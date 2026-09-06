@@ -1,3 +1,4 @@
+# Trigger extraction after workflow registration
 name: Extract server package
 
 on:
