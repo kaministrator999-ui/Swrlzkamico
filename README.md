@@ -1,6 +1,6 @@
 # §wyrlz Clean Vercel SERVER Transplant
 
-Server revision: **2.0.5**
+Server revision: **2.0.6**
 
 This package is for a **brand-new GitHub repository and brand-new Vercel project**.
 
@@ -17,11 +17,11 @@ Included:
 - Forge ZIP-wrapper support for a `.zip` containing the verified R39 `.gz`
 - Vercel bundle-size handling: `.transport/**` is excluded from deployment/function bundles and missing chunks are streamed from the deployment's exact GitHub commit at runtime
 - hot Gate 5 execution with R39 load/verification performed inside the same function invocation
-- arbitrary binary/text uploads, directory browsing, media/PDF/text/binary preview, text editing, download, SHA-256, rename, delete, folder creation, and runtime logging
+- arbitrary binary/text uploads, directory browsing, media/PDF/text/binary preview, text editing, SHA-256, rename, delete, folder creation, runtime logging, and response-safe chunked downloads
 
 ## Unified runtime boundary
 
-Revision 2.0.5 consolidates the former `api/admin.py`, `api/lalm.py`, and `api/health.py` serverless entrypoints into the single `api/index.py` FastAPI application. Vercel routes `/api/*` through that entrypoint, so Admin, health, LALM loading, file operations, and Gate 5 use one function definition instead of three separately packaged functions.
+Revision 2.0.5 consolidated the former `api/admin.py`, `api/lalm.py`, and `api/health.py` serverless entrypoints into the single `api/index.py` FastAPI application. Vercel routes `/api/*` through that entrypoint, so Admin, health, LALM loading, file operations, and Gate 5 use one function definition instead of three separately packaged functions.
 
 Vercel `/tmp` is still ephemeral and instance-local and Vercel may scale a function to multiple instances. Therefore the hot Gate 5 action does **not** assume that a previous `/api/lalm` request populated the same instance. `RUN HOT GATE 5` calls `ensure_r39()` inside the same invocation immediately before executing `/tmp/swrlz-admin/live/gate5_live.py`. It exports these local paths to the script:
 
@@ -34,9 +34,11 @@ This gives Gate 5 a verified local model in the exact runtime invocation that la
 
 ## Admin workbench
 
-`/api/admin` accepts any file type through chunked binary-safe upload. The workbench can browse `/tmp/swrlz-admin`, create folders, preview/edit UTF-8 text/code files up to the editor limit, preview images/video/audio/PDF files, show a binary hex preview, download original bytes, calculate SHA-256, rename, and delete files. Admin actions require `SWRLZ_ADMIN_TOKEN` through the `x-swrlz-admin-token` request header.
+`/api/admin` accepts any file type through chunked binary-safe upload. The workbench can browse `/tmp/swrlz-admin`, create folders, preview/edit UTF-8 text/code files up to the editor limit, preview images/video/audio/PDF files, show a binary hex preview, calculate SHA-256, rename, and delete files. Admin actions require `SWRLZ_ADMIN_TOKEN` through the `x-swrlz-admin-token` request header.
 
-The workbench also exposes `LOAD / VERIFY LALM`, `RUN HOT GATE 5`, runtime state, and the full Gate 5 runtime log. Upload sessions retain the existing instance ID guard so a multi-chunk upload fails explicitly and can be restarted if Vercel moves it to a different runtime instance.
+Revision 2.0.6 adds large-file downloads without sending an oversized Vercel response. `download-info` returns the file size, MIME type, chunk size, and source runtime instance. `download-chunk` then serves at most 3 MiB per `206 Partial Content` response and rejects the transfer if Vercel moves it to a different runtime instance. The browser loops over those chunks with a visible progress bar. When the browser supports the File System Access API, chunks are written directly to the selected destination rather than accumulating a large R39-sized Blob in browser RAM; other browsers fall back to Blob assembly.
+
+The workbench also exposes `LOAD / VERIFY LALM`, `RUN HOT GATE 5`, runtime state, and the full Gate 5 runtime log. Upload and download sessions retain the instance ID guard so a multi-chunk transfer fails explicitly and can be restarted if Vercel moves it to a different runtime instance.
 
 ## Preferred Forge deployment path
 
@@ -74,4 +76,4 @@ Deployment:
 
 Important: the committed Forge chunks are the durable model source. `/tmp` is reconstructed runtime state, not persistent storage. External object storage via `SWRLZ_R39_URL` remains supported as an alternative.
 
-`PACKAGE_VALIDATION.json` records the original clean-transplant archive validation. Revision 2.0.1 added direct Forge chunk transport reconstruction. Revision 2.0.2 added ZIP-wrapped Forge transport support. Revision 2.0.3 added runtime streaming of excluded Forge chunks from the exact GitHub deployment commit. Revision 2.0.4 fixed the Vercel Python function glob and added `.vercelignore`. Revision 2.0.5 consolidates all API behavior into one FastAPI function, makes Gate 5 load R39 in the same invocation, and upgrades the Admin workbench into a binary-safe file manager/viewer/editor.
+`PACKAGE_VALIDATION.json` records the original clean-transplant archive validation. Revision 2.0.1 added direct Forge chunk transport reconstruction. Revision 2.0.2 added ZIP-wrapped Forge transport support. Revision 2.0.3 added runtime streaming of excluded Forge chunks from the exact GitHub deployment commit. Revision 2.0.4 fixed the Vercel Python function glob and added `.vercelignore`. Revision 2.0.5 consolidated all API behavior into one FastAPI function, made Gate 5 load R39 in the same invocation, and upgraded the Admin workbench into a binary-safe file manager/viewer/editor. Revision 2.0.6 adds response-safe chunked downloads for large files, including the full R39 artifacts.
