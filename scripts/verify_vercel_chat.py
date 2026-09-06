@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "2.1.0"
+EXPECTED_VERSION = "2.1.1"
 STREAM_CONTRACT = "swrlz_llm_stream_v2"
 
 
@@ -31,12 +31,14 @@ def check_python() -> None:
 
 def check_index() -> None:
     text = read("api/index.py")
-    assert f'VERSION = "{EXPECTED_VERSION}"' in text, "SERVER version is not 2.1.0"
+    assert f'VERSION = "{EXPECTED_VERSION}"' in text, "SERVER version is not 2.1.1"
     assert 'app.mount("/api/chat", swrlz_chat_app' in text, "chat mount missing"
     assert '"chat": "/api/chat"' in text, "root route does not advertise chat"
     assert "OPEN CHAT" in text, "Admin chat entry point missing"
+    assert "Dragon Jester Protocol" in text, "2.1.1 Admin theme marker missing"
     assert 'TOKEN = os.environ.get("SWRLZ_ADMIN_TOKEN", "").strip()' in text, "2.0.7 Admin auth normalization regressed"
     assert "DOWNLOAD_CHUNK = 3 * 1024 * 1024" in text, "chunked download contract regressed"
+    assert "JSON.stringify(j,null,2)" in text, "Admin diagnostics are not preserving structured failure receipts"
 
 
 def check_chat_bridge() -> None:
@@ -87,7 +89,7 @@ def check_docs_and_env() -> None:
     read("docs/contracts/SWRLZ_VERCEL_CHAT_BRIDGE_V1.md")
     read("docs/checkpoints/INT-VERCEL-CHAT-001A_CHECKPOINT.md")
     root_readme = read("README.md")
-    assert "Server revision: **2.1.0**" in root_readme
+    assert "Server revision: **2.1.1**" in root_readme
     assert "Chat revision: **1.0.0**" in root_readme
 
 
@@ -103,7 +105,7 @@ def check_transport_exclusions() -> None:
 def main() -> int:
     checks = (
         ("Python syntax", check_python),
-        ("unified SERVER 2.1.0 mount", check_index),
+        ("unified SERVER 2.1.1 mount/theme", check_index),
         ("truthful chat bridge", check_chat_bridge),
         ("safe streaming chat UI", check_chat_page),
         ("documentation/environment accounting", check_docs_and_env),
