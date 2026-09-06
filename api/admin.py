@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI,Query,Request
 from fastapi.responses import HTMLResponse,JSONResponse,PlainTextResponse
 
-app=FastAPI(title="§wyrlz Admin",version="2.0.2")
+app=FastAPI(title="§wyrlz Admin",version="2.0.3")
 ROOT=Path("/tmp/swrlz-admin"); LIVE=ROOT/"live"; UP=ROOT/"uploads"; LOG=ROOT/"full-runtime.log"
 for d in (ROOT,LIVE,UP): d.mkdir(parents=True,exist_ok=True)
 INSTANCE=f"{os.getpid()}-{uuid.uuid4().hex[:8]}"
