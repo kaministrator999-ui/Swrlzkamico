@@ -1,10 +1,10 @@
 # §wyrlz Clean Vercel SERVER Transplant
 
-Server revision: **2.1.0**  
+Server revision: **2.1.1**  
 Chat revision: **1.0.0**  
 Checkpoint: `INT-VERCEL-CHAT-001A`
 
-This repository is the clean unified §wyrlz Vercel SERVER. It preserves the R39 transport/runtime workbench and adds the R299-derived web chat bridge at `/api/chat`.
+This repository is the clean unified §wyrlz Vercel SERVER. It preserves the R39 transport/runtime workbench, mounts the R299-derived web chat bridge at `/api/chat`, and presents the Admin workbench with the Dragon Jester visual system.
 
 Included:
 - one unified FastAPI/Vercel entrypoint at `api/index.py`;
@@ -13,6 +13,8 @@ Included:
 - ZIP-wrapper support for `lalm§wyrlz.zip` containing the verified R39 `.gz`;
 - hot Gate 5 execution with R39 load/verification inside the same invocation;
 - binary-safe Admin file manager/viewer/editor with chunked large-file upload/download;
+- responsive Dragon Jester Admin dashboard with the same underlying Admin actions and IDs;
+- full structured Admin error receipts in the visible diagnostics console instead of collapsing failures to a generic message;
 - browser-local chat threads and evidence export;
 - V2 NDJSON streaming bridge with strict DELTA/RESET/terminal semantics;
 - independent fail-closed `SWRLZ_WEB_CHAT_TOKEN`;
@@ -33,6 +35,8 @@ Authoritative raw R39 SHA-256:
 ## Admin workbench
 
 Open `/api/admin`. Admin actions require `SWRLZ_ADMIN_TOKEN` through `x-swrlz-admin-token`. The workbench supports runtime state, R39 load/verify, Gate 5 execution, directory browsing, arbitrary binary upload, text editing, media/PDF/binary preview, SHA-256, rename/delete, folder creation, runtime logs, and response-safe chunked downloads.
+
+Revision 2.1.1 changes presentation and observability, not the proven backend boundaries. The Admin workbench now uses the Dragon Jester visual language: neon blue/violet glass panels, responsive dashboard/navigation, explicit status tiles, dedicated Admin/LALM/Gate 5 sections, runtime console, and direct Chat navigation. Existing control IDs/actions are retained so the underlying file, runtime, upload/download, auth, LALM, and Gate 5 plumbing remains intact. Failed Admin API calls now preserve the complete structured JSON receipt in the visible console, including safe auth diagnostics such as `authConfigured`, `tokenReceived`, and `receivedLength` when provided by the server.
 
 ## Web chat
 
@@ -67,7 +71,7 @@ The chat overlay carries a deterministic source verifier:
 python scripts/verify_vercel_chat.py
 ```
 
-It checks the 2.1.0 mount, source compilation, chat page safety invariants, truthful local no-inference behavior, and required integration files.
+It checks the 2.1.1 unified mount/theme markers, source compilation, Admin diagnostics preservation, chat page safety invariants, truthful local no-inference behavior, required integration files, and Vercel transport exclusions.
 
 See:
 - `SWRLZ_VERCEL_CHAT_README.md`;
@@ -77,4 +81,4 @@ See:
 
 ## Revision history
 
-2.0.5 unified the API runtime and colocated Gate 5 with R39 load/verify. 2.0.6 added response-safe chunked large-file downloads. 2.0.7 hardened Admin token normalization and diagnostics. **2.1.0 adds the R299-derived Vercel chat bridge/UI without removing the proven Admin, R39 transport, or Gate 5 behavior.**
+2.0.5 unified the API runtime and colocated Gate 5 with R39 load/verify. 2.0.6 added response-safe chunked large-file downloads. 2.0.7 hardened Admin token normalization and diagnostics. 2.1.0 added the R299-derived Vercel chat bridge/UI without removing the proven Admin, R39 transport, or Gate 5 behavior. **2.1.1 restyles the existing Admin workbench into the responsive Dragon Jester dashboard and preserves structured failure diagnostics without changing R39/Gate 5/chat runtime contracts.**
