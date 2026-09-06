@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hmac
 import json
+import mimetypes
 import os
 import re
 import secrets
@@ -12,10 +13,10 @@ from pathlib import Path
 from typing import Any, Iterator
 
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 
 
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.1.0"
 BRIDGE_CONTRACT = "swrlz_vercel_chat_bridge_v1"
 STREAM_CONTRACT = "swrlz_llm_stream_v2"
 STREAM_PATH = "/ai/swrlz-llm/v2/chat/stream"
@@ -35,6 +36,11 @@ EVENT_TYPES = {
 TERMINAL_TYPES = {"COMPLETED", "CANCELLED", "FAILED"}
 ROOT = Path(__file__).resolve().parents[1]
 CHAT_PAGE = ROOT / "web" / "chat.html"
+RUNTIME_ROOT = Path("/tmp/swrlz-admin/runtime")
+RUNTIME_WEB_TOKEN = RUNTIME_ROOT / "web-chat-token.txt"
+LIVE_WEB_ROOT = Path("/tmp/swrlz-admin/web")
+for directory in (RUNTIME_ROOT, LIVE_WEB_ROOT):
+    directory.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(
     title="SWRLZ Vercel Chat Bridge",
@@ -69,9 +75,24 @@ def _json_error(status: int, code: str, detail: str) -> JSONResponse:
     )
 
 
+def _valid_token(value: str) -> bool:
+    return 16 <= len(value) <= 512 and not any(ord(char) < 32 or ord(char) == 127 for char in value)
+
+
+def _runtime_web_token() -> str:
+    try:
+        token = RUNTIME_WEB_TOKEN.read_text("utf-8").strip()
+    except OSError:
+        return ""
+    return token if _valid_token(token) else ""
+
+
 def _web_token_state() -> tuple[str, bool]:
+    runtime_token = _runtime_web_token()
+    if runtime_token:
+        return runtime_token, True
     token = os.environ.get("SWRLZ_WEB_CHAT_TOKEN", "").strip()
-    return token, len(token) >= 16
+    return token, _valid_token(token)
 
 
 def _require_web_token(request: Request) -> None:
@@ -80,7 +101,7 @@ def _require_web_token(request: Request) -> None:
         raise BridgeError(
             503,
             "WEB_CHAT_TOKEN_NOT_CONFIGURED",
-            "Set SWRLZ_WEB_CHAT_TOKEN to a private value of at least 16 characters.",
+            "Set SWRLZ_WEB_CHAT_TOKEN or /tmp/swrlz-admin/runtime/web-chat-token.txt to a private value of at least 16 characters.",
         )
     supplied = request.headers.get("x-swrlz-chat-token", "")
     if not supplied or not hmac.compare_digest(expected, supplied):
@@ -150,7 +171,15 @@ def _status_payload() -> dict[str, Any]:
             "streamContractId": STREAM_CONTRACT,
         },
         "mode": mode,
-        "security": {"chatTokenConfigured": token_ready},
+        "security": {
+            "chatTokenConfigured": token_ready,
+            "runtimeTokenOverride": RUNTIME_WEB_TOKEN.is_file() and bool(_runtime_web_token()),
+        },
+        "liveWeb": {
+            "enabled": True,
+            "basePath": "/live/",
+            "storage": "EPHEMERAL_INSTANCE_LOCAL",
+        },
         "upstream": {
             "configured": bool(raw_endpoint),
             "urlAccepted": bool(endpoint),
@@ -165,6 +194,46 @@ def _status_payload() -> dict[str, Any]:
             "blockers": ["SECTION_PAYLOAD_LOCATION_AND_INFERENCE_WIRING_PENDING"],
         },
     }
+
+
+def _safe_live_path(asset_path: str) -> Path:
+    root = LIVE_WEB_ROOT.resolve()
+    candidate = (LIVE_WEB_ROOT / asset_path.lstrip("/")).resolve()
+    if candidate != root and root not in candidate.parents:
+        raise BridgeError(403, "LIVE_PATH_REJECTED", "The requested live path escapes the runtime web root.")
+    return candidate
+
+
+def _live_response(request: Request, asset_path: str):
+    try:
+        target = _safe_live_path(asset_path)
+    except BridgeError as exc:
+        return _json_error(exc.status, exc.code, exc.detail)
+    if target.is_dir():
+        index = target / "index.html"
+        if not index.is_file():
+            if target == LIVE_WEB_ROOT.resolve():
+                return JSONResponse(
+                    {
+                        "ok": True,
+                        "service": "SWRLZ Live Web Workspace",
+                        "basePath": "/live/",
+                        "detail": "Upload pages and assets under /tmp/swrlz-admin/web. Directories publish index.html.",
+                    },
+                    headers=_no_store_headers(),
+                )
+            return _json_error(404, "LIVE_INDEX_MISSING", "This live directory does not contain index.html.")
+        if asset_path and not request.url.path.endswith("/"):
+            public_path = "/live/" + urllib.parse.quote(asset_path.strip("/"), safe="/-._~") + "/"
+            return RedirectResponse(public_path, status_code=307, headers=_no_store_headers())
+        target = index
+    if not target.is_file():
+        return _json_error(404, "LIVE_FILE_NOT_FOUND", "The requested live file does not exist in this runtime instance.")
+    media_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+    headers = _no_store_headers()
+    headers["Cache-Control"] = "no-store, max-age=0"
+    headers["Cross-Origin-Resource-Policy"] = "same-origin"
+    return FileResponse(target, media_type=media_type, headers=headers)
 
 
 async def _read_json(request: Request) -> dict[str, Any]:
@@ -549,6 +618,17 @@ def _stream_response(payload: dict[str, Any]) -> StreamingResponse:
         },
     )
     return StreamingResponse(iterator, media_type="application/x-ndjson", headers=headers)
+
+
+@app.get("/live", include_in_schema=False)
+@app.get("/live/", include_in_schema=False)
+async def live_root(request: Request):
+    return _live_response(request, "")
+
+
+@app.get("/live/{asset_path:path}", include_in_schema=False)
+async def live_asset(request: Request, asset_path: str):
+    return _live_response(request, asset_path)
 
 
 @app.get("/", include_in_schema=False)
