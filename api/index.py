@@ -17,7 +17,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 
 from swyrlz.backend import LIVE, PACKED, RAW, ensure_r39, sha
 
-VERSION = "2.0.7"
+VERSION = "2.1.0"
 ROOT = Path("/tmp/swrlz-admin")
 UP = ROOT / "uploads"
 LOG = ROOT / "full-runtime.log"
@@ -33,6 +33,11 @@ MAX_TEXT_EDIT = 4 * 1024 * 1024
 GATE5 = LIVE / "gate5_live.py"
 
 app = FastAPI(title="§wyrlz Unified Server Workbench", version=VERSION)
+
+# Additive R299-derived web chat surface. Existing admin/LALM routes remain unchanged.
+from api.chat import app as swrlz_chat_app
+
+app.mount("/api/chat", swrlz_chat_app, name="swrlz-chat")
 
 
 def auth(request: Request) -> bool:
@@ -157,8 +162,8 @@ def run_gate5() -> dict:
 
 PAGE = r'''<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>§wyrlz SERVER Workbench</title><style>
 :root{color-scheme:dark}*{box-sizing:border-box}body{font-family:system-ui,sans-serif;background:#080d15;color:#edf4ff;max-width:1050px;margin:auto;padding:18px}h1,h2{margin:.25em 0}.muted{color:#9fb0c8}.card{background:#101827;border:1px solid #2c3d58;border-radius:22px;padding:18px;margin:16px 0}.row{display:flex;flex-wrap:wrap;gap:9px;align-items:center}input,button,textarea{font:inherit}input{background:#0b1321;color:#fff;border:1px solid #405371;border-radius:12px;padding:11px}button{background:#1a2b42;color:#eaf5ff;border:1px solid #40577a;border-radius:12px;padding:11px 15px;font-weight:750;cursor:pointer}button.hot{background:#675d52}button.danger{background:#5c2630}button.good{background:#245a3f}#path{flex:1;min-width:240px}.bar{height:12px;background:#222c3a;border-radius:9px;overflow:hidden;margin:9px 0}.fill{height:100%;width:0;background:#71df9d}#files{margin-top:12px;border-top:1px solid #26364c}.entry{display:grid;grid-template-columns:1fr auto;gap:10px;padding:11px 6px;border-bottom:1px solid #243247;align-items:center}.entry button{padding:7px 10px}.name{overflow-wrap:anywhere}.meta{font-size:.82rem;color:#9fb0c8}textarea{width:100%;min-height:430px;background:#080f1c;color:#eef6ff;border:1px solid #405371;border-radius:14px;padding:14px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre;overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#080f1c;padding:13px;border-radius:14px;max-height:420px;overflow:auto}iframe,img,video,audio{max-width:100%;border-radius:12px}iframe{width:100%;height:520px;background:white}.badge{display:inline-block;background:#1c2a40;padding:4px 8px;border-radius:999px;margin:2px;font-size:.8rem}
-</style></head><body><h1>§wyrlz SERVER Workbench <span class="badge">v2.0.7</span></h1><p class="muted">Unified Admin + R39 + Gate 5 runtime. Large downloads use response-safe chunks. Vercel /tmp remains ephemeral.</p>
-<div class="card"><div class="row"><input id="tok" type="password" placeholder="SWRLZ_ADMIN_TOKEN" style="flex:1;min-width:240px"><button onclick="saveTok()">SET TOKEN</button><button onclick="runtime()">RUNTIME</button><button class="good" onclick="loadLalm()">LOAD / VERIFY LALM</button><button class="hot" onclick="runGate5()">🔥 RUN HOT GATE 5</button></div><pre id="status">Ready.</pre></div>
+</style></head><body><h1>§wyrlz SERVER Workbench <span class="badge">v2.1.0</span></h1><p class="muted">Unified Admin + R39 + Gate 5 runtime. Large downloads use response-safe chunks. Vercel /tmp remains ephemeral.</p>
+<div class="card"><div class="row"><input id="tok" type="password" placeholder="SWRLZ_ADMIN_TOKEN" style="flex:1;min-width:240px"><button onclick="saveTok()">SET TOKEN</button><button onclick="runtime()">RUNTIME</button><button class="good" onclick="location.href='/api/chat'">OPEN CHAT</button><button class="good" onclick="loadLalm()">LOAD / VERIFY LALM</button><button class="hot" onclick="runGate5()">🔥 RUN HOT GATE 5</button></div><pre id="status">Ready.</pre></div>
 <div class="card"><h2>Files</h2><div class="row"><button onclick="up()">↑ UP ONE DIR</button><input id="path" value="/tmp/swrlz-admin/live"><button onclick="refresh()">GO / REFRESH</button><button onclick="newFolder()">NEW FOLDER</button></div><div class="row" style="margin-top:10px"><input id="fi" type="file" multiple style="flex:1"><button onclick="uploadAll()">UPLOAD ANY FILES</button></div><div class="bar"><div id="progress" class="fill"></div></div><div id="summary" class="muted"></div><div id="files"></div></div>
 <div class="card"><h2>Viewer / Editor</h2><div id="selected" class="muted">No file selected.</div><div class="row" style="margin:10px 0"><button id="saveBtn" onclick="saveText()" disabled>SAVE TEXT</button><button id="downloadBtn" onclick="downloadSelected()" disabled>DOWNLOAD</button><button id="hashBtn" onclick="hashSelected()" disabled>SHA-256</button><button id="renameBtn" onclick="renameSelected()" disabled>RENAME</button><button id="deleteBtn" class="danger" onclick="deleteSelected()" disabled>DELETE</button></div><div class="bar"><div id="downloadProgress" class="fill"></div></div><div id="viewer"><pre>Select a file to preview it.</pre></div></div>
 <div class="card"><h2>Runtime Log</h2><div class="row"><button onclick="loadLog()">OPEN FULL LOG</button><button onclick="downloadLog()">DOWNLOAD LOG</button></div><pre id="log">Log not loaded.</pre></div>
@@ -184,7 +189,7 @@ async function loadLalm(){try{status('Loading and verifying R39 in this runtime�
 @app.get("/")
 @app.get("/api")
 def root():
-    return {"ok": True, "service": "§wyrlz Unified Vercel Server", "version": VERSION, "health": "/api/health", "admin": "/api/admin", "lalm": "/api/lalm"}
+    return {"ok": True, "service": "§wyrlz Unified Vercel Server", "version": VERSION, "health": "/api/health", "admin": "/api/admin", "lalm": "/api/lalm", "chat": "/api/chat"}
 
 
 @app.get("/api/health")
