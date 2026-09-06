@@ -17,7 +17,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 
 from swyrlz.backend import LIVE, PACKED, RAW, ensure_r39, sha
 
-VERSION = "2.0.6"
+VERSION = "2.0.7"
 ROOT = Path("/tmp/swrlz-admin")
 UP = ROOT / "uploads"
 LOG = ROOT / "full-runtime.log"
@@ -25,7 +25,7 @@ for directory in (ROOT, LIVE, UP):
     directory.mkdir(parents=True, exist_ok=True)
 
 INSTANCE = f"{os.getpid()}-{uuid.uuid4().hex[:8]}"
-TOKEN = os.environ.get("SWRLZ_ADMIN_TOKEN", "")
+TOKEN = os.environ.get("SWRLZ_ADMIN_TOKEN", "").strip()
 MAX_CHUNK = 3 * 1024 * 1024
 DOWNLOAD_CHUNK = 3 * 1024 * 1024
 DIRECT_DOWNLOAD_MAX = 4 * 1024 * 1024
@@ -36,7 +36,7 @@ app = FastAPI(title="§wyrlz Unified Server Workbench", version=VERSION)
 
 
 def auth(request: Request) -> bool:
-    supplied = request.headers.get("x-swrlz-admin-token", "")
+    supplied = request.headers.get("x-swrlz-admin-token", "").strip()
     return bool(TOKEN) and hmac.compare_digest(supplied, TOKEN)
 
 
@@ -157,21 +157,21 @@ def run_gate5() -> dict:
 
 PAGE = r'''<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>§wyrlz SERVER Workbench</title><style>
 :root{color-scheme:dark}*{box-sizing:border-box}body{font-family:system-ui,sans-serif;background:#080d15;color:#edf4ff;max-width:1050px;margin:auto;padding:18px}h1,h2{margin:.25em 0}.muted{color:#9fb0c8}.card{background:#101827;border:1px solid #2c3d58;border-radius:22px;padding:18px;margin:16px 0}.row{display:flex;flex-wrap:wrap;gap:9px;align-items:center}input,button,textarea{font:inherit}input{background:#0b1321;color:#fff;border:1px solid #405371;border-radius:12px;padding:11px}button{background:#1a2b42;color:#eaf5ff;border:1px solid #40577a;border-radius:12px;padding:11px 15px;font-weight:750;cursor:pointer}button.hot{background:#675d52}button.danger{background:#5c2630}button.good{background:#245a3f}#path{flex:1;min-width:240px}.bar{height:12px;background:#222c3a;border-radius:9px;overflow:hidden;margin:9px 0}.fill{height:100%;width:0;background:#71df9d}#files{margin-top:12px;border-top:1px solid #26364c}.entry{display:grid;grid-template-columns:1fr auto;gap:10px;padding:11px 6px;border-bottom:1px solid #243247;align-items:center}.entry button{padding:7px 10px}.name{overflow-wrap:anywhere}.meta{font-size:.82rem;color:#9fb0c8}textarea{width:100%;min-height:430px;background:#080f1c;color:#eef6ff;border:1px solid #405371;border-radius:14px;padding:14px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre;overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#080f1c;padding:13px;border-radius:14px;max-height:420px;overflow:auto}iframe,img,video,audio{max-width:100%;border-radius:12px}iframe{width:100%;height:520px;background:white}.badge{display:inline-block;background:#1c2a40;padding:4px 8px;border-radius:999px;margin:2px;font-size:.8rem}
-</style></head><body><h1>§wyrlz SERVER Workbench <span class="badge">v2.0.6</span></h1><p class="muted">Unified Admin + R39 + Gate 5 runtime. Large downloads use response-safe chunks. Vercel /tmp remains ephemeral.</p>
+</style></head><body><h1>§wyrlz SERVER Workbench <span class="badge">v2.0.7</span></h1><p class="muted">Unified Admin + R39 + Gate 5 runtime. Large downloads use response-safe chunks. Vercel /tmp remains ephemeral.</p>
 <div class="card"><div class="row"><input id="tok" type="password" placeholder="SWRLZ_ADMIN_TOKEN" style="flex:1;min-width:240px"><button onclick="saveTok()">SET TOKEN</button><button onclick="runtime()">RUNTIME</button><button class="good" onclick="loadLalm()">LOAD / VERIFY LALM</button><button class="hot" onclick="runGate5()">🔥 RUN HOT GATE 5</button></div><pre id="status">Ready.</pre></div>
 <div class="card"><h2>Files</h2><div class="row"><button onclick="up()">↑ UP ONE DIR</button><input id="path" value="/tmp/swrlz-admin/live"><button onclick="refresh()">GO / REFRESH</button><button onclick="newFolder()">NEW FOLDER</button></div><div class="row" style="margin-top:10px"><input id="fi" type="file" multiple style="flex:1"><button onclick="uploadAll()">UPLOAD ANY FILES</button></div><div class="bar"><div id="progress" class="fill"></div></div><div id="summary" class="muted"></div><div id="files"></div></div>
 <div class="card"><h2>Viewer / Editor</h2><div id="selected" class="muted">No file selected.</div><div class="row" style="margin:10px 0"><button id="saveBtn" onclick="saveText()" disabled>SAVE TEXT</button><button id="downloadBtn" onclick="downloadSelected()" disabled>DOWNLOAD</button><button id="hashBtn" onclick="hashSelected()" disabled>SHA-256</button><button id="renameBtn" onclick="renameSelected()" disabled>RENAME</button><button id="deleteBtn" class="danger" onclick="deleteSelected()" disabled>DELETE</button></div><div class="bar"><div id="downloadProgress" class="fill"></div></div><div id="viewer"><pre>Select a file to preview it.</pre></div></div>
 <div class="card"><h2>Runtime Log</h2><div class="row"><button onclick="loadLog()">OPEN FULL LOG</button><button onclick="downloadLog()">DOWNLOAD LOG</button></div><pre id="log">Log not loaded.</pre></div>
 <script>
 let token=sessionStorage.getItem('swrlzAdminToken')||'',selected=null,selectedMeta=null;const CHUNK=2*1024*1024;document.getElementById('tok').value=token;
-function saveTok(){token=document.getElementById('tok').value.trim();sessionStorage.setItem('swrlzAdminToken',token);status('Token stored for this browser session.');refresh()}function status(x){document.getElementById('status').textContent=typeof x==='string'?x:JSON.stringify(x,null,2)}function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function fmt(n){if(n==null)return '—';let u=['B','KB','MB','GB'],i=0,v=n;while(v>=1024&&i<u.length-1){v/=1024;i++}return v.toFixed(i?2:0)+' '+u[i]}
+async function saveTok(){token=document.getElementById('tok').value.trim();sessionStorage.setItem('swrlzAdminToken',token);try{let j=await api('auth-check');status(j);await refresh()}catch(e){status('FAILED: '+e.message)}}function status(x){document.getElementById('status').textContent=typeof x==='string'?x:JSON.stringify(x,null,2)}function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function fmt(n){if(n==null)return '—';let u=['B','KB','MB','GB'],i=0,v=n;while(v>=1024&&i<u.length-1){v/=1024;i++}return v.toFixed(i?2:0)+' '+u[i]}
 async function api(action,q={},body=null,response='json'){const u='/api/admin?'+new URLSearchParams({action,...q});const r=await fetch(u,{method:'POST',headers:{'x-swrlz-admin-token':token},body});if(response==='blob'){if(!r.ok)throw Error(await r.text());return r.blob()}const j=await r.json();if(!r.ok)throw Error(j.error||j.detail||JSON.stringify(j));return j}
 async function chunkRequest(path,instanceId,offset,length){const u='/api/admin?'+new URLSearchParams({action:'download-chunk',path,instanceId,offset,length});const r=await fetch(u,{method:'POST',headers:{'x-swrlz-admin-token':token}});if(!r.ok)throw Error(await r.text());return new Uint8Array(await r.arrayBuffer())}
 async function downloadInfo(path){return api('download-info',{path})}
 async function downloadBlobChunked(path){const info=await downloadInfo(path),parts=[];let off=0;while(off<info.size){const n=Math.min(info.chunkBytes,info.size-off),part=await chunkRequest(path,info.instanceId,off,n);parts.push(part);off+=part.byteLength;document.getElementById('downloadProgress').style.width=(off/info.size*100)+'%';status('Downloading '+info.name+' '+Math.floor(off/info.size*100)+'%')}document.getElementById('downloadProgress').style.width='0';return {blob:new Blob(parts,{type:info.mime}),info}}
 async function saveChunked(path){const name=path.split('/').pop();let handle=null;if('showSaveFilePicker' in window){try{handle=await window.showSaveFilePicker({suggestedName:name})}catch(e){if(e.name==='AbortError')return}}const info=await downloadInfo(path);let off=0,parts=[],writable=handle?await handle.createWritable():null;try{while(off<info.size){const n=Math.min(info.chunkBytes,info.size-off),part=await chunkRequest(path,info.instanceId,off,n);if(writable)await writable.write(part);else parts.push(part);off+=part.byteLength;document.getElementById('downloadProgress').style.width=(off/info.size*100)+'%';status('Downloading '+info.name+' '+fmt(off)+' / '+fmt(info.size)+' ('+Math.floor(off/info.size*100)+'%)')}if(writable)await writable.close();else{const blob=new Blob(parts,{type:info.mime}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=info.name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}status('Download complete: '+info.name+' · '+fmt(info.size))}catch(e){if(writable)try{await writable.abort()}catch(_){ }throw e}finally{document.getElementById('downloadProgress').style.width='0'}}
 async function runtime(){try{status(await api('runtime'))}catch(e){status('FAILED: '+e.message)}}function currentPath(){return document.getElementById('path').value.trim()}function up(){let p=currentPath().replace(/\/+$/,''),i=p.lastIndexOf('/');document.getElementById('path').value=i>0?p.slice(0,i):'/tmp/swrlz-admin';refresh()}
-async function refresh(){try{let j=await api('list',{path:currentPath()});document.getElementById('path').value=j.path;document.getElementById('summary').textContent=j.entries.length+' entries · '+j.path;document.getElementById('files').innerHTML=j.entries.map(e=>`<div class="entry"><div class="name">${e.type==='directory'?'📁':'📄'} <b>${esc(e.name)}</b><div class="meta">${esc(e.type)} · ${fmt(e.size)} · ${esc(e.mime)}</div></div><button onclick='openEntry(${JSON.stringify(e.path)})'>OPEN</button></div>`).join('')}catch(e){status('FAILED: '+e.message)}}
+async function refresh(){try{let j=await api('list',{path:currentPath()});document.getElementById('path').value=j.path;document.getElementById('summary').textContent=j.entries.length+' entries · '+j.path;document.getElementById('files').innerHTML=j.entries.map(e=>`<div class="entry"><div class="name">${e.type==='directory'?'📁':'📄'} <b>${esc(e.name)}</b><div class="meta">${esc(e.type)} · ${fmt(e.size)} · ${esc(e.mime)}</div></div><button onclick='openEntry(${JSON.stringify(e.path)})'>OPEN</button></div>`).join('');return j}catch(e){status('FAILED: '+e.message);throw e}}
 async function openEntry(path){try{let j=await api('preview',{path});if(j.type==='directory'){document.getElementById('path').value=j.path;return refresh()}selected=j.path;selectedMeta=j;document.getElementById('selected').textContent=j.path+' · '+fmt(j.size)+' · '+j.mime;for(const id of ['downloadBtn','hashBtn','renameBtn','deleteBtn'])document.getElementById(id).disabled=false;document.getElementById('saveBtn').disabled=j.previewKind!=='text';let v=document.getElementById('viewer');if(j.previewKind==='text'){v.innerHTML='<textarea id="editor"></textarea>';document.getElementById('editor').value=j.content}else if(j.mime.startsWith('image/'))await mediaPreview('img',j);else if(j.mime.startsWith('video/'))await mediaPreview('video',j);else if(j.mime.startsWith('audio/'))await mediaPreview('audio',j);else if(j.mime==='application/pdf')await mediaPreview('iframe',j);else v.innerHTML='<pre>'+esc('Binary file\n'+(j.sha256?'SHA-256: '+j.sha256+'\n':'')+'First '+j.previewBytes+' bytes:\n'+j.hex)+'</pre>'}catch(e){status('FAILED: '+e.message)}}
 async function mediaPreview(tag,j){let d=await downloadBlobChunked(j.path),url=URL.createObjectURL(d.blob),v=document.getElementById('viewer');if(tag==='img')v.innerHTML=`<img src="${url}">`;else if(tag==='video')v.innerHTML=`<video controls src="${url}"></video>`;else if(tag==='audio')v.innerHTML=`<audio controls src="${url}"></audio>`;else v.innerHTML=`<iframe src="${url}"></iframe>`}
 async function saveText(){try{let text=document.getElementById('editor').value;status(await api('save-text',{path:selected},new Blob([text],{type:'text/plain;charset=utf-8'})));refresh()}catch(e){status('FAILED: '+e.message)}}async function downloadSelected(){if(!selected)return;try{await saveChunked(selected)}catch(e){status('FAILED: '+e.message)}}async function hashSelected(){try{status(await api('hash',{path:selected}))}catch(e){status('FAILED: '+e.message)}}
@@ -189,7 +189,7 @@ def root():
 
 @app.get("/api/health")
 def health():
-    return {"ok": True, "version": VERSION, "routingReady": True, "runtimeBoundary": "single-api-index", "instanceId": INSTANCE, **lalm_presence(), "storage": "Vercel /tmp is ephemeral and instance-local; Gate 5 loads/verifies R39 in the same invocation."}
+    return {"ok": True, "version": VERSION, "routingReady": True, "runtimeBoundary": "single-api-index", "instanceId": INSTANCE, "adminAuthConfigured": bool(TOKEN), **lalm_presence(), "storage": "Vercel /tmp is ephemeral and instance-local; Gate 5 loads/verifies R39 in the same invocation."}
 
 
 @app.get("/api/lalm")
@@ -220,8 +220,18 @@ async def admin_action(
     instanceId: str | None = Query(default=None),
 ):
     if not auth(request):
-        return JSONResponse(status_code=401, content={"ok": False, "error": "invalid or missing SWRLZ_ADMIN_TOKEN"})
+        supplied = request.headers.get("x-swrlz-admin-token", "").strip()
+        return JSONResponse(status_code=401, content={
+            "ok": False,
+            "error": "invalid or missing SWRLZ_ADMIN_TOKEN",
+            "authConfigured": bool(TOKEN),
+            "tokenReceived": bool(supplied),
+            "receivedLength": len(supplied),
+            "instanceId": INSTANCE,
+        })
     try:
+        if action == "auth-check":
+            return {"ok": True, "authenticated": True, "version": VERSION, "instanceId": INSTANCE, "message": "Admin token accepted."}
         if action == "runtime":
             return {"ok": True, "version": VERSION, "instanceId": INSTANCE, "root": str(ROOT), "live": str(LIVE), "uploadAuthConfigured": bool(TOKEN), "downloadChunkBytes": DOWNLOAD_CHUNK, **lalm_presence()}
         if action == "list":
