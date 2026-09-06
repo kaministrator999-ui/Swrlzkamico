@@ -1,6 +1,6 @@
 # §wyrlz Clean Vercel SERVER Transplant
 
-Server revision: **2.0.3**
+Server revision: **2.0.4**
 
 This package is for a **brand-new GitHub repository and brand-new Vercel project**.
 
@@ -15,13 +15,13 @@ Included:
 - gzip -> raw verification
 - Forge chunked Git transport reconstruction (`chunked-git-blobs-v1` / `v2`)
 - Forge ZIP-wrapper support for a `.zip` containing the verified R39 `.gz`
-- Vercel bundle-size handling: `.transport/**` is excluded from Python function bundles and missing chunks are streamed from the deployment's exact GitHub commit at runtime
+- Vercel bundle-size handling: `.transport/**` is excluded from deployment/function bundles and missing chunks are streamed from the deployment's exact GitHub commit at runtime
 
 ## Preferred Forge deployment path
 
 Forge may upload either the exact R39 gzip directly or a ZIP wrapper such as `lalm§wyrlz.zip` containing the gzip. AUTO/CHUNKED transport stores immutable chunk blobs under `.transport/...` plus a `*.transport.json` manifest instead of attempting one oversized Git blob.
 
-The root transport manifest remains bundled with the server. The large `.transport/**` chunk directory is excluded from Vercel Python function bundles so the function stays below Vercel's 500 MB uncompressed Python bundle limit. When a chunk is not present locally, `/api/lalm` streams it from `raw.githubusercontent.com` using Vercel's Git repository owner/slug and exact deployment commit SHA, then verifies the chunk SHA before accepting it.
+The root transport manifest remains bundled with the server. The large `.transport/**` chunk directory and preserved `SWRLZ_NEW_SERVER_GITHUB_READY.zip` archive are excluded from the Vercel deployment input with `.vercelignore`, while the Python function configuration also excludes them with the documented `api/**/*.py` function glob. When a chunk is not present locally, `/api/lalm` streams it from `raw.githubusercontent.com` using Vercel's Git repository owner/slug and exact deployment commit SHA, then verifies the chunk SHA before accepting it.
 
 At runtime `/api/lalm` verifies the manifest and every chunk, reconstructs the transported payload, and then:
 
@@ -43,14 +43,14 @@ Optional overrides:
 - `SWRLZ_GITHUB_OWNER`, `SWRLZ_GITHUB_REPO`, `SWRLZ_GITHUB_REF` — fallback GitHub source coordinates when Vercel Git system environment variables are unavailable.
 
 Deployment:
-1. Confirm the generated `*.transport.json` and `.transport/...` chunk files are committed.
-2. Import this repository into a new Vercel project.
+1. Confirm the generated `*.transport.json` and `.transport/...` chunk files are committed to GitHub.
+2. Import this repository into Vercel.
 3. Set `SWRLZ_ADMIN_TOKEN` to a long random secret.
-4. Deploy.
+4. Deploy. Vercel should exclude the large transport/archive payload from the deployment bundle.
 5. Open `/api/health`.
 6. Open `/api/lalm`; it should stream the excluded Forge chunks from GitHub, reconstruct the ZIP, unwrap the nested gzip, verify R39, and decompress it automatically.
 7. `/api/admin` remains available as a manual fallback upload workbench.
 
 Important: Vercel `/tmp` is ephemeral and instance-local. The committed Forge chunks are the durable source; `/tmp` is only reconstructed runtime state. External object storage via `SWRLZ_R39_URL` remains supported as an alternative.
 
-`PACKAGE_VALIDATION.json` records the original clean-transplant archive validation. Revision 2.0.1 added direct Forge chunk transport reconstruction. Revision 2.0.2 added ZIP-wrapped Forge transport support. Revision 2.0.3 excludes large Forge chunks from Vercel Python function bundles and streams them from the exact GitHub deployment commit at runtime.
+`PACKAGE_VALIDATION.json` records the original clean-transplant archive validation. Revision 2.0.1 added direct Forge chunk transport reconstruction. Revision 2.0.2 added ZIP-wrapped Forge transport support. Revision 2.0.3 added runtime streaming of excluded Forge chunks from the exact GitHub deployment commit. Revision 2.0.4 fixes the Vercel Python function glob to the documented `api/**/*.py` form and adds `.vercelignore` so the large Forge transport payload is excluded before function bundling.
