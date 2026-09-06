@@ -1,0 +1,41 @@
+{
+  "contractId": "swrlz_vercel_chat_overlay_manifest_v1",
+  "package": "SWRLZ_VERCEL_CHAT_v1.0.0_R1",
+  "checkpoint": "INT-VERCEL-CHAT-001A",
+  "integratedAtUtc": "2026-09-06T16:26:00Z",
+  "repository": "kaministrator999-ui/Swrlzkamico",
+  "branch": "main",
+  "sourceBoundary": {
+    "baselineCommit": "0375f42f57d1e4df000a53a6ec02659bb7a6a5df",
+    "baselineServerVersion": "2.0.7",
+    "targetServerVersion": "2.1.0",
+    "chatVersion": "1.0.0",
+    "androidServerVersion": "SERVER_CFv2.1.134",
+    "androidServerCheckpoint": "R299",
+    "androidServerArchiveSha256": "d54cf84feebddba1524c69fe601c97e759c59a8c870f5199f43051a988414a3a",
+    "r39RawSha256": "65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee",
+    "r39PackedSha256": "fd790c873c9f0b43d4862b55491d643a79f8a90da0c9b70ea61b1937b9843e68"
+  },
+  "integrationCommits": {
+    "chatBridge": "70f184649dee3207dfb07e6503f692b59e23333c",
+    "serverMountAndVersion": "2f9f5adfc7362aa7268abfd6a1a5ce6e4c9e3b7e",
+    "rootDocumentation": "fee7bef2f9bf6b3942be6bd1475e08f0baa92ea9",
+    "environmentAccounting": "3f301b357107dd5150a0438a399c47af21aa10cc",
+    "checkpoint": "05fd110b317e511dccde704a35d29ab7425f2108",
+    "sourceVerifier": "37a908a5abec3158ade409ce004fcdfd297060dd"
+  },
+  "preservedBoundaries": [
+    "Admin authentication and file workbench",
+    "Forge chunked R39 reconstruction",
+    "exact R39 packed/raw integrity contracts",
+    "same-invocation Gate 5 readiness verification",
+    "Vercel .transport and large archive exclusions"
+  ],
+  "truthBoundary": {
+    "r39ContainerReady": true,
+    "oneTokenReady": false,
+    "interactiveReady": false,
+    "blocker": "SECTION_PAYLOAD_LOCATION_AND_INFERENCE_WIRING_PENDING",
+    "localChatModeWithoutUpstream": "LOCAL_R39_STATUS_ONLY"
+  }
+}
