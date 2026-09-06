@@ -14,6 +14,10 @@
   },
   "rewrites": [
     {
+      "source": "/live",
+      "destination": "/api/chat/live"
+    },
+    {
       "source": "/live/:path*",
       "destination": "/api/chat/live/:path*"
     }
