@@ -1,4 +1,10 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "functions": {"api/*.py": {"maxDuration": 300}}
+  "functions": {
+    "api/*.py": {
+      "maxDuration": 300,
+      "excludeFiles": "{.transport/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
+    }
+  }
 }
