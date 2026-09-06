@@ -1,0 +1,22 @@
+{
+  "sourceRepository": "kamiswrlzco-cloud/Swrlzco",
+  "sourceBranch": "main",
+  "sourceSubtree": "swrlz-core/vercel-lalm-r38",
+  "observedFiles": [
+    ".gitignore",
+    "README.md",
+    "requirements.txt",
+    "vercel.json",
+    "api/admin.py",
+    "api/health.py",
+    "api/index.py",
+    "api/lalm.py",
+    "api/setup.py",
+    "api/tcp.py",
+    "swyrlz/__init__.py",
+    "swyrlz/backend.py",
+    "swyrlz/container.py",
+    "swyrlz/r38_gate5.py"
+  ],
+  "note": "New package is a clean R39-oriented deploy transplant, not a clone of old Git history."
+}

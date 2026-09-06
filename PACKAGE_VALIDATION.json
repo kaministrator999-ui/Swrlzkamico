@@ -1,0 +1,72 @@
+{
+  "allPythonSyntaxPass": true,
+  "pythonSyntax": {
+    "swyrlz/backend.py": "PASS",
+    "swyrlz/__init__.py": "PASS",
+    "api/index.py": "PASS",
+    "api/lalm.py": "PASS",
+    "api/health.py": "PASS",
+    "api/admin.py": "PASS"
+  },
+  "modelBytesIncluded": false,
+  "r39PackedExpectedBytes": 226000615,
+  "r39PackedExpectedSha256": "fd790c873c9f0b43d4862b55491d643a79f8a90da0c9b70ea61b1937b9843e68",
+  "files": {
+    ".env.example": {
+      "bytes": 43,
+      "sha256": "807d0ef759b91b593df447f55d920498ba19dd0099d90cfba30c10028544458a"
+    },
+    ".gitignore": {
+      "bytes": 40,
+      "sha256": "dd0f6cc85a1e78404789996916655e24b7c8bc8e35829b37380d8be674f98fc2"
+    },
+    "MODEL_R39.json": {
+      "bytes": 450,
+      "sha256": "26bdaa69f6a859d72195f8bafd84e0bfc0cfce7011e34586ebe086225e92b089"
+    },
+    "NEW_SERVER_DEPLOY_CHECKLIST.md": {
+      "bytes": 379,
+      "sha256": "57502727261903b6847221be1bf0b73104a68c5d91baf41e10f7064ee9c5f02b"
+    },
+    "OLD_DEPLOY_SOURCE_RECEIPT.json": {
+      "bytes": 555,
+      "sha256": "ab19454a4dd197f7cc2ab43dc790eb650a7746a4638da247befd4b60dec3f7d3"
+    },
+    "README.md": {
+      "bytes": 1139,
+      "sha256": "947fb6e9a5aea1665be7a38767034cba8ea91d1ac75427f107fdb7ce8c9ec33e"
+    },
+    "api/admin.py": {
+      "bytes": 6289,
+      "sha256": "0c9321fc144b0847f45deeb4ebfe3027189a751ea7c9ed8891d96d7b561c8e4f"
+    },
+    "api/health.py": {
+      "bytes": 335,
+      "sha256": "5d9140b3e4b38125f97a6396ba2dfd9bc65cac8c9ed513e00d052f6a241c05b4"
+    },
+    "api/index.py": {
+      "bytes": 245,
+      "sha256": "0e1b85a1ccb3e768d9c6409a04320fe06d1b7d72339b0e31d23477982e8959d4"
+    },
+    "api/lalm.py": {
+      "bytes": 497,
+      "sha256": "f1222875d896cb75bd89dc47c13fc12aad7352540c22715257b11ac31d1457b3"
+    },
+    "requirements.txt": {
+      "bytes": 47,
+      "sha256": "3a6db0b7431ae6756d81fe3f41569ba9b3046c8a94e2338a8870c40e621ffd82"
+    },
+    "swyrlz/__init__.py": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "swyrlz/backend.py": {
+      "bytes": 2343,
+      "sha256": "0944e226f05fd6b04ea811c2f354053eebc41ccdcf8e7a00280d02b22e8c5350"
+    },
+    "vercel.json": {
+      "bytes": 70,
+      "sha256": "7b179c0a9230ba2d08764222d46d1bf1b09f8dfb21a67db3d35f8581448ca214"
+    }
+  }
+}

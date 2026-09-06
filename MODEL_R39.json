@@ -1,0 +1,9 @@
+{
+  "artifact": "SWYRLZ_LALM_R39_PHYSICAL_BASE_REPAIRED.§wyrlzx",
+  "artifactBytes": 233637480,
+  "artifactSha256": "65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee",
+  "gzip": "SWYRLZ_LALM_R39_PHYSICAL_BASE_REPAIRED.§wyrlzx.gz",
+  "gzipBytes": 226000615,
+  "gzipSha256": "fd790c873c9f0b43d4862b55491d643a79f8a90da0c9b70ea61b1937b9843e68",
+  "tensorDataSha256": "d2fec2437a36afff23566eca26df82172c2602f34478c8fd1d7e506c4821fb37"
+}
