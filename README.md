@@ -1,79 +1,80 @@
 # §wyrlz Clean Vercel SERVER Transplant
 
-Server revision: **2.0.6**
+Server revision: **2.1.0**  
+Chat revision: **1.0.0**  
+Checkpoint: `INT-VERCEL-CHAT-001A`
 
-This package is for a **brand-new GitHub repository and brand-new Vercel project**.
-
-It intentionally does **not** include the old `.git` history or a monolithic 226 MB R39 Git blob. That avoids dragging the multi-GB repository history into the new deployment and avoids GitHub's regular single-blob size limit.
+This repository is the clean unified §wyrlz Vercel SERVER. It preserves the R39 transport/runtime workbench and adds the R299-derived web chat bridge at `/api/chat`.
 
 Included:
-- one FastAPI/Vercel entrypoint at `api/index.py`
-- `/api/health`
-- `/api/admin` unified phone/server workbench
-- `/api/lalm`
-- exact repaired R39 size/SHA contract
-- gzip -> raw verification
-- Forge chunked Git transport reconstruction (`chunked-git-blobs-v1` / `v2`)
-- Forge ZIP-wrapper support for a `.zip` containing the verified R39 `.gz`
-- Vercel bundle-size handling: `.transport/**` is excluded from deployment/function bundles and missing chunks are streamed from the deployment's exact GitHub commit at runtime
-- hot Gate 5 execution with R39 load/verification performed inside the same function invocation
-- arbitrary binary/text uploads, directory browsing, media/PDF/text/binary preview, text editing, SHA-256, rename, delete, folder creation, runtime logging, and response-safe chunked downloads
+- one unified FastAPI/Vercel entrypoint at `api/index.py`;
+- `/api/health`, `/api/admin`, `/api/lalm`, and `/api/chat`;
+- exact repaired R39 size/SHA verification and Forge chunked transport reconstruction;
+- ZIP-wrapper support for `lalm§wyrlz.zip` containing the verified R39 `.gz`;
+- hot Gate 5 execution with R39 load/verification inside the same invocation;
+- binary-safe Admin file manager/viewer/editor with chunked large-file upload/download;
+- browser-local chat threads and evidence export;
+- V2 NDJSON streaming bridge with strict DELTA/RESET/terminal semantics;
+- independent fail-closed `SWRLZ_WEB_CHAT_TOKEN`;
+- proof-bound Android SERVER upstream headers injected only on the server side.
 
-## Unified runtime boundary
+## Runtime boundary
 
-Revision 2.0.5 consolidated the former `api/admin.py`, `api/lalm.py`, and `api/health.py` serverless entrypoints into the single `api/index.py` FastAPI application. Vercel routes `/api/*` through that entrypoint, so Admin, health, LALM loading, file operations, and Gate 5 use one function definition instead of three separately packaged functions.
+All API behavior is rooted in the single `api/index.py` FastAPI application. `/api/chat` is mounted additively from `api/chat.py`, so Admin, health, LALM, Gate 5, and chat share the same deployed function definition. Vercel `/tmp` remains ephemeral and instance-local. Gate 5 therefore calls `ensure_r39()` in the same invocation before executing the live verifier.
 
-Vercel `/tmp` is still ephemeral and instance-local and Vercel may scale a function to multiple instances. Therefore the hot Gate 5 action does **not** assume that a previous `/api/lalm` request populated the same instance. `RUN HOT GATE 5` calls `ensure_r39()` inside the same invocation immediately before executing `/tmp/swrlz-admin/live/gate5_live.py`. It exports these local paths to the script:
+The proven R39 path is:
 
-- `SWRLZ_R39_PATH=/tmp/swrlz-admin/live/SWYRLZ_LALM_R39_PHYSICAL_BASE_REPAIRED.§wyrlzx`
-- `SWRLZ_LALM_PATH` — same verified raw R39 path
-- `SWRLZ_R39_GZ_PATH` — verified packed gzip path
-- `SWRLZ_LIVE_DIR=/tmp/swrlz-admin/live`
+`Forge chunks -> wrapper ZIP -> nested verified R39 gzip -> raw R39 -> SHA-256 -> Gate 5 readiness`
 
-This gives Gate 5 a verified local model in the exact runtime invocation that launches it.
+Authoritative raw R39 SHA-256:
+
+`65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee`
 
 ## Admin workbench
 
-`/api/admin` accepts any file type through chunked binary-safe upload. The workbench can browse `/tmp/swrlz-admin`, create folders, preview/edit UTF-8 text/code files up to the editor limit, preview images/video/audio/PDF files, show a binary hex preview, calculate SHA-256, rename, and delete files. Admin actions require `SWRLZ_ADMIN_TOKEN` through the `x-swrlz-admin-token` request header.
+Open `/api/admin`. Admin actions require `SWRLZ_ADMIN_TOKEN` through `x-swrlz-admin-token`. The workbench supports runtime state, R39 load/verify, Gate 5 execution, directory browsing, arbitrary binary upload, text editing, media/PDF/binary preview, SHA-256, rename/delete, folder creation, runtime logs, and response-safe chunked downloads.
 
-Revision 2.0.6 adds large-file downloads without sending an oversized Vercel response. `download-info` returns the file size, MIME type, chunk size, and source runtime instance. `download-chunk` then serves at most 3 MiB per `206 Partial Content` response and rejects the transfer if Vercel moves it to a different runtime instance. The browser loops over those chunks with a visible progress bar. When the browser supports the File System Access API, chunks are written directly to the selected destination rather than accumulating a large R39-sized Blob in browser RAM; other browsers fall back to Blob assembly.
+## Web chat
 
-The workbench also exposes `LOAD / VERIFY LALM`, `RUN HOT GATE 5`, runtime state, and the full Gate 5 runtime log. Upload and download sessions retain the instance ID guard so a multi-chunk transfer fails explicitly and can be restarted if Vercel moves it to a different runtime instance.
+Open `/api/chat`. The browser chat token is deliberately separate from Admin:
 
-## Preferred Forge deployment path
+- `SWRLZ_WEB_CHAT_TOKEN` — browser-to-Vercel chat token, minimum 16 characters;
+- `SWRLZ_CHAT_UPSTREAM_URL` — reachable HTTPS SWRLZ SERVER gateway for live chat;
+- `SWRLZ_CHAT_UPSTREAM_NODE_ID` — registered proof-bound CLIENT node ID;
+- `SWRLZ_CHAT_UPSTREAM_DEVICE_PROOF` — server-side proof for that node;
+- `SWRLZ_CHAT_UPSTREAM_BEARER` — optional outer gateway bearer;
+- `SWRLZ_CHAT_UPSTREAM_IDLE_TIMEOUT_SECONDS` — optional 10–290 second upstream idle timeout.
 
-Forge may upload either the exact R39 gzip directly or a ZIP wrapper such as `lalm§wyrlz.zip` containing the gzip. AUTO/CHUNKED transport stores immutable chunk blobs under `.transport/...` plus a `*.transport.json` manifest instead of attempting one oversized Git blob.
+The browser submits only `x-swrlz-chat-token`. Device proof and optional gateway bearer never enter HTML, local storage, thread exports, or browser-visible responses.
 
-The root transport manifest remains bundled with the server. The large `.transport/**` chunk directory and preserved `SWRLZ_NEW_SERVER_GITHUB_READY.zip` archive are excluded from the Vercel deployment input with `.vercelignore`, while the Python function configuration also excludes them with the documented `api/**/*.py` function glob. When a chunk is not present locally, the R39 loader streams it from `raw.githubusercontent.com` using Vercel's Git repository owner/slug and exact deployment commit SHA, then verifies the chunk SHA before accepting it.
+When no live upstream is configured, chat is intentionally status-only: it reports the current local R39 boundary and does **not** fabricate assistant DELTAs. Current Gate 5 proves container/integrity readiness, not one-token inference.
 
-At runtime the loader verifies the manifest and every chunk, reconstructs the transported payload, and then:
+## Forge transport
 
-- if the payload is the exact R39 gzip, it uses it directly;
-- if the payload is a ZIP wrapper, it opens the ZIP and locates the nested gzip that matches the exact R39 gzip size/SHA contract.
+The durable model source is the committed `lalm§wyrlz.transport.json` plus `.transport/...` chunks. `.transport/**` and preserved large archives stay excluded from Vercel function bundles. Missing chunks are streamed from the deployment Git source and verified before reconstruction.
 
-The server then decompresses that verified gzip and verifies the raw R39 size/SHA before reporting the model ready.
+Optional transport overrides:
+- `SWRLZ_R39_TRANSPORT_MANIFEST`;
+- `SWRLZ_REPO_ROOT`;
+- `SWRLZ_R39_URL`;
+- `SWRLZ_GITHUB_REPO_OWNER` / `SWRLZ_GITHUB_REPO_SLUG` / `SWRLZ_GITHUB_REF` for the current loader.
 
-Current Forge upload in this repository:
-- manifest: `lalm§wyrlz.transport.json`
-- wrapper: `lalm§wyrlz.zip`
-- transport: `chunked-git-blobs-v1`
-- chunks: `.transport/lalm§wyrlz/...`
+## Verification
 
-Optional overrides:
-- `SWRLZ_R39_TRANSPORT_MANIFEST` — explicit repository-relative or absolute manifest path.
-- `SWRLZ_REPO_ROOT` — explicit deployed repository root if the runtime working directory differs.
-- `SWRLZ_R39_URL` — direct HTTPS cold-start fallback for the exact gzip.
-- `SWRLZ_GITHUB_OWNER`, `SWRLZ_GITHUB_REPO`, `SWRLZ_GITHUB_REF` — fallback GitHub source coordinates when Vercel Git system environment variables are unavailable.
+The chat overlay carries a deterministic source verifier:
 
-Deployment:
-1. Confirm the generated `*.transport.json` and `.transport/...` chunk files are committed to GitHub.
-2. Import this repository into Vercel.
-3. Set `SWRLZ_ADMIN_TOKEN` to a long random secret.
-4. Deploy. Vercel should exclude the large transport/archive payload from the deployment bundle.
-5. Open `/api/health`.
-6. Open `/api/lalm` to verify the public R39 reconstruction path.
-7. Open `/api/admin`, set the admin token, and use `LOAD / VERIFY LALM` or `RUN HOT GATE 5`.
+```bash
+python scripts/verify_vercel_chat.py
+```
 
-Important: the committed Forge chunks are the durable model source. `/tmp` is reconstructed runtime state, not persistent storage. External object storage via `SWRLZ_R39_URL` remains supported as an alternative.
+It checks the 2.1.0 mount, source compilation, chat page safety invariants, truthful local no-inference behavior, and required integration files.
 
-`PACKAGE_VALIDATION.json` records the original clean-transplant archive validation. Revision 2.0.1 added direct Forge chunk transport reconstruction. Revision 2.0.2 added ZIP-wrapped Forge transport support. Revision 2.0.3 added runtime streaming of excluded Forge chunks from the exact GitHub deployment commit. Revision 2.0.4 fixed the Vercel Python function glob and added `.vercelignore`. Revision 2.0.5 consolidated all API behavior into one FastAPI function, made Gate 5 load R39 in the same invocation, and upgraded the Admin workbench into a binary-safe file manager/viewer/editor. Revision 2.0.6 adds response-safe chunked downloads for large files, including the full R39 artifacts.
+See:
+- `SWRLZ_VERCEL_CHAT_README.md`;
+- `docs/contracts/SWRLZ_VERCEL_CHAT_BRIDGE_V1.md`;
+- `docs/checkpoints/INT-VERCEL-CHAT-001A_CHECKPOINT.md`;
+- `SWRLZ_VERCEL_CHAT_CHANGELOG.md`.
+
+## Revision history
+
+2.0.5 unified the API runtime and colocated Gate 5 with R39 load/verify. 2.0.6 added response-safe chunked large-file downloads. 2.0.7 hardened Admin token normalization and diagnostics. **2.1.0 adds the R299-derived Vercel chat bridge/UI without removing the proven Admin, R39 transport, or Gate 5 behavior.**
