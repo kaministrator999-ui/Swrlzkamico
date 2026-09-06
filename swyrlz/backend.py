@@ -1,5 +1,6 @@
 from __future__ import annotations
-import gzip, hashlib, json, os, urllib.request, zipfile
+import gzip, hashlib, json, os, urllib.parse, urllib.request, zipfile
+from contextlib import closing, nullcontext
 from pathlib import Path
 
 ROOT=Path("/tmp/swrlz-admin")
@@ -39,6 +40,21 @@ def _manifest_candidates(root):
             seen.add(resolved)
             yield resolved
 
+def _github_raw_url(rel):
+    owner=os.environ.get("VERCEL_GIT_REPO_OWNER") or os.environ.get("SWRLZ_GITHUB_OWNER") or "kaministrator999-ui"
+    repo=os.environ.get("VERCEL_GIT_REPO_SLUG") or os.environ.get("SWRLZ_GITHUB_REPO") or "Swrlzkamico"
+    ref=os.environ.get("VERCEL_GIT_COMMIT_SHA") or os.environ.get("VERCEL_GIT_COMMIT_REF") or os.environ.get("SWRLZ_GITHUB_REF") or "main"
+    path=urllib.parse.quote(str(rel).replace("\\","/"),safe="/")
+    return f"https://raw.githubusercontent.com/{urllib.parse.quote(owner,safe='')}/{urllib.parse.quote(repo,safe='')}/{urllib.parse.quote(ref,safe='')}/{path}"
+
+def _open_chunk(root,rel):
+    chunk_path=(root/rel).resolve()
+    if root!=chunk_path and root not in chunk_path.parents:
+        raise ValueError("chunk path escapes repository root")
+    if chunk_path.is_file():
+        return nullcontext(chunk_path.open("rb")),"local"
+    return closing(urllib.request.urlopen(_github_raw_url(rel),timeout=90)),"github-raw"
+
 def _copy_verified_chunks(root,data,target):
     chunks=data.get("chunks") or []
     if not chunks:
@@ -47,17 +63,17 @@ def _copy_verified_chunks(root,data,target):
     expected_whole_size=int(data.get("source_size_bytes") or data.get("size_bytes") or -1)
     total=0
     whole=hashlib.sha256()
+    origins=set()
     with target.open("wb") as out:
         for chunk in sorted(chunks,key=lambda c:int(c["index"])):
             rel=Path(str(chunk["path"]))
-            chunk_path=(root/rel).resolve()
-            if root!=chunk_path and root not in chunk_path.parents:
-                raise ValueError("chunk path escapes repository root")
             expected_size=int(chunk["size_bytes"])
             expected_sha=str(chunk["sha256"]).lower()
             actual_size=0
             part_hash=hashlib.sha256()
-            with chunk_path.open("rb") as src:
+            cm,origin=_open_chunk(root,rel)
+            origins.add(origin)
+            with cm as src:
                 for block in iter(lambda:src.read(1024*1024),b""):
                     out.write(block)
                     whole.update(block)
@@ -69,7 +85,7 @@ def _copy_verified_chunks(root,data,target):
     if total!=expected_whole_size or whole.hexdigest()!=expected_whole_sha:
         target.unlink(missing_ok=True)
         raise ValueError("reconstructed transport verification failed")
-    return {"chunks":len(chunks),"size":total,"sha256":whole.hexdigest()}
+    return {"chunks":len(chunks),"size":total,"sha256":whole.hexdigest(),"origins":sorted(origins)}
 
 def _extract_r39_gzip_from_zip(zip_path):
     tmp=PACKED.with_suffix(PACKED.suffix+".part")
@@ -117,11 +133,11 @@ def _reconstruct_forge_transport():
                 if meta["size"]!=PACKED_SIZE or meta["sha256"]!=PACKED_SHA:
                     raise ValueError("transported gzip does not match R39 contract")
                 os.replace(source_tmp,PACKED)
-                return {"manifest":str(manifest),"transport":transport,"chunks":meta["chunks"],"wrapper":"none"}
+                return {"manifest":str(manifest),"transport":transport,"chunks":meta["chunks"],"wrapper":"none","chunkOrigins":meta["origins"]}
             if source_name.lower().endswith(".zip"):
                 nested=_extract_r39_gzip_from_zip(source_tmp)
                 source_tmp.unlink(missing_ok=True)
-                return {"manifest":str(manifest),"transport":transport,"chunks":meta["chunks"],"wrapper":"zip","archive":source_name,"nested":nested}
+                return {"manifest":str(manifest),"transport":transport,"chunks":meta["chunks"],"wrapper":"zip","archive":source_name,"nested":nested,"chunkOrigins":meta["origins"]}
         finally:
             source_tmp.unlink(missing_ok=True)
     return None
@@ -166,6 +182,7 @@ def ensure_r39():
         result["transport"]=transport["transport"]
         result["transportChunks"]=transport["chunks"]
         result["transportWrapper"]=transport["wrapper"]
+        result["transportChunkOrigins"]=transport.get("chunkOrigins",[])
         if transport.get("archive"): result["transportArchive"]=transport["archive"]
         if transport.get("nested"): result["transportNestedR39"]=transport["nested"]
     return result
