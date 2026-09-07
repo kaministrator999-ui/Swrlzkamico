@@ -13,6 +13,7 @@ ADMIN_SESSION_JS = ROOT / "web" / "chat_admin_session.js"
 ENH_CSS = '<link rel="stylesheet" href="/api/chat/assets/enhancements.css">'
 ENH_JS = '<script src="/api/chat/assets/enhancements.js"></script>'
 SESSION_JS = '<script src="/api/chat/admin-session-ui.js"></script>'
+UI_VERSION = "1.3.12"
 
 
 def _inject(html: str) -> str:
@@ -46,12 +47,12 @@ def install(server) -> None:
                     "Cache-Control": "no-store, max-age=0",
                     "X-SWRLZ-Chat-UI-Source": source,
                     "X-SWRLZ-Chat-Enhancements": "required",
-                    "X-SWRLZ-Chat-UI-Version": "1.3.5",
+                    "X-SWRLZ-Chat-UI-Version": UI_VERSION,
                     "Content-Security-Policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
                 },
             )
         if request.method == "GET" and path == "/api/chat/admin-session-ui.js":
-            return FileResponse(ADMIN_SESSION_JS, media_type="application/javascript", headers={"Cache-Control": "no-store, max-age=0", "X-SWRLZ-Chat-UI-Version": "1.3.5"})
+            return FileResponse(ADMIN_SESSION_JS, media_type="application/javascript", headers={"Cache-Control": "no-store, max-age=0", "X-SWRLZ-Chat-UI-Version": UI_VERSION})
         return await call_next(request)
 
     server.CAPABILITIES["chat-ui-parent-guard"] = {
@@ -60,7 +61,7 @@ def install(server) -> None:
         "path": "/api/chat",
         "hotSource": True,
         "enhancementsRequired": True,
-        "uiVersion": "1.3.5",
-        "adminSessionBootstrap": True,
+        "uiVersion": UI_VERSION,
+        "serverManagedBrowserSession": True,
         "queryTolerance": "ignores unrelated query decoration; action=page stays UI, functional actions pass through",
     }
