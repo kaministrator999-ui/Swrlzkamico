@@ -1,9 +1,9 @@
-"""§wyrlz Server 2.1.8 release entrypoint.
+"""§wyrlz Server 2.1.9 release entrypoint.
 
-2.1.8 promotes web pages to a live runtime/source-managed layer. Admin, Chat,
-the runtime index, and future registered pages can sync from the non-deploying
-dev branch into instance-local runtime storage, be edited live, and optionally
-be pushed back to dev without redeploying the stable server.
+2.1.9 hardens the live-page boundary: /live is served directly by the unified
+server, Chat UI hot-source injection is enforced at the parent app boundary,
+and the Page Manager exposes server-side GitHub credential state immediately
+after Admin authentication without ever returning the raw secret.
 """
 from __future__ import annotations
 
@@ -11,8 +11,11 @@ from api import server_v213 as _server
 from api.runtime_hot import install as _install_hot_runtime
 from api.page_runtime import install as _install_page_runtime
 from api.page_runtime_guard import install as _install_page_runtime_guard
+from api.live_runtime_routes import install as _install_live_runtime_routes
+from api.chat_ui_guard import install as _install_chat_ui_guard
+from api.page_manager_ui import install as _install_page_manager_ui
 
-VERSION = "2.1.8"
+VERSION = "2.1.9"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -24,6 +27,9 @@ _server.CAPABILITIES["local-r39-inference"] = {
 _install_hot_runtime(_server)
 _install_page_runtime_guard()
 _install_page_runtime(_server)
+_install_live_runtime_routes(_server)
+_install_chat_ui_guard(_server)
+_install_page_manager_ui(_server)
 _server._write_server_state()
 
 app = _server.app
