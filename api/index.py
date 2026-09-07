@@ -1,9 +1,8 @@
-"""§wyrlz Server 2.1.12 release entrypoint.
+"""§wyrlz Server 2.1.13 release entrypoint.
 
-2.1.12 makes Admin authentication resolve the deployment credential per request
-and tolerates harmless outer whitespace / matching wrapping quotes without
-weakening exact token identity. It retains 2.1.11 non-blocking Chat status and
-Admin-authorized ephemeral Chat browser sessions.
+2.1.13 removes the Vercel instance-local /tmp dependency from live page reads.
+Core live pages and Chat assets resolve from GitHub dev per request with a short
+in-instance cache and bundled fallback, while runtime mutation tools remain.
 """
 from __future__ import annotations
 
@@ -17,8 +16,9 @@ from api.page_manager_ui import install as _install_page_manager_ui
 from api.chat_admin_session import install as _install_chat_admin_session
 from api.chat_fast_status import install as _install_chat_fast_status
 from api.admin_auth_guard import install as _install_admin_auth_guard
+from api.live_source_guard import install as _install_live_source_guard
 
-VERSION = "2.1.12"
+VERSION = "2.1.13"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -27,7 +27,6 @@ _server.CAPABILITIES["local-r39-inference"] = {
     "engineId": "swrlz_r39_python_reference_v1",
     "boundary": "canonical LFM2 reference profile; runtime override supported with bundled fallback; stream heartbeat timer resets after each engine progress event; status probes never inspect/load the model",
 }
-# Security/auth guard must be installed before features capture/use server.auth.
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
 _install_page_runtime_guard()
@@ -37,6 +36,8 @@ _install_chat_admin_session(_server)
 _install_chat_fast_status(_server)
 _install_chat_ui_guard(_server)
 _install_page_manager_ui(_server)
+# Install last so this parent middleware owns live read resolution across Vercel instances.
+_install_live_source_guard(_server)
 _server._write_server_state()
 
 app = _server.app
