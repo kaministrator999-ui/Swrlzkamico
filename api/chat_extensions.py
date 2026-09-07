@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import time
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
 from pathlib import Path
 from typing import Any, Iterator
 
@@ -34,17 +35,27 @@ def _normalize_with_generation(payload: dict[str, Any]) -> dict[str, Any]:
         except (TypeError,ValueError): generation={}
         if generation: normalized["generation"]=generation
     return normalized
-chat._normalize_chat_request=_normalize_with_generation; chat.APP_VERSION="1.3.1"; chat.app.version="1.3.1"
+chat._normalize_chat_request=_normalize_with_generation; chat.APP_VERSION="1.3.2"; chat.app.version="1.3.2"
 
 def _server_state():
     try:return json.loads(SERVER_STATE.read_text("utf-8"))
     except Exception:return {}
+
+def _probe_local_once():
+    if LOCAL_READINESS.get("checked"): return
+    try:
+        engine=inspect_engine(); LOCAL_READINESS.clear(); LOCAL_READINESS.update({"checked":True,**engine})
+    except Exception as exc:
+        LOCAL_READINESS.clear(); LOCAL_READINESS.update({"checked":True,"ok":False,"oneTokenReady":False,"interactiveReady":False,"code":"R39_ENGINE_PROBE_FAILED","detail":f"{type(exc).__name__}: {exc}"})
+
 def runtime_chat_state():
     now=time.time(); return {"available":True,"activeStreams":len(ACTIVE),"requests":[{**v,"ageSeconds":round(now-v["startedAt"],2)} for v in ACTIVE.values()],"server":_server_state(),"bridgeVersion":chat.APP_VERSION,"localEngine":{"engineId":LOCAL_ENGINE_ID,"modelSha256":LOCAL_MODEL_SHA256,**LOCAL_READINESS}}
+
 def _status_payload():
     base=_original_status_payload()
     if not chat._raw_upstream_url():
-        base["mode"]="LOCAL_R39"; base["localR39"]={"containerVerificationAvailable":True,"engineWired":True,"engineId":LOCAL_ENGINE_ID,"modelSha256":LOCAL_MODEL_SHA256,"oneTokenReady":bool(LOCAL_READINESS.get("oneTokenReady")),"interactiveReady":bool(LOCAL_READINESS.get("interactiveReady")),"readinessChecked":bool(LOCAL_READINESS.get("checked")),"blockers":[] if LOCAL_READINESS.get("interactiveReady") else [str(LOCAL_READINESS.get("code") or "R39_ENGINE_NOT_PROBED")]}
+        _probe_local_once()
+        base["mode"]="LOCAL_R39"; base["localR39"]={"containerVerificationAvailable":True,"engineWired":True,"engineId":LOCAL_ENGINE_ID,"modelSha256":LOCAL_MODEL_SHA256,"autoInitialize":True,"manualGate5Required":False,"oneTokenReady":bool(LOCAL_READINESS.get("oneTokenReady")),"interactiveReady":bool(LOCAL_READINESS.get("interactiveReady")),"readinessChecked":bool(LOCAL_READINESS.get("checked")),"blockers":[] if LOCAL_READINESS.get("interactiveReady") else [str(LOCAL_READINESS.get("code") or "R39_ENGINE_NOT_PROBED")]}
     return base
 chat._status_payload=_status_payload
 
@@ -63,14 +74,32 @@ def _event_payload(seq,request_id,raw):
     elif event_type=="DELTA":event["answerState"]="STREAMING"
     return event
 
+def _heartbeat_events(source, request_id):
+    """Advance the blocking local generator on one worker while keeping NDJSON alive."""
+    iterator=iter(source)
+    with ThreadPoolExecutor(max_workers=1,thread_name_prefix="swrlz-r39") as pool:
+        while True:
+            future=pool.submit(next,iterator)
+            while True:
+                try:
+                    raw=future.result(timeout=8.0); break
+                except FutureTimeout:
+                    yield {"type":"STATUS","phase":"COMPUTE_HEARTBEAT","reason":"Local R39 compute is still active; keeping the response stream alive."}
+            yield raw
+
 def _local_stream(payload):
     request_id=payload["requestId"]; LOCAL_CANCELLED.discard(request_id); seq=1; yield chat._encode_event(chat._bridge_event(seq,"STARTED",request_id,phase="ANALYZING_REQUEST",reason="Request admitted by the local R39 Vercel inference bridge.")); seq+=1
     try:
-        for raw in generate_events(payload,lambda:request_id in LOCAL_CANCELLED):
-            event=_event_payload(seq,request_id,raw); yield chat._encode_event(event)
-            if raw.get("type")=="ROUTE":LOCAL_READINESS.update({"checked":True,"oneTokenReady":True,"interactiveReady":True,"ok":True,"engineId":LOCAL_ENGINE_ID})
-            seq+=1
+        source=generate_events(payload,lambda:request_id in LOCAL_CANCELLED)
+        try:
+            for raw in _heartbeat_events(source,request_id):
+                event=_event_payload(seq,request_id,raw); yield chat._encode_event(event)
+                if raw.get("type")=="ROUTE":LOCAL_READINESS.update({"checked":True,"oneTokenReady":True,"interactiveReady":True,"ok":True,"engineId":LOCAL_ENGINE_ID})
+                seq+=1
+        except RuntimeError as exc:
+            if "StopIteration" not in str(exc): raise
     finally:LOCAL_CANCELLED.discard(request_id)
+
 def _stream_response(payload):
     upstream_ready,missing=chat._upstream_ready()
     if chat._raw_upstream_url() and not upstream_ready:raise chat.BridgeError(503,"UPSTREAM_CONFIGURATION_INCOMPLETE","The upstream bridge is missing: "+", ".join(missing))
