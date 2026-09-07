@@ -1,5 +1,27 @@
 # SWRLZ Vercel Chat Changelog
 
+## SERVER 2.2.0 / Chat 1.3.26 / LALM UI 1.0.0 — 2026-09-07
+
+Changed:
+- split the system into independent Server, LALM, and Chat control planes;
+- added `/server/` and `/lalm/` dedicated pages;
+- added `/api/server/status`, `/api/lalm/status`, `/api/control/route`, `/route`, and explicit `POST /api/lalm/verify`;
+- added scoped hot mutation at `POST /api/control/hot/sync?scope=lalm|server|all`;
+- `scope=lalm` updates only `web/lalm.html` and `runtime_hot/r39_engine.py` and explicitly reports `chatTouched: false`;
+- LALM-scoped verification/hot sync may use the bounded signed browser Chat session while Server/all mutation remains Admin-controlled;
+- Chat stays at 1.3.26 because this release changes infrastructure/model ownership rather than Chat protocol or Chat UX;
+- the compiled direct-quantized R39 backend remains preferred and the Python/NumPy reference executor remains the correctness/fallback oracle.
+
+Architecture boundary:
+- Server owns routing, deployment/base version, instance/capability receipts, and hot control;
+- LALM owns R39 engine/model/readiness/native-backend diagnostics and runtime tuning;
+- Chat owns conversation UX, request/stream/reconnect behavior, and the Truth Firewall;
+- future ordinary R39 tuning must not advance the Chat version unless Chat behavior itself changes.
+
+Deployment boundary:
+- 2.2.0 requires one base deployment to establish the new Python routes/native build boundary;
+- after that deployment, ordinary LALM engine/page iteration can hot-sync independently of Chat.
+
 ## SERVER 2.1.16 / Chat 1.3.13 — 2026-09-07
 
 Changed:
