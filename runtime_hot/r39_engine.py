@@ -18,7 +18,7 @@ import swyrlz.r39_tokenizer_patch  # noqa: F401
 
 ENGINE_ID = base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_REVISION = "2.1.16-hot-boundary-v5-output-cache"
+HOT_REVISION = "2.1.16-hot-boundary-v6-connect-diag"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
 _ORIGINAL_RENDER_CHAT_PROMPT = base.render_chat_prompt
@@ -31,9 +31,6 @@ _TENSOR_CACHE_LOCK = threading.RLock()
 _CACHE_BUDGET_BYTES = 96 * 1024 * 1024
 _CACHE_ITEM_MAX_BYTES = 12 * 1024 * 1024
 
-# Generation pays the full token_embd vocabulary projection on every output token.
-# Decode it once per warm worker when it fits a strict bound, then reuse the immutable
-# float32 matrix. This trades bounded resident memory for removing repeated dequantization.
 _OUTPUT_CACHE_LOCK = threading.RLock()
 _OUTPUT_MATRIX: np.ndarray | None = None
 _OUTPUT_MATRIX_BYTES = 0
@@ -86,13 +83,11 @@ def _hot_matvec(self: base.R39Model, name: str, x: np.ndarray) -> np.ndarray:
     rows = int(shape[1]) if len(shape) > 1 else 1
     if x.size != cols:
         raise base.R39InferenceError("R39_MATVEC_SHAPE_MISMATCH", f"{name}: expected {cols}, got {x.size}")
-
     decoded_bytes = cols * rows * 4
     if decoded_bytes <= _CACHE_ITEM_MAX_BYTES:
         matrix = _hot_matrix(self, name)
         if matrix.ndim == 2:
             return (matrix @ x).astype(np.float32, copy=False)
-
     rb = self._row_bytes(d["kind"], cols)
     raw = self._raw(name)
     target_bytes = 16 * 1024 * 1024
@@ -117,7 +112,6 @@ def _output_projection(self: base.R39Model, x: np.ndarray) -> np.ndarray:
     decoded_bytes = cols * rows * 4
     if decoded_bytes > _OUTPUT_CACHE_MAX_BYTES:
         return _hot_matvec(self, "token_embd.weight", x)
-
     matrix = _OUTPUT_MATRIX
     if matrix is None:
         with _OUTPUT_CACHE_LOCK:
@@ -126,7 +120,6 @@ def _output_projection(self: base.R39Model, x: np.ndarray) -> np.ndarray:
                 rb = self._row_bytes(d["kind"], cols)
                 raw = self._raw("token_embd.weight")
                 resident = np.empty((rows, cols), dtype=np.float32)
-                # Smaller temporary blocks keep peak memory bounded while materializing.
                 target_bytes = 8 * 1024 * 1024
                 batch_rows = max(1, min(rows, max(64, target_bytes // max(4 * cols, 1))))
                 for start in range(0, rows, batch_rows):
@@ -220,11 +213,21 @@ def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *
 def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
     request_id = str(payload["requestId"])
     started = time.monotonic()
+    engine_entered_ms = int(time.time() * 1000)
+    try:
+        client_sent_ms = int(payload.get("clientSentAtMs") or 0)
+    except Exception:
+        client_sent_ms = 0
+    approx_client_to_hot_ms = max(0, engine_entered_ms - client_sent_ms) if client_sent_ms > 0 else None
     try:
         already_warm = _MODEL is not None
-        yield {"type": "STATUS", "phase": "MODEL_LOADING", "reason": "Reusing warm server R39 model." if already_warm else "Opening R39 once for this server worker; subsequent requests reuse the warm model."}
+        warm_note = "Reusing warm server R39 model." if already_warm else "Opening R39 once for this server worker; subsequent requests reuse the warm model."
+        diag = f"Hot engine entered · revision {HOT_REVISION} · serverEpochMs {engine_entered_ms}"
+        if approx_client_to_hot_ms is not None:
+            diag += f" · approx client→hot {approx_client_to_hot_ms}ms"
+        yield {"type": "STATUS", "phase": "HOT_ENGINE_ENTERED", "reason": f"{diag}. {warm_note}"}
         model = _get_model()
-        yield {"type": "ROUTE", "phase": "ROUTE_RESOLVED", "reason": "Using hot local R39 Python reference inference with warm-model reuse and cached vocabulary projection.", "identity": {"route": "LOCAL_R39", "engineId": ENGINE_ID, "modelId": str(model.manifest.get("modelId", "R39")), "modelSha256": MODEL_SHA256}}
+        yield {"type": "ROUTE", "phase": "ROUTE_RESOLVED", "reason": f"Hot loader resolved {HOT_REVISION}; using local R39 with warm-model reuse and cached vocabulary projection.", "identity": {"route": "LOCAL_R39", "engineId": ENGINE_ID, "modelId": str(model.manifest.get("modelId", "R39")), "modelSha256": MODEL_SHA256}}
 
         prompt = base.render_chat_prompt(payload)
         tokens = model.tokenizer.encode(prompt)
@@ -364,6 +367,7 @@ def inspect_engine():
             "graphNodeCount": len(model.graph.get("nodes", [])),
             "hotRevision": HOT_REVISION,
             "tuningBoundary": "runtime_hot/dev",
+            "connectionDiagnostics": True,
             "warmModelResident": True,
             "warmModelAgeSeconds": round(max(0.0, time.time() - _MODEL_READY_AT), 2),
             "decodedCacheBytes": int(getattr(model, "_hot_tensor_cache_bytes", 0)),
@@ -388,7 +392,6 @@ def generate_events(payload, is_cancelled=None):
     if job is None:
         yield from _generate_hot_events(payload, is_cancelled)
         return
-
     index = 0
     condition: threading.Condition = job["condition"]
     while True:
