@@ -1,8 +1,8 @@
 """Hot-swappable R39 engine entrypoint.
 
-v8 transitions the heavy matrix-vector path to the compiled direct-quantized native
-backend when present. The Python/Numpy reference path remains a safe correctness
-fallback, so this hot file can run before or after the Server 2.1.18 native build lands.
+v9 keeps the native-dispatch path and adds an explicit effective hot-server receipt.
+The Python/Numpy reference path remains a safe correctness fallback when the compiled
+native extension is not present on the current worker.
 """
 from __future__ import annotations
 
@@ -18,7 +18,8 @@ from swyrlz import r39_native as native_bridge
 
 ENGINE_ID = "swrlz_r39_native_qmatvec_v1" if native_bridge.available() else base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_REVISION = "hot-boundary-v8-native-dispatch"
+HOT_SERVER_VERSION = "2.1.18"
+HOT_REVISION = "2.1.18-hot-boundary-v9-effective-receipt"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
 _ORIGINAL_MATVEC = base.R39Model.matvec
@@ -191,7 +192,7 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         native = native_bridge.available()
         mode = "compiled direct-quantized kernels" if native else "Python/Numpy fallback (native extension not present on this worker)"
         warm_note = "Reusing warm server R39 model." if already_warm else "Opening R39 once for this server worker; subsequent requests reuse the warm model."
-        diag = f"Hot engine entered · revision {HOT_REVISION} · {mode} · serverEpochMs {engine_entered_ms}"
+        diag = f"Hot engine entered · server {HOT_SERVER_VERSION} · revision {HOT_REVISION} · {mode} · serverEpochMs {engine_entered_ms}"
         if approx_client_to_hot_ms is not None:
             diag += f" · approx client→hot {approx_client_to_hot_ms}ms"
         yield {"type": "STATUS", "phase": "HOT_ENGINE_ENTERED", "reason": f"{diag}. {warm_note}"}
@@ -199,7 +200,7 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         yield {
             "type": "ROUTE",
             "phase": "ROUTE_RESOLVED",
-            "reason": f"Hot loader resolved {HOT_REVISION}; inference backend: {mode}.",
+            "reason": f"Hot loader resolved server {HOT_SERVER_VERSION} / {HOT_REVISION}; inference backend: {mode}.",
             "identity": {"route": "LOCAL_R39", "engineId": "swrlz_r39_native_qmatvec_v1" if native else base.ENGINE_ID, "modelId": str(model.manifest.get("modelId", "R39")), "modelSha256": MODEL_SHA256},
         }
 
@@ -340,6 +341,7 @@ def inspect_engine():
             "tensorCount": len(model.desc),
             "tokenCount": len(model.tokenizer.tokens),
             "graphNodeCount": len(model.graph.get("nodes", [])),
+            "hotServerVersion": HOT_SERVER_VERSION,
             "hotRevision": HOT_REVISION,
             "nativeBackendAvailable": native,
             "nativeDirectQuantizedMatvec": native,
@@ -355,9 +357,9 @@ def inspect_engine():
             "activeDetachedJobs": sum(1 for job in jobs if not job["done"]),
         }
     except base.R39InferenceError as exc:
-        return {"ok": False, "oneTokenReady": False, "interactiveReady": False, "code": exc.code, "detail": exc.detail, "hotRevision": HOT_REVISION}
+        return {"ok": False, "oneTokenReady": False, "interactiveReady": False, "code": exc.code, "detail": exc.detail, "hotServerVersion": HOT_SERVER_VERSION, "hotRevision": HOT_REVISION}
     except Exception as exc:
-        return {"ok": False, "oneTokenReady": False, "interactiveReady": False, "code": "R39_HOT_ENGINE_PROBE_FAILED", "detail": f"{type(exc).__name__}: {exc}", "hotRevision": HOT_REVISION}
+        return {"ok": False, "oneTokenReady": False, "interactiveReady": False, "code": "R39_HOT_ENGINE_PROBE_FAILED", "detail": f"{type(exc).__name__}: {exc}", "hotServerVersion": HOT_SERVER_VERSION, "hotRevision": HOT_REVISION}
 
 
 def generate_events(payload, is_cancelled=None):
