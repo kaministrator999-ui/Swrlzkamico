@@ -8,7 +8,8 @@ from types import ModuleType
 
 HOT_ROOT = Path("/tmp/swrlz-admin/runtime/hot")
 HOT_CHAT = HOT_ROOT / "chat"
-HOT_INFERENCE = HOT_ROOT / "inference" / "r39_engine.py"
+HOT_INFERENCE_DIR = HOT_ROOT / "inference"
+HOT_INFERENCE = HOT_INFERENCE_DIR / "r39_engine.py"
 
 _lock = threading.RLock()
 _cached_module: ModuleType | None = None
@@ -29,6 +30,9 @@ def _load_override() -> ModuleType | None:
     with _lock:
         if _cached_module is not None and _cached_signature == signature:
             return _cached_module
+        inference_path = str(HOT_INFERENCE_DIR)
+        if inference_path not in sys.path:
+            sys.path.insert(0, inference_path)
         spec = importlib.util.spec_from_file_location("swrlz_hot_r39_engine", HOT_INFERENCE)
         if spec is None or spec.loader is None:
             raise RuntimeError("HOT_R39_IMPORT_SPEC_FAILED")
