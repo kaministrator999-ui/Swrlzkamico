@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "revision": "2.1.7-bootstrap",
+  "inferenceFiles": [
+    "r39_engine.py"
+  ]
+}
