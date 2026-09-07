@@ -1,8 +1,7 @@
-"""§wyrlz Server 2.1.13 release entrypoint.
+"""§wyrlz Server 2.1.14 release entrypoint.
 
-2.1.13 removes the Vercel instance-local /tmp dependency from live page reads.
-Core live pages and Chat assets resolve from GitHub dev per request with a short
-in-instance cache and bundled fallback, while runtime mutation tools remain.
+2.1.14 makes Admin-authorized Chat sessions stateless and verifiable across
+Vercel instances. Live GitHub-backed page delivery from 2.1.13 remains intact.
 """
 from __future__ import annotations
 
@@ -18,7 +17,7 @@ from api.chat_fast_status import install as _install_chat_fast_status
 from api.admin_auth_guard import install as _install_admin_auth_guard
 from api.live_source_guard import install as _install_live_source_guard
 
-VERSION = "2.1.13"
+VERSION = "2.1.14"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
