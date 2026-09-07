@@ -9,6 +9,8 @@ from pathlib import Path
 from fastapi import Request
 from fastapi.responses import Response
 
+from api.chat_admin_session import attach_browser_session_cookie
+
 OWNER = "kaministrator999-ui"
 REPO = "Swrlzkamico"
 BRANCH = "dev"
@@ -47,7 +49,13 @@ def _fetch(source: str, limit: int = 4_000_000) -> bytes:
 
 
 def _headers(source: str, resolved: str = "github-dev") -> dict[str, str]:
-    return {"Cache-Control":"no-store, max-age=0","X-Content-Type-Options":"nosniff","X-SWRLZ-Live-Source":resolved,"X-SWRLZ-Live-Branch":BRANCH,"X-SWRLZ-Live-Path":source}
+    return {
+        "Cache-Control": "no-store, max-age=0",
+        "X-Content-Type-Options": "nosniff",
+        "X-SWRLZ-Live-Source": resolved,
+        "X-SWRLZ-Live-Branch": BRANCH,
+        "X-SWRLZ-Live-Path": source,
+    }
 
 
 def _inject_chat(data: bytes) -> bytes:
@@ -76,9 +84,12 @@ def _serve_source(source: str, fallback: Path | None = None, *, chat_html: bool 
     if chat_html:
         data = _inject_chat(data)
     media = mimetypes.guess_type(source)[0] or "application/octet-stream"
-    if source.endswith(".html"): media = "text/html; charset=utf-8"
-    elif source.endswith(".js"): media = "application/javascript; charset=utf-8"
-    elif source.endswith(".css"): media = "text/css; charset=utf-8"
+    if source.endswith(".html"):
+        media = "text/html; charset=utf-8"
+    elif source.endswith(".js"):
+        media = "application/javascript; charset=utf-8"
+    elif source.endswith(".css"):
+        media = "text/css; charset=utf-8"
     return Response(content=data, media_type=media, headers=_headers(source, resolved))
 
 
@@ -93,14 +104,29 @@ def install(server) -> None:
     async def live_source_guard(request: Request, call_next):
         path = request.url.path.rstrip("/") or "/"
         action = request.query_params.get("action", "page").strip().lower()
-        if request.method == "GET" and path == "/api/chat" and action == "page": return _serve_source(CHAT_HTML, bundled_chat, chat_html=True)
-        if request.method == "GET" and path == "/api/chat/assets/enhancements.js": return _serve_source(CHAT_JS, bundled_js)
-        if request.method == "GET" and path == "/api/chat/assets/enhancements.css": return _serve_source(CHAT_CSS, bundled_css)
-        if request.method == "GET" and path == "/api/admin": return _serve_source(ADMIN_HTML, bundled_admin)
-        if request.method == "GET" and path == "/live": return _serve_source(INDEX_HTML, bundled_index)
+        if request.method == "GET" and path == "/api/chat" and action == "page":
+            response = _serve_source(CHAT_HTML, bundled_chat, chat_html=True)
+            return attach_browser_session_cookie(response, request)
+        if request.method == "GET" and path == "/api/chat/assets/enhancements.js":
+            return _serve_source(CHAT_JS, bundled_js)
+        if request.method == "GET" and path == "/api/chat/assets/enhancements.css":
+            return _serve_source(CHAT_CSS, bundled_css)
+        if request.method == "GET" and path == "/api/admin":
+            return _serve_source(ADMIN_HTML, bundled_admin)
+        if request.method == "GET" and path == "/live":
+            return _serve_source(INDEX_HTML, bundled_index)
         if request.method == "GET" and path.startswith("/live/pages/"):
             rel = path[len("/live/pages/"):]
-            if rel and ".." not in Path(rel).parts: return _serve_source("runtime_pages/pages/" + rel, None)
+            if rel and ".." not in Path(rel).parts:
+                return _serve_source("runtime_pages/pages/" + rel, None)
         return await call_next(request)
 
-    server.CAPABILITIES["instance-independent-live-source"] = {"kind":"github-backed-runtime-serving","ready":True,"sourceBranch":BRANCH,"cacheTtlSeconds":CACHE_TTL,"instanceLocalTmpRequiredForReads":False,"detail":"Core live pages and Chat assets resolve from GitHub dev per request with bounded in-instance cache and bundled fallback."}
+    server.CAPABILITIES["instance-independent-live-source"] = {
+        "kind": "github-backed-runtime-serving",
+        "ready": True,
+        "sourceBranch": BRANCH,
+        "cacheTtlSeconds": CACHE_TTL,
+        "instanceLocalTmpRequiredForReads": False,
+        "chatSessionCookieOnPageLoad": True,
+        "detail": "Core live pages and Chat assets resolve from GitHub dev per request with bounded in-instance cache and bundled fallback.",
+    }
