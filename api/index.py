@@ -1,7 +1,9 @@
-"""§wyrlz Server 2.1.14 release entrypoint.
+"""§wyrlz Server 2.1.15 release entrypoint.
 
-2.1.14 makes Admin-authorized Chat sessions stateless and verifiable across
-Vercel instances. Live GitHub-backed page delivery from 2.1.13 remains intact.
+2.1.15 makes Chat authorization server-managed for normal same-origin browser use.
+Loading /api/chat receives a bounded HttpOnly session cookie signed from the
+server-side Chat secret; the permanent SWRLZ_WEB_CHAT_TOKEN never enters the UI.
+GitHub-backed live page delivery from 2.1.13 remains intact.
 """
 from __future__ import annotations
 
@@ -17,7 +19,7 @@ from api.chat_fast_status import install as _install_chat_fast_status
 from api.admin_auth_guard import install as _install_admin_auth_guard
 from api.live_source_guard import install as _install_live_source_guard
 
-VERSION = "2.1.14"
+VERSION = "2.1.15"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -35,6 +37,7 @@ _install_chat_admin_session(_server)
 _install_chat_fast_status(_server)
 _install_chat_ui_guard(_server)
 _install_page_manager_ui(_server)
+# Install last so this parent middleware owns live read resolution across Vercel instances.
 _install_live_source_guard(_server)
 _server._write_server_state()
 
