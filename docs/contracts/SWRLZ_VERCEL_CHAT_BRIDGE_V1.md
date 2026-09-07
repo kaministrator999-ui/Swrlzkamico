@@ -2,86 +2,74 @@
 
 Contract ID: `swrlz_vercel_chat_bridge_v1`  
 Stream contract: `swrlz_llm_stream_v2`  
-SERVER: `2.1.0`  
-Chat: `1.0.0`
+SERVER: `2.1.4`  
+Chat: `1.3.0`
 
 ## Purpose
 
-Define the boundary between the browser chat surface, the unified Vercel SERVER, and an optional proof-bound SWRLZ SERVER inference upstream. The contract is designed so presentation cannot silently upgrade structural/readiness evidence into an inference claim.
+Define the boundary between the browser Chat surface, the unified Vercel SERVER, local R39 inference, and an optional proof-bound SWRLZ SERVER upstream. Presentation may never silently upgrade structural/readiness evidence into model output.
 
 ## Browser -> Vercel
 
-Chat requests are POSTed under `/api/chat` with `x-swrlz-chat-token`. `SWRLZ_WEB_CHAT_TOKEN` is a separate secret from `SWRLZ_ADMIN_TOKEN` and must be at least 16 characters.
+Chat requests are POSTed under `/api/chat` with `x-swrlz-chat-token`. `SWRLZ_WEB_CHAT_TOKEN` is separate from `SWRLZ_ADMIN_TOKEN` and must be at least 16 characters.
 
-Accepted stream request fields are bounded and normalized:
+Accepted fields remain bounded/normalized: request ID, prompt, recent user/assistant history, optional thread/profile identifiers, and bounded generation controls. Browser code never receives upstream device proof or gateway bearer credentials.
 
-- `requestId`: 1–128 URL-safe characters; generated when absent;
-- `prompt`: nonblank, maximum 16000 characters;
-- `history`: maximum 32 retained user/assistant turns, each text field bounded to 2000 characters;
-- `threadId`: optional bounded browser-local identifier;
-- `profileId`: optional bounded route/profile hint.
+## Route resolution
 
-The browser never receives the upstream device proof or optional bearer credential.
+Route selection is deterministic:
+
+1. If a complete proof-bound upstream configuration is present, use the upstream stream/cancel routes.
+2. If no upstream URL is configured, use `LOCAL_R39`.
+3. If an upstream URL is configured but required proof fields are missing, fail explicitly with `UPSTREAM_CONFIGURATION_INCOMPLETE`; do not silently substitute another route/identity.
+
+## Local R39 contract
+
+The local executor must establish all of the following before claiming one-token readiness:
+- canonical `SWRLZX\r\n` header at offset 0;
+- valid SWRLZX v1 header fields and 128-byte TOC entries;
+- active TOKENIZER, TENSOR_DIRECTORY, and TENSOR_DATA sections;
+- tokenizer vocabulary/merge availability;
+- each required tensor descriptor mapped through its declared `dataSectionId` and physical range;
+- a supported quantizer for every required tensor;
+- the supported LFM2 reference graph/tensor profile.
+
+Any mismatch fails closed with a diagnostic category. No placeholder/synthetic DELTA may be emitted as a substitute.
+
+The current reference path supports `f32`, `f16`, `bf16`, `q4_0`, `q8_0`, `q4_k`, and `q6_k` storage, BPE tokenization, recurrent short-convolution state, GQA KV state, bounded sampling, cancellation checks, and incremental UTF-8 decoding.
 
 ## Vercel -> proof-bound upstream
 
-When configured, Vercel sends the normalized request to the SWRLZ SERVER V2 chat stream and injects server-side headers:
-
-- `X-SWRLZ-Device-Node-Id`;
-- `X-SWRLZ-Device-Proof`;
-- optional `Authorization: Bearer ...`;
-- `X-SWRLZ-Request-Id`;
-- `Idempotency-Key`.
-
-The configured URL must be HTTP(S), contain no embedded credentials, query, or fragment, and resolves to `/ai/swrlz-llm/v2/chat/stream` unless that stream path is already supplied.
+When configured, Vercel sends the normalized request to the SWRLZ SERVER V2 stream and injects server-side identity/proof headers plus request/idempotency IDs. The configured URL must be HTTP(S), contain no embedded credentials/query/fragment, and resolves to the V2 stream route unless already supplied.
 
 ## Stream validation
 
-Every upstream NDJSON event must:
+Every admitted upstream event must be a bounded JSON object using protocol V2, contract `swrlz_llm_stream_v2`, a supported schema version, known event type, strictly increasing sequence, matching request identity, string text for DELTA, and consistent terminal flags. Contract-invalid output becomes explicit FAILED evidence.
 
-1. be a JSON object no larger than the bridge event bound;
-2. use `protocolVersion: 2`;
-3. use contract `swrlz_llm_stream_v2`;
-4. use a supported schema version;
-5. use a known event type;
-6. have a strictly increasing integer `seq`;
-7. carry an identity whose `requestId` equals the browser request;
-8. use string text for DELTA;
-9. mark terminal state consistently with COMPLETED, CANCELLED, or FAILED.
+Local events are projected through the same bridge event schema before browser delivery.
 
-Contract-invalid upstream output becomes an explicit terminal FAILED event. It is never accepted as assistant prose.
+## Presentation invariant / Truth Firewall
 
-## Presentation invariant
+Only `DELTA.text` may be appended to the assistant message. `RESET` clears the current committed assistant revision. STARTED, STATUS, ROUTE, timing, errors, blockers, categories, model identity, and terminal metadata remain operational UI state.
 
-Only `DELTA.text` may be appended to the assistant message. `RESET` clears the current committed assistant revision. STARTED, STATUS, ROUTE, timing, errors, blockers, and terminal metadata remain operational UI state.
-
-This is a hard separation between answer text and runtime/control-plane evidence.
-
-## Local status-only mode
-
-If no upstream is configured, the bridge reports `LOCAL_R39_STATUS_ONLY`. A chat request emits STARTED, STATUS, then FAILED with blocker:
-
-`SECTION_PAYLOAD_LOCATION_AND_INFERENCE_WIRING_PENDING`
-
-No DELTA is generated. This is intentional: the current Gate 5 proof establishes R39 container/integrity readiness but not one-token or interactive inference.
+FAILED or CANCELLED may preserve already committed DELTA text but their diagnostics are never concatenated into assistant prose.
 
 ## R39 verification action
 
-The chat verification action reuses the existing `ensure_r39()` loader and Gate 5 inspector. Returned data is sanitized to readiness/integrity fields and explicitly distinguishes container verification from inference readiness.
+The verification action reuses the transport loader and Gate 5/engine probes. It returns non-secret integrity/readiness evidence and explicitly distinguishes container verification, payload-location reconstruction, one-token structural readiness, and interactive readiness.
 
 ## Cancellation
 
-The browser can cancel the active request by request ID. In upstream mode the bridge forwards cancellation to the corresponding V2 cancel route. In local status-only mode cancellation is quiescent because no inference owner exists.
+The browser cancels by request ID. Upstream mode forwards cancellation to the corresponding V2 cancel route. Local mode arms a best-effort cancellation flag scoped to the current runtime instance and the local executor checks it during prefill/generation.
 
 ## Persistence and evidence
 
-Browser conversation content may be stored in localStorage. `SWRLZ_WEB_CHAT_TOKEN` is stored only in sessionStorage. Exports include bounded conversation/stream metadata but exclude chat tokens, Admin tokens, upstream device proof, and gateway bearer credentials.
+Browser conversation content may be stored in `localStorage`; the Chat token is stored only in `sessionStorage`. Exports may include bounded conversation/stream/runtime metadata but exclude Chat/Admin tokens, upstream device proof, and gateway bearer credentials.
 
 ## Non-claims
 
 This contract does not claim:
-
-- that Vercel can reach a configured upstream until stream evidence proves it;
-- that a proof-bound upstream accepts the configured identity until a request is admitted;
-- that R39 container verification implies token generation;
-- that local inference is ready while Gate 5 reports `oneTokenReady:false` or `interactiveReady:false`.
+- that source readiness equals a successful production deployment;
+- that Vercel can reach a configured upstream until a request is admitted;
+- that local R39 execution completes within platform duration limits until measured;
+- that any unsupported artifact/profile is usable merely because its container hash is valid.
