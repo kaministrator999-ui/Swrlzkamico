@@ -1,6 +1,6 @@
 # SWRLZ Live Page Runtime v1
 
-Server 2.1.8 separates durable page source from the stable Vercel deployment.
+Current server boundary: **2.1.15**
 
 ## Source of truth
 
@@ -8,27 +8,38 @@ Durable page source lives on the non-deploying `dev` branch. Updating `dev` does
 
 Core mappings:
 
-- `web/admin.html` -> runtime Admin page -> `/api/admin`
-- `web/chat.html` -> runtime Chat page -> `/api/chat`
-- `web/chat_enhancements.css` -> runtime Chat CSS
-- `web/chat_enhancements.js` -> runtime Chat JS
-- `runtime_pages/index.html` -> runtime launchpad -> `/live/`
+- `web/admin.html` -> `/api/admin`
+- `web/chat.html` -> `/api/chat`
+- `web/chat_enhancements.css` -> `/api/chat/assets/enhancements.css`
+- `web/chat_enhancements.js` -> `/api/chat/assets/enhancements.js`
+- `runtime_pages/index.html` -> `/live/`
+- `runtime_pages/pages/<path>` -> `/live/pages/<path>`
 
-Additional files under `runtime_pages/pages/` are discovered automatically and published under `/live/pages/`.
+Additional supported files under `runtime_pages/pages/` are published directly under `/live/pages/`.
 
-## Runtime boundary
+## Live read boundary
 
-Runtime copies are instance-local and live under `/tmp/swrlz-admin`. They can be edited while the server is running. `/api/pages` is the authenticated page manager.
+Server 2.1.13 moved normal live reads away from instance-local `/tmp` and onto GitHub-backed resolution.
 
-The manager supports:
+For each supported live page/asset request, the server resolves the current source from GitHub `dev`, using only a short bounded in-instance cache and a bundled fallback for core assets. The response includes source/branch/path receipts.
 
-- sync `dev` -> runtime;
-- read/edit/save the runtime copy;
-- optional push runtime -> `dev`;
-- runtime GitHub write-token configuration without exposing the token back to the browser;
-- listing current page source/runtime/live URL receipts.
+Therefore the normal page-update flow is:
 
-`/tmp` remains ephemeral. GitHub `dev` is the durable boundary.
+`edit GitHub dev -> refresh live URL -> receive current dev source`
+
+A Vercel server redeploy is not required for ordinary supported page/UI changes.
+
+## Runtime mutation boundary
+
+`/api/pages` remains the authenticated Page Manager. Runtime copies under `/tmp/swrlz-admin` still support:
+
+- explicit `dev` -> runtime synchronization;
+- runtime read/edit/save;
+- optional runtime -> `dev` push-back;
+- GitHub write-capability configuration/status;
+- page/source/runtime/live-URL receipts.
+
+These mutation tools are no longer required for normal live reads. `/tmp` remains ephemeral and instance-local and must never be treated as the durable page source of truth.
 
 ## GitHub write token
 
@@ -38,8 +49,14 @@ Push-back requires a fine-grained GitHub token with Contents write permission fo
 2. `SWRLZ_GITHUB_CONTENT_TOKEN`
 3. `SWRLZ_GITHUB_TOKEN`
 
-The runtime token can be set from `/api/pages` using the Admin token. Secret values are never read back.
+The Page Manager reports configured/not-configured state but never returns the raw secret.
 
 ## Deployment discipline
 
-Stable server/auth/API/security changes still require `main` deployment. Page/UI and approved hot inference changes belong on `dev` and are synced into the running instance. This keeps UI iteration from redeploying the server.
+Stable backend changes still require deliberate `main` deployment. This includes Python/API routes, authentication/session semantics, middleware, inference plumbing, and deployment configuration.
+
+Normal HTML/CSS/JS/page-source work belongs on `dev` and is consumed live by the deployed server without promotion or redeployment.
+
+## Acceptance receipt
+
+The live-source path was proven by changing Chat UI versions on `dev` while the deployed server version remained unchanged. Browser refreshes advanced the Chat UI without `/api/pages` sync and without a Vercel server redeploy.
