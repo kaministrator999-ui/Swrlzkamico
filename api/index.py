@@ -1,7 +1,9 @@
-"""§wyrlz Server 2.1.11 release entrypoint.
+"""§wyrlz Server 2.1.12 release entrypoint.
 
-2.1.11 makes Chat status non-blocking and lets an authenticated Admin authorize
-an ephemeral browser Chat session without exposing the permanent Chat secret.
+2.1.12 makes Admin authentication resolve the deployment credential per request
+and tolerates harmless outer whitespace / matching wrapping quotes without
+weakening exact token identity. It retains 2.1.11 non-blocking Chat status and
+Admin-authorized ephemeral Chat browser sessions.
 """
 from __future__ import annotations
 
@@ -14,8 +16,9 @@ from api.chat_ui_guard import install as _install_chat_ui_guard
 from api.page_manager_ui import install as _install_page_manager_ui
 from api.chat_admin_session import install as _install_chat_admin_session
 from api.chat_fast_status import install as _install_chat_fast_status
+from api.admin_auth_guard import install as _install_admin_auth_guard
 
-VERSION = "2.1.11"
+VERSION = "2.1.12"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -24,6 +27,8 @@ _server.CAPABILITIES["local-r39-inference"] = {
     "engineId": "swrlz_r39_python_reference_v1",
     "boundary": "canonical LFM2 reference profile; runtime override supported with bundled fallback; stream heartbeat timer resets after each engine progress event; status probes never inspect/load the model",
 }
+# Security/auth guard must be installed before features capture/use server.auth.
+_install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
 _install_page_runtime_guard()
 _install_page_runtime(_server)
