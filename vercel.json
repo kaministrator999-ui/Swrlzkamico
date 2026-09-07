@@ -11,15 +11,5 @@
       "maxDuration": 300,
       "excludeFiles": "{.transport/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
     }
-  },
-  "rewrites": [
-    {
-      "source": "/live",
-      "destination": "/api/chat/live"
-    },
-    {
-      "source": "/live/:path*",
-      "destination": "/api/chat/live/:path*"
-    }
-  ]
+  }
 }
