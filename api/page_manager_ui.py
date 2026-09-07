@@ -10,8 +10,8 @@ HTML = r'''<!doctype html><html><head><meta charset="utf-8"><meta name="viewport
 def install(server) -> None:
     @server.app.middleware("http")
     async def page_manager_ui(request: Request, call_next):
-        if request.method == "GET" and request.url.path.rstrip("/") == "/api/pages" and not request.query_params:
-            return HTMLResponse(HTML, headers={"Cache-Control": "no-store, max-age=0", "X-SWRLZ-Page-Manager-UI": "2"})
+        if request.method == "GET" and request.url.path.rstrip("/") == "/api/pages":
+            return HTMLResponse(HTML, headers={"Cache-Control": "no-store, max-age=0", "X-SWRLZ-Page-Manager-UI": "3"})
         return await call_next(request)
 
     server.CAPABILITIES["page-manager-credential-status"] = {
@@ -19,4 +19,5 @@ def install(server) -> None:
         "ready": True,
         "githubSecretExposed": False,
         "statusFrom": "POST /api/pages?action=list",
+        "queryTolerance": "exact /api/pages GET ignores harmless query decoration",
     }
