@@ -25,7 +25,8 @@ def install(server) -> None:
     @server.app.middleware("http")
     async def swrlz_parent_chat_ui_guard(request: Request, call_next):
         path = request.url.path.rstrip("/") or "/"
-        if request.method == "GET" and path == "/api/chat" and not request.query_params:
+        action = request.query_params.get("action", "page").strip().lower()
+        if request.method == "GET" and path == "/api/chat" and action == "page":
             page = hot_chat_path("chat.html", BUNDLED_CHAT_PAGE)
             try:
                 html = page.read_text("utf-8")
@@ -49,4 +50,5 @@ def install(server) -> None:
         "path": "/api/chat",
         "hotSource": True,
         "enhancementsRequired": True,
+        "queryTolerance": "ignores unrelated query decoration; action=page stays UI, functional actions pass through",
     }
