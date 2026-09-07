@@ -1,9 +1,7 @@
-"""§wyrlz Server 2.1.9 release entrypoint.
+"""§wyrlz Server 2.1.10 release entrypoint.
 
-2.1.9 hardens the live-page boundary: /live is served directly by the unified
-server, Chat UI hot-source injection is enforced at the parent app boundary,
-and the Page Manager exposes server-side GitHub credential state immediately
-after Admin authentication without ever returning the raw secret.
+2.1.10 makes the parent Chat/Page Manager guards tolerant of harmless query
+parameters so tracked/shared links cannot silently bypass the live UI layer.
 """
 from __future__ import annotations
 
@@ -15,7 +13,7 @@ from api.live_runtime_routes import install as _install_live_runtime_routes
 from api.chat_ui_guard import install as _install_chat_ui_guard
 from api.page_manager_ui import install as _install_page_manager_ui
 
-VERSION = "2.1.9"
+VERSION = "2.1.10"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
