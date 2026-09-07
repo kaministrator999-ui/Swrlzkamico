@@ -1,13 +1,13 @@
 (()=>{"use strict";
-const UI_VERSION="1.3.12";
 const CHAT_TOKEN_KEY="swrlz.vercel.chat.token.v1";
 const LEGACY_SESSION_KEY="swrlz.vercel.chat.admin-session.v1";
 const SESSION_MARKER="__SERVER_MANAGED_CHAT_SESSION__";
 
 /*
- * Server 2.1.15 issues an HttpOnly, SameSite=Strict cookie when /api/chat loads.
- * Keep the base UI's historical token() guard satisfied with a non-secret marker,
- * but never copy SWRLZ_WEB_CHAT_TOKEN into browser storage or request headers.
+ * Server-managed Chat auth shim. This file must not own or repaint the Chat UI
+ * version; the hot Chat enhancement asset is the single authoritative version
+ * painter. Keep the base UI's historical token() guard satisfied with a
+ * non-secret marker without exposing SWRLZ_WEB_CHAT_TOKEN to browser storage.
  */
 sessionStorage.setItem(CHAT_TOKEN_KEY,SESSION_MARKER);
 sessionStorage.removeItem(LEGACY_SESSION_KEY);
@@ -26,16 +26,6 @@ function paint(){
       .replace(/Credential:\s*configured\s*·\s*Admin session not active/gi,'Authorization: server managed')
       .replace(/Credential:\s*configured\s*·\s*Admin session active/gi,'Authorization: server managed');
     panel.dataset.authorization='server-managed-cookie';
-  }
-
-  const legacy=document.querySelector('#swrlzVersionLine');
-  if(legacy) legacy.style.display='none';
-  const hot=document.querySelector('#swrlzHotVersionLine');
-  if(hot){
-    const current=hot.textContent||'';
-    const server=(current.match(/SERVER v([^·\s]+)/)||[])[1]||'…';
-    hot.textContent=`CHAT v${UI_VERSION} · SERVER v${server}`;
-    hot.dataset.auth='server-managed-cookie';
   }
 
   const detail=document.querySelector('#nodeDetail');
