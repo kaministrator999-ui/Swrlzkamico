@@ -1,24 +1,26 @@
 # SWRLZ Vercel Chat Changelog
 
-## SERVER 2.1.17 / Chat 1.3.13 — 2026-09-07
+## SERVER 2.2.0 / Chat 1.3.26 / LALM UI 1.0.0 — 2026-09-07
 
 Changed:
-- the hot Chat/R39 plane now auto-hydrates from GitHub `dev` on the first active hot read of a fresh Vercel instance;
-- active instances perform throttled request-driven refresh checks approximately every 30 seconds;
-- hot files are compared by SHA-256 and only changed allowlisted files are atomically replaced during automatic refresh;
-- the R39 module cache is invalidated only when `runtime_hot/r39_engine.py` actually changes;
-- GitHub/network refresh failures no longer make the stable request path fail solely because the hot plane is unavailable; existing runtime state or bundled fallback remains available;
-- manual `/api/hot/sync` is now explicitly a force-refresh/recovery control rather than the required normal update path;
-- manual clear and rollback suspend automatic refresh so bundled fallback or a restored snapshot can be intentionally held.
+- split the system into independent Server, LALM, and Chat control planes;
+- added `/server/` and `/lalm/` dedicated pages;
+- added `/api/server/status`, `/api/lalm/status`, `/api/control/route`, `/route`, and explicit `POST /api/lalm/verify`;
+- added scoped hot mutation at `POST /api/control/hot/sync?scope=lalm|server|all`;
+- `scope=lalm` updates only `web/lalm.html` and `runtime_hot/r39_engine.py` and explicitly reports `chatTouched: false`;
+- LALM-scoped verification/hot sync may use the bounded signed browser Chat session while Server/all mutation remains Admin-controlled;
+- Chat stays at 1.3.26 because this release changes infrastructure/model ownership rather than Chat protocol or Chat UX;
+- the compiled direct-quantized R39 backend remains preferred and the Python/NumPy reference executor remains the correctness/fallback oracle.
 
-Durability:
-- `/tmp/swrlz-admin/runtime/hot/*` remains ephemeral and instance-local;
-- GitHub `dev` is the durable hot source;
-- after redeploy/cold start, the expected path is `empty /tmp -> first Chat/R39 hot read -> automatic dev hydration -> runtime override active`.
+Architecture boundary:
+- Server owns routing, deployment/base version, instance/capability receipts, and hot control;
+- LALM owns R39 engine/model/readiness/native-backend diagnostics and runtime tuning;
+- Chat owns conversation UX, request/stream/reconnect behavior, and the Truth Firewall;
+- future ordinary R39 tuning must not advance the Chat version unless Chat behavior itself changes.
 
 Deployment boundary:
-- this release changes the stable hot-loader/runtime contract and therefore requires one server deployment;
-- after 2.1.17 is deployed, normal Chat asset and R39 hot-engine iteration returns to the no-redeploy `dev` lane.
+- 2.2.0 requires one base deployment to establish the new Python routes/native build boundary;
+- after that deployment, ordinary LALM engine/page iteration can hot-sync independently of Chat.
 
 ## SERVER 2.1.16 / Chat 1.3.13 — 2026-09-07
 
