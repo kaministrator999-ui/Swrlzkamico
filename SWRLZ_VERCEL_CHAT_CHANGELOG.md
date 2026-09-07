@@ -22,6 +22,34 @@ Deployment boundary:
 - 2.2.0 requires one base deployment to establish the new Python routes/native build boundary;
 - after that deployment, ordinary LALM engine/page iteration can hot-sync independently of Chat.
 
+## SERVER 2.1.18 — 2026-09-07
+
+Changed:
+- added the compiled `swrlz_r39_native_qmatvec_v1` backend;
+- native kernels operate directly on SWRLZX quantized weights for `f32`, `f16`, `bf16`, `q4_0`, `q8_0`, `q4_k`, and `q6_k`;
+- Python/NumPy reference inference remains the correctness and fallback oracle;
+- hot R39 runtime dispatch prefers native kernels when the compiled extension is present.
+
+## SERVER 2.1.17 / Chat 1.3.13 — 2026-09-07
+
+Changed:
+- the hot Chat/R39 plane now auto-hydrates from GitHub `dev` on the first active hot read of a fresh Vercel instance;
+- active instances perform throttled request-driven refresh checks approximately every 30 seconds;
+- hot files are compared by SHA-256 and only changed allowlisted files are atomically replaced during automatic refresh;
+- the R39 module cache is invalidated only when `runtime_hot/r39_engine.py` actually changes;
+- GitHub/network refresh failures no longer make the stable request path fail solely because the hot plane is unavailable; existing runtime state or bundled fallback remains available;
+- manual `/api/hot/sync` is now explicitly a force-refresh/recovery control rather than the required normal update path;
+- manual clear and rollback suspend automatic refresh so bundled fallback or a restored snapshot can be intentionally held.
+
+Durability:
+- `/tmp/swrlz-admin/runtime/hot/*` remains ephemeral and instance-local;
+- GitHub `dev` is the durable hot source;
+- after redeploy/cold start, the expected path is `empty /tmp -> first Chat/R39 hot read -> automatic dev hydration -> runtime override active`.
+
+Deployment boundary:
+- this release changes the stable hot-loader/runtime contract and therefore requires one server deployment;
+- after 2.1.17 is deployed, normal Chat asset and R39 hot-engine iteration returns to the no-redeploy `dev` lane.
+
 ## SERVER 2.1.16 / Chat 1.3.13 — 2026-09-07
 
 Changed:
