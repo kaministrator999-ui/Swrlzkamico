@@ -1,5 +1,22 @@
 # SWRLZ Vercel Chat Changelog
 
+## SERVER 2.1.16 / Chat 1.3.13 — 2026-09-07
+
+Changed:
+- local R39 reference matvec dequantization batches increased from a 4 MiB target to a bounded 16 MiB target, reducing repeated decode/allocation/BLAS-call overhead while avoiding whole-model dequantization;
+- small decoded matrices and vectors are cached per model instance so normalization weights and other small tensors are not repeatedly dequantized on every token;
+- the stock Vercel bridge response directive is compacted only on the local R39 prompt path before tokenization, reducing prefill tokens while preserving the Truth Firewall in the stream/event layer;
+- the hot R39 engine revision now identifies the `2.1.16-prefill-hotpath` runtime;
+- production deployment is recorded as `https://swrlzkamico-o3nu.vercel.app`.
+
+Why:
+- the live trace reached `LOCAL_R39` and began a 55-token prefill but only reached `16/55` before the browser stream failed at roughly 153 seconds;
+- heartbeats proved the stream remained active, so the dominant failure boundary was reference inference latency rather than route/model-load failure.
+
+Truth boundary:
+- this release optimizes the canonical Python/NumPy reference path; it does not claim compiled-backend throughput or guarantee completion inside every Vercel duration limit;
+- whole-model dequantization remains prohibited by design in this patch so memory stays bounded.
+
 ## SERVER 2.1.15 / Chat 1.3.12 — 2026-09-07
 
 Changed:
@@ -95,7 +112,6 @@ Changed:
 Added:
 - canonical SWRLZX v1 header/TOC parser for active physical section locations;
 - tokenizer, tensor-directory, and tensor-data payload reconstruction;
-- tensor routing through declared `dataSectionId` values with range validation;
 - local R39 Python/NumPy reference executor for the supplied LFM2 profile;
 - BPE tokenization and incremental UTF-8 decoding;
 - recurrent short-convolution and GQA/KV state execution;
