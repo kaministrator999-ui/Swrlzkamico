@@ -5,10 +5,11 @@ import time
 import urllib.parse
 import urllib.request
 from pathlib import Path
-from typing import Any
 
 from fastapi import Request
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import Response
+
+from api.chat_admin_session import attach_browser_session_cookie
 
 OWNER = "kaministrator999-ui"
 REPO = "Swrlzkamico"
@@ -104,7 +105,8 @@ def install(server) -> None:
         path = request.url.path.rstrip("/") or "/"
         action = request.query_params.get("action", "page").strip().lower()
         if request.method == "GET" and path == "/api/chat" and action == "page":
-            return _serve_source(CHAT_HTML, bundled_chat, chat_html=True)
+            response = _serve_source(CHAT_HTML, bundled_chat, chat_html=True)
+            return attach_browser_session_cookie(response, request)
         if request.method == "GET" and path == "/api/chat/assets/enhancements.js":
             return _serve_source(CHAT_JS, bundled_js)
         if request.method == "GET" and path == "/api/chat/assets/enhancements.css":
@@ -116,8 +118,7 @@ def install(server) -> None:
         if request.method == "GET" and path.startswith("/live/pages/"):
             rel = path[len("/live/pages/"):]
             if rel and ".." not in Path(rel).parts:
-                source = "runtime_pages/pages/" + rel
-                return _serve_source(source, None)
+                return _serve_source("runtime_pages/pages/" + rel, None)
         return await call_next(request)
 
     server.CAPABILITIES["instance-independent-live-source"] = {
@@ -126,5 +127,6 @@ def install(server) -> None:
         "sourceBranch": BRANCH,
         "cacheTtlSeconds": CACHE_TTL,
         "instanceLocalTmpRequiredForReads": False,
+        "chatSessionCookieOnPageLoad": True,
         "detail": "Core live pages and Chat assets resolve from GitHub dev per request with bounded in-instance cache and bundled fallback.",
     }
