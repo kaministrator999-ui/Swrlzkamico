@@ -1,5 +1,95 @@
 # SWRLZ Vercel Chat Changelog
 
+## SERVER 2.1.15 / Chat 1.3.12 — 2026-09-07
+
+Changed:
+- normal same-origin Chat use no longer requires the user to paste or bootstrap a Chat secret through Admin;
+- loading `/api/chat` now receives a bounded HttpOnly, Secure, SameSite=Strict session cookie scoped to `/api/chat`;
+- the session is signed from the server-side Chat secret and the permanent `SWRLZ_WEB_CHAT_TOKEN` is never exposed to browser JavaScript;
+- the legacy explicit Admin session endpoint remains as a compatibility path;
+- Chat UI uses a non-secret browser marker only to satisfy the historical base UI token guard; actual request authorization is server-managed by the cookie;
+- Bridge Settings is renamed to Chat Settings and the credential field is hidden from the normal UI;
+- sending a message no longer opens settings merely because no browser-held Chat token exists.
+
+Security boundary:
+- `SWRLZ_WEB_CHAT_TOKEN` remains the server-side root secret;
+- the browser receives only a bounded signed cookie, never the root secret;
+- manual `x-swrlz-chat-token` validation remains as a fallback compatibility path.
+
+## SERVER 2.1.14 / Chat 1.3.11 — 2026-09-07
+
+Changed:
+- Admin-authorized Chat sessions moved from an instance-local in-memory dictionary to stateless signed session tokens;
+- any Vercel instance can verify an issued session when the shared signing secret is available;
+- Chat stopped forcing the settings dialog open when authorization was missing and instead reported an authorization receipt in place.
+
+## SERVER 2.1.13 / Chat 1.3.6-1.3.10 — 2026-09-07
+
+Added/changed:
+- live core pages and Chat assets resolve from GitHub `dev` on request with a short in-instance cache and bundled fallback;
+- live reads no longer depend on the `/tmp` copy created by whichever Vercel instance handled `/api/pages` sync;
+- `dev`-only Chat version bumps were proven live while the deployed server version remained unchanged (`1.3.7`, `1.3.8`, `1.3.9`, `1.3.10` on Server `2.1.13`);
+- Chat settings learned server-side Chat credential state without echoing the secret;
+- the stale local-R39 boilerplate panel was replaced by Chat status and model status: route, server/instance, credential/session state, readiness, engine, source, model SHA, and blocker.
+
+Live-page receipt:
+- GitHub `dev` is the durable source of truth;
+- supported page/UI changes can appear live without `main` promotion, Vercel server redeploy, or `/tmp` synchronization.
+
+## SERVER 2.1.12 / Chat 1.3.5 — 2026-09-07
+
+Changed:
+- Admin auth now resolves `SWRLZ_ADMIN_TOKEN` per request instead of relying on an import-time environment snapshot;
+- harmless outer whitespace and one matching wrapping quote pair are normalized while identity comparison remains exact and constant-time;
+- repaired Page Manager regression where SET ADMIN remained locked despite a valid deployment token.
+
+## SERVER 2.1.11 / Chat 1.3.5 — 2026-09-07
+
+Added/changed:
+- Chat operations/status was separated from model inspection so `/api/chat/ops` stays cheap and non-blocking;
+- server version and route state can render immediately without loading/inspecting the R39 model;
+- introduced Admin-to-Chat ephemeral session bootstrap while retaining the direct Chat-token fallback;
+- mobile drawer repair, authoritative status paint, and Chat/server footer receipt remained active.
+
+## SERVER 2.1.10 / Chat 1.3.4 — 2026-09-07
+
+Changed:
+- parent UI guards tolerate harmless URL query decoration/tracking parameters;
+- live manager/UI paths no longer fall through to stale handlers because of unrelated query keys.
+
+## SERVER 2.1.9 / Chat 1.3.4 — 2026-09-07
+
+Changed:
+- `/live/` and Chat UI serving were moved onto the unified parent app boundary;
+- Page Manager gained explicit Admin/GitHub/source status receipts;
+- mobile drawer stacking and stale bottom status/version behavior were repaired.
+
+## SERVER 2.1.8 / Chat 1.3.4 — 2026-09-07
+
+Added:
+- live Page Manager `/api/pages`;
+- durable page source on non-deploying `dev`;
+- editable runtime copies and optional runtime -> `dev` push-back;
+- source-managed Admin, Chat, Chat CSS/JS, live index, and additional `runtime_pages/pages/*` publication;
+- server-side GitHub write-token resolution.
+
+## SERVER 2.1.7 — 2026-09-07
+
+Added:
+- narrow hot runtime for Chat/R39 overrides under `/api/hot`;
+- atomic runtime sync/backups with bundled fallbacks.
+
+## SERVER 2.1.6 — 2026-09-07
+
+Added:
+- automatic local R39 initialization path;
+- heartbeat STATUS events around blocking engine progress so idle network timeouts do not masquerade as compute hangs.
+
+## SERVER 2.1.5 — 2026-09-07
+
+Changed:
+- tokenizer admission became tolerant of producer-specific BPE labels when structural tokenizer evidence is valid.
+
 ## Unified SERVER 2.1.4 / Chat 1.3.0 — 2026-09-07
 
 Added:
