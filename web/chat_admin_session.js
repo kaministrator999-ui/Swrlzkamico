@@ -20,6 +20,14 @@ function paint(){
   const credential=document.querySelector('#accessToken')?.closest('.field');
   if(credential) credential.style.display='none';
 
+  const panel=document.querySelector('#runtimePanel');
+  if(panel){
+    panel.innerHTML=panel.innerHTML
+      .replace(/Credential:\s*configured\s*·\s*Admin session not active/gi,'Authorization: server managed')
+      .replace(/Credential:\s*configured\s*·\s*Admin session active/gi,'Authorization: server managed');
+    panel.dataset.authorization='server-managed-cookie';
+  }
+
   const legacy=document.querySelector('#swrlzVersionLine');
   if(legacy) legacy.style.display='none';
   const hot=document.querySelector('#swrlzHotVersionLine');
