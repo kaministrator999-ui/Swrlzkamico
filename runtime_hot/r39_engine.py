@@ -18,7 +18,7 @@ import swyrlz.r39_tokenizer_patch  # noqa: F401
 
 ENGINE_ID = base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_REVISION = "2.1.16-hot-boundary-v6-connect-diag"
+HOT_REVISION = "2.1.16-hot-boundary-v7-fp16-prefill"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
 _ORIGINAL_RENDER_CHAT_PROMPT = base.render_chat_prompt
@@ -28,13 +28,21 @@ _MODEL: base.R39Model | None = None
 _MODEL_READY_AT = 0.0
 
 _TENSOR_CACHE_LOCK = threading.RLock()
-_CACHE_BUDGET_BYTES = 96 * 1024 * 1024
+_CACHE_BUDGET_BYTES = 64 * 1024 * 1024
 _CACHE_ITEM_MAX_BYTES = 12 * 1024 * 1024
 
+_FP16_CACHE_LOCK = threading.RLock()
+_FP16_CACHE_BUDGET_BYTES = 128 * 1024 * 1024
+_FP16_ITEM_MAX_BYTES = 32 * 1024 * 1024
+_FP16_MATMUL_BLOCK_BYTES = 8 * 1024 * 1024
+
 _OUTPUT_CACHE_LOCK = threading.RLock()
-_OUTPUT_MATRIX: np.ndarray | None = None
+_OUTPUT_MATRIX_FP16: np.ndarray | None = None
 _OUTPUT_MATRIX_BYTES = 0
 _OUTPUT_CACHE_MAX_BYTES = 192 * 1024 * 1024
+_OUTPUT_MATMUL_BLOCK_BYTES = 8 * 1024 * 1024
+
+_INFERENCE_LOCK = threading.RLock()
 
 _JOB_LOCK = threading.RLock()
 _JOBS: dict[str, dict[str, Any]] = {}
@@ -51,12 +59,27 @@ def _cache(self: base.R39Model) -> dict[str, np.ndarray]:
     return cache
 
 
+def _fp16_cache(self: base.R39Model) -> dict[str, np.ndarray]:
+    cache = getattr(self, "_hot_fp16_cache", None)
+    if cache is None:
+        cache = {}
+        self._hot_fp16_cache = cache
+        self._hot_fp16_cache_bytes = 0
+        self._hot_fp16_cache_hits = 0
+        self._hot_fp16_cache_misses = 0
+    return cache
+
+
+def _decoded_bytes(desc: dict[str, Any], bytes_per_element: int = 4) -> int:
+    elements = 1
+    for dim in desc["shape"]:
+        elements *= int(dim)
+    return elements * bytes_per_element
+
+
 def _hot_matrix(self: base.R39Model, name: str) -> np.ndarray:
     d = self.desc[name]
-    elements = 1
-    for dim in d["shape"]:
-        elements *= int(dim)
-    decoded_bytes = elements * 4
+    decoded_bytes = _decoded_bytes(d, 4)
     if decoded_bytes <= _CACHE_ITEM_MAX_BYTES:
         with _TENSOR_CACHE_LOCK:
             cache = _cache(self)
@@ -76,18 +99,59 @@ def _hot_vector(self: base.R39Model, name: str) -> np.ndarray:
     return _hot_matrix(self, name).reshape(-1)
 
 
-def _hot_matvec(self: base.R39Model, name: str, x: np.ndarray) -> np.ndarray:
+def _materialize_fp16(self: base.R39Model, name: str) -> np.ndarray | None:
+    if name == "token_embd.weight":
+        return None
+    d = self.desc[name]
+    shape = d["shape"]
+    if len(shape) < 2:
+        return None
+    cols = int(shape[0])
+    rows = int(shape[1])
+    fp16_bytes = cols * rows * 2
+    if fp16_bytes > _FP16_ITEM_MAX_BYTES:
+        return None
+    with _FP16_CACHE_LOCK:
+        cache = _fp16_cache(self)
+        hit = cache.get(name)
+        if hit is not None:
+            self._hot_fp16_cache_hits = int(getattr(self, "_hot_fp16_cache_hits", 0)) + 1
+            return hit
+        used = int(getattr(self, "_hot_fp16_cache_bytes", 0))
+        if used + fp16_bytes > _FP16_CACHE_BUDGET_BYTES:
+            return None
+        self._hot_fp16_cache_misses = int(getattr(self, "_hot_fp16_cache_misses", 0)) + 1
+        rb = self._row_bytes(d["kind"], cols)
+        raw = self._raw(name)
+        resident = np.empty((rows, cols), dtype=np.float16)
+        target_rows = max(1, _FP16_MATMUL_BLOCK_BYTES // max(4 * cols, 1))
+        batch_rows = max(1, min(rows, target_rows))
+        for start in range(0, rows, batch_rows):
+            count = min(batch_rows, rows - start)
+            block = raw[start * rb:(start + count) * rb]
+            decoded = base._deq(d["kind"], block, (cols, count))
+            resident[start:start + count] = decoded.astype(np.float16, copy=False)
+        cache[name] = resident
+        self._hot_fp16_cache_bytes = used + int(resident.nbytes)
+        return resident
+
+
+def _fp16_matvec(matrix: np.ndarray, x: np.ndarray, block_bytes: int) -> np.ndarray:
+    rows, cols = matrix.shape
+    batch_rows = max(1, min(rows, block_bytes // max(4 * cols, 1)))
+    out = np.empty(rows, dtype=np.float32)
+    for start in range(0, rows, batch_rows):
+        count = min(batch_rows, rows - start)
+        block = matrix[start:start + count].astype(np.float32)
+        out[start:start + count] = block @ x
+    return out
+
+
+def _streamed_matvec(self: base.R39Model, name: str, x: np.ndarray) -> np.ndarray:
     d = self.desc[name]
     shape = d["shape"]
     cols = int(shape[0])
     rows = int(shape[1]) if len(shape) > 1 else 1
-    if x.size != cols:
-        raise base.R39InferenceError("R39_MATVEC_SHAPE_MISMATCH", f"{name}: expected {cols}, got {x.size}")
-    decoded_bytes = cols * rows * 4
-    if decoded_bytes <= _CACHE_ITEM_MAX_BYTES:
-        matrix = _hot_matrix(self, name)
-        if matrix.ndim == 2:
-            return (matrix @ x).astype(np.float32, copy=False)
     rb = self._row_bytes(d["kind"], cols)
     raw = self._raw(name)
     target_bytes = 16 * 1024 * 1024
@@ -101,36 +165,53 @@ def _hot_matvec(self: base.R39Model, name: str, x: np.ndarray) -> np.ndarray:
     return out
 
 
+def _hot_matvec(self: base.R39Model, name: str, x: np.ndarray) -> np.ndarray:
+    d = self.desc[name]
+    shape = d["shape"]
+    cols = int(shape[0])
+    rows = int(shape[1]) if len(shape) > 1 else 1
+    if x.size != cols:
+        raise base.R39InferenceError("R39_MATVEC_SHAPE_MISMATCH", f"{name}: expected {cols}, got {x.size}")
+    decoded_bytes = cols * rows * 4
+    if decoded_bytes <= _CACHE_ITEM_MAX_BYTES:
+        matrix = _hot_matrix(self, name)
+        if matrix.ndim == 2:
+            return (matrix @ x).astype(np.float32, copy=False)
+    fp16 = _materialize_fp16(self, name)
+    if fp16 is not None:
+        return _fp16_matvec(fp16, x, _FP16_MATMUL_BLOCK_BYTES)
+    return _streamed_matvec(self, name, x)
+
+
 def _output_projection(self: base.R39Model, x: np.ndarray) -> np.ndarray:
-    global _OUTPUT_MATRIX, _OUTPUT_MATRIX_BYTES
+    global _OUTPUT_MATRIX_FP16, _OUTPUT_MATRIX_BYTES
     d = self.desc["token_embd.weight"]
     shape = d["shape"]
     cols = int(shape[0])
     rows = int(shape[1]) if len(shape) > 1 else 1
     if x.size != cols:
         raise base.R39InferenceError("R39_OUTPUT_SHAPE_MISMATCH", f"token_embd.weight: expected {cols}, got {x.size}")
-    decoded_bytes = cols * rows * 4
-    if decoded_bytes > _OUTPUT_CACHE_MAX_BYTES:
-        return _hot_matvec(self, "token_embd.weight", x)
-    matrix = _OUTPUT_MATRIX
+    fp16_bytes = cols * rows * 2
+    if fp16_bytes > _OUTPUT_CACHE_MAX_BYTES:
+        return _streamed_matvec(self, "token_embd.weight", x)
+    matrix = _OUTPUT_MATRIX_FP16
     if matrix is None:
         with _OUTPUT_CACHE_LOCK:
-            matrix = _OUTPUT_MATRIX
+            matrix = _OUTPUT_MATRIX_FP16
             if matrix is None:
                 rb = self._row_bytes(d["kind"], cols)
                 raw = self._raw("token_embd.weight")
-                resident = np.empty((rows, cols), dtype=np.float32)
-                target_bytes = 8 * 1024 * 1024
-                batch_rows = max(1, min(rows, max(64, target_bytes // max(4 * cols, 1))))
+                resident = np.empty((rows, cols), dtype=np.float16)
+                batch_rows = max(1, min(rows, _OUTPUT_MATMUL_BLOCK_BYTES // max(4 * cols, 1)))
                 for start in range(0, rows, batch_rows):
                     count = min(batch_rows, rows - start)
                     block = raw[start * rb:(start + count) * rb]
                     decoded = base._deq(d["kind"], block, (cols, count))
-                    resident[start:start + count] = decoded
-                _OUTPUT_MATRIX = resident
+                    resident[start:start + count] = decoded.astype(np.float16, copy=False)
+                _OUTPUT_MATRIX_FP16 = resident
                 _OUTPUT_MATRIX_BYTES = int(resident.nbytes)
                 matrix = resident
-    return (matrix @ x).astype(np.float32, copy=False)
+    return _fp16_matvec(matrix, x, _OUTPUT_MATMUL_BLOCK_BYTES)
 
 
 def _hot_render_chat_prompt(payload):
@@ -226,57 +307,63 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         if approx_client_to_hot_ms is not None:
             diag += f" · approx client→hot {approx_client_to_hot_ms}ms"
         yield {"type": "STATUS", "phase": "HOT_ENGINE_ENTERED", "reason": f"{diag}. {warm_note}"}
-        model = _get_model()
-        yield {"type": "ROUTE", "phase": "ROUTE_RESOLVED", "reason": f"Hot loader resolved {HOT_REVISION}; using local R39 with warm-model reuse and cached vocabulary projection.", "identity": {"route": "LOCAL_R39", "engineId": ENGINE_ID, "modelId": str(model.manifest.get("modelId", "R39")), "modelSha256": MODEL_SHA256}}
-
-        prompt = base.render_chat_prompt(payload)
-        tokens = model.tokenizer.encode(prompt)
-        if not tokens:
-            raise base.R39InferenceError("R39_PROMPT_TOKENIZATION_EMPTY", "Prompt tokenization produced no tokens.")
-        generation = payload.get("generation") if isinstance(payload.get("generation"), dict) else {}
-        max_tokens = min(512, max(1, int(generation.get("maxTokens", 128))))
-        temperature = min(2.0, max(0.0, float(generation.get("temperature", 0.1))))
-        top_p = min(1.0, max(0.01, float(generation.get("topP", 0.9))))
-        state = base.RecurrentState()
-        yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefilling {len(tokens)} token(s); vocabulary projection is skipped for intermediate prompt tokens."}
-
-        logits: np.ndarray | None = None
-        prefill_started = time.monotonic()
-        total = len(tokens)
-        for ordinal, token in enumerate(tokens, start=1):
-            if is_cancelled and is_cancelled():
-                raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
-            token_started = time.monotonic()
-            logits = _forward_hot(model, token, state, need_logits=(ordinal == total))
-            elapsed = time.monotonic() - prefill_started
-            avg = elapsed / ordinal
-            eta = max(0.0, avg * (total - ordinal))
-            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefill {ordinal}/{total} · {time.monotonic() - token_started:.2f}s token · {avg:.2f}s avg · ETA {eta:.1f}s."}
-        assert logits is not None
-
-        decoder = base.IncrementalDecoder(model.tokenizer)
-        recent: list[int] = []
-        first_ms: int | None = None
-        cache_note = f" vocabulary projection cached ({_OUTPUT_MATRIX_BYTES // (1024 * 1024)} MiB resident)." if _OUTPUT_MATRIX is not None else " vocabulary projection exceeded cache bound; using streamed projection."
-        yield {"type": "STATUS", "phase": "GENERATING", "reason": f"R39 prefill complete in {time.monotonic() - prefill_started:.2f}s; decoding locally;{cache_note}"}
-        for _ in range(max_tokens):
-            if is_cancelled and is_cancelled():
-                raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
-            next_token = base._sample(logits, recent[-64:], temperature, top_p, 50, 1.05, hash(request_id) ^ (state.pos * 0x9E3779B9))
-            if model.tokenizer.eos is not None and next_token == int(model.tokenizer.eos):
-                break
-            text = decoder.push(next_token)
-            if first_ms is None:
-                first_ms = int((time.monotonic() - started) * 1000)
-            if text:
-                yield {"type": "DELTA", "phase": "GENERATING", "text": text, "firstDeltaLatencyMs": first_ms}
-            recent.append(next_token)
-            logits = _forward_hot(model, next_token, state, need_logits=True)
+        with _INFERENCE_LOCK:
+            model = _get_model()
+            yield {"type": "ROUTE", "phase": "ROUTE_RESOLVED", "reason": f"Hot loader resolved {HOT_REVISION}; using local R39 with fp16 recurrent/output caches.", "identity": {"route": "LOCAL_R39", "engineId": ENGINE_ID, "modelId": str(model.manifest.get("modelId", "R39")), "modelSha256": MODEL_SHA256}}
+            prompt = base.render_chat_prompt(payload)
+            tokens = model.tokenizer.encode(prompt)
+            if not tokens:
+                raise base.R39InferenceError("R39_PROMPT_TOKENIZATION_EMPTY", "Prompt tokenization produced no tokens.")
+            generation = payload.get("generation") if isinstance(payload.get("generation"), dict) else {}
+            max_tokens = min(512, max(1, int(generation.get("maxTokens", 128))))
+            temperature = min(2.0, max(0.0, float(generation.get("temperature", 0.1))))
+            top_p = min(1.0, max(0.01, float(generation.get("topP", 0.9))))
+            state = base.RecurrentState()
+            fp16_before = int(getattr(model, "_hot_fp16_cache_bytes", 0))
+            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefilling {len(tokens)} token(s); intermediate vocabulary logits skipped; bounded fp16 recurrent cache enabled."}
+            logits: np.ndarray | None = None
+            prefill_started = time.monotonic()
+            total = len(tokens)
+            for ordinal, token in enumerate(tokens, start=1):
+                if is_cancelled and is_cancelled():
+                    raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
+                token_started = time.monotonic()
+                logits = _forward_hot(model, token, state, need_logits=(ordinal == total))
+                elapsed = time.monotonic() - prefill_started
+                avg = elapsed / ordinal
+                eta = max(0.0, avg * (total - ordinal))
+                fp16_now = int(getattr(model, "_hot_fp16_cache_bytes", 0))
+                warmed = max(0, fp16_now - fp16_before) // (1024 * 1024)
+                yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefill {ordinal}/{total} · {time.monotonic() - token_started:.2f}s token · {avg:.2f}s avg · ETA {eta:.1f}s · fp16 cache +{warmed} MiB."}
             assert logits is not None
-        tail = decoder.finish()
-        if tail:
-            yield {"type": "DELTA", "phase": "GENERATING", "text": tail, "firstDeltaLatencyMs": first_ms}
-        yield {"type": "COMPLETED", "phase": "COMPLETE", "reason": "Local R39 generation completed.", "totalLatencyMs": int((time.monotonic() - started) * 1000)}
+            decoder = base.IncrementalDecoder(model.tokenizer)
+            recent: list[int] = []
+            first_ms: int | None = None
+            if _OUTPUT_MATRIX_FP16 is not None:
+                output_note = f"fp16 vocabulary cache active ({_OUTPUT_MATRIX_BYTES // (1024 * 1024)} MiB resident)"
+            else:
+                d = model.desc["token_embd.weight"]
+                output_fp16_bytes = _decoded_bytes(d, 2)
+                output_note = "fp16 vocabulary cache will materialize on first projection" if output_fp16_bytes <= _OUTPUT_CACHE_MAX_BYTES else f"vocabulary projection is {output_fp16_bytes // (1024 * 1024)} MiB in fp16 and exceeds {_OUTPUT_CACHE_MAX_BYTES // (1024 * 1024)} MiB bound"
+            yield {"type": "STATUS", "phase": "GENERATING", "reason": f"R39 prefill complete in {time.monotonic() - prefill_started:.2f}s; {output_note}; decoding locally."}
+            for _ in range(max_tokens):
+                if is_cancelled and is_cancelled():
+                    raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
+                next_token = base._sample(logits, recent[-64:], temperature, top_p, 50, 1.05, hash(request_id) ^ (state.pos * 0x9E3779B9))
+                if model.tokenizer.eos is not None and next_token == int(model.tokenizer.eos):
+                    break
+                text = decoder.push(next_token)
+                if first_ms is None:
+                    first_ms = int((time.monotonic() - started) * 1000)
+                if text:
+                    yield {"type": "DELTA", "phase": "GENERATING", "text": text, "firstDeltaLatencyMs": first_ms}
+                recent.append(next_token)
+                logits = _forward_hot(model, next_token, state, need_logits=True)
+                assert logits is not None
+            tail = decoder.finish()
+            if tail:
+                yield {"type": "DELTA", "phase": "GENERATING", "text": tail, "firstDeltaLatencyMs": first_ms}
+            yield {"type": "COMPLETED", "phase": "COMPLETE", "reason": "Local R39 generation completed.", "totalLatencyMs": int((time.monotonic() - started) * 1000)}
     except base.R39InferenceError as exc:
         event_type = "CANCELLED" if exc.code == "REQUEST_CANCELLED" else "FAILED"
         phase = "CANCELLED" if event_type == "CANCELLED" else "ERROR"
@@ -352,35 +439,9 @@ def inspect_engine():
         model = _get_model()
         jobs = _job_snapshot()
         d = model.desc.get("token_embd.weight", {})
-        shape = d.get("shape", [])
-        output_decoded_bytes = (int(shape[0]) * int(shape[1]) * 4) if len(shape) > 1 else 0
-        return {
-            "ok": True,
-            "oneTokenReady": True,
-            "interactiveReady": True,
-            "engineId": ENGINE_ID,
-            "modelId": model.manifest.get("modelId", "R39"),
-            "modelSha256": MODEL_SHA256,
-            "tocCount": model.header["tocCount"],
-            "tensorCount": len(model.desc),
-            "tokenCount": len(model.tokenizer.tokens),
-            "graphNodeCount": len(model.graph.get("nodes", [])),
-            "hotRevision": HOT_REVISION,
-            "tuningBoundary": "runtime_hot/dev",
-            "connectionDiagnostics": True,
-            "warmModelResident": True,
-            "warmModelAgeSeconds": round(max(0.0, time.time() - _MODEL_READY_AT), 2),
-            "decodedCacheBytes": int(getattr(model, "_hot_tensor_cache_bytes", 0)),
-            "decodedCacheBudgetBytes": _CACHE_BUDGET_BYTES,
-            "outputProjectionDecodedBytes": output_decoded_bytes,
-            "outputProjectionCacheBudgetBytes": _OUTPUT_CACHE_MAX_BYTES,
-            "outputProjectionCached": _OUTPUT_MATRIX is not None,
-            "outputProjectionCacheBytes": _OUTPUT_MATRIX_BYTES,
-            "prefillSkipsIntermediateLogits": True,
-            "detachedGeneration": True,
-            "replayableJobs": jobs,
-            "activeDetachedJobs": sum(1 for job in jobs if not job["done"]),
-        }
+        output_fp32_bytes = _decoded_bytes(d, 4) if d else 0
+        output_fp16_bytes = _decoded_bytes(d, 2) if d else 0
+        return {"ok": True, "oneTokenReady": True, "interactiveReady": True, "engineId": ENGINE_ID, "modelId": model.manifest.get("modelId", "R39"), "modelSha256": MODEL_SHA256, "tocCount": model.header["tocCount"], "tensorCount": len(model.desc), "tokenCount": len(model.tokenizer.tokens), "graphNodeCount": len(model.graph.get("nodes", [])), "hotRevision": HOT_REVISION, "tuningBoundary": "runtime_hot/dev", "connectionDiagnostics": True, "warmModelResident": True, "warmModelAgeSeconds": round(max(0.0, time.time() - _MODEL_READY_AT), 2), "decodedCacheBytes": int(getattr(model, "_hot_tensor_cache_bytes", 0)), "decodedCacheBudgetBytes": _CACHE_BUDGET_BYTES, "fp16RecurrentCacheBytes": int(getattr(model, "_hot_fp16_cache_bytes", 0)), "fp16RecurrentCacheBudgetBytes": _FP16_CACHE_BUDGET_BYTES, "fp16RecurrentCacheHits": int(getattr(model, "_hot_fp16_cache_hits", 0)), "fp16RecurrentCacheMisses": int(getattr(model, "_hot_fp16_cache_misses", 0)), "outputProjectionDecodedBytes": output_fp32_bytes, "outputProjectionFp16Bytes": output_fp16_bytes, "outputProjectionCacheBudgetBytes": _OUTPUT_CACHE_MAX_BYTES, "outputProjectionCacheMode": "fp16" if _OUTPUT_MATRIX_FP16 is not None else "eligible-fp16" if output_fp16_bytes <= _OUTPUT_CACHE_MAX_BYTES else "streamed", "outputProjectionCached": _OUTPUT_MATRIX_FP16 is not None, "outputProjectionCacheBytes": _OUTPUT_MATRIX_BYTES, "prefillSkipsIntermediateLogits": True, "detachedGeneration": True, "replayableJobs": jobs, "activeDetachedJobs": sum(1 for job in jobs if not job["done"])}
     except base.R39InferenceError as exc:
         return {"ok": False, "oneTokenReady": False, "interactiveReady": False, "code": exc.code, "detail": exc.detail, "hotRevision": HOT_REVISION}
     except Exception as exc:
