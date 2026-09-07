@@ -1,5 +1,5 @@
 (()=>{"use strict";
-const UI_VERSION='1.3.14';
+const UI_VERSION='1.3.15';
 const $=s=>document.querySelector(s),safe=v=>v??'—';
 const settingsKey='swrlz.chat.generation.v1';
 const ACTIVE_STREAM_KEY='swrlz.chat.active-stream.v1';
