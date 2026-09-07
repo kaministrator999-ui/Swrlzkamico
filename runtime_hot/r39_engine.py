@@ -10,4 +10,4 @@ import swyrlz.r39_matvec_patch  # noqa: F401
 import swyrlz.r39_tokenizer_patch  # noqa: F401
 from swyrlz.r39_inference import ENGINE_ID, MODEL_SHA256, generate_events, inspect_engine
 
-HOT_REVISION = "2.1.7-bootstrap"
+HOT_REVISION = "2.1.16-prefill-hotpath"
