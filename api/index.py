@@ -10,6 +10,7 @@ from __future__ import annotations
 from api import server_v213 as _server
 from api.runtime_hot import install as _install_hot_runtime
 from api.page_runtime import install as _install_page_runtime
+from api.page_runtime_guard import install as _install_page_runtime_guard
 
 VERSION = "2.1.8"
 _server.VERSION = VERSION
@@ -21,6 +22,7 @@ _server.CAPABILITIES["local-r39-inference"] = {
     "boundary": "canonical LFM2 reference profile; runtime override supported with bundled fallback; stream heartbeat timer resets after each engine progress event",
 }
 _install_hot_runtime(_server)
+_install_page_runtime_guard()
 _install_page_runtime(_server)
 _server._write_server_state()
 
