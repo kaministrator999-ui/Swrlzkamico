@@ -18,24 +18,27 @@ import swyrlz.r39_tokenizer_patch  # noqa: F401
 
 ENGINE_ID = base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_REVISION = "2.1.16-hot-boundary-v4-warm-prefill"
+HOT_REVISION = "2.1.16-hot-boundary-v5-output-cache"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
 _ORIGINAL_RENDER_CHAT_PROMPT = base.render_chat_prompt
 
-# Per-worker warm model. The mmap/tokenizer/tensor directory stays open for the life of
-# this Vercel worker instead of being reconstructed for every request.
 _MODEL_LOCK = threading.RLock()
 _MODEL: base.R39Model | None = None
 _MODEL_READY_AT = 0.0
 
-# Bounded decoded-weight cache. Keep only matrices small enough to be useful without
-# materializing the whole model. Large matrices continue through bounded dequant batches.
 _TENSOR_CACHE_LOCK = threading.RLock()
 _CACHE_BUDGET_BYTES = 96 * 1024 * 1024
 _CACHE_ITEM_MAX_BYTES = 12 * 1024 * 1024
 
-# Detached generation registry for reconnect/replay while this worker remains alive.
+# Generation pays the full token_embd vocabulary projection on every output token.
+# Decode it once per warm worker when it fits a strict bound, then reuse the immutable
+# float32 matrix. This trades bounded resident memory for removing repeated dequantization.
+_OUTPUT_CACHE_LOCK = threading.RLock()
+_OUTPUT_MATRIX: np.ndarray | None = None
+_OUTPUT_MATRIX_BYTES = 0
+_OUTPUT_CACHE_MAX_BYTES = 192 * 1024 * 1024
+
 _JOB_LOCK = threading.RLock()
 _JOBS: dict[str, dict[str, Any]] = {}
 _JOB_TTL_SECONDS = 15 * 60
@@ -103,6 +106,40 @@ def _hot_matvec(self: base.R39Model, name: str, x: np.ndarray) -> np.ndarray:
     return out
 
 
+def _output_projection(self: base.R39Model, x: np.ndarray) -> np.ndarray:
+    global _OUTPUT_MATRIX, _OUTPUT_MATRIX_BYTES
+    d = self.desc["token_embd.weight"]
+    shape = d["shape"]
+    cols = int(shape[0])
+    rows = int(shape[1]) if len(shape) > 1 else 1
+    if x.size != cols:
+        raise base.R39InferenceError("R39_OUTPUT_SHAPE_MISMATCH", f"token_embd.weight: expected {cols}, got {x.size}")
+    decoded_bytes = cols * rows * 4
+    if decoded_bytes > _OUTPUT_CACHE_MAX_BYTES:
+        return _hot_matvec(self, "token_embd.weight", x)
+
+    matrix = _OUTPUT_MATRIX
+    if matrix is None:
+        with _OUTPUT_CACHE_LOCK:
+            matrix = _OUTPUT_MATRIX
+            if matrix is None:
+                rb = self._row_bytes(d["kind"], cols)
+                raw = self._raw("token_embd.weight")
+                resident = np.empty((rows, cols), dtype=np.float32)
+                # Smaller temporary blocks keep peak memory bounded while materializing.
+                target_bytes = 8 * 1024 * 1024
+                batch_rows = max(1, min(rows, max(64, target_bytes // max(4 * cols, 1))))
+                for start in range(0, rows, batch_rows):
+                    count = min(batch_rows, rows - start)
+                    block = raw[start * rb:(start + count) * rb]
+                    decoded = base._deq(d["kind"], block, (cols, count))
+                    resident[start:start + count] = decoded
+                _OUTPUT_MATRIX = resident
+                _OUTPUT_MATRIX_BYTES = int(resident.nbytes)
+                matrix = resident
+    return (matrix @ x).astype(np.float32, copy=False)
+
+
 def _hot_render_chat_prompt(payload):
     clone = dict(payload)
     directive = str(clone.get("responseDirective") or "").strip()
@@ -133,13 +170,6 @@ def _get_model() -> base.R39Model:
 
 
 def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *, need_logits: bool) -> np.ndarray | None:
-    """Reference-equivalent recurrent step with optional vocabulary projection.
-
-    During prompt prefill, only the final token needs logits for sampling. The bundled
-    reference projected 1024 hidden units through the full vocabulary after every prompt
-    token, then discarded all but the last projection. Skipping those discarded logits is
-    the largest safe prefill optimization available inside the hot boundary.
-    """
     x = model.row("token_embd.weight", token).astype(np.float32)
     for i, kvh in enumerate(base.LAYER_KV):
         n = base._rms(x, model.vector(f"blk.{i}.attn_norm.weight"))
@@ -184,7 +214,7 @@ def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *
     state.pos += 1
     if not need_logits:
         return None
-    return model.matvec("token_embd.weight", x)
+    return _output_projection(model, x)
 
 
 def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
@@ -192,18 +222,9 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
     started = time.monotonic()
     try:
         already_warm = _MODEL is not None
-        yield {
-            "type": "STATUS",
-            "phase": "MODEL_LOADING",
-            "reason": "Reusing warm server R39 model." if already_warm else "Opening R39 once for this server worker; subsequent requests reuse the warm model.",
-        }
+        yield {"type": "STATUS", "phase": "MODEL_LOADING", "reason": "Reusing warm server R39 model." if already_warm else "Opening R39 once for this server worker; subsequent requests reuse the warm model."}
         model = _get_model()
-        yield {
-            "type": "ROUTE",
-            "phase": "ROUTE_RESOLVED",
-            "reason": "Using hot local R39 Python reference inference with warm-model reuse.",
-            "identity": {"route": "LOCAL_R39", "engineId": ENGINE_ID, "modelId": str(model.manifest.get("modelId", "R39")), "modelSha256": MODEL_SHA256},
-        }
+        yield {"type": "ROUTE", "phase": "ROUTE_RESOLVED", "reason": "Using hot local R39 Python reference inference with warm-model reuse and cached vocabulary projection.", "identity": {"route": "LOCAL_R39", "engineId": ENGINE_ID, "modelId": str(model.manifest.get("modelId", "R39")), "modelSha256": MODEL_SHA256}}
 
         prompt = base.render_chat_prompt(payload)
         tokens = model.tokenizer.encode(prompt)
@@ -227,17 +248,14 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
             elapsed = time.monotonic() - prefill_started
             avg = elapsed / ordinal
             eta = max(0.0, avg * (total - ordinal))
-            yield {
-                "type": "STATUS",
-                "phase": "PREFILL",
-                "reason": f"Prefill {ordinal}/{total} · {time.monotonic() - token_started:.2f}s token · {avg:.2f}s avg · ETA {eta:.1f}s.",
-            }
+            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefill {ordinal}/{total} · {time.monotonic() - token_started:.2f}s token · {avg:.2f}s avg · ETA {eta:.1f}s."}
         assert logits is not None
 
         decoder = base.IncrementalDecoder(model.tokenizer)
         recent: list[int] = []
         first_ms: int | None = None
-        yield {"type": "STATUS", "phase": "GENERATING", "reason": f"R39 prefill complete in {time.monotonic() - prefill_started:.2f}s; decoding locally."}
+        cache_note = f" vocabulary projection cached ({_OUTPUT_MATRIX_BYTES // (1024 * 1024)} MiB resident)." if _OUTPUT_MATRIX is not None else " vocabulary projection exceeded cache bound; using streamed projection."
+        yield {"type": "STATUS", "phase": "GENERATING", "reason": f"R39 prefill complete in {time.monotonic() - prefill_started:.2f}s; decoding locally;{cache_note}"}
         for _ in range(max_tokens):
             if is_cancelled and is_cancelled():
                 raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
@@ -330,6 +348,9 @@ def inspect_engine():
     try:
         model = _get_model()
         jobs = _job_snapshot()
+        d = model.desc.get("token_embd.weight", {})
+        shape = d.get("shape", [])
+        output_decoded_bytes = (int(shape[0]) * int(shape[1]) * 4) if len(shape) > 1 else 0
         return {
             "ok": True,
             "oneTokenReady": True,
@@ -347,6 +368,10 @@ def inspect_engine():
             "warmModelAgeSeconds": round(max(0.0, time.time() - _MODEL_READY_AT), 2),
             "decodedCacheBytes": int(getattr(model, "_hot_tensor_cache_bytes", 0)),
             "decodedCacheBudgetBytes": _CACHE_BUDGET_BYTES,
+            "outputProjectionDecodedBytes": output_decoded_bytes,
+            "outputProjectionCacheBudgetBytes": _OUTPUT_CACHE_MAX_BYTES,
+            "outputProjectionCached": _OUTPUT_MATRIX is not None,
+            "outputProjectionCacheBytes": _OUTPUT_MATRIX_BYTES,
             "prefillSkipsIntermediateLogits": True,
             "detachedGeneration": True,
             "replayableJobs": jobs,
