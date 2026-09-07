@@ -1,56 +1,76 @@
 # §wyrlz Clean Vercel SERVER Transplant
 
-Server revision: **2.1.10**  
-Chat UI revision: **1.3.4**  
+Server revision: **2.1.15**  
+Chat UI revision: **1.3.12**  
 Checkpoint lineage: `INT-VERCEL-CHAT-001A`
 
-This repository is the unified §wyrlz Vercel SERVER. The stable deployment owns authentication, API/security contracts, filesystem confinement, Chat stream semantics, R39 transport, and bundled fallbacks. UI pages and the narrow hot R39 engine can iterate independently through the non-deploying `dev` branch.
+This repository is the unified §wyrlz Vercel SERVER. The stable deployment owns authentication, API/security contracts, filesystem confinement, Chat stream semantics, R39 transport/execution, and bundled fallbacks. Presentation pages and supported live assets are sourced from the non-deploying `dev` branch so they can iterate without redeploying the stable server.
 
 ## Current control planes
 
 - `/api/admin` — Dragon Jester Admin workbench.
 - `/api/chat` — §wyrlz Chat.
-- `/api/pages` — live page source/runtime manager.
+- `/api/pages` — authenticated live page manager and runtime mutation tools.
 - `/api/hot` — narrow hot Chat/R39 runtime control.
-- `/live/` — runtime launchpad/index.
+- `/live/` — live launchpad/index.
+- `/live/pages/*` — additional GitHub-backed pages from `runtime_pages/pages/*`.
 - `/api/health` — server health receipt.
 - `/api/lalm` — R39 load/transport state.
 
-## Live page runtime — 2.1.10
+## Live page architecture — current
 
-Durable page source is kept on `dev`, where Vercel deployment is disabled. The running server can sync that source into instance-local `/tmp`, edit it immediately, and optionally push the accepted runtime copy back to `dev` without deploying the server.
+Durable page source lives on GitHub `dev`, where `vercel.json` disables Vercel deployment.
+
+Server 2.1.13 changed the live read path so core pages/assets resolve directly from GitHub `dev` on request with a short in-instance cache and bundled fallback. Normal live reads no longer depend on whichever Vercel instance owns an ephemeral `/tmp` copy.
 
 Core mappings:
 
-- `web/admin.html` -> runtime Admin -> `/api/admin`
-- `web/chat.html` -> runtime Chat -> `/api/chat`
-- `web/chat_enhancements.css` -> runtime Chat CSS
-- `web/chat_enhancements.js` -> runtime Chat JS
+- `web/admin.html` -> `/api/admin`
+- `web/chat.html` -> `/api/chat`
+- `web/chat_enhancements.css` -> `/api/chat/assets/enhancements.css`
+- `web/chat_enhancements.js` -> `/api/chat/assets/enhancements.js`
 - `runtime_pages/index.html` -> `/live/`
+- `runtime_pages/pages/<path>` -> `/live/pages/<path>`
 
-Any additional supported files under `runtime_pages/pages/` are discovered automatically and published below `/live/pages/`.
+This means supported page/UI work follows:
 
-`/api/pages` provides the authenticated manager for `dev -> runtime` synchronization, runtime read/edit/save, runtime -> `dev` push-back, and page/source/runtime/live-URL receipts. GitHub write credentials remain server-side. Token precedence is runtime `/tmp/swrlz-admin/runtime/github-content-token.txt`, then `SWRLZ_GITHUB_CONTENT_TOKEN`, then `SWRLZ_GITHUB_TOKEN`; raw secret values are never returned to the browser.
+`edit GitHub dev -> refresh live URL -> receive current dev source`
 
-`/tmp` remains ephemeral and instance-local. **GitHub `dev` is the durable page source-of-truth.**
+No `/api/pages` sync and no Vercel server redeploy are required for ordinary GitHub-backed page changes. `/api/pages` remains useful for authenticated runtime editing, receipts, and optional push-back workflows.
 
-### 2.1.9 / 2.1.10 boundary repairs
+### Proven no-redeploy receipt
 
-2.1.9 moved `/live/` onto the unified parent app, added a parent Chat UI guard, and added the credential-status Page Manager. 2.1.10 makes those parent UI guards tolerant of harmless URL query decoration such as tracking parameters. `/api/chat` still preserves functional `action=` behavior, while unrelated query keys no longer bypass the hot UI layer. `/api/pages` serves the current manager for the exact GET path regardless of harmless query decoration.
+The Chat UI was deliberately bumped on `dev` while the deployed server stayed on Server 2.1.13. Refreshing `/api/chat` advanced the visible Chat version through 1.3.7 and 1.3.8 without server promotion or sync. This is the acceptance receipt for the GitHub-backed live-source path.
 
-## Hot runtime development
+## GitHub write credentials
 
-The separate `/api/hot` boundary remains for the narrow R39 engine and Chat runtime override:
+GitHub write capability remains server-side. Resolution precedence is:
 
-`runtime Chat override -> bundled Chat fallback`
+1. `/tmp/swrlz-admin/runtime/github-content-token.txt`
+2. `SWRLZ_GITHUB_CONTENT_TOKEN`
+3. `SWRLZ_GITHUB_TOKEN`
 
-`runtime R39 engine override -> bundled R39 fallback`
+The Page Manager reports whether write capability is configured but never echoes the secret value.
 
-Stable auth/API/security changes still require a `main` deployment. Page/UI work and approved hot inference experiments can remain on `dev` and be pulled into the live instance.
+## Chat authorization — 2.1.15
 
-## Chat 1.3.4
+`SWRLZ_WEB_CHAT_TOKEN` remains the server-side root Chat secret. Normal browser Chat no longer needs the user to paste that key or open Admin first.
 
-Chat keeps browser-local threads, streamed NDJSON evidence, Truth Firewall separation, Stream Camera copy/clear, generation controls, context inspection, retry/fork, and Send to Workbench. The 1.3.4 UI removes the enhancement-layer interception that was fighting the base New/Delete thread controls, repairs the mobile drawer stacking by moving the scrim into the app stacking context, makes LOCAL_R39 runtime status authoritative in the sidebar, and adds a persistent Chat/Server version receipt at the bottom of the drawer.
+When `/api/chat` loads, Server 2.1.15 issues a bounded HttpOnly, Secure, SameSite=Strict signed cookie scoped to `/api/chat`. The root Chat secret never enters browser JavaScript or browser storage. The legacy direct Chat-token header and explicit Admin session endpoint remain compatibility fallbacks.
+
+Chat 1.3.12 therefore treats authorization as server-managed. The normal Chat Settings UI does not expose a credential input.
+
+## Chat UI — 1.3.12 lineage
+
+Recent Chat repairs include:
+
+- base New/Delete thread controls restored by removing conflicting enhancement interception;
+- mobile drawer scrim moved into the app stacking context so the drawer remains undimmed;
+- authoritative `/api/chat/ops` status and persistent Chat/Server version receipt;
+- non-blocking status path that does not load/inspect R39 merely to render UI state;
+- Stream Camera copy/clear, context inspection, generation controls, retry/fork, and Send to Workbench;
+- Chat Settings status panel showing route, server instance/version, model readiness, engine source/ID, model SHA, and blocker;
+- server-managed Chat authorization so sending no longer opens settings because a browser token is absent.
 
 ## Local R39 inference
 
@@ -66,11 +86,11 @@ Authoritative raw R39 SHA-256:
 
 `65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee`
 
-The current reference engine supports the canonical LFM2 profile and quantized tensor readers used by this lineage. Blocking local compute is wrapped with periodic heartbeat STATUS events. The heartbeat idle interval restarts after each real engine/progress event; this protects the connection but does not reset Vercel's hard maximum function duration.
+The current reference engine supports the canonical LFM2 profile and quantized tensor readers used by this lineage. Blocking local compute is wrapped with periodic heartbeat STATUS events. Heartbeat intervals restart after real engine/progress events; this protects connection idleness but does not reset Vercel's hard function-duration limit.
 
 ## Chat routing / Truth Firewall
 
-Routing is deterministic:
+Routing remains deterministic:
 
 `complete proof-bound upstream -> upstream proxy`
 
@@ -82,14 +102,21 @@ Only `DELTA.text` may enter assistant prose. STARTED, STATUS, ROUTE, RESET, hear
 
 ## Development / release flow
 
-Incremental page/UI work goes to `dev`. `vercel.json` disables Vercel deployment for `dev`. Stable SERVER releases are promoted deliberately to `main`. Normal page/UI edits should not require promotion: update `dev`, then sync through `/api/pages`.
+Use `dev` for normal page/UI changes. These do not deploy Vercel and are read live by the deployed server.
 
-## Contracts
+Promote to `main` only when the stable server boundary changes: Python/backend routes, auth/session behavior, middleware, inference plumbing, deployment configuration, or other server-owned contracts.
 
-- `docs/contracts/SWRLZ_HOT_RUNTIME_V1.md`
+`/tmp` remains ephemeral and instance-local; it is not the durable live-page source of truth. GitHub `dev` is.
+
+## Contracts and records
+
 - `docs/contracts/SWRLZ_LIVE_PAGE_RUNTIME_V1.md`
-- existing Chat/R39/runtime contracts remain authoritative for their respective boundaries.
+- `docs/contracts/SWRLZ_VERCEL_CHAT_BRIDGE_V1.md`
+- `docs/contracts/SWRLZ_HOT_RUNTIME_V1.md`
+- `docs/contracts/SWRLZ_CONTROL_PLANES_V1.md`
+- `SWRLZ_VERCEL_CHAT_CHANGELOG.md`
+- `docs/releases/`
 
 ## Revision history
 
-2.0.5 unified the API runtime and colocated Gate 5 with R39 load/verify. 2.0.6 added response-safe chunked downloads. 2.0.7 hardened Admin token normalization and diagnostics. 2.1.0 added the R299-derived Vercel chat bridge/UI. 2.1.1 introduced Dragon Jester Admin. 2.1.2 added `/live/*`, runtime Chat-token override, and dev deployment suppression. 2.1.3 paired Chat/Admin control planes. 2.1.4 wired local R39 inference. 2.1.5 resolved producer-specific BPE tokenizer labels. 2.1.6 added automatic R39 initialization and heartbeat-protected streaming. 2.1.7 added narrow hot Chat/R39 runtime overrides. 2.1.8 / Chat UI 1.3.4 promoted Admin, Chat, the runtime index, and future pages into a source-managed live page layer. 2.1.9 repaired the unified `/live/` and parent UI boundaries. **2.1.10 makes those UI guards tolerant of harmless query decoration so shared/tracked URLs cannot fall back to stale handlers.**
+2.0.5 unified the API runtime and colocated Gate 5 with R39 load/verify. 2.0.6 added response-safe chunked downloads. 2.0.7 hardened Admin token normalization and diagnostics. 2.1.0 added the R299-derived Vercel Chat bridge/UI. 2.1.1 introduced Dragon Jester Admin. 2.1.2 added `/live/*`, runtime Chat-token override, and dev deployment suppression. 2.1.3 paired Chat/Admin control planes. 2.1.4 wired local R39 inference. 2.1.5 resolved producer-specific BPE tokenizer labels. 2.1.6 added automatic R39 initialization and heartbeat-protected streaming. 2.1.7 added narrow hot Chat/R39 overrides. 2.1.8 introduced the live Page Manager/source layer. 2.1.9 repaired unified live/UI boundaries. 2.1.10 added query-decoration tolerance. 2.1.11 made Chat status non-blocking and added initial Admin-session bootstrap. 2.1.12 repaired per-request Admin auth. 2.1.13 made live page reads GitHub-backed and instance-independent. 2.1.14 made explicit Chat sessions stateless across Vercel instances. **2.1.15 makes normal same-origin Chat authorization server-managed with an HttpOnly signed cookie while keeping the permanent Chat secret server-side.**
