@@ -1,10 +1,10 @@
-"""§wyrlz Server 2.1.16 release entrypoint.
+"""§wyrlz Server 2.1.17 release entrypoint.
 
-2.1.16 optimizes the local R39 Python reference hot path without changing the
-canonical inference contract: larger bounded dequantization batches, per-model
-small-tensor decode caching, and compact stock local prompt directives reduce
-prefill overhead while preserving bounded memory and Truth Firewall separation.
-Server-managed Chat authorization and GitHub-backed live page delivery remain intact.
+2.1.17 makes the dev hot-runtime plane self-hydrating on active requests. Chat
+HTML/CSS/JS and the R39 hot engine are delta-refreshed from the durable dev
+branch into ephemeral /tmp runtime storage without requiring a manual Hot Sync
+button press after every change or cold instance. Bundled assets remain the
+fail-safe fallback, and explicit clear/rollback suspends auto refresh.
 """
 from __future__ import annotations
 
@@ -20,14 +20,14 @@ from api.chat_fast_status import install as _install_chat_fast_status
 from api.admin_auth_guard import install as _install_admin_auth_guard
 from api.live_source_guard import install as _install_live_source_guard
 
-VERSION = "2.1.16"
+VERSION = "2.1.17"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
     "kind": "runtime-execution",
     "ready": True,
     "engineId": "swrlz_r39_python_reference_v1",
-    "boundary": "canonical LFM2 reference profile; bounded 16 MiB dequant batches; small decoded tensor cache; compact stock local prompt directive; runtime override supported with bundled fallback; stream heartbeat timer resets after each engine progress event; status probes never inspect/load the model",
+    "boundary": "canonical LFM2 reference fallback; hot R39 execution comes from the dev runtime plane; request-driven auto hydration/delta refresh; bundled fallback remains available; stream heartbeat timer resets after each engine progress event; status probes never inspect/load the model",
 }
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
