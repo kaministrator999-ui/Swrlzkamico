@@ -9,4 +9,4 @@ Repair scope:
 - Add native/reference regression coverage using explicit subnormal quantization scales so the 1/2-scale bug cannot silently return.
 - Preserve Hot R39 2.1.20 deep selection/prefill/decode diagnostics for production validation after the native extension rebuild.
 
-Trigger: 2026-09-08 America/Chicago, after all Server 2.2.3 GitHub commits were staged.
+Final trigger lineage includes native fix `16543ccc`, regression verifier `70f0f009`, and Server 2.2.3 entrypoint `e6e56eaf`.
