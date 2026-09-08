@@ -6,7 +6,6 @@
       "dev": false
     }
   },
-  "ignoreCommand": "git diff --quiet \"$VERCEL_GIT_PREVIOUS_SHA\" HEAD -- DEPLOY_TRIGGER_SERVER_2.2.2.md",
   "functions": {
     "api/**/*.py": {
       "maxDuration": 300,
