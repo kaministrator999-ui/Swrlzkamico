@@ -22,6 +22,7 @@ _CACHE: dict[str, tuple[float, bytes]] = {}
 CHAT_HTML = "web/chat.html"
 CHAT_CSS = "web/chat_enhancements.css"
 CHAT_JS = "web/chat_enhancements.js"
+CHAT_FOCUS_JS = "web/chat_stream_focus.js"
 ADMIN_HTML = "web/admin.html"
 SERVER_HTML = "web/server.html"
 LALM_HTML = "web/lalm.html"
@@ -29,6 +30,7 @@ INDEX_HTML = "runtime_pages/index.html"
 
 ENH_CSS = '<link rel="stylesheet" href="/api/chat/assets/enhancements.css">'
 ENH_JS = '<script src="/api/chat/assets/enhancements.js"></script>'
+FOCUS_JS = '<script src="/api/chat/assets/stream-focus.js"></script>'
 SESSION_JS = '<script src="/api/chat/admin-session-ui.js"></script>'
 
 
@@ -67,6 +69,8 @@ def _inject_chat(data: bytes) -> bytes:
     scripts = ""
     if "/api/chat/assets/enhancements.js" not in html:
         scripts += ENH_JS
+    if "/api/chat/assets/stream-focus.js" not in html:
+        scripts += FOCUS_JS
     if "/api/chat/admin-session-ui.js" not in html:
         scripts += SESSION_JS
     if scripts:
@@ -99,6 +103,7 @@ def install(server) -> None:
     bundled_chat = ROOT / CHAT_HTML
     bundled_css = ROOT / CHAT_CSS
     bundled_js = ROOT / CHAT_JS
+    bundled_focus_js = ROOT / CHAT_FOCUS_JS
     bundled_admin = ROOT / ADMIN_HTML
     bundled_server = ROOT / SERVER_HTML
     bundled_lalm = ROOT / LALM_HTML
@@ -115,6 +120,8 @@ def install(server) -> None:
             return attach_browser_session_cookie(response, request)
         if request.method == "GET" and path == "/api/chat/assets/enhancements.js":
             return _serve_source(CHAT_JS, bundled_js)
+        if request.method == "GET" and path == "/api/chat/assets/stream-focus.js":
+            return _serve_source(CHAT_FOCUS_JS, bundled_focus_js)
         if request.method == "GET" and path == "/api/chat/assets/enhancements.css":
             return _serve_source(CHAT_CSS, bundled_css)
         if request.method == "GET" and path == "/api/admin":
@@ -145,5 +152,6 @@ def install(server) -> None:
             "admin": ADMIN_HTML,
             "live": INDEX_HTML,
         },
+        "chatAssets": [CHAT_CSS, CHAT_JS, CHAT_FOCUS_JS],
         "detail": "Chat, Server, LALM, Admin, live index, and Chat assets resolve from GitHub dev per request with a 2-second in-instance cache and bundled fallback. R39 engine code remains request-driven hot runtime with its own 30-second delta refresh.",
     }
