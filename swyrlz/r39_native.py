@@ -23,14 +23,33 @@ def _load_native() -> None:
     except Exception as exc:
         _import_error = f"{type(exc).__name__}: {exc}"
 
-    package_dir = Path(__file__).resolve().parent
+    search_dirs = [Path(__file__).resolve().parent]
+    for entry in sys.path:
+        try:
+            candidate_dir = Path(entry).resolve() / "swyrlz"
+        except Exception:
+            continue
+        if candidate_dir not in search_dirs:
+            search_dirs.append(candidate_dir)
+
     patterns = ("_r39_native*.so", "_r39_native*.pyd", "_r39_native*.dylib")
     found: list[Path] = []
-    for pattern in patterns:
-        found.extend(sorted(package_dir.glob(pattern)))
-    _candidates = [str(path) for path in found]
+    for directory in search_dirs:
+        for pattern in patterns:
+            try:
+                found.extend(sorted(directory.glob(pattern)))
+            except OSError:
+                pass
+    unique: list[Path] = []
+    seen: set[str] = set()
+    for path in found:
+        key = str(path)
+        if key not in seen:
+            seen.add(key)
+            unique.append(path)
+    _candidates = [str(path) for path in unique]
 
-    for candidate in found:
+    for candidate in unique:
         try:
             spec = importlib.util.spec_from_file_location("swyrlz._r39_native", candidate)
             if spec is None or spec.loader is None:
