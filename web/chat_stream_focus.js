@@ -1,110 +1,25 @@
 (()=>{"use strict";
-const STREAM_UI_VERSION='1.3.30';
-let viewportEventType='',viewportMessageId='';
+const STREAM_UI_VERSION='1.3.31';
+const DRAFT_IDLE_MS=450,DRAFT_MIN_CHARS=4;
+let viewportEventType='',viewportMessageId='',draftTimer=0,draftSeq=0,lastDraftText='';
 
-function activeArticle(){
-  const message=typeof activeMessage==='function'?activeMessage():null;
-  if(!message)return null;
-  return refs?.stack?.querySelector?.(`[data-message-id="${CSS.escape(message.id)}"]`)||null;
-}
+function activeArticle(){const message=typeof activeMessage==='function'?activeMessage():null;if(!message)return null;return refs?.stack?.querySelector?.(`[data-message-id="${CSS.escape(message.id)}"]`)||null;}
+function focusGeneratedTail(force=false){const article=activeArticle();if(!article||!refs?.messages)return;const trace=article.querySelector('.trace');if(trace?.open){refs.messages.scrollTop=refs.messages.scrollHeight;return;}if(!force&&viewportEventType!=='DELTA'&&viewportEventType!=='RESET')return;const bubble=article.querySelector('.bubble');if(!bubble)return;const viewport=refs.messages.getBoundingClientRect(),rect=bubble.getBoundingClientRect(),delta=rect.bottom-(viewport.bottom-12);if(Math.abs(delta)>1)refs.messages.scrollTop+=delta;}
 
-function focusGeneratedTail(force=false){
-  const article=activeArticle();
-  if(!article||!refs?.messages)return;
-  const trace=article.querySelector('.trace');
-  if(trace?.open){
-    refs.messages.scrollTop=refs.messages.scrollHeight;
-    return;
-  }
-  if(!force&&viewportEventType!=='DELTA'&&viewportEventType!=='RESET')return;
-  const bubble=article.querySelector('.bubble');
-  if(!bubble)return;
-  const viewport=refs.messages.getBoundingClientRect();
-  const rect=bubble.getBoundingClientRect();
-  const targetBottom=viewport.bottom-12;
-  const delta=rect.bottom-targetBottom;
-  if(Math.abs(delta)>1)refs.messages.scrollTop+=delta;
-}
-
-// Re-render without blindly snapping to scrollHeight. Expanded activity follows the
-// full message; collapsed activity follows only the live assistant bubble tail.
-scheduleRender=function(scroll=false){
-  if(renderQueued)return;
-  renderQueued=true;
-  requestAnimationFrame(()=>{
-    renderQueued=false;
-    render(false);
-    if(scroll)requestAnimationFrame(()=>focusGeneratedTail(false));
-  });
-};
-
+scheduleRender=function(scroll=false){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;render(false);if(scroll)requestAnimationFrame(()=>focusGeneratedTail(false));});};
 const focusBaseRenderMessage=renderMessage;
-renderMessage=function(message){
-  const article=focusBaseRenderMessage(message);
-  if(message?.role!=='assistant')return article;
-  message.meta=message.meta||{};
-  const body=article.querySelector('.message-body'),bubble=article.querySelector('.bubble'),trace=article.querySelector('.trace');
-  if(trace&&body&&bubble){
-    trace.open=Boolean(message.meta.activityExpanded);
-    const summary=trace.querySelector('summary');
-    if(summary&&!String(summary.textContent||'').startsWith('Activity log'))summary.textContent=`Activity log · ${summary.textContent||'runtime'}`;
-    trace.addEventListener('toggle',()=>{
-      message.meta.activityExpanded=trace.open;
-      saveState();
-      if(trace.open)requestAnimationFrame(()=>{refs.messages.scrollTop=refs.messages.scrollHeight;});
-      else requestAnimationFrame(()=>focusGeneratedTail(true));
-    });
-    body.insertBefore(trace,bubble);
-  }
-  // Keep operational controls/evidence above the assistant prose so the actively
-  // generated response itself is the bottom-most conversational content.
-  if(body&&bubble){
-    const actions=body.querySelector('.message-actions');
-    const evidence=body.querySelector('.swrlz-evidence');
-    if(actions)body.insertBefore(actions,bubble);
-    if(evidence)body.insertBefore(evidence,bubble);
-  }
-  return article;
-};
-
+renderMessage=function(message){const article=focusBaseRenderMessage(message);if(message?.role!=='assistant')return article;message.meta=message.meta||{};const body=article.querySelector('.message-body'),bubble=article.querySelector('.bubble'),trace=article.querySelector('.trace');if(trace&&body&&bubble){trace.open=Boolean(message.meta.activityExpanded);const summary=trace.querySelector('summary');if(summary&&!String(summary.textContent||'').startsWith('Activity log'))summary.textContent=`Activity log · ${summary.textContent||'runtime'}`;trace.addEventListener('toggle',()=>{message.meta.activityExpanded=trace.open;saveState();if(trace.open)requestAnimationFrame(()=>{refs.messages.scrollTop=refs.messages.scrollHeight;});else requestAnimationFrame(()=>focusGeneratedTail(true));});body.insertBefore(trace,bubble);}if(body&&bubble){const actions=body.querySelector('.message-actions'),evidence=body.querySelector('.swrlz-evidence');if(actions)body.insertBefore(actions,bubble);if(evidence)body.insertBefore(evidence,bubble);}return article;};
 const focusBaseConsume=consumeEvent;
-consumeEvent=function(event,context){
-  viewportEventType=String(event?.type||'');
-  viewportMessageId=String(context?.message?.id||'');
-  return focusBaseConsume(event,context);
-};
+consumeEvent=function(event,context){viewportEventType=String(event?.type||'');viewportMessageId=String(context?.message?.id||'');return focusBaseConsume(event,context);};
 
-// Preserve the visible version contract even though this behavior is layered as a
-// separate live-source asset rather than rewriting the large enhancement bundle.
+function draftHistory(){const t=currentThread();return (t?.messages||[]).filter(m=>m?.text&&['user','assistant'].includes(m.role)).slice(-32).map(m=>({role:m.role,text:String(m.text).slice(0,2000)}));}
+async function prefillDraft(text,seq){const t=currentThread();if(!t?.id||seq!==draftSeq)return;const started=performance.now();pushDiag('DRAFT_PREFILL_START',`chars=${text.length} · idle=${DRAFT_IDLE_MS}ms`);try{const r=await nativeChatFetch('/api/chat/draft-prefill',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({threadId:t.id,draft:text,history:draftHistory()})});let j={};try{j=await r.json()}catch(_){}if(seq!==draftSeq)return;if(r.ok&&j.ok){lastDraftText=text;pushDiag('DRAFT_PREFILL_READY',`chars=${text.length} · tokens=${j.draftTokens??'—'} · reused=${j.reusedTokens??'—'} · computed=${j.prefilledTokens??'—'} · ${j.elapsedMs??Math.round(performance.now()-started)}ms`);}else pushDiag('DRAFT_PREFILL_SKIPPED',`${j.code||'HTTP_'+r.status} · ${j.detail||'not ready'}`);}catch(error){if(seq===draftSeq)pushDiag('DRAFT_PREFILL_FAILED',String(error?.message||error));}}
+function scheduleDraftPrefill(){clearTimeout(draftTimer);const text=String(refs?.prompt?.value||'').trim();draftSeq++;const seq=draftSeq;if(text.length<DRAFT_MIN_CHARS||text===lastDraftText)return;draftTimer=setTimeout(()=>prefillDraft(text,seq),DRAFT_IDLE_MS);}
+if(refs?.prompt){refs.prompt.addEventListener('input',scheduleDraftPrefill,{passive:true});refs.prompt.addEventListener('blur',scheduleDraftPrefill,{passive:true});}
+
 const focusBasePaintMode=paintMode;
-paintMode=function(){
-  const result=focusBasePaintMode();
-  const line=document.querySelector('#swrlzHotVersionLine');
-  if(line)line.textContent=String(line.textContent||'').replace(/CHAT v\d+\.\d+\.\d+/i,`CHAT v${STREAM_UI_VERSION}`);
-  const detail=document.querySelector('#nodeDetail');
-  if(detail)detail.textContent=String(detail.textContent||'').replace(/Chat v\d+\.\d+\.\d+/i,`Chat v${STREAM_UI_VERSION}`);
-  return result;
-};
-
-const focusBaseExportCameraLog=exportCameraLog;
-exportCameraLog=function(){
-  const t=currentThread(),receipt=effectiveServerReceipt(),stamp=new Date().toISOString().replace(/[:.]/g,'-');
-  const header=[`§wyrlz Stream Camera Export`,`exported=${new Date().toISOString()}`,`chatVersion=${STREAM_UI_VERSION}`,`threadId=${t?.id||'—'}`,`threadTitle=${t?.title||'—'}`,`baseVersion=${receipt.base}`,`hotServerVersion=${receipt.effective||'—'}`,`hotRevision=${receipt.hot||'—'}`,`eventCount=${camera.length}`,''].join('\n');
-  const blob=new Blob([header+cameraText(true)+'\n'],{type:'text/plain;charset=utf-8'}),u=URL.createObjectURL(blob),a=document.createElement('a');
-  a.href=u;a.download=`swrlz-camera-${safeFilePart(t?.id)}-${stamp}.log.txt`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);toast(`Exported ${camera.length} camera event${camera.length===1?'':'s'} to device`);
-};
-
-const style=document.createElement('style');
-style.textContent=`
-.message.assistant .trace{order:initial}
-.message.assistant .trace summary{user-select:none}
-.message.assistant .trace:not([open]) .trace-list{display:none}
-.message.assistant[data-stream-tail="true"] .bubble{scroll-margin-bottom:12px}
-`;
-document.head.append(style);
-
-// Existing streaming messages created before this layer loaded defaulted their trace
-// open. Re-render once to apply the persisted/default-collapsed activity state.
-render(false);
-paintMode();
+paintMode=function(){const result=focusBasePaintMode();const line=document.querySelector('#swrlzHotVersionLine');if(line)line.textContent=String(line.textContent||'').replace(/CHAT v\d+\.\d+\.\d+/i,`CHAT v${STREAM_UI_VERSION}`);const detail=document.querySelector('#nodeDetail');if(detail)detail.textContent=String(detail.textContent||'').replace(/Chat v\d+\.\d+\.\d+/i,`Chat v${STREAM_UI_VERSION}`);return result;};
+exportCameraLog=function(){const t=currentThread(),receipt=effectiveServerReceipt(),stamp=new Date().toISOString().replace(/[:.]/g,'-');const header=[`§wyrlz Stream Camera Export`,`exported=${new Date().toISOString()}`,`chatVersion=${STREAM_UI_VERSION}`,`threadId=${t?.id||'—'}`,`threadTitle=${t?.title||'—'}`,`baseVersion=${receipt.base}`,`hotServerVersion=${receipt.effective||'—'}`,`hotRevision=${receipt.hot||'—'}`,`eventCount=${camera.length}`,''].join('\n');const blob=new Blob([header+cameraText(true)+'\n'],{type:'text/plain;charset=utf-8'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=`swrlz-camera-${safeFilePart(t?.id)}-${stamp}.log.txt`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);toast(`Exported ${camera.length} camera event${camera.length===1?'':'s'} to device`);};
+const style=document.createElement('style');style.textContent=`.message.assistant .trace{order:initial}.message.assistant .trace summary{user-select:none}.message.assistant .trace:not([open]) .trace-list{display:none}.message.assistant[data-stream-tail="true"] .bubble{scroll-margin-bottom:12px}`;document.head.append(style);
+render(false);paintMode();
 })();
