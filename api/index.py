@@ -1,7 +1,7 @@
-"""§wyrlz Server 2.2.4 release entrypoint.
+"""§wyrlz Server 2.2.5 release entrypoint.
 
-2.2.4 keeps the corrected 2.2.3 native math, reduces cold R39 hydration work,
-and widens the native quantized matvec hot path for lower TTFT and decode latency.
+2.2.5 keeps the 2.2.4 cold-hydration and native-throughput gains, then enables
+Vercel Fluid Compute in a fixed iad1 region to improve warm worker/model reuse.
 """
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from api.live_source_guard import install as _install_live_source_guard
 from api.control_plane import install as _install_control_plane
 from api.native_status import install as _install_native_status
 
-VERSION = "2.2.4"
+VERSION = "2.2.5"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -27,7 +27,7 @@ _server.CAPABILITIES["local-r39-inference"] = {
     "ready": True,
     "engineId": "swrlz_r39_native_qmatvec_v1",
     "fallbackEngineId": "swrlz_r39_python_reference_v1",
-    "boundary": "compiled direct-quantized matvec kernels for f32/f16/bf16/q4_0/q8_0/q4_k/q6_k with corrected fp16 subnormal scaling, float32 hot accumulators, parallel cold transport hydration, and single-pass raw verification; Python reference remains correctness/fallback oracle; LALM runtime override remains independent of Chat assets",
+    "boundary": "compiled direct-quantized matvec kernels for f32/f16/bf16/q4_0/q8_0/q4_k/q6_k with corrected fp16 subnormal scaling, float32 hot accumulators, parallel cold transport hydration, single-pass raw verification, and Fluid Compute/fixed-region worker reuse; Python reference remains correctness/fallback oracle; LALM runtime override remains independent of Chat assets",
 }
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
