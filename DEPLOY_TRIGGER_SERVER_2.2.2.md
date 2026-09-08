@@ -1,8 +1,12 @@
-# Server 2.2.2 production deployment trigger
+# Server 2.2.3 production deployment trigger
 
-This commit intentionally changes the production branch to force the Vercel Git integration to enqueue a fresh production deployment from the current `main` state.
+This file is intentionally changed only after the Server 2.2.3 repair batch is complete so the Vercel ignored-build gate admits one production build for the finished `main` tree.
 
-Expected server version after deployment: `2.2.2`
-Expected entrypoint commit lineage includes: `fb548a4eae5fd3023761294360fd3404606f78f3`
+Expected server version after deployment: `2.2.3`
 
-Retry trigger: 2026-09-07 21:28 America/Chicago after the previous deployment was manually redeployed from the stale 21a5efa snapshot. This commit exists only to make Vercel build the current `main` tree rather than redeploying that old snapshot.
+Repair scope:
+- Correct fp16 subnormal conversion in the compiled R39 native kernels. The previous exponent calculation produced exactly half-scale values for subnormal fp16 quantization scales.
+- Add native/reference regression coverage using explicit subnormal quantization scales so the 1/2-scale bug cannot silently return.
+- Preserve Hot R39 2.1.20 deep selection/prefill/decode diagnostics for production validation after the native extension rebuild.
+
+Trigger: 2026-09-08 America/Chicago, after all Server 2.2.3 GitHub commits were staged.
