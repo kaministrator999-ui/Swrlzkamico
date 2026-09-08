@@ -16,9 +16,6 @@ static inline float fp16_to_f32(uint16_t h) {
             int shift = 0;
             while ((f & 0x400u) == 0) { f <<= 1; shift++; }
             f &= 0x3ffu;
-            /* Half subnormals normalize with exponent 1-bias, so after shifting the
-               leading 1 into bit 10 the unbiased exponent is -14-shift. The old
-               -15-shift expression made every subnormal scale exactly 1/2 sized. */
             out = (s << 31) | ((uint32_t)(127 - 14 - shift) << 23) | (f << 13);
         }
     } else if (e == 31) {
@@ -53,60 +50,64 @@ static void q4k_scales(const uint8_t *sc, int scale[8], int minv[8]) {
     }
 }
 
+/* R39 is quantized and the reference path ultimately consumes float32 logits.
+   Keeping the hot kernel accumulation in float lets the compiler use twice as
+   many SIMD lanes as the former double accumulator on x86_64. The live
+   native/reference probes remain the correctness oracle for this tradeoff. */
 static float dot_row_f32(const uint8_t *row, int cols, const float *x) {
     const float *w = (const float *)row;
-    double sum = 0.0;
-    for (int i = 0; i < cols; ++i) sum += (double)w[i] * x[i];
-    return (float)sum;
+    float sum = 0.0f;
+    for (int i = 0; i < cols; ++i) sum += w[i] * x[i];
+    return sum;
 }
 
 static float dot_row_f16(const uint8_t *row, int cols, const float *x) {
-    double sum = 0.0;
-    for (int i = 0; i < cols; ++i) sum += (double)fp16_to_f32(rd16(row + 2*i)) * x[i];
-    return (float)sum;
+    float sum = 0.0f;
+    for (int i = 0; i < cols; ++i) sum += fp16_to_f32(rd16(row + 2*i)) * x[i];
+    return sum;
 }
 
 static float dot_row_bf16(const uint8_t *row, int cols, const float *x) {
-    double sum = 0.0;
-    for (int i = 0; i < cols; ++i) sum += (double)bf16_to_f32(rd16(row + 2*i)) * x[i];
-    return (float)sum;
+    float sum = 0.0f;
+    for (int i = 0; i < cols; ++i) sum += bf16_to_f32(rd16(row + 2*i)) * x[i];
+    return sum;
 }
 
 static float dot_row_q40(const uint8_t *row, int cols, const float *x) {
-    double sum = 0.0;
+    float sum = 0.0f;
     const int blocks = cols / 32;
     for (int b = 0; b < blocks; ++b) {
         const uint8_t *p = row + b * 18;
         const float d = fp16_to_f32(rd16(p));
         const uint8_t *q = p + 2;
         const int base = b * 32;
-        double local = 0.0;
+        float local = 0.0f;
         for (int i = 0; i < 16; ++i) {
-            local += (double)((int)(q[i] & 15) - 8) * x[base + i];
-            local += (double)((int)(q[i] >> 4) - 8) * x[base + 16 + i];
+            local += (float)((int)(q[i] & 15) - 8) * x[base + i];
+            local += (float)((int)(q[i] >> 4) - 8) * x[base + 16 + i];
         }
-        sum += (double)d * local;
+        sum += d * local;
     }
-    return (float)sum;
+    return sum;
 }
 
 static float dot_row_q80(const uint8_t *row, int cols, const float *x) {
-    double sum = 0.0;
+    float sum = 0.0f;
     const int blocks = cols / 32;
     for (int b = 0; b < blocks; ++b) {
         const uint8_t *p = row + b * 34;
         const float d = fp16_to_f32(rd16(p));
         const int8_t *q = (const int8_t *)(p + 2);
         const int base = b * 32;
-        double local = 0.0;
-        for (int i = 0; i < 32; ++i) local += (double)q[i] * x[base + i];
-        sum += (double)d * local;
+        float local = 0.0f;
+        for (int i = 0; i < 32; ++i) local += (float)q[i] * x[base + i];
+        sum += d * local;
     }
-    return (float)sum;
+    return sum;
 }
 
 static float dot_row_q4k(const uint8_t *row, int cols, const float *x) {
-    double sum = 0.0;
+    float sum = 0.0f;
     const int blocks = cols / 256;
     for (int b = 0; b < blocks; ++b) {
         const uint8_t *p = row + b * 144;
@@ -120,23 +121,24 @@ static float dot_row_q4k(const uint8_t *row, int cols, const float *x) {
         for (int g = 0; g < 4; ++g) {
             const uint8_t *q = qs + g * 32;
             const int o = base + g * 64;
-            double sx0 = 0.0, sx1 = 0.0, qx0 = 0.0, qx1 = 0.0;
+            float sx0 = 0.0f, sx1 = 0.0f, qx0 = 0.0f, qx1 = 0.0f;
             for (int i = 0; i < 32; ++i) {
                 const float x0 = x[o + i];
                 const float x1 = x[o + 32 + i];
-                sx0 += x0; sx1 += x1;
-                qx0 += (double)(q[i] & 15) * x0;
-                qx1 += (double)(q[i] >> 4) * x1;
+                sx0 += x0;
+                sx1 += x1;
+                qx0 += (float)(q[i] & 15) * x0;
+                qx1 += (float)(q[i] >> 4) * x1;
             }
-            sum += (double)d * scale[2*g] * qx0 - (double)dm * minv[2*g] * sx0;
-            sum += (double)d * scale[2*g + 1] * qx1 - (double)dm * minv[2*g + 1] * sx1;
+            sum += d * (float)scale[2*g] * qx0 - dm * (float)minv[2*g] * sx0;
+            sum += d * (float)scale[2*g + 1] * qx1 - dm * (float)minv[2*g + 1] * sx1;
         }
     }
-    return (float)sum;
+    return sum;
 }
 
 static float dot_row_q6k(const uint8_t *row, int cols, const float *x) {
-    double sum = 0.0;
+    float sum = 0.0f;
     const int blocks = cols / 256;
     for (int b = 0; b < blocks; ++b) {
         const uint8_t *p = row + b * 210;
@@ -157,15 +159,17 @@ static float dot_row_q6k(const uint8_t *row, int cols, const float *x) {
                 const int q2 = (int)((lo1[i] & 15) | (((hi[i] >> 2) & 3) << 4)) - 32;
                 const int q3 = (int)(((lo0[i] >> 4) & 15) | (((hi[i] >> 4) & 3) << 4)) - 32;
                 const int q4 = (int)(((lo1[i] >> 4) & 15) | (((hi[i] >> 6) & 3) << 4)) - 32;
-                sum += (double)d * sc[s + ix] * q1 * x[o + i];
-                sum += (double)d * sc[s + 2 + ix] * q2 * x[o + 32 + i];
-                sum += (double)d * sc[s + 4 + ix] * q3 * x[o + 64 + i];
-                sum += (double)d * sc[s + 6 + ix] * q4 * x[o + 96 + i];
+                sum += d * (float)sc[s + ix] * (float)q1 * x[o + i];
+                sum += d * (float)sc[s + 2 + ix] * (float)q2 * x[o + 32 + i];
+                sum += d * (float)sc[s + 4 + ix] * (float)q3 * x[o + 64 + i];
+                sum += d * (float)sc[s + 6 + ix] * (float)q4 * x[o + 96 + i];
             }
         }
     }
-    return (float)sum;
+    return sum;
 }
+
+typedef float (*dot_row_fn)(const uint8_t *, int, const float *);
 
 static PyObject *py_matvec(PyObject *self, PyObject *args) {
     const char *kind = NULL;
@@ -182,25 +186,30 @@ static PyObject *py_matvec(PyObject *self, PyObject *args) {
     PyArrayObject *x_arr = (PyArrayObject *)PyArray_FROM_OTF(x_obj, NPY_FLOAT32, NPY_ARRAY_IN_ARRAY);
     if (!x_arr) { PyBuffer_Release(&raw); return NULL; }
     if (PyArray_SIZE(x_arr) != cols) {
-        Py_DECREF(x_arr); PyBuffer_Release(&raw);
+        Py_DECREF(x_arr);
+        PyBuffer_Release(&raw);
         PyErr_SetString(PyExc_ValueError, "x size mismatch");
         return NULL;
     }
 
     int rb = 0;
-    if (strcmp(kind, "f32") == 0) rb = cols * 4;
-    else if (strcmp(kind, "f16") == 0 || strcmp(kind, "bf16") == 0) rb = cols * 2;
-    else if (strcmp(kind, "q4_0") == 0 && cols % 32 == 0) rb = (cols / 32) * 18;
-    else if (strcmp(kind, "q8_0") == 0 && cols % 32 == 0) rb = (cols / 32) * 34;
-    else if (strcmp(kind, "q4_k") == 0 && cols % 256 == 0) rb = (cols / 256) * 144;
-    else if (strcmp(kind, "q6_k") == 0 && cols % 256 == 0) rb = (cols / 256) * 210;
+    dot_row_fn dot = NULL;
+    if (strcmp(kind, "f32") == 0) { rb = cols * 4; dot = dot_row_f32; }
+    else if (strcmp(kind, "f16") == 0) { rb = cols * 2; dot = dot_row_f16; }
+    else if (strcmp(kind, "bf16") == 0) { rb = cols * 2; dot = dot_row_bf16; }
+    else if (strcmp(kind, "q4_0") == 0 && cols % 32 == 0) { rb = (cols / 32) * 18; dot = dot_row_q40; }
+    else if (strcmp(kind, "q8_0") == 0 && cols % 32 == 0) { rb = (cols / 32) * 34; dot = dot_row_q80; }
+    else if (strcmp(kind, "q4_k") == 0 && cols % 256 == 0) { rb = (cols / 256) * 144; dot = dot_row_q4k; }
+    else if (strcmp(kind, "q6_k") == 0 && cols % 256 == 0) { rb = (cols / 256) * 210; dot = dot_row_q6k; }
     else {
-        Py_DECREF(x_arr); PyBuffer_Release(&raw);
+        Py_DECREF(x_arr);
+        PyBuffer_Release(&raw);
         PyErr_SetString(PyExc_ValueError, "unsupported quantizer or block mismatch");
         return NULL;
     }
     if (raw.len < (Py_ssize_t)rb * rows) {
-        Py_DECREF(x_arr); PyBuffer_Release(&raw);
+        Py_DECREF(x_arr);
+        PyBuffer_Release(&raw);
         PyErr_SetString(PyExc_ValueError, "raw tensor is shorter than expected");
         return NULL;
     }
@@ -214,14 +223,7 @@ static PyObject *py_matvec(PyObject *self, PyObject *args) {
 
     Py_BEGIN_ALLOW_THREADS
     for (int r = 0; r < rows; ++r) {
-        const uint8_t *row = rp + (size_t)r * rb;
-        if (strcmp(kind, "f32") == 0) y[r] = dot_row_f32(row, cols, x);
-        else if (strcmp(kind, "f16") == 0) y[r] = dot_row_f16(row, cols, x);
-        else if (strcmp(kind, "bf16") == 0) y[r] = dot_row_bf16(row, cols, x);
-        else if (strcmp(kind, "q4_0") == 0) y[r] = dot_row_q40(row, cols, x);
-        else if (strcmp(kind, "q8_0") == 0) y[r] = dot_row_q80(row, cols, x);
-        else if (strcmp(kind, "q4_k") == 0) y[r] = dot_row_q4k(row, cols, x);
-        else y[r] = dot_row_q6k(row, cols, x);
+        y[r] = dot(rp + (size_t)r * rb, cols, x);
     }
     Py_END_ALLOW_THREADS
 
