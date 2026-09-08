@@ -19,7 +19,7 @@ source = _v26.decode("utf-8")
 _anchor = '''_impl=types.ModuleType("swrlz_hot_r39_engine_impl_v26");_impl.__file__=_IMPL_URL
 exec(compile(_source_text,_IMPL_URL,"exec"),_impl.__dict__)
 '''
-_injected = r'''from runtime_hot import r39_batch_prefill as _batch_prefill
+_injected = r"""from runtime_hot import r39_batch_prefill as _batch_prefill
 _batch_anchor='''        prefill_started = time.monotonic()
         if remaining:
             for absolute_index in range(prefix_len, total):
@@ -55,7 +55,7 @@ _source_text=_source_text.replace(_batch_anchor,_batch_replacement,1)
 _impl=types.ModuleType("swrlz_hot_r39_engine_impl_v26_batch");_impl.__file__=_IMPL_URL
 _impl.__dict__["_batch_prefill"]=_batch_prefill
 exec(compile(_source_text,_IMPL_URL,"exec"),_impl.__dict__)
-'''
+"""
 if _anchor not in source:
     raise RuntimeError("R39_V26_IMPL_CREATION_ANCHOR_MISSING")
 source = source.replace(_anchor, _injected, 1)
