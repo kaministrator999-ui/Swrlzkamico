@@ -1,8 +1,7 @@
 """Hot-swappable R39 engine entrypoint.
 
-v9 keeps the native-dispatch path and adds an explicit effective hot-server receipt.
-The Python/Numpy reference path remains a safe correctness fallback when the compiled
-native extension is not present on the current worker.
+v10 keeps native direct-quantized dispatch, adds recurrent-prefix reuse for follow-up
+turns on a warm worker, and guards pathological single-token repetition.
 """
 from __future__ import annotations
 
@@ -18,11 +17,10 @@ from swyrlz import r39_native as native_bridge
 
 ENGINE_ID = "swrlz_r39_native_qmatvec_v1" if native_bridge.available() else base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_SERVER_VERSION = "2.1.18"
-HOT_REVISION = "2.1.18-hot-boundary-v9-effective-receipt"
+HOT_SERVER_VERSION = "2.1.19"
+HOT_REVISION = "2.1.19-hot-boundary-v10-prefix-cache-repeat-guard"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
-_ORIGINAL_MATVEC = base.R39Model.matvec
 _ORIGINAL_RENDER_CHAT_PROMPT = base.render_chat_prompt
 
 _MODEL_LOCK = threading.RLock()
@@ -32,6 +30,11 @@ _MODEL_READY_AT = 0.0
 _TENSOR_CACHE_LOCK = threading.RLock()
 _CACHE_BUDGET_BYTES = 96 * 1024 * 1024
 _CACHE_ITEM_MAX_BYTES = 12 * 1024 * 1024
+
+_PREFIX_LOCK = threading.RLock()
+_PREFIX_CACHE: list[dict[str, Any]] = []
+_PREFIX_CACHE_MAX = 3
+_PREFIX_CACHE_MAX_TOKENS = 4096
 
 _JOB_LOCK = threading.RLock()
 _JOBS: dict[str, dict[str, Any]] = {}
@@ -124,13 +127,70 @@ def _get_model() -> base.R39Model:
             return _MODEL
         load = base.ensure_r39()
         if not load.get("modelReady"):
-            raise base.R39InferenceError(str(load.get("code", "R39_LOAD_FAILED")), str(load.get("detail", "R39 reconstruction failed.")))
+            raise base.R39InferenceError(
+                str(load.get("code", "R39_LOAD_FAILED")),
+                str(load.get("detail", "R39 reconstruction failed.")),
+            )
         _MODEL = base.R39Model(base.RAW)
         _MODEL_READY_AT = time.time()
         return _MODEL
 
 
-def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *, need_logits: bool) -> np.ndarray | None:
+def _clone_state(state: base.RecurrentState) -> base.RecurrentState:
+    clone = base.RecurrentState()
+    clone.pos = int(state.pos)
+    clone.conv = {i: value.copy() for i, value in state.conv.items()}
+    clone.kv = {
+        i: [(k.copy(), v.copy()) for k, v in entries]
+        for i, entries in state.kv.items()
+    }
+    return clone
+
+
+def _prefix_get(tokens: list[int]) -> tuple[int, base.RecurrentState | None, np.ndarray | None]:
+    if not tokens:
+        return 0, None, None
+    best: dict[str, Any] | None = None
+    with _PREFIX_LOCK:
+        for entry in _PREFIX_CACHE:
+            cached = entry["tokens"]
+            n = len(cached)
+            if n <= len(tokens) and tokens[:n] == cached:
+                if best is None or n > len(best["tokens"]):
+                    best = entry
+        if best is None:
+            return 0, None, None
+        best["usedAt"] = time.time()
+        return (
+            len(best["tokens"]),
+            _clone_state(best["state"]),
+            best["logits"].copy() if best.get("logits") is not None else None,
+        )
+
+
+def _prefix_put(tokens: list[int], state: base.RecurrentState, logits: np.ndarray | None) -> None:
+    if not tokens or len(tokens) > _PREFIX_CACHE_MAX_TOKENS or logits is None:
+        return
+    entry = {
+        "tokens": list(tokens),
+        "state": _clone_state(state),
+        "logits": logits.copy(),
+        "usedAt": time.time(),
+    }
+    with _PREFIX_LOCK:
+        _PREFIX_CACHE[:] = [item for item in _PREFIX_CACHE if item["tokens"] != entry["tokens"]]
+        _PREFIX_CACHE.append(entry)
+        _PREFIX_CACHE.sort(key=lambda item: float(item.get("usedAt", 0)), reverse=True)
+        del _PREFIX_CACHE[_PREFIX_CACHE_MAX:]
+
+
+def _forward_hot(
+    model: base.R39Model,
+    token: int,
+    state: base.RecurrentState,
+    *,
+    need_logits: bool,
+) -> np.ndarray | None:
     x = model.row("token_embd.weight", token).astype(np.float32)
     for i, kvh in enumerate(base.LAYER_KV):
         n = base._rms(x, model.vector(f"blk.{i}.attn_norm.weight"))
@@ -159,7 +219,10 @@ def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *
             for h in range(16):
                 kh = h // 2
                 qh = q.reshape(16, 64)[h]
-                scores = np.array([np.dot(qh, kk.reshape(8, 64)[kh]) / 8.0 for kk, _ in state.kv[i]], np.float32)
+                scores = np.array(
+                    [np.dot(qh, kk.reshape(8, 64)[kh]) / 8.0 for kk, _ in state.kv[i]],
+                    np.float32,
+                )
                 weights = np.exp(scores - scores.max(), dtype=np.float32)
                 weights /= weights.sum(dtype=np.float32)
                 for weight, (_, vv) in zip(weights, state.kv[i]):
@@ -169,13 +232,32 @@ def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *
         fn = base._rms(residual, model.vector(f"blk.{i}.ffn_norm.weight"))
         gate = model.matvec(f"blk.{i}.ffn_gate.weight", fn)
         up = model.matvec(f"blk.{i}.ffn_up.weight", fn)
-        ff = model.matvec(f"blk.{i}.ffn_down.weight", (base._silu(gate) * up).astype(np.float32))
+        ff = model.matvec(
+            f"blk.{i}.ffn_down.weight",
+            (base._silu(gate) * up).astype(np.float32),
+        )
         x = (residual + ff).astype(np.float32)
     x = base._rms(x, model.vector("token_embd_norm.weight"))
     state.pos += 1
     if not need_logits:
         return None
     return model.matvec("token_embd.weight", x)
+
+
+def _sample_hot(
+    logits: np.ndarray,
+    recent: list[int],
+    temperature: float,
+    top_p: float,
+    seed: int,
+) -> int:
+    adjusted = logits
+    if len(recent) >= 3 and recent[-1] == recent[-2] == recent[-3]:
+        adjusted = logits.copy()
+        token = recent[-1]
+        if 0 <= token < adjusted.size:
+            adjusted[token] = -np.inf
+    return base._sample(adjusted, recent[-128:], temperature, top_p, 64, 1.18, seed)
 
 
 def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
@@ -212,32 +294,54 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         max_tokens = min(512, max(1, int(generation.get("maxTokens", 128))))
         temperature = min(2.0, max(0.0, float(generation.get("temperature", 0.1))))
         top_p = min(1.0, max(0.01, float(generation.get("topP", 0.9))))
-        state = base.RecurrentState()
-        yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefilling {len(tokens)} token(s); intermediate vocabulary logits skipped; backend={('native-qmatvec' if native else 'python-fallback')}."}
 
-        logits: np.ndarray | None = None
-        prefill_started = time.monotonic()
+        prefix_len, cached_state, cached_logits = _prefix_get(tokens)
+        state = cached_state if cached_state is not None else base.RecurrentState()
+        logits: np.ndarray | None = cached_logits
         total = len(tokens)
-        for ordinal, token in enumerate(tokens, start=1):
-            if is_cancelled and is_cancelled():
-                raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
-            token_started = time.monotonic()
-            logits = _forward_hot(model, token, state, need_logits=(ordinal == total))
-            token_s = time.monotonic() - token_started
-            elapsed = time.monotonic() - prefill_started
-            avg = elapsed / ordinal
-            eta = max(0.0, avg * (total - ordinal))
-            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefill {ordinal}/{total} · {token_s:.3f}s token · {avg:.3f}s avg · ETA {eta:.1f}s · backend={('native' if native else 'python')}."}
-        assert logits is not None
+        remaining = total - prefix_len
+        yield {
+            "type": "STATUS",
+            "phase": "PREFILL",
+            "reason": f"Prefilling {total} token(s); prefix reuse {prefix_len} token(s), {remaining} token(s) remaining; intermediate vocabulary logits skipped; backend={('native-qmatvec' if native else 'python-fallback')}.",
+        }
+
+        prefill_started = time.monotonic()
+        if remaining:
+            for absolute_index in range(prefix_len, total):
+                if is_cancelled and is_cancelled():
+                    raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
+                token_started = time.monotonic()
+                ordinal = absolute_index + 1
+                logits = _forward_hot(model, tokens[absolute_index], state, need_logits=(ordinal == total))
+                token_s = time.monotonic() - token_started
+                processed = absolute_index - prefix_len + 1
+                elapsed = time.monotonic() - prefill_started
+                avg = elapsed / processed
+                eta = max(0.0, avg * (total - ordinal))
+                yield {
+                    "type": "STATUS",
+                    "phase": "PREFILL",
+                    "reason": f"Prefill {ordinal}/{total} · {token_s:.3f}s token · {avg:.3f}s new-token avg · ETA {eta:.1f}s · reused={prefix_len} · backend={('native' if native else 'python')}.",
+                }
+        if logits is None:
+            raise base.R39InferenceError("R39_PREFIX_CACHE_LOGITS_MISSING", "Prompt prefix cache did not contain final logits.")
+        _prefix_put(tokens, state, logits)
 
         decoder = base.IncrementalDecoder(model.tokenizer)
         recent: list[int] = []
+        sequence_tokens = list(tokens)
         first_ms: int | None = None
-        yield {"type": "STATUS", "phase": "GENERATING", "reason": f"R39 prefill complete in {time.monotonic() - prefill_started:.2f}s; decoding with {('native direct-quantized matvec' if native else 'Python/Numpy fallback')}."}
+        prefill_elapsed = time.monotonic() - prefill_started
+        yield {
+            "type": "STATUS",
+            "phase": "GENERATING",
+            "reason": f"R39 prefill complete in {prefill_elapsed:.2f}s; reused {prefix_len}/{total} prompt token(s); decoding with {('native direct-quantized matvec' if native else 'Python/Numpy fallback')}.",
+        }
         for ordinal in range(1, max_tokens + 1):
             if is_cancelled and is_cancelled():
                 raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
-            next_token = base._sample(logits, recent[-64:], temperature, top_p, 50, 1.05, hash(request_id) ^ (state.pos * 0x9E3779B9))
+            next_token = _sample_hot(logits, recent, temperature, top_p, hash(request_id) ^ (state.pos * 0x9E3779B9))
             if model.tokenizer.eos is not None and next_token == int(model.tokenizer.eos):
                 break
             text = decoder.push(next_token)
@@ -246,11 +350,14 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
             if text:
                 yield {"type": "DELTA", "phase": "GENERATING", "text": text, "firstDeltaLatencyMs": first_ms}
             recent.append(next_token)
+            sequence_tokens.append(next_token)
             decode_started = time.monotonic()
             logits = _forward_hot(model, next_token, state, need_logits=True)
-            assert logits is not None
+            if logits is None:
+                raise base.R39InferenceError("R39_GENERATION_LOGITS_MISSING", "Generation forward pass returned no logits.")
             if ordinal <= 4 or ordinal % 8 == 0:
                 yield {"type": "STATUS", "phase": "DECODE_PROGRESS", "reason": f"Decode step {ordinal} · {time.monotonic() - decode_started:.3f}s · backend={('native' if native else 'python')}."}
+        _prefix_put(sequence_tokens, state, logits)
         tail = decoder.finish()
         if tail:
             yield {"type": "DELTA", "phase": "GENERATING", "text": tail, "firstDeltaLatencyMs": first_ms}
@@ -330,6 +437,9 @@ def inspect_engine():
         model = _get_model()
         jobs = _job_snapshot()
         native = native_bridge.available()
+        with _PREFIX_LOCK:
+            prefix_entries = len(_PREFIX_CACHE)
+            longest_prefix = max((len(item["tokens"]) for item in _PREFIX_CACHE), default=0)
         return {
             "ok": True,
             "oneTokenReady": True,
@@ -351,6 +461,10 @@ def inspect_engine():
             "decodedCacheBytes": int(getattr(model, "_hot_tensor_cache_bytes", 0)),
             "decodedCacheBudgetBytes": _CACHE_BUDGET_BYTES,
             "prefillSkipsIntermediateLogits": True,
+            "prefillPrefixReuse": True,
+            "prefixCacheEntries": prefix_entries,
+            "longestCachedPrefixTokens": longest_prefix,
+            "generationRepeatGuard": True,
             "connectionDiagnostics": True,
             "detachedGeneration": True,
             "replayableJobs": jobs,
