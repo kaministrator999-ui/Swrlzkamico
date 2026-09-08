@@ -10,7 +10,7 @@ setup(
             "swyrlz._r39_native",
             sources=["native/r39_native.c"],
             include_dirs=[numpy.get_include()],
-            extra_compile_args=["-O3", "-ffast-math", "-fno-math-errno"],
+            extra_compile_args=["-O3", "-ffast-math", "-fno-math-errno", "-funroll-loops"],
         )
     ],
 )
