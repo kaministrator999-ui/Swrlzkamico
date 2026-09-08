@@ -7,7 +7,7 @@ import urllib.request
 from pathlib import Path
 
 from fastapi import Request
-from fastapi.responses import Response
+from fastapi.responses import RedirectResponse, Response
 
 from api.chat_admin_session import attach_browser_session_cookie
 
@@ -23,6 +23,8 @@ CHAT_HTML = "web/chat.html"
 CHAT_CSS = "web/chat_enhancements.css"
 CHAT_JS = "web/chat_enhancements.js"
 ADMIN_HTML = "web/admin.html"
+SERVER_HTML = "web/server.html"
+LALM_HTML = "web/lalm.html"
 INDEX_HTML = "runtime_pages/index.html"
 
 ENH_CSS = '<link rel="stylesheet" href="/api/chat/assets/enhancements.css">'
@@ -36,7 +38,7 @@ def _fetch(source: str, limit: int = 4_000_000) -> bytes:
     if cached and now - cached[0] <= CACHE_TTL:
         return cached[1]
     url = f"{RAW_BASE}/{urllib.parse.quote(BRANCH, safe='-._/')}/{urllib.parse.quote(source, safe='-._/')}"
-    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-live-source/1", "Cache-Control": "no-cache"})
+    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-live-source/2", "Cache-Control": "no-cache"})
     with urllib.request.urlopen(req, timeout=8) as response:
         data = response.read(limit + 1)
     if len(data) > limit:
@@ -98,12 +100,16 @@ def install(server) -> None:
     bundled_css = ROOT / CHAT_CSS
     bundled_js = ROOT / CHAT_JS
     bundled_admin = ROOT / ADMIN_HTML
+    bundled_server = ROOT / SERVER_HTML
+    bundled_lalm = ROOT / LALM_HTML
     bundled_index = ROOT / INDEX_HTML
 
     @server.app.middleware("http")
     async def live_source_guard(request: Request, call_next):
         path = request.url.path.rstrip("/") or "/"
         action = request.query_params.get("action", "page").strip().lower()
+        if request.method == "GET" and path == "/chat":
+            return RedirectResponse("/api/chat", status_code=307)
         if request.method == "GET" and path == "/api/chat" and action == "page":
             response = _serve_source(CHAT_HTML, bundled_chat, chat_html=True)
             return attach_browser_session_cookie(response, request)
@@ -113,6 +119,10 @@ def install(server) -> None:
             return _serve_source(CHAT_CSS, bundled_css)
         if request.method == "GET" and path == "/api/admin":
             return _serve_source(ADMIN_HTML, bundled_admin)
+        if request.method == "GET" and path == "/server":
+            return _serve_source(SERVER_HTML, bundled_server)
+        if request.method == "GET" and path == "/lalm":
+            return _serve_source(LALM_HTML, bundled_lalm)
         if request.method == "GET" and path == "/live":
             return _serve_source(INDEX_HTML, bundled_index)
         if request.method == "GET" and path.startswith("/live/pages/"):
@@ -128,5 +138,12 @@ def install(server) -> None:
         "cacheTtlSeconds": CACHE_TTL,
         "instanceLocalTmpRequiredForReads": False,
         "chatSessionCookieOnPageLoad": True,
-        "detail": "Core live pages and Chat assets resolve from GitHub dev per request with bounded in-instance cache and bundled fallback.",
+        "corePages": {
+            "chat": CHAT_HTML,
+            "server": SERVER_HTML,
+            "lalm": LALM_HTML,
+            "admin": ADMIN_HTML,
+            "live": INDEX_HTML,
+        },
+        "detail": "Chat, Server, LALM, Admin, live index, and Chat assets resolve from GitHub dev per request with a 2-second in-instance cache and bundled fallback. R39 engine code remains request-driven hot runtime with its own 30-second delta refresh.",
     }
