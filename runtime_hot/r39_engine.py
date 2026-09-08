@@ -1,7 +1,9 @@
 """Hot-swappable R39 engine entrypoint.
 
-v10 keeps native direct-quantized dispatch, adds recurrent-prefix reuse for follow-up
-turns on a warm worker, and guards pathological single-token repetition.
+v11 keeps native direct-quantized dispatch and prefix reuse, then adds a conservative
+reference rerank over the native top-logit candidate set plus targeted prefill/decode
+telemetry so native-vs-reference drift and activation instability are visible in the
+normal stream trace without falling back to a full Python vocabulary projection.
 """
 from __future__ import annotations
 
@@ -17,8 +19,8 @@ from swyrlz import r39_native as native_bridge
 
 ENGINE_ID = "swrlz_r39_native_qmatvec_v1" if native_bridge.available() else base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_SERVER_VERSION = "2.1.19"
-HOT_REVISION = "2.1.19-hot-boundary-v10-prefix-cache-repeat-guard"
+HOT_SERVER_VERSION = "2.1.20"
+HOT_REVISION = "2.1.20-hot-boundary-v11-reference-rerank-deep-trace"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
 _ORIGINAL_RENDER_CHAT_PROMPT = base.render_chat_prompt
@@ -40,6 +42,10 @@ _JOB_LOCK = threading.RLock()
 _JOBS: dict[str, dict[str, Any]] = {}
 _JOB_TTL_SECONDS = 15 * 60
 _MAX_JOBS = 12
+
+_REFERENCE_RERANK_CANDIDATES = 48
+_TRACE_TOP_CANDIDATES = 6
+_TRACE_LAYERS = {0, 7, 15}
 
 
 def _cache(self: base.R39Model) -> dict[str, np.ndarray]:
@@ -140,10 +146,7 @@ def _clone_state(state: base.RecurrentState) -> base.RecurrentState:
     clone = base.RecurrentState()
     clone.pos = int(state.pos)
     clone.conv = {i: value.copy() for i, value in state.conv.items()}
-    clone.kv = {
-        i: [(k.copy(), v.copy()) for k, v in entries]
-        for i, entries in state.kv.items()
-    }
+    clone.kv = {i: [(k.copy(), v.copy()) for k, v in entries] for i, entries in state.kv.items()}
     return clone
 
 
@@ -171,17 +174,86 @@ def _prefix_get(tokens: list[int]) -> tuple[int, base.RecurrentState | None, np.
 def _prefix_put(tokens: list[int], state: base.RecurrentState, logits: np.ndarray | None) -> None:
     if not tokens or len(tokens) > _PREFIX_CACHE_MAX_TOKENS or logits is None:
         return
-    entry = {
-        "tokens": list(tokens),
-        "state": _clone_state(state),
-        "logits": logits.copy(),
-        "usedAt": time.time(),
-    }
+    entry = {"tokens": list(tokens), "state": _clone_state(state), "logits": logits.copy(), "usedAt": time.time()}
     with _PREFIX_LOCK:
         _PREFIX_CACHE[:] = [item for item in _PREFIX_CACHE if item["tokens"] != entry["tokens"]]
         _PREFIX_CACHE.append(entry)
         _PREFIX_CACHE.sort(key=lambda item: float(item.get("usedAt", 0)), reverse=True)
         del _PREFIX_CACHE[_PREFIX_CACHE_MAX:]
+
+
+def _array_stats(value: np.ndarray) -> dict[str, float | int]:
+    a = np.asarray(value, dtype=np.float32).reshape(-1)
+    finite = np.isfinite(a)
+    if not finite.any():
+        return {"n": int(a.size), "finite": 0, "mean": float("nan"), "rms": float("nan"), "maxAbs": float("nan")}
+    f = a[finite]
+    return {
+        "n": int(a.size),
+        "finite": int(f.size),
+        "mean": float(np.mean(f, dtype=np.float64)),
+        "rms": float(np.sqrt(np.mean(f * f, dtype=np.float64))),
+        "maxAbs": float(np.max(np.abs(f))),
+    }
+
+
+def _token_text(model: base.R39Model, token_id: int) -> str:
+    try:
+        raw = model.tokenizer.token_bytes(int(token_id))
+        if raw is None:
+            return model.tokenizer.tokens[int(token_id)]
+        return raw.decode("utf-8", "replace").replace("\n", "\\n")
+    except Exception:
+        return "<?>"
+
+
+def _top_ids(logits: np.ndarray, count: int) -> np.ndarray:
+    count = min(max(1, int(count)), int(logits.size))
+    ids = np.argpartition(logits, -count)[-count:]
+    return ids[np.argsort(logits[ids])[::-1]]
+
+
+def _reference_rerank(model: base.R39Model, logits: np.ndarray, hidden: np.ndarray, diag: dict[str, Any] | None) -> np.ndarray:
+    if not native_bridge.available():
+        if diag is not None:
+            diag["referenceRerank"] = {"enabled": False, "reason": "native backend inactive"}
+        return logits
+    candidate_ids = _top_ids(logits, _REFERENCE_RERANK_CANDIDATES)
+    repaired = logits.copy()
+    max_abs_error = 0.0
+    top_probe: list[dict[str, Any]] = []
+    for rank, token_id in enumerate(candidate_ids):
+        tid = int(token_id)
+        native_value = float(logits[tid])
+        reference_value = float(np.dot(model.row("token_embd.weight", tid).astype(np.float32), hidden))
+        repaired[tid] = np.float32(reference_value)
+        error = abs(reference_value - native_value)
+        max_abs_error = max(max_abs_error, error)
+        if rank < _TRACE_TOP_CANDIDATES:
+            top_probe.append({
+                "id": tid,
+                "text": _token_text(model, tid),
+                "native": native_value,
+                "reference": reference_value,
+                "absError": error,
+            })
+    if diag is not None:
+        diag["referenceRerank"] = {
+            "enabled": True,
+            "candidateCount": int(candidate_ids.size),
+            "maxAbsError": float(max_abs_error),
+            "topProbe": top_probe,
+        }
+        diag["nativeTop"] = [
+            {"id": int(tid), "text": _token_text(model, int(tid)), "logit": float(logits[int(tid)])}
+            for tid in candidate_ids[:_TRACE_TOP_CANDIDATES]
+        ]
+        repaired_ids = _top_ids(repaired, _TRACE_TOP_CANDIDATES)
+        diag["repairedTop"] = [
+            {"id": int(tid), "text": _token_text(model, int(tid)), "logit": float(repaired[int(tid)])}
+            for tid in repaired_ids
+        ]
+    return repaired
 
 
 def _forward_hot(
@@ -190,7 +262,11 @@ def _forward_hot(
     state: base.RecurrentState,
     *,
     need_logits: bool,
+    diag: dict[str, Any] | None = None,
 ) -> np.ndarray | None:
+    if diag is not None:
+        diag["inputToken"] = {"id": int(token), "text": _token_text(model, int(token)), "pos": int(state.pos)}
+        diag["layers"] = []
     x = model.row("token_embd.weight", token).astype(np.float32)
     for i, kvh in enumerate(base.LAYER_KV):
         n = base._rms(x, model.vector(f"blk.{i}.attn_norm.weight"))
@@ -204,6 +280,7 @@ def _forward_hot(
             state.conv[i][0] = hist[1].copy()
             state.conv[i][1] = bx
             op = model.matvec(f"blk.{i}.shortconv.out_proj.weight", (c * cv).astype(np.float32))
+            path = "shortconv"
         else:
             q = model.matvec(f"blk.{i}.attn_q.weight", n)
             k = model.matvec(f"blk.{i}.attn_k.weight", n)
@@ -219,45 +296,83 @@ def _forward_hot(
             for h in range(16):
                 kh = h // 2
                 qh = q.reshape(16, 64)[h]
-                scores = np.array(
-                    [np.dot(qh, kk.reshape(8, 64)[kh]) / 8.0 for kk, _ in state.kv[i]],
-                    np.float32,
-                )
+                scores = np.array([np.dot(qh, kk.reshape(8, 64)[kh]) / 8.0 for kk, _ in state.kv[i]], np.float32)
                 weights = np.exp(scores - scores.max(), dtype=np.float32)
                 weights /= weights.sum(dtype=np.float32)
                 for weight, (_, vv) in zip(weights, state.kv[i]):
                     att[h] += weight * vv.reshape(8, 64)[kh]
             op = model.matvec(f"blk.{i}.attn_output.weight", att.reshape(-1))
+            path = "attention"
         residual = (x + op).astype(np.float32)
         fn = base._rms(residual, model.vector(f"blk.{i}.ffn_norm.weight"))
         gate = model.matvec(f"blk.{i}.ffn_gate.weight", fn)
         up = model.matvec(f"blk.{i}.ffn_up.weight", fn)
-        ff = model.matvec(
-            f"blk.{i}.ffn_down.weight",
-            (base._silu(gate) * up).astype(np.float32),
-        )
+        ff = model.matvec(f"blk.{i}.ffn_down.weight", (base._silu(gate) * up).astype(np.float32))
         x = (residual + ff).astype(np.float32)
-    x = base._rms(x, model.vector("token_embd_norm.weight"))
+        if diag is not None and i in _TRACE_LAYERS:
+            diag["layers"].append({
+                "layer": i,
+                "path": path,
+                "norm": _array_stats(n),
+                "op": _array_stats(op),
+                "residual": _array_stats(residual),
+                "ff": _array_stats(ff),
+                "output": _array_stats(x),
+                "kvLen": len(state.kv[i]) if kvh else 0,
+            })
+    hidden = base._rms(x, model.vector("token_embd_norm.weight"))
     state.pos += 1
+    if diag is not None:
+        diag["finalHidden"] = _array_stats(hidden)
     if not need_logits:
         return None
-    return model.matvec("token_embd.weight", x)
+    native_logits = model.matvec("token_embd.weight", hidden)
+    if diag is not None:
+        diag["nativeLogits"] = _array_stats(native_logits)
+    return _reference_rerank(model, native_logits, hidden, diag)
 
 
-def _sample_hot(
-    logits: np.ndarray,
-    recent: list[int],
-    temperature: float,
-    top_p: float,
-    seed: int,
-) -> int:
-    adjusted = logits
-    if len(recent) >= 3 and recent[-1] == recent[-2] == recent[-3]:
-        adjusted = logits.copy()
-        token = recent[-1]
+def _format_stats(stats: dict[str, Any]) -> str:
+    return f"rms={float(stats.get('rms', float('nan'))):.4g}, max={float(stats.get('maxAbs', float('nan'))):.4g}, finite={stats.get('finite')}/{stats.get('n')}"
+
+
+def _trace_reason(diag: dict[str, Any]) -> str:
+    token = diag.get("inputToken") or {}
+    layer_bits = []
+    for layer in diag.get("layers") or []:
+        layer_bits.append(f"L{layer['layer']}:{layer['path']} out({_format_stats(layer['output'])})")
+    rerank = diag.get("referenceRerank") or {}
+    probe = rerank.get("topProbe") or []
+    probe_bits = [f"{p['id']}:{p['text']!r} n={p['native']:.3g} ref={p['reference']:.3g} err={p['absError']:.3g}" for p in probe]
+    repaired = diag.get("repairedTop") or []
+    repaired_bits = [f"{p['id']}:{p['text']!r}={p['logit']:.3g}" for p in repaired]
+    return (
+        f"token {token.get('id')} {token.get('text')!r} @pos {token.get('pos')} · "
+        + " · ".join(layer_bits)
+        + f" · final({_format_stats(diag.get('finalHidden') or {})})"
+        + f" · logits({_format_stats(diag.get('nativeLogits') or {})})"
+        + (f" · native/ref probe [{'; '.join(probe_bits)}]" if probe_bits else "")
+        + (f" · repaired top [{'; '.join(repaired_bits)}]" if repaired_bits else "")
+    )
+
+
+def _sample_hot(logits: np.ndarray, recent: list[int], temperature: float, top_p: float, seed: int) -> int:
+    adjusted = logits.copy()
+    counts: dict[int, int] = {}
+    for token in recent[-128:]:
+        counts[token] = counts.get(token, 0) + 1
+    for token, count in counts.items():
         if 0 <= token < adjusted.size:
-            adjusted[token] = -np.inf
-    return base._sample(adjusted, recent[-128:], temperature, top_p, 64, 1.18, seed)
+            penalty = 1.12 + min(0.28, 0.035 * count)
+            adjusted[token] = adjusted[token] * penalty if adjusted[token] < 0 else adjusted[token] / penalty
+    if len(recent) >= 2 and recent[-1] == recent[-2]:
+        adjusted[recent[-1]] = -np.inf
+    if len(recent) >= 6:
+        tail = recent[-6:]
+        for token in set(tail):
+            if tail.count(token) >= 4 and 0 <= token < adjusted.size:
+                adjusted[token] = -np.inf
+    return base._sample(adjusted, [], temperature, top_p, 64, 1.0, seed)
 
 
 def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
@@ -282,7 +397,7 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         yield {
             "type": "ROUTE",
             "phase": "ROUTE_RESOLVED",
-            "reason": f"Hot loader resolved server {HOT_SERVER_VERSION} / {HOT_REVISION}; inference backend: {mode}.",
+            "reason": f"Hot loader resolved server {HOT_SERVER_VERSION} / {HOT_REVISION}; inference backend: {mode}; top-{_REFERENCE_RERANK_CANDIDATES} native logits are reference-reranked before sampling.",
             "identity": {"route": "LOCAL_R39", "engineId": "swrlz_r39_native_qmatvec_v1" if native else base.ENGINE_ID, "modelId": str(model.manifest.get("modelId", "R39")), "modelSha256": MODEL_SHA256},
         }
 
@@ -313,7 +428,9 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
                     raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
                 token_started = time.monotonic()
                 ordinal = absolute_index + 1
-                logits = _forward_hot(model, tokens[absolute_index], state, need_logits=(ordinal == total))
+                trace_this = ordinal in {1, total} or ordinal % 32 == 0
+                forward_diag: dict[str, Any] | None = {} if trace_this else None
+                logits = _forward_hot(model, tokens[absolute_index], state, need_logits=(ordinal == total), diag=forward_diag)
                 token_s = time.monotonic() - token_started
                 processed = absolute_index - prefix_len + 1
                 elapsed = time.monotonic() - prefill_started
@@ -324,6 +441,8 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
                     "phase": "PREFILL",
                     "reason": f"Prefill {ordinal}/{total} · {token_s:.3f}s token · {avg:.3f}s new-token avg · ETA {eta:.1f}s · reused={prefix_len} · backend={('native' if native else 'python')}.",
                 }
+                if forward_diag is not None:
+                    yield {"type": "STATUS", "phase": "PREFILL_DIAGNOSTIC", "reason": _trace_reason(forward_diag)}
         if logits is None:
             raise base.R39InferenceError("R39_PREFIX_CACHE_LOGITS_MISSING", "Prompt prefix cache did not contain final logits.")
         _prefix_put(tokens, state, logits)
@@ -333,16 +452,30 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         sequence_tokens = list(tokens)
         first_ms: int | None = None
         prefill_elapsed = time.monotonic() - prefill_started
+        initial_top = _top_ids(logits, _TRACE_TOP_CANDIDATES)
+        yield {
+            "type": "STATUS",
+            "phase": "SELECTION_DIAGNOSTIC",
+            "reason": "Initial repaired candidates · " + "; ".join(f"{int(t)}:{_token_text(model, int(t))!r}={float(logits[int(t)]):.4g}" for t in initial_top),
+        }
         yield {
             "type": "STATUS",
             "phase": "GENERATING",
-            "reason": f"R39 prefill complete in {prefill_elapsed:.2f}s; reused {prefix_len}/{total} prompt token(s); decoding with {('native direct-quantized matvec' if native else 'Python/Numpy fallback')}.",
+            "reason": f"R39 prefill complete in {prefill_elapsed:.2f}s; reused {prefix_len}/{total} prompt token(s); decoding with {('native direct-quantized matvec' if native else 'Python/Numpy fallback')} plus reference candidate rerank.",
         }
         for ordinal in range(1, max_tokens + 1):
             if is_cancelled and is_cancelled():
                 raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
+            before_ids = _top_ids(logits, _TRACE_TOP_CANDIDATES)
             next_token = _sample_hot(logits, recent, temperature, top_p, hash(request_id) ^ (state.pos * 0x9E3779B9))
+            if ordinal <= 8 or ordinal % 8 == 0:
+                yield {
+                    "type": "STATUS",
+                    "phase": "SELECTION_DIAGNOSTIC",
+                    "reason": f"step {ordinal} selected {next_token}:{_token_text(model, next_token)!r} · top repaired " + "; ".join(f"{int(t)}:{_token_text(model, int(t))!r}={float(logits[int(t)]):.4g}" for t in before_ids),
+                }
             if model.tokenizer.eos is not None and next_token == int(model.tokenizer.eos):
+                yield {"type": "STATUS", "phase": "STOP_DIAGNOSTIC", "reason": f"EOS selected at decode step {ordinal}."}
                 break
             text = decoder.push(next_token)
             if first_ms is None:
@@ -352,11 +485,14 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
             recent.append(next_token)
             sequence_tokens.append(next_token)
             decode_started = time.monotonic()
-            logits = _forward_hot(model, next_token, state, need_logits=True)
+            trace_this = ordinal <= 4 or ordinal % 8 == 0
+            forward_diag = {} if trace_this else None
+            logits = _forward_hot(model, next_token, state, need_logits=True, diag=forward_diag)
             if logits is None:
                 raise base.R39InferenceError("R39_GENERATION_LOGITS_MISSING", "Generation forward pass returned no logits.")
-            if ordinal <= 4 or ordinal % 8 == 0:
+            if trace_this:
                 yield {"type": "STATUS", "phase": "DECODE_PROGRESS", "reason": f"Decode step {ordinal} · {time.monotonic() - decode_started:.3f}s · backend={('native' if native else 'python')}."}
+                yield {"type": "STATUS", "phase": "DECODE_DIAGNOSTIC", "reason": _trace_reason(forward_diag or {})}
         _prefix_put(sequence_tokens, state, logits)
         tail = decoder.finish()
         if tail:
@@ -465,6 +601,10 @@ def inspect_engine():
             "prefixCacheEntries": prefix_entries,
             "longestCachedPrefixTokens": longest_prefix,
             "generationRepeatGuard": True,
+            "referenceCandidateRerank": True,
+            "referenceCandidateCount": _REFERENCE_RERANK_CANDIDATES,
+            "deepGenerationDiagnostics": True,
+            "diagnosticLayers": sorted(_TRACE_LAYERS),
             "connectionDiagnostics": True,
             "detachedGeneration": True,
             "replayableJobs": jobs,
