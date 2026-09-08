@@ -4,6 +4,7 @@ import numpy
 setup(
     name="swrlzkamico-native",
     version="0.1.0",
+    packages=["swyrlz"],
     ext_modules=[
         Extension(
             "swyrlz._r39_native",
