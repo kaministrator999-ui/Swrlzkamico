@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.7-bootstrap",
+  "revision": "2.1.19-hot-boundary-v10-prefix-cache-repeat-guard",
   "inferenceFiles": [
     "r39_engine.py"
   ]
