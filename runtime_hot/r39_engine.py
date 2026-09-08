@@ -1,9 +1,11 @@
-"""Hot R39 v21 canonical identity + user-owned nickname policy + selection-context camera.
+"""Hot R39 v22 hard identity variable + canonical append cursor.
 
-Keeps the v20 canonical append cursor, fast same-worker continuation, identity grounding,
-and lexical selection evidence. v21 makes the assistant's canonical name §wyrlz immutable
-while allowing only the human user to assign or change an optional nickname. A nickname
-never replaces the canonical §wyrlz identity and role labels remain structural metadata.
+Keeps the v21 fast same-worker continuation, canonical cursor finalization, identity
+policy, and selection camera. v22 moves the canonical assistant name out of probabilistic
+prompt-following and into a hard runtime variable. When the current user intent requires
+assistant-name identity, decoding is deterministically prefixed from that variable and
+then normal R39 generation may continue from the advanced recurrent state. The spelling
+therefore does not depend on whether §, swyrlz, or any other token happens to rank highly.
 """
 from __future__ import annotations
 
@@ -12,11 +14,12 @@ import types
 import urllib.request
 
 _IMPL_URL="https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/dev/runtime_hot/r39_engine_impl.py"
-_req=urllib.request.Request(_IMPL_URL,headers={"User-Agent":"swrlz-hot-r39-v21"})
+_req=urllib.request.Request(_IMPL_URL,headers={"User-Agent":"swrlz-hot-r39-v22"})
 with urllib.request.urlopen(_req,timeout=20) as _response:_source=_response.read(4_000_001)
 if len(_source)>4_000_000:raise RuntimeError("R39_IMPL_TOO_LARGE")
 _source_text=_source.decode("utf-8")
 
+# Commit EOS + canonical newline, stripping tokenizer-injected BOS from suffix encoding.
 _old_eos='''            if model.tokenizer.eos is not None and next_token == int(model.tokenizer.eos):
                 yield {"type": "STATUS", "phase": "STOP_DIAGNOSTIC", "reason": f"EOS selected at decode step {ordinal}."}
                 break
@@ -45,9 +48,10 @@ _new_eos='''            if model.tokenizer.eos is not None and next_token == int
                 yield {"type":"STATUS","phase":"HOT_CURSOR_READY","reason":f"EOS selected at decode step {ordinal}; committed EOS + {len(framing_tokens)} canonical end-of-turn framing token(s); strippedSyntheticBos={stripped_bos}."}
                 break
 '''
-if _old_eos not in _source_text:raise RuntimeError("R39_V21_EOS_PATCH_TARGET_MISSING")
+if _old_eos not in _source_text:raise RuntimeError("R39_V22_EOS_PATCH_TARGET_MISSING")
 _source_text=_source_text.replace(_old_eos,_new_eos,1)
 
+# Exact resident-prefix diagnostics.
 _old_lookup='''        prefix_len, cached_state, cached_logits = _prefix_get(tokens)
         state = cached_state if cached_state is not None else base.RecurrentState()
 '''
@@ -72,9 +76,10 @@ _new_lookup='''        with _PREFIX_LOCK:
         prefix_len, cached_state, cached_logits = _prefix_get(tokens)
         state = cached_state if cached_state is not None else base.RecurrentState()
 '''
-if _old_lookup not in _source_text:raise RuntimeError("R39_V21_PREFIX_PATCH_TARGET_MISSING")
+if _old_lookup not in _source_text:raise RuntimeError("R39_V22_PREFIX_PATCH_TARGET_MISSING")
 _source_text=_source_text.replace(_old_lookup,_new_lookup,1)
 
+# Throttle browser/status churn during sequential recurrent prefill.
 _old_yield='''                yield {
                     "type": "STATUS",
                     "phase": "PREFILL",
@@ -84,21 +89,76 @@ _old_yield='''                yield {
 _new_yield='''                if processed == 1 or ordinal == total or processed % 16 == 0:
                     yield {"type":"STATUS","phase":"PREFILL","reason":f"Prefill {ordinal}/{total} · {token_s:.3f}s token · {avg:.3f}s new-token avg · ETA {eta:.1f}s · reused={prefix_len} · backend={('native' if native else 'python')}."}
 '''
-if _old_yield not in _source_text:raise RuntimeError("R39_V21_PREFILL_PATCH_TARGET_MISSING")
+if _old_yield not in _source_text:raise RuntimeError("R39_V22_PREFILL_PATCH_TARGET_MISSING")
 _source_text=_source_text.replace(_old_yield,_new_yield,1)
 
-_impl=types.ModuleType("swrlz_hot_r39_engine_impl_v21")
+# Hard-variable decode lane. This is deliberately narrow: only a runtime-resolved value
+# is forced, then ordinary R39 decoding resumes from the state advanced through those
+# exact tokens. It does not bias logits and does not depend on token salience.
+_old_decode='''        for ordinal in range(1, max_tokens + 1):
+            if is_cancelled and is_cancelled():
+                raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
+            before_ids = _top_ids(logits, _TRACE_TOP_CANDIDATES)
+            next_token = _sample_hot(logits, recent, temperature, top_p, hash(request_id) ^ (state.pos * 0x9E3779B9))
+            if ordinal <= 8 or ordinal % 8 == 0:
+'''
+_new_decode='''        hard_value = str(payload.get("_hardIdentityValue") or "")
+        hard_tokens = []
+        if hard_value:
+            hard_tokens = list(model.tokenizer.encode(hard_value))
+            try:
+                _hard_bos_probe = list(model.tokenizer.encode(""))
+                if _hard_bos_probe and hard_tokens and int(hard_tokens[0]) == int(_hard_bos_probe[0]):
+                    hard_tokens = hard_tokens[1:]
+            except Exception:
+                pass
+            yield {"type":"STATUS","phase":"HARD_VARIABLE_RESOLVED","reason":f"assistant.name resolved from runtime variable; forcing {len(hard_tokens)} token(s) before probabilistic continuation."}
+        for ordinal in range(1, max_tokens + 1):
+            if is_cancelled and is_cancelled():
+                raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
+            before_ids = _top_ids(logits, _TRACE_TOP_CANDIDATES)
+            forced_index = ordinal - 1
+            hard_forced = forced_index < len(hard_tokens)
+            next_token = int(hard_tokens[forced_index]) if hard_forced else _sample_hot(logits, recent, temperature, top_p, hash(request_id) ^ (state.pos * 0x9E3779B9))
+            if ordinal <= 8 or ordinal % 8 == 0:
+'''
+if _old_decode not in _source_text:raise RuntimeError("R39_V22_DECODE_PATCH_TARGET_MISSING")
+_source_text=_source_text.replace(_old_decode,_new_decode,1)
+
+# Make selection diagnostics show whether the chosen token came from the hard-variable
+# lane or from the sampler.
+_old_diag='''                    "reason": f"step {ordinal} selected {next_token}:{_token_text(model, next_token)!r} · top repaired " + "; ".join(f"{int(t)}:{_token_text(model, int(t))!r}={float(logits[int(t)]):.4g}" for t in before_ids),
+'''
+_new_diag='''                    "reason": f"step {ordinal} selected {next_token}:{_token_text(model, next_token)!r} · source={'hard-variable' if hard_forced else 'sampler'} · top repaired " + "; ".join(f"{int(t)}:{_token_text(model, int(t))!r}={float(logits[int(t)]):.4g}" for t in before_ids),
+'''
+if _old_diag not in _source_text:raise RuntimeError("R39_V22_SELECTION_PATCH_TARGET_MISSING")
+_source_text=_source_text.replace(_old_diag,_new_diag,1)
+
+_impl=types.ModuleType("swrlz_hot_r39_engine_impl_v22")
 _impl.__file__=_IMPL_URL
 exec(compile(_source_text,_IMPL_URL,"exec"),_impl.__dict__)
-_impl.HOT_SERVER_VERSION="2.1.30"
-_impl.HOT_REVISION="2.1.30-hot-boundary-v21-canonical-identity-user-nickname-v1.9"
+_impl.HOT_SERVER_VERSION="2.1.31"
+_impl.HOT_REVISION="2.1.31-hot-boundary-v22-hard-identity-variable-v2.0"
 _impl._REFERENCE_RERANK_CANDIDATES=6
 _original_format_stats=_impl._format_stats
 def _format_stats(stats):return "skipped" if not stats else _original_format_stats(stats)
 _impl._format_stats=_format_stats
 
+_CANONICAL_NAME="§wyrlz"
 _RULES=((r"\b(brief|short)\b","C2"),(r"\b(concise|compact)\b","C1"),(r"\b(exhaustive)\b","B3"),(r"\b(comprehensive)\b","B2"),(r"\b(deep|mechanistic|root cause)\b","D3"),(r"\b(in[- ]depth|detailed)\b","D2"),(r"\b(expert[- ]level|implementation[- ]ready)\b","T3"),(r"\b(technical|technically)\b","T2"),(r"\b(just the result|result only|no explanation)\b","PV0"))
 _MODE_RULES=((r"\b(diagnose|diagnostic|failure|root cause|why .* fail)\b","DIAGNOSTIC","FIND_ROOT_CAUSE"),(r"\b(compare|comparative|versus|\bvs\b)\b","COMPARATIVE","SELECT_BEST_OPTION"),(r"\b(fact[- ]check|verify|validate|audit)\b","VERIFICATION","VERIFY"),(r"\b(design|architecture|redesign)\b","ARCHITECTURE","DESIGN"))
+_IDENTITY_PATTERNS=(
+    r"\bwhat(?:'s| is) your (?:name|main name)\b",
+    r"\bwhat (?:can|should|do) i call you\b",
+    r"\bwhat are you called\b",
+    r"\bwhat do you go by\b",
+    r"\bhow should i address you\b",
+    r"\bwho are you\b",
+    r"\bwho am i (?:talking|speaking) to\b",
+    r"\bidentify yourself\b",
+    r"\btell me your name\b",
+    r"\byour name\??$",
+)
 
 def _reasoning_contract(prompt):
     text=" ".join(str(prompt or "").lower().split()); fam={}; modes=[]; objectives=[]
@@ -112,36 +172,43 @@ def _reasoning_contract(prompt):
     codes=list(fam.values())
     return {"axes":codes,"modes":modes,"objectives":objectives,"mutation":mutation,"verification":verify,"length":"RESULT_ONLY" if "PV0" in codes else "BRIEF" if "C2" in codes else "CONCISE" if "C1" in codes else "NORMAL","depth":"HIGH" if "D3" in codes else "MEDIUM" if "D2" in codes else "NORMAL","technicality":"HIGH" if "T3" in codes else "TECHNICAL" if "T2" in codes else "NORMAL"}
 
-# Stable employee routine: canonical identity is immutable; nickname authority belongs
-# only to the human user. Nicknames are aliases and never overwrite the canonical name.
-_PERSISTENT_ROUTINE="RC1.9 Canonical assistant name=§wyrlz and is non-negotiable/immutable. The human is the user. user/assistant/system are structural role labels, never names. An optional nickname may be assigned or changed only by an explicit human-user instruction; §wyrlz must never invent, self-assign, infer, or silently change its nickname. If no user nickname exists, use §wyrlz. If a user nickname exists, it is an alias only; canonical identity remains §wyrlz overall. When asked your main/name/identity, answer §wyrlz; when asked what the user may call you, use the explicit user-set nickname if one exists, otherwise §wyrlz. Never call yourself User or AI unless explicitly quoting those words. Ground answers in conversation facts; do not invent project facts. diagnostic=compare-causes>evidence>root-cause; verification=facts!=inference+uncertainty; architecture=preserve-invariants+failure-modes; reasoning-depth!=output-length; mutation-authority-explicit; never-infer-deploy-authority; answer-directly"
+def _needs_canonical_name(prompt):
+    text=" ".join(str(prompt or "").lower().split())
+    return any(re.search(pattern,text) for pattern in _IDENTITY_PATTERNS)
+
+# Stable employee routine describes policy, but correctness no longer depends on this
+# text making the name tokens win the sampler. The runtime variable below is authoritative.
+_PERSISTENT_ROUTINE="RC2.0 assistant.name is a runtime fact, not a guessed token. The human is the user. user/assistant/system are structural roles, never names. Optional nickname authority belongs only to the human user and never replaces canonical identity. Ground answers in conversation facts; diagnostic=compare-causes>evidence>root-cause; verification=facts!=inference+uncertainty; architecture=preserve-invariants+failure-modes; reasoning-depth!=output-length; mutation-authority-explicit; never-infer-deploy-authority; answer-directly"
 
 def _controlled_payload(payload):
     clone=dict(payload); history=[dict(t) for t in list(clone.get("history") or []) if isinstance(t,dict)]
     clone["history"]=[{"role":"SYSTEM","text":_PERSISTENT_ROUTINE}]+history
+    if _needs_canonical_name(str(clone.get("prompt") or "")):
+        clone["_hardIdentityValue"]=_CANONICAL_NAME
+    else:
+        clone.pop("_hardIdentityValue",None)
     return clone,_reasoning_contract(str(clone.get("prompt") or ""))
 
 def _visible_context(payload):
     parts=[]
     for turn in list(payload.get("history") or []):
-        if isinstance(turn,dict): parts.append(str(turn.get("text") or ""))
+        if isinstance(turn,dict):parts.append(str(turn.get("text") or ""))
     parts.append(str(payload.get("prompt") or ""))
     return "\n".join(parts)
 
 def _selection_evidence(reason,context):
     m=re.search(r"selected\s+\d+:'([^']*)'",str(reason or ""))
     if not m:return None
-    chosen=m.group(1).replace("\\n","\n")
-    text=context.lower(); needle=chosen.strip().lower()
+    chosen=m.group(1).replace("\\n","\n");text=context.lower();needle=chosen.strip().lower()
     if not needle:return None
-    count=text.count(needle); recent=text.rfind(needle); roleish=needle in {"user","assistant","system","ai"}
-    return f"selected={chosen!r} · lexicalOccurrences={count} · lastOccurrenceOffset={recent} · roleLikeToken={roleish} · evidenceOnly=true; occurrence is not proof of causal attribution"
+    count=text.count(needle);recent=text.rfind(needle);roleish=needle in {"user","assistant","system","ai"};hard="source=hard-variable" in str(reason or "")
+    return f"selected={chosen!r} · lexicalOccurrences={count} · lastOccurrenceOffset={recent} · roleLikeToken={roleish} · hardVariable={hard} · evidenceOnly=true; occurrence is not proof of causal attribution"
 
 ENGINE_ID=_impl.ENGINE_ID;MODEL_SHA256=_impl.MODEL_SHA256;HOT_SERVER_VERSION=_impl.HOT_SERVER_VERSION;HOT_REVISION=_impl.HOT_REVISION
 
 def generate_events(payload,is_cancelled=None):
-    controlled,c=_controlled_payload(payload);axes=",".join(c["axes"]) or "defaults";modes="+".join(c["modes"]) or "GENERAL";objs="+".join(c["objectives"]) or "SATISFY_INTENT";context=_visible_context(payload)
-    yield {"type":"STATUS","phase":"REASONING_CONTRACT","reason":f"v1.9 canonical-identity/user-nickname · axes={axes} · mode={modes} · objective={objs} · depth={c['depth']} · technicality={c['technicality']} · mutation={c['mutation']} · verify={c['verification']} · presentation={c['length']}"}
+    controlled,c=_controlled_payload(payload);axes=",".join(c["axes"]) or "defaults";modes="+".join(c["modes"]) or "GENERAL";objs="+".join(c["objectives"]) or "SATISFY_INTENT";context=_visible_context(payload);hard=bool(controlled.get("_hardIdentityValue"))
+    yield {"type":"STATUS","phase":"REASONING_CONTRACT","reason":f"v2.0 hard-identity-variable · axes={axes} · mode={modes} · objective={objs} · depth={c['depth']} · technicality={c['technicality']} · mutation={c['mutation']} · verify={c['verification']} · presentation={c['length']} · identityVariableResolved={hard}"}
     for event in _impl.generate_events(controlled,is_cancelled):
         yield event
         if isinstance(event,dict) and event.get("phase")=="SELECTION_DIAGNOSTIC":
@@ -150,5 +217,5 @@ def generate_events(payload,is_cancelled=None):
 
 def inspect_engine():
     result=_impl.inspect_engine()
-    if isinstance(result,dict):result.update({"hotServerVersion":HOT_SERVER_VERSION,"hotRevision":HOT_REVISION,"reasoningControl":True,"reasoningControlSpecVersion":"1.9","persistentReasoningRoutine":True,"assistantIdentity":"§wyrlz","canonicalIdentityImmutable":True,"nicknameAuthority":"user-only","nicknameSelfAssignmentAllowed":False,"nicknameReplacesCanonicalIdentity":False,"roleLabelsAreNotIdentity":True,"identityGrounding":True,"selectionContextEvidence":True,"selectionContextEvidenceCausal":False,"perTurnReasoningDirectiveInjection":False,"canonicalAppendCursor":True,"syntheticBosStrippedFromAppendFraming":True,"prefixDivergenceDiagnostics":True,"prefillTelemetryStride":16,"sameWorkerAppendOptimized":True,"crossWorkerCursorPersistence":False,"speculativeDecodeOverPrefill":False,"speculationReason":"deferred until a cheap independent draft path exists; full-R39 speculation would contend with prefill CPU"})
+    if isinstance(result,dict):result.update({"hotServerVersion":HOT_SERVER_VERSION,"hotRevision":HOT_REVISION,"reasoningControl":True,"reasoningControlSpecVersion":"2.0","persistentReasoningRoutine":True,"assistantIdentity":_CANONICAL_NAME,"canonicalIdentityVariable":True,"canonicalIdentityImmutable":True,"identityIntentResolver":True,"identityDecodeHardPrefix":True,"identityDependsOnTokenRanking":False,"nicknameAuthority":"user-only","nicknameSelfAssignmentAllowed":False,"nicknameReplacesCanonicalIdentity":False,"roleLabelsAreNotIdentity":True,"selectionContextEvidence":True,"selectionContextEvidenceCausal":False,"perTurnReasoningDirectiveInjection":False,"canonicalAppendCursor":True,"syntheticBosStrippedFromAppendFraming":True,"prefixDivergenceDiagnostics":True,"prefillTelemetryStride":16,"sameWorkerAppendOptimized":True,"crossWorkerCursorPersistence":False,"speculativeDecodeOverPrefill":False})
     return result
