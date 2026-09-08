@@ -1,10 +1,9 @@
-"""Hot R39 v16 append-ready recurrent cursor shim.
+"""Hot R39 v17 append-ready cursor + exact prefix-divergence diagnostics.
 
-Keeps compact deterministic reasoning control, and patches the hot implementation
-before load so generated EOS/end-of-turn framing is immediately advanced through
-the recurrent state and cached. A same-worker continuation can therefore restore
-the already-completed assistant turn and prefill only genuinely appended framing,
-control, and new user content. Exact-prefix reuse remains the recovery path.
+Keeps compact deterministic reasoning control and the v16 post-generation recurrent
+cursor finalization. v17 adds token-level cache diagnostics before prefix restore so
+we can see exactly where a completed hot cursor diverges from the next rendered
+request instead of inferring the boundary from reused=N telemetry.
 """
 from __future__ import annotations
 
@@ -13,17 +12,16 @@ import types
 import urllib.request
 
 _IMPL_URL = "https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/dev/runtime_hot/r39_engine_impl.py"
-_req = urllib.request.Request(_IMPL_URL, headers={"User-Agent": "swrlz-hot-r39-v16"})
+_req = urllib.request.Request(_IMPL_URL, headers={"User-Agent": "swrlz-hot-r39-v17"})
 with urllib.request.urlopen(_req, timeout=20) as _response:
     _source = _response.read(4_000_001)
 if len(_source) > 4_000_000:
     raise RuntimeError("R39_IMPL_TOO_LARGE")
 _source_text = _source.decode("utf-8")
 
-# v16: generation used to stop before forwarding EOS. That left the cached recurrent
-# state one framing boundary behind the history rendered on the next request, forcing
-# already-generated assistant text/framing to be rediscovered through prefill. Commit
-# EOS plus the canonical newline immediately, while the model is already hot.
+# v16 behavior retained: generation used to stop before forwarding EOS. Commit EOS
+# plus canonical trailing newline while the model is already hot, then cache that
+# completed cursor as the newest prefix entry.
 _old_eos = '''            if model.tokenizer.eos is not None and next_token == int(model.tokenizer.eos):
                 yield {"type": "STATUS", "phase": "STOP_DIAGNOSTIC", "reason": f"EOS selected at decode step {ordinal}."}
                 break
@@ -43,15 +41,81 @@ _new_eos = '''            if model.tokenizer.eos is not None and next_token == i
                 break
 '''
 if _old_eos not in _source_text:
-    raise RuntimeError("R39_V16_EOS_PATCH_TARGET_MISSING")
+    raise RuntimeError("R39_V17_EOS_PATCH_TARGET_MISSING")
 _source_text = _source_text.replace(_old_eos, _new_eos, 1)
 
-_impl = types.ModuleType("swrlz_hot_r39_engine_impl_v16")
+# v17: before normal exact-prefix lookup, compare the current rendered token stream
+# with every resident prefix-cache entry. The newest entry is the just-completed hot
+# cursor on the normal path. Report full common-prefix lengths and a small token window
+# around the first divergence. This is diagnostics only; reuse semantics are unchanged.
+_old_prefix_lookup = '''        prefix_len, cached_state, cached_logits = _prefix_get(tokens)
+        state = cached_state if cached_state is not None else base.RecurrentState()
+'''
+_new_prefix_lookup = '''        with _PREFIX_LOCK:
+            _diag_entries = [
+                {"tokens": list(item.get("tokens") or []), "usedAt": float(item.get("usedAt", 0.0))}
+                for item in _PREFIX_CACHE
+            ]
+        _diag_entries.sort(key=lambda item: item["usedAt"], reverse=True)
+        _diag_rows = []
+        _best_partial = None
+        _now = time.time()
+        for _idx, _entry in enumerate(_diag_entries):
+            _cached = _entry["tokens"]
+            _limit = min(len(_cached), len(tokens))
+            _lcp = 0
+            while _lcp < _limit and _cached[_lcp] == tokens[_lcp]:
+                _lcp += 1
+            _age = max(0.0, _now - _entry["usedAt"])
+            _diag_rows.append(f"#{_idx}:len={len(_cached)},lcp={_lcp},age={_age:.1f}s")
+            if _best_partial is None or _lcp > _best_partial["lcp"] or (_lcp == _best_partial["lcp"] and _entry["usedAt"] > _best_partial["usedAt"]):
+                _best_partial = {"index": _idx, "tokens": _cached, "lcp": _lcp, "usedAt": _entry["usedAt"], "age": _age}
+        yield {
+            "type": "STATUS",
+            "phase": "PREFIX_CACHE_DIAGNOSTIC",
+            "reason": f"current={len(tokens)} token(s) · resident={len(_diag_entries)} · " + (" · ".join(_diag_rows) if _diag_rows else "cache empty"),
+        }
+        if _best_partial is not None:
+            _cached = _best_partial["tokens"]
+            _lcp = int(_best_partial["lcp"])
+            if _lcp < min(len(_cached), len(tokens)):
+                _cached_id = int(_cached[_lcp])
+                _current_id = int(tokens[_lcp])
+                _c0, _c1 = max(0, _lcp - 4), min(len(_cached), _lcp + 5)
+                _n0, _n1 = max(0, _lcp - 4), min(len(tokens), _lcp + 5)
+                _cached_window = " | ".join(f"{i}:{int(_cached[i])}:{_token_text(model, int(_cached[i]))!r}" for i in range(_c0, _c1))
+                _current_window = " | ".join(f"{i}:{int(tokens[i])}:{_token_text(model, int(tokens[i]))!r}" for i in range(_n0, _n1))
+                yield {
+                    "type": "STATUS",
+                    "phase": "PREFIX_MISMATCH",
+                    "reason": f"best resident entry #{_best_partial['index']} diverges at token index {_lcp} (1-based {_lcp + 1}); cached={_cached_id}:{_token_text(model, _cached_id)!r}, current={_current_id}:{_token_text(model, _current_id)!r}; cachedWindow=[{_cached_window}]; currentWindow=[{_current_window}]",
+                }
+            elif len(_cached) <= len(tokens):
+                yield {
+                    "type": "STATUS",
+                    "phase": "PREFIX_MATCH",
+                    "reason": f"best resident entry #{_best_partial['index']} is an exact {len(_cached)}-token prefix of the {len(tokens)}-token current request; only the appended suffix should require prefill.",
+                }
+            else:
+                yield {
+                    "type": "STATUS",
+                    "phase": "PREFIX_TRUNCATION",
+                    "reason": f"current request ends after {_lcp} token(s) but resident entry #{_best_partial['index']} continues to {len(_cached)} token(s); history/rendering was shortened or replaced.",
+                }
+
+        prefix_len, cached_state, cached_logits = _prefix_get(tokens)
+        state = cached_state if cached_state is not None else base.RecurrentState()
+'''
+if _old_prefix_lookup not in _source_text:
+    raise RuntimeError("R39_V17_PREFIX_PATCH_TARGET_MISSING")
+_source_text = _source_text.replace(_old_prefix_lookup, _new_prefix_lookup, 1)
+
+_impl = types.ModuleType("swrlz_hot_r39_engine_impl_v17")
 _impl.__file__ = _IMPL_URL
 exec(compile(_source_text, _IMPL_URL, "exec"), _impl.__dict__)
 
-_impl.HOT_SERVER_VERSION = "2.1.25"
-_impl.HOT_REVISION = "2.1.25-hot-boundary-v16-append-ready-recurrent-cursor-v1.4"
+_impl.HOT_SERVER_VERSION = "2.1.26"
+_impl.HOT_REVISION = "2.1.26-hot-boundary-v17-exact-prefix-divergence-trace-v1.5"
 _impl._REFERENCE_RERANK_CANDIDATES = 6
 
 _original_format_stats = _impl._format_stats
@@ -112,7 +176,7 @@ def _reasoning_contract(prompt: str) -> dict:
 
 def _contract_directive(contract: dict) -> str:
     modes = contract["modes"] or ["GENERAL"]
-    bits = ["RC1.4", f"mode={'+'.join(modes)}", f"depth={contract['depth']}", f"tech={contract['technicality']}", f"evidence={contract['evidence']}", f"mutation={contract['mutation']}", f"verify={contract['verification']}", f"output={contract['length']}"]
+    bits = ["RC1.5", f"mode={'+'.join(modes)}", f"depth={contract['depth']}", f"tech={contract['technicality']}", f"evidence={contract['evidence']}", f"mutation={contract['mutation']}", f"verify={contract['verification']}", f"output={contract['length']}"]
     if "DIAGNOSTIC" in modes: bits.append("compare-causes>evidence>root-cause")
     if "VERIFICATION" in modes: bits.append("facts!=inference;state-uncertainty")
     if "ARCHITECTURE" in modes: bits.append("preserve-invariants;compare-failures;select-design")
@@ -124,7 +188,8 @@ def _controlled_payload(payload):
     clone = dict(payload)
     transformed = []
     for turn in list(clone.get("history") or []):
-        if not isinstance(turn, dict): continue
+        if not isinstance(turn, dict):
+            continue
         role = str(turn.get("role", "USER")).upper()
         text = str(turn.get("text", "")).strip()
         if role not in {"ASSISTANT", "AI", "SWRLZ", "SELF", "SYSTEM"} and text:
@@ -145,7 +210,7 @@ def generate_events(payload, is_cancelled=None):
     axes = ",".join(contract["axes"]) or "defaults"
     modes = "+".join(contract["modes"]) or "GENERAL"
     objectives = "+".join(contract["objectives"]) or "SATISFY_INTENT"
-    yield {"type": "STATUS", "phase": "REASONING_CONTRACT", "reason": f"v1.4 append-ready · axes={axes} · mode={modes} · objective={objectives} · depth={contract['depth']} · technicality={contract['technicality']} · evidence={contract['evidence']} · mutation={contract['mutation']} · verify={contract['verification']} · presentation={contract['length']}"}
+    yield {"type": "STATUS", "phase": "REASONING_CONTRACT", "reason": f"v1.5 prefix-divergence-trace · axes={axes} · mode={modes} · objective={objectives} · depth={contract['depth']} · technicality={contract['technicality']} · evidence={contract['evidence']} · mutation={contract['mutation']} · verify={contract['verification']} · presentation={contract['length']}"}
     yield from _impl.generate_events(controlled, is_cancelled)
 
 def inspect_engine():
@@ -158,7 +223,7 @@ def inspect_engine():
         result["nativeVerifiedFastRerank"] = True
         result["diagnosticSkippedLogitsLabel"] = True
         result["reasoningControl"] = True
-        result["reasoningControlSpecVersion"] = "1.4"
+        result["reasoningControlSpecVersion"] = "1.5"
         result["reasoningControlArchitecture"] = "intent -> compact control -> reasoning -> execution/verification -> presentation"
         result["reasoningPresentationSeparated"] = True
         result["mutationAuthoritySeparated"] = True
@@ -172,4 +237,7 @@ def inspect_engine():
         result["postGenerationEosCommitted"] = True
         result["appendReadyRecurrentState"] = True
         result["prefixCacheRecoveryFallback"] = True
+        result["prefixDivergenceDiagnostics"] = True
+        result["prefixMismatchTokenWindows"] = True
+        result["prefixCacheInventoryTelemetry"] = True
     return result
