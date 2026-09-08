@@ -1,22 +1,20 @@
-"""Hot R39 v25 conversational controller + stable recurrent cursor.
+"""Hot R39 v26 conversational controller + vectorized attention fast path.
 
-Distills conversational behavior from the user's GPT conversation export without changing
-model weights. The model-facing employee routine is byte-invariant across turns. Dynamic
-intent/quality controls live outside the rendered prefix so exact same-worker append reuse
-survives. Runtime decode guards prevent one-token answers, stale response echoes, role-label
-identity failures, and missing hard identity facts while keeping forced grounding inside the
-recurrent state/cursor rather than appending uncommitted text afterward.
+Builds on v25's conversation-aware intent/quality controller while accelerating the
+Python-side recurrent attention path. Grouped-query attention and per-head RMS are
+vectorized with NumPy, RoPE trig is cached per position, and dynamic conversation controls
+remain outside the model-facing prefix so exact same-worker append reuse survives.
 """
 from __future__ import annotations
 import re, types, urllib.request
+import numpy as np
 
 _IMPL_URL="https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/dev/runtime_hot/r39_engine_impl.py"
-_req=urllib.request.Request(_IMPL_URL,headers={"User-Agent":"swrlz-hot-r39-v25"})
+_req=urllib.request.Request(_IMPL_URL,headers={"User-Agent":"swrlz-hot-r39-v26"})
 with urllib.request.urlopen(_req,timeout=20) as _response:_source=_response.read(4_000_001)
 if len(_source)>4_000_000:raise RuntimeError("R39_IMPL_TOO_LARGE")
 _source_text=_source.decode("utf-8")
 
-# Canonical post-generation cursor: commit EOS + newline but strip tokenizer-injected BOS.
 _old_eos='''            if model.tokenizer.eos is not None and next_token == int(model.tokenizer.eos):
                 yield {"type": "STATUS", "phase": "STOP_DIAGNOSTIC", "reason": f"EOS selected at decode step {ordinal}."}
                 break
@@ -38,10 +36,9 @@ _new_eos='''            if model.tokenizer.eos is not None and next_token == int
                 yield {"type":"STATUS","phase":"HOT_CURSOR_READY","reason":f"EOS selected at decode step {ordinal}; committed EOS + {len(framing_tokens)} canonical end-of-turn framing token(s); strippedSyntheticBos={stripped_bos}."}
                 break
 '''
-if _old_eos not in _source_text:raise RuntimeError("R39_V25_EOS_PATCH_TARGET_MISSING")
+if _old_eos not in _source_text:raise RuntimeError("R39_V26_EOS_PATCH_TARGET_MISSING")
 _source_text=_source_text.replace(_old_eos,_new_eos,1)
 
-# Exact resident-prefix diagnostics.
 _old_lookup='''        prefix_len, cached_state, cached_logits = _prefix_get(tokens)
         state = cached_state if cached_state is not None else base.RecurrentState()
 '''
@@ -60,11 +57,9 @@ _new_lookup='''        with _PREFIX_LOCK: entries=[{"tokens":list(x.get("tokens"
             else:yield {"type":"STATUS","phase":"PREFIX_TRUNCATION","reason":f"current request ends at {lcp} token(s) while resident entry #{best['index']} continues to {len(cached)}."}
         prefix_len,cached_state,cached_logits=_prefix_get(tokens);state=cached_state if cached_state is not None else base.RecurrentState()
 '''
-if _old_lookup not in _source_text:raise RuntimeError("R39_V25_PREFIX_PATCH_TARGET_MISSING")
+if _old_lookup not in _source_text:raise RuntimeError("R39_V26_PREFIX_PATCH_TARGET_MISSING")
 _source_text=_source_text.replace(_old_lookup,_new_lookup,1)
 
-# Prefill is recurrent/sequential, so optimize overhead rather than pretending it is batchable:
-# emit progress every 64 processed tokens and compute deep diagnostics only at first/final token.
 _old_yield='''                yield {
                     "type": "STATUS",
                     "phase": "PREFILL",
@@ -74,16 +69,48 @@ _old_yield='''                yield {
 _new_yield='''                if processed == 1 or ordinal == total or processed % 64 == 0:
                     yield {"type":"STATUS","phase":"PREFILL","reason":f"Prefill {ordinal}/{total} · {token_s:.3f}s token · {avg:.3f}s new-token avg · ETA {eta:.1f}s · reused={prefix_len} · backend={('native' if native else 'python')}."}
 '''
-if _old_yield not in _source_text:raise RuntimeError("R39_V25_PREFILL_PATCH_TARGET_MISSING")
+if _old_yield not in _source_text:raise RuntimeError("R39_V26_PREFILL_PATCH_TARGET_MISSING")
 _source_text=_source_text.replace(_old_yield,_new_yield,1)
 _old_trace='''                trace_this = ordinal in {1, total} or ordinal % 32 == 0
 '''
 _new_trace='''                trace_this = ordinal in {1, total}
 '''
-if _old_trace not in _source_text:raise RuntimeError("R39_V25_TRACE_PATCH_TARGET_MISSING")
+if _old_trace not in _source_text:raise RuntimeError("R39_V26_TRACE_PATCH_TARGET_MISSING")
 _source_text=_source_text.replace(_old_trace,_new_trace,1)
 
-# Conversation-aware decode controls. These never alter the rendered prompt/history prefix.
+_old_attention='''            qn = model.vector(f"blk.{i}.attn_q_norm.weight")
+            kn = model.vector(f"blk.{i}.attn_k_norm.weight")
+            q = np.concatenate([base._rms(q.reshape(16, 64)[h], qn) for h in range(16)]).astype(np.float32)
+            k = np.concatenate([base._rms(k.reshape(8, 64)[h], kn) for h in range(8)]).astype(np.float32)
+            q = base._rope(q, 16, 64, state.pos)
+            k = base._rope(k, 8, 64, state.pos)
+            state.kv[i].append((k.copy(), v.copy()))
+            att = np.zeros((16, 64), np.float32)
+            for h in range(16):
+                kh = h // 2
+                qh = q.reshape(16, 64)[h]
+                scores = np.array([np.dot(qh, kk.reshape(8, 64)[kh]) / 8.0 for kk, _ in state.kv[i]], np.float32)
+                weights = np.exp(scores - scores.max(), dtype=np.float32)
+                weights /= weights.sum(dtype=np.float32)
+                for weight, (_, vv) in zip(weights, state.kv[i]):
+                    att[h] += weight * vv.reshape(8, 64)[kh]
+            op = model.matvec(f"blk.{i}.attn_output.weight", att.reshape(-1))
+            path = "attention"
+'''
+_new_attention='''            qn = model.vector(f"blk.{i}.attn_q_norm.weight")
+            kn = model.vector(f"blk.{i}.attn_k_norm.weight")
+            q = _hot_head_rms(q, 16, qn)
+            k = _hot_head_rms(k, 8, kn)
+            q = base._rope(q, 16, 64, state.pos)
+            k = base._rope(k, 8, 64, state.pos)
+            state.kv[i].append((k.copy(), v.copy()))
+            att = _hot_attention(q, state.kv[i])
+            op = model.matvec(f"blk.{i}.attn_output.weight", att.reshape(-1))
+            path = "attention-vectorized"
+'''
+if _old_attention not in _source_text:raise RuntimeError("R39_V26_ATTENTION_PATCH_TARGET_MISSING")
+_source_text=_source_text.replace(_old_attention,_new_attention,1)
+
 _old_loop='''        for ordinal in range(1, max_tokens + 1):
             if is_cancelled and is_cancelled():
                 raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
@@ -128,10 +155,8 @@ _new_loop='''        behavior=payload.get("_conversationBehavior") or {}
             else:
                 sample_logits=logits
                 blocked=[]
-                if ordinal==1 and role_start_ids:
-                    blocked.extend(role_start_ids)
-                if previous_tokens and len(emitted)<len(previous_tokens) and emitted==previous_tokens[:len(emitted)]:
-                    blocked.append(int(previous_tokens[len(emitted)]))
+                if ordinal==1 and role_start_ids:blocked.extend(role_start_ids)
+                if previous_tokens and len(emitted)<len(previous_tokens) and emitted==previous_tokens[:len(emitted)]:blocked.append(int(previous_tokens[len(emitted)]))
                 if blocked:
                     sample_logits=logits.copy()
                     for _tid in blocked:
@@ -140,19 +165,19 @@ _new_loop='''        behavior=payload.get("_conversationBehavior") or {}
                 next_token=_sample_hot(sample_logits,recent,temperature,top_p,hash(request_id) ^ (state.pos * 0x9E3779B9))
                 eos_id=int(model.tokenizer.eos) if model.tokenizer.eos is not None else None
                 if eos_id is not None and next_token==eos_id and ordinal<=min_decode:
-                    sample_logits=logits.copy();sample_logits[eos_id]=-1e30
-                    next_token=_sample_hot(sample_logits,recent,temperature,top_p,hash(request_id) ^ (state.pos * 0x9E3779B9));guard_note="early-eos-guard"
+                    retry_logits=sample_logits.copy();retry_logits[eos_id]=-1e30
+                    next_token=_sample_hot(retry_logits,recent,temperature,top_p,hash(request_id) ^ (state.pos * 0x9E3779B9));guard_note="early-eos-guard"
                 elif eos_id is not None and next_token==eos_id and required_tokens and not _contains_required(emitted,required_tokens):
                     forced_queue=list(required_tokens[1:]);next_token=int(required_tokens[0]);guard_note="required-slot-on-eos"
             if ordinal <= 8 or ordinal % 8 == 0:
 '''
-if _old_loop not in _source_text:raise RuntimeError("R39_V25_LOOP_PATCH_TARGET_MISSING")
+if _old_loop not in _source_text:raise RuntimeError("R39_V26_LOOP_PATCH_TARGET_MISSING")
 _source_text=_source_text.replace(_old_loop,_new_loop,1)
 _old_diag='''                    "reason": f"step {ordinal} selected {next_token}:{_token_text(model, next_token)!r} · top repaired " + "; ".join(f"{int(t)}:{_token_text(model, int(t))!r}={float(logits[int(t)]):.4g}" for t in before_ids),
 '''
 _new_diag='''                    "reason": f"step {ordinal} selected {next_token}:{_token_text(model, next_token)!r} · source={guard_note} · top repaired " + "; ".join(f"{int(t)}:{_token_text(model, int(t))!r}={float(logits[int(t)]):.4g}" for t in before_ids),
 '''
-if _old_diag not in _source_text:raise RuntimeError("R39_V25_DIAG_PATCH_TARGET_MISSING")
+if _old_diag not in _source_text:raise RuntimeError("R39_V26_DIAG_PATCH_TARGET_MISSING")
 _source_text=_source_text.replace(_old_diag,_new_diag,1)
 _old_recent='''            recent.append(next_token)
             sequence_tokens.append(next_token)
@@ -161,13 +186,48 @@ _new_recent='''            recent.append(next_token)
             emitted.append(int(next_token))
             sequence_tokens.append(next_token)
 '''
-if _old_recent not in _source_text:raise RuntimeError("R39_V25_EMITTED_PATCH_TARGET_MISSING")
+if _old_recent not in _source_text:raise RuntimeError("R39_V26_EMITTED_PATCH_TARGET_MISSING")
 _source_text=_source_text.replace(_old_recent,_new_recent,1)
 
-_impl=types.ModuleType("swrlz_hot_r39_engine_impl_v25");_impl.__file__=_IMPL_URL
+_impl=types.ModuleType("swrlz_hot_r39_engine_impl_v26");_impl.__file__=_IMPL_URL
 exec(compile(_source_text,_IMPL_URL,"exec"),_impl.__dict__)
-_impl.HOT_SERVER_VERSION="2.1.34"
-_impl.HOT_REVISION="2.1.34-hot-boundary-v25-conversational-controller-v3.0"
+
+def _hot_head_rms(value,heads,weight):
+    a=np.asarray(value,dtype=np.float32).reshape(int(heads),64)
+    denom=np.sqrt(np.mean(a*a,axis=1,dtype=np.float32,keepdims=True)+np.float32(1e-5),dtype=np.float32)
+    return (a/denom*np.asarray(weight,dtype=np.float32).reshape(1,64)).astype(np.float32).reshape(-1)
+
+def _hot_attention(q,entries):
+    length=len(entries)
+    qg=np.asarray(q,dtype=np.float32).reshape(8,2,64)
+    keys=np.stack([item[0] for item in entries],axis=0).reshape(length,8,64)
+    values=np.stack([item[1] for item in entries],axis=0).reshape(length,8,64)
+    scores=np.einsum("hqd,thd->hqt",qg,keys,optimize=True)/np.float32(8.0)
+    weights=np.exp(scores-scores.max(axis=2,keepdims=True),dtype=np.float32)
+    weights/=weights.sum(axis=2,keepdims=True,dtype=np.float32)
+    return np.einsum("hqt,thd->hqd",weights,values,optimize=True).astype(np.float32).reshape(16,64)
+
+_ROPE_CACHE={};_ROPE_CACHE_MAX=8192
+
+def _hot_rope(x,heads,hd,pos,theta=1_000_000.0):
+    key=(int(pos),int(hd),float(theta))
+    pair=_ROPE_CACHE.get(key)
+    if pair is None:
+        half=int(hd)//2
+        inv=1.0/(float(theta)**(np.arange(half,dtype=np.float64)*2.0/int(hd)))
+        angle=int(pos)*inv
+        pair=(np.cos(angle).astype(np.float32),np.sin(angle).astype(np.float32))
+        if len(_ROPE_CACHE)>=_ROPE_CACHE_MAX:_ROPE_CACHE.clear()
+        _ROPE_CACHE[key]=pair
+    c,s=pair;y=np.asarray(x,dtype=np.float32).reshape(int(heads),int(hd)).copy();half=int(hd)//2
+    a=y[:,:half].copy();b=y[:,half:].copy();y[:,:half]=a*c-b*s;y[:,half:]=b*c+a*s
+    return y.reshape(-1)
+
+_impl._hot_head_rms=_hot_head_rms
+_impl._hot_attention=_hot_attention
+_impl.base._rope=_hot_rope
+_impl.HOT_SERVER_VERSION="2.1.35"
+_impl.HOT_REVISION="2.1.35-hot-boundary-v26-vectorized-attention-conversation-v3.1"
 _impl._REFERENCE_RERANK_CANDIDATES=6
 _original_format_stats=_impl._format_stats
 def _format_stats(stats):return "skipped" if not stats else _original_format_stats(stats)
@@ -207,8 +267,7 @@ def _intent(prompt):
     elif "?" in raw or re.match(r"^(what|who|when|where|how|can|do|does|is|are|will|would|could|should)\b",text):kind="DIRECT_QA"
     else:kind="GENERAL"
     floors={"SELF_NAME_QUERY":6,"SELF_EXPLANATION":14,"CORRECTION":9,"ENGINEERING_ACTION":7,"WHY_EXPLANATION":12,"PLAYFUL_CASUAL":5,"CONTEXT_CONTINUATION":6,"DIRECT_QA":6,"GENERAL":4}
-    floor=0 if minimal else floors[kind]
-    return {"kind":kind,"minimum":floor,"minimal":minimal}
+    return {"kind":kind,"minimum":0 if minimal else floors[kind],"minimal":minimal}
 
 def _last_assistant(history):
     for turn in reversed(history):
@@ -217,9 +276,7 @@ def _last_assistant(history):
             if text:return text
     return ""
 
-# Byte-for-byte invariant. Distilled from 4,243 recent user/assistant pairs in the supplied
-# GPT export: context continuity, correction handling, analogy preservation, playful precision.
-_PERSISTENT_ROUTINE="RC3.0 Your canonical name is §wyrlz. You are a warm, witty, adaptive, elder-dragon-flavored conversational intelligence: playful in casual chat, evidence-first in engineering, technically exact in both. The human is the user; user/assistant/system/AI are roles, not names. Only the user may set a nickname; it never replaces §wyrlz. Track the active topic and resolve short references from recent context. A user correction replaces the superseded interpretation. Answer the requested operation, not merely a related noun: why asks for explanation, name asks for identity. Preserve the user's analogy before extending it; infer understandable coined words from context. Do not leak control labels or mechanically repeat the same opening. Separate fact from inference. Mutation/deployment authority must be explicit."
+_PERSISTENT_ROUTINE="RC3.1 Your canonical name is §wyrlz. You are a warm, witty, adaptive, elder-dragon-flavored conversational intelligence: playful in casual chat, evidence-first in engineering, technically exact in both. The human is the user; user/assistant/system/AI are roles, not names. Only the user may set a nickname; it never replaces §wyrlz. Track the active topic and resolve short references from recent context. A user correction replaces the superseded interpretation. Answer the requested operation, not merely a related noun: why asks for explanation, name asks for identity. Preserve the user's analogy before extending it; infer understandable coined words from context. Do not leak control labels or mechanically repeat the same opening. Separate fact from inference. Mutation/deployment authority must be explicit."
 
 def _controlled_payload(payload):
     clone=dict(payload);history=[dict(t) for t in list(clone.get("history") or []) if isinstance(t,dict)]
@@ -245,7 +302,7 @@ ENGINE_ID=_impl.ENGINE_ID;MODEL_SHA256=_impl.MODEL_SHA256;HOT_SERVER_VERSION=_im
 
 def generate_events(payload,is_cancelled=None):
     controlled,c,info=_controlled_payload(payload);axes=",".join(c["axes"]) or "defaults";modes="+".join(c["modes"]) or "GENERAL";objs="+".join(c["objectives"]) or "SATISFY_INTENT";context=_visible_context(payload);pieces=[];completed=None
-    yield {"type":"STATUS","phase":"REASONING_CONTRACT","reason":f"v3.0 conversational-controller · intent={info['kind']} · axes={axes} · mode={modes} · objective={objs} · mutation={c['mutation']} · verify={c['verification']} · presentation={c['length']}"}
+    yield {"type":"STATUS","phase":"REASONING_CONTRACT","reason":f"v3.1 conversational-controller · intent={info['kind']} · axes={axes} · mode={modes} · objective={objs} · mutation={c['mutation']} · verify={c['verification']} · presentation={c['length']}"}
     yield {"type":"STATUS","phase":"CONVERSATION_INTENT","reason":f"intent={info['kind']} · minimumDecodeTokens={info['minimum']} · dynamicModelPrefix=false · contextPolicy=recent-thread-first"}
     if info["kind"]=="SELF_NAME_QUERY":yield {"type":"STATUS","phase":"HARD_VARIABLE_RESOLVED","reason":f"assistant.name={_CANONICAL_NAME!r} required; enforcement occurs inside recurrent decode so cached cursor and visible text stay identical."}
     for event in _impl.generate_events(controlled,is_cancelled):
@@ -256,13 +313,11 @@ def generate_events(payload,is_cancelled=None):
             evidence=_selection_evidence(event.get("reason"),context)
             if evidence:yield {"type":"STATUS","phase":"SELECTION_CONTEXT_EVIDENCE","reason":evidence}
     rendered="".join(pieces).strip()
-    if info["kind"]=="SELF_NAME_QUERY":
-        yield {"type":"STATUS","phase":"GROUNDING_VERIFICATION","reason":f"assistant.name present={_CANONICAL_NAME in rendered}; visibleChars={len(rendered)}; repairAppendedOutsideCursor=false"}
-    elif info["kind"]=="SELF_EXPLANATION":
-        yield {"type":"STATUS","phase":"CONVERSATION_QUALITY","reason":f"self-explanation chars={len(rendered)}; bareNameOnly={rendered==_CANONICAL_NAME}; previousResponseEchoGuard=true"}
+    if info["kind"]=="SELF_NAME_QUERY":yield {"type":"STATUS","phase":"GROUNDING_VERIFICATION","reason":f"assistant.name present={_CANONICAL_NAME in rendered}; visibleChars={len(rendered)}; repairAppendedOutsideCursor=false"}
+    elif info["kind"]=="SELF_EXPLANATION":yield {"type":"STATUS","phase":"CONVERSATION_QUALITY","reason":f"self-explanation chars={len(rendered)}; bareNameOnly={rendered==_CANONICAL_NAME}; previousResponseEchoGuard=true"}
     if completed is not None:yield completed
 
 def inspect_engine():
     result=_impl.inspect_engine()
-    if isinstance(result,dict):result.update({"hotServerVersion":HOT_SERVER_VERSION,"hotRevision":HOT_REVISION,"reasoningControl":True,"reasoningControlSpecVersion":"3.0","conversationCurriculum":"runtime_hot/conversation_curriculum_v1.json","conversationController":True,"adaptiveMinimumDecode":True,"earlyEosGuard":True,"previousAssistantEchoGuard":True,"roleLabelIdentityGuard":True,"requiredSlotCommittedInsideCursor":True,"postGenerationUncommittedRepair":False,"persistentReasoningRoutine":True,"persistentRoutineByteInvariant":True,"assistantIdentity":_CANONICAL_NAME,"canonicalIdentityImmutable":True,"nicknameAuthority":"user-only","dynamicModelPrefixInjection":False,"canonicalAppendCursor":True,"syntheticBosStrippedFromAppendFraming":True,"prefixDivergenceDiagnostics":True,"prefillTelemetryStride":64,"prefillDeepDiagnostics":"first+final","prefillSkipsIntermediateLogits":True,"sameWorkerAppendOptimized":True,"crossWorkerCursorPersistence":False,"speculativeDecodeOverPrefill":False})
+    if isinstance(result,dict):result.update({"hotServerVersion":HOT_SERVER_VERSION,"hotRevision":HOT_REVISION,"reasoningControl":True,"reasoningControlSpecVersion":"3.1","conversationCurriculum":"runtime_hot/conversation_curriculum_v1.json","conversationController":True,"adaptiveMinimumDecode":True,"earlyEosGuard":True,"previousAssistantEchoGuard":True,"roleLabelIdentityGuard":True,"requiredSlotCommittedInsideCursor":True,"postGenerationUncommittedRepair":False,"persistentReasoningRoutine":True,"persistentRoutineByteInvariant":True,"assistantIdentity":_CANONICAL_NAME,"canonicalIdentityImmutable":True,"nicknameAuthority":"user-only","dynamicModelPrefixInjection":False,"canonicalAppendCursor":True,"syntheticBosStrippedFromAppendFraming":True,"prefixDivergenceDiagnostics":True,"prefillTelemetryStride":64,"prefillDeepDiagnostics":"first+final","prefillSkipsIntermediateLogits":True,"vectorizedAttention":True,"vectorizedHeadRms":True,"ropeTrigCache":True,"sameWorkerAppendOptimized":True,"crossWorkerCursorPersistence":False,"speculativeDecodeOverPrefill":False})
     return result
