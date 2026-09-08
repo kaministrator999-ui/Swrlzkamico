@@ -1,9 +1,10 @@
-"""Hot R39 v15 compact reasoning-control shim.
+"""Hot R39 v16 append-ready recurrent cursor shim.
 
-Keeps reasoning control operational while making every reconstructed control turn
-small and deterministic. Historical user turns receive the same compact control
-turn that was placed immediately before them when they were current, preserving
-token-prefix compatibility without repeatedly injecting long English directives.
+Keeps compact deterministic reasoning control, and patches the hot implementation
+before load so generated EOS/end-of-turn framing is immediately advanced through
+the recurrent state and cached. A same-worker continuation can therefore restore
+the already-completed assistant turn and prefill only genuinely appended framing,
+control, and new user content. Exact-prefix reuse remains the recovery path.
 """
 from __future__ import annotations
 
@@ -12,18 +13,45 @@ import types
 import urllib.request
 
 _IMPL_URL = "https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/dev/runtime_hot/r39_engine_impl.py"
-_req = urllib.request.Request(_IMPL_URL, headers={"User-Agent": "swrlz-hot-r39-v15"})
+_req = urllib.request.Request(_IMPL_URL, headers={"User-Agent": "swrlz-hot-r39-v16"})
 with urllib.request.urlopen(_req, timeout=20) as _response:
     _source = _response.read(4_000_001)
 if len(_source) > 4_000_000:
     raise RuntimeError("R39_IMPL_TOO_LARGE")
-_source.decode("utf-8")
-_impl = types.ModuleType("swrlz_hot_r39_engine_impl_v11")
-_impl.__file__ = _IMPL_URL
-exec(compile(_source, _IMPL_URL, "exec"), _impl.__dict__)
+_source_text = _source.decode("utf-8")
 
-_impl.HOT_SERVER_VERSION = "2.1.24"
-_impl.HOT_REVISION = "2.1.24-hot-boundary-v15-compact-stable-reasoning-control-v1.3"
+# v16: generation used to stop before forwarding EOS. That left the cached recurrent
+# state one framing boundary behind the history rendered on the next request, forcing
+# already-generated assistant text/framing to be rediscovered through prefill. Commit
+# EOS plus the canonical newline immediately, while the model is already hot.
+_old_eos = '''            if model.tokenizer.eos is not None and next_token == int(model.tokenizer.eos):
+                yield {"type": "STATUS", "phase": "STOP_DIAGNOSTIC", "reason": f"EOS selected at decode step {ordinal}."}
+                break
+'''
+_new_eos = '''            if model.tokenizer.eos is not None and next_token == int(model.tokenizer.eos):
+                sequence_tokens.append(next_token)
+                logits = _forward_hot(model, next_token, state, need_logits=True, diag=None)
+                if logits is None:
+                    raise base.R39InferenceError("R39_CURSOR_EOS_LOGITS_MISSING", "EOS cursor finalization returned no logits.")
+                framing_tokens = model.tokenizer.encode("\\n")
+                for framing_token in framing_tokens:
+                    sequence_tokens.append(framing_token)
+                    logits = _forward_hot(model, framing_token, state, need_logits=True, diag=None)
+                    if logits is None:
+                        raise base.R39InferenceError("R39_CURSOR_FRAME_LOGITS_MISSING", "Post-generation framing returned no logits.")
+                yield {"type": "STATUS", "phase": "HOT_CURSOR_READY", "reason": f"EOS selected at decode step {ordinal}; committed EOS + {len(framing_tokens)} end-of-turn framing token(s) into the hot recurrent cursor before waiting for the next user turn."}
+                break
+'''
+if _old_eos not in _source_text:
+    raise RuntimeError("R39_V16_EOS_PATCH_TARGET_MISSING")
+_source_text = _source_text.replace(_old_eos, _new_eos, 1)
+
+_impl = types.ModuleType("swrlz_hot_r39_engine_impl_v16")
+_impl.__file__ = _IMPL_URL
+exec(compile(_source_text, _IMPL_URL, "exec"), _impl.__dict__)
+
+_impl.HOT_SERVER_VERSION = "2.1.25"
+_impl.HOT_REVISION = "2.1.25-hot-boundary-v16-append-ready-recurrent-cursor-v1.4"
 _impl._REFERENCE_RERANK_CANDIDATES = 6
 
 _original_format_stats = _impl._format_stats
@@ -74,11 +102,8 @@ def _reasoning_contract(prompt: str) -> dict:
     elif re.search(r"\b(sanity[- ]check|check)\b", text): verification = "V1"
     codes = list(by_family.values())
     return {
-        "axes": codes,
-        "modes": modes,
-        "objectives": objectives,
-        "mutation": mutation,
-        "verification": verification,
+        "axes": codes, "modes": modes, "objectives": objectives,
+        "mutation": mutation, "verification": verification,
         "length": "RESULT_ONLY" if "PV0" in codes else "BRIEF" if "C2" in codes else "CONCISE" if "C1" in codes else "NORMAL",
         "depth": "HIGH" if "D3" in codes else "MEDIUM" if "D2" in codes else "NORMAL",
         "technicality": "HIGH" if "T3" in codes else "TECHNICAL" if "T2" in codes else "NORMAL",
@@ -86,38 +111,20 @@ def _reasoning_contract(prompt: str) -> dict:
     }
 
 def _contract_directive(contract: dict) -> str:
-    """Small deterministic instruction; identical input text => identical control tokens."""
     modes = contract["modes"] or ["GENERAL"]
-    mode = "+".join(modes)
-    bits = [
-        "RC1.3",
-        f"mode={mode}",
-        f"depth={contract['depth']}",
-        f"tech={contract['technicality']}",
-        f"evidence={contract['evidence']}",
-        f"mutation={contract['mutation']}",
-        f"verify={contract['verification']}",
-        f"output={contract['length']}",
-    ]
-    # Preserve the decisive behavioral semantics, but only when that mode needs them.
-    if "DIAGNOSTIC" in modes:
-        bits.append("compare-causes>evidence>root-cause")
-    if "VERIFICATION" in modes:
-        bits.append("facts!=inference;state-uncertainty")
-    if "ARCHITECTURE" in modes:
-        bits.append("preserve-invariants;compare-failures;select-design")
-    if contract["mutation"] == "M0":
-        bits.append("read-only")
-    elif contract["mutation"] == "M1":
-        bits.append("proposal-only")
+    bits = ["RC1.4", f"mode={'+'.join(modes)}", f"depth={contract['depth']}", f"tech={contract['technicality']}", f"evidence={contract['evidence']}", f"mutation={contract['mutation']}", f"verify={contract['verification']}", f"output={contract['length']}"]
+    if "DIAGNOSTIC" in modes: bits.append("compare-causes>evidence>root-cause")
+    if "VERIFICATION" in modes: bits.append("facts!=inference;state-uncertainty")
+    if "ARCHITECTURE" in modes: bits.append("preserve-invariants;compare-failures;select-design")
+    if contract["mutation"] == "M0": bits.append("read-only")
+    elif contract["mutation"] == "M1": bits.append("proposal-only")
     return " ".join(bits)
 
 def _controlled_payload(payload):
     clone = dict(payload)
     transformed = []
     for turn in list(clone.get("history") or []):
-        if not isinstance(turn, dict):
-            continue
+        if not isinstance(turn, dict): continue
         role = str(turn.get("role", "USER")).upper()
         text = str(turn.get("text", "")).strip()
         if role not in {"ASSISTANT", "AI", "SWRLZ", "SELF", "SYSTEM"} and text:
@@ -138,7 +145,7 @@ def generate_events(payload, is_cancelled=None):
     axes = ",".join(contract["axes"]) or "defaults"
     modes = "+".join(contract["modes"]) or "GENERAL"
     objectives = "+".join(contract["objectives"]) or "SATISFY_INTENT"
-    yield {"type": "STATUS", "phase": "REASONING_CONTRACT", "reason": f"v1.3 compact-stable · axes={axes} · mode={modes} · objective={objectives} · depth={contract['depth']} · technicality={contract['technicality']} · evidence={contract['evidence']} · mutation={contract['mutation']} · verify={contract['verification']} · presentation={contract['length']}"}
+    yield {"type": "STATUS", "phase": "REASONING_CONTRACT", "reason": f"v1.4 append-ready · axes={axes} · mode={modes} · objective={objectives} · depth={contract['depth']} · technicality={contract['technicality']} · evidence={contract['evidence']} · mutation={contract['mutation']} · verify={contract['verification']} · presentation={contract['length']}"}
     yield from _impl.generate_events(controlled, is_cancelled)
 
 def inspect_engine():
@@ -151,7 +158,7 @@ def inspect_engine():
         result["nativeVerifiedFastRerank"] = True
         result["diagnosticSkippedLogitsLabel"] = True
         result["reasoningControl"] = True
-        result["reasoningControlSpecVersion"] = "1.3"
+        result["reasoningControlSpecVersion"] = "1.4"
         result["reasoningControlArchitecture"] = "intent -> compact control -> reasoning -> execution/verification -> presentation"
         result["reasoningPresentationSeparated"] = True
         result["mutationAuthoritySeparated"] = True
@@ -161,4 +168,8 @@ def inspect_engine():
         result["reasoningControlPrefixCompatible"] = True
         result["reasoningControlCompactHistoricalDirectives"] = True
         result["reasoningControlAvoidsEnglishDirectiveInflation"] = True
+        result["postGenerationCursorAdvance"] = True
+        result["postGenerationEosCommitted"] = True
+        result["appendReadyRecurrentState"] = True
+        result["prefixCacheRecoveryFallback"] = True
     return result
