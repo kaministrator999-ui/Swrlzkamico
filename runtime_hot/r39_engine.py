@@ -1,8 +1,9 @@
-"""Hot R39 v14 reasoning-control shim.
+"""Hot R39 v15 compact reasoning-control shim.
 
-Operationalizes the LALM v1.2 control contract and reconstructs deterministic
-control turns for historical user messages so continued conversations retain a
-stable transformed prefix for recurrent-state reuse.
+Keeps reasoning control operational while making every reconstructed control turn
+small and deterministic. Historical user turns receive the same compact control
+turn that was placed immediately before them when they were current, preserving
+token-prefix compatibility without repeatedly injecting long English directives.
 """
 from __future__ import annotations
 
@@ -11,7 +12,7 @@ import types
 import urllib.request
 
 _IMPL_URL = "https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/dev/runtime_hot/r39_engine_impl.py"
-_req = urllib.request.Request(_IMPL_URL, headers={"User-Agent": "swrlz-hot-r39-v14"})
+_req = urllib.request.Request(_IMPL_URL, headers={"User-Agent": "swrlz-hot-r39-v15"})
 with urllib.request.urlopen(_req, timeout=20) as _response:
     _source = _response.read(4_000_001)
 if len(_source) > 4_000_000:
@@ -21,8 +22,8 @@ _impl = types.ModuleType("swrlz_hot_r39_engine_impl_v11")
 _impl.__file__ = _IMPL_URL
 exec(compile(_source, _IMPL_URL, "exec"), _impl.__dict__)
 
-_impl.HOT_SERVER_VERSION = "2.1.23"
-_impl.HOT_REVISION = "2.1.23-hot-boundary-v14-operational-reasoning-control-v1.2"
+_impl.HOT_SERVER_VERSION = "2.1.24"
+_impl.HOT_REVISION = "2.1.24-hot-boundary-v15-compact-stable-reasoning-control-v1.3"
 _impl._REFERENCE_RERANK_CANDIDATES = 6
 
 _original_format_stats = _impl._format_stats
@@ -85,25 +86,31 @@ def _reasoning_contract(prompt: str) -> dict:
     }
 
 def _contract_directive(contract: dict) -> str:
+    """Small deterministic instruction; identical input text => identical control tokens."""
     modes = contract["modes"] or ["GENERAL"]
-    objective = contract["objectives"][0] if contract["objectives"] else "SATISFY_INTENT"
-    parts = [
-        f"LALM control v1.2. Mode={'+'.join(modes)}; objective={objective}.",
-        f"Depth={contract['depth']}; technicality={contract['technicality']}; evidence={contract['evidence']}.",
+    mode = "+".join(modes)
+    bits = [
+        "RC1.3",
+        f"mode={mode}",
+        f"depth={contract['depth']}",
+        f"tech={contract['technicality']}",
+        f"evidence={contract['evidence']}",
+        f"mutation={contract['mutation']}",
+        f"verify={contract['verification']}",
+        f"output={contract['length']}",
     ]
+    # Preserve the decisive behavioral semantics, but only when that mode needs them.
     if "DIAGNOSTIC" in modes:
-        parts.append("Compare plausible causes against available evidence, reject weak causes, and report the best-supported root cause rather than a generic symptom.")
+        bits.append("compare-causes>evidence>root-cause")
     if "VERIFICATION" in modes:
-        parts.append("Separate observed facts from inference and state material uncertainty.")
+        bits.append("facts!=inference;state-uncertainty")
     if "ARCHITECTURE" in modes:
-        parts.append("Preserve requirements and invariants, compare alternatives and failure modes, then select the best-supported design.")
-    if contract["length"] in {"BRIEF", "CONCISE", "RESULT_ONLY"}:
-        parts.append("Keep the visible answer short and dense without reducing analytical depth or omitting decisive evidence.")
+        bits.append("preserve-invariants;compare-failures;select-design")
     if contract["mutation"] == "M0":
-        parts.append("Read-only authority: do not claim changes, execution, or deployment were authorized or performed.")
+        bits.append("read-only")
     elif contract["mutation"] == "M1":
-        parts.append("Proposal authority only: suggest changes without claiming execution.")
-    return " ".join(parts)
+        bits.append("proposal-only")
+    return " ".join(bits)
 
 def _controlled_payload(payload):
     clone = dict(payload)
@@ -131,7 +138,7 @@ def generate_events(payload, is_cancelled=None):
     axes = ",".join(contract["axes"]) or "defaults"
     modes = "+".join(contract["modes"]) or "GENERAL"
     objectives = "+".join(contract["objectives"]) or "SATISFY_INTENT"
-    yield {"type": "STATUS", "phase": "REASONING_CONTRACT", "reason": f"v1.2 axes={axes} · mode={modes} · objective={objectives} · depth={contract['depth']} · technicality={contract['technicality']} · evidence={contract['evidence']} · mutation={contract['mutation']} · verify={contract['verification']} · presentation={contract['length']}"}
+    yield {"type": "STATUS", "phase": "REASONING_CONTRACT", "reason": f"v1.3 compact-stable · axes={axes} · mode={modes} · objective={objectives} · depth={contract['depth']} · technicality={contract['technicality']} · evidence={contract['evidence']} · mutation={contract['mutation']} · verify={contract['verification']} · presentation={contract['length']}"}
     yield from _impl.generate_events(controlled, is_cancelled)
 
 def inspect_engine():
@@ -144,12 +151,14 @@ def inspect_engine():
         result["nativeVerifiedFastRerank"] = True
         result["diagnosticSkippedLogitsLabel"] = True
         result["reasoningControl"] = True
-        result["reasoningControlSpecVersion"] = "1.2"
-        result["reasoningControlArchitecture"] = "intent -> reasoning -> execution/verification -> presentation"
+        result["reasoningControlSpecVersion"] = "1.3"
+        result["reasoningControlArchitecture"] = "intent -> compact control -> reasoning -> execution/verification -> presentation"
         result["reasoningPresentationSeparated"] = True
         result["mutationAuthoritySeparated"] = True
         result["reasoningContractTelemetry"] = True
         result["reasoningControlOperationalPrompts"] = True
         result["reasoningControlStableHistoricalReconstruction"] = True
         result["reasoningControlPrefixCompatible"] = True
+        result["reasoningControlCompactHistoricalDirectives"] = True
+        result["reasoningControlAvoidsEnglishDirectiveInflation"] = True
     return result
