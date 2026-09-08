@@ -16,7 +16,10 @@ static inline float fp16_to_f32(uint16_t h) {
             int shift = 0;
             while ((f & 0x400u) == 0) { f <<= 1; shift++; }
             f &= 0x3ffu;
-            out = (s << 31) | ((uint32_t)(127 - 15 - shift) << 23) | (f << 13);
+            /* Half subnormals normalize with exponent 1-bias, so after shifting the
+               leading 1 into bit 10 the unbiased exponent is -14-shift. The old
+               -15-shift expression made every subnormal scale exactly 1/2 sized. */
+            out = (s << 31) | ((uint32_t)(127 - 14 - shift) << 23) | (f << 13);
         }
     } else if (e == 31) {
         out = (s << 31) | 0x7f800000u | (f << 13);
