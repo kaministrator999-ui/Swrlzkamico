@@ -1,8 +1,8 @@
-"""§wyrlz Server 2.2.1 release entrypoint.
+"""§wyrlz Server 2.2.2 release entrypoint.
 
-2.2.1 completes the split-control-plane live-source boundary: Chat, Server, LALM,
-Admin, and live pages are read from GitHub dev at request time with bundled fallback,
-while the R39 engine remains independently request-driven through the hot runtime.
+2.2.2 keeps Chat, Server, LALM, Admin, and live pages GitHub-dev-backed at
+request time, and adds resilient/native R39 loading diagnostics so the compiled
+backend can be located even when source and installed-package paths differ.
 """
 from __future__ import annotations
 
@@ -18,8 +18,9 @@ from api.chat_fast_status import install as _install_chat_fast_status
 from api.admin_auth_guard import install as _install_admin_auth_guard
 from api.live_source_guard import install as _install_live_source_guard
 from api.control_plane import install as _install_control_plane
+from api.native_status import install as _install_native_status
 
-VERSION = "2.2.1"
+VERSION = "2.2.2"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -39,6 +40,7 @@ _install_chat_fast_status(_server)
 _install_chat_ui_guard(_server)
 _install_page_manager_ui(_server)
 _install_control_plane(_server)
+_install_native_status(_server)
 # Install last so this parent middleware owns GitHub-backed live reads across Vercel instances.
 _install_live_source_guard(_server)
 _server._write_server_state()
