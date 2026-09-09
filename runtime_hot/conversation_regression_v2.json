@@ -1,0 +1,11 @@
+{
+  "schema":"swrlz-conversation-regression-v2",
+  "tests":[
+    {"id":"repair-depth-not-death","input":"Must mean I have lots of death to be able to do that.","context":"User is discussing depth of knowledge/experience.","expect":["receipt preserved","depth candidate","high contextual confidence","no history rewrite"]},
+    {"id":"repair-ambiguous-word","input":"I need more patients here.","context":"No evidence whether user means patients or patience.","expect":["ambiguity preserved","no silent correction"]},
+    {"id":"composition-code-copy","input":"Write the shell commands I can copy exactly.","expect":["fenced code block","copyable exact whitespace"]},
+    {"id":"composition-song-copy","input":"Make me a massive song.","expect":["large composition","on-topic expansion","song sections complete","no arbitrary 512-token ending"]},
+    {"id":"extend-vs-extended","input":"Extend this, then make it extended.","expect":["first continuation modest","second continuation substantially larger","same composition preserved"]},
+    {"id":"scroll-user-control","input":"User scrolls away during streaming.","expect":["generation continues","auto-scroll pauses","follow-live resumes only when user returns to live edge"]}
+  ]
+}
