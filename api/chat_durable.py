@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from fastapi import Request
 from fastapi.responses import JSONResponse, StreamingResponse
 
@@ -23,15 +22,13 @@ if wf is not None:
     async def generate_chat_step(*, payload: dict):
         writable = get_writable()
         request_id = str(payload.get("requestId"))
-        from api.chat_extensions import _engine, _event_payload
-        engine, source = _engine()
-        seq = 1
-        for raw in engine.generate_events(payload, lambda: False):
-            event = _event_payload(seq, request_id, raw)
-            seq += 1
-            await writable.write((json.dumps(event, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8"))
+        # Reuse the already-proven local R39 stream adapter so the durable path
+        # emits the exact same protocol events as ordinary chat generation.
+        from api.chat_extensions import _local_stream
+        for chunk in _local_stream(payload):
+            await writable.write(chunk)
         await writable.close()
-        return {"ok": True, "requestId": request_id, "engineSource": source}
+        return {"ok": True, "requestId": request_id}
 
     @wf.workflow
     async def chat_generation_workflow(*, payload: dict):
