@@ -5,7 +5,8 @@
   "regions": ["iad1"],
   "git": {
     "deploymentEnabled": {
-      "dev": false
+      "dev": false,
+      "main": true
     }
   },
   "functions": {
