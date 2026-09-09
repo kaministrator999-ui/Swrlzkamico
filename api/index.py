@@ -1,8 +1,9 @@
-"""§wyrlz Server 2.3.0 release candidate entrypoint.
+"""§wyrlz Server 2.3.1 release candidate entrypoint.
 
-2.3.0 adds server-verified Google identity, durable per-user chat/profile state,
-Vercel Queue detached generation/replay, and intent-preserving input provenance while
-preserving the existing live Server/Chat/LALM control planes.
+2.3.1 adds server-verified Google identity, durable per-user chat/profile state,
+Vercel Queue detached generation/replay, intent-preserving input provenance, and the
+verified public Python Queues publishing/subscriber contract while preserving existing
+live Server/Chat/LALM control planes.
 """
 from __future__ import annotations
 
@@ -20,9 +21,9 @@ from api.live_source_guard import install as _install_live_source_guard
 from api.control_plane import install as _install_control_plane
 from api.native_status import install as _install_native_status
 from api.contextual_input import install as _install_contextual_input
-from api.account_routes import install as _install_account_routes
+from api.account_routes_v2 import install as _install_account_routes
 
-VERSION = "2.3.0"
+VERSION = "2.3.1"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -43,16 +44,12 @@ _install_chat_ui_guard(_server)
 _install_page_manager_ui(_server)
 _install_control_plane(_server)
 _install_native_status(_server)
-# Semantic input normalization composes over the existing chat request normalizers.
 _install_contextual_input(_server)
-# Account routes own durable identity/state/generation APIs; legacy proof-bound chat remains available.
 _install_account_routes(_server)
-# Install last so this parent middleware owns GitHub-backed live reads across Vercel instances.
 _install_live_source_guard(_server)
 _server._write_server_state()
 
 app = _server.app
-
 INSTANCE = _server.INSTANCE
 ROOT = _server.ROOT
 LIVE = _server.LIVE
