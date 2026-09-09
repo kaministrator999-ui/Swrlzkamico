@@ -21,7 +21,14 @@ exec(compile(_helper_bytes.decode("utf-8"),_HELPER_URL,"exec"),_batch_prefill.__
 _anchor='''_impl=types.ModuleType("swrlz_hot_r39_engine_impl_v26");_impl.__file__=_IMPL_URL
 exec(compile(_source_text,_IMPL_URL,"exec"),_impl.__dict__)
 '''
-_injected=r"""_batch_anchor='''        prefill_started = time.monotonic()
+_injected=r"""_budget_anchor='''        max_tokens = min(512, max(1, int(generation.get("maxTokens", 128))))
+'''
+_budget_replacement='''        max_tokens = min(2048, max(1, int(generation.get("maxTokens", 128))))
+'''
+if _budget_anchor not in _source_text: raise RuntimeError("R39_ADAPTIVE_BUDGET_PATCH_TARGET_MISSING")
+_source_text=_source_text.replace(_budget_anchor,_budget_replacement,1)
+
+_batch_anchor='''        prefill_started = time.monotonic()
         if remaining:
             for absolute_index in range(prefix_len, total):
 '''
