@@ -10,9 +10,9 @@ with urllib.request.urlopen(_req,timeout=20) as _response: _v26=_response.read(4
 if len(_v26)>4_000_000: raise RuntimeError("R39_V26_SOURCE_TOO_LARGE")
 source=_v26.decode("utf-8")
 
-_HELPER_COMMIT="80e1f21b0de2f5d461a6e67c4049264ac417dda1"
+_HELPER_COMMIT="606eb930d6619d88d6d1e8c928a45db9da859487"
 _HELPER_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_HELPER_COMMIT}/runtime_hot/r39_batch_prefill.py"
-_req=urllib.request.Request(_HELPER_URL,headers={"User-Agent":"swrlz-hot-r39-batch-helper-vector-gqa"})
+_req=urllib.request.Request(_HELPER_URL,headers={"User-Agent":"swrlz-hot-r39-batch-helper-vector-gqa-fix"})
 with urllib.request.urlopen(_req,timeout=20) as _response: _helper_bytes=_response.read(1_000_001)
 if len(_helper_bytes)>1_000_000: raise RuntimeError("R39_BATCH_HELPER_TOO_LARGE")
 _batch_prefill=types.ModuleType("swrlz_hot_r39_batch_prefill_vector_gqa"); _batch_prefill.__file__=_HELPER_URL
