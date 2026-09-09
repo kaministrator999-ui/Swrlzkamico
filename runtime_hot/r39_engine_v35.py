@@ -24,7 +24,7 @@ def _adaptive_generation(generation,profile):
 
 def _structure_state(text):
     s=str(text or ""); fences=s.count("```")
-    return {"openFence":fences%2==1,"openParen":s.count("(")>s.count(")"),"openBracket":s.count("[")>s.count("]"),"openBrace":s.count("{")>s.count("}"),"endsSentence":bool(re.search(r"[.!?。！？]\\s*$",s)),"endsLine":bool(s.endswith("\\n"))}
+    return {"openFence":fences%2==1,"openParen":s.count("(")>s.count(")"),"openBracket":s.count("[")>s.count("]"),"openBrace":s.count("{")>s.count("}"),"endsSentence":bool(re.search(r"[.!?。！？]\s*$",s)),"endsLine":bool(s.endswith("\n"))}
 
 def _controlled_payload(payload):
     clone,contract,info=_V35_BASE_CONTROLLED(payload); profile=dict(clone.get("_adaptiveProfile") or {})
@@ -37,7 +37,7 @@ def generate_events(payload,is_cancelled=None):
     text=""; approx_words=0; horizon_reported=False; wrap_reported=False
     for event in _V35_BASE_GENERATE(payload,is_cancelled):
         if isinstance(event,dict) and event.get("type")=="DELTA":
-            chunk=str(event.get("text") or ""); text+=chunk; approx_words=len(re.findall(r"\\S+",text)); state=_structure_state(text)
+            chunk=str(event.get("text") or ""); text+=chunk; approx_words=len(re.findall(r"\S+",text)); state=_structure_state(text)
             if not horizon_reported and approx_words>=plan["softTargetTokens"]:
                 horizon_reported=True; yield {"type":"STATUS","phase":"RESPONSE_HORIZON","reason":f"soft planning horizon reached · approxWords={approx_words} · scale={profile['responseScale']} · openStructure={any(state[k] for k in ('openFence','openParen','openBracket','openBrace'))} · naturalEosPreferred=true"}
             if not wrap_reported and approx_words>=max(1,plan["softTargetTokens"]-16) and any(state[k] for k in ('openFence','openParen','openBracket','openBrace')):
