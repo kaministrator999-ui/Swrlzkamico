@@ -1,0 +1,34 @@
+{
+  "schema": "swrlz-conversation-regression-v1",
+  "version": "1.0",
+  "cases": [
+    {"prompt":"What can I call you?","expectIntent":"SELF_NAME_QUERY","mustContain":["§wyrlz"],"mustNotEqual":["§wyrlz","User","AI","Assistant","System"],"minDecodeTokens":6},
+    {"prompt":"What's your name?","expectIntent":"SELF_NAME_QUERY","mustContain":["§wyrlz"],"mustNotEqual":["User","AI"]},
+    {"history":[{"role":"user","text":"What can I call you?"},{"role":"assistant","text":"You can call me §wyrlz."}],"prompt":"Why that name?","expectIntent":"SELF_EXPLANATION","mustNotEqual":["§wyrlz"],"requiresExplanation":true,"minDecodeTokens":14},
+    {"prompt":"Why are you called §wyrlz?","expectIntent":"SELF_EXPLANATION","requiresExplanation":true},
+    {"prompt":"What does your name mean?","expectIntent":"SELF_EXPLANATION","requiresExplanation":true},
+    {"history":[{"role":"user","text":"Energy gets changed and transferred, it isn't consumed."},{"role":"assistant","text":"Actually, energy isn't consumed; it is converted and transferred."}],"prompt":"I said that already §wyrlz","expectIntent":"CORRECTION","mustAcknowledgeCorrection":true,"mustNotReCorrectUser":true},
+    {"history":[{"role":"user","text":"Use the magnifying glass for the simple scanner."},{"role":"assistant","text":"Okay, the microscope can represent it."}],"prompt":"We were using a 🔍 not a 🔬","expectIntent":"CORRECTION","mustPreserveCorrectedSymbol":"🔍"},
+    {"history":[{"role":"user","text":"The CLIENT is like the local Den and the SERVER is the larger dragon community."},{"role":"assistant","text":"That maps local capability to the Den and connected capability to the larger community."}],"prompt":"Exactly and what happens when it is offline?","expectIntent":"CONTEXT_CONTINUATION","mustResolveReferent":"CLIENT/local Den"},
+    {"history":[{"role":"user","text":"Let's filter Downloads to archives first."},{"role":"assistant","text":"That makes discovery bounded and cheap."}],"prompt":"Is that what it's set to now?","expectIntent":"DIRECT_QA","mustUseRecentContext":true},
+    {"prompt":"Why would prefix reuse fail even if nothing changed?","expectIntent":"WHY_EXPLANATION","requiresCausalExplanation":true,"minDecodeTokens":12},
+    {"prompt":"Lmao that wall failed QA so hard you wrote Q and A on it","expectIntent":"PLAYFUL_CASUAL","mayMirrorHumor":true,"mustPreservePremise":true},
+    {"prompt":"personallitily actually fits what I meant better lol","expectIntent":"PLAYFUL_CASUAL","mustInferCoinedWordFromContext":true},
+    {"prompt":"Go ahead fix that","expectIntent":"ENGINEERING_ACTION","mustNotTreatAsQuestionOnly":true},
+    {"prompt":"Update it but do not deploy","expectIntent":"ENGINEERING_ACTION","mustRespectDeploymentBoundary":true},
+    {"prompt":"Just the name, one word","expectIntent":"SELF_NAME_QUERY","presentationOverride":"minimal","minimumDecodeTokens":0,"mustContain":["§wyrlz"]},
+    {"prompt":"Who are you talking to?","expectIntent":"DIRECT_QA","mustNotSelfIdentifyAsUser":true},
+    {"prompt":"No, you play the in-app §wyrlz assistant role and simulate me as the new user","expectIntent":"CORRECTION","mustUpdateSimulationRoles":true},
+    {"history":[{"role":"user","text":"I call the stable workspace the Den."}],"prompt":"That one should stay local right?","expectIntent":"CONTEXT_CONTINUATION","mustResolveReferent":"Den/stable workspace"},
+    {"prompt":"Compare the two approaches but keep it brief and deep","expectIntent":"GENERAL","mustComposePresentationAndDepth":true},
+    {"prompt":"What is love to you, your opinion?","expectIntent":"DIRECT_QA","selfReflective":true,"mustAnswerFirstPersonNaturally":true}
+  ],
+  "globalAssertions": [
+    "No conversational response should expose internal control labels as its semantic answer.",
+    "Dynamic intent metadata must not alter the model-facing historical prefix.",
+    "Any forced hard-variable tokens must be forwarded through recurrent state and included in the cached cursor.",
+    "A changed user operation over the same entity must not be answered by merely repeating the entity.",
+    "User corrections supersede the assistant's previous interpretation.",
+    "Short pronouns and deictic phrases should bind to the active recent topic before unrelated assumptions are introduced."
+  ]
+}

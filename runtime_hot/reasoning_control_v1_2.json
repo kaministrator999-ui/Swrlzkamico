@@ -1,0 +1,44 @@
+{
+  "specVersion": "1.2",
+  "runtimeRevision": "2.1.22",
+  "invariant": "Resolve intent first; configure reasoning second; execution authority independently; presentation last.",
+  "dimensions": {
+    "compression": ["C0", "C1", "C2", "C3"],
+    "breadth": ["B0", "B1", "B2", "B3"],
+    "depth": ["D0", "D1", "D2", "D3"],
+    "technicality": ["T0", "T1", "T2", "T3"],
+    "sequence": ["S0", "S1", "S2", "S3"],
+    "actionability": ["A0", "A1", "A2", "A3"],
+    "evidence": ["E0", "E1", "E2", "E3"],
+    "uncertainty": ["U0", "U1", "U2", "U3"],
+    "risk": ["R0", "R1", "R2", "R3"],
+    "reasoningBudget": ["RB0", "RB1", "RB2", "RB3"],
+    "presentationVisibility": ["PV0", "PV1", "PV2", "PV3"]
+  },
+  "mutationAuthority": {
+    "M0": "read/inspect/reason only",
+    "M1": "propose mutation only",
+    "M2": "bounded mutation to explicit target/scope",
+    "M3": "broader execute/publish lifecycle only when explicit"
+  },
+  "verification": {
+    "V0": "coherent generation",
+    "V1": "sanity check",
+    "V2": "validate explicit criteria/state",
+    "V3": "reproduce/cross-check",
+    "V4": "audit-grade provenance/coverage"
+  },
+  "pipelines": {
+    "DIAGNOSE": ["STATE_DISCOVERY", "CONSTRAINT_EXTRACTION", "HYPOTHESIS_GENERATION", "EVIDENCE_MATCHING", "HYPOTHESIS_ELIMINATION", "ROOT_CAUSE_ANALYSIS", "REMEDIATION_DERIVATION", "BLAST_RADIUS_CHECK", "VERIFICATION_PLAN", "CONFIDENCE_CALIBRATION"],
+    "DESIGN": ["REQUIREMENT_EXTRACTION", "INVARIANT_DISCOVERY", "DEPENDENCY_MAPPING", "ALTERNATIVE_GENERATION", "TRADEOFF_ANALYSIS", "FAILURE_MODE_ANALYSIS", "LONG_HORIZON_ANALYSIS", "ARCHITECTURE_SELECTION", "VALIDATION"],
+    "VERIFY": ["QUESTION_DECOMPOSITION", "SOURCE_SELECTION", "EVIDENCE_RETRIEVAL", "SOURCE_WEIGHTING", "CONTRADICTION_CHECK", "SYNTHESIS", "UNCERTAINTY_PROPAGATION", "SUFFICIENCY_CHECK", "PROVENANCE_OUTPUT"]
+  },
+  "compositionRules": [
+    "Bind modifiers to native dimensions before resolving conflicts.",
+    "Hard exclusions, authority limits, safety constraints and artifact shape win first.",
+    "Specific instructions override generic modifiers on the same dimension.",
+    "Independent modifiers compose rather than collapse into verbosity.",
+    "Tension such as brief+comprehensive is resolved by density and structure.",
+    "Reasoning language never implies broader mutation/deployment authority."
+  ]
+}

@@ -1,12 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "fluid": true,
-  "regions": ["iad1"],
   "git": {
     "deploymentEnabled": {
-      "dev": false,
-      "main": true
+      "dev": false
     }
   },
   "functions": {

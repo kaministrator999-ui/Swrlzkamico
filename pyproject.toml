@@ -4,11 +4,17 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "swrlzkamico-native"
-version = "0.1.0"
-description = "§wyrlz Vercel server native R39 acceleration package"
+version = "0.2.2"
+description = "§wyrlz Vercel server native R39 acceleration and durable account chat package"
 requires-python = ">=3.12"
 dependencies = [
   "fastapi==0.116.1",
   "numpy==2.3.2",
   "pydantic==2.11.7",
+  "google-auth>=2.35,<3",
+  "requests>=2.32,<3",
+  "vercel-queue",
 ]
+
+[[tool.vercel.subscribers]]
+entrypoint = "queues.swrlz_generation_v3"

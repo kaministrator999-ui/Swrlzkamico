@@ -1,7 +1,8 @@
 {
   "schema": 1,
-  "revision": "2.1.7-bootstrap",
+  "revision": "2.1.21-hot-boundary-v12-native-verified-fast-rerank",
   "inferenceFiles": [
-    "r39_engine.py"
+    "r39_engine.py",
+    "r39_engine_impl.py"
   ]
 }
