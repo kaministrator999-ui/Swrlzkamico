@@ -1,0 +1,98 @@
+{
+  "schema": "swrlz-conversation-curriculum-v2",
+  "version": "2.0",
+  "purpose": "Inference-time language understanding curriculum; not weight training.",
+  "principles": {
+    "intent_preserving_contextual_repair": "Infer intended meaning without falsifying received input.",
+    "receipt_preservation": "Always preserve the original received text separately from any inferred repair or interpretation.",
+    "smallest_plausible_repair": true,
+    "confidence_before_commit": true,
+    "ambiguity_preservation": true,
+    "provenance_is_evidence_not_authority": true
+  },
+  "repair_pipeline": [
+    "received input",
+    "literal validity",
+    "contextual and semantic fit",
+    "smallest plausible repair candidates",
+    "confidence assessment",
+    "intended interpretation"
+  ],
+  "general_noise_sources": [
+    "speech-recognition errors",
+    "typos",
+    "autocorrect",
+    "omitted words",
+    "malformed grammar",
+    "slang",
+    "ambiguous references",
+    "unusual phrasing"
+  ],
+  "speech_provenance": {
+    "future_fields": ["modality", "sttConfidence", "candidateAlternatives", "uncertainSpans", "language", "provider"],
+    "rule": "Use provenance to adjust repair probability, while conversational context determines whether a repair is justified."
+  },
+  "representation_contract": {
+    "receivedText": "immutable receipt",
+    "inputProvenance": "optional evidence object",
+    "repairCandidates": "possible intended forms with confidence",
+    "interpretedMeaning": "active semantic interpretation",
+    "repairConfidence": "confidence score or band",
+    "userVisibleRepair": "optional explicit correction notice"
+  },
+  "examples": [
+    {
+      "input": "Must mean I have lots of death to be able to do that.",
+      "context": "The conversation is about the depth of knowledge or experience required to accomplish something.",
+      "literalValidity": "death is grammatically valid",
+      "repair": "depth",
+      "confidence": "high",
+      "behavior": "Reason from depth while preserving the receipt; surface the correction when useful."
+    },
+    {
+      "input": "I need to reed the server logs before we deploy.",
+      "context": "The user is discussing inspecting logs.",
+      "literalValidity": "reed is a valid word",
+      "repair": "read",
+      "confidence": "high",
+      "behavior": "Prefer read because the semantic trajectory strongly supports it."
+    },
+    {
+      "input": "The model needs more patients here.",
+      "context": "The conversation is about waiting longer during inference.",
+      "literalValidity": "patients is valid",
+      "repair": "patience",
+      "confidence": "medium-high",
+      "behavior": "Interpret as patience if context strongly supports it; otherwise preserve ambiguity."
+    },
+    {
+      "input": "Send the file to the new node or keep it local?",
+      "context": "No missing-word or STT anomaly is present.",
+      "literalValidity": "valid",
+      "repair": null,
+      "confidence": "none",
+      "behavior": "Do not invent a correction merely because another wording is possible."
+    }
+  ],
+  "response_composition": {
+    "copyable_exact_content": "Use fenced code blocks for code, commands, lyrics, structured text, or other content where whitespace/exact copying matters.",
+    "natural_language": "Do not wrap ordinary prose in code fences merely to make it look technical.",
+    "length": "Treat requested response length as a soft planning horizon. Natural semantic completion outranks the horizon.",
+    "extend": "modest continuation of the existing composition",
+    "extended": "large continuation with additional sections/composition",
+    "massive": "broad/deep expansion constrained by topic relevance and anti-padding",
+    "wrap_up": "Before natural EOS, close the currently active sentence, paragraph, list item, code fence, song section, or other open structure when possible."
+  },
+  "evaluation": {
+    "required": [
+      "receipt preservation",
+      "repair candidate quality",
+      "repair confidence calibration",
+      "contextual coherence",
+      "ambiguity preservation",
+      "no silent high-impact rewrite",
+      "copyable-composition formatting",
+      "semantic completion before horizon stop"
+    ]
+  }
+}
