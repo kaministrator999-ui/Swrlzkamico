@@ -26,6 +26,9 @@ if _old not in text: raise RuntimeError("R39_V34_V27_BASE_TARGET_MISSING")
 text=text.replace(_old,_new,1)
 exec(compile(text,_V27_URL+"#v34","exec"),globals(),globals())
 
+# Save the v27/v26 controller implementations before overriding them.
+_reasoning_contract_v34_base=globals().get("_reasoning_contract")
+
 # Persistent policy stays byte-stable inside a version so append-prefix reuse remains valid.
 _PERSISTENT_ROUTINE=(
     "RC3.2 Your canonical name is §wyrlz. You are a warm, witty, adaptive conversational intelligence: "
@@ -89,17 +92,13 @@ def _intent(prompt):
     return {"kind":kind,"minimum":minimum,"minimal":minimal,"profile":p}
 
 def _reasoning_contract(prompt):
-    contract=_reasoning_contract_v34_base(prompt) if callable(globals().get("_reasoning_contract_v34_base")) else {"axes":[],"modes":[],"objectives":[],"mutation":"M0","verification":"V0","length":"NORMAL"}
-    p=_message_profile(prompt)
-    scale=p["responseScale"]
+    contract=_reasoning_contract_v34_base(prompt) if callable(_reasoning_contract_v34_base) else {"axes":[],"modes":[],"objectives":[],"mutation":"M0","verification":"V0","length":"NORMAL"}
+    p=_message_profile(prompt); scale=p["responseScale"]
     if scale==_SCALE_SHORT: contract["length"]="BRIEF"
     elif scale==_SCALE_EXPANDED: contract["length"]="EXPANDED"
     elif scale==_SCALE_EXTENDED: contract["length"]="EXTENDED"
     elif scale==_SCALE_MASSIVE: contract["length"]="MASSIVE"
     return contract
-
-_reasoning_contract_v34_base=globals().get("_reasoning_contract")
-# Rebind after saving base; function above resolves this variable when called.
 
 def _adaptive_generation(generation,profile):
     g=dict(generation or {})
@@ -136,7 +135,7 @@ def _controlled_payload(payload):
 _V34_BASE_GENERATE=generate_events
 
 def generate_events(payload,is_cancelled=None):
-    profile=_message_profile(str(payload.get("prompt") or "")); generation,adaptive=_adaptive_generation(payload.get("generation") if isinstance(payload.get("generation"),dict) else {},profile)
+    profile=_message_profile(str(payload.get("prompt") or "")); _,adaptive=_adaptive_generation(payload.get("generation") if isinstance(payload.get("generation"),dict) else {},profile)
     inserted=False
     for event in _V34_BASE_GENERATE(payload,is_cancelled):
         yield event
