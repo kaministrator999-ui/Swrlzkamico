@@ -1,17 +1,80 @@
-"""Vectorized/batched R39 prompt prefill helpers.
+"""Vectorized R39 prompt prefill with a persistent dense-weight fast path.
 
-This module is staged only; the live hot entrypoint remains v27 until the native
-matmat extension is present in a rebuilt base image and equivalence/perf gates pass.
-Activations use (features, tokens) layout so the token axis is contiguous inside the
-native quantized matmat kernel.
+The direct-quantized matmat kernel remains the safe fallback. For block prefill, eligible
+weights are decoded once per warm worker and retained as float32 matrices, allowing
+NumPy/BLAS GEMM to reuse them across every subsequent prompt block/request instead of
+re-decoding quantized rows on every call.
 """
 from __future__ import annotations
 
+import threading
 import numpy as np
+
+_DENSE_LOCK = threading.RLock()
+_DENSE_CACHE: dict[tuple[int, str], np.ndarray] = {}
+_DENSE_CACHE_BYTES = 0
+_DENSE_CACHE_HITS = 0
+_DENSE_CACHE_MISSES = 0
+_DENSE_CACHE_BUDGET = 384 * 1024 * 1024
+_DENSE_ITEM_MAX = 48 * 1024 * 1024
+_DENSE_MATERIALIZE_MIN_BATCH = 32
+
+
+def cache_stats() -> dict[str, int]:
+    with _DENSE_LOCK:
+        return {
+            "items": len(_DENSE_CACHE),
+            "bytes": int(_DENSE_CACHE_BYTES),
+            "budgetBytes": int(_DENSE_CACHE_BUDGET),
+            "hits": int(_DENSE_CACHE_HITS),
+            "misses": int(_DENSE_CACHE_MISSES),
+        }
+
+
+def _dense_matrix(model, name: str, batch: int) -> np.ndarray | None:
+    global _DENSE_CACHE_BYTES, _DENSE_CACHE_HITS, _DENSE_CACHE_MISSES
+    key = (id(model), str(name))
+    with _DENSE_LOCK:
+        hit = _DENSE_CACHE.get(key)
+        if hit is not None:
+            _DENSE_CACHE_HITS += 1
+            return hit
+        _DENSE_CACHE_MISSES += 1
+
+    d = model.desc[name]
+    shape = d["shape"]
+    cols = int(shape[0])
+    rows = int(shape[1]) if len(shape) > 1 else 1
+    decoded_bytes = rows * cols * 4
+    if batch < _DENSE_MATERIALIZE_MIN_BATCH or decoded_bytes > _DENSE_ITEM_MAX:
+        return None
+    with _DENSE_LOCK:
+        if _DENSE_CACHE_BYTES + decoded_bytes > _DENSE_CACHE_BUDGET:
+            return None
+
+    # model.matrix is the engine's canonical dequantizer, so this preserves exact tensor
+    # interpretation while retaining the decoded matrix beyond the engine's smaller
+    # generic tensor-cache budget.
+    value = np.ascontiguousarray(model.matrix(name), dtype=np.float32)
+    if value.ndim != 2 or value.shape != (rows, cols):
+        return None
+    with _DENSE_LOCK:
+        existing = _DENSE_CACHE.get(key)
+        if existing is not None:
+            return existing
+        if _DENSE_CACHE_BYTES + int(value.nbytes) > _DENSE_CACHE_BUDGET:
+            return None
+        _DENSE_CACHE[key] = value
+        _DENSE_CACHE_BYTES += int(value.nbytes)
+        return value
 
 
 def _matmat(bridge, model, name: str, x: np.ndarray) -> np.ndarray:
-    out = bridge.matmat(model, name, np.ascontiguousarray(x, dtype=np.float32))
+    value = np.ascontiguousarray(x, dtype=np.float32)
+    dense = _dense_matrix(model, name, int(value.shape[1]))
+    if dense is not None:
+        return np.asarray(dense @ value, dtype=np.float32)
+    out = bridge.matmat(model, name, value)
     if out is None:
         raise RuntimeError(f"R39_BATCH_MATMAT_UNAVAILABLE:{name}")
     return np.asarray(out, dtype=np.float32)
@@ -73,11 +136,6 @@ def _causal_gqa(q: np.ndarray, k: np.ndarray, v: np.ndarray, old_entries: list[t
 
 
 def forward_token_block(base, bridge, model, state, tokens: list[int]) -> np.ndarray:
-    """Advance recurrent state over a prompt block and return the final hidden vector.
-
-    The function intentionally does not project the full vocabulary for intermediate
-    tokens. The caller performs one final vocabulary matvec/rerank after the block.
-    """
     if not tokens:
         raise ValueError("tokens must be non-empty")
     start_pos = int(state.pos)
@@ -93,11 +151,7 @@ def forward_token_block(base, bridge, model, state, tokens: list[int]) -> np.nda
             cw = np.asarray(model.matrix(f"blk.{i}.shortconv.conv.weight"), dtype=np.float32)
             hist = np.asarray(state.conv[i], dtype=np.float32)
             seq = np.concatenate((hist, bx.T), axis=0)
-            cv = (
-                seq[0:count].T * cw[:, 0:1]
-                + seq[1:count + 1].T * cw[:, 1:2]
-                + seq[2:count + 2].T * cw[:, 2:3]
-            ).astype(np.float32)
+            cv = (seq[0:count].T * cw[:, 0:1] + seq[1:count + 1].T * cw[:, 1:2] + seq[2:count + 2].T * cw[:, 2:3]).astype(np.float32)
             state.conv[i][0] = seq[-2].copy()
             state.conv[i][1] = seq[-1].copy()
             op = _matmat(bridge, model, f"blk.{i}.shortconv.out_proj.weight", (c * cv).astype(np.float32))
