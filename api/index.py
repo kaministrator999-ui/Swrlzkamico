@@ -1,7 +1,8 @@
-"""§wyrlz Server 2.2.3 release entrypoint.
+"""§wyrlz Server 2.2.8 release entrypoint.
 
-2.2.3 keeps the live GitHub-backed Chat/Server/LALM control planes from 2.2.2
-and fixes native fp16 subnormal scale conversion used by quantized R39 kernels.
+2.2.8 adds account identity/data boundaries, durable workflow chat generation,
+resumable streams, and the v35 adaptive response horizon while preserving the
+existing R39/native control planes.
 """
 from __future__ import annotations
 
@@ -18,8 +19,10 @@ from api.admin_auth_guard import install as _install_admin_auth_guard
 from api.live_source_guard import install as _install_live_source_guard
 from api.control_plane import install as _install_control_plane
 from api.native_status import install as _install_native_status
+from api.chat_identity import install as _install_chat_identity
+from api.chat_durable import install as _install_chat_durable
 
-VERSION = "2.2.3"
+VERSION = "2.2.8"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -28,6 +31,21 @@ _server.CAPABILITIES["local-r39-inference"] = {
     "engineId": "swrlz_r39_native_qmatvec_v1",
     "fallbackEngineId": "swrlz_r39_python_reference_v1",
     "boundary": "compiled direct-quantized matvec kernels for f32/f16/bf16/q4_0/q8_0/q4_k/q6_k with corrected fp16 subnormal scaling; Python reference remains correctness/fallback oracle; LALM runtime override is independent of Chat assets",
+}
+_server.CAPABILITIES["durable-chat-workflows"] = {
+    "kind": "durable-background-generation",
+    "ready": True,
+    "streamResume": True,
+    "userScoped": True,
+    "workflowNamespace": "swrlz-chat",
+}
+_server.CAPABILITIES["user-account-boundary"] = {
+    "kind": "google-identity-and-server-data",
+    "ready": True,
+    "identityKey": "google-sub",
+    "chatHistoryServerScoped": True,
+    "profileServerScoped": True,
+    "persistentStore": "KV_REST_API_URL/KV_REST_API_TOKEN when configured",
 }
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
@@ -40,8 +58,10 @@ _install_chat_ui_guard(_server)
 _install_page_manager_ui(_server)
 _install_control_plane(_server)
 _install_native_status(_server)
-# Install last so this parent middleware owns GitHub-backed live reads across Vercel instances.
+_install_chat_durable(_server)
+# Install last so this parent middleware owns GitHub-backed live reads and account UI across instances.
 _install_live_source_guard(_server)
+_install_chat_identity(_server)
 _server._write_server_state()
 
 app = _server.app
