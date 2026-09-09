@@ -7,6 +7,8 @@
 - Review branch: `feature/swrlz-web-knowledge-001a`
 - Stable baseline: `main@b43bd9f63bf53dd1e6372de034613c92092a0716`
 - Live-development baseline inspected: `dev@18e4233260a732a48d9760bc4752c76aaffa012c`
+- GitHub implementation commit: `396f66cf56188c0c6339f2e1da26724143230210`
+- Implementation tree: `cc074f2bd6a11995914d95fa51f93a90c1a170cd`
 - Constitutional source read: `ahazus420-stack/Swrlzcore@35fe6f095cc87c7e8b46ce1c7ee41ed417ba52e9/docs/governance/SWRLZ_CONSTITUTION.md` (`sha 9dbc2b208617179cc0fad218533e505b6707bb27`)
 - User authorization: `Approve`, given in response to the bounded `SWRLZ-WEB-KNOWLEDGE-001A` proposal
 
@@ -104,7 +106,7 @@ Verified source results before the implementation commit:
 - external and inline browser JavaScript parsed successfully;
 - `git diff --check` passed.
 
-The implementation commit identity is added in the final receipt-only commit before branch handoff.
+The implementation commit and tree identities above bind these results to the reviewed source state. The following receipt-only commit records that binding and does not change runtime behavior.
 
 No live provider request, R39 model load, Vercel deployment, production browser request, or workflow run is claimed.
 
