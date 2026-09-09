@@ -80,7 +80,7 @@ def _rope_cols(x,heads,start_pos,theta=1_000_000.0):
 
 
 def _causal_gqa(q,k,v,old_entries):
-    """Block-causal GQA. Vectorizes the query-token dimension; mask preserves exact causality."""
+    """Block-causal GQA. Vectorizes query tokens while preserving exact causal visibility."""
     tokens=int(q.shape[1]); qg=q.T.reshape(tokens,8,2,64)
     kh_new=k.T.reshape(tokens,8,64); vh_new=v.T.reshape(tokens,8,64)
     if old_entries:
@@ -89,11 +89,15 @@ def _causal_gqa(q,k,v,old_entries):
         keys=np.concatenate((kh_old,kh_new),axis=0); values=np.concatenate((vh_old,vh_new),axis=0); prefix=len(old_entries)
     else:
         keys=kh_new; values=vh_new; prefix=0
-    # [token, kv_head, q_per_kv, key_position]
+    # scores: [token, kv_head, q_per_kv, key_position]
     scores=np.einsum("thqd,lhd->thql",qg,keys,optimize=True).astype(np.float32)/np.float32(8.0)
+    # Build [token,key_position], then explicitly expand singleton head axes.
+    # Without [:,None,None,:], NumPy right-aligns (T,L) against (T,H,Q,L),
+    # incorrectly comparing T with Q and causing the 64-vs-2 broadcast failure.
     key_pos=np.arange(prefix+tokens,dtype=np.int32)[None,:]
     limits=(prefix+np.arange(tokens,dtype=np.int32))[:,None]
-    scores=np.where(key_pos<=limits,scores,np.float32(-np.inf))
+    causal=(key_pos<=limits)[:,None,None,:]
+    scores=np.where(causal,scores,np.float32(-np.inf))
     peak=np.max(scores,axis=3,keepdims=True)
     weights=np.exp(scores-peak,dtype=np.float32)
     weights/=np.sum(weights,axis=3,keepdims=True,dtype=np.float32)
