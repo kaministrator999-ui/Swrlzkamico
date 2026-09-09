@@ -1,14 +1,14 @@
-"""R39 hot v30 staged batched-prefill overlay.
+"""R39 hot v30 native batched-prefill overlay.
 
-Not live until runtime_hot/r39_engine.py is deliberately switched to v30 after a base
-image containing swyrlz._r39_batch is built. v30 preserves v27 region-shared cursor
-semantics and substitutes the v26 engine beneath it with the block-prefill variant.
+Pins the proven v27 cursor overlay and the staged v26 batch engine to immutable commits.
+The live entrypoint may select v30 only after the base image reports _r39_batch loaded.
 """
 from __future__ import annotations
 
 import urllib.request
 
-_V27_URL = "https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/dev/runtime_hot/r39_engine_v27.py"
+_V27_COMMIT = "a7de2c488f97dc4f2f6d019e88edea7021ab2dfc"
+_V27_URL = f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V27_COMMIT}/runtime_hot/r39_engine_v27.py"
 _req = urllib.request.Request(_V27_URL, headers={"User-Agent": "swrlz-hot-r39-v30"})
 with urllib.request.urlopen(_req, timeout=20) as _response:
     source = _response.read(4_000_001)
@@ -18,8 +18,8 @@ text = source.decode("utf-8")
 _old = '''_V26_COMMIT = "3dc70e8d02777fd622db3ae3311fad13b7382e6a"
 _V26_URL = f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V26_COMMIT}/runtime_hot/r39_engine.py"
 '''
-_new = '''_V26_COMMIT = "dev-batched-prefill"
-_V26_URL = "https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/dev/runtime_hot/r39_engine_v26_batch.py"
+_new = '''_V26_COMMIT = "4de614516048f0dd19041e17f7376d17f3efa381"
+_V26_URL = f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V26_COMMIT}/runtime_hot/r39_engine_v26_batch.py"
 '''
 if _old not in text:
     raise RuntimeError("R39_V30_V27_BASE_TARGET_MISSING")
@@ -45,5 +45,7 @@ def inspect_engine():
             "batchKernel": "direct-quantized-matmat-token-columns",
             "batchIntermediateVocabularyProjection": False,
             "batchCursorSemantics": "v27-region-shared-exact-prefix-preserved",
+            "batchSourceCommit": "4de614516048f0dd19041e17f7376d17f3efa381",
+            "cursorSourceCommit": _V27_COMMIT,
         })
     return result
