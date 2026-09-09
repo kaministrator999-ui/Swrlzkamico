@@ -11,13 +11,15 @@ ROOT = Path(__file__).resolve().parents[1]
 BUNDLED_CHAT_PAGE = ROOT / "web" / "chat.html"
 ADMIN_SESSION_JS = ROOT / "web" / "chat_admin_session.js"
 STREAM_FOCUS_JS = ROOT / "web" / "chat_stream_focus.js"
+ACCOUNT_BRIDGE_JS = ROOT / "web" / "chat_account_bridge.js"
 ACCOUNT_JS = ROOT / "web" / "chat_account.js"
 ENH_CSS = '<link rel="stylesheet" href="/api/chat/assets/enhancements.css">'
 ENH_JS = '<script src="/api/chat/assets/enhancements.js"></script>'
 SESSION_JS = '<script src="/api/chat/admin-session-ui.js"></script>'
 STREAM_FOCUS_TAG = '<script src="/api/chat/stream-focus.js"></script>'
+ACCOUNT_BRIDGE_TAG = '<script src="/api/chat/account-bridge.js"></script>'
 ACCOUNT_TAG = '<script src="/api/chat/account.js"></script>'
-UI_VERSION = "1.4.0"
+UI_VERSION = "1.4.1"
 
 
 def _inject(html: str) -> str:
@@ -28,6 +30,7 @@ def _inject(html: str) -> str:
         ("/api/chat/assets/enhancements.js", ENH_JS),
         ("/api/chat/admin-session-ui.js", SESSION_JS),
         ("/api/chat/stream-focus.js", STREAM_FOCUS_TAG),
+        ("/api/chat/account-bridge.js", ACCOUNT_BRIDGE_TAG),
         ("/api/chat/account.js", ACCOUNT_TAG),
     ):
         if marker not in html:
@@ -66,12 +69,14 @@ def install(server) -> None:
                     ),
                 },
             )
-        if request.method == "GET" and path == "/api/chat/admin-session-ui.js":
-            return FileResponse(ADMIN_SESSION_JS, media_type="application/javascript", headers={"Cache-Control": "no-store, max-age=0", "X-SWRLZ-Chat-UI-Version": UI_VERSION})
-        if request.method == "GET" and path == "/api/chat/stream-focus.js":
-            return FileResponse(STREAM_FOCUS_JS, media_type="application/javascript", headers={"Cache-Control": "no-store, max-age=0", "X-SWRLZ-Chat-UI-Version": UI_VERSION})
-        if request.method == "GET" and path == "/api/chat/account.js":
-            return FileResponse(ACCOUNT_JS, media_type="application/javascript", headers={"Cache-Control": "no-store, max-age=0", "X-SWRLZ-Chat-UI-Version": UI_VERSION})
+        assets = {
+            "/api/chat/admin-session-ui.js": ADMIN_SESSION_JS,
+            "/api/chat/stream-focus.js": STREAM_FOCUS_JS,
+            "/api/chat/account-bridge.js": ACCOUNT_BRIDGE_JS,
+            "/api/chat/account.js": ACCOUNT_JS,
+        }
+        if request.method == "GET" and path in assets:
+            return FileResponse(assets[path], media_type="application/javascript", headers={"Cache-Control": "no-store, max-age=0", "X-SWRLZ-Chat-UI-Version": UI_VERSION})
         return await call_next(request)
 
     server.CAPABILITIES["chat-ui-parent-guard"] = {
@@ -83,6 +88,7 @@ def install(server) -> None:
         "uiVersion": UI_VERSION,
         "serverManagedBrowserSession": True,
         "durableAccountLayer": True,
+        "activeThreadDurableHandoff": True,
         "lineAwareStreamFollow": True,
         "copyableArtifactBlocks": True,
         "queryTolerance": "ignores unrelated query decoration; action=page stays UI, functional actions pass through",
