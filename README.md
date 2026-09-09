@@ -1,13 +1,25 @@
 # §wyrlz Unified Vercel Server
 
-Server revision: **2.2.0**  
+Server revision: **2.2.7**
 Chat UI revision: **1.3.26**  
+Chat review candidate: **1.4.0-rc.1** (`SWRLZ-WEB-KNOWLEDGE-001A`, not deployed)
 LALM UI revision: **1.0.0**  
 Server UI revision: **1.0.0**  
 Production deployment: **https://swrlzkamico-o3nu.vercel.app**  
 Checkpoint lineage: `INT-VERCEL-CHAT-001A`
 
-This repository is the unified §wyrlz Vercel server. Server 2.2.0 separates infrastructure/server operations, LALM/R39 engineering, and Chat into independent control planes so model/runtime work no longer requires Chat UI mutation.
+This repository is the unified §wyrlz Vercel server. Server 2.2.7 preserves the separated infrastructure/server, LALM/R39, and Chat control planes introduced in 2.2.0 while packaging the gated native R39 prefill kernel.
+
+## Online Evidence review candidate
+
+`feature/swrlz-web-knowledge-001a` adds a disabled-by-default, provider-neutral Online Evidence foundation for Chat. Offline model-only Chat remains protocol V2 and the default. Explicit Online requests use protocol V3, derive a bounded/redacted query from the current prompt only, safe-fetch public HTTPS text, ground local R39 without changing weights, and render server-issued source/lineage receipts separately from assistant text.
+
+No production provider is registered, no API key is used, no evidence corpus is stored, and no training or deployment is authorized by this candidate. See:
+
+- `docs/contracts/SWRLZ_ONLINE_EVIDENCE_V1.md`
+- `docs/contracts/SWRLZ_LLM_STREAM_V3.md`
+- `docs/data/SWRLZ_ONLINE_KNOWLEDGE_DATA_POLICY_V1.md`
+- `docs/checkpoints/SWRLZ-WEB-KNOWLEDGE-001A_CHECKPOINT.md`
 
 ## Control planes
 
@@ -102,7 +114,11 @@ Server 2.2.0 is the one-time architecture deployment that establishes the split 
 - `docs/contracts/SWRLZ_CONTROL_PLANES_V2.md`
 - `docs/contracts/SWRLZ_LIVE_PAGE_RUNTIME_V1.md`
 - `docs/contracts/SWRLZ_VERCEL_CHAT_BRIDGE_V1.md`
+- `docs/contracts/SWRLZ_ONLINE_EVIDENCE_V1.md`
+- `docs/contracts/SWRLZ_LLM_STREAM_V3.md`
 - `docs/contracts/SWRLZ_HOT_RUNTIME_V1.md`
+- `docs/data/SWRLZ_ONLINE_KNOWLEDGE_DATA_POLICY_V1.md`
+- `docs/checkpoints/SWRLZ-WEB-KNOWLEDGE-001A_CHECKPOINT.md`
 - `docs/releases/SERVER_2.2.0.md`
 - `SWRLZ_VERCEL_CHAT_CHANGELOG.md`
 

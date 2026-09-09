@@ -20,6 +20,7 @@ from api.admin_auth_guard import install as _install_admin_auth_guard
 from api.live_source_guard import install as _install_live_source_guard
 from api.control_plane import install as _install_control_plane
 from api.native_status import install as _install_native_status
+from api.online_evidence import evidence_configuration_status
 
 VERSION = "2.2.7"
 _server.VERSION = VERSION
@@ -37,6 +38,19 @@ _server.CAPABILITIES["r39-native-batched-prefill-kernel"] = {
     "activation": "gated-hot-runtime",
     "blockTokens": 64,
     "detail": "Base image packages swyrlz._r39_batch; hot v30 activation remains separate and gated by native diagnostics plus equivalence/performance validation.",
+}
+_knowledge = evidence_configuration_status()
+_server.CAPABILITIES["online-evidence"] = {
+    "kind": "remote-retrieval-plus-local-inference",
+    "ready": bool(_knowledge["available"]),
+    "defaultMode": "OFFLINE",
+    "protocolVersion": 3,
+    "contractId": _knowledge["contractId"],
+    "providerId": _knowledge["providerId"],
+    "providerRegistered": _knowledge["providerRegistered"],
+    "noSilentFallback": True,
+    "trainingEligible": False,
+    "boundary": "Source foundation only; no production provider is registered by this checkpoint.",
 }
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)

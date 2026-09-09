@@ -13,7 +13,7 @@ ADMIN_SESSION_JS = ROOT / "web" / "chat_admin_session.js"
 ENH_CSS = '<link rel="stylesheet" href="/api/chat/assets/enhancements.css">'
 ENH_JS = '<script src="/api/chat/assets/enhancements.js"></script>'
 SESSION_JS = '<script src="/api/chat/admin-session-ui.js"></script>'
-UI_VERSION = "1.3.13"
+UI_VERSION = "1.4.0-rc.1"
 
 
 def _inject(html: str) -> str:

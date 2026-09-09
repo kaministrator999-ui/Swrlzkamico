@@ -13,6 +13,14 @@ import api.chat as chat
 import swyrlz.r39_matvec_patch
 import swyrlz.r39_tokenizer_patch
 from api.hot_loader import get_engine, hot_chat_path
+from api.online_evidence import (
+    ONLINE_ROUTE,
+    DerivedQuery,
+    EvidenceBundle,
+    EvidenceError,
+    build_grounded_payload,
+    configured_evidence_service,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 BUNDLED_CHAT_PAGE = ROOT / "web" / "chat.html"
@@ -26,6 +34,7 @@ _original_normalize = chat._normalize_chat_request
 _original_status_payload = chat._status_payload
 _original_verify_r39 = chat._verify_r39
 _original_forward_cancel = chat._forward_cancel
+_evidence_service_factory = configured_evidence_service
 
 
 def _engine():
@@ -53,8 +62,8 @@ def _normalize_with_generation(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 chat._normalize_chat_request = _normalize_with_generation
-chat.APP_VERSION = "1.3.3"
-chat.app.version = "1.3.3"
+chat.APP_VERSION = "1.4.0-rc.1"
+chat.app.version = "1.4.0-rc.1"
 
 
 def _server_state():
@@ -135,9 +144,10 @@ def _verify_r39():
 chat._verify_r39 = _verify_r39
 
 
-def _event_payload(seq, request_id, raw):
+def _event_payload(seq, request_id, raw, *, protocol_version=2, evidence_bundle=None):
     event_type = str(raw.get("type", "STATUS"))
     terminal = event_type in chat.TERMINAL_TYPES
+    online = protocol_version == 3
     event = chat._bridge_event(
         seq,
         event_type,
@@ -146,10 +156,14 @@ def _event_payload(seq, request_id, raw):
         reason=str(raw.get("reason") or ""),
         categories=[str(x) for x in raw.get("categories", [])][:12],
         terminal=terminal,
+        protocol_version=protocol_version,
+        route=ONLINE_ROUTE if online else "LOCAL_R39_STATUS_ONLY",
     )
     identity = raw.get("identity")
     if isinstance(identity, dict):
         event["identity"].update({k: str(v) for k, v in identity.items() if k in {"route", "engineId", "modelId", "modelSha256"} and v is not None})
+    if online:
+        event["identity"]["route"] = ONLINE_ROUTE
     if event_type == "DELTA":
         event["text"] = str(raw.get("text") or "")
     if raw.get("firstDeltaLatencyMs") is not None:
@@ -162,6 +176,8 @@ def _event_payload(seq, request_id, raw):
         event["answerState"] = "PARTIAL_OR_EMPTY"
     elif event_type == "DELTA":
         event["answerState"] = "STREAMING"
+    if evidence_bundle is not None and event_type in {"COMPLETED", "CANCELLED", "FAILED"}:
+        event["knowledgeReceipt"] = evidence_bundle.receipt()
     return event
 
 
@@ -182,18 +198,136 @@ def _heartbeat_events(source):
 
 def _local_stream(payload):
     request_id = payload["requestId"]
+    protocol_version = int(payload.get("protocolVersion", 2))
+    online = protocol_version == 3 and payload.get("knowledgeMode") == "ONLINE"
+    route = ONLINE_ROUTE if online else "LOCAL_R39_STATUS_ONLY"
     LOCAL_CANCELLED.discard(request_id)
     seq = 1
-    yield chat._encode_event(chat._bridge_event(seq, "STARTED", request_id, phase="ANALYZING_REQUEST", reason="Request admitted by the local R39 Vercel inference bridge."))
+    started_reason = "Request admitted by the local R39 Vercel inference bridge."
+    if online:
+        started_reason = "Request admitted by local R39 with explicitly requested remote web evidence."
+    yield chat._encode_event(chat._bridge_event(seq, "STARTED", request_id, phase="ANALYZING_REQUEST", reason=started_reason, protocol_version=protocol_version, route=route))
     seq += 1
+    evidence_bundle: EvidenceBundle | None = None
+    engine_payload = payload
     try:
+        if online:
+            query = DerivedQuery(
+                text=str(payload["knowledgeQuery"]),
+                sha256=str(payload["knowledgeQuerySha256"]),
+                redaction_count=int(payload.get("knowledgeQueryRedactionCount", 0)),
+            )
+            yield chat._encode_event(
+                chat._bridge_event(
+                    seq,
+                    "STATUS",
+                    request_id,
+                    phase="KNOWLEDGE_QUERY_PREPARED",
+                    reason="Prepared a bounded current-prompt-only query; conversation history was not sent to search.",
+                    protocol_version=3,
+                    route=route,
+                ),
+            )
+            seq += 1
+            try:
+                service = _evidence_service_factory()
+                with ThreadPoolExecutor(max_workers=1, thread_name_prefix="swrlz-evidence") as pool:
+                    future = pool.submit(service.collect, query)
+                    while True:
+                        try:
+                            evidence_bundle = future.result(timeout=4.0)
+                            break
+                        except FutureTimeout:
+                            yield chat._encode_event(
+                                chat._bridge_event(
+                                    seq,
+                                    "STATUS",
+                                    request_id,
+                                    phase="KNOWLEDGE_FETCH",
+                                    reason="Online Evidence retrieval is still active within its bounded safe-fetch policy.",
+                                    protocol_version=3,
+                                    route=route,
+                                ),
+                            )
+                            seq += 1
+            except EvidenceError as exc:
+                yield chat._encode_event(
+                    chat._bridge_event(
+                        seq,
+                        "FAILED",
+                        request_id,
+                        phase="ERROR",
+                        reason=exc.detail,
+                        categories=[exc.code],
+                        terminal=True,
+                        protocol_version=3,
+                        route=route,
+                    ),
+                )
+                return
+            except Exception:
+                yield chat._encode_event(
+                    chat._bridge_event(
+                        seq,
+                        "FAILED",
+                        request_id,
+                        phase="ERROR",
+                        reason="Online Evidence failed before local generation began.",
+                        categories=["ONLINE_EVIDENCE_RUNTIME_FAILED"],
+                        terminal=True,
+                        protocol_version=3,
+                        route=route,
+                    ),
+                )
+                return
+            for source in evidence_bundle.sources:
+                source_event = chat._bridge_event(
+                    seq,
+                    "SOURCE",
+                    request_id,
+                    phase="KNOWLEDGE_EVIDENCE_READY",
+                    reason="A server-validated source is available as untrusted request-scoped evidence.",
+                    protocol_version=3,
+                    route=route,
+                )
+                source_event["source"] = source.public_record()
+                yield chat._encode_event(source_event)
+                seq += 1
+            yield chat._encode_event(
+                chat._bridge_event(
+                    seq,
+                    "STATUS",
+                    request_id,
+                    phase="KNOWLEDGE_EVIDENCE_READY",
+                    reason=f"{len(evidence_bundle.sources)} source(s) passed safe fetch; grounding local R39 without changing model weights.",
+                    protocol_version=3,
+                    route=route,
+                ),
+            )
+            seq += 1
+            engine_payload = build_grounded_payload(payload, evidence_bundle)
+            if request_id in LOCAL_CANCELLED:
+                cancelled = chat._bridge_event(
+                    seq,
+                    "CANCELLED",
+                    request_id,
+                    phase="CANCELLED",
+                    reason="Generation was cancelled after evidence retrieval.",
+                    categories=["REQUEST_CANCELLED"],
+                    terminal=True,
+                    protocol_version=3,
+                    route=route,
+                )
+                cancelled["knowledgeReceipt"] = evidence_bundle.receipt()
+                yield chat._encode_event(cancelled)
+                return
         engine, source = _engine()
-        source_events = engine.generate_events(payload, lambda: request_id in LOCAL_CANCELLED)
+        source_events = engine.generate_events(engine_payload, lambda: request_id in LOCAL_CANCELLED)
         try:
             for raw in _heartbeat_events(source_events):
                 if raw.get("type") == "ROUTE":
                     LOCAL_READINESS.update({"checked": True, "oneTokenReady": True, "interactiveReady": True, "ok": True, "engineId": str(engine.ENGINE_ID), "engineSource": source})
-                event = _event_payload(seq, request_id, raw)
+                event = _event_payload(seq, request_id, raw, protocol_version=protocol_version, evidence_bundle=evidence_bundle)
                 yield chat._encode_event(event)
                 seq += 1
         except RuntimeError as exc:
@@ -207,9 +341,15 @@ def _stream_response(payload):
     upstream_ready, missing = chat._upstream_ready()
     if chat._raw_upstream_url() and not upstream_ready:
         raise chat.BridgeError(503, "UPSTREAM_CONFIGURATION_INCOMPLETE", "The upstream bridge is missing: " + ", ".join(missing))
+    if payload.get("protocolVersion") == 3 and chat._raw_upstream_url():
+        raise chat.BridgeError(
+            409,
+            "ONLINE_EVIDENCE_UPSTREAM_UNSUPPORTED",
+            "Online Evidence currently composes only with local R39; the configured proof-bound upstream was not used and no fallback occurred.",
+        )
     iterator = chat._proxy_stream(payload) if upstream_ready else _local_stream(payload)
     headers = chat._no_store_headers()
-    headers.update({"X-SWRLZ-Stream-Contract": chat.STREAM_CONTRACT, "X-SWRLZ-Request-Id": payload["requestId"], "X-Accel-Buffering": "no"})
+    headers.update({"X-SWRLZ-Stream-Contract": chat._stream_contract_for_protocol(int(payload.get("protocolVersion", 2))), "X-SWRLZ-Request-Id": payload["requestId"], "X-Accel-Buffering": "no"})
     return StreamingResponse(iterator, media_type="application/x-ndjson", headers=headers)
 
 

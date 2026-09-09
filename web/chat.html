@@ -354,6 +354,14 @@
     .trace-list { display: grid; gap: 8px; padding: 2px 12px 12px 26px; }
     .trace-item { position: relative; color: var(--muted); font-size: 11px; line-height: 1.45; }
     .trace-item::before { content: ""; position: absolute; width: 4px; height: 4px; left: -13px; top: 6px; border-radius: 50%; background: rgba(145, 169, 192, .58); }
+    .source-panel { margin-top: 9px; border: 1px solid rgba(56, 232, 255, .18); border-radius: 13px; background: rgba(4, 18, 28, .45); }
+    .source-panel summary { min-height: 38px; padding: 10px 12px; cursor: pointer; color: var(--cyan); font-size: 11px; font-weight: 700; }
+    .source-list { display: grid; gap: 8px; padding: 0 12px 12px; }
+    .source-link { display: grid; gap: 2px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 10px; color: var(--secondary); background: rgba(7, 16, 28, .75); text-decoration: none; }
+    .source-link:hover { border-color: rgba(56, 232, 255, .34); color: var(--text); }
+    .source-link strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .source-link span { overflow: hidden; color: var(--muted); font: 10px/1.4 ui-monospace, monospace; text-overflow: ellipsis; white-space: nowrap; }
+    .source-receipt { color: var(--muted); font: 10px/1.45 ui-monospace, monospace; overflow-wrap: anywhere; }
     .message-actions { display: flex; align-items: center; gap: 3px; min-height: 34px; margin-top: 5px; opacity: .28; transition: opacity .15s ease; }
     .message:hover .message-actions, .message:focus-within .message-actions { opacity: 1; }
     .message.user .message-actions { justify-content: flex-end; }
@@ -385,6 +393,7 @@
     .composer-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 49px; padding: 4px 7px 7px 12px; }
     .composer-left, .composer-right { display: flex; align-items: center; gap: 8px; min-width: 0; }
     .route-select { height: 34px; max-width: 180px; padding: 0 28px 0 10px; border: 1px solid var(--line); border-radius: 10px; color: var(--secondary); background: #0c1527; font-size: 11px; font-weight: 700; }
+    .knowledge-select[data-mode="ONLINE"] { border-color: rgba(56, 232, 255, .45); color: var(--cyan); }
     .composer-hint { overflow: hidden; color: var(--muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
     .send-button {
       display: inline-grid;
@@ -485,7 +494,10 @@
       .avatar svg { width: 18px; height: 18px; }
       .bubble { padding: 13px 14px; }
       .message.user .message-body { width: 94%; }
-      .route-select { max-width: 132px; }
+      .composer-tools { align-items: flex-end; }
+      .composer-left { flex: 1; gap: 5px; }
+      .composer-right { margin-left: auto; }
+      .route-select { flex: 1; min-width: 0; max-width: 132px; font-size: 10px; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
@@ -558,6 +570,7 @@
             <div class="composer-tools">
               <div class="composer-left">
                 <select class="route-select" id="route" aria-label="Response route"><option value="AUTO">AUTO · SERVER</option><option value="LALM">LALM · DIRECT</option></select>
+                <select class="route-select knowledge-select" id="knowledgeMode" aria-label="Knowledge mode" data-mode="OFFLINE"><option value="OFFLINE">OFFLINE · MODEL</option><option value="ONLINE">ONLINE · EVIDENCE</option></select>
                 <span class="composer-hint" id="composerHint">Committed stream text only</span>
               </div>
               <div class="composer-right">
@@ -595,8 +608,8 @@
     const API = location.pathname.startsWith("/api/chat") ? "/api/chat" : "/";
     const STORAGE_KEY = "swrlz.vercel.chat.v1";
     const TOKEN_KEY = "swrlz.vercel.chat.token.v1";
-    const STREAM_CONTRACT = "swrlz_llm_stream_v2";
-    const EVENT_TYPES = new Set(["STARTED", "STATUS", "ROUTE", "DELTA", "RESET", "COMPLETED", "CANCELLED", "FAILED"]);
+    const STREAM_CONTRACTS = Object.freeze({2: "swrlz_llm_stream_v2", 3: "swrlz_llm_stream_v3"});
+    const EVENT_TYPES = new Set(["STARTED", "STATUS", "ROUTE", "SOURCE", "DELTA", "RESET", "COMPLETED", "CANCELLED", "FAILED"]);
     const TERMINAL_TYPES = new Set(["COMPLETED", "CANCELLED", "FAILED"]);
     const $ = (selector) => document.querySelector(selector);
     const refs = {
@@ -605,7 +618,7 @@
       messages: $("#messages"), stack: $("#messageStack"), prompt: $("#prompt"), composer: $("#composer"), send: $("#sendButton"),
       statusPill: $("#statusPill"), statusText: $("#statusText"), nodeLight: $("#nodeLight"), nodeTitle: $("#nodeTitle"), nodeDetail: $("#nodeDetail"),
       settings: $("#settingsDialog"), token: $("#accessToken"), runtime: $("#runtimePanel"), verify: $("#verifyR39"), toast: $("#toast"),
-      route: $("#route"), charCount: $("#charCount"), composerHint: $("#composerHint")
+      route: $("#route"), knowledge: $("#knowledgeMode"), charCount: $("#charCount"), composerHint: $("#composerHint")
     };
 
     const now = () => Date.now();
@@ -623,6 +636,7 @@
     const phaseLabel = (phase) => ({
       CONNECTING: "Connecting to §wyrlz", ANALYZING_REQUEST: "Analyzing request", PERMISSION_PREFLIGHT: "Checking permissions",
       CAPABILITY_DISCOVERY: "Discovering capabilities", STATE_VALIDATION: "Validating current state", ROUTE_RESOLVED: "Route resolved",
+      KNOWLEDGE_QUERY_PREPARED: "Preparing safe online query", KNOWLEDGE_FETCH: "Retrieving online evidence", KNOWLEDGE_EVIDENCE_READY: "Online evidence ready",
       MODEL_READY: "Native LALM ready", QUEUED: "Waiting for execution slot", PREFILL: "Preparing context", FIRST_TOKEN: "First token generated",
       GENERATING: "Generating response", ANSWER_STREAMING: "Streaming grounded answer", VERIFYING_RESULT: "Verifying result",
       TRUTH_FIREWALL_RESET: "Revalidating output", FINALIZING: "Finalizing response", COMPLETE: "Response complete",
@@ -781,6 +795,26 @@
         }
         details.append(summary, list); body.append(details);
       }
+      if (message.role === "assistant" && Array.isArray(message.meta?.sources) && message.meta.sources.length) {
+        const details = document.createElement("details"); details.className = "source-panel";
+        const summary = document.createElement("summary"); summary.textContent = `Online sources · ${message.meta.sources.length}`;
+        const list = document.createElement("div"); list.className = "source-list";
+        for (const source of message.meta.sources) {
+          let parsed; try { parsed = new URL(String(source?.url || "")); } catch (_) { continue; }
+          if (parsed.protocol !== "https:") continue;
+          const link = document.createElement("a"); link.className = "source-link"; link.href = parsed.href; link.target = "_blank"; link.rel = "noopener noreferrer";
+          const title = document.createElement("strong"); title.textContent = source.title || source.sourceId;
+          const location = document.createElement("span"); location.textContent = `${parsed.hostname} · ${source.sourceId}`;
+          link.append(title, location); list.append(link);
+        }
+        const bundleSha = String(message.meta.knowledgeReceipt?.bundleSha256 || "");
+        if (/^[a-f0-9]{64}$/.test(bundleSha)) {
+          const receipt = document.createElement("div"); receipt.className = "source-receipt";
+          receipt.textContent = `Evidence receipt ${bundleSha.slice(0, 16)}… · request-scoped · not training data`;
+          list.append(receipt);
+        }
+        details.append(summary, list); body.append(details);
+      }
       const actions = document.createElement("div"); actions.className = "message-actions";
       actions.append(actionButton("Copy message", "copy", async () => { try { await navigator.clipboard.writeText(message.text || ""); toast("Message copied"); } catch (_) { toast("Clipboard access was unavailable"); } }));
       actions.append(actionButton(message.pinned ? "Remove bookmark" : "Bookmark message", "pin", () => { message.pinned = !message.pinned; saveState(); render(); }, message.pinned));
@@ -822,7 +856,9 @@
       const isStreaming = Boolean(active);
       refs.send.classList.toggle("stop", isStreaming); refs.send.setAttribute("aria-label", isStreaming ? "Stop response" : "Send message");
       refs.send.replaceChildren(icon(isStreaming ? "stop" : "send"));
-      refs.composerHint.textContent = isStreaming ? phaseLabel(activeMessage()?.meta?.phase || "CONNECTING") : "Committed stream text only";
+      refs.route.disabled = isStreaming; refs.knowledge.disabled = isStreaming;
+      refs.knowledge.dataset.mode = refs.knowledge.value;
+      refs.composerHint.textContent = isStreaming ? phaseLabel(activeMessage()?.meta?.phase || "CONNECTING") : refs.knowledge.value === "ONLINE" ? "Remote evidence · explicit request" : "Offline · model only";
       if (scroll) requestAnimationFrame(() => { refs.messages.scrollTop = refs.messages.scrollHeight; });
     }
 
@@ -853,8 +889,8 @@
       const artifact = {
         contractId: "swrlz_vercel_chat_export_v1", exportedAt: new Date().toISOString(),
         thread: {id: thread.id, title: thread.title, createdAt: thread.createdAt, updatedAt: thread.updatedAt, messages: thread.messages},
-        runtime: serverStatus ? {mode: serverStatus.mode, bridge: serverStatus.bridge, upstream: serverStatus.upstream, localR39: serverStatus.localR39} : null,
-        note: "This browser-local export contains chat content and bounded stream telemetry. It contains no chat access token or upstream proof."
+        runtime: serverStatus ? {mode: serverStatus.mode, bridge: serverStatus.bridge, upstream: serverStatus.upstream, localR39: serverStatus.localR39, knowledge: serverStatus.knowledge} : null,
+        note: "This browser-local export contains chat content, source receipts, and bounded stream telemetry. It contains no chat access token or upstream proof; online sources remain training-ineligible until rights are reviewed separately."
       };
       const blob = new Blob([JSON.stringify(artifact, null, 2)], {type: "application/json"});
       const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `${escapeFilename(thread.title)}.swrlz-chat.json`; link.click();
@@ -896,6 +932,9 @@
           ? `Missing configuration: ${(serverStatus.upstream?.missing || []).join(", ") || "chat token"}.`
           : "R39 integrity can be checked here, but the current Vercel runtime has no one-token or interactive inference wiring. Configure the SWRLZ SERVER upstream to chat.");
       refs.runtime.append(line);
+      const online = serverStatus.knowledge || {};
+      const option = refs.knowledge.querySelector('option[value="ONLINE"]');
+      if (option) option.textContent = online.available ? "ONLINE · EVIDENCE" : "ONLINE · UNAVAILABLE";
     }
 
     function pushTrace(message, event) {
@@ -909,13 +948,23 @@
     }
 
     function consumeEvent(event, context) {
-      if (!event || typeof event !== "object" || event.protocolVersion !== 2 || event.contractId !== STREAM_CONTRACT || ![1, 2].includes(event.schemaVersion)) throw new Error("Stream contract mismatch");
+      const protocolVersion = context.protocolVersion || 2;
+      const supportedSchema = protocolVersion === 3 ? event?.schemaVersion === 3 : [1, 2].includes(event?.schemaVersion);
+      if (!event || typeof event !== "object" || event.protocolVersion !== protocolVersion || event.contractId !== STREAM_CONTRACTS[protocolVersion] || !supportedSchema) throw new Error("Stream contract mismatch");
       if (!EVENT_TYPES.has(event.type) || !Number.isInteger(event.seq) || event.seq <= context.lastSeq) throw new Error("Stream event order is invalid");
+      if (event.type === "SOURCE" && protocolVersion !== 3) throw new Error("SOURCE requires Online Evidence protocol V3");
       if (!event.identity || event.identity.requestId !== context.requestId) throw new Error("Stream identity mismatch");
       if (TERMINAL_TYPES.has(event.type) !== Boolean(event.terminal)) throw new Error("Stream terminal flag is invalid");
       context.lastSeq = event.seq; const message = context.message; pushTrace(message, event);
       if (event.type === "ROUTE") {
         message.meta.route = event.identity.route || ""; message.meta.engineId = event.identity.engineId || ""; message.meta.modelId = event.identity.modelId || "";
+      } else if (event.type === "SOURCE") {
+        const source = event.source;
+        if (!source || typeof source.sourceId !== "string" || typeof source.url !== "string" || typeof source.title !== "string" || typeof source.contentSha256 !== "string") throw new Error("SOURCE record is invalid");
+        let parsed; try { parsed = new URL(source.url); } catch (_) { throw new Error("SOURCE URL is invalid"); }
+        if (!/^src_[a-f0-9]{16}$/.test(source.sourceId) || parsed.protocol !== "https:" || parsed.username || parsed.password || (parsed.port && parsed.port !== "443") || !/^[a-f0-9]{64}$/.test(source.contentSha256) || source.trainingEligible !== false) throw new Error("SOURCE evidence boundary is invalid");
+        if (!Array.isArray(message.meta.sources)) message.meta.sources = [];
+        if (!message.meta.sources.some(item => item.sourceId === source.sourceId)) message.meta.sources.push({sourceId: source.sourceId.slice(0, 80), url: parsed.href, title: source.title.slice(0, 200), providerId: String(source.providerId || "").slice(0, 64), contentSha256: source.contentSha256, retrievedAt: String(source.retrievedAt || "").slice(0, 40), trainingEligible: false});
       } else if (event.type === "DELTA") {
         if (typeof event.text !== "string") throw new Error("DELTA text is invalid");
         if (message.meta.firstDeltaLatencyMs == null) message.meta.firstDeltaLatencyMs = event.firstDeltaLatencyMs ?? Math.round(performance.now() - context.started);
@@ -925,6 +974,14 @@
       }
       if (event.firstDeltaLatencyMs != null) message.meta.firstDeltaLatencyMs = event.firstDeltaLatencyMs;
       if (event.totalLatencyMs != null) message.meta.totalLatencyMs = event.totalLatencyMs;
+      if (event.knowledgeReceipt && typeof event.knowledgeReceipt === "object") {
+        const receipt = event.knowledgeReceipt;
+        if (receipt.contractId !== "swrlz_online_evidence_v1" || !/^[a-f0-9]{64}$/.test(String(receipt.bundleSha256 || "")) || receipt.trainingEligible !== false) throw new Error("Online Evidence receipt is invalid");
+        const sourceIds = Array.isArray(receipt.sourceIds) ? receipt.sourceIds.map(String) : [];
+        const observedIds = Array.isArray(message.meta.sources) ? message.meta.sources.map(source => source.sourceId) : [];
+        if (receipt.sourceCount !== observedIds.length || sourceIds.length !== observedIds.length || sourceIds.some((sourceId, index) => sourceId !== observedIds[index])) throw new Error("Online Evidence receipt does not match streamed sources");
+        message.meta.knowledgeReceipt = receipt;
+      }
       if (TERMINAL_TYPES.has(event.type)) {
         context.terminal = true; message.state = event.type === "COMPLETED" ? "complete" : event.type === "CANCELLED" ? "cancelled" : "failed";
         message.meta.totalLatencyMs ??= Math.round(performance.now() - context.started);
@@ -942,17 +999,21 @@
       if (!token()) { openSettings(); toast("Enter the chat access token first."); return; }
       const thread = currentThread(); const history = thread.messages.filter(m => m.text && ["user", "assistant"].includes(m.role)).slice(-32).map(m => ({role: m.role, text: m.text.slice(0, 2000)}));
       const requestId = uid("web").slice(0, 128);
-      const user = {id: uid("message"), role: "user", text: promptText, createdAt: now(), state: "complete", pinned: false, meta: {route: refs.route.value}};
-      const assistant = {id: uid("message"), role: "assistant", text: "", createdAt: now(), state: "streaming", pinned: false, meta: {requestId, phase: "CONNECTING", trail: [], firstDeltaLatencyMs: null, totalLatencyMs: null, error: ""}};
+      const knowledgeMode = refs.knowledge.value === "ONLINE" ? "ONLINE" : "OFFLINE";
+      const protocolVersion = knowledgeMode === "ONLINE" ? 3 : 2;
+      const user = {id: uid("message"), role: "user", text: promptText, createdAt: now(), state: "complete", pinned: false, meta: {route: refs.route.value, knowledgeMode}};
+      const assistant = {id: uid("message"), role: "assistant", text: "", createdAt: now(), state: "streaming", pinned: false, meta: {requestId, knowledgeMode, sources: [], knowledgeReceipt: null, phase: "CONNECTING", trail: [], firstDeltaLatencyMs: null, totalLatencyMs: null, error: ""}};
       thread.messages.push(user, assistant); thread.updatedAt = now(); if (thread.title === "New conversation") thread.title = deriveTitle(promptText);
       refs.prompt.value = ""; resizePrompt(); saveState();
       const controller = new AbortController();
       active = {threadId: thread.id, messageId: assistant.id, requestId, controller}; render(true);
-      const context = {threadId: thread.id, requestId, message: assistant, lastSeq: 0, terminal: false, started: performance.now()};
+      const context = {threadId: thread.id, requestId, message: assistant, protocolVersion, lastSeq: 0, terminal: false, started: performance.now()};
       try {
+        const requestPayload = {protocolVersion, requestId, prompt: promptText, history, threadId: thread.id, ingress: "VERCEL_CHAT", profileId: refs.route.value};
+        if (knowledgeMode === "ONLINE") requestPayload.knowledgeMode = "ONLINE";
         const response = await fetch(`${API}?action=stream`, {
           method: "POST", headers: authHeaders(), signal: controller.signal,
-          body: JSON.stringify({protocolVersion: 2, requestId, prompt: promptText, history, threadId: thread.id, ingress: "VERCEL_CHAT", profileId: refs.route.value})
+          body: JSON.stringify(requestPayload)
         });
         if (!response.ok) {
           const error = await response.json().catch(() => ({})); throw new Error(error.detail || `Bridge rejected the request (HTTP ${response.status}).`);
@@ -1004,6 +1065,7 @@
 
     refs.composer.addEventListener("submit", event => { event.preventDefault(); sendMessage(); });
     refs.prompt.addEventListener("input", resizePrompt);
+    refs.knowledge.addEventListener("change", () => { refs.knowledge.dataset.mode = refs.knowledge.value; render(); if (refs.knowledge.value === "ONLINE" && !serverStatus?.knowledge?.available) toast("Online Evidence is not configured on this server."); });
     refs.prompt.addEventListener("keydown", event => { if (event.key === "Enter" && !event.shiftKey && !event.isComposing) { event.preventDefault(); sendMessage(); } });
     refs.send.addEventListener("click", event => { if (active) { event.preventDefault(); stopActive(); } });
     $("#newChat").addEventListener("click", createThread); $("#renameCurrent").addEventListener("click", renameCurrent); $("#exportChat").addEventListener("click", exportChat);

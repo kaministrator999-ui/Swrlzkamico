@@ -1,17 +1,26 @@
 # §wyrlz Vercel SERVER Chat
 
-Chat revision: **1.3.2**  
-Unified SERVER revision: **2.1.6**  
-Checkpoint lineage: `INT-VERCEL-CHAT-001A`  
+Stable Chat revision: **1.3.26**
+Chat review candidate: **1.4.0-rc.1**
+Unified SERVER source baseline: **2.2.7**
+Checkpoint lineage: `INT-VERCEL-CHAT-001A` → `SWRLZ-WEB-KNOWLEDGE-001A`
 Route: `/api/chat`
 
-The web Chat surface runs on the same unified Vercel SERVER as Admin, R39 transport, `/api/lalm`, `/api/health`, file operations, Gate 5, and `/live/*`. Release 1.3.2 keeps the V2 streaming/Truth Firewall contract while hardening the local R39 path and mobile/browser controls.
+The web Chat surface runs on the same unified Vercel SERVER as Admin, R39 transport, `/api/lalm`, `/api/health`, file operations, Gate 5, and `/live/*`. The stable offline path keeps the V2 streaming/Truth Firewall contract. The 1.4.0 review candidate adds explicit, disabled-by-default Online Evidence through a compatible V3 extension; it is source-ready only and is not a deployment claim.
+
+## Online Evidence candidate
+
+The composer keeps execution route and knowledge mode separate. `OFFLINE` is the default and sends the existing V2 payload. `ONLINE` requires V3 and composes local R39 with remote web evidence under the `LOCAL_R39+REMOTE_WEB_EVIDENCE` route identity.
+
+The server derives a redacted query from the current prompt only, never the full thread; validates and pins public HTTPS targets; emits sources as non-prose `SOURCE` events; and attaches a request-scoped lineage receipt. Retrieved material is not persisted or training-eligible. No live provider adapter is registered in this checkpoint, so Online requests fail explicitly until a separately approved provider is installed and enabled.
+
+See `docs/contracts/SWRLZ_ONLINE_EVIDENCE_V1.md`, `docs/contracts/SWRLZ_LLM_STREAM_V3.md`, and `docs/data/SWRLZ_ONLINE_KNOWLEDGE_DATA_POLICY_V1.md`.
 
 ## Architecture
 
-`api/index.py` is the release entrypoint. SERVER 2.1.6 keeps the preserved 2.1.3 runtime in `api/server_v213.py`; that base mounts `api/chat.py` at `/api/chat`, while `api/chat_extensions.py` adds local inference, runtime evidence, automatic readiness, and heartbeat-protected streaming.
+`api/index.py` is the release entrypoint. SERVER 2.2.7 keeps the preserved 2.1.3 runtime in `api/server_v213.py`; that base mounts `api/chat.py` at `/api/chat`, while `api/chat_extensions.py` adds local inference, runtime evidence, automatic readiness, heartbeat-protected streaming, and the candidate Online Evidence orchestration.
 
-The browser consumes `swrlz_llm_stream_v2` NDJSON. Only `DELTA.text` contributes assistant prose. `STARTED`, `STATUS`, `ROUTE`, `RESET`, failures, timing, identity, execution phases, compute heartbeats, and terminal metadata remain separate operational evidence.
+The browser consumes `swrlz_llm_stream_v2` for Offline Chat and `swrlz_llm_stream_v3` only for explicit Online Evidence. Only `DELTA.text` contributes assistant prose. `STARTED`, `STATUS`, `ROUTE`, `SOURCE`, `RESET`, failures, timing, identity, execution phases, compute heartbeats, receipts, and terminal metadata remain separate operational evidence.
 
 Browser-local thread history is stored in `localStorage`. The browser Chat token is stored only in `sessionStorage`. Exports intentionally omit Chat/Admin tokens, upstream device proof, and optional bearer credentials.
 
@@ -19,7 +28,7 @@ Browser-local thread history is stored in `localStorage`. The browser Chat token
 
 When no upstream URL is configured, the bridge reports/runs `LOCAL_R39`. The local engine reconstructs active SWRLZX TOKENIZER, TENSOR_DIRECTORY, and TENSOR_DATA locations and maps tensor descriptors through their declared data sections.
 
-SERVER 2.1.6 automatically initializes/probes the local R39 engine once per fresh runtime instance. Manual Admin LOAD / VERIFY and Gate 5 controls remain useful diagnostics/recovery tools, but they are no longer intended as required steps before Chat use.
+The unified server automatically initializes/probes the local R39 engine once per fresh runtime instance. Manual Admin LOAD / VERIFY and Gate 5 controls remain useful diagnostics/recovery tools, but they are no longer intended as required steps before Chat use.
 
 Long blocking local compute stages are advanced on one worker while the bridge emits periodic `COMPUTE_HEARTBEAT` STATUS events. This preserves the response connection during expensive prefill/generation gaps without placing operational text into the assistant response.
 
@@ -54,4 +63,4 @@ Only committed `DELTA.text` is answer text. `RESET` clears the current assistant
 
 ## Deployment truth
 
-Source readiness is not deployment proof. After SERVER 2.1.6 is deployed, verify `/api/health`, `/api/chat?action=status`, automatic local readiness, and an actual streamed request. The next live performance receipt of interest is whether heartbeat-protected prefill survives long compute gaps and reaches the first `DELTA`.
+Source readiness is not deployment proof. This review branch has not been merged or deployed. Backend V3 support must be promoted and verified before the GitHub `dev` live UI is allowed to offer Online Evidence. Provider selection, replay/persistence behavior, credentials, quotas, rights, and live verification remain separate approval gates.

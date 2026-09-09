@@ -15,10 +15,14 @@ from typing import Any, Iterator
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 
+from api.online_evidence import EvidenceError, ONLINE_STREAM_CONTRACT, derive_knowledge_query, evidence_configuration_status
+
 
 APP_VERSION = "1.1.0"
 BRIDGE_CONTRACT = "swrlz_vercel_chat_bridge_v1"
-STREAM_CONTRACT = "swrlz_llm_stream_v2"
+STREAM_CONTRACT_V2 = "swrlz_llm_stream_v2"
+STREAM_CONTRACT_V3 = ONLINE_STREAM_CONTRACT
+STREAM_CONTRACT = STREAM_CONTRACT_V2
 STREAM_PATH = "/ai/swrlz-llm/v2/chat/stream"
 MAX_REQUEST_BYTES = 128 * 1024
 MAX_EVENT_BYTES = 65_536
@@ -33,6 +37,7 @@ EVENT_TYPES = {
     "CANCELLED",
     "FAILED",
 }
+EVENT_TYPES_V3 = EVENT_TYPES | {"SOURCE"}
 TERMINAL_TYPES = {"COMPLETED", "CANCELLED", "FAILED"}
 ROOT = Path(__file__).resolve().parents[1]
 CHAT_PAGE = ROOT / "web" / "chat.html"
@@ -169,6 +174,7 @@ def _status_payload() -> dict[str, Any]:
             "version": APP_VERSION,
             "contractId": BRIDGE_CONTRACT,
             "streamContractId": STREAM_CONTRACT,
+            "streamContracts": {"2": STREAM_CONTRACT_V2, "3": STREAM_CONTRACT_V3},
         },
         "mode": mode,
         "security": {
@@ -193,6 +199,7 @@ def _status_payload() -> dict[str, Any]:
             "interactiveReady": False,
             "blockers": ["SECTION_PAYLOAD_LOCATION_AND_INFERENCE_WIRING_PENDING"],
         },
+        "knowledge": evidence_configuration_status(),
     }
 
 
@@ -282,7 +289,19 @@ def _normalize_chat_request(payload: dict[str, Any]) -> dict[str, Any]:
         text = _clean_text(turn.get("text"), 2_000)
         if role in {"user", "assistant"} and text:
             history.append({"role": role.upper(), "text": text})
-    return {
+    protocol_version = payload.get("protocolVersion", 2)
+    if isinstance(protocol_version, bool) or not isinstance(protocol_version, int) or protocol_version not in {2, 3}:
+        raise BridgeError(400, "PROTOCOL_VERSION_UNSUPPORTED", "protocolVersion must be 2 (offline) or 3 (Online Evidence).")
+    knowledge_mode = _clean_text(payload.get("knowledgeMode") or "OFFLINE", 16).upper()
+    if knowledge_mode == "AUTO":
+        raise BridgeError(400, "KNOWLEDGE_MODE_AUTO_NOT_IMPLEMENTED", "Automatic online routing is not implemented; choose OFFLINE or ONLINE explicitly.")
+    if knowledge_mode not in {"OFFLINE", "ONLINE"}:
+        raise BridgeError(400, "KNOWLEDGE_MODE_UNSUPPORTED", "knowledgeMode must be OFFLINE or ONLINE.")
+    if knowledge_mode == "ONLINE" and protocol_version != 3:
+        raise BridgeError(400, "ONLINE_EVIDENCE_REQUIRES_V3", "Online Evidence requires protocolVersion 3.")
+    if knowledge_mode == "OFFLINE" and protocol_version != 2:
+        raise BridgeError(400, "OFFLINE_CHAT_REQUIRES_V2", "Offline model-only Chat continues to use protocolVersion 2.")
+    normalized = {
         "protocolVersion": 2,
         "requestId": request_id,
         "prompt": prompt,
@@ -295,6 +314,25 @@ def _normalize_chat_request(payload: dict[str, Any]) -> dict[str, Any]:
         "ingress": "VERCEL_CHAT",
         "profileId": _clean_text(payload.get("profileId"), 96),
     }
+    if knowledge_mode == "ONLINE":
+        try:
+            query = derive_knowledge_query(prompt)
+        except EvidenceError as exc:
+            raise BridgeError(400, exc.code, exc.detail) from exc
+        normalized.update(
+            {
+                "protocolVersion": 3,
+                "knowledgeMode": "ONLINE",
+                "knowledgeQuery": query.text,
+                "knowledgeQuerySha256": query.sha256,
+                "knowledgeQueryRedactionCount": query.redaction_count,
+            },
+        )
+    return normalized
+
+
+def _stream_contract_for_protocol(protocol_version: int) -> str:
+    return STREAM_CONTRACT_V3 if protocol_version == 3 else STREAM_CONTRACT_V2
 
 
 def _bridge_identity(request_id: str, route: str) -> dict[str, str]:
@@ -319,14 +357,16 @@ def _bridge_event(
     reason: str = "",
     categories: list[str] | None = None,
     terminal: bool = False,
+    protocol_version: int = 2,
+    route: str = "LOCAL_R39_STATUS_ONLY",
 ) -> dict[str, Any]:
     return {
-        "protocolVersion": 2,
-        "schemaVersion": 2,
-        "contractId": STREAM_CONTRACT,
+        "protocolVersion": protocol_version,
+        "schemaVersion": 3 if protocol_version == 3 else 2,
+        "contractId": _stream_contract_for_protocol(protocol_version),
         "seq": seq,
         "type": event_type,
-        "identity": _bridge_identity(request_id, "LOCAL_R39_STATUS_ONLY"),
+        "identity": _bridge_identity(request_id, route),
         "text": "",
         "reason": reason,
         "categories": categories or [],
@@ -601,6 +641,12 @@ def _verify_r39() -> dict[str, Any]:
 
 
 def _stream_response(payload: dict[str, Any]) -> StreamingResponse:
+    if payload.get("protocolVersion") == 3:
+        raise BridgeError(
+            503,
+            "ONLINE_EVIDENCE_EXECUTOR_UNAVAILABLE",
+            "Online Evidence requires the integrated Chat extension executor.",
+        )
     upstream_ready, missing = _upstream_ready()
     if _raw_upstream_url() and not upstream_ready:
         raise BridgeError(

@@ -1,5 +1,26 @@
 # SWRLZ Vercel Chat Changelog
 
+## REVIEW CANDIDATE — Chat 1.4.0-rc.1 / SWRLZ-WEB-KNOWLEDGE-001A — 2026-09-09
+
+Added on `feature/swrlz-web-knowledge-001a`:
+
+- explicit and separate `OFFLINE` / `ONLINE` knowledge control;
+- V3 Online Evidence request and NDJSON stream contract while preserving V2 Offline Chat;
+- provider-neutral search adapter registration with no production adapter registered;
+- current-prompt-only bounded query derivation with common secret/PII redaction;
+- public-address-pinned HTTPS safe fetch, redirect revalidation, response/media bounds, and non-executing text extraction;
+- server-issued `SOURCE` events and terminal evidence-bundle lineage receipts;
+- local R39 grounding through a bounded untrusted-reference system turn without model-weight changes;
+- mocked tests for offline compatibility, explicit failure, SSRF rejection, source separation, receipts, and grounding;
+- data policy that keeps all retrieved material request-scoped, rights-unassessed, and training-ineligible.
+
+Not changed/claimed:
+
+- no merge or deployment;
+- no provider key or live web request;
+- no crawler, durable corpus, user-data collection, or training;
+- no automatic online routing or silent online-to-offline fallback.
+
 ## SERVER 2.2.0 / Chat 1.3.26 / LALM UI 1.0.0 — 2026-09-07
 
 Changed:
