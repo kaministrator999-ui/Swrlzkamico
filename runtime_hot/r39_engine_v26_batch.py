@@ -1,10 +1,12 @@
 """v26-derived engine with an opt-in native batched prompt-prefill path.
 
-This file is staged behind v30 and is not the live hot entrypoint. It reuses the exact
-v26 conversational/vectorized engine source, injecting only the prompt-prefill loop.
+This file is staged behind v30. It reuses the exact v26 conversational/vectorized
+engine source and hot-loads the batch helper from immutable source so no base Python
+package mutation is required beyond the compiled native kernel.
 """
 from __future__ import annotations
 
+import types
 import urllib.request
 
 _V26_COMMIT = "3dc70e8d02777fd622db3ae3311fad13b7382e6a"
@@ -16,11 +18,21 @@ if len(_v26) > 4_000_000:
     raise RuntimeError("R39_V26_SOURCE_TOO_LARGE")
 source = _v26.decode("utf-8")
 
+_HELPER_COMMIT = "ebe683ec92281ec00b2c3e4fe26900595c9a7193"
+_HELPER_URL = f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_HELPER_COMMIT}/runtime_hot/r39_batch_prefill.py"
+_req = urllib.request.Request(_HELPER_URL, headers={"User-Agent": "swrlz-hot-r39-batch-helper"})
+with urllib.request.urlopen(_req, timeout=20) as _response:
+    _helper_bytes = _response.read(1_000_001)
+if len(_helper_bytes) > 1_000_000:
+    raise RuntimeError("R39_BATCH_HELPER_TOO_LARGE")
+_batch_prefill = types.ModuleType("swrlz_hot_r39_batch_prefill")
+_batch_prefill.__file__ = _HELPER_URL
+exec(compile(_helper_bytes.decode("utf-8"), _HELPER_URL, "exec"), _batch_prefill.__dict__)
+
 _anchor = '''_impl=types.ModuleType("swrlz_hot_r39_engine_impl_v26");_impl.__file__=_IMPL_URL
 exec(compile(_source_text,_IMPL_URL,"exec"),_impl.__dict__)
 '''
-_injected = r"""from runtime_hot import r39_batch_prefill as _batch_prefill
-_batch_anchor='''        prefill_started = time.monotonic()
+_injected = r"""_batch_anchor='''        prefill_started = time.monotonic()
         if remaining:
             for absolute_index in range(prefix_len, total):
 '''
