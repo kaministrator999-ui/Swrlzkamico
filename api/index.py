@@ -1,9 +1,8 @@
-"""§wyrlz Server 2.3.1 release candidate entrypoint.
+"""§wyrlz Server 2.3.2 release candidate entrypoint.
 
-2.3.1 adds server-verified Google identity, durable per-user chat/profile state,
-Vercel Queue detached generation/replay, intent-preserving input provenance, and the
-verified public Python Queues publishing/subscriber contract while preserving existing
-live Server/Chat/LALM control planes.
+2.3.2 adds server-verified Google identity, durable per-user chat/profile state,
+Vercel Queue detached generation/replay, intent-preserving input provenance, the verified
+public Python Queues contract, and the Google token-verification HTTP transport.
 """
 from __future__ import annotations
 
@@ -23,14 +22,12 @@ from api.native_status import install as _install_native_status
 from api.contextual_input import install as _install_contextual_input
 from api.account_routes_v2 import install as _install_account_routes
 
-VERSION = "2.3.1"
+VERSION = "2.3.2"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
-    "kind": "runtime-execution",
-    "ready": True,
-    "engineId": "swrlz_r39_native_qmatvec_v1",
-    "fallbackEngineId": "swrlz_r39_python_reference_v1",
+    "kind": "runtime-execution", "ready": True,
+    "engineId": "swrlz_r39_native_qmatvec_v1", "fallbackEngineId": "swrlz_r39_python_reference_v1",
     "boundary": "compiled direct-quantized R39 execution; hot reasoning overlay remains independent of bundled server release",
 }
 _install_admin_auth_guard(_server)
