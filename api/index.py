@@ -1,7 +1,8 @@
-"""§wyrlz Server 2.2.3 release entrypoint.
+"""§wyrlz Server 2.3.0 release candidate entrypoint.
 
-2.2.3 keeps the live GitHub-backed Chat/Server/LALM control planes from 2.2.2
-and fixes native fp16 subnormal scale conversion used by quantized R39 kernels.
+2.3.0 adds server-verified Google identity, durable per-user chat/profile state,
+Vercel Queue detached generation/replay, and intent-preserving input provenance while
+preserving the existing live Server/Chat/LALM control planes.
 """
 from __future__ import annotations
 
@@ -18,8 +19,10 @@ from api.admin_auth_guard import install as _install_admin_auth_guard
 from api.live_source_guard import install as _install_live_source_guard
 from api.control_plane import install as _install_control_plane
 from api.native_status import install as _install_native_status
+from api.contextual_input import install as _install_contextual_input
+from api.account_routes import install as _install_account_routes
 
-VERSION = "2.2.3"
+VERSION = "2.3.0"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -27,7 +30,7 @@ _server.CAPABILITIES["local-r39-inference"] = {
     "ready": True,
     "engineId": "swrlz_r39_native_qmatvec_v1",
     "fallbackEngineId": "swrlz_r39_python_reference_v1",
-    "boundary": "compiled direct-quantized matvec kernels for f32/f16/bf16/q4_0/q8_0/q4_k/q6_k with corrected fp16 subnormal scaling; Python reference remains correctness/fallback oracle; LALM runtime override is independent of Chat assets",
+    "boundary": "compiled direct-quantized R39 execution; hot reasoning overlay remains independent of bundled server release",
 }
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
@@ -40,6 +43,10 @@ _install_chat_ui_guard(_server)
 _install_page_manager_ui(_server)
 _install_control_plane(_server)
 _install_native_status(_server)
+# Semantic input normalization composes over the existing chat request normalizers.
+_install_contextual_input(_server)
+# Account routes own durable identity/state/generation APIs; legacy proof-bound chat remains available.
+_install_account_routes(_server)
 # Install last so this parent middleware owns GitHub-backed live reads across Vercel instances.
 _install_live_source_guard(_server)
 _server._write_server_state()
