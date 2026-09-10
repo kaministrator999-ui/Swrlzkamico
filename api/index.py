@@ -1,8 +1,9 @@
-"""§wyrlz Server 2.2.8 release entrypoint.
+"""§wyrlz Server 2.3.3 runtime entrypoint.
 
-2.2.8 preserves the 2.2.7 runtime/cursor behavior, records the hot Chat sidebar
-stacking fix as a versioned server update, and keeps module version reporting
-available through the existing control-plane status endpoints.
+2.3.3 preserves the runtime-owned Chat/LALM behavior and aligns the durable
+runtime version receipt with the stable server release. Startup LALM warming is
+owned by the stable infrastructure entrypoint; this runtime entrypoint remains
+the live application source of truth for hot application behavior.
 """
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ from api.live_source_guard import install as _install_live_source_guard
 from api.control_plane import install as _install_control_plane
 from api.native_status import install as _install_native_status
 
-VERSION = "2.2.8"
+VERSION = "2.3.3"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
