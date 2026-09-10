@@ -119,18 +119,20 @@ For every server development event:
 6. Determine the current versions of every module that may be affected.
 7. Fetch the current target source from the authoritative branch before editing.
 8. Identify exactly which module(s) will change.
-9. Make the smallest safe change.
-10. Assign the next overall Server version to the event.
-11. Increment only the module version(s) that actually changed.
-12. Update each affected module's canonical version source.
-13. Ensure cross-module consumers resolve versions from authoritative owners rather than duplicate literals.
-14. Record the event in the roadmap/release record.
-15. Record failures or unsuccessful verification honestly; do not rewrite history to hide them.
-16. Commit the complete versioned event with its relevant code and records.
-17. Reload/request affected routes according to the hotfix/deployment boundary.
-18. Verify behavior, version responses, visible version displays, and source lineage.
-19. If verification fails, treat the correction as a new versioned event.
-20. Only declare the event complete after the required verification and release record are present.
+9. **Perform the deployment-risk check before any repository mutation.**
+10. If the proposed action could cause deployment/redeployment, **STOP and obtain explicit user approval before the mutation.**
+11. Make the smallest safe change.
+12. Assign the next overall Server version to the event.
+13. Increment only the module version(s) that actually changed.
+14. Update each affected module's canonical version source.
+15. Ensure cross-module consumers resolve versions from authoritative owners rather than duplicate literals.
+16. Record the event in the roadmap/release record.
+17. Record failures or unsuccessful verification honestly; do not rewrite history to hide them.
+18. Commit the complete versioned event with its relevant code and records.
+19. Reload/request affected routes according to the hotfix/deployment boundary.
+20. Verify behavior, version responses, visible version displays, and source lineage.
+21. If verification fails, treat the correction as a new versioned event.
+22. Only declare the event complete after the required verification and release record are present.
 
 ## 6. Module versions are lineage, not decoration
 
@@ -186,18 +188,46 @@ Do **not** normally expose implementation syntax, variable assignments, internal
 
 The roadmap remains the detailed engineering record; the Chat update is the human-readable project-status layer.
 
-## 8. Branch and deployment interaction
+## 8. Deployment approval is a pre-mutation safety boundary
 
-Versioning does not override the hotfix/deployment boundary.
+**Deployment is never implicitly authorized by the existence of a development request.** The agent must not treat a request to architect, investigate, document, debug, implement, test, version, commit, merge, or otherwise work on §wyrlz as permission to cause deployment.
+
+Before **any** repository mutation that could cause deployment/redeployment, the agent must:
+
+1. identify the exact deployment trigger;
+2. identify the branch/path/configuration/action involved;
+3. explain why the trigger causes deployment;
+4. distinguish an actual architectural deployment requirement from an automatic consequence of the deployment configuration;
+5. identify the deployed surface that would be affected;
+6. determine whether the work can instead be performed through the non-deployment `runtime` path;
+7. state the exact repository action awaiting authorization;
+8. **STOP and obtain explicit user approval before performing that mutation.**
+
+This applies to source code **and documentation**. A Markdown edit can still cause deployment if it is committed to a deployment-watched branch; the document contents themselves do not need to be executable for the commit to trigger deployment.
+
+If deployment behavior is uncertain, the agent must treat the action as deployment-capable and stop for approval.
+
+A commit is not deployment authorization. A merge into `main` is not deployment authorization. A general request to update the repository is not deployment authorization.
+
+If deployment is approved, the approval applies to the specifically explained deployment-producing action. The agent must not broaden that approval to unrelated deployment-producing changes.
+
+If the user chooses to deploy manually, the agent must not automatically initiate the deployment.
+
+This rule takes precedence over convenience and applies during architecture, investigation, debugging, documentation, implementation, testing, release preparation, branch operations, commits, merges, and all other repository work.
+
+## 9. Branch and deployment interaction
+
+Versioning does not override the hotfix/deployment boundary or the deployment approval gate.
 
 - `runtime` remains the durable live application source for ordinary runtime changes.
 - `main` remains the stable loader/infrastructure/deployment boundary.
 - Runtime-only changes follow the no-deploy/no-restart hotfix path defined by `SWRLZ_HOTFIX_RULES.md`.
-- Stable infrastructure changes follow the deployment path defined by `SWRLZ_HOTFIX_RULES.md`.
+- Stable infrastructure changes follow the deployment path defined by `SWRLZ_HOTFIX_RULES.md`, but only after explicit user approval before the deployment-producing repository mutation.
+- Documentation changes must also be evaluated for deployment impact before mutation.
 
-The version event must record which path was used.
+The version event must record which path was used and whether deployment was none, approved, or otherwise explicitly authorized.
 
-## 9. Source-of-truth discipline
+## 10. Source-of-truth discipline
 
 Before changing a version or module, establish the current source of truth from the repository.
 
@@ -212,7 +242,7 @@ Do not rely on:
 
 Repository state is authoritative for current engineering work.
 
-## 10. Programming-LALM curriculum requirements
+## 11. Programming-LALM curriculum requirements
 
 This contract is intentionally written as an engineering teaching specification for the future programming-side LALM.
 
@@ -226,6 +256,10 @@ SOURCE-OF-TRUTH DISCOVERY
 CURRENT VERSION DISCOVERY
   ↓
 MODULE IMPACT ANALYSIS
+  ↓
+DEPLOYMENT RISK ANALYSIS
+  ↓
+IF DEPLOYMENT-CAPABLE → STOP + EXPLAIN + GET USER APPROVAL
   ↓
 BRANCH / DEPLOYMENT DECISION
   ↓
@@ -263,7 +297,7 @@ HUMAN PROJECT UPDATE
 → what changed, what it accomplishes, resulting behavior, status
 ```
 
-## 11. Required reasoning questions for future programming agents
+## 12. Required reasoning questions for future programming agents
 
 Before declaring a change complete, the programming agent should be able to answer:
 
@@ -279,13 +313,15 @@ Before declaring a change complete, the programming agent should be able to answ
 10. What happened if an attempt failed?
 11. What commit contains the event?
 12. What verification was performed?
-13. Was deployment required, or was this a runtime-only hotfix?
-14. Does the roadmap accurately describe the completed event?
-15. What should the human user be told this change **accomplishes**, without exposing implementation syntax unless requested?
+13. **Could any repository action for this event cause deployment/redeployment?**
+14. **If yes, what exactly causes it, why does it happen, and was explicit user approval obtained before the mutation?**
+15. Was deployment required, or was this a runtime-only hotfix?
+16. Does the roadmap accurately describe the completed event?
+17. What should the human user be told this change **accomplishes**, without exposing implementation syntax unless requested?
 
-If any answer is unknown, the agent must resolve the repository state before claiming completion.
+If any answer is unknown, the agent must resolve the repository state before claiming completion. If deployment risk is unknown, the agent must stop before repository mutation.
 
-## 12. Evolution law in one block
+## 13. Evolution law in one block
 
 ```text
 EVERY SERVER DEVELOPMENT EVENT
@@ -300,6 +336,10 @@ UPDATE THEIR CANONICAL SOURCES
         ↓
 CONSUMERS QUERY OWNERS — NEVER DUPLICATE
         ↓
+DEPLOYMENT RISK CHECK BEFORE MUTATION
+        ↓
+DEPLOYMENT-CAPABLE? → STOP + EXPLAIN + GET USER APPROVAL
+        ↓
 RECORD CHANGE + FAILURE + VERIFICATION + COMMIT LINEAGE
         ↓
 VERIFY
@@ -311,6 +351,6 @@ FAILURE = NEW VERSIONED EVENT FOR THE NEXT ATTEMPT
 
 ## Bottom line
 
-**Server versioning is chronological event lineage. Module versioning is independent component lineage. Canonical ownership prevents drift. Cross-module resolution prevents stale duplication. Roadmap entries preserve history. Failed attempts remain visible. Verification closes each event. The roadmap records the technical implementation; the conversational update explains the resulting accomplishment in human language.**
+**Server versioning is chronological event lineage. Module versioning is independent component lineage. Canonical ownership prevents drift. Cross-module resolution prevents stale duplication. Roadmap entries preserve history. Failed attempts remain visible. Verification closes each event. The roadmap records the technical implementation; the conversational update explains the resulting accomplishment in human language. Before any repository action that could trigger deployment, §wyrlz must stop, explain the trigger and requirement, and obtain explicit user approval before touching the repository.**
 
 This document is therefore both the **third required project-start contract** and the foundation for the future **programming-side LALM engineering curriculum/specification**.
