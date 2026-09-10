@@ -167,6 +167,25 @@ The roadmap is the historical ledger. It must not be left saying `NEXT RELEASE` 
 
 The release record must describe what actually happened, including failed attempts when they are part of the event lineage.
 
+### Human-readable update/reporting rule
+
+The roadmap may contain implementation-level engineering detail, including source files, commits, hashes, exact technical mechanisms, and test evidence. **The conversational update to the human user must not be a code dump.**
+
+When a Server/module event is reported in Chat, summarize the work in plain human/project language:
+
+- identify the new Server version;
+- identify the affected module version(s);
+- explain **what the change accomplishes for the user/system**;
+- explain the resulting behavior or capability;
+- state what was intentionally unchanged when useful;
+- state deployment/restart status;
+- state verification status honestly;
+- mention the roadmap was updated.
+
+Do **not** normally expose implementation syntax, variable assignments, internal function names, raw diffs, or code fragments in the conversational release summary unless the user specifically asks for technical implementation details.
+
+The roadmap remains the detailed engineering record; the Chat update is the human-readable project-status layer.
+
 ## 8. Branch and deployment interaction
 
 Versioning does not override the hotfix/deployment boundary.
@@ -234,6 +253,16 @@ FAILURE → RECORD + CREATE NEXT VERSIONED EVENT
 
 The LALM must understand that versioning is part of the engineering operation itself, not a cosmetic documentation task performed after coding.
 
+It must also understand the two reporting layers:
+
+```text
+ENGINEERING RECORD
+→ detailed implementation, lineage, evidence, commits, failures
+
+HUMAN PROJECT UPDATE
+→ what changed, what it accomplishes, resulting behavior, status
+```
+
 ## 11. Required reasoning questions for future programming agents
 
 Before declaring a change complete, the programming agent should be able to answer:
@@ -252,6 +281,7 @@ Before declaring a change complete, the programming agent should be able to answ
 12. What verification was performed?
 13. Was deployment required, or was this a runtime-only hotfix?
 14. Does the roadmap accurately describe the completed event?
+15. What should the human user be told this change **accomplishes**, without exposing implementation syntax unless requested?
 
 If any answer is unknown, the agent must resolve the repository state before claiming completion.
 
@@ -274,11 +304,13 @@ RECORD CHANGE + FAILURE + VERIFICATION + COMMIT LINEAGE
         ↓
 VERIFY
         ↓
+REPORT HUMAN-READABLE ACCOMPLISHMENT TO USER
+        ↓
 FAILURE = NEW VERSIONED EVENT FOR THE NEXT ATTEMPT
 ```
 
 ## Bottom line
 
-**Server versioning is chronological event lineage. Module versioning is independent component lineage. Canonical ownership prevents drift. Cross-module resolution prevents stale duplication. Roadmap entries preserve history. Failed attempts remain visible. Verification closes each event.**
+**Server versioning is chronological event lineage. Module versioning is independent component lineage. Canonical ownership prevents drift. Cross-module resolution prevents stale duplication. Roadmap entries preserve history. Failed attempts remain visible. Verification closes each event. The roadmap records the technical implementation; the conversational update explains the resulting accomplishment in human language.**
 
 This document is therefore both the **third required project-start contract** and the foundation for the future **programming-side LALM engineering curriculum/specification**.
