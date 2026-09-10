@@ -1,18 +1,13 @@
-"""§wyrlz Server 2.3.2 release candidate entrypoint.
+"""§wyrlz stable server entrypoint.
 
-2.3.2 adds server-verified Google identity, durable per-user chat/profile state,
-Vercel Queue detached generation/replay, intent-preserving input provenance, the verified
-public Python Queues contract, and the Google token-verification HTTP transport.
+Stable infrastructure owns the HTTP/bootstrap/control plane. Runtime application
+pages, page-owned assets, and the hot R39 implementation are sourced from the
+runtime branch by the dedicated hot/live loaders.
 """
 from __future__ import annotations
 
 from api import server_v213 as _server
 from api.runtime_hot import install as _install_hot_runtime
-from api.page_runtime import install as _install_page_runtime
-from api.page_runtime_guard import install as _install_page_runtime_guard
-from api.live_runtime_routes import install as _install_live_runtime_routes
-from api.chat_ui_guard import install as _install_chat_ui_guard
-from api.page_manager_ui import install as _install_page_manager_ui
 from api.chat_admin_session import install as _install_chat_admin_session
 from api.chat_fast_status import install as _install_chat_fast_status
 from api.admin_auth_guard import install as _install_admin_auth_guard
@@ -21,7 +16,6 @@ from api.control_plane import install as _install_control_plane
 from api.native_status import install as _install_native_status
 from api.contextual_input import install as _install_contextual_input
 from api.account_routes_v2 import install as _install_account_routes
-from api.chat_hot_assets import install as _install_chat_hot_assets
 
 VERSION = "2.3.2"
 _server.VERSION = VERSION
@@ -33,18 +27,12 @@ _server.CAPABILITIES["local-r39-inference"] = {
 }
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
-_install_page_runtime_guard()
-_install_page_runtime(_server)
-_install_live_runtime_routes(_server)
 _install_chat_admin_session(_server)
 _install_chat_fast_status(_server)
-_install_chat_ui_guard(_server)
-_install_page_manager_ui(_server)
 _install_control_plane(_server)
 _install_native_status(_server)
 _install_contextual_input(_server)
 _install_account_routes(_server)
-_install_chat_hot_assets(_server)
 _install_live_source_guard(_server)
 _server._write_server_state()
 
