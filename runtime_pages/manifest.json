@@ -6,7 +6,7 @@
     "/chat": {
       "source": "web/chat.html",
       "styles": ["web/chat_enhancements.css"],
-      "scripts": ["web/chat_admin_session.js", "web/chat_enhancements.js", "web/chat_stream_focus.js"]
+      "scripts": ["web/chat_admin_session.js", "web/chat_enhancements.js", "web/chat_stream_focus.js", "web/chat_version.js"]
     },
     "/server": {"source": "web/server.html"},
     "/lalm": {"source": "web/lalm.html"},
