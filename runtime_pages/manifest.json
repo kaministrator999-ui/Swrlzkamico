@@ -1,17 +1,18 @@
 {
-  "version": 1,
+  "version": 2,
   "mode": "runtime-source-of-truth",
   "routes": {
-    "/": "runtime_pages/index.html",
-    "/chat": "web/chat.html",
-    "/server": "web/server.html",
-    "/lalm": "web/lalm.html",
-    "/admin": "web/admin.html",
-    "/live": "runtime_pages/index.html"
+    "/": {"source": "runtime_pages/index.html"},
+    "/chat": {
+      "source": "web/chat.html",
+      "styles": ["web/chat_enhancements.css"],
+      "scripts": ["web/chat_admin_session.js", "web/chat_enhancements.js", "web/chat_stream_focus.js"]
+    },
+    "/server": {"source": "web/server.html"},
+    "/lalm": {"source": "web/lalm.html"},
+    "/admin": {"source": "web/admin.html"},
+    "/live": {"source": "runtime_pages/index.html"}
   },
-  "assetRoots": [
-    "web",
-    "runtime_pages"
-  ],
-  "notes": "This manifest is durable configuration on the runtime branch. The stable server must read it at request time. Add, change, or remove route entries here without redeploying the stable server. Page files and page-owned assets live on the runtime branch."
+  "assetRoots": ["web", "runtime_pages"],
+  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Add, change, or remove routes and assets here without a Vercel deployment."
 }
