@@ -12,8 +12,38 @@ When the user says **“start project work”**, **“resume project work”**, 
 4. Immediately read `SWRLZ_SERVER_ROADMAP.md`.
 5. Treat those four files as the current operating and engineering contract before touching the repository.
 6. Fetch the current target file/commit state before making any edit.
+7. **Before making any repository mutation that could cause a deployment/redeployment, apply the Deployment Approval Gate below and obtain explicit user approval first.**
 
 Do not ask the user to repeat these instructions unless the repository/files are genuinely inaccessible.
+
+## DEPLOYMENT APPROVAL GATE — HARD STOP
+
+**No deployment or redeployment is ever implicitly authorized by a request to architect, investigate, document, debug, implement, test, version, commit, merge, or otherwise work on §wyrlz.**
+
+Before touching the repository in any way that could cause a deployment/redeployment, the agent MUST stop and verify with the user:
+
+1. **What exactly will trigger the deployment** — branch, path, configuration, merge, workflow, or other mechanism.
+2. **Why it will trigger deployment** — distinguish an actual architectural deployment requirement from an automatic deployment consequence of repository/deployment configuration.
+3. **What the deployment affects** — runtime, stable infrastructure, production behavior, or other deployed surfaces.
+4. **Whether the work can be completed through the non-deployment `runtime` path instead.**
+5. **What action is being requested for approval** — the precise repository mutation or deployment-producing operation.
+
+The agent MUST obtain an explicit approval from the user before performing that deployment-capable repository action.
+
+### Strict rules
+
+- **Never assume deployment approval.**
+- A request to “fix,” “update,” “document,” or “commit” something is **not** permission to trigger deployment.
+- A Git commit is **not** deployment authorization.
+- A merge into a deployment-watched branch is **not** deployment authorization.
+- Documentation changes are subject to this gate just like code changes.
+- If deployment behavior is uncertain, treat the action as potentially deployment-producing and **STOP + ASK** before repository mutation.
+- If a runtime-only solution exists, prefer it and do not cross the deployment boundary.
+- If stable infrastructure must change, explain the deployment requirement and obtain approval **before the first repository mutation that can cause deployment**.
+- The user may choose to perform the actual deployment manually. Do not automatically deploy unless the user has explicitly authorized that deployment action.
+- After approval, record the approved deployment-producing event and its resulting deployment/verification state in the roadmap when applicable.
+
+**This gate applies during architecture, investigation, debugging, documentation, implementation, testing, release preparation, versioning, branch operations, commits, merges, and all other repository work.**
 
 ## REQUIRED DOCUMENT ORDER
 
@@ -31,7 +61,7 @@ The project-start contract is intentionally structured as four layers:
 
 ### Document 1 — Project Start
 
-Defines the entry sequence and the non-negotiable project-start procedure.
+Defines the entry sequence and the non-negotiable project-start procedure, including the Deployment Approval Gate.
 
 ### Document 2 — Hotfix Rules
 
@@ -55,7 +85,7 @@ Records the actual chronological Server/module release history and current versi
 
 For Chat, pages, page-owned JS/CSS, stream UI, runtime assets, and runtime-loadable LALM/R39: edit `runtime`, make the smallest targeted change, commit it, reload/request, verify it live, and **DO NOT DEPLOY or RESTART** for ordinary runtime changes.
 
-For stable API, middleware, authentication/security boundaries, runtime loader/source resolution, hydration/sync infrastructure, deployment/build configuration, or capabilities the current loader cannot serve: edit `main` and **DEPLOY + VERIFY**.
+For stable API, middleware, authentication/security boundaries, runtime loader/source resolution, hydration/sync infrastructure, deployment/build configuration, or capabilities the current loader cannot serve: edit `main` and **DEPLOY + VERIFY**, but only after passing the Deployment Approval Gate above.
 
 Never use `dev` as the Chat/runtime hotfix source.
 Never use `/tmp` as durable source of truth.
@@ -82,7 +112,7 @@ During the update:
 Before declaring the work complete:
 - Record the completed event in `SWRLZ_SERVER_ROADMAP.md`.
 - Include the overall Server version, affected module versions, exact update notes, failures/attempts, deployment status, verification, commit lineage, and rollback/migration notes when applicable.
-- If the event changed stable infrastructure on `main`, deploy and verify production before closing the release.
+- If the event changed stable infrastructure on `main`, deploy and verify production before closing the release **only if deployment was explicitly approved under the Deployment Approval Gate**.
 - If the event was runtime-only, explicitly record `Deployment: NONE` and verify the live runtime source without deployment.
 - If an attempt fails, preserve that event in the lineage and treat the next correction as another versioned event.
 
@@ -115,6 +145,10 @@ FETCH CURRENT TARGET + VERSION SOURCES
       ↓
 DETERMINE MODULE IMPACT
       ↓
+DEPLOYMENT RISK CHECK
+      ↓
+IF DEPLOYMENT-CAUSING → STOP + EXPLAIN + GET USER APPROVAL
+      ↓
 MAKE SMALLEST SAFE CHANGE
       ↓
 ASSIGN NEW OVERALL SERVER VERSION
@@ -125,7 +159,7 @@ UPDATE CANONICAL VERSION SOURCES
       ↓
 VERIFY CROSS-MODULE VERSION RESOLUTION
       ↓
-COMMIT TO runtime OR main
+COMMIT TO runtime OR approved main PATH
       ↓
 UPDATE ROADMAP / RELEASE RECORD
       ↓
@@ -148,4 +182,4 @@ If any of these documents conflict, stop and resolve the conflict against the ne
 
 ## BOTTOM LINE
 
-**Read `SWRLZ_PROJECT_START.md`, then automatically read `SWRLZ_HOTFIX_RULES.md`, `SWRLZ_VERSION_MODULE_EVOLUTION.md`, and `SWRLZ_SERVER_ROADMAP.md`. Follow the hotfix/deployment boundary. Every server development event receives a new overall Server version; only actually changed components receive component bumps; canonical version sources stay authoritative; cross-module displays resolve versions automatically; failures remain in lineage; and the completed event is recorded in the roadmap before the work is declared done.**
+**Read `SWRLZ_PROJECT_START.md`, then automatically read `SWRLZ_HOTFIX_RULES.md`, `SWRLZ_VERSION_MODULE_EVOLUTION.md`, and `SWRLZ_SERVER_ROADMAP.md`. Follow the hotfix/deployment boundary. Before any action that could cause deployment, STOP, explain exactly what would cause it and why, and obtain explicit user approval before touching the repository. Every server development event receives a new overall Server version; only actually changed components receive component bumps; canonical version sources stay authoritative; cross-module displays resolve versions automatically; failures remain in lineage; and the completed event is recorded in the roadmap before the work is declared done.**
