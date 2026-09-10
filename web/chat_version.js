@@ -1,5 +1,5 @@
 (()=>{"use strict";
-const CHAT_VERSION="1.4.5";
+const CHAT_VERSION="1.4.6";
 const STREAM_VERSION="V2";
 const apply=()=>{
   const foot=document.querySelector(".sidebar-foot");
@@ -33,21 +33,22 @@ const apply=()=>{
       light.classList.remove("ready","error");
       if(ready){
         light.classList.add("ready");
-        title.textContent="Local LALM ready";
-        detail.textContent="R39 resident · native backend";
+        if(title.textContent!=="Local LALM ready")title.textContent="Local LALM ready";
+        if(detail.textContent!=="R39 resident · native backend")detail.textContent="R39 resident · native backend";
       }else if(failed){
         light.classList.add("error");
-        title.textContent="Local LALM unavailable";
-        detail.textContent=String(s?.readiness?.detail||s?.readiness?.code||"Check LALM status");
+        if(title.textContent!=="Local LALM unavailable")title.textContent="Local LALM unavailable";
+        const value=String(s?.readiness?.detail||s?.readiness?.code||"Check LALM status");
+        if(detail.textContent!==value)detail.textContent=value;
       }else{
-        title.textContent="Local LALM warming";
-        detail.textContent="R39 is being prepared";
+        if(title.textContent!=="Local LALM warming")title.textContent="Local LALM warming";
+        if(detail.textContent!=="R39 is being prepared")detail.textContent="R39 is being prepared";
       }
     }catch(_){
       light.classList.remove("ready");
       light.classList.add("error");
-      title.textContent="Local LALM unavailable";
-      detail.textContent="LALM status unavailable";
+      if(title.textContent!=="Local LALM unavailable")title.textContent="Local LALM unavailable";
+      if(detail.textContent!=="LALM status unavailable")detail.textContent="LALM status unavailable";
     }
   };
   render();
