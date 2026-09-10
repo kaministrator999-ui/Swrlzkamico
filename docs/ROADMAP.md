@@ -2,16 +2,44 @@
 
 ## Current release
 
-**Server v2.3.6**
+**Server v2.3.7**
 
 This is the current runtime development release. Stable deployed infrastructure remains Server v2.3.3 until a future stable-infrastructure deployment changes it.
 
 ### Module state
 
-- **Chat v1.4.6** — fixed a browser-side status MutationObserver loop and kept authoritative local LALM readiness display guarded against redundant DOM writes.
+- **Chat v1.4.7** — synchronized the main Chat status indicator with the same authoritative local LALM readiness source used by the sidebar.
 - **LALM UI v1.0.0** — unchanged in this release.
 - **LALM engine hot revision** — `2.1.18-hot-boundary-v9-effective-receipt`; unchanged in this release.
 - **Server UI v1.0.0** — unchanged in this release.
+
+## Server v2.3.7 — 2026-09-10
+
+### Changed
+
+- Corrected the main Chat page status indicator so its status dot and label are driven by the authoritative `/api/lalm/status` readiness state instead of the separate upstream bridge-configuration state.
+- The main Chat indicator now agrees with the sidebar: ready local LALM state is shown as green **LALM ready**, warming state remains amber, and an unavailable/error state is red.
+- Kept the correction in the canonical runtime-owned `web/chat_version.js`, avoiding another dependency on the separately propagated enhancement asset.
+- Bumped Chat from `v1.4.6` to `v1.4.7` because the user-facing Chat status behavior changed.
+- Bumped overall Server from `v2.3.6` to `v2.3.7` because this is a new server runtime development event.
+- LALM UI and LALM/R39 engine versions remain unchanged because their source/behavior did not change in this event.
+- Kept the change entirely on `runtime`; no stable-infrastructure deployment or server restart is required.
+
+### Failure / history
+
+- The sidebar and main Chat status indicator had diverged because they were evaluating different status concepts. The sidebar was already reading `/api/lalm/status`, while the main indicator was evaluating upstream bridge configuration.
+- The live screenshot demonstrated the resulting mismatch: the sidebar showed **Local LALM ready** with a green indicator while the main Chat status remained amber.
+- This release unifies the user-facing status presentation around the authoritative local LALM readiness result without changing the underlying LALM engine.
+
+### Verification state
+
+- `runtime/web/chat_version.js` now reads `/api/lalm/status` and applies the same ready/warming/error state to both the sidebar indicator and the main Chat status pill.
+- Server version source advanced to `2.3.7`.
+- Chat version source advanced to `1.4.7`.
+- No LALM UI or engine source was changed.
+- **Deployment:** NONE required.
+- **Server restart:** NONE.
+- Final browser verification: reload the live Chat page and confirm the main status dot and sidebar dot remain visually synchronized when local LALM readiness is green.
 
 ## Server v2.3.6 — 2026-09-10
 
