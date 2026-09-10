@@ -30,8 +30,10 @@ def _fetch(source: str, limit: int = MAX_SOURCE_BYTES) -> bytes:
     cached = _CACHE.get(source)
     if cached and now - cached[0] <= CACHE_TTL:
         return cached[1]
-    url = f"{RAW_BASE}/{urllib.parse.quote(BRANCH, safe='-._/')}/{urllib.parse.quote(source, safe='-._/')}"
-    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-live-runtime/5", "Cache-Control": "no-cache"})
+    encoded_branch = urllib.parse.quote(BRANCH, safe='-._/')
+    encoded_source = urllib.parse.quote(source, safe='-._/')
+    url = f"{RAW_BASE}/{encoded_branch}/{encoded_source}?swrlz_runtime={int(now * 1000)}"
+    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-live-runtime/6", "Cache-Control": "no-cache"})
     with urllib.request.urlopen(req, timeout=FETCH_TIMEOUT) as response:
         data = response.read(limit + 1)
     if len(data) > limit:
@@ -127,8 +129,6 @@ def install(server) -> None:
         if request.method != "GET":
             return await call_next(request)
 
-        # The manifest is the only page routing authority. The stable server
-        # never owns Chat/LALM/UI versions or application behavior.
         if path == "/chat":
             meta = _route_meta("/chat") or {"source": "web/chat.html"}
             source = _safe_runtime_source(meta.get("source")) or "web/chat.html"
