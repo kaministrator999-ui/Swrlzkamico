@@ -3,7 +3,8 @@
   "version": 2,
   "git": {
     "deploymentEnabled": {
-      "dev": false
+      "dev": false,
+      "runtime": false
     }
   },
   "functions": {
