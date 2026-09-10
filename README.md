@@ -1,111 +1,92 @@
 # §wyrlz Unified Vercel Server
 
 Server revision: **2.2.0**  
-Chat UI revision: **1.3.26**  
-LALM UI revision: **1.0.0**  
-Server UI revision: **1.0.0**  
+Chat/runtime hotfix rules: **SWRLZ_HOTFIX_RULES.md**  
 Production deployment: **https://swrlzkamico-o3nu.vercel.app**  
 Checkpoint lineage: `INT-VERCEL-CHAT-001A`
 
-This repository is the unified §wyrlz Vercel server. Server 2.2.0 separates infrastructure/server operations, LALM/R39 engineering, and Chat into independent control planes so model/runtime work no longer requires Chat UI mutation.
+This repository is the unified §wyrlz Vercel server. The stable `main` branch provides the deployed loader/infrastructure; the `runtime` branch is the durable live application source for hot-editable pages, Chat, page-owned assets, and runtime LALM/inference.
+
+## ⚠️ READ FIRST FOR CHAT / PAGE / LALM WORK
+
+**Canonical hotfix instructions:** `SWRLZ_HOTFIX_RULES.md`
+
+Normal runtime change:
+
+`edit runtime → commit → reload/request → verify → NO VERCEL DEPLOY → NO SERVER RESTART`
+
+Do not use `dev` for Chat/runtime hotfixes. Do not replace a complete page for a one-line change. Do not treat `/tmp` as durable source.
 
 ## Control planes
 
-- `/server/` — infrastructure, routing, deployment/base-version receipts, capabilities, and scoped hot-sync controls.
-- `/lalm/` — R39/LALM model/runtime status, native-backend receipt, readiness, verification, and LALM-scoped hot sync.
-- `/api/chat` — stable conversational client surface.
+- `/server/` — stable infrastructure, routing, deployment/base-version receipts, and server capabilities.
+- `/lalm/` — LALM/R39 status and verification surfaces.
+- `/api/chat` — stable conversational transport surface.
 - `/api/admin` — Admin workbench.
-- `/api/pages` — live page manager.
-- `/live/` — live launchpad/index.
+- `/live/` — runtime live launchpad/source surface.
 
-Status/API receipts:
+## Runtime ownership
 
-- `/api/server/status`
-- `/api/lalm/status`
-- `/api/chat/ops`
-- `/api/health`
-- `/api/control/route?client=chat|lalm|server|admin`
+The `runtime` branch owns the live application source:
 
-Browser routing helper:
+- Chat HTML/UI
+- Chat JavaScript and CSS
+- stream UI and Chat enhancements
+- Chat version display
+- runtime page routes via `runtime_pages/manifest.json`
+- runtime page assets
+- runtime-loadable LALM/R39 inference code
 
-- `/route?client=chat`
-- `/route?client=lalm`
-- `/route?client=server`
-- `/route?client=admin`
+These changes are designed to be served from current `runtime` source without a Vercel deployment or server restart.
 
-## Scoped hot architecture
+## Stable boundary / deployment ownership
 
-The legacy `/api/hot` route remains for compatibility. Server 2.2.0 adds the preferred scoped control endpoint:
+`main` owns the stable infrastructure that loads and serves `runtime`.
 
-`POST /api/control/hot/sync?scope=<scope>&branch=dev`
+A Vercel deployment is required when changing the stable boundary itself, such as:
 
-Scopes:
-
-- `lalm` — updates only `web/lalm.html` and `runtime_hot/r39_engine.py`.
-- `server` — updates only `web/server.html`.
-- `all` — updates Server + LALM control assets, still without touching Chat.
-
-The LALM scope returns `chatTouched: false` by contract. Ordinary R39/native/prefill/decode iteration should use this path after 2.2.0 is deployed.
-
-## Chat freeze boundary
-
-Chat remains **1.3.26** for Server 2.2.0. R39 performance work, native-kernel work, model readiness, and Server routing do not advance the Chat version unless the Chat protocol or user-facing Chat behavior itself changes.
-
-Chat owns:
-
-- browser conversation/thread UX;
-- request submission;
-- NDJSON stream rendering;
-- reconnect/replay behavior;
-- response evidence and Truth Firewall enforcement.
-
-Chat does not own Server deployment state or LALM engineering state.
-
-## LALM / R39 runtime
-
-The proven transport path remains:
-
-`Forge chunks -> wrapper ZIP -> verified R39 gzip -> raw R39 -> SHA-256 -> runtime`
-
-The compute path remains:
-
-`SWRLZX TOC -> TOKENIZER + TENSOR_DIRECTORY + TENSOR_DATA -> R39 executor -> NDJSON DELTA`
-
-Authoritative raw R39 SHA-256:
-
-`65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee`
-
-The preferred production engine is `swrlz_r39_native_qmatvec_v1`, using compiled direct-quantized matvec kernels for `f32`, `f16`, `bf16`, `q4_0`, `q8_0`, `q4_k`, and `q6_k`. The Python/NumPy reference executor remains the correctness/fallback oracle.
-
-`/api/lalm/status` is deliberately non-blocking and does not perform model verification merely to paint the LALM page. Explicit verification is owned by `POST /api/lalm/verify`.
-
-## Authorization
-
-`SWRLZ_WEB_CHAT_TOKEN` remains server-side. Same-origin Chat may use the bounded signed browser session established by the server. The permanent root Chat secret is not exposed to browser JavaScript.
-
-Server/all scoped hot mutation requires Admin authorization. The LALM scope and LALM verification may also accept a valid signed browser Chat session supplied through `x-swrlz-chat-session`.
+- Python API routes or middleware
+- authentication/session/security behavior
+- runtime loader/source-resolution logic
+- runtime hydration/sync mechanism
+- `vercel.json` or build/runtime configuration
+- new bundled dependencies or stable server capabilities
+- a capability the existing runtime loader cannot serve
 
 ## Durable vs ephemeral state
 
-GitHub `dev` remains the durable source for hot-editable assets. Vercel `/tmp` hot overrides are instance-local and ephemeral. Bundled source remains the fallback after worker replacement, runtime clear, or cold start.
+GitHub `runtime` is durable source of truth. `/tmp`, memory caches, loaded Python module objects, and Vercel instance state are disposable execution/cache state. A restart/cold start must recreate active runtime state from the durable `runtime` source.
 
-## Development / release flow
+## LALM / R39 runtime
 
-Use `dev` for ordinary page and LALM-runtime iteration. `vercel.json` disables automatic deployment from `dev`.
+The runtime-loadable LALM/R39 source belongs to `runtime`. Changing inference internals does not require changing the Chat version unless user-facing Chat behavior or protocol actually changes.
 
-Promote to `main` only when the stable server boundary changes, including Python routes, auth/session behavior, middleware, native build configuration, or deployment contracts.
+Authoritative raw R39 SHA-256 currently recorded by the project:
 
-Server 2.2.0 is the one-time architecture deployment that establishes the split control planes and LALM-scoped hot-sync contract. After that deployment, routine LALM work should not require Chat updates or base-server redeploys.
+`65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee`
 
-## Contracts and records
+## Page lifecycle
 
-- `docs/contracts/SWRLZ_CONTROL_PLANES_V2.md`
+Add/remove/update pages through the runtime source and `runtime_pages/manifest.json`. See `HOT_RUNTIME_UPDATE_GUIDE.md` on `runtime` for the exact workflow.
+
+## Verification
+
+Before declaring a runtime hotfix complete:
+
+- fetch the current target file first;
+- make the smallest targeted edit;
+- commit to `runtime`;
+- confirm no Vercel deployment was created;
+- request/reload the affected route;
+- verify the live response comes from current `runtime` source;
+- verify browser behavior/version;
+- verify no legacy injector or loader overrides the change.
+
+## Key records
+
+- `SWRLZ_HOTFIX_RULES.md` — canonical future-§wyrlz hotfix instructions.
+- `HOT_RUNTIME_UPDATE_GUIDE.md` — runtime workflow and page lifecycle guide.
+- `docs/contracts/SWRLZ_HOT_RUNTIME_V1.md`
 - `docs/contracts/SWRLZ_LIVE_PAGE_RUNTIME_V1.md`
 - `docs/contracts/SWRLZ_VERCEL_CHAT_BRIDGE_V1.md`
-- `docs/contracts/SWRLZ_HOT_RUNTIME_V1.md`
-- `docs/releases/SERVER_2.2.0.md`
 - `SWRLZ_VERCEL_CHAT_CHANGELOG.md`
-
-## Revision history
-
-2.1.x established the unified Chat/Admin/live-page runtime, local R39 execution, browser Chat authorization, hot runtime, and native direct-quantized inference path. **2.2.0 separates Server, LALM, and Chat ownership and introduces scoped LALM hot mutation that explicitly leaves Chat untouched.**
