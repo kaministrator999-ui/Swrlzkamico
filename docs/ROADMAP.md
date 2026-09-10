@@ -2,16 +2,45 @@
 
 ## Current release
 
-**Server v2.3.4**
+**Server v2.3.5**
 
 This is the current runtime development release. Stable deployed infrastructure remains Server v2.3.3 until a future stable-infrastructure deployment changes it.
 
 ### Module state
 
-- **Chat v1.4.4** — sidebar LALM status now reflects the authoritative `/api/lalm/status` readiness state instead of labeling local R39 as pending merely because no upstream bridge is configured.
+- **Chat v1.4.5** — authoritative local LALM readiness display is enforced from the canonical Chat version asset so it does not depend on the separate enhancement asset's propagation state.
 - **LALM UI v1.0.0** — unchanged in this release.
 - **LALM engine hot revision** — `2.1.18-hot-boundary-v9-effective-receipt`; unchanged in this release.
 - **Server UI v1.0.0** — unchanged in this release.
+
+## Server v2.3.5 — 2026-09-10
+
+### Changed
+
+- Moved the authoritative local LALM status presentation into `web/chat_version.js`, the canonical Chat version/status asset that was verified live after the 2.3.4 runtime update.
+- The Chat sidebar now directly queries `/api/lalm/status` and displays:
+  - **Local LALM ready** when `interactiveReady` is true.
+  - **Local LALM warming** while readiness is not yet established.
+  - **Local LALM unavailable** when the status probe reports an error or cannot be reached.
+- Bumped Chat from `v1.4.4` to `v1.4.5` because the Chat runtime implementation changed again.
+- Bumped overall Server from `v2.3.4` to `v2.3.5` because this is a new server runtime development event.
+- LALM UI and LALM/R39 engine versions remain unchanged because their source/behavior did not change.
+- Kept the correction entirely on the `runtime` branch; no stable loader/infrastructure deployment is required.
+
+### Failure / history
+
+- Server 2.3.4 correctly identified the root cause and added the status override to `web/chat_enhancements.js`, but production verification showed that asset still serving the older 519-byte runtime content while the canonical `chat_version.js` had already propagated to Chat `1.4.4`.
+- Rather than depend on the separate enhancement asset's propagation state, Server 2.3.5 places the same status correction in the canonical version/status asset already confirmed live.
+- This preserves the versioning rule: the incomplete 2.3.4 attempt remains recorded; the next corrective attempt receives a new Server and Chat version.
+
+### Verification state
+
+- Production `/api/lalm/status` was verified to report `engineSource: runtime-override`, `interactiveReady: true`, `warmModelResident: true`, native backend availability, and the expected R39 model identity.
+- Production `/live/assets/chat_version.js` was verified serving Chat `1.4.4` after the 2.3.4 merge, proving that the runtime branch hot path is active for that canonical asset.
+- The status presentation is now implemented in that verified-live asset and will query the same authoritative LALM endpoint directly.
+- **Deployment:** NONE required.
+- **Server restart:** NONE.
+- Final user-side verification: reload Chat and confirm the sidebar indicator is green with **Local LALM ready** instead of **Local inference pending**.
 
 ## Server v2.3.4 — 2026-09-10
 
@@ -30,25 +59,24 @@ This is the current runtime development release. Stable deployed infrastructure 
 
 The previous screenshot's **Local inference pending** label was not evidence that R39 itself was unready. The live production `/api/lalm/status` response was verified with `interactiveReady: true` and `warmModelResident: true` while reporting `engineSource: runtime-override`. The base Chat page was instead using the absence of an upstream SERVER bridge to choose the misleading local-inference label.
 
-Server 2.3.3's startup-warm path therefore remains valid; this 2.3.4 event corrects the Chat presentation layer so the UI reports the actual LALM state.
+Server 2.3.3's startup-warm path therefore remains valid; this 2.3.4 event corrected the Chat presentation layer. Its first asset implementation was not deterministically visible in the final production verification path, so the follow-up correction is recorded as Server 2.3.5 rather than silently rewriting 2.3.4.
 
 ### Failure / history
 
 - Server 2.3.3 startup warm was initially interpreted as unsuccessful because the Chat sidebar continued to display **Local inference pending**.
 - Direct production status verification showed the LALM/R39 engine was actually ready and resident, isolating the remaining defect to Chat status presentation rather than model warming.
-- No LALM engine failure occurred in this event.
+- No LALM engine failure occurred in this update.
 - No stable-infrastructure change was made.
 
 ### Verification state
 
 - Current production `/api/lalm/status` was queried directly before the fix.
 - Verified production response reported `engineSource: runtime-override`, `interactiveReady: true`, `warmModelResident: true`, and the expected R39 model identity.
-- Updated `runtime/web/chat_enhancements.js` to consume `/api/lalm/status` and override the misleading sidebar state.
-- Updated `runtime/web/chat_version.js` from Chat `1.4.3` to `1.4.4`.
+- `runtime/web/chat_enhancements.js` was updated to consume `/api/lalm/status`, but production verification found the older asset content still being served.
+- `runtime/web/chat_version.js` was updated from Chat `1.4.3` to `1.4.4` and was verified live.
 - Runtime branch remains the live application source of truth.
 - **Deployment:** NONE required for these runtime-owned changes.
 - **Server restart:** NONE.
-- Final browser-side verification should confirm the sidebar changes from the misleading pending label to **Local LALM ready** when the status endpoint reports readiness.
 
 ## Server v2.2.8 — 2026-09-10
 
