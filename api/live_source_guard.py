@@ -13,7 +13,7 @@ from api.chat_admin_session import attach_browser_session_cookie
 
 OWNER = "kaministrator999-ui"
 REPO = "Swrlzkamico"
-BRANCH = "dev"
+BRANCH = "runtime"
 RAW_BASE = f"https://raw.githubusercontent.com/{OWNER}/{REPO}"
 ROOT = Path(__file__).resolve().parents[1]
 CACHE_TTL = 2.0
@@ -51,7 +51,7 @@ def _fetch(source: str, limit: int = 4_000_000) -> bytes:
     return data
 
 
-def _headers(source: str, resolved: str = "github-dev") -> dict[str, str]:
+def _headers(source: str, resolved: str = "github-runtime") -> dict[str, str]:
     return {
         "Cache-Control": "no-store, max-age=0",
         "X-Content-Type-Options": "nosniff",
@@ -79,7 +79,7 @@ def _inject_chat(data: bytes) -> bytes:
 def _serve_source(source: str, fallback: Path | None = None, *, chat_html: bool = False) -> Response:
     try:
         data = _fetch(source)
-        resolved = "github-dev"
+        resolved = "github-runtime"
     except Exception:
         if fallback is None or not fallback.is_file():
             return Response("Live source unavailable", status_code=503, media_type="text/plain", headers=_headers(source, "unavailable"))
@@ -147,5 +147,5 @@ def install(server) -> None:
             "admin": ADMIN_HTML,
             "live": INDEX_HTML,
         },
-        "detail": "Chat, Server, LALM, Admin, live index, and Chat assets resolve from GitHub dev per request with a 2-second in-instance cache and bundled fallback. R39 engine code remains request-driven hot runtime with its own 30-second delta refresh.",
+        "detail": "Chat, Server, LALM, Admin, live index, and Chat assets resolve from GitHub runtime per request with a 2-second in-instance cache and bundled fallback. R39 engine code remains request-driven hot runtime with its own 30-second delta refresh.",
     }
