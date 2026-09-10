@@ -1,5 +1,5 @@
 (()=>{"use strict";
-const STREAM_UI_VERSION='1.4.0';
+const STREAM_UI_VERSION='1.4.1';
 let viewportEventType='',viewportMessageId='';
 
 function activeArticle(){
