@@ -1,48 +1,147 @@
 (()=>{"use strict";
-const UI_VERSION='1.3.26';
-const $=s=>document.querySelector(s),safe=v=>v??'—';
-const settingsKey='swrlz.chat.generation.v1';
-const ACTIVE_STREAM_KEY='swrlz.chat.active-stream.v1';
-const ADMIN_KEY='swrlzAdminToken',SESSION_KEY='swrlz.vercel.chat.admin-session.v1',TOKEN_KEY='swrlz.vercel.chat.token.v1',SESSION_MARKER='__ADMIN_SESSION_AUTHORIZED__';
-const MAX_HOT_RETRIES=2,MAX_TRANSPORT_RETRIES=5,MAX_REATTACH_POLLS=90,REATTACH_POLL_MS=2000,ACTIVE_STREAM_STALE_MS=15*60*1000;
-let camera=[],ops=null,verifiedHot=null;
-function pushDiag(type,text){camera.push({at:new Date().toISOString().slice(11,23),seq:'B',type,phase:'CONNECT',text});if(camera.length>500)camera=camera.slice(-500)}
-function effectiveServerReceipt(){let base=ops?.operations?.server?.version||'—';return{base,loaded:!!verifiedHot,effective:verifiedHot?.version||'',hot:verifiedHot?.revision||'',requestId:verifiedHot?.requestId||''}}
-function captureHotReceipt(event,context){if(event?.type==='STARTED'){verifiedHot=null;paintMode();return}if(event?.phase!=='HOT_ENGINE_ENTERED')return;let reason=String(event.reason||''),vm=reason.match(/server\s+(\d+\.\d+\.\d+)/i),rm=reason.match(/revision\s+([^·.]+(?:\.[^·.]+)*)/i);if(!vm){let m=reason.match(/revision\s+(\d+\.\d+\.\d+)-([^·]+)/i);if(m)vm=[m[0],m[1]]}if(vm){verifiedHot={version:vm[1],revision:(rm?.[1]||'').trim(),requestId:context?.requestId||event?.identity?.requestId||''};paintMode()}}
-function modal(title,body,actions=[]){let m=document.createElement('div');m.className='swrlz-modal';m.innerHTML=`<div class="swrlz-panel"><div class="swrlz-panel-head"><h3>${title}</h3><div data-actions></div></div><div data-body></div></div>`;m.querySelector('[data-body]').append(body);let a=m.querySelector('[data-actions]');actions.forEach(([n,f])=>{let b=document.createElement('button');b.textContent=n;b.onclick=f;a.append(b)});let close=document.createElement('button');close.textContent='CLOSE';close.onclick=()=>m.remove();a.append(close);document.body.append(m);return m}
-async function copyText(text){try{await navigator.clipboard.writeText(text);toast('Copied to clipboard')}catch(_){let ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Copied to clipboard')}}
-async function loadOps(){try{let r=await fetch('/api/chat/ops',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);ops=await r.json();paintMode()}catch(_){pushDiag('OPS_REFRESH_FAILED','preserving last known runtime state');if(!ops)paintMode()}}
-function paintMode(){let el=$('#swrlzMode'),mode=ops?.mode||'UNKNOWN',inst=ops?.operations?.server?.instanceId||'',receipt=effectiveServerReceipt();if(el)el.textContent=mode+(inst?' · '+inst:'');let local=ops?.localR39||{},localReady=mode==='LOCAL_R39'&&(local.oneTokenReady||local.interactiveReady||ops?.operations?.localEngine?.oneTokenReady||ops?.operations?.localEngine?.interactiveReady),upstreamReady=mode==='UPSTREAM_SERVER'&&ops?.upstream?.configurationReady,ready=localReady||upstreamReady;document.querySelectorAll('.status-pill').forEach(x=>{x.classList.toggle('ready',!!ready);x.classList.toggle('error',mode==='UNKNOWN')});document.querySelectorAll('.node-light').forEach(x=>{x.classList.toggle('ready',!!ready);x.classList.toggle('error',mode==='UNKNOWN')});let strong=$('#nodeTitle'),sub=$('#nodeDetail'),hotText=receipt.loaded?`Hot Server v${receipt.effective}`:'Hot Runtime NOT LOADED';if(strong)strong.textContent=mode==='LOCAL_R39'?(localReady?'Local R39 ready':'Server R39 warming'):mode==='UPSTREAM_SERVER'?(upstreamReady?'Upstream bridge ready':'Upstream setup needed'):'Runtime status unavailable';if(sub)sub.textContent=`Chat v${UI_VERSION} · ${hotText} · Base v${receipt.base}`;let v=$('#swrlzHotVersionLine');if(v)v.textContent=`CHAT v${UI_VERSION} · ${receipt.loaded?`HOT SERVER v${receipt.effective}`:'HOT RUNTIME NOT LOADED'} · BASE v${receipt.base}`;settingsUX();statusPanelUX()}
-function contextInspector(){let t=currentThread(),h=t.messages.filter(m=>m.text&&['user','assistant'].includes(m.role)).slice(-32).map(m=>({role:m.role,text:m.text.slice(0,2000)})),pre=document.createElement('pre');pre.textContent=JSON.stringify({threadId:t.id,turns:h.length,history:h},null,2);modal('Context inspector',pre)}
-function controls(){let cfg={temperature:.7,topP:.95,maxTokens:512,...JSON.parse(localStorage.getItem(settingsKey)||'{}')},box=document.createElement('div');box.innerHTML=`<label>Temperature <input id="gtemp" type="number" min="0" max="2" step="0.05" value="${cfg.temperature}"></label><br><br><label>Top P <input id="gtop" type="number" min="0" max="1" step="0.01" value="${cfg.topP}"></label><br><br><label>Max tokens <input id="gmax" type="number" min="1" max="512" value="${cfg.maxTokens}"></label><br><br><button id="gsave">SAVE CONTROLS</button>`;box.querySelector('#gsave').onclick=()=>{let v={temperature:+box.querySelector('#gtemp').value,topP:+box.querySelector('#gtop').value,maxTokens:+box.querySelector('#gmax').value};localStorage.setItem(settingsKey,JSON.stringify(v));toast('Generation controls saved')};modal('Generation controls',box)}
-function cameraText(){return camera.length?camera.slice(-120).map(x=>`${x.at} #${x.seq} ${x.type} ${x.phase||''} ${x.text||''}`).join('\n'):'No stream events captured yet.'}
-function streamCamera(){let pre=document.createElement('pre');pre.className='swrlz-camera';pre.textContent=cameraText();modal('Stream camera',pre,[['COPY TEXT',()=>copyText(cameraText())],['CLEAR CAMERA',()=>{camera=[];pre.textContent=cameraText();toast('Stream camera cleared')}]] )}
-function forkAt(message){let t=currentThread(),i=t.messages.findIndex(m=>m.id===message.id);if(i<0)return;let stamp=now(),copy=JSON.parse(JSON.stringify(t.messages.slice(0,i+1))),nt={id:uid('thread'),title:'Fork · '+t.title,createdAt:stamp,updatedAt:stamp,pinned:false,messages:copy};state.threads.push(nt);state.currentId=nt.id;saveState();render(true);toast('Forked conversation')}
-function retryMessage(message){let t=currentThread(),i=t.messages.findIndex(m=>m.id===message.id);for(let n=i-1;n>=0;n--)if(t.messages[n].role==='user'&&t.messages[n].text){refs.prompt.value=t.messages[n].text;resizePrompt();sendMessage();return}toast('No user prompt found to retry')}
-function sendWorkbench(message){let admin=sessionStorage.getItem(ADMIN_KEY)||prompt('Admin token');if(!admin)return;sessionStorage.setItem(ADMIN_KEY,admin);let name=prompt('Save response as','chat-response-'+Date.now()+'.md');if(!name)return;let path='/tmp/swrlz-admin/web/'+name;fetch('/api/admin?'+new URLSearchParams({action:'save-text',path}),{method:'POST',headers:{'x-swrlz-admin-token':admin},body:new Blob([message.text||''],{type:'text/plain'})}).then(async r=>{let j=await r.json();if(!r.ok)throw Error(JSON.stringify(j));toast('Sent to Workbench · /live/'+name)}).catch(e=>toast('Workbench save failed: '+e.message))}
-const baseRenderMessage=renderMessage;renderMessage=function(message){let article=baseRenderMessage(message);if(message.role==='assistant'){let d=document.createElement('details');d.className='swrlz-evidence';let m=message.meta||{};d.innerHTML=`<summary>Evidence · ${safe(m.phase)} · ${safe(m.requestId)}</summary><div class="swrlz-evidence-grid"><span>route: ${safe(m.route)}</span><span>engine: ${safe(m.engineId)}</span><span>model: ${safe(m.modelId)}</span><span>TTFT: ${safe(m.firstDeltaLatencyMs)} ms</span><span>total: ${safe(m.totalLatencyMs)} ms</span><span>finish: ${safe(message.state)}</span></div>`;let a=document.createElement('div');a.className='swrlz-evidence-actions';[['RETRY',()=>retryMessage(message)],['FORK HERE',()=>forkAt(message)],['SEND TO WORKBENCH',()=>sendWorkbench(message)],['EXPORT TRACE',()=>{let b=new Blob([JSON.stringify({message,threadId:currentThread().id},null,2)],{type:'application/json'}),u=URL.createObjectURL(b),x=document.createElement('a');x.href=u;x.download=(m.requestId||'trace')+'.json';x.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}]].forEach(([n,f])=>{let b=document.createElement('button');b.textContent=n;b.onclick=f;a.append(b)});d.append(a);article.querySelector('.message-body')?.append(d)}return article};
-const baseConsume=consumeEvent;consumeEvent=function(event,context){captureHotReceipt(event,context);camera.push({at:new Date().toISOString().slice(11,23),seq:event?.seq,type:event?.type,phase:event?.phase,text:event?.type==='DELTA'?String(event.text||'').slice(0,120):event?.reason||''});if(camera.length>500)camera=camera.slice(-500);let out=baseConsume(event,context);let ledger=readActiveLedger();if(ledger&&ledger.requestId===context.requestId){ledger.lastSeq=context.lastSeq;ledger.updatedAt=Date.now();writeActiveLedger(ledger);if(context.terminal)clearActiveLedger(context.requestId)}return out};
-function readActiveLedger(){try{let v=JSON.parse(localStorage.getItem(ACTIVE_STREAM_KEY)||'null');if(v){let stamp=Number(v.updatedAt)||Number(v.startedAt)||0;if(stamp&&Date.now()-stamp>ACTIVE_STREAM_STALE_MS){pushDiag('ACTIVE_STREAM_EXPIRED',`${v.requestId||'unknown'} · stale for ${Math.round((Date.now()-stamp)/1000)}s`);localStorage.removeItem(ACTIVE_STREAM_KEY);return null}}return v}catch(_){return null}}
-function writeActiveLedger(v){try{localStorage.setItem(ACTIVE_STREAM_KEY,JSON.stringify(v))}catch(_){}}
-function clearActiveLedger(requestId){let v;try{v=JSON.parse(localStorage.getItem(ACTIVE_STREAM_KEY)||'null')}catch(_){v=null}if(!requestId||v?.requestId===requestId)localStorage.removeItem(ACTIVE_STREAM_KEY)}
-function waitVisible(signal){if(!document.hidden)return Promise.resolve();return new Promise((resolve,reject)=>{let done=()=>{document.removeEventListener('visibilitychange',on);signal?.removeEventListener('abort',ab);resolve()},on=()=>{if(!document.hidden)done()},ab=()=>{document.removeEventListener('visibilitychange',on);reject(new DOMException('Aborted','AbortError'))};document.addEventListener('visibilitychange',on);signal?.addEventListener('abort',ab,{once:true})})}
-function delay(ms,signal){return new Promise((resolve,reject)=>{let id=setTimeout(resolve,ms);signal?.addEventListener('abort',()=>{clearTimeout(id);reject(new DOMException('Aborted','AbortError'))},{once:true})})}
-function markReconnecting(requestId){let l=readActiveLedger();if(l?.requestId===requestId){l.state='reconnecting';l.updatedAt=Date.now();writeActiveLedger(l)}}
-function bumpTransportRetry(requestId){let l=readActiveLedger();if(!l||l.requestId!==requestId)return MAX_TRANSPORT_RETRIES+1;l.transportRetries=(Number(l.transportRetries)||0)+1;l.updatedAt=Date.now();writeActiveLedger(l);return l.transportRetries}
-function bumpReattachPoll(requestId){let l=readActiveLedger();if(!l||l.requestId!==requestId)return MAX_REATTACH_POLLS+1;l.reattachPolls=(Number(l.reattachPolls)||0)+1;l.updatedAt=Date.now();writeActiveLedger(l);return l.reattachPolls}
-const nativeFetch=window.fetch.bind(window);
-async function nativeChatFetch(input,init={}){let url=typeof input==='string'?input:input.url,u=new URL(url,location.href),headers=new Headers(init.headers||{}),session=sessionStorage.getItem(SESSION_KEY)||'';if(session&&u.origin===location.origin&&(u.pathname==='/api/chat'||u.pathname.startsWith('/api/chat/')))headers.set('X-SWRLZ-Chat-Session',session);return nativeFetch(input,{...init,headers})}
-async function primeHotRuntime(reason='preflight'){let admin=(sessionStorage.getItem(ADMIN_KEY)||'').trim(),session=(sessionStorage.getItem(SESSION_KEY)||'').trim(),headers={};if(admin)headers['x-swrlz-admin-token']=admin;else if(session)headers['x-swrlz-chat-session']=session;else{pushDiag('HOT_PRIME_SKIPPED',`${reason} · no admin or chat session credential; bundled fallback allowed`);return false}let authKind=admin?'admin':'chat-session',started=performance.now();pushDiag('HOT_PRIME_START',`${reason} · ${authKind} auth · syncing dev hot package`);try{let r=await nativeFetch('/api/hot/sync?branch=dev',{method:'POST',headers,cache:'no-store'}),text=await r.text();if(!r.ok){pushDiag(r.status===401&&authKind==='chat-session'?'HOT_PRIME_SESSION_REJECTED':'HOT_PRIME_FAILED',`${reason} · ${authKind} auth · HTTP ${r.status} · ${(performance.now()-started).toFixed(0)}ms`);return false}let j={};try{j=JSON.parse(text)}catch(_){}let engine=(j.files||[]).find(x=>x.name==='r39_engine.py');pushDiag('HOT_PRIME_OK',`${reason} · ${authKind} auth · ${(performance.now()-started).toFixed(0)}ms${engine?.sha256?` · r39 ${String(engine.sha256).slice(0,12)}…`:''}`);return true}catch(error){pushDiag('HOT_PRIME_FAILED',`${reason} · ${authKind} auth · ${error?.message||error}`);return false}}
-async function resilientStreamFetch(input,init,payload){let signal=init.signal,ledger=readActiveLedger(),lastSeq=ledger?.requestId===payload.requestId?(ledger.lastSeq||0):0,terminal=false,attempt=0,encoder=new TextEncoder(),requestStarted=performance.now(),firstChunk=false,firstEvent=false,hotSeen=false,hotRetryCount=0,canPrime=!!((sessionStorage.getItem(ADMIN_KEY)||'').trim()||(sessionStorage.getItem(SESSION_KEY)||'').trim());pushDiag('BROWSER_FETCH_START',`request ${payload.requestId} · epoch ${payload.clientSentAtMs||Date.now()}`);let body=new ReadableStream({start(controller){(async()=>{while(!terminal){try{if(signal?.aborted)throw new DOMException('Aborted','AbortError');let current=readActiveLedger();if(!current||current.requestId!==payload.requestId)throw Object.assign(new Error('Request superseded or expired.'),{fatal:true});if(attempt===0&&!verifiedHot){if(canPrime){let primed=await primeHotRuntime('request preflight');if(!primed){canPrime=false;pushDiag('HOT_RETRY_DISABLED','hot sync unavailable with available browser credential; bundled fallback allowed')}}else pushDiag('HOT_PRIME_SKIPPED','request preflight · no usable browser credential; bundled fallback allowed')}if(attempt>0){markReconnecting(payload.requestId);await waitVisible(signal);await delay(Math.min(1250,250*attempt),signal)}attempt++;let attemptStarted=performance.now();pushDiag('BROWSER_ATTEMPT',`attempt ${attempt} started · ${(attemptStarted-requestStarted).toFixed(0)}ms since send`);let response=await nativeChatFetch(input,{...init,signal,cache:'no-store'});pushDiag('RESPONSE_HEADERS',`attempt ${attempt} · HTTP ${response.status} · ${(performance.now()-attemptStarted).toFixed(0)}ms transport · ${(performance.now()-requestStarted).toFixed(0)}ms since send`);if(!response.ok){if(response.status>=400&&response.status<500)throw Object.assign(new Error(`Bridge rejected the request (HTTP ${response.status}).`),{fatal:true});throw Object.assign(new Error(`Bridge temporarily unavailable (HTTP ${response.status}).`),{transport:true})}if(!response.body)throw Object.assign(new Error('Streaming response body is unavailable.'),{transport:true});let reader=response.body.getReader(),decoder=new TextDecoder(),buffer='',sawEventThisAttempt=false;try{while(true){let {value,done}=await reader.read();if(done)break;if(!firstChunk&&value?.length){firstChunk=true;pushDiag('FIRST_CHUNK',`${value.length} bytes · ${(performance.now()-requestStarted).toFixed(0)}ms since send`)}buffer+=decoder.decode(value,{stream:true});if(buffer.length>131072&&!buffer.includes('\n'))throw Object.assign(new Error('Stream event exceeded the browser safety bound.'),{fatal:true});let lines=buffer.split('\n');buffer=lines.pop()||'';for(let line of lines){if(!line.trim())continue;let event=JSON.parse(line);if(event?.identity?.requestId!==payload.requestId)continue;sawEventThisAttempt=true;if(!firstEvent){firstEvent=true;pushDiag('FIRST_SERVER_EVENT',`${event.type||'UNKNOWN'} ${event.phase||''} · ${(performance.now()-requestStarted).toFixed(0)}ms since send`)}if(event?.phase==='HOT_ENGINE_ENTERED')hotSeen=true;if(event?.phase==='MODEL_LOADING'&&!hotSeen&&canPrime&&hotRetryCount<MAX_HOT_RETRIES){hotRetryCount++;pushDiag('HOT_RUNTIME_MISS',`attempt ${attempt} landed on bundled worker · hot retry ${hotRetryCount}/${MAX_HOT_RETRIES}`);try{await reader.cancel()}catch(_){}let primed=await primeHotRuntime(`worker miss ${hotRetryCount}`);if(!primed){canPrime=false;pushDiag('HOT_RETRY_DISABLED','hot sync unavailable; accepting bundled worker on next pass')}else throw Object.assign(new Error('Bundled worker detected; retrying after verified hot sync.'),{hotRetry:true})}if(Number.isInteger(event.seq)&&event.seq<=lastSeq)continue;if(Number.isInteger(event.seq))lastSeq=event.seq;let l=readActiveLedger();if(l?.requestId===payload.requestId){l.lastSeq=lastSeq;l.state='streaming';l.updatedAt=Date.now();writeActiveLedger(l)}controller.enqueue(encoder.encode(line+'\n'));if(event.terminal){terminal=true;clearActiveLedger(payload.requestId);break}}if(terminal)break}buffer+=decoder.decode();if(!terminal&&buffer.trim()){let event=JSON.parse(buffer);if(event?.identity?.requestId===payload.requestId&&Number.isInteger(event.seq)&&event.seq>lastSeq){sawEventThisAttempt=true;if(!firstEvent){firstEvent=true;pushDiag('FIRST_SERVER_EVENT',`${event.type||'UNKNOWN'} ${event.phase||''} · ${(performance.now()-requestStarted).toFixed(0)}ms since send`)}if(event?.phase==='HOT_ENGINE_ENTERED')hotSeen=true;if(event?.phase==='MODEL_LOADING'&&!hotSeen&&canPrime&&hotRetryCount<MAX_HOT_RETRIES){hotRetryCount++;let primed=await primeHotRuntime(`worker miss ${hotRetryCount}`);if(primed)throw Object.assign(new Error('Bundled worker detected; retrying after verified hot sync.'),{hotRetry:true});canPrime=false;pushDiag('HOT_RETRY_DISABLED','hot sync unavailable; accepting bundled worker')}lastSeq=event.seq;controller.enqueue(encoder.encode(buffer+'\n'));if(event.terminal){terminal=true;clearActiveLedger(payload.requestId)}}}}finally{try{reader.releaseLock()}catch(_){}}if(!terminal)throw Object.assign(new Error(sawEventThisAttempt?'Server stream detached before terminal event.':'No new server events yet; reattaching.'),{reattach:true})}catch(error){if(signal?.aborted||error?.name==='AbortError'){controller.error(error);return}if(error?.hotRetry){pushDiag('HOT_RETRY',`${error.message} · next attempt ${attempt+1}`);markReconnecting(payload.requestId);continue}if(error?.fatal){pushDiag('CONNECT_FATAL',error?.message||String(error));clearActiveLedger(payload.requestId);controller.error(error);return}if(error?.reattach){let polls=bumpReattachPoll(payload.requestId);if(polls>MAX_REATTACH_POLLS){pushDiag('REATTACH_LIMIT',`request reattach window exhausted (${MAX_REATTACH_POLLS} polls)`);clearActiveLedger(payload.requestId);controller.error(new Error(`Server reattach window exhausted for ${payload.requestId}.`));return}pushDiag('STREAM_REATTACH',`${error.message} · poll ${polls}/${MAX_REATTACH_POLLS} · next in ${REATTACH_POLL_MS}ms`);markReconnecting(payload.requestId);await delay(REATTACH_POLL_MS,signal);continue}let totalRetries=bumpTransportRetry(payload.requestId);if(totalRetries>MAX_TRANSPORT_RETRIES){pushDiag('CONNECT_RETRY_LIMIT',`${error?.message||error} · network retry budget exhausted (${MAX_TRANSPORT_RETRIES})`);clearActiveLedger(payload.requestId);controller.error(new Error(`Network retry budget exhausted for ${payload.requestId}.`));return}pushDiag('CONNECT_RETRY',`${error?.message||error} · network retry ${totalRetries}/${MAX_TRANSPORT_RETRIES} · ${(performance.now()-requestStarted).toFixed(0)}ms since send`);markReconnecting(payload.requestId)}}controller.close()})()}});return new Response(body,{status:200,headers:{'Content-Type':'application/x-ndjson','Cache-Control':'no-store','X-SWRLZ-Request-Id':payload.requestId}})}
-window.fetch=async function(input,init={}){try{let url=typeof input==='string'?input:input.url,u=new URL(url,location.href),headers=new Headers(init.headers||{}),session=sessionStorage.getItem(SESSION_KEY)||'';if(session&&u.origin===location.origin&&(u.pathname==='/api/chat'||u.pathname.startsWith('/api/chat/')))headers.set('X-SWRLZ-Chat-Session',session);if(url.includes('?action=stream')&&init?.body){let p=JSON.parse(init.body),g=JSON.parse(localStorage.getItem(settingsKey)||'{}');p.generation=g;p.clientSentAtMs=p.clientSentAtMs||Date.now();let existing=readActiveLedger();if(existing&&existing.requestId!==p.requestId)pushDiag('ACTIVE_STREAM_SUPERSEDED',`${existing.requestId} → ${p.requestId}`);if(!existing||existing.requestId!==p.requestId)writeActiveLedger({requestId:p.requestId,threadId:p.threadId,prompt:p.prompt,history:p.history||[],profileId:p.profileId||'',lastSeq:0,transportRetries:0,reattachPolls:0,state:'streaming',startedAt:p.clientSentAtMs,updatedAt:Date.now()});return resilientStreamFetch(input,{...init,body:JSON.stringify(p),headers},p)}return nativeFetch(input,{...init,headers})}catch(_){return nativeFetch(input,init)}};
-const baseToken=token;token=function(){let session=sessionStorage.getItem(SESSION_KEY)||'';return session?SESSION_MARKER:baseToken()};
-async function ensureAdminSession(force=false){let current=sessionStorage.getItem(SESSION_KEY)||'';if(current&&!force&&current.includes('.'))return true;let admin=(sessionStorage.getItem(ADMIN_KEY)||'').trim();if(!admin)return false;try{let r=await nativeFetch('/api/chat/admin-session',{method:'POST',headers:{'X-SWRLZ-Admin-Token':admin},cache:'no-store'}),j=await r.json().catch(()=>({}));if(!r.ok||!j.session)throw Error(j.detail||`HTTP ${r.status}`);sessionStorage.setItem(SESSION_KEY,String(j.session));sessionStorage.setItem(TOKEN_KEY,SESSION_MARKER);settingsUX();statusPanelUX();return true}catch(_){sessionStorage.removeItem(SESSION_KEY);return false}}
-const baseSendMessage=sendMessage;sendMessage=async function(){if(!token()){let ok=await ensureAdminSession();if(!ok){toast('Chat authorization is not active. Open Admin once in this tab, then send again.');return}}return baseSendMessage()};
-async function resumePersistedStream(){let l=readActiveLedger();if(!l||active||!l.requestId)return;if((Number(l.transportRetries)||0)>=MAX_TRANSPORT_RETRIES){clearActiveLedger(l.requestId);return}let stamp=Number(l.updatedAt)||Number(l.startedAt)||0;if(stamp&&Date.now()-stamp>ACTIVE_STREAM_STALE_MS){pushDiag('ACTIVE_STREAM_EXPIRED',`${l.requestId} · resume suppressed after ${Math.round((Date.now()-stamp)/1000)}s`);clearActiveLedger(l.requestId);return}let thread=state.threads.find(t=>t.id===l.threadId),message=thread?.messages.find(m=>m?.meta?.requestId===l.requestId);if(!thread||!message||['complete','failed','cancelled'].includes(message.state)){clearActiveLedger(l.requestId);return}let controller=new AbortController();active={threadId:thread.id,messageId:message.id,requestId:l.requestId,controller};message.state='streaming';message.meta.phase='RECONNECTING';message.meta.error='';saveState();render(true);let context={threadId:thread.id,requestId:l.requestId,message,lastSeq:l.lastSeq||0,terminal:false,started:performance.now()};try{let response=await fetch(`${API}?action=stream`,{method:'POST',headers:authHeaders(),signal:controller.signal,body:JSON.stringify({protocolVersion:2,requestId:l.requestId,prompt:l.prompt,history:l.history||[],threadId:l.threadId,ingress:'VERCEL_CHAT',profileId:l.profileId||refs.route.value,clientSentAtMs:l.startedAt||Date.now()})});if(!response.ok)throw Error(`Reconnect failed (HTTP ${response.status}).`);let reader=response.body.getReader(),decoder=new TextDecoder(),buffer='';while(true){let {value,done}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});let lines=buffer.split('\n');buffer=lines.pop()||'';for(let line of lines)if(line.trim()){let event=JSON.parse(line);if(event.seq<=context.lastSeq)continue;consumeEvent(event,context)}if(context.terminal){try{await reader.cancel()}catch(_){}break}}buffer+=decoder.decode();if(!context.terminal&&buffer.trim()){let event=JSON.parse(buffer);if(event.seq>context.lastSeq)consumeEvent(event,context)}if(!context.terminal)throw Error('Reconnect stream ended without terminal event.')}catch(error){if(error.name!=='AbortError'){let still=readActiveLedger();if(!still||still.requestId!==l.requestId){message.state='failed';message.meta.phase='ERROR';message.meta.error='Connection request expired, was superseded, or exhausted its retry budget. Retry to start a fresh request.'}else{message.state='reconnecting';message.meta.phase='RECONNECTING';message.meta.error='Connection paused; response job will be rechecked when Chat is visible.'}saveState()}}finally{if(active?.requestId===l.requestId)active=null;render(true);refreshStatus()}}
-function searchThreads(q){q=q.toLowerCase().trim();document.querySelectorAll('.thread').forEach(el=>{let text=el.textContent.toLowerCase();el.style.display=!q||text.includes(q)?'':'none'})}
-function repairDrawerStack(){let scrim=$('#sidebarScrim'),app=$('.app'),side=$('.sidebar');if(scrim&&app&&side&&scrim.parentElement!==app)app.insertBefore(scrim,side.nextSibling)}
-function settingsUX(){let dialog=$('#settingsDialog');if(!dialog)return;let heading=dialog.querySelector('.dialog-head h2');if(heading)heading.textContent='Chat settings';let field=$('#accessToken')?.closest('.field');if(field)field.style.display='none';let verify=$('#verifyR39');if(verify)verify.textContent='Verify model';}
-function statusPanelUX(){let panel=$('#runtimePanel');if(!panel)return;if(!ops){panel.innerHTML='<strong>Chat status</strong><br>Status unavailable. Refresh state to retry.';return}let mode=ops.mode||'UNKNOWN',server=ops?.operations?.server||{},receipt=effectiveServerReceipt(),local=ops.localR39||{},session=sessionStorage.getItem(SESSION_KEY)?'ACTIVE':'NOT ACTIVE',modelState=local.interactiveReady?'READY':local.oneTokenReady?'ONE-TOKEN READY':local.readinessChecked?'CHECKED / NOT READY':'NOT PROBED',engine=local.engineId||ops?.operations?.localEngine?.engineId||'—',source=local.engineSource||ops?.operations?.localEngine?.source||'—',sha=local.modelSha256||ops?.operations?.localEngine?.modelSha256||'',blocker=(local.blockers||[])[0]||'none',route=mode==='LOCAL_R39'?'LOCAL R39':mode==='UPSTREAM_SERVER'?'UPSTREAM SERVER':mode;panel.innerHTML=`<strong>Chat status</strong><br>Route: ${route}<br>${receipt.loaded?`Verified hot server: v${receipt.effective}`:'Hot runtime: NOT LOADED / NOT VERIFIED'}<br>Base image: v${receipt.base} · ${server.instanceId||'instance —'}${receipt.hot?`<br>Hot revision: ${receipt.hot}`:''}${receipt.requestId?`<br>Receipt request: ${receipt.requestId}`:''}<br>Authorization: ${session}<br><br><strong>Model status</strong><br>State: ${modelState}<br>Engine: ${engine}<br>Source: ${source}${sha?`<br>Model SHA: ${sha.slice(0,12)}…`:''}${modelState==='READY'?'':`<br>Blocker: ${blocker}`}`;panel.dataset.statusView='chat-model'}
-function addVersionReceipt(){let foot=$('.sidebar-foot');if(!foot)return;Array.from(foot.children).forEach(el=>{if(el.id==='swrlzHotVersionLine')return;let text=(el.textContent||'').trim();if(el.id==='swrlzVersionLine'||/^CHAT\s+v\d/i.test(text))el.style.display='none'});let line=$('#swrlzHotVersionLine');if(!line){line=document.createElement('div');line.id='swrlzHotVersionLine';line.className='swrlz-version-line';line.dataset.source='hot-runtime';foot.append(line)}line.textContent=`CHAT v${UI_VERSION} · HOT RUNTIME NOT VERIFIED · BASE v…`}
-let bar=document.createElement('div');bar.className='swrlz-enhance-bar';bar.innerHTML='<span id="swrlzMode" class="swrlz-mode">LOADING</span><input class="swrlz-search" placeholder="Search threads"><button class="swrlz-tools-toggle" type="button" aria-expanded="false">TOOLS</button><button data-context>CONTEXT</button><button data-controls>GENERATION</button><button data-camera>STREAM CAMERA</button><button data-ops>REFRESH STATE</button>';let workspace=$('.workspace'),top=$('.topbar');if(workspace&&top)top.insertAdjacentElement('afterend',bar);bar.querySelector('.swrlz-search').oninput=e=>searchThreads(e.target.value);let toggle=bar.querySelector('.swrlz-tools-toggle');toggle.onclick=()=>{let open=bar.dataset.expanded==='true';bar.dataset.expanded=open?'false':'true';toggle.setAttribute('aria-expanded',String(!open));toggle.textContent=open?'TOOLS':'CLOSE'};bar.querySelector('[data-context]').onclick=contextInspector;bar.querySelector('[data-controls]').onclick=controls;bar.querySelector('[data-camera]').onclick=streamCamera;bar.querySelector('[data-ops]').onclick=loadOps;repairDrawerStack();addVersionReceipt();settingsUX();statusPanelUX();readActiveLedger();ensureAdminSession(true).then(()=>{settingsUX();statusPanelUX();resumePersistedStream()});loadOps();setInterval(loadOps,15000);setInterval(()=>{settingsUX();statusPanelUX()},1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden){loadOps();refreshStatus();render(true);resumePersistedStream()}});window.addEventListener('pageshow',()=>{loadOps();refreshStatus();render(true);resumePersistedStream()});
+const UI_VERSION='1.4.1';
+const $=s=>document.querySelector(s);
+const safe=v=>v??'—';
+let camera=[];
+let ops=null;
+let verifiedHot=null;
+
+function toast(message){
+  const el=$('#toast');
+  if(!el)return;
+  el.textContent=message;
+  el.classList.add('show');
+  clearTimeout(el.__swrlzTimer);
+  el.__swrlzTimer=setTimeout(()=>el.classList.remove('show'),2600);
+}
+
+function safeFilePart(value){
+  return String(value||'chat').replace(/[^a-z0-9._-]+/gi,'-').replace(/^-|-$/g,'').slice(0,80)||'chat';
+}
+
+function effectiveServerReceipt(){
+  const server=ops?.operations?.server||{};
+  return {base:server.version||'—',loaded:!!verifiedHot,effective:verifiedHot?.version||'',hot:verifiedHot?.revision||'',requestId:verifiedHot?.requestId||''};
+}
+
+function cameraText(includeMeta=false){
+  return camera.length
+    ? camera.slice(-160).map(x=>`${x.at} #${x.seq??'—'} ${x.type||'EVENT'} ${x.phase||''} ${x.text||''}`.trim()).join('\n')
+    : 'No stream events captured yet.';
+}
+
+function paintMode(){
+  const mode=ops?.mode||'UNKNOWN';
+  const server=ops?.operations?.server||{};
+  const local=ops?.localR39||{};
+  const ready=mode==='UPSTREAM_SERVER'
+    ? !!ops?.upstream?.configurationReady
+    : !!(local.oneTokenReady||local.interactiveReady);
+  const pill=$('#statusPill'),light=$('#nodeLight'),title=$('#nodeTitle'),detail=$('#nodeDetail'),line=$('#swrlzHotVersionLine');
+  pill?.classList.toggle('ready',ready);
+  pill?.classList.toggle('error',mode==='UNKNOWN');
+  light?.classList.toggle('ready',ready);
+  light?.classList.toggle('error',mode==='UNKNOWN');
+  if(title)title.textContent=mode==='LOCAL_R39'?(ready?'Local R39 ready':'Server R39 warming'):mode==='UPSTREAM_SERVER'?(ready?'Upstream bridge ready':'Upstream setup needed'):'Runtime status unavailable';
+  if(detail)detail.textContent=`Chat v${UI_VERSION} · ${verifiedHot?.version?`HOT SERVER v${verifiedHot.version}`:'HOT RUNTIME'} · Base v${server.version||'—'}`;
+  if(line)line.textContent=`CHAT v${UI_VERSION} · ${verifiedHot?.version?`HOT SERVER v${verifiedHot.version}`:'HOT RUNTIME'} · BASE v${server.version||'—'}`;
+}
+
+async function loadOps(){
+  try{
+    const r=await fetch('/api/chat/ops',{cache:'no-store'});
+    if(!r.ok)throw Error(`HTTP ${r.status}`);
+    ops=await r.json();
+    paintMode();
+  }catch(_){
+    if(!ops)paintMode();
+  }
+}
+
+function capture(event,context){
+  if(event?.phase==='HOT_ENGINE_ENTERED'){
+    const reason=String(event.reason||'');
+    const match=reason.match(/server\s+(\d+\.\d+\.\d+)/i);
+    const revision=reason.match(/revision\s+([^·]+)/i);
+    if(match)verifiedHot={version:match[1],revision:(revision?.[1]||'').trim(),requestId:context?.requestId||event?.identity?.requestId||''};
+  }
+  camera.push({at:new Date().toISOString().slice(11,23),seq:event?.seq,type:event?.type,phase:event?.phase,text:event?.type==='DELTA'?String(event.text||'').slice(0,140):event?.reason||''});
+  if(camera.length>500)camera=camera.slice(-500);
+  paintMode();
+}
+
+function exportCameraLog(){
+  const thread=typeof currentThread==='function'?currentThread():null;
+  const receipt=effectiveServerReceipt();
+  const header=[
+    '§wyrlz Stream Camera Export',
+    `exported=${new Date().toISOString()}`,
+    `chatVersion=${UI_VERSION}`,
+    `threadId=${thread?.id||'—'}`,
+    `threadTitle=${thread?.title||'—'}`,
+    `baseVersion=${receipt.base}`,
+    `hotServerVersion=${receipt.effective||'—'}`,
+    `hotRevision=${receipt.hot||'—'}`,
+    `eventCount=${camera.length}`,'',''
+  ].join('\n');
+  const blob=new Blob([header+cameraText(true)+'\n'],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=`swrlz-camera-${safeFilePart(thread?.id)}-${Date.now()}.log.txt`;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+  toast(`Exported ${camera.length} camera event${camera.length===1?'':'s'}`);
+}
+
+const baseConsume=typeof consumeEvent==='function'?consumeEvent:null;
+if(baseConsume){
+  consumeEvent=function(event,context){
+    capture(event,context);
+    return baseConsume(event,context);
+  };
+}
+
+function addVersionReceipt(){
+  const foot=$('.sidebar-foot');
+  if(!foot)return;
+  let line=$('#swrlzHotVersionLine');
+  if(!line){
+    line=document.createElement('div');
+    line.id='swrlzHotVersionLine';
+    line.className='swrlz-version-line';
+    line.dataset.source='runtime';
+    foot.append(line);
+  }
+  paintMode();
+}
+
+function addTools(){
+  const top=$('.topbar');
+  if(!top||$('#swrlzRuntimeTools'))return;
+  const bar=document.createElement('div');
+  bar.id='swrlzRuntimeTools';
+  bar.className='swrlz-enhance-bar';
+  bar.innerHTML='<span id="swrlzMode" class="swrlz-mode">RUNTIME</span><button type="button" data-refresh>REFRESH STATE</button><button type="button" data-camera>STREAM CAMERA</button>';
+  top.insertAdjacentElement('afterend',bar);
+  bar.querySelector('[data-refresh]').onclick=loadOps;
+  bar.querySelector('[data-camera]').onclick=()=>{
+    const pre=document.createElement('pre');
+    pre.className='swrlz-camera';
+    pre.textContent=cameraText(true);
+    const modal=document.createElement('div');
+    modal.className='swrlz-modal';
+    modal.innerHTML='<div class="swrlz-panel"><div class="swrlz-panel-head"><h3>Stream camera</h3><div data-actions></div></div><div data-body></div></div>';
+    modal.querySelector('[data-body]').append(pre);
+    const actions=modal.querySelector('[data-actions]');
+    const copy=document.createElement('button');copy.textContent='COPY';copy.onclick=()=>navigator.clipboard?.writeText(cameraText(true));actions.append(copy);
+    const exp=document.createElement('button');exp.textContent='EXPORT';exp.onclick=exportCameraLog;actions.append(exp);
+    const close=document.createElement('button');close.textContent='CLOSE';close.onclick=()=>modal.remove();actions.append(close);
+    document.body.append(modal);
+  };
+}
+
+addVersionReceipt();
+addTools();
+loadOps();
+setInterval(loadOps,15000);
+window.addEventListener('pageshow',loadOps);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadOps()});
 })();
