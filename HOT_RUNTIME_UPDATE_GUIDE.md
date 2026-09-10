@@ -1,79 +1,129 @@
 # §wyrlz Hot Runtime Update Guide
 
-## Purpose
+**READ THIS BEFORE MODIFYING CHAT, PAGES, OR THE LALM.**
 
-`runtime` is the live application source of truth. The stable Vercel/server bootstrap serves runtime page files and runtime-owned assets without requiring a Vercel deployment or server restart.
+## One rule
 
-## Update a page
+**`runtime` is the live application source of truth. `main` is stable loader/infrastructure.**
 
-1. Edit the page under `web/` or `runtime_pages/` on the `runtime` branch.
-2. Commit/save the change.
-3. Reload the page. The next request retrieves the current runtime source.
+Normal application changes are:
 
-Examples:
+**edit `runtime` → commit → reload/request → verify → NO VERCEL DEPLOY → NO SERVER RESTART.**
 
-- `web/chat.html` → Chat page
-- `web/server.html` → Server page
-- `web/lalm.html` → LALM page
-- `runtime_pages/pages/*.html` → additional runtime pages
+Canonical rules are also kept on `main` in `SWRLZ_HOTFIX_RULES.md` so a new §wyrlz chat has a single obvious place to start.
 
-## Add a page
+## NO REDEPLOY: edit `runtime`
 
-1. Create the HTML file on `runtime`.
-2. Add its public route to `runtime_pages/manifest.json`.
-3. Save/commit both changes.
-4. Open the new route.
+Use `runtime` for:
 
-## Remove a page
+- `web/chat.html` — Chat UI/page
+- `web/chat_*.js` — Chat behavior, stream UI, enhancements, version display
+- `web/chat_*.css` — Chat styling
+- `web/server.html`, `web/lalm.html`, and other runtime-owned pages
+- `runtime_pages/manifest.json` — add/remove/change routes
+- runtime assets under `web/` or `runtime_pages/`
+- runtime-loadable LALM/inference code, including R39 runtime source
 
-Remove its route from `runtime_pages/manifest.json` and delete the page file if it is no longer needed. The stable bootstrap must not contain a second copy that can override the runtime route.
+### Exact hotfix procedure
 
-## Update page-owned JavaScript/CSS
+1. **Fetch the current file from `runtime` before editing.**
+2. Make the **smallest targeted change** possible.
+3. Commit the change to `runtime`.
+4. Reload/request the affected live route.
+5. Verify the live response/headers/version/behavior is from `runtime`.
+6. If incorrect, revert the runtime commit or make another small runtime-only fix.
 
-Keep page behavior and styling on `runtime` whenever possible. Changes to HTML, JavaScript, CSS, stream UI, enhancement code, and page assets are runtime changes and should be served from the runtime branch.
+### Especially for Chat
 
-## Update LALM / inference used by Chat
+If asked for a version bump, text change, footer change, CSS tweak, stream UI change, or other small Chat modification:
 
-Runtime-loadable LALM/inference modules belong under the runtime hot-runtime source tree. The server should reload the changed module by runtime revision/signature rather than requiring process restart. Durable source files live in GitHub `runtime`; `/tmp` is only a disposable execution/cache layer.
+- change only the owning runtime file;
+- do **not** rewrite the entire `web/chat.html` unless the HTML itself is the requested change;
+- do **not** add a competing hardcoded version/injector in `main`;
+- preserve the existing complete Chat page.
 
-## Durability rule
+## REDEPLOY: edit `main`
 
-Never treat `/tmp`, a Vercel instance filesystem, browser cache, or a running Python module object as the source of truth. Those are caches/execution state only. A server restart may destroy them; the runtime branch must recreate the active state automatically.
+Only change `main` when the stable deployed boundary itself must change, including:
 
-## No-deploy rule
+- Python API routes or middleware
+- authentication/session/security boundaries
+- runtime loader/source-resolution logic
+- runtime hydration/sync mechanism
+- deployment/build configuration (`vercel.json`, build/runtime configuration)
+- new bundled dependencies or stable server capabilities
+- a capability the current runtime loader cannot serve
 
-Do **not** create a Vercel deployment for ordinary runtime application changes. A deployment is only required when changing the stable bootstrap/infrastructure that is responsible for loading the runtime source.
+A `main` change requires a Vercel deployment.
 
-## Verification
+## Restart/cold-start rule
 
-A healthy hot-runtime response should identify:
+GitHub `runtime` is durable. `/tmp`, memory caches, loaded Python module objects, and Vercel instance state are disposable. A restart/cold start must recreate active runtime state from the durable `runtime` source automatically.
 
-- source branch: `runtime`
-- source: runtime/GitHub rather than bundled fallback
-- cache policy: no-store or a very short bounded fetch cache
-- current runtime revision
+Never treat `/tmp` as the permanent source of truth.
 
-The visible page version must be owned by the runtime application itself, never hardcoded by the stable bootstrap.
+## Page lifecycle
+
+### Add a page
+
+1. Create the page on `runtime`.
+2. Add its route to `runtime_pages/manifest.json`.
+3. Commit.
+4. Request the new route.
+
+### Remove a page
+
+1. Remove its route from `runtime_pages/manifest.json`.
+2. Delete the obsolete page file if no longer needed.
+3. Commit.
+4. Request the route and verify it is no longer served.
+
+### Update page JS/CSS
+
+Edit the runtime-owned asset directly, commit, reload, verify. No deploy/restart.
+
+## LALM/R39
+
+Runtime-loadable inference/LALM modules belong to the runtime source tree. The hot-runtime mechanism should reload changed source by revision/signature. Changing LALM internals does not require changing the Chat version unless user-facing Chat behavior/protocol changes.
+
+## Verification checklist
+
+Before declaring a hotfix complete:
+
+- [ ] Current target file fetched first.
+- [ ] Smallest possible file change made.
+- [ ] Change committed to `runtime`.
+- [ ] No Vercel deployment created for the runtime-only change.
+- [ ] Live request serves current `runtime` source rather than bundled fallback.
+- [ ] Browser behavior/version reflects the change.
+- [ ] No legacy injector/loader overrides the runtime asset.
 
 ## Architecture
 
 ```text
-GitHub runtime branch
-        │
-        ▼
-stable runtime loader
-        │
-        ├── HTML
-        ├── CSS
-        ├── browser JS
-        ├── page assets
-        └── runtime-loadable LALM/inference
-        │
-        ▼
-Vercel request
-        │
-        ▼
-current runtime source
+                 DURABLE
+              GitHub runtime
+                    │
+                    ▼
+          stable runtime loader
+                    │
+          ┌─────────┼─────────┐
+          ▼         ▼         ▼
+         HTML      JS/CSS    LALM/R39
+          │         │         │
+          └─────────┼─────────┘
+                    ▼
+               live request
+                    │
+                    ▼
+              current §wyrlz
+
+main = stable infrastructure → deploy when changed
+runtime = live app source   → hotfix without deploy
 ```
 
-This is the intended §wyrlz rule: **save to runtime → request/reload → new code is served; no deploy and no restart.**
+**Bottom line:**
+
+> **Chat/page/JS/CSS/stream/LALM change → `runtime` → smallest edit → commit → reload → verify → no deploy.**
+>
+> **Loader/API/middleware/auth/deployment infrastructure change → `main` → deploy.**
