@@ -1,12 +1,70 @@
 # §wyrlz Hotfix Rules — READ THIS FIRST
 
-**Purpose:** prevent unnecessary Vercel redeploys and accidental overwrites of the live Chat application.
+**Purpose:** prevent unnecessary Vercel redeploys and accidental overwrites of the live Chat application while preserving complete Server/module version lineage.
 
 ## One rule
 
 **`runtime` is the live application source of truth. `main` is stable loader/infrastructure.**
 
-For normal Chat/page/LALM changes: **edit `runtime` → commit → reload/request → verify. DO NOT DEPLOY. DO NOT RESTART.**
+For normal Chat/page/LALM changes: **edit `runtime` → increment the overall Server version → increment every affected module version → update the roadmap/release record → commit → reload/request → verify. DO NOT DEPLOY. DO NOT RESTART.**
+
+## Mandatory Server + module versioning
+
+Every server-side development event that changes runtime state is a new overall **Server version**, including a tiny change, a test-only version event, an unsuccessful attempt, or a failed fix.
+
+The Server version is the umbrella chronological release/event number. Module versions record the lineage of the components actually changed underneath that Server version.
+
+Example:
+
+```text
+Server v5.5.6
+
+Chat v5.5.5
+- Sidebar fix.
+
+LALM v5.5.4
+- No change.
+```
+
+If the next change is only LALM:
+
+```text
+Server v5.5.7
+
+LALM v5.5.5
+- Inference fix.
+```
+
+If an attempt fails, record the failure as its own Server version. The subsequent fix is another Server version.
+
+## Mandatory update workflow
+
+For **every** runtime/server update:
+
+1. Determine the current Server version.
+2. Determine the current version of every affected module.
+3. Fetch the current target file(s) from `runtime` before editing.
+4. Make the smallest targeted change possible.
+5. Increment the overall Server version.
+6. Increment every module version that actually changed.
+7. Update every canonical in-code/version-source location for those versions.
+8. Update every module-owned UI/status surface that should show its own version.
+9. Cross-module version displays must retrieve the owning module's authoritative version automatically; do not duplicate stale hardcoded versions.
+10. Update the roadmap/release record with the Server version, affected module versions, changes, failures, and verification state.
+11. Commit code + version records + roadmap to `runtime`.
+12. Reload/request every affected route.
+13. Verify live behavior, version responses, and visible version displays.
+14. Verify no legacy injector/loader overrides the runtime asset.
+15. Only then declare the update complete.
+
+## Version ownership
+
+- **Server:** `api/index.py` `VERSION`; exposed through `/api/server/status` as `version`.
+- **Chat:** `web/chat_version.js` `CHAT_VERSION`.
+- **LALM UI:** control-plane `LALM_UI_VERSION`; exposed through `/api/lalm/status` as `uiVersion`.
+- **LALM engine:** active runtime revision fields in `runtime_hot/r39_engine.py`, including `HOT_SERVER_VERSION` and `HOT_REVISION`.
+
+If another module needs to display one of these values, it must read the authoritative status/version source. It must not receive a second manually maintained copy.
 
 ## NO REDEPLOY required
 
@@ -25,10 +83,12 @@ These belong on `runtime`:
 
 1. **Fetch the current target file from `runtime` first.**
 2. Make the **smallest targeted edit** possible.
-3. Commit it to `runtime`.
-4. Reload/request the affected route.
-5. Verify the live response/headers/version/behavior comes from `runtime`.
-6. If wrong, revert the runtime commit or make another small runtime-only fix.
+3. Apply the required Server/module version bumps.
+4. Update the roadmap/release record.
+5. Commit it to `runtime`.
+6. Reload/request the affected route.
+7. Verify the live response/headers/version/behavior comes from `runtime`.
+8. If wrong, make another versioned runtime fix; do not silently overwrite the previous event.
 
 ### NEVER do this for a hotfix
 
@@ -38,6 +98,7 @@ These belong on `runtime`:
 - Do not restart the server to expose ordinary runtime changes.
 - Do not trigger Vercel deployment for ordinary runtime edits.
 - Do not change `dev` when the task is a Chat/runtime hotfix; use `runtime`.
+- Do not manually copy another module's version into a second module when an authoritative status endpoint can provide it.
 
 ## REDEPLOY required
 
@@ -69,14 +130,20 @@ Changing LALM internals does **not** require changing the Chat version unless us
 
 ## Versioning rule
 
-If asked to bump the Chat version, change the runtime-owned version source only. **Do not rewrite `web/chat.html` unless the HTML itself is the requested change. Preserve the complete existing page.**
+If asked to bump the Chat version, change the runtime-owned version source only, bump the overall Server version, and update the roadmap. **Do not rewrite `web/chat.html` unless the HTML itself is the requested change. Preserve the complete existing page.**
 
 ## Verification checklist
 
 Before saying a hotfix is done:
 
 - [ ] Current target file was fetched first.
+- [ ] Current Server/module versions established.
 - [ ] Only intended runtime file(s) changed.
+- [ ] Server version bumped.
+- [ ] Every affected module version bumped.
+- [ ] Canonical version sources updated.
+- [ ] Cross-module version displays resolve authoritative values automatically.
+- [ ] Roadmap/release record updated.
 - [ ] `runtime` contains the change.
 - [ ] No Vercel deployment was created for the runtime-only change.
 - [ ] Live request serves `runtime`, not bundled fallback.
@@ -103,12 +170,17 @@ Before saying a hotfix is done:
                     ▼
               current §wyrlz
 
+Version ownership stays with each module.
+Cross-module displays query the owning module's authoritative source.
+
 main = stable infrastructure → deploy when changed
 runtime = live app source   → hotfix without deploy
 ```
 
 ## Bottom line for future §wyrlz
 
-> **If the user asks to update Chat, a Chat page, page-owned JS/CSS, stream UI, or runtime LALM: work on `runtime`, make the smallest possible edit, commit, reload, verify, and do not redeploy.**
-
+> **Any server runtime change = new Server version + affected module version(s) + roadmap entry + commit + reload + verification.**
+>
+> **If the user asks to update Chat, a Chat page, page-owned JS/CSS, stream UI, or runtime LALM: work on `runtime`, make the smallest possible edit, version everything affected, update the roadmap, commit, reload, verify, and do not redeploy.**
+>
 > **If the loader/API/middleware/auth/deployment infrastructure must change: work on `main` and redeploy.**
