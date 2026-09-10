@@ -1,5 +1,5 @@
 (()=>{"use strict";
-const STREAM_UI_VERSION='1.3.31';
+const STREAM_UI_VERSION='1.3.32';
 let viewportEventType='',viewportMessageId='',viewportDeltaText='';
 let streamFollow=true,lastBubbleHeight=0,lastFollowMessageId='',programmaticUntil=0;
 
