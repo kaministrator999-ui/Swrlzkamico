@@ -2,16 +2,53 @@
 
 ## Current release
 
-**Server v2.2.8**
+**Server v2.3.4**
 
-This is the current runtime version after the mobile Chat sidebar stacking fix and the establishment of authoritative cross-module version display.
+This is the current runtime development release. Stable deployed infrastructure remains Server v2.3.3 until a future stable-infrastructure deployment changes it.
 
 ### Module state
 
-- **Chat v1.4.3** — mobile sidebar scrim layering fixed; Chat footer now resolves Server and LALM versions from authoritative status endpoints.
+- **Chat v1.4.4** — sidebar LALM status now reflects the authoritative `/api/lalm/status` readiness state instead of labeling local R39 as pending merely because no upstream bridge is configured.
 - **LALM UI v1.0.0** — unchanged in this release.
 - **LALM engine hot revision** — `2.1.18-hot-boundary-v9-effective-receipt`; unchanged in this release.
 - **Server UI v1.0.0** — unchanged in this release.
+
+## Server v2.3.4 — 2026-09-10
+
+### Changed
+
+- Corrected the Chat sidebar's local inference status so it is sourced from the authoritative `/api/lalm/status` readiness object.
+- A ready local R39 worker now displays **Local LALM ready** with a green indicator and the resident/native-backend detail.
+- A warming worker displays **Local LALM warming** rather than incorrectly implying that local inference is simply pending configuration.
+- An actual LALM status error displays **Local LALM unavailable** with an error indicator.
+- Bumped Chat from `v1.4.3` to `v1.4.4` because the user-facing Chat status behavior changed.
+- Bumped overall Server from `v2.3.3` to `v2.3.4` because this is a new server runtime development event.
+- LALM UI and LALM/R39 engine versions were intentionally left unchanged because their behavior/source did not change in this event.
+- Kept the change entirely inside runtime-owned Chat assets so the existing hot-runtime path can serve it without a Vercel deployment or server restart.
+
+### Root-cause clarification
+
+The previous screenshot's **Local inference pending** label was not evidence that R39 itself was unready. The live production `/api/lalm/status` response was verified with `interactiveReady: true` and `warmModelResident: true` while reporting `engineSource: runtime-override`. The base Chat page was instead using the absence of an upstream SERVER bridge to choose the misleading local-inference label.
+
+Server 2.3.3's startup-warm path therefore remains valid; this 2.3.4 event corrects the Chat presentation layer so the UI reports the actual LALM state.
+
+### Failure / history
+
+- Server 2.3.3 startup warm was initially interpreted as unsuccessful because the Chat sidebar continued to display **Local inference pending**.
+- Direct production status verification showed the LALM/R39 engine was actually ready and resident, isolating the remaining defect to Chat status presentation rather than model warming.
+- No LALM engine failure occurred in this event.
+- No stable-infrastructure change was made.
+
+### Verification state
+
+- Current production `/api/lalm/status` was queried directly before the fix.
+- Verified production response reported `engineSource: runtime-override`, `interactiveReady: true`, `warmModelResident: true`, and the expected R39 model identity.
+- Updated `runtime/web/chat_enhancements.js` to consume `/api/lalm/status` and override the misleading sidebar state.
+- Updated `runtime/web/chat_version.js` from Chat `1.4.3` to `1.4.4`.
+- Runtime branch remains the live application source of truth.
+- **Deployment:** NONE required for these runtime-owned changes.
+- **Server restart:** NONE.
+- Final browser-side verification should confirm the sidebar changes from the misleading pending label to **Local LALM ready** when the status endpoint reports readiness.
 
 ## Server v2.2.8 — 2026-09-10
 
@@ -103,6 +140,7 @@ The next fix receives another Server version and another LALM version increment.
 - Continue user-facing Chat/runtime fixes as targeted runtime hot updates.
 - Keep Chat version display authoritative and self-refreshing from server/module status.
 - Preserve stream, request, session, and Truth Firewall boundaries.
+- Keep local LALM readiness presentation tied to `/api/lalm/status`, not upstream bridge configuration.
 
 ### LALM
 
