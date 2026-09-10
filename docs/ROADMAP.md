@@ -2,16 +2,47 @@
 
 ## Current release
 
-**Server v2.3.5**
+**Server v2.3.6**
 
 This is the current runtime development release. Stable deployed infrastructure remains Server v2.3.3 until a future stable-infrastructure deployment changes it.
 
 ### Module state
 
-- **Chat v1.4.5** — authoritative local LALM readiness display is enforced from the canonical Chat version asset so it does not depend on the separate enhancement asset's propagation state.
+- **Chat v1.4.6** — fixed a browser-side status MutationObserver loop and kept authoritative local LALM readiness display guarded against redundant DOM writes.
 - **LALM UI v1.0.0** — unchanged in this release.
 - **LALM engine hot revision** — `2.1.18-hot-boundary-v9-effective-receipt`; unchanged in this release.
 - **Server UI v1.0.0** — unchanged in this release.
+
+## Server v2.3.6 — 2026-09-10
+
+### Changed
+
+- Fixed `web/chat_enhancements.js` so its local LALM status updater no longer installs a `MutationObserver` that observes the same DOM nodes it rewrites.
+- The previous observer could repeatedly trigger itself because `paint()` changed `#nodeTitle` / `#nodeDetail`, which generated new mutation records and re-entered the observer. This is the likely cause of the Chat page appearing stuck/loading while the LALM indicator itself showed ready.
+- Replaced the observer with a bounded 15-second status poll and guarded text writes so unchanged values do not create unnecessary DOM mutations.
+- Bumped Chat from `v1.4.5` to `v1.4.6` because the user-facing Chat runtime implementation changed again.
+- Bumped overall Server from `v2.3.5` to `v2.3.6` because this is a new server runtime development event.
+- LALM UI and LALM/R39 engine versions remain unchanged because their source/behavior did not change in this event.
+- Kept the correction entirely on the `runtime` branch; no stable infrastructure deployment or server restart is required.
+
+### Failure / history
+
+- Server 2.3.4 added local LALM readiness handling to `web/chat_enhancements.js`.
+- Server 2.3.5 moved authoritative readiness presentation into `web/chat_version.js` after production asset propagation for the separate enhancement asset was found stale.
+- Inspection of the 2.3.4 enhancement implementation exposed a self-triggering `MutationObserver`: it watched `#nodeTitle` and `#nodeDetail`, then its own `paint()` function wrote to those nodes. That creates a recurring mutation cycle and can monopolize browser work.
+- Server 2.3.6 records this as a new corrective runtime event rather than rewriting the earlier release history.
+
+### Verification state
+
+- The production LALM backend remains independently verified as `interactiveReady: true` and `warmModelResident: true`; the defect isolated here is browser-side Chat behavior, not LALM readiness.
+- `web/chat_enhancements.js` now contains no `MutationObserver`; its updater performs a direct status fetch and bounded polling.
+- `web/chat_version.js` canonical Chat version/status source is now Chat `v1.4.6` in `runtime`.
+- Runtime commits:
+  - `34f57ab433226fa0a0a8f47e929ae17dbc0ce19a` — enhancement observer-loop fix.
+  - `4952fef7519946b8b04dece24077d3353df737ae` — canonical Chat version/status bump to v1.4.6.
+- **Deployment:** NONE required.
+- **Server restart:** NONE.
+- Final browser verification remains required: reload the live Chat page and confirm it remains responsive instead of appearing stuck/loading while the green **Local LALM ready** indicator remains stable.
 
 ## Server v2.3.5 — 2026-09-10
 
@@ -73,7 +104,7 @@ Server 2.3.3's startup-warm path therefore remains valid; this 2.3.4 event corre
 - Current production `/api/lalm/status` was queried directly before the fix.
 - Verified production response reported `engineSource: runtime-override`, `interactiveReady: true`, `warmModelResident: true`, and the expected R39 model identity.
 - `runtime/web/chat_enhancements.js` was updated to consume `/api/lalm/status`, but production verification found the older asset content still being served.
-- `runtime/web/chat_version.js` was updated from Chat `1.4.3` to `1.4.4` and was verified live.
+- `runtime/web/chat_version.js` was updated from Chat `v1.4.3` to `v1.4.4` and was verified live.
 - Runtime branch remains the live application source of truth.
 - **Deployment:** NONE required for these runtime-owned changes.
 - **Server restart:** NONE.
