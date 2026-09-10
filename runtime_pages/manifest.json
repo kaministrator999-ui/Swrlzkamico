@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "mode": "runtime-source-of-truth",
+  "routes": {
+    "/": "runtime_pages/index.html",
+    "/chat": "web/chat.html",
+    "/server": "web/server.html",
+    "/lalm": "web/lalm.html",
+    "/admin": "web/admin.html",
+    "/live": "runtime_pages/index.html"
+  },
+  "assetRoots": [
+    "web",
+    "runtime_pages"
+  ],
+  "notes": "This manifest is durable configuration on the runtime branch. The stable server must read it at request time. Add, change, or remove route entries here without redeploying the stable server. Page files and page-owned assets live on the runtime branch."
+}
