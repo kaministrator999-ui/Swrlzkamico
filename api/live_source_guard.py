@@ -31,10 +31,7 @@ def _fetch(source: str, limit: int = MAX_SOURCE_BYTES) -> bytes:
     if cached and now - cached[0] <= CACHE_TTL:
         return cached[1]
     url = f"{RAW_BASE}/{urllib.parse.quote(BRANCH, safe='-._/')}/{urllib.parse.quote(source, safe='-._/')}"
-    req = urllib.request.Request(
-        url,
-        headers={"User-Agent": "swrlz-live-runtime/4", "Cache-Control": "no-cache"},
-    )
+    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-live-runtime/5", "Cache-Control": "no-cache"})
     with urllib.request.urlopen(req, timeout=FETCH_TIMEOUT) as response:
         data = response.read(limit + 1)
     if len(data) > limit:
@@ -47,30 +44,31 @@ def _fetch(source: str, limit: int = MAX_SOURCE_BYTES) -> bytes:
 
 
 def _headers(source: str, resolved: str = "github-runtime") -> dict[str, str]:
-    return {
-        "Cache-Control": "no-store, max-age=0",
-        "X-Content-Type-Options": "nosniff",
-        "X-SWRLZ-Live-Source": resolved,
-        "X-SWRLZ-Live-Branch": BRANCH,
-        "X-SWRLZ-Live-Path": source,
-    }
+    return {"Cache-Control": "no-store, max-age=0", "X-Content-Type-Options": "nosniff", "X-SWRLZ-Live-Source": resolved, "X-SWRLZ-Live-Branch": BRANCH, "X-SWRLZ-Live-Path": source}
 
 
 def _manifest() -> dict[str, object]:
     try:
-        return json.loads(_fetch(MANIFEST, 128_000).decode("utf-8"))
+        value = json.loads(_fetch(MANIFEST, 128_000).decode("utf-8"))
+        return value if isinstance(value, dict) else {}
     except Exception:
         return {}
 
 
-def _runtime_path_for_route(path: str) -> str | None:
-    manifest = _manifest()
-    routes = manifest.get("routes") if isinstance(manifest, dict) else None
-    if isinstance(routes, dict):
-        target = routes.get(path)
-        if isinstance(target, str) and target and ".." not in Path(target).parts:
-            return target
-    return None
+def _route_meta(path: str) -> dict[str, object] | None:
+    routes = _manifest().get("routes")
+    if not isinstance(routes, dict):
+        return None
+    value = routes.get(path)
+    if isinstance(value, str):
+        return {"source": value}
+    return value if isinstance(value, dict) else None
+
+
+def _safe_runtime_source(source: object) -> str | None:
+    if not isinstance(source, str) or not source or ".." in Path(source).parts:
+        return None
+    return source
 
 
 def _serve_source(source: str, fallback: Path | None = None) -> Response:
@@ -79,15 +77,9 @@ def _serve_source(source: str, fallback: Path | None = None) -> Response:
         resolved = "github-runtime"
     except Exception:
         if fallback is None or not fallback.is_file():
-            return Response(
-                "Live runtime source unavailable",
-                status_code=503,
-                media_type="text/plain",
-                headers=_headers(source, "unavailable"),
-            )
+            return Response("Live runtime source unavailable", status_code=503, media_type="text/plain", headers=_headers(source, "unavailable"))
         data = fallback.read_bytes()
         resolved = "bundled-fallback"
-
     media = mimetypes.guess_type(source)[0] or "application/octet-stream"
     if source.endswith(".html"):
         media = "text/html; charset=utf-8"
@@ -105,6 +97,28 @@ def _fallback(source: str) -> Path | None:
     return path if path.is_file() else None
 
 
+def _inject_runtime_assets(data: bytes, meta: dict[str, object]) -> bytes:
+    html = data.decode("utf-8")
+    styles = meta.get("styles") if isinstance(meta.get("styles"), list) else []
+    scripts = meta.get("scripts") if isinstance(meta.get("scripts"), list) else []
+    style_tags: list[str] = []
+    script_tags: list[str] = []
+    for item in styles:
+        source = _safe_runtime_source(item)
+        if source and source.endswith(".css"):
+            style_tags.append(f'<link rel="stylesheet" href="/live/assets/{source.removeprefix("web/") if source.startswith("web/") else source}">')
+    for item in scripts:
+        source = _safe_runtime_source(item)
+        if source and source.endswith(".js"):
+            path = source.removeprefix("web/") if source.startswith("web/") else source
+            script_tags.append(f'<script src="/live/assets/{path}"></script>')
+    if style_tags and "data-swrzl-runtime-styles" not in html:
+        html = html.replace("</head>", '<meta name="data-swrzl-runtime-styles" content="runtime">' + "".join(style_tags) + "</head>")
+    if script_tags and "data-swrzl-runtime-scripts" not in html:
+        html = html.replace("</body>", '<div id="data-swrzl-runtime-scripts" hidden></div>' + "".join(script_tags) + "</body>")
+    return html.encode("utf-8")
+
+
 def install(server) -> None:
     @server.app.middleware("http")
     async def live_runtime_guard(request: Request, call_next):
@@ -113,34 +127,45 @@ def install(server) -> None:
         if request.method != "GET":
             return await call_next(request)
 
-        # Every page route is resolved from the durable runtime manifest.
-        # The stable server does not inject UI/version/Chat code into pages.
-        if path == "/chat" or (path == "/api/chat" and action == "page"):
-            source = _runtime_path_for_route("/chat") or "web/chat.html"
+        # The manifest is the only page routing authority. The stable server
+        # never owns Chat/LALM/UI versions or application behavior.
+        if path == "/chat":
+            meta = _route_meta("/chat") or {"source": "web/chat.html"}
+            source = _safe_runtime_source(meta.get("source")) or "web/chat.html"
             response = _serve_source(source, _fallback(source))
+            if response.status_code == 200 and response.media_type and response.media_type.startswith("text/html"):
+                response.body = _inject_runtime_assets(response.body, meta)
+                response.headers["content-length"] = str(len(response.body))
             return attach_browser_session_cookie(response, request)
 
-        source = _runtime_path_for_route(path)
-        if source:
+        if path == "/api/chat" and action == "page":
+            meta = _route_meta("/chat") or {"source": "web/chat.html"}
+            source = _safe_runtime_source(meta.get("source")) or "web/chat.html"
             response = _serve_source(source, _fallback(source))
-            if path == "/chat":
-                return attach_browser_session_cookie(response, request)
-            return response
+            if response.status_code == 200 and response.media_type and response.media_type.startswith("text/html"):
+                response.body = _inject_runtime_assets(response.body, meta)
+                response.headers["content-length"] = str(len(response.body))
+            return attach_browser_session_cookie(response, request)
 
-        # Generic runtime asset path. This keeps page-owned JS/CSS/assets hot.
+        meta = _route_meta(path)
+        if meta:
+            source = _safe_runtime_source(meta.get("source"))
+            if source:
+                response = _serve_source(source, _fallback(source))
+                if response.status_code == 200 and response.media_type and response.media_type.startswith("text/html"):
+                    response.body = _inject_runtime_assets(response.body, meta)
+                    response.headers["content-length"] = str(len(response.body))
+                return response
+
         if path.startswith("/live/assets/"):
             rel = path[len("/live/assets/"):]
             if rel and ".." not in Path(rel).parts:
-                source = "web/" + rel
-                return _serve_source(source, None)
+                return _serve_source("web/" + rel, None)
 
-        # Generic runtime page namespace. Add/remove files on runtime without
-        # changing the stable server.
         if path.startswith("/live/pages/"):
             rel = path[len("/live/pages/"):]
             if rel and ".." not in Path(rel).parts:
-                source = "runtime_pages/pages/" + rel
-                return _serve_source(source, None)
+                return _serve_source("runtime_pages/pages/" + rel, None)
 
         if path == "/live/manifest.json":
             return _serve_source(MANIFEST, None)
@@ -157,5 +182,5 @@ def install(server) -> None:
         "vercelDeploymentRequiredForRuntimeChanges": False,
         "stableBootstrapOwnsPageCode": False,
         "durability": "GitHub runtime branch is source of truth; instance memory is only a bounded read cache.",
-        "detail": "The runtime manifest controls page routes. Runtime HTML, CSS, JavaScript, and page assets are fetched from GitHub runtime per request. The stable bootstrap does not inject versions, watchdogs, CSS, JavaScript, or other page behavior.",
+        "detail": "The runtime manifest controls page routes and page-owned asset injection. HTML, CSS, JavaScript, stream UI, and other page code remain on runtime. The stable bootstrap interprets metadata only.",
     }
