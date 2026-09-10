@@ -30,6 +30,7 @@ INDEX_HTML = "runtime_pages/index.html"
 ENH_CSS = '<link rel="stylesheet" href="/api/chat/assets/enhancements.css">'
 ENH_JS = '<script src="/api/chat/assets/enhancements.js"></script>'
 SESSION_JS = '<script src="/api/chat/admin-session-ui.js"></script>'
+VERSION_PROBE_JS = '''<script>(()=>{const v='1.3.30';const apply=()=>{for(const id of ['swrlzHotVersionLine','nodeDetail']){const e=document.getElementById(id);if(e)e.textContent=e.textContent.replace(/CHAT? v\\d+\\.\\d+\\.\\d+/ig,m=>m.replace(/\\d+\\.\\d+\\.\\d+/,v)).replace(/Chat v\\d+\\.\\d+\\.\\d+/ig,m=>m.replace(/\\d+\\.\\d+\\.\\d+/,v));}};apply();new MutationObserver(apply).observe(document.body,{subtree:true,childList:true,characterData:true});})();</script>'''
 
 
 def _fetch(source: str, limit: int = 4_000_000) -> bytes:
@@ -69,6 +70,7 @@ def _inject_chat(data: bytes) -> bytes:
         scripts += ENH_JS
     if "/api/chat/admin-session-ui.js" not in html:
         scripts += SESSION_JS
+    scripts += VERSION_PROBE_JS
     if scripts:
         html = html.replace("</body>", scripts + "</body>")
     return html.encode("utf-8")
