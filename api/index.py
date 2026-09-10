@@ -1,9 +1,8 @@
-"""§wyrlz Server 2.2.7 release entrypoint.
+"""§wyrlz Server 2.2.8 release entrypoint.
 
-2.2.7 preserves the 2.2.6 runtime/cursor behavior and packages the optional native
-R39 direct-quantized batched matmul extension. The live hot engine remains unchanged
-until the rebuilt base proves the extension is importable and the batch equivalence/
-performance gate is run.
+2.2.8 preserves the 2.2.7 runtime/cursor behavior, records the hot Chat sidebar
+stacking fix as a versioned server update, and keeps module version reporting
+available through the existing control-plane status endpoints.
 """
 from __future__ import annotations
 
@@ -21,7 +20,7 @@ from api.live_source_guard import install as _install_live_source_guard
 from api.control_plane import install as _install_control_plane
 from api.native_status import install as _install_native_status
 
-VERSION = "2.2.7"
+VERSION = "2.2.8"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
