@@ -144,4 +144,5 @@ loadOps();
 setInterval(loadOps,15000);
 window.addEventListener('pageshow',loadOps);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadOps()});
+window.__SWRLZ_RUNTIME_HOT_TEST='runtime-only-2026-09-10T17:24Z';
 })();
