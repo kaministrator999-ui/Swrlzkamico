@@ -1,5 +1,5 @@
 (()=>{"use strict";
-const ACCOUNT_UI_VERSION='1.4.0';
+const ACCOUNT_UI_VERSION='1.4.1';
 const STORAGE_KEY='swrlz.vercel.chat.v1';
 const MIGRATION_KEY='swrlz.account.local-import.v1';
 const nativeFetch=window.fetch.bind(window);
@@ -10,6 +10,7 @@ function writeLocal(value){localStorage.setItem(STORAGE_KEY,JSON.stringify(value
 function meaningfulLocal(state){return !!state?.threads?.some(t=>Array.isArray(t.messages)&&t.messages.some(m=>String(m?.text||'').trim()))}
 function toastText(text){const el=document.querySelector('#toast');if(!el)return;el.textContent=text;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2600)}
 function safeJson(response){return response.json().catch(()=>({}))}
+function setAccountMode(value){accountMode=Boolean(value);window.SWRLZ_ACCOUNT_MODE=accountMode;paintAccount()}
 
 function accountButton(){
   let host=document.querySelector('.topbar-right');if(!host)return null;
@@ -71,17 +72,17 @@ async function renderGoogleButton(host){
   try{await loadGoogle();host.replaceChildren();google.accounts.id.initialize({client_id:status.googleClientId,callback:handleGoogle,auto_select:false,cancel_on_tap_outside:true});google.accounts.id.renderButton(host,{type:'standard',theme:'outline',size:'large',text:'signin_with',shape:'pill',width:Math.min(420,Math.max(260,window.innerWidth-100))})}catch(_){host.textContent='Google Identity Services failed to load.'}
 }
 async function handleGoogle(response){
-  const r=await nativeFetch('/api/account/google',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({credential:response.credential})}),j=await safeJson(r);if(!r.ok){toastText(j.detail||'Google sign-in failed');return}me=j;accountMode=true;await importDevice(false);await hydrateFromServer();paintAccount();renderAccountDialog();toastText('§wyrlz account connected')
+  const r=await nativeFetch('/api/account/google',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({credential:response.credential})}),j=await safeJson(r);if(!r.ok){toastText(j.detail||'Google sign-in failed');return}me=j;setAccountMode(true);await importDevice(false);await hydrateFromServer();paintAccount();renderAccountDialog();toastText('§wyrlz account connected')
 }
 async function refreshIdentity(){
-  try{status=await (await nativeFetch('/api/account/status',{cache:'no-store'})).json();if(!status.authConfigured||!status.storeConfigured){accountMode=false;me=null;paintAccount();return}let r=await nativeFetch('/api/account/me',{cache:'no-store',credentials:'same-origin'});if(r.ok){me=await r.json();accountMode=true}else{me=null;accountMode=false}}catch(_){accountMode=false;me=null}paintAccount()
+  try{status=await (await nativeFetch('/api/account/status',{cache:'no-store'})).json();if(!status.authConfigured||!status.storeConfigured){setAccountMode(false);me=null;return}let r=await nativeFetch('/api/account/me',{cache:'no-store',credentials:'same-origin'});if(r.ok){me=await r.json();setAccountMode(true)}else{me=null;setAccountMode(false)}}catch(_){me=null;setAccountMode(false)}
 }
 async function saveProfile(){
   if(!accountMode||!me)return;
   const d=ensureDialog(),p=me.profile||{},body={version:p.version,displayName:d.querySelector('[data-display]').value.trim(),preferences:{...(p.preferences||{}),preferredName:d.querySelector('[data-preferred]').value.trim(),about:d.querySelector('[data-about]').value.trim()},modelPreferences:{...(p.model_preferences||p.modelPreferences||{}),responsePreferences:d.querySelector('[data-response]').value.trim()},uiPreferences:p.ui_preferences||p.uiPreferences||{}};
   const r=await nativeFetch('/api/account/profile',{method:'PUT',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)}),j=await safeJson(r);if(!r.ok){toastText(j.detail||'Profile save failed');return}me.profile=j.profile;me.user.displayName=j.profile.display_name||j.profile.displayName||null;paintAccount();toastText('Profile saved')
 }
-async function logout(){await nativeFetch('/api/account/logout',{method:'POST',credentials:'same-origin'});accountMode=false;me=null;activeJobs.clear();paintAccount();renderAccountDialog();toastText('Signed out; device cache remains available')}
+async function logout(){await nativeFetch('/api/account/logout',{method:'POST',credentials:'same-origin'});me=null;setAccountMode(false);activeJobs.clear();paintAccount();renderAccountDialog();toastText('Signed out; device cache remains available')}
 async function importDevice(force){
   if(!accountMode)return false;const local=readLocal();if(!meaningfulLocal(local))return false;if(!force&&localStorage.getItem(MIGRATION_KEY))return false;
   const r=await nativeFetch('/api/account/import-local',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({threads:local.threads})}),j=await safeJson(r);if(!r.ok){if(force)toastText(j.detail||'Import failed');return false}localStorage.setItem(MIGRATION_KEY,new Date().toISOString());if(force)toastText(`Imported ${j.importedThreads||0} thread(s), ${j.importedMessages||0} message(s)`);return true
@@ -126,12 +127,12 @@ window.fetch=async function(input,init={}){
   if(accountMode&&u.origin===location.origin&&u.pathname==='/api/chat'&&action==='cancel'&&method==='POST'){
     let body={};try{body=JSON.parse(init.body||'{}')}catch(_){};if(body.requestId)return nativeFetch(`/api/account/generation/${encodeURIComponent(body.requestId)}/cancel`,{method:'POST',credentials:'same-origin'});
   }
-  return previousFetch(input,init)
+  return previousFetch(input,init);
 };
 
 function enhanceCodeBlocks(root=document){for(const pre of root.querySelectorAll('.bubble pre:not([data-swrlz-copy-ready])')){pre.dataset.swrlzCopyReady='1';pre.style.position='relative';let b=document.createElement('button');b.type='button';b.className='swrlz-block-copy';b.textContent='COPY';b.title='Copy this block';b.onclick=async()=>{let code=pre.querySelector('code');try{await navigator.clipboard.writeText(code?.textContent||pre.textContent||'');b.textContent='COPIED';setTimeout(()=>b.textContent='COPY',1200)}catch(_){toastText('Clipboard unavailable')}};pre.append(b)}}
 const observer=new MutationObserver(records=>{for(const r of records)for(const n of r.addedNodes)if(n.nodeType===1)enhanceCodeBlocks(n)});observer.observe(document.body,{childList:true,subtree:true});enhanceCodeBlocks();
 const style=document.createElement('style');style.textContent=`.swrlz-block-copy{position:absolute;top:8px;right:8px;z-index:2;border:1px solid rgba(56,232,255,.35);border-radius:8px;background:#091423;color:#cdefff;padding:5px 8px;font-size:10px;font-weight:800;letter-spacing:.06em}.swrlz-block-copy:hover{background:#10233a}#swrlzAccountDialog{background:#07111e;color:#f7fbff;border:1px solid rgba(56,232,255,.25);border-radius:20px;box-shadow:0 24px 80px #0008}#swrlzAccountDialog::backdrop{background:#000a}#swrlzAccountDialog input,#swrlzAccountDialog textarea{background:#050c17;color:#fff;border:1px solid #294866;border-radius:10px;padding:10px}`;document.head.append(style);
 
-(async()=>{accountButton();await refreshIdentity();if(accountMode){await importDevice(false);await hydrateFromServer()}paintAccount();setInterval(()=>{if(accountMode)paintAccount()},2500)})();
+(async()=>{window.SWRLZ_ACCOUNT_MODE=false;accountButton();await refreshIdentity();if(accountMode){await importDevice(false);await hydrateFromServer()}paintAccount();setInterval(()=>{if(accountMode)paintAccount()},2500)})();
 })();
