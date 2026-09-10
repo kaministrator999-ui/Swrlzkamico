@@ -1,13 +1,13 @@
 # §wyrlz Unified Vercel Server
 
-Server revision: **2.2.0**  
-Chat UI revision: **1.3.26**  
+Server revision: **2.2.8**  
+Chat UI revision: **1.4.3**  
 LALM UI revision: **1.0.0**  
 Server UI revision: **1.0.0**  
 Production deployment: **https://swrlzkamico-o3nu.vercel.app**  
 Checkpoint lineage: `INT-VERCEL-CHAT-001A`
 
-This repository is the unified §wyrlz Vercel server. Server 2.2.0 separates infrastructure/server operations, LALM/R39 engineering, and Chat into independent control planes so model/runtime work no longer requires Chat UI mutation.
+This repository is the unified §wyrlz Vercel server. Server 2.2.8 preserves the split control planes and records the mobile Chat sidebar fix plus authoritative cross-module version display.
 
 ## Control planes
 
@@ -35,7 +35,7 @@ Browser routing helper:
 
 ## Scoped hot architecture
 
-The legacy `/api/hot` route remains for compatibility. Server 2.2.0 adds the preferred scoped control endpoint:
+The legacy `/api/hot` route remains for compatibility. Server 2.2.0 added the preferred scoped control endpoint:
 
 `POST /api/control/hot/sync?scope=<scope>&branch=dev`
 
@@ -47,9 +47,9 @@ Scopes:
 
 The LALM scope returns `chatTouched: false` by contract. Ordinary R39/native/prefill/decode iteration should use this path after 2.2.0 is deployed.
 
-## Chat freeze boundary
+## Chat boundary
 
-Chat remains **1.3.26** for Server 2.2.0. R39 performance work, native-kernel work, model readiness, and Server routing do not advance the Chat version unless the Chat protocol or user-facing Chat behavior itself changes.
+Chat is **1.4.3** for Server 2.2.8. The mobile sidebar fix changed user-facing Chat behavior, so Chat received its own version increment. Server/LALM work that does not change the Chat protocol or user-facing behavior does not advance the Chat version.
 
 Chat owns:
 
@@ -57,7 +57,8 @@ Chat owns:
 - request submission;
 - NDJSON stream rendering;
 - reconnect/replay behavior;
-- response evidence and Truth Firewall enforcement.
+- response evidence and Truth Firewall enforcement;
+- its own canonical Chat version source and cross-module version display.
 
 Chat does not own Server deployment state or LALM engineering state.
 
@@ -95,7 +96,16 @@ Use `dev` for ordinary page and LALM-runtime iteration. `vercel.json` disables a
 
 Promote to `main` only when the stable server boundary changes, including Python routes, auth/session behavior, middleware, native build configuration, or deployment contracts.
 
-Server 2.2.0 is the one-time architecture deployment that establishes the split control planes and LALM-scoped hot-sync contract. After that deployment, routine LALM work should not require Chat updates or base-server redeploys.
+Server 2.2.8 preserves the architecture deployment that established the split control planes and LALM-scoped hot-sync contract. Routine runtime application work remains on `runtime` without redeploy/restart.
+
+## Versioning contract
+
+Every server runtime development event receives a new overall Server version, including failed attempts. Every module actually changed in that event receives its own module-version increment. The roadmap/release record is updated in the same event.
+
+Modules that display another module's version must obtain it from the owning module's authoritative status/version source rather than maintaining a second stale literal. Chat currently resolves Server from `/api/server/status` and LALM UI from `/api/lalm/status`.
+
+Canonical roadmap: `docs/ROADMAP.md`  
+Latest release record: `docs/releases/SERVER_2.2.8.md`
 
 ## Contracts and records
 
@@ -104,8 +114,10 @@ Server 2.2.0 is the one-time architecture deployment that establishes the split 
 - `docs/contracts/SWRLZ_VERCEL_CHAT_BRIDGE_V1.md`
 - `docs/contracts/SWRLZ_HOT_RUNTIME_V1.md`
 - `docs/releases/SERVER_2.2.0.md`
+- `docs/releases/SERVER_2.2.8.md`
+- `docs/ROADMAP.md`
 - `SWRLZ_VERCEL_CHAT_CHANGELOG.md`
 
 ## Revision history
 
-2.1.x established the unified Chat/Admin/live-page runtime, local R39 execution, browser Chat authorization, hot runtime, and native direct-quantized inference path. **2.2.0 separates Server, LALM, and Chat ownership and introduces scoped LALM hot mutation that explicitly leaves Chat untouched.**
+2.2.8 records the mobile Chat sidebar stacking fix, advances Chat to 1.4.3 and Server to 2.2.8, and establishes authoritative cross-module version rendering. 2.2.0 established the split Server/LALM/Chat control planes and scoped LALM hot mutation.
