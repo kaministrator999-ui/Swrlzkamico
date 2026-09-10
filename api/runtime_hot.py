@@ -15,15 +15,17 @@ from api.hot_loader import HOT_CHAT, HOT_INFERENCE, HOT_ROOT, invalidate_engine
 
 OWNER = "kaministrator999-ui"
 REPO = "Swrlzkamico"
-DEFAULT_BRANCH = "dev"
+DEFAULT_BRANCH = "runtime"
 RAW_BASE = f"https://raw.githubusercontent.com/{OWNER}/{REPO}"
 HOT_BACKUPS = HOT_ROOT / "backups"
 WEB_ROOT = Path("/tmp/swrlz-admin/web")
 
 SOURCES = {
     "chat.html": ("web/chat.html", HOT_CHAT / "chat.html", 2_000_000),
+    "chat_account.js": ("web/chat_account.js", HOT_CHAT / "chat_account.js", 1_000_000),
     "chat_enhancements.css": ("web/chat_enhancements.css", HOT_CHAT / "chat_enhancements.css", 512_000),
     "chat_enhancements.js": ("web/chat_enhancements.js", HOT_CHAT / "chat_enhancements.js", 1_000_000),
+    "chat_stream_focus.js": ("web/chat_stream_focus.js", HOT_CHAT / "chat_stream_focus.js", 1_000_000),
     "r39_engine.py": ("runtime_hot/r39_engine.py", HOT_INFERENCE, 4_000_000),
 }
 
@@ -34,7 +36,7 @@ def _sha(data: bytes) -> str:
 
 def _fetch(branch: str, path: str, limit: int) -> bytes:
     url = f"{RAW_BASE}/{branch}/{path}"
-    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-hot-sync/1"})
+    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-hot-sync/2"})
     with urllib.request.urlopen(req, timeout=20) as response:
         data = response.read(limit + 1)
     if len(data) > limit:
@@ -65,7 +67,7 @@ def _backup() -> str | None:
 
 
 def _portal_html() -> str:
-    return """<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>§wyrlz Runtime Index</title><style>body{font-family:system-ui;background:#050914;color:#eef7ff;margin:0;padding:20px}h1{color:#63e8ff;margin-bottom:4px}a{color:#7ee8ff;text-decoration:none}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.card{background:#0b1426;border:1px solid #274362;border-radius:16px;padding:16px;margin:12px 0}.muted{color:#93aac0}button,input{font:inherit}button{background:#13243d;color:#fff;border:1px solid #315478;border-radius:10px;padding:10px 12px;margin:4px 4px 4px 0}button.hot{background:#4a3215;border-color:#e5a13b}button.danger{background:#4a1d29;border-color:#b94860}input{width:100%;padding:10px;border-radius:10px;border:1px solid #315478;background:#06101d;color:white}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#040914;border:1px solid #1e3856;border-radius:12px;padding:12px}</style></head><body><h1>§WYRLZ Runtime Index</h1><p class='muted'>Temporary launchpad + hot-runtime controls. Current pages are discovered from this runtime instance.</p><div class='grid'><div class='card'><b>Core</b><div id='core'></div></div><div class='card'><b>Hot Runtime</b><p class='muted'>Sync Chat UI + R39 runtime engine from the non-deploying <code>dev</code> branch.</p><input id='adm' type='password' placeholder='SWRLZ_ADMIN_TOKEN'><div><button class='hot' onclick='syncHot()'>SYNC HOT FROM DEV</button><button onclick='hotStatus()'>STATUS</button><button class='danger' onclick='clearHot()'>CLEAR → BUNDLED FALLBACK</button></div><pre id='hotOut'>Not checked.</pre></div></div><div class='card'><b>Live pages</b><div id='pages'>Loading…</div></div><script>const core=[['Admin','/api/admin'],['Chat','/api/chat'],['Hot Runtime Control','/api/hot'],['Health','/api/health'],['LALM','/api/lalm'],['Hot Runtime Status','/api/hot/status']];coreEl=document.querySelector('#core');coreEl.innerHTML=core.map(x=>`<div><a href="${x[1]}">${x[0]}</a></div>`).join('');adm.value=sessionStorage.getItem('swrlzAdminToken')||'';adm.onchange=()=>sessionStorage.setItem('swrlzAdminToken',adm.value.trim());async function req(path,method='GET'){const r=await fetch(path,{method,headers:{'x-swrlz-admin-token':adm.value.trim()},cache:'no-store'}),t=await r.text();let j;try{j=JSON.parse(t)}catch{j={raw:t}}hotOut.textContent=JSON.stringify(j,null,2);if(!r.ok)throw Error(t);return j}async function syncHot(){sessionStorage.setItem('swrlzAdminToken',adm.value.trim());await req('/api/hot/sync?branch=dev','POST');location.reload()}async function clearHot(){if(confirm('Clear runtime overrides and fall back to bundled Chat/R39?'))await req('/api/hot/clear','POST')}async function hotStatus(){await req('/api/hot/status')}fetch('/api/hot/pages',{cache:'no-store'}).then(r=>r.json()).then(j=>{pages.innerHTML=(j.pages||[]).map(x=>`<div><a href="${x.url}">${x.relative}</a> <span class="muted">${x.size} B</span></div>`).join('')||'No additional pages yet.'}).catch(e=>pages.textContent='Page discovery failed: '+e);hotStatus();</script></body></html>"""
+    return """<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>§wyrlz Runtime Index</title><style>body{font-family:system-ui;background:#050914;color:#eef7ff;margin:0;padding:20px}h1{color:#63e8ff;margin-bottom:4px}a{color:#7ee8ff;text-decoration:none}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.card{background:#0b1426;border:1px solid #274362;border-radius:16px;padding:16px;margin:12px 0}.muted{color:#93aac0}button,input{font:inherit}button{background:#13243d;color:#fff;border:1px solid #315478;border-radius:10px;padding:10px 12px;margin:4px 4px 4px 0}button.hot{background:#4a3215;border-color:#e5a13b}button.danger{background:#4a1d29;border-color:#b94860}input{width:100%;padding:10px;border-radius:10px;border:1px solid #315478;background:#06101d;color:white}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#040914;border:1px solid #1e3856;border-radius:12px;padding:12px}</style></head><body><h1>§WYRLZ Runtime Index</h1><p class='muted'>Temporary launchpad + hot-runtime controls. Current pages are discovered from this runtime instance.</p><div class='grid'><div class='card'><b>Core</b><div id='core'></div></div><div class='card'><b>Hot Runtime</b><p class='muted'>Sync Chat UI + R39 runtime engine from the non-deploying <code>runtime</code> branch.</p><input id='adm' type='password' placeholder='SWRLZ_ADMIN_TOKEN'><div><button class='hot' onclick='syncHot()'>SYNC HOT FROM RUNTIME</button><button onclick='hotStatus()'>STATUS</button><button class='danger' onclick='clearHot()'>CLEAR → BUNDLED FALLBACK</button></div><pre id='hotOut'>Not checked.</pre></div></div><div class='card'><b>Live pages</b><div id='pages'>Loading…</div></div><script>const core=[['Admin','/api/admin'],['Chat','/api/chat'],['Hot Runtime Control','/api/hot'],['Health','/api/health'],['LALM','/api/lalm'],['Hot Runtime Status','/api/hot/status']];coreEl=document.querySelector('#core');coreEl.innerHTML=core.map(x=>`<div><a href="${x[1]}">${x[0]}</a></div>`).join('');adm.value=sessionStorage.getItem('swrlzAdminToken')||'';adm.onchange=()=>sessionStorage.setItem('swrlzAdminToken',adm.value.trim());async function req(path,method='GET'){const r=await fetch(path,{method,headers:{'x-swrlz-admin-token':adm.value.trim()},cache:'no-store'}),t=await r.text();let j;try{j=JSON.parse(t)}catch{j={raw:t}}hotOut.textContent=JSON.stringify(j,null,2);if(!r.ok)throw Error(t);return j}async function syncHot(){sessionStorage.setItem('swrlzAdminToken',adm.value.trim());await req('/api/hot/sync?branch=runtime','POST');location.reload()}async function clearHot(){if(confirm('Clear runtime overrides and fall back to bundled Chat/R39?'))await req('/api/hot/clear','POST')}async function hotStatus(){await req('/api/hot/status')}fetch('/api/hot/pages',{cache:'no-store'}).then(r=>r.json()).then(j=>{pages.innerHTML=(j.pages||[]).map(x=>`<div><a href="${x.url}">${x.relative}</a> <span class="muted">${x.size} B</span></div>`).join('')||'No additional pages yet.'}).catch(e=>pages.textContent='Page discovery failed: '+e);hotStatus();</script></body></html>"""
 
 
 def _ensure_portal() -> None:
@@ -85,7 +87,7 @@ def _pages() -> list[dict[str, Any]]:
 
 
 def _control_html() -> str:
-    return """<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>§wyrlz Hot Runtime</title><style>body{font-family:system-ui;background:#050914;color:#eef7ff;padding:20px;max-width:760px;margin:auto}a{color:#72e6ff}button,input{font:inherit}input{width:100%;padding:11px;background:#06101d;color:#fff;border:1px solid #315478;border-radius:10px}button{padding:10px 12px;margin:8px 6px 0 0;background:#122741;color:#fff;border:1px solid #38638d;border-radius:10px}pre{background:#040914;border:1px solid #203a58;border-radius:12px;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body><h1>Hot Runtime Control</h1><p><a href='/live/'>← Runtime Index</a> · <a href='/api/admin'>Admin</a> · <a href='/api/chat'>Chat</a></p><p>Updates Chat UI and the narrow R39 runtime engine override from <b>dev</b> without redeploying the stable server.</p><input id='t' type='password' placeholder='SWRLZ_ADMIN_TOKEN'><button onclick='go("sync")'>SYNC HOT FROM DEV</button><button onclick='status()'>STATUS</button><button onclick='go("clear")'>CLEAR OVERRIDES</button><pre id='o'>Ready.</pre><script>t.value=sessionStorage.getItem('swrlzAdminToken')||'';async function call(url,method='GET'){sessionStorage.setItem('swrlzAdminToken',t.value.trim());let r=await fetch(url,{method,headers:{'x-swrlz-admin-token':t.value.trim()},cache:'no-store'}),x=await r.text();try{o.textContent=JSON.stringify(JSON.parse(x),null,2)}catch{o.textContent=x}}function go(a){call('/api/hot/'+a+(a==='sync'?'?branch=dev':''),'POST')}function status(){call('/api/hot/status')}status()</script></body></html>"""
+    return """<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>§wyrlz Hot Runtime</title><style>body{font-family:system-ui;background:#050914;color:#eef7ff;padding:20px;max-width:760px;margin:auto}a{color:#72e6ff}button,input{font:inherit}input{width:100%;padding:11px;background:#06101d;color:#fff;border:1px solid #315478;border-radius:10px}button{padding:10px 12px;margin:8px 6px 0 0;background:#122741;color:#fff;border:1px solid #38638d;border-radius:10px}pre{background:#040914;border:1px solid #203a58;border-radius:12px;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body><h1>Hot Runtime Control</h1><p><a href='/live/'>← Runtime Index</a> · <a href='/api/admin'>Admin</a> · <a href='/api/chat'>Chat</a></p><p>Updates Chat UI + account controls + R39 runtime engine from the non-deploying <b>runtime</b> branch without redeploying the stable server.</p><input id='t' type='password' placeholder='SWRLZ_ADMIN_TOKEN'><button onclick='go("sync")'>SYNC HOT FROM RUNTIME</button><button onclick='status()'>STATUS</button><button onclick='go("clear")'>CLEAR OVERRIDES</button><pre id='o'>Ready.</pre><script>t.value=sessionStorage.getItem('swrlzAdminToken')||'';async function call(url,method='GET'){sessionStorage.setItem('swrlzAdminToken',t.value.trim());let r=await fetch(url,{method,headers:{'x-swrlz-admin-token':t.value.trim()},cache:'no-store'}),x=await r.text();try{o.textContent=JSON.stringify(JSON.parse(x),null,2)}catch{o.textContent=x}}function go(a){call('/api/hot/'+a+(a==='sync'?'?branch=runtime':''),'POST')}function status(){call('/api/hot/status')}status()</script></body></html>"""
 
 
 def install(server) -> None:
@@ -93,7 +95,7 @@ def install(server) -> None:
     HOT_BACKUPS.mkdir(parents=True, exist_ok=True)
     _ensure_portal()
     server.CAPABILITIES["hot-runtime"] = {"kind": "runtime-mutation", "ready": True, "sourceBranch": DEFAULT_BRANCH}
-    server.CAPABILITIES["hot-chat-ui"] = {"kind": "runtime-mutation", "ready": True, "fallback": "bundled"}
+    server.CAPABILITIES["hot-chat-ui"] = {"kind": "runtime-mutation", "ready": True, "fallback": "bundled", "assets": sorted(k for k in SOURCES if k.startswith("chat_")) + ["chat.html"]}
     server.CAPABILITIES["hot-r39-engine"] = {"kind": "runtime-execution", "ready": True, "fallback": "bundled"}
     server._write_server_state()
 
@@ -106,7 +108,7 @@ def install(server) -> None:
 
     @server.app.get("/api/hot/status")
     async def hot_status():
-        return {"ok": True, "branch": DEFAULT_BRANCH, "chatOverride": (HOT_CHAT / "chat.html").is_file(), "inferenceOverride": HOT_INFERENCE.is_file(), "portal": "/live/", "control": "/api/hot", "pages": len(_pages())}
+        return {"ok": True, "branch": DEFAULT_BRANCH, "chatOverride": (HOT_CHAT / "chat.html").is_file(), "chatAccountOverride": (HOT_CHAT / "chat_account.js").is_file(), "inferenceOverride": HOT_INFERENCE.is_file(), "portal": "/live/", "control": "/api/hot", "pages": len(_pages())}
 
     @server.app.get("/api/hot/pages")
     async def hot_pages():
