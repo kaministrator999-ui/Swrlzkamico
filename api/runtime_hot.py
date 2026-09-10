@@ -22,7 +22,6 @@ WEB_ROOT = Path("/tmp/swrlz-admin/web")
 
 SOURCES = {
     "chat.html": ("web/chat.html", HOT_CHAT / "chat.html", 2_000_000),
-    "chat_account.js": ("web/chat_account.js", HOT_CHAT / "chat_account.js", 1_000_000),
     "chat_enhancements.css": ("web/chat_enhancements.css", HOT_CHAT / "chat_enhancements.css", 512_000),
     "chat_enhancements.js": ("web/chat_enhancements.js", HOT_CHAT / "chat_enhancements.js", 1_000_000),
     "chat_stream_focus.js": ("web/chat_stream_focus.js", HOT_CHAT / "chat_stream_focus.js", 1_000_000),
