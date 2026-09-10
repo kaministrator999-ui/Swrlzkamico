@@ -21,6 +21,7 @@ from api.control_plane import install as _install_control_plane
 from api.native_status import install as _install_native_status
 from api.contextual_input import install as _install_contextual_input
 from api.account_routes_v2 import install as _install_account_routes
+from api.chat_hot_assets import install as _install_chat_hot_assets
 
 VERSION = "2.3.2"
 _server.VERSION = VERSION
@@ -43,6 +44,7 @@ _install_control_plane(_server)
 _install_native_status(_server)
 _install_contextual_input(_server)
 _install_account_routes(_server)
+_install_chat_hot_assets(_server)
 _install_live_source_guard(_server)
 _server._write_server_state()
 
