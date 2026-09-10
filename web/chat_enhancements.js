@@ -1,30 +1,10 @@
 (()=>{"use strict";
-const UI_VERSION='1.4.4';
+const UI_VERSION='1.4.6';
 const apply=()=>{
   const title=document.querySelector('#nodeTitle');
   const detail=document.querySelector('#nodeDetail');
   const light=document.querySelector('#nodeLight');
   if(!title||!detail||!light)return;
-  let last=null;
-  let painting=false;
-  const paint=()=>{
-    if(!last||painting)return;
-    painting=true;
-    light.classList.remove('ready','error');
-    if(last.ready){
-      light.classList.add('ready');
-      title.textContent='Local LALM ready';
-      detail.textContent=last.detail||'R39 resident · native backend';
-    }else if(last.error){
-      light.classList.add('error');
-      title.textContent='Local LALM unavailable';
-      detail.textContent=last.detail||'Check LALM status';
-    }else{
-      title.textContent='Local LALM warming';
-      detail.textContent=last.detail||'R39 is being prepared';
-    }
-    painting=false;
-  };
   const refresh=async()=>{
     try{
       const r=await fetch('/api/lalm/status',{cache:'no-store'});
@@ -32,16 +12,31 @@ const apply=()=>{
       const s=await r.json();
       const ready=Boolean(s?.readiness?.interactiveReady);
       const error=s?.readiness?.ok===false;
-      last={ready,error,detail:ready?'R39 resident · native backend':error?(s?.readiness?.detail||s?.readiness?.code||'Check LALM status'):'R39 is being prepared'};
-      paint();
-    }catch(e){
-      last={ready:false,error:true,detail:'LALM status unavailable'};
-      paint();
+      light.classList.remove('ready','error');
+      if(ready){
+        light.classList.add('ready');
+        if(title.textContent!=='Local LALM ready')title.textContent='Local LALM ready';
+        const value='R39 resident · native backend';
+        if(detail.textContent!==value)detail.textContent=value;
+      }else if(error){
+        light.classList.add('error');
+        const value='Local LALM unavailable';
+        if(title.textContent!==value)title.textContent=value;
+        const reason=String(s?.readiness?.detail||s?.readiness?.code||'Check LALM status');
+        if(detail.textContent!==reason)detail.textContent=reason;
+      }else{
+        const value='Local LALM warming';
+        if(title.textContent!==value)title.textContent=value;
+        const reason='R39 is being prepared';
+        if(detail.textContent!==reason)detail.textContent=reason;
+      }
+    }catch(_){
+      light.classList.remove('ready');
+      light.classList.add('error');
+      if(title.textContent!=='Local LALM unavailable')title.textContent='Local LALM unavailable';
+      if(detail.textContent!=='LALM status unavailable')detail.textContent='LALM status unavailable';
     }
   };
-  const observer=new MutationObserver(()=>paint());
-  observer.observe(title,{childList:true,characterData:true,subtree:true});
-  observer.observe(detail,{childList:true,characterData:true,subtree:true});
   refresh();
   window.setInterval(refresh,15000);
 };
