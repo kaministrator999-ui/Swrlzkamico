@@ -19,12 +19,26 @@ SESSION_JS = '<script src="/api/chat/admin-session-ui.js"></script>'
 STREAM_FOCUS_TAG = '<script src="/api/chat/stream-focus.js"></script>'
 ACCOUNT_BRIDGE_TAG = '<script src="/api/chat/account-bridge.js"></script>'
 ACCOUNT_TAG = '<script src="/api/chat/account.js"></script>'
+MOBILE_POLISH = '''<style id="swrlz-mobile-polish">
+@media (max-width:820px){
+  :root{--sidebar:min(82vw,360px)}
+  .sidebar{width:var(--sidebar);max-width:360px;box-shadow:18px 0 55px rgba(0,0,0,.38)}
+  .sidebar-foot{flex:0 0 auto;max-height:34dvh;overflow:auto;padding-bottom:10px}
+  .swrlz-account{padding-bottom:4px}
+  .swrlz-account-card{min-width:0}
+  .swrlz-google-host{max-width:100%;overflow:hidden}
+  .swrlz-enhance-bar[data-expanded="true"]{position:relative;z-index:10;background:rgba(5,9,18,.985);border-bottom:1px solid var(--line-strong);box-shadow:0 16px 38px rgba(0,0,0,.34);backdrop-filter:blur(18px)}
+  .swrlz-enhance-bar[data-expanded="true"] button{background:rgba(13,23,42,.98);box-shadow:0 6px 18px rgba(0,0,0,.2)}
+}
+</style>'''
 UI_VERSION = "1.4.1"
 
 
 def _inject(html: str) -> str:
     if "/api/chat/assets/enhancements.css" not in html:
-        html = html.replace("</head>", ENH_CSS + "</head>")
+        html = html.replace("</head>", ENH_CSS + MOBILE_POLISH + "</head>")
+    elif "swrlz-mobile-polish" not in html:
+        html = html.replace("</head>", MOBILE_POLISH + "</head>")
     scripts = ""
     for marker, tag in (
         ("/api/chat/assets/enhancements.js", ENH_JS),
