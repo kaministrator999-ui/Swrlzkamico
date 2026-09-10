@@ -1,5 +1,5 @@
 (()=>{"use strict";
-const CHAT_VERSION="1.4.3";
+const CHAT_VERSION="1.4.4";
 const STREAM_VERSION="V2";
 const apply=()=>{
   const foot=document.querySelector(".sidebar-foot");
