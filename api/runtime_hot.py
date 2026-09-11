@@ -11,7 +11,7 @@ from typing import Any
 from fastapi import Request
 from fastapi.responses import HTMLResponse, JSONResponse
 
-from api.hot_loader import HOT_CHAT, HOT_INFERENCE, HOT_ROOT, invalidate_engine
+from api.hot_loader import HOT_CHAT, HOT_INFERENCE, HOT_ROOT, invalidate_engine, register_hot_refresher
 
 OWNER = "kaministrator999-ui"
 REPO = "Swrlzkamico"
@@ -102,12 +102,12 @@ def _sync_runtime(*, force: bool = False, reason: str = "automatic") -> dict[str
     return {"ok": True, "changed": True, "branch": DEFAULT_BRANCH, "files": changed, "backupId": backup_id, "reason": reason}
 
 
-def _safe_auto_sync(server) -> dict[str, Any]:
+def _safe_auto_sync(server, *, force: bool = False) -> dict[str, Any]:
     enabled = os.environ.get("SWRLZ_HOT_AUTO_SYNC", "1").strip().lower() not in {"0", "false", "no", "off"}
     if not enabled:
         return {"ok": True, "enabled": False, "changed": False, "branch": DEFAULT_BRANCH}
     try:
-        result = _sync_runtime(reason="automatic")
+        result = _sync_runtime(force=force, reason="automatic")
         if result.get("changed"):
             server.activity("hot-auto-sync", branch=DEFAULT_BRANCH, files=len(result.get("files") or []), changed=[x["name"] for x in result.get("files") or []])
         return {**result, "enabled": True}
@@ -144,9 +144,10 @@ def install(server) -> None:
     HOT_ROOT.mkdir(parents=True, exist_ok=True)
     HOT_BACKUPS.mkdir(parents=True, exist_ok=True)
     _ensure_portal()
-    server.CAPABILITIES["hot-runtime"] = {"kind": "runtime-mutation", "ready": True, "sourceBranch": DEFAULT_BRANCH, "autoSync": True, "strategy": "hash-driven raw-source hydration with disposable instance cache"}
+    register_hot_refresher(lambda force=False: _safe_auto_sync(server, force=force))
+    server.CAPABILITIES["hot-runtime"] = {"kind": "runtime-mutation", "ready": True, "sourceBranch": DEFAULT_BRANCH, "autoSync": True, "strategy": "per-worker get_engine refresh plus hash-driven runtime hydration"}
     server.CAPABILITIES["hot-chat-ui"] = {"kind": "runtime-mutation", "ready": True, "fallback": "bundled", "assets": sorted(SOURCES)}
-    server.CAPABILITIES["hot-r39-engine"] = {"kind": "runtime-execution", "ready": True, "fallback": "bundled", "reload": "content-hash invalidation"}
+    server.CAPABILITIES["hot-r39-engine"] = {"kind": "runtime-execution", "ready": True, "fallback": "bundled", "reload": "content-hash invalidation", "workerRefreshSeconds": 30}
     server._write_server_state()
 
     @server.app.middleware("http")
