@@ -1,17 +1,33 @@
-/* §wyrlz Ice Dragon generated-art layer v2 — companion welcome icon + adult chamber background */
+/* §wyrlz Ice Dragon generated-art layer v3 — companion identity + adult chamber wallpaper */
 body[data-swrlz-theme="ice-dragon"]::after{display:none!important}
 
 body[data-swrlz-theme="ice-dragon"] .messages{
-  position:relative;
-  isolation:isolate;
-  background:
-    linear-gradient(180deg,rgba(1,7,16,.24),rgba(1,8,18,.38) 58%,rgba(1,6,14,.52)),
-    linear-gradient(90deg,rgba(1,8,18,.42),transparent 44%,rgba(1,8,18,.12)),
-    var(--ice-dragon-adult,none) center 42%/cover no-repeat,
-    radial-gradient(circle at 52% -8%,rgba(126,240,255,.05),transparent 30%),
-    repeating-linear-gradient(117deg,transparent 0 92px,rgba(176,239,255,.009) 93px 94px,transparent 95px 182px)!important;
+  position:relative!important;
+  isolation:isolate!important;
 }
-body[data-swrlz-theme="ice-dragon"] .message-stack{position:relative;z-index:1}
+body[data-swrlz-theme="ice-dragon"] .messages::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background-image:var(--ice-dragon-adult,none);
+  background-position:50% 42%;
+  background-size:cover;
+  background-repeat:no-repeat;
+  opacity:1;
+}
+body[data-swrlz-theme="ice-dragon"] .messages::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(1,7,16,.18),rgba(1,8,18,.28) 56%,rgba(1,6,14,.42)),
+    linear-gradient(90deg,rgba(1,8,18,.24),transparent 58%);
+}
+body[data-swrlz-theme="ice-dragon"] .message-stack{position:relative!important;z-index:2!important}
 
 body[data-swrlz-theme="ice-dragon"] .dragon-mark,
 body[data-swrlz-theme="ice-dragon"] .welcome-orb,
@@ -39,11 +55,5 @@ body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble,
 body[data-swrlz-theme="ice-dragon"] .composer-box{backdrop-filter:blur(8px) saturate(118%);-webkit-backdrop-filter:blur(8px) saturate(118%)}
 
 @media(max-width:760px){
-  body[data-swrlz-theme="ice-dragon"] .messages{
-    background:
-      linear-gradient(180deg,rgba(1,7,16,.20),rgba(1,8,18,.34) 56%,rgba(1,6,14,.48)),
-      linear-gradient(90deg,rgba(1,8,18,.25),transparent 60%),
-      var(--ice-dragon-adult,none) 50% 40%/cover no-repeat,
-      radial-gradient(circle at 52% -8%,rgba(126,240,255,.04),transparent 30%)!important;
-  }
+  body[data-swrlz-theme="ice-dragon"] .messages::before{background-position:50% 40%}
 }
