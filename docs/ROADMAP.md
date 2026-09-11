@@ -2,18 +2,46 @@
 
 ## Current release
 
-**Server v2.3.25**
+**Server v2.3.26**
 
-This event adds a selectable Ice Dragon visual theme to Web Chat while preserving the existing default theme, current Chat architecture, account behavior, streaming behavior, and runtime-only ownership.
+This event corrects the mobile Chat viewport so the composer stays pinned to the usable bottom edge instead of leaving browser-dependent dead space underneath it.
 
 ### Module state
 
-- **Server runtime v2.3.25** — current server development lineage.
-- **Chat v1.4.21** — selectable Ice Dragon theme pack with persistent user choice.
+- **Server runtime v2.3.26** — current server development lineage.
+- **Chat v1.4.22** — mobile viewport/composer-bottom correction.
 - **LALM engine v2.1.21** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.0** — unchanged.
+
+## Server v2.3.26 — 2026-09-11
+
+### Mobile Chat viewport correction
+
+- User browser evidence showed a large empty region below the Chat composer on Android even though the visible browser viewport extended farther down.
+- The correction is owned by Web Chat and applies to mobile layouts regardless of whether Default or Ice Dragon is selected.
+- Added a final runtime CSS layer that pins the mobile Chat app to the viewport edges and lets the workspace fill that pinned container rather than relying on a browser-dependent `100dvh` result for the app shell.
+- The composer remains the final grid row, so the correction removes the dead lower region without moving it through a negative-margin or theme-specific hack.
+- Existing message scrolling, sidebar behavior, theme selection, account behavior, streaming, LALM behavior, and stable infrastructure were intentionally left unchanged.
+- `runtime_pages/manifest.json` now loads the viewport correction after the normal Chat and Ice Dragon styles so it wins only for the mobile layout properties it owns.
+
+### Verification / deployment state
+
+- `web/chat_mobile_viewport_fix.css` added on `runtime`.
+- `runtime_pages/manifest.json` updated on `runtime` to load the correction for `/chat`.
+- `versions/server-runtime.txt` advanced to `2.3.26`.
+- `versions/web-chat.txt` advanced to `1.4.22`.
+- **Production deployment:** NONE requested; this is a runtime-only Chat update.
+- **Server restart:** NONE requested.
+- **Verification:** source and live-asset verification pending immediately after commit; browser visual acceptance remains the final check for the exact Android viewport shown by the user.
+
+### Relevant lineage
+
+- Mobile viewport correction: `42f5fa6b402367c6b0b753607fbb77bd64279eaf`
+- Runtime manifest wiring: `b36267dcfa10a49945f54506863322ac2cb41d74`
+- Server version authority: `1ad54e46315dd28c0f96bf29e47b7c9bf8fab605`
+- Chat version authority: `0af4dbcf530d0e1aa94d61cbf4ba0e1a22101fa0`
 
 ## Server v2.3.25 — 2026-09-11
 
