@@ -2,56 +2,81 @@
 
 ## Current release
 
-**Server v2.3.13**
+**Server v2.3.15**
 
-This runtime event integrates the existing isolated Google login flow into the Chat sidebar footer and establishes the first account-settings dialog surface.
+This runtime event replaces the incomplete page/iframe Google-login bridge with direct Google Identity Services integration inside Chat and completes the first functional Account settings submenus.
 
 ### Module state
 
-- **Server runtime v2.3.13** — overall runtime development lineage advanced.
-- **Chat v1.4.11** — sidebar footer now exposes Google sign-in/account identity and a centered account-settings gear.
-- **Google Account architecture v1.0.1** — the existing Google login test flow is now consumed by Chat as a reusable account identity source.
+- **Server runtime v2.3.15** — current runtime development lineage.
+- **Chat v1.4.13** — direct Google sign-in button, separated account identity/settings controls, and functional account settings UI.
+- **Google Account architecture v1.0.3** — Google Identity Services now initializes directly inside Chat from the existing hidden browser-stored client configuration.
 - **LALM UI v1.0.0** — unchanged.
 - **LALM engine v2.1.18** / revision `2.1.18-hot-boundary-v9-effective-receipt` — unchanged.
+
+## Server v2.3.15 — 2026-09-10
+
+### Accomplishment
+
+- Removed Chat's dependency on `/live/pages/google-login-test.html` and removed the iframe/cropped-page architecture that produced the empty rounded box in the sidebar.
+- Chat now loads Google Identity Services directly and uses the existing browser-stored Google Web Client configuration internally. The client configuration is consumed silently and is not displayed in the sidebar or Account settings UI.
+- The sidebar now renders the real Google sign-in button directly in the footer.
+- A successful sign-in stores only the safe account claims already used by the isolated test flow: name, email, verification state, picture, subject, issuer, and expiration metadata. The raw Google credential token is not retained in the Account settings UI.
+- The signed-in account identity is now display-only rather than another Account settings trigger.
+- The centered gear is the dedicated Account settings entry point.
+- Filled the Account settings sections with working local controls:
+  - **Profile** — account identity display, optional display/preferred names, Google-name preference.
+  - **Data & privacy** — explicit current storage behavior and local preference clearing.
+  - **Personalization** — response-depth and preferred-name preferences stored locally.
+  - **Security** — sign-in state, email verification state, session expiry, hidden-credential statement, and sign-out.
+- Server-side Google ID-token verification remains a future stable-auth boundary; this release intentionally does not pretend browser-decoded identity claims are server-verified authentication.
+
+### Verification state
+
+- `web/chat_enhancements.js` no longer contains a Google login page URL or iframe bridge.
+- `web/chat_enhancements.css` no longer depends on the cropped Google-page iframe and now styles the direct button and populated settings sections.
+- `versions/server-runtime.txt` reports `2.3.15`.
+- `versions/web-chat.txt` reports `1.4.13`.
+- `versions/google-account.txt` reports `1.0.3`.
+- **Production deployment:** NONE requested.
+- **Server restart:** NONE.
+- **Manual Vercel deployment:** NONE.
+- User-side browser reload is the final visual/sign-in verification gate.
+
+## Server v2.3.14 — 2026-09-10 — FAILED ATTEMPT PRESERVED
+
+### Attempt
+
+- First direct-in-Chat Google Identity implementation removed the page/iframe dependency and introduced the intended Account settings structure.
+
+### Failure / correction lineage
+
+- The first JavaScript write contained a syntax error in the Google Identity script-loader error callback.
+- The incorrect attempt was not rewritten out of history. It is preserved as Server `v2.3.14`, Chat `v1.4.12`, and Google Account architecture `v1.0.2`.
+- Server `v2.3.15` / Chat `v1.4.13` / Google Account `v1.0.3` is the corrective event.
 
 ## Server v2.3.13 — 2026-09-10
 
 ### Accomplishment
 
-- Connected Chat's left sidebar footer to the existing `/live/pages/google-login-test.html` Google Identity flow without duplicating OAuth credentials or exposing the setup fields directly in the Chat sidebar.
-- When the Google test flow has already been configured in the browser, Chat renders only the Google sign-in control in the footer.
-- After a successful Google login, the footer replaces the sign-in control with the authenticated account identity (picture/name/email).
-- Added a centered gear button below the account area that opens an Account settings dialog.
-- The dialog provides the initial settings menu structure for Profile, Data & privacy, Personalization, and Security, plus sign-out control when an account is present.
-- Chat uses the same browser-local Google client configuration and safe identity claims already produced by the isolated test page; it does not duplicate a client secret or expose additional credential fields in Chat.
-- Server-side Google ID-token verification is still a future stable-auth boundary. This release is the runtime UI/account-shell integration only.
+- Introduced the first Chat sidebar account dock and Account settings gear.
+- Attempted to reuse the isolated Google login page through a cropped iframe.
+- Added the initial settings menu shell.
 
-### Verification state
+### Failure discovered by browser verification
 
-- `web/chat_enhancements.js` now creates the account dock, consumes the existing Google login page, mirrors authenticated account claims, and owns the settings modal behavior.
-- `web/chat_enhancements.css` now styles the account dock, account identity card, centered gear, and settings dialog.
-- `versions/server-runtime.txt` reports `2.3.13`.
-- `versions/web-chat.txt` reports `1.4.11`.
-- `versions/google-account.txt` reports `1.0.1`.
-- **Production deployment:** NONE.
-- **Server restart:** NONE.
-- **Manual Vercel deployment:** NONE.
-- User-side browser verification remains the final UI check.
+- The sidebar showed an empty rounded Google host instead of the actual sign-in button.
+- The account/login area and Account settings behavior were insufficiently separated.
+- Settings submenu contents were placeholder descriptions rather than functional controls.
+- The deeper design issue was using the isolated test page as a UI dependency instead of moving its proven Google Identity architecture directly into Chat.
 
 ## Server v2.3.12 — 2026-09-10
 
 ### Accomplishment
 
 - Corrected the `runtime` branch's own `vercel.json` so Git pushes from that branch no longer request Vercel Git deployments.
-- The root cause was branch-local configuration drift: `main/vercel.json` had been changed to `git.deploymentEnabled=false`, but `runtime/vercel.json` still contained a branch map that disabled `dev`, explicitly enabled `main`, and did not disable `runtime` itself.
-- Because Vercel builds a pushed branch using that branch's configuration, runtime commits continued creating Preview deployments even though `main` had the global disable rule.
-- `runtime/vercel.json` now also uses `git.deploymentEnabled=false`, matching the intended repository-wide manual-deployment architecture.
-
-### Verification / failure lineage
-
-- Vercel deployment history confirmed Server v2.3.11 runtime commits created Preview deployments on the `runtime` branch.
-- This corrects the earlier mistaken release note that automatic Git deployments were already disabled for runtime work.
-- The subsequent Server v2.3.12 version-authority and roadmap commits produced no new Vercel deployments, verifying the correction.
+- The root cause was branch-local configuration drift: `main/vercel.json` had been changed to `git.deploymentEnabled=false`, but `runtime/vercel.json` still contained a branch map that did not disable `runtime` itself.
+- Follow-up runtime commits produced no new Vercel deployments, verifying the correction.
 
 ### Deployment state
 
@@ -65,30 +90,30 @@ This runtime event integrates the existing isolated Google login flow into the C
 ### Accomplishment
 
 - Chat no longer has to visibly fall back to a yellow/pending state on every refresh when that same browser tab has already verified the LALM as ready moments earlier.
-- A recent verified-ready state is restored immediately from session state, while `/api/lalm/status` is still checked in the background so the UI does not blindly trust stale readiness forever.
-- Status polling was reduced from every 15 seconds to every 60 seconds, with an additional check when the browser regains focus.
+- A recent verified-ready state is restored immediately from session state while `/api/lalm/status` is checked in the background.
+- Status polling was reduced from every 15 seconds to every 60 seconds.
 
 ### Verification evidence
 
 - Live `/api/lalm/status` reported `interactiveReady: true` and `warmModelResident: true` with the runtime override/native backend active.
-- Vercel deployment history later showed that the runtime commits for this event generated Preview deployments. That deployment behavior was unintended and is corrected by Server v2.3.12.
+- Vercel deployment history later showed the runtime commits for this event generated Preview deployments; Server v2.3.12 corrected that deployment-control issue.
 
 ## Server v2.3.10 — 2026-09-10
 
 ### Purpose
 
-- Incremented only the canonical Server runtime version authority to verify that Chat could dynamically display `v2.3.10` without changing Chat code.
+- Incremented only the canonical Server runtime version authority to verify Chat could dynamically display `v2.3.10` without changing Chat code.
 
 ### Verification state
 
 - User-side verification confirmed Chat dynamically displayed Server runtime `v2.3.10`.
-- The version-authority architecture itself worked correctly.
+- The version-authority architecture worked correctly.
 
 ## Server v2.3.9 — 2026-09-10
 
 ### Architecture established
 
-- Replaced the single value-bearing root `VERSION.txt` with an index that maps stable module IDs to independent canonical files under `versions/`.
+- Replaced the single value-bearing root `VERSION.txt` with an index mapping stable module IDs to independent canonical files under `versions/`.
 - Added dedicated version authorities for Server runtime, Server UI, Web Chat, stream contract, LALM UI, LALM engine, Admin Web, Google Account architecture, Client APK, and Server APK.
 - Chat resolves displayed Server runtime / Chat / Stream / LALM versions from the corresponding per-module files.
 - Unverified APK versions remain `UNASSIGNED` instead of being fabricated.
