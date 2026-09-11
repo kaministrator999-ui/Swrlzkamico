@@ -12,7 +12,8 @@ When the user says **“start project work”**, **“resume project work”**, 
 4. Immediately read `SWRLZ_SERVER_ROADMAP.md`.
 5. Treat those four files as the current operating and engineering contract before touching the repository.
 6. Fetch the current target file/commit state before making any edit.
-7. **Before making any repository mutation that could cause a deployment/redeployment, apply the Deployment Approval Gate below and obtain explicit user approval first.**
+7. Fetch the current `VERSION.txt` module router and the authoritative `versions/<module-id>.txt` file for every module the requested work may affect.
+8. **Before making any repository mutation that could cause a deployment/redeployment, apply the Deployment Approval Gate below and obtain explicit user approval first.**
 
 Do not ask the user to repeat these instructions unless the repository/files are genuinely inaccessible.
 
@@ -65,11 +66,11 @@ Defines the entry sequence and the non-negotiable project-start procedure, inclu
 
 ### Document 2 — Hotfix Rules
 
-Defines the `runtime` vs. `main` boundary, safe editing rules, deployment/restart rules, and verification requirements.
+Defines the `runtime` vs. `main` boundary, safe editing rules, deployment/restart rules, verification requirements, and module-owned version-file workflow.
 
 ### Document 3 — Version + Module Evolution Contract
 
-Defines how §wyrlz evolves as an engineered system. It governs overall Server versioning, independent module versioning, failed-event lineage, canonical version ownership, automatic cross-module version resolution, release records, verification, and commit lineage.
+Defines how §wyrlz evolves as an engineered system. It governs overall Server versioning, independent module versioning, failed-event lineage, canonical version ownership, the `VERSION.txt` router, per-module `versions/*.txt` authorities, automatic cross-module version resolution, release records, verification, and commit lineage.
 
 **This is also the foundation for the future programming-side LALM engineering curriculum/specification.** The programming LALM must eventually learn this structure as an engineering process, not as optional documentation.
 
@@ -83,7 +84,7 @@ Records the actual chronological Server/module release history and current versi
 
 `main` = stable loader/infrastructure/deployment boundary.
 
-For Chat, pages, page-owned JS/CSS, stream UI, runtime assets, and runtime-loadable LALM/R39: edit `runtime`, make the smallest targeted change, commit it, reload/request, verify it live, and **DO NOT DEPLOY or RESTART** for ordinary runtime changes.
+For Chat, pages, page-owned JS/CSS, stream UI, runtime assets, runtime-loadable LALM/R39, and runtime-owned module version authorities: edit `runtime`, make the smallest targeted change, commit it, reload/request, verify it live, and **DO NOT DEPLOY or RESTART** for ordinary runtime changes.
 
 For stable API, middleware, authentication/security boundaries, runtime loader/source resolution, hydration/sync infrastructure, deployment/build configuration, or capabilities the current loader cannot serve: edit `main` and **DEPLOY + VERIFY**, but only after passing the Deployment Approval Gate above.
 
@@ -91,6 +92,57 @@ Never use `dev` as the Chat/runtime hotfix source.
 Never use `/tmp` as durable source of truth.
 Never replace a complete page for a small targeted change.
 Never introduce a competing hardcoded page/version injector in `main`.
+Never duplicate another module's version number when that module owns an authoritative version file.
+
+## MODULE VERSION AUTHORITY RULE — REQUIRED
+
+`VERSION.txt` is the **module-version router/index**. It identifies which module-owned file contains the authoritative version for each independently evolving structure.
+
+The authoritative values live in module-owned files such as:
+
+```text
+versions/server-runtime.txt
+versions/server-ui.txt
+versions/web-chat.txt
+versions/stream-contract.txt
+versions/lalm-ui.txt
+versions/lalm-engine.txt
+versions/admin-web.txt
+versions/google-account.txt
+versions/client-apk.txt
+versions/server-apk.txt
+```
+
+The exact registered set must always be read from current repository state because new structures may be added over time.
+
+### New independently evolving structure
+
+If work introduces a structure that can evolve independently — such as a new account subsystem, admin surface, client/server application, authentication architecture, profile/memory/search system, protocol, or other substantial module — the same development event must:
+
+1. assign a stable module ID;
+2. create its own `versions/<module-id>.txt` authority;
+3. register that owner in `VERSION.txt`;
+4. make its own visible/status/update surfaces consume that authority where appropriate;
+5. make other modules query the owner instead of carrying duplicate version literals;
+6. include that module in roadmap/release lineage going forward.
+
+If the true current version of an artifact cannot be verified, record an explicit unassigned/unknown state. **Do not invent a version.**
+
+### Display/update behavior
+
+When Chat, Admin, LALM, an APK, installer, updater, or another consumer needs a version:
+
+```text
+consumer
+   ↓
+VERSION.txt
+   ↓
+module-owned versions/<module-id>.txt
+   ↓
+render / compare / update decision
+```
+
+A component update checker compares its installed/local version against the authoritative hosted module version under that component's update policy.
 
 ## AUTOMATIC VERSION + ROADMAP RULE
 
@@ -99,14 +151,15 @@ Never introduce a competing hardcoded page/version injector in `main`.
 This happens as part of the update workflow, not as an optional follow-up task.
 
 Before the update:
-- Read the current overall Server version and component versions from `SWRLZ_SERVER_ROADMAP.md` and authoritative module sources.
+- Read the current overall Server version and component versions from `SWRLZ_SERVER_ROADMAP.md`, `VERSION.txt`, and the authoritative module-owned version files.
 - Read `SWRLZ_VERSION_MODULE_EVOLUTION.md` and determine which components actually change.
 
 During the update:
 - Apply the appropriate change on `runtime` or `main` according to the hotfix/deployment boundary.
-- Increase the overall Server version for the development event.
+- Increase the overall Server version for the development event when required by the Server event contract.
 - Increase only the component version(s) that actually changed.
-- Update each affected module's canonical version source.
+- Update each affected module's `versions/<module-id>.txt` authority.
+- Update `VERSION.txt` only when module registration/routing changes; do not duplicate version values there.
 - Ensure cross-module version displays resolve the owning module's authoritative version automatically.
 
 Before declaring the work complete:
@@ -120,13 +173,7 @@ Before declaring the work complete:
 
 ## CURRENT BASELINE
 
-At the creation of this instruction file:
-
-- Overall Server: `2.2.0`
-- Chat: `1.4.2`
-- Next overall release: `2.2.1`
-
-These numbers are informational only. Always read the roadmap and authoritative module sources before the next update because the values may have advanced.
+The baseline numbers written into this file are informational snapshots only and may be stale immediately after future work. **Do not use them as version authority.** Always resolve current versions from `VERSION.txt`, the referenced module-owned version files, and the current roadmap before an update.
 
 ## REQUIRED RELEASE LOOP
 
@@ -141,7 +188,11 @@ READ SWRLZ_VERSION_MODULE_EVOLUTION.md
       ↓
 READ SWRLZ_SERVER_ROADMAP.md
       ↓
-FETCH CURRENT TARGET + VERSION SOURCES
+FETCH VERSION.txt ROUTER
+      ↓
+FETCH AFFECTED versions/<module-id>.txt AUTHORITIES
+      ↓
+FETCH CURRENT TARGET SOURCE
       ↓
 DETERMINE MODULE IMPACT
       ↓
@@ -151,11 +202,13 @@ IF DEPLOYMENT-CAUSING → STOP + EXPLAIN + GET USER APPROVAL
       ↓
 MAKE SMALLEST SAFE CHANGE
       ↓
-ASSIGN NEW OVERALL SERVER VERSION
+ASSIGN NEW OVERALL SERVER VERSION WHEN REQUIRED
       ↓
 INCREMENT ONLY CHANGED COMPONENT VERSIONS
       ↓
-UPDATE CANONICAL VERSION SOURCES
+UPDATE AFFECTED MODULE-OWNED VERSION FILES
+      ↓
+UPDATE VERSION.txt ONLY FOR OWNER/ROUTING CHANGES
       ↓
 VERIFY CROSS-MODULE VERSION RESOLUTION
       ↓
@@ -176,10 +229,12 @@ FAILURE → RECORD EVENT + CREATE NEXT VERSIONED EVENT
 - `SWRLZ_PROJECT_START.md` — single entrypoint; tells future §wyrlz what to read and what must happen every update.
 - `SWRLZ_HOTFIX_RULES.md` — exact hotfix vs. redeploy boundary and safe editing rules.
 - `SWRLZ_VERSION_MODULE_EVOLUTION.md` — third required contract; formal Server/module evolution rules and future programming-LALM curriculum foundation.
-- `SWRLZ_SERVER_ROADMAP.md` — authoritative overall/component version ledger and release history.
+- `SWRLZ_SERVER_ROADMAP.md` — authoritative overall/component release history.
+- `VERSION.txt` — router from stable module IDs to authoritative module-owned version files.
+- `versions/*.txt` — authoritative version/revision identity for each independently evolving structure.
 
 If any of these documents conflict, stop and resolve the conflict against the newest authoritative repository state before editing application code.
 
 ## BOTTOM LINE
 
-**Read `SWRLZ_PROJECT_START.md`, then automatically read `SWRLZ_HOTFIX_RULES.md`, `SWRLZ_VERSION_MODULE_EVOLUTION.md`, and `SWRLZ_SERVER_ROADMAP.md`. Follow the hotfix/deployment boundary. Before any action that could cause deployment, STOP, explain exactly what would cause it and why, and obtain explicit user approval before touching the repository. Every server development event receives a new overall Server version; only actually changed components receive component bumps; canonical version sources stay authoritative; cross-module displays resolve versions automatically; failures remain in lineage; and the completed event is recorded in the roadmap before the work is declared done.**
+**Read `SWRLZ_PROJECT_START.md`, then automatically read `SWRLZ_HOTFIX_RULES.md`, `SWRLZ_VERSION_MODULE_EVOLUTION.md`, and `SWRLZ_SERVER_ROADMAP.md`. Resolve current module versions through `VERSION.txt` and each module's own `versions/<module-id>.txt`. Follow the hotfix/deployment boundary. Before any action that could cause deployment, STOP, explain exactly what would cause it and why, and obtain explicit user approval before touching the repository. Every server development event receives the Server lineage treatment required by the evolution contract; only actually changed components receive component bumps; independently evolving structures own their own version files; cross-module displays resolve those authorities automatically; failures remain in lineage; and the completed event is recorded in the roadmap before the work is declared done.**
