@@ -1,6 +1,5 @@
 (()=>{"use strict";
-const CHAT_VERSION="1.4.7";
-const STREAM_VERSION="V2";
+const VERSION_REGISTRY="https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/runtime/VERSION.txt";
 const apply=()=>{
   const foot=document.querySelector(".sidebar-foot");
   if(!foot)return;
@@ -12,12 +11,15 @@ const apply=()=>{
     line.style.cssText="padding:4px 9px 2px;color:var(--muted);font-size:10px;letter-spacing:.05em;opacity:.9;line-height:1.45;";
     foot.appendChild(line);
   }
-  const render=(serverVersion,lalmVersion)=>{
-    const parts=[`Chat v${CHAT_VERSION}`,`Stream ${STREAM_VERSION}`];
-    if(serverVersion)parts.push(`Server v${serverVersion}`);
-    if(lalmVersion)parts.push(`LALM v${lalmVersion}`);
+  const parseRegistry=(text)=>Object.fromEntries(String(text||"").split(/\r?\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith("#")&&x.includes("=")).map(x=>{const i=x.indexOf("=");return [x.slice(0,i).trim(),x.slice(i+1).trim()];}));
+  const render=(v={})=>{
+    const parts=[];
+    if(v.CHAT)parts.push(`Chat v${v.CHAT}`);
+    if(v.STREAM)parts.push(`Stream ${v.STREAM}`);
+    if(v.SERVER_RUNTIME)parts.push(`Server runtime v${v.SERVER_RUNTIME}`);
+    if(v.LALM_UI)parts.push(`LALM v${v.LALM_UI}`);
     const text=parts.join(" · ");
-    if(line.textContent!==text)line.textContent=text;
+    if(text&&line.textContent!==text)line.textContent=text;
   };
   const paintLalm=async()=>{
     const title=document.querySelector("#nodeTitle");
@@ -62,14 +64,10 @@ const apply=()=>{
     }
   };
   render();
-  Promise.allSettled([
-    fetch("/api/server/status",{cache:"no-store"}).then(r=>r.ok?r.json():null),
-    fetch("/api/lalm/status",{cache:"no-store"}).then(r=>r.ok?r.json():null)
-  ]).then(([server,lalm])=>{
-    const serverVersion=server.status==="fulfilled"&&server.value?.version?server.value.version:"";
-    const lalmVersion=lalm.status==="fulfilled"&&lalm.value?.uiVersion?lalm.value.uiVersion:"";
-    render(serverVersion,lalmVersion);
-  });
+  fetch(`${VERSION_REGISTRY}?ts=${Date.now()}`,{cache:"no-store"})
+    .then(r=>r.ok?r.text():Promise.reject(new Error(`HTTP ${r.status}`)))
+    .then(text=>render(parseRegistry(text)))
+    .catch(()=>{});
   paintLalm();
   window.setInterval(paintLalm,15000);
 };
