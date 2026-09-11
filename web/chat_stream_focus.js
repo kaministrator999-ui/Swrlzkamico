@@ -1,4 +1,6 @@
 (()=>{"use strict";
+if(window.__swrlzStreamFollowInstalled)return;
+window.__swrlzStreamFollowInstalled=true;
 let viewportEventType='';
 let viewportMessageId='';
 let followLocked=true;
@@ -28,14 +30,13 @@ function setFollowLocked(next){
   }
 }
 
-function newestLineVisible(){
+function newestLineInFollowBand(){
   const article=tailArticle();
   const bubble=article?.querySelector?.('.bubble');
   if(!bubble||!refs?.messages)return false;
   const viewport=refs.messages.getBoundingClientRect();
-  const rect=bubble.getBoundingClientRect();
-  const y=rect.bottom;
-  return y>=viewport.top+12&&y<=viewport.bottom-12;
+  const y=bubble.getBoundingClientRect().bottom;
+  return y>=viewport.top+viewport.height*.34&&y<=viewport.top+viewport.height*.70;
 }
 
 function centerGeneratedLine(){
@@ -95,14 +96,15 @@ function finishStreamFollowSoon(){
 function installUserScrollIntent(){
   if(!refs?.messages||refs.messages.dataset.swrlzFollowBound==='true')return;
   refs.messages.dataset.swrlzFollowBound='true';
+  const manual=()=>{if(lifecycleActive&&performance.now()>=programmaticUntil)setFollowLocked(false)};
   const reevaluate=()=>{
-    if(!lifecycleActive||performance.now()<programmaticUntil)return;
-    setFollowLocked(newestLineVisible());
+    if(!lifecycleActive||performance.now()<programmaticUntil||followLocked)return;
+    if(newestLineInFollowBand())setFollowLocked(true);
   };
   refs.messages.addEventListener('scroll',reevaluate,{passive:true});
-  refs.messages.addEventListener('wheel',()=>{if(lifecycleActive&&performance.now()>=programmaticUntil)setFollowLocked(false)},{passive:true});
-  refs.messages.addEventListener('touchstart',()=>{if(lifecycleActive&&performance.now()>=programmaticUntil)setFollowLocked(false)},{passive:true});
-  refs.messages.addEventListener('pointerdown',()=>{if(lifecycleActive&&performance.now()>=programmaticUntil)setFollowLocked(false)},{passive:true});
+  refs.messages.addEventListener('wheel',manual,{passive:true});
+  refs.messages.addEventListener('touchstart',manual,{passive:true});
+  refs.messages.addEventListener('pointerdown',manual,{passive:true});
 }
 
 const focusBaseRender=render;
@@ -172,7 +174,7 @@ style.textContent=`
 .message.assistant .trace summary{user-select:none}
 .message.assistant .trace:not([open]) .trace-list{display:none}
 .message.assistant[data-stream-tail="true"] .bubble{scroll-margin-bottom:12px}
-.messages[data-stream-follow="true"]{scroll-behavior:auto!important}
+.messages[data-stream-follow="true"]{scroll-behavior:auto!important;overflow-anchor:none!important}
 `;
 document.head.append(style);
 installUserScrollIntent();
