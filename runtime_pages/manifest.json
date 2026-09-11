@@ -7,7 +7,8 @@
       "source": "web/chat.html",
       "styles": [
         "web/chat_enhancements.css",
-        "web/themes/ice-dragon/ice-dragon-theme.css"
+        "web/themes/ice-dragon/ice-dragon-theme.css",
+        "web/chat_mobile_viewport_fix.css"
       ],
       "scripts": [
         "web/chat_admin_session.js",
@@ -23,5 +24,5 @@
     "/live": {"source": "runtime_pages/index.html"}
   },
   "assetRoots": ["web", "runtime_pages"],
-  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Add, change, or remove routes and assets here without a Vercel deployment. Ice Dragon is an opt-in chat theme; Default remains the first-load selection and the user's explicit choice is persisted locally."
+  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Add, change, or remove routes and assets here without a Vercel deployment. Ice Dragon is an opt-in chat theme; Default remains the first-load selection and the user's explicit choice is persisted locally. Mobile Chat uses a final runtime viewport correction so the composer stays pinned to the usable viewport bottom instead of leaving browser-dependent dead space beneath it."
 }
