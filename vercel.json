@@ -4,10 +4,7 @@
   "fluid": true,
   "regions": ["iad1"],
   "git": {
-    "deploymentEnabled": {
-      "dev": false,
-      "main": true
-    }
+    "deploymentEnabled": false
   },
   "functions": {
     "api/**/*.py": {
