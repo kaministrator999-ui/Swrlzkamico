@@ -6,6 +6,7 @@ const STORE_KEY='swrlz.chat.pending-streams.v1';
 const MAX_AGE_MS=30*60*1000;
 const live=new Set();
 const retryTimers=new Map();
+const identityLead=new Map();
 const nativeFetch=window.fetch.bind(window);
 const BASE_RESPONSE_DIRECTIVE='Answer only the current user request directly, naturally, and completely. Treat the assistant name as metadata only; do not announce, introduce, or sign with it unless the user explicitly asks about identity or the name. Do not introduce unrelated programming, code, examples, or task types. If the current user explicitly requests programming help, satisfy that request completely and keep code, explanations, formulas, and input/output behavior mutually consistent.';
 const INTENT_MARK='[[SWRLZ_TURN_INTENT:';
@@ -75,7 +76,7 @@ function remember(payload,url){
 }
 function forget(rid){
   if(!rid)return;const store=loadStore();if(store[rid]){delete store[rid];saveStore(store)}
-  live.delete(rid);const timer=retryTimers.get(rid);if(timer)clearTimeout(timer);retryTimers.delete(rid);
+  live.delete(rid);identityLead.delete(rid);const timer=retryTimers.get(rid);if(timer)clearTimeout(timer);retryTimers.delete(rid);
 }
 
 window.fetch=async function(input,init={}){
@@ -113,6 +114,27 @@ async function compareInstance(entry,message){
   if(previous&&previous!==current){message.meta=message.meta||{};message.meta.backgroundInstanceChanged=true;phaseNote(message,'Server instance changed. The same pending request is being resumed or regenerated and reconciled against the partial response already on this device.')}
 }
 
+function filterLeadingIdentity(event,context){
+  if(String(event?.type||'')!=='DELTA')return event;
+  const message=context?.message,rid=String(event?.identity?.requestId||message?.meta?.requestId||'');
+  if(!message||!rid||String(message.text||'').length>0)return event;
+  let state=identityLead.get(rid)||{buffer:''};
+  const chunk=String(event?.text??'');
+  if(!state.buffer&&!/^\s*§/u.test(chunk)){identityLead.delete(rid);return event}
+  state.buffer+=chunk;
+  const normalized=state.buffer.replace(/\r\n/g,'\n');
+  const standalone=/^\s*§wyrlz\s*\n+/iu.exec(normalized);
+  if(standalone){
+    identityLead.delete(rid);
+    const remainder=normalized.slice(standalone[0].length);
+    return remainder?{...event,text:remainder}:null;
+  }
+  const stillPossible=/^\s*§?w?y?r?l?z?\s*$/iu.test(normalized);
+  if(stillPossible&&normalized.length<=24){identityLead.set(rid,state);return null}
+  identityLead.delete(rid);
+  return {...event,text:state.buffer};
+}
+
 const baseConsume=typeof consumeEvent==='function'?consumeEvent:null;
 function replayDelta(event,context){
   const message=context.message,reconcile=context.__swrlzReconcile,seq=Number(event.seq||0);
@@ -135,6 +157,7 @@ function replayDelta(event,context){
 
 if(baseConsume){
   consumeEvent=function(event,context){
+    const filtered=filterLeadingIdentity(event,context);if(filtered==null)return false;event=filtered;
     const message=context?.message,rid=String(event?.identity?.requestId||message?.meta?.requestId||'');
     if(context?.__swrlzReplay&&event?.type==='DELTA')return replayDelta(event,context);
     if(context?.__swrlzReplay&&event?.type==='RESET'&&context.__swrlzReconcile){context.__swrlzReconcile.baseline='';context.__swrlzReconcile.generated='';context.__swrlzReconcile.mode='redo'}
