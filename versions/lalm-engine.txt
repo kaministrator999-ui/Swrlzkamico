@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.21
-REVISION=2.1.21-hot-boundary-v12-pipelined-prefill
+VERSION=2.1.22
+REVISION=2.1.22-hot-boundary-v13-adaptive-response-budget
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
