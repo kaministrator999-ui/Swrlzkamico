@@ -2,16 +2,51 @@
 
 ## Current release
 
-**Server v2.3.8**
+**Server v2.3.9**
 
 This is the current runtime development release. Stable deployed infrastructure remains Server v2.3.3 until a future stable-infrastructure deployment changes it.
 
 ### Module state
 
-- **Chat v1.4.8** — Chat version display now reads the canonical repository version registry instead of maintaining its own version constants.
-- **LALM UI v1.0.0** — unchanged in this release.
-- **LALM engine hot revision** — `2.1.18-hot-boundary-v9-effective-receipt`; unchanged in this release.
-- **Server UI v1.0.0** — unchanged in this release.
+- **Chat v1.4.9** — Chat now resolves display versions through the per-module version-file index instead of a shared value registry.
+- **LALM UI v1.0.0** — unchanged in this release; now has its own canonical version file.
+- **LALM engine v2.1.18** / revision `2.1.18-hot-boundary-v9-effective-receipt` — unchanged; now has its own canonical version file.
+- **Server UI v1.0.0** — unchanged; now has its own canonical version file.
+- **Admin Web v1.0.0** — initial canonical version-file enrollment; behavior unchanged.
+- **Google Account architecture v1.0.0** — initial canonical version-file enrollment; behavior unchanged.
+- **Client APK / Server APK** — version authorities reserved as `UNASSIGNED` until their actual artifacts/source versions are verified.
+
+## Server v2.3.9 — 2026-09-10
+
+### Changed
+
+- Replaced the single value-bearing root `VERSION.txt` with an index that maps stable module IDs to independent canonical files under `versions/`.
+- Added dedicated version authorities for Server runtime, Server UI, Web Chat, stream contract, LALM UI, LALM engine, Admin Web, Google Account architecture, Client APK, and Server APK.
+- Existing unversioned structures were enrolled with explicit baselines where the repository has an identifiable structure; APK entries remain `UNASSIGNED` rather than inventing versions for artifacts that are not verified in this repository.
+- Changed Chat version presentation so it reads the root index and then fetches the specific Server runtime, Chat, stream-contract, and LALM version files needed for display.
+- Advanced Chat from `v1.4.8` to `v1.4.9` because its version-resolution behavior changed.
+- Advanced overall Server from `v2.3.8` to `v2.3.9` because this is a new runtime development event.
+- No LALM behavior, Admin behavior, Google account behavior, Server UI behavior, or APK artifact behavior changed in this event.
+- Kept the implementation entirely on `runtime`; no stable-infrastructure deployment or server restart is required.
+
+### Architecture rule established
+
+- Every independently evolvable structure gets its own canonical version file.
+- `VERSION.txt` is an index of module IDs to version-file paths, not a duplicate list of version numbers.
+- A display or update checker fetches only the module file(s) it needs.
+- New structures must receive and register a version authority when they enter the project lifecycle.
+- Installed clients may compare their local version against the hosted canonical module file to decide whether an update is available.
+
+### Verification state
+
+- `VERSION.txt` now points to per-module files rather than embedding component version values.
+- `versions/server-runtime.txt` reports `2.3.9`.
+- `versions/web-chat.txt` reports `1.4.9`.
+- Chat reads its displayed Server runtime / Chat / Stream / LALM versions from the corresponding per-module files.
+- Existing module values were preserved where already established; unverified APK versions were not fabricated.
+- **Deployment:** NONE required.
+- **Server restart:** NONE.
+- Final browser verification: reload Chat after runtime propagation and confirm the footer reflects the per-module files.
 
 ## Server v2.3.8 — 2026-09-10
 
@@ -201,7 +236,11 @@ Every server runtime development event gets a new overall Server version, includ
 
 Every module actually changed gets its own version increment in that Server event.
 
-A module's version must be updated at every canonical location where that module owns its version. Other modules that display the version must query the owning module's authoritative status/version source rather than maintaining stale copies.
+Every independently evolvable structure must have one canonical version file registered by stable module ID in root `VERSION.txt`. This includes server runtime, web interfaces, LALM components, protocol contracts, admin surfaces, account/auth architectures, APK clients, desktop clients, and future modules/pages/services that evolve independently.
+
+A changed module updates its own version file in the same release event. A module that did not change does not advance simply because another module or the overall Server advanced.
+
+Consumers must read the relevant module version file rather than copy another component's version into local code. The root `VERSION.txt` maps IDs to version-file paths and must not duplicate their version numbers.
 
 Every event must update this roadmap/release lineage with:
 
@@ -219,32 +258,42 @@ Every event must update this roadmap/release lineage with:
 - Preserve runtime hot-update/no-redeploy workflow for runtime-owned application changes.
 - Keep stable infrastructure changes isolated to `main` and the deployment boundary.
 - Maintain complete Server release lineage.
-- Treat `VERSION.txt` as the canonical repository version registry for display/update-check consumers.
+- Treat root `VERSION.txt` as the version-authority index and `versions/*.txt` as module-owned version authorities.
 
 ### Chat
 
 - Continue user-facing Chat/runtime fixes as targeted runtime hot updates.
-- Fetch version information from the canonical version registry instead of duplicating component versions.
+- Fetch each displayed version from that module's canonical version file.
 - Keep Chat status presentation tied to `/api/lalm/status`, not upstream bridge configuration.
 - Preserve stream, request, session, and Truth Firewall boundaries.
 
 ### LALM
 
 - Continue R39/native inference work independently of Chat where the user-facing Chat protocol is unchanged.
-- Expose authoritative LALM UI/runtime version and revision information through the registry/status surfaces.
+- Keep LALM UI and engine revision/version in their own canonical version authorities.
 - Preserve correctness/reference fallback while native runtime work evolves.
+
+### Clients / update checks
+
+- Each independently released APK/client receives its own version file.
+- A client carries its installed version locally, fetches its hosted canonical version file, compares versions, and follows its update policy when a newer/different version is available.
+- Never assign an artifact version without verified source/artifact evidence; reserved entries remain `UNASSIGNED` until established.
 
 ## Version ownership map
 
-| Module | Canonical registry key | Previous in-code owner | Cross-module consumers |
-|---|---|---|---|
-| Server runtime | `SERVER_RUNTIME` | `api/index.py` → `VERSION` | Chat, status surfaces, update checks |
-| Server UI | `SERVER_UI` | `api/control_plane.py` → `SERVER_UI_VERSION` | Server/admin status surfaces |
-| Chat | `CHAT` | `web/chat_version.js` → `CHAT_VERSION` | Chat itself, update checks |
-| Stream | `STREAM` | Chat stream/display surfaces | Chat and diagnostics |
-| LALM UI | `LALM_UI` | `api/control_plane.py` → `LALM_UI_VERSION` | Chat and LALM status surfaces |
-| LALM engine | `LALM_ENGINE_REVISION`, `LALM_ENGINE_HOT_SERVER_VERSION` | `runtime_hot/r39_engine.py` → `HOT_REVISION` / `HOT_SERVER_VERSION` | LALM status and diagnostics |
+| Module | Canonical version file | Consumers |
+|---|---|---|
+| Server runtime | `versions/server-runtime.txt` | Chat, status surfaces, update checks |
+| Server UI | `versions/server-ui.txt` | Server/admin status surfaces |
+| Web Chat | `versions/web-chat.txt` | Chat display, diagnostics, update checks |
+| Stream contract | `versions/stream-contract.txt` | Chat and diagnostics |
+| LALM UI | `versions/lalm-ui.txt` | Chat and LALM surfaces |
+| LALM engine | `versions/lalm-engine.txt` | LALM status and diagnostics |
+| Admin Web | `versions/admin-web.txt` | Admin UI/status/update checks |
+| Google Account architecture | `versions/google-account.txt` | account/login diagnostics and release tracking |
+| Client APK | `versions/client-apk.txt` | Android client update check |
+| Server APK | `versions/server-apk.txt` | Android server update check |
 
-**Rule:** `VERSION.txt` is the canonical repository registry for version display/update-check data. A consumer fetches the registry when it needs those values; it must not create a second manually maintained copy of another module's version.
+**Rule:** root `VERSION.txt` is an index only. Each structure owns one canonical `versions/<module>.txt`. Displays and update-check consumers fetch the owner; they do not maintain a second copy.
 
-**Update-check pattern:** a client may carry its installed/local version metadata, fetch the hosted `VERSION.txt`, compare the relevant component key, and only apply an update when the authoritative available value differs according to the component's update policy.
+**Update-check pattern:** local installed version → fetch root index → fetch relevant module version file → compare → apply the module's update policy only when an update is indicated → verify the resulting installed version.
