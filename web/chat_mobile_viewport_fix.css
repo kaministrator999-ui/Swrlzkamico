@@ -1,0 +1,22 @@
+/* §wyrlz Web Chat mobile viewport correction — Server 2.3.26 / Chat 1.4.22 */
+@media (max-width: 820px) {
+  html,
+  body {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+  }
+
+  .app {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .workspace {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+}
