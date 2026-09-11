@@ -1,0 +1,1 @@
+(()=>{"use strict";const reveal=()=>window.__swrlzChatReveal?.();if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(()=>requestAnimationFrame(reveal)),{once:true});else requestAnimationFrame(()=>requestAnimationFrame(reveal))})();
