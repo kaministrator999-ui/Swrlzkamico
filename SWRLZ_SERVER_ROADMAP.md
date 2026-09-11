@@ -1,9 +1,10 @@
 # §wyrlz Server Roadmap & Version Ledger
 
 **READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-**Current overall server baseline:** `2.3.6`  
-**Current Chat component:** `1.4.6`  
+**Current overall server baseline:** `2.3.56`  
+**Current Chat component:** `1.4.50`  
 **Current LALM UI component:** `1.0.0`  
+**Current Deployment Control component:** `1.0.1`  
 **Release policy:** every server development event gets an overall Server release/version entry plus independent component version changes where applicable, including unsuccessful attempts.
 
 ## Version model
@@ -11,7 +12,7 @@
 §wyrlz uses two levels of versioning:
 
 1. **Overall Server version** — the chronological development/release event of the complete server architecture.
-2. **Independent component versions** — Chat, LALM/R39, Server/Infrastructure, Admin, and other independently maintained surfaces.
+2. **Independent component versions** — Chat, LALM/R39, Server/Infrastructure, Admin, Deployment Control, and other independently maintained surfaces.
 
 An update may change one component or several components, but the roadmap records the **overall Server version for every server development event** and records each component's version separately.
 
@@ -21,12 +22,14 @@ An update may change one component or several components, but the roadmap record
 
 A failed attempt is still a real versioned event. The next correction receives the next overall Server version.
 
+Version authorities are read at event entry and re-read immediately before version assignment/commit. If another instance/process advanced a relevant authority in between, the event must reconcile from the newest state instead of writing a stale planned version.
+
 ## What has been accomplished
 
 - Established the unified §wyrlz Vercel server and separated major control-plane responsibilities.
 - Established runtime-owned Chat/page source delivery.
 - Established the `runtime` branch as the durable live application source of truth for hot application changes.
-- Established `main` as the stable loader/infrastructure boundary.
+- Established `main` as the stable loader/infrastructure and engineering-contract boundary.
 - Built runtime page manifest routing through `runtime_pages/manifest.json`.
 - Enabled runtime-owned HTML, JavaScript, CSS, page assets, and runtime-loadable LALM/inference updates without ordinary Vercel redeployment.
 - Added cache-busted runtime source retrieval so current runtime commits are visible to new requests.
@@ -40,16 +43,19 @@ A failed attempt is still a real versioned event. The next correction receives t
 - Added the explicit reporting rule that technical implementation belongs in the roadmap while conversational updates describe the human-visible accomplishment and resulting behavior.
 - Verified that runtime-only files can be created/changed/removed and served by production without creating a new Vercel deployment.
 - Established the durability rule: GitHub `runtime` is source of truth; `/tmp`, memory, browser cache, and Vercel instance state are disposable.
+- Added explicit optimistic-concurrency handling for version authorities so multiple §wyrlz instances/agents do not overwrite each other's release lineage.
+- Corrected deployment-gate logic so approval follows the actual deployment trigger/configuration instead of treating every `main` or documentation commit as deployment-capable.
 
 ## Component ownership
 
 | Component | Source of truth | Versioning rule |
 |---|---|---|
-| Overall Server | `main/api/index.py` + this roadmap | Advances on every server development event |
-| Chat | `runtime/web/chat*` and related runtime Chat assets | Advances when Chat UI/protocol/behavior/version plumbing changes |
+| Overall Server | `runtime/versions/server-runtime.txt` + this roadmap lineage | Advances on every server development event |
+| Chat | `runtime/web/chat*` and `runtime/versions/web-chat.txt` | Advances when Chat UI/protocol/behavior/version plumbing changes |
 | Chat Stream UI | `runtime/web/chat_stream_focus.js` and related assets | Advances when stream behavior changes |
 | LALM/R39 | runtime LALM/inference source | Advances when LALM/inference behavior changes |
 | Server/Infrastructure | `main/api/*`, deployment/configuration | Advances with stable infrastructure releases |
+| Deployment Control | `runtime/versions/deployment-control.txt` + governing contract/deployment configuration | Advances when deployment-control behavior/rules change |
 | Page system | `runtime_pages/manifest.json` + runtime page assets | Advances when page routing/system behavior changes |
 | Admin | Admin-owned runtime/stable assets | Advances when Admin behavior changes |
 
@@ -65,13 +71,21 @@ These changes normally require **no Vercel deployment and no server restart**:
 - Runtime page additions/removals through the runtime manifest.
 - Runtime-owned page asset changes.
 - Runtime-loadable LALM/R39/inference changes supported by the existing loader.
+- Version-authority changes already supported by the stable loader.
+- `main` documentation/contract commits when current deployment configuration/workflows prove those commits do not trigger deployment.
 
 Procedure:
 
 ```text
-FETCH current runtime file
+FETCH current source + VERSION.txt router + affected authorities
+        ↓
+CAPTURE authority values/SHAs as event baseline
         ↓
 SMALLEST targeted edit
+        ↓
+RE-READ affected authorities before version assignment
+        ↓
+CHANGED? → reconcile from newest authority
         ↓
 ASSIGN NEW SERVER VERSION
         ↓
@@ -79,20 +93,24 @@ BUMP ONLY AFFECTED MODULES
         ↓
 UPDATE CANONICAL VERSION SOURCES
         ↓
-COMMIT to runtime
+UPDATE ROADMAP / RELEASE RECORD
         ↓
-RELOAD / REQUEST
+COMMIT with stale-write protection
         ↓
-VERIFY runtime source + behavior
+RE-READ authorities + verify assigned versions
         ↓
-RECORD detailed release entry
+RELOAD / REQUEST when applicable
+        ↓
+VERIFY source + behavior
         ↓
 REPORT human-readable accomplishment to user
 ```
 
 ## Deployment boundary
 
-A Vercel deployment is required when the **stable loader/infrastructure** changes, including:
+Deployment capability is determined from the **current deployment configuration and workflows**, not from branch name alone.
+
+A production deployment is required when an actual deployment action is needed to apply stable loader/infrastructure changes, including cases such as:
 
 - Python API routes or middleware.
 - Authentication/session/security boundaries.
@@ -102,7 +120,7 @@ A Vercel deployment is required when the **stable loader/infrastructure** change
 - New stable dependencies/capabilities required by the runtime loader.
 - Any change that the existing deployed loader cannot serve from `runtime`.
 
-Those changes belong on `main`, followed by a deployment and production verification.
+Those changes generally belong on `main`, but a `main` commit is not automatically a deployment. Under the currently verified Vercel configuration, Git-based deployment is disabled. Therefore documentation-only `main` commits are non-deployment mutations unless another workflow/automation is proven to deploy them. If an explicit deployment action is required, it must pass the Deployment Approval Gate before execution.
 
 ## Release ledger
 
@@ -200,6 +218,55 @@ Key milestones are recorded above under “What has been accomplished.”
 - Canonical Chat version correction: `4952fef7519946b8b04dece24077d3353df737ae`
 - Roadmap update on runtime: `1c11066dee7867cee464f2051eeeebf828cd1bb5`
 
+### Roadmap reconciliation note — versions 2.3.7 through 2.3.55
+
+The authoritative runtime version files advanced beyond this roadmap while several runtime events were performed without corresponding roadmap entries. This is a documentation/process gap, not permission to invent missing history.
+
+Before Server 2.3.56, the authoritative repository state was verified as:
+
+- Overall Server: `2.3.55`
+- Web Chat: `1.4.50`
+- Deployment Control: `1.0.0`
+
+The omitted individual release notes for `2.3.7` through `2.3.55` are intentionally **not fabricated** here. They require a separate evidence-based reconciliation from commit/history records if full backfill is desired.
+
+### Server 2.3.56 — Concurrency-safe project contract + trigger-based deployment gate
+
+**Status:** complete; repository verification complete  
+**Chat:** `1.4.50` unchanged  
+**LALM UI:** `1.0.0` unchanged  
+**Deployment Control:** `1.0.1`  
+**Server/Infrastructure runtime behavior:** unchanged  
+**Deployment:** NONE  
+**Restart:** NONE
+
+**Update notes:**
+- Corrected the governing project rules so deployment approval follows the **actual deployment trigger/configuration** rather than treating every `main` or documentation commit as deployment-capable.
+- Recorded the currently verified Vercel state where Git-based deployment is disabled, while requiring future agents to re-check deployment configuration/workflows each event instead of assuming this forever.
+- Added an optimistic-concurrency version protocol: capture authoritative Server/module versions and SHAs at event entry, re-read them immediately before version assignment/commit, and reconcile if another instance/process advanced the project meanwhile.
+- Added stale-write protection guidance using repository SHA/precondition checks where supported.
+- Added post-commit authority verification before closing a release.
+- Extended the programming-LALM curriculum so future §wyrlz instances learn source-of-truth revalidation, multi-agent coordination, deployment-trigger reasoning, and project-specific rule adaptation.
+- No Chat code, LALM engine behavior, API runtime, or production deployment was changed by this event.
+
+**Verification state:**
+- Pre-change authority baseline verified from `VERSION.txt`, `versions/server-runtime.txt`, and `versions/deployment-control.txt`.
+- Authorities were re-read before version assignment; the baseline remained `Server 2.3.55` / `Deployment Control 1.0.0`.
+- Post-change authority verification confirmed `Server 2.3.56` and `Deployment Control 1.0.1`.
+- `web-chat` was independently re-read and remained `1.4.50`.
+- Current Vercel configuration was verified with Git deployment disabled; no deployment or restart was performed.
+
+**Relevant lineage:**
+- Server version authority: `7987049e99f7eb90ea1eb91aceed499b85acdfb8`
+- Deployment Control authority: `1495c21ecdd285d3f77308ce516326fbc1624fd2`
+- Project Start contract: `039d39ae1ef0ef46aa13e8e2ef642a049e2698e3`
+- Hotfix contract: `b3af696c88a5aecd0a807ee9c530a82d78eda934`
+- Version/module evolution contract: `ee1199dbed8b1bca106eb2f32f524e4e239b5122`
+
+**Rollback/migration notes:**
+- No runtime migration is required.
+- If automatic Git deployments are enabled in the future, the deployment-gate decision must automatically re-evaluate against that new configuration.
+
 ## Required release-entry format
 
 For every future Server development event, append a new section using this structure:
@@ -214,7 +281,8 @@ For every future Server development event, append a new section using this struc
 **Server/Infrastructure:** X.Y.Z
 **Admin:** X.Y.Z
 **Page Runtime:** X.Y.Z
-**Deployment:** NONE / REQUIRED
+**Deployment Control:** X.Y.Z
+**Deployment:** NONE / REQUIRED / APPROVED
 
 **Update notes:**
 - What the change accomplishes in human/project terms.
@@ -239,7 +307,9 @@ The detailed roadmap may include exact implementation mechanics and code-level e
 - Never claim a release is complete without recording it here.
 - Never silently change the overall Server version without a roadmap entry.
 - Never bump a component version just to make numbers move; bump it because that component changed.
+- Never assign a planned version from a stale snapshot; re-read authority immediately before versioning/commit.
 - Never deploy solely because a runtime component changed.
+- Never treat a `main` or documentation commit as deployment-capable without checking the current deployment trigger/configuration.
 - Never allow `main` and `runtime` to become competing sources of truth for the same page-owned behavior.
 - Never replace a complete page when a targeted file-level change is sufficient.
 - Always preserve the known-good runtime state before risky edits.
@@ -252,6 +322,14 @@ The detailed roadmap may include exact implementation mechanics and code-level e
 ```text
                          §wyrlz RELEASE EVENT
                               │
+                    capture authority baseline
+                              │
+                       make minimal change
+                              │
+                    revalidate authorities
+                              │
+                  reconcile if state advanced
+                              │
                        Server X.Y.Z
                               │
           ┌───────────────────┼───────────────────┐
@@ -261,11 +339,12 @@ The detailed roadmap may include exact implementation mechanics and code-level e
           │                   │                   │
           └──────────── independent component ───┘
 
-main    = stable infrastructure / deployed boundary
+main    = stable infrastructure / engineering-contract boundary
 runtime = durable live application / hot-update source
+DEPLOY  = separate production action determined by current configuration
 
 ROADMAP = detailed technical lineage
 CHAT     = human-readable accomplishment/status
 ```
 
-**Bottom line:** every §wyrlz server development event is a real versioned event. Increment the overall Server version, update only the component versions that actually changed, preserve failed attempts, write the detailed engineering record here, and communicate the resulting accomplishment to the human user in clear project language. Use the hotfix/deployment boundary defined in `SWRLZ_HOTFIX_RULES.md`.
+**Bottom line:** every §wyrlz server development event is a real versioned event. Read authoritative versions at entry, re-read them at the commit boundary, reconcile concurrent advances before assigning versions, increment the overall Server version, update only the component versions that actually changed, preserve failed attempts, write the detailed engineering record here, and communicate the resulting accomplishment to the human user in clear project language. Apply the Deployment Approval Gate to the action that actually triggers deployment, based on current deployment configuration/workflows.
