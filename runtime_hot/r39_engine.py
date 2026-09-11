@@ -1,8 +1,9 @@
 """Hot-swappable R39 engine entrypoint.
 
-v9 keeps the native-dispatch path and adds an explicit effective hot-server receipt.
-The Python/Numpy reference path remains a safe correctness fallback when the compiled
-native extension is not present on the current worker.
+v10 keeps the native-dispatch path and adds bounded per-thread recurrent-state reuse
+so a continuing conversation prefills only context appended since its last request
+when the previous tokenized prompt is an exact prefix. Cache miss, worker restart,
+prefix mismatch, or safety bounds fall back to full prefill.
 """
 from __future__ import annotations
 
@@ -18,8 +19,8 @@ from swyrlz import r39_native as native_bridge
 
 ENGINE_ID = "swrlz_r39_native_qmatvec_v1" if native_bridge.available() else base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_SERVER_VERSION = "2.1.18"
-HOT_REVISION = "2.1.18-hot-boundary-v9-effective-receipt"
+HOT_SERVER_VERSION = "2.1.19"
+HOT_REVISION = "2.1.19-hot-boundary-v10-thread-prefill-cache"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
 _ORIGINAL_MATVEC = base.R39Model.matvec
@@ -32,6 +33,12 @@ _MODEL_READY_AT = 0.0
 _TENSOR_CACHE_LOCK = threading.RLock()
 _CACHE_BUDGET_BYTES = 96 * 1024 * 1024
 _CACHE_ITEM_MAX_BYTES = 12 * 1024 * 1024
+
+_CONTEXT_LOCK = threading.RLock()
+_CONTEXTS: dict[str, dict[str, Any]] = {}
+_CONTEXT_TTL_SECONDS = 20 * 60
+_CONTEXT_MAX_ENTRIES = 2
+_CONTEXT_MAX_TOKENS = 2048
 
 _JOB_LOCK = threading.RLock()
 _JOBS: dict[str, dict[str, Any]] = {}
@@ -130,6 +137,77 @@ def _get_model() -> base.R39Model:
         return _MODEL
 
 
+def _clone_state(state: base.RecurrentState) -> base.RecurrentState:
+    clone = base.RecurrentState()
+    clone.pos = int(state.pos)
+    clone.conv = {i: value.copy() for i, value in state.conv.items()}
+    clone.kv = {i: [(k.copy(), v.copy()) for k, v in values] for i, values in state.kv.items()}
+    return clone
+
+
+def _cleanup_contexts(now: float | None = None) -> None:
+    now = time.time() if now is None else now
+    with _CONTEXT_LOCK:
+        expired = [key for key, value in _CONTEXTS.items() if now - float(value.get("updatedAt", now)) > _CONTEXT_TTL_SECONDS]
+        for key in expired:
+            _CONTEXTS.pop(key, None)
+        if len(_CONTEXTS) > _CONTEXT_MAX_ENTRIES:
+            ordered = sorted(_CONTEXTS.items(), key=lambda item: float(item[1].get("updatedAt", 0)))
+            for key, _value in ordered[: max(0, len(_CONTEXTS) - _CONTEXT_MAX_ENTRIES)]:
+                _CONTEXTS.pop(key, None)
+
+
+def _resume_context(thread_id: str, tokens: list[int]) -> tuple[base.RecurrentState, int, np.ndarray | None, str]:
+    if not thread_id:
+        return base.RecurrentState(), 0, None, "no-thread-id"
+    _cleanup_contexts()
+    with _CONTEXT_LOCK:
+        entry = _CONTEXTS.get(thread_id)
+        if entry is None:
+            return base.RecurrentState(), 0, None, "miss"
+        cached_tokens = entry.get("tokens")
+        cached_state = entry.get("state")
+        cached_logits = entry.get("logits")
+        if not isinstance(cached_tokens, tuple) or cached_state is None:
+            _CONTEXTS.pop(thread_id, None)
+            return base.RecurrentState(), 0, None, "invalid"
+        prefix_len = len(cached_tokens)
+        if prefix_len > len(tokens) or tuple(tokens[:prefix_len]) != cached_tokens:
+            _CONTEXTS.pop(thread_id, None)
+            return base.RecurrentState(), 0, None, "prefix-mismatch"
+        entry["updatedAt"] = time.time()
+        logits = cached_logits.copy() if isinstance(cached_logits, np.ndarray) else None
+        return _clone_state(cached_state), prefix_len, logits, "hit"
+
+
+def _store_context(thread_id: str, tokens: list[int], state: base.RecurrentState, logits: np.ndarray) -> bool:
+    if not thread_id or len(tokens) > _CONTEXT_MAX_TOKENS:
+        return False
+    with _CONTEXT_LOCK:
+        _CONTEXTS[thread_id] = {
+            "tokens": tuple(tokens),
+            "state": state,
+            "logits": logits.copy(),
+            "updatedAt": time.time(),
+        }
+    _cleanup_contexts()
+    return True
+
+
+def _context_snapshot() -> list[dict[str, Any]]:
+    _cleanup_contexts()
+    now = time.time()
+    with _CONTEXT_LOCK:
+        return [
+            {
+                "threadId": key,
+                "tokenCount": len(value.get("tokens") or ()),
+                "ageSeconds": round(now - float(value.get("updatedAt", now)), 2),
+            }
+            for key, value in _CONTEXTS.items()
+        ]
+
+
 def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *, need_logits: bool) -> np.ndarray | None:
     x = model.row("token_embd.weight", token).astype(np.float32)
     for i, kvh in enumerate(base.LAYER_KV):
@@ -180,6 +258,7 @@ def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *
 
 def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
     request_id = str(payload["requestId"])
+    thread_id = str(payload.get("threadId") or "").strip()[:128]
     started = time.monotonic()
     engine_entered_ms = int(time.time() * 1000)
     try:
@@ -212,28 +291,47 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         max_tokens = min(512, max(1, int(generation.get("maxTokens", 128))))
         temperature = min(2.0, max(0.0, float(generation.get("temperature", 0.1))))
         top_p = min(1.0, max(0.01, float(generation.get("topP", 0.9))))
-        state = base.RecurrentState()
-        yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefilling {len(tokens)} token(s); intermediate vocabulary logits skipped; backend={('native-qmatvec' if native else 'python-fallback')}."}
 
-        logits: np.ndarray | None = None
+        state, reused, cached_logits, cache_reason = _resume_context(thread_id, tokens)
+        pending = tokens[reused:]
+        if reused:
+            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Conversation prefill cache hit: reused {reused} token(s); {len(pending)} new token(s) require prefill."}
+        elif cache_reason == "prefix-mismatch":
+            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Conversation context changed before the cached boundary; safely rebuilding all {len(tokens)} token(s)."}
+        else:
+            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefilling {len(tokens)} token(s); intermediate vocabulary logits skipped; backend={('native-qmatvec' if native else 'python-fallback')}."}
+
+        logits: np.ndarray | None = cached_logits if not pending else None
         prefill_started = time.monotonic()
-        total = len(tokens)
-        for ordinal, token in enumerate(tokens, start=1):
+        total_new = len(pending)
+        for ordinal, token in enumerate(pending, start=1):
             if is_cancelled and is_cancelled():
                 raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
             token_started = time.monotonic()
-            logits = _forward_hot(model, token, state, need_logits=(ordinal == total))
+            logits = _forward_hot(model, token, state, need_logits=(ordinal == total_new))
             token_s = time.monotonic() - token_started
             elapsed = time.monotonic() - prefill_started
             avg = elapsed / ordinal
-            eta = max(0.0, avg * (total - ordinal))
-            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefill {ordinal}/{total} · {token_s:.3f}s token · {avg:.3f}s avg · ETA {eta:.1f}s · backend={('native' if native else 'python')}."}
-        assert logits is not None
+            eta = max(0.0, avg * (total_new - ordinal))
+            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefill new {ordinal}/{total_new} · cached {reused} · {token_s:.3f}s token · {avg:.3f}s avg · ETA {eta:.1f}s · backend={('native' if native else 'python')}."}
+        if logits is None:
+            raise base.R39InferenceError("R39_CONTEXT_CACHE_LOGITS_MISSING", "Conversation context cache did not provide terminal prefill logits.")
+
+        cached = _store_context(thread_id, tokens, state, logits)
+        if cached:
+            generation_state = _clone_state(state)
+        else:
+            generation_state = state
+        state = generation_state
 
         decoder = base.IncrementalDecoder(model.tokenizer)
         recent: list[int] = []
         first_ms: int | None = None
-        yield {"type": "STATUS", "phase": "GENERATING", "reason": f"R39 prefill complete in {time.monotonic() - prefill_started:.2f}s; decoding with {('native direct-quantized matvec' if native else 'Python/Numpy fallback')}."}
+        prefill_time = time.monotonic() - prefill_started
+        cache_note = f"reused {reused}, prefetched {total_new}" if reused else f"prefetched {total_new}"
+        if not cached and len(tokens) > _CONTEXT_MAX_TOKENS:
+            cache_note += f"; cache skipped above {_CONTEXT_MAX_TOKENS}-token safety bound"
+        yield {"type": "STATUS", "phase": "GENERATING", "reason": f"R39 prefill complete in {prefill_time:.2f}s ({cache_note}); decoding with {('native direct-quantized matvec' if native else 'Python/Numpy fallback')}."}
         for ordinal in range(1, max_tokens + 1):
             if is_cancelled and is_cancelled():
                 raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
@@ -329,6 +427,7 @@ def inspect_engine():
     try:
         model = _get_model()
         jobs = _job_snapshot()
+        contexts = _context_snapshot()
         native = native_bridge.available()
         return {
             "ok": True,
@@ -351,6 +450,10 @@ def inspect_engine():
             "decodedCacheBytes": int(getattr(model, "_hot_tensor_cache_bytes", 0)),
             "decodedCacheBudgetBytes": _CACHE_BUDGET_BYTES,
             "prefillSkipsIntermediateLogits": True,
+            "incrementalConversationPrefill": True,
+            "conversationContextCacheMaxTokens": _CONTEXT_MAX_TOKENS,
+            "conversationContextCacheTtlSeconds": _CONTEXT_TTL_SECONDS,
+            "conversationContextCaches": contexts,
             "connectionDiagnostics": True,
             "detachedGeneration": True,
             "replayableJobs": jobs,
