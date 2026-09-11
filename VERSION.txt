@@ -1,13 +1,17 @@
-# §wyrlz canonical version registry
-# Consumers should fetch this file rather than hardcode another component's version.
-# Update this registry in the same release event as the owning component.
+# §wyrlz version authority index
+# This file maps stable module IDs to their OWN canonical version files.
+# It must not duplicate component version numbers.
+# Consumers fetch the module file they need; update-check clients compare their local version to that file.
 
-SERVER_RUNTIME=2.3.8
-SERVER_UI=1.0.0
-CHAT=1.4.8
-STREAM=V2
-LALM_UI=1.0.0
-LALM_ENGINE_REVISION=2.1.18-hot-boundary-v9-effective-receipt
-LALM_ENGINE_HOT_SERVER_VERSION=2.1.18
+SERVER_RUNTIME=versions/server-runtime.txt
+SERVER_UI=versions/server-ui.txt
+WEB_CHAT=versions/web-chat.txt
+STREAM_CONTRACT=versions/stream-contract.txt
+LALM_UI=versions/lalm-ui.txt
+LALM_ENGINE=versions/lalm-engine.txt
+ADMIN_WEB=versions/admin-web.txt
+GOOGLE_ACCOUNT=versions/google-account.txt
+CLIENT_APK=versions/client-apk.txt
+SERVER_APK=versions/server-apk.txt
 
-REGISTRY_FORMAT=1
+REGISTRY_FORMAT=2
