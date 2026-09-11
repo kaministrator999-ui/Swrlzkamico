@@ -78,12 +78,23 @@ For **every** runtime/server update:
 
 ## Version ownership
 
-- **Server:** `api/index.py` `VERSION`; exposed through `/api/server/status` as `version`.
-- **Chat:** `web/chat_version.js` `CHAT_VERSION`.
-- **LALM UI:** control-plane `LALM_UI_VERSION`; exposed through `/api/lalm/status` as `uiVersion`.
-- **LALM engine:** active runtime revision fields in `runtime_hot/r39_engine.py`, including `HOT_SERVER_VERSION` and `HOT_REVISION`.
+- **Repository version router:** `VERSION.txt`; it identifies the authoritative version file for each module and must not become a second manually maintained copy of every module's version value.
+- **Server runtime:** `versions/server-runtime.txt`.
+- **Server UI:** `versions/server-ui.txt`.
+- **Chat:** `versions/web-chat.txt`.
+- **Stream contract:** `versions/stream-contract.txt`.
+- **LALM UI:** `versions/lalm-ui.txt`.
+- **LALM engine:** `versions/lalm-engine.txt`.
+- **Admin web:** `versions/admin-web.txt`.
+- **Google account architecture:** `versions/google-account.txt`.
+- **Android client APK:** `versions/client-apk.txt`.
+- **Android server APK:** `versions/server-apk.txt`.
 
-If another module needs to display one of these values, it must read the authoritative status/version source. It must not receive a second manually maintained copy.
+Existing API/status/code constants may expose or consume these values, but the **module-owned version file is the version identity authority**. Cross-module consumers must fetch the owning module's authority, directly or through a status/API surface derived from it. They must not maintain duplicate version literals.
+
+If a new independently evolvable structure is introduced, it must receive a stable module ID, its own `versions/<module-id>.txt`, and an entry in `VERSION.txt` in the same development event.
+
+If the real current version of an existing artifact has not been verified, use an explicit unassigned/unknown state rather than inventing a version.
 
 ## NO REDEPLOY required
 
@@ -97,17 +108,19 @@ These belong on `runtime`:
 - runtime assets under `web/` or `runtime_pages/`
 - runtime-loadable LALM/inference code, including active R39 runtime source
 - normal Chat behavior already supported by the stable loader
+- runtime-owned `VERSION.txt` and `versions/*.txt` authority changes when the existing loader already serves them
 
 ### Hotfix procedure
 
 1. **Fetch the current target file from `runtime` first.**
 2. Make the **smallest targeted edit** possible.
 3. Apply the required Server/module version bumps.
-4. Update the roadmap/release record.
-5. Commit it to `runtime`.
-6. Reload/request the affected route.
-7. Verify the live response/headers/version/behavior comes from `runtime`.
-8. If wrong, make another versioned runtime fix; do not silently overwrite the previous event.
+4. Update the affected module-owned version file(s) and `VERSION.txt` only when routing/registration changes.
+5. Update the roadmap/release record.
+6. Commit it to `runtime`.
+7. Reload/request the affected route.
+8. Verify the live response/headers/version/behavior comes from `runtime`.
+9. If wrong, make another versioned runtime fix; do not silently overwrite the previous event.
 
 ### NEVER do this for a hotfix
 
@@ -117,7 +130,8 @@ These belong on `runtime`:
 - Do not restart the server to expose ordinary runtime changes.
 - Do not trigger Vercel deployment for ordinary runtime edits.
 - Do not change `dev` when the task is a Chat/runtime hotfix; use `runtime`.
-- Do not manually copy another module's version into a second module when an authoritative status endpoint can provide it.
+- Do not manually copy another module's version into a second module when an authoritative version file/status source can provide it.
+- Do not treat `VERSION.txt` as a duplicated ledger of module numbers; it routes to module-owned authorities.
 
 ## REDEPLOY required
 
@@ -143,26 +157,28 @@ GitHub `runtime` is durable. `/tmp`, memory caches, loaded Python module objects
 - **Chat stream/UI enhancements:** `runtime`
 - **Chat version display:** `runtime`
 - **LALM/R39 runtime code:** `runtime`
+- **Module-owned version authorities:** `runtime` for runtime-owned modules
 - **Stable API/loader/security infrastructure:** `main`
 
 Changing LALM internals does **not** require changing the Chat version unless user-facing Chat behavior/protocol changed.
 
 ## Versioning rule
 
-If asked to bump the Chat version, change the runtime-owned version source only, bump the overall Server version, and update the roadmap. **Do not rewrite `web/chat.html` unless the HTML itself is the requested change. Preserve the complete existing page.**
+If asked to bump a module version, update that module's authoritative version file, bump the overall Server version when the event is server-governed, and update the roadmap. **Do not rewrite an unrelated page or module merely to carry the version number.** UI/status surfaces should derive the value from the authority.
 
 ## Verification checklist
 
 Before saying a hotfix is done:
 
 - [ ] Current target file was fetched first.
-- [ ] Current Server/module versions established.
+- [ ] Current Server/module versions established from authoritative sources.
 - [ ] Deployment risk was evaluated before repository mutation.
 - [ ] Explicit approval was obtained before any deployment-capable action.
 - [ ] Only intended runtime file(s) changed.
-- [ ] Server version bumped.
+- [ ] Server version bumped when required by the event contract.
 - [ ] Every affected module version bumped.
-- [ ] Canonical version sources updated.
+- [ ] Affected module-owned version files updated.
+- [ ] `VERSION.txt` routing updated only if module registration/ownership changed.
 - [ ] Cross-module version displays resolve authoritative values automatically.
 - [ ] Roadmap/release record updated.
 - [ ] `runtime` contains the change.
@@ -176,6 +192,10 @@ Before saying a hotfix is done:
 ```text
                  DURABLE
               GitHub runtime
+                    │
+          VERSION.txt (router)
+                    │
+           versions/*.txt owners
                     │
                     ▼
           stable runtime loader
@@ -191,8 +211,8 @@ Before saying a hotfix is done:
                     ▼
               current §wyrlz
 
-Version ownership stays with each module.
-Cross-module displays query the owning module's authoritative source.
+Each independently evolving structure owns its version file.
+Cross-module displays query the owning authority.
 
 main = stable infrastructure → deploy when changed + explicit approval
 runtime = live app source   → hotfix without deploy
@@ -200,8 +220,8 @@ runtime = live app source   → hotfix without deploy
 
 ## Bottom line for future §wyrlz
 
-> **Any server runtime change = new Server version + affected module version(s) + roadmap entry + commit + reload + verification.**
+> **Any server runtime change = new Server version + affected module version(s) + module-owned version authority update + roadmap entry + commit + reload + verification.**
 >
-> **If the user asks to update Chat, a Chat page, page-owned JS/CSS, stream UI, or runtime LALM: work on `runtime`, make the smallest possible edit, version everything affected, update the roadmap, commit, reload, verify, and do not redeploy.**
+> **If the user asks to update Chat, a Chat page, page-owned JS/CSS, stream UI, runtime LALM, or another runtime-owned module: work on `runtime`, make the smallest possible edit, version everything affected, update the owning `versions/*.txt` file(s), update the roadmap, commit, reload, verify, and do not redeploy.**
 >
 > **If the loader/API/middleware/auth/deployment infrastructure must change: explain the deployment trigger and requirement, obtain explicit user approval before the repository mutation, then work on `main` and redeploy/verify.**
