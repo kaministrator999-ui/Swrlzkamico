@@ -1,5 +1,5 @@
 ID=web-chat
-VERSION=1.4.34
+VERSION=1.4.35
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
