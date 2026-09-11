@@ -2,19 +2,50 @@
 
 ## Current release
 
-**Server v2.3.16**
+**Server v2.3.17**
 
-This runtime event scopes Chat state to the signed-in Google identity, replaces token-by-token scroll chasing with interruptible line-follow behavior, and adds bounded per-thread incremental LALM prefill reuse.
+This corrective runtime event wires the line-aware streaming-follow implementation into the JavaScript asset that Chat actually hot-loads, while retaining the account-scoped state and incremental LALM prefill work established in Server v2.3.16.
 
 ### Module state
 
-- **Server runtime v2.3.16** — current runtime development lineage.
-- **Chat v1.4.14** — account-selected browser history/settings plus line-aware, user-interruptible streaming follow.
-- **Google Account architecture v1.0.4** — Google subject now selects isolated Chat-history and preference namespaces on the device.
+- **Server runtime v2.3.17** — current runtime development lineage.
+- **Chat v1.4.15** — account-selected browser history/settings plus actively hot-loaded line-aware, user-interruptible streaming follow.
+- **Google Account architecture v1.0.4** — unchanged from v2.3.16; Google subject selects isolated Chat-history and preference namespaces on the device.
 - **LALM UI v1.0.0** — unchanged.
-- **LALM engine v2.1.19** / revision `2.1.19-hot-boundary-v10-thread-prefill-cache` — bounded per-thread recurrent-state reuse for incremental conversation prefill.
+- **LALM engine v2.1.19** / revision `2.1.19-hot-boundary-v10-thread-prefill-cache` — unchanged from v2.3.16; bounded per-thread recurrent-state reuse for incremental conversation prefill.
 
-## Server v2.3.16 — 2026-09-10
+## Server v2.3.17 — 2026-09-10
+
+### Correction
+
+- Review of the active Chat middleware showed that `/api/chat` injects `/api/chat/assets/enhancements.js`; `web/chat_stream_focus.js` exists in the runtime source set but is not currently injected by that middleware.
+- The first Server v2.3.16 scroll implementation therefore existed in source but was not guaranteed to execute in the active Chat page. That path is preserved rather than rewritten out of history.
+- The same line-aware follow logic is now installed directly by `web/chat_enhancements.js`, the hot-loaded Chat enhancement asset.
+- The active implementation now:
+  - does not move the viewport on status events or every token;
+  - measures assistant-bubble growth and moves only after approximately one new rendered line appears;
+  - centers the newest generated line near the middle of the Chat viewport while follow is locked;
+  - disables smooth animation for programmatic streaming steps to avoid cumulative jitter;
+  - unlocks follow on manual wheel/touch/pointer navigation;
+  - re-locks only when the user brings the generated tail back into the generation focus band;
+  - suppresses completion-time forced-bottom scrolling after the user has intentionally navigated away.
+- `loadState` and `saveState` are both now rebound to the active Google-account namespace layer, so the original cross-tab storage listener cannot accidentally reload the legacy global namespace while a Google account is active.
+
+### Verification state
+
+- `api/chat_extensions.py` confirms the active Chat page injects `/api/chat/assets/enhancements.js`.
+- `web/chat_enhancements.js` now contains both account-scoped state selection and the runtime streaming-follow controller.
+- `versions/server-runtime.txt` reports `2.3.17`.
+- `versions/web-chat.txt` reports `1.4.15`.
+- Google Account architecture remains `1.0.4`.
+- LALM engine remains `2.1.19` / `2.1.19-hot-boundary-v10-thread-prefill-cache`.
+- **Production deployment:** NONE requested.
+- **Server restart:** NONE.
+- **Manual Vercel deployment:** NONE.
+- The newest Vercel deployment remains the older Server v2.3.11 runtime deployment; no deployment was created by the v2.3.16/v2.3.17 runtime-branch updates.
+- Browser reload and live stream receipts remain the final runtime verification gate.
+
+## Server v2.3.16 — 2026-09-10 — CORRECTION LINEAGE PRESERVED
 
 ### Accomplishment
 
@@ -24,29 +55,24 @@ This runtime event scopes Chat state to the signed-in Google identity, replaces 
 - Sign-in and sign-out persist the namespace being left before changing identity, then load the namespace belonging to the identity being entered.
 - Google credential tokens and hidden OAuth client configuration remain outside Chat history and account preference storage.
 - This release deliberately distinguishes **account-selected local persistence** from **durable cross-device cloud sync**. Google currently selects which browser namespace to load; true cross-device persistence still requires server-side Google-token verification plus a durable account datastore. Ephemeral Vercel instance storage is not used as fake persistence.
-- Streaming follow no longer asks the viewport to move for every stream/status event. It measures the rendered assistant bubble and moves only after the response grows by approximately one visual line.
-- While follow is locked, the newest generated line is positioned near the center of the message viewport and smooth-scroll animation is disabled during the programmatic step to eliminate token-level jitter.
-- Manual wheel/touch/pointer scrolling unlocks generation follow. When the user returns until the generated tail is visible again, follow automatically re-locks.
-- Direct forced renders at stream completion are suppressed when the user intentionally scrolled away, so completion cannot yank the viewport back to the bottom.
 - The hot R39 engine now keeps a bounded per-thread prefill cache containing the exact token prefix, recurrent/KV/short-convolution state, and terminal prefill logits.
 - On a continuing conversation, the engine reuses the cached state only when the previously prefetched token sequence is an exact prefix of the newly rendered prompt. It then prefills only the appended context.
 - Prefix mismatch, worker restart, missing thread identity, cache expiry, or safety-bound overflow falls back to the existing full-prefill path rather than trusting stale state.
 - Conversation context caching is bounded to two recent entries, 20-minute TTL, and 2048 cached prompt tokens per entry to avoid unbounded KV-memory growth.
-- Engine status receipts now report cache hits as `reused N` plus `new M` tokens, making the optimization externally observable rather than inferred from latency alone.
+- Engine status receipts report cache hits as `reused N` plus `new M` tokens, making the optimization externally observable rather than inferred from latency alone.
 
-### Verification state
+### Scroll-wiring issue discovered during verification
 
-- `web/chat_enhancements.js` owns Google-account namespace selection, one-time legacy migration, account-switch reload, and account-specific preferences.
-- `web/chat_stream_focus.js` owns line-growth detection, follow lock/unlock/re-lock behavior, and suppression of completion-time forced scrolling after manual navigation.
-- `runtime_hot/r39_engine.py` owns bounded exact-prefix recurrent-state reuse and advertises `incrementalConversationPrefill: true` through engine inspection.
-- `versions/server-runtime.txt` reports `2.3.16`.
-- `versions/web-chat.txt` reports `1.4.14`.
-- `versions/google-account.txt` reports `1.0.4`.
-- `versions/lalm-engine.txt` reports `2.1.19` / `2.1.19-hot-boundary-v10-thread-prefill-cache`.
-- **Production deployment:** NONE requested.
-- **Server restart:** NONE.
-- **Manual Vercel deployment:** NONE.
-- Browser behavior and live hot-runtime receipts remain the user-side runtime verification gates.
+- The initial line-aware streaming-follow implementation was written to `web/chat_stream_focus.js`.
+- Inspection of the active middleware then showed that the current Chat response injects `web/chat_enhancements.js`, not `web/chat_stream_focus.js`.
+- The scroll algorithm itself was retained, but Server v2.3.17 / Chat v1.4.15 moved the active controller into the actually served enhancement layer.
+
+### Module versions established in this event
+
+- Server runtime `2.3.16`.
+- Chat `1.4.14`.
+- Google Account architecture `1.0.4`.
+- LALM engine `2.1.19` / `2.1.19-hot-boundary-v10-thread-prefill-cache`.
 
 ## Server v2.3.15 — 2026-09-10
 
@@ -136,7 +162,7 @@ This runtime event scopes Chat state to the signed-in Google identity, replaces 
 
 ### Purpose
 
-- Incremented only the canonical Server runtime version authority to verify Chat could dynamically display `v2.3.10` without changing Chat code.
+- Incremented only the canonical Server runtime authority to verify Chat could dynamically display `v2.3.10` without changing Chat code.
 
 ### Verification state
 
