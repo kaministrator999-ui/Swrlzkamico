@@ -7,7 +7,26 @@ const MAX_AGE_MS=30*60*1000;
 const live=new Set();
 const retryTimers=new Map();
 const nativeFetch=window.fetch.bind(window);
-const CHAT_RESPONSE_DIRECTIVE='Answer naturally without printing, announcing, or signing with the assistant name unless the user explicitly asks about identity or the name. For programming requests, unless the user explicitly asks for code only, give a short natural lead-in, then complete runnable code, then a concise explanation or overview of what the code does, and finish with one short natural closing sentence after the explanation. Keep code, explanation, and claims mutually consistent and verify syntax, formulas, input/output behavior, and requested requirements before ending.';
+const BASE_RESPONSE_DIRECTIVE='Answer the current user request directly, naturally, and completely. Treat the assistant name as metadata only; do not announce, introduce, or sign with it unless the user explicitly asks about identity or the name.';
+const INTENT_MARK='[[SWRLZ_TURN_INTENT:';
+
+function cleanTurnText(value){const text=String(value||'');const at=text.indexOf('\n\n'+INTENT_MARK);return (at>=0?text.slice(0,at):text).trim()}
+function classifyIntent(value){
+  const text=cleanTurnText(value),lower=text.toLowerCase(),words=text.split(/\s+/).filter(Boolean).length;
+  const code=/\b(code|coding|program|programming|function|class|method|script|html|css|javascript|typescript|python|c\+\+|cpp|java|kotlin|rust|sql|api|json|implement|debug|refactor|snippet|compile|compiler)\b|\.(?:cpp|h|hpp|py|js|ts|html|css)\b/i.test(text);
+  if(code)return 'coding';
+  const social=/^(?:hey|hi|hello|yo|sup|thanks|thank you|lol|lmao|😂|😆|👋|🙂|😊|❤️|🫂)(?:\s|[!,.?👋🙂😊😂😆❤️🫂])*$/i.test(text);
+  if(words<=10&&social)return 'social';
+  return 'general';
+}
+function decorateTurn(value){
+  const text=cleanTurnText(value),intent=classifyIntent(text);
+  let rule='Answer only what this turn asks. Do not introduce unrelated code, examples, or a self-introduction.';
+  if(intent==='social')rule='This is a social turn. Reply briefly and naturally. Do not provide code, technical examples, or a self-introduction unless this turn explicitly asks for them.';
+  if(intent==='coding')rule='This turn requests programming help. Follow the requested language and requirements. Unless code-only was explicitly requested, use a short natural lead-in, complete runnable code, a concise explanation or overview, and a short natural closing. Keep code and explanation mutually consistent.';
+  return `${text}\n\n${INTENT_MARK}${intent}]] ${rule}`;
+}
+function normalizeHistory(history){return Array.isArray(history)?history.map(item=>{if(!item||typeof item!=='object')return item;const next={...item};if(String(next.role||'').toLowerCase()==='user')next.text=decorateTurn(next.text);return next}):history}
 
 function loadStore(){try{const value=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');return value&&typeof value==='object'?value:{}}catch(_){return {}}}
 function saveStore(store){try{localStorage.setItem(STORE_KEY,JSON.stringify(store))}catch(_){}}
@@ -19,10 +38,20 @@ function prune(store=loadStore()){
 function streamUrl(input){try{return typeof input==='string'?input:(input?.url||'')}catch(_){return ''}}
 function isStreamRequest(input,init){const method=String(init?.method||input?.method||'GET').toUpperCase();if(method!=='POST')return false;return /(?:[?&]action=stream(?:&|$)|\/stream(?:[?#]|$))/i.test(streamUrl(input))}
 function bodyPayload(init){if(typeof init?.body!=='string')return null;try{const value=JSON.parse(init.body);return value&&typeof value==='object'?value:null}catch(_){return null}}
-function normalizePayload(payload){if(!payload||typeof payload!=='object')return payload;const next={...payload};if(!String(next.responseDirective||'').trim())next.responseDirective=CHAT_RESPONSE_DIRECTIVE;return next}
-function recoveryHeaders(){
-  try{if(typeof authHeaders==='function')return {...authHeaders(),Accept:'application/x-ndjson'}}catch(_){ }
-  return {'Accept':'application/x-ndjson','Content-Type':'application/json; charset=utf-8'};
+function normalizePayload(payload){
+  if(!payload||typeof payload!=='object')return payload;
+  const next={...payload};
+  next.responseDirective=BASE_RESPONSE_DIRECTIVE;
+  next.prompt=decorateTurn(next.prompt);
+  next.history=normalizeHistory(next.history);
+  next.turnIntent=classifyIntent(next.prompt);
+  return next;
+}
+function authHeaders(){
+  try{if(typeof window.authHeaders==='function')return {...window.authHeaders()}}catch(_){ }
+  try{if(typeof authHeaders==='function')return {...authHeaders()}}catch(_){ }
+  let value='';try{value=sessionStorage.getItem('swrlzChatToken')||sessionStorage.getItem('swrlz.chat.token')||''}catch(_){ }
+  return {'Content-Type':'application/json','X-SWRLZ-Chat-Token':value};
 }
 
 async function serverInstanceId(){
@@ -64,7 +93,7 @@ function currentContext(rid,threadId){
 function phaseNote(message,text,phase='RECONNECTING'){
   if(!message)return;message.meta=message.meta||{};message.meta.phase=phase;message.meta.error='';message.meta.trail=Array.isArray(message.meta.trail)?message.meta.trail:[];
   const last=message.meta.trail[message.meta.trail.length-1];if(last?.reason!==text)message.meta.trail.push({seq:Number(last?.seq||0)+1,phase,reason:text,at:Date.now()});
-  if(message.meta.trail.length>40)message.meta.trail=message.meta.trail.slice(-40);
+  if(message.meta.trail.length>80)message.meta.trail.splice(0,message.meta.trail.length-80);
   if(message.state!=='complete')message.state='streaming';
   try{saveState()}catch(_){ }try{scheduleRender(false)}catch(_){ }
 }
@@ -76,10 +105,7 @@ async function compareInstance(entry,message){
   const current=await serverInstanceId();if(!current)return;
   const store=loadStore(),saved=store[entry.requestId];if(saved){saved.lastSeenInstanceId=current;saved.updatedAt=Date.now();saveStore(store)}
   const previous=String(entry.lastSeenInstanceId||entry.originInstanceId||'');
-  if(previous&&previous!==current){
-    message.meta=message.meta||{};message.meta.backgroundInstanceChanged=true;
-    phaseNote(message,'A new server instance was detected. The same pending request is being resumed or regenerated and reconciled against the partial response already on this device.');
-  }
+  if(previous&&previous!==current){message.meta=message.meta||{};message.meta.backgroundInstanceChanged=true;phaseNote(message,'Server instance changed. The same pending request is being resumed or regenerated and reconciled against the partial response already on this device.')}
 }
 
 const baseConsume=typeof consumeEvent==='function'?consumeEvent:null;
@@ -90,14 +116,9 @@ function replayDelta(event,context){
   const chunk=String(event.text??'');reconcile.generated+=chunk;
   const baseline=reconcile.baseline;
   let mode=reconcile.mode,target=message.text;
-  if(baseline.startsWith(reconcile.generated)){
-    mode='compare';target=baseline;
-  }else if(reconcile.generated.startsWith(baseline)){
-    mode='continue';target=reconcile.generated;
-  }else{
-    mode='redo';target=reconcile.generated;
-    if(!reconcile.redoNoted){reconcile.redoNoted=true;phaseNote(message,'The replacement instance regenerated a different prefix, so Chat switched to a clean redo instead of stitching incompatible text onto the old partial response.','RESTARTING')}
-  }
+  if(baseline.startsWith(reconcile.generated)){mode='compare';target=baseline}
+  else if(reconcile.generated.startsWith(baseline)){mode='continue';target=reconcile.generated}
+  else{mode='redo';target=reconcile.generated;if(!reconcile.redoNoted){reconcile.redoNoted=true;phaseNote(message,'The regenerated response diverged from the saved partial, so Chat switched to a clean redo instead of stitching incompatible text together.','RESTARTING')}}
   reconcile.mode=mode;message.text=target;message.meta=message.meta||{};message.meta.backgroundResumeMode=mode;
   if(message.meta.firstDeltaLatencyMs==null&&event.firstDeltaLatencyMs!=null)message.meta.firstDeltaLatencyMs=event.firstDeltaLatencyMs;
   try{if(typeof pushTrace==='function')pushTrace(message,event)}catch(_){ }
@@ -135,21 +156,20 @@ async function consumeNdjson(response,context,rid){
 function scheduleRetry(rid,delay=1500){if(retryTimers.has(rid))return;retryTimers.set(rid,setTimeout(()=>{retryTimers.delete(rid);resumeOne(rid)},delay))}
 async function resumeOne(rid){
   if(!rid||live.has(rid)||document.visibilityState==='hidden')return;
-  try{if(typeof active!=='undefined'&&active?.requestId===rid)return}catch(_){ }
+  try{if(typeof active!=='undefined'&&active?.requestId===rid&&active?.controller&&!active.controller.signal.aborted)return}catch(_){ }
   const store=prune(),entry=store[rid];if(!entry)return;
   const found=currentContext(rid,entry.threadId);if(!found)return;
   const context={threadId:found.thread.id,requestId:rid,message:found.message,lastSeq:0,terminal:false,started:performance.now(),__swrlzReplay:true,__swrlzReconcile:{baseline:String(found.message.text||entry.partialText||''),generated:'',mode:'compare',redoNoted:false}};
-  live.add(rid);phaseNote(found.message,'Checking the pending server generation now. Existing work will continue; if the worker moved, the same request will restart immediately and reconcile against the partial response already shown.');
+  live.add(rid);phaseNote(found.message,'Checking the pending server generation now. Existing work will continue if available; otherwise the same request will restart and reconcile against the saved partial.');
   compareInstance(entry,found.message);
   try{
-    const response=await nativeFetch(entry.url||'/api/chat?action=stream',{method:'POST',credentials:'same-origin',cache:'no-store',headers:recoveryHeaders(),body:JSON.stringify(entry.body)});
-    if(response.status===401){
-      phaseNote(found.message,'Generation recovery is waiting for the current Chat access token before it can reattach.','RECONNECTING');
-      return;
-    }
+    const body=normalizePayload(entry.body);
+    entry.body=body;const allHeaders={...authHeaders(),'Accept':'application/x-ndjson'};
+    const response=await nativeFetch(entry.url||'/api/chat?action=stream',{method:'POST',credentials:'same-origin',cache:'no-store',headers:allHeaders,body:JSON.stringify(body)});
+    if(response.status===401){phaseNote(found.message,'Generation recovery needs a valid Chat access token before it can reconnect.','AUTH_REQUIRED');return}
     await consumeNdjson(response,context,rid);
   }catch(err){
-    phaseNote(found.message,`Generation recovery is retrying (${String(err?.message||err)}). The pending request remains saved on this device.`);
+    const text=String(err?.message||err);phaseNote(found.message,`Generation recovery is retrying (${text}). The pending request remains saved on this device.`);
     if(document.visibilityState!=='hidden')scheduleRetry(rid);
   }finally{live.delete(rid)}
 }
@@ -165,7 +185,7 @@ window.addEventListener('online',()=>setTimeout(resumeCurrent,60));
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(resumeCurrent,60);else persistNow()});
 window.addEventListener('pagehide',persistNow);
 setTimeout(resumeCurrent,300);
-setInterval(()=>{if(document.visibilityState==='visible')resumeCurrent()},2500);
+setInterval(()=>{if(document.visibilityState==='visible')resumeCurrent()},1800);
 
-window.__swrlzBackgroundResume={resumeCurrent,pending:()=>prune(),live};
+window.__swrlzBackgroundResume={resumeCurrent,pending:()=>prune(),live,classifyIntent,decorateTurn};
 })();
