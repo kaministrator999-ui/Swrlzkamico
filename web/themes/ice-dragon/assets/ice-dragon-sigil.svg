@@ -1,11 +1,34 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" fill="none">
   <defs>
-    <linearGradient id="g" x1="130" y1="90" x2="660" y2="710" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#EAFEFF"/><stop offset=".45" stop-color="#72E8FF"/><stop offset="1" stop-color="#7F9CFF"/>
+    <linearGradient id="g" x1="120" y1="90" x2="680" y2="720" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F3FEFF"/>
+      <stop offset=".36" stop-color="#86F5FF"/>
+      <stop offset=".7" stop-color="#72B7FF"/>
+      <stop offset="1" stop-color="#9A8CFF"/>
     </linearGradient>
-    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <radialGradient id="halo" cx="0" cy="0" r="1" gradientTransform="translate(400 400) rotate(90) scale(318)">
+      <stop stop-color="#8DF6FF" stop-opacity=".10"/>
+      <stop offset="1" stop-color="#8DF6FF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
-  <path d="M401 74c-77 61-131 121-161 182-71-7-129 13-178 62 74 3 127 20 160 51-70 61-100 134-91 218 27-57 69-99 126-126-11 76 12 143 69 201-12-79 2-142 43-189 10 83 53 151 130 205-23-71-18-132 15-181 50 36 88 90 113 162 9-96-14-174-70-235 57-21 116-23 179-4-48-55-107-85-178-88-25-57-69-106-131-148 5 77-12 136-52 177-16-57-49-108-98-152 4 70-9 124-39 162-13-61-43-113-90-156Z" stroke="url(#g)" stroke-width="16" stroke-linejoin="round" filter="url(#glow)"/>
-  <path d="M294 290c66-34 133-42 202-25-46 10-83 33-111 69 56-4 107 9 153 41-73 5-131 32-174 79-23-48-28-103-15-165-26 11-44 11-55 1Z" fill="url(#g)" fill-opacity=".13"/>
-  <circle cx="413" cy="301" r="9" fill="#EAFEFF" filter="url(#glow)"/>
+
+  <circle cx="400" cy="400" r="300" stroke="#BDF8FF" stroke-opacity=".12" stroke-width="2" stroke-dasharray="5 18"/>
+  <circle cx="400" cy="400" r="252" stroke="#8BDFFF" stroke-opacity=".09" stroke-width="1.5"/>
+  <circle cx="400" cy="400" r="230" fill="url(#halo)"/>
+
+  <g stroke="#BFF9FF" stroke-opacity=".16" stroke-width="2">
+    <path d="M400 66v72M400 662v72M66 400h72M662 400h72"/>
+    <path d="M164 164l51 51M585 585l51 51M636 164l-51 51M215 585l-51 51"/>
+    <path d="M120 400l30-18v36l-30-18Zm560 0-30-18v36l30-18ZM400 120l-18 30h36l-18-30Zm0 560-18-30h36l-18 30Z"/>
+  </g>
+
+  <path d="M401 74c-77 61-131 121-161 182-71-7-129 13-178 62 74 3 127 20 160 51-70 61-100 134-91 218 27-57 69-99 126-126-11 76 12 143 69 201-12-79 2-142 43-189 10 83 53 151 130 205-23-71-18-132 15-181 50 36 88 90 113 162 9-96-14-174-70-235 57-21 116-23 179-4-48-55-107-85-178-88-25-57-69-106-131-148 5 77-12 136-52 177-16-57-49-108-98-152 4 70-9 124-39 162-13-61-43-113-90-156Z" stroke="url(#g)" stroke-width="15" stroke-linejoin="round" filter="url(#glow)"/>
+  <path d="M294 290c66-34 133-42 202-25-46 10-83 33-111 69 56-4 107 9 153 41-73 5-131 32-174 79-23-48-28-103-15-165-26 11-44 11-55 1Z" fill="url(#g)" fill-opacity=".15"/>
+  <path d="M331 457c30 13 61 18 93 14-32 23-51 54-58 92-13-34-25-69-35-106Z" fill="#8DF6FF" fill-opacity=".07"/>
+  <circle cx="413" cy="301" r="9" fill="#F3FEFF" filter="url(#glow)"/>
+  <circle cx="413" cy="301" r="20" stroke="#8DF6FF" stroke-opacity=".28"/>
 </svg>
