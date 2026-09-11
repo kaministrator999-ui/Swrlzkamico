@@ -1,0 +1,7 @@
+ID=web-chat
+VERSION=1.4.9
+KIND=web-interface
+SOURCE_BRANCH=runtime
+STATUS=active
+DISPLAY_NAME=§wyrlz Web Chat
+UPDATE_POLICY=runtime-hot
