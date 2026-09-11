@@ -7,26 +7,41 @@ const MAX_AGE_MS=30*60*1000;
 const live=new Set();
 const retryTimers=new Map();
 const nativeFetch=window.fetch.bind(window);
-const BASE_RESPONSE_DIRECTIVE='Answer the current user request directly, naturally, and completely. Treat the assistant name as metadata only; do not announce, introduce, or sign with it unless the user explicitly asks about identity or the name.';
+const BASE_RESPONSE_DIRECTIVE='Answer only the current user request directly, naturally, and completely. Treat the assistant name as metadata only; do not announce, introduce, or sign with it unless the user explicitly asks about identity or the name. Do not introduce unrelated programming, code, examples, or task types. If the current user explicitly requests programming help, satisfy that request completely and keep code, explanations, formulas, and input/output behavior mutually consistent.';
 const INTENT_MARK='[[SWRLZ_TURN_INTENT:';
 
-function cleanTurnText(value){const text=String(value||'');const at=text.indexOf('\n\n'+INTENT_MARK);return (at>=0?text.slice(0,at):text).trim()}
+function cleanTurnText(value){
+  let text=String(value||'');
+  const markers=['\n\n'+INTENT_MARK,INTENT_MARK,'[[social turn]]','[[coding turn]]','[[general turn]]'];
+  for(const marker of markers){const at=text.indexOf(marker);if(at>=0)text=text.slice(0,at)}
+  return text.trim();
+}
 function classifyIntent(value){
-  const text=cleanTurnText(value),lower=text.toLowerCase(),words=text.split(/\s+/).filter(Boolean).length;
+  const text=cleanTurnText(value),words=text.split(/\s+/).filter(Boolean).length;
   const code=/\b(code|coding|program|programming|function|class|method|script|html|css|javascript|typescript|python|c\+\+|cpp|java|kotlin|rust|sql|api|json|implement|debug|refactor|snippet|compile|compiler)\b|\.(?:cpp|h|hpp|py|js|ts|html|css)\b/i.test(text);
   if(code)return 'coding';
   const social=/^(?:hey|hi|hello|yo|sup|thanks|thank you|lol|lmao|😂|😆|👋|🙂|😊|❤️|🫂)(?:\s|[!,.?👋🙂😊😂😆❤️🫂])*$/i.test(text);
   if(words<=10&&social)return 'social';
   return 'general';
 }
-function decorateTurn(value){
-  const text=cleanTurnText(value),intent=classifyIntent(text);
-  let rule='Answer only what this turn asks. Do not introduce unrelated code, examples, or a self-introduction.';
-  if(intent==='social')rule='This is a social turn. Reply briefly and naturally. Do not provide code, technical examples, or a self-introduction unless this turn explicitly asks for them.';
-  if(intent==='coding')rule='This turn requests programming help. Follow the requested language and requirements. Unless code-only was explicitly requested, use a short natural lead-in, complete runnable code, a concise explanation or overview, and a short natural closing. Keep code and explanation mutually consistent.';
-  return `${text}\n\n${INTENT_MARK}${intent}]] ${rule}`;
+function normalizeHistory(history){
+  return Array.isArray(history)?history.map(item=>{
+    if(!item||typeof item!=='object')return item;
+    const next={...item};
+    if(String(next.role||'').toLowerCase()==='user')next.text=cleanTurnText(next.text);
+    return next;
+  }):history;
 }
-function normalizeHistory(history){return Array.isArray(history)?history.map(item=>{if(!item||typeof item!=='object')return item;const next={...item};if(String(next.role||'').toLowerCase()==='user')next.text=decorateTurn(next.text);return next}):history}
+function normalizePayload(payload){
+  if(!payload||typeof payload!=='object')return payload;
+  const next={...payload};
+  const prompt=cleanTurnText(next.prompt);
+  next.responseDirective=BASE_RESPONSE_DIRECTIVE;
+  next.prompt=prompt;
+  next.history=normalizeHistory(next.history);
+  next.turnIntent=classifyIntent(prompt);
+  return next;
+}
 
 function loadStore(){try{const value=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');return value&&typeof value==='object'?value:{}}catch(_){return {}}}
 function saveStore(store){try{localStorage.setItem(STORE_KEY,JSON.stringify(store))}catch(_){}}
@@ -38,18 +53,8 @@ function prune(store=loadStore()){
 function streamUrl(input){try{return typeof input==='string'?input:(input?.url||'')}catch(_){return ''}}
 function isStreamRequest(input,init){const method=String(init?.method||input?.method||'GET').toUpperCase();if(method!=='POST')return false;return /(?:[?&]action=stream(?:&|$)|\/stream(?:[?#]|$))/i.test(streamUrl(input))}
 function bodyPayload(init){if(typeof init?.body!=='string')return null;try{const value=JSON.parse(init.body);return value&&typeof value==='object'?value:null}catch(_){return null}}
-function normalizePayload(payload){
-  if(!payload||typeof payload!=='object')return payload;
-  const next={...payload};
-  next.responseDirective=BASE_RESPONSE_DIRECTIVE;
-  next.prompt=decorateTurn(next.prompt);
-  next.history=normalizeHistory(next.history);
-  next.turnIntent=classifyIntent(next.prompt);
-  return next;
-}
-function authHeaders(){
+function chatAuthHeaders(){
   try{if(typeof window.authHeaders==='function')return {...window.authHeaders()}}catch(_){ }
-  try{if(typeof authHeaders==='function')return {...authHeaders()}}catch(_){ }
   let value='';try{value=sessionStorage.getItem('swrlzChatToken')||sessionStorage.getItem('swrlz.chat.token')||''}catch(_){ }
   return {'Content-Type':'application/json','X-SWRLZ-Chat-Token':value};
 }
@@ -164,7 +169,7 @@ async function resumeOne(rid){
   compareInstance(entry,found.message);
   try{
     const body=normalizePayload(entry.body);
-    entry.body=body;const allHeaders={...authHeaders(),'Accept':'application/x-ndjson'};
+    entry.body=body;const allHeaders={...chatAuthHeaders(),'Accept':'application/x-ndjson'};
     const response=await nativeFetch(entry.url||'/api/chat?action=stream',{method:'POST',credentials:'same-origin',cache:'no-store',headers:allHeaders,body:JSON.stringify(body)});
     if(response.status===401){phaseNote(found.message,'Generation recovery needs a valid Chat access token before it can reconnect.','AUTH_REQUIRED');return}
     await consumeNdjson(response,context,rid);
@@ -187,5 +192,5 @@ window.addEventListener('pagehide',persistNow);
 setTimeout(resumeCurrent,300);
 setInterval(()=>{if(document.visibilityState==='visible')resumeCurrent()},1800);
 
-window.__swrlzBackgroundResume={resumeCurrent,pending:()=>prune(),live,classifyIntent,decorateTurn};
+window.__swrlzBackgroundResume={resumeCurrent,pending:()=>prune(),live,classifyIntent,cleanTurnText};
 })();
