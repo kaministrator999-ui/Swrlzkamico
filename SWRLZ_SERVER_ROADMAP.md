@@ -1,8 +1,8 @@
 # §wyrlz Server Roadmap & Version Ledger
 
 **READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-**Current overall server baseline:** `2.3.56`  
-**Current Chat component:** `1.4.50`  
+**Current overall server baseline:** `2.3.58`  
+**Current Chat component:** `1.4.52`  
 **Current LALM UI component:** `1.0.0`  
 **Current Deployment Control component:** `1.0.1`  
 **Release policy:** every server development event gets an overall Server release/version entry plus independent component version changes where applicable, including unsuccessful attempts.
@@ -45,6 +45,7 @@ Version authorities are read at event entry and re-read immediately before versi
 - Established the durability rule: GitHub `runtime` is source of truth; `/tmp`, memory, browser cache, and Vercel instance state are disposable.
 - Added explicit optimistic-concurrency handling for version authorities so multiple §wyrlz instances/agents do not overwrite each other's release lineage.
 - Corrected deployment-gate logic so approval follows the actual deployment trigger/configuration instead of treating every `main` or documentation commit as deployment-capable.
+- Established generated Ice Dragon artwork ownership so the adult wallpaper can replace the legacy Frozen Sanctum procedural chamber art instead of stacking on top of it.
 
 ## Component ownership
 
@@ -266,6 +267,50 @@ The omitted individual release notes for `2.3.7` through `2.3.55` are intentiona
 **Rollback/migration notes:**
 - No runtime migration is required.
 - If automatic Git deployments are enabled in the future, the deployment-gate decision must automatically re-evaluate against that new configuration.
+
+### Server 2.3.57 — Adult Ice Dragon dedicated wallpaper layer
+
+**Status:** attempted; browser verification showed legacy chamber art still visible  
+**Chat:** `1.4.51`  
+**LALM UI:** `1.0.0` unchanged  
+**Deployment Control:** `1.0.1` unchanged  
+**Deployment:** NONE
+
+**Update notes:**
+- Added a dedicated `.messages::before` adult-art wallpaper layer and kept conversation content above it.
+- Browser verification showed the baby companion artwork loaded but the adult wallpaper still did not replace the old Frozen Sanctum chamber appearance.
+- The failed visual result is preserved as a separate release event rather than rewritten as successful.
+
+**Failure/attempt lineage:**
+- The generated adult layer existed, but the base Ice Dragon theme still retained old `body::before` frost texture and `.messages` procedural background ownership.
+
+**Relevant lineage:**
+- Adult-art CSS layer commit: `ebdb9eefdea066fee3ca2d318aabd3bb2790883e`
+- Server authority commit: `a0be0e86a6e11a42a5d9303158c4659812f1c946`
+- Chat authority commit: `9d934a35b2bebec8200c986854cddc9e477fd972`
+
+### Server 2.3.58 — Remove legacy chamber wallpaper ownership
+
+**Status:** source complete; browser verification pending  
+**Chat:** `1.4.52`  
+**LALM UI:** `1.0.0` unchanged  
+**Deployment Control:** `1.0.1` unchanged  
+**Deployment:** NONE
+
+**Update notes:**
+- Identified both remaining legacy Ice Dragon artwork owners: the fixed `body::before` frost-line texture and the original `.messages` gradient/stripe chamber background.
+- The generated-art layer now explicitly disables both legacy body pseudo-art layers and forces `.messages` itself to have no background.
+- The adult dragon remains the sole wallpaper source through `.messages::before`; `.messages::after` is reserved only for readability shading and `.message-stack` remains above both.
+- This deliberately removes the old Frozen Sanctum procedural wallpaper from the generated-art theme path instead of allowing it to remain visible beneath a failed or delayed adult image.
+
+**Verification state:**
+- Runtime source change committed and authoritative Server/Chat versions advanced after revalidation from `2.3.57 / 1.4.51`.
+- Live browser visual confirmation is still required before this event is marked complete.
+
+**Relevant lineage:**
+- Generated-art ownership fix: `0e454bdd926ea61925ca343a9e7fb1cbe7ee7490`
+- Server version commit: `0c1c74b7ba0443afd578e963dc6089dcf62b66cc`
+- Chat version commit: `e47741237a3f79651af09c8ea5bd2d430c94bc38`
 
 ## Required release-entry format
 
