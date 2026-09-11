@@ -1,0 +1,8 @@
+ID=admin-web
+VERSION=1.0.0
+KIND=web-interface
+SOURCE_BRANCH=runtime
+STATUS=active
+DISPLAY_NAME=§wyrlz Admin Web
+UPDATE_POLICY=runtime-hot
+BASELINE_NOTE=Initial canonical version-file enrollment; no admin behavior change in this release.
