@@ -1,34 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" fill="none">
-  <defs>
-    <linearGradient id="g" x1="120" y1="90" x2="680" y2="720" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#F3FEFF"/>
-      <stop offset=".36" stop-color="#86F5FF"/>
-      <stop offset=".7" stop-color="#72B7FF"/>
-      <stop offset="1" stop-color="#9A8CFF"/>
-    </linearGradient>
-    <radialGradient id="halo" cx="0" cy="0" r="1" gradientTransform="translate(400 400) rotate(90) scale(318)">
-      <stop stop-color="#8DF6FF" stop-opacity=".10"/>
-      <stop offset="1" stop-color="#8DF6FF" stop-opacity="0"/>
-    </radialGradient>
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="8" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-  </defs>
-
-  <circle cx="400" cy="400" r="300" stroke="#BDF8FF" stroke-opacity=".12" stroke-width="2" stroke-dasharray="5 18"/>
-  <circle cx="400" cy="400" r="252" stroke="#8BDFFF" stroke-opacity=".09" stroke-width="1.5"/>
-  <circle cx="400" cy="400" r="230" fill="url(#halo)"/>
-
-  <g stroke="#BFF9FF" stroke-opacity=".16" stroke-width="2">
-    <path d="M400 66v72M400 662v72M66 400h72M662 400h72"/>
-    <path d="M164 164l51 51M585 585l51 51M636 164l-51 51M215 585l-51 51"/>
-    <path d="M120 400l30-18v36l-30-18Zm560 0-30-18v36l30-18ZM400 120l-18 30h36l-18-30Zm0 560-18-30h36l-18 30Z"/>
-  </g>
-
-  <path d="M401 74c-77 61-131 121-161 182-71-7-129 13-178 62 74 3 127 20 160 51-70 61-100 134-91 218 27-57 69-99 126-126-11 76 12 143 69 201-12-79 2-142 43-189 10 83 53 151 130 205-23-71-18-132 15-181 50 36 88 90 113 162 9-96-14-174-70-235 57-21 116-23 179-4-48-55-107-85-178-88-25-57-69-106-131-148 5 77-12 136-52 177-16-57-49-108-98-152 4 70-9 124-39 162-13-61-43-113-90-156Z" stroke="url(#g)" stroke-width="15" stroke-linejoin="round" filter="url(#glow)"/>
-  <path d="M294 290c66-34 133-42 202-25-46 10-83 33-111 69 56-4 107 9 153 41-73 5-131 32-174 79-23-48-28-103-15-165-26 11-44 11-55 1Z" fill="url(#g)" fill-opacity=".15"/>
-  <path d="M331 457c30 13 61 18 93 14-32 23-51 54-58 92-13-34-25-69-35-106Z" fill="#8DF6FF" fill-opacity=".07"/>
-  <circle cx="413" cy="301" r="9" fill="#F3FEFF" filter="url(#glow)"/>
-  <circle cx="413" cy="301" r="20" stroke="#8DF6FF" stroke-opacity=".28"/>
+<defs>
+ <linearGradient id="ice" x1="150" y1="120" x2="650" y2="690" gradientUnits="userSpaceOnUse"><stop stop-color="#F4FEFF"/><stop offset=".35" stop-color="#8CF5FF"/><stop offset=".7" stop-color="#70B8FF"/><stop offset="1" stop-color="#A58FFF"/></linearGradient>
+ <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<!-- restrained crest ring: ornament stays around the dragon, not instead of it -->
+<circle cx="400" cy="400" r="292" stroke="#BDF8FF" stroke-opacity=".10" stroke-width="3" stroke-dasharray="8 22"/>
+<path d="M400 82v54M400 664v54M82 400h54M664 400h54" stroke="#BDF8FF" stroke-opacity=".13" stroke-width="3"/>
+<!-- large readable dragon profile -->
+<g filter="url(#glow)">
+ <path d="M254 278 151 151l165 70 62-130 51 139c88-18 169 5 225 65l-109 27 126 73-128 36 70 91-149-25-60 66 27 126-111-95-97 48 43-111-103-51 116-27-82-91 137 26c48-79 119-126 213-139-78-30-160-28-239 7l-34-28Z" fill="url(#ice)" fill-opacity=".11" stroke="url(#ice)" stroke-width="18" stroke-linejoin="round"/>
+ <path d="M335 365c67-69 157-93 250-65l-96 54 110 42-126 33-68 74-119-30 62-44-107-18 94-46Z" fill="url(#ice)" fill-opacity=".18" stroke="url(#ice)" stroke-width="12" stroke-linejoin="round"/>
+ <path d="M463 433c44 20 87 27 131 20-43 50-97 71-164 64" stroke="#E7FFFF" stroke-width="12" stroke-linecap="round"/>
+ <circle cx="462" cy="345" r="17" fill="#F8FFFF"/><circle cx="462" cy="345" r="34" stroke="#8CF5FF" stroke-opacity=".34" stroke-width="5"/>
+</g>
 </svg>
