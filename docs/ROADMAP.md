@@ -2,16 +2,37 @@
 
 ## Current release
 
-**Server v2.3.10**
+**Server v2.3.11**
 
-This is a version-authority propagation test. No Server runtime code, Chat code, LALM code, or deployed infrastructure changed in this event.
+This runtime event improves how Chat presents LALM readiness on refresh while preserving the existing worker-start LALM warmup architecture.
 
 ### Module state
 
-- **Server runtime v2.3.10** — canonical version authority incremented from `2.3.9` to `2.3.10` to verify that Chat resolves and displays the module-owned version file dynamically.
-- **Chat v1.4.9** — unchanged; its existing version resolver is the subject of this test.
+- **Server runtime v2.3.11** — runtime development lineage advanced for this event.
+- **Chat v1.4.10** — readiness display now restores a recent verified-ready state immediately on refresh, then verifies it in the background.
 - **LALM UI v1.0.0** — unchanged.
 - **LALM engine v2.1.18** / revision `2.1.18-hot-boundary-v9-effective-receipt` — unchanged.
+
+## Server v2.3.11 — 2026-09-10
+
+### Accomplishment
+
+- Chat no longer has to visibly fall back to a yellow/pending state on every refresh when that same browser tab has already verified the LALM as ready moments earlier.
+- A recent verified-ready state is restored immediately from session state, while `/api/lalm/status` is still checked in the background so the UI does not blindly trust stale readiness forever.
+- Status polling was reduced from every 15 seconds to every 60 seconds, with an additional check when the browser regains focus. This reduces unnecessary serverless status invocations while preserving freshness.
+- The stable deployed server already warms the R39 model during each worker cold start through the startup warm path. This release does not alter that LALM engine behavior; it removes the repeated UI-level pending delay on ordinary Chat refreshes.
+
+### Verification evidence
+
+- Live production `/api/lalm/status` reported `interactiveReady: true` and `warmModelResident: true` with the runtime override/native backend active.
+- The same live response reported `warmModelAgeSeconds: 0.0`, which is consistent with the status request reaching a freshly initialized serverless worker. Vercel can create/reuse workers independently, so worker residency cannot be treated as one permanent process.
+- Expected browser result: after one successful readiness check, refreshing the same Chat tab should render green readiness essentially immediately, then verify asynchronously.
+
+### Deployment state
+
+- **Deployment:** NONE.
+- **Server restart:** NONE.
+- Runtime-only Chat change; automatic Git deployments remain disabled.
 
 ## Server v2.3.10 — 2026-09-10
 
@@ -28,12 +49,10 @@ This is a version-authority propagation test. No Server runtime code, Chat code,
 
 ### Verification state
 
-- Canonical Server runtime authority is now `2.3.10` on `runtime`.
-- Expected observable result: Chat's existing footer/version resolver displays Server runtime `v2.3.10` after fetching the authority again (reload/cache-bypass as necessary).
+- Canonical Server runtime authority is now superseded by `2.3.11`.
+- User-side verification confirmed Chat dynamically displayed Server runtime `v2.3.10` without a server redeploy.
 - **Deployment:** NONE.
 - **Server restart:** NONE.
-- **Production code release:** NONE.
-- User-side browser observation is the verification gate for this test.
 
 ## Server v2.3.9 — 2026-09-10
 
