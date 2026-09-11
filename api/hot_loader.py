@@ -3,20 +3,55 @@ from __future__ import annotations
 import importlib.util
 import sys
 import threading
+import time
 from pathlib import Path
 from types import ModuleType
+from typing import Callable
 
 HOT_ROOT = Path("/tmp/swrlz-admin/runtime/hot")
 HOT_CHAT = HOT_ROOT / "chat"
 HOT_INFERENCE_DIR = HOT_ROOT / "inference"
 HOT_INFERENCE = HOT_INFERENCE_DIR / "r39_engine.py"
+AUTO_REFRESH_SECONDS = 30.0
 
 _lock = threading.RLock()
 _cached_module: ModuleType | None = None
 _cached_signature: tuple[int, int] | None = None
+_hot_refresher: Callable[[bool], None] | None = None
+_last_refresh_attempt = 0.0
+
+
+def register_hot_refresher(callback: Callable[[bool], None] | None) -> None:
+    """Register the deployment-owned refresher used by hot read paths.
+
+    The callback is intentionally narrow: it may hydrate/update the fixed hot
+    allowlist, but it does not own routing/auth contracts. Failures are swallowed
+    here so GitHub/network trouble never takes the bundled fallback offline.
+    """
+    global _hot_refresher, _last_refresh_attempt
+    with _lock:
+        _hot_refresher = callback
+        _last_refresh_attempt = 0.0
+
+
+def _refresh_if_due(force: bool = False) -> None:
+    global _last_refresh_attempt
+    callback = _hot_refresher
+    if callback is None:
+        return
+    now = time.monotonic()
+    with _lock:
+        if not force and _last_refresh_attempt and now - _last_refresh_attempt < AUTO_REFRESH_SECONDS:
+            return
+        _last_refresh_attempt = now
+    try:
+        callback(force)
+    except Exception:
+        return
 
 
 def hot_chat_path(name: str, bundled: Path) -> Path:
+    _refresh_if_due()
     candidate = HOT_CHAT / name
     return candidate if candidate.is_file() else bundled
 
@@ -48,6 +83,7 @@ def _load_override() -> ModuleType | None:
 
 
 def get_engine() -> tuple[ModuleType, str]:
+    _refresh_if_due()
     override = _load_override()
     if override is not None:
         return override, "runtime-override"
