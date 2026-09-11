@@ -1,68 +1,37 @@
-/* §wyrlz Ice Dragon generated-art layer — juvenile companion + adult guardian */
+/* §wyrlz Ice Dragon generated-art layer — browser-safe runtime hydrated assets */
 body[data-swrlz-theme="ice-dragon"]::after{
   inset:0!important;
   width:auto!important;
   height:auto!important;
   right:0!important;
   bottom:0!important;
-  opacity:.30!important;
+  opacity:.31!important;
   transform:none!important;
   filter:saturate(1.08) contrast(1.04)!important;
   background:
-    linear-gradient(180deg,rgba(1,7,16,.16) 0%,rgba(1,8,18,.34) 52%,rgba(1,6,14,.54) 100%),
-    linear-gradient(90deg,rgba(1,8,18,.42),transparent 38%,rgba(1,8,18,.10)),
-    url("assets/ice-dragon-adult-generated.svg") center 42%/cover no-repeat!important;
+    linear-gradient(180deg,rgba(1,7,16,.12),rgba(1,8,18,.30) 52%,rgba(1,6,14,.52)),
+    linear-gradient(90deg,rgba(1,8,18,.38),transparent 42%,rgba(1,8,18,.08)),
+    var(--ice-dragon-adult,none) center 43%/cover no-repeat!important;
 }
-
 body[data-swrlz-theme="ice-dragon"] .messages{
-  background:
-    radial-gradient(circle at 52% -8%,rgba(126,240,255,.055),transparent 30%),
-    linear-gradient(180deg,rgba(2,12,23,.28),rgba(1,7,16,.13)),
-    repeating-linear-gradient(117deg,transparent 0 92px,rgba(176,239,255,.010) 93px 94px,transparent 95px 182px)!important;
+  background:radial-gradient(circle at 52% -8%,rgba(126,240,255,.05),transparent 30%),linear-gradient(180deg,rgba(2,12,23,.24),rgba(1,7,16,.10)),repeating-linear-gradient(117deg,transparent 0 92px,rgba(176,239,255,.009) 93px 94px,transparent 95px 182px)!important;
 }
-
 body[data-swrlz-theme="ice-dragon"] .dragon-mark{
   overflow:hidden;
-  border-color:rgba(164,246,255,.62)!important;
-  background:
-    linear-gradient(145deg,rgba(210,252,255,.08),rgba(25,64,103,.08)),
-    url("assets/ice-dragon-companion-generated.svg") center/cover no-repeat!important;
-  box-shadow:0 0 26px rgba(115,236,255,.22),inset 0 0 18px rgba(213,253,255,.08)!important;
+  border-color:rgba(164,246,255,.66)!important;
+  background:var(--ice-dragon-companion,linear-gradient(145deg,rgba(127,239,255,.24),rgba(83,123,255,.16))) center/cover no-repeat!important;
+  box-shadow:0 0 26px rgba(115,236,255,.24),inset 0 0 18px rgba(213,253,255,.08)!important;
 }
 body[data-swrlz-theme="ice-dragon"] .dragon-mark svg{display:none!important}
-body[data-swrlz-theme="ice-dragon"] .dragon-mark::before{
-  inset:-5px!important;
-  border-color:rgba(190,248,255,.18)!important;
-  transform:rotate(6deg)!important;
-}
-
+body[data-swrlz-theme="ice-dragon"] .dragon-mark::before{inset:-5px!important;border-color:rgba(190,248,255,.18)!important;transform:rotate(6deg)!important}
 body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar{
   overflow:hidden;
-  border-color:rgba(151,241,255,.42)!important;
-  background:
-    linear-gradient(145deg,rgba(210,252,255,.05),rgba(25,64,103,.06)),
-    url("assets/ice-dragon-companion-generated.svg") center/cover no-repeat!important;
-  box-shadow:0 0 16px rgba(110,232,255,.13),inset 0 0 10px rgba(225,254,255,.05)!important;
+  color:transparent!important;
+  border-color:rgba(151,241,255,.44)!important;
+  background:var(--ice-dragon-companion,linear-gradient(145deg,rgba(118,235,255,.14),rgba(64,112,191,.09))) center/cover no-repeat!important;
+  box-shadow:0 0 16px rgba(110,232,255,.15),inset 0 0 10px rgba(225,254,255,.05)!important;
 }
 body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar svg{display:none!important}
-
-/* Keep text surfaces readable while allowing the adult guardian to remain visibly present. */
-body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble,
-body[data-swrlz-theme="ice-dragon"] .composer-box{
-  backdrop-filter:blur(8px) saturate(118%);
-  -webkit-backdrop-filter:blur(8px) saturate(118%);
-}
-
-@media(max-width:760px){
-  body[data-swrlz-theme="ice-dragon"]::after{
-    opacity:.25!important;
-    background:
-      linear-gradient(180deg,rgba(1,7,16,.12),rgba(1,8,18,.32) 54%,rgba(1,6,14,.52)),
-      linear-gradient(90deg,rgba(1,8,18,.26),transparent 58%),
-      url("assets/ice-dragon-adult-generated.svg") 53% 42%/cover no-repeat!important;
-  }
-}
-
-@media(prefers-reduced-motion:reduce){
-  body[data-swrlz-theme="ice-dragon"]::after{filter:none!important}
-}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble,body[data-swrlz-theme="ice-dragon"] .composer-box{backdrop-filter:blur(8px) saturate(118%);-webkit-backdrop-filter:blur(8px) saturate(118%)}
+@media(max-width:760px){body[data-swrlz-theme="ice-dragon"]::after{opacity:.27!important;background:linear-gradient(180deg,rgba(1,7,16,.10),rgba(1,8,18,.28) 54%,rgba(1,6,14,.50)),linear-gradient(90deg,rgba(1,8,18,.22),transparent 58%),var(--ice-dragon-adult,none) 50% 42%/cover no-repeat!important}}
+@media(prefers-reduced-motion:reduce){body[data-swrlz-theme="ice-dragon"]::after{filter:none!important}}
