@@ -9,7 +9,7 @@
         "web/chat_boot_guard.css",
         "web/chat_enhancements.css",
         "web/themes/ice-dragon/ice-dragon-theme.css",
-        "web/themes/ice-dragon/ice-dragon-art.css",
+        "web/themes/ice-dragon/ice-dragon-art-v2.css",
         "web/chat_mobile_viewport_fix.css",
         "web/chat_code_artifacts.css"
       ],
@@ -32,5 +32,5 @@
     "/live": {"source": "runtime_pages/index.html"}
   },
   "assetRoots": ["web", "runtime_pages"],
-  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Ice Dragon is opt-in and persisted locally. Generated Ice Dragon artwork now hydrates from browser-safe base64 text assets through ice-dragon-art-loader.js instead of nested SVG image wrappers. Chat boot stays behind the hydration guard until account-scoped state and, when relevant, Ice Dragon art are ready or the bounded fail-open timer expires."
+  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Ice Dragon is opt-in and persisted locally. Generated Ice Dragon artwork hydrates from browser-safe base64 text assets through ice-dragon-art-loader.js. Ice Dragon art v2 applies the juvenile companion to the sidebar brand, assistant avatars, and new-chat welcome orb, while the adult guardian is painted directly into the Chat message chamber so app surfaces cannot cover it. Chat boot stays behind the hydration guard until account-scoped state and, when relevant, Ice Dragon art are ready or the bounded fail-open timer expires."
 }
