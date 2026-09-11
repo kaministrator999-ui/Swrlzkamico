@@ -2,16 +2,46 @@
 
 ## Current release
 
-**Server v2.3.7**
+**Server v2.3.8**
 
 This is the current runtime development release. Stable deployed infrastructure remains Server v2.3.3 until a future stable-infrastructure deployment changes it.
 
 ### Module state
 
-- **Chat v1.4.7** — synchronized the main Chat status indicator with the same authoritative local LALM readiness source used by the sidebar.
+- **Chat v1.4.8** — Chat version display now reads the canonical repository version registry instead of maintaining its own version constants.
 - **LALM UI v1.0.0** — unchanged in this release.
 - **LALM engine hot revision** — `2.1.18-hot-boundary-v9-effective-receipt`; unchanged in this release.
 - **Server UI v1.0.0** — unchanged in this release.
+
+## Server v2.3.8 — 2026-09-10
+
+### Changed
+
+- Added the repository-level `VERSION.txt` canonical version registry for components that expose version information.
+- The registry contains the authoritative Server runtime, Server UI, Chat, Stream, LALM UI, and LALM engine version/revision values.
+- Changed Chat version presentation so it fetches the registry instead of keeping duplicate Chat/Stream/Server/LALM version constants in `web/chat_version.js`.
+- Advanced Chat from `v1.4.7` to `v1.4.8` because the user-facing version-source behavior changed.
+- Advanced overall Server from `v2.3.7` to `v2.3.8` because this is a new server runtime development event.
+- LALM UI, Server UI, and LALM/R39 engine source were not changed, so their versions remain unchanged.
+- This establishes the same source-of-truth pattern needed for future update checks: clients and UI surfaces can retrieve the hosted registry and compare the relevant installed/local version against the authoritative available version.
+- Kept the work entirely on `runtime`; no stable-infrastructure deployment or server restart is required.
+
+### Failure / history
+
+- The previous Chat footer mixed an authoritative deployed Server status value with a separately maintained runtime development version, producing a confusing `Server v2.3.3` display while the runtime release lineage had advanced.
+- The deeper architectural issue was duplicate version ownership: components had version values in code while other surfaces fetched or repeated those values independently.
+- Server 2.3.8 replaces that pattern with one canonical repository registry that consumers fetch when they need version information.
+
+### Verification state
+
+- `VERSION.txt` exists on the runtime branch and contains the current component version registry.
+- `web/chat_version.js` no longer owns hardcoded Chat/Stream/Server/LALM display version constants; it fetches and parses the canonical registry.
+- Runtime Server version source advanced to `2.3.8`.
+- Chat version advanced to `1.4.8`.
+- No LALM UI or engine source was changed.
+- **Deployment:** NONE required.
+- **Server restart:** NONE.
+- Final browser verification: reload Chat and confirm the footer reflects the registry values and no longer presents the deployed infrastructure version as the runtime release version.
 
 ## Server v2.3.7 — 2026-09-10
 
@@ -182,38 +212,6 @@ Every event must update this roadmap/release lineage with:
 5. Verification state.
 6. Relevant commit lineage.
 
-### Example
-
-```text
-Server v5.5.6
-
-Chat v5.5.5
-- Sidebar fix.
-
-LALM v5.5.4
-- No change.
-```
-
-Next LALM-only event:
-
-```text
-Server v5.5.7
-
-LALM v5.5.5
-- Inference fix.
-```
-
-If that fails:
-
-```text
-Server v5.5.8
-
-LALM v5.5.6
-- Failed inference attempt recorded.
-```
-
-The next fix receives another Server version and another LALM version increment.
-
 ## Roadmap direction
 
 ### Server
@@ -221,27 +219,32 @@ The next fix receives another Server version and another LALM version increment.
 - Preserve runtime hot-update/no-redeploy workflow for runtime-owned application changes.
 - Keep stable infrastructure changes isolated to `main` and the deployment boundary.
 - Maintain complete Server release lineage.
+- Treat `VERSION.txt` as the canonical repository version registry for display/update-check consumers.
 
 ### Chat
 
 - Continue user-facing Chat/runtime fixes as targeted runtime hot updates.
-- Keep Chat version display authoritative and self-refreshing from server/module status.
+- Fetch version information from the canonical version registry instead of duplicating component versions.
+- Keep Chat status presentation tied to `/api/lalm/status`, not upstream bridge configuration.
 - Preserve stream, request, session, and Truth Firewall boundaries.
-- Keep local LALM readiness presentation tied to `/api/lalm/status`, not upstream bridge configuration.
 
 ### LALM
 
 - Continue R39/native inference work independently of Chat where the user-facing Chat protocol is unchanged.
-- Expose authoritative LALM UI/runtime version and revision information through status endpoints.
+- Expose authoritative LALM UI/runtime version and revision information through the registry/status surfaces.
 - Preserve correctness/reference fallback while native runtime work evolves.
 
 ## Version ownership map
 
-| Module | Canonical owner | Cross-module consumers |
-|---|---|---|
-| Server | `api/index.py` → `VERSION` | Chat, LALM/status, admin/status surfaces |
-| Chat | `web/chat_version.js` → `CHAT_VERSION` | Chat itself |
-| LALM UI | `api/control_plane.py` → `LALM_UI_VERSION` → `/api/lalm/status` | Chat and other status surfaces |
-| LALM engine | `runtime_hot/r39_engine.py` → `HOT_REVISION` / `HOT_SERVER_VERSION` | LALM status and diagnostics |
+| Module | Canonical registry key | Previous in-code owner | Cross-module consumers |
+|---|---|---|---|
+| Server runtime | `SERVER_RUNTIME` | `api/index.py` → `VERSION` | Chat, status surfaces, update checks |
+| Server UI | `SERVER_UI` | `api/control_plane.py` → `SERVER_UI_VERSION` | Server/admin status surfaces |
+| Chat | `CHAT` | `web/chat_version.js` → `CHAT_VERSION` | Chat itself, update checks |
+| Stream | `STREAM` | Chat stream/display surfaces | Chat and diagnostics |
+| LALM UI | `LALM_UI` | `api/control_plane.py` → `LALM_UI_VERSION` | Chat and LALM status surfaces |
+| LALM engine | `LALM_ENGINE_REVISION`, `LALM_ENGINE_HOT_SERVER_VERSION` | `runtime_hot/r39_engine.py` → `HOT_REVISION` / `HOT_SERVER_VERSION` | LALM status and diagnostics |
 
-**Rule:** consumers query the owner. They do not copy another module's version into a second manually maintained constant.
+**Rule:** `VERSION.txt` is the canonical repository registry for version display/update-check data. A consumer fetches the registry when it needs those values; it must not create a second manually maintained copy of another module's version.
+
+**Update-check pattern:** a client may carry its installed/local version metadata, fetch the hosted `VERSION.txt`, compare the relevant component key, and only apply an update when the authoritative available value differs according to the component's update policy.
