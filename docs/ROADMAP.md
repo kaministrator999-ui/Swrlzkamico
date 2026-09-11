@@ -2,17 +2,51 @@
 
 ## Current release
 
-**Server v2.3.15**
+**Server v2.3.16**
 
-This runtime event replaces the incomplete page/iframe Google-login bridge with direct Google Identity Services integration inside Chat and completes the first functional Account settings submenus.
+This runtime event scopes Chat state to the signed-in Google identity, replaces token-by-token scroll chasing with interruptible line-follow behavior, and adds bounded per-thread incremental LALM prefill reuse.
 
 ### Module state
 
-- **Server runtime v2.3.15** — current runtime development lineage.
-- **Chat v1.4.13** — direct Google sign-in button, separated account identity/settings controls, and functional account settings UI.
-- **Google Account architecture v1.0.3** — Google Identity Services now initializes directly inside Chat from the existing hidden browser-stored client configuration.
+- **Server runtime v2.3.16** — current runtime development lineage.
+- **Chat v1.4.14** — account-selected browser history/settings plus line-aware, user-interruptible streaming follow.
+- **Google Account architecture v1.0.4** — Google subject now selects isolated Chat-history and preference namespaces on the device.
 - **LALM UI v1.0.0** — unchanged.
-- **LALM engine v2.1.18** / revision `2.1.18-hot-boundary-v9-effective-receipt` — unchanged.
+- **LALM engine v2.1.19** / revision `2.1.19-hot-boundary-v10-thread-prefill-cache` — bounded per-thread recurrent-state reuse for incremental conversation prefill.
+
+## Server v2.3.16 — 2026-09-10
+
+### Accomplishment
+
+- Chat history is no longer one undifferentiated browser-local namespace. The signed-in Google account's stable `subject` claim selects a separate local history namespace, and switching accounts reloads the corresponding namespace.
+- Existing pre-account Chat history is migrated once into the first signed-in account namespace so the current user's existing threads are not discarded. Later account switches do not clone another account's history.
+- Profile/personalization settings now use the same account-selected namespace model instead of one global preference key.
+- Sign-in and sign-out persist the namespace being left before changing identity, then load the namespace belonging to the identity being entered.
+- Google credential tokens and hidden OAuth client configuration remain outside Chat history and account preference storage.
+- This release deliberately distinguishes **account-selected local persistence** from **durable cross-device cloud sync**. Google currently selects which browser namespace to load; true cross-device persistence still requires server-side Google-token verification plus a durable account datastore. Ephemeral Vercel instance storage is not used as fake persistence.
+- Streaming follow no longer asks the viewport to move for every stream/status event. It measures the rendered assistant bubble and moves only after the response grows by approximately one visual line.
+- While follow is locked, the newest generated line is positioned near the center of the message viewport and smooth-scroll animation is disabled during the programmatic step to eliminate token-level jitter.
+- Manual wheel/touch/pointer scrolling unlocks generation follow. When the user returns until the generated tail is visible again, follow automatically re-locks.
+- Direct forced renders at stream completion are suppressed when the user intentionally scrolled away, so completion cannot yank the viewport back to the bottom.
+- The hot R39 engine now keeps a bounded per-thread prefill cache containing the exact token prefix, recurrent/KV/short-convolution state, and terminal prefill logits.
+- On a continuing conversation, the engine reuses the cached state only when the previously prefetched token sequence is an exact prefix of the newly rendered prompt. It then prefills only the appended context.
+- Prefix mismatch, worker restart, missing thread identity, cache expiry, or safety-bound overflow falls back to the existing full-prefill path rather than trusting stale state.
+- Conversation context caching is bounded to two recent entries, 20-minute TTL, and 2048 cached prompt tokens per entry to avoid unbounded KV-memory growth.
+- Engine status receipts now report cache hits as `reused N` plus `new M` tokens, making the optimization externally observable rather than inferred from latency alone.
+
+### Verification state
+
+- `web/chat_enhancements.js` owns Google-account namespace selection, one-time legacy migration, account-switch reload, and account-specific preferences.
+- `web/chat_stream_focus.js` owns line-growth detection, follow lock/unlock/re-lock behavior, and suppression of completion-time forced scrolling after manual navigation.
+- `runtime_hot/r39_engine.py` owns bounded exact-prefix recurrent-state reuse and advertises `incrementalConversationPrefill: true` through engine inspection.
+- `versions/server-runtime.txt` reports `2.3.16`.
+- `versions/web-chat.txt` reports `1.4.14`.
+- `versions/google-account.txt` reports `1.0.4`.
+- `versions/lalm-engine.txt` reports `2.1.19` / `2.1.19-hot-boundary-v10-thread-prefill-cache`.
+- **Production deployment:** NONE requested.
+- **Server restart:** NONE.
+- **Manual Vercel deployment:** NONE.
+- Browser behavior and live hot-runtime receipts remain the user-side runtime verification gates.
 
 ## Server v2.3.15 — 2026-09-10
 
