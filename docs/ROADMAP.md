@@ -2,18 +2,43 @@
 
 ## Current release
 
-**Server v2.3.23**
+**Server v2.3.24**
 
-This event improves LALM conversation prefill so a continuing thread can reuse more of the previous turn and spend less work rebuilding context before response generation.
+This event turns assistant generation into reusable future-prefill work so the next user message can begin from the newest safe exact-prefix state already available instead of waiting for post-response warming to finish.
 
 ### Module state
 
-- **Server runtime v2.3.23** — current server development lineage.
+- **Server runtime v2.3.24** — current server development lineage.
 - **Chat v1.4.20** — unchanged in this event.
-- **LALM engine v2.1.20** / revision `2.1.20-hot-boundary-v11-prefill-checkpoints` — prefill reuse and prefill fast-path update.
+- **LALM engine v2.1.21** / revision `2.1.21-hot-boundary-v12-pipelined-prefill` — generation-time checkpoints plus speculative next-turn warmup.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.0** — unchanged.
+
+## Server v2.3.24 — 2026-09-11
+
+### Pipelined prefill / next-turn race behavior
+
+- Runtime evidence from LALM v2.1.20 showed the checkpoint design working: a later same-thread response reused 39 tokens and prefetched only 9, then the next response reused 77 and again prefetched only 9.
+- Generated assistant tokens already advance the same recurrent/KV state needed by the next turn, so v2.1.21 now treats that generation work as future prefill work instead of throwing the state away until a later post-response pass.
+- During generation, safe assistant-output checkpoints are published periodically when canonical retokenization proves the generated state is an exact prompt prefix.
+- Before the `COMPLETE` event is exposed, the final assistant-open state is published as an immutable checkpoint. A user who sends the next message immediately can resume from that state even if speculative warmup has not finished.
+- After generation, a daemon warmup continues independently. It first advances through the assistant-close marker and then through the fixed next-user role scaffold, publishing each exact-prefix state as it becomes available.
+- The next request **never waits** for that speculative work. It selects the longest exact-prefix checkpoint that exists at request time and prefills only the remaining suffix plus the new user content.
+- This creates the intended race: if postwarm finishes first, the next request begins from the next-user-open checkpoint; if the user responds first, the request begins from the assistant-open or assistant-closed checkpoint already available and performs only the missing suffix itself.
+- Mutable generation state is never handed directly to another request. Checkpoints clone state before publication, preserving isolation between active generation and later requests.
+- Context checkpoint capacity increased from four to six per thread to preserve prompt, live assistant, terminal assistant, assistant-close, and next-user-open boundaries without immediately evicting useful fallbacks.
+- Prefix mismatch, edited history, worker replacement, expiry, or safety-bound overflow still falls back to correct prefill rather than trusting stale speculative state.
+
+### Verification / deployment state
+
+- `runtime_hot/r39_engine.py` advanced to LALM v2.1.21 on the `runtime` branch.
+- `versions/lalm-engine.txt` advanced to `2.1.21`.
+- `versions/server-runtime.txt` advanced to `2.3.24`.
+- **Chat version:** unchanged because Chat code did not change.
+- **Production deployment:** NONE requested; this is a runtime-hot LALM update.
+- **Server restart:** NONE requested.
+- Acceptance receipt: inspect the next same-thread camera log for checkpoint kinds/reuse counts and verify that a rapid next message can start without waiting for speculative postwarm completion.
 
 ## Server v2.3.23 — 2026-09-11
 
