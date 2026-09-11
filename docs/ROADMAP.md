@@ -2,18 +2,56 @@
 
 ## Current release
 
-**Server v2.3.24**
+**Server v2.3.25**
 
-This event turns assistant generation into reusable future-prefill work so the next user message can begin from the newest safe exact-prefix state already available instead of waiting for post-response warming to finish.
+This event adds a selectable Ice Dragon visual theme to Web Chat while preserving the existing default theme, current Chat architecture, account behavior, streaming behavior, and runtime-only ownership.
 
 ### Module state
 
-- **Server runtime v2.3.24** — current server development lineage.
-- **Chat v1.4.20** — unchanged in this event.
-- **LALM engine v2.1.21** / revision `2.1.21-hot-boundary-v12-pipelined-prefill` — generation-time checkpoints plus speculative next-turn warmup.
+- **Server runtime v2.3.25** — current server development lineage.
+- **Chat v1.4.21** — selectable Ice Dragon theme pack with persistent user choice.
+- **LALM engine v2.1.21** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.0** — unchanged.
+
+## Server v2.3.25 — 2026-09-11
+
+### Ice Dragon Chat theme pack
+
+- Added a complete Ice Dragon theme package under the runtime-owned Web Chat surface, including local CSS, JavaScript controller, dragon sigil artwork, and ice-shard artwork.
+- Added a compact Chat theme selector with `Default` and `❄ Ice Dragon` choices.
+- Default remains the first-load behavior; Ice Dragon is opt-in and the user's explicit theme choice persists locally across reloads.
+- The theme covers the existing sidebar, top bar, conversation bubbles, composer, send controls, enhancement toolbar, evidence panels, modals, scrollbars, mobile layout, and reduced-motion preference without replacing the Chat page.
+- Preserved the mobile sidebar rule: when the sidebar opens, the workspace may dim but the sidebar itself remains bright and undimmed.
+- Wired the theme through `runtime_pages/manifest.json`, so the existing runtime source loader injects the theme CSS and controller after the normal Chat assets. No stable loader or API change was required.
+- `VERSION.txt` routing was unchanged because Ice Dragon is part of the existing Web Chat module rather than a new independently versioned subsystem.
+
+### Process correction / failure lineage
+
+- The first implementation pass began before the required project-start documents were read and briefly placed duplicate theme files on `main`.
+- After `SWRLZ_PROJECT_START.md`, `SWRLZ_HOTFIX_RULES.md`, `SWRLZ_VERSION_MODULE_EVOLUTION.md`, the active runtime roadmap, `VERSION.txt`, and the affected version authorities were read, ownership was corrected to the `runtime` branch.
+- The misplaced `main` theme files were removed and the bundled `web/chat_account.js` bootstrap was restored to its prior contents, leaving no competing main-owned Chat theme path.
+- Git-triggered deployment is disabled in the repository configuration, and no Vercel deployment or restart was requested or required for this correction.
+
+### Verification / deployment state
+
+- `runtime_pages/manifest.json` now lists the Ice Dragon stylesheet and controller in the `/chat` route asset chain.
+- `versions/server-runtime.txt` advanced to `2.3.25`.
+- `versions/web-chat.txt` advanced to `1.4.21`.
+- **Production deployment:** NONE requested; this is a runtime-only Chat update.
+- **Server restart:** NONE requested.
+- Final acceptance requires a live `/chat` request to confirm runtime asset injection and visible theme-selector behavior.
+
+### Relevant lineage
+
+- Runtime controller: `5627b54d8d7e44aeb3be79ae6cbf1f71f5a33cb5`
+- Runtime theme styles: `0047c77944b3b6f82b7d477ef32ba4a06c4e56fd`
+- Runtime sigil asset: `19715b9e048c252c60756dcdc72591b3202c75f7`
+- Runtime shard asset: `669fc0380697b515330a13c545928e3bc31cec66`
+- Runtime manifest wiring: `c2b0c0e80fa424d5cbcc0274b1f6f9a714ab5859`
+- Server version authority: `c625390e263bf71d16596b12830a951b796044c6`
+- Chat version authority: `1756544c5cdf2f1e205bcd4fdb754be70048311a`
 
 ## Server v2.3.24 — 2026-09-11
 
