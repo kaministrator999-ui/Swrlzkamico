@@ -1,4 +1,4 @@
-/* §wyrlz Web Chat viewport + responsive correction — Server 2.3.29 / Chat 1.4.25 */
+/* §wyrlz Web Chat viewport + responsive correction — Server 2.3.30 / Chat 1.4.26 */
 
 .workspace,
 .messages,
@@ -73,6 +73,7 @@
     height: 100% !important;
     min-height: 0 !important;
     overflow: hidden !important;
+    z-index: auto !important;
   }
 
   .workspace {
@@ -83,7 +84,6 @@
     overflow: hidden;
   }
 
-  /* Drawer must stay visually independent from the dimmed workspace. */
   .sidebar {
     z-index: 100 !important;
     opacity: 1 !important;
@@ -94,6 +94,7 @@
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transform: translate3d(-105%, 0, 0);
+    pointer-events: auto !important;
   }
 
   body.sidebar-open .sidebar {
@@ -104,10 +105,14 @@
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     transform: translate3d(0, 0, 0) !important;
+    pointer-events: auto !important;
   }
 
+  /* The scrim must never cover the drawer itself. */
   .sidebar-scrim {
     z-index: 90 !important;
+    inset: 0 0 0 min(320px, calc(100% - 44px)) !important;
+    width: auto !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     filter: none !important;
@@ -258,6 +263,13 @@
     --sidebar: 238px;
   }
 
+  .app,
+  .workspace {
+    height: 100svh !important;
+    max-height: 100svh !important;
+    min-height: 0 !important;
+  }
+
   .app {
     grid-template-columns: var(--sidebar) minmax(0, 1fr);
     width: 100%;
@@ -267,7 +279,23 @@
 
   .sidebar {
     width: var(--sidebar);
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
     padding-inline: 10px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .thread-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .sidebar-foot,
+  .swrlz-account-dock {
+    flex: 0 0 auto;
   }
 
   .workspace {
