@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.24
-REVISION=2.1.24-hot-boundary-v15-progressive-prefill-code-verify
+VERSION=2.1.25
+REVISION=2.1.25-hot-boundary-v16-strict-code-live-contract
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
