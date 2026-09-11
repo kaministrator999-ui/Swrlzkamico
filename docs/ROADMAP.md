@@ -2,16 +2,41 @@
 
 ## Current release
 
-**Server v2.3.12**
+**Server v2.3.13**
 
-This runtime event fixes Git-triggered Vercel deployment control for the `runtime` branch itself.
+This runtime event integrates the existing isolated Google login flow into the Chat sidebar footer and establishes the first account-settings dialog surface.
 
 ### Module state
 
-- **Server runtime v2.3.12** — deployment-control configuration corrected on the runtime branch.
-- **Chat v1.4.10** — unchanged.
+- **Server runtime v2.3.13** — overall runtime development lineage advanced.
+- **Chat v1.4.11** — sidebar footer now exposes Google sign-in/account identity and a centered account-settings gear.
+- **Google Account architecture v1.0.1** — the existing Google login test flow is now consumed by Chat as a reusable account identity source.
 - **LALM UI v1.0.0** — unchanged.
 - **LALM engine v2.1.18** / revision `2.1.18-hot-boundary-v9-effective-receipt` — unchanged.
+
+## Server v2.3.13 — 2026-09-10
+
+### Accomplishment
+
+- Connected Chat's left sidebar footer to the existing `/live/pages/google-login-test.html` Google Identity flow without duplicating OAuth credentials or exposing the setup fields directly in the Chat sidebar.
+- When the Google test flow has already been configured in the browser, Chat renders only the Google sign-in control in the footer.
+- After a successful Google login, the footer replaces the sign-in control with the authenticated account identity (picture/name/email).
+- Added a centered gear button below the account area that opens an Account settings dialog.
+- The dialog provides the initial settings menu structure for Profile, Data & privacy, Personalization, and Security, plus sign-out control when an account is present.
+- Chat uses the same browser-local Google client configuration and safe identity claims already produced by the isolated test page; it does not duplicate a client secret or expose additional credential fields in Chat.
+- Server-side Google ID-token verification is still a future stable-auth boundary. This release is the runtime UI/account-shell integration only.
+
+### Verification state
+
+- `web/chat_enhancements.js` now creates the account dock, consumes the existing Google login page, mirrors authenticated account claims, and owns the settings modal behavior.
+- `web/chat_enhancements.css` now styles the account dock, account identity card, centered gear, and settings dialog.
+- `versions/server-runtime.txt` reports `2.3.13`.
+- `versions/web-chat.txt` reports `1.4.11`.
+- `versions/google-account.txt` reports `1.0.1`.
+- **Production deployment:** NONE.
+- **Server restart:** NONE.
+- **Manual Vercel deployment:** NONE.
+- User-side browser verification remains the final UI check.
 
 ## Server v2.3.12 — 2026-09-10
 
@@ -26,15 +51,14 @@ This runtime event fixes Git-triggered Vercel deployment control for the `runtim
 
 - Vercel deployment history confirmed Server v2.3.11 runtime commits created Preview deployments on the `runtime` branch.
 - This corrects the earlier mistaken release note that automatic Git deployments were already disabled for runtime work.
-- The first commit that changes `runtime/vercel.json` may itself still create one final Preview deployment because it is evaluated from the branch state that existed before the commit took effect.
-- The subsequent Server v2.3.12 version-authority and roadmap commits are the verification actions: they should not create new Vercel deployments if the correction is effective.
+- The subsequent Server v2.3.12 version-authority and roadmap commits produced no new Vercel deployments, verifying the correction.
 
 ### Deployment state
 
 - **Production deployment:** NONE.
 - **Server restart:** NONE.
 - **Manual Vercel deployment:** NONE.
-- Git-triggered deployment suppression is now configured on both `main` and `runtime`.
+- Git-triggered deployment suppression is configured on both `main` and `runtime`.
 
 ## Server v2.3.11 — 2026-09-10
 
@@ -43,7 +67,6 @@ This runtime event fixes Git-triggered Vercel deployment control for the `runtim
 - Chat no longer has to visibly fall back to a yellow/pending state on every refresh when that same browser tab has already verified the LALM as ready moments earlier.
 - A recent verified-ready state is restored immediately from session state, while `/api/lalm/status` is still checked in the background so the UI does not blindly trust stale readiness forever.
 - Status polling was reduced from every 15 seconds to every 60 seconds, with an additional check when the browser regains focus.
-- The stable deployed server already warms the R39 model during each worker cold start through the startup warm path. This release did not alter that LALM engine behavior; it changed Chat readiness presentation.
 
 ### Verification evidence
 
