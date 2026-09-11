@@ -1,9 +1,10 @@
-"""§wyrlz Server 2.3.8 runtime entrypoint.
+"""§wyrlz Server 2.3.9 runtime entrypoint.
 
-2.3.8 introduces the canonical VERSION.txt registry and keeps runtime-owned
-Chat/LALM behavior on the durable runtime branch. Startup LALM warming is
-owned by the stable infrastructure entrypoint; this runtime entrypoint
-remains the live application source of truth for hot application behavior.
+2.3.9 introduces per-module canonical version files indexed by VERSION.txt and
+keeps runtime-owned Chat/LALM behavior on the durable runtime branch. Startup
+LALM warming is owned by the stable infrastructure entrypoint; this runtime
+entrypoint remains the live application source of truth for hot application
+behavior.
 """
 from __future__ import annotations
 
@@ -21,7 +22,7 @@ from api.live_source_guard import install as _install_live_source_guard
 from api.control_plane import install as _install_control_plane
 from api.native_status import install as _install_native_status
 
-VERSION = "2.3.8"
+VERSION = "2.3.9"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
