@@ -1,8 +1,8 @@
 ID=google-account
-VERSION=1.0.1
+VERSION=1.0.2
 KIND=account-auth-architecture
 SOURCE_BRANCH=mixed
-STATUS=active
+STATUS=failed-attempt
 DISPLAY_NAME=Google Account Architecture
 UPDATE_POLICY=runtime-ui/stable-auth-boundary
-BASELINE_NOTE=Chat footer now consumes the existing isolated Google login flow and exposes the authenticated account plus account-settings entry point. Server-side token verification remains the next stable-auth boundary.
+BASELINE_NOTE=Direct-in-Chat Google Identity attempt replaced the page/iframe integration but contained a loader syntax error; preserved as failed lineage.
