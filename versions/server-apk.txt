@@ -1,0 +1,8 @@
+ID=server-apk
+VERSION=UNASSIGNED
+KIND=android-server-apk
+SOURCE_BRANCH=external-or-future-repo
+STATUS=reserved
+DISPLAY_NAME=§wyrlz Android Server APK
+UPDATE_POLICY=client-update-check
+BASELINE_NOTE=Reserved canonical version authority. Assign the real current version when the APK artifact/source is present and verified; do not invent a version.
