@@ -2,6 +2,10 @@
 const GOOGLE_CLIENT_KEY='swrlzGoogleLoginTestClientId';
 const GOOGLE_CLAIMS_KEY='swrlzGoogleLoginTestClaims';
 const ACCOUNT_PREFS_KEY='swrlzAccountPrefsV1';
+const ACCOUNT_PREFS_PREFIX='swrlzAccountPrefsV2.account.';
+const PREFS_MIGRATION_KEY='swrlzAccountPrefsV2.migrated';
+const CHAT_ACCOUNT_PREFIX='swrlz.vercel.chat.v2.account.';
+const CHAT_MIGRATION_KEY='swrlz.vercel.chat.v2.migrated';
 const GIS_SRC='https://accounts.google.com/gsi/client';
 
 function make(tag,attrs={},html=''){
@@ -11,8 +15,22 @@ function make(tag,attrs={},html=''){
   return el;
 }
 function safeClaims(raw){try{const v=JSON.parse(raw||'null');return v&&v.authenticated?v:null}catch{return null}}
-function readPrefs(){try{return {...{displayName:'',preferredName:'',useGoogleName:true,responseDepth:'adaptive',retainLocalPrefs:true},...(JSON.parse(localStorage.getItem(ACCOUNT_PREFS_KEY)||'{}')||{})}}catch{return {displayName:'',preferredName:'',useGoogleName:true,responseDepth:'adaptive',retainLocalPrefs:true}}}
-function savePrefs(next){localStorage.setItem(ACCOUNT_PREFS_KEY,JSON.stringify(next))}
+function currentClaims(){return safeClaims(sessionStorage.getItem(GOOGLE_CLAIMS_KEY))}
+function accountSubject(){const value=String(currentClaims()?.subject||'').trim();return value||''}
+function accountSuffix(){const subject=accountSubject();return subject?encodeURIComponent(subject):''}
+function prefsKey(){const suffix=accountSuffix();return suffix?ACCOUNT_PREFS_PREFIX+suffix:ACCOUNT_PREFS_KEY}
+function chatKey(){const suffix=accountSuffix();return suffix?CHAT_ACCOUNT_PREFIX+suffix:STORAGE_KEY}
+function defaultPrefs(){return {displayName:'',preferredName:'',useGoogleName:true,responseDepth:'adaptive',retainLocalPrefs:true}}
+function migratePrefsOnce(){
+  const suffix=accountSuffix();if(!suffix)return;
+  const target=ACCOUNT_PREFS_PREFIX+suffix;
+  if(localStorage.getItem(target)!==null||localStorage.getItem(PREFS_MIGRATION_KEY))return;
+  const legacy=localStorage.getItem(ACCOUNT_PREFS_KEY);
+  if(legacy!==null)localStorage.setItem(target,legacy);
+  localStorage.setItem(PREFS_MIGRATION_KEY,suffix);
+}
+function readPrefs(){migratePrefsOnce();try{return {...defaultPrefs(),...(JSON.parse(localStorage.getItem(prefsKey())||'{}')||{})}}catch{return defaultPrefs()}}
+function savePrefs(next){localStorage.setItem(prefsKey(),JSON.stringify(next))}
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function decodeJwtPayload(token){
   const part=String(token||'').split('.')[1];if(!part)throw new Error('Google credential was not a JWT');
@@ -33,6 +51,40 @@ function loadGoogleIdentity(){
   return window.__swrlzGoogleIdentityPromise;
 }
 
+function parseChatState(raw){
+  try{
+    const parsed=JSON.parse(raw||'null');
+    if(parsed&&parsed.version===1&&Array.isArray(parsed.threads)&&parsed.threads.length){
+      parsed.threads=parsed.threads.filter(t=>t&&typeof t.id==='string'&&Array.isArray(t.messages)).slice(0,80);
+      if(parsed.threads.length){parsed.currentId=parsed.threads.some(t=>t.id===parsed.currentId)?parsed.currentId:parsed.threads[0].id;return parsed}
+    }
+  }catch(_){ }
+  const first=freshThread();return {version:1,currentId:first.id,threads:[first]};
+}
+function persistStateTo(key){try{localStorage.setItem(key,JSON.stringify(state));return true}catch(_){toast('Conversation storage is full; export before refreshing.');return false}}
+function migrateChatOnce(){
+  const suffix=accountSuffix();if(!suffix)return;
+  const target=CHAT_ACCOUNT_PREFIX+suffix;
+  if(localStorage.getItem(target)!==null||localStorage.getItem(CHAT_MIGRATION_KEY))return;
+  const legacy=localStorage.getItem(STORAGE_KEY);
+  if(legacy!==null)localStorage.setItem(target,legacy);
+  localStorage.setItem(CHAT_MIGRATION_KEY,suffix);
+}
+function loadScopedChat(){migrateChatOnce();return parseChatState(localStorage.getItem(chatKey()))}
+function switchScopedChat(){state=loadScopedChat();render(false)}
+function installAccountScopedChat(){
+  if(window.__swrlzAccountScopedChatInstalled)return;
+  window.__swrlzAccountScopedChatInstalled=true;
+  migrateChatOnce();
+  if(accountSubject())state=loadScopedChat();
+  saveState=function(){persistStateTo(chatKey())};
+  window.addEventListener('swrlz:account-change',()=>{switchScopedChat()});
+  window.addEventListener('storage',event=>{if(event.key===chatKey()){state=loadScopedChat();render(false)}});
+  render(false);
+}
+function saveCurrentNamespace(){persistStateTo(chatKey())}
+function emitAccountChange(){window.dispatchEvent(new CustomEvent('swrlz:account-change',{detail:{signedIn:Boolean(accountSubject())}}))}
+
 function setupAccountFooter(){
   const foot=document.querySelector('.sidebar-foot');
   if(!foot||document.querySelector('#swrlzAccountDock'))return;
@@ -42,10 +94,10 @@ function setupAccountFooter(){
   const gear=make('button',{id:'swrlzAccountSettings',type:'button',class:'swrlz-account-gear','aria-label':'Account settings',title:'Account settings'},'⚙');
   dock.append(loginHost,account,gear);
   const versionLine=foot.querySelector('#swrlzChatVersion,.swrlz-version-line');foot.insertBefore(dock,versionLine||null);
-  let claims=safeClaims(sessionStorage.getItem(GOOGLE_CLAIMS_KEY));
+  let claims=currentClaims();
 
   const renderAccount=()=>{
-    claims=safeClaims(sessionStorage.getItem(GOOGLE_CLAIMS_KEY));
+    claims=currentClaims();
     if(!claims){account.hidden=true;loginHost.hidden=false;return}
     loginHost.hidden=true;account.hidden=false;
     const prefs=readPrefs();
@@ -57,7 +109,9 @@ function setupAccountFooter(){
     try{
       const c=decodeJwtPayload(response?.credential);
       const safe={authenticated:true,name:c.name||null,given_name:c.given_name||null,family_name:c.family_name||null,email:c.email||null,email_verified:c.email_verified===true,picture:c.picture||null,issuer:c.iss||null,subject:c.sub||null,expires_at:c.exp?new Date(c.exp*1000).toISOString():null};
-      sessionStorage.setItem(GOOGLE_CLAIMS_KEY,JSON.stringify(safe));renderAccount();
+      saveCurrentNamespace();
+      sessionStorage.setItem(GOOGLE_CLAIMS_KEY,JSON.stringify(safe));
+      renderAccount();emitAccountChange();
     }catch(_){loginHost.innerHTML='<div class="swrlz-google-state error">Google sign-in could not be completed.</div>'}
   };
   const bootGoogle=async()=>{
@@ -74,28 +128,30 @@ function setupAccountFooter(){
 
   const closeModal=modal=>modal?.remove();
   const signOut=(modal)=>{
+    saveCurrentNamespace();
     sessionStorage.removeItem(GOOGLE_CLAIMS_KEY);try{window.google?.accounts?.id?.disableAutoSelect?.()}catch(_){ }
-    claims=null;renderAccount();bootGoogle();closeModal(modal);
+    claims=null;renderAccount();emitAccountChange();bootGoogle();closeModal(modal);
   };
   const renderSection=(panel,key)=>{
-    const detail=panel.querySelector('[data-detail]');const prefs=readPrefs();claims=safeClaims(sessionStorage.getItem(GOOGLE_CLAIMS_KEY));
+    const detail=panel.querySelector('[data-detail]');const prefs=readPrefs();claims=currentClaims();
     const identityName=claims?.name||'Not signed in',email=claims?.email||'—',verified=claims?.email_verified?'Verified':'Not verified';
+    const storageScope=claims?'This browser keeps a separate Chat history and preference namespace for this signed-in Google account. Switching Google accounts switches the loaded namespace.':'You are using the signed-out browser namespace.';
     const sections={
       profile:`<h3>Profile</h3><div class="swrlz-setting-grid"><label>Google name<input value="${esc(identityName)}" disabled></label><label>Email<input value="${esc(email)}" disabled></label><label>Display name<input data-pref="displayName" value="${esc(prefs.displayName)}" placeholder="Optional display name"></label><label>Preferred name<input data-pref="preferredName" value="${esc(prefs.preferredName)}" placeholder="How §wyrlz should address you"></label></div><label class="swrlz-check"><input type="checkbox" data-pref-check="useGoogleName" ${prefs.useGoogleName?'checked':''}>Use Google account name when available</label><button type="button" data-save-prefs>Save profile preferences</button>`,
-      data:`<h3>Data & privacy</h3><div class="swrlz-setting-row"><strong>Chat storage</strong><span>Current Chat history remains private on this device unless a server account-storage feature explicitly moves it.</span></div><div class="swrlz-setting-row"><strong>Account preferences</strong><span>These settings are stored locally in this browser today. Google credential tokens and the hidden client configuration are not shown here.</span></div><label class="swrlz-check"><input type="checkbox" data-pref-check="retainLocalPrefs" ${prefs.retainLocalPrefs?'checked':''}>Keep local account preferences on this device</label><button type="button" data-clear-prefs>Clear local account preferences</button>`,
+      data:`<h3>Data & privacy</h3><div class="swrlz-setting-row"><strong>Account-selected Chat storage</strong><span>${esc(storageScope)}</span></div><div class="swrlz-setting-row"><strong>Cross-device sync boundary</strong><span>Google identifies which namespace to load, but durable cross-device cloud sync is not enabled until the server has verified Google sessions plus persistent account storage. No credential token is stored in Chat history.</span></div><label class="swrlz-check"><input type="checkbox" data-pref-check="retainLocalPrefs" ${prefs.retainLocalPrefs?'checked':''}>Keep account preferences on this device</label><button type="button" data-clear-prefs>Clear this account's local preferences</button>`,
       personalization:`<h3>Personalization</h3><div class="swrlz-setting-grid"><label>Response depth<select data-pref="responseDepth"><option value="adaptive" ${prefs.responseDepth==='adaptive'?'selected':''}>Adaptive</option><option value="concise" ${prefs.responseDepth==='concise'?'selected':''}>Concise</option><option value="detailed" ${prefs.responseDepth==='detailed'?'selected':''}>Detailed</option></select></label><label>Preferred name<input data-pref="preferredName" value="${esc(prefs.preferredName)}" placeholder="Optional"></label></div><button type="button" data-save-prefs>Save personalization</button>`,
-      security:`<h3>Security</h3><div class="swrlz-setting-row"><strong>Google sign-in</strong><span>${claims?'Signed in':'Not signed in'}</span></div><div class="swrlz-setting-row"><strong>Email status</strong><span>${esc(verified)}</span></div><div class="swrlz-setting-row"><strong>Session expires</strong><span>${esc(claims?.expires_at||'—')}</span></div><div class="swrlz-setting-row"><strong>Credential display</strong><span>OAuth client configuration and Google credential tokens stay hidden from the account UI.</span></div>${claims?'<button type="button" class="swrlz-signout" data-signout>Sign out</button>':''}`
+      security:`<h3>Security</h3><div class="swrlz-setting-row"><strong>Google sign-in</strong><span>${claims?'Signed in':'Not signed in'}</span></div><div class="swrlz-setting-row"><strong>Email status</strong><span>${esc(verified)}</span></div><div class="swrlz-setting-row"><strong>Session expires</strong><span>${esc(claims?.expires_at||'—')}</span></div><div class="swrlz-setting-row"><strong>Credential display</strong><span>OAuth client configuration and Google credential tokens stay hidden from the account UI and Chat storage.</span></div>${claims?'<button type="button" class="swrlz-signout" data-signout>Sign out</button>':''}`
     };
     detail.innerHTML=sections[key]||sections.profile;
     const collect=()=>{const next=readPrefs();detail.querySelectorAll('[data-pref]').forEach(el=>next[el.dataset.pref]=el.value);detail.querySelectorAll('[data-pref-check]').forEach(el=>next[el.dataset.prefCheck]=el.checked);return next};
     detail.querySelector('[data-save-prefs]')?.addEventListener('click',()=>{savePrefs(collect());renderAccount();renderSection(panel,key)});
-    detail.querySelector('[data-clear-prefs]')?.addEventListener('click',()=>{localStorage.removeItem(ACCOUNT_PREFS_KEY);renderAccount();renderSection(panel,key)});
+    detail.querySelector('[data-clear-prefs]')?.addEventListener('click',()=>{localStorage.removeItem(prefsKey());renderAccount();renderSection(panel,key)});
     detail.querySelector('[data-signout]')?.addEventListener('click',()=>signOut(panel.closest('.swrlz-account-modal')));
   };
   const openSettings=()=>{
     const modal=make('div',{class:'swrlz-modal swrlz-account-modal','data-account-modal':'true'});const panel=make('div',{class:'swrlz-panel swrlz-account-panel'});
-    claims=safeClaims(sessionStorage.getItem(GOOGLE_CLAIMS_KEY));
-    panel.innerHTML=`<div class="swrlz-panel-head"><div><strong>Account settings</strong><div class="swrlz-account-sub">${claims?`${esc(claims.name||'Google account')}<span>${esc(claims.email||'')}</span>`:'Not signed in'}</div></div><button type="button" data-close>Close</button></div><div class="swrlz-settings-shell"><nav class="swrlz-settings-list"><button type="button" data-setting="profile"><strong>Profile</strong><span>Identity and account details</span></button><button type="button" data-setting="data"><strong>Data & privacy</strong><span>Storage and local data controls</span></button><button type="button" data-setting="personalization"><strong>Personalization</strong><span>Account-linked Chat preferences</span></button><button type="button" data-setting="security"><strong>Security</strong><span>Sign-in and session controls</span></button></nav><section class="swrlz-settings-detail" data-detail></section></div>`;
+    claims=currentClaims();
+    panel.innerHTML=`<div class="swrlz-panel-head"><div><strong>Account settings</strong><div class="swrlz-account-sub">${claims?`${esc(claims.name||'Google account')}<span>${esc(claims.email||'')}</span>`:'Not signed in'}</div></div><button type="button" data-close>Close</button></div><div class="swrlz-settings-shell"><nav class="swrlz-settings-list"><button type="button" data-setting="profile"><strong>Profile</strong><span>Identity and account details</span></button><button type="button" data-setting="data"><strong>Data & privacy</strong><span>Storage and account data controls</span></button><button type="button" data-setting="personalization"><strong>Personalization</strong><span>Account-linked Chat preferences</span></button><button type="button" data-setting="security"><strong>Security</strong><span>Sign-in and session controls</span></button></nav><section class="swrlz-settings-detail" data-detail></section></div>`;
     modal.appendChild(panel);document.body.appendChild(modal);
     modal.addEventListener('click',e=>{if(e.target===modal||e.target.closest('[data-close]'))closeModal(modal)});
     panel.querySelectorAll('[data-setting]').forEach(btn=>btn.addEventListener('click',()=>{panel.querySelectorAll('[data-setting]').forEach(x=>x.classList.toggle('active',x===btn));renderSection(panel,btn.dataset.setting)}));
@@ -110,5 +166,5 @@ function setupLalmStatus(){
   const refresh=async()=>{try{const r=await fetch('/api/lalm/status',{cache:'no-store'});if(!r.ok)throw new Error();const s=await r.json(),ready=Boolean(s?.readiness?.interactiveReady),error=s?.readiness?.ok===false;light.classList.remove('ready','error');if(ready){light.classList.add('ready');title.textContent='Local LALM ready';detail.textContent='R39 resident · native backend'}else if(error){light.classList.add('error');title.textContent='Local LALM unavailable';detail.textContent=String(s?.readiness?.detail||s?.readiness?.code||'Check LALM status')}else{title.textContent='Local LALM warming';detail.textContent='R39 is being prepared'}}catch(_){light.classList.remove('ready');light.classList.add('error');title.textContent='Local LALM unavailable';detail.textContent='LALM status unavailable'}};
   refresh();window.setInterval(refresh,60000);
 }
-const apply=()=>{setupLalmStatus();setupAccountFooter()};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply,{once:true});else apply();
+const apply=()=>{installAccountScopedChat();setupLalmStatus();setupAccountFooter()};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply,{once:true});else apply();
 })();
