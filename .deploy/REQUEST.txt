@@ -1,0 +1,11 @@
+# §wyrlz manual production deployment request
+# Updating this file is the assistant-controlled deployment trigger.
+# It must only be changed after the user explicitly approves a production deployment.
+
+TARGET=production
+APPROVED=0
+REQUEST_ID=not-requested
+REQUESTED_AT=not-requested
+REQUESTED_BY=none
+SOURCE_REF=main
+REASON=No deployment requested.
