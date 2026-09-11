@@ -24,6 +24,7 @@
         "web/chat_code_artifacts.js",
         "web/chat_stream_incremental.js",
         "web/chat_background_resume.js",
+        "web/chat_response_polish.js",
         "web/chat_boot_ready.js"
       ]
     },
@@ -33,5 +34,5 @@
     "/live": {"source": "runtime_pages/index.html"}
   },
   "assetRoots": ["web", "runtime_pages"],
-  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Ice Dragon is opt-in and persisted locally. Generated Ice Dragon artwork hydrates from browser-safe base64 text assets. The juvenile companion is used for the sidebar brand, assistant avatars, and new-chat welcome orb. The adult guardian is applied directly to the live Chat message chamber by ice-dragon-art-loader-v3.js using inline !important background longhands so the theme stylesheet's !important shorthand cannot override it. Chat boot stays behind the hydration guard until account-scoped state and, when relevant, Ice Dragon art are ready or the bounded fail-open timer expires. Pending stream request metadata is persisted locally so Chat can reattach to replayable server-side LALM generations after page backgrounding, reload, or return."
+  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Ice Dragon is opt-in and persisted locally. Generated Ice Dragon artwork hydrates from browser-safe base64 text assets. The juvenile companion is used for the sidebar brand, assistant avatars, and new-chat welcome orb. The adult guardian is applied directly to the live Chat message chamber by ice-dragon-art-loader-v3.js using inline !important background longhands so the theme stylesheet's !important shorthand cannot override it. Chat boot stays behind the hydration guard until account-scoped state and, when relevant, Ice Dragon art are ready or the bounded fail-open timer expires. Pending stream request metadata is persisted locally so Chat can reattach to replayable server-side LALM generations after page backgrounding, reload, or return. Response polish keeps the assistant name out of ordinary output and preserves a natural intro/code/details/closing presentation for coding responses."
 }
