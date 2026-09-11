@@ -1,0 +1,8 @@
+ID=lalm-engine
+VERSION=2.1.18
+REVISION=2.1.18-hot-boundary-v9-effective-receipt
+KIND=lalm-engine
+SOURCE_BRANCH=runtime
+STATUS=active
+DISPLAY_NAME=§wyrlz LALM Engine
+UPDATE_POLICY=runtime-hot
