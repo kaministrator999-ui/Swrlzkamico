@@ -2,18 +2,35 @@
 
 ## Current release
 
-**Server v2.3.20**
+**Server v2.3.21**
 
-This event adds first-class controls to every assistant activity log so the visible log, raw message state, conversation state, and stream-camera generation events can be inspected, copied, and exported without leaving Chat.
+This corrective Chat event promotes camera logging to the conversation level: one persistent camera button now opens the complete current thread log, including conversation messages, assistant activity/generation traces, raw thread state, and stream-camera events.
 
 ### Module state
 
-- **Server runtime v2.3.20** — current server development lineage.
-- **Chat v1.4.18** — every assistant activity log now has Camera, Copy, and Export full log controls, including response-generation trace data.
+- **Server runtime v2.3.21** — current server development lineage.
+- **Chat v1.4.19** — adds a persistent whole-conversation camera control in the Chat top bar.
 - **Deployment Control v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
 - **LALM engine v2.1.19** / revision `2.1.19-hot-boundary-v10-thread-prefill-cache` — unchanged in this event.
+
+## Server v2.3.21 — 2026-09-11
+
+### Whole-conversation camera logging
+
+- Added one persistent `📷` control to the Chat top bar for the current conversation, which is the primary camera-log entry point requested for whole-thread diagnostics.
+- Opening the conversation camera renders a single complete log snapshot containing every message in the current thread, rendered assistant activity/generation traces, raw per-message state, the raw thread state, and full stream-camera / response-generation events available in the browser session.
+- The conversation camera includes `Copy whole log`, `Refresh`, `Export full log`, and `Close` controls.
+- `Refresh` rebuilds the snapshot while the modal is open so an actively evolving thread can be recaptured without closing the camera.
+- Existing per-message Activity-log camera/copy/export controls from Server v2.3.20 remain available as secondary diagnostics; the conversation-level camera is now the main control.
+
+### Verification / deployment state
+
+- `web/chat_stream_focus.js` is updated on the `runtime` branch.
+- **Production deployment:** NONE required.
+- **Server restart:** NONE.
+- **Manual Vercel deployment:** NONE for this runtime-hot Chat change.
 
 ## Server v2.3.20 — 2026-09-11
 
