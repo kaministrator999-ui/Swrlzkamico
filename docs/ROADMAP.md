@@ -36,12 +36,15 @@ This event adds a selectable Ice Dragon visual theme to Web Chat while preservin
 
 ### Verification / deployment state
 
-- `runtime_pages/manifest.json` now lists the Ice Dragon stylesheet and controller in the `/chat` route asset chain.
+- `runtime_pages/manifest.json` lists the Ice Dragon stylesheet and controller in the `/chat` route asset chain.
 - `versions/server-runtime.txt` advanced to `2.3.25`.
 - `versions/web-chat.txt` advanced to `1.4.21`.
+- Live `/chat` verification returned HTTP 200 with `x-swrlz-live-source: github-runtime`, `x-swrlz-live-branch: runtime`, and `x-swrlz-live-path: web/chat.html`.
+- The live HTML contains both the Ice Dragon stylesheet and controller injections after the existing Chat assets.
+- The live Ice Dragon CSS and JavaScript asset URLs each returned HTTP 200 and identified their source as the `runtime` branch through the existing live-source loader.
 - **Production deployment:** NONE requested; this is a runtime-only Chat update.
 - **Server restart:** NONE requested.
-- Final acceptance requires a live `/chat` request to confirm runtime asset injection and visible theme-selector behavior.
+- **Verification:** PASSED for runtime source selection, asset injection, and live theme asset delivery. Browser-visible theme selection remains user-controlled by the injected `Default` / `❄ Ice Dragon` selector.
 
 ### Relevant lineage
 
