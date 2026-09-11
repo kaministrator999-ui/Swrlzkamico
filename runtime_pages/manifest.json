@@ -20,7 +20,7 @@
         "web/chat_stream_focus.js",
         "web/chat_version.js",
         "web/themes/ice-dragon/ice-dragon-theme.js",
-        "web/themes/ice-dragon/ice-dragon-art-loader-v5.js",
+        "web/themes/ice-dragon/ice-dragon-art-loader-v6.js",
         "web/chat_code_artifacts.js",
         "web/chat_stream_incremental.js",
         "web/chat_background_resume.js",
@@ -34,5 +34,5 @@
     "/live": {"source": "runtime_pages/index.html"}
   },
   "assetRoots": ["web", "runtime_pages"],
-  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Ice Dragon is opt-in and persisted locally. Generated Ice Dragon artwork hydrates from browser-safe base64 text assets. The juvenile companion is used for the sidebar brand, assistant avatars, and new-chat welcome orb. The adult guardian is rendered by ice-dragon-art-loader-v5.js as a literal IMG node inside the Chat message chamber with a separate readability overlay, while the legacy message background is forced transparent so no CSS background can hide the artwork. Chat boot stays behind the hydration guard until account-scoped state and, when relevant, Ice Dragon art are ready or the bounded fail-open timer expires. Pending stream request metadata is persisted locally so Chat can reattach to replayable server-side LALM generations after page backgrounding, reload, or return. Response polish keeps the assistant name out of ordinary output and preserves a natural intro/code/details/closing presentation for coding responses."
+  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Ice Dragon is opt-in and persisted locally. Generated Ice Dragon artwork hydrates from browser-safe base64 text assets. The juvenile companion is used for the sidebar brand, assistant avatars, and new-chat welcome orb. The adult guardian is rendered by ice-dragon-art-loader-v6.js as a literal IMG node inside the Chat message chamber. The adult base64 is normalized, decoded with atob into binary bytes, wrapped in an image/jpeg Blob, and assigned through an object URL so Android Chrome does not need to decode the adult image from a data URL. The legacy message background is forced transparent while Ice Dragon is active. Chat boot stays behind the hydration guard until account-scoped state and, when relevant, Ice Dragon art are ready or the bounded fail-open timer expires. Pending stream request metadata is persisted locally so Chat can reattach to replayable server-side LALM generations after page backgrounding, reload, or return. Response polish keeps the assistant name out of ordinary output and preserves a natural intro/code/details/closing presentation for coding responses."
 }
