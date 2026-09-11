@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.22
-REVISION=2.1.22-hot-boundary-v13-adaptive-response-budget
+VERSION=2.1.23
+REVISION=2.1.23-hot-boundary-v14-completion-contract-fast-decode
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
