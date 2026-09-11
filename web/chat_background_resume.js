@@ -20,6 +20,10 @@ function streamUrl(input){try{return typeof input==='string'?input:(input?.url||
 function isStreamRequest(input,init){const method=String(init?.method||input?.method||'GET').toUpperCase();if(method!=='POST')return false;return /(?:[?&]action=stream(?:&|$)|\/stream(?:[?#]|$))/i.test(streamUrl(input))}
 function bodyPayload(init){if(typeof init?.body!=='string')return null;try{const value=JSON.parse(init.body);return value&&typeof value==='object'?value:null}catch(_){return null}}
 function normalizePayload(payload){if(!payload||typeof payload!=='object')return payload;const next={...payload};if(!String(next.responseDirective||'').trim())next.responseDirective=CHAT_RESPONSE_DIRECTIVE;return next}
+function recoveryHeaders(){
+  try{if(typeof authHeaders==='function')return {...authHeaders(),Accept:'application/x-ndjson'}}catch(_){ }
+  return {'Accept':'application/x-ndjson','Content-Type':'application/json; charset=utf-8'};
+}
 
 async function serverInstanceId(){
   try{const response=await nativeFetch('/api/server/status',{cache:'no-store',credentials:'same-origin'});if(!response.ok)return '';const value=await response.json();return String(value?.instanceId||'')}catch(_){return ''}
@@ -60,6 +64,7 @@ function currentContext(rid,threadId){
 function phaseNote(message,text,phase='RECONNECTING'){
   if(!message)return;message.meta=message.meta||{};message.meta.phase=phase;message.meta.error='';message.meta.trail=Array.isArray(message.meta.trail)?message.meta.trail:[];
   const last=message.meta.trail[message.meta.trail.length-1];if(last?.reason!==text)message.meta.trail.push({seq:Number(last?.seq||0)+1,phase,reason:text,at:Date.now()});
+  if(message.meta.trail.length>40)message.meta.trail=message.meta.trail.slice(-40);
   if(message.state!=='complete')message.state='streaming';
   try{saveState()}catch(_){ }try{scheduleRender(false)}catch(_){ }
 }
@@ -73,7 +78,7 @@ async function compareInstance(entry,message){
   const previous=String(entry.lastSeenInstanceId||entry.originInstanceId||'');
   if(previous&&previous!==current){
     message.meta=message.meta||{};message.meta.backgroundInstanceChanged=true;
-    phaseNote(message,'A new server instance was detected. §wyrlz restarted the same pending request immediately and is comparing the regenerated stream with the partial response already on this device.');
+    phaseNote(message,'A new server instance was detected. The same pending request is being resumed or regenerated and reconciled against the partial response already on this device.');
   }
 }
 
@@ -127,7 +132,7 @@ async function consumeNdjson(response,context,rid){
   const tail=(buffer+decoder.decode()).trim();if(tail&&!context.terminal){try{const event=JSON.parse(tail);consumeEvent(event,context)}catch(_){}}
   if(!context.terminal)throw new Error('STREAM_ENDED_WITHOUT_TERMINAL');
 }
-function scheduleRetry(rid,delay=1200){if(retryTimers.has(rid))return;retryTimers.set(rid,setTimeout(()=>{retryTimers.delete(rid);resumeOne(rid)},delay))}
+function scheduleRetry(rid,delay=1500){if(retryTimers.has(rid))return;retryTimers.set(rid,setTimeout(()=>{retryTimers.delete(rid);resumeOne(rid)},delay))}
 async function resumeOne(rid){
   if(!rid||live.has(rid)||document.visibilityState==='hidden')return;
   try{if(typeof active!=='undefined'&&active?.requestId===rid)return}catch(_){ }
@@ -137,7 +142,11 @@ async function resumeOne(rid){
   live.add(rid);phaseNote(found.message,'Checking the pending server generation now. Existing work will continue; if the worker moved, the same request will restart immediately and reconcile against the partial response already shown.');
   compareInstance(entry,found.message);
   try{
-    const response=await nativeFetch(entry.url||'/api/chat?action=stream',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{'Accept':'application/x-ndjson','Content-Type':'application/json; charset=utf-8'},body:JSON.stringify(entry.body)});
+    const response=await nativeFetch(entry.url||'/api/chat?action=stream',{method:'POST',credentials:'same-origin',cache:'no-store',headers:recoveryHeaders(),body:JSON.stringify(entry.body)});
+    if(response.status===401){
+      phaseNote(found.message,'Generation recovery is waiting for the current Chat access token before it can reattach.','RECONNECTING');
+      return;
+    }
     await consumeNdjson(response,context,rid);
   }catch(err){
     phaseNote(found.message,`Generation recovery is retrying (${String(err?.message||err)}). The pending request remains saved on this device.`);
@@ -156,7 +165,7 @@ window.addEventListener('online',()=>setTimeout(resumeCurrent,60));
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(resumeCurrent,60);else persistNow()});
 window.addEventListener('pagehide',persistNow);
 setTimeout(resumeCurrent,300);
-setInterval(()=>{if(document.visibilityState==='visible')resumeCurrent()},1500);
+setInterval(()=>{if(document.visibilityState==='visible')resumeCurrent()},2500);
 
 window.__swrlzBackgroundResume={resumeCurrent,pending:()=>prune(),live};
 })();
