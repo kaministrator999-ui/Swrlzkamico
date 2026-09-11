@@ -2,18 +2,37 @@
 
 ## Current release
 
-**Server v2.3.21**
+**Server v2.3.22**
 
-This corrective Chat event promotes camera logging to the conversation level: one persistent camera button now opens the complete current thread log, including conversation messages, assistant activity/generation traces, raw thread state, and stream-camera events.
+This corrective Chat event fixes why the whole-conversation camera was present in source but absent in the live mobile header: `chat_enhancements.js` claimed the shared stream-follow guard before `chat_stream_focus.js`, causing the latter to exit before installing its camera control.
 
 ### Module state
 
-- **Server runtime v2.3.21** — current server development lineage.
-- **Chat v1.4.19** — adds a persistent whole-conversation camera control in the Chat top bar.
+- **Server runtime v2.3.22** — current server development lineage.
+- **Chat v1.4.20** — installs the whole-conversation camera from the independently loaded `chat_admin_session.js` path so it is no longer coupled to ownership of the stream-follow guard.
 - **Deployment Control v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
 - **LALM engine v2.1.19** / revision `2.1.19-hot-boundary-v10-thread-prefill-cache` — unchanged in this event.
+
+## Server v2.3.22 — 2026-09-11
+
+### Whole-conversation camera visibility correction
+
+- User screenshot verified the top bar showed the live status indicator and settings gear but no conversation camera button.
+- Live `/api/chat` inspection confirmed script order is `chat_admin_session.js` → `chat_enhancements.js` → `chat_stream_focus.js` → `chat_version.js`.
+- `chat_enhancements.js` installs the shared `window.__swrlzStreamFollowInstalled` guard before `chat_stream_focus.js` runs; therefore the top-level guard in `chat_stream_focus.js` caused that entire file to return before its later conversation-camera installer executed.
+- The whole-conversation camera is now installed independently by `chat_admin_session.js`, which loads before the competing stream-follow owners and does not depend on that guard.
+- The top-bar `📷` control opens a complete current-thread snapshot containing all messages, stored assistant generation/activity trails, rendered activity trace text when available, raw message state, and raw thread state.
+- The viewer includes `Copy whole log`, `Refresh`, `Export full log`, and `Close`.
+- `chat_stream_focus.js` may still install its richer camera path when it owns the stream controller, but both paths use the same `#swrlzConversationCamera` identity so only one top-bar button is created.
+
+### Verification / deployment state
+
+- Runtime files and version authorities updated on the `runtime` branch.
+- **Production deployment:** NONE required.
+- **Server restart:** NONE.
+- **Manual Vercel deployment:** NONE for this runtime-hot Chat correction.
 
 ## Server v2.3.21 — 2026-09-11
 
@@ -155,9 +174,9 @@ This corrective Chat event promotes camera logging to the conversation level: on
 ### Module versions established
 
 - Server runtime `2.3.16`.
-- Chat `1.4.14`.
-- Google Account architecture `1.0.4`.
-- LALM engine `2.1.19` / `2.1.19-hot-boundary-v10-thread-prefill-cache`.
+- Chat `v1.4.14`.
+- Google Account architecture `v1.0.4`.
+- LALM engine `v2.1.19` / `2.1.19-hot-boundary-v10-thread-prefill-cache`.
 
 ## Server v2.3.15 — 2026-09-10
 
