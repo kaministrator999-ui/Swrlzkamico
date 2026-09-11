@@ -7,6 +7,7 @@ const MAX_AGE_MS=30*60*1000;
 const live=new Set();
 const retryTimers=new Map();
 const nativeFetch=window.fetch.bind(window);
+const CHAT_RESPONSE_DIRECTIVE='Answer naturally without printing, announcing, or signing with the assistant name unless the user explicitly asks about identity or the name. For programming requests, unless the user explicitly asks for code only, give a short natural lead-in, then complete runnable code, then a concise explanation or overview of what the code does, and finish with one short natural closing sentence after the explanation. Keep code, explanation, and claims mutually consistent and verify syntax, formulas, input/output behavior, and requested requirements before ending.';
 
 function loadStore(){try{const value=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');return value&&typeof value==='object'?value:{}}catch(_){return {}}}
 function saveStore(store){try{localStorage.setItem(STORE_KEY,JSON.stringify(store))}catch(_){}}
@@ -18,6 +19,7 @@ function prune(store=loadStore()){
 function streamUrl(input){try{return typeof input==='string'?input:(input?.url||'')}catch(_){return ''}}
 function isStreamRequest(input,init){const method=String(init?.method||input?.method||'GET').toUpperCase();if(method!=='POST')return false;return /(?:[?&]action=stream(?:&|$)|\/stream(?:[?#]|$))/i.test(streamUrl(input))}
 function bodyPayload(init){if(typeof init?.body!=='string')return null;try{const value=JSON.parse(init.body);return value&&typeof value==='object'?value:null}catch(_){return null}}
+function normalizePayload(payload){if(!payload||typeof payload!=='object')return payload;const next={...payload};if(!String(next.responseDirective||'').trim())next.responseDirective=CHAT_RESPONSE_DIRECTIVE;return next}
 
 async function serverInstanceId(){
   try{const response=await nativeFetch('/api/server/status',{cache:'no-store',credentials:'same-origin'});if(!response.ok)return '';const value=await response.json();return String(value?.instanceId||'')}catch(_){return ''}
@@ -39,8 +41,11 @@ function forget(rid){
 }
 
 window.fetch=async function(input,init={}){
-  if(isStreamRequest(input,init)){const payload=bodyPayload(init);if(payload?.requestId){remember(payload,streamUrl(input));live.add(String(payload.requestId))}}
-  return nativeFetch(input,init);
+  if(!isStreamRequest(input,init))return nativeFetch(input,init);
+  const raw=bodyPayload(init),payload=normalizePayload(raw),rid=String(payload?.requestId||'');
+  const nextInit=payload?{...init,body:JSON.stringify(payload)}:init;
+  if(rid)remember(payload,streamUrl(input));
+  try{return await nativeFetch(input,nextInit)}catch(err){if(rid)setTimeout(()=>resumeOne(rid),80);throw err}
 };
 
 function currentContext(rid,threadId){
@@ -53,7 +58,7 @@ function currentContext(rid,threadId){
   }catch(_){return null}
 }
 function phaseNote(message,text,phase='RECONNECTING'){
-  if(!message)return;message.meta=message.meta||{};message.meta.phase=phase;message.meta.trail=Array.isArray(message.meta.trail)?message.meta.trail:[];
+  if(!message)return;message.meta=message.meta||{};message.meta.phase=phase;message.meta.error='';message.meta.trail=Array.isArray(message.meta.trail)?message.meta.trail:[];
   const last=message.meta.trail[message.meta.trail.length-1];if(last?.reason!==text)message.meta.trail.push({seq:Number(last?.seq||0)+1,phase,reason:text,at:Date.now()});
   if(message.state!=='complete')message.state='streaming';
   try{saveState()}catch(_){ }try{scheduleRender(false)}catch(_){ }
@@ -122,9 +127,10 @@ async function consumeNdjson(response,context,rid){
   const tail=(buffer+decoder.decode()).trim();if(tail&&!context.terminal){try{const event=JSON.parse(tail);consumeEvent(event,context)}catch(_){}}
   if(!context.terminal)throw new Error('STREAM_ENDED_WITHOUT_TERMINAL');
 }
-function scheduleRetry(rid,delay=2500){if(retryTimers.has(rid))return;retryTimers.set(rid,setTimeout(()=>{retryTimers.delete(rid);resumeOne(rid)},delay))}
+function scheduleRetry(rid,delay=1200){if(retryTimers.has(rid))return;retryTimers.set(rid,setTimeout(()=>{retryTimers.delete(rid);resumeOne(rid)},delay))}
 async function resumeOne(rid){
   if(!rid||live.has(rid)||document.visibilityState==='hidden')return;
+  try{if(typeof active!=='undefined'&&active?.requestId===rid)return}catch(_){ }
   const store=prune(),entry=store[rid];if(!entry)return;
   const found=currentContext(rid,entry.threadId);if(!found)return;
   const context={threadId:found.thread.id,requestId:rid,message:found.message,lastSeq:0,terminal:false,started:performance.now(),__swrlzReplay:true,__swrlzReconcile:{baseline:String(found.message.text||entry.partialText||''),generated:'',mode:'compare',redoNoted:false}};
@@ -146,10 +152,11 @@ function persistNow(){try{saveState()}catch(_){ }}
 
 window.addEventListener('pageshow',()=>setTimeout(resumeCurrent,80));
 window.addEventListener('focus',()=>setTimeout(resumeCurrent,60));
+window.addEventListener('online',()=>setTimeout(resumeCurrent,60));
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(resumeCurrent,60);else persistNow()});
 window.addEventListener('pagehide',persistNow);
-setTimeout(resumeCurrent,350);
-setInterval(()=>{if(document.visibilityState==='visible')resumeCurrent()},4000);
+setTimeout(resumeCurrent,300);
+setInterval(()=>{if(document.visibilityState==='visible')resumeCurrent()},1500);
 
 window.__swrlzBackgroundResume={resumeCurrent,pending:()=>prune(),live};
 })();
