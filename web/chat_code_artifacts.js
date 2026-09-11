@@ -55,5 +55,6 @@ function decorateBubble(bubble){
 
 function scan(root=document){root.querySelectorAll?.('.message.assistant .bubble').forEach(decorateBubble)}
 function install(){scan();const target=document.querySelector('.messages')||document.querySelector('.message-stack')||document.body;const observer=new MutationObserver(records=>{for(const record of records){for(const node of record.addedNodes){if(node.nodeType!==1)continue;if(node.matches?.('.message.assistant .bubble'))decorateBubble(node);else scan(node)}}});observer.observe(target,{childList:true,subtree:true});window.__swrlzCodeArtifactObserver=observer}
+window.__swrlzDecorateCodeArtifact=decorateBubble;
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
