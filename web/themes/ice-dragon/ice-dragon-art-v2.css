@@ -1,9 +1,12 @@
-/* §wyrlz Ice Dragon generated-art layer v3 — companion identity + adult chamber wallpaper */
+/* §wyrlz Ice Dragon generated-art layer v4 — generated art owns the chamber wallpaper */
+/* Suppress every legacy Frozen Sanctum artwork layer while generated art is active. */
+body[data-swrlz-theme="ice-dragon"]::before,
 body[data-swrlz-theme="ice-dragon"]::after{display:none!important}
 
 body[data-swrlz-theme="ice-dragon"] .messages{
   position:relative!important;
   isolation:isolate!important;
+  background:none!important;
 }
 body[data-swrlz-theme="ice-dragon"] .messages::before{
   content:"";
@@ -11,10 +14,10 @@ body[data-swrlz-theme="ice-dragon"] .messages::before{
   inset:0;
   z-index:0;
   pointer-events:none;
-  background-image:var(--ice-dragon-adult,none);
-  background-position:50% 42%;
-  background-size:cover;
-  background-repeat:no-repeat;
+  background-image:var(--ice-dragon-adult,none)!important;
+  background-position:50% 42%!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
   opacity:1;
 }
 body[data-swrlz-theme="ice-dragon"] .messages::after{
@@ -25,7 +28,7 @@ body[data-swrlz-theme="ice-dragon"] .messages::after{
   pointer-events:none;
   background:
     linear-gradient(180deg,rgba(1,7,16,.18),rgba(1,8,18,.28) 56%,rgba(1,6,14,.42)),
-    linear-gradient(90deg,rgba(1,8,18,.24),transparent 58%);
+    linear-gradient(90deg,rgba(1,8,18,.24),transparent 58%)!important;
 }
 body[data-swrlz-theme="ice-dragon"] .message-stack{position:relative!important;z-index:2!important}
 
@@ -55,5 +58,5 @@ body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble,
 body[data-swrlz-theme="ice-dragon"] .composer-box{backdrop-filter:blur(8px) saturate(118%);-webkit-backdrop-filter:blur(8px) saturate(118%)}
 
 @media(max-width:760px){
-  body[data-swrlz-theme="ice-dragon"] .messages::before{background-position:50% 40%}
+  body[data-swrlz-theme="ice-dragon"] .messages::before{background-position:50% 40%!important}
 }
