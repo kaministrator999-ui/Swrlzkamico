@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.19
-REVISION=2.1.19-hot-boundary-v10-thread-prefill-cache
+VERSION=2.1.20
+REVISION=2.1.20-hot-boundary-v11-prefill-checkpoints
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
