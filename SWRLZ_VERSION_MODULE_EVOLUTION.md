@@ -349,8 +349,70 @@ REPORT HUMAN-READABLE ACCOMPLISHMENT TO USER
 FAILURE = NEW VERSIONED EVENT FOR THE NEXT ATTEMPT
 ```
 
+## 14. Per-module version authority files — REQUIRED GOING FORWARD
+
+Every independently evolving §wyrlz structure must have its **own authoritative version file**. The repository-level `VERSION.txt` is an index/router to those owners, not a second place that duplicates everybody's version number.
+
+The required pattern is:
+
+```text
+VERSION.txt
+   ↓ identifies owner
+versions/<module-id>.txt
+   ↓ authoritative version/revision
+module UI / status / update checker / installer
+```
+
+Current and reserved module authorities include:
+
+- `versions/server-runtime.txt`
+- `versions/server-ui.txt`
+- `versions/web-chat.txt`
+- `versions/stream-contract.txt`
+- `versions/lalm-ui.txt`
+- `versions/lalm-engine.txt`
+- `versions/admin-web.txt`
+- `versions/google-account.txt`
+- `versions/client-apk.txt`
+- `versions/server-apk.txt`
+
+The Android APK version files may remain `UNASSIGNED` until the actual current artifact versions are verified. **Never invent a current version merely to fill the registry.**
+
+### New-module rule
+
+Whenever a new independently evolvable structure is introduced — for example profile/account architecture, memory, search, Windows client/server, admin tooling, authentication architecture, a protocol, an APK, or another substantial subsystem — the same development event must:
+
+1. assign it a stable module ID;
+2. create `versions/<module-id>.txt`;
+3. register that owner in `VERSION.txt`;
+4. make the module's own UI/status/update surfaces read that authority where appropriate;
+5. make cross-module consumers fetch the owner instead of copying its value;
+6. include the module in release/roadmap lineage from that point forward.
+
+### Update rule
+
+When a module changes, update **its own version file** in the same versioned event. Do not bump unrelated module files. If a user-facing surface displays the module version, it must derive that display from the authoritative module file or an API/status surface that itself derives from that file.
+
+### Update-check rule
+
+Clients, APKs, installers, and web/admin surfaces should compare their installed/local version against the authoritative hosted module version. A mismatch is the basis for update availability; equality means the installed/local component is current under that component's update policy.
+
+### Version-source precedence
+
+For version identity, precedence is:
+
+```text
+module-owned version file
+        ↓
+authoritative API/status derived from it
+        ↓
+UI/update checker consuming that source
+```
+
+Roadmaps, changelogs, filenames, labels, and commit messages describe lineage but do not outrank the module-owned version authority.
+
 ## Bottom line
 
-**Server versioning is chronological event lineage. Module versioning is independent component lineage. Canonical ownership prevents drift. Cross-module resolution prevents stale duplication. Roadmap entries preserve history. Failed attempts remain visible. Verification closes each event. The roadmap records the technical implementation; the conversational update explains the resulting accomplishment in human language. Before any repository action that could trigger deployment, §wyrlz must stop, explain the trigger and requirement, and obtain explicit user approval before touching the repository.**
+**Server versioning is chronological event lineage. Module versioning is independent component lineage. Canonical ownership prevents drift. Cross-module resolution prevents stale duplication. Roadmap entries preserve history. Failed attempts remain visible. Verification closes each event. The roadmap records the technical implementation; the conversational update explains the resulting accomplishment in human language. Before any repository action that could trigger deployment, §wyrlz must stop, explain the trigger and requirement, and obtain explicit user approval before touching the repository. Every independently evolving structure must own its own version file, with `VERSION.txt` routing consumers to the correct authority rather than duplicating module versions.**
 
 This document is therefore both the **third required project-start contract** and the foundation for the future **programming-side LALM engineering curriculum/specification**.
