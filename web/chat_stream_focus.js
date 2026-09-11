@@ -195,6 +195,36 @@ function openLogCamera(message,article){
   actions.append(copy,exportAll,close);head.append(title,actions);panel.append(head,pre);modal.append(panel);document.body.append(modal);
 }
 
+function openConversationCamera(){
+  document.querySelector('#swrlzConversationCameraModal')?.remove();
+  const modal=document.createElement('div');modal.id='swrlzConversationCameraModal';modal.className='swrlz-log-camera-modal';
+  const panel=document.createElement('div');panel.className='swrlz-log-camera-panel';
+  const head=document.createElement('div');head.className='swrlz-log-camera-head';
+  const title=document.createElement('strong');title.textContent='📷 Full Conversation Camera';
+  const actions=document.createElement('div');actions.className='swrlz-log-camera-actions';
+  const copy=document.createElement('button');copy.type='button';copy.textContent='Copy whole log';
+  const refresh=document.createElement('button');refresh.type='button';refresh.textContent='Refresh';
+  const exportAll=document.createElement('button');exportAll.type='button';exportAll.textContent='Export full log';
+  const close=document.createElement('button');close.type='button';close.textContent='Close';
+  const pre=document.createElement('pre');
+  const update=()=>{pre.textContent=fullThreadLogText()};update();
+  copy.onclick=async()=>{await clipText(pre.textContent||'');toast?.('Copied whole conversation camera log')};
+  refresh.onclick=()=>{update();toast?.('Conversation camera refreshed')};
+  exportAll.onclick=()=>{const t=currentThread?.(),stamp=new Date().toISOString().replace(/[:.]/g,'-');downloadText(`swrlz-full-log-${typeof safeFilePart==='function'?safeFilePart(t?.id):'thread'}-${stamp}.log.txt`,fullThreadLogText());toast?.('Exported full conversation + generation log')};
+  close.onclick=()=>modal.remove();
+  modal.addEventListener('click',event=>{if(event.target===modal)modal.remove()});
+  actions.append(copy,refresh,exportAll,close);head.append(title,actions);panel.append(head,pre);modal.append(panel);document.body.append(modal);
+}
+
+function installConversationCameraButton(){
+  if(document.querySelector('#swrlzConversationCamera'))return;
+  const host=document.querySelector('.topbar-right');if(!host)return;
+  const button=document.createElement('button');button.id='swrlzConversationCamera';button.type='button';button.className='icon-button swrlz-conversation-camera';button.title='Open whole-conversation camera log';button.setAttribute('aria-label','Open whole-conversation camera log');button.textContent='📷';
+  button.addEventListener('click',openConversationCamera);
+  const exportButton=host.querySelector('#exportChat');host.insertBefore(button,exportButton||host.firstChild);
+}
+window.swrlzOpenConversationCamera=openConversationCamera;
+
 function installLogTools(message,article,trace){
   if(!trace||trace.querySelector('.swrlz-log-tools'))return;
   const tools=document.createElement('span');tools.className='swrlz-log-tools';
@@ -285,6 +315,7 @@ style.textContent=`
 .swrlz-log-tools{display:inline-flex;gap:5px;align-items:center;margin-left:auto}
 .swrlz-log-tool{border:1px solid var(--line);background:rgba(13,23,42,.88);color:var(--secondary);border-radius:8px;padding:4px 7px;font-size:10px;line-height:1.2;cursor:pointer}
 .swrlz-log-tool:hover{border-color:var(--line-strong);color:var(--text)}
+.swrlz-conversation-camera{font-size:16px;line-height:1}
 .swrlz-log-camera-modal{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:14px}
 .swrlz-log-camera-panel{width:min(900px,100%);max-height:90dvh;display:grid;grid-template-rows:auto minmax(0,1fr);border:1px solid var(--line-strong);border-radius:18px;background:#07101d;box-shadow:var(--shadow);overflow:hidden}
 .swrlz-log-camera-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
@@ -294,6 +325,7 @@ style.textContent=`
 @media(max-width:600px){.swrlz-log-tools{width:100%;margin-left:0}.swrlz-log-tool{flex:1}.swrlz-log-camera-head{align-items:flex-start;flex-direction:column}.swrlz-log-camera-actions{width:100%}.swrlz-log-camera-actions button{flex:1}}
 `;
 document.head.append(style);
+installConversationCameraButton();
 installUserScrollIntent();
 render(false);
 })();
