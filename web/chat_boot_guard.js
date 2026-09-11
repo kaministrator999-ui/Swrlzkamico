@@ -1,0 +1,1 @@
+(()=>{"use strict";const root=document.documentElement;const READY='swrlz-chat-ready';try{if(localStorage.getItem('swrlz.chat.theme')==='ice-dragon')document.body?.setAttribute('data-swrlz-theme','ice-dragon')}catch(_){}window.__swrlzChatReveal=()=>root.classList.add(READY);window.__swrlzChatBootStarted=performance.now();setTimeout(()=>window.__swrlzChatReveal?.(),1800)})();
