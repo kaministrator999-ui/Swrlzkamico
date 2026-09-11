@@ -2,17 +2,43 @@
 
 ## Current release
 
-**Server v2.3.18**
+**Server v2.3.19**
 
-This corrective runtime event finalizes account-scoped Chat state, line-aware streaming follow, and incremental per-thread LALM prefill after verifying the actual live runtime asset chain rather than relying on one static middleware path.
+This event adds explicit manual-only production deployment control and prevents the base Chat shell from visibly flashing before the current runtime enhancement layer finishes booting.
 
 ### Module state
 
-- **Server runtime v2.3.18** — current runtime development lineage.
-- **Chat v1.4.16** — Google-account-selected browser history/settings plus single-owner line-aware, user-interruptible streaming follow.
-- **Google Account architecture v1.0.4** — Google subject selects isolated Chat-history and preference namespaces on the device.
+- **Server runtime v2.3.19** — current server development lineage.
+- **Chat v1.4.17** — suppresses the stale/base interface flash during enhancement initialization so refresh presents the current enhanced interface as one coherent load.
+- **Deployment Control v1.0.0** — new independently versioned manual deployment-control module.
+- **Google Account architecture v1.0.4** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
-- **LALM engine v2.1.19** / revision `2.1.19-hot-boundary-v10-thread-prefill-cache` — bounded per-thread recurrent-state reuse for incremental conversation prefill.
+- **LALM engine v2.1.19** / revision `2.1.19-hot-boundary-v10-thread-prefill-cache` — unchanged in this event.
+
+## Server v2.3.19 — 2026-09-10
+
+### Manual deployment control
+
+- Added `.github/workflows/manual-vercel-production.yml` on `main`.
+- Normal Git pushes remain non-deploying because Vercel Git deployments stay disabled.
+- Production deployment is now an explicit workflow action only.
+- Added `.deploy/REQUEST.txt` as the assistant-controlled trigger. It must remain unapproved unless the user has explicitly authorized a production deployment.
+- Registered the new `deployment-control` module in `VERSION.txt` with authority `versions/deployment-control.txt` at `v1.0.0`.
+- The first approved workflow request correctly entered the authorization/deploy pipeline but stopped safely because the repository does not currently have the required `VERCEL_TOKEN` secret. No production deployment occurred from that failed run.
+
+### Chat refresh flash correction
+
+- Inspection confirmed the server returns the Chat shell and injects runtime enhancement CSS in `<head>` plus enhancement JavaScript at the end of `<body>`.
+- The visible "old Chat then snap to new Chat" effect was not a second page replacing the first; it was the base shell becoming visible before enhancement JavaScript finished installing the current runtime UI structures.
+- `web/chat_enhancements.css` now keeps the Chat body hidden until the enhancement layer has created the current account dock marker (`#swrlzAccountDock`). Because the enhancement stylesheet is loaded from `<head>`, the browser waits to reveal the interface until the current runtime UI is assembled.
+- The live production enhancement CSS was fetched after the runtime commit and confirmed to contain the boot-gating rule with `X-SWRLZ-Chat-UI-Source: runtime-override`.
+
+### Deployment / verification state
+
+- Runtime Chat correction: **Deployment NONE**; live runtime CSS verified.
+- Main deployment-control workflow files: committed without automatic Vercel deployment.
+- Approved manual production deployment attempt: **FAILED SAFELY before Vercel CLI execution** because `VERCEL_TOKEN` is not configured in GitHub Actions secrets.
+- Stable per-worker hot-engine refresh infrastructure remains committed on `main` but is not production-active until a successful approved manual production deployment occurs.
 
 ## Server v2.3.18 — 2026-09-10
 
