@@ -1,14 +1,14 @@
 """Hot-swappable R39 engine entrypoint.
 
-v10 keeps the native-dispatch path and adds bounded per-thread recurrent-state reuse
-so a continuing conversation prefills only context appended since its last request
-when the previous tokenized prompt is an exact prefix. Cache miss, worker restart,
-prefix mismatch, or safety bounds fall back to full prefill.
+v11 extends exact-prefix conversation reuse with multi-checkpoint caching, post-response
+assistant-close checkpoints, cached invariant tensors/token embeddings, and quieter
+prefill telemetry. The model math and safety fallbacks remain unchanged.
 """
 from __future__ import annotations
 
 import threading
 import time
+from collections import OrderedDict
 from typing import Any
 
 import numpy as np
@@ -19,11 +19,11 @@ from swyrlz import r39_native as native_bridge
 
 ENGINE_ID = "swrlz_r39_native_qmatvec_v1" if native_bridge.available() else base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_SERVER_VERSION = "2.1.19"
-HOT_REVISION = "2.1.19-hot-boundary-v10-thread-prefill-cache"
+HOT_SERVER_VERSION = "2.1.20"
+HOT_REVISION = "2.1.20-hot-boundary-v11-prefill-checkpoints"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
-_ORIGINAL_MATVEC = base.R39Model.matvec
+_ORIGINAL_ROW = base.R39Model.row
 _ORIGINAL_RENDER_CHAT_PROMPT = base.render_chat_prompt
 
 _MODEL_LOCK = threading.RLock()
@@ -33,12 +33,14 @@ _MODEL_READY_AT = 0.0
 _TENSOR_CACHE_LOCK = threading.RLock()
 _CACHE_BUDGET_BYTES = 96 * 1024 * 1024
 _CACHE_ITEM_MAX_BYTES = 12 * 1024 * 1024
+_TOKEN_ROW_CACHE_MAX = 512
 
 _CONTEXT_LOCK = threading.RLock()
 _CONTEXTS: dict[str, dict[str, Any]] = {}
 _CONTEXT_TTL_SECONDS = 20 * 60
 _CONTEXT_MAX_ENTRIES = 2
 _CONTEXT_MAX_TOKENS = 2048
+_CONTEXT_MAX_CHECKPOINTS = 4
 
 _JOB_LOCK = threading.RLock()
 _JOBS: dict[str, dict[str, Any]] = {}
@@ -80,6 +82,24 @@ def _hot_vector(self: base.R39Model, name: str) -> np.ndarray:
     return _hot_matrix(self, name).reshape(-1)
 
 
+def _hot_row(self: base.R39Model, name: str, row: int) -> np.ndarray:
+    if name != "token_embd.weight":
+        return _ORIGINAL_ROW(self, name, row)
+    cache = getattr(self, "_hot_token_row_cache", None)
+    if cache is None:
+        cache = OrderedDict()
+        self._hot_token_row_cache = cache
+    value = cache.get(int(row))
+    if value is not None:
+        cache.move_to_end(int(row))
+        return value
+    value = _ORIGINAL_ROW(self, name, row).astype(np.float32, copy=False)
+    cache[int(row)] = value
+    if len(cache) > _TOKEN_ROW_CACHE_MAX:
+        cache.popitem(last=False)
+    return value
+
+
 def _fallback_matvec(self: base.R39Model, name: str, x: np.ndarray) -> np.ndarray:
     d = self.desc[name]
     shape = d["shape"]
@@ -118,8 +138,34 @@ def _hot_render_chat_prompt(payload):
 
 base.R39Model.matrix = _hot_matrix
 base.R39Model.vector = _hot_vector
+base.R39Model.row = _hot_row
 base.R39Model.matvec = _hot_matvec
 base.render_chat_prompt = _hot_render_chat_prompt
+
+
+def _prepare_static(model: base.R39Model) -> dict[str, Any]:
+    static = getattr(model, "_hot_static_tensors", None)
+    if static is not None:
+        return static
+    with _MODEL_LOCK:
+        static = getattr(model, "_hot_static_tensors", None)
+        if static is not None:
+            return static
+        layers: list[dict[str, Any]] = []
+        for i, kvh in enumerate(base.LAYER_KV):
+            item: dict[str, Any] = {
+                "attn_norm": model.vector(f"blk.{i}.attn_norm.weight"),
+                "ffn_norm": model.vector(f"blk.{i}.ffn_norm.weight"),
+            }
+            if kvh == 0:
+                item["conv_weight"] = model.matrix(f"blk.{i}.shortconv.conv.weight")
+            else:
+                item["q_norm"] = model.vector(f"blk.{i}.attn_q_norm.weight")
+                item["k_norm"] = model.vector(f"blk.{i}.attn_k_norm.weight")
+            layers.append(item)
+        static = {"layers": layers, "final_norm": model.vector("token_embd_norm.weight")}
+        model._hot_static_tensors = static
+        return static
 
 
 def _get_model() -> base.R39Model:
@@ -133,6 +179,7 @@ def _get_model() -> base.R39Model:
         if not load.get("modelReady"):
             raise base.R39InferenceError(str(load.get("code", "R39_LOAD_FAILED")), str(load.get("detail", "R39 reconstruction failed.")))
         _MODEL = base.R39Model(base.RAW)
+        _prepare_static(_MODEL)
         _MODEL_READY_AT = time.time()
         return _MODEL
 
@@ -165,32 +212,60 @@ def _resume_context(thread_id: str, tokens: list[int]) -> tuple[base.RecurrentSt
         entry = _CONTEXTS.get(thread_id)
         if entry is None:
             return base.RecurrentState(), 0, None, "miss"
-        cached_tokens = entry.get("tokens")
-        cached_state = entry.get("state")
-        cached_logits = entry.get("logits")
-        if not isinstance(cached_tokens, tuple) or cached_state is None:
-            _CONTEXTS.pop(thread_id, None)
-            return base.RecurrentState(), 0, None, "invalid"
-        prefix_len = len(cached_tokens)
-        if prefix_len > len(tokens) or tuple(tokens[:prefix_len]) != cached_tokens:
-            _CONTEXTS.pop(thread_id, None)
+        checkpoints = entry.get("checkpoints")
+        if not isinstance(checkpoints, list):
+            legacy_tokens = entry.get("tokens")
+            legacy_state = entry.get("state")
+            if isinstance(legacy_tokens, tuple) and legacy_state is not None:
+                checkpoints = [{
+                    "tokens": legacy_tokens,
+                    "state": legacy_state,
+                    "logits": entry.get("logits"),
+                    "kind": "legacy",
+                    "updatedAt": entry.get("updatedAt", time.time()),
+                }]
+            else:
+                _CONTEXTS.pop(thread_id, None)
+                return base.RecurrentState(), 0, None, "invalid"
+        best = None
+        for checkpoint in checkpoints:
+            cached_tokens = checkpoint.get("tokens")
+            cached_state = checkpoint.get("state")
+            if not isinstance(cached_tokens, tuple) or cached_state is None:
+                continue
+            prefix_len = len(cached_tokens)
+            if prefix_len <= len(tokens) and tuple(tokens[:prefix_len]) == cached_tokens:
+                if best is None or prefix_len > len(best.get("tokens") or ()):
+                    best = checkpoint
+        if best is None:
             return base.RecurrentState(), 0, None, "prefix-mismatch"
         entry["updatedAt"] = time.time()
-        logits = cached_logits.copy() if isinstance(cached_logits, np.ndarray) else None
-        return _clone_state(cached_state), prefix_len, logits, "hit"
+        best["updatedAt"] = entry["updatedAt"]
+        logits = best.get("logits")
+        return _clone_state(best["state"]), len(best["tokens"]), logits.copy() if isinstance(logits, np.ndarray) else None, str(best.get("kind") or "hit")
 
 
-def _store_context(thread_id: str, tokens: list[int], state: base.RecurrentState, logits: np.ndarray) -> bool:
-    if not thread_id or len(tokens) > _CONTEXT_MAX_TOKENS:
+def _store_context(thread_id: str, tokens: list[int], state: base.RecurrentState, logits: np.ndarray, *, kind: str = "prompt") -> bool:
+    if not thread_id or not tokens or len(tokens) > _CONTEXT_MAX_TOKENS:
         return False
+    token_tuple = tuple(tokens)
+    now = time.time()
+    checkpoint = {
+        "tokens": token_tuple,
+        "state": _clone_state(state),
+        "logits": logits.copy(),
+        "kind": kind,
+        "updatedAt": now,
+    }
     with _CONTEXT_LOCK:
-        _CONTEXTS[thread_id] = {
-            "tokens": tuple(tokens),
-            "state": state,
-            "logits": logits.copy(),
-            "updatedAt": time.time(),
-        }
-    _cleanup_contexts()
+        entry = _CONTEXTS.setdefault(thread_id, {"checkpoints": [], "updatedAt": now})
+        checkpoints = entry.setdefault("checkpoints", [])
+        checkpoints[:] = [cp for cp in checkpoints if cp.get("tokens") != token_tuple]
+        checkpoints.append(checkpoint)
+        checkpoints.sort(key=lambda cp: (len(cp.get("tokens") or ()), float(cp.get("updatedAt", 0))), reverse=True)
+        del checkpoints[_CONTEXT_MAX_CHECKPOINTS:]
+        entry["updatedAt"] = now
+    _cleanup_contexts(now)
     return True
 
 
@@ -198,25 +273,29 @@ def _context_snapshot() -> list[dict[str, Any]]:
     _cleanup_contexts()
     now = time.time()
     with _CONTEXT_LOCK:
-        return [
-            {
+        out = []
+        for key, value in _CONTEXTS.items():
+            checkpoints = value.get("checkpoints") or []
+            out.append({
                 "threadId": key,
-                "tokenCount": len(value.get("tokens") or ()),
+                "checkpointTokenCounts": [len(cp.get("tokens") or ()) for cp in checkpoints],
+                "checkpointKinds": [str(cp.get("kind") or "unknown") for cp in checkpoints],
                 "ageSeconds": round(now - float(value.get("updatedAt", now)), 2),
-            }
-            for key, value in _CONTEXTS.items()
-        ]
+            })
+        return out
 
 
 def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *, need_logits: bool) -> np.ndarray | None:
-    x = model.row("token_embd.weight", token).astype(np.float32)
+    static = _prepare_static(model)
+    x = model.row("token_embd.weight", token)
     for i, kvh in enumerate(base.LAYER_KV):
-        n = base._rms(x, model.vector(f"blk.{i}.attn_norm.weight"))
+        layer = static["layers"][i]
+        n = base._rms(x, layer["attn_norm"])
         if kvh == 0:
             projected = model.matvec(f"blk.{i}.shortconv.in_proj.weight", n)
             b, c, z = np.split(projected, 3)
             bx = (b * z).astype(np.float32)
-            cw = model.matrix(f"blk.{i}.shortconv.conv.weight")
+            cw = layer["conv_weight"]
             hist = state.conv[i]
             cv = (hist[0] * cw[:, 0] + hist[1] * cw[:, 1] + bx * cw[:, 2]).astype(np.float32)
             state.conv[i][0] = hist[1].copy()
@@ -226,34 +305,73 @@ def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *
             q = model.matvec(f"blk.{i}.attn_q.weight", n)
             k = model.matvec(f"blk.{i}.attn_k.weight", n)
             v = model.matvec(f"blk.{i}.attn_v.weight", n)
-            qn = model.vector(f"blk.{i}.attn_q_norm.weight")
-            kn = model.vector(f"blk.{i}.attn_k_norm.weight")
-            q = np.concatenate([base._rms(q.reshape(16, 64)[h], qn) for h in range(16)]).astype(np.float32)
-            k = np.concatenate([base._rms(k.reshape(8, 64)[h], kn) for h in range(8)]).astype(np.float32)
+            qn = layer["q_norm"]
+            kn = layer["k_norm"]
+            q2 = q.reshape(16, 64)
+            k2 = k.reshape(8, 64)
+            q = np.concatenate([base._rms(q2[h], qn) for h in range(16)]).astype(np.float32)
+            k = np.concatenate([base._rms(k2[h], kn) for h in range(8)]).astype(np.float32)
             q = base._rope(q, 16, 64, state.pos)
             k = base._rope(k, 8, 64, state.pos)
             state.kv[i].append((k.copy(), v.copy()))
+            q_heads = q.reshape(16, 64)
             att = np.zeros((16, 64), np.float32)
+            history = state.kv[i]
             for h in range(16):
                 kh = h // 2
-                qh = q.reshape(16, 64)[h]
-                scores = np.array([np.dot(qh, kk.reshape(8, 64)[kh]) / 8.0 for kk, _ in state.kv[i]], np.float32)
+                qh = q_heads[h]
+                keys = np.stack([kk.reshape(8, 64)[kh] for kk, _ in history], axis=0)
+                values = np.stack([vv.reshape(8, 64)[kh] for _, vv in history], axis=0)
+                scores = (keys @ qh).astype(np.float32) / np.float32(8.0)
                 weights = np.exp(scores - scores.max(), dtype=np.float32)
                 weights /= weights.sum(dtype=np.float32)
-                for weight, (_, vv) in zip(weights, state.kv[i]):
-                    att[h] += weight * vv.reshape(8, 64)[kh]
+                att[h] = weights @ values
             op = model.matvec(f"blk.{i}.attn_output.weight", att.reshape(-1))
         residual = (x + op).astype(np.float32)
-        fn = base._rms(residual, model.vector(f"blk.{i}.ffn_norm.weight"))
+        fn = base._rms(residual, layer["ffn_norm"])
         gate = model.matvec(f"blk.{i}.ffn_gate.weight", fn)
         up = model.matvec(f"blk.{i}.ffn_up.weight", fn)
         ff = model.matvec(f"blk.{i}.ffn_down.weight", (base._silu(gate) * up).astype(np.float32))
         x = (residual + ff).astype(np.float32)
-    x = base._rms(x, model.vector("token_embd_norm.weight"))
+    x = base._rms(x, static["final_norm"])
     state.pos += 1
     if not need_logits:
         return None
     return model.matvec("token_embd.weight", x)
+
+
+def _postwarm_assistant_close(
+    model: base.R39Model,
+    thread_id: str,
+    prompt: str,
+    prompt_tokens: list[int],
+    generated_state: base.RecurrentState,
+    generated_tokens: list[int],
+    generated_text: str,
+) -> None:
+    if not thread_id or not generated_tokens or len(prompt_tokens) >= _CONTEXT_MAX_TOKENS:
+        return
+    try:
+        closed_text = prompt + generated_text.strip() + "<|im_end|>\n"
+        closed_tokens = model.tokenizer.encode(closed_text)
+        if len(closed_tokens) > _CONTEXT_MAX_TOKENS or tuple(closed_tokens[:len(prompt_tokens)]) != tuple(prompt_tokens):
+            return
+        generated_end = len(prompt_tokens) + len(generated_tokens)
+        if generated_end > len(closed_tokens):
+            return
+        if tuple(closed_tokens[len(prompt_tokens):generated_end]) != tuple(generated_tokens):
+            return
+        state = _clone_state(generated_state)
+        closing = closed_tokens[generated_end:]
+        if not closing:
+            return
+        logits: np.ndarray | None = None
+        for ordinal, token in enumerate(closing, start=1):
+            logits = _forward_hot(model, token, state, need_logits=(ordinal == len(closing)))
+        if logits is not None:
+            _store_context(thread_id, closed_tokens, state, logits, kind="assistant-closed")
+    except Exception:
+        return
 
 
 def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
@@ -280,7 +398,7 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
             "type": "ROUTE",
             "phase": "ROUTE_RESOLVED",
             "reason": f"Hot loader resolved server {HOT_SERVER_VERSION} / {HOT_REVISION}; inference backend: {mode}.",
-            "identity": {"route": "LOCAL_R39", "engineId": "swrlz_r39_native_qmatvec_v1" if native else base.ENGINE_ID, "modelId": str(model.manifest.get("modelId", "R39")), "modelSha256": MODEL_SHA256},
+            "identity": {"route": "LOCAL_R39", "engineId": ENGINE_ID, "modelId": str(model.manifest.get("modelId", "R39")), "modelSha256": MODEL_SHA256},
         }
 
         prompt = base.render_chat_prompt(payload)
@@ -295,9 +413,9 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         state, reused, cached_logits, cache_reason = _resume_context(thread_id, tokens)
         pending = tokens[reused:]
         if reused:
-            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Conversation prefill cache hit: reused {reused} token(s); {len(pending)} new token(s) require prefill."}
+            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Conversation prefill checkpoint hit: reused {reused} token(s); only {len(pending)} new token(s) require prefill."}
         elif cache_reason == "prefix-mismatch":
-            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Conversation context changed before the cached boundary; safely rebuilding all {len(tokens)} token(s)."}
+            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"No cached checkpoint matches the edited/divergent prefix; safely rebuilding all {len(tokens)} token(s)."}
         else:
             yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefilling {len(tokens)} token(s); intermediate vocabulary logits skipped; backend={('native-qmatvec' if native else 'python-fallback')}."}
 
@@ -313,18 +431,17 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
             elapsed = time.monotonic() - prefill_started
             avg = elapsed / ordinal
             eta = max(0.0, avg * (total_new - ordinal))
-            yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefill new {ordinal}/{total_new} · cached {reused} · {token_s:.3f}s token · {avg:.3f}s avg · ETA {eta:.1f}s · backend={('native' if native else 'python')}."}
+            if ordinal <= 2 or ordinal == total_new or ordinal % 8 == 0:
+                yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefill new {ordinal}/{total_new} · cached {reused} · {token_s:.3f}s token · {avg:.3f}s avg · ETA {eta:.1f}s · backend={('native' if native else 'python')}."}
         if logits is None:
             raise base.R39InferenceError("R39_CONTEXT_CACHE_LOGITS_MISSING", "Conversation context cache did not provide terminal prefill logits.")
 
-        cached = _store_context(thread_id, tokens, state, logits)
-        if cached:
-            generation_state = _clone_state(state)
-        else:
-            generation_state = state
-        state = generation_state
+        cached = _store_context(thread_id, tokens, state, logits, kind="prompt")
+        state = _clone_state(state) if cached else state
 
         decoder = base.IncrementalDecoder(model.tokenizer)
+        generated_tokens: list[int] = []
+        response_parts: list[str] = []
         recent: list[int] = []
         first_ms: int | None = None
         prefill_time = time.monotonic() - prefill_started
@@ -332,6 +449,7 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         if not cached and len(tokens) > _CONTEXT_MAX_TOKENS:
             cache_note += f"; cache skipped above {_CONTEXT_MAX_TOKENS}-token safety bound"
         yield {"type": "STATUS", "phase": "GENERATING", "reason": f"R39 prefill complete in {prefill_time:.2f}s ({cache_note}); decoding with {('native direct-quantized matvec' if native else 'Python/Numpy fallback')}."}
+
         for ordinal in range(1, max_tokens + 1):
             if is_cancelled and is_cancelled():
                 raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
@@ -342,17 +460,25 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
             if first_ms is None:
                 first_ms = int((time.monotonic() - started) * 1000)
             if text:
+                response_parts.append(text)
                 yield {"type": "DELTA", "phase": "GENERATING", "text": text, "firstDeltaLatencyMs": first_ms}
+            generated_tokens.append(next_token)
             recent.append(next_token)
             decode_started = time.monotonic()
             logits = _forward_hot(model, next_token, state, need_logits=True)
             assert logits is not None
             if ordinal <= 4 or ordinal % 8 == 0:
                 yield {"type": "STATUS", "phase": "DECODE_PROGRESS", "reason": f"Decode step {ordinal} · {time.monotonic() - decode_started:.3f}s · backend={('native' if native else 'python')}."}
+
         tail = decoder.finish()
         if tail:
+            response_parts.append(tail)
             yield {"type": "DELTA", "phase": "GENERATING", "text": tail, "firstDeltaLatencyMs": first_ms}
         yield {"type": "COMPLETED", "phase": "COMPLETE", "reason": "Local R39 generation completed.", "totalLatencyMs": int((time.monotonic() - started) * 1000)}
+
+        # Terminal has already been emitted. Opportunistically prepare the canonical
+        # assistant-close prefix so the next user turn can reuse the answer too.
+        _postwarm_assistant_close(model, thread_id, prompt, tokens, state, generated_tokens, "".join(response_parts))
     except base.R39InferenceError as exc:
         event_type = "CANCELLED" if exc.code == "REQUEST_CANCELLED" else "FAILED"
         phase = "CANCELLED" if event_type == "CANCELLED" else "ERROR"
@@ -433,7 +559,7 @@ def inspect_engine():
             "ok": True,
             "oneTokenReady": True,
             "interactiveReady": True,
-            "engineId": "swrlz_r39_native_qmatvec_v1" if native else base.ENGINE_ID,
+            "engineId": ENGINE_ID,
             "modelId": model.manifest.get("modelId", "R39"),
             "modelSha256": MODEL_SHA256,
             "tocCount": model.header["tocCount"],
@@ -449,10 +575,15 @@ def inspect_engine():
             "warmModelAgeSeconds": round(max(0.0, time.time() - _MODEL_READY_AT), 2),
             "decodedCacheBytes": int(getattr(model, "_hot_tensor_cache_bytes", 0)),
             "decodedCacheBudgetBytes": _CACHE_BUDGET_BYTES,
+            "tokenEmbeddingRowCacheEntries": len(getattr(model, "_hot_token_row_cache", {})),
             "prefillSkipsIntermediateLogits": True,
             "incrementalConversationPrefill": True,
+            "multiCheckpointConversationPrefill": True,
+            "postResponseAssistantCloseWarmup": True,
+            "prefillStaticTensorFastPath": True,
             "conversationContextCacheMaxTokens": _CONTEXT_MAX_TOKENS,
             "conversationContextCacheTtlSeconds": _CONTEXT_TTL_SECONDS,
+            "conversationContextMaxCheckpoints": _CONTEXT_MAX_CHECKPOINTS,
             "conversationContextCaches": contexts,
             "connectionDiagnostics": True,
             "detachedGeneration": True,
