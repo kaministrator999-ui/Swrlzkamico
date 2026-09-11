@@ -1,8 +1,8 @@
 """Hot-swappable R39 engine entrypoint.
 
-v16 keeps the pipelined/checkpointed R39 path, tightens programming-response
-completion, treats assistant identity as metadata rather than output boilerplate,
-and shortens the stable directive to reduce first-turn prefill work.
+v17 keeps the strict completion/live-contract path while making generated-token
+checkpoints canonical without re-tokenizing decoded text, so same-worker next turns
+can reuse assistant-output and next-user boundary state reliably.
 """
 from __future__ import annotations
 
@@ -20,8 +20,8 @@ from swyrlz import r39_native as native_bridge
 
 ENGINE_ID = "swrlz_r39_native_qmatvec_v1" if native_bridge.available() else base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_SERVER_VERSION = "2.1.25"
-HOT_REVISION = "2.1.25-hot-boundary-v16-strict-code-live-contract"
+HOT_SERVER_VERSION = "2.1.26"
+HOT_REVISION = "2.1.26-hot-boundary-v17-token-exact-next-turn-checkpoints"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
 _ORIGINAL_ROW = base.R39Model.row
@@ -345,10 +345,10 @@ def _publish_generated_checkpoint(model, thread_id, prompt, prompt_tokens, gener
     if not thread_id or not generated_tokens:
         return False
     try:
-        open_tokens = model.tokenizer.encode(prompt + generated_text)
-        expected = len(prompt_tokens) + len(generated_tokens)
-        if len(open_tokens) != expected or tuple(open_tokens[:len(prompt_tokens)]) != tuple(prompt_tokens) or tuple(open_tokens[len(prompt_tokens):]) != tuple(generated_tokens):
-            return False
+        # State has already advanced through these exact sampled token ids. Building
+        # the checkpoint key directly from those ids avoids false cache misses from
+        # decode->text->encode round trips that can choose a different equivalent BPE.
+        open_tokens = list(prompt_tokens) + list(generated_tokens)
         return _store_context(thread_id, open_tokens, state, logits, kind=kind)
     except Exception:
         return False
@@ -358,34 +358,29 @@ def _speculative_next_turn_warmup(model, thread_id, prompt, prompt_tokens, gener
     if not thread_id or not generated_tokens:
         return
     try:
-        open_text = prompt + generated_text
-        open_tokens = model.tokenizer.encode(open_text)
-        generated_end = len(prompt_tokens) + len(generated_tokens)
-        if len(open_tokens) != generated_end or tuple(open_tokens[:len(prompt_tokens)]) != tuple(prompt_tokens) or tuple(open_tokens[len(prompt_tokens):]) != tuple(generated_tokens):
-            return
+        open_tokens = list(prompt_tokens) + list(generated_tokens)
         state = _clone_state(generated_state)
-        closed_text = open_text + "<|im_end|>\n"
-        closed_tokens = model.tokenizer.encode(closed_text)
-        if tuple(closed_tokens[:generated_end]) != tuple(open_tokens):
-            return
-        closing = closed_tokens[generated_end:]
         logits = None
+
+        # Special chat-boundary tokens are encoded independently of the decoded
+        # assistant text, preserving the exact recurrent state that generated it.
+        closing = list(model.tokenizer.encode("<|im_end|>\n"))
+        if not closing:
+            return
         for ordinal, token in enumerate(closing, start=1):
             logits = _forward_hot(model, token, state, need_logits=(ordinal == len(closing)))
-        if not closing or logits is None:
+        if logits is None:
             return
+        closed_tokens = open_tokens + closing
         _store_context(thread_id, closed_tokens, state, logits, kind="assistant-closed")
-        user_open_text = closed_text + "<|im_start|>user\n"
-        user_open_tokens = model.tokenizer.encode(user_open_text)
-        if tuple(user_open_tokens[:len(closed_tokens)]) != tuple(closed_tokens):
+
+        user_open_suffix = list(model.tokenizer.encode("<|im_start|>user\n"))
+        if not user_open_suffix:
             return
-        suffix = user_open_tokens[len(closed_tokens):]
-        if not suffix:
-            return
-        for ordinal, token in enumerate(suffix, start=1):
-            logits = _forward_hot(model, token, state, need_logits=(ordinal == len(suffix)))
+        for ordinal, token in enumerate(user_open_suffix, start=1):
+            logits = _forward_hot(model, token, state, need_logits=(ordinal == len(user_open_suffix)))
         if logits is not None:
-            _store_context(thread_id, user_open_tokens, state, logits, kind="next-user-open")
+            _store_context(thread_id, closed_tokens + user_open_suffix, state, logits, kind="next-user-open")
     except Exception:
         return
 
@@ -768,6 +763,7 @@ def inspect_engine():
             "speculativeNextTurnWarmup":True,"nextRequestNeverWaitsForWarmup":True,"liveCheckpointEveryGeneratedTokens":_LIVE_CHECKPOINT_EVERY,"prefillStaticTensorFastPath":True,
             "adaptiveResponseBudget":True,"softWrapAdvisory":True,"structureAwareBudgetOverrun":True,"responseCompletionContract":True,"codingConsistencyGuidance":True,"codingSemanticChecks":True,
             "strictCodePresenceVerification":True,"assistantNameMetadataOnly":True,"shortStableDirective":True,"eosDefersForMissingRequirements":True,"stableResponseDirectiveForCacheReuse":True,
+            "tokenExactGeneratedCheckpoints":True,"nextTurnBoundaryCheckpointing":True,
             "vectorizedGroupedAttention":True,"batchedMatmulAttention":True,"absoluteResponseHardCap":_ABSOLUTE_RESPONSE_HARD_CAP,"conversationContextCacheMaxTokens":_CONTEXT_MAX_TOKENS,
             "conversationContextCacheTtlSeconds":_CONTEXT_TTL_SECONDS,"conversationContextMaxCheckpoints":_CONTEXT_MAX_CHECKPOINTS,"conversationContextCaches":contexts,"connectionDiagnostics":True,
             "detachedGeneration":True,"replayableJobs":jobs,"activeDetachedJobs":sum(1 for job in jobs if not job["done"]),
