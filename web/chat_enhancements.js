@@ -27,8 +27,8 @@ function loadGoogleIdentity(){
   window.__swrlzGoogleIdentityPromise=new Promise((resolve,reject)=>{
     let script=document.querySelector(`script[src="${GIS_SRC}"]`);
     const done=()=>window.google?.accounts?.id?resolve(window.google.accounts.id):reject(new Error('Google Identity Services unavailable'));
-    if(script){script.addEventListener('load',done,{once:true});script.addEventListener('error',()=>reject(new Error('Google Identity Services failed to load')),{once:true});setTimeout(done,0);return}
-    script=document.createElement('script');script.src=GIS_SRC;script.async=true;script.defer=true;script.onload=done;script.onerror=()=>reject(new Error('Google Identity Services failed to load'););document.head.appendChild(script);
+    if(script){script.addEventListener('load',done,{once:true});script.addEventListener('error',()=>reject(new Error('Google Identity Services failed to load')),{once:true});setTimeout(()=>{if(window.google?.accounts?.id)resolve(window.google.accounts.id)},0);return}
+    script=document.createElement('script');script.src=GIS_SRC;script.async=true;script.defer=true;script.onload=done;script.onerror=()=>reject(new Error('Google Identity Services failed to load'));document.head.appendChild(script);
   });
   return window.__swrlzGoogleIdentityPromise;
 }
@@ -58,7 +58,7 @@ function setupAccountFooter(){
       const c=decodeJwtPayload(response?.credential);
       const safe={authenticated:true,name:c.name||null,given_name:c.given_name||null,family_name:c.family_name||null,email:c.email||null,email_verified:c.email_verified===true,picture:c.picture||null,issuer:c.iss||null,subject:c.sub||null,expires_at:c.exp?new Date(c.exp*1000).toISOString():null};
       sessionStorage.setItem(GOOGLE_CLAIMS_KEY,JSON.stringify(safe));renderAccount();
-    }catch(err){loginHost.innerHTML=`<div class="swrlz-google-state error">Google sign-in could not be completed.</div>`}
+    }catch(_){loginHost.innerHTML='<div class="swrlz-google-state error">Google sign-in could not be completed.</div>'}
   };
   const bootGoogle=async()=>{
     loginHost.hidden=false;loginHost.innerHTML='';
@@ -82,7 +82,7 @@ function setupAccountFooter(){
     const identityName=claims?.name||'Not signed in',email=claims?.email||'—',verified=claims?.email_verified?'Verified':'Not verified';
     const sections={
       profile:`<h3>Profile</h3><div class="swrlz-setting-grid"><label>Google name<input value="${esc(identityName)}" disabled></label><label>Email<input value="${esc(email)}" disabled></label><label>Display name<input data-pref="displayName" value="${esc(prefs.displayName)}" placeholder="Optional display name"></label><label>Preferred name<input data-pref="preferredName" value="${esc(prefs.preferredName)}" placeholder="How §wyrlz should address you"></label></div><label class="swrlz-check"><input type="checkbox" data-pref-check="useGoogleName" ${prefs.useGoogleName?'checked':''}>Use Google account name when available</label><button type="button" data-save-prefs>Save profile preferences</button>`,
-      data:`<h3>Data & privacy</h3><div class="swrlz-setting-row"><strong>Chat storage</strong><span>Current Chat history remains private on this device unless a server account-storage feature explicitly moves it.</span></div><div class="swrlz-setting-row"><strong>Account preferences</strong><span>These settings are stored locally in this browser today. Raw Google credentials are not shown in this menu.</span></div><label class="swrlz-check"><input type="checkbox" data-pref-check="retainLocalPrefs" ${prefs.retainLocalPrefs?'checked':''}>Keep local account preferences on this device</label><button type="button" data-clear-prefs>Clear local account preferences</button>`,
+      data:`<h3>Data & privacy</h3><div class="swrlz-setting-row"><strong>Chat storage</strong><span>Current Chat history remains private on this device unless a server account-storage feature explicitly moves it.</span></div><div class="swrlz-setting-row"><strong>Account preferences</strong><span>These settings are stored locally in this browser today. Google credential tokens and the hidden client configuration are not shown here.</span></div><label class="swrlz-check"><input type="checkbox" data-pref-check="retainLocalPrefs" ${prefs.retainLocalPrefs?'checked':''}>Keep local account preferences on this device</label><button type="button" data-clear-prefs>Clear local account preferences</button>`,
       personalization:`<h3>Personalization</h3><div class="swrlz-setting-grid"><label>Response depth<select data-pref="responseDepth"><option value="adaptive" ${prefs.responseDepth==='adaptive'?'selected':''}>Adaptive</option><option value="concise" ${prefs.responseDepth==='concise'?'selected':''}>Concise</option><option value="detailed" ${prefs.responseDepth==='detailed'?'selected':''}>Detailed</option></select></label><label>Preferred name<input data-pref="preferredName" value="${esc(prefs.preferredName)}" placeholder="Optional"></label></div><button type="button" data-save-prefs>Save personalization</button>`,
       security:`<h3>Security</h3><div class="swrlz-setting-row"><strong>Google sign-in</strong><span>${claims?'Signed in':'Not signed in'}</span></div><div class="swrlz-setting-row"><strong>Email status</strong><span>${esc(verified)}</span></div><div class="swrlz-setting-row"><strong>Session expires</strong><span>${esc(claims?.expires_at||'—')}</span></div><div class="swrlz-setting-row"><strong>Credential display</strong><span>OAuth client configuration and Google credential tokens stay hidden from the account UI.</span></div>${claims?'<button type="button" class="swrlz-signout" data-signout>Sign out</button>':''}`
     };
