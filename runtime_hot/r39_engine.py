@@ -1,8 +1,10 @@
 """Hot-swappable R39 engine entrypoint.
 
-v11 extends exact-prefix conversation reuse with multi-checkpoint caching, post-response
-assistant-close checkpoints, cached invariant tensors/token embeddings, and quieter
-prefill telemetry. The model math and safety fallbacks remain unchanged.
+v12 turns generation itself into future-prefill work. During decode it publishes
+immutable assistant-output checkpoints, publishes a terminal assistant-open checkpoint
+before completion is exposed, and then speculatively warms the assistant-close and
+next-user scaffold in a daemon thread. A new request never waits for speculative
+warmup: it simply resumes from the longest exact-prefix checkpoint already available.
 """
 from __future__ import annotations
 
@@ -19,8 +21,8 @@ from swyrlz import r39_native as native_bridge
 
 ENGINE_ID = "swrlz_r39_native_qmatvec_v1" if native_bridge.available() else base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_SERVER_VERSION = "2.1.20"
-HOT_REVISION = "2.1.20-hot-boundary-v11-prefill-checkpoints"
+HOT_SERVER_VERSION = "2.1.21"
+HOT_REVISION = "2.1.21-hot-boundary-v12-pipelined-prefill"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
 _ORIGINAL_ROW = base.R39Model.row
@@ -40,7 +42,8 @@ _CONTEXTS: dict[str, dict[str, Any]] = {}
 _CONTEXT_TTL_SECONDS = 20 * 60
 _CONTEXT_MAX_ENTRIES = 2
 _CONTEXT_MAX_TOKENS = 2048
-_CONTEXT_MAX_CHECKPOINTS = 4
+_CONTEXT_MAX_CHECKPOINTS = 6
+_LIVE_CHECKPOINT_EVERY = 16
 
 _JOB_LOCK = threading.RLock()
 _JOBS: dict[str, dict[str, Any]] = {}
@@ -214,19 +217,7 @@ def _resume_context(thread_id: str, tokens: list[int]) -> tuple[base.RecurrentSt
             return base.RecurrentState(), 0, None, "miss"
         checkpoints = entry.get("checkpoints")
         if not isinstance(checkpoints, list):
-            legacy_tokens = entry.get("tokens")
-            legacy_state = entry.get("state")
-            if isinstance(legacy_tokens, tuple) and legacy_state is not None:
-                checkpoints = [{
-                    "tokens": legacy_tokens,
-                    "state": legacy_state,
-                    "logits": entry.get("logits"),
-                    "kind": "legacy",
-                    "updatedAt": entry.get("updatedAt", time.time()),
-                }]
-            else:
-                _CONTEXTS.pop(thread_id, None)
-                return base.RecurrentState(), 0, None, "invalid"
+            return base.RecurrentState(), 0, None, "invalid"
         best = None
         for checkpoint in checkpoints:
             cached_tokens = checkpoint.get("tokens")
@@ -340,7 +331,36 @@ def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *
     return model.matvec("token_embd.weight", x)
 
 
-def _postwarm_assistant_close(
+def _publish_generated_checkpoint(
+    model: base.R39Model,
+    thread_id: str,
+    prompt: str,
+    prompt_tokens: list[int],
+    generated_text: str,
+    generated_tokens: list[int],
+    state: base.RecurrentState,
+    logits: np.ndarray,
+    *,
+    kind: str,
+) -> bool:
+    """Publish only if canonical retokenization proves this state is an exact prefix."""
+    if not thread_id or not generated_tokens:
+        return False
+    try:
+        open_tokens = model.tokenizer.encode(prompt + generated_text)
+        expected_len = len(prompt_tokens) + len(generated_tokens)
+        if len(open_tokens) != expected_len:
+            return False
+        if tuple(open_tokens[:len(prompt_tokens)]) != tuple(prompt_tokens):
+            return False
+        if tuple(open_tokens[len(prompt_tokens):]) != tuple(generated_tokens):
+            return False
+        return _store_context(thread_id, open_tokens, state, logits, kind=kind)
+    except Exception:
+        return False
+
+
+def _speculative_next_turn_warmup(
     model: base.R39Model,
     thread_id: str,
     prompt: str,
@@ -349,29 +369,55 @@ def _postwarm_assistant_close(
     generated_tokens: list[int],
     generated_text: str,
 ) -> None:
-    if not thread_id or not generated_tokens or len(prompt_tokens) >= _CONTEXT_MAX_TOKENS:
+    """Finish stable separators in the background; never gate the next request."""
+    if not thread_id or not generated_tokens:
         return
     try:
-        closed_text = prompt + generated_text.strip() + "<|im_end|>\n"
-        closed_tokens = model.tokenizer.encode(closed_text)
-        if len(closed_tokens) > _CONTEXT_MAX_TOKENS or tuple(closed_tokens[:len(prompt_tokens)]) != tuple(prompt_tokens):
-            return
+        open_text = prompt + generated_text
+        open_tokens = model.tokenizer.encode(open_text)
         generated_end = len(prompt_tokens) + len(generated_tokens)
-        if generated_end > len(closed_tokens):
+        if len(open_tokens) != generated_end:
             return
-        if tuple(closed_tokens[len(prompt_tokens):generated_end]) != tuple(generated_tokens):
+        if tuple(open_tokens[:len(prompt_tokens)]) != tuple(prompt_tokens):
             return
+        if tuple(open_tokens[len(prompt_tokens):]) != tuple(generated_tokens):
+            return
+
         state = _clone_state(generated_state)
-        closing = closed_tokens[generated_end:]
-        if not closing:
+        closed_text = open_text + "<|im_end|>\n"
+        closed_tokens = model.tokenizer.encode(closed_text)
+        if tuple(closed_tokens[:generated_end]) != tuple(open_tokens):
             return
+        closing = closed_tokens[generated_end:]
         logits: np.ndarray | None = None
         for ordinal, token in enumerate(closing, start=1):
             logits = _forward_hot(model, token, state, need_logits=(ordinal == len(closing)))
-        if logits is not None:
+        if closing and logits is not None:
             _store_context(thread_id, closed_tokens, state, logits, kind="assistant-closed")
+        elif not closing:
+            return
+
+        # The next rendered prompt always begins with this user-role scaffold.
+        # Prefilling it speculatively means the next request normally pays only for
+        # the user's actual text plus the small user-close / assistant-open suffix.
+        user_open_text = closed_text + "<|im_start|>user\n"
+        user_open_tokens = model.tokenizer.encode(user_open_text)
+        if tuple(user_open_tokens[:len(closed_tokens)]) != tuple(closed_tokens):
+            return
+        suffix = user_open_tokens[len(closed_tokens):]
+        if not suffix:
+            return
+        for ordinal, token in enumerate(suffix, start=1):
+            logits = _forward_hot(model, token, state, need_logits=(ordinal == len(suffix)))
+        if logits is not None:
+            _store_context(thread_id, user_open_tokens, state, logits, kind="next-user-open")
     except Exception:
         return
+
+
+def _start_speculative_warmup(*args) -> None:
+    worker = threading.Thread(target=_speculative_next_turn_warmup, args=args, name="swrlz-prefill-postwarm", daemon=True)
+    worker.start()
 
 
 def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
@@ -467,6 +513,20 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
             decode_started = time.monotonic()
             logits = _forward_hot(model, next_token, state, need_logits=True)
             assert logits is not None
+
+            if ordinal % _LIVE_CHECKPOINT_EVERY == 0 and response_parts:
+                _publish_generated_checkpoint(
+                    model,
+                    thread_id,
+                    prompt,
+                    tokens,
+                    "".join(response_parts),
+                    list(generated_tokens),
+                    state,
+                    logits,
+                    kind=f"assistant-live-{ordinal}",
+                )
+
             if ordinal <= 4 or ordinal % 8 == 0:
                 yield {"type": "STATUS", "phase": "DECODE_PROGRESS", "reason": f"Decode step {ordinal} · {time.monotonic() - decode_started:.3f}s · backend={('native' if native else 'python')}."}
 
@@ -474,11 +534,42 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         if tail:
             response_parts.append(tail)
             yield {"type": "DELTA", "phase": "GENERATING", "text": tail, "firstDeltaLatencyMs": first_ms}
-        yield {"type": "COMPLETED", "phase": "COMPLETE", "reason": "Local R39 generation completed.", "totalLatencyMs": int((time.monotonic() - started) * 1000)}
 
-        # Terminal has already been emitted. Opportunistically prepare the canonical
-        # assistant-close prefix so the next user turn can reuse the answer too.
-        _postwarm_assistant_close(model, thread_id, prompt, tokens, state, generated_tokens, "".join(response_parts))
+        response_text = "".join(response_parts)
+        # Publish the exact assistant-open state before COMPLETE. If the user sends
+        # the next turn immediately, this is already usable even if background
+        # close/scaffold warmup has not finished yet.
+        terminal_published = False
+        if generated_tokens and logits is not None:
+            terminal_published = _publish_generated_checkpoint(
+                model,
+                thread_id,
+                prompt,
+                tokens,
+                response_text,
+                generated_tokens,
+                state,
+                logits,
+                kind="assistant-terminal-open",
+            )
+
+        if generated_tokens:
+            _start_speculative_warmup(
+                model,
+                thread_id,
+                prompt,
+                list(tokens),
+                _clone_state(state),
+                list(generated_tokens),
+                response_text,
+            )
+
+        yield {
+            "type": "COMPLETED",
+            "phase": "COMPLETE",
+            "reason": "Local R39 generation completed; response-state checkpoint published and next-turn warmup continues opportunistically." if terminal_published else "Local R39 generation completed; next-turn warmup continues opportunistically.",
+            "totalLatencyMs": int((time.monotonic() - started) * 1000),
+        }
     except base.R39InferenceError as exc:
         event_type = "CANCELLED" if exc.code == "REQUEST_CANCELLED" else "FAILED"
         phase = "CANCELLED" if event_type == "CANCELLED" else "ERROR"
@@ -579,7 +670,11 @@ def inspect_engine():
             "prefillSkipsIntermediateLogits": True,
             "incrementalConversationPrefill": True,
             "multiCheckpointConversationPrefill": True,
-            "postResponseAssistantCloseWarmup": True,
+            "generationPublishesReusableCheckpoints": True,
+            "terminalAssistantCheckpointBeforeComplete": True,
+            "speculativeNextTurnWarmup": True,
+            "nextRequestNeverWaitsForWarmup": True,
+            "liveCheckpointEveryGeneratedTokens": _LIVE_CHECKPOINT_EVERY,
             "prefillStaticTensorFastPath": True,
             "conversationContextCacheMaxTokens": _CONTEXT_MAX_TOKENS,
             "conversationContextCacheTtlSeconds": _CONTEXT_TTL_SECONDS,
