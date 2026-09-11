@@ -1,0 +1,13 @@
+# §wyrlz canonical version registry
+# Consumers should fetch this file rather than hardcode another component's version.
+# Update this registry in the same release event as the owning component.
+
+SERVER_RUNTIME=2.3.8
+SERVER_UI=1.0.0
+CHAT=1.4.8
+STREAM=V2
+LALM_UI=1.0.0
+LALM_ENGINE_REVISION=2.1.18-hot-boundary-v9-effective-receipt
+LALM_ENGINE_HOT_SERVER_VERSION=2.1.18
+
+REGISTRY_FORMAT=1
