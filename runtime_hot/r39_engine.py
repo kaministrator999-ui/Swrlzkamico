@@ -1,15 +1,14 @@
 """Hot-swappable R39 engine entrypoint.
 
-v13 keeps v12 pipelined prefill/checkpoint behavior and replaces the fixed 128-token
-response leash with an adaptive response budget. Each request receives a planned
-length, a soft wrap point, and a larger emergency ceiling. The planning advisory is
-part of the model prompt so the recurrent state remains canonical; generation may
-continue past the plan to finish code, sentences, and promised sections, and obvious
-open code/syntax structures receive bounded completion headroom before the absolute
-safety ceiling is allowed to stop them.
+v14 keeps pipelined conversation checkpoints and adaptive runtime budgets, adds a
+semantic completion contract so EOS is not accepted while explicit requested parts
+are still missing, makes the model-facing response directive stable across turns so
+conversation-prefix reuse is not invalidated by per-request budget text, and reduces
+hot-path overhead with grouped/vectorized attention plus quieter progress telemetry.
 """
 from __future__ import annotations
 
+import re
 import threading
 import time
 from collections import OrderedDict
@@ -23,8 +22,8 @@ from swyrlz import r39_native as native_bridge
 
 ENGINE_ID = "swrlz_r39_native_qmatvec_v1" if native_bridge.available() else base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_SERVER_VERSION = "2.1.22"
-HOT_REVISION = "2.1.22-hot-boundary-v13-adaptive-response-budget"
+HOT_SERVER_VERSION = "2.1.23"
+HOT_REVISION = "2.1.23-hot-boundary-v14-completion-contract-fast-decode"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
 _ORIGINAL_ROW = base.R39Model.row
@@ -54,6 +53,11 @@ _MAX_JOBS = 12
 
 _ABSOLUTE_RESPONSE_HARD_CAP = 768
 _RESPONSE_EXTENSION_STEP = 64
+_STABLE_RESPONSE_DIRECTIVE = (
+    "You are §wyrlz. Answer directly, truthfully, and completely. Fulfill every explicit requested part before ending. "
+    "Use a natural, lightly personable tone when appropriate. Do not introduce or describe your model identity unless the user asks. "
+    "For code requests, finish the code and any requested explanation or overview before ending."
+)
 
 
 def _cache(self: base.R39Model) -> dict[str, np.ndarray]:
@@ -139,8 +143,13 @@ def _hot_matvec(self: base.R39Model, name: str, x: np.ndarray) -> np.ndarray:
 def _hot_render_chat_prompt(payload):
     clone = dict(payload)
     directive = str(clone.get("responseDirective") or "").strip()
-    if directive.startswith("Answer directly and truthfully.") and "SWRLZ_RESPONSE_BUDGET" not in directive:
-        clone["responseDirective"] = "Answer directly and truthfully."
+    if (
+        not directive
+        or directive.startswith("Answer directly and truthfully.")
+        or directive.startswith("You are §wyrlz. Answer directly and truthfully.")
+        or "SWRLZ_RESPONSE_BUDGET" in directive
+    ):
+        clone["responseDirective"] = _STABLE_RESPONSE_DIRECTIVE
     return _ORIGINAL_RENDER_CHAT_PROMPT(clone)
 
 
@@ -281,6 +290,12 @@ def _context_snapshot() -> list[dict[str, Any]]:
         return out
 
 
+def _rms_rows(values: np.ndarray, weight: np.ndarray) -> np.ndarray:
+    rows = values.astype(np.float32, copy=False)
+    denom = np.sqrt(np.mean(rows * rows, axis=1, dtype=np.float32) + np.float32(1e-5), dtype=np.float32)
+    return (rows / denom[:, None] * weight[None, :]).astype(np.float32)
+
+
 def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *, need_logits: bool) -> np.ndarray | None:
     static = _prepare_static(model)
     x = model.row("token_embd.weight", token)
@@ -303,25 +318,21 @@ def _forward_hot(model: base.R39Model, token: int, state: base.RecurrentState, *
             v = model.matvec(f"blk.{i}.attn_v.weight", n)
             qn = layer["q_norm"]
             kn = layer["k_norm"]
-            q2 = q.reshape(16, 64)
-            k2 = k.reshape(8, 64)
-            q = np.concatenate([base._rms(q2[h], qn) for h in range(16)]).astype(np.float32)
-            k = np.concatenate([base._rms(k2[h], kn) for h in range(8)]).astype(np.float32)
+            q = _rms_rows(q.reshape(16, 64), qn).reshape(-1)
+            k = _rms_rows(k.reshape(8, 64), kn).reshape(-1)
             q = base._rope(q, 16, 64, state.pos)
             k = base._rope(k, 8, 64, state.pos)
             state.kv[i].append((k.copy(), v.copy()))
-            q_heads = q.reshape(16, 64)
-            att = np.zeros((16, 64), np.float32)
+
             history = state.kv[i]
-            for h in range(16):
-                kh = h // 2
-                qh = q_heads[h]
-                keys = np.stack([kk.reshape(8, 64)[kh] for kk, _ in history], axis=0)
-                values = np.stack([vv.reshape(8, 64)[kh] for _, vv in history], axis=0)
-                scores = (keys @ qh).astype(np.float32) / np.float32(8.0)
-                weights = np.exp(scores - scores.max(), dtype=np.float32)
-                weights /= weights.sum(dtype=np.float32)
-                att[h] = weights @ values
+            keys = np.stack([kk.reshape(8, 64) for kk, _ in history], axis=0)
+            values = np.stack([vv.reshape(8, 64) for _, vv in history], axis=0)
+            q_grouped = q.reshape(8, 2, 64)
+            scores = np.einsum("tks,khs->tkh", keys, q_grouped, optimize=True).astype(np.float32) / np.float32(8.0)
+            scores -= scores.max(axis=0, keepdims=True)
+            weights = np.exp(scores, dtype=np.float32)
+            weights /= weights.sum(axis=0, keepdims=True, dtype=np.float32)
+            att = np.einsum("tkh,tks->khs", weights, values, optimize=True).astype(np.float32).reshape(16, 64)
             op = model.matvec(f"blk.{i}.attn_output.weight", att.reshape(-1))
         residual = (x + op).astype(np.float32)
         fn = base._rms(residual, layer["ffn_norm"])
@@ -476,16 +487,6 @@ def _plan_response_budget(payload: dict[str, Any]) -> dict[str, Any]:
     return {"kind": kind, "planned": planned, "wrapAt": wrap_at, "hard": hard}
 
 
-def _budget_directive(plan: dict[str, Any]) -> str:
-    return (
-        "SWRLZ_RESPONSE_BUDGET: Treat the response length as adaptive, not a forced cutoff. "
-        f"Plan roughly {plan['planned']} output tokens and begin converging around {plan['wrapAt']}. "
-        f"You may exceed the plan when needed for correctness, especially to finish code blocks, syntax, sentences, lists, or sections you explicitly started. "
-        "Do not pad merely to reach the plan. Prefer a complete answer over an abrupt cutoff. "
-        f"An emergency runtime ceiling exists at {plan['hard']} tokens and is not a target."
-    )
-
-
 def _looks_structurally_open(text: str) -> bool:
     value = str(text or "")
     if not value.strip():
@@ -504,6 +505,56 @@ def _looks_structurally_open(text: str) -> bool:
     if last_line.startswith(("- ", "* ")) or (last_line[:2].isdigit() and last_line.endswith(".")):
         return True
     return False
+
+
+def _response_contract(payload: dict[str, Any]) -> dict[str, Any]:
+    text = _latest_user_text(payload)
+    lower = text.lower()
+    coding = any(cue in lower for cue in (
+        "code", "function", "class", "method", "program", "script", "html", "css", "javascript",
+        "typescript", "python", "c++", "cpp", "java", "kotlin", "rust", "sql", "implement", "refactor",
+    ))
+    explain = any(cue in lower for cue in ("explain", "explanation", "overview", "how it works", "how the", "walkthrough", "briefly"))
+    requirements: list[str] = []
+    if coding:
+        requirements.append("code")
+    if coding and explain:
+        requirements.append("code-explanation")
+    if coding and "function" in lower and "main" in lower and explain:
+        requirements.append("function-main-explanation")
+    return {"coding": coding, "explain": explain, "requirements": requirements}
+
+
+def _prose_outside_code(text: str) -> str:
+    parts = str(text or "").split("```")
+    outside = parts[::2]
+    return "\n".join(outside).strip()
+
+
+def _response_contract_gaps(text: str, contract: dict[str, Any]) -> list[str]:
+    value = str(text or "")
+    lower = value.lower()
+    outside = _prose_outside_code(value)
+    outside_lower = outside.lower()
+    requirements = list(contract.get("requirements") or [])
+    gaps: list[str] = []
+
+    if "code" in requirements:
+        fenced_complete = value.count("```") >= 2 and value.count("```") % 2 == 0
+        code_like = ("{" in value and "}" in value and ";" in value) or "def " in lower or "function " in lower
+        if not (fenced_complete or code_like):
+            gaps.append("complete-code")
+
+    if "code-explanation" in requirements:
+        prose_words = re.findall(r"[A-Za-z]{2,}", outside)
+        if len(prose_words) < 12:
+            gaps.append("requested-explanation")
+
+    if "function-main-explanation" in requirements:
+        if "function" not in outside_lower or "main" not in outside_lower:
+            gaps.append("function-and-main-explanation")
+
+    return gaps
 
 
 def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
@@ -534,13 +585,12 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         }
 
         budget = _plan_response_budget(payload)
-        prompt_payload = dict(payload)
-        existing_directive = str(prompt_payload.get("responseDirective") or "").strip()
-        budget_note = _budget_directive(budget)
-        prompt_payload["responseDirective"] = f"{existing_directive}\n{budget_note}".strip()
+        contract = _response_contract(payload)
         yield {"type": "STATUS", "phase": "RESPONSE_BUDGET", "reason": f"Adaptive response plan · kind={budget['kind']} · planned≈{budget['planned']} · wrap≈{budget['wrapAt']} · emergency ceiling={budget['hard']} token(s)."}
+        if contract["requirements"]:
+            yield {"type": "STATUS", "phase": "RESPONSE_CONTRACT", "reason": "Response completion contract armed · required: " + ", ".join(contract["requirements"]) + "."}
 
-        prompt = base.render_chat_prompt(prompt_payload)
+        prompt = base.render_chat_prompt(payload)
         tokens = model.tokenizer.encode(prompt)
         if not tokens:
             raise base.R39InferenceError("R39_PROMPT_TOKENIZATION_EMPTY", "Prompt tokenization produced no tokens.")
@@ -569,7 +619,7 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
             elapsed = time.monotonic() - prefill_started
             avg = elapsed / ordinal
             eta = max(0.0, avg * (total_new - ordinal))
-            if ordinal <= 2 or ordinal == total_new or ordinal % 8 == 0:
+            if ordinal <= 2 or ordinal == total_new or ordinal % 16 == 0:
                 yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefill new {ordinal}/{total_new} · cached {reused} · {token_s:.3f}s token · {avg:.3f}s avg · ETA {eta:.1f}s · backend={('native' if native else 'python')}."}
         if logits is None:
             raise base.R39InferenceError("R39_CONTEXT_CACHE_LOGITS_MISSING", "Conversation context cache did not provide terminal prefill logits.")
@@ -592,15 +642,39 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         current_limit = int(budget["hard"])
         wrap_notified = False
         extended_for_structure = False
+        extended_for_contract = False
+        eos_deferred = False
+        last_gap_signature: tuple[str, ...] = ()
         stopped_on_eos = False
+        eos_id = int(model.tokenizer.eos) if model.tokenizer.eos is not None else None
+
         while ordinal < current_limit:
             ordinal += 1
             if is_cancelled and is_cancelled():
                 raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
-            next_token = base._sample(logits, recent[-64:], temperature, top_p, 50, 1.05, hash(request_id) ^ (state.pos * 0x9E3779B9))
-            if model.tokenizer.eos is not None and next_token == int(model.tokenizer.eos):
-                stopped_on_eos = True
-                break
+
+            seed = hash(request_id) ^ (state.pos * 0x9E3779B9)
+            next_token = base._sample(logits, recent[-64:], temperature, top_p, 50, 1.05, seed)
+            if eos_id is not None and next_token == eos_id:
+                partial = "".join(response_parts)
+                gaps = _response_contract_gaps(partial, contract)
+                if gaps and ordinal < _ABSOLUTE_RESPONSE_HARD_CAP:
+                    masked = logits.copy()
+                    if 0 <= eos_id < masked.size:
+                        masked[eos_id] = np.float32(-np.inf)
+                    next_token = base._sample(masked, recent[-64:], temperature, top_p, 50, 1.05, seed ^ 0x5F3759DF)
+                    signature = tuple(gaps)
+                    if signature != last_gap_signature:
+                        last_gap_signature = signature
+                        yield {"type": "STATUS", "phase": "RESPONSE_CONTRACT", "reason": "EOS deferred because requested response parts remain incomplete: " + ", ".join(gaps) + "."}
+                    eos_deferred = True
+                    if next_token == eos_id:
+                        stopped_on_eos = True
+                        break
+                else:
+                    stopped_on_eos = True
+                    break
+
             text = decoder.push(next_token)
             if first_ms is None:
                 first_ms = int((time.monotonic() - started) * 1000)
@@ -615,7 +689,7 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
 
             if not wrap_notified and ordinal >= int(budget["wrapAt"]):
                 wrap_notified = True
-                yield {"type": "STATUS", "phase": "RESPONSE_BUDGET", "reason": f"Soft wrap point reached at token {ordinal}; model was pre-advised to converge cleanly, but generation may continue for completeness."}
+                yield {"type": "STATUS", "phase": "RESPONSE_BUDGET", "reason": f"Soft wrap point reached at token {ordinal}; generation may continue until the requested response is complete."}
 
             if ordinal % _LIVE_CHECKPOINT_EVERY == 0 and response_parts:
                 _publish_generated_checkpoint(
@@ -630,17 +704,23 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
                     kind=f"assistant-live-{ordinal}",
                 )
 
-            if ordinal <= 4 or ordinal % 8 == 0:
+            if ordinal <= 4 or ordinal % 16 == 0:
                 yield {"type": "STATUS", "phase": "DECODE_PROGRESS", "reason": f"Decode step {ordinal} · {time.monotonic() - decode_started:.3f}s · backend={('native' if native else 'python')}."}
 
             if ordinal >= current_limit and current_limit < _ABSOLUTE_RESPONSE_HARD_CAP:
                 partial = "".join(response_parts)
-                if _looks_structurally_open(partial):
+                gaps = _response_contract_gaps(partial, contract)
+                structural = _looks_structurally_open(partial)
+                if structural or gaps:
                     next_limit = min(_ABSOLUTE_RESPONSE_HARD_CAP, current_limit + _RESPONSE_EXTENSION_STEP)
                     if next_limit > current_limit:
                         current_limit = next_limit
-                        extended_for_structure = True
-                        yield {"type": "STATUS", "phase": "RESPONSE_BUDGET", "reason": f"Completion headroom extended to {current_limit} token(s) because the response still contains an open code/syntax structure."}
+                        if structural:
+                            extended_for_structure = True
+                        if gaps:
+                            extended_for_contract = True
+                        reason = "open code/syntax structure" if structural and not gaps else "unfinished requested response parts" if gaps and not structural else "open structure and unfinished requested parts"
+                        yield {"type": "STATUS", "phase": "RESPONSE_BUDGET", "reason": f"Completion headroom extended to {current_limit} token(s) because of {reason}."}
 
         tail = decoder.finish()
         if tail:
@@ -677,8 +757,15 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         if terminal_published:
             completion_bits.append("response-state checkpoint published")
         completion_bits.append("next-turn warmup continues opportunistically")
+        if eos_deferred:
+            completion_bits.append("semantic completion gate deferred premature EOS")
         if extended_for_structure:
             completion_bits.append("completion headroom was used for open code/syntax")
+        if extended_for_contract:
+            completion_bits.append("completion headroom was used for requested response parts")
+        final_gaps = _response_contract_gaps(response_text, contract)
+        if final_gaps:
+            completion_bits.append("unresolved contract gaps: " + ", ".join(final_gaps))
         if not stopped_on_eos and ordinal >= current_limit:
             completion_bits.append(f"generation reached safety ceiling {current_limit}")
         yield {
@@ -796,6 +883,10 @@ def inspect_engine():
             "adaptiveResponseBudget": True,
             "softWrapAdvisory": True,
             "structureAwareBudgetOverrun": True,
+            "responseCompletionContract": True,
+            "eosDefersForMissingRequirements": True,
+            "stableResponseDirectiveForCacheReuse": True,
+            "vectorizedGroupedAttention": True,
             "absoluteResponseHardCap": _ABSOLUTE_RESPONSE_HARD_CAP,
             "conversationContextCacheMaxTokens": _CONTEXT_MAX_TOKENS,
             "conversationContextCacheTtlSeconds": _CONTEXT_TTL_SECONDS,
