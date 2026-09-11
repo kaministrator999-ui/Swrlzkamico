@@ -9,7 +9,6 @@
         "web/chat_enhancements.css",
         "web/themes/ice-dragon/ice-dragon-theme.css",
         "web/chat_mobile_viewport_fix.css",
-        "web/chat_responsive_polish.css",
         "web/chat_code_artifacts.css"
       ],
       "scripts": [
@@ -28,5 +27,5 @@
     "/live": {"source": "runtime_pages/index.html"}
   },
   "assetRoots": ["web", "runtime_pages"],
-  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Add, change, or remove routes and assets here without a Vercel deployment. Ice Dragon is an opt-in chat theme; Default remains the first-load selection and the user's explicit choice is persisted locally. Mobile Chat uses a viewport correction plus a final responsive polish layer so normal mobile mode, browser desktop-site mode, message cards, code blocks, and composer geometry stay within the usable viewport without clipping or dead space. Assistant responses containing code are enhanced by runtime-owned nested code artifact assets that group code, file tabs, controls, and explanatory details inside one bounded response artifact. Streaming now uses a final incremental renderer so only the active assistant message is replaced during generation instead of rebuilding the whole conversation DOM on every stream event."
+  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Add, change, or remove routes and assets here without a Vercel deployment. Ice Dragon is an opt-in chat theme; Default remains the first-load selection and the user's explicit choice is persisted locally. Mobile Chat geometry, responsive bounds, response-card polish, first-paint visibility, and narrow-header fitting are consolidated in chat_mobile_viewport_fix.css so the obsolete duplicate responsive-polish request is no longer part of the boot chain. Assistant responses containing code are enhanced by runtime-owned nested code artifact assets that group code, file tabs, controls, and explanatory details inside one bounded response artifact. Streaming uses a final incremental renderer so only the active assistant message is replaced during generation instead of rebuilding the whole conversation DOM on every stream event."
 }
