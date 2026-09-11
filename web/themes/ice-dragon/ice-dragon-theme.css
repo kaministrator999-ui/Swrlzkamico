@@ -1,0 +1,378 @@
+/*
+  SWRLZ Ice Dragon Theme Pack v1.0.1
+  Target: kaministrator999-ui/Swrlzkamico
+  Primary UI: web/chat.html + web/chat_enhancements.css
+  Apply by loading this stylesheet and adding data-swrlz-theme="ice-dragon" to <body>.
+*/
+
+body[data-swrlz-theme="ice-dragon"] {
+  --bg: #010711;
+  --bg-soft: #06111e;
+  --panel: rgba(6, 20, 34, .86);
+  --panel-strong: rgba(7, 24, 42, .96);
+  --panel-lite: rgba(17, 46, 70, .72);
+  --line: rgba(171, 226, 255, .19);
+  --line-strong: rgba(111, 225, 255, .46);
+  --cyan: #78eeff;
+  --blue: #66aaff;
+  --violet: #a58cff;
+  --trust: #8fffd2;
+  --amber: #ffe091;
+  --danger: #ff6e8b;
+  --text: #f6fdff;
+  --secondary: #d7f3ff;
+  --muted: #91bfd2;
+  --shadow: 0 28px 90px rgba(0, 5, 16, .6);
+  --ice-deep: #020b18;
+  --ice-mid: #0a2036;
+  --ice-glow: #8df4ff;
+  --ice-white: #ecfcff;
+  --ice-royal: #86a8ff;
+  --dragon-violet: #b29aff;
+  --frost-line: rgba(201, 245, 255, .18);
+  --frost-glass: rgba(8, 28, 45, .72);
+
+  color: var(--text);
+  background:
+    radial-gradient(circle at 72% -12%, rgba(120, 238, 255, .18), transparent 31%),
+    radial-gradient(circle at 8% 102%, rgba(102, 170, 255, .16), transparent 35%),
+    linear-gradient(145deg, #01050d 0%, #03101e 46%, #06182a 100%);
+}
+
+body[data-swrlz-theme="ice-dragon"]::before,
+body[data-swrlz-theme="ice-dragon"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body[data-swrlz-theme="ice-dragon"]::before {
+  opacity: .3;
+  background:
+    linear-gradient(120deg, transparent 0 42%, rgba(207, 248, 255, .025) 42% 43%, transparent 43% 100%),
+    linear-gradient(58deg, transparent 0 64%, rgba(120, 238, 255, .032) 64% 65%, transparent 65% 100%);
+  background-size: 180px 180px, 230px 230px;
+}
+
+body[data-swrlz-theme="ice-dragon"]::after {
+  inset: auto -10vw -24vh auto;
+  width: min(72vw, 900px);
+  height: min(72vw, 900px);
+  opacity: .16;
+  filter: blur(1px) drop-shadow(0 0 60px rgba(120, 238, 255, .18));
+  background: url("assets/ice-dragon-sigil.svg") center / contain no-repeat;
+  transform: rotate(-8deg);
+}
+
+body[data-swrlz-theme="ice-dragon"] .noise {
+  opacity: .12;
+  mix-blend-mode: screen;
+}
+
+body[data-swrlz-theme="ice-dragon"] .ambient.a {
+  background: var(--ice-glow);
+  opacity: .24;
+}
+body[data-swrlz-theme="ice-dragon"] .ambient.b {
+  background: var(--ice-royal);
+  opacity: .2;
+}
+
+body[data-swrlz-theme="ice-dragon"] .app { z-index: 1; }
+
+body[data-swrlz-theme="ice-dragon"] .sidebar {
+  opacity: 1 !important;
+  filter: none !important;
+  border-right-color: rgba(133, 229, 255, .23);
+  background:
+    linear-gradient(180deg, rgba(7, 27, 45, .96), rgba(2, 13, 26, .96)),
+    var(--ice-deep) !important;
+  box-shadow: 18px 0 50px rgba(0, 7, 18, .34), inset -1px 0 rgba(219, 250, 255, .045);
+  backdrop-filter: blur(26px) saturate(145%);
+}
+body[data-swrlz-theme="ice-dragon"].sidebar-open .sidebar { opacity: 1 !important; filter: none !important; }
+body[data-swrlz-theme="ice-dragon"] .sidebar-scrim {
+  background: rgba(0, 5, 13, .64) !important;
+  backdrop-filter: blur(2px);
+}
+
+body[data-swrlz-theme="ice-dragon"] .brand { position: relative; }
+body[data-swrlz-theme="ice-dragon"] .brand::after {
+  content: "ICE DRAGON";
+  position: absolute;
+  right: 4px;
+  top: 2px;
+  color: rgba(173, 241, 255, .46);
+  font: 800 8px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .18em;
+}
+
+body[data-swrlz-theme="ice-dragon"] .dragon-mark {
+  border-color: rgba(142, 242, 255, .5);
+  color: var(--ice-white);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(238, 253, 255, .22), transparent 24%),
+    linear-gradient(145deg, rgba(112, 235, 255, .2), rgba(85, 128, 255, .14));
+  box-shadow:
+    inset 0 0 24px rgba(141, 244, 255, .14),
+    0 0 28px rgba(120, 238, 255, .18);
+}
+body[data-swrlz-theme="ice-dragon"] .dragon-mark::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 1px solid rgba(194, 248, 255, .08);
+  border-radius: 18px;
+  transform: rotate(8deg);
+}
+body[data-swrlz-theme="ice-dragon"] .brand-copy strong {
+  color: var(--ice-white);
+  text-shadow: 0 0 18px rgba(120, 238, 255, .16);
+}
+body[data-swrlz-theme="ice-dragon"] .brand-copy span { color: #8fc9df; }
+
+body[data-swrlz-theme="ice-dragon"] .new-chat {
+  border-color: rgba(130, 232, 255, .36);
+  background: linear-gradient(135deg, rgba(113, 239, 255, .15), rgba(85, 157, 255, .10) 50%, rgba(167, 140, 255, .12));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.018), 0 8px 24px rgba(0, 10, 28, .2);
+}
+body[data-swrlz-theme="ice-dragon"] .new-chat:hover {
+  border-color: rgba(153, 244, 255, .65);
+  box-shadow: 0 0 24px rgba(120, 238, 255, .12);
+}
+
+body[data-swrlz-theme="ice-dragon"] .thread {
+  transition: border-color .16s ease, background .16s ease, transform .16s ease;
+}
+body[data-swrlz-theme="ice-dragon"] .thread:hover {
+  background: rgba(101, 198, 255, .055);
+  transform: translateX(2px);
+}
+body[data-swrlz-theme="ice-dragon"] .thread[data-active="true"] {
+  border-color: rgba(127, 225, 255, .24);
+  background: linear-gradient(90deg, rgba(120, 238, 255, .12), rgba(102, 170, 255, .07) 62%, transparent);
+  box-shadow: inset 3px 0 0 rgba(120, 238, 255, .72);
+}
+
+body[data-swrlz-theme="ice-dragon"] .icon-button:hover,
+body[data-swrlz-theme="ice-dragon"] .node-card:hover {
+  border-color: rgba(143, 232, 255, .2);
+  background: rgba(113, 209, 255, .065);
+}
+
+body[data-swrlz-theme="ice-dragon"] .topbar {
+  border-bottom-color: rgba(150, 232, 255, .18);
+  background: rgba(2, 12, 24, .72);
+  box-shadow: 0 12px 34px rgba(0, 6, 18, .18);
+  backdrop-filter: blur(22px) saturate(150%);
+}
+body[data-swrlz-theme="ice-dragon"] .thread-heading h1 {
+  color: var(--ice-white);
+  text-shadow: 0 0 16px rgba(118, 233, 255, .11);
+}
+body[data-swrlz-theme="ice-dragon"] .status-pill {
+  border-color: rgba(153, 231, 255, .2);
+  background: rgba(105, 208, 255, .055);
+}
+
+body[data-swrlz-theme="ice-dragon"] .messages {
+  background:
+    linear-gradient(180deg, rgba(4, 17, 31, .16), rgba(2, 10, 20, .04)),
+    radial-gradient(circle at 50% 0%, rgba(120, 238, 255, .045), transparent 30%);
+}
+
+body[data-swrlz-theme="ice-dragon"] .avatar {
+  border-color: rgba(141, 235, 255, .3);
+  color: var(--ice-glow);
+  background: linear-gradient(145deg, rgba(120, 238, 255, .12), rgba(67, 118, 193, .08));
+  box-shadow: inset 0 0 18px rgba(120, 238, 255, .06);
+}
+body[data-swrlz-theme="ice-dragon"] .message.user .avatar {
+  border-color: rgba(172, 160, 255, .3);
+  color: #ddd5ff;
+  background: linear-gradient(145deg, rgba(139, 177, 255, .12), rgba(178, 154, 255, .12));
+}
+
+body[data-swrlz-theme="ice-dragon"] .bubble {
+  border-color: rgba(160, 224, 255, .16);
+  color: var(--secondary);
+  background: linear-gradient(160deg, rgba(15, 42, 63, .83), rgba(5, 22, 37, .89));
+  box-shadow: 0 14px 42px rgba(0, 8, 22, .22), inset 0 1px rgba(235, 253, 255, .028);
+  backdrop-filter: blur(14px) saturate(125%);
+}
+body[data-swrlz-theme="ice-dragon"] .message:not(.user) .bubble::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 17px;
+  width: 2px;
+  height: 44%;
+  min-height: 24px;
+  border-radius: 99px;
+  background: linear-gradient(var(--ice-glow), transparent);
+  box-shadow: 0 0 12px rgba(120, 238, 255, .5);
+}
+body[data-swrlz-theme="ice-dragon"] .message.user .bubble {
+  border-color: rgba(137, 177, 255, .28);
+  color: var(--text);
+  background:
+    radial-gradient(circle at 86% 12%, rgba(221, 244, 255, .08), transparent 24%),
+    linear-gradient(135deg, rgba(51, 119, 170, .38), rgba(84, 94, 176, .31));
+}
+
+body[data-swrlz-theme="ice-dragon"] .bubble pre,
+body[data-swrlz-theme="ice-dragon"] .bubble code,
+body[data-swrlz-theme="ice-dragon"] .swrlz-panel pre {
+  border-color: rgba(143, 223, 255, .18);
+  background: rgba(1, 10, 19, .8);
+}
+body[data-swrlz-theme="ice-dragon"] .bubble a { color: #a5f4ff; }
+body[data-swrlz-theme="ice-dragon"] .bubble blockquote {
+  border-left-color: rgba(124, 233, 255, .54);
+  background: rgba(108, 214, 255, .045);
+}
+
+body[data-swrlz-theme="ice-dragon"] .composer,
+body[data-swrlz-theme="ice-dragon"] .composer-shell,
+body[data-swrlz-theme="ice-dragon"] .input-shell,
+body[data-swrlz-theme="ice-dragon"] .input-wrap {
+  border-color: rgba(153, 231, 255, .2) !important;
+  background: rgba(3, 17, 31, .88) !important;
+  box-shadow: 0 -14px 44px rgba(0, 7, 18, .18), inset 0 1px rgba(232, 252, 255, .03);
+}
+body[data-swrlz-theme="ice-dragon"] textarea,
+body[data-swrlz-theme="ice-dragon"] input,
+body[data-swrlz-theme="ice-dragon"] select { caret-color: var(--ice-glow); }
+body[data-swrlz-theme="ice-dragon"] textarea::placeholder,
+body[data-swrlz-theme="ice-dragon"] input::placeholder { color: #729fb2; }
+
+body[data-swrlz-theme="ice-dragon"] .send-button {
+  border-color: rgba(150, 239, 255, .42) !important;
+  color: #001019 !important;
+  background: linear-gradient(145deg, #dffcff, #74eaff 58%, #88afff) !important;
+  box-shadow: 0 0 24px rgba(120, 238, 255, .18);
+}
+body[data-swrlz-theme="ice-dragon"] .send-button:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 0 32px rgba(120, 238, 255, .26);
+}
+body[data-swrlz-theme="ice-dragon"] .send-button.stop {
+  color: #fff !important;
+  background: linear-gradient(145deg, #3a5578, #27364f) !important;
+}
+
+body[data-swrlz-theme="ice-dragon"] .swrlz-enhance-bar {
+  border-bottom-color: rgba(147, 228, 255, .18);
+  background: rgba(3, 15, 27, .96);
+  box-shadow: inset 0 -1px rgba(255,255,255,.015);
+}
+body[data-swrlz-theme="ice-dragon"] .swrlz-enhance-bar button,
+body[data-swrlz-theme="ice-dragon"] .swrlz-evidence button,
+body[data-swrlz-theme="ice-dragon"] .swrlz-panel button {
+  border-color: rgba(153, 226, 255, .2);
+  background: rgba(11, 35, 55, .92);
+}
+body[data-swrlz-theme="ice-dragon"] .swrlz-enhance-bar button:hover,
+body[data-swrlz-theme="ice-dragon"] .swrlz-evidence button:hover,
+body[data-swrlz-theme="ice-dragon"] .swrlz-panel button:hover {
+  border-color: rgba(143, 238, 255, .42);
+  background: rgba(18, 54, 80, .94);
+}
+body[data-swrlz-theme="ice-dragon"] .swrlz-search {
+  border-color: rgba(147, 223, 255, .2);
+  background: #041321;
+}
+body[data-swrlz-theme="ice-dragon"] .swrlz-evidence {
+  border-color: rgba(141, 224, 255, .17);
+  background: rgba(3, 17, 29, .66);
+}
+body[data-swrlz-theme="ice-dragon"] .swrlz-modal {
+  background: rgba(0, 5, 14, .76);
+  backdrop-filter: blur(4px);
+}
+body[data-swrlz-theme="ice-dragon"] .swrlz-panel {
+  border-color: rgba(136, 234, 255, .4);
+  background:
+    radial-gradient(circle at 80% 0%, rgba(122, 228, 255, .08), transparent 25%),
+    linear-gradient(150deg, #071a2a, #04111e);
+  box-shadow: 0 30px 100px rgba(0, 4, 14, .7), 0 0 36px rgba(120, 238, 255, .07);
+}
+body[data-swrlz-theme="ice-dragon"] .swrlz-mode { color: var(--ice-glow); }
+
+body[data-swrlz-theme="ice-dragon"] ::selection {
+  color: #001017;
+  background: #9cf4ff;
+}
+body[data-swrlz-theme="ice-dragon"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(#28516a, #163246) !important;
+}
+body[data-swrlz-theme="ice-dragon"] ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(#3b708d, #1e4a63) !important;
+}
+
+body[data-swrlz-theme="ice-dragon"] .workspace::before,
+body[data-swrlz-theme="ice-dragon"] .workspace::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  width: 110px;
+  height: 110px;
+  opacity: .22;
+  background: url("assets/ice-shards.svg") center / contain no-repeat;
+}
+body[data-swrlz-theme="ice-dragon"] .workspace::before { right: 0; top: 0; }
+body[data-swrlz-theme="ice-dragon"] .workspace::after { left: 0; bottom: 0; transform: rotate(180deg); opacity: .11; }
+
+.swrlz-theme-select {
+  min-height: 32px;
+  max-width: 128px;
+  padding: 0 27px 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--secondary);
+  background: rgba(255,255,255,.035);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .02em;
+  cursor: pointer;
+}
+.swrlz-theme-select:hover { border-color: var(--line-strong); }
+body[data-swrlz-theme="ice-dragon"] .swrlz-theme-select {
+  border-color: rgba(143, 232, 255, .28);
+  color: var(--ice-white);
+  background: rgba(8, 35, 55, .82);
+  box-shadow: inset 0 0 18px rgba(120, 238, 255, .05);
+}
+
+@media (max-width: 760px) {
+  body[data-swrlz-theme="ice-dragon"]::after {
+    width: 105vw;
+    height: 105vw;
+    right: -34vw;
+    bottom: -18vw;
+    opacity: .09;
+  }
+  body[data-swrlz-theme="ice-dragon"] .sidebar {
+    background: linear-gradient(180deg, #061b2c 0%, #020d1b 100%) !important;
+    box-shadow: 18px 0 55px rgba(0, 5, 15, .7);
+  }
+  body[data-swrlz-theme="ice-dragon"] .swrlz-enhance-bar { background: #03111f; }
+}
+
+@media (max-width: 560px) {
+  .swrlz-theme-select { max-width: 106px; padding-left: 7px; padding-right: 21px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-swrlz-theme="ice-dragon"] *,
+  body[data-swrlz-theme="ice-dragon"] *::before,
+  body[data-swrlz-theme="ice-dragon"] *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
