@@ -2,18 +2,62 @@
 
 ## Current release
 
-**Server v2.3.26**
+**Server v2.3.28**
 
-This event corrects the mobile Chat viewport so the composer stays pinned to the usable bottom edge instead of leaving browser-dependent dead space underneath it.
+This event corrects Chat responsiveness across normal mobile browsing and phone browser desktop-site mode, while also giving assistant responses a cleaner bounded card treatment.
 
 ### Module state
 
-- **Server runtime v2.3.26** — current server development lineage.
-- **Chat v1.4.22** — mobile viewport/composer-bottom correction.
+- **Server runtime v2.3.28** — current server development lineage.
+- **Chat v1.4.24** — mobile/desktop-site responsive geometry and response-card polish.
 - **LALM engine v2.1.21** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.0** — unchanged.
+
+## Server v2.3.28 — 2026-09-11
+
+### Responsive Chat geometry + response presentation
+
+- User screenshots showed normal Android browser mode appearing oversized and clipping the right side of Chat, while Chrome desktop-site mode exposed a different proportion problem across sidebar, workspace, message cards, and composer.
+- Added a final runtime responsive-polish stylesheet that constrains all major Chat surfaces to their actual container width and prevents long code/text from forcing horizontal page overflow.
+- Mobile mode now keeps the app, workspace, top bar, message stack, composer, route control, and theme selector inside the visual viewport while preserving internal horizontal scrolling for code blocks only.
+- Desktop-site mode on phone-sized desktop CSS viewports now uses a compact desktop sidebar and bounded message/composer widths instead of inheriting full desktop proportions that crowd the workspace.
+- Assistant response cards now have a more intentional layered card surface, softer radius, cleaner code-block spacing, and improved overflow handling without changing response semantics or LALM output.
+- Existing Ice Dragon selection, account state, camera controls, stream behavior, message storage, and LALM behavior were intentionally left unchanged.
+
+### Verification / deployment state
+
+- `web/chat_responsive_polish.css` added on `runtime`.
+- `runtime_pages/manifest.json` now loads responsive polish after the existing viewport correction so it owns only final geometry/presentation overrides.
+- `versions/server-runtime.txt` advanced from `2.3.27` to `2.3.28`.
+- `versions/web-chat.txt` advanced from `1.4.23` to `1.4.24`.
+- **Production deployment:** NONE requested; runtime-only Chat update.
+- **Server restart:** NONE requested.
+- **Verification:** live source/asset verification follows this record; exact Android visual acceptance remains screenshot-driven.
+
+### Relevant lineage
+
+- Responsive polish stylesheet: `913960884b9a169cf1941884f219baf4b36e0f56`
+- Runtime manifest wiring: `0b225f264327b8f62c4fc877696d4f946aefd069`
+- Server version authority: `0e0c71013986e78976ddd2eea7919689db9e4d6e`
+- Chat version authority: `10cc10c970ee85531d3afebea61f9d357bdc89f9`
+
+## Server v2.3.27 — 2026-09-11
+
+### Authoritative LALM engine version display
+
+- Chat's version footer was corrected to resolve and display the authoritative `LALM_ENGINE` module version instead of the LALM UI version.
+- Chat advanced to `v1.4.23`; Server runtime advanced to `v2.3.27`.
+- The change remained runtime-only and did not alter LALM inference behavior.
+- **Production deployment:** NONE.
+- **Server restart:** NONE.
+
+### Relevant lineage
+
+- Chat version-display correction: `c0e4a17a49500966f687d124b87974bc6d6c2997`
+- Chat version authority: `d60c84d98d32a44d4580bcfdfab5b850f60d41e1`
+- Server version authority: `8d695b695b9b58ec55620f08bfdfe234204d1839`
 
 ## Server v2.3.26 — 2026-09-11
 
