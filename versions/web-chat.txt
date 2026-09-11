@@ -1,7 +1,7 @@
 ID=web-chat
-VERSION=1.4.11
+VERSION=1.4.12
 KIND=web-interface
 SOURCE_BRANCH=runtime
-STATUS=active
+STATUS=failed-attempt
 DISPLAY_NAME=§wyrlz Web Chat
 UPDATE_POLICY=runtime-hot
