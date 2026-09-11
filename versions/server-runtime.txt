@@ -1,7 +1,7 @@
 ID=server-runtime
-VERSION=2.3.14
+VERSION=2.3.15
 KIND=server-runtime
 SOURCE_BRANCH=runtime
-STATUS=failed-attempt
+STATUS=active
 DISPLAY_NAME=§wyrlz Server Runtime
 UPDATE_POLICY=runtime-hot
