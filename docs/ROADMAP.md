@@ -2,18 +2,38 @@
 
 ## Current release
 
-**Server v2.3.19**
+**Server v2.3.20**
 
-This event adds explicit manual-only production deployment control and prevents the base Chat shell from visibly flashing before the current runtime enhancement layer finishes booting.
+This event adds first-class controls to every assistant activity log so the visible log, raw message state, conversation state, and stream-camera generation events can be inspected, copied, and exported without leaving Chat.
 
 ### Module state
 
-- **Server runtime v2.3.19** — current server development lineage.
-- **Chat v1.4.17** — suppresses the stale/base interface flash during enhancement initialization so refresh presents the current enhanced interface as one coherent load.
-- **Deployment Control v1.0.0** — new independently versioned manual deployment-control module.
+- **Server runtime v2.3.20** — current server development lineage.
+- **Chat v1.4.18** — every assistant activity log now has Camera, Copy, and Export full log controls, including response-generation trace data.
+- **Deployment Control v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
 - **LALM engine v2.1.19** / revision `2.1.19-hot-boundary-v10-thread-prefill-cache` — unchanged in this event.
+
+## Server v2.3.20 — 2026-09-11
+
+### Activity-log camera and export controls
+
+- Every assistant Activity log receives an inline `📷` camera control, a `Copy` control, and an `Export full log` control.
+- The camera opens a dedicated log viewer containing the selected response text, rendered activity/generation trace, and the raw message state used by Chat.
+- `Copy box` copies the complete selected log snapshot rather than only the visible summary label.
+- `Export full log` downloads the current conversation as a text log containing every stored message, each rendered activity trace available in the current DOM, the raw thread state, and the complete browser stream-camera / response-generation event log.
+- The existing standalone stream-camera export remains available; this event adds the same diagnostic capability directly where each assistant log is inspected.
+- Controls stop event propagation so clicking Camera/Copy/Export does not accidentally toggle the `<details>` activity log open or closed.
+- The viewer and controls include responsive mobile layout behavior.
+
+### Verification / deployment state
+
+- `web/chat_stream_focus.js` was updated on the `runtime` branch and then fetched from the live Vercel `/live/assets/chat_stream_focus.js` route.
+- Live response headers identify `x-swrlz-live-branch: runtime` and `x-swrlz-live-source: github-runtime`, confirming the new Chat log controls propagated through the hot runtime path.
+- **Production deployment:** NONE.
+- **Server restart:** NONE.
+- **Manual Vercel deployment:** NONE for this Chat update.
 
 ## Server v2.3.19 — 2026-09-10
 
