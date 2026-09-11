@@ -1,0 +1,7 @@
+ID=deployment-control
+VERSION=1.0.0
+KIND=deployment-control
+SOURCE_BRANCH=main
+STATUS=active
+DISPLAY_NAME=§wyrlz Manual Deployment Control
+UPDATE_POLICY=main-infrastructure
