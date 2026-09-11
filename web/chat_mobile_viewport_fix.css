@@ -1,4 +1,15 @@
-/* §wyrlz Web Chat viewport + responsive correction — Server 2.3.30 / Chat 1.4.26 */
+/* §wyrlz Web Chat viewport + responsive correction — Server 2.3.34 / Chat 1.4.29 */
+
+/* Never hold first paint hostage to the enhancement/account dock bootstrap. */
+html body {
+  visibility: visible !important;
+}
+
+/* Cheaply skip paint/layout work for off-screen sidebar threads during first render. */
+.thread {
+  content-visibility: auto;
+  contain-intrinsic-size: 52px;
+}
 
 .workspace,
 .messages,
@@ -255,6 +266,41 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+}
+
+/* Very narrow phone widths cannot comfortably fit title + theme + status + camera + settings. */
+@media (max-width: 560px) {
+  .topbar {
+    gap: 5px;
+    padding-inline: 8px;
+  }
+
+  .topbar-right {
+    gap: 4px;
+    flex: 0 0 auto;
+  }
+
+  .topbar-right .status-pill {
+    display: none !important;
+  }
+
+  .swrlz-theme-select {
+    width: 104px !important;
+    max-width: 104px !important;
+    flex: 0 0 104px !important;
+    padding-left: 7px;
+    padding-right: 20px;
+  }
+
+  .topbar-right .icon-button {
+    width: 34px;
+    height: 34px;
+  }
+
+  .thread-heading p {
+    font-size: 10px;
+    letter-spacing: .04em;
   }
 }
 
