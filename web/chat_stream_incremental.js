@@ -8,151 +8,40 @@ let pendingSave=false;
 let saveTimer=0;
 let lastRenderedHeight=null;
 let pendingScroll=false;
+const LIVE_NAMES={cpp:'main.cpp',cxx:'main.cpp','c++':'main.cpp',c:'main.c',h:'main.h',hpp:'main.hpp',html:'index.html',css:'styles.css',javascript:'script.js',js:'script.js',typescript:'app.ts',ts:'app.ts',jsx:'App.jsx',tsx:'App.tsx',python:'main.py',py:'main.py',java:'Main.java',kotlin:'Main.kt',kt:'Main.kt',json:'data.json',yaml:'config.yaml',yml:'config.yml',markdown:'README.md',md:'README.md',bash:'script.sh',shell:'script.sh',sh:'script.sh',sql:'query.sql',go:'main.go',rust:'main.rs',rs:'main.rs'};
 
-function activeStreamMessage(){
-  try{return typeof activeMessage==='function'?activeMessage():null}catch(_){return null}
-}
-function activeArticle(message){
-  if(!message||!refs?.stack)return null;
-  try{return refs.stack.querySelector(`[data-message-id="${CSS.escape(String(message.id||''))}"]`)}catch(_){return null}
-}
-function flushSave(){
-  if(saveTimer){clearTimeout(saveTimer);saveTimer=0}
-  if(!pendingSave)return;
-  pendingSave=false;
-  try{baseSaveState()}catch(_){}
-}
-saveState=function(){
-  const message=activeStreamMessage();
-  if(!message){flushSave();return baseSaveState()}
-  pendingSave=true;
-  if(!saveTimer)saveTimer=setTimeout(flushSave,700);
-};
-renderMessage=function(message){
-  const article=baseRenderMessage(message);
-  if(article)article.dataset.messageState=String(message?.state||'');
-  return article;
-};
+function activeStreamMessage(){try{return typeof activeMessage==='function'?activeMessage():null}catch(_){return null}}
+function activeArticle(message){if(!message||!refs?.stack)return null;try{return refs.stack.querySelector(`[data-message-id="${CSS.escape(String(message.id||''))}"]`)}catch(_){return null}}
+function flushSave(){if(saveTimer){clearTimeout(saveTimer);saveTimer=0}if(!pendingSave)return;pendingSave=false;try{baseSaveState()}catch(_){}}
+saveState=function(){const message=activeStreamMessage();if(!message){flushSave();return baseSaveState()}pendingSave=true;if(!saveTimer)saveTimer=setTimeout(flushSave,700)};
+renderMessage=function(message){const article=baseRenderMessage(message);if(article)article.dataset.messageState=String(message?.state||'');return article};
 function followEnabled(){return refs?.messages?.dataset?.streamFollow==='true'}
-function centerTailLine(article){
-  if(!followEnabled()||!refs?.messages||!article)return;
-  const bubble=article.querySelector('.bubble');
-  if(!bubble)return;
-  const viewport=refs.messages.getBoundingClientRect();
-  const rect=bubble.getBoundingClientRect();
-  const height=Math.ceil(rect.height);
-  const style=getComputedStyle(bubble);
-  const line=parseFloat(style.lineHeight);
-  const font=parseFloat(style.fontSize)||16;
-  const lineHeight=Number.isFinite(line)?line:font*1.5;
-  const lineAdvanced=lastRenderedHeight==null||Math.abs(height-lastRenderedHeight)>=Math.max(4,lineHeight*.45);
-  if(!lineAdvanced)return;
-  lastRenderedHeight=height;
-  const target=viewport.top+viewport.height*.52;
-  const delta=rect.bottom-target;
-  if(Math.abs(delta)>1)refs.messages.scrollTop+=delta;
-}
-function phaseText(message){
-  try{return typeof phaseLabel==='function'?phaseLabel(message?.meta?.phase||'CONNECTING'):'Preparing response'}catch(_){return 'Preparing response'}
-}
-function updateLiveActivity(article,message){
-  const body=article?.querySelector('.message-body');
-  if(!body)return;
-  const trail=Array.isArray(message?.meta?.trail)?message.meta.trail:[];
-  if(!trail.length)return;
-  let details=body.querySelector(':scope > details.trace');
-  if(!details){
-    details=document.createElement('details');
-    details.className='trace swrlz-live-trace';
-    details.open=true;
-    const summary=document.createElement('summary');
-    const list=document.createElement('div');list.className='trace-list';
-    details.append(summary,list);
-    const actions=body.querySelector(':scope > .message-actions');
-    if(actions)body.insertBefore(details,actions);else body.append(details);
-  }
-  details.open=true;
-  const summary=details.querySelector('summary');
-  if(summary)summary.textContent=`Activity log · ${phaseText(message)}`;
-  const list=details.querySelector('.trace-list');
-  if(list){
-    const recent=trail.slice(-12);
-    const signature=recent.map(x=>`${x.phase||''}\u0000${x.reason||''}`).join('\u0001');
-    if(list.dataset.signature!==signature){
-      list.dataset.signature=signature;
-      const frag=document.createDocumentFragment();
-      for(const step of recent){
-        const item=document.createElement('div');item.className='trace-item';
-        const label=typeof phaseLabel==='function'?phaseLabel(step.phase):String(step.phase||'Activity');
-        item.textContent=step.reason?`${label} — ${step.reason}`:label;
-        frag.append(item);
-      }
-      list.replaceChildren(frag);
-    }
-  }
-}
-function stableStreamText(article,message){
-  if(!article||!message)return false;
-  article.dataset.messageState=String(message.state||'streaming');
-  const bubble=article.querySelector('.bubble');
-  if(!bubble)return false;
-  const next=String(message.text||'');
-  if(next){
-    let live=bubble.querySelector(':scope > .swrlz-live-stream-text');
-    if(!live){live=document.createElement('div');live.className='swrlz-live-stream-text';bubble.replaceChildren(live)}
-    if(live.textContent!==next)live.textContent=next;
-  }else{
-    let waiting=bubble.querySelector(':scope > .swrlz-live-status');
-    if(!waiting){
-      waiting=document.createElement('div');waiting.className='empty-response swrlz-live-status';
-      const mark=document.createElement('span');mark.className='thinking-mark';
-      const text=document.createElement('span');text.className='swrlz-live-status-text';
-      waiting.append(mark,text);bubble.replaceChildren(waiting);
-    }
-    const text=waiting.querySelector('.swrlz-live-status-text');
-    if(text)text.textContent=phaseText(message);
-  }
-  updateLiveActivity(article,message);
-  return true;
-}
-function finalizeArticle(article,message){
-  if(!article||!message)return false;
-  const replacement=renderMessage(message);
-  if(!replacement)return false;
-  article.replaceWith(replacement);
-  lastRenderedHeight=null;
-  flushSave();
-  return true;
-}
-function patchActiveArticle(scroll){
-  const message=activeStreamMessage();
-  const article=activeArticle(message);
-  if(!message||!article)return false;
-  const streaming=message.state==='streaming'||message.state==='cancelling';
-  const patched=streaming?stableStreamText(article,message):finalizeArticle(article,message);
-  if(patched&&scroll&&streaming)requestAnimationFrame(()=>centerTailLine(article));
-  return patched;
-}
-scheduleRender=function(scroll=false){
-  pendingScroll=pendingScroll||Boolean(scroll);
-  if(renderQueued)return;
-  renderQueued=true;
-  requestAnimationFrame(()=>{
-    renderQueued=false;
-    const shouldScroll=pendingScroll;pendingScroll=false;
-    const message=activeStreamMessage();
-    const patched=message?patchActiveArticle(shouldScroll):false;
-    if(!patched){lastRenderedHeight=null;render(false)}
-  });
-};
-const style=document.createElement('style');
-style.textContent=`
+function centerTailLine(article){if(!followEnabled()||!refs?.messages||!article)return;const bubble=article.querySelector('.bubble');if(!bubble)return;const viewport=refs.messages.getBoundingClientRect();const rect=bubble.getBoundingClientRect();const height=Math.ceil(rect.height);const style=getComputedStyle(bubble);const line=parseFloat(style.lineHeight);const font=parseFloat(style.fontSize)||16;const lineHeight=Number.isFinite(line)?line:font*1.5;const lineAdvanced=lastRenderedHeight==null||Math.abs(height-lastRenderedHeight)>=Math.max(4,lineHeight*.45);if(!lineAdvanced)return;lastRenderedHeight=height;const target=viewport.top+viewport.height*.52;const delta=rect.bottom-target;if(Math.abs(delta)>1)refs.messages.scrollTop+=delta}
+function phaseText(message){try{return typeof phaseLabel==='function'?phaseLabel(message?.meta?.phase||'CONNECTING'):'Preparing response'}catch(_){return 'Preparing response'}}
+function updateLiveActivity(article,message){const body=article?.querySelector('.message-body');if(!body)return;const trail=Array.isArray(message?.meta?.trail)?message.meta.trail:[];if(!trail.length)return;let details=body.querySelector(':scope > details.trace');if(!details){details=document.createElement('details');details.className='trace swrlz-live-trace';details.open=true;const summary=document.createElement('summary');const list=document.createElement('div');list.className='trace-list';details.append(summary,list);const actions=body.querySelector(':scope > .message-actions');if(actions)body.insertBefore(details,actions);else body.append(details)}details.open=true;const summary=details.querySelector('summary');if(summary)summary.textContent=`Activity log · ${phaseText(message)}`;const list=details.querySelector('.trace-list');if(list){const recent=trail.slice(-12);const signature=recent.map(x=>`${x.phase||''}\u0000${x.reason||''}`).join('\u0001');if(list.dataset.signature!==signature){list.dataset.signature=signature;const frag=document.createDocumentFragment();for(const step of recent){const item=document.createElement('div');item.className='trace-item';const label=typeof phaseLabel==='function'?phaseLabel(step.phase):String(step.phase||'Activity');item.textContent=step.reason?`${label} — ${step.reason}`:label;frag.append(item)}list.replaceChildren(frag)}}}
+
+function copyLive(text,button){const done=()=>{const old=button.textContent;button.textContent='Copied';setTimeout(()=>button.textContent=old,800)};if(navigator.clipboard?.writeText)navigator.clipboard.writeText(text).then(done).catch(()=>{});}
+function liveName(lang,index){const base=LIVE_NAMES[lang]||`code-${index+1}.txt`;if(index===0)return base;const dot=base.lastIndexOf('.');return dot<0?`${base}-${index+1}`:`${base.slice(0,dot)}-${index+1}${base.slice(dot)}`}
+function parseLiveCode(text){const source=String(text||'');const first=source.indexOf('```');if(first<0)return null;const files=[];const prose=[];const lead=source.slice(0,first).trim();let cursor=first;let tailStart=first;while(cursor<source.length){const open=source.indexOf('```',cursor);if(open<0)break;if(open>tailStart){const between=source.slice(tailStart,open).trim();if(between)prose.push(between)}let headerStart=open+3;let lineEnd=source.indexOf('\n',headerStart);if(lineEnd<0){const partialHeader=source.slice(headerStart).trim();files.push({lang:(partialHeader.split(/\s+/)[0]||'text').toLowerCase(),text:'',open:true});tailStart=source.length;break}const header=source.slice(headerStart,lineEnd).trim();const lang=(header.split(/\s+/)[0]||'text').toLowerCase();const codeStart=lineEnd+1;const close=source.indexOf('```',codeStart);if(close<0){files.push({lang,text:source.slice(codeStart),open:true});tailStart=source.length;break}files.push({lang,text:source.slice(codeStart,close),open:false});cursor=close+3;tailStart=cursor;if(source.indexOf('```',cursor)<0){const rest=source.slice(cursor).trim();if(rest)prose.push(rest);break}}
+  if(!files.length)return null;return {lead,files:files.map((f,i)=>({...f,name:liveName(f.lang,i)})),details:prose.join('\n\n').trim()};}
+function ensureLiveArtifact(bubble){let outer=bubble.querySelector(':scope > .swrlz-live-code-artifact');if(outer)return outer;outer=document.createElement('section');outer.className='swrlz-code-artifact swrlz-live-code-artifact';outer.innerHTML=`<div class="swrlz-code-artifact-head"><div class="swrlz-code-artifact-title"><strong>Code artifact</strong><span class="swrlz-live-code-meta">Preparing code…</span></div><div class="swrlz-code-artifact-actions"><button type="button" class="swrlz-live-copy-all">Copy all</button></div></div><div class="swrlz-code-artifact-lead swrlz-live-code-lead" hidden></div><div class="swrlz-code-workspace"><div class="swrlz-code-tabs" role="tablist"></div><div class="swrlz-code-stage"></div></div><div class="swrlz-code-artifact-notes swrlz-live-code-notes" hidden><div class="swrlz-code-notes-title">Details</div><div class="swrlz-live-code-details"></div></div>`;outer.__files=[];outer.__active=0;outer.querySelector('.swrlz-live-copy-all').addEventListener('click',e=>copyLive((outer.__files||[]).map(f=>`// ${f.name}\n${f.text}`).join('\n\n'),e.currentTarget));bubble.replaceChildren(outer);return outer}
+function renderLiveArtifact(bubble,text){const parsed=parseLiveCode(text);if(!parsed)return false;const outer=ensureLiveArtifact(bubble);outer.__files=parsed.files;const title=outer.querySelector('.swrlz-code-artifact-title strong');const meta=outer.querySelector('.swrlz-live-code-meta');if(title)title.textContent=parsed.files.length>1?'Code project':'Code artifact';if(meta){const active=parsed.files[Math.min(outer.__active||0,parsed.files.length-1)]||parsed.files[0];meta.textContent=parsed.files.length>1?`${parsed.files.length} files · ${active.name}`:`${active.name} · ${active.lang}`}
+  const lead=outer.querySelector('.swrlz-live-code-lead');if(lead){lead.hidden=!parsed.lead;lead.textContent=parsed.lead}
+  const tabs=outer.querySelector('.swrlz-code-tabs');const stage=outer.querySelector('.swrlz-code-stage');while(tabs.children.length<parsed.files.length){const index=tabs.children.length;const tab=document.createElement('button');tab.type='button';tab.className='swrlz-code-tab';tab.setAttribute('role','tab');tab.addEventListener('click',()=>{outer.__active=index;renderLiveArtifact(bubble,String(text))});tabs.append(tab);const pane=document.createElement('section');pane.className='swrlz-code-pane';pane.innerHTML=`<div class="swrlz-code-pane-tools"><span></span><button type="button" class="swrlz-live-copy-one">Copy</button></div><div class="swrlz-code-inner"><pre><code></code></pre></div>`;pane.querySelector('.swrlz-live-copy-one').addEventListener('click',e=>{const f=(outer.__files||[])[index];if(f)copyLive(f.text,e.currentTarget)});stage.append(pane)}while(tabs.children.length>parsed.files.length){tabs.lastElementChild.remove();stage.lastElementChild.remove()}
+  if(parsed.files.length===1)tabs.classList.add('single');else tabs.classList.remove('single');const active=Math.min(outer.__active||0,parsed.files.length-1);outer.__active=active;parsed.files.forEach((file,index)=>{const tab=tabs.children[index];const pane=stage.children[index];tab.textContent=file.name;tab.setAttribute('aria-selected',index===active?'true':'false');pane.hidden=index!==active;const label=pane.querySelector('.swrlz-code-pane-tools span');if(label)label.textContent=`${file.lang} · ${file.name}${file.open?' · writing…':''}`;const code=pane.querySelector('code');if(code&&code.textContent!==file.text)code.textContent=file.text});
+  const notes=outer.querySelector('.swrlz-live-code-notes');const details=outer.querySelector('.swrlz-live-code-details');if(notes&&details){notes.hidden=!parsed.details;if(details.textContent!==parsed.details)details.textContent=parsed.details}return true}
+
+function stableStreamText(article,message){if(!article||!message)return false;article.dataset.messageState=String(message.state||'streaming');const bubble=article.querySelector('.bubble');if(!bubble)return false;const next=String(message.text||'');if(next){if(!renderLiveArtifact(bubble,next)){let live=bubble.querySelector(':scope > .swrlz-live-stream-text');if(!live){live=document.createElement('div');live.className='swrlz-live-stream-text';bubble.replaceChildren(live)}if(live.textContent!==next)live.textContent=next}}else{let waiting=bubble.querySelector(':scope > .swrlz-live-status');if(!waiting){waiting=document.createElement('div');waiting.className='empty-response swrlz-live-status';const mark=document.createElement('span');mark.className='thinking-mark';const text=document.createElement('span');text.className='swrlz-live-status-text';waiting.append(mark,text);bubble.replaceChildren(waiting)}const text=waiting.querySelector('.swrlz-live-status-text');if(text)text.textContent=phaseText(message)}updateLiveActivity(article,message);return true}
+function finalizeArticle(article,message){if(!article||!message)return false;const replacement=renderMessage(message);if(!replacement)return false;try{const bubble=replacement.querySelector('.bubble');if(bubble&&typeof window.__swrlzDecorateCodeArtifact==='function')window.__swrlzDecorateCodeArtifact(bubble)}catch(_){}article.replaceWith(replacement);lastRenderedHeight=null;flushSave();return true}
+function patchActiveArticle(scroll){const message=activeStreamMessage();const article=activeArticle(message);if(!message||!article)return false;const streaming=message.state==='streaming'||message.state==='cancelling';const patched=streaming?stableStreamText(article,message):finalizeArticle(article,message);if(patched&&scroll&&streaming)requestAnimationFrame(()=>centerTailLine(article));return patched}
+scheduleRender=function(scroll=false){pendingScroll=pendingScroll||Boolean(scroll);if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;const shouldScroll=pendingScroll;pendingScroll=false;const message=activeStreamMessage();const patched=message?patchActiveArticle(shouldScroll):false;if(!patched){lastRenderedHeight=null;render(false)}})};
+const style=document.createElement('style');style.textContent=`
 .swrlz-live-stream-text{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;min-height:1.4em;contain:content}
 .swrlz-live-status{min-height:1.4em;color:var(--muted);display:flex;align-items:center;gap:9px}
 .swrlz-live-trace{margin-top:8px}
+.swrlz-live-code-lead,.swrlz-live-code-details{white-space:pre-wrap;overflow-wrap:anywhere}
+.swrlz-live-code-artifact .swrlz-code-inner pre{margin:0}
 .message[data-message-state="streaming"] .bubble{will-change:auto;backface-visibility:hidden;transform:translateZ(0)}
-`;
-document.head.append(style);
-window.addEventListener('pagehide',flushSave);
-window.addEventListener('beforeunload',flushSave);
+`;document.head.append(style);
+window.addEventListener('pagehide',flushSave);window.addEventListener('beforeunload',flushSave);
 })();
