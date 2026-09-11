@@ -1,5 +1,8 @@
 (()=>{"use strict";
-const VERSION_REGISTRY="https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/runtime/VERSION.txt";
+const RAW_ROOT="https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/runtime/";
+const INDEX_URL=`${RAW_ROOT}VERSION.txt`;
+const parseKV=(text)=>Object.fromEntries(String(text||"").split(/\r?\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith("#")&&x.includes("=")).map(x=>{const i=x.indexOf("=");return [x.slice(0,i).trim(),x.slice(i+1).trim()];}));
+const fetchText=(url)=>fetch(`${url}${url.includes("?")?"&":"?"}ts=${Date.now()}`,{cache:"no-store"}).then(r=>r.ok?r.text():Promise.reject(new Error(`HTTP ${r.status}`)));
 const apply=()=>{
   const foot=document.querySelector(".sidebar-foot");
   if(!foot)return;
@@ -11,15 +14,28 @@ const apply=()=>{
     line.style.cssText="padding:4px 9px 2px;color:var(--muted);font-size:10px;letter-spacing:.05em;opacity:.9;line-height:1.45;";
     foot.appendChild(line);
   }
-  const parseRegistry=(text)=>Object.fromEntries(String(text||"").split(/\r?\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith("#")&&x.includes("=")).map(x=>{const i=x.indexOf("=");return [x.slice(0,i).trim(),x.slice(i+1).trim()];}));
-  const render=(v={})=>{
+  const renderVersions=(mods={})=>{
     const parts=[];
-    if(v.CHAT)parts.push(`Chat v${v.CHAT}`);
-    if(v.STREAM)parts.push(`Stream ${v.STREAM}`);
-    if(v.SERVER_RUNTIME)parts.push(`Server runtime v${v.SERVER_RUNTIME}`);
-    if(v.LALM_UI)parts.push(`LALM v${v.LALM_UI}`);
+    if(mods.WEB_CHAT?.VERSION)parts.push(`Chat v${mods.WEB_CHAT.VERSION}`);
+    if(mods.STREAM_CONTRACT?.VERSION)parts.push(`Stream ${mods.STREAM_CONTRACT.VERSION}`);
+    if(mods.SERVER_RUNTIME?.VERSION)parts.push(`Server runtime v${mods.SERVER_RUNTIME.VERSION}`);
+    if(mods.LALM_UI?.VERSION)parts.push(`LALM v${mods.LALM_UI.VERSION}`);
     const text=parts.join(" · ");
     if(text&&line.textContent!==text)line.textContent=text;
+  };
+  const loadVersions=async()=>{
+    try{
+      const index=parseKV(await fetchText(INDEX_URL));
+      const keys=["WEB_CHAT","STREAM_CONTRACT","SERVER_RUNTIME","LALM_UI"];
+      const pairs=await Promise.all(keys.map(async key=>{
+        const path=index[key];
+        if(!path)return [key,null];
+        return [key,parseKV(await fetchText(`${RAW_ROOT}${path}`))];
+      }));
+      renderVersions(Object.fromEntries(pairs));
+    }catch(_){
+      if(!line.textContent)line.textContent="Version registry unavailable";
+    }
   };
   const paintLalm=async()=>{
     const title=document.querySelector("#nodeTitle");
@@ -35,7 +51,7 @@ const apply=()=>{
       const ready=Boolean(s?.readiness?.interactiveReady);
       const failed=s?.readiness?.ok===false;
       light.classList.remove("ready","error");
-      if(pill){pill.classList.remove("ready","error");}
+      if(pill)pill.classList.remove("ready","error");
       if(ready){
         light.classList.add("ready");
         if(pill)pill.classList.add("ready");
@@ -63,11 +79,7 @@ const apply=()=>{
       if(detail.textContent!=="LALM status unavailable")detail.textContent="LALM status unavailable";
     }
   };
-  render();
-  fetch(`${VERSION_REGISTRY}?ts=${Date.now()}`,{cache:"no-store"})
-    .then(r=>r.ok?r.text():Promise.reject(new Error(`HTTP ${r.status}`)))
-    .then(text=>render(parseRegistry(text)))
-    .catch(()=>{});
+  loadVersions();
   paintLalm();
   window.setInterval(paintLalm,15000);
 };
