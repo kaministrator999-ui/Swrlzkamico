@@ -1,10 +1,12 @@
 """Hot-swappable R39 engine entrypoint.
 
-v12 turns generation itself into future-prefill work. During decode it publishes
-immutable assistant-output checkpoints, publishes a terminal assistant-open checkpoint
-before completion is exposed, and then speculatively warms the assistant-close and
-next-user scaffold in a daemon thread. A new request never waits for speculative
-warmup: it simply resumes from the longest exact-prefix checkpoint already available.
+v13 keeps v12 pipelined prefill/checkpoint behavior and replaces the fixed 128-token
+response leash with an adaptive response budget. Each request receives a planned
+length, a soft wrap point, and a larger emergency ceiling. The planning advisory is
+part of the model prompt so the recurrent state remains canonical; generation may
+continue past the plan to finish code, sentences, and promised sections, and obvious
+open code/syntax structures receive bounded completion headroom before the absolute
+safety ceiling is allowed to stop them.
 """
 from __future__ import annotations
 
@@ -21,8 +23,8 @@ from swyrlz import r39_native as native_bridge
 
 ENGINE_ID = "swrlz_r39_native_qmatvec_v1" if native_bridge.available() else base.ENGINE_ID
 MODEL_SHA256 = base.MODEL_SHA256
-HOT_SERVER_VERSION = "2.1.21"
-HOT_REVISION = "2.1.21-hot-boundary-v12-pipelined-prefill"
+HOT_SERVER_VERSION = "2.1.22"
+HOT_REVISION = "2.1.22-hot-boundary-v13-adaptive-response-budget"
 
 _ORIGINAL_MATRIX = base.R39Model.matrix
 _ORIGINAL_ROW = base.R39Model.row
@@ -49,6 +51,9 @@ _JOB_LOCK = threading.RLock()
 _JOBS: dict[str, dict[str, Any]] = {}
 _JOB_TTL_SECONDS = 15 * 60
 _MAX_JOBS = 12
+
+_ABSOLUTE_RESPONSE_HARD_CAP = 768
+_RESPONSE_EXTENSION_STEP = 64
 
 
 def _cache(self: base.R39Model) -> dict[str, np.ndarray]:
@@ -134,7 +139,7 @@ def _hot_matvec(self: base.R39Model, name: str, x: np.ndarray) -> np.ndarray:
 def _hot_render_chat_prompt(payload):
     clone = dict(payload)
     directive = str(clone.get("responseDirective") or "").strip()
-    if directive.startswith("Answer directly and truthfully."):
+    if directive.startswith("Answer directly and truthfully.") and "SWRLZ_RESPONSE_BUDGET" not in directive:
         clone["responseDirective"] = "Answer directly and truthfully."
     return _ORIGINAL_RENDER_CHAT_PROMPT(clone)
 
@@ -397,9 +402,6 @@ def _speculative_next_turn_warmup(
         elif not closing:
             return
 
-        # The next rendered prompt always begins with this user-role scaffold.
-        # Prefilling it speculatively means the next request normally pays only for
-        # the user's actual text plus the small user-close / assistant-open suffix.
         user_open_text = closed_text + "<|im_start|>user\n"
         user_open_tokens = model.tokenizer.encode(user_open_text)
         if tuple(user_open_tokens[:len(closed_tokens)]) != tuple(closed_tokens):
@@ -418,6 +420,90 @@ def _speculative_next_turn_warmup(
 def _start_speculative_warmup(*args) -> None:
     worker = threading.Thread(target=_speculative_next_turn_warmup, args=args, name="swrlz-prefill-postwarm", daemon=True)
     worker.start()
+
+
+def _latest_user_text(payload: dict[str, Any]) -> str:
+    return str(payload.get("prompt") or "").strip()
+
+
+def _plan_response_budget(payload: dict[str, Any]) -> dict[str, Any]:
+    """Choose a soft response target from the current request, not a universal leash."""
+    text = _latest_user_text(payload)
+    lower = text.lower()
+    words = len(text.split())
+    code_cues = (
+        "code", "function", "class", "method", "program", "script", "html", "css", "javascript",
+        "typescript", "python", "c++", "cpp", "java", "kotlin", "rust", "sql", "api", "json",
+        "implement", "debug", "refactor", "main.", ".h", ".cpp", ".py", ".js", ".ts",
+    )
+    deep_cues = ("explain", "walkthrough", "step by step", "analyze", "compare", "detailed", "architecture", "design", "research")
+    multi_cues = ("multiple files", "multi-file", "project", "all files", "header", "interface", "tabs", "full implementation")
+    social_cues = ("hey", "hi", "hello", "thanks", "thank you", "lol", "lmao")
+
+    kind = "normal"
+    planned = 192
+    wrap_at = 152
+    hard = 384
+
+    if any(cue in lower for cue in code_cues):
+        kind = "coding"
+        planned, wrap_at, hard = 384, 300, 576
+        if any(cue in lower for cue in multi_cues) or words > 80:
+            planned, wrap_at, hard = 512, 416, 704
+    elif any(cue in lower for cue in deep_cues) or words > 120:
+        kind = "detailed"
+        planned, wrap_at, hard = 320, 256, 512
+    elif words <= 8 and any(lower == cue or lower.startswith(cue + " ") for cue in social_cues):
+        kind = "brief-social"
+        planned, wrap_at, hard = 64, 48, 160
+    elif words <= 20:
+        planned, wrap_at, hard = 128, 96, 256
+
+    generation = payload.get("generation") if isinstance(payload.get("generation"), dict) else {}
+    if str(generation.get("budgetMode") or "").lower() == "manual":
+        try:
+            manual = max(1, int(generation.get("maxTokens")))
+            hard = min(_ABSOLUTE_RESPONSE_HARD_CAP, manual)
+            planned = min(planned, hard)
+            wrap_at = min(wrap_at, max(1, planned - max(8, planned // 5)))
+            kind = "manual"
+        except Exception:
+            pass
+
+    planned = min(planned, _ABSOLUTE_RESPONSE_HARD_CAP)
+    wrap_at = min(max(1, wrap_at), planned)
+    hard = min(max(planned + 32, hard), _ABSOLUTE_RESPONSE_HARD_CAP)
+    return {"kind": kind, "planned": planned, "wrapAt": wrap_at, "hard": hard}
+
+
+def _budget_directive(plan: dict[str, Any]) -> str:
+    return (
+        "SWRLZ_RESPONSE_BUDGET: Treat the response length as adaptive, not a forced cutoff. "
+        f"Plan roughly {plan['planned']} output tokens and begin converging around {plan['wrapAt']}. "
+        f"You may exceed the plan when needed for correctness, especially to finish code blocks, syntax, sentences, lists, or sections you explicitly started. "
+        "Do not pad merely to reach the plan. Prefer a complete answer over an abrupt cutoff. "
+        f"An emergency runtime ceiling exists at {plan['hard']} tokens and is not a target."
+    )
+
+
+def _looks_structurally_open(text: str) -> bool:
+    value = str(text or "")
+    if not value.strip():
+        return False
+    if value.count("```") % 2:
+        return True
+    opens = value.count("{") - value.count("}")
+    parens = value.count("(") - value.count(")")
+    brackets = value.count("[") - value.count("]")
+    if opens > 0 or parens > 0 or brackets > 0:
+        return True
+    tail = value.rstrip()
+    if tail.endswith((":", ",", "\\", "->", "=>")):
+        return True
+    last_line = tail.splitlines()[-1].strip() if tail else ""
+    if last_line.startswith(("- ", "* ")) or (last_line[:2].isdigit() and last_line.endswith(".")):
+        return True
+    return False
 
 
 def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
@@ -447,12 +533,18 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
             "identity": {"route": "LOCAL_R39", "engineId": ENGINE_ID, "modelId": str(model.manifest.get("modelId", "R39")), "modelSha256": MODEL_SHA256},
         }
 
-        prompt = base.render_chat_prompt(payload)
+        budget = _plan_response_budget(payload)
+        prompt_payload = dict(payload)
+        existing_directive = str(prompt_payload.get("responseDirective") or "").strip()
+        budget_note = _budget_directive(budget)
+        prompt_payload["responseDirective"] = f"{existing_directive}\n{budget_note}".strip()
+        yield {"type": "STATUS", "phase": "RESPONSE_BUDGET", "reason": f"Adaptive response plan · kind={budget['kind']} · planned≈{budget['planned']} · wrap≈{budget['wrapAt']} · emergency ceiling={budget['hard']} token(s)."}
+
+        prompt = base.render_chat_prompt(prompt_payload)
         tokens = model.tokenizer.encode(prompt)
         if not tokens:
             raise base.R39InferenceError("R39_PROMPT_TOKENIZATION_EMPTY", "Prompt tokenization produced no tokens.")
         generation = payload.get("generation") if isinstance(payload.get("generation"), dict) else {}
-        max_tokens = min(512, max(1, int(generation.get("maxTokens", 128))))
         temperature = min(2.0, max(0.0, float(generation.get("temperature", 0.1))))
         top_p = min(1.0, max(0.01, float(generation.get("topP", 0.9))))
 
@@ -494,13 +586,20 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
         cache_note = f"reused {reused}, prefetched {total_new}" if reused else f"prefetched {total_new}"
         if not cached and len(tokens) > _CONTEXT_MAX_TOKENS:
             cache_note += f"; cache skipped above {_CONTEXT_MAX_TOKENS}-token safety bound"
-        yield {"type": "STATUS", "phase": "GENERATING", "reason": f"R39 prefill complete in {prefill_time:.2f}s ({cache_note}); decoding with {('native direct-quantized matvec' if native else 'Python/Numpy fallback')}."}
+        yield {"type": "STATUS", "phase": "GENERATING", "reason": f"R39 prefill complete in {prefill_time:.2f}s ({cache_note}); adaptive output plan≈{budget['planned']}, wrap≈{budget['wrapAt']}, emergency ceiling={budget['hard']}; decoding with {('native direct-quantized matvec' if native else 'Python/Numpy fallback')}."}
 
-        for ordinal in range(1, max_tokens + 1):
+        ordinal = 0
+        current_limit = int(budget["hard"])
+        wrap_notified = False
+        extended_for_structure = False
+        stopped_on_eos = False
+        while ordinal < current_limit:
+            ordinal += 1
             if is_cancelled and is_cancelled():
                 raise base.R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
             next_token = base._sample(logits, recent[-64:], temperature, top_p, 50, 1.05, hash(request_id) ^ (state.pos * 0x9E3779B9))
             if model.tokenizer.eos is not None and next_token == int(model.tokenizer.eos):
+                stopped_on_eos = True
                 break
             text = decoder.push(next_token)
             if first_ms is None:
@@ -513,6 +612,10 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
             decode_started = time.monotonic()
             logits = _forward_hot(model, next_token, state, need_logits=True)
             assert logits is not None
+
+            if not wrap_notified and ordinal >= int(budget["wrapAt"]):
+                wrap_notified = True
+                yield {"type": "STATUS", "phase": "RESPONSE_BUDGET", "reason": f"Soft wrap point reached at token {ordinal}; model was pre-advised to converge cleanly, but generation may continue for completeness."}
 
             if ordinal % _LIVE_CHECKPOINT_EVERY == 0 and response_parts:
                 _publish_generated_checkpoint(
@@ -530,15 +633,21 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
             if ordinal <= 4 or ordinal % 8 == 0:
                 yield {"type": "STATUS", "phase": "DECODE_PROGRESS", "reason": f"Decode step {ordinal} · {time.monotonic() - decode_started:.3f}s · backend={('native' if native else 'python')}."}
 
+            if ordinal >= current_limit and current_limit < _ABSOLUTE_RESPONSE_HARD_CAP:
+                partial = "".join(response_parts)
+                if _looks_structurally_open(partial):
+                    next_limit = min(_ABSOLUTE_RESPONSE_HARD_CAP, current_limit + _RESPONSE_EXTENSION_STEP)
+                    if next_limit > current_limit:
+                        current_limit = next_limit
+                        extended_for_structure = True
+                        yield {"type": "STATUS", "phase": "RESPONSE_BUDGET", "reason": f"Completion headroom extended to {current_limit} token(s) because the response still contains an open code/syntax structure."}
+
         tail = decoder.finish()
         if tail:
             response_parts.append(tail)
             yield {"type": "DELTA", "phase": "GENERATING", "text": tail, "firstDeltaLatencyMs": first_ms}
 
         response_text = "".join(response_parts)
-        # Publish the exact assistant-open state before COMPLETE. If the user sends
-        # the next turn immediately, this is already usable even if background
-        # close/scaffold warmup has not finished yet.
         terminal_published = False
         if generated_tokens and logits is not None:
             terminal_published = _publish_generated_checkpoint(
@@ -564,10 +673,18 @@ def _generate_hot_events(payload: dict[str, Any], is_cancelled=None):
                 response_text,
             )
 
+        completion_bits = ["Local R39 generation completed"]
+        if terminal_published:
+            completion_bits.append("response-state checkpoint published")
+        completion_bits.append("next-turn warmup continues opportunistically")
+        if extended_for_structure:
+            completion_bits.append("completion headroom was used for open code/syntax")
+        if not stopped_on_eos and ordinal >= current_limit:
+            completion_bits.append(f"generation reached safety ceiling {current_limit}")
         yield {
             "type": "COMPLETED",
             "phase": "COMPLETE",
-            "reason": "Local R39 generation completed; response-state checkpoint published and next-turn warmup continues opportunistically." if terminal_published else "Local R39 generation completed; next-turn warmup continues opportunistically.",
+            "reason": "; ".join(completion_bits) + ".",
             "totalLatencyMs": int((time.monotonic() - started) * 1000),
         }
     except base.R39InferenceError as exc:
@@ -676,6 +793,10 @@ def inspect_engine():
             "nextRequestNeverWaitsForWarmup": True,
             "liveCheckpointEveryGeneratedTokens": _LIVE_CHECKPOINT_EVERY,
             "prefillStaticTensorFastPath": True,
+            "adaptiveResponseBudget": True,
+            "softWrapAdvisory": True,
+            "structureAwareBudgetOverrun": True,
+            "absoluteResponseHardCap": _ABSOLUTE_RESPONSE_HARD_CAP,
             "conversationContextCacheMaxTokens": _CONTEXT_MAX_TOKENS,
             "conversationContextCacheTtlSeconds": _CONTEXT_TTL_SECONDS,
             "conversationContextMaxCheckpoints": _CONTEXT_MAX_CHECKPOINTS,
