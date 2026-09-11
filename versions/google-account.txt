@@ -1,0 +1,8 @@
+ID=google-account
+VERSION=1.0.0
+KIND=account-auth-architecture
+SOURCE_BRANCH=main
+STATUS=active
+DISPLAY_NAME=Google Account Architecture
+UPDATE_POLICY=stable-infrastructure
+BASELINE_NOTE=Initial canonical version-file enrollment for the existing Google account/login architecture; no Google-account behavior change in this runtime release.
