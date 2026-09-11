@@ -1,0 +1,49 @@
+/* §wyrlz Ice Dragon generated-art layer v2 — companion welcome icon + adult chamber background */
+body[data-swrlz-theme="ice-dragon"]::after{display:none!important}
+
+body[data-swrlz-theme="ice-dragon"] .messages{
+  position:relative;
+  isolation:isolate;
+  background:
+    linear-gradient(180deg,rgba(1,7,16,.24),rgba(1,8,18,.38) 58%,rgba(1,6,14,.52)),
+    linear-gradient(90deg,rgba(1,8,18,.42),transparent 44%,rgba(1,8,18,.12)),
+    var(--ice-dragon-adult,none) center 42%/cover no-repeat,
+    radial-gradient(circle at 52% -8%,rgba(126,240,255,.05),transparent 30%),
+    repeating-linear-gradient(117deg,transparent 0 92px,rgba(176,239,255,.009) 93px 94px,transparent 95px 182px)!important;
+}
+body[data-swrlz-theme="ice-dragon"] .message-stack{position:relative;z-index:1}
+
+body[data-swrlz-theme="ice-dragon"] .dragon-mark,
+body[data-swrlz-theme="ice-dragon"] .welcome-orb,
+body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar{
+  overflow:hidden;
+  border-color:rgba(164,246,255,.66)!important;
+  background:var(--ice-dragon-companion,linear-gradient(145deg,rgba(127,239,255,.24),rgba(83,123,255,.16))) center/cover no-repeat!important;
+  box-shadow:0 0 26px rgba(115,236,255,.24),inset 0 0 18px rgba(213,253,255,.08)!important;
+}
+body[data-swrlz-theme="ice-dragon"] .dragon-mark svg,
+body[data-swrlz-theme="ice-dragon"] .welcome-orb svg,
+body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar svg{display:none!important}
+body[data-swrlz-theme="ice-dragon"] .dragon-mark::before{inset:-5px!important;border-color:rgba(190,248,255,.18)!important;transform:rotate(6deg)!important}
+body[data-swrlz-theme="ice-dragon"] .welcome-orb{
+  border-radius:26px!important;
+  box-shadow:0 0 34px rgba(120,238,255,.22),0 24px 72px rgba(56,232,255,.10),inset 0 0 22px rgba(225,254,255,.05)!important;
+}
+body[data-swrlz-theme="ice-dragon"] .welcome-orb::before{border-color:rgba(177,243,255,.14)!important}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar{
+  color:transparent!important;
+  border-color:rgba(151,241,255,.44)!important;
+  box-shadow:0 0 16px rgba(110,232,255,.15),inset 0 0 10px rgba(225,254,255,.05)!important;
+}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble,
+body[data-swrlz-theme="ice-dragon"] .composer-box{backdrop-filter:blur(8px) saturate(118%);-webkit-backdrop-filter:blur(8px) saturate(118%)}
+
+@media(max-width:760px){
+  body[data-swrlz-theme="ice-dragon"] .messages{
+    background:
+      linear-gradient(180deg,rgba(1,7,16,.20),rgba(1,8,18,.34) 56%,rgba(1,6,14,.48)),
+      linear-gradient(90deg,rgba(1,8,18,.25),transparent 60%),
+      var(--ice-dragon-adult,none) 50% 40%/cover no-repeat,
+      radial-gradient(circle at 52% -8%,rgba(126,240,255,.04),transparent 30%)!important;
+  }
+}
