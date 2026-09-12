@@ -1,8 +1,8 @@
 # §wyrlz Server Roadmap & Version Ledger
 
 **READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-**Current overall server baseline:** `2.3.58`  
-**Current Chat component:** `1.4.52`  
+**Current overall server baseline:** `2.3.59`  
+**Current Chat component:** `1.4.53`  
 **Current LALM UI component:** `1.0.0`  
 **Current Deployment Control component:** `1.0.1`  
 **Release policy:** every server development event gets an overall Server release/version entry plus independent component version changes where applicable, including unsuccessful attempts.
@@ -46,6 +46,7 @@ Version authorities are read at event entry and re-read immediately before versi
 - Added explicit optimistic-concurrency handling for version authorities so multiple §wyrlz instances/agents do not overwrite each other's release lineage.
 - Corrected deployment-gate logic so approval follows the actual deployment trigger/configuration instead of treating every `main` or documentation commit as deployment-capable.
 - Established generated Ice Dragon artwork ownership so the adult wallpaper can replace the legacy Frozen Sanctum procedural chamber art instead of stacking on top of it.
+- Consolidated Ice Dragon theme ownership so future theme visual work has one canonical CSS owner and one deterministic asset hydrator instead of multiple competing wallpaper/style layers.
 
 ## Component ownership
 
@@ -311,6 +312,41 @@ The omitted individual release notes for `2.3.7` through `2.3.55` are intentiona
 - Generated-art ownership fix: `0e454bdd926ea61925ca343a9e7fb1cbe7ee7490`
 - Server version commit: `0c1c74b7ba0443afd578e963dc6089dcf62b66cc`
 - Chat version commit: `e47741237a3f79651af09c8ea5bd2d430c94bc38`
+
+### Server 2.3.59 — Canonical Ice Dragon theme package ownership
+
+**Status:** source/live asset delivery verified; browser visual verification pending  
+**Chat:** `1.4.53`  
+**LALM UI:** `1.0.0` unchanged  
+**Deployment Control:** `1.0.1` unchanged  
+**Deployment:** NONE  
+**Restart:** NONE
+
+**Update notes:**
+- Traced the live Chat loader and confirmed the Ice Dragon theme had accumulated two CSS owners and two JavaScript owners on top of the generic Chat page.
+- Consolidated all Ice Dragon visual ownership into `ice-dragon-theme.css`; the old generated-art stylesheet is now only a compatibility shim and can no longer compete for the chamber background.
+- Reduced the theme controller to theme selection/state only.
+- Replaced the previous Blob/fallback rendering chain with one deterministic asset hydrator that exposes the companion and adult JPEGs as direct data-image CSS variables.
+- The chamber wallpaper now has one owner: the Ice Dragon theme's `.messages::before` layer. The adult asset hydrator only supplies the image value; it no longer creates competing DOM image/fallback layers.
+- The existing stable Chat injector remains unchanged and continues loading the same runtime asset paths, so this migration required no deployment or restart.
+- Generic/default Chat layout remains in the base Chat page; theme-specific appearance is now isolated to the Ice Dragon package path.
+
+**Verification state:**
+- Entry and pre-version authority checks both confirmed `Server 2.3.58 / Chat 1.4.52`; no concurrent version advance was detected.
+- Live Vercel requests returned the new canonical Ice Dragon CSS and deterministic v10 asset hydrator from the `runtime` branch with no-store delivery.
+- Final visual confirmation of the adult wallpaper in the browser remains pending user refresh/screenshot.
+
+**Relevant lineage:**
+- Canonical theme CSS: `33de5406308d30844384f32bd5582b9b82ff09d7`
+- Duplicate art CSS retired: `f334e45c4408ea522719d520a86743577c205ec6`
+- Theme controller state-only migration: `5ba9d947496b22a378df4fca104f2bf08cb76606`
+- Deterministic asset hydrator: `c069915cfd2e5cd4e1845c5ef823fcd4a4311645`
+- Server authority: `a14329f7c6cea5fe5e931661475b1b761f173489`
+- Chat authority: `97362a41154b8743e9ff7ab631e425c8e2499bb6`
+
+**Rollback/migration notes:**
+- No data migration is required.
+- Rollback can restore the four Ice Dragon runtime assets and the two runtime version authorities to their 2.3.58 / 1.4.52 state.
 
 ## Required release-entry format
 
