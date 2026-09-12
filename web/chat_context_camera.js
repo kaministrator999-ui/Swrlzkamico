@@ -16,6 +16,12 @@ function addCameraTrail(message,reason){
     if(message.meta.trail.length>80)message.meta.trail.splice(0,message.meta.trail.length-80);
   }catch(_){ }
 }
+function clockSummary(camera){
+  const c=camera?.cognitiveClock;if(!c||typeof c!=='object')return 'RMCCA=not-captured';
+  const domains=Array.isArray(c.domains)&&c.domains.length?c.domains.map(d=>`${d.domain}:${d.salience}`).join('>'):'none';
+  const roles=Array.isArray(c.structuralRoles)&&c.structuralRoles.length?c.structuralRoles.join('+'):'none';
+  return `RMCCA topology=${c.responseTopology||'unknown'} · depth=${c.resolutionDepth||'unknown'} · frame=${c.referenceFrame||'unknown'} · domains=${domains} · structure=${roles}`;
+}
 
 window.consumeEvent=function(event,context){
   const message=context?.message,rid=ridOf(event,context);
@@ -35,12 +41,12 @@ window.consumeEvent=function(event,context){
     camera.canonicalDiffersFromDisplay=typeof raw==='string'?raw!==String(message.text||''):false;
     camera.leadingIdentityFiltered=typeof raw==='string'&&/^\s*§wyrlz\s*(?:\r?\n)+/iu.test(raw)&&!/^\s*§wyrlz\s*(?:\r?\n)+/iu.test(String(message.text||''));
     camera.completedAt=Date.now();
-    addCameraTrail(message,`Context camera · history=${camera.historySource||'unknown'} · canonical assistant history=${Number(camera.assistantHistoryUsingModelText||0)} · raw/display differ=${camera.canonicalDiffersFromDisplay?'yes':'no'} · leading identity filtered=${camera.leadingIdentityFiltered?'yes':'no'}.`);
+    addCameraTrail(message,`Context camera · history=${camera.historySource||'unknown'} · canonical assistant history=${Number(camera.assistantHistoryUsingModelText||0)} · raw/display differ=${camera.canonicalDiffersFromDisplay?'yes':'no'} · leading identity filtered=${camera.leadingIdentityFiltered?'yes':'no'} · ${clockSummary(camera)}.`);
     rawByRequest.delete(rid);
     try{if(typeof saveState==='function')saveState()}catch(_){ }
   }
   return result;
 };
 
-window.__swrlzContextCamera={rawByRequest};
+window.__swrlzContextCamera={rawByRequest,clockSummary};
 })();
