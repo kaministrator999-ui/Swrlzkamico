@@ -1,4 +1,4 @@
-# Server 2.3.70 — Frozen Web Snapshot Collector 1.0.0
+# Server 2.3.79 — Frozen Web Snapshot Collector 1.0.0
 
 Date: 2026-09-12
 Checkpoint: `FROZEN-WEB-COLLECTOR-001`
@@ -6,15 +6,15 @@ Status at source publication: `SOURCE IMPLEMENTED`, `STATIC VERIFICATION PASS`, 
 
 ## Accomplishment
 
-Server 2.3.70 adds a professional, authenticated browser control room for building bounded and resumable frozen web snapshots. Evidence collection, frozen search, and training review are explicit separate stages. The initial stable host requires one approved production deployment; compatible collector interface and engine updates remain owned by `runtime` and can be applied without redeploying the server.
+Server 2.3.79 adds a professional, authenticated browser control room for building bounded and resumable frozen web snapshots. Evidence collection, frozen search, and training review are explicit separate stages. The initial stable host requires one approved production deployment; compatible collector interface and engine updates remain owned by `runtime` and can be applied without redeploying the server.
 
 ## Component versions
 
-- Overall Server: `2.3.70`
+- Overall Server: `2.3.79`
 - Frozen Web Collector: `1.0.0`
 - Deployment Control: `1.0.2`
-- Web Chat: `1.4.62` unchanged
-- LALM Engine: `2.1.26` unchanged
+- Web Chat: `1.4.71` unchanged
+- LALM Engine: `2.1.30` unchanged
 
 ## Stable infrastructure
 
@@ -50,10 +50,10 @@ These are source/static results. They are not recorded as a Vercel build or live
 - Original runtime baseline: `e47741237a3f79651af09c8ea5bd2d430c94bc38`
 - Reconciled main baseline: `4a070f5d5cc8aba67ef0575d8567b2f0f9813f7a`
 - Initial runtime reconciliation: `26009037b55c158a0606e84bf69202b165e59057`
-- Final runtime baseline: `349ebf5f8e2d8c6927d131905ec595145a9816b0`
+- Final runtime baseline: `3c2cc5efd320157ba67d888240f195344c015be7`
 - Rebased stable checkpoint: `636321dcd9f204eae08f5e9cfc567ab1b2ac5c1d`
 - Rebased runtime checkpoint: `5b7744acc78a1a8508e5a954a4f5b2161db7a8d8`
-- Final reconciled runtime checkpoint: `852a27207a89554ff8c37b5ed3b149b1d5b66a21`
+- Final reconciled runtime checkpoint: `7cc1ccb9eb09857f945dab2ea992b2809d8b50f1`
 
 Final canonical commits, GitHub Actions run, Vercel deployment ID/URL, production checks, and browser evidence are appended after publication/deployment.
 
@@ -68,3 +68,7 @@ No existing data migration is required. The newly connected private store begins
 - No snapshot was sealed.
 - No training candidate was accepted.
 - No Chat or LALM behavior was changed.
+
+## Final continuation reconciliation
+
+A further workspace-maintenance pruning removed the transient checkout. Recovered source from stable checkpoint `6861aedc32249fd7b5bdafc480f0e020238cf5d3` and runtime checkpoint `7cc1ccb9eb09857f945dab2ea992b2809d8b50f1`. Reconciled with current main `3f3d8eaeec4859099a3710155df8067577ca27fe` and runtime `3c2cc5efd320157ba67d888240f195344c015be7` (Server 2.3.78, Chat 1.4.71, LALM 2.1.30, Deployment Control 1.0.1). The unassigned collector 2.3.70 candidate was discarded; publication is Server 2.3.79, Collector 1.0.0, Deployment Control 1.0.2. The existing Google deployment request is preserved until the distinct approved collector trigger. No collection or training operation is part of deployment.

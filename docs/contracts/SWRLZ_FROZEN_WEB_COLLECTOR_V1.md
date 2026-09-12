@@ -1,6 +1,6 @@
 # SWRLZ Frozen Web Snapshot Collector Contract V1
 
-Status: accepted implementation contract for Server 2.3.70
+Status: accepted implementation contract for Server 2.3.79
 Module: `frozen-web-collector`
 Module version: `1.0.0`
 API schema: `1`

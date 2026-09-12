@@ -73,7 +73,7 @@ At the first release-boundary revalidation, current authority had advanced to:
 - runtime `26009037b55c158a0606e84bf69202b165e59057`;
 - Server `2.3.67`, Chat `1.4.61`, Deployment Control `1.0.1`.
 
-At the final commit boundary, runtime advanced again to `349ebf5f8e2d8c6927d131905ec595145a9816b0`, Server `2.3.69`, and Chat `1.4.62`. Planned Server `2.3.59` and `2.3.68` identities were discarded. Collector work was reconciled again, preserving the concurrent Ice Dragon and RMCCA changes, and reassigned to Server `2.3.70`.
+At the final commit boundary, runtime advanced again to `3c2cc5efd320157ba67d888240f195344c015be7`, Server `2.3.78`, and Chat `1.4.71`. Planned Server `2.3.59` and `2.3.68` identities were discarded. Collector work was reconciled again, preserving the concurrent Ice Dragon and RMCCA changes, and reassigned to Server `2.3.79`.
 
 Recovery checkpoints:
 
@@ -81,7 +81,7 @@ Recovery checkpoints:
 - original runtime checkpoints through `9cf836bda3792f5cd4fd2b02452d2196e4749af6`;
 - reconciled stable checkpoint: `636321dcd9f204eae08f5e9cfc567ab1b2ac5c1d`;
 - first reconciled runtime checkpoint: `5b7744acc78a1a8508e5a954a4f5b2161db7a8d8`;
-- final reconciled runtime checkpoint: `852a27207a89554ff8c37b5ed3b149b1d5b66a21`.
+- final reconciled runtime checkpoint: `7cc1ccb9eb09857f945dab2ea992b2809d8b50f1`.
 
 Three transient workspace pruning/reset events occurred during the checkpoint. Functional code was recovered from the GitHub checkpoints each time. The documentation draft not yet published during the latest pruning event was reconstructed from source evidence rather than represented as previously saved.
 
@@ -194,3 +194,7 @@ Source and documentation are prepared on reconciled release branches and recover
 - Approval does not authorize: initiating a crawl, registering third-party sources, accepting training material, deleting existing data, or unrelated repository/deployment changes.
 - Expected result: live `/collector` control room with authenticated operations and future compatible runtime updates that require no server redeployment.
 - Exact approval phrase: already received as `Approved`, followed by `continue`.
+
+## Final continuation reconciliation
+
+A further workspace-maintenance pruning removed the transient checkout. Recovered source from stable checkpoint `6861aedc32249fd7b5bdafc480f0e020238cf5d3` and runtime checkpoint `7cc1ccb9eb09857f945dab2ea992b2809d8b50f1`. Reconciled with current main `3f3d8eaeec4859099a3710155df8067577ca27fe` and runtime `3c2cc5efd320157ba67d888240f195344c015be7` (Server 2.3.78, Chat 1.4.71, LALM 2.1.30, Deployment Control 1.0.1). The unassigned collector 2.3.70 candidate was discarded; publication is Server 2.3.79, Collector 1.0.0, Deployment Control 1.0.2. The existing Google deployment request is preserved until the distinct approved collector trigger. No collection or training operation is part of deployment.

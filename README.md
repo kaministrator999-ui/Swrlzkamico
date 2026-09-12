@@ -1,6 +1,6 @@
 # §wyrlz Unified Vercel Server
 
-- Server revision: **2.3.70**
+- Server revision: **2.3.79**
 - Frozen Web Collector revision: **1.0.0**
 - Chat/runtime hotfix rules: **SWRLZ_HOTFIX_RULES.md**
 - Production deployment: **https://swrlzkamico-o3nu.vercel.app**
@@ -45,7 +45,7 @@ These changes are designed to be served from current `runtime` source without a 
 
 ## Frozen Web Snapshot Collector
 
-Server 2.3.70 installs a stable authenticated host for Frozen Web Collector 1.0.0. The browser page and compatible engine stay on `runtime`, while private Vercel Blob stores resumable control state, provenance, immutable frozen snapshots, lexical search indexes, and separately reviewed training artifacts. Robots compliance, public-address-only requests, redirect/MIME/byte/rate/domain/storage limits, and explicit rights confirmation are enforced by the collector contract.
+Server 2.3.79 installs a stable authenticated host for Frozen Web Collector 1.0.0. The browser page and compatible engine stay on `runtime`, while private Vercel Blob stores resumable control state, provenance, immutable frozen snapshots, lexical search indexes, and separately reviewed training artifacts. Robots compliance, public-address-only requests, redirect/MIME/byte/rate/domain/storage limits, and explicit rights confirmation are enforced by the collector contract.
 
 The initial host installation requires the approved production deployment. After that, compatible collector page and engine changes follow the normal `runtime` hot-update path without redeploying the server.
 
@@ -101,5 +101,5 @@ Before declaring a runtime hotfix complete:
 - `docs/contracts/SWRLZ_VERCEL_CHAT_BRIDGE_V1.md`
 - `docs/contracts/SWRLZ_FROZEN_WEB_COLLECTOR_V1.md`
 - `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md`
-- `docs/releases/SERVER_2.3.70_FROZEN_WEB_COLLECTOR.md`
+- `docs/releases/SERVER_2.3.79_FROZEN_WEB_COLLECTOR.md`
 - `SWRLZ_VERCEL_CHAT_CHANGELOG.md`
