@@ -1,5 +1,5 @@
 {
-  "version": 12,
+  "version": 13,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -24,7 +24,7 @@
         "web/chat_stream_focus.js",
         "web/chat_version.js",
         "web/themes/ice-dragon/ice-dragon-theme-v3.2.js",
-        "web/themes/ice-dragon/ice-dragon-art-loader-v15.js",
+        "web/themes/ice-dragon/ice-dragon-art-loader-v16.js",
         "web/chat_code_artifacts.js",
         "web/chat_stream_incremental.js",
         "web/chat_activity_immediate.js",
@@ -56,5 +56,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Runtime manifest v11 makes Chat frontend-first: the locally stored shell/theme can paint immediately while server/LALM/account connectivity settles independently. Ice Dragon v15 persistently caches its companion and adult source on-device and can promote the adult wallpaper to a cached 4320x7680 WebP during idle time on capable devices. Manifest v12 adds the runtime-owned Frozen Web Collector page at /collector; compatible collector page and engine updates require no subsequent server deployment."
+  "notes": "Runtime manifest v13 keeps Chat frontend-first and moves Ice Dragon to v16. After the first successful theme load, an 864x1536 data-URL preview is stored locally so later refreshes can paint the wallpaper synchronously during frontend boot, before async Cache Storage/server hydration. The persistent Cache Storage source and optional idle-time 4320x7680 WebP promotion remain available and replace the preview when ready."
 }
