@@ -147,8 +147,37 @@ def _time_note(payload):
     return (" User local time: " + bits + ".") if bits else ""
 
 
+def _rmcca_clock(payload):
+    ctx = payload.get("swrlzCognitiveContext") if isinstance(payload, dict) else None
+    clock = ctx.get("cognitiveClock") if isinstance(ctx, dict) else None
+    return clock if isinstance(clock, dict) else {}
+
+
 def _classify_task(payload):
     prompt = str(payload.get("prompt") or "").strip()
+    clock = _rmcca_clock(payload)
+
+    # Prefer the canonical Chat cognitive envelope when it is present. The regex
+    # classifier remains a server-side fallback for non-Chat callers and degraded
+    # envelopes rather than competing with RMCCA's richer structural analysis.
+    domains = [
+        str(item.get("domain") or "").lower()
+        for item in (clock.get("domains") or [])
+        if isinstance(item, dict)
+    ]
+    roles = {str(x).lower() for x in (clock.get("structuralRoles") or [])}
+    topology = str(clock.get("responseTopology") or "").lower()
+    if topology == "social-participation" or "social" in domains:
+        return "social"
+    if "programming" in domains:
+        return "coding"
+    if any(d in domains for d in ("science", "language")) and "question" in roles:
+        return "research"
+    if "comparison" in roles or topology in {"comparison", "layered-synthesis", "revision-continuation"}:
+        return "analysis"
+    if "creative" in domains:
+        return "creative"
+
     if _GREETING_RE.fullmatch(prompt):
         return "social"
     if _CODE_RE.search(prompt):
@@ -171,7 +200,9 @@ def _explicit_generation(generation):
         return False
     if str(generation.get("budgetMode") or "").lower() == "manual":
         return True
-    return any(key in generation for key in ("temperature", "topP", "top_p", "maxTokens"))
+    # maxTokens is an output-length budget, not a sampling preference. A caller
+    # may supply it while still expecting the engine's model-aware temperature.
+    return any(key in generation for key in ("temperature", "topP", "top_p"))
 
 
 def _prepare_payload(payload):
@@ -208,8 +239,14 @@ def _engine_render_chat_prompt(payload):
     prompt = str(clone.get("prompt") or "").strip()
     client_policy = str(clone.get("responseDirective") or "").strip()
     task = str(clone.get("_swrlzTaskProfile") or _classify_task(clone))
+    clock = _rmcca_clock(clone)
     compact_social = bool(_GREETING_RE.fullmatch(prompt))
-    policy = _BASE_POLICY + " " + _TASK_POLICIES.get(task, _TASK_POLICIES["general"]) + _time_note(clone)
+    policy = _BASE_POLICY + " " + _TASK_POLICIES.get(task, _TASK_POLICIES["general"])
+    if str(clock.get("resolutionDepth") or "").lower() == "deep":
+        policy += " Deep-resolution mode: integrate the relevant domains and explain causal structure without padding."
+    if "correction-refinement" in {str(x).lower() for x in (clock.get("structuralRoles") or [])}:
+        policy += " Correction mode: revise only the affected interpretation; preserve still-valid prior context."
+    policy += _time_note(clone)
 
     # Client policy can carry user/project-specific constraints. Preserve it as a
     # secondary policy except for a bare greeting, where excess directive tokens
@@ -232,6 +269,8 @@ def inspect_engine():
         data["hotRevision"] = HOT_REVISION
         data["engineConversationContract"] = True
         data["taskAwareCognitivePolicy"] = True
+        data["rmccaCognitiveEnvelopePreferred"] = True
+        data["serverIntentClassifierFallback"] = True
         data["taskProfiles"] = sorted(_TASK_POLICIES)
         data["adaptiveTaskSampling"] = True
         data["modelFamilySamplingBaseline"] = "temperature~0.3; repetition_penalty=1.05"
@@ -252,6 +291,7 @@ def inspect_engine():
 def generate_events(payload, is_cancelled=None):
     prepared = _prepare_payload(payload)
     task = prepared.get("_swrlzTaskProfile", "general")
+    clock = _rmcca_clock(prepared)
     adaptive = bool(prepared.get("_swrlzAdaptiveSampling"))
     generation = prepared.get("generation") if isinstance(prepared.get("generation"), dict) else {}
     temperature = generation.get("temperature")
@@ -259,8 +299,8 @@ def generate_events(payload, is_cancelled=None):
         "type": "STATUS",
         "phase": "COGNITIVE_ROUTE",
         "reason": (
-            f"Task profile={task}; "
-            + (f"adaptive temperature={temperature}; " if adaptive else "explicit generation settings preserved; ")
+            f"Task profile={task}; cognitive source={'RMCCA' if clock else 'server-fallback'}; "
+            + (f"adaptive temperature={temperature}; " if adaptive else "explicit sampling settings preserved; ")
             + f"prefill checkpoints={_impl._PREFILL_CHECKPOINT_EVERY}, live checkpoints={_impl._LIVE_CHECKPOINT_EVERY}."
         ),
     }
