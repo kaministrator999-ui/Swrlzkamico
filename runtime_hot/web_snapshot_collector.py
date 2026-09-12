@@ -1310,6 +1310,7 @@ def _process_batch(store: BlobStore, state: dict[str, Any], etag: str | None, co
 
 def _new_snapshot_state(previous: dict[str, Any]) -> dict[str, Any]:
     state = _default_state()
+    state["stateRevision"] = int(previous.get("stateRevision", 0))
     state["config"] = previous.get("config", _default_config())
     state["sources"] = previous.get("sources", [])
     state["trainingQueue"] = previous.get("trainingQueue", [])[-MAX_TRAINING_QUEUE:]
