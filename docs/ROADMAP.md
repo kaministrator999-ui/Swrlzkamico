@@ -2,21 +2,21 @@
 
 ## Current release
 
-**Server v2.3.68**
+**Server v2.3.70**
 
 This event establishes the authenticated Frozen Web Snapshot Collector as a runtime-owned browser control plane backed by private durable Vercel Blob storage. The stable host is deployed once; compatible collector page and engine revisions remain hot-updatable from `runtime` afterward.
 
 ### Module state
 
-- **Server runtime v2.3.68** — current server development lineage.
-- **Chat v1.4.61** — unchanged; RMCCA cognitive policy + camera observability.
+- **Server runtime v2.3.70** — current server development lineage.
+- **Chat v1.4.62** — unchanged by the collector; latest Ice Dragon/RMCCA behavior is preserved.
 - **Frozen Web Collector v1.0.0** — bounded collection, frozen search snapshots, and rights-reviewed training preparation.
 - **LALM engine v2.1.26** — unchanged in this event.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.2** — private Blob provisioning and collector acceptance gates added to the approved production workflow.
 
-## Server v2.3.68 — 2026-09-12
+## Server v2.3.70 — 2026-09-12
 
 ### Frozen Web Snapshot Collector 1.0.0
 
@@ -31,8 +31,9 @@ This event establishes the authenticated Frozen Web Snapshot Collector as a runt
 ### Concurrency reconciliation
 
 - The collector was originally designed against Server `2.3.58` and a planned `2.3.59` event.
-- Before promotion, the authoritative runtime branch had advanced through Server `2.3.67` / Chat `1.4.61` for later Ice Dragon and RMCCA work.
-- The stale planned Server version was discarded, all current runtime work was preserved, and the collector event was reassigned to Server `2.3.68`.
+- Before the first release-boundary revalidation, the authoritative runtime branch had advanced through Server `2.3.67` / Chat `1.4.61` for later Ice Dragon and RMCCA work.
+- At the final commit boundary it advanced again through Server `2.3.69` / Chat `1.4.62` for Ice Dragon quality and RMCCA request-authority work.
+- Stale planned Server versions were discarded, all concurrent work was preserved, and the collector event was reassigned to Server `2.3.70`.
 - The older `2.3.67` current-state display called Deployment Control `1.0.0`; its module authority was already `1.0.1`. This event advances that authority to `1.0.2` without rewriting prior version history.
 
 ### Verification / deployment state
@@ -47,7 +48,8 @@ This event establishes the authenticated Frozen Web Snapshot Collector as a runt
 
 - Rebased runtime checkpoint: `5b7744acc78a1a8508e5a954a4f5b2161db7a8d8`
 - Rebased stable-host checkpoint: `636321dcd9f204eae08f5e9cfc567ab1b2ac5c1d`
-- Pre-event runtime authority: `26009037b55c158a0606e84bf69202b165e59057`
+- Initial reconciliation authority: `26009037b55c158a0606e84bf69202b165e59057`
+- Final pre-event runtime authority: `349ebf5f8e2d8c6927d131905ec595145a9816b0`
 - Pre-event main authority: `4a070f5d5cc8aba67ef0575d8567b2f0f9813f7a`
 - Final canonical and deployment receipts: pending publication/deployment.
 
@@ -55,6 +57,46 @@ This event establishes the authenticated Frozen Web Snapshot Collector as a runt
 
 - No existing collector data migration is required; the private store begins with no configured sources or accepted training material.
 - Rollback restores the preceding stable deployment and the pre-event `runtime` authority. Immutable snapshot artifacts, if later created by an operator, remain preserved unless separately and explicitly removed.
+
+## Server v2.3.69 — Authority reconciliation record
+
+- The Server authority advanced from `2.3.68` to `2.3.69` at commit `349ebf5f8e2d8c6927d131905ec595145a9816b0` before the collector event was published.
+- Direct source history shows concurrent RMCCA work making canonical context the single request authority, preserving that authority across recovery, and exposing the continuity through camera evidence.
+- Chat authority remained `1.4.62`; LALM Engine remained `2.1.26`; Deployment Control remained `1.0.1`.
+- No independent release document for this event was present when the collector checkpoint revalidated authority. This reconciliation records only observed source/version facts and does not invent unverified build, deployment, or browser claims.
+- Relevant source commits: `cec5cb1`, `badd23f`, `b5527c6`, `349ebf5`.
+
+## Server v2.3.68 — 2026-09-12
+
+### Ice Dragon adult wallpaper quality pass
+
+- User browser verification confirmed the adult Ice Dragon wallpaper finally rendered correctly, but the recovered 180×320 JPEG derivative was visibly over-compressed when stretched across the mobile Chat chamber.
+- Re-encoded the exact intended adult Ice Dragon artwork into the existing `web/themes/ice-dragon/assets/adult-180x320.jpg.b64` slot at substantially higher JPEG quality.
+- Preserved the verified v13 asset hydrator, direct `.messages` wallpaper ownership, theme selector behavior, companion icon behavior, and all existing CSS/DOM ownership.
+- No new wallpaper mechanism, pseudo-element owner, image loader, or runtime route was added.
+
+### Concurrency reconciliation
+
+- Before version assignment, the authoritative version files were re-read.
+- They had concurrently advanced to Server `2.3.67` / Chat `1.4.61` for unrelated RMCCA work.
+- This wallpaper-quality event therefore advances from those authorities to Server `2.3.68` / Chat `1.4.62` rather than overwriting concurrent lineage.
+
+### Verification / deployment state
+
+- Replacement payload is valid Base64 and locally decodes as JPEG before commit.
+- Rendering architecture is unchanged from the browser-verified working path.
+- `versions/server-runtime.txt` advanced from `2.3.67` to `2.3.68`.
+- `versions/web-chat.txt` advanced from `1.4.61` to `1.4.62`.
+- **Production deployment:** NONE requested; runtime-hot asset update only.
+- **Server restart:** NONE requested.
+- Final acceptance is visual: verify reduced blockiness/compression artifacts on the target Android viewport.
+
+### Relevant lineage
+
+- Wallpaper quality asset: `23595d179bad58e0370749d2dc42fdeb6f4e7220`
+- Server version authority: `277f8648d54e77a846c31d8063ef25b09f552ea3`
+- Chat version authority: `61411018d8a722df55e8a5e01bee66e22dd9fd14`
+- Release record: `docs/releases/server-2.3.68-ice-dragon-wallpaper-quality.md`
 
 ## Server v2.3.67 — 2026-09-11/12
 
@@ -137,7 +179,7 @@ Detailed intermediate release records from Server v2.3.29 through v2.3.65 remain
 
 - User screenshots showed normal Android browser mode appearing oversized and clipping the right side of Chat, while Chrome desktop-site mode exposed a different proportion problem across sidebar, workspace, message cards, and composer.
 - Added a final runtime responsive-polish stylesheet that constrains all major Chat surfaces to their actual container width and prevents long code/text from forcing horizontal page overflow.
-- Mobile mode now keeps the app, workspace, top bar, message stack, composer, route control, and theme selector inside the visual viewport while preserving internal horizontal scrolling for code blocks only.
+- Mobile mode now keeps the app, workspace, top bar, message stack, composer, route control, theme selector inside the visual viewport while preserving internal horizontal scrolling for code blocks only.
 - Desktop-site mode on phone-sized desktop CSS viewports now uses a compact desktop sidebar and bounded message/composer widths instead of inheriting full desktop proportions that crowd the workspace.
 - Assistant response cards now have a more intentional layered card surface, softer radius, cleaner code-block spacing, and improved overflow handling without changing response semantics or LALM output.
 - Existing Ice Dragon selection, account state, camera controls, stream behavior, message storage, and LALM behavior were intentionally left unchanged.
@@ -157,7 +199,7 @@ Detailed intermediate release records from Server v2.3.29 through v2.3.65 remain
 - Responsive polish stylesheet: `913960884b9a169cf1941884f219baf4b36e0f56`
 - Runtime manifest wiring: `0b225f264327b8f62c4fc877696d4f946aefd069`
 - Server version authority: `0e0c71013986e78976ddd2eea7919689db9e4d6e`
-- Chat version authority: `10cc10c970ee85531d3afebea61f9d357bdc89f9`
+- Chat version authority: `10cc10c970ae5c8f37df83f9ee5b0820c350472`
 
 ## Server v2.3.27 — 2026-09-11
 

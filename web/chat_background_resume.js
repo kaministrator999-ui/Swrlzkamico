@@ -6,9 +6,7 @@ const STORE_KEY='swrlz.chat.pending-streams.v1';
 const MAX_AGE_MS=30*60*1000;
 const live=new Set();
 const retryTimers=new Map();
-const identityLead=new Map();
 const nativeFetch=window.fetch.bind(window);
-const BASE_RESPONSE_DIRECTIVE='Answer only the current user request directly, naturally, and completely. Treat the assistant name as metadata only; do not announce, introduce, or sign with it unless the user explicitly asks about identity or the name. Do not introduce unrelated programming, code, examples, or task types. If the current user explicitly requests programming help, satisfy that request completely and keep code, explanations, formulas, and input/output behavior mutually consistent.';
 const INTENT_MARK='[[SWRLZ_TURN_INTENT:';
 
 function cleanTurnText(value){
@@ -33,15 +31,22 @@ function normalizeHistory(history){
     return next;
   }):history;
 }
-function normalizePayload(payload){
+function fallbackNormalizePayload(payload){
   if(!payload||typeof payload!=='object')return payload;
   const next={...payload};
   const prompt=cleanTurnText(next.prompt);
-  next.responseDirective=BASE_RESPONSE_DIRECTIVE;
   next.prompt=prompt;
   next.history=normalizeHistory(next.history);
-  next.turnIntent=classifyIntent(prompt);
+  if(!next.turnIntent)next.turnIntent=classifyIntent(prompt);
   return next;
+}
+function canonicalizePayload(payload){
+  const normalized=fallbackNormalizePayload(payload);
+  try{
+    const prepare=window.__swrlzCanonicalContext?.preparePayload;
+    if(typeof prepare==='function')return prepare(normalized);
+  }catch(_){ }
+  return normalized;
 }
 
 function loadStore(){try{const value=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');return value&&typeof value==='object'?value:{}}catch(_){return {}}}
@@ -70,18 +75,18 @@ async function captureOriginInstance(rid){
 }
 function remember(payload,url){
   if(!payload?.requestId)return;
-  const store=prune(),rid=String(payload.requestId),old=store[rid]||{};
-  store[rid]={...old,requestId:rid,threadId:String(payload.threadId||''),url:String(url||'/api/chat?action=stream'),body:payload,createdAt:Number(old.createdAt||Date.now()),updatedAt:Date.now()};
+  const store=prune(),rid=String(payload.requestId),old=store[rid]||{},stamp=Date.now();
+  store[rid]={...old,requestId:rid,threadId:String(payload.threadId||''),url:String(url||'/api/chat?action=stream'),body:payload,createdAt:Number(old.createdAt||stamp),requestStartedAt:Number(old.requestStartedAt||stamp),updatedAt:stamp,recoveryAttempts:Number(old.recoveryAttempts||0)};
   saveStore(store);captureOriginInstance(rid);
 }
 function forget(rid){
   if(!rid)return;const store=loadStore();if(store[rid]){delete store[rid];saveStore(store)}
-  live.delete(rid);identityLead.delete(rid);const timer=retryTimers.get(rid);if(timer)clearTimeout(timer);retryTimers.delete(rid);
+  live.delete(rid);const timer=retryTimers.get(rid);if(timer)clearTimeout(timer);retryTimers.delete(rid);
 }
 
 window.fetch=async function(input,init={}){
   if(!isStreamRequest(input,init))return nativeFetch(input,init);
-  const raw=bodyPayload(init),payload=normalizePayload(raw),rid=String(payload?.requestId||'');
+  const raw=bodyPayload(init),payload=canonicalizePayload(raw),rid=String(payload?.requestId||'');
   const nextInit=payload?{...init,body:JSON.stringify(payload)}:init;
   if(rid)remember(payload,streamUrl(input));
   try{return await nativeFetch(input,nextInit)}catch(err){if(rid)setTimeout(()=>resumeOne(rid),80);throw err}
@@ -107,32 +112,20 @@ function persistEvent(rid,message,seq){
   const store=loadStore(),entry=store[rid];if(!entry)return;
   entry.updatedAt=Date.now();entry.lastSeq=Math.max(Number(entry.lastSeq||0),Number(seq||0));entry.partialText=String(message?.text||'');saveStore(store);
 }
+function markRecoveryCamera(message,entry,body){
+  if(!message)return;message.meta=message.meta||{};message.meta.contextCamera=message.meta.contextCamera||{};
+  const camera=message.meta.contextCamera,envelope=body?.swrlzCognitiveContext;
+  camera.recoveryAttempts=Number(entry?.recoveryAttempts||0);
+  camera.requestStartedAt=Number(entry?.requestStartedAt||entry?.createdAt||0);
+  camera.recoveryElapsedMs=camera.requestStartedAt?Math.max(0,Date.now()-camera.requestStartedAt):null;
+  camera.canonicalEnvelopePreserved=Boolean(envelope?.envelopeId&&envelope?.directiveId);
+  if(envelope){camera.directiveId=envelope.directiveId;camera.canonicalEnvelopeId=envelope.envelopeId;camera.cognitiveAuthority='chat_context_canonical';camera.cognitiveClock=envelope.cognitiveClock;camera.historySource=envelope.historySource;camera.historyMessages=envelope.historyMessages;camera.assistantHistoryUsingModelText=envelope.assistantHistoryUsingModelText;}
+}
 async function compareInstance(entry,message){
   const current=await serverInstanceId();if(!current)return;
   const store=loadStore(),saved=store[entry.requestId];if(saved){saved.lastSeenInstanceId=current;saved.updatedAt=Date.now();saveStore(store)}
   const previous=String(entry.lastSeenInstanceId||entry.originInstanceId||'');
-  if(previous&&previous!==current){message.meta=message.meta||{};message.meta.backgroundInstanceChanged=true;phaseNote(message,'Server instance changed. The same pending request is being resumed or regenerated and reconciled against the partial response already on this device.')}
-}
-
-function filterLeadingIdentity(event,context){
-  if(String(event?.type||'')!=='DELTA')return event;
-  const message=context?.message,rid=String(event?.identity?.requestId||message?.meta?.requestId||'');
-  if(!message||!rid||String(message.text||'').length>0)return event;
-  let state=identityLead.get(rid)||{buffer:''};
-  const chunk=String(event?.text??'');
-  if(!state.buffer&&!/^\s*§/u.test(chunk)){identityLead.delete(rid);return event}
-  state.buffer+=chunk;
-  const normalized=state.buffer.replace(/\r\n/g,'\n');
-  const standalone=/^\s*§wyrlz\s*\n+/iu.exec(normalized);
-  if(standalone){
-    identityLead.delete(rid);
-    const remainder=normalized.slice(standalone[0].length);
-    return remainder?{...event,text:remainder}:null;
-  }
-  const stillPossible=/^\s*§?w?y?r?l?z?\s*$/iu.test(normalized);
-  if(stillPossible&&normalized.length<=24){identityLead.set(rid,state);return null}
-  identityLead.delete(rid);
-  return {...event,text:state.buffer};
+  if(previous&&previous!==current){message.meta=message.meta||{};message.meta.backgroundInstanceChanged=true;phaseNote(message,'Server instance changed. The same canonical request is being resumed or regenerated and reconciled against the partial response already on this device.')}
 }
 
 const baseConsume=typeof consumeEvent==='function'?consumeEvent:null;
@@ -157,7 +150,6 @@ function replayDelta(event,context){
 
 if(baseConsume){
   consumeEvent=function(event,context){
-    const filtered=filterLeadingIdentity(event,context);if(filtered==null)return false;event=filtered;
     const message=context?.message,rid=String(event?.identity?.requestId||message?.meta?.requestId||'');
     if(context?.__swrlzReplay&&event?.type==='DELTA')return replayDelta(event,context);
     if(context?.__swrlzReplay&&event?.type==='RESET'&&context.__swrlzReconcile){context.__swrlzReconcile.baseline='';context.__swrlzReconcile.generated='';context.__swrlzReconcile.mode='redo'}
@@ -187,17 +179,18 @@ async function resumeOne(rid){
   try{if(typeof active!=='undefined'&&active?.requestId===rid&&active?.controller&&!active.controller.signal.aborted)return}catch(_){ }
   const store=prune(),entry=store[rid];if(!entry)return;
   const found=currentContext(rid,entry.threadId);if(!found)return;
-  const context={threadId:found.thread.id,requestId:rid,message:found.message,lastSeq:0,terminal:false,started:performance.now(),__swrlzReplay:true,__swrlzReconcile:{baseline:String(found.message.text||entry.partialText||''),generated:'',mode:'compare',redoNoted:false}};
-  live.add(rid);phaseNote(found.message,'Checking the pending server generation now. Existing work will continue if available; otherwise the same request will restart and reconcile against the saved partial.');
-  compareInstance(entry,found.message);
+  entry.recoveryAttempts=Number(entry.recoveryAttempts||0)+1;entry.updatedAt=Date.now();saveStore(store);
+  const body=canonicalizePayload(entry.body);entry.body=body;saveStore(store);markRecoveryCamera(found.message,entry,body);
+  const context={threadId:found.thread.id,requestId:rid,message:found.message,lastSeq:0,terminal:false,started:performance.now(),requestStartedAt:Number(entry.requestStartedAt||entry.createdAt||Date.now()),__swrlzReplay:true,__swrlzReconcile:{baseline:String(found.message.text||entry.partialText||''),generated:'',mode:'compare',redoNoted:false}};
+  live.add(rid);phaseNote(found.message,'Checking the pending canonical server generation now. Existing work will continue if available; otherwise the exact same cognitive request will restart and reconcile against the saved partial.');
+  await compareInstance(entry,found.message);
   try{
-    const body=normalizePayload(entry.body);
-    entry.body=body;const allHeaders={...chatAuthHeaders(),'Accept':'application/x-ndjson'};
+    const allHeaders={...chatAuthHeaders(),'Accept':'application/x-ndjson'};
     const response=await nativeFetch(entry.url||'/api/chat?action=stream',{method:'POST',credentials:'same-origin',cache:'no-store',headers:allHeaders,body:JSON.stringify(body)});
     if(response.status===401){phaseNote(found.message,'Generation recovery needs a valid Chat access token before it can reconnect.','AUTH_REQUIRED');return}
     await consumeNdjson(response,context,rid);
   }catch(err){
-    const text=String(err?.message||err);phaseNote(found.message,`Generation recovery is retrying (${text}). The pending request remains saved on this device.`);
+    const text=String(err?.message||err);phaseNote(found.message,`Generation recovery is retrying (${text}). The pending canonical request remains saved on this device.`);
     if(document.visibilityState!=='hidden')scheduleRetry(rid);
   }finally{live.delete(rid)}
 }
@@ -215,5 +208,5 @@ window.addEventListener('pagehide',persistNow);
 setTimeout(resumeCurrent,300);
 setInterval(()=>{if(document.visibilityState==='visible')resumeCurrent()},1800);
 
-window.__swrlzBackgroundResume={resumeCurrent,pending:()=>prune(),live,classifyIntent,cleanTurnText};
+window.__swrlzBackgroundResume={resumeCurrent,pending:()=>prune(),live,classifyIntent,cleanTurnText,canonicalizePayload};
 })();

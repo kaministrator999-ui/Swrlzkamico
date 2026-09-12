@@ -1,14 +1,14 @@
 # §wyrlz Unified Vercel Server
 
-- Server revision: **2.3.68**
-- Chat UI revision: **1.4.61**
+- Server revision: **2.3.70**
+- Chat UI revision: **1.4.62**
 - LALM UI revision: **1.0.0**
 - Server UI revision: **1.0.0**
 - Frozen Web Collector revision: **1.0.0**
 - Production deployment: **https://swrlzkamico-o3nu.vercel.app**
 - Checkpoint lineage: `FROZEN-WEB-COLLECTOR-001`
 
-This branch is the durable live application source for the unified §wyrlz Vercel server. Server 2.3.68 adds the Frozen Web Snapshot Collector while preserving Chat 1.4.61 and LALM Engine 2.1.26.
+This branch is the durable live application source for the unified §wyrlz Vercel server. Server 2.3.70 adds the Frozen Web Snapshot Collector while preserving Chat 1.4.62 and LALM Engine 2.1.26.
 
 ## Control planes
 
@@ -60,7 +60,7 @@ Private Vercel Blob owns durable state and snapshot artifacts. Raw HTML is disca
 
 ## Chat boundary
 
-Chat is **1.4.61** for Server 2.3.68 and is unchanged by the collector event. Server/LALM/collector work that does not change the Chat protocol or user-facing behavior does not advance the Chat version.
+Chat is **1.4.62** for Server 2.3.70 and is unchanged by the collector event. Server/LALM/collector work that does not change the Chat protocol or user-facing behavior does not advance the Chat version.
 
 Chat owns:
 
@@ -107,7 +107,7 @@ Use `runtime` for ordinary page and LALM-runtime iteration. `vercel.json` disabl
 
 Promote to `main` only when the stable server boundary changes, including Python routes, auth/session behavior, middleware, native build configuration, or deployment contracts.
 
-Server 2.3.68 installs the stable collector host. Routine compatible collector, Chat, page, and LALM runtime work remains on `runtime` without redeploy/restart.
+Server 2.3.70 installs the stable collector host. Routine compatible collector, Chat, page, and LALM runtime work remains on `runtime` without redeploy/restart.
 
 ## Versioning contract
 
@@ -116,7 +116,7 @@ Every server runtime development event receives a new overall Server version, in
 Modules that display another module's version must obtain it from the owning module's authoritative status/version source rather than maintaining a second stale literal. Chat currently resolves Server from `/api/server/status` and LALM UI from `/api/lalm/status`.
 
 Canonical roadmap: `docs/ROADMAP.md`  
-Latest release record: `docs/releases/server-2.3.68-frozen-web-collector.md`
+Latest release record: `docs/releases/server-2.3.70-frozen-web-collector.md`
 
 ## Contracts and records
 
@@ -126,10 +126,10 @@ Latest release record: `docs/releases/server-2.3.68-frozen-web-collector.md`
 - `docs/contracts/SWRLZ_HOT_RUNTIME_V1.md`
 - `docs/releases/SERVER_2.2.0.md`
 - `docs/releases/SERVER_2.2.8.md`
-- `docs/releases/server-2.3.68-frozen-web-collector.md`
+- `docs/releases/server-2.3.70-frozen-web-collector.md`
 - `docs/ROADMAP.md`
 - `SWRLZ_VERCEL_CHAT_CHANGELOG.md`
 
 ## Revision history
 
-2.3.68 adds Frozen Web Collector 1.0.0, private durable snapshot storage, explicit training review, and the hot-update collector boundary. Earlier release records remain preserved in `docs/releases/`.
+2.3.70 adds Frozen Web Collector 1.0.0, private durable snapshot storage, explicit training review, and the hot-update collector boundary. Earlier release records remain preserved in `docs/releases/`.
