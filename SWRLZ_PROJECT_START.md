@@ -121,6 +121,7 @@ versions/admin-web.txt
 versions/google-account.txt
 versions/client-apk.txt
 versions/server-apk.txt
+versions/frozen-web-collector.txt
 ```
 
 The exact registered set must always be read from current repository state because new structures may be added over time.

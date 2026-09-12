@@ -6,8 +6,8 @@ runtime branch by the dedicated hot/live loaders. The stable frozen-web
 collector host applies authentication and a fixed runtime-module contract while
 the collector implementation and page remain runtime-owned.
 
-Server 2.3.3 adds startup-time LALM hydration and readiness probing so a newly
-started worker warms the local R39 engine before Chat needs it.
+Server 2.3.70 adds the authenticated Frozen Web Collector host while preserving
+startup-time LALM hydration and the existing runtime-source boundary.
 """
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ from api.account_routes_v2 import install as _install_account_routes
 from api.collector_host import install as _install_collector_host
 import api.chat_extensions as _chat_extensions
 
-VERSION = "2.3.3"
+VERSION = "2.3.70"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {

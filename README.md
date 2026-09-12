@@ -1,9 +1,10 @@
 # §wyrlz Unified Vercel Server
 
-Server revision: **2.2.0**  
-Chat/runtime hotfix rules: **SWRLZ_HOTFIX_RULES.md**  
-Production deployment: **https://swrlzkamico-o3nu.vercel.app**  
-Checkpoint lineage: `INT-VERCEL-CHAT-001A`
+- Server revision: **2.3.70**
+- Frozen Web Collector revision: **1.0.0**
+- Chat/runtime hotfix rules: **SWRLZ_HOTFIX_RULES.md**
+- Production deployment: **https://swrlzkamico-o3nu.vercel.app**
+- Checkpoint lineage: `FROZEN-WEB-COLLECTOR-001`
 
 This repository is the unified §wyrlz Vercel server. The stable `main` branch provides the deployed loader/infrastructure; the `runtime` branch is the durable live application source for hot-editable pages, Chat, page-owned assets, and runtime LALM/inference.
 
@@ -23,6 +24,8 @@ Do not use `dev` for Chat/runtime hotfixes. Do not replace a complete page for a
 - `/lalm/` — LALM/R39 status and verification surfaces.
 - `/api/chat` — stable conversational transport surface.
 - `/api/admin` — Admin workbench.
+- `/collector` — authenticated Frozen Web Snapshot Collector control room.
+- `/api/collector/*` — collector status, actions, frozen search/documents, and snapshot manifests.
 - `/live/` — runtime live launchpad/source surface.
 
 ## Runtime ownership
@@ -36,8 +39,15 @@ The `runtime` branch owns the live application source:
 - runtime page routes via `runtime_pages/manifest.json`
 - runtime page assets
 - runtime-loadable LALM/R39 inference code
+- compatible Frozen Web Collector interface and engine revisions
 
 These changes are designed to be served from current `runtime` source without a Vercel deployment or server restart.
+
+## Frozen Web Snapshot Collector
+
+Server 2.3.70 installs a stable authenticated host for Frozen Web Collector 1.0.0. The browser page and compatible engine stay on `runtime`, while private Vercel Blob stores resumable control state, provenance, immutable frozen snapshots, lexical search indexes, and separately reviewed training artifacts. Robots compliance, public-address-only requests, redirect/MIME/byte/rate/domain/storage limits, and explicit rights confirmation are enforced by the collector contract.
+
+The initial host installation requires the approved production deployment. After that, compatible collector page and engine changes follow the normal `runtime` hot-update path without redeploying the server.
 
 ## Stable boundary / deployment ownership
 
@@ -89,4 +99,7 @@ Before declaring a runtime hotfix complete:
 - `docs/contracts/SWRLZ_HOT_RUNTIME_V1.md`
 - `docs/contracts/SWRLZ_LIVE_PAGE_RUNTIME_V1.md`
 - `docs/contracts/SWRLZ_VERCEL_CHAT_BRIDGE_V1.md`
+- `docs/contracts/SWRLZ_FROZEN_WEB_COLLECTOR_V1.md`
+- `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md`
+- `docs/releases/SERVER_2.3.70_FROZEN_WEB_COLLECTOR.md`
 - `SWRLZ_VERCEL_CHAT_CHANGELOG.md`

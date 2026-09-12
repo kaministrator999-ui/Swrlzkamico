@@ -1,11 +1,12 @@
 # §wyrlz Server Roadmap & Version Ledger
 
-**READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-**Current overall server baseline:** `2.3.59`  
-**Current Chat component:** `1.4.53`  
-**Current LALM UI component:** `1.0.0`  
-**Current Deployment Control component:** `1.0.1`  
-**Release policy:** every server development event gets an overall Server release/version entry plus independent component version changes where applicable, including unsuccessful attempts.
+- **Read with:** `SWRLZ_HOTFIX_RULES.md`
+- **Current overall server baseline:** `2.3.70`
+- **Current Chat component:** `1.4.62`
+- **Current LALM UI component:** `1.0.0`
+- **Current Frozen Web Collector component:** `1.0.0`
+- **Current Deployment Control component:** `1.0.2`
+- **Release policy:** every server development event gets an overall Server release/version entry plus independent component version changes where applicable, including unsuccessful attempts.
 
 ## Version model
 
@@ -47,6 +48,7 @@ Version authorities are read at event entry and re-read immediately before versi
 - Corrected deployment-gate logic so approval follows the actual deployment trigger/configuration instead of treating every `main` or documentation commit as deployment-capable.
 - Established generated Ice Dragon artwork ownership so the adult wallpaper can replace the legacy Frozen Sanctum procedural chamber art instead of stacking on top of it.
 - Consolidated Ice Dragon theme ownership so future theme visual work has one canonical CSS owner and one deterministic asset hydrator instead of multiple competing wallpaper/style layers.
+- Added an authenticated Frozen Web Snapshot Collector with durable private storage, immutable searchable snapshots, explicit training review, and a runtime-hot interface/engine boundary.
 
 ## Component ownership
 
@@ -59,6 +61,7 @@ Version authorities are read at event entry and re-read immediately before versi
 | Server/Infrastructure | `main/api/*`, deployment/configuration | Advances with stable infrastructure releases |
 | Deployment Control | `runtime/versions/deployment-control.txt` + governing contract/deployment configuration | Advances when deployment-control behavior/rules change |
 | Page system | `runtime_pages/manifest.json` + runtime page assets | Advances when page routing/system behavior changes |
+| Frozen Web Collector | `runtime/runtime_hot/web_snapshot_collector.py`, `runtime/web/collector.html`, and `runtime/versions/frozen-web-collector.txt` | Advances when compatible collector engine, API, policy, or interface behavior changes |
 | Admin | Admin-owned runtime/stable assets | Advances when Admin behavior changes |
 
 ## Hot-update boundary
@@ -74,6 +77,7 @@ These changes normally require **no Vercel deployment and no server restart**:
 - Runtime-owned page asset changes.
 - Runtime-loadable LALM/R39/inference changes supported by the existing loader.
 - Version-authority changes already supported by the stable loader.
+- Compatible Frozen Web Collector interface/engine changes after the stable host is installed.
 - `main` documentation/contract commits when current deployment configuration/workflows prove those commits do not trigger deployment.
 
 Procedure:
@@ -347,6 +351,52 @@ The omitted individual release notes for `2.3.7` through `2.3.55` are intentiona
 **Rollback/migration notes:**
 - No data migration is required.
 - Rollback can restore the four Ice Dragon runtime assets and the two runtime version authorities to their 2.3.58 / 1.4.52 state.
+
+### Roadmap reconciliation note — Server 2.3.60 through 2.3.69
+
+The runtime authority and its detailed release records advanced beyond this stable-main ledger during later Ice Dragon diagnostics/repair and RMCCA integration work. At the final collector commit boundary, the verified authority was Server `2.3.69`, Chat `1.4.62`, LALM Engine `2.1.26`, and Deployment Control `1.0.1` at runtime commit `349ebf5f8e2d8c6927d131905ec595145a9816b0`.
+
+This note re-anchors the stable ledger to that verified state. It does not fabricate duplicate summaries for releases whose detailed evidence remains in runtime `docs/ROADMAP.md`, `docs/releases/`, and Git history.
+
+### Server 2.3.70 — Frozen Web Snapshot Collector 1.0.0
+
+- **Status:** source implementation and static verification complete; approved production deployment pending
+- **Chat:** `1.4.62` unchanged
+- **LALM/R39:** `2.1.26` unchanged
+- **Server/Infrastructure:** stable authenticated collector host added
+- **Frozen Web Collector:** `1.0.0`
+- **Deployment Control:** `1.0.2`
+- **Deployment:** REQUIRED and explicitly APPROVED
+
+**Update notes:**
+- Adds `/collector`, a professional browser control room for source registration, bounded collection, pause/continue/checkpoint operation, frozen evidence search, training review, manifest inspection, and safety configuration.
+- Adds a runtime-owned engine that validates destinations, enforces mandatory robots/politeness and explicit budgets, extracts/canonicalizes/deduplicates text, records provenance and revisions, discards raw HTML, prepares chunks/search indexes, and seals immutable snapshots.
+- Keeps frozen evidence separate from reviewed training corpora. Training acceptance requires an explicit decision and rights/provenance confirmation.
+- Stores durable control state and immutable artifacts in private Vercel Blob; `/tmp` remains disposable cache state only.
+- Installs a fixed authenticated stable host once. Compatible collector page and engine updates remain on `runtime` and require no later server redeployment.
+- Preserves Chat 1.4.62, LALM Engine 2.1.26, RMCCA, Ice Dragon, and unrelated application behavior.
+
+**Concurrency lineage:**
+- Initial design baseline was Server `2.3.58`; the planned `2.3.59` event was never assigned.
+- First revalidation found Server `2.3.67` / Chat `1.4.61` at runtime `26009037b55c158a0606e84bf69202b165e59057`.
+- Final revalidation found Server `2.3.69` / Chat `1.4.62` at runtime `349ebf5f8e2d8c6927d131905ec595145a9816b0`; the intermediate planned `2.3.68` collector identity was discarded.
+- Reconciled checkpoints are runtime `852a27207a89554ff8c37b5ed3b149b1d5b66a21` and stable host `636321dcd9f204eae08f5e9cfc567ab1b2ac5c1d`.
+
+**Verification state:**
+- Focused runtime tests pass for storage transport, SSRF/redirect/robots safety, source policies, lifecycle/checkpointing, search, deterministic sealing, immutable evidence, rights confirmation, separate training corpora, and storage preflight.
+- Browser-console contract tests pass with safe DOM rendering, session-only token handling, complete controls/API bindings, and runtime route ownership.
+- Stable-host tests pass for fixed module contract, bounded readiness, authentication rejection, request limits, dispatch, and source receipts.
+- Production workflow YAML parses successfully. Actual workflow/build/deployment/browser evidence is pending and will be appended after the approved trigger completes.
+
+**Relevant lineage:**
+- Contract: `docs/contracts/SWRLZ_FROZEN_WEB_COLLECTOR_V1.md`
+- Checkpoint: `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md`
+- Release record: `docs/releases/SERVER_2.3.70_FROZEN_WEB_COLLECTOR.md`
+- Final canonical/deployment commits: pending publication.
+
+**Rollback/migration notes:**
+- No existing collector-state migration is required; deployment does not configure sources or begin collection.
+- Rollback restores the preceding production deployment and pre-event runtime authority. Operator-created immutable artifacts remain preserved unless separately removed with explicit authority.
 
 ## Required release-entry format
 

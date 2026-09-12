@@ -106,6 +106,7 @@ For **every** runtime/server-governed update:
 - **Google account architecture:** `versions/google-account.txt`.
 - **Android client APK:** `versions/client-apk.txt`.
 - **Android server APK:** `versions/server-apk.txt`.
+- **Frozen Web Snapshot Collector:** `versions/frozen-web-collector.txt`.
 - **Deployment control:** `versions/deployment-control.txt`.
 
 Existing API/status/code constants may expose or consume these values, but the **module-owned version file is the version identity authority**. Cross-module consumers must fetch the owning module's authority, directly or through a status/API surface derived from it. They must not maintain duplicate version literals.

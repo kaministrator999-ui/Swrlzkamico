@@ -434,6 +434,7 @@ Current and reserved module authorities include:
 - `versions/google-account.txt`
 - `versions/client-apk.txt`
 - `versions/server-apk.txt`
+- `versions/frozen-web-collector.txt`
 - `versions/deployment-control.txt`
 
 The Android APK version files may remain `UNASSIGNED` until the actual current artifact versions are verified. **Never invent a current version merely to fill the registry.**

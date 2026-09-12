@@ -1,0 +1,70 @@
+# Server 2.3.70 — Frozen Web Snapshot Collector 1.0.0
+
+Date: 2026-09-12
+Checkpoint: `FROZEN-WEB-COLLECTOR-001`
+Status at source publication: `SOURCE IMPLEMENTED`, `STATIC VERIFICATION PASS`, production deployment approved and pending
+
+## Accomplishment
+
+Server 2.3.70 adds a professional, authenticated browser control room for building bounded and resumable frozen web snapshots. Evidence collection, frozen search, and training review are explicit separate stages. The initial stable host requires one approved production deployment; compatible collector interface and engine updates remain owned by `runtime` and can be applied without redeploying the server.
+
+## Component versions
+
+- Overall Server: `2.3.70`
+- Frozen Web Collector: `1.0.0`
+- Deployment Control: `1.0.2`
+- Web Chat: `1.4.62` unchanged
+- LALM Engine: `2.1.26` unchanged
+
+## Stable infrastructure
+
+- Adds the authenticated collector host at `/api/collector/*`.
+- Fixes runtime source ownership to the `runtime` branch and validates module ID/API schema before dispatch.
+- Exposes a bounded public readiness route without exposing credentials or the full private store ID.
+- Preserves an in-worker last-known-good module when a later compatible source refresh fails.
+- Extends the manual production workflow to provision/connect a private collector Blob store and verify readiness, page delivery, runtime ownership, and anonymous rejection.
+
+## Runtime capability
+
+- Adds `/collector` with overview, sources, search, frontier, training review, snapshots, and safety/configuration views.
+- Adds source priority/policy management and explicit collection/storage/domain/time budgets.
+- Implements SSRF resistance, IP-pinned verified TLS, redirect revalidation, mandatory robots behavior, politeness, MIME/byte limits, and fail-closed guards.
+- Extracts and canonicalizes text, deduplicates by content identity, records revisions/provenance, scores quality/privacy, chunks evidence, and builds a lexical index.
+- Writes durable mutable control state and immutable snapshot/training artifacts to private Vercel Blob.
+- Requires explicit operator rights/provenance confirmation before any training candidate is accepted.
+
+## Verification before deployment
+
+- Collector engine verification: PASS.
+- Console contract verification: PASS with 91 unique element IDs.
+- Stable host contract/auth/request-limit/dispatch verification: PASS.
+- Python compilation: PASS.
+- Runtime manifest JSON parsing: PASS.
+- Production workflow YAML parsing: PASS.
+
+These are source/static results. They are not recorded as a Vercel build or live production result until the workflow and browser verification produce that evidence.
+
+## Lineage
+
+- Original main baseline: `99b56cf63b305aae13728195a7277aa1758fadad`
+- Original runtime baseline: `e47741237a3f79651af09c8ea5bd2d430c94bc38`
+- Reconciled main baseline: `4a070f5d5cc8aba67ef0575d8567b2f0f9813f7a`
+- Initial runtime reconciliation: `26009037b55c158a0606e84bf69202b165e59057`
+- Final runtime baseline: `349ebf5f8e2d8c6927d131905ec595145a9816b0`
+- Rebased stable checkpoint: `636321dcd9f204eae08f5e9cfc567ab1b2ac5c1d`
+- Rebased runtime checkpoint: `5b7744acc78a1a8508e5a954a4f5b2161db7a8d8`
+- Final reconciled runtime checkpoint: `852a27207a89554ff8c37b5ed3b149b1d5b66a21`
+
+Final canonical commits, GitHub Actions run, Vercel deployment ID/URL, production checks, and browser evidence are appended after publication/deployment.
+
+## Migration and rollback
+
+No existing data migration is required. The newly connected private store begins without collector sources, snapshots, or training decisions. A deployment rollback can restore the preceding stable Vercel deployment; runtime rollback can restore the prior runtime authority. Operator-created immutable artifacts are not deleted by code rollback.
+
+## Exclusions
+
+- No crawl was initiated.
+- No external source was registered.
+- No snapshot was sealed.
+- No training candidate was accepted.
+- No Chat or LALM behavior was changed.
