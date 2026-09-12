@@ -222,6 +222,12 @@ def main() -> None:
     }))
     assert code == 200 and payload["state"]["config"]["batchSize"] == 1
 
+    code, robots_override = asyncio.run(invoke(module, context, "POST", "action", {
+        "action": "configure",
+        "config": {"respectRobots": False},
+    }))
+    assert code == 400 and robots_override["error"]["code"] == "ROBOTS_REQUIRED"
+
     code, payload = asyncio.run(invoke(module, context, "POST", "action", {
         "action": "add-source",
         "url": "https://example.com/guide?utm_source=verification",

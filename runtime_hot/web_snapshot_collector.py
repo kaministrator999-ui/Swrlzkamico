@@ -691,7 +691,7 @@ def _domain_state(state: dict[str, Any], host: str) -> dict[str, Any]:
 def _fetch_robots(state: dict[str, Any], url: str) -> tuple[bool, float, str, bool]:
     config = state["config"]
     if not config.get("respectRobots", True):
-        return True, float(config["minDelaySeconds"]), "robots-disabled-by-admin", False
+        return False, float(config["minDelaySeconds"]), "robots-required-fail-closed", False
     parsed = urllib.parse.urlsplit(url)
     origin = f"{parsed.scheme}://{parsed.netloc}"
     cached = state.setdefault("robots", {}).get(origin)
@@ -1503,7 +1503,11 @@ def _apply_config(state: dict[str, Any], patch: Any) -> dict[str, Any]:
             if not low <= value <= high:
                 raise CollectorError(400, "CONFIG_RANGE", f"{key} must be between {low} and {high}.")
             updated[key] = value
-        elif key in {"respectRobots", "allowExternalDomains"}:
+        elif key == "respectRobots":
+            if raw is not True:
+                raise CollectorError(400, "ROBOTS_REQUIRED", "robots.txt compliance is a fixed collector guardrail.")
+            updated[key] = True
+        elif key == "allowExternalDomains":
             if not isinstance(raw, bool):
                 raise CollectorError(400, "CONFIG_INVALID", f"{key} must be true or false.")
             updated[key] = raw
