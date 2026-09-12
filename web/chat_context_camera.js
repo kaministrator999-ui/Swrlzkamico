@@ -22,6 +22,13 @@ function clockSummary(camera){
   const roles=Array.isArray(c.structuralRoles)&&c.structuralRoles.length?c.structuralRoles.join('+'):'none';
   return `RMCCA topology=${c.responseTopology||'unknown'} · depth=${c.resolutionDepth||'unknown'} · frame=${c.referenceFrame||'unknown'} · domains=${domains} · structure=${roles}`;
 }
+function continuitySummary(camera){
+  const authority=camera?.cognitiveAuthority||'unknown';
+  const envelope=camera?.canonicalEnvelopeId||'none';
+  const attempts=Number(camera?.recoveryAttempts||0);
+  const preserved=camera?.canonicalEnvelopePreserved===true?'yes':camera?.canonicalEnvelopePreserved===false?'no':'n/a';
+  return `authority=${authority} · envelope=${envelope} · recovery attempts=${attempts} · canonical recovery preserved=${preserved}`;
+}
 
 window.consumeEvent=function(event,context){
   const message=context?.message,rid=ridOf(event,context);
@@ -39,14 +46,13 @@ window.consumeEvent=function(event,context){
     if(typeof raw==='string'&&raw.length){message.meta.modelText=raw;camera.rawAssistantChars=raw.length}
     camera.displayAssistantChars=String(message.text||'').length;
     camera.canonicalDiffersFromDisplay=typeof raw==='string'?raw!==String(message.text||''):false;
-    camera.leadingIdentityFiltered=typeof raw==='string'&&/^\s*§wyrlz\s*(?:\r?\n)+/iu.test(raw)&&!/^\s*§wyrlz\s*(?:\r?\n)+/iu.test(String(message.text||''));
     camera.completedAt=Date.now();
-    addCameraTrail(message,`Context camera · history=${camera.historySource||'unknown'} · canonical assistant history=${Number(camera.assistantHistoryUsingModelText||0)} · raw/display differ=${camera.canonicalDiffersFromDisplay?'yes':'no'} · leading identity filtered=${camera.leadingIdentityFiltered?'yes':'no'} · ${clockSummary(camera)}.`);
+    addCameraTrail(message,`Context camera · history=${camera.historySource||'unknown'} · canonical assistant history=${Number(camera.assistantHistoryUsingModelText||0)} · raw/display differ=${camera.canonicalDiffersFromDisplay?'yes':'no'} · ${continuitySummary(camera)} · ${clockSummary(camera)}.`);
     rawByRequest.delete(rid);
     try{if(typeof saveState==='function')saveState()}catch(_){ }
   }
   return result;
 };
 
-window.__swrlzContextCamera={rawByRequest,clockSummary};
+window.__swrlzContextCamera={rawByRequest,clockSummary,continuitySummary};
 })();
