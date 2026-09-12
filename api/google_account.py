@@ -14,7 +14,10 @@ from google.oauth2 import id_token as google_id_token
 
 SESSION_COOKIE = "swrlz_session"
 SESSION_TTL_SECONDS = 7 * 24 * 60 * 60
-DEFAULT_GOOGLE_CLIENT_ID = "1083208613166-59am0s2p1v4vpoc04klr3iinh0oph1en.apps.googleusercontent.com"
+DEFAULT_GOOGLE_CLIENT_ID = "1083208613166-bj7isingvbv5dcns9ldtru8cjfj993mc.apps.googleusercontent.com"
+RETIRED_GOOGLE_CLIENT_IDS = {
+    "1083208613166-59am0s2p1v4vpoc04klr3iinh0oph1en.apps.googleusercontent.com",
+}
 
 
 class AccountConfigurationError(RuntimeError):
@@ -35,7 +38,13 @@ class VerifiedGoogleIdentity:
 
 
 def google_client_id() -> str:
-    return os.environ.get("SWRLZ_GOOGLE_CLIENT_ID", "").strip() or DEFAULT_GOOGLE_CLIENT_ID
+    configured = os.environ.get("SWRLZ_GOOGLE_CLIENT_ID", "").strip()
+    # Migrate the one known-bad OAuth identifier that was introduced during the
+    # browser compatibility work. This keeps production healthy even when an old
+    # Vercel environment value survives after the source repair.
+    if not configured or configured in RETIRED_GOOGLE_CLIENT_IDS:
+        return DEFAULT_GOOGLE_CLIENT_ID
+    return configured
 
 
 def _session_secret_material() -> tuple[str, str]:
