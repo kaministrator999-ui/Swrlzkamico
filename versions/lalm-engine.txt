@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.31
-REVISION=2.1.31-hot-task-aware-prefill-efficiency-v21
+VERSION=2.1.32
+REVISION=2.1.32-hot-batched-prefill-rmcca-v22
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
