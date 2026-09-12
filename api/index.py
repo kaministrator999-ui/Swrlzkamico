@@ -4,8 +4,8 @@ Stable infrastructure owns the HTTP/bootstrap/control plane. Runtime application
 pages, page-owned assets, and the hot R39 implementation are sourced from the
 runtime branch by the dedicated hot/live loaders.
 
-Server 2.3.3 adds startup-time LALM hydration and readiness probing so a newly
-started worker warms the local R39 engine before Chat needs it.
+Server 2.3.4 preserves startup-time LALM hydration and adds the stable Google
+account authentication/session boundary used by cross-browser Chat sign-in.
 """
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ from api.contextual_input import install as _install_contextual_input
 from api.account_routes_v2 import install as _install_account_routes
 import api.chat_extensions as _chat_extensions
 
-VERSION = "2.3.3"
+VERSION = "2.3.4"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
