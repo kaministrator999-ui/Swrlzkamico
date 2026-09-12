@@ -2,18 +2,58 @@
 
 ## Current release
 
-**Server v2.3.71**
+**Server v2.3.72**
 
-This event stabilizes RMCCA social participation, hardens canonical-request transport across initial send/recovery, and makes canonical model-text capture generation-branch aware so recovered responses cannot poison future history with duplicated raw output.
+This event replaces the active Ice Dragon adult wallpaper's 180×320 source with the existing 864×1536 source payload while preserving the verified direct `.messages` paint path.
 
 ### Module state
 
-- **Server runtime v2.3.71** — current server development lineage.
-- **Chat v1.4.65** — RMCCA social-participation policy + canonical transport hardening + branch-aware camera/history capture.
+- **Server runtime v2.3.72** — current server development lineage.
+- **Chat v1.4.66** — Ice Dragon full-resolution adult wallpaper hydration.
 - **LALM engine v2.1.26** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.0** — unchanged.
+
+## Server v2.3.72 — 2026-09-12
+
+### Triggering evidence
+
+- The adult Ice Dragon wallpaper was finally rendering, but remained visibly blurred/pixelated on the mobile viewport.
+- A user-initiated Vercel redeploy did not improve the image, ruling out deployment propagation as the quality bottleneck.
+- Runtime inspection showed `ice-dragon-art-loader-v13.js` still fetched `adult-180x320.jpg.b64` and stretched it across `.messages` with `background-size: cover`.
+- The runtime asset tree already contained six ordered `adult-864x1536.part000.b64` through `part005.b64` source chunks, and the first chunk's JPEG header identifies the intended 864×1536 dimensions.
+
+### Full-resolution wallpaper path
+
+- Added `web/themes/ice-dragon/ice-dragon-art-loader-v14.js`.
+- Preserved the verified v13 ownership model: `.messages` remains the single adult wallpaper owner; companion hydration remains independent; single-flight deduplication remains intact.
+- Adult hydration now fetches all six 864×1536 Base64 chunks concurrently, joins them in numeric order, normalizes the complete payload once, creates the same Blob URL, and runs the browser decode probe before painting.
+- Added diagnostics for `adult-part-fetch-start`, `adult-parts-complete`, normalized payload length, decoded dimensions, and final paint state.
+- Added a resolution guard so an unexpectedly low-resolution decoded adult asset fails loudly instead of silently reintroducing the same visual regression.
+- `runtime_pages/manifest.json` advanced from manifest v6 to v7 and now injects the unique `ice-dragon-art-loader-v14.js` URL, avoiding the stale fixed-asset URL problem discovered earlier.
+
+### Concurrency reconciliation
+
+- Transaction baseline was Server `2.3.71` / Chat `1.4.65`.
+- Immediately before version assignment, both authoritative version files were re-read and remained Server `2.3.71` / Chat `1.4.65`.
+- This event therefore advanced to Server `2.3.72` / Chat `1.4.66`.
+
+### Verification / deployment state
+
+- Runtime source changed only on `runtime`.
+- **Production deployment:** not required for this runtime-hot fix; the user's preceding redeploy already demonstrated deployment was not the image-quality bottleneck.
+- **Server restart:** not required.
+- Repository acceptance: manifest v7 points at v14; the six 864×1536 chunks remain the v14 adult source.
+- Browser acceptance: Theme Logs should report `adult-parts-complete`, `adult-decode-ok 864x1536`, and `adult-painted`; the target Android viewport should show materially sharper adult artwork than the 180×320 path.
+
+### Relevant lineage
+
+- v14 full-resolution hydrator: `7f82590e30ae6b6da77e3407b739a05c1df32b51`
+- Manifest v7 activation: `3c1fce86ce392618e2eff15db26d914faa2c48bc`
+- Server version authority: `32ff3c525c0c6471b6bed129414e8ce21d0b9a02`
+- Chat version authority: `7074153de81d57d7d4af063b02239cfb5e5a1b8f`
+- Release record: `docs/releases/server-2.3.72-ice-dragon-full-resolution-wallpaper.md`
 
 ## Server v2.3.71 — 2026-09-12
 
