@@ -1,8 +1,8 @@
 ID=google-account
-VERSION=1.0.5
+VERSION=1.0.6
 KIND=account-auth-architecture
 SOURCE_BRANCH=mixed
 STATUS=active
 DISPLAY_NAME=Google Account Architecture
 UPDATE_POLICY=runtime-ui/stable-auth-boundary
-BASELINE_NOTE=Chat now reads the public Google OAuth client ID from the server account-status authority and mirrors it into browser-local compatibility storage, eliminating per-browser test-page setup once server auth is configured. Server-side Google verification and durable account storage remain the authoritative stable boundary.
+BASELINE_NOTE=Google sign-in now uses a server-owned OAuth client ID fallback, server-side Google ID-token verification, and a signed HttpOnly account session on every browser. When durable Redis account storage is unavailable, authentication degrades to verified stateless identity while Chat remains browser-local; durable profile/chat sync still requires the Redis REST boundary.
