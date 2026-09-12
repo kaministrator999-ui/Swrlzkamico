@@ -1,10 +1,10 @@
 # §wyrlz Unified Vercel Server
 
-- Server revision: **2.3.79**
-- Chat UI revision: **1.4.71**
+- Server revision: **2.3.91**
+- Chat UI revision: **1.4.77**
 - LALM UI revision: **1.0.0**
 - Server UI revision: **1.0.0**
-- Frozen Web Collector revision: **1.0.0**
+- Frozen Web Collector revision: **1.0.5**
 - Production deployment: **https://swrlzkamico-o3nu.vercel.app**
 - Checkpoint lineage: `FROZEN-WEB-COLLECTOR-001`
 
@@ -136,4 +136,4 @@ Latest release record: `docs/releases/server-2.3.79-frozen-web-collector.md`
 
 ## Collector deployment status
 
-The `/collector` page is live, but its stable backend installation is blocked by missing GitHub Actions secret `VERCEL_TOKEN` in run 34708124306. No collector build, deployment, or storage provisioning ran. The release record contains the exact recovery step.
+The `/collector` page and stable backend are live, with Collector 1.0.5 loaded from `runtime` and private Blob configured. Operations require the existing SWRLZ admin token. See `docs/releases/server-2.3.91-collector-deployment-recovery.md` for current evidence and the authenticated verification boundary; the older missing-token recovery instructions are superseded.
