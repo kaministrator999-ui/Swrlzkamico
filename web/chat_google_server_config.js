@@ -10,6 +10,22 @@ const RETIRED_CLIENT_IDS=new Set([
   '1083208613166-59am0s2p1v4vpoc04klr3iinh0oph1en.apps.googleusercontent.com'
 ]);
 
+// Repair the browser OAuth authority synchronously while this script is parsed.
+// chat_enhancements.js registers its DOMContentLoaded account boot before this
+// bridge, so waiting until DOMContentLoaded here is too late: it can initialize
+// Google Identity Services with the retired client ID first. This synchronous
+// seed/repair guarantees the account UI observes the canonical ID on first boot.
+function repairBrowserClientNow(){
+  const existing=String(localStorage.getItem(CLIENT_KEY)||'').trim();
+  if(!existing||RETIRED_CLIENT_IDS.has(existing)){
+    localStorage.setItem(CLIENT_KEY,CANONICAL_CLIENT_ID);
+    sessionStorage.removeItem(RELOAD_KEY);
+    return CANONICAL_CLIENT_ID;
+  }
+  return existing;
+}
+repairBrowserClientNow();
+
 async function accountStatus(){
   const urls=['/api/account/status','/live/api/account/status'];
   let lastError=null;
@@ -84,17 +100,10 @@ async function syncGoogleClient(){
     const status=await accountStatus();
     const reportedServerClientId=String(status.googleClientId||'').trim();
     const serverClientId=RETIRED_CLIENT_IDS.has(reportedServerClientId)?CANONICAL_CLIENT_ID:(reportedServerClientId||CANONICAL_CLIENT_ID);
-    let browserClientId=String(localStorage.getItem(CLIENT_KEY)||'').trim();
+    let browserClientId=repairBrowserClientNow();
 
-    // Automatically repair only the specific retired ID that poisoned browsers
-    // during the Edge compatibility regression. Any other browser-proven ID is
-    // preserved and never overwritten by the server fallback.
-    if(RETIRED_CLIENT_IDS.has(browserClientId)){
-      browserClientId=CANONICAL_CLIENT_ID;
-      localStorage.setItem(CLIENT_KEY,browserClientId);
-      sessionStorage.removeItem(RELOAD_KEY);
-    }
-
+    // Any non-retired browser-proven OAuth ID remains authoritative. The
+    // canonical server ID only seeds empty/retired browser state.
     if(browserClientId){
       sessionStorage.removeItem(RELOAD_KEY);
       window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{
@@ -122,8 +131,7 @@ async function syncGoogleClient(){
     sessionStorage.removeItem(RELOAD_KEY);
     window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{configured:true,source:'server-seed',authConfigured:Boolean(status.authConfigured),storeConfigured:Boolean(status.storeConfigured)}}));
   }catch(error){
-    const existing=String(localStorage.getItem(CLIENT_KEY)||'').trim();
-    if(RETIRED_CLIENT_IDS.has(existing))localStorage.setItem(CLIENT_KEY,CANONICAL_CLIENT_ID);
+    repairBrowserClientNow();
     if(!localStorage.getItem(CLIENT_KEY))setStatusText('Google sign-in configuration could not be loaded from the server.',true);
     window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{configured:Boolean(localStorage.getItem(CLIENT_KEY)),source:localStorage.getItem(CLIENT_KEY)?'browser':'server',error:String(error?.message||error)}}));
   }
@@ -132,7 +140,7 @@ async function syncGoogleClient(){
 window.addEventListener('swrlz:account-change',event=>{
   if(event?.detail?.signedIn===false)fetch('/api/account/logout',{method:'POST',credentials:'same-origin'}).catch(()=>{});
 });
-window.__swrlzGoogleServerAuth={accountStatus,verifyCredential,patchGoogleIdentity};
+window.__swrlzGoogleServerAuth={accountStatus,verifyCredential,patchGoogleIdentity,repairBrowserClientNow};
 watchGoogleIdentity();
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',syncGoogleClient,{once:true});
 else syncGoogleClient();
