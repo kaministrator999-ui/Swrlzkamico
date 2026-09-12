@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.30
-REVISION=2.1.30-hot-compact-social-temporal-v20
+VERSION=2.1.31
+REVISION=2.1.31-hot-task-aware-prefill-efficiency-v21
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
