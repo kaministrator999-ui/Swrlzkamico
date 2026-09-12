@@ -1,14 +1,14 @@
-"""R39 hot-engine v19 social/temporal conversation wrapper.
+"""R39 hot-engine v20 compact social/temporal conversation wrapper.
 
 The stable hot loader currently hydrates only r39_engine.py. This wrapper preserves
-the proven v17 engine by loading the archived v17 source from the local hot folder
-when available, or from this repository's runtime branch once and caching it locally.
-It then installs the v19 social, identity, and user-local-time conversation contract
-at the engine boundary.
+the proven v17 engine, keeps social/identity behavior at the model boundary, and
+consumes browser-supplied user-local time as structured metadata without rewriting
+the user's prompt.
 """
 from __future__ import annotations
 
 import importlib.util
+import re
 import sys
 import urllib.request
 from pathlib import Path
@@ -23,7 +23,7 @@ def _load_v17():
     global _ARCHIVE_SOURCE
     if not _ARCHIVE_PATH.is_file():
         _ARCHIVE_SOURCE = "github-runtime-cache"
-        request = urllib.request.Request(_ARCHIVE_URL, headers={"User-Agent": "swrlz-r39-hot-loader/2.1.29"})
+        request = urllib.request.Request(_ARCHIVE_URL, headers={"User-Agent": "swrlz-r39-hot-loader/2.1.30"})
         with urllib.request.urlopen(request, timeout=8) as response:
             source = response.read()
         if not source or b"def generate_events" not in source or b"def inspect_engine" not in source:
@@ -40,31 +40,46 @@ def _load_v17():
 
 _impl = _load_v17()
 
-HOT_SERVER_VERSION = "2.1.29"
-HOT_REVISION = "2.1.29-hot-social-temporal-v19"
+HOT_SERVER_VERSION = "2.1.30"
+HOT_REVISION = "2.1.30-hot-compact-social-temporal-v20"
 ENGINE_ID = _impl.ENGINE_ID
 MODEL_SHA256 = _impl.MODEL_SHA256
 
 _ENGINE_POLICY = (
-    "LALM conversation contract: participate in the user's conversational act instead of describing it. "
-    "For a simple greeting or casual social opening, greet back naturally and briefly, match the user's energy and emoji when reasonable, and never explain that the input is a greeting. "
-    "On an opening social turn, do not use service-desk or conversation-closing language such as 'How can I assist you today?', 'Let me know if you need anything else today', 'Is there anything else I can help with?', or equivalents. "
-    "A natural opening may greet back and, when appropriate, ask one ordinary conversational follow-up such as 'How's it going?' then stop. Do not prematurely wrap up a conversation that has just started. "
-    "User messages may begin with an internal marker formatted [[SWRLZ_USER_LOCAL_TIME:...]]. Treat that marker as authoritative user-local temporal context for that message, not as user-visible prose. Use its local date, clock time, timezone, UTC offset, and daypart when time-sensitive wording matters. Never claim a morning, afternoon, evening, night, date, or 'today/tonight' relationship that contradicts that marker. Do not quote or expose the marker unless the user explicitly asks about system context. "
-    "Assistant identity: your name is §wyrlz. The user's name or preferred form of address is never your name. If explicitly asked your name or identity, answer naturally in first person, for example 'I'm §wyrlz.' "
-    "If the user says 'You can call me Kami 😜', acknowledge the user's preferred name rather than treating Kami as your own identity. "
-    "Examples: User at 10:44 local: 'Hey 👋' -> Assistant: 'Hey 👋 How's it going?'; User: 'Hey there' -> Assistant: 'Hey there 😄'; User: 'What's your name?' -> Assistant: 'I'm §wyrlz.' "
-    "Answer substantive questions directly and completely. For programming requests, provide correct runnable code when appropriate and keep code, explanation, formulas, and input/output behavior mutually consistent."
+    "Conversation contract: participate instead of describing the user's act. "
+    "Simple greetings: greet back naturally and briefly; one ordinary follow-up is fine; do not use service-desk closings or ask whether they need anything else. "
+    "Your name is §wyrlz; never confuse the user's preferred name with yours. "
+    "Use supplied user-local time naturally when relevant and never contradict it. "
+    "Answer substantive requests directly; for code, keep code and explanation consistent."
 )
+_GREETING_RE = re.compile(r"^(?:hey|hi|hello|yo|sup|👋)(?:\s|[!,.?👋🙂😊😂😆❤️🫂])*$", re.I)
 
 _impl.HOT_SERVER_VERSION = HOT_SERVER_VERSION
 _impl.HOT_REVISION = HOT_REVISION
 
 
+def _time_note(payload):
+    ctx = payload.get("swrlzUserTimeContext") if isinstance(payload, dict) else None
+    if not isinstance(ctx, dict):
+        return ""
+    date = str(ctx.get("localDate") or "").strip()
+    time = str(ctx.get("localTime") or "").strip()
+    daypart = str(ctx.get("daypart") or "").strip()
+    zone = str(ctx.get("timeZone") or "").strip()
+    offset = str(ctx.get("utcOffset") or "").strip()
+    bits = " ".join(x for x in [date, time, daypart, zone, ("UTC" + offset) if offset else ""] if x)
+    return (" User local time: " + bits + ".") if bits else ""
+
+
 def _engine_render_chat_prompt(payload):
     clone = dict(payload)
+    prompt = str(clone.get("prompt") or "").strip()
     client_policy = str(clone.get("responseDirective") or "").strip()
-    clone["responseDirective"] = _ENGINE_POLICY + ((" Client cognitive policy: " + client_policy) if client_policy else "")
+    compact_social = bool(_GREETING_RE.fullmatch(prompt))
+    policy = _ENGINE_POLICY + _time_note(clone)
+    if client_policy and not compact_social:
+        policy += " Client cognitive policy: " + client_policy
+    clone["responseDirective"] = policy
     return _impl._ORIGINAL_RENDER_CHAT_PROMPT(clone)
 
 
@@ -81,6 +96,8 @@ def inspect_engine():
         data["openingTurnNoPrematureClosure"] = True
         data["identityDisambiguationContract"] = True
         data["userLocalTemporalContextContract"] = True
+        data["structuredUserTimeMetadata"] = True
+        data["compactGreetingDirective"] = True
         data["clientDirectivePreservedAsSecondaryPolicy"] = True
         data["v17ArchiveSource"] = _ARCHIVE_SOURCE
     return data
