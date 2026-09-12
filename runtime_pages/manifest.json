@@ -1,5 +1,5 @@
 {
-  "version": 9,
+  "version": 10,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source": "runtime_pages/index.html"},
@@ -24,6 +24,7 @@
         "web/themes/ice-dragon/ice-dragon-art-loader-v14.js",
         "web/chat_code_artifacts.js",
         "web/chat_stream_incremental.js",
+        "web/chat_activity_immediate.js",
         "web/chat_user_time_context.js",
         "web/chat_context_canonical.js",
         "web/chat_background_resume.js",
@@ -38,5 +39,5 @@
     "/live": {"source": "runtime_pages/index.html"}
   },
   "assetRoots": ["web", "runtime_pages"],
-  "notes": "Runtime manifest v9 loads a browser-local temporal context layer before canonical Chat request preparation. It attaches stable per-user-message local date, clock time, timezone, UTC offset, and daypart context without altering displayed message text; the stable timestamp reconstruction preserves next-turn prompt-prefix reuse. Google server configuration and Ice Dragon v14 behavior remain unchanged."
+  "notes": "Runtime manifest v10 shows a local activity receipt immediately when a Chat request is sent and passes user-local time as structured request metadata instead of prefixing prompt/history text. This keeps simple-greeting classification intact and reduces first-turn prefill inflation. Google server configuration and Ice Dragon v14 behavior remain unchanged."
 }
