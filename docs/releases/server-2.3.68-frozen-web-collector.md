@@ -1,8 +1,8 @@
 # Server 2.3.68 — Frozen Web Snapshot Collector
 
-Date: 2026-09-12
-Lifecycle: IMPLEMENTATION_VERIFIED / DOCUMENTATION_SYNCED
-Production status at source publication: deployment approved and pending
+- Date: 2026-09-12
+- Lifecycle: IMPLEMENTATION_VERIFIED / DOCUMENTATION_SYNCED
+- Production status at source publication: deployment approved and pending
 
 ## Versions
 

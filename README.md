@@ -1,12 +1,12 @@
 # §wyrlz Unified Vercel Server
 
-Server revision: **2.3.68**
-Chat UI revision: **1.4.61**
-LALM UI revision: **1.0.0**  
-Server UI revision: **1.0.0**  
-Frozen Web Collector revision: **1.0.0**
-Production deployment: **https://swrlzkamico-o3nu.vercel.app**  
-Checkpoint lineage: `INT-VERCEL-CHAT-001A`
+- Server revision: **2.3.68**
+- Chat UI revision: **1.4.61**
+- LALM UI revision: **1.0.0**
+- Server UI revision: **1.0.0**
+- Frozen Web Collector revision: **1.0.0**
+- Production deployment: **https://swrlzkamico-o3nu.vercel.app**
+- Checkpoint lineage: `FROZEN-WEB-COLLECTOR-001`
 
 This branch is the durable live application source for the unified §wyrlz Vercel server. Server 2.3.68 adds the Frozen Web Snapshot Collector while preserving Chat 1.4.61 and LALM Engine 2.1.26.
 
