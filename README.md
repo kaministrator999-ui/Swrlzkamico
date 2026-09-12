@@ -1,14 +1,14 @@
 # §wyrlz Unified Vercel Server
 
 - Server revision: **2.3.70**
-- Chat UI revision: **1.4.62**
+- Chat UI revision: **1.4.63**
 - LALM UI revision: **1.0.0**
 - Server UI revision: **1.0.0**
 - Frozen Web Collector revision: **1.0.0**
 - Production deployment: **https://swrlzkamico-o3nu.vercel.app**
 - Checkpoint lineage: `FROZEN-WEB-COLLECTOR-001`
 
-This branch is the durable live application source for the unified §wyrlz Vercel server. Server 2.3.70 adds the Frozen Web Snapshot Collector while preserving Chat 1.4.62 and LALM Engine 2.1.26.
+This branch is the durable live application source for the unified §wyrlz Vercel server. Server 2.3.70 adds the Frozen Web Snapshot Collector while preserving Chat 1.4.63 and LALM Engine 2.1.26.
 
 ## Control planes
 
@@ -60,7 +60,7 @@ Private Vercel Blob owns durable state and snapshot artifacts. Raw HTML is disca
 
 ## Chat boundary
 
-Chat is **1.4.62** for Server 2.3.70 and is unchanged by the collector event. Server/LALM/collector work that does not change the Chat protocol or user-facing behavior does not advance the Chat version.
+Chat is **1.4.63** for Server 2.3.70 and is unchanged by the collector event. Server/LALM/collector work that does not change the Chat protocol or user-facing behavior does not advance the Chat version.
 
 Chat owns:
 

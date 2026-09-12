@@ -9,7 +9,7 @@ This event establishes the authenticated Frozen Web Snapshot Collector as a runt
 ### Module state
 
 - **Server runtime v2.3.70** — current server development lineage.
-- **Chat v1.4.62** — unchanged by the collector; latest Ice Dragon/RMCCA behavior is preserved.
+- **Chat v1.4.63** — unchanged by the collector; latest Ice Dragon/RMCCA behavior is preserved.
 - **Frozen Web Collector v1.0.0** — bounded collection, frozen search snapshots, and rights-reviewed training preparation.
 - **LALM engine v2.1.26** — unchanged in this event.
 - **LALM UI v1.0.0** — unchanged.
@@ -32,7 +32,7 @@ This event establishes the authenticated Frozen Web Snapshot Collector as a runt
 
 - The collector was originally designed against Server `2.3.58` and a planned `2.3.59` event.
 - Before the first release-boundary revalidation, the authoritative runtime branch had advanced through Server `2.3.67` / Chat `1.4.61` for later Ice Dragon and RMCCA work.
-- At the final commit boundary it advanced again through Server `2.3.69` / Chat `1.4.62` for Ice Dragon quality and RMCCA request-authority work.
+- At the final publication boundary it advanced again through Server `2.3.69` / Chat `1.4.63` for the completed Ice Dragon quality and RMCCA single-authority work.
 - Stale planned Server versions were discarded, all concurrent work was preserved, and the collector event was reassigned to Server `2.3.70`.
 - The older `2.3.67` current-state display called Deployment Control `1.0.0`; its module authority was already `1.0.1`. This event advances that authority to `1.0.2` without rewriting prior version history.
 
@@ -50,7 +50,7 @@ This event establishes the authenticated Frozen Web Snapshot Collector as a runt
 - Final reconciled runtime checkpoint: `852a27207a89554ff8c37b5ed3b149b1d5b66a21`
 - Rebased stable-host checkpoint: `636321dcd9f204eae08f5e9cfc567ab1b2ac5c1d`
 - Initial reconciliation authority: `26009037b55c158a0606e84bf69202b165e59057`
-- Final pre-event runtime authority: `349ebf5f8e2d8c6927d131905ec595145a9816b0`
+- Final pre-event runtime authority: `adcade0fda78ed4373d863bbbcc4344ff9d46b18`
 - Pre-event main authority: `4a070f5d5cc8aba67ef0575d8567b2f0f9813f7a`
 - Final canonical and deployment receipts: pending publication/deployment.
 
@@ -59,13 +59,52 @@ This event establishes the authenticated Frozen Web Snapshot Collector as a runt
 - No existing collector data migration is required; the private store begins with no configured sources or accepted training material.
 - Rollback restores the preceding stable deployment and the pre-event `runtime` authority. Immutable snapshot artifacts, if later created by an operator, remain preserved unless separately and explicitly removed.
 
-## Server v2.3.69 — Authority reconciliation record
+## Server v2.3.69 — 2026-09-12
 
-- The Server authority advanced from `2.3.68` to `2.3.69` at commit `349ebf5f8e2d8c6927d131905ec595145a9816b0` before the collector event was published.
-- Direct source history shows concurrent RMCCA work making canonical context the single request authority, preserving that authority across recovery, and exposing the continuity through camera evidence.
-- Chat authority remained `1.4.62`; LALM Engine remained `2.1.26`; Deployment Control remained `1.0.1`.
-- No independent release document for this event was present when the collector checkpoint revalidated authority. This reconciliation records only observed source/version facts and does not invent unverified build, deployment, or browser claims.
-- Relevant source commits: `cec5cb1`, `badd23f`, `b5527c6`, `349ebf5`.
+### RMCCA single cognitive authority
+
+- A fresh browser close/reopen still answered `What's your name?` with `I don't have a name. I'm an AI`, disproving the stale-tab-only explanation.
+- The camera showed no RMCCA metadata on the active identity turn while background recovery repeatedly restarted the request after network/instance changes.
+- `web/chat_context_canonical.js` is now the single owner of model-facing response policy, canonical history, RMCCA diagnostics, and the persisted cognitive request envelope.
+- Added the `swrlz-rmcca-context-v1` canonical envelope carrying directive identity, cognitive-clock diagnostics, history provenance, canonical assistant-history count, and prompt size.
+- Canonical preparation is idempotent: a request that already owns the current RMCCA envelope is preserved instead of rebuilt or replaced by another layer.
+- Identity requests now have an explicit `identity-query` structural role and `identity-answer` response topology; the cognitive policy explicitly teaches that the assistant identity is §wyrlz and should not be denied.
+
+### Background recovery ownership correction
+
+- `web/chat_background_resume.js` no longer injects its older competing `BASE_RESPONSE_DIRECTIVE`.
+- Initial send and recovery both ask the canonical RMCCA layer to prepare the request; the resulting canonical request is what background persistence stores and replays.
+- Removed the leading-`§wyrlz` display suppression path. Correctness is owned by model understanding/generation rather than hiding output in presentation.
+- Recovery now records attempt count, original request start time, recovery elapsed time, and whether the canonical envelope survived the recovery path.
+
+### Camera observability
+
+- `web/chat_context_camera.js` now reports cognitive authority, canonical envelope ID, recovery-attempt count, envelope preservation, RMCCA topology/depth/reference frame/domains, and raw/display continuity.
+- The next identity test can therefore distinguish model-generation failure from cognitive-context ownership or recovery failure without guessing.
+
+### Concurrency reconciliation
+
+- The event began from authoritative Server `2.3.68` / Chat `1.4.62`.
+- Immediately before version assignment both authorities were re-read and were still unchanged.
+- The event therefore safely advanced to Server `2.3.69` / Chat `1.4.63` using the fresh authority SHAs.
+
+### Verification / deployment state
+
+- `versions/server-runtime.txt` advanced from `2.3.68` to `2.3.69`.
+- `versions/web-chat.txt` advanced from `1.4.62` to `1.4.63`.
+- LALM engine remains `2.1.26`; R39 inference source was not modified in this event.
+- **Production deployment:** NONE requested; runtime-only Chat/model-context update.
+- **Server restart:** NONE requested.
+- Browser acceptance gate: fresh `What's your name?` should naturally identify §wyrlz and the camera should show `cognitiveAuthority=chat_context_canonical`, `canonicalEnvelopeId=swrlz-rmcca-context-v1`, and RMCCA topology `identity-answer`. If recovery occurs, the same log should show the canonical envelope preserved.
+
+### Relevant lineage
+
+- Canonical RMCCA authority: `cec5cb1f523cafadb9ce3a65c8aae16739de9d02`
+- Background canonical recovery: `badd23f1d2ff0583067f24ac570bd2e3e71c12b1`
+- Camera continuity telemetry: `b5527c6e146a83cea77ed82604f7375b0481ee0a`
+- Server version authority: `349ebf5f8e2d8c6927d131905ec595145a9816b0`
+- Chat version authority: `5ccdd063f9975abd587564afe91cbe2fa20e34d5`
+- Release record: `docs/releases/server-2.3.69-rmcca-single-authority.md`
 
 ## Server v2.3.68 — 2026-09-12
 
@@ -143,7 +182,7 @@ The Deployment Control authority entering this event was `1.0.1`; an earlier cur
 - Exported theme diagnostics proved the v13 single-flight hydrator was active and correctly collapsing repeated boot triggers, while the adult wallpaper still failed because the source payload normalized to 7713 significant Base64 characters — an impossible `4n+1` length.
 - Recovered the exact intended Ice Dragon wallpaper from project/user Library source artwork `32841.png` (864×1536).
 - Rebuilt the artwork at the existing 180×320 theme aspect ratio as a valid JPEG and Base64-encoded the verified result.
-- Replaced `web/themes/ice-dragon/assets/adult-180x320.jpg.b64` with the rebuilt payload; the existing v13 loader remains the runtime owner because its concurrency and diagnostics behavior were already verified.
+- Replaced `web/themes/ice-dragon/assets/adult-180x320.jpg.b64` with the rebuilt payload; the existing v13 loader remains the runtime owner because its concurrency behavior was verified by diagnostics.
 - The live runtime asset path now returns the rebuilt payload directly from the `runtime` branch with `no-store` caching.
 
 ### Failure lineage preserved

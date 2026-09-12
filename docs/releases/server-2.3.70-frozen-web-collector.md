@@ -9,7 +9,7 @@
 - Server Runtime: `2.3.70`
 - Frozen Web Collector: `1.0.0`
 - Deployment Control: `1.0.2`
-- Web Chat: `1.4.62` unchanged
+- Web Chat: `1.4.63` unchanged
 - LALM Engine: `2.1.26` unchanged
 
 ## Result
@@ -43,7 +43,7 @@ The stable deployment hosts authentication and a fixed module contract. The inte
 ## Lineage
 
 - Initial runtime reconciliation: `26009037b55c158a0606e84bf69202b165e59057`
-- Final runtime baseline: `349ebf5f8e2d8c6927d131905ec595145a9816b0`
+- Final runtime baseline: `adcade0fda78ed4373d863bbbcc4344ff9d46b18`
 - Main baseline: `4a070f5d5cc8aba67ef0575d8567b2f0f9813f7a`
 - First reconciled runtime checkpoint: `5b7744acc78a1a8508e5a954a4f5b2161db7a8d8`
 - Final reconciled runtime checkpoint: `852a27207a89554ff8c37b5ed3b149b1d5b66a21`
