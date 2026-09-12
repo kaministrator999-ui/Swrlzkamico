@@ -2,18 +2,50 @@
 
 ## Current release
 
-**Server v2.3.67**
+**Server v2.3.68**
 
-This event integrates the Recursive Multi-Domain Cognitive Clock Architecture (RMCCA) with the existing Structured Response Understanding & Revision model so §wyrlz can interpret progressively structured user meaning, keep multiple relevant domains active at once, and choose a response shape that fits the actual conversational act.
+This event improves the visual quality of the now-working Ice Dragon adult wallpaper while deliberately preserving the rendering path that was proven in Server v2.3.66.
 
 ### Module state
 
-- **Server runtime v2.3.67** — current server development lineage.
-- **Chat v1.4.61** — RMCCA cognitive policy + camera observability.
-- **LALM engine v2.1.26** — unchanged in this event.
+- **Server runtime v2.3.68** — current server development lineage.
+- **Chat v1.4.62** — Ice Dragon wallpaper quality pass.
+- **LALM engine v2.1.26** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.0** — unchanged.
+
+## Server v2.3.68 — 2026-09-12
+
+### Ice Dragon adult wallpaper quality pass
+
+- User browser verification confirmed the adult Ice Dragon wallpaper finally rendered correctly, but the recovered 180×320 JPEG derivative was visibly over-compressed when stretched across the mobile Chat chamber.
+- Re-encoded the exact intended adult Ice Dragon artwork into the existing `web/themes/ice-dragon/assets/adult-180x320.jpg.b64` slot at substantially higher JPEG quality.
+- Preserved the verified v13 asset hydrator, direct `.messages` wallpaper ownership, theme selector behavior, companion icon behavior, and all existing CSS/DOM ownership.
+- No new wallpaper mechanism, pseudo-element owner, image loader, or runtime route was added.
+
+### Concurrency reconciliation
+
+- Before version assignment, the authoritative version files were re-read.
+- They had concurrently advanced to Server `2.3.67` / Chat `1.4.61` for unrelated RMCCA work.
+- This wallpaper-quality event therefore advances from those authorities to Server `2.3.68` / Chat `1.4.62` rather than overwriting concurrent lineage.
+
+### Verification / deployment state
+
+- Replacement payload is valid Base64 and locally decodes as JPEG before commit.
+- Rendering architecture is unchanged from the browser-verified working path.
+- `versions/server-runtime.txt` advanced from `2.3.67` to `2.3.68`.
+- `versions/web-chat.txt` advanced from `1.4.61` to `1.4.62`.
+- **Production deployment:** NONE requested; runtime-hot asset update only.
+- **Server restart:** NONE requested.
+- Final acceptance is visual: verify reduced blockiness/compression artifacts on the target Android viewport.
+
+### Relevant lineage
+
+- Wallpaper quality asset: `23595d179bad58e0370749d2dc42fdeb6f4e7220`
+- Server version authority: `277f8648d54e77a846c31d8063ef25b09f552ea3`
+- Chat version authority: `61411018d8a722df55e8a5e01bee66e22dd9fd14`
+- Release record: `docs/releases/server-2.3.68-ice-dragon-wallpaper-quality.md`
 
 ## Server v2.3.67 — 2026-09-11/12
 
@@ -94,7 +126,7 @@ Detailed intermediate release records from Server v2.3.29 through v2.3.65 remain
 
 - User screenshots showed normal Android browser mode appearing oversized and clipping the right side of Chat, while Chrome desktop-site mode exposed a different proportion problem across sidebar, workspace, message cards, and composer.
 - Added a final runtime responsive-polish stylesheet that constrains all major Chat surfaces to their actual container width and prevents long code/text from forcing horizontal page overflow.
-- Mobile mode now keeps the app, workspace, top bar, message stack, composer, route control, and theme selector inside the visual viewport while preserving internal horizontal scrolling for code blocks only.
+- Mobile mode now keeps the app, workspace, top bar, message stack, composer, route control, theme selector inside the visual viewport while preserving internal horizontal scrolling for code blocks only.
 - Desktop-site mode on phone-sized desktop CSS viewports now uses a compact desktop sidebar and bounded message/composer widths instead of inheriting full desktop proportions that crowd the workspace.
 - Assistant response cards now have a more intentional layered card surface, softer radius, cleaner code-block spacing, and improved overflow handling without changing response semantics or LALM output.
 - Existing Ice Dragon selection, account state, camera controls, stream behavior, message storage, and LALM behavior were intentionally left unchanged.
@@ -114,7 +146,7 @@ Detailed intermediate release records from Server v2.3.29 through v2.3.65 remain
 - Responsive polish stylesheet: `913960884b9a169cf1941884f219baf4b36e0f56`
 - Runtime manifest wiring: `0b225f264327b8f62c4fc877696d4f946aefd069`
 - Server version authority: `0e0c71013986e78976ddd2eea7919689db9e4d6e`
-- Chat version authority: `10cc10c970ee85531d3afebea61f9d357bdc89f9`
+- Chat version authority: `10cc10c970ae5c8f37df83f9ee5b0820c350472`
 
 ## Server v2.3.27 — 2026-09-11
 
