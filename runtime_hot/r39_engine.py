@@ -1,9 +1,10 @@
-"""R39 hot-engine v18b single-file compatibility wrapper.
+"""R39 hot-engine v19 social/temporal conversation wrapper.
 
 The stable hot loader currently hydrates only r39_engine.py. This wrapper preserves
 the proven v17 engine by loading the archived v17 source from the local hot folder
 when available, or from this repository's runtime branch once and caching it locally.
-It then installs the v18 social/identity conversation contract at the engine boundary.
+It then installs the v19 social, identity, and user-local-time conversation contract
+at the engine boundary.
 """
 from __future__ import annotations
 
@@ -22,7 +23,7 @@ def _load_v17():
     global _ARCHIVE_SOURCE
     if not _ARCHIVE_PATH.is_file():
         _ARCHIVE_SOURCE = "github-runtime-cache"
-        request = urllib.request.Request(_ARCHIVE_URL, headers={"User-Agent": "swrlz-r39-hot-loader/2.1.28"})
+        request = urllib.request.Request(_ARCHIVE_URL, headers={"User-Agent": "swrlz-r39-hot-loader/2.1.29"})
         with urllib.request.urlopen(request, timeout=8) as response:
             source = response.read()
         if not source or b"def generate_events" not in source or b"def inspect_engine" not in source:
@@ -39,18 +40,20 @@ def _load_v17():
 
 _impl = _load_v17()
 
-HOT_SERVER_VERSION = "2.1.28"
-HOT_REVISION = "2.1.28-hot-social-participation-v18b-single-file-loader"
+HOT_SERVER_VERSION = "2.1.29"
+HOT_REVISION = "2.1.29-hot-social-temporal-v19"
 ENGINE_ID = _impl.ENGINE_ID
 MODEL_SHA256 = _impl.MODEL_SHA256
 
 _ENGINE_POLICY = (
     "LALM conversation contract: participate in the user's conversational act instead of describing it. "
     "For a simple greeting or casual social opening, greet back naturally and briefly, match the user's energy and emoji when reasonable, and never explain that the input is a greeting. "
-    "Do not default to generic service language such as 'This is a friendly greeting' or 'How can I assist you today?' when the user is simply socializing. "
+    "On an opening social turn, do not use service-desk or conversation-closing language such as 'How can I assist you today?', 'Let me know if you need anything else today', 'Is there anything else I can help with?', or equivalents. "
+    "A natural opening may greet back and, when appropriate, ask one ordinary conversational follow-up such as 'How's it going?' then stop. Do not prematurely wrap up a conversation that has just started. "
+    "User messages may begin with an internal marker formatted [[SWRLZ_USER_LOCAL_TIME:...]]. Treat that marker as authoritative user-local temporal context for that message, not as user-visible prose. Use its local date, clock time, timezone, UTC offset, and daypart when time-sensitive wording matters. Never claim a morning, afternoon, evening, night, date, or 'today/tonight' relationship that contradicts that marker. Do not quote or expose the marker unless the user explicitly asks about system context. "
     "Assistant identity: your name is §wyrlz. The user's name or preferred form of address is never your name. If explicitly asked your name or identity, answer naturally in first person, for example 'I'm §wyrlz.' "
     "If the user says 'You can call me Kami 😜', acknowledge the user's preferred name rather than treating Kami as your own identity. "
-    "Examples: User: 'Hey 👋' -> Assistant: 'Hey 👋'; User: 'Hey there' -> Assistant: 'Hey there 😄'; User: 'What's your name?' -> Assistant: 'I'm §wyrlz.' "
+    "Examples: User at 10:44 local: 'Hey 👋' -> Assistant: 'Hey 👋 How's it going?'; User: 'Hey there' -> Assistant: 'Hey there 😄'; User: 'What's your name?' -> Assistant: 'I'm §wyrlz.' "
     "Answer substantive questions directly and completely. For programming requests, provide correct runnable code when appropriate and keep code, explanation, formulas, and input/output behavior mutually consistent."
 )
 
@@ -75,7 +78,9 @@ def inspect_engine():
         data["hotRevision"] = HOT_REVISION
         data["engineConversationContract"] = True
         data["socialParticipationContract"] = True
+        data["openingTurnNoPrematureClosure"] = True
         data["identityDisambiguationContract"] = True
+        data["userLocalTemporalContextContract"] = True
         data["clientDirectivePreservedAsSecondaryPolicy"] = True
         data["v17ArchiveSource"] = _ARCHIVE_SOURCE
     return data
