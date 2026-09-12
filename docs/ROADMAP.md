@@ -2,15 +2,18 @@
 
 ## Current release
 
-**Server v2.3.91 — Deployment Control 1.0.3**
+**Server v2.3.92 — Frozen Web Collector 1.0.6**
 
-**Status: collector host/UI live; public checks pass; authenticated operator verification pending.**
+**Status: authenticated state and storage access verified; configuration form repair published for live acceptance.**
 
-Collector 1.0.5 runs from the runtime branch with configured private Blob storage. Compatible engine/page changes require no server redeployment. The manual workflow is repaired for future explicitly approved deployments; this event does not deploy or restart production.
+The response-limit field now accepts the exact saved byte limit after conversion to MiB, fixing a native browser validation error that blocked saving current settings. Engine, stored data, and schema remain unchanged. Compatible runtime updates require no server redeployment.
 
-- Server Runtime 2.3.91; Deployment Control 1.0.3.
-- Collector 1.0.5, Chat 1.4.77, Web Frontend 1.0.3, Google Account 1.0.8, LALM engine 2.1.30 unchanged.
-- Baseline authority was Server 2.3.90 despite the stale 2.3.79 roadmap header. Existing intervening release records and Git history remain preserved.
+- Server Runtime 2.3.92; Collector 1.0.6.
+- Deployment Control 1.0.3, Chat 1.4.77, Web Frontend 1.0.3, Google Account 1.0.8, LALM engine 2.1.30 unchanged.
+
+## Server v2.3.92 — 2026-09-12
+
+Fixed the response-size field's step mismatch and aligned its MiB bounds with the server's byte limits. Authenticated state retrieval and private Blob listing passed before the repair. A browser save/reload will verify the corrected form and durable write. No crawl or training action was started. See [event receipt](releases/server-2.3.92-collector-configuration-save.md).
 
 ## Server v2.3.91 — 2026-09-12
 
