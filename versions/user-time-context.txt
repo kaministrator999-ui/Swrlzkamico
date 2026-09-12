@@ -1,8 +1,8 @@
 ID=user-time-context
-VERSION=1.0.0
+VERSION=1.0.1
 KIND=web-chat-context-module
 SOURCE_BRANCH=runtime
 STATUS=active
 DISPLAY_NAME=§wyrlz User Time Context
 UPDATE_POLICY=runtime-hot
-BASELINE_NOTE=Browser-local message timestamps are converted into stable hidden model context containing local date, clock time, IANA timezone, UTC offset, and daypart. Displayed user text remains unchanged and the same timestamp is reconstructed when that message later appears in history so prefix-cache reuse is preserved.
+BASELINE_NOTE=Browser-local message time is passed as structured request metadata rather than prefixed into prompt/history text. This preserves raw user wording for social classification, reduces first-turn prefill inflation, and still gives the LALM local date, clock time, timezone, UTC offset, and daypart when relevant.
