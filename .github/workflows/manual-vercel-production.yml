@@ -103,6 +103,38 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
+      - name: Ensure private collector Blob store
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          COLLECTOR_BLOB_STORE: swrlz-collector-o3nu
+        run: |
+          set -euo pipefail
+          connected="$(vercel blob list-stores --token="$VERCEL_TOKEN")"
+          if printf '%s\n' "$connected" | grep -Fq "$COLLECTOR_BLOB_STORE"; then
+            echo "Private collector Blob store is already connected."
+          else
+            available="$(vercel blob list-stores --all --token="$VERCEL_TOKEN")"
+            if printf '%s\n' "$available" | grep -Fq "$COLLECTOR_BLOB_STORE"; then
+              vercel integration resource connect "$COLLECTOR_BLOB_STORE" "$VERCEL_PROJECT_ID" \
+                --environment production --yes --token="$VERCEL_TOKEN"
+            else
+              vercel blob create-store "$COLLECTOR_BLOB_STORE" --access private --region iad1 \
+                --environment production --yes --token="$VERCEL_TOKEN"
+            fi
+          fi
+
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          environment_file=".vercel/.env.production.local"
+          if grep -q '^BLOB_READ_WRITE_TOKEN=' "$environment_file"; then
+            echo "Collector storage credential is available for the production build."
+          elif grep -q '^VERCEL_OIDC_TOKEN=' "$environment_file" && grep -q '^BLOB_STORE_ID=' "$environment_file"; then
+            echo "Collector OIDC storage identity is available for the production build."
+          else
+            echo "Private Blob was not exposed to the production environment." >&2
+            exit 1
+          fi
+
       - name: Build production artifact
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -118,6 +150,49 @@ jobs:
           url="$(vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN")"
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Production deployment: $url" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify frozen web collector
+        shell: bash
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          set -euo pipefail
+          ready=0
+          for attempt in $(seq 1 18); do
+            code="$(curl --silent --show-error --output collector-readiness.json --write-out '%{http_code}' \
+              "$DEPLOYMENT_URL/api/collector/readiness" || true)"
+            if [[ "$code" == "200" ]] && python - <<'PY'
+          import json
+          with open("collector-readiness.json", encoding="utf-8") as stream:
+              value = json.load(stream)
+          assert value.get("ready") is True
+          assert value.get("module", {}).get("id") == "frozen-web-collector"
+          assert value.get("module", {}).get("version") == "1.0.0"
+          assert value.get("storage", {}).get("backend") == "vercel-blob"
+          assert value.get("storage", {}).get("configured") is True
+          assert value.get("storage", {}).get("access") == "private"
+          assert value.get("storage", {}).get("ephemeralTmpUsedAsAuthority") is False
+          assert value.get("host", {}).get("sourceBranch") == "runtime"
+          assert value.get("host", {}).get("deploymentRequiredForRuntimeChanges") is False
+          PY
+            then
+              ready=1
+              break
+            fi
+            sleep 5
+          done
+          if [[ "$ready" != "1" ]]; then
+            echo "Collector readiness did not pass within the bounded verification window." >&2
+            test -f collector-readiness.json && python -m json.tool collector-readiness.json || true
+            exit 1
+          fi
+
+          curl --fail --silent --show-error "$DEPLOYMENT_URL/collector" | \
+            grep -Fq '<title>SWRLZ Frozen Web Collector</title>'
+          anonymous_code="$(curl --silent --show-error --output collector-anonymous.json --write-out '%{http_code}' \
+            "$DEPLOYMENT_URL/api/collector/status")"
+          test "$anonymous_code" = "401"
+          echo "Frozen Web Collector page, runtime, private storage, and authentication checks passed." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Deployment receipt
         run: |

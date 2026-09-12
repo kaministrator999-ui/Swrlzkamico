@@ -2,7 +2,9 @@
 
 Stable infrastructure owns the HTTP/bootstrap/control plane. Runtime application
 pages, page-owned assets, and the hot R39 implementation are sourced from the
-runtime branch by the dedicated hot/live loaders.
+runtime branch by the dedicated hot/live loaders. The stable frozen-web
+collector host applies authentication and a fixed runtime-module contract while
+the collector implementation and page remain runtime-owned.
 
 Server 2.3.3 adds startup-time LALM hydration and readiness probing so a newly
 started worker warms the local R39 engine before Chat needs it.
@@ -20,6 +22,7 @@ from api.control_plane import install as _install_control_plane
 from api.native_status import install as _install_native_status
 from api.contextual_input import install as _install_contextual_input
 from api.account_routes_v2 import install as _install_account_routes
+from api.collector_host import install as _install_collector_host
 import api.chat_extensions as _chat_extensions
 
 VERSION = "2.3.3"
@@ -44,6 +47,7 @@ _install_control_plane(_server)
 _install_native_status(_server)
 _install_contextual_input(_server)
 _install_account_routes(_server)
+_install_collector_host(_server)
 _install_live_source_guard(_server)
 
 
