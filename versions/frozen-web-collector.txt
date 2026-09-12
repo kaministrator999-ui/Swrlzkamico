@@ -1,5 +1,5 @@
 ID=frozen-web-collector
-VERSION=1.0.4
+VERSION=1.0.5
 KIND=runtime-service
 SOURCE_BRANCH=runtime
 STATUS=active
@@ -7,4 +7,4 @@ DISPLAY_NAME=§wyrlz Frozen Web Snapshot Collector
 UPDATE_POLICY=runtime-hot-compatible
 API_SCHEMA=1
 STATE_SCHEMA=1
-BASELINE_NOTE=Collector 1.0.4 directly repairs the canonical durable state writer with no compatibility wrapper. A missing Blob ETag no longer implies that state.json is absent: existing state is re-read and its revision is checked before overwrite, while genuinely absent state still uses immutable creation. Every write is then read back and compared by expected revision and exact canonical JSON. API/state schema remain 1; failed 1.0.1 and 1.0.2 wrapper attempts and 1.0.3 recovery remain preserved in lineage.
+BASELINE_NOTE=Collector 1.0.5 fixes Start new revision continuity directly in the canonical runtime source. _new_snapshot_state now inherits the previous durable stateRevision before _save_state advances it, so a new snapshot no longer resets to revision zero and falsely conflicts with an existing Vercel Blob state when no usable ETag is returned. Collector 1.0.4 remains the direct missing-ETag writer repair; failed 1.0.1 and 1.0.2 wrapper attempts and 1.0.3 recovery remain preserved in lineage. No API/state schema or durable collector data is reset.
