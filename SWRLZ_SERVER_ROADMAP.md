@@ -1,12 +1,12 @@
 # §wyrlz Server Roadmap & Version Ledger
 
 **READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-- **Current overall server baseline:** `2.3.79`
-**Current Chat component:** `1.4.71`  
-**Current Web Frontend component:** `1.0.0`  
+- **Current overall server baseline:** `2.3.91`
+**Current Chat component:** `1.4.77`  
+**Current Web Frontend component:** `1.0.3`  
 **Current LALM UI component:** `1.0.0`  
-- **Current Frozen Web Collector component:** `1.0.0`
-- **Current Deployment Control component:** `1.0.2`
+- **Current Frozen Web Collector component:** `1.0.5`
+- **Current Deployment Control component:** `1.0.3`
 **Release policy:** every server development event gets an overall Server release/version entry plus independent component version changes where applicable, including unsuccessful attempts.
 
 ## Version model
@@ -130,6 +130,15 @@ A production deployment is required when an actual deployment action is needed t
 Those changes generally belong on `main`, but a `main` commit is not automatically a deployment. Under the currently verified Vercel configuration, Git-based deployment is disabled. Therefore documentation-only `main` commits are non-deployment mutations unless another workflow/automation is proven to deploy them. If an explicit deployment action is required, it must pass the Deployment Approval Gate before execution.
 
 ## Release ledger
+
+### Server 2.3.91 — Collector deployment recovery
+
+**Deployment Control:** 1.0.3; **Collector:** 1.0.5 unchanged. **Deployment / restart:** NONE.
+
+Production already has the stable collector host. Public readiness/UI/runtime-source receipts and anonymous rejection pass; private Blob provisioning succeeded during the original job's second attempt. That job failed before deployment because uv was missing. This event installs pinned uv in future manual builds, accepts compatible current collector versions, and removes the fragile page-check pipeline. Current collector tests and isolated revision-continuity regression pass. Authenticated production storage/collection acceptance remains pending secure admin sign-in.
+
+The current authority was Server 2.3.90 even though this roadmap's header still showed 2.3.79. Intervening releases remain in their existing Git/release history; no missing event details are invented here. See [complete event receipt](docs/releases/SERVER_2.3.91_COLLECTOR_DEPLOYMENT_RECOVERY.md).
+
 
 ### Server 2.2.0 — Architecture baseline
 
@@ -546,7 +555,9 @@ CHAT     = human-readable accomplishment/status
 - Collector engine and stable host tests pass; console contract passes with 91 unique IDs; workflow YAML and all nine shell blocks parse. Local/remote release tree IDs match exactly.
 - No source registration, collection, sealing, training acceptance, or data deletion occurred.
 
-### Exact recovery step
+### Exact recovery step — historical, superseded
+
+**Do not execute this historical step. The live recovery verification below records the installed host and current state.**
 
 Configure a valid Vercel deployment credential for the existing team/project as the GitHub Actions secret `VERCEL_TOKEN` in `kaministrator999-ui/Swrlzkamico` (repository secret or the workflow's `production` environment). Enter credentials only in the provider's secure settings, never in chat or tracked files.
 

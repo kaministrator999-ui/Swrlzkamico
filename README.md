@@ -1,7 +1,7 @@
 # §wyrlz Unified Vercel Server
 
-- Server revision: **2.3.79**
-- Frozen Web Collector revision: **1.0.0**
+- Server runtime revision: **2.3.91**
+- Frozen Web Collector revision: **1.0.5**
 - Chat/runtime hotfix rules: **SWRLZ_HOTFIX_RULES.md**
 - Production deployment: **https://swrlzkamico-o3nu.vercel.app**
 - Checkpoint lineage: `FROZEN-WEB-COLLECTOR-001`
@@ -106,4 +106,4 @@ Before declaring a runtime hotfix complete:
 
 ## Collector deployment status
 
-The `/collector` interface is live from `runtime`; its backend installation is blocked because workflow run 34708124306 has no `VERCEL_TOKEN` available. The stable collector API and private-storage provisioning have not run. See `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md` for source receipts and the exact recovery step.
+The `/collector` page and stable host are live. Public readiness reports Collector 1.0.5 with private storage configured; operations require the existing SWRLZ admin token. Compatible page/engine updates load from `runtime` without server redeployment. See `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md` for deployment receipts and the remaining authenticated verification boundary.

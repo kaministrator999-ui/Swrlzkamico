@@ -135,6 +135,12 @@ jobs:
             exit 1
           fi
 
+      - name: Install Python build tooling
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.13"
+          enable-cache: false
+
       - name: Build production artifact
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -163,11 +169,16 @@ jobs:
               "$DEPLOYMENT_URL/api/collector/readiness" || true)"
             if [[ "$code" == "200" ]] && python - <<'PY'
           import json
+          import re
           with open("collector-readiness.json", encoding="utf-8") as stream:
               value = json.load(stream)
           assert value.get("ready") is True
           assert value.get("module", {}).get("id") == "frozen-web-collector"
-          assert value.get("module", {}).get("version") == "1.0.0"
+          module = value.get("module", {})
+          assert re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", str(module.get("version", "")))
+          assert module.get("apiSchemaVersion") == 1
+          assert module.get("stateSchemaVersion") == 1
+          assert value.get("host", {}).get("moduleVersion") == module["version"]
           assert value.get("storage", {}).get("backend") == "vercel-blob"
           assert value.get("storage", {}).get("configured") is True
           assert value.get("storage", {}).get("access") == "private"
@@ -187,12 +198,12 @@ jobs:
             exit 1
           fi
 
-          curl --fail --silent --show-error "$DEPLOYMENT_URL/collector" | \
-            grep -Fq '<title>SWRLZ Frozen Web Collector</title>'
+          curl --fail --silent --show-error --output collector-page.html "$DEPLOYMENT_URL/collector"
+          grep -Fq '<title>SWRLZ Frozen Web Collector</title>' collector-page.html
           anonymous_code="$(curl --silent --show-error --output collector-anonymous.json --write-out '%{http_code}' \
             "$DEPLOYMENT_URL/api/collector/status")"
           test "$anonymous_code" = "401"
-          echo "Frozen Web Collector page, runtime, private storage, and authentication checks passed." >> "$GITHUB_STEP_SUMMARY"
+          echo "Frozen Web Collector page, runtime compatibility, storage configuration, and anonymous-auth checks passed." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Deployment receipt
         run: |
