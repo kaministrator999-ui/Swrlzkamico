@@ -1,8 +1,9 @@
 # §wyrlz Server Roadmap & Version Ledger
 
 **READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-**Current overall server baseline:** `2.3.59`  
-**Current Chat component:** `1.4.53`  
+**Current overall server baseline:** `2.3.78`  
+**Current Chat component:** `1.4.71`  
+**Current Web Frontend component:** `1.0.0`  
 **Current LALM UI component:** `1.0.0`  
 **Current Deployment Control component:** `1.0.1`  
 **Release policy:** every server development event gets an overall Server release/version entry plus independent component version changes where applicable, including unsuccessful attempts.
@@ -12,7 +13,7 @@
 §wyrlz uses two levels of versioning:
 
 1. **Overall Server version** — the chronological development/release event of the complete server architecture.
-2. **Independent component versions** — Chat, LALM/R39, Server/Infrastructure, Admin, Deployment Control, and other independently maintained surfaces.
+2. **Independent component versions** — Chat, Web Frontend, LALM/R39, Server/Infrastructure, Admin, Deployment Control, and other independently maintained surfaces.
 
 An update may change one component or several components, but the roadmap records the **overall Server version for every server development event** and records each component's version separately.
 
@@ -47,12 +48,15 @@ Version authorities are read at event entry and re-read immediately before versi
 - Corrected deployment-gate logic so approval follows the actual deployment trigger/configuration instead of treating every `main` or documentation commit as deployment-capable.
 - Established generated Ice Dragon artwork ownership so the adult wallpaper can replace the legacy Frozen Sanctum procedural chamber art instead of stacking on top of it.
 - Consolidated Ice Dragon theme ownership so future theme visual work has one canonical CSS owner and one deterministic asset hydrator instead of multiple competing wallpaper/style layers.
+- Established a frontend-first Chat boot boundary: the local shell/theme renders independently while account, bridge, server, and LALM connectivity settle asynchronously.
+- Added persistent device-side Ice Dragon asset caching, including an optional idle-time 4320x7680 cached WebP promotion tier on capable devices.
 
 ## Component ownership
 
 | Component | Source of truth | Versioning rule |
 |---|---|---|
 | Overall Server | `runtime/versions/server-runtime.txt` + this roadmap lineage | Advances on every server development event |
+| Web Frontend | `runtime/web/chat_frontend_boot.js`, frontend boot/cache assets, and `runtime/versions/web-frontend.txt` | Advances when static/local-first frontend architecture changes |
 | Chat | `runtime/web/chat*` and `runtime/versions/web-chat.txt` | Advances when Chat UI/protocol/behavior/version plumbing changes |
 | Chat Stream UI | `runtime/web/chat_stream_focus.js` and related assets | Advances when stream behavior changes |
 | LALM/R39 | runtime LALM/inference source | Advances when LALM/inference behavior changes |
@@ -347,6 +351,62 @@ The omitted individual release notes for `2.3.7` through `2.3.55` are intentiona
 **Rollback/migration notes:**
 - No data migration is required.
 - Rollback can restore the four Ice Dragon runtime assets and the two runtime version authorities to their 2.3.58 / 1.4.52 state.
+
+### Roadmap reconciliation note — versions 2.3.60 through 2.3.77
+
+The authoritative runtime version files and evidence-backed per-release records advanced beyond this canonical roadmap after Server 2.3.59. This gap is recorded explicitly rather than inventing summaries that were not reconstructed from their source evidence.
+
+Immediately before the Server 2.3.78 event, the authoritative runtime state was re-read as:
+
+- Overall Server: `2.3.77`
+- Web Chat: `1.4.70`
+- The concurrent event observed at that boundary was a Google Account Architecture advance.
+
+Existing evidence-backed release files in `runtime/docs/releases/` remain the source for those individual events until a dedicated roadmap backfill is performed.
+
+### Server 2.3.78 — Frontend-first Chat + persistent device theme cache
+
+**Status:** source implementation complete; browser acceptance verification pending  
+**Chat:** `1.4.71`  
+**Web Frontend:** `1.0.0`  
+**LALM/R39:** unchanged  
+**Server/Infrastructure:** unchanged  
+**Deployment Control:** unchanged  
+**Deployment:** NONE  
+**Restart:** NONE
+
+**Update notes:**
+- Established a new independently versioned `web-frontend` module so static/local-first browser architecture is no longer versioned only as a side effect of Chat behavior.
+- Added a frontend-first boot controller that restores the locally selected theme before backend/account/LALM readiness and marks the shell ready independently.
+- Removed the old 1.8-second full-page synchronization curtain and the art-dependent reveal gate; the local Chat shell is no longer intentionally hidden while remote/runtime state settles.
+- Preserved the existing Chat API/inference boundary: connection state may still show connecting/unavailable, but it no longer owns whether the local interface can render.
+- Added Ice Dragon asset hydrator v15 with persistent browser Cache Storage. The companion and reconstructed 864x1536 adult source are cached after first successful hydration and reused on later refreshes.
+- Changed source fetch behavior away from `no-store`; six-part reconstruction is now a first-cache-fill fallback instead of an every-refresh requirement.
+- Added non-blocking idle-time promotion to a cached 4320x7680 WebP on capable devices. The 8K tier is never required before the UI becomes usable; cached 864x1536 paints first when needed.
+- Later visits prefer the cached 8K tier when it exists, matching the intended “download/build once, run from the user's device cache” model.
+- Advanced the runtime page manifest to v11 with `chat_frontend_boot.js` first and Ice Dragon v15 as the active art loader.
+- Preserved theme diagnostics so cache hits/misses, 8K promotion, and paint tier can be verified from the existing View Theme Logs UI.
+
+**Verification state:**
+- All new/modified JavaScript was syntax-checked before repository mutation.
+- The runtime manifest was re-read after concurrent project activity and still contained the intended frontend-first script order and v15 loader.
+- Version authorities were re-read immediately before assignment. The event-entry snapshot (`2.3.76 / 1.4.69`) had concurrently advanced to `2.3.77 / 1.4.70`, so this event reconciled forward and assigned `2.3.78 / 1.4.71` rather than overwriting the other event.
+- Final browser acceptance remains user-visible verification: first load should populate cache; later refreshes should show cache hits and immediate shell rendering.
+
+**Failure/attempt lineage:**
+- The earlier full-resolution wallpaper fix solved visual quality but still reconstructed theme art from network-delivered Base64 chunks during refresh.
+- Screenshots showed intermediate/base Chat states and occasional multiple-refresh convergence, motivating separation of static frontend readiness from §wyrlz service readiness.
+
+**Relevant lineage:**
+- Runtime release record: `runtime/docs/releases/server-2.3.78-frontend-first-device-cache.md`
+- Frontend authority: `runtime/versions/web-frontend.txt`
+- Runtime manifest: `runtime/runtime_pages/manifest.json` v11
+- Ice Dragon loader: `runtime/web/themes/ice-dragon/ice-dragon-art-loader-v15.js`
+
+**Rollback/migration notes:**
+- No server data migration is required.
+- Existing browser Cache Storage entries are disposable and version-keyed; a future theme-asset revision can advance cache keys without mutating prior entries in place.
+- Rolling back v15 restores the prior v14 network reconstruction path; it does not require server restart or deployment.
 
 ## Required release-entry format
 
