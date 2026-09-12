@@ -5,6 +5,10 @@ window.__swrlzGoogleServerConfigBridgeInstalled=true;
 const CLIENT_KEY='swrlzGoogleLoginTestClientId';
 const RELOAD_KEY='swrlz.google.server-config-reload.v1';
 const GIS_SRC='https://accounts.google.com/gsi/client';
+const CANONICAL_CLIENT_ID='1083208613166-bj7isingvbv5dcns9ldtru8cjfj993mc.apps.googleusercontent.com';
+const RETIRED_CLIENT_IDS=new Set([
+  '1083208613166-59am0s2p1v4vpoc04klr3iinh0oph1en.apps.googleusercontent.com'
+]);
 
 async function accountStatus(){
   const urls=['/api/account/status','/live/api/account/status'];
@@ -78,12 +82,19 @@ function watchGoogleIdentity(){
 async function syncGoogleClient(){
   try{
     const status=await accountStatus();
-    const serverClientId=String(status.googleClientId||'').trim();
-    const browserClientId=String(localStorage.getItem(CLIENT_KEY)||'').trim();
+    const reportedServerClientId=String(status.googleClientId||'').trim();
+    const serverClientId=RETIRED_CLIENT_IDS.has(reportedServerClientId)?CANONICAL_CLIENT_ID:(reportedServerClientId||CANONICAL_CLIENT_ID);
+    let browserClientId=String(localStorage.getItem(CLIENT_KEY)||'').trim();
 
-    // Browser-proven OAuth configuration outranks the server fallback. The fallback
-    // exists only to seed fresh browsers; it must never overwrite a client ID that
-    // has already been configured and proven on this origin.
+    // Automatically repair only the specific retired ID that poisoned browsers
+    // during the Edge compatibility regression. Any other browser-proven ID is
+    // preserved and never overwritten by the server fallback.
+    if(RETIRED_CLIENT_IDS.has(browserClientId)){
+      browserClientId=CANONICAL_CLIENT_ID;
+      localStorage.setItem(CLIENT_KEY,browserClientId);
+      sessionStorage.removeItem(RELOAD_KEY);
+    }
+
     if(browserClientId){
       sessionStorage.removeItem(RELOAD_KEY);
       window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{
@@ -111,6 +122,8 @@ async function syncGoogleClient(){
     sessionStorage.removeItem(RELOAD_KEY);
     window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{configured:true,source:'server-seed',authConfigured:Boolean(status.authConfigured),storeConfigured:Boolean(status.storeConfigured)}}));
   }catch(error){
+    const existing=String(localStorage.getItem(CLIENT_KEY)||'').trim();
+    if(RETIRED_CLIENT_IDS.has(existing))localStorage.setItem(CLIENT_KEY,CANONICAL_CLIENT_ID);
     if(!localStorage.getItem(CLIENT_KEY))setStatusText('Google sign-in configuration could not be loaded from the server.',true);
     window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{configured:Boolean(localStorage.getItem(CLIENT_KEY)),source:localStorage.getItem(CLIENT_KEY)?'browser':'server',error:String(error?.message||error)}}));
   }
