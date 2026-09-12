@@ -14,6 +14,7 @@ from google.oauth2 import id_token as google_id_token
 
 SESSION_COOKIE = "swrlz_session"
 SESSION_TTL_SECONDS = 7 * 24 * 60 * 60
+DEFAULT_GOOGLE_CLIENT_ID = "1083208613166-59am0s2p1v4vpoc04klr3iinh0oph1en.apps.googleusercontent.com"
 
 
 class AccountConfigurationError(RuntimeError):
@@ -34,18 +35,37 @@ class VerifiedGoogleIdentity:
 
 
 def google_client_id() -> str:
-    return os.environ.get("SWRLZ_GOOGLE_CLIENT_ID", "").strip()
+    return os.environ.get("SWRLZ_GOOGLE_CLIENT_ID", "").strip() or DEFAULT_GOOGLE_CLIENT_ID
+
+
+def _session_secret_material() -> tuple[str, str]:
+    explicit = os.environ.get("SWRLZ_SESSION_SECRET", "").strip()
+    if len(explicit) >= 32:
+        return explicit, "SWRLZ_SESSION_SECRET"
+    for key in ("SWRLZ_ADMIN_TOKEN", "SWRLZ_WEB_CHAT_TOKEN"):
+        value = os.environ.get(key, "").strip()
+        if value:
+            return value, key
+    return "", ""
+
+
+def session_secret_source() -> str:
+    return _session_secret_material()[1]
 
 
 def session_secret() -> bytes:
-    value = os.environ.get("SWRLZ_SESSION_SECRET", "").strip()
-    if len(value) < 32:
-        raise AccountConfigurationError("SWRLZ_SESSION_SECRET must contain at least 32 characters")
-    return value.encode("utf-8")
+    value, source = _session_secret_material()
+    if not value:
+        raise AccountConfigurationError("No server-side account session secret source is configured")
+    if source == "SWRLZ_SESSION_SECRET":
+        return value.encode("utf-8")
+    # Domain-separate an already configured server secret instead of reusing it directly.
+    return hashlib.sha256(("swrlz-account-session-v1\x00" + value).encode("utf-8")).digest()
 
 
 def auth_configured() -> bool:
-    return bool(google_client_id() and len(os.environ.get("SWRLZ_SESSION_SECRET", "").strip()) >= 32)
+    value, _ = _session_secret_material()
+    return bool(google_client_id() and value)
 
 
 def verify_google_credential(credential: str) -> VerifiedGoogleIdentity:
@@ -82,14 +102,22 @@ def _unb64(text: str) -> bytes:
     return base64.urlsafe_b64decode(text + "=" * ((4 - len(text) % 4) % 4))
 
 
-def issue_session(user_id: str, *, ttl_seconds: int = SESSION_TTL_SECONDS) -> str:
+def issue_session(user_id: str, *, ttl_seconds: int = SESSION_TTL_SECONDS, claims: dict[str, Any] | None = None) -> str:
     now = int(time.time())
-    body = {
+    body: dict[str, Any] = {
         "v": 1,
         "sub": str(user_id),
         "iat": now,
         "exp": now + max(300, min(int(ttl_seconds), 30 * 24 * 60 * 60)),
     }
+    if isinstance(claims, dict):
+        safe: dict[str, Any] = {}
+        for key in ("provider", "providerSubject", "email", "emailVerified", "name", "picture", "durable"):
+            value = claims.get(key)
+            if isinstance(value, (str, bool)) or value is None:
+                safe[key] = value
+        if safe:
+            body["identity"] = safe
     encoded = _b64(json.dumps(body, separators=(",", ":"), sort_keys=True).encode("utf-8"))
     signature = _b64(hmac.new(session_secret(), encoded.encode("ascii"), hashlib.sha256).digest())
     return encoded + "." + signature
