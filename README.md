@@ -133,3 +133,7 @@ Latest release record: `docs/releases/server-2.3.79-frozen-web-collector.md`
 ## Revision history
 
 2.3.79 adds Frozen Web Collector 1.0.0, private durable snapshot storage, explicit training review, and the hot-update collector boundary. Earlier release records remain preserved in `docs/releases/`.
+
+## Collector deployment status
+
+The `/collector` page is live, but its stable backend installation is blocked by missing GitHub Actions secret `VERCEL_TOKEN` in run 34708124306. No collector build, deployment, or storage provisioning ran. The release record contains the exact recovery step.
