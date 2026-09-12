@@ -1,5 +1,5 @@
 {
-  "version": 7,
+  "version": 8,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source": "runtime_pages/index.html"},
@@ -17,6 +17,7 @@
         "web/chat_boot_guard.js",
         "web/chat_admin_session.js",
         "web/chat_enhancements.js",
+        "web/chat_google_server_config.js",
         "web/chat_stream_focus.js",
         "web/chat_version.js",
         "web/themes/ice-dragon/ice-dragon-theme-v3.2.js",
@@ -36,5 +37,5 @@
     "/live": {"source": "runtime_pages/index.html"}
   },
   "assetRoots": ["web", "runtime_pages"],
-  "notes": "The manifest is durable runtime configuration. Ice Dragon v14 preserves the verified direct .messages paint path but reconstructs the adult wallpaper from the six 864x1536 Base64 source chunks, validates browser-decoded dimensions, keeps single-flight hydration, and leaves companion loading independent. Theme diagnostics remain available with copy, export, and clear controls."
+  "notes": "Runtime manifest v8 adds the Google server-configuration bridge so every browser obtains the public OAuth client ID from the server account-status authority rather than requiring browser-local test-page setup. Ice Dragon v14 behavior remains unchanged."
 }
