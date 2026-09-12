@@ -4,8 +4,8 @@
 
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-12-google-account-stable-auth
-REQUESTED_AT=2026-09-12T17:03:00Z
+REQUEST_ID=2026-09-12-frozen-web-collector
+REQUESTED_AT=2026-09-12T17:24:12.116Z
 REQUESTED_BY=ChatGPT-with-user-approval
-SOURCE_REF=main
-REASON=Deploy the approved stable Google account authentication/session boundary so Chat can use server-verified Google identity consistently across browsers. Runtime Chat remains the live UI source of truth.
+SOURCE_REF=329f4222b6ed159f472f29b093aa789accc76263
+REASON=Deploy the approved authenticated Frozen Web Collector stable host and idempotent private Blob provisioning. Compatible collector page and engine updates remain on runtime without subsequent server deployment.
