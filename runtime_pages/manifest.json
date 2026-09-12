@@ -1,5 +1,5 @@
 {
-  "version": 10,
+  "version": 11,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source": "runtime_pages/index.html"},
@@ -14,6 +14,7 @@
         "web/chat_code_artifacts.css"
       ],
       "scripts": [
+        "web/chat_frontend_boot.js",
         "web/chat_boot_guard.js",
         "web/chat_admin_session.js",
         "web/chat_enhancements.js",
@@ -21,7 +22,7 @@
         "web/chat_stream_focus.js",
         "web/chat_version.js",
         "web/themes/ice-dragon/ice-dragon-theme-v3.2.js",
-        "web/themes/ice-dragon/ice-dragon-art-loader-v14.js",
+        "web/themes/ice-dragon/ice-dragon-art-loader-v15.js",
         "web/chat_code_artifacts.js",
         "web/chat_stream_incremental.js",
         "web/chat_activity_immediate.js",
@@ -39,5 +40,5 @@
     "/live": {"source": "runtime_pages/index.html"}
   },
   "assetRoots": ["web", "runtime_pages"],
-  "notes": "Runtime manifest v10 shows a local activity receipt immediately when a Chat request is sent and passes user-local time as structured request metadata instead of prefixing prompt/history text. This keeps simple-greeting classification intact and reduces first-turn prefill inflation. Google server configuration and Ice Dragon v14 behavior remain unchanged."
+  "notes": "Runtime manifest v11 makes Chat frontend-first: the locally stored shell/theme can paint immediately while server/LALM/account connectivity settles independently. Ice Dragon v15 persistently caches its companion and adult source on-device and can promote the adult wallpaper to a cached 4320x7680 WebP during idle time on capable devices."
 }
