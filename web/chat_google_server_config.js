@@ -79,25 +79,40 @@ async function syncGoogleClient(){
   try{
     const status=await accountStatus();
     const serverClientId=String(status.googleClientId||'').trim();
+    const browserClientId=String(localStorage.getItem(CLIENT_KEY)||'').trim();
+
+    // Browser-proven OAuth configuration outranks the server fallback. The fallback
+    // exists only to seed fresh browsers; it must never overwrite a client ID that
+    // has already been configured and proven on this origin.
+    if(browserClientId){
+      sessionStorage.removeItem(RELOAD_KEY);
+      window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{
+        configured:true,
+        source:'browser',
+        serverFallbackAvailable:Boolean(serverClientId),
+        authConfigured:Boolean(status.authConfigured),
+        storeConfigured:Boolean(status.storeConfigured)
+      }}));
+      return;
+    }
+
     if(!serverClientId){
-      if(!localStorage.getItem(CLIENT_KEY))setStatusText('Google sign-in is not configured on the server.',true);
+      setStatusText('Google sign-in is not configured on the server.',true);
       window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{configured:false,source:'server'}}));
       return;
     }
-    const previous=String(localStorage.getItem(CLIENT_KEY)||'').trim();
-    if(previous!==serverClientId){
-      localStorage.setItem(CLIENT_KEY,serverClientId);
-      if(!sessionStorage.getItem(RELOAD_KEY)){
-        sessionStorage.setItem(RELOAD_KEY,'1');
-        location.reload();
-        return;
-      }
+
+    localStorage.setItem(CLIENT_KEY,serverClientId);
+    if(!sessionStorage.getItem(RELOAD_KEY)){
+      sessionStorage.setItem(RELOAD_KEY,'1');
+      location.reload();
+      return;
     }
     sessionStorage.removeItem(RELOAD_KEY);
-    window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{configured:true,source:'server',authConfigured:Boolean(status.authConfigured),storeConfigured:Boolean(status.storeConfigured)}}));
+    window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{configured:true,source:'server-seed',authConfigured:Boolean(status.authConfigured),storeConfigured:Boolean(status.storeConfigured)}}));
   }catch(error){
     if(!localStorage.getItem(CLIENT_KEY))setStatusText('Google sign-in configuration could not be loaded from the server.',true);
-    window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{configured:false,source:'server',error:String(error?.message||error)}}));
+    window.dispatchEvent(new CustomEvent('swrlz:google-config',{detail:{configured:Boolean(localStorage.getItem(CLIENT_KEY)),source:localStorage.getItem(CLIENT_KEY)?'browser':'server',error:String(error?.message||error)}}));
   }
 }
 
