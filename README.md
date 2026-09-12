@@ -103,3 +103,7 @@ Before declaring a runtime hotfix complete:
 - `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md`
 - `docs/releases/SERVER_2.3.79_FROZEN_WEB_COLLECTOR.md`
 - `SWRLZ_VERCEL_CHAT_CHANGELOG.md`
+
+## Collector deployment status
+
+The `/collector` interface is live from `runtime`; its backend installation is blocked because workflow run 34708124306 has no `VERCEL_TOKEN` available. The stable collector API and private-storage provisioning have not run. See `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md` for source receipts and the exact recovery step.
