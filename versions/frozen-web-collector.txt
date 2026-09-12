@@ -1,5 +1,5 @@
 ID=frozen-web-collector
-VERSION=1.0.1
+VERSION=1.0.2
 KIND=runtime-service
 SOURCE_BRANCH=runtime
 STATUS=active
@@ -7,4 +7,4 @@ DISPLAY_NAME=§wyrlz Frozen Web Snapshot Collector
 UPDATE_POLICY=runtime-hot-compatible
 API_SCHEMA=1
 STATE_SCHEMA=1
-BASELINE_NOTE=Collector 1.0.1 preserves API/state schema 1 and repairs durable state overwrites when an existing private Blob read does not expose a usable ETag. Existing-state fallback re-reads current revision before overwrite and verifies the exact persisted state after writing; the compatibility wrapper pins and Git-blob-verifies the 1.0.0 implementation source before applying only the state-save correction.
+BASELINE_NOTE=Collector 1.0.2 preserves API/state schema 1 and replaces failed 1.0.1 wrapper import. It executes the immutable pinned 1.0.0 collector source directly, then overrides only durable state saving. Missing ETag no longer implies a new object: existing state is re-read and revision-checked before overwrite, then the exact canonical persisted state is verified after the write. Failed Collector 1.0.1 remains preserved in release lineage.
