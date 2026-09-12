@@ -2,18 +2,56 @@
 
 ## Current release
 
-**Server v2.3.28**
+**Server v2.3.66**
 
-This event corrects Chat responsiveness across normal mobile browsing and phone browser desktop-site mode, while also giving assistant responses a cleaner bounded card treatment.
+This event repairs the Ice Dragon adult wallpaper at its actual source boundary: the runtime Base64 payload was structurally corrupt, so the exact intended source artwork was recovered and rebuilt into a valid browser-decodable JPEG payload.
 
 ### Module state
 
-- **Server runtime v2.3.28** — current server development lineage.
-- **Chat v1.4.24** — mobile/desktop-site responsive geometry and response-card polish.
+- **Server runtime v2.3.66** — current server development lineage.
+- **Chat v1.4.60** — Ice Dragon adult wallpaper source repair.
 - **LALM engine v2.1.21** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.0** — unchanged.
+
+## Server v2.3.66 — 2026-09-11/12
+
+### Ice Dragon adult wallpaper source repair
+
+- Exported theme diagnostics proved the v13 single-flight hydrator was active and correctly collapsing repeated boot triggers, while the adult wallpaper still failed because the source payload normalized to 7713 significant Base64 characters — an impossible `4n+1` length.
+- Recovered the exact intended Ice Dragon wallpaper from project/user Library source artwork `32841.png` (864×1536).
+- Rebuilt the artwork at the existing 180×320 theme aspect ratio as a valid JPEG and Base64-encoded the verified result.
+- Replaced `web/themes/ice-dragon/assets/adult-180x320.jpg.b64` with the rebuilt payload; the existing v13 loader remains the runtime owner because its concurrency and diagnostics behavior were already verified.
+- The live runtime asset path now returns the rebuilt payload directly from the `runtime` branch with `no-store` caching.
+
+### Failure lineage preserved
+
+- An intermediate replacement commit accidentally wrote a placeholder string into the adult payload path.
+- The mistake was detected immediately and corrected by the next commit before acceptance; both commits remain in Git history.
+
+### Verification / deployment state
+
+- Local source recovery: exact 864×1536 artwork confirmed from Library.
+- Rebuilt JPEG: 180×320, valid Base64 length divisible by four, local decode verified before commit.
+- Live asset request: HTTP 200 from `github-runtime`, branch `runtime`, path `web/themes/ice-dragon/assets/adult-180x320.jpg.b64`.
+- `versions/server-runtime.txt` advanced from `2.3.65` to `2.3.66`.
+- `versions/web-chat.txt` advanced from `1.4.59` to `1.4.60`.
+- **Production deployment:** NONE requested; runtime-only asset repair.
+- **Server restart:** NONE requested.
+- Browser acceptance gate: theme diagnostics should now show `adult-decode-ok` followed by `adult-painted`.
+
+### Relevant lineage
+
+- Intermediate placeholder write: `4b0ff408f68e5f2ade8c2005e255837a8c8f1014`
+- Correct rebuilt adult payload: `08f9af180e8714a935a8a57c27624c0794d443ed`
+- Server version authority: `6626332198a7ce61a4d4f67c79a98c2fd95a200b`
+- Chat version authority: `ea16fe9fd0b6d23d9018dd21b639edbcb95adc4c`
+- Release record: `docs/releases/server-2.3.66.md`
+
+### Roadmap continuity note
+
+Detailed intermediate release records from Server v2.3.29 through v2.3.65 remain preserved under `docs/releases/` and Git history. This active roadmap is re-anchored here to the current authoritative module versions rather than pretending the previously stale v2.3.28 header was current.
 
 ## Server v2.3.28 — 2026-09-11
 
