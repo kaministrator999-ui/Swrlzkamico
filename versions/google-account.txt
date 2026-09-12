@@ -1,8 +1,8 @@
 ID=google-account
-VERSION=1.0.6
+VERSION=1.0.7
 KIND=account-auth-architecture
 SOURCE_BRANCH=mixed
 STATUS=active
 DISPLAY_NAME=Google Account Architecture
 UPDATE_POLICY=runtime-ui/stable-auth-boundary
-BASELINE_NOTE=Google sign-in now uses a server-owned OAuth client ID fallback, server-side Google ID-token verification, and a signed HttpOnly account session on every browser. When durable Redis account storage is unavailable, authentication degrades to verified stateless identity while Chat remains browser-local; durable profile/chat sync still requires the Redis REST boundary.
+BASELINE_NOTE=Google sign-in preserves an already configured browser OAuth Web Client ID and uses the server-owned client ID only to seed browsers that have no local OAuth client configuration. Server-side Google ID-token verification and signed HttpOnly account sessions remain authoritative after credential issuance; durable profile/chat sync still requires the Redis REST boundary.
