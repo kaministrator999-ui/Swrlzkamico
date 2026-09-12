@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source": "runtime_pages/index.html"},
@@ -19,8 +19,8 @@
         "web/chat_enhancements.js",
         "web/chat_stream_focus.js",
         "web/chat_version.js",
-        "web/themes/ice-dragon/ice-dragon-theme.js",
-        "web/themes/ice-dragon/ice-dragon-art-loader-v8.js",
+        "web/themes/ice-dragon/ice-dragon-theme-v3.1.js",
+        "web/themes/ice-dragon/ice-dragon-art-loader-v12.js",
         "web/chat_code_artifacts.js",
         "web/chat_stream_incremental.js",
         "web/chat_context_canonical.js",
@@ -36,5 +36,5 @@
     "/live": {"source": "runtime_pages/index.html"}
   },
   "assetRoots": ["web", "runtime_pages"],
-  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. Ice Dragon is opt-in and persisted locally. Generated Ice Dragon artwork hydrates from browser-safe base64 text assets. The juvenile companion is used for the sidebar brand, assistant avatars, and new-chat welcome orb. The adult guardian is decoded to an image/jpeg Blob URL and bound back into --ice-dragon-adult so the existing Ice Dragon chamber stylesheet paints it as the true background; a nearly transparent IMG remains as a decode fallback. Chat boot stays behind the hydration guard until account-scoped state and, when relevant, Ice Dragon art are ready or the bounded fail-open timer expires. Pending stream request metadata is persisted locally so Chat can reattach to replayable server-side LALM generations after page backgrounding, reload, or return. Canonical context instrumentation keeps raw model output separate from display-polished text, rebuilds outgoing assistant history from canonical model text when available, and records context-camera receipts in existing conversation camera exports. Response polish keeps the assistant name out of ordinary output and preserves a natural intro/code/details/closing presentation for coding responses."
+  "notes": "The manifest is durable runtime configuration. Chat theme scripts use versioned asset filenames so hot theme updates cannot be confused with stale fixed-path responses. Ice Dragon diagnostics trace theme selection, asset fetch/decode, DOM target discovery, direct wallpaper painting, and computed background state. Companion and adult assets hydrate independently so an adult wallpaper failure cannot remove the companion artwork."
 }
