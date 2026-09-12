@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.28-hot-social-participation-v18b-single-file-loader",
+  "revision": "2.1.31-hot-task-aware-prefill-efficiency-v21",
   "inferenceFiles": [
     "r39_engine.py"
   ]
