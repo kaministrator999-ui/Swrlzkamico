@@ -1,60 +1,19 @@
 {
-  "version": 13,
+  "version": 14,
   "mode": "runtime-source-of-truth",
   "routes": {
-    "/": {
-      "source": "runtime_pages/index.html"
-    },
+    "/": {"source":"runtime_pages/index.html"},
     "/chat": {
-      "source": "web/chat.html",
-      "styles": [
-        "web/chat_boot_guard.css",
-        "web/chat_enhancements.css",
-        "web/themes/ice-dragon/ice-dragon-theme.css",
-        "web/themes/ice-dragon/ice-dragon-art-v2.css",
-        "web/chat_mobile_viewport_fix.css",
-        "web/chat_code_artifacts.css"
-      ],
-      "scripts": [
-        "web/chat_frontend_boot.js",
-        "web/chat_boot_guard.js",
-        "web/chat_admin_session.js",
-        "web/chat_enhancements.js",
-        "web/chat_google_server_config.js",
-        "web/chat_stream_focus.js",
-        "web/chat_version.js",
-        "web/themes/ice-dragon/ice-dragon-theme-v3.2.js",
-        "web/themes/ice-dragon/ice-dragon-art-loader-v16.js",
-        "web/chat_code_artifacts.js",
-        "web/chat_stream_incremental.js",
-        "web/chat_activity_immediate.js",
-        "web/chat_user_time_context.js",
-        "web/chat_context_canonical.js",
-        "web/chat_background_resume.js",
-        "web/chat_context_camera.js",
-        "web/chat_response_polish.js",
-        "web/chat_boot_ready.js"
-      ]
+      "source":"web/chat.html",
+      "styles":["web/chat_boot_guard.css","web/chat_enhancements.css","web/themes/ice-dragon/ice-dragon-theme.css","web/themes/ice-dragon/ice-dragon-art-v2.css","web/chat_mobile_viewport_fix.css","web/chat_code_artifacts.css"],
+      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_activity_immediate.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_background_resume.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
     },
-    "/server": {
-      "source": "web/server.html"
-    },
-    "/lalm": {
-      "source": "web/lalm.html"
-    },
-    "/admin": {
-      "source": "web/admin.html"
-    },
-    "/live": {
-      "source": "runtime_pages/index.html"
-    },
-    "/collector": {
-      "source": "web/collector.html"
-    }
+    "/server":{"source":"web/server.html"},
+    "/lalm":{"source":"web/lalm.html"},
+    "/admin":{"source":"web/admin.html"},
+    "/live":{"source":"runtime_pages/index.html"},
+    "/collector":{"source":"web/collector.html"}
   },
-  "assetRoots": [
-    "web",
-    "runtime_pages"
-  ],
-  "notes": "Runtime manifest v13 keeps Chat frontend-first and moves Ice Dragon to v16. After the first successful theme load, an 864x1536 data-URL preview is stored locally so later refreshes can paint the wallpaper synchronously during frontend boot, before async Cache Storage/server hydration. The persistent Cache Storage source and optional idle-time 4320x7680 WebP promotion remain available and replace the preview when ready."
+  "assetRoots":["web","runtime_pages"],
+  "notes":"Manifest v14 moves Ice Dragon to v17. Theme cache keys advance to generation v2 so previously cached low-quality/upscaled wallpaper tiers cannot be reused. The fake 4320x7680 browser upscale is removed; Chat now paints only the verified 864x1536 source tier and stores a fresh v2 local preview for fast subsequent boot."
 }
