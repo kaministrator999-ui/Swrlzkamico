@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source": "runtime_pages/index.html"},
@@ -19,7 +19,7 @@
         "web/chat_enhancements.js",
         "web/chat_stream_focus.js",
         "web/chat_version.js",
-        "web/themes/ice-dragon/ice-dragon-theme-v3.1.js",
+        "web/themes/ice-dragon/ice-dragon-theme-v3.2.js",
         "web/themes/ice-dragon/ice-dragon-art-loader-v12.js",
         "web/chat_code_artifacts.js",
         "web/chat_stream_incremental.js",
@@ -36,5 +36,5 @@
     "/live": {"source": "runtime_pages/index.html"}
   },
   "assetRoots": ["web", "runtime_pages"],
-  "notes": "The manifest is durable runtime configuration. Chat theme scripts use versioned asset filenames so hot theme updates cannot be confused with stale fixed-path responses. Ice Dragon diagnostics trace theme selection, asset fetch/decode, DOM target discovery, direct wallpaper painting, and computed background state. Companion and adult assets hydrate independently so an adult wallpaper failure cannot remove the companion artwork."
+  "notes": "The manifest is durable runtime configuration. Chat theme scripts use versioned asset filenames so hot theme updates cannot be confused with stale fixed-path responses. Ice Dragon diagnostics trace theme selection, asset fetch/decode, DOM target discovery, direct wallpaper painting, and computed background state. Companion and adult assets hydrate independently so an adult wallpaper failure cannot remove the companion artwork. Theme diagnostics now include an in-product mobile log viewer with copy, JSON export, and clear controls while retaining bounded recent history in local storage."
 }
