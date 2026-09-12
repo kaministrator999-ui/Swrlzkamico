@@ -343,17 +343,41 @@ def _load_state(store: BlobStore) -> tuple[dict[str, Any], str | None]:
 
 
 def _save_state(store: BlobStore, state: dict[str, Any], etag: str | None) -> str | None:
-    state["stateRevision"] = int(state.get("stateRevision", 0)) + 1
+    previous_revision = int(state.get("stateRevision", 0))
+    state["stateRevision"] = previous_revision + 1
     state["updatedAt"] = _now()
     expected_revision = state["stateRevision"]
-    result = store.put_json(STATE_PATH, state, etag=etag, immutable=etag is None)
-    new_etag = result.get("etag") if isinstance(result.get("etag"), str) else None
-    if new_etag:
-        return new_etag
+
+    effective_etag = etag
+    immutable = False
+    if effective_etag is None:
+        persisted_before, discovered_etag = store.get_json(STATE_PATH)
+        if persisted_before is None:
+            immutable = True
+        else:
+            persisted_revision = int(persisted_before.get("stateRevision", -1))
+            if persisted_revision != previous_revision:
+                raise CollectorError(
+                    409,
+                    "STATE_WRITE_CONFLICT",
+                    "Collector state advanced before this write; reload and retry.",
+                    {"expectedRevision": previous_revision, "actualRevision": persisted_revision},
+                )
+            effective_etag = discovered_etag
+
+    result = store.put_json(STATE_PATH, state, etag=effective_etag, immutable=immutable)
+    response_etag = result.get("etag") if isinstance(result.get("etag"), str) and result.get("etag") else None
+
     persisted, fetched_etag = store.get_json(STATE_PATH)
-    if persisted is None or int(persisted.get("stateRevision", -1)) != expected_revision:
-        raise CollectorError(409, "STATE_WRITE_CONFLICT", "Collector state could not be confirmed after writing; reload and retry.")
-    return fetched_etag
+    actual_revision = int(persisted.get("stateRevision", -1)) if persisted is not None else -1
+    if persisted is None or actual_revision != expected_revision or _compact_json(persisted) != _compact_json(state):
+        raise CollectorError(
+            409,
+            "STATE_WRITE_CONFLICT",
+            "Collector state was superseded while confirming the write; reload and retry.",
+            {"expectedRevision": expected_revision, "actualRevision": actual_revision},
+        )
+    return response_etag or fetched_etag
 
 
 def _event(state: dict[str, Any], kind: str, message: str, **fields: Any) -> None:
