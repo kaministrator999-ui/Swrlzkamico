@@ -2,18 +2,91 @@
 
 ## Current release
 
-**Server v2.3.28**
+**Server v2.3.67**
 
-This event corrects Chat responsiveness across normal mobile browsing and phone browser desktop-site mode, while also giving assistant responses a cleaner bounded card treatment.
+This event integrates the Recursive Multi-Domain Cognitive Clock Architecture (RMCCA) with the existing Structured Response Understanding & Revision model so §wyrlz can interpret progressively structured user meaning, keep multiple relevant domains active at once, and choose a response shape that fits the actual conversational act.
 
 ### Module state
 
-- **Server runtime v2.3.28** — current server development lineage.
-- **Chat v1.4.24** — mobile/desktop-site responsive geometry and response-card polish.
-- **LALM engine v2.1.21** — unchanged.
+- **Server runtime v2.3.67** — current server development lineage.
+- **Chat v1.4.61** — RMCCA cognitive policy + camera observability.
+- **LALM engine v2.1.26** — unchanged in this event.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.0** — unchanged.
+
+## Server v2.3.67 — 2026-09-11/12
+
+### Recursive Multi-Domain Cognitive Clock Architecture integration
+
+- Added the formal RMCCA architecture specification at `docs/architecture/RMCCA.md`.
+- Integrated a stable RMCCA cognitive response policy into the canonical Chat-to-LALM context layer. The policy teaches progressive structure decoding, scope preservation, local correction/revision, simultaneous multi-domain activation, domain salience, resolution depth, contextual reference frames, user-established synthesis order, and response-topology selection.
+- Identity questions are taught as contextual conversational acts that should receive a natural identity answer rather than a bare unexplained label.
+- Casual conversation is taught as participation rather than meta-description of the act itself.
+- Added RMCCA camera telemetry that records structural roles, active domains, qualitative salience, resolution depth, reference frame, response topology, and synthesis order alongside canonical/display context evidence.
+- RMCCA camera planning is diagnostic only and does not dynamically rewrite the prompt each turn, preserving a stable prefix for conversation-cache/checkpoint reuse.
+
+### Concurrency reconciliation
+
+- The event began from Server `2.3.65` / Chat `1.4.59`.
+- Immediately before version assignment, the authorities were re-read and had advanced concurrently to Server `2.3.66` / Chat `1.4.60` for the Ice Dragon adult-wallpaper repair.
+- The originally planned version numbers were discarded and the RMCCA event was reassigned to Server `2.3.67` / Chat `1.4.61` from the newest authority.
+
+### Verification / deployment state
+
+- `versions/server-runtime.txt` advanced from `2.3.66` to `2.3.67`.
+- `versions/web-chat.txt` advanced from `1.4.60` to `1.4.61`.
+- LALM engine remains `2.1.26` because the R39 engine source itself was not modified.
+- **Production deployment:** NONE requested; runtime-only Chat/model-policy update.
+- **Server restart:** NONE requested.
+- Acceptance remains camera-driven: verify natural identity framing, natural social participation, multi-domain RMCCA metadata, and stable checkpoint reuse in the next conversation log.
+
+### Relevant lineage
+
+- RMCCA cognitive policy: `984f783165f96326d58a90293a3fb7ffa8d21397`
+- RMCCA camera integration: `c5a1689953a60e42c581151fa867312f9ef84e5d`
+- RMCCA architecture document: `22017bbdc32e27a003e4c023ba83438d1bae3f48`
+- Server version authority: `7743a48186e333b8356f99389e91a24897c63d75`
+- Chat version authority: `2457c2cec2a676cd12bc6dd6e887b0b9b81708bb`
+- Release record: `docs/releases/server-2.3.67-rmcca-integration.md`
+
+## Server v2.3.66 — 2026-09-11/12
+
+### Ice Dragon adult wallpaper source repair
+
+- Exported theme diagnostics proved the v13 single-flight hydrator was active and correctly collapsing repeated boot triggers, while the adult wallpaper still failed because the source payload normalized to 7713 significant Base64 characters — an impossible `4n+1` length.
+- Recovered the exact intended Ice Dragon wallpaper from project/user Library source artwork `32841.png` (864×1536).
+- Rebuilt the artwork at the existing 180×320 theme aspect ratio as a valid JPEG and Base64-encoded the verified result.
+- Replaced `web/themes/ice-dragon/assets/adult-180x320.jpg.b64` with the rebuilt payload; the existing v13 loader remains the runtime owner because its concurrency and diagnostics behavior were already verified.
+- The live runtime asset path now returns the rebuilt payload directly from the `runtime` branch with `no-store` caching.
+
+### Failure lineage preserved
+
+- An intermediate replacement commit accidentally wrote a placeholder string into the adult payload path.
+- The mistake was detected immediately and corrected by the next commit before acceptance; both commits remain in Git history.
+
+### Verification / deployment state
+
+- Local source recovery: exact 864×1536 artwork confirmed from Library.
+- Rebuilt JPEG: 180×320, valid Base64 length divisible by four, local decode verified before commit.
+- Live asset request: HTTP 200 from `github-runtime`, branch `runtime`, path `web/themes/ice-dragon/assets/adult-180x320.jpg.b64`.
+- `versions/server-runtime.txt` advanced from `2.3.65` to `2.3.66`.
+- `versions/web-chat.txt` advanced from `1.4.59` to `1.4.60`.
+- **Production deployment:** NONE requested; runtime-only asset repair.
+- **Server restart:** NONE requested.
+- Browser acceptance gate: theme diagnostics should now show `adult-decode-ok` followed by `adult-painted`.
+
+### Relevant lineage
+
+- Intermediate placeholder write: `4b0ff408f68e5f2ade8c2005e255837a8c8f1014`
+- Correct rebuilt adult payload: `08f9af180e8714a935a8a57c27624c0794d443ed`
+- Server version authority: `6626332198a7ce61a4d4f67c79a98c2fd95a200b`
+- Chat version authority: `ea16fe9fd0b6d23d9018dd21b639edbcb95adc4c`
+- Release record: `docs/releases/server-2.3.66.md`
+
+### Roadmap continuity note
+
+Detailed intermediate release records from Server v2.3.29 through v2.3.65 remain preserved under `docs/releases/` and Git history. This active roadmap is re-anchored here to the current authoritative module versions rather than pretending the previously stale v2.3.28 header was current.
 
 ## Server v2.3.28 — 2026-09-11
 

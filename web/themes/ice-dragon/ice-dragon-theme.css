@@ -1,161 +1,96 @@
-/* SWRLZ Ice Dragon Theme Pack v2.0.0 — Frozen Sanctum */
+/* SWRLZ Ice Dragon Theme Pack v3.1.0 — canonical visual owner */
 body[data-swrlz-theme="ice-dragon"]{
   --bg:#01050c;--bg-soft:#04101c;--panel:rgba(5,18,31,.88);--panel-strong:rgba(5,21,38,.97);--panel-lite:rgba(15,48,73,.74);
   --line:rgba(181,235,255,.18);--line-strong:rgba(121,232,255,.52);--cyan:#7af2ff;--blue:#6ca8ff;--violet:#9b88ff;
   --trust:#8bffd3;--amber:#ffe08c;--danger:#ff6e8b;--text:#f7fdff;--secondary:#d9f4ff;--muted:#8fb8c9;
-  --shadow:0 28px 90px rgba(0,4,14,.68);--ice-deep:#010814;--ice-mid:#08243a;--ice-glow:#8df6ff;--ice-white:#effeff;
-  --ice-royal:#7d9fff;--dragon-violet:#aa92ff;--frost-line:rgba(216,249,255,.22);--frost-glass:rgba(7,29,47,.74);
-  color:var(--text);
-  background:
-    radial-gradient(circle at 76% -8%,rgba(124,242,255,.20),transparent 28%),
-    radial-gradient(circle at 16% 108%,rgba(102,145,255,.18),transparent 34%),
-    linear-gradient(145deg,#01040a 0%,#02101e 43%,#061b2e 100%);
+  --shadow:0 24px 80px rgba(0,8,18,.62);
+  color:var(--text);background:#01050c!important;
 }
 
+/* Theme-specific decoration is owned here. Generic Chat layout remains in chat.html/base styles. */
 body[data-swrlz-theme="ice-dragon"]::before,
-body[data-swrlz-theme="ice-dragon"]::after{content:"";position:fixed;pointer-events:none;z-index:0}
-body[data-swrlz-theme="ice-dragon"]::before{
-  inset:0;opacity:.40;
-  background:
-    linear-gradient(120deg,transparent 0 44%,rgba(220,251,255,.03) 44.2% 44.8%,transparent 45% 100%),
-    linear-gradient(58deg,transparent 0 67%,rgba(131,238,255,.035) 67.2% 67.8%,transparent 68% 100%),
-    radial-gradient(circle at 24% 20%,rgba(236,253,255,.045) 0 1px,transparent 1.8px),
-    radial-gradient(circle at 82% 64%,rgba(141,246,255,.04) 0 1px,transparent 1.8px);
-  background-size:210px 210px,280px 280px,38px 38px,52px 52px;
-}
-body[data-swrlz-theme="ice-dragon"]::after{
-  right:-12vw;bottom:-24vh;width:min(78vw,980px);height:min(78vw,980px);opacity:.19;
-  background:url("assets/ice-dragon-sigil.svg") center/contain no-repeat;
-  filter:drop-shadow(0 0 70px rgba(121,239,255,.24));transform:rotate(-7deg);
-}
-
+body[data-swrlz-theme="ice-dragon"]::after{display:none!important;content:none!important}
 body[data-swrlz-theme="ice-dragon"] .noise{opacity:.08;mix-blend-mode:screen}
-body[data-swrlz-theme="ice-dragon"] .ambient.a{background:#87f6ff;opacity:.23}
-body[data-swrlz-theme="ice-dragon"] .ambient.b{background:#7397ff;opacity:.19}
-body[data-swrlz-theme="ice-dragon"] .app{z-index:1}
+body[data-swrlz-theme="ice-dragon"] .ambient.a{background:#65efff;opacity:.14}
+body[data-swrlz-theme="ice-dragon"] .ambient.b{background:#597bff;opacity:.11}
 
-/* Frozen navigation */
 body[data-swrlz-theme="ice-dragon"] .sidebar{
-  opacity:1!important;filter:none!important;border-right-color:rgba(145,235,255,.26);
-  background:
-    linear-gradient(180deg,rgba(8,32,51,.965),rgba(2,13,26,.985)),
-    repeating-linear-gradient(135deg,rgba(255,255,255,.012) 0 1px,transparent 1px 16px)!important;
-  box-shadow:18px 0 58px rgba(0,5,16,.42),inset -1px 0 rgba(229,252,255,.06),inset -14px 0 30px rgba(77,191,255,.025);
-  backdrop-filter:blur(24px) saturate(140%);
+  border-right-color:rgba(153,235,255,.18);
+  background:linear-gradient(180deg,rgba(3,12,22,.97),rgba(2,9,18,.93));
+  box-shadow:18px 0 60px rgba(0,7,16,.22);
 }
-body[data-swrlz-theme="ice-dragon"].sidebar-open .sidebar{opacity:1!important;filter:none!important}
-body[data-swrlz-theme="ice-dragon"] .sidebar::after{
-  content:"";position:absolute;right:-1px;top:0;bottom:0;width:2px;pointer-events:none;
-  background:linear-gradient(180deg,transparent 3%,rgba(147,245,255,.68) 20%,rgba(111,174,255,.18) 58%,transparent 96%);
-  box-shadow:0 0 16px rgba(121,239,255,.22);
-}
-body[data-swrlz-theme="ice-dragon"] .sidebar-scrim{background:rgba(0,5,13,.70)!important;backdrop-filter:none!important}
-body[data-swrlz-theme="ice-dragon"] .brand{position:relative}
-body[data-swrlz-theme="ice-dragon"] .brand::after{content:"ICE DRAGON";position:absolute;right:4px;top:2px;color:rgba(183,244,255,.55);font:800 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.22em;text-shadow:0 0 12px rgba(122,242,255,.28)}
-body[data-swrlz-theme="ice-dragon"] .dragon-mark{
-  border-color:rgba(155,246,255,.54);color:var(--ice-white);
-  background:radial-gradient(circle at 33% 25%,rgba(245,254,255,.30),transparent 22%),linear-gradient(145deg,rgba(127,239,255,.24),rgba(83,123,255,.16));
-  box-shadow:inset 0 0 28px rgba(141,244,255,.16),0 0 32px rgba(120,238,255,.19);
-}
-body[data-swrlz-theme="ice-dragon"] .dragon-mark::before{content:"";position:absolute;inset:-6px;border:1px solid rgba(204,249,255,.12);border-radius:18px;transform:rotate(8deg);box-shadow:0 0 20px rgba(126,241,255,.08)}
-body[data-swrlz-theme="ice-dragon"] .brand-copy strong{color:var(--ice-white);text-shadow:0 0 20px rgba(120,238,255,.18)}
-body[data-swrlz-theme="ice-dragon"] .brand-copy span{color:#8cc9de}
-body[data-swrlz-theme="ice-dragon"] .new-chat{border-color:rgba(137,235,255,.37);background:linear-gradient(135deg,rgba(120,241,255,.16),rgba(83,151,255,.10) 50%,rgba(163,142,255,.13));box-shadow:inset 0 1px rgba(255,255,255,.045),0 9px 26px rgba(0,10,28,.24)}
-body[data-swrlz-theme="ice-dragon"] .new-chat:hover{border-color:rgba(165,248,255,.70);box-shadow:0 0 28px rgba(120,238,255,.14)}
-body[data-swrlz-theme="ice-dragon"] .thread{transition:border-color .16s ease,background .16s ease,transform .16s ease,box-shadow .16s ease}
-body[data-swrlz-theme="ice-dragon"] .thread:hover{background:rgba(104,202,255,.06);transform:translateX(2px)}
-body[data-swrlz-theme="ice-dragon"] .thread[data-active="true"]{border-color:rgba(132,230,255,.28);background:linear-gradient(90deg,rgba(125,242,255,.14),rgba(94,156,255,.07) 62%,transparent);box-shadow:inset 3px 0 0 rgba(132,244,255,.85),inset 0 0 24px rgba(91,214,255,.035)}
-
-/* Frosted command rail */
 body[data-swrlz-theme="ice-dragon"] .topbar{
-  border-bottom-color:rgba(151,235,255,.22);
-  background:linear-gradient(180deg,rgba(4,21,36,.92),rgba(2,14,27,.78));
-  box-shadow:0 12px 38px rgba(0,6,18,.22),inset 0 -1px rgba(220,250,255,.04);
-  backdrop-filter:blur(20px) saturate(145%);
+  border-bottom-color:rgba(153,235,255,.16);
+  background:linear-gradient(180deg,rgba(3,12,22,.90),rgba(2,9,18,.78));
 }
-body[data-swrlz-theme="ice-dragon"] .topbar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(138,244,255,.62) 34%,rgba(122,169,255,.28) 64%,transparent);box-shadow:0 0 13px rgba(127,241,255,.22)}
-body[data-swrlz-theme="ice-dragon"] .thread-heading h1{color:var(--ice-white);text-shadow:0 0 18px rgba(118,233,255,.14)}
-body[data-swrlz-theme="ice-dragon"] .status-pill{border-color:rgba(159,235,255,.22);background:linear-gradient(180deg,rgba(111,220,255,.075),rgba(46,103,154,.04));box-shadow:inset 0 1px rgba(255,255,255,.035)}
-body[data-swrlz-theme="ice-dragon"] .icon-button:hover,body[data-swrlz-theme="ice-dragon"] .node-card:hover{border-color:rgba(148,235,255,.24);background:rgba(111,214,255,.07)}
+body[data-swrlz-theme="ice-dragon"] .composer-shell{
+  background:linear-gradient(to top,rgba(1,5,12,1) 36%,rgba(1,7,15,.93) 72%,transparent);
+}
+body[data-swrlz-theme="ice-dragon"] .composer-box{
+  border-color:rgba(145,235,255,.25);
+  background:rgba(4,17,30,.84);
+  box-shadow:0 22px 70px rgba(0,5,14,.52),inset 0 1px 0 rgba(218,251,255,.035);
+  backdrop-filter:blur(16px) saturate(120%);-webkit-backdrop-filter:blur(16px) saturate(120%);
+}
+body[data-swrlz-theme="ice-dragon"] .composer-box:focus-within{border-color:rgba(122,242,255,.56);box-shadow:0 22px 70px rgba(0,5,14,.52),0 0 0 3px rgba(122,242,255,.06)}
+body[data-swrlz-theme="ice-dragon"] .route-select{background:#061727;border-color:rgba(143,229,255,.23)}
+body[data-swrlz-theme="ice-dragon"] .send-button{background:linear-gradient(135deg,#9af8ff,#6aa9ff);box-shadow:0 8px 26px rgba(92,226,255,.24)}
 
-/* Frozen chamber */
+/* One and only chamber wallpaper owner: the .messages element itself. */
 body[data-swrlz-theme="ice-dragon"] .messages{
-  background:
-    radial-gradient(circle at 52% -8%,rgba(126,240,255,.065),transparent 30%),
-    linear-gradient(180deg,rgba(4,18,32,.22),rgba(1,8,18,.05)),
-    repeating-linear-gradient(117deg,transparent 0 92px,rgba(176,239,255,.012) 93px 94px,transparent 95px 182px);
+  position:relative!important;
+  isolation:isolate!important;
+  background-color:#010812!important;
+  background-position:50% 42%!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
 }
-body[data-swrlz-theme="ice-dragon"] .avatar{border-color:rgba(148,239,255,.36);color:var(--ice-glow);background:radial-gradient(circle at 35% 28%,rgba(232,253,255,.16),transparent 28%),linear-gradient(145deg,rgba(118,235,255,.14),rgba(64,112,191,.09));box-shadow:inset 0 0 20px rgba(120,238,255,.07),0 0 18px rgba(91,221,255,.07)}
-body[data-swrlz-theme="ice-dragon"] .message.user .avatar{border-color:rgba(175,164,255,.35);color:#e0d9ff;background:linear-gradient(145deg,rgba(130,178,255,.14),rgba(177,151,255,.14))}
-
-body[data-swrlz-theme="ice-dragon"] .bubble{
-  border-color:rgba(170,231,255,.18);color:var(--secondary);
-  background:
-    radial-gradient(circle at 90% 8%,rgba(215,250,255,.045),transparent 25%),
-    linear-gradient(160deg,rgba(14,44,66,.90),rgba(4,20,35,.94));
-  box-shadow:0 16px 46px rgba(0,7,21,.28),inset 0 1px rgba(239,253,255,.045),inset 0 -1px rgba(83,162,223,.035);
-  backdrop-filter:blur(12px) saturate(122%);
+body[data-swrlz-theme="ice-dragon"] .messages::before{
+  content:none!important;
+  display:none!important;
+  background:none!important;
 }
-body[data-swrlz-theme="ice-dragon"] .message:not(.user) .bubble::before{content:"";position:absolute;left:-1px;top:14px;width:2px;height:52%;min-height:28px;border-radius:99px;background:linear-gradient(var(--ice-white),var(--ice-glow) 40%,transparent);box-shadow:0 0 14px rgba(120,238,255,.62)}
-body[data-swrlz-theme="ice-dragon"] .message:not(.user) .bubble::after{content:"";position:absolute;right:8px;top:8px;width:44px;height:44px;pointer-events:none;opacity:.13;background:url("assets/ice-shards.svg") center/contain no-repeat;transform:rotate(8deg)}
-body[data-swrlz-theme="ice-dragon"] .message.user .bubble{border-color:rgba(145,177,255,.31);color:var(--text);background:radial-gradient(circle at 88% 10%,rgba(231,245,255,.10),transparent 23%),linear-gradient(135deg,rgba(45,118,170,.46),rgba(77,76,161,.39));box-shadow:0 14px 38px rgba(5,6,30,.25),inset 0 1px rgba(255,255,255,.055)}
-body[data-swrlz-theme="ice-dragon"] .message.user .bubble::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;border-top:1px solid rgba(225,243,255,.10);mask:linear-gradient(90deg,transparent,#000 68%,#000)}
-body[data-swrlz-theme="ice-dragon"] .message-actions{color:#8fb8c9}
-body[data-swrlz-theme="ice-dragon"] .timing{color:#7096a7}
-
-body[data-swrlz-theme="ice-dragon"] .bubble pre,
-body[data-swrlz-theme="ice-dragon"] .swrlz-panel pre{border-color:rgba(143,228,255,.20);background:linear-gradient(180deg,rgba(1,12,23,.92),rgba(1,8,17,.90));box-shadow:inset 0 1px rgba(210,250,255,.025)}
-body[data-swrlz-theme="ice-dragon"] .bubble code{border-color:rgba(143,223,255,.16);background:rgba(57,152,189,.10)}
-body[data-swrlz-theme="ice-dragon"] .bubble a{color:#a9f7ff}
-body[data-swrlz-theme="ice-dragon"] .bubble blockquote{border-left-color:rgba(129,239,255,.60);background:rgba(108,214,255,.05)}
-body[data-swrlz-theme="ice-dragon"] .trace{border-color:rgba(138,225,255,.15);background:rgba(2,13,25,.50)}
-body[data-swrlz-theme="ice-dragon"] .trace summary::before{color:var(--ice-glow)}
-
-/* Ice altar composer */
-body[data-swrlz-theme="ice-dragon"] .composer-shell{background:linear-gradient(to top,rgba(1,7,16,.99) 38%,rgba(2,14,27,.93) 72%,transparent)!important}
-body[data-swrlz-theme="ice-dragon"] .composer-box,
-body[data-swrlz-theme="ice-dragon"] .input-shell,
-body[data-swrlz-theme="ice-dragon"] .input-wrap{
-  border-color:rgba(154,237,255,.25)!important;
-  background:radial-gradient(circle at 72% -15%,rgba(131,240,255,.08),transparent 36%),linear-gradient(180deg,rgba(5,24,42,.96),rgba(3,15,29,.96))!important;
-  box-shadow:0 22px 62px rgba(0,7,19,.40),0 0 0 1px rgba(132,241,255,.025),inset 0 1px rgba(236,253,255,.045)!important;
+body[data-swrlz-theme="ice-dragon"] .messages::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(1,7,16,.17),rgba(1,8,18,.27) 55%,rgba(1,6,14,.42)),linear-gradient(90deg,rgba(1,8,18,.22),transparent 60%);
 }
-body[data-swrlz-theme="ice-dragon"] .composer-box:focus-within{border-color:rgba(133,244,255,.58)!important;box-shadow:0 22px 62px rgba(0,7,19,.42),0 0 0 3px rgba(121,239,255,.055),0 0 34px rgba(112,225,255,.08),inset 0 1px rgba(236,253,255,.06)!important}
-body[data-swrlz-theme="ice-dragon"] textarea,body[data-swrlz-theme="ice-dragon"] input,body[data-swrlz-theme="ice-dragon"] select{caret-color:var(--ice-glow)}
-body[data-swrlz-theme="ice-dragon"] textarea::placeholder,body[data-swrlz-theme="ice-dragon"] input::placeholder{color:#739cad}
-body[data-swrlz-theme="ice-dragon"] .route-select,body[data-swrlz-theme="ice-dragon"] .swrlz-theme-select{border-color:rgba(143,230,255,.25);color:var(--ice-white);background:linear-gradient(180deg,rgba(11,43,65,.94),rgba(5,25,43,.94));box-shadow:inset 0 1px rgba(255,255,255,.035)}
-body[data-swrlz-theme="ice-dragon"] .send-button{border:1px solid rgba(202,250,255,.54)!important;color:#001019!important;background:radial-gradient(circle at 35% 25%,#f5feff 0 13%,transparent 14%),linear-gradient(145deg,#dffcff,#73eaff 58%,#85aaff)!important;box-shadow:0 0 26px rgba(120,238,255,.24),inset 0 1px rgba(255,255,255,.58)}
-body[data-swrlz-theme="ice-dragon"] .send-button:hover{filter:brightness(1.07);box-shadow:0 0 36px rgba(120,238,255,.33),inset 0 1px rgba(255,255,255,.65)}
-body[data-swrlz-theme="ice-dragon"] .send-button.stop{color:#fff!important;background:linear-gradient(145deg,#405978,#27364f)!important}
+body[data-swrlz-theme="ice-dragon"] .message-stack{position:relative!important;z-index:2!important}
 
-/* Enhancement surfaces */
-body[data-swrlz-theme="ice-dragon"] .swrlz-enhance-bar{border-bottom-color:rgba(147,228,255,.18);background:rgba(3,15,27,.97);box-shadow:inset 0 -1px rgba(255,255,255,.018)}
-body[data-swrlz-theme="ice-dragon"] .swrlz-enhance-bar button,body[data-swrlz-theme="ice-dragon"] .swrlz-evidence button,body[data-swrlz-theme="ice-dragon"] .swrlz-panel button{border-color:rgba(153,226,255,.21);background:rgba(10,35,55,.94)}
-body[data-swrlz-theme="ice-dragon"] .swrlz-enhance-bar button:hover,body[data-swrlz-theme="ice-dragon"] .swrlz-evidence button:hover,body[data-swrlz-theme="ice-dragon"] .swrlz-panel button:hover{border-color:rgba(143,238,255,.44);background:rgba(18,55,82,.96)}
-body[data-swrlz-theme="ice-dragon"] .swrlz-search{border-color:rgba(147,223,255,.20);background:#031321}
-body[data-swrlz-theme="ice-dragon"] .swrlz-evidence{border-color:rgba(141,224,255,.18);background:rgba(3,17,29,.70)}
-body[data-swrlz-theme="ice-dragon"] .swrlz-modal{background:rgba(0,5,14,.78);backdrop-filter:blur(4px)}
-body[data-swrlz-theme="ice-dragon"] .swrlz-panel{border-color:rgba(136,234,255,.42);background:radial-gradient(circle at 80% 0%,rgba(122,228,255,.09),transparent 25%),linear-gradient(150deg,#071b2c,#03101d);box-shadow:0 30px 100px rgba(0,4,14,.72),0 0 40px rgba(120,238,255,.08)}
-body[data-swrlz-theme="ice-dragon"] .swrlz-mode{color:var(--ice-glow)}
+/* Generated companion artwork owns every dragon avatar surface. */
+body[data-swrlz-theme="ice-dragon"] .dragon-mark,
+body[data-swrlz-theme="ice-dragon"] .welcome-orb,
+body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar{
+  overflow:hidden;position:relative;
+  border-color:rgba(164,246,255,.58)!important;
+  background-image:var(--ice-dragon-companion,linear-gradient(145deg,rgba(127,239,255,.24),rgba(83,123,255,.16)))!important;
+  background-position:center!important;background-size:cover!important;background-repeat:no-repeat!important;
+  box-shadow:0 0 26px rgba(115,236,255,.20),inset 0 0 18px rgba(213,253,255,.07)!important;
+}
+body[data-swrlz-theme="ice-dragon"] .dragon-mark svg,
+body[data-swrlz-theme="ice-dragon"] .welcome-orb svg,
+body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar svg{display:none!important}
+body[data-swrlz-theme="ice-dragon"] .welcome-orb{border-radius:26px!important;box-shadow:0 0 36px rgba(120,238,255,.22),0 24px 72px rgba(56,232,255,.10),inset 0 0 22px rgba(225,254,255,.05)!important}
+body[data-swrlz-theme="ice-dragon"] .welcome-orb::before{border-color:rgba(177,243,255,.14)!important}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar{color:transparent!important;border-color:rgba(151,241,255,.42)!important;box-shadow:0 0 16px rgba(110,232,255,.14),inset 0 0 10px rgba(225,254,255,.05)!important}
 
-body[data-swrlz-theme="ice-dragon"] ::selection{color:#001017;background:#9cf4ff}
-body[data-swrlz-theme="ice-dragon"] ::-webkit-scrollbar-thumb{background:linear-gradient(#33677e,#183b4f)!important;border-radius:99px}
-body[data-swrlz-theme="ice-dragon"] ::-webkit-scrollbar-thumb:hover{background:linear-gradient(#4b849d,#22556d)!important}
+body[data-swrlz-theme="ice-dragon"] .new-chat{
+  border-color:rgba(126,235,255,.34);background:linear-gradient(135deg,rgba(80,219,255,.14),rgba(70,125,255,.08) 50%,rgba(145,116,255,.10));
+}
+body[data-swrlz-theme="ice-dragon"] .thread[data-active="true"]{border-color:rgba(141,233,255,.22);background:rgba(86,191,255,.09)}
+body[data-swrlz-theme="ice-dragon"] .status-pill{border-color:rgba(142,229,255,.21);background:rgba(5,22,38,.78)}
+body[data-swrlz-theme="ice-dragon"] .prompt-chip{border-color:rgba(158,224,255,.16);background:rgba(5,20,35,.58);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+body[data-swrlz-theme="ice-dragon"] .prompt-chip:hover{border-color:rgba(122,242,255,.35);background:rgba(7,28,47,.76)}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble{border-color:rgba(145,225,255,.20);background:rgba(4,18,31,.75);box-shadow:0 14px 38px rgba(0,7,16,.20);backdrop-filter:blur(9px) saturate(118%);-webkit-backdrop-filter:blur(9px) saturate(118%)}
+body[data-swrlz-theme="ice-dragon"] .message.user .bubble{border-color:rgba(142,198,255,.28);background:linear-gradient(135deg,rgba(73,169,225,.24),rgba(102,116,221,.23));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+body[data-swrlz-theme="ice-dragon"] .bubble code{color:#e3fbff;background:rgba(122,242,255,.09)}
+body[data-swrlz-theme="ice-dragon"] .bubble pre{border-color:rgba(143,224,255,.18);background:rgba(0,7,14,.54)}
+body[data-swrlz-theme="ice-dragon"] .trace{border-color:rgba(142,224,255,.15);background:rgba(2,12,22,.48)}
+body[data-swrlz-theme="ice-dragon"] dialog{border-color:rgba(153,232,255,.23);background:rgba(4,18,31,.97)}
 
-body[data-swrlz-theme="ice-dragon"] .workspace::before,
-body[data-swrlz-theme="ice-dragon"] .workspace::after{content:"";position:absolute;pointer-events:none;z-index:2;width:132px;height:132px;opacity:.26;background:url("assets/ice-shards.svg") center/contain no-repeat;filter:drop-shadow(0 0 10px rgba(141,244,255,.12))}
-body[data-swrlz-theme="ice-dragon"] .workspace::before{right:-10px;top:-7px}
-body[data-swrlz-theme="ice-dragon"] .workspace::after{left:-16px;bottom:-20px;transform:rotate(180deg);opacity:.13}
-
-.swrlz-theme-select{min-height:32px;max-width:128px;padding:0 27px 0 9px;border:1px solid var(--line);border-radius:10px;color:var(--secondary);background:rgba(255,255,255,.035);font-size:10px;font-weight:750;letter-spacing:.02em;cursor:pointer}
-.swrlz-theme-select:hover{border-color:var(--line-strong)}
+.swrlz-theme-select{height:34px;max-width:150px;padding:0 28px 0 10px;border:1px solid var(--line);border-radius:10px;color:var(--secondary);background:#0c1527;font-size:11px;font-weight:700}
+body[data-swrlz-theme="ice-dragon"] .swrlz-theme-select{border-color:rgba(143,229,255,.25);background:#061727;color:#dff8ff}
 
 @media(max-width:760px){
-  body[data-swrlz-theme="ice-dragon"]::after{width:112vw;height:112vw;right:-39vw;bottom:-16vw;opacity:.11}
-  body[data-swrlz-theme="ice-dragon"] .sidebar{background:linear-gradient(180deg,#061d30 0%,#020d1b 100%)!important;box-shadow:18px 0 55px rgba(0,5,15,.72);backdrop-filter:none!important}
-  body[data-swrlz-theme="ice-dragon"] .sidebar::after{opacity:.75}
-  body[data-swrlz-theme="ice-dragon"] .swrlz-enhance-bar{background:#03111f}
-  body[data-swrlz-theme="ice-dragon"] .message:not(.user) .bubble::after{opacity:.10;width:36px;height:36px}
+  body[data-swrlz-theme="ice-dragon"] .messages{background-position:50% 40%!important}
+  body[data-swrlz-theme="ice-dragon"] .sidebar{background:linear-gradient(180deg,rgba(3,12,22,.995),rgba(2,9,18,.98))}
 }
-@media(max-width:560px){.swrlz-theme-select{max-width:106px;padding-left:7px;padding-right:21px}}
-@media(prefers-reduced-motion:reduce){body[data-swrlz-theme="ice-dragon"] *,body[data-swrlz-theme="ice-dragon"] *::before,body[data-swrlz-theme="ice-dragon"] *::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
