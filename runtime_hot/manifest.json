@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.31-hot-task-aware-prefill-efficiency-v21",
+  "revision": "2.1.32-hot-batched-prefill-rmcca-v22",
   "inferenceFiles": [
     "r39_engine.py"
   ]
