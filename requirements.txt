@@ -1,5 +1,7 @@
 fastapi==0.116.1
 numpy==2.3.2
 pydantic==2.11.7
+requests>=2.32,<3
+urllib3>=2.2,<3
 vercel==0.10.0
 -e .

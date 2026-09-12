@@ -667,6 +667,14 @@ def _source_for_item(state: dict[str, Any], item: dict[str, Any]) -> dict[str, A
     return next((source for source in state.get("sources", []) if source.get("id") == item.get("sourceId")), None)
 
 
+def _registered_hosts(state: dict[str, Any]) -> set[str]:
+    return {
+        str(source.get("host"))
+        for source in state.get("sources", [])
+        if source.get("enabled", True) and source.get("host")
+    }
+
+
 def _domain_state(state: dict[str, Any], host: str) -> dict[str, Any]:
     return state.setdefault("domainStats", {}).setdefault(host, {
         "attempted": 0,
@@ -770,6 +778,33 @@ def _fetch_document(state: dict[str, Any], url: str) -> dict[str, Any]:
             if not location:
                 raise CollectorError(422, "REDIRECT_LOCATION_MISSING", "Redirect response did not include a location.")
             target = _canonicalize(urllib.parse.urljoin(current, location))
+            target, _target_addresses = _validate_public_url(target, config)
+            target_host = urllib.parse.urlsplit(target).hostname or ""
+            if not config.get("allowExternalDomains") and target_host not in _registered_hosts(state):
+                raise CollectorError(403, "REDIRECT_DOMAIN_REJECTED", "Redirect left the registered source domains.")
+            known_domains = set(state.get("domainStats", {})) | _registered_hosts(state)
+            if target_host not in known_domains and len(known_domains) >= int(config["maxDomains"]):
+                raise CollectorError(429, "DOMAIN_QUOTA", "Redirect would exceed the configured domain budget.")
+            target_domain = _domain_state(state, target_host)
+            wait_seconds = max(0.0, float(target_domain.get("nextAllowedAt", 0)) - time.time())
+            if wait_seconds > 0:
+                raise CollectorError(
+                    425,
+                    "REDIRECT_POLITENESS_WAIT",
+                    "Redirect destination is waiting for its domain politeness window.",
+                    {"retryAfterSeconds": round(wait_seconds, 2)},
+                )
+            allowed, delay, _reason, robots_fresh = _fetch_robots(state, target)
+            target_domain["nextAllowedAt"] = time.time() + delay
+            if not allowed:
+                raise CollectorError(403, "ROBOTS_DENIED", "robots.txt does not allow the redirect destination.")
+            if robots_fresh:
+                raise CollectorError(
+                    425,
+                    "ROBOTS_REFRESH_REQUIRED",
+                    "Redirect destination robots policy was cached; retry after its politeness delay.",
+                    {"retryAfterSeconds": round(delay, 2)},
+                )
             redirects.append({"from": current, "to": target, "status": response.status_code})
             current = target
             continue
@@ -820,9 +855,13 @@ def _frontier_has(state: dict[str, Any], url: str) -> bool:
 
 def _enqueue_links(state: dict[str, Any], base_url: str, links: list[str], depth: int, source_id: str | None) -> int:
     config = state["config"]
-    if depth > int(config["maxDepth"]):
+    source = next((item for item in state.get("sources", []) if item.get("id") == source_id), None) or {}
+    policy = str(source.get("policy", "balanced"))
+    global_depth = int(config["maxDepth"])
+    policy_depth = min(global_depth, 1) if policy == "shallow" else min(global_depth, 2) if policy == "balanced" else global_depth
+    if depth > policy_depth:
         return 0
-    seed_hosts = {source.get("host") for source in state.get("sources", []) if source.get("enabled", True)}
+    seed_hosts = _registered_hosts(state)
     preferred = config.get("preferredDomains", [])
     blocked = config.get("blockedDomains", [])
     existing_domains = set(state.get("domainStats", {})) | {item for item in seed_hosts if item}
@@ -841,12 +880,14 @@ def _enqueue_links(state: dict[str, Any], base_url: str, links: list[str], depth
                 continue
             preferred_host = any(_domain_matches(host, item) for item in preferred)
             exploration = host not in seed_hosts and not preferred_host
+            source_priority = int(source.get("priority", 60))
+            inherited_priority = max(1, min(100, source_priority - depth * 5))
             state["frontier"].append({
                 "url": candidate,
                 "depth": depth,
                 "sourceId": source_id,
                 "referrer": base_url,
-                "priority": 85 if preferred_host else 60 if host in seed_hosts else 35,
+                "priority": min(100, inherited_priority + 10) if preferred_host else inherited_priority if host in seed_hosts else min(35, inherited_priority),
                 "exploration": exploration,
                 "discoveredAt": _now(),
             })
@@ -954,6 +995,15 @@ def _process_item(store: BlobStore, state: dict[str, Any], item: dict[str, Any],
     if item.get("exploration"):
         state["totals"]["explorationFetched"] += 1
     fetched = _fetch_document(state, canonical)
+    final_host = urllib.parse.urlsplit(fetched["url"]).hostname or host
+    if final_host != host:
+        domain = _domain_state(state, final_host)
+        domain["attempted"] += 1
+        host = final_host
+        if int(domain["accepted"]) >= int(config["maxDocumentsPerDomain"]):
+            raise CollectorError(429, "DOMAIN_DOCUMENT_QUOTA", "Redirect destination reached its document quota.")
+        if int(domain["bytes"]) >= int(config["maxBytesPerDomain"]):
+            raise CollectorError(429, "DOMAIN_BYTE_QUOTA", "Redirect destination reached its byte quota.")
     domain["lastFetchAt"] = fetched["fetchedAt"]
     if int(domain["bytes"]) + len(fetched["body"]) > int(config["maxBytesPerDomain"]):
         raise CollectorError(429, "DOMAIN_BYTE_QUOTA", "This response would exceed the per-domain byte quota.")
@@ -1191,6 +1241,16 @@ def _process_batch(store: BlobStore, state: dict[str, Any], etag: str | None, co
                 state["reason"] = exc.message
                 _event(state, "budget-stop", exc.message, detail=exc.detail)
                 results.append({"url": item.get("url"), "result": "paused", "code": exc.code, "message": exc.message})
+            elif exc.code in {"ROBOTS_REFRESH_REQUIRED", "REDIRECT_POLITENESS_WAIT"}:
+                state["frontier"].insert(0, item)
+                state["reason"] = exc.message
+                results.append({
+                    "url": item.get("url"),
+                    "result": "deferred",
+                    "code": exc.code,
+                    "message": exc.message,
+                    "retryAfterSeconds": (exc.detail or {}).get("retryAfterSeconds", 1.0),
+                })
             else:
                 _reject(state, item, exc.code, exc.message)
                 results.append({"url": item.get("url"), "result": "rejected", "code": exc.code, "message": exc.message})
@@ -1212,7 +1272,7 @@ def _process_batch(store: BlobStore, state: dict[str, Any], etag: str | None, co
             "lastUrl": state["lastUrl"],
         }
         etag = _save_state(store, state, etag)
-        if results[-1].get("result") in {"robots-cached", "politeness-wait"}:
+        if results[-1].get("result") in {"robots-cached", "politeness-wait", "deferred"}:
             break
     if state.get("status") != "running" or not results:
         now_monotonic = time.monotonic()

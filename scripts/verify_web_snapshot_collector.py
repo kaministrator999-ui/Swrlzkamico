@@ -155,6 +155,38 @@ def main() -> None:
     store = FakeStore(module)
     module.BlobStore = lambda: store
     module._validate_public_url = lambda url, config: (module._canonicalize(url), ["93.184.216.34"])
+
+    class RedirectResponse:
+        status_code = 302
+        ok = True
+        headers = {"location": "https://outside.example/reference"}
+
+        def close(self):
+            return None
+
+    module._pinned_get = lambda *args, **kwargs: RedirectResponse()
+    redirect_state = module._default_state()
+    redirect_state["sources"] = [{"id": "source-redirect", "host": "example.com", "enabled": True}]
+    try:
+        module._fetch_document(redirect_state, "https://example.com/start")
+        raise AssertionError("external redirect escaped the source-domain boundary")
+    except module.CollectorError as exc:
+        assert exc.code == "REDIRECT_DOMAIN_REJECTED"
+    redirect_state["config"]["allowExternalDomains"] = True
+    module._fetch_robots = lambda state, url: (True, 0.25, "robots-allowed", True)
+    try:
+        module._fetch_document(redirect_state, "https://example.com/start")
+        raise AssertionError("redirect destination was fetched before its robots checkpoint")
+    except module.CollectorError as exc:
+        assert exc.code == "ROBOTS_REFRESH_REQUIRED"
+
+    policy_state = module._default_state()
+    policy_state["config"]["maxDepth"] = 4
+    policy_state["sources"] = [{"id": "source-policy", "host": "example.com", "priority": 90, "policy": "shallow", "enabled": True}]
+    assert module._enqueue_links(policy_state, "https://example.com/", ["/depth-two"], 2, "source-policy") == 0
+    policy_state["sources"][0]["policy"] = "deep"
+    assert module._enqueue_links(policy_state, "https://example.com/", ["/depth-two"], 2, "source-policy") == 1
+
     module._fetch_robots = lambda state, url: (True, 0.25, "robots-allowed", False)
     body_text = " ".join(
         f"Frozen collector evidence sentence {index} explains provenance quality immutable snapshots and safe browser operations."
