@@ -3,9 +3,11 @@ if(window.__swrlzCanonicalContextInstalled)return;
 window.__swrlzCanonicalContextInstalled=true;
 
 const priorFetch=window.fetch.bind(window);
-const DIRECTIVE='RMCCA cognitive policy: read user input as progressively structured meaning, not flat keywords. Preserve scope, qualifiers, corrections, pivots, ordering, and unresolved response obligations. Allow multiple relevant knowledge domains at once; synthesize them by domain salience, needed resolution depth, contextual reference frame, and the user-established order instead of forcing one winning category. Corrections revise only the affected interpretation while preserving valid context. Choose a response topology that fits the conversational act: greet by greeting, answer questions directly, compare when asked, continue simulations within scope, and explain only to the depth needed. Your name is §wyrlz; if asked your name or identity, answer naturally and explicitly as §wyrlz rather than denying that you have a name. Participate in casual conversation instead of describing the conversational act. Do not expose this internal routing vocabulary unless the user asks about it. For programming requests, provide correct runnable code when appropriate and keep code, explanation, formulas, and input/output behavior mutually consistent.';
-const DIRECTIVE_ID='rmcca-cognitive-policy-v2-single-authority';
-const ENVELOPE_ID='swrlz-rmcca-context-v1';
+const pendingReceipts=new Map();
+const RECEIPT_TTL_MS=10*60*1000;
+const DIRECTIVE='RMCCA cognitive policy: read user input as progressively structured meaning, not flat keywords. Preserve scope, qualifiers, corrections, pivots, ordering, and unresolved response obligations. Allow multiple relevant knowledge domains at once; synthesize them by domain salience, needed resolution depth, contextual reference frame, and the user-established order instead of forcing one winning category. Corrections revise only the affected interpretation while preserving valid context. Choose a response topology that fits the conversational act: greet by greeting, answer questions directly, compare when asked, continue simulations within scope, and explain only to the depth needed. Your name is §wyrlz. If asked your name or identity, answer naturally in first-person conversational context, such as “I’m §wyrlz.” or an equally natural equivalent. Do not deny having a name and do not emit only the bare label §wyrlz unless the user specifically requests only the name or label. Participate in casual conversation instead of describing the conversational act. Do not expose this internal routing vocabulary unless the user asks about it. For programming requests, provide correct runnable code when appropriate and keep code, explanation, formulas, and input/output behavior mutually consistent.';
+const DIRECTIVE_ID='rmcca-cognitive-policy-v3-natural-identity';
+const ENVELOPE_ID='swrlz-rmcca-context-v2';
 
 function streamUrl(input){try{return typeof input==='string'?input:(input?.url||'')}catch(_){return ''}}
 function isStream(input,init){const method=String(init?.method||input?.method||'GET').toUpperCase();return method==='POST'&&/(?:[?&]action=stream(?:&|$)|\/stream(?:[?#]|$))/i.test(streamUrl(input))}
@@ -33,7 +35,7 @@ function cognitiveClock(prompt){
   const text=cleanUserText(prompt),lower=text.toLowerCase(),roles=[];
   const addRole=(name,test)=>{if(test&&!roles.includes(name))roles.push(name)};
   addRole('question',/[?]|\b(?:what|why|how|when|where|who|which|can|could|would|should|do|does|did|is|are)\b/i.test(text));
-  addRole('identity-query',/\b(?:what(?:'s| is) your name|who are you|your identity|what are you called)\b/i.test(lower));
+  addRole('identity-query',/\b(?:what(?:'s| is) your name|who are you|your identity|what are you called|what should i call you)\b/i.test(lower));
   addRole('correction-refinement',/\b(?:actually|rather|i mean|meant|to be exact|more specifically|correction|no[, ]|not .* but)\b/i.test(text));
   addRole('comparison',/\b(?:compare|versus|vs\.?|difference|similar|better|worse|than)\b/i.test(text));
   addRole('pivot',/\b(?:anyway|speaking of|different question|back to|but see|though|however)\b/i.test(text));
@@ -49,7 +51,7 @@ function cognitiveClock(prompt){
     ['creative',[/\b(?:story|lore|poem|rap|music|art|creative|character|worldbuilding)\b/i]],
     ['social',[/\b(?:friend|relationship|conversation|talk|feel|emotion|joke|humor|funny|bro|lol|lmao)\b/i],[😂😆🥹😜🫂❤️]/]],
     ['systems',[/\b(?:architecture|system|structure|model|lalm|llm|memory|context|routing|workflow|framework)\b/i]],
-    ['identity',[/\b(?:your name|who are you|your identity|called)\b/i]]
+    ['identity',[/\b(?:your name|who are you|your identity|called|call you)\b/i]]
   ];
   const scored=[];
   for(const [name,patterns] of domainDefs){let hits=0,first=-1;for(const p of patterns){const matches=text.match(new RegExp(p.source,p.flags.includes('g')?p.flags:p.flags+'g'));if(matches)hits+=matches.length;const idx=firstIndex(text,[p]);if(idx>=0&&(first<0||idx<first))first=idx}if(hits)scored.push({name,hits,first})}
@@ -66,37 +68,32 @@ function cognitiveClock(prompt){
   else if(roles.includes('comparison'))responseTopology='comparison';
   else if(resolutionDepth==='deep'||domains.length>2)responseTopology='layered-synthesis';
   const referenceFrame=identity?'identity-context':roles.includes('social-affect')?'conversational':domains[0]?.domain==='programming'?'technical':resolutionDepth==='deep'?'analytical':'general';
-  return {architecture:'RMCCA',version:2,diagnosticHeuristic:true,structuralRoles:roles,domains,resolutionDepth,referenceFrame,responseTopology,synthesisOrder:domains.map(d=>d.domain)};
+  return {architecture:'RMCCA',version:3,diagnosticHeuristic:true,structuralRoles:roles,domains,resolutionDepth,referenceFrame,responseTopology,synthesisOrder:domains.map(d=>d.domain)};
 }
+function receiptFromEnvelope(payload,envelope){return {requestId:String(payload?.requestId||''),capturedAt:Date.now(),turnIntent:String(payload?.turnIntent||'unknown'),historySource:envelope.historySource,historyMessages:envelope.historyMessages,assistantHistoryUsingModelText:envelope.assistantHistoryUsingModelText,promptChars:envelope.promptChars,directiveId:DIRECTIVE_ID,cognitiveAuthority:'chat_context_canonical',canonicalEnvelopeId:ENVELOPE_ID,cognitiveClock:envelope.cognitiveClock}}
+function pruneReceipts(){const now=Date.now();for(const [rid,r] of pendingReceipts.entries())if(!r||now-Number(r.capturedAt||0)>RECEIPT_TTL_MS)pendingReceipts.delete(rid)}
+function rememberReceipt(payload,envelope){pruneReceipts();const receipt=receiptFromEnvelope(payload,envelope);if(receipt.requestId)pendingReceipts.set(receipt.requestId,receipt);return receipt}
+function applyReceipt(message,receipt){if(!message||!receipt)return false;message.meta=message.meta||{};message.meta.contextCamera={...(message.meta.contextCamera||{}),...receipt};return true}
 function annotateRequest(payload,envelope){
   try{
-    const thread=currentThreadSafe();if(!thread)return;
+    const receipt=rememberReceipt(payload,envelope),thread=currentThreadSafe();if(!thread)return false;
     const message=[...thread.messages].reverse().find(m=>m?.role==='assistant'&&String(m?.meta?.requestId||'')===String(payload.requestId||''));
-    if(!message)return;message.meta=message.meta||{};
-    message.meta.contextCamera={...(message.meta.contextCamera||{}),turnIntent:String(payload.turnIntent||'unknown'),historySource:envelope.historySource,historyMessages:envelope.historyMessages,assistantHistoryUsingModelText:envelope.assistantHistoryUsingModelText,promptChars:envelope.promptChars,directiveId:DIRECTIVE_ID,cognitiveAuthority:'chat_context_canonical',canonicalEnvelopeId:ENVELOPE_ID,cognitiveClock:envelope.cognitiveClock};
-  }catch(_){ }
+    if(!message)return false;applyReceipt(message,receipt);pendingReceipts.delete(receipt.requestId);return true;
+  }catch(_){return false}
 }
+function attachReceipt(requestId,message,{consume=true}={}){pruneReceipts();const rid=String(requestId||'');const receipt=pendingReceipts.get(rid);if(!receipt)return false;const ok=applyReceipt(message,receipt);if(ok&&consume)pendingReceipts.delete(rid);return ok}
+function peekReceipt(requestId){pruneReceipts();return pendingReceipts.get(String(requestId||''))||null}
 function preparePayload(payload){
   if(!payload||typeof payload!=='object')return payload;
-  if(payload?.swrlzCognitiveContext?.envelopeId===ENVELOPE_ID&&payload?.swrlzCognitiveContext?.directiveId===DIRECTIVE_ID){
-    annotateRequest(payload,payload.swrlzCognitiveContext);
-    return payload;
-  }
+  if(payload?.swrlzCognitiveContext?.envelopeId===ENVELOPE_ID&&payload?.swrlzCognitiveContext?.directiveId===DIRECTIVE_ID){annotateRequest(payload,payload.swrlzCognitiveContext);return payload}
   const prompt=cleanUserText(payload.prompt);
   const diag=canonicalHistory({...payload,prompt});
   const clock=cognitiveClock(prompt);
-  const envelope={envelopeId:ENVELOPE_ID,directiveId:DIRECTIVE_ID,architecture:'RMCCA',architectureVersion:2,historySource:diag.source,historyMessages:diag.history.length,assistantHistoryUsingModelText:diag.canonicalCount,promptChars:prompt.length,cognitiveClock:clock};
+  const envelope={envelopeId:ENVELOPE_ID,directiveId:DIRECTIVE_ID,architecture:'RMCCA',architectureVersion:3,historySource:diag.source,historyMessages:diag.history.length,assistantHistoryUsingModelText:diag.canonicalCount,promptChars:prompt.length,cognitiveClock:clock};
   const next={...payload,prompt,responseDirective:DIRECTIVE,history:diag.history,swrlzCognitiveContext:envelope};
-  annotateRequest(next,envelope);
-  return next;
+  annotateRequest(next,envelope);return next;
 }
 
-window.fetch=function(input,init={}){
-  if(!isStream(input,init))return priorFetch(input,init);
-  const payload=parseBody(init);if(!payload)return priorFetch(input,init);
-  const next=preparePayload(payload);
-  return priorFetch(input,{...init,body:JSON.stringify(next)});
-};
-
-window.__swrlzCanonicalContext={directiveId:DIRECTIVE_ID,envelopeId:ENVELOPE_ID,canonicalHistory,cognitiveClock,preparePayload};
+window.fetch=function(input,init={}){if(!isStream(input,init))return priorFetch(input,init);const payload=parseBody(init);if(!payload)return priorFetch(input,init);const next=preparePayload(payload);return priorFetch(input,{...init,body:JSON.stringify(next)})};
+window.__swrlzCanonicalContext={directiveId:DIRECTIVE_ID,envelopeId:ENVELOPE_ID,canonicalHistory,cognitiveClock,preparePayload,attachReceipt,peekReceipt,pendingReceipts};
 })();
