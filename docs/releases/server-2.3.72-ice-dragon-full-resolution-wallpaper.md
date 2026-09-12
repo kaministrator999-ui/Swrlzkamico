@@ -28,7 +28,18 @@ Added `web/themes/ice-dragon/ice-dragon-art-loader-v14.js` as the smallest targe
 - Adds explicit logs for part fetch, combined payload length, decode dimensions, and final paint state.
 - Rejects unexpectedly low decoded dimensions to prevent silent regression back to a tiny source.
 
-`runtime_pages/manifest.json` advanced from v6 to v7 and now injects the unique `ice-dragon-art-loader-v14.js` URL rather than v13.
+`runtime_pages/manifest.json` advanced from v6 to v7 and points directly to `ice-dragon-art-loader-v14.js`.
+
+## Stale-manifest compatibility
+
+Live verification showed the v14 asset was already served from `runtime`, but the fixed live manifest route was temporarily still returning manifest v6 and therefore referencing v13. Rather than making browser acceptance depend on that propagation window, the existing v13 path was converted into a small compatibility bridge that loads the unique v14 full-resolution script URL.
+
+This makes both manifest generations converge on v14:
+
+- stale manifest v6 → v13 compatibility bridge → v14
+- current manifest v7 → v14 directly
+
+The live v13 asset endpoint was verified returning the compatibility bridge, and the live v14 endpoint was verified returning the full-resolution hydrator.
 
 ## Concurrency / authority check
 
@@ -42,6 +53,7 @@ This is a `runtime` hot update. No new Vercel deployment or server restart is re
 
 After Chat reload with Ice Dragon selected, Theme Logs should show:
 
+- `v13-bridge-start` / `v13-bridge-loaded` when the stale manifest path is used, or direct v14 execution when manifest v7 has propagated
 - `adult-part-fetch-start parts=6`
 - `adult-parts-complete parts=6 ...`
 - `adult-decode-ok 864x1536`
@@ -56,3 +68,4 @@ The adult wallpaper should be materially sharper than the former 180×320 path.
 - Server version authority: `32ff3c525c0c6471b6bed129414e8ce21d0b9a02`
 - Chat version authority: `7074153de81d57d7d4af063b02239cfb5e5a1b8f`
 - Roadmap update: `7a4b299cf0d2368c2a097c79647c5fef7aa71aa0`
+- v13 stale-manifest bridge: `18eb73b15ee585993c1cadd5d81f5ed4db133533`
