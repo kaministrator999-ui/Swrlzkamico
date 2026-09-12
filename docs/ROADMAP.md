@@ -2,18 +2,65 @@
 
 ## Current release
 
-**Server v2.3.68**
+**Server v2.3.69**
 
-This event improves the visual quality of the now-working Ice Dragon adult wallpaper while deliberately preserving the rendering path that was proven in Server v2.3.66.
+This event makes RMCCA the single canonical cognitive authority for Chat requests and preserves that exact cognitive request across background recovery/restart paths instead of allowing older request-normalization logic to compete with it.
 
 ### Module state
 
-- **Server runtime v2.3.68** — current server development lineage.
-- **Chat v1.4.62** — Ice Dragon wallpaper quality pass.
+- **Server runtime v2.3.69** — current server development lineage.
+- **Chat v1.4.63** — RMCCA single-authority request/recovery correction + camera continuity telemetry.
 - **LALM engine v2.1.26** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.0** — unchanged.
+
+## Server v2.3.69 — 2026-09-12
+
+### RMCCA single cognitive authority
+
+- A fresh browser close/reopen still answered `What's your name?` with `I don't have a name. I'm an AI`, disproving the stale-tab-only explanation.
+- The camera showed no RMCCA metadata on the active identity turn while background recovery repeatedly restarted the request after network/instance changes.
+- `web/chat_context_canonical.js` is now the single owner of model-facing response policy, canonical history, RMCCA diagnostics, and the persisted cognitive request envelope.
+- Added the `swrlz-rmcca-context-v1` canonical envelope carrying directive identity, cognitive-clock diagnostics, history provenance, canonical assistant-history count, and prompt size.
+- Canonical preparation is idempotent: a request that already owns the current RMCCA envelope is preserved instead of rebuilt or replaced by another layer.
+- Identity requests now have an explicit `identity-query` structural role and `identity-answer` response topology; the cognitive policy explicitly teaches that the assistant identity is §wyrlz and should not be denied.
+
+### Background recovery ownership correction
+
+- `web/chat_background_resume.js` no longer injects its older competing `BASE_RESPONSE_DIRECTIVE`.
+- Initial send and recovery both ask the canonical RMCCA layer to prepare the request; the resulting canonical request is what background persistence stores and replays.
+- Removed the leading-`§wyrlz` display suppression path. Correctness is owned by model understanding/generation rather than hiding output in presentation.
+- Recovery now records attempt count, original request start time, recovery elapsed time, and whether the canonical envelope survived the recovery path.
+
+### Camera observability
+
+- `web/chat_context_camera.js` now reports cognitive authority, canonical envelope ID, recovery-attempt count, envelope preservation, RMCCA topology/depth/reference frame/domains, and raw/display continuity.
+- The next identity test can therefore distinguish model-generation failure from cognitive-context ownership or recovery failure without guessing.
+
+### Concurrency reconciliation
+
+- The event began from authoritative Server `2.3.68` / Chat `1.4.62`.
+- Immediately before version assignment both authorities were re-read and were still unchanged.
+- The event therefore safely advanced to Server `2.3.69` / Chat `1.4.63` using the fresh authority SHAs.
+
+### Verification / deployment state
+
+- `versions/server-runtime.txt` advanced from `2.3.68` to `2.3.69`.
+- `versions/web-chat.txt` advanced from `1.4.62` to `1.4.63`.
+- LALM engine remains `2.1.26`; R39 inference source was not modified in this event.
+- **Production deployment:** NONE requested; runtime-only Chat/model-context update.
+- **Server restart:** NONE requested.
+- Browser acceptance gate: fresh `What's your name?` should naturally identify §wyrlz and the camera should show `cognitiveAuthority=chat_context_canonical`, `canonicalEnvelopeId=swrlz-rmcca-context-v1`, and RMCCA topology `identity-answer`. If recovery occurs, the same log should show the canonical envelope preserved.
+
+### Relevant lineage
+
+- Canonical RMCCA authority: `cec5cb1f523cafadb9ce3a65c8aae16739de9d02`
+- Background canonical recovery: `badd23f1d2ff0583067f24ac570bd2e3e71c12b1`
+- Camera continuity telemetry: `b5527c6e146a83cea77ed82604f7375b0481ee0a`
+- Server version authority: `349ebf5f8e2d8c6927d131905ec595145a9816b0`
+- Chat version authority: `5ccdd063f9975abd587564afe91cbe2fa20e34d5`
+- Release record: `docs/releases/server-2.3.69-rmcca-single-authority.md`
 
 ## Server v2.3.68 — 2026-09-12
 
@@ -89,7 +136,7 @@ This event improves the visual quality of the now-working Ice Dragon adult wallp
 - Exported theme diagnostics proved the v13 single-flight hydrator was active and correctly collapsing repeated boot triggers, while the adult wallpaper still failed because the source payload normalized to 7713 significant Base64 characters — an impossible `4n+1` length.
 - Recovered the exact intended Ice Dragon wallpaper from project/user Library source artwork `32841.png` (864×1536).
 - Rebuilt the artwork at the existing 180×320 theme aspect ratio as a valid JPEG and Base64-encoded the verified result.
-- Replaced `web/themes/ice-dragon/assets/adult-180x320.jpg.b64` with the rebuilt payload; the existing v13 loader remains the runtime owner because its concurrency and diagnostics behavior were already verified.
+- Replaced `web/themes/ice-dragon/assets/adult-180x320.jpg.b64` with the rebuilt payload; the existing v13 loader remains the runtime owner because its concurrency behavior was verified by diagnostics.
 - The live runtime asset path now returns the rebuilt payload directly from the `runtime` branch with `no-store` caching.
 
 ### Failure lineage preserved
