@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.26
-REVISION=2.1.26-hot-boundary-v17-token-exact-next-turn-checkpoints
+VERSION=2.1.30
+REVISION=2.1.30-hot-compact-social-temporal-v20
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active

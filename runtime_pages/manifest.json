@@ -1,8 +1,10 @@
 {
-  "version": 7,
+  "version": 12,
   "mode": "runtime-source-of-truth",
   "routes": {
-    "/": {"source": "runtime_pages/index.html"},
+    "/": {
+      "source": "runtime_pages/index.html"
+    },
     "/chat": {
       "source": "web/chat.html",
       "styles": [
@@ -14,15 +16,19 @@
         "web/chat_code_artifacts.css"
       ],
       "scripts": [
+        "web/chat_frontend_boot.js",
         "web/chat_boot_guard.js",
         "web/chat_admin_session.js",
         "web/chat_enhancements.js",
+        "web/chat_google_server_config.js",
         "web/chat_stream_focus.js",
         "web/chat_version.js",
         "web/themes/ice-dragon/ice-dragon-theme-v3.2.js",
-        "web/themes/ice-dragon/ice-dragon-art-loader-v13.js",
+        "web/themes/ice-dragon/ice-dragon-art-loader-v15.js",
         "web/chat_code_artifacts.js",
         "web/chat_stream_incremental.js",
+        "web/chat_activity_immediate.js",
+        "web/chat_user_time_context.js",
         "web/chat_context_canonical.js",
         "web/chat_background_resume.js",
         "web/chat_context_camera.js",
@@ -30,12 +36,25 @@
         "web/chat_boot_ready.js"
       ]
     },
-    "/server": {"source": "web/server.html"},
-    "/lalm": {"source": "web/lalm.html"},
-    "/admin": {"source": "web/admin.html"},
-    "/collector": {"source": "web/collector.html"},
-    "/live": {"source": "runtime_pages/index.html"}
+    "/server": {
+      "source": "web/server.html"
+    },
+    "/lalm": {
+      "source": "web/lalm.html"
+    },
+    "/admin": {
+      "source": "web/admin.html"
+    },
+    "/live": {
+      "source": "runtime_pages/index.html"
+    },
+    "/collector": {
+      "source": "web/collector.html"
+    }
   },
-  "assetRoots": ["web", "runtime_pages"],
-  "notes": "The manifest is durable runtime configuration. The stable server only interprets route/source/style/script metadata; all page-owned code remains on runtime. /collector serves the Frozen Web Snapshot Collector control room directly from runtime, allowing compatible page and collector-engine revisions without Vercel redeployment. Ice Dragon now uses a versioned v13 asset hydrator that normalizes browser-loaded base64 before decoding, logs normalization lengths, and collapses concurrent boot triggers onto single in-flight companion/adult/overall hydration promises. The theme log viewer remains available with copy, export, and clear controls."
+  "assetRoots": [
+    "web",
+    "runtime_pages"
+  ],
+  "notes": "Runtime manifest v11 makes Chat frontend-first: the locally stored shell/theme can paint immediately while server/LALM/account connectivity settles independently. Ice Dragon v15 persistently caches its companion and adult source on-device and can promote the adult wallpaper to a cached 4320x7680 WebP during idle time on capable devices. Manifest v12 adds the runtime-owned Frozen Web Collector page at /collector; compatible collector page and engine updates require no subsequent server deployment."
 }

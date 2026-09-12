@@ -1,50 +1,20 @@
-/* §wyrlz Chat hydration guard — do not expose the base shell before runtime assets/account scope settle. */
+/* §wyrlz frontend-first boot guard — the cached/local shell is never blocked by backend or theme hydration. */
+html body .app{
+  opacity:1;
+  pointer-events:auto;
+}
 html:not(.swrlz-chat-ready) body .app{
-  opacity:0;
-  pointer-events:none;
-  animation:swrlz-app-failopen 0s 1.8s forwards;
-}
-html:not(.swrlz-chat-ready)::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:2147483645;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 52% 32%,rgba(90,225,255,.12),transparent 28%),
-    linear-gradient(145deg,#01050c,#041426 58%,#06192a);
-  animation:swrlz-boot-failopen .22s 1.8s forwards;
-}
-html:not(.swrlz-chat-ready)::after{
-  content:"§wyrlz\A synchronizing chat…";
-  white-space:pre;
-  position:fixed;
-  left:50%;
-  top:46%;
-  z-index:2147483646;
-  transform:translate(-50%,-50%);
-  pointer-events:none;
-  color:#dffaff;
-  text-align:center;
-  font:700 15px/1.65 Inter,ui-sans-serif,system-ui,sans-serif;
-  letter-spacing:.04em;
-  text-shadow:0 0 24px rgba(105,235,255,.28);
-  animation:swrlz-boot-failopen .22s 1.8s forwards;
+  opacity:1;
+  pointer-events:auto;
 }
 html.swrlz-chat-ready body .app{
   opacity:1;
-  transition:opacity .14s ease-out;
 }
+/* Keep compatibility classes without a full-screen synchronizing overlay. */
+html:not(.swrlz-chat-ready)::before,
+html:not(.swrlz-chat-ready)::after,
 html.swrlz-chat-ready::before,
 html.swrlz-chat-ready::after{
-  opacity:0;
-  visibility:hidden;
-  transition:opacity .14s ease-out,visibility 0s .14s;
-}
-@keyframes swrlz-app-failopen{to{opacity:1;pointer-events:auto}}
-@keyframes swrlz-boot-failopen{to{opacity:0;visibility:hidden}}
-@media(prefers-reduced-motion:reduce){
-  html.swrlz-chat-ready body .app,
-  html.swrlz-chat-ready::before,
-  html.swrlz-chat-ready::after{transition:none}
+  content:none !important;
+  display:none !important;
 }

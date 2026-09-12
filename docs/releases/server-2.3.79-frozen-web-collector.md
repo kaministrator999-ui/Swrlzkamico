@@ -1,4 +1,4 @@
-# Server 2.3.70 — Frozen Web Snapshot Collector
+# Server 2.3.79 — Frozen Web Snapshot Collector
 
 - Date: 2026-09-12
 - Lifecycle: IMPLEMENTATION_VERIFIED / DOCUMENTATION_SYNCED
@@ -6,11 +6,11 @@
 
 ## Versions
 
-- Server Runtime: `2.3.70`
+- Server Runtime: `2.3.79`
 - Frozen Web Collector: `1.0.0`
 - Deployment Control: `1.0.2`
-- Web Chat: `1.4.63` unchanged
-- LALM Engine: `2.1.26` unchanged
+- Web Chat: `1.4.71` unchanged
+- LALM Engine: `2.1.30` unchanged
 
 ## Result
 
@@ -43,10 +43,14 @@ The stable deployment hosts authentication and a fixed module contract. The inte
 ## Lineage
 
 - Initial runtime reconciliation: `26009037b55c158a0606e84bf69202b165e59057`
-- Final runtime baseline: `adcade0fda78ed4373d863bbbcc4344ff9d46b18`
+- Final runtime baseline: `3c2cc5efd320157ba67d888240f195344c015be7`
 - Main baseline: `4a070f5d5cc8aba67ef0575d8567b2f0f9813f7a`
 - First reconciled runtime checkpoint: `5b7744acc78a1a8508e5a954a4f5b2161db7a8d8`
-- Final reconciled runtime checkpoint: `852a27207a89554ff8c37b5ed3b149b1d5b66a21`
+- Final reconciled runtime checkpoint: `7cc1ccb9eb09857f945dab2ea992b2809d8b50f1`
 - Rebased stable checkpoint: `636321dcd9f204eae08f5e9cfc567ab1b2ac5c1d`
 
 No crawl, snapshot sealing, or training acceptance was performed as part of deployment.
+
+## Final continuation reconciliation
+
+A further workspace-maintenance pruning removed the transient checkout. Recovered source from stable checkpoint `6861aedc32249fd7b5bdafc480f0e020238cf5d3` and runtime checkpoint `7cc1ccb9eb09857f945dab2ea992b2809d8b50f1`. Reconciled with current main `3f3d8eaeec4859099a3710155df8067577ca27fe` and runtime `3c2cc5efd320157ba67d888240f195344c015be7` (Server 2.3.78, Chat 1.4.71, LALM 2.1.30, Deployment Control 1.0.1). The unassigned collector 2.3.70 candidate was discarded; publication is Server 2.3.79, Collector 1.0.0, Deployment Control 1.0.2. The existing Google deployment request is preserved until the distinct approved collector trigger. No collection or training operation is part of deployment.

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.19-hot-boundary-v10-thread-prefill-cache",
+  "revision": "2.1.28-hot-social-participation-v18b-single-file-loader",
   "inferenceFiles": [
     "r39_engine.py"
   ]

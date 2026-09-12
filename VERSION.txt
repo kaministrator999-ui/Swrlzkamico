@@ -5,6 +5,7 @@
 
 SERVER_RUNTIME=versions/server-runtime.txt
 SERVER_UI=versions/server-ui.txt
+WEB_FRONTEND=versions/web-frontend.txt
 WEB_CHAT=versions/web-chat.txt
 STREAM_CONTRACT=versions/stream-contract.txt
 LALM_UI=versions/lalm-ui.txt
