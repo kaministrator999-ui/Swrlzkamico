@@ -2,18 +2,71 @@
 
 ## Current release
 
-**Server v2.3.70**
+**Server v2.3.71**
 
-This event strengthens RMCCA identity-response framing and closes the first-send camera observability gap revealed by the clean `What's your name?` acceptance test.
+This event stabilizes RMCCA social participation, hardens canonical-request transport across initial send/recovery, and makes canonical model-text capture generation-branch aware so recovered responses cannot poison future history with duplicated raw output.
 
 ### Module state
 
-- **Server runtime v2.3.70** — current server development lineage.
-- **Chat v1.4.64** — RMCCA first-send cognitive receipt bridge + natural identity framing.
+- **Server runtime v2.3.71** — current server development lineage.
+- **Chat v1.4.65** — RMCCA social-participation policy + canonical transport hardening + branch-aware camera/history capture.
 - **LALM engine v2.1.26** — unchanged.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.0** — unchanged.
+
+## Server v2.3.71 — 2026-09-12
+
+### Triggering camera evidence
+
+- A fresh `Hey 👋` turn was classified by the engine as `brief-social` but still generated `This is a friendly greeting. How can I assist you today?`, proving response framing remained meta-descriptive instead of participatory.
+- The same camera reported `authority=unknown`, `envelope=none`, `first-send receipt=n/a`, and `RMCCA=not-captured`.
+- Recovery then reported `canonicalEnvelopePreserved=false` after a server-instance change.
+- Raw model capture concatenated output from the original generation and the recovery generation even though visible reconciliation correctly showed only one coherent answer, making the raw `modelText` unsafe as canonical future history.
+
+### RMCCA social participation
+
+- Advanced policy to `rmcca-cognitive-policy-v4-social-participation` and envelope to `swrlz-rmcca-context-v3`.
+- Greeting/social topology now explicitly requires direct conversational participation: greet back, match conversational energy, and continue naturally.
+- Meta-descriptions such as `This is a friendly greeting` are explicitly disallowed.
+- Greeting cues now activate the social domain and conversational reference frame.
+
+### Canonical transport hardening
+
+- Canonical context preparation now degrades safely instead of silently disappearing when a diagnostic/history substep fails.
+- Background transport validates that the outgoing payload owns the current canonical envelope and retries canonical preparation if needed.
+- Canonical receipts are retained by request ID until terminal completion rather than being consumed too early.
+- Camera transport metadata now records canonical preparation status/errors, envelope identity, request attempt, and generation branch identity.
+
+### Recovery-safe canonical model text
+
+- Every generation attempt receives a branch identity (`requestId:branch-N`).
+- Recovery advances to a new branch and the camera resets raw capture at that branch boundary.
+- Terminal `modelText` is now sourced only from the winning generation branch and marked `canonicalModelTextSource=winning-generation-branch`.
+- This prevents pre-recovery partial output from being concatenated into canonical history after a regenerated response.
+
+### Concurrency reconciliation
+
+- Transaction baseline: Server `2.3.70` / Chat `1.4.64`.
+- Immediately before version assignment both authorities were re-read and remained unchanged.
+- The event therefore safely advanced to Server `2.3.71` / Chat `1.4.65` using the fresh authority SHAs.
+
+### Verification / deployment state
+
+- Runtime source changed only on `runtime`.
+- LALM engine remains `2.1.26`; R39 inference source was not modified.
+- **Production deployment:** NONE requested.
+- **Server restart:** NONE requested.
+- Browser acceptance remains camera-driven. A fresh greeting should report `cognitiveAuthority=chat_context_canonical`, envelope `swrlz-rmcca-context-v3`, topology `social-participation`, conversational frame, and natural greeting behavior. If recovery occurs, the same envelope should remain preserved and only one winning raw generation branch should become canonical history.
+
+### Relevant lineage
+
+- Canonical RMCCA v4: `6968b1489732df12609556d5a80e23305e9ff497`
+- Recovery/canonical transport lineage: `623c4ece6b2595a796c51130d5cea8df8e8fa0cb`
+- Branch-aware context camera: `70863beab2cd9ad2463a6568137dda3073e135d1`
+- Server version authority: `0ef58926f166f1d5aee8aeb4560cf50244887e15`
+- Chat version authority: `134bc2ef18c76739a779ccc9d223d7ae3cea75c0`
+- Release record: `docs/releases/server-2.3.71-rmcca-social-recovery-lineage.md`
 
 ## Server v2.3.70 — 2026-09-12
 
