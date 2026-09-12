@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source": "runtime_pages/index.html"},
@@ -24,6 +24,7 @@
         "web/themes/ice-dragon/ice-dragon-art-loader-v14.js",
         "web/chat_code_artifacts.js",
         "web/chat_stream_incremental.js",
+        "web/chat_user_time_context.js",
         "web/chat_context_canonical.js",
         "web/chat_background_resume.js",
         "web/chat_context_camera.js",
@@ -37,5 +38,5 @@
     "/live": {"source": "runtime_pages/index.html"}
   },
   "assetRoots": ["web", "runtime_pages"],
-  "notes": "Runtime manifest v8 adds the Google server-configuration bridge so every browser obtains the public OAuth client ID from the server account-status authority rather than requiring browser-local test-page setup. Ice Dragon v14 behavior remains unchanged."
+  "notes": "Runtime manifest v9 loads a browser-local temporal context layer before canonical Chat request preparation. It attaches stable per-user-message local date, clock time, timezone, UTC offset, and daypart context without altering displayed message text; the stable timestamp reconstruction preserves next-turn prompt-prefix reuse. Google server configuration and Ice Dragon v14 behavior remain unchanged."
 }
