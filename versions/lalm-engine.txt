@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.27
-REVISION=2.1.27-hot-social-participation-v18
+VERSION=2.1.28
+REVISION=2.1.28-hot-social-participation-v18b-single-file-loader
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
