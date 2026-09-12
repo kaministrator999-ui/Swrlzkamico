@@ -1,4 +1,4 @@
-/* SWRLZ Ice Dragon Theme Pack v3.0.0 — canonical visual owner */
+/* SWRLZ Ice Dragon Theme Pack v3.1.0 — canonical visual owner */
 body[data-swrlz-theme="ice-dragon"]{
   --bg:#01050c;--bg-soft:#04101c;--panel:rgba(5,18,31,.88);--panel-strong:rgba(5,21,38,.97);--panel-lite:rgba(15,48,73,.74);
   --line:rgba(181,235,255,.18);--line-strong:rgba(121,232,255,.52);--cyan:#7af2ff;--blue:#6ca8ff;--violet:#9b88ff;
@@ -36,15 +36,19 @@ body[data-swrlz-theme="ice-dragon"] .composer-box:focus-within{border-color:rgba
 body[data-swrlz-theme="ice-dragon"] .route-select{background:#061727;border-color:rgba(143,229,255,.23)}
 body[data-swrlz-theme="ice-dragon"] .send-button{background:linear-gradient(135deg,#9af8ff,#6aa9ff);box-shadow:0 8px 26px rgba(92,226,255,.24)}
 
-/* One and only chamber wallpaper owner. */
+/* One and only chamber wallpaper owner: the .messages element itself. */
 body[data-swrlz-theme="ice-dragon"] .messages{
-  position:relative!important;isolation:isolate!important;background:none!important;
+  position:relative!important;
+  isolation:isolate!important;
+  background-color:#010812!important;
+  background-position:50% 42%!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
 }
 body[data-swrlz-theme="ice-dragon"] .messages::before{
-  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background-image:var(--ice-dragon-adult,none)!important;
-  background-position:50% 42%!important;background-size:cover!important;background-repeat:no-repeat!important;
-  opacity:1!important;
+  content:none!important;
+  display:none!important;
+  background:none!important;
 }
 body[data-swrlz-theme="ice-dragon"] .messages::after{
   content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
@@ -87,6 +91,6 @@ body[data-swrlz-theme="ice-dragon"] dialog{border-color:rgba(153,232,255,.23);ba
 body[data-swrlz-theme="ice-dragon"] .swrlz-theme-select{border-color:rgba(143,229,255,.25);background:#061727;color:#dff8ff}
 
 @media(max-width:760px){
-  body[data-swrlz-theme="ice-dragon"] .messages::before{background-position:50% 40%!important}
+  body[data-swrlz-theme="ice-dragon"] .messages{background-position:50% 40%!important}
   body[data-swrlz-theme="ice-dragon"] .sidebar{background:linear-gradient(180deg,rgba(3,12,22,.995),rgba(2,9,18,.98))}
 }
