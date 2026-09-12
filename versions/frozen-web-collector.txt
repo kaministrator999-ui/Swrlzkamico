@@ -1,5 +1,5 @@
 ID=frozen-web-collector
-VERSION=1.0.3
+VERSION=1.0.4
 KIND=runtime-service
 SOURCE_BRANCH=runtime
 STATUS=active
@@ -7,4 +7,4 @@ DISPLAY_NAME=§wyrlz Frozen Web Snapshot Collector
 UPDATE_POLICY=runtime-hot-compatible
 API_SCHEMA=1
 STATE_SCHEMA=1
-BASELINE_NOTE=Collector 1.0.3 restores the last verified working 1.0.0 runtime implementation after live import failures in 1.0.1 and 1.0.2 compatibility-wrapper attempts. This recovery restores readiness without changing API/state schema or durable collector data. The original false STATE_WRITE_CONFLICT on existing state without a usable ETag remains unresolved and requires a subsequent direct-source or stable-host repair; failed 1.0.1 and 1.0.2 remain preserved in lineage.
+BASELINE_NOTE=Collector 1.0.4 directly repairs the canonical durable state writer with no compatibility wrapper. A missing Blob ETag no longer implies that state.json is absent: existing state is re-read and its revision is checked before overwrite, while genuinely absent state still uses immutable creation. Every write is then read back and compared by expected revision and exact canonical JSON. API/state schema remain 1; failed 1.0.1 and 1.0.2 wrapper attempts and 1.0.3 recovery remain preserved in lineage.
