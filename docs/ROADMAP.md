@@ -2,18 +2,53 @@
 
 ## Current release
 
-**Server v2.3.66**
+**Server v2.3.67**
 
-This event repairs the Ice Dragon adult wallpaper at its actual source boundary: the runtime Base64 payload was structurally corrupt, so the exact intended source artwork was recovered and rebuilt into a valid browser-decodable JPEG payload.
+This event integrates the Recursive Multi-Domain Cognitive Clock Architecture (RMCCA) with the existing Structured Response Understanding & Revision model so §wyrlz can interpret progressively structured user meaning, keep multiple relevant domains active at once, and choose a response shape that fits the actual conversational act.
 
 ### Module state
 
-- **Server runtime v2.3.66** — current server development lineage.
-- **Chat v1.4.60** — Ice Dragon adult wallpaper source repair.
-- **LALM engine v2.1.21** — unchanged.
+- **Server runtime v2.3.67** — current server development lineage.
+- **Chat v1.4.61** — RMCCA cognitive policy + camera observability.
+- **LALM engine v2.1.26** — unchanged in this event.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
 - **Deployment Control v1.0.0** — unchanged.
+
+## Server v2.3.67 — 2026-09-11/12
+
+### Recursive Multi-Domain Cognitive Clock Architecture integration
+
+- Added the formal RMCCA architecture specification at `docs/architecture/RMCCA.md`.
+- Integrated a stable RMCCA cognitive response policy into the canonical Chat-to-LALM context layer. The policy teaches progressive structure decoding, scope preservation, local correction/revision, simultaneous multi-domain activation, domain salience, resolution depth, contextual reference frames, user-established synthesis order, and response-topology selection.
+- Identity questions are taught as contextual conversational acts that should receive a natural identity answer rather than a bare unexplained label.
+- Casual conversation is taught as participation rather than meta-description of the act itself.
+- Added RMCCA camera telemetry that records structural roles, active domains, qualitative salience, resolution depth, reference frame, response topology, and synthesis order alongside canonical/display context evidence.
+- RMCCA camera planning is diagnostic only and does not dynamically rewrite the prompt each turn, preserving a stable prefix for conversation-cache/checkpoint reuse.
+
+### Concurrency reconciliation
+
+- The event began from Server `2.3.65` / Chat `1.4.59`.
+- Immediately before version assignment, the authorities were re-read and had advanced concurrently to Server `2.3.66` / Chat `1.4.60` for the Ice Dragon adult-wallpaper repair.
+- The originally planned version numbers were discarded and the RMCCA event was reassigned to Server `2.3.67` / Chat `1.4.61` from the newest authority.
+
+### Verification / deployment state
+
+- `versions/server-runtime.txt` advanced from `2.3.66` to `2.3.67`.
+- `versions/web-chat.txt` advanced from `1.4.60` to `1.4.61`.
+- LALM engine remains `2.1.26` because the R39 engine source itself was not modified.
+- **Production deployment:** NONE requested; runtime-only Chat/model-policy update.
+- **Server restart:** NONE requested.
+- Acceptance remains camera-driven: verify natural identity framing, natural social participation, multi-domain RMCCA metadata, and stable checkpoint reuse in the next conversation log.
+
+### Relevant lineage
+
+- RMCCA cognitive policy: `984f783165f96326d58a90293a3fb7ffa8d21397`
+- RMCCA camera integration: `c5a1689953a60e42c581151fa867312f9ef84e5d`
+- RMCCA architecture document: `22017bbdc32e27a003e4c023ba83438d1bae3f48`
+- Server version authority: `7743a48186e333b8356f99389e91a24897c63d75`
+- Chat version authority: `2457c2cec2a676cd12bc6dd6e887b0b9b81708bb`
+- Release record: `docs/releases/server-2.3.67-rmcca-integration.md`
 
 ## Server v2.3.66 — 2026-09-11/12
 
