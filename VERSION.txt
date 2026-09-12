@@ -13,6 +13,7 @@ ADMIN_WEB=versions/admin-web.txt
 GOOGLE_ACCOUNT=versions/google-account.txt
 CLIENT_APK=versions/client-apk.txt
 SERVER_APK=versions/server-apk.txt
+FROZEN_WEB_COLLECTOR=versions/frozen-web-collector.txt
 DEPLOYMENT_CONTROL=versions/deployment-control.txt
 
 REGISTRY_FORMAT=2

@@ -2,22 +2,65 @@
 
 ## Current release
 
-**Server v2.3.67**
+**Server v2.3.68**
 
-This event integrates the Recursive Multi-Domain Cognitive Clock Architecture (RMCCA) with the existing Structured Response Understanding & Revision model so §wyrlz can interpret progressively structured user meaning, keep multiple relevant domains active at once, and choose a response shape that fits the actual conversational act.
+This event establishes the authenticated Frozen Web Snapshot Collector as a runtime-owned browser control plane backed by private durable Vercel Blob storage. The stable host is deployed once; compatible collector page and engine revisions remain hot-updatable from `runtime` afterward.
 
 ### Module state
 
-- **Server runtime v2.3.67** — current server development lineage.
-- **Chat v1.4.61** — RMCCA cognitive policy + camera observability.
+- **Server runtime v2.3.68** — current server development lineage.
+- **Chat v1.4.61** — unchanged; RMCCA cognitive policy + camera observability.
+- **Frozen Web Collector v1.0.0** — bounded collection, frozen search snapshots, and rights-reviewed training preparation.
 - **LALM engine v2.1.26** — unchanged in this event.
 - **LALM UI v1.0.0** — unchanged.
 - **Google Account architecture v1.0.4** — unchanged.
-- **Deployment Control v1.0.0** — unchanged.
+- **Deployment Control v1.0.2** — private Blob provisioning and collector acceptance gates added to the approved production workflow.
+
+## Server v2.3.68 — 2026-09-12
+
+### Frozen Web Snapshot Collector 1.0.0
+
+- Added a professional browser control room at `/collector` for configuring sources and budgets; starting, pausing, continuing, stepping, and sealing collection; searching frozen evidence; reviewing training candidates; and inspecting snapshot manifests.
+- Added a runtime-owned collector engine that canonicalizes and deduplicates content, extracts text, records provenance and URL revisions, calculates quality/privacy signals, prepares overlapping chunks and a lexical search index, and discards fetched raw HTML after extraction.
+- Frozen snapshot evidence and reviewed training corpora are separate. Snapshot inclusion never authorizes training; acceptance requires an explicit operator decision and rights/provenance confirmation.
+- Added fixed robots compliance, public-address-only outbound resolution, hostname-verified TLS over IP-pinned connections, redirect revalidation, source/domain boundaries, MIME and byte limits, politeness delays, run/page/document/domain/storage budgets, exploration reserve, and automatic pressure handling at 70/85/95 percent.
+- Durable mutable control state and immutable snapshot/training artifacts use a private Vercel Blob store. `/tmp` remains cache-only and is never authoritative.
+- Registered `FROZEN_WEB_COLLECTOR` in `VERSION.txt` with module authority `versions/frozen-web-collector.txt` at `1.0.0`.
+- The collector page and compatible engine updates are owned by `runtime`. A single stable-host deployment is required for initial installation; subsequent compatible revisions do not require server redeployment.
+
+### Concurrency reconciliation
+
+- The collector was originally designed against Server `2.3.58` and a planned `2.3.59` event.
+- Before promotion, the authoritative runtime branch had advanced through Server `2.3.67` / Chat `1.4.61` for later Ice Dragon and RMCCA work.
+- The stale planned Server version was discarded, all current runtime work was preserved, and the collector event was reassigned to Server `2.3.68`.
+- The older `2.3.67` current-state display called Deployment Control `1.0.0`; its module authority was already `1.0.1`. This event advances that authority to `1.0.2` without rewriting prior version history.
+
+### Verification / deployment state
+
+- **Source:** implemented on reconciled release branches and preserved in GitHub checkpoints.
+- **Static verification:** collector engine, storage contract, SSRF rejection, redirect/robots handling, lifecycle/checkpointing, lexical search, deterministic immutable sealing, training separation, console safety, and stable-host dispatch all pass focused verification.
+- **Production deployment:** explicitly approved; pending at this release-record stage.
+- **Server restart:** represented by the approved Vercel production deployment only; no recurring restart is required for compatible runtime updates.
+- **Live browser/API evidence:** pending the approved deployment and will be appended without rewriting the source event.
+
+### Relevant lineage
+
+- Rebased runtime checkpoint: `5b7744acc78a1a8508e5a954a4f5b2161db7a8d8`
+- Rebased stable-host checkpoint: `636321dcd9f204eae08f5e9cfc567ab1b2ac5c1d`
+- Pre-event runtime authority: `26009037b55c158a0606e84bf69202b165e59057`
+- Pre-event main authority: `4a070f5d5cc8aba67ef0575d8567b2f0f9813f7a`
+- Final canonical and deployment receipts: pending publication/deployment.
+
+### Rollback / migration
+
+- No existing collector data migration is required; the private store begins with no configured sources or accepted training material.
+- Rollback restores the preceding stable deployment and the pre-event `runtime` authority. Immutable snapshot artifacts, if later created by an operator, remain preserved unless separately and explicitly removed.
 
 ## Server v2.3.67 — 2026-09-11/12
 
 ### Recursive Multi-Domain Cognitive Clock Architecture integration
+
+The Deployment Control authority entering this event was `1.0.1`; an earlier current-state summary displayed `1.0.0` and is superseded by the authority-backed 2.3.68 record above.
 
 - Added the formal RMCCA architecture specification at `docs/architecture/RMCCA.md`.
 - Integrated a stable RMCCA cognitive response policy into the canonical Chat-to-LALM context layer. The policy teaches progressive structure decoding, scope preservation, local correction/revision, simultaneous multi-domain activation, domain salience, resolution depth, contextual reference frames, user-established synthesis order, and response-topology selection.

@@ -1,0 +1,9 @@
+ID=frozen-web-collector
+VERSION=1.0.0
+KIND=runtime-service
+SOURCE_BRANCH=runtime
+STATUS=active
+DISPLAY_NAME=§wyrlz Frozen Web Snapshot Collector
+UPDATE_POLICY=runtime-hot-compatible
+API_SCHEMA=1
+STATE_SCHEMA=1

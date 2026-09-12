@@ -60,10 +60,11 @@ For every versioned server update:
 
 ## Version ownership
 
-- **Server:** canonical runtime Server version is owned by `api/index.py` (`VERSION`) and exposed through the control-plane status endpoints.
-- **Chat:** canonical Chat version is owned by `web/chat_version.js` (`CHAT_VERSION`).
+- **Server:** canonical runtime Server version is owned by `versions/server-runtime.txt` and exposed through the control-plane status endpoints.
+- **Chat:** canonical Chat version is owned by `versions/web-chat.txt` and exposed through the runtime version/status path.
 - **LALM UI:** canonical LALM UI version is owned by the LALM control-plane status source and exposed as `/api/lalm/status` `uiVersion`.
 - **LALM engine:** engine/hot-runtime revisions are owned by the active LALM runtime source (`runtime_hot/r39_engine.py`). These are separate from the LALM UI version and must also be bumped when that runtime itself changes.
+- **Frozen Web Collector:** canonical collector version is owned by `versions/frozen-web-collector.txt`; the stable host reads it through `VERSION.txt` rather than carrying a duplicate value.
 
 ## Automatic cross-module version display
 
@@ -87,6 +88,7 @@ Use `runtime` for:
 - `runtime_pages/manifest.json` — add/remove/change routes
 - runtime assets under `web/` or `runtime_pages/`
 - runtime-loadable LALM/inference code, including R39 runtime source
+- `web/collector.html` and compatible `runtime_hot/web_snapshot_collector.py` revisions after the stable collector host is deployed
 
 ### Exact hotfix procedure
 
@@ -122,7 +124,7 @@ Only change `main` when the stable deployed boundary itself must change, includi
 - new bundled dependencies or stable server capabilities
 - a capability the current runtime loader cannot serve
 
-A `main` change requires a Vercel deployment.
+Applying a stable `main` change to production requires an explicitly approved Vercel deployment. Under the current configuration, ordinary Git commits do not deploy; `.deploy/REQUEST.txt` or an approved workflow dispatch is the production trigger.
 
 ## Restart/cold-start rule
 
@@ -154,6 +156,10 @@ Never treat `/tmp` as the permanent source of truth.
 ### Update page JS/CSS
 
 Edit the runtime-owned asset directly, bump the affected module and Server versions, update the roadmap, commit, reload, verify. No deploy/restart.
+
+### Update the Frozen Web Collector
+
+Compatible collector page and engine changes stay on `runtime`: update `web/collector.html` and/or `runtime_hot/web_snapshot_collector.py`, preserve API/state schema compatibility, advance Server and Frozen Web Collector authorities, update the roadmap, commit, and verify `/collector` plus `/api/collector/readiness`. A stable deployment is required only when the host contract, authentication boundary, stable dependency set, or API/state compatibility boundary changes.
 
 ## LALM/R39
 

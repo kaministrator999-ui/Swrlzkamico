@@ -1,13 +1,14 @@
 # §wyrlz Unified Vercel Server
 
-Server revision: **2.2.8**  
-Chat UI revision: **1.4.3**  
+Server revision: **2.3.68**
+Chat UI revision: **1.4.61**
 LALM UI revision: **1.0.0**  
 Server UI revision: **1.0.0**  
+Frozen Web Collector revision: **1.0.0**
 Production deployment: **https://swrlzkamico-o3nu.vercel.app**  
 Checkpoint lineage: `INT-VERCEL-CHAT-001A`
 
-This repository is the unified §wyrlz Vercel server. Server 2.2.8 preserves the split control planes and records the mobile Chat sidebar fix plus authoritative cross-module version display.
+This branch is the durable live application source for the unified §wyrlz Vercel server. Server 2.3.68 adds the Frozen Web Snapshot Collector while preserving Chat 1.4.61 and LALM Engine 2.1.26.
 
 ## Control planes
 
@@ -16,6 +17,8 @@ This repository is the unified §wyrlz Vercel server. Server 2.2.8 preserves the
 - `/api/chat` — stable conversational client surface.
 - `/api/admin` — Admin workbench.
 - `/api/pages` — live page manager.
+- `/collector` — Frozen Web Snapshot Collector browser control room.
+- `/api/collector/*` — authenticated collector status, lifecycle, frozen search, document, and snapshot routes.
 - `/live/` — live launchpad/index.
 
 Status/API receipts:
@@ -47,9 +50,17 @@ Scopes:
 
 The LALM scope returns `chatTouched: false` by contract. Ordinary R39/native/prefill/decode iteration should use this path after 2.2.0 is deployed.
 
+## Frozen Web Snapshot Collector
+
+The collector implements the controlled pipeline:
+
+`registered source → bounded fetch → extract/canonicalize/deduplicate → quality + provenance → chunks + lexical index → immutable frozen snapshot → explicit training review`
+
+Private Vercel Blob owns durable state and snapshot artifacts. Raw HTML is discarded after extraction, `/tmp` is never authoritative, robots compliance is fixed on, and every training acceptance requires an explicit rights/provenance confirmation. The stable host is deployed once; `web/collector.html` and compatible `runtime_hot/web_snapshot_collector.py` revisions remain hot-updatable from `runtime`.
+
 ## Chat boundary
 
-Chat is **1.4.3** for Server 2.2.8. The mobile sidebar fix changed user-facing Chat behavior, so Chat received its own version increment. Server/LALM work that does not change the Chat protocol or user-facing behavior does not advance the Chat version.
+Chat is **1.4.61** for Server 2.3.68 and is unchanged by the collector event. Server/LALM/collector work that does not change the Chat protocol or user-facing behavior does not advance the Chat version.
 
 Chat owns:
 
@@ -88,15 +99,15 @@ Server/all scoped hot mutation requires Admin authorization. The LALM scope and 
 
 ## Durable vs ephemeral state
 
-GitHub `dev` remains the durable source for hot-editable assets. Vercel `/tmp` hot overrides are instance-local and ephemeral. Bundled source remains the fallback after worker replacement, runtime clear, or cold start.
+GitHub `runtime` remains the durable source for hot-editable assets. Vercel `/tmp` state is instance-local and ephemeral; runtime loaders reconstruct compatible page and engine code from the durable branch after worker replacement or cold start.
 
 ## Development / release flow
 
-Use `dev` for ordinary page and LALM-runtime iteration. `vercel.json` disables automatic deployment from `dev`.
+Use `runtime` for ordinary page and LALM-runtime iteration. `vercel.json` disables Git-triggered deployment; the stable production workflow is separately approval-gated.
 
 Promote to `main` only when the stable server boundary changes, including Python routes, auth/session behavior, middleware, native build configuration, or deployment contracts.
 
-Server 2.2.8 preserves the architecture deployment that established the split control planes and LALM-scoped hot-sync contract. Routine runtime application work remains on `runtime` without redeploy/restart.
+Server 2.3.68 installs the stable collector host. Routine compatible collector, Chat, page, and LALM runtime work remains on `runtime` without redeploy/restart.
 
 ## Versioning contract
 
@@ -105,7 +116,7 @@ Every server runtime development event receives a new overall Server version, in
 Modules that display another module's version must obtain it from the owning module's authoritative status/version source rather than maintaining a second stale literal. Chat currently resolves Server from `/api/server/status` and LALM UI from `/api/lalm/status`.
 
 Canonical roadmap: `docs/ROADMAP.md`  
-Latest release record: `docs/releases/SERVER_2.2.8.md`
+Latest release record: `docs/releases/server-2.3.68-frozen-web-collector.md`
 
 ## Contracts and records
 
@@ -115,9 +126,10 @@ Latest release record: `docs/releases/SERVER_2.2.8.md`
 - `docs/contracts/SWRLZ_HOT_RUNTIME_V1.md`
 - `docs/releases/SERVER_2.2.0.md`
 - `docs/releases/SERVER_2.2.8.md`
+- `docs/releases/server-2.3.68-frozen-web-collector.md`
 - `docs/ROADMAP.md`
 - `SWRLZ_VERCEL_CHAT_CHANGELOG.md`
 
 ## Revision history
 
-2.2.8 records the mobile Chat sidebar stacking fix, advances Chat to 1.4.3 and Server to 2.2.8, and establishes authoritative cross-module version rendering. 2.2.0 established the split Server/LALM/Chat control planes and scoped LALM hot mutation.
+2.3.68 adds Frozen Web Collector 1.0.0, private durable snapshot storage, explicit training review, and the hot-update collector boundary. Earlier release records remain preserved in `docs/releases/`.
