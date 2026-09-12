@@ -4,8 +4,8 @@
 
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-10-hot-engine-refresh
-REQUESTED_AT=2026-09-11T02:45:00Z
+REQUEST_ID=2026-09-12-google-account-stable-auth
+REQUESTED_AT=2026-09-12T17:03:00Z
 REQUESTED_BY=ChatGPT-with-user-approval
 SOURCE_REF=main
-REASON=Deploy approved stable per-worker hot engine refresh wiring so LALM 2.1.19 and future runtime engine revisions propagate consistently across Vercel workers.
+REASON=Deploy the approved stable Google account authentication/session boundary so Chat can use server-verified Google identity consistently across browsers. Runtime Chat remains the live UI source of truth.
