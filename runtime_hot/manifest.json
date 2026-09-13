@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.36-hot-requirement-plan-rmcca-trace-v26",
+  "revision": "2.1.37-hot-requirement-repair-rmcca-direct-v27",
   "inferenceFiles": [
     "r39_engine.py"
   ]
