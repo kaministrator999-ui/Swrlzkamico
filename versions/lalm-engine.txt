@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.32
-REVISION=2.1.32-hot-batched-prefill-rmcca-v22
+VERSION=2.1.33
+REVISION=2.1.33-hot-continuity-rmcca-guard-v23
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
