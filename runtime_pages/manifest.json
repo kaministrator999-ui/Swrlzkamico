@@ -1,5 +1,5 @@
 {
-  "version": 32,
+  "version": 33,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v32 activates Ice Dragon wallpaper v21. The runtime binary bridge returned 503 for the PNG path, so the browser now requests the exact repository-root PNG directly from raw GitHub and renders it with centered cover geometry. Existing context-capacity and continuity behavior remain unchanged."
+  "notes":"Manifest v33 is the cache-revision authority for Server 2.3.109 runtime delivery optimization. After that stable server is deployed, injected JS/CSS URLs carry ?v=33 and may be browser-cached as immutable while HTML and the manifest remain live/no-store. Ice Dragon wallpaper v21 and existing context/continuity behavior remain unchanged."
 }
