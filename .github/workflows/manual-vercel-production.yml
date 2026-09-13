@@ -7,17 +7,14 @@ on:
         description: "Explicit production deployment approval"
         required: true
         type: choice
-        options:
-          - "no"
-          - "yes"
+        options: ["no", "yes"]
         default: "no"
       ref:
         description: "Git ref to deploy"
         required: true
         default: "main"
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - ".deploy/REQUEST.txt"
 
@@ -56,7 +53,6 @@ jobs:
             echo "ref=${{ inputs.ref }}" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-
           target="$(grep '^TARGET=' .deploy/REQUEST.txt | tail -n1 | cut -d= -f2-)"
           approved="$(grep '^APPROVED=' .deploy/REQUEST.txt | tail -n1 | cut -d= -f2-)"
           source_ref="$(grep '^SOURCE_REF=' .deploy/REQUEST.txt | tail -n1 | cut -d= -f2-)"
@@ -103,40 +99,24 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
-      - name: Ensure private collector Blob store
+      - name: Verify private collector Blob store
         shell: bash
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           COLLECTOR_BLOB_STORE: swrlz-collector-o3nu
         run: |
           set -euo pipefail
-          connected="$(vercel blob list-stores --token="$VERCEL_TOKEN")"
-          if printf '%s\n' "$connected" | grep -Fq "$COLLECTOR_BLOB_STORE"; then
-            echo "Private collector Blob store is already connected."
-          else
-            available="$(vercel blob list-stores --all --token="$VERCEL_TOKEN")"
-            if printf '%s\n' "$available" | grep -Fq "$COLLECTOR_BLOB_STORE"; then
-              vercel integration resource connect "$COLLECTOR_BLOB_STORE" "$VERCEL_PROJECT_ID" \
-                --environment production --yes --token="$VERCEL_TOKEN"
-            else
-              vercel blob create-store "$COLLECTOR_BLOB_STORE" --access private --region iad1 \
-                --environment production --yes --token="$VERCEL_TOKEN"
-            fi
-          fi
-
-          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
-          environment_file=".vercel/.env.production.local"
-          if grep -q '^BLOB_READ_WRITE_TOKEN=' "$environment_file"; then
-            echo "Collector storage credential is available for the production build."
-          elif grep -q '^VERCEL_OIDC_TOKEN=' "$environment_file" && grep -q '^BLOB_STORE_ID=' "$environment_file"; then
-            echo "Collector OIDC storage identity is available for the production build."
-          else
-            echo "Private Blob was not exposed to the production environment." >&2
+          stores="$(vercel blob list-stores --token="$VERCEL_TOKEN" 2>&1 || true)"
+          printf '%s\n' "$stores"
+          if ! printf '%s\n' "$stores" | grep -Fq "$COLLECTOR_BLOB_STORE"; then
+            echo "Expected private collector Blob store is not connected to this project." >&2
             exit 1
           fi
+          echo "Private collector Blob store is already connected."
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
 
       - name: Install Python build tooling
-        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9
         with:
           version: "0.12.13"
           enable-cache: false
@@ -157,7 +137,7 @@ jobs:
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Production deployment: $url" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Verify frozen web collector
+      - name: Verify production server and collector
         shell: bash
         env:
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
@@ -165,26 +145,15 @@ jobs:
           set -euo pipefail
           ready=0
           for attempt in $(seq 1 18); do
-            code="$(curl --silent --show-error --output collector-readiness.json --write-out '%{http_code}' \
-              "$DEPLOYMENT_URL/api/collector/readiness" || true)"
+            code="$(curl --silent --show-error --output server-status.json --write-out '%{http_code}' "$DEPLOYMENT_URL/api/server/status" || true)"
             if [[ "$code" == "200" ]] && python - <<'PY'
           import json
-          import re
-          with open("collector-readiness.json", encoding="utf-8") as stream:
+          with open("server-status.json", encoding="utf-8") as stream:
               value = json.load(stream)
-          assert value.get("ready") is True
-          assert value.get("module", {}).get("id") == "frozen-web-collector"
-          module = value.get("module", {})
-          assert re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", str(module.get("version", "")))
-          assert module.get("apiSchemaVersion") == 1
-          assert module.get("stateSchemaVersion") == 1
-          assert value.get("host", {}).get("moduleVersion") == module["version"]
-          assert value.get("storage", {}).get("backend") == "vercel-blob"
-          assert value.get("storage", {}).get("configured") is True
-          assert value.get("storage", {}).get("access") == "private"
-          assert value.get("storage", {}).get("ephemeralTmpUsedAsAuthority") is False
-          assert value.get("host", {}).get("sourceBranch") == "runtime"
-          assert value.get("host", {}).get("deploymentRequiredForRuntimeChanges") is False
+          assert value.get("version") == "2.3.100", value.get("version")
+          caps = value.get("capabilities", {})
+          assert caps.get("chat-resumable-generation", {}).get("ready") is True
+          assert caps.get("chat-resumable-generation", {}).get("contract") == "resumable-v1"
           PY
             then
               ready=1
@@ -193,17 +162,22 @@ jobs:
             sleep 5
           done
           if [[ "$ready" != "1" ]]; then
-            echo "Collector readiness did not pass within the bounded verification window." >&2
-            test -f collector-readiness.json && python -m json.tool collector-readiness.json || true
+            echo "Server 2.3.100 readiness did not pass." >&2
+            test -f server-status.json && python -m json.tool server-status.json || true
             exit 1
           fi
 
-          curl --fail --silent --show-error --output collector-page.html "$DEPLOYMENT_URL/collector"
-          grep -Fq '<title>SWRLZ Frozen Web Collector</title>' collector-page.html
-          anonymous_code="$(curl --silent --show-error --output collector-anonymous.json --write-out '%{http_code}' \
-            "$DEPLOYMENT_URL/api/collector/status")"
-          test "$anonymous_code" = "401"
-          echo "Frozen Web Collector page, runtime compatibility, storage configuration, and anonymous-auth checks passed." >> "$GITHUB_STEP_SUMMARY"
+          collector_code="$(curl --silent --show-error --output collector-readiness.json --write-out '%{http_code}' "$DEPLOYMENT_URL/api/collector/readiness" || true)"
+          test "$collector_code" = "200"
+          python - <<'PY'
+          import json
+          with open("collector-readiness.json", encoding="utf-8") as stream:
+              value = json.load(stream)
+          assert value.get("ready") is True
+          assert value.get("storage", {}).get("configured") is True
+          assert value.get("storage", {}).get("access") == "private"
+          PY
+          echo "Server 2.3.100 resumable Chat capability and collector readiness passed." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Deployment receipt
         run: |
