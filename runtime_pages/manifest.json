@@ -1,12 +1,12 @@
 {
-  "version": 29,
+  "version": 30,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
     "/chat": {
       "source":"web/chat.html",
       "styles":["web/chat_boot_guard.css","web/chat_enhancements.css","web/themes/ice-dragon/ice-dragon-theme.css","web/themes/ice-dragon/ice-dragon-art-v2.css","web/chat_mobile_viewport_fix.css","web/chat_code_artifacts.css"],
-      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-wallpaper-v19.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_committed_contract_bridge.js","web/chat_committed_output_v3.js","web/chat_activity_immediate.js","web/chat_temporal_personality.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_rmcca_transport_guard.js","web/chat_background_resume_v2.js","web/chat_identity_semantics.js","web/chat_response_presence.js","web/chat_transcript_sync.js","web/chat_terminal_integrity.js","web/chat_rmcca_transport_trace_v2.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
+      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-wallpaper-v19.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_committed_contract_bridge.js","web/chat_committed_output_v3.js","web/chat_activity_immediate.js","web/chat_temporal_personality.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_rmcca_transport_guard.js","web/chat_background_resume_v2.js","web/chat_identity_semantics.js","web/chat_response_presence.js","web/chat_transcript_sync.js","web/chat_terminal_integrity.js","web/chat_context_capacity.js","web/chat_rmcca_transport_trace_v2.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
     },
     "/server":{"source":"web/server.html"},
     "/lalm":{"source":"web/lalm.html"},
@@ -15,5 +15,5 @@
     "/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v29 adds terminal-response integrity and temporal metadata non-relay. A stream-confirmed completed response is monotonic: later foreground/reconnect/transcript network errors may be recorded but cannot erase or downgrade already-completed assistant text. Visible committed text is snapshotted before backgrounding and preserved across late network-state churn. Approved device time remains reasoning context, while raw local date, IANA timezone and UTC offset are internal metadata and are not surfaced unless the user explicitly asks for those details. Existing staged §wyrlz presence, semantic alias normalization, permission-first device time, preferred-name/time anchors, and strict generation-transcript-v1 continuity remain active."
+  "notes":"Manifest v30 adds visible conversation-context capacity and thread-history integrity. The UI shows estimated active model context against the current 2048-token conversation budget while separately showing messages stored in the thread. Reaching 100% does not delete thread history; bounded model context and stored conversation history remain separate. A same-thread silent shrink is reconciled from a browser-local shadow snapshot, while explicit whole-thread deletion remains allowed. Existing terminal-response integrity, temporal metadata non-relay, staged §wyrlz presence, semantic alias normalization, permission-first device time, and strict generation-transcript-v1 continuity remain active."
 }
