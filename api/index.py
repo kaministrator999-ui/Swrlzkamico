@@ -6,10 +6,10 @@ runtime branch by the dedicated hot/live loaders. The stable frozen-web
 collector host applies authentication and a fixed runtime-module contract while
 the collector implementation and page remain runtime-owned.
 
-Server 2.3.108 preserves validated RMCCA/time context, keeps local generation
-detached from the browser socket, and checkpoints the authoritative generation
-transcript to private shared Blob state so transcript synchronization is not tied
-to whichever warm worker receives the browser's next request.
+Server 2.3.109 preserves the 2.3.108 shared transcript continuity contract while
+reducing runtime-source request overhead: hot synchronization is globally gated
+and parallelized, and manifest-versioned web assets are browser-cacheable without
+making the HTML or runtime manifest stale.
 """
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ from api.chat_rmcca_passthrough import install as _install_chat_rmcca_passthroug
 from api.chat_transcript_store import STORE as _transcript_store
 import api.chat_extensions as _chat_extensions
 
-VERSION = "2.3.108"
+VERSION = "2.3.109"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -70,6 +70,15 @@ _server.CAPABILITIES["chat-rmcca-direct-transport"] = {
     "contract": "rmcca-direct-v1",
     "fallback": "history-carrier-v1",
     "detail": "Validated RMCCA cognitive and user-time context survives stable request normalization as bounded first-class metadata; the compact history carrier remains compatibility transport.",
+}
+_server.CAPABILITIES["runtime-delivery-optimization"] = {
+    "kind": "performance",
+    "ready": True,
+    "contract": "hot-runtime-delivery-v1",
+    "syncGateSeconds": 30,
+    "parallelSourceChecks": True,
+    "assetCacheContract": "manifest-versioned-immutable-v1",
+    "detail": "Ordinary Chat requests share a gated runtime refresh authority; due source checks run concurrently; revisioned JS/CSS may remain browser-cached while HTML and manifest stay live/no-store.",
 }
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
