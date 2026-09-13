@@ -1,12 +1,12 @@
 {
-  "version": 15,
+  "version": 16,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
     "/chat": {
       "source":"web/chat.html",
       "styles":["web/chat_boot_guard.css","web/chat_enhancements.css","web/themes/ice-dragon/ice-dragon-theme.css","web/themes/ice-dragon/ice-dragon-art-v2.css","web/chat_mobile_viewport_fix.css","web/chat_code_artifacts.css"],
-      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-direct-wallpaper-v18.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_activity_immediate.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_background_resume.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
+      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-direct-wallpaper-v18.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_activity_immediate.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_background_resume.js","web/chat_recovery_integrity.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
     },
     "/server":{"source":"web/server.html"},
     "/lalm":{"source":"web/lalm.html"},
@@ -15,5 +15,5 @@
     "/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v15 adds Ice Dragon direct wallpaper v18 after the existing v17 fallback. v18 uses the user-supplied artwork file directly from web/themes/ice-dragon/assets/ice-dragon-adult-wallpaper.jpg and caches it once on-device; it performs no browser upscaling or recompression. If the direct binary asset is unavailable, v17 remains the safe fallback."
+  "notes":"Manifest v16 adds the Chat recovery-integrity overlay after canonical context/background recovery. It transports compact RMCCA/time context through the existing normalized stream contract and changes replay behavior to exact continuation or best-partial preservation instead of destructive divergent redo. Existing Ice Dragon direct wallpaper v18 remains unchanged."
 }
