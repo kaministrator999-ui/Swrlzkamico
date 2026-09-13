@@ -27,3 +27,8 @@ The script syntax and safety fixtures pass: fixed origin, no redirects, exactly 
 ## Continuation
 
 Read the verification run and append its actual status, provider-version comparison, durable revision receipts, and any remaining errors. A successful readiness response alone must never be described as successful storage writes.
+
+
+## 2026-09-13 live result — verification incomplete
+
+[Run 34778401085](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/34778401085) failed before any configuration write. Both metadata and private delivery reads returned HTTP 200. The metadata ETag was strong, the delivery ETag was weak, and they differed. This confirms the provider-version mismatch behind the user's HTTP 412 reports. Readiness matched Collector 1.0.8 and its exact published engine hash. The following authenticated status request returned HTTP 401; no configure action was attempted. This result must not be called storage-write acceptance. Server 2.3.121 adds explicit handling for non-readable credential exports and a separately scoped exact-engine/private-Blob verification using the existing storage credential.

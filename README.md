@@ -1,6 +1,6 @@
 # §wyrlz Unified Vercel Server
 
-- Server revision: **2.3.120**
+- Server revision: **2.3.121**
 - Chat UI revision: **1.4.77**
 - LALM UI revision: **1.0.0**
 - Server UI revision: **1.0.0**
@@ -137,3 +137,8 @@ Latest release record: `docs/releases/server-2.3.79-frozen-web-collector.md`
 ## Collector deployment status
 
 The collector is live through the runtime loader. Collector 1.0.8 repairs conditional state writes using Vercel's object metadata ETag after the user's Start/Configure screenshots confirmed HTTP 412 ETag mismatch on 1.0.7. Deterministic verification passes; see `docs/releases/server-2.3.104-collector-metadata-etag.md` for production acceptance receipts. Compatible runtime changes require no redeployment.
+
+
+## Collector verification event 2.3.121
+
+Deployment Control 1.0.6 handles unavailable credential exports explicitly and verifies a bounded save through the exact live collector and its private store. Collector remains 1.0.8. [Verification scope and pending receipt](docs/releases/server-2.3.121-collector-storage-acceptance.md).

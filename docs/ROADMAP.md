@@ -2,6 +2,12 @@
 
 ## Current release
 
+**Server 2.3.121 / Deployment Control 1.0.6 — collector storage acceptance**
+
+The prior run confirmed the strong-metadata/weak-delivery ETag mismatch, then stopped at HTTP 401 before a write. This event distinguishes non-readable application credentials and can verify the exact published engine against the existing private store. Live acceptance is pending; Collector remains 1.0.8. No deployment or collection interruption. See [event receipt](releases/server-2.3.121-collector-storage-acceptance.md).
+
+## Previous release context
+
 **Server 2.3.120 / Deployment Control 1.0.5 — bounded collector live verification**
 
 Collector 1.0.8 is confirmed live. This event adds a separate verification job that uses existing credentials privately to save unchanged settings and confirm persistence. Production acceptance is pending the job result. It does not deploy or interrupt collection. See [event receipt](releases/server-2.3.120-collector-live-verification.md).
