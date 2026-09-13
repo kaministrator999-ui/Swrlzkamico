@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.35
-REVISION=2.1.35-hot-semantic-commit-ledger-v25
+VERSION=2.1.36
+REVISION=2.1.36-hot-requirement-plan-rmcca-trace-v26
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
