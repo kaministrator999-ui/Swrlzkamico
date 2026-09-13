@@ -2,15 +2,17 @@
 
 ## Current release
 
-**Server v2.3.112 / Web Chat 1.4.94 — exact Ice Dragon PNG wallpaper**
+**Server v2.3.116 / Web Chat 1.4.99 — exact Ice Dragon PNG with stale-manifest compatibility**
 
-**Status: exact supplied artwork wired directly; live browser acceptance pending refresh.**
+**Status: exact supplied artwork wired directly; stale v20 and current v21 paths both converge on the same PNG; browser acceptance pending refresh.**
 
-The Ice Dragon theme now uses the exact repository-root PNG identified by the user (`file_00000000b13c81f5a7f9fe99c0264ef0.png`) without resize, recompression, Base64 reconstruction, or fake 8K generation. The same Git blob is exposed at `web/themes/ice-dragon/assets/ice-dragon-adult-wallpaper.png`, loaded by wallpaper v20, cached under a fresh generation, and rendered with centered `cover` geometry so it fills the whole chat backdrop. Manifest 30 activates the new controller. See [event receipt](releases/server-2.3.112-ice-dragon-exact-png-wallpaper.md).
+The intended Ice Dragon artwork is the exact repository-root PNG `file_00000000b13c81f5a7f9fe99c0264ef0.png`. No resize, recompression, Base64 reconstruction, or fake 8K generation is used. The runtime binary bridge was proven to return HTTP 503 for the copied PNG asset, so current wallpaper v21 requests the exact PNG directly from raw GitHub and renders it centered with `background-size: cover` across the complete chat backdrop. Because the live manifest was still temporarily serving manifest 31 / wallpaper v20, v20 was also converted into a compatibility bridge to the same direct PNG path. This makes stale and current manifests converge instead of showing the old dragon. See [v21 receipt](releases/server-2.3.115-ice-dragon-raw-png.md) and [v20 compatibility receipt](releases/server-2.3.116-ice-dragon-v20-compat-bridge.md).
 
 ## Previous release context
 
-The prior roadmap entries remain preserved in Git history. This current-state update intentionally advances only the active frontier while retaining full lineage through release receipts and commit history.
+Server 2.3.113 / Web Chat 1.4.96 copied the exact PNG Git blob into the runtime theme asset path and restored `cover`, but live acceptance exposed that the text-oriented `/live/assets/...` source bridge cannot serve that binary and returned HTTP 503. Server 2.3.115 / Web Chat 1.4.98 therefore bypassed the binary bridge with direct browser loading, and Server 2.3.116 / Web Chat 1.4.99 hardened stale-manifest compatibility.
+
+The prior roadmap entries remain preserved in Git history and release receipts.
 
 ## Mandatory roadmap/version law
 
