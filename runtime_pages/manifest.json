@@ -1,5 +1,5 @@
 {
-  "version": 33,
+  "version": 34,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v33 is the cache-revision authority for Server 2.3.109 runtime delivery optimization. After that stable server is deployed, injected JS/CSS URLs carry ?v=33 and may be browser-cached as immutable while HTML and the manifest remain live/no-store. Ice Dragon wallpaper v21 and existing context/continuity behavior remain unchanged."
+  "notes":"Manifest v34 refreshes the Ice Dragon theme CSS cache revision for UI polish: the backdrop fade now spans the full message-stack content, the composer backing is translucent blurred glass, and welcome copy contrast is increased. Wallpaper v21 and existing context/continuity behavior remain unchanged."
 }
