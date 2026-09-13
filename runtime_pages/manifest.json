@@ -1,5 +1,5 @@
 {
-  "version": 37,
+  "version": 38,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v37 preserves the canonical Ice Dragon workspace and adds ice-dragon-brand-v1.css. The canonical §wyrlz identity in the sidebar and assistant byline now uses a mobile-safe icy rune/display treatment with gradient text, controlled letter spacing, and restrained cyan-blue glow while prose, code, timestamps, telemetry, and activity text retain their normal readable typography. Existing turn-integrity, transcript continuity, context-capacity, response-polish, and workspace-shell behavior is preserved."
+  "notes":"Manifest v38 removes the legacy adult-wallpaper hydrator as a visual owner. The exact Ice Dragon PNG is painted only by the canonical workspace path from first paint onward; stale local adult previews are purged and the message chamber stays transparent, preventing the old low-resolution dragon from replacing the intended backdrop after hydration. Composer glass is rebalanced to a lighter outer blur with a darker inner input field, and chat bubble blur is reduced for sharper artwork. Existing brand, turn-integrity, transcript continuity, context-capacity, and response-polish behavior is preserved."
 }
