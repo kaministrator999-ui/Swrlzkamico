@@ -1,11 +1,11 @@
 # §wyrlz Server Roadmap & Version Ledger
 
 **READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-- **Current overall server baseline:** `2.3.91`
+- **Current overall server baseline:** `2.3.102`
 **Current Chat component:** `1.4.77`  
 **Current Web Frontend component:** `1.0.3`  
 **Current LALM UI component:** `1.0.0`  
-- **Current Frozen Web Collector component:** `1.0.5`
+- **Current Frozen Web Collector component:** `1.0.7`
 - **Current Deployment Control component:** `1.0.3`
 **Release policy:** every server development event gets an overall Server release/version entry plus independent component version changes where applicable, including unsuccessful attempts.
 
@@ -564,3 +564,19 @@ Configure a valid Vercel deployment credential for the existing team/project as 
 Then re-run the failed deploy job in workflow run `34708124306`. The retained successful authorization output pins source `329f4222b6ed159f472f29b093aa789accc76263`; the same approved collector installation is still pending. Do not alter deployment settings or start a crawl as a workaround. After the job succeeds, verify readiness/storage/auth responses and browser operation, then append the actual deployment ID and result here.
 
 Approval is already on record for this bounded installation; the remaining prerequisite is credential configuration. This receipt records new evidence for the same Server 2.3.79 event and does not introduce another source change or version event.
+
+
+## Collector storage continuation — 2026-09-13
+
+- Event: Server Runtime 2.3.102 / Frozen Web Collector 1.0.7.
+- Runtime and checkpoint commit: `9ea27fc6f4a0c0242031c06004210c01f96079a6`.
+- Authoritative baseline was runtime `d7c232459e58a4eb259e6f2a49f51641be4ecff6`, Server 2.3.101 / Collector 1.0.6. Concurrent Web Chat work was preserved.
+- Collector 1.0.6 corrected the response-size input's native step mismatch. Authenticated reads and private Blob listing passed on 2026-09-12, but three unchanged configuration saves returned HTTP 409 and left revision 1. The generic write-conflict message came from the provider PUT error mapping, not the state revision precheck.
+- Collector 1.0.7 preserves conditional writes and exposes a bounded, credential-redacted provider rejection to the authenticated operator. It never retries without the write condition. This is diagnostic progress, not a claim that saving is fixed.
+- Complete deterministic collector verification passes, including the provider-error/redaction/no-unconditional-retry regression.
+- At `2026-09-13T12:56:26Z`, production readiness returned HTTP 200, ready true, Collector 1.0.7, API/state schema 1, private storage configured, and engine SHA-256 `a7c933a6a0a384150f699abc7825086a26e3c1ee83e42df6883bbce12f55eb7f`. Host source is `github-runtime`; `deploymentRequiredForRuntimeChanges:false`.
+- The diagnostic change is therefore live through runtime loading. It does not prove a successful authenticated state write.
+- The verification browser's prior tab session expired; secure sign-in with the existing SWRLZ_ADMIN_TOKEN is pending. Credentials must not be pasted into chat or saved in GitHub.
+- Remaining acceptance: after secure sign-in, save the unchanged Safety configuration once, capture the actual provider reason if rejected, repair the evidenced cause in a new version event, and confirm successful revision advancement plus settings persistence after reload.
+- No source registration, collection, snapshot sealing, training acceptance, or deletion was initiated by this continuation.
+- Current configuration has Git deployment disabled and the production workflow watches only explicit dispatch or main `.deploy/REQUEST.txt` changes. This event changes neither. Another chat independently requested a stable deployment at main `1a766f071a354b6d757b903aa9b5c56e486c0da4`; that request and its source are preserved.

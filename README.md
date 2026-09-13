@@ -1,7 +1,7 @@
 # §wyrlz Unified Vercel Server
 
-- Server runtime revision: **2.3.91**
-- Frozen Web Collector revision: **1.0.5**
+- Server runtime revision: **2.3.102**
+- Frozen Web Collector revision: **1.0.7**
 - Chat/runtime hotfix rules: **SWRLZ_HOTFIX_RULES.md**
 - Production deployment: **https://swrlzkamico-o3nu.vercel.app**
 - Checkpoint lineage: `FROZEN-WEB-COLLECTOR-001`
@@ -106,4 +106,4 @@ Before declaring a runtime hotfix complete:
 
 ## Collector deployment status
 
-The `/collector` page and stable host are live. Public readiness reports Collector 1.0.5 with private storage configured; operations require the existing SWRLZ admin token. Compatible page/engine updates load from `runtime` without server redeployment. See `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md` for deployment receipts and the remaining authenticated verification boundary.
+The `/collector` page and stable host are live. Production readiness verified Collector 1.0.7 on 2026-09-13 through the runtime loading path, with private storage configured and no deployment required for compatible updates. Authenticated reads/listing passed previously; saving settings returned HTTP 409 and remains under diagnosis. See `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md` for the saved continuation and exact remaining acceptance.
