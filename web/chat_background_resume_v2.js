@@ -2,14 +2,11 @@
 if(window.__swrlzBackgroundResumeInstalled)return;
 window.__swrlzBackgroundResumeInstalled=true;
 
-const STORE_KEY='swrlz.chat.pending-streams.v2';
-const LEGACY_STORE_KEY='swrlz.chat.pending-streams.v1';
-const MAX_AGE_MS=30*60*1000;
-const live=new Set();
-const retryTimers=new Map();
 const nativeFetch=window.fetch.bind(window);
 const INTENT_MARK='[[SWRLZ_TURN_INTENT:';
 const CARRIER='[[SWRLZ_RMCCA_TRANSPORT_V1:';
+const RESUME_CONTRACT='resumable-v1';
+const encoder=new TextEncoder();
 
 function cleanTurnText(value){let text=String(value||'');const markers=['\n\n'+INTENT_MARK,INTENT_MARK,'[[social turn]]','[[coding turn]]','[[general turn]]'];for(const marker of markers){const at=text.indexOf(marker);if(at>=0)text=text.slice(0,at)}return text.trim()}
 function classifyIntent(value){const text=cleanTurnText(value),words=text.split(/\s+/).filter(Boolean).length;const code=/\b(code|coding|program|programming|function|class|method|script|html|css|javascript|typescript|python|c\+\+|cpp|java|kotlin|rust|sql|api|json|implement|debug|refactor|snippet|compile|compiler)\b|\.(?:cpp|h|hpp|py|js|ts|html|css)\b/i.test(text);if(code)return 'coding';const social=/^(?:hey|hi|hello|yo|sup|thanks|thank you|lol|lmao|😂|😆|👋|🙂|😊|❤️|🫂)(?:\s|[!,.?👋🙂😊😂😆❤️🫂])*$/i.test(text);if(words<=10&&social)return 'social';return 'general'}
@@ -18,37 +15,88 @@ function fallbackNormalizePayload(payload){if(!payload||typeof payload!=='object
 function compactCarrier(payload){const e=payload?.swrlzCognitiveContext,t=payload?.swrlzUserTimeContext;if(!e?.cognitiveClock&&!t)return '';const data={v:1};if(e?.cognitiveClock)data.e={envelopeId:String(e.envelopeId||''),directiveId:String(e.directiveId||''),cognitiveClock:e.cognitiveClock};if(t)data.t={localDate:String(t.localDate||''),localTime:String(t.localTime||''),daypart:String(t.daypart||''),timeZone:String(t.timeZone||''),utcOffset:String(t.utcOffset||'')};const encoded=JSON.stringify(data);return encoded.length<=1800?CARRIER+encoded+']]':''}
 function withCarrier(payload){if(!payload||typeof payload!=='object')return payload;const carrier=compactCarrier(payload);if(!carrier)return payload;const history=(Array.isArray(payload.history)?payload.history:[]).filter(item=>!String(item?.text||'').startsWith(CARRIER));history.push({role:'assistant',text:carrier});return {...payload,history,_swrlzCarrierAttached:true}}
 function canonicalizePayload(payload){const normalized=fallbackNormalizePayload(payload);let prepared=normalized,error='';try{const prepare=window.__swrlzCanonicalContext?.preparePayload;if(typeof prepare==='function')prepared=prepare(normalized)}catch(err){error=String(err?.message||err)}try{const ctx=window.__swrlzCanonicalContext;if(ctx&&typeof ctx.envelopeValid==='function'&&!ctx.envelopeValid(prepared)&&typeof ctx.preparePayload==='function')prepared=ctx.preparePayload({...normalized,swrlzCognitiveContext:null})}catch(err){error=[error,String(err?.message||err)].filter(Boolean).join(' | ')}if(prepared&&typeof prepared==='object'&&error)prepared={...prepared,swrlzCanonicalTransportError:error};return withCarrier(prepared)}
+function isStreamRequest(input,init){try{const method=String(init?.method||input?.method||'GET').toUpperCase();const url=typeof input==='string'?input:(input?.url||'');return method==='POST'&&/(?:[?&]action=stream(?:&|$)|\/stream(?:[?#]|$))/i.test(url)}catch(_){return false}}
+function parseBody(init){if(typeof init?.body!=='string')return null;try{const value=JSON.parse(init.body);return value&&typeof value==='object'?value:null}catch(_){return null}}
+function currentMessage(rid){try{const thread=typeof currentThread==='function'?currentThread():null;return [...(thread?.messages||[])].reverse().find(m=>m?.role==='assistant'&&String(m?.meta?.requestId||'')===String(rid))||null}catch(_){return null}}
+function trace(message,phase,reason){if(!message)return;message.meta=message.meta||{};message.meta.phase=phase;message.meta.trail=Array.isArray(message.meta.trail)?message.meta.trail:[];const last=message.meta.trail.at(-1);if(last?.reason!==reason)message.meta.trail.push({seq:Number(last?.seq||0)+1,phase,reason,at:Date.now()});if(message.meta.trail.length>80)message.meta.trail.splice(0,message.meta.trail.length-80);try{saveState()}catch(_){ }try{scheduleRender(false)}catch(_){ }}
+function annotate(message,patch){if(!message)return;message.meta=message.meta||{};message.meta.networkContinuity={...(message.meta.networkContinuity||{}),...patch}}
+function abortError(){try{return new DOMException('Aborted','AbortError')}catch(_){const e=new Error('Aborted');e.name='AbortError';return e}}
+function sleep(ms,signal){return new Promise((resolve,reject)=>{if(signal?.aborted)return reject(abortError());const timer=setTimeout(done,ms);function done(){signal?.removeEventListener?.('abort',stop);resolve()}function stop(){clearTimeout(timer);reject(abortError())}signal?.addEventListener?.('abort',stop,{once:true})})}
+async function waitForOnline(signal){while(!navigator.onLine){await new Promise((resolve,reject)=>{if(signal?.aborted)return reject(abortError());const online=()=>{cleanup();resolve()},abort=()=>{cleanup();reject(abortError())};function cleanup(){window.removeEventListener('online',online);signal?.removeEventListener?.('abort',abort)}window.addEventListener('online',online,{once:true});signal?.addEventListener?.('abort',abort,{once:true})})}}
+function copyHeaders(source){const headers=new Headers();source.headers.forEach((v,k)=>headers.set(k,v));return headers}
 
-function loadStore(){try{const current=JSON.parse(localStorage.getItem(STORE_KEY)||'null');if(current&&typeof current==='object')return current;const legacy=JSON.parse(localStorage.getItem(LEGACY_STORE_KEY)||'{}');return legacy&&typeof legacy==='object'?legacy:{}}catch(_){return {}}}
-function saveStore(store){try{localStorage.setItem(STORE_KEY,JSON.stringify(store));localStorage.removeItem(LEGACY_STORE_KEY)}catch(_){}}
-function prune(store=loadStore()){const now=Date.now();let changed=false;for(const [rid,entry] of Object.entries(store))if(!entry||!entry.createdAt||now-Number(entry.createdAt)>MAX_AGE_MS){delete store[rid];changed=true}if(changed)saveStore(store);return store}
-function streamUrl(input){try{return typeof input==='string'?input:(input?.url||'')}catch(_){return ''}}
-function isStreamRequest(input,init){const method=String(init?.method||input?.method||'GET').toUpperCase();if(method!=='POST')return false;return /(?:[?&]action=stream(?:&|$)|\/stream(?:[?#]|$))/i.test(streamUrl(input))}
-function bodyPayload(init){if(typeof init?.body!=='string')return null;try{const value=JSON.parse(init.body);return value&&typeof value==='object'?value:null}catch(_){return null}}
-function chatAuthHeaders(){try{if(typeof window.authHeaders==='function')return {...window.authHeaders()}}catch(_){ }let value='';try{value=sessionStorage.getItem('swrlzChatToken')||sessionStorage.getItem('swrlz.chat.token')||''}catch(_){ }return {'Content-Type':'application/json','X-SWRLZ-Chat-Token':value}}
-function messageForRequest(rid){try{const thread=typeof currentThread==='function'?currentThread():null;if(!thread||!Array.isArray(thread.messages))return null;return [...thread.messages].reverse().find(item=>item?.role==='assistant'&&String(item?.meta?.requestId||'')===String(rid))||null}catch(_){return null}}
-function currentContext(rid,threadId){try{const thread=typeof currentThread==='function'?currentThread():null;if(!thread)return null;if(threadId&&String(thread.id||'')!==String(threadId))return null;const message=[...(thread.messages||[])].reverse().find(item=>item?.role==='assistant'&&String(item?.meta?.requestId||'')===String(rid));return message?{thread,message}:null}catch(_){return null}}
-function applyTransportCamera(message,body,extra={}){if(!message)return;message.meta=message.meta||{};message.meta.contextCamera=message.meta.contextCamera||{};const camera=message.meta.contextCamera,e=body?.swrlzCognitiveContext;camera.canonicalRequestPrepared=Boolean(e?.envelopeId&&e?.directiveId);camera.canonicalEnvelopePreserved=Boolean(e?.envelopeId&&e?.directiveId&&body?._swrlzCarrierAttached);camera.canonicalTransportError=String(body?.swrlzCanonicalTransportError||'');camera.rmccaCarrierAttached=Boolean(body?._swrlzCarrierAttached);if(e){camera.directiveId=e.directiveId;camera.canonicalEnvelopeId=e.envelopeId;camera.cognitiveAuthority='chat_context_canonical';camera.cognitiveClock=e.cognitiveClock;camera.historySource=e.historySource;camera.historyMessages=e.historyMessages;camera.assistantHistoryUsingModelText=e.assistantHistoryUsingModelText;camera.canonicalPrepareStatus=e.prepareStatus||'ok';camera.canonicalPrepareError=e.prepareError||''}Object.assign(camera,extra)}
-function phaseNote(message,text,phase='RECONNECTING'){if(!message)return;message.meta=message.meta||{};message.meta.phase=phase;message.meta.trail=Array.isArray(message.meta.trail)?message.meta.trail:[];const last=message.meta.trail[message.meta.trail.length-1];if(last?.reason!==text)message.meta.trail.push({seq:Number(last?.seq||0)+1,phase,reason:text,at:Date.now()});if(message.meta.trail.length>80)message.meta.trail.splice(0,message.meta.trail.length-80);try{saveState()}catch(_){ }try{scheduleRender(false)}catch(_){ }}
-function persistEvent(rid,message,seq){const store=loadStore(),entry=store[rid];if(!entry)return;entry.updatedAt=Date.now();entry.lastSeq=Math.max(Number(entry.lastSeq||0),Number(seq||0));entry.partialText=String(message?.text||'');saveStore(store)}
-function forget(rid){if(!rid)return;const store=loadStore();if(store[rid]){delete store[rid];saveStore(store)}live.delete(rid);const timer=retryTimers.get(rid);if(timer)clearTimeout(timer);retryTimers.delete(rid);try{window.__swrlzCanonicalContext?.releaseReceipt?.(rid)}catch(_){}}
-function remember(payload,url){if(!payload?.requestId)return;const store=prune(),rid=String(payload.requestId),old=store[rid]||{},stamp=Date.now();store[rid]={...old,requestId:rid,threadId:String(payload.threadId||''),url:String(url||'/api/chat?action=stream'),body:payload,createdAt:Number(old.createdAt||stamp),requestStartedAt:Number(old.requestStartedAt||stamp),updatedAt:stamp,recoveryAttempts:Number(old.recoveryAttempts||0),partialText:String(old.partialText||'')};saveStore(store);const message=messageForRequest(rid);applyTransportCamera(message,payload,{generationBranchId:`${rid}:primary`,requestAttempt:1,firstSendReceiptAttached:Boolean(payload?.swrlzCognitiveContext),continuityPolicy:'single-visible-generation'});captureOriginInstance(rid)}
-async function serverInstanceId(){try{const response=await nativeFetch('/api/server/status',{cache:'no-store',credentials:'same-origin'});if(!response.ok)return '';const value=await response.json();return String(value?.instanceId||'')}catch(_){return ''}}
-async function captureOriginInstance(rid){const instanceId=await serverInstanceId();if(!instanceId)return;const store=loadStore(),entry=store[rid];if(!entry)return;if(!entry.originInstanceId)entry.originInstanceId=instanceId;entry.lastSeenInstanceId=instanceId;entry.updatedAt=Date.now();saveStore(store)}
-function preservePartial(found,entry,reason){const message=found?.message;if(!message)return false;const baseline=String(message.text||entry?.partialText||'');if(!baseline.trim())return false;message.text=baseline;message.state='complete';message.meta=message.meta||{};message.meta.phase='PARTIAL_PRESERVED';message.meta.backgroundResumeMode='partial-preserved';message.meta.recoveryStopped=true;message.meta.recoveryStoppedReason=reason;message.meta.generationBranchId=`${entry.requestId}:primary`;phaseNote(message,reason,'PARTIAL_PRESERVED');forget(entry.requestId);try{saveState()}catch(_){ }try{scheduleRender(false)}catch(_){ }return true}
-function failWithoutText(found,entry,reason){const message=found?.message;if(!message)return;message.state='failed';message.meta=message.meta||{};message.meta.phase='ERROR';message.meta.error=reason;message.meta.recoveryStopped=true;message.meta.backgroundResumeMode='no-visible-retry-exhausted';phaseNote(message,reason,'ERROR');forget(entry.requestId);try{saveState()}catch(_){ }try{scheduleRender(false)}catch(_){ }}
+async function openConnection(input,init,payload,resumeAfterSeq,signal){await waitForOnline(signal);const body={...payload,resumeAfterSeq:Math.max(0,Number(resumeAfterSeq||0))};return nativeFetch(input,{...init,signal,body:JSON.stringify(body)})}
 
-window.fetch=async function(input,init={}){if(!isStreamRequest(input,init))return nativeFetch(input,init);const raw=bodyPayload(init),payload=canonicalizePayload(raw),rid=String(payload?.requestId||'');const nextInit=payload?{...init,body:JSON.stringify(payload)}:init;if(rid)remember(payload,streamUrl(input));try{return await nativeFetch(input,nextInit)}catch(err){if(rid)setTimeout(()=>resumeOne(rid),80);throw err}};
+function resilientBody(input,init,payload,firstResponse){
+  const rid=String(payload.requestId||''),message=currentMessage(rid),signal=init.signal;
+  let lastSeq=0,terminal=false,currentResponse=firstResponse,reconnects=0;
+  annotate(message,{contract:RESUME_CONTRACT,reconnects:0,lastSeq:0,state:'live'});
+  return new ReadableStream({
+    async start(controller){
+      try{
+        while(!terminal){
+          if(!currentResponse){
+            reconnects++;
+            annotate(message,{state:'reconnecting',reconnects,lastSeq});
+            trace(message,'RECONNECTING','Network connection changed or dropped. §wyrlz is still generating on the server; reconnecting to the same generation session.');
+            let delay=250;
+            while(!currentResponse){
+              if(signal?.aborted)throw abortError();
+              try{
+                await waitForOnline(signal);
+                const response=await openConnection(input,init,payload,lastSeq,signal);
+                if(response.status===404||response.status===409||response.status===410)throw new Error(`Generation session unavailable (HTTP ${response.status}).`);
+                if(!response.ok)throw new Error(`Resume HTTP ${response.status}`);
+                if(response.headers.get('x-swrlz-generation-session')!==RESUME_CONTRACT)throw new Error('The server does not expose resumable generation sessions.');
+                currentResponse=response;
+              }catch(err){if(signal?.aborted)throw abortError();annotate(message,{state:'waiting-network',lastError:String(err?.message||err)});await sleep(delay,signal);delay=Math.min(3000,Math.round(delay*1.6))}
+            }
+          }
+          const replayThrough=Math.max(lastSeq,Number(currentResponse.headers.get('x-swrlz-replay-through-seq')||0));
+          const reader=currentResponse.body?.getReader?.();
+          if(!reader)throw new Error('Streaming response body is unavailable.');
+          const decoder=new TextDecoder();let buffer='';
+          try{
+            while(true){
+              const {value,done}=await reader.read();if(done)break;
+              buffer+=decoder.decode(value,{stream:true});let nl;
+              while((nl=buffer.indexOf('\n'))>=0){
+                const line=buffer.slice(0,nl).trim();buffer=buffer.slice(nl+1);if(!line)continue;
+                let event;try{event=JSON.parse(line)}catch(_){continue}
+                const seq=Number(event?.seq||0);if(!Number.isInteger(seq)||seq<=lastSeq)continue;
+                const backlog=seq<=replayThrough;
+                if(backlog){annotate(message,{state:'catching-up',lastSeq,replayThrough});message&&(message.meta.phase='CATCHING_UP');if(event.type==='DELTA')await sleep(24,signal);else await sleep(4,signal)}
+                controller.enqueue(encoder.encode(JSON.stringify(event)+'\n'));
+                lastSeq=seq;annotate(message,{state:backlog?'catching-up':'live',lastSeq,replayThrough,reconnects});
+                if(['COMPLETED','CANCELLED','FAILED'].includes(String(event.type||''))){terminal=true;break}
+              }
+              if(terminal)break;
+            }
+            buffer+=decoder.decode();
+            if(buffer.trim()&&!terminal){try{const event=JSON.parse(buffer.trim()),seq=Number(event?.seq||0);if(Number.isInteger(seq)&&seq>lastSeq){controller.enqueue(encoder.encode(JSON.stringify(event)+'\n'));lastSeq=seq;if(['COMPLETED','CANCELLED','FAILED'].includes(String(event.type||'')))terminal=true}}catch(_){}}
+          }catch(err){if(signal?.aborted)throw abortError();annotate(message,{state:'reconnecting',lastError:String(err?.message||err),lastSeq})}
+          finally{try{reader.releaseLock()}catch(_){}}
+          if(!terminal){currentResponse=null;continue}
+        }
+        annotate(message,{state:'complete',lastSeq,reconnects});controller.close();
+      }catch(err){annotate(message,{state:'failed',lastError:String(err?.message||err),lastSeq,reconnects});controller.error(err)}
+    },
+    cancel(){try{if(!signal?.aborted&&typeof active!=='undefined'&&active?.controller)active.controller.abort()}catch(_){}}
+  });
+}
 
-const baseConsume=typeof consumeEvent==='function'?consumeEvent:null;
-if(baseConsume){consumeEvent=function(event,context){const result=baseConsume(event,context);const message=context?.message,rid=String(event?.identity?.requestId||message?.meta?.requestId||'');if(rid)persistEvent(rid,message,event?.seq);if(rid&&['COMPLETED','CANCELLED','FAILED'].includes(String(event?.type||'')))forget(rid);return result}}
+window.fetch=async function(input,init={}){
+  if(!isStreamRequest(input,init))return nativeFetch(input,init);
+  const raw=parseBody(init);if(!raw)return nativeFetch(input,init);
+  const payload=canonicalizePayload(raw),rid=String(payload?.requestId||''),message=currentMessage(rid);
+  const nextInit={...init,body:JSON.stringify(payload)};
+  let response;
+  try{response=await nativeFetch(input,nextInit)}catch(err){annotate(message,{state:'initial-network-error',lastError:String(err?.message||err)});throw err}
+  if(response.headers.get('x-swrlz-generation-session')!==RESUME_CONTRACT)return response;
+  const headers=copyHeaders(response);headers.set('x-swrlz-browser-continuity','same-generation-v1');
+  trace(message,'GENERATING','Resumable generation session established. Network handoffs will reconnect to this same response without regenerating it.');
+  return new Response(resilientBody(input,nextInit,payload,response),{status:response.status,statusText:response.statusText,headers});
+};
 
-async function consumeNdjson(response,context,rid){if(!response.ok)throw new Error(`HTTP ${response.status}`);const reader=response.body?.getReader?.();if(!reader)throw new Error('STREAM_BODY_UNAVAILABLE');const decoder=new TextDecoder();let buffer='';while(true){const {value,done}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});let nl;while((nl=buffer.indexOf('\n'))>=0){const line=buffer.slice(0,nl).trim();buffer=buffer.slice(nl+1);if(!line)continue;let event;try{event=JSON.parse(line)}catch(_){continue}if(String(event?.identity?.requestId||event?.requestId||rid)!==String(rid))continue;consumeEvent(event,context);if(context.terminal)try{await reader.cancel()}catch(_){}}if(context.terminal)break}const tail=(buffer+decoder.decode()).trim();if(tail&&!context.terminal){try{consumeEvent(JSON.parse(tail),context)}catch(_){}}if(!context.terminal)throw new Error('STREAM_ENDED_WITHOUT_TERMINAL')}
-function scheduleRetry(rid,delay=1200){if(retryTimers.has(rid))return;retryTimers.set(rid,setTimeout(()=>{retryTimers.delete(rid);resumeOne(rid)},delay))}
-async function resumeOne(rid){if(!rid||live.has(rid)||document.visibilityState==='hidden')return;try{if(typeof active!=='undefined'&&active?.requestId===rid&&active?.controller&&!active.controller.signal.aborted)return}catch(_){ }const store=prune(),entry=store[rid];if(!entry)return;const found=currentContext(rid,entry.threadId);if(!found)return;const baseline=String(found.message.text||entry.partialText||'');if(baseline.trim()){preservePartial(found,entry,'The live stream ended after visible text had already been committed. That response was preserved exactly; Chat will not regenerate or replace it automatically.');return}if(Number(entry.recoveryAttempts||0)>=1){failWithoutText(found,entry,'The stream ended before any assistant text arrived and the single safe retry also ended. Start a new request rather than silently regenerating multiple branches.');return}entry.recoveryAttempts=1;entry.updatedAt=Date.now();entry.body=canonicalizePayload(entry.body);saveStore(store);applyTransportCamera(found.message,entry.body,{generationBranchId:`${rid}:pretext-retry-1`,requestAttempt:2,recoveryAttempts:1,continuityPolicy:'single-visible-generation'});live.add(rid);phaseNote(found.message,'The stream ended before any assistant text was visible. One safe retry is starting; once any text is shown it will never be replaced automatically.','RECONNECTING');try{const response=await nativeFetch(entry.url||'/api/chat?action=stream',{method:'POST',credentials:'same-origin',cache:'no-store',headers:{...chatAuthHeaders(),'Accept':'application/x-ndjson'},body:JSON.stringify(entry.body)});if(response.status===401){failWithoutText(found,entry,'Generation recovery needs a valid Chat session.');return}const context={threadId:found.thread.id,requestId:rid,message:found.message,lastSeq:0,terminal:false,started:performance.now(),requestStartedAt:Number(entry.requestStartedAt||Date.now())};await consumeNdjson(response,context,rid)}catch(err){const text=String(err?.message||err),latest=loadStore()[rid]||entry;if(String(found.message.text||latest.partialText||'').trim())preservePartial(found,latest,`The retry stream ended (${text}); the visible response was preserved exactly.`);else failWithoutText(found,latest,`The single pre-text retry ended (${text}).`)}finally{live.delete(rid)}}
-function resumeCurrent(){const store=prune();let thread=null;try{thread=typeof currentThread==='function'?currentThread():null}catch(_){thread=null}if(!thread)return;for(const entry of Object.values(store))if(String(entry?.threadId||'')===String(thread.id||''))resumeOne(String(entry.requestId||''))}
-function persistNow(){try{saveState()}catch(_){ }}
-
-window.addEventListener('pageshow',()=>setTimeout(resumeCurrent,80));window.addEventListener('focus',()=>setTimeout(resumeCurrent,60));window.addEventListener('online',()=>setTimeout(resumeCurrent,60));document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(resumeCurrent,60);else persistNow()});window.addEventListener('pagehide',persistNow);setTimeout(resumeCurrent,300);setInterval(()=>{if(document.visibilityState==='visible')resumeCurrent()},1800);
-window.__swrlzBackgroundResume={version:2,resumeCurrent,pending:()=>prune(),live,classifyIntent,cleanTurnText,canonicalizePayload,continuityPolicy:'single-visible-generation',carrier:CARRIER};
+window.__swrlzBackgroundResume={version:3,classifyIntent,cleanTurnText,canonicalizePayload,continuityPolicy:'same-generation-resume',resumeContract:RESUME_CONTRACT,catchupDeltaDelayMs:24,carrier:CARRIER};
 })();
