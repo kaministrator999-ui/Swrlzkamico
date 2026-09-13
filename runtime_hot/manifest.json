@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.32-hot-batched-prefill-rmcca-v22",
+  "revision": "2.1.33-hot-continuity-rmcca-guard-v23",
   "inferenceFiles": [
     "r39_engine.py"
   ]
