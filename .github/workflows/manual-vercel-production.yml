@@ -144,13 +144,13 @@ jobs:
         run: |
           set -euo pipefail
           ready=0
-          for attempt in $(seq 1 18); do
-            code="$(curl --silent --show-error --output server-status.json --write-out '%{http_code}' "$DEPLOYMENT_URL/api/server/status" || true)"
+          for attempt in $(seq 1 36); do
+            code="$(curl --max-time 12 --silent --show-error --output server-status.json --write-out '%{http_code}' "$DEPLOYMENT_URL/api/server/status" || true)"
             if [[ "$code" == "200" ]] && python - <<'PY'
           import json
           with open("server-status.json", encoding="utf-8") as stream:
               value = json.load(stream)
-          assert value.get("version") == "2.3.108", value.get("version")
+          assert value.get("version") == "2.3.109", value.get("version")
           caps = value.get("capabilities", {})
           assert caps.get("chat-resumable-generation", {}).get("ready") is True
           assert caps.get("chat-resumable-generation", {}).get("contract") == "resumable-v1"
@@ -161,6 +161,9 @@ jobs:
           assert caps.get("chat-shared-generation-transcript", {}).get("access") == "private"
           assert caps.get("chat-rmcca-direct-transport", {}).get("ready") is True
           assert caps.get("chat-rmcca-direct-transport", {}).get("contract") == "rmcca-direct-v1"
+          assert caps.get("runtime-delivery-optimization", {}).get("ready") is True
+          assert caps.get("runtime-delivery-optimization", {}).get("contract") == "hot-runtime-delivery-v1"
+          assert caps.get("instance-independent-live-source", {}).get("assetCacheContract") == "manifest-versioned-immutable-v1"
           PY
             then
               ready=1
@@ -169,12 +172,14 @@ jobs:
             sleep 5
           done
           if [[ "$ready" != "1" ]]; then
-            echo "Server 2.3.108 readiness did not pass." >&2
-            test -f server-status.json && python -m json.tool server-status.json || true
+            echo "Server 2.3.109 readiness did not pass." >&2
+            if [[ -s server-status.json ]]; then
+              python -m json.tool server-status.json || cat server-status.json
+            fi
             exit 1
           fi
 
-          collector_code="$(curl --silent --show-error --output collector-readiness.json --write-out '%{http_code}' "$DEPLOYMENT_URL/api/collector/readiness" || true)"
+          collector_code="$(curl --max-time 12 --silent --show-error --output collector-readiness.json --write-out '%{http_code}' "$DEPLOYMENT_URL/api/collector/readiness" || true)"
           test "$collector_code" = "200"
           python - <<'PY'
           import json
@@ -184,7 +189,7 @@ jobs:
           assert value.get("storage", {}).get("configured") is True
           assert value.get("storage", {}).get("access") == "private"
           PY
-          echo "Server 2.3.108 resumable Chat + shared private transcript continuity + direct RMCCA transport and collector readiness passed." >> "$GITHUB_STEP_SUMMARY"
+          echo "Server 2.3.109 optimized hot-runtime delivery + shared private transcript continuity + direct RMCCA transport and collector readiness passed." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Deployment receipt
         run: |
