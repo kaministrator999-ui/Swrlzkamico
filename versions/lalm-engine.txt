@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.37
-REVISION=2.1.37-hot-requirement-repair-rmcca-direct-v27
+VERSION=2.1.38
+REVISION=2.1.38-hot-permission-temporal-grounding-v28
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
