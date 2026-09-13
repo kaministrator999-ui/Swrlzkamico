@@ -6,9 +6,9 @@ runtime branch by the dedicated hot/live loaders. The stable frozen-web
 collector host applies authentication and a fixed runtime-module contract while
 the collector implementation and page remain runtime-owned.
 
-Server 2.3.79 adds the authenticated Frozen Web Collector host while preserving
-startup-time LALM hydration, the Google account authentication/session boundary,
-and the existing runtime-source boundary.
+Server 2.3.100 adds same-generation resumable Chat sessions for transient network
+handoffs while preserving startup-time LALM hydration, the Google account
+authentication/session boundary, and the existing runtime-source boundary.
 """
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ from api.collector_host import install as _install_collector_host
 from api.chat_resume_sessions import install as _install_chat_resume_sessions
 import api.chat_extensions as _chat_extensions
 
-VERSION = "2.3.79"
+VERSION = "2.3.100"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -40,6 +40,12 @@ _server.CAPABILITIES["lalm-startup-warm"] = {
     "ready": False,
     "phase": "server-start",
     "detail": "LALM/R39 is hydrated from runtime and probed before the worker is exposed to Chat.",
+}
+_server.CAPABILITIES["chat-resumable-generation"] = {
+    "kind": "transport-continuity",
+    "ready": True,
+    "contract": "resumable-v1",
+    "detail": "A requestId owns one local generation session; reconnecting clients replay only events after resumeAfterSeq.",
 }
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
@@ -76,8 +82,6 @@ def _warm_lalm_at_start() -> None:
         }
         _server.activity("lalm-startup-warm", source=source, ready=True, branch=sync.get("branch", "runtime"))
     except Exception as exc:
-        # Startup warmup is fail-open: the existing Chat readiness path remains
-        # available as a fallback if hydration or probing cannot complete.
         _server.CAPABILITIES["lalm-startup-warm"] = {
             "kind": "runtime-execution",
             "ready": False,
