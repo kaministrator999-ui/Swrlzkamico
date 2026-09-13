@@ -1,0 +1,59 @@
+/* §wyrlz Ice Dragon brand typography v1
+   Display-only identity treatment. Message prose, code, timestamps, and telemetry remain unchanged. */
+
+body[data-swrlz-theme="ice-dragon"]{
+  --swrlz-brand-font:"Copperplate","Copperplate Gothic Light","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
+  --swrlz-brand-ice-1:#f5fdff;
+  --swrlz-brand-ice-2:#a8f4ff;
+  --swrlz-brand-ice-3:#75a9ff;
+}
+
+/* Canonical §wyrlz identity surfaces. */
+body[data-swrlz-theme="ice-dragon"] .brand-copy strong,
+body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong{
+  font-family:var(--swrlz-brand-font)!important;
+  font-weight:800!important;
+  font-variant:small-caps;
+  letter-spacing:.075em!important;
+  line-height:1.05;
+  color:var(--swrlz-brand-ice-1)!important;
+  text-shadow:
+    0 0 4px rgba(223,252,255,.92),
+    0 0 10px rgba(111,236,255,.52),
+    0 0 20px rgba(83,145,255,.28),
+    0 2px 8px rgba(0,7,18,.88);
+}
+
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  body[data-swrlz-theme="ice-dragon"] .brand-copy strong,
+  body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong{
+    background:linear-gradient(180deg,var(--swrlz-brand-ice-1) 4%,var(--swrlz-brand-ice-2) 48%,var(--swrlz-brand-ice-3) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+}
+
+/* Sidebar identity gets a touch more presence without becoming a logo billboard. */
+body[data-swrlz-theme="ice-dragon"] .brand-copy strong{
+  font-size:18px!important;
+  letter-spacing:.105em!important;
+  filter:drop-shadow(0 0 7px rgba(112,237,255,.18));
+}
+
+/* Assistant-byline stays compact enough for mobile chat rows. */
+body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong{
+  font-size:13px!important;
+  letter-spacing:.07em!important;
+}
+
+/* Let the § glyph read like a rune instead of disappearing into the wordmark. */
+body[data-swrlz-theme="ice-dragon"] .brand-copy strong::first-letter,
+body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong::first-letter{
+  font-size:1.08em;
+}
+
+@media(max-width:540px){
+  body[data-swrlz-theme="ice-dragon"] .brand-copy strong{font-size:17px!important;letter-spacing:.085em!important}
+  body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong{font-size:12.5px!important;letter-spacing:.055em!important}
+}
