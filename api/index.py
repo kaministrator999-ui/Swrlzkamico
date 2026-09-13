@@ -24,6 +24,7 @@ from api.native_status import install as _install_native_status
 from api.contextual_input import install as _install_contextual_input
 from api.account_routes_v2 import install as _install_account_routes
 from api.collector_host import install as _install_collector_host
+from api.chat_resume_sessions import install as _install_chat_resume_sessions
 import api.chat_extensions as _chat_extensions
 
 VERSION = "2.3.79"
@@ -50,6 +51,7 @@ _install_contextual_input(_server)
 _install_account_routes(_server)
 _install_collector_host(_server)
 _install_live_source_guard(_server)
+_install_chat_resume_sessions(_chat_extensions)
 
 
 def _warm_lalm_at_start() -> None:
