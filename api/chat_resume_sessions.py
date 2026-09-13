@@ -147,8 +147,9 @@ def install(chat_extensions) -> None:
                 return
 
     def stream_response(payload: dict[str, Any]):
+        clean = canonical_payload(payload)
         if chat._raw_upstream_url():
-            return base_stream_response(payload)
+            return base_stream_response(clean)
         after_seq = max(0, int(payload.get("resumeAfterSeq") or 0))
         session = get_or_start(payload)
         replay_through = int(session.get("lastSeq") or 0)
