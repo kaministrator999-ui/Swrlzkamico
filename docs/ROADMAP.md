@@ -2,9 +2,15 @@
 
 ## Current release
 
-**Server 2.3.125 / Web Chat 1.5.5 — canonical wallpaper lock + restrained glass**
+**Server 2.3.126 / Web Chat 1.5.6 — Ice Dragon forum-glass polish + account chat identity**
 
-**Status: runtime-hot fix published; browser visual acceptance pending refresh.**
+**Status: runtime-hot UI update published; browser visual acceptance pending refresh.**
+
+Manifest v39 adds `ice-dragon-polish-v2.css` and `chat_account_identity_v1.js` while preserving the canonical exact-PNG workspace wallpaper and the v38 wallpaper lock. The composer now uses a lighter sculpted outer glass field with a darker inner input surface, cooler silver-gray context/caption typography, and lower blur so artwork detail remains visible. Assistant identity receives a restrained old-forum-inspired frosted nameplate that visually joins the dragon companion with the §wyrlz name/time, while assistant response bubbles use a subtler themed border rather than a heavy frame. Activity/copy/export/action controls now use ice-blue glass instead of flat gray blocks. Account settings are constrained for mobile, duplicate name controls are collapsed toward one editable Chat name, and signed-in Google avatar/name are used for user-message identity instead of the generic `YOU` label when available. Existing turn-integrity, transcript continuity, context-capacity, response-polish, and wallpaper ownership remain unchanged. See [event receipt](releases/server-2.3.126-chat-identity-polish.md).
+
+## Previous release context
+
+**Server 2.3.125 / Web Chat 1.5.5 — canonical wallpaper lock + restrained glass**
 
 The refresh regression was traced to `ice-dragon-art-loader-v17.js`: after the canonical workspace had already painted the intended repository PNG, the legacy adult-art hydrator reconstructed/cached the former 864×1536 JPEG and later painted it onto `.messages`, visually replacing the correct backdrop. That adult wallpaper responsibility is now retired from the art loader; it remains companion-avatar-only and actively clears legacy message-chamber wallpaper state. `chat_frontend_boot.js` no longer reads the stale adult-preview localStorage key and always first-paints the canonical Ice Dragon PNG on `.workspace`. Manifest v38 cache-busts the fix. The composer is rebalanced to the requested layered glass treatment: lighter outer shell blur, darker inner input field, and lower blur on user/assistant bubbles so the artwork remains sharper. Existing Ice Dragon brand styling from manifest v37 and all turn-integrity/transcript/context behavior remain preserved. See [event receipt](releases/server-2.3.125-ice-dragon-wallpaper-lock.md).
 
