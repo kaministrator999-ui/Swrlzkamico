@@ -37,20 +37,10 @@ consumeEvent=function(event,context){
   return strictConsume(event,context);
 };
 
-function loadTranscriptSync(){
-  if(window.__swrlzTranscriptSyncInstalled||document.querySelector('script[data-swrlz-transcript-sync]'))return;
-  const script=document.createElement('script');
-  script.src='/live/web/chat_transcript_sync.js';
-  script.async=false;
-  script.dataset.swrlzTranscriptSync='1';
-  document.body.appendChild(script);
-}
-if(document.readyState==='complete')setTimeout(loadTranscriptSync,0);else window.addEventListener('load',loadTranscriptSync,{once:true});
-
 window.__swrlzCommittedContractBridge={
   version:2,
   policy:'network-events-strict-local-commits-direct',
-  transcriptSyncLoader:true,
-  detail:'Strict stream-contract validation applies only to real transport events. Semantically staged text that has already passed transport validation commits directly to the append-only final-copy buffer. The authoritative transcript-sync overlay is loaded after all chat wrappers are installed.'
+  transcriptSyncLoader:false,
+  detail:'Strict stream-contract validation applies only to real transport events. Semantically staged text that has already passed transport validation commits directly to the append-only final-copy buffer. Transcript synchronization is injected separately by the runtime manifest after resumable continuity.'
 };
 })();
