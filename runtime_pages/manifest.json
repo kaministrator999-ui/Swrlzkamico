@@ -1,5 +1,5 @@
 {
-  "version": 42,
+  "version": 43,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v42 applies mobile visual-acceptance fixes: the assistant baby-dragon avatar is structurally joined to the §wyrlz name/time plate on the left, the activity log is rendered above that identity immediately when a response request starts, the response bubble follows tightly beneath it, and the account settings modal suppresses the stale sidebar scrim that was dimming/overlapping the right side. Existing Google user identity, theme settings, wallpaper ownership, turn integrity, transcript continuity and context capacity remain preserved."
+  "notes":"Manifest v43 locks the assistant companion to the user-supplied blue/white Ice Dragon art through a static runtime asset, retires the old async companion preview/cache owner that could repaint or disappear, and hides assistant rows during the tiny initial DOM normalization window so refresh no longer flashes the pre-forum layout. Activity -> companion/name/time -> response composition, Google user identity, account/theme settings, wallpaper ownership, turn integrity, transcript continuity and context capacity remain preserved."
 }
