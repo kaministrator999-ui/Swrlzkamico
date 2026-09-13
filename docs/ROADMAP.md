@@ -2,6 +2,12 @@
 
 ## Current release
 
+**Server 2.3.120 / Deployment Control 1.0.5 — bounded collector live verification**
+
+Collector 1.0.8 is confirmed live. This event adds a separate verification job that uses existing credentials privately to save unchanged settings and confirm persistence. Production acceptance is pending the job result. It does not deploy or interrupt collection. See [event receipt](releases/server-2.3.120-collector-live-verification.md).
+
+## Previous release context
+
 **Server v2.3.118 / Web Chat 1.5.1 — Ice Dragon UI polish**
 
 **Status: runtime-hot UI polish published; browser visual acceptance pending refresh.**

@@ -1,6 +1,6 @@
 # §wyrlz Unified Vercel Server
 
-- Server revision: **2.3.104**
+- Server revision: **2.3.120**
 - Chat UI revision: **1.4.77**
 - LALM UI revision: **1.0.0**
 - Server UI revision: **1.0.0**
