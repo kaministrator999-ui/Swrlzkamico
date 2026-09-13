@@ -33,3 +33,8 @@ Production was independently updated to READY deployment dpl_6CkGKrvJGERibofqim9
 Public readiness on 2026-09-13 showed Collector 1.0.6, configured private storage, API/state schema 1, and runtime source loading. The verification browser's tab session expired; a secure browserAuth request for the existing SWRLZ_ADMIN_TOKEN is pending. No credential is requested in chat or stored in the repository.
 
 Next bounded step: confirm Collector 1.0.7 is loaded, authenticate securely, save the existing safety configuration once, capture the provider's actual rejection if any, then repair its evidenced cause as a new versioned event. Completion requires a successful durable save and reload, not readiness alone.
+
+
+## Authentication handoff outcome — 2026-09-13
+
+The secure sign-in request ended with a tool timeout rather than a confirmed authentication result. A fresh browser verification at `https://swrlzkamico-o3nu.vercel.app/collector#overview` visibly shows Collector 1.0.7 and the Connect to the collector dialog, with Waiting for authorization and no loaded revision. No production write was attempted during this continuation. The next operator step is private sign-in in the verification browser using the existing SWRLZ_ADMIN_TOKEN; then perform the single unchanged configuration save described above. Do not treat the timed-out request as proof that credentials were or were not entered, and never obtain the token through chat or repository files.
