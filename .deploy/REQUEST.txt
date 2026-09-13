@@ -4,8 +4,8 @@
 
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-13-resumable-chat-sessions
-REQUESTED_AT=2026-09-13T02:22:00Z
+REQUEST_ID=2026-09-13-resumable-chat-sessions-r2
+REQUESTED_AT=2026-09-13T02:31:00Z
 REQUESTED_BY=ChatGPT-with-user-approval
 SOURCE_REF=5b98f0de636dda89e7d32d394f9b16a69f06667f
-REASON=Deploy Server 2.3.100 stable resumable Chat generation sessions so transient mobile/Wi-Fi handoffs reconnect to the same requestId, replay only missing sequenced events, and preserve one visible generation without regeneration.
+REASON=Deploy Server 2.3.100 stable resumable Chat generation sessions after correcting the idempotent collector Blob preflight; transient mobile/Wi-Fi handoffs must reconnect to the same requestId, replay only missing sequenced events, and preserve one visible generation without regeneration.
