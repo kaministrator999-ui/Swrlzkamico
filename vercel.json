@@ -7,7 +7,7 @@
   "functions": {
     "api/**/*.py": {
       "maxDuration": 300,
-      "excludeFiles": "{.transport/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
+      "excludeFiles": "{.transport/**,swrlz-core/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
     }
   }
 }
