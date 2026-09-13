@@ -1,33 +1,19 @@
-/* SWRLZ Ice Dragon asset hydrator v17.1 — companion-only; wallpaper is owned by the canonical workspace pipeline. */
+/* SWRLZ Ice Dragon asset hydrator v17.2 — wallpaper purge only; companion is a static CSS-owned runtime asset. */
 (()=>{'use strict';
 const root=document.documentElement;
 const body=document.body;
 const debug=window.SWRLZThemeDebug||{log:(event,detail='')=>console.debug('[SWRLZ theme]',event,detail)};
-const CACHE_NAME=window.SWRLZFrontend?.cacheName||'swrlz-static-theme-v3';
-const COMPANION_KEY='/__swrlz-cache__/themes/ice-dragon/companion-96-v2.jpg';
-const FAST_COMPANION_KEY='swrlz.theme.iceDragon.companionPreview.v2';
 const LEGACY_ADULT_KEY='swrlz.theme.iceDragon.adultPreview.v2';
-const COMPANION_SOURCE='/live/assets/themes/ice-dragon/assets/companion-96.jpg.b64';
-const cacheOpen=()=>('caches'in window?caches.open(CACHE_NAME):Promise.resolve(null));
-const read=async path=>{debug.log('asset-fetch-start',path);const r=await fetch(path,{cache:'force-cache'});debug.log('asset-fetch-response',`${path} status=${r.status}`);if(!r.ok)throw new Error(`HTTP ${r.status} ${path}`);const text=await r.text();debug.log('asset-fetch-complete',`${path} rawChars=${text.length}`);return text};
-function normalizeBase64(raw,label){const compact=String(raw||'').replace(/\s+/g,'').replace(/-/g,'+').replace(/_/g,'/');const cleaned=compact.replace(/[^A-Za-z0-9+/=]/g,'');const firstPad=cleaned.indexOf('=');const body64=firstPad>=0?cleaned.slice(0,firstPad):cleaned;let normalized=body64;const mod=normalized.length%4;if(mod===1)throw new Error(`${label} base64 length invalid after normalization (${normalized.length})`);if(mod)normalized+='='.repeat(4-mod);return normalized}
-function b64Blob(b64,type='image/jpeg'){const binary=atob(b64);const bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);return new Blob([bytes],{type})}
-async function decodeBlob(blob,label,minW=1,minH=1){const url=URL.createObjectURL(blob);const probe=new Image();try{await new Promise((resolve,reject)=>{probe.onload=resolve;probe.onerror=()=>reject(new Error(`${label} failed browser decode`));probe.src=url});if(probe.naturalWidth<minW||probe.naturalHeight<minH)throw new Error(`${label} resolution unexpectedly low ${probe.naturalWidth}x${probe.naturalHeight}`);debug.log(`${label}-decode-ok`,`${probe.naturalWidth}x${probe.naturalHeight}`);return{url,width:probe.naturalWidth,height:probe.naturalHeight}}catch(error){URL.revokeObjectURL(url);throw error}}
-async function cacheMatch(key){const cache=await cacheOpen();if(!cache)return null;return(await cache.match(key))||null}
-async function cachePut(key,blob){const cache=await cacheOpen();if(!cache)return false;await cache.put(key,new Response(blob,{headers:{'Content-Type':blob.type||'application/octet-stream','Cache-Control':'public, max-age=31536000, immutable'}}));return true}
-function blobDataUrl(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||''));reader.onerror=()=>reject(reader.error||new Error('FileReader failed'));reader.readAsDataURL(blob)})}
-async function seedFastPreview(blob,key,label,minChars){try{const dataUrl=await blobDataUrl(blob);if(!dataUrl.startsWith('data:image/')||dataUrl.length<minChars)throw new Error(`${label} preview unexpectedly small`);localStorage.setItem(key,dataUrl);debug.log('fast-preview-store',`${label} chars=${dataUrl.length}`);return true}catch(error){debug.log('fast-preview-store-failed',`${label} ${String(error)}`);return false}}
-let companionUrl='';let companionReady=false;let companionPromise=null;
+const OLD_COMPANION_KEYS=['swrlz.theme.iceDragon.companionPreview.v2','swrlz.theme.iceDragon.companionPreview.v3'];
 function active(){return body?.dataset.swrlzTheme==='ice-dragon'}
 function purgeLegacyAdult(){try{localStorage.removeItem(LEGACY_ADULT_KEY)}catch(_){ }const messages=document.querySelector('.messages');if(messages){for(const key of ['background-image','background-position','background-size','background-repeat','background-color'])messages.style.removeProperty(key);messages.style.setProperty('background','transparent','important')}debug.log('adult-wallpaper-retired','workspace-is-canonical-owner')}
-function paintCompanion(){if(active()&&companionReady&&companionUrl){body.style.setProperty('--ice-dragon-companion',`url("${companionUrl}")`);debug.log('companion-painted','fresh-cache-v2')}else body?.style.removeProperty('--ice-dragon-companion')}
-async function ensureCompanion(){if(companionReady){paintCompanion();return true}if(companionPromise)return companionPromise;companionPromise=(async()=>{try{const cached=await cacheMatch(COMPANION_KEY);let blob;if(cached){blob=await cached.blob();debug.log('companion-cache-hit',`${blob.size} bytes`)}else{debug.log('companion-cache-miss');blob=b64Blob(normalizeBase64(await read(COMPANION_SOURCE),'companion'));await cachePut(COMPANION_KEY,blob);debug.log('companion-cache-store',`${blob.size} bytes`)}seedFastPreview(blob,FAST_COMPANION_KEY,'companion-v2',1000);const decoded=await decodeBlob(blob,'companion',64,64);companionUrl=decoded.url;companionReady=true;root.classList.add('swrlz-ice-dragon-companion-ready');paintCompanion();return true}catch(error){root.classList.add('swrlz-ice-dragon-companion-failed');debug.log('companion-failed',String(error));return false}finally{companionPromise=null}})();return companionPromise}
-async function ensure(){purgeLegacyAdult();const ok=await ensureCompanion();root.classList.toggle('swrlz-ice-dragon-art-ready',ok);debug.log('assets-ensure-complete',`companion=${companionReady} adult=retired workspaceWallpaper=true`);return ok}
+function purgeLegacyCompanionPreviews(){for(const key of OLD_COMPANION_KEYS){try{localStorage.removeItem(key)}catch(_){ }}debug.log('companion-cache-retired','static-css-owner')}
+function paintCompanion(){if(active())root.classList.add('swrlz-ice-dragon-companion-ready');else root.classList.remove('swrlz-ice-dragon-companion-ready')}
+async function ensureCompanion(){paintCompanion();return true}
+async function ensure(){purgeLegacyAdult();purgeLegacyCompanionPreviews();paintCompanion();root.classList.toggle('swrlz-ice-dragon-art-ready',active());debug.log('assets-ensure-complete','companion=static-css adult=retired workspaceWallpaper=true');return true}
 window.__swrlzIceDragonArtReady=ensure();
-window.IceDragonAssets={ensure,paint:()=>{purgeLegacyAdult();paintCompanion()},ensureCompanion,ensureAdult:async()=>{purgeLegacyAdult();return true},get companionReady(){return companionReady},get adultReady(){return true},get adultTier(){return'canonical-workspace'}};
+window.IceDragonAssets={ensure,paint:()=>{purgeLegacyAdult();paintCompanion()},ensureCompanion,ensureAdult:async()=>{purgeLegacyAdult();return true},get companionReady(){return active()},get adultReady(){return true},get adultTier(){return'canonical-workspace'}};
 window.addEventListener('swrlz-theme-change',event=>{if(event?.detail?.theme==='ice-dragon')ensure();else paintCompanion()});
-new MutationObserver(()=>{if(active())ensure();else paintCompanion()}).observe(body,{attributes:true,attributeFilter:['data-swrlz-theme']});
-document.addEventListener('DOMContentLoaded',()=>{purgeLegacyAdult();if(active())ensure()},{once:true});
-window.addEventListener('load',()=>{purgeLegacyAdult();if(active())paintCompanion()},{once:true});
-window.addEventListener('pagehide',()=>{if(companionUrl)URL.revokeObjectURL(companionUrl)},{once:true});
+new MutationObserver(()=>paintCompanion()).observe(body,{attributes:true,attributeFilter:['data-swrlz-theme']});
+document.addEventListener('DOMContentLoaded',()=>{purgeLegacyAdult();purgeLegacyCompanionPreviews();paintCompanion()},{once:true});
 })();
