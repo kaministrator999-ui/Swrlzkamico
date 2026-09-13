@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.39
-REVISION=2.1.39-hot-anchored-temporal-personality-v29
+VERSION=2.1.40
+REVISION=2.1.40-hot-temporal-context-nonrelay-v30
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
