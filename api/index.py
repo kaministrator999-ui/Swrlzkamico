@@ -6,10 +6,10 @@ runtime branch by the dedicated hot/live loaders. The stable frozen-web
 collector host applies authentication and a fixed runtime-module contract while
 the collector implementation and page remain runtime-owned.
 
-Server 2.3.101 preserves validated RMCCA cognitive context directly through the
-stable Chat normalizer while retaining same-generation resumable Chat sessions,
-startup-time LALM hydration, Google account authentication/session boundaries,
-and the runtime-source boundary.
+Server 2.3.106 preserves validated RMCCA cognitive context directly through the
+stable Chat normalizer, keeps local generation detached from the browser socket,
+and exposes the active generation transcript as authoritative synchronization
+state for foreground/app-resume catch-up.
 """
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ from api.chat_resume_sessions import install as _install_chat_resume_sessions
 from api.chat_rmcca_passthrough import install as _install_chat_rmcca_passthrough
 import api.chat_extensions as _chat_extensions
 
-VERSION = "2.3.101"
+VERSION = "2.3.106"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -48,6 +48,12 @@ _server.CAPABILITIES["chat-resumable-generation"] = {
     "ready": True,
     "contract": "resumable-v1",
     "detail": "A requestId owns one local generation session; reconnecting clients replay only events after resumeAfterSeq.",
+}
+_server.CAPABILITIES["chat-generation-transcript"] = {
+    "kind": "transport-continuity",
+    "ready": True,
+    "contract": "generation-transcript-v1",
+    "detail": "The server-owned generation session exposes append-only generated text, text revision, phase, sequence and terminal state so Chat can synchronize to the authoritative response position before resuming live events.",
 }
 _server.CAPABILITIES["chat-rmcca-direct-transport"] = {
     "kind": "cognitive-context-transport",
