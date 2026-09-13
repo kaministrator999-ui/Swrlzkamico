@@ -1,12 +1,12 @@
 {
-  "version": 17,
+  "version": 18,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
     "/chat": {
       "source":"web/chat.html",
       "styles":["web/chat_boot_guard.css","web/chat_enhancements.css","web/themes/ice-dragon/ice-dragon-theme.css","web/themes/ice-dragon/ice-dragon-art-v2.css","web/chat_mobile_viewport_fix.css","web/chat_code_artifacts.css"],
-      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-direct-wallpaper-v18.js","web/chat_code_artifacts.js","web/chat_stream_artifact_stability.js","web/chat_stream_incremental.js","web/chat_activity_immediate.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_background_resume_v2.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
+      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-direct-wallpaper-v18.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_committed_output.js","web/chat_activity_immediate.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_background_resume_v2.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
     },
     "/server":{"source":"web/server.html"},
     "/lalm":{"source":"web/lalm.html"},
@@ -15,5 +15,5 @@
     "/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v17 makes Chat recovery single-visible-generation: once assistant text is visible, interrupted streams preserve it exactly rather than spawning replacement branches. It also attaches RMCCA transport in the active background transport layer and stabilizes code artifacts so only terminal responses with balanced Markdown fences become artifact cards. Existing Ice Dragon assets remain unchanged."
+  "notes":"Manifest v18 makes visible assistant output a committed append-only final copy. Raw model deltas stage privately and only coherent prose/code units enter message.text; malformed or repetitive tails are discarded before visibility. The live code artifact can grow in place from committed code lines. Single-visible-generation recovery and RMCCA transport from manifest v17 remain active."
 }
