@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.34
-REVISION=2.1.34-hot-polished-first-continuity-v24
+VERSION=2.1.35
+REVISION=2.1.35-hot-semantic-commit-ledger-v25
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
