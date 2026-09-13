@@ -1,5 +1,5 @@
 {
-  "version": 25,
+  "version": 26,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -15,5 +15,5 @@
     "/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v25 makes generation-transcript-v1 mandatory for the transcript-continuity upgrade. Every generation performs an initial contract verification. Missing endpoints, wrong contracts, identity mismatches, or transcript-prefix mismatches fail closed with an explicit version/contract error; legacy event-replay fallback is not accepted as successful transcript continuity."
+  "notes":"Manifest v26 adds permission-first device temporal context and shared-transcript following. Chat no longer attaches device time until the user explicitly allows it; declined/unset state tells the LALM not to make user-local time claims. Profile city/state/country fields are stored but deliberately not used for timezone resolution yet. Transcript sync remains fail-closed and can follow shared-private-blob-v1 checkpoints when stable Server 2.3.108 is deployed, without reverting to legacy replay as a hidden fallback."
 }
