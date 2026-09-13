@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.33-hot-continuity-rmcca-guard-v23",
+  "revision": "2.1.34-hot-polished-first-continuity-v24",
   "inferenceFiles": [
     "r39_engine.py"
   ]
