@@ -1,0 +1,13 @@
+/* Assistant response layout v1 — activity -> identity -> response, tightly grouped. */
+body[data-swrlz-theme="ice-dragon"] .message.assistant{align-items:flex-start!important;row-gap:0!important}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .message-body{display:flex!important;flex-direction:column!important;gap:0!important}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .trace{order:1!important;margin:0 0 5px!important;width:max-content;max-width:100%}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label{order:2!important;margin-bottom:3px!important}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble{order:3!important;margin-top:0!important}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .message-actions,
+body[data-swrlz-theme="ice-dragon"] .message.assistant .swrlz-evidence{order:4!important}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar{min-width:44px;min-height:44px}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar .swrlz-companion-fallback{display:grid;place-items:center;position:absolute;inset:0;font-size:23px;color:#dffaff;text-shadow:0 0 10px rgba(92,225,255,.65);z-index:0}
+.swrlz-ice-dragon-companion-ready body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar .swrlz-companion-fallback{display:none}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar{background-color:rgba(6,31,49,.78)!important}
+@media(max-width:600px){body[data-swrlz-theme="ice-dragon"] .message.assistant .trace{margin-bottom:4px!important}body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label{margin-bottom:2px!important}body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble{margin-top:0!important}}
