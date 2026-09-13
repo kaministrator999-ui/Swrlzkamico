@@ -1,0 +1,25 @@
+(()=>{'use strict';
+if(window.__swrlzAccountIdentityV1Installed)return;
+window.__swrlzAccountIdentityV1Installed=true;
+const GOOGLE_CLAIMS_KEY='swrlzGoogleLoginTestClaims';
+const ACCOUNT_PREFS_KEY='swrlzAccountPrefsV1';
+const ACCOUNT_PREFS_PREFIX='swrlzAccountPrefsV2.account.';
+function safeClaims(){try{const v=JSON.parse(sessionStorage.getItem(GOOGLE_CLAIMS_KEY)||'null');return v&&v.authenticated?v:null}catch{return null}}
+function prefsKey(){const c=safeClaims(),subject=String(c?.subject||'').trim();return subject?ACCOUNT_PREFS_PREFIX+encodeURIComponent(subject):ACCOUNT_PREFS_KEY}
+function prefs(){try{return JSON.parse(localStorage.getItem(prefsKey())||'{}')||{}}catch{return {}}}
+function identity(){const c=safeClaims(),p=prefs();const useGoogle=p.useGoogleName!==false;const name=String(p.displayName||((useGoogle&&c?.name)?c.name:'')||c?.given_name||c?.email||'You').trim()||'You';return{name,picture:String(c?.picture||''),email:String(c?.email||''),googleName:String(c?.name||'')}}
+function decorateUser(node,message){if(!node||message?.role!=='user')return node;const id=identity(),avatar=node.querySelector('.avatar'),who=node.querySelector('.message-label strong');if(who)who.textContent=id.name;if(avatar){avatar.classList.toggle('swrlz-user-photo',Boolean(id.picture));if(id.picture){avatar.textContent='';const img=document.createElement('img');img.src=id.picture;img.alt='';img.referrerPolicy='no-referrer';avatar.appendChild(img)}else avatar.textContent=(id.name||'You').slice(0,2).toUpperCase()}return node}
+function installRenderer(){if(typeof window.renderMessage!=='function'||window.__swrlzAccountIdentityRenderWrapped)return;window.__swrlzAccountIdentityRenderWrapped=true;const base=window.renderMessage;window.renderMessage=function(message){return decorateUser(base(message),message)};try{window.render?.(false)}catch(_){}}
+function makeIdentityCard(){const id=identity(),wrap=document.createElement('div');wrap.className='swrlz-account-identity';const avatar=id.picture?`<img src="${id.picture.replace(/"/g,'&quot;')}" alt="">`:'<span class="swrlz-account-avatar-fallback">'+((id.name||'U').slice(0,1).toUpperCase())+'</span>';wrap.innerHTML=`${avatar}<div><strong>${escapeHtml(id.googleName||id.name)}</strong><span>${escapeHtml(id.email||'Signed-out browser profile')}</span></div>`;return wrap}
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function patchSettings(root=document){const modal=root.querySelector?.('.swrlz-account-modal')||(root.matches?.('.swrlz-account-modal')?root:null);if(!modal)return;const detail=modal.querySelector('[data-detail]');if(!detail)return;if(!detail.querySelector('.swrlz-account-identity'))detail.prepend(makeIdentityCard());
+  const display=detail.querySelector('[data-pref="displayName"]');if(display){const label=display.closest('label');if(label){for(const n of [...label.childNodes])if(n.nodeType===Node.TEXT_NODE&&n.textContent.trim())n.textContent='Chat name';display.placeholder='Name shown beside your messages'}}
+  detail.querySelector('[data-pref="preferredName"]')?.closest('label')?.remove();
+  const disabled=[...detail.querySelectorAll('input:disabled')];if(disabled.length>1){const googleNameField=disabled.find(x=>String(x.value||'')!==identity().email);googleNameField?.closest('label')?.remove()}
+  const h3=detail.querySelector('h3');if(h3?.textContent==='Personalization'&&!detail.querySelector('[data-pref="displayName"]')){const existing=detail.querySelector('.swrlz-setting-grid');if(existing){const label=document.createElement('label');label.textContent='Chat name';const input=document.createElement('input');input.dataset.pref='displayName';input.value=prefs().displayName||'';input.placeholder='Name shown beside your messages';label.appendChild(input);existing.appendChild(label)}}
+}
+function observeSettings(){const obs=new MutationObserver(records=>{for(const r of records){for(const n of r.addedNodes){if(n.nodeType===1){if(n.matches?.('.swrlz-account-modal'))setTimeout(()=>patchSettings(n),0);else if(n.querySelector?.('.swrlz-account-modal'))setTimeout(()=>patchSettings(n),0)}}}const modal=document.querySelector('.swrlz-account-modal');if(modal)setTimeout(()=>patchSettings(modal),0)});obs.observe(document.documentElement,{childList:true,subtree:true})}
+function refresh(){installRenderer();try{window.render?.(false)}catch(_){}const modal=document.querySelector('.swrlz-account-modal');if(modal)patchSettings(modal)}
+function boot(){installRenderer();observeSettings();window.addEventListener('swrlz:account-change',refresh);window.addEventListener('storage',e=>{if(String(e.key||'').startsWith('swrlzAccountPrefs'))refresh()});document.addEventListener('click',e=>{if(e.target.closest?.('#swrlzAccountSettings,[data-setting]'))setTimeout(()=>patchSettings(document),0)});setTimeout(refresh,0)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+})();
