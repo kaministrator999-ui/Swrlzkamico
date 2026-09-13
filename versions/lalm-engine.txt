@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.41
-REVISION=2.1.41-hot-social-directive-temporal-anchor-v31
+VERSION=2.1.42
+REVISION=2.1.42-hot-social-semantic-acceptance-v32
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
