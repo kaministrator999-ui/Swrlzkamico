@@ -7,10 +7,12 @@ import time
 from collections.abc import Iterator
 from typing import Any
 
-from fastapi.responses import StreamingResponse
+from fastapi import Request
+from fastapi.responses import JSONResponse, StreamingResponse
 
 SESSION_TTL_SECONDS = 30 * 60
 MAX_SESSION_EVENTS = 4096
+TRANSCRIPT_CONTRACT = "generation-transcript-v1"
 
 
 def install(chat_extensions) -> None:
@@ -19,6 +21,11 @@ def install(chat_extensions) -> None:
     A requestId owns one generation session. Reconnecting clients resubscribe with
     resumeAfterSeq and receive only later events. The generation thread continues
     independently of any one StreamingResponse subscriber while the worker lives.
+
+    The session also owns an append-only raw generation transcript. This transcript
+    is the authoritative generation position for foreground/app-resume synchronization;
+    browser committed-output policy may still withhold or sanitize text before it is
+    shown to the user.
     """
     chat = chat_extensions.chat
     base_normalize = chat._normalize_chat_request
@@ -53,11 +60,24 @@ def install(chat_extensions) -> None:
         encoded = chat._encode_event(event)
         condition: threading.Condition = session["condition"]
         with condition:
-            session["events"].append((int(event["seq"]), encoded))
+            seq = int(event["seq"])
+            session["events"].append((seq, encoded))
             if len(session["events"]) > MAX_SESSION_EVENTS:
                 session["events"] = session["events"][-MAX_SESSION_EVENTS:]
-            session["lastSeq"] = int(event["seq"])
+            session["lastSeq"] = seq
             session["updatedAt"] = time.time()
+            phase = str(event.get("phase") or "").strip()
+            if phase:
+                session["phase"] = phase
+            if str(event.get("type") or "") == "DELTA":
+                text = str(event.get("text") or "")
+                if text:
+                    session["transcript"] = str(session.get("transcript") or "") + text
+                    session["textRevision"] = int(session.get("textRevision") or 0) + 1
+                    session["lastDeltaSeq"] = seq
+            identity = event.get("identity")
+            if isinstance(identity, dict):
+                session["identity"] = dict(identity)
             if event.get("terminal"):
                 session["terminal"] = True
                 session["terminalType"] = str(event.get("type") or "")
@@ -118,6 +138,11 @@ def install(chat_extensions) -> None:
                 "condition": condition,
                 "events": [],
                 "lastSeq": 0,
+                "lastDeltaSeq": 0,
+                "phase": "ANALYZING_REQUEST",
+                "transcript": "",
+                "textRevision": 0,
+                "identity": {},
                 "terminal": False,
                 "terminalType": "",
                 "createdAt": time.time(),
@@ -146,6 +171,24 @@ def install(chat_extensions) -> None:
             if terminal and cursor >= last_seq:
                 return
 
+    def transcript_payload(session: dict[str, Any]) -> dict[str, Any]:
+        condition: threading.Condition = session["condition"]
+        with condition:
+            return {
+                "ok": True,
+                "contract": TRANSCRIPT_CONTRACT,
+                "requestId": str(session.get("requestId") or ""),
+                "text": str(session.get("transcript") or ""),
+                "textRevision": int(session.get("textRevision") or 0),
+                "lastSeq": int(session.get("lastSeq") or 0),
+                "lastDeltaSeq": int(session.get("lastDeltaSeq") or 0),
+                "phase": str(session.get("phase") or ""),
+                "terminal": bool(session.get("terminal")),
+                "terminalType": str(session.get("terminalType") or ""),
+                "identity": dict(session.get("identity") or {}),
+                "updatedAt": float(session.get("updatedAt") or 0),
+            }
+
     def stream_response(payload: dict[str, Any]):
         clean = canonical_payload(payload)
         if chat._raw_upstream_url():
@@ -158,11 +201,28 @@ def install(chat_extensions) -> None:
             "X-SWRLZ-Stream-Contract": chat.STREAM_CONTRACT,
             "X-SWRLZ-Request-Id": payload["requestId"],
             "X-SWRLZ-Generation-Session": "resumable-v1",
+            "X-SWRLZ-Transcript-Contract": TRANSCRIPT_CONTRACT,
             "X-SWRLZ-Resume-After-Seq": str(after_seq),
             "X-SWRLZ-Replay-Through-Seq": str(replay_through),
             "X-Accel-Buffering": "no",
         })
         return StreamingResponse(session_stream(session, after_seq), media_type="application/x-ndjson", headers=headers)
+
+    @chat.app.post("/transcript", include_in_schema=False)
+    @chat.app.post("/api/chat/transcript", include_in_schema=False)
+    async def transcript_snapshot(request: Request):
+        try:
+            chat._require_web_token(request)
+            payload = await chat._read_json(request)
+            request_id = chat._clean_request_id(payload.get("requestId"))
+            prune()
+            with lock:
+                session = sessions.get(request_id)
+            if session is None:
+                return chat._json_error(404, "GENERATION_SESSION_NOT_FOUND", "The requested generation transcript is not present on this server instance.")
+            return JSONResponse(transcript_payload(session), headers=chat._no_store_headers())
+        except chat.BridgeError as exc:
+            return chat._json_error(exc.status, exc.code, exc.detail)
 
     chat._normalize_chat_request = normalize
     chat._stream_response = stream_response
@@ -170,3 +230,4 @@ def install(chat_extensions) -> None:
     chat_extensions.RESUMABLE_GENERATION_LOCK = lock
     chat_extensions.RESUMABLE_GENERATION_TTL_SECONDS = SESSION_TTL_SECONDS
     chat_extensions.RESUMABLE_GENERATION_CONTRACT = "resumable-v1"
+    chat_extensions.GENERATION_TRANSCRIPT_CONTRACT = TRANSCRIPT_CONTRACT
