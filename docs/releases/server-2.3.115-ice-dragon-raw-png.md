@@ -1,0 +1,3 @@
+# Server Runtime 2.3.115 / Web Chat 1.4.98 — exact Ice Dragon PNG via direct repository asset
+
+The previous event proved the runtime live-source bridge returns HTTP 503 for the copied binary PNG even though the exact asset exists in Git. This repair bypasses that text-oriented bridge and lets the browser request the exact root PNG directly from raw GitHub: `file_00000000b13c81f5a7f9fe99c0264ef0.png`. No resize, recompression, Base64 reconstruction, or canvas upscaling occurs. Wallpaper v21 renders centered `cover` across the full chat backdrop; ordinary browser HTTP caching handles repeat loads. Manifest 32 activates v21. Runtime-hot; no stable redeploy required.
