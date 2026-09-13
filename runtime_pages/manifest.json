@@ -1,12 +1,12 @@
 {
-  "version": 19,
+  "version": 20,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
     "/chat": {
       "source":"web/chat.html",
       "styles":["web/chat_boot_guard.css","web/chat_enhancements.css","web/themes/ice-dragon/ice-dragon-theme.css","web/themes/ice-dragon/ice-dragon-art-v2.css","web/chat_mobile_viewport_fix.css","web/chat_code_artifacts.css"],
-      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-direct-wallpaper-v18.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_committed_output_v2.js","web/chat_activity_immediate.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_rmcca_transport_guard.js","web/chat_background_resume_v2.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
+      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-direct-wallpaper-v18.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_committed_output_v2.js","web/chat_activity_immediate.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_rmcca_transport_guard.js","web/chat_background_resume_v2.js","web/chat_rmcca_transport_trace_v2.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
     },
     "/server":{"source":"web/server.html"},
     "/lalm":{"source":"web/lalm.html"},
@@ -15,5 +15,5 @@
     "/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v19 upgrades committed streaming from syntax-only staging to semantic final-copy validation. Numeric retrieved-message limits, duplicate structural headings, unsupported quantified claims, and explicit runnable-code obligations are checked before or at commit. RMCCA transport now has an explicit canonical fallback/proof guard between canonical context preparation and background transport. Single-visible-generation recovery and live growing code artifacts remain active."
+  "notes":"Manifest v20 keeps semantic committed output v2 and adds an outer RMCCA transport trace after background-resume wrapping. Stream requests are canonicalized before the final wrapper chain, and the context camera records envelope/carrier state before and after that boundary. Requirement-driven response planning is supplied by LALM v26."
 }
