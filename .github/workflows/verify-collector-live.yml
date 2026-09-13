@@ -1,0 +1,50 @@
+name: Verify live collector storage
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".collector/VERIFY_REQUEST.json"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-collector-verification
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install the existing Vercel CLI version
+        run: npm install --global vercel@59.16.0
+      - name: Verify the live save with private existing credentials
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_E4y2LpTSFo9UxTErO9aw6HW1
+          VERCEL_PROJECT_ID: prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          verification_env="$RUNNER_TEMP/swrlz-collector-verification.env"
+          pull_log="$RUNNER_TEMP/swrlz-collector-env-pull.log"
+          trap 'rm -f "$verification_env" "$pull_log"' EXIT
+          if [[ -z "${VERCEL_TOKEN:-}" ]]; then
+            echo "Existing VERCEL_TOKEN repository secret is unavailable."
+            exit 1
+          fi
+          mkdir -p .vercel
+          node -e 'require("node:fs").writeFileSync(".vercel/project.json", JSON.stringify({orgId:process.env.VERCEL_ORG_ID,projectId:process.env.VERCEL_PROJECT_ID}))'
+          if ! vercel env pull "$verification_env" --environment=production --yes --token="$VERCEL_TOKEN" >"$pull_log" 2>&1; then
+            echo "Could not load the existing production environment for this project. No verification write was attempted."
+            exit 1
+          fi
+          node --env-file="$verification_env" scripts/verify_collector_live.mjs

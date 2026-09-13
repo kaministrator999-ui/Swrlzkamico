@@ -1,12 +1,12 @@
 # §wyrlz Server Roadmap & Version Ledger
 
 **READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-- **Current overall server baseline:** `2.3.102`
+- **Current overall server baseline:** `2.3.120`
 **Current Chat component:** `1.4.77`  
 **Current Web Frontend component:** `1.0.3`  
 **Current LALM UI component:** `1.0.0`  
-- **Current Frozen Web Collector component:** `1.0.7`
-- **Current Deployment Control component:** `1.0.3`
+- **Current Frozen Web Collector component:** `1.0.8`
+- **Current Deployment Control component:** `1.0.5`
 **Release policy:** every server development event gets an overall Server release/version entry plus independent component version changes where applicable, including unsuccessful attempts.
 
 ## Version model
@@ -580,3 +580,14 @@ Approval is already on record for this bounded installation; the remaining prere
 - Remaining acceptance: after secure sign-in, save the unchanged Safety configuration once, capture the actual provider reason if rejected, repair the evidenced cause in a new version event, and confirm successful revision advancement plus settings persistence after reload.
 - No source registration, collection, snapshot sealing, training acceptance, or deletion was initiated by this continuation.
 - Current configuration has Git deployment disabled and the production workflow watches only explicit dispatch or main `.deploy/REQUEST.txt` changes. This event changes neither. Another chat independently requested a stable deployment at main `1a766f071a354b6d757b903aa9b5c56e486c0da4`; that request and its source are preserved.
+
+
+## Server 2.3.120 / Collector 1.0.8 live verification — 2026-09-13
+
+Runtime event commit: 92b4865b0466c77bfdefc595911ef2932c018b12. Collector repair commit: a7d2cc0d99ba399c288ba8f82e8eb7582b746231. Deployment Control advances to 1.0.5; Collector code remains 1.0.8.
+
+The user's 1.0.7 screenshots confirmed HTTP 412 ETag mismatch on both Start and Configure. The 1.0.8 repair now uses the Blob metadata ETag, brackets the uncached state read, and rejects missing/changing versions rather than writing without a condition. Complete deterministic verification passes. Production readiness at 2026-09-13T19:36:26Z reports the exact 1.0.8 engine hash and private storage configuration.
+
+This event runs a bounded, separate GitHub verification job using the existing project's production credentials privately. It saves the current configuration with an empty patch and verifies a fresh read, without starting/interfering with collection or training. Environment/credential files remain only in the ephemeral runner and are deleted; logs contain no state contents or credentials. The browser sign-in limitation is no longer the planned acceptance path.
+
+The new .collector/VERIFY_REQUEST.json trigger runs verification only. Current Git deployment is disabled; .deploy/REQUEST.txt and the existing deployment workflow are unchanged. No redeploy/restart is requested. See docs/releases/SERVER_2.3.120_COLLECTOR_LIVE_VERIFICATION.md for the exact operation and pending acceptance receipt.

@@ -1,0 +1,6 @@
+{
+  "checkpoint": "FROZEN-WEB-COLLECTOR-001",
+  "event": "Server 2.3.120 live verification of Collector 1.0.8",
+  "collectorVersion": "1.0.8",
+  "engineSha256": "95e9b808c9f35360804e047dc02ba13d8df2f7cb93e1a53b66879e33c4e0caa5"
+}
