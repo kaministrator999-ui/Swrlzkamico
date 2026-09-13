@@ -1,12 +1,12 @@
 {
-  "version": 22,
+  "version": 23,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
     "/chat": {
       "source":"web/chat.html",
       "styles":["web/chat_boot_guard.css","web/chat_enhancements.css","web/themes/ice-dragon/ice-dragon-theme.css","web/themes/ice-dragon/ice-dragon-art-v2.css","web/chat_mobile_viewport_fix.css","web/chat_code_artifacts.css"],
-      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-wallpaper-v19.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_committed_output_v3.js","web/chat_activity_immediate.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_rmcca_transport_guard.js","web/chat_background_resume_v2.js","web/chat_rmcca_transport_trace_v2.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
+      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-wallpaper-v19.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_committed_contract_bridge.js","web/chat_committed_output_v3.js","web/chat_activity_immediate.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_rmcca_transport_guard.js","web/chat_background_resume_v2.js","web/chat_rmcca_transport_trace_v2.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
     },
     "/server":{"source":"web/server.html"},
     "/lalm":{"source":"web/lalm.html"},
@@ -15,5 +15,5 @@
     "/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v22 activates Ice Dragon wallpaper v19. The direct supplied-art path is attempted without resizing or recompression; if the binary asset is unavailable, the existing decoded source is kept but rendered with quality-safe contain geometry instead of cover zoom so the browser no longer magnifies the portrait artwork into visible pixelation. Existing Chat continuity, committed-output v3, RMCCA transport tracing, and recovery scripts remain unchanged."
+  "notes":"Manifest v23 activates the committed stream contract bridge immediately before committed-output v3. Real network events retain strict swrlz_llm_stream_v2 validation, while semantically staged local commit units append directly to the final-copy buffer instead of fabricating incomplete stream envelopes. Ice Dragon wallpaper v19, resumable continuity, RMCCA transport tracing, and recovery behavior remain otherwise unchanged."
 }
