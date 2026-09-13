@@ -6,9 +6,10 @@ runtime branch by the dedicated hot/live loaders. The stable frozen-web
 collector host applies authentication and a fixed runtime-module contract while
 the collector implementation and page remain runtime-owned.
 
-Server 2.3.100 adds same-generation resumable Chat sessions for transient network
-handoffs while preserving startup-time LALM hydration, the Google account
-authentication/session boundary, and the existing runtime-source boundary.
+Server 2.3.101 preserves validated RMCCA cognitive context directly through the
+stable Chat normalizer while retaining same-generation resumable Chat sessions,
+startup-time LALM hydration, Google account authentication/session boundaries,
+and the runtime-source boundary.
 """
 from __future__ import annotations
 
@@ -25,9 +26,10 @@ from api.contextual_input import install as _install_contextual_input
 from api.account_routes_v2 import install as _install_account_routes
 from api.collector_host import install as _install_collector_host
 from api.chat_resume_sessions import install as _install_chat_resume_sessions
+from api.chat_rmcca_passthrough import install as _install_chat_rmcca_passthrough
 import api.chat_extensions as _chat_extensions
 
-VERSION = "2.3.100"
+VERSION = "2.3.101"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -47,6 +49,13 @@ _server.CAPABILITIES["chat-resumable-generation"] = {
     "contract": "resumable-v1",
     "detail": "A requestId owns one local generation session; reconnecting clients replay only events after resumeAfterSeq.",
 }
+_server.CAPABILITIES["chat-rmcca-direct-transport"] = {
+    "kind": "cognitive-context-transport",
+    "ready": True,
+    "contract": "rmcca-direct-v1",
+    "fallback": "history-carrier-v1",
+    "detail": "Validated RMCCA cognitive context survives stable request normalization as a first-class field; the compact history carrier remains a compatibility fallback.",
+}
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
 _install_chat_admin_session(_server)
@@ -58,6 +67,7 @@ _install_account_routes(_server)
 _install_collector_host(_server)
 _install_live_source_guard(_server)
 _install_chat_resume_sessions(_chat_extensions)
+_install_chat_rmcca_passthrough(_chat_extensions)
 
 
 def _warm_lalm_at_start() -> None:
