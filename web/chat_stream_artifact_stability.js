@@ -1,0 +1,11 @@
+(()=>{"use strict";
+if(window.__swrlzStreamArtifactStabilityInstalled)return;
+window.__swrlzStreamArtifactStabilityInstalled=true;
+function messageForArticle(article){const id=String(article?.dataset?.messageId||'');if(!id)return null;try{const thread=typeof currentThread==='function'?currentThread():null;return thread?.messages?.find?.(m=>String(m?.id||'')===id)||null}catch(_){return null}}
+function balancedFences(text){const count=(String(text||'').match(/```/g)||[]).length;return count%2===0}
+function stabilizeArticle(article){if(!article?.matches?.('.message.assistant'))return;const message=messageForArticle(article);if(!message)return;const streaming=message.state==='streaming'||message.state==='cancelling';article.dataset.swrlzMessageState=String(message.state||'');article.toggleAttribute('data-swrlz-streaming',streaming);if(streaming){article.querySelectorAll('pre').forEach(pre=>{if(!String(pre.textContent||'').trim())pre.hidden=true});return}article.querySelectorAll('pre[hidden]').forEach(pre=>pre.hidden=false);if(message.state!=='complete'||!balancedFences(message?.meta?.modelText||message.text||''))return;const bubble=article.querySelector('.bubble');if(bubble&&typeof window.__swrlzDecorateCodeArtifact==='function')window.__swrlzDecorateCodeArtifact(bubble)}
+function scan(root=document){if(root.matches?.('.message.assistant'))stabilizeArticle(root);root.querySelectorAll?.('.message.assistant').forEach(stabilizeArticle)}
+function install(){try{window.__swrlzCodeArtifactObserver?.disconnect?.()}catch(_){ }scan();const target=document.querySelector('.messages')||document.querySelector('.message-stack')||document.body;const observer=new MutationObserver(records=>{for(const record of records){for(const node of record.addedNodes){if(node.nodeType===1)scan(node)}}});observer.observe(target,{childList:true,subtree:true});window.__swrlzStableArtifactObserver=observer;const style=document.createElement('style');style.textContent='.message.assistant[data-swrlz-streaming] pre:empty,.message.assistant[data-swrlz-streaming] pre[hidden]{display:none!important}';document.head.appendChild(style)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+window.__swrlzStreamArtifactStability={version:1,policy:'terminal-balanced-fences-only'};
+})();
