@@ -80,15 +80,19 @@ def _compact_json(value: Any) -> bytes:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
 
-def _safe_error_text(response: requests.Response) -> str:
+def _safe_error_text(response: requests.Response, *, redact: tuple[str, ...] = ()) -> str:
     try:
         body = response.json()
         message = body.get("error", body) if isinstance(body, dict) else body
         if isinstance(message, dict):
             message = message.get("message") or message.get("code") or "request rejected"
-        return str(message)[:320]
     except Exception:
-        return (response.text or response.reason or "request rejected")[:320]
+        message = response.text or response.reason or "request rejected"
+    text = str(message)
+    for secret in redact:
+        if secret:
+            text = text.replace(secret, "[redacted]")
+    return text[:320]
 
 
 class BlobStore:
@@ -203,7 +207,7 @@ class BlobStore:
             timeout=(5, 30),
         )
         if not response.ok:
-            message = _safe_error_text(response)
+            message = _safe_error_text(response, redact=(self.token, self.store_id))
             conflict = response.status_code in {400, 409, 412} and any(
                 marker in message.lower() for marker in ("exist", "overwrite", "precondition", "etag")
             )
@@ -219,7 +223,12 @@ class BlobStore:
                     }
                 raise CollectorError(409, "IMMUTABLE_OBJECT_CONFLICT", "An immutable object exists with different content.")
             if conflict:
-                raise CollectorError(409, "STATE_WRITE_CONFLICT", "Collector state changed on another worker; reload and retry.")
+                raise CollectorError(
+                    409,
+                    "STATE_WRITE_CONFLICT",
+                    f"Private storage rejected this write (HTTP {response.status_code}): {message}",
+                    {"providerStatus": response.status_code, "conditionalWrite": bool(etag), "immutable": immutable},
+                )
             raise CollectorError(503, "BLOB_WRITE_FAILED", message)
         try:
             result = response.json()

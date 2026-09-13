@@ -123,6 +123,35 @@ def main() -> None:
     assert headers["x-api-version"] == "12"
     assert headers["x-vercel-blob-store-id"] == "abc123"
     assert headers["authorization"].startswith("Bearer vercel_blob_rw_")
+
+    class RejectedPut:
+        status_code = 412
+        ok = False
+
+        def json(self):
+            return {"error": {"message": "ETag precondition failed: " + "x" * 300 + header_store.token}}
+
+    put_calls = []
+
+    class RejectedSession:
+        def put(self, url, **kwargs):
+            put_calls.append((url, kwargs))
+            return RejectedPut()
+
+    header_store.session = RejectedSession()
+    try:
+        header_store.put_json(module.STATE_PATH, {"stateRevision": 2}, etag='"current"')
+        raise AssertionError("a rejected conditional write reported success")
+    except module.CollectorError as exc:
+        assert exc.code == "STATE_WRITE_CONFLICT" and exc.status == 409
+        assert "HTTP 412" in exc.message and "ETag precondition failed" in exc.message
+        assert "vercel_blob_rw_" not in exc.message
+        assert exc.detail == {"providerStatus": 412, "conditionalWrite": True, "immutable": False}
+    assert len(put_calls) == 1, "a failed conditional write must never retry unconditionally"
+    assert put_calls[0][1]["headers"]["x-if-match"] == '"current"'
+    assert put_calls[0][1]["headers"]["x-allow-overwrite"] == "1"
+    assert "vercel_blob_rw_" not in module._safe_error_text(RejectedPut(), redact=(header_store.token,))
+
     if previous_rw is None:
         os.environ.pop("BLOB_READ_WRITE_TOKEN", None)
     else:

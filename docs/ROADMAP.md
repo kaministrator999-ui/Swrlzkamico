@@ -2,6 +2,14 @@
 
 ## Current release
 
+**Server v2.3.102 / Frozen Web Collector 1.0.7 — storage write diagnostics**
+
+**Status: provider error reporting repaired and tested; live durable-write acceptance remains open.**
+
+The previous configuration form repair passed browser validation, but the ensuing private Blob PUT was rejected. This event preserves conditional writes and exposes the bounded, redacted provider reason to the authenticated operator. It does not yet claim storage writes succeed. No deployment or data reset is performed. See [event receipt](releases/server-2.3.102-collector-storage-diagnostics.md).
+
+## Previous release context
+
 **Server v2.3.101 / Web Chat 1.4.85 — Ice Dragon wallpaper v19**
 
 **Status: runtime-hot wallpaper repair published; direct supplied-art route remains the final exact-byte acceptance gate.**
@@ -304,3 +312,8 @@ This evidence supersedes the original missing-token recovery instructions. The c
 - No source registration, collection, sealing, training acceptance, or data deletion was performed by this continuation.
 
 Server 2.3.91 / Deployment Control 1.0.3 repairs the manual workflow for future explicitly approved deployments. It installs pinned uv before building, accepts compatible versioned API/state schema 1 runtime modules instead of requiring Collector 1.0.0, and checks the saved HTML without an early-closing curl/grep pipeline. Its receipt now accurately calls the storage check a configuration check. Workflow YAML/shell syntax and positive/negative readiness fixtures pass. The repaired workflow was not dispatched because production already has the host.
+
+
+## Collector 1.0.6 acceptance follow-up — 2026-09-13
+
+The corrected configuration form submitted successfully, but three unchanged saves on 2026-09-12 returned HTTP 409 from BlobStore.put_json and kept durable revision 1. Storage reads and listing were successful. Server 2.3.102 / Collector 1.0.7 records that remaining blocker and enables safe provider diagnosis; the earlier form fix must not be interpreted as durable-write acceptance.
