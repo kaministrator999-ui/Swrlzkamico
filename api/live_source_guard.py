@@ -17,10 +17,12 @@ REPO = "Swrlzkamico"
 BRANCH = "runtime"
 RAW_BASE = f"https://raw.githubusercontent.com/{OWNER}/{REPO}"
 ROOT = Path(__file__).resolve().parents[1]
-CACHE_TTL = 1.0
+CACHE_TTL = 2.0
 FETCH_TIMEOUT = 8
 MAX_SOURCE_BYTES = 4_000_000
 MANIFEST = "runtime_pages/manifest.json"
+IMMUTABLE_ASSET_CACHE = "public, max-age=31536000, immutable"
+NO_STORE_CACHE = "no-store, max-age=0"
 
 _CACHE: dict[str, tuple[float, bytes]] = {}
 
@@ -33,7 +35,7 @@ def _fetch(source: str, limit: int = MAX_SOURCE_BYTES) -> bytes:
     encoded_branch = urllib.parse.quote(BRANCH, safe='-._/')
     encoded_source = urllib.parse.quote(source, safe='-._/')
     url = f"{RAW_BASE}/{encoded_branch}/{encoded_source}?swrlz_runtime={int(now * 1000)}"
-    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-live-runtime/6", "Cache-Control": "no-cache"})
+    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-live-runtime/7", "Cache-Control": "no-cache"})
     with urllib.request.urlopen(req, timeout=FETCH_TIMEOUT) as response:
         data = response.read(limit + 1)
     if len(data) > limit:
@@ -45,8 +47,8 @@ def _fetch(source: str, limit: int = MAX_SOURCE_BYTES) -> bytes:
     return data
 
 
-def _headers(source: str, resolved: str = "github-runtime") -> dict[str, str]:
-    return {"Cache-Control": "no-store, max-age=0", "X-Content-Type-Options": "nosniff", "X-SWRLZ-Live-Source": resolved, "X-SWRLZ-Live-Branch": BRANCH, "X-SWRLZ-Live-Path": source}
+def _headers(source: str, resolved: str = "github-runtime", *, cache_control: str = NO_STORE_CACHE) -> dict[str, str]:
+    return {"Cache-Control": cache_control, "X-Content-Type-Options": "nosniff", "X-SWRLZ-Live-Source": resolved, "X-SWRLZ-Live-Branch": BRANCH, "X-SWRLZ-Live-Path": source}
 
 
 def _manifest() -> dict[str, object]:
@@ -55,6 +57,13 @@ def _manifest() -> dict[str, object]:
         return value if isinstance(value, dict) else {}
     except Exception:
         return {}
+
+
+def _manifest_revision() -> str:
+    value = _manifest().get("version")
+    if isinstance(value, (str, int, float)) and str(value).strip():
+        return str(value).strip()
+    return "unversioned"
 
 
 def _route_meta(path: str) -> dict[str, object] | None:
@@ -73,13 +82,13 @@ def _safe_runtime_source(source: object) -> str | None:
     return source
 
 
-def _serve_source(source: str, fallback: Path | None = None) -> Response:
+def _serve_source(source: str, fallback: Path | None = None, *, cache_control: str = NO_STORE_CACHE) -> Response:
     try:
         data = _fetch(source)
         resolved = "github-runtime"
     except Exception:
         if fallback is None or not fallback.is_file():
-            return Response("Live runtime source unavailable", status_code=503, media_type="text/plain", headers=_headers(source, "unavailable"))
+            return Response("Live runtime source unavailable", status_code=503, media_type="text/plain", headers=_headers(source, "unavailable", cache_control=NO_STORE_CACHE))
         data = fallback.read_bytes()
         resolved = "bundled-fallback"
     media = mimetypes.guess_type(source)[0] or "application/octet-stream"
@@ -91,7 +100,7 @@ def _serve_source(source: str, fallback: Path | None = None) -> Response:
         media = "text/css; charset=utf-8"
     elif source.endswith(".json"):
         media = "application/json; charset=utf-8"
-    return Response(content=data, media_type=media, headers=_headers(source, resolved))
+    return Response(content=data, media_type=media, headers=_headers(source, resolved, cache_control=cache_control))
 
 
 def _fallback(source: str) -> Path | None:
@@ -99,23 +108,29 @@ def _fallback(source: str) -> Path | None:
     return path if path.is_file() else None
 
 
+def _asset_url(source: str, revision: str) -> str:
+    path = source.removeprefix("web/") if source.startswith("web/") else source
+    encoded_revision = urllib.parse.quote(str(revision), safe="-._~")
+    return f"/live/assets/{path}?v={encoded_revision}"
+
+
 def _inject_runtime_assets(data: bytes, meta: dict[str, object]) -> bytes:
     html = data.decode("utf-8")
     styles = meta.get("styles") if isinstance(meta.get("styles"), list) else []
     scripts = meta.get("scripts") if isinstance(meta.get("scripts"), list) else []
+    revision = _manifest_revision()
     style_tags: list[str] = []
     script_tags: list[str] = []
     for item in styles:
         source = _safe_runtime_source(item)
         if source and source.endswith(".css"):
-            style_tags.append(f'<link rel="stylesheet" href="/live/assets/{source.removeprefix("web/") if source.startswith("web/") else source}">')
+            style_tags.append(f'<link rel="stylesheet" href="{_asset_url(source, revision)}">')
     for item in scripts:
         source = _safe_runtime_source(item)
         if source and source.endswith(".js"):
-            path = source.removeprefix("web/") if source.startswith("web/") else source
-            script_tags.append(f'<script src="/live/assets/{path}"></script>')
+            script_tags.append(f'<script src="{_asset_url(source, revision)}"></script>')
     if style_tags and "data-swrzl-runtime-styles" not in html:
-        html = html.replace("</head>", '<meta name="data-swrzl-runtime-styles" content="runtime">' + "".join(style_tags) + "</head>")
+        html = html.replace("</head>", f'<meta name="data-swrzl-runtime-styles" content="runtime-v{revision}">' + "".join(style_tags) + "</head>")
     if script_tags and "data-swrzl-runtime-scripts" not in html:
         html = html.replace("</body>", '<div id="data-swrzl-runtime-scripts" hidden></div>' + "".join(script_tags) + "</body>")
     return html.encode("utf-8")
@@ -160,7 +175,10 @@ def install(server) -> None:
         if path.startswith("/live/assets/"):
             rel = path[len("/live/assets/"):]
             if rel and ".." not in Path(rel).parts:
-                return _serve_source("web/" + rel, None)
+                # Injected assets carry the manifest revision in ?v=. That URL is
+                # immutable for that revision, so the browser can cache it heavily.
+                versioned = bool(request.query_params.get("v", "").strip())
+                return _serve_source("web/" + rel, None, cache_control=IMMUTABLE_ASSET_CACHE if versioned else NO_STORE_CACHE)
 
         if path.startswith("/live/pages/"):
             rel = path[len("/live/pages/"):]
@@ -178,9 +196,11 @@ def install(server) -> None:
         "sourceBranch": BRANCH,
         "manifest": MANIFEST,
         "cacheTtlSeconds": CACHE_TTL,
+        "assetCacheContract": "manifest-versioned-immutable-v1",
+        "versionedAssetCacheControl": IMMUTABLE_ASSET_CACHE,
         "serverRestartRequiredForRuntimeChanges": False,
         "vercelDeploymentRequiredForRuntimeChanges": False,
         "stableBootstrapOwnsPageCode": False,
         "durability": "GitHub runtime branch is source of truth; instance memory is only a bounded read cache.",
-        "detail": "The runtime manifest controls page routes and page-owned asset injection. HTML, CSS, JavaScript, stream UI, and other page code remain on runtime. The stable bootstrap interprets metadata only.",
+        "detail": "HTML and the manifest remain live/no-store. Manifest-injected JS/CSS use revisioned URLs and immutable browser caching, preserving hot updates while removing repeated asset transfer on unchanged revisions.",
     }
