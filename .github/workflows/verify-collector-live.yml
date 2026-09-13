@@ -25,6 +25,8 @@ jobs:
           node-version: "20"
       - name: Install the existing Vercel CLI version
         run: npm install --global vercel@59.16.0
+      - name: Install collector verification dependencies
+        run: python3 -m pip install fastapi==0.116.1 requests==2.34.2
       - name: Verify the live save with private existing credentials
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

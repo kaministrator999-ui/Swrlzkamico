@@ -38,3 +38,8 @@ The user's 1.0.7 screenshots confirmed HTTP 412 ETag mismatch on both Start and 
 This event runs a bounded, separate GitHub verification job using the existing project's production credentials privately. It saves the current configuration with an empty patch and verifies a fresh read, without starting/interfering with collection or training. Environment/credential files remain only in the ephemeral runner and are deleted; logs contain no state contents or credentials. The browser sign-in limitation is no longer the planned acceptance path.
 
 The new .collector/VERIFY_REQUEST.json trigger runs verification only. Current Git deployment is disabled; .deploy/REQUEST.txt and the existing deployment workflow are unchanged. No redeploy/restart is requested. See docs/releases/SERVER_2.3.120_COLLECTOR_LIVE_VERIFICATION.md for the exact operation and pending acceptance receipt.
+
+
+## 2026-09-13 live result — verification incomplete
+
+[Run 34778401085](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/34778401085) failed before any configuration write. Both metadata and private delivery reads returned HTTP 200. The metadata ETag was strong, the delivery ETag was weak, and they differed. This confirms the provider-version mismatch behind the user's HTTP 412 reports. Readiness matched Collector 1.0.8 and its exact published engine hash. The following authenticated status request returned HTTP 401; no configure action was attempted. This result must not be called storage-write acceptance. Server 2.3.121 adds explicit handling for non-readable credential exports and a separately scoped exact-engine/private-Blob verification using the existing storage credential.

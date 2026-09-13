@@ -1,6 +1,6 @@
 # §wyrlz Unified Vercel Server
 
-- Server runtime revision: **2.3.120**
+- Server runtime revision: **2.3.121**
 - Frozen Web Collector revision: **1.0.8**
 - Chat/runtime hotfix rules: **SWRLZ_HOTFIX_RULES.md**
 - Production deployment: **https://swrlzkamico-o3nu.vercel.app**
@@ -107,3 +107,8 @@ Before declaring a runtime hotfix complete:
 ## Collector deployment status
 
 Collector 1.0.8 is live through the runtime loader and repairs the reported ETag mismatch. A separate GitHub verification job now checks authenticated save-and-reload with unchanged settings. See `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md` for the actual result and saved continuation. Compatible collector updates require no server redeployment.
+
+
+## Server 2.3.121 / Deployment Control 1.0.6 — collector storage acceptance
+
+Collector remains 1.0.8. The preceding verification confirmed mismatched strong metadata and weak delivery ETags, then failed at authenticated status (HTTP 401) before any write. This event recognizes non-readable credential exports and can perform one unchanged configuration save through the exact live engine using the existing private storage credential, with explicit scope and complete state preservation checks. Live result pending. No deployment, restart, source reset, collection, or training review. See [release](https://github.com/kaministrator999-ui/Swrlzkamico/blob/main/docs/releases/SERVER_2.3.121_COLLECTOR_STORAGE_ACCEPTANCE.md).

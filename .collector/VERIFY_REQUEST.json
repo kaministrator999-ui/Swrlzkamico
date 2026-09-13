@@ -1,6 +1,11 @@
 {
   "checkpoint": "FROZEN-WEB-COLLECTOR-001",
-  "event": "Server 2.3.120 live verification of Collector 1.0.8",
+  "event": "Server 2.3.121 collector storage acceptance",
   "collectorVersion": "1.0.8",
-  "engineSha256": "95e9b808c9f35360804e047dc02ba13d8df2f7cb93e1a53b66879e33c4e0caa5"
+  "engineSha256": "95e9b808c9f35360804e047dc02ba13d8df2f7cb93e1a53b66879e33c4e0caa5",
+  "serverEvent": "2.3.121",
+  "runtimeCommit": "a7d2cc0d99ba399c288ba8f82e8eb7582b746231",
+  "requestedAt": "2026-09-13T19:50:50.609Z",
+  "purpose": "Verify the exact live Collector 1.0.8 empty configuration save and durable readback; report API versus storage scope explicitly.",
+  "fixEvent": "Server 2.3.104 metadata ETag repair"
 }

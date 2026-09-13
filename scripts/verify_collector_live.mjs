@@ -2,12 +2,22 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
+import { execFileSync } from 'node:child_process';
 
 const ORIGIN = 'https://swrlzkamico-o3nu.vercel.app';
 const STATE_PATH = 'swrlz/collector/control/state.json';
 
+export function adminCredentialState(value) {
+  const token = String(value || '').trim();
+  if (!token) return 'unavailable';
+  // Vercel intentionally exports this marker for non-readable sensitive values.
+  // It is never an application credential and must not be sent as one.
+  if (token === '[SENSITIVE]') return 'redacted';
+  return 'available';
+}
+
 export async function verifyLive({ token, expected, fetcher = fetch }) {
-  assert(token, 'SWRLZ_ADMIN_TOKEN is unavailable to this verification job.');
+  assert.equal(adminCredentialState(token), 'available', 'The application credential is not available to this verification job.');
   assert.match(expected.engineSha256, /^[a-f0-9]{64}$/);
   assert.match(expected.collectorVersion, /^\d+\.\d+\.\d+$/);
   const api = async (path, body) => {
@@ -24,7 +34,10 @@ export async function verifyLive({ token, expected, fetcher = fetch }) {
     });
     const payload = await response.json();
     if (!response.ok || !payload.ok) {
-      throw new Error(`${path}: HTTP ${response.status}; ${payload.error?.code || 'REQUEST_FAILED'}; ${payload.error?.message || 'request rejected'}`);
+      const failure = new Error(`${path}: HTTP ${response.status}; ${payload.error?.code || 'REQUEST_FAILED'}; ${payload.error?.message || 'request rejected'}`);
+      failure.apiPath = path;
+      failure.httpStatus = response.status;
+      throw failure;
     }
     return payload;
   };
@@ -55,6 +68,7 @@ export async function verifyLive({ token, expected, fetcher = fetch }) {
   }
   return {
     ok: true,
+    scope: 'production-collector-api',
     collectorVersion: expected.collectorVersion,
     engineSha256: expected.engineSha256,
     beforeRevision: before.state.stateRevision,
@@ -109,7 +123,42 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   try {
     const expected = JSON.parse(await readFile('.collector/VERIFY_REQUEST.json', 'utf8'));
     console.log(JSON.stringify({ storageVersionCheck: await compareStorageVersions() }));
-    console.log(JSON.stringify(await verifyLive({ token: process.env.SWRLZ_ADMIN_TOKEN, expected })));
+    let credentialState = adminCredentialState(process.env.SWRLZ_ADMIN_TOKEN);
+    console.log(JSON.stringify({ applicationCredential: credentialState }));
+    let receipt;
+    if (credentialState === 'available') {
+      try {
+        receipt = await verifyLive({ token: process.env.SWRLZ_ADMIN_TOKEN, expected });
+      } catch (error) {
+        // Only an authentication rejection before any mutation may select the
+        // separately authorized Blob check. Never replay a failed write.
+        if (error.apiPath !== 'status' || error.httpStatus !== 401) throw error;
+        credentialState = 'rejected-before-write';
+        console.log(JSON.stringify({ applicationCredential: credentialState, apiWriteAttempted: false }));
+      }
+    }
+    if (!receipt) {
+      let output;
+      try {
+        output = execFileSync('python3', ['scripts/verify_collector_storage.py'], {
+        encoding: 'utf8', timeout: 180000, maxBuffer: 100000,
+        // The storage check has its own existing resource credential. It neither
+        // reads nor changes the application's administrator credential.
+        env: {
+          PATH: process.env.PATH,
+          BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN || '',
+          PYTHONDONTWRITEBYTECODE: '1',
+        },
+        stdio: ['ignore', 'pipe', 'pipe'],
+        });
+      } catch (error) {
+        let failure;
+        try { failure = JSON.parse(error.stdout || '{}'); } catch { /* No private process output is logged. */ }
+        throw new Error(failure?.error || 'The production storage verification process failed.');
+      }
+      receipt = { ...JSON.parse(output), applicationCredential: credentialState, apiWriteVerified: false };
+    }
+    console.log(JSON.stringify(receipt));
   } catch (error) {
     console.error(JSON.stringify({ ok: false, error: safeMessage(error) }));
     process.exitCode = 1;
