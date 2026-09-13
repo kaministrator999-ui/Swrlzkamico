@@ -6,10 +6,10 @@ runtime branch by the dedicated hot/live loaders. The stable frozen-web
 collector host applies authentication and a fixed runtime-module contract while
 the collector implementation and page remain runtime-owned.
 
-Server 2.3.106 preserves validated RMCCA cognitive context directly through the
-stable Chat normalizer, keeps local generation detached from the browser socket,
-and exposes the active generation transcript as authoritative synchronization
-state for foreground/app-resume catch-up.
+Server 2.3.108 preserves validated RMCCA/time context, keeps local generation
+detached from the browser socket, and checkpoints the authoritative generation
+transcript to private shared Blob state so transcript synchronization is not tied
+to whichever warm worker receives the browser's next request.
 """
 from __future__ import annotations
 
@@ -27,9 +27,10 @@ from api.account_routes_v2 import install as _install_account_routes
 from api.collector_host import install as _install_collector_host
 from api.chat_resume_sessions import install as _install_chat_resume_sessions
 from api.chat_rmcca_passthrough import install as _install_chat_rmcca_passthrough
+from api.chat_transcript_store import STORE as _transcript_store
 import api.chat_extensions as _chat_extensions
 
-VERSION = "2.3.106"
+VERSION = "2.3.108"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -47,20 +48,28 @@ _server.CAPABILITIES["chat-resumable-generation"] = {
     "kind": "transport-continuity",
     "ready": True,
     "contract": "resumable-v1",
-    "detail": "A requestId owns one local generation session; reconnecting clients replay only events after resumeAfterSeq.",
+    "detail": "A requestId owns one local generation session; the owning worker replays events after resumeAfterSeq while shared transcript state prevents duplicate remote ownership.",
 }
 _server.CAPABILITIES["chat-generation-transcript"] = {
     "kind": "transport-continuity",
     "ready": True,
     "contract": "generation-transcript-v1",
-    "detail": "The server-owned generation session exposes append-only generated text, text revision, phase, sequence and terminal state so Chat can synchronize to the authoritative response position before resuming live events.",
+    "detail": "Append-only generated text, revision, phase, sequence and terminal state are authoritative response-position synchronization state.",
+}
+_server.CAPABILITIES["chat-shared-generation-transcript"] = {
+    "kind": "durable-transport-continuity",
+    "ready": bool(_transcript_store.configured),
+    "contract": "shared-private-blob-v1",
+    "access": "private",
+    "ttlSeconds": 1800,
+    "detail": "The active model state remains worker-owned; bounded transcript checkpoints are shared privately across workers so a different worker can synchronize the same response without starting a duplicate generation.",
 }
 _server.CAPABILITIES["chat-rmcca-direct-transport"] = {
     "kind": "cognitive-context-transport",
     "ready": True,
     "contract": "rmcca-direct-v1",
     "fallback": "history-carrier-v1",
-    "detail": "Validated RMCCA cognitive context survives stable request normalization as a first-class field; the compact history carrier remains a compatibility fallback.",
+    "detail": "Validated RMCCA cognitive and user-time context survives stable request normalization as bounded first-class metadata; the compact history carrier remains compatibility transport.",
 }
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
