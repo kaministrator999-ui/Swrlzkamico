@@ -94,3 +94,33 @@ body[data-swrlz-theme="ice-dragon"] .swrlz-theme-select{border-color:rgba(143,22
   body[data-swrlz-theme="ice-dragon"] .messages{background-position:50% 40%!important}
   body[data-swrlz-theme="ice-dragon"] .sidebar{background:linear-gradient(180deg,rgba(3,12,22,.995),rgba(2,9,18,.98))}
 }
+
+/* v3.1.1 polish: keep the fade attached to the whole scroll content, soften composer backing, and lift welcome-copy contrast. */
+body[data-swrlz-theme="ice-dragon"] .messages::after{display:none!important;content:none!important}
+body[data-swrlz-theme="ice-dragon"] .message-stack{isolation:isolate!important}
+body[data-swrlz-theme="ice-dragon"] .message-stack::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(180deg,rgba(1,7,16,.18),rgba(1,8,18,.31) 56%,rgba(1,6,14,.46)),linear-gradient(90deg,rgba(1,8,18,.24),transparent 64%);
+}
+body[data-swrlz-theme="ice-dragon"] .message-stack>*{position:relative;z-index:1}
+body[data-swrlz-theme="ice-dragon"] .composer-shell{
+  background:rgba(1,7,15,.16)!important;
+  backdrop-filter:blur(18px) saturate(118%);-webkit-backdrop-filter:blur(18px) saturate(118%);
+}
+body[data-swrlz-theme="ice-dragon"] .composer-box{
+  background:rgba(4,17,30,.58)!important;
+  backdrop-filter:blur(20px) saturate(122%);-webkit-backdrop-filter:blur(20px) saturate(122%);
+}
+body[data-swrlz-theme="ice-dragon"] .welcome h2{
+  color:#fff!important;
+  text-shadow:0 2px 12px rgba(0,0,0,.92),0 0 22px rgba(0,12,26,.72);
+}
+body[data-swrlz-theme="ice-dragon"] .welcome p{
+  color:rgba(241,251,255,.94)!important;
+  font-weight:520;
+  text-shadow:0 2px 10px rgba(0,0,0,.94),0 0 16px rgba(0,9,20,.72);
+}
+body[data-swrlz-theme="ice-dragon"] .notice{
+  background:rgba(45,7,18,.66)!important;
+  backdrop-filter:blur(10px) saturate(112%);-webkit-backdrop-filter:blur(10px) saturate(112%);
+}
