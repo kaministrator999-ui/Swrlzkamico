@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import json
 import mimetypes
 import time
@@ -8,7 +9,7 @@ import urllib.request
 from pathlib import Path
 
 from fastapi import Request
-from fastapi.responses import RedirectResponse, Response
+from fastapi.responses import Response
 
 from api.chat_admin_session import attach_browser_session_cookie
 
@@ -16,8 +17,10 @@ OWNER = "kaministrator999-ui"
 REPO = "Swrlzkamico"
 BRANCH = "runtime"
 RAW_BASE = f"https://raw.githubusercontent.com/{OWNER}/{REPO}"
+CONTENTS_API_BASE = f"https://api.github.com/repos/{OWNER}/{REPO}/contents"
 ROOT = Path(__file__).resolve().parents[1]
 CACHE_TTL = 2.0
+MANIFEST_CACHE_TTL = 60.0
 FETCH_TIMEOUT = 8
 MAX_SOURCE_BYTES = 4_000_000
 MANIFEST = "runtime_pages/manifest.json"
@@ -25,6 +28,16 @@ IMMUTABLE_ASSET_CACHE = "public, max-age=31536000, immutable"
 NO_STORE_CACHE = "no-store, max-age=0"
 
 _CACHE: dict[str, tuple[float, bytes]] = {}
+_MANIFEST_CACHE: tuple[float, bytes, str] | None = None
+
+
+def _validate_text_source(source: str, data: bytes, limit: int) -> bytes:
+    if len(data) > limit:
+        raise ValueError(f"LIVE_SOURCE_TOO_LARGE:{source}")
+    data.decode("utf-8")
+    if b"\x00" in data:
+        raise ValueError(f"LIVE_SOURCE_BINARY_REJECTED:{source}")
+    return data
 
 
 def _fetch(source: str, limit: int = MAX_SOURCE_BYTES) -> bytes:
@@ -35,35 +48,86 @@ def _fetch(source: str, limit: int = MAX_SOURCE_BYTES) -> bytes:
     encoded_branch = urllib.parse.quote(BRANCH, safe='-._/')
     encoded_source = urllib.parse.quote(source, safe='-._/')
     url = f"{RAW_BASE}/{encoded_branch}/{encoded_source}?swrlz_runtime={int(now * 1000)}"
-    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-live-runtime/7", "Cache-Control": "no-cache"})
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "swrlz-live-runtime/8",
+            "Cache-Control": "no-cache, no-store, max-age=0",
+            "Pragma": "no-cache",
+        },
+    )
     with urllib.request.urlopen(req, timeout=FETCH_TIMEOUT) as response:
         data = response.read(limit + 1)
-    if len(data) > limit:
-        raise ValueError(f"LIVE_SOURCE_TOO_LARGE:{source}")
-    data.decode("utf-8")
-    if b"\x00" in data:
-        raise ValueError(f"LIVE_SOURCE_BINARY_REJECTED:{source}")
+    data = _validate_text_source(source, data, limit)
     _CACHE[source] = (now, data)
     return data
 
 
+def _fetch_manifest_authoritative() -> tuple[bytes, str]:
+    """Read the runtime manifest from GitHub repository-content authority.
+
+    Raw GitHub remains the fast delivery path for revisioned assets, but a branch
+    CDN response must never be allowed to pin Chat to an old manifest revision.
+    The manifest therefore resolves through the repository contents API and is
+    cached briefly in-worker. If that authority is unavailable after the cache
+    expires, callers fail closed rather than silently serving an older raw copy.
+    """
+    global _MANIFEST_CACHE
+    now = time.time()
+    if _MANIFEST_CACHE and now - _MANIFEST_CACHE[0] <= MANIFEST_CACHE_TTL:
+        return _MANIFEST_CACHE[1], _MANIFEST_CACHE[2]
+
+    encoded_source = urllib.parse.quote(MANIFEST, safe='-._/')
+    encoded_branch = urllib.parse.quote(BRANCH, safe='-._/')
+    url = f"{CONTENTS_API_BASE}/{encoded_source}?ref={encoded_branch}"
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "swrlz-live-manifest-authority/1",
+            "Cache-Control": "no-cache, no-store, max-age=0",
+            "Pragma": "no-cache",
+            "X-GitHub-Api-Version": "2022-11-28",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=FETCH_TIMEOUT) as response:
+        payload = json.loads(response.read(256_000).decode("utf-8"))
+    if not isinstance(payload, dict) or payload.get("encoding") != "base64":
+        raise ValueError("LIVE_MANIFEST_AUTHORITY_INVALID_RESPONSE")
+    encoded = str(payload.get("content") or "").replace("\n", "")
+    data = base64.b64decode(encoded, validate=True)
+    data = _validate_text_source(MANIFEST, data, 128_000)
+    value = json.loads(data.decode("utf-8"))
+    if not isinstance(value, dict) or not isinstance(value.get("version"), (str, int, float)):
+        raise ValueError("LIVE_MANIFEST_AUTHORITY_INVALID_MANIFEST")
+    revision = str(value.get("version")).strip()
+    if not revision:
+        raise ValueError("LIVE_MANIFEST_AUTHORITY_MISSING_REVISION")
+    _MANIFEST_CACHE = (now, data, revision)
+    return data, revision
+
+
 def _headers(source: str, resolved: str = "github-runtime", *, cache_control: str = NO_STORE_CACHE) -> dict[str, str]:
-    return {"Cache-Control": cache_control, "X-Content-Type-Options": "nosniff", "X-SWRLZ-Live-Source": resolved, "X-SWRLZ-Live-Branch": BRANCH, "X-SWRLZ-Live-Path": source}
+    return {
+        "Cache-Control": cache_control,
+        "X-Content-Type-Options": "nosniff",
+        "X-SWRLZ-Live-Source": resolved,
+        "X-SWRLZ-Live-Branch": BRANCH,
+        "X-SWRLZ-Live-Path": source,
+    }
 
 
 def _manifest() -> dict[str, object]:
-    try:
-        value = json.loads(_fetch(MANIFEST, 128_000).decode("utf-8"))
-        return value if isinstance(value, dict) else {}
-    except Exception:
-        return {}
+    data, _ = _fetch_manifest_authoritative()
+    value = json.loads(data.decode("utf-8"))
+    if not isinstance(value, dict):
+        raise ValueError("LIVE_MANIFEST_AUTHORITY_INVALID_MANIFEST")
+    return value
 
 
 def _manifest_revision() -> str:
-    value = _manifest().get("version")
-    if isinstance(value, (str, int, float)) and str(value).strip():
-        return str(value).strip()
-    return "unversioned"
+    _, revision = _fetch_manifest_authoritative()
+    return revision
 
 
 def _route_meta(path: str) -> dict[str, object] | None:
@@ -88,7 +152,12 @@ def _serve_source(source: str, fallback: Path | None = None, *, cache_control: s
         resolved = "github-runtime"
     except Exception:
         if fallback is None or not fallback.is_file():
-            return Response("Live runtime source unavailable", status_code=503, media_type="text/plain", headers=_headers(source, "unavailable", cache_control=NO_STORE_CACHE))
+            return Response(
+                "Live runtime source unavailable",
+                status_code=503,
+                media_type="text/plain",
+                headers=_headers(source, "unavailable", cache_control=NO_STORE_CACHE),
+            )
         data = fallback.read_bytes()
         resolved = "bundled-fallback"
     media = mimetypes.guess_type(source)[0] or "application/octet-stream"
@@ -101,6 +170,22 @@ def _serve_source(source: str, fallback: Path | None = None, *, cache_control: s
     elif source.endswith(".json"):
         media = "application/json; charset=utf-8"
     return Response(content=data, media_type=media, headers=_headers(source, resolved, cache_control=cache_control))
+
+
+def _serve_manifest() -> Response:
+    try:
+        data, revision = _fetch_manifest_authoritative()
+    except Exception as exc:
+        return Response(
+            f"Live manifest authority unavailable: {type(exc).__name__}",
+            status_code=503,
+            media_type="text/plain",
+            headers=_headers(MANIFEST, "authority-unavailable", cache_control=NO_STORE_CACHE),
+        )
+    headers = _headers(MANIFEST, "github-contents-api", cache_control=NO_STORE_CACHE)
+    headers["X-SWRLZ-Manifest-Authority"] = "github-contents-api-v1"
+    headers["X-SWRLZ-Manifest-Revision"] = revision
+    return Response(content=data, media_type="application/json; charset=utf-8", headers=headers)
 
 
 def _fallback(source: str) -> Path | None:
@@ -144,25 +229,63 @@ def install(server) -> None:
         if request.method != "GET":
             return await call_next(request)
 
+        # Asset requests are revision-addressed and do not need to touch the
+        # manifest authority again. Keeping this before route lookup removes a
+        # manifest/network dependency from the hot asset-delivery path.
+        if path.startswith("/live/assets/"):
+            rel = path[len("/live/assets/"):]
+            if rel and ".." not in Path(rel).parts:
+                versioned = bool(request.query_params.get("v", "").strip())
+                return _serve_source("web/" + rel, None, cache_control=IMMUTABLE_ASSET_CACHE if versioned else NO_STORE_CACHE)
+
+        if path == "/live/manifest.json":
+            return _serve_manifest()
+
         if path == "/chat":
-            meta = _route_meta("/chat") or {"source": "web/chat.html"}
+            try:
+                meta = _route_meta("/chat") or {"source": "web/chat.html"}
+            except Exception as exc:
+                return Response(
+                    f"Live manifest authority unavailable: {type(exc).__name__}",
+                    status_code=503,
+                    media_type="text/plain",
+                    headers=_headers(MANIFEST, "authority-unavailable"),
+                )
             source = _safe_runtime_source(meta.get("source")) or "web/chat.html"
             response = _serve_source(source, _fallback(source))
             if response.status_code == 200 and response.media_type and response.media_type.startswith("text/html"):
                 response.body = _inject_runtime_assets(response.body, meta)
                 response.headers["content-length"] = str(len(response.body))
+                response.headers["X-SWRLZ-Manifest-Revision"] = _manifest_revision()
             return attach_browser_session_cookie(response, request)
 
         if path == "/api/chat" and action == "page":
-            meta = _route_meta("/chat") or {"source": "web/chat.html"}
+            try:
+                meta = _route_meta("/chat") or {"source": "web/chat.html"}
+            except Exception as exc:
+                return Response(
+                    f"Live manifest authority unavailable: {type(exc).__name__}",
+                    status_code=503,
+                    media_type="text/plain",
+                    headers=_headers(MANIFEST, "authority-unavailable"),
+                )
             source = _safe_runtime_source(meta.get("source")) or "web/chat.html"
             response = _serve_source(source, _fallback(source))
             if response.status_code == 200 and response.media_type and response.media_type.startswith("text/html"):
                 response.body = _inject_runtime_assets(response.body, meta)
                 response.headers["content-length"] = str(len(response.body))
+                response.headers["X-SWRLZ-Manifest-Revision"] = _manifest_revision()
             return attach_browser_session_cookie(response, request)
 
-        meta = _route_meta(path)
+        if path.startswith("/live/pages/"):
+            rel = path[len("/live/pages/"):]
+            if rel and ".." not in Path(rel).parts:
+                return _serve_source("runtime_pages/pages/" + rel, None)
+
+        try:
+            meta = _route_meta(path)
+        except Exception:
+            meta = None
         if meta:
             source = _safe_runtime_source(meta.get("source"))
             if source:
@@ -170,23 +293,8 @@ def install(server) -> None:
                 if response.status_code == 200 and response.media_type and response.media_type.startswith("text/html"):
                     response.body = _inject_runtime_assets(response.body, meta)
                     response.headers["content-length"] = str(len(response.body))
+                    response.headers["X-SWRLZ-Manifest-Revision"] = _manifest_revision()
                 return response
-
-        if path.startswith("/live/assets/"):
-            rel = path[len("/live/assets/"):]
-            if rel and ".." not in Path(rel).parts:
-                # Injected assets carry the manifest revision in ?v=. That URL is
-                # immutable for that revision, so the browser can cache it heavily.
-                versioned = bool(request.query_params.get("v", "").strip())
-                return _serve_source("web/" + rel, None, cache_control=IMMUTABLE_ASSET_CACHE if versioned else NO_STORE_CACHE)
-
-        if path.startswith("/live/pages/"):
-            rel = path[len("/live/pages/"):]
-            if rel and ".." not in Path(rel).parts:
-                return _serve_source("runtime_pages/pages/" + rel, None)
-
-        if path == "/live/manifest.json":
-            return _serve_source(MANIFEST, None)
 
         return await call_next(request)
 
@@ -196,11 +304,14 @@ def install(server) -> None:
         "sourceBranch": BRANCH,
         "manifest": MANIFEST,
         "cacheTtlSeconds": CACHE_TTL,
+        "manifestAuthority": "github-contents-api-v1",
+        "manifestAuthorityCacheTtlSeconds": MANIFEST_CACHE_TTL,
+        "manifestFailurePolicy": "fail-closed-no-stale-raw-manifest",
         "assetCacheContract": "manifest-versioned-immutable-v1",
         "versionedAssetCacheControl": IMMUTABLE_ASSET_CACHE,
         "serverRestartRequiredForRuntimeChanges": False,
         "vercelDeploymentRequiredForRuntimeChanges": False,
         "stableBootstrapOwnsPageCode": False,
         "durability": "GitHub runtime branch is source of truth; instance memory is only a bounded read cache.",
-        "detail": "HTML and the manifest remain live/no-store. Manifest-injected JS/CSS use revisioned URLs and immutable browser caching, preserving hot updates while removing repeated asset transfer on unchanged revisions.",
+        "detail": "Manifest revision is resolved through GitHub repository-content authority and fails closed rather than silently accepting stale raw branch content. Revisioned JS/CSS remain immutable browser-cache assets; asset requests bypass manifest lookup.",
     }
