@@ -4,7 +4,7 @@
 
 **Server 2.3.121 / Deployment Control 1.0.6 — collector storage acceptance**
 
-The prior run confirmed the strong-metadata/weak-delivery ETag mismatch, then stopped at HTTP 401 before a write. This event distinguishes non-readable application credentials and can verify the exact published engine against the existing private store. Live acceptance is pending; Collector remains 1.0.8. No deployment or collection interruption. See [event receipt](releases/server-2.3.121-collector-storage-acceptance.md).
+The prior run confirmed the strong-metadata/weak-delivery ETag mismatch, then stopped at HTTP 401 before a write. This event distinguishes non-readable application credentials and can verify the exact published engine against the existing private store. Production storage acceptance passed: the exact live action saved revision 2 and a new session read confirmed identical content. The exported application credential is redacted, so authenticated browser/API mutation was not verified. Collector remains 1.0.8. No deployment or collection interruption. See [event receipt](releases/server-2.3.121-collector-storage-acceptance.md).
 
 ## Previous release context
 

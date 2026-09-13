@@ -141,4 +141,6 @@ The collector is live through the runtime loader. Collector 1.0.8 repairs condit
 
 ## Collector verification event 2.3.121
 
-Deployment Control 1.0.6 handles unavailable credential exports explicitly and verifies a bounded save through the exact live collector and its private store. Collector remains 1.0.8. [Verification scope and pending receipt](docs/releases/server-2.3.121-collector-storage-acceptance.md).
+Deployment Control 1.0.6 handles unavailable credential exports explicitly and verifies a bounded save through the exact live collector and its private store. Collector remains 1.0.8. [Verification scope and successful storage receipt](docs/releases/server-2.3.121-collector-storage-acceptance.md).
+
+Production storage acceptance passed at 2026-09-13T19:52:26Z: revision 1 → 2 survived a new session read, with all collection content preserved. The application credential is intentionally redacted; API/browser mutation acceptance is not claimed. [Successful run](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/34778963286).
