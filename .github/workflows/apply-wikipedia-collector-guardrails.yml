@@ -1,0 +1,169 @@
+name: Apply Wikipedia collector guardrails
+
+on:
+  push:
+    branches: [runtime]
+    paths:
+      - .github/workflows/apply-wikipedia-collector-guardrails.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: runtime
+          fetch-depth: 0
+
+      - name: Apply deterministic collector patch
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('runtime_hot/web_snapshot_collector.py')
+          text = path.read_text(encoding='utf-8')
+
+          def replace_once(old: str, new: str, label: str) -> None:
+              global text
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected exactly one match, found {count}')
+              text = text.replace(old, new, 1)
+
+          replace_once(
+              'ALLOWED_MIMES = {"text/html", "application/xhtml+xml", "text/plain"}\n',
+              'ALLOWED_MIMES = {"text/html", "application/xhtml+xml", "text/plain"}\n'
+              'WIKIPEDIA_KNOWLEDGE_PROFILE = "wikipedia-knowledge"\n'
+              'WIKIPEDIA_PROFILE_VERSION = 1\n'
+              'WIKIPEDIA_ARTICLE_HOST = "en.wikipedia.org"\n'
+              'WIKIPEDIA_PORTAL_HOSTS = {"wikipedia.org", "www.wikipedia.org"}\n'
+              'WIKIPEDIA_BLOCKED_NAMESPACES = {\n'
+              '    "special", "talk", "user", "user_talk", "wikipedia", "wikipedia_talk",\n'
+              '    "file", "file_talk", "mediawiki", "mediawiki_talk", "template", "template_talk",\n'
+              '    "help", "help_talk", "category", "category_talk", "portal", "portal_talk",\n'
+              '    "draft", "draft_talk", "timedtext", "module", "module_talk", "media",\n'
+              '}\n',
+              'constants',
+          )
+
+          replace_once(
+              '        "explorationFetched": 0,\n        "trainingPending": 0,\n',
+              '        "explorationFetched": 0,\n        "profileFilteredLinks": 0,\n        "trainingPending": 0,\n',
+              'totals',
+          )
+
+          marker = '''def _validate_public_url(url: str, config: dict[str, Any]) -> tuple[str, list[str]]:\n'''
+          helpers = '''def _profile_for_url(url: str) -> str:\n    parsed = urllib.parse.urlsplit(url)\n    host = (parsed.hostname or "").lower()\n    if host == WIKIPEDIA_ARTICLE_HOST or host in WIKIPEDIA_PORTAL_HOSTS:\n        return WIKIPEDIA_KNOWLEDGE_PROFILE\n    return "general-web"\n\n\ndef _normalize_source_profile(url: str) -> tuple[str, str]:\n    canonical = _canonicalize(url)\n    profile = _profile_for_url(canonical)\n    parsed = urllib.parse.urlsplit(canonical)\n    host = (parsed.hostname or "").lower()\n    if profile == WIKIPEDIA_KNOWLEDGE_PROFILE and host in WIKIPEDIA_PORTAL_HOSTS:\n        canonical = "https://en.wikipedia.org/wiki/Main_Page"\n    return canonical, profile\n\n\ndef _source_profile(source: dict[str, Any]) -> str:\n    explicit = str(source.get("profile") or "").strip().lower()\n    return explicit or _profile_for_url(str(source.get("url") or ""))\n\n\ndef _profile_allows_url(source: dict[str, Any], url: str) -> tuple[bool, str | None]:\n    if _source_profile(source) != WIKIPEDIA_KNOWLEDGE_PROFILE:\n        return True, None\n    parsed = urllib.parse.urlsplit(url)\n    host = (parsed.hostname or "").lower()\n    if host != WIKIPEDIA_ARTICLE_HOST:\n        return False, "WIKIPEDIA_OFF_DOMAIN"\n    if parsed.query:\n        return False, "WIKIPEDIA_QUERY_VARIANT"\n    path = urllib.parse.unquote(parsed.path or "/")\n    if not path.startswith("/wiki/"):\n        return False, "WIKIPEDIA_NON_ARTICLE"\n    article = path[len("/wiki/"):].strip()\n    if not article:\n        return False, "WIKIPEDIA_NON_ARTICLE"\n    if ":" in article:\n        namespace = article.split(":", 1)[0].strip().replace(" ", "_").casefold()\n        if namespace in WIKIPEDIA_BLOCKED_NAMESPACES:\n            return False, "WIKIPEDIA_BLOCKED_NAMESPACE"\n    return True, None\n\n\n'''
+          replace_once(marker, helpers + marker, 'profile helpers')
+
+          replace_once(
+              '    source = next((item for item in state.get("sources", []) if item.get("id") == source_id), None) or {}\n    policy = str(source.get("policy", "balanced"))\n',
+              '    source = next((item for item in state.get("sources", []) if item.get("id") == source_id), None) or {}\n    source_profile = _source_profile(source)\n    policy = str(source.get("policy", "balanced"))\n',
+              'enqueue profile',
+          )
+          replace_once(
+              '            host = urllib.parse.urlsplit(candidate).hostname or ""\n            if any(_domain_matches(host, item) for item in blocked):\n',
+              '            host = urllib.parse.urlsplit(candidate).hostname or ""\n            if source_profile == WIKIPEDIA_KNOWLEDGE_PROFILE:\n                allowed, _reason = _profile_allows_url(source, candidate)\n                if not allowed:\n                    state["totals"]["profileFilteredLinks"] = int(state["totals"].get("profileFilteredLinks", 0)) + 1\n                    continue\n            if any(_domain_matches(host, item) for item in blocked):\n',
+              'enqueue filter',
+          )
+
+          replace_once(
+              'def _process_item(store: BlobStore, state: dict[str, Any], item: dict[str, Any], context: Any) -> dict[str, Any]:\n    canonical, _addresses = _validate_public_url(str(item.get("url", "")), state["config"])\n',
+              'def _process_item(store: BlobStore, state: dict[str, Any], item: dict[str, Any], context: Any) -> dict[str, Any]:\n    source = _source_for_item(state, item) or {}\n    canonical, _addresses = _validate_public_url(str(item.get("url", "")), state["config"])\n    profile_allowed, profile_code = _profile_allows_url(source, canonical)\n    if not profile_allowed:\n        raise CollectorError(422, profile_code or "SOURCE_PROFILE_REJECTED", "URL is outside the source crawl profile.")\n',
+              'process prefetch profile',
+          )
+          replace_once(
+              '    fetched = _fetch_document(state, canonical)\n    final_host = urllib.parse.urlsplit(fetched["url"]).hostname or host\n',
+              '    fetched = _fetch_document(state, canonical)\n    profile_allowed, profile_code = _profile_allows_url(source, fetched["url"])\n    if not profile_allowed:\n        raise CollectorError(422, profile_code or "SOURCE_PROFILE_REJECTED", "Redirect destination is outside the source crawl profile.")\n    final_host = urllib.parse.urlsplit(fetched["url"]).hostname or host\n',
+              'process postfetch profile',
+          )
+          replace_once(
+              '    extracted = _extract(fetched["body"], fetched["contentType"], fetched["url"])\n    source = _source_for_item(state, item) or {}\n    quality = _quality(extracted, int(source.get("priority", item.get("priority", 50))))\n',
+              '    extracted = _extract(fetched["body"], fetched["contentType"], fetched["url"])\n    quality = _quality(extracted, int(source.get("priority", item.get("priority", 50))))\n',
+              'remove duplicate source lookup',
+          )
+
+          replace_once(
+              '    state["config"] = previous.get("config", _default_config())\n    state["sources"] = previous.get("sources", [])\n',
+              '    state["config"] = dict(previous.get("config", _default_config()))\n    migrated_sources: list[dict[str, Any]] = []\n    for original in previous.get("sources", []):\n        source = dict(original)\n        normalized_url, profile = _normalize_source_profile(str(source.get("url") or ""))\n        changed = normalized_url != source.get("url") or profile != source.get("profile")\n        source["url"] = normalized_url\n        source["host"] = urllib.parse.urlsplit(normalized_url).hostname\n        source["profile"] = profile\n        source["profileVersion"] = WIKIPEDIA_PROFILE_VERSION if profile == WIKIPEDIA_KNOWLEDGE_PROFILE else 1\n        if changed:\n            source["updatedAt"] = _now()\n        migrated_sources.append(source)\n    state["sources"] = migrated_sources\n    enabled_sources = [source for source in state["sources"] if source.get("enabled", True)]\n    if enabled_sources and all(_source_profile(source) == WIKIPEDIA_KNOWLEDGE_PROFILE for source in enabled_sources):\n        state["config"]["allowExternalDomains"] = False\n        state["config"]["explorationPercent"] = 0\n        preferred = set(state["config"].get("preferredDomains", []))\n        preferred.add(WIKIPEDIA_ARTICLE_HOST)\n        state["config"]["preferredDomains"] = sorted(preferred)\n',
+              'new snapshot migration',
+          )
+
+          replace_once(
+              '        url, _addresses = _validate_public_url(str(body.get("url", "")), state["config"])\n        priority = int(body.get("priority", 80))\n',
+              '        raw_url = _canonicalize(str(body.get("url", "")))\n        url, profile = _normalize_source_profile(raw_url)\n        url, _addresses = _validate_public_url(url, state["config"])\n        profile_allowed, profile_code = _profile_allows_url({"url": url, "profile": profile}, url)\n        if not profile_allowed:\n            raise CollectorError(400, profile_code or "SOURCE_PROFILE_REJECTED", "The source URL is outside its automatic crawl profile.")\n        priority = int(body.get("priority", 80))\n',
+              'add source normalize',
+          )
+          replace_once(
+              '            "enabled": bool(body.get("enabled", True)),\n            "updatedAt": _now(),\n',
+              '            "enabled": bool(body.get("enabled", True)),\n            "profile": profile,\n            "profileVersion": WIKIPEDIA_PROFILE_VERSION if profile == WIKIPEDIA_KNOWLEDGE_PROFILE else 1,\n            "updatedAt": _now(),\n',
+              'add source profile metadata',
+          )
+          replace_once(
+              '        _event(state, "source-added" if existing is None else "source-updated", f"Registered {url}", priority=priority)\n',
+              '        if profile == WIKIPEDIA_KNOWLEDGE_PROFILE and all(_source_profile(item) == WIKIPEDIA_KNOWLEDGE_PROFILE for item in state["sources"] if item.get("enabled", True)):\n            state["config"]["allowExternalDomains"] = False\n            state["config"]["explorationPercent"] = 0\n            preferred = set(state["config"].get("preferredDomains", []))\n            preferred.add(WIKIPEDIA_ARTICLE_HOST)\n            state["config"]["preferredDomains"] = sorted(preferred)\n        _event(state, "source-added" if existing is None else "source-updated", f"Registered {url}", priority=priority, profile=profile)\n',
+              'add source auto config',
+          )
+
+          replace_once(
+              '        "security": ["admin-authenticated-host", "public-IP-only", "IP-pinned-connect", "hostname-verified-TLS", "redirect-revalidation", "robots", "MIME-limit", "response-byte-limit", "domain-rate-limit"],\n',
+              '        "security": ["admin-authenticated-host", "public-IP-only", "IP-pinned-connect", "hostname-verified-TLS", "redirect-revalidation", "robots", "MIME-limit", "response-byte-limit", "domain-rate-limit", "source-profile-url-gates"],\n        "crawlProfiles": {"wikipedia": {"id": WIKIPEDIA_KNOWLEDGE_PROFILE, "version": WIKIPEDIA_PROFILE_VERSION, "host": WIKIPEDIA_ARTICLE_HOST, "articlePath": "/wiki/", "externalDomains": False}},\n',
+              'module inspection',
+          )
+
+          path.write_text(text, encoding='utf-8')
+
+          version_path = Path('versions/frozen-web-collector.txt')
+          version = version_path.read_text(encoding='utf-8')
+          if 'VERSION=1.0.8' not in version:
+              raise SystemExit('version authority is not at expected 1.0.8 baseline')
+          version = version.replace('VERSION=1.0.8', 'VERSION=1.0.9', 1)
+          version = version.replace(
+              'BASELINE_NOTE=',
+              'BASELINE_NOTE=Collector 1.0.9 adds automatic source crawl profiles. Wikipedia portal seeds normalize to English Wikipedia Main Page, Wikipedia crawling stays on en.wikipedia.org main-article /wiki/ URLs, known non-content namespaces and query variants are filtered before frontier expansion, stale off-profile frontier items are rejected before fetch, and Wikipedia-only snapshots automatically disable external-domain exploration. Exact content deduplication, quality gates, robots compliance, immutable snapshots, and explicit training review remain unchanged. ',
+              1,
+          )
+          version_path.write_text(version, encoding='utf-8')
+          PY
+
+      - name: Validate syntax and guardrails
+        shell: bash
+        run: |
+          python -m py_compile runtime_hot/web_snapshot_collector.py
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          source = Path('runtime_hot/web_snapshot_collector.py').read_text(encoding='utf-8')
+          ast.parse(source)
+          required = [
+              'WIKIPEDIA_KNOWLEDGE_PROFILE',
+              'WIKIPEDIA_BLOCKED_NAMESPACE',
+              'profileFilteredLinks',
+              'source-profile-url-gates',
+              'allowExternalDomains"] = False',
+          ]
+          for marker in required:
+              if marker not in source:
+                  raise SystemExit(f'missing guardrail marker: {marker}')
+          version = Path('versions/frozen-web-collector.txt').read_text(encoding='utf-8')
+          if 'VERSION=1.0.9' not in version:
+              raise SystemExit('collector version was not advanced to 1.0.9')
+          print('Wikipedia collector guardrail patch validated')
+          PY
+
+      - name: Commit runtime update
+        shell: bash
+        run: |
+          if git diff --quiet -- runtime_hot/web_snapshot_collector.py versions/frozen-web-collector.txt; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add runtime_hot/web_snapshot_collector.py versions/frozen-web-collector.txt
+          git commit -m 'collector: add automatic Wikipedia knowledge guardrails'
+          git push origin HEAD:runtime
