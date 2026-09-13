@@ -2,14 +2,19 @@
 
 ## Current release
 
-**Server v2.3.92 — Frozen Web Collector 1.0.6**
+**Server v2.3.101 / Web Chat 1.4.85 — Ice Dragon wallpaper v19**
 
-**Status: authenticated state and storage access verified; configuration form repair published for live acceptance.**
+**Status: runtime-hot wallpaper repair published; direct supplied-art route remains the final exact-byte acceptance gate.**
 
-The response-limit field now accepts the exact saved byte limit after conversion to MiB, fixing a native browser validation error that blocked saving current settings. Engine, stored data, and schema remain unchanged. Compatible runtime updates require no server redeployment.
+Web Chat 1.4.85 activates manifest v22 and Ice Dragon wallpaper v19. The controller no longer lets the fallback portrait artwork be enlarged by `background-size: cover`; fallback geometry is centered `contain`, preventing additional browser magnification/pixelation. The direct supplied-art path remains first priority and performs no canvas resizing or recompression when the binary route is available.
 
-- Server Runtime 2.3.92; Collector 1.0.6.
-- Deployment Control 1.0.3, Chat 1.4.77, Web Frontend 1.0.3, Google Account 1.0.8, LALM engine 2.1.30 unchanged.
+- Server Runtime 2.3.101 unchanged; Web Chat 1.4.85.
+- Runtime page manifest 22; Ice Dragon wallpaper controller v19.
+- LALM Engine and other modules unchanged by this event.
+
+## Web Chat v1.4.85 — 2026-09-13
+
+Replaced the broken direct-wallpaper v18 activation with v19. Live evidence had shown the expected direct wallpaper asset route returning HTTP 503, while the older fallback used cover geometry that could magnify the portrait source past native detail. v19 attempts the direct supplied-art bytes first without resize/recompression and, when unavailable, preserves the existing fallback while forcing centered contain geometry. Manifest v22 is live through the runtime source-of-truth path. See [event receipt](releases/web-chat-1.4.85-ice-dragon-wallpaper-v19.md).
 
 ## Server v2.3.92 — 2026-09-12
 
