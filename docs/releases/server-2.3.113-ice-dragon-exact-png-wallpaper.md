@@ -1,0 +1,3 @@
+# Server Runtime 2.3.113 / Web Chat 1.4.96 — exact Ice Dragon PNG wallpaper
+
+Uses the exact repository-root PNG `file_00000000b13c81f5a7f9fe99c0264ef0.png` as the Ice Dragon runtime wallpaper with no resize, recompression, Base64 reconstruction, or canvas upscale. The same Git blob is exposed at `web/themes/ice-dragon/assets/ice-dragon-adult-wallpaper.png`; wallpaper v20 loads it directly under a fresh cache generation and renders centered `cover` across the full chat backdrop. Manifest 31 activates v20 while preserving the current context-capacity and continuity stack. Runtime-hot; no stable redeploy required.
