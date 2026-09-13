@@ -10,22 +10,22 @@ from typing import Any
 from fastapi import Request
 from fastapi.responses import JSONResponse, StreamingResponse
 
+from api.chat_transcript_store import OWNER_ID, STORE
+
 SESSION_TTL_SECONDS = 30 * 60
 MAX_SESSION_EVENTS = 4096
 TRANSCRIPT_CONTRACT = "generation-transcript-v1"
+SHARED_TRANSCRIPT_CONTRACT = "shared-private-blob-v1"
 
 
 def install(chat_extensions) -> None:
-    """Detach local R39 generation from an individual browser stream.
+    """Detach local R39 generation from one browser stream and share transcript state.
 
-    A requestId owns one generation session. Reconnecting clients resubscribe with
-    resumeAfterSeq and receive only later events. The generation thread continues
-    independently of any one StreamingResponse subscriber while the worker lives.
-
-    The session also owns an append-only raw generation transcript. This transcript
-    is the authoritative generation position for foreground/app-resume synchronization;
-    browser committed-output policy may still withhold or sanitize text before it is
-    shown to the user.
+    One worker still owns the active model/KV generation state. Private Blob stores a
+    bounded authoritative transcript checkpoint so any worker can answer transcript
+    synchronization without starting a duplicate generation. Event replay remains
+    local to the generation owner; cross-worker clients synchronize from the shared
+    transcript until they reconnect to the owner or the transcript becomes terminal.
     """
     chat = chat_extensions.chat
     base_normalize = chat._normalize_chat_request
@@ -56,6 +56,77 @@ def install(chat_extensions) -> None:
             for rid in stale:
                 sessions.pop(rid, None)
 
+    def transcript_payload(session: dict[str, Any], *, source: str = "local-worker") -> dict[str, Any]:
+        condition: threading.Condition = session["condition"]
+        with condition:
+            return {
+                "ok": True,
+                "contract": TRANSCRIPT_CONTRACT,
+                "requestId": str(session.get("requestId") or ""),
+                "fingerprint": str(session.get("fingerprint") or ""),
+                "ownerId": str(session.get("ownerId") or OWNER_ID),
+                "text": str(session.get("transcript") or ""),
+                "textRevision": int(session.get("textRevision") or 0),
+                "lastSeq": int(session.get("lastSeq") or 0),
+                "lastDeltaSeq": int(session.get("lastDeltaSeq") or 0),
+                "phase": str(session.get("phase") or ""),
+                "terminal": bool(session.get("terminal")),
+                "terminalType": str(session.get("terminalType") or ""),
+                "identity": dict(session.get("identity") or {}),
+                "createdAt": float(session.get("createdAt") or 0),
+                "updatedAt": float(session.get("updatedAt") or 0),
+                "storage": {
+                    "contract": SHARED_TRANSCRIPT_CONTRACT,
+                    "configured": STORE.configured,
+                    "source": source,
+                    "private": True,
+                    "ownerLocal": str(session.get("ownerId") or OWNER_ID) == OWNER_ID,
+                    "lastError": str(session.get("durableError") or ""),
+                },
+            }
+
+    def durable_snapshot(session: dict[str, Any]) -> dict[str, Any]:
+        value = transcript_payload(session, source="durable-checkpoint")
+        value["storage"]["source"] = "durable-blob"
+        return value
+
+    def checkpoint_worker(session: dict[str, Any]) -> None:
+        condition: threading.Condition = session["condition"]
+        try:
+            while True:
+                with condition:
+                    if not session.get("durableDirty"):
+                        return
+                    session["durableDirty"] = False
+                try:
+                    STORE.write(durable_snapshot(session))
+                    with condition:
+                        session["durableError"] = ""
+                        session["lastDurableWriteAt"] = time.time()
+                except Exception as exc:
+                    with condition:
+                        session["durableError"] = f"{type(exc).__name__}: {exc}"[:300]
+                time.sleep(0.12)
+        finally:
+            with condition:
+                session["durableWriteRunning"] = False
+                needs_more = bool(session.get("durableDirty"))
+            if needs_more:
+                schedule_checkpoint(session, force=True)
+
+    def schedule_checkpoint(session: dict[str, Any], *, force: bool = False) -> None:
+        if not STORE.configured:
+            return
+        condition: threading.Condition = session["condition"]
+        with condition:
+            session["durableDirty"] = True
+            elapsed = time.time() - float(session.get("lastDurableWriteAt") or 0)
+            if session.get("durableWriteRunning") or (not force and elapsed < 0.30):
+                return
+            session["durableWriteRunning"] = True
+        thread = threading.Thread(target=checkpoint_worker, args=(session,), name=f"swrlz-transcript-checkpoint-{str(session.get('requestId') or '')[-16:]}", daemon=True)
+        thread.start()
+
     def append_event(session: dict[str, Any], event: dict[str, Any]) -> None:
         encoded = chat._encode_event(event)
         condition: threading.Condition = session["condition"]
@@ -78,10 +149,12 @@ def install(chat_extensions) -> None:
             identity = event.get("identity")
             if isinstance(identity, dict):
                 session["identity"] = dict(identity)
-            if event.get("terminal"):
+            terminal = bool(event.get("terminal"))
+            if terminal:
                 session["terminal"] = True
                 session["terminalType"] = str(event.get("type") or "")
             condition.notify_all()
+        schedule_checkpoint(session, force=terminal or str(event.get("type") or "") == "STARTED")
 
     def run_generation(session: dict[str, Any], payload: dict[str, Any]) -> None:
         request_id = payload["requestId"]
@@ -119,6 +192,13 @@ def install(chat_extensions) -> None:
         finally:
             chat_extensions.LOCAL_CANCELLED.discard(request_id)
             session["updatedAt"] = time.time()
+            schedule_checkpoint(session, force=True)
+
+    def remote_snapshot(request_id: str) -> dict[str, Any] | None:
+        try:
+            return STORE.read(request_id)
+        except Exception:
+            return None
 
     def get_or_start(payload: dict[str, Any]) -> dict[str, Any]:
         prune()
@@ -131,10 +211,24 @@ def install(chat_extensions) -> None:
                 if existing.get("fingerprint") != fp:
                     raise chat.BridgeError(409, "REQUEST_ID_REUSE_MISMATCH", "This requestId already owns a different generation payload.")
                 return existing
+        remote = remote_snapshot(request_id)
+        if remote is not None:
+            remote_fp = str(remote.get("fingerprint") or "")
+            if remote_fp and remote_fp != fp:
+                raise chat.BridgeError(409, "REQUEST_ID_REUSE_MISMATCH", "This requestId already owns a different durable generation payload.")
+            if str(remote.get("ownerId") or "") != OWNER_ID:
+                code = "GENERATION_SESSION_REMOTE_TERMINAL" if remote.get("terminal") else "GENERATION_SESSION_REMOTE_OWNER"
+                raise chat.BridgeError(409, code, "This generation is owned by another worker. Synchronize through the shared transcript instead of starting a duplicate generation.")
+        with lock:
+            existing = sessions.get(request_id)
+            if existing is not None:
+                return existing
             condition = threading.Condition(threading.RLock())
+            now = time.time()
             session: dict[str, Any] = {
                 "requestId": request_id,
                 "fingerprint": fp,
+                "ownerId": OWNER_ID,
                 "condition": condition,
                 "events": [],
                 "lastSeq": 0,
@@ -145,14 +239,24 @@ def install(chat_extensions) -> None:
                 "identity": {},
                 "terminal": False,
                 "terminalType": "",
-                "createdAt": time.time(),
-                "updatedAt": time.time(),
+                "createdAt": now,
+                "updatedAt": now,
+                "durableError": "",
+                "durableDirty": False,
+                "durableWriteRunning": False,
+                "lastDurableWriteAt": 0.0,
             }
             sessions[request_id] = session
-            thread = threading.Thread(target=run_generation, args=(session, clean), name=f"swrlz-generation-{request_id[-20:]}", daemon=True)
-            session["thread"] = thread
-            thread.start()
-            return session
+        if STORE.configured:
+            try:
+                STORE.write(durable_snapshot(session))
+                session["lastDurableWriteAt"] = time.time()
+            except Exception as exc:
+                session["durableError"] = f"{type(exc).__name__}: {exc}"[:300]
+        thread = threading.Thread(target=run_generation, args=(session, clean), name=f"swrlz-generation-{request_id[-20:]}", daemon=True)
+        session["thread"] = thread
+        thread.start()
+        return session
 
     def session_stream(session: dict[str, Any], after_seq: int) -> Iterator[bytes]:
         cursor = max(0, int(after_seq))
@@ -171,24 +275,6 @@ def install(chat_extensions) -> None:
             if terminal and cursor >= last_seq:
                 return
 
-    def transcript_payload(session: dict[str, Any]) -> dict[str, Any]:
-        condition: threading.Condition = session["condition"]
-        with condition:
-            return {
-                "ok": True,
-                "contract": TRANSCRIPT_CONTRACT,
-                "requestId": str(session.get("requestId") or ""),
-                "text": str(session.get("transcript") or ""),
-                "textRevision": int(session.get("textRevision") or 0),
-                "lastSeq": int(session.get("lastSeq") or 0),
-                "lastDeltaSeq": int(session.get("lastDeltaSeq") or 0),
-                "phase": str(session.get("phase") or ""),
-                "terminal": bool(session.get("terminal")),
-                "terminalType": str(session.get("terminalType") or ""),
-                "identity": dict(session.get("identity") or {}),
-                "updatedAt": float(session.get("updatedAt") or 0),
-            }
-
     def stream_response(payload: dict[str, Any]):
         clean = canonical_payload(payload)
         if chat._raw_upstream_url():
@@ -202,6 +288,7 @@ def install(chat_extensions) -> None:
             "X-SWRLZ-Request-Id": payload["requestId"],
             "X-SWRLZ-Generation-Session": "resumable-v1",
             "X-SWRLZ-Transcript-Contract": TRANSCRIPT_CONTRACT,
+            "X-SWRLZ-Transcript-Storage": SHARED_TRANSCRIPT_CONTRACT if STORE.configured else "worker-memory-only",
             "X-SWRLZ-Resume-After-Seq": str(after_seq),
             "X-SWRLZ-Replay-Through-Seq": str(replay_through),
             "X-Accel-Buffering": "no",
@@ -218,9 +305,16 @@ def install(chat_extensions) -> None:
             prune()
             with lock:
                 session = sessions.get(request_id)
-            if session is None:
-                return chat._json_error(404, "GENERATION_SESSION_NOT_FOUND", "The requested generation transcript is not present on this server instance.")
-            return JSONResponse(transcript_payload(session), headers=chat._no_store_headers())
+            if session is not None:
+                return JSONResponse(transcript_payload(session), headers=chat._no_store_headers())
+            durable = remote_snapshot(request_id)
+            if durable is not None:
+                durable["ok"] = True
+                durable["contract"] = TRANSCRIPT_CONTRACT
+                durable.setdefault("storage", {})
+                durable["storage"].update({"contract": SHARED_TRANSCRIPT_CONTRACT, "configured": STORE.configured, "source": "durable-blob", "private": True, "ownerLocal": str(durable.get("ownerId") or "") == OWNER_ID})
+                return JSONResponse(durable, headers=chat._no_store_headers())
+            return chat._json_error(404, "GENERATION_SESSION_NOT_FOUND", "The requested generation transcript is not present in local or shared transcript state.")
         except chat.BridgeError as exc:
             return chat._json_error(exc.status, exc.code, exc.detail)
 
@@ -231,3 +325,4 @@ def install(chat_extensions) -> None:
     chat_extensions.RESUMABLE_GENERATION_TTL_SECONDS = SESSION_TTL_SECONDS
     chat_extensions.RESUMABLE_GENERATION_CONTRACT = "resumable-v1"
     chat_extensions.GENERATION_TRANSCRIPT_CONTRACT = TRANSCRIPT_CONTRACT
+    chat_extensions.GENERATION_TRANSCRIPT_STORAGE = STORE.describe()
