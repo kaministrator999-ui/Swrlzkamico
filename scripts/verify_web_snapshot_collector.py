@@ -103,6 +103,134 @@ async def invoke(module: Any, context: Any, method: str, path: str, body=None, q
     return response.status_code, response_json(response)
 
 
+def verify_blob_versions(module: Any, store: Any) -> None:
+    """Exercise the real transport with independent delivery and write ETags."""
+    class BlobResponse:
+        def __init__(self, status, body=None, headers=None, content=b""):
+            self.status_code = status
+            self.ok = 200 <= status < 300
+            self.headers = headers or {}
+            self.content = content
+            self._body = body
+
+        def json(self):
+            return self._body
+
+    class VersionedSession:
+        def __init__(self, state=None):
+            self.state = state
+            self.sequence = 7
+            self.metadata_reads = 0
+            self.puts = []
+            self.missing_etag = False
+            self.race_on_read = False
+
+        def etag(self):
+            return f'"object-{self.sequence}"'
+
+        def get(self, url, **kwargs):
+            if url == module.BLOB_API:
+                assert kwargs["params"] == {"url": module.STATE_PATH}
+                assert kwargs["headers"]["x-api-version"] == "12"
+                self.metadata_reads += 1
+                if self.state is None:
+                    return BlobResponse(404)
+                return BlobResponse(200, {} if self.missing_etag else {"etag": self.etag()})
+            assert "cache=0" in url, "mutable content must bypass the Blob cache"
+            if self.state is None:
+                return BlobResponse(404)
+            content = module._compact_json(self.state)
+            if self.race_on_read:
+                self.sequence += 1
+                self.state["stateRevision"] += 1
+            return BlobResponse(200, headers={"etag": 'W/"delivery-representation"'}, content=content)
+
+        def put(self, url, **kwargs):
+            self.puts.append(kwargs)
+            headers = kwargs["headers"]
+            assert headers["x-vercel-blob-access"] == "private"
+            assert headers["x-add-random-suffix"] == "0"
+            if self.state is None:
+                assert headers["x-allow-overwrite"] == "0", "first write must create only"
+                assert "x-if-match" not in headers
+            elif headers.get("x-if-match") != self.etag():
+                return BlobResponse(412, {"error": {"message": "Precondition failed: ETag mismatch."}})
+            self.sequence += 1
+            self.state = json.loads(kwargs["data"])
+            return BlobResponse(200, {"etag": self.etag()})
+
+    state = module._default_state()
+    state["stateRevision"] = 7
+    session = VersionedSession(state)
+    store.session = session
+    _body, delivery_version, _headers = store.get_bytes(module.STATE_PATH)
+    try:
+        store.put_json(module.STATE_PATH, state, etag=delivery_version)
+        raise AssertionError("the delivery ETag unexpectedly matched the stored object")
+    except module.CollectorError as exc:
+        assert exc.code == "STATE_WRITE_CONFLICT" and "ETag mismatch" in exc.message
+    loaded, version = module._load_state(store)
+    assert version == '"object-7"', "delivery ETags must not become write tokens"
+    stale = json.loads(json.dumps(loaded))
+    loaded["config"]["maxDocuments"] = 125
+    module._save_state(store, loaded, version)
+    assert session.puts[-1]["headers"]["x-if-match"] == '"object-7"'
+    reloaded, version = module._load_state(store)
+    assert reloaded["stateRevision"] == 8 and reloaded["config"]["maxDocuments"] == 125
+
+    new_snapshot = module._new_snapshot_state(reloaded)
+    module._save_state(store, new_snapshot, version)
+    assert session.state["stateRevision"] == 9, "Start must keep durable revision continuity"
+    assert session.state["config"]["maxDocuments"] == 125
+    puts_before = len(session.puts)
+    try:
+        module._save_state(store, stale, '"object-7"')
+        raise AssertionError("a concurrent writer was overwritten")
+    except module.CollectorError as exc:
+        assert exc.code == "STATE_WRITE_CONFLICT" and "HTTP 412" in exc.message
+    assert len(session.puts) == puts_before + 1, "never retry a stale write unconditionally"
+    assert session.state["stateRevision"] == 9
+
+    session.race_on_read = True
+    puts_before = len(session.puts)
+    try:
+        module._load_state(store)
+        raise AssertionError("a changed object was paired with stale content")
+    except module.CollectorError as exc:
+        assert exc.code == "STATE_READ_CONFLICT"
+    assert len(session.puts) == puts_before
+    session.race_on_read = False
+    session.missing_etag = True
+    try:
+        module._load_state(store)
+        raise AssertionError("missing metadata allowed an unguarded state write")
+    except module.CollectorError as exc:
+        assert exc.code == "BLOB_WRITE_ETAG_UNAVAILABLE"
+    assert len(session.puts) == puts_before
+
+    empty = VersionedSession()
+    store.session = empty
+    fresh, version = module._load_state(store)
+    assert version is None and fresh["stateRevision"] == 0
+    module._save_state(store, fresh, version)
+    assert empty.state["stateRevision"] == 1
+
+    class MissingVersionStore(FakeStore):
+        def get_json(self, pathname):
+            value, _version = super().get_json(pathname)
+            return value, None
+
+    missing = MissingVersionStore(module)
+    missing.put_json(module.STATE_PATH, module._default_state(), immutable=True)
+    fresh, _version = missing.get_json(module.STATE_PATH)
+    try:
+        module._save_state(missing, fresh, None)
+        raise AssertionError("revision alone allowed an unguarded overwrite")
+    except module.CollectorError as exc:
+        assert exc.code == "BLOB_WRITE_ETAG_UNAVAILABLE"
+    assert missing.sequence == 1
+
+
 def main() -> None:
     module = load_module()
     assert module.MODULE_ID == "frozen-web-collector"
@@ -151,6 +279,8 @@ def main() -> None:
     assert put_calls[0][1]["headers"]["x-if-match"] == '"current"'
     assert put_calls[0][1]["headers"]["x-allow-overwrite"] == "1"
     assert "vercel_blob_rw_" not in module._safe_error_text(RejectedPut(), redact=(header_store.token,))
+
+    verify_blob_versions(module, header_store)
 
     if previous_rw is None:
         os.environ.pop("BLOB_READ_WRITE_TOKEN", None)

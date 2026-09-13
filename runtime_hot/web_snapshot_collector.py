@@ -165,8 +165,49 @@ class BlobStore:
             raise CollectorError(503, "BLOB_READ_FAILED", _safe_error_text(response))
         return response.content, response.headers.get("etag"), dict(response.headers)
 
+    def _metadata_etag(self, pathname: str) -> str | None:
+        # Match @vercel/blob head(): metadata is a GET to the Blob API,
+        # and its JSON etag is the version token accepted by conditional PUT.
+        response = self.session.get(
+            BLOB_API,
+            params={"url": pathname},
+            headers=self._headers(),
+            timeout=(5, 20),
+        )
+        if response.status_code == 404:
+            return None
+        if not response.ok:
+            raise CollectorError(
+                503, "BLOB_METADATA_FAILED",
+                _safe_error_text(response, redact=(self.token, self.store_id)),
+            )
+        try:
+            metadata = response.json()
+        except Exception as exc:
+            raise CollectorError(503, "BLOB_METADATA_INVALID", "Private storage returned invalid object metadata.") from exc
+        etag = metadata.get("etag") if isinstance(metadata, dict) else None
+        if not isinstance(etag, str) or not etag.strip() or etag.startswith("W/"):
+            raise CollectorError(
+                503, "BLOB_WRITE_ETAG_UNAVAILABLE",
+                "Private storage did not return a strong object version; the state was not overwritten.",
+            )
+        return etag
+
     def get_json(self, pathname: str) -> tuple[dict[str, Any] | None, str | None]:
+        mutable_state = pathname == STATE_PATH
+        before_etag = self._metadata_etag(pathname) if mutable_state else None
         data, etag, _headers = self.get_bytes(pathname)
+        if mutable_state:
+            # Bracket the cache-bypassed content read so an old body can never
+            # be paired with a newer object's write token. The delivery ETag
+            # may describe an HTTP representation rather than the stored blob.
+            after_etag = self._metadata_etag(pathname)
+            if before_etag != after_etag or (data is None) != (after_etag is None):
+                raise CollectorError(
+                    409, "STATE_READ_CONFLICT",
+                    "Collector state changed while being read; refresh and retry.",
+                )
+            etag = after_etag
         if data is None:
             return None, None
         try:
@@ -359,7 +400,7 @@ def _save_state(store: BlobStore, state: dict[str, Any], etag: str | None) -> st
 
     effective_etag = etag
     immutable = False
-    if effective_etag is None:
+    if not effective_etag:
         persisted_before, discovered_etag = store.get_json(STATE_PATH)
         if persisted_before is None:
             immutable = True
@@ -373,6 +414,11 @@ def _save_state(store: BlobStore, state: dict[str, Any], etag: str | None) -> st
                     {"expectedRevision": previous_revision, "actualRevision": persisted_revision},
                 )
             effective_etag = discovered_etag
+            if not effective_etag:
+                raise CollectorError(
+                    503, "BLOB_WRITE_ETAG_UNAVAILABLE",
+                    "Private storage did not return an object version; the state was not overwritten.",
+                )
 
     result = store.put_json(STATE_PATH, state, etag=effective_etag, immutable=immutable)
     response_etag = result.get("etag") if isinstance(result.get("etag"), str) and result.get("etag") else None

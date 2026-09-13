@@ -2,6 +2,14 @@
 
 ## Current release
 
+**Server v2.3.104 / Frozen Web Collector 1.0.8 — metadata-bound state writes**
+
+**Status: transport regression passes; production save acceptance pending.**
+
+The user's screenshots confirmed HTTP 412 ETag mismatch for Start and Configure. Mutable state now binds a cache-bypassed read to Vercel's metadata ETag and fails closed on missing or changing object versions. Concurrent Server 2.3.103 stream-contract work is preserved. See [event receipt](releases/server-2.3.104-collector-metadata-etag.md).
+
+## Server 2.3.102 diagnostic checkpoint
+
 **Server v2.3.102 / Frozen Web Collector 1.0.7 — storage write diagnostics**
 
 **Status: provider error reporting repaired and tested; live durable-write acceptance remains open.**
