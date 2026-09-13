@@ -137,7 +137,7 @@ jobs:
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Production deployment: $url" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Verify production server and collector
+      - name: Verify production server, manifest authority, and collector
         shell: bash
         env:
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
@@ -150,7 +150,7 @@ jobs:
           import json
           with open("server-status.json", encoding="utf-8") as stream:
               value = json.load(stream)
-          assert value.get("version") == "2.3.109", value.get("version")
+          assert value.get("version") == "2.3.110", value.get("version")
           caps = value.get("capabilities", {})
           assert caps.get("chat-resumable-generation", {}).get("ready") is True
           assert caps.get("chat-resumable-generation", {}).get("contract") == "resumable-v1"
@@ -163,7 +163,12 @@ jobs:
           assert caps.get("chat-rmcca-direct-transport", {}).get("contract") == "rmcca-direct-v1"
           assert caps.get("runtime-delivery-optimization", {}).get("ready") is True
           assert caps.get("runtime-delivery-optimization", {}).get("contract") == "hot-runtime-delivery-v1"
-          assert caps.get("instance-independent-live-source", {}).get("assetCacheContract") == "manifest-versioned-immutable-v1"
+          assert caps.get("runtime-manifest-authority", {}).get("ready") is True
+          assert caps.get("runtime-manifest-authority", {}).get("contract") == "github-contents-manifest-v1"
+          live = caps.get("instance-independent-live-source", {})
+          assert live.get("assetCacheContract") == "manifest-versioned-immutable-v1"
+          assert live.get("manifestAuthority") == "github-contents-api-v1"
+          assert live.get("manifestFailurePolicy") == "fail-closed-no-stale-raw-manifest"
           PY
             then
               ready=1
@@ -172,12 +177,24 @@ jobs:
             sleep 5
           done
           if [[ "$ready" != "1" ]]; then
-            echo "Server 2.3.109 readiness did not pass." >&2
+            echo "Server 2.3.110 readiness did not pass." >&2
             if [[ -s server-status.json ]]; then
               python -m json.tool server-status.json || cat server-status.json
             fi
             exit 1
           fi
+
+          manifest_code="$(curl --max-time 12 --silent --show-error --dump-header manifest-headers.txt --output live-manifest.json --write-out '%{http_code}' "$DEPLOYMENT_URL/live/manifest.json" || true)"
+          test "$manifest_code" = "200"
+          grep -iq '^x-swrlz-manifest-authority: github-contents-api-v1' manifest-headers.txt
+          python - <<'PY'
+          import json
+          with open("live-manifest.json", encoding="utf-8") as stream:
+              value = json.load(stream)
+          assert int(value.get("version", 0)) >= 35, value.get("version")
+          scripts = value.get("routes", {}).get("/chat", {}).get("scripts", [])
+          assert "web/chat_turn_integrity_v1.js" in scripts
+          PY
 
           collector_code="$(curl --max-time 12 --silent --show-error --output collector-readiness.json --write-out '%{http_code}' "$DEPLOYMENT_URL/api/collector/readiness" || true)"
           test "$collector_code" = "200"
@@ -189,7 +206,7 @@ jobs:
           assert value.get("storage", {}).get("configured") is True
           assert value.get("storage", {}).get("access") == "private"
           PY
-          echo "Server 2.3.109 optimized hot-runtime delivery + shared private transcript continuity + direct RMCCA transport and collector readiness passed." >> "$GITHUB_STEP_SUMMARY"
+          echo "Server 2.3.110 manifest authority + optimized hot-runtime delivery + shared transcript continuity + direct RMCCA transport and collector readiness passed." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Deployment receipt
         run: |
