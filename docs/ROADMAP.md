@@ -2,11 +2,25 @@
 
 ## Current release
 
+**Server 2.3.125 / Web Chat 1.5.5 — canonical wallpaper lock + restrained glass**
+
+**Status: runtime-hot fix published; browser visual acceptance pending refresh.**
+
+The refresh regression was traced to `ice-dragon-art-loader-v17.js`: after the canonical workspace had already painted the intended repository PNG, the legacy adult-art hydrator reconstructed/cached the former 864×1536 JPEG and later painted it onto `.messages`, visually replacing the correct backdrop. That adult wallpaper responsibility is now retired from the art loader; it remains companion-avatar-only and actively clears legacy message-chamber wallpaper state. `chat_frontend_boot.js` no longer reads the stale adult-preview localStorage key and always first-paints the canonical Ice Dragon PNG on `.workspace`. Manifest v38 cache-busts the fix. The composer is rebalanced to the requested layered glass treatment: lighter outer shell blur, darker inner input field, and lower blur on user/assistant bubbles so the artwork remains sharper. Existing Ice Dragon brand styling from manifest v37 and all turn-integrity/transcript/context behavior remain preserved. See [event receipt](releases/server-2.3.125-ice-dragon-wallpaper-lock.md).
+
+## Previous release context
+
+**Server 2.3.124 / Web Chat 1.5.4 — Ice Dragon brand treatment**
+
+Manifest v37 added `ice-dragon-brand-v1.css` and preserved the canonical workspace shell while applying the icy §wyrlz identity treatment to sidebar and assistant byline surfaces. This concurrent update was detected before version assignment and preserved by the 2.3.125 event.
+
+## Previous release context
+
 **Server 2.3.123 / Web Chat 1.5.3 — canonical Ice Dragon shell + glass composer**
 
 **Status: runtime-hot UI architecture published; browser visual acceptance pending refresh.**
 
-The Ice Dragon wallpaper is now owned by the full `.workspace` instead of only the `.messages` scroll chamber. This lets the composer region remain genuinely transparent/blurred over the same backdrop instead of revealing a solid dark page behind it. `.messages` is transparent, the full `.message-stack` owns the continuous readability fade so it extends through long/error content, and the welcome subtitle remains high-contrast over bright artwork. `chat_frontend_boot.js` now defaults to/persists the Ice Dragon theme when no preference exists, paints the workspace immediately from the direct repository PNG (or the local cached preview when present), and marks the canonical frontend shell ready before backend/theme hydration. Manifest v36 adds `ice-dragon-shell-v1.css` as the final theme-shell authority and preserves the existing turn-integrity, transcript-continuity, context-capacity, and response-polish scripts. See [event receipt](releases/server-2.3.123-canonical-chat-shell.md).
+The Ice Dragon wallpaper is now owned by the full `.workspace` instead of only the `.messages` scroll chamber. This lets the composer region remain genuinely transparent/blurred over the same backdrop instead of revealing a solid dark page behind it. `.messages` is transparent, the full `.message-stack` owns the continuous readability fade so it extends through long/error content, and the welcome subtitle remains high-contrast over bright artwork. `chat_frontend_boot.js` now defaults to/persists the Ice Dragon theme when no preference exists, paints the workspace immediately from the direct repository PNG, and marks the canonical frontend shell ready before backend/theme hydration. Manifest v36 adds `ice-dragon-shell-v1.css` as the final theme-shell authority and preserves the existing turn-integrity, transcript-continuity, context-capacity, and response-polish scripts. See [event receipt](releases/server-2.3.123-canonical-chat-shell.md).
 
 ## Previous release context
 
