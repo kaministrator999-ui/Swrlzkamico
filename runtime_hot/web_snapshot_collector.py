@@ -45,6 +45,16 @@ MAX_ROBOTS_BYTES = 64_000
 STATE_GROWTH_RESERVE_BYTES = 32_768
 TRACKING_KEYS = {"fbclid", "gclid", "mc_cid", "mc_eid", "ref", "ref_src"}
 ALLOWED_MIMES = {"text/html", "application/xhtml+xml", "text/plain"}
+WIKIPEDIA_KNOWLEDGE_PROFILE = "wikipedia-knowledge"
+WIKIPEDIA_PROFILE_VERSION = 1
+WIKIPEDIA_ARTICLE_HOST = "en.wikipedia.org"
+WIKIPEDIA_PORTAL_HOSTS = {"wikipedia.org", "www.wikipedia.org"}
+WIKIPEDIA_BLOCKED_NAMESPACES = {
+    "special", "talk", "user", "user_talk", "wikipedia", "wikipedia_talk",
+    "file", "file_talk", "mediawiki", "mediawiki_talk", "template", "template_talk",
+    "help", "help_talk", "category", "category_talk", "portal", "portal_talk",
+    "draft", "draft_talk", "timedtext", "module", "module_talk", "media",
+}
 STOP_WORDS = {
     "about", "after", "again", "also", "among", "and", "are", "because", "been", "before",
     "being", "between", "both", "but", "can", "could", "does", "each", "for", "from", "had",
@@ -338,6 +348,7 @@ def _totals() -> dict[str, Any]:
         "bytesSavedByDedup": 0,
         "chunks": 0,
         "explorationFetched": 0,
+        "profileFilteredLinks": 0,
         "trainingPending": 0,
         "trainingAccepted": 0,
         "trainingRejected": 0,
@@ -490,6 +501,51 @@ def _canonicalize(raw_url: str) -> str:
     pairs = [(key, value) for key, value in pairs if not key.lower().startswith("utm_") and key.lower() not in TRACKING_KEYS]
     query = urllib.parse.urlencode(sorted(pairs), doseq=True)
     return urllib.parse.urlunsplit((parsed.scheme.lower(), netloc, path, query, ""))
+
+
+def _profile_for_url(url: str) -> str:
+    parsed = urllib.parse.urlsplit(url)
+    host = (parsed.hostname or "").lower()
+    if host == WIKIPEDIA_ARTICLE_HOST or host in WIKIPEDIA_PORTAL_HOSTS:
+        return WIKIPEDIA_KNOWLEDGE_PROFILE
+    return "general-web"
+
+
+def _normalize_source_profile(url: str) -> tuple[str, str]:
+    canonical = _canonicalize(url)
+    profile = _profile_for_url(canonical)
+    parsed = urllib.parse.urlsplit(canonical)
+    host = (parsed.hostname or "").lower()
+    if profile == WIKIPEDIA_KNOWLEDGE_PROFILE and host in WIKIPEDIA_PORTAL_HOSTS:
+        canonical = "https://en.wikipedia.org/wiki/Main_Page"
+    return canonical, profile
+
+
+def _source_profile(source: dict[str, Any]) -> str:
+    explicit = str(source.get("profile") or "").strip().lower()
+    return explicit or _profile_for_url(str(source.get("url") or ""))
+
+
+def _profile_allows_url(source: dict[str, Any], url: str) -> tuple[bool, str | None]:
+    if _source_profile(source) != WIKIPEDIA_KNOWLEDGE_PROFILE:
+        return True, None
+    parsed = urllib.parse.urlsplit(url)
+    host = (parsed.hostname or "").lower()
+    if host != WIKIPEDIA_ARTICLE_HOST:
+        return False, "WIKIPEDIA_OFF_DOMAIN"
+    if parsed.query:
+        return False, "WIKIPEDIA_QUERY_VARIANT"
+    path = urllib.parse.unquote(parsed.path or "/")
+    if not path.startswith("/wiki/"):
+        return False, "WIKIPEDIA_NON_ARTICLE"
+    article = path[len("/wiki/"):].strip()
+    if not article:
+        return False, "WIKIPEDIA_NON_ARTICLE"
+    if ":" in article:
+        namespace = article.split(":", 1)[0].strip().replace(" ", "_").casefold()
+        if namespace in WIKIPEDIA_BLOCKED_NAMESPACES:
+            return False, "WIKIPEDIA_BLOCKED_NAMESPACE"
+    return True, None
 
 
 def _validate_public_url(url: str, config: dict[str, Any]) -> tuple[str, list[str]]:
@@ -935,6 +991,7 @@ def _frontier_has(state: dict[str, Any], url: str) -> bool:
 def _enqueue_links(state: dict[str, Any], base_url: str, links: list[str], depth: int, source_id: str | None) -> int:
     config = state["config"]
     source = next((item for item in state.get("sources", []) if item.get("id") == source_id), None) or {}
+    source_profile = _source_profile(source)
     policy = str(source.get("policy", "balanced"))
     global_depth = int(config["maxDepth"])
     policy_depth = min(global_depth, 1) if policy == "shallow" else min(global_depth, 2) if policy == "balanced" else global_depth
@@ -949,6 +1006,11 @@ def _enqueue_links(state: dict[str, Any], base_url: str, links: list[str], depth
         try:
             candidate = _canonicalize(urllib.parse.urljoin(base_url, raw))
             host = urllib.parse.urlsplit(candidate).hostname or ""
+            if source_profile == WIKIPEDIA_KNOWLEDGE_PROFILE:
+                allowed, _reason = _profile_allows_url(source, candidate)
+                if not allowed:
+                    state["totals"]["profileFilteredLinks"] = int(state["totals"].get("profileFilteredLinks", 0)) + 1
+                    continue
             if any(_domain_matches(host, item) for item in blocked):
                 continue
             if not config.get("allowExternalDomains") and host not in seed_hosts:
@@ -1052,7 +1114,11 @@ def _write_immutable(store: BlobStore, state: dict[str, Any], path: str, value: 
 
 
 def _process_item(store: BlobStore, state: dict[str, Any], item: dict[str, Any], context: Any) -> dict[str, Any]:
+    source = _source_for_item(state, item) or {}
     canonical, _addresses = _validate_public_url(str(item.get("url", "")), state["config"])
+    profile_allowed, profile_code = _profile_allows_url(source, canonical)
+    if not profile_allowed:
+        raise CollectorError(422, profile_code or "SOURCE_PROFILE_REJECTED", "URL is outside the source crawl profile.")
     host = urllib.parse.urlsplit(canonical).hostname or "unknown"
     domain = _domain_state(state, host)
     config = state["config"]
@@ -1074,6 +1140,9 @@ def _process_item(store: BlobStore, state: dict[str, Any], item: dict[str, Any],
     if item.get("exploration"):
         state["totals"]["explorationFetched"] += 1
     fetched = _fetch_document(state, canonical)
+    profile_allowed, profile_code = _profile_allows_url(source, fetched["url"])
+    if not profile_allowed:
+        raise CollectorError(422, profile_code or "SOURCE_PROFILE_REJECTED", "Redirect destination is outside the source crawl profile.")
     final_host = urllib.parse.urlsplit(fetched["url"]).hostname or host
     if final_host != host:
         domain = _domain_state(state, final_host)
@@ -1089,7 +1158,6 @@ def _process_item(store: BlobStore, state: dict[str, Any], item: dict[str, Any],
     state["totals"]["bytesFetched"] += len(fetched["body"])
     domain["bytes"] += len(fetched["body"])
     extracted = _extract(fetched["body"], fetched["contentType"], fetched["url"])
-    source = _source_for_item(state, item) or {}
     quality = _quality(extracted, int(source.get("priority", item.get("priority", 50))))
     if quality["characters"] < int(config["minTextCharacters"]):
         raise CollectorError(422, "TEXT_TOO_SHORT", "Extracted useful text is below the configured minimum.")
@@ -1366,8 +1434,27 @@ def _process_batch(store: BlobStore, state: dict[str, Any], etag: str | None, co
 def _new_snapshot_state(previous: dict[str, Any]) -> dict[str, Any]:
     state = _default_state()
     state["stateRevision"] = int(previous.get("stateRevision", 0))
-    state["config"] = previous.get("config", _default_config())
-    state["sources"] = previous.get("sources", [])
+    state["config"] = dict(previous.get("config", _default_config()))
+    migrated_sources: list[dict[str, Any]] = []
+    for original in previous.get("sources", []):
+        source = dict(original)
+        normalized_url, profile = _normalize_source_profile(str(source.get("url") or ""))
+        changed = normalized_url != source.get("url") or profile != source.get("profile")
+        source["url"] = normalized_url
+        source["host"] = urllib.parse.urlsplit(normalized_url).hostname
+        source["profile"] = profile
+        source["profileVersion"] = WIKIPEDIA_PROFILE_VERSION if profile == WIKIPEDIA_KNOWLEDGE_PROFILE else 1
+        if changed:
+            source["updatedAt"] = _now()
+        migrated_sources.append(source)
+    state["sources"] = migrated_sources
+    enabled_sources = [source for source in state["sources"] if source.get("enabled", True)]
+    if enabled_sources and all(_source_profile(source) == WIKIPEDIA_KNOWLEDGE_PROFILE for source in enabled_sources):
+        state["config"]["allowExternalDomains"] = False
+        state["config"]["explorationPercent"] = 0
+        preferred = set(state["config"].get("preferredDomains", []))
+        preferred.add(WIKIPEDIA_ARTICLE_HOST)
+        state["config"]["preferredDomains"] = sorted(preferred)
     state["trainingQueue"] = previous.get("trainingQueue", [])[-MAX_TRAINING_QUEUE:]
     state["snapshots"] = previous.get("snapshots", [])[-100:]
     state["urlRevisions"] = dict(previous.get("urlRevisions", {}))
@@ -1675,7 +1762,12 @@ async def _action(request: Any, store: BlobStore, state: dict[str, Any], etag: s
     elif action == "add-source":
         if state.get("status") == "running":
             raise CollectorError(409, "SOURCE_WHILE_RUNNING", "Pause before changing the source registry.")
-        url, _addresses = _validate_public_url(str(body.get("url", "")), state["config"])
+        raw_url = _canonicalize(str(body.get("url", "")))
+        url, profile = _normalize_source_profile(raw_url)
+        url, _addresses = _validate_public_url(url, state["config"])
+        profile_allowed, profile_code = _profile_allows_url({"url": url, "profile": profile}, url)
+        if not profile_allowed:
+            raise CollectorError(400, profile_code or "SOURCE_PROFILE_REJECTED", "The source URL is outside its automatic crawl profile.")
         priority = int(body.get("priority", 80))
         if not 1 <= priority <= 100:
             raise CollectorError(400, "SOURCE_PRIORITY", "Source priority must be from 1 to 100.")
@@ -1692,11 +1784,19 @@ async def _action(request: Any, store: BlobStore, state: dict[str, Any], etag: s
             "policy": policy,
             "licenseNote": str(body.get("licenseNote", ""))[:500],
             "enabled": bool(body.get("enabled", True)),
+            "profile": profile,
+            "profileVersion": WIKIPEDIA_PROFILE_VERSION if profile == WIKIPEDIA_KNOWLEDGE_PROFILE else 1,
             "updatedAt": _now(),
         })
         if existing is None:
             state["sources"].append(source)
-        _event(state, "source-added" if existing is None else "source-updated", f"Registered {url}", priority=priority)
+        if profile == WIKIPEDIA_KNOWLEDGE_PROFILE and all(_source_profile(item) == WIKIPEDIA_KNOWLEDGE_PROFILE for item in state["sources"] if item.get("enabled", True)):
+            state["config"]["allowExternalDomains"] = False
+            state["config"]["explorationPercent"] = 0
+            preferred = set(state["config"].get("preferredDomains", []))
+            preferred.add(WIKIPEDIA_ARTICLE_HOST)
+            state["config"]["preferredDomains"] = sorted(preferred)
+        _event(state, "source-added" if existing is None else "source-updated", f"Registered {url}", priority=priority, profile=profile)
         result = {"source": source}
     elif action == "remove-source":
         if state.get("status") == "running":
@@ -1913,5 +2013,6 @@ def inspect_module() -> dict[str, Any]:
         "storage": store.describe(),
         "lifecycleActions": ["configure", "add-source", "remove-source", "start", "pause", "continue", "step", "seal", "review", "storage-check"],
         "search": {"kind": "lexical-bm25-preparation", "endpoint": "/api/collector/search"},
-        "security": ["admin-authenticated-host", "public-IP-only", "IP-pinned-connect", "hostname-verified-TLS", "redirect-revalidation", "robots", "MIME-limit", "response-byte-limit", "domain-rate-limit"],
+        "security": ["admin-authenticated-host", "public-IP-only", "IP-pinned-connect", "hostname-verified-TLS", "redirect-revalidation", "robots", "MIME-limit", "response-byte-limit", "domain-rate-limit", "source-profile-url-gates"],
+        "crawlProfiles": {"wikipedia": {"id": WIKIPEDIA_KNOWLEDGE_PROFILE, "version": WIKIPEDIA_PROFILE_VERSION, "host": WIKIPEDIA_ARTICLE_HOST, "articlePath": "/wiki/", "externalDomains": False}},
     }
