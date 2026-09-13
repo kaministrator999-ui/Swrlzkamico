@@ -3,8 +3,10 @@ from __future__ import annotations
 import hashlib
 import os
 import shutil
+import threading
 import time
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
@@ -29,7 +31,11 @@ SOURCES = {
 }
 
 AUTO_SYNC_SECONDS = 30.0
+AUTO_SYNC_FAILURE_RETRY_SECONDS = 5.0
 LAST_SYNC: dict[str, Any] = {"attemptAt": None, "successAt": None, "changed": [], "error": None}
+_AUTO_SYNC_LOCK = threading.Lock()
+_LAST_AUTO_SYNC_MONOTONIC = 0.0
+_LAST_AUTO_RESULT: dict[str, Any] = {"ok": True, "changed": False, "branch": DEFAULT_BRANCH, "files": [], "reason": "not-yet-run"}
 
 
 def _sha(data: bytes) -> str:
@@ -38,7 +44,7 @@ def _sha(data: bytes) -> str:
 
 def _fetch(path: str, limit: int) -> bytes:
     url = f"{RAW_BASE}/{DEFAULT_BRANCH}/{path}?swrlz_runtime={int(time.time() * 1000)}"
-    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-hot-runtime/4", "Cache-Control": "no-cache"})
+    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-hot-runtime/5", "Cache-Control": "no-cache"})
     with urllib.request.urlopen(req, timeout=20) as response:
         data = response.read(limit + 1)
     if len(data) > limit:
@@ -72,12 +78,22 @@ def _runtime_status() -> dict[str, Any]:
     return {name: {"path": str(target), "exists": target.is_file(), "sha256": _sha(target.read_bytes()) if target.is_file() else None} for name, (_source, target, _limit) in SOURCES.items()}
 
 
+def _fetch_source_item(item: tuple[str, tuple[str, Path, int]]) -> tuple[str, Path, bytes, str]:
+    name, (source, target, limit) = item
+    data = _fetch(source, limit)
+    return name, target, data, _sha(data)
+
+
 def _sync_runtime(*, force: bool = False, reason: str = "automatic") -> dict[str, Any]:
     LAST_SYNC["attemptAt"] = time.time()
+    items = list(SOURCES.items())
+    # Runtime files are independent. Fetch them concurrently so one network RTT does
+    # not multiply by the number of hot sources when a refresh is actually due.
+    with ThreadPoolExecutor(max_workers=max(1, min(6, len(items))), thread_name_prefix="swrlz-hot-fetch") as pool:
+        fetched = list(pool.map(_fetch_source_item, items))
+
     payloads = []
-    for name, (source, target, limit) in SOURCES.items():
-        data = _fetch(source, limit)
-        digest = _sha(data)
+    for name, target, data, digest in fetched:
         current = _sha(target.read_bytes()) if target.is_file() else None
         if force or digest != current:
             payloads.append((name, target, data, digest))
@@ -85,7 +101,7 @@ def _sync_runtime(*, force: bool = False, reason: str = "automatic") -> dict[str
         LAST_SYNC["successAt"] = time.time()
         LAST_SYNC["changed"] = []
         LAST_SYNC["error"] = None
-        return {"ok": True, "changed": False, "branch": DEFAULT_BRANCH, "files": [], "reason": reason}
+        return {"ok": True, "changed": False, "branch": DEFAULT_BRANCH, "files": [], "reason": reason, "parallelFetch": True}
     backup_id = _backup()
     changed = []
     engine_changed = False
@@ -99,22 +115,42 @@ def _sync_runtime(*, force: bool = False, reason: str = "automatic") -> dict[str
     LAST_SYNC["successAt"] = time.time()
     LAST_SYNC["changed"] = [item["name"] for item in changed]
     LAST_SYNC["error"] = None
-    return {"ok": True, "changed": True, "branch": DEFAULT_BRANCH, "files": changed, "backupId": backup_id, "reason": reason}
+    return {"ok": True, "changed": True, "branch": DEFAULT_BRANCH, "files": changed, "backupId": backup_id, "reason": reason, "parallelFetch": True}
 
 
 def _safe_auto_sync(server, *, force: bool = False) -> dict[str, Any]:
+    global _LAST_AUTO_SYNC_MONOTONIC, _LAST_AUTO_RESULT
     enabled = os.environ.get("SWRLZ_HOT_AUTO_SYNC", "1").strip().lower() not in {"0", "false", "no", "off"}
     if not enabled:
         return {"ok": True, "enabled": False, "changed": False, "branch": DEFAULT_BRANCH}
+
+    now = time.monotonic()
+    if not force and _LAST_AUTO_SYNC_MONOTONIC and now - _LAST_AUTO_SYNC_MONOTONIC < AUTO_SYNC_SECONDS:
+        return {**_LAST_AUTO_RESULT, "enabled": True, "throttled": True, "nextRefreshInSeconds": round(max(0.0, AUTO_SYNC_SECONDS - (now - _LAST_AUTO_SYNC_MONOTONIC)), 3)}
+
+    acquired = _AUTO_SYNC_LOCK.acquire(blocking=force)
+    if not acquired:
+        return {**_LAST_AUTO_RESULT, "enabled": True, "throttled": True, "refreshInProgress": True}
     try:
-        result = _sync_runtime(force=force, reason="automatic")
-        if result.get("changed"):
-            server.activity("hot-auto-sync", branch=DEFAULT_BRANCH, files=len(result.get("files") or []), changed=[x["name"] for x in result.get("files") or []])
-        return {**result, "enabled": True}
-    except Exception as exc:
-        LAST_SYNC["error"] = f"{type(exc).__name__}: {exc}"
-        server.activity("hot-auto-sync-failed", branch=DEFAULT_BRANCH, error=LAST_SYNC["error"])
-        return {"ok": False, "enabled": True, "changed": False, "branch": DEFAULT_BRANCH, "error": LAST_SYNC["error"]}
+        now = time.monotonic()
+        if not force and _LAST_AUTO_SYNC_MONOTONIC and now - _LAST_AUTO_SYNC_MONOTONIC < AUTO_SYNC_SECONDS:
+            return {**_LAST_AUTO_RESULT, "enabled": True, "throttled": True, "nextRefreshInSeconds": round(max(0.0, AUTO_SYNC_SECONDS - (now - _LAST_AUTO_SYNC_MONOTONIC)), 3)}
+        _LAST_AUTO_SYNC_MONOTONIC = now
+        try:
+            result = _sync_runtime(force=force, reason="manual" if force else "automatic")
+            _LAST_AUTO_RESULT = result
+            if result.get("changed"):
+                server.activity("hot-auto-sync", branch=DEFAULT_BRANCH, files=len(result.get("files") or []), changed=[x["name"] for x in result.get("files") or []])
+            return {**result, "enabled": True, "throttled": False}
+        except Exception as exc:
+            LAST_SYNC["error"] = f"{type(exc).__name__}: {exc}"
+            # Retry failed refreshes sooner than the normal successful refresh cadence.
+            _LAST_AUTO_SYNC_MONOTONIC = time.monotonic() - AUTO_SYNC_SECONDS + AUTO_SYNC_FAILURE_RETRY_SECONDS
+            _LAST_AUTO_RESULT = {"ok": False, "changed": False, "branch": DEFAULT_BRANCH, "error": LAST_SYNC["error"]}
+            server.activity("hot-auto-sync-failed", branch=DEFAULT_BRANCH, error=LAST_SYNC["error"])
+            return {**_LAST_AUTO_RESULT, "enabled": True, "throttled": False, "retryInSeconds": AUTO_SYNC_FAILURE_RETRY_SECONDS}
+    finally:
+        _AUTO_SYNC_LOCK.release()
 
 
 def _portal_html() -> str:
@@ -145,9 +181,9 @@ def install(server) -> None:
     HOT_BACKUPS.mkdir(parents=True, exist_ok=True)
     _ensure_portal()
     register_hot_refresher(lambda force=False: _safe_auto_sync(server, force=force))
-    server.CAPABILITIES["hot-runtime"] = {"kind": "runtime-mutation", "ready": True, "sourceBranch": DEFAULT_BRANCH, "autoSync": True, "strategy": "per-worker get_engine refresh plus hash-driven runtime hydration"}
+    server.CAPABILITIES["hot-runtime"] = {"kind": "runtime-mutation", "ready": True, "sourceBranch": DEFAULT_BRANCH, "autoSync": True, "strategy": "30s gated parallel runtime hydration; request-path callers share one refresh authority"}
     server.CAPABILITIES["hot-chat-ui"] = {"kind": "runtime-mutation", "ready": True, "fallback": "bundled", "assets": sorted(SOURCES)}
-    server.CAPABILITIES["hot-r39-engine"] = {"kind": "runtime-execution", "ready": True, "fallback": "bundled", "reload": "content-hash invalidation", "workerRefreshSeconds": 30}
+    server.CAPABILITIES["hot-r39-engine"] = {"kind": "runtime-execution", "ready": True, "fallback": "bundled", "reload": "content-hash invalidation", "workerRefreshSeconds": int(AUTO_SYNC_SECONDS)}
     server._write_server_state()
 
     @server.app.middleware("http")
@@ -177,12 +213,9 @@ def install(server) -> None:
     async def hot_sync(request: Request):
         if not authorized(request):
             return JSONResponse(status_code=401, content={"ok": False, "error": "invalid or missing SWRLZ_ADMIN_TOKEN"})
-        try:
-            result = _sync_runtime(force=True, reason="manual")
-            return {**result, "chat": "/api/chat", "portal": "/live/"}
-        except Exception as exc:
-            LAST_SYNC["error"] = f"{type(exc).__name__}: {exc}"
-            return JSONResponse(status_code=502, content={"ok": False, "error": LAST_SYNC["error"], "branch": DEFAULT_BRANCH})
+        result = _safe_auto_sync(server, force=True)
+        status = 200 if result.get("ok") else 502
+        return JSONResponse(status_code=status, content={**result, "chat": "/api/chat", "portal": "/live/"})
 
     @server.app.post("/api/hot/clear")
     async def hot_clear(request: Request):
