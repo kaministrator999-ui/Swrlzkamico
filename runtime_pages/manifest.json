@@ -1,12 +1,12 @@
 {
-  "version": 26,
+  "version": 27,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
     "/chat": {
       "source":"web/chat.html",
       "styles":["web/chat_boot_guard.css","web/chat_enhancements.css","web/themes/ice-dragon/ice-dragon-theme.css","web/themes/ice-dragon/ice-dragon-art-v2.css","web/chat_mobile_viewport_fix.css","web/chat_code_artifacts.css"],
-      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-wallpaper-v19.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_committed_contract_bridge.js","web/chat_committed_output_v3.js","web/chat_activity_immediate.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_rmcca_transport_guard.js","web/chat_background_resume_v2.js","web/chat_transcript_sync.js","web/chat_rmcca_transport_trace_v2.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
+      "scripts":["web/chat_frontend_boot.js","web/chat_boot_guard.js","web/chat_admin_session.js","web/chat_enhancements.js","web/chat_google_server_config.js","web/chat_stream_focus.js","web/chat_version.js","web/themes/ice-dragon/ice-dragon-theme-v3.2.js","web/themes/ice-dragon/ice-dragon-art-loader-v17.js","web/themes/ice-dragon/ice-dragon-wallpaper-v19.js","web/chat_code_artifacts.js","web/chat_stream_incremental.js","web/chat_committed_contract_bridge.js","web/chat_committed_output_v3.js","web/chat_activity_immediate.js","web/chat_user_time_context.js","web/chat_context_canonical.js","web/chat_rmcca_transport_guard.js","web/chat_background_resume_v2.js","web/chat_response_presence.js","web/chat_transcript_sync.js","web/chat_rmcca_transport_trace_v2.js","web/chat_context_camera.js","web/chat_response_polish.js","web/chat_boot_ready.js"]
     },
     "/server":{"source":"web/server.html"},
     "/lalm":{"source":"web/lalm.html"},
@@ -15,5 +15,5 @@
     "/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v26 adds permission-first device temporal context and shared-transcript following. Chat no longer attaches device time until the user explicitly allows it; declined/unset state tells the LALM not to make user-local time claims. Profile city/state/country fields are stored but deliberately not used for timezone resolution yet. Transcript sync remains fail-closed and can follow shared-private-blob-v1 checkpoints when stable Server 2.3.108 is deployed, without reverting to legacy replay as a hidden fallback."
+  "notes":"Manifest v27 adds staged response-presence messaging and display-only §wyrlz brand normalization. Response placeholders now follow real request stages instead of remaining on a generic connecting label: received, reading, understanding, preparing context, thinking, composing, writing, reconnecting, catch-up, checking, and terminal states. Displayed swurlz/swrlz/swyrlz aliases normalize to §wyrlz while raw stored/user-entered text and code/input content remain untouched. Permission-first device temporal context and strict generation-transcript-v1 continuity remain active."
 }
