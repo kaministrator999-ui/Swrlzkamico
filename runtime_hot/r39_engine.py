@@ -1,8 +1,8 @@
-"""Hot R39 entrypoint — v28 permission-aware temporal grounding."""
+"""Hot R39 entrypoint — v29 anchored temporal personality."""
 from __future__ import annotations
 import urllib.request
-_SOURCE_URL="https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/f7ffe36332349a5745b122de71d4880340aa66ee/runtime_hot/r39_engine_v28.py"
-_request=urllib.request.Request(_SOURCE_URL,headers={"User-Agent":"swrlz-hot-r39-entry-v28"})
+_SOURCE_URL="https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/49a59dce9cd908d21178626d53f228ec14e8c70d/runtime_hot/r39_engine_v29.py"
+_request=urllib.request.Request(_SOURCE_URL,headers={"User-Agent":"swrlz-hot-r39-entry-v29"})
 with urllib.request.urlopen(_request,timeout=20) as _response:_source=_response.read(4_000_001)
-if len(_source)>4_000_000:raise RuntimeError("R39_V28_OVERLAY_TOO_LARGE")
+if len(_source)>4_000_000:raise RuntimeError("R39_V29_OVERLAY_TOO_LARGE")
 exec(compile(_source.decode("utf-8"),_SOURCE_URL,"exec"),globals(),globals())
