@@ -257,3 +257,8 @@ Server 2.3.91 / Deployment Control 1.0.3 repairs the manual workflow for future 
 - Remaining acceptance: after secure sign-in, save the unchanged Safety configuration once, capture the actual provider reason if rejected, repair the evidenced cause in a new version event, and confirm successful revision advancement plus settings persistence after reload.
 - No source registration, collection, snapshot sealing, training acceptance, or deletion was initiated by this continuation.
 - Current configuration has Git deployment disabled and the production workflow watches only explicit dispatch or main `.deploy/REQUEST.txt` changes. This event changes neither. Another chat independently requested a stable deployment at main `1a766f071a354b6d757b903aa9b5c56e486c0da4`; that request and its source are preserved.
+
+
+## Authentication handoff outcome — 2026-09-13
+
+The secure sign-in request ended with a tool timeout rather than a confirmed authentication result. A fresh browser verification at `https://swrlzkamico-o3nu.vercel.app/collector#overview` visibly shows Collector 1.0.7 and the Connect to the collector dialog, with Waiting for authorization and no loaded revision. No production write was attempted during this continuation. The next operator step is private sign-in in the verification browser using the existing SWRLZ_ADMIN_TOKEN; then perform the single unchanged configuration save described above. Do not treat the timed-out request as proof that credentials were or were not entered, and never obtain the token through chat or repository files.
