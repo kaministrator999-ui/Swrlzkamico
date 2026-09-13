@@ -1,5 +1,5 @@
 {
-  "version": 41,
+  "version": 42,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v41 preserves the v40 assistant response composition and account/theme work while activating turn-integrity-v2. Simple social greetings now receive approved request-time localTime/daypart as fixed factual anchors, contradictory temporal greetings are explicitly forbidden, and terminal UI retirement accepts either verified transcript terminal state or the existing terminal-response-integrity completion receipt so stale Analyzing/Stop UI can settle promptly. Existing identity, wallpaper ownership, transcript continuity, context capacity and response layout remain preserved."
+  "notes":"Manifest v42 applies mobile visual-acceptance fixes: the assistant baby-dragon avatar is structurally joined to the §wyrlz name/time plate on the left, the activity log is rendered above that identity immediately when a response request starts, the response bubble follows tightly beneath it, and the account settings modal suppresses the stale sidebar scrim that was dimming/overlapping the right side. Existing Google user identity, theme settings, wallpaper ownership, turn integrity, transcript continuity and context capacity remain preserved."
 }
