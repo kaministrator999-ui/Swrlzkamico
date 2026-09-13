@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.38
-REVISION=2.1.38-hot-permission-temporal-grounding-v28
+VERSION=2.1.39
+REVISION=2.1.39-hot-anchored-temporal-personality-v29
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
