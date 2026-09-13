@@ -2,6 +2,14 @@
 
 ## Current release
 
+**Server 2.3.123 / Web Chat 1.5.3 — canonical Ice Dragon shell + glass composer**
+
+**Status: runtime-hot UI architecture published; browser visual acceptance pending refresh.**
+
+The Ice Dragon wallpaper is now owned by the full `.workspace` instead of only the `.messages` scroll chamber. This lets the composer region remain genuinely transparent/blurred over the same backdrop instead of revealing a solid dark page behind it. `.messages` is transparent, the full `.message-stack` owns the continuous readability fade so it extends through long/error content, and the welcome subtitle remains high-contrast over bright artwork. `chat_frontend_boot.js` now defaults to/persists the Ice Dragon theme when no preference exists, paints the workspace immediately from the direct repository PNG (or the local cached preview when present), and marks the canonical frontend shell ready before backend/theme hydration. Manifest v36 adds `ice-dragon-shell-v1.css` as the final theme-shell authority and preserves the existing turn-integrity, transcript-continuity, context-capacity, and response-polish scripts. See [event receipt](releases/server-2.3.123-canonical-chat-shell.md).
+
+## Previous release context
+
 **Server 2.3.121 / Deployment Control 1.0.6 — collector storage acceptance**
 
 The prior run confirmed the strong-metadata/weak-delivery ETag mismatch, then stopped at HTTP 401 before a write. This event distinguishes non-readable application credentials and can verify the exact published engine against the existing private store. Production storage acceptance passed: the exact live action saved revision 2 and a new session read confirmed identical content. The exported application credential is redacted, so authenticated browser/API mutation was not verified. Collector remains 1.0.8. No deployment or collection interruption. See [event receipt](releases/server-2.3.121-collector-storage-acceptance.md).
