@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.40
-REVISION=2.1.40-hot-temporal-context-nonrelay-v30
+VERSION=2.1.41
+REVISION=2.1.41-hot-social-directive-temporal-anchor-v31
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
