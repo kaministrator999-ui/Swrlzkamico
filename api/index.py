@@ -6,10 +6,10 @@ runtime branch by the dedicated hot/live loaders. The stable frozen-web
 collector host applies authentication and a fixed runtime-module contract while
 the collector implementation and page remain runtime-owned.
 
-Server 2.3.109 preserves the 2.3.108 shared transcript continuity contract while
-reducing runtime-source request overhead: hot synchronization is globally gated
-and parallelized, and manifest-versioned web assets are browser-cacheable without
-making the HTML or runtime manifest stale.
+Server 2.3.110 preserves the 2.3.109 runtime-delivery optimization while
+hardening the runtime manifest boundary: the manifest resolves through GitHub
+repository-content authority, revisioned assets stay immutable/cacheable, and a
+stale raw branch CDN response can no longer pin Chat to an older asset revision.
 """
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ from api.chat_rmcca_passthrough import install as _install_chat_rmcca_passthroug
 from api.chat_transcript_store import STORE as _transcript_store
 import api.chat_extensions as _chat_extensions
 
-VERSION = "2.3.109"
+VERSION = "2.3.110"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {
@@ -79,6 +79,15 @@ _server.CAPABILITIES["runtime-delivery-optimization"] = {
     "parallelSourceChecks": True,
     "assetCacheContract": "manifest-versioned-immutable-v1",
     "detail": "Ordinary Chat requests share a gated runtime refresh authority; due source checks run concurrently; revisioned JS/CSS may remain browser-cached while HTML and manifest stay live/no-store.",
+}
+_server.CAPABILITIES["runtime-manifest-authority"] = {
+    "kind": "runtime-source-integrity",
+    "ready": True,
+    "contract": "github-contents-manifest-v1",
+    "authority": "github-contents-api-v1",
+    "failurePolicy": "fail-closed-no-stale-raw-manifest",
+    "assetPath": "raw-github-revisioned",
+    "detail": "The runtime manifest resolves from repository-content authority; versioned assets remain on the fast immutable raw path, and stale raw branch content cannot silently select an older manifest revision.",
 }
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
