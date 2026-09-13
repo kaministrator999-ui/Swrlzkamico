@@ -150,10 +150,12 @@ jobs:
           import json
           with open("server-status.json", encoding="utf-8") as stream:
               value = json.load(stream)
-          assert value.get("version") == "2.3.101", value.get("version")
+          assert value.get("version") == "2.3.106", value.get("version")
           caps = value.get("capabilities", {})
           assert caps.get("chat-resumable-generation", {}).get("ready") is True
           assert caps.get("chat-resumable-generation", {}).get("contract") == "resumable-v1"
+          assert caps.get("chat-generation-transcript", {}).get("ready") is True
+          assert caps.get("chat-generation-transcript", {}).get("contract") == "generation-transcript-v1"
           assert caps.get("chat-rmcca-direct-transport", {}).get("ready") is True
           assert caps.get("chat-rmcca-direct-transport", {}).get("contract") == "rmcca-direct-v1"
           PY
@@ -164,7 +166,7 @@ jobs:
             sleep 5
           done
           if [[ "$ready" != "1" ]]; then
-            echo "Server 2.3.101 readiness did not pass." >&2
+            echo "Server 2.3.106 readiness did not pass." >&2
             test -f server-status.json && python -m json.tool server-status.json || true
             exit 1
           fi
@@ -179,7 +181,7 @@ jobs:
           assert value.get("storage", {}).get("configured") is True
           assert value.get("storage", {}).get("access") == "private"
           PY
-          echo "Server 2.3.101 resumable Chat + direct RMCCA transport and collector readiness passed." >> "$GITHUB_STEP_SUMMARY"
+          echo "Server 2.3.106 resumable Chat + authoritative transcript sync + direct RMCCA transport and collector readiness passed." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Deployment receipt
         run: |
