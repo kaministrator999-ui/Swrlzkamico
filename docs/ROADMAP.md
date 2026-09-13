@@ -2,11 +2,17 @@
 
 ## Current release
 
+**Server 2.3.132 / Web Chat 1.5.10 — canonical Ice Dragon companion + stable first paint**
+
+**Status: runtime-hot UI update published; mobile visual acceptance pending refresh.**
+
+Manifest v43 locks the assistant companion to a small runtime derivative of the user-supplied blue/white Ice Dragon artwork and removes the competing async companion repaint path. The companion now remains structurally joined to the §wyrlz name/time plate, later theme shorthand can no longer erase its `background-image`, and the green emoji fallback is retired. `chat_response_layout_v1.js` now completes its initial assistant DOM normalization before Ice Dragon assistant rows become visible, eliminating the brief refresh flash where the avatar appeared above the name before moving into the forum-style plate. Existing `Activity log → companion/name/time → response` composition, Google user identity, account/theme settings, canonical wallpaper, turn integrity, transcript continuity, and context capacity remain preserved. The event baseline observed Server 2.3.130 / Web Chat 1.5.9, then correctly reconciled a concurrent Server advance to 2.3.131 before assigning 2.3.132 / 1.5.10. No Vercel deployment or restart was performed. See [event receipt](releases/server-2.3.132-ice-dragon-companion-first-paint.md).
+
+## Previous release context
+
 **Server 2.3.126 / Web Chat 1.5.6 — Ice Dragon forum-glass polish + account chat identity**
 
-**Status: runtime-hot UI update published; browser visual acceptance pending refresh.**
-
-Manifest v39 adds `ice-dragon-polish-v2.css` and `chat_account_identity_v1.js` while preserving the canonical exact-PNG workspace wallpaper and the v38 wallpaper lock. The composer now uses a lighter sculpted outer glass field with a darker inner input surface, cooler silver-gray context/caption typography, and lower blur so artwork detail remains visible. Assistant identity receives a restrained old-forum-inspired frosted nameplate that visually joins the dragon companion with the §wyrlz name/time, while assistant response bubbles use a subtler themed border rather than a heavy frame. Activity/copy/export/action controls now use ice-blue glass instead of flat gray blocks. Account settings are constrained for mobile, duplicate name controls are collapsed toward one editable Chat name, and signed-in Google avatar/name are used for user-message identity instead of the generic `YOU` label when available. Existing turn-integrity, transcript continuity, context-capacity, response-polish, and wallpaper ownership remain unchanged. See [event receipt](releases/server-2.3.126-chat-identity-polish.md).
+Manifest v39 adds `ice-dragon-polish-v2.css` and `chat_account_identity_v1.js` while preserving the canonical exact-PNG workspace wallpaper and the v38 wallpaper lock. The composer uses a lighter sculpted outer glass field with a darker inner input surface, cooler silver-gray context/caption typography, and lower blur so artwork detail remains visible. Assistant identity receives a restrained old-forum-inspired frosted nameplate that visually joins the dragon companion with the §wyrlz name/time, while assistant response bubbles use a subtler themed border rather than a heavy frame. Activity/copy/export/action controls use ice-blue glass instead of flat gray blocks. Account settings are constrained for mobile, duplicate name controls are collapsed toward one editable Chat name, and signed-in Google avatar/name are used for user-message identity instead of the generic `YOU` label when available. Existing turn-integrity, transcript continuity, context-capacity, response-polish, and wallpaper ownership remain unchanged. See [event receipt](releases/server-2.3.126-chat-identity-polish.md).
 
 ## Previous release context
 
@@ -26,7 +32,7 @@ Manifest v37 added `ice-dragon-brand-v1.css` and preserved the canonical workspa
 
 **Status: runtime-hot UI architecture published; browser visual acceptance pending refresh.**
 
-The Ice Dragon wallpaper is now owned by the full `.workspace` instead of only the `.messages` scroll chamber. This lets the composer region remain genuinely transparent/blurred over the same backdrop instead of revealing a solid dark page behind it. `.messages` is transparent, the full `.message-stack` owns the continuous readability fade so it extends through long/error content, and the welcome subtitle remains high-contrast over bright artwork. `chat_frontend_boot.js` now defaults to/persists the Ice Dragon theme when no preference exists, paints the workspace immediately from the direct repository PNG, and marks the canonical frontend shell ready before backend/theme hydration. Manifest v36 adds `ice-dragon-shell-v1.css` as the final theme-shell authority and preserves the existing turn-integrity, transcript-continuity, context-capacity, and response-polish scripts. See [event receipt](releases/server-2.3.123-canonical-chat-shell.md).
+The Ice Dragon wallpaper is owned by the full `.workspace` instead of only the `.messages` scroll chamber. This lets the composer region remain genuinely transparent/blurred over the same backdrop instead of revealing a solid dark page behind it. `.messages` is transparent, the full `.message-stack` owns the continuous readability fade so it extends through long/error content, and the welcome subtitle remains high-contrast over bright artwork. `chat_frontend_boot.js` defaults to/persists the Ice Dragon theme when no preference exists, paints the workspace immediately from the direct repository PNG, and marks the canonical frontend shell ready before backend/theme hydration. Manifest v36 adds `ice-dragon-shell-v1.css` as the final theme-shell authority and preserves existing turn-integrity, transcript-continuity, context-capacity, and response-polish scripts. See [event receipt](releases/server-2.3.123-canonical-chat-shell.md).
 
 ## Previous release context
 
@@ -46,7 +52,7 @@ Collector 1.0.8 is confirmed live. This event adds a separate verification job t
 
 **Status: runtime-hot UI polish published; browser visual acceptance pending refresh.**
 
-The Ice Dragon wallpaper source remains unchanged. This event fixes three presentation issues only: the dark readability fade is now owned by the full `.message-stack` so it extends through long/error content instead of stopping at the scroll viewport boundary; the composer shell and input box backing are now translucent blurred glass instead of an opaque dark slab; and the welcome subtitle contrast is increased with brighter text and shadowing so the copy beneath “What are we building?” remains readable over bright portions of the artwork. Manifest v34 forces a fresh CSS cache revision. See [event receipt](releases/server-2.3.118-ice-dragon-ui-polish.md).
+The Ice Dragon wallpaper source remains unchanged. This event fixes three presentation issues only: the dark readability fade is owned by the full `.message-stack` so it extends through long/error content instead of stopping at the scroll viewport boundary; the composer shell and input box backing are translucent blurred glass instead of an opaque dark slab; and the welcome subtitle contrast is increased with brighter text and shadowing so the copy beneath “What are we building?” remains readable over bright portions of the artwork. Manifest v34 forces a fresh CSS cache revision. See [event receipt](releases/server-2.3.118-ice-dragon-ui-polish.md).
 
 ## Previous release context
 
