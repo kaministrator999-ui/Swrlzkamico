@@ -1,4 +1,4 @@
-/* Canonical Ice Dragon shell v1: wallpaper spans workspace; chat surfaces glass over it. */
+/* Canonical Ice Dragon shell v1.1: one workspace wallpaper; layered glass surfaces with restrained blur. */
 body[data-swrlz-theme="ice-dragon"] .workspace{
   background-color:#010812!important;
   background-position:50% 42%!important;
@@ -6,21 +6,36 @@ body[data-swrlz-theme="ice-dragon"] .workspace{
   background-repeat:no-repeat!important;
 }
 body[data-swrlz-theme="ice-dragon"] .messages{background:transparent!important}
+
+/* Lighter glass behind the composer; darker glass inside the actual input field. */
 body[data-swrlz-theme="ice-dragon"] .composer-shell{
-  background:rgba(1,7,15,.08)!important;
-  backdrop-filter:blur(22px) saturate(122%)!important;
-  -webkit-backdrop-filter:blur(22px) saturate(122%)!important;
+  background:rgba(82,140,190,.10)!important;
+  backdrop-filter:blur(9px) saturate(114%)!important;
+  -webkit-backdrop-filter:blur(9px) saturate(114%)!important;
 }
 body[data-swrlz-theme="ice-dragon"] .composer-box{
-  background:rgba(4,17,30,.34)!important;
-  backdrop-filter:blur(20px) saturate(124%)!important;
-  -webkit-backdrop-filter:blur(20px) saturate(124%)!important;
+  background:rgba(3,15,27,.68)!important;
+  backdrop-filter:blur(8px) saturate(116%)!important;
+  -webkit-backdrop-filter:blur(8px) saturate(116%)!important;
 }
+body[data-swrlz-theme="ice-dragon"] .composer-box:focus-within{
+  background:rgba(3,15,27,.72)!important;
+}
+
+/* Keep message glass readable without smearing the dragon artwork. */
+body[data-swrlz-theme="ice-dragon"] .message.user .bubble{
+  backdrop-filter:blur(4px) saturate(112%)!important;
+  -webkit-backdrop-filter:blur(4px) saturate(112%)!important;
+}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble{
+  backdrop-filter:blur(5px) saturate(114%)!important;
+  -webkit-backdrop-filter:blur(5px) saturate(114%)!important;
+}
+
 body[data-swrlz-theme="ice-dragon"] .message-stack{position:relative!important;isolation:isolate!important}
 body[data-swrlz-theme="ice-dragon"] .message-stack::before{
   content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(1,7,16,.16),rgba(1,8,18,.29) 58%,rgba(1,6,14,.48));
-  backdrop-filter:blur(1.5px);-webkit-backdrop-filter:blur(1.5px);
+  background:linear-gradient(180deg,rgba(1,7,16,.16),rgba(1,8,18,.27) 58%,rgba(1,6,14,.44));
 }
 body[data-swrlz-theme="ice-dragon"] .message-stack>*{position:relative;z-index:1}
 body[data-swrlz-theme="ice-dragon"] .welcome p{
