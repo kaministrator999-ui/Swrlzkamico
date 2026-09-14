@@ -1,5 +1,5 @@
 {
-  "version": 73,
+  "version": 74,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v73 moves the Ice Dragon response-chamber dark blur/fade from the content-height message-stack to the full messages viewport. The fade now stretches from the top of the chat response area through the entire available viewport, including the empty lower area exposed when the composer collapses, while the wallpaper remains the same chamber owner. Runtime only; no Vercel deploy or restart required."
+  "notes":"Manifest v74 fixes the response-chamber fade at the actual scroll-viewport layer. The prior absolute pseudo-element belonged to scroll content geometry and could still end before the visible chamber bottom. The tint/blur is now a sticky 100%-height viewport overlay behind message content, and loader REV 74 cache-busts the changed theme asset so mobile browsers cannot keep the previous revision. Runtime only; no Vercel deploy or restart required."
 }
