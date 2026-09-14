@@ -1,5 +1,5 @@
 {
-  "version": 88,
+  "version": 89,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v88 fixes the actual Android sidebar dimming root cause found by whole-file Chat analysis: chat.html places the root-level sidebar scrim before .app while base .app has z-index:1, creating a parent stacking context that traps the sidebar below the scrim regardless of the sidebar z-index. Android now dissolves the .app stacking context with z-index:auto so workspace < scrim(90) < sidebar(110). Runtime-only; no Vercel deploy or restart required."
+  "notes":"Manifest v89 removes the legacy mobile layout stylesheet injected by chat_debug_log_v1.js. Diagnostics are now layout-neutral; chat_mobile_viewport_fix.css is the sole Android viewport/sidebar authority. Debug v8 emits flat geometry-v2 records with computed stacking, transform, opacity, filter and viewport measurements on boot, viewport changes and sidebar class changes. Runtime-only; no Vercel deploy or restart required."
 }
