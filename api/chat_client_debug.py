@@ -27,10 +27,6 @@ def install(server) -> None:
     from fastapi import Request
     from fastapi.responses import JSONResponse
 
-    # Stable api/index.py may pass the server module; Vercel's file-routed
-    # api/chat.py passes its FastAPI app directly. Support both authorities.
-    # Vercel routing deterministically sets the application request path to
-    # /api/chat/client-debug before invoking api/chat.py.
     app = getattr(server, "app", server)
 
     async def chat_client_debug_post(request: Request):
@@ -48,14 +44,29 @@ def install(server) -> None:
         print("SWRLZ_CHAT_CLIENT_DEBUG " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
         return JSONResponse({"ok": True}, headers={"Cache-Control": "no-store"})
 
-    async def chat_client_debug_get(limit: int = 120):
-        safe_limit = max(1, min(int(limit or 120), 500))
+    async def chat_client_debug_get(request: Request):
+        try:
+            limit = int(request.query_params.get("limit", "120") or 120)
+        except (TypeError, ValueError):
+            limit = 120
+        safe_limit = max(1, min(limit, 500))
         with _LOCK:
             rows = list(_RECENT)[-safe_limit:]
         return JSONResponse({"ok": True, "count": len(rows), "events": rows}, headers={"Cache-Control": "no-store"})
 
-    app.add_api_route("/api/chat/client-debug", chat_client_debug_post, methods=["POST"], include_in_schema=False)
-    app.add_api_route("/api/chat/client-debug", chat_client_debug_get, methods=["GET"], include_in_schema=False)
+    # Vercel's function destination path is /api/chat.py. The public diagnostic
+    # route is marked by vercel.json with a private query flag, so intercept it
+    # before FastAPI route matching. This avoids depending on Vercel's internal
+    # ASGI pathname semantics while keeping api/chat.py as the single owner.
+    @app.middleware("http")
+    async def chat_client_debug_middleware(request: Request, call_next):
+        if request.query_params.get("__swrlz_client_debug") == "1":
+            if request.method == "POST":
+                return await chat_client_debug_post(request)
+            if request.method == "GET":
+                return await chat_client_debug_get(request)
+            return JSONResponse({"ok": False, "detail": "Method Not Allowed"}, status_code=405, headers={"Cache-Control": "no-store"})
+        return await call_next(request)
 
     capabilities = getattr(server, "CAPABILITIES", None)
     if isinstance(capabilities, dict):
