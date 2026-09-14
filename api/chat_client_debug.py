@@ -28,12 +28,12 @@ def install(server) -> None:
     from fastapi.responses import JSONResponse
 
     # Stable api/index.py passes the server module; Vercel's file-routed
-    # api/chat.py passes its FastAPI app directly. Support both authorities so
-    # /api/chat/client-debug is installed on the function that actually owns
-    # the /api/chat filesystem route.
+    # api/chat.py passes its FastAPI app directly. Support both authorities.
+    # The explicit Vercel route for the public diagnostic URL targets
+    # /api/chat.py, and Vercel preserves that destination pathname when it
+    # invokes the ASGI app, so register both the public and destination paths.
     app = getattr(server, "app", server)
 
-    @app.post("/api/chat/client-debug")
     async def chat_client_debug_post(request: Request):
         try:
             raw = await request.json()
@@ -46,16 +46,19 @@ def install(server) -> None:
         }
         with _LOCK:
             _RECENT.append(record)
-        # Vercel runtime logs are the durable operator-visible trail for a request.
         print("SWRLZ_CHAT_CLIENT_DEBUG " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
         return JSONResponse({"ok": True}, headers={"Cache-Control": "no-store"})
 
-    @app.get("/api/chat/client-debug")
     async def chat_client_debug_get(limit: int = 120):
         safe_limit = max(1, min(int(limit or 120), 500))
         with _LOCK:
             rows = list(_RECENT)[-safe_limit:]
         return JSONResponse({"ok": True, "count": len(rows), "events": rows}, headers={"Cache-Control": "no-store"})
+
+    app.add_api_route("/api/chat/client-debug", chat_client_debug_post, methods=["POST"], include_in_schema=False)
+    app.add_api_route("/api/chat/client-debug", chat_client_debug_get, methods=["GET"], include_in_schema=False)
+    app.add_api_route("/api/chat.py", chat_client_debug_post, methods=["POST"], include_in_schema=False)
+    app.add_api_route("/api/chat.py", chat_client_debug_get, methods=["GET"], include_in_schema=False)
 
     capabilities = getattr(server, "CAPABILITIES", None)
     if isinstance(capabilities, dict):
