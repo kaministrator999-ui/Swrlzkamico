@@ -1,5 +1,5 @@
 {
-  "version": 91,
+  "version": 92,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v91 atomic Chat runtime publication. Android drawer scrim is physically constrained to the exposed workspace to preserve background dimming and tap-outside close without allowing the scrim to cover/dim the drawer. Loader REV91 and manifest v91 move in the same commit. Runtime-only; no Vercel deploy or restart required."
+  "notes":"Manifest v92 atomic Chat runtime publication. Drawer and scrim are normalized into the same app stacking context before Chat becomes interactive, so the background dimmer remains behind the drawer and cannot intercept side-menu input. Loader REV92 and manifest v92 move in the same commit. Runtime-only; no Vercel deploy or restart required."
 }
