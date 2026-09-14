@@ -1,5 +1,5 @@
 {
-  "version": 79,
+  "version": 80,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v79 advances the authoritative Chat runtime revision to match chat_runtime_loader_v3 REV 79. This cache-busts the loader and all loader-owned runtime assets so the current mobile viewport, thread crest, drawer geometry, and scroll/composer fixes are actually delivered. Runtime only; no Vercel deploy or restart required."
+  "notes":"Manifest v80 publishes the Android keyboard viewport correction. Chat now bounds the fixed application shell to visualViewport.height and visualViewport.offsetTop while the IME is visible instead of extending the shell to the layout viewport beneath the keyboard. Runtime only; no Vercel deploy or restart required."
 }
