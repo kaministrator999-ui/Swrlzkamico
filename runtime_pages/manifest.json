@@ -1,11 +1,11 @@
 {
-  "version": 93,
+  "version": 94,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
-    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js"]},
+    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js"]},
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v93 atomic Chat runtime publication. Android Edge IME handling now detects Edge's double-shrunk visual viewport while an editable control is focused and uses the already-resized layout viewport as the effective Chat height, eliminating the black shelf above the keyboard without changing Chrome behavior. Loader REV93 and manifest v93 move in the same commit. Runtime-only; no Vercel deploy or restart required."
+  "notes":"Manifest v94 adds authenticated server-authoritative Chat account-state synchronization. Browser localStorage remains a fast cache while private durable server state owns cross-browser thread/message continuity. Generation transcript checkpoints remain a separate contract."
 }
