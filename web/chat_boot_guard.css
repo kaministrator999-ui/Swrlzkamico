@@ -1,13 +1,10 @@
 /* §wyrlz atomic visual boot guard.
-   Base chat.html remains the immediate structural fallback, but once the runtime
-   loader starts we hold the app for one visual bundle barrier so theme/layout/
-   wallpaper appear together instead of visibly assembling asset-by-asset. */
+   Runtime owns first visible paint. Do not reveal the structural fallback merely
+   because the critical bridge is ready: theme/layout/wallpaper must settle first. */
 html body .app{opacity:1;pointer-events:auto}
-html.swrlz-visual-booting body .app{opacity:0!important;pointer-events:none!important}
-html.swrlz-visual-ready body .app,
-html.swrlz-main-chat-ready body .app,
-html.swrlz-chat-ready body .app{opacity:1!important;pointer-events:auto!important}
-html:not(.swrlz-chat-ready)::before,
-html:not(.swrlz-chat-ready)::after,
-html.swrlz-chat-ready::before,
-html.swrlz-chat-ready::after{content:none!important;display:none!important}
+html.swrlz-visual-booting body .app{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+html.swrlz-visual-ready body .app{opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+html:not(.swrlz-visual-ready)::before,
+html:not(.swrlz-visual-ready)::after,
+html.swrlz-visual-ready::before,
+html.swrlz-visual-ready::after{content:none!important;display:none!important}
