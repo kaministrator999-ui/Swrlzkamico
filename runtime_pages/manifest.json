@@ -1,11 +1,11 @@
 {
-  "version": 85,
+  "version": 86,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
-    "/chat": {"source":"web/chat.html","styles":[],"scripts":["web/chat_runtime_loader_v3.js"]},
+    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js"]},
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v85 fixes the remaining Android desktop-site horizontal displacement by tracking VisualViewport.offsetLeft as --swrlz-vv-left and anchoring app/sidebar/scrim to the actual visible viewport origin. The drawer scrim now uses that same visual viewport rectangle so blur/dimming stays behind the open side menu instead of being displaced. Geometry diagnostics now include visual offsets/page offsets. Runtime only; no restart required."
+  "notes":"Manifest v86 closes the stale-shell first-paint hole without replacing the 62 KB Chat document. The stable runtime source guard already injects manifest styles into <head>; Chat now injects a tiny render-blocking first-paint guard there. The legacy/base .app and decorative shell remain invisible until REV85 runtime completes theme/layout/wallpaper settlement and sets swrlz-visual-ready. This preserves runtime source ownership and requires no Vercel deploy or restart."
 }
