@@ -1,11 +1,11 @@
 """R39 hot v33: brain-owned interpretation boundary over v32.
 
 The Chat client is a mask/sensory relay, not a second reasoning controller.  v33
-therefore treats browser-supplied cognitive envelopes and known browser-generated
-response steering as legacy input that must not own interpretation.  Factual
-approved user context still crosses the boundary, while task classification,
-RMCCA reasoning, temporal interpretation, response planning and semantic
-acceptance remain LALM responsibilities.
+therefore treats browser-supplied cognitive envelopes, intent labels and known
+browser-generated response steering as legacy input that must not own
+interpretation. Factual approved user context still crosses the boundary, while
+task classification, RMCCA reasoning, temporal interpretation, response planning
+and semantic acceptance remain LALM responsibilities.
 """
 from __future__ import annotations
 import re
@@ -42,6 +42,7 @@ _TRANSPORT_DIRECTIVE = (
     "Keep status, routing, and operational detail outside assistant prose."
 )
 _TIME_RE = re.compile(r"^(\d{1,2}):(\d{2})")
+_CARRIER_PREFIX = "[[SWRLZ_RMCCA_TRANSPORT_V1:"
 
 
 def _derive_daypart_from_clock(value):
@@ -74,9 +75,17 @@ def _brain_owned_payload(payload):
         return payload
     clone = dict(payload)
 
-    # Browser cognitive envelopes are retired as interpretation authorities.  The
-    # LALM's own classifier/RMCCA fallback receives the raw prompt/history instead.
+    # Retired browser cognition must never become an interpretation authority.
     clone.pop("swrlzCognitiveContext", None)
+    clone.pop("turnIntent", None)
+    clone.pop("_swrlzCarrierAttached", None)
+    history = clone.get("history")
+    if isinstance(history, list):
+        clone["history"] = [
+            item for item in history
+            if not str(item.get("text") or "").startswith(_CARRIER_PREFIX)
+            if isinstance(item, dict)
+        ]
 
     # Old cached clients may still append cognitive steering for a short period.
     # Replace only known retired client-authored steering with the neutral stream
@@ -96,6 +105,8 @@ def inspect_engine():
             "hotRevision": HOT_REVISION,
             "maskBrainBoundary": "client-relays-lalm-interprets-v1",
             "clientCognitiveEnvelopeIgnored": True,
+            "clientIntentLabelIgnored": True,
+            "legacyRmccaCarrierIgnored": True,
             "legacyClientCognitiveSteeringIgnored": True,
             "daypartDerivedInsideLalm": True,
             "factualTemporalContextPreserved": True,
