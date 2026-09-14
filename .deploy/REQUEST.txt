@@ -4,8 +4,8 @@
 
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-14-chat-account-state-authority-v1
-REQUESTED_AT=2026-09-14T23:34:00Z
+REQUEST_ID=2026-09-14-chat-account-state-route-integration-v2
+REQUESTED_AT=2026-09-14T23:46:00Z
 REQUESTED_BY=ChatGPT-with-user-approval
 SOURCE_REF=main
-REASON=Deploy the stable authenticated private Chat account-state authority in api/chat_state.py. This enables runtime Web Chat 1.5.25 / Server Runtime 2.3.148 to treat browser localStorage as a cache and synchronize bounded thread/message state across authenticated browsers while keeping generation transcript checkpoints separate.
+REASON=Deploy Server Runtime 2.3.149 correction: install the authenticated private swrlz-chat-account-state-v1 router on the existing stable api/index.py server entrypoint so /api/chat_state is reachable in the two-function Vercel architecture. Web Chat remains 1.5.25 / manifest 94.
