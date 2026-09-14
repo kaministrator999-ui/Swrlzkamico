@@ -1,4 +1,4 @@
-/* §wyrlz Web Chat viewport + responsive correction — Server 2.3.34 / Chat 1.4.29 */
+/* §wyrlz Web Chat viewport + responsive correction — Server 2.3.34 / Chat 1.4.30 */
 html body { visibility: visible !important; }
 .thread { content-visibility: auto; contain-intrinsic-size: 52px; }
 .workspace,.messages,.message-stack,.message,.message-body,.bubble,.composer-shell,.composer,.composer-box,.topbar,.topbar-left,.topbar-right { min-width: 0; }
@@ -50,7 +50,7 @@ html body { visibility: visible !important; }
   .topbar-right .icon-button { width: 34px; height: 34px; }
   .thread-heading p { font-size: 10px; letter-spacing: .04em; }
 }
-@media (min-width: 821px) and (max-width: 1180px) {
+@media (min-width: 821px) and (max-width: 1180px) and (pointer:fine) {
   :root { --sidebar: 238px; }
   .app,.workspace { height: 100svh !important; max-height: 100svh !important; min-height: 0 !important; }
   .app { grid-template-columns: var(--sidebar) minmax(0,1fr); width: 100%; max-width: 100%; overflow: hidden; }
@@ -73,4 +73,17 @@ html body { visibility: visible !important; }
   .composer-shell[data-swrlz-composer-collapsed="true"] .composer { display:none!important; transform:none!important; opacity:0!important; visibility:hidden!important; pointer-events:none!important; }
   .composer-shell[data-swrlz-composer-collapsed="true"] .swrlz-composer-collapse { pointer-events:auto; }
   .composer-shell[data-swrlz-composer-collapsed="true"] .swrlz-composer-collapse span { transform:translateY(2px) rotate(225deg); }
+}
+/* A phone remains a one-column overlay layout even when the browser requests a desktop-sized CSS viewport. This prevents the desktop grid from reserving a dead sidebar column and keeps the drawer/scrim functional in Chrome/Edge desktop-site mode. */
+@media (pointer:coarse) {
+  :root { --swrlz-mobile-gutter: 10px; }
+  .app { position:fixed!important;inset:0!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100vw!important;height:var(--swrlz-vvh,100dvh)!important;overflow:hidden!important; }
+  .workspace { grid-column:1!important;width:calc(100% - (var(--swrlz-mobile-gutter) * 2))!important;max-width:calc(100% - (var(--swrlz-mobile-gutter) * 2))!important;height:100%!important;margin-inline:var(--swrlz-mobile-gutter)!important;overflow:hidden!important; }
+  .sidebar { position:fixed!important;z-index:100!important;inset:0 auto 0 0!important;width:min(320px,calc(100% - 44px))!important;height:var(--swrlz-vvh,100dvh)!important;transform:translate3d(-105%,0,0)!important;opacity:1!important;filter:none!important;-webkit-filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important; }
+  body.sidebar-open .sidebar { transform:translate3d(0,0,0)!important; }
+  .sidebar-scrim { position:fixed!important;display:block!important;z-index:90!important;inset:0!important;width:100vw!important;height:var(--swrlz-vvh,100dvh)!important;opacity:0;pointer-events:none;background:rgba(0,5,13,.58)!important;backdrop-filter:blur(4px) saturate(1.06)!important;-webkit-backdrop-filter:blur(4px) saturate(1.06)!important; }
+  body.sidebar-open .sidebar-scrim { opacity:1!important;pointer-events:auto!important; }
+  .mobile-menu { display:inline-grid!important; }
+  .messages { width:100%!important;max-width:100%!important;min-height:0!important; }
+  .message-stack { width:calc(100% - 16px)!important;max-width:100%!important;margin-inline:auto!important; }
 }
