@@ -1,5 +1,5 @@
 {
-  "version": 57,
+  "version": 61,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v57 keeps the v56 CLIENT /chat -> SERVER /api/chat transport boundary and removes the visibly slow staged Chat hydration seen on mobile. Functional helpers now begin 150ms after main readiness instead of 1.6s, artificial per-script delays are reduced from 56ms to 8ms, decorative art hydrates during browser idle time, and the large Ice Dragon wallpaper is deferred until after the document load event. Script loads also have bounded timeouts so one stalled helper cannot hold the hydration chain indefinitely. Stable server, LALM cognition authority, and runtime route ownership are unchanged; no redeploy or restart is required."
+  "notes":"Manifest v61 advances the runtime Chat asset revision so /chat requests the current diagnostic-aware runtime loader. CLIENT /chat -> SERVER /api/chat transport ownership, runtime source ownership, and stable server boundaries remain unchanged; no redeploy or restart is required."
 }
