@@ -1,11 +1,11 @@
 {
-  "version": 50,
+  "version": 51,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
-    "/chat": {"source":"web/chat.html","styles":["web/chat_boot_guard.css","web/chat_enhancements.css","web/chat_user_settings_v2.css","web/themes/ice-dragon/ice-dragon-theme.css","web/themes/ice-dragon/ice-dragon-art-v2.css","web/themes/ice-dragon/ice-dragon-shell-v1.css","web/themes/ice-dragon/ice-dragon-brand-v1.css","web/themes/ice-dragon/ice-dragon-polish-v2.css","web/themes/ice-dragon/ice-dragon-response-layout-v1.css","web/chat_mobile_viewport_fix.css","web/chat_code_artifacts.css"],"scripts":["web/chat_runtime_loader_v1.js"]},
+    "/chat": {"source":"web/chat.html","styles":[],"scripts":["web/chat_runtime_loader_v1.js"]},
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v50 fixes partial Chat hydration caused by the stable live-source injector emitting the entire runtime enhancement chain as parser-blocking revisioned script tags. Chat now loads one small runtime loader. That loader starts all runtime enhancement fetches concurrently, preserves exact dependency execution order, and then exposes the existing full interface. This is a delivery-only correction: Mask/Human/Brain ownership remains unchanged; Chat still relays/presents, Server governs/executes, and LALM interprets/reasons. Existing settings, Ice Dragon theme, account UI, context capacity, continuity, transcript synchronization, terminal integrity, code presentation and mobile behavior remain preserved."
+  "notes":"Manifest v51 removes the remaining 42-request Vercel live-source hydration fan-out. Chat now receives only one tiny loader through the Vercel runtime bridge. The loader applies the saved/default Ice Dragon theme marker immediately, then loads revisioned CSS and JavaScript directly from the GitHub runtime branch. Styles download concurrently; external scripts are inserted with async=false so downloads may overlap while execution preserves dependency order. This is a delivery correction only: Mask/Human/Brain ownership is unchanged, and no stable deployment or restart is required."
 }
