@@ -111,6 +111,182 @@ Never replace a complete page for a small targeted change.
 Never introduce a competing hardcoded page/version injector in `main`.
 Never duplicate another module's version number when that module owns an authoritative version file.
 
+## MASK / HUMAN / BRAIN ARCHITECTURE RULESET — NON-NEGOTIABLE
+
+§wyrlz uses three separate architectural components. They may communicate closely, but their responsibilities MUST remain distinct:
+
+```text
+🎭 Chat interface / client = MASK
+🧍 Server                  = HUMAN / BODY
+🧠 LALM                    = BRAIN
+```
+
+This is an engineering boundary, not merely a visual metaphor.
+
+### 1. The Chat interface is the Mask
+
+The Chat client is the presentation, sensing, input, and relay surface through which an outside user interacts with the system.
+
+The mask may be visually rich, expressive, animated, themed, highly interactive, and capable. It may expose controls, cameras, microphones, files, account/profile surfaces, notifications, haptics, local-device information, accessibility features, AR/VR affordances, or other client capabilities. A mask does not have to resemble a human face; it may extend with additional sensors, controls, levers, or mechanisms.
+
+Those capabilities do **not** make the client a cognitive authority.
+
+The client MAY relay factual information that it legitimately owns or receives, including for example:
+
+- the user's exact submitted text;
+- bounded conversation/history data selected under the current context contract;
+- request/thread/session identity;
+- account/profile fields the user has authorized for use;
+- approved device-local time, date, timezone, locale, or other factual device context;
+- files, images, voice, clicks, selections, control inputs, permissions, and other user-provided or device-provided facts;
+- presentation and transport diagnostics needed to operate the interface.
+
+The client MUST NOT turn those facts into cognitive instructions for the LALM.
+
+For example, this is allowed:
+
+```text
+prompt = "Hey 👋"
+localTime = "18:16"
+timeZone = "America/Chicago"
+preferredName = <authorized profile value>
+```
+
+This is NOT allowed as Chat-owned cognition:
+
+```text
+intent = social
+responseTopology = social-participation
+daypartInterpretation = evening
+recommendedGreeting = "Good evening"
+instruction = "Do not say morning"
+```
+
+The mask relays the user's signal and factual metadata through its "sockets." It does not whisper an interpretation of those facts to the brain.
+
+### 2. The LALM is the Brain
+
+The LALM owns cognition.
+
+Interpretation, reasoning, semantic classification, contextual meaning, intent understanding, domain synthesis, task recognition, temporal interpretation, response planning, requirement tracking, conversational behavior, semantic validation, repair, and answer generation belong in the LALM unless a narrowly defined non-cognitive safety or protocol boundary requires otherwise.
+
+Examples:
+
+```text
+18:16 -> infer that this is evening if relevant
+"Hey 👋" -> understand that it is a greeting
+user asks for code -> determine the programming task and response structure
+conversation correction -> preserve valid prior context and revise the affected interpretation
+```
+
+The LALM may decide that supplied context is irrelevant and omit it from the response. The client must not force a cognitive conclusion merely because factual metadata was supplied.
+
+There should be one primary cognitive authority. Do not duplicate LALM reasoning in Chat and then ask the LALM to reason over Chat's interpretation of the user.
+
+### 3. The Server is the Human / Body
+
+The server is the capable acting system around the LALM brain.
+
+The server owns operational authority and execution boundaries such as:
+
+- authentication and authorization;
+- sessions and request ownership;
+- durable state and storage;
+- transcript persistence and synchronization;
+- network and service access;
+- tools and external actions;
+- files and data access;
+- rate/security boundaries;
+- routing and stream transport;
+- action execution;
+- enforcement of user-granted permissions and pre-authorized automation rules.
+
+The server SHOULD remain operational rather than cognitive. It may validate schema, permissions, identities, safety/authority boundaries, protocol integrity, and whether an action is allowed or technically possible. It must not become a competing reasoning engine for ordinary conversation semantics.
+
+The LALM may reason that an action is useful, but the server controls whether and how that action can actually occur under the authority given to the system.
+
+### 4. Capability is not cognition
+
+A component can become more capable without becoming more intelligent.
+
+Adding a camera, microphone, file picker, notification system, AR surface, robot control, account panel, device bridge, or UI automation to the client is analogous to adding another opening, lever, sensor, or mechanism to the mask. That does not transfer interpretation or reasoning ownership to the mask.
+
+Likewise, adding tools, network access, databases, schedulers, actuators, or integrations to the server expands the human/body's capabilities. It does not make the server the brain.
+
+### 5. Relay facts; do not relay conclusions
+
+When factual context originates outside the LALM, preserve it as factual context whenever practical.
+
+Preferred pattern:
+
+```text
+user input + factual metadata + bounded history
+                ↓
+             server
+                ↓
+              LALM
+                ↓
+        interpretation/reasoning
+```
+
+Avoid:
+
+```text
+user input
+   ↓
+Chat interprets it
+   ↓
+Chat writes reasoning instructions
+   ↓
+server adds another interpretation
+   ↓
+LALM reasons over the interpretations
+```
+
+The latter creates competing cognitive authorities, hidden prompt coupling, harder debugging, and contradictions between layers.
+
+### 6. Human/server action authority remains separate from LALM thought
+
+The LALM is the brain, but a thought is not automatically an action.
+
+The server/human layer owns the mechanisms that turn an allowed decision into an external effect. User approval, stored permissions, policy, explicit automation rules, and available capabilities determine whether an action can occur.
+
+A pre-authorized automation is still an action whose authority originated from a deliberate rule established through the system. It is not independent agency created by the mask.
+
+### 7. Presentation may be complex; the cognitive connection should stay simple
+
+The front of the mask may be spectacular. The connection behind it should remain straightforward.
+
+The preferred Chat-to-server/LALM payload is factual and compact: request identity, user text, bounded/canonical history, authorized user/device/account context, attachments/capabilities when relevant, and transport metadata.
+
+Do not grow the Chat backend into a second semantic planner merely because the frontend becomes richer.
+
+### 8. Ownership test for future features
+
+Use this test whenever deciding where new behavior belongs:
+
+- **Does it capture, relay, transport, render, expose, or execute a capability?** Place it in Chat/client or server according to the owning surface.
+- **Does it interpret, infer, classify meaning, reason, decide conversational strategy, plan an answer, or validate semantic correctness?** Place it in the LALM.
+- **Does it decide whether an external action is authenticated, authorized, permitted, durable, routable, or executable?** Place it in the server.
+
+When uncertain, preserve raw/factual evidence and let the LALM perform the interpretation rather than pre-interpreting it in Chat.
+
+### 9. Refactor rule
+
+Existing Chat-side cognitive logic is technical debt when it duplicates or steers LALM cognition. During relevant work, prefer migrating such logic into the LALM and reducing Chat to factual context relay, interface behavior, continuity, and presentation.
+
+Do not remove transport integrity, transcript continuity, authentication, user-authorized context capture, UI state, or presentation safeguards merely because cognitive logic is being removed. The goal is separation of responsibility, not loss of capability.
+
+### Architecture shorthand
+
+```text
+🎭 MASK  = sense / relay / present
+🧍 HUMAN = authorize / operate / execute
+🧠 BRAIN = interpret / reason / decide
+```
+
+**Core rule: The mask relays evidence to the human/brain system; it does not whisper conclusions to the brain. The server provides the body and action boundary; the LALM provides cognition. Keep all three components distinct.**
+
 ## MODULE VERSION AUTHORITY RULE — REQUIRED
 
 `VERSION.txt` is the **module-version router/index**. It identifies which module-owned file contains the authoritative version for each independently evolving structure.
@@ -275,4 +451,4 @@ If any of these documents conflict, stop and resolve the conflict against the ne
 
 ## BOTTOM LINE
 
-**Read `SWRLZ_PROJECT_START.md`, then automatically read `SWRLZ_HOTFIX_RULES.md`, `SWRLZ_VERSION_MODULE_EVOLUTION.md`, and `SWRLZ_SERVER_ROADMAP.md`. For Google account/OAuth work, also read `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` before diagnosing or editing that flow. Resolve current module versions through `VERSION.txt` and each module's own `versions/<module-id>.txt`. Capture those authorities as the event baseline, then re-read them immediately before version assignment/commit so concurrent updates are detected and reconciled rather than overwritten. Follow the hotfix/deployment boundary based on current deployment configuration and workflows, not branch name alone. Before any action that can actually cause deployment, STOP, explain exactly what would cause it and why, and obtain explicit user approval. Every server development event receives the Server lineage treatment required by the evolution contract; only actually changed components receive component bumps; independently evolving structures own their own version files; cross-module displays resolve those authorities automatically; failures remain in lineage; and the completed event is recorded in the roadmap before the work is declared done.**
+**Read `SWRLZ_PROJECT_START.md`, then automatically read `SWRLZ_HOTFIX_RULES.md`, `SWRLZ_VERSION_MODULE_EVOLUTION.md`, and `SWRLZ_SERVER_ROADMAP.md`. For Google account/OAuth work, also read `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` before diagnosing or editing that flow. Resolve current module versions through `VERSION.txt` and each module's own `versions/<module-id>.txt`. Capture those authorities as the event baseline, then re-read them immediately before version assignment/commit so concurrent updates are detected and reconciled rather than overwritten. Follow the hotfix/deployment boundary based on current deployment configuration and workflows, not branch name alone. Before any action that can actually cause deployment, STOP, explain exactly what would cause it and why, and obtain explicit user approval. Every server development event receives the Server lineage treatment required by the evolution contract; only actually changed components receive component bumps; independently evolving structures own their own version files; cross-module displays resolve those authorities automatically; failures remain in lineage; and the completed event is recorded in the roadmap before the work is declared done. Preserve the Mask / Human / Brain boundary: Chat relays and presents factual evidence, the Server owns operational/action authority, and the LALM owns cognition and interpretation.**
