@@ -1,5 +1,5 @@
 {
-  "version": 54,
+  "version": 55,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v54 replaces the v53 near-immediate background stampede with cooperative Chat bootstrap v3. Main Chat first paint now loads only frontend boot, boot guard, version display, and ready signalling. Functional helpers are loaded one-at-a-time after a 1.6s settling window with explicit browser yields. Decorative Ice Dragon hydration is delayed until the functional layer settles. Frontend boot v2 removes legacy base64 companion hydration and does not decode the large wallpaper during first paint. Wallpaper v22 is the only delayed wallpaper painter and intentionally performs no duplicate Image probe. LALM 2.1.44 remains cognition authority. No stable deployment or restart is required."
+  "notes":"Manifest v55 repairs the Mask-to-Human Chat transport boundary. The launchpad now opens the UI mask at /chat while chat status/stream/cancel/verify traffic is forced to the authoritative /api/chat socket. A critical transport-boundary helper also installs the server-managed session marker before delayed functional helpers load, preventing the phased cooperative boot from leaving the base Mask on stale root-routing or manual-token assumptions. Chat bootstrap remains cooperative; LALM cognition and stable server behavior are unchanged. No stable deployment or restart is required."
 }
