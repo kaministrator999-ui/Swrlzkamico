@@ -1,0 +1,23 @@
+/* §wyrlz Edge Android IME boundary override v1.
+   Edge can expose an undersized visualViewport while its native fixed-position
+   viewport still reaches the browser/keyboard boundary. During IME focus,
+   delegate vertical ownership to that native fixed containing block instead
+   of forcing the JavaScript-computed height. Chrome and non-Edge paths are untouched. */
+@media (max-width:820px){
+  html.swrlz-edge-android.swrlz-ime-open .app{
+    top:var(--swrlz-vv-top,0px)!important;
+    bottom:0!important;
+    height:auto!important;
+    min-height:0!important;
+  }
+  html.swrlz-edge-android.swrlz-ime-open .workspace{
+    height:100%!important;
+    min-height:0!important;
+  }
+  html.swrlz-edge-android.swrlz-ime-open .sidebar,
+  html.swrlz-edge-android.swrlz-ime-open .sidebar-scrim{
+    top:var(--swrlz-vv-top,0px)!important;
+    bottom:0!important;
+    height:auto!important;
+  }
+}
