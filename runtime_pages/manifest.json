@@ -1,5 +1,5 @@
 {
-  "version": 74,
+  "version": 79,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v74 fixes the response-chamber fade at the actual scroll-viewport layer. The prior absolute pseudo-element belonged to scroll content geometry and could still end before the visible chamber bottom. The tint/blur is now a sticky 100%-height viewport overlay behind message content, and loader REV 74 cache-busts the changed theme asset so mobile browsers cannot keep the previous revision. Runtime only; no Vercel deploy or restart required."
+  "notes":"Manifest v79 advances the authoritative Chat runtime revision to match chat_runtime_loader_v3 REV 79. This cache-busts the loader and all loader-owned runtime assets so the current mobile viewport, thread crest, drawer geometry, and scroll/composer fixes are actually delivered. Runtime only; no Vercel deploy or restart required."
 }
