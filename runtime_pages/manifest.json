@@ -1,5 +1,5 @@
 {
-  "version": 62,
+  "version": 64,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v62 restores normal Chat boot after the v61 loading incident. Temporary client diagnostic logger/UI assets remain dormant in the repository and are not loaded by the normal critical chain. See docs/runbooks/CHAT_LOAD_FAILURE_DIAGNOSTICS.md for the source/revision alignment check and temporary instrumentation procedure. CLIENT /chat -> SERVER /api/chat transport ownership and runtime source ownership are unchanged; no redeploy or restart is required."
+  "notes":"Manifest v64 advances Chat after two targeted fixes: collapsed-composer stream layout now reconciles while generation is active, and the hot R39 brain scopes inherited implementation-acceptance scaffolding to actual runnable-code turns so ordinary social responses are not contaminated by code-evaluation policy. Diagnostic logger/UI assets remain dormant. CLIENT /chat -> SERVER /api/chat transport ownership and runtime source ownership are unchanged; no redeploy or restart is required."
 }
