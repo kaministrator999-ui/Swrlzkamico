@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/chat/client-debug",
-      "destination": "/api/chat_client_debug_route"
+      "destination": "/api/chat/client-debug"
     }
   ],
   "functions": {
