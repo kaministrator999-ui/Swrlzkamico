@@ -1,6 +1,6 @@
 (()=>{"use strict";
 if(window.__swrlzRuntimeLoaderV3)return;
-const REV='58';
+const REV='59';
 const ROOT='/live/assets/';
 const diagnostics={contractId:'swrlz_chat_cooperative_boot_v3',revision:REV,startedAt:performance.now(),critical:[],functional:[],decorative:[],styleErrors:[],scriptErrors:[],timeouts:[],mainReady:false,functionalReady:false,decorativeReady:false};
 window.__swrlzRuntimeLoaderV3=diagnostics;
@@ -26,69 +26,11 @@ const decorativeCore=['themes/ice-dragon/ice-dragon-art-loader-v17.js'];
 const wallpaper='themes/ice-dragon/ice-dragon-wallpaper-v22.js';
 const src=path=>`${ROOT}${path}?v=${REV}`;
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-
-function establishInitialTheme(){
-  let saved='';
-  try{saved=localStorage.getItem('swrlz.chat.theme')||''}catch(_){ }
-  const initial=saved==='default'?'default':'ice-dragon';
-  if(initial==='ice-dragon')document.body.dataset.swrlzTheme='ice-dragon';
-  else delete document.body.dataset.swrlzTheme;
-  diagnostics.initialTheme=initial;
-}
-function startStyles(){
-  for(const path of styles){
-    if(document.querySelector(`link[data-swrlz-runtime-style="${CSS.escape(path)}"]`))continue;
-    const link=document.createElement('link');link.rel='stylesheet';link.href=src(path);link.dataset.swrlzRuntimeStyle=path;
-    link.addEventListener('error',()=>diagnostics.styleErrors.push(path),{once:true});document.head.appendChild(link);
-  }
-}
-function loadOne(path,bucket,timeoutMs=5000){
-  return new Promise(resolve=>{
-    if(document.querySelector(`script[data-swrlz-runtime-script="${CSS.escape(path)}"]`))return resolve();
-    let settled=false;
-    const done=(kind)=>{if(settled)return;settled=true;clearTimeout(timer);if(kind==='load')bucket?.push(path);if(kind==='error')diagnostics.scriptErrors.push(path);if(kind==='timeout')diagnostics.timeouts.push(path);resolve();};
-    const script=document.createElement('script');script.src=src(path);script.async=false;script.dataset.swrlzRuntimeScript=path;
-    script.addEventListener('load',()=>done('load'),{once:true});
-    script.addEventListener('error',()=>done('error'),{once:true});
-    const timer=setTimeout(()=>done('timeout'),timeoutMs);
-    document.body.appendChild(script);
-  });
-}
-async function loadSerial(paths,bucket,yieldMs=0){
-  for(const path of paths){await loadOne(path,bucket);if(yieldMs)await sleep(yieldMs);}
-}
-function whenIdle(fn,timeout=1600){
-  if('requestIdleCallback' in window)requestIdleCallback(fn,{timeout});
-  else setTimeout(fn,180);
-}
-async function boot(){
-  establishInitialTheme();
-  startStyles();
-
-  // Wallpaper is part of the canonical Ice Dragon shell, not deferred decoration.
-  // Start it immediately and independently so slow functional helpers cannot block first paint.
-  loadOne(wallpaper,diagnostics.decorative,4000);
-
-  // Legacy state retirement is intentionally not part of normal boot. It deleted the
-  // base Chat storage key and could force a reload loop/stale-page flash.
-  await loadSerial(critical,diagnostics.critical,6);
-  diagnostics.mainReady=true;diagnostics.mainReadyAt=performance.now();
-  document.documentElement.classList.add('swrlz-main-chat-ready');
-  window.dispatchEvent(new CustomEvent('swrlz:main-chat-ready',{detail:{revision:REV,at:diagnostics.mainReadyAt}}));
-
-  setTimeout(async()=>{
-    await loadSerial(functional,diagnostics.functional,8);
-    diagnostics.functionalReady=true;diagnostics.functionalReadyAt=performance.now();
-    document.documentElement.classList.add('swrlz-chat-functional-ready');
-    window.dispatchEvent(new CustomEvent('swrlz:chat-functional-ready',{detail:{revision:REV,errors:[...diagnostics.scriptErrors],timeouts:[...diagnostics.timeouts],at:diagnostics.functionalReadyAt}}));
-
-    whenIdle(async()=>{
-      await loadSerial(decorativeCore,diagnostics.decorative,0);
-      diagnostics.decorativeReady=true;diagnostics.decorativeReadyAt=performance.now();
-      document.documentElement.classList.add('swrlz-chat-decorative-ready');
-      window.dispatchEvent(new CustomEvent('swrlz:chat-decorative-ready',{detail:{revision:REV,errors:[...diagnostics.scriptErrors],timeouts:[...diagnostics.timeouts],at:diagnostics.decorativeReadyAt}}));
-    },900);
-  },40);
-}
+function establishInitialTheme(){let saved='';try{saved=localStorage.getItem('swrlz.chat.theme')||''}catch(_){ }const initial=saved==='default'?'default':'ice-dragon';if(initial==='ice-dragon')document.body.dataset.swrlzTheme='ice-dragon';else delete document.body.dataset.swrlzTheme;diagnostics.initialTheme=initial;}
+function startStyles(){for(const path of styles){if(document.querySelector(`link[data-swrlz-runtime-style="${CSS.escape(path)}"]`))continue;const link=document.createElement('link');link.rel='stylesheet';link.href=src(path);link.dataset.swrlzRuntimeStyle=path;link.addEventListener('error',()=>diagnostics.styleErrors.push(path),{once:true});document.head.appendChild(link);}}
+function loadOne(path,bucket,timeoutMs=5000){return new Promise(resolve=>{if(document.querySelector(`script[data-swrlz-runtime-script="${CSS.escape(path)}"]`))return resolve();let settled=false;const done=(kind)=>{if(settled)return;settled=true;clearTimeout(timer);if(kind==='load')bucket?.push(path);if(kind==='error')diagnostics.scriptErrors.push(path);if(kind==='timeout')diagnostics.timeouts.push(path);resolve();};const script=document.createElement('script');script.src=src(path);script.async=false;script.dataset.swrlzRuntimeScript=path;script.addEventListener('load',()=>done('load'),{once:true});script.addEventListener('error',()=>done('error'),{once:true});const timer=setTimeout(()=>done('timeout'),timeoutMs);document.body.appendChild(script);});}
+async function loadSerial(paths,bucket,yieldMs=0){for(const path of paths){await loadOne(path,bucket);if(yieldMs)await sleep(yieldMs);}}
+function whenIdle(fn,timeout=1600){if('requestIdleCallback' in window)requestIdleCallback(fn,{timeout});else setTimeout(fn,180);}
+async function boot(){establishInitialTheme();startStyles();loadOne(wallpaper,diagnostics.decorative,4000);await loadSerial(critical,diagnostics.critical,6);diagnostics.mainReady=true;diagnostics.mainReadyAt=performance.now();document.documentElement.classList.add('swrlz-main-chat-ready');window.dispatchEvent(new CustomEvent('swrlz:main-chat-ready',{detail:{revision:REV,at:diagnostics.mainReadyAt}}));setTimeout(async()=>{await loadSerial(functional,diagnostics.functional,8);diagnostics.functionalReady=true;diagnostics.functionalReadyAt=performance.now();document.documentElement.classList.add('swrlz-chat-functional-ready');window.dispatchEvent(new CustomEvent('swrlz:chat-functional-ready',{detail:{revision:REV,errors:[...diagnostics.scriptErrors],timeouts:[...diagnostics.timeouts],at:diagnostics.functionalReadyAt}}));whenIdle(async()=>{await loadSerial(decorativeCore,diagnostics.decorative,0);diagnostics.decorativeReady=true;diagnostics.decorativeReadyAt=performance.now();document.documentElement.classList.add('swrlz-chat-decorative-ready');window.dispatchEvent(new CustomEvent('swrlz:chat-decorative-ready',{detail:{revision:REV,errors:[...diagnostics.scriptErrors],timeouts:[...diagnostics.timeouts],at:diagnostics.decorativeReadyAt}}));},900);},40);}
 boot().catch(error=>{diagnostics.fatal=String(error?.message||error);console.error('[§wyrlz cooperative chat boot]',error)});
 })();
