@@ -1,5 +1,5 @@
 {
-  "version": 86,
+  "version": 87,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v86 closes the stale-shell first-paint hole without replacing the 62 KB Chat document. The stable runtime source guard already injects manifest styles into <head>; Chat now injects a tiny render-blocking first-paint guard there. The legacy/base .app and decorative shell remain invisible until REV85 runtime completes theme/layout/wallpaper settlement and sets swrlz-visual-ready. This preserves runtime source ownership and requires no Vercel deploy or restart."
+  "notes":"Manifest v87 keeps the atomic first-paint guard and fixes two remaining Android browser surfaces: the mobile sidebar scrim no longer uses backdrop blur, so thread content stays crisp, and the runtime now tracks IME-open viewport state while the Android page/root paints the Ice Dragon shell color behind any browser-exposed visual-viewport shelf. Runtime-only; no Vercel deploy or restart required."
 }
