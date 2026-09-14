@@ -4,8 +4,8 @@
 
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-13-manifest-authority-hardening-v1
-REQUESTED_AT=2026-09-13T19:41:00Z
+REQUEST_ID=2026-09-14-chat-account-state-authority-v1
+REQUESTED_AT=2026-09-14T23:34:00Z
 REQUESTED_BY=ChatGPT-with-user-approval
 SOURCE_REF=main
-REASON=Deploy Server 2.3.110 manifest authority hardening. The live runtime manifest must resolve through current GitHub repository-content authority before revisioned immutable assets are injected, preserving hot-runtime-delivery-v1, shared-private-blob-v1, generation-transcript-v1, resumable-v1, rmcca-direct-v1, turn-integrity-v1, and collector readiness verification.
+REASON=Deploy the stable authenticated private Chat account-state authority in api/chat_state.py. This enables runtime Web Chat 1.5.25 / Server Runtime 2.3.148 to treat browser localStorage as a cache and synchronize bounded thread/message state across authenticated browsers while keeping generation transcript checkpoints separate.
