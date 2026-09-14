@@ -1,5 +1,5 @@
 {
-  "version": 72,
+  "version": 73,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v72 fixes composer reopen geometry. Expanded mobile composer height is now intrinsic (height:auto) rather than being constrained by the previously captured CSS custom-property height; the collapsed state alone owns the fixed 18px rail. This lets the grid reclaim the composer's true full height immediately when reopened while retaining deterministic collapse and the stable mobile gutter. Runtime only; no Vercel deploy or restart required."
+  "notes":"Manifest v73 moves the Ice Dragon response-chamber dark blur/fade from the content-height message-stack to the full messages viewport. The fade now stretches from the top of the chat response area through the entire available viewport, including the empty lower area exposed when the composer collapses, while the wallpaper remains the same chamber owner. Runtime only; no Vercel deploy or restart required."
 }
