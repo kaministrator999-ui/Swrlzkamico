@@ -1,5 +1,5 @@
 {
-  "version": 66,
+  "version": 67,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v66 activates the Chat diagnostic logger as the first cooperative critical asset and advances every runtime asset URL to a fresh immutable revision. Diagnostic delivery uses same-origin fetch keepalive for ordinary checkpoints, reserving sendBeacon for pagehide. CLIENT /chat -> SERVER /api/chat transport ownership and runtime source ownership are unchanged; no redeploy or restart is required."
+  "notes":"Manifest v67 activates the mobile Chat viewport/drawer/composer corrections with a fresh immutable asset revision. The sidebar scrim shades the full underlying workspace, mobile messages retain a slim wallpaper gutter, and composer collapse preserves the dock footprint instead of expanding the transcript into it. Diagnostic logging remains first in the critical cooperative boot chain. CLIENT /chat -> SERVER /api/chat transport ownership and runtime source ownership are unchanged; no redeploy or restart is required."
 }
