@@ -1,5 +1,5 @@
 {
-  "version": 89,
+  "version": 90,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v89 removes the legacy mobile layout stylesheet injected by chat_debug_log_v1.js. Diagnostics are now layout-neutral; chat_mobile_viewport_fix.css is the sole Android viewport/sidebar authority. Debug v8 emits flat geometry-v2 records with computed stacking, transform, opacity, filter and viewport measurements on boot, viewport changes and sidebar class changes. Runtime-only; no Vercel deploy or restart required."
+  "notes":"Manifest v90 atomic publication checkpoint. Loader REV90 and manifest v90 are committed in the same Git tree/commit so the runtime branch cannot expose a new loader revision and its manifest pointer in separate commits. Runtime-only; no Vercel deploy or restart required."
 }
