@@ -1,10 +1,14 @@
 """R39 hot v34: Phase 2 mask/human/brain semantic ownership over v33.
 
-Chat is presentation + factual relay + continuity.  It no longer classifies turn intent,
+Chat is presentation + factual relay + continuity. It no longer classifies turn intent,
 derives daypart, canonicalizes identity aliases, reconstructs RMCCA carriers, parses user
 requirements, validates code semantics, rewrites model claims, or changes a successful
-LALM terminal result into failure.  Interpretation and semantic acceptance remain inside
+LALM terminal result into failure. Interpretation and semantic acceptance remain inside
 R39; the server remains the execution/authority boundary.
+
+v34 also prevents the inherited implementation acceptance layer from contaminating
+non-coding turns. Coding/artifact validation remains available only when the LALM's own
+requirement parser finds an actual runnable-code obligation.
 """
 from __future__ import annotations
 import urllib.request
@@ -23,8 +27,8 @@ _V33_GENERATE = globals().get("generate_events")
 if not callable(_V33_INSPECT) or not callable(_V33_GENERATE):
     raise RuntimeError("R39_V34_BASE_CONTRACT_MISSING")
 
-HOT_SERVER_VERSION = "2.1.44"
-HOT_REVISION = "2.1.44-hot-mask-phase2-semantic-ownership-v34"
+HOT_SERVER_VERSION = "2.1.45"
+HOT_REVISION = "2.1.45-hot-mask-phase2-contract-scope-v34"
 _impl.HOT_SERVER_VERSION = HOT_SERVER_VERSION
 _impl.HOT_REVISION = HOT_REVISION
 
@@ -34,6 +38,18 @@ if isinstance(globals().get("_BASE_POLICY"), str):
     _BASE_POLICY += (
         " Identity interpretation: common spellings such as swurlz, swrlz, and swyrlz may refer to §wyrlz when conversational context supports that reading. Preserve the user's original wording; infer the referent rather than rewriting input text."
     )
+
+# v27 appended its implementation acceptance contract unconditionally. That leaked
+# code-evaluation scaffolding into ordinary social turns. Keep that semantic gate inside
+# the brain, but arm it only when the brain's requirement ledger actually requires code.
+if callable(globals().get("_implementation_contract")):
+    _V33_IMPLEMENTATION_CONTRACT = _implementation_contract
+
+    def _implementation_contract(req, original_prompt):
+        requirements = req if isinstance(req, dict) else {}
+        if not requirements.get("requireRunnableCode"):
+            return ""
+        return _V33_IMPLEMENTATION_CONTRACT(requirements, original_prompt)
 
 
 def inspect_engine():
@@ -51,6 +67,8 @@ def inspect_engine():
             "clientTerminalSemanticOverrideRequired": False,
             "semanticAcceptanceOwner": "lalm",
             "identityAliasInterpretationOwner": "lalm",
+            "implementationContractScope": "runnable-code-turns-only",
+            "nonCodingImplementationScaffoldingSuppressed": True,
             "rawUserWordingPreservedByClient": True,
             "serverAuthorityBoundaryPreserved": True,
             "v33SourceCommit": _V33_COMMIT,
