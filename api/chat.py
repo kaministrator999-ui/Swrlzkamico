@@ -50,6 +50,11 @@ app = FastAPI(
     openapi_url=None,
 )
 
+# /api/chat is a file-routed Vercel function, so diagnostics must be installed
+# on this app rather than api/index.py or a competing nested api/chat/* file.
+from api.chat_client_debug import install as _install_chat_client_debug
+_install_chat_client_debug(app)
+
 
 class BridgeError(Exception):
     def __init__(self, status: int, code: str, detail: str) -> None:
@@ -404,101 +409,85 @@ def _validate_upstream_event(raw: bytes, request_id: str, previous_seq: int) -> 
         raise ValueError("UPSTREAM_EVENT_CONTRACT_MISMATCH")
     if event.get("schemaVersion") not in {1, 2}:
         raise ValueError("UPSTREAM_EVENT_SCHEMA_UNSUPPORTED")
-    event_type = event.get("type")
-    if event_type not in EVENT_TYPES:
-        raise ValueError("UPSTREAM_EVENT_TYPE_UNSUPPORTED")
-    seq = event.get("seq")
-    if isinstance(seq, bool) or not isinstance(seq, int) or seq <= previous_seq:
-        raise ValueError("UPSTREAM_EVENT_SEQUENCE_INVALID")
     identity = event.get("identity")
     if not isinstance(identity, dict) or identity.get("requestId") != request_id:
-        raise ValueError("UPSTREAM_EVENT_IDENTITY_MISMATCH")
-    if event_type == "DELTA" and not isinstance(event.get("text"), str):
-        raise ValueError("UPSTREAM_DELTA_TEXT_INVALID")
-    terminal = bool(event.get("terminal"))
-    if (event_type in TERMINAL_TYPES) != terminal:
-        raise ValueError("UPSTREAM_EVENT_TERMINAL_FLAG_INVALID")
+        raise ValueError("UPSTREAM_EVENT_REQUEST_ID_MISMATCH")
+    try:
+        seq = int(event.get("seq"))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("UPSTREAM_EVENT_SEQ_INVALID") from exc
+    if seq <= previous_seq:
+        raise ValueError("UPSTREAM_EVENT_SEQ_NON_MONOTONIC")
+    event_type = str(event.get("type", "")).upper()
+    if event_type not in EVENT_TYPES:
+        raise ValueError("UPSTREAM_EVENT_TYPE_INVALID")
+    text = event.get("text", "")
+    if not isinstance(text, str):
+        raise ValueError("UPSTREAM_EVENT_TEXT_INVALID")
+    event["seq"] = seq
+    event["type"] = event_type
+    event["text"] = text
+    event["terminal"] = bool(event.get("terminal")) or event_type in TERMINAL_TYPES
     return event, seq
-
-
-def _proxy_failed_event(seq: int, request_id: str, code: str, reason: str) -> bytes:
-    return _encode_event(
-        _bridge_event(
-            seq,
-            "FAILED",
-            request_id,
-            phase="ERROR",
-            reason=reason,
-            categories=[code],
-            terminal=True,
-        ),
-    )
 
 
 def _proxy_stream(payload: dict[str, Any]) -> Iterator[bytes]:
     request_id = payload["requestId"]
+    body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     request = urllib.request.Request(
         _upstream_url(),
-        data=json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8"),
+        data=body,
         headers=_upstream_headers(request_id),
         method="POST",
     )
-    last_seq = 0
-    saw_terminal = False
+    previous_seq = 0
+    terminal_seen = False
     try:
         with urllib.request.urlopen(request, timeout=_timeout_seconds()) as response:
-            content_type = response.headers.get("Content-Type", "").lower()
-            if "application/x-ndjson" not in content_type:
+            if response.status != 200:
+                raise ValueError(f"UPSTREAM_HTTP_{response.status}")
+            content_type = response.headers.get("content-type", "").lower()
+            if "ndjson" not in content_type and "jsonl" not in content_type:
                 raise ValueError("UPSTREAM_CONTENT_TYPE_INVALID")
             while True:
-                raw = response.readline(MAX_EVENT_BYTES + 2)
+                raw = response.readline(MAX_EVENT_BYTES + 1)
                 if not raw:
                     break
-                if len(raw) > MAX_EVENT_BYTES + 1:
+                if len(raw) > MAX_EVENT_BYTES:
                     raise ValueError("UPSTREAM_EVENT_TOO_LARGE")
-                raw = raw.strip()
-                if not raw:
+                if not raw.strip():
                     continue
-                event, last_seq = _validate_upstream_event(raw, request_id, last_seq)
+                event, previous_seq = _validate_upstream_event(raw, request_id, previous_seq)
                 yield _encode_event(event)
-                if event["type"] in TERMINAL_TYPES:
-                    saw_terminal = True
+                if event["terminal"]:
+                    terminal_seen = True
                     break
-        if not saw_terminal:
-            yield _proxy_failed_event(
-                last_seq + 1,
-                request_id,
-                "UPSTREAM_STREAM_ENDED_WITHOUT_TERMINAL",
-                "The upstream stream closed without a terminal event.",
-            )
+        if not terminal_seen:
+            raise ValueError("UPSTREAM_TERMINAL_MISSING")
     except urllib.error.HTTPError as exc:
-        yield _proxy_failed_event(
-            last_seq + 1,
-            request_id,
-            f"UPSTREAM_HTTP_{exc.code}",
-            f"The proof-bound SWRLZ SERVER rejected the request (HTTP {exc.code}).",
+        yield _encode_event(
+            _bridge_event(
+                previous_seq + 1,
+                "FAILED",
+                request_id,
+                phase="ERROR",
+                reason=f"Upstream chat bridge returned HTTP {exc.code}.",
+                categories=["UPSTREAM_HTTP_ERROR"],
+                terminal=True,
+            ),
         )
-    except urllib.error.URLError:
-        yield _proxy_failed_event(
-            last_seq + 1,
-            request_id,
-            "UPSTREAM_UNREACHABLE",
-            "The configured SWRLZ SERVER upstream could not be reached.",
-        )
-    except (OSError, TimeoutError):
-        yield _proxy_failed_event(
-            last_seq + 1,
-            request_id,
-            "UPSTREAM_TRANSPORT_FAILED",
-            "The upstream stream ended because of a transport failure or idle timeout.",
-        )
-    except ValueError as exc:
-        code = str(exc) if str(exc).startswith("UPSTREAM_") else "UPSTREAM_STREAM_INVALID"
-        yield _proxy_failed_event(
-            last_seq + 1,
-            request_id,
-            code,
-            "The upstream emitted an event that failed the SWRLZ stream contract.",
+    except (urllib.error.URLError, OSError, TimeoutError, ValueError) as exc:
+        code = str(exc)[:96] or type(exc).__name__
+        yield _encode_event(
+            _bridge_event(
+                previous_seq + 1,
+                "FAILED",
+                request_id,
+                phase="ERROR",
+                reason="Upstream chat bridge failed closed: " + code,
+                categories=["UPSTREAM_STREAM_INVALID"],
+                terminal=True,
+            ),
         )
 
 
