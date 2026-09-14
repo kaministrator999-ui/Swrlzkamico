@@ -1,5 +1,5 @@
 {
-  "version": 44,
+  "version": 45,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v44 adds native-first mobile scroll gesture ownership. During an active touch drag and the short inertial handoff after release, Chat suppresses the stream-follow scroll re-lock that previously fought the user's finger and made scrolling feel delayed. The transcript uses native pan-y, momentum scrolling, contained overscroll and auto scroll behavior, while the existing stream-follow system may resume only after the gesture/momentum window settles. Companion first-paint, activity/identity/response composition, Google identity, account/theme settings, wallpaper ownership, turn integrity, transcript continuity and context capacity remain preserved."
+  "notes":"Manifest v45 activates Mask/Human/Brain architecture migration phase 1. Chat canonical context now relays prompt/history facts without browser RMCCA classification or cognitive policy generation; the RMCCA transport guard no longer reconstructs browser cognition; temporal personality and turn-integrity layers no longer steer social/time responses. R39 v33 owns task/RMCCA interpretation, ignores retired client cognitive envelopes/intent labels/carriers, and derives daypart from approved local clock context inside the LALM boundary. Existing visual theme, continuity, transcript, terminal-integrity, account, context-capacity and mobile-scroll behavior remain preserved."
 }
