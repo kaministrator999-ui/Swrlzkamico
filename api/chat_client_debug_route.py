@@ -2,13 +2,11 @@ from __future__ import annotations
 
 from collections import deque
 from datetime import datetime, timezone
+from http.server import BaseHTTPRequestHandler
 import json
 from threading import Lock
+from urllib.parse import parse_qs, urlsplit
 
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-
-app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 _RECENT = deque(maxlen=500)
 _LOCK = Lock()
 
@@ -27,32 +25,50 @@ def _clean(value, depth=0):
     return str(value)[:2000]
 
 
-async def _post_debug(request: Request):
-    try:
-        raw = await request.json()
-    except Exception:
-        raw = {}
-    record = {
-        "receivedAt": datetime.now(timezone.utc).isoformat(),
-        "event": _clean(raw if isinstance(raw, dict) else {}),
-    }
-    with _LOCK:
-        _RECENT.append(record)
-    print("SWRLZ_CHAT_CLIENT_DEBUG " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
-    return JSONResponse({"ok": True}, headers={"Cache-Control": "no-store"})
+class handler(BaseHTTPRequestHandler):
+    """Path-agnostic Vercel Python diagnostic function.
 
+    Routing is owned by vercel.json.  The function deliberately does not use an
+    ASGI router, so a rewritten pathname cannot cause an application-level 404.
+    """
 
-async def _get_debug(limit: int = 120):
-    safe_limit = max(1, min(int(limit or 120), 500))
-    with _LOCK:
-        rows = list(_RECENT)[-safe_limit:]
-    return JSONResponse({"ok": True, "count": len(rows), "events": rows}, headers={"Cache-Control": "no-store"})
+    def _json(self, status: int, payload: dict) -> None:
+        body = json.dumps(payload, separators=(",", ":"), ensure_ascii=True).encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(body)
 
+    def do_GET(self) -> None:
+        try:
+            query = parse_qs(urlsplit(self.path).query)
+            limit = int((query.get("limit") or ["120"])[0])
+        except (TypeError, ValueError):
+            limit = 120
+        safe_limit = max(1, min(limit, 500))
+        with _LOCK:
+            rows = list(_RECENT)[-safe_limit:]
+        self._json(200, {"ok": True, "count": len(rows), "events": rows})
 
-# Vercel's current backend-framework rewrite behavior preserves the rewritten
-# destination pathname when dispatching into the ASGI app. Keep the public,
-# internal destination, and function-root forms explicit so diagnostics remain
-# reachable without relying on pathname stripping semantics.
-for _path in ("/", "/api/chat/client-debug", "/api/chat_client_debug_route"):
-    app.add_api_route(_path, _post_debug, methods=["POST"], include_in_schema=False)
-    app.add_api_route(_path, _get_debug, methods=["GET"], include_in_schema=False)
+    def do_POST(self) -> None:
+        try:
+            length = max(0, min(int(self.headers.get("content-length", "0") or 0), 65536))
+        except ValueError:
+            length = 0
+        try:
+            raw = json.loads(self.rfile.read(length) or b"{}")
+        except Exception:
+            raw = {}
+        record = {
+            "receivedAt": datetime.now(timezone.utc).isoformat(),
+            "event": _clean(raw if isinstance(raw, dict) else {}),
+        }
+        with _LOCK:
+            _RECENT.append(record)
+        print("SWRLZ_CHAT_CLIENT_DEBUG " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
+        self._json(200, {"ok": True})
+
+    def log_message(self, format: str, *args) -> None:
+        return
