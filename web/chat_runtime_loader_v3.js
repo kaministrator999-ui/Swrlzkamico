@@ -1,6 +1,6 @@
 (()=>{"use strict";
 if(window.__swrlzRuntimeLoaderV3)return;
-const REV='76',ROOT='/live/assets/';
+const REV='77',ROOT='/live/assets/';
 const diagnostics={contractId:'swrlz_chat_cooperative_boot_v3',revision:REV,startedAt:performance.now(),critical:[],functional:[],decorative:[],styleErrors:[],scriptErrors:[],timeouts:[],mainReady:false,functionalReady:false,decorativeReady:false};window.__swrlzRuntimeLoaderV3=diagnostics;
 const styles=['chat_boot_guard.css','chat_enhancements.css','chat_user_settings_v2.css','themes/ice-dragon/ice-dragon-theme.css','themes/ice-dragon/ice-dragon-art-v2.css','themes/ice-dragon/ice-dragon-shell-v1.css','themes/ice-dragon/ice-dragon-brand-v1.css','themes/ice-dragon/ice-dragon-polish-v2.css','themes/ice-dragon/ice-dragon-response-layout-v1.css','chat_mobile_viewport_fix.css','chat_code_artifacts.css'];
 const critical=['chat_debug_log_v1.js','chat_transport_boundary_v1.js','chat_frontend_boot_v2.js','chat_boot_guard.js','chat_version.js','chat_boot_ready.js'];
