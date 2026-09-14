@@ -27,8 +27,7 @@ def _clean(value, depth=0):
     return str(value)[:2000]
 
 
-@app.post("/")
-async def post_debug(request: Request):
+async def _post_debug(request: Request):
     try:
         raw = await request.json()
     except Exception:
@@ -43,9 +42,17 @@ async def post_debug(request: Request):
     return JSONResponse({"ok": True}, headers={"Cache-Control": "no-store"})
 
 
-@app.get("/")
-async def get_debug(limit: int = 120):
+async def _get_debug(limit: int = 120):
     safe_limit = max(1, min(int(limit or 120), 500))
     with _LOCK:
         rows = list(_RECENT)[-safe_limit:]
     return JSONResponse({"ok": True, "count": len(rows), "events": rows}, headers={"Cache-Control": "no-store"})
+
+
+# Vercel's current backend-framework rewrite behavior preserves the rewritten
+# destination pathname when dispatching into the ASGI app. Keep the public,
+# internal destination, and function-root forms explicit so diagnostics remain
+# reachable without relying on pathname stripping semantics.
+for _path in ("/", "/api/chat/client-debug", "/api/chat_client_debug_route"):
+    app.add_api_route(_path, _post_debug, methods=["POST"], include_in_schema=False)
+    app.add_api_route(_path, _get_debug, methods=["GET"], include_in_schema=False)
