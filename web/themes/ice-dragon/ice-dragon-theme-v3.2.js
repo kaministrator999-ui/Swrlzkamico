@@ -1,4 +1,4 @@
-/* SWRLZ Ice Dragon Theme controller v3.2.0 — state + persistent diagnostics UI */
+/* SWRLZ Ice Dragon Theme controller v3.2.1 — state + persistent diagnostics UI */
 (function(global){
   'use strict';
   const STORAGE_KEY='swrlz.chat.theme';
@@ -108,7 +108,7 @@
     debug.log('selector-mounted',select.value);mountLogsButton();
   }
   function init(){
-    let saved=DEFAULT;try{saved=localStorage.getItem(STORAGE_KEY)||DEFAULT}catch(error){debug.log('theme-storage-read-error',String(error))}
+    let saved=THEME;try{saved=localStorage.getItem(STORAGE_KEY)||THEME}catch(error){debug.log('theme-storage-read-error',String(error))}
     debug.log('theme-init',`saved=${saved} readyState=${document.readyState}`);
     set(saved,false);mountControl();mountLogsButton();
   }
