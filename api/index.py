@@ -27,6 +27,7 @@ from api.collector_host import install as _install_collector_host
 from api.chat_resume_sessions import install as _install_chat_resume_sessions
 from api.chat_rmcca_passthrough import install as _install_chat_rmcca_passthrough
 from api.chat_transcript_store import STORE as _transcript_store
+from api.chat_state import app as _chat_state_app
 import api.chat_extensions as _chat_extensions
 
 VERSION = "2.3.111"
@@ -37,6 +38,7 @@ _server.CAPABILITIES["lalm-startup-warm"] = {"kind":"runtime-execution","ready":
 _server.CAPABILITIES["chat-resumable-generation"] = {"kind":"transport-continuity","ready":True,"contract":"resumable-v1","detail":"A requestId owns one local generation session; the owning worker replays events after resumeAfterSeq while shared transcript state prevents duplicate remote ownership."}
 _server.CAPABILITIES["chat-generation-transcript"] = {"kind":"transport-continuity","ready":True,"contract":"generation-transcript-v1","detail":"Append-only generated text, revision, phase, sequence and terminal state are authoritative response-position synchronization state."}
 _server.CAPABILITIES["chat-shared-generation-transcript"] = {"kind":"durable-transport-continuity","ready":bool(_transcript_store.configured),"contract":"shared-private-blob-v1","access":"private","ttlSeconds":1800,"detail":"The active model state remains worker-owned; bounded transcript checkpoints are shared privately across workers so a different worker can synchronize the same response without starting a duplicate generation."}
+_server.CAPABILITIES["chat-account-state"] = {"kind":"durable-user-state","ready":bool(_transcript_store.configured),"contract":"swrlz-chat-account-state-v1","access":"private","authority":"server","browserLocalStorageAuthoritative":False,"detail":"Authenticated account-scoped thread/message presentation state is durable in private Blob storage; browser localStorage is a cache only."}
 _server.CAPABILITIES["chat-rmcca-direct-transport"] = {"kind":"cognitive-context-transport","ready":True,"contract":"rmcca-direct-v1","fallback":"history-carrier-v1","detail":"Validated RMCCA cognitive and user-time context survives stable request normalization as bounded first-class metadata; the compact history carrier remains compatibility transport."}
 _server.CAPABILITIES["runtime-delivery-optimization"] = {"kind":"performance","ready":True,"contract":"hot-runtime-delivery-v1","syncGateSeconds":30,"parallelSourceChecks":True,"assetCacheContract":"manifest-versioned-immutable-v1","detail":"Ordinary Chat requests share a gated runtime refresh authority; due source checks run concurrently; revisioned JS/CSS may remain browser-cached while HTML and manifest stay live/no-store."}
 _server.CAPABILITIES["runtime-manifest-authority"] = {"kind":"runtime-source-integrity","ready":True,"contract":"github-contents-manifest-v1","authority":"github-contents-api-v1","failurePolicy":"fail-closed-no-stale-raw-manifest","assetPath":"raw-github-revisioned","detail":"The runtime manifest resolves from repository-content authority; versioned assets remain on the fast immutable raw path, and stale raw branch content cannot silently select an older manifest revision."}
@@ -49,6 +51,7 @@ _install_control_plane(_server)
 _install_native_status(_server)
 _install_contextual_input(_server)
 _install_account_routes(_server)
+_server.app.include_router(_chat_state_app.router)
 _install_collector_host(_server)
 _install_live_source_guard(_server)
 _install_chat_resume_sessions(_chat_extensions)
