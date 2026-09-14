@@ -11,7 +11,57 @@ function text(){return[`SWRLZ Chat Debug Log`,`Run: ${RUN}`,`URL: ${location.hre
 async function copy(){const value=text();try{await navigator.clipboard.writeText(value);return true}catch(_){return false}}
 function download(){const blob=new Blob([text()],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`swrlz-chat-debug-${RUN}.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function clear(){entries=[];persist();log('debug','log-cleared')}
-window.__swrlzDebug={version:3,runId:RUN,log,text,copy,download,clear,get entries(){return entries.slice()}};window.__swrlzDebugLog=entries;
-window.addEventListener('error',e=>log('error','window-error',{message:e.message,source:e.filename,line:e.lineno,column:e.colno,error:clean(e.error)}));window.addEventListener('unhandledrejection',e=>log('error','unhandled-rejection',clean(e.reason)));document.addEventListener('visibilitychange',()=>log('lifecycle','visibility',{state:document.visibilityState}));window.addEventListener('pageshow',e=>log('lifecycle','pageshow',{persisted:e.persisted}));window.addEventListener('pagehide',e=>{const event={at:new Date().toISOString(),ms:Math.round(performance.now()),type:'lifecycle',message:'pagehide',data:{persisted:e.persisted}};entries.push(event);if(entries.length>MAX)entries=entries.slice(-MAX);persist();beacon(event)});
-log('boot','debug-logger-ready',{readyState:document.readyState,runId:RUN,delivery:'fetch-keepalive'});
+window.__swrlzDebug={version:4,runId:RUN,log,text,copy,download,clear,get entries(){return entries.slice()}};window.__swrlzDebugLog=entries;
+
+/* Mobile viewport ownership: size the chat to the visual viewport, not the larger
+   layout viewport Android leaves behind when the IME opens. */
+const style=document.createElement('style');style.id='swrlz-mobile-layout-v1';style.textContent=`
+:root{--swrlz-vvh:100dvh;--swrlz-vtop:0px}
+html,body{height:var(--swrlz-vvh)!important;min-height:var(--swrlz-vvh)!important;overflow:hidden!important}
+.app,.workspace{height:var(--swrlz-vvh)!important;min-height:0!important;max-height:var(--swrlz-vvh)!important}
+.workspace{overflow:hidden!important}
+.messages{min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;overflow-wrap:anywhere;word-break:normal}
+.message-stack{padding-bottom:14px!important}
+.composer-shell{padding-top:5px!important;padding-bottom:max(7px,env(safe-area-inset-bottom))!important;background:linear-gradient(to top,rgba(3,3,11,.98) 30%,rgba(3,3,11,.88) 72%,transparent)!important}
+.composer-caption,.composer-shell .context-label,.composer-shell .context-meta,.composer-shell [class*="context"]{text-shadow:0 2px 4px rgba(0,0,0,.98),0 0 7px rgba(0,0,0,.92),0 0 14px rgba(4,18,34,.9)}
+.composer-caption{margin-top:5px!important;color:rgba(220,235,248,.88)!important;font-weight:550}
+.sidebar-scrim{background:rgba(1,7,16,.72)!important;backdrop-filter:blur(5px) saturate(115%);-webkit-backdrop-filter:blur(5px) saturate(115%);will-change:opacity;transform:translateZ(0)}
+.sidebar{will-change:transform;transform:translate3d(-105%,0,0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+body.sidebar-open .sidebar{transform:translate3d(0,0,0)}
+.sidebar-foot{padding-top:6px!important;padding-bottom:0!important}
+.node-card{min-height:44px!important;padding-block:5px!important}
+@media(max-width:820px){
+ .topbar{min-height:58px!important;padding-block:6px!important}
+ .message-stack{padding-top:14px!important}
+ .sidebar{height:var(--swrlz-vvh)!important;max-height:var(--swrlz-vvh)!important}
+}
+@media(max-width:540px){
+ #prompt{min-height:52px!important;padding-top:13px!important;padding-bottom:6px!important}
+ .composer-tools{min-height:44px!important}
+}
+body.swrlz-keyboard-open .composer-caption{display:none!important}
+body.swrlz-keyboard-open .composer-shell{padding-bottom:4px!important}
+body.swrlz-keyboard-open .message-stack{padding-top:8px!important;padding-bottom:8px!important}
+`;(document.head||document.documentElement).append(style);
+let lastViewport={h:0,w:0,top:0,keyboard:false};
+function syncVisualViewport(reason){
+ const vv=window.visualViewport;
+ const h=Math.max(1,Math.round(vv?.height||window.innerHeight||document.documentElement.clientHeight));
+ const w=Math.max(1,Math.round(vv?.width||window.innerWidth||document.documentElement.clientWidth));
+ const top=Math.max(0,Math.round(vv?.offsetTop||0));
+ const layoutH=Math.max(h,Math.round(window.innerHeight||h));
+ const keyboard=!!vv&&(layoutH-h>120);
+ document.documentElement.style.setProperty('--swrlz-vvh',`${h}px`);
+ document.documentElement.style.setProperty('--swrlz-vtop',`${top}px`);
+ document.body?.classList.toggle('swrlz-keyboard-open',keyboard);
+ const changed=h!==lastViewport.h||w!==lastViewport.w||top!==lastViewport.top||keyboard!==lastViewport.keyboard;
+ if(changed){lastViewport={h,w,top,keyboard};log('viewport','visual-viewport',{reason,h,w,top,layoutH,keyboard});requestAnimationFrame(()=>{const m=document.querySelector('#messages,.messages');if(m&&keyboard)m.scrollTop=m.scrollHeight})}
+}
+if(window.visualViewport){visualViewport.addEventListener('resize',()=>syncVisualViewport('resize'),{passive:true});visualViewport.addEventListener('scroll',()=>syncVisualViewport('scroll'),{passive:true})}
+window.addEventListener('resize',()=>syncVisualViewport('window-resize'),{passive:true});
+window.addEventListener('orientationchange',()=>setTimeout(()=>syncVisualViewport('orientation'),80),{passive:true});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>syncVisualViewport('dom-ready'),{once:true});else syncVisualViewport('boot');
+
+window.addEventListener('error',e=>log('error','window-error',{message:e.message,source:e.filename,line:e.lineno,column:e.colno,error:clean(e.error)}));window.addEventListener('unhandledrejection',e=>log('error','unhandled-rejection',clean(e.reason)));document.addEventListener('visibilitychange',()=>log('lifecycle','visibility',{state:document.visibilityState}));window.addEventListener('pageshow',e=>{log('lifecycle','pageshow',{persisted:e.persisted});syncVisualViewport('pageshow')});window.addEventListener('pagehide',e=>{const event={at:new Date().toISOString(),ms:Math.round(performance.now()),type:'lifecycle',message:'pagehide',data:{persisted:e.persisted}};entries.push(event);if(entries.length>MAX)entries=entries.slice(-MAX);persist();beacon(event)});
+log('boot','debug-logger-ready',{readyState:document.readyState,runId:RUN,delivery:'fetch-keepalive',mobileLayout:'visual-viewport-v1'});
 })();
