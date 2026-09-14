@@ -1,5 +1,5 @@
 {
-  "version": 64,
+  "version": 66,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v64 advances Chat after two targeted fixes: collapsed-composer stream layout now reconciles while generation is active, and the hot R39 brain scopes inherited implementation-acceptance scaffolding to actual runnable-code turns so ordinary social responses are not contaminated by code-evaluation policy. Diagnostic logger/UI assets remain dormant. CLIENT /chat -> SERVER /api/chat transport ownership and runtime source ownership are unchanged; no redeploy or restart is required."
+  "notes":"Manifest v66 activates the Chat diagnostic logger as the first cooperative critical asset and advances every runtime asset URL to a fresh immutable revision. Diagnostic delivery uses same-origin fetch keepalive for ordinary checkpoints, reserving sendBeacon for pagehide. CLIENT /chat -> SERVER /api/chat transport ownership and runtime source ownership are unchanged; no redeploy or restart is required."
 }
