@@ -1,5 +1,5 @@
 {
-  "version": 83,
+  "version": 84,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v83 fixes Android Edge and desktop-site horizontal displacement by separating physical visual viewport width from the emulated CSS layout viewport. App, workspace, sidebar, and scrim now bind to --swrlz-vvw plus live visual viewport height. Runtime only; no Vercel deploy or restart required."
+  "notes":"Manifest v84 makes Ice Dragon asset ownership settlement part of the authoritative Chat first-paint barrier. The app is not marked visual-ready until functional scripts, styles, wallpaper, and ice-dragon-art-loader settlement complete. It also emits a pre-reveal geometry snapshot for app/workspace/messages/message-stack/thread-brand/composer/sidebar/scrim so any remaining Edge or Android desktop-site displacement is evidence-addressable. Runtime only; no restart required."
 }
