@@ -4,6 +4,12 @@
   "git": {
     "deploymentEnabled": false
   },
+  "rewrites": [
+    {
+      "source": "/api/chat/client-debug",
+      "destination": "/api/chat/client-debug.py"
+    }
+  ],
   "functions": {
     "api/**/*.py": {
       "maxDuration": 300,
