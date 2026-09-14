@@ -1,8 +1,8 @@
-"""Hot R39 entrypoint — v33 brain-owned interpretation boundary."""
+"""Hot R39 entrypoint — v34 mask/human/brain Phase 2 semantic ownership."""
 from __future__ import annotations
 import urllib.request
-_SOURCE_URL="https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/97962919586e3b96a33099b745df225282984f60/runtime_hot/r39_engine_v33.py"
-_request=urllib.request.Request(_SOURCE_URL,headers={"User-Agent":"swrlz-hot-r39-entry-v33"})
+_SOURCE_URL="https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/b0962eee8a0ceeddeb4e122c88bc4a321a29f721/runtime_hot/r39_engine_v34.py"
+_request=urllib.request.Request(_SOURCE_URL,headers={"User-Agent":"swrlz-hot-r39-entry-v34"})
 with urllib.request.urlopen(_request,timeout=20) as _response:_source=_response.read(4_000_001)
-if len(_source)>4_000_000:raise RuntimeError("R39_V33_OVERLAY_TOO_LARGE")
+if len(_source)>4_000_000:raise RuntimeError("R39_V34_OVERLAY_TOO_LARGE")
 exec(compile(_source.decode("utf-8"),_SOURCE_URL,"exec"),globals(),globals())
