@@ -44,10 +44,11 @@ function canonicalizeChatNavigation(event){
 
 document.addEventListener('click',canonicalizeChatNavigation,true);
 ensureSessionMarker();
+queueMicrotask(()=>{try{if(typeof refreshStatus==='function')refreshStatus()}catch(_){ }});
 
 window.__swrlzChatTransportBoundaryV1={
   contract:CONTRACT,
-  version:1,
+  version:2,
   chatUi:CHAT_UI,
   chatApi:CHAT_API,
   policy:'mask-ui-never-owns-server-routing; chat UI is /chat; all chat control and stream actions terminate at /api/chat; browser auth remains server-managed'
