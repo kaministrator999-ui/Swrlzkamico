@@ -1,15 +1,22 @@
 (()=>{'use strict';
 if(window.__swrlzGestureScrollV1)return;window.__swrlzGestureScrollV1=true;
 let bound=null,dragging=false,cooldownUntil=0,endTimer=0;
+let composerShell=null,composerToggle=null,composerResize=null,composerCollapsed=false,revealArmed=false,lastScrollTop=0;
 const now=()=>performance.now();
+const tailDistance=el=>el?Math.max(0,el.scrollHeight-el.scrollTop-el.clientHeight):Infinity;
+const revealThreshold=el=>Math.max(72,Math.min(124,(el?.clientHeight||720)*.12));
+function measureComposer(){if(!composerShell||composerCollapsed)return;requestAnimationFrame(()=>{if(!composerShell||composerCollapsed)return;const h=Math.ceil(composerShell.scrollHeight+2);composerShell.style.setProperty('--swrlz-composer-height',`${h}px`)})}
+function setComposerCollapsed(next){if(!composerShell)return;composerCollapsed=Boolean(next);composerShell.dataset.swrlzComposerCollapsed=composerCollapsed?'true':'false';if(composerToggle){composerToggle.setAttribute('aria-expanded',composerCollapsed?'false':'true');composerToggle.setAttribute('aria-label',composerCollapsed?'Show message input':'Hide message input');composerToggle.title=composerCollapsed?'Show message input':'Hide message input'}const el=bound||document.querySelector('.messages');lastScrollTop=el?.scrollTop||0;revealArmed=composerCollapsed&&tailDistance(el)>revealThreshold(el);if(!composerCollapsed)measureComposer()}
+function maybeRevealComposer(el){if(!composerCollapsed||!el)return;const dist=tailDistance(el),threshold=revealThreshold(el),movingDown=el.scrollTop>lastScrollTop+.5;if(dist>threshold*1.5)revealArmed=true;if(revealArmed&&movingDown&&dist<=threshold)setComposerCollapsed(false);lastScrollTop=el.scrollTop}
+function setupComposerDock(){const shell=document.querySelector('.composer-shell');if(!shell)return;if(shell!==composerShell){composerResize?.disconnect?.();composerShell=shell;composerShell.dataset.swrlzComposerDock='true';composerToggle=shell.querySelector('.swrlz-composer-collapse');if(!composerToggle){composerToggle=document.createElement('button');composerToggle.type='button';composerToggle.className='swrlz-composer-collapse';composerToggle.setAttribute('aria-label','Hide message input');composerToggle.setAttribute('aria-expanded','true');composerToggle.title='Hide message input';composerToggle.innerHTML='<span aria-hidden="true"></span>';shell.insertBefore(composerToggle,shell.firstChild);composerToggle.addEventListener('click',()=>setComposerCollapsed(!composerCollapsed))}composerResize=new ResizeObserver(()=>measureComposer());composerResize.observe(shell);setComposerCollapsed(false);measureComposer()}}
 function finishGesture(){dragging=false;cooldownUntil=now()+260;clearTimeout(endTimer);endTimer=setTimeout(()=>{cooldownUntil=0},280)}
-function bind(){const el=document.querySelector('.messages');if(!el||el===bound)return;if(bound)bound.removeAttribute('data-swrlz-gesture-scroll');bound=el;el.dataset.swrlzGestureScroll='true';el.style.touchAction='pan-y';el.style.overscrollBehaviorY='contain';el.style.webkitOverflowScrolling='touch';el.style.scrollBehavior='auto';
+function bind(){const el=document.querySelector('.messages');setupComposerDock();if(!el||el===bound)return;if(bound)bound.removeAttribute('data-swrlz-gesture-scroll');bound=el;el.dataset.swrlzGestureScroll='true';el.style.touchAction='pan-y';el.style.overscrollBehaviorY='contain';el.style.webkitOverflowScrolling='touch';el.style.scrollBehavior='auto';lastScrollTop=el.scrollTop;
   el.addEventListener('touchstart',()=>{dragging=true;cooldownUntil=Infinity;clearTimeout(endTimer)},{capture:true,passive:true});
   el.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){dragging=true;cooldownUntil=Infinity;clearTimeout(endTimer)}},{capture:true,passive:true});
   el.addEventListener('touchend',finishGesture,{capture:true,passive:true});el.addEventListener('touchcancel',finishGesture,{capture:true,passive:true});
   el.addEventListener('pointerup',e=>{if(e.pointerType==='touch')finishGesture()},{capture:true,passive:true});el.addEventListener('pointercancel',e=>{if(e.pointerType==='touch')finishGesture()},{capture:true,passive:true});
-  el.addEventListener('scroll',e=>{if(dragging||now()<cooldownUntil)e.stopImmediatePropagation()},{capture:true,passive:true});
+  el.addEventListener('scroll',e=>{maybeRevealComposer(el);if(dragging||now()<cooldownUntil)e.stopImmediatePropagation()},{capture:true,passive:true});
 }
-function boot(){bind();new MutationObserver(bind).observe(document.documentElement,{childList:true,subtree:true});window.addEventListener('swrlz-theme-change',()=>requestAnimationFrame(bind))}
+function boot(){bind();new MutationObserver(bind).observe(document.documentElement,{childList:true,subtree:true});window.addEventListener('swrlz-theme-change',()=>requestAnimationFrame(()=>{bind();measureComposer()}));window.addEventListener('resize',measureComposer,{passive:true})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
