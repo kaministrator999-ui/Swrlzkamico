@@ -1,5 +1,5 @@
 {
-  "version": 70,
+  "version": 71,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v70 stretches the mobile messages chamber through the full grid row after composer collapse and introduces an atomic visual boot barrier. Runtime theme/layout styles, wallpaper, and critical scripts start in parallel; the visible app is released together after those visual dependencies settle, avoiding the previous one-by-one interface construction. Functional and decorative enhancements continue after first visual paint without blocking the shell. No Vercel deploy or restart is required."
+  "notes":"Manifest v71 fixes the two visual regressions exposed by mobile screenshots. The visual boot barrier now remains closed through functional hydration and transcript/theme/account/layout ownership, then releases the completed chat shell in one paint instead of exposing the critical-only intermediate form. Composer collapse is now deterministic: collapsed content is display:none with a fixed 18px rail, transitions cannot translate the composer below the viewport, and expanded height measurement ignores collapsed geometry and sub-2px resize noise so repeated up/down toggles cannot accumulate drift. Runtime only; no Vercel deploy or restart required."
 }
