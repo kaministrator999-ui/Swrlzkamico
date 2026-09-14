@@ -8,7 +8,14 @@
     {
       "src": "/api/chat/client-debug/?$",
       "methods": ["GET", "POST"],
-      "dest": "/api/chat.py"
+      "dest": "/api/chat.py",
+      "transforms": [
+        {
+          "type": "request.path",
+          "op": "set",
+          "args": "/api/chat/client-debug"
+        }
+      ]
     }
   ],
   "functions": {
