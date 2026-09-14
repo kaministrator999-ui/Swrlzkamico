@@ -11,9 +11,12 @@
       "dest": "/api/chat.py",
       "transforms": [
         {
-          "type": "request.path",
+          "type": "request.query",
           "op": "set",
-          "args": "/api/chat/client-debug"
+          "target": {
+            "key": "__swrlz_client_debug"
+          },
+          "args": "1"
         }
       ]
     }
