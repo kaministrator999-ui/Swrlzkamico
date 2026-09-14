@@ -27,7 +27,13 @@ def install(server) -> None:
     from fastapi import Request
     from fastapi.responses import JSONResponse
 
-    @server.app.post("/api/chat/client-debug")
+    # Stable api/index.py passes the server module; Vercel's file-routed
+    # api/chat.py passes its FastAPI app directly. Support both authorities so
+    # /api/chat/client-debug is installed on the function that actually owns
+    # the /api/chat filesystem route.
+    app = getattr(server, "app", server)
+
+    @app.post("/api/chat/client-debug")
     async def chat_client_debug_post(request: Request):
         try:
             raw = await request.json()
@@ -44,16 +50,18 @@ def install(server) -> None:
         print("SWRLZ_CHAT_CLIENT_DEBUG " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
         return JSONResponse({"ok": True}, headers={"Cache-Control": "no-store"})
 
-    @server.app.get("/api/chat/client-debug")
+    @app.get("/api/chat/client-debug")
     async def chat_client_debug_get(limit: int = 120):
         safe_limit = max(1, min(int(limit or 120), 500))
         with _LOCK:
             rows = list(_RECENT)[-safe_limit:]
         return JSONResponse({"ok": True, "count": len(rows), "events": rows}, headers={"Cache-Control": "no-store"})
 
-    server.CAPABILITIES["chat-client-debug"] = {
-        "kind": "diagnostics",
-        "ready": True,
-        "path": "/api/chat/client-debug",
-        "detail": "Bounded browser boot checkpoints are emitted to Vercel runtime logs and retained briefly in-process for direct inspection.",
-    }
+    capabilities = getattr(server, "CAPABILITIES", None)
+    if isinstance(capabilities, dict):
+        capabilities["chat-client-debug"] = {
+            "kind": "diagnostics",
+            "ready": True,
+            "path": "/api/chat/client-debug",
+            "detail": "Bounded browser boot checkpoints are emitted to Vercel runtime logs and retained briefly in-process for direct inspection.",
+        }
