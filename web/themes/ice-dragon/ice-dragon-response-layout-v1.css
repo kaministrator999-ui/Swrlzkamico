@@ -1,4 +1,4 @@
-/* Assistant response layout v1.2 — stable first paint + canonical companion. */
+/* Assistant response layout v1.3 — stable first paint + canonical companion + balanced mobile width. */
 body[data-swrlz-theme="ice-dragon"]{--ice-dragon-companion:url("https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/runtime/web/themes/ice-dragon/assets/companion-kami-128.jpg")}
 html:not(.swrlz-response-layout-ready) body[data-swrlz-theme="ice-dragon"] .message.assistant{visibility:hidden!important}
 body[data-swrlz-theme="ice-dragon"] .message.assistant{display:block!important;margin-bottom:24px!important}
@@ -7,11 +7,59 @@ body[data-swrlz-theme="ice-dragon"] .message.assistant .trace{order:1!important;
 body[data-swrlz-theme="ice-dragon"] .message.assistant .swrlz-assistant-identity{order:2!important;display:flex!important;align-items:stretch!important;width:max-content;max-width:100%;margin:0 0 4px!important}
 body[data-swrlz-theme="ice-dragon"] .message.assistant .swrlz-assistant-identity .avatar{flex:0 0 52px!important;width:52px!important;height:auto!important;min-height:48px!important;margin:0!important;border-radius:14px 5px 5px 14px!important;background-color:rgba(6,31,49,.78)!important;background-image:var(--ice-dragon-companion)!important;background-position:center!important;background-size:cover!important;background-repeat:no-repeat!important}
 body[data-swrlz-theme="ice-dragon"] .message.assistant .swrlz-assistant-identity .message-label{margin:0 0 0 -1px!important;min-height:48px!important;padding:7px 14px!important;border-radius:5px 14px 14px 5px!important}
-body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble{order:3!important;margin:0 0 0 52px!important;width:calc(100% - 52px)!important;max-width:none!important}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble{order:3!important;margin:0 0 0 32px!important;width:calc(100% - 32px)!important;max-width:none!important}
 body[data-swrlz-theme="ice-dragon"] .message.assistant .message-actions,
-body[data-swrlz-theme="ice-dragon"] .message.assistant .swrlz-evidence{order:4!important;margin-left:52px!important}
+body[data-swrlz-theme="ice-dragon"] .message.assistant .swrlz-evidence{order:4!important;margin-left:32px!important}
 body[data-swrlz-theme="ice-dragon"] .message.assistant .avatar .swrlz-companion-fallback{display:none!important}
 body[data-swrlz-theme="ice-dragon"] .message.assistant .trace summary{min-height:42px!important;padding:0 14px!important}
 body[data-swrlz-theme="ice-dragon"] .dragon-mark,
 body[data-swrlz-theme="ice-dragon"] .welcome-orb{background-image:var(--ice-dragon-companion)!important;background-position:center!important;background-size:cover!important;background-repeat:no-repeat!important}
-@media(max-width:600px){body[data-swrlz-theme="ice-dragon"] .message.assistant .trace{margin-bottom:4px!important}body[data-swrlz-theme="ice-dragon"] .message.assistant .swrlz-assistant-identity{margin-bottom:3px!important}body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble{margin-left:52px!important;width:calc(100% - 52px)!important}}
+
+/* User identity mirrors the assistant's frosted identity language, intentionally smaller and quieter. */
+body[data-swrlz-theme="ice-dragon"] .message.user{gap:5px!important}
+body[data-swrlz-theme="ice-dragon"] .message.user .message-body{width:min(96%,720px)!important}
+body[data-swrlz-theme="ice-dragon"] .message.user .message-label{
+  width:max-content!important;
+  max-width:100%;
+  margin:0 0 5px auto!important;
+  min-height:30px!important;
+  padding:4px 9px 4px 11px!important;
+  border:1px solid rgba(157,231,255,.24)!important;
+  border-radius:11px 4px 4px 11px!important;
+  background:linear-gradient(135deg,rgba(18,49,72,.66),rgba(8,23,42,.48))!important;
+  box-shadow:0 7px 20px rgba(0,8,22,.24),inset 0 1px 0 rgba(235,252,255,.08)!important;
+  backdrop-filter:blur(7px) saturate(1.08)!important;
+  -webkit-backdrop-filter:blur(7px) saturate(1.08)!important;
+}
+body[data-swrlz-theme="ice-dragon"] .message.user .message-label strong{
+  font-family:var(--swrlz-brand-font,"Copperplate","Palatino Linotype",Georgia,serif)!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  font-variant:small-caps;
+  letter-spacing:.055em!important;
+  color:#eefcff!important;
+  text-shadow:0 0 5px rgba(183,244,255,.42),0 2px 7px rgba(0,6,18,.78)!important;
+}
+body[data-swrlz-theme="ice-dragon"] .message.user .avatar{
+  border:1px solid rgba(164,235,255,.3)!important;
+  border-radius:4px 11px 11px 4px!important;
+  background:linear-gradient(145deg,rgba(31,93,133,.72),rgba(8,27,49,.82))!important;
+  box-shadow:0 7px 20px rgba(0,8,22,.26),0 0 12px rgba(92,218,255,.10)!important;
+  backdrop-filter:blur(6px)!important;
+  -webkit-backdrop-filter:blur(6px)!important;
+  overflow:hidden!important;
+}
+body[data-swrlz-theme="ice-dragon"] .message.user .avatar img{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important}
+
+@media(max-width:600px){
+  body[data-swrlz-theme="ice-dragon"] .message-stack{width:calc(100% - 12px)!important}
+  body[data-swrlz-theme="ice-dragon"] .message.assistant .trace{margin-bottom:4px!important}
+  body[data-swrlz-theme="ice-dragon"] .message.assistant .swrlz-assistant-identity{margin-bottom:3px!important}
+  body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble{margin-left:26px!important;width:calc(100% - 26px)!important}
+  body[data-swrlz-theme="ice-dragon"] .message.assistant .message-actions,
+  body[data-swrlz-theme="ice-dragon"] .message.assistant .swrlz-evidence{margin-left:26px!important}
+  body[data-swrlz-theme="ice-dragon"] .message.user .message-body{width:97%!important}
+  body[data-swrlz-theme="ice-dragon"] .message.user .message-label{min-height:28px!important;padding:3px 8px 3px 10px!important;margin-bottom:4px!important}
+  body[data-swrlz-theme="ice-dragon"] .message.user .message-label strong{font-size:10.5px!important;letter-spacing:.045em!important}
+  body[data-swrlz-theme="ice-dragon"] .message.user .avatar{width:30px!important;height:30px!important}
+}
