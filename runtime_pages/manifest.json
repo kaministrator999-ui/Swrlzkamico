@@ -1,5 +1,5 @@
 {
-  "version": 81,
+  "version": 82,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v81 publishes touch-device desktop-site layout hardening, overlay drawer/scrim correction, the Ice Dragon transcript shader left inset, and includes the REV 80 visualViewport keyboard correction. Runtime only; no Vercel deploy or restart required."
+  "notes":"Manifest v82 replaces pointer/media-query phone detection with Android device authority and live visualViewport geometry. Edge mobile and Chrome/Edge Desktop site now use the same one-column overlay architecture as working Chrome mobile, with sidebar/scrim bound to the visible viewport. Runtime only; no Vercel deploy or restart required."
 }
