@@ -1,6 +1,6 @@
 """Durable account-scoped Chat thread/message state.
 
-This is deliberately separate from generation transcript checkpoints.  The browser is a
+This is deliberately separate from generation transcript checkpoints. The browser is a
 cache/presentation surface; the authenticated server account owns the durable state.
 """
 from __future__ import annotations
@@ -19,7 +19,7 @@ from fastapi.responses import JSONResponse
 
 from api.google_account import AuthenticationError, user_id_from_request
 
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.0.1"
 CONTRACT = "swrlz-chat-account-state-v1"
 BLOB_API = "https://vercel.com/api/blob"
 PREFIX = "swrlz/chat/account-state/v1"
@@ -31,11 +31,7 @@ app = FastAPI(title="SWRLZ Chat State", version=APP_VERSION, docs_url=None, redo
 
 
 def _headers() -> dict[str, str]:
-    return {
-        "Cache-Control": "no-store, no-transform",
-        "X-Content-Type-Options": "nosniff",
-        "Referrer-Policy": "no-referrer",
-    }
+    return {"Cache-Control": "no-store, no-transform", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer"}
 
 
 def _error(status: int, code: str, detail: str) -> JSONResponse:
@@ -56,8 +52,7 @@ def _blob_auth() -> tuple[str, str, str]:
 
 
 def _path(user_id: str) -> str:
-    digest = hashlib.sha256(user_id.encode("utf-8")).hexdigest()
-    return f"{PREFIX}/{digest}.json"
+    return f"{PREFIX}/{hashlib.sha256(user_id.encode('utf-8')).hexdigest()}.json"
 
 
 def _read_blob(user_id: str) -> dict[str, Any] | None:
@@ -86,17 +81,10 @@ def _write_blob(user_id: str, value: dict[str, Any]) -> None:
     if len(body) > MAX_STATE_BYTES:
         raise RuntimeError("CHAT_STATE_TOO_LARGE")
     headers = {
-        "authorization": f"Bearer {token}",
-        "x-vercel-blob-store-id": store_id,
-        "x-api-version": "12",
-        "x-api-blob-request-attempt": "0",
-        "x-api-blob-request-id": f"{store_id}:{int(time.time()*1000)}:{uuid.uuid4().hex[:12]}",
-        "content-type": "application/json; charset=utf-8",
-        "x-content-type": "application/json; charset=utf-8",
-        "x-vercel-blob-access": "private",
-        "x-add-random-suffix": "0",
-        "x-allow-overwrite": "1",
-        "x-cache-control-max-age": "0",
+        "authorization": f"Bearer {token}", "x-vercel-blob-store-id": store_id, "x-api-version": "12",
+        "x-api-blob-request-attempt": "0", "x-api-blob-request-id": f"{store_id}:{int(time.time()*1000)}:{uuid.uuid4().hex[:12]}",
+        "content-type": "application/json; charset=utf-8", "x-content-type": "application/json; charset=utf-8",
+        "x-vercel-blob-access": "private", "x-add-random-suffix": "0", "x-allow-overwrite": "1", "x-cache-control-max-age": "0",
     }
     response = requests.put(BLOB_API + "/", params={"pathname": _path(user_id)}, headers=headers, data=body, timeout=(3, 12))
     if not response.ok:
@@ -130,21 +118,14 @@ def _clean_state(raw: Any) -> dict[str, Any]:
                 continue
             seen_messages.add(message_id)
             messages.append({
-                "id": message_id,
-                "role": role,
-                "text": str(msg.get("text") or "")[:200000],
-                "createdAt": int(msg.get("createdAt") or 0),
-                "state": str(msg.get("state") or "complete")[:32],
-                "pinned": bool(msg.get("pinned")),
-                "meta": msg.get("meta") if isinstance(msg.get("meta"), dict) else {},
+                "id": message_id, "role": role, "text": str(msg.get("text") or "")[:200000],
+                "createdAt": int(msg.get("createdAt") or 0), "state": str(msg.get("state") or "complete")[:32],
+                "pinned": bool(msg.get("pinned")), "meta": msg.get("meta") if isinstance(msg.get("meta"), dict) else {},
             })
         threads.append({
-            "id": thread_id,
-            "title": str(item.get("title") or "New conversation").strip()[:120] or "New conversation",
-            "createdAt": int(item.get("createdAt") or 0),
-            "updatedAt": int(item.get("updatedAt") or 0),
-            "pinned": bool(item.get("pinned")),
-            "messages": messages,
+            "id": thread_id, "title": str(item.get("title") or "New conversation").strip()[:120] or "New conversation",
+            "createdAt": int(item.get("createdAt") or 0), "updatedAt": int(item.get("updatedAt") or 0),
+            "pinned": bool(item.get("pinned")), "messages": messages,
         })
     current_id = str(raw.get("currentId") or "").strip()[:160]
     if current_id not in seen_threads:
@@ -156,7 +137,6 @@ def _user(request: Request) -> str:
     return user_id_from_request(request)
 
 
-@app.get("/", include_in_schema=False)
 @app.get("/api/chat_state", include_in_schema=False)
 async def get_state(request: Request):
     try:
@@ -172,7 +152,6 @@ async def get_state(request: Request):
         return _error(503, "CHAT_STATE_READ_FAILED", f"{type(exc).__name__}: {exc}")
 
 
-@app.put("/", include_in_schema=False)
 @app.put("/api/chat_state", include_in_schema=False)
 async def put_state(request: Request):
     try:
