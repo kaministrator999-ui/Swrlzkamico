@@ -1,5 +1,5 @@
 {
-  "version": 84,
+  "version": 85,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v84 makes Ice Dragon asset ownership settlement part of the authoritative Chat first-paint barrier. The app is not marked visual-ready until functional scripts, styles, wallpaper, and ice-dragon-art-loader settlement complete. It also emits a pre-reveal geometry snapshot for app/workspace/messages/message-stack/thread-brand/composer/sidebar/scrim so any remaining Edge or Android desktop-site displacement is evidence-addressable. Runtime only; no restart required."
+  "notes":"Manifest v85 fixes the remaining Android desktop-site horizontal displacement by tracking VisualViewport.offsetLeft as --swrlz-vv-left and anchoring app/sidebar/scrim to the actual visible viewport origin. The drawer scrim now uses that same visual viewport rectangle so blur/dimming stays behind the open side menu instead of being displaced. Geometry diagnostics now include visual offsets/page offsets. Runtime only; no restart required."
 }
