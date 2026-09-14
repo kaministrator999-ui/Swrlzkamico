@@ -83,8 +83,8 @@ def _brain_owned_payload(payload):
     if isinstance(history, list):
         clone["history"] = [
             item for item in history
-            if not str(item.get("text") or "").startswith(_CARRIER_PREFIX)
             if isinstance(item, dict)
+            if not str(item.get("text") or "").startswith(_CARRIER_PREFIX)
         ]
 
     # Old cached clients may still append cognitive steering for a short period.
