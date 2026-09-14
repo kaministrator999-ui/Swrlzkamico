@@ -26,7 +26,7 @@ html body { visibility: visible !important; }
   .thread-heading,.thread-heading button,.thread-heading h1 { min-width: 0; max-width: 100%; }
   .status-pill { flex: 0 0 auto; padding-inline: 8px; }
   .swrlz-theme-select { width: 118px; max-width: 118px; flex: 0 1 118px; }
-  .messages { width: 100% !important; max-width: 100% !important; margin-right: 0 !important; overflow-x: hidden; border-radius: 0 0 10px 0; }
+  .messages { width: 100% !important; max-width: 100% !important; height: 100% !important; min-height: 0 !important; margin-right: 0 !important; overflow-x: hidden; border-radius: 0 0 10px 0; }
   .message-stack { width: calc(100% - 16px) !important; max-width: 100% !important; margin-inline: auto; padding: 18px 0 20px; }
   .message { grid-template-columns: 30px minmax(0,1fr); gap: 9px; width: 100%; max-width: 100%; margin-bottom: 22px; }
   .message.user { grid-template-columns: minmax(0,1fr) 30px; }
@@ -64,10 +64,6 @@ html body { visibility: visible !important; }
   .composer-shell { padding-inline: 14px; }
   .swrlz-theme-select { max-width: 116px; }
 }
-/* Expanded geometry is measured only to keep the transition deterministic.
-   Collapsed geometry itself is intentionally tiny: the blur/input panel leaves
-   layout, the message viewport receives the freed space, and only the toggle
-   remains. The fixed workspace gutter is independent of this state. */
 @media (max-width: 820px) {
   .composer-shell[data-swrlz-composer-dock="true"] { position: relative; overflow: visible; height: var(--swrlz-composer-height,auto); min-height: 0; max-height: none; transition: height .28s cubic-bezier(.22,.8,.25,1),padding .28s cubic-bezier(.22,.8,.25,1); }
   .composer-shell[data-swrlz-composer-dock="true"] .composer { transform: translate3d(0,0,0); opacity: 1; transition: transform .24s cubic-bezier(.22,.8,.25,1),opacity .16s ease; will-change: transform,opacity; }
