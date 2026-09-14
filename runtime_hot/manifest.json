@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.46-hot-noncoding-context-hygiene-v35",
+  "revision": "2.1.47-hot-token-exact-prefill-trace-v36",
   "inferenceFiles": [
     "r39_engine.py"
   ]
