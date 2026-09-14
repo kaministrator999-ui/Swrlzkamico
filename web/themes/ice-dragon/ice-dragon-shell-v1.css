@@ -1,4 +1,4 @@
-/* Canonical Ice Dragon shell v1.1: one workspace wallpaper; layered glass surfaces with restrained blur. */
+/* Canonical Ice Dragon shell v1.2: one workspace wallpaper; layered glass surfaces with restrained blur. */
 body[data-swrlz-theme="ice-dragon"] .workspace{
   background-color:#010812!important;
   background-position:50% 42%!important;
@@ -34,7 +34,7 @@ body[data-swrlz-theme="ice-dragon"] .message.assistant .bubble{
 
 body[data-swrlz-theme="ice-dragon"] .message-stack{position:relative!important;isolation:isolate!important}
 body[data-swrlz-theme="ice-dragon"] .message-stack::before{
-  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  content:"";position:absolute;inset:0 0 0 7px;z-index:0;pointer-events:none;border-radius:10px 0 0 10px;
   background:linear-gradient(180deg,rgba(1,7,16,.16),rgba(1,8,18,.27) 58%,rgba(1,6,14,.44));
 }
 body[data-swrlz-theme="ice-dragon"] .message-stack>*{position:relative;z-index:1}
