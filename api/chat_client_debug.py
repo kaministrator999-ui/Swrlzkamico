@@ -27,11 +27,10 @@ def install(server) -> None:
     from fastapi import Request
     from fastapi.responses import JSONResponse
 
-    # Stable api/index.py passes the server module; Vercel's file-routed
+    # Stable api/index.py may pass the server module; Vercel's file-routed
     # api/chat.py passes its FastAPI app directly. Support both authorities.
-    # The explicit Vercel route for the public diagnostic URL targets
-    # /api/chat.py, and Vercel preserves that destination pathname when it
-    # invokes the ASGI app, so register both the public and destination paths.
+    # Vercel routing deterministically sets the application request path to
+    # /api/chat/client-debug before invoking api/chat.py.
     app = getattr(server, "app", server)
 
     async def chat_client_debug_post(request: Request):
@@ -57,8 +56,6 @@ def install(server) -> None:
 
     app.add_api_route("/api/chat/client-debug", chat_client_debug_post, methods=["POST"], include_in_schema=False)
     app.add_api_route("/api/chat/client-debug", chat_client_debug_get, methods=["GET"], include_in_schema=False)
-    app.add_api_route("/api/chat.py", chat_client_debug_post, methods=["POST"], include_in_schema=False)
-    app.add_api_route("/api/chat.py", chat_client_debug_get, methods=["GET"], include_in_schema=False)
 
     capabilities = getattr(server, "CAPABILITIES", None)
     if isinstance(capabilities, dict):
