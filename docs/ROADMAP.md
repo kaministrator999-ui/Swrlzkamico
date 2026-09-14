@@ -2,6 +2,14 @@
 
 ## Current release
 
+**Server 2.3.134 / Web Chat 1.5.12 — mobile composer reading mode + balanced message width**
+
+**Status: runtime-hot Chat UI update published; mobile visual/tactile acceptance pending refresh.**
+
+The mobile composer now has a compact chevron handle above the input. The user can collapse the complete composer below the viewport to reclaim reading space, then Chat automatically slides it back into view when a later downward scroll reaches the conversation tail. That reveal is deliberately armed only after the transcript has moved away from the tail, so collapsing the composer while already at the bottom does not immediately undo the user's action. The behavior extends the existing native-first scroll-gesture controller instead of creating a second competing scroll owner. Ice Dragon message geometry is also rebalanced: the assistant response begins 26 px from the left on mobile instead of 52 px, user bubbles use more of the available width, and the user's signed-in/custom avatar + name now receive a smaller companion-style frosted identity treatment with restrained Ice Dragon typography, blur, and shadow. Existing LALM cognition, server routing, Google identity authority, transcript continuity, context capacity, wallpaper ownership, and assistant companion source remain unchanged. Server and Web Chat authorities were re-read before version assignment and still matched the event baseline. Runtime manifest stays v44 because all changed assets were already loaded. Web Frontend remains 1.0.3. Deployment/restart: NONE. See [event receipt](releases/server-2.3.134-mobile-composer-and-width-polish.md).
+
+## Previous release context
+
 **Server 2.3.133 / Web Chat 1.5.11 — native-first mobile scroll gesture ownership**
 
 **Status: runtime-hot interaction update published; mobile tactile acceptance pending refresh.**
