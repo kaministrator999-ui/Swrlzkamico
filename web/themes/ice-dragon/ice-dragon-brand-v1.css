@@ -1,35 +1,10 @@
-/* §wyrlz Ice Dragon brand typography v1
-   Display-only identity treatment. Message prose, code, timestamps, and telemetry remain unchanged. */
-
-body[data-swrlz-theme="ice-dragon"]{
-  --swrlz-brand-font:"Copperplate","Copperplate Gothic Light","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;
-  --swrlz-brand-ice-1:#f5fdff;
-  --swrlz-brand-ice-2:#a8f4ff;
-  --swrlz-brand-ice-3:#75a9ff;
-}
-
-body[data-swrlz-theme="ice-dragon"] .brand-copy strong,
-body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong,
-body[data-swrlz-theme="ice-dragon"] .swrlz-thread-brand{
-  font-family:var(--swrlz-brand-font)!important;
-  font-weight:800!important;
-  font-variant:small-caps;
-  letter-spacing:.075em!important;
-  line-height:1.05;
-  color:var(--swrlz-brand-ice-1)!important;
-  text-shadow:0 0 4px rgba(223,252,255,.92),0 0 10px rgba(111,236,255,.52),0 0 20px rgba(83,145,255,.28),0 4px 12px rgba(0,7,18,.96);
-}
-
-@supports ((-webkit-background-clip:text) or (background-clip:text)){
-  body[data-swrlz-theme="ice-dragon"] .brand-copy strong,
-  body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong,
-  body[data-swrlz-theme="ice-dragon"] .swrlz-thread-brand{
-    background:linear-gradient(180deg,var(--swrlz-brand-ice-1) 4%,var(--swrlz-brand-ice-2) 48%,var(--swrlz-brand-ice-3) 100%);
-    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-  }
-}
-body[data-swrlz-theme="ice-dragon"] .brand-copy strong{font-size:18px!important;letter-spacing:.105em!important;filter:drop-shadow(0 0 7px rgba(112,237,255,.18))}
-body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong{font-size:13px!important;letter-spacing:.07em!important}
-body[data-swrlz-theme="ice-dragon"] .swrlz-thread-brand{width:100%;padding:14px 0 24px;text-align:center;font-size:22px!important;letter-spacing:.16em!important;filter:drop-shadow(0 4px 9px rgba(0,4,12,.88)) drop-shadow(0 0 10px rgba(112,237,255,.22));user-select:none;pointer-events:none}
-body[data-swrlz-theme="ice-dragon"] .brand-copy strong::first-letter,body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong::first-letter,body[data-swrlz-theme="ice-dragon"] .swrlz-thread-brand::first-letter{font-size:1.08em}
-@media(max-width:540px){body[data-swrlz-theme="ice-dragon"] .brand-copy strong{font-size:17px!important;letter-spacing:.085em!important}body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong{font-size:12.5px!important;letter-spacing:.055em!important}body[data-swrlz-theme="ice-dragon"] .swrlz-thread-brand{font-size:20px!important;padding:12px 0 22px}}
+/* §wyrlz Ice Dragon brand typography v1 */
+body[data-swrlz-theme="ice-dragon"]{--swrlz-brand-font:"Copperplate","Copperplate Gothic Light","Palatino Linotype","Book Antiqua",Palatino,Georgia,serif;--swrlz-brand-ice-1:#f5fdff;--swrlz-brand-ice-2:#a8f4ff;--swrlz-brand-ice-3:#75a9ff}
+body[data-swrlz-theme="ice-dragon"] .brand-copy strong,body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong,body[data-swrlz-theme="ice-dragon"] .swrlz-thread-brand{font-family:var(--swrlz-brand-font)!important;font-weight:800!important;font-variant:small-caps;letter-spacing:.075em!important;line-height:1.05;color:var(--swrlz-brand-ice-1)!important;text-shadow:0 0 4px rgba(223,252,255,.92),0 0 10px rgba(111,236,255,.52),0 0 20px rgba(83,145,255,.28),0 4px 12px rgba(0,7,18,.96)}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){body[data-swrlz-theme="ice-dragon"] .brand-copy strong,body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong,body[data-swrlz-theme="ice-dragon"] .swrlz-thread-brand span{background:linear-gradient(180deg,var(--swrlz-brand-ice-1) 4%,var(--swrlz-brand-ice-2) 48%,var(--swrlz-brand-ice-3) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}}
+body[data-swrlz-theme="ice-dragon"] .brand-copy strong{font-size:18px!important;letter-spacing:.105em!important;filter:drop-shadow(0 0 7px rgba(112,237,255,.18))}body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong{font-size:13px!important;letter-spacing:.07em!important}
+body[data-swrlz-theme="ice-dragon"] .messages{position:relative!important}
+body[data-swrlz-theme="ice-dragon"] .swrlz-thread-brand{display:block!important;position:relative!important;z-index:4!important;width:calc(100% - 20px)!important;min-height:54px!important;margin:8px 10px 12px!important;padding:15px 12px!important;text-align:center!important;font-size:22px!important;letter-spacing:.16em!important;border:1px solid rgba(151,231,255,.20);border-radius:18px;background:linear-gradient(135deg,rgba(12,46,70,.66),rgba(5,19,39,.48));box-shadow:0 9px 26px rgba(0,5,16,.38),inset 0 1px 0 rgba(235,253,255,.09);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);filter:drop-shadow(0 0 10px rgba(112,237,255,.18));user-select:none;pointer-events:none;flex:0 0 auto!important}
+body[data-swrlz-theme="ice-dragon"] .swrlz-thread-brand span{display:inline-block!important;color:#f5fdff!important}
+body[data-swrlz-theme="ice-dragon"] .brand-copy strong::first-letter,body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong::first-letter{font-size:1.08em}
+@media(max-width:540px){body[data-swrlz-theme="ice-dragon"] .brand-copy strong{font-size:17px!important;letter-spacing:.085em!important}body[data-swrlz-theme="ice-dragon"] .message.assistant .message-label strong{font-size:12.5px!important;letter-spacing:.055em!important}body[data-swrlz-theme="ice-dragon"] .swrlz-thread-brand{font-size:20px!important;min-height:50px!important;padding:14px 10px!important;margin-top:6px!important}}
