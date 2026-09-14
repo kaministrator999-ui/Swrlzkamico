@@ -1,0 +1,21 @@
+/* §wyrlz Chat atomic first-paint guard.
+   This stylesheet is injected into <head> by the stable runtime source guard,
+   so the legacy/base Chat shell can never paint before the runtime theme settles. */
+html:not(.swrlz-visual-ready) body {
+  background:#020913 !important;
+}
+html:not(.swrlz-visual-ready) body .app,
+html:not(.swrlz-visual-ready) body > .noise,
+html:not(.swrlz-visual-ready) body > .ambient,
+html:not(.swrlz-visual-ready) body > .sidebar-scrim,
+html:not(.swrlz-visual-ready) body > dialog,
+html:not(.swrlz-visual-ready) body > .toast {
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+html.swrlz-visual-ready body .app,
+html.swrlz-visual-ready body > .noise,
+html.swrlz-visual-ready body > .ambient {
+  visibility:visible !important;
+}
