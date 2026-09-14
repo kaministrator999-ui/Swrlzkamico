@@ -1,5 +1,5 @@
 {
-  "version": 68,
+  "version": 69,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v68 fixes mobile composer geometry at the owning measurement layer. The expanded dock height is captured only from untransformed expanded layout and reused while collapsed, preventing cumulative toggle drift. The workspace now owns one fixed 10px mobile wallpaper gutter in both composer states. Diagnostic logging remains first in the critical cooperative boot chain. CLIENT /chat -> SERVER /api/chat transport ownership and runtime source ownership are unchanged; no redeploy or restart is required."
+  "notes":"Manifest v69 makes mobile composer collapse actually release its panel footprint. Expanded height is still measured only from expanded geometry to prevent cumulative drift, but collapsed state is a fixed 18px toggle rail with the composer hidden and backdrop blur removed. The message viewport therefore expands into the released lower area while the fixed 10px workspace gutter remains unchanged. CLIENT /chat -> SERVER /api/chat transport ownership and runtime source ownership are unchanged; no redeploy or restart is required."
 }
