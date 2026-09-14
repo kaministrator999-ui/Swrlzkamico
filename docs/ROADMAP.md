@@ -2,11 +2,17 @@
 
 ## Current release
 
+**Server 2.3.133 / Web Chat 1.5.11 — native-first mobile scroll gesture ownership**
+
+**Status: runtime-hot interaction update published; mobile tactile acceptance pending refresh.**
+
+Manifest v44 adds `web/chat_scroll_gesture_v1.js`. While the user is actively dragging the transcript, Chat now lets the browser own vertical movement at full native touch speed instead of allowing stream-follow logic to re-lock during the same gesture. The gesture guard also stays active briefly after finger release so browser momentum/inertial scrolling can continue naturally before automatic stream-follow becomes eligible again. The transcript explicitly uses `touch-action: pan-y`, contained vertical overscroll, native momentum scrolling, and `scroll-behavior: auto`. Existing companion first-paint, `Activity log → companion/name/time → response` composition, Google user identity, account/theme settings, wallpaper ownership, turn integrity, transcript continuity, and context capacity remain preserved. The transaction began from Server 2.3.132 / Web Chat 1.5.10; a same-version authority SHA change was detected during release, so both authority files were re-read before assigning 2.3.133 / 1.5.11. See [event receipt](releases/server-2.3.133-mobile-scroll-gesture.md).
+
+## Previous release context
+
 **Server 2.3.132 / Web Chat 1.5.10 — canonical Ice Dragon companion + stable first paint**
 
-**Status: runtime-hot UI update published; mobile visual acceptance pending refresh.**
-
-Manifest v43 locks the assistant companion to a small runtime derivative of the user-supplied blue/white Ice Dragon artwork and removes the competing async companion repaint path. The companion now remains structurally joined to the §wyrlz name/time plate, later theme shorthand can no longer erase its `background-image`, and the green emoji fallback is retired. `chat_response_layout_v1.js` now completes its initial assistant DOM normalization before Ice Dragon assistant rows become visible, eliminating the brief refresh flash where the avatar appeared above the name before moving into the forum-style plate. Existing `Activity log → companion/name/time → response` composition, Google user identity, account/theme settings, canonical wallpaper, turn integrity, transcript continuity, and context capacity remain preserved. The event baseline observed Server 2.3.130 / Web Chat 1.5.9, then correctly reconciled a concurrent Server advance to 2.3.131 before assigning 2.3.132 / 1.5.10. No Vercel deployment or restart was performed. See [event receipt](releases/server-2.3.132-ice-dragon-companion-first-paint.md).
+Manifest v43 locks the assistant companion to a small runtime derivative of the user-supplied blue/white Ice Dragon artwork and removes the competing async companion repaint path. The companion remains structurally joined to the §wyrlz name/time plate, later theme shorthand can no longer erase its `background-image`, and the green emoji fallback is retired. `chat_response_layout_v1.js` completes its initial assistant DOM normalization before Ice Dragon assistant rows become visible, eliminating the brief refresh flash where the avatar appeared above the name before moving into the forum-style plate. Existing `Activity log → companion/name/time → response` composition, Google user identity, account/theme settings, canonical wallpaper, turn integrity, transcript continuity, and context capacity remain preserved. See [event receipt](releases/server-2.3.132-ice-dragon-companion-first-paint.md).
 
 ## Previous release context
 
@@ -32,7 +38,7 @@ Manifest v37 added `ice-dragon-brand-v1.css` and preserved the canonical workspa
 
 **Status: runtime-hot UI architecture published; browser visual acceptance pending refresh.**
 
-The Ice Dragon wallpaper is owned by the full `.workspace` instead of only the `.messages` scroll chamber. This lets the composer region remain genuinely transparent/blurred over the same backdrop instead of revealing a solid dark page behind it. `.messages` is transparent, the full `.message-stack` owns the continuous readability fade so it extends through long/error content, and the welcome subtitle remains high-contrast over bright artwork. `chat_frontend_boot.js` defaults to/persists the Ice Dragon theme when no preference exists, paints the workspace immediately from the direct repository PNG, and marks the canonical frontend shell ready before backend/theme hydration. Manifest v36 adds `ice-dragon-shell-v1.css` as the final theme-shell authority and preserves existing turn-integrity, transcript-continuity, context-capacity, and response-polish scripts. See [event receipt](releases/server-2.3.123-canonical-chat-shell.md).
+The Ice Dragon wallpaper is owned by the full `.workspace` instead of only `.messages`. This lets the composer region remain genuinely transparent/blurred over the same backdrop instead of revealing a solid dark page behind it. `.messages` is transparent, the full `.message-stack` owns the continuous readability fade so it extends through long/error content, and the welcome subtitle remains high-contrast over bright artwork. `chat_frontend_boot.js` defaults to/persists the Ice Dragon theme when no preference exists, paints the workspace immediately from the direct repository PNG, and marks the canonical frontend shell ready before backend/theme hydration. Manifest v36 adds `ice-dragon-shell-v1.css` as the final theme-shell authority and preserves existing turn-integrity, transcript-continuity, context-capacity, and response-polish scripts. See [event receipt](releases/server-2.3.123-canonical-chat-shell.md).
 
 ## Previous release context
 
