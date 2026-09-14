@@ -4,10 +4,11 @@
   "git": {
     "deploymentEnabled": false
   },
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/chat/client-debug",
-      "destination": "/api/chat/client-debug"
+      "src": "/api/chat/client-debug/?$",
+      "methods": ["GET", "POST"],
+      "dest": "/api/chat.py"
     }
   ],
   "functions": {
