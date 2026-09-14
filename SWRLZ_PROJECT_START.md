@@ -164,6 +164,33 @@ instruction = "Do not say morning"
 
 The mask relays the user's signal and factual metadata through its "sockets." It does not whisper an interpretation of those facts to the brain.
 
+#### User-facing alignment rule — the mask must sit straight
+
+The three components remain separate internally, but **the user experiences one coherent §wyrlz**. Component boundaries are an engineering/debugging concern; the user must not be required to reconcile contradictory Mask, Human/Body, and Brain states.
+
+The mask's openings must align with the real system underneath them. What the user sees through the mask must faithfully expose the authoritative state or output of the component that owns it. The mask may render or summarize an authoritative fact for presentation, but it MUST NOT fabricate, independently guess, or prematurely declare operational state that belongs to the server/body, and it MUST NOT substitute its own interpretation for LALM/brain cognition.
+
+Examples:
+
+```text
+server/body says conversationUsage = 92%, canAppend = true
+    -> mask may display "92%" / near-limit styling
+    -> mask must keep the conversation writable
+
+server/body says hardLimitReached = true, canAppend = false
+    -> mask may display the hard-stop state and disable append controls
+
+brain/LALM produces an answer or interpretation
+    -> mask presents that output
+    -> mask does not replace it with a competing semantic conclusion
+```
+
+If the mask displays "full," "unavailable," "connected," "ready," "failed," or another operational condition while the authoritative body/server state says otherwise, the mask is **tilted/misaligned**: the user is seeing the wrong underlying state through the wrong opening. Treat that as a synchronization/ownership defect even if each component is functioning independently.
+
+Likewise, if the server/body truly has a capacity or protocol limit, the mask must learn that limit from the authoritative server contract/state and display it faithfully; the client must not invent its own limit merely because it can estimate usage locally.
+
+**User-perspective invariant:** internally diagnose whether a defect belongs to the Mask, Human/Body, Brain, or the connection between them; externally preserve one coherent §wyrlz. Separation of responsibility must improve correctness without exposing contradictory component realities to the user.
+
 ### 2. The LALM is the Brain
 
 The LALM owns cognition.
@@ -285,7 +312,7 @@ Do not remove transport integrity, transcript continuity, authentication, user-a
 🧠 BRAIN = interpret / reason / decide
 ```
 
-**Core rule: The mask relays evidence to the human/brain system; it does not whisper conclusions to the brain. The server provides the body and action boundary; the LALM provides cognition. Keep all three components distinct.**
+**Core rule: The mask relays evidence to the human/brain system; it does not whisper conclusions to the brain. The server provides the body and action boundary; the LALM provides cognition. Keep all three components distinct internally, while presenting one coherent aligned §wyrlz to the user.**
 
 ## MODULE VERSION AUTHORITY RULE — REQUIRED
 
