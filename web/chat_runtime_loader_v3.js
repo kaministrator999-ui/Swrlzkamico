@@ -1,6 +1,6 @@
 (()=>{"use strict";
 if(window.__swrlzRuntimeLoaderV3)return;
-const REV='57';
+const REV='58';
 const ROOT='/live/assets/';
 const diagnostics={contractId:'swrlz_chat_cooperative_boot_v3',revision:REV,startedAt:performance.now(),critical:[],functional:[],decorative:[],styleErrors:[],scriptErrors:[],timeouts:[],mainReady:false,functionalReady:false,decorativeReady:false};
 window.__swrlzRuntimeLoaderV3=diagnostics;
@@ -27,6 +27,14 @@ const wallpaper='themes/ice-dragon/ice-dragon-wallpaper-v22.js';
 const src=path=>`${ROOT}${path}?v=${REV}`;
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
+function establishInitialTheme(){
+  let saved='';
+  try{saved=localStorage.getItem('swrlz.chat.theme')||''}catch(_){ }
+  const initial=saved==='default'?'default':'ice-dragon';
+  if(initial==='ice-dragon')document.body.dataset.swrlzTheme='ice-dragon';
+  else delete document.body.dataset.swrlzTheme;
+  diagnostics.initialTheme=initial;
+}
 function startStyles(){
   for(const path of styles){
     if(document.querySelector(`link[data-swrlz-runtime-style="${CSS.escape(path)}"]`))continue;
@@ -54,10 +62,15 @@ function whenIdle(fn,timeout=1600){
   else setTimeout(fn,180);
 }
 async function boot(){
+  establishInitialTheme();
   startStyles();
-  await loadOne('chat_legacy_state_retirement.js',null,2500);
-  if(window.__swrlzLegacyChatState?.reloadRequired)return;
 
+  // Wallpaper is part of the canonical Ice Dragon shell, not deferred decoration.
+  // Start it immediately and independently so slow functional helpers cannot block first paint.
+  loadOne(wallpaper,diagnostics.decorative,4000);
+
+  // Legacy state retirement is intentionally not part of normal boot. It deleted the
+  // base Chat storage key and could force a reload loop/stale-page flash.
   await loadSerial(critical,diagnostics.critical,6);
   diagnostics.mainReady=true;diagnostics.mainReadyAt=performance.now();
   document.documentElement.classList.add('swrlz-main-chat-ready');
@@ -75,11 +88,7 @@ async function boot(){
       document.documentElement.classList.add('swrlz-chat-decorative-ready');
       window.dispatchEvent(new CustomEvent('swrlz:chat-decorative-ready',{detail:{revision:REV,errors:[...diagnostics.scriptErrors],timeouts:[...diagnostics.timeouts],at:diagnostics.decorativeReadyAt}}));
     },900);
-
-    const startWallpaper=()=>whenIdle(()=>loadOne(wallpaper,diagnostics.decorative,4000),2200);
-    if(document.readyState==='complete')setTimeout(startWallpaper,500);
-    else window.addEventListener('load',()=>setTimeout(startWallpaper,500),{once:true});
-  },150);
+  },40);
 }
 boot().catch(error=>{diagnostics.fatal=String(error?.message||error);console.error('[§wyrlz cooperative chat boot]',error)});
 })();
