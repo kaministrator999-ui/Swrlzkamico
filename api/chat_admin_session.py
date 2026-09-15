@@ -105,6 +105,10 @@ def _install_canonical_ingress_auth_bridge() -> None:
     Canonical persistence/diagnostics must therefore recognize it too instead of
     requiring the retired permanent-token header path. The legacy header check is
     retained as fallback for non-browser callers.
+
+    Canonical admission is claimed once in ASGI request state. The no-slash
+    /api/chat POST is allowed to redirect without mutating conversation state;
+    the canonical /api/chat/ request owns the one durable turn transaction.
     """
     try:
         import api.chat_client_debug as chat_client_debug
@@ -116,9 +120,17 @@ def _install_canonical_ingress_auth_bridge() -> None:
         return
 
     def browser_session_aware(request: Request) -> bool:
-        if _session_valid(_request_session(request)):
-            return True
-        return bool(legacy_authorized(request))
+        if not request.url.path.endswith("/"):
+            return False
+
+        state = request.scope.setdefault("state", {})
+        if state.get("swrlz_canonical_ingress_claimed"):
+            return False
+
+        authorized = _session_valid(_request_session(request)) or bool(legacy_authorized(request))
+        if authorized:
+            state["swrlz_canonical_ingress_claimed"] = True
+        return authorized
 
     browser_session_aware.__swrlz_browser_session_aware__ = True
     chat_client_debug._authorized_chat_ingress = browser_session_aware
@@ -200,4 +212,5 @@ def install(server) -> None:
         "permanentChatSecretExposed": False,
         "manualChatTokenRequired": False,
         "fallbackChatTokenSupported": True,
+        "canonicalIngressClaim": "request-scope-exactly-once-v1",
     }
