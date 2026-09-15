@@ -1,6 +1,6 @@
 (()=>{"use strict";
 if(window.__swrlzRuntimeLoaderV3)return;
-const REV='93',ROOT='/live/assets/';
+const REV=(()=>{try{return new URL(document.currentScript?.src||'',location.href).searchParams.get('v')||'95'}catch(_){return '95'}})(),ROOT='/live/assets/';
 const diagnostics={contractId:'swrlz_chat_cooperative_boot_v3',revision:REV,startedAt:performance.now(),critical:[],functional:[],decorative:[],styleErrors:[],scriptErrors:[],timeouts:[],mainReady:false,functionalReady:false,decorativeReady:false,themeSettled:false};window.__swrlzRuntimeLoaderV3=diagnostics;
 const ua=navigator.userAgent||'',isAndroid=/Android/i.test(ua),isEdgeAndroid=isAndroid&&(/\bEdgA\//i.test(ua)||/\bEdg\//i.test(ua));if(isAndroid)document.documentElement.classList.add('swrlz-android-device');if(isEdgeAndroid)document.documentElement.classList.add('swrlz-edge-android');
 const physicalViewportWidth=()=>{const vv=window.visualViewport;const layoutW=Math.max(1,Math.round(document.documentElement.clientWidth||window.innerWidth||1));const visualCssW=Math.max(1,Math.round(vv?.width||window.innerWidth||layoutW));const screenCssW=Math.max(1,Math.round(screen?.availWidth||screen?.width||visualCssW));return Math.min(layoutW,visualCssW,screenCssW)};
