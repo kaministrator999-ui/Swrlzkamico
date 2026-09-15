@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.50-hot-recursion-safe-server-telemetry-v39",
+  "revision": "2.1.51-hot-import-safe-server-telemetry-v40",
   "inferenceFiles": [
     "r39_engine.py"
   ]
