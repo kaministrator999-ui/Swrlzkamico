@@ -1,5 +1,5 @@
 {
-  "version": 97,
+  "version": 98,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v97 repairs Phase 2A client-side server-state coordination. Metadata mutation flushes reschedule instead of deadlocking when hydration is busy, queued mutations explicitly wake the flush path, and stale local streaming cache only blocks hydration while the matching assistant message remains unresolved on the server. Mutation enqueue/defer/complete diagnostics are emitted for acceptance tracing."
+  "notes":"Manifest v98 aligns the base Chat mask with Phase 2A server-owned history. Browser-only ownership language is removed from the thread header, welcome copy, and delete confirmation; signed-in deletion is described as server-owned history deletion with stale-cache restoration prevention."
 }
