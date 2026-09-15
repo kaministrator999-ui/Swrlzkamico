@@ -1,11 +1,11 @@
 {
-  "version": 100,
+  "version": 101,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
-    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js"]},
+    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js","web/chat_same_tab_canonical_reconcile_v1.js"]},
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v100 stages the cross-worker resumable-generation continuity repair and closes global stale-stream hydration blocking. Chat follows the shared generation transcript when the deployed server explicitly marks a remote-owner 409 as a non-terminal continuity handoff; inactive stale streaming cache entries no longer block account hydration, while the currently active unresolved request may still defer hydration. Whole Conversation Camera diagnostics remain observation-only."
+  "notes":"Manifest v101 closes the same-tab canonical-render gap exposed by Whole Conversation Camera. When account-state hydration writes newer server-owned state through the sync layer, the same browser document now adopts that cache change into Chat's in-memory view; a server-terminal assistant correlated by requestId also retires the stale active controller so a completed canonical response cannot remain rendered as Writing response. Server/account authority remains unchanged and the bridge performs no cognition or durable writes."
 }
