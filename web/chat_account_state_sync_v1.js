@@ -3,10 +3,12 @@
 if(window.__swrlzChatAccountStateSyncV1)return;
 
 const API='/api/chat_state';
+const DEBUG_ENDPOINT='/api/chat/client-debug';
 const STORAGE_KEY='swrlz.vercel.chat.v1';
 const APPLIED_KEY='swrlz.chat.account-state.applied.v1';
 const MUTATION_CONTRACT='swrlz-chat-account-mutation-v1';
-const ctl={contract:'swrlz-chat-account-state-sync-v2',revision:0,ready:false,lastError:'',syncing:false,mode:'unknown',pendingMutations:0};
+const CAMERA_CONTRACT='swrlz-whole-conversation-camera-v1';
+const ctl={contract:'swrlz-chat-account-state-sync-v3',revision:0,ready:false,lastError:'',syncing:false,mode:'unknown',pendingMutations:0};
 window.__swrlzChatAccountStateSyncV1=ctl;
 
 const dbg=(m,d)=>{try{window.__swrlzDebug?.log('account-state',m,d)}catch(_){}};
@@ -19,20 +21,52 @@ function mergeState(a,b){if(!a)return b;if(!b)return a;const map=new Map();for(c
 function sameThreadMeta(a,b){return String(a?.title||'')===String(b?.title||'')&&!!a?.pinned===!!b?.pinned}
 function threadMap(state){return new Map((state?.threads||[]).filter(t=>t?.id).map(t=>[String(t.id),t]))}
 function messageMap(thread){return new Map((thread?.messages||[]).filter(m=>m?.id).map(m=>[String(m.id),m]))}
-function isLocalInflight(message){const state=String(message?.state||'').toLowerCase();return message?.role==='assistant'&&(state==='streaming'||state==='cancelling')}
-function hasUnresolvedInflight(localState,remoteState){
-  if(!localState)return false;
-  const remoteThreads=threadMap(remoteState);
+function requestIdOf(message){return String(message?.meta?.requestId||'')}
+function isLocalInflight(message){const s=String(message?.state||'').toLowerCase();return message?.role==='assistant'&&(s==='streaming'||s==='cancelling')}
+function isTerminalAssistant(message){if(message?.role!=='assistant')return false;const s=String(message?.state||'').toLowerCase();if(['complete','cancelled','failed'].includes(s))return true;const meta=message?.meta||{};if(String(meta.commitPhase||'').toUpperCase()==='TERMINAL')return true;return ['COMPLETED','CANCELLED','FAILED'].includes(String(meta.terminalType||'').toUpperCase())}
+function assistantForLocal(remoteThread,localMessage){
+  if(!remoteThread)return null;
+  const rid=requestIdOf(localMessage);
+  if(rid){const byRequest=(remoteThread.messages||[]).find(m=>m?.role==='assistant'&&requestIdOf(m)===rid);if(byRequest)return byRequest}
+  return messageMap(remoteThread).get(String(localMessage?.id||''))||null;
+}
+function unresolvedInflight(localState,remoteState){
+  if(!localState)return [];
+  const unresolved=[],remoteThreads=threadMap(remoteState);
   for(const thread of localState.threads||[]){
-    const remoteMessages=messageMap(remoteThreads.get(String(thread?.id||'')));
+    const remoteThread=remoteThreads.get(String(thread?.id||''));
     for(const message of thread?.messages||[]){
       if(!isLocalInflight(message))continue;
-      const remoteMessage=remoteMessages.get(String(message.id||''));
-      const remoteStateName=String(remoteMessage?.state||'').toLowerCase();
-      if(!remoteMessage||remoteStateName==='streaming'||remoteStateName==='cancelling')return true;
+      const remoteMessage=assistantForLocal(remoteThread,message);
+      if(!remoteMessage||!isTerminalAssistant(remoteMessage))unresolved.push({threadId:String(thread?.id||''),localMessageId:String(message?.id||''),requestId:requestIdOf(message),remoteMessageId:String(remoteMessage?.id||''),remoteState:String(remoteMessage?.state||''),matchedBy:remoteMessage&&(requestIdOf(message)&&requestIdOf(remoteMessage)===requestIdOf(message))?'requestId':remoteMessage?'messageId':'none'});
     }
   }
-  return false;
+  return unresolved;
+}
+function hasUnresolvedInflight(localState,remoteState){return unresolvedInflight(localState,remoteState).length>0}
+
+const DIAGNOSTIC_META_KEYS=['phase','trail','firstDeltaLatencyMs','totalLatencyMs','error','terminalIntegrity','workLabel','responsePresence','contextCamera','temporalContext','activityExpanded','networkContinuity','committedOutputV4','outputVisibilityPolicy','committedChars','stagedChars','semanticValidationOwner','rawPhase','transcriptSync','committedContractBridge','committedContractBridgePolicy','turnIntegrity','categories','modelText','generationBranchId'];
+function diagnosticMeta(meta){const out={};for(const key of DIAGNOSTIC_META_KEYS)if(meta&&Object.prototype.hasOwnProperty.call(meta,key))out[key]=meta[key];return out}
+function localAssistantForRemote(localThread,remoteMessage){
+  if(!localThread||remoteMessage?.role!=='assistant')return null;
+  const rid=requestIdOf(remoteMessage);
+  if(rid){const byRequest=(localThread.messages||[]).find(m=>m?.role==='assistant'&&requestIdOf(m)===rid);if(byRequest)return byRequest}
+  return messageMap(localThread).get(String(remoteMessage?.id||''))||null;
+}
+function preserveLocalDiagnostics(remoteState,localState){
+  if(!remoteState||!localState)return remoteState;
+  const locals=threadMap(localState);
+  return {...remoteState,threads:(remoteState.threads||[]).map(remoteThread=>{
+    const localThread=locals.get(String(remoteThread?.id||''));
+    if(!localThread)return remoteThread;
+    return {...remoteThread,messages:(remoteThread.messages||[]).map(remoteMessage=>{
+      const localMessage=localAssistantForRemote(localThread,remoteMessage);
+      if(!localMessage)return remoteMessage;
+      const diagnostics=diagnosticMeta(localMessage.meta||{});
+      if(!Object.keys(diagnostics).length)return remoteMessage;
+      return {...remoteMessage,meta:{...(remoteMessage.meta||{}),...diagnostics,requestId:requestIdOf(remoteMessage)||requestIdOf(localMessage),clientCacheMessageId:String(localMessage.id||'')}};
+    })};
+  })};
 }
 function deriveMutations(before,after){
   if(!before||!after)return [];
@@ -43,8 +77,63 @@ function deriveMutations(before,after){
   for(const [threadId,nextThread] of b){const priorThread=a.get(threadId);if(!priorThread)continue;const priorMessages=messageMap(priorThread);for(const [messageId,nextMessage] of messageMap(nextThread)){const priorMessage=priorMessages.get(messageId);if(priorMessage&&!!priorMessage.pinned!==!!nextMessage.pinned){ops.push({type:'SET_MESSAGE_PINNED',threadId,messageId,pinned:!!nextMessage.pinned,_retry:0})}}}
   return ops.slice(0,32);
 }
+function terminalTransition(before,after){
+  if(!after)return null;
+  const oldThreads=threadMap(before);
+  for(const thread of after.threads||[]){
+    const oldThread=oldThreads.get(String(thread?.id||''));
+    const oldMessages=messageMap(oldThread);
+    for(const message of thread?.messages||[]){
+      if(message?.role!=='assistant'||!isTerminalAssistant(message))continue;
+      let prior=oldMessages.get(String(message.id||''));
+      if(!prior&&requestIdOf(message)&&oldThread)prior=(oldThread.messages||[]).find(m=>m?.role==='assistant'&&requestIdOf(m)===requestIdOf(message));
+      if(!prior||!isTerminalAssistant(prior))return {threadId:String(thread.id||''),messageId:String(message.id||''),requestId:requestIdOf(message),state:String(message.state||'')};
+    }
+  }
+  return null;
+}
+
+const SENSITIVE_KEY=/(?:^|_)(?:token|secret|password|credential|authorization|cookie|access.?token|id.?token)(?:$|_)/i;
+function redact(value,depth=0){
+  if(depth>7)return '[depth-limit]';
+  if(value==null||typeof value==='boolean'||typeof value==='number')return value;
+  if(typeof value==='string')return value.slice(0,5000);
+  if(Array.isArray(value))return value.slice(0,80).map(v=>redact(v,depth+1));
+  if(typeof value==='object'){const out={};for(const [key,val] of Object.entries(value).slice(0,80)){if(SENSITIVE_KEY.test(String(key)))continue;out[key]=redact(val,depth+1)}return out}
+  return String(value).slice(0,5000);
+}
+function addChunks(target,prefix,value,maxChunks=8){
+  let text='';try{text=JSON.stringify(redact(value))}catch(_){text=String(value||'')}
+  const size=1700,count=Math.min(maxChunks,Math.ceil(text.length/size));target[`${prefix}Chars`]=text.length;target[`${prefix}Chunks`]=count;target[`${prefix}Truncated`]=text.length>size*maxChunks;
+  for(let i=0;i<count;i++)target[`${prefix}${String(i+1).padStart(2,'0')}`]=text.slice(i*size,(i+1)*size);
+}
+function cameraState(){try{if(typeof state!=='undefined'&&state?.version===1&&Array.isArray(state.threads))return state}catch(_){ }return local()}
 
 const nativeFetch=window.fetch.bind(window);
+function cameraSend(message,data){
+  try{
+    const debug=window.__swrlzDebug,event={at:new Date().toISOString(),ms:Math.round(performance.now()),type:'conversation-camera',message:String(message||''),data};
+    const payload=JSON.stringify({runId:String(debug?.runId||'conversation-camera'),url:location.pathname,ua:navigator.userAgent,event});
+    nativeFetch(DEBUG_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:payload,keepalive:true,cache:'no-store',credentials:'same-origin'}).catch(()=>{});
+  }catch(_){ }
+}
+function relayConversationCamera(reason,stateValue=cameraState(),extra={}){
+  try{
+    if(!stateValue?.threads?.length)return false;
+    const thread=stateValue.threads.find(t=>String(t?.id||'')===String(extra.threadId||stateValue.currentId||''))||stateValue.threads[0];if(!thread)return false;
+    const all=Array.isArray(thread.messages)?thread.messages:[],included=all.slice(-8),captureId=`camera:${Date.now().toString(36)}:${Math.random().toString(36).slice(2,9)}`;
+    const header={contract:CAMERA_CONTRACT,captureId,reason:String(reason||'manual'),capturedAt:new Date().toISOString(),mode:ctl.mode,revision:ctl.revision,threadId:String(thread.id||''),threadTitle:String(thread.title||'').slice(0,160),messageCount:all.length,includedMessages:included.length,truncatedMessages:all.length>included.length,...redact(extra)};
+    addChunks(header,'rawThreadState',{...thread,messages:included},10);cameraSend('whole-thread',header);
+    included.forEach((message,index)=>{
+      const meta=message?.meta||{},data={contract:CAMERA_CONTRACT,captureId,reason:String(reason||'manual'),threadId:String(thread.id||''),threadTitle:String(thread.title||'').slice(0,160),messageIndex:all.length-included.length+index+1,messageCount:all.length,messageId:String(message?.id||''),role:String(message?.role||''),state:String(message?.state||''),createdAt:Number(message?.createdAt||0),pinned:!!message?.pinned,text:String(message?.text||'').slice(0,2000),requestId:requestIdOf(message),phase:String(meta.phase||''),firstDeltaLatencyMs:meta.firstDeltaLatencyMs??null,totalLatencyMs:meta.totalLatencyMs??null,error:String(meta.error||'').slice(0,1000),activity:(Array.isArray(meta.trail)?meta.trail:[]).map(step=>`${String(step?.phase||'')} — ${String(step?.reason||'')}`).join('\n').slice(0,2000)};
+      for(const key of ['terminalIntegrity','responsePresence','contextCamera','temporalContext','networkContinuity','transcriptSync','turnIntegrity'])if(meta[key]!=null)addChunks(data,key,meta[key],2);
+      addChunks(data,'rawMessageState',message,6);cameraSend('message',data);
+    });
+    return true;
+  }catch(_){return false}
+}
+window.__swrlzWholeConversationCamera={version:1,contract:CAMERA_CONTRACT,capture:(reason='manual')=>relayConversationCamera(reason,cameraState(),{})};
+
 function enrichTurnRequest(input,init){
   try{
     if(!init||String(init.method||'GET').toUpperCase()!=='POST'||typeof init.body!=='string')return init;
@@ -78,6 +167,7 @@ localStorage.setItem=function(key,value){
   if(key!==STORAGE_KEY){nativeSet(key,value);return}
   const before=parse(localStorage.getItem(STORAGE_KEY));nativeSet(key,value);if(applyingRemote)return;
   const after=parse(value);if(!after)return;
+  const terminal=terminalTransition(before,after);if(terminal)setTimeout(()=>relayConversationCamera('assistant-terminal-local',after,terminal),0);
   if(ctl.mode==='server')enqueue(deriveMutations(before,after));else scheduleLegacyPush();
 };
 
@@ -103,7 +193,8 @@ async function flushMutations(){
     if(!isServerMutationMode(remote)){ctl.mode='compatibility';pendingOps=[];ctl.pendingMutations=0;scheduleLegacyPush(50);return}
     ctl.mode='server';let base=Number(remote.revision||0);let result=await mutateRemote(batch,base);if(result.conflict){base=Number(result.revision||0);result=await mutateRemote(batch,base)}
     if(result.signedOut)return;if(result.conflict)throw new Error('account state changed during mutation retry');rememberRevision(result.revision||base);ctl.ready=true;ctl.lastError='';dbg('mutation-complete',{revision:ctl.revision,operations:batch.map(op=>op.type),queued:pendingOps.length});
-    if(result.state&&!hasUnresolvedInflight(local(),result.state)){const before=local(),after=JSON.stringify(result.state);if(JSON.stringify(before)!==after)setLocal(result.state)}
+    const l=local();if(result.state&&!hasUnresolvedInflight(l,result.state)){const hydrated=preserveLocalDiagnostics(result.state,l),before=l?JSON.stringify(l):'',after=JSON.stringify(hydrated);if(before!==after)setLocal(hydrated)}
+    relayConversationCamera('mutation-complete',cameraState(),{revision:ctl.revision,operations:batch.map(op=>op.type)});
   }catch(e){
     const retryable=String(e?.message||'').includes('CHAT_STATE_MESSAGE_NOT_FOUND')||String(e?.message||'').includes('CHAT_STATE_THREAD_NOT_FOUND');
     if(retryable){const again=batch.map(op=>({...op,_retry:Number(op._retry||0)+1})).filter(op=>op._retry<=6);if(again.length){pendingOps.unshift(...again);ctl.pendingMutations=pendingOps.length;scheduleMutationFlush(1800)}}
@@ -123,9 +214,9 @@ async function hydrate(){
     }
     ctl.mode='server';rememberRevision(remote.revision);ctl.ready=true;ctl.lastError='';
     if(pendingOps.length){dbg('hydrate-deferred',{reason:'pending-mutations',queued:pendingOps.length,revision:ctl.revision});scheduleMutationFlush(60);return}
-    const l=local();if(hasUnresolvedInflight(l,remote.state)){dbg('hydrate-deferred',{reason:'local-stream-unresolved',revision:ctl.revision});return}
-    if(remote.state){const before=l?JSON.stringify(l):'',after=JSON.stringify(remote.state);if(before!==after){setLocal(remote.state);rememberRevision(remote.revision);dbg('server-hydrate-applied',{revision:ctl.revision,threads:remote.state.threads?.length||0});if(appliedBefore!==ctl.revision){location.reload();return}}}
-    dbg('server-authority-ready',{revision:ctl.revision,snapshotWrites:false});
+    const l=local(),unresolved=unresolvedInflight(l,remote.state);if(unresolved.length){dbg('hydrate-deferred',{reason:'local-stream-unresolved',revision:ctl.revision,unresolved});relayConversationCamera('hydrate-unresolved',l,{revision:ctl.revision,unresolved});return}
+    if(remote.state){const hydrated=preserveLocalDiagnostics(remote.state,l),before=l?JSON.stringify(l):'',after=JSON.stringify(hydrated);if(before!==after){setLocal(hydrated);rememberRevision(remote.revision);dbg('server-hydrate-applied',{revision:ctl.revision,threads:hydrated.threads?.length||0,diagnosticsPreserved:true});relayConversationCamera('server-hydrate-applied',hydrated,{revision:ctl.revision});if(appliedBefore!==ctl.revision){location.reload();return}}}
+    dbg('server-authority-ready',{revision:ctl.revision,snapshotWrites:false,terminalCorrelation:'requestId-first',diagnosticOverlay:'local-presentation-only'});
   }catch(e){ctl.lastError=String(e?.message||e);dbg('hydrate-failed',{error:ctl.lastError})}finally{ctl.syncing=false}
 }
 
