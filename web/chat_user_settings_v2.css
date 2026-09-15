@@ -1,4 +1,6 @@
 .swrlz-account-modal{background:rgba(0,3,10,.76);backdrop-filter:blur(14px) saturate(120%)}
+dialog:not([open]){display:none!important;visibility:hidden!important;pointer-events:none!important}
+#settingsDialog:not([open]){position:fixed!important;inset:auto!important;width:0!important;height:0!important;overflow:hidden!important}
 .swrlz-account-panel.swrlz-settings-v2{width:min(980px,calc(100vw - 28px));max-height:min(88dvh,820px);padding:0;overflow:hidden;border:1px solid rgba(56,232,255,.22);border-radius:24px;background:linear-gradient(155deg,rgba(9,18,33,.98),rgba(5,10,20,.985) 52%,rgba(10,12,28,.985));box-shadow:0 30px 110px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.035)}
 .swrlz-settings-v2 .swrlz-panel-head{position:relative;min-height:86px;padding:18px 22px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(56,232,255,.055),transparent 34%,rgba(154,85,255,.05));flex-wrap:wrap}
 .swrlz-settings-v2 .swrlz-panel-head>div:first-child>strong{font-size:19px;letter-spacing:-.02em;color:var(--text)}
