@@ -1,5 +1,5 @@
 {
-  "version": 98,
+  "version": 99,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v98 aligns the base Chat mask with Phase 2A server-owned history. Browser-only ownership language is removed from the thread header, welcome copy, and delete confirmation; signed-in deletion is described as server-owned history deletion with stale-cache restoration prevention."
+  "notes":"Manifest v99 closes the Phase 2A stale-stream correlation edge by matching local and server assistant state by requestId before messageId, while preserving browser-only presentation diagnostics over server-authoritative canonical state. It also relays bounded, redacted Whole Conversation Camera diagnostics through the existing client-debug channel so thread/message state, activity, request identity, terminal/transcript/network/context integrity, and raw diagnostic snapshots are visible in runtime logs without restoring browser snapshot authority."
 }
