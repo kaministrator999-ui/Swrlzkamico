@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.48
-REVISION=2.1.48-hot-deep-inference-telemetry-v37
+VERSION=2.1.49
+REVISION=2.1.49-hot-server-log-deep-telemetry-v38
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
