@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.51
-REVISION=2.1.51-hot-import-safe-server-telemetry-v40
+VERSION=2.1.52
+REVISION=2.1.52-hot-collision-safe-server-telemetry-v41
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
