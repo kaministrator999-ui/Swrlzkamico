@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.48-hot-deep-inference-telemetry-v37",
+  "revision": "2.1.49-hot-server-log-deep-telemetry-v38",
   "inferenceFiles": [
     "r39_engine.py"
   ]
