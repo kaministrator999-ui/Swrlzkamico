@@ -257,6 +257,30 @@ def install(server) -> None:
         if turn is None:
             return response
 
+        if response.status_code == 409:
+            # A resumable generation may legitimately belong to another worker.
+            # HTTP 409 is therefore a continuity/ownership handoff, not a model
+            # terminal. Never persist an empty FAILED assistant for this status:
+            # the original generation owner remains responsible for the terminal
+            # canonical assistant commit.
+            response.headers["X-SWRLZ-Continuity-Handoff"] = "non-terminal-v1"
+            _turn_log(
+                {
+                    "eventType": "CHAT_GENERATION_CONTINUITY_HANDOFF",
+                    "receivedAt": datetime.now(timezone.utc).isoformat(),
+                    "accountScope": turn.account_scope,
+                    "threadId": turn.thread_id,
+                    "messageId": turn.assistant_message_id,
+                    "requestId": turn.request_id,
+                    "stateRevision": turn.user_revision,
+                    "httpStatus": 409,
+                    "terminal": False,
+                    "persistence": "UNCHANGED",
+                    "reason": "HTTP_409_NON_TERMINAL_CONTINUITY_HANDOFF",
+                }
+            )
+            return response
+
         if response.status_code >= 400:
             try:
                 from api.chat_turn_state import finish_turn
@@ -406,5 +430,7 @@ def install(server) -> None:
             "assistantCommitAtTerminal": True,
             "historyAuthority": "server-account-state",
             "clientHistoryAuthoritative": False,
-            "detail": "Authenticated Chat turns are committed to private server state before inference; LALM history is rebuilt from that canonical state; assistant output is committed at the terminal boundary. The browser remains a presentation/cache surface.",
+            "continuityHandoffNonTerminal": True,
+            "continuityHandoffHeader": "X-SWRLZ-Continuity-Handoff: non-terminal-v1",
+            "detail": "Authenticated Chat turns are committed to private server state before inference; LALM history is rebuilt from that canonical state; assistant output is committed at the terminal boundary. Cross-worker 409 continuity handoffs do not create false terminal assistant failures. The browser remains a presentation/cache surface.",
         }
