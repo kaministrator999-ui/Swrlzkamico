@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.47-hot-token-exact-prefill-trace-v36",
+  "revision": "2.1.48-hot-deep-inference-telemetry-v37",
   "inferenceFiles": [
     "r39_engine.py"
   ]
