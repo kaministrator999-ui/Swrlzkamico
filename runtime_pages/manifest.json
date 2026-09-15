@@ -1,5 +1,5 @@
 {
-  "version": 101,
+  "version": 102,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v101 closes the same-tab canonical-render gap exposed by Whole Conversation Camera. When account-state hydration writes newer server-owned state through the sync layer, the same browser document now adopts that cache change into Chat's in-memory view; a server-terminal assistant correlated by requestId also retires the stale active controller so a completed canonical response cannot remain rendered as Writing response. Server/account authority remains unchanged and the bridge performs no cognition or durable writes."
+  "notes":"Manifest v102 repairs two Mask regressions observed on Android Chat. Same-tab canonical account-state adoption now updates the live Chat state directly instead of synthesizing a browser storage event that caused broad storage listeners and full-mask rerender behavior on every send. Closed native dialogs are explicitly contained so Bridge settings/runtime diagnostic text cannot bleed into or intercept taps in the conversation viewport. Server/account and LALM authority are unchanged."
 }
