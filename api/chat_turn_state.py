@@ -82,6 +82,24 @@ def _contains_message(state: dict[str, Any], thread_id: str, message_id: str, ro
     return False
 
 
+def _request_message(
+    state: dict[str, Any],
+    *,
+    request_id: str,
+    role: str,
+) -> tuple[str, dict[str, Any]] | None:
+    """Find the canonical message already owned by this request/role, if any."""
+    for thread in state.get("threads", []):
+        thread_id = str(thread.get("id") or "")
+        for message in thread.get("messages", []):
+            if not isinstance(message, dict) or message.get("role") != role:
+                continue
+            meta = message.get("meta") if isinstance(message.get("meta"), dict) else {}
+            if str(meta.get("requestId") or "") == request_id:
+                return thread_id, message
+    return None
+
+
 def canonical_history(request: Request, *, thread_id: str, request_id: str, limit: int = 32) -> tuple[list[dict[str, str]], int]:
     """Return server-owned prior conversation history for one authenticated turn.
 
@@ -135,12 +153,33 @@ def _commit_message(
         "turnContract": TURN_CONTRACT,
         **(extra_meta or {}),
     }
+    expected_text = text[:200000]
+    expected_state = state_name[:32]
 
     for attempt in range(MAX_COMMIT_ATTEMPTS):
         current = _read_blob(user_id)
         current_revision, canonical = _state_from_value(current)
         stamp = _now_ms()
         threads = canonical.setdefault("threads", [])
+
+        claimed = _request_message(canonical, request_id=request_id, role=role)
+        if claimed is not None:
+            claimed_thread_id, existing = claimed
+            if claimed_thread_id != thread_id or existing.get("id") != message_id:
+                raise ValueError("CHAT_TURN_REQUEST_ID_MESSAGE_CONFLICT")
+            existing_meta = existing.get("meta") if isinstance(existing.get("meta"), dict) else {}
+            if str(existing.get("text") or "") != expected_text:
+                raise ValueError("CHAT_TURN_MESSAGE_ID_CONTENT_CONFLICT")
+            if str(existing.get("state") or "") != expected_state:
+                raise ValueError("CHAT_TURN_MESSAGE_ID_STATE_CONFLICT")
+            for key, value in metadata.items():
+                if existing_meta.get(key) != value:
+                    raise ValueError("CHAT_TURN_MESSAGE_ID_META_CONFLICT")
+            # Idempotent replay: the same immutable canonical message already
+            # exists for this request/role. Acknowledge it without a Blob write,
+            # revision bump, timestamp churn, or duplicate durable turn.
+            return current_revision
+
         thread = next((item for item in threads if item.get("id") == thread_id), None)
         if thread is None:
             thread = {
@@ -158,26 +197,19 @@ def _commit_message(
         if existing is not None:
             if existing.get("role") != role:
                 raise ValueError("CHAT_TURN_MESSAGE_ID_ROLE_CONFLICT")
-            existing.update(
-                {
-                    "text": text[:200000],
-                    "createdAt": _stamp(existing.get("createdAt"), created_at or stamp),
-                    "state": state_name[:32],
-                    "meta": {**(existing.get("meta") if isinstance(existing.get("meta"), dict) else {}), **metadata},
-                }
-            )
-        else:
-            messages.append(
-                {
-                    "id": message_id,
-                    "role": role,
-                    "text": text[:200000],
-                    "createdAt": created_at or stamp,
-                    "state": state_name[:32],
-                    "pinned": False,
-                    "meta": metadata,
-                }
-            )
+            raise ValueError("CHAT_TURN_MESSAGE_ID_REQUEST_CONFLICT")
+
+        messages.append(
+            {
+                "id": message_id,
+                "role": role,
+                "text": expected_text,
+                "createdAt": created_at or stamp,
+                "state": expected_state,
+                "pinned": False,
+                "meta": metadata,
+            }
+        )
 
         messages.sort(key=lambda item: int(item.get("createdAt") or 0))
         if len(messages) > 1000:
