@@ -9,6 +9,25 @@ function newest(a,b){return Number(a?.updatedAt||0)>=Number(b?.updatedAt||0)?a:b
 function mergeMessage(a,b){const n=newest(a,b)||a||b;return {...(a||{}),...(b||{}),...n,meta:{...(a?.meta||{}),...(b?.meta||{}),...(n?.meta||{})}}}
 function mergeThread(a,b){if(!a)return b;if(!b)return a;const n=newest(a,b);const map=new Map();for(const m of [...(a.messages||[]),...(b.messages||[])]){if(!m?.id)continue;map.set(m.id,map.has(m.id)?mergeMessage(map.get(m.id),m):m)}const messages=[...map.values()].sort((x,y)=>Number(x.createdAt||0)-Number(y.createdAt||0));return {...a,...b,...n,messages}}
 function mergeState(a,b){if(!a)return b;if(!b)return a;const map=new Map();for(const t of [...(a.threads||[]),...(b.threads||[])]){if(!t?.id)continue;map.set(t.id,map.has(t.id)?mergeThread(map.get(t.id),t):t)}const threads=[...map.values()].sort((x,y)=>Number(y.pinned)-Number(x.pinned)||Number(y.updatedAt||0)-Number(x.updatedAt||0)).slice(0,80);const ids=new Set(threads.map(t=>t.id));const currentId=ids.has(a.currentId)?a.currentId:(ids.has(b.currentId)?b.currentId:(threads[0]?.id||''));return {version:1,currentId,threads}}
+
+const nativeFetch=window.fetch.bind(window);
+function enrichTurnRequest(input,init){
+  try{
+    if(!init||String(init.method||'GET').toUpperCase()!=='POST'||typeof init.body!=='string')return init;
+    const payload=JSON.parse(init.body);if(!payload||payload.protocolVersion!==2||!payload.requestId||!payload.prompt||!payload.threadId)return init;
+    const state=local(),thread=state?.threads?.find(t=>t?.id===payload.threadId);if(!thread)return init;
+    const messages=Array.isArray(thread.messages)?thread.messages:[];
+    let assistantIndex=messages.findIndex(m=>m?.role==='assistant'&&m?.meta?.requestId===payload.requestId);
+    let assistant=assistantIndex>=0?messages[assistantIndex]:null,user=assistantIndex>0?messages[assistantIndex-1]:null;
+    if(!user||user.role!=='user'||String(user.text||'')!==String(payload.prompt||''))user=[...messages].reverse().find(m=>m?.role==='user'&&String(m.text||'')===String(payload.prompt||''))||null;
+    if(!assistant||!assistant.id||!user||!user.id)return init;
+    const enriched={...payload,messageId:String(user.id).slice(0,160),assistantMessageId:String(assistant.id).slice(0,160),userCreatedAt:Number(user.createdAt||0),assistantCreatedAt:Number(assistant.createdAt||0)};
+    dbg('turn-identity-attached',{threadId:payload.threadId,requestId:payload.requestId,messageId:enriched.messageId,assistantMessageId:enriched.assistantMessageId});
+    return {...init,body:JSON.stringify(enriched)};
+  }catch(_){return init}
+}
+window.fetch=function(input,init){return nativeFetch(input,enrichTurnRequest(input,init))};
+
 async function readRemote(){const r=await fetch(API,{credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}});if(r.status===401)return {signedOut:true};const v=await r.json().catch(()=>({}));if(!r.ok)throw new Error(v.detail||`state read HTTP ${r.status}`);return v}
 async function writeRemote(state,baseRevision){const r=await fetch(API,{method:'PUT',credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({baseRevision,state})});const v=await r.json().catch(()=>({}));if(r.status===401)return {signedOut:true};if(r.status===409)return {...v,conflict:true};if(!r.ok)throw new Error(v.detail||`state write HTTP ${r.status}`);return v}
 let pushTimer=0,nativeSet=localStorage.setItem.bind(localStorage);
