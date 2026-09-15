@@ -1,8 +1,10 @@
-"""Hot R39 entrypoint — v41 structured server telemetry."""
+"""Hot R39 entrypoint v42."""
 from __future__ import annotations
 import urllib.request
-_SOURCE_URL="https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/1b75ca5c46c1f67f19fb4a4f145722aa13718840/runtime_hot/r39_engine_v41.py"
-_request=urllib.request.Request(_SOURCE_URL,headers={"User-Agent":"swrlz-hot-r39-entry-v41"})
-with urllib.request.urlopen(_request,timeout=20) as _response:_source=_response.read(4_000_001)
-if len(_source)>4_000_000:raise RuntimeError("R39_V41_OVERLAY_TOO_LARGE")
-exec(compile(_source.decode("utf-8"),_SOURCE_URL,"exec"),globals(),globals())
+_SOURCE_URL = "https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/bc2842b6f57564305ba917665a02333130ecf848/runtime_hot/r39_engine_v42.py"
+_request = urllib.request.Request(_SOURCE_URL, headers={"User-Agent": "swrlz-r39-v42-loader"})
+with urllib.request.urlopen(_request, timeout=20) as _response:
+    _source = _response.read(4000001)
+if len(_source) > 4000000:
+    raise RuntimeError("R39_V42_SOURCE_TOO_LARGE")
+exec(compile(_source.decode("utf-8"), _SOURCE_URL, "exec"), globals(), globals())
