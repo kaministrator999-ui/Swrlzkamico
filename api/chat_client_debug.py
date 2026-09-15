@@ -157,9 +157,20 @@ def install(server) -> None:
                 if accepted is not None:
                     _turn_log(accepted)
                 try:
-                    from api.chat_turn_state import begin_turn
+                    from api.chat_turn_state import begin_turn, canonical_history
                     from api.google_account import AuthenticationError
                     turn = begin_turn(request, raw)
+                    history, history_revision = canonical_history(
+                        request,
+                        thread_id=turn.thread_id,
+                        request_id=turn.request_id,
+                    )
+                    # The downstream Chat route still owns schema validation and
+                    # stream transport. Replace only the browser-supplied history
+                    # with the authenticated server account's canonical history.
+                    raw["history"] = history
+                    request._body = json.dumps(raw, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+                    request._json = raw
                     _turn_log(
                         {
                             "eventType": "CHAT_MESSAGE_COMMITTED",
@@ -175,6 +186,19 @@ def install(server) -> None:
                             "persistence": "PRIVATE_ACCOUNT_BLOB",
                             "stateRevision": turn.user_revision,
                             "generationStarted": False,
+                        }
+                    )
+                    _turn_log(
+                        {
+                            "eventType": "CHAT_HISTORY_CANONICALIZED",
+                            "receivedAt": datetime.now(timezone.utc).isoformat(),
+                            "accountScope": turn.account_scope,
+                            "threadId": turn.thread_id,
+                            "requestId": turn.request_id,
+                            "historyMessages": len(history),
+                            "historyRevision": history_revision,
+                            "authority": "PRIVATE_ACCOUNT_BLOB",
+                            "clientHistoryAuthoritative": False,
                         }
                     )
                 except AuthenticationError:
@@ -201,7 +225,7 @@ def install(server) -> None:
                         }
                     )
                     return JSONResponse(
-                        {"ok": False, "code": "CHAT_MESSAGE_COMMIT_FAILED", "detail": "The server could not durably commit this message, so generation was not started."},
+                        {"ok": False, "code": "CHAT_MESSAGE_COMMIT_FAILED", "detail": "The server could not durably commit this message and canonicalize its history, so generation was not started."},
                         status_code=503,
                         headers={"Cache-Control": "no-store"},
                     )
@@ -380,5 +404,7 @@ def install(server) -> None:
             "authority": "server",
             "commitBeforeGeneration": True,
             "assistantCommitAtTerminal": True,
-            "detail": "Authenticated Chat turns are committed to private server state before inference and at the assistant terminal boundary; the browser remains a presentation/cache surface.",
+            "historyAuthority": "server-account-state",
+            "clientHistoryAuthoritative": False,
+            "detail": "Authenticated Chat turns are committed to private server state before inference; LALM history is rebuilt from that canonical state; assistant output is committed at the terminal boundary. The browser remains a presentation/cache surface.",
         }
