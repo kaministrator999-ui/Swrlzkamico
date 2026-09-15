@@ -2,7 +2,7 @@
 
 if(window.__swrlzSameTabCanonicalReconcileV1)return;
 const STORAGE_KEY='swrlz.vercel.chat.v1';
-const ctl={contract:'swrlz-same-tab-canonical-reconcile-v1',lastSnapshot:'',applied:0,lastError:''};
+const ctl={contract:'swrlz-same-tab-canonical-reconcile-v2',lastSnapshot:'',applied:0,lastError:''};
 window.__swrlzSameTabCanonicalReconcileV1=ctl;
 
 const dbg=(m,d)=>{try{window.__swrlzDebug?.log('same-tab-reconcile',m,d)}catch(_){}};
@@ -19,15 +19,24 @@ function settleActiveFromServer(snapshot){
   dbg('active-terminal-adopted',{requestId,threadId:String(match.thread?.id||''),messageId:String(match.message?.id||''),state:String(match.message?.state||'')});
   return true;
 }
+function adoptIntoLiveMask(snapshot){
+  try{
+    if(typeof state==='undefined'||typeof render!=='function')return false;
+    state=snapshot;
+    render(false);
+    window.dispatchEvent(new CustomEvent('swrlz:canonical-state-adopted',{detail:{currentId:String(snapshot.currentId||''),threads:snapshot.threads.length}}));
+    return true;
+  }catch(e){ctl.lastError=String(e?.message||e);dbg('direct-adopt-failed',{error:ctl.lastError});return false}
+}
 function adopt(reason){
   try{
     const raw=localStorage.getItem(STORAGE_KEY)||'';if(!raw||raw===ctl.lastSnapshot)return;
     const snapshot=parse(raw);if(!snapshot)return;
     ctl.lastSnapshot=raw;
     const settled=settleActiveFromServer(snapshot);
-    window.dispatchEvent(new StorageEvent('storage',{key:STORAGE_KEY,newValue:raw,storageArea:localStorage,url:location.href}));
+    const direct=adoptIntoLiveMask(snapshot);
     ctl.applied++;
-    dbg('same-tab-cache-adopted',{reason,settledActive:settled,currentId:String(snapshot.currentId||''),threads:snapshot.threads.length,applied:ctl.applied});
+    dbg('same-tab-cache-adopted',{reason,settledActive:settled,direct,currentId:String(snapshot.currentId||''),threads:snapshot.threads.length,applied:ctl.applied});
   }catch(e){ctl.lastError=String(e?.message||e);dbg('same-tab-cache-adopt-failed',{reason,error:ctl.lastError})}
 }
 function boot(){ctl.lastSnapshot=localStorage.getItem(STORAGE_KEY)||'';setInterval(()=>adopt('cache-change'),250);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(()=>adopt('visible'),0)});window.addEventListener('online',()=>setTimeout(()=>adopt('online'),0))}
