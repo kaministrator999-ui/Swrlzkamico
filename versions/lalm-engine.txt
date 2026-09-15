@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.53
-REVISION=2.1.53-hot-social-fastpath-prefill-cameras-v42
+VERSION=2.1.54
+REVISION=2.1.54-hot-contextual-swyrlz-social-voice-v43
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
