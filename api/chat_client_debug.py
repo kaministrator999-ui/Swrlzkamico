@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from collections import deque
 from datetime import datetime, timezone
 import hashlib
@@ -12,6 +13,7 @@ from threading import Lock
 _RECENT = deque(maxlen=500)
 _LOCK = Lock()
 _RUNTIME_WEB_TOKEN = Path("/tmp/swrlz-admin/runtime/web-chat-token.txt")
+_TERMINAL = {"COMPLETED", "CANCELLED", "FAILED"}
 
 
 def _clean(value, depth=0):
@@ -76,9 +78,21 @@ def _message_receipt(payload: dict, request) -> dict | None:
         "role": "user",
         "text": prompt[:16000],
         "textBytes": len(prompt.encode("utf-8")),
-        "persistence": "VERCEL_RUNTIME_LOG",
+        "persistence": "PENDING_SERVER_COMMIT",
         "generationStarted": False,
     }
+
+
+def _turn_log(event: dict) -> None:
+    print("SWRLZ_CHAT_TURN " + json.dumps(event, separators=(",", ":"), ensure_ascii=True), flush=True)
+
+
+def _stream_event(line: str) -> dict | None:
+    try:
+        value = json.loads(line)
+    except (TypeError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None
 
 
 def install(server) -> None:
@@ -125,22 +139,231 @@ def install(server) -> None:
                 return await chat_client_debug_get(request)
             return JSONResponse({"ok": False, "detail": "Method Not Allowed"}, status_code=405, headers={"Cache-Control": "no-store"})
 
-        # Capture the authenticated Chat message at the server ingress boundary,
-        # before the route starts generation. This is intentionally a private
-        # structured runtime-log receipt, not a public diagnostic response.
-        if request.method == "POST" and _authorized_chat_ingress(request):
-            action = request.query_params.get("action", "stream").strip().lower()
-            if action == "stream":
-                try:
-                    raw = await request.json()
-                except Exception:
-                    raw = {}
-                if isinstance(raw, dict):
-                    receipt = _message_receipt(raw, request)
-                    if receipt is not None:
-                        print("SWRLZ_CHAT_MESSAGE " + json.dumps(receipt, separators=(",", ":"), ensure_ascii=True), flush=True)
+        turn = None
+        raw: dict = {}
+        action = request.query_params.get("action", "stream").strip().lower()
+        canonical_candidate = request.method == "POST" and action == "stream" and _authorized_chat_ingress(request)
+        if canonical_candidate:
+            try:
+                parsed = await request.json()
+                raw = parsed if isinstance(parsed, dict) else {}
+            except Exception:
+                raw = {}
 
-        return await call_next(request)
+            prompt = str(raw.get("prompt") or "").strip()
+            request_id = str(raw.get("requestId") or "").strip()
+            if prompt and request_id:
+                accepted = _message_receipt(raw, request)
+                if accepted is not None:
+                    _turn_log(accepted)
+                try:
+                    from api.chat_turn_state import begin_turn
+                    from api.google_account import AuthenticationError
+                    turn = begin_turn(request, raw)
+                    _turn_log(
+                        {
+                            "eventType": "CHAT_MESSAGE_COMMITTED",
+                            "receivedAt": datetime.now(timezone.utc).isoformat(),
+                            "accountScope": turn.account_scope,
+                            "threadId": turn.thread_id,
+                            "messageId": turn.user_message_id,
+                            "assistantMessageId": turn.assistant_message_id,
+                            "requestId": turn.request_id,
+                            "role": "user",
+                            "text": prompt[:16000],
+                            "textBytes": len(prompt.encode("utf-8")),
+                            "persistence": "PRIVATE_ACCOUNT_BLOB",
+                            "stateRevision": turn.user_revision,
+                            "generationStarted": False,
+                        }
+                    )
+                except AuthenticationError:
+                    _turn_log(
+                        {
+                            "eventType": "CHAT_MESSAGE_SERVER_STATE_SKIPPED",
+                            "receivedAt": datetime.now(timezone.utc).isoformat(),
+                            "threadId": str(raw.get("threadId") or "")[:128],
+                            "requestId": request_id[:128],
+                            "reason": "ACCOUNT_SESSION_UNAVAILABLE",
+                            "persistence": "CLIENT_COMPATIBILITY_ONLY",
+                        }
+                    )
+                except Exception as exc:
+                    _turn_log(
+                        {
+                            "eventType": "CHAT_MESSAGE_COMMIT_FAILED",
+                            "receivedAt": datetime.now(timezone.utc).isoformat(),
+                            "accountScope": _account_scope(request),
+                            "threadId": str(raw.get("threadId") or "")[:128],
+                            "requestId": request_id[:128],
+                            "error": f"{type(exc).__name__}: {exc}"[:1200],
+                            "generationStarted": False,
+                        }
+                    )
+                    return JSONResponse(
+                        {"ok": False, "code": "CHAT_MESSAGE_COMMIT_FAILED", "detail": "The server could not durably commit this message, so generation was not started."},
+                        status_code=503,
+                        headers={"Cache-Control": "no-store"},
+                    )
+
+        try:
+            response = await call_next(request)
+        except BaseException as exc:
+            if turn is not None:
+                try:
+                    from api.chat_turn_state import finish_turn
+                    revision = finish_turn(turn, text="", terminal_type="FAILED", reason=f"ROUTE_EXCEPTION:{type(exc).__name__}")
+                    _turn_log(
+                        {
+                            "eventType": "CHAT_GENERATION_TERMINAL",
+                            "receivedAt": datetime.now(timezone.utc).isoformat(),
+                            "accountScope": turn.account_scope,
+                            "threadId": turn.thread_id,
+                            "messageId": turn.assistant_message_id,
+                            "requestId": turn.request_id,
+                            "terminalType": "FAILED",
+                            "stateRevision": revision,
+                            "reason": f"ROUTE_EXCEPTION:{type(exc).__name__}",
+                        }
+                    )
+                except Exception as commit_exc:
+                    _turn_log({"eventType": "CHAT_ASSISTANT_COMMIT_FAILED", "requestId": turn.request_id, "error": f"{type(commit_exc).__name__}: {commit_exc}"[:1200]})
+            raise
+
+        if turn is None:
+            return response
+
+        if response.status_code >= 400:
+            try:
+                from api.chat_turn_state import finish_turn
+                revision = finish_turn(turn, text="", terminal_type="FAILED", reason=f"HTTP_{response.status_code}")
+                _turn_log(
+                    {
+                        "eventType": "CHAT_GENERATION_TERMINAL",
+                        "receivedAt": datetime.now(timezone.utc).isoformat(),
+                        "accountScope": turn.account_scope,
+                        "threadId": turn.thread_id,
+                        "messageId": turn.assistant_message_id,
+                        "requestId": turn.request_id,
+                        "terminalType": "FAILED",
+                        "stateRevision": revision,
+                        "reason": f"HTTP_{response.status_code}",
+                    }
+                )
+            except Exception as exc:
+                _turn_log({"eventType": "CHAT_ASSISTANT_COMMIT_FAILED", "requestId": turn.request_id, "error": f"{type(exc).__name__}: {exc}"[:1200]})
+            return response
+
+        original_iterator = getattr(response, "body_iterator", None)
+        if original_iterator is None:
+            return response
+
+        response.headers["X-SWRLZ-Canonical-Turn"] = "swrlz-chat-canonical-turn-v1"
+        response.headers["X-SWRLZ-State-Revision"] = str(turn.user_revision)
+        _turn_log(
+            {
+                "eventType": "CHAT_GENERATION_STARTED",
+                "receivedAt": datetime.now(timezone.utc).isoformat(),
+                "accountScope": turn.account_scope,
+                "threadId": turn.thread_id,
+                "messageId": turn.assistant_message_id,
+                "requestId": turn.request_id,
+                "stateRevision": turn.user_revision,
+                "generationStarted": True,
+            }
+        )
+
+        async def tracked_stream():
+            buffer = ""
+            answer = ""
+            terminal_seen = False
+
+            async def persist_terminal(terminal_type: str, reason: str) -> None:
+                nonlocal terminal_seen
+                if terminal_seen:
+                    return
+                from api.chat_turn_state import finish_turn
+                revision = finish_turn(turn, text=answer, terminal_type=terminal_type, reason=reason)
+                terminal_seen = True
+                _turn_log(
+                    {
+                        "eventType": "CHAT_GENERATION_TERMINAL",
+                        "receivedAt": datetime.now(timezone.utc).isoformat(),
+                        "accountScope": turn.account_scope,
+                        "threadId": turn.thread_id,
+                        "messageId": turn.assistant_message_id,
+                        "requestId": turn.request_id,
+                        "role": "assistant",
+                        "terminalType": terminal_type,
+                        "text": answer[:16000],
+                        "textBytes": len(answer.encode("utf-8")),
+                        "persistence": "PRIVATE_ACCOUNT_BLOB",
+                        "stateRevision": revision,
+                    }
+                )
+
+            def observe(text: str) -> tuple[str | None, str]:
+                nonlocal buffer, answer
+                terminal_type = None
+                terminal_reason = ""
+                buffer += text
+                lines = buffer.split("\n")
+                buffer = lines.pop()
+                for line in lines:
+                    if not line.strip():
+                        continue
+                    event = _stream_event(line)
+                    if not event:
+                        continue
+                    event_type = str(event.get("type") or "").upper()
+                    if event_type == "RESET":
+                        answer = ""
+                    elif event_type == "DELTA" and isinstance(event.get("text"), str):
+                        answer += event["text"]
+                    if event_type in _TERMINAL:
+                        terminal_type = event_type
+                        terminal_reason = str(event.get("reason") or "")[:2000]
+                return terminal_type, terminal_reason
+
+            try:
+                async for chunk in original_iterator:
+                    if isinstance(chunk, bytes):
+                        decoded = chunk.decode("utf-8", errors="replace")
+                    elif isinstance(chunk, str):
+                        decoded = chunk
+                    else:
+                        decoded = bytes(chunk).decode("utf-8", errors="replace")
+                    terminal_type, terminal_reason = observe(decoded)
+                    if terminal_type and not terminal_seen:
+                        try:
+                            await persist_terminal(terminal_type, terminal_reason)
+                        except Exception as exc:
+                            _turn_log(
+                                {
+                                    "eventType": "CHAT_ASSISTANT_COMMIT_FAILED",
+                                    "receivedAt": datetime.now(timezone.utc).isoformat(),
+                                    "accountScope": turn.account_scope,
+                                    "threadId": turn.thread_id,
+                                    "messageId": turn.assistant_message_id,
+                                    "requestId": turn.request_id,
+                                    "error": f"{type(exc).__name__}: {exc}"[:1200],
+                                }
+                            )
+                            raise RuntimeError("CHAT_ASSISTANT_COMMIT_FAILED") from exc
+                    yield chunk
+                if not terminal_seen:
+                    await persist_terminal("FAILED", "STREAM_ENDED_WITHOUT_TERMINAL")
+            except BaseException as exc:
+                if not terminal_seen:
+                    terminal_type = "CANCELLED" if isinstance(exc, asyncio.CancelledError) else "FAILED"
+                    try:
+                        await persist_terminal(terminal_type, f"STREAM_EXCEPTION:{type(exc).__name__}")
+                    except Exception as commit_exc:
+                        _turn_log({"eventType": "CHAT_ASSISTANT_COMMIT_FAILED", "requestId": turn.request_id, "error": f"{type(commit_exc).__name__}: {commit_exc}"[:1200]})
+                raise
+
+        response.body_iterator = tracked_stream()
+        return response
 
     capabilities = getattr(server, "CAPABILITIES", None)
     if isinstance(capabilities, dict):
@@ -149,4 +372,13 @@ def install(server) -> None:
             "ready": True,
             "path": "/api/chat/client-debug",
             "detail": "Bounded browser boot checkpoints are emitted to Vercel runtime logs and retained briefly in-process for direct inspection.",
+        }
+        capabilities["chat-canonical-turn-state"] = {
+            "kind": "durable-user-state",
+            "ready": True,
+            "contract": "swrlz-chat-canonical-turn-v1",
+            "authority": "server",
+            "commitBeforeGeneration": True,
+            "assistantCommitAtTerminal": True,
+            "detail": "Authenticated Chat turns are committed to private server state before inference and at the assistant terminal boundary; the browser remains a presentation/cache surface.",
         }
