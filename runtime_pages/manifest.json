@@ -1,5 +1,5 @@
 {
-  "version": 96,
+  "version": 97,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v96 stages Phase 2A server-owned Chat state. The account-state sync remains backward-compatible with the pre-mutation server, then automatically switches signed-in Chat to server-authoritative hydration plus narrow thread/message metadata mutations when swrlz-chat-account-mutation-v1 is advertised. Whole browser message snapshots are no longer authoritative after that stable capability is deployed."
+  "notes":"Manifest v97 repairs Phase 2A client-side server-state coordination. Metadata mutation flushes reschedule instead of deadlocking when hydration is busy, queued mutations explicitly wake the flush path, and stale local streaming cache only blocks hydration while the matching assistant message remains unresolved on the server. Mutation enqueue/defer/complete diagnostics are emitted for acceptance tracing."
 }
