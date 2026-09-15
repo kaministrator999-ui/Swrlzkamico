@@ -1,9 +1,9 @@
-"""Server-owned durable Chat turn commits.
+"""Server-owned durable Chat turn commits and canonical history.
 
 The browser may cache and present Chat state, but authenticated user/assistant
-messages are committed here to private account-scoped Blob state. A user turn is
-persisted before generation begins; the assistant turn is persisted at the
-terminal stream boundary.
+messages and the history sent toward the LALM are owned here by private
+account-scoped server state. A user turn is persisted before generation begins;
+the assistant turn is persisted at the terminal stream boundary.
 """
 from __future__ import annotations
 
@@ -80,6 +80,35 @@ def _contains_message(state: dict[str, Any], thread_id: str, message_id: str, ro
             continue
         return any(message.get("id") == message_id and message.get("role") == role for message in thread.get("messages", []))
     return False
+
+
+def canonical_history(request: Request, *, thread_id: str, request_id: str, limit: int = 32) -> tuple[list[dict[str, str]], int]:
+    """Return server-owned prior conversation history for one authenticated turn.
+
+    The current request is excluded because its prompt travels separately in the
+    stream payload. This prevents the just-committed user message from appearing
+    twice to the LALM.
+    """
+    user_id = user_id_from_request(request)
+    current = _read_blob(user_id)
+    revision, state = _state_from_value(current)
+    thread = next((item for item in state.get("threads", []) if item.get("id") == thread_id), None)
+    if not thread:
+        return [], revision
+
+    history: list[dict[str, str]] = []
+    for message in thread.get("messages", []):
+        if not isinstance(message, dict):
+            continue
+        role = str(message.get("role") or "").lower()
+        text = str(message.get("text") or "").strip()
+        meta = message.get("meta") if isinstance(message.get("meta"), dict) else {}
+        if str(meta.get("requestId") or "") == request_id:
+            continue
+        if role not in {"user", "assistant"} or not text:
+            continue
+        history.append({"role": role.upper(), "text": text[:2000]})
+    return history[-max(1, min(int(limit), 32)):], revision
 
 
 def _commit_message(
