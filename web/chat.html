@@ -537,7 +537,7 @@
           <button class="icon-button mobile-menu" id="mobileMenu" aria-label="Open conversations"><svg><use href="#menu"></use></svg></button>
           <div class="thread-heading">
             <button id="renameCurrent" title="Rename conversation"><h1 id="currentTitle">New conversation</h1><svg width="14" height="14"><use href="#edit"></use></svg></button>
-            <p id="currentMeta">Private on this device</p>
+            <p id="currentMeta">Server-owned when signed in</p>
           </div>
         </div>
         <div class="topbar-right">
@@ -578,7 +578,7 @@
       <div class="field">
         <label for="accessToken">Chat access token</label>
         <div class="input-row"><input id="accessToken" type="password" autocomplete="off" spellcheck="false" placeholder="SWRLZ_WEB_CHAT_TOKEN"><button class="secondary-button" id="saveToken" type="button">Save for tab</button></div>
-        <small>Kept in session storage for this browser tab. It is never written to conversation exports or local thread history.</small>
+        <small>Kept in session storage for this browser tab. It is never written to conversation exports or the browser conversation cache.</small>
       </div>
       <div class="runtime-panel" id="runtimePanel"><strong>Runtime</strong><br>Loading the server boundary…</div>
       <div class="dialog-actions">
@@ -797,7 +797,7 @@
       const welcome = document.createElement("div"); welcome.className = "welcome";
       const orb = document.createElement("div"); orb.className = "welcome-orb"; orb.append(icon("dragon"));
       const heading = document.createElement("h2"); heading.textContent = "What are we building?";
-      const detail = document.createElement("p"); detail.textContent = "A proof-bound window into your SWRLZ SERVER. Threads stay in this browser; only bounded history is sent when you ask a question.";
+      const detail = document.createElement("p"); detail.textContent = "A proof-bound window into your SWRLZ SERVER. Signed-in conversations are server-owned; this browser keeps a working cache while canonical history stays with your account.";
       const grid = document.createElement("div"); grid.className = "prompt-grid";
       const suggestions = [
         ["Inspect the server", "Summarize the current runtime state and its verified limits."],
@@ -816,7 +816,7 @@
     function render(scroll = false) {
       const thread = currentThread(); if (!thread) return;
       renderThreads(); refs.currentTitle.textContent = thread.title;
-      refs.currentMeta.textContent = `${thread.messages.length} messages · private on this device`;
+      refs.currentMeta.textContent = `${thread.messages.length} messages · server-owned when signed in`;
       refs.stack.replaceChildren();
       if (!thread.messages.length) refs.stack.append(renderWelcome()); else for (const message of thread.messages) refs.stack.append(renderMessage(message));
       const isStreaming = Boolean(active);
@@ -832,7 +832,7 @@
     function deleteThread(id) {
       if (active?.threadId === id) return toast("Stop the active response before deleting this thread.");
       const thread = state.threads.find(t => t.id === id); if (!thread) return;
-      if (thread.messages.length && !confirm(`Delete “${thread.title}” from this browser?`)) return;
+      if (thread.messages.length && !confirm(`Delete “${thread.title}” from your §wyrlz history?\n\nWhen signed in, this removes the server-owned thread and prevents stale browser caches from restoring it.`)) return;
       state.threads = state.threads.filter(t => t.id !== id);
       if (!state.threads.length) state.threads = [freshThread()];
       if (state.currentId === id) state.currentId = state.threads[0].id;
