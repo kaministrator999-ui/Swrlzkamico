@@ -16,6 +16,7 @@ SESSION_TTL_SECONDS = 30 * 60
 MAX_SESSION_EVENTS = 4096
 TRANSCRIPT_CONTRACT = "generation-transcript-v1"
 SHARED_TRANSCRIPT_CONTRACT = "shared-private-blob-v1"
+CONTINUITY_HANDOFF = "non-terminal-v1"
 
 
 def install(chat_extensions) -> None:
@@ -280,7 +281,17 @@ def install(chat_extensions) -> None:
         if chat._raw_upstream_url():
             return base_stream_response(clean)
         after_seq = max(0, int(payload.get("resumeAfterSeq") or 0))
-        session = get_or_start(payload)
+        try:
+            session = get_or_start(payload)
+        except chat.BridgeError as exc:
+            if exc.code in {"GENERATION_SESSION_REMOTE_OWNER", "GENERATION_SESSION_REMOTE_TERMINAL"}:
+                response = chat._json_error(exc.status, exc.code, exc.detail)
+                response.headers["X-SWRLZ-Continuity-Handoff"] = CONTINUITY_HANDOFF
+                response.headers["X-SWRLZ-Generation-Session"] = "resumable-v1"
+                response.headers["X-SWRLZ-Transcript-Contract"] = TRANSCRIPT_CONTRACT
+                response.headers["X-SWRLZ-Transcript-Storage"] = SHARED_TRANSCRIPT_CONTRACT if STORE.configured else "worker-memory-only"
+                return response
+            raise
         replay_through = int(session.get("lastSeq") or 0)
         headers = chat._no_store_headers()
         headers.update({
