@@ -1,5 +1,5 @@
 {
-  "version": 99,
+  "version": 100,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v99 closes the Phase 2A stale-stream correlation edge by matching local and server assistant state by requestId before messageId, while preserving browser-only presentation diagnostics over server-authoritative canonical state. It also relays bounded, redacted Whole Conversation Camera diagnostics through the existing client-debug channel so thread/message state, activity, request identity, terminal/transcript/network/context integrity, and raw diagnostic snapshots are visible in runtime logs without restoring browser snapshot authority."
+  "notes":"Manifest v100 stages the cross-worker resumable-generation continuity repair and closes global stale-stream hydration blocking. Chat follows the shared generation transcript when the deployed server explicitly marks a remote-owner 409 as a non-terminal continuity handoff; inactive stale streaming cache entries no longer block account hydration, while the currently active unresolved request may still defer hydration. Whole Conversation Camera diagnostics remain observation-only."
 }
