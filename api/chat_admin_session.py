@@ -98,6 +98,40 @@ def _require_web_or_browser_session(request: Request) -> None:
     _ORIGINAL_REQUIRE(request)
 
 
+def _install_canonical_ingress_auth_bridge() -> None:
+    """Make canonical-turn admission use the same signed browser session authority.
+
+    The browser-session credential is already sufficient for the Chat route itself.
+    Canonical persistence/diagnostics must therefore recognize it too instead of
+    requiring the retired permanent-token header path. The legacy header check is
+    retained as fallback for non-browser callers.
+    """
+    try:
+        import api.chat_client_debug as chat_client_debug
+    except Exception:
+        return
+
+    legacy_authorized = getattr(chat_client_debug, "_authorized_chat_ingress", None)
+    if not callable(legacy_authorized) or getattr(legacy_authorized, "__swrlz_browser_session_aware__", False):
+        return
+
+    def browser_session_aware(request: Request) -> bool:
+        if _session_valid(_request_session(request)):
+            return True
+        return bool(legacy_authorized(request))
+
+    browser_session_aware.__swrlz_browser_session_aware__ = True
+    chat_client_debug._authorized_chat_ingress = browser_session_aware
+
+    # chat_message_receipt imports the helper by value, so update that already-
+    # imported reference when present to keep both receipt boundaries aligned.
+    try:
+        import api.chat_message_receipt as chat_message_receipt
+        chat_message_receipt._authorized_chat_ingress = browser_session_aware
+    except Exception:
+        pass
+
+
 def attach_browser_session_cookie(response: Response, request: Request) -> Response:
     """Attach/refresh a same-origin HttpOnly Chat session when Chat is configured.
 
@@ -126,6 +160,7 @@ def attach_browser_session_cookie(response: Response, request: Request) -> Respo
 
 def install(server) -> None:
     chat._require_web_token = _require_web_or_browser_session
+    _install_canonical_ingress_auth_bridge()
 
     @chat.app.post("/admin-session", include_in_schema=False)
     async def admin_chat_session(request: Request):
