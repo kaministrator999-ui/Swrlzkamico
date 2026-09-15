@@ -17,6 +17,7 @@ from api.hot_loader import get_engine
 from api.chat_admin_session import install as _install_chat_admin_session
 from api.chat_fast_status import install as _install_chat_fast_status
 from api.chat_client_debug import install as _install_chat_client_debug
+from api.chat_message_receipt import install as _install_chat_message_receipt
 from api.admin_auth_guard import install as _install_admin_auth_guard
 from api.live_source_guard import install as _install_live_source_guard
 from api.control_plane import install as _install_control_plane
@@ -47,6 +48,7 @@ _install_hot_runtime(_server)
 _install_chat_admin_session(_server)
 _install_chat_fast_status(_server)
 _install_chat_client_debug(_server)
+_install_chat_message_receipt()
 _install_control_plane(_server)
 _install_native_status(_server)
 _install_contextual_input(_server)
