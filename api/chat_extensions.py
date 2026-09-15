@@ -35,6 +35,10 @@ def _engine():
 
 def _normalize_with_generation(payload: dict[str, Any]) -> dict[str, Any]:
     normalized = _original_normalize(payload)
+    # Transport framing is a server concern, not LALM cognition. The bridge may
+    # enforce NDJSON/DELTA behavior operationally, but that instruction must not
+    # enter the model payload where it can leak into visible assistant prose.
+    normalized.pop("responseDirective", None)
     raw = payload.get("generation")
     if isinstance(raw, dict):
         generation = {}
