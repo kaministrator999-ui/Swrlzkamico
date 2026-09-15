@@ -1,5 +1,5 @@
 {
-  "version": 94,
+  "version": 95,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v94 adds authenticated server-authoritative Chat account-state synchronization. Browser localStorage remains a fast cache while private durable server state owns cross-browser thread/message continuity. Generation transcript checkpoints remain a separate contract."
+  "notes":"Manifest v95 prepares server-canonical Chat turns by attaching the browser-created user/assistant message IDs to stream requests, derives child asset cache revisions from the manifest loader URL instead of a stale hardcoded revision, and repairs the incremental waiting-state renderer temporal-dead-zone crash. Browser state synchronization remains compatibility transport until the stable commit-before-generation server path is deployed and verified."
 }
