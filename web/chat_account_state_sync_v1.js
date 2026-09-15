@@ -8,7 +8,7 @@ const STORAGE_KEY='swrlz.vercel.chat.v1';
 const APPLIED_KEY='swrlz.chat.account-state.applied.v1';
 const MUTATION_CONTRACT='swrlz-chat-account-mutation-v1';
 const CAMERA_CONTRACT='swrlz-whole-conversation-camera-v1';
-const ctl={contract:'swrlz-chat-account-state-sync-v3',revision:0,ready:false,lastError:'',syncing:false,mode:'unknown',pendingMutations:0};
+const ctl={contract:'swrlz-chat-account-state-sync-v4',revision:0,ready:false,lastError:'',syncing:false,mode:'unknown',pendingMutations:0};
 window.__swrlzChatAccountStateSyncV1=ctl;
 
 const dbg=(m,d)=>{try{window.__swrlzDebug?.log('account-state',m,d)}catch(_){}};
@@ -43,7 +43,8 @@ function unresolvedInflight(localState,remoteState){
   }
   return unresolved;
 }
-function hasUnresolvedInflight(localState,remoteState){return unresolvedInflight(localState,remoteState).length>0}
+function activeRequestIdSafe(){try{return typeof active!=='undefined'&&active?.requestId?String(active.requestId):''}catch(_){return ''}}
+function inflightResolution(localState,remoteState){const unresolved=unresolvedInflight(localState,remoteState),activeRequestId=activeRequestIdSafe(),blocking=activeRequestId?unresolved.filter(item=>item.requestId===activeRequestId):[],stale=unresolved.filter(item=>!activeRequestId||item.requestId!==activeRequestId);return {activeRequestId,unresolved,blocking,stale}}
 
 const DIAGNOSTIC_META_KEYS=['phase','trail','firstDeltaLatencyMs','totalLatencyMs','error','terminalIntegrity','workLabel','responsePresence','contextCamera','temporalContext','activityExpanded','networkContinuity','committedOutputV4','outputVisibilityPolicy','committedChars','stagedChars','semanticValidationOwner','rawPhase','transcriptSync','committedContractBridge','committedContractBridgePolicy','turnIntegrity','categories','modelText','generationBranchId'];
 function diagnosticMeta(meta){const out={};for(const key of DIAGNOSTIC_META_KEYS)if(meta&&Object.prototype.hasOwnProperty.call(meta,key))out[key]=meta[key];return out}
@@ -193,7 +194,7 @@ async function flushMutations(){
     if(!isServerMutationMode(remote)){ctl.mode='compatibility';pendingOps=[];ctl.pendingMutations=0;scheduleLegacyPush(50);return}
     ctl.mode='server';let base=Number(remote.revision||0);let result=await mutateRemote(batch,base);if(result.conflict){base=Number(result.revision||0);result=await mutateRemote(batch,base)}
     if(result.signedOut)return;if(result.conflict)throw new Error('account state changed during mutation retry');rememberRevision(result.revision||base);ctl.ready=true;ctl.lastError='';dbg('mutation-complete',{revision:ctl.revision,operations:batch.map(op=>op.type),queued:pendingOps.length});
-    const l=local();if(result.state&&!hasUnresolvedInflight(l,result.state)){const hydrated=preserveLocalDiagnostics(result.state,l),before=l?JSON.stringify(l):'',after=JSON.stringify(hydrated);if(before!==after)setLocal(hydrated)}
+    const l=local();if(result.state){const inflight=inflightResolution(l,result.state);if(!inflight.blocking.length){const hydrated=preserveLocalDiagnostics(result.state,l),before=l?JSON.stringify(l):'',after=JSON.stringify(hydrated);if(before!==after)setLocal(hydrated);if(inflight.stale.length){dbg('mutation-stale-stream-repaired',{revision:ctl.revision,staleCount:inflight.stale.length,activeRequestId:inflight.activeRequestId});relayConversationCamera('mutation-stale-stream-repaired',hydrated,{revision:ctl.revision,staleCount:inflight.stale.length,activeRequestId:inflight.activeRequestId})}}else{dbg('mutation-hydrate-deferred',{reason:'active-stream-unresolved',revision:ctl.revision,activeRequestId:inflight.activeRequestId,blockingCount:inflight.blocking.length})}}
     relayConversationCamera('mutation-complete',cameraState(),{revision:ctl.revision,operations:batch.map(op=>op.type)});
   }catch(e){
     const retryable=String(e?.message||'').includes('CHAT_STATE_MESSAGE_NOT_FOUND')||String(e?.message||'').includes('CHAT_STATE_THREAD_NOT_FOUND');
@@ -214,9 +215,10 @@ async function hydrate(){
     }
     ctl.mode='server';rememberRevision(remote.revision);ctl.ready=true;ctl.lastError='';
     if(pendingOps.length){dbg('hydrate-deferred',{reason:'pending-mutations',queued:pendingOps.length,revision:ctl.revision});scheduleMutationFlush(60);return}
-    const l=local(),unresolved=unresolvedInflight(l,remote.state);if(unresolved.length){dbg('hydrate-deferred',{reason:'local-stream-unresolved',revision:ctl.revision,unresolved});relayConversationCamera('hydrate-unresolved',l,{revision:ctl.revision,unresolved});return}
-    if(remote.state){const hydrated=preserveLocalDiagnostics(remote.state,l),before=l?JSON.stringify(l):'',after=JSON.stringify(hydrated);if(before!==after){setLocal(hydrated);rememberRevision(remote.revision);dbg('server-hydrate-applied',{revision:ctl.revision,threads:hydrated.threads?.length||0,diagnosticsPreserved:true});relayConversationCamera('server-hydrate-applied',hydrated,{revision:ctl.revision});if(appliedBefore!==ctl.revision){location.reload();return}}}
-    dbg('server-authority-ready',{revision:ctl.revision,snapshotWrites:false,terminalCorrelation:'requestId-first',diagnosticOverlay:'local-presentation-only'});
+    const l=local(),inflight=inflightResolution(l,remote.state);if(inflight.blocking.length){dbg('hydrate-deferred',{reason:'active-stream-unresolved',revision:ctl.revision,activeRequestId:inflight.activeRequestId,blocking:inflight.blocking});relayConversationCamera('hydrate-active-unresolved',l,{revision:ctl.revision,activeRequestId:inflight.activeRequestId,blockingCount:inflight.blocking.length});return}
+    if(inflight.stale.length)dbg('hydrate-stale-stream-repair',{revision:ctl.revision,staleCount:inflight.stale.length,activeRequestId:inflight.activeRequestId});
+    if(remote.state){const hydrated=preserveLocalDiagnostics(remote.state,l),before=l?JSON.stringify(l):'',after=JSON.stringify(hydrated);if(before!==after){setLocal(hydrated);rememberRevision(remote.revision);dbg('server-hydrate-applied',{revision:ctl.revision,threads:hydrated.threads?.length||0,diagnosticsPreserved:true,staleStreamsRepaired:inflight.stale.length});relayConversationCamera(inflight.stale.length?'hydrate-stale-stream-repaired':'server-hydrate-applied',hydrated,{revision:ctl.revision,staleCount:inflight.stale.length,activeRequestId:inflight.activeRequestId});if(appliedBefore!==ctl.revision){location.reload();return}}}
+    dbg('server-authority-ready',{revision:ctl.revision,snapshotWrites:false,terminalCorrelation:'requestId-first',hydrationDeferral:'active-request-only',diagnosticOverlay:'local-presentation-only'});
   }catch(e){ctl.lastError=String(e?.message||e);dbg('hydrate-failed',{error:ctl.lastError})}finally{ctl.syncing=false}
 }
 
