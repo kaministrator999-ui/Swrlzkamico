@@ -16,10 +16,24 @@ function newest(a,b){return Number(a?.updatedAt||0)>=Number(b?.updatedAt||0)?a:b
 function mergeMessage(a,b){const n=newest(a,b)||a||b;return {...(a||{}),...(b||{}),...n,meta:{...(a?.meta||{}),...(b?.meta||{}),...(n?.meta||{})}}}
 function mergeThread(a,b){if(!a)return b;if(!b)return a;const n=newest(a,b);const map=new Map();for(const m of [...(a.messages||[]),...(b.messages||[])]){if(!m?.id)continue;map.set(m.id,map.has(m.id)?mergeMessage(map.get(m.id),m):m)}const messages=[...map.values()].sort((x,y)=>Number(x.createdAt||0)-Number(y.createdAt||0));return {...a,...b,...n,messages}}
 function mergeState(a,b){if(!a)return b;if(!b)return a;const map=new Map();for(const t of [...(a.threads||[]),...(b.threads||[])]){if(!t?.id)continue;map.set(t.id,map.has(t.id)?mergeThread(map.get(t.id),t):t)}const threads=[...map.values()].sort((x,y)=>Number(y.pinned)-Number(x.pinned)||Number(y.updatedAt||0)-Number(x.updatedAt||0)).slice(0,80);const ids=new Set(threads.map(t=>t.id));const currentId=ids.has(a.currentId)?a.currentId:(ids.has(b.currentId)?b.currentId:(threads[0]?.id||''));return {version:1,currentId,threads}}
-function hasInflight(state){return !!state?.threads?.some(t=>t?.messages?.some(m=>String(m?.state||'').toLowerCase()==='streaming'))}
 function sameThreadMeta(a,b){return String(a?.title||'')===String(b?.title||'')&&!!a?.pinned===!!b?.pinned}
 function threadMap(state){return new Map((state?.threads||[]).filter(t=>t?.id).map(t=>[String(t.id),t]))}
 function messageMap(thread){return new Map((thread?.messages||[]).filter(m=>m?.id).map(m=>[String(m.id),m]))}
+function isLocalInflight(message){const state=String(message?.state||'').toLowerCase();return message?.role==='assistant'&&(state==='streaming'||state==='cancelling')}
+function hasUnresolvedInflight(localState,remoteState){
+  if(!localState)return false;
+  const remoteThreads=threadMap(remoteState);
+  for(const thread of localState.threads||[]){
+    const remoteMessages=messageMap(remoteThreads.get(String(thread?.id||'')));
+    for(const message of thread?.messages||[]){
+      if(!isLocalInflight(message))continue;
+      const remoteMessage=remoteMessages.get(String(message.id||''));
+      const remoteStateName=String(remoteMessage?.state||'').toLowerCase();
+      if(!remoteMessage||remoteStateName==='streaming'||remoteStateName==='cancelling')return true;
+    }
+  }
+  return false;
+}
 function deriveMutations(before,after){
   if(!before||!after)return [];
   const ops=[],a=threadMap(before),b=threadMap(after);
@@ -56,8 +70,9 @@ function isServerMutationMode(remote){return remote?.mutationContract===MUTATION
 let nativeSet=localStorage.setItem.bind(localStorage),applyingRemote=false,legacyTimer=0,mutationTimer=0,pendingOps=[];
 function setLocal(state){applyingRemote=true;try{nativeSet(STORAGE_KEY,JSON.stringify(state))}finally{applyingRemote=false}}
 function rememberRevision(revision){ctl.revision=Number(revision||0);sessionStorage.setItem(APPLIED_KEY,String(ctl.revision))}
-function enqueue(ops){if(!ops.length)return;pendingOps.push(...ops);ctl.pendingMutations=pendingOps.length;clearTimeout(mutationTimer);mutationTimer=setTimeout(flushMutations,350)}
+function enqueue(ops){if(!ops.length)return;pendingOps.push(...ops);ctl.pendingMutations=pendingOps.length;dbg('mutation-enqueued',{operations:ops.map(op=>op.type),queued:pendingOps.length});clearTimeout(mutationTimer);mutationTimer=setTimeout(flushMutations,350)}
 function scheduleLegacyPush(delay=1400){clearTimeout(legacyTimer);legacyTimer=setTimeout(legacyPush,delay)}
+function scheduleMutationFlush(delay=250){if(!pendingOps.length)return;clearTimeout(mutationTimer);mutationTimer=setTimeout(flushMutations,delay)}
 
 localStorage.setItem=function(key,value){
   if(key!==STORAGE_KEY){nativeSet(key,value);return}
@@ -78,19 +93,22 @@ async function legacyPush(){
 }
 
 async function flushMutations(){
-  mutationTimer=0;if(ctl.syncing||!pendingOps.length)return;ctl.syncing=true;
+  mutationTimer=0;
+  if(!pendingOps.length)return;
+  if(ctl.syncing){dbg('mutation-deferred',{reason:'sync-busy',queued:pendingOps.length});scheduleMutationFlush(250);return}
+  ctl.syncing=true;
   const batch=pendingOps.splice(0,32);ctl.pendingMutations=pendingOps.length;
   try{
     let remote=await readRemote();if(remote.signedOut)return;
     if(!isServerMutationMode(remote)){ctl.mode='compatibility';pendingOps=[];ctl.pendingMutations=0;scheduleLegacyPush(50);return}
     ctl.mode='server';let base=Number(remote.revision||0);let result=await mutateRemote(batch,base);if(result.conflict){base=Number(result.revision||0);result=await mutateRemote(batch,base)}
     if(result.signedOut)return;if(result.conflict)throw new Error('account state changed during mutation retry');rememberRevision(result.revision||base);ctl.ready=true;ctl.lastError='';dbg('mutation-complete',{revision:ctl.revision,operations:batch.map(op=>op.type),queued:pendingOps.length});
-    if(result.state&&!hasInflight(local())){const before=local(),after=JSON.stringify(result.state);if(JSON.stringify(before)!==after)setLocal(result.state)}
+    if(result.state&&!hasUnresolvedInflight(local(),result.state)){const before=local(),after=JSON.stringify(result.state);if(JSON.stringify(before)!==after)setLocal(result.state)}
   }catch(e){
     const retryable=String(e?.message||'').includes('CHAT_STATE_MESSAGE_NOT_FOUND')||String(e?.message||'').includes('CHAT_STATE_THREAD_NOT_FOUND');
-    if(retryable){const again=batch.map(op=>({...op,_retry:Number(op._retry||0)+1})).filter(op=>op._retry<=6);if(again.length){pendingOps.unshift(...again);ctl.pendingMutations=pendingOps.length;clearTimeout(mutationTimer);mutationTimer=setTimeout(flushMutations,1800)}}
+    if(retryable){const again=batch.map(op=>({...op,_retry:Number(op._retry||0)+1})).filter(op=>op._retry<=6);if(again.length){pendingOps.unshift(...again);ctl.pendingMutations=pendingOps.length;scheduleMutationFlush(1800)}}
     ctl.lastError=String(e?.message||e);dbg('mutation-failed',{error:ctl.lastError,retryable,queued:pendingOps.length});
-  }finally{ctl.syncing=false;if(pendingOps.length&&!mutationTimer)mutationTimer=setTimeout(flushMutations,450)}
+  }finally{ctl.syncing=false;if(pendingOps.length&&!mutationTimer)scheduleMutationFlush(450)}
 }
 
 async function hydrate(){
@@ -104,8 +122,8 @@ async function hydrate(){
       if(after!==JSON.stringify(remote.state))scheduleLegacyPush(150);return;
     }
     ctl.mode='server';rememberRevision(remote.revision);ctl.ready=true;ctl.lastError='';
-    if(pendingOps.length){dbg('hydrate-deferred',{reason:'pending-mutations',queued:pendingOps.length,revision:ctl.revision});return}
-    const l=local();if(hasInflight(l)){dbg('hydrate-deferred',{reason:'local-stream-active',revision:ctl.revision});return}
+    if(pendingOps.length){dbg('hydrate-deferred',{reason:'pending-mutations',queued:pendingOps.length,revision:ctl.revision});scheduleMutationFlush(60);return}
+    const l=local();if(hasUnresolvedInflight(l,remote.state)){dbg('hydrate-deferred',{reason:'local-stream-unresolved',revision:ctl.revision});return}
     if(remote.state){const before=l?JSON.stringify(l):'',after=JSON.stringify(remote.state);if(before!==after){setLocal(remote.state);rememberRevision(remote.revision);dbg('server-hydrate-applied',{revision:ctl.revision,threads:remote.state.threads?.length||0});if(appliedBefore!==ctl.revision){location.reload();return}}}
     dbg('server-authority-ready',{revision:ctl.revision,snapshotWrites:false});
   }catch(e){ctl.lastError=String(e?.message||e);dbg('hydrate-failed',{error:ctl.lastError})}finally{ctl.syncing=false}
