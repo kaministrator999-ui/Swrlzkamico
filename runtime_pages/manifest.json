@@ -1,11 +1,11 @@
 {
-  "version": 112,
+  "version": 113,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
-    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js","web/chat_same_tab_canonical_reconcile_v1.js","web/chat_terminal_transcript_recovery_v1.js","web/chat_activity_expansion_state_v1.js","web/chat_language_preferences_v1.js","web/chat_online_research_v1.js"]},
+    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js","web/chat_same_tab_canonical_reconcile_v1.js","web/chat_activity_expansion_state_v1.js","web/chat_language_preferences_v1.js","web/chat_online_research_v1.js"]},
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v112 keeps each Activity-log expansion choice in a request/message keyed client presentation authority so canonical hydration and streaming rerenders cannot erase a user's collapse/open choice. The obsolete strict transcript-sync client remains excluded from cooperative boot."
+  "notes":"Manifest v113 removes the obsolete terminal transcript recovery client from Chat boot because production has no /api/chat/transcript contract and the recovery loop was generating repeated 404 requests. Canonical account-state synchronization and same-tab canonical reconciliation remain the recovery authorities. Activity expansion remains request/message keyed."
 }
