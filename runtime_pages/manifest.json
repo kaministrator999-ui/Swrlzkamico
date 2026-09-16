@@ -1,5 +1,5 @@
 {
-  "version": 111,
+  "version": 112,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v111 makes Activity-log open/close a synchronous user-owned summary action so fast collapse taps cannot race a rerender. The cooperative Chat loader no longer loads the obsolete strict transcript-sync client that was repeatedly calling an unavailable /api/chat/transcript route; canonical account-state and bounded terminal transcript recovery remain active."
+  "notes":"Manifest v112 keeps each Activity-log expansion choice in a request/message keyed client presentation authority so canonical hydration and streaming rerenders cannot erase a user's collapse/open choice. The obsolete strict transcript-sync client remains excluded from cooperative boot."
 }
