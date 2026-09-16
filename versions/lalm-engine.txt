@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.58
-REVISION=2.1.58-hot-conversation-trajectory-repair-v47
+VERSION=2.1.59
+REVISION=2.1.59-hot-online-research-reasoning-v48
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
