@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.57
-REVISION=2.1.57-hot-social-act-language-preference-v46
+VERSION=2.1.58
+REVISION=2.1.58-hot-conversation-trajectory-repair-v47
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
