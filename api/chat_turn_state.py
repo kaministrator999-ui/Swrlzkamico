@@ -76,10 +76,12 @@ def _title_hint(prompt: str) -> str:
 def canonical_backend() -> str:
     """Return the selected durable backend without silently crossing authorities.
 
-    `blob` is the compatibility default. `redis` requires Redis configuration.
-    `auto` prefers configured Redis and otherwise uses Blob for staged migration.
+    `auto` is the compatibility default: configured Redis is authoritative when
+    available, otherwise legacy Blob remains the fallback. Explicit `redis` stays
+    fail-closed when Redis is not configured; explicit `blob` remains available
+    for rollback/migration diagnostics.
     """
-    requested = os.environ.get("SWRLZ_CHAT_CANONICAL_BACKEND", "blob").strip().lower() or "blob"
+    requested = os.environ.get("SWRLZ_CHAT_CANONICAL_BACKEND", "auto").strip().lower() or "auto"
     if requested == "auto":
         return "redis" if canonical_redis_state.configured() else "blob"
     if requested == "redis":
@@ -92,7 +94,7 @@ def canonical_backend() -> str:
 
 
 def canonical_backend_status() -> dict[str, Any]:
-    requested = os.environ.get("SWRLZ_CHAT_CANONICAL_BACKEND", "blob").strip().lower() or "blob"
+    requested = os.environ.get("SWRLZ_CHAT_CANONICAL_BACKEND", "auto").strip().lower() or "auto"
     redis_ready = canonical_redis_state.configured()
     try:
         selected = canonical_backend()
