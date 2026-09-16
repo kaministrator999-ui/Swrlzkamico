@@ -1,5 +1,5 @@
 {
-  "version": 109,
+  "version": 110,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v109 makes terminal transcript recovery user-visible-state safe and persists Activity log expansion. Empty local stream failures are held as a recovering state while bounded canonical transcript checks run; a real error is exposed only after recovery is exhausted. User-opened Activity logs remain open across message rerenders and stream updates until the user closes them."
+  "notes":"Manifest v110 removes the Activity-log MutationObserver feedback loop. Activity expansion is applied once during normal message rendering and only a real user toggle writes the preference. Online research now starts enabled by default while remaining user-toggleable."
 }
