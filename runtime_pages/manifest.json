@@ -1,5 +1,5 @@
 {
-  "version": 110,
+  "version": 111,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v110 removes the Activity-log MutationObserver feedback loop. Activity expansion is applied once during normal message rendering and only a real user toggle writes the preference. Online research now starts enabled by default while remaining user-toggleable."
+  "notes":"Manifest v111 makes Activity-log open/close a synchronous user-owned summary action so fast collapse taps cannot race a rerender. The cooperative Chat loader no longer loads the obsolete strict transcript-sync client that was repeatedly calling an unavailable /api/chat/transcript route; canonical account-state and bounded terminal transcript recovery remain active."
 }
