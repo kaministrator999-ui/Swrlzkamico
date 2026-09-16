@@ -8,7 +8,7 @@ const STORAGE_KEY='swrlz.vercel.chat.v1';
 const APPLIED_KEY='swrlz.chat.account-state.applied.v1';
 const MUTATION_CONTRACT='swrlz-chat-account-mutation-v1';
 const CAMERA_CONTRACT='swrlz-whole-conversation-camera-v1';
-const ctl={contract:'swrlz-chat-account-state-sync-v4',revision:0,ready:false,lastError:'',syncing:false,mode:'unknown',pendingMutations:0};
+const ctl={contract:'swrlz-chat-account-state-sync-v5',revision:0,ready:false,lastError:'',syncing:false,mode:'unknown',pendingMutations:0};
 window.__swrlzChatAccountStateSyncV1=ctl;
 
 const dbg=(m,d)=>{try{window.__swrlzDebug?.log('account-state',m,d)}catch(_){}};
@@ -160,6 +160,8 @@ function isServerMutationMode(remote){return remote?.mutationContract===MUTATION
 let nativeSet=localStorage.setItem.bind(localStorage),applyingRemote=false,legacyTimer=0,mutationTimer=0,pendingOps=[];
 function setLocal(state){applyingRemote=true;try{nativeSet(STORAGE_KEY,JSON.stringify(state))}finally{applyingRemote=false}}
 function rememberRevision(revision){ctl.revision=Number(revision||0);sessionStorage.setItem(APPLIED_KEY,String(ctl.revision))}
+function notifyCanonicalAdoption(stateValue,reason){try{window.dispatchEvent(new CustomEvent('swrlz:account-state-hydrated',{detail:{reason:String(reason||'hydrate'),revision:ctl.revision,currentId:String(stateValue?.currentId||''),threads:Number(stateValue?.threads?.length||0)}}))}catch(_){}}
+function applyHydratedLocal(stateValue,reason){setLocal(stateValue);rememberRevision(ctl.revision);notifyCanonicalAdoption(stateValue,reason);dbg('hydrate-live-adoption-requested',{reason:String(reason||'hydrate'),revision:ctl.revision,currentId:String(stateValue?.currentId||''),threads:Number(stateValue?.threads?.length||0)});return true}
 function enqueue(ops){if(!ops.length)return;pendingOps.push(...ops);ctl.pendingMutations=pendingOps.length;dbg('mutation-enqueued',{operations:ops.map(op=>op.type),queued:pendingOps.length});clearTimeout(mutationTimer);mutationTimer=setTimeout(flushMutations,350)}
 function scheduleLegacyPush(delay=1400){clearTimeout(legacyTimer);legacyTimer=setTimeout(legacyPush,delay)}
 function scheduleMutationFlush(delay=250){if(!pendingOps.length)return;clearTimeout(mutationTimer);mutationTimer=setTimeout(flushMutations,delay)}
@@ -194,7 +196,7 @@ async function flushMutations(){
     if(!isServerMutationMode(remote)){ctl.mode='compatibility';pendingOps=[];ctl.pendingMutations=0;scheduleLegacyPush(50);return}
     ctl.mode='server';let base=Number(remote.revision||0);let result=await mutateRemote(batch,base);if(result.conflict){base=Number(result.revision||0);result=await mutateRemote(batch,base)}
     if(result.signedOut)return;if(result.conflict)throw new Error('account state changed during mutation retry');rememberRevision(result.revision||base);ctl.ready=true;ctl.lastError='';dbg('mutation-complete',{revision:ctl.revision,operations:batch.map(op=>op.type),queued:pendingOps.length});
-    const l=local();if(result.state){const inflight=inflightResolution(l,result.state);if(!inflight.blocking.length){const hydrated=preserveLocalDiagnostics(result.state,l),before=l?JSON.stringify(l):'',after=JSON.stringify(hydrated);if(before!==after)setLocal(hydrated);if(inflight.stale.length){dbg('mutation-stale-stream-repaired',{revision:ctl.revision,staleCount:inflight.stale.length,activeRequestId:inflight.activeRequestId});relayConversationCamera('mutation-stale-stream-repaired',hydrated,{revision:ctl.revision,staleCount:inflight.stale.length,activeRequestId:inflight.activeRequestId})}}else{dbg('mutation-hydrate-deferred',{reason:'active-stream-unresolved',revision:ctl.revision,activeRequestId:inflight.activeRequestId,blockingCount:inflight.blocking.length})}}
+    const l=local();if(result.state){const inflight=inflightResolution(l,result.state);if(!inflight.blocking.length){const hydrated=preserveLocalDiagnostics(result.state,l),before=l?JSON.stringify(l):'',after=JSON.stringify(hydrated);if(before!==after)applyHydratedLocal(hydrated,'mutation-complete');if(inflight.stale.length){dbg('mutation-stale-stream-repaired',{revision:ctl.revision,staleCount:inflight.stale.length,activeRequestId:inflight.activeRequestId});relayConversationCamera('mutation-stale-stream-repaired',hydrated,{revision:ctl.revision,staleCount:inflight.stale.length,activeRequestId:inflight.activeRequestId})}}else{dbg('mutation-hydrate-deferred',{reason:'active-stream-unresolved',revision:ctl.revision,activeRequestId:inflight.activeRequestId,blockingCount:inflight.blocking.length})}}
     relayConversationCamera('mutation-complete',cameraState(),{revision:ctl.revision,operations:batch.map(op=>op.type)});
   }catch(e){
     const retryable=String(e?.message||'').includes('CHAT_STATE_MESSAGE_NOT_FOUND')||String(e?.message||'').includes('CHAT_STATE_THREAD_NOT_FOUND');
@@ -204,21 +206,21 @@ async function flushMutations(){
 }
 
 async function hydrate(){
-  if(ctl.syncing)return;const appliedBefore=Number(sessionStorage.getItem(APPLIED_KEY)||0);ctl.syncing=true;
+  if(ctl.syncing)return;ctl.syncing=true;
   try{
     const remote=await readRemote();if(remote.signedOut){ctl.ready=false;ctl.mode='signed-out';return}
     if(!isServerMutationMode(remote)){
       ctl.mode='compatibility';const l=local();if(!remote.state){ctl.syncing=false;await legacyPush();return}
       const merged=mergeState(l,remote.state);rememberRevision(remote.revision);ctl.ready=true;ctl.lastError='';const before=l?JSON.stringify(l):'',after=JSON.stringify(merged);
-      if(before!==after){setLocal(merged);rememberRevision(remote.revision);dbg('compat-hydrate-applied',{revision:ctl.revision,threads:merged.threads.length});if(appliedBefore!==ctl.revision){location.reload();return}}
+      if(before!==after){applyHydratedLocal(merged,'compat-hydrate');dbg('compat-hydrate-applied',{revision:ctl.revision,threads:merged.threads.length,documentReload:false})}
       if(after!==JSON.stringify(remote.state))scheduleLegacyPush(150);return;
     }
     ctl.mode='server';rememberRevision(remote.revision);ctl.ready=true;ctl.lastError='';
     if(pendingOps.length){dbg('hydrate-deferred',{reason:'pending-mutations',queued:pendingOps.length,revision:ctl.revision});scheduleMutationFlush(60);return}
     const l=local(),inflight=inflightResolution(l,remote.state);if(inflight.blocking.length){dbg('hydrate-deferred',{reason:'active-stream-unresolved',revision:ctl.revision,activeRequestId:inflight.activeRequestId,blocking:inflight.blocking});relayConversationCamera('hydrate-active-unresolved',l,{revision:ctl.revision,activeRequestId:inflight.activeRequestId,blockingCount:inflight.blocking.length});return}
     if(inflight.stale.length)dbg('hydrate-stale-stream-repair',{revision:ctl.revision,staleCount:inflight.stale.length,activeRequestId:inflight.activeRequestId});
-    if(remote.state){const hydrated=preserveLocalDiagnostics(remote.state,l),before=l?JSON.stringify(l):'',after=JSON.stringify(hydrated);if(before!==after){setLocal(hydrated);rememberRevision(remote.revision);dbg('server-hydrate-applied',{revision:ctl.revision,threads:hydrated.threads?.length||0,diagnosticsPreserved:true,staleStreamsRepaired:inflight.stale.length});relayConversationCamera(inflight.stale.length?'hydrate-stale-stream-repaired':'server-hydrate-applied',hydrated,{revision:ctl.revision,staleCount:inflight.stale.length,activeRequestId:inflight.activeRequestId});if(appliedBefore!==ctl.revision){location.reload();return}}}
-    dbg('server-authority-ready',{revision:ctl.revision,snapshotWrites:false,terminalCorrelation:'requestId-first',hydrationDeferral:'active-request-only',diagnosticOverlay:'local-presentation-only'});
+    if(remote.state){const hydrated=preserveLocalDiagnostics(remote.state,l),before=l?JSON.stringify(l):'',after=JSON.stringify(hydrated);if(before!==after){applyHydratedLocal(hydrated,inflight.stale.length?'hydrate-stale-stream-repaired':'server-hydrate-applied');dbg('server-hydrate-applied',{revision:ctl.revision,threads:hydrated.threads?.length||0,diagnosticsPreserved:true,staleStreamsRepaired:inflight.stale.length,documentReload:false});relayConversationCamera(inflight.stale.length?'hydrate-stale-stream-repaired':'server-hydrate-applied',hydrated,{revision:ctl.revision,staleCount:inflight.stale.length,activeRequestId:inflight.activeRequestId})}}
+    dbg('server-authority-ready',{revision:ctl.revision,snapshotWrites:false,terminalCorrelation:'requestId-first',hydrationDeferral:'active-request-only',diagnosticOverlay:'local-presentation-only',documentReload:false});
   }catch(e){ctl.lastError=String(e?.message||e);dbg('hydrate-failed',{error:ctl.lastError})}finally{ctl.syncing=false}
 }
 
