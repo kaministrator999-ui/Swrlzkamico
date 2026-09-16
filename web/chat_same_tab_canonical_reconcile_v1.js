@@ -2,7 +2,7 @@
 
 if(window.__swrlzSameTabCanonicalReconcileV1)return;
 const STORAGE_KEY='swrlz.vercel.chat.v1';
-const ctl={contract:'swrlz-same-tab-canonical-reconcile-v4',lastSnapshot:'',applied:0,quietAdoptions:0,deferredActive:0,terminalTextRepairs:0,lastError:''};
+const ctl={contract:'swrlz-same-tab-canonical-reconcile-v5',lastSnapshot:'',applied:0,quietAdoptions:0,deferredActive:0,terminalTextRepairs:0,lastError:''};
 window.__swrlzSameTabCanonicalReconcileV1=ctl;
 
 const dbg=(m,d)=>{try{window.__swrlzDebug?.log('same-tab-reconcile',m,d)}catch(_){}};
@@ -22,10 +22,10 @@ function preserveCompletedAssistantText(snapshot,prior){
     return {...remoteThread,messages:(remoteThread.messages||[]).map(remoteMessage=>{
       if(remoteMessage?.role!=='assistant'||String(remoteMessage.text||'')||!completed(remoteMessage))return remoteMessage;
       const priorMessage=localAssistantFor(priorThread,remoteMessage);
-      if(!priorMessage||!String(priorMessage.text||'')||!completed(priorMessage))return remoteMessage;
-      const rid=requestIdOf(remoteMessage)||requestIdOf(priorMessage);
-      repairs.push({threadId:String(remoteThread.id||''),messageId:String(remoteMessage.id||''),requestId:rid,chars:String(priorMessage.text||'').length});
-      return {...remoteMessage,text:String(priorMessage.text||''),state:'complete',meta:{...(remoteMessage.meta||{}),...(priorMessage.meta||{}),requestId:rid,phase:'COMPLETE',rawPhase:'COMPLETE',error:'',workLabel:'✅ Response complete',canonicalTextRepair:{contract:'same-tab-terminal-text-monotonic-v1',reason:'canonical-snapshot-empty-after-visible-completed-text',at:Date.now()}}};
+      if(!priorMessage||!String(priorMessage.text||''))return remoteMessage;
+      const rid=requestIdOf(remoteMessage)||requestIdOf(priorMessage),priorText=String(priorMessage.text||'');
+      repairs.push({threadId:String(remoteThread.id||''),messageId:String(remoteMessage.id||''),requestId:rid,chars:priorText.length,priorState:String(priorMessage.state||'')});
+      return {...remoteMessage,text:priorText,state:'complete',meta:{...(remoteMessage.meta||{}),...(priorMessage.meta||{}),requestId:rid,phase:'COMPLETE',rawPhase:'COMPLETE',error:'',workLabel:'✅ Response complete',canonicalTextRepair:{contract:'same-tab-terminal-text-monotonic-v2',reason:'canonical-completed-snapshot-empty-after-local-nonempty-text',priorState:String(priorMessage.state||''),at:Date.now()}}};
     })};
   })};
   return {snapshot:repaired,repairs};
@@ -69,14 +69,14 @@ function adopt(reason){
       ctl.terminalTextRepairs+=repair.repairs.length;
       const repairedRaw=JSON.stringify(snapshot);ctl.lastSnapshot=repairedRaw;
       try{localStorage.setItem(STORAGE_KEY,repairedRaw)}catch(_){ }
-      dbg('completed-assistant-text-preserved',{reason,repairs:repair.repairs,totalRepairs:ctl.terminalTextRepairs});
+      dbg('completed-assistant-text-preserved',{reason,repairs:repair.repairs,totalRepairs:ctl.terminalTextRepairs,contract:'same-tab-terminal-text-monotonic-v2'});
     }else ctl.lastSnapshot=raw;
     const requestId=activeRequest(),hasTerminal=requestId?!!terminalForRequest(snapshot,requestId):false;
     if(requestId&&!hasTerminal){ctl.deferredActive++;dbg('same-tab-cache-deferred-active',{reason,requestId,deferredActive:ctl.deferredActive});return}
     const settled=settleActiveFromServer(snapshot);
     const adoption=adoptIntoLiveMask(snapshot);
     ctl.applied++;
-    dbg('same-tab-cache-adopted',{reason,settledActive:settled,direct:adoption.applied,mode:adoption.mode,currentId:String(snapshot.currentId||''),threads:snapshot.threads.length,applied:ctl.applied,quietAdoptions:ctl.quietAdoptions,terminalTextRepairs:ctl.terminalTextRepairs});
+    dbg('same-tab-cache-adopted',{reason,settledActive:settled,direct:adoption.applied,mode:adoption.mode,currentId:String(snapshot.currentId||''),threads:snapshot.threads.length,applied:ctl.applied,quietAdoptions:ctl.quietAdoptions,terminalTextRepairs:ctl.terminalTextRepairs,contract:ctl.contract});
   }catch(e){ctl.lastError=String(e?.message||e);dbg('same-tab-cache-adopt-failed',{reason,error:ctl.lastError})}
 }
 function boot(){ctl.lastSnapshot=localStorage.getItem(STORAGE_KEY)||'';setInterval(()=>adopt('cache-change'),250);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(()=>adopt('visible'),0)});window.addEventListener('online',()=>setTimeout(()=>adopt('online'),0))}
