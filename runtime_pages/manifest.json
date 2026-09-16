@@ -1,5 +1,5 @@
 {
-  "version": 106,
+  "version": 107,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v106 refreshes Chat account-state synchronization. Canonical hydration now updates the browser cache and lets the same-tab reconciler adopt authoritative state in-place; hydration no longer calls location.reload(), preventing account-state revisions from restarting the entire Chat document and runtime/theme boot chain."
+  "notes":"Manifest v107 advances the Chat runtime asset revision so the cooperative loader cache-busts its functional children, including terminal-integrity v2 and turn-integrity v3.2. Empty terminal snapshots are no longer sufficient terminal authority; a non-empty assistant payload must exist before the Mask can settle a response as completed."
 }
