@@ -20,7 +20,11 @@ RAW_BASE = f"https://raw.githubusercontent.com/{OWNER}/{REPO}"
 CONTENTS_API_BASE = f"https://api.github.com/repos/{OWNER}/{REPO}/contents"
 ROOT = Path(__file__).resolve().parents[1]
 CACHE_TTL = 2.0
-MANIFEST_CACHE_TTL = 60.0
+# The manifest is the cache-busting authority for every runtime Chat asset. A
+# long worker-local cache here makes a freshly updated runtime branch look stale
+# even when the browser reloads correctly. Keep only a tiny request-collapse
+# window so one reload converges on the new revision without hammering GitHub.
+MANIFEST_CACHE_TTL = 2.0
 FETCH_TIMEOUT = 8
 MAX_SOURCE_BYTES = 4_000_000
 MANIFEST = "runtime_pages/manifest.json"
@@ -69,8 +73,9 @@ def _fetch_manifest_authoritative() -> tuple[bytes, str]:
     Raw GitHub remains the fast delivery path for revisioned assets, but a branch
     CDN response must never be allowed to pin Chat to an old manifest revision.
     The manifest therefore resolves through the repository contents API and is
-    cached briefly in-worker. If that authority is unavailable after the cache
-    expires, callers fail closed rather than silently serving an older raw copy.
+    cached only for a tiny request-collapse window. If that authority is
+    unavailable after the cache expires, callers fail closed rather than
+    silently serving an older raw copy.
     """
     global _MANIFEST_CACHE
     now = time.time()
@@ -84,7 +89,7 @@ def _fetch_manifest_authoritative() -> tuple[bytes, str]:
         url,
         headers={
             "Accept": "application/vnd.github+json",
-            "User-Agent": "swrlz-live-manifest-authority/1",
+            "User-Agent": "swrlz-live-manifest-authority/2",
             "Cache-Control": "no-cache, no-store, max-age=0",
             "Pragma": "no-cache",
             "X-GitHub-Api-Version": "2022-11-28",
@@ -229,9 +234,6 @@ def install(server) -> None:
         if request.method != "GET":
             return await call_next(request)
 
-        # Asset requests are revision-addressed and do not need to touch the
-        # manifest authority again. Keeping this before route lookup removes a
-        # manifest/network dependency from the hot asset-delivery path.
         if path.startswith("/live/assets/"):
             rel = path[len("/live/assets/"):]
             if rel and ".." not in Path(rel).parts:
@@ -245,12 +247,7 @@ def install(server) -> None:
             try:
                 meta = _route_meta("/chat") or {"source": "web/chat.html"}
             except Exception as exc:
-                return Response(
-                    f"Live manifest authority unavailable: {type(exc).__name__}",
-                    status_code=503,
-                    media_type="text/plain",
-                    headers=_headers(MANIFEST, "authority-unavailable"),
-                )
+                return Response(f"Live manifest authority unavailable: {type(exc).__name__}",status_code=503,media_type="text/plain",headers=_headers(MANIFEST,"authority-unavailable"))
             source = _safe_runtime_source(meta.get("source")) or "web/chat.html"
             response = _serve_source(source, _fallback(source))
             if response.status_code == 200 and response.media_type and response.media_type.startswith("text/html"):
@@ -263,12 +260,7 @@ def install(server) -> None:
             try:
                 meta = _route_meta("/chat") or {"source": "web/chat.html"}
             except Exception as exc:
-                return Response(
-                    f"Live manifest authority unavailable: {type(exc).__name__}",
-                    status_code=503,
-                    media_type="text/plain",
-                    headers=_headers(MANIFEST, "authority-unavailable"),
-                )
+                return Response(f"Live manifest authority unavailable: {type(exc).__name__}",status_code=503,media_type="text/plain",headers=_headers(MANIFEST,"authority-unavailable"))
             source = _safe_runtime_source(meta.get("source")) or "web/chat.html"
             response = _serve_source(source, _fallback(source))
             if response.status_code == 200 and response.media_type and response.media_type.startswith("text/html"):
@@ -313,5 +305,5 @@ def install(server) -> None:
         "vercelDeploymentRequiredForRuntimeChanges": False,
         "stableBootstrapOwnsPageCode": False,
         "durability": "GitHub runtime branch is source of truth; instance memory is only a bounded read cache.",
-        "detail": "Manifest revision is resolved through GitHub repository-content authority and fails closed rather than silently accepting stale raw branch content. Revisioned JS/CSS remain immutable browser-cache assets; asset requests bypass manifest lookup.",
+        "detail": "Manifest revision is resolved through GitHub repository-content authority with only a 2-second request-collapse cache. Revisioned JS/CSS remain immutable browser-cache assets; asset requests bypass manifest lookup.",
     }
