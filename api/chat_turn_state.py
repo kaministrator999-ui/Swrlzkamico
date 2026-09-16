@@ -1,14 +1,15 @@
 """Server-owned durable Chat turn commits and canonical history.
 
-The browser may cache and present Chat state, but authenticated user/assistant
-messages and the history sent toward the LALM are owned here by private
-account-scoped server state. A user turn is persisted before generation begins;
-the assistant turn is persisted at the terminal stream boundary.
+Authenticated turns fail closed until the USER message is durably observable.
+Concurrent account-state writers are reconciled by rebasing the requested message
+onto the newest canonical snapshot; a successful write is never considered a
+commit until an exact read-back proves the message survived.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+import random
 import time
 from typing import Any
 
@@ -24,8 +25,8 @@ from api.chat_state import (
 )
 from api.google_account import user_id_from_request
 
-TURN_CONTRACT = "swrlz-chat-canonical-turn-v1"
-MAX_COMMIT_ATTEMPTS = 3
+TURN_CONTRACT = "swrlz-chat-canonical-turn-v2"
+MAX_COMMIT_ATTEMPTS = 7
 
 
 @dataclass(frozen=True)
@@ -81,12 +82,12 @@ def _state_from_value(value: dict[str, Any] | None) -> tuple[int, dict[str, Any]
     return revision, _apply_tombstones(state, tombstones), tombstones
 
 
-def _contains_message(state: dict[str, Any], thread_id: str, message_id: str, role: str) -> bool:
+def _message(state: dict[str, Any], thread_id: str, message_id: str, role: str) -> dict[str, Any] | None:
     for thread in state.get("threads", []):
         if thread.get("id") != thread_id:
             continue
-        return any(message.get("id") == message_id and message.get("role") == role for message in thread.get("messages", []))
-    return False
+        return next((m for m in thread.get("messages", []) if m.get("id") == message_id and m.get("role") == role), None)
+    return None
 
 
 def _request_message(state: dict[str, Any], *, request_id: str, role: str) -> tuple[str, dict[str, Any]] | None:
@@ -101,6 +102,20 @@ def _request_message(state: dict[str, Any], *, request_id: str, role: str) -> tu
     return None
 
 
+def _exact_message(message: dict[str, Any] | None, *, text: str, state_name: str, metadata: dict[str, Any]) -> bool:
+    if not message or str(message.get("text") or "") != text or str(message.get("state") or "") != state_name:
+        return False
+    meta = message.get("meta") if isinstance(message.get("meta"), dict) else {}
+    return all(meta.get(key) == value for key, value in metadata.items())
+
+
+def _backoff(attempt: int) -> None:
+    # Small bounded jitter prevents multiple serverless writers from repeatedly
+    # re-colliding on the same read/write cadence.
+    base = min(0.32, 0.025 * (2 ** attempt))
+    time.sleep(base + random.random() * min(0.04, base))
+
+
 def canonical_history(request: Request, *, thread_id: str, request_id: str, limit: int = 32) -> tuple[list[dict[str, str]], int]:
     user_id = user_id_from_request(request)
     current = _read_blob(user_id)
@@ -108,7 +123,6 @@ def canonical_history(request: Request, *, thread_id: str, request_id: str, limi
     thread = next((item for item in state.get("threads", []) if item.get("id") == thread_id), None)
     if not thread:
         return [], revision
-
     history: list[dict[str, str]] = []
     for message in thread.get("messages", []):
         if not isinstance(message, dict):
@@ -118,9 +132,8 @@ def canonical_history(request: Request, *, thread_id: str, request_id: str, limi
         meta = message.get("meta") if isinstance(message.get("meta"), dict) else {}
         if str(meta.get("requestId") or "") == request_id:
             continue
-        if role not in {"user", "assistant"} or not text:
-            continue
-        history.append({"role": role.upper(), "text": text[:2000]})
+        if role in {"user", "assistant"} and text:
+            history.append({"role": role.upper(), "text": text[:2000]})
     return history[-max(1, min(int(limit), 32)):], revision
 
 
@@ -133,31 +146,27 @@ def _commit_message(user_id: str, *, thread_id: str, message_id: str, role: str,
     metadata = {"requestId": request_id, "authority": "server", "turnContract": TURN_CONTRACT, **(extra_meta or {})}
     expected_text = text[:200000]
     expected_state = state_name[:32]
+    observed_revisions: list[int] = []
 
     for attempt in range(MAX_COMMIT_ATTEMPTS):
         current = _read_blob(user_id)
         current_revision, canonical, tombstones = _state_from_value(current)
+        observed_revisions.append(current_revision)
         tombstone_ids = {str(item.get("threadId") or "") for item in tombstones}
         if thread_id in tombstone_ids:
             raise ValueError("CHAT_TURN_THREAD_TOMBSTONED")
 
-        stamp = _now_ms()
-        threads = canonical.setdefault("threads", [])
         claimed = _request_message(canonical, request_id=request_id, role=role)
         if claimed is not None:
             claimed_thread_id, existing = claimed
             if claimed_thread_id != thread_id or existing.get("id") != message_id:
                 raise ValueError("CHAT_TURN_REQUEST_ID_MESSAGE_CONFLICT")
-            existing_meta = existing.get("meta") if isinstance(existing.get("meta"), dict) else {}
-            if str(existing.get("text") or "") != expected_text:
-                raise ValueError("CHAT_TURN_MESSAGE_ID_CONTENT_CONFLICT")
-            if str(existing.get("state") or "") != expected_state:
-                raise ValueError("CHAT_TURN_MESSAGE_ID_STATE_CONFLICT")
-            for key, value in metadata.items():
-                if existing_meta.get(key) != value:
-                    raise ValueError("CHAT_TURN_MESSAGE_ID_META_CONFLICT")
+            if not _exact_message(existing, text=expected_text, state_name=expected_state, metadata=metadata):
+                raise ValueError("CHAT_TURN_REQUEST_ID_CONTENT_CONFLICT")
             return current_revision
 
+        stamp = _now_ms()
+        threads = canonical.setdefault("threads", [])
         thread = next((item for item in threads if item.get("id") == thread_id), None)
         if thread is None:
             thread = {"id": thread_id, "title": title_hint or "New conversation", "createdAt": created_at or stamp, "updatedAt": stamp, "pinned": False, "messages": []}
@@ -166,10 +175,7 @@ def _commit_message(user_id: str, *, thread_id: str, message_id: str, role: str,
         messages = thread.setdefault("messages", [])
         existing = next((item for item in messages if item.get("id") == message_id), None)
         if existing is not None:
-            if existing.get("role") != role:
-                raise ValueError("CHAT_TURN_MESSAGE_ID_ROLE_CONFLICT")
-            raise ValueError("CHAT_TURN_MESSAGE_ID_REQUEST_CONFLICT")
-
+            raise ValueError("CHAT_TURN_MESSAGE_ID_CONFLICT")
         messages.append({"id": message_id, "role": role, "text": expected_text, "createdAt": created_at or stamp, "state": expected_state, "pinned": False, "meta": metadata})
         messages.sort(key=lambda item: int(item.get("createdAt") or 0))
         if len(messages) > 1000:
@@ -180,18 +186,24 @@ def _commit_message(user_id: str, *, thread_id: str, message_id: str, role: str,
         canonical["currentId"] = thread_id
         canonical["threads"] = sorted(threads, key=lambda item: (bool(item.get("pinned")), int(item.get("updatedAt") or 0)), reverse=True)[:80]
 
-        next_revision = current_revision + 1
-        _write_blob(user_id, {"contract": STATE_CONTRACT, "userId": user_id, "revision": next_revision, "updatedAt": stamp, "state": _clean_state(canonical), "tombstones": tombstones})
+        _write_blob(user_id, {"contract": STATE_CONTRACT, "userId": user_id, "revision": current_revision + 1, "updatedAt": stamp, "state": _clean_state(canonical), "tombstones": tombstones})
 
+        # Do not merely test presence. Exact text/state/metadata proves that the
+        # canonical object visible after the write is the turn we intended.
         verified = _read_blob(user_id)
         verified_revision, verified_state, verified_tombstones = _state_from_value(verified)
         if thread_id in {str(item.get("threadId") or "") for item in verified_tombstones}:
             raise RuntimeError("CHAT_TURN_COMMIT_TOMBSTONED")
-        if _contains_message(verified_state, thread_id, message_id, role):
+        visible = _message(verified_state, thread_id, message_id, role)
+        if _exact_message(visible, text=expected_text, state_name=expected_state, metadata=metadata):
             return verified_revision
-        time.sleep(0.04 * (attempt + 1))
 
-    raise RuntimeError("CHAT_TURN_COMMIT_LOST_RACE")
+        # Another writer won after our PUT. Re-read/rebase on the next attempt
+        # rather than regenerating from stale state or bypassing durability.
+        _backoff(attempt)
+
+    trail = ",".join(str(value) for value in observed_revisions[-MAX_COMMIT_ATTEMPTS:])
+    raise RuntimeError(f"CHAT_TURN_COMMIT_LOST_RACE:revisions={trail}")
 
 
 def begin_turn(request: Request, payload: dict[str, Any]) -> CanonicalTurn:
@@ -201,7 +213,6 @@ def begin_turn(request: Request, payload: dict[str, Any]) -> CanonicalTurn:
     prompt = _bounded(payload.get("prompt"), 16000)
     if not request_id or not prompt:
         raise ValueError("CHAT_TURN_REQUEST_INVALID")
-
     thread_id = _bounded(payload.get("threadId"), 160) or _derived_id("thread", user_id, request_id)
     user_message_id = _bounded(payload.get("messageId"), 160) or _derived_id("message", request_id, thread_id, prompt)
     assistant_message_id = _bounded(payload.get("assistantMessageId"), 160) or _derived_id("assistant", request_id, thread_id)
