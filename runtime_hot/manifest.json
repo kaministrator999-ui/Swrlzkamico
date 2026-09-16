@@ -1,7 +1,5 @@
 {
   "schema": 1,
-  "revision": "2.1.59-hot-online-research-reasoning-v48",
-  "inferenceFiles": [
-    "r39_engine.py"
-  ]
+  "revision": "2.1.60-hot-evidence-aware-online-reasoning-v49",
+  "inferenceFiles": ["r39_engine.py"]
 }
