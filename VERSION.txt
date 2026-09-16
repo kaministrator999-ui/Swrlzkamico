@@ -10,6 +10,7 @@ WEB_CHAT=versions/web-chat.txt
 STREAM_CONTRACT=versions/stream-contract.txt
 LALM_UI=versions/lalm-ui.txt
 LALM_ENGINE=versions/lalm-engine.txt
+ONLINE_RESEARCH=versions/online-research.txt
 ADMIN_WEB=versions/admin-web.txt
 GOOGLE_ACCOUNT=versions/google-account.txt
 CLIENT_APK=versions/client-apk.txt
