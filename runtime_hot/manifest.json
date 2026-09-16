@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.57-hot-social-act-language-preference-v46",
+  "revision": "2.1.58-hot-conversation-trajectory-repair-v47",
   "inferenceFiles": [
     "r39_engine.py"
   ]
