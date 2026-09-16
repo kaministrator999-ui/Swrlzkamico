@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.56-hot-social-repetition-reasoning-v45",
+  "revision": "2.1.57-hot-social-act-language-preference-v46",
   "inferenceFiles": [
     "r39_engine.py"
   ]
