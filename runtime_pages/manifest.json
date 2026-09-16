@@ -1,11 +1,11 @@
 {
-  "version": 102,
+  "version": 103,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
-    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js","web/chat_same_tab_canonical_reconcile_v1.js"]},
+    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js","web/chat_same_tab_canonical_reconcile_v1.js","web/chat_language_preferences_v1.js"]},
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v102 repairs two Mask regressions observed on Android Chat. Same-tab canonical account-state adoption now updates the live Chat state directly instead of synthesizing a browser storage event that caused broad storage listeners and full-mask rerender behavior on every send. Closed native dialogs are explicitly contained so Bridge settings/runtime diagnostic text cannot bleed into or intercept taps in the conversation viewport. Server/account and LALM authority are unchanged."
+  "notes":"Manifest v103 adds an explicit Chat language-style setting. Clean language is the default; users may explicitly allow profanity. The Mask stores and relays only the factual preference while the LALM remains the cognitive authority for contextual language choice."
 }
