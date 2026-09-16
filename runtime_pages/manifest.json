@@ -1,5 +1,5 @@
 {
-  "version": 103,
+  "version": 104,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v103 adds an explicit Chat language-style setting. Clean language is the default; users may explicitly allow profanity. The Mask stores and relays only the factual preference while the LALM remains the cognitive authority for contextual language choice."
+  "notes":"Manifest v104 refreshes the Chat same-tab canonical reconciler. Canonical acknowledgements now defer while a turn is actively streaming and adopt visually equivalent server state without rebuilding the whole Chat mask, preventing the send-time black flash while preserving server authority."
 }
