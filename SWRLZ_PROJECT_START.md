@@ -10,14 +10,19 @@ When the user says **“start project work”**, **“resume project work”**, 
 2. Immediately read `SWRLZ_HOTFIX_RULES.md`.
 3. Immediately read `SWRLZ_VERSION_MODULE_EVOLUTION.md`.
 4. Immediately read `SWRLZ_SERVER_ROADMAP.md`.
-5. Treat those four files as the current operating and engineering contract before touching the repository.
-6. If the task touches Google sign-in, Google accounts, OAuth, account sessions, Chat account UI, browser auth state, or an auth regression, immediately read `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` before diagnosing or editing that flow.
-7. Fetch the current target file/commit state before making any edit.
-8. Fetch the current `VERSION.txt` module router and the authoritative `versions/<module-id>.txt` file for every module the requested work may affect, and record those authority values as the event baseline.
-9. Determine deployment capability from the **current repository/deployment configuration and workflows**, not from branch name alone.
-10. **Before making any repository mutation that can actually cause a deployment/redeployment, apply the Deployment Approval Gate below and obtain explicit user approval first.**
+5. Immediately read `SWRLZ_CHAT_CAMERA_LOGS.md` so live Chat diagnostics are read from the correct production observation source and correlated with repository instrumentation.
+6. Treat those five files as the current operating, engineering, and Chat-observation contract before touching the repository.
+7. If the task touches Google sign-in, Google accounts, OAuth, account sessions, Chat account UI, browser auth state, or an auth regression, immediately read `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` before diagnosing or editing that flow.
+8. Fetch the current target file/commit state before making any edit.
+9. Fetch the current `VERSION.txt` module router and the authoritative `versions/<module-id>.txt` file for every module the requested work may affect, and record those authority values as the event baseline.
+10. Determine deployment capability from the **current repository/deployment configuration and workflows**, not from branch name alone.
+11. **Before making any repository mutation that can actually cause a deployment/redeployment, apply the Deployment Approval Gate below and obtain explicit user approval first.**
 
 Do not ask the user to repeat these instructions unless the repository/files are genuinely inaccessible.
+
+## CHAT CAMERA / RUNTIME LOG RUNBOOK — REQUIRED
+
+`SWRLZ_CHAT_CAMERA_LOGS.md` is the persistent observation runbook for Chat diagnostics. GitHub contains the camera/instrumentation source; actual live Whole Conversation Camera and structured Chat/LALM observations are normally inspected in Vercel production runtime logs. Use request IDs, thread IDs, canonical revisions, engine versions, and terminal state to correlate a live turn. Do not confuse repository source with live runtime evidence, and do not claim production acceptance from source alone.
 
 ## GOOGLE ACCOUNT / OAUTH RUNBOOK — REQUIRED WHEN RELEVANT
 
@@ -65,7 +70,7 @@ A branch name by itself does **not** prove that a commit deploys. Before applyin
 
 ## REQUIRED DOCUMENT ORDER
 
-The project-start contract is intentionally structured as four layers:
+The project-start contract is intentionally structured as five layers:
 
 ```text
 1. SWRLZ_PROJECT_START.md
@@ -75,6 +80,8 @@ The project-start contract is intentionally structured as four layers:
 3. SWRLZ_VERSION_MODULE_EVOLUTION.md
    ↓
 4. SWRLZ_SERVER_ROADMAP.md
+   ↓
+5. SWRLZ_CHAT_CAMERA_LOGS.md
 ```
 
 ### Document 1 — Project Start
@@ -94,6 +101,10 @@ Defines how §wyrlz evolves as an engineered system. It governs overall Server v
 ### Document 4 — Server Roadmap
 
 Records the actual chronological Server/module release history and current version ledger.
+
+### Document 5 — Chat Camera Logs
+
+Defines where Chat/Whole Conversation Camera instrumentation lives, where live production observations are actually read, how to correlate a turn, and how to distinguish source facts, runtime facts, user-visible facts, and diagnosis.
 
 ## NON-NEGOTIABLE WORK RULE
 
@@ -418,6 +429,8 @@ READ SWRLZ_VERSION_MODULE_EVOLUTION.md
       ↓
 READ SWRLZ_SERVER_ROADMAP.md
       ↓
+READ SWRLZ_CHAT_CAMERA_LOGS.md
+      ↓
 IF GOOGLE ACCOUNT/OAUTH RELATED → READ docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md
       ↓
 FETCH VERSION.txt ROUTER
@@ -470,6 +483,7 @@ FAILURE → RECORD EVENT + CREATE NEXT VERSIONED EVENT
 - `SWRLZ_HOTFIX_RULES.md` — exact hotfix vs. redeploy boundary and safe editing rules.
 - `SWRLZ_VERSION_MODULE_EVOLUTION.md` — third required contract; formal Server/module evolution rules and future programming-LALM curriculum foundation.
 - `SWRLZ_SERVER_ROADMAP.md` — authoritative overall/component release history.
+- `SWRLZ_CHAT_CAMERA_LOGS.md` — required Chat observation runbook; maps repository instrumentation to live Vercel runtime logs and turn-correlation workflow.
 - `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` — required architecture, diagnostic, incident, and recovery reference for Google account/OAuth work.
 - `VERSION.txt` — router from stable module IDs to authoritative module-owned version files.
 - `versions/*.txt` — authoritative version/revision identity for each independently evolving structure.
@@ -478,4 +492,4 @@ If any of these documents conflict, stop and resolve the conflict against the ne
 
 ## BOTTOM LINE
 
-**Read `SWRLZ_PROJECT_START.md`, then automatically read `SWRLZ_HOTFIX_RULES.md`, `SWRLZ_VERSION_MODULE_EVOLUTION.md`, and `SWRLZ_SERVER_ROADMAP.md`. For Google account/OAuth work, also read `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` before diagnosing or editing that flow. Resolve current module versions through `VERSION.txt` and each module's own `versions/<module-id>.txt`. Capture those authorities as the event baseline, then re-read them immediately before version assignment/commit so concurrent updates are detected and reconciled rather than overwritten. Follow the hotfix/deployment boundary based on current deployment configuration and workflows, not branch name alone. Before any action that can actually cause deployment, STOP, explain exactly what would cause it and why, and obtain explicit user approval. Every server development event receives the Server lineage treatment required by the evolution contract; only actually changed components receive component bumps; independently evolving structures own their own version files; cross-module displays resolve those authorities automatically; failures remain in lineage; and the completed event is recorded in the roadmap before the work is declared done. Preserve the Mask / Human / Brain boundary: Chat relays and presents factual evidence, the Server owns operational/action authority, and the LALM owns cognition and interpretation.**
+**Read `SWRLZ_PROJECT_START.md`, then automatically read `SWRLZ_HOTFIX_RULES.md`, `SWRLZ_VERSION_MODULE_EVOLUTION.md`, `SWRLZ_SERVER_ROADMAP.md`, and `SWRLZ_CHAT_CAMERA_LOGS.md`. The Chat camera runbook establishes that GitHub contains instrumentation/source while live production camera observations are normally read from Vercel runtime logs and correlated by request/thread identity. For Google account/OAuth work, also read `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` before diagnosing or editing that flow. Resolve current module versions through `VERSION.txt` and each module's own `versions/<module-id>.txt`. Capture those authorities as the event baseline, then re-read them immediately before version assignment/commit so concurrent updates are detected and reconciled rather than overwritten. Follow the hotfix/deployment boundary based on current deployment configuration and workflows, not branch name alone. Before any action that can actually cause deployment, STOP, explain exactly what would cause it and why, and obtain explicit user approval. Every server development event receives the Server lineage treatment required by the evolution contract; only actually changed components receive component bumps; independently evolving structures own their own version files; cross-module displays resolve those authorities automatically; failures remain in lineage; and the completed event is recorded in the roadmap before the work is declared done. Preserve the Mask / Human / Brain boundary: Chat relays and presents factual evidence, the Server owns operational/action authority, and the LALM owns cognition and interpretation.**
