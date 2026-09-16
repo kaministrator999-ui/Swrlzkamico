@@ -1,5 +1,5 @@
 ID=server-runtime
-VERSION=2.3.181
+VERSION=2.3.182
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
