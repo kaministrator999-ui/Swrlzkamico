@@ -20,7 +20,7 @@ from fastapi.responses import JSONResponse
 
 from api.google_account import AuthenticationError, user_id_from_request
 
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.1.1"
 CONTRACT = "swrlz-chat-account-state-v1"
 MUTATION_CONTRACT = "swrlz-chat-account-mutation-v1"
 BLOB_API = "https://vercel.com/api/blob"
@@ -46,49 +46,78 @@ def _error(status: int, code: str, detail: str, **extra: Any) -> JSONResponse:
     return JSONResponse({"ok": False, "code": code, "detail": detail, **extra}, status_code=status, headers=_headers())
 
 
-def _blob_auth() -> tuple[str, str, str]:
+def _store_id_from_read_write_token(token: str) -> str:
+    # Current Vercel Blob read/write tokens encode the store id in the fourth
+    # underscore-delimited field. Treat any other shape as unusable instead of
+    # allowing a stale/malformed token to shadow deployment OIDC credentials.
+    pieces = token.split("_")
+    if len(pieces) <= 3:
+        return ""
+    return pieces[3].strip().removeprefix("store_")
+
+
+def _blob_auth_candidates() -> list[tuple[str, str, str]]:
+    """Return usable Blob credentials in failover order without exposing secrets."""
     read_write = os.environ.get("BLOB_READ_WRITE_TOKEN", "").strip()
     oidc = os.environ.get("VERCEL_OIDC_TOKEN", "").strip()
     configured_store = os.environ.get("BLOB_STORE_ID", "").strip().removeprefix("store_")
-    if read_write:
-        pieces = read_write.split("_")
-        store_id = (pieces[3] if len(pieces) > 3 else "").removeprefix("store_")
-        return read_write, store_id, "read-write"
+    candidates: list[tuple[str, str, str]] = []
+
+    # Prefer deployment OIDC when the store is explicitly known. Vercel rotates
+    # OIDC automatically, whereas a stale static token can remain present in the
+    # environment and otherwise shadow a healthy OIDC credential indefinitely.
     if oidc and configured_store:
-        return oidc, configured_store, "oidc"
-    return "", "", "unconfigured"
+        candidates.append((oidc, configured_store, "oidc"))
+
+    if read_write:
+        store_id = _store_id_from_read_write_token(read_write)
+        if store_id:
+            candidates.append((read_write, store_id, "read-write"))
+
+    return candidates
+
+
+def _blob_auth() -> tuple[str, str, str]:
+    candidates = _blob_auth_candidates()
+    return candidates[0] if candidates else ("", "", "unconfigured")
 
 
 def _path(user_id: str) -> str:
     return f"{PREFIX}/{hashlib.sha256(user_id.encode('utf-8')).hexdigest()}.json"
 
 
-def _read_blob(user_id: str) -> dict[str, Any] | None:
-    token, store_id, _ = _blob_auth()
-    if not token or not store_id:
-        raise RuntimeError("CHAT_STATE_BLOB_NOT_CONFIGURED")
+def _private_blob_url(store_id: str, user_id: str) -> str:
     pathname = urllib.parse.quote(_path(user_id), safe="/-._~")
-    url = f"https://{store_id}.private.blob.vercel-storage.com/{pathname}?cache=0&t={int(time.time()*1000)}"
-    response = requests.get(url, headers={"authorization": f"Bearer {token}"}, timeout=(3, 10))
-    if response.status_code == 404:
-        return None
-    response.raise_for_status()
-    if len(response.content) > MAX_STATE_BYTES:
-        raise RuntimeError("CHAT_STATE_TOO_LARGE")
-    value = response.json()
-    if not isinstance(value, dict) or value.get("contract") != CONTRACT or value.get("userId") != user_id:
-        raise RuntimeError("CHAT_STATE_INVALID")
-    return value
+    return f"https://{store_id}.private.blob.vercel-storage.com/{pathname}?cache=0&t={int(time.time()*1000)}"
 
 
-def _write_blob(user_id: str, value: dict[str, Any]) -> None:
-    token, store_id, _ = _blob_auth()
-    if not token or not store_id:
+def _read_blob(user_id: str) -> dict[str, Any] | None:
+    candidates = _blob_auth_candidates()
+    if not candidates:
         raise RuntimeError("CHAT_STATE_BLOB_NOT_CONFIGURED")
-    body = json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    if len(body) > MAX_STATE_BYTES:
-        raise RuntimeError("CHAT_STATE_TOO_LARGE")
-    headers = {
+
+    last_status = 0
+    for index, (token, store_id, _auth_kind) in enumerate(candidates):
+        response = requests.get(_private_blob_url(store_id, user_id), headers={"authorization": f"Bearer {token}"}, timeout=(3, 10))
+        if response.status_code == 404:
+            return None
+        if response.status_code in {401, 403} and index + 1 < len(candidates):
+            last_status = response.status_code
+            continue
+        if not response.ok:
+            raise RuntimeError(f"CHAT_STATE_BLOB_READ_HTTP_{response.status_code}")
+        if len(response.content) > MAX_STATE_BYTES:
+            raise RuntimeError("CHAT_STATE_TOO_LARGE")
+        value = response.json()
+        if not isinstance(value, dict) or value.get("contract") != CONTRACT or value.get("userId") != user_id:
+            raise RuntimeError("CHAT_STATE_INVALID")
+        return value
+
+    raise RuntimeError(f"CHAT_STATE_BLOB_READ_HTTP_{last_status or 403}")
+
+
+def _blob_write_headers(token: str, store_id: str) -> dict[str, str]:
+    return {
         "authorization": f"Bearer {token}",
         "x-vercel-blob-store-id": store_id,
         "x-api-version": "12",
@@ -101,9 +130,33 @@ def _write_blob(user_id: str, value: dict[str, Any]) -> None:
         "x-allow-overwrite": "1",
         "x-cache-control-max-age": "0",
     }
-    response = requests.put(BLOB_API + "/", params={"pathname": _path(user_id)}, headers=headers, data=body, timeout=(3, 12))
-    if not response.ok:
+
+
+def _write_blob(user_id: str, value: dict[str, Any]) -> None:
+    candidates = _blob_auth_candidates()
+    if not candidates:
+        raise RuntimeError("CHAT_STATE_BLOB_NOT_CONFIGURED")
+    body = json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    if len(body) > MAX_STATE_BYTES:
+        raise RuntimeError("CHAT_STATE_TOO_LARGE")
+
+    last_status = 0
+    for index, (token, store_id, _auth_kind) in enumerate(candidates):
+        response = requests.put(
+            BLOB_API + "/",
+            params={"pathname": _path(user_id)},
+            headers=_blob_write_headers(token, store_id),
+            data=body,
+            timeout=(3, 12),
+        )
+        if response.status_code in {401, 403} and index + 1 < len(candidates):
+            last_status = response.status_code
+            continue
+        if response.ok:
+            return
         raise RuntimeError(f"CHAT_STATE_BLOB_WRITE_HTTP_{response.status_code}")
+
+    raise RuntimeError(f"CHAT_STATE_BLOB_WRITE_HTTP_{last_status or 403}")
 
 
 def _clean_state(raw: Any) -> dict[str, Any]:
