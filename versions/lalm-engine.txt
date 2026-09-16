@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.60
-REVISION=2.1.60-hot-evidence-aware-online-reasoning-v49
+VERSION=2.1.61
+REVISION=2.1.61-hot-semantic-online-reasoner-v50
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
