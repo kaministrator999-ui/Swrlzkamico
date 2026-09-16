@@ -20,7 +20,7 @@ from fastapi.responses import JSONResponse
 
 from api.google_account import AuthenticationError, user_id_from_request
 
-APP_VERSION = "1.1.2"
+APP_VERSION = "1.1.3"
 CONTRACT = "swrlz-chat-account-state-v1"
 MUTATION_CONTRACT = "swrlz-chat-account-mutation-v1"
 BLOB_API = "https://vercel.com/api/blob"
@@ -78,6 +78,25 @@ def _blob_auth() -> tuple[str, str, str]:
     return candidates[0] if candidates else ("", "", "unconfigured")
 
 
+def _blob_trace(operation: str, auth_kind: str, attempt: int, candidate_count: int, status: int, duration_ms: int) -> None:
+    # Structured flight-recorder event. Never include credentials, user IDs,
+    # authorization headers, object paths, or private Blob URLs here.
+    store_source = "configured-store" if auth_kind in {"oidc", "read-write-configured-store"} else "token-derived-store"
+    print(json.dumps({
+        "camera": "chat-state-blob",
+        "event": "BLOB_ATTEMPT_COMPLETE",
+        "at": int(time.time() * 1000),
+        "operation": operation,
+        "attempt": attempt,
+        "candidateCount": candidate_count,
+        "authKind": auth_kind,
+        "storeSource": store_source,
+        "httpStatus": status,
+        "durationMs": duration_ms,
+        "credentialMaterialLogged": False,
+    }, separators=(",", ":")), flush=True)
+
+
 def _path(user_id: str) -> str:
     return f"{PREFIX}/{hashlib.sha256(user_id.encode('utf-8')).hexdigest()}.json"
 
@@ -92,8 +111,10 @@ def _read_blob(user_id: str) -> dict[str, Any] | None:
     if not candidates:
         raise RuntimeError("CHAT_STATE_BLOB_NOT_CONFIGURED")
     last_status = 0
-    for index, (token, store_id, _auth_kind) in enumerate(candidates):
+    for index, (token, store_id, auth_kind) in enumerate(candidates):
+        started = time.monotonic()
         response = requests.get(_private_blob_url(store_id, user_id), headers={"authorization": f"Bearer {token}"}, timeout=(3, 10))
+        _blob_trace("READ", auth_kind, index + 1, len(candidates), response.status_code, int((time.monotonic() - started) * 1000))
         if response.status_code == 404:
             return None
         if response.status_code in {401, 403} and index + 1 < len(candidates):
@@ -134,8 +155,10 @@ def _write_blob(user_id: str, value: dict[str, Any]) -> None:
     if len(body) > MAX_STATE_BYTES:
         raise RuntimeError("CHAT_STATE_TOO_LARGE")
     last_status = 0
-    for index, (token, store_id, _auth_kind) in enumerate(candidates):
+    for index, (token, store_id, auth_kind) in enumerate(candidates):
+        started = time.monotonic()
         response = requests.put(BLOB_API + "/", params={"pathname": _path(user_id)}, headers=_blob_write_headers(token, store_id), data=body, timeout=(3, 12))
+        _blob_trace("WRITE", auth_kind, index + 1, len(candidates), response.status_code, int((time.monotonic() - started) * 1000))
         if response.status_code in {401, 403} and index + 1 < len(candidates):
             last_status = response.status_code
             continue
