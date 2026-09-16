@@ -20,7 +20,7 @@ from fastapi.responses import JSONResponse
 
 from api.google_account import AuthenticationError, user_id_from_request
 
-APP_VERSION = "1.1.1"
+APP_VERSION = "1.1.2"
 CONTRACT = "swrlz-chat-account-state-v1"
 MUTATION_CONTRACT = "swrlz-chat-account-mutation-v1"
 BLOB_API = "https://vercel.com/api/blob"
@@ -58,12 +58,18 @@ def _blob_auth_candidates() -> list[tuple[str, str, str]]:
     oidc = os.environ.get("VERCEL_OIDC_TOKEN", "").strip()
     configured_store = os.environ.get("BLOB_STORE_ID", "").strip().removeprefix("store_")
     candidates: list[tuple[str, str, str]] = []
-    if oidc and configured_store:
-        candidates.append((oidc, configured_store, "oidc"))
+    seen: set[tuple[str, str]] = set()
+
+    def add(token: str, store_id: str, auth_kind: str) -> None:
+        key = (token, store_id)
+        if token and store_id and key not in seen:
+            seen.add(key)
+            candidates.append((token, store_id, auth_kind))
+
+    add(oidc, configured_store, "oidc")
+    add(read_write, configured_store, "read-write-configured-store")
     if read_write:
-        store_id = _store_id_from_read_write_token(read_write)
-        if store_id:
-            candidates.append((read_write, store_id, "read-write"))
+        add(read_write, _store_id_from_read_write_token(read_write), "read-write-token-store")
     return candidates
 
 
