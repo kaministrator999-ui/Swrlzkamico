@@ -1,11 +1,11 @@
 {
-  "version": 107,
+  "version": 108,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
-    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js","web/chat_same_tab_canonical_reconcile_v1.js","web/chat_language_preferences_v1.js","web/chat_online_research_v1.js"]},
+    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js","web/chat_same_tab_canonical_reconcile_v1.js","web/chat_terminal_transcript_recovery_v1.js","web/chat_language_preferences_v1.js","web/chat_online_research_v1.js"]},
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v107 advances the Chat runtime asset revision so the cooperative loader cache-busts its functional children, including terminal-integrity v2 and turn-integrity v3.2. Empty terminal snapshots are no longer sufficient terminal authority; a non-empty assistant payload must exist before the Mask can settle a response as completed."
+  "notes":"Manifest v108 adds canonical terminal transcript recovery. When the Mask locally reaches an empty failed/complete assistant state while the server transcript has already committed a non-empty COMPLETED response, Chat rehydrates that exact canonical text, clears the synthetic transport failure, and records recovery camera receipts. Server/LALM semantics are not rewritten."
 }
