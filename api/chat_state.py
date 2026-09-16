@@ -20,7 +20,7 @@ from fastapi.responses import JSONResponse
 
 from api.google_account import AuthenticationError, user_id_from_request
 
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.1.1"
 CONTRACT = "swrlz-chat-account-state-v1"
 MUTATION_CONTRACT = "swrlz-chat-account-mutation-v1"
 BLOB_API = "https://vercel.com/api/blob"
@@ -46,49 +46,66 @@ def _error(status: int, code: str, detail: str, **extra: Any) -> JSONResponse:
     return JSONResponse({"ok": False, "code": code, "detail": detail, **extra}, status_code=status, headers=_headers())
 
 
-def _blob_auth() -> tuple[str, str, str]:
+def _store_id_from_read_write_token(token: str) -> str:
+    pieces = token.split("_")
+    if len(pieces) <= 3:
+        return ""
+    return pieces[3].strip().removeprefix("store_")
+
+
+def _blob_auth_candidates() -> list[tuple[str, str, str]]:
     read_write = os.environ.get("BLOB_READ_WRITE_TOKEN", "").strip()
     oidc = os.environ.get("VERCEL_OIDC_TOKEN", "").strip()
     configured_store = os.environ.get("BLOB_STORE_ID", "").strip().removeprefix("store_")
-    if read_write:
-        pieces = read_write.split("_")
-        store_id = (pieces[3] if len(pieces) > 3 else "").removeprefix("store_")
-        return read_write, store_id, "read-write"
+    candidates: list[tuple[str, str, str]] = []
     if oidc and configured_store:
-        return oidc, configured_store, "oidc"
-    return "", "", "unconfigured"
+        candidates.append((oidc, configured_store, "oidc"))
+    if read_write:
+        store_id = _store_id_from_read_write_token(read_write)
+        if store_id:
+            candidates.append((read_write, store_id, "read-write"))
+    return candidates
+
+
+def _blob_auth() -> tuple[str, str, str]:
+    candidates = _blob_auth_candidates()
+    return candidates[0] if candidates else ("", "", "unconfigured")
 
 
 def _path(user_id: str) -> str:
     return f"{PREFIX}/{hashlib.sha256(user_id.encode('utf-8')).hexdigest()}.json"
 
 
-def _read_blob(user_id: str) -> dict[str, Any] | None:
-    token, store_id, _ = _blob_auth()
-    if not token or not store_id:
-        raise RuntimeError("CHAT_STATE_BLOB_NOT_CONFIGURED")
+def _private_blob_url(store_id: str, user_id: str) -> str:
     pathname = urllib.parse.quote(_path(user_id), safe="/-._~")
-    url = f"https://{store_id}.private.blob.vercel-storage.com/{pathname}?cache=0&t={int(time.time()*1000)}"
-    response = requests.get(url, headers={"authorization": f"Bearer {token}"}, timeout=(3, 10))
-    if response.status_code == 404:
-        return None
-    response.raise_for_status()
-    if len(response.content) > MAX_STATE_BYTES:
-        raise RuntimeError("CHAT_STATE_TOO_LARGE")
-    value = response.json()
-    if not isinstance(value, dict) or value.get("contract") != CONTRACT or value.get("userId") != user_id:
-        raise RuntimeError("CHAT_STATE_INVALID")
-    return value
+    return f"https://{store_id}.private.blob.vercel-storage.com/{pathname}?cache=0&t={int(time.time()*1000)}"
 
 
-def _write_blob(user_id: str, value: dict[str, Any]) -> None:
-    token, store_id, _ = _blob_auth()
-    if not token or not store_id:
+def _read_blob(user_id: str) -> dict[str, Any] | None:
+    candidates = _blob_auth_candidates()
+    if not candidates:
         raise RuntimeError("CHAT_STATE_BLOB_NOT_CONFIGURED")
-    body = json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    if len(body) > MAX_STATE_BYTES:
-        raise RuntimeError("CHAT_STATE_TOO_LARGE")
-    headers = {
+    last_status = 0
+    for index, (token, store_id, _auth_kind) in enumerate(candidates):
+        response = requests.get(_private_blob_url(store_id, user_id), headers={"authorization": f"Bearer {token}"}, timeout=(3, 10))
+        if response.status_code == 404:
+            return None
+        if response.status_code in {401, 403} and index + 1 < len(candidates):
+            last_status = response.status_code
+            continue
+        if not response.ok:
+            raise RuntimeError(f"CHAT_STATE_BLOB_READ_HTTP_{response.status_code}")
+        if len(response.content) > MAX_STATE_BYTES:
+            raise RuntimeError("CHAT_STATE_TOO_LARGE")
+        value = response.json()
+        if not isinstance(value, dict) or value.get("contract") != CONTRACT or value.get("userId") != user_id:
+            raise RuntimeError("CHAT_STATE_INVALID")
+        return value
+    raise RuntimeError(f"CHAT_STATE_BLOB_READ_HTTP_{last_status or 403}")
+
+
+def _blob_write_headers(token: str, store_id: str) -> dict[str, str]:
+    return {
         "authorization": f"Bearer {token}",
         "x-vercel-blob-store-id": store_id,
         "x-api-version": "12",
@@ -101,9 +118,25 @@ def _write_blob(user_id: str, value: dict[str, Any]) -> None:
         "x-allow-overwrite": "1",
         "x-cache-control-max-age": "0",
     }
-    response = requests.put(BLOB_API + "/", params={"pathname": _path(user_id)}, headers=headers, data=body, timeout=(3, 12))
-    if not response.ok:
+
+
+def _write_blob(user_id: str, value: dict[str, Any]) -> None:
+    candidates = _blob_auth_candidates()
+    if not candidates:
+        raise RuntimeError("CHAT_STATE_BLOB_NOT_CONFIGURED")
+    body = json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    if len(body) > MAX_STATE_BYTES:
+        raise RuntimeError("CHAT_STATE_TOO_LARGE")
+    last_status = 0
+    for index, (token, store_id, _auth_kind) in enumerate(candidates):
+        response = requests.put(BLOB_API + "/", params={"pathname": _path(user_id)}, headers=_blob_write_headers(token, store_id), data=body, timeout=(3, 12))
+        if response.status_code in {401, 403} and index + 1 < len(candidates):
+            last_status = response.status_code
+            continue
+        if response.ok:
+            return
         raise RuntimeError(f"CHAT_STATE_BLOB_WRITE_HTTP_{response.status_code}")
+    raise RuntimeError(f"CHAT_STATE_BLOB_WRITE_HTTP_{last_status or 403}")
 
 
 def _clean_state(raw: Any) -> dict[str, Any]:
@@ -132,27 +165,8 @@ def _clean_state(raw: Any) -> dict[str, Any]:
             if not message_id or message_id in seen_messages or role not in {"user", "assistant"}:
                 continue
             seen_messages.add(message_id)
-            messages.append(
-                {
-                    "id": message_id,
-                    "role": role,
-                    "text": str(msg.get("text") or "")[:200000],
-                    "createdAt": int(msg.get("createdAt") or 0),
-                    "state": str(msg.get("state") or "complete")[:32],
-                    "pinned": bool(msg.get("pinned")),
-                    "meta": msg.get("meta") if isinstance(msg.get("meta"), dict) else {},
-                }
-            )
-        threads.append(
-            {
-                "id": thread_id,
-                "title": str(item.get("title") or "New conversation").strip()[:120] or "New conversation",
-                "createdAt": int(item.get("createdAt") or 0),
-                "updatedAt": int(item.get("updatedAt") or 0),
-                "pinned": bool(item.get("pinned")),
-                "messages": messages,
-            }
-        )
+            messages.append({"id": message_id, "role": role, "text": str(msg.get("text") or "")[:200000], "createdAt": int(msg.get("createdAt") or 0), "state": str(msg.get("state") or "complete")[:32], "pinned": bool(msg.get("pinned")), "meta": msg.get("meta") if isinstance(msg.get("meta"), dict) else {}})
+        threads.append({"id": thread_id, "title": str(item.get("title") or "New conversation").strip()[:120] or "New conversation", "createdAt": int(item.get("createdAt") or 0), "updatedAt": int(item.get("updatedAt") or 0), "pinned": bool(item.get("pinned")), "messages": messages})
     current_id = str(raw.get("currentId") or "").strip()[:160]
     if current_id not in seen_threads:
         current_id = threads[0]["id"] if threads else ""
@@ -202,14 +216,7 @@ def _user(request: Request) -> str:
 
 
 def _mutation_response(*, revision: int, state: dict[str, Any] | None, updated_at: int = 0, conflict: bool = False) -> JSONResponse:
-    payload: dict[str, Any] = {
-        "ok": not conflict,
-        "contract": CONTRACT,
-        "mutationContract": MUTATION_CONTRACT,
-        "revision": revision,
-        "snapshotWriteAuthority": "retired",
-        "stateAuthority": "server",
-    }
+    payload: dict[str, Any] = {"ok": not conflict, "contract": CONTRACT, "mutationContract": MUTATION_CONTRACT, "revision": revision, "snapshotWriteAuthority": "retired", "stateAuthority": "server"}
     if updated_at:
         payload["updatedAt"] = updated_at
     if state is not None:
@@ -234,7 +241,6 @@ def _apply_mutation(state: dict[str, Any], tombstones: list[dict[str, Any]], ope
         raise ValueError("mutation.type is required")
     tombstone_ids = {str(item.get("threadId") or "") for item in tombstones}
     changed = False
-
     if op == "UPSERT_THREAD":
         if not thread_id:
             raise ValueError("threadId is required")
@@ -250,25 +256,20 @@ def _apply_mutation(state: dict[str, Any], tombstones: list[dict[str, Any]], ope
             changed = True
         else:
             if thread.get("title") != title:
-                thread["title"] = title
-                changed = True
+                thread["title"] = title; changed = True
             if bool(thread.get("pinned")) != pinned:
-                thread["pinned"] = pinned
-                changed = True
+                thread["pinned"] = pinned; changed = True
             if changed:
                 thread["updatedAt"] = stamp
-
     elif op == "DELETE_THREAD":
         if not thread_id:
             raise ValueError("threadId is required")
         before = len(state.get("threads", []))
         state["threads"] = [thread for thread in state.get("threads", []) if thread.get("id") != thread_id]
         if len(state["threads"]) != before or thread_id not in tombstone_ids:
-            tombstones = _clean_tombstones([*tombstones, {"threadId": thread_id, "deletedAt": stamp}])
-            changed = True
+            tombstones = _clean_tombstones([*tombstones, {"threadId": thread_id, "deletedAt": stamp}]); changed = True
         if state.get("currentId") == thread_id:
             state["currentId"] = state["threads"][0]["id"] if state["threads"] else ""
-
     elif op == "SET_CURRENT_THREAD":
         if not thread_id:
             new_value = ""
@@ -277,9 +278,7 @@ def _apply_mutation(state: dict[str, Any], tombstones: list[dict[str, Any]], ope
                 raise ValueError("CHAT_STATE_THREAD_NOT_FOUND")
             new_value = thread_id
         if state.get("currentId") != new_value:
-            state["currentId"] = new_value
-            changed = True
-
+            state["currentId"] = new_value; changed = True
     elif op == "SET_MESSAGE_PINNED":
         if not thread_id:
             raise ValueError("threadId is required")
@@ -294,13 +293,9 @@ def _apply_mutation(state: dict[str, Any], tombstones: list[dict[str, Any]], ope
             raise ValueError("CHAT_STATE_MESSAGE_NOT_FOUND")
         pinned = bool(operation.get("pinned"))
         if bool(message.get("pinned")) != pinned:
-            message["pinned"] = pinned
-            thread["updatedAt"] = stamp
-            changed = True
-
+            message["pinned"] = pinned; thread["updatedAt"] = stamp; changed = True
     else:
         raise ValueError("CHAT_STATE_MUTATION_UNSUPPORTED")
-
     state = _apply_tombstones(_clean_state(state), tombstones)
     return changed, state, tombstones
 
@@ -312,17 +307,7 @@ async def get_state(request: Request):
         value = _read_blob(user_id)
         token, store_id, auth_kind = _blob_auth()
         revision, state, _ = _state_value(value)
-        return JSONResponse({
-            "ok": True,
-            "contract": CONTRACT,
-            "mutationContract": MUTATION_CONTRACT,
-            "revision": revision,
-            "updatedAt": int(value.get("updatedAt") or 0) if value else 0,
-            "state": state if value else None,
-            "stateAuthority": "server",
-            "snapshotWriteAuthority": "retired",
-            "storage": {"configured": bool(token and store_id), "access": "private", "authKind": auth_kind},
-        }, headers=_headers())
+        return JSONResponse({"ok": True, "contract": CONTRACT, "mutationContract": MUTATION_CONTRACT, "revision": revision, "updatedAt": int(value.get("updatedAt") or 0) if value else 0, "state": state if value else None, "stateAuthority": "server", "snapshotWriteAuthority": "retired", "storage": {"configured": bool(token and store_id), "access": "private", "authKind": auth_kind}}, headers=_headers())
     except AuthenticationError as exc:
         return _error(401, "ACCOUNT_SESSION_INVALID", str(exc))
     except Exception as exc:
@@ -344,24 +329,21 @@ async def mutate_state(request: Request):
             return _error(400, "CHAT_STATE_MUTATION_INVALID", f"operations must contain 1..{MAX_MUTATIONS} items")
         if not all(isinstance(item, dict) for item in raw_operations):
             return _error(400, "CHAT_STATE_MUTATION_INVALID", "Every operation must be an object.")
-
-        expected = int(payload.get("baseRevision") or 0)
+        expected_revision = int(payload.get("expectedRevision") or 0)
         current = _read_blob(user_id)
-        current_revision, state, tombstones = _state_value(current)
-        if expected != current_revision:
-            return _mutation_response(revision=current_revision, state=state, conflict=True)
-
+        revision, state, tombstones = _state_value(current)
+        if expected_revision != revision:
+            return _mutation_response(revision=revision, state=state, updated_at=int(current.get("updatedAt") or 0) if current else 0, conflict=True)
         stamp = int(time.time() * 1000)
-        changed_any = False
+        changed = False
         for operation in raw_operations:
-            changed, state, tombstones = _apply_mutation(state, tombstones, operation, stamp)
-            changed_any = changed_any or changed
-
-        if not changed_any:
-            return _mutation_response(revision=current_revision, state=state, updated_at=int(current.get("updatedAt") or 0) if current else 0)
-
-        next_revision = current_revision + 1
-        _write_blob(user_id, {"contract": CONTRACT, "userId": user_id, "revision": next_revision, "updatedAt": stamp, "state": state, "tombstones": tombstones})
+            item_changed, state, tombstones = _apply_mutation(state, tombstones, operation, stamp)
+            changed = changed or item_changed
+        if not changed:
+            return _mutation_response(revision=revision, state=state, updated_at=int(current.get("updatedAt") or 0) if current else stamp)
+        next_revision = revision + 1
+        record = {"contract": CONTRACT, "mutationContract": MUTATION_CONTRACT, "userId": user_id, "revision": next_revision, "updatedAt": stamp, "state": state, "tombstones": tombstones}
+        _write_blob(user_id, record)
         return _mutation_response(revision=next_revision, state=state, updated_at=stamp)
     except AuthenticationError as exc:
         return _error(401, "ACCOUNT_SESSION_INVALID", str(exc))
@@ -369,12 +351,3 @@ async def mutate_state(request: Request):
         return _error(400, "CHAT_STATE_MUTATION_INVALID", str(exc))
     except Exception as exc:
         return _error(503, "CHAT_STATE_MUTATION_FAILED", f"{type(exc).__name__}: {exc}")
-
-
-@app.put("/api/chat_state", include_in_schema=False)
-async def put_state(request: Request):
-    try:
-        _user(request)
-        return _error(410, "CHAT_STATE_SNAPSHOT_WRITE_RETIRED", "Whole-state browser writes are retired. Refresh Chat to use server-owned state mutations.", mutationContract=MUTATION_CONTRACT, snapshotWriteAuthority="retired", stateAuthority="server")
-    except AuthenticationError as exc:
-        return _error(401, "ACCOUNT_SESSION_INVALID", str(exc))
