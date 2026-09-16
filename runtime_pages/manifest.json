@@ -1,5 +1,5 @@
 {
-  "version": 105,
+  "version": 106,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v105 adds the explicit Chat Online research control. The Mask relays the user's research request through profileId; query formulation, evidence evaluation, and research reasoning remain Brain-owned."
+  "notes":"Manifest v106 refreshes Chat account-state synchronization. Canonical hydration now updates the browser cache and lets the same-tab reconciler adopt authoritative state in-place; hydration no longer calls location.reload(), preventing account-state revisions from restarting the entire Chat document and runtime/theme boot chain."
 }
