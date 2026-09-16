@@ -20,6 +20,7 @@
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.id = "onlineResearch";
+  checkbox.checked = true;
   checkbox.setAttribute("aria-label", "Use online research");
   const glyph = document.createElement("span"); glyph.textContent = "⌕";
   const text = document.createElement("span"); text.className = "online-research-label"; text.textContent = "Online";
@@ -54,7 +55,6 @@
     RESEARCH_COMPARING: "Comparing evidence",
     RESEARCH_SYNTHESIS: "Synthesizing verified findings"
   };
-  const originalTextContent = Object.getOwnPropertyDescriptor(Node.prototype, "textContent");
   // No cognition is performed here. Existing stream phases remain server/Brain-authored;
   // this table only gives research phases readable Mask labels when they arrive.
   window.SWRLZ_RESEARCH_PHASE_LABELS = Object.freeze(phaseLabels);
@@ -67,4 +67,5 @@
   };
   checkbox.addEventListener("change", emit);
   apply();
+  emit();
 })();
