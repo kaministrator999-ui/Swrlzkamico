@@ -2,16 +2,34 @@
 
 if(window.__swrlzSameTabCanonicalReconcileV1)return;
 const STORAGE_KEY='swrlz.vercel.chat.v1';
-const ctl={contract:'swrlz-same-tab-canonical-reconcile-v3',lastSnapshot:'',applied:0,quietAdoptions:0,deferredActive:0,lastError:''};
+const ctl={contract:'swrlz-same-tab-canonical-reconcile-v4',lastSnapshot:'',applied:0,quietAdoptions:0,deferredActive:0,terminalTextRepairs:0,lastError:''};
 window.__swrlzSameTabCanonicalReconcileV1=ctl;
 
 const dbg=(m,d)=>{try{window.__swrlzDebug?.log('same-tab-reconcile',m,d)}catch(_){}};
 function parse(v){try{const x=JSON.parse(v||'null');return x&&x.version===1&&Array.isArray(x.threads)?x:null}catch{return null}}
 function requestIdOf(message){return String(message?.meta?.requestId||'')}
 function terminal(message){if(message?.role!=='assistant')return false;const s=String(message?.state||'').toLowerCase();if(['complete','cancelled','failed'].includes(s))return true;const meta=message?.meta||{};if(String(meta.commitPhase||'').toUpperCase()==='TERMINAL')return true;return ['COMPLETED','CANCELLED','FAILED'].includes(String(meta.terminalType||'').toUpperCase())}
+function completed(message){if(message?.role!=='assistant')return false;const s=String(message?.state||'').toLowerCase(),meta=message?.meta||{};if(s==='complete')return true;if(String(meta.terminalType||'').toUpperCase()==='COMPLETED')return true;return String(meta.commitPhase||'').toUpperCase()==='TERMINAL'&&String(meta.phase||meta.rawPhase||'').toUpperCase()==='COMPLETE'}
 function terminalForRequest(snapshot,requestId){if(!snapshot||!requestId)return null;for(const thread of snapshot.threads||[])for(const message of thread.messages||[])if(message?.role==='assistant'&&requestIdOf(message)===requestId&&terminal(message))return {thread,message};return null}
 function activeRequest(){try{return typeof active!=='undefined'&&active?.requestId?String(active.requestId):''}catch(_){return ''}}
 function liveState(){try{return typeof state!=='undefined'?state:null}catch(_){return null}}
+function localAssistantFor(snapshotThread,message){if(!snapshotThread||message?.role!=='assistant')return null;const rid=requestIdOf(message);if(rid){const byRequest=(snapshotThread.messages||[]).find(m=>m?.role==='assistant'&&requestIdOf(m)===rid);if(byRequest)return byRequest}return (snapshotThread.messages||[]).find(m=>String(m?.id||'')===String(message?.id||''))||null}
+function preserveCompletedAssistantText(snapshot,prior){
+  if(!snapshot||!prior)return {snapshot,repairs:[]};
+  const priorThreads=new Map((prior.threads||[]).filter(t=>t?.id).map(t=>[String(t.id),t])),repairs=[];
+  const repaired={...snapshot,threads:(snapshot.threads||[]).map(remoteThread=>{
+    const priorThread=priorThreads.get(String(remoteThread?.id||''));if(!priorThread)return remoteThread;
+    return {...remoteThread,messages:(remoteThread.messages||[]).map(remoteMessage=>{
+      if(remoteMessage?.role!=='assistant'||String(remoteMessage.text||'')||!completed(remoteMessage))return remoteMessage;
+      const priorMessage=localAssistantFor(priorThread,remoteMessage);
+      if(!priorMessage||!String(priorMessage.text||'')||!completed(priorMessage))return remoteMessage;
+      const rid=requestIdOf(remoteMessage)||requestIdOf(priorMessage);
+      repairs.push({threadId:String(remoteThread.id||''),messageId:String(remoteMessage.id||''),requestId:rid,chars:String(priorMessage.text||'').length});
+      return {...remoteMessage,text:String(priorMessage.text||''),state:'complete',meta:{...(remoteMessage.meta||{}),...(priorMessage.meta||{}),requestId:rid,phase:'COMPLETE',rawPhase:'COMPLETE',error:'',workLabel:'✅ Response complete',canonicalTextRepair:{contract:'same-tab-terminal-text-monotonic-v1',reason:'canonical-snapshot-empty-after-visible-completed-text',at:Date.now()}}};
+    })};
+  })};
+  return {snapshot:repaired,repairs};
+}
 function settleActiveFromServer(snapshot){
   const requestId=activeRequest();if(!requestId)return false;
   const match=terminalForRequest(snapshot,requestId);if(!match)return false;
@@ -45,14 +63,20 @@ function adoptIntoLiveMask(snapshot){
 function adopt(reason){
   try{
     const raw=localStorage.getItem(STORAGE_KEY)||'';if(!raw||raw===ctl.lastSnapshot)return;
-    const snapshot=parse(raw);if(!snapshot)return;
-    ctl.lastSnapshot=raw;
+    const parsed=parse(raw);if(!parsed)return;
+    const prior=liveState(),repair=preserveCompletedAssistantText(parsed,prior),snapshot=repair.snapshot;
+    if(repair.repairs.length){
+      ctl.terminalTextRepairs+=repair.repairs.length;
+      const repairedRaw=JSON.stringify(snapshot);ctl.lastSnapshot=repairedRaw;
+      try{localStorage.setItem(STORAGE_KEY,repairedRaw)}catch(_){ }
+      dbg('completed-assistant-text-preserved',{reason,repairs:repair.repairs,totalRepairs:ctl.terminalTextRepairs});
+    }else ctl.lastSnapshot=raw;
     const requestId=activeRequest(),hasTerminal=requestId?!!terminalForRequest(snapshot,requestId):false;
     if(requestId&&!hasTerminal){ctl.deferredActive++;dbg('same-tab-cache-deferred-active',{reason,requestId,deferredActive:ctl.deferredActive});return}
     const settled=settleActiveFromServer(snapshot);
     const adoption=adoptIntoLiveMask(snapshot);
     ctl.applied++;
-    dbg('same-tab-cache-adopted',{reason,settledActive:settled,direct:adoption.applied,mode:adoption.mode,currentId:String(snapshot.currentId||''),threads:snapshot.threads.length,applied:ctl.applied,quietAdoptions:ctl.quietAdoptions});
+    dbg('same-tab-cache-adopted',{reason,settledActive:settled,direct:adoption.applied,mode:adoption.mode,currentId:String(snapshot.currentId||''),threads:snapshot.threads.length,applied:ctl.applied,quietAdoptions:ctl.quietAdoptions,terminalTextRepairs:ctl.terminalTextRepairs});
   }catch(e){ctl.lastError=String(e?.message||e);dbg('same-tab-cache-adopt-failed',{reason,error:ctl.lastError})}
 }
 function boot(){ctl.lastSnapshot=localStorage.getItem(STORAGE_KEY)||'';setInterval(()=>adopt('cache-change'),250);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(()=>adopt('visible'),0)});window.addEventListener('online',()=>setTimeout(()=>adopt('online'),0))}
