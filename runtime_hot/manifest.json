@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.52-hot-collision-safe-server-telemetry-v41",
+  "revision": "2.1.56-hot-social-repetition-reasoning-v45",
   "inferenceFiles": [
     "r39_engine.py"
   ]
