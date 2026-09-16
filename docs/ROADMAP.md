@@ -2,6 +2,16 @@
 
 ## Current release
 
+**Server 2.3.191 / LALM Engine 2.1.62 — evidence-preserving reasoning recovery**
+
+**Status: runtime-hot LALM update published; live acceptance verification in progress.**
+
+R39 v51 extends the v50 semantic reasoner with a bounded conversational recovery contract learned from a correction-heavy reasoning trace. Sparse user cues are treated as possible directional evidence: the Brain first tries the smallest interpretation, traverses active context for the missing rung, and reconstructs independently instead of requiring the user to hand it the destination. Observation, inference, and unknown are kept distinct. Corrections preserve still-valid prior state and replace only the disproven assumption, retaining the failure path rather than rewriting history. The reasoner prefers invariant mechanism over surface taxonomy when that is the user's actual point while preserving technically meaningful distinctions. Tiny referent questions or repetition can function as comprehension checksums. Agreement/paraphrase are treated as weaker comprehension evidence than a novel inference that survives the evidence boundary. Corroborating routes may raise confidence without being misrepresented as independent proof. Core invariant: **do not invent the hidden object; do not ignore its shadow; follow evidence far enough to discover something new, but never farther than the evidence can carry you.** Runtime entrypoint advances to R39 v51. Chat UI/protocol is unchanged, so Web Chat is not bumped. Deployment/restart: NONE.
+
+Event baseline: Server 2.3.190 (`versions/server-runtime.txt` SHA `aea762d8236dadc460326a790ef67b6779acdc28`), LALM Engine 2.1.61 (`versions/lalm-engine.txt` SHA `7589229936bd9551b25fde2d4b28b87cade07844`), R39 v50 entrypoint SHA `ffc9889d54b8986aa969a00da37a5dd8ca2a3d22`. Authorities were re-read immediately before assignment and remained unchanged.
+
+## Previous release context
+
 **Server 2.3.134 / Web Chat 1.5.12 — mobile composer reading mode + balanced message width**
 
 **Status: runtime-hot Chat UI update published; mobile visual/tactile acceptance pending refresh.**
