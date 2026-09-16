@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "revision": "2.1.58-hot-conversation-trajectory-repair-v47",
+  "revision": "2.1.59-hot-online-research-reasoning-v48",
   "inferenceFiles": [
     "r39_engine.py"
   ]
