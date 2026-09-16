@@ -1,11 +1,11 @@
 {
-  "version": 108,
+  "version": 109,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
-    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js","web/chat_same_tab_canonical_reconcile_v1.js","web/chat_terminal_transcript_recovery_v1.js","web/chat_language_preferences_v1.js","web/chat_online_research_v1.js"]},
+    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js","web/chat_same_tab_canonical_reconcile_v1.js","web/chat_terminal_transcript_recovery_v1.js","web/chat_activity_expansion_state_v1.js","web/chat_language_preferences_v1.js","web/chat_online_research_v1.js"]},
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v108 adds canonical terminal transcript recovery. When the Mask locally reaches an empty failed/complete assistant state while the server transcript has already committed a non-empty COMPLETED response, Chat rehydrates that exact canonical text, clears the synthetic transport failure, and records recovery camera receipts. Server/LALM semantics are not rewritten."
+  "notes":"Manifest v109 makes terminal transcript recovery user-visible-state safe and persists Activity log expansion. Empty local stream failures are held as a recovering state while bounded canonical transcript checks run; a real error is exposed only after recovery is exhausted. User-opened Activity logs remain open across message rerenders and stream updates until the user closes them."
 }
