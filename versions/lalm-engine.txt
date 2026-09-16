@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.54
-REVISION=2.1.54-hot-contextual-swyrlz-social-voice-v43
+VERSION=2.1.55
+REVISION=2.1.55-hot-social-recent-reply-anti-repeat-v44
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
