@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.84
-REVISION=2.1.84-hot-coding-inference-failure-detail-v72
+VERSION=2.1.85
+REVISION=2.1.85-hot-ngram-numpy-namespace-repair-v73
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
