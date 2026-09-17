@@ -1,5 +1,5 @@
 {
-  "version": 133,
+  "version": 134,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v133 activates Chat 1.5.73 terminal-stable Activity Log ownership. The canonical Activity controller now recreates traces for completed assistant turns with retained activity history, observes transient open-attribute mutations from incremental streaming, and reasserts the persisted message.meta.activityExpanded state so live repaint and terminal replacement cannot silently change the user's Activity Log state."
+  "notes":"Manifest v134 activates Chat 1.5.74 user-owned Activity Log state. The visible Activity Log no longer uses native details/summary toggling: message.meta.activityExpanded is initialized once and may only be changed by the user-facing Activity button. Streaming, terminal replacement, MutationObserver reconciliation, and legacy incremental traces are read-only with respect to that state. Legacy details traces are hidden from presentation so their historical open writes cannot fight the canonical panel."
 }
