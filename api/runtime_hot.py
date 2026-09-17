@@ -13,7 +13,16 @@ from typing import Any
 from fastapi import Request
 from fastapi.responses import HTMLResponse, JSONResponse
 
-from api.hot_loader import HOT_CHAT, HOT_INFERENCE, HOT_ROOT, invalidate_engine, register_hot_refresher
+from api.hot_loader import (
+    HOT_CHAT,
+    HOT_CHAT_HISTORY_POLICY,
+    HOT_INFERENCE,
+    HOT_ROOT,
+    HOT_SERVER_DIR,
+    invalidate_chat_history_policy,
+    invalidate_engine,
+    register_hot_refresher,
+)
 
 OWNER = "kaministrator999-ui"
 REPO = "Swrlzkamico"
@@ -28,6 +37,7 @@ SOURCES = {
     "chat_enhancements.js": ("web/chat_enhancements.js", HOT_CHAT / "chat_enhancements.js", 1_000_000),
     "chat_stream_focus.js": ("web/chat_stream_focus.js", HOT_CHAT / "chat_stream_focus.js", 1_000_000),
     "r39_engine.py": ("runtime_hot/r39_engine.py", HOT_INFERENCE, 4_000_000),
+    "chat_history_policy.py": ("runtime_hot/chat_history_policy.py", HOT_CHAT_HISTORY_POLICY, 512_000),
 }
 
 AUTO_SYNC_SECONDS = 30.0
@@ -68,7 +78,7 @@ def _backup() -> str | None:
     backup_id = time.strftime("%Y%m%d-%H%M%S")
     target = HOT_BACKUPS / backup_id
     target.mkdir(parents=True, exist_ok=True)
-    for child in (HOT_CHAT, HOT_INFERENCE.parent):
+    for child in (HOT_CHAT, HOT_INFERENCE.parent, HOT_SERVER_DIR):
         if child.exists():
             shutil.copytree(child, target / child.name, dirs_exist_ok=True)
     return backup_id
@@ -105,12 +115,16 @@ def _sync_runtime(*, force: bool = False, reason: str = "automatic") -> dict[str
     backup_id = _backup()
     changed = []
     engine_changed = False
+    history_policy_changed = False
     for name, target, data, digest in payloads:
         _atomic_write(target, data)
         changed.append({"name": name, "path": str(target), "bytes": len(data), "sha256": digest})
         engine_changed = engine_changed or target == HOT_INFERENCE
+        history_policy_changed = history_policy_changed or target == HOT_CHAT_HISTORY_POLICY
     if engine_changed:
         invalidate_engine()
+    if history_policy_changed:
+        invalidate_chat_history_policy()
     _ensure_portal()
     LAST_SYNC["successAt"] = time.time()
     LAST_SYNC["changed"] = [item["name"] for item in changed]
@@ -154,7 +168,7 @@ def _safe_auto_sync(server, *, force: bool = False) -> dict[str, Any]:
 
 
 def _portal_html() -> str:
-    return """<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>§wyrlz Runtime Index</title><style>body{font-family:system-ui;background:#050914;color:#eef7ff;margin:0;padding:20px}a{color:#7ee8ff;text-decoration:none}.card{background:#0b1426;border:1px solid #274362;border-radius:16px;padding:16px;margin:12px 0}.muted{color:#93aac0}button,input{font:inherit}button{background:#13243d;color:#fff;border:1px solid #315478;border-radius:10px;padding:10px 12px;margin:4px}input{width:100%;padding:10px;border-radius:10px;border:1px solid #315478;background:#06101d;color:white}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#040914;border:1px solid #1e3856;border-radius:12px;padding:12px}</style></head><body><h1>§WYRLZ Runtime Index</h1><p class='muted'>Durable application source: <code>runtime</code>. Runtime page and LALM changes are hydrated on request; deployment/restart is not part of the application update path.</p><div class='card'><b>Hot Runtime</b><p>Chat UI, page assets, and R39 runtime follow the runtime branch.</p><input id='adm' type='password' placeholder='SWRLZ_ADMIN_TOKEN'><button onclick='syncHot()'>SYNC NOW</button><button onclick='hotStatus()'>STATUS</button><pre id='hotOut'>Not checked.</pre></div><div class='card'><b>Live pages</b><div id='pages'>Loading…</div></div><script>const adm=document.querySelector('#adm'),out=document.querySelector('#hotOut'),pages=document.querySelector('#pages');adm.value=sessionStorage.getItem('swrlzAdminToken')||'';adm.onchange=()=>sessionStorage.setItem('swrlzAdminToken',adm.value.trim());async function req(path,method='GET'){const r=await fetch(path,{method,headers:{'x-swrlz-admin-token':adm.value.trim()},cache:'no-store'}),t=await r.text();try{out.textContent=JSON.stringify(JSON.parse(t),null,2)}catch{out.textContent=t}}async function syncHot(){await req('/api/hot/sync','POST');location.reload()}async function hotStatus(){await req('/api/hot/status')}fetch('/api/hot/pages',{cache:'no-store'}).then(r=>r.json()).then(j=>pages.innerHTML=(j.pages||[]).map(x=>`<div><a href="${x.url}">${x.relative}</a> <span class='muted'>${x.size} B</span></div>`).join('')||'No additional pages.').catch(e=>pages.textContent='Page discovery failed: '+e);hotStatus();</script></body></html>"""
+    return """<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>§wyrlz Runtime Index</title><style>body{font-family:system-ui;background:#050914;color:#eef7ff;margin:0;padding:20px}a{color:#7ee8ff;text-decoration:none}.card{background:#0b1426;border:1px solid #274362;border-radius:16px;padding:16px;margin:12px 0}.muted{color:#93aac0}button,input{font:inherit}button{background:#13243d;color:#fff;border:1px solid #315478;border-radius:10px;padding:10px 12px;margin:4px}input{width:100%;padding:10px;border-radius:10px;border:1px solid #315478;background:#06101d;color:white}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#040914;border:1px solid #1e3856;border-radius:12px;padding:12px}</style></head><body><h1>§WYRLZ Runtime Index</h1><p class='muted'>Durable application source: <code>runtime</code>. Runtime page, LALM, and allowlisted Server-policy changes are hydrated on request; deployment/restart is not part of the application update path once the stable loader ABI is present.</p><div class='card'><b>Hot Runtime</b><p>Chat UI, R39 runtime, and allowlisted Server history policy follow the runtime branch.</p><input id='adm' type='password' placeholder='SWRLZ_ADMIN_TOKEN'><button onclick='syncHot()'>SYNC NOW</button><button onclick='hotStatus()'>STATUS</button><pre id='hotOut'>Not checked.</pre></div><div class='card'><b>Live pages</b><div id='pages'>Loading…</div></div><script>const adm=document.querySelector('#adm'),out=document.querySelector('#hotOut'),pages=document.querySelector('#pages');adm.value=sessionStorage.getItem('swrlzAdminToken')||'';adm.onchange=()=>sessionStorage.setItem('swrlzAdminToken',adm.value.trim());async function req(path,method='GET'){const r=await fetch(path,{method,headers:{'x-swrlz-admin-token':adm.value.trim()},cache:'no-store'}),t=await r.text();try{out.textContent=JSON.stringify(JSON.parse(t),null,2)}catch{out.textContent=t}}async function syncHot(){await req('/api/hot/sync','POST');location.reload()}async function hotStatus(){await req('/api/hot/status')}fetch('/api/hot/pages',{cache:'no-store'}).then(r=>r.json()).then(j=>pages.innerHTML=(j.pages||[]).map(x=>`<div><a href="${x.url}">${x.relative}</a> <span class='muted'>${x.size} B</span></div>`).join('')||'No additional pages.').catch(e=>pages.textContent='Page discovery failed: '+e);hotStatus();</script></body></html>"""
 
 
 def _ensure_portal() -> None:
@@ -182,8 +196,9 @@ def install(server) -> None:
     _ensure_portal()
     register_hot_refresher(lambda force=False: _safe_auto_sync(server, force=force))
     server.CAPABILITIES["hot-runtime"] = {"kind": "runtime-mutation", "ready": True, "sourceBranch": DEFAULT_BRANCH, "autoSync": True, "strategy": "30s gated parallel runtime hydration; request-path callers share one refresh authority"}
-    server.CAPABILITIES["hot-chat-ui"] = {"kind": "runtime-mutation", "ready": True, "fallback": "bundled", "assets": sorted(SOURCES)}
+    server.CAPABILITIES["hot-chat-ui"] = {"kind": "runtime-mutation", "ready": True, "fallback": "bundled", "assets": ["chat.html", "chat_enhancements.css", "chat_enhancements.js", "chat_stream_focus.js"]}
     server.CAPABILITIES["hot-r39-engine"] = {"kind": "runtime-execution", "ready": True, "fallback": "bundled", "reload": "content-hash invalidation", "workerRefreshSeconds": int(AUTO_SYNC_SECONDS)}
+    server.CAPABILITIES["hot-server-history-policy"] = {"kind": "runtime-server-policy", "ready": True, "authority": "server-owned-records", "sourceBranch": DEFAULT_BRANCH, "fallback": "bundled-canonical-history", "reload": "content-hash invalidation", "workerRefreshSeconds": int(AUTO_SYNC_SECONDS), "readOnly": True}
     server._write_server_state()
 
     @server.app.middleware("http")
@@ -226,7 +241,10 @@ def install(server) -> None:
             shutil.rmtree(HOT_CHAT, ignore_errors=True)
         if HOT_INFERENCE.parent.exists():
             shutil.rmtree(HOT_INFERENCE.parent, ignore_errors=True)
+        if HOT_SERVER_DIR.exists():
+            shutil.rmtree(HOT_SERVER_DIR, ignore_errors=True)
         invalidate_engine()
+        invalidate_chat_history_policy()
         server.activity("hot-clear", backupId=backup_id)
         return {"ok": True, "fallback": "bundled", "backupId": backup_id}
 
@@ -246,6 +264,10 @@ def install(server) -> None:
         if (source / "inference").exists():
             shutil.rmtree(HOT_INFERENCE.parent, ignore_errors=True)
             shutil.copytree(source / "inference", HOT_INFERENCE.parent)
+        if (source / "server").exists():
+            shutil.rmtree(HOT_SERVER_DIR, ignore_errors=True)
+            shutil.copytree(source / "server", HOT_SERVER_DIR)
         invalidate_engine()
+        invalidate_chat_history_policy()
         server.activity("hot-rollback", backupId=backup_id)
         return {"ok": True, "restored": backup_id}
