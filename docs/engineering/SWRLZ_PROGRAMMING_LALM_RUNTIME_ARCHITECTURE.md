@@ -2,7 +2,7 @@
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **Phase 1 runtime scaffolded** in LALM `2.1.77` / R39 `v66`. Repository/tool execution, full architecture acceptance, coder-model delegation, live activation proof, and model training remain separate later states.
+**Current implementation state:** **Phase 1 runtime scaffolded and live-hydrated** through LALM `2.1.80` / R39 `v68`. The programming classifier/context compiler is deterministically exercised in the active lineage and startup warm is live verified. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain separate later states. A full authenticated post-v68 user programming turn still awaits direct generation-camera evidence.
 
 ---
 
@@ -60,13 +60,13 @@ For user-owned projects, apply the same principles proportionally rather than co
 
 ---
 
-## 3. Phase 1 implementation — R39 v66
+## 3. Phase 1 implementation — v66 preserved through v68
 
-LALM `2.1.77`, revision `2.1.77-hot-programming-mode-context-v66`, introduces the first executable programming runtime scaffold.
+R39 `v66` introduced the first executable programming runtime scaffold. v67 repaired its inherited source lineage, and v68 repaired an inherited namespace boundary required by conversation-state/context-focus and programming routing. The current active authority is LALM `2.1.80`, revision `2.1.80-hot-v67-latest-user-namespace-repair-v68`.
 
 ### A. Coding-task classifier
 
-The active LALM now compiles bounded routing state including:
+The active LALM compiles bounded routing state including:
 
 ```text
 codingTask
@@ -74,7 +74,7 @@ projectContext = none / new / existing
 changeClass = explain / create / feature / fix / refactor / migrate / deploy / review
 architectureDepth = lightweight / normal / deep
 architectureReconciliation
- diagnostics
+diagnostics
 projectCoaching
 toolEvidenceRequired
 source = current-turn / conversation-bridge
@@ -93,15 +93,13 @@ The bridge is conservative:
 - it only looks through a bounded recent user window;
 - it stops rather than tunneling through a newer substantive unrelated task;
 - explicit stop/cancel language suppresses the programming continuation;
-- the inherited source is represented as bounded routing metadata rather than copied hidden reasoning.
+- inherited source is represented as bounded routing metadata rather than copied hidden reasoning.
 
 ### C. Programming context compiler
 
-When programming mode is active, v66 adds a bounded system-context marker to a **copy of the generation payload history**. It does not rewrite canonical persisted conversation history.
+When programming mode is active, the runtime adds a bounded system-context marker to a **copy of the generation payload history**. It does not rewrite canonical persisted conversation history.
 
-The marker tells the primary LALM to apply the architecture grammar appropriate to the classified task.
-
-For an existing-project change it instructs the model to:
+For an existing-project change, the marker directs the primary LALM to:
 
 - separate desired outcome from implementation assumptions;
 - inspect available project/repository evidence before inventing owners or structure;
@@ -109,50 +107,30 @@ For an existing-project change it instructs the model to:
 - prefer **reuse → extend canonical owner → consolidate/refactor → migrate+retire → genuinely new structure**;
 - avoid fabricating architecture when evidence is missing or ownership remains ambiguous.
 
-For a new user project it instructs the model to:
+For a new user project it directs the model to:
 
 - choose the smallest useful structure justified by current scale/risk;
 - add stronger ownership/state/tests/observability/version/deployment boundaries only when complexity warrants them;
 - respect the user's explicit decision to simplify optional architecture;
 - explain material tradeoffs without repeatedly pressuring the user.
 
-For lightweight standalone coding/explanation it explicitly avoids forcing repository ceremony.
-
-For fix/debug work it directs the LALM toward **inspect evidence first → add bounded instrumentation only if needed → repair**.
+For lightweight standalone coding/explanation it avoids forcing repository ceremony. For fix/debug work it directs the LALM toward **inspect evidence first → add bounded instrumentation only if needed → repair**.
 
 ### D. Permission boundary
 
-Programming mode is cognitive routing only.
-
-Its context explicitly does **not** grant permission to:
-
-- write files;
-- invoke tools;
-- deploy;
-- spend money/credits;
-- bypass server policy;
-- bypass user approval requirements.
+Programming mode is cognitive routing only. It does **not** grant permission to write files, invoke tools, deploy, spend money/credits, bypass server policy, or bypass user approval requirements.
 
 Operational authority remains with the server/tool layer and the project's explicit approval contracts.
 
 ### E. Programming camera
 
-Active programming turns emit a bounded `programming-mode` camera event with routing facts such as:
-
-- project context;
-- change class;
-- architecture depth;
-- inheritance state;
-- architecture-reconciliation requirement;
-- diagnostic/coaching flags;
-- tool-evidence requirement;
-- implementation-truth state.
+Active programming turns emit bounded `programming-mode` camera facts such as project context, change class, architecture depth, inheritance state, architecture-reconciliation requirement, diagnostic/coaching flags, tool-evidence requirement, and implementation-truth state.
 
 The event does not intentionally log prompt/response text or private chain-of-thought.
 
 ### F. Deterministic routing self-test
 
-v66 includes a bounded in-engine self-test covering generalized behavior classes:
+The inherited programming suite covers seven generalized behavior classes:
 
 1. non-programming question stays out of programming mode;
 2. code explanation remains lightweight;
@@ -162,39 +140,74 @@ v66 includes a bounded in-engine self-test covering generalized behavior classes
 6. cross-cutting migration gets deep architecture treatment;
 7. conversational `let's do this` correctly inherits the prior coding task.
 
-The source was also locally syntax-compiled before publication. This is a **routing/scaffold evaluation**, not yet the full Phase 2 architecture-acceptance suite.
+Production v68 status reports this suite **7/7**. This is a routing/scaffold evaluation, not yet the full Phase 2 architecture-acceptance suite.
 
 ---
 
 ## 4. Runtime lineage and activation
 
-Current published lineage:
+Current published lineage relevant to programming mode:
 
 ```text
-R39 v65
-  ↓ immutable source inheritance
-R39 v66 source
+v17 canonical engine implementation
+  ↓ module-owned implementation namespace (_impl)
+conversation / planning lineage
   ↓
-runtime_hot/r39_engine.py hot entrypoint
+v61 context-focus lineage
   ↓
-runtime_hot/manifest.json revision identity
+v65 inherited namespace lineage
+  ↓
+v66 programming-mode scaffold
+  ↓
+v67 pinned-source lineage repair
+  ↓
+v68 canonical _latest_user_text namespace bridge
+  ↓
+runtime_hot/r39_engine.py
 ```
 
-v66 source is published immutably through the runtime commit recorded in the Server `2.3.234` release lineage. The hot entrypoint and hot manifest both identify the v66 target/revision.
+### v67 lineage repair
+
+v67 corrected a typo in the pinned v65 → v61 source commit. That restored the intended source chain but did not by itself restore every historical bare-global name expected by later wrappers.
+
+### v68 namespace repair
+
+The canonical `_latest_user_text` helper already belongs to the v17 implementation loaded as `_impl`. Later conversation-state/context-focus code still references the historical bare-global name. v68 therefore bridges:
+
+```text
+_latest_user_text = _impl._latest_user_text
+```
+
+This is compatibility plumbing, not a second parser. The canonical semantic owner remains `_impl._latest_user_text`.
+
+v68 fails hydration closed if that owner is unavailable and runs a three-part namespace self-test over:
+
+- canonical latest-user-text extraction;
+- inherited conversation-state compilation;
+- programming-task classification.
+
+This prevents the exact class of defect from remaining latent until a user turn.
 
 ### Activation truth
 
-Current state for this event:
+Current state:
 
 - **source complete:** yes;
-- **local syntax/static classifier self-test:** yes;
-- **runtime scaffolded in published hot source:** yes;
+- **runtime scaffolded:** yes;
+- **live worker hydration:** yes;
+- **live startup warm:** yes;
+- **namespace self-test:** `3/3` live;
+- **conversation acceptance:** `9/9` live status;
+- **context-focus acceptance:** `5/5` live status;
+- **programming routing acceptance:** `7/7` live status;
 - **tool-integrated:** no;
 - **full deterministic architecture acceptance:** no;
-- **live worker hydration verified:** not yet — the checked production log window contained no R39 hot-entry records at all;
+- **authenticated post-v68 programming generation directly observed:** not yet;
 - **learned/trained:** no.
 
-Do not collapse these states into “fully implemented coding model.”
+Production `/api/lalm/status` reports `hotServerVersion=2.1.80`, the v68 revision, `oneTokenReady=true`, and `interactiveReady=true`. A fresh production `/api/server/status` reports `lalm-startup-warm.ready=true` and `phase=server-start-complete`. Hot-load cameras independently show the canonical namespace bridge and conversation/programming probes passing.
+
+No authenticated production Chat request has yet emitted a `v68-enter` generation camera after activation. The Chat POST boundary requires its private browser/admin credential; verification must not bypass that authority. Therefore this document distinguishes **live runtime/startup verification** from **full end-to-end user-turn verification**.
 
 ---
 
@@ -257,8 +270,6 @@ Why:
 - less routing/resource overhead;
 - no model-vs-model architecture drift.
 
-A useful mental model remains:
-
 ```text
 §wyrlz LALM = architect / lead engineer / conversational brain
 programming mode = programming cortex
@@ -285,16 +296,7 @@ OUTPUT FORMAT
 
 The specialist returns proposals/evidence such as patches, affected files, assumptions, tests, migration concerns, and possible conflicts.
 
-It must **not** independently own:
-
-- user intent;
-- conversation truth;
-- project architecture policy;
-- deployment permission;
-- canonical state;
-- version authority;
-- final acceptance;
-- user-facing product decisions.
+It must **not** independently own user intent, conversation truth, project architecture policy, deployment permission, canonical state, version authority, final acceptance, or user-facing product decisions.
 
 The primary LALM can reject or repair a specialist proposal that violates the architecture contract.
 
@@ -310,15 +312,15 @@ Project Start, architecture reconciliation/coaching, project-wide cameras/logs, 
 
 ### Phase 1 — same-LALM programming mode
 
-**Status: runtime scaffolded in LALM 2.1.77 / R39 v66.**
+**Status: runtime scaffolded and live-hydrated through LALM 2.1.80 / R39 v68.**
 
-Implemented coding-task routing, new/existing/lightweight context, architecture depth, programming continuation inheritance, bounded programming context injection, proportional new-project policy, diagnostic policy, cameras, and routing self-tests.
+Implemented coding-task routing, new/existing/lightweight context, architecture depth, programming continuation inheritance, bounded programming context injection, proportional new-project policy, diagnostic policy, cameras, and routing self-tests. v68 additionally hardens inherited namespace activation so conversation/programming state is exercised at hydration rather than failing on the first user turn.
 
-Live activation remains separately verifiable.
+**Remaining Phase 1 acceptance:** observe a normal authenticated post-v68 programming generation and confirm `v68-enter` + `programming-mode` + terminal generation evidence without namespace exceptions.
 
 ### Phase 2 — obligation + architecture acceptance
 
-**Next target.**
+**Next capability target after the remaining end-to-end Phase 1 acceptance.**
 
 Add programming obligation tracking, repository-evidence/overlap state, integration decisions, completion requirements, and a generalized architecture acceptance suite.
 
@@ -328,7 +330,7 @@ Connect LALM planning to repository search/read/write/test/log operations throug
 
 ### Phase 4 — richer user-project adaptation
 
-Expand project-scale/risk detection and architecture coaching beyond the initial v66 routing prompt into structured adaptive state/evaluation.
+Expand project-scale/risk detection and architecture coaching into structured adaptive state/evaluation.
 
 ### Phase 5 — optional coder specialist
 
@@ -337,24 +339,3 @@ Benchmark whether a specialized coding model materially improves quality, latenc
 ### Phase 6 — training/fine-tuning if justified
 
 After enough high-quality generalized traces/evals exist, consider training/fine-tuning the programming behavior. Do not train first and define the architecture afterward.
-
----
-
-## 10. Implementation-truth ladder
-
-Use these labels literally:
-
-**Documented** → behavior exists as curriculum/specification.  
-**Runtime scaffolded** → active/published LALM source has structured routing/state/context.  
-**Tool-integrated** → that state controls repository/test/log operations through server tools.  
-**Deterministically evaluated** → generalized architecture acceptance suites pass.  
-**Live verified** → real project work demonstrates the path executing correctly.  
-**Learned/trained** → model weights were actually trained/fine-tuned for the behavior.
-
-A later state does not erase the need to state earlier evidence precisely.
-
----
-
-## Bottom line
-
-**§wyrlz now has the first executable programming cortex inside the same primary LALM: v66 can recognize programming work, distinguish lightweight/new/existing project contexts, carry coding intent through short continuation turns, and inject the proportional architecture operating grammar into generation. It is deliberately still only `runtime scaffolded`: repository/tool execution, obligation tracking, full architecture acceptance, live hydration proof, coder-model delegation, and training remain separate future milestones. Keep the primary LALM as architect/authority; add a coder specialist later only if measured value justifies it.**
