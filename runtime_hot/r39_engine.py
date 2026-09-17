@@ -1,10 +1,10 @@
-"""Hot R39 entrypoint v56."""
+"""Hot R39 entrypoint v57."""
 from __future__ import annotations
 import urllib.request
-_SOURCE_URL = "https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/55d494b28c97d973fb217944498416a5ef7f8de8/runtime_hot/r39_engine_v56.py"
-_request = urllib.request.Request(_SOURCE_URL, headers={"User-Agent": "swrlz-r39-v56-loader"})
+_SOURCE_URL = "https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/e5f17eedf60c22bf92aa296125aed91535f16a18/runtime_hot/r39_engine_v57.py"
+_request = urllib.request.Request(_SOURCE_URL, headers={"User-Agent": "swrlz-r39-v57-loader"})
 with urllib.request.urlopen(_request, timeout=20) as _response:
     _source = _response.read(4000001)
 if len(_source) > 4000000:
-    raise RuntimeError("R39_V56_SOURCE_TOO_LARGE")
+    raise RuntimeError("R39_V57_SOURCE_TOO_LARGE")
 exec(compile(_source.decode("utf-8"), _SOURCE_URL, "exec"), globals(), globals())
