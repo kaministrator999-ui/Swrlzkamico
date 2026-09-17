@@ -1,24 +1,25 @@
 /* §wyrlz Chat first-paint guard.
-   Keep the stale/base shell hidden only until the runtime-owned main Chat is ready.
-   Decorative/theme settlement is progressive and must never gate an interactive Mask. */
+   The complete base shell is already usable HTML/CSS, so boot readiness must never
+   be able to turn a slow/failed enhancement load into a blank Chat page.
+   Runtime readiness remains observable through classes; it is not a visibility gate. */
 html:not(.swrlz-main-chat-ready) body {
   background:#020913 !important;
 }
 html:not(.swrlz-main-chat-ready) body .app,
 html:not(.swrlz-main-chat-ready) body > .noise,
-html:not(.swrlz-main-chat-ready) body > .ambient,
-html:not(.swrlz-main-chat-ready) body > .sidebar-scrim,
-html:not(.swrlz-main-chat-ready) body > dialog,
-html:not(.swrlz-main-chat-ready) body > .toast {
-  opacity:0 !important;
-  visibility:hidden !important;
-  pointer-events:none !important;
+html:not(.swrlz-main-chat-ready) body > .ambient {
+  opacity:1 !important;
+  visibility:visible !important;
+  pointer-events:auto !important;
 }
 html.swrlz-main-chat-ready body .app,
 html.swrlz-main-chat-ready body > .noise,
 html.swrlz-main-chat-ready body > .ambient {
+  opacity:1 !important;
   visibility:visible !important;
+  pointer-events:auto !important;
 }
+/* Dialog/toast visibility stays under their native/component rules. */
 /* Decorative readiness remains observable, but it is not an interaction gate. */
 html.swrlz-main-chat-ready:not(.swrlz-visual-ready) body .app {
   opacity:1 !important;
