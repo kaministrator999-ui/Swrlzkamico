@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.249`
-- **Chat:** `1.5.74`
-- **LALM Engine:** `2.1.81` (`v69` lightweight-programming prefill repair)
+- **Overall Server:** `2.3.252`
+- **Chat:** `1.5.75`
+- **LALM Engine:** `2.1.82` (`v70` coding-terminal + fence-repair hardening)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -34,15 +34,44 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Release ledger
 
+### Server 2.3.252 — R39 v70 coding-terminal + bounded-repair hardening
+
+**Status:** runtime-hot source complete; deterministic repair acceptance passed; v70 live-hydrated; authenticated coding-turn completion acceptance pending.  
+**LALM Engine:** `2.1.82` / `v70`.  
+**Chat:** `1.5.75` unchanged by this event.  
+**Deployment Control:** `1.0.8` unchanged.  
+**Deployment / restart:** NONE.
+
+**Triggering evidence:** the authenticated v69 standalone Python test proved the lightweight-context repair itself worked: v69 compacted nine Brain-owned policy records / about 16.8k characters to one / 364 characters, rendered a 444-token prompt, and inference prefetched 656 tokens rather than the prior 3,839-token baseline. The old render `NameError` was gone. After successful prefill, however, the first coding candidate ended after roughly two decode steps with only an opening Python-fence fragment. The inherited v27 requirement owner detected `runnable-code`, ran its one bounded repair, and that repair also failed, leaving duplicated opening-fence fragments. The request had zero reconnects, excluding worker handoff as the cause.
+
+**Architecture reconciliation:** this is Brain/LALM ownership. Chat correctly relayed/persisted the model failure. The canonical semantic artifact/repair owner already exists in the v27 lineage, so v70 extends that owner rather than adding another repair system. The inherited v17 generation loop already consults a dynamic completion-gap helper before accepting EOS. v70 hardens that boundary specifically for empty/bare coding fences and normalizes v27 repair conditioning when the prior candidate consists only of an opening Python fence. v69 context compaction remains preserved.
+
+**Repair:** a bare opening `python`/`py` fence can no longer lose `complete-code` or `requested-explanation` completion gaps. When `runnable-code` repair follows such a candidate, the broken assistant fence is removed from repair-history conditioning and the correction pass is instructed to continue inside the already-visible fence, emit executable Python instead of another opener, close that fence once, then provide the requested explanation. A bounded `coding-candidate-terminal` camera now classifies first/repair terminal source and counts without logging response text; `coding-fence-repair-normalized` records activation of the fence-continuation normalization.
+
+**Diagnostic refinement:** live v70 hydration/self-test showed the inherited pre-v70 completion checker already returned both `complete-code` and `requested-explanation` for a bare opening Python fence. Therefore the original early terminal was not caused by the gap checker mistakenly accepting the fence as complete. The lower terminal source is the remaining diagnostic question; the new terminal-boundary camera will identify it on the next authenticated coding request.
+
+**Verification:** production `/api/lalm/status` reports `2.1.82`, revision `2.1.82-hot-coding-terminal-repair-v70`, `interactiveReady=true`, v69 preserved, coding bare-fence completion hardening active, v27 fence-continuation repair active, candidate-terminal camera active, and the complete v70 deterministic self-test green. End-to-end success remains pending one normal authenticated coding turn; source/runtime hydration is not being mislabeled as successful coding completion.
+
+**Concurrency:** final version gate observed Server `2.3.251`, LALM `2.1.81`, Chat `1.5.75`; no affected authority moved before assignment. This event therefore owns Server `2.3.252` and LALM `2.1.82`. Chat is unchanged.
+
+**Lineage:** v70 source `d35c55aed8a1d83550e6639af70759fe0b310554`; hot entry `83ab61aba5ca46f858684130a008f557cec176dd`; manifest `1244d12d607302154b1047f6c9b0f57baecdbeb3`; LALM authority `8412b52261d389525539a5c0df21b3d877deca0e`; Server authority `7b9487e7304f512fb020128f033022265b08e840`; dedicated receipt `docs/releases/SERVER_2.3.252_R39_V70_CODING_TERMINAL_REPAIR.md`.
+
+### Server 2.3.250–2.3.251 — Preserved concurrent Chat/runtime lineage
+
+**Status:** preserved from canonical runtime authorities.  
+**Observed baseline before v70:** Server `2.3.251`, Chat `1.5.75`, LALM `2.1.81`.
+
+These independent events advanced runtime/Chat authority after the v69 release. This roadmap intentionally does not invent their feature details; their runtime commits/event-specific records remain the source for those changes. Server 2.3.252 preserved them and changed only the LALM plus overall Server authority.
+
 ### Server 2.3.249 — R39 v69 lightweight-programming prefill + bounded render repair
 
-**Status:** source complete / runtime-hot publication complete; fresh-worker v69 activation and performance acceptance pending.  
+**Status:** source/runtime/live compaction accepted; later authenticated user turn exposed a separate post-prefill coding-terminal defect handled by Server 2.3.252.  
 **LALM Engine:** `2.1.81` / `v69`.  
 **Chat:** `1.5.74` unchanged by this event.  
 **Deployment Control:** `1.0.8` unchanged.  
 **Deployment / restart:** NONE.
 
-**Triggering live evidence:** the first authenticated standalone programming turn after v68 proved Phase 1 routing end to end. Request `web:mu5vbli6:11914080611097954501` emitted `v68-enter` and `programming-mode` with `projectContext=none`, `architectureDepth=lightweight`, and no architecture reconciliation, diagnostics, project coaching, or tool-evidence requirement. This closes the earlier v68 uncertainty about whether the programming route could be reached by a real authenticated Chat turn.
+**Triggering live evidence:** the first authenticated standalone programming turn after v68 proved Phase 1 routing end to end. Request `web:mu5vbli6:11914080611097954501` emitted `v68-enter` and `programming-mode` with `projectContext=none`, `architectureDepth=lightweight`, and no architecture reconciliation, diagnostics, project coaching, or tool-evidence requirement. This closed the earlier v68 uncertainty about whether the programming route could be reached by a real authenticated Chat turn.
 
 The same request exposed a prefill/context avalanche: canonical Chat history reported zero prior messages while the final LALM payload contained nine internally injected system-policy records totaling about 16.8k characters, producing a 3,839-token prefill at roughly 10–11 tokens/s for a 200-character Python request. Those records were Brain-owned policy wrappers, not leaked canonical user history.
 
@@ -52,9 +81,7 @@ A second camera defect was also localized: the bounded v42 rendered-prompt camer
 
 **Reconnect truth:** Chat continuity was inspected but not changed. Existing releases explicitly define detached model/KV state as worker-local. Same-worker reconnect can replay/follow the live job, while a replacement worker may regenerate from the beginning because there is no durable cross-worker inference checkpoint. v69 mitigates that restart cost for lightweight coding; it does not falsely claim cross-worker compute continuation.
 
-**v69 acceptance contract:** bounded `lightweight-context-compaction` and `lightweight-context-applied` cameras report only message/character counts and `dialoguePreserved`; hydration self-test checks model/history bridges, known-policy compaction, unknown-system preservation, exact dialogue preservation, idempotence, and non-lightweight no-op behavior.
-
-**Activation truth:** the production worker reachable during closure was already warm on v68 before v69 publication and continued to report `2.1.80`/v68. Therefore v69 is **published, activation pending** rather than labeled live verified. A fresh or explicitly refreshed worker plus a standalone coding turn must prove `v69-enter`, no `render-error`, compaction cameras with `dialoguePreserved=true`, materially reduced prefill, and normal completion.
+**Acceptance:** a later authenticated v69 Python turn provided the decisive context evidence: `v69-enter` used lightweight programming, compaction changed 9 messages / 16,774 chars to 1 / 364 with `dialoguePreserved=true`, bounded rendering reported 444 tokens with no `render-error`, and the actual inference prefill was 656 tokens. Thus the v69 context/render repair is live verified. That same turn failed only after prefill in the coding terminal/repair path, which is a distinct defect lineage now owned by Server 2.3.252.
 
 **Concurrency:** the main roadmap still displayed Server `2.3.241` when this event began, while runtime authorities had independently advanced through Server `2.3.248` and Chat `1.5.74`. The version gate re-read the module authorities and preserved all intervening work, then assigned LALM `2.1.81` and Server `2.3.249` only.
 
@@ -83,7 +110,7 @@ The main roadmap had not yet been reconciled through these independently complet
 
 **Change:** `web/chat_version.js` now installs a one-time reconciliation adapter over the historical global `paintStatus()` function. Each legacy bridge-status refresh preserves its original bridge/settings work, then immediately reapplies the already-normalized `window.__swrlzLalmState`; if that normalized state has not yet been established, it schedules the canonical LALM status read. This removes the stale post-request `Local inference pending` terminal presentation without adding a third state source or changing LALM semantics.
 
-**Generation defect relationship:** this event did not modify the LALM. The earlier `_latest_user_text` generation failure was independently repaired by Server `2.3.240` / LALM `2.1.80` v68. Later Server 2.3.249 live evidence closes the remaining authenticated-programming-route uncertainty while identifying a separate prefill/context optimization issue.
+**Generation defect relationship:** this event did not modify the LALM. The earlier `_latest_user_text` generation failure was independently repaired by Server `2.3.240` / LALM `2.1.80` v68. Later Server 2.3.249 live evidence closed the authenticated programming-route uncertainty; Server 2.3.252 now owns the distinct post-prefill coding-terminal repair.
 
 **Concurrency:** event entry observed Server `2.3.240`, Chat `1.5.66`, LALM `2.1.80`. The source was changed, then Server and Chat authorities were re-read and remained at the entry values. This event therefore assigns Server `2.3.241` and Chat `1.5.67`; LALM remains `2.1.80` because no LALM source changed.
 
@@ -93,7 +120,7 @@ The main roadmap had not yet been reconciled through these independently complet
 
 ### Server 2.3.240 — R39 v68 canonical latest-user namespace repair
 
-**Status:** runtime-hot repair complete; live hydration + startup-warm verified; later Server 2.3.249 evidence confirms authenticated programming-route entry.  
+**Status:** runtime-hot repair complete; live hydration + startup-warm verified; later authenticated programming turns confirm route entry.  
 **LALM Engine:** `2.1.80` / `v68`.  
 **Chat:** `1.5.66` unchanged.  
 **Deployment Control:** `1.0.8` unchanged.  
@@ -105,7 +132,7 @@ The main roadmap had not yet been reconciled through these independently complet
 
 **Architecture decision:** preserve one semantic owner. v68 bridges the historical name directly to `_impl._latest_user_text`; it does not create another parser or change prompt semantics. Hydration fails closed if the canonical owner is unavailable.
 
-**Repair/acceptance:** v68 adds a hydration-time namespace self-test covering the helper, inherited conversation-state compiler, and programming classifier. Production `/api/lalm/status` reported `2.1.80`, `interactiveReady=true`, namespace self-test `3/3`, inherited conversation acceptance `9/9`, context-focus acceptance `5/5`, and programming-mode routing `7/7`. A fresh production `/api/server/status` reported `lalm-startup-warm.ready=true` and `phase=server-start-complete`, directly verifying the boundary that previously failed. The later authenticated Python test emitted both `v68-enter` and the intended `programming-mode` route, closing the user-turn route acceptance item.
+**Repair/acceptance:** v68 adds a hydration-time namespace self-test covering the helper, inherited conversation-state compiler, and programming classifier. Production `/api/lalm/status` reported `2.1.80`, `interactiveReady=true`, namespace self-test `3/3`, inherited conversation acceptance `9/9`, context-focus acceptance `5/5`, and programming-mode routing `7/7`. A fresh production `/api/server/status` reported `lalm-startup-warm.ready=true` and `phase=server-start-complete`, directly verifying the boundary that previously failed. Later authenticated Python tests emitted the intended programming-mode route, closing the user-turn route acceptance item.
 
 **Concurrency:** the event entered around Server `2.3.238` / LALM `2.1.79` v67. A separate project-response identity event advanced Server to `2.3.239` during the repair. The final version gate preserved it, then assigned LALM `2.1.80` and Server `2.3.240` from current authority.
 
@@ -145,11 +172,11 @@ A docs-only `main` commit unexpectedly created a native-Git production deploymen
 
 ### Server 2.3.234 — R39 v66 same-LALM programming mode runtime scaffold
 
-**Status:** runtime scaffolded; deterministic routing `7/7`; later lineage live-hydrated through v68 and authenticated programming routing was proven by the Server 2.3.249 trigger turn.  
+**Status:** runtime scaffolded; deterministic routing `7/7`; later lineage live-hydrated through v70 and authenticated programming routing is proven.  
 **LALM Engine at event:** `2.1.77` / v66.  
 **Chat:** `1.5.66` unchanged.
 
-Phase 1 added conservative programming-task routing, new/existing/lightweight project context, architecture depth, programming continuation inheritance, bounded programming context injection, proportional new-project policy, diagnostic policy, cameras, and generalized routing self-tests. The current v69 lineage preserves that programming classification while optimizing standalone lightweight prompt construction.
+Phase 1 added conservative programming-task routing, new/existing/lightweight project context, architecture depth, programming continuation inheritance, bounded programming context injection, proportional new-project policy, diagnostic policy, cameras, and generalized routing self-tests. The current v70 lineage preserves that programming classification while retaining v69 lightweight prompt compaction and v70 coding-terminal repair hardening.
 
 ### Server 2.3.233 — Programming-LALM runtime architecture and model-specialization decision
 
