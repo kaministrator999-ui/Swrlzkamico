@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.76
-REVISION=2.1.76-hot-v61-complete-inherited-namespace-v65
+VERSION=2.1.77
+REVISION=2.1.77-hot-programming-mode-context-v66
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
