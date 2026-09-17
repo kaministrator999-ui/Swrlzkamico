@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.86
-REVISION=2.1.86-hot-programming-artifact-continuation-v74
+VERSION=2.1.87
+REVISION=2.1.87-hot-programming-continuation-semantics-v75
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
