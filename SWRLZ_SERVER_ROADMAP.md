@@ -6,13 +6,13 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.234`
+- **Overall Server:** `2.3.237`
 - **Chat:** `1.5.66`
-- **LALM Engine:** `2.1.77` (`v66`)
+- **LALM Engine:** `2.1.78` (`v66` camera-lineage revision)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
-- **Deployment Control:** `1.0.7`
+- **Deployment Control:** `1.0.8`
 
 `VERSION.txt` and the referenced `versions/<module-id>.txt` files remain the version/status authorities. This roadmap is history/lineage and must be reconciled to those owners rather than treated as a competing version source.
 
@@ -34,96 +34,94 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Release ledger
 
+### Server 2.3.237 — Fail-closed Vercel Git gate + source-bound manual production verification
+
+**Status:** source/config complete; automatic-Git gate verified with multiple no-deploy canaries.  
+**Deployment Control:** `1.0.8`.  
+**LALM Engine:** `2.1.78` / v66 camera-lineage revision unchanged by this event.  
+**Chat:** `1.5.66` unchanged.  
+**Deployment / restart:** one unintended native-Git production deployment was observed **before** this repair; no production deployment was intentionally triggered by the repair event.
+
+**Triggering defect:** a documentation-only `main` commit (`88eed351f6e768d3da544a5cd0c69aeb8f17545e`) created production deployment `dpl_FPM6etnF9ZMHVeVmhx7AnLMSCwCe`. Vercel identified its source as `git`, target `production`, branch `main`. This contradicted the project contract that documentation/governance commits are deployment-inert.
+
+**Architecture reconciliation:** deployment had two effective writers: the intended explicitly approved GitHub Actions/Vercel CLI path and an unintended native Git integration path. Inspection proved the unexpectedly deployed commit already contained `git.deploymentEnabled=false`, so merely re-adding the modern guard would not repair the observed behavior. Vercel documentation also exposes a GitHub-specific compatibility kill switch. The integration decision was therefore to preserve the manual CLI deployment owner and harden native Git to fail closed with both declarations rather than add another deployment mechanism.
+
+**Git gate repair:** `vercel.json` now retains the modern `git.deploymentEnabled=false` declaration and adds the GitHub-specific compatibility guard `github.enabled=false`. The dual guard is intentional because observed production behavior showed the modern declaration alone was insufficient in this project/integration state.
+
+**Manual workflow repair:** `.github/workflows/manual-vercel-production.yml` no longer hardcodes stable server `2.3.110`. The workflow now:
+
+- captures the exact SHA of the approved checked-out source;
+- derives the stable server version from canonical `VERSION` in `api/index.py` using Python AST parsing;
+- deploys through the explicit Vercel CLI path only after its existing approval gate;
+- requires `/api/server/status` to report the derived stable version;
+- requires `deploymentCommit` to equal the exact approved source SHA;
+- requires `deploymentEnvironment=production`;
+- preserves manifest-authority, continuity, RMCCA, and collector acceptance checks.
+
+This explicitly separates the stable deployed server authority (`api/index.py`, currently `2.3.111`) from the runtime-hot overall Server lineage (`versions/server-runtime.txt`).
+
+**Canary verification:** after the dual guard was committed, Vercel deployment history showed no new production deployment. A second `main` commit modifying the manual deployment workflow also produced no new deployment. Later engineering-contract commits in this same closure sequence are checked against the same deployment history before final acceptance. The pre-repair docs deployment remains the newest production deployment unless an explicitly approved manual deployment occurs.
+
+**Hotfix contract update:** `SWRLZ_HOTFIX_RULES.md` now records automatic Git as fail-closed, the explicitly approved manual workflow as canonical production deployment owner, source-SHA-bound deployment acceptance, and the requirement to verify platform behavior rather than trust config text alone.
+
+**Concurrency reconciliation:** this repair began after Server `2.3.234`, while concurrent runtime/LALM work advanced Server through `2.3.236` and LALM to `2.1.78` / v66 camera-lineage. The event re-read current authorities, preserved those advances, bumped only Deployment Control (`1.0.7 → 1.0.8`), then assigned Server `2.3.237` from the current `2.3.236` authority.
+
+**Additional live evidence discovered during diagnosis:** production logs now prove the v66 hot entrypoint hydrated successfully with `hotServerVersion=2.1.77`, revision `2.1.77-hot-programming-mode-context-v66`, and callable programming-profile/programming-context contracts. Subsequent concurrent camera-lineage work advanced the LALM authority to `2.1.78`; this Server 2.3.237 event did not modify that LALM source. Thus the Phase 1 programming runtime is no longer merely awaiting loader-level activation evidence; v66 hydration is proven live, while full programming-mission/tool-loop acceptance remains later work.
+
+**Lineage:** Vercel dual Git guard `492b23f56bb4533c448da47adf7f15b6f622b09d`; manual source-bound verification `9fdab0ea4ab72747b471cabd942702d5f1959cb1`; Deployment Control authority `717d4ed563c48fec551ae66a0059b4507eff5c64`; Server authority `7dfe75b6f5c5c94bbcec8aceed894bf366aeb118`; Hotfix contract repair `62dfae9abd0f9af152b64d224cf14d6b5a520a2e`.
+
+### Server 2.3.235–2.3.236 — Concurrent v66 camera-lineage activation work
+
+**Status:** preserved concurrent runtime/LALM lineage.  
+**LALM Engine:** advanced to `2.1.78`, revision `2.1.78-hot-programming-mode-context-v66-camera-lineage`.
+
+These events advanced inherited camera/activation lineage around v66 while Server 2.3.237 deployment-control work was in progress. Server 2.3.237 preserved them rather than reusing stale planned versions.
+
 ### Server 2.3.234 — R39 v66 same-LALM programming mode runtime scaffold
 
-**Status:** source complete / static routing verified / runtime scaffolded / live activation pending.  
-**LALM Engine:** `2.1.77` / `v66`.  
+**Status:** runtime scaffolded; static routing suite passed 7/7; loader-level live hydration is now verified by later production evidence.  
+**LALM Engine at event:** `2.1.77` / v66.  
 **Chat:** `1.5.66` unchanged.  
-**Deployment / restart:** NONE.
+**Deployment / restart at event:** none intentionally performed for the runtime-hot v66 change.
 
-This is Phase 1 of the Programming LALM Runtime Architecture. The primary §wyrlz LALM now has an executable programming-mode scaffold rather than documentation alone.
+Phase 1 added conservative coding-task routing, new/existing/lightweight project context, change class and architecture depth, architecture/diagnostic/project-coaching flags, bounded programming continuation inheritance, stop suppression, a copied-payload programming context compiler, proportional new-project architecture behavior, existing-project reconciliation grammar, programming cameras, and seven generalized deterministic routing cases.
 
-**Architecture reconciliation:** the active v65 lineage already owned conversation/context-focus, response planning, continuation, cameras, and hot-loader behavior. No separate coding-model or programming compiler was present. The change therefore extends the canonical LALM owner rather than creating a second cognitive subsystem. A separate coder model remains deferred and, if added later, must be subordinate to the primary LALM architecture contract.
-
-**Implemented in v66:**
-
-- conservative coding-task routing;
-- `projectContext = none/new/existing`;
-- `changeClass = explain/create/feature/fix/refactor/migrate/deploy/review`;
-- `architectureDepth = lightweight/normal/deep`;
-- architecture-reconciliation, diagnostics, project-coaching, and tool-evidence flags;
-- bounded inheritance of programming mode across continuation turns such as `keep going` / `let's do this`;
-- stop/cancel suppression so programming mode does not tunnel through an explicit stop;
-- a programming context compiler that injects the architecture operating grammar into a copied generation payload rather than mutating canonical persisted history;
-- existing-project policy: inspect evidence before inventing owners, trace authority/state/readers/writers/lifecycle, and prefer reuse → extend → consolidate → migrate+retire → genuinely new structure;
-- new-user-project policy: proportional architecture with user-controlled simplification of optional structure;
-- lightweight standalone-code policy that avoids unnecessary repository ceremony;
-- fix/debug policy that prefers existing evidence before new instrumentation;
-- explicit permission boundary: programming mode does not authorize file writes, tools, deployment, spending, or bypass of user/server gates;
-- bounded `programming-mode` camera telemetry without intentional prompt/response text;
-- deterministic in-engine routing self-tests for seven generalized behavior classes.
-
-**Hot activation lineage:** v66 source was published as immutable runtime source, `runtime_hot/r39_engine.py` was advanced to fetch that immutable commit, and `runtime_hot/manifest.json` was reconciled from its stale v61 revision label to `2.1.77-hot-programming-mode-context-v66`.
-
-**Static verification:** the exact v66 source was locally syntax-compiled before publication. The classifier/context self-test passed all 7/7 cases, including non-programming exclusion, lightweight code explanation, existing-project feature/debug routing, simple new webpage coaching, cross-cutting migration depth, and conversational programming continuation.
-
-**Live verification:** production logs were queried against the current production deployment after publication. The narrow window contained no `SWRLZ_R39_HOT_ENTRY` records at all, so there was no request available to prove or disprove v66 hydration. Therefore the event is **not** labeled live verified. The next actual R39 request can provide activation evidence through the hot-entry and programming-mode cameras.
-
-**Implementation truth:** `runtime scaffolded`. It is **not yet** `tool-integrated`, full architecture acceptance is not yet deterministically evaluated, a live programming mission has not yet been verified, no coder specialist exists, and no model weights were trained/fine-tuned for this behavior.
-
-**Still future work:** programming obligation ledger, repository-evidence/authority-map compiler, overlap/integration state grounded in actual tool evidence, architecture-aware completion/patch acceptance, repository/tool action loop, richer project-scale adaptation, optional coder specialist benchmarks, and training only after strong generalized evals.
-
-**Lineage:** v66 source commit `3b2379eecd3f68d2aec20ae9839f156b9d79e175`; hot entrypoint commit `a1d371983f551c5e394614b39e67b0c3e2e2391a`; hot manifest commit `fc1e84d86629348a86ddd8d1f69eecb8c9bacde0`; LALM authority commit `3f0a7e250bf99efbfc80e73d35c066122b67faab`; Server authority commit `49f22cd94defd44c4ace0d8ed069eae9e75294cd`; programming-runtime spec update `8d2f2c0f769381d5a6497f6ff02a32e577c457f3`.
+The later production hot-entry evidence shows v66 fetched immutable source `3b2379eecd3f68d2aec20ae9839f156b9d79e175` and completed hydration with planner, response-contract, conversation-state, programming-profile, programming-context, and camera contracts present. That proves loader-level live activation; it does not by itself prove the future repository/tool execution loop or architecture-acceptance phases.
 
 ### Server 2.3.233 — Programming-LALM runtime architecture and model-specialization decision
 
-**Status:** documentation/target architecture complete; superseded by Phase 1 runtime scaffold status for programming-mode implementation.  
-**LALM Engine at event:** `2.1.76` / `v65`.  
-**Deployment / restart:** NONE.
+**Status:** target architecture established.
 
-Established one primary LALM as project/cognitive authority, same-model-first programming specialization, the subordinate-only future coder-model boundary, the implementation-truth ladder, and the phased coding architecture roadmap.
+Established one primary LALM as project/cognitive authority, same-model-first programming specialization, a subordinate-only future coder-model boundary, the implementation-truth ladder, and phased coding architecture roadmap.
 
 ### Server 2.3.232 — Canonical Redis lifecycle repair
 
-**Status:** concurrent runtime event preserved.
-
-Separate Redis lifecycle work advanced Server authority before the programming architecture event; later programming work preserved it rather than overwriting its lineage.
+**Status:** preserved concurrent runtime event.
 
 ### Server 2.3.231 — Shared module status plane
 
 **Status:** preserved.  
 **Chat:** advanced to `1.5.66`.
 
-Normalized shared declared-module status and observed-health behavior. Later programming events preserved Chat `1.5.66`.
-
 ### Server 2.3.230 — Project-work governance, diagnostics, reporting, and architecture coaching
 
 **Status:** source complete / governance contract verified.
 
-Reconciled Project Start as the canonical router, made issue work automatically inspect accessible evidence and add bounded cameras only when needed, introduced the response/readability standard, broadened cameras/logs project-wide, and established proportional architecture coaching for user projects.
+Reconciled Project Start as canonical router, made issue work inspect accessible evidence automatically, introduced the response/readability standard, broadened cameras/logs project-wide, and established proportional architecture coaching for user projects.
 
 ### Server 2.3.229 — R39 v65 inherited-namespace repair
 
-**Status:** preserved in lineage.  
-**LALM Engine:** `2.1.76` / `v65` at that event.
-
-Advanced the cold-load-safe v65 lineage while preserving v61 context-focus behavior.
+**Status:** preserved in lineage.
 
 ### Server 2.3.228 — Programming-LALM architecture reconciliation curriculum
 
 **Status:** source complete.
 
-Added the architecture-reconciliation execution protocol: discover owners, trace state/readers/writers/lifecycle, classify overlap, distinguish current authority/live activation/history, and deliberately choose reuse/extension/consolidation/migration/new structure.
+Added the architecture-reconciliation execution protocol: discover owners, trace state/readers/writers/lifecycle, classify overlap, distinguish current authority/live activation/history, and choose reuse/extension/consolidation/migration/new structure deliberately.
 
 ### Server 2.3.226 — Mandatory pre-feature architecture reconciliation governance
 
 **Status:** source complete.
-
-Made architecture reconciliation mandatory before feature/fix/optimization/refactor work and required a durable reconciliation note.
-
-### Earlier releases
-
-Earlier detailed release records remain in Git history and `docs/releases/`. This compact roadmap emphasizes current architecture and recent lineage rather than duplicating every historical event indefinitely.
 
 ---
 
@@ -137,7 +135,8 @@ Future work should leave this ledger able to answer:
 - What cameras/log evidence supported diagnosis or activation?
 - What verification level passed?
 - For programming/model work, is capability **documented, runtime scaffolded, tool-integrated, deterministically evaluated, live verified, or learned/trained**?
-- Did deployment/restart happen?
+- Did deployment/restart happen, and through which authority?
+- Did any Git commit unexpectedly become a deployment writer?
 - What concurrency/failure lineage must future work preserve?
 
 If module authorities disagree with this snapshot, module-owned authorities win and the roadmap must be reconciled during the next governed event.
