@@ -1,5 +1,5 @@
 {
   "schema": 1,
-  "revision": "2.1.67-hot-trajectory-bound-response-planning-v56",
+  "revision": "2.1.70-hot-acceptance-completion-diagnostics-v59",
   "inferenceFiles": ["r39_engine.py"]
 }
