@@ -168,9 +168,9 @@ Core invariant:
 - `main` = stable loader/infrastructure and engineering-contract boundary.
 - branch name alone does **not** prove deployment capability.
 
-Before any repository action that can actually trigger deployment/redeployment, determine the current deployment configuration/workflow and **obtain explicit user approval before the deployment-producing action**.
+Before an action that is explicitly deployment-producing under the current deployment contract, determine the current deployment configuration/workflow and **obtain explicit user approval before that deployment-producing action**. Ordinary Git/documentation mutations remain deployment-inert unless fresh evidence shows the deployment-control contract has changed or failed.
 
-A request to fix, implement, document, commit, merge, or architect is not deployment authorization.
+A request to fix, implement, document, commit, merge, or architect is not deployment authorization; it also must not cause ordinary deployment-inert Git work to be mislabeled as deployment-capable.
 
 Documentation-only changes are engineering-contract maintenance and must be deployment-inert. They do not require deployment approval. If repository/deployment configuration causes documentation-only commits to deploy application code, treat that configuration as a defect and correct the deployment filtering rather than treating documentation as deployment-sensitive.
 
