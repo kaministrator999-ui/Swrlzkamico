@@ -1,21 +1,26 @@
-/* §wyrlz Chat atomic first-paint guard.
-   This stylesheet is injected into <head> by the stable runtime source guard,
-   so the legacy/base Chat shell can never paint before the runtime theme settles. */
-html:not(.swrlz-visual-ready) body {
+/* §wyrlz Chat first-paint guard.
+   Keep the stale/base shell hidden only until the runtime-owned main Chat is ready.
+   Decorative/theme settlement is progressive and must never gate an interactive Mask. */
+html:not(.swrlz-main-chat-ready) body {
   background:#020913 !important;
 }
-html:not(.swrlz-visual-ready) body .app,
-html:not(.swrlz-visual-ready) body > .noise,
-html:not(.swrlz-visual-ready) body > .ambient,
-html:not(.swrlz-visual-ready) body > .sidebar-scrim,
-html:not(.swrlz-visual-ready) body > dialog,
-html:not(.swrlz-visual-ready) body > .toast {
+html:not(.swrlz-main-chat-ready) body .app,
+html:not(.swrlz-main-chat-ready) body > .noise,
+html:not(.swrlz-main-chat-ready) body > .ambient,
+html:not(.swrlz-main-chat-ready) body > .sidebar-scrim,
+html:not(.swrlz-main-chat-ready) body > dialog,
+html:not(.swrlz-main-chat-ready) body > .toast {
   opacity:0 !important;
   visibility:hidden !important;
   pointer-events:none !important;
 }
-html.swrlz-visual-ready body .app,
-html.swrlz-visual-ready body > .noise,
-html.swrlz-visual-ready body > .ambient {
+html.swrlz-main-chat-ready body .app,
+html.swrlz-main-chat-ready body > .noise,
+html.swrlz-main-chat-ready body > .ambient {
   visibility:visible !important;
+}
+/* Decorative readiness remains observable, but it is not an interaction gate. */
+html.swrlz-main-chat-ready:not(.swrlz-visual-ready) body .app {
+  opacity:1 !important;
+  pointer-events:auto !important;
 }
