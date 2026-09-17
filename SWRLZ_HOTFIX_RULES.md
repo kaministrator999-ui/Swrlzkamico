@@ -23,7 +23,7 @@ Do not move behavior to the wrong plane merely to avoid deployment.
 
 No repository action that can actually cause deployment/redeployment is implicitly authorized by a request to fix, implement, test, document, commit, merge, refactor, or architect.
 
-Before a deployment-producing action, establish from **current configuration/workflows and current platform behavior**:
+Before an explicitly deployment-producing action, establish from the current deployment contract and relevant platform evidence:
 
 1. the exact trigger/action;
 2. why it causes deployment;
@@ -35,13 +35,13 @@ Then **STOP and obtain explicit user approval before performing that deployment-
 
 A branch name alone does not prove deployment capability. A `main` commit is not automatically a deployment. A documentation file is not automatically deployment-capable. An explicit deploy action remains deployment-producing even when ordinary Git commits are inert.
 
-If deployment capability is genuinely uncertain, treat the proposed action as deployment-capable until current configuration **and observed platform behavior** are inspected.
+Do not manufacture deployment uncertainty for ordinary Git work. Under the current fail-closed contract, commits—including documentation-only `main` commits—are deployment-inert. Re-open deployment capability only when the proposed action is an explicit deploy/redeploy trigger, changes deployment-control configuration/integration, or fresh platform evidence shows the fail-closed contract has failed.
 
 ---
 
 ## 3. Current production deployment-control contract
 
-The current production deployment boundary must be re-checked each governed event; never permanently assume yesterday's configuration.
+The current production deployment boundary is durable project state, not a per-event suspicion loop. Re-check it when deployment-control files/integration change, when an explicit deployment is proposed, or when platform evidence contradicts the recorded contract.
 
 ### Automatic Git deployment must remain fail-closed
 
@@ -125,7 +125,7 @@ Ordinary runtime-hot changes do **not** require a deployment or restart unless c
 - stable server capabilities the current runtime loader cannot supply;
 - engineering-contract documentation.
 
-A `main` mutation and a production deployment are separate concepts. Under the current fail-closed Git contract, ordinary `main` commits are expected to be deployment-inert; verify that expectation after deployment-control changes rather than merely trusting config text.
+A `main` mutation and a production deployment are separate concepts. Under the current fail-closed Git contract, ordinary `main` commits are deployment-inert and should proceed without deployment approval. Verify again after deployment-control changes or contradictory platform evidence, not after every ordinary commit.
 
 If applying a stable change to production requires the explicit manual deployment workflow or another deployment-producing action, pass the Deployment Approval Gate first.
 
