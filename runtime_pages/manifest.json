@@ -1,11 +1,39 @@
 {
-  "version": 135,
+  "version": 136,
   "mode": "runtime-source-of-truth",
   "routes": {
-    "/": {"source":"runtime_pages/index.html"},
-    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_early_shell_ready_v1.js","web/chat_runtime_loader_v3.js"]},
-    "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
+    "/": {
+      "source": "runtime_pages/index.html"
+    },
+    "/chat": {
+      "source": "web/chat.html",
+      "styles": [
+        "web/chat_first_paint_guard.css"
+      ],
+      "scripts": [
+        "web/chat_early_shell_ready_v1.js",
+        "web/chat_runtime_loader_v3.js"
+      ]
+    },
+    "/server": {
+      "source": "web/server.html"
+    },
+    "/lalm": {
+      "source": "web/lalm.html"
+    },
+    "/admin": {
+      "source": "web/admin.html"
+    },
+    "/live": {
+      "source": "runtime_pages/index.html"
+    },
+    "/collector": {
+      "source": "web/collector.html"
+    }
   },
-  "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v135 activates Chat 1.5.75 isolated Activity Log tap ownership. The visible controlled Activity panel no longer carries the legacy .trace class or trace-list/item classes, preventing older Chat enhancement modules from attaching native-details behavior to the new control. One user click is the sole activityExpanded write path; the panel uses its own styling and touch-action manipulation for deterministic mobile taps."
+  "assetRoots": [
+    "web",
+    "runtime_pages"
+  ],
+  "notes": "Manifest v136 activates Chat 1.5.76 response identity emblem. Assistant response labels now render the canonical 𓆩⁽§⁾wyrlz𓆪 mark while preserving the existing Chat renderer and runtime-hot version polling path."
 }
