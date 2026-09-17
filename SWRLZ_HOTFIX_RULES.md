@@ -23,7 +23,7 @@ Do not move behavior to the wrong plane merely to avoid deployment.
 
 No repository action that can actually cause deployment/redeployment is implicitly authorized by a request to fix, implement, test, document, commit, merge, refactor, or architect.
 
-Before a deployment-producing action, establish from **current configuration/workflows**:
+Before a deployment-producing action, establish from **current configuration/workflows and current platform behavior**:
 
 1. the exact trigger/action;
 2. why it causes deployment;
@@ -35,15 +35,46 @@ Then **STOP and obtain explicit user approval before performing that deployment-
 
 A branch name alone does not prove deployment capability. A `main` commit is not automatically a deployment. A documentation file is not automatically deployment-capable. An explicit deploy action remains deployment-producing even when ordinary Git commits are inert.
 
-If deployment capability is genuinely uncertain, treat the proposed action as deployment-capable until current configuration is inspected.
+If deployment capability is genuinely uncertain, treat the proposed action as deployment-capable until current configuration **and observed platform behavior** are inspected.
 
 ---
 
-## 3. Current deployment-control principle
+## 3. Current production deployment-control contract
 
-The current production workflow must be re-checked each event; never permanently assume yesterday's configuration.
+The current production deployment boundary must be re-checked each governed event; never permanently assume yesterday's configuration.
 
-When Git-based deployment is disabled and only an explicit workflow/request path deploys, ordinary documentation or source commits that do not hit that trigger are non-deploying.
+### Automatic Git deployment must remain fail-closed
+
+`vercel.json` currently carries **both** supported/compatibility Git-disable guards:
+
+```json
+"git": {
+  "deploymentEnabled": false
+},
+"github": {
+  "enabled": false
+}
+```
+
+The modern `git.deploymentEnabled=false` guard is the primary declaration. The GitHub-specific `github.enabled=false` compatibility guard is retained because production evidence showed that the modern guard by itself did not prevent a native Git deployment of a documentation-only `main` commit.
+
+These guards mean an ordinary Git commit must **not** be treated as the canonical production deployment path. After changing either guard or any Vercel Git-integration behavior, verify the result against the Vercel deployment list rather than assuming the config was honored.
+
+### Canonical production deployment path
+
+The canonical application deployment path is `.github/workflows/manual-vercel-production.yml` (or an explicitly approved equivalent that deliberately replaces it).
+
+That workflow:
+
+- requires explicit approval for `workflow_dispatch`, or an explicitly approved `.deploy/REQUEST.txt` request;
+- checks out the approved source ref;
+- records the exact checked-out source SHA;
+- derives the stable server version from the canonical `VERSION` assignment in `api/index.py` rather than duplicating a stale literal;
+- builds and deploys through the Vercel CLI;
+- verifies that production reports both the expected stable server version **and the exact approved deployment commit SHA**;
+- verifies required runtime/manifest/collector capabilities before acceptance.
+
+The workflow's source-bound verification is part of deployment correctness. Do not replace it with a remembered Server/runtime version number: the stable deployed server version and the runtime-hot Server lineage are separate authorities.
 
 If configuration changes later, re-evaluate immediately.
 
@@ -94,7 +125,11 @@ Ordinary runtime-hot changes do **not** require a deployment or restart unless c
 - stable server capabilities the current runtime loader cannot supply;
 - engineering-contract documentation.
 
-A `main` mutation and a production deployment are separate concepts. If the mutation itself is inert, it may be committed without pretending it deployed. If applying it to production requires an actual deployment-producing action, pass the Deployment Approval Gate first.
+A `main` mutation and a production deployment are separate concepts. Under the current fail-closed Git contract, ordinary `main` commits are expected to be deployment-inert; verify that expectation after deployment-control changes rather than merely trusting config text.
+
+If applying a stable change to production requires the explicit manual deployment workflow or another deployment-producing action, pass the Deployment Approval Gate first.
+
+Documentation-only commits are expected to remain deployment-inert. If one produces a deployment, treat that as a deployment-control defect and reconcile the platform integration before continuing ordinary `main` work.
 
 ---
 
@@ -198,8 +233,10 @@ Before closing a governed update, verify as applicable:
 - [ ] Server/module authority baseline captured;
 - [ ] issue work inspected existing logs/cameras automatically;
 - [ ] observability gap instrumented only if needed;
-- [ ] deployment capability checked from current configuration;
+- [ ] deployment capability checked from current configuration **and current platform evidence**;
 - [ ] explicit approval obtained before any deployment-producing action;
+- [ ] Git auto-deploy guards remain fail-closed when that is the intended architecture;
+- [ ] manual deployment verification is bound to approved source SHA + canonical stable server version;
 - [ ] only intended owners/files changed;
 - [ ] version authorities re-read at commit boundary;
 - [ ] concurrent advances reconciled;
@@ -208,7 +245,7 @@ Before closing a governed update, verify as applicable:
 - [ ] post-change authorities re-read;
 - [ ] source/static/runtime/live verification classified honestly;
 - [ ] no legacy injector/loader/fallback unexpectedly overrides the intended source;
-- [ ] no unapproved deployment/restart occurred.
+- [ ] no unapproved deployment/restart occurred after the repair boundary.
 
 ---
 
@@ -224,4 +261,4 @@ Do not rewrite history to make a failed attempt look like it never happened.
 
 ## Bottom line
 
-**Architecture tells you where the change belongs. This document tells you how to mutate that owner safely. Prefer runtime-hot changes for runtime-owned behavior, keep stable infrastructure on main, prove deployment capability from current configuration, never trigger deployment without explicit approval, preserve durable authority, version from current state, and verify the actual owner/activation path before declaring the work done.**
+**Architecture tells you where the change belongs. This document tells you how to mutate that owner safely. Prefer runtime-hot changes for runtime-owned behavior, keep stable infrastructure on main, keep automatic Git deployment fail-closed, use the explicitly approved manual workflow as the canonical production path, bind deployment acceptance to the exact approved source SHA and canonical stable-server authority, preserve durable/version authority, and verify actual platform behavior before declaring the deployment boundary safe.**
