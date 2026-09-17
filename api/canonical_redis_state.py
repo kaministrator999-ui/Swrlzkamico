@@ -33,6 +33,7 @@ if redis.call('EXISTS',KEYS[2])==1 then return 0 end
 redis.call('SET',KEYS[2],ARGV[1]); redis.call('ZADD',KEYS[3],ARGV[2],ARGV[3]); return 1
 '''
 _CAMERA_CONTRACT="swrlz-canonical-redis-lifecycle-v3"
+_LEGACY_MESSAGE_INDEX="messages"
 def _camera(stage:str,**fields:Any)->None:
  r={"contract":_CAMERA_CONTRACT,"stage":stage,"atUnixMs":int(time.time()*1000)}
  for k,v in fields.items():
@@ -69,9 +70,23 @@ def _verify_existing(redis:AtomicRedisRestChatStore,job:GenerationJobRecord,thre
  if job.thread_id!=thread_id or job.user_message_id!=user_message_id or job.assistant_message_id!=assistant_message_id:raise ValueError("CHAT_TURN_REQUEST_ID_MESSAGE_CONFLICT")
  m=_message(redis,user_id=job.user_id,message_id=user_message_id)
  if m is None or m.committed_text!=prompt or m.role!="USER":raise ValueError("CHAT_TURN_MESSAGE_ID_CONTENT_CONFLICT")
+def _messages_from_index(redis:AtomicRedisRestChatStore,*,user_id:str,thread_id:str,index_name:str,limit:int=200)->list[MessageRecord]:
+ count=max(1,min(int(limit),1000));ids=redis._command("ZRANGE",redis._key(index_name,user_id,thread_id),-count,-1) or [];out=[]
+ for message_id in ids:
+  message=_message(redis,user_id=user_id,message_id=str(message_id))
+  if message is not None and message.user_id==user_id and message.thread_id==thread_id:out.append(message)
+ return out
+def _canonical_messages_compatible(redis:AtomicRedisRestChatStore,*,user_id:str,thread_id:str,limit:int=200)->tuple[list[MessageRecord],int]:
+ current=redis.list_messages(user_id=user_id,thread_id=thread_id,limit=limit);legacy=_messages_from_index(redis,user_id=user_id,thread_id=thread_id,index_name=_LEGACY_MESSAGE_INDEX,limit=limit);merged={}
+ for message in [*legacy,*current]:
+  existing=merged.get(message.message_id)
+  if existing is None or float(message.updated_at or 0)>=float(existing.updated_at or 0):merged[message.message_id]=message
+ ordered=sorted(merged.values(),key=lambda m:(float(m.created_at or 0),str(m.message_id)))
+ return ordered[-max(1,min(int(limit),1000)):],len(legacy)
 def canonical_history(*,user_id:str,thread_id:str,request_id:str,limit:int=32)->list[dict[str,str]]:
- redis=store();out=[]
- for m in redis.list_messages(user_id=user_id,thread_id=thread_id):
+ redis=store();out=[];messages,legacy_count=_canonical_messages_compatible(redis,user_id=user_id,thread_id=thread_id,limit=max(64,limit*4))
+ if legacy_count:_camera("history-legacy-index-bridge",requestId=request_id,threadId=thread_id,legacyIndexedMessages=legacy_count,mergedMessages=len(messages))
+ for m in messages:
   if m.request_id==request_id or m.role not in {"USER","ASSISTANT"}:continue
   text=m.committed_text.strip()
   if not text or m.state in {"STREAMING","FAILED","CANCELLED"}:continue
