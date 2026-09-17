@@ -6,7 +6,7 @@ actual r39_engine_v58b.py repair and removes the fresh-worker `_impl` preflight 
 """
 from __future__ import annotations
 import json,time,urllib.request
-_V61_COMMIT="05e591af96d2dced0692c6d98775e7b85bb2b98c"
+_V61_COMMIT="ae27745d9a4d988b28e2351f793d9c568a24ef26"
 _V61_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V61_COMMIT}/runtime_hot/r39_engine_v61.py"
 _V60_OLD="d248a4dacf2446c1d0d836c54482617f8dedc11f"
 _V60B_NEW="db761e67d903d7141108945abd64f74dd0de2932"
