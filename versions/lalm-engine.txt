@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.63
-REVISION=2.1.63-hot-unicode-semantic-awareness-v52
+VERSION=2.1.64
+REVISION=2.1.64-hot-map-to-point-selective-activation-v53
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
