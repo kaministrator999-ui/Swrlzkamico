@@ -2,7 +2,7 @@
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **Phase 1 is runtime scaffolded and authenticated-route verified; production behavior is live-proven through v71, while LALM `2.1.85` / R39 `v73` is source-complete and published with fresh-worker/user-turn activation pending.** v69 live-verified proportional lightweight-programming context compaction. v70 owns coding-terminal/repair hardening. v71 made terminal-source diagnostics collision-proof and a real authenticated turn proved both first and repair candidates were failing in lower inference after exactly two decode steps. v72 added bounded lower-failure detail diagnostics without changing response semantics. v73 repairs the source-visible inherited v55 n-gram NumPy namespace fault at that exact two-token threshold. One successful authenticated post-v73 runnable-code turn remains the current completion acceptance. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain later states.
+**Current implementation state:** **Phase 1 core programming generation is live verified through LALM `2.1.86` / R39 `v74`; same-thread artifact-continuation integration is source-complete but awaits one stable Server bootstrap deployment for canonical history recovery.** v69 live-verified proportional lightweight-programming context compaction. v70 owns coding-terminal/repair hardening. v71 made terminal-source diagnostics collision-proof. v72 added bounded lower-failure detail. v73 repaired the inherited v55 n-gram NumPy fault and a real authenticated turn completed runnable Python + explanation beyond the former two-token failure. v74 is production-hydrated and adds proportional programming-artifact continuation routing. Server `2.3.257` adds a read-only runtime-hot canonical-history policy seam so future history-reconstruction refinements can ship from `runtime` after one stable loader activation. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain later states.
 
 ---
 
@@ -27,6 +27,7 @@ PROGRAMMING SPECIALIZATION
   └─ future optional coder model: subordinate proposal engine only
         ↓
 SERVER / TOOLS
+  ├─ canonical conversation history
   ├─ Git/files
   ├─ tests/builds
   ├─ cameras/logs
@@ -70,9 +71,10 @@ R39 `v66` introduced executable programming-mode routing. Later lineage hardens 
 - **v70** preserved v69 while hardening coding completion/repair around malformed bare opening fences;
 - **v71** preserved v70 response semantics while making coding-terminal camera identity collision-proof across the exec-based inherited namespace;
 - **v72** preserved all response semantics and added bounded failure category / Python exception type / short sanitized detail at the first/repair candidate boundary;
-- **v73** preserves v72 and repairs the inherited v55 n-gram sampler's missing NumPy global at the exact 2→3 generated-token transition.
+- **v73** preserved v72 and repaired the inherited v55 n-gram sampler's missing NumPy global at the exact 2→3 generated-token transition;
+- **v74** preserves v73 inference/sampling and repairs proportional continuation routing for references to a recent coding artifact such as `that code`.
 
-Current source authority is LALM `2.1.85`, revision `2.1.85-hot-ngram-numpy-namespace-repair-v73`.
+Current LALM authority is `2.1.86`, revision `2.1.86-hot-programming-artifact-continuation-v74`.
 
 ### A. Coding-task classifier
 
@@ -87,8 +89,9 @@ architectureReconciliation
 diagnostics
 projectCoaching
 toolEvidenceRequired
-source = current-turn / conversation-bridge
+source = current-turn / conversation-bridge / conversation-artifact-bridge
 inherited
+artifactContinuation
 implementationTruth = runtime-scaffolded
 ```
 
@@ -97,6 +100,8 @@ This metadata routes cognition; it does not replace semantic reasoning.
 ### B. Conversational programming inheritance
 
 Short continuation turns such as `keep going`, `go ahead`, or `let's do this` may inherit programming mode from the nearest relevant user task. The bridge is conservative: it examines a bounded recent user window, stops at newer substantive unrelated work, honors explicit stop/cancel language, and represents inherited state as bounded metadata rather than copied hidden reasoning.
+
+v74 extends this with **artifact-aware inheritance**. Deictic follow-ups such as `that code`, `this script`, or `the previous function` may anchor to the nearest recent assistant code artifact and its preceding programming task. A standalone artifact stays standalone/lightweight unless the user explicitly introduces an existing project/repository.
 
 ### C. Programming context compiler
 
@@ -174,7 +179,7 @@ v71 intentionally collapsed the underlying base-generator exception to `inferenc
 - Python exception type;
 - short sanitized detail preview.
 
-It logs no prompt, response body, secret, or hidden reasoning and leaves candidate events unchanged. v72 is a diagnostic layer, not another semantic repair owner. v73 preserves it so any lower failure that survives remains diagnosable.
+It logs no prompt, response body, secret, or hidden reasoning and leaves candidate events unchanged. v72 is a diagnostic layer, not another semantic repair owner. Later layers preserve it so any lower failure that survives remains diagnosable.
 
 ### H. Inherited n-gram NumPy namespace repair — v73
 
@@ -196,19 +201,57 @@ v73 repairs that compatibility boundary at the current edge:
 - fail-closes if `_ngram_guarded_sample` is unavailable;
 - runs a hydration self-test that calls the sampler with a two-token history, forcing the exact previously failing branch.
 
-This is source/static verified and published. Fresh-worker hydration plus one authenticated coding completion remains required before the repair is called live verified.
+Authenticated request `web:mu621xd9:9391101464251047456` then crossed the former failure threshold, decoded 134 tokens / 509 characters through at least decode step 128, and completed runnable Python plus the requested explanation with zero completion gaps. v73 is therefore live/user-turn verified.
 
-### I. Permission boundary
+### I. Programming-artifact continuation routing — v74
 
-Programming mode is cognitive routing only. It does **not** grant permission to write files, invoke tools, deploy, spend money/credits, bypass server policy, or bypass approval requirements. Operational authority remains with the server/tool layer and project contracts.
+The next same-thread request asked to `add a error catch to that code`. Canonical history unexpectedly arrived empty, so the older classifier had no code artifact and promoted the phrase `error catch` into existing-project/fix semantics. That triggered architecture reconciliation/tool evidence, prevented v69 lightweight compaction, and inflated the rendered prompt to 3,599 tokens before the function timed out during prefill.
 
-### J. Programming cameras
+v74 repairs the Brain-owned half without changing v73 generation/sampling:
 
-Programming turns emit bounded routing facts such as project context, change class, architecture depth, inheritance state, architecture-reconciliation requirement, diagnostics/coaching flags, tool-evidence requirement, and implementation-truth state.
+- recognizes bounded code referents such as `that code`, `this script`, and `the previous function`;
+- locates the nearest recent assistant code artifact and preceding programming task from supplied canonical history;
+- inherits prior `projectContext` rather than inventing a project;
+- keeps a standalone artifact `projectContext=none` / `architectureDepth=lightweight`;
+- treats adding error handling as feature/hardening rather than proof of an existing broken project;
+- preserves true `fix/debug/repair` semantics when explicitly requested;
+- preserves explicit repository/project language as existing-project work.
 
-v69 adds bounded context/prefill evidence; v70/v71 add reliable candidate-terminal/fence evidence; v72 adds bounded lower-failure detail; v73 emits activation evidence for the namespace repair. These cameras intentionally avoid prompt/response text and private chain-of-thought unless an existing explicit Chat transcript camera separately owns visible user content.
+v74's five-case hydration self-test is production verified and the hot entry reports LALM `2.1.86`. End-to-end deictic continuation still requires canonical history delivery from the Server.
 
-### K. Deterministic routing self-test
+### J. Canonical-history delivery + runtime-hot Server history policy — Server 2.3.256–2.3.257
+
+The same failed continuation exposed the Server-owned half: the deployed stable writer used legacy Redis sorted-set names such as `messages`, while the canonical reader enumerated `message_index`. Durable messages existed but history reconstruction returned zero.
+
+Server 2.3.256 added a bundled compatibility reader on `main` that merges current and legacy message indexes. Server 2.3.257 generalizes that read policy behind a **runtime-hot Server policy ABI** while preserving stable Server authority:
+
+```text
+stable auth + durable Redis records
+        ↓
+stable hot-loader ABI
+        ↓
+runtime_hot/chat_history_policy.py  (read-only)
+        ↓
+bounded canonical history
+        ↓
+v74 cognition
+```
+
+The hot policy may enumerate/filter already-authoritative Server records only. It cannot accept browser history as authority and does not own writes, authentication, turn lifecycle, or terminal commits. The stable loader validates the hot contract/self-test, re-bounds its output, and falls back to the bundled canonical reader on missing/invalid/failing runtime policy.
+
+Runtime policy revision `1.0.0-runtime-history-compat-v1` passed six deterministic compatibility cases covering legacy recovery, order, dedupe, current-request exclusion, failed-turn exclusion, and bounded index counts. The stable loader seam is source-complete but needs one explicit production deployment. Once that seam is active, later history-policy-only improvements can ship from `runtime` without another Vercel deployment/restart.
+
+### K. Permission boundary
+
+Programming mode and runtime history reconstruction are cognitive/read-routing facilities only. They do **not** grant permission to write files, invoke tools, deploy, spend money/credits, bypass server policy, or bypass approval requirements. Operational authority remains with the server/tool layer and project contracts.
+
+### L. Programming cameras
+
+Programming turns emit bounded routing facts such as project context, change class, architecture depth, inheritance state, artifact-continuation state, architecture-reconciliation requirement, diagnostics/coaching flags, tool-evidence requirement, and implementation-truth state.
+
+v69 adds bounded context/prefill evidence; v70/v71 add reliable candidate-terminal/fence evidence; v72 adds bounded lower-failure detail; v73 emits activation evidence for the namespace repair; v74 emits artifact-continuation routing state. Server 2.3.257 adds `SWRLZ_CHAT_HISTORY_POLICY` / `SWRLZ_CHAT_HISTORY_HOT` count-only history-source evidence. These cameras intentionally avoid prompt/response text and private chain-of-thought unless an existing explicit Chat transcript camera separately owns visible user content.
+
+### M. Deterministic routing self-tests
 
 The inherited programming suite covers seven generalized behavior classes:
 
@@ -220,7 +263,7 @@ The inherited programming suite covers seven generalized behavior classes:
 6. cross-cutting migration gets deep architecture treatment;
 7. conversational continuation correctly inherits the prior coding task.
 
-The lineage reports this suite **7/7**. This is routing/scaffold evaluation, not the later full Phase 2 architecture-acceptance suite.
+The lineage reports this suite **7/7**. v74 adds five artifact-continuation cases, and the runtime-hot history policy adds six deterministic canonical-history compatibility checks. These are routing/history-policy evaluations, not the later full Phase 2 architecture-acceptance suite.
 
 ---
 
@@ -253,30 +296,48 @@ v72 bounded coding-inference failure-detail camera
   ↓
 v73 inherited v55 n-gram NumPy namespace repair
   ↓
+v74 programming-artifact continuation routing
+  ↓
 runtime_hot/r39_engine.py
+```
+
+Canonical-history support feeding that lineage is separately Server-owned:
+
+```text
+canonical Redis records
+  ↓
+Server 2.3.256 bundled legacy/current compatibility
+  ↓
+Server 2.3.257 stable hot-policy loader seam
+  ↓
+runtime_hot/chat_history_policy.py
 ```
 
 ### Activation truth
 
 Current state:
 
-- **source complete:** yes, through v73;
+- **LALM source complete:** yes, through v74;
 - **runtime scaffolded:** yes;
-- **live worker hydration:** verified through v71; v73 fresh-worker hydration pending;
-- **live startup/runtime readiness:** previously verified through v71; v73 pending;
+- **live worker hydration:** verified through v74;
+- **live startup/runtime readiness:** verified with v74 hot hydration;
 - **authenticated programming-route entry:** yes;
 - **programming routing acceptance:** `7/7` inherited;
 - **v69 lightweight context compaction:** live user-turn verified;
 - **v70 semantic/repair self-test:** live hydration verified;
 - **v71 terminal-camera contract:** live hydration and real candidate evidence verified;
-- **v72 diagnostic contract:** source/static verified and preserved, not independently required for acceptance after source diagnosis;
-- **v73 two-token threshold self-test:** source/static verified; fresh-worker execution pending;
-- **successful authenticated post-v73 runnable-code completion:** pending;
+- **v72 diagnostic contract:** source/static verified and preserved;
+- **v73 two-token threshold repair:** live/user-turn verified;
+- **successful authenticated post-v73 runnable-code completion:** yes;
+- **v74 artifact-continuation routing:** live hydration/self-test verified;
+- **runtime-hot canonical-history policy:** source complete + deterministic behavior verified;
+- **stable history-policy loader ABI:** source complete, production activation pending explicit deployment;
+- **successful authenticated same-thread `that code` continuation through hot history policy:** pending stable bootstrap activation;
 - **tool-integrated programming execution:** no;
 - **full deterministic architecture acceptance:** no;
 - **learned/trained programming specialization:** no.
 
-Do not bypass Chat authentication or manufacture an end-to-end success simply to close acceptance. A normal authenticated lightweight coding turn is the correct live acceptance surface.
+Do not bypass Chat authentication or manufacture an end-to-end success simply to close acceptance. A normal authenticated same-thread continuation after the stable loader deployment is the correct acceptance surface.
 
 ---
 
@@ -306,7 +367,7 @@ Phase 1 establishes the cognitive/routing/generation foundation before those mec
 
 ### Lightweight coding
 
-Examples: explain syntax, write a standalone function, show an algorithm. Use lightweight programming reasoning and proportional context; do not force repository architecture scanning.
+Examples: explain syntax, write a standalone function, show an algorithm, or modify a recent standalone code artifact. Use lightweight programming reasoning and proportional context; do not force repository architecture scanning.
 
 ### Existing-project coding
 
@@ -362,11 +423,11 @@ The specialist may return patches, affected files, assumptions, tests, migration
 
 ### Phase 1 — same-LALM programming mode
 
-**Status:** routing and proportional context are live verified; coding-terminal diagnosis reached a source-complete v73 causal repair. **Final acceptance remains one successful authenticated post-v73 runnable-code + explanation turn.**
+**Status:** core generation/routing foundation is live verified through v74. Runnable-code completion acceptance passed under v73 and v74 preserves that inference path. The remaining Phase 1 integration checkpoint is a normal authenticated same-thread artifact continuation after Server 2.3.257's stable history-policy loader seam is deployed and the runtime-hot policy is observed in production.
 
 ### Phase 2 — obligation + architecture acceptance
 
-**Next capability target only after Phase 1 coding completion acceptance.** Add programming obligation tracking, repository-evidence/overlap state, integration decisions, completion requirements, and a generalized architecture acceptance suite.
+**Next capability target after the remaining continuation integration checkpoint closes.** Add programming obligation tracking, repository-evidence/overlap state, integration decisions, completion requirements, and a generalized architecture acceptance suite.
 
 ### Phase 3 — repository/tool execution loop
 
@@ -397,10 +458,10 @@ Programming capability claims use these states literally:
 5. **Live verified** — production/user-turn evidence proves the relevant path executed successfully.
 6. **Learned/trained** — capability is materially represented in trained/fine-tuned model behavior rather than runtime prompting/scaffolding alone.
 
-Do not collapse these states. A published/hydrated wrapper is not automatically a successful coding answer, and a documented future coder boundary is not a deployed specialist model.
+Do not collapse these states. A published/hydrated wrapper is not automatically a successful coding answer, a runtime-hot history policy is not live until its stable loader ABI is active, and a documented future coder boundary is not a deployed specialist model.
 
 ---
 
 ## Bottom line
 
-**§wyrlz keeps one primary cognitive authority. Phase 1 currently reaches source authority LALM 2.1.85 / R39 v73: authenticated programming routing and v69 proportional context are live verified; v70/v71 isolated the coding failure below semantic repair; v72 preserves bounded lower-failure diagnostics; and v73 repairs the exact inherited v55 NumPy namespace fault that activates at the two-token history threshold. v73 still requires fresh-worker plus authenticated runnable-code acceptance before it is called live verified. Phase 2 begins only after that boundary closes; repository/tool execution and any future coder model remain later, explicitly separate implementation states.**
+**§wyrlz keeps one primary cognitive authority. LALM 2.1.86 / R39 v74 is the active programming edge: v69 proportional context is live verified; v70/v71 isolated semantic-vs-inference failure correctly; v72 preserves bounded diagnostics; v73 repaired and live-verified the exact two-token NumPy namespace failure; and v74 live-hydrates proportional artifact-continuation routing. Server 2.3.257 keeps durable conversation authority in the Human/Server while adding a read-only runtime-hot history-policy seam so future canonical-history reconstruction can evolve from `runtime`. One stable bootstrap deployment plus a normal same-thread continuation test remains before that integration is called live verified. Repository/tool execution and any future coder model remain later, explicitly separate implementation states.**
