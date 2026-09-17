@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.252`
+- **Overall Server:** `2.3.253`
 - **Chat:** `1.5.75`
-- **LALM Engine:** `2.1.82` (`v70` coding-terminal + fence-repair hardening)
+- **LALM Engine:** `2.1.83` (`v71` coding-terminal camera-contract namespace repair)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,26 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.253 — R39 v71 coding-terminal camera-contract namespace repair
+
+**Status:** runtime-hot source complete; v71 live-hydrated; camera-contract self-test live verified; authenticated coding-turn terminal acceptance pending.  
+**LALM Engine:** `2.1.83` / `v71`.  
+**Chat:** `1.5.75` unchanged by this event.  
+**Deployment Control:** `1.0.8` unchanged.  
+**Deployment / restart:** NONE.
+
+**Triggering state:** v70 already owned the coding-terminal + bounded-repair hardening and added the bounded `coding-candidate-terminal` camera. During closure, the exec-based inherited lineage exposed a diagnostics-only namespace collision: v70 used the generic global `_CONTRACT`, and nested hydrated layers could overwrite that name before the camera/self-test resolved it. The generation/repair behavior itself remained owned by v70.
+
+**Architecture reconciliation:** this is Brain/LALM compatibility instrumentation, not another repair system. v71 preserves the v70 semantic owner and repairs only the camera-contract namespace so the next authenticated coding turn can be diagnosed reliably. Chat persistence/transport, v69 context compaction, deployment infrastructure, and tool authority are unchanged.
+
+**Repair:** v71 hydrates immutable v70, establishes unique `r39-v71-coding-terminal-camera-contract-v1`, restores the dynamically resolved contract after inherited hydration, recomputes/fail-closes the coding-terminal self-test against that contract, and emits `v71-enter` before delegating to v70. No coding-response semantics were changed by v71.
+
+**Verification:** production runtime logs show fresh workers fetching v71 and completing the inherited hydration chain. v71 emitted `hydrate-ok` with `hotServerVersion=2.1.83`, `v70Preserved=true`, `cameraContractNamespaceRepair=true`, `selfTest=true`, and `selfTestContract=r39-v71-coding-terminal-camera-contract-v1`. The hot entry reported revision `2.1.83-hot-coding-terminal-camera-contract-v71` with the response contract, gap helper, repair payload, candidate generator, programming profile, and camera all callable. No authenticated post-v71 `coding-candidate-terminal` event has been observed yet; one normal coding request remains the acceptance surface.
+
+**Failure/concurrency lineage:** v71 source/entry/manifest had already been published and live-hydrated while canonical authorities still reported Server `2.3.252` / LALM `2.1.82` v70. The restarted repair session treated this as an incomplete governed event, re-read the current authorities, preserved the active v71 source, and closed lineage as Server `2.3.253` / LALM `2.1.83` rather than duplicating the repair.
+
+**Lineage:** v71 source `b1bfa7eaec5eec7b21b020a7f8d7ec423416d5ab`; hot entry `b25858e67b8b3e7801134263a695034194c68402`; manifest `e03dd747c54c6cf8c4bf3d7128821550771da704`; LALM authority `23b4728072a5808bb0dc88d1309b1c9144bd32a9`; Server authority `6b75f7c9fdb9ca7220683c35dc4ac27c5e882642`; dedicated receipt `docs/releases/SERVER_2.3.253_R39_V71_CAMERA_CONTRACT_REPAIR.md`.
 
 ### Server 2.3.252 — R39 v70 coding-terminal + bounded-repair hardening
 
