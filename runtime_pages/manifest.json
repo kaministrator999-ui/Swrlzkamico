@@ -1,5 +1,5 @@
 {
-  "version": 134,
+  "version": 135,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v134 activates Chat 1.5.74 user-owned Activity Log state. The visible Activity Log no longer uses native details/summary toggling: message.meta.activityExpanded is initialized once and may only be changed by the user-facing Activity button. Streaming, terminal replacement, MutationObserver reconciliation, and legacy incremental traces are read-only with respect to that state. Legacy details traces are hidden from presentation so their historical open writes cannot fight the canonical panel."
+  "notes":"Manifest v135 activates Chat 1.5.75 isolated Activity Log tap ownership. The visible controlled Activity panel no longer carries the legacy .trace class or trace-list/item classes, preventing older Chat enhancement modules from attaching native-details behavior to the new control. One user click is the sole activityExpanded write path; the panel uses its own styling and touch-action manipulation for deterministic mobile taps."
 }
