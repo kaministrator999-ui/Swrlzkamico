@@ -6,23 +6,21 @@
 
 ## Current authoritative baseline
 
-The values below were reconciled from current module-owned authorities for this ledger update.
-
-- **Overall Server:** `2.3.233`
+- **Overall Server:** `2.3.234`
 - **Chat:** `1.5.66`
-- **LALM Engine:** `2.1.76` (`v65`)
+- **LALM Engine:** `2.1.77` (`v66`)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
 - **Deployment Control:** `1.0.7`
 
-`VERSION.txt` and the referenced `versions/<module-id>.txt` files remain the version/status identity authorities. This roadmap is lineage/history and must be reconciled to those owners rather than treated as a competing source.
+`VERSION.txt` and the referenced `versions/<module-id>.txt` files remain the version/status authorities. This roadmap is history/lineage and must be reconciled to those owners rather than treated as a competing version source.
 
 ---
 
 ## Current project-work contract
 
-Project development is governed by the canonical owners routed from `SWRLZ_PROJECT_START.md`:
+Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 - Hotfix/deployment mechanics → `SWRLZ_HOTFIX_RULES.md`
 - Server/module lineage → `SWRLZ_VERSION_MODULE_EVOLUTION.md`
@@ -30,105 +28,116 @@ Project development is governed by the canonical owners routed from `SWRLZ_PROJE
 - Project-wide cameras/logs → `SWRLZ_CHAT_CAMERA_LOGS.md`
 - Project-work response/readability → `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md`
 - User-project architecture teaching → `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md`
-- Programming-LALM runtime target + implementation truth → `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md`
-
-Every feature/fix/refactor first reconciles existing architecture. Every issue/debug event automatically inspects available repository/live evidence and adds bounded cameras only when observability is insufficient. Every governed event uses concurrency-safe version assignment and a durable release record. Substantial conversational updates follow the response standard.
+- Programming-LALM target + implementation truth → `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md`
 
 ---
 
 ## Release ledger
 
-### Server 2.3.233 — Programming-LALM runtime architecture and model-specialization decision
+### Server 2.3.234 — R39 v66 same-LALM programming mode runtime scaffold
 
-**Status:** target architecture/documentation source complete; executable programming subsystem not yet implemented.  
-**Affected module versions:** none.  
-**LALM Engine:** `2.1.76` / `v65` unchanged.  
+**Status:** source complete / static routing verified / runtime scaffolded / live activation pending.  
+**LALM Engine:** `2.1.77` / `v66`.  
 **Chat:** `1.5.66` unchanged.  
 **Deployment / restart:** NONE.
 
-This event documents the intended relationship between the architecture curriculum, the active LALM, user-project architecture coaching, and a possible future coding-specialist model.
+This is Phase 1 of the Programming LALM Runtime Architecture. The primary §wyrlz LALM now has an executable programming-mode scaffold rather than documentation alone.
 
-**Architecture reconciliation:** reviewed Project Start, Architecture Reconciliation Protocol, Architecture Coaching Guide, current R39 v65 loader/source, current module authorities, current deployment workflow, and existing engineering docs. The repository had architecture curriculum and coaching guidance but no dedicated runtime/model specification defining how those rules become executable programming behavior or how a future coder model would coexist with the primary LALM. Active v65 preserves conversation/context-focus, response-contract, continuation, and loader/camera behavior, but no dedicated programming-mode compiler or coder-specialist delegation contract was found in the active wrapper lineage.
+**Architecture reconciliation:** the active v65 lineage already owned conversation/context-focus, response planning, continuation, cameras, and hot-loader behavior. No separate coding-model or programming compiler was present. The change therefore extends the canonical LALM owner rather than creating a second cognitive subsystem. A separate coder model remains deferred and, if added later, must be subordinate to the primary LALM architecture contract.
 
-**Core model decision:** keep **one primary §wyrlz LALM as the cognitive/project authority**. Implement programming capability in the same LALM first through coding-task routing, a programming context compiler, architecture reconciliation state, an obligation ledger, tool/action planning, and architecture-aware acceptance. A dedicated coding model may be added later only as a **subordinate specialist/proposal engine** supplied with a bounded architecture contract by the primary LALM. It must not independently own user intent, project architecture, canonical state, deployment permission, version authority, or final acceptance.
+**Implemented in v66:**
 
-**Internal vs user-project architecture:** the architecture curriculum is intended to become §wyrlz's internal programming operating grammar. The same principles may be applied to projects users build with §wyrlz, but proportionally: tiny projects get lightweight structure; growing/persistent/deployed projects receive stronger ownership/state/test/log/deployment boundaries; optional architecture may be simplified or removed when the user chooses a different tradeoff. The user-facing project does not need to copy §wyrlz's internal repository structure.
+- conservative coding-task routing;
+- `projectContext = none/new/existing`;
+- `changeClass = explain/create/feature/fix/refactor/migrate/deploy/review`;
+- `architectureDepth = lightweight/normal/deep`;
+- architecture-reconciliation, diagnostics, project-coaching, and tool-evidence flags;
+- bounded inheritance of programming mode across continuation turns such as `keep going` / `let's do this`;
+- stop/cancel suppression so programming mode does not tunnel through an explicit stop;
+- a programming context compiler that injects the architecture operating grammar into a copied generation payload rather than mutating canonical persisted history;
+- existing-project policy: inspect evidence before inventing owners, trace authority/state/readers/writers/lifecycle, and prefer reuse → extend → consolidate → migrate+retire → genuinely new structure;
+- new-user-project policy: proportional architecture with user-controlled simplification of optional structure;
+- lightweight standalone-code policy that avoids unnecessary repository ceremony;
+- fix/debug policy that prefers existing evidence before new instrumentation;
+- explicit permission boundary: programming mode does not authorize file writes, tools, deployment, spending, or bypass of user/server gates;
+- bounded `programming-mode` camera telemetry without intentional prompt/response text;
+- deterministic in-engine routing self-tests for seven generalized behavior classes.
 
-**Implementation-truth ladder established:** programming architecture capability must be reported distinctly as **documented → runtime scaffolded → tool-integrated → deterministically evaluated → live verified → learned/trained**. Documentation alone must never be reported as executable or trained model capability.
+**Hot activation lineage:** v66 source was published as immutable runtime source, `runtime_hot/r39_engine.py` was advanced to fetch that immutable commit, and `runtime_hot/manifest.json` was reconciled from its stale v61 revision label to `2.1.77-hot-programming-mode-context-v66`.
 
-**Target implementation phases:** Phase 0 curriculum/governance foundation; Phase 1 same-LALM programming mode; Phase 2 programming obligation + architecture acceptance; Phase 3 repository/tool execution loop; Phase 4 user-project architecture adaptation as runtime behavior; Phase 5 optional coder specialist after benchmarking; Phase 6 training/fine-tuning only if justified by generalized evals/traces.
+**Static verification:** the exact v66 source was locally syntax-compiled before publication. The classifier/context self-test passed all 7/7 cases, including non-programming exclusion, lightweight code explanation, existing-project feature/debug routing, simple new webpage coaching, cross-cutting migration depth, and conversational programming continuation.
 
-**Why same-model-first:** it preserves one interpretation of user intent/project context, avoids duplicated project memory and competing architecture decisions, reduces model-routing and local-resource complexity, and gives the project a clean evaluation surface before another model is introduced.
+**Live verification:** production logs were queried against the current production deployment after publication. The narrow window contained no `SWRLZ_R39_HOT_ENTRY` records at all, so there was no request available to prove or disprove v66 hydration. Therefore the event is **not** labeled live verified. The next actual R39 request can provide activation evidence through the hot-entry and programming-mode cameras.
 
-**Intentionally unchanged:** no R39 inference source, model weights, prompt runtime, repository execution loop, Chat runtime source, server API, persistence schema, loader, or deployment configuration was changed by this event. No component version was artificially bumped.
+**Implementation truth:** `runtime scaffolded`. It is **not yet** `tool-integrated`, full architecture acceptance is not yet deterministically evaluated, a live programming mission has not yet been verified, no coder specialist exists, and no model weights were trained/fine-tuned for this behavior.
 
-**Concurrency reconciliation:** this work began while Server `2.3.231` was current, then concurrent work advanced authority to Server `2.3.232`. The event re-read `VERSION.txt`, Server, LALM, and Chat authorities and assigned `2.3.233` from the newest state. Concurrent Chat `1.5.66` and LALM `2.1.76/v65` were preserved.
+**Still future work:** programming obligation ledger, repository-evidence/authority-map compiler, overlap/integration state grounded in actual tool evidence, architecture-aware completion/patch acceptance, repository/tool action loop, richer project-scale adaptation, optional coder specialist benchmarks, and training only after strong generalized evals.
 
-**Verification:** the new runtime-architecture specification exists on `main`; Project Start routes programming-LALM/coder work to it and explicitly separates documented curriculum from executable/trained capability; authoritative Server state is `2.3.233`; no LALM or Chat version bump occurred for this documentation-only event.
+**Lineage:** v66 source commit `3b2379eecd3f68d2aec20ae9839f156b9d79e175`; hot entrypoint commit `a1d371983f551c5e394614b39e67b0c3e2e2391a`; hot manifest commit `fc1e84d86629348a86ddd8d1f69eecb8c9bacde0`; LALM authority commit `3f0a7e250bf99efbfc80e73d35c066122b67faab`; Server authority commit `49f22cd94defd44c4ace0d8ed069eae9e75294cd`; programming-runtime spec update `8d2f2c0f769381d5a6497f6ff02a32e577c457f3`.
 
-**Lineage:** Programming LALM Runtime Architecture spec `99266a98f65c917123cce5fdf2614cd7d9259459`; Project Start integration `e3767108bb2dba32a73873585a157b23a029c71c`; Server authority `68860df68d997b5b7f668dc746647726d938495b`.
+### Server 2.3.233 — Programming-LALM runtime architecture and model-specialization decision
+
+**Status:** documentation/target architecture complete; superseded by Phase 1 runtime scaffold status for programming-mode implementation.  
+**LALM Engine at event:** `2.1.76` / `v65`.  
+**Deployment / restart:** NONE.
+
+Established one primary LALM as project/cognitive authority, same-model-first programming specialization, the subordinate-only future coder-model boundary, the implementation-truth ladder, and the phased coding architecture roadmap.
 
 ### Server 2.3.232 — Canonical Redis lifecycle repair
 
-**Status:** concurrent runtime event preserved.  
-**LALM Engine:** `2.1.76` / `v65` unchanged by Server 2.3.233.  
-**Chat:** `1.5.66` unchanged by Server 2.3.233.
+**Status:** concurrent runtime event preserved.
 
-Runtime authority advanced concurrently under commit lineage labeled `Record canonical Redis lifecycle repair`. Server 2.3.233 treated that release as current authority and did not overwrite or reinterpret its implementation.
+Separate Redis lifecycle work advanced Server authority before the programming architecture event; later programming work preserved it rather than overwriting its lineage.
 
 ### Server 2.3.231 — Shared module status plane
 
-**Status:** concurrent runtime/Chat event preserved.  
-**Chat:** advanced to `1.5.66`.  
-**LALM Engine:** remained `2.1.76` / `v65`.
+**Status:** preserved.  
+**Chat:** advanced to `1.5.66`.
 
-The concurrent lineage added/normalized shared module declared-status and observed-health behavior and advanced Chat accordingly. Project Start now reflects the version/status distinction and consumer-normalization rules established by that work.
+Normalized shared declared-module status and observed-health behavior. Later programming events preserved Chat `1.5.66`.
 
 ### Server 2.3.230 — Project-work governance, diagnostics, reporting, and architecture coaching
 
-**Status:** source complete / governance contract verified.  
-**Affected module versions:** none at that event.  
-**Deployment / restart:** NONE.
+**Status:** source complete / governance contract verified.
 
-Reconciled Project Start into the canonical router; made issue diagnostics automatically inspect accessible evidence and add bounded cameras where observability is missing; created the Project Work Response Standard; broadened the camera/log contract project-wide; and added the Architecture Coaching Guide for proportional user-project structure.
+Reconciled Project Start as the canonical router, made issue work automatically inspect accessible evidence and add bounded cameras only when needed, introduced the response/readability standard, broadened cameras/logs project-wide, and established proportional architecture coaching for user projects.
 
 ### Server 2.3.229 — R39 v65 inherited-namespace repair
 
 **Status:** preserved in lineage.  
-**LALM Engine:** `2.1.76` / `v65`.
+**LALM Engine:** `2.1.76` / `v65` at that event.
 
-Advanced the active LALM lineage to the current v65 inherited-namespace/cold-load-safe architecture while preserving v61 context-focus behavior.
+Advanced the cold-load-safe v65 lineage while preserving v61 context-focus behavior.
 
 ### Server 2.3.228 — Programming-LALM architecture reconciliation curriculum
 
 **Status:** source complete.
 
-Added the explicit architecture-reconciliation execution protocol so the programming LALM can discover owners, trace state/readers/writers/lifecycle, classify overlap, distinguish current authority/live activation/history, and deliberately choose reuse/extension/consolidation/migration/new structure before implementation.
+Added the architecture-reconciliation execution protocol: discover owners, trace state/readers/writers/lifecycle, classify overlap, distinguish current authority/live activation/history, and deliberately choose reuse/extension/consolidation/migration/new structure.
 
 ### Server 2.3.226 — Mandatory pre-feature architecture reconciliation governance
 
 **Status:** source complete.
 
-Made architecture reconciliation mandatory before feature/fix/optimization/refactor work and required a durable architecture-reconciliation note in the release record.
+Made architecture reconciliation mandatory before feature/fix/optimization/refactor work and required a durable reconciliation note.
 
 ### Earlier releases
 
-Earlier detailed release entries remain in Git history and `docs/releases/`. This compact roadmap intentionally emphasizes the current architecture and recent lineage rather than duplicating every historical record into one ever-growing file.
+Earlier detailed release records remain in Git history and `docs/releases/`. This compact roadmap emphasizes current architecture and recent lineage rather than duplicating every historical event indefinitely.
 
 ---
 
 ## Roadmap operating principle
 
-A future project-work event should leave this ledger able to answer:
+Future work should leave this ledger able to answer:
 
-- What is the current Server baseline?
-- Which modules actually changed?
-- What architecture owner was used?
-- What competing/legacy work was found or retired?
-- What camera/log evidence supported issue diagnosis?
+- What is the current Server/module baseline?
+- Which architecture owner was changed?
+- What existing/competing work was reconciled?
+- What cameras/log evidence supported diagnosis or activation?
 - What verification level passed?
-- For programming/model work, is the capability only documented, runtime-scaffolded, tool-integrated, evaluated, live-verified, or actually trained?
+- For programming/model work, is capability **documented, runtime scaffolded, tool-integrated, deterministically evaluated, live verified, or learned/trained**?
 - Did deployment/restart happen?
-- What concurrency or failed-event lineage must future work preserve?
+- What concurrency/failure lineage must future work preserve?
 
-If current module authorities disagree with the snapshot at the top of this document, the module-owned authorities win and the roadmap must be reconciled during the next governed event.
+If module authorities disagree with this snapshot, module-owned authorities win and the roadmap must be reconciled during the next governed event.
