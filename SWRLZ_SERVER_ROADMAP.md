@@ -1,7 +1,7 @@
 # §wyrlz Server Roadmap & Version Ledger
 
 **READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-- **Current overall server baseline:** `2.3.211`
+- **Current overall server baseline:** `2.3.226`
 **Current Chat component:** `1.5.60`  
 **Current Web Frontend component:** `1.0.3`  
 **Current LALM UI component:** `1.0.0`  
@@ -26,6 +26,8 @@ A failed attempt is still a real versioned event. The next correction receives t
 
 Version authorities are read at event entry and re-read immediately before version assignment/commit. If another instance/process advanced a relevant authority in between, the event must reconcile from the newest state instead of writing a stale planned version.
 
+Before implementing each feature/fix/optimization/refactor, the event must also perform the Project Start **Pre-Feature Architecture Reconciliation**: inspect the selected/affected architecture and existing related work, confirm the canonical owner/integration path, and avoid introducing duplicate or competing implementations. The reconciliation result is recorded with the event.
+
 ## What has been accomplished
 
 - Established the unified §wyrlz Vercel server and separated major control-plane responsibilities.
@@ -47,6 +49,7 @@ Version authorities are read at event entry and re-read immediately before versi
 - Established the durability rule: GitHub `runtime` is source of truth; `/tmp`, memory, browser cache, and Vercel instance state are disposable.
 - Added explicit optimistic-concurrency handling for version authorities so multiple §wyrlz instances/agents do not overwrite each other's release lineage.
 - Corrected deployment-gate logic so approval follows the actual deployment trigger/configuration instead of treating every `main` or documentation commit as deployment-capable.
+- Established the mandatory Pre-Feature Architecture Reconciliation so every feature checks the affected architecture and existing related implementations before implementation, reuses/reconciles canonical owners instead of stacking duplicate feature paths, and records that reconciliation in the roadmap/release lineage.
 - Established generated Ice Dragon artwork ownership so the adult wallpaper can replace the legacy Frozen Sanctum procedural chamber art instead of stacking on top of it.
 - Consolidated Ice Dragon theme ownership so future theme visual work has one canonical CSS owner and one deterministic asset hydrator instead of multiple competing wallpaper/style layers.
 - Established a frontend-first Chat boot boundary: the local shell/theme renders independently while account, bridge, server, and LALM connectivity settle asynchronously.
@@ -91,7 +94,11 @@ FETCH current source + VERSION.txt router + affected authorities
         ↓
 CAPTURE authority values/SHAs as event baseline
         ↓
-SMALLEST targeted edit
+CHECK selected/affected architecture + existing related implementations
+        ↓
+CONFIRM canonical owner / integration path; reconcile duplicate or competing work
+        ↓
+SMALLEST targeted edit through the reconciled owner
         ↓
 RE-READ affected authorities before version assignment
         ↓
@@ -103,7 +110,7 @@ BUMP ONLY AFFECTED MODULES
         ↓
 UPDATE CANONICAL VERSION SOURCES
         ↓
-UPDATE ROADMAP / RELEASE RECORD
+UPDATE ROADMAP / RELEASE RECORD, INCLUDING ARCHITECTURE RECONCILIATION
         ↓
 COMMIT with stale-write protection
         ↓
@@ -134,6 +141,24 @@ Those changes generally belong on `main`, but a `main` commit is not automatical
 
 ## Release ledger
 
+### Server 2.3.226 — Mandatory pre-feature architecture reconciliation governance
+
+**Status:** engineering-contract and roadmap source complete.  
+**Affected module versions:** none; this event advances the overall Server/governed-project lineage only.  
+**Deployment / restart:** NONE.
+
+Project Start now requires a brief but complete architecture reconciliation before implementation of each feature, fix, optimization, refactor, subsystem, or substantial behavior/UI addition. The check begins with the selected/affected architecture and expands far enough to find existing implementations that share the same owner, source of truth, state, lifecycle, route, protocol, storage, authentication boundary, cache, loader, UI surface, tool/action path, version authority, or other directly interacting responsibility.
+
+The new rule requires future work to search for existing/partial/retired implementations, identify neighboring behavior that shares the same architecture, deliberately choose reuse/extension/refactor/retirement rather than adding a parallel mechanism, and resolve competing ownership before implementation. Every governed event must record a brief architecture-reconciliation note alongside the existing Server/module version, verification, deployment, and progress record.
+
+**Architecture reconciliation for this event:** checked the canonical Project Start Mask/Human/Brain ownership rules, module/version authority rules, Server roadmap/version workflow, current deployment workflow, and repository search for an existing dedicated architecture-reconciliation gate. Existing ownership rules defined where behavior belongs but did not require a per-feature inspection for overlapping or partial implementations. The canonical Project Start contract was therefore extended instead of creating a competing policy document.
+
+**Version/concurrency:** the initial observed runtime Server authority had already advanced beyond the previous conversational baseline; the authority was re-read immediately before assignment at `2.3.225`, so this event correctly assigned Server `2.3.226` rather than a stale planned number. No component authority changed for this governance-only event.
+
+**Deployment verification:** current production deployment is still based on `main` commit `8eff92be6b251fa05e708283f72fe6d7e7392f71`, while `main` had already advanced through later commits without automatic redeployment. The production workflow only pushes on `.deploy/REQUEST.txt` or explicit workflow dispatch, so these documentation commits do not cross the deployment approval boundary.
+
+**Lineage:** Server authority commit `758e0ce13cc609e8a01f019c55a41eb25cc97104`; Project Start contract commit `d13c21fb1410ce51b1ed6be451afe8d925d8936e`.
+
 ### Server 2.3.211 — Chat live version authority + full phone drawer
 
 **Status:** runtime source complete; rendered-device verification pending.  
@@ -158,4 +183,4 @@ The previous visual fix updated the canonical runtime viewport stylesheet, but A
 
 ### Roadmap reconciliation note
 
-Historical release entries before this event remain in Git history. This header and current event are reconciled to the authoritative runtime version files at event entry rather than fabricating omitted historical detail.
+Historical release entries omitted from this compact main-branch ledger remain in Git history and runtime release records. This header and Server 2.3.226 governance event are reconciled to the authoritative runtime Server version at event time rather than fabricating missing intermediate detail.
