@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.257`
-- **Chat:** `1.5.75`
-- **LALM Engine:** `2.1.86` (`v74` programming-artifact continuation routing)
+- **Overall Server:** `2.3.259`
+- **Chat:** `1.5.76`
+- **LALM Engine:** `2.1.87` (`v75` programming continuation provenance + runnable edit semantics)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -34,12 +34,38 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Release ledger
 
+### Server 2.3.259 — R39 v75 programming continuation provenance + runnable edit semantics
+
+**Status:** runtime-hot source complete; production hydration verified; deterministic continuation/semantic suite 5/5; authenticated post-v75 user-turn acceptance pending.  
+**LALM Engine:** `2.1.87` / `v75`.  
+**Chat:** `1.5.76` preserved from concurrent work; unchanged by this event.  
+**Deployment / restart:** NONE performed.
+
+**Triggering live evidence:** fresh-thread continuation `web:mu65t03i:30386169343835364035` proved the hot history policy and v74 first-hop routing worked, but the generated edit renamed `even_odd`, omitted its runnable entrypoint call, and added an unrequested `while True` retry loop while the old acceptance checker still returned zero gaps. Old-thread request `web:mu65y61e:3993695763349477977` proved legacy recovery (2 current + 4 legacy records merged, 4 selected, high-confidence assistant anchor), but v74 classified the edit-of-an-edit as existing-project/normal depth, rendered 3,883 prompt tokens, and hit the 300-second timeout.
+
+**Architecture reconciliation:** canonical history remains Human/Server owned and is now live verified. v75 changes only Brain/LALM programming behavior. It walks bounded artifact/edit chains back to their original programming context or an explicit project promotion, and extends the existing v27 artifact acceptance/repair owner rather than adding another repair path.
+
+**Repair:** the v75 overlay preserves standalone provenance across multi-hop edits, carries a compact prior runnable-artifact signature, and rejects unrequested callable-name loss, lost runnable entrypoints, lost top-level execution, and newly introduced retry loops unless the user explicitly requests that behavior. A compact continuation directive biases first-pass generation toward requested-scope edits before the bounded repair is needed.
+
+**Verification:** production `/api/lalm/status` reports LALM `2.1.87`, revision `2.1.87-hot-programming-continuation-semantics-v75`, `interactiveReady=true`, v74 preserved, continuation provenance active, runnable-edit semantic gate active, and unrequested-retry gate active. The v75 deterministic suite passed 5/5: multi-hop standalone inheritance, explicit project promotion, missing-entrypoint rejection, unrequested-retry rejection, and acceptance of a minimal error-catching edit. User-turn/live semantic acceptance remains pending a fresh authenticated continuation.
+
+**Concurrency:** entry baseline was Server `2.3.257` / LALM `2.1.86` / Chat `1.5.75`. During hydration another event advanced Server to `2.3.258` and Chat to `1.5.76`; LALM remained `2.1.86`. This event preserved that advance and assigned Server `2.3.259` + LALM `2.1.87` only.
+
+**Lineage:** v75 overlay `8a92721addbeb6709b132f826404e805d8e35029`; hot entry `00a38f0b22976dd959101a0462d041b1bd161a65`; manifest `1ccbfbdf4acf3b0cee8f4be987c4625d11e34b12`; Server authority `bfcfdcd72ac5eeb59dfb515986cfd99b4a7f5123`; LALM authority `a6aa1a51caf87f5795cadda06030d3547cbbd9d6`; receipt `docs/releases/SERVER_2.3.259_R39_V75_CONTINUATION_SEMANTICS.md` on `runtime`.
+
+### Server 2.3.258 — Preserved concurrent runtime/Chat lineage
+
+**Status:** preserved from canonical runtime authorities during the v75 event.  
+**Observed authority before v75 assignment:** Server `2.3.258`, Chat `1.5.76`, LALM `2.1.86`.
+
+This independent event advanced Server/Chat authority while v75 was hydrating. The v75 event intentionally preserves that work and does not invent its feature details; its own runtime commit/release record remains the authority for the change.
+
 ### Server 2.3.257 — Runtime-hot canonical history policy seam
 
-**Status:** source complete; deterministic history-policy behavior verified; production activation pending one stable Server deployment.  
+**Status:** live verified in production; runtime-hot history policy applied successfully to authenticated current-index and legacy-index threads.  
 **LALM Engine:** `2.1.86` / `v74` unchanged.  
 **Chat:** `1.5.75` unchanged.  
-**Deployment / restart:** NONE performed.
+**Deployment / restart:** one user-approved manual production bootstrap deployment activated the stable loader seam; later history-policy-only updates remain runtime-hot.
 
 **Goal:** make canonical Chat history reconstruction improvable from `runtime` without turning the Brain or browser into a persistence authority and without requiring a Vercel deployment for every later history-policy refinement.
 
@@ -51,7 +77,7 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 **Verification:** the history-policy acceptance case passed 6/6 for legacy recovery, ordering, dedupe, current-request exclusion, failed-turn exclusion, and current/legacy index counts. Committed loader/history diffs were re-read. No CI status/workflow was attached to these commits, so live import/hydration is intentionally not claimed before the bootstrap deployment.
 
-**Activation truth:** the policy source is already durable on `runtime`, but the currently deployed stable Server predates the Server-policy hot-loader ABI. One approved stable production deployment is therefore required to install the seam. After that one activation, later changes confined to `runtime_hot/chat_history_policy.py` become ordinary runtime-hot work and do not require another deployment/restart.
+**Activation truth:** the user-approved bootstrap deployment is active. Production `/api/hot/status` exposes `chat_history_policy.py`, and authenticated Chat turns emitted `source=runtime-override` / `policy-applied`. Fresh-thread history resolved from the current index, while old-thread acceptance merged current + legacy indexes and restored a high-confidence assistant anchor. Later changes confined to `runtime_hot/chat_history_policy.py` are ordinary runtime-hot work and do not require another deployment/restart.
 
 **Concurrency/version gate:** Server `2.3.256`, LALM `2.1.86`, and Chat `1.5.75` remained authoritative immediately before assignment. This event owns Server `2.3.257` only.
 
