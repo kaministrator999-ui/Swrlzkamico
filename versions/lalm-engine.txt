@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.74
-REVISION=2.1.74-hot-v61-context-focus-prehydrate-planner-v63
+VERSION=2.1.75
+REVISION=2.1.75-hot-v61-context-focus-complete-cold-load-v64
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
