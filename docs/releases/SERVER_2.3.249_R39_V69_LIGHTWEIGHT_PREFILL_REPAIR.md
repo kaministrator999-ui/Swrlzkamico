@@ -1,6 +1,6 @@
 # Server 2.3.249 — R39 v69 lightweight programming prefill repair
 
-**Status:** runtime-hot source complete; immutable v69 published and selected by the hot entry/manifest; fresh-worker activation and user-turn performance acceptance pending.  
+**Status:** runtime-hot source complete; v69 live-hydrated on fresh production workers; authenticated lightweight-turn performance acceptance pending.  
 **Server Runtime:** `2.3.249`  
 **LALM Engine:** `2.1.81` / `v69`  
 **Chat:** `1.5.74` unchanged by this event  
@@ -63,19 +63,33 @@ A hydration self-test verifies the model accessor/history-cleaner contracts, dia
 
 ## Verification truth
 
-### Source complete
+### Source / static
 
 - immutable v69 source published;
 - active hot entrypoint targets that immutable source;
 - hot manifest revision is `2.1.81-hot-lightweight-programming-prefill-v69`;
+- isolated compaction invariants passed: known-policy removal, unknown-system preservation, exact dialogue preservation, one compact marker, and idempotence;
 - LALM authority advanced `2.1.80 → 2.1.81`;
 - Server authority advanced from the concurrently observed `2.3.248 → 2.3.249`.
 
-### Live activation pending
+### Live runtime hydration verified
 
-The production worker reachable during closure was already warm on v68 before v69 publication and continued reporting `2.1.80`/v68. That is consistent with instance-local hot-engine residency and does not prove v69 failure or success. A fresh or explicitly hot-refreshed worker must report v69 before live activation is claimed.
+Fresh production `/api/lalm/status` workers emitted the complete v69 hot-load chain. Production logs show:
 
-The next authenticated standalone programming turn should provide the decisive acceptance evidence:
+- `target=v69` fetched immutable source `a47edea4867c8082baddf27b04182430dc92fb31`;
+- v68/v67/v66 inherited lineage hydrated successfully;
+- v69 reported `hotServerVersion=2.1.81`;
+- `getModelBridge=true`;
+- `boundedRenderCamera=true`;
+- `rawPromptTokenTraceRetired=true`;
+- `lightweightCompactionSelfTest=true`;
+- the final hot-entry `hydrate-ok` reported revision `2.1.81-hot-lightweight-programming-prefill-v69`, callable programming profile/context, `_get_model`, and lightweight compaction.
+
+This upgrades v69 from published/activation-pending to **live runtime verified**.
+
+### Remaining user-turn acceptance
+
+The next authenticated standalone programming turn should provide the decisive performance/behavior evidence:
 
 - `v69-enter` with `lightweightProgramming=true`;
 - no `render-error` camera;
@@ -87,6 +101,8 @@ The next authenticated standalone programming turn should provide the decisive a
 ## Concurrency
 
 This event began while the main roadmap still displayed Server `2.3.241`, but runtime authorities advanced through several independent Chat/runtime events. Immediately before version assignment the canonical runtime authorities were Server `2.3.248`, LALM `2.1.80`, and Chat `1.5.74`. Those intervening events were preserved. Only LALM and overall Server advanced in this event.
+
+After Server 2.3.249 was assigned, a separate Chat/Activity Log event advanced current authorities to Server `2.3.250` and Chat `1.5.75`; LALM remained `2.1.81`. That later event is preserved and does not change this release's ownership or numbering.
 
 ## Lineage
 
