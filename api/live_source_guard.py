@@ -218,7 +218,10 @@ def _inject_runtime_assets(data: bytes, meta: dict[str, object]) -> bytes:
     for item in scripts:
         source = _safe_runtime_source(item)
         if source and source.endswith(".js"):
-            script_tags.append(f'<script src="{_asset_url(source, revision)}"></script>')
+            # Runtime augmentation must never stop the base Chat document parser.
+            # Ordered deferred scripts preserve manifest order while allowing the
+            # base shell to finish parsing before augmentation executes.
+            script_tags.append(f'<script defer src="{_asset_url(source, revision)}"></script>')
     if style_tags and "data-swrzl-runtime-styles" not in html:
         html = html.replace("</head>", f'<meta name="data-swrzl-runtime-styles" content="runtime-v{revision}">' + "".join(style_tags) + "</head>")
     if script_tags and "data-swrzl-runtime-scripts" not in html:
@@ -305,5 +308,5 @@ def install(server) -> None:
         "vercelDeploymentRequiredForRuntimeChanges": False,
         "stableBootstrapOwnsPageCode": False,
         "durability": "GitHub runtime branch is source of truth; instance memory is only a bounded read cache.",
-        "detail": "Manifest revision is resolved through GitHub repository-content authority with only a 2-second request-collapse cache. Revisioned JS/CSS remain immutable browser-cache assets; asset requests bypass manifest lookup.",
+        "detail": "Manifest revision is resolved through GitHub repository-content authority with only a 2-second request-collapse cache. Runtime augmentation scripts are injected as ordered deferred scripts so the base document parser cannot be blocked. Revisioned JS/CSS remain immutable browser-cache assets; asset requests bypass manifest lookup.",
     }
