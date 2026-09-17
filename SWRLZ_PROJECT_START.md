@@ -50,7 +50,8 @@ Each rule family has one primary owner.
 | Cameras/logs/diagnostic evidence | `SWRLZ_CHAT_CAMERA_LOGS.md` |
 | Project-work response formatting/readability | `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` |
 | Architecture teaching for user-owned projects | `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md` |
-| Module version routing | `VERSION.txt` → `versions/<module-id>.txt` |
+| Module version + declared operational status routing | `VERSION.txt` → `versions/<module-id>.txt` |
+| Observed runtime health/readiness | owning module/server status endpoint, reconciled with declared module status |
 
 Do not create a second policy document for a concern that already has a canonical owner. Extend the owner or deliberately migrate/retire the old contract.
 
@@ -61,9 +62,9 @@ Do not create a second policy document for a concern that already has a canonica
 ```text
 READ PROJECT CONTRACT
       ↓
-FETCH CURRENT TARGET + VERSION AUTHORITIES
+FETCH CURRENT TARGET + VERSION/STATUS AUTHORITIES
       ↓
-CAPTURE VERSION/SHA BASELINE
+CAPTURE VERSION/STATUS/SHA BASELINE
       ↓
 ARCHITECTURE RECONCILIATION
       ↓
@@ -79,20 +80,22 @@ DEPLOYMENT-PRODUCING ACTION?
       ↓
 IMPLEMENT THROUGH THE RECONCILED OWNER
       ↓
-RE-READ VERSION AUTHORITIES
+RE-READ VERSION/STATUS AUTHORITIES
       ↓
 RECONCILE ANY CONCURRENT ADVANCE
       ↓
 ASSIGN SERVER + ACTUALLY CHANGED MODULE VERSIONS
       ↓
-VERIFY BEHAVIOR + OWNERSHIP + ACTIVATION AS RELEVANT
+SET/VERIFY DECLARED MODULE STATUS APPROPRIATELY
+      ↓
+VERIFY BEHAVIOR + OBSERVED RUNTIME HEALTH + OWNERSHIP + ACTIVATION AS RELEVANT
       ↓
 UPDATE ROADMAP / RELEASE RECORD
       ↓
 REPORT RESULT USING RESPONSE STANDARD
 ```
 
-Version state observed at the beginning is a baseline, **not a reservation**.
+Version/status state observed at the beginning is a baseline, **not a reservation**.
 
 ---
 
@@ -108,7 +111,7 @@ The engineering agent must determine, at the minimum:
 - relevant readers, writers, lifecycle, fallback, compatibility, and retired paths;
 - whether similar/partial functionality already exists under another name;
 - whether the correct integration is **reuse, extend, consolidate/refactor, migrate+retire, or genuinely new structure**;
-- whether source authority, live activation, and historical evidence agree.
+- whether source authority, declared module status, live activation/runtime health, and historical evidence agree.
 
 Do not add a third owner to two mechanisms already fighting each other.
 
@@ -122,7 +125,7 @@ When the work is primarily **fixing, debugging, investigating, or verifying a de
 
 §wyrlz must, without waiting for the user to separately request it:
 
-1. inspect relevant repository-side diagnostic evidence: current source, existing cameras, manifests/loaders, version authorities, roadmap/releases, engineering logs, tests, recent commits, and workflow/build logs when relevant;
+1. inspect relevant repository-side diagnostic evidence: current source, existing cameras, manifests/loaders, version/status authorities, roadmap/releases, engineering logs, tests, recent commits, and workflow/build logs when relevant;
 2. inspect accessible live/runtime evidence such as Vercel runtime logs, status/diagnostic endpoints, GitHub Actions logs, browser/device evidence, or subsystem-specific logs;
 3. correlate evidence by request/operation/revision/version identity when possible;
 4. decide whether current observability is enough;
@@ -151,11 +154,13 @@ Before any repository action that can actually trigger deployment/redeployment, 
 
 A request to fix, implement, document, commit, merge, or architect is not deployment authorization.
 
+Documentation-only changes are engineering-contract maintenance and must be deployment-inert. They do not require deployment approval. If repository/deployment configuration causes documentation-only commits to deploy application code, treat that configuration as a defect and correct the deployment filtering rather than treating documentation as deployment-sensitive.
+
 Prefer runtime-hot work when it is the correct architectural owner; do not move behavior to the wrong layer merely to avoid deployment.
 
 ---
 
-## 7. Version + roadmap rule
+## 7. Version + status + roadmap rule
 
 `SWRLZ_VERSION_MODULE_EVOLUTION.md` owns the exact lineage rules.
 
@@ -163,11 +168,37 @@ Core invariants:
 
 - every governed Server development event gets the next overall Server version, including failed/partial governed events as defined by the evolution contract;
 - only modules that actually changed receive module-version bumps;
-- `VERSION.txt` routes stable module IDs to their authoritative `versions/<module-id>.txt` owners and must not become a duplicate numeric ledger;
+- `VERSION.txt` routes stable module IDs to their authoritative `versions/<module-id>.txt` owners and must not become a duplicate numeric/status ledger;
+- each module-owned version file may also declare the module's intended operational `STATUS`; consumers should resolve that status through `VERSION.txt` rather than hardcoding another copy;
+- **VERSION and STATUS answer different questions:** `VERSION` identifies the module's evolution state; `STATUS` declares whether that module is intended to be `active`, `preparing`, `maintenance`, `disabled`, or another explicitly defined lifecycle state;
+- declared `STATUS=active` means the module is intended to be available; it does **not** override evidence of an actual runtime fault;
+- runtime-capable modules should expose observed health/readiness through their owning server/status surface. Consumers reconcile **declared module status + observed runtime health** into presentation/behavior;
+- a consumer such as Chat must not invent a permanent local “warming” state merely because one legacy readiness field is absent. It should read canonical declared status, inspect observed health when available, and normalize the result;
+- shared consumers may expose the normalized state as a reusable event/object/API so other UI surfaces do not each invent their own status semantics;
 - capture authoritative values/SHAs at event entry;
 - re-read affected authorities immediately before version assignment/commit;
 - if another process advanced them, reconcile from the newest state instead of overwriting it;
-- every completed event gets a durable roadmap/release record including architecture, diagnostic/verification, deployment, failure, and lineage state as applicable.
+- every completed event gets a durable roadmap/release record including architecture, diagnostic/verification, deployment, failure, lineage, and meaningful status-state changes as applicable.
+
+Canonical relationship:
+
+```text
+VERSION.txt
+    ↓ routes module ID
+versions/<module-id>.txt
+    ├─ VERSION = evolution identity
+    └─ STATUS  = declared operational intent
+                 ↓
+      owning runtime/status endpoint
+      = observed health/readiness
+                 ↓
+      consumer normalization
+      = active / preparing / maintenance / disabled / error / unknown
+                 ↓
+      Chat / admin / other UI behavior
+```
+
+**Never use a UI color, label, cached browser value, roadmap entry, or hardcoded string as the status authority.** Green/yellow/red are presentations of reconciled state, not sources of truth.
 
 Never finish a governed event while the roadmap still represents an obsolete baseline for that completed event.
 
@@ -224,7 +255,7 @@ The user should be able to scan the response and understand:
 
 Use readable Markdown structure, compact paragraphs, and small bullet groups. Do not dump raw implementation internals unless requested or genuinely necessary.
 
-Never report **source complete** as **live fixed** when activation has not been observed.
+Never report **source complete** as **live fixed** when activation has not been observed. Likewise, never report declared `STATUS=active` as proof of runtime health when observed evidence says the module is failing.
 
 ---
 
@@ -238,11 +269,11 @@ Treat current source/live evidence as current authority and older incident infor
 
 ## 12. Conflict resolution
 
-If project documents, source, live behavior, or historical records appear to conflict:
+If project documents, source, declared module status, live behavior, or historical records appear to conflict:
 
 1. do not silently choose whichever file was found first;
-2. use the architecture protocol to classify **current engineering authority vs live activation vs historical evidence**;
-3. use module-owned version files for version identity;
+2. use the architecture protocol to classify **current engineering authority vs declared operational intent vs live activation/runtime health vs historical evidence**;
+3. use module-owned version files for version identity and declared module status;
 4. inspect current source/manifests/loaders and relevant live evidence;
 5. reconcile the conflict before adding another implementation or claiming completion;
 6. record any meaningful authority migration/retirement in the roadmap/release lineage.
@@ -257,9 +288,10 @@ A governed project event is not complete until the applicable parts are true:
 - issue work used the automatic diagnostic evidence/camera loop;
 - the change went through the intended canonical owner;
 - deployment rules were followed;
-- version authorities were concurrency-checked;
+- version/status authorities were concurrency-checked;
 - only actually changed modules were bumped;
-- behavioral, ownership, and activation verification were performed as applicable or explicitly recorded as pending;
+- declared module status is appropriate for the resulting lifecycle state;
+- behavioral, ownership, observed runtime-health, and activation verification were performed as applicable or explicitly recorded as pending;
 - roadmap/release history reflects the event;
 - the user-facing update follows the project-work response standard.
 
@@ -267,4 +299,4 @@ A governed project event is not complete until the applicable parts are true:
 
 ## Bottom line
 
-**Project Start is the router. Read the seven required project-work documents, then follow their ownership instead of duplicating their rules. Reconcile architecture before implementing. During issue work, automatically inspect repository/live logs and add bounded cameras only where evidence is missing. Version from current authority, preserve concurrency and roadmap lineage, never trigger deployment without explicit approval, and report the result in a structured readable way. When helping users build their own projects, teach these architecture principles proportionally and respect their informed choice to simplify optional structure.**
+**Project Start is the router. Read the seven required project-work documents, then follow their ownership instead of duplicating their rules. Reconcile architecture before implementing. During issue work, automatically inspect repository/live logs and add bounded cameras only where evidence is missing. Resolve module VERSION and declared STATUS through `VERSION.txt` and the module-owned authority; reconcile that declared state with observed runtime health before a consumer chooses behavior or UI. Version from current authority, preserve concurrency and roadmap lineage, never trigger deployment without explicit approval, and report the result in a structured readable way. When helping users build their own projects, teach these architecture principles proportionally and respect their informed choice to simplify optional structure.**
