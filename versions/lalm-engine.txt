@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.82
-REVISION=2.1.82-hot-coding-terminal-repair-v70
+VERSION=2.1.83
+REVISION=2.1.83-hot-coding-terminal-camera-contract-v71
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
