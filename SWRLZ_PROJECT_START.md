@@ -30,6 +30,7 @@ Read these when relevant:
 
 - `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` — Google sign-in, OAuth, account/session, or related Chat-auth work.
 - `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md` — when helping a user start/grow their own project, teaching architecture, explaining tradeoffs, or simplifying/removing optional architecture at the user's request.
+- `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md` — whenever work changes or evaluates programming/coding behavior in the LALM, coding-task routing, architecture-aware coding state, code-tool planning, coding evaluation, or a future dedicated coder model. This document owns the target runtime architecture and the truth boundary between documented curriculum, executable runtime behavior, and trained model capability.
 - feature-specific runbooks/contracts — when the affected subsystem has one.
 
 **Order authority:** this Project Start file owns the startup/read order. If an older subordinate document contains a legacy “READ THIS FIRST” label or old ordering, this file wins unless the repository has explicitly replaced this router with a newer authority.
@@ -50,6 +51,7 @@ Each rule family has one primary owner.
 | Cameras/logs/diagnostic evidence | `SWRLZ_CHAT_CAMERA_LOGS.md` |
 | Project-work response formatting/readability | `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` |
 | Architecture teaching for user-owned projects | `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md` |
+| Programming LALM runtime target + implementation truth | `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md` |
 | Module version + declared operational status routing | `VERSION.txt` → `versions/<module-id>.txt` |
 | Observed runtime health/readiness | owning module/server status endpoint, reconciled with declared module status |
 
@@ -236,6 +238,8 @@ Use `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md` to:
 
 **Good architecture is proportional architecture, not maximum architecture.**
 
+The internal programming runtime target for applying that grammar automatically is documented separately in `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md`. A documented coaching rule is not proof that the active LALM already enforces it in code.
+
 ---
 
 ## 10. Project-work response standard — mandatory
@@ -278,6 +282,8 @@ If project documents, source, declared module status, live behavior, or historic
 5. reconcile the conflict before adding another implementation or claiming completion;
 6. record any meaningful authority migration/retirement in the roadmap/release lineage.
 
+For programming/coder capability specifically, also distinguish **documented curriculum**, **runtime scaffold**, **tool integration**, **deterministic evaluation**, **live verification**, and **trained/learned capability** using the Programming LALM Runtime Architecture specification.
+
 ---
 
 ## 13. Definition of done
@@ -299,4 +305,4 @@ A governed project event is not complete until the applicable parts are true:
 
 ## Bottom line
 
-**Project Start is the router. Read the seven required project-work documents, then follow their ownership instead of duplicating their rules. Reconcile architecture before implementing. During issue work, automatically inspect repository/live logs and add bounded cameras only where evidence is missing. Resolve module VERSION and declared STATUS through `VERSION.txt` and the module-owned authority; reconcile that declared state with observed runtime health before a consumer chooses behavior or UI. Version from current authority, preserve concurrency and roadmap lineage, never trigger deployment without explicit approval, and report the result in a structured readable way. When helping users build their own projects, teach these architecture principles proportionally and respect their informed choice to simplify optional structure.**
+**Project Start is the router. Read the seven required project-work documents, then follow their ownership instead of duplicating their rules. Reconcile architecture before implementing. During issue work, automatically inspect repository/live logs and add bounded cameras only where evidence is missing. Resolve module VERSION and declared STATUS through `VERSION.txt` and the module-owned authority; reconcile that declared state with observed runtime health before a consumer chooses behavior or UI. Version from current authority, preserve concurrency and roadmap lineage, never trigger deployment without explicit approval, and report the result in a structured readable way. When helping users build their own projects, teach these architecture principles proportionally and respect their informed choice to simplify optional structure. When changing programming-LALM/coder capability, read the Programming LALM Runtime Architecture spec and never confuse documented curriculum with executable or trained capability.**
