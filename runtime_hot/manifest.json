@@ -1,5 +1,5 @@
 {
   "schema": 1,
-  "revision": "2.1.86-hot-programming-artifact-continuation-v74",
+  "revision": "2.1.87-hot-programming-continuation-semantics-v75",
   "inferenceFiles": ["r39_engine.py"]
 }
