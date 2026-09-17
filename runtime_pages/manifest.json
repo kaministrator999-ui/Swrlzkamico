@@ -1,5 +1,5 @@
 {
-  "version": 127,
+  "version": 128,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v127 activates Chat 1.5.67 status ownership reconciliation. The runtime loader now requests a fresh immutable asset revision so cached v126 chat_version.js cannot preserve the legacy Local inference pending overwrite. Version/status authority still resolves through runtime/VERSION.txt and the module-owned files."
+  "notes":"Manifest v128 activates Chat 1.5.68 Activity Log dismissal repair. Sidebar-originated modal destinations now close the mobile drawer before mounting the modal on the next animation frame, preventing the opening gesture/drawer transition from immediately dismissing the new overlay."
 }
