@@ -6,8 +6,8 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.240`
-- **Chat:** `1.5.66`
+- **Overall Server:** `2.3.241`
+- **Chat:** `1.5.67`
 - **LALM Engine:** `2.1.80` (`v68` latest-user namespace repair)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
@@ -33,6 +33,30 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.241 — Chat LALM-status ownership reconciliation
+
+**Status:** runtime-hot source complete; static/syntax verified; production status authority live; user-visible refresh acceptance pending.  
+**Chat:** `1.5.67`.  
+**LALM Engine:** `2.1.80` / `v68` unchanged.  
+**Deployment Control:** `1.0.8` unchanged.  
+**Deployment / restart:** NONE.
+
+**Symptom/evidence:** the mobile drawer could display `Local inference pending` while the same page showed the active LALM version. Current `chat_version.js` already normalized declared `STATUS=active` with `/api/lalm/status`, but the base `web/chat.html` retained an older `paintStatus()` bridge presenter that still wrote `Local inference pending`. `refreshStatus()` calls that legacy presenter after request completion, so it could overwrite the newer LALM status presentation after the canonical status module had correctly painted `active`.
+
+**Live authority evidence:** production `/api/lalm/status` reports LALM `2.1.80`, `engine.available=true`, `readiness.ok=true`, `oneTokenReady=true`, and `interactiveReady=true`. The old pending label therefore represented a presentation-owner race rather than actual LALM readiness.
+
+**Architecture reconciliation:** the Shared Module Status Plane introduced at Server `2.3.231` makes `web/chat_version.js` the Chat-side consumer/normalizer for LALM declared status plus observed health. The older inline bridge presenter remains useful for bridge/settings details but must not become a competing final LALM-status authority. The repair therefore extends the canonical status owner with a bounded compatibility reconciliation around the legacy presenter: bridge/settings behavior runs, then the canonical normalized LALM state is synchronously restored before the browser can present the stale result. The canonical paint owner is explicitly exposed as `chat_version.js`; the legacy writer is marked compatibility-only.
+
+**Change:** `web/chat_version.js` now installs a one-time reconciliation adapter over the historical global `paintStatus()` function. Each legacy bridge-status refresh preserves its original bridge/settings work, then immediately reapplies the already-normalized `window.__swrlzLalmState`; if that normalized state has not yet been established, it schedules the canonical LALM status read. This removes the stale post-request `Local inference pending` terminal presentation without adding a third state source or changing LALM semantics.
+
+**Generation defect relationship:** this event does not modify the LALM. The earlier `_latest_user_text` generation failure was independently repaired by Server `2.3.240` / LALM `2.1.80` v68. Production currently shows no runtime-error cluster in the subsequent 30-minute window, and v68 startup/runtime self-tests are live; an authenticated post-v68 Chat generation still requires direct user-turn camera evidence before full end-to-end generation acceptance is claimed.
+
+**Concurrency:** event entry observed Server `2.3.240`, Chat `1.5.66`, LALM `2.1.80`. The source was changed, then Server and Chat authorities were re-read and remained at the entry values. This event therefore assigns Server `2.3.241` and Chat `1.5.67`; LALM remains `2.1.80` because no LALM source changed.
+
+**Verification:** updated `chat_version.js` passes JavaScript syntax checking. Canonical declared/runtime status evidence agrees on an active v68 LALM. Runtime asset publication and no-deploy verification are checked after this roadmap record. User-visible acceptance requires reloading Chat and confirming the drawer remains on the canonical active state after a request/status refresh.
+
+**Lineage:** Chat status repair `09939f48bc0002f529cb1adfedf2f736113e8c07`; Chat authority `a230bee6b5cf98afdc043ccab3141f4a4f3375aa`; Server authority `fdea0d0cb18bc06891cd4df9693ee5e231d6d278`.
 
 ### Server 2.3.240 — R39 v68 canonical latest-user namespace repair
 
