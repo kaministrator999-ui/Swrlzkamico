@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.255`
+- **Overall Server:** `2.3.256`
 - **Chat:** `1.5.75`
-- **LALM Engine:** `2.1.85` (`v73` inherited n-gram NumPy namespace repair)
+- **LALM Engine:** `2.1.86` (`v74` programming-artifact continuation routing)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -34,9 +34,29 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Release ledger
 
+### Server 2.3.256 — Coding continuation history + proportional routing repair
+
+**Status:** split activation. v74/LALM `2.1.86` is runtime-hot and production hydration verified; the stable Server Redis history-compatibility reader is source-complete on `main` but requires an explicit production deployment, so end-to-end same-thread continuation acceptance remains pending.  
+**Chat:** `1.5.75` unchanged.  
+**Deployment / restart:** NONE performed.
+
+**Triggering evidence:** after the live-verified standalone Python response, same-thread request `web:mu62vyb6:41632918973548127832` asked `Can you add a error catch to that code?`. Production canonicalization reported `historyMessages=0`; context focus had no confident anchor; programming mode therefore promoted the turn to `projectContext=existing`, `changeClass=fix`, normal architecture depth, diagnostics, architecture reconciliation, and tool-evidence requirements. v69 lightweight compaction did not activate, the prompt expanded to 3,599 rendered tokens / 18,724 characters, and the stable Vercel function timed out in prefill after 300 seconds.
+
+**Architecture reconciliation:** two existing owners were repaired without creating competing authority. Human/Server owns durable canonical thread history; Brain/LALM owns proportional programming continuation interpretation. The Mask/browser remains non-authoritative for canonical history, and v73 inference/sampling remains preserved.
+
+**Stable Server root cause + repair:** the currently deployed stable commit `88eed351f6e768d3da544a5cd0c69aeb8f17545e` writes legacy Redis sorted-set indexes named `messages`, `activeJobs`, and `threads`, while the canonical reader uses `message_index`, `active_jobs`, and `thread_index`. Durable message records could therefore exist while canonical history enumeration returned zero. Current `main` already writes the newer keys; this event additionally makes `canonical_history()` merge current `message_index` with legacy `messages`, resolve server-owned records, deduplicate by message ID, sort canonically, and preserve existing state/current-request filters. Bounded `history-legacy-index-bridge` telemetry reports counts only. Stable source commit `a1667599d03585f4fb068afc485b5b79bdb34263`; activation requires manual production deployment.
+
+**LALM v74 repair:** immutable v74 preserves v73 generation/sampling and overrides only programming-route classification. It recognizes deictic references to recent assistant code artifacts, inherits their prior programming context, keeps standalone artifacts `projectContext=none` / `architectureDepth=lightweight`, distinguishes adding error handling as a feature/hardening request from debugging a broken project, and preserves explicit existing-project/repository requests as full project work. Hydration fail-closes on five deterministic continuation/routing cases.
+
+**Verification:** production hot-load fetched v74 source `58bfd905d0d3281b6adc1669ca8482cd04cc300c` and emitted `hotServerVersion=2.1.86`, revision `2.1.86-hot-programming-artifact-continuation-v74`, `v73Preserved=true`, `programmingArtifactContinuation=true`, `proportionalErrorHandlingFeature=true`, and `selfTest=true`. The hot entry also proved inherited response-contract, gap checker, repair payload, candidate generator, programming profile, camera, and n-gram sampler remained callable. Stable Server end-to-end recovery is not labeled live until deployment approval activates the Python API change.
+
+**Concurrency/version gate:** Server `2.3.255`, LALM `2.1.85`, and Chat `1.5.75` remained authoritative immediately before assignment. This event owns Server `2.3.256` and LALM `2.1.86`; Chat is unchanged.
+
+**Lineage:** stable Server source `a1667599d03585f4fb068afc485b5b79bdb34263`; v74 source `58bfd905d0d3281b6adc1669ca8482cd04cc300c`; hot entry `dc79a648600aec4accd453a5b72cf79bde100f80`; manifest `9fdf1dff84be8650f28c924d978c0de9a679d131`; LALM authority `7cc3579b4d392aa51550faf4ae50d4e9c1070945`; Server authority `a627c8fbf74feb3edb7d3b296f902b8ed64db864`; receipt `docs/releases/SERVER_2.3.256_CODING_CONTINUATION_HISTORY_REPAIR.md` on `runtime`.
+
 ### Server 2.3.255 — R39 v73 inherited n-gram NumPy namespace repair
 
-**Status:** source complete; static threshold acceptance passed; published with live worker/user-turn activation pending.  
+**Status:** live/user-visible verified; authenticated standalone coding completion acceptance passed.  
 **LALM Engine:** `2.1.85` / `v73`.  
 **Chat:** `1.5.75` unchanged.  
 **Deployment Control:** `1.0.8` unchanged.  
@@ -48,11 +68,11 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 **Repair:** v73 hydrates immutable v72, restores NumPy in the shared namespace after the full inherited exec chain loads, fail-closes if the n-gram sampler is absent, and runs a hydration self-test that calls `_ngram_guarded_sample` with a two-token history to deliberately cross the exact branch that previously failed before token three. v72 diagnostics and all v71/v70/v69 programming behavior remain preserved.
 
-**Verification:** immutable v73 source was re-fetched from its exact commit; syntax compilation passed; the hot entry and manifest now select revision `2.1.85-hot-ngram-numpy-namespace-repair-v73`; version authorities were re-read immediately before assignment and had not advanced. A fresh production worker has not yet emitted v73 hydration/user-turn evidence, so end-to-end coding success remains pending one normal authenticated request.
+**Verification:** authenticated request `web:mu621xd9:9391101464251047456` hydrated v73, crossed the former two-token failure threshold, decoded 134 tokens / 509 characters through at least decode step 128, completed on the first candidate with `gapCount=0`, valid paired code fences, runnable Python, and the requested explanation. No bounded repair or degeneration guard was needed.
 
 **Concurrency:** the version gate observed Server `2.3.254`, LALM `2.1.84`, Chat `1.5.75`; affected authorities remained unchanged before assignment. This event therefore owns Server `2.3.255` and LALM `2.1.85` only.
 
-**Lineage:** v73 source `023ac7efdabbe8c317490bc23f410e3a370b5eaf`; hot entry `90ac4c548506d25b1a6f61c0dd15098dccc88b31`; manifest `6eeb60934e8b119e38c61b486da0739e5ded92ba`; LALM authority `fa2b37776f5f3a76fc8b3388ef3527e0ddc2b529`; Server authority `5263ae849029674c29bb66b4404ccd1b60044692`; dedicated receipt `docs/releases/SERVER_2.3.255_R39_V73_NGRAM_NUMPY_NAMESPACE_REPAIR.md`.
+**Lineage:** v73 source `023ac7efdabbe8c317490bc23f410e3a370b5eaf`; hot entry `90ac4c548506d25b1a6f61c0dd15098dccc88b31`; manifest `6eeb60934e8b119e38c61c0dd15098dccc88b31`; LALM authority `fa2b37776f5f3a76fc8b3388ef3527e0ddc2b529`; Server authority `5263ae849029674c29bb66b4404ccd1b60044692`; dedicated receipt `docs/releases/SERVER_2.3.255_R39_V73_NGRAM_NUMPY_NAMESPACE_REPAIR.md`.
 
 ### Server 2.3.254 — R39 v72 coding inference failure-detail camera
 
