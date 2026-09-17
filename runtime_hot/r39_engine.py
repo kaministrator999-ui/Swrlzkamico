@@ -1,7 +1,7 @@
-"""Hot R39 entrypoint v66 with programming-mode and loader diagnostics."""
+"""Hot R39 entrypoint v66 with programming-mode and generation-boundary diagnostics."""
 from __future__ import annotations
 import json,time,urllib.request
-_SOURCE_COMMIT="3b2379eecd3f68d2aec20ae9839f156b9d79e175"
+_SOURCE_COMMIT="a3bbf9b12d370c16c69f255dde3bf2f3c56ab3a8"
 _SOURCE_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_SOURCE_COMMIT}/runtime_hot/r39_engine_v66.py"
 def _entry(stage,**fields):
     record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v66","atUnixMs":int(time.time()*1000)}
