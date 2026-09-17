@@ -1,7 +1,7 @@
 """R39 v65: preserve v61 context-focus behavior over cold-load-safe v60e."""
 from __future__ import annotations
 import json,time,urllib.request
-_V61_COMMIT="ae27745d9a4d988b28e2351f793d9c568a24ef26"
+_V61_COMMIT="ae27745d9a4d988e2351f793d9c568a24ef26"
 _V61_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V61_COMMIT}/runtime_hot/r39_engine_v61.py"
 _V60_OLD="d248a4dacf2446c1d0d836c54482617f8dedc11f"
 _V60E_NEW="bc870515340d28588f8bf9c93455d69ececc0311"
@@ -38,4 +38,8 @@ def inspect_engine():
 def generate_events(payload,is_cancelled=None):
     request_id=_request_id(payload) if isinstance(payload,dict) else ""
     _camera(request_id,"v65-enter",contract="r39-v65-lineage-camera-v1",v61Preserved=True,coldLoadSafe=True,responseContractBridge=True,responseContractGapBridge=True)
-    for event in _V61_GENERATE(payload,is_cancelled):yield event
+    try:
+        for event in _V61_GENERATE(payload,is_cancelled):yield event
+    except Exception as exc:
+        _camera(request_id,"v65-generate-exception",contract="r39-v65-lineage-camera-v2",errorType=type(exc).__name__,errorMessage=str(exc)[:240])
+        raise
