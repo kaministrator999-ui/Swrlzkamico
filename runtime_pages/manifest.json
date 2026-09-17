@@ -1,5 +1,5 @@
 {
-  "version": 120,
+  "version": 121,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v120 advances the immutable Chat asset generation for the Android viewport-width correction. The visual viewport is the physical mobile frame authority; screen/availWidth no longer clamps Chat narrower than the rendered viewport. Runtime CSS remains the owner of intentional inner content gutters."
+  "notes":"Manifest v121 advances immutable Chat assets for two isolated Mask corrections: Android keeps the full visual-viewport Chat frame while the thread menu returns to a bounded overlay with a right-side scrim; Chat version display resolves VERSION.txt and mapped module authorities from the canonical /live/assets/ runtime asset root."
 }
