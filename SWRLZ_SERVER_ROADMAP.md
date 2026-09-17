@@ -1,117 +1,120 @@
 # §wyrlz Server Roadmap & Version Ledger
 
-**READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-- **Current overall server baseline:** `2.3.228`
-- **Current Chat component:** `1.5.65`
-- **Current LALM Engine:** `2.1.75` (`v64`)
-- **Current Web Frontend component:** `1.0.3`
-- **Current LALM UI component:** `1.0.0`
-- **Current Frozen Web Collector component:** `1.0.8`
-- **Current Deployment Control component:** `1.0.6`
+**Role:** durable chronological memory of Server/module evolution, architecture decisions, diagnostics, verification, deployment state, and completed project progress.
 
-**Release policy:** every server development event gets an overall Server release/version entry plus independent component version changes where applicable, including unsuccessful attempts.
+**Startup/read order is owned by `SWRLZ_PROJECT_START.md`.** This ledger reports what happened; it does not redefine the operating workflow.
 
-## Version model
+## Current authoritative baseline
 
-§wyrlz uses two levels of versioning:
+The values below were reconciled from current module-owned authorities for this ledger update.
 
-1. **Overall Server version** — chronological development/release event of the complete server architecture.
-2. **Independent component versions** — Chat, Web Frontend, LALM/R39, Server/Infrastructure, Admin, Deployment Control, and other independently maintained surfaces.
+- **Overall Server:** `2.3.230`
+- **Chat:** `1.5.65`
+- **LALM Engine:** `2.1.76` (`v65`)
+- **Web Frontend:** `1.0.5`
+- **LALM UI:** `1.0.0`
+- **Frozen Web Collector:** `1.0.9`
+- **Deployment Control:** `1.0.7`
 
-Version authorities are read at event entry and re-read immediately before version assignment/commit. Concurrent advances must be reconciled from the newest authority rather than overwritten.
+`VERSION.txt` and the referenced `versions/<module-id>.txt` files remain the version identity authorities. This roadmap is lineage/history and must be reconciled to those owners rather than treated as a competing version source.
 
-Before implementing each feature/fix/optimization/refactor, perform the Project Start **Pre-Feature Architecture Reconciliation** using `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md`: inspect the selected/affected architecture and related work, confirm the canonical owner/integration path, and avoid duplicate or competing implementations.
+---
 
-## Core architecture accomplished
+## Current project-work contract
 
-- `runtime` is the durable live application source of truth for hot application changes.
-- `main` is the stable loader/infrastructure and engineering-contract boundary.
-- Runtime-owned Chat/page/LALM updates are supported without ordinary Vercel redeployment.
-- GitHub runtime source is authoritative; ephemeral worker/browser state is disposable.
-- Chat uses the Ice Dragon frontend-first shell and runtime-owned Chat geometry/theme behavior.
-- Chat visible versions derive from the `VERSION.txt` routing authority and mapped `versions/*.txt` value authorities.
-- LALM hot loading has explicit entry/lineage cameras for fetch, hydration, inherited-contract, and generation failures.
-- Deployment approval follows actual deployment capability/action, not branch name.
-- Repository documentation is deployment-inert under the verified configuration and does not require deployment approval.
-- The programming-LALM curriculum now includes an explicit architecture-reconciliation execution protocol: outcome framing, architecture-radius discovery, authority mapping, reader/writer/lifecycle tracing, source-vs-live-vs-history evidence separation, overlap classification, integration-path selection, new-module tests, and post-change ownership verification.
+Project development is governed by the canonical owners routed from `SWRLZ_PROJECT_START.md`:
 
-## Component ownership
+- Hotfix/deployment mechanics → `SWRLZ_HOTFIX_RULES.md`
+- Server/module lineage → `SWRLZ_VERSION_MODULE_EVOLUTION.md`
+- Architecture reconciliation → `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md`
+- Project-wide cameras/logs → `SWRLZ_CHAT_CAMERA_LOGS.md`
+- Project-work response/readability → `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md`
+- User-project architecture teaching → `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md`
 
-| Component | Source of truth | Versioning rule |
-|---|---|---|
-| Overall Server | `runtime/versions/server-runtime.txt` + this roadmap lineage | Advances on every governed server development event |
-| Web Frontend | runtime frontend assets + `runtime/versions/web-frontend.txt` | Advances when frontend architecture changes |
-| Chat | `runtime/web/chat*` + `runtime/versions/web-chat.txt` | Advances when Chat UI/protocol/behavior changes |
-| LALM/R39 | `runtime_hot/r39_engine*` + `runtime/versions/lalm-engine.txt` | Advances when LALM/inference behavior changes |
-| Server/Infrastructure | `main/api/*`, deployment/configuration | Advances with stable infrastructure releases |
-| Deployment Control | deployment-control authority + governing configuration | Advances when deployment-control behavior changes |
-| Page system | `runtime_pages/manifest.json` + runtime page assets | Advances when page routing/system behavior changes |
+Every feature/fix/refactor first reconciles existing architecture. Every issue/debug event automatically inspects available repository/live evidence and adds bounded cameras only when observability is insufficient. Every governed event uses concurrency-safe version assignment and a durable release record. Substantial conversational updates follow the response standard.
 
-## Hot-update boundary
-
-Normally no Vercel deployment/restart is required for runtime Chat HTML/JS/CSS, stream behavior, runtime page assets, supported hot LALM/R39 changes, version-authority changes, or documentation/contract commits.
-
-Documentation-only repository commits are explicitly **deployment-inert** and **do not require deployment approval**. If deployment configuration ever causes docs-only changes to create deployments, that configuration is treated as the defect to correct rather than making documentation approval-gated.
-
-Actual deployment-capable stable loader/infrastructure/configuration changes remain behind the Deployment Approval Gate.
+---
 
 ## Release ledger
 
-### Server 2.3.228 — Programming-LALM architecture reconciliation curriculum
+### Server 2.3.230 — Project-work contract reconciliation, automatic diagnostics, readable reporting, and architecture coaching
 
-**Status:** engineering curriculum / governance source complete.  
-**Affected module versions:** none; LALM Engine remains `2.1.75` / `v64`, Chat remains `1.5.65`.  
-**Deployment / restart:** NONE.
-
-The mandatory pre-feature architecture rule introduced in Server 2.3.226 now has a concrete programming-LALM execution method instead of relying on the vague instruction to “check the architecture.” The new `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md` teaches the engineering LALM how to turn a user outcome into bounded architecture discovery before implementation.
-
-The protocol introduces architecture-radius traversal from the requested outcome through direct owner, readers/writers/dependencies, cross-cutting authority, and historical/live evidence only as far as needed. It requires an authority map rather than a file list; traces both data flow and control/lifecycle flow; searches by responsibility/state/readers/writers rather than only feature names; distinguishes current engineering authority, actual production activation, and historical evidence; and provides explicit stop conditions when ownership or activation remains materially ambiguous.
-
-Existing work is classified before implementation as exact existing capability, partial overlap, legitimate composition, compatibility adapter, fallback, historical/retired path, conflicting duplicate owner, or genuinely independent new responsibility. The preferred integration ladder is now explicit: **reuse → extend canonical owner → refactor/consolidate → migrate+retire → create a genuinely independent structure**. New modules must pass an independent responsibility/lifecycle/state-contract/versioning test instead of being created because another layer is convenient.
-
-The protocol also teaches Mask/Human/Brain placement, architecture-conflict signals, pre-implementation Architecture Reconciliation Records, post-change single-authority checks, and three verification dimensions when relevant: behavioral acceptance, ownership acceptance, and live activation acceptance.
-
-**Architecture reconciliation for this event:** inspected the Project Start pre-feature rule, Version/Module Evolution programming curriculum, current roadmap, `docs/engineering`, current architecture contracts, version authorities, and deployment workflow. No existing dedicated method taught an engineering LALM how to traverse and reconcile architecture. Older formal control-plane documents were found that describe historical `dev`/`/tmp` behavior, demonstrating that the LALM must distinguish historical documentation from newer current Project Start/Hotfix/Roadmap/runtime authority rather than treating every formal document as equally current. The integration therefore keeps Project Start as the mandatory gate, adds one canonical execution curriculum under `docs/engineering`, and links that method into the Version/Module Evolution curriculum instead of duplicating another policy system.
-
-**Intentionally unchanged:** no R39/inference source, Chat runtime behavior, server API, persistence schema, loader, deployment configuration, or component version was changed by this curriculum event.
-
-**Verification:** the protocol is now a required Project Start document; the Version/Module Evolution contract incorporates architecture discovery before module/version impact; current `VERSION.txt`, Server/LALM/Chat authorities were re-read at the version boundary; the deployment workflow still only auto-triggers from `.deploy/REQUEST.txt` on `main` or explicit workflow dispatch, so these documentation/curriculum commits are non-deploying.
-
-**Lineage:** architecture protocol `0db88e04f0f5059a7e9244e80b2cf1f8b8f0c5cc`; Project Start integration `a8d2f6203036c11611cf434a09c429753e8ed52f`; Version/Module Evolution integration `d91b2750b6d0e1f956f810defa6c04826eb768d6`; Server authority `1dafa6163956137a66269855677c606c42b034fe`.
-
-### Server 2.3.227 — R39 v64 complete cold-load namespace repair
-
-**Status:** runtime source complete; live rendered verification pending.  
-**LALM Engine:** `2.1.75` / `v64`.  
+**Status:** source complete / governance contract verified.  
+**Affected module versions:** none.  
+**LALM Engine:** `2.1.76` / `v65` unchanged.  
 **Chat:** `1.5.65` unchanged.  
 **Deployment / restart:** NONE.
 
-Production hot-loader cameras proved v63 successfully reached the repaired planner bootstrap but failed during inherited v55 hydration with `NameError: name '_response_contract' is not defined`. Architecture reconciliation traced both `_plan_response_budget` and `_response_contract` to the canonical implementation module and confirmed v55 captures both names immediately after v54 hydration, while v54 publishes neither into the shared exec namespace.
+This event reconciled the project-development contract around four user goals:
 
-v58d now installs lazy canonical bridges for both symbols **before** v57→v56→v55 hydration. v60d preserves the v59 acceptance/completion lineage over v58d, and v64 preserves the v61 context-focus layer over v60d. The active hot entrypoint now targets v64 and its loader camera reports both planner and response-contract readiness on successful hydration.
+1. issue-fixing should automatically inspect §wyrlz-accessible logs/evidence and add diagnostic cameras where observability is missing;
+2. project-work responses should use a consistent readable engineering handoff structure;
+3. Project Start should clearly route every rule family to one canonical owner rather than duplicate/compete with subordinate documents;
+4. the architecture curriculum should also help §wyrlz teach proportional architecture to users building their own projects and respect informed simplification of optional structure.
 
-**Architecture reconciliation:** extended the existing hot-loader lineage/camera architecture; no alternate LALM loader, Chat-side cognition, or duplicate response-contract implementation was introduced. Canonical response planning/contract behavior remains owned by the inherited R39 implementation; the repair only exposes those existing callables at the timing required by later wrappers.
+**Architecture reconciliation:** reviewed Project Start, Hotfix Rules, Version/Module Evolution, Architecture Reconciliation Protocol, the prior Chat camera runbook, Engineering Log, roadmap/release behavior, deployment workflow, current module authorities, and the newly created response standard. The main overlap found was governance duplication: Project Start had grown into a large secondary owner of architecture/version/deployment details; Hotfix still labeled itself “READ THIS FIRST”; Version Evolution carried a second startup sequence; and camera guidance was named/scoped as Chat-specific despite diagnostic needs being project-wide.
 
-**Verification evidence before repair:** repeated production `/api/lalm/status` and `/api/chat` traces reached v63 → v60c → v58c, emitted `prehydrate-bridges-ready`, then consistently failed at `hydrate-v57-failed` with `_response_contract` undefined. This isolated the defect to inherited namespace hydration rather than Chat presentation or cache.
+**Integration decision:** preserve one owner per concern. Project Start was refactored into the canonical router/orchestrator; Hotfix now owns mutation/deployment mechanics and explicitly sits second; Version Evolution now owns lineage/concurrency/version authority only; the existing camera filename remains for compatibility but its contract is project-wide; a separate Response Standard owns conversational project reporting; the existing Architecture Reconciliation Protocol remains the engineering method; and a separate Architecture Coaching Guide owns user-facing teaching/adaptation so internal architecture rules are not forced onto every user project.
 
-**Lineage:** v58d `086652e834b340aaba8e70b5f8ca2a8d4f4f33cf`; v60d `1e3f6ff76df766a59538c369ed6d056becd3f515`; v64 `545dfb82d87654923c6f19dff65c52c71810e351`; active entrypoint `721b21d1ef8d48206933412729cd846b1fb39380`; LALM authority `cec503c30a5a74ec5ee17a076ef223865dc5e7c3`; Server authority `f3f37ce35599c37f11c80752e8ee85983802bd81`.
+**Automatic diagnostic behavior added to contract:** when fixing/debugging/investigating/verifying defects, §wyrlz automatically inspects current source, existing cameras, manifests/loaders, version authorities, roadmap/releases, Engineering Log, tests, recent commits and workflow/build logs as relevant, plus accessible live/runtime evidence such as Vercel logs/status. If evidence cannot distinguish competing explanations, the agent adds the smallest bounded camera at the relevant architecture boundary, reproduces the path, fixes the canonical owner, and re-checks the same evidence. Default diagnostic order is **inspect first → instrument second → mutate third**.
+
+**Response/readability behavior added:** `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` defines structured Status / findings / changes / verification / version-deployment / remaining-state reporting, precise source-vs-runtime-vs-live truth vocabulary, and concise progress updates during long work.
+
+**User architecture coaching added:** `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md` teaches proportional project structure, plain-language reasons for architecture boundaries, progressive architecture as complexity grows, user choice over preference-level structure, distinction between requirements/recommendations/preferences, and clean removal/simplification when the user rejects optional architecture.
+
+**Authority/concurrency reconciliation:** event work began around Server `2.3.228`, but concurrent runtime work advanced the authoritative Server to `2.3.229` and LALM Engine to `2.1.76` / `v65`. This event preserved that work and assigned `2.3.230` from the re-read authority rather than overwriting/reusing stale numbers. Current Chat remained `1.5.65`. Additional roadmap snapshot drift was corrected from current authorities: Web Frontend `1.0.5`, Frozen Web Collector `1.0.9`, Deployment Control `1.0.7`.
+
+**Intentionally unchanged:** no R39 inference source, Chat runtime behavior, server API, persistence schema, production loader, deployment configuration, Web Frontend source, Collector source, or Deployment Control source was changed by this governance event. Therefore no component version was artificially bumped.
+
+**Verification:** Project Start now routes seven mandatory project-work documents and conditional architecture/OAuth guides; Hotfix and Version Evolution no longer compete for startup-order ownership; project-wide diagnostic rules and response standard have dedicated owners; Server authority advanced to `2.3.230` after concurrency revalidation. Deployment configuration remained manual/inert for these documentation commits; production deployment is not part of this event.
+
+**Lineage:** response standard `eacad54746efefbc0756a02635795b33c3b58419`; project-wide diagnostic contract `bf64fba083e5cc07cf3c380b3868ee5905921bab`; architecture coaching guide `935421ce92d27ad8d575ca94c8f55c65f11c9d38`; Project Start router refactor `d752630179522b6e63b32bf5700f2ffdca417d30`; Hotfix contract clarification `4e4ede2bf9527ff8671dbe31c020157babb4895a`; Version Evolution ownership cleanup `f7370ccd1d64c993a59e386fabdedfdec3fb50e3`; Server authority `3680dc63d3b62892563e1fc7a0249e2d65a4be23`.
+
+### Server 2.3.229 — R39 v65 inherited-namespace repair
+
+**Status:** concurrent runtime event preserved; this governance pass did not modify it.  
+**LALM Engine:** `2.1.76` / `v65`.  
+**Chat:** `1.5.65` unchanged.  
+**Deployment / restart:** not performed by Server 2.3.230.
+
+Runtime authority advanced concurrently from the previous v64 lineage to revision `2.1.76-hot-v61-complete-inherited-namespace-v65`. Server 2.3.230 re-read and preserved that authority before assigning its own Server version.
+
+### Server 2.3.228 — Programming-LALM architecture reconciliation curriculum
+
+**Status:** source complete.  
+**Affected module versions:** none.
+
+Added the explicit architecture-reconciliation execution protocol so the programming LALM can discover owners, trace state/readers/writers/lifecycle, classify overlap, distinguish current authority/live activation/history, and deliberately choose reuse/extension/consolidation/migration/new structure before implementation.
+
+### Server 2.3.227 — R39 v64 complete cold-load namespace repair
+
+**Status:** preserved in lineage; superseded by current LALM v65 authority.
+
+Expanded the R39 cold-load repair lineage and loader cameras while preserving conversation/context-focus behavior.
 
 ### Server 2.3.226 — Mandatory pre-feature architecture reconciliation governance
 
-**Status:** engineering-contract and roadmap source complete.  
-**Affected module versions:** none.  
-**Deployment / restart:** NONE.
+**Status:** source complete.
 
-Project Start requires architecture reconciliation before implementation so related/partial/retired implementations are inspected and canonical ownership is deliberately reused, extended, refactored, or retired rather than stacked.
+Made architecture reconciliation mandatory before feature/fix/optimization/refactor work and required a durable architecture-reconciliation note in the release record.
 
-### Server 2.3.211 — Chat live version authority + phone drawer lineage
+### Earlier releases
 
-Chat visible versions were routed through the live version authority. Later mobile work superseded the original full-phone drawer geometry; current rendered-device geometry is governed by the accepted bounded drawer/runtime viewport implementation.
+Earlier detailed release entries remain in Git history and `docs/releases/`. This compact roadmap intentionally emphasizes the current architecture and recent lineage rather than duplicating every historical record into one ever-growing file.
 
-### Server 2.3.210 — Chat single geometry authority correction
+---
 
-Account identity and early-shell layers stopped independently owning workspace/message/composer geometry; runtime viewport CSS became the post-boot geometry authority while Google identity behavior remained separate.
+## Roadmap operating principle
 
-### Roadmap reconciliation note
+A future project-work event should leave this ledger able to answer:
 
-Historical release entries omitted from this compact ledger remain in Git history and runtime release records. This ledger is reconciled to the current authoritative runtime files rather than fabricating omitted intermediate events.
+- What is the current Server baseline?
+- Which modules actually changed?
+- What architecture owner was used?
+- What competing/legacy work was found or retired?
+- What camera/log evidence supported issue diagnosis?
+- What verification level passed?
+- Did deployment/restart happen?
+- What concurrency or failed-event lineage must future work preserve?
+
+If current module authorities disagree with the snapshot at the top of this document, the module-owned authorities win and the roadmap must be reconciled during the next governed event.
