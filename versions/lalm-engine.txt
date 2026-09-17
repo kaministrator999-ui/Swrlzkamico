@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.69
-REVISION=2.1.69-hot-planner-namespace-loader-camera-v58
+VERSION=2.1.70
+REVISION=2.1.70-hot-acceptance-completion-diagnostics-v59
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
