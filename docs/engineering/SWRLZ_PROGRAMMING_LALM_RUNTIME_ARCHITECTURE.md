@@ -2,7 +2,7 @@
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **Phase 1 core programming generation is live verified through LALM `2.1.86` / R39 `v74`; same-thread artifact-continuation integration is source-complete but awaits one stable Server bootstrap deployment for canonical history recovery.** v69 live-verified proportional lightweight-programming context compaction. v70 owns coding-terminal/repair hardening. v71 made terminal-source diagnostics collision-proof. v72 added bounded lower-failure detail. v73 repaired the inherited v55 n-gram NumPy fault and a real authenticated turn completed runnable Python + explanation beyond the former two-token failure. v74 is production-hydrated and adds proportional programming-artifact continuation routing. Server `2.3.257` adds a read-only runtime-hot canonical-history policy seam so future history-reconstruction refinements can ship from `runtime` after one stable loader activation. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain later states.
+**Current implementation state:** **Phase 1 core programming generation/history integration is live verified through LALM `2.1.87` / R39 `v75`; Server 2.3.257's runtime-hot canonical-history policy is active in production and has recovered both current-index and legacy-index authenticated threads. v75 is production-hydrated and deterministically evaluated for multi-hop artifact provenance + runnable edit semantics; a fresh authenticated post-v75 continuation remains the final user-turn acceptance checkpoint for those new semantic gates.** v69 live-verified proportional lightweight-programming context compaction. v70 owns coding-terminal/repair hardening. v71 made terminal-source diagnostics collision-proof. v72 added bounded lower-failure detail. v73 repaired the inherited v55 n-gram NumPy fault and a real authenticated turn completed runnable Python + explanation beyond the former two-token failure. v74 added proportional first-hop programming-artifact continuation routing. Server `2.3.257` activated a read-only runtime-hot canonical-history policy seam; production authenticated turns have since proved current-index history delivery and legacy-index recovery. v75 preserves v74 while adding bounded edit-chain provenance plus runnable-edit semantic preservation. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain later states.
 
 ---
 
@@ -329,10 +329,11 @@ Current state:
 - **v72 diagnostic contract:** source/static verified and preserved;
 - **v73 two-token threshold repair:** live/user-turn verified;
 - **successful authenticated post-v73 runnable-code completion:** yes;
-- **v74 artifact-continuation routing:** live hydration/self-test verified;
-- **runtime-hot canonical-history policy:** source complete + deterministic behavior verified;
-- **stable history-policy loader ABI:** source complete, production activation pending explicit deployment;
-- **successful authenticated same-thread `that code` continuation through hot history policy:** pending stable bootstrap activation;
+- **v74 artifact-continuation routing:** live hydration/self-test verified; authenticated fresh-thread first-hop continuation verified lightweight;
+- **runtime-hot canonical-history policy:** live production verified on current + legacy indexes;
+- **stable history-policy loader ABI:** production activated by the user-approved bootstrap deployment;
+- **successful authenticated same-thread `that code` continuation through hot history policy:** yes for history delivery/anchor resolution; fresh-thread first-hop routing stayed lightweight, while an edit-of-edit provenance defect was exposed and superseded by v75;
+- **v75 continuation provenance + runnable-edit semantic gates:** production hydrated; deterministic acceptance 5/5; fresh authenticated post-v75 user-turn acceptance pending;
 - **tool-integrated programming execution:** no;
 - **full deterministic architecture acceptance:** no;
 - **learned/trained programming specialization:** no.
@@ -423,11 +424,11 @@ The specialist may return patches, affected files, assumptions, tests, migration
 
 ### Phase 1 — same-LALM programming mode
 
-**Status:** core generation/routing foundation is live verified through v74. Runnable-code completion acceptance passed under v73 and v74 preserves that inference path. The remaining Phase 1 integration checkpoint is a normal authenticated same-thread artifact continuation after Server 2.3.257's stable history-policy loader seam is deployed and the runtime-hot policy is observed in production.
+**Status:** core generation/routing/history foundation is live verified through v75. Runnable-code completion acceptance passed under v73; Server 2.3.257's hot history-policy seam is production active and authenticated turns proved both current-index and legacy-index recovery. v75 is live hydrated and deterministically passes multi-hop provenance + runnable-edit semantics. The remaining Phase 1 checkpoint is a fresh authenticated post-v75 continuation proving those new semantic gates on a real user turn.
 
 ### Phase 2 — obligation + architecture acceptance
 
-**Next capability target after the remaining continuation integration checkpoint closes.** Add programming obligation tracking, repository-evidence/overlap state, integration decisions, completion requirements, and a generalized architecture acceptance suite.
+**Next capability target after the remaining v75 user-turn semantic checkpoint closes.** Add programming obligation tracking, repository-evidence/overlap state, integration decisions, completion requirements, and a generalized architecture acceptance suite.
 
 ### Phase 3 — repository/tool execution loop
 
@@ -464,4 +465,4 @@ Do not collapse these states. A published/hydrated wrapper is not automatically 
 
 ## Bottom line
 
-**§wyrlz keeps one primary cognitive authority. LALM 2.1.86 / R39 v74 is the active programming edge: v69 proportional context is live verified; v70/v71 isolated semantic-vs-inference failure correctly; v72 preserves bounded diagnostics; v73 repaired and live-verified the exact two-token NumPy namespace failure; and v74 live-hydrates proportional artifact-continuation routing. Server 2.3.257 keeps durable conversation authority in the Human/Server while adding a read-only runtime-hot history-policy seam so future canonical-history reconstruction can evolve from `runtime`. One stable bootstrap deployment plus a normal same-thread continuation test remains before that integration is called live verified. Repository/tool execution and any future coder model remain later, explicitly separate implementation states.**
+**§wyrlz keeps one primary cognitive authority. LALM 2.1.87 / R39 v75 is the active programming edge: v69 proportional context is live verified; v70/v71 isolated semantic-vs-inference failure correctly; v72 preserves bounded diagnostics; v73 repaired the exact two-token NumPy namespace failure; v74 established proportional first-hop artifact continuation; and v75 preserves provenance across edit chains while adding runnable-edit semantic gates for callable names, entrypoints, and unrequested retry behavior. Server 2.3.257's read-only runtime-hot history-policy seam is production active and authenticated turns have proved both current-index and legacy-index recovery. The remaining Phase 1 checkpoint is a fresh authenticated post-v75 continuation; repository/tool execution and any future coder model remain later, explicitly separate implementation states.**
