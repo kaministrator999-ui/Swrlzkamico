@@ -1,7 +1,7 @@
 """R39 v65: preserve v61 context-focus behavior over cold-load-safe v60e."""
 from __future__ import annotations
 import json,time,urllib.request
-_V61_COMMIT="ae27745d9a4d988e2351f793d9c568a24ef26"
+_V61_COMMIT="ae27745d9a4d988b28e2351f793d9c568a24ef26"
 _V61_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V61_COMMIT}/runtime_hot/r39_engine_v61.py"
 _V60_OLD="d248a4dacf2446c1d0d836c54482617f8dedc11f"
 _V60E_NEW="bc870515340d28588f8bf9c93455d69ececc0311"
