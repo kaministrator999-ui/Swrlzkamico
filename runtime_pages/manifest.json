@@ -1,5 +1,5 @@
 {
-  "version": 122,
+  "version": 123,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v122 advances immutable Chat assets for the Ice Dragon sidebar command surface. The existing bounded mobile drawer and full visual-viewport Chat geometry are preserved while the drawer gains Chats, Bookmarks, Pinned, Settings, Knowledge, Tools, Activity Log, and Help navigation. Backing capabilities that are not yet enabled are identified rather than simulated."
+  "notes":"Manifest v123 advances the Chat sidebar composition: Settings gear is anchored in the drawer header; Google identity is compacted to a larger avatar plus display name only; identity sits immediately above Local LALM status; LALM status sits immediately above the version authority display. Existing bounded drawer and viewport geometry remain unchanged."
 }
