@@ -1,5 +1,5 @@
 {
-  "version": 131,
+  "version": 132,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v131 activates Chat 1.5.71 renderer-owned Activity Log behavior. Streaming assistant turns now seed Activity Log state before render, default the live trace open on first creation, preserve expansion state in the message model across every streamed re-render, and bind summary intent directly to that persisted state."
+  "notes":"Manifest v132 activates Chat 1.5.72 delegated Activity Log ownership. Activity expansion state is now owned at the message-stack boundary, so traces created by base rendering, incremental streaming, or later DOM replacement all share the same persisted message.meta.activityExpanded state. Live assistant turns recreate a missing Activity Log immediately and user open/close intent is handled centrally instead of per transient DOM node."
 }
