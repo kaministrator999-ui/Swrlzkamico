@@ -1,8 +1,8 @@
 # §wyrlz Server Roadmap & Version Ledger
 
 **READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-- **Current overall server baseline:** `2.3.210`
-**Current Chat component:** `1.5.59`  
+- **Current overall server baseline:** `2.3.211`
+**Current Chat component:** `1.5.60`  
 **Current Web Frontend component:** `1.0.3`  
 **Current LALM UI component:** `1.0.0`  
 - **Current Frozen Web Collector component:** `1.0.8`
@@ -52,6 +52,8 @@ Version authorities are read at event entry and re-read immediately before versi
 - Established a frontend-first Chat boot boundary: the local shell/theme renders independently while account, bridge, server, and LALM connectivity settle asynchronously.
 - Added persistent device-side Ice Dragon asset caching, including an optional idle-time 4320x7680 cached WebP promotion tier on capable devices.
 - Consolidated Android Chat geometry so the early shell and account identity module no longer independently own workspace/message/composer widths; runtime viewport CSS is the post-boot geometry authority while the early shell remains full-width and neutral.
+- Routed Chat's visible component versions through the live `VERSION.txt` index and its mapped module files, removing the raw-GitHub version read as a separate version-delivery path.
+- Made the Android phone thread drawer consume the full visual viewport instead of intentionally leaving a narrow underlying-Chat strip visible.
 
 ## Component ownership
 
@@ -132,9 +134,21 @@ Those changes generally belong on `main`, but a `main` commit is not automatical
 
 ## Release ledger
 
+### Server 2.3.211 — Chat live version authority + full phone drawer
+
+**Status:** runtime source complete; rendered-device verification pending.  
+**Chat:** `1.5.60`  
+**Deployment / restart:** NONE.
+
+Chat's visible version footer now begins at the production live `VERSION.txt` index and resolves the mapped module files through the same `/live/` runtime source path as the running Chat. This removes raw GitHub as a separate version-display delivery path while preserving `VERSION.txt` as the routing authority and each mapped `versions/*.txt` file as the value authority. Version values are refreshed on focus/visibility so a returning Chat surface converges without relying on an old footer value.
+
+The Android phone thread drawer now uses the full visual viewport width and removes the narrow right-side scrim/underlying-Chat strip. This is a targeted interface correction to the defect visible in the device screenshot; larger desktop/tablet sidebar behavior remains separately governed.
+
+**Runtime lineage:** Chat version routing `e222d08255e59cf252caeda018b8390df42c41c7`; phone drawer correction `bf13b411c47206118c996294937c61c5e75efeb0`; Server authority `81d8107e422677af523b6fe32ceff7645529ba07`; Web Chat authority `69e9bf5023c1455deeeb1ab26ecf57609cbc8d6c`.
+
 ### Server 2.3.210 — Chat single geometry authority correction
 
-**Status:** source complete; production-source verification pending.  
+**Status:** source complete; superseded by 2.3.211 interface correction.  
 **Chat:** `1.5.59`  
 **Deployment / restart:** NONE.
 
