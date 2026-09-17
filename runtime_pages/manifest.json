@@ -1,5 +1,5 @@
 {
-  "version": 125,
+  "version": 126,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v125 makes drawer presentation atomic: the main Chat may paint immediately, but an open drawer remains hidden while runtime functional assets compose navigation, account identity, status, and footer ordering; the completed drawer is revealed only at functional readiness. Early Android width authority also matches the visual viewport runtime contract."
+  "notes":"Manifest v126 advances Chat version authority transport: the drawer footer reads runtime/VERSION.txt as the routing authority and then resolves its mapped module version files. Version and LALM readiness failures also emit bounded client debug events. Drawer geometry remains unchanged."
 }
