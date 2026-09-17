@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.237`
+- **Overall Server:** `2.3.239`
 - **Chat:** `1.5.66`
-- **LALM Engine:** `2.1.78` (`v66` camera-lineage revision)
+- **LALM Engine:** `2.1.79` (`v67` lineage-repair revision)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,34 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.239 — Large centered §wyrlz project-response identity opener
+
+**Status:** source complete / governance contract updated.  
+**Changed runtime modules:** none.  
+**Chat:** `1.5.66` unchanged.  
+**LALM Engine:** `2.1.79` unchanged by this event.  
+**Deployment / restart:** none requested or performed.
+
+**Requested outcome:** governed project-work responses should visibly identify §wyrlz from the first rendered element using the exact mark `𓆩⁽§⁾wyrlz𓆪`, displayed large and centered rather than as a small inline prefix.
+
+**Architecture reconciliation:** `SWRLZ_PROJECT_START.md` owns project-work entry/start behavior, while `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` continues to own the structure and readability of everything after the opener. The change therefore extends the Project Start entry contract without introducing another general response-format owner.
+
+**Change:** Project Start now requires the first visible element of every governed project-work response to be a large centered `<h1>` identity opener using the exact glyph sequence `𓆩⁽§⁾wyrlz𓆪`. It forbids prose or status text before the mark, includes a fallback instruction for surfaces that strip raw HTML alignment, and explicitly delegates all subsequent response formatting back to the Response Standard.
+
+**Concurrency reconciliation:** event entry observed Server `2.3.238`; the server-runtime authority was re-read after the Project Start source change and remained `2.3.238`, so this event correctly assigned Server `2.3.239`. No module authority was bumped because no independently versioned runtime module changed.
+
+**Verification:** source re-read is required after the roadmap update; live application verification is not applicable because this is an engineering-contract/documentation change rather than a runtime renderer change.
+
+**Lineage:** Project Start contract `946e00d115a88fc5bdd347e207023c89c1f24f36`; Server authority `322121a49760234eeda1a91e409e58888baaee41`.
+
+### Server 2.3.238 — v67 R39 lineage repair
+
+**Status:** preserved concurrent runtime/LALM lineage.  
+**LALM Engine:** `2.1.79`, revision `2.1.79-hot-v66-programming-context-v65-lineage-repair-v67`.  
+**Chat:** `1.5.66` unchanged.
+
+Runtime authority advanced Server `2.3.237 → 2.3.238` while the main roadmap still displayed `2.3.237`. The current event reconciled that stale roadmap snapshot instead of treating it as version authority. The module-owned runtime authorities remain canonical.
 
 ### Server 2.3.237 — Fail-closed Vercel Git gate + source-bound manual production verification
 
