@@ -2,7 +2,7 @@
 
 ## Status
 
-**Source complete / static verified / published, live activation and authenticated coding acceptance pending.**
+**Live/user-visible verified. Authenticated coding completion acceptance passed.**
 
 - Overall Server event: `2.3.255`
 - LALM Engine: `2.1.85`
@@ -48,19 +48,38 @@ No Chat code, server persistence, deployment configuration, or user-facing respo
 
 ## Verification
 
+Source/static verification:
+
 - immutable v73 source was re-fetched from its exact commit;
 - Python syntax compilation passed;
-- active `runtime_hot/r39_engine.py` now targets immutable v73;
+- active `runtime_hot/r39_engine.py` targets immutable v73;
 - `runtime_hot/manifest.json` declares the v73 revision;
 - LALM and Server version authorities were re-read before assignment and had not advanced concurrently;
 - no Vercel deployment or restart was performed;
-- Git automatic deployment guards remain fail-closed.
+- Git automatic deployment guards remained fail-closed.
 
-A fresh production worker has not yet emitted v73 hydration/user-turn evidence, so this release is not labeled live-fixed yet. The next normal authenticated coding turn is the live acceptance surface; it must cross decode step 2 and ultimately satisfy runnable-code + explanation requirements.
+Live authenticated acceptance then passed on request `web:mu621xd9:9391101464251047456`:
+
+- fresh production workers hydrated v73 successfully with `ngramNumpyNamespaceRepair=true` and `selfTest=true`;
+- the active engine was `2.1.85`, revision `2.1.85-hot-ngram-numpy-namespace-repair-v73`;
+- the coding request crossed the prior two-token failure boundary and produced **134 decode tokens / 509 characters**;
+- candidate telemetry reached at least decode step **128** rather than failing after step 2;
+- the **first** candidate terminated `COMPLETED / base-completed`;
+- `gapCount=0`, `completeCodeGap=false`, and `requestedExplanationGap=false`;
+- `fenceCount=2` and `bareOpeningFence=false`, proving the code fence completed normally;
+- no degeneration guard fired;
+- no `coding-fence-repair-normalized` event appeared for the acceptance request, so the bounded repair path was not needed;
+- terminal Chat state persisted `COMPLETED` with runnable Python plus the requested explanation.
+
+Performance on that acceptance turn was also recorded: 678 uncached prefill tokens in about 64.38 seconds (10.53 tok/s), followed by 134 decoded tokens in about 65.37 seconds (2.05 tok/s), total terminal time about 130.55 seconds. These latency figures are performance evidence only; they do not alter the functional acceptance result.
+
+This closes the v73 live acceptance target and the specific Phase-1 coding-completion blocker exposed by the v69/v70/v71 test sequence.
 
 ## Concurrency / versions
 
 The version gate observed Server `2.3.254`, LALM `2.1.84`, and Chat `1.5.75`. Those affected authorities remained unchanged immediately before assignment, so this event owns Server `2.3.255` and LALM `2.1.85`; Chat stays unchanged.
+
+The later live-acceptance documentation update closes verification for the existing Server `2.3.255` event and does not create another runtime/module version because no runtime behavior or module authority changed.
 
 ## Lineage
 
@@ -70,6 +89,6 @@ The version gate observed Server `2.3.254`, LALM `2.1.84`, and Chat `1.5.75`. Th
 - LALM authority: `fa2b37776f5f3a76fc8b3388ef3527e0ddc2b529`
 - Server authority: `5263ae849029674c29bb66b4404ccd1b60044692`
 
-## Acceptance target
+## Acceptance result
 
-A normal authenticated standalone coding request should hydrate v73, pass the two-token sampler threshold without an inference failure, continue decoding beyond step 2, and complete with valid runnable code plus the requested explanation. If another lower failure remains, v72's bounded failure-detail camera remains preserved in the lineage to classify it.
+**PASSED.** A normal authenticated standalone coding request hydrated v73, crossed decode step 2 without inference failure, completed directly on the first candidate, and satisfied runnable-code plus requested-explanation requirements with no bounded repair required.
