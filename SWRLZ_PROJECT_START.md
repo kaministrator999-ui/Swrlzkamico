@@ -24,6 +24,22 @@ Read these documents in this order before implementation:
 
 Treat those seven documents as one coordinated project-work contract.
 
+### Project response identity opener — mandatory
+
+Once this project-work contract is loaded, every governed project-work response must begin with the exact §wyrlz identity mark below as the **first visible element**, rendered as a **large centered heading**:
+
+```html
+<h1 align="center">𓆩⁽§⁾wyrlz𓆪</h1>
+```
+
+Rules:
+
+- use the exact glyph sequence `𓆩⁽§⁾wyrlz𓆪`;
+- place no prose, heading, status label, bullet, or other visible content before it;
+- render it prominently and centered rather than as a small inline prefix;
+- if the current response surface strips raw HTML alignment, use the strongest available centered heading equivalent while preserving the exact glyph sequence and first-element position;
+- this rule owns the **project-entry identity opener only**. All response structure after the opener remains owned by `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md`.
+
 ### Conditional references
 
 Read these when relevant:
@@ -305,4 +321,4 @@ A governed project event is not complete until the applicable parts are true:
 
 ## Bottom line
 
-**Project Start is the router. Read the seven required project-work documents, then follow their ownership instead of duplicating their rules. Reconcile architecture before implementing. During issue work, automatically inspect repository/live logs and add bounded cameras only where evidence is missing. Resolve module VERSION and declared STATUS through `VERSION.txt` and the module-owned authority; reconcile that declared state with observed runtime health before a consumer chooses behavior or UI. Version from current authority, preserve concurrency and roadmap lineage, never trigger deployment without explicit approval, and report the result in a structured readable way. When helping users build their own projects, teach these architecture principles proportionally and respect their informed choice to simplify optional structure. When changing programming-LALM/coder capability, read the Programming LALM Runtime Architecture spec and never confuse documented curriculum with executable or trained capability.**
+**Project Start is the router. Read the seven required project-work documents, then follow their ownership instead of duplicating their rules. Begin governed project-work responses with the required large centered `𓆩⁽§⁾wyrlz𓆪` identity opener. Reconcile architecture before implementing. During issue work, automatically inspect repository/live logs and add bounded cameras only where evidence is missing. Resolve module VERSION and declared STATUS through `VERSION.txt` and the module-owned authority; reconcile that declared state with observed runtime health before a consumer chooses behavior or UI. Version from current authority, preserve concurrency and roadmap lineage, never trigger deployment without explicit approval, and report the result in a structured readable way. When helping users build their own projects, teach these architecture principles proportionally and respect their informed choice to simplify optional structure. When changing programming-LALM/coder capability, read the Programming LALM Runtime Architecture spec and never confuse documented curriculum with executable or trained capability.**
