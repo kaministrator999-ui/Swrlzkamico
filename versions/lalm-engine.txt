@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.79
-REVISION=2.1.79-hot-v66-programming-context-v65-lineage-repair-v67
+VERSION=2.1.80
+REVISION=2.1.80-hot-v67-latest-user-namespace-repair-v68
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
