@@ -14,9 +14,10 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from api import canonical_redis_state
+from api.durable_chat_contract import MessageRecord
 from api.google_account import AuthenticationError, user_id_from_request
 
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.0.1"
 CONTRACT = "swrlz-chat-turn-status-v1"
 app = FastAPI(title="SWRLZ Chat Turn Status", version=APP_VERSION, docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -47,7 +48,7 @@ async def get_turn_status(request: Request):
         job = redis.get_generation(user_id=user_id, request_id=request_id)
         if job is None:
             return _error(404, "CHAT_TURN_STATUS_NOT_FOUND", "Canonical turn was not found.")
-        assistant = redis.get_message(user_id=user_id, message_id=job.assistant_message_id)
+        assistant = redis._get_json(redis._key("message", user_id, job.assistant_message_id), MessageRecord)
         if assistant is None:
             return _error(503, "CHAT_TURN_STATUS_ASSISTANT_MISSING", "Canonical assistant record is missing.")
         terminal = str(job.state or "").upper() in {"COMPLETE", "FAILED", "CANCELLED"} and str(assistant.state or "").upper() in {"COMPLETE", "FAILED", "CANCELLED"}
