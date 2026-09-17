@@ -1,8 +1,8 @@
-/* §wyrlz atomic visual boot guard.
-   Runtime owns first visible paint. Do not reveal the structural fallback merely
-   because the critical bridge is ready: theme/layout/wallpaper must settle first. */
-html body .app{opacity:1;pointer-events:auto}
-html.swrlz-visual-booting body .app{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+/* §wyrlz atomic visual boot guard — fail-open shell policy.
+   The structural Chat shell is the recovery surface and must remain visible while
+   decorative/theme assets settle. Readiness classes are diagnostic state only. */
+html body .app{opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+html.swrlz-visual-booting body .app{opacity:1!important;visibility:visible!important;pointer-events:auto!important}
 html.swrlz-visual-ready body .app{opacity:1!important;visibility:visible!important;pointer-events:auto!important}
 html:not(.swrlz-visual-ready)::before,
 html:not(.swrlz-visual-ready)::after,
