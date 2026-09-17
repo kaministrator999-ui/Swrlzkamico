@@ -9,15 +9,16 @@ When the user says **“start project work”**, **“resume project work”**, 
 1. Read this file first.
 2. Immediately read `SWRLZ_HOTFIX_RULES.md`.
 3. Immediately read `SWRLZ_VERSION_MODULE_EVOLUTION.md`.
-4. Immediately read `SWRLZ_SERVER_ROADMAP.md`.
-5. Immediately read `SWRLZ_CHAT_CAMERA_LOGS.md` so live Chat diagnostics are read from the correct production observation source and correlated with repository instrumentation.
-6. Treat those five files as the current operating, engineering, and Chat-observation contract before touching the repository.
-7. If the task touches Google sign-in, Google accounts, OAuth, account sessions, Chat account UI, browser auth state, or an auth regression, immediately read `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` before diagnosing or editing that flow.
-8. **Before implementing any feature, fix, optimization, refactor, or substantial behavior/UI addition, perform the Pre-Feature Architecture Reconciliation below across the selected/affected architecture and existing related work.**
-9. Fetch the current target file/commit state before making any edit.
-10. Fetch the current `VERSION.txt` module router and the authoritative `versions/<module-id>.txt` file for every module the requested work may affect, and record those authority values as the event baseline.
-11. Determine deployment capability from the **current repository/deployment configuration and workflows**, not from branch name alone.
-12. **Before making any repository mutation that can actually cause a deployment/redeployment, apply the Deployment Approval Gate below and obtain explicit user approval first.**
+4. Immediately read `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md` so the programming LALM knows how to execute the required architecture check rather than merely being told to perform one.
+5. Immediately read `SWRLZ_SERVER_ROADMAP.md`.
+6. Immediately read `SWRLZ_CHAT_CAMERA_LOGS.md` so live Chat diagnostics are read from the correct production observation source and correlated with repository instrumentation.
+7. Treat those six files as the current operating, engineering, architecture-reconciliation, and Chat-observation contract before touching the repository.
+8. If the task touches Google sign-in, Google accounts, OAuth, account sessions, Chat account UI, browser auth state, or an auth regression, immediately read `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` before diagnosing or editing that flow.
+9. **Before implementing any feature, fix, optimization, refactor, or substantial behavior/UI addition, perform the Pre-Feature Architecture Reconciliation below using the architecture traversal method in `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md`.**
+10. Fetch the current target file/commit state before making any edit.
+11. Fetch the current `VERSION.txt` module router and the authoritative `versions/<module-id>.txt` file for every module the requested work may affect, and record those authority values as the event baseline.
+12. Determine deployment capability from the **current repository/deployment configuration and workflows**, not from branch name alone.
+13. **Before making any repository mutation that can actually cause a deployment/redeployment, apply the Deployment Approval Gate below and obtain explicit user approval first.**
 
 Do not ask the user to repeat these instructions unless the repository/files are genuinely inaccessible.
 
@@ -71,7 +72,7 @@ A branch name by itself does **not** prove that a commit deploys. Before applyin
 
 ## REQUIRED DOCUMENT ORDER
 
-The project-start contract is intentionally structured as five layers:
+The project-start contract is intentionally structured as six layers:
 
 ```text
 1. SWRLZ_PROJECT_START.md
@@ -80,9 +81,11 @@ The project-start contract is intentionally structured as five layers:
    ↓
 3. SWRLZ_VERSION_MODULE_EVOLUTION.md
    ↓
-4. SWRLZ_SERVER_ROADMAP.md
+4. docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md
    ↓
-5. SWRLZ_CHAT_CAMERA_LOGS.md
+5. SWRLZ_SERVER_ROADMAP.md
+   ↓
+6. SWRLZ_CHAT_CAMERA_LOGS.md
 ```
 
 ### Document 1 — Project Start
@@ -97,13 +100,17 @@ Defines the `runtime` vs. `main` boundary, safe editing rules, deployment/restar
 
 Defines how §wyrlz evolves as an engineered system. It governs overall Server versioning, independent module versioning, failed-event lineage, canonical version ownership, the `VERSION.txt` router, per-module `versions/*.txt` authorities, automatic cross-module version resolution, release records, verification, and commit lineage.
 
-**This is also the foundation for the future programming-side LALM engineering curriculum/specification.** The programming LALM must eventually learn this structure as an engineering process, not as optional documentation.
+### Document 4 — Architecture Reconciliation Protocol
 
-### Document 4 — Server Roadmap
+Defines the programming-LALM execution method for architecture reconciliation: architecture-radius expansion, authority mapping, source-vs-live-vs-history distinction, reader/writer/lifecycle tracing, overlap classification, reuse/extend/refactor/migrate/new-module decisions, stop conditions, and the Architecture Reconciliation Record.
+
+**Documents 3 and 4 together form the foundation of the programming-side LALM engineering curriculum/specification.** The programming LALM must learn both the evolution/version grammar and the method for discovering how a requested feature fits the existing architecture before implementation.
+
+### Document 5 — Server Roadmap
 
 Records the actual chronological Server/module release history and current version ledger.
 
-### Document 5 — Chat Camera Logs
+### Document 6 — Chat Camera Logs
 
 Defines where Chat/Whole Conversation Camera instrumentation lives, where live production observations are actually read, how to correlate a turn, and how to distinguish source facts, runtime facts, user-visible facts, and diagnosis.
 
@@ -114,6 +121,8 @@ Defines where Chat/Whole Conversation Camera instrumentation lives, where live p
 The purpose is to prevent a new change from fighting an existing owner, duplicating an already-present feature, creating a second source of truth, reviving a retired path, or adding another layer that solves the same problem differently.
 
 This is a **bounded architecture check**, not a requirement to re-audit the entire repository before every edit. Start with the architecture selected by the requested feature and expand only far enough to identify every existing implementation that shares the same owner, source of truth, state, lifecycle, route, protocol, storage, authentication boundary, cache, loader, UI surface, tool/action path, version authority, or other directly interacting responsibility.
+
+**Execution method:** follow `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md`. The programming LALM must use that protocol to separate desired outcome from implementation assumptions, widen architecture radius only as needed, build an authority map, distinguish current engineering authority from live activation and historical evidence, trace relevant readers/writers/lifecycle, classify overlap, and deliberately choose reuse/extension/consolidation/migration-retirement/new structure before mutation.
 
 ### Required pre-feature check
 
@@ -143,6 +152,8 @@ Every governed development event must include a brief architecture-reconciliatio
 
 For a small isolated feature this record may be one concise sentence. For cross-module or architectural work it should be detailed enough to preserve the reasoning behind the ownership choice.
 
+The detailed protocol defines the fuller Architecture Reconciliation Record that the programming LALM should be able to construct internally before implementation; the roadmap note may remain concise while preserving the decision and evidence that matter for future engineering work.
+
 ### Relationship to versioning, deployment, and roadmap
 
 The architecture reconciliation is an **additional pre-implementation gate**; it does not replace the version, deployment, or verification contracts.
@@ -151,6 +162,8 @@ The architecture reconciliation is an **additional pre-implementation gate**; it
 READ PROJECT CONTRACT
         ↓
 CAPTURE CURRENT VERSION/SHA BASELINE
+        ↓
+READ / APPLY ARCHITECTURE RECONCILIATION PROTOCOL
         ↓
 PRE-FEATURE ARCHITECTURE RECONCILIATION
         ↓
@@ -164,7 +177,7 @@ RE-READ VERSION AUTHORITIES / RECONCILE CONCURRENCY
         ↓
 ASSIGN SERVER + AFFECTED MODULE VERSIONS
         ↓
-VERIFY RESULT
+VERIFY BEHAVIOR + OWNERSHIP + ACTIVATION WHEN RELEVANT
         ↓
 RECORD ARCHITECTURE CHECK + PROGRESS IN ROADMAP/RELEASE RECORD
 ```
@@ -451,6 +464,7 @@ Before the update:
 - Read the current overall Server version and component versions from `SWRLZ_SERVER_ROADMAP.md`, `VERSION.txt`, and the authoritative module-owned version files.
 - Record the exact authoritative version values/SHAs as the **event baseline**.
 - Read `SWRLZ_VERSION_MODULE_EVOLUTION.md` and determine which components actually change.
+- Read and apply `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md`.
 - Perform the required Pre-Feature Architecture Reconciliation over the selected/affected architecture and existing related work before implementation; identify the canonical owner/reuse path and any overlap that must be reconciled.
 
 Immediately before assigning versions or committing:
@@ -495,6 +509,8 @@ READ SWRLZ_HOTFIX_RULES.md
       ↓
 READ SWRLZ_VERSION_MODULE_EVOLUTION.md
       ↓
+READ docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md
+      ↓
 READ SWRLZ_SERVER_ROADMAP.md
       ↓
 READ SWRLZ_CHAT_CAMERA_LOGS.md
@@ -509,11 +525,13 @@ CAPTURE VERSION/SHA BASELINE
       ↓
 FETCH CURRENT TARGET SOURCE + RELATED ARCHITECTURE/IMPLEMENTATIONS
       ↓
-PRE-FEATURE ARCHITECTURE RECONCILIATION
+BUILD AUTHORITY MAP + TRACE READERS/WRITERS/LIFECYCLE
       ↓
-CONFIRM CANONICAL OWNER / REUSE-EXTEND-REFACTOR-RETIRE PATH
+RECONCILE CURRENT SOURCE AUTHORITY VS LIVE ACTIVATION VS HISTORICAL EVIDENCE
       ↓
-DETERMINE MODULE IMPACT
+CLASSIFY OVERLAP + CHOOSE REUSE/EXTEND/CONSOLIDATE/MIGRATE-RETIRE/NEW-STRUCTURE PATH
+      ↓
+CONFIRM CANONICAL OWNER / MODULE IMPACT
       ↓
 DEPLOYMENT RISK CHECK FROM CURRENT CONFIG/WORKFLOWS
       ↓
@@ -543,7 +561,7 @@ RE-READ AUTHORITIES + VERIFY ASSIGNED VERSIONS
       ↓
 RELOAD / REQUEST AFFECTED ROUTES
       ↓
-VERIFY LIVE RESULT
+VERIFY BEHAVIOR + OWNERSHIP + LIVE ACTIVATION WHEN RELEVANT
       ↓
 SUCCESS → CLOSE EVENT
 FAILURE → RECORD EVENT + CREATE NEXT VERSIONED EVENT
@@ -553,15 +571,16 @@ FAILURE → RECORD EVENT + CREATE NEXT VERSIONED EVENT
 
 - `SWRLZ_PROJECT_START.md` — single entrypoint; tells future §wyrlz what to read and what must happen every update.
 - `SWRLZ_HOTFIX_RULES.md` — exact hotfix vs. redeploy boundary and safe editing rules.
-- `SWRLZ_VERSION_MODULE_EVOLUTION.md` — third required contract; formal Server/module evolution rules and future programming-LALM curriculum foundation.
+- `SWRLZ_VERSION_MODULE_EVOLUTION.md` — third required contract; formal Server/module evolution rules and programming-LALM evolution curriculum foundation.
+- `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md` — required programming-LALM method for discovering affected architecture, current authority, related implementations, overlap/conflict, integration path, and post-change ownership verification.
 - `SWRLZ_SERVER_ROADMAP.md` — authoritative overall/component release history.
 - `SWRLZ_CHAT_CAMERA_LOGS.md` — required Chat observation runbook; maps repository instrumentation to live Vercel runtime logs and turn-correlation workflow.
 - `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` — required architecture, diagnostic, incident, and recovery reference for Google account/OAuth work.
 - `VERSION.txt` — router from stable module IDs to authoritative module-owned version files.
 - `versions/*.txt` — authoritative version/revision identity for each independently evolving structure.
 
-If any of these documents conflict, stop and resolve the conflict against the newest authoritative repository state before editing application code.
+If any of these documents conflict, stop and resolve the conflict against the newest authoritative repository state before editing application code. Use the Architecture Reconciliation Protocol to distinguish current engineering authority, live activation evidence, and historical/superseded architecture evidence.
 
 ## BOTTOM LINE
 
-**Read `SWRLZ_PROJECT_START.md`, then automatically read `SWRLZ_HOTFIX_RULES.md`, `SWRLZ_VERSION_MODULE_EVOLUTION.md`, `SWRLZ_SERVER_ROADMAP.md`, and `SWRLZ_CHAT_CAMERA_LOGS.md`. The Chat camera runbook establishes that GitHub contains instrumentation/source while live production camera observations are normally read from Vercel runtime logs and correlated by request/thread identity. For Google account/OAuth work, also read `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` before diagnosing or editing that flow. Resolve current module versions through `VERSION.txt` and each module's own `versions/<module-id>.txt`. Capture those authorities as the event baseline. Before implementing each feature/fix/optimization/refactor, perform a brief but complete reconciliation of the selected/affected architecture and existing related implementations, confirm the canonical owner and integration path, and avoid introducing duplicate or competing feature/state/authority paths. Then re-read version authorities immediately before version assignment/commit so concurrent updates are detected and reconciled rather than overwritten. Follow the hotfix/deployment boundary based on current deployment configuration and workflows, not branch name alone. Before any action that can actually cause deployment, STOP, explain exactly what would cause it and why, and obtain explicit user approval. Every server development event receives the Server lineage treatment required by the evolution contract; only actually changed components receive component bumps; independently evolving structures own their own version files; cross-module displays resolve those authorities automatically; failures remain in lineage; and the completed event—including a brief architecture-reconciliation note—is recorded in the roadmap before the work is declared done. Preserve the Mask / Human / Brain boundary: Chat relays and presents factual evidence, the Server owns operational/action authority, and the LALM owns cognition and interpretation.**
+**Read `SWRLZ_PROJECT_START.md`, then automatically read `SWRLZ_HOTFIX_RULES.md`, `SWRLZ_VERSION_MODULE_EVOLUTION.md`, `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md`, `SWRLZ_SERVER_ROADMAP.md`, and `SWRLZ_CHAT_CAMERA_LOGS.md`. The architecture protocol teaches the programming LALM how to turn the pre-feature rule into an evidence-driven traversal: separate desired outcome from implementation assumptions; widen architecture radius only as needed; map current owners/state/readers/writers/lifecycle; distinguish repository engineering authority from live activation and historical evidence; classify overlap; and deliberately choose reuse, extension, consolidation, migration/retirement, or a genuinely new structure. The Chat camera runbook establishes that GitHub contains instrumentation/source while live production camera observations are normally read from Vercel runtime logs and correlated by request/thread identity. For Google account/OAuth work, also read `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` before diagnosing or editing that flow. Resolve current module versions through `VERSION.txt` and each module's own `versions/<module-id>.txt`. Capture those authorities as the event baseline, then re-read version authorities immediately before version assignment/commit so concurrent updates are detected and reconciled rather than overwritten. Follow the hotfix/deployment boundary based on current deployment configuration and workflows, not branch name alone. Before any action that can actually cause deployment, STOP, explain exactly what would cause it and why, and obtain explicit user approval. Every server development event receives the Server lineage treatment required by the evolution contract; only actually changed components receive component bumps; independently evolving structures own their own version files; cross-module displays resolve those authorities automatically; failures remain in lineage; and the completed event—including a brief architecture-reconciliation note—is recorded in the roadmap before the work is declared done. Preserve the Mask / Human / Brain boundary: Chat relays and presents factual evidence, the Server owns operational/action authority, and the LALM owns cognition and interpretation.**
