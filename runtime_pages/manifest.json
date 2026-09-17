@@ -1,5 +1,5 @@
 {
-  "version": 124,
+  "version": 125,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v124 advances immutable Chat assets for duplicate Settings control removal. The standalone drawer-header gear is removed/hidden while the Settings command in the sidebar navigation remains the sole drawer settings entry point. Sidebar geometry and footer composition remain unchanged."
+  "notes":"Manifest v125 makes drawer presentation atomic: the main Chat may paint immediately, but an open drawer remains hidden while runtime functional assets compose navigation, account identity, status, and footer ordering; the completed drawer is revealed only at functional readiness. Early Android width authority also matches the visual viewport runtime contract."
 }
