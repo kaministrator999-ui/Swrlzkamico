@@ -1,10 +1,21 @@
 (()=>{"use strict";
 if(window.__swrlzChatEarlyShellReadyV1)return;
-const startedAt=performance.now();
+const startedAt=performance.now(),root=document.documentElement,body=document.body;
+const THEME_KEY='swrlz.chat.theme';
+const WALLPAPER='https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/main/file_00000000b13c81f5a7f9fe99c0264ef0.png?v=20260913i';
 let theme='ice-dragon';
-try{theme=localStorage.getItem('swrlz.chat.theme')||'ice-dragon'}catch(_){ }
-if(theme==='ice-dragon')document.body?.setAttribute('data-swrlz-theme','ice-dragon');else document.body?.removeAttribute('data-swrlz-theme');
-document.documentElement.classList.add('swrlz-main-chat-ready');
-window.__swrlzChatEarlyShellReadyV1={version:1,contract:'swrlz-mask-early-shell-ready-v1',theme,startedAt,readyAt:performance.now(),policy:'Mask shell readiness is independent of network, account hydration, reconciliation, LALM status, and decorative settlement'};
-window.dispatchEvent(new CustomEvent('swrlz:main-chat-ready',{detail:{revision:'early-shell-v1',at:performance.now(),source:'early-shell'}}));
+try{theme=localStorage.getItem(THEME_KEY)||'ice-dragon'}catch(_){ }
+const ua=navigator.userAgent||'',isAndroid=/Android/i.test(ua),isEdgeAndroid=isAndroid&&(/\bEdgA\//i.test(ua)||/\bEdg\//i.test(ua));
+if(isAndroid)root.classList.add('swrlz-android-device');if(isEdgeAndroid)root.classList.add('swrlz-edge-android');
+const physicalViewportWidth=()=>{const vv=window.visualViewport;return Math.min(Math.max(1,Math.round(document.documentElement.clientWidth||innerWidth||1)),Math.max(1,Math.round(vv?.width||innerWidth||1)),Math.max(1,Math.round(screen?.availWidth||screen?.width||innerWidth||1)))};
+const syncViewport=()=>{if(!isAndroid)return;const vv=window.visualViewport,visualH=Math.max(1,Math.round(vv?.height||innerHeight||document.documentElement.clientHeight||1)),w=physicalViewportWidth(),top=Math.max(0,Math.round(vv?.offsetTop||0)),left=Math.max(0,Math.round(vv?.offsetLeft||0));root.style.setProperty('--swrlz-vvh',`${visualH}px`);root.style.setProperty('--swrlz-vvw',`${w}px`);root.style.setProperty('--swrlz-vv-top',`${top}px`);root.style.setProperty('--swrlz-vv-left',`${left}px`)};
+syncViewport();visualViewport?.addEventListener('resize',syncViewport,{passive:true});
+if(theme==='ice-dragon'){
+  body?.setAttribute('data-swrlz-theme','ice-dragon');
+  const critical=document.createElement('style');critical.id='swrlz-ice-dragon-first-paint';critical.textContent=`body[data-swrlz-theme="ice-dragon"]{background:#010812!important}body[data-swrlz-theme="ice-dragon"] .workspace{background-color:#010812!important;background-image:url("${WALLPAPER}")!important;background-position:50% 42%!important;background-size:cover!important;background-repeat:no-repeat!important}body[data-swrlz-theme="ice-dragon"] .messages{background:transparent!important}@media(max-width:820px){html.swrlz-android-device,html.swrlz-android-device body{width:100%!important;height:100%!important;min-height:100%!important;overflow:hidden!important;background:#010812!important}html.swrlz-android-device body{position:fixed!important;inset:0!important}html.swrlz-android-device .app{position:fixed!important;inset:auto!important;top:var(--swrlz-vv-top,0px)!important;left:var(--swrlz-vv-left,0px)!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:var(--swrlz-vvw,100vw)!important;max-width:var(--swrlz-vvw,100vw)!important;height:var(--swrlz-vvh,100dvh)!important;min-height:0!important;overflow:hidden!important}html.swrlz-android-device .workspace{grid-column:1!important;width:calc(var(--swrlz-vvw,100vw) - 20px)!important;max-width:calc(var(--swrlz-vvw,100vw) - 20px)!important;height:100%!important;min-height:0!important;margin-left:10px!important;margin-right:10px!important;overflow:hidden!important}html.swrlz-android-device .mobile-menu{display:inline-grid!important}}`;
+  document.head.appendChild(critical);
+}else body?.removeAttribute('data-swrlz-theme');
+root.classList.add('swrlz-main-chat-ready');
+window.__swrlzChatEarlyShellReadyV1={version:2,contract:'swrlz-mask-early-shell-ready-v2',theme,startedAt,readyAt:performance.now(),wallpaper:theme==='ice-dragon'?WALLPAPER:null,android:isAndroid,policy:'Paint the selected canonical shell before runtime hydration; readiness remains independent of network, account hydration, reconciliation, LALM status, and decorative settlement'};
+window.dispatchEvent(new CustomEvent('swrlz:main-chat-ready',{detail:{revision:'early-shell-v2',at:performance.now(),source:'early-shell',theme}}));
 })();
