@@ -2,7 +2,7 @@
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **Phase 1 runtime scaffolded and live-hydrated** through LALM `2.1.80` / R39 `v68`. The programming classifier/context compiler is deterministically exercised in the active lineage and startup warm is live verified. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain separate later states. A full authenticated post-v68 user programming turn still awaits direct generation-camera evidence.
+**Current implementation state:** **Phase 1 is runtime scaffolded, authenticated-route verified, and live-hydrated through LALM `2.1.82` / R39 `v70`.** The programming classifier/context compiler has been exercised by real authenticated Chat turns. v69 live-verified proportional lightweight-programming context compaction; v70 live-hydrates coding-terminal/repair hardening after that first compacted coding turn exposed a separate post-prefill completion defect. One successful authenticated post-v70 runnable-code turn remains the final current completion acceptance. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain later states.
 
 ---
 
@@ -60,9 +60,16 @@ For user-owned projects, apply the same principles proportionally rather than co
 
 ---
 
-## 3. Phase 1 implementation — v66 preserved through v68
+## 3. Phase 1 implementation — v66 preserved through v70
 
-R39 `v66` introduced the first executable programming runtime scaffold. v67 repaired its inherited source lineage, and v68 repaired an inherited namespace boundary required by conversation-state/context-focus and programming routing. The current active authority is LALM `2.1.80`, revision `2.1.80-hot-v67-latest-user-namespace-repair-v68`.
+R39 `v66` introduced the first executable programming runtime scaffold. Later lineage hardened the same owner rather than replacing it:
+
+- **v67** repaired the pinned v65→v61 source lineage;
+- **v68** repaired the inherited canonical `_latest_user_text` namespace boundary;
+- **v69** compacted redundant Brain-owned policy context for standalone lightweight coding and repaired the bounded prompt-render diagnostic namespace;
+- **v70** preserves v69 while hardening coding terminal/repair behavior around malformed bare opening code fences.
+
+The current active authority is LALM `2.1.82`, revision `2.1.82-hot-coding-terminal-repair-v70`.
 
 ### A. Coding-task classifier
 
@@ -97,9 +104,9 @@ The bridge is conservative:
 
 ### C. Programming context compiler
 
-When programming mode is active, the runtime adds a bounded system-context marker to a **copy of the generation payload history**. It does not rewrite canonical persisted conversation history.
+When programming mode is active, the runtime adds bounded system context to a **copy of the generation payload history**. It does not rewrite canonical persisted conversation history.
 
-For an existing-project change, the marker directs the primary LALM to:
+For an existing-project change, the context directs the primary LALM to:
 
 - separate desired outcome from implementation assumptions;
 - inspect available project/repository evidence before inventing owners or structure;
@@ -116,19 +123,59 @@ For a new user project it directs the model to:
 
 For lightweight standalone coding/explanation it avoids forcing repository ceremony. For fix/debug work it directs the LALM toward **inspect evidence first → add bounded instrumentation only if needed → repair**.
 
-### D. Permission boundary
+### D. Proportional lightweight-programming context — v69
+
+The first authenticated lightweight programming acceptance turn showed that the programming classifier routed correctly but the copied generation payload accumulated nine Brain-owned policy records totaling about 16.8k characters. This produced a 3,839-token prefill for a tiny standalone coding request.
+
+v69 preserves canonical Chat dialogue while compacting only recognized §wyrlz-owned internal policies when:
+
+```text
+programming active
++ projectContext = none
++ architectureDepth = lightweight
+```
+
+It replaces that redundant stack with one bounded lightweight-programming marker. Unknown system authority is preserved, user/assistant dialogue is preserved exactly, and non-lightweight programming requests remain unchanged.
+
+Live authenticated v69 evidence proved:
+
+- policy records: `9 → 1`;
+- internal policy characters: `16,774 → 364`;
+- bounded rendered prompt: `444` tokens;
+- actual inference prefill: `656` tokens rather than the earlier `3,839` baseline;
+- no old bounded-render `NameError`;
+- zero reconnects on the decisive test.
+
+This is **live-verified context proportionality**, not a claim that local inference throughput itself is fast; the observed native prefill still ran around 10–11 tokens/s.
+
+### E. Coding completion + bounded repair — v70
+
+The decisive v69 coding turn passed prefill, then exposed a separate defect: the first candidate terminated after roughly two decode steps with only an opening Python-fence fragment. The inherited v27 requirement owner correctly detected `runnable-code` and invoked its one bounded repair, but its repair conditioning included the incomplete assistant fence and the second pass produced another opening fragment instead of runnable code.
+
+v70 extends the **existing v27 repair owner** rather than adding another repair subsystem:
+
+- coding responses that are empty or only a bare opening `python`/`py` fence retain `complete-code` and, when requested, `requested-explanation` completion gaps;
+- if v27 repairs a `runnable-code` failure whose first candidate is only an opening Python fence, that incomplete assistant prefix is removed from repair-history conditioning;
+- the repair is told to continue inside the already-visible fence, emit executable code instead of another opener, close the existing fence once, then provide the requested explanation;
+- the compact v69 lightweight policy also explicitly forbids ending after only an opening language fence.
+
+A live v70 hydration self-test established an important diagnosis: the inherited pre-v70 gap checker already returned `complete-code` + `requested-explanation` for the bare fence. Therefore the original early terminal was **not** caused by the completion-gap helper considering the fence complete. The lower terminal source remains to be classified by the next real turn.
+
+v70 adds a bounded `coding-candidate-terminal` camera at the existing v27 first/repair candidate boundary. It records pass kind, terminal type/reason class, delta count/character count, maximum observed decode step, degeneration-guard observation, fence count/bare-fence state, and gap booleans. It does **not** log response text or hidden reasoning. A second bounded `coding-fence-repair-normalized` event records activation of the repair normalization.
+
+### F. Permission boundary
 
 Programming mode is cognitive routing only. It does **not** grant permission to write files, invoke tools, deploy, spend money/credits, bypass server policy, or bypass user approval requirements.
 
 Operational authority remains with the server/tool layer and the project's explicit approval contracts.
 
-### E. Programming camera
+### G. Programming cameras
 
-Active programming turns emit bounded `programming-mode` camera facts such as project context, change class, architecture depth, inheritance state, architecture-reconciliation requirement, diagnostic/coaching flags, tool-evidence requirement, and implementation-truth state.
+Active programming turns emit bounded `programming-mode` facts such as project context, change class, architecture depth, inheritance state, architecture-reconciliation requirement, diagnostic/coaching flags, tool-evidence requirement, and implementation-truth state.
 
-The event does not intentionally log prompt/response text or private chain-of-thought.
+v69/v70 add bounded performance/terminal evidence for their respective ownership boundaries. These events intentionally avoid prompt/response text and private chain-of-thought.
 
-### F. Deterministic routing self-test
+### H. Deterministic routing self-test
 
 The inherited programming suite covers seven generalized behavior classes:
 
@@ -140,7 +187,7 @@ The inherited programming suite covers seven generalized behavior classes:
 6. cross-cutting migration gets deep architecture treatment;
 7. conversational `let's do this` correctly inherits the prior coding task.
 
-Production v68 status reports this suite **7/7**. This is a routing/scaffold evaluation, not yet the full Phase 2 architecture-acceptance suite.
+The active lineage still reports this suite **7/7**. This is a routing/scaffold evaluation, not the later full Phase 2 architecture-acceptance suite.
 
 ---
 
@@ -163,51 +210,45 @@ v67 pinned-source lineage repair
   ↓
 v68 canonical _latest_user_text namespace bridge
   ↓
+v69 lightweight-programming context compaction + bounded render repair
+  ↓
+v70 coding-terminal + v27 bounded-repair hardening
+  ↓
 runtime_hot/r39_engine.py
 ```
 
-### v67 lineage repair
-
-v67 corrected a typo in the pinned v65 → v61 source commit. That restored the intended source chain but did not by itself restore every historical bare-global name expected by later wrappers.
-
 ### v68 namespace repair
 
-The canonical `_latest_user_text` helper already belongs to the v17 implementation loaded as `_impl`. Later conversation-state/context-focus code still references the historical bare-global name. v68 therefore bridges:
+The canonical `_latest_user_text` helper belongs to the v17 implementation loaded as `_impl`. v68 bridges the historical bare name directly to that owner; it does not create another parser.
 
-```text
-_latest_user_text = _impl._latest_user_text
-```
+### v69 context/render repair
 
-This is compatibility plumbing, not a second parser. The canonical semantic owner remains `_impl._latest_user_text`.
+v69 compacts only recognized internal policies for standalone lightweight coding, restores the bounded render counter's canonical model accessor, and keeps the legacy raw prompt-token trace retired.
 
-v68 fails hydration closed if that owner is unavailable and runs a three-part namespace self-test over:
+### v70 terminal/repair hardening
 
-- canonical latest-user-text extraction;
-- inherited conversation-state compilation;
-- programming-task classification.
-
-This prevents the exact class of defect from remaining latent until a user turn.
+v70 preserves the v69 lineage and extends dynamic completion/repair boundaries already owned by the inherited generator and v27 repair layer. It adds fail-closed hydration checks for the required inherited contracts and bounded terminal classification for the remaining early-terminal question.
 
 ### Activation truth
 
 Current state:
 
-- **source complete:** yes;
+- **source complete:** yes, through v70;
 - **runtime scaffolded:** yes;
-- **live worker hydration:** yes;
-- **live startup warm:** yes;
-- **namespace self-test:** `3/3` live;
-- **conversation acceptance:** `9/9` live status;
-- **context-focus acceptance:** `5/5` live status;
-- **programming routing acceptance:** `7/7` live status;
-- **tool-integrated:** no;
+- **live worker hydration:** yes, through v70;
+- **live startup/runtime readiness:** yes;
+- **authenticated programming-route entry:** yes;
+- **programming routing acceptance:** `7/7` inherited and active;
+- **v69 lightweight context compaction:** live user-turn verified;
+- **v70 coding-terminal deterministic self-test:** live hydration verified;
+- **successful authenticated post-v70 runnable-code completion:** pending;
+- **tool-integrated programming execution:** no;
 - **full deterministic architecture acceptance:** no;
-- **authenticated post-v68 programming generation directly observed:** not yet;
-- **learned/trained:** no.
+- **learned/trained programming specialization:** no.
 
-Production `/api/lalm/status` reports `hotServerVersion=2.1.80`, the v68 revision, `oneTokenReady=true`, and `interactiveReady=true`. A fresh production `/api/server/status` reports `lalm-startup-warm.ready=true` and `phase=server-start-complete`. Hot-load cameras independently show the canonical namespace bridge and conversation/programming probes passing.
+Production `/api/lalm/status` reports `hotServerVersion=2.1.82`, revision `2.1.82-hot-coding-terminal-repair-v70`, `oneTokenReady=true`, `interactiveReady=true`, v69 preservation/compaction flags, v70 coding-terminal/repair flags, and a fully green v70 self-test.
 
-No authenticated production Chat request has yet emitted a `v68-enter` generation camera after activation. The Chat POST boundary requires its private browser/admin credential; verification must not bypass that authority. Therefore this document distinguishes **live runtime/startup verification** from **full end-to-end user-turn verification**.
+The next normal authenticated lightweight coding turn is the correct final acceptance surface for v70. Do not bypass Chat auth or manufacture a synthetic end-to-end success merely to close the checklist.
 
 ---
 
@@ -229,7 +270,7 @@ The following remain later work:
 - a separate coding model;
 - coding-specific fine-tuned/trained weights.
 
-Phase 1 intentionally establishes the cognitive/routing foundation before those mechanisms are layered on top.
+Phase 1 intentionally establishes the cognitive/routing/generation foundation before those mechanisms are layered on top.
 
 ---
 
@@ -239,7 +280,7 @@ Phase 1 intentionally establishes the cognitive/routing foundation before those 
 
 Examples: explain syntax, write a standalone function, show an algorithm.
 
-Use lightweight programming reasoning. Do not force a repo architecture scan.
+Use lightweight programming reasoning and v69 proportional context. Do not force a repository architecture scan.
 
 ### Existing-project coding
 
@@ -312,15 +353,15 @@ Project Start, architecture reconciliation/coaching, project-wide cameras/logs, 
 
 ### Phase 1 — same-LALM programming mode
 
-**Status: runtime scaffolded and live-hydrated through LALM 2.1.80 / R39 v68.**
+**Status: runtime scaffolded and live-hydrated through LALM `2.1.82` / R39 `v70`; authenticated routing + v69 context optimization verified; final v70 coding-completion acceptance pending.**
 
-Implemented coding-task routing, new/existing/lightweight context, architecture depth, programming continuation inheritance, bounded programming context injection, proportional new-project policy, diagnostic policy, cameras, and routing self-tests. v68 additionally hardens inherited namespace activation so conversation/programming state is exercised at hydration rather than failing on the first user turn.
+Implemented coding-task routing, new/existing/lightweight context, architecture depth, programming continuation inheritance, bounded programming context injection, proportional new-project policy, diagnostic policy, cameras, and routing self-tests. v68 hardened inherited namespace activation. v69 made lightweight programming context proportional and live-proved the compaction path. v70 hardens the existing coding completion/repair path and adds the missing bounded terminal-source camera.
 
-**Remaining Phase 1 acceptance:** observe a normal authenticated post-v68 programming generation and confirm `v68-enter` + `programming-mode` + terminal generation evidence without namespace exceptions.
+**Remaining Phase 1 acceptance:** run a normal authenticated standalone coding request under v70 and verify terminal behavior. Success means runnable code + requested explanation complete. If a candidate still terminates early, the v70 terminal camera must classify the lower source and the normalized v27 repair must either recover or provide the precise next defect boundary.
 
 ### Phase 2 — obligation + architecture acceptance
 
-**Next capability target after the remaining end-to-end Phase 1 acceptance.**
+**Next capability target after the remaining v70 coding-completion acceptance.**
 
 Add programming obligation tracking, repository-evidence/overlap state, integration decisions, completion requirements, and a generalized architecture acceptance suite.
 
@@ -339,3 +380,24 @@ Benchmark whether a specialized coding model materially improves quality, latenc
 ### Phase 6 — training/fine-tuning if justified
 
 After enough high-quality generalized traces/evals exist, consider training/fine-tuning the programming behavior. Do not train first and define the architecture afterward.
+
+---
+
+## 10. Implementation-truth ladder
+
+Programming capability claims should use these states literally:
+
+1. **Documented** — the desired rule/architecture exists in canonical engineering documentation.
+2. **Runtime scaffolded** — executable runtime state/behavior exists, but may not yet be connected to operational tools or fully accepted.
+3. **Tool-integrated** — the runtime can execute the relevant repository/tool loop through operational authority.
+4. **Deterministically evaluated** — generalized acceptance cases exercise the capability reproducibly.
+5. **Live verified** — production/user-turn evidence proves the relevant path actually executed successfully.
+6. **Learned/trained** — the capability is materially represented in trained/fine-tuned model behavior rather than only runtime prompting/scaffolding.
+
+Do not collapse these states. In particular, a live-hydrated wrapper is not automatically a successful end-to-end coding answer, and a documented future coder boundary is not a deployed specialist model.
+
+---
+
+## Bottom line
+
+**§wyrlz keeps one primary cognitive authority. Phase 1 now reaches LALM 2.1.82 / R39 v70: authenticated programming routing is proven, v69 proportional lightweight context is live verified, and v70 is live-hydrated with deterministic coding-terminal/repair hardening. One successful authenticated post-v70 runnable-code turn remains the current completion acceptance. Phase 2 begins only after that boundary is closed; repository/tool execution and any future coder model remain later, explicitly separate implementation states.**
