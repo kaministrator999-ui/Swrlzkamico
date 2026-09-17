@@ -1,7 +1,7 @@
 # §wyrlz Server Roadmap & Version Ledger
 
 **READ WITH:** `SWRLZ_HOTFIX_RULES.md`  
-- **Current overall server baseline:** `2.3.227`
+- **Current overall server baseline:** `2.3.228`
 - **Current Chat component:** `1.5.65`
 - **Current LALM Engine:** `2.1.75` (`v64`)
 - **Current Web Frontend component:** `1.0.3`
@@ -20,7 +20,7 @@
 
 Version authorities are read at event entry and re-read immediately before version assignment/commit. Concurrent advances must be reconciled from the newest authority rather than overwritten.
 
-Before implementing each feature/fix/optimization/refactor, perform the Project Start **Pre-Feature Architecture Reconciliation**: inspect the selected/affected architecture and related work, confirm the canonical owner/integration path, and avoid duplicate or competing implementations.
+Before implementing each feature/fix/optimization/refactor, perform the Project Start **Pre-Feature Architecture Reconciliation** using `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md`: inspect the selected/affected architecture and related work, confirm the canonical owner/integration path, and avoid duplicate or competing implementations.
 
 ## Core architecture accomplished
 
@@ -33,6 +33,7 @@ Before implementing each feature/fix/optimization/refactor, perform the Project 
 - LALM hot loading has explicit entry/lineage cameras for fetch, hydration, inherited-contract, and generation failures.
 - Deployment approval follows actual deployment capability/action, not branch name.
 - Repository documentation is deployment-inert under the verified configuration and does not require deployment approval.
+- The programming-LALM curriculum now includes an explicit architecture-reconciliation execution protocol: outcome framing, architecture-radius discovery, authority mapping, reader/writer/lifecycle tracing, source-vs-live-vs-history evidence separation, overlap classification, integration-path selection, new-module tests, and post-change ownership verification.
 
 ## Component ownership
 
@@ -55,6 +56,28 @@ Documentation-only repository commits are explicitly **deployment-inert** and **
 Actual deployment-capable stable loader/infrastructure/configuration changes remain behind the Deployment Approval Gate.
 
 ## Release ledger
+
+### Server 2.3.228 — Programming-LALM architecture reconciliation curriculum
+
+**Status:** engineering curriculum / governance source complete.  
+**Affected module versions:** none; LALM Engine remains `2.1.75` / `v64`, Chat remains `1.5.65`.  
+**Deployment / restart:** NONE.
+
+The mandatory pre-feature architecture rule introduced in Server 2.3.226 now has a concrete programming-LALM execution method instead of relying on the vague instruction to “check the architecture.” The new `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md` teaches the engineering LALM how to turn a user outcome into bounded architecture discovery before implementation.
+
+The protocol introduces architecture-radius traversal from the requested outcome through direct owner, readers/writers/dependencies, cross-cutting authority, and historical/live evidence only as far as needed. It requires an authority map rather than a file list; traces both data flow and control/lifecycle flow; searches by responsibility/state/readers/writers rather than only feature names; distinguishes current engineering authority, actual production activation, and historical evidence; and provides explicit stop conditions when ownership or activation remains materially ambiguous.
+
+Existing work is classified before implementation as exact existing capability, partial overlap, legitimate composition, compatibility adapter, fallback, historical/retired path, conflicting duplicate owner, or genuinely independent new responsibility. The preferred integration ladder is now explicit: **reuse → extend canonical owner → refactor/consolidate → migrate+retire → create a genuinely independent structure**. New modules must pass an independent responsibility/lifecycle/state-contract/versioning test instead of being created because another layer is convenient.
+
+The protocol also teaches Mask/Human/Brain placement, architecture-conflict signals, pre-implementation Architecture Reconciliation Records, post-change single-authority checks, and three verification dimensions when relevant: behavioral acceptance, ownership acceptance, and live activation acceptance.
+
+**Architecture reconciliation for this event:** inspected the Project Start pre-feature rule, Version/Module Evolution programming curriculum, current roadmap, `docs/engineering`, current architecture contracts, version authorities, and deployment workflow. No existing dedicated method taught an engineering LALM how to traverse and reconcile architecture. Older formal control-plane documents were found that describe historical `dev`/`/tmp` behavior, demonstrating that the LALM must distinguish historical documentation from newer current Project Start/Hotfix/Roadmap/runtime authority rather than treating every formal document as equally current. The integration therefore keeps Project Start as the mandatory gate, adds one canonical execution curriculum under `docs/engineering`, and links that method into the Version/Module Evolution curriculum instead of duplicating another policy system.
+
+**Intentionally unchanged:** no R39/inference source, Chat runtime behavior, server API, persistence schema, loader, deployment configuration, or component version was changed by this curriculum event.
+
+**Verification:** the protocol is now a required Project Start document; the Version/Module Evolution contract incorporates architecture discovery before module/version impact; current `VERSION.txt`, Server/LALM/Chat authorities were re-read at the version boundary; the deployment workflow still only auto-triggers from `.deploy/REQUEST.txt` on `main` or explicit workflow dispatch, so these documentation/curriculum commits are non-deploying.
+
+**Lineage:** architecture protocol `0db88e04f0f5059a7e9244e80b2cf1f8b8f0c5cc`; Project Start integration `a8d2f6203036c11611cf434a09c429753e8ed52f`; Version/Module Evolution integration `d91b2750b6d0e1f956f810defa6c04826eb768d6`; Server authority `1dafa6163956137a66269855677c606c42b034fe`.
 
 ### Server 2.3.227 — R39 v64 complete cold-load namespace repair
 
