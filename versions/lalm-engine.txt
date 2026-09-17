@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.70
-REVISION=2.1.70-hot-acceptance-completion-diagnostics-v59
+VERSION=2.1.71
+REVISION=2.1.71-hot-v59-cold-load-safe-lineage-v60
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
