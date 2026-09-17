@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+import json
 import os
 import time
 from typing import Any
@@ -23,10 +24,12 @@ from api.chat_state import (
     _write_blob,
 )
 from api.google_account import user_id_from_request
+from api.hot_loader import get_chat_history_policy
 from api import canonical_redis_state
 
 TURN_CONTRACT = "swrlz-chat-canonical-turn-v1"
 MAX_COMMIT_ATTEMPTS = 3
+_HISTORY_CAMERA_CONTRACT = "swrlz-chat-history-policy-loader-v1"
 
 
 @dataclass(frozen=True)
@@ -71,6 +74,14 @@ def _derived_id(prefix: str, *parts: str) -> str:
 def _title_hint(prompt: str) -> str:
     compact = " ".join(prompt.split())
     return compact[:72] or "New conversation"
+
+
+def _history_camera(stage: str, **fields: Any) -> None:
+    record = {"contract": _HISTORY_CAMERA_CONTRACT, "stage": stage, "atUnixMs": _now_ms()}
+    for key, value in fields.items():
+        if value is None or isinstance(value, (str, int, float, bool)):
+            record[str(key)[:64]] = value
+    print("SWRLZ_CHAT_HISTORY_POLICY " + json.dumps(record, ensure_ascii=False, separators=(",", ":")), flush=True)
 
 
 def canonical_backend() -> str:
@@ -134,10 +145,79 @@ def _request_message(state: dict[str, Any], *, request_id: str, role: str) -> tu
     return None
 
 
+def _bundled_redis_history(*, user_id: str, thread_id: str, request_id: str, limit: int) -> list[dict[str, str]]:
+    return canonical_redis_state.canonical_history(
+        user_id=user_id, thread_id=thread_id, request_id=request_id, limit=limit
+    )
+
+
+def _hot_redis_history(*, user_id: str, thread_id: str, request_id: str, limit: int) -> list[dict[str, str]]:
+    """Use the runtime-hot read policy when valid, with bundled Server fallback.
+
+    This boundary never accepts browser history as authority. Both the hot path and
+    the fallback read durable server-owned message records only.
+    """
+    try:
+        policy, source = get_chat_history_policy()
+    except Exception as exc:
+        _history_camera(
+            "policy-load-failed",
+            requestId=request_id,
+            threadId=thread_id,
+            errorType=type(exc).__name__,
+            fallback="bundled",
+        )
+        return _bundled_redis_history(user_id=user_id, thread_id=thread_id, request_id=request_id, limit=limit)
+    if policy is None:
+        _history_camera("policy-bundled", requestId=request_id, threadId=thread_id, source=source)
+        return _bundled_redis_history(user_id=user_id, thread_id=thread_id, request_id=request_id, limit=limit)
+    try:
+        result = policy.resolve_history(
+            redis=canonical_redis_state.store(),
+            user_id=user_id,
+            thread_id=thread_id,
+            request_id=request_id,
+            limit=limit,
+        )
+        if not isinstance(result, dict) or not isinstance(result.get("history"), list):
+            raise RuntimeError("HOT_CHAT_HISTORY_POLICY_RESULT_INVALID")
+        history: list[dict[str, str]] = []
+        for item in result.get("history") or []:
+            if not isinstance(item, dict):
+                continue
+            role = str(item.get("role") or "").strip().upper()
+            text = str(item.get("text") or "").strip()
+            if role in {"USER", "ASSISTANT"} and text:
+                history.append({"role": role, "text": text[:2000]})
+        meta = result.get("meta") if isinstance(result.get("meta"), dict) else {}
+        bounded = history[-max(1, min(int(limit), 32)):]
+        _history_camera(
+            "policy-applied",
+            requestId=request_id,
+            threadId=thread_id,
+            source=source,
+            revision=str(meta.get("revision") or getattr(policy, "HOT_REVISION", ""))[:96],
+            currentIndexedMessages=int(meta.get("currentIndexedMessages") or 0),
+            legacyIndexedMessages=int(meta.get("legacyIndexedMessages") or 0),
+            mergedMessages=int(meta.get("mergedMessages") or 0),
+            selectedMessages=len(bounded),
+        )
+        return bounded
+    except Exception as exc:
+        _history_camera(
+            "policy-execution-failed",
+            requestId=request_id,
+            threadId=thread_id,
+            errorType=type(exc).__name__,
+            fallback="bundled",
+        )
+        return _bundled_redis_history(user_id=user_id, thread_id=thread_id, request_id=request_id, limit=limit)
+
+
 def canonical_history(request: Request, *, thread_id: str, request_id: str, limit: int = 32) -> tuple[list[dict[str, str]], int]:
     user_id = user_id_from_request(request)
     if canonical_backend() == "redis":
-        return canonical_redis_state.canonical_history(user_id=user_id, thread_id=thread_id, request_id=request_id, limit=limit), 0
+        return _hot_redis_history(user_id=user_id, thread_id=thread_id, request_id=request_id, limit=limit), 0
 
     current = _read_blob(user_id)
     revision, state, _ = _state_from_value(current)
