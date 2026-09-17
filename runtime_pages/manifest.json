@@ -1,11 +1,11 @@
 {
-  "version": 116,
+  "version": 117,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
-    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_background_resume_v3.js","web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js","web/chat_same_tab_canonical_reconcile_v1.js","web/chat_activity_expansion_state_v1.js","web/chat_canonical_terminal_reconcile_v1.js","web/chat_sigil_activity_ui_v1.js","web/chat_language_preferences_v1.js","web/chat_online_research_v1.js"]},
+    "/chat": {"source":"web/chat.html","styles":["web/chat_first_paint_guard.css"],"scripts":["web/chat_early_shell_ready_v1.js","web/chat_background_resume_v3.js","web/chat_runtime_loader_v3.js","web/chat_account_state_sync_v1.js","web/chat_same_tab_canonical_reconcile_v1.js","web/chat_activity_expansion_state_v1.js","web/chat_canonical_terminal_reconcile_v1.js","web/chat_sigil_activity_ui_v1.js","web/chat_language_preferences_v1.js","web/chat_online_research_v1.js"]},
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v116 makes main Chat readiness, not decorative/theme settlement, the first-paint interaction gate. The runtime-owned Mask becomes visible and usable after critical Chat boot while functional modules, Ice Dragon decoration, account compatibility work, and reconciliation continue asynchronously. v115 terminal-safe resume and v114 Redis terminal reconciliation/timestamped Activity/sigil presentation remain active."
+  "notes":"Manifest v117 introduces an explicit early Mask-shell readiness boundary before background resume, cooperative loader, account hydration, reconciliation, status probing, and decorative settlement. The runtime Chat shell applies the saved/default Ice Dragon identity and becomes visible immediately; network-bound and decorative boot work can no longer gate first interaction. v116 progressive decoration, v115 terminal-safe resume, and v114 Redis terminal reconciliation/timestamped Activity/sigil presentation remain active."
 }
