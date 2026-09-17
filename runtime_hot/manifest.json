@@ -1,5 +1,5 @@
 {
   "schema": 1,
-  "revision": "2.1.84-hot-coding-inference-failure-detail-v72",
+  "revision": "2.1.85-hot-ngram-numpy-namespace-repair-v73",
   "inferenceFiles": ["r39_engine.py"]
 }
