@@ -2,7 +2,7 @@
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **Phase 1 is runtime scaffolded, authenticated-route verified, and live-hydrated through LALM `2.1.82` / R39 `v70`.** The programming classifier/context compiler has been exercised by real authenticated Chat turns. v69 live-verified proportional lightweight-programming context compaction; v70 live-hydrates coding-terminal/repair hardening after that first compacted coding turn exposed a separate post-prefill completion defect. One successful authenticated post-v70 runnable-code turn remains the final current completion acceptance. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain later states.
+**Current implementation state:** **Phase 1 is runtime scaffolded, authenticated-route verified, and live-hydrated through LALM `2.1.83` / R39 `v71`.** The programming classifier/context compiler has been exercised by real authenticated Chat turns. v69 live-verified proportional lightweight-programming context compaction; v70 owns coding-terminal/repair hardening after that first compacted coding turn exposed a separate post-prefill completion defect; v71 preserves that behavior while repairing the terminal-camera contract namespace so the next real turn can classify the remaining terminal source reliably. One successful authenticated post-v71 runnable-code turn remains the final current completion acceptance. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain later states.
 
 ---
 
@@ -60,16 +60,17 @@ For user-owned projects, apply the same principles proportionally rather than co
 
 ---
 
-## 3. Phase 1 implementation — v66 preserved through v70
+## 3. Phase 1 implementation — v66 preserved through v71
 
 R39 `v66` introduced the first executable programming runtime scaffold. Later lineage hardened the same owner rather than replacing it:
 
 - **v67** repaired the pinned v65→v61 source lineage;
 - **v68** repaired the inherited canonical `_latest_user_text` namespace boundary;
 - **v69** compacted redundant Brain-owned policy context for standalone lightweight coding and repaired the bounded prompt-render diagnostic namespace;
-- **v70** preserves v69 while hardening coding terminal/repair behavior around malformed bare opening code fences.
+- **v70** preserves v69 while hardening coding terminal/repair behavior around malformed bare opening code fences;
+- **v71** preserves v70 generation semantics while making the coding-terminal camera contract collision-proof across the exec-based inherited namespace.
 
-The current active authority is LALM `2.1.82`, revision `2.1.82-hot-coding-terminal-repair-v70`.
+The current active authority is LALM `2.1.83`, revision `2.1.83-hot-coding-terminal-camera-contract-v71`.
 
 ### A. Coding-task classifier
 
@@ -163,19 +164,33 @@ A live v70 hydration self-test established an important diagnosis: the inherited
 
 v70 adds a bounded `coding-candidate-terminal` camera at the existing v27 first/repair candidate boundary. It records pass kind, terminal type/reason class, delta count/character count, maximum observed decode step, degeneration-guard observation, fence count/bare-fence state, and gap booleans. It does **not** log response text or hidden reasoning. A second bounded `coding-fence-repair-normalized` event records activation of the repair normalization.
 
-### F. Permission boundary
+### F. Terminal-camera contract namespace — v71
+
+The v70 camera functions live in an exec-based inherited module namespace. v70 initially used a generic global `_CONTRACT`, and older/nested hydrated layers also use that symbol. A later exec could therefore replace the camera contract identifier even though v70's generation/repair behavior remained intact.
+
+v71 repairs only that diagnostics boundary:
+
+- establishes unique `r39-v71-coding-terminal-camera-contract-v1`;
+- restores the dynamically resolved camera contract after inherited hydration;
+- recomputes the v70 coding-terminal self-test and fails hydration if the resolved contract is not the v71 authority;
+- preserves v70 generation/repair behavior unchanged;
+- emits bounded `v71-enter` evidence before delegating to v70.
+
+Production hot-load logs verify `selfTest=true` and `selfTestContract=r39-v71-coding-terminal-camera-contract-v1`. No authenticated post-v71 coding candidate has yet exercised the terminal camera, so successful end-to-end coding completion remains pending.
+
+### G. Permission boundary
 
 Programming mode is cognitive routing only. It does **not** grant permission to write files, invoke tools, deploy, spend money/credits, bypass server policy, or bypass user approval requirements.
 
 Operational authority remains with the server/tool layer and the project's explicit approval contracts.
 
-### G. Programming cameras
+### H. Programming cameras
 
 Active programming turns emit bounded `programming-mode` facts such as project context, change class, architecture depth, inheritance state, architecture-reconciliation requirement, diagnostic/coaching flags, tool-evidence requirement, and implementation-truth state.
 
-v69/v70 add bounded performance/terminal evidence for their respective ownership boundaries. These events intentionally avoid prompt/response text and private chain-of-thought.
+v69 adds bounded context/prefill evidence, v70 adds candidate-terminal/fence-repair evidence, and v71 makes that terminal-camera contract collision-proof. These events intentionally avoid prompt/response text and private chain-of-thought.
 
-### H. Deterministic routing self-test
+### I. Deterministic routing self-test
 
 The inherited programming suite covers seven generalized behavior classes:
 
@@ -214,6 +229,8 @@ v69 lightweight-programming context compaction + bounded render repair
   ↓
 v70 coding-terminal + v27 bounded-repair hardening
   ↓
+v71 coding-terminal camera-contract namespace repair
+  ↓
 runtime_hot/r39_engine.py
 ```
 
@@ -229,26 +246,31 @@ v69 compacts only recognized internal policies for standalone lightweight coding
 
 v70 preserves the v69 lineage and extends dynamic completion/repair boundaries already owned by the inherited generator and v27 repair layer. It adds fail-closed hydration checks for the required inherited contracts and bounded terminal classification for the remaining early-terminal question.
 
+### v71 camera-contract repair
+
+v71 preserves v70 response semantics. Its sole runtime responsibility is to make v70's terminal/fence-repair cameras and self-test resolve a unique contract identity after the exec-based inherited source chain has hydrated.
+
 ### Activation truth
 
 Current state:
 
-- **source complete:** yes, through v70;
+- **source complete:** yes, through v71;
 - **runtime scaffolded:** yes;
-- **live worker hydration:** yes, through v70;
+- **live worker hydration:** yes, through v71;
 - **live startup/runtime readiness:** yes;
 - **authenticated programming-route entry:** yes;
 - **programming routing acceptance:** `7/7` inherited and active;
 - **v69 lightweight context compaction:** live user-turn verified;
-- **v70 coding-terminal deterministic self-test:** live hydration verified;
-- **successful authenticated post-v70 runnable-code completion:** pending;
+- **v70 coding-terminal semantic/repair self-test:** live hydration verified;
+- **v71 terminal-camera contract self-test:** live hydration verified;
+- **successful authenticated post-v71 runnable-code completion:** pending;
 - **tool-integrated programming execution:** no;
 - **full deterministic architecture acceptance:** no;
 - **learned/trained programming specialization:** no.
 
-Production `/api/lalm/status` reports `hotServerVersion=2.1.82`, revision `2.1.82-hot-coding-terminal-repair-v70`, `oneTokenReady=true`, `interactiveReady=true`, v69 preservation/compaction flags, v70 coding-terminal/repair flags, and a fully green v70 self-test.
+Production hot-load/status evidence reports active engine version `2.1.83`, revision `2.1.83-hot-coding-terminal-camera-contract-v71`, with the v71 camera-contract self-test green and the inherited v70 coding-terminal/repair owner preserved.
 
-The next normal authenticated lightweight coding turn is the correct final acceptance surface for v70. Do not bypass Chat auth or manufacture a synthetic end-to-end success merely to close the checklist.
+The next normal authenticated lightweight coding turn is the correct final acceptance surface for v71/v70 coding completion. Do not bypass Chat auth or manufacture a synthetic end-to-end success merely to close the checklist.
 
 ---
 
@@ -353,15 +375,15 @@ Project Start, architecture reconciliation/coaching, project-wide cameras/logs, 
 
 ### Phase 1 — same-LALM programming mode
 
-**Status: runtime scaffolded and live-hydrated through LALM `2.1.82` / R39 `v70`; authenticated routing + v69 context optimization verified; final v70 coding-completion acceptance pending.**
+**Status: runtime scaffolded and live-hydrated through LALM `2.1.83` / R39 `v71`; authenticated routing + v69 context optimization verified; v70 coding repair and v71 terminal-camera contract are live-hydrated; final authenticated coding-completion acceptance pending.**
 
-Implemented coding-task routing, new/existing/lightweight context, architecture depth, programming continuation inheritance, bounded programming context injection, proportional new-project policy, diagnostic policy, cameras, and routing self-tests. v68 hardened inherited namespace activation. v69 made lightweight programming context proportional and live-proved the compaction path. v70 hardens the existing coding completion/repair path and adds the missing bounded terminal-source camera.
+Implemented coding-task routing, new/existing/lightweight context, architecture depth, programming continuation inheritance, bounded programming context injection, proportional new-project policy, diagnostic policy, cameras, and routing self-tests. v68 hardened inherited namespace activation. v69 made lightweight programming context proportional and live-proved the compaction path. v70 hardens the existing coding completion/repair path. v71 preserves that behavior while making its terminal-source evidence reliable across inherited namespace hydration.
 
-**Remaining Phase 1 acceptance:** run a normal authenticated standalone coding request under v70 and verify terminal behavior. Success means runnable code + requested explanation complete. If a candidate still terminates early, the v70 terminal camera must classify the lower source and the normalized v27 repair must either recover or provide the precise next defect boundary.
+**Remaining Phase 1 acceptance:** run a normal authenticated standalone coding request under v71 and verify terminal behavior. Success means runnable code + requested explanation complete. If a candidate still terminates early, the v71/v70 terminal camera must classify the lower source and the normalized v27 repair must either recover or provide the precise next defect boundary.
 
 ### Phase 2 — obligation + architecture acceptance
 
-**Next capability target after the remaining v70 coding-completion acceptance.**
+**Next capability target after the remaining v71 coding-completion acceptance.**
 
 Add programming obligation tracking, repository-evidence/overlap state, integration decisions, completion requirements, and a generalized architecture acceptance suite.
 
@@ -400,4 +422,4 @@ Do not collapse these states. In particular, a live-hydrated wrapper is not auto
 
 ## Bottom line
 
-**§wyrlz keeps one primary cognitive authority. Phase 1 now reaches LALM 2.1.82 / R39 v70: authenticated programming routing is proven, v69 proportional lightweight context is live verified, and v70 is live-hydrated with deterministic coding-terminal/repair hardening. One successful authenticated post-v70 runnable-code turn remains the current completion acceptance. Phase 2 begins only after that boundary is closed; repository/tool execution and any future coder model remain later, explicitly separate implementation states.**
+**§wyrlz keeps one primary cognitive authority. Phase 1 now reaches LALM 2.1.83 / R39 v71: authenticated programming routing is proven, v69 proportional lightweight context is live verified, v70 owns coding-terminal/repair hardening, and v71 is live-hydrated with collision-proof terminal-camera evidence. One successful authenticated post-v71 runnable-code turn remains the current completion acceptance. Phase 2 begins only after that boundary is closed; repository/tool execution and any future coder model remain later, explicitly separate implementation states.**
