@@ -2,7 +2,7 @@
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **Phase 1 is runtime scaffolded, authenticated-route verified, and live-hydrated through LALM `2.1.83` / R39 `v71`.** The programming classifier/context compiler has been exercised by real authenticated Chat turns. v69 live-verified proportional lightweight-programming context compaction; v70 owns coding-terminal/repair hardening after that first compacted coding turn exposed a separate post-prefill completion defect; v71 preserves that behavior while repairing the terminal-camera contract namespace so the next real turn can classify the remaining terminal source reliably. One successful authenticated post-v71 runnable-code turn remains the final current completion acceptance. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain later states.
+**Current implementation state:** **Phase 1 is runtime scaffolded and authenticated-route verified; production behavior is live-proven through v71, while LALM `2.1.85` / R39 `v73` is source-complete and published with fresh-worker/user-turn activation pending.** v69 live-verified proportional lightweight-programming context compaction. v70 owns coding-terminal/repair hardening. v71 made terminal-source diagnostics collision-proof and a real authenticated turn proved both first and repair candidates were failing in lower inference after exactly two decode steps. v72 added bounded lower-failure detail diagnostics without changing response semantics. v73 repairs the source-visible inherited v55 n-gram NumPy namespace fault at that exact two-token threshold. One successful authenticated post-v73 runnable-code turn remains the current completion acceptance. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain later states.
 
 ---
 
@@ -34,47 +34,49 @@ SERVER / TOOLS
   └─ permitted external actions
 ```
 
-A future coding model may become highly specialized at patch/test/refactor generation, but it must not become a second independent authority for user intent, project architecture, deployment permission, version state, or final acceptance.
+A future coding model may become highly specialized at patch/test/refactor generation, but it must not become a second independent authority for user intent, conversation truth, project architecture policy, deployment permission, canonical state, version authority, final acceptance, or user-facing product decisions.
 
 ---
 
 ## 2. Hidden architecture grammar
 
-Internally, programming work should follow this operating grammar:
+Programming work should internally follow:
 
 ```text
 understand desired outcome
 → distinguish requirements from implementation assumptions
 → determine coding/project context
-→ inspect existing architecture when an existing project is involved
+→ inspect architecture when an existing project is involved
 → identify authority + state/readers/writers/lifecycle
 → find related or competing work
-→ choose reuse / extend / consolidate / migrate+retire / new structure
+→ choose reuse / extend / consolidate / migrate+retire / new
 → implement through the intended owner
 → verify behavior + ownership + activation truth
 ```
 
-The user does **not** need to see every internal architecture map or classification. Surface the important architectural consequence when it improves understanding or affects a tradeoff.
+The user does not need every internal classification. Surface architecture when it changes a tradeoff, responsibility, risk, or verification boundary.
 
-For user-owned projects, apply the same principles proportionally rather than copying §wyrlz's internal repository structure.
+For user-owned projects, apply this grammar proportionally rather than copying §wyrlz's internal repository structure.
 
 ---
 
-## 3. Phase 1 implementation — v66 preserved through v71
+## 3. Phase 1 implementation lineage
 
-R39 `v66` introduced the first executable programming runtime scaffold. Later lineage hardened the same owner rather than replacing it:
+R39 `v66` introduced executable programming-mode routing. Later lineage hardens the same primary cognitive owner rather than replacing it:
 
 - **v67** repaired the pinned v65→v61 source lineage;
 - **v68** repaired the inherited canonical `_latest_user_text` namespace boundary;
-- **v69** compacted redundant Brain-owned policy context for standalone lightweight coding and repaired the bounded prompt-render diagnostic namespace;
-- **v70** preserves v69 while hardening coding terminal/repair behavior around malformed bare opening code fences;
-- **v71** preserves v70 generation semantics while making the coding-terminal camera contract collision-proof across the exec-based inherited namespace.
+- **v69** compacted redundant Brain-owned policy context for standalone lightweight coding and repaired bounded prompt-render diagnostics;
+- **v70** preserved v69 while hardening coding completion/repair around malformed bare opening fences;
+- **v71** preserved v70 response semantics while making coding-terminal camera identity collision-proof across the exec-based inherited namespace;
+- **v72** preserved all response semantics and added bounded failure category / Python exception type / short sanitized detail at the first/repair candidate boundary;
+- **v73** preserves v72 and repairs the inherited v55 n-gram sampler's missing NumPy global at the exact 2→3 generated-token transition.
 
-The current active authority is LALM `2.1.83`, revision `2.1.83-hot-coding-terminal-camera-contract-v71`.
+Current source authority is LALM `2.1.85`, revision `2.1.85-hot-ngram-numpy-namespace-repair-v73`.
 
 ### A. Coding-task classifier
 
-The active LALM compiles bounded routing state including:
+The active lineage compiles bounded routing state including:
 
 ```text
 codingTask
@@ -90,45 +92,27 @@ inherited
 implementationTruth = runtime-scaffolded
 ```
 
-This is routing/context metadata, not a replacement for semantic reasoning.
+This metadata routes cognition; it does not replace semantic reasoning.
 
 ### B. Conversational programming inheritance
 
-Short continuation/acceptance turns such as `keep going`, `go ahead`, or `let's do this` can inherit programming mode from the nearest relevant user task.
-
-The bridge is conservative:
-
-- it only looks through a bounded recent user window;
-- it stops rather than tunneling through a newer substantive unrelated task;
-- explicit stop/cancel language suppresses the programming continuation;
-- inherited source is represented as bounded routing metadata rather than copied hidden reasoning.
+Short continuation turns such as `keep going`, `go ahead`, or `let's do this` may inherit programming mode from the nearest relevant user task. The bridge is conservative: it examines a bounded recent user window, stops at newer substantive unrelated work, honors explicit stop/cancel language, and represents inherited state as bounded metadata rather than copied hidden reasoning.
 
 ### C. Programming context compiler
 
-When programming mode is active, the runtime adds bounded system context to a **copy of the generation payload history**. It does not rewrite canonical persisted conversation history.
+Programming mode adds bounded system context to a **copy of the generation payload history**. It does not rewrite canonical persisted dialogue.
 
-For an existing-project change, the context directs the primary LALM to:
+For existing-project changes it directs the LALM to inspect project evidence before inventing owners, identify state/readers/writers/lifecycle and related implementations, prefer **reuse → extend canonical owner → consolidate/refactor → migrate+retire → genuinely new structure**, and preserve ambiguity when evidence is insufficient.
 
-- separate desired outcome from implementation assumptions;
-- inspect available project/repository evidence before inventing owners or structure;
-- identify current authority, relevant state, readers/writers/lifecycle, and related implementations;
-- prefer **reuse → extend canonical owner → consolidate/refactor → migrate+retire → genuinely new structure**;
-- avoid fabricating architecture when evidence is missing or ownership remains ambiguous.
+For new user projects it applies proportional architecture: start with the smallest useful structure justified by current scale/risk, add stronger ownership/tests/observability/version/deployment boundaries only when warranted, and respect the user's choice to simplify optional architecture.
 
-For a new user project it directs the model to:
-
-- choose the smallest useful structure justified by current scale/risk;
-- add stronger ownership/state/tests/observability/version/deployment boundaries only when complexity warrants them;
-- respect the user's explicit decision to simplify optional architecture;
-- explain material tradeoffs without repeatedly pressuring the user.
-
-For lightweight standalone coding/explanation it avoids forcing repository ceremony. For fix/debug work it directs the LALM toward **inspect evidence first → add bounded instrumentation only if needed → repair**.
+For lightweight standalone coding it avoids repository ceremony. For fix/debug work it follows **inspect evidence first → add bounded instrumentation only if needed → repair**.
 
 ### D. Proportional lightweight-programming context — v69
 
-The first authenticated lightweight programming acceptance turn showed that the programming classifier routed correctly but the copied generation payload accumulated nine Brain-owned policy records totaling about 16.8k characters. This produced a 3,839-token prefill for a tiny standalone coding request.
+The first authenticated lightweight programming turn showed the classifier routed correctly but the copied generation payload accumulated nine Brain-owned policy records totaling about 16.8k characters, producing a 3,839-token prefill for a tiny coding request.
 
-v69 preserves canonical Chat dialogue while compacting only recognized §wyrlz-owned internal policies when:
+v69 compacts only recognized §wyrlz-owned internal policies when:
 
 ```text
 programming active
@@ -136,61 +120,95 @@ programming active
 + architectureDepth = lightweight
 ```
 
-It replaces that redundant stack with one bounded lightweight-programming marker. Unknown system authority is preserved, user/assistant dialogue is preserved exactly, and non-lightweight programming requests remain unchanged.
+Unknown system authority and user/assistant dialogue are preserved. Non-lightweight programming requests remain unchanged.
 
-Live authenticated v69 evidence proved:
+Live authenticated evidence proved:
 
-- policy records: `9 → 1`;
-- internal policy characters: `16,774 → 364`;
-- bounded rendered prompt: `444` tokens;
-- actual inference prefill: `656` tokens rather than the earlier `3,839` baseline;
-- no old bounded-render `NameError`;
-- zero reconnects on the decisive test.
+- policy records `9 → 1`;
+- internal policy characters `16,774 → ~364–467` across the accepted tests;
+- bounded rendered prompt roughly `444–466` tokens;
+- actual inference prefill roughly `656–678` tokens instead of `3,839`;
+- old bounded-render `NameError` removed;
+- no reconnect dependency in the decisive failure tests.
 
-This is **live-verified context proportionality**, not a claim that local inference throughput itself is fast; the observed native prefill still ran around 10–11 tokens/s.
+This proves context proportionality, not fast raw inference; native prefill throughput remained roughly 10–11 tokens/s.
 
 ### E. Coding completion + bounded repair — v70
 
-The decisive v69 coding turn passed prefill, then exposed a separate defect: the first candidate terminated after roughly two decode steps with only an opening Python-fence fragment. The inherited v27 requirement owner correctly detected `runnable-code` and invoked its one bounded repair, but its repair conditioning included the incomplete assistant fence and the second pass produced another opening fragment instead of runnable code.
+The compacted coding turn passed prefill but generated only an opening Python fence before failing. The inherited v27 requirement owner detected `runnable-code` and invoked its one bounded repair.
 
-v70 extends the **existing v27 repair owner** rather than adding another repair subsystem:
+v70 extends that existing repair owner:
 
-- coding responses that are empty or only a bare opening `python`/`py` fence retain `complete-code` and, when requested, `requested-explanation` completion gaps;
-- if v27 repairs a `runnable-code` failure whose first candidate is only an opening Python fence, that incomplete assistant prefix is removed from repair-history conditioning;
-- the repair is told to continue inside the already-visible fence, emit executable code instead of another opener, close the existing fence once, then provide the requested explanation;
-- the compact v69 lightweight policy also explicitly forbids ending after only an opening language fence.
+- empty/bare `python`/`py` fences retain `complete-code` and requested-explanation gaps;
+- a repair following a bare opening Python fence removes that incomplete assistant prefix from repair-history conditioning;
+- repair guidance continues inside the already-visible fence, emits executable code, closes the fence once, then supplies the requested explanation;
+- lightweight programming policy explicitly forbids ending after only an opening language fence.
 
-A live v70 hydration self-test established an important diagnosis: the inherited pre-v70 gap checker already returned `complete-code` + `requested-explanation` for the bare fence. Therefore the original early terminal was **not** caused by the completion-gap helper considering the fence complete. The lower terminal source remains to be classified by the next real turn.
-
-v70 adds a bounded `coding-candidate-terminal` camera at the existing v27 first/repair candidate boundary. It records pass kind, terminal type/reason class, delta count/character count, maximum observed decode step, degeneration-guard observation, fence count/bare-fence state, and gap booleans. It does **not** log response text or hidden reasoning. A second bounded `coding-fence-repair-normalized` event records activation of the repair normalization.
+Hydration testing proved the pre-v70 gap checker already considered a bare opening fence incomplete, so semantic completion was not the source of the two-token terminal.
 
 ### F. Terminal-camera contract namespace — v71
 
-The v70 camera functions live in an exec-based inherited module namespace. v70 initially used a generic global `_CONTRACT`, and older/nested hydrated layers also use that symbol. A later exec could therefore replace the camera contract identifier even though v70's generation/repair behavior remained intact.
+v70 cameras lived in an exec-based inherited namespace and initially used generic `_CONTRACT`, which older nested layers could replace. v71 establishes unique `r39-v71-coding-terminal-camera-contract-v1`, restores it after inherited hydration, recomputes/fail-closes the v70 self-test, and preserves generation semantics.
 
-v71 repairs only that diagnostics boundary:
+Authenticated request `web:mu5zycye:4201205958924473599` then proved both first and repair candidates terminated:
 
-- establishes unique `r39-v71-coding-terminal-camera-contract-v1`;
-- restores the dynamically resolved camera contract after inherited hydration;
-- recomputes the v70 coding-terminal self-test and fails hydration if the resolved contract is not the v71 authority;
-- preserves v70 generation/repair behavior unchanged;
-- emits bounded `v71-enter` evidence before delegating to v70.
+```text
+terminalType = FAILED
+terminalReasonClass = inference-failed
+deltaEvents = 2
+deltaChars = 9
+maxDecodeStep = 2
+sawDegenerationGuard = false
+bareOpeningFence = true
+completeCodeGap = true
+requestedExplanationGap = true
+```
 
-Production hot-load logs verify `selfTest=true` and `selfTestContract=r39-v71-coding-terminal-camera-contract-v1`. No authenticated post-v71 coding candidate has yet exercised the terminal camera, so successful end-to-end coding completion remains pending.
+This ruled out EOS acceptance, completion-gap loss, degeneration, Chat transport, and fence-repair routing as the terminal source.
 
-### G. Permission boundary
+### G. Lower inference failure detail — v72
 
-Programming mode is cognitive routing only. It does **not** grant permission to write files, invoke tools, deploy, spend money/credits, bypass server policy, or bypass user approval requirements.
+v71 intentionally collapsed the underlying base-generator exception to `inference-failed`, while the base generator already produced a bounded error category and Python exception message. v72 wraps the existing v27 candidate boundary and records only:
 
-Operational authority remains with the server/tool layer and the project's explicit approval contracts.
+- terminal category;
+- Python exception type;
+- short sanitized detail preview.
 
-### H. Programming cameras
+It logs no prompt, response body, secret, or hidden reasoning and leaves candidate events unchanged. v72 is a diagnostic layer, not another semantic repair owner. v73 preserves it so any lower failure that survives remains diagnosable.
 
-Active programming turns emit bounded `programming-mode` facts such as project context, change class, architecture depth, inheritance state, architecture-reconciliation requirement, diagnostic/coaching flags, tool-evidence requirement, and implementation-truth state.
+### H. Inherited n-gram NumPy namespace repair — v73
 
-v69 adds bounded context/prefill evidence, v70 adds candidate-terminal/fence-repair evidence, and v71 makes that terminal-camera contract collision-proof. These events intentionally avoid prompt/response text and private chain-of-thought.
+Source inspection exposed an exact causal match for the two-token failure. v55's `_ngram_guarded_sample` behaves as follows:
 
-### I. Deterministic routing self-test
+```text
+history length 0 → delegate to prior sampler
+history length 1 → delegate to prior sampler
+history length 2 → enter n-gram branch → first `np.argpartition(...)`
+```
+
+v55 imported `urllib.request` and `re`, but not `numpy as np`. Because the hot lineage is assembled through nested `exec(..., globals(), globals())`, the sampler resolves that bare global dynamically and could reach a namespace without `np` exactly when attempting token three.
+
+v73 repairs that compatibility boundary at the current edge:
+
+- imports NumPy;
+- restores `np` after the entire inherited v72 chain hydrates;
+- preserves the v55 sampler as semantic owner rather than rewriting its policy;
+- fail-closes if `_ngram_guarded_sample` is unavailable;
+- runs a hydration self-test that calls the sampler with a two-token history, forcing the exact previously failing branch.
+
+This is source/static verified and published. Fresh-worker hydration plus one authenticated coding completion remains required before the repair is called live verified.
+
+### I. Permission boundary
+
+Programming mode is cognitive routing only. It does **not** grant permission to write files, invoke tools, deploy, spend money/credits, bypass server policy, or bypass approval requirements. Operational authority remains with the server/tool layer and project contracts.
+
+### J. Programming cameras
+
+Programming turns emit bounded routing facts such as project context, change class, architecture depth, inheritance state, architecture-reconciliation requirement, diagnostics/coaching flags, tool-evidence requirement, and implementation-truth state.
+
+v69 adds bounded context/prefill evidence; v70/v71 add reliable candidate-terminal/fence evidence; v72 adds bounded lower-failure detail; v73 emits activation evidence for the namespace repair. These cameras intentionally avoid prompt/response text and private chain-of-thought unless an existing explicit Chat transcript camera separately owns visible user content.
+
+### K. Deterministic routing self-test
 
 The inherited programming suite covers seven generalized behavior classes:
 
@@ -200,15 +218,15 @@ The inherited programming suite covers seven generalized behavior classes:
 4. existing-project bug activates diagnostic behavior;
 5. simple new webpage uses lightweight project coaching;
 6. cross-cutting migration gets deep architecture treatment;
-7. conversational `let's do this` correctly inherits the prior coding task.
+7. conversational continuation correctly inherits the prior coding task.
 
-The active lineage still reports this suite **7/7**. This is a routing/scaffold evaluation, not the later full Phase 2 architecture-acceptance suite.
+The lineage reports this suite **7/7**. This is routing/scaffold evaluation, not the later full Phase 2 architecture-acceptance suite.
 
 ---
 
 ## 4. Runtime lineage and activation
 
-Current published lineage relevant to programming mode:
+Relevant programming lineage:
 
 ```text
 v17 canonical engine implementation
@@ -225,52 +243,40 @@ v67 pinned-source lineage repair
   ↓
 v68 canonical _latest_user_text namespace bridge
   ↓
-v69 lightweight-programming context compaction + bounded render repair
+v69 lightweight context compaction + bounded render repair
   ↓
-v70 coding-terminal + v27 bounded-repair hardening
+v70 coding terminal + v27 bounded-repair hardening
   ↓
 v71 coding-terminal camera-contract namespace repair
   ↓
+v72 bounded coding-inference failure-detail camera
+  ↓
+v73 inherited v55 n-gram NumPy namespace repair
+  ↓
 runtime_hot/r39_engine.py
 ```
-
-### v68 namespace repair
-
-The canonical `_latest_user_text` helper belongs to the v17 implementation loaded as `_impl`. v68 bridges the historical bare name directly to that owner; it does not create another parser.
-
-### v69 context/render repair
-
-v69 compacts only recognized internal policies for standalone lightweight coding, restores the bounded render counter's canonical model accessor, and keeps the legacy raw prompt-token trace retired.
-
-### v70 terminal/repair hardening
-
-v70 preserves the v69 lineage and extends dynamic completion/repair boundaries already owned by the inherited generator and v27 repair layer. It adds fail-closed hydration checks for the required inherited contracts and bounded terminal classification for the remaining early-terminal question.
-
-### v71 camera-contract repair
-
-v71 preserves v70 response semantics. Its sole runtime responsibility is to make v70's terminal/fence-repair cameras and self-test resolve a unique contract identity after the exec-based inherited source chain has hydrated.
 
 ### Activation truth
 
 Current state:
 
-- **source complete:** yes, through v71;
+- **source complete:** yes, through v73;
 - **runtime scaffolded:** yes;
-- **live worker hydration:** yes, through v71;
-- **live startup/runtime readiness:** yes;
+- **live worker hydration:** verified through v71; v73 fresh-worker hydration pending;
+- **live startup/runtime readiness:** previously verified through v71; v73 pending;
 - **authenticated programming-route entry:** yes;
-- **programming routing acceptance:** `7/7` inherited and active;
+- **programming routing acceptance:** `7/7` inherited;
 - **v69 lightweight context compaction:** live user-turn verified;
-- **v70 coding-terminal semantic/repair self-test:** live hydration verified;
-- **v71 terminal-camera contract self-test:** live hydration verified;
-- **successful authenticated post-v71 runnable-code completion:** pending;
+- **v70 semantic/repair self-test:** live hydration verified;
+- **v71 terminal-camera contract:** live hydration and real candidate evidence verified;
+- **v72 diagnostic contract:** source/static verified and preserved, not independently required for acceptance after source diagnosis;
+- **v73 two-token threshold self-test:** source/static verified; fresh-worker execution pending;
+- **successful authenticated post-v73 runnable-code completion:** pending;
 - **tool-integrated programming execution:** no;
 - **full deterministic architecture acceptance:** no;
 - **learned/trained programming specialization:** no.
 
-Production hot-load/status evidence reports active engine version `2.1.83`, revision `2.1.83-hot-coding-terminal-camera-contract-v71`, with the v71 camera-contract self-test green and the inherited v70 coding-terminal/repair owner preserved.
-
-The next normal authenticated lightweight coding turn is the correct final acceptance surface for v71/v70 coding completion. Do not bypass Chat auth or manufacture a synthetic end-to-end success merely to close the checklist.
+Do not bypass Chat authentication or manufacture an end-to-end success simply to close acceptance. A normal authenticated lightweight coding turn is the correct live acceptance surface.
 
 ---
 
@@ -292,7 +298,7 @@ The following remain later work:
 - a separate coding model;
 - coding-specific fine-tuned/trained weights.
 
-Phase 1 intentionally establishes the cognitive/routing/generation foundation before those mechanisms are layered on top.
+Phase 1 establishes the cognitive/routing/generation foundation before those mechanisms are layered on top.
 
 ---
 
@@ -300,19 +306,15 @@ Phase 1 intentionally establishes the cognitive/routing/generation foundation be
 
 ### Lightweight coding
 
-Examples: explain syntax, write a standalone function, show an algorithm.
-
-Use lightweight programming reasoning and v69 proportional context. Do not force a repository architecture scan.
+Examples: explain syntax, write a standalone function, show an algorithm. Use lightweight programming reasoning and proportional context; do not force repository architecture scanning.
 
 ### Existing-project coding
 
-Examples: feature, regression, persistence/auth change, refactor, integration.
-
-Activate architecture reconciliation and require real project evidence before inventing ownership.
+Examples: feature, regression, persistence/auth change, refactor, integration. Activate architecture reconciliation and require real project evidence before inventing ownership.
 
 ### New user project
 
-Activate proportional architecture coaching. Start small; grow structure with responsibility and risk.
+Activate proportional architecture coaching. Start small and grow structure with responsibility and risk.
 
 ### High-impact/cross-cutting work
 
@@ -322,16 +324,7 @@ Use deeper architecture treatment for migrations, deployment, auth/security, per
 
 ## 7. Same-model-first strategy
 
-The next programming capabilities should continue to strengthen the **same primary LALM** before adding another model.
-
-Why:
-
-- one interpretation of user intent;
-- one conversation/project context;
-- one architecture authority;
-- easier evaluation and debugging;
-- less routing/resource overhead;
-- no model-vs-model architecture drift.
+Strengthen the **same primary LALM** before adding another model because that preserves one interpretation of user intent, one conversation/project context, one architecture authority, simpler evaluation/debugging, lower routing overhead, and less model-vs-model architecture drift.
 
 ```text
 §wyrlz LALM = architect / lead engineer / conversational brain
@@ -344,7 +337,7 @@ server/tools = hands + operational authority
 
 ## 8. Future coder specialist boundary
 
-If benchmarking later justifies a dedicated coding model, the primary LALM supplies a bounded coding contract such as:
+If benchmarking later justifies a dedicated coding model, the primary LALM supplies a bounded contract such as:
 
 ```text
 TASK
@@ -357,11 +350,7 @@ DO-NOT-CHANGE SURFACES
 OUTPUT FORMAT
 ```
 
-The specialist returns proposals/evidence such as patches, affected files, assumptions, tests, migration concerns, and possible conflicts.
-
-It must **not** independently own user intent, conversation truth, project architecture policy, deployment permission, canonical state, version authority, final acceptance, or user-facing product decisions.
-
-The primary LALM can reject or repair a specialist proposal that violates the architecture contract.
+The specialist may return patches, affected files, assumptions, tests, migration concerns, and conflicts. It must not independently own user intent, conversation truth, architecture policy, deployment permission, canonical state, version authority, final acceptance, or user-facing product decisions. The primary LALM may reject or repair specialist proposals.
 
 ---
 
@@ -369,23 +358,15 @@ The primary LALM can reject or repair a specialist proposal that violates the ar
 
 ### Phase 0 — curriculum/governance foundation
 
-**Status: established.**
-
-Project Start, architecture reconciliation/coaching, project-wide cameras/logs, response standard, version evolution, roadmap/release discipline.
+**Status: established.** Project Start, architecture reconciliation/coaching, project-wide cameras/logs, response standard, version evolution, roadmap/release discipline.
 
 ### Phase 1 — same-LALM programming mode
 
-**Status: runtime scaffolded and live-hydrated through LALM `2.1.83` / R39 `v71`; authenticated routing + v69 context optimization verified; v70 coding repair and v71 terminal-camera contract are live-hydrated; final authenticated coding-completion acceptance pending.**
-
-Implemented coding-task routing, new/existing/lightweight context, architecture depth, programming continuation inheritance, bounded programming context injection, proportional new-project policy, diagnostic policy, cameras, and routing self-tests. v68 hardened inherited namespace activation. v69 made lightweight programming context proportional and live-proved the compaction path. v70 hardens the existing coding completion/repair path. v71 preserves that behavior while making its terminal-source evidence reliable across inherited namespace hydration.
-
-**Remaining Phase 1 acceptance:** run a normal authenticated standalone coding request under v71 and verify terminal behavior. Success means runnable code + requested explanation complete. If a candidate still terminates early, the v71/v70 terminal camera must classify the lower source and the normalized v27 repair must either recover or provide the precise next defect boundary.
+**Status:** routing and proportional context are live verified; coding-terminal diagnosis reached a source-complete v73 causal repair. **Final acceptance remains one successful authenticated post-v73 runnable-code + explanation turn.**
 
 ### Phase 2 — obligation + architecture acceptance
 
-**Next capability target after the remaining v71 coding-completion acceptance.**
-
-Add programming obligation tracking, repository-evidence/overlap state, integration decisions, completion requirements, and a generalized architecture acceptance suite.
+**Next capability target only after Phase 1 coding completion acceptance.** Add programming obligation tracking, repository-evidence/overlap state, integration decisions, completion requirements, and a generalized architecture acceptance suite.
 
 ### Phase 3 — repository/tool execution loop
 
@@ -397,29 +378,29 @@ Expand project-scale/risk detection and architecture coaching into structured ad
 
 ### Phase 5 — optional coder specialist
 
-Benchmark whether a specialized coding model materially improves quality, latency, or local resource usage. Add only as a subordinate specialist if measured benefits justify the complexity.
+Benchmark whether a specialized coding model materially improves quality, latency, or local resource use. Add only as a subordinate specialist if measured benefits justify complexity.
 
 ### Phase 6 — training/fine-tuning if justified
 
-After enough high-quality generalized traces/evals exist, consider training/fine-tuning the programming behavior. Do not train first and define the architecture afterward.
+After enough high-quality generalized traces/evals exist, consider training/fine-tuning programming behavior. Do not train first and define architecture afterward.
 
 ---
 
 ## 10. Implementation-truth ladder
 
-Programming capability claims should use these states literally:
+Programming capability claims use these states literally:
 
-1. **Documented** — the desired rule/architecture exists in canonical engineering documentation.
-2. **Runtime scaffolded** — executable runtime state/behavior exists, but may not yet be connected to operational tools or fully accepted.
-3. **Tool-integrated** — the runtime can execute the relevant repository/tool loop through operational authority.
-4. **Deterministically evaluated** — generalized acceptance cases exercise the capability reproducibly.
-5. **Live verified** — production/user-turn evidence proves the relevant path actually executed successfully.
-6. **Learned/trained** — the capability is materially represented in trained/fine-tuned model behavior rather than only runtime prompting/scaffolding.
+1. **Documented** — desired rule/architecture exists in canonical engineering documentation.
+2. **Runtime scaffolded** — executable runtime state/behavior exists but may not be operationally integrated or fully accepted.
+3. **Tool-integrated** — runtime can execute the relevant repository/tool loop through operational authority.
+4. **Deterministically evaluated** — generalized acceptance cases exercise capability reproducibly.
+5. **Live verified** — production/user-turn evidence proves the relevant path executed successfully.
+6. **Learned/trained** — capability is materially represented in trained/fine-tuned model behavior rather than runtime prompting/scaffolding alone.
 
-Do not collapse these states. In particular, a live-hydrated wrapper is not automatically a successful end-to-end coding answer, and a documented future coder boundary is not a deployed specialist model.
+Do not collapse these states. A published/hydrated wrapper is not automatically a successful coding answer, and a documented future coder boundary is not a deployed specialist model.
 
 ---
 
 ## Bottom line
 
-**§wyrlz keeps one primary cognitive authority. Phase 1 now reaches LALM 2.1.83 / R39 v71: authenticated programming routing is proven, v69 proportional lightweight context is live verified, v70 owns coding-terminal/repair hardening, and v71 is live-hydrated with collision-proof terminal-camera evidence. One successful authenticated post-v71 runnable-code turn remains the current completion acceptance. Phase 2 begins only after that boundary is closed; repository/tool execution and any future coder model remain later, explicitly separate implementation states.**
+**§wyrlz keeps one primary cognitive authority. Phase 1 currently reaches source authority LALM 2.1.85 / R39 v73: authenticated programming routing and v69 proportional context are live verified; v70/v71 isolated the coding failure below semantic repair; v72 preserves bounded lower-failure diagnostics; and v73 repairs the exact inherited v55 NumPy namespace fault that activates at the two-token history threshold. v73 still requires fresh-worker plus authenticated runnable-code acceptance before it is called live verified. Phase 2 begins only after that boundary closes; repository/tool execution and any future coder model remain later, explicitly separate implementation states.**
