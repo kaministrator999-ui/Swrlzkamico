@@ -1,5 +1,5 @@
 {
-  "version": 129,
+  "version": 130,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {"source":"runtime_pages/index.html"},
@@ -7,5 +7,5 @@
     "/server":{"source":"web/server.html"},"/lalm":{"source":"web/lalm.html"},"/admin":{"source":"web/admin.html"},"/live":{"source":"runtime_pages/index.html"},"/collector":{"source":"web/collector.html"}
   },
   "assetRoots":["web","runtime_pages"],
-  "notes":"Manifest v129 activates Chat 1.5.69 immediate Activity Log spawning. The activity trace is seeded at the composer submit boundary before streamed network events arrive, while the stream-fetch hook remains as a fallback identifier path."
+  "notes":"Manifest v130 activates Chat 1.5.70 Activity Log expansion-state race repair. The intended open/closed state is persisted synchronously at the summary interaction boundary before native details toggle dispatch, so streamed response re-renders cannot rebuild the trace closed between tap and toggle reconciliation."
 }
