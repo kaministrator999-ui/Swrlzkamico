@@ -6,7 +6,7 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.256`
+- **Overall Server:** `2.3.257`
 - **Chat:** `1.5.75`
 - **LALM Engine:** `2.1.86` (`v74` programming-artifact continuation routing)
 - **Web Frontend:** `1.0.5`
@@ -33,6 +33,29 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.257 — Runtime-hot canonical history policy seam
+
+**Status:** source complete; deterministic history-policy behavior verified; production activation pending one stable Server deployment.  
+**LALM Engine:** `2.1.86` / `v74` unchanged.  
+**Chat:** `1.5.75` unchanged.  
+**Deployment / restart:** NONE performed.
+
+**Goal:** make canonical Chat history reconstruction improvable from `runtime` without turning the Brain or browser into a persistence authority and without requiring a Vercel deployment for every later history-policy refinement.
+
+**Architecture reconciliation:** durable conversation authority remains Human/Server owned. Stable Server retains authentication, Redis durability, turn creation, terminal commits, and write authority. A new narrow hot ABI permits only read-only reconstruction of already-authoritative server message records into bounded LALM history. Missing, invalid, or failing hot policy falls back to the bundled canonical history reader.
+
+**Stable bootstrap seam:** `api/hot_loader.py` adds an independently cached `HOT_SERVER_DIR/chat_history_policy.py` slot and requires `resolve_history`, `inspect_policy`, `CONTRACT_ID`, and `HOT_REVISION`, with `inspect_policy().ok=true`. `api/runtime_hot.py` adds that file to the fixed runtime allowlist, backup/rollback/clear lifecycle, content-hash invalidation, and a read-only `hot-server-history-policy` capability. `api/chat_turn_state.py` resolves Redis history through the hot policy when available, supplies only the authenticated Server-owned Redis store, defensively re-bounds returned role/text data, and otherwise uses the bundled reader.
+
+**Runtime policy v1:** `runtime_hot/chat_history_policy.py` revision `1.0.0-runtime-history-compat-v1` reads current `message_index` plus legacy `messages`, resolves durable `MessageRecord`s, validates user/thread ownership, deduplicates by message ID, restores creation order, excludes the current request and non-terminal/failed/cancelled/empty records, caps history at 32 messages / 2,000 characters per message, and emits count-only `SWRLZ_CHAT_HISTORY_HOT` telemetry. Browser history is never accepted as canonical input.
+
+**Verification:** the history-policy acceptance case passed 6/6 for legacy recovery, ordering, dedupe, current-request exclusion, failed-turn exclusion, and current/legacy index counts. Committed loader/history diffs were re-read. No CI status/workflow was attached to these commits, so live import/hydration is intentionally not claimed before the bootstrap deployment.
+
+**Activation truth:** the policy source is already durable on `runtime`, but the currently deployed stable Server predates the Server-policy hot-loader ABI. One approved stable production deployment is therefore required to install the seam. After that one activation, later changes confined to `runtime_hot/chat_history_policy.py` become ordinary runtime-hot work and do not require another deployment/restart.
+
+**Concurrency/version gate:** Server `2.3.256`, LALM `2.1.86`, and Chat `1.5.75` remained authoritative immediately before assignment. This event owns Server `2.3.257` only.
+
+**Lineage:** runtime policy `1581935d99194c82cc3f298d29db00c6b94c63f1`; stable hot-loader seam `455c63166dc41f78a3c55cc87684102640eb9f7d`; stable runtime hydrator `fe5b3280c58c684749692e3d59a3ad6759f7f14d`; stable canonical-history routing seam `6346bf8522da7e769f71297ab4266fe9029b8aa2`; Server authority `40bac966a8d7a015483ff5b028e1185d15b57a45`; receipt `docs/releases/SERVER_2.3.257_RUNTIME_HOT_HISTORY_POLICY.md` on `runtime`.
 
 ### Server 2.3.256 — Coding continuation history + proportional routing repair
 
@@ -66,7 +89,7 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 **Architecture reconciliation:** this is Brain/LALM inherited decode-policy ownership. Chat, persistence, v69 context compaction, and v70 semantic repair are not the cause. v73 preserves the v55 n-gram sampler as semantic owner and repairs only its missing inherited `np` dependency at the current hot edge.
 
-**Repair:** v73 hydrates immutable v72, restores NumPy in the shared namespace after the full inherited exec chain loads, fail-closes if the n-gram sampler is absent, and runs a hydration self-test that calls `_ngram_guarded_sample` with a two-token history to deliberately cross the exact branch that previously failed before token three. v72 diagnostics and all v71/v70/v69 programming behavior remain preserved.
+**Repair:** v73 hydrates immutable v72, restores NumPy in the shared namespace after the full inherited v72 chain loads, fail-closes if the n-gram sampler is absent, and runs a hydration self-test that calls `_ngram_guarded_sample` with a two-token history to deliberately cross the exact branch that previously failed before token three. v72 diagnostics and all v71/v70/v69 programming behavior remain preserved.
 
 **Verification:** authenticated request `web:mu621xd9:9391101464251047456` hydrated v73, crossed the former two-token failure threshold, decoded 134 tokens / 509 characters through at least decode step 128, completed on the first candidate with `gapCount=0`, valid paired code fences, runnable Python, and the requested explanation. No bounded repair or degeneration guard was needed.
 
@@ -122,7 +145,7 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 **Architecture reconciliation:** this is Brain/LALM ownership. Chat correctly relayed/persisted the model failure. The canonical semantic artifact/repair owner already exists in the v27 lineage, so v70 extends that owner rather than adding another repair system. The inherited v17 generation loop already consults a dynamic completion-gap helper before accepting EOS. v70 hardens that boundary specifically for empty/bare coding fences and normalizes v27 repair conditioning when the prior candidate consists only of an opening Python fence. v69 context compaction remains preserved.
 
-**Repair:** a bare opening `python`/`py` fence can no longer lose `complete-code` or `requested-explanation` completion gaps. When `runnable-code` repair follows such a candidate, the broken assistant fence is removed from repair-history conditioning and the correction pass is instructed to continue inside the already-visible fence, emit executable Python instead of another opener, close that fence once, then provide the requested explanation. A bounded `coding-candidate-terminal` camera classifies first/repair terminal source and counts without logging response text; `coding-fence-repair-normalized` records activation of the fence-continuation normalization.
+**Repair:** a bare opening `python`/`py` fence can no longer lose `complete-code` or `requested-explanation` completion gaps. When `runnable-code` repair follows such a candidate, the broken assistant fence is removed from repair-history conditioning and the correction pass is instructed to continue inside the already-visible fence, emit executable code, closes the fence once, then provide the requested explanation. A bounded `coding-candidate-terminal` camera classifies first/repair terminal source and counts without logging response text; `coding-fence-repair-normalized` records activation of the fence-continuation normalization.
 
 **Diagnostic refinement:** live v70 hydration/self-test showed the inherited pre-v70 completion checker already returned both `complete-code` and `requested-explanation` for the bare fence. Therefore the original early terminal was not caused by the gap checker mistakenly accepting the fence as complete.
 
