@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.81
-REVISION=2.1.81-hot-lightweight-programming-prefill-v69
+VERSION=2.1.82
+REVISION=2.1.82-hot-coding-terminal-repair-v70
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
