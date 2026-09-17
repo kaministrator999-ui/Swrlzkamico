@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.67
-REVISION=2.1.67-hot-trajectory-bound-response-planning-v56
+VERSION=2.1.68
+REVISION=2.1.68-hot-inherited-base-namespace-repair-v57
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
