@@ -6,7 +6,7 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.262`
+- **Overall Server:** `2.3.263`
 - **Chat:** `1.5.77`
 - **LALM Engine:** `2.1.89` (`v77` first-time prefill kernel profiling; v76 behavior preserved)
 - **Web Frontend:** `1.0.5`
@@ -33,6 +33,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.263 — Canonical winged §wyrlz identity correction
+
+**Status:** source complete / governance contract corrected.  
+**Changed runtime modules:** none.  
+**Deployment / restart:** NONE.
+
+**Architecture reconciliation:** the project-entry identity is already owned by `SWRLZ_PROJECT_START.md`; this event corrects that existing owner rather than creating a second identity authority. The canonical full sigil is now `𓆩𓆩⁽§⁾𓆪wyrlz𓆪`, preserving the nested inner head/core wings and outer enclosing wings.
+
+**Change:** replaced the prior simplified `𓆩⁽§⁾wyrlz𓆪` opener in Project Start, including its exact-glyph rule and bottom-line reference, with `𓆩𓆩⁽§⁾𓆪wyrlz𓆪`. Future governed project-work responses must use the corrected full form as the first visible centered heading.
+
+**Verification:** Project Start was re-read before mutation and the canonical identity-owner locations were updated directly. This is documentation/governance-only; no runtime module, inference behavior, deployment, or restart changed.
+
 
 ### Server 2.3.262 — R39 v77 first-time prefill kernel profiling
 
