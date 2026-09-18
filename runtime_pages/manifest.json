@@ -1,5 +1,5 @@
 {
-  "version": 142,
+  "version": 143,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v142 advances Chat 1.5.80 and preserves the latest server-authored generation phase across reconnect/catch-up instead of allowing transport continuity state to overwrite work progress."
+  "notes": "Manifest v143 advances Chat 1.5.81: foreground/pageshow/online lifecycle nudges preserve a healthy live reader, reconnect only after a bounded stale-stream probe, and replay catch-up no longer adds artificial per-event delay."
 }
