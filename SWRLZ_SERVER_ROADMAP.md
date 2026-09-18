@@ -6,7 +6,7 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.275`
+- **Overall Server:** `2.3.276`
 - **Chat:** `1.5.81`
 - **LALM Engine:** `2.1.97` (`v85` live research-planner status stream; v84 scope and v83 batching preserved)
 - **Web Frontend:** `1.0.5`
@@ -33,6 +33,21 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.276 — fail closed when durable transcript outlives local model state
+
+**Status:** source complete/static source verified; stable-server deployment and live acceptance pending.  
+**Chat:** `1.5.81` unchanged. **LALM Engine:** `2.1.97` unchanged.  
+**Deployment / restart:** NONE.
+
+**Evidence / cause:** request `web:mu7j7fb7:22190333891009728307` reached PREFILL seq 24 (288/3569), then the browser lost the stream. A later resume POST carried `resumeAfterSeq=24`, but production admitted the same request into a new planner/inference path instead of attaching to live model state. Runtime evidence also shows the original long R39 invocation exceeded Vercel's 300-second execution window. The durable transcript persists response-position facts, not KV/model execution state; therefore it cannot itself continue an inference after the owning invocation is gone.
+
+**Architecture reconciliation:** the canonical Human/server continuity owner remains `api/chat_resume_sessions.py`. Durable transcript state is synchronization authority, not permission to recreate model ownership. No Mask or Brain workaround was added.
+
+**Change:** when no live in-memory session exists but a matching durable transcript checkpoint does, the resumable owner now returns the existing continuity handoff path regardless of whether the stored owner ID happens to equal the current process identity. It no longer starts duplicate/restarted inference under the same request ID.
+
+**Verification:** source mutation completed against the current stable owner. This prevents false restart-as-resume, but it does not make model/KV state durable across Vercel's execution ceiling. Long generations that exceed the platform invocation lifetime still require a compute-lifetime/architecture solution (or enough inference acceleration to finish inside the ceiling). Live acceptance requires deployment of the stable-server change.
+
 
 ### Server 2.3.275 — preserve healthy foreground stream + fast factual catch-up
 
