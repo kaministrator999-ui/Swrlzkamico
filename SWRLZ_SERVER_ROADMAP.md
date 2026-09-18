@@ -6,8 +6,8 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.263`
-- **Chat:** `1.5.77`
+- **Overall Server:** `2.3.264`
+- **Chat:** `1.5.79`
 - **LALM Engine:** `2.1.89` (`v77` first-time prefill kernel profiling; v76 behavior preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
@@ -33,6 +33,23 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.264 — Chat canonical winged identity propagation
+
+**Status:** runtime-hot source complete; live/user-visible refresh acceptance pending.  
+**Chat:** `1.5.78 → 1.5.79`.  
+**LALM Engine:** `2.1.89` unchanged.  
+**Runtime manifest:** `140 → 141`.  
+**Deployment / restart:** NONE.
+
+**Triggering evidence:** mobile screenshots showed Chat still rendering legacy/simplified §wyrlz marks in the drawer/header and assistant identity after Project Start had established the canonical full `𓆩𓆩⁽§⁾𓆪wyrlz𓆪` sigil.
+
+**Architecture reconciliation:** this is Mask/Chat presentation ownership. Existing Chat identity writers were extended in place: base Chat markup, Ice Dragon transcript crest, transcript-brand compatibility path, and the latent sigil/activity decorator. No new identity owner was created and Brain/LALM semantics are unchanged.
+
+**Change:** visible Chat identity surfaces now use the canonical full winged sigil. Legacy activity-decorator variants were normalized to the same canonical value so they cannot reintroduce an older emblem if that path is activated. Manifest 141 provides a fresh runtime asset revision.
+
+**Verification:** mutated runtime sources were fetched from their current owners before mutation; version authorities were re-read immediately before assignment. Source/static text verification is complete. Live browser refresh acceptance remains pending. No deployment or restart was performed.
+
 
 ### Server 2.3.263 — Canonical winged §wyrlz identity correction
 
