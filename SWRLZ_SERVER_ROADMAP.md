@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.272`
+- **Overall Server:** `2.3.273`
 - **Chat:** `1.5.80`
-- **LALM Engine:** `2.1.95` (`v83` updated batch-prefill adapter reinstall; v82 source preserved)
+- **LALM Engine:** `2.1.96` (`v84` research-planner scope/query repair; v83 batching preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,22 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.273 — R39 v84 research-planner scope/query repair
+
+**Status:** runtime-hot source complete/static source verified; live v84 acceptance pending.  
+**LALM Engine:** `2.1.95 → 2.1.96` / `v84`.  
+**Chat:** `1.5.80` unchanged. **Online Research:** `1.0.0` unchanged.  
+**Deployment / restart:** NONE.
+
+**Evidence:** user-visible completion exposed the planner JSON itself as the assistant answer. Production request `web:mu7dwmlm:25975713361057552668` confirms the internal planner completed with 223 JSON characters, then the outer synthesis rendered a 3,569-token prompt but immediately replayed the same 223-character artifact. The internal planner and outer synthesis shared the same request identity. The planner also produced object entries containing only `max`, which v50 stringified into bogus search queries. Prefill batch events themselves were present and later replayed to the Activity log; the screenshot confirms the per-block entries are not deleted, but foreground/reconnect timing can delay their presentation.
+
+**Architecture reconciliation:** Brain owns semantic planning; Human/server owns authorized retrieval; Mask only presents/replays progress. v84 extends the existing Brain planner rather than adding client-side query inference or fake prefill steps.
+
+**Change:** v84 gives the internal planner a bounded derived planner scope so its request-scoped inference state cannot collide with the outer user synthesis. Planner queries now accept strings or explicit query-bearing object fields only; malformed objects such as `{max:200}` are rejected and fall back to the exact user request instead of being stringified. A bounded planner-scope camera records activation/query fallback without prompt content. v83 batch-prefill behavior remains intact.
+
+**Verification:** v84 overlay and entrypoint fetched back with zero literal two-character `\\n` source escapes after an immediately repaired source-newline mutation defect. Source identity, query normalization, planner scoping, and v84 loader references are present. Live worker hydration plus an online retry showing a distinct planner scope, a real query, retrieval, and a non-planner final synthesis remain pending.
+
 
 ### Server 2.3.272 — Chat reconnect progress authority repair
 
