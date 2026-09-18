@@ -197,7 +197,9 @@ def install(chat_extensions) -> None:
                 if callable(planner):
                     try:
                         # Internal planner control data: never append planner events to the user transcript.
-                        print("SWRLZ_BRAIN_RESEARCH_ADAPTER " + json.dumps({"contract":"swrlz-brain-research-adapter-camera-v1","stage":"planner-enter","requestId":request_id,"profileId":str(payload.get("profileId") or "")[:96],"onlineResearchRequested":bool(payload.get("onlineResearchRequested")),"hasOnlineEvidence":bool(payload.get("onlineEvidence"))}, ensure_ascii=False, separators=(",", ":")))\n                        plan = planner(payload)\n                        print("SWRLZ_BRAIN_RESEARCH_ADAPTER " + json.dumps({"contract":"swrlz-brain-research-adapter-camera-v1","stage":"planner-exit","requestId":request_id,"planType":type(plan).__name__,"queryCandidateCount":len(plan.get("queries", [])) if isinstance(plan, dict) and isinstance(plan.get("queries"), list) else 0}, ensure_ascii=False, separators=(",", ":")))
+                        print("SWRLZ_BRAIN_RESEARCH_ADAPTER " + json.dumps({"contract":"swrlz-brain-research-adapter-camera-v1","stage":"planner-enter","requestId":request_id,"profileId":str(payload.get("profileId") or "")[:96],"onlineResearchRequested":bool(payload.get("onlineResearchRequested")),"hasOnlineEvidence":bool(payload.get("onlineEvidence"))}, ensure_ascii=False, separators=(",", ":")))
+                        plan = planner(payload)
+                        print("SWRLZ_BRAIN_RESEARCH_ADAPTER " + json.dumps({"contract":"swrlz-brain-research-adapter-camera-v1","stage":"planner-exit","requestId":request_id,"planType":type(plan).__name__,"queryCandidateCount":len(plan.get("queries", [])) if isinstance(plan, dict) and isinstance(plan.get("queries"), list) else 0}, ensure_ascii=False, separators=(",", ":")))
                     except Exception as exc:
                         plan = {"queries": [str(payload.get("prompt") or "")], "plannerFallback": True, "plannerError": type(exc).__name__}
                 else:
