@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.91
-REVISION=2.1.91-hot-inherited-research-call-camera-v79
+VERSION=2.1.92
+REVISION=2.1.92-hot-research-telemetry-scope-v80
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
