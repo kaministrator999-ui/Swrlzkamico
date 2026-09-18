@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.273`
+- **Overall Server:** `2.3.274`
 - **Chat:** `1.5.80`
-- **LALM Engine:** `2.1.96` (`v84` research-planner scope/query repair; v83 batching preserved)
+- **LALM Engine:** `2.1.97` (`v85` live research-planner status stream; v84 scope and v83 batching preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,21 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.274 — live research-planner prefill telemetry
+
+**Status:** source complete/static source verified; live acceptance blocked on stable-server activation.  
+**LALM Engine:** `2.1.96 → 2.1.97` / `v85`. **Chat:** `1.5.80` unchanged.  
+**Deployment / restart:** NONE.
+
+**Evidence / cause:** the user's Activity panel did not receive planner prefill batches immediately after Send. The Brain already produced real PREFILL STATUS events during the internal online-research planning inference, but `plan_research()` consumed those events privately and returned only the final plan. The server therefore exposed only the coarse `RESEARCH_PLANNING` phase until planning completed; later replay could reveal generation telemetry, creating the delayed appearance.
+
+**Architecture reconciliation:** Brain remains owner of real inference/prefill telemetry; Human/server owns stream relay; Mask remains presentation-only. No fake client timers or synthetic batch counters were added.
+
+**Change:** R39 v85 adds `plan_research_stream()`, preserving v84 planner request isolation/query normalization while exposing only real internal planner STATUS events and the final structured plan. The stable server adapter now consumes that stream through the existing heartbeat wrapper and relays planner STATUS/PREFILL events under the outer request identity before retrieval begins. Planner DELTA text remains private and is not surfaced as assistant output.
+
+**Verification:** v85 overlay/entrypoint and server adapter fetched back; loader references v85; source-newline check is clean; existing v83 batch adapter remains preserved. Because the relay change is in the stable `main` server boundary, production cannot exhibit this behavior until an explicitly approved deployment activates that source. No deployment was performed.
+
 
 ### Server 2.3.273 — R39 v84 research-planner scope/query repair
 
