@@ -185,6 +185,9 @@ def install(chat_extensions) -> None:
             # chat_extensions._local_stream(), so +ONLINE reached R39 policy but never
             # executed server-authorized retrieval.
             research_requested = bool(session.get("onlineResearchRequested"))
+            # Preserve admitted capability explicitly across the Human -> Brain seam.
+            payload = dict(payload)
+            payload["onlineResearchRequested"] = research_requested
             if research_requested:
                 engine, source = chat_extensions._engine()
                 planning_started = time.perf_counter()
@@ -199,7 +202,6 @@ def install(chat_extensions) -> None:
                         plan = {"queries": [str(payload.get("prompt") or "")], "plannerFallback": True, "plannerError": type(exc).__name__}
                 else:
                     plan = {"queries": [str(payload.get("prompt") or "")], "plannerFallback": True, "plannerError": "PLAN_RESEARCH_UNAVAILABLE"}
-                payload = dict(payload)
                 # Normalize planner output before it crosses the stable retrieval boundary.
                 # R39 may return structured/non-string query candidates; retrieval accepts
                 # only bounded human-readable query strings. Fall back to the exact prompt.
@@ -218,7 +220,10 @@ def install(chat_extensions) -> None:
                         if len(queries) >= 6:
                             break
                 if not queries:
-                    fallback_query = " ".join(str(payload.get("prompt") or "").split())[:500]
+                    requested = " ".join(str(plan.get("requestedInformation") or "").split()) if isinstance(plan, dict) else ""
+                    target = " ".join(str(plan.get("target") or "").split()) if isinstance(plan, dict) else ""
+                    semantic_fallback = " ".join(part for part in (requested, target) if part).strip()
+                    fallback_query = (semantic_fallback or " ".join(str(payload.get("prompt") or "").split()))[:500]
                     queries = [fallback_query] if fallback_query else []
                     if isinstance(plan, dict):
                         plan["plannerFallback"] = True
