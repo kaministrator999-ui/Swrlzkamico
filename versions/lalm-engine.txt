@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.89
-REVISION=2.1.89-hot-prefill-kernel-profile-v77
+VERSION=2.1.90
+REVISION=2.1.90-hot-online-research-handoff-camera-v78
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
