@@ -1,5 +1,5 @@
 {
-  "version": 143,
+  "version": 144,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v143 advances Chat 1.5.81: foreground/pageshow/online lifecycle nudges preserve a healthy live reader, reconnect only after a bounded stale-stream probe, and replay catch-up no longer adds artificial per-event delay."
+  "notes": "Manifest v144 advances Chat 1.5.82: the sidebar version surface now enumerates every module authority declared by VERSION.txt instead of a fixed four-module subset."
 }
