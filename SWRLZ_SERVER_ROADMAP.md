@@ -6,8 +6,8 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.274`
-- **Chat:** `1.5.80`
+- **Overall Server:** `2.3.275`
+- **Chat:** `1.5.81`
 - **LALM Engine:** `2.1.97` (`v85` live research-planner status stream; v84 scope and v83 batching preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
@@ -33,6 +33,21 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.275 — preserve healthy foreground stream + fast factual catch-up
+
+**Status:** runtime-hot source complete/static source verified; live client acceptance pending.  
+**Chat:** `1.5.80 → 1.5.81`. **Manifest:** `142 → 143`. **LALM Engine:** `2.1.97` unchanged.  
+**Deployment / restart:** NONE.
+
+**Evidence / cause:** user-visible Activity showed repeated Reconnecting entries while R39 prefill remained healthy. Browser camera evidence recorded a mobile `pagehide` lifecycle event. The canonical continuity controller also proved that every foreground/pageshow/online nudge immediately cancelled the active reader, manufacturing a reconnect even when the stream remained healthy. Replay then deliberately slept 24 ms per DELTA and 4 ms per non-DELTA event, making state recovery slower than necessary.
+
+**Architecture reconciliation:** extended the existing Mask continuity owner `web/chat_background_resume_v2.js`; no new continuity subsystem and no Brain/server workaround.
+
+**Change:** continuity controller v8 preserves an active reader on foreground/pageshow/online. A lifecycle nudge records a probe but does not reconnect while recent stream activity is healthy. Only a reader that remains stale for at least 12 seconds and survives a further 900 ms probe is cancelled for same-generation resume. Genuine stream failure still enters the existing resume loop immediately. Replay catch-up remains ordered/factual but removes artificial per-event sleeps so the client converges on current server state as fast as events can be consumed. Continuity work phase remains separate from server-authored generation phase.
+
+**Verification:** source fetched back with controller v8, zero old unconditional `foreground-resume` cancellation, stale threshold/probe present, and catch-up delay declared zero. Existing literal `\\n` occurrences are intentional JavaScript string/newline protocol literals, not source corruption. Live browser acceptance requires a fresh manifest-143 client and an actual background/foreground test.
+
 
 ### Server 2.3.274 — live research-planner prefill telemetry
 
