@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.266`
+- **Overall Server:** `2.3.267`
 - **Chat:** `1.5.79`
-- **LALM Engine:** `2.1.90` (`v78` online-research handoff camera; v77 behavior preserved)
+- **LALM Engine:** `2.1.91` (`v79` inherited research-call camera; v78 behavior preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,22 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.267 — R39 v79 inherited research-call camera
+
+**Status:** runtime-hot source complete/static source verified; live activation + retry evidence pending.  
+**LALM Engine:** `2.1.90 → 2.1.91` / `v79`.  
+**Chat:** `1.5.79` unchanged.  
+**Deployment / restart:** NONE.
+
+**Triggering evidence:** production retry `web:mu773n8j:18156983961906926818` again showed Mask/Human/Brain adapter online=true while inherited v48 research-policy logged false. Server 2.3.266's main-boundary camera could not execute on the unchanged stable production deployment, while runtime-hot v78 remained active.
+
+**Architecture reconciliation:** lineage tracing found the critical inherited seam in v50. Its semantic research planner intentionally clones the outer payload, rewrites `profileId` to `LALM`, removes research/evidence fields, and invokes captured `_V49_GENERATE` for a bounded planning inference. Because v49 chains through v48, the v48 `research-policy=false` camera can therefore describe this internal planner pass rather than the user's outer request. Existing v50/v49 seam is instrumented; no new routing authority is introduced.
+
+**Change:** v79 wraps the captured `_V49_GENERATE` callable used by v50 and emits bounded `SWRLZ_R39_INHERITED_RESEARCH_CALL` telemetry containing request ID, profile ID/derived online state, presence-only research plan/evidence flags, and generation max-token budget. It changes no routing, research, retrieval, or model semantics and preserves v78/v77 behavior.
+
+**Verification:** v79 overlay and active entrypoint were fetched back. Both contain zero literal `\\n` source escapes. Entrypoint pins the v79 overlay commit and reports the v79 camera during hydration. Live activation and one online retry remain pending.
+
 
 ### Server 2.3.266 — Brain → R39 actual call-boundary research camera
 
