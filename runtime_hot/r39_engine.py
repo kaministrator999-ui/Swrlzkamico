@@ -1,4 +1,4 @@
-"""Hot R39 entrypoint v81 with batch-prefill fallback detail over preserved v80 behavior."""
+"""Hot R39 entrypoint v82 with direct batch-prefill exception camera over preserved v81 behavior."""
 from __future__ import annotations
 import json,time,urllib.request
 
@@ -18,15 +18,17 @@ _V80_COMMIT="44f154cf6a4ae46eb232665f36815eec2b2d8496"
 _V80_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V80_COMMIT}/runtime_hot/r39_engine_v80_overlay.py"
 _V81_COMMIT="94d09dce6d03d3a51632f8b6d830265481a26372"
 _V81_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V81_COMMIT}/runtime_hot/r39_engine_v81_overlay.py"
+_V82_BATCH_COMMIT="a0a7705af9ade9aa6ad35b94646cff453a6cedaf"
+_V82_BATCH_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V82_BATCH_COMMIT}/runtime_hot/r39_batch_prefill.py"
 
 def _entry(stage,**fields):
-    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v81","atUnixMs":int(time.time()*1000)}
+    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v82","atUnixMs":int(time.time()*1000)}
     for k,v in fields.items():
         if v is None or isinstance(v,(str,int,float,bool)):record[str(k)[:64]]=v
     print("SWRLZ_R39_HOT_ENTRY "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
 
 try:
-    _entry("fetch-start",sourceCommit=_V74_COMMIT,overlayCommit=_V75_COMMIT,v76OverlayCommit=_V76_COMMIT,v77OverlayCommit=_V77_COMMIT,v78OverlayCommit=_V78_COMMIT,v79OverlayCommit=_V79_COMMIT,v80OverlayCommit=_V80_COMMIT,v81OverlayCommit=_V81_COMMIT)
+    _entry("fetch-start",sourceCommit=_V74_COMMIT,overlayCommit=_V75_COMMIT,v76OverlayCommit=_V76_COMMIT,v77OverlayCommit=_V77_COMMIT,v78OverlayCommit=_V78_COMMIT,v79OverlayCommit=_V79_COMMIT,v80OverlayCommit=_V80_COMMIT,v81OverlayCommit=_V81_COMMIT,v82BatchCommit=_V82_BATCH_COMMIT)
     _request=urllib.request.Request(_V74_URL,headers={"User-Agent":"swrlz-r39-v75-loader"})
     with urllib.request.urlopen(_request,timeout=20) as _response:_source=_response.read(4000001)
     if len(_source)>4000000:raise RuntimeError("R39_V74_SOURCE_TOO_LARGE")
@@ -75,6 +77,12 @@ try:
     _entry("v81-overlay-fetch-ok",overlayBytes=len(_v81_overlay))
     exec(compile(_v81_overlay.decode("utf-8"),_V81_URL+"#v81-overlay","exec"),globals(),globals())
 
+    _v82_batch_request=urllib.request.Request(_V82_BATCH_URL,headers={"User-Agent":"swrlz-r39-v82-batch"})
+    with urllib.request.urlopen(_v82_batch_request,timeout=20) as _response:_v82_batch_source=_response.read(1000001)
+    if len(_v82_batch_source)>1000000:raise RuntimeError("R39_V82_BATCH_SOURCE_TOO_LARGE")
+    _entry("v82-batch-fetch-ok",batchBytes=len(_v82_batch_source))
+    exec(compile(_v82_batch_source.decode("utf-8"),_V82_BATCH_URL+"#v82-batch","exec"),_batch.__dict__,_batch.__dict__)
+
     _inspect=inspect_engine() if callable(globals().get("inspect_engine")) else {}
     _self_test=_inspect.get("programmingContinuationSemanticSelfTest") if isinstance(_inspect,dict) else None
     if not isinstance(_self_test,dict) or not _self_test.get("ok"):
@@ -88,6 +96,6 @@ try:
            programmingProfile=callable(globals().get("_programming_profile")),
            camera=callable(globals().get("_camera")),
            ngramSampler=callable(globals().get("_ngram_guarded_sample")),
-           artifactContinuation=True,continuationProvenance=True,runnableEditSemanticGate=True,coldPrefillProfileCamera=True,prefillKernelProfileCamera=True,onlineResearchHandoffCamera=True,inheritedResearchCallCamera=True,researchTelemetryScopeCamera=True,batchFallbackDetailCamera=True,selfTest=True)
+           artifactContinuation=True,continuationProvenance=True,runnableEditSemanticGate=True,coldPrefillProfileCamera=True,prefillKernelProfileCamera=True,onlineResearchHandoffCamera=True,inheritedResearchCallCamera=True,researchTelemetryScopeCamera=True,batchFallbackDetailCamera=True,batchFallbackExceptCamera=True,selfTest=True)
 except Exception as exc:
     _entry("hydrate-failed",errorType=type(exc).__name__,errorMessage=str(exc)[:240]);raise
