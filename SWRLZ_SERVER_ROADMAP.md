@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.270`
+- **Overall Server:** `2.3.271`
 - **Chat:** `1.5.79`
-- **LALM Engine:** `2.1.94` (`v82` direct batch-prefill exception camera; v81 behavior preserved)
+- **LALM Engine:** `2.1.95` (`v83` updated batch-prefill adapter reinstall; v82 source preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,22 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.271 — R39 v83 updated batch-prefill adapter reinstall
+
+**Status:** runtime-hot source complete/static source verified; live v83 activation and fallback-signature acceptance pending.  
+**LALM Engine:** `2.1.94 → 2.1.95` / `v83`.  
+**Chat:** `1.5.79` unchanged.  
+**Deployment / restart:** NONE.
+
+**Triggering evidence:** production status logs proved the v82 batch source commit fetched successfully and the entrypoint advertised `batchFallbackExceptCamera=true`, but hydration still identified `2.1.93-hot-batch-fallback-detail-v81` and no v82 exception event emitted. This showed source hydration alone did not replace the already-installed batch adapter closure.
+
+**Architecture reconciliation:** the existing batch-prefill adapter remains the canonical performance owner. v83 reuses its public `install(_impl)` seam after hydrating the updated v82 module, so `_impl._forward_hot` and `_impl._generate_hot_events` are rebound through the updated adapter rather than adding another inference owner.
+
+**Change:** after v82 batch source hydration, the runtime entrypoint now calls the existing adapter installer, requires its `installed` receipt, emits bounded `v83-batch-reinstall-ok` activation evidence, and sets runtime identity to `2.1.95-hot-batch-reinstall-v83`. No model math, batch block size, fallback policy, prompt semantics, or decode policy changes.
+
+**Verification:** entrypoint fetch-back confirms the reinstall seam and v83 runtime identity; literal two-character `\\n` source count is zero. Live worker activation and a completed inference are still required before claiming the exception camera or performance path fixed live.
+
 
 ### Server 2.3.270 — R39 v82 direct batch-prefill exception camera
 
