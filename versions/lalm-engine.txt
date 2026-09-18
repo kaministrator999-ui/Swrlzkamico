@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.90
-REVISION=2.1.90-hot-online-research-handoff-camera-v78
+VERSION=2.1.91
+REVISION=2.1.91-hot-inherited-research-call-camera-v79
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
