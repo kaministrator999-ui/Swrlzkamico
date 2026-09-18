@@ -1,5 +1,5 @@
 {
-  "version": 139,
+  "version": 140,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v139 activates Chat 1.5.77 Online research control through the cooperative runtime loader. The existing chat_online_research_v1.js checkbox is loaded below the composer, defaults checked, and relays +ONLINE to the already-live server-authorized online research capability. Online Research 1.0.0 remains unchanged."
+  "notes": "Manifest v140 advances Chat 1.5.78 with a live traceroute-style Activity Log: numbered execution hops, per-hop elapsed timing, active/failure state, and expanded safe reasoning/action telemetry from the existing trail contract. Raw hidden chain-of-thought is not exposed or persisted."
 }
