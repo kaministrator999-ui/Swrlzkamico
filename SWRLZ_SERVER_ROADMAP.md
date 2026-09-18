@@ -6,7 +6,7 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.276`
+- **Overall Server:** `2.3.277`
 - **Chat:** `1.5.81`
 - **LALM Engine:** `2.1.97` (`v85` live research-planner status stream; v84 scope and v83 batching preserved)
 - **Web Frontend:** `1.0.5`
@@ -33,6 +33,20 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+
+### Server 2.3.277 — bounded relevance-first Online Research evidence
+
+**Status:** runtime-hot source complete; live request acceptance pending.  
+**Online Research:** `1.0.0 → 1.0.1`. **LALM Engine:** `2.1.97` unchanged. **Chat:** `1.5.81` unchanged.  
+**Deployment / restart:** NONE.
+
+**Architecture reconciliation:** extended the existing runtime-hot Online Research reasoner; stable Human/server network authority and Brain synthesis ownership remain unchanged. No second search subsystem was created.
+
+**Change:** research now ranks/deduplicates search candidates before admission, caps synthesis evidence at eight items, fetches only the strongest three-page frontier, and reduces fetched page text to a relevance-centered passage capped at 1,400 characters. Search snippets are bounded to 700 characters. Up to four planner queries execute. New `EVIDENCE_BUDGET` camera telemetry reports queries executed, search results inspected, pages fetched, external characters inspected, evidence items admitted, and evidence characters admitted without logging hidden reasoning.
+
+**Verification:** runtime source and version authorities were published. Live acceptance still requires a fresh online request showing Online Research 1.0.1 and the evidence-budget camera. This event intentionally does not claim to explain the separate 3,569-token synthesis prefill observed when retrieval returned zero evidence; prompt-composition attribution remains a distinct diagnostic target.
+
 
 ### Server 2.3.276 — fail closed when durable transcript outlives local model state
 
