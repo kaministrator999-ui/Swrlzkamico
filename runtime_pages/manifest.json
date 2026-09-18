@@ -1,5 +1,5 @@
 {
-  "version": 141,
+  "version": 142,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v141 advances Chat 1.5.79 and canonicalizes visible Chat identity surfaces to the full winged 𓆩𓆩⁽§⁾𓆪wyrlz𓆪 sigil."
+  "notes": "Manifest v142 advances Chat 1.5.80 and preserves the latest server-authored generation phase across reconnect/catch-up instead of allowing transport continuity state to overwrite work progress."
 }
