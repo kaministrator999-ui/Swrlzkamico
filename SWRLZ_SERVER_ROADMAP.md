@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.268`
+- **Overall Server:** `2.3.269`
 - **Chat:** `1.5.79`
-- **LALM Engine:** `2.1.92` (`v80` research telemetry scope repair; v79 behavior preserved)
+- **LALM Engine:** `2.1.93` (`v81` batch-prefill fallback-detail camera; v80 behavior preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,22 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.269 — R39 v81 batch-prefill fallback-detail camera
+
+**Status:** runtime-hot source complete/static source verified; live fallback-detail acceptance pending.  
+**LALM Engine:** `2.1.92 → 2.1.93` / `v81`.  
+**Chat:** `1.5.79` unchanged.  
+**Deployment / restart:** NONE.
+
+**Triggering evidence:** production request `web:mu781p9s:33908104923143565645` measured TTFT 324045 ms for 970 uncached tokens, prefill 324.03 s / 2.99 tok/s, zero batch-prefill tokens/blocks, 970 serial-prefill tokens, and 11 batch fallbacks; decode was 96 tokens / 47.163 s / 2.04 tok/s. Earlier 705-token planner runs showed the same complete fallback pattern. Prompt rendering itself remained millisecond-scale, so the dominant delay is inference prefill, not prompt construction or retrieval.
+
+**Architecture reconciliation:** canonical performance owner remains `runtime_hot/r39_batch_prefill.py` installed through the existing R39 runtime-hot lineage. That owner already records a bounded `lastBatchFallback` internally, but the production PERF_METRICS surface exposes only the fallback count. Existing evidence proves total batch-path failure but not its exception class; changing kernel/math behavior before exposing that detail would be guesswork.
+
+**Change:** v81 adds a bounded persistent `SWRLZ_R39_BATCH_FALLBACK` camera at the PERF_METRICS boundary and emits the existing `lastBatchFallback` field (exception type + bounded message only). No prompt text, token IDs, logits, weights, hidden reasoning, batching policy, model math, or decode semantics change.
+
+**Verification:** v81 overlay and entrypoint were fetched back and contain zero literal `\\n` source escapes. Entrypoint pins the v81 overlay commit and advertises the camera. Live v81 hydration plus one completed inference with a fallback are still required before selecting the actual batch-prefill repair.
+
 
 ### Server 2.3.268 — R39 v80 research telemetry scope repair
 
