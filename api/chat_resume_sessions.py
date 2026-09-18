@@ -183,11 +183,39 @@ def install(chat_extensions) -> None:
                 else:
                     plan = {"queries": [str(payload.get("prompt") or "")], "plannerFallback": True, "plannerError": "PLAN_RESEARCH_UNAVAILABLE"}
                 payload = dict(payload)
+                # Normalize planner output before it crosses the stable retrieval boundary.
+                # R39 may return structured/non-string query candidates; retrieval accepts
+                # only bounded human-readable query strings. Fall back to the exact prompt.
+                raw_queries = plan.get("queries", []) if isinstance(plan, dict) else []
+                queries = []
+                if isinstance(raw_queries, list):
+                    for item in raw_queries:
+                        if isinstance(item, str):
+                            query = " ".join(item.split())[:500]
+                        elif isinstance(item, dict):
+                            query = " ".join(str(item.get("query") or item.get("q") or item.get("text") or "").split())[:500]
+                        else:
+                            query = ""
+                        if query and query not in queries:
+                            queries.append(query)
+                        if len(queries) >= 6:
+                            break
+                if not queries:
+                    fallback_query = " ".join(str(payload.get("prompt") or "").split())[:500]
+                    queries = [fallback_query] if fallback_query else []
+                    if isinstance(plan, dict):
+                        plan["plannerFallback"] = True
+                        plan["plannerFallbackReason"] = "NO_VALID_STRING_QUERIES"
+                if not isinstance(plan, dict):
+                    plan = {}
+                plan["queries"] = queries
                 payload["researchPlan"] = plan
-                payload["researchQueries"] = plan.get("queries", [])
-                append_event(session, chat._bridge_event(seq, "STATUS", request_id, phase="RESEARCH_TARGET_RESOLVED", reason=f"Research target resolved in {round((time.perf_counter()-planning_started)*1000)} ms; preparing {len(plan.get('queries', []))} bounded query set(s).", categories=["ONLINE_RESEARCH", "SEMANTIC_TARGET_RESOLUTION"]))
+                payload["researchQueries"] = queries
+                append_event(session, chat._bridge_event(seq, "STATUS", request_id, phase="RESEARCH_TARGET_RESOLVED", reason=f"Research target resolved in {round((time.perf_counter()-planning_started)*1000)} ms; preparing {len(queries)} bounded query set(s).", categories=["ONLINE_RESEARCH", "SEMANTIC_TARGET_RESOLUTION"]))
                 seq += 1
-                append_event(session, chat._bridge_event(seq, "STATUS", request_id, phase="SOURCE_FETCH_STARTED", reason="Executing bounded server-authorized online retrieval. Search results and fetched pages remain untrusted evidence."))
+                append_event(session, chat._bridge_event(seq, "STATUS", request_id, phase="QUERY_PLAN_READY", reason=("Search query ready: " + queries[0][:180]) if queries else "Research target resolved, but no safe query text was available.", categories=["ONLINE_RESEARCH", "QUERY_PLAN"]))
+                seq += 1
+                append_event(session, chat._bridge_event(seq, "STATUS", request_id, phase="SOURCE_FETCH_STARTED", reason="Searching online sources now. Retrieved pages remain untrusted evidence until evaluated."))
                 seq += 1
                 bundle = chat_extensions.run_online_research(payload)
                 payload["onlineEvidence"] = chat_extensions._research_context(bundle)
