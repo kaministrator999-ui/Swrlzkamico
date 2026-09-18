@@ -1,5 +1,5 @@
 {
-  "version": 138,
+  "version": 139,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v138 updates the canonical Chat sidebar/header brand from §wyrlz to 𓆩⁽§⁾wyrlz𓆪 while preserving Server chat subtitle and the existing assistant response emblem."
+  "notes": "Manifest v139 activates Chat 1.5.77 Online research control through the cooperative runtime loader. The existing chat_online_research_v1.js checkbox is loaded below the composer, defaults checked, and relays +ONLINE to the already-live server-authorized online research capability. Online Research 1.0.0 remains unchanged."
 }
