@@ -304,9 +304,11 @@ def install(chat_extensions) -> None:
             remote_fp = str(remote.get("fingerprint") or "")
             if remote_fp and remote_fp != fp:
                 raise chat.BridgeError(409, "REQUEST_ID_REUSE_MISMATCH", "This requestId already owns a different durable generation payload.")
-            if str(remote.get("ownerId") or "") != OWNER_ID:
-                code = "GENERATION_SESSION_REMOTE_TERMINAL" if remote.get("terminal") else "GENERATION_SESSION_REMOTE_OWNER"
-                raise chat.BridgeError(409, code, "This generation is owned by another worker. Synchronize through the shared transcript instead of starting a duplicate generation.")
+            # A durable checkpoint without a live in-memory session is never resumable
+            # model state, even if its ownerId equals this process identity. Starting
+            # again would duplicate/restart inference under the same requestId.
+            code = "GENERATION_SESSION_REMOTE_TERMINAL" if remote.get("terminal") else "GENERATION_SESSION_REMOTE_OWNER"
+            raise chat.BridgeError(409, code, "This generation has durable transcript state but no live local model session. Synchronize through the shared transcript instead of starting duplicate inference.")
         with lock:
             existing = sessions.get(request_id)
             if existing is not None:
