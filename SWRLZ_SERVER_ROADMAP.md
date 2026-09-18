@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.269`
+- **Overall Server:** `2.3.270`
 - **Chat:** `1.5.79`
-- **LALM Engine:** `2.1.93` (`v81` batch-prefill fallback-detail camera; v80 behavior preserved)
+- **LALM Engine:** `2.1.94` (`v82` direct batch-prefill exception camera; v81 behavior preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,22 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.270 — R39 v82 direct batch-prefill exception camera
+
+**Status:** runtime-hot source complete/static source verified; live v82 acceptance pending.  
+**LALM Engine:** `2.1.93 → 2.1.94` / `v82`.  
+**Chat:** `1.5.79` unchanged.  
+**Deployment / restart:** NONE.
+
+**Triggering evidence:** completed v81 request `web:mu78kbz5:33734635502389096493` measured 705 uncached tokens, 213.061 s prefill / 3.31 tok/s, zero batch tokens/blocks, 705 serial-prefill tokens, and 8 fallbacks. The v81 outer PERF_METRICS camera did not emit `lastBatchFallback`, proving that boundary no longer owns the thread-local metric lifetime needed to identify the exception.
+
+**Architecture reconciliation:** the canonical failure boundary is the existing `runtime_hot/r39_batch_prefill.py` adapter's `patched_forward` batch `except Exception as exc` path. v82 extends that owner rather than adding inference logic elsewhere. It emits the first bounded exception signature per inference directly while the exception and metrics scope are unquestionably live.
+
+**Change:** the batch adapter now emits `SWRLZ_R39_BATCH_FALLBACK` contract `r39-v82-batch-fallback-except-v1` from the actual batch exception boundary, with only bounded exception type/detail. The hot entrypoint pins and hydrates that updated adapter after the preserved v81 lineage. No prompt/token/logit/weight/reasoning data is logged; no model math, block policy, fallback semantics, or decode behavior changes.
+
+**Verification:** updated adapter and entrypoint fetched back with zero literal `\\n` source escapes; v82 camera/loader references present. Runtime activation and a live fallback signature remain pending one inference.
+
 
 ### Server 2.3.269 — R39 v81 batch-prefill fallback-detail camera
 
