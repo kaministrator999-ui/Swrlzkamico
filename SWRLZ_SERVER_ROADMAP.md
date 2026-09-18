@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.264`
+- **Overall Server:** `2.3.265`
 - **Chat:** `1.5.79`
-- **LALM Engine:** `2.1.89` (`v77` first-time prefill kernel profiling; v76 behavior preserved)
+- **LALM Engine:** `2.1.90` (`v78` online-research handoff camera; v77 behavior preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,22 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.265 — R39 v78 online-research handoff camera
+
+**Status:** runtime-hot source complete; live activation + retry evidence pending.  
+**LALM Engine:** `2.1.89 → 2.1.90` / `v78`.  
+**Chat:** `1.5.79` unchanged.  
+**Deployment / restart:** NONE.
+
+**Triggering evidence:** production request `web:mu75nhyi:763607404220016667` entered as `AUTO+ONLINE`; Human normalization/session admission and the Brain research adapter all reported online research requested, while the inherited R39 v48 research-policy camera later reported `onlineResearchRequested=false`.
+
+**Architecture reconciliation:** Mask/UI and Human admission are already proven to preserve the online intent. R39 v48 derives its policy solely from `payload.profileId`. Existing evidence does not yet prove whether that field is absent at the outer active R39 entry or is changed deeper inside the inherited R39 wrapper chain. The correct next step is a bounded Brain-entry camera, not a speculative behavior change.
+
+**Change:** added v78 as an observability-only overlay over v77. It emits one `SWRLZ_R39_RESEARCH_HANDOFF` record per generation containing only request ID, bounded profile ID, profile-derived online boolean, presence of research plan/evidence, and an explicit boolean field if one exists. No prompt/history/evidence contents, token IDs, logits, or hidden reasoning are logged. v77 prefill instrumentation and model semantics are preserved.
+
+**Verification:** v78 overlay and entrypoint were fetched back after mutation. An initial entrypoint edit introduced literal newline escapes; that source defect was detected during mandatory fetch-back and repaired before version assignment. Final entrypoint contains zero literal `\\n` source escapes at the inserted boundary. Live v78 activation and retry evidence remain pending.
+
 
 ### Server 2.3.264 — Chat canonical winged identity propagation
 
