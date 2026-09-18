@@ -177,7 +177,7 @@ def install(chat_extensions) -> None:
                 planner = getattr(engine, "plan_research", None)
                 if callable(planner):
                     try:
-                        plan = planner(payload)
+                        # Internal planner control data: never append planner events to the user transcript.\n                        plan = planner(payload)
                     except Exception as exc:
                         plan = {"queries": [str(payload.get("prompt") or "")], "plannerFallback": True, "plannerError": type(exc).__name__}
                 else:
@@ -193,7 +193,7 @@ def install(chat_extensions) -> None:
                         if isinstance(item, str):
                             query = " ".join(item.split())[:500]
                         elif isinstance(item, dict):
-                            query = " ".join(str(item.get("query") or item.get("q") or item.get("text") or "").split())[:500]
+                            query = " ".join(str(item.get("query") or item.get("queryText") or item.get("q") or item.get("text") or "").split())[:500]
                         else:
                             query = ""
                         if query and query not in queries:
