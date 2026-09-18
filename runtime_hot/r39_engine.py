@@ -1,4 +1,4 @@
-"""Hot R39 entrypoint v77 with first-time prefill kernel profiling over preserved v76 behavior."""
+"""Hot R39 entrypoint v78 with online-research handoff camera over preserved v77 behavior."""
 from __future__ import annotations
 import json,time,urllib.request
 
@@ -9,16 +9,16 @@ _V75_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V
 _V76_COMMIT="65bcfbb1b20bda7fb71e0ea5b52f811a2d09725b"
 _V76_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V76_COMMIT}/runtime_hot/r39_engine_v76_overlay.py"
 _V77_COMMIT="fae655929b24c1eff3951fba1178a488394dce53"
-_V77_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V77_COMMIT}/runtime_hot/r39_engine_v77_overlay.py"
+_V77_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V77_COMMIT}/runtime_hot/r39_engine_v77_overlay.py"\n_V78_COMMIT="042baf81ad511205d49f4564e7f7b092a6ae6ac0"\n_V78_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V78_COMMIT}/runtime_hot/r39_engine_v78_overlay.py"
 
 def _entry(stage,**fields):
-    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v77","atUnixMs":int(time.time()*1000)}
+    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v78","atUnixMs":int(time.time()*1000)}
     for k,v in fields.items():
         if v is None or isinstance(v,(str,int,float,bool)):record[str(k)[:64]]=v
     print("SWRLZ_R39_HOT_ENTRY "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
 
 try:
-    _entry("fetch-start",sourceCommit=_V74_COMMIT,overlayCommit=_V75_COMMIT,v76OverlayCommit=_V76_COMMIT,v77OverlayCommit=_V77_COMMIT)
+    _entry("fetch-start",sourceCommit=_V74_COMMIT,overlayCommit=_V75_COMMIT,v76OverlayCommit=_V76_COMMIT,v77OverlayCommit=_V77_COMMIT,v78OverlayCommit=_V78_COMMIT)
     _request=urllib.request.Request(_V74_URL,headers={"User-Agent":"swrlz-r39-v75-loader"})
     with urllib.request.urlopen(_request,timeout=20) as _response:_source=_response.read(4000001)
     if len(_source)>4000000:raise RuntimeError("R39_V74_SOURCE_TOO_LARGE")
@@ -43,7 +43,7 @@ try:
     _entry("v77-overlay-fetch-ok",overlayBytes=len(_v77_overlay))
     exec(compile(_v77_overlay.decode("utf-8"),_V77_URL+"#v77-overlay","exec"),globals(),globals())
 
-    _inspect=inspect_engine() if callable(globals().get("inspect_engine")) else {}
+    _v78_request=urllib.request.Request(_V78_URL,headers={"User-Agent":"swrlz-r39-v78-overlay"})\n    with urllib.request.urlopen(_v78_request,timeout=20) as _response:_v78_overlay=_response.read(1000001)\n    if len(_v78_overlay)>1000000:raise RuntimeError("R39_V78_OVERLAY_TOO_LARGE")\n    _entry("v78-overlay-fetch-ok",overlayBytes=len(_v78_overlay))\n    exec(compile(_v78_overlay.decode("utf-8"),_V78_URL+"#v78-overlay","exec"),globals(),globals())\n\n    _inspect=inspect_engine() if callable(globals().get("inspect_engine")) else {}
     _self_test=_inspect.get("programmingContinuationSemanticSelfTest") if isinstance(_inspect,dict) else None
     if not isinstance(_self_test,dict) or not _self_test.get("ok"):
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
@@ -56,6 +56,6 @@ try:
            programmingProfile=callable(globals().get("_programming_profile")),
            camera=callable(globals().get("_camera")),
            ngramSampler=callable(globals().get("_ngram_guarded_sample")),
-           artifactContinuation=True,continuationProvenance=True,runnableEditSemanticGate=True,coldPrefillProfileCamera=True,prefillKernelProfileCamera=True,selfTest=True)
+           artifactContinuation=True,continuationProvenance=True,runnableEditSemanticGate=True,coldPrefillProfileCamera=True,prefillKernelProfileCamera=True,onlineResearchHandoffCamera=True,selfTest=True)
 except Exception as exc:
     _entry("hydrate-failed",errorType=type(exc).__name__,errorMessage=str(exc)[:240]);raise
