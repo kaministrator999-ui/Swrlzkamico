@@ -1,5 +1,5 @@
 {
-  "version": 140,
+  "version": 141,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v140 advances Chat 1.5.78 with a live traceroute-style Activity Log: numbered execution hops, per-hop elapsed timing, active/failure state, and expanded safe reasoning/action telemetry from the existing trail contract. Raw hidden chain-of-thought is not exposed or persisted."
+  "notes": "Manifest v141 advances Chat 1.5.79 and canonicalizes visible Chat identity surfaces to the full winged 𓆩𓆩⁽§⁾𓆪wyrlz𓆪 sigil."
 }
