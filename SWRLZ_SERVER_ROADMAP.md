@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.261`
+- **Overall Server:** `2.3.262`
 - **Chat:** `1.5.77`
-- **LALM Engine:** `2.1.88` (`v76` bounded cold-prefill profiling; v75 behavior preserved)
+- **LALM Engine:** `2.1.89` (`v77` first-time prefill kernel profiling; v76 behavior preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,21 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.262 — R39 v77 first-time prefill kernel profiling
+
+**Status:** runtime-hot source complete; live activation and fresh kernel profile pending.  
+**LALM Engine:** `2.1.88 → 2.1.89` / `v77`.  
+**Deployment / restart:** NONE.
+
+**Triggering evidence:** v76 live request `web:mu6wn854:28943448923819814889` completed with 3,469 uncached prompt tokens, 359.816 s prefill, 9.64 tok/s, 37 native batch blocks, zero serial-prefill tokens, zero batch fallbacks, and TTFT 359,939 ms. Prompt rendering was only 114 ms. The request was a fresh-thread/first-time case, so zero cache reuse is not itself a cache defect.
+
+**Architecture reconciliation:** Brain/LALM remains canonical. Existing `r39_batch_prefill` primitives are wrapped with bounded timing only; no inference/cache/prompt owner is duplicated and no model math, block policy, context policy, or sampling behavior is changed.
+
+**Change:** v77 times native batch-prefill categories—FFN matmat, attention matmat, short-convolution matmat, other matmat, causal GQA, RMS normalization, head RMS, and RoPE—and emits one structured `SWRLZ_R39_PREFILL_KERNEL` summary per prefill attempt. This is intended to identify the dominant first-time compute cost before optimization.
+
+**Verification:** v77 entrypoint and overlay were fetched back after mutation and inspected for correct pinned lineage and absence of the prior literal-newline escape defect. Live activation/kernel timing remains pending a fresh request.
+
 
 ### Server 2.3.261 — R39 v76 bounded cold-prefill profiling
 
