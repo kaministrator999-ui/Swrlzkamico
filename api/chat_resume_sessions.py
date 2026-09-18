@@ -177,7 +177,8 @@ def install(chat_extensions) -> None:
                 planner = getattr(engine, "plan_research", None)
                 if callable(planner):
                     try:
-                        # Internal planner control data: never append planner events to the user transcript.\n                        plan = planner(payload)
+                        # Internal planner control data: never append planner events to the user transcript.
+                        plan = planner(payload)
                     except Exception as exc:
                         plan = {"queries": [str(payload.get("prompt") or "")], "plannerFallback": True, "plannerError": type(exc).__name__}
                 else:
