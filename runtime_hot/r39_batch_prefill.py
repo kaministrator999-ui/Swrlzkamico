@@ -12,6 +12,7 @@ back to the original serial forward path from an untouched recurrent state.
 """
 from __future__ import annotations
 
+import json
 import re
 import threading
 import time
@@ -29,6 +30,21 @@ _DENSE_ITEM_MAX = 32 * 1024 * 1024
 _DENSE_MATERIALIZE_MIN_BATCH = 32
 _DEFAULT_BLOCK_TOKENS = 96
 _TLS = threading.local()
+_FALLBACK_CAMERA_CONTRACT = "r39-v82-batch-fallback-except-v1"
+
+def _emit_batch_fallback(exc: Exception, metrics: dict[str, Any] | None) -> None:
+    """Emit one bounded exception signature per inference from the actual fallback site."""
+    if metrics is None or metrics.get("fallbackCameraEmitted"):
+        return
+    metrics["fallbackCameraEmitted"] = True
+    detail = f"{type(exc).__name__}:{exc}"[:240]
+    print("SWRLZ_R39_BATCH_FALLBACK " + json.dumps({
+        "contract": _FALLBACK_CAMERA_CONTRACT,
+        "stage": "batch-except",
+        "errorType": type(exc).__name__[:96],
+        "detail": detail,
+    }, ensure_ascii=False, separators=(",", ":")), flush=True)
+
 
 
 def cache_stats() -> dict[str, int]:
@@ -238,6 +254,7 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
             if metrics is not None and phase == "PREFILL":
                 metrics["batchFallbacks"] += 1
                 metrics["lastBatchFallback"] = f"{type(exc).__name__}:{exc}"[:240]
+                _emit_batch_fallback(exc, metrics)
             logits = None
             serial_started = time.monotonic()
             for index, buffered_token in enumerate(block):
@@ -267,6 +284,7 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
             "serialPrefillSeconds": 0.0,
             "batchFallbacks": 0,
             "lastBatchFallback": "",
+            "fallbackCameraEmitted": False,
             "decodeTokens": 0,
             "decodeComputeSeconds": 0.0,
             "firstDeltaLatencyMs": None,
