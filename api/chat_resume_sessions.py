@@ -164,6 +164,38 @@ def install(chat_extensions) -> None:
         append_event(session, chat._bridge_event(seq, "STARTED", request_id, phase="ANALYZING_REQUEST", reason="Request admitted by the resumable local R39 generation owner."))
         seq += 1
         try:
+            # Preserve the canonical online-research seam when resumable generation owns
+            # the local stream. The resumable owner previously bypassed
+            # chat_extensions._local_stream(), so +ONLINE reached R39 policy but never
+            # executed server-authorized retrieval.
+            research_requested = chat_extensions.online_research_requested(payload.get("profileId"))
+            if research_requested:
+                engine, source = chat_extensions._engine()
+                planning_started = time.perf_counter()
+                append_event(session, chat._bridge_event(seq, "STATUS", request_id, phase="RESEARCH_PLANNING", reason="Brain is resolving the semantic research target, requested information, constraints and search specificity."))
+                seq += 1
+                planner = getattr(engine, "plan_research", None)
+                if callable(planner):
+                    try:
+                        plan = planner(payload)
+                    except Exception as exc:
+                        plan = {"queries": [str(payload.get("prompt") or "")], "plannerFallback": True, "plannerError": type(exc).__name__}
+                else:
+                    plan = {"queries": [str(payload.get("prompt") or "")], "plannerFallback": True, "plannerError": "PLAN_RESEARCH_UNAVAILABLE"}
+                payload = dict(payload)
+                payload["researchPlan"] = plan
+                payload["researchQueries"] = plan.get("queries", [])
+                append_event(session, chat._bridge_event(seq, "STATUS", request_id, phase="RESEARCH_TARGET_RESOLVED", reason=f"Research target resolved in {round((time.perf_counter()-planning_started)*1000)} ms; preparing {len(plan.get('queries', []))} bounded query set(s).", categories=["ONLINE_RESEARCH", "SEMANTIC_TARGET_RESOLUTION"]))
+                seq += 1
+                append_event(session, chat._bridge_event(seq, "STATUS", request_id, phase="SOURCE_FETCH_STARTED", reason="Executing bounded server-authorized online retrieval. Search results and fetched pages remain untrusted evidence."))
+                seq += 1
+                bundle = chat_extensions.run_online_research(payload)
+                payload["onlineEvidence"] = chat_extensions._research_context(bundle)
+                reason = f"Retrieved {bundle.get('resultCount', 0)} candidate evidence item(s) across {len(bundle.get('queries', []))} query set(s) in {bundle.get('elapsedMs', 0)} ms."
+                append_event(session, chat._bridge_event(seq, "STATUS", request_id, phase="SOURCE_FETCH_COMPLETE", reason=reason, categories=["ONLINE_RESEARCH", "EVIDENCE_UNTRUSTED_EXTERNAL"]))
+                seq += 1
+                append_event(session, chat._bridge_event(seq, "STATUS", request_id, phase="EVIDENCE_EVALUATION_STARTED", reason="Passing bounded provenance-bearing evidence to the Brain for relevance, authority, freshness, corroboration, conflict evaluation and source-grounded synthesis."))
+                seq += 1
             engine, source = chat_extensions._engine()
             source_events = engine.generate_events(payload, lambda: request_id in chat_extensions.LOCAL_CANCELLED)
             try:
