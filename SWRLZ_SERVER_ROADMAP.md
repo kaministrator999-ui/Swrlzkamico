@@ -6,8 +6,8 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.259`
-- **Chat:** `1.5.76`
+- **Overall Server:** `2.3.260`
+- **Chat:** `1.5.77`
 - **LALM Engine:** `2.1.87` (`v75` programming continuation provenance + runnable edit semantics)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
@@ -33,6 +33,21 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.260 — Chat Online research control activation
+
+**Status:** runtime-hot source and live asset activation verified; fresh-browser end-to-end search turn pending user acceptance.  
+**Chat:** `1.5.76 → 1.5.77`.  
+**Online Research:** `1.0.0` unchanged; existing capability reused.  
+**Runtime manifest:** `138 → 139`.  
+**Deployment / restart:** NONE.
+
+**Architecture reconciliation:** the requested feature already existed as a composed Mask/Human/Brain capability rather than requiring a new subsystem. Chat already owned `web/chat_online_research_v1.js` with a default-checked Online control and `+ONLINE` relay; the stable server already exposed a live authorized network boundary and hot research reasoner; R39 already owned research planning/evidence reasoning. The missing activation seam was the cooperative Chat loader, which did not load the existing control script.
+
+**Change:** extended the canonical `chat_runtime_loader_v3.js` functional asset list to load `chat_online_research_v1.js`. The control remains checked by default, appears with the composer controls, and relays explicit online-research state without moving cognition into the Mask.
+
+**Verification:** production `/chat` reports manifest revision 139; the live revisioned loader asset contains `chat_online_research_v1.js`; the live control asset returns successfully and contains both `checkbox.checked = true` and the `+ONLINE` relay. Immediately before this event, production `/api/chat/ops` also reported `onlineResearch.available=true`, `stableNetworkBoundary=true`, and `hotReasonerAvailable=true`, proving the retrieval capability was already active before the UI activation. User-visible fresh-load placement and an authenticated online-search turn remain the final acceptance step.
+
 
 ### Server 2.3.259 — R39 v75 programming continuation provenance + runnable edit semantics
 
