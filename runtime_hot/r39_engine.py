@@ -19,7 +19,9 @@ _V80_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V
 _V81_COMMIT="94d09dce6d03d3a51632f8b6d830265481a26372"
 _V81_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V81_COMMIT}/runtime_hot/r39_engine_v81_overlay.py"
 _V82_BATCH_COMMIT="a0a7705af9ade9aa6ad35b94646cff453a6cedaf"
-_V82_BATCH_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V82_BATCH_COMMIT}/runtime_hot/r39_batch_prefill.py"\n_V84_COMMIT="2e959bb9fea0af38c7f2c1e35745c3a8a8c9f066"\n_V84_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V84_COMMIT}/runtime_hot/r39_engine_v84_overlay.py"
+_V82_BATCH_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V82_BATCH_COMMIT}/runtime_hot/r39_batch_prefill.py"
+_V84_COMMIT="2e959bb9fea0af38c7f2c1e35745c3a8a8c9f066"
+_V84_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V84_COMMIT}/runtime_hot/r39_engine_v84_overlay.py"
 
 def _entry(stage,**fields):
     record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v84","atUnixMs":int(time.time()*1000)}
