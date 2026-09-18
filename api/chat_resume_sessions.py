@@ -197,7 +197,7 @@ def install(chat_extensions) -> None:
                 if callable(planner):
                     try:
                         # Internal planner control data: never append planner events to the user transcript.
-                        plan = planner(payload)
+                        print("SWRLZ_BRAIN_RESEARCH_ADAPTER " + json.dumps({"contract":"swrlz-brain-research-adapter-camera-v1","stage":"planner-enter","requestId":request_id,"profileId":str(payload.get("profileId") or "")[:96],"onlineResearchRequested":bool(payload.get("onlineResearchRequested")),"hasOnlineEvidence":bool(payload.get("onlineEvidence"))}, ensure_ascii=False, separators=(",", ":")))\n                        plan = planner(payload)\n                        print("SWRLZ_BRAIN_RESEARCH_ADAPTER " + json.dumps({"contract":"swrlz-brain-research-adapter-camera-v1","stage":"planner-exit","requestId":request_id,"planType":type(plan).__name__,"queryCandidateCount":len(plan.get("queries", [])) if isinstance(plan, dict) and isinstance(plan.get("queries"), list) else 0}, ensure_ascii=False, separators=(",", ":")))
                     except Exception as exc:
                         plan = {"queries": [str(payload.get("prompt") or "")], "plannerFallback": True, "plannerError": type(exc).__name__}
                 else:
@@ -247,7 +247,7 @@ def install(chat_extensions) -> None:
                 append_event(session, chat._bridge_event(seq, "STATUS", request_id, phase="EVIDENCE_EVALUATION_STARTED", reason="Passing bounded provenance-bearing evidence to the Brain for relevance, authority, freshness, corroboration, conflict evaluation and source-grounded synthesis."))
                 seq += 1
             engine, source = chat_extensions._engine()
-            source_events = engine.generate_events(payload, lambda: request_id in chat_extensions.LOCAL_CANCELLED)
+            evidence = payload.get("onlineEvidence")\n            evidence_count = int(evidence.get("resultCount") or 0) if isinstance(evidence, dict) else 0\n            print("SWRLZ_BRAIN_RESEARCH_ADAPTER " + json.dumps({"contract":"swrlz-brain-research-adapter-camera-v1","stage":"synthesis-enter","requestId":request_id,"profileId":str(payload.get("profileId") or "")[:96],"onlineResearchRequested":bool(payload.get("onlineResearchRequested")),"hasResearchPlan":bool(payload.get("researchPlan")),"researchQueryCount":len(payload.get("researchQueries", [])) if isinstance(payload.get("researchQueries"), list) else 0,"hasOnlineEvidence":isinstance(evidence, dict),"onlineEvidenceCount":evidence_count,"engineSource":source,"engineRevision":str(getattr(engine, "HOT_REVISION", ""))[:160]}, ensure_ascii=False, separators=(",", ":")))\n            source_events = engine.generate_events(payload, lambda: request_id in chat_extensions.LOCAL_CANCELLED)
             try:
                 for raw in chat_extensions._heartbeat_events(source_events):
                     if raw.get("type") == "ROUTE":
