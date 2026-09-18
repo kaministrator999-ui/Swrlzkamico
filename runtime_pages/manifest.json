@@ -1,5 +1,5 @@
 {
-  "version": 137,
+  "version": 138,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v137 reissues Chat 1.5.76 assistant response identity through a fresh runtime revision and adds a bounded emblem-v1 renderer receipt. This invalidates any stale revision-136 page/source read while preserving the canonical 𓆩⁽§⁾wyrlz𓆪 response label."
+  "notes": "Manifest v138 updates the canonical Chat sidebar/header brand from §wyrlz to 𓆩⁽§⁾wyrlz𓆪 while preserving Server chat subtitle and the existing assistant response emblem."
 }
