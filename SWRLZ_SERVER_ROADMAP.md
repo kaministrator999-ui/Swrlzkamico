@@ -6,8 +6,8 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.277`
-- **Chat:** `1.5.81`
+- **Overall Server:** `2.3.278`
+- **Chat:** `1.5.82`
 - **LALM Engine:** `2.1.97` (`v85` live research-planner status stream; v84 scope and v83 batching preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
@@ -33,6 +33,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.278 — registry-driven Chat module/version surface
+
+**Status:** runtime-hot source complete/static verified; live browser acceptance pending.  
+**Chat:** `1.5.81 → 1.5.82`. **Online Research:** `1.0.1` unchanged. **LALM Engine:** `2.1.97` unchanged. **Manifest:** `143 → 144`.  
+**Deployment / restart:** NONE.
+
+**Architecture reconciliation:** `VERSION.txt` remains the registry/router and each `versions/*.txt` file remains its module authority. Existing `web/chat_version.js` remains the Chat presentation owner; no second version/status subsystem was created.
+
+**Change:** Chat no longer hard-codes four version keys. It loads every `VERSION.txt` entry whose value points into `versions/`, fetches each module authority, and displays every module with a declared VERSION using its DISPLAY_NAME. This automatically includes Online Research 1.0.1 and future registry modules without another Chat code edit. Manifest 144 activates the changed Chat asset.
+
+**Verification:** fetch-back confirms Online Research is already registered in `VERSION.txt`; `versions/online-research.txt` is 1.0.1/runtime-hot; Chat is 1.5.82; Server is 2.3.278; manifest is 144. Runtime-hot source publication is proven, but actual browser rendering/worker hot-refresh has not yet been observed, so live acceptance remains pending.
+
 
 
 ### Server 2.3.277 — bounded relevance-first Online Research evidence
