@@ -6,7 +6,7 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.265`
+- **Overall Server:** `2.3.266`
 - **Chat:** `1.5.79`
 - **LALM Engine:** `2.1.90` (`v78` online-research handoff camera; v77 behavior preserved)
 - **Web Frontend:** `1.0.5`
@@ -33,6 +33,22 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.266 — Brain → R39 actual call-boundary research camera
+
+**Status:** source complete/static source verified; live acceptance pending.  
+**LALM Engine:** `2.1.90` unchanged.  
+**Chat:** `1.5.79` unchanged.  
+**Deployment / restart:** NONE.
+
+**Triggering evidence:** retry request `web:mu76qquh:25220472203581075747` proved v78 hydrated live and Human/Brain adapter still carried `AUTO+ONLINE` / online=true, while inherited R39 policy still observed false. The v78 outer wrapper camera did not emit, proving that wrapper was not the executed generation boundary.
+
+**Architecture reconciliation:** the actual local inference handoff is main `api/chat_extensions.py::_local_stream`, where the adapter resolves online intent/research and then calls the currently loaded engine's `generate_events`. This is the narrow Human/Brain integration boundary needed to distinguish payload state at call time from deeper R39 mutation. Existing owner extended; no duplicate routing authority added.
+
+**Change:** added persistent bounded `SWRLZ_BRAIN_R39_CALL_BOUNDARY` camera immediately before the actual `engine.generate_events` call. It records request/revision, bounded profile ID and derived online state, adapter research decision, presence-only research-plan/evidence booleans, and an explicit online boolean only if already present. It logs no prompt/history/evidence contents, tokens, logits, or hidden reasoning.
+
+**Verification:** source fetched back after mutation. The first edit introduced literal newline escapes; mandatory fetch-back caught them and a repair commit removed them. Final source contains zero literal `\\n` escapes at this edit and the camera sits immediately before the actual generation call. Live execution evidence is pending a retry.
+
 
 ### Server 2.3.265 — R39 v78 online-research handoff camera
 
