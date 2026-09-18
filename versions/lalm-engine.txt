@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.92
-REVISION=2.1.92-hot-research-telemetry-scope-v80
+VERSION=2.1.93
+REVISION=2.1.93-hot-batch-fallback-detail-v81
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
