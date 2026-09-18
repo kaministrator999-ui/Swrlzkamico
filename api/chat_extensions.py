@@ -125,11 +125,23 @@ def _local_stream(payload):
     if research_requested:
         engine,source=_engine(); planning_started=time.perf_counter()
         yield chat._encode_event(chat._bridge_event(seq,"STATUS",request_id,phase="RESEARCH_PLANNING",reason="Brain is resolving the semantic research target, requested information, constraints and search specificity.")); seq+=1
-        planner=getattr(engine,"plan_research",None)
-        if callable(planner):
-            try: plan=planner(payload)
+        planner_stream=getattr(engine,"plan_research_stream",None)
+        if callable(planner_stream):
+            plan={}
+            try:
+                for planner_event in _heartbeat_events(planner_stream(payload)):
+                    if planner_event.get("type")=="PLAN":
+                        plan=planner_event.get("plan") if isinstance(planner_event.get("plan"),dict) else {}
+                    elif planner_event.get("type")=="STATUS":
+                        yield chat._encode_event(_event_payload(seq,request_id,planner_event)); seq+=1
+                if not plan: plan={"queries":[str(payload.get("prompt") or "")],"plannerFallback":True,"plannerError":"EMPTY_STREAM_PLAN"}
             except Exception as exc: plan={"queries":[str(payload.get("prompt") or "")],"plannerFallback":True,"plannerError":type(exc).__name__}
-        else: plan={"queries":[str(payload.get("prompt") or "")],"plannerFallback":True,"plannerError":"PLAN_RESEARCH_UNAVAILABLE"}
+        else:
+            planner=getattr(engine,"plan_research",None)
+            if callable(planner):
+                try: plan=planner(payload)
+                except Exception as exc: plan={"queries":[str(payload.get("prompt") or "")],"plannerFallback":True,"plannerError":type(exc).__name__}
+            else: plan={"queries":[str(payload.get("prompt") or "")],"plannerFallback":True,"plannerError":"PLAN_RESEARCH_UNAVAILABLE"}
         payload=dict(payload);payload["researchPlan"]=plan;payload["researchQueries"]=plan.get("queries",[])
         yield chat._encode_event(chat._bridge_event(seq,"STATUS",request_id,phase="RESEARCH_TARGET_RESOLVED",reason=f"Research target resolved in {round((time.perf_counter()-planning_started)*1000)} ms; preparing {len(plan.get('queries',[]))} bounded query set(s).",categories=["ONLINE_RESEARCH","SEMANTIC_TARGET_RESOLUTION"])); seq+=1
         yield chat._encode_event(chat._bridge_event(seq,"STATUS",request_id,phase="SOURCE_FETCH_STARTED",reason="Executing bounded server-authorized online retrieval. Search results and fetched pages remain untrusted evidence.")); seq+=1
