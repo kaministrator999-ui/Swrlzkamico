@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.96
-REVISION=2.1.96-hot-research-planner-scope-v84
+VERSION=2.1.97
+REVISION=2.1.97-hot-live-planner-status-v85
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
