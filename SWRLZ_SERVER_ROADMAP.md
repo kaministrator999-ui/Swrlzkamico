@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.267`
+- **Overall Server:** `2.3.268`
 - **Chat:** `1.5.79`
-- **LALM Engine:** `2.1.91` (`v79` inherited research-call camera; v78 behavior preserved)
+- **LALM Engine:** `2.1.92` (`v80` research telemetry scope repair; v79 behavior preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,22 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.268 — R39 v80 research telemetry scope repair
+
+**Status:** runtime-hot source complete/static source verified; live acceptance pending.  
+**LALM Engine:** `2.1.91 → 2.1.92` / `v80`.  
+**Chat:** `1.5.79` unchanged.  
+**Deployment / restart:** NONE.
+
+**Accepted diagnosis:** production retry `web:mu77ow6q:20962495313738375154` runtime-verified v79 and proved the apparent contradiction was telemetry scope, not online-intent loss. The outer request entered as `AUTO+ONLINE` / online=true. v50 then intentionally created an internal bounded planner payload with `profileId=LALM`, no research/evidence bundle, and `maxTokens=160`; inherited v48 therefore correctly reported online=false for that internal planner inference.
+
+**Architecture reconciliation:** the user-facing online intent remains owned by the existing Mask/Human/Brain research path. The internal v50→v49 planning inference is a distinct Brain sub-scope that deliberately must not recursively request retrieval. No routing behavior needs repair. The defect is ambiguous observability under a shared request ID.
+
+**Change:** v80 extends the existing runtime-hot R39 camera lineage and emits `SWRLZ_R39_RESEARCH_SCOPE` immediately around the inherited v49 call. It explicitly labels the recognized bounded planner pass as `inferenceScope=internal-research-planner`, marks the outer user's online state as not represented by that cloned payload, and explains an offline policy result there as `expected-internal-offline-planner`. Model/research semantics are unchanged.
+
+**Verification:** v80 overlay and active entrypoint were fetched back; both contain zero literal `\\n` source escapes. Entrypoint pins the v80 commit and advertises the scope camera. Production emission of the v80 scope record is still pending a subsequent request/status hydration; do not call it runtime accepted until observed.
+
 
 ### Server 2.3.267 — R39 v79 inherited research-call camera
 
