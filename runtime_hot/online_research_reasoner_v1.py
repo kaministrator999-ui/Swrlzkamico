@@ -37,8 +37,15 @@ def normalize_plan(payload:dict[str,Any])->dict[str,Any]:
     try: confidence=max(0.0,min(1.0,float(confidence)))
     except (TypeError,ValueError): confidence=0.0
     queries=[]
-    for q in raw.get("queries",[]) if isinstance(raw.get("queries"),list) else []:
-        q=_clean(q,500)
+    for candidate in raw.get("queries",[]) if isinstance(raw.get("queries"),list) else []:
+        # Planner output is untrusted structured data. Accept strings directly and
+        # only explicit query-bearing fields from objects; never stringify dicts.
+        if isinstance(candidate,str):
+            q=_clean(candidate,500)
+        elif isinstance(candidate,dict):
+            q=_clean(candidate.get("query") or candidate.get("q") or candidate.get("text"),500)
+        else:
+            q=""
         if q and q not in queries:queries.append(q)
         if len(queries)>=6:break
     if not queries:
