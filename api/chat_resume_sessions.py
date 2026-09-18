@@ -46,6 +46,10 @@ def install(chat_extensions) -> None:
     def canonical_payload(payload: dict[str, Any]) -> dict[str, Any]:
         return {k: v for k, v in payload.items() if k != "resumeAfterSeq"}
 
+    def online_requested(payload: dict[str, Any]) -> bool:
+        # Freeze explicit client intent at admission; reconnects cannot downgrade it.
+        return chat_extensions.online_research_requested(payload.get("profileId"))
+
     def fingerprint(payload: dict[str, Any]) -> str:
         raw = json.dumps(canonical_payload(payload), sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         return hashlib.sha256(raw).hexdigest()
@@ -168,7 +172,7 @@ def install(chat_extensions) -> None:
             # the local stream. The resumable owner previously bypassed
             # chat_extensions._local_stream(), so +ONLINE reached R39 policy but never
             # executed server-authorized retrieval.
-            research_requested = chat_extensions.online_research_requested(payload.get("profileId"))
+            research_requested = bool(session.get("onlineResearchRequested"))
             if research_requested:
                 engine, source = chat_extensions._engine()
                 planning_started = time.perf_counter()
@@ -307,6 +311,8 @@ def install(chat_extensions) -> None:
                 "durableDirty": False,
                 "durableWriteRunning": False,
                 "lastDurableWriteAt": 0.0,
+                "onlineResearchRequested": online_requested(clean),
+                "profileId": str(clean.get("profileId") or ""),
             }
             sessions[request_id] = session
         if STORE.configured:
