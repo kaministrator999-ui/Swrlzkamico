@@ -6,8 +6,8 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.271`
-- **Chat:** `1.5.79`
+- **Overall Server:** `2.3.272`
+- **Chat:** `1.5.80`
 - **LALM Engine:** `2.1.95` (`v83` updated batch-prefill adapter reinstall; v82 source preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
@@ -33,6 +33,22 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.272 — Chat reconnect progress authority repair
+
+**Status:** runtime-hot source complete/static source verified; live browser acceptance pending.  
+**Chat:** `1.5.79 → 1.5.80`; runtime manifest `141 → 142`.  
+**LALM Engine:** `2.1.95` unchanged.  
+**Deployment / restart:** NONE.
+
+**Evidence:** user screenshots showed the Mask stuck on `Research planning…` while repeated reconnect activity accumulated. Correlated production logs for the same generation showed the Brain/server had already completed research planning and retrieval and entered synthesis. The resumable transport owner wrote `RECONNECTING`/`CATCHING_UP` directly into the same `message.meta.phase` field used for server-authored work progress, and replayed events were only painted downstream after enqueue.
+
+**Architecture reconciliation:** server/Brain remains authority for generation work phase; Mask transport owns continuity only. The existing `chat_background_resume_v2.js` owner was extended rather than adding a second progress system.
+
+**Change:** reconnect/catch-up state now lives in `message.meta.continuityPhase` instead of overwriting authoritative `message.meta.phase`. Replayed/resumed server events paint their work phase immediately before relay, so the visible status catches up as soon as authoritative replay arrives. Background-resume controller advances to v7. Manifest 142 activates the changed asset.
+
+**Verification:** source fetch-back confirms v7, continuity-phase separation, and pre-relay phase painting. Live client revision 142 plus a reconnect/replay showing the current server phase remains pending.
+
 
 ### Server 2.3.271 — R39 v83 updated batch-prefill adapter reinstall
 
