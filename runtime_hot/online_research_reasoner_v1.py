@@ -43,7 +43,7 @@ def normalize_plan(payload:dict[str,Any])->dict[str,Any]:
         if isinstance(candidate,str):
             q=_clean(candidate,500)
         elif isinstance(candidate,dict):
-            q=_clean(candidate.get("query") or candidate.get("q") or candidate.get("text"),500)
+            q=_clean(candidate.get("query") or candidate.get("queryText") or candidate.get("q") or candidate.get("text"),500)
         else:
             q=""
         if q and q not in queries:queries.append(q)
