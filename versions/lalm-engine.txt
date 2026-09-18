@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.93
-REVISION=2.1.93-hot-batch-fallback-detail-v81
+VERSION=2.1.94
+REVISION=2.1.94-hot-batch-fallback-except-v82
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
