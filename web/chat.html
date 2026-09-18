@@ -518,7 +518,7 @@
     <aside class="sidebar" aria-label="Conversation history">
       <div class="brand">
         <div class="dragon-mark"><svg><use href="#dragon"></use></svg></div>
-        <div class="brand-copy"><strong>𓆩⁽§⁾wyrlz𓆪</strong><span>Server chat</span></div>
+        <div class="brand-copy"><strong>𓆩𓆩⁽§⁾𓆪wyrlz𓆪</strong><span>Server chat</span></div>
       </div>
       <button class="new-chat" id="newChat"><span>New conversation</span><span class="keycap">⌘ K</span></button>
       <div class="sidebar-label"><span>Threads</span><span id="threadCount">0</span></div>
@@ -755,7 +755,7 @@
       if (message.role === "assistant") avatar.append(icon("dragon")); else avatar.textContent = "YOU";
       const body = document.createElement("div"); body.className = "message-body";
       const label = document.createElement("div"); label.className = "message-label";
-      const who = document.createElement("strong"); who.textContent = message.role === "assistant" ? "𓆩⁽§⁾wyrlz𓆪" : "You"; who.dataset.swrlzIdentity = "emblem-v1";
+      const who = document.createElement("strong"); who.textContent = message.role === "assistant" ? "𓆩𓆩⁽§⁾𓆪wyrlz𓆪" : "You"; who.dataset.swrlzIdentity = "emblem-v1";
       const when = document.createElement("span"); when.textContent = formatClock(message.createdAt);
       label.append(who, when);
       if (message.pinned) { const pin = document.createElement("span"); pin.textContent = "◆ saved"; label.append(pin); }
