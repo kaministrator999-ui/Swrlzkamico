@@ -36,11 +36,23 @@ def install(chat_extensions) -> None:
     sessions: dict[str, dict[str, Any]] = {}
 
     def normalize(payload: dict[str, Any]) -> dict[str, Any]:
+        raw_profile = str(payload.get("profileId") or "")[:96]
         normalized = base_normalize(payload)
+        normalized_profile = str(normalized.get("profileId") or "")[:96]
         try:
             normalized["resumeAfterSeq"] = max(0, int(payload.get("resumeAfterSeq") or 0))
         except (TypeError, ValueError):
             normalized["resumeAfterSeq"] = 0
+        print("SWRLZ_ONLINE_INTENT_CAMERA " + json.dumps({
+            "contract": "swrlz-online-intent-camera-v1",
+            "stage": "request-normalized",
+            "requestId": str(normalized.get("requestId") or ""),
+            "rawProfileId": raw_profile,
+            "normalizedProfileId": normalized_profile,
+            "rawOnlineRequested": chat_extensions.online_research_requested(raw_profile),
+            "normalizedOnlineRequested": chat_extensions.online_research_requested(normalized_profile),
+            "resumeAfterSeq": int(normalized.get("resumeAfterSeq") or 0),
+        }, ensure_ascii=False, separators=(",", ":")))
         return normalized
 
     def canonical_payload(payload: dict[str, Any]) -> dict[str, Any]:
@@ -315,6 +327,14 @@ def install(chat_extensions) -> None:
                 "profileId": str(clean.get("profileId") or ""),
             }
             sessions[request_id] = session
+            print("SWRLZ_ONLINE_INTENT_CAMERA " + json.dumps({
+                "contract": "swrlz-online-intent-camera-v1",
+                "stage": "session-admitted",
+                "requestId": request_id,
+                "profileId": str(session.get("profileId") or ""),
+                "onlineResearchRequested": bool(session.get("onlineResearchRequested")),
+                "resumeAfterSeq": int(payload.get("resumeAfterSeq") or 0),
+            }, ensure_ascii=False, separators=(",", ":")))
         if STORE.configured:
             try:
                 STORE.write(durable_snapshot(session))
