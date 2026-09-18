@@ -6,9 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.260`
+- **Overall Server:** `2.3.261`
 - **Chat:** `1.5.77`
-- **LALM Engine:** `2.1.87` (`v75` programming continuation provenance + runnable edit semantics)
+- **LALM Engine:** `2.1.88` (`v76` bounded cold-prefill profiling; v75 behavior preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -33,6 +33,22 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.261 — R39 v76 bounded cold-prefill profiling
+
+**Status:** runtime-hot source complete; live activation and fresh user-turn profiling pending.  
+**LALM Engine:** `2.1.87 → 2.1.88` / `v76`.  
+**Chat:** unchanged.  
+**Deployment / restart:** NONE.
+
+**Triggering evidence:** authenticated request `web:mu6wesdb:11826491873590844071` rendered 3,242 prompt tokens in 135 ms and entered PREFILL about 159 ms after inference telemetry began, but searchable production logs did not expose the existing per-prefill STATUS reasons or a terminal PERF_METRICS payload. This prevented separating first-time prefill compute from cache reuse/batch-path behavior.
+
+**Architecture reconciliation:** Brain/LALM remains the canonical owner. The existing prefill implementation and status stream are reused; v76 adds only a bounded observability overlay around v75 generation. No new inference/cache owner was created and no prompt shortening or sampling behavior was introduced.
+
+**Change:** v76 emits structured `SWRLZ_R39_PREFILL_PROFILE` records for prefill entry, bounded progress samples, prefill exit, existing PERF_METRICS status, and abnormal terminal-without-generating. Records contain timing/count/reuse/status metadata only; prompt text, token IDs, logits, and hidden reasoning are excluded.
+
+**Verification:** source was re-read after mutation and the accidental literal-newline escape introduced during the first entrypoint edit was detected and corrected before version assignment. Source/version authorities now identify Server 2.3.261 and LALM 2.1.88/v76. Runtime/live activation remains pending a fresh request and log observation.
+
 
 ### Server 2.3.260 — Chat Online research control activation
 
