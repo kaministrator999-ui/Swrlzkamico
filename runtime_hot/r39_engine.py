@@ -1,4 +1,4 @@
-"""Hot R39 entrypoint v82 with direct batch-prefill exception camera over preserved v81 behavior."""
+"""Hot R39 entrypoint v83 reinstalling the updated batch-prefill adapter over preserved v82 source."""
 from __future__ import annotations
 import json,time,urllib.request
 
@@ -22,7 +22,7 @@ _V82_BATCH_COMMIT="a0a7705af9ade9aa6ad35b94646cff453a6cedaf"
 _V82_BATCH_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V82_BATCH_COMMIT}/runtime_hot/r39_batch_prefill.py"
 
 def _entry(stage,**fields):
-    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v82","atUnixMs":int(time.time()*1000)}
+    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v83","atUnixMs":int(time.time()*1000)}
     for k,v in fields.items():
         if v is None or isinstance(v,(str,int,float,bool)):record[str(k)[:64]]=v
     print("SWRLZ_R39_HOT_ENTRY "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
@@ -83,6 +83,15 @@ try:
     _entry("v82-batch-fetch-ok",batchBytes=len(_v82_batch_source))
     exec(compile(_v82_batch_source.decode("utf-8"),_V82_BATCH_URL+"#v82-batch","exec"),_batch.__dict__,_batch.__dict__)
 
+    _batch_install=_batch.install(_impl)
+    if not isinstance(_batch_install,dict) or not _batch_install.get("installed"):
+        raise RuntimeError("R39_V83_BATCH_REINSTALL_NOT_PROVEN")
+    _entry("v83-batch-reinstall-ok",installed=True,blockTokens=int(_batch_install.get("blockTokens") or 0),nativeBatchAvailable=bool(_batch_install.get("nativeBatchAvailable")))
+    HOT_SERVER_VERSION="2.1.95"
+    HOT_REVISION="2.1.95-hot-batch-reinstall-v83"
+    _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
+    _impl.HOT_REVISION=HOT_REVISION
+
     _inspect=inspect_engine() if callable(globals().get("inspect_engine")) else {}
     _self_test=_inspect.get("programmingContinuationSemanticSelfTest") if isinstance(_inspect,dict) else None
     if not isinstance(_self_test,dict) or not _self_test.get("ok"):
@@ -96,6 +105,6 @@ try:
            programmingProfile=callable(globals().get("_programming_profile")),
            camera=callable(globals().get("_camera")),
            ngramSampler=callable(globals().get("_ngram_guarded_sample")),
-           artifactContinuation=True,continuationProvenance=True,runnableEditSemanticGate=True,coldPrefillProfileCamera=True,prefillKernelProfileCamera=True,onlineResearchHandoffCamera=True,inheritedResearchCallCamera=True,researchTelemetryScopeCamera=True,batchFallbackDetailCamera=True,batchFallbackExceptCamera=True,selfTest=True)
+           artifactContinuation=True,continuationProvenance=True,runnableEditSemanticGate=True,coldPrefillProfileCamera=True,prefillKernelProfileCamera=True,onlineResearchHandoffCamera=True,inheritedResearchCallCamera=True,researchTelemetryScopeCamera=True,batchFallbackDetailCamera=True,batchFallbackExceptCamera=True,batchAdapterReinstalled=True,selfTest=True)
 except Exception as exc:
     _entry("hydrate-failed",errorType=type(exc).__name__,errorMessage=str(exc)[:240]);raise
