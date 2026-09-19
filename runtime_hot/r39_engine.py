@@ -18,7 +18,7 @@ _V80_COMMIT="44f154cf6a4ae46eb232665f36815eec2b2d8496"
 _V80_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V80_COMMIT}/runtime_hot/r39_engine_v80_overlay.py"
 _V81_COMMIT="94d09dce6d03d3a51632f8b6d830265481a26372"
 _V81_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V81_COMMIT}/runtime_hot/r39_engine_v81_overlay.py"
-_V82_BATCH_COMMIT="2807923fc71fc54c634b80aff9080202de1efc54"
+_V82_BATCH_COMMIT="b2299402b5630371adb7774c6f80c7392c173dd2"
 _V82_BATCH_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V82_BATCH_COMMIT}/runtime_hot/r39_batch_prefill.py"
 _V84_COMMIT="2e959bb9fea0af38c7f2c1e35745c3a8a8c9f066"
 _V84_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V84_COMMIT}/runtime_hot/r39_engine_v84_overlay.py"
@@ -148,8 +148,8 @@ try:
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-    HOT_SERVER_VERSION="2.1.110"
-    HOT_REVISION="2.1.110-hot-full-map-trace-v90"
+    HOT_SERVER_VERSION="2.1.111"
+    HOT_REVISION="2.1.111-hot-lockdown-every-step-v90"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
 
@@ -166,9 +166,30 @@ try:
         system=[x for x in history if isinstance(x,dict) and str(x.get("role") or "").lower()=="system"]
         history_chars=sum(len(str(x.get("text") or x.get("content") or "")) for x in history if isinstance(x,dict))
         system_chars=sum(len(str(x.get("text") or x.get("content") or "")) for x in system)
-        _entry(stage,requestId=_request_id(payload),historyMessages=len(history),
+        request_id=_request_id(payload)
+        _entry(stage,requestId=request_id,historyMessages=len(history),
                historyChars=history_chars,systemMessages=len(system),systemChars=system_chars,
                promptChars=len(str(payload.get("prompt") or "")))
+        # Lockdown diagnostic intentionally exposes the inference instructions and
+        # bounded conversation material during this single-user development phase.
+        snapshot={
+            "contract":"r39-full-lockdown-payload-v1",
+            "stage":stage,
+            "requestId":request_id,
+            "atUnixNs":time.time_ns(),
+            "history":[
+                {
+                    "index":idx,
+                    "role":str(item.get("role") or "")[:32],
+                    "text":str(item.get("text") or item.get("content") or "")[:16000],
+                    "chars":len(str(item.get("text") or item.get("content") or "")),
+                }
+                for idx,item in enumerate(history[:256]) if isinstance(item,dict)
+            ],
+            "prompt":str(payload.get("prompt") or "")[:16000],
+            "promptChars":len(str(payload.get("prompt") or "")),
+        }
+        print("SWRLZ_R39_LOCKDOWN "+json.dumps(snapshot,ensure_ascii=False,separators=(",",":")),flush=True)
 
     # Full-map trace: retain all existing cameras and extend observation upward
     # through every reachable inherited generation bridge. This is observational only.
