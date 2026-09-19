@@ -878,3 +878,12 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Repair scope:** pin the entrypoint to the current optimized batch adapter source, explicitly stamp 2.1.103 after all inherited overlays, and expose the selected batch source commit in the hydration camera. Preserve all v90 semantic overlays and model policy.
 - **Packaging remains a separate proof:** the deployed function must still expose compiled `_r39_native`/`_r39_batch`; entrypoint repair alone must not claim native availability.
 - **Verification:** runtime hydration must report 2.1.103 and the new batch-source commit; live `nativeBatchAvailable:true` remains required before throughput benchmarking.
+
+
+##### R39 hot-entry refresh repair — 2026-09-19
+
+- Exact failed request `web:mu8md616:5404701603259339612` proved production still executed the stale `v82BatchCommit=f0d4a460...` entrypoint.
+- Stable loader inspection found the cause: `api/runtime_hot.py` invoked automatic runtime hydration only for **GET** `/api/chat[/]`, while actual generation begins on **POST**. A POST could therefore enter inference using a stale worker-local R39 entrypoint.
+- Repaired the stable middleware so every `/api/chat[/]` request method passes through the existing throttled/single-writer hot-sync authority before generation. This does not add a second loader or inference owner.
+- Runtime entrypoint authority remains `runtime@a45dfef51ac87315a1f3aa3d0ce5a92d53b31ad5`, which pins the optimized batch adapter to containing commit `2807923fc71fc54c634b80aff9080202de1efc54`.
+- This stable-loader mutation is deployment-bearing. Per the accepted terminal-deploy contract, exactly one production deployment is the final activation step for this repair.
