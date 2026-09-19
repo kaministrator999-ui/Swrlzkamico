@@ -655,6 +655,139 @@
     let renderQueued = false;
     let toastTimer = 0;
 
+    // FULL LOCKDOWN CAMERA v1 — development observability from send frame 0 to terminal settle.
+    const LOCKDOWN_CONTRACT = "swrlz-full-lockdown-client-v1";
+    const lockdownNativeFetch = window.fetch.bind(window);
+    const lockdownNativeRAF = window.requestAnimationFrame.bind(window);
+    const lockdownEvents = [];
+    let lockdownQueue = [];
+    let lockdownSeq = 0;
+    let lockdownCurrentRequestId = "";
+    let lockdownIntentId = "";
+    let lockdownFrame = 0;
+    let lockdownFrameRunning = false;
+    let lockdownTerminal = false;
+    let lockdownFlushTimer = 0;
+    let lockdownViewerPre = null;
+
+    function lockdownTarget(node) {
+      if (!node || node.nodeType !== 1) return String(node?.nodeName || "unknown");
+      const id = node.id ? "#" + node.id : "";
+      const cls = node.classList?.length ? "." + Array.from(node.classList).slice(0,4).join(".") : "";
+      return String(node.tagName || "").toLowerCase() + id + cls;
+    }
+    function lockdownRect(node) {
+      if (!node?.getBoundingClientRect) return null;
+      const r = node.getBoundingClientRect();
+      return {x:+r.x.toFixed(2),y:+r.y.toFixed(2),w:+r.width.toFixed(2),h:+r.height.toFixed(2),top:+r.top.toFixed(2),right:+r.right.toFixed(2),bottom:+r.bottom.toFixed(2),left:+r.left.toFixed(2)};
+    }
+    function lockdownSnapshot() {
+      const messages = Array.from(refs.stack?.querySelectorAll?.(".message") || []).map((node, index) => ({
+        index,
+        id: node.dataset?.messageId || "",
+        className: node.className,
+        rect: lockdownRect(node),
+        bubbleRect: lockdownRect(node.querySelector?.(".bubble")),
+        textChars: (node.textContent || "").length
+      }));
+      return {
+        visibility: document.visibilityState,
+        viewport: {w:innerWidth,h:innerHeight,dpr:devicePixelRatio,scrollX:+scrollX.toFixed(2),scrollY:+scrollY.toFixed(2)},
+        messagesScroll: refs.messages ? {top:+refs.messages.scrollTop.toFixed(2),height:refs.messages.scrollHeight,clientHeight:refs.messages.clientHeight} : null,
+        stackRect: lockdownRect(refs.stack),
+        composerRect: lockdownRect(refs.composer),
+        promptRect: lockdownRect(refs.prompt),
+        sendRect: lockdownRect(refs.send),
+        statusRect: lockdownRect(refs.statusPill),
+        renderQueued,
+        active: active ? {threadId:active.threadId,messageId:active.messageId,requestId:active.requestId} : null,
+        messages
+      };
+    }
+    function lockdownSafe(value, depth=0) {
+      if (depth > 7) return "[depth-limit]";
+      if (value == null || typeof value === "boolean" || typeof value === "number") return value;
+      if (typeof value === "string") return value.slice(0,16000);
+      if (Array.isArray(value)) return value.slice(0,500).map(v=>lockdownSafe(v,depth+1));
+      if (typeof value === "object") {
+        const out={};
+        for (const [k,v] of Object.entries(value).slice(0,240)) {
+          const low=String(k).toLowerCase();
+          out[k]=/(token|authorization|credential|password|secret|cookie|bearer|proof)/.test(low)?"[redacted]":lockdownSafe(v,depth+1);
+        }
+        return out;
+      }
+      return String(value).slice(0,16000);
+    }
+    function lockdownTrace(stage, fields={}) {
+      const event = {
+        contract: LOCKDOWN_CONTRACT,
+        seq: ++lockdownSeq,
+        stage,
+        at: new Date().toISOString(),
+        performanceMs: +performance.now().toFixed(3),
+        requestId: lockdownCurrentRequestId,
+        intentId: lockdownIntentId,
+        frame: lockdownFrame,
+        threadId: active?.threadId || currentThread()?.id || "",
+        fields: lockdownSafe(fields)
+      };
+      lockdownEvents.push(event);
+      lockdownQueue.push(event);
+      console.debug("SWRLZ_LOCKDOWN", event);
+      if (lockdownViewerPre) {
+        lockdownViewerPre.textContent += JSON.stringify(event) + "\n";
+        lockdownViewerPre.scrollTop = lockdownViewerPre.scrollHeight;
+      }
+      if (lockdownQueue.length >= 20) lockdownFlush();
+      else if (!lockdownFlushTimer) lockdownFlushTimer=setTimeout(lockdownFlush,80);
+      return event;
+    }
+    function lockdownFlush() {
+      clearTimeout(lockdownFlushTimer); lockdownFlushTimer=0;
+      if (!lockdownQueue.length) return;
+      const events = lockdownQueue.splice(0,200);
+      const payload = JSON.stringify({contract:"swrlz-lockdown-batch-v1",events});
+      lockdownNativeFetch("/api/chat/client-debug",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",keepalive:true,body:payload}).catch(()=>{});
+      if (lockdownQueue.length) lockdownFlushTimer=setTimeout(lockdownFlush,25);
+    }
+    function lockdownFrameLoop() {
+      if (!lockdownFrameRunning) return;
+      lockdownFrame++;
+      lockdownTrace("animation-frame",{snapshot:lockdownSnapshot()});
+      if (lockdownTerminal && !active) {
+        lockdownTrace("animation-frame-terminal-settle",{snapshot:lockdownSnapshot()});
+        lockdownFrameRunning=false;
+        lockdownFlush();
+        return;
+      }
+      lockdownNativeRAF(lockdownFrameLoop);
+    }
+    function lockdownStartFrames() {
+      if (lockdownFrameRunning) return;
+      lockdownFrame=0; lockdownTerminal=false; lockdownFrameRunning=true;
+      lockdownTrace("frame-trace-start",{snapshot:lockdownSnapshot()});
+      lockdownNativeRAF(lockdownFrameLoop);
+    }
+    function lockdownViewer() {
+      if (document.getElementById("swrlzLockdownOverlay")) return;
+      const overlay=document.createElement("div"); overlay.id="swrlzLockdownOverlay";
+      overlay.style.cssText="position:fixed;inset:0;z-index:2147483646;background:rgba(0,0,0,.96);color:#d8f7ff;padding:10px;display:flex;flex-direction:column;gap:8px;font:11px/1.35 monospace";
+      const bar=document.createElement("div");
+      const close=document.createElement("button"); close.textContent="CLOSE"; close.onclick=()=>{lockdownViewerPre=null;overlay.remove()};
+      const copy=document.createElement("button"); copy.textContent="COPY ALL"; copy.onclick=()=>navigator.clipboard?.writeText(lockdownEvents.map(x=>JSON.stringify(x)).join("\n"));
+      const exportBtn=document.createElement("button"); exportBtn.textContent="EXPORT ALL"; exportBtn.onclick=()=>{const blob=new Blob([lockdownEvents.map(x=>JSON.stringify(x)).join("\n")+"\n"],{type:"application/x-ndjson"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="swrlz-lockdown-"+Date.now()+".ndjson";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
+      bar.append(close,copy,exportBtn);
+      const pre=document.createElement("pre"); pre.style.cssText="flex:1;overflow:auto;white-space:pre-wrap;margin:0"; pre.textContent=lockdownEvents.map(x=>JSON.stringify(x)).join("\n")+"\n";
+      overlay.append(bar,pre); document.body.append(overlay); lockdownViewerPre=pre;
+    }
+    function lockdownInstallButton() {
+      if (document.getElementById("swrlzLockdownButton")) return;
+      const b=document.createElement("button"); b.id="swrlzLockdownButton"; b.type="button"; b.textContent="LOCKDOWN LOG";
+      b.style.cssText="position:fixed;right:8px;top:8px;z-index:2147483645;background:#111;color:#7fffd4;border:1px solid #7fffd4;padding:7px 9px;font:700 10px monospace";
+      b.onclick=lockdownViewer; document.body.append(b);
+    }
+
     function saveState() {
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
       catch (_) { toast("Conversation storage is full; export before refreshing."); }
@@ -1001,6 +1134,136 @@
       } catch (error) { refs.runtime.textContent = `Verification failed: ${error.message}`; toast("R39 verification did not complete"); }
       finally { refs.verify.disabled = false; refs.verify.textContent = "Verify R39 container"; }
     }
+
+
+    // --- Full message-path wrappers: observational only. ---
+    const lockdownBaseSaveState = saveState;
+    saveState = function() {
+      lockdownTrace("state-save-enter",{threads:state.threads.length,currentId:state.currentId,currentMessages:currentThread()?.messages?.length||0});
+      try { return lockdownBaseSaveState(); }
+      finally { lockdownTrace("state-save-exit",{threads:state.threads.length,currentMessages:currentThread()?.messages?.length||0}); }
+    };
+
+    const lockdownBaseRender = render;
+    render = function(scroll=false) {
+      lockdownTrace("render-enter",{scroll,snapshot:lockdownSnapshot()});
+      const started=performance.now();
+      const result=lockdownBaseRender(scroll);
+      lockdownTrace("render-exit",{scroll,durationMs:+(performance.now()-started).toFixed(3),snapshot:lockdownSnapshot()});
+      return result;
+    };
+
+    const lockdownBaseScheduleRender = scheduleRender;
+    scheduleRender = function(scroll=false) {
+      lockdownTrace("render-schedule",{scroll,alreadyQueued:renderQueued});
+      return lockdownBaseScheduleRender(scroll);
+    };
+
+    const lockdownBaseRenderMessage = renderMessage;
+    renderMessage = function(message) {
+      lockdownTrace("render-message-enter",{messageId:message?.id,role:message?.role,state:message?.state,textChars:String(message?.text||"").length,phase:message?.meta?.phase});
+      const started=performance.now(), node=lockdownBaseRenderMessage(message);
+      lockdownTrace("render-message-exit",{messageId:message?.id,durationMs:+(performance.now()-started).toFixed(3),rect:lockdownRect(node),textChars:(node?.textContent||"").length});
+      return node;
+    };
+
+    const lockdownBaseConsumeEvent = consumeEvent;
+    consumeEvent = function(event, context) {
+      if (context?.requestId) lockdownCurrentRequestId=context.requestId;
+      lockdownTrace("stream-event-consume-enter",{event:lockdownSafe(event),lastSeq:context?.lastSeq,terminal:context?.terminal,messageState:context?.message?.state,textChars:String(context?.message?.text||"").length});
+      const started=performance.now();
+      try { return lockdownBaseConsumeEvent(event,context); }
+      finally {
+        lockdownTrace("stream-event-consume-exit",{eventType:event?.type,seq:event?.seq,durationMs:+(performance.now()-started).toFixed(3),lastSeq:context?.lastSeq,terminal:context?.terminal,messageState:context?.message?.state,textChars:String(context?.message?.text||"").length});
+        if (TERMINAL_TYPES.has(String(event?.type||""))) { lockdownTerminal=true; lockdownTrace("terminal-event-observed",{eventType:event.type,seq:event.seq}); }
+      }
+    };
+
+    const lockdownBaseSendMessage = sendMessage;
+    sendMessage = async function() {
+      lockdownIntentId=uid("intent");
+      lockdownCurrentRequestId="";
+      lockdownTrace("user-send-intent",{prompt:String(refs.prompt?.value||""),promptChars:String(refs.prompt?.value||"").length,route:refs.route?.value,snapshot:lockdownSnapshot()});
+      lockdownStartFrames();
+      const started=performance.now();
+      try { return await lockdownBaseSendMessage(); }
+      catch(error) { lockdownTrace("send-message-throw",{errorType:error?.name||"Error",error:String(error?.message||error)}); throw error; }
+      finally { lockdownTrace("send-message-return",{durationMs:+(performance.now()-started).toFixed(3),snapshot:lockdownSnapshot()}); }
+    };
+
+    const lockdownBaseStopActive = stopActive;
+    stopActive = async function() {
+      lockdownTrace("stop-active-enter",{active:lockdownSafe(active)});
+      try { return await lockdownBaseStopActive(); }
+      finally { lockdownTrace("stop-active-exit",{active:lockdownSafe(active)}); }
+    };
+
+    // Log every application requestAnimationFrame scheduling/firing while a turn is active.
+    window.requestAnimationFrame = function(callback) {
+      if (!lockdownFrameRunning) return lockdownNativeRAF(callback);
+      const scheduledAt=performance.now();
+      lockdownTrace("raf-scheduled",{callbackName:callback?.name||"anonymous"});
+      return lockdownNativeRAF(ts=>{
+        lockdownTrace("raf-fired",{callbackName:callback?.name||"anonymous",rafTimestamp:+ts.toFixed(3),waitMs:+(performance.now()-scheduledAt).toFixed(3)});
+        return callback(ts);
+      });
+    };
+
+    // Transport camera: every fetch request/response/error, without ever logging credential values.
+    window.fetch = async function(input, init={}) {
+      const url=typeof input==="string"?input:(input?.url||"");
+      if (String(url).includes("/api/chat/client-debug")) return lockdownNativeFetch(input,init);
+      let bodyMeta=null, parsed=null;
+      if (typeof init?.body==="string") {
+        try { parsed=JSON.parse(init.body); } catch (_) {}
+        bodyMeta=parsed?lockdownSafe(parsed):{chars:init.body.length};
+        if (parsed?.requestId) {
+          lockdownCurrentRequestId=String(parsed.requestId);
+          lockdownTrace("request-id-bound",{requestId:lockdownCurrentRequestId});
+        }
+      }
+      const started=performance.now();
+      lockdownTrace("fetch-enter",{url:String(url),method:String(init?.method||"GET"),body:bodyMeta});
+      try {
+        const response=await lockdownNativeFetch(input,init);
+        lockdownTrace("fetch-response",{url:String(url),status:response.status,ok:response.ok,durationMs:+(performance.now()-started).toFixed(3),headers:{contentType:response.headers.get("content-type"),streamContract:response.headers.get("x-swrlz-stream-contract"),requestId:response.headers.get("x-swrlz-request-id"),canonicalTurn:response.headers.get("x-swrlz-canonical-turn"),stateRevision:response.headers.get("x-swrlz-state-revision")}});
+        return response;
+      } catch(error) {
+        lockdownTrace("fetch-error",{url:String(url),durationMs:+(performance.now()-started).toFixed(3),errorType:error?.name||"Error",error:String(error?.message||error)});
+        throw error;
+      }
+    };
+
+    // Every DOM mutation is a camera event during the active frame trace.
+    const lockdownMutationObserver = new MutationObserver(records=>{
+      if (!lockdownFrameRunning) return;
+      for (const m of records) lockdownTrace("dom-mutation",{
+        type:m.type,target:lockdownTarget(m.target),attributeName:m.attributeName||"",
+        added:Array.from(m.addedNodes||[]).map(lockdownTarget),
+        removed:Array.from(m.removedNodes||[]).map(lockdownTarget),
+        textChars:m.type==="characterData"?String(m.target?.data||"").length:undefined
+      });
+    });
+    lockdownMutationObserver.observe(document.documentElement,{subtree:true,childList:true,attributes:true,characterData:true});
+
+    if (window.PerformanceObserver) {
+      for (const type of ["longtask","layout-shift","resource","navigation","paint","event"]) {
+        try {
+          const po=new PerformanceObserver(list=>{
+            if (!lockdownFrameRunning && type!=="navigation") return;
+            for (const e of list.getEntries()) lockdownTrace("performance-"+type,{name:e.name,startTime:+e.startTime.toFixed(3),duration:+e.duration.toFixed(3),value:e.value,hadRecentInput:e.hadRecentInput,entryType:e.entryType});
+          });
+          po.observe({type,buffered:true,durationThreshold:0});
+        } catch (_) {}
+      }
+    }
+
+    window.addEventListener("error",e=>lockdownTrace("window-error",{message:e.message,filename:e.filename,lineno:e.lineno,colno:e.colno,error:String(e.error?.stack||e.error||"")}));
+    window.addEventListener("unhandledrejection",e=>lockdownTrace("unhandled-rejection",{reason:String(e.reason?.stack||e.reason||"")}));
+    document.addEventListener("visibilitychange",()=>{lockdownTrace("visibility-change",{state:document.visibilityState});lockdownFlush()});
+    window.addEventListener("pagehide",()=>{lockdownTrace("pagehide",{});lockdownFlush()});
+    lockdownInstallButton();
+    lockdownTrace("lockdown-camera-installed",{contract:LOCKDOWN_CONTRACT});
 
     refs.composer.addEventListener("submit", event => { event.preventDefault(); sendMessage(); });
     refs.prompt.addEventListener("input", resizePrompt);
