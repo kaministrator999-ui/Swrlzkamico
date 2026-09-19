@@ -67,6 +67,11 @@ def _lockdown(stage: str, **fields) -> None:
         else:
             record[str(key)[:96]] = str(value)[:2000]
     print("SWRLZ_R39_LOCKDOWN " + json.dumps(record, ensure_ascii=False, separators=(",", ":")), flush=True)
+    try:
+        from api.chat_client_debug import _lockdown as _server_lockdown
+        _server_lockdown("brain-" + str(stage)[:140], request_id=record.get("requestId",""), brain=record)
+    except Exception:
+        pass
 
 
 def cache_stats() -> dict[str, int]:
