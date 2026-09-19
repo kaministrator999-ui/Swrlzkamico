@@ -1,5 +1,5 @@
 {
-  "version": 151,
+  "version": 152,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -14,6 +14,11 @@
         "web/chat_early_shell_ready_v1.js",
         "web/chat_runtime_loader_v3.js"
       ]
+    },
+    "/chat/§wyrlz": {
+      "source": "chat/§wyrlz/index.html",
+      "styles": [],
+      "scripts": []
     },
     "/server": {
       "source": "web/server.html"
@@ -35,5 +40,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v151 completes full-lockdown observability: Web Chat 1.5.84 unified frame/transport/server logger, Server Runtime 2.3.287 ingress/persistence/hydration trace, R39 LALM 2.1.112 request-correlated prompt/token/inference cameras, and Deployment Control 1.0.10 loader-aware verification plus verified native-binary injection into Vercel Python function bundles. Diagnostic volume is intentionally maximal; credentials remain redacted."
+  "notes": "Manifest v152 adds the clean-room /chat/§wyrlz runtime-hot route with one canonical source and zero injected styles/scripts. Legacy /chat remains unchanged as a control surface."
 }
