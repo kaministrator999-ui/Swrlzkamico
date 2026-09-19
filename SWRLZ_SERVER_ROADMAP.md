@@ -36,6 +36,13 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### §wyrlz Start filename correction
+
+**UPDATE STARTED / FINISHED**
+
+**Result:** COMPLETE — corrected the prior interpretation of the user's naming request. The canonical project entry file was renamed from `SWRLZ_PROJECT_START.md` to `§wyrlz_§tart.md`. The mistakenly added prose section that encoded the user's example invocation sentence was removed; the sentence is a user command pattern, not content that belongs inside the start document. Internal self-references now use the new filename. Repository Work advanced to `1.0.5`; Server Runtime, Web Chat, and Runtime Manifest are unchanged. No deployment/restart occurred.
+
+
 ### Lockdown camera architecture + Project Start single-entry hardening
 
 **UPDATE STARTED**
