@@ -160,8 +160,9 @@ For a governed event:
 - capture current authorities and SHAs at entry;
 - re-read them immediately before version assignment/commit;
 - reconcile concurrent advances;
-- advance the overall Server lineage as required by the evolution contract;
-- bump only modules that actually changed;
+- advance Repository Work for the completed governed repository tier;
+- advance Server Runtime only when an actual Server release/deployment advances deployed Server lineage;
+- bump only components/modules that actually changed;
 - update module-owned `versions/<module-id>.txt` authorities;
 - update `VERSION.txt` only for module routing/registration changes;
 - record the event in the roadmap/release record.
@@ -203,6 +204,7 @@ Do not use `/tmp`, in-memory module objects, browser cache, or one worker's proc
 
 Examples include:
 
+- `versions/repository-work.txt`
 - `versions/server-runtime.txt`
 - `versions/server-ui.txt`
 - `versions/web-frontend.txt`
@@ -230,7 +232,7 @@ Before closing a governed update, verify as applicable:
 
 - [ ] current target source fetched;
 - [ ] architecture owner reconciled;
-- [ ] Server/module authority baseline captured;
+- [ ] Repository Work / Server / affected-component authority baseline captured;
 - [ ] issue work inspected existing logs/cameras automatically;
 - [ ] observability gap instrumented only if needed;
 - [ ] deployment capability checked from current configuration **and current platform evidence**;
@@ -240,7 +242,7 @@ Before closing a governed update, verify as applicable:
 - [ ] only intended owners/files changed;
 - [ ] version authorities re-read at commit boundary;
 - [ ] concurrent advances reconciled;
-- [ ] Server and actually changed module versions assigned correctly;
+- [ ] Repository Work, Server (only if released/deployed), and actually changed component versions assigned correctly;
 - [ ] roadmap/release record updated;
 - [ ] post-change authorities re-read;
 - [ ] source/static/runtime/live verification classified honestly;
