@@ -970,3 +970,14 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **No semantic repair:** this continuation remains observation-only. It does not compact prompts, alter model policy, change sampling semantics, or fix throughput behavior.
 - **Required closure before test:** retrace source for instrumentation-induced defects, close any remaining frame-to-terminal gaps, reconcile module versions/manifest, verify the stable/runtime activation boundary, and only then perform the single terminal deployment trigger if stable source changes require it.
 - **Acceptance target:** a fresh request can be reconstructed chronologically from user intent/frame 0 through terminal settled frame, including exact request identity, server route/persistence, Brain prompt/token/inference progression, stream relay, browser consumption, and UI state transitions.
+
+
+###### Retrace closure before activation — 2026-09-19
+
+- **Defect found and repaired:** the new R39 semantic/payload cameras referenced `_request_id(...)` without defining it in the composed v90 entrypoint. That would have hydrated successfully but failed on the first traced generation. R39 2.1.112 now defines one bounded request-ID extractor before any semantic camera executes.
+- **Security defect found and repaired:** the historical client-debug route was intentionally easy to reach for browser boot diagnostics, but full-lockdown mode now carries raw application/prompt/inference evidence. Both GET and POST diagnostic operations now require the existing private `X-SWRLZ-Chat-Token`; the Mask supplies it only to the same-origin diagnostic route. Credentials remain redacted from stored/logged fields.
+- **Hot-runtime camera gap closed:** immutable runtime-head resolution now has both enter and exit/error evidence.
+- **Deployment verification reconciled:** the production workflow had a stale assertion expecting `chat_turn_integrity_v1.js` directly in the manifest even though the current architecture declares only bootstrap scripts there and loads turn integrity through `chat_runtime_loader_v3.js`. Deployment Control 1.0.9 now verifies the loader is manifest-declared and then verifies the loader actually references turn integrity.
+- **Version reconciliation:** Server `2.3.287`; Web Chat `1.5.84`; LALM Engine `2.1.112-hot-lockdown-retrace-v90`; Runtime Manifest `151`; Deployment Control `1.0.9`.
+- **Activation boundary:** stable Human/server files and the deployment workflow changed, so this checkpoint genuinely requires one production activation. The standing terminal-deploy contract authorizes exactly one `.deploy/REQUEST.txt` trigger after source reconciliation; it does not authorize retries.
+- **Post-trigger truth rule:** a workflow trigger is only a trigger. Production is not called deployed until Vercel reports a READY deployment for the approved source; live camera behavior is not called verified until a fresh request produces the correlated trace.
