@@ -1,6 +1,6 @@
 ID=lalm-engine
 VERSION=2.1.103
-REVISION=2.1.103-hot-native-parallel-kernels-v90
+REVISION=2.1.104-hot-compact-selective-prefill-v90
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
