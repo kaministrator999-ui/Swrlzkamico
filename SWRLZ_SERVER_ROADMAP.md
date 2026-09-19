@@ -1157,3 +1157,14 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Expected impact:** governance/trigger semantics only. Repository Work will advance; Server Runtime, Web Chat, Runtime Manifest, LALM, and Deployment Control remain unchanged.
 - **Deployment expectation:** none. Documentation/governance work is deployment-inert.
 - **Verification plan:** re-fetch Project Start and Repository Work after mutation; verify explicit executable-sigil semantics, anti-acknowledgement terminal condition, alias behavior, and no runtime/deployment version movement.
+
+
+### UPDATE FINISHED — 2026-09-19 — §§ executable Project Start bootstrap hardening
+
+- **Changed Project Start:** `§wyrlz_§tart.md` now defines `§§` and `@GitHub §§` as executable bootstrap forms, explicitly forbids stopping at recognition/file lookup/read, and makes the presented stage-of-understanding report part of the terminal condition.
+- **Changed trigger skill:** companion skill v4 recognizes both exact compact forms, treats recognition as step zero, adds an anti-mask-only completion guard, and dynamically delegates the current startup procedure to the repository instead of freezing a duplicate startup list.
+- **Architecture reconciliation:** no new runtime owner was introduced. Project Start remains the startup semantic authority; the skill remains only the compact trigger/launcher.
+- **Interrupted runtime work:** the lockdown route-enter 500 repair remains unresolved and untouched by this governance event.
+- **Resulting version:** Repository Work `1.0.6`. Server Runtime `2.3.287`, Web Chat `1.5.85`, Runtime Manifest `152`, LALM Engine `2.1.112`, and Deployment Control `1.0.10` remain unchanged.
+- **Verification:** source re-read confirmed the executable bootstrap block and terminal guard before version assignment; Repository Work authority was concurrency-checked before advancing.
+- **Deployment/restart:** none; this event is deployment-inert and performs no production activation.
