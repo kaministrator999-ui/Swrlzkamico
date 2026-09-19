@@ -16,6 +16,7 @@ import uuid
 from typing import Any
 
 import requests
+from api.chat_client_debug import _lockdown as _chat_lockdown
 
 BLOB_API = "https://vercel.com/api/blob"
 PREFIX = "swrlz/chat/generation-transcripts/v1"
@@ -87,13 +88,18 @@ class SharedTranscriptStore:
         }
 
     def read(self, request_id: str) -> dict[str, Any] | None:
+        started=time.perf_counter_ns()
+        _chat_lockdown("transcript-read-enter", request_id=request_id, configured=self.configured, authKind=self.auth_kind)
         if not self.configured:
+            _chat_lockdown("transcript-read-skip", request_id=request_id, reason="unconfigured")
             return None
         pathname = _path(request_id)
         encoded = urllib.parse.quote(pathname, safe="/-._~")
         url = f"https://{self.store_id}.private.blob.vercel-storage.com/{encoded}?cache=0&t={int(time.time()*1000)}"
         response = self.session.get(url, headers={"authorization": f"Bearer {self.token}"}, timeout=(3, 8))
+        _chat_lockdown("transcript-read-response", request_id=request_id, status=response.status_code, bytes=len(response.content), durationNs=time.perf_counter_ns()-started)
         if response.status_code == 404:
+            _chat_lockdown("transcript-read-miss", request_id=request_id)
             return None
         response.raise_for_status()
         data = response.content
@@ -104,11 +110,17 @@ class SharedTranscriptStore:
             raise RuntimeError("CHAT_TRANSCRIPT_SNAPSHOT_INVALID")
         updated = float(value.get("updatedAt") or 0)
         if updated and time.time() - updated > TTL_SECONDS:
+            _chat_lockdown("transcript-read-expired", request_id=request_id, ageSeconds=time.time()-updated)
             return None
+        _chat_lockdown("transcript-read-exit", request_id=request_id, snapshot=value, durationNs=time.perf_counter_ns()-started)
         return value
 
     def write(self, snapshot: dict[str, Any]) -> None:
+        request_id=str(snapshot.get("requestId") or "")[:128]
+        started=time.perf_counter_ns()
+        _chat_lockdown("transcript-write-enter", request_id=request_id, configured=self.configured, snapshot=snapshot)
         if not self.configured:
+            _chat_lockdown("transcript-write-skip", request_id=request_id, reason="unconfigured")
             return
         body = _compact(snapshot)
         if len(body) > MAX_SNAPSHOT_BYTES:
@@ -120,8 +132,10 @@ class SharedTranscriptStore:
             data=body,
             timeout=(3, 10),
         )
+        _chat_lockdown("transcript-write-response", request_id=request_id, status=response.status_code, ok=response.ok, bytes=len(body), durationNs=time.perf_counter_ns()-started)
         if not response.ok:
             raise RuntimeError(f"CHAT_TRANSCRIPT_BLOB_WRITE_HTTP_{response.status_code}")
+        _chat_lockdown("transcript-write-exit", request_id=request_id, durationNs=time.perf_counter_ns()-started)
 
 
 STORE = SharedTranscriptStore()
