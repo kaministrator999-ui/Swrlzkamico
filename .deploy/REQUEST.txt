@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-19-r39-post-force-runtime-freshness-v1
+REQUEST_ID=2026-09-19-runtime-immutable-head-resolution-v1
 REQUESTED_BY=standing-terminal-deploy-contract
 SOURCE_REF=main
-REASON=Terminal activation for bounded hot-runtime freshness repair. Generation POST now forces the existing single-writer runtime branch check before inference so a newly committed Brain runtime cannot be hidden by the 30-second worker throttle. One terminal production trigger only.
+REASON=Terminal activation for bounded runtime publication repair. Stable loader now resolves the runtime branch through GitHub API and hydrates every hot source from one immutable commit SHA, preventing stale raw branch/CDN views and mixed revisions. One terminal production trigger only.
