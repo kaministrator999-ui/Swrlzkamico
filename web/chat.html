@@ -669,6 +669,9 @@
     let lockdownTerminal = false;
     let lockdownFlushTimer = 0;
     let lockdownViewerPre = null;
+    let lockdownLastServerSeq = 0;
+    let lockdownServerPullTimer = 0;
+    let lockdownServerPullBusy = false;
 
     function lockdownTarget(node) {
       if (!node || node.nodeType !== 1) return String(node?.nodeName || "unknown");
@@ -751,6 +754,42 @@
       lockdownNativeFetch("/api/chat/client-debug",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",keepalive:true,body:payload}).catch(()=>{});
       if (lockdownQueue.length) lockdownFlushTimer=setTimeout(lockdownFlush,25);
     }
+    function lockdownAppendUnifiedServer(row) {
+      const event=row?.event;if(!event||typeof event!=="object")return;
+      const seq=Number(event.serverSeq||0);
+      if(seq&&seq<=lockdownLastServerSeq)return;
+      if(seq)lockdownLastServerSeq=Math.max(lockdownLastServerSeq,seq);
+      const merged={contract:"swrlz-lockdown-unified-view-v1",source:"server",receivedAt:row.receivedAt||"",serverSeq:seq,event};
+      lockdownEvents.push(merged);
+      console.debug("SWRLZ_LOCKDOWN_SERVER",merged);
+      if(lockdownViewerPre){lockdownViewerPre.textContent+=JSON.stringify(merged)+"\n";lockdownViewerPre.scrollTop=lockdownViewerPre.scrollHeight}
+    }
+    async function lockdownPullServer() {
+      if(lockdownServerPullBusy)return;
+      lockdownServerPullBusy=true;
+      try{
+        const response=await lockdownNativeFetch(`/api/chat/client-debug?after=${lockdownLastServerSeq}&limit=10000`,{cache:"no-store",credentials:"same-origin"});
+        if(response.ok){
+          const data=await response.json();
+          for(const row of (data.events||[]))lockdownAppendUnifiedServer(row);
+          lockdownLastServerSeq=Math.max(lockdownLastServerSeq,Number(data.latestServerSeq||0));
+        }
+      }catch(error){
+        const merged={contract:"swrlz-lockdown-unified-view-v1",source:"client-pull-error",at:new Date().toISOString(),error:String(error?.message||error)};
+        lockdownEvents.push(merged);
+        if(lockdownViewerPre)lockdownViewerPre.textContent+=JSON.stringify(merged)+"\n";
+      }finally{lockdownServerPullBusy=false}
+    }
+    function lockdownStartServerPull() {
+      clearInterval(lockdownServerPullTimer);
+      lockdownPullServer();
+      lockdownServerPullTimer=setInterval(lockdownPullServer,100);
+    }
+    function lockdownStopServerPull() {
+      clearInterval(lockdownServerPullTimer);lockdownServerPullTimer=0;
+      lockdownPullServer();
+    }
+
     function lockdownFrameLoop() {
       if (!lockdownFrameRunning) return;
       lockdownFrame++;
@@ -759,6 +798,7 @@
         lockdownTrace("animation-frame-terminal-settle",{snapshot:lockdownSnapshot()});
         lockdownFrameRunning=false;
         lockdownFlush();
+        setTimeout(()=>{lockdownPullServer().finally(lockdownStopServerPull)},150);
         return;
       }
       lockdownNativeRAF(lockdownFrameLoop);
@@ -767,6 +807,7 @@
       if (lockdownFrameRunning) return;
       lockdownFrame=0; lockdownTerminal=false; lockdownFrameRunning=true;
       lockdownTrace("frame-trace-start",{snapshot:lockdownSnapshot()});
+      lockdownStartServerPull();
       lockdownNativeRAF(lockdownFrameLoop);
     }
     function lockdownViewer() {
