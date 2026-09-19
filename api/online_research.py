@@ -75,7 +75,7 @@ def _ddg_search(query:str)->list[dict[str,Any]]:
     # DDG changes wrapper nesting independently of the stable result__a/result__snippet
     # classes. Parse each result anchor and bound its local result region instead of
     # requiring one exact nested </div></div> shape.
-    anchors=list(re.finditer(r'<a[^>]+class=["\\\'][^"\\\']*\\bresult__a\\b[^"\\\']*["\\\'][^>]+href=["\\\']([^"\\\']+)["\\\'][^>]*>([\\s\\S]*?)</a>',text,re.I))
+    anchors=list(re.finditer(r'<a[^>]+class=["\'][^"\']*\bresult__a\b[^"\']*["\'][^>]+href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>',text,re.I))
     results=[]
     for index,anchor in enumerate(anchors):
         href=html.unescape(anchor.group(1));parsed=urllib.parse.urlsplit(href)
@@ -85,10 +85,10 @@ def _ddg_search(query:str)->list[dict[str,Any]]:
         try:href=_validate_public_url(href)
         except ValueError:continue
         target=urllib.parse.urlsplit(href)
-        title=html.unescape(re.sub(r"\\s+"," ",re.sub(r"<[^>]+>"," ",anchor.group(2)))).strip()
+        title=html.unescape(re.sub(r"\s+"," ",re.sub(r"<[^>]+>"," ",anchor.group(2)))).strip()
         region_end=anchors[index+1].start() if index+1<len(anchors) else min(len(text),anchor.end()+5000)
         region=text[anchor.end():region_end]
-        sm=re.search(r'class=["\\\'][^"\\\']*\\bresult__snippet\\b[^"\\\']*["\\\'][^>]*>([\\s\\S]*?)</(?:a|div)>',region,re.I)
+        sm=re.search(r'class=["\'][^"\']*\bresult__snippet\b[^"\']*["\'][^>]*>([\s\S]*?)</(?:a|div)>',region,re.I)
         snippet=re.sub(r"<[^>]+>"," ",sm.group(1)) if sm else ""
         snippet=html.unescape(re.sub(r"\\s+"," ",snippet)).strip()[:1200]
         results.append(asdict(Evidence(title=title[:300],url=href,snippet=snippet,source=target.netloc.lower(),query=query,rank=len(results)+1,fetched_at=int(time.time()))))
