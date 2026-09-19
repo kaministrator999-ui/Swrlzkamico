@@ -148,84 +148,66 @@ try:
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-    HOT_SERVER_VERSION="2.1.108"
-    HOT_REVISION="2.1.108-hot-v47-v46-prefill-boundary-v90"
+    HOT_SERVER_VERSION="2.1.109"
+    HOT_REVISION="2.1.109-hot-prefill-boundary-cameras-v90"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
 
-    # Compact at the actual final policy-wrapper boundary. v55 -> v54 -> v53 ->
-    # v52 -> v51 inject the synthetic Brain turns in that order. Intercept the
-    # inherited v50 generator called by v51: at that point all verbose policy
-    # turns already exist, while model rendering/prefill has not started.
-    _policy_markers=(
-        "[SWRLZ_CONVERSATION_STATE ","[SWRLZ_CONTEXT_FOCUS ","[SWRLZ_TRAJECTORY",
-        "[SWRLZ_REASONING","[SWRLZ_UNICODE","[SWRLZ_MAP_TO_POINT",
-        "[SWRLZ_CONVERSATION_INTELLIGENCE",
+    # Prefill issue diagnostics are intentionally observational here.
+    # Prior speculative compaction hooks are removed under the Project Start
+    # gradual-mutation rule; cameras below identify which inherited boundary
+    # actually changes prompt material before any next behavioral mutation.
+    def _diag_payload(stage,payload):
+        if not isinstance(payload,dict):
+            _entry(stage,payloadType=type(payload).__name__)
+            return
+        history=payload.get("history")
+        history=history if isinstance(history,list) else []
+        system=[x for x in history if isinstance(x,dict) and str(x.get("role") or "").lower()=="system"]
+        history_chars=sum(len(str(x.get("text") or x.get("content") or "")) for x in history if isinstance(x,dict))
+        system_chars=sum(len(str(x.get("text") or x.get("content") or "")) for x in system)
+        _entry(stage,requestId=_request_id(payload),historyMessages=len(history),
+               historyChars=history_chars,systemMessages=len(system),systemChars=system_chars,
+               promptChars=len(str(payload.get("prompt") or "")))
+
+    _camera_chain=()
+    _v51_generate=globals().get("_V51_GENERATE")
+    _v50_generate=getattr(_v51_generate,"__globals__",{}).get("_V50_GENERATE") if callable(_v51_generate) else None
+    _v49_generate=getattr(_v50_generate,"__globals__",{}).get("_V49_GENERATE") if callable(_v50_generate) else None
+    _v48_generate=getattr(_v49_generate,"__globals__",{}).get("_V48_GENERATE") if callable(_v49_generate) else None
+    _v47_generate=getattr(_v48_generate,"__globals__",{}).get("_V47_GENERATE") if callable(_v48_generate) else None
+    _v46_generate=getattr(_v47_generate,"__globals__",{}).get("_V46_GENERATE") if callable(_v47_generate) else None
+    _v45_generate=getattr(_v46_generate,"__globals__",{}).get("_V45_GENERATE") if callable(_v46_generate) else None
+    _v44_generate=getattr(_v45_generate,"__globals__",{}).get("_V44_GENERATE") if callable(_v45_generate) else None
+    _v43_generate=getattr(_v44_generate,"__globals__",{}).get("_V43_GENERATE") if callable(_v44_generate) else None
+    _v42_generate=getattr(_v43_generate,"__globals__",{}).get("_V42_GENERATE") if callable(_v43_generate) else None
+    _v41_generate=getattr(_v42_generate,"__globals__",{}).get("_V41_GENERATE") if callable(_v42_generate) else None
+    _camera_chain=(
+        ("v51-v50",_v51_generate,"_V50_GENERATE",_v50_generate),
+        ("v50-v49",_v50_generate,"_V49_GENERATE",_v49_generate),
+        ("v49-v48",_v49_generate,"_V48_GENERATE",_v48_generate),
+        ("v48-v47",_v48_generate,"_V47_GENERATE",_v47_generate),
+        ("v47-v46",_v47_generate,"_V46_GENERATE",_v46_generate),
+        ("v46-v45",_v46_generate,"_V45_GENERATE",_v45_generate),
+        ("v45-v44",_v45_generate,"_V44_GENERATE",_v44_generate),
+        ("v44-v43",_v44_generate,"_V43_GENERATE",_v43_generate),
+        ("v43-v42",_v43_generate,"_V42_GENERATE",_v42_generate),
+        ("v42-v41",_v42_generate,"_V41_GENERATE",_v41_generate),
     )
-    def _compact_policy_payload(payload):
-        if not isinstance(payload,dict): return payload,0,0,0
-        enriched=dict(payload); history=list(enriched.get("history") or [])
-        kept=[]; removed=0; removed_chars=0
-        for turn in history:
-            text=str(turn.get("text") or "") if isinstance(turn,dict) else ""
-            synthetic=(isinstance(turn,dict) and str(turn.get("role") or "").lower()=="system"
-                       and any(m in text[:128] for m in _policy_markers))
-            if synthetic: removed+=1; removed_chars+=len(text)
-            else: kept.append(turn)
-        if removed:
-            capsule="[SWRLZ_BRAIN v3] literal-user-first; preserve-continuity; smallest-sufficient-context; evidence-boundary; multi-act."
-            kept=[{"role":"system","text":capsule}]+kept
-            enriched["history"]=kept
-            return enriched,removed,removed_chars,len(capsule)
-        return enriched,0,0,0
-
-    _v51_owner=globals().get("_V51_GENERATE")
-    _v50_original=getattr(_v51_owner,"__globals__",{}).get("_V50_GENERATE") if callable(_v51_owner) else None
-    if not callable(_v50_original):
-        raise RuntimeError("R39_COMPACT_PREFILL_V50_BOUNDARY_UNAVAILABLE")
-    def _compact_v50_generate(payload,is_cancelled=None):
-        compacted,removed,removed_chars,capsule_chars=_compact_policy_payload(payload)
-        _entry("compact-prefill-final-policy-boundary",
-               requestId=_request_id(payload) if isinstance(payload,dict) else "",
-               removedPolicySegments=removed,removedPolicyChars=removed_chars,
-               capsuleChars=capsule_chars)
-        for event in _v50_original(compacted,is_cancelled): yield event
-    _v51_owner.__globals__["_V50_GENERATE"]=_compact_v50_generate
-
-    # v50 normal generation delegates to v49, whose _V48_GENERATE bridge is the
-    # last unconditional path after v51-v55 have injected their synthetic policy
-    # turns. Patch that bridge as well so all legacy Brain policy prose is removed
-    # before v48+ conditional research/evidence handling and base inference.
-    _v50_owner=getattr(_v51_owner,"__globals__",{}).get("_V50_GENERATE") if callable(_v51_owner) else None
-    _v49_generate=getattr(_v50_owner,"__globals__",{}).get("_V49_GENERATE") if callable(_v50_owner) else None
-    _v48_original=getattr(_v49_generate,"__globals__",{}).get("_V48_GENERATE") if callable(_v49_generate) else None
-    if not callable(_v48_original):
-        raise RuntimeError("R39_COMPACT_PREFILL_V49_V48_BOUNDARY_UNAVAILABLE")
-    def _compact_v48_generate(payload,is_cancelled=None):
-        compacted,removed,removed_chars,capsule_chars=_compact_policy_payload(payload)
-        _entry("compact-prefill-final-render-path",
-               requestId=_request_id(payload) if isinstance(payload,dict) else "",
-               removedPolicySegments=removed,removedPolicyChars=removed_chars,
-               capsuleChars=capsule_chars)
-        for event in _v48_original(compacted,is_cancelled): yield event
-    _v49_generate.__globals__["_V48_GENERATE"]=_compact_v48_generate
-
-    # v48 delegates to v47, and v47 injects the trajectory policy before calling
-    # its inherited v46 generator. Patch that exact bridge: all v51-v55 policies
-    # plus v47 trajectory now exist, while v46/base inference has not begun.
-    _v47_generate=getattr(_v48_original,"__globals__",{}).get("_V47_GENERATE") if callable(_v48_original) else None
-    _v46_original=getattr(_v47_generate,"__globals__",{}).get("_V46_GENERATE") if callable(_v47_generate) else None
-    if not callable(_v46_original):
-        raise RuntimeError("R39_COMPACT_PREFILL_V47_V46_BOUNDARY_UNAVAILABLE")
-    def _compact_v46_generate(payload,is_cancelled=None):
-        compacted,removed,removed_chars,capsule_chars=_compact_policy_payload(payload)
-        _entry("compact-prefill-last-unconditional-policy-boundary",
-               requestId=_request_id(payload) if isinstance(payload,dict) else "",
-               removedPolicySegments=removed,removedPolicyChars=removed_chars,
-               capsuleChars=capsule_chars)
-        for event in _v46_original(compacted,is_cancelled): yield event
-    _v47_generate.__globals__["_V46_GENERATE"]=_compact_v46_generate
-    _entry("compact-prefill-installed",finalPolicyBoundary=True,v49v48Boundary=True,v47v46Boundary=True)
+    _installed_boundaries=0
+    for _boundary,_owner,_slot,_original in _camera_chain:
+        if not callable(_owner) or not callable(_original):
+            continue
+        def _make_camera_bridge(boundary,original):
+            def _bridge(payload,is_cancelled=None):
+                _diag_payload("prefill-boundary-"+boundary,payload)
+                for event in original(payload,is_cancelled):
+                    yield event
+            return _bridge
+        _owner.__globals__[_slot]=_make_camera_bridge(_boundary,_original)
+        _installed_boundaries+=1
+    _entry("prefill-boundary-cameras-installed",boundaries=_installed_boundaries,
+           mutationMode="observe-only")
     _entry("hydrate-ok",hotServerVersion=HOT_SERVER_VERSION,
            hotRevision=HOT_REVISION,batchSourceCommit=_V82_BATCH_COMMIT,
            responseContract=callable(globals().get("_response_contract")),
