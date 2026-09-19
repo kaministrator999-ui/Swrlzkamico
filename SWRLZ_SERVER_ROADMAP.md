@@ -48,6 +48,15 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Deployment expectation:** NONE.  
 **Verification plan:** create the lockdown-camera guide; update Project Start startup/read order and ownership map; verify the start document explicitly tells a future agent how to become project-ready from one command and requires cameras-by-design with runtime-switchable activation for new components; fetch back all edited authorities and close the roadmap event.
 
+**UPDATE FINISHED**
+
+**Result:** COMPLETE — LOCKDOWN CAMERA DOCTRINE + SINGLE-ENTRY PROJECT START VERIFIED.  
+**Actual change:** added `docs/engineering/SWRLZ_LOCKDOWN_CAMERA_SYSTEM.md` as the build-time observability operating guide. It defines cameras-from-birth, OFF/NORMAL/LOCKDOWN/FULL_MAP semantics, runtime-hot activation preference, correlation law, stage/backstage/Brain/stagehand coverage, ON/OFF functional parity, performance discipline, version effects, and roadmap requirements. Project Start now includes that guide in the mandatory startup chain, requires a camera contract before new/materially changed Server/page/module/component implementation, and defines the one-command readiness behavior for “§wyrlz follow the start doc in our GitHub Swrlzkamico repo.”  
+**Resulting versions:** Repository Work `1.0.4`; Server Runtime remains `2.3.287`; Web Chat remains `1.5.85`; Runtime Manifest remains `152`.  
+**Verification:** fetch-back confirms Project Start SHA `1817ad47cf1aa5a596de964b545fc8c1203ed055`, Lockdown Camera System SHA `29552ec26824d703fd0ebb5b4be6136400a4c54d`, and Repository Work `1.0.4`. Server, Chat, and Runtime Manifest authorities were re-read unchanged.  
+**Deployment / restart:** NONE. Documentation/governance tier only.  
+**Operational consequence:** future component work starts with its camera contract already designed; lockdown detail can be enabled/disabled through the runtime-hot path where architecture supports it, rather than bolting observability on after the play is built.
+
 
 ### §wyrlz Chat clean-room stage — Tier 1 route + single-word scene
 
