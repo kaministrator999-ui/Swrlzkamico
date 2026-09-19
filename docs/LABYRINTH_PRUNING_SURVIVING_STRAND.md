@@ -158,3 +158,106 @@ The key lesson is not “timers are always bad.” It is:
 Or in the project shorthand:
 
 > **Keep the stage thin. Put the machinery and cameras backstage. Trim the ♾️ until the evidence-supported squiggly strand is the thing left flapping.**
+
+
+## Generalization — Scope First, Snipe Second
+
+The Chat case and the controlled GitHub → Vercel deployment observation demonstrate the same reasoning primitive in different systems.
+
+### Scope
+
+First reduce a large possibility space to the smallest region that can still explain the observation. A successful scoped intervention proves that the relevant variable exists somewhere inside that region; it does **not** identify the exact causal variable.
+
+### Snipe
+
+After the scope is proven, isolate the exact variable, transition, pointer, dependency, or interaction. Change the smallest causal element possible, restore innocent neighboring behavior, and verify that the complete system still works.
+
+This distinction prevents a successful broad intervention from becoming a permanent over-broad fix.
+
+```text
+♾️ possibility space
+   ↓
+scope
+   ↓
+small candidate set
+   ↓
+controlled intervention proves region
+   ↓
+snipe candidates individually / test interactions
+   ↓
+exact causal mechanism
+   ↓
+minimal repair
+   ↓
+full-system verification
+```
+
+A useful mental model is Cheat Engine-style narrowing: finding five candidate addresses is valuable, but freezing all five forever is not equivalent to identifying the real gold address. Neighboring candidates may depend on the genuine value, so changing them can hide the immediate symptom while creating later failures.
+
+**Doctrine:** pruning localizes uncertainty; sniping establishes precise causality.
+
+## Case Study — Controlled GitHub → Vercel Deployment Path
+
+The deployment path provided a second cross-domain example of scope → controlled trigger → observation → causal narrowing.
+
+### Current canonical production trigger
+
+Under the repository's recorded deployment contract, ordinary Git commits are deployment-inert. The canonical production request is a deliberate update to:
+
+`.deploy/REQUEST.txt`
+
+on `main`. That request is consumed by:
+
+`.github/workflows/manual-vercel-production.yml`
+
+The workflow then performs the Vercel CLI production build/deploy and source-bound verification.
+
+Therefore the deployment path is not:
+
+```text
+ordinary commit → instantly deployed
+```
+
+It is:
+
+```text
+explicit .deploy/REQUEST.txt mutation
+        ↓
+GitHub receives the commit
+        ↓
+GitHub Actions workflow is triggered / scheduled
+        ↓
+workflow begins processing the request
+        ↓
+Vercel production build/deploy starts
+        ↓
+Vercel finishes activation
+        ↓
+source-bound/runtime verification
+```
+
+### Timing lesson
+
+Triggering the deployment request is **not the same event as the deployment becoming live**. There can be a visible delay while GitHub Actions detects/schedules/runs the workflow and while Vercel builds and activates the production deployment.
+
+On 2026-09-19 a controlled one-time request was committed specifically to observe this path (`e965c007ad05c24ee099c03fa192d331c8c87230`). The user observed the resulting deployment after roughly a 15-second window. Treat that duration as an observation from that run, **not a guaranteed deployment SLA**.
+
+This matters operationally: after triggering, do not immediately conclude that nothing happened and manually trigger another deployment merely because Vercel has not appeared live yet. Observe the GitHub workflow path first and allow the asynchronous pipeline time to progress.
+
+### Reasoning lesson
+
+The deployment experiment and Chat performance experiment share the same architecture:
+
+```text
+broad uncertainty
+    ↓ scope
+small causal region
+    ↓ controlled trigger/change
+observable effect
+    ↓
+region confirmed
+    ↓ snipe
+exact cause / mechanism
+```
+
+Cross-domain recurrence is important for §wyrlx. The target behavior is not memorizing one debugging recipe; it is learning when to scope, when to rescope, when evidence is sufficient to snipe, and when a successful intervention still leaves causal uncertainty.
