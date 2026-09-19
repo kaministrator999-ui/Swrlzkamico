@@ -18,7 +18,7 @@ _V80_COMMIT="44f154cf6a4ae46eb232665f36815eec2b2d8496"
 _V80_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V80_COMMIT}/runtime_hot/r39_engine_v80_overlay.py"
 _V81_COMMIT="94d09dce6d03d3a51632f8b6d830265481a26372"
 _V81_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V81_COMMIT}/runtime_hot/r39_engine_v81_overlay.py"
-_V82_BATCH_COMMIT="b2299402b5630371adb7774c6f80c7392c173dd2"
+_V82_BATCH_COMMIT="c6db9697b11482caf991b1d3e8ce30c9b392e5e6"
 _V82_BATCH_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V82_BATCH_COMMIT}/runtime_hot/r39_batch_prefill.py"
 _V84_COMMIT="2e959bb9fea0af38c7f2c1e35745c3a8a8c9f066"
 _V84_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V84_COMMIT}/runtime_hot/r39_engine_v84_overlay.py"
@@ -40,6 +40,11 @@ def _entry(stage,**fields):
     for k,v in fields.items():
         if v is None or isinstance(v,(str,int,float,bool)):record[str(k)[:64]]=v
     print("SWRLZ_R39_HOT_ENTRY "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
+    try:
+        from api.chat_client_debug import _lockdown as _server_lockdown
+        _server_lockdown("brain-hot-entry-" + str(stage)[:120], request_id=str(fields.get("requestId") or ""), brain=record)
+    except Exception:
+        pass
 
 try:
     _entry("fetch-start",sourceCommit=_V74_COMMIT,overlayCommit=_V75_COMMIT,v76OverlayCommit=_V76_COMMIT,v77OverlayCommit=_V77_COMMIT,v78OverlayCommit=_V78_COMMIT,v79OverlayCommit=_V79_COMMIT,v80OverlayCommit=_V80_COMMIT,v81OverlayCommit=_V81_COMMIT,v82BatchCommit=_V82_BATCH_COMMIT,v84OverlayCommit=_V84_COMMIT,v85OverlayCommit=_V85_COMMIT,v86OverlayCommit=_V86_COMMIT,v87OverlayCommit=_V87_COMMIT,v88OverlayCommit=_V88_COMMIT,v89OverlayCommit=_V89_COMMIT,v90OverlayCommit=_V90_COMMIT)
@@ -190,6 +195,11 @@ try:
             "promptChars":len(str(payload.get("prompt") or "")),
         }
         print("SWRLZ_R39_LOCKDOWN "+json.dumps(snapshot,ensure_ascii=False,separators=(",",":")),flush=True)
+        try:
+            from api.chat_client_debug import _lockdown as _server_lockdown
+            _server_lockdown("brain-payload-" + str(stage)[:120], request_id=request_id, brain=snapshot)
+        except Exception:
+            pass
 
     # Full-map trace: retain all existing cameras and extend observation upward
     # through every reachable inherited generation bridge. This is observational only.
