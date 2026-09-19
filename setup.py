@@ -12,7 +12,7 @@ OPENMP_LINK = ["-fopenmp"] if USE_OPENMP else []
 
 setup(
     name="swrlzkamico-native",
-    version="0.2.0",
+    version="0.2.1",
     packages=["swyrlz"],
     ext_modules=[
         Extension(
