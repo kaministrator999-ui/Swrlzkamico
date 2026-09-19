@@ -90,6 +90,8 @@ ISSUE/DEFECT? → AUTOMATIC CAMERA + LOG EVIDENCE LOOP
       ↓
 CONFIRM CANONICAL OWNER + MODULE IMPACT
       ↓
+WRITE ROADMAP UPDATE STARTED RECORD
+      ↓
 CHECK CURRENT DEPLOYMENT CAPABILITY
       ↓
 DEPLOYMENT-PRODUCING ACTION?
@@ -108,12 +110,22 @@ SET/VERIFY DECLARED MODULE STATUS APPROPRIATELY
       ↓
 VERIFY BEHAVIOR + OBSERVED RUNTIME HEALTH + OWNERSHIP + ACTIVATION AS RELEVANT
       ↓
-UPDATE ROADMAP / RELEASE RECORD
+WRITE ROADMAP UPDATE FINISHED RECORD
       ↓
 REPORT RESULT USING RESPONSE STANDARD
 ```
 
 Version/status state observed at the beginning is a baseline, **not a reservation**.
+
+### Transactional roadmap journal — mandatory
+
+Before the first implementation mutation of a governed update, write an **UPDATE STARTED** record to `SWRLZ_SERVER_ROADMAP.md`. It must describe the requested outcome, expected canonical owner/module impact, observed version/SHA baseline, deployment expectation, and verification plan.
+
+After implementation, concurrency reconciliation, version assignment, and verification, update that same event with an **UPDATE FINISHED** marker describing the actual change, resulting Server/module versions, verification/activation truth state, deployment/restart state, and any correction/supersession lineage.
+
+If Project Start finds an **UPDATE STARTED** record without a matching terminal marker, treat it as interrupted work. Reconcile repository/runtime/version evidence before beginning overlapping mutation, then explicitly **resume and finish**, **ABORT**, or **SUPERSEDE** the event. Never silently discard an unfinished update.
+
+Roadmap journal writes and other documentation/governance bookkeeping are deployment-inert under the current deployment contract and do not authorize or trigger a stable-server deployment. If fresh deployment evidence contradicts that invariant, treat it as a deployment-control defect and stop before any deployment-producing action.
 
 ---
 
@@ -186,7 +198,7 @@ Core invariants:
 
 - every governed Server development event gets the next overall Server version, including failed/partial governed events as defined by the evolution contract;
 - only modules that actually changed receive module-version bumps;
-- `VERSION.txt` routes stable module IDs to their authoritative `versions/<module-id>.txt` owners and must not become a duplicate numeric/status ledger;
+- `VERSION.txt` is the complete governed version registry: anything that has or receives an independently advanced version identifier MUST be registered there and routed to its authoritative `versions/<module-id>.txt` owner; it must not become a duplicate numeric/status ledger;
 - each module-owned version file may also declare the module's intended operational `STATUS`; consumers should resolve that status through `VERSION.txt` rather than hardcoding another copy;
 - **VERSION and STATUS answer different questions:** `VERSION` identifies the module's evolution state; `STATUS` declares whether that module is intended to be `active`, `preparing`, `maintenance`, `disabled`, or another explicitly defined lifecycle state;
 - declared `STATUS=active` means the module is intended to be available; it does **not** override evidence of an actual runtime fault;
