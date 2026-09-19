@@ -153,10 +153,15 @@ try:
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-    HOT_SERVER_VERSION="2.1.111"
-    HOT_REVISION="2.1.111-hot-lockdown-every-step-v90"
+    HOT_SERVER_VERSION="2.1.112"
+    HOT_REVISION="2.1.112-hot-lockdown-retrace-v90"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
+
+    def _request_id(payload):
+        if not isinstance(payload,dict):
+            return ""
+        return str(payload.get("requestId") or payload.get("request_id") or "")[:128]
 
     def _semantic_lockdown(stage,request_id="",**fields):
         record={"contract":"r39-semantic-primitive-lockdown-v1","stage":str(stage)[:160],"requestId":str(request_id or "")[:128],"atUnixNs":time.time_ns(),"monotonicNs":time.perf_counter_ns()}
