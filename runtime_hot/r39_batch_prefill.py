@@ -47,6 +47,28 @@ def _emit_batch_fallback(exc: Exception, metrics: dict[str, Any] | None) -> None
 
 
 
+def _lockdown(stage: str, **fields) -> None:
+    metrics = getattr(_TLS, "metrics", None)
+    record = {
+        "contract": "r39-full-lockdown-trace-v1",
+        "stage": str(stage)[:160],
+        "atUnixNs": time.time_ns(),
+        "monotonicNs": time.perf_counter_ns(),
+        "requestId": str((metrics or {}).get("requestId") or "")[:128],
+        "phase": str((metrics or {}).get("phase") or ""),
+    }
+    for key, value in fields.items():
+        if value is None or isinstance(value, (str, int, float, bool)):
+            record[str(key)[:96]] = value
+        elif isinstance(value, (list, tuple)):
+            record[str(key)[:96]] = list(value)[:512]
+        elif isinstance(value, dict):
+            record[str(key)[:96]] = {str(k)[:96]: v for k, v in list(value.items())[:256] if v is None or isinstance(v, (str, int, float, bool))}
+        else:
+            record[str(key)[:96]] = str(value)[:2000]
+    print("SWRLZ_R39_LOCKDOWN " + json.dumps(record, ensure_ascii=False, separators=(",", ":")), flush=True)
+
+
 def cache_stats() -> dict[str, int]:
     with _DENSE_LOCK:
         return {
@@ -93,14 +115,21 @@ def _dense_matrix(model, name: str, batch: int) -> np.ndarray | None:
 
 def _matmat(bridge, model, name: str, x: np.ndarray) -> np.ndarray:
     value = np.ascontiguousarray(x, dtype=np.float32)
+    started = time.perf_counter_ns()
+    _lockdown("matmat-enter", tensor=name, rows=int(value.shape[0]), columns=int(value.shape[1]))
     # Prefer the bounded-memory direct-quantized batch kernel when the worker has it.
     if callable(getattr(bridge, "matmat_available", None)) and bridge.matmat_available():
         out = bridge.matmat(model, name, value)
         if out is not None:
-            return np.asarray(out, dtype=np.float32)
+            result = np.asarray(out, dtype=np.float32)
+            _lockdown("matmat-exit", tensor=name, path="native-quantized", outputRows=int(result.shape[0]), outputColumns=int(result.shape[1]), durationNs=time.perf_counter_ns()-started)
+            return result
     dense = _dense_matrix(model, name, int(value.shape[1]))
     if dense is not None:
-        return np.asarray(dense @ value, dtype=np.float32)
+        result = np.asarray(dense @ value, dtype=np.float32)
+        _lockdown("matmat-exit", tensor=name, path="dense-blas", outputRows=int(result.shape[0]), outputColumns=int(result.shape[1]), durationNs=time.perf_counter_ns()-started)
+        return result
+    _lockdown("matmat-unavailable", tensor=name, durationNs=time.perf_counter_ns()-started)
     raise RuntimeError(f"R39_BATCH_MATMAT_UNAVAILABLE:{name}")
 
 
@@ -165,9 +194,15 @@ def forward_token_block(base, bridge, model, state, tokens: list[int]) -> np.nda
     start_pos = int(state.pos)
     count = len(tokens)
     x = np.stack([model.row("token_embd.weight", int(token)).astype(np.float32) for token in tokens], axis=1)
+    _lockdown("prefill-block-enter", startPos=start_pos, tokenCount=count, tokenIds=[int(t) for t in tokens])
     for i, kvh in enumerate(base.LAYER_KV):
+        layer_started = time.perf_counter_ns()
+        _lockdown("layer-enter", layer=i, layerType="shortconv" if kvh == 0 else "attention", startPos=start_pos, tokenCount=count, hiddenRows=int(x.shape[0]), hiddenColumns=int(x.shape[1]))
+        norm_started=time.perf_counter_ns()
         n = _rms_cols(x, model.vector(f"blk.{i}.attn_norm.weight"))
+        _lockdown("layer-attn-norm", layer=i, durationNs=time.perf_counter_ns()-norm_started)
         if kvh == 0:
+            _lockdown("layer-shortconv-enter", layer=i)
             projected = _matmat(bridge, model, f"blk.{i}.shortconv.in_proj.weight", n)
             b, c, z = np.split(projected, 3, axis=0)
             bx = (b * z).astype(np.float32)
@@ -178,7 +213,9 @@ def forward_token_block(base, bridge, model, state, tokens: list[int]) -> np.nda
             state.conv[i][0] = seq[-2].copy()
             state.conv[i][1] = seq[-1].copy()
             op = _matmat(bridge, model, f"blk.{i}.shortconv.out_proj.weight", (c * cv).astype(np.float32))
+            _lockdown("layer-shortconv-exit", layer=i)
         else:
+            _lockdown("layer-attention-enter", layer=i, priorKv=len(state.kv[i]))
             q = _matmat(bridge, model, f"blk.{i}.attn_q.weight", n)
             k = _matmat(bridge, model, f"blk.{i}.attn_k.weight", n)
             v = _matmat(bridge, model, f"blk.{i}.attn_v.weight", n)
@@ -190,14 +227,23 @@ def forward_token_block(base, bridge, model, state, tokens: list[int]) -> np.nda
             att = _causal_gqa(q, k, v, old_entries)
             state.kv[i].extend((k[:, t].copy(), v[:, t].copy()) for t in range(count))
             op = _matmat(bridge, model, f"blk.{i}.attn_output.weight", att)
+            _lockdown("layer-attention-exit", layer=i, newKv=len(state.kv[i]))
         residual = (x + op).astype(np.float32)
+        _lockdown("layer-residual", layer=i)
+        ffn_norm_started=time.perf_counter_ns()
         fn = _rms_cols(residual, model.vector(f"blk.{i}.ffn_norm.weight"))
+        _lockdown("layer-ffn-norm", layer=i, durationNs=time.perf_counter_ns()-ffn_norm_started)
         gate = _matmat(bridge, model, f"blk.{i}.ffn_gate.weight", fn)
         up = _matmat(bridge, model, f"blk.{i}.ffn_up.weight", fn)
+        _lockdown("layer-ffn-activation", layer=i)
         ff = _matmat(bridge, model, f"blk.{i}.ffn_down.weight", (base._silu(gate) * up).astype(np.float32))
         x = (residual + ff).astype(np.float32)
+        _lockdown("layer-exit", layer=i, durationNs=time.perf_counter_ns()-layer_started)
+    final_norm_started=time.perf_counter_ns()
     hidden = _rms_cols(x, model.vector("token_embd_norm.weight"))
+    _lockdown("prefill-final-norm", durationNs=time.perf_counter_ns()-final_norm_started)
     state.pos = start_pos + count
+    _lockdown("prefill-block-exit", startPos=start_pos, endPos=state.pos, tokenCount=count)
     return hidden[:, -1].copy()
 
 
@@ -219,17 +265,20 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
             setattr(state, "_swrlz_batch_prefill_tokens", pending)
         metrics = _metric()
         phase = str((metrics or {}).get("phase") or "")
+        _lockdown("forward-token-enter", tokenId=int(token), needLogits=bool(need_logits), statePos=int(state.pos), pendingTokens=len(pending))
 
         # Decode stays single-token. This preserves ITL and avoids batching a lone token.
         if need_logits and not pending and phase == "GENERATING":
             started = time.monotonic()
             result = original_forward(model, token, state, need_logits=True)
+            _lockdown("decode-token-exit", tokenId=int(token), durationNs=int((time.monotonic()-started)*1_000_000_000), statePos=int(state.pos))
             if metrics is not None:
                 metrics["decodeTokens"] += 1
                 metrics["decodeComputeSeconds"] += time.monotonic() - started
             return result
 
         pending.append(int(token))
+        _lockdown("prefill-token-buffered", tokenId=int(token), pendingTokens=len(pending), blockTokens=block_tokens, needLogits=bool(need_logits))
         if not need_logits and len(pending) < block_tokens:
             return None
 
@@ -239,18 +288,21 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
         # back to serial execution without repairing a half-mutated recurrent state.
         trial = impl._clone_state(state)
         batch_started = time.monotonic()
+        _lockdown("batch-attempt-enter", tokenCount=len(block), tokenIds=block, statePos=int(state.pos))
         try:
             hidden = forward_token_block(impl.base, impl.native_bridge, model, trial, block)
             logits = model.matvec("token_embd.weight", hidden) if need_logits else None
             state.conv = trial.conv
             state.kv = trial.kv
             state.pos = trial.pos
+            _lockdown("batch-attempt-exit", tokenCount=len(block), path="batch", statePos=int(state.pos), durationNs=int((time.monotonic()-batch_started)*1_000_000_000))
             if metrics is not None and phase == "PREFILL":
                 metrics["batchBlocks"] += 1
                 metrics["batchPrefillTokens"] += len(block)
                 metrics["batchComputeSeconds"] += time.monotonic() - batch_started
             return logits
         except Exception as exc:
+            _lockdown("batch-attempt-fallback", tokenCount=len(block), errorType=type(exc).__name__, error=str(exc)[:2000])
             if metrics is not None and phase == "PREFILL":
                 metrics["batchFallbacks"] += 1
                 metrics["lastBatchFallback"] = f"{type(exc).__name__}:{exc}"[:240]
@@ -258,12 +310,15 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
             logits = None
             serial_started = time.monotonic()
             for index, buffered_token in enumerate(block):
+                token_started=time.perf_counter_ns()
+                _lockdown("serial-prefill-token-enter", index=index, tokenId=int(buffered_token), statePos=int(state.pos))
                 logits = original_forward(
                     model,
                     buffered_token,
                     state,
                     need_logits=bool(need_logits and index == len(block) - 1),
                 )
+                _lockdown("serial-prefill-token-exit", index=index, tokenId=int(buffered_token), statePos=int(state.pos), durationNs=time.perf_counter_ns()-token_started)
             if metrics is not None and phase == "PREFILL":
                 metrics["serialPrefillTokens"] += len(block)
                 metrics["serialPrefillSeconds"] += time.monotonic() - serial_started
@@ -272,6 +327,7 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
     def instrumented_generate_hot_events(payload, is_cancelled=None):
         metrics = {
             "phase": "START",
+            "requestId": str(payload.get("requestId") or "")[:128] if isinstance(payload, dict) else "",
             "started": time.monotonic(),
             "prefillStarted": None,
             "prefillFinished": None,
@@ -290,8 +346,10 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
             "firstDeltaLatencyMs": None,
         }
         _TLS.metrics = metrics
+        _lockdown("generate-enter", promptChars=len(str(payload.get("prompt") or "")) if isinstance(payload,dict) else 0, historyMessages=len(payload.get("history") or []) if isinstance(payload,dict) and isinstance(payload.get("history"),list) else 0)
         try:
             for event in original_generate_hot_events(payload, is_cancelled):
+                _lockdown("generate-event", eventType=str(event.get("type") or ""), seq=event.get("seq"), eventPhase=str(event.get("phase") or ""), reason=str(event.get("reason") or "")[:4000], text=str(event.get("text") or "")[:16000])
                 phase = str(event.get("phase") or "")
                 reason = str(event.get("reason") or "")
                 if phase == "PREFILL":
