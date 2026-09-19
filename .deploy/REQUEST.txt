@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-19-r39-chat-post-hot-hydration-v1
+REQUEST_ID=2026-09-19-r39-post-force-runtime-freshness-v1
 REQUESTED_BY=standing-terminal-deploy-contract
 SOURCE_REF=main
-REASON=Terminal activation for the bounded R39 activation-lineage repair. Stable chat middleware now hot-syncs runtime before POST generation, preventing stale worker-local R39 entrypoints. Runtime a45dfef pins batch adapter to containing commit 2807923. One production deployment only; verification follows.
+REASON=Terminal activation for bounded hot-runtime freshness repair. Generation POST now forces the existing single-writer runtime branch check before inference so a newly committed Brain runtime cannot be hidden by the 30-second worker throttle. One terminal production trigger only.
