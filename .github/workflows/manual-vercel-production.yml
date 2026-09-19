@@ -157,6 +157,20 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: vercel build --prod --token="$VERCEL_TOKEN"
 
+      - name: Verify native R39 artifacts are bundled
+        shell: bash
+        run: |
+          set -euo pipefail
+          native_count="$(find .vercel/output -type f \( -name '_r39_native*.so' -o -name '_r39_native*.pyd' -o -name '_r39_native*.dylib' \) | wc -l | tr -d ' ')"
+          batch_count="$(find .vercel/output -type f \( -name '_r39_batch*.so' -o -name '_r39_batch*.pyd' -o -name '_r39_batch*.dylib' \) | wc -l | tr -d ' ')"
+          echo "R39 native artifacts: $native_count" >> "$GITHUB_STEP_SUMMARY"
+          echo "R39 batch artifacts: $batch_count" >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$native_count" -lt 1 || "$batch_count" -lt 1 ]]; then
+            echo "Production artifact is missing required R39 native accelerators; refusing to deploy." >&2
+            find .vercel/output -type f | grep -E 'r39|swyrlz' || true
+            exit 1
+          fi
+
       - name: Deploy production artifact
         id: deploy
         shell: bash
