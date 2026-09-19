@@ -258,6 +258,84 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
     original_forward = impl._forward_hot
     original_generate_hot_events = impl._generate_hot_events
 
+    # Lockdown operator cameras wrap the existing primitives instead of
+    # reimplementing inference. This preserves arithmetic ownership while exposing
+    # each neural operator used by the serial/decode path.
+    if not bool(getattr(impl, "_swrlz_lockdown_operator_cameras", False)):
+        base_mod = impl.base
+        original_rms = base_mod._rms
+        original_rope = base_mod._rope
+        original_silu = base_mod._silu
+        model_cls = base_mod.R39Model
+        original_matvec = model_cls.matvec
+        original_row = model_cls.row
+        original_vector = model_cls.vector
+        original_matrix = model_cls.matrix
+
+        def traced_rms(values, weight):
+            started=time.perf_counter_ns()
+            shape=getattr(values, "shape", None)
+            _lockdown("op-rms-enter", inputShape=list(shape) if shape is not None else "")
+            out=original_rms(values, weight)
+            _lockdown("op-rms-exit", outputShape=list(getattr(out,"shape",()) or ()), durationNs=time.perf_counter_ns()-started)
+            return out
+
+        def traced_rope(values, heads, head_dim, pos, *args, **kwargs):
+            started=time.perf_counter_ns()
+            _lockdown("op-rope-enter", heads=int(heads), headDim=int(head_dim), position=int(pos), inputShape=list(getattr(values,"shape",()) or ()))
+            out=original_rope(values, heads, head_dim, pos, *args, **kwargs)
+            _lockdown("op-rope-exit", heads=int(heads), position=int(pos), outputShape=list(getattr(out,"shape",()) or ()), durationNs=time.perf_counter_ns()-started)
+            return out
+
+        def traced_silu(values):
+            started=time.perf_counter_ns()
+            _lockdown("op-silu-enter", inputShape=list(getattr(values,"shape",()) or ()))
+            out=original_silu(values)
+            _lockdown("op-silu-exit", outputShape=list(getattr(out,"shape",()) or ()), durationNs=time.perf_counter_ns()-started)
+            return out
+
+        def traced_matvec(self, name, values):
+            started=time.perf_counter_ns()
+            _lockdown("op-matvec-enter", tensor=str(name), inputShape=list(getattr(values,"shape",()) or ()))
+            try:
+                out=original_matvec(self, name, values)
+                _lockdown("op-matvec-exit", tensor=str(name), outputShape=list(getattr(out,"shape",()) or ()), durationNs=time.perf_counter_ns()-started)
+                return out
+            except Exception as exc:
+                _lockdown("op-matvec-error", tensor=str(name), errorType=type(exc).__name__, error=str(exc)[:2000], durationNs=time.perf_counter_ns()-started)
+                raise
+
+        def traced_row(self, name, index):
+            started=time.perf_counter_ns()
+            _lockdown("op-row-enter", tensor=str(name), index=int(index))
+            out=original_row(self, name, index)
+            _lockdown("op-row-exit", tensor=str(name), index=int(index), outputShape=list(getattr(out,"shape",()) or ()), durationNs=time.perf_counter_ns()-started)
+            return out
+
+        def traced_vector(self, name):
+            started=time.perf_counter_ns()
+            _lockdown("op-vector-enter", tensor=str(name))
+            out=original_vector(self, name)
+            _lockdown("op-vector-exit", tensor=str(name), outputShape=list(getattr(out,"shape",()) or ()), durationNs=time.perf_counter_ns()-started)
+            return out
+
+        def traced_matrix(self, name):
+            started=time.perf_counter_ns()
+            _lockdown("op-matrix-enter", tensor=str(name))
+            out=original_matrix(self, name)
+            _lockdown("op-matrix-exit", tensor=str(name), outputShape=list(getattr(out,"shape",()) or ()), durationNs=time.perf_counter_ns()-started)
+            return out
+
+        base_mod._rms = traced_rms
+        base_mod._rope = traced_rope
+        base_mod._silu = traced_silu
+        model_cls.matvec = traced_matvec
+        model_cls.row = traced_row
+        model_cls.vector = traced_vector
+        model_cls.matrix = traced_matrix
+        setattr(impl, "_swrlz_lockdown_operator_cameras", True)
+        _lockdown("operator-cameras-installed", primitives=["rms","rope","silu","matvec","row","vector","matrix"])
+
     def patched_forward(model, token, state, *, need_logits: bool):
         pending = getattr(state, "_swrlz_batch_prefill_tokens", None)
         if pending is None:
