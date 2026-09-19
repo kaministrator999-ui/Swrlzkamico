@@ -6,10 +6,10 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.281`
+- **Overall Server:** `2.3.282`
 - **Chat:** `1.5.82`
-- **Runtime Manifest:** `146`
-- **LALM Engine:** `2.1.99` (`v87` corrected loader preserving v86 prompt-composition attribution; v85 research-planner status and v83 batching preserved)
+- **Runtime Manifest:** `147`
+- **LALM Engine:** `2.1.100` (`v88` complete loader correction preserving v86 prompt-composition attribution; v85 research-planner status and v83 batching preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -35,9 +35,22 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Release ledger
 
+### Server 2.3.282 — R39 v88 complete prompt-camera loader repair
+
+**Status:** runtime-hot source complete/static fetch-back verified; live hotload re-probe pending.  
+**LALM Engine:** `2.1.99 → 2.1.100` / `v88`. **Runtime Manifest:** `146 → 147`. **Chat:** `1.5.82` unchanged. **Online Research:** `1.0.1` unchanged.  
+**Deployment / restart:** NONE.
+
+**Live failure evidence:** after Server 2.3.281, production `/api/lalm/status` returned engine unavailable with `SyntaxError: unexpected character after line continuation character (r39_engine.py, line 109)`. Fetch-back localized six remaining literal backslash-n separators in the v86 loader execution block.
+
+**Correction:** replaced exactly those six corrupt separators with real Python source newlines, leaving legitimate string escapes untouched. Fetch-back now shows v85, v86, v87, and v88 loader blocks on separate physical source lines. v88 is a minimal lineage overlay preserving the v86 composition camera while reporting LALM 2.1.100.
+
+**Verification:** source/static fetch-back confirms the corrected loader structure and authorities Server 2.3.282, LALM 2.1.100/v88, Runtime Manifest 147. A fresh status request is still required to prove a worker hotloads the corrected source; after that, rerun the Kansas City weather request and inspect `prompt-composition-owner` totals against actual prefill.
+
+
 ### Server 2.3.281 — R39 v87 loader correction preserving prompt-composition camera
 
-**Status:** runtime-hot source complete/static fetch-back verified; live request acceptance pending.  
+**Status:** preserved partial/failed correction. The declaration-region corruption was repaired, but a live `/api/lalm/status` probe then exposed six additional literal backslash-n separators inside the v86 loader block at line 109 (`SyntaxError: unexpected character after line continuation character`). Server 2.3.282 / v88 completes the repair.  
 **LALM Engine:** `2.1.98 → 2.1.99` / `v87`. **Runtime Manifest:** `145 → 146`. **Chat:** `1.5.82` unchanged. **Online Research:** `1.0.1` unchanged.  
 **Deployment / restart:** NONE.
 
