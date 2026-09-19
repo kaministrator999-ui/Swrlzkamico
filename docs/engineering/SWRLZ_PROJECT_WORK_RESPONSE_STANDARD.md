@@ -139,6 +139,16 @@ If cameras/instrumentation were added because the previous observability was ins
 
 ---
 
+## 6A. Compact startup stage report
+
+When the response is the terminal report for `§§` / `@GitHub §§`, preserve the normal readable stage presentation but include a compact **versioned-module handoff ledger** covering every authority registered in `runtime:VERSION.txt`. Each entry should show the authoritative current version and the latest supported Roadmap handoff/state for that module.
+
+Then include a visually distinct **Where we actually left off** section identifying the newest completed governed event and, separately, the newest unresolved/interrupted event when one exists. Do not equate newest commit with newest unresolved engineering work.
+
+The agent may reconstruct more forensic detail internally than it displays. Surface the details needed to understand readiness, ownership, activation, blockers, and the current handoff; keep low-value retrieval narration backstage.
+
+---
+
 ## 7. Version/deployment reporting
 
 For every governed versioned event, the conversational response should state:
