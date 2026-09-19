@@ -47,6 +47,14 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Deployment expectation:** NONE. Documentation/governance bookkeeping is deployment-inert under the current contract.  
 **Verification plan:** fetch back all changed governance documents and confirm the workflow, version-registry invariant, interruption recovery, and deployment-inert wording agree without creating a second policy owner.
 
+**UPDATE FINISHED**
+
+**Result:** COMPLETE.  
+**Actual change:** Project Start now routes every governed event through a pre-mutation `UPDATE STARTED` roadmap write and a post-verification `UPDATE FINISHED` write. The Version Evolution contract owns the detailed journal schema and interruption-recovery rule. Project Start also explicitly states that every independently versioned governed component must be registered through `VERSION.txt`.  
+**Version result:** governance/documentation-only event; runtime Server remains `2.3.282`, LALM Engine remains `2.1.100` / v88, Runtime Manifest remains `147`; no runtime module changed.  
+**Verification:** fetch-back verified the new START/FINISH workflow, incomplete-event recovery rule, complete version-registry invariant, and deployment-inert wording in their canonical owners. Runtime `VERSION.txt` remains a route-only registry and current Server authority remains `2.3.282`.  
+**Deployment / restart:** NONE. No deployment-producing action was performed.  
+
 ## Release ledger
 
 ### Server 2.3.282 — R39 v88 complete prompt-camera loader repair
