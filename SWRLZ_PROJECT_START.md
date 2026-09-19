@@ -171,6 +171,27 @@ Default diagnostic order when the cause is uncertain:
 
 Do not add noisy logging when existing evidence already answers the question. Never log secrets merely for debugging convenience.
 
+### Gradual issue mutation / causal rollback rule — mandatory
+
+Until the user explicitly declares the issue being worked on **fixed**, treat every proposed fix as a bounded diagnostic experiment rather than permanent architecture.
+
+For each unresolved issue:
+
+1. **Use existing cameras first.** If current cameras/logs can narrow the competing causes, inspect them before changing behavior.
+2. **Instrument before guessing.** If evidence cannot distinguish the remaining candidates, add the smallest read-only cameras at the candidate boundaries and reproduce the issue. Prefer observing semantic boundaries and state transitions over indiscriminately logging every local variable.
+3. **Narrow before mutation.** A value changing with the symptom establishes correlation, not ownership. Multiple candidates may track the same visible value.
+4. **Change one causal candidate at a time.** Do not stack multiple speculative behavioral fixes merely because several candidates look related.
+5. **Verify the intended symptom and adjacent invariants after each candidate change.** A symptom improvement proves a causal effect, not automatically that the changed location is the correct architectural owner.
+6. **If the candidate does not fix the issue, restore that candidate change completely before testing the next candidate.** Preserve diagnostic cameras when they remain useful, but do not accumulate disproven behavioral mutations.
+7. **If a candidate appears to fix the issue, keep it provisional until the user declares the issue fixed.** Continue verifying ownership, regressions, fallback behavior, and relevant invariants.
+8. **After the user declares the issue fixed, reconcile the retained solution into permanent structure.** Remove superseded experimental hooks/cameras that are no longer useful, preserve useful bounded observability, and record the accepted owner and cleanup in roadmap lineage.
+
+The governing debugging model is:
+
+> **observe → narrow → mutate one candidate → verify → keep provisionally if causal / restore if disproven → repeat until user acceptance → reconcile permanent structure**
+
+A disproven experiment is evidence, not architecture. Do not leave failed candidate fixes layered into the permanent system where their interactions can create delayed or timing-dependent regressions.
+
 ---
 
 ## 6. Runtime / main / deployment boundary
