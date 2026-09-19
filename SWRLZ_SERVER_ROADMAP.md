@@ -897,3 +897,11 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Repair strategy:** add a final v90 compact-prefill adapter that removes only recognized synthetic policy prose and replaces it with one compact deterministic control capsule derived from the already-computed Brain state. Preserve actual user/assistant history, response directives, online evidence, Truth Firewall/evidence rules, model weights, tokenizer, and response-budget semantics.
 - **Target:** trivial fresh-turn prefill should fall from ~3.2K tokens toward a few hundred without deleting capability; production cameras must report removed-policy count/chars and compact capsule size.
 - **Verification:** same fresh count-to-10 request, compare renderedPromptTokens and coherence before any further arithmetic optimization.
+
+
+##### UPDATE CONTINUATION STARTED — 2026-09-19 — hot-runtime activation freshness repair
+
+- Fresh production evidence after the 2.1.105 runtime mutation still reported `engineVersion=2.1.104` and `engineRevision=2.1.104-hot-compact-selective-prefill-v90`; therefore the 3,232-token result did not exercise the 2.1.105 render-boundary compactor.
+- Source reconciliation found the stable loader has a 30-second worker-local throttle. A generation POST inside that window can legally skip the branch check and execute the already-loaded engine, which is unacceptable for controlled runtime-hot activation verification.
+- Bounded repair: generation POST requests must perform a branch freshness check before inference; keep the single-writer sync authority and content-hash invalidation, but do not permit the ordinary 30-second throttle to hide a newly committed Brain runtime from generation.
+- This changes stable loader behavior only; model weights, tokenizer, Truth Firewall, Chat ownership, and the 2.1.105 compactor are unchanged.
