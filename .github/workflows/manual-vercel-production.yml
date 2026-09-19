@@ -156,6 +156,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python -m pip install --disable-pip-version-check "numpy==2.2.6" "setuptools>=75,<82" wheel
           python setup.py build_ext --inplace
           python scripts/verify_r39_native.py
           python - <<'PY'
