@@ -1,4 +1,4 @@
-"""Hot R39 entrypoint v88 preserving v86 prompt-composition attribution after complete loader repair."""
+"""Hot R39 entrypoint v89: request-first fresh factual inference over v88."""
 from __future__ import annotations
 import json,time,urllib.request
 
@@ -30,15 +30,17 @@ _V87_COMMIT="e59f572d3afbbf0d825d023531cc10987572a7aa"
 _V87_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V87_COMMIT}/runtime_hot/r39_engine_v87_overlay.py"
 _V88_COMMIT="46eb91e1f1477069777c06a21cc8eced5c7873cb"
 _V88_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V88_COMMIT}/runtime_hot/r39_engine_v88_overlay.py"
+_V89_COMMIT="61d477cbfd5337c37d65fc8cde154af77069719a"
+_V89_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V89_COMMIT}/runtime_hot/r39_engine_v89_overlay.py"
 
 def _entry(stage,**fields):
-    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v88","atUnixMs":int(time.time()*1000)}
+    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v89","atUnixMs":int(time.time()*1000)}
     for k,v in fields.items():
         if v is None or isinstance(v,(str,int,float,bool)):record[str(k)[:64]]=v
     print("SWRLZ_R39_HOT_ENTRY "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
 
 try:
-    _entry("fetch-start",sourceCommit=_V74_COMMIT,overlayCommit=_V75_COMMIT,v76OverlayCommit=_V76_COMMIT,v77OverlayCommit=_V77_COMMIT,v78OverlayCommit=_V78_COMMIT,v79OverlayCommit=_V79_COMMIT,v80OverlayCommit=_V80_COMMIT,v81OverlayCommit=_V81_COMMIT,v82BatchCommit=_V82_BATCH_COMMIT,v84OverlayCommit=_V84_COMMIT,v85OverlayCommit=_V85_COMMIT,v86OverlayCommit=_V86_COMMIT,v87OverlayCommit=_V87_COMMIT,v88OverlayCommit=_V88_COMMIT)
+    _entry("fetch-start",sourceCommit=_V74_COMMIT,overlayCommit=_V75_COMMIT,v76OverlayCommit=_V76_COMMIT,v77OverlayCommit=_V77_COMMIT,v78OverlayCommit=_V78_COMMIT,v79OverlayCommit=_V79_COMMIT,v80OverlayCommit=_V80_COMMIT,v81OverlayCommit=_V81_COMMIT,v82BatchCommit=_V82_BATCH_COMMIT,v84OverlayCommit=_V84_COMMIT,v85OverlayCommit=_V85_COMMIT,v86OverlayCommit=_V86_COMMIT,v87OverlayCommit=_V87_COMMIT,v88OverlayCommit=_V88_COMMIT,v89OverlayCommit=_V89_COMMIT)
     _request=urllib.request.Request(_V74_URL,headers={"User-Agent":"swrlz-r39-v75-loader"})
     with urllib.request.urlopen(_request,timeout=20) as _response:_source=_response.read(4000001)
     if len(_source)>4000000:raise RuntimeError("R39_V74_SOURCE_TOO_LARGE")
@@ -126,6 +128,12 @@ try:
     _entry("v88-overlay-fetch-ok",overlayBytes=len(_v88_overlay))
     exec(compile(_v88_overlay.decode("utf-8"),_V88_URL+"#v88-overlay","exec"),globals(),globals())
 
+    _v89_request=urllib.request.Request(_V89_URL,headers={"User-Agent":"swrlz-r39-v89-overlay"})
+    with urllib.request.urlopen(_v89_request,timeout=20) as _response:_v89_overlay=_response.read(1000001)
+    if len(_v89_overlay)>1000000:raise RuntimeError("R39_V89_OVERLAY_TOO_LARGE")
+    _entry("v89-overlay-fetch-ok",overlayBytes=len(_v89_overlay))
+    exec(compile(_v89_overlay.decode("utf-8"),_V89_URL+"#v89-overlay","exec"),globals(),globals())
+
     _inspect=inspect_engine() if callable(globals().get("inspect_engine")) else {}
     _self_test=_inspect.get("programmingContinuationSemanticSelfTest") if isinstance(_inspect,dict) else None
     if not isinstance(_self_test,dict) or not _self_test.get("ok"):
@@ -139,6 +147,6 @@ try:
            programmingProfile=callable(globals().get("_programming_profile")),
            camera=callable(globals().get("_camera")),
            ngramSampler=callable(globals().get("_ngram_guarded_sample")),
-           artifactContinuation=True,continuationProvenance=True,runnableEditSemanticGate=True,coldPrefillProfileCamera=True,prefillKernelProfileCamera=True,onlineResearchHandoffCamera=True,inheritedResearchCallCamera=True,researchTelemetryScopeCamera=True,batchFallbackDetailCamera=True,batchFallbackExceptCamera=True,batchAdapterReinstalled=True,researchPlannerScoped=True,liveResearchPlannerStatus=True,promptCompositionCamera=True,selfTest=True)
+           artifactContinuation=True,continuationProvenance=True,runnableEditSemanticGate=True,coldPrefillProfileCamera=True,prefillKernelProfileCamera=True,onlineResearchHandoffCamera=True,inheritedResearchCallCamera=True,researchTelemetryScopeCamera=True,batchFallbackDetailCamera=True,batchFallbackExceptCamera=True,batchAdapterReinstalled=True,researchPlannerScoped=True,liveResearchPlannerStatus=True,promptCompositionCamera=True,requestFirstFreshFactual=True,selfTest=True)
 except Exception as exc:
     _entry("hydrate-failed",errorType=type(exc).__name__,errorMessage=str(exc)[:240]);raise
