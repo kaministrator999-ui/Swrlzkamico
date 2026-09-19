@@ -55,7 +55,7 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Mask contract:** records **§IMPLE Architecture: K.I.S.S. on the surface; π underneath**, “The §wyrlz Mask is the stage, not the theater,” “The Mask presents capabilities; it does not possess capabilities,” the cognition-leak test, and “The stage receives scenery, not the machinery that constructed the scenery.” New tools should normally require zero core Chat-runtime changes.  
 **Recursive/Backrooms rule:** nested masks/hats are valid boundary roles, but the contract explicitly rejects abstraction-for-abstraction's-sake; new workers/services still require responsibility/authority/lifecycle/isolation/reuse justification.  
 **Version result:** documentation/governance-only event; runtime Server remains `2.3.284`, Chat remains `1.5.82`, LALM Engine remains `2.1.102` / v90, Frozen Web Collector remains `1.0.9`.  
-**Verification:** source fetch-back pending immediately after this journal write; no runtime/live behavior was claimed or changed.  
+**Verification:** source fetch-back verified the new Project Start section and its Mask/Human/Brain mapping, recursive boundary roles, mission-worker coordination, distinct information lifecycles, provenance invariant, §imple surface/π-underneath rule, and zero direct tool authority in Chat. No runtime/live behavior was claimed or changed.  
 **Deployment / restart:** NONE. No deployment-producing action performed.
 
 ### Transformer throughput checkpoint — cold prefill and decode arithmetic
