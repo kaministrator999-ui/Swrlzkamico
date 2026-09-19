@@ -151,8 +151,9 @@ function fullThreadLogText(){
     const article=refs?.stack?.querySelector?.(`[data-message-id="${CSS.escape(String(message?.id||''))}"]`)||null;
     return [`\n===== MESSAGE ${index+1}/${messages.length} =====`,messageLogText(message,article)].join('\n');
   });
-  let streamCamera='';
+  let streamCamera='',lockdownTrace='';
   try{streamCamera=typeof cameraText==='function'?cameraText(true):''}catch(_){streamCamera=''}
+  try{lockdownTrace=typeof window.__swrlzLockdownText==='function'?window.__swrlzLockdownText():''}catch(_){lockdownTrace=''}
   return [
     '§wyrlz Full Conversation + Generation Log',
     `exported=${new Date().toISOString()}`,
@@ -166,6 +167,8 @@ function fullThreadLogText(){
     ...blocks,
     '\n===== FULL STREAM CAMERA / RESPONSE-GENERATION EVENTS =====',
     streamCamera||'No camera events captured in this browser session.',
+    '\n===== FULL LOCKDOWN FRAME-TO-TERMINAL TRACE =====',
+    lockdownTrace||'No unified lockdown events captured in this browser session.',
     '\n===== RAW THREAD STATE =====',
     JSON.stringify(t??{},null,2),
     ''
