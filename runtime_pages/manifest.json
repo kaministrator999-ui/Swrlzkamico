@@ -1,5 +1,5 @@
 {
-  "version": 146,
+  "version": 147,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v146 activates corrected R39 LALM 2.1.99 / v87, preserving v86 bounded prompt-composition attribution after repairing the v86 loader newline corruption."
+  "notes": "Manifest v147 activates R39 LALM 2.1.100 / v88 after complete loader newline repair, preserving v86 bounded prompt-composition attribution."
 }
