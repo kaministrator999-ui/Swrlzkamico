@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-19-chat-load-isolation-candidate-2-v1
+REQUEST_ID=2026-09-19-chat-load-isolation-candidate-3-v1
 REQUESTED_BY=user-explicit-chat-load-isolation-test
 SOURCE_REF=main
-REASON=Controlled Chat load isolation test #2: all original suspect behaviors active except candidate 2, the 1 second settings/status repaint loop. One terminal production trigger only; observe page-load behavior before candidate #3.
+REASON=Controlled Chat load isolation test #3: all original suspect behaviors active except candidate 3, the 5 second hot-revision polling loop. Candidate #2 restored after user observed load with a slight later pause. One terminal production trigger only; observe before candidate #4.
