@@ -227,7 +227,37 @@ No duplicate version literal should become authoritative merely because it appea
 
 ---
 
-## 11. Roadmap / release record — mandatory
+## 11. Transactional roadmap journal — mandatory
+
+The roadmap is a before/after engineering journal, not only a post-hoc changelog.
+
+Before the first implementation mutation of every governed update, create an **UPDATE STARTED** record in `SWRLZ_SERVER_ROADMAP.md` containing, as applicable:
+
+- event intent/requested outcome;
+- observed Server/module version and SHA baseline;
+- expected canonical owner and module impact;
+- expected files/surfaces when useful;
+- deployment expectation;
+- verification/acceptance plan;
+- `Status: IN PROGRESS`.
+
+Do not treat a planned next version as reserved at START; concurrency rules still apply.
+
+After mutation, re-read authorities, reconcile concurrency, assign versions, and verify the result. Then update the event with **UPDATE FINISHED** and record:
+
+- actual changes and canonical owner;
+- resulting Server and changed-module versions;
+- verification truth state (source/static/runtime/live);
+- runtime-hot/activation evidence as applicable;
+- deployment/restart state;
+- failure/correction/supersession lineage when applicable;
+- `Result: COMPLETE` or another explicit terminal state.
+
+If an `UPDATE STARTED` record has no terminal marker, future governed work MUST reconcile it before overlapping mutation. Inspect current source, version authorities, commits, roadmap, and runtime evidence as applicable, then explicitly resume+finish it or mark it **ABORTED** or **SUPERSEDED** with evidence. Never erase or silently skip interrupted work.
+
+Roadmap/documentation bookkeeping is deployment-inert and does not authorize deployment. The deployment gate remains owned by `SWRLZ_HOTFIX_RULES.md`.
+
+## 12. Roadmap / release record — mandatory
 
 Every completed governed event receives a durable record in `SWRLZ_SERVER_ROADMAP.md` and/or the appropriate release record.
 
@@ -254,7 +284,7 @@ Do not finish a completed governed event while the roadmap still presents the pr
 
 ---
 
-## 12. Failure lineage
+## 13. Failure lineage
 
 Failure is data.
 
@@ -270,7 +300,7 @@ This prevents later engineering agents from repeating an invisible failed path.
 
 ---
 
-## 13. Source-of-truth precedence for version identity
+## 14. Source-of-truth precedence for version identity
 
 For version identity:
 
@@ -292,7 +322,7 @@ For architecture and runtime behavior, use the architecture protocol's distincti
 
 ---
 
-## 14. Programming-LALM curriculum
+## 15. Programming-LALM curriculum
 
 This document teaches the programming LALM the **evolution grammar** of a project.
 
@@ -313,6 +343,8 @@ AUTOMATIC DIAGNOSTIC EVIDENCE LOOP IF FIXING AN ISSUE
   ↓
 CONFIRM MODULE IMPACT
   ↓
+WRITE ROADMAP UPDATE STARTED
+  ↓
 DEPLOYMENT CAPABILITY CHECK
   ↓
 IMPLEMENT THROUGH CANONICAL OWNER
@@ -329,7 +361,7 @@ UPDATE CANONICAL VERSION SOURCES
   ↓
 VERIFY BEHAVIOR / OWNERSHIP / ACTIVATION AS RELEVANT
   ↓
-ROADMAP / RELEASE RECORD
+WRITE ROADMAP UPDATE FINISHED
   ↓
 HUMAN UPDATE USING RESPONSE STANDARD
 ```
@@ -338,7 +370,7 @@ Versioning is part of engineering itself, not cosmetic cleanup after coding.
 
 ---
 
-## 15. Completion questions
+## 16. Completion questions
 
 Before declaring a versioned event complete, §wyrlz should be able to answer:
 
@@ -362,7 +394,7 @@ If a required answer is unknown, resolve it before claiming completion.
 
 ---
 
-## 16. Human-readable reporting
+## 17. Human-readable reporting
 
 Detailed engineering evidence belongs in durable repository records.
 
