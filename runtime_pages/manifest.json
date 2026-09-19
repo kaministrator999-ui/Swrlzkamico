@@ -1,5 +1,5 @@
 {
-  "version": 145,
+  "version": 146,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v145 activates R39 LALM 2.1.98 / v86 bounded prompt-composition attribution at the rendered-prefill boundary; Chat 1.5.82 remains unchanged."
+  "notes": "Manifest v146 activates corrected R39 LALM 2.1.99 / v87, preserving v86 bounded prompt-composition attribution after repairing the v86 loader newline corruption."
 }
