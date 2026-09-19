@@ -1,5 +1,5 @@
 {
-  "version": 147,
+  "version": 148,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v147 activates R39 LALM 2.1.100 / v88 after complete loader newline repair, preserving v86 bounded prompt-composition attribution."
+  "notes": "Manifest v148 activates R39 LALM 2.1.101 / v89 request-first fresh factual inference, preserving v86 prompt-composition attribution and v88 loader repair."
 }
