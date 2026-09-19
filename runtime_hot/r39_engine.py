@@ -148,8 +148,8 @@ try:
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-    HOT_SERVER_VERSION="2.1.109"
-    HOT_REVISION="2.1.109-hot-prefill-boundary-cameras-v90"
+    HOT_SERVER_VERSION="2.1.110"
+    HOT_REVISION="2.1.110-hot-full-map-trace-v90"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
 
@@ -170,6 +170,26 @@ try:
                historyChars=history_chars,systemMessages=len(system),systemChars=system_chars,
                promptChars=len(str(payload.get("prompt") or "")))
 
+    # Full-map trace: retain all existing cameras and extend observation upward
+    # through every reachable inherited generation bridge. This is observational only.
+    def _discover_generate_chain(start,limit=80):
+        chain=[]; current=start; seen=set()
+        for depth in range(limit):
+            if not callable(current) or id(current) in seen:break
+            seen.add(id(current)); g=getattr(current,"__globals__",{})
+            candidates=[]
+            for name,value in g.items():
+                if name.startswith("_V") and name.endswith("_GENERATE") and callable(value):
+                    try:num=int(name[2:name.index("_GENERATE")])
+                    except Exception:continue
+                    candidates.append((num,name,value))
+            if not candidates:break
+            candidates.sort(reverse=True)
+            num,name,nxt=candidates[0]
+            chain.append((f"auto-depth-{depth}-v{num}",current,name,nxt))
+            current=nxt
+        return chain
+
     _camera_chain=()
     _v51_generate=globals().get("_V51_GENERATE")
     _v50_generate=getattr(_v51_generate,"__globals__",{}).get("_V50_GENERATE") if callable(_v51_generate) else None
@@ -182,7 +202,9 @@ try:
     _v43_generate=getattr(_v44_generate,"__globals__",{}).get("_V43_GENERATE") if callable(_v44_generate) else None
     _v42_generate=getattr(_v43_generate,"__globals__",{}).get("_V42_GENERATE") if callable(_v43_generate) else None
     _v41_generate=getattr(_v42_generate,"__globals__",{}).get("_V41_GENERATE") if callable(_v42_generate) else None
-    _camera_chain=(
+    _camera_chain=_discover_generate_chain(globals().get("generate_events"))
+    # Preserve the explicitly named lower-level bridge cameras as stable landmarks.
+    _explicit_chain=(
         ("v51-v50",_v51_generate,"_V50_GENERATE",_v50_generate),
         ("v50-v49",_v50_generate,"_V49_GENERATE",_v49_generate),
         ("v49-v48",_v49_generate,"_V48_GENERATE",_v48_generate),
@@ -194,6 +216,8 @@ try:
         ("v43-v42",_v43_generate,"_V42_GENERATE",_v42_generate),
         ("v42-v41",_v42_generate,"_V41_GENERATE",_v41_generate),
     )
+    _seen_slots={(id(owner),slot) for _,owner,slot,_ in _camera_chain if callable(owner)}
+    _camera_chain+=tuple(x for x in _explicit_chain if callable(x[1]) and (id(x[1]),x[2]) not in _seen_slots)
     _installed_boundaries=0
     for _boundary,_owner,_slot,_original in _camera_chain:
         if not callable(_owner) or not callable(_original):
@@ -206,8 +230,7 @@ try:
             return _bridge
         _owner.__globals__[_slot]=_make_camera_bridge(_boundary,_original)
         _installed_boundaries+=1
-    _entry("prefill-boundary-cameras-installed",boundaries=_installed_boundaries,
-           mutationMode="observe-only")
+    _entry("prefill-boundary-cameras-installed",boundaries=_installed_boundaries, mutationMode="observe-only", coverage="full-reachable-generation-chain")
     _entry("hydrate-ok",hotServerVersion=HOT_SERVER_VERSION,
            hotRevision=HOT_REVISION,batchSourceCommit=_V82_BATCH_COMMIT,
            responseContract=callable(globals().get("_response_contract")),
