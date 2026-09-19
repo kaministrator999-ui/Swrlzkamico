@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-19-deployment-path-observation-v1
-REQUESTED_BY=user-explicit-one-time-deployment-test
+REQUEST_ID=2026-09-19-chat-load-isolation-candidate-1-v1
+REQUESTED_BY=user-explicit-chat-load-isolation-test
 SOURCE_REF=main
-REASON=One-time controlled deployment-path observation requested by user to verify whether updating this request triggers GitHub workflow processing and subsequently creates a Vercel production deployment. No source/feature mutation; no automatic retry.
+REASON=Controlled Chat load isolation test: restore candidates 2-5 to original active behavior while candidate 1 (500 ms admin repaint) remains frozen. One terminal production trigger only; observe page-load behavior before any next candidate.
