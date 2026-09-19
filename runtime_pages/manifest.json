@@ -1,5 +1,5 @@
 {
-  "version": 150,
+  "version": 151,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v150 activates full-lockdown observability: Web Chat 1.5.83 frame-to-terminal cameras, Server Runtime 2.3.286 trace ingestion, and R39 LALM 2.1.111 every-step prefill/decode cameras. Diagnostic presentation is intentionally verbose during active development."
+  "notes": "Manifest v151 completes full-lockdown observability: Web Chat 1.5.84 unified frame/transport/server logger, Server Runtime 2.3.287 ingress/persistence/hydration trace, and R39 LALM 2.1.112 request-correlated prompt/token/inference cameras. Diagnostic volume is intentionally maximal; credentials remain redacted."
 }
