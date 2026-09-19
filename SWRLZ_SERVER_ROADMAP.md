@@ -35,6 +35,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### Project-start playbook + runtime-hotloader operating guide
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** make Project Start sufficient as the single entry point for understanding the whole §wyrlz play: repository/server/component version axes, roadmap role, Mask/theater model, current work position, and the operational documentation required to extend runtime-hot components correctly. Add a dedicated runtime-hotloader integration guide and route Project Start to it rather than forcing future work to reverse-engineer loader source.  
+**Observed authority baseline:** Repository Work `1.0.1` SHA `070b5fd072665f849bcb8ae81b1b765bce9c0191`; Server Runtime `2.3.287` SHA `43ce7f1c7144d2a127e513093dc87b1ba914911c`; Web Chat `1.5.84` SHA `f1b8e8196a60685557f9090d936ddfc8296a4b34`; Runtime Manifest `151` SHA `7c133dc2a0f26ce52aeefe04853755998db7c208`; registry SHA `37d75d33d3eca616ab3a76c64d137a3e6816881f`.  
+**Architecture reconciliation:** Project Start remains the router, Version Evolution owns lineage semantics, Roadmap remains historical/current work journal, Hotfix Rules owns mutation/deployment boundaries, and a new Runtime Hotloader Guide will own practical integration instructions. No duplicate roadmap or version authority will be created.  
+**Expected impact:** documentation/governance only plus Repository Work lineage. Server Runtime, Web Chat, Runtime Manifest, LALM and deployment-control behavior remain unchanged.  
+**Deployment expectation:** NONE; documentation/governance work is deployment-inert.  
+**Verification plan:** fetch back Project Start, hotloader guide, Version Evolution/Hotfix references, registry and version authorities; verify a future agent can enter through Project Start and discover both conceptual architecture and exact runtime integration procedure without source archaeology.
+
+
 ### Version-governance separation — Repository / Server / Module lineage
 
 **UPDATE STARTED**
