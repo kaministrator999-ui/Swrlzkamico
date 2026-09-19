@@ -10,13 +10,23 @@ Architecture placement is owned by `docs/engineering/SWRLZ_ARCHITECTURE_RECONCIL
 
 ## 1. Core evolution law
 
-Every governed Server development event receives a new overall **Server version** when required by this contract.
+Repository work, deployed Server releases, and component/module evolution are three distinct lineages.
 
-The overall Server version is chronological event lineage. It answers:
+Every completed governed repository update advances the canonical **Repository Work** version. This records which repository engineering tier/update is current even when no running Server or runtime component is touched.
 
-> Which governed development event are we talking about?
+The **Server Runtime** version advances only when a Server release/deployment event actually changes the deployed Server lineage. Editing documentation, adding directories/scaffolding, or changing a runtime-hot component without deploying/releasing the Server does not advance Server Runtime merely because repository work occurred.
 
-It does **not** mean every module changed.
+Each independently evolving component/module advances only when that component actually changes.
+
+Conceptually:
+
+```text
+Repository Work = what governed repo update/tier are we at?
+Server Runtime  = what deployed Server release are we at?
+Module version  = what evolution state is this component at?
+```
+
+A single repository tier may therefore advance Repository Work only, Repository Work + Chat, or Repository Work + Server + affected modules depending on what actually changed and what was deployed/released.
 
 Governed events include successful changes and, when they mutate/advance governed project state, failed or partial attempts that must remain visible in lineage.
 
@@ -34,7 +44,8 @@ A module version answers:
 
 Rules:
 
-- bump the overall Server version for the governed event;
+- bump the Repository Work version for every completed governed repository update;
+- bump Server Runtime only for an actual Server release/deployment event that advances deployed Server lineage;
 - bump only modules that actually changed;
 - do not bump unrelated modules merely because the Server event advanced;
 - a module may remain unchanged across many Server releases;
@@ -71,6 +82,7 @@ Cross-module consumers query the owning authority. They do not hardcode another 
 
 Examples of current/reserved owners include:
 
+- `versions/repository-work.txt`
 - `versions/server-runtime.txt`
 - `versions/server-ui.txt`
 - `versions/web-frontend.txt`
@@ -115,11 +127,12 @@ Do not create an independent module authority merely because another file/class/
 At event entry:
 
 1. read current `VERSION.txt`;
-2. read `versions/server-runtime.txt`;
-3. read every module authority that the requested work may affect;
-4. record exact version values and file/blob SHAs as the **event baseline**;
-5. read the current roadmap/release state;
-6. fetch the current target source before editing.
+2. read `versions/repository-work.txt`;
+3. read `versions/server-runtime.txt`;
+4. read every module authority that the requested work may affect;
+5. record exact version values and file/blob SHAs as the **event baseline**;
+6. read the current roadmap/release state;
+7. fetch the current target source before editing.
 
 The baseline is an observation, **not a reservation**.
 
@@ -130,9 +143,10 @@ The baseline is an observation, **not a reservation**.
 Immediately before assigning versions or committing the versioned event:
 
 1. re-read `VERSION.txt`;
-2. re-read `versions/server-runtime.txt`;
-3. re-read every affected module authority;
-4. compare current values/SHAs with the event baseline.
+2. re-read `versions/repository-work.txt`;
+3. re-read `versions/server-runtime.txt`;
+4. re-read every affected module authority;
+5. compare current values/SHAs with the event baseline.
 
 If relevant authority moved:
 
@@ -216,12 +230,13 @@ Do not equate “new version committed” with “new version observed live.”
 
 After architecture/work is ready and authorities have been revalidated:
 
-1. assign the next overall Server version from the newest `server-runtime` authority;
-2. increment only actually changed module versions;
-3. update each changed module's authoritative file;
-4. update `VERSION.txt` only when module routing/registration changed;
-5. ensure consumers derive version state from the owner;
-6. preserve concurrent events and failed events rather than reusing their numbers.
+1. assign the next Repository Work version from the newest `repository-work` authority for the completed governed repository tier;
+2. advance Server Runtime only when this tier actually performs/records a Server release or deployment that advances deployed Server lineage;
+3. increment only actually changed module versions;
+4. update each changed authority file;
+5. update `VERSION.txt` only when module routing/registration changed;
+6. ensure consumers derive version state from the owner;
+7. preserve concurrent events and failed events rather than reusing their numbers.
 
 No duplicate version literal should become authoritative merely because it appears in a page, filename, commit message, roadmap, or release document.
 
@@ -406,4 +421,4 @@ Always distinguish the overall Server event from independently changed module ve
 
 ## Bottom line
 
-**Server versions are chronological governed-event lineage. Module versions are independent component lineage. Capture authority at entry, reconcile architecture before deciding module impact, inspect diagnostics automatically for defects, re-read authority before version assignment, preserve concurrent and failed events, bump only what actually changed, keep version values in module-owned sources, record the completed event durably, and report the truth state clearly to the user.**
+**Repository Work versions are chronological governed-repository-update lineage. Server Runtime versions are deployed Server release lineage. Module versions are independent component lineage. Capture authority at entry, reconcile architecture before deciding module impact, inspect diagnostics automatically for defects, re-read authority before version assignment, preserve concurrent and failed events, bump only what actually changed, keep version values in module-owned sources, record the completed event durably, and report the truth state clearly to the user.**
