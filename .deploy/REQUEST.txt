@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-19-chat-load-isolation-candidate-4-v1
+REQUEST_ID=2026-09-19-chat-load-isolation-candidate-5-v1
 REQUESTED_BY=user-explicit-chat-load-isolation-test
 SOURCE_REF=main
-REASON=Controlled Chat load isolation test #4: all original suspect behaviors active except candidate 4, the 15 second ops polling loop. Candidate #3 restored after user observed a slow/hanging start with #3 frozen, strongly reducing #3 as a sole cause. One terminal production trigger only; observe before candidate #5.
+REASON=Controlled Chat load isolation test #5: all original suspect behaviors active except candidate 5, redundant lifecycle full render(true) calls. Candidate #4 restored after user observed instant loading with #4 frozen. One terminal production trigger only; observe and then compare the complete five-candidate matrix.
