@@ -152,6 +152,20 @@ jobs:
           version: "0.12.13"
           enable-cache: false
 
+      - name: Build native R39 extensions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python setup.py build_ext --inplace
+          python scripts/verify_r39_native.py
+          python - <<'PY'
+          from swyrlz import r39_native
+          state = r39_native.diagnostics()
+          assert state.get("available") is True, state
+          assert state.get("batchAvailable") is True, state
+          print(state)
+          PY
+
       - name: Build production artifact
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
