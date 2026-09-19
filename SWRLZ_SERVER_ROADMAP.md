@@ -6,10 +6,10 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.283`
+- **Overall Server:** `2.3.284`
 - **Chat:** `1.5.82`
-- **Runtime Manifest:** `148`
-- **LALM Engine:** `2.1.101` (`v89` request-first fresh factual/tool inference; v88 loader repair and v86 prompt-composition attribution preserved)
+- **Runtime Manifest:** `149`
+- **LALM Engine:** `2.1.102` (`v90` protected factual-evidence handoff/fail-closed synthesis; v89 request-first inference, v88 loader repair, and v86 prompt-composition attribution preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -89,6 +89,15 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Expected modules:** LALM Engine + Runtime Manifest + overall Server lineage. Online Research remains unchanged unless implementation evidence proves its owner must change.  
 **Deployment expectation:** NONE; runtime-hot path.  
 **Verification plan:** protect evidence by semantic payload/record identity rather than brittle policy text; deterministic tests must prove non-empty evidence survives final compaction and missing evidence fails closed; fetch back source/version authorities; then require live production telemetry before claiming runtime/user-visible acceptance.
+
+**UPDATE FINISHED**
+
+**Result:** SOURCE COMPLETE / STATIC VERIFIED; LIVE ACTIVATION PENDING.  
+**Actual change:** R39 v90 now reads the canonical `onlineEvidence.evidence` payload at the inherited inference boundary and materializes a protected `ONLINE_EVIDENCE_BUNDLE_JSON` data record before v89 compaction. The existing v89 owner already preserves that evidence-data class, so unrelated policy prose can still be removed without erasing returned facts. For a fresh factual request that explicitly requests online research but reaches synthesis with zero evidence items, v90 fails closed with a verification-unavailable response instead of allowing model-generated current facts.  
+**Architecture reconciliation:** Online Research/Human remains the factual/retrieval authority; v90 only protects its handoff into the existing Brain synthesis owner. No second search subsystem, evidence authority, or inference owner was introduced. Mask/personality remains presentation after factual grounding.  
+**Versions:** Server `2.3.283 → 2.3.284`; LALM Engine `2.1.101 → 2.1.102` / `v90`; Runtime Manifest `148 → 149`. Online Research remains `1.0.1`; Chat remains unchanged.  
+**Verification:** fetch-back confirms v90 overlay, active v90 loader pin, zero literal backslash-newline source separators in the loader, LALM 2.1.102, Server 2.3.284, Manifest authority/json 149, and unchanged Online Research 1.0.1. v90 carries deterministic self-tests for evidence detection/materialization, survival through v89 compaction, marker preservation, missing-evidence detection, and offline planner exclusion. Production logs have not yet emitted v90, so runtime/live/user-visible acceptance is pending a fresh request.  
+**Deployment / restart:** NONE. Runtime-hot source only; no deployment-producing action was performed.
 
 ## Release ledger
 
