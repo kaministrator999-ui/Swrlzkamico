@@ -111,6 +111,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Expected modules:** Online Research + overall Server. No LALM or Chat mutation expected. Stable server source is deployment-bound, so implementation will stop before any deployment-producing action.  
 **Verification plan:** replace brittle nested-div regex extraction with bounded result-anchor parsing that tolerates current DDG HTML structure; add privacy-safe parser diagnostics distinguishing response/anchor/accepted counts; source/static fetch-back and deterministic fixture reasoning; live acceptance requires deployment approval and a fresh request.
 
+**UPDATE FINISHED**
+
+**Result:** SOURCE COMPLETE / STATIC VERIFIED; DEPLOYMENT + LIVE ACCEPTANCE BLOCKED ON EXPLICIT APPROVAL.  
+**Cause:** the stable Human/server provider owner `api/online_research.py::_ddg_search` parsed DuckDuckGo HTML by first matching one exact nested `<div class="result...">...</div></div>` wrapper. Production showed HTTP retrieval completing without an exception but yielding zero search candidates, consistent with provider markup no longer matching that brittle wrapper shape.  
+**Fix:** extraction now keys on the more stable `result__a` anchors and bounds each local result region to the next anchor before looking for `result__snippet`. URL public-network validation, result caps, deduplication, and evidence budgets remain intact. Added `SWRLZ_SEARCH_PROVIDER_CAMERA` with HTTP status, response bytes, result-anchor count, and accepted-result count—no query text or page contents.  
+**Architecture reconciliation:** extended the existing Online Research network boundary only. v90 fail-closed grounding remains unchanged and continues to block fabricated current facts if retrieval still produces zero evidence.  
+**Version state:** implementation source changed, but governed version authorities are intentionally not advanced yet because the stable-server repair cannot be activated/accepted without a deployment-producing action. Current published authorities remain Server `2.3.284`, Online Research `1.0.1`, LALM `2.1.102`/v90, Manifest `149`. This event remains blocked rather than falsely claiming an active 2.3.285 runtime.  
+**Verification:** source fetch-back confirms the repaired parser and bounded provider camera. Live provider acceptance requires the stable-server source to be deployed, then a fresh Kansas City weather request must show nonzero `resultAnchors` / `acceptedResults`, nonzero evidence, v90 `protected-evidence-ready`, and a grounded answer.  
+**Deployment / restart:** NOT PERFORMED. Explicit approval is required before the production deployment action.
+
 ## Release ledger
 
 ### Server 2.3.282 — R39 v88 complete prompt-camera loader repair
