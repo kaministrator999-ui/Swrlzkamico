@@ -7,27 +7,37 @@ import hashlib
 import hmac
 import json
 import os
+import time
 from pathlib import Path
 from threading import Lock
 
-_RECENT = deque(maxlen=500)
+_RECENT = deque(maxlen=100000)
 _LOCK = Lock()
 _RUNTIME_WEB_TOKEN = Path("/tmp/swrlz-admin/runtime/web-chat-token.txt")
 _TERMINAL = {"COMPLETED", "CANCELLED", "FAILED"}
 
 
 def _clean(value, depth=0):
-    if depth > 4:
+    """High-volume diagnostic sanitizer. Preserve evidence, redact credentials."""
+    if depth > 8:
         return "[depth-limit]"
     if value is None or isinstance(value, (bool, int, float)):
         return value
     if isinstance(value, str):
-        return value[:2000]
+        return value[:16000]
     if isinstance(value, list):
-        return [_clean(v, depth + 1) for v in value[:40]]
+        return [_clean(v, depth + 1) for v in value[:500]]
     if isinstance(value, dict):
-        return {str(k)[:80]: _clean(v, depth + 1) for k, v in list(value.items())[:40]}
-    return str(value)[:2000]
+        out = {}
+        for k, v in list(value.items())[:240]:
+            key = str(k)[:120]
+            lowered = key.lower()
+            if any(secret in lowered for secret in ("token", "authorization", "credential", "password", "secret", "cookie", "bearer", "deviceproof", "device_proof")):
+                out[key] = "[redacted]"
+            else:
+                out[key] = _clean(v, depth + 1)
+        return out
+    return str(value)[:16000]
 
 
 def _valid_token(value: str) -> bool:
@@ -87,6 +97,20 @@ def _turn_log(event: dict) -> None:
     print("SWRLZ_CHAT_TURN " + json.dumps(event, separators=(",", ":"), ensure_ascii=True), flush=True)
 
 
+def _lockdown(stage: str, *, request_id: str = "", **fields) -> None:
+    record = {
+        "contract": "swrlz-full-lockdown-trace-v1",
+        "stage": str(stage)[:160],
+        "requestId": str(request_id or "")[:128],
+        "at": datetime.now(timezone.utc).isoformat(),
+        "monotonicNs": time.perf_counter_ns(),
+    }
+    record.update(_clean(fields))
+    with _LOCK:
+        _RECENT.append({"receivedAt": record["at"], "event": record})
+    print("SWRLZ_CHAT_LOCKDOWN " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
+
+
 def _stream_event(line: str) -> dict | None:
     try:
         value = json.loads(line)
@@ -107,6 +131,18 @@ def install(server) -> None:
         except Exception:
             raw = {}
         event = _clean(raw if isinstance(raw, dict) else {})
+        if isinstance(event, dict) and event.get("contract") == "swrlz-lockdown-batch-v1" and isinstance(event.get("events"), list):
+            accepted = 0
+            for item in event["events"]:
+                clean_item = _clean(item)
+                if not isinstance(clean_item, dict):
+                    continue
+                record = {"receivedAt": datetime.now(timezone.utc).isoformat(), "event": clean_item}
+                with _LOCK:
+                    _RECENT.append(record)
+                print("SWRLZ_CHAT_CLIENT_DEBUG " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
+                accepted += 1
+            return JSONResponse({"ok": True, "accepted": accepted}, headers={"Cache-Control": "no-store"})
         record = {
             "receivedAt": datetime.now(timezone.utc).isoformat(),
             "event": event,
@@ -114,14 +150,14 @@ def install(server) -> None:
         with _LOCK:
             _RECENT.append(record)
         print("SWRLZ_CHAT_CLIENT_DEBUG " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
-        return JSONResponse({"ok": True}, headers={"Cache-Control": "no-store"})
+        return JSONResponse({"ok": True, "accepted": 1}, headers={"Cache-Control": "no-store"})
 
     async def chat_client_debug_get(request: Request):
         try:
             limit = int(request.query_params.get("limit", "120") or 120)
         except (TypeError, ValueError):
             limit = 120
-        safe_limit = max(1, min(limit, 500))
+        safe_limit = max(1, min(limit, 10000))
         with _LOCK:
             rows = list(_RECENT)[-safe_limit:]
         return JSONResponse({"ok": True, "count": len(rows), "events": rows}, headers={"Cache-Control": "no-store"})
@@ -142,13 +178,16 @@ def install(server) -> None:
         turn = None
         raw: dict = {}
         action = request.query_params.get("action", "stream").strip().lower()
+        _lockdown("http-ingress", request_id=request.headers.get("x-swrlz-request-id", ""), method=request.method, path=request.url.path, action=action, contentLength=request.headers.get("content-length", ""))
         canonical_candidate = request.method == "POST" and action == "stream" and _authorized_chat_ingress(request)
         if canonical_candidate:
             try:
                 parsed = await request.json()
                 raw = parsed if isinstance(parsed, dict) else {}
-            except Exception:
+                _lockdown("request-json-parsed", request_id=str(raw.get("requestId") or ""), keys=list(raw.keys()), promptChars=len(str(raw.get("prompt") or "")), historyMessages=len(raw.get("history") or []) if isinstance(raw.get("history"), list) else 0, payload=_clean(raw))
+            except Exception as exc:
                 raw = {}
+                _lockdown("request-json-failed", errorType=type(exc).__name__, error=str(exc)[:1200])
 
             prompt = str(raw.get("prompt") or "").strip()
             request_id = str(raw.get("requestId") or "").strip()
@@ -157,6 +196,7 @@ def install(server) -> None:
                 if accepted is not None:
                     _turn_log(accepted)
                 try:
+                    _lockdown("canonical-turn-begin", request_id=request_id, threadId=str(raw.get("threadId") or "")[:128])
                     from api.chat_turn_state import begin_turn, canonical_history
                     from api.google_account import AuthenticationError
                     turn = begin_turn(request, raw)
@@ -171,6 +211,7 @@ def install(server) -> None:
                     raw["history"] = history
                     request._body = json.dumps(raw, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
                     request._json = raw
+                    _lockdown("canonical-history-installed", request_id=turn.request_id, threadId=turn.thread_id, historyMessages=len(history), historyRevision=history_revision, canonicalHistory=_clean(history))
                     _turn_log(
                         {
                             "eventType": "CHAT_MESSAGE_COMMITTED",
@@ -231,7 +272,9 @@ def install(server) -> None:
                     )
 
         try:
+            _lockdown("route-enter", request_id=str(raw.get("requestId") or ""), action=action)
             response = await call_next(request)
+            _lockdown("route-exit", request_id=str(raw.get("requestId") or ""), action=action, status=response.status_code, mediaType=getattr(response, "media_type", None))
         except BaseException as exc:
             if turn is not None:
                 try:
@@ -320,6 +363,7 @@ def install(server) -> None:
         )
 
         async def tracked_stream():
+            _lockdown("stream-tracker-enter", request_id=turn.request_id, threadId=turn.thread_id)
             buffer = ""
             answer = ""
             terminal_seen = False
@@ -358,10 +402,12 @@ def install(server) -> None:
                 for line in lines:
                     if not line.strip():
                         continue
+                    _lockdown("stream-line", request_id=turn.request_id, bytes=len(line.encode("utf-8")), line=line[:16000])
                     event = _stream_event(line)
                     if not event:
                         continue
                     event_type = str(event.get("type") or "").upper()
+                    _lockdown("stream-event-parsed", request_id=turn.request_id, eventType=event_type, seq=event.get("seq"), phase=event.get("phase"), event=_clean(event))
                     if event_type == "RESET":
                         answer = ""
                     elif event_type == "DELTA" and isinstance(event.get("text"), str):
@@ -379,6 +425,7 @@ def install(server) -> None:
                         decoded = chunk
                     else:
                         decoded = bytes(chunk).decode("utf-8", errors="replace")
+                    _lockdown("stream-chunk-received", request_id=turn.request_id, bytes=len(decoded.encode("utf-8")), text=decoded[:16000])
                     terminal_type, terminal_reason = observe(decoded)
                     if terminal_type and not terminal_seen:
                         try:
@@ -396,9 +443,11 @@ def install(server) -> None:
                                 }
                             )
                             raise RuntimeError("CHAT_ASSISTANT_COMMIT_FAILED") from exc
+                    _lockdown("stream-chunk-yield", request_id=turn.request_id, bytes=len(decoded.encode("utf-8")), terminalSeen=terminal_seen)
                     yield chunk
                 if not terminal_seen:
                     await persist_terminal("FAILED", "STREAM_ENDED_WITHOUT_TERMINAL")
+                _lockdown("stream-tracker-exit", request_id=turn.request_id, terminalSeen=terminal_seen, answerChars=len(answer))
             except BaseException as exc:
                 if not terminal_seen:
                     terminal_type = "CANCELLED" if isinstance(exc, asyncio.CancelledError) else "FAILED"
