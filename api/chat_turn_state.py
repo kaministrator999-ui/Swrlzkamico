@@ -26,6 +26,7 @@ from api.chat_state import (
 from api.google_account import user_id_from_request
 from api.hot_loader import get_chat_history_policy
 from api import canonical_redis_state
+from api.chat_client_debug import _lockdown as _chat_lockdown
 
 TURN_CONTRACT = "swrlz-chat-canonical-turn-v1"
 MAX_COMMIT_ATTEMPTS = 3
@@ -93,13 +94,18 @@ def canonical_backend() -> str:
     for rollback/migration diagnostics.
     """
     requested = os.environ.get("SWRLZ_CHAT_CANONICAL_BACKEND", "auto").strip().lower() or "auto"
+    redis_ready=canonical_redis_state.configured()
+    _chat_lockdown("turn-backend-select-enter", requested=requested, redisConfigured=redis_ready)
     if requested == "auto":
-        return "redis" if canonical_redis_state.configured() else "blob"
+        selected="redis" if redis_ready else "blob"
+        _chat_lockdown("turn-backend-select-exit", selected=selected)
+        return selected
     if requested == "redis":
         if not canonical_redis_state.configured():
             raise RuntimeError("CHAT_CANONICAL_REDIS_NOT_CONFIGURED")
         return "redis"
     if requested == "blob":
+        _chat_lockdown("turn-backend-select-exit", selected="blob")
         return "blob"
     raise RuntimeError("CHAT_CANONICAL_BACKEND_INVALID")
 
@@ -215,14 +221,18 @@ def _hot_redis_history(*, user_id: str, thread_id: str, request_id: str, limit: 
 
 
 def canonical_history(request: Request, *, thread_id: str, request_id: str, limit: int = 32) -> tuple[list[dict[str, str]], int]:
+    _chat_lockdown("turn-history-enter", request_id=request_id, threadId=thread_id, limit=limit)
     user_id = user_id_from_request(request)
     if canonical_backend() == "redis":
-        return _hot_redis_history(user_id=user_id, thread_id=thread_id, request_id=request_id, limit=limit), 0
+        history=_hot_redis_history(user_id=user_id, thread_id=thread_id, request_id=request_id, limit=limit)
+        _chat_lockdown("turn-history-exit", request_id=request_id, threadId=thread_id, backend="redis", revision=0, history=history, historyMessages=len(history))
+        return history, 0
 
     current = _read_blob(user_id)
     revision, state, _ = _state_from_value(current)
     thread = next((item for item in state.get("threads", []) if item.get("id") == thread_id), None)
     if not thread:
+        _chat_lockdown("turn-history-exit", request_id=request_id, threadId=thread_id, backend="blob", revision=revision, history=[], historyMessages=0)
         return [], revision
     history: list[dict[str, str]] = []
     for message in thread.get("messages", []):
@@ -235,10 +245,13 @@ def canonical_history(request: Request, *, thread_id: str, request_id: str, limi
             continue
         if role in {"user", "assistant"} and text:
             history.append({"role": role.upper(), "text": text[:2000]})
-    return history[-max(1, min(int(limit), 32)):], revision
+    bounded=history[-max(1, min(int(limit), 32)):]
+    _chat_lockdown("turn-history-exit", request_id=request_id, threadId=thread_id, backend="blob", revision=revision, history=bounded, historyMessages=len(bounded))
+    return bounded, revision
 
 
 def _commit_blob_message(user_id: str, *, thread_id: str, message_id: str, role: str, text: str, created_at: int, state_name: str, request_id: str, title_hint: str = "", extra_meta: dict[str, Any] | None = None) -> int:
+    _chat_lockdown("turn-blob-commit-enter", request_id=request_id, threadId=thread_id, messageId=message_id, role=role, state=state_name, textChars=len(text))
     if role not in {"user", "assistant"}:
         raise ValueError("CHAT_TURN_ROLE_INVALID")
     if not thread_id or not message_id:
@@ -248,8 +261,10 @@ def _commit_blob_message(user_id: str, *, thread_id: str, message_id: str, role:
     expected_state = state_name[:32]
 
     for attempt in range(MAX_COMMIT_ATTEMPTS):
+        _chat_lockdown("turn-blob-commit-attempt", request_id=request_id, threadId=thread_id, messageId=message_id, attempt=attempt)
         current = _read_blob(user_id)
         current_revision, canonical, tombstones = _state_from_value(current)
+        _chat_lockdown("turn-blob-state-read", request_id=request_id, threadId=thread_id, attempt=attempt, currentRevision=current_revision, threadCount=len(canonical.get("threads",[])), tombstones=len(tombstones))
         if thread_id in {str(item.get("threadId") or "") for item in tombstones}:
             raise ValueError("CHAT_TURN_THREAD_TOMBSTONED")
         stamp = _now_ms()
@@ -289,18 +304,24 @@ def _commit_blob_message(user_id: str, *, thread_id: str, message_id: str, role:
         canonical["currentId"] = thread_id
         canonical["threads"] = sorted(threads, key=lambda item: (bool(item.get("pinned")), int(item.get("updatedAt") or 0)), reverse=True)[:80]
         next_revision = current_revision + 1
+        _chat_lockdown("turn-blob-write-enter", request_id=request_id, threadId=thread_id, messageId=message_id, nextRevision=next_revision)
         _write_blob(user_id, {"contract": STATE_CONTRACT, "userId": user_id, "revision": next_revision, "updatedAt": stamp, "state": _clean_state(canonical), "tombstones": tombstones})
+        _chat_lockdown("turn-blob-write-exit", request_id=request_id, threadId=thread_id, messageId=message_id, nextRevision=next_revision)
         verified = _read_blob(user_id)
         verified_revision, verified_state, verified_tombstones = _state_from_value(verified)
         if thread_id in {str(item.get("threadId") or "") for item in verified_tombstones}:
             raise RuntimeError("CHAT_TURN_COMMIT_TOMBSTONED")
         if _contains_message(verified_state, thread_id, message_id, role):
+            _chat_lockdown("turn-blob-commit-verified", request_id=request_id, threadId=thread_id, messageId=message_id, verifiedRevision=verified_revision, attempt=attempt)
             return verified_revision
+        _chat_lockdown("turn-blob-commit-retry", request_id=request_id, threadId=thread_id, messageId=message_id, attempt=attempt)
         time.sleep(0.04 * (attempt + 1))
     raise RuntimeError("CHAT_TURN_COMMIT_LOST_RACE")
 
 
 def begin_turn(request: Request, payload: dict[str, Any]) -> CanonicalTurn:
+    request_hint=str(payload.get("requestId") or "")[:128]
+    _chat_lockdown("turn-begin-enter", request_id=request_hint, payload=payload)
     user_id = user_id_from_request(request)
     now = _now_ms()
     request_id = _bounded(payload.get("requestId"), 128)
@@ -313,6 +334,7 @@ def begin_turn(request: Request, payload: dict[str, Any]) -> CanonicalTurn:
     user_created_at = _stamp(payload.get("userCreatedAt"), now)
     assistant_created_at = _stamp(payload.get("assistantCreatedAt"), max(now, user_created_at + 1))
     backend = canonical_backend()
+    _chat_lockdown("turn-begin-identities", request_id=request_id, threadId=thread_id, userMessageId=user_message_id, assistantMessageId=assistant_message_id, backend=backend)
     if backend == "redis":
         canonical_redis_state.begin_canonical_turn(
             user_id=user_id, thread_id=thread_id, request_id=request_id,
@@ -323,16 +345,20 @@ def begin_turn(request: Request, payload: dict[str, Any]) -> CanonicalTurn:
         revision = 0
     else:
         revision = _commit_blob_message(user_id, thread_id=thread_id, message_id=user_message_id, role="user", text=prompt, created_at=user_created_at, state_name="complete", request_id=request_id, title_hint=_title_hint(prompt), extra_meta={"commitPhase": "PRE_GENERATION"})
-    return CanonicalTurn(user_id=user_id, account_scope=_scope(user_id), thread_id=thread_id, request_id=request_id, user_message_id=user_message_id, assistant_message_id=assistant_message_id, user_created_at=user_created_at, assistant_created_at=assistant_created_at, user_revision=revision, storage_backend=backend)
+    turn=CanonicalTurn(user_id=user_id, account_scope=_scope(user_id), thread_id=thread_id, request_id=request_id, user_message_id=user_message_id, assistant_message_id=assistant_message_id, user_created_at=user_created_at, assistant_created_at=assistant_created_at, user_revision=revision, storage_backend=backend)
+    _chat_lockdown("turn-begin-exit", request_id=request_id, threadId=thread_id, userMessageId=user_message_id, assistantMessageId=assistant_message_id, backend=backend, revision=revision)
+    return turn
 
 
 def finish_turn(turn: CanonicalTurn, *, text: str, terminal_type: str, reason: str = "") -> int:
     terminal = _bounded(terminal_type, 32).upper() or "FAILED"
+    _chat_lockdown("turn-finish-enter", request_id=turn.request_id, threadId=turn.thread_id, assistantMessageId=turn.assistant_message_id, backend=turn.storage_backend, terminalType=terminal, reason=reason, textChars=len(str(text or "")), text=str(text or "")[:16000])
     if turn.storage_backend == "redis":
         canonical_redis_state.finish_canonical_turn(
             user_id=turn.user_id, request_id=turn.request_id, assistant_message_id=turn.assistant_message_id,
             text=str(text or "")[:200000], terminal_type=terminal, reason=_bounded(reason, 2000), turn_contract=TURN_CONTRACT,
         )
+        _chat_lockdown("turn-finish-exit", request_id=turn.request_id, threadId=turn.thread_id, backend="redis", revision=0, terminalType=terminal)
         return 0
     state_name = {"COMPLETED": "complete", "CANCELLED": "cancelled", "FAILED": "failed"}.get(terminal, "failed")
     return _commit_blob_message(turn.user_id, thread_id=turn.thread_id, message_id=turn.assistant_message_id, role="assistant", text=str(text or "")[:200000], created_at=turn.assistant_created_at, state_name=state_name, request_id=turn.request_id, extra_meta={"commitPhase": "TERMINAL", "terminalType": terminal, "terminalReason": _bounded(reason, 2000)})
