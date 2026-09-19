@@ -33,5 +33,6 @@ function paint(){
 }
 
 paint();
-setInterval(paint,500);
+// UI shim is event-driven: do not continuously repaint an idle Chat page.
+window.addEventListener("pageshow",paint);
 })();
