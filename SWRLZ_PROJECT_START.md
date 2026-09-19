@@ -125,6 +125,8 @@ After implementation, concurrency reconciliation, version assignment, and verifi
 
 If Project Start finds an **UPDATE STARTED** record without a matching terminal marker, treat it as interrupted work. Reconcile repository/runtime/version evidence before beginning overlapping mutation, then explicitly **resume and finish**, **ABORT**, or **SUPERSEDE** the event. Never silently discard an unfinished update.
 
+When the decision is to resume, write an **UPDATE CONTINUATION STARTED** checkpoint into the existing roadmap event **before any new implementation mutation**. The continuation checkpoint must identify the prior START record being resumed, the newly observed source/version/SHA/runtime baseline, what work was already completed, what remains, whether assumptions or architecture ownership changed, the current deployment boundary, and the verification plan for this continuation. A continuation checkpoint is lineage inside the original governed event; it does not silently create a second overlapping event or reserve stale version numbers. Each later interrupted/resumed work session gets another continuation checkpoint so the roadmap shows where execution actually stopped and restarted. Detailed continuation-journal fields remain owned by the Version Evolution contract; this router enforces that the checkpoint exists before resumed mutation.
+
 Roadmap journal writes and other documentation/governance bookkeeping are deployment-inert under the current deployment contract and do not authorize or trigger a stable-server deployment. If fresh deployment evidence contradicts that invariant, treat it as a deployment-control defect and stop before any deployment-producing action.
 
 ---
