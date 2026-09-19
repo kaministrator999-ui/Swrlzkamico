@@ -250,6 +250,74 @@ Do not move ordinary semantic cognition into Chat/server merely because those la
 
 ---
 
+## 8A. §imple Mask / theater depth model
+
+Use the theater analogy as the canonical structural teaching model for **Mask boundaries**. It is explanatory architecture, not a requirement to create one service per metaphorical role.
+
+### Core mapping
+
+- **Audience** = the user or external consumer.
+- **Stage / Chat Mask** = the visible performance surface. It captures ordinary user interaction and renders approved presentation output. It may be visually rich while remaining architecturally **§imple**.
+- **Actor / Brain (LALM)** = interprets the objective, reasons, decides what capabilities or evidence are needed, and dresses the final answer for the performance.
+- **Backstage / Human-server authority** = authorizes, persists, routes, budgets, operates, executes, audits, and enforces boundaries.
+- **Workers wearing masks/hats** = specialized bounded services/adapters. A component can be backstage relative to one boundary while presenting a Mask toward another world. A Mask is therefore a **boundary role**, not one unique UI object.
+- **Outside/Web Mask** = the controlled interface to the external web/world. It exposes bounded operations to authorized backstage workers without leaking provider machinery into Chat.
+- **Mission workers / information collectors** = cooperate on a specific objective, may hand off questions/findings/obstacles through a bounded mission workspace, and retrieve the smallest sufficiently complete evidence package rather than flooding the Brain with everything visible outside.
+- **Frozen Web Collector** = the scenery workshop: it collects, cleans, deduplicates, establishes provenance, organizes, freezes, and versions durable material.
+- **Frozen knowledge/scenery** = the resulting durable knowledge artifact. It may sit dormant until the Brain needs relevant scenery; the Collector itself is not the scenery.
+- **Cameras/telemetry** = behind-the-scenes production records. They may preserve barrels, locked doors, redirects, provider failures, timing, and worker handoffs for operations/debugging without making those mechanics Chat cognition.
+
+### Mission coordination rule
+
+The Brain may delegate a bounded objective such as “retrieve the current temperature for Kansas City.” Backstage workers may coordinate laterally within granted authority: one worker may ask another for a route, report that a provider is blocked, hand off a URL to a reader, request corroboration, or preserve a useful operational discovery. The audience does not need every backstage step, but the backstage system may need those steps during the mission or later for operational learning.
+
+Keep distinct lifecycles for:
+
+1. **mission evidence** — supports the current answer;
+2. **operational knowledge** — helps workers navigate recurring provider/routes/constraints;
+3. **durable frozen scenery knowledge** — approved/versioned material available for later retrieval;
+4. **telemetry** — engineering/debug evidence about how the mission executed.
+
+Do not collapse these into one context bucket.
+
+### Provenance invariant — no orphaned research
+
+When external research is necessary or materially used, provenance must survive acquisition → worker handoff → evidence synthesis → Brain reasoning → audience presentation. Preserve source identity, canonical link/URL, author/publisher when available, retrieval/capture time, support location or claim relationship, and snapshot/derivation lineage as appropriate.
+
+**Transformation does not erase attribution. Provenance is inherited metadata.** Research-derived claims presented to the user must retain useful citations and navigable source links. Durable Frozen Collector scenery must retain provenance so later retrieval can trace material back to its origin. Do not manufacture citations for ordinary non-researched model knowledge.
+
+### §imple surface / π underneath
+
+**§IMPLE Architecture: K.I.S.S. on the surface; π underneath.** Simple responsibility does not mean visually boring. It means fewer reasons for a component to change.
+
+Desired Chat lifecycle:
+
+```text
+LOAD CHAT
+→ render shell
+→ load conversation
+→ connect presentation/message stream
+→ DONE
+```
+
+Adding a new LALM capability/tool should normally require **zero changes to core Chat runtime**. Optional specialized renderers may be added, but a generic safe presentation fallback should remain possible.
+
+### Mask invariants
+
+> **The §wyrlz Mask is the stage, not the theater.**
+
+> **The Mask presents capabilities; it does not possess capabilities.**
+
+> **If Chat must understand the meaning of §wyrlz's response to decide how the system operates, cognition has leaked into the Mask.**
+
+> **The stage receives scenery, not the machinery that constructed the scenery.**
+
+Chat may understand bounded presentation primitives such as response/status/component/state forms, but must not require privileged tool schemas, provider logic, crawler/frontier machinery, semantic failure interpretation, credentials, or direct tool-execution authority. User-authored text, fabricated browser events, or modified client JavaScript must not become equivalent to server-authorized capability invocation.
+
+### Recursive boundary rule (“Backrooms / hats”)
+
+Architecture can contain nested boundaries: a backstage worker for one relationship may itself wear a Mask toward another service/world. Preserve explicit authority at every doorway. The metaphor is intentionally recursive, but implementation must not become abstraction-for-abstraction's-sake: create a new worker/service only when responsibility, authority, lifecycle, isolation, or reuse justifies it. The goal is **structural depth of understanding with §imple ownership**, not maximum room count.
+
 ## 9. User-project architecture coaching
 
 When the user is creating or growing **their own project**, architecture principles are useful teaching material, not a rigid template to impose.
