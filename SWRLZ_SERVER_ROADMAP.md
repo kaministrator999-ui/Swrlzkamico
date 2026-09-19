@@ -33,6 +33,20 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ---
 
+## Active update journal
+
+### Governance update — transactional roadmap lifecycle
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** make the roadmap a durable before/after journal for every governed update so interrupted work can be discovered and safely resumed, completed, aborted, or superseded.  
+**Canonical owners:** `SWRLZ_PROJECT_START.md` routes the workflow; `SWRLZ_VERSION_MODULE_EVOLUTION.md` owns version/roadmap lineage; this roadmap owns the durable event record.  
+**Expected changes:** require an `UPDATE STARTED` roadmap record before implementation mutation, then an `UPDATE FINISHED` record after mutation/version reconciliation/verification; unfinished START records must be reconciled before overlapping work begins. Require complete `VERSION.txt` registration for every independently versioned governed component.  
+**Observed baseline:** Server `2.3.282`; LALM Engine `2.1.100` / v88; Runtime Manifest `147`.  
+**Deployment expectation:** NONE. Documentation/governance bookkeeping is deployment-inert under the current contract.  
+**Verification plan:** fetch back all changed governance documents and confirm the workflow, version-registry invariant, interruption recovery, and deployment-inert wording agree without creating a second policy owner.
+
 ## Release ledger
 
 ### Server 2.3.282 — R39 v88 complete prompt-camera loader repair
