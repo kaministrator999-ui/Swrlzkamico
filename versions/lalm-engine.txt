@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.97
-REVISION=2.1.97-hot-live-planner-status-v85
+VERSION=2.1.98
+REVISION=2.1.98-hot-prompt-composition-camera-v86
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
