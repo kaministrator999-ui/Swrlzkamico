@@ -950,3 +950,12 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Behavioral-fix rule:** no prompt/policy/inference semantic repair is included in this checkpoint. Camera density is intentionally high; a later cleanup pass may reduce presentation noise only after behavior is correct and the user accepts the issue as fixed.
 - **Remaining full-map work:** server ingress/persistence/route cameras and client transport/render/animation-frame exposure must be reconciled through their canonical owners rather than being smuggled into the Brain runtime. Existing cameras remain active while those layers are filled.
 - **Verification:** next fresh-thread reproduction should show the expanded automatic generation-chain boundary trace and identify where the pre-v51 synthetic history first appears.
+
+
+##### UPDATE CONTINUATION STARTED — 2026-09-19 — full-stack frame-to-terminal camera completion
+
+- **Explicit authorization:** user directed immediate completion of all missing cameras across the message lifecycle and logger surface.
+- **Scope:** preserve every useful existing camera; add dense observational coverage across Mask/client, Human/server, Brain/LALM, stream transport, persistence, and visible presentation/frame state from user send through terminal response completion.
+- **Architecture ownership:** Mask owns UI/send/receive/render/frame cameras; Human/server owns ingress/auth/routing/persistence/stream relay cameras; Brain owns semantic/prompt/tokenization/inference/decode cameras. All owners emit one correlated trace contract rather than moving cognition across boundaries.
+- **Diagnostic mode:** presentation cleanliness and log volume are explicitly secondary during this development phase. Logging may be extremely dense, but cameras remain observational and should avoid credentials/secrets. No behavioral repair is bundled into this instrumentation checkpoint.
+- **Verification target:** one fresh request must be reconstructable in chronological order from frame/send 0 through terminal settled response, with request/turn/thread correlation and enough before/after state to expose slips, bottlenecks, fallback paths, and fault lines.
