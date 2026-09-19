@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-19-full-lockdown-frame-to-terminal-v1
-REQUESTED_BY=standing-terminal-deploy-contract
+REQUEST_ID=2026-09-19-route-enter-500-candidate-v1
+REQUESTED_BY=user-explicit-route-enter-500-approval
 SOURCE_REF=main
-REASON=One terminal activation for the completed full-lockdown camera checkpoint. Activates authenticated frame-to-terminal Mask/Human/Brain observability, request-correlated R39 2.1.112 diagnostics, and loader-aware Deployment Control 1.0.9 verification. One trigger only; no automatic retry.
+REASON=Activate only the camera-proven runtime_hydration request_id definition repair from commit 5aa3128874e74df6b22e3dc4cc82c9938b928536. Verify candidate #1 before any LOCKDOWN viewer 401/freeze mutation. One trigger only; no automatic retry.
