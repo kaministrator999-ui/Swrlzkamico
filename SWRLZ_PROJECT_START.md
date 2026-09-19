@@ -94,10 +94,6 @@ WRITE ROADMAP UPDATE STARTED RECORD
       ↓
 CHECK CURRENT DEPLOYMENT CAPABILITY
       ↓
-DEPLOYMENT-PRODUCING ACTION?
-      ├─ YES → STOP + EXPLAIN + GET EXPLICIT USER APPROVAL
-      └─ NO  → CONTINUE
-      ↓
 IMPLEMENT THROUGH THE RECONCILED OWNER
       ↓
 RE-READ VERSION/STATUS AUTHORITIES
@@ -111,6 +107,11 @@ SET/VERIFY DECLARED MODULE STATUS APPROPRIATELY
 VERIFY BEHAVIOR + OBSERVED RUNTIME HEALTH + OWNERSHIP + ACTIVATION AS RELEVANT
       ↓
 WRITE ROADMAP UPDATE FINISHED RECORD
+      ↓
+PRODUCTION DEPLOY REQUIRED?
+      ├─ YES → USE STANDING APPROVAL FOR ONE TERMINAL CANONICAL TRIGGER
+      │         → OBSERVE + VERIFY; NEVER AUTO-RETRY
+      └─ NO  → DO NOT DEPLOY
       ↓
 REPORT RESULT USING RESPONSE STANDARD
 ```
@@ -182,9 +183,24 @@ Core invariant:
 - `main` = stable loader/infrastructure and engineering-contract boundary.
 - branch name alone does **not** prove deployment capability.
 
-Before an action that is explicitly deployment-producing under the current deployment contract, determine the current deployment configuration/workflow and **obtain explicit user approval before that deployment-producing action**. Ordinary Git/documentation mutations remain deployment-inert unless fresh evidence shows the deployment-control contract has changed or failed.
+Before an action that is explicitly deployment-producing under the current deployment contract, determine the current deployment configuration/workflow.
 
-A request to fix, implement, document, commit, merge, or architect is not deployment authorization; it also must not cause ordinary deployment-inert Git work to be mislabeled as deployment-capable.
+### Project standing approval — single terminal production trigger
+
+For this repository, the user grants standing approval for **one production deployment trigger at the end of a governed update when that update actually requires production deployment**. This standing approval is deliberately narrow:
+
+- finish source implementation, reconciliation, versioning, and all deployment-inert verification first;
+- deployment is the **last step** of the update, never an exploratory/intermediate step;
+- trigger production **once only** for that completed candidate;
+- use the canonical repository deployment authority. As of 2026-09-19, that authority is the `main`-branch `.deploy/REQUEST.txt` request consumed by `.github/workflows/manual-vercel-production.yml`, which performs the Vercel CLI production build/deploy and source-bound verification;
+- do not repeatedly rewrite/retrigger the request to chase a failure. A failed, cancelled, ambiguous, or materially changed candidate requires diagnosis and a new explicit user approval before another production trigger;
+- do not deploy updates that are runtime-hot/deployment-inert or otherwise do not require stable production activation;
+- do not treat ordinary commits, documentation writes, version bumps, or roadmap bookkeeping as deployment triggers;
+- after the single trigger, observe the workflow/deployment result and report the exact activation/verification truth state. Never claim live success merely because the trigger fired.
+
+This standing approval supersedes the older per-update requirement to stop and ask immediately before the **first and only terminal deployment trigger**, but it does not authorize a second attempt, rollback, unrelated deployment, workflow redesign, release, or deployment earlier in the update.
+
+A request to fix, implement, document, commit, merge, or architect does not by itself create broader deployment authorization beyond this standing single-terminal-trigger contract; it also must not cause ordinary deployment-inert Git work to be mislabeled as deployment-capable.
 
 Documentation-only changes are engineering-contract maintenance and must be deployment-inert. They do not require deployment approval. If repository/deployment configuration causes documentation-only commits to deploy application code, treat that configuration as a defect and correct the deployment filtering rather than treating documentation as deployment-sensitive.
 
