@@ -203,7 +203,11 @@ def install(server) -> None:
 
     @server.app.middleware("http")
     async def runtime_hydration(request: Request, call_next):
-        if request.method == "GET" and (request.url.path == "/api/chat" or request.url.path.startswith("/api/chat/")):
+        # Generation is initiated by POST /api/chat[/]. Hydrating only GET meant
+        # a user could submit inference against a stale R39 entrypoint before any
+        # page/status GET happened to refresh the worker. Refresh every chat
+        # request method through the same throttled single-writer authority.
+        if request.url.path == "/api/chat" or request.url.path.startswith("/api/chat/"):
             _safe_auto_sync(server)
         return await call_next(request)
 
