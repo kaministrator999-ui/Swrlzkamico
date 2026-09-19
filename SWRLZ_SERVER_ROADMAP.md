@@ -6,10 +6,10 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.280`
+- **Overall Server:** `2.3.281`
 - **Chat:** `1.5.82`
-- **Runtime Manifest:** `145`
-- **LALM Engine:** `2.1.98` (`v86` bounded prompt-composition attribution; v85 research-planner status and v83 batching preserved)
+- **Runtime Manifest:** `146`
+- **LALM Engine:** `2.1.99` (`v87` corrected loader preserving v86 prompt-composition attribution; v85 research-planner status and v83 batching preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -35,9 +35,24 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Release ledger
 
+### Server 2.3.281 — R39 v87 loader correction preserving prompt-composition camera
+
+**Status:** runtime-hot source complete/static fetch-back verified; live request acceptance pending.  
+**LALM Engine:** `2.1.98 → 2.1.99` / `v87`. **Runtime Manifest:** `145 → 146`. **Chat:** `1.5.82` unchanged. **Online Research:** `1.0.1` unchanged.  
+**Deployment / restart:** NONE.
+
+**Failure lineage:** Server 2.3.280 published the v86 prompt-composition overlay but its first loader edit contained two literal backslash-n separators in Python source. The failed event remains recorded rather than being relabeled successful.
+
+**Correction:** repaired only the corrupted loader separators, verified the v85/v86/v87 declaration region contains real source newlines and zero literal backslash-n separators, then added a minimal v87 lineage overlay that preserves the complete v86 camera and reports LALM 2.1.99. Manifest 146 activates the corrected runtime-hot lineage.
+
+**Prompt camera preserved:** the camera still attributes the exact rendered prompt total without logging prompt/token text. It emits per-segment marginal token counts, owner totals, duplicate fingerprints, total rendered tokens, and `exactTotalMatched`.
+
+**Verification:** loader declaration fetch-back is structurally clean and the canonical authorities report Server 2.3.281, LALM 2.1.99/v87, and Runtime Manifest 146. Live hydration and a fresh Kansas City weather request remain required before claiming runtime acceptance.
+
+
 ### Server 2.3.280 — R39 v86 bounded prompt-composition attribution
 
-**Status:** runtime-hot source complete/static verified; live request acceptance pending.  
+**Status:** preserved failed activation event. The v86 camera overlay itself was published, but the first entrypoint mutation inserted two literal `\\n` separators between the v85/v86 loader declarations, making that loader source syntactically invalid. This was detected during fetch-back before live acceptance and is corrected by Server 2.3.281 / LALM 2.1.99 v87.  
 **LALM Engine:** `2.1.97 → 2.1.98` / `v86`. **Runtime Manifest:** `144 → 145`. **Chat:** `1.5.82` unchanged. **Online Research:** `1.0.1` unchanged.  
 **Deployment / restart:** NONE.
 
