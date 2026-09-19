@@ -19,10 +19,11 @@ Read these documents in this order before implementation:
 3. `SWRLZ_VERSION_MODULE_EVOLUTION.md` — Server/module version lineage and concurrency rules.
 4. `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md` — how to inspect existing architecture before adding/fixing anything.
 5. `SWRLZ_SERVER_ROADMAP.md` — current project/version baseline and durable release/progress ledger.
-6. `SWRLZ_CHAT_CAMERA_LOGS.md` — project-wide diagnostic cameras/logs/evidence workflow. The compatibility filename remains historical; the document is project-wide, not Chat-only.
-7. `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` — how project-work progress and final results are formatted and reported to the user.
+6. `docs/engineering/SWRLZ_LOCKDOWN_CAMERA_SYSTEM.md` — build-time camera architecture, runtime-switchable lockdown modes, component integration, and ON/OFF parity requirements.
+7. `SWRLZ_CHAT_CAMERA_LOGS.md` — project-wide diagnostic cameras/logs/evidence workflow. The compatibility filename remains historical; the document is project-wide, not Chat-only.
+8. `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` — how project-work progress and final results are formatted and reported to the user.
 
-Treat those seven documents as one coordinated project-work contract. Then follow any subsystem operating guide routed below before changing that subsystem.
+Treat those eight documents as one coordinated project-work contract. Then follow any subsystem operating guide routed below before changing that subsystem.
 
 ### Project response identity opener — mandatory
 
@@ -45,6 +46,7 @@ Rules:
 Read these when relevant:
 
 - `docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md` — **mandatory for runtime-hot page/asset/module integration**, including adding routes, using the runtime manifest, deciding between manifest-routed pages and hydrated hot sources, versioning activation, and verifying hotload state.
+- `docs/engineering/SWRLZ_LOCKDOWN_CAMERA_SYSTEM.md` — **mandatory when creating or materially changing any Server/page/module/component**. Define the component's camera contract at build time, keep camera activation runtime-switchable where supported, and verify functional parity with cameras OFF and ON.
 - `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` — Google sign-in, OAuth, account/session, or related Chat-auth work.
 - `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md` — when helping a user start/grow their own project, teaching architecture, explaining tradeoffs, or simplifying/removing optional architecture at the user's request.
 - `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md` — whenever work changes or evaluates programming/coding behavior in the LALM, coding-task routing, architecture-aware coding state, code-tool planning, coding evaluation, or a future dedicated coder model. This document owns the target runtime architecture and the truth boundary between documented curriculum, executable runtime behavior, and trained model capability.
@@ -102,6 +104,7 @@ Each rule family has one primary owner.
 | Repository/Server/module version lineage | `SWRLZ_VERSION_MODULE_EVOLUTION.md` |
 | Pre-feature architecture discovery/reconciliation | `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md` |
 | Durable progress/release history | `SWRLZ_SERVER_ROADMAP.md` |
+| Lockdown camera architecture / build-time integration | `docs/engineering/SWRLZ_LOCKDOWN_CAMERA_SYSTEM.md` |
 | Cameras/logs/diagnostic evidence | `SWRLZ_CHAT_CAMERA_LOGS.md` |
 | Project-work response formatting/readability | `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` |
 | Architecture teaching for user-owned projects | `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md` |
@@ -113,6 +116,28 @@ Do not create a second policy document for a concern that already has a canonica
 
 ---
 
+### One-command project readiness contract
+
+When the user says any equivalent of:
+
+> **“§wyrlz follow the start doc in our GitHub Swrlzkamico repo”**
+
+the engineering agent must treat that as authorization to **load project context and become ready to work**, not as permission to mutate the repository blindly.
+
+Before replying ready, it must:
+
+1. read this Project Start file and every mandatory document in the startup order above;
+2. read current `VERSION.txt` and the version authorities relevant to Repository Work, Server Runtime, Runtime Manifest, Chat, LALM, deployment control, and the requested/current subsystem;
+3. read `SWRLZ_SERVER_ROADMAP.md` far enough to identify the latest completed tier, any open/incomplete UPDATE STARTED events, current work position, and known pending verification/deployment state;
+4. follow the whole-play/theater model so it knows the current Mask/stage, backstage/server, Brain/LALM, props, actors, stagehands, cameras, and curtain/scene rules;
+5. read the Runtime Hotloader Guide whenever current or likely next work is runtime-hot;
+6. read the Lockdown Camera System guide before creating or materially changing any Server/page/module/component;
+7. inspect current source/manifest/owner files for the component actually being worked on before implementation;
+8. reconcile interrupted work before starting overlapping mutation;
+9. return a concise **ready state** summarizing current versions, current stage/tier, active owner, whether the path is runtime-hot or deployment-bound, and the next scoped unit of work.
+
+The one-command entry contract is intentionally strong: **Project Start is the map that teaches how to read the rest of the project.** A future §wyrlz instance should not need the user to separately explain the version axes, runtime hotloader, theater analogy, roadmap role, or lockdown-camera doctrine after following this file.
+
 ## 3. Automatic workflow for every governed development event
 
 ```text
@@ -123,6 +148,8 @@ FETCH CURRENT TARGET + VERSION/STATUS AUTHORITIES
 CAPTURE VERSION/STATUS/SHA BASELINE
       ↓
 ARCHITECTURE RECONCILIATION
+      ↓
+DEFINE/VERIFY COMPONENT CAMERA CONTRACT
       ↓
 ISSUE/DEFECT? → AUTOMATIC CAMERA + LOG EVIDENCE LOOP
       ↓
