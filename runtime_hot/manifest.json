@@ -1,5 +1,7 @@
 {
   "schema": 1,
-  "revision": "2.1.87-hot-programming-continuation-semantics-v75",
-  "inferenceFiles": ["r39_engine.py"]
+  "revision": "2.1.111-hot-lockdown-every-step-v90",
+  "inferenceFiles": [
+    "r39_engine.py"
+  ]
 }
