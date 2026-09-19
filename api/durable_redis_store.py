@@ -8,6 +8,7 @@ import urllib.request
 from dataclasses import asdict, replace
 from typing import Any
 
+from api.chat_client_debug import _lockdown as _chat_lockdown
 from api.durable_chat_contract import (
     ConflictError,
     DurableChatStore,
@@ -93,6 +94,14 @@ class RedisRestChatStore(DurableChatStore):
         return ":".join([self.prefix, *[str(p).replace(":", "_") for p in parts]])
 
     def _command(self, *command: Any) -> Any:
+        started_ns=time.perf_counter_ns()
+        op=str(command[0] if command else "")[:64].upper()
+        safe_command=[]
+        for index,value in enumerate(command):
+            text=str(value)
+            # Never expose provider credentials; command arguments are application state.
+            safe_command.append(text[:16000])
+        _chat_lockdown("redis-command-enter", operation=op, argumentCount=len(command), command=safe_command)
         request = urllib.request.Request(
             self.url,
             data=json.dumps(list(command), ensure_ascii=False, separators=(",", ":")).encode("utf-8"),
@@ -107,10 +116,14 @@ class RedisRestChatStore(DurableChatStore):
             with urllib.request.urlopen(request, timeout=15) as response:
                 payload = json.loads(response.read())
         except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+            _chat_lockdown("redis-command-error", operation=op, durationNs=time.perf_counter_ns()-started_ns, errorType=type(exc).__name__, error=str(exc)[:2000])
             raise DurableStoreUnavailable(f"durable Redis REST request failed: {type(exc).__name__}") from exc
         if not isinstance(payload, dict) or payload.get("error"):
+            _chat_lockdown("redis-command-rejected", operation=op, durationNs=time.perf_counter_ns()-started_ns, error=str(payload.get("error") if isinstance(payload,dict) else "invalid response")[:2000])
             raise DurableStoreUnavailable(str(payload.get("error") if isinstance(payload, dict) else "invalid Redis REST response"))
-        return payload.get("result")
+        result=payload.get("result")
+        _chat_lockdown("redis-command-exit", operation=op, durationNs=time.perf_counter_ns()-started_ns, result=str(result)[:16000])
+        return result
 
     def _set_json(self, key: str, value: Any) -> None:
         self._command("SET", key, json.dumps(asdict(value), ensure_ascii=False, separators=(",", ":")))
