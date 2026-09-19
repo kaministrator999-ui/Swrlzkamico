@@ -1,5 +1,5 @@
 ID=runtime-manifest
-VERSION=147
+VERSION=148
 KIND=runtime-page-manifest
 SOURCE_BRANCH=runtime
 STATUS=active
