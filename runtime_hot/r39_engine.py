@@ -106,7 +106,13 @@ try:
     _entry("v85-overlay-fetch-ok",overlayBytes=len(_v85_overlay))
     exec(compile(_v85_overlay.decode("utf-8"),_V85_URL+"#v85-overlay","exec"),globals(),globals())
 
-    _v86_request=urllib.request.Request(_V86_URL,headers={"User-Agent":"swrlz-r39-v86-overlay"})\n    with urllib.request.urlopen(_v86_request,timeout=20) as _response:_v86_overlay=_response.read(1000001)\n    if len(_v86_overlay)>1000000:raise RuntimeError("R39_V86_OVERLAY_TOO_LARGE")\n    _entry("v86-overlay-fetch-ok",overlayBytes=len(_v86_overlay))\n    exec(compile(_v86_overlay.decode("utf-8"),_V86_URL+"#v86-overlay","exec"),globals(),globals())\n\n    _v87_request=urllib.request.Request(_V87_URL,headers={"User-Agent":"swrlz-r39-v87-overlay"})
+    _v86_request=urllib.request.Request(_V86_URL,headers={"User-Agent":"swrlz-r39-v86-overlay"})
+    with urllib.request.urlopen(_v86_request,timeout=20) as _response:_v86_overlay=_response.read(1000001)
+    if len(_v86_overlay)>1000000:raise RuntimeError("R39_V86_OVERLAY_TOO_LARGE")
+    _entry("v86-overlay-fetch-ok",overlayBytes=len(_v86_overlay))
+    exec(compile(_v86_overlay.decode("utf-8"),_V86_URL+"#v86-overlay","exec"),globals(),globals())
+
+    _v87_request=urllib.request.Request(_V87_URL,headers={"User-Agent":"swrlz-r39-v87-overlay"})
     with urllib.request.urlopen(_v87_request,timeout=20) as _response:_v87_overlay=_response.read(1000001)
     if len(_v87_overlay)>1000000:raise RuntimeError("R39_V87_OVERLAY_TOO_LARGE")
     _entry("v87-overlay-fetch-ok",overlayBytes=len(_v87_overlay))
