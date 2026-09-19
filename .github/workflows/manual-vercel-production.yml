@@ -172,6 +172,34 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: vercel build --prod --token="$VERCEL_TOKEN"
 
+      - name: Inject native R39 artifacts into Python function bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          native_artifacts=(swyrlz/_r39_native*.so swyrlz/_r39_native*.pyd swyrlz/_r39_native*.dylib)
+          batch_artifacts=(swyrlz/_r39_batch*.so swyrlz/_r39_batch*.pyd swyrlz/_r39_batch*.dylib)
+          if [[ "${#native_artifacts[@]}" -lt 1 || "${#batch_artifacts[@]}" -lt 1 ]]; then
+            echo "Compiled R39 artifacts disappeared before function-bundle injection." >&2
+            exit 1
+          fi
+          python_functions=0
+          while IFS= read -r -d '' func_dir; do
+            config="$func_dir/.vc-config.json"
+            if [[ ! -f "$config" ]] || ! grep -Eq '"runtime"[[:space:]]*:[[:space:]]*"python' "$config"; then
+              continue
+            fi
+            mkdir -p "$func_dir/swyrlz"
+            cp -f "${native_artifacts[@]}" "${batch_artifacts[@]}" "$func_dir/swyrlz/"
+            python_functions=$((python_functions + 1))
+          done < <(find .vercel/output/functions -type d -name '*.func' -print0)
+          if [[ "$python_functions" -lt 1 ]]; then
+            echo "No Python Vercel function bundles were found for native injection." >&2
+            find .vercel/output/functions -maxdepth 3 -type f -name '.vc-config.json' -print || true
+            exit 1
+          fi
+          echo "Injected R39 native artifacts into $python_functions Python function bundles." >> "$GITHUB_STEP_SUMMARY"
+
       - name: Verify native R39 artifacts are bundled
         shell: bash
         run: |
