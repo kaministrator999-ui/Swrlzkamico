@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import shutil
 import threading
@@ -52,9 +53,31 @@ def _sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def _fetch(path: str, limit: int) -> bytes:
-    url = f"{RAW_BASE}/{DEFAULT_BRANCH}/{path}?swrlz_runtime={int(time.time() * 1000)}"
-    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-hot-runtime/5", "Cache-Control": "no-cache"})
+def _resolve_runtime_head() -> str:
+    # Resolve the mutable runtime branch once through GitHub's API. Fetching
+    # raw.githubusercontent.com by branch name can return an older CDN view even
+    # with query cache-busters; immutable commit-SHA URLs cannot drift.
+    url = f"https://api.github.com/repos/{OWNER}/{REPO}/commits/{DEFAULT_BRANCH}?swrlz_runtime={int(time.time() * 1000)}"
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "swrlz-hot-runtime/6",
+            "Accept": "application/vnd.github+json",
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=20) as response:
+        payload = json.loads(response.read(262145).decode("utf-8"))
+    sha = str(payload.get("sha") or "").strip().lower()
+    if len(sha) != 40 or any(ch not in "0123456789abcdef" for ch in sha):
+        raise ValueError("HOT_RUNTIME_HEAD_INVALID")
+    return sha
+
+
+def _fetch(path: str, limit: int, *, ref: str) -> bytes:
+    url = f"{RAW_BASE}/{ref}/{path}"
+    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-hot-runtime/6"})
     with urllib.request.urlopen(req, timeout=20) as response:
         data = response.read(limit + 1)
     if len(data) > limit:
@@ -63,7 +86,6 @@ def _fetch(path: str, limit: int) -> bytes:
     if b"\x00" in data:
         raise ValueError(f"HOT_SOURCE_BINARY_REJECTED:{path}")
     return data
-
 
 def _atomic_write(path: Path, data: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -88,19 +110,20 @@ def _runtime_status() -> dict[str, Any]:
     return {name: {"path": str(target), "exists": target.is_file(), "sha256": _sha(target.read_bytes()) if target.is_file() else None} for name, (_source, target, _limit) in SOURCES.items()}
 
 
-def _fetch_source_item(item: tuple[str, tuple[str, Path, int]]) -> tuple[str, Path, bytes, str]:
+def _fetch_source_item(item: tuple[str, tuple[str, Path, int]], ref: str) -> tuple[str, Path, bytes, str]:
     name, (source, target, limit) = item
-    data = _fetch(source, limit)
+    data = _fetch(source, limit, ref=ref)
     return name, target, data, _sha(data)
 
 
 def _sync_runtime(*, force: bool = False, reason: str = "automatic") -> dict[str, Any]:
     LAST_SYNC["attemptAt"] = time.time()
     items = list(SOURCES.items())
-    # Runtime files are independent. Fetch them concurrently so one network RTT does
-    # not multiply by the number of hot sources when a refresh is actually due.
+    runtime_head = _resolve_runtime_head()
+    # Resolve one branch head, then fetch every source from that same immutable
+    # snapshot so a sync cannot mix revisions across files.
     with ThreadPoolExecutor(max_workers=max(1, min(6, len(items))), thread_name_prefix="swrlz-hot-fetch") as pool:
-        fetched = list(pool.map(_fetch_source_item, items))
+        fetched = list(pool.map(lambda item: _fetch_source_item(item, runtime_head), items))
 
     payloads = []
     for name, target, data, digest in fetched:
@@ -111,7 +134,7 @@ def _sync_runtime(*, force: bool = False, reason: str = "automatic") -> dict[str
         LAST_SYNC["successAt"] = time.time()
         LAST_SYNC["changed"] = []
         LAST_SYNC["error"] = None
-        return {"ok": True, "changed": False, "branch": DEFAULT_BRANCH, "files": [], "reason": reason, "parallelFetch": True}
+        return {"ok": True, "changed": False, "branch": DEFAULT_BRANCH, "runtimeHead": runtime_head, "files": [], "reason": reason, "parallelFetch": True}
     backup_id = _backup()
     changed = []
     engine_changed = False
@@ -129,7 +152,7 @@ def _sync_runtime(*, force: bool = False, reason: str = "automatic") -> dict[str
     LAST_SYNC["successAt"] = time.time()
     LAST_SYNC["changed"] = [item["name"] for item in changed]
     LAST_SYNC["error"] = None
-    return {"ok": True, "changed": True, "branch": DEFAULT_BRANCH, "files": changed, "backupId": backup_id, "reason": reason, "parallelFetch": True}
+    return {"ok": True, "changed": True, "branch": DEFAULT_BRANCH, "runtimeHead": runtime_head, "files": changed, "backupId": backup_id, "reason": reason, "parallelFetch": True}
 
 
 def _safe_auto_sync(server, *, force: bool = False) -> dict[str, Any]:
