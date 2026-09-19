@@ -130,6 +130,7 @@ def install(server) -> None:
     app = getattr(server, "app", server)
 
     async def chat_client_debug_post(request: Request):
+        global _TRACE_SEQ
         try:
             raw = await request.json()
         except Exception:
