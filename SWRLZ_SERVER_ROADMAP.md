@@ -6,10 +6,11 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.284`
-- **Chat:** `1.5.82`
-- **Runtime Manifest:** `149`
-- **LALM Engine:** `2.1.102` (`v90` protected factual-evidence handoff/fail-closed synthesis; v89 request-first inference, v88 loader repair, and v86 prompt-composition attribution preserved)
+- **Repository Work:** `1.0.3`
+- **Server Runtime:** `2.3.287`
+- **Chat:** `1.5.85`
+- **Runtime Manifest:** `152`
+- **LALM Engine:** `2.1.112`
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -46,6 +47,15 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Expected impact:** Repository Work + Web Chat + Runtime Manifest only. Server Runtime remains unchanged because no Server release/deployment occurs.  
 **Deployment expectation:** NONE. This uses the already-deployed manifest-routed runtime-hot ABI.  
 **Verification plan:** create the one-word page; register exact route with empty styles/scripts; re-read authorities for concurrency; advance Repository Work, Web Chat, and Runtime Manifest only; fetch back page/manifest/versions and verify no legacy assets are attached.
+
+**UPDATE FINISHED**
+
+**Result:** COMPLETE — LIVE RUNTIME-HOT CLEAN-ROOM STAGE VERIFIED.  
+**Actual change:** created runtime source `chat/§wyrlz/index.html` whose only visible body content is `§wyrlz`; Runtime Manifest v152 now maps `/chat/§wyrlz` directly to that source with `styles: []` and `scripts: []`. The legacy `/chat` route and its loader stack were not modified or inherited.  
+**Resulting versions:** Repository Work `1.0.3`; Web Chat `1.5.85`; Runtime Manifest `152`; Server Runtime remains `2.3.287`.  
+**Verification:** source fetch-back confirms page SHA `6f76eb020c52f2144bdedb0f39506cf1816f6b75` and manifest SHA `0b88016050c0e9856269833370837fc0f0802feb`. Live Vercel fetch of encoded `/chat/%C2%A7wyrlz` returned HTTP 200, body containing only the minimal §wyrlz document, `X-SWRLZ-Live-Source: github-runtime`, `X-SWRLZ-Live-Branch: runtime`, and `X-SWRLZ-Manifest-Revision: 152`. This proves the already-deployed generic runtime manifest loader activated the new page without a stable Server deployment.  
+**Deployment / restart:** NONE. Runtime-hot activation only.  
+**Next scoped tier:** classify and add only the first required scenery for the §wyrlz stage; do not import legacy Chat presentation machinery.
 
 
 ### Project-start playbook + runtime-hotloader operating guide
