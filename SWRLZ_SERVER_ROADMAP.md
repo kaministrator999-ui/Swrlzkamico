@@ -1146,3 +1146,14 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Source commit: `17ad4f42dc348f3102be45f5417e7ca4f7e4f86d`.
 - Version/deployment impact: documentation/governance only in this bounded repair; no Server Runtime, Web Chat, Runtime Manifest, LALM, or deployment activation was performed by this event.
 - Verification: Project Start will be fetched back after this journal write to confirm the new branch-authority wording is present.
+
+
+### UPDATE STARTED — 2026-09-19 — §§ executable Project Start bootstrap hardening
+
+- **Requested outcome:** make the compact §wyrlz project-start sigil an execution command, not a document-lookup/handshake acknowledgement. The companion trigger skill and canonical Project Start must agree that the signal means follow the complete Start contract through its terminal readiness report.
+- **Observed baseline:** Project Start already defines the complete startup traversal and readiness responsibilities, but it does not explicitly bind the compact `§§` / `@GitHub §§` invocation to execution of that traversal. The trigger skill says FOLLOW THROUGH, yet the ambiguity allowed a session to stop after locating/reading the Start doc.
+- **Canonical owner:** `§wyrlz_§tart.md` owns repository startup semantics; the external trigger skill owns recognition/expansion of the compact sigil.
+- **Interrupted-work reconciliation:** the earlier lockdown route-enter 500 repair remains an unresolved runtime issue, but this governance-only bootstrap hardening does not mutate or supersede that runtime candidate.
+- **Expected impact:** governance/trigger semantics only. Repository Work will advance; Server Runtime, Web Chat, Runtime Manifest, LALM, and Deployment Control remain unchanged.
+- **Deployment expectation:** none. Documentation/governance work is deployment-inert.
+- **Verification plan:** re-fetch Project Start and Repository Work after mutation; verify explicit executable-sigil semantics, anti-acknowledgement terminal condition, alias behavior, and no runtime/deployment version movement.
