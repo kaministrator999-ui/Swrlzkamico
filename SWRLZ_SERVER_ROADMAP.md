@@ -913,3 +913,11 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - The 11:44 generation failure is now source-proven: runtime 2.1.105 is fetched, overlays through v90 and batch adapter load, then hydration aborts with `RuntimeError: R39_COMPACT_PREFILL_RENDER_BOUNDARY_UNAVAILABLE`.
 - Root cause: the attempted v90 repair assumed a callable `_render_prompt` export on the composed namespace; the inherited lineage does not expose that symbol at this layer. Fail-closed hydration therefore correctly prevented inference.
 - Bounded repair: remove the invalid render-symbol interception and compact the synthetic Brain history at the last composed `generate_events` boundary, after inherited v50-v56 policy injection has occurred but before the underlying model generation owner consumes the payload. Do not modify stable loader freshness behavior.
+
+
+##### UPDATE CONTINUATION STARTED — 2026-09-19 — final synthetic-policy compaction boundary repair
+
+- Production request `web:mu8n8av9:623101326991319669` proves 2.1.106 is live and the existing compactor executes, but it removes only 2 synthetic segments / 1,175 chars before downstream wrappers add trajectory, reasoning-recovery, Unicode, map-to-point, and conversation-intelligence policies.
+- Rendered result remains 3,288 tokens; composition attributes 2,673 tokens to those five downstream policy segments alone.
+- Fresh source tracing shows v50 delegates normal generation to `_V49_GENERATE`; v49 delegates to `_V48_GENERATE`. Therefore the safe final synthetic-policy interception point is the inherited v49 -> v48 normal-generation bridge: all v51-v55 policy wrappers have already injected their state before reaching v50/v49, while online evidence/research semantics remain downstream and conditional.
+- Bounded repair: replace only the v49 namespace's `_V48_GENERATE` bridge with a compaction adapter. Preserve real history, online evidence, research policy, Truth Firewall/evidence semantics, and all deterministic cameras/state machines.
