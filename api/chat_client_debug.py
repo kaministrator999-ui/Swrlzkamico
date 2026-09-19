@@ -76,8 +76,20 @@ def _navigation_boot_event(value) -> dict | None:
         return None
 
     def text_field(name: str, maximum: int) -> str:
-        value = str(value_raw.get(name) or "")
-        return value[:maximum]
+        item = str(value_raw.get(name) or "")
+        return item[:maximum]
+
+    def int_field(name: str) -> int:
+        try:
+            return int(value_raw.get(name) or 0)
+        except (TypeError, ValueError):
+            return 0
+
+    def float_field(name: str) -> float:
+        try:
+            return float(value_raw.get(name) or 0.0)
+        except (TypeError, ValueError):
+            return 0.0
 
     value_raw = value
     event = text_field("event", 64)
@@ -90,16 +102,16 @@ def _navigation_boot_event(value) -> dict | None:
         "event": event,
         "bootId": boot_id,
         "navTraceId": nav_trace_id,
-        "navAttempt": int(value_raw.get("navAttempt") or 0),
-        "eventSeq": int(value_raw.get("eventSeq") or 0),
-        "atMs": int(value_raw.get("atMs") or 0),
-        "perfMs": float(value_raw.get("perfMs") or 0.0),
+        "navAttempt": int_field("navAttempt"),
+        "eventSeq": int_field("eventSeq"),
+        "atMs": int_field("atMs"),
+        "perfMs": float_field("perfMs"),
         "readyState": text_field("readyState", 24),
         "visibility": text_field("visibility", 24),
         "path": text_field("path", 240),
         "method": text_field("method", 16),
         "requestPath": text_field("requestPath", 240),
-        "status": int(value_raw.get("status") or 0),
+        "status": int_field("status"),
         "persisted": bool(value_raw.get("persisted")),
         "online": bool(value_raw.get("online", True)),
         "errorName": text_field("errorName", 96),
