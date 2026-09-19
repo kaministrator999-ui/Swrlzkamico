@@ -1179,3 +1179,16 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Expected impact:** documentation/governance only. Repository Work advances on completion; Server Runtime, Web Chat, Runtime Manifest, LALM Engine, Deployment Control, and all other runtime modules remain unchanged.
 - **Deployment expectation:** none; governance documentation is deployment-inert.
 - **Verification plan:** re-read all changed authorities, verify startup requires a row/state for every `runtime:VERSION.txt` entry and a distinct latest-overall handoff, verify version mutation requires same-event Roadmap synchronization, then concurrency-check and advance Repository Work only.
+
+
+### UPDATE FINISHED — 2026-09-19 — version-ledger and §§ startup handoff hardening
+
+- **Changed Project Start:** compact `§§` / `@GitHub §§` startup must now correlate every `runtime:VERSION.txt` authority with its latest supported Roadmap handoff/truth state, and must separately present the newest completed event and newest unresolved/interrupted event.
+- **Changed Version Evolution:** every registered module version mutation is now explicitly atomic with same-event Roadmap lineage. Changed modules must record prior/resulting version, reason, truth state, and deployment consequence; authority and Roadmap must be re-read/reconciled before FINISH.
+- **Changed response standard:** compact startup reports retain the clean stage presentation while including the complete versioned-module handoff ledger and distinct **Where we actually left off** section; deeper retrieval narration remains backstage.
+- **Architecture reconciliation:** existing authorities were extended only. No new registry, history store, runtime module, or competing owner was introduced.
+- **Resulting version:** Repository Work `1.0.7` (from `1.0.6`). Server Runtime `2.3.287`, Web Chat `1.5.85`, Runtime Manifest `152`, LALM Engine `2.1.112`, Deployment Control `1.0.10`, and all other runtime module versions remain unchanged.
+- **Verification:** changed Project Start and response-standard clauses were re-read successfully; the Version Evolution atomic synchronization clause was re-read after correction; `runtime:versions/repository-work.txt` reports `1.0.7` active.
+- **Existing unresolved work preserved:** lockdown route-enter 500 candidate/live acceptance and adjacent client-debug 401/freeze remain unresolved and are not superseded by this governance event.
+- **Deployment/restart:** none. This governance-only tier is deployment-inert.
+- **Result:** COMPLETE.
