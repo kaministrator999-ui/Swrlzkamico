@@ -158,8 +158,8 @@ jobs:
           set -euo pipefail
           python -m pip install --disable-pip-version-check "numpy==2.2.6" "setuptools>=75,<82" wheel
           python setup.py build_ext --inplace
-          python scripts/verify_r39_native.py
-          python - <<'PY'
+          PYTHONPATH="$GITHUB_WORKSPACE" python scripts/verify_r39_native.py
+          PYTHONPATH="$GITHUB_WORKSPACE" python - <<'PY'
           from swyrlz import r39_native
           state = r39_native.diagnostics()
           assert state.get("available") is True, state
