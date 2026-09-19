@@ -859,3 +859,11 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Repair scope:** make the compiled `swyrlz._r39_native` and `swyrlz._r39_batch` artifacts explicitly traceable into Vercel function output; add a pre-deploy artifact gate so a production deployment cannot proceed when native binaries are absent; preserve Python/reference fallback for runtime safety.
 - **Deployment boundary:** complete and statically verify the packaging/workflow repair first. Under the standing Project Start contract, at most one terminal production trigger is permitted after the candidate is complete; no automatic retry loop.
 - **Verification plan:** prebuilt artifact must contain both native extensions; production `/api/lalm/native` must report `available:true` and `batchAvailable:true`; R39 hydration camera must report `nativeBatchAvailable:true`; then measure cold prefill/decode against the 10.67 / 2.08 tok/s baseline before closing the parent event.
+
+
+##### R39 native verifier repair — 2026-09-19
+
+- Run #18 proved both OpenMP extensions compile successfully, then correctly stopped before deployment because the native equivalence harness generated arbitrary byte patterns for f32/f16/bf16 tensors. Those bytes can encode NaN/Inf, yielding a non-finite reference and invalid `max_abs_error=nan`.
+- Repaired `scripts/verify_r39_native.py` so floating-point cases are generated as bounded finite numeric tensors; BF16 is encoded from bounded float32 using round-to-nearest-even. Quantized cases remain byte/block-oriented.
+- Added explicit finite-value assertions for reference output, native output, and comparison error. A NaN can no longer accidentally satisfy/pass the verifier.
+- No production deployment was triggered by this repair because run #18 consumed the prior one-retry authorization.
