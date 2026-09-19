@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.102
-REVISION=2.1.102-hot-protected-factual-evidence-v90
+VERSION=2.1.103
+REVISION=2.1.103-hot-native-parallel-kernels-v90
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
