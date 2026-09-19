@@ -1,0 +1,8 @@
+ID=runtime-manifest
+VERSION=144
+KIND=runtime-page-manifest
+SOURCE_BRANCH=runtime
+STATUS=active
+DISPLAY_NAME=§wyrlz Runtime Manifest
+UPDATE_POLICY=runtime-hot
+VERSION_SOURCE=runtime_pages/manifest.json
