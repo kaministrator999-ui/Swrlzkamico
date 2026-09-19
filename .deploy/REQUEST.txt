@@ -1,11 +1,10 @@
 # §wyrlz manual production deployment request
-# Updating this file is the assistant-controlled deployment trigger.
-# Explicit retry approval granted by user after run #15 failed closed.
+# Explicit one-retry approval granted after run #16 failed before deployment.
 
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-19-r39-native-build-retry-v1
+REQUEST_ID=2026-09-19-r39-native-build-prereqs-retry-v1
 REQUESTED_AT=2026-09-19T00:00:00Z
 REQUESTED_BY=ChatGPT-explicit-retry-approval
 SOURCE_REF=main
-REASON=One approved retry for R39 native activation. Workflow now compiles native extensions in-place and runs the native equivalence/diagnostics gate before Vercel build; artifact and live native gates remain mandatory.
+REASON=One approved retry after exact run #16 evidence showed ModuleNotFoundError: numpy before native compilation. Workflow now installs pinned native build prerequisites before compiling and verifying both R39 extensions; artifact and live gates remain mandatory.
