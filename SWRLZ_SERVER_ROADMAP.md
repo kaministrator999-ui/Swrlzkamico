@@ -47,6 +47,14 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Deployment expectation:** NONE; documentation/governance work is deployment-inert.  
 **Verification plan:** fetch back Project Start, hotloader guide, Version Evolution/Hotfix references, registry and version authorities; verify a future agent can enter through Project Start and discover both conceptual architecture and exact runtime integration procedure without source archaeology.
 
+**UPDATE FINISHED**
+
+**Result:** COMPLETE — PROJECT ENTRY + HOTLOADER OPERATING MODEL RECONCILED.  
+**Actual change:** Project Start now explicitly distinguishes the whole-play router, reusable subsystem operating guides, chronological Roadmap, version registry, executable source, and observed camera/log truth. It includes the Repository Work / Server Runtime / component version-axis quick rule and routes runtime-hot work to the new `docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md`. The guide documents manifest-routed live pages versus hydrated hot sources, route integration, manifest ownership, version effects, verification levels, and the §wyrlz Chat theater constraints. Hotfix Rules was reconciled to the separated version axes.  
+**Resulting versions:** Repository Work `1.0.2`; Server Runtime remains `2.3.287`; Web Chat remains `1.5.84`; Runtime Manifest remains `151`.  
+**Verification:** source fetch-back confirms Project Start SHA `3bff265377bc4d0c8fb9cf4a67b25ad5e7c608ab`, hotloader guide SHA `7cc5fb1cc22fb08d5d21fa56d4aa7e52687328f3`, Repository Work authority `1.0.2`; unchanged Server and Chat authorities were re-read.  
+**Deployment / restart:** NONE. Documentation/governance tier only; no runtime behavior activated.
+
 
 ### Version-governance separation — Repository / Server / Module lineage
 
