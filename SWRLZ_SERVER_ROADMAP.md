@@ -867,3 +867,14 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Repaired `scripts/verify_r39_native.py` so floating-point cases are generated as bounded finite numeric tensors; BF16 is encoded from bounded float32 using round-to-nearest-even. Quantized cases remain byte/block-oriented.
 - Added explicit finite-value assertions for reference output, native output, and comparison error. A NaN can no longer accidentally satisfy/pass the verifier.
 - No production deployment was triggered by this repair because run #18 consumed the prior one-retry authorization.
+
+
+#### UPDATE CONTINUATION STARTED — 2026-09-19 — R39 2.1.103 activation-lineage repair
+
+- **Production evidence:** manual Vercel production deployment `dpl_872wt9e5dwmqkJMfHBPbYxs1UnVy` is READY at `main@f24e78331812c7981493d946e464720d83340f72`.
+- **Live camera evidence:** exact deployment hydrates v90 as `2.1.102-hot-protected-factual-evidence-v90` and reports `v83-batch-reinstall-ok ... nativeBatchAvailable:false`.
+- **Runtime authority:** `runtime/versions/lalm-engine.txt` already declares `2.1.103-hot-native-parallel-kernels-v90`; therefore the authority and the executable entrypoint disagree.
+- **Root lineage defect:** `runtime_hot/r39_engine.py` still pins `_V82_BATCH_COMMIT=a0a7705...`, so every hydration downloads the historical batch-prefill adapter instead of the current runtime adapter, and no final 2.1.103 activation stamp exists after the v90 overlay.
+- **Repair scope:** pin the entrypoint to the current optimized batch adapter source, explicitly stamp 2.1.103 after all inherited overlays, and expose the selected batch source commit in the hydration camera. Preserve all v90 semantic overlays and model policy.
+- **Packaging remains a separate proof:** the deployed function must still expose compiled `_r39_native`/`_r39_batch`; entrypoint repair alone must not claim native availability.
+- **Verification:** runtime hydration must report 2.1.103 and the new batch-source commit; live `nativeBatchAvailable:true` remains required before throughput benchmarking.
