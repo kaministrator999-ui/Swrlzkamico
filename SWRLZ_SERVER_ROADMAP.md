@@ -49,6 +49,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Verification plan:** source fetch-back; validate injected navigation ID and bounded boot telemetry contract; verify subsequent same-origin requests carry boot/navigation headers into `SWRLZ_CHAT_LOCKDOWN`; then, after explicit deployment approval, reproduce one clean/slow/abort startup and confirm Vercel logs can filter/correlate the exact navigation and boot lineage.
 
 
+
+**UPDATE FINISHED**
+
+**Result:** SOURCE COMPLETE / STATIC FETCH-BACK VERIFIED; PRODUCTION ACTIVATION PENDING DEPLOYMENT APPROVAL.  
+**Actual change:** the stable Chat document route now stamps every served page with a server-generated `navTraceId` and emits a `navigation-document-serve` lockdown record. The earliest page script creates a `bootId`, records bounded boot/lifecycle states (`BOOT_SCRIPT_START`, DOM/load/pageshow/visibility/pagehide/unload/error/rejection, 1s/3s/10s stall checkpoints, `BOOT_READY`), wraps same-origin `fetch` only to add `X-SWRLZ-Boot-Id` / `X-SWRLZ-Nav-Trace` correlation headers and record start/end/error metadata, and sends bounded telemetry through the existing client-debug owner. The client-debug middleware now accepts only the strict non-sensitive `swrlz-navigation-boot-v1` allowlist without Chat credentials so boot evidence exists before authenticated state is available; all other debug payloads retain the existing authorization gate. `SWRLZ_CHAT_LOCKDOWN` ingress/route records now preserve the same boot/navigation IDs for correlated API requests.  
+**Architecture reconciliation:** extended the existing stable Chat route + existing client-debug/camera owner; no second logging service, persistence owner, retry mechanism, or behavioral “fix” was introduced. The instrumentation is diagnostic and intentionally leaves all five suspect behaviors active.  
+**Source verification:** fetch-back confirms `api/chat.py` SHA `5119db3e4b68ab5b12535e8f9513abcd4302db26`, `api/chat_client_debug.py` SHA `b7e9008c8c709dcd9332e2de264d7716767c6ddb`, and `web/chat.html` SHA `b9aba5a506befb18241cdc0e1fdd2068ce13aff3`. Runtime authority re-read remains Server `2.3.287`, Web Chat `1.5.84`, Web Frontend `1.0.5`, Deployment Control `1.0.10`; no runtime authority was advanced because this stable instrumentation is not active in production yet.  
+**Deployment / restart:** NOT PERFORMED. Production verification requires exactly one canonical `.deploy/REQUEST.txt` trigger consumed by `.github/workflows/manual-vercel-production.yml`. That is deployment-producing and remains behind the explicit approval gate.  
+**Live acceptance:** PENDING. After approval/deployment, reproduce the startup and query Vercel for `SWRLZ_CHAT_NAV_BOOT` plus `navTraceId` / `bootId` in `SWRLZ_CHAT_LOCKDOWN`; acceptance requires seeing one complete boot lineage and, ideally, one stalled/aborted-adjacent lineage for comparison.
+
 ### Architecture preplan — Mask separation audit
 
 **UPDATE STARTED**
