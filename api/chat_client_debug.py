@@ -142,7 +142,6 @@ def install(server) -> None:
                 if not isinstance(clean_item, dict):
                     continue
                 received = datetime.now(timezone.utc).isoformat()
-                global _TRACE_SEQ
                 with _LOCK:
                     _TRACE_SEQ += 1
                     clean_item["serverSeq"] = _TRACE_SEQ
@@ -152,7 +151,6 @@ def install(server) -> None:
                 accepted += 1
             return JSONResponse({"ok": True, "accepted": accepted}, headers={"Cache-Control": "no-store"})
         received = datetime.now(timezone.utc).isoformat()
-        global _TRACE_SEQ
         with _LOCK:
             _TRACE_SEQ += 1
             if isinstance(event, dict):
