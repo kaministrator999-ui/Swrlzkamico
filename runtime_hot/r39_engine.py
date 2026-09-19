@@ -148,61 +148,69 @@ try:
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-    HOT_SERVER_VERSION="2.1.104"
-    HOT_REVISION="2.1.104-hot-compact-selective-prefill-v90"
+    HOT_SERVER_VERSION="2.1.105"
+    HOT_REVISION="2.1.105-hot-render-boundary-prefill-v90"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
 
-    # Legacy v50-v56 Brain wrappers encode durable behavior as long explanatory
-    # synthetic system turns. Preserve the behavior/state machines, but compact
-    # those recognized policy turns immediately before the inherited generator
-    # renders the model prompt. Real conversation/evidence turns are untouched.
-    _policy_prefixes=(
+    # Compact at the actual render boundary. Legacy wrappers add their synthetic
+    # policy turns *inside* the inherited generate chain, after the outer payload
+    # enters this v90 wrapper, so filtering the ingress payload cannot see them.
+    # Intercept the canonical renderer instead; this is the first point where all
+    # synthetic policy turns exist together.
+    _policy_markers=(
         "[SWRLZ_CONVERSATION_STATE ",
         "[SWRLZ_CONTEXT_FOCUS ",
+        "[SWRLZ_TRAJECTORY",
+        "[SWRLZ_REASONING",
+        "[SWRLZ_UNICODE",
+        "[SWRLZ_MAP_TO_POINT",
+        "[SWRLZ_CONVERSATION_INTELLIGENCE",
     )
     _policy_exact=tuple(
         str(globals().get(name) or "")
         for name in (
             "_PLANNER_POLICY","_REASONING_RECOVERY_POLICY","_UNICODE_AWARENESS_POLICY",
             "_MAP_TO_POINT_POLICY","_CONVERSATION_INTELLIGENCE_POLICY",
-        )
-        if str(globals().get(name) or "")
+        ) if str(globals().get(name) or "")
     )
-    _inherited_generate=generate_events
-    def _compact_selective_payload(payload):
+    _render_owner=globals().get("_impl")
+    _original_render=getattr(_render_owner,"_render_prompt",None) if _render_owner is not None else None
+    if not callable(_original_render):
+        _original_render=globals().get("_render_prompt")
+        _render_owner=None
+    if not callable(_original_render):
+        raise RuntimeError("R39_COMPACT_PREFILL_RENDER_BOUNDARY_UNAVAILABLE")
+    def _compact_render_payload(payload):
         if not isinstance(payload,dict): return payload,0,0,0
-        enriched=dict(payload)
-        history=list(enriched.get("history") or [])
+        enriched=dict(payload); history=list(enriched.get("history") or [])
         kept=[]; removed=0; removed_chars=0
         for turn in history:
             text=str(turn.get("text") or "") if isinstance(turn,dict) else ""
-            synthetic=(
-                isinstance(turn,dict) and str(turn.get("role") or "").lower()=="system" and
-                (text in _policy_exact or any(text.startswith(p) for p in _policy_prefixes))
-            )
-            if synthetic:
-                removed+=1; removed_chars+=len(text); continue
-            kept.append(turn)
+            synthetic=(isinstance(turn,dict) and str(turn.get("role") or "").lower()=="system" and
+                       (text in _policy_exact or any(m in text[:96] for m in _policy_markers)))
+            if synthetic: removed+=1; removed_chars+=len(text)
+            else: kept.append(turn)
         if removed:
-            state=_conversation_state(payload) if callable(globals().get("_conversation_state")) else {}
-            capsule=(
-                "[SWRLZ_BRAIN v1] literal-user-first; preserve valid continuity; "
-                "smallest-sufficient-context; evidence-boundary; purposeful-unicode; "
-                "multi-act; stance="+str(state.get("responseStance") or "respond")+
-                "; scope="+str(state.get("scope") or "normal")+
-                "; repair="+str(state.get("repair") or "none")+"."
-            )
+            capsule="[SWRLZ_BRAIN v2] literal-user-first; preserve-continuity; smallest-sufficient-context; evidence-boundary; multi-act."
             kept=[{"role":"system","text":capsule}]+kept
             enriched["history"]=kept
             return enriched,removed,removed_chars,len(capsule)
         return enriched,0,0,0
-    def generate_events(payload,is_cancelled=None):
-        compacted,removed,removed_chars,capsule_chars=_compact_selective_payload(payload)
-        request_id=_request_id(payload) if isinstance(payload,dict) else ""
-        _entry("compact-prefill",requestId=request_id,removedPolicySegments=removed,
-               removedPolicyChars=removed_chars,capsuleChars=capsule_chars)
-        for event in _inherited_generate(compacted,is_cancelled): yield event
+    def _compact_render(*args,**kwargs):
+        # Canonical renderer's first argument is the generation payload.
+        if args and isinstance(args[0],dict):
+            compacted,removed,removed_chars,capsule_chars=_compact_render_payload(args[0])
+            if removed:
+                args=(compacted,)+args[1:]
+                _entry("compact-prefill-render",removedPolicySegments=removed,
+                       removedPolicyChars=removed_chars,capsuleChars=capsule_chars)
+        return _original_render(*args,**kwargs)
+    if _render_owner is not None:
+        setattr(_render_owner,"_render_prompt",_compact_render)
+    else:
+        globals()["_render_prompt"]=_compact_render
+    _entry("compact-prefill-installed",renderBoundary=True)
     _entry("hydrate-ok",hotServerVersion=HOT_SERVER_VERSION,
            hotRevision=HOT_REVISION,batchSourceCommit=_V82_BATCH_COMMIT,
            responseContract=callable(globals().get("_response_contract")),
