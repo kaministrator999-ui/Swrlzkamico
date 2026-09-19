@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v151 completes full-lockdown observability: Web Chat 1.5.84 unified frame/transport/server logger, Server Runtime 2.3.287 ingress/persistence/hydration trace, R39 LALM 2.1.112 request-correlated prompt/token/inference cameras, and Deployment Control 1.0.9 loader-aware production verification. Diagnostic volume is intentionally maximal; credentials remain redacted."
+  "notes": "Manifest v151 completes full-lockdown observability: Web Chat 1.5.84 unified frame/transport/server logger, Server Runtime 2.3.287 ingress/persistence/hydration trace, R39 LALM 2.1.112 request-correlated prompt/token/inference cameras, and Deployment Control 1.0.10 loader-aware verification plus verified native-binary injection into Vercel Python function bundles. Diagnostic volume is intentionally maximal; credentials remain redacted."
 }
