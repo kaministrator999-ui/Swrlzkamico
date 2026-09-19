@@ -62,6 +62,7 @@ def _sha(data: bytes) -> str:
 
 
 def _resolve_runtime_head() -> str:
+    _trace("resolve-head-enter", branch=DEFAULT_BRANCH)
     # Resolve the mutable runtime branch once through GitHub's API. Fetching
     # raw.githubusercontent.com by branch name can return an older CDN view even
     # with query cache-busters; immutable commit-SHA URLs cannot drift.
