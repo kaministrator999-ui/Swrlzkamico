@@ -398,6 +398,7 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
                     }
                 yield event
         finally:
+            _lockdown("generate-exit", decodeTokens=int(metrics.get("decodeTokens") or 0), batchPrefillTokens=int(metrics.get("batchPrefillTokens") or 0), serialPrefillTokens=int(metrics.get("serialPrefillTokens") or 0), batchFallbacks=int(metrics.get("batchFallbacks") or 0))
             try:
                 delattr(_TLS, "metrics")
             except Exception:
