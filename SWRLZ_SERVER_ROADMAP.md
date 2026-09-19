@@ -35,6 +35,18 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### Architecture preplan — Mask separation audit
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** audit the current Chat/Mask and its immediate bridge contracts against the new §imple Mask theater model, identify cognition/tool/authority machinery that should eventually move backstage, and prepare a separation plan **without runtime/module mutation**.  
+**Observed baseline:** Server `2.3.284`; Chat `1.5.82`; LALM Engine `2.1.102` / v90; Frozen Web Collector `1.0.9`; runtime Chat source `web/chat.html` SHA `4212c79610ee4f23c73ac4f8312f2a0359f29b3b`; runtime Chat version overlay `web/chat_version.js` SHA `a27d6556464e559d69066ce5cfecbf0ed8c8195c`; stable Vercel bridge `api/chat.py` SHA `b24033529e59105feb81119a35d12f22cd28c9af`.  
+**Architecture reconciliation:** inspect current Mask responsibilities first, then immediate bridge/server contracts where ownership crosses the browser boundary. Classify each finding as KEEP IN MASK, PRESENTATION CONTRACT TO SIMPLIFY, MOVE/KEEP BACKSTAGE, or AUTHORITY/PERSISTENCE RECONCILIATION. No code/module movement is authorized by this audit.  
+**Expected module impact:** documentation/preplanning only. No Chat, bridge, LALM, research, collector, manifest, or runtime version change.  
+**Deployment expectation:** NONE. No deployment-producing action is required or authorized.  
+**Verification plan:** inspect concrete source responsibilities and record exact separation candidates, dependencies, migration order, invariants, and non-targets; fetch back this roadmap record after completion.
+
 ### Governance update — §imple Mask theater depth model
 
 **UPDATE STARTED**
