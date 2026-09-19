@@ -272,6 +272,22 @@ If an `UPDATE STARTED` record has no terminal marker, future governed work MUST 
 
 Roadmap/documentation bookkeeping is deployment-inert and does not authorize deployment. The deployment gate remains owned by `SWRLZ_HOTFIX_RULES.md`.
 
+## 11A. Atomic registered-module Roadmap synchronization — mandatory
+
+Whenever a module registered in `runtime:VERSION.txt` receives a new version value, that version mutation and its Roadmap lineage are one governed transaction.
+
+- Before implementation/version mutation, the governing Roadmap event must already contain UPDATE STARTED or the required CONTINUATION checkpoint.
+- Every registered module whose version changes must be named in that same event with its prior version, resulting version, reason for advancement, verification/activation truth, and deployment/restart consequence.
+- The module authority file and Roadmap must not intentionally finish at different resulting versions. Re-read both before UPDATE FINISHED.
+- A changed module may not be omitted from the Roadmap merely because Repository Work also advances.
+- Untouched modules do not bump; when useful for avoiding ambiguity, record them as intentionally unchanged.
+- Repository Work still advances for every completed governed repository tier according to its policy, and its resulting version is recorded in the same FINISHED event.
+- If a version file was advanced but the Roadmap was not synchronized, treat the governed event as incomplete and repair the ledger before beginning unrelated overlapping work.
+
+The invariant is: **registered version mutation ⇄ same-event Roadmap lineage**. Neither side is governably complete without the other.
+
+---
+
 ## 12. Roadmap / release record — mandatory
 
 Every completed governed event receives a durable record in `SWRLZ_SERVER_ROADMAP.md` and/or the appropriate release record.
