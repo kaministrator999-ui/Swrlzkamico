@@ -43,9 +43,30 @@ def _v89_dialogue_history(payload):
             if text:out.append((role,text))
     return out
 
+def _v89_is_internal_system(text):
+    value=str(text or "")
+    if value.startswith(("[SWRLZ_","User language preference:","ONLINE_EVIDENCE_BUNDLE_JSON")):return True
+    for name in (
+        "_CONVERSATION_INTELLIGENCE_POLICY","_MAP_TO_POINT_POLICY","_UNICODE_AWARENESS_POLICY",
+        "_REASONING_RECOVERY_POLICY","_TRAJECTORY_POLICY","_REPAIR_POLICY","_ACCEPT_POLICY",
+        "_RESEARCH_POLICY","_PLANNER_POLICY","_EVIDENCE_POLICY",
+    ):
+        policy=globals().get(name)
+        if isinstance(policy,str) and value==policy:return True
+    return False
+
+def _v89_has_external_system(payload):
+    if not isinstance(payload,dict):return False
+    for item in list(payload.get("history") or []):
+        if not isinstance(item,dict):continue
+        if str(item.get("role") or "").strip().lower()!="system":continue
+        text=str(item.get("text") or item.get("content") or "").strip()
+        if text and not _v89_is_internal_system(text):return True
+    return False
+
 def _v89_simple_factual(payload):
     if not isinstance(payload,dict):return False
-    if _v89_dialogue_history(payload):return False
+    if _v89_dialogue_history(payload) or _v89_has_external_system(payload):return False
     prompt=" ".join(str(payload.get("prompt") or "").strip().lower().split())
     if not prompt or len(prompt)>500:return False
     if any(term in prompt for term in _V89_DEEP_TERMS):return False
@@ -127,6 +148,7 @@ def _v89_self_test():
         "markerPresent":any(x.startswith("[SWRLZ_REQUEST_FIRST_FACTUAL v1]") for x in texts),
         "deepRequestExcluded":not _v89_simple_factual({"prompt":"Explain why quantum physics works","history":[]}),
         "conversationExcluded":not _v89_simple_factual({"prompt":"What's the weather?","history":[{"role":"user","text":"earlier turn"}]}),
+        "externalSystemExcluded":not _v89_simple_factual({"prompt":"What's the weather?","history":[{"role":"system","text":"CUSTOM_SYSTEM_OWNER must survive"}]}),
     }
     return {"ok":all(checks.values()),"checks":checks,"contract":_V89_CONTRACT}
 
