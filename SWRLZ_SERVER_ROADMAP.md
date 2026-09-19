@@ -55,6 +55,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Verification:** fetch-back verified the new START/FINISH workflow, incomplete-event recovery rule, complete version-registry invariant, and deployment-inert wording in their canonical owners. Runtime `VERSION.txt` remains a route-only registry and current Server authority remains `2.3.282`.  
 **Deployment / restart:** NONE. No deployment-producing action was performed.  
 
+### Server 2.3.283 — request-first fresh-thread factual inference
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** make fresh-thread simple factual/tool requests request-first: understand the user request, invoke only the required factual/tool path, synthesize from returned facts, then apply §wyrlz Mask/personality flavor instead of preloading unrelated Brain policy stacks.  
+**Triggering evidence:** the fresh Kansas City weather request had zero canonical history and a 34-character user request, yet outer synthesis prefilling was ~3,550 tokens. Prompt Composition Camera attribution showed large unrelated policy owners including conversation intelligence (~1,177 tokens), Unicode awareness (~513), map-to-point (~505), reasoning recovery (~311), plus a repeatable ~232-token attribution gap. A fresh /python request also hit the 300-second runtime ceiling.  
+**Architecture reconciliation:** extend the existing Brain/LALM prompt-composition/routing owner; preserve Human/tool factual authority and Mask presentation ownership. Capability availability must not imply unconditional prompt injection. No second inference owner or tool system is introduced.  
+**Expected modules:** LALM Engine + Runtime Manifest + overall Server lineage. Chat and Online Research remain unchanged unless evidence proves otherwise.  
+**Observed baseline:** Server `2.3.282`; LALM Engine `2.1.100` / v88; Runtime Manifest `147`; runtime authorities re-read before mutation.  
+**Deployment expectation:** NONE; intended path is runtime-hot.  
+**Verification plan:** source/static fetch-back first; then a fresh factual/tool request must show the new revision, materially reduced unrelated policy injection/prefill, preserved factual/tool handoff, and prompt-composition telemetry. Live acceptance remains pending until observed.
+
 ## Release ledger
 
 ### Server 2.3.282 — R39 v88 complete prompt-camera loader repair
