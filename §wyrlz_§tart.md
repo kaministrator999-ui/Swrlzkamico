@@ -41,6 +41,26 @@ A compact bootstrap is complete only after the normal startup contract below has
 
 The terminal report is part of execution. Internally loading context without presenting the recovered stage does not satisfy `§§`.
 
+### Compact-bootstrap versioned-stage handoff — mandatory
+
+For `§§` / `@GitHub §§`, resolving the version registry is not enough. The terminal stage report must reconstruct the durable handoff for **every module registered by `runtime:VERSION.txt`**.
+
+For each registry entry, correlate its current authority file with the Roadmap and report, at minimum:
+
+- module/display name and current authoritative version;
+- the latest Roadmap event/checkpoint that materially changed, activated, verified, reserved, or explicitly left that module unchanged when that is the only durable state available;
+- the resulting truth state: completed, source complete, static verified, runtime verified, live/user-visible verified, published/activation pending, interrupted, blocked, reserved/unassigned, or another precisely supported state;
+- any unresolved continuation that still governs that module.
+
+Do not invent a historical handoff when the Roadmap does not contain one. Say that no module-specific Roadmap handoff was found and preserve the authority file as current version truth.
+
+After the per-module ledger, present a separate **Where we actually left off** handoff that identifies:
+
+1. the newest completed governed event overall; and
+2. the newest still-unresolved/interrupted governed event overall, when one exists.
+
+These are different axes. A newer documentation/governance completion must not hide an older unresolved engineering continuation. The compact report should keep the clean stage/readiness presentation while retaining the deeper reconstructed state backstage.
+
 **Batman rule:** the sigil is the Bat-Signal. Finding the Batcave or putting on the mask is not completion; the full startup contract is the suit, and §wyrlz steps onto the stage only after it is on.
 
 When the user says **start project work**, **resume project work**, **work on §wyrlz**, explicitly references this file, or otherwise asks for repository development:
