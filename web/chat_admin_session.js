@@ -33,7 +33,6 @@ function paint(){
 }
 
 paint();
-// Isolation test #1: restore original group, then freeze ONLY the 500 ms admin repaint candidate.
-// Candidate #1 remains disabled; candidates #2–#5 are restored in their owning files for this run.
-window.addEventListener("pageshow",paint);
+// Isolation test #2: candidate #1 restored to its original 500 ms repaint loop.
+setInterval(paint,500);
 })();
