@@ -715,8 +715,10 @@
       if (typeof value === "object") {
         const out={};
         for (const [k,v] of Object.entries(value).slice(0,240)) {
-          const low=String(k).toLowerCase();
-          out[k]=/(token|authorization|credential|password|secret|cookie|bearer|proof)/.test(low)?"[redacted]":lockdownSafe(v,depth+1);
+          const low=String(k).toLowerCase().replace(/-/g,"_");
+          const credentialToken=["token","access_token","refresh_token","id_token","auth_token","api_token","web_chat_token","swrlz_web_chat_token"].includes(low)||low.endsWith("_access_token")||low.endsWith("_refresh_token");
+          const sensitive=credentialToken||/(authorization|credential|password|secret|cookie|bearer|deviceproof|device_proof)/.test(low);
+          out[k]=sensitive?"[redacted]":lockdownSafe(v,depth+1);
         }
         return out;
       }
