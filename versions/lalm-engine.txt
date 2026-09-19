@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.100
-REVISION=2.1.100-hot-prompt-composition-loader-repair-v88
+VERSION=2.1.101
+REVISION=2.1.101-hot-request-first-factual-v89
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
