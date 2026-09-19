@@ -1129,3 +1129,20 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Expected module impact:** documentation/governance only. Repository Work should advance; Server Runtime, Web Chat, Runtime Manifest, LALM, and deployment state should remain unchanged unless concurrent evidence requires otherwise.
 - **Deployment expectation:** none; documentation/governance mutation is deployment-inert.
 - **Verification plan:** fetch back `§wyrlz_§tart.md`, confirm explicit `runtime:VERSION.txt` authority and 404-on-main non-error rule, then reconcile version authorities before closing this event.
+
+
+### UPDATE STARTED — 2026-09-19 — Project Start version-registry branch authority hardening
+
+- Requested outcome: prevent fresh Project Start sessions from treating a default-branch `VERSION.txt` miss as a version-authority inconsistency.
+- Observed baseline: Project Start routed through `VERSION.txt` without naming the authoritative branch, while the canonical registry is available at `runtime:VERSION.txt` (SHA `37d75d33d3eca616ab3a76c64d137a3e6816881f`).
+- Canonical owner: Project Start owns startup/read routing; `runtime` owns the live version registry.
+- Expected impact: documentation/governance only; no Server/runtime activation change.
+- Deployment expectation: none.
+- Verification plan: fetch back Project Start and confirm the explicit runtime registry rule before closing this event.
+
+### UPDATE FINISHED — 2026-09-19 — Project Start version-registry branch authority hardening
+
+- Changed `§wyrlz_§tart.md` so startup explicitly resolves the canonical version registry from `runtime:VERSION.txt` and does not treat a 404 on `main:VERSION.txt` as an inconsistency.
+- Source commit: `17ad4f42dc348f3102be45f5417e7ca4f7e4f86d`.
+- Version/deployment impact: documentation/governance only in this bounded repair; no Server Runtime, Web Chat, Runtime Manifest, LALM, or deployment activation was performed by this event.
+- Verification: Project Start will be fetched back after this journal write to confirm the new branch-authority wording is present.
