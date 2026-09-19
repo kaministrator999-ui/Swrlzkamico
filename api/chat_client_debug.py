@@ -13,6 +13,7 @@ from threading import Lock
 
 _RECENT = deque(maxlen=100000)
 _LOCK = Lock()
+_TRACE_SEQ = 0
 _RUNTIME_WEB_TOKEN = Path("/tmp/swrlz-admin/runtime/web-chat-token.txt")
 _TERMINAL = {"COMPLETED", "CANCELLED", "FAILED"}
 
@@ -98,6 +99,7 @@ def _turn_log(event: dict) -> None:
 
 
 def _lockdown(stage: str, *, request_id: str = "", **fields) -> None:
+    global _TRACE_SEQ
     record = {
         "contract": "swrlz-full-lockdown-trace-v1",
         "stage": str(stage)[:160],
@@ -107,6 +109,8 @@ def _lockdown(stage: str, *, request_id: str = "", **fields) -> None:
     }
     record.update(_clean(fields))
     with _LOCK:
+        _TRACE_SEQ += 1
+        record["serverSeq"] = _TRACE_SEQ
         _RECENT.append({"receivedAt": record["at"], "event": record})
     print("SWRLZ_CHAT_LOCKDOWN " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
 
@@ -137,17 +141,23 @@ def install(server) -> None:
                 clean_item = _clean(item)
                 if not isinstance(clean_item, dict):
                     continue
-                record = {"receivedAt": datetime.now(timezone.utc).isoformat(), "event": clean_item}
+                received = datetime.now(timezone.utc).isoformat()
+                global _TRACE_SEQ
                 with _LOCK:
+                    _TRACE_SEQ += 1
+                    clean_item["serverSeq"] = _TRACE_SEQ
+                    record = {"receivedAt": received, "event": clean_item}
                     _RECENT.append(record)
                 print("SWRLZ_CHAT_CLIENT_DEBUG " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
                 accepted += 1
             return JSONResponse({"ok": True, "accepted": accepted}, headers={"Cache-Control": "no-store"})
-        record = {
-            "receivedAt": datetime.now(timezone.utc).isoformat(),
-            "event": event,
-        }
+        received = datetime.now(timezone.utc).isoformat()
+        global _TRACE_SEQ
         with _LOCK:
+            _TRACE_SEQ += 1
+            if isinstance(event, dict):
+                event["serverSeq"] = _TRACE_SEQ
+            record = {"receivedAt": received, "event": event}
             _RECENT.append(record)
         print("SWRLZ_CHAT_CLIENT_DEBUG " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
         return JSONResponse({"ok": True, "accepted": 1}, headers={"Cache-Control": "no-store"})
@@ -160,7 +170,9 @@ def install(server) -> None:
         safe_limit = max(1, min(limit, 10000))
         with _LOCK:
             rows = list(_RECENT)[-safe_limit:]
-        return JSONResponse({"ok": True, "count": len(rows), "events": rows}, headers={"Cache-Control": "no-store"})
+        with _LOCK:
+            latest_seq = _TRACE_SEQ
+        return JSONResponse({"ok": True, "count": len(rows), "latestServerSeq": latest_seq, "events": rows}, headers={"Cache-Control": "no-store"})
 
     # Vercel's function destination path is /api/chat.py. The public diagnostic
     # route is marked by vercel.json with a private query flag, so intercept it
