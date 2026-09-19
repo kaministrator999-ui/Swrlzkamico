@@ -18,7 +18,7 @@ _V80_COMMIT="44f154cf6a4ae46eb232665f36815eec2b2d8496"
 _V80_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V80_COMMIT}/runtime_hot/r39_engine_v80_overlay.py"
 _V81_COMMIT="94d09dce6d03d3a51632f8b6d830265481a26372"
 _V81_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V81_COMMIT}/runtime_hot/r39_engine_v81_overlay.py"
-_V82_BATCH_COMMIT="a0a7705af9ade9aa6ad35b94646cff453a6cedaf"
+_V82_BATCH_COMMIT="f0d4a46015d4e381c368bf40915b4a6dae905653"
 _V82_BATCH_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V82_BATCH_COMMIT}/runtime_hot/r39_batch_prefill.py"
 _V84_COMMIT="2e959bb9fea0af38c7f2c1e35745c3a8a8c9f066"
 _V84_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V84_COMMIT}/runtime_hot/r39_engine_v84_overlay.py"
@@ -146,8 +146,14 @@ try:
     _self_test=_inspect.get("programmingContinuationSemanticSelfTest") if isinstance(_inspect,dict) else None
     if not isinstance(_self_test,dict) or not _self_test.get("ok"):
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
-    _entry("hydrate-ok",hotServerVersion=str(globals().get("HOT_SERVER_VERSION") or ""),
-           hotRevision=str(globals().get("HOT_REVISION") or ""),
+    # v90 semantic overlays are preserved, but the active runtime authority is
+    # the optimized 2.1.103 kernel lineage selected by this entrypoint.
+    HOT_SERVER_VERSION="2.1.103"
+    HOT_REVISION="2.1.103-hot-native-parallel-kernels-v90"
+    _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
+    _impl.HOT_REVISION=HOT_REVISION
+    _entry("hydrate-ok",hotServerVersion=HOT_SERVER_VERSION,
+           hotRevision=HOT_REVISION,batchSourceCommit=_V82_BATCH_COMMIT,
            responseContract=callable(globals().get("_response_contract")),
            responseContractGaps=callable(globals().get("_response_contract_gaps")),
            repairPayload=callable(globals().get("_repair_payload")),
