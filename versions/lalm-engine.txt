@@ -1,6 +1,6 @@
 ID=lalm-engine
 VERSION=2.1.103
-REVISION=2.1.105-hot-render-boundary-prefill-v90
+REVISION=2.1.106-hot-final-policy-boundary-prefill-v90
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
