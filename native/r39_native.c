@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 static inline float fp16_to_f32(uint16_t h) {
     uint32_t s = (uint32_t)(h >> 15) & 1u;
@@ -213,6 +216,9 @@ static PyObject *py_matvec(PyObject *self, PyObject *args) {
     float *y = (float *)PyArray_DATA(out);
 
     Py_BEGIN_ALLOW_THREADS
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(static) if(rows >= 256)
+#endif
     for (int r = 0; r < rows; ++r) {
         const uint8_t *row = rp + (size_t)r * rb;
         if (strcmp(kind, "f32") == 0) y[r] = dot_row_f32(row, cols, x);
