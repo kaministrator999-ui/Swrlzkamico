@@ -6,10 +6,10 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.282`
+- **Overall Server:** `2.3.283`
 - **Chat:** `1.5.82`
-- **Runtime Manifest:** `147`
-- **LALM Engine:** `2.1.100` (`v88` complete loader correction preserving v86 prompt-composition attribution; v85 research-planner status and v83 batching preserved)
+- **Runtime Manifest:** `148`
+- **LALM Engine:** `2.1.101` (`v89` request-first fresh factual/tool inference; v88 loader repair and v86 prompt-composition attribution preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -67,6 +67,15 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Observed baseline:** Server `2.3.282`; LALM Engine `2.1.100` / v88; Runtime Manifest `147`; runtime authorities re-read before mutation.  
 **Deployment expectation:** NONE; intended path is runtime-hot.  
 **Verification plan:** source/static fetch-back first; then a fresh factual/tool request must show the new revision, materially reduced unrelated policy injection/prefill, preserved factual/tool handoff, and prompt-composition telemetry. Live acceptance remains pending until observed.
+
+**UPDATE FINISHED**
+
+**Result:** SOURCE COMPLETE / STATIC VERIFIED; LIVE ACTIVATION PENDING.  
+**Actual change:** R39 v89 adds a fail-closed request-first route for fresh simple factual/tool turns. It recognizes freshness from canonical user/assistant dialogue rather than injected system-policy count, removes known unrelated Brain policy prose at the inherited inference boundary, preserves online evidence policy/data when supplied, and replaces the removed stack with one compact factual-turn marker. Requests with real prior dialogue, deep/explanatory/programming cues, or unknown external system context do not enter this compaction route. Capability code remains loaded and available; capability availability no longer requires unconditional prompt injection for this route.  
+**Mask / Human / Brain:** Brain performs minimum routing/interpretation; Human/tool/research evidence remains factual authority; the generated answer applies concise §wyrlz Mask/personality after facts rather than using personality policy as factual authority.  
+**Versions:** Server `2.3.282 → 2.3.283`; LALM Engine `2.1.100 → 2.1.101` / `v89`; Runtime Manifest `147 → 148`. Chat `1.5.82` and Online Research `1.0.1` unchanged. `VERSION.txt` already routes all affected independently versioned authorities, so no registry mutation was required.  
+**Verification:** fetch-back confirms v89 overlay, corrected v89 pin, v89 entrypoint activation, LALM 2.1.101, Server 2.3.283, Manifest authority/json 148, and the complete registry. The v89 deterministic self-test covers weather classification, known-policy removal, evidence-policy/data preservation, marker insertion, deep-request exclusion, prior-dialogue exclusion, and fail-closed unknown-system exclusion. Production logs have not yet emitted v89, so runtime/live acceptance is explicitly pending.  
+**Deployment / restart:** NONE. Runtime-hot source only; no stable-server deployment-producing action was performed.  
 
 ## Release ledger
 
