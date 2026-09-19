@@ -6,8 +6,9 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.278`
+- **Overall Server:** `2.3.279`
 - **Chat:** `1.5.82`
+- **Runtime Manifest:** `144`
 - **LALM Engine:** `2.1.97` (`v85` live research-planner status stream; v84 scope and v83 batching preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
@@ -33,6 +34,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.279 — complete VERSION.txt overview registry
+
+**Status:** runtime-hot source complete/static verified; live Chat overview acceptance pending.  
+**Runtime Manifest:** `144` established as a registered governed version authority. **Chat:** `1.5.82` unchanged. **Online Research:** `1.0.1` unchanged.  
+**Deployment / restart:** NONE.
+
+**Architecture reconciliation:** the existing Shared Module Status Plane and `VERSION.txt` registry remain canonical. The inconsistency was that runtime manifest carried an independently advancing numeric version but had no registry authority, so bounded overview retrieval could not discover it.
+
+**Change:** added `versions/runtime-manifest.txt` with VERSION 144 and registered `RUNTIME_MANIFEST` in `VERSION.txt`. The version-evolution contract now explicitly requires every governed independently versioned component/artifact, including activation manifests, to be discoverable through the complete overview registry while keeping actual values in their owning authority files. Because Chat 1.5.82 dynamically enumerates the registry, Runtime Manifest will be included without another Chat mutation.
+
+**Verification:** fetch-back confirms `VERSION.txt → versions/runtime-manifest.txt → VERSION=144`, matching `runtime_pages/manifest.json.version=144`. Server authority advanced to 2.3.279. No deployment/restart occurred; live browser rendering remains pending.
+
 
 ### Server 2.3.278 — registry-driven Chat module/version surface
 
