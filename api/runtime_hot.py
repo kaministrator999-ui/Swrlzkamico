@@ -208,7 +208,11 @@ def install(server) -> None:
         # page/status GET happened to refresh the worker. Refresh every chat
         # request method through the same throttled single-writer authority.
         if request.url.path == "/api/chat" or request.url.path.startswith("/api/chat/"):
-            _safe_auto_sync(server)
+            # A generation POST is an activation boundary: it must observe the
+            # current runtime branch before inference. GET/status traffic may use
+            # the ordinary worker-local throttle, but POST must not hide a newly
+            # committed Brain runtime for up to AUTO_SYNC_SECONDS.
+            _safe_auto_sync(server, force=request.method == "POST")
         return await call_next(request)
 
     def authorized(request: Request) -> bool:
