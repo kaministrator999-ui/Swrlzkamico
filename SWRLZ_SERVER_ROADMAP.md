@@ -887,3 +887,13 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Repaired the stable middleware so every `/api/chat[/]` request method passes through the existing throttled/single-writer hot-sync authority before generation. This does not add a second loader or inference owner.
 - Runtime entrypoint authority remains `runtime@a45dfef51ac87315a1f3aa3d0ce5a92d53b31ad5`, which pins the optimized batch adapter to containing commit `2807923fc71fc54c634b80aff9080202de1efc54`.
 - This stable-loader mutation is deployment-bearing. Per the accepted terminal-deploy contract, exactly one production deployment is the final activation step for this repair.
+
+
+#### UPDATE CONTINUATION STARTED — 2026-09-19 — compact selective Brain prefill
+
+- **Observed production request:** fresh-thread `Can you count for me 1-10?` had canonical conversation history 0, but R39 rendered 3,232 prompt tokens.
+- **Composition evidence:** synthetic Brain policy segments dominate: conversation-intelligence 1,177 tokens; unicode-awareness 513; map-to-point 505; reasoning-recovery 311; trajectory 167; conversation-state 132; context-focus 122; current user only 15.
+- **Architecture reconciliation:** these are Brain-owned deterministic policies, but legacy v50-v56 wrappers serialize their full explanatory prose into `payload.history` as synthetic system turns. The behavior/cameras remain Brain-owned; Chat Mask is not the repair owner.
+- **Repair strategy:** add a final v90 compact-prefill adapter that removes only recognized synthetic policy prose and replaces it with one compact deterministic control capsule derived from the already-computed Brain state. Preserve actual user/assistant history, response directives, online evidence, Truth Firewall/evidence rules, model weights, tokenizer, and response-budget semantics.
+- **Target:** trivial fresh-turn prefill should fall from ~3.2K tokens toward a few hundred without deleting capability; production cameras must report removed-policy count/chars and compact capsule size.
+- **Verification:** same fresh count-to-10 request, compare renderedPromptTokens and coherence before any further arithmetic optimization.
