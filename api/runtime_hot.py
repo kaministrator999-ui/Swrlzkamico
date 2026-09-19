@@ -49,6 +49,14 @@ _LAST_AUTO_SYNC_MONOTONIC = 0.0
 _LAST_AUTO_RESULT: dict[str, Any] = {"ok": True, "changed": False, "branch": DEFAULT_BRANCH, "files": [], "reason": "not-yet-run"}
 
 
+def _trace(stage: str, **fields) -> None:
+    try:
+        from api.chat_client_debug import _lockdown
+        _lockdown("hot-runtime-" + stage, request_id=str(fields.pop("requestId", "") or ""), **fields)
+    except Exception:
+        pass
+
+
 def _sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -71,12 +79,16 @@ def _resolve_runtime_head() -> str:
         payload = json.loads(response.read(262145).decode("utf-8"))
     sha = str(payload.get("sha") or "").strip().lower()
     if len(sha) != 40 or any(ch not in "0123456789abcdef" for ch in sha):
+        _trace("resolve-head-invalid", value=sha)
         raise ValueError("HOT_RUNTIME_HEAD_INVALID")
+    _trace("resolve-head-exit", branch=DEFAULT_BRANCH, runtimeHead=sha)
     return sha
 
 
 def _fetch(path: str, limit: int, *, ref: str) -> bytes:
     url = f"{RAW_BASE}/{ref}/{path}"
+    started=time.perf_counter_ns()
+    _trace("source-fetch-enter", sourcePath=path, ref=ref, limit=limit)
     req = urllib.request.Request(url, headers={"User-Agent": "swrlz-hot-runtime/6"})
     with urllib.request.urlopen(req, timeout=20) as response:
         data = response.read(limit + 1)
@@ -85,13 +97,17 @@ def _fetch(path: str, limit: int, *, ref: str) -> bytes:
     data.decode("utf-8")
     if b"\x00" in data:
         raise ValueError(f"HOT_SOURCE_BINARY_REJECTED:{path}")
+    _trace("source-fetch-exit", sourcePath=path, ref=ref, bytes=len(data), sha256=_sha(data), durationNs=time.perf_counter_ns()-started)
     return data
 
 def _atomic_write(path: Path, data: bytes) -> None:
+    started=time.perf_counter_ns()
+    _trace("atomic-write-enter", targetPath=str(path), bytes=len(data), sha256=_sha(data))
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(path.name + ".tmp")
     tmp.write_bytes(data)
     os.replace(tmp, path)
+    _trace("atomic-write-exit", targetPath=str(path), durationNs=time.perf_counter_ns()-started)
 
 
 def _backup() -> str | None:
@@ -117,13 +133,17 @@ def _fetch_source_item(item: tuple[str, tuple[str, Path, int]], ref: str) -> tup
 
 
 def _sync_runtime(*, force: bool = False, reason: str = "automatic") -> dict[str, Any]:
+    sync_started=time.perf_counter_ns()
+    _trace("sync-enter", force=force, reason=reason)
     LAST_SYNC["attemptAt"] = time.time()
     items = list(SOURCES.items())
     runtime_head = _resolve_runtime_head()
+    _trace("sync-head-ready", runtimeHead=runtime_head, sourceCount=len(items))
     # Resolve one branch head, then fetch every source from that same immutable
     # snapshot so a sync cannot mix revisions across files.
     with ThreadPoolExecutor(max_workers=max(1, min(6, len(items))), thread_name_prefix="swrlz-hot-fetch") as pool:
         fetched = list(pool.map(lambda item: _fetch_source_item(item, runtime_head), items))
+    _trace("sync-fetch-all-complete", runtimeHead=runtime_head, fetched=[{"name":n,"target":str(t),"bytes":len(d),"sha256":s} for n,t,d,s in fetched])
 
     payloads = []
     for name, target, data, digest in fetched:
@@ -131,23 +151,31 @@ def _sync_runtime(*, force: bool = False, reason: str = "automatic") -> dict[str
         if force or digest != current:
             payloads.append((name, target, data, digest))
     if not payloads:
+        _trace("sync-no-change", runtimeHead=runtime_head, durationNs=time.perf_counter_ns()-sync_started)
         LAST_SYNC["successAt"] = time.time()
         LAST_SYNC["changed"] = []
         LAST_SYNC["error"] = None
         return {"ok": True, "changed": False, "branch": DEFAULT_BRANCH, "runtimeHead": runtime_head, "files": [], "reason": reason, "parallelFetch": True}
     backup_id = _backup()
+    _trace("sync-backup", backupId=backup_id or "", changedCount=len(payloads))
     changed = []
     engine_changed = False
     history_policy_changed = False
     for name, target, data, digest in payloads:
+        _trace("sync-file-change-enter", name=name, targetPath=str(target), bytes=len(data), sha256=digest)
         _atomic_write(target, data)
+        _trace("sync-file-change-exit", name=name, targetPath=str(target), sha256=digest)
         changed.append({"name": name, "path": str(target), "bytes": len(data), "sha256": digest})
         engine_changed = engine_changed or target == HOT_INFERENCE
         history_policy_changed = history_policy_changed or target == HOT_CHAT_HISTORY_POLICY
     if engine_changed:
+        _trace("engine-invalidate-enter")
         invalidate_engine()
+        _trace("engine-invalidate-exit")
     if history_policy_changed:
+        _trace("history-policy-invalidate-enter")
         invalidate_chat_history_policy()
+        _trace("history-policy-invalidate-exit")
     _ensure_portal()
     LAST_SYNC["successAt"] = time.time()
     LAST_SYNC["changed"] = [item["name"] for item in changed]
@@ -235,8 +263,13 @@ def install(server) -> None:
             # current runtime branch before inference. GET/status traffic may use
             # the ordinary worker-local throttle, but POST must not hide a newly
             # committed Brain runtime for up to AUTO_SYNC_SECONDS.
-            _safe_auto_sync(server, force=request.method == "POST")
-        return await call_next(request)
+            _trace("middleware-sync-enter", requestId=request_id, force=request.method=="POST")
+            sync_result=_safe_auto_sync(server, force=request.method == "POST")
+            _trace("middleware-sync-exit", requestId=request_id, result=sync_result)
+        _trace("middleware-call-next-enter", requestId=request_id, path=request.url.path)
+        response=await call_next(request)
+        _trace("middleware-call-next-exit", requestId=request_id, path=request.url.path, status=getattr(response,"status_code",None))
+        return response
 
     def authorized(request: Request) -> bool:
         return server.auth(request)
