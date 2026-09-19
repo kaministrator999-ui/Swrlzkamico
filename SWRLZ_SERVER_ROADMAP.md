@@ -35,6 +35,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### §wyrlz Chat clean-room stage — Tier 1 route + single-word scene
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** establish the new clean-room `/chat/§wyrlz` stage as a runtime-hot manifest-routed page, completely separate from the legacy `/chat` presentation stack. For this tier the entire visible scene must be exactly one word: `§wyrlz`. No legacy Chat HTML, CSS, scripts, LKG/fail-open presentation, actors, props, transport, or decorative loader is inherited yet.  
+**Observed authority baseline:** Repository Work `1.0.2` SHA `3b33edfc94309625a1a5fb2e7d9a55db83acfd73`; Server Runtime `2.3.287` SHA `43ce7f1c7144d2a127e513093dc87b1ba914911c`; Web Chat `1.5.84` SHA `f1b8e8196a60685557f9090d936ddfc8296a4b34`; Runtime Manifest `151` SHA `7c133dc2a0f26ce52aeefe04853755998db7c208`; manifest blob SHA `55082479a4cd1e1dc4fd90a8ffa64f49d93f331f`.  
+**Architecture reconciliation:** the existing stable `api/live_source_guard.py` already supports arbitrary manifest routes, so no stable/main Server code is needed. Canonical new-page source will be `chat/§wyrlz/index.html` on `runtime`; `runtime_pages/manifest.json` will activate `/chat/§wyrlz` with zero injected styles/scripts. This deliberately avoids adding a third loader or copying the legacy `/chat` loader chain.  
+**Expected impact:** Repository Work + Web Chat + Runtime Manifest only. Server Runtime remains unchanged because no Server release/deployment occurs.  
+**Deployment expectation:** NONE. This uses the already-deployed manifest-routed runtime-hot ABI.  
+**Verification plan:** create the one-word page; register exact route with empty styles/scripts; re-read authorities for concurrency; advance Repository Work, Web Chat, and Runtime Manifest only; fetch back page/manifest/versions and verify no legacy assets are attached.
+
+
 ### Project-start playbook + runtime-hotloader operating guide
 
 **UPDATE STARTED**
