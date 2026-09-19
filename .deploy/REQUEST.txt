@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-19-runtime-immutable-head-resolution-v1
+REQUEST_ID=2026-09-19-full-lockdown-frame-to-terminal-v1
 REQUESTED_BY=standing-terminal-deploy-contract
 SOURCE_REF=main
-REASON=Terminal activation for bounded runtime publication repair. Stable loader now resolves the runtime branch through GitHub API and hydrates every hot source from one immutable commit SHA, preventing stale raw branch/CDN views and mixed revisions. One terminal production trigger only.
+REASON=One terminal activation for the completed full-lockdown camera checkpoint. Activates authenticated frame-to-terminal Mask/Human/Brain observability, request-correlated R39 2.1.112 diagnostics, and loader-aware Deployment Control 1.0.9 verification. One trigger only; no automatic retry.
