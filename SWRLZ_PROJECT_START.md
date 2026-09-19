@@ -178,7 +178,7 @@ Until the user explicitly declares the issue being worked on **fixed**, treat ev
 For each unresolved issue:
 
 1. **Use existing cameras first.** If current cameras/logs can narrow the competing causes, inspect them before changing behavior.
-2. **Instrument before guessing.** If evidence cannot distinguish the remaining candidates, add the smallest read-only cameras at the candidate boundaries and reproduce the issue. Prefer observing semantic boundaries and state transitions over indiscriminately logging every local variable.
+2. **Instrument before guessing.** If evidence cannot distinguish the remaining candidates, add the smallest read-only cameras at the candidate boundaries and reproduce the issue. Instrument the complete governed message path at high diagnostic resolution. During active issue diagnosis, every meaningful stage, handoff, mutation, branch decision, policy injection, render/tokenization step, inference phase, stream event, persistence transition, and presentation/animation-frame state transition may have a camera. Observability is intentionally dense; do not ration cameras merely to reduce log volume. Cameras must remain observational and must not log secrets, credentials, raw private payload contents unnecessarily, or alter execution semantics.
 3. **Narrow before mutation.** A value changing with the symptom establishes correlation, not ownership. Multiple candidates may track the same visible value.
 4. **Change one causal candidate at a time.** Do not stack multiple speculative behavioral fixes merely because several candidates look related.
 5. **Verify the intended symptom and adjacent invariants after each candidate change.** A symptom improvement proves a causal effect, not automatically that the changed location is the correct architectural owner.
@@ -191,6 +191,20 @@ The governing debugging model is:
 > **observe → narrow → mutate one candidate → verify → keep provisionally if causal / restore if disproven → repeat until user acceptance → reconcile permanent structure**
 
 A disproven experiment is evidence, not architecture. Do not leave failed candidate fixes layered into the permanent system where their interactions can create delayed or timing-dependent regressions.
+
+### Full-map camera doctrine — mandatory during active issue diagnosis
+
+Treat the user-message lifecycle as a fully observable execution map from user action through terminal presentation. Keep useful existing cameras at every level and add missing coverage rather than replacing lower-resolution cameras with higher-resolution ones.
+
+For an actively diagnosed issue, camera coverage should span, as applicable: user-send/UI event; request construction; transport; admission/auth; canonical persistence/history resolution; routing; Brain/LALM entry; every wrapper/handoff capable of changing state; policy/context construction; prompt/history mutation; render; tokenization; prefill; individual inference/kernel phases where practical; decode/stream events; validation/repair; server persistence; client stream consumption; message-state transitions; and presentation/animation-frame state transitions.
+
+Low-level cameras are broad tripwires. Mid-level cameras identify the subsystem and transition. High-level cameras identify the exact writer, variable, branch, or owner. Preserve all useful levels so one request can be traced end-to-end without moving the observation point after each failure.
+
+Every camera record should carry enough correlation data to reconstruct ordering—normally request ID, generation/branch ID when applicable, stage, monotonic/epoch timing, owner/component identity, before/after counts or bounded fingerprints for mutable state, and relevant version/revision identity.
+
+Dense logging is permitted because development observability is a first-class project capability. Bound the *data exposed*, not the number of legitimate observation points: never emit secrets, credentials, authentication material, or unnecessary raw private content. Prefer hashes/fingerprints, sizes, counts, classifications, and redacted metadata when content itself is not required.
+
+The engineering objective is: **after the user sends a message, the §wyrlz logger should be able to reconstruct every meaningful step that message takes and expose that trace on the engineering/logger side of the interface, including presentation-frame transitions where they participate in the issue.**
 
 ---
 
