@@ -32,8 +32,16 @@ def _clean(value, depth=0):
         out = {}
         for k, v in list(value.items())[:240]:
             key = str(k)[:120]
-            lowered = key.lower()
-            if any(secret in lowered for secret in ("token", "authorization", "credential", "password", "secret", "cookie", "bearer", "deviceproof", "device_proof")):
+            lowered = key.lower().replace("-", "_")
+            credential_token_key = lowered in {
+                "token", "access_token", "refresh_token", "id_token", "auth_token",
+                "api_token", "web_chat_token", "swrlz_web_chat_token",
+            } or lowered.endswith("_access_token") or lowered.endswith("_refresh_token")
+            sensitive_key = credential_token_key or any(secret in lowered for secret in (
+                "authorization", "credential", "password", "secret", "cookie", "bearer",
+                "deviceproof", "device_proof",
+            ))
+            if sensitive_key:
                 out[key] = "[redacted]"
             else:
                 out[key] = _clean(v, depth + 1)
