@@ -270,6 +270,41 @@ After mutation, re-read authorities, reconcile concurrency, assign versions, and
 
 If an `UPDATE STARTED` record has no terminal marker, future governed work MUST reconcile it before overlapping mutation. Inspect current source, version authorities, commits, roadmap, and runtime evidence as applicable, then explicitly resume+finish it or mark it **ABORTED** or **SUPERSEDED** with evidence. Never erase or silently skip interrupted work.
 
+### Continuation lifecycle — mandatory
+
+A governed update that is interrupted and later resumed/recontinued keeps one event identity and an explicit session lifecycle:
+
+```text
+UPDATE STARTED
+  ↓
+[work / interruption]
+  ↓
+UPDATE CONTINUATION STARTED
+  ↓
+[resumed work]
+  ↓
+UPDATE CONTINUATION ENDED
+  ↓
+[optional later interruption/resume]
+  ↓
+UPDATE CONTINUATION STARTED
+  ↓
+...
+  ↓
+UPDATE FINISHED | ABORTED | SUPERSEDED
+```
+
+Rules:
+
+- The original UPDATE STARTED is never replaced by a continuation marker.
+- Every resumed/recontinued session gets its own UPDATE CONTINUATION STARTED **before** new implementation mutation.
+- If that session pauses/stops while the overall event remains open, it gets UPDATE CONTINUATION ENDED before leaving the work. Record the exact stop point, mutations made, current authority/version/truth state, verification/deployment state, and remaining work.
+- If that resumed session closes the overall event, UPDATE FINISHED, ABORTED, or SUPERSEDED is the continuation's end marker; do not require a duplicate CONTINUATION ENDED immediately before it.
+- A later resume gets a new continuation-start marker. Never reuse an older continuation marker for a new session.
+- Startup reconstruction must treat a continuation-start marker without either a later continuation-end marker or terminal event marker as interrupted-in-continuation work requiring reconciliation before overlapping mutation.
+
+This makes every continuation recoverable: **event start → each continuation start → each continuation end → terminal event end**.
+
 Roadmap/documentation bookkeeping is deployment-inert and does not authorize deployment. The deployment gate remains owned by `SWRLZ_HOTFIX_RULES.md`.
 
 ## 11A. Atomic registered-module Roadmap synchronization — mandatory
