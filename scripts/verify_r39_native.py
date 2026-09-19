@@ -30,7 +30,26 @@ def _set_half(raw: np.ndarray, offset: int, value: float) -> None:
 
 def _run_case(rng: np.random.Generator, kind: str, cols: int, rows: int, *, scale: float | None = None) -> float:
     rb = row_bytes(kind, cols)
-    raw = rng.integers(0, 256, size=rb * rows, dtype=np.uint8)
+    # Floating-point tensors cannot be arbitrary bytes: random bit patterns
+    # generate NaN/Inf/subnormal payloads and make the reference comparison
+    # meaningless. Quantized tensors remain byte-oriented because their block
+    # layouts are intentionally exercised below.
+    if kind == "f32":
+        values = rng.uniform(-0.25, 0.25, size=cols * rows).astype(np.float32)
+        raw = np.frombuffer(values.tobytes(), dtype=np.uint8).copy()
+    elif kind == "f16":
+        values = rng.uniform(-0.25, 0.25, size=cols * rows).astype(np.float16)
+        raw = np.frombuffer(values.tobytes(), dtype=np.uint8).copy()
+    elif kind == "bf16":
+        values = rng.uniform(-0.25, 0.25, size=cols * rows).astype(np.float32)
+        bits = values.view(np.uint32)
+        # Round-to-nearest-even before truncating to BF16.
+        rounded = bits + (np.uint32(0x7FFF) + ((bits >> 16) & np.uint32(1)))
+        bf16 = (rounded >> 16).astype(np.uint16)
+        raw = np.frombuffer(bf16.tobytes(), dtype=np.uint8).copy()
+    else:
+        raw = rng.integers(0, 256, size=rb * rows, dtype=np.uint8)
+
     chosen = 0.03125 if scale is None else scale
     if kind in {"q4_0", "q8_0"}:
         stride = 18 if kind == "q4_0" else 34
@@ -48,7 +67,13 @@ def _run_case(rng: np.random.Generator, kind: str, cols: int, rows: int, *, scal
     actual = r39_native.matvec(FakeModel(kind, cols, rows, raw), "w", x)
     if actual is None:
         raise AssertionError(f"native dispatch returned None for {kind}")
+    if not np.all(np.isfinite(expected)):
+        raise AssertionError(f"{kind} reference produced non-finite output")
+    if not np.all(np.isfinite(actual)):
+        raise AssertionError(f"{kind} native output produced non-finite output")
     err = float(np.max(np.abs(expected - actual)))
+    if not np.isfinite(err):
+        raise AssertionError(f"{kind} comparison produced non-finite error")
     if not np.allclose(expected, actual, rtol=2e-4, atol=2e-3):
         raise AssertionError(f"{kind} mismatch: max_abs_error={err}")
     return err
