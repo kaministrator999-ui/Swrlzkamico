@@ -35,6 +35,20 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### Navigation-lineage camera — intermittent Chat catnnection isolation
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** add bounded navigation/boot lineage so one Chat startup can be reconstructed from server document ingress through browser boot, startup fetches, lifecycle transitions, and terminal READY/abort-adjacent states while the intermittent `ERR_CONNECTION_ABORTED` defect remains active.  
+**Triggering evidence:** production can serve `/api/chat` successfully while the browser intermittently hangs or displays `ERR_CONNECTION_ABORTED`, then later renders Chat without a manual retry; recent Vercel windows also show successful 200/307 document responses mixed with 401 diagnostic traffic and some status-0 request records. Existing server `requestId` fields are empty for page startup, so failed and successful boot lineages cannot yet be correlated exactly.  
+**Observed authority baseline:** runtime `VERSION.txt` registry SHA `b1d1b9c9402079b3543292b7d7c2cb3fa09d386d`; Server Runtime `2.3.287` SHA `43ce7f1c7144d2a127e513093dc87b1ba914911c`; Web Chat `1.5.84` SHA `f1b8e8196a60685557f9090d936ddfc8296a4b34`; Web Frontend `1.0.5` SHA `f6898debdc797377b6a3bf8791773cc5847d76f7`; Deployment Control `1.0.10` SHA `6ffefe45eb75b68d15e7b43667ebaec5055d4650`. Stable owners: `api/chat.py` SHA `7497bf9e204b47b6cf8f7d6b48c159ce452b456c`, `api/chat_client_debug.py` SHA `c5f8121747f981773047c583484fbc93fdc8e5de`, `web/chat.html` source inspected on main.  
+**Architecture reconciliation:** extend the existing stable Chat document route and existing Chat client-debug/camera owner rather than adding a second telemetry service. Server creates one navigation trace identity when serving the document; the page inherits it, creates one browser boot identity, and bounded early instrumentation records lifecycle/fetch lineage. Existing lockdown middleware records the same boot/navigation headers on subsequent same-origin requests. The camera must be observational, redact/private-data safe, and avoid using the ordinary authenticated Chat stream contract.  
+**Expected module impact:** stable Chat bridge/diagnostic infrastructure plus Chat presentation bootstrap instrumentation. Version assignment will be reconciled against current runtime authorities immediately before commit; no unrelated LALM, Online Research, or deployment-control behavior should change.  
+**Deployment expectation:** stable `main` source work is deployment-inert. Live log verification will require one explicit canonical production trigger through `.deploy/REQUEST.txt` → `.github/workflows/manual-vercel-production.yml`; do not fire that trigger without the deployment approval gate.  
+**Verification plan:** source fetch-back; validate injected navigation ID and bounded boot telemetry contract; verify subsequent same-origin requests carry boot/navigation headers into `SWRLZ_CHAT_LOCKDOWN`; then, after explicit deployment approval, reproduce one clean/slow/abort startup and confirm Vercel logs can filter/correlate the exact navigation and boot lineage.
+
+
 ### Architecture preplan — Mask separation audit
 
 **UPDATE STARTED**
