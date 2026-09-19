@@ -1,6 +1,73 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <!-- SWRLZ_NAV_TRACE_META -->
+  <script>
+  (()=>{"use strict";
+    if(window.__swrlzNavigationBootCamera)return;
+    window.__swrlzNavigationBootCamera=true;
+    const meta=document.querySelector('meta[name="swrlz-nav-trace"]');
+    const navTraceId=meta?.content||"";
+    const bytes=new Uint8Array(12);
+    try{crypto.getRandomValues(bytes)}catch(_){for(let i=0;i<bytes.length;i++)bytes[i]=(Math.random()*256)|0}
+    const bootId="boot:"+Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
+    let navAttempt=1;
+    try{navAttempt=(Number(sessionStorage.getItem("swrlz.nav.attempt")||"0")+1);sessionStorage.setItem("swrlz.nav.attempt",String(navAttempt))}catch(_){}
+    let eventSeq=0,bootReady=false;
+    const nativeFetch=window.fetch.bind(window);
+    const base=()=>({contract:"swrlz-navigation-boot-v1",bootId,navTraceId,navAttempt,eventSeq:++eventSeq,atMs:Date.now(),perfMs:Number(performance.now().toFixed(3)),readyState:document.readyState,visibility:document.visibilityState,path:location.pathname,online:navigator.onLine!==false});
+    const emit=(event,extra={})=>{
+      const body=JSON.stringify({...base(),event,...extra});
+      nativeFetch("/api/chat/client-debug",{method:"POST",headers:{"content-type":"application/json"},body,cache:"no-store",keepalive:true,credentials:"same-origin"}).catch(()=>{});
+    };
+    const emitBeacon=(event,extra={})=>{
+      const body=JSON.stringify({...base(),event,...extra});
+      try{navigator.sendBeacon("/api/chat/client-debug",new Blob([body],{type:"application/json"}))}catch(_){emit(event,extra)}
+    };
+    window.__swrlzBootCamera={bootId,navTraceId,navAttempt,emit};
+    emit("BOOT_SCRIPT_START");
+
+    window.fetch=(input,init)=>{
+      let target=input,nextInit=init,url,method="GET",requestPath="";
+      try{
+        url=new URL(input instanceof Request?input.url:String(input),location.href);
+        method=String(init?.method||(input instanceof Request?input.method:"GET")||"GET").toUpperCase();
+        requestPath=url.origin===location.origin?url.pathname:"[cross-origin]";
+        if(url.origin===location.origin){
+          const headers=new Headers(input instanceof Request?input.headers:init?.headers);
+          headers.set("X-SWRLZ-Boot-Id",bootId);
+          if(navTraceId)headers.set("X-SWRLZ-Nav-Trace",navTraceId);
+          if(input instanceof Request){target=new Request(input,{...(init||{}),headers});nextInit=undefined}
+          else nextInit={...(init||{}),headers};
+        }
+      }catch(_){}
+      const started=performance.now();
+      emit("FETCH_START",{method,requestPath});
+      return nativeFetch(target,nextInit).then(response=>{
+        emit("FETCH_END",{method,requestPath,status:response.status,reason:"ms:"+Math.round((performance.now()-started)*1000)/1000});
+        return response;
+      },error=>{
+        emit("FETCH_ERROR",{method,requestPath,errorName:String(error?.name||"Error"),reason:String(error?.message||"").slice(0,160)});
+        throw error;
+      });
+    };
+
+    document.addEventListener("DOMContentLoaded",()=>emit("DOM_CONTENT_LOADED"),{once:true});
+    window.addEventListener("load",()=>{
+      emit("WINDOW_LOAD");
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{bootReady=true;emit("BOOT_READY")}));
+    },{once:true});
+    window.addEventListener("pageshow",e=>emit("PAGESHOW",{persisted:!!e.persisted}));
+    document.addEventListener("visibilitychange",()=>emit(document.hidden?"VISIBILITY_HIDDEN":"VISIBILITY_VISIBLE"));
+    window.addEventListener("pagehide",e=>emitBeacon("PAGEHIDE",{persisted:!!e.persisted}));
+    window.addEventListener("beforeunload",()=>emitBeacon("BEFOREUNLOAD"));
+    window.addEventListener("error",e=>emit("WINDOW_ERROR",{errorName:String(e?.error?.name||"Error"),reason:String(e?.message||"").slice(0,160)}));
+    window.addEventListener("unhandledrejection",e=>emit("UNHANDLED_REJECTION",{errorName:String(e?.reason?.name||"Error"),reason:String(e?.reason?.message||e?.reason||"").slice(0,160)}));
+    setTimeout(()=>{if(!bootReady)emit("BOOT_STALLED_1S")},1000);
+    setTimeout(()=>{if(!bootReady)emit("BOOT_STALLED_3S")},3000);
+    setTimeout(()=>{if(!bootReady)emit("BOOT_STALLED_10S")},10000);
+  })();
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
