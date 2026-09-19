@@ -70,6 +70,43 @@ def _authorized_chat_ingress(request) -> bool:
     return bool(expected and supplied and hmac.compare_digest(expected, supplied))
 
 
+def _navigation_boot_event(value) -> dict | None:
+    """Accept only a bounded, non-sensitive browser boot lineage contract."""
+    if not isinstance(value, dict) or value.get("contract") != "swrlz-navigation-boot-v1":
+        return None
+
+    def text_field(name: str, maximum: int) -> str:
+        value = str(value_raw.get(name) or "")
+        return value[:maximum]
+
+    value_raw = value
+    event = text_field("event", 64)
+    boot_id = text_field("bootId", 96)
+    nav_trace_id = text_field("navTraceId", 96)
+    if not event or not boot_id:
+        return None
+    return {
+        "contract": "swrlz-navigation-boot-v1",
+        "event": event,
+        "bootId": boot_id,
+        "navTraceId": nav_trace_id,
+        "navAttempt": int(value_raw.get("navAttempt") or 0),
+        "eventSeq": int(value_raw.get("eventSeq") or 0),
+        "atMs": int(value_raw.get("atMs") or 0),
+        "perfMs": float(value_raw.get("perfMs") or 0.0),
+        "readyState": text_field("readyState", 24),
+        "visibility": text_field("visibility", 24),
+        "path": text_field("path", 240),
+        "method": text_field("method", 16),
+        "requestPath": text_field("requestPath", 240),
+        "status": int(value_raw.get("status") or 0),
+        "persisted": bool(value_raw.get("persisted")),
+        "online": bool(value_raw.get("online", True)),
+        "errorName": text_field("errorName", 96),
+        "reason": text_field("reason", 160),
+    }
+
+
 def _account_scope(request) -> str:
     try:
         from api.google_account import user_id_from_request
@@ -139,12 +176,27 @@ def install(server) -> None:
 
     async def chat_client_debug_post(request: Request):
         global _TRACE_SEQ
-        if not _authorized_chat_ingress(request):
-            return JSONResponse({"ok": False, "detail": "Unauthorized"}, status_code=401, headers={"Cache-Control": "no-store"})
         try:
             raw = await request.json()
         except Exception:
             raw = {}
+
+        # Navigation/boot lineage is deliberately credential-free because it
+        # starts before authenticated Chat state is available. Only a strict,
+        # non-sensitive field allowlist is accepted on this unauthenticated path.
+        boot_event = _navigation_boot_event(raw)
+        if boot_event is not None:
+            received = datetime.now(timezone.utc).isoformat()
+            with _LOCK:
+                _TRACE_SEQ += 1
+                boot_event["serverSeq"] = _TRACE_SEQ
+                record = {"receivedAt": received, "event": boot_event}
+                _RECENT.append(record)
+            print("SWRLZ_CHAT_NAV_BOOT " + json.dumps(record, separators=(",", ":"), ensure_ascii=True), flush=True)
+            return JSONResponse({"ok": True, "accepted": 1, "contract": "swrlz-navigation-boot-v1"}, headers={"Cache-Control": "no-store"})
+
+        if not _authorized_chat_ingress(request):
+            return JSONResponse({"ok": False, "detail": "Unauthorized"}, status_code=401, headers={"Cache-Control": "no-store"})
         event = _clean(raw if isinstance(raw, dict) else {})
         if isinstance(event, dict) and event.get("contract") == "swrlz-lockdown-batch-v1" and isinstance(event.get("events"), list):
             accepted = 0
@@ -207,7 +259,9 @@ def install(server) -> None:
         turn = None
         raw: dict = {}
         action = request.query_params.get("action", "stream").strip().lower()
-        _lockdown("http-ingress", request_id=request.headers.get("x-swrlz-request-id", ""), method=request.method, path=request.url.path, action=action, contentLength=request.headers.get("content-length", ""))
+        boot_id = request.headers.get("x-swrlz-boot-id", "")
+        nav_trace_id = request.headers.get("x-swrlz-nav-trace", "")
+        _lockdown("http-ingress", request_id=request.headers.get("x-swrlz-request-id", ""), method=request.method, path=request.url.path, action=action, contentLength=request.headers.get("content-length", ""), bootId=boot_id, navTraceId=nav_trace_id)
         canonical_candidate = request.method == "POST" and action == "stream" and _authorized_chat_ingress(request)
         if canonical_candidate:
             try:
@@ -301,9 +355,9 @@ def install(server) -> None:
                     )
 
         try:
-            _lockdown("route-enter", request_id=str(raw.get("requestId") or ""), action=action)
+            _lockdown("route-enter", request_id=str(raw.get("requestId") or ""), action=action, bootId=boot_id, navTraceId=nav_trace_id)
             response = await call_next(request)
-            _lockdown("route-exit", request_id=str(raw.get("requestId") or ""), action=action, status=response.status_code, mediaType=getattr(response, "media_type", None))
+            _lockdown("route-exit", request_id=str(raw.get("requestId") or ""), action=action, status=response.status_code, mediaType=getattr(response, "media_type", None), bootId=boot_id, navTraceId=nav_trace_id)
         except BaseException as exc:
             if turn is not None:
                 try:
