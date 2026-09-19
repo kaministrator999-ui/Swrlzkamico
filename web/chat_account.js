@@ -20,5 +20,5 @@ Promise.resolve()
   .then(()=>load("chat_stream_focus.js"))
   .then(()=>refreshIfChanged())
   .catch(error=>console.warn("§wyrlz hot chat assets unavailable",error));
-setInterval(refreshIfChanged,5000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshIfChanged()});
 })();
