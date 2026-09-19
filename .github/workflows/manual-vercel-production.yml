@@ -272,8 +272,12 @@ jobs:
               value = json.load(stream)
           assert int(value.get("version", 0)) >= 35, value.get("version")
           scripts = value.get("routes", {}).get("/chat", {}).get("scripts", [])
-          assert "web/chat_turn_integrity_v1.js" in scripts
+          assert "web/chat_runtime_loader_v3.js" in scripts, scripts
           PY
+
+          loader_code="$(curl --max-time 12 --silent --show-error --output chat-runtime-loader.js --write-out '%{http_code}' "$DEPLOYMENT_URL/live/assets/chat_runtime_loader_v3.js" || true)"
+          test "$loader_code" = "200"
+          grep -Fq "chat_turn_integrity_v1.js" chat-runtime-loader.js
 
           collector_code="$(curl --max-time 12 --silent --show-error --output collector-readiness.json --write-out '%{http_code}' "$DEPLOYMENT_URL/api/collector/readiness" || true)"
           test "$collector_code" = "200"
