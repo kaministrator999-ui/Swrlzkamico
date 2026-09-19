@@ -57,6 +57,19 @@ Read these when relevant:
 ---
 
 
+### Version registry branch authority — mandatory
+
+The canonical version registry is `runtime:VERSION.txt`, not `main:VERSION.txt`.
+
+Startup/readiness resolution rule:
+
+1. Fetch `VERSION.txt` from the `runtime` branch.
+2. Resolve each registered module authority from the paths listed there, following the current version-governance contract.
+3. Do not treat a 404 for `VERSION.txt` on `main` as a missing or inconsistent authority.
+4. Only report a version-authority inconsistency after the documented runtime authority path has been exhausted or conflicts with another canonical owner.
+
+This prevents fresh project-start traversals from stopping early on a default-branch lookup.
+
 ### Whole-play orientation
 
 Project Start is the front door to the entire production, not merely a checklist. A future engineering session should be able to enter here and recover four things without guessing:
