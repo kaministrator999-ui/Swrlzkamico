@@ -36,6 +36,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### Lockdown camera architecture + Project Start single-entry hardening
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** make observability a built-in architectural requirement for every new Server/page/module/component from the moment it is created, while keeping lockdown cameras runtime-switchable so normal operation does not continuously emit full-lockdown telemetry. Harden Project Start so the command “follow the start doc” is sufficient to recover the project state, stage/theater model, version structure, runtime-hot operating model, lockdown-camera contract, roadmap position, and current build/fix workflow without additional prompting.  
+**Observed authority baseline:** Repository Work `1.0.3` SHA `b2a94cbb061adafd2e37c98d3e32763b32582d4e`; Server Runtime `2.3.287` SHA `43ce7f1c7144d2a127e513093dc87b1ba914911c`; Web Chat `1.5.85` SHA `c88c61298c8bcbed69d515f2e9154fa913b83d78`; Runtime Manifest `152` SHA `86a9aea7ac28a04ca6d8d232fb0707734505389c`; Project Start SHA `3bff265377bc4d0c8fb9cf4a67b25ad5e7c608ab`.  
+**Architecture reconciliation:** preserve `SWRLZ_CHAT_CAMERA_LOGS.md` as the existing evidence/diagnostic owner and add a dedicated Lockdown Camera System operating guide for build-time instrumentation design, activation/deactivation, correlation, runtime-hot toggling, and component integration. Project Start will route all new Server/page/module/component work through that guide before implementation. This is documentation/governance only; no runtime camera implementation or Server deployment occurs in this tier.  
+**Expected impact:** Repository Work + documentation/governance only. Server Runtime, Web Chat, Runtime Manifest, LALM and deployment-control versions remain unchanged.  
+**Deployment expectation:** NONE.  
+**Verification plan:** create the lockdown-camera guide; update Project Start startup/read order and ownership map; verify the start document explicitly tells a future agent how to become project-ready from one command and requires cameras-by-design with runtime-switchable activation for new components; fetch back all edited authorities and close the roadmap event.
+
+
 ### §wyrlz Chat clean-room stage — Tier 1 route + single-word scene
 
 **UPDATE STARTED**
