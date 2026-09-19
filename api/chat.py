@@ -658,7 +658,18 @@ async def chat_get(request: Request):
         html = CHAT_PAGE.read_text("utf-8")
     except OSError:
         return _json_error(500, "CHAT_PAGE_MISSING", "web/chat.html is missing from the deployment bundle.")
+    nav_trace_id = "nav:" + secrets.token_urlsafe(18).replace("-", "_")
+    nav_meta = '<meta name="swrlz-nav-trace" content="' + nav_trace_id + '">'
+    html = html.replace("<!-- SWRLZ_NAV_TRACE_META -->", nav_meta, 1)
+    _chat_lockdown(
+        "navigation-document-serve",
+        request_id=nav_trace_id,
+        navTraceId=nav_trace_id,
+        path=request.url.path,
+        userAgentBytes=len(request.headers.get("user-agent", "").encode("utf-8")),
+    )
     headers = _no_store_headers()
+    headers["X-SWRLZ-Navigation-Trace"] = nav_trace_id
     headers["Content-Security-Policy"] = (
         "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; "
         "script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
