@@ -166,12 +166,18 @@ def install(server) -> None:
             limit = int(request.query_params.get("limit", "120") or 120)
         except (TypeError, ValueError):
             limit = 120
+        try:
+            after = max(0, int(request.query_params.get("after", "0") or 0))
+        except (TypeError, ValueError):
+            after = 0
         safe_limit = max(1, min(limit, 10000))
         with _LOCK:
-            rows = list(_RECENT)[-safe_limit:]
-        with _LOCK:
             latest_seq = _TRACE_SEQ
-        return JSONResponse({"ok": True, "count": len(rows), "latestServerSeq": latest_seq, "events": rows}, headers={"Cache-Control": "no-store"})
+            if after:
+                rows = [row for row in _RECENT if int((row.get("event") or {}).get("serverSeq") or 0) > after][:safe_limit]
+            else:
+                rows = list(_RECENT)[-safe_limit:]
+        return JSONResponse({"ok": True, "count": len(rows), "latestServerSeq": latest_seq, "after": after, "events": rows}, headers={"Cache-Control": "no-store"})
 
     # Vercel's function destination path is /api/chat.py. The public diagnostic
     # route is marked by vercel.json with a private query flag, so intercept it
