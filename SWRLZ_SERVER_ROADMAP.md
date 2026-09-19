@@ -981,3 +981,12 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Version reconciliation:** Server `2.3.287`; Web Chat `1.5.84`; LALM Engine `2.1.112-hot-lockdown-retrace-v90`; Runtime Manifest `151`; Deployment Control `1.0.9`.
 - **Activation boundary:** stable Human/server files and the deployment workflow changed, so this checkpoint genuinely requires one production activation. The standing terminal-deploy contract authorizes exactly one `.deploy/REQUEST.txt` trigger after source reconciliation; it does not authorize retries.
 - **Post-trigger truth rule:** a workflow trigger is only a trigger. Production is not called deployed until Vercel reports a READY deployment for the approved source; live camera behavior is not called verified until a fresh request produces the correlated trace.
+
+
+###### Terminal activation attempt #1 — fail-closed before deployment
+
+- **Trigger:** GitHub Actions run `35462625551` from request commit `2834a292bf31a6b29417ee72403a1c1ee129fb7e`.
+- **Result:** no Vercel deployment occurred. Authorization, environment pull, collector-store check, native compilation/equivalence, and `vercel build --prod` all passed. The pre-deploy artifact gate then failed because `.vercel/output` contained zero `_r39_native`/`_r39_batch` binaries, so the deploy step was skipped exactly as intended.
+- **Evidence:** both extensions compiled and loaded successfully in the runner; native equivalence passed for f32/f16/bf16/q4_0/q8_0/q4_k/q6_k and diagnostics reported `available:true`, `batchAvailable:true`. Therefore the defect is packaging transfer into Vercel Build Output, not native arithmetic/build correctness.
+- **Bounded repair:** Deployment Control 1.0.10 now injects the already-verified compiled binaries into every Python `.func/swyrlz/` bundle after `vercel build` and before the existing artifact gate. It fails closed if compiled artifacts or Python function bundles are absent. No inference semantics changed.
+- **Retry governance:** the standing contract allowed one terminal trigger and that trigger has been consumed. This repair is source complete but a second production trigger requires explicit user approval; no retry was started automatically.
