@@ -940,3 +940,13 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Purpose:** one controlled fresh-thread reproduction should reveal the first boundary where synthetic prompt material appears or is reconstructed. Only after narrowing will one candidate owner be mutated.
 - **Deployment boundary:** runtime-hot only; no stable production deployment is required while the immutable runtime-head loader remains healthy.
 - **Verification plan:** reproduce the same fresh-thread count-to-10 request, correlate all `prefill-boundary-*` cameras for one request ID, identify the smallest remaining candidate set, and make no behavioral fix until that evidence is reviewed.
+
+
+##### UPDATE CONTINUATION STARTED — 2026-09-19 — full-map message/inference lockdown trace
+
+- **User requirement:** during this development/diagnostic phase, maximize observability rather than presentation cleanliness. Preserve useful existing cameras and expose every reachable meaningful message/inference transition from user send through terminal completion; presentation/frame transitions are also in scope for the complete logger architecture.
+- **Current bounded mutation:** R39 2.1.110 extends the existing observational prefill cameras across the full reachable inherited `generate_events` chain discovered at hydration time, while retaining the explicit v51→v41 landmarks. The bridge cameras only observe payload metadata and forward the original generator unchanged.
+- **Correlation fields:** request ID, stage/boundary identity, history/system message counts and character totals, prompt characters, runtime version/revision, and timestamps remain available for causal reconstruction.
+- **Behavioral-fix rule:** no prompt/policy/inference semantic repair is included in this checkpoint. Camera density is intentionally high; a later cleanup pass may reduce presentation noise only after behavior is correct and the user accepts the issue as fixed.
+- **Remaining full-map work:** server ingress/persistence/route cameras and client transport/render/animation-frame exposure must be reconciled through their canonical owners rather than being smuggled into the Brain runtime. Existing cameras remain active while those layers are filled.
+- **Verification:** next fresh-thread reproduction should show the expanded automatic generation-chain boundary trace and identify where the pre-v51 synthetic history first appears.
