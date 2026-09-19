@@ -1,5 +1,5 @@
 {
-  "version": 149,
+  "version": 150,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v149 activates R39 LALM 2.1.102 / v90 protected factual evidence handoff and fail-closed online factual synthesis, preserving v89 request-first compaction."
+  "notes": "Manifest v150 activates full-lockdown observability: Web Chat 1.5.83 frame-to-terminal cameras, Server Runtime 2.3.286 trace ingestion, and R39 LALM 2.1.111 every-step prefill/decode cameras. Diagnostic presentation is intentionally verbose during active development."
 }
