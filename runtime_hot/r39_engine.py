@@ -148,8 +148,8 @@ try:
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-    HOT_SERVER_VERSION="2.1.107"
-    HOT_REVISION="2.1.107-hot-v49-v48-prefill-boundary-v90"
+    HOT_SERVER_VERSION="2.1.108"
+    HOT_REVISION="2.1.108-hot-v47-v46-prefill-boundary-v90"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
 
@@ -209,7 +209,23 @@ try:
                capsuleChars=capsule_chars)
         for event in _v48_original(compacted,is_cancelled): yield event
     _v49_generate.__globals__["_V48_GENERATE"]=_compact_v48_generate
-    _entry("compact-prefill-installed",finalPolicyBoundary=True,v49v48Boundary=True)
+
+    # v48 delegates to v47, and v47 injects the trajectory policy before calling
+    # its inherited v46 generator. Patch that exact bridge: all v51-v55 policies
+    # plus v47 trajectory now exist, while v46/base inference has not begun.
+    _v47_generate=getattr(_v48_original,"__globals__",{}).get("_V47_GENERATE") if callable(_v48_original) else None
+    _v46_original=getattr(_v47_generate,"__globals__",{}).get("_V46_GENERATE") if callable(_v47_generate) else None
+    if not callable(_v46_original):
+        raise RuntimeError("R39_COMPACT_PREFILL_V47_V46_BOUNDARY_UNAVAILABLE")
+    def _compact_v46_generate(payload,is_cancelled=None):
+        compacted,removed,removed_chars,capsule_chars=_compact_policy_payload(payload)
+        _entry("compact-prefill-last-unconditional-policy-boundary",
+               requestId=_request_id(payload) if isinstance(payload,dict) else "",
+               removedPolicySegments=removed,removedPolicyChars=removed_chars,
+               capsuleChars=capsule_chars)
+        for event in _v46_original(compacted,is_cancelled): yield event
+    _v47_generate.__globals__["_V46_GENERATE"]=_compact_v46_generate
+    _entry("compact-prefill-installed",finalPolicyBoundary=True,v49v48Boundary=True,v47v46Boundary=True)
     _entry("hydrate-ok",hotServerVersion=HOT_SERVER_VERSION,
            hotRevision=HOT_REVISION,batchSourceCommit=_V82_BATCH_COMMIT,
            responseContract=callable(globals().get("_response_contract")),
