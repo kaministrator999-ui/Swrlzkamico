@@ -6,10 +6,10 @@
 
 ## Current authoritative baseline
 
-- **Overall Server:** `2.3.279`
+- **Overall Server:** `2.3.280`
 - **Chat:** `1.5.82`
-- **Runtime Manifest:** `144`
-- **LALM Engine:** `2.1.97` (`v85` live research-planner status stream; v84 scope and v83 batching preserved)
+- **Runtime Manifest:** `145`
+- **LALM Engine:** `2.1.98` (`v86` bounded prompt-composition attribution; v85 research-planner status and v83 batching preserved)
 - **Web Frontend:** `1.0.5`
 - **LALM UI:** `1.0.0`
 - **Frozen Web Collector:** `1.0.9`
@@ -34,6 +34,21 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 ---
 
 ## Release ledger
+
+### Server 2.3.280 — R39 v86 bounded prompt-composition attribution
+
+**Status:** runtime-hot source complete/static verified; live request acceptance pending.  
+**LALM Engine:** `2.1.97 → 2.1.98` / `v86`. **Runtime Manifest:** `144 → 145`. **Chat:** `1.5.82` unchanged. **Online Research:** `1.0.1` unchanged.  
+**Deployment / restart:** NONE.
+
+**Triggering evidence:** the Kansas City weather request contained only 69 prompt characters and zero canonical conversation history, while outer synthesis reported a 3,569-token rendered prefill. Retrieval for that run returned zero candidate evidence, so page content cannot be assumed to explain the large prompt.
+
+**Architecture reconciliation:** the canonical rendered-prompt boundary already exists in the R39 v42 camera and is preserved through v69. v86 extends that Brain/LALM observation boundary rather than adding another prompt builder or tokenizer. It uses the same `base.render_chat_prompt` framing and exact model tokenizer used by inference.
+
+**Change:** v86 emits privacy-bounded `prompt-composition-segment`, `prompt-composition-owner`, and `prompt-composition-summary` cameras. It records semantic owner, rendered character count, cumulative/marginal token count, and a truncated SHA-256 fingerprint; it does not log prompt text, token text, hidden reasoning, or secrets. Owners include response directive, current user request, conversation turns, online research/evidence policy, evidence data, conversation/context/programming policy, render framing, and unknown system context. Cumulative tokenization makes marginal attribution sum to the exact rendered prompt token total; the summary explicitly reports whether that invariant matched.
+
+**Verification:** source fetch-back confirms v86 overlay, active entrypoint reference, LALM authority 2.1.98, Server 2.3.280, and manifest authority/json 145. Live acceptance requires a fresh online weather request showing v86 hydration and a composition summary whose exact total matches the inference prefill. The camera is diagnostic only and does not yet remove context.
+
 
 ### Server 2.3.279 — complete VERSION.txt overview registry
 
