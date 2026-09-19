@@ -40,7 +40,7 @@ ENOUGH OBSERVABILITY?
 
 The default is **inspect first, instrument second, mutate third** when diagnosis is uncertain.
 
-Do not add logging mechanically when existing evidence already answers the question. Cameras exist to close an observability gap, not to create noise.
+During an active lockdown/debugging phase, do not ration cameras merely because existing evidence answers one question. Preserve useful existing cameras and maintain full-map observability so one request can be reconstructed end-to-end. Log volume and presentation cleanliness are secondary until behavior is accepted; cleanup is a later reconciliation step.
 
 ---
 
@@ -63,11 +63,11 @@ A camera may record facts such as:
 - compatibility/fallback activation;
 - sanitized error classification.
 
-A camera is not permission to dump arbitrary user data, credentials, secrets, tokens, raw private payloads, or unbounded transcripts into logs.
+A camera is never permission to expose credentials, secrets, authentication tokens, cookies, device proofs, or other security material. During an explicitly authorized single-user lockdown/debugging phase, however, raw application payloads, prompt/policy text, stream events, inference/token metadata, state mutations, and frame geometry may be recorded when needed to reconstruct execution completely.
 
 ### Camera design rule
 
-Prefer small structured records that answer one diagnostic question over giant opaque text blobs.
+Normal operation should prefer structured records. During active lockdown diagnosis, **coverage wins over terseness**: emit structured records at every meaningful transition and retain the lower-, middle-, and high-level cameras simultaneously. A dense trace is intentional evidence, not accidental noise.
 
 When practical, include enough identity to correlate the event across layers:
 
@@ -172,6 +172,43 @@ Example: if it is unclear whether the loader fetched v65 but hydrated v64, instr
 
 ---
 
+## 6A. Full-lockdown / frame-to-terminal mode
+
+When the user explicitly places §wyrlz in full-lockdown diagnostic mode, the camera target is the **complete causal path**, not merely the currently suspected fault.
+
+For a Chat/LALM request this means, as applicable:
+
+```text
+user input/send frame
+→ UI/message state
+→ request construction
+→ browser transport
+→ server ingress/auth/admission
+→ canonical persistence/history
+→ routing/hydration
+→ Brain/LALM wrappers
+→ policy/context/prompt construction
+→ tokenization
+→ every prefill block/token/layer/matrix path that is instrumentable
+→ decode token steps
+→ generated/validated stream events
+→ persistence/checkpointing
+→ server stream relay
+→ browser stream parsing/consumption
+→ DOM/message mutations
+→ every active animation frame and geometry state
+→ terminal event
+→ final settled frame/state
+```
+
+Keep existing cameras at all resolutions. Low-level cameras catch broad divergence, middle cameras localize ownership, and high-resolution cameras identify the exact writer/operation. All events should carry correlation identity and high-resolution timing whenever available.
+
+The engineering logger should expose this evidence directly during development. Do not suppress events merely to keep the interface pretty. Cleanup, sampling, aggregation, or lower-noise presentation occurs only after the behavior is accepted and the retained observability contract is deliberately reconciled.
+
+Security remains invariant: full-lockdown mode may expose application state and inference instructions, but **must redact credentials and authentication material**.
+
+---
+
 ## 7. Persistent vs temporary cameras
 
 ### Persistent camera
@@ -205,7 +242,7 @@ For any defect:
 4. Identify existing cameras and what diagnostic questions they can already answer.
 5. Pull the relevant live/runtime/workflow logs when access exists.
 6. Correlate source + runtime + user-visible evidence by concrete identifiers where possible.
-7. If the cause remains ambiguous because observability is missing, add the smallest camera needed at the correct owner/boundary.
+7. If the system is in lockdown/full-map diagnostic mode, fill every missing observation point on the governed path rather than adding only one camera at a time. Outside lockdown mode, add the smallest camera needed at the correct owner/boundary.
 8. Reproduce/request the affected path and inspect the new evidence.
 9. Fix the canonical owner rather than compensating in a neighboring layer.
 10. Re-check the same cameras/logs after the change.
