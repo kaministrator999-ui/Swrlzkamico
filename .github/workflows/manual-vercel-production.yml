@@ -237,6 +237,17 @@ jobs:
             exit 1
           fi
 
+          native_code="$(curl --max-time 20 --silent --show-error --output native-status.json --write-out '%{http_code}' "$DEPLOYMENT_URL/api/lalm/native" || true)"
+          test "$native_code" = "200"
+          python - <<'PY'
+          import json
+          with open("native-status.json", encoding="utf-8") as stream:
+              value = json.load(stream)
+          assert value.get("ok") is True, value
+          assert value.get("available") is True, value
+          assert value.get("batchAvailable") is True, value
+          PY
+
           manifest_code="$(curl --max-time 12 --silent --show-error --dump-header manifest-headers.txt --output live-manifest.json --write-out '%{http_code}' "$DEPLOYMENT_URL/live/manifest.json" || true)"
           test "$manifest_code" = "200"
           grep -iq '^x-swrlz-manifest-authority: github-contents-api-v1' manifest-headers.txt
