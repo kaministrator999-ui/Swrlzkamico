@@ -139,6 +139,8 @@ def install(server) -> None:
 
     async def chat_client_debug_post(request: Request):
         global _TRACE_SEQ
+        if not _authorized_chat_ingress(request):
+            return JSONResponse({"ok": False, "detail": "Unauthorized"}, status_code=401, headers={"Cache-Control": "no-store"})
         try:
             raw = await request.json()
         except Exception:
@@ -170,6 +172,8 @@ def install(server) -> None:
         return JSONResponse({"ok": True, "accepted": 1}, headers={"Cache-Control": "no-store"})
 
     async def chat_client_debug_get(request: Request):
+        if not _authorized_chat_ingress(request):
+            return JSONResponse({"ok": False, "detail": "Unauthorized"}, status_code=401, headers={"Cache-Control": "no-store"})
         try:
             limit = int(request.query_params.get("limit", "120") or 120)
         except (TypeError, ValueError):
