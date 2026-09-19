@@ -1192,3 +1192,13 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Existing unresolved work preserved:** lockdown route-enter 500 candidate/live acceptance and adjacent client-debug 401/freeze remain unresolved and are not superseded by this governance event.
 - **Deployment/restart:** none. This governance-only tier is deployment-inert.
 - **Result:** COMPLETE.
+
+
+### UPDATE STARTED — 2026-09-19 — continuation marker lifecycle hardening
+
+- **Requested outcome:** make every resumed/recontinued governed update leave an explicit three-part Roadmap lifecycle: original UPDATE STARTED, a continuation marker for each resumed work session, and a terminal UPDATE FINISHED/ABORTED/SUPERSEDED marker.
+- **Observed baseline:** Project Start already requires UPDATE CONTINUATION STARTED before resumed mutation, but the contract does not explicitly require a matching continuation-end checkpoint when that resumed work session stops again before the overall update reaches its terminal marker.
+- **Canonical owners:** Project Start owns workflow enforcement; Version Evolution owns detailed Roadmap lineage semantics.
+- **Expected impact:** governance documentation only. Repository Work advances; runtime module versions remain unchanged.
+- **Deployment expectation:** none.
+- **Verification plan:** harden both canonical contracts, re-read them, concurrency-check Repository Work, advance only Repository Work, and close this Roadmap event.
