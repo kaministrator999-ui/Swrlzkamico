@@ -22,7 +22,7 @@ Read these documents in this order before implementation:
 6. `SWRLZ_CHAT_CAMERA_LOGS.md` — project-wide diagnostic cameras/logs/evidence workflow. The compatibility filename remains historical; the document is project-wide, not Chat-only.
 7. `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` — how project-work progress and final results are formatted and reported to the user.
 
-Treat those seven documents as one coordinated project-work contract.
+Treat those seven documents as one coordinated project-work contract. Then follow any subsystem operating guide routed below before changing that subsystem.
 
 ### Project response identity opener — mandatory
 
@@ -44,6 +44,7 @@ Rules:
 
 Read these when relevant:
 
+- `docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md` — **mandatory for runtime-hot page/asset/module integration**, including adding routes, using the runtime manifest, deciding between manifest-routed pages and hydrated hot sources, versioning activation, and verifying hotload state.
 - `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` — Google sign-in, OAuth, account/session, or related Chat-auth work.
 - `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md` — when helping a user start/grow their own project, teaching architecture, explaining tradeoffs, or simplifying/removing optional architecture at the user's request.
 - `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md` — whenever work changes or evaluates programming/coding behavior in the LALM, coding-task routing, architecture-aware coding state, code-tool planning, coding evaluation, or a future dedicated coder model. This document owns the target runtime architecture and the truth boundary between documented curriculum, executable runtime behavior, and trained model capability.
@@ -53,6 +54,42 @@ Read these when relevant:
 
 ---
 
+
+### Whole-play orientation
+
+Project Start is the front door to the entire production, not merely a checklist. A future engineering session should be able to enter here and recover four things without guessing:
+
+1. **Where we are:** read `VERSION.txt` and its authorities for Repository Work, Server Runtime, Runtime Manifest, Chat, LALM, deployment control, and every other registered component; then read the Roadmap for current/incomplete work.
+2. **How the play is shaped:** the §imple Mask/theater model below defines Audience, Stage/Mask, actors, props, stagehands, backstage/Human-server, Brain/LALM, cameras, and curtain/scene transitions.
+3. **How to change it:** architecture reconciliation decides ownership; subsystem guides explain operation/integration; Hotfix Rules define mutation/deployment mechanics; Version Evolution assigns lineage; cameras provide evidence.
+4. **What happened before:** the Roadmap is the chronological engineering journal. It records each scoped tier's START, actual work, versions, verification level, deployment truth, failures, and FINISH.
+
+Documentation roles are deliberately separated:
+
+```text
+PROJECT START = map/router + whole-play orientation
+OPERATING GUIDES = how a subsystem works and how to integrate with it
+ROADMAP = what we actually did, in chronological scoped tiers
+VERSION.txt = where every independently advancing version authority lives
+SOURCE = executable truth
+CAMERAS/LOGS = observed execution truth
+```
+
+Do not make the Roadmap carry operational instructions that belong in a reusable guide, and do not make an operating guide pretend to be chronological history.
+
+### Version-axis quick rule
+
+```text
+Any completed governed repo tier       → Repository Work ↑
+Chat implementation changed            → Web Chat ↑
+Runtime route/asset activation changed → Runtime Manifest ↑
+LALM changed                            → LALM Engine/UI as owned ↑
+Stable Server actually released/deployed→ Server Runtime ↑
+Untouched component                     → stays exactly where it is
+```
+
+A repository commit is not a Server deployment. A runtime-hot activation is not automatically a Server release. A component may advance across many Repository Work tiers while Server Runtime remains unchanged.
+
 ## 2. Document ownership map
 
 Each rule family has one primary owner.
@@ -61,7 +98,8 @@ Each rule family has one primary owner.
 |---|---|
 | Project-work entry/order | `SWRLZ_PROJECT_START.md` |
 | Runtime vs main, hotfix/deploy boundary | `SWRLZ_HOTFIX_RULES.md` |
-| Server/module version lineage | `SWRLZ_VERSION_MODULE_EVOLUTION.md` |
+| Runtime-hot integration/how-to | `docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md` |
+| Repository/Server/module version lineage | `SWRLZ_VERSION_MODULE_EVOLUTION.md` |
 | Pre-feature architecture discovery/reconciliation | `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md` |
 | Durable progress/release history | `SWRLZ_SERVER_ROADMAP.md` |
 | Cameras/logs/diagnostic evidence | `SWRLZ_CHAT_CAMERA_LOGS.md` |
@@ -100,7 +138,9 @@ RE-READ VERSION/STATUS AUTHORITIES
       ↓
 RECONCILE ANY CONCURRENT ADVANCE
       ↓
-ASSIGN SERVER + ACTUALLY CHANGED MODULE VERSIONS
+ASSIGN REPOSITORY WORK + ACTUALLY CHANGED COMPONENT VERSIONS
+      ↓
+ADVANCE SERVER RUNTIME ONLY IF A SERVER RELEASE/DEPLOYMENT EVENT OCCURRED
       ↓
 SET/VERIFY DECLARED MODULE STATUS APPROPRIATELY
       ↓
@@ -249,8 +289,9 @@ Prefer runtime-hot work when it is the correct architectural owner; do not move 
 
 Core invariants:
 
-- every governed Server development event gets the next overall Server version, including failed/partial governed events as defined by the evolution contract;
-- only modules that actually changed receive module-version bumps;
+- every completed governed repository tier advances Repository Work lineage;
+- Server Runtime advances only when an actual Server release/deployment event advances deployed Server lineage;
+- only components/modules that actually changed receive their own version bumps;
 - `VERSION.txt` is the complete governed version registry: anything that has or receives an independently advanced version identifier MUST be registered there and routed to its authoritative `versions/<module-id>.txt` owner; it must not become a duplicate numeric/status ledger;
 - each module-owned version file may also declare the module's intended operational `STATUS`; consumers should resolve that status through `VERSION.txt` rather than hardcoding another copy;
 - **VERSION and STATUS answer different questions:** `VERSION` identifies the module's evolution state; `STATUS` declares whether that module is intended to be `active`, `preparing`, `maintenance`, `disabled`, or another explicitly defined lifecycle state;
