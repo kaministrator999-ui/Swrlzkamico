@@ -1168,3 +1168,14 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Resulting version:** Repository Work `1.0.6`. Server Runtime `2.3.287`, Web Chat `1.5.85`, Runtime Manifest `152`, LALM Engine `2.1.112`, and Deployment Control `1.0.10` remain unchanged.
 - **Verification:** source re-read confirmed the executable bootstrap block and terminal guard before version assignment; Repository Work authority was concurrency-checked before advancing.
 - **Deployment/restart:** none; this event is deployment-inert and performs no production activation.
+
+
+### UPDATE STARTED — 2026-09-19 — version-ledger and §§ startup handoff hardening
+
+- **Requested outcome:** require every registered version authority to remain transactionally synchronized with the Roadmap whenever that module version advances, and require compact project startup to reconstruct and present where every registered versioned module was last left plus the single most recent overall handoff.
+- **Observed baseline:** `runtime:VERSION.txt` is the canonical registry and Repository Work is `1.0.6`. Project Start resolves all module authorities and the Roadmap, but its compact-bootstrap terminal contract does not yet require a per-module Roadmap handoff ledger. Version governance requires version assignment and Roadmap closure, but the invariant that every changed registered module must have its new version and resulting state recorded in the same governed Roadmap event is not stated strongly enough as an atomic requirement.
+- **Canonical owners:** `SWRLZ_VERSION_MODULE_EVOLUTION.md` owns version/Roadmap synchronization; `§wyrlz_§tart.md` owns startup reconstruction; the response standard owns presentation.
+- **Architecture reconciliation:** extend the existing authorities only; introduce no new registry, history store, or runtime owner.
+- **Expected impact:** documentation/governance only. Repository Work advances on completion; Server Runtime, Web Chat, Runtime Manifest, LALM Engine, Deployment Control, and all other runtime modules remain unchanged.
+- **Deployment expectation:** none; governance documentation is deployment-inert.
+- **Verification plan:** re-read all changed authorities, verify startup requires a row/state for every `runtime:VERSION.txt` entry and a distinct latest-overall handoff, verify version mutation requires same-event Roadmap synchronization, then concurrency-check and advance Repository Work only.
