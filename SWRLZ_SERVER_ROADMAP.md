@@ -921,3 +921,11 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Rendered result remains 3,288 tokens; composition attributes 2,673 tokens to those five downstream policy segments alone.
 - Fresh source tracing shows v50 delegates normal generation to `_V49_GENERATE`; v49 delegates to `_V48_GENERATE`. Therefore the safe final synthetic-policy interception point is the inherited v49 -> v48 normal-generation bridge: all v51-v55 policy wrappers have already injected their state before reaching v50/v49, while online evidence/research semantics remain downstream and conditional.
 - Bounded repair: replace only the v49 namespace's `_V48_GENERATE` bridge with a compaction adapter. Preserve real history, online evidence, research policy, Truth Firewall/evidence semantics, and all deterministic cameras/state machines.
+
+
+##### UPDATE CONTINUATION STARTED — 2026-09-19 — v47/v46 last-unconditional policy boundary
+
+- Request `web:mu8nbzp4:16546873061255550490` proves 2.1.107 and both compaction adapters execute. The v49->v48 adapter sees zero removable segments because v48 delegates to v47, and v47 injects trajectory after that adapter; v46 and earlier lineage are therefore also downstream of the attempted boundary.
+- Prompt camera: 3,556 rendered tokens, 7 synthetic history messages / 14,080 history chars; conversation-intelligence 1,177 tokens, map-to-point 505, Unicode 513, reasoning-recovery 311, trajectory 167.
+- Source tracing confirms v47 owns trajectory injection then calls `_V46_GENERATE`; v46 delegates to v45. Therefore patch the v47 namespace's `_V46_GENERATE` bridge: this is downstream of v47 trajectory and all later wrappers while still upstream of v46/base inference.
+- Preserve v46 language context and all lower inference semantics; compact only recognized synthetic Brain policy system turns.
