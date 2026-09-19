@@ -255,6 +255,13 @@ def install(server) -> None:
 
     @server.app.middleware("http")
     async def runtime_hydration(request: Request, call_next):
+        # Read-only ingress camera: derive correlation locally before any sync/call-next
+        # instrumentation. This must never be able to break the request path.
+        request_id = str(
+            request.headers.get("x-swrlz-request-id")
+            or request.query_params.get("requestId")
+            or ""
+        ).strip()[:160]
         # Generation is initiated by POST /api/chat[/]. Hydrating only GET meant
         # a user could submit inference against a stale R39 entrypoint before any
         # page/status GET happened to refresh the worker. Refresh every chat
