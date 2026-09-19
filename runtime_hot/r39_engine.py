@@ -1,4 +1,4 @@
-"""Hot R39 entrypoint v86 with prompt-composition attribution over preserved v85 research status and v83 batching."""
+"""Hot R39 entrypoint v87 preserving v86 prompt-composition attribution after loader repair."""
 from __future__ import annotations
 import json,time,urllib.request
 
@@ -26,15 +26,17 @@ _V85_COMMIT="f63e6d1999255806f65e0d1d670d46ac8ab86994"
 _V85_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V85_COMMIT}/runtime_hot/r39_engine_v85_overlay.py"
 _V86_COMMIT="abc895d9d268ccae6efc5c8bb2d5cfa1bb982c7f"
 _V86_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V86_COMMIT}/runtime_hot/r39_engine_v86_overlay.py"
+_V87_COMMIT="e59f572d3afbbf0d825d023531cc10987572a7aa"
+_V87_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V87_COMMIT}/runtime_hot/r39_engine_v87_overlay.py"
 
 def _entry(stage,**fields):
-    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v86","atUnixMs":int(time.time()*1000)}
+    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v87","atUnixMs":int(time.time()*1000)}
     for k,v in fields.items():
         if v is None or isinstance(v,(str,int,float,bool)):record[str(k)[:64]]=v
     print("SWRLZ_R39_HOT_ENTRY "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
 
 try:
-    _entry("fetch-start",sourceCommit=_V74_COMMIT,overlayCommit=_V75_COMMIT,v76OverlayCommit=_V76_COMMIT,v77OverlayCommit=_V77_COMMIT,v78OverlayCommit=_V78_COMMIT,v79OverlayCommit=_V79_COMMIT,v80OverlayCommit=_V80_COMMIT,v81OverlayCommit=_V81_COMMIT,v82BatchCommit=_V82_BATCH_COMMIT,v84OverlayCommit=_V84_COMMIT,v85OverlayCommit=_V85_COMMIT,v86OverlayCommit=_V86_COMMIT)
+    _entry("fetch-start",sourceCommit=_V74_COMMIT,overlayCommit=_V75_COMMIT,v76OverlayCommit=_V76_COMMIT,v77OverlayCommit=_V77_COMMIT,v78OverlayCommit=_V78_COMMIT,v79OverlayCommit=_V79_COMMIT,v80OverlayCommit=_V80_COMMIT,v81OverlayCommit=_V81_COMMIT,v82BatchCommit=_V82_BATCH_COMMIT,v84OverlayCommit=_V84_COMMIT,v85OverlayCommit=_V85_COMMIT,v86OverlayCommit=_V86_COMMIT,v87OverlayCommit=_V87_COMMIT)
     _request=urllib.request.Request(_V74_URL,headers={"User-Agent":"swrlz-r39-v75-loader"})
     with urllib.request.urlopen(_request,timeout=20) as _response:_source=_response.read(4000001)
     if len(_source)>4000000:raise RuntimeError("R39_V74_SOURCE_TOO_LARGE")
@@ -104,7 +106,13 @@ try:
     _entry("v85-overlay-fetch-ok",overlayBytes=len(_v85_overlay))
     exec(compile(_v85_overlay.decode("utf-8"),_V85_URL+"#v85-overlay","exec"),globals(),globals())
 
-    _v86_request=urllib.request.Request(_V86_URL,headers={"User-Agent":"swrlz-r39-v86-overlay"})\n    with urllib.request.urlopen(_v86_request,timeout=20) as _response:_v86_overlay=_response.read(1000001)\n    if len(_v86_overlay)>1000000:raise RuntimeError("R39_V86_OVERLAY_TOO_LARGE")\n    _entry("v86-overlay-fetch-ok",overlayBytes=len(_v86_overlay))\n    exec(compile(_v86_overlay.decode("utf-8"),_V86_URL+"#v86-overlay","exec"),globals(),globals())\n\n    _inspect=inspect_engine() if callable(globals().get("inspect_engine")) else {}
+    _v86_request=urllib.request.Request(_V86_URL,headers={"User-Agent":"swrlz-r39-v86-overlay"})\n    with urllib.request.urlopen(_v86_request,timeout=20) as _response:_v86_overlay=_response.read(1000001)\n    if len(_v86_overlay)>1000000:raise RuntimeError("R39_V86_OVERLAY_TOO_LARGE")\n    _entry("v86-overlay-fetch-ok",overlayBytes=len(_v86_overlay))\n    exec(compile(_v86_overlay.decode("utf-8"),_V86_URL+"#v86-overlay","exec"),globals(),globals())\n\n    _v87_request=urllib.request.Request(_V87_URL,headers={"User-Agent":"swrlz-r39-v87-overlay"})
+    with urllib.request.urlopen(_v87_request,timeout=20) as _response:_v87_overlay=_response.read(1000001)
+    if len(_v87_overlay)>1000000:raise RuntimeError("R39_V87_OVERLAY_TOO_LARGE")
+    _entry("v87-overlay-fetch-ok",overlayBytes=len(_v87_overlay))
+    exec(compile(_v87_overlay.decode("utf-8"),_V87_URL+"#v87-overlay","exec"),globals(),globals())
+
+    _inspect=inspect_engine() if callable(globals().get("inspect_engine")) else {}
     _self_test=_inspect.get("programmingContinuationSemanticSelfTest") if isinstance(_inspect,dict) else None
     if not isinstance(_self_test,dict) or not _self_test.get("ok"):
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
