@@ -990,3 +990,13 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Evidence:** both extensions compiled and loaded successfully in the runner; native equivalence passed for f32/f16/bf16/q4_0/q8_0/q4_k/q6_k and diagnostics reported `available:true`, `batchAvailable:true`. Therefore the defect is packaging transfer into Vercel Build Output, not native arithmetic/build correctness.
 - **Bounded repair:** Deployment Control 1.0.10 now injects the already-verified compiled binaries into every Python `.func/swyrlz/` bundle after `vercel build` and before the existing artifact gate. It fails closed if compiled artifacts or Python function bundles are absent. No inference semantics changed.
 - **Retry governance:** the standing contract allowed one terminal trigger and that trigger has been consumed. This repair is source complete but a second production trigger requires explicit user approval; no retry was started automatically.
+
+
+###### UPDATE CONTINUATION STARTED — 2026-09-19 — lockdown route-enter 500 repair
+
+- **User reproduction:** fresh count request displayed `Bridge rejected the request (HTTP 500)`; opening LOCKDOWN LOG then froze the page.
+- **Production cameras:** requests reach `http-ingress` and `route-enter` but do not reach the hot-runtime middleware's downstream cameras. Multiple Chat/status requests share the same failure boundary. Browser diagnostic POSTs also show 401, so the viewer currently cannot drain its high-volume client trace and can freeze under retained diagnostic pressure.
+- **Proven source defect:** `api/runtime_hot.py::runtime_hydration` used `request_id` in `middleware-sync-enter` / `middleware-call-next-enter` without defining it. This exactly matches the camera boundary: the exception occurs immediately after outer `route-enter` and before the first runtime-hydration camera.
+- **Bounded candidate repair:** commit `5aa3128874e74df6b22e3dc4cc82c9938b928536` derives a bounded request correlation ID from `x-swrlz-request-id` or `requestId` before any runtime-hydration camera. No inference, policy, prompt, persistence, or UI semantics changed; all cameras remain installed.
+- **Adjacent issue retained:** client-debug authentication 401/freeze remains a separate candidate and is not silently bundled into this behavioral fix. Verify the 500 repair first under the one-candidate rule, then narrow the viewer freeze independently.
+- **Activation:** stable middleware changed; production activation is required before this candidate can be live/user-visible verified. No deployment has been triggered by this continuation.
