@@ -1,10 +1,7 @@
-# §wyrlz manual production deployment request
-# Explicit one-retry approval granted after run #18 exposed the verifier NaN defect.
-
+# §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-19-r39-finite-verifier-retry-v1
-REQUESTED_AT=2026-09-19T16:16:00Z
-REQUESTED_BY=ChatGPT-explicit-retry-approval
+REQUEST_ID=2026-09-19-r39-chat-post-hot-hydration-v1
+REQUESTED_BY=standing-terminal-deploy-contract
 SOURCE_REF=main
-REASON=One approved retry after repairing the R39 native equivalence verifier to generate bounded finite floating-point tensors and reject non-finite reference/native/error values. Native compilation, equivalence, artifact-presence, deployment, and live native/batch gates remain mandatory.
+REASON=Terminal activation for the bounded R39 activation-lineage repair. Stable chat middleware now hot-syncs runtime before POST generation, preventing stale worker-local R39 entrypoints. Runtime a45dfef pins batch adapter to containing commit 2807923. One production deployment only; verification follows.
