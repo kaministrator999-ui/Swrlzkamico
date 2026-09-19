@@ -929,3 +929,14 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Prompt camera: 3,556 rendered tokens, 7 synthetic history messages / 14,080 history chars; conversation-intelligence 1,177 tokens, map-to-point 505, Unicode 513, reasoning-recovery 311, trajectory 167.
 - Source tracing confirms v47 owns trajectory injection then calls `_V46_GENERATE`; v46 delegates to v45. Therefore patch the v47 namespace's `_V46_GENERATE` bridge: this is downstream of v47 trajectory and all later wrappers while still upstream of v46/base inference.
 - Preserve v46 language context and all lower inference semantics; compact only recognized synthetic Brain policy system turns.
+
+
+##### UPDATE CONTINUATION STARTED — 2026-09-19 — prefill causal narrowing reset
+
+- **User-directed debugging discipline:** until the user declares this prefill issue fixed, use existing cameras first, instrument missing candidate boundaries, mutate one behavioral candidate at a time, and fully restore disproven candidate mutations before trying another.
+- **Reconciled experimental evidence:** 2.1.106's v51→v50 compactor had a measurable partial effect (2 segments / 1,175 chars removed) but did not fix the issue; 2.1.107 v49→v48 and 2.1.108 v47→v46 each removed zero segments and did not reduce the 3,556-token fresh-thread prompt.
+- **Reset performed:** removed all three speculative compaction bridges from the active R39 entrypoint rather than carrying failed/provisional behavioral mutations forward.
+- **Observation-only instrumentation:** R39 2.1.109 installs read-only payload cameras across the inherited generation bridges v51→v50 through v42→v41. Each camera records request identity plus history/system message counts and character totals and prompt characters; it does not alter prompt/history contents.
+- **Purpose:** one controlled fresh-thread reproduction should reveal the first boundary where synthetic prompt material appears or is reconstructed. Only after narrowing will one candidate owner be mutated.
+- **Deployment boundary:** runtime-hot only; no stable production deployment is required while the immutable runtime-head loader remains healthy.
+- **Verification plan:** reproduce the same fresh-thread count-to-10 request, correlate all `prefill-boundary-*` cameras for one request ID, identify the smallest remaining candidate set, and make no behavioral fix until that evidence is reviewed.
