@@ -849,3 +849,13 @@ Future work should leave this ledger able to answer:
 - What concurrency/failure lineage must future work preserve?
 
 If module authorities disagree with this snapshot, module-owned authorities win and the roadmap must be reconciled during the next governed event.
+
+#### UPDATE CONTINUATION STARTED — 2026-09-19 — R39 native production activation repair
+
+- **Prior event:** Transformer throughput checkpoint — cold prefill and decode arithmetic.
+- **Observed deployment evidence:** production deployment `dpl_8uTWPBjbNSqY84UurtS8YqEFkvA4` reached Vercel READY from source `7acb942034e2ed6f0fd38435dfb0cc5dcb0a14f4`, but GitHub production workflow run #14 failed its post-deploy verification step.
+- **Runtime camera evidence:** R39 v90 hydration succeeded, but `v83-batch-reinstall-ok` reported `nativeBatchAvailable:false`; therefore the intended native batched prefill accelerator was not active and no throughput improvement may be claimed.
+- **Architecture ownership:** stable production packaging/deployment owns compiled native-extension delivery; runtime-hot R39 owns inference selection/use. The Brain remains the sole inference owner.
+- **Repair scope:** make the compiled `swyrlz._r39_native` and `swyrlz._r39_batch` artifacts explicitly traceable into Vercel function output; add a pre-deploy artifact gate so a production deployment cannot proceed when native binaries are absent; preserve Python/reference fallback for runtime safety.
+- **Deployment boundary:** complete and statically verify the packaging/workflow repair first. Under the standing Project Start contract, at most one terminal production trigger is permitted after the candidate is complete; no automatic retry loop.
+- **Verification plan:** prebuilt artifact must contain both native extensions; production `/api/lalm/native` must report `available:true` and `batchAvailable:true`; R39 hydration camera must report `nativeBatchAvailable:true`; then measure cold prefill/decode against the 10.67 / 2.08 tok/s baseline before closing the parent event.
