@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-19-route-enter-500-candidate-v1
-REQUESTED_BY=user-explicit-route-enter-500-approval
+REQUEST_ID=2026-09-19-deployment-path-observation-v1
+REQUESTED_BY=user-explicit-one-time-deployment-test
 SOURCE_REF=main
-REASON=Activate only the camera-proven runtime_hydration request_id definition repair from commit 5aa3128874e74df6b22e3dc4cc82c9938b928536. Verify candidate #1 before any LOCKDOWN viewer 401/freeze mutation. One trigger only; no automatic retry.
+REASON=One-time controlled deployment-path observation requested by user to verify whether updating this request triggers GitHub workflow processing and subsequently creates a Vercel production deployment. No source/feature mutation; no automatic retry.
