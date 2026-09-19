@@ -1202,3 +1202,13 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Expected impact:** governance documentation only. Repository Work advances; runtime module versions remain unchanged.
 - **Deployment expectation:** none.
 - **Verification plan:** harden both canonical contracts, re-read them, concurrency-check Repository Work, advance only Repository Work, and close this Roadmap event.
+
+
+### UPDATE FINISHED — 2026-09-19 — continuation marker lifecycle hardening
+
+- **Changed Project Start:** every resumed/recontinued work session now requires an `UPDATE CONTINUATION STARTED` marker before mutation and an `UPDATE CONTINUATION ENDED` marker when that continuation pauses/stops. If the continuation closes the overall event, `UPDATE FINISHED`, `ABORTED`, or `SUPERSEDED` serves as its end marker instead of requiring a redundant continuation-end marker.
+- **Changed Version Evolution:** added the canonical continuation lifecycle: original UPDATE STARTED → continuation start/end pairs for every resumed session → terminal event marker. A continuation-start without a later continuation-end or terminal marker is explicitly interrupted-in-continuation work.
+- **Resulting version:** Repository Work `1.0.8` (from `1.0.7`). All runtime component versions remain unchanged.
+- **Verification:** both changed contracts were re-read and contain the explicit `UPDATE CONTINUATION ENDED` requirement; `runtime:versions/repository-work.txt` reports `1.0.8` active.
+- **Deployment/restart:** none; governance-only and deployment-inert.
+- **Result:** COMPLETE.
