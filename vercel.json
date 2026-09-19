@@ -10,7 +10,10 @@
   "routes": [
     {
       "src": "/api/chat/client-debug/?$",
-      "methods": ["GET", "POST"],
+      "methods": [
+        "GET",
+        "POST"
+      ],
       "dest": "/api/chat.py",
       "transforms": [
         {
@@ -27,7 +30,8 @@
   "functions": {
     "api/**/*.py": {
       "maxDuration": 300,
-      "excludeFiles": "{.transport/**,swrlz-core/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
+      "excludeFiles": "{.transport/**,swrlz-core/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}",
+      "includeFiles": "{swyrlz/**,native/**}"
     }
   }
 }
