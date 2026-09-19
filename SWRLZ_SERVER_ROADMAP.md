@@ -99,6 +99,18 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Verification:** fetch-back confirms v90 overlay, active v90 loader pin, zero literal backslash-newline source separators in the loader, LALM 2.1.102, Server 2.3.284, Manifest authority/json 149, and unchanged Online Research 1.0.1. v90 carries deterministic self-tests for evidence detection/materialization, survival through v89 compaction, marker preservation, missing-evidence detection, and offline planner exclusion. Production logs have not yet emitted v90, so runtime/live/user-visible acceptance is pending a fresh request.  
 **Deployment / restart:** NONE. Runtime-hot source only; no deployment-producing action was performed.
 
+### Server 2.3.285 — repair Online Research search-result extraction
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** restore candidate retrieval for ordinary public factual searches while preserving v90 fail-closed grounding.  
+**Triggering evidence:** production request `web:mu8fya97:3452270317462630067` planned the exact Kansas City weather query, invoked provider `duckduckgo-html`, completed in 48 ms with `resultCount=0`, `searchResultsInspected=0`, `pagesFetched=0`, and no retrieval error. v90 then correctly failed closed.  
+**Architecture reconciliation:** the defect is at the existing Human/server network boundary `api/online_research.py::_ddg_search`; Online Research remains the sole retrieval owner. Brain evidence protection and Mask presentation remain unchanged.  
+**Observed baseline:** Server `2.3.284`; Online Research `1.0.1`; LALM Engine `2.1.102` / v90; Runtime Manifest `149`.  
+**Expected modules:** Online Research + overall Server. No LALM or Chat mutation expected. Stable server source is deployment-bound, so implementation will stop before any deployment-producing action.  
+**Verification plan:** replace brittle nested-div regex extraction with bounded result-anchor parsing that tolerates current DDG HTML structure; add privacy-safe parser diagnostics distinguishing response/anchor/accepted counts; source/static fetch-back and deterministic fixture reasoning; live acceptance requires deployment approval and a fresh request.
+
 ## Release ledger
 
 ### Server 2.3.282 — R39 v88 complete prompt-camera loader repair
