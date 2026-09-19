@@ -148,8 +148,8 @@ try:
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-    HOT_SERVER_VERSION="2.1.106"
-    HOT_REVISION="2.1.106-hot-final-policy-boundary-prefill-v90"
+    HOT_SERVER_VERSION="2.1.107"
+    HOT_REVISION="2.1.107-hot-v49-v48-prefill-boundary-v90"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
 
@@ -191,7 +191,25 @@ try:
                capsuleChars=capsule_chars)
         for event in _v50_original(compacted,is_cancelled): yield event
     _v51_owner.__globals__["_V50_GENERATE"]=_compact_v50_generate
-    _entry("compact-prefill-installed",finalPolicyBoundary=True)
+
+    # v50 normal generation delegates to v49, whose _V48_GENERATE bridge is the
+    # last unconditional path after v51-v55 have injected their synthetic policy
+    # turns. Patch that bridge as well so all legacy Brain policy prose is removed
+    # before v48+ conditional research/evidence handling and base inference.
+    _v50_owner=getattr(_v51_owner,"__globals__",{}).get("_V50_GENERATE") if callable(_v51_owner) else None
+    _v49_generate=getattr(_v50_owner,"__globals__",{}).get("_V49_GENERATE") if callable(_v50_owner) else None
+    _v48_original=getattr(_v49_generate,"__globals__",{}).get("_V48_GENERATE") if callable(_v49_generate) else None
+    if not callable(_v48_original):
+        raise RuntimeError("R39_COMPACT_PREFILL_V49_V48_BOUNDARY_UNAVAILABLE")
+    def _compact_v48_generate(payload,is_cancelled=None):
+        compacted,removed,removed_chars,capsule_chars=_compact_policy_payload(payload)
+        _entry("compact-prefill-final-render-path",
+               requestId=_request_id(payload) if isinstance(payload,dict) else "",
+               removedPolicySegments=removed,removedPolicyChars=removed_chars,
+               capsuleChars=capsule_chars)
+        for event in _v48_original(compacted,is_cancelled): yield event
+    _v49_generate.__globals__["_V48_GENERATE"]=_compact_v48_generate
+    _entry("compact-prefill-installed",finalPolicyBoundary=True,v49v48Boundary=True)
     _entry("hydrate-ok",hotServerVersion=HOT_SERVER_VERSION,
            hotRevision=HOT_REVISION,batchSourceCommit=_V82_BATCH_COMMIT,
            responseContract=callable(globals().get("_response_contract")),
