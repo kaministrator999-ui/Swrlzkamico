@@ -1130,6 +1130,8 @@
       const controller = new AbortController();
       active = {threadId: thread.id, messageId: assistant.id, requestId, controller}; render(true);
       const context = {threadId: thread.id, requestId, message: assistant, lastSeq: 0, terminal: false, started: performance.now()};
+      lockdownCurrentRequestId=requestId;
+      lockdownTrace("request-context-created",{requestId,threadId:thread.id,userMessageId:user.id,assistantMessageId:assistant.id,history,prompt:promptText,context:lockdownSafe(context)});
       try {
         const response = await fetch(`${API}?action=stream`, {
           method: "POST", headers: authHeaders(), signal: controller.signal,
@@ -1139,23 +1141,55 @@
           const error = await response.json().catch(() => ({})); throw new Error(error.detail || `Bridge rejected the request (HTTP ${response.status}).`);
         }
         if (!response.body) throw new Error("Streaming response body is unavailable.");
-        const reader = response.body.getReader(); const decoder = new TextDecoder(); let buffer = "";
+        const reader = response.body.getReader(); const decoder = new TextDecoder(); let buffer = "", readOrdinal=0;
+        lockdownTrace("stream-reader-created",{requestId,bodyLocked:response.body.locked});
         while (true) {
-          const {value, done} = await reader.read(); if (done) break;
-          buffer += decoder.decode(value, {stream: true});
+          const readStarted=performance.now();
+          lockdownTrace("stream-read-enter",{ordinal:readOrdinal+1,bufferChars:buffer.length});
+          const {value, done} = await reader.read(); readOrdinal++;
+          lockdownTrace("stream-read-exit",{ordinal:readOrdinal,done,byteCount:value?.byteLength||0,durationMs:+(performance.now()-readStarted).toFixed(3),bytesHex:value?Array.from(value.slice(0,4096)).map(x=>x.toString(16).padStart(2,"0")).join(""):""});
+          if (done) break;
+          const decodedChunk=decoder.decode(value, {stream: true});
+          lockdownTrace("stream-decode-chunk",{ordinal:readOrdinal,decodedChars:decodedChunk.length,decodedText:decodedChunk});
+          buffer += decodedChunk;
+          lockdownTrace("stream-buffer-after-append",{ordinal:readOrdinal,bufferChars:buffer.length,buffer});
           if (buffer.length > 131072 && !buffer.includes("\n")) throw new Error("Stream event exceeded the browser safety bound.");
           const lines = buffer.split("\n"); buffer = lines.pop() || "";
-          for (const line of lines) if (line.trim()) consumeEvent(JSON.parse(line), context);
-          if (context.terminal) { try { await reader.cancel(); } catch (_) {} break; }
+          lockdownTrace("stream-lines-split",{ordinal:readOrdinal,lineCount:lines.length,remainderChars:buffer.length,remainder:buffer});
+          for (let lineIndex=0;lineIndex<lines.length;lineIndex++) {
+            const line=lines[lineIndex];
+            if (!line.trim()) { lockdownTrace("stream-line-empty",{ordinal:readOrdinal,lineIndex}); continue; }
+            lockdownTrace("stream-line-json-enter",{ordinal:readOrdinal,lineIndex,line});
+            const parsed=JSON.parse(line);
+            lockdownTrace("stream-line-json-exit",{ordinal:readOrdinal,lineIndex,event:lockdownSafe(parsed)});
+            consumeEvent(parsed, context);
+          }
+          if (context.terminal) {
+            lockdownTrace("stream-reader-cancel-terminal",{ordinal:readOrdinal,lastSeq:context.lastSeq});
+            try { await reader.cancel(); lockdownTrace("stream-reader-cancelled",{ordinal:readOrdinal}); } catch (error) { lockdownTrace("stream-reader-cancel-error",{ordinal:readOrdinal,error:String(error?.message||error)}); }
+            break;
+          }
         }
-        buffer += decoder.decode(); if (!context.terminal && buffer.trim()) consumeEvent(JSON.parse(buffer), context);
+        const decoderTail=decoder.decode();
+        lockdownTrace("stream-decoder-finish",{tailChars:decoderTail.length,tail:decoderTail});
+        buffer += decoderTail;
+        if (!context.terminal && buffer.trim()) {
+          lockdownTrace("stream-final-json-enter",{buffer});
+          const parsed=JSON.parse(buffer);
+          lockdownTrace("stream-final-json-exit",{event:lockdownSafe(parsed)});
+          consumeEvent(parsed, context);
+        }
         if (!context.terminal) throw new Error("Stream ended without a terminal event.");
+        lockdownTrace("stream-reader-terminal-complete",{readOrdinal,lastSeq:context.lastSeq,messageState:assistant.state,textChars:assistant.text.length});
       } catch (error) {
+        lockdownTrace("send-stream-catch",{errorType:error?.name||"Error",error:String(error?.message||error),stack:String(error?.stack||"")});
         if (error.name === "AbortError") { assistant.state = "cancelled"; assistant.meta.phase = "CANCELLED"; }
         else { assistant.state = "failed"; assistant.meta.phase = "ERROR"; assistant.meta.error = error.message || "The stream failed."; }
         assistant.meta.totalLatencyMs ??= Math.round(performance.now() - context.started); saveState();
       } finally {
+        lockdownTrace("send-stream-finally-enter",{requestId,terminal:context.terminal,lastSeq:context.lastSeq,messageState:assistant.state,textChars:assistant.text.length});
         if (active?.requestId === requestId) active = null; render(true); refreshStatus();
+        lockdownTrace("send-stream-finally-exit",{requestId,active:lockdownSafe(active),messageState:assistant.state,textChars:assistant.text.length,snapshot:lockdownSnapshot()});
       }
     }
 
