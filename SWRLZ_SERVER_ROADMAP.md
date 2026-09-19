@@ -47,6 +47,15 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Deployment expectation:** NONE for this governance tier. Repository/document/version-authority commits are deployment-inert under the current fail-closed deployment contract.  
 **Verification plan:** update the canonical version-evolution contract; add/register repository-work authority; fetch back all authorities; verify Server remains `2.3.287`, Chat remains `1.5.84`, and repository-work lineage alone advances for this tier; then finish this roadmap event before beginning the next scoped page tier.
 
+**UPDATE FINISHED**
+
+**Result:** COMPLETE — VERSION LINEAGES SEPARATED.  
+**Actual change:** established canonical Repository Work lineage as a distinct version axis, registered it in the runtime `VERSION.txt` index, and corrected the version-evolution contract so repository engineering progress no longer forces a Server Runtime bump. Repository Work now advances for every completed governed repository tier; Server Runtime advances only for an actual Server release/deployment event that advances deployed Server lineage; component/module versions advance only when those components change.  
+**Resulting versions:** Repository Work `1.0.1`; Server Runtime remains `2.3.287`; Web Chat remains `1.5.84`. No Chat, Server runtime, LALM, runtime manifest, or deployment-control implementation changed in this governance tier.  
+**Verification:** fetch-back confirms `VERSION.txt` registers `REPOSITORY_WORK=versions/repository-work.txt`; `versions/repository-work.txt` reports `1.0.1`; Server Runtime remains `2.3.287`; Web Chat remains `1.5.84`.  
+**Deployment / restart:** NONE. No deployment-producing action was performed.  
+**Next scoped tier:** inventory and classify the initial `/chat/§wyrlz` scene (scenery, starting props, starting actors, open-curtain actors, temporary actors, closed-curtain transitions, stagehands) before page implementation.
+
 
 ### Navigation-lineage camera — intermittent Chat catnnection isolation
 
