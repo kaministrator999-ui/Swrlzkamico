@@ -1,4 +1,4 @@
-# §wyrlz Project Start — READ THIS FIRST
+# §wyrlz §tart — READ THIS FIRST
 
 **Role:** canonical router/orchestrator for every §wyrlz project-development session.
 
@@ -14,7 +14,7 @@ When the user says **start project work**, **resume project work**, **work on §
 
 Read these documents in this order before implementation:
 
-1. `SWRLZ_PROJECT_START.md` — this router.
+1. `§wyrlz_§tart.md` — this router.
 2. `SWRLZ_HOTFIX_RULES.md` — runtime/main mutation boundary, deployment gate, hotfix mechanics.
 3. `SWRLZ_VERSION_MODULE_EVOLUTION.md` — Server/module version lineage and concurrency rules.
 4. `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md` — how to inspect existing architecture before adding/fixing anything.
@@ -98,7 +98,7 @@ Each rule family has one primary owner.
 
 | Concern | Canonical document |
 |---|---|
-| Project-work entry/order | `SWRLZ_PROJECT_START.md` |
+| Project-work entry/order | `§wyrlz_§tart.md` |
 | Runtime vs main, hotfix/deploy boundary | `SWRLZ_HOTFIX_RULES.md` |
 | Runtime-hot integration/how-to | `docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md` |
 | Repository/Server/module version lineage | `SWRLZ_VERSION_MODULE_EVOLUTION.md` |
