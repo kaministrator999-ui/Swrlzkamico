@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 static inline float fp16_to_f32(uint16_t h) {
     uint32_t s = (uint32_t)(h >> 15) & 1u;
@@ -221,7 +224,13 @@ static PyObject *py_matvec(PyObject *self, PyObject *args) {
     const float *x = (const float *)PyArray_DATA(x_arr);
     float *y = (float *)PyArray_DATA(out);
 
+    /* Output rows are independent. Parallelize the expensive quantized
+       projection across rows while the GIL is released. The threshold avoids
+       OpenMP team overhead on tiny matrices used by probes/tests. */
     Py_BEGIN_ALLOW_THREADS
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(static) if(rows >= 256)
+#endif
     for (int r = 0; r < rows; ++r) {
         y[r] = dot(rp + (size_t)r * rb, cols, x);
     }
