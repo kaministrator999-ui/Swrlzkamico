@@ -35,6 +35,29 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### Governance update — §imple Mask theater depth model
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** preserve the Kami + §wyrlz theater/play analogy as the structural depth model for designing proper Mask boundaries: stage/Mask, actor/Brain, backstage/Human-server, recursive masked workers, outward Web Mask, mission coordination, Frozen Collector scenery construction, provenance, and backstage telemetry.  
+**Observed baseline:** Server `2.3.284`; Chat `1.5.82`; LALM Engine `2.1.102` / v90; Frozen Web Collector `1.0.9`; main Project Start SHA `b9eb51b62bb89b9626afcd59bb5c15c97c8a6b4e`; runtime registry `b1d1b9c9402079b3543292b7d7c2cb3fa09d386d`.  
+**Architecture reconciliation:** extend `SWRLZ_PROJECT_START.md`, the existing project architecture router, rather than creating a competing Mask policy owner. This is an explanatory architecture contract: metaphors clarify responsibility/boundary depth but do not mandate one service per metaphorical worker.  
+**Expected module impact:** governance/docs only. No runtime module, Chat implementation, LALM runtime, Online Research runtime, Frozen Collector runtime, or manifest mutation.  
+**Deployment expectation:** NONE. Documentation/governance mutation is deployment-inert under the current contract.  
+**Verification plan:** fetch back Project Start and confirm the model preserves Mask/Human/Brain ownership, recursive boundary roles, mission-worker coordination, distinct information lifecycles, no-orphaned-research provenance, §imple surface/π-underneath, and zero direct tool authority in Chat.
+
+**UPDATE FINISHED**
+
+**Result:** COMPLETE.  
+**Actual change:** Project Start now contains a canonical **§imple Mask / theater depth model**. It defines the Audience, Stage/Chat Mask, Actor/Brain, Backstage/Human-server, recursive masked workers, Outside/Web Mask, mission workers, Frozen Collector as scenery workshop, frozen knowledge as scenery, and cameras as behind-the-scenes records. It explicitly allows bounded worker-to-worker coordination and separates mission evidence, operational knowledge, durable frozen scenery, and telemetry.  
+**Provenance:** added the **no orphaned research** invariant: transformation does not erase attribution; externally researched material carries useful provenance through evidence/reasoning to citations and navigable source links, while durable frozen scenery retains derivation lineage.  
+**Mask contract:** records **§IMPLE Architecture: K.I.S.S. on the surface; π underneath**, “The §wyrlz Mask is the stage, not the theater,” “The Mask presents capabilities; it does not possess capabilities,” the cognition-leak test, and “The stage receives scenery, not the machinery that constructed the scenery.” New tools should normally require zero core Chat-runtime changes.  
+**Recursive/Backrooms rule:** nested masks/hats are valid boundary roles, but the contract explicitly rejects abstraction-for-abstraction's-sake; new workers/services still require responsibility/authority/lifecycle/isolation/reuse justification.  
+**Version result:** documentation/governance-only event; runtime Server remains `2.3.284`, Chat remains `1.5.82`, LALM Engine remains `2.1.102` / v90, Frozen Web Collector remains `1.0.9`.  
+**Verification:** source fetch-back pending immediately after this journal write; no runtime/live behavior was claimed or changed.  
+**Deployment / restart:** NONE. No deployment-producing action performed.
+
 ### Transformer throughput checkpoint — cold prefill and decode arithmetic
 
 **UPDATE STARTED**
