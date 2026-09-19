@@ -1119,3 +1119,13 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Bounded candidate repair:** commit `5aa3128874e74df6b22e3dc4cc82c9938b928536` derives a bounded request correlation ID from `x-swrlz-request-id` or `requestId` before any runtime-hydration camera. No inference, policy, prompt, persistence, or UI semantics changed; all cameras remain installed.
 - **Adjacent issue retained:** client-debug authentication 401/freeze remains a separate candidate and is not silently bundled into this behavioral fix. Verify the 500 repair first under the one-candidate rule, then narrow the viewer freeze independently.
 - **Activation:** stable middleware changed; production activation is required before this candidate can be live/user-visible verified. No deployment has been triggered by this continuation.
+
+
+### UPDATE STARTED — 2026-09-19 — Project Start version-registry branch authority hardening
+
+- **Requested outcome:** prevent fresh Project Start sessions from misclassifying `main:VERSION.txt` 404 as a version-authority inconsistency.
+- **Observed baseline:** `§wyrlz_§tart.md` on `main` routes startup through `VERSION.txt` without explicitly naming the authoritative branch; canonical registry fetch succeeds at `runtime:VERSION.txt` (SHA `37d75d33d3eca616ab3a76c64d137a3e6816881f`).
+- **Canonical owner:** Project Start owns startup/read routing; runtime owns the live version registry.
+- **Expected module impact:** documentation/governance only. Repository Work should advance; Server Runtime, Web Chat, Runtime Manifest, LALM, and deployment state should remain unchanged unless concurrent evidence requires otherwise.
+- **Deployment expectation:** none; documentation/governance mutation is deployment-inert.
+- **Verification plan:** fetch back `§wyrlz_§tart.md`, confirm explicit `runtime:VERSION.txt` authority and 404-on-main non-error rule, then reconcile version authorities before closing this event.
