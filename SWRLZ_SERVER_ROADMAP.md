@@ -35,6 +35,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### Version-governance separation — Repository / Server / Module lineage
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** separate repository-work lineage from deployed Server lineage and independently evolving module lineage so every governed repository update advances a repository/GitHub version, while Server advances only for an actual Server deployment/release event and each changed component (for example Chat) advances only when that component changes. This also establishes the scoped step-by-step build of the new canonical `/chat/§wyrlz` theater page without inheriting the competing legacy Chat presentation stack.  
+**Observed authority baseline:** runtime registry `VERSION.txt` SHA `b1d1b9c9402079b3543292b7d7c2cb3fa09d386d`; Server Runtime `2.3.287` SHA `43ce7f1c7144d2a127e513093dc87b1ba914911c`; Web Chat `1.5.84` SHA `f1b8e8196a60685557f9090d936ddfc8296a4b34`; Web Frontend `1.0.5` SHA `f6898debdc797377b6a3bf8791773cc5847d76f7`; Deployment Control `1.0.10` SHA `6ffefe45eb75b68d15e7b43667ebaec5055d4650`. Current version contract still couples the overall Server version to governed development events and has no independent repository-work version authority; that is the governance defect being corrected before new-page implementation.  
+**Architecture reconciliation:** introduce one repository-work lineage authority rather than overloading Server Runtime. Repository/GitHub version records completed governed repository tiers/updates; Server Runtime records deployed Server releases; module authorities continue to record their own component changes. A docs/directory/scaffolding-only repository tier therefore advances repository lineage only. A Chat source change advances repository + Chat, but not Server unless the Server is actually deployed/released. A Server deployment/release advances repository + Server and any component versions whose source changed in that tier. `VERSION.txt` remains the bounded registry and will register the new repository-work authority.  
+**Expected module impact:** governance/version registry plus a new repository-work version authority. No Chat runtime, Server runtime, LALM, manifest, or deployment-control behavior is changed by this governance tier itself. The `/chat/§wyrlz` implementation begins only after this version model is committed and verified.  
+**Deployment expectation:** NONE for this governance tier. Repository/document/version-authority commits are deployment-inert under the current fail-closed deployment contract.  
+**Verification plan:** update the canonical version-evolution contract; add/register repository-work authority; fetch back all authorities; verify Server remains `2.3.287`, Chat remains `1.5.84`, and repository-work lineage alone advances for this tier; then finish this roadmap event before beginning the next scoped page tier.
+
+
 ### Navigation-lineage camera — intermittent Chat catnnection isolation
 
 **UPDATE STARTED**
