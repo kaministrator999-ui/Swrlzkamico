@@ -1,4 +1,4 @@
-"""Hot R39 entrypoint v87 preserving v86 prompt-composition attribution after loader repair."""
+"""Hot R39 entrypoint v88 preserving v86 prompt-composition attribution after complete loader repair."""
 from __future__ import annotations
 import json,time,urllib.request
 
@@ -28,15 +28,17 @@ _V86_COMMIT="abc895d9d268ccae6efc5c8bb2d5cfa1bb982c7f"
 _V86_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V86_COMMIT}/runtime_hot/r39_engine_v86_overlay.py"
 _V87_COMMIT="e59f572d3afbbf0d825d023531cc10987572a7aa"
 _V87_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V87_COMMIT}/runtime_hot/r39_engine_v87_overlay.py"
+_V88_COMMIT="46eb91e1f1477069777c06a21cc8eced5c7873cb"
+_V88_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V88_COMMIT}/runtime_hot/r39_engine_v88_overlay.py"
 
 def _entry(stage,**fields):
-    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v87","atUnixMs":int(time.time()*1000)}
+    record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v88","atUnixMs":int(time.time()*1000)}
     for k,v in fields.items():
         if v is None or isinstance(v,(str,int,float,bool)):record[str(k)[:64]]=v
     print("SWRLZ_R39_HOT_ENTRY "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
 
 try:
-    _entry("fetch-start",sourceCommit=_V74_COMMIT,overlayCommit=_V75_COMMIT,v76OverlayCommit=_V76_COMMIT,v77OverlayCommit=_V77_COMMIT,v78OverlayCommit=_V78_COMMIT,v79OverlayCommit=_V79_COMMIT,v80OverlayCommit=_V80_COMMIT,v81OverlayCommit=_V81_COMMIT,v82BatchCommit=_V82_BATCH_COMMIT,v84OverlayCommit=_V84_COMMIT,v85OverlayCommit=_V85_COMMIT,v86OverlayCommit=_V86_COMMIT,v87OverlayCommit=_V87_COMMIT)
+    _entry("fetch-start",sourceCommit=_V74_COMMIT,overlayCommit=_V75_COMMIT,v76OverlayCommit=_V76_COMMIT,v77OverlayCommit=_V77_COMMIT,v78OverlayCommit=_V78_COMMIT,v79OverlayCommit=_V79_COMMIT,v80OverlayCommit=_V80_COMMIT,v81OverlayCommit=_V81_COMMIT,v82BatchCommit=_V82_BATCH_COMMIT,v84OverlayCommit=_V84_COMMIT,v85OverlayCommit=_V85_COMMIT,v86OverlayCommit=_V86_COMMIT,v87OverlayCommit=_V87_COMMIT,v88OverlayCommit=_V88_COMMIT)
     _request=urllib.request.Request(_V74_URL,headers={"User-Agent":"swrlz-r39-v75-loader"})
     with urllib.request.urlopen(_request,timeout=20) as _response:_source=_response.read(4000001)
     if len(_source)>4000000:raise RuntimeError("R39_V74_SOURCE_TOO_LARGE")
@@ -117,6 +119,12 @@ try:
     if len(_v87_overlay)>1000000:raise RuntimeError("R39_V87_OVERLAY_TOO_LARGE")
     _entry("v87-overlay-fetch-ok",overlayBytes=len(_v87_overlay))
     exec(compile(_v87_overlay.decode("utf-8"),_V87_URL+"#v87-overlay","exec"),globals(),globals())
+
+    _v88_request=urllib.request.Request(_V88_URL,headers={"User-Agent":"swrlz-r39-v88-overlay"})
+    with urllib.request.urlopen(_v88_request,timeout=20) as _response:_v88_overlay=_response.read(1000001)
+    if len(_v88_overlay)>1000000:raise RuntimeError("R39_V88_OVERLAY_TOO_LARGE")
+    _entry("v88-overlay-fetch-ok",overlayBytes=len(_v88_overlay))
+    exec(compile(_v88_overlay.decode("utf-8"),_V88_URL+"#v88-overlay","exec"),globals(),globals())
 
     _inspect=inspect_engine() if callable(globals().get("inspect_engine")) else {}
     _self_test=_inspect.get("programmingContinuationSemanticSelfTest") if isinstance(_inspect,dict) else None
