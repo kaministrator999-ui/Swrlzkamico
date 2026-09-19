@@ -1,5 +1,5 @@
 {
-  "version": 144,
+  "version": 145,
   "mode": "runtime-source-of-truth",
   "routes": {
     "/": {
@@ -35,5 +35,5 @@
     "web",
     "runtime_pages"
   ],
-  "notes": "Manifest v144 advances Chat 1.5.82: the sidebar version surface now enumerates every module authority declared by VERSION.txt instead of a fixed four-module subset."
+  "notes": "Manifest v145 activates R39 LALM 2.1.98 / v86 bounded prompt-composition attribution at the rendered-prefill boundary; Chat 1.5.82 remains unchanged."
 }
