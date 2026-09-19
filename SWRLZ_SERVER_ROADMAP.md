@@ -35,6 +35,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### Transformer throughput checkpoint — cold prefill and decode arithmetic
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** substantially improve uncached first-response prefill and autoregressive decode without dropping user context, changing model weights/quantization, weakening evidence/completion policy, or substituting cached answers.  
+**Observed baseline:** runtime commit `50338e18cd34dcb28c07d0132f013b4577fd35e0`; Server `2.3.284`; LALM Engine `2.1.102` / v90; Runtime Manifest `149`. Production request `web:mu8fs7os:15238160462747352484:planner` reported 766 uncached tokens, 71.763 seconds prefill (10.67 tokens/s), native batch active, zero serial fallbacks, and reported decode-compute 2.08 tokens/s. Decode metric accounting will also be checked against wall time.  
+**Architecture reconciliation:** Brain/LALM owns transformer arithmetic. Existing `runtime_hot/r39_batch_prefill.py` owns block prefill; the inherited R39 forward/matvec primitive owns decode; the active entrypoint pins their source lineage. Stable native kernels are a deployment-bound dependency, not a new model or second inference owner. Investigate optimized BLAS operations over the same dequantized weights, bounded memory, state equivalence, and duplicate adapter installation before choosing the smallest measured change.  
+**Expected module impact:** LALM Engine, Runtime Manifest activation, and Server event lineage. Chat, Online Research, model artifact/tokenizer, and model policy are outside this checkpoint.  
+**Existing event reconciliation:** the source-only search repair labeled 2.3.285 is terminally recorded as awaiting deployment; its source and evidence are preserved. This checkpoint does not deploy or modify that repair, and no version number is reserved by this START record.  
+**Deployment expectation:** prefer the existing runtime-hot arithmetic owner. No Vercel deployment, restart, paid service, or hardware-plan change is authorized/performed. If measured acceptance requires native/stable deployment, prepare the verified change and report that boundary separately.  
+**Verification plan:** reconstruct and checksum the canonical R39 artifact locally; compare baseline/candidate kernel timing, logits, recurrent state, and deterministic generated continuations using equal full prompts; include cold and warm cases, finite-output/error tolerances, fallback correctness, and memory bounds. Re-read authorities before version assignment; distinguish local benchmark results from production throughput acceptance.
+
 ### Governance update — transactional roadmap lifecycle
 
 **UPDATE STARTED**
