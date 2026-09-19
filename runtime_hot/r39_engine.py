@@ -158,6 +158,62 @@ try:
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
 
+    def _semantic_lockdown(stage,request_id="",**fields):
+        record={"contract":"r39-semantic-primitive-lockdown-v1","stage":str(stage)[:160],"requestId":str(request_id or "")[:128],"atUnixNs":time.time_ns(),"monotonicNs":time.perf_counter_ns()}
+        for key,value in fields.items():
+            if value is None or isinstance(value,(str,int,float,bool)):
+                record[str(key)[:96]]=value
+            elif isinstance(value,(list,tuple)):
+                record[str(key)[:96]]=list(value)[:1024]
+            else:
+                record[str(key)[:96]]=str(value)[:16000]
+        print("SWRLZ_R39_LOCKDOWN "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
+        try:
+            from api.chat_client_debug import _lockdown as _server_lockdown
+            _server_lockdown("brain-semantic-"+str(stage)[:120],request_id=request_id,brain=record)
+        except Exception:
+            pass
+
+    _base_mod=getattr(_impl,"base",None)
+    if _base_mod is not None:
+        _render=getattr(_base_mod,"render_chat_prompt",None)
+        if callable(_render) and not bool(getattr(_render,"_swrlz_lockdown_wrapper",False)):
+            def _traced_render(payload,_original=_render):
+                rid=_request_id(payload) if isinstance(payload,dict) else ""
+                _semantic_lockdown("render-prompt-enter",rid,historyMessages=len(payload.get("history") or []) if isinstance(payload,dict) and isinstance(payload.get("history"),list) else 0,prompt=str(payload.get("prompt") or "")[:16000] if isinstance(payload,dict) else "")
+                started=time.perf_counter_ns()
+                out=_original(payload)
+                _semantic_lockdown("render-prompt-exit",rid,renderedChars=len(str(out)),renderedPrompt=str(out)[:64000],durationNs=time.perf_counter_ns()-started)
+                return out
+            _traced_render._swrlz_lockdown_wrapper=True
+            _base_mod.render_chat_prompt=_traced_render
+
+        _tok_cls=getattr(_base_mod,"BpeTokenizer",None)
+        if _tok_cls is not None:
+            _encode=getattr(_tok_cls,"encode",None)
+            if callable(_encode) and not bool(getattr(_encode,"_swrlz_lockdown_wrapper",False)):
+                def _traced_encode(self,text,_original=_encode):
+                    _semantic_lockdown("tokenizer-encode-enter",textChars=len(str(text)),text=str(text)[:64000])
+                    started=time.perf_counter_ns()
+                    out=_original(self,text)
+                    _semantic_lockdown("tokenizer-encode-exit",tokenCount=len(out),tokenIds=[int(x) for x in out],durationNs=time.perf_counter_ns()-started)
+                    return out
+                _traced_encode._swrlz_lockdown_wrapper=True
+                _tok_cls.encode=_traced_encode
+
+        _sample_fn=getattr(_base_mod,"_sample",None)
+        if callable(_sample_fn) and not bool(getattr(_sample_fn,"_swrlz_lockdown_wrapper",False)):
+            def _traced_sample(logits,history,temperature,top_p,top_k,repetition_penalty,seed,_original=_sample_fn):
+                started=time.perf_counter_ns()
+                _semantic_lockdown("sample-enter",logitsShape=list(getattr(logits,"shape",()) or ()),history=list(history)[-64:],temperature=float(temperature),topP=float(top_p),topK=int(top_k),repetitionPenalty=float(repetition_penalty),seed=int(seed))
+                out=_original(logits,history,temperature,top_p,top_k,repetition_penalty,seed)
+                _semantic_lockdown("sample-exit",selectedTokenId=int(out),durationNs=time.perf_counter_ns()-started)
+                return out
+            _traced_sample._swrlz_lockdown_wrapper=True
+            _base_mod._sample=_traced_sample
+
+        _semantic_lockdown("semantic-primitive-cameras-installed",primitives=["render_chat_prompt","tokenizer.encode","sample"])
+
     # Prefill issue diagnostics are intentionally observational here.
     # Prior speculative compaction hooks are removed under the Project Start
     # gradual-mutation rule; cameras below identify which inherited boundary
