@@ -905,3 +905,11 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Source reconciliation found the stable loader has a 30-second worker-local throttle. A generation POST inside that window can legally skip the branch check and execute the already-loaded engine, which is unacceptable for controlled runtime-hot activation verification.
 - Bounded repair: generation POST requests must perform a branch freshness check before inference; keep the single-writer sync authority and content-hash invalidation, but do not permit the ordinary 30-second throttle to hide a newly committed Brain runtime from generation.
 - This changes stable loader behavior only; model weights, tokenizer, Truth Firewall, Chat ownership, and the 2.1.105 compactor are unchanged.
+
+
+##### UPDATE CONTINUATION STARTED — 2026-09-19 — 2.1.105 hydration failure repair
+
+- Production deployment `de5e1037...` is READY and the forced POST freshness boundary is executing.
+- The 11:44 generation failure is now source-proven: runtime 2.1.105 is fetched, overlays through v90 and batch adapter load, then hydration aborts with `RuntimeError: R39_COMPACT_PREFILL_RENDER_BOUNDARY_UNAVAILABLE`.
+- Root cause: the attempted v90 repair assumed a callable `_render_prompt` export on the composed namespace; the inherited lineage does not expose that symbol at this layer. Fail-closed hydration therefore correctly prevented inference.
+- Bounded repair: remove the invalid render-symbol interception and compact the synthetic Brain history at the last composed `generate_events` boundary, after inherited v50-v56 policy injection has occurred but before the underlying model generation owner consumes the payload. Do not modify stable loader freshness behavior.
