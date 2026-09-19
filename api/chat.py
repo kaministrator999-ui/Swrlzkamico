@@ -693,6 +693,7 @@ async def _post_action(request: Request, action: str):
             return JSONResponse(_verify_r39(), headers=_no_store_headers())
         return _json_error(404, "CHAT_ACTION_NOT_FOUND", "Unknown chat action.")
     except BridgeError as exc:
+        _chat_lockdown("bridge-action-error", request_id=request_hint, action=action, status=exc.status, code=exc.code, detail=exc.detail)
         return _json_error(exc.status, exc.code, exc.detail)
 
 
