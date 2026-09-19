@@ -53,9 +53,9 @@ Server 2.4.10
 
 ## 3. Canonical version ownership
 
-`VERSION.txt` is the **router/index** from stable module IDs to their authoritative module-owned version files.
+`VERSION.txt` is the **complete overview router/index** from stable governed version IDs to their authoritative version files. Any governed component/artifact that carries an independently advanced version identifier (including activation manifests) MUST be registered here so one bounded registry read discovers the complete version pool.
 
-It must not become a second manually maintained copy of every module number.
+It must not become a second manually maintained copy of every module number: the registry collects routes, while each referenced authority owns the actual version value.
 
 Pattern:
 
@@ -75,6 +75,7 @@ Examples of current/reserved owners include:
 - `versions/server-ui.txt`
 - `versions/web-frontend.txt`
 - `versions/web-chat.txt`
+- `versions/runtime-manifest.txt`
 - `versions/stream-contract.txt`
 - `versions/lalm-ui.txt`
 - `versions/lalm-engine.txt`
