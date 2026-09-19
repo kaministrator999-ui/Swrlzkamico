@@ -1,11 +1,11 @@
 # §wyrlz manual production deployment request
 # Updating this file is the assistant-controlled deployment trigger.
-# It must only be changed under the Project Start single-terminal-trigger contract.
+# Explicit retry approval granted by user after run #15 failed closed.
 
 TARGET=production
 APPROVED=1
-REQUEST_ID=2026-09-19-r39-native-bundle-repair-v1
+REQUEST_ID=2026-09-19-r39-native-build-retry-v1
 REQUESTED_AT=2026-09-19T00:00:00Z
-REQUESTED_BY=ChatGPT-standing-terminal-approval
+REQUESTED_BY=ChatGPT-explicit-retry-approval
 SOURCE_REF=main
-REASON=Terminal deployment of the R39 native production activation repair. Vercel function packaging explicitly includes swyrlz/native artifacts; CI now refuses deployment unless both compiled native extensions exist in the prebuilt artifact and post-deploy verification requires /api/lalm/native available=true and batchAvailable=true.
+REASON=One approved retry for R39 native activation. Workflow now compiles native extensions in-place and runs the native equivalence/diagnostics gate before Vercel build; artifact and live native gates remain mandatory.
