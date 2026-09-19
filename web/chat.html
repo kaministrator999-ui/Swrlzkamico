@@ -824,11 +824,16 @@
       const pre=document.createElement("pre"); pre.style.cssText="flex:1;overflow:auto;white-space:pre-wrap;margin:0"; pre.textContent=lockdownEvents.map(x=>JSON.stringify(x)).join("\n")+"\n";
       overlay.append(bar,pre); document.body.append(overlay); lockdownViewerPre=pre;
     }
+    window.__swrlzLockdownEvents=lockdownEvents;
+    window.__swrlzLockdownText=()=>lockdownEvents.map(x=>JSON.stringify(x)).join("\n")+"\n";
+    window.__swrlzLockdownPullServer=lockdownPullServer;
+
     function lockdownInstallButton() {
       if (document.getElementById("swrlzLockdownButton")) return;
       const b=document.createElement("button"); b.id="swrlzLockdownButton"; b.type="button"; b.textContent="LOCKDOWN LOG";
       b.style.cssText="position:fixed;right:8px;top:8px;z-index:2147483645;background:#111;color:#7fffd4;border:1px solid #7fffd4;padding:7px 9px;font:700 10px monospace";
       b.onclick=lockdownViewer; document.body.append(b);
+      window.__swrlzOpenLockdownLogger=lockdownViewer;
     }
 
     function saveState() {
