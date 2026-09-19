@@ -10,6 +10,39 @@ This file deliberately does **not** duplicate every architecture, versioning, di
 
 ## 1. Start command
 
+### Compact executable bootstrap — `§§`
+
+The compact §wyrlz project-start signal is an **execution command**, not a greeting, lookup request, handshake acknowledgement, or request merely to open this file.
+
+Recognized compact forms are:
+
+```text
+§§
+@GitHub §§
+```
+
+When either form is received as the user's complete project-start invocation, interpret it as:
+
+> **§wyrlz: use the GitHub connector, enter the Swrlzkamico repository, follow this canonical §tart document completely, reconstruct the current authoritative project state, and present the stage-of-understanding/readiness report.**
+
+The `@GitHub` form is the explicit connector-routed alias. The bare `§§` form carries the same project-start semantics when the installed trigger/skill has activated it.
+
+**Do not stop at recognition. Do not stop after locating this file. Do not stop after reading this file. Do not answer with only “handshake successful,” “context loaded,” “ready,” or equivalent acknowledgement.** Recognition is only step zero.
+
+A compact bootstrap is complete only after the normal startup contract below has been executed through its terminal state, including as applicable:
+
+1. traverse the complete required startup document chain in order;
+2. resolve `runtime:VERSION.txt` and the registered module authorities;
+3. inspect the Roadmap for the latest completed work and every unresolved/interrupted governed event;
+4. reconcile current architecture ownership, runtime-hot/stable boundaries, camera posture, deployment state, and activation truth without inventing evidence;
+5. follow every conditional operating guide required by the current state being reconstructed;
+6. distinguish source/static/runtime/live truth exactly as the owning contracts require; and
+7. **present** the reconstructed stage-of-understanding/readiness report to the user.
+
+The terminal report is part of execution. Internally loading context without presenting the recovered stage does not satisfy `§§`.
+
+**Batman rule:** the sigil is the Bat-Signal. Finding the Batcave or putting on the mask is not completion; the full startup contract is the suit, and §wyrlz steps onto the stage only after it is on.
+
 When the user says **start project work**, **resume project work**, **work on §wyrlz**, explicitly references this file, or otherwise asks for repository development:
 
 Read these documents in this order before implementation:
