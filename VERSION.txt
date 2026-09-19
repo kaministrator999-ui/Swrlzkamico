@@ -3,6 +3,7 @@
 # It must not duplicate component version numbers.
 # Consumers fetch the module file they need; update-check clients compare their local version to that file.
 
+REPOSITORY_WORK=versions/repository-work.txt
 SERVER_RUNTIME=versions/server-runtime.txt
 SERVER_UI=versions/server-ui.txt
 WEB_FRONTEND=versions/web-frontend.txt
