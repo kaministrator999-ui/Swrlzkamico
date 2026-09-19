@@ -77,6 +77,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Verification:** fetch-back confirms v89 overlay, corrected v89 pin, v89 entrypoint activation, LALM 2.1.101, Server 2.3.283, Manifest authority/json 148, and the complete registry. The v89 deterministic self-test covers weather classification, known-policy removal, evidence-policy/data preservation, marker insertion, deep-request exclusion, prior-dialogue exclusion, and fail-closed unknown-system exclusion. Production logs have not yet emitted v89, so runtime/live acceptance is explicitly pending.  
 **Deployment / restart:** NONE. Runtime-hot source only; no stable-server deployment-producing action was performed.  
 
+### Server 2.3.284 — protect factual evidence across request-first compaction
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** correct v89 so fresh factual optimization removes unrelated Brain policy prose without removing or hiding the actual Online Research evidence needed by final synthesis; fail closed when an online factual synthesis has no protected evidence.  
+**Triggering evidence:** production request `web:mu8ezl4y:7713960623732368313` requested Kansas City weather with AUTO+ONLINE. Final v89 synthesis compacted `beforeMessages=9 → afterMessages=1`, its composition camera contained no online-evidence owner, and it returned invented example weather text.  
+**Architecture reconciliation:** extend the existing Brain/LALM v89 compaction owner. Human/Online Research remains factual authority; Brain may synthesize but must not erase factual evidence; Mask remains presentation. No second search or inference owner.  
+**Observed baseline:** Server `2.3.283`; LALM Engine `2.1.101` / v89; Runtime Manifest `148`; Online Research `1.0.1`.  
+**Expected modules:** LALM Engine + Runtime Manifest + overall Server lineage. Online Research remains unchanged unless implementation evidence proves its owner must change.  
+**Deployment expectation:** NONE; runtime-hot path.  
+**Verification plan:** protect evidence by semantic payload/record identity rather than brittle policy text; deterministic tests must prove non-empty evidence survives final compaction and missing evidence fails closed; fetch back source/version authorities; then require live production telemetry before claiming runtime/user-visible acceptance.
+
 ## Release ledger
 
 ### Server 2.3.282 — R39 v88 complete prompt-camera loader repair
