@@ -31,7 +31,9 @@ _V87_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V
 _V88_COMMIT="46eb91e1f1477069777c06a21cc8eced5c7873cb"
 _V88_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V88_COMMIT}/runtime_hot/r39_engine_v88_overlay.py"
 _V89_COMMIT="4cee6d758121526d170ef2a44e1ad2d365676c43"
-_V89_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V89_COMMIT}/runtime_hot/r39_engine_v89_overlay.py"\n_V90_COMMIT="5c242ddc4246e388ebc6478c74c3e21ceb6864ec"\n_V90_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V90_COMMIT}/runtime_hot/r39_engine_v90_overlay.py"
+_V89_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V89_COMMIT}/runtime_hot/r39_engine_v89_overlay.py"
+_V90_COMMIT="5c242ddc4246e388ebc6478c74c3e21ceb6864ec"
+_V90_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V90_COMMIT}/runtime_hot/r39_engine_v90_overlay.py"
 
 def _entry(stage,**fields):
     record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v90","atUnixMs":int(time.time()*1000)}
@@ -134,7 +136,13 @@ try:
     _entry("v89-overlay-fetch-ok",overlayBytes=len(_v89_overlay))
     exec(compile(_v89_overlay.decode("utf-8"),_V89_URL+"#v89-overlay","exec"),globals(),globals())
 
-    _v90_request=urllib.request.Request(_V90_URL,headers={"User-Agent":"swrlz-r39-v90-overlay"})\n    with urllib.request.urlopen(_v90_request,timeout=20) as _response:_v90_overlay=_response.read(1000001)\n    if len(_v90_overlay)>1000000:raise RuntimeError("R39_V90_OVERLAY_TOO_LARGE")\n    _entry("v90-overlay-fetch-ok",overlayBytes=len(_v90_overlay))\n    exec(compile(_v90_overlay.decode("utf-8"),_V90_URL+"#v90-overlay","exec"),globals(),globals())\n\n    _inspect=inspect_engine() if callable(globals().get("inspect_engine")) else {}
+    _v90_request=urllib.request.Request(_V90_URL,headers={"User-Agent":"swrlz-r39-v90-overlay"})
+    with urllib.request.urlopen(_v90_request,timeout=20) as _response:_v90_overlay=_response.read(1000001)
+    if len(_v90_overlay)>1000000:raise RuntimeError("R39_V90_OVERLAY_TOO_LARGE")
+    _entry("v90-overlay-fetch-ok",overlayBytes=len(_v90_overlay))
+    exec(compile(_v90_overlay.decode("utf-8"),_V90_URL+"#v90-overlay","exec"),globals(),globals())
+
+    _inspect=inspect_engine() if callable(globals().get("inspect_engine")) else {}
     _self_test=_inspect.get("programmingContinuationSemanticSelfTest") if isinstance(_inspect,dict) else None
     if not isinstance(_self_test,dict) or not _self_test.get("ok"):
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
