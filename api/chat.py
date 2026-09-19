@@ -16,7 +16,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 
 
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.1.1"
 BRIDGE_CONTRACT = "swrlz_vercel_chat_bridge_v1"
 STREAM_CONTRACT = "swrlz_llm_stream_v2"
 STREAM_PATH = "/ai/swrlz-llm/v2/chat/stream"
@@ -52,7 +52,7 @@ app = FastAPI(
 
 # /api/chat is a file-routed Vercel function, so diagnostics must be installed
 # on this app rather than api/index.py or a competing nested api/chat/* file.
-from api.chat_client_debug import install as _install_chat_client_debug
+from api.chat_client_debug import install as _install_chat_client_debug, _lockdown as _chat_lockdown
 _install_chat_client_debug(app)
 
 
@@ -213,6 +213,7 @@ def _live_response(request: Request, asset_path: str):
     try:
         target = _safe_live_path(asset_path)
     except BridgeError as exc:
+        _chat_lockdown("bridge-action-error", request_id=request_hint, action=action, status=exc.status, code=exc.code, detail=exc.detail)
         return _json_error(exc.status, exc.code, exc.detail)
     if target.is_dir():
         index = target / "index.html"
@@ -242,7 +243,9 @@ def _live_response(request: Request, asset_path: str):
 
 
 async def _read_json(request: Request) -> dict[str, Any]:
+    _chat_lockdown("bridge-read-json-enter", request_id=request.headers.get("x-swrlz-request-id",""), path=request.url.path)
     body = await request.body()
+    _chat_lockdown("bridge-read-json-body", request_id=request.headers.get("x-swrlz-request-id",""), bodyBytes=len(body))
     if len(body) > MAX_REQUEST_BYTES:
         raise BridgeError(413, "REQUEST_TOO_LARGE", "The request exceeds 128 KiB.")
     try:
@@ -251,6 +254,7 @@ async def _read_json(request: Request) -> dict[str, Any]:
         raise BridgeError(400, "INVALID_JSON", "A valid UTF-8 JSON object is required.") from exc
     if not isinstance(value, dict):
         raise BridgeError(400, "INVALID_JSON_OBJECT", "The request body must be a JSON object.")
+    _chat_lockdown("bridge-read-json-exit", request_id=str(value.get("requestId") or request.headers.get("x-swrlz-request-id","")), keys=list(value.keys()), payload=value)
     return value
 
 
@@ -272,6 +276,7 @@ def _clean_text(value: Any, maximum: int) -> str:
 
 
 def _normalize_chat_request(payload: dict[str, Any]) -> dict[str, Any]:
+    _chat_lockdown("bridge-normalize-enter", request_id=str(payload.get("requestId") or ""), payload=payload)
     prompt = _clean_text(payload.get("prompt"), 16_001)
     if not prompt or len(prompt) > 16_000:
         raise BridgeError(400, "PROMPT_INVALID", "A nonblank prompt of at most 16000 characters is required.")
@@ -287,7 +292,7 @@ def _normalize_chat_request(payload: dict[str, Any]) -> dict[str, Any]:
         text = _clean_text(turn.get("text"), 2_000)
         if role in {"user", "assistant"} and text:
             history.append({"role": role.upper(), "text": text})
-    return {
+    normalized = {
         "protocolVersion": 2,
         "requestId": request_id,
         "prompt": prompt,
@@ -300,6 +305,8 @@ def _normalize_chat_request(payload: dict[str, Any]) -> dict[str, Any]:
         "ingress": "VERCEL_CHAT",
         "profileId": _clean_text(payload.get("profileId"), 96),
     }
+    _chat_lockdown("bridge-normalize-exit", request_id=request_id, normalized=normalized, historyMessages=len(history), promptChars=len(prompt))
+    return normalized
 
 
 def _bridge_identity(request_id: str, route: str) -> dict[str, str]:
@@ -397,6 +404,7 @@ def _timeout_seconds() -> float:
 
 
 def _validate_upstream_event(raw: bytes, request_id: str, previous_seq: int) -> tuple[dict[str, Any], int]:
+    _chat_lockdown("bridge-upstream-event-raw", request_id=request_id, rawBytes=len(raw), previousSeq=previous_seq, raw=raw.decode("utf-8",errors="replace")[:16000])
     if len(raw) > MAX_EVENT_BYTES:
         raise ValueError("UPSTREAM_EVENT_TOO_LARGE")
     try:
@@ -428,12 +436,15 @@ def _validate_upstream_event(raw: bytes, request_id: str, previous_seq: int) -> 
     event["type"] = event_type
     event["text"] = text
     event["terminal"] = bool(event.get("terminal")) or event_type in TERMINAL_TYPES
+    _chat_lockdown("bridge-upstream-event-validated", request_id=request_id, seq=seq, eventType=event_type, event=event)
     return event, seq
 
 
 def _proxy_stream(payload: dict[str, Any]) -> Iterator[bytes]:
     request_id = payload["requestId"]
     body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    parsed_upstream = urllib.parse.urlsplit(_upstream_url())
+    _chat_lockdown("bridge-upstream-request-built", request_id=request_id, bodyBytes=len(body), payload=payload, upstreamScheme=parsed_upstream.scheme, upstreamHost=parsed_upstream.netloc, upstreamPath=parsed_upstream.path)
     request = urllib.request.Request(
         _upstream_url(),
         data=body,
@@ -443,7 +454,9 @@ def _proxy_stream(payload: dict[str, Any]) -> Iterator[bytes]:
     previous_seq = 0
     terminal_seen = False
     try:
+        _chat_lockdown("bridge-upstream-open-enter", request_id=request_id, timeoutSeconds=_timeout_seconds())
         with urllib.request.urlopen(request, timeout=_timeout_seconds()) as response:
+            _chat_lockdown("bridge-upstream-open-exit", request_id=request_id, status=response.status, contentType=response.headers.get("content-type",""))
             if response.status != 200:
                 raise ValueError(f"UPSTREAM_HTTP_{response.status}")
             content_type = response.headers.get("content-type", "").lower()
@@ -451,20 +464,27 @@ def _proxy_stream(payload: dict[str, Any]) -> Iterator[bytes]:
                 raise ValueError("UPSTREAM_CONTENT_TYPE_INVALID")
             while True:
                 raw = response.readline(MAX_EVENT_BYTES + 1)
+                _chat_lockdown("bridge-upstream-readline", request_id=request_id, rawBytes=len(raw), previousSeq=previous_seq)
                 if not raw:
+                    _chat_lockdown("bridge-upstream-eof", request_id=request_id, previousSeq=previous_seq, terminalSeen=terminal_seen)
                     break
                 if len(raw) > MAX_EVENT_BYTES:
                     raise ValueError("UPSTREAM_EVENT_TOO_LARGE")
                 if not raw.strip():
                     continue
                 event, previous_seq = _validate_upstream_event(raw, request_id, previous_seq)
-                yield _encode_event(event)
+                encoded = _encode_event(event)
+                _chat_lockdown("bridge-stream-yield", request_id=request_id, seq=previous_seq, eventType=event.get("type"), bytes=len(encoded), terminal=bool(event.get("terminal")))
+                yield encoded
                 if event["terminal"]:
                     terminal_seen = True
+                    _chat_lockdown("bridge-terminal-seen", request_id=request_id, seq=previous_seq, eventType=event.get("type"))
                     break
         if not terminal_seen:
+            _chat_lockdown("bridge-terminal-missing", request_id=request_id, previousSeq=previous_seq)
             raise ValueError("UPSTREAM_TERMINAL_MISSING")
     except urllib.error.HTTPError as exc:
+        _chat_lockdown("bridge-upstream-http-error", request_id=request_id, status=exc.code, error=str(exc)[:1200])
         yield _encode_event(
             _bridge_event(
                 previous_seq + 1,
@@ -478,6 +498,7 @@ def _proxy_stream(payload: dict[str, Any]) -> Iterator[bytes]:
         )
     except (urllib.error.URLError, OSError, TimeoutError, ValueError) as exc:
         code = str(exc)[:96] or type(exc).__name__
+        _chat_lockdown("bridge-upstream-error", request_id=request_id, errorType=type(exc).__name__, error=str(exc)[:2000], previousSeq=previous_seq)
         yield _encode_event(
             _bridge_event(
                 previous_seq + 1,
@@ -504,7 +525,9 @@ def _cancel_url(request_id: str) -> str:
 
 
 def _forward_cancel(request_id: str) -> tuple[int, dict[str, Any]]:
+    _chat_lockdown("bridge-cancel-enter", request_id=request_id)
     upstream_ready, missing = _upstream_ready()
+    _chat_lockdown("bridge-cancel-route", request_id=request_id, upstreamReady=upstream_ready, missing=missing)
     if not upstream_ready:
         if _raw_upstream_url():
             return 503, {
@@ -590,7 +613,9 @@ def _verify_r39() -> dict[str, Any]:
 
 
 def _stream_response(payload: dict[str, Any]) -> StreamingResponse:
+    _chat_lockdown("bridge-stream-response-enter", request_id=payload.get("requestId",""), payload=payload)
     upstream_ready, missing = _upstream_ready()
+    _chat_lockdown("bridge-stream-route-decision", request_id=payload.get("requestId",""), upstreamReady=upstream_ready, missing=missing, rawUpstreamConfigured=bool(_raw_upstream_url()))
     if _raw_upstream_url() and not upstream_ready:
         raise BridgeError(
             503,
@@ -598,6 +623,7 @@ def _stream_response(payload: dict[str, Any]) -> StreamingResponse:
             "The upstream bridge is missing: " + ", ".join(missing),
         )
     iterator = _proxy_stream(payload) if upstream_ready else _local_not_ready_stream(payload["requestId"])
+    _chat_lockdown("bridge-stream-iterator-selected", request_id=payload["requestId"], owner="upstream-proxy" if upstream_ready else "local-status-only")
     headers = _no_store_headers()
     headers.update(
         {
@@ -647,11 +673,18 @@ async def chat_status():
 
 
 async def _post_action(request: Request, action: str):
+    request_hint=request.headers.get("x-swrlz-request-id","")
+    _chat_lockdown("bridge-post-action-enter", request_id=request_hint, action=action, path=request.url.path)
     try:
+        _chat_lockdown("bridge-auth-enter", request_id=request_hint, action=action)
         _require_web_token(request)
+        _chat_lockdown("bridge-auth-ok", request_id=request_hint, action=action)
         payload = await _read_json(request)
+        _chat_lockdown("bridge-post-payload-ready", request_id=str(payload.get("requestId") or request_hint), action=action, payload=payload)
         if action == "stream":
-            return _stream_response(_normalize_chat_request(payload))
+            normalized=_normalize_chat_request(payload)
+            _chat_lockdown("bridge-action-stream", request_id=normalized["requestId"])
+            return _stream_response(normalized)
         if action == "cancel":
             request_id = _clean_request_id(payload.get("requestId"))
             status, result = _forward_cancel(request_id)
