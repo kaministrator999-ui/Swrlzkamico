@@ -110,6 +110,15 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 - **Truth state:** accepted-source promotion + byte-identity verified. Production packaging workflow not executed here; no runtime/live deployment verification.
 - **Deployment/restart:** NONE. Promotion is main-source integration only.
 
+
+### UPDATE CONTINUATION STARTED — 2026-09-19 — R39 overlay precomposition transfer
+
+- **Intent:** move the accepted R39 v74→v90 historical overlay/source acquisition out of Server startup and into the accepted/prepared deployment generation.
+- **Observed accepted entrypoint:** `accepted_runtime/lalm/r39_engine.py` performs immutable GitHub raw fetches for v74 base, v75-v81 overlays, v82 batch source, and v84-v90 overlays during module import/hydration.
+- **Target:** vendor the exact immutable historical source blobs into the accepted main snapshot, validate their identities, and have production preparation rewrite the accepted entrypoint to consume local packaged chain files. Production LALM import must perform zero historical GitHub source fetches.
+- **Semantics:** preserve overlay execution order and existing cameras/self-tests. This tier changes source delivery, not inference behavior.
+- **Deployment:** NONE authorized by this continuation.
+
 ### UPDATE STARTED — 2026-09-19 — legacy-to-clean-room hot-runtime coupling probe
 
 - **Intent:** deliberately mutate only the legacy `runtime:web/chat.html` source, then have the user refresh clean-room `/chat/§wyrlz` to test whether a legacy runtime-head change causes transient loading/routing inconsistencies on the clean-room route.
