@@ -1,0 +1,127 @@
+name: Deploy Persistent Server Plane
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/SERVER_PLANE.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-server-plane
+  cancel-in-progress: false
+
+env:
+  VERCEL_ORG_ID: team_E4y2LpTSFo9UxTErO9aw6HW1
+  SOURCE_PROJECT_ID: prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp
+  TARGET_PROJECT_NAME: swrlzkamico-server
+  TARGET_SCOPE: kamiswrlzco-cloud
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Read deployment gate
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Authorize
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -qx 'APPROVED=1' .deploy/SERVER_PLANE.txt
+          grep -qx 'SOURCE_REF=runtime' .deploy/SERVER_PLANE.txt
+
+      - name: Checkout server source
+        uses: actions/checkout@v4
+        with:
+          ref: runtime
+          clean: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@59.23.2
+
+      - name: Verify token
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: test -n "${VERCEL_TOKEN:-}"
+
+      - name: Pull production environment from original project
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .vercel
+          printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$SOURCE_PROJECT_ID" > .vercel/project.json
+          vercel env pull /tmp/swrlz-source.env --environment=production --yes --token="$VERCEL_TOKEN"
+
+      - name: Create or link persistent server project
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          vercel project add "$TARGET_PROJECT_NAME" --scope "$TARGET_SCOPE" --token="$VERCEL_TOKEN" >/tmp/project-add.txt 2>&1 || true
+          rm -rf .vercel
+          vercel link --yes --project "$TARGET_PROJECT_NAME" --scope "$TARGET_SCOPE" --token="$VERCEL_TOKEN"
+          cat .vercel/project.json
+
+      - name: Clone production environment
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check python-dotenv
+          python - <<'PY'
+          import os, subprocess
+          from dotenv import dotenv_values
+          vals=dotenv_values('/tmp/swrlz-source.env')
+          for key,value in vals.items():
+              if not key or key.startswith('VERCEL_') or value is None:
+                  continue
+              subprocess.run(['vercel','env','rm',key,'production','--yes','--token',os.environ['VERCEL_TOKEN']],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+              p=subprocess.run(['vercel','env','add',key,'production','--token',os.environ['VERCEL_TOKEN']],input=value,text=True,capture_output=True)
+              if p.returncode:
+                  raise SystemExit(f'failed to copy env {key}: {p.stderr}')
+          print(f'copied {sum(1 for k,v in vals.items() if k and not k.startswith("VERCEL_") and v is not None)} production env values')
+          PY
+
+      - name: Deploy persistent server
+        id: deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="$(vercel deploy --prod --yes --scope "$TARGET_SCOPE" --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Server deployment: $url" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify account API
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for n in $(seq 1 30); do
+            code="$(curl -sS -o /tmp/account.json -w '%{http_code}' "$DEPLOYMENT_URL/api/account/status" || true)"
+            if [[ "$code" == "200" ]] && python -m json.tool /tmp/account.json >/dev/null 2>&1; then
+              cat /tmp/account.json
+              echo "Account API verified at $DEPLOYMENT_URL" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Account API did not become ready" >&2
+          cat /tmp/account.json || true
+          exit 1
