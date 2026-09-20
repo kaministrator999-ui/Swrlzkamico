@@ -1,9 +1,47 @@
 {
   "contract": "swrlz-accepted-runtime-v1",
-  "sourceRuntimeCommit": "f1def525541a9148950ca8202b86b7bc1b51470d",
+  "sourceRuntimeCommit": "b7076a6fbd2a8028a13326f32511316f18de07ba",
   "promotionScope": "legacy-chat+lalm+chat-history-policy",
   "deploymentInput": true,
   "runtimePollingRequired": false,
-  "status": "bootstrap-pending-explicit-promotion",
-  "files": []
+  "status": "accepted",
+  "integrity": "github-blob-sha",
+  "files": [
+    {
+      "owner": "legacy-chat",
+      "runtimeSource": "web/chat.html",
+      "acceptedTarget": "legacy-chat/chat.html",
+      "sourceBlobSha": "7392656841f268d898facaeea26780ec3392c5ef"
+    },
+    {
+      "owner": "legacy-chat",
+      "runtimeSource": "web/chat_enhancements.css",
+      "acceptedTarget": "legacy-chat/chat_enhancements.css",
+      "sourceBlobSha": "c3ae4f69250699e6e6d39526d5d2bcc06c5da5c1"
+    },
+    {
+      "owner": "legacy-chat",
+      "runtimeSource": "web/chat_enhancements.js",
+      "acceptedTarget": "legacy-chat/chat_enhancements.js",
+      "sourceBlobSha": "a4b74df06a8ae136aea06a1eb055c5908881ce02"
+    },
+    {
+      "owner": "legacy-chat",
+      "runtimeSource": "web/chat_stream_focus.js",
+      "acceptedTarget": "legacy-chat/chat_stream_focus.js",
+      "sourceBlobSha": "541aeff11c8e00a83a167ddbf2566ac6c4172816"
+    },
+    {
+      "owner": "lalm",
+      "runtimeSource": "runtime_hot/r39_engine.py",
+      "acceptedTarget": "lalm/r39_engine.py",
+      "sourceBlobSha": "db56980b36c70ce8fb564eb828317d4197d054f2"
+    },
+    {
+      "owner": "server-policy",
+      "runtimeSource": "runtime_hot/chat_history_policy.py",
+      "acceptedTarget": "server-policy/chat_history_policy.py",
+      "sourceBlobSha": "1e684e9719365566f4c8ec3589469898c3b3bece"
+    }
+  ]
 }
