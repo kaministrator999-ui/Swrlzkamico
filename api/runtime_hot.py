@@ -246,8 +246,10 @@ def install(server) -> None:
     HOT_ROOT.mkdir(parents=True, exist_ok=True)
     HOT_BACKUPS.mkdir(parents=True, exist_ok=True)
     _ensure_portal()
-    register_hot_refresher(lambda force=False: _safe_auto_sync(server, force=force))
-    server.CAPABILITIES["hot-runtime"] = {"kind": "runtime-mutation", "ready": True, "sourceBranch": DEFAULT_BRANCH, "autoSync": True, "strategy": "30s gated parallel runtime hydration; request-path callers share one refresh authority"}
+    # Runtime synchronization is explicit. Ordinary audience requests consume
+    # the last activated/prepared generation and never become sync workers.
+    register_hot_refresher(None)
+    server.CAPABILITIES["hot-runtime"] = {"kind": "runtime-mutation", "ready": True, "sourceBranch": DEFAULT_BRANCH, "autoSync": False, "strategy": "explicit activation; prepared deployment generation; request path never synchronizes"}
     server.CAPABILITIES["hot-chat-ui"] = {"kind": "runtime-mutation", "ready": True, "fallback": "bundled", "assets": ["chat.html", "chat_enhancements.css", "chat_enhancements.js", "chat_stream_focus.js"]}
     server.CAPABILITIES["hot-r39-engine"] = {"kind": "runtime-execution", "ready": True, "fallback": "bundled", "reload": "content-hash invalidation", "workerRefreshSeconds": int(AUTO_SYNC_SECONDS)}
     server.CAPABILITIES["hot-server-history-policy"] = {"kind": "runtime-server-policy", "ready": True, "authority": "server-owned-records", "sourceBranch": DEFAULT_BRANCH, "fallback": "bundled-canonical-history", "reload": "content-hash invalidation", "workerRefreshSeconds": int(AUTO_SYNC_SECONDS), "readOnly": True}
@@ -255,28 +257,15 @@ def install(server) -> None:
 
     @server.app.middleware("http")
     async def runtime_hydration(request: Request, call_next):
-        # Read-only ingress camera: derive correlation locally before any sync/call-next
-        # instrumentation. This must never be able to break the request path.
+        # Serving requests are consumers, never runtime synchronization workers.
         request_id = str(
             request.headers.get("x-swrlz-request-id")
             or request.query_params.get("requestId")
             or ""
         ).strip()[:160]
-        # Generation is initiated by POST /api/chat[/]. Hydrating only GET meant
-        # a user could submit inference against a stale R39 entrypoint before any
-        # page/status GET happened to refresh the worker. Refresh every chat
-        # request method through the same throttled single-writer authority.
-        if request.url.path == "/api/chat" or request.url.path.startswith("/api/chat/"):
-            # A generation POST is an activation boundary: it must observe the
-            # current runtime branch before inference. GET/status traffic may use
-            # the ordinary worker-local throttle, but POST must not hide a newly
-            # committed Brain runtime for up to AUTO_SYNC_SECONDS.
-            _trace("middleware-sync-enter", requestId=request_id, force=request.method=="POST")
-            sync_result=_safe_auto_sync(server, force=request.method == "POST")
-            _trace("middleware-sync-exit", requestId=request_id, result=sync_result)
-        _trace("middleware-call-next-enter", requestId=request_id, path=request.url.path)
-        response=await call_next(request)
-        _trace("middleware-call-next-exit", requestId=request_id, path=request.url.path, status=getattr(response,"status_code",None))
+        _trace("middleware-prepared-generation", requestId=request_id, path=request.url.path, syncPerformed=False)
+        response = await call_next(request)
+        _trace("middleware-call-next-exit", requestId=request_id, path=request.url.path, status=getattr(response, "status_code", None))
         return response
 
     def authorized(request: Request) -> bool:
@@ -288,8 +277,7 @@ def install(server) -> None:
 
     @server.app.get("/api/hot/status")
     async def hot_status():
-        auto = _safe_auto_sync(server)
-        return {"ok": True, "branch": DEFAULT_BRANCH, "autoSync": auto, "lastSync": dict(LAST_SYNC), "runtime": _runtime_status(), "pages": len(_pages()), "portal": "/live/", "control": "/api/hot"}
+        return {"ok": True, "branch": DEFAULT_BRANCH, "autoSync": {"enabled": False, "requestPath": False}, "lastSync": dict(LAST_SYNC), "runtime": _runtime_status(), "pages": len(_pages()), "portal": "/live/", "control": "/api/hot"}
 
     @server.app.get("/api/hot/pages")
     async def hot_pages():
