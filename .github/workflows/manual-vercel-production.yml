@@ -297,6 +297,7 @@ jobs:
           assert caps.get("runtime-delivery-optimization", {}).get("ready") is True
           assert caps.get("runtime-delivery-optimization", {}).get("contract") == "prepared-runtime-generation-v3"
           assert caps.get("runtime-delivery-optimization", {}).get("requestPathSync") is False
+          assert caps.get("runtime-delivery-optimization", {}).get("r39HistoricalNetworkFetch") is False
           generation = json.load(open(".swrzl-prepared-runtime/generation.json"))
           assert generation.get("r39SourceDelivery") == "local-precomposed-chain-v1"
           assert len(generation.get("r39OverlayChain") or []) == 16
