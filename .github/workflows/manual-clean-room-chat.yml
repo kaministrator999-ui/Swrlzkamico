@@ -56,7 +56,7 @@ jobs:
           python - <<'PY'
           import json
           value=json.load(open("vercel.json",encoding="utf-8"))
-          assert value.get("functions") == {}, value.get("functions")
+          assert "functions" not in value, value.get("functions")
           routes=value.get("routes",[])
           assert len(routes)==2, routes
           assert routes[0]["dest"]=="/chat/§wyrlz/index.html", routes
