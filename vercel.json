@@ -13,6 +13,10 @@
       "dest": "/chat/§wyrlz/index.html"
     },
     {
+      "src": "/chat/legacy/?$",
+      "dest": "/legacy-chat/chat.html"
+    },
+    {
       "src": "/file_00000000b13c81f5a7f9fe99c0264ef0.png$",
       "dest": "/file_00000000b13c81f5a7f9fe99c0264ef0.png"
     }
