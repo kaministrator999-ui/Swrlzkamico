@@ -110,6 +110,21 @@ Read these when relevant:
 ---
 
 
+### Runtime-hot route/source discovery — mandatory
+
+When the user names, points to, or asks to inspect a page, route, component, asset, or module that is runtime-hot capable, **do not assume the default/`main` branch is its source authority and do not declare it missing from a default-branch 404 alone.**
+
+Resolve the surface through the architecture before searching generically:
+
+1. classify whether it is a manifest-routed page/asset or a hydrated runtime source using `docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md`;
+2. for manifest-routed pages, inspect `runtime:runtime_pages/manifest.json` and resolve the exact route to its declared runtime `source`, `styles`, and `scripts`;
+3. preserve route/path naming literally, including Unicode/sigil-bearing segments such as `§wyrlz`; a route such as `/chat/§wyrlz` may canonically map to `runtime:chat/§wyrlz/index.html`;
+4. for hydrated runtime components, resolve the registered runtime source path through the stable hotloader owner rather than guessing a `main` path;
+5. only after the documented runtime authority and naming convention have been checked may a missing path be reported as missing; and
+6. when a user gives a live route, treat that route as a discovery key: trace route → manifest/registry → source authority before broad code search.
+
+This is a **discovery/authority rule**, not a requirement that every similarly named file live on `runtime`. The owning manifest/registry and hotloader guide decide the actual source location.
+
 ### Version registry branch authority — mandatory
 
 The canonical version registry is `runtime:VERSION.txt`, not `main:VERSION.txt`.
