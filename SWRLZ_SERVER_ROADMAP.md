@@ -36,6 +36,24 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE CONTINUATION ENDED — 2026-09-19 — prior lockdown 500 repair session reconciliation
+
+- **Recovered stop state:** prior continuation had committed the bounded `api/runtime_hot.py` request-correlation repair but stopped before production/user-visible acceptance; client-debug 401/logger freeze remained explicitly separate.
+- **Fresh production reconciliation:** current production deployment now executes the repaired middleware far enough to emit `hot-runtime-middleware-sync-enter/exit` and `middleware-call-next-enter/exit` on status requests, proving the old pre-camera NameError boundary is no longer universal. A fresh authenticated stream POST is still required for full 500 user-visible acceptance.
+- **No new mutation in this checkpoint.** This marker closes the previously interrupted continuation session before a new continuation begins.
+
+### UPDATE CONTINUATION STARTED — 2026-09-19 — lockdown acceptance + client-debug 401/logger freeze repair
+
+- **Intent:** finish the remaining full-lockdown red/orange state before Chat becomes the next primary focus: (1) close the historical route-enter 500 with production/live evidence, and (2) repair the separate client-debug 401/retry-pressure + logger-freeze path without removing camera coverage.
+- **Observed production evidence:** status traffic on current production reaches repaired runtime-hot middleware cameras and exits HTTP 200; the prior NameError remains only in older error-cluster history. Client-debug traffic is rewritten to `/api/chat.py`; unauthorized diagnostic requests can still return 401.
+- **Source diagnosis:** runtime `web/chat.html` currently splices lockdown batches before proving a usable token, silently discards batches on HTTP 401, polls server diagnostics at 100 ms, and renders/appends the entire growing trace directly into one `<pre>` with per-event scroll updates. This can create 401 pressure and catastrophic DOM work while preserving less evidence than intended.
+- **Canonical owners:** stable diagnostic auth/routing remains `api/chat_client_debug.py` + `vercel.json`; runtime-hot client capture/viewer behavior is owned by `runtime:web/chat.html`. Do not weaken server auth.
+- **Repair candidate:** gate diagnostic sends/pulls on usable token state, preserve/requeue unsent evidence on auth failure without retry storms, and render a bounded visible tail while retaining full in-memory trace for COPY/EXPORT.
+- **Expected impact:** Web Chat + Repository Work for runtime client behavior. Stable Server files are not expected to change in this candidate. Production activation requirement for the earlier stable middleware repair remains a separate truth boundary already partially evidenced by current deployment.
+- **Deployment expectation:** no deployment-producing action during source repair. Runtime-hot Chat mutation may activate through the existing hotloader; stable deployment will remain explicitly gated.
+- **Verification plan:** mutate one bounded client candidate, fetch back, verify auth gating + evidence retention + bounded viewer, advance only affected authorities, then collect runtime/live evidence. Full authenticated stream acceptance may require the user's live Chat token/session.
+
+
 ### UPDATE FINISHED — 2026-09-19 — Roadmap newest-handoff retrieval hardening
 
 - **Result:** COMPLETE — compact startup now distinguishes incomplete retrieval from genuine lineage inconsistency.
