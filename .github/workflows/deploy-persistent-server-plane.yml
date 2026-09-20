@@ -56,7 +56,10 @@ jobs:
                 "maxDuration": 300,
                 "excludeFiles": "{.transport/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
               }
-            }
+            },
+            "routes": [
+              {"src": "/api/(.*)", "dest": "/api/index.py"}
+            ]
           }
           JSON
 
