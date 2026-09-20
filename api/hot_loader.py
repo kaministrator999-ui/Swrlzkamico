@@ -14,6 +14,10 @@ HOT_INFERENCE_DIR = HOT_ROOT / "inference"
 HOT_INFERENCE = HOT_INFERENCE_DIR / "r39_engine.py"
 HOT_SERVER_DIR = HOT_ROOT / "server"
 HOT_CHAT_HISTORY_POLICY = HOT_SERVER_DIR / "chat_history_policy.py"
+PREPARED_ROOT = Path(__file__).resolve().parents[1] / "swrzl_prepared_runtime"
+PREPARED_CHAT = PREPARED_ROOT / "legacy-chat"
+PREPARED_INFERENCE = PREPARED_ROOT / "lalm" / "r39_engine.py"
+PREPARED_CHAT_HISTORY_POLICY = PREPARED_ROOT / "server-policy" / "chat_history_policy.py"
 AUTO_REFRESH_SECONDS = 30.0
 
 _lock = threading.RLock()
@@ -55,9 +59,12 @@ def _refresh_if_due(force: bool = False) -> None:
 
 
 def hot_chat_path(name: str, bundled: Path) -> Path:
-    _refresh_if_due()
+    """Resolve Chat from explicit hot activation, then prepared deployment generation."""
     candidate = HOT_CHAT / name
-    return candidate if candidate.is_file() else bundled
+    if candidate.is_file():
+        return candidate
+    prepared = PREPARED_CHAT / name
+    return prepared if prepared.is_file() else bundled
 
 
 def _load_override() -> ModuleType | None:
@@ -116,10 +123,17 @@ def _load_history_policy_override() -> ModuleType | None:
 
 
 def get_engine() -> tuple[ModuleType, str]:
-    _refresh_if_due()
     override = _load_override()
     if override is not None:
         return override, "runtime-override"
+    if PREPARED_INFERENCE.is_file():
+        # Materialize the immutable deployment generation into the existing
+        # loader target so contract validation/cache semantics stay singular.
+        HOT_INFERENCE.parent.mkdir(parents=True, exist_ok=True)
+        HOT_INFERENCE.write_bytes(PREPARED_INFERENCE.read_bytes())
+        override = _load_override()
+        if override is not None:
+            return override, "prepared-deployment"
     import swyrlz.r39_inference as bundled
     return bundled, "bundled"
 
@@ -131,10 +145,15 @@ def get_chat_history_policy() -> tuple[ModuleType | None, str]:
     may only reconstruct bounded history from already-authoritative server records.
     Missing or invalid runtime source is handled by the caller's bundled fallback.
     """
-    _refresh_if_due()
     override = _load_history_policy_override()
     if override is not None:
         return override, "runtime-override"
+    if PREPARED_CHAT_HISTORY_POLICY.is_file():
+        HOT_CHAT_HISTORY_POLICY.parent.mkdir(parents=True, exist_ok=True)
+        HOT_CHAT_HISTORY_POLICY.write_bytes(PREPARED_CHAT_HISTORY_POLICY.read_bytes())
+        override = _load_history_policy_override()
+        if override is not None:
+            return override, "prepared-deployment"
     return None, "bundled"
 
 
