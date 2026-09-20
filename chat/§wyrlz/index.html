@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.18">
+  <meta name="swrlz-chat-version" content="1.0.19">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -116,6 +116,27 @@
       const accountAction = document.getElementById("accountAction");
       const googleSlot = document.getElementById("googleSlot");
       let accountUser = null;
+      const LEGACY_ACCOUNT_ORIGIN = "https://swrlzkamico-o3nu.vercel.app";
+      const accountTrace = async (phase,data={}) => {
+        try {
+          console.info("[§wyrlz account camera]",phase,data);
+          await fetch("/api/chat/client-debug",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"clean-room-account-v1",url:location.pathname,ua:navigator.userAgent,event:{at:new Date().toISOString(),type:"account-camera",message:phase,data}}),keepalive:true,cache:"no-store",credentials:"same-origin"});
+        } catch (_) {}
+      };
+      const accountFetch = async (path, init={}) => {
+        const url = LEGACY_ACCOUNT_ORIGIN + path;
+        const started = performance.now();
+        try {
+          const response = await fetch(url,{...init,credentials:"include",cache:"no-store"});
+          const contentType=response.headers.get("content-type")||"";
+          const preview=await response.clone().text().then(t=>t.slice(0,180)).catch(()=>"");
+          accountTrace("response",{path,status:response.status,ok:response.ok,contentType,preview,durationMs:Math.round(performance.now()-started)});
+          return response;
+        } catch (error) {
+          accountTrace("network-error",{path,error:String(error?.message||error),durationMs:Math.round(performance.now()-started)});
+          throw error;
+        }
+      };
       const showUser = user => {
         accountUser = user || null;
         accountName.textContent = user?.displayName || user?.email || "Google Account";
@@ -125,22 +146,22 @@
         if(user) googleSlot.innerHTML="";
       };
       const renderGoogle = async () => {
-        const status = await fetch("/live/api/account/status",{credentials:"same-origin",cache:"no-store"}).then(r=>r.json());
+        const status = await accountFetch("/api/account/status",{credentials:"same-origin",cache:"no-store"}).then(r=>r.json());
         if(!status?.googleClientId || !window.google?.accounts?.id) throw new Error("Google account service unavailable");
         googleSlot.innerHTML="";
         google.accounts.id.initialize({client_id:status.googleClientId,callback:async response=>{
-          const result=await fetch("/live/api/account/google",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({credential:response.credential})});
+          const result=await accountFetch("/api/account/google",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({credential:response.credential})});
           if(!result.ok) throw new Error("Google sign-in failed");
           const data=await result.json(); showUser(data.user);
         }});
         google.accounts.id.renderButton(googleSlot,{type:"standard",theme:"outline",size:"medium",text:"signin_with",shape:"pill",width:250});
       };
       const refreshAccount = async () => {
-        try{const r=await fetch("/live/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user);return;}}catch(_){}
+        try{const r=await accountFetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user);return;}}catch(_){}
         showUser(null);
       };
       accountAction.addEventListener("click",async()=>{
-        if(accountUser){await fetch("/live/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null);return;}
+        if(accountUser){await accountFetch("/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null);return;}
         try{await renderGoogle();}catch(e){accountMeta.textContent=e.message;}
       });
       refreshAccount();
