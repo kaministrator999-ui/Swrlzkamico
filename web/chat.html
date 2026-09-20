@@ -9,12 +9,9 @@
   <!-- Canonical first-paint Ice Dragon scenery. This runs before body paint so
        the generic base Chat cannot become a visible intermediate frame. -->
   <script>
-    (() => {
-      try {
-        const theme = localStorage.getItem('swrlz.chat.theme') || 'ice-dragon';
-        if (theme !== 'default') document.documentElement.dataset.swrlzInitialTheme = 'ice-dragon';
-      } catch (_) { document.documentElement.dataset.swrlzInitialTheme = 'ice-dragon'; }
-    })();
+    // Ice Dragon is the canonical Chat shell. Runtime hydrates behavior; it does
+    // not choose or replace the opening visual presentation.
+    document.documentElement.dataset.swrlzInitialTheme = 'ice-dragon';
   </script>
   <style id="swrlz-ice-dragon-first-paint-canonical">
     html[data-swrlz-initial-theme="ice-dragon"] body { background:#010812!important; }
@@ -514,10 +511,7 @@
     }
   </style>
 </head>
-<body>
-  <div class="noise" aria-hidden="true"></div>
-  <div class="ambient a" aria-hidden="true"></div>
-  <div class="ambient b" aria-hidden="true"></div>
+<body data-swrlz-theme="ice-dragon">
   <button class="sidebar-scrim" id="sidebarScrim" aria-label="Close conversations"></button>
 
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
