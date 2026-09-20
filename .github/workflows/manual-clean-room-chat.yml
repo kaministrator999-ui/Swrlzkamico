@@ -57,7 +57,7 @@ jobs:
 
           version_lines=open("chat/§wyrlz/VERSION.txt",encoding="utf-8").read().splitlines()
           version=version_lines[0].strip() if version_lines else ""
-          assert re.fullmatch(r"\\d+\\.\\d+\\.\\d+", version), f"invalid VERSION.txt version: {version!r}"
+          assert re.fullmatch(r"\d+\.\d+\.\d+", version), f"invalid VERSION.txt version: {version!r}"
 
           html=open("chat/§wyrlz/index.html",encoding="utf-8").read()
           match=re.search(r'<meta\\s+name="swrlz-chat-version"\\s+content="([^"]+)"', html)
