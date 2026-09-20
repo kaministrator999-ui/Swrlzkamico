@@ -97,6 +97,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 - **Deployment/restart:** NONE. No workflow dispatch or production action.
 - **Version state:** still deferred under the open transfer event. Stable main/deployment-control behavior has changed; re-read authorities and assign registered versions atomically with the terminal Roadmap event. Server Runtime remains `2.3.287` until an actual production release.
 
+
+### UPDATE CONTINUATION STARTED — 2026-09-19 — first accepted legacy Chat + LALM promotion
+
+- **User acceptance action:** promote the current satisfactory legacy Chat + LALM rehearsal baseline into the main-owned deployable snapshot now.
+- **Probe exclusion:** runtime HEAD `f1def525...` contains only the intentionally inert legacy coupling-probe comment after Repository Work `1.0.14`. The accepted baseline therefore uses its parent `b7076a6f...`, excluding diagnostic probe residue while preserving all prior accepted legacy Chat/LALM work.
+- **Promoted authority:** `main:accepted_runtime/` now contains legacy Chat HTML/CSS/JS/stream-focus, R39/LALM entrypoint, and Chat history policy from runtime commit `b7076a6f...`.
+- **Integrity:** accepted manifest records the exact source Git blob SHA for every promoted file; fetch-back confirms the main snapshot blobs match those runtime source blobs byte-for-byte.
+- **Production eligibility:** bootstrap-pending state removed; accepted snapshot status is `accepted`. Production preparation may now package this snapshot, subject to the separate deployment approval gate.
+- **No rehearsal leakage:** inert `SWRLZ_LEGACY_COUPLING_PROBE_20260919_A` is not present in the promoted Chat blob because its source blob is the pre-probe `73926568...`.
+- **Preparation hardening:** preparer now supports Git blob-SHA integrity for the accepted snapshot and still emits SHA-256 in the prepared generation artifact.
+- **Truth state:** accepted-source promotion + byte-identity verified. Production packaging workflow not executed here; no runtime/live deployment verification.
+- **Deployment/restart:** NONE. Promotion is main-source integration only.
+
 ### UPDATE STARTED — 2026-09-19 — legacy-to-clean-room hot-runtime coupling probe
 
 - **Intent:** deliberately mutate only the legacy `runtime:web/chat.html` source, then have the user refresh clean-room `/chat/§wyrlz` to test whether a legacy runtime-head change causes transient loading/routing inconsistencies on the clean-room route.
