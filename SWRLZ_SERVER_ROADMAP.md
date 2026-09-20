@@ -36,6 +36,17 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE CONTINUATION ENDED — 2026-09-19 — lockdown acceptance + client-debug 401/logger freeze repair
+
+- **500 candidate:** current production traffic now traverses the repaired runtime-hot middleware cameras (`middleware-sync-enter/exit`, `middleware-call-next-enter/exit`) and returns HTTP 200 on status traffic. This proves the deployed stable bundle no longer universally fails at the historical undefined-`request_id` boundary. A fresh authenticated stream POST remains the final user-path acceptance check for the original reproduction.
+- **Client-debug repair:** runtime `web/chat.html` now refuses diagnostic sends/pulls without a usable token, remembers a rejected token to prevent 401 retry storms, requeues unsent POST batches on auth/non-OK/network failure, clears the rejected-token block only when the saved token changes, and resumes flush/pull after a valid token is saved. Server auth was not weakened.
+- **Logger freeze repair:** the LOCKDOWN LOG overlay now renders only a bounded visible tail (1,200 events) through RAF batching while retaining the full `lockdownEvents` evidence buffer for COPY ALL / EXPORT ALL. Per-event synchronous `<pre>` append + forced scroll was removed.
+- **Activation:** runtime-hot source is live. Production fetch-back of `/chat` contains `lockdownRejectedToken`, the bounded `VISIBLE TAIL` viewer, and save-token resume logic.
+- **Resulting versions:** Repository Work `1.0.12` (from `1.0.11`); Web Chat `1.5.86` (from `1.5.85`). Server Runtime remains `2.3.287`; Runtime Manifest remains `152`; LALM Engine remains `2.1.112`.
+- **Deployment/restart:** NONE for this continuation. The client repair activated through the existing runtime-hot path; no deployment-producing action was fired.
+- **Remaining acceptance:** one authenticated live stream + opening LOCKDOWN LOG in that same session will close the user-visible acceptance ladder for both symptoms. Until then the source/live activation is proven, but the final secret-bearing browser path is not claimed as user-visible verified.
+
+
 ### UPDATE CONTINUATION ENDED — 2026-09-19 — prior lockdown 500 repair session reconciliation
 
 - **Recovered stop state:** prior continuation had committed the bounded `api/runtime_hot.py` request-correlation repair but stopped before production/user-visible acceptance; client-debug 401/logger freeze remained explicitly separate.
