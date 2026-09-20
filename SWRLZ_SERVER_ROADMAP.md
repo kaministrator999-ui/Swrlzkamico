@@ -36,6 +36,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE STARTED — 2026-09-20 — clean-room Chat three-frame first-paint trace
+
+- **Observed defect:** one mobile refresh visibly traverses at least three materially different Chat compositions before settling: base shell, transient Ice Dragon topbar selector/header reflow, then selector removal plus context/composer augmentation.
+- **Trace evidence:** the active Chat asset stack is runtime-owned under `runtime:web/`. `chat_runtime_loader_v3.js` serially loads critical scripts, intentionally waits **1600 ms** before the functional script chain, then loads decorative wallpaper/theme settlement afterward. The base first-paint guard explicitly reveals the usable shell rather than gating visibility until composition is complete.
+- **Confirmed writer #1:** `themes/ice-dragon/ice-dragon-theme-v3.2.js` dynamically creates `#swrlzThemeSelect` and inserts it at the start of `.topbar-right`, forcing the transient header/title geometry seen in the middle screenshot.
+- **Confirmed writer #2:** `chat_theme_settings_v1.js`, loaded later in the same functional chain, explicitly removes `#swrlzThemeSelect` as a legacy control because Appearance owns theme selection. This explains the selector appearing and then disappearing during the same boot.
+- **Confirmed writer #3:** `chat_context_capacity.js`, also loaded during the functional chain, dynamically creates `#swrlzContextCapacity` and inserts it into `.composer`, explaining the late context meter/composer-height mutation visible in the final screenshot.
+- **Additional duplicate opening-state writers:** `chat_early_shell_ready_v1.js`, `chat_frontend_boot_v2.js`, and `chat_runtime_loader_v3.js` each independently read/apply initial theme/viewport/readiness state. `chat_boot_guard.js` and `chat_boot_ready.js` also carry reveal/readiness behavior. The current architecture therefore has multiple opening-scene authorities rather than one atomic pre-reveal owner.
+- **Causal conclusion:** the screenshots are not merely asset latency. The runtime loader's staged execution plus contradictory/dynamic DOM writers deterministically creates multiple visible checkpoints. The 1600 ms functional-settle delay makes the intermediate composition especially observable.
+- **Mutation state:** TRACE ONLY. No runtime Chat behavior has been changed yet. Per the causal rollback rule, the next mutation must consolidate opening-scene ownership without stacking speculative fixes, then camera-verify first reveal versus later mutations before acceptance.
+- **Deployment state:** no production deployment/restart/live activation triggered.
+
+
 ### UPDATE FINISHED — 2026-09-20 — Gate 4 terminal candidate frozen
 
 - **Result:** COMPLETE — source/static/non-production runtime freeze verified; live activation intentionally pending.
