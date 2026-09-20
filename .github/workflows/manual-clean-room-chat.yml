@@ -52,6 +52,10 @@ jobs:
           set -euo pipefail
           test -f 'chat/§wyrlz/index.html'
           test -f 'file_00000000b13c81f5a7f9fe99c0264ef0.png'
+          test -f 'accepted_runtime/legacy-chat/chat.html'
+          test -f 'accepted_runtime/legacy-chat/chat_enhancements.css'
+          test -f 'accepted_runtime/legacy-chat/chat_enhancements.js'
+          test -f 'accepted_runtime/legacy-chat/chat_stream_focus.js'
           python - <<'PY'
           import json, re
 
@@ -77,9 +81,10 @@ jobs:
           assert value.get("installCommand") == "", value.get("installCommand")
           assert value.get("buildCommand") == "", value.get("buildCommand")
           routes=value.get("routes",[])
-          assert len(routes)==2, routes
+          assert len(routes)==3, routes
           assert routes[0]["dest"]=="/chat/§wyrlz/index.html", routes
-          assert routes[1]["dest"]=="/file_00000000b13c81f5a7f9fe99c0264ef0.png", routes
+          assert routes[1]["dest"]=="/legacy-chat/chat.html", routes
+          assert routes[2]["dest"]=="/file_00000000b13c81f5a7f9fe99c0264ef0.png", routes
           print("isolated clean-room Chat contract verified")
           PY
 
@@ -158,8 +163,12 @@ jobs:
           set -euo pipefail
           start="$(date +%s%3N)"
           stage="$(mktemp -d)"
-          mkdir -p "$stage/chat/§wyrlz"
+          mkdir -p "$stage/chat/§wyrlz" "$stage/legacy-chat"
           cp 'chat/§wyrlz/index.html' "$stage/chat/§wyrlz/index.html"
+          cp accepted_runtime/legacy-chat/chat.html "$stage/legacy-chat/chat.html"
+          cp accepted_runtime/legacy-chat/chat_enhancements.css "$stage/legacy-chat/chat_enhancements.css"
+          cp accepted_runtime/legacy-chat/chat_enhancements.js "$stage/legacy-chat/chat_enhancements.js"
+          cp accepted_runtime/legacy-chat/chat_stream_focus.js "$stage/legacy-chat/chat_stream_focus.js"
           cp 'file_00000000b13c81f5a7f9fe99c0264ef0.png' "$stage/"
           cp vercel.json "$stage/vercel.json"
           cd "$stage"
