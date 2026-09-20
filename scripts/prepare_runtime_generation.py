@@ -40,7 +40,7 @@ def main() -> int:
     files = []
     for spec in files_spec:
         target_name = str(spec.get("acceptedTarget") or "")
-        expected = str(spec.get("sha256") or "")
+        expected_blob = str(spec.get("sourceBlobSha") or "")
         if not target_name or target_name.startswith("/") or ".." in Path(target_name).parts:
             raise SystemExit(f"invalid accepted target: {target_name!r}")
         source = accepted_root / target_name
@@ -49,7 +49,12 @@ def main() -> int:
         data = source.read_bytes()
         data.decode("utf-8")
         actual = hashlib.sha256(data).hexdigest()
-        if actual != expected:
+        if manifest.get("integrity") == "github-blob-sha":
+            header = f"blob {len(data)}\\0".encode("utf-8")
+            actual_blob = hashlib.sha1(header + data).hexdigest()
+            if actual_blob != expected_blob:
+                raise SystemExit(f"accepted source blob mismatch: {target_name}")
+        elif str(spec.get("sha256") or "") != actual:
             raise SystemExit(f"accepted source hash mismatch: {target_name}")
         target = output_root / target_name
         target.parent.mkdir(parents=True, exist_ok=True)
