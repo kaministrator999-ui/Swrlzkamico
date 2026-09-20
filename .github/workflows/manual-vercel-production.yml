@@ -295,8 +295,11 @@ jobs:
           assert caps.get("chat-rmcca-direct-transport", {}).get("ready") is True
           assert caps.get("chat-rmcca-direct-transport", {}).get("contract") == "rmcca-direct-v1"
           assert caps.get("runtime-delivery-optimization", {}).get("ready") is True
-          assert caps.get("runtime-delivery-optimization", {}).get("contract") == "prepared-runtime-generation-v2"
+          assert caps.get("runtime-delivery-optimization", {}).get("contract") == "prepared-runtime-generation-v3"
           assert caps.get("runtime-delivery-optimization", {}).get("requestPathSync") is False
+          generation = json.load(open(".swrzl-prepared-runtime/generation.json"))
+          assert generation.get("r39SourceDelivery") == "local-precomposed-chain-v1"
+          assert len(generation.get("r39OverlayChain") or []) == 16
           assert caps.get("runtime-manifest-authority", {}).get("ready") is True
           assert caps.get("runtime-manifest-authority", {}).get("contract") == "github-contents-manifest-v1"
           live = caps.get("instance-independent-live-source", {})
