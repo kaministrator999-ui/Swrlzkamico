@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.18  
+**Version:** 1.0.19  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -69,3 +69,5 @@ The component acceptance cadence is therefore:
 - **1.0.17 drawer account + versions:** Versions is now a header-toggled collapsible panel that retains bounded scrolling when expanded. Immediately above it, the drawer uses the existing server account contract (`/api/account/status`, `/api/account/me`, `/api/account/google`, `/api/account/logout`) and Google Identity Services; it does not create a second account authority. Existing signed HttpOnly session state is checked on load, sign-in credentials are server-verified, and sign-out uses the canonical account route.
 
 - **1.0.18 legacy-account routing correction:** the clean-room drawer account UI now routes status, session restore, Google credential verification, and logout through the existing `/live/api/account/*` server surface used by the legacy/server-backed Chat architecture. The clean-room static Vercel deployment does not own Python account functions, so direct `/api/account/*` calls on that isolated project were the wrong boundary. No duplicate auth authority was introduced.
+
+- **1.0.19 account transport trace:** ancestry/source inspection confirmed legacy Google verification is canonically `/api/account/*`; `/live/api/account/*` was an incorrect inferred prefix and produced non-JSON responses. Clean-room account requests now target the canonical account paths at the legacy server origin and wrap every request with an account camera capturing path/status/content-type/body preview/duration or network error. The camera also attempts relay to `/api/chat/client-debug`; console trace remains available when the isolated static deployment has no debug ingestion route.
