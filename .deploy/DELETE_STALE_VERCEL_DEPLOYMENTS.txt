@@ -4,3 +4,4 @@ KEEP=current-production-host
 PROJECT=swrlzkamico-o3nu
 REQUESTED_AT=2026-09-20
 PURPOSE=isolate stale-deployment contribution to clean-room Chat load behavior
+RETRY=2
