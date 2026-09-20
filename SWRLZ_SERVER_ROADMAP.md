@@ -1212,3 +1212,14 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Verification:** both changed contracts were re-read and contain the explicit `UPDATE CONTINUATION ENDED` requirement; `runtime:versions/repository-work.txt` reports `1.0.8` active.
 - **Deployment/restart:** none; governance-only and deployment-inert.
 - **Result:** COMPLETE.
+
+
+### UPDATE STARTED — 2026-09-19 — runtime-hot route/source discovery hardening
+
+- **Requested outcome:** make Project Start reliably resolve user-referenced pages/components through the repository's runtime-hot architecture and naming conventions before concluding that a path does not exist.
+- **Observed failure:** a reference to the new Chat / §wyrlz page was searched on `main` and treated as missing even though the live manifest-routed source exists at `runtime:chat/§wyrlz/index.html` for route `/chat/§wyrlz`.
+- **Observed baseline:** Repository Work `1.0.8`; Web Chat `1.5.85`; Runtime Manifest `152`; Server Runtime `2.3.287`.
+- **Architecture reconciliation:** Project Start owns discovery/routing behavior; the Runtime Hotloader Guide owns the detailed runtime-hot route/source mapping convention. No new source owner, loader, or registry is introduced.
+- **Expected impact:** documentation/governance only. Repository Work advances; runtime component versions remain unchanged.
+- **Deployment expectation:** none; this is deployment-inert.
+- **Verification plan:** add a mandatory runtime-hot discovery rule to Project Start, add the operational route/source resolution convention to the Hotloader Guide, fetch both back, concurrency-check Repository Work, advance Repository Work only, then close this event.
