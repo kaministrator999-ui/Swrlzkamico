@@ -73,6 +73,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 - **Current implementation relationship:** tier 1 already removes ordinary request-path synchronization and prepares a deployment generation. The next architecture tier must add an explicit promotion/integration step so the deployment workflow consumes accepted canonical source rather than treating the mutable runtime branch itself as the long-term production authority.
 - **Truth state:** governance/lifecycle contract updated. No deployment/restart/live activation.
 
+
+### UPDATE CONTINUATION STARTED — 2026-09-19 — accepted runtime promotion implementation
+
+- **Intent:** implement the explicit graduation boundary: runtime-hot remains the temporary rehearsal authority while a feature is being tested; satisfactory legacy Chat/LALM state is promoted into a canonical deployable snapshot on `main`; the production workflow consumes that accepted snapshot rather than the mutable runtime branch.
+- **Baseline re-read:** Repository Work `1.0.14`; Server Runtime `2.3.287`; Web Chat `1.5.86`; LALM Engine `2.1.112`; Deployment Control `1.0.10`. Existing tier-1 workflow still resolves `origin/runtime` immediately before production build.
+- **Canonical owner decision:** add a main-owned accepted-generation snapshot plus explicit promotion tool. Promotion is an engineering action, not deployment. The deployment workflow must fail closed if the accepted snapshot is absent/inconsistent and must not fetch mutable runtime application authority as production input.
+- **First promotion scope:** legacy Chat assets + R39/LALM entrypoint + Chat history policy, matching tier-1 transfer scope. Clean-room `/chat/§wyrlz` remains outside this promotion until its own stage is accepted.
+- **Promotion evidence:** accepted snapshot records source runtime commit and per-file hashes so rehearsal provenance remains auditable after graduation.
+- **Deployment expectation:** NONE during this implementation. No production workflow dispatch is authorized.
+
 ### UPDATE STARTED — 2026-09-19 — legacy-to-clean-room hot-runtime coupling probe
 
 - **Intent:** deliberately mutate only the legacy `runtime:web/chat.html` source, then have the user refresh clean-room `/chat/§wyrlz` to test whether a legacy runtime-head change causes transient loading/routing inconsistencies on the clean-room route.
