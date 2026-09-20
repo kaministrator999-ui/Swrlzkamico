@@ -36,6 +36,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### Chat stage overview contract
+
+**UPDATE STARTED**
+
+**Status:** IN PROGRESS.  
+**Intent:** preserve the canonical Chat theater/stage composition model as a reusable overview and make it mandatory reading from `§wyrlz_§tart.md`, so future Chat work classifies scenery, props, actors, stagehands, curtain phases, ownership, lifecycle, and legal mutation timing before implementation.  
+**Observed baseline:** Repository Work `1.0.9`; Server Runtime `2.3.287`; Web Chat `1.5.85`; Runtime Manifest `152`; §wyrlz Start SHA `66505c614e42f976e0fbe1e69e01cb945e60ea09`. Repository search did not find this complete six-primitive Chat scene contract already captured as a canonical overview.  
+**Architecture reconciliation:** add one Chat overview operating document rather than scattering this model through Roadmap history. Route Project Start through it as mandatory Chat-context reading. This tier is documentation/governance only and does not alter the runtime-hot Chat page.  
+**Expected impact:** Repository Work only. Server Runtime, Web Chat, Runtime Manifest unchanged.  
+**Deployment expectation:** NONE.  
+**Verification plan:** create the Chat overview, wire it into §wyrlz Start mandatory routing/ownership, fetch back, bump Repository Work, and close this event.
+
+
 ### §wyrlz Start filename correction
 
 **UPDATE STARTED / FINISHED**
