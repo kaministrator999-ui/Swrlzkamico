@@ -88,26 +88,30 @@ jobs:
 
           deleted=0
           failed=0
-          cursor=""
           seen_keep=0
 
-          while :; do
-            url="https://api.vercel.com/v13/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=100"
-            if [[ -n "$cursor" ]]; then
-              url="$url&until=$cursor"
-            fi
-            page="$(curl --fail-with-body --silent --show-error "${auth[@]}" "$url")"
-
+          # Re-read the first page after each deletion batch. Mutating a paginated
+          # collection while walking old cursors can skip entries, so cleanup
+          # converges from fresh project state instead.
+          for pass in $(seq 1 20); do
+            page="$(curl --fail-with-body --silent --show-error "${auth[@]}" \
+              "https://api.vercel.com/v13/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=100")"
             mapfile -t ids < <(jq -r '.deployments[]? | .uid // .id // empty' <<<"$page")
-            if [[ "${#ids[@]}" -eq 0 ]]; then
-              break
-            fi
 
+            stale=()
             for id in "${ids[@]}"; do
               if [[ "$id" == "$keep_id" ]]; then
                 seen_keep=1
-                continue
+              else
+                stale+=("$id")
               fi
+            done
+
+            if [[ "${#stale[@]}" -eq 0 ]]; then
+              break
+            fi
+
+            for id in "${stale[@]}"; do
               echo "Deleting stale deployment $id"
               code="$(curl --silent --show-error --output delete.json --write-out '%{http_code}' \
                 -X DELETE "${auth[@]}" \
@@ -122,11 +126,6 @@ jobs:
                 echo "- FAILED `$id` (HTTP $code)" >> "$GITHUB_STEP_SUMMARY"
               fi
             done
-
-            cursor="$(jq -r '.pagination.next // empty' <<<"$page")"
-            if [[ -z "$cursor" || "$cursor" == "null" ]]; then
-              break
-            fi
           done
 
           if [[ "$seen_keep" -ne 1 ]]; then
