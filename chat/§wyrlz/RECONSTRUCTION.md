@@ -29,6 +29,26 @@ Runtime-hot is not part of this reconstruction phase. The clean-room Chat is a s
 
 Clean-room Chat starts at **1.0.1**. It is independent from the legacy Web Chat 1.5.x lineage. Each accepted component-level change advances this clean-room lineage according to the project version-evolution contract.
 
+
+## Camera-first admission law
+
+Observability is part of every component, not a later debugging add-on. A component is **not admitted** into the clean-room Chat unless its head-to-toe execution/render path is observable through structured cameras that §wyrlz can retrieve from the server-side diagnostic surface after deployment.
+
+For every rendered or behavior-bearing component, cameras must cover, as applicable:
+
+`source/version identity → component admission/start → dependency readiness → DOM creation/attachment → style/theme application → render/visibility state → geometry/layout changes → animation/frame transitions → event binding → user interaction → state mutation → network/server handoff → response/state application → terminal/settled state → error/fallback/removal`.
+
+Every camera event must use a stable component ID, clean-room Chat version, correlation/request/session identity where applicable, monotonic/high-resolution timing where available, event name, bounded state/geometry metadata, and source/revision identity. Credentials, tokens, cookies, and authentication secrets are never logged.
+
+Rendered components additionally require mutation/layout/frame observation sufficient to identify **what rendered, when it rendered, what changed its geometry/visibility, and which writer caused the change**. Cameras must be installed with the component rather than retrofitted after a defect.
+
+Client/browser cameras must have a bounded server diagnostic ingestion/storage path that can be queried during development. Console-only telemetry does not satisfy this contract. If §wyrlz cannot retrieve the evidence, the component is not camera-complete.
+
+The component acceptance cadence is therefore:
+
+`integrate component + cameras → deploy approved checkpoint → pull correlated logs → inspect head-to-toe path → accept/correct → document → next component`.
+
+
 ## Current component inventory
 
 - **Foundation:** ACCEPTED as 1.0.1 — minimal document and viewport metadata only. The visible `§wyrlz` placeholder and page-title label were removed; the body is intentionally empty.
