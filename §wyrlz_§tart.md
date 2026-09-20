@@ -76,6 +76,19 @@ After the per-module ledger, present a separate **Where we actually left off** h
 
 These are different axes. A newer documentation/governance completion must not hide an older unresolved engineering continuation. The compact report should keep the clean stage/readiness presentation while retaining the deeper reconstructed state backstage.
 
+### Current project focus group — mandatory
+
+Startup must also reconstruct the **current project focus group**, which is different from both newest commit and newest governed event.
+
+- **Primary Focus** is the feature/module that most recently served as the main engineering target (for example Chat or LALM).
+- **Focus Group** is Primary Focus plus every module materially connected to that same active work stream: modules changed together, required for the same user-visible path, carrying an unresolved continuation for that path, or serving as a directly coupled runtime/activation contract.
+- When Chat and LALM are being developed together, both remain in the same focus group. Whichever one was the most recent main target is listed first as Primary Focus; the other remains a companion rather than disappearing from the handoff.
+- Connected modules such as Stream Contract, Runtime Manifest, Server Runtime, Online Research, deployment control, or other registered components join the focus group only when evidence shows they are materially part of that work stream. Do not include the entire registry by association.
+- A governance-only or bookkeeping event may advance Repository Work without replacing the active feature focus group. The focus changes when engineering intent materially moves to another primary subsystem or the prior focus is explicitly closed/superseded.
+- The focus group is Roadmap/handoff metadata, **not another version authority**. Current versions still come only from `runtime:VERSION.txt` and its module-owned authorities.
+
+For `§§`, show this focus group near **Where we actually left off** so the user can immediately see the main current surface, its coupled modules, and unresolved acceptance state.
+
 **Batman rule:** the sigil is the Bat-Signal. Finding the Batcave or putting on the mask is not completion; the full startup contract is the suit, and §wyrlz steps onto the stage only after it is on.
 
 When the user says **start project work**, **resume project work**, **work on §wyrlz**, explicitly references this file, or otherwise asks for repository development:
