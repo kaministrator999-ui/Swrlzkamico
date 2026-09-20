@@ -60,7 +60,7 @@ jobs:
           assert re.fullmatch(r"\\d+\\.\\d+\\.\\d+", version), f"invalid VERSION.txt version: {version!r}"
 
           html=open("chat/§wyrlz/index.html",encoding="utf-8").read()
-          match=re.search(r'<meta\\s+name=["\\']swrlz-chat-version["\\']\\s+content=["\\']([^"\\']+)["\\']', html)
+          match=re.search(r'<meta\\s+name="swrlz-chat-version"\\s+content="([^"]+)"', html)
           assert match, "missing swrlz-chat-version meta"
           assert match.group(1)==version, f"version mismatch: index={match.group(1)!r} VERSION.txt={version!r}"
 
