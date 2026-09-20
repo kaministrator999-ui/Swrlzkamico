@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.3">
+  <meta name="swrlz-chat-version" content="1.0.4">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -21,28 +21,37 @@
       color:var(--text);
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     }
-    .composer-shell{
-      position:fixed;z-index:4;left:0;right:0;bottom:0;
-      padding:8px clamp(14px,3vw,34px) 20px;
-      background:linear-gradient(to top,var(--bg) 38%,rgba(3,3,11,.9) 72%,transparent);
-    }
+    .composer-shell{position:fixed;z-index:4;left:0;right:0;bottom:0;padding:0 20px 18px;background:linear-gradient(to top,rgba(3,10,24,.88) 0%,rgba(3,10,24,.45) 58%,transparent 100%)}
     .composer{width:min(900px,100%);margin:0 auto}
-    .composer-box{
-      position:relative;overflow:hidden;border:1px solid rgba(145,169,192,.2);
-      border-radius:21px;background:rgba(10,17,32,.9);
-      box-shadow:0 22px 70px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.025);
-      backdrop-filter:blur(24px);transition:border-color .18s ease,box-shadow .18s ease;
+    .composer-box{position:relative;overflow:hidden;border:1px solid rgba(95,192,255,.38);border-radius:36px;background:linear-gradient(145deg,rgba(21,43,65,.94),rgba(7,25,43,.91));box-shadow:0 22px 70px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(28px) saturate(125%)}
+    .composer-box:focus-within{border-color:rgba(56,232,255,.58);box-shadow:0 22px 70px rgba(0,0,0,.48),0 0 0 2px rgba(56,232,255,.06)}
+    #prompt{display:block;width:100%;height:112px;resize:none;padding:34px 32px 12px;border:0;outline:0;color:var(--text);background:transparent;font:inherit;font-size:24px;line-height:1.4}
+    #prompt::placeholder{color:rgba(145,169,192,.78)}
+    .composer-tools{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 18px 17px 22px}
+    .composer-left,.composer-right{display:flex;align-items:center;gap:14px;min-width:0}
+    .route-select{height:61px;min-width:262px;padding:0 44px 0 24px;border:1px solid rgba(56,232,255,.28);border-radius:17px;color:#dcecff;background:#071b2d;font-size:17px;font-weight:800}
+    .utility-button{display:inline-grid;place-items:center;width:80px;height:61px;border:1px solid rgba(56,232,255,.48);border-radius:17px;color:#d9fbff;background:rgba(20,70,91,.72);font-size:19px;font-weight:800}
+    .send-button{display:inline-grid;place-items:center;width:68px;height:68px;border:0;border-radius:21px;cursor:pointer;color:#dffaff;background:linear-gradient(145deg,#7de5ff,#58a8ff);box-shadow:0 10px 28px rgba(56,168,255,.3)}
+    .send-button svg{width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .context-panel{padding:10px 14px 0;color:rgba(198,218,235,.72);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+    .context-row,.stored-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:16px;letter-spacing:.04em}
+    .context-label{font-weight:700}
+    .context-meter{height:8px;margin:9px 0 11px;border-radius:999px;background:rgba(113,154,186,.22);box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}
+    .context-meter-fill{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--cyan),var(--blue))}
+    .stored-row{justify-content:flex-start;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+    .composer-caption{overflow:hidden;margin:10px 0 0;color:rgba(198,218,235,.68);font-size:15px;letter-spacing:.035em;white-space:nowrap;text-overflow:ellipsis}
+    @media(max-width:600px){
+      .composer-shell{padding:0 20px 16px}
+      .composer-box{border-radius:34px}
+      #prompt{height:112px;padding:33px 31px 10px;font-size:23px}
+      .composer-tools{padding:0 17px 17px 22px}
+      .route-select{min-width:0;width:262px;max-width:calc(100vw - 190px);height:61px;font-size:16px}
+      .utility-button{width:80px;height:61px}
+      .send-button{width:68px;height:68px}
+      .context-panel{padding:9px 14px 0}
+      .context-row,.stored-row{font-size:15px}
+      .composer-caption{font-size:14px}
     }
-    .composer-box:focus-within{border-color:rgba(56,232,255,.42);box-shadow:0 22px 70px rgba(0,0,0,.42),0 0 0 3px rgba(56,232,255,.04)}
-    #prompt{display:block;width:100%;min-height:60px;max-height:180px;resize:none;padding:17px 18px 9px;border:0;outline:0;color:var(--text);background:transparent;font:inherit;font-size:15px;line-height:1.55}
-    #prompt::placeholder{color:rgba(145,169,192,.68)}
-    .composer-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:49px;padding:4px 7px 7px 12px}
-    .composer-left,.composer-right{display:flex;align-items:center;gap:8px;min-width:0}
-    .route-select{height:34px;max-width:180px;padding:0 28px 0 10px;border:1px solid var(--line);border-radius:10px;color:var(--secondary);background:#0c1527;font-size:11px;font-weight:700}
-    .composer-hint{overflow:hidden;color:var(--muted);font-size:10px;text-overflow:ellipsis;white-space:nowrap}
-    .send-button{display:inline-grid;place-items:center;width:39px;height:39px;border:0;border-radius:13px;cursor:pointer;color:#001015;background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 8px 24px rgba(56,232,255,.2)}
-    .send-button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-    .composer-caption{margin:8px 8px 0;color:rgba(145,169,192,.72);font-size:10px;text-align:center}
   </style>
 </head>
 <body>
@@ -53,17 +62,21 @@
         <div class="composer-tools">
           <div class="composer-left">
             <select class="route-select" id="route" aria-label="Response route"><option value="AUTO">AUTO · SERVER</option><option value="LALM">LALM · DIRECT</option></select>
-            <span class="composer-hint" id="composerHint">Committed stream text only</span>
+            <button class="utility-button" type="button" aria-label="Composer utility">☑⌕</button>
           </div>
           <div class="composer-right">
-            <span class="composer-hint" id="charCount">0 / 16k</span>
             <button class="send-button" id="sendButton" type="button" aria-label="Send message">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/><path d="m11 13 9-9"/></svg>
             </button>
           </div>
         </div>
       </div>
-      <p class="composer-caption">Status and routing stay separate from assistant text. Verify important output before acting.</p>
+      <div class="context-panel" aria-label="Context status scenery">
+        <div class="context-row"><span class="context-label">Context</span><span>≈ 0 / 2,048 tokens · 0%</span></div>
+        <div class="context-meter"><span class="context-meter-fill"></span></div>
+        <div class="stored-row">0 messages stored · 0 recent messages currently eligible…</div>
+        <p class="composer-caption">Status and routing stay separate from assistant text. Verify important output before acting.</p>
+      </div>
     </form>
   </footer>
 </body>
