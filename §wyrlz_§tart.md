@@ -86,6 +86,8 @@ Startup must also reconstruct the **current project focus group**, which is diff
 - Connected modules such as Stream Contract, Runtime Manifest, Server Runtime, Online Research, deployment control, or other registered components join the focus group only when evidence shows they are materially part of that work stream. Do not include the entire registry by association.
 - A governance-only or bookkeeping event may advance Repository Work without replacing the active feature focus group. The focus changes when engineering intent materially moves to another primary subsystem or the prior focus is explicitly closed/superseded.
 - The focus group is Roadmap/handoff metadata, **not another version authority**. Current versions still come only from `runtime:VERSION.txt` and its module-owned authorities.
+- Focus identity must be specific enough to distinguish independently routed/architected surfaces inside one registered module. If legacy `/chat` and clean-room `/chat/§wyrlz` share the Web Chat version authority, startup must still name which route/product surface is Primary Focus and which is only control/reference. A shared module version does not collapse distinct architectural roles.
+- For the current Chat rebuild, `/chat/§wyrlz` is the clean-room product surface and `/chat` is the legacy control/reference unless a later governed event explicitly changes that architecture. Legacy dependencies do not automatically join the clean-room focus group; each companion joins only when the clean-room route materially integrates with it.
 
 For `§§`, show this focus group near **Where we actually left off** so the user can immediately see the main current surface, its coupled modules, and unresolved acceptance state.
 
