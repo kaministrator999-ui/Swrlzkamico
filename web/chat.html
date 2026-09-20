@@ -6,6 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#03030b">
+  <!-- Canonical first-paint Ice Dragon scenery. This runs before body paint so
+       the generic base Chat cannot become a visible intermediate frame. -->
+  <script>
+    (() => {
+      try {
+        const theme = localStorage.getItem('swrlz.chat.theme') || 'ice-dragon';
+        if (theme !== 'default') document.documentElement.dataset.swrlzInitialTheme = 'ice-dragon';
+      } catch (_) { document.documentElement.dataset.swrlzInitialTheme = 'ice-dragon'; }
+    })();
+  </script>
+  <style id="swrlz-ice-dragon-first-paint-canonical">
+    html[data-swrlz-initial-theme="ice-dragon"] body { background:#010812!important; }
+    html[data-swrlz-initial-theme="ice-dragon"] .workspace {
+      background-color:#010812!important;
+      background-image:url("https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/main/file_00000000b13c81f5a7f9fe99c0264ef0.png?v=20260913i")!important;
+      background-position:50% 42%!important;background-size:cover!important;background-repeat:no-repeat!important;
+    }
+    html[data-swrlz-initial-theme="ice-dragon"] .messages { background:transparent!important; }
+    html[data-swrlz-initial-theme="ice-dragon"] .composer-shell { background:rgba(82,140,190,.10)!important;backdrop-filter:blur(9px) saturate(114%)!important;-webkit-backdrop-filter:blur(9px) saturate(114%)!important; }
+    html[data-swrlz-initial-theme="ice-dragon"] .composer-box { background:rgba(3,15,27,.68)!important;backdrop-filter:blur(8px) saturate(116%)!important;-webkit-backdrop-filter:blur(8px) saturate(116%)!important; }
+  </style>
   <title>§wyrlz Chat</title>
   <style>
     :root {
