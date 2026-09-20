@@ -157,7 +157,7 @@ jobs:
           cp 'chat/§wyrlz/index.html' "$stage/chat/§wyrlz/index.html"
           cp 'file_00000000b13c81f5a7f9fe99c0264ef0.png' "$stage/"
           git fetch --depth=1 origin runtime
-          git archive --format=tar origin/runtime api requirements.txt pyproject.toml setup.py swyrlz web | tar -x -C "$stage"
+          git archive --format=tar origin/runtime api requirements.txt pyproject.toml setup.py swyrlz native web | tar -x -C "$stage"
           cp vercel.json "$stage/vercel.json"
           cd "$stage"
           url="$(npx --yes vercel@59.23.2 deploy --prod --yes --token="$VERCEL_TOKEN")"
