@@ -36,6 +36,15 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE CONTINUATION STARTED — 2026-09-20 — Gate 4 terminal version/freeze reconciliation
+
+- **Primary Focus:** Deployment Control / prepared-runtime terminal candidate.
+- **Focus Group:** Repository Work (changed by completed governed transfer), Deployment Control (candidate verification contract), Online Research (prepared reasoner inclusion/activation boundary), LALM Engine (unchanged accepted v90 payload, acceptance-coupled), Web Chat legacy (unchanged accepted payload, acceptance-coupled).
+- **Observed authority baseline:** runtime registry remains authoritative; Repository Work 1.0.14, Server Runtime 2.3.287, LALM Engine 2.1.112 / v90, Online Research 1.0.1, Web Chat 1.5.86, Runtime Manifest 152, Deployment Control 1.0.10. Server Runtime is intentionally not advanced before an actual release.
+- **Reconciliation findings before freeze:** the production workflow still asserts the older `local-precomposed-chain-v1` label while the verified preparer emits `local-precomposed-full-lineage-v2`; the accepted promotion scope does not yet package the already-accepted Online Research reasoner even though Gate 3 removed audience-path repository refresh; and `.deploy/REQUEST.txt` still contains a consumed historical request and must not be reused as the new terminal authorization.
+- **Deployment state:** no deployment triggered by this continuation. Gate 4 must close the three freeze gaps, re-read version authorities for concurrency, advance only changed registered modules, rerun non-production verification, and leave a frozen exact source candidate ready for the single terminal production trigger.
+
+
 ### UPDATE CONTINUATION ENDED — 2026-09-20 — Gate 3 audience/request-path audit
 
 - **Legacy Chat/LALM:** ordinary GET/POST Chat paths resolve explicit worker-local override → prepared deployment generation → bundled fallback. `runtime_hot` middleware is consumer-only and `register_hot_refresher(None)` prevents audience requests from becoming repository synchronization workers. `get_engine()` performs no repository discovery.
