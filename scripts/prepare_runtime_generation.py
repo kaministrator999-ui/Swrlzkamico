@@ -47,7 +47,7 @@ def main() -> int:
     source=entry.read_text(encoding="utf-8")
     source=source.replace("import json,time,urllib.request","import json,time,urllib.request\nfrom pathlib import Path",1)
     source=source.replace("def _entry(stage,**fields):",'_SWRLZ_CHAIN=Path(__file__).with_name("chain")\n\ndef _entry(stage,**fields):',1)
-    local_map={"_source":"v74.py","_overlay":"v75.py","_v76_overlay":"v76.py","_v77_overlay":"v77.py","_v78_overlay":"v78.py","_v79_overlay":"v79.py","_v80_overlay":"v80.py","_v81_overlay":"v81.py","_v82_batch_source":"v82_batch.py","_v84_overlay":"v84.py","_v85_overlay":"v85.py","_v86_overlay":"v86.py","_v87_overlay":"v87.py","_v88_overlay":"v88.py","_v89_overlay":"v89.py","_v90_overlay":"v90.py"}
+    local_map={"_source":"v74.py","_overlay":"v75.py","_v76_overlay":"v76.py","_v77_overlay":"v77.py","_v78_overlay":"v78.py","_v79_overlay":"v79.py","_v80_overlay":"v80.py","_v81_overlay":"v81.py","_v82_batch_source":"v82_batch.py","_v85_overlay":"v85.py","_v86_overlay":"v86.py","_v87_overlay":"v87.py","_v88_overlay":"v88.py","_v89_overlay":"v89.py","_v90_overlay":"v90.py"}
     for var,filename in local_map.items():
         pattern=re.compile(r'(?m)^\s*with urllib\.request\.urlopen\([^\n]+\) as _response:'+re.escape(var)+r'=_response\.read\([^\n]+\)')
         source,count=pattern.subn(f'    {var}=(_SWRLZ_CHAIN/"{filename}").read_bytes()',source,count=1)
