@@ -46,97 +46,97 @@
   ],
   "overlayChain": [
     {
-      "name": "v74.py",
+      "name": "v74",
       "sourceCommit": "58bfd905d0d3281b6adc1669ca8482cd04cc300c",
       "acceptedTarget": "lalm/chain/v74.py",
       "sourceBlobSha": "df44c8007f6a14188ad4304194b809f082a8d968"
     },
     {
-      "name": "v75.py",
+      "name": "v75",
       "sourceCommit": "8a92721addbeb6709b132f826404e805d8e35029",
       "acceptedTarget": "lalm/chain/v75.py",
       "sourceBlobSha": "e95ae4f42d2002a286abb4c5c6f8e155727428a0"
     },
     {
-      "name": "v76.py",
+      "name": "v76",
       "sourceCommit": "65bcfbb1b20bda7fb71e0ea5b52f811a2d09725b",
       "acceptedTarget": "lalm/chain/v76.py",
       "sourceBlobSha": "60985f79a86afd3b5a8d4b17c7c2ea2815ef8dbe"
     },
     {
-      "name": "v77.py",
+      "name": "v77",
       "sourceCommit": "fae655929b24c1eff3951fba1178a488394dce53",
       "acceptedTarget": "lalm/chain/v77.py",
       "sourceBlobSha": "b0bf5e57bb8c19730dd1aa2ffe8b3ba7c8abcc02"
     },
     {
-      "name": "v78.py",
+      "name": "v78",
       "sourceCommit": "042baf81ad511205d49f4564e7f7b092a6ae6ac0",
       "acceptedTarget": "lalm/chain/v78.py",
       "sourceBlobSha": "7c1b1fb4669b0340a170704cdc4f0293005a7c26"
     },
     {
-      "name": "v79.py",
+      "name": "v79",
       "sourceCommit": "188a830fee42b91849196a3ae18ef40af178a644",
       "acceptedTarget": "lalm/chain/v79.py",
       "sourceBlobSha": "f93509c0a85986c48769c5492dbc15e52e288594"
     },
     {
-      "name": "v80.py",
+      "name": "v80",
       "sourceCommit": "44f154cf6a4ae46eb232665f36815eec2b2d8496",
       "acceptedTarget": "lalm/chain/v80.py",
       "sourceBlobSha": "e3c404e7d334546a9b169fdbf35dd6f94587e559"
     },
     {
-      "name": "v81.py",
+      "name": "v81",
       "sourceCommit": "94d09dce6d03d3a51632f8b6d830265481a26372",
       "acceptedTarget": "lalm/chain/v81.py",
       "sourceBlobSha": "0bff936ee1b2ea784dc7f1c91fa25c02073bbb4a"
     },
     {
-      "name": "v82_batch.py",
+      "name": "v82-batch",
       "sourceCommit": "c52341389f884f37fa9c6ba1c5950aea54fceffe",
       "acceptedTarget": "lalm/chain/v82_batch.py",
       "sourceBlobSha": "df08d0ff01ac2fbee14360296a66c01d7f0a8416"
     },
     {
-      "name": "v84.py",
+      "name": "v84",
       "sourceCommit": "2e959bb9fea0af38c7f2c1e35745c3a8a8c9f066",
       "acceptedTarget": "lalm/chain/v84.py",
       "sourceBlobSha": "e9fddf8f0f8ee21e19046de9afb81b0288d81b25"
     },
     {
-      "name": "v85.py",
+      "name": "v85",
       "sourceCommit": "f63e6d1999255806f65e0d1d670d46ac8ab86994",
       "acceptedTarget": "lalm/chain/v85.py",
       "sourceBlobSha": "9530ea17891f02c01ae70c8832e213e6706ac317"
     },
     {
-      "name": "v86.py",
+      "name": "v86",
       "sourceCommit": "abc895d9d268ccae6efc5c8bb2d5cfa1bb982c7f",
       "acceptedTarget": "lalm/chain/v86.py",
       "sourceBlobSha": "20e31a381e0c77bfcd2fe43e774f1f2321a006ca"
     },
     {
-      "name": "v87.py",
+      "name": "v87",
       "sourceCommit": "e59f572d3afbbf0d825d023531cc10987572a7aa",
       "acceptedTarget": "lalm/chain/v87.py",
       "sourceBlobSha": "fcf88bd7385ca5635e37c56a1b0a7d54fc38949a"
     },
     {
-      "name": "v88.py",
+      "name": "v88",
       "sourceCommit": "46eb91e1f1477069777c06a21cc8eced5c7873cb",
       "acceptedTarget": "lalm/chain/v88.py",
       "sourceBlobSha": "aa3d78372dc6fb87270cdad8adcf88403ecdcac8"
     },
     {
-      "name": "v89.py",
+      "name": "v89",
       "sourceCommit": "4cee6d758121526d170ef2a44e1ad2d365676c43",
       "acceptedTarget": "lalm/chain/v89.py",
       "sourceBlobSha": "c38bece68ba0a03f3ddedf01fe03c07885f78ef7"
     },
     {
-      "name": "v90.py",
+      "name": "v90",
       "sourceCommit": "5c242ddc4246e388ebc6478c74c3e21ceb6864ec",
       "acceptedTarget": "lalm/chain/v90.py",
       "sourceBlobSha": "9a4051e5e12637998bc81e4adf78f740fc4e62d4"
