@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.3  
+**Version:** 1.0.4  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -53,6 +53,6 @@ The component acceptance cadence is therefore:
 
 - **Foundation:** ACCEPTED as 1.0.1 — minimal document and viewport metadata only. The visible `§wyrlz` placeholder and page-title label were removed; the body is intentionally empty.
 - **Ice Dragon wallpaper / first-paint scenery:** ACCEPTED as 1.0.2 — canonical Ice Dragon image is initial-document scenery with no JavaScript/runtime/late injector. Repeated fresh-deployment audience tests showed immediate clean first paint.
-- **Composer / opening stage scenery:** SOURCE-INTEGRATED as 1.0.3 — extracted from `accepted_runtime/legacy-chat/chat.html` and placed directly in the initial clean-room document. Geometry, textarea, route selector, hints, send control, and caption are opening scenery only; no transport, submit behavior, runtime hydration, history, or actors are admitted. Acceptance target: first visible frame contains Dragon + Composer together with no late attachment or layout jump.
+- **Composer / opening stage scenery:** SOURCE-INTEGRATED as 1.0.4 — rebuilt to the supplied accepted mobile visual contract: large rounded glass shell, matching prompt spacing, AUTO · SERVER route control, utility control, blue send control, Context row/meter, stored-message line, and status caption. It remains initial-document scenery with native HTML behavior only; no transport, hydration, counters, history/session loading, or Chat-specific runtime behavior is admitted. Acceptance target: first visible frame matches the reference composer geometry against the Ice Dragon backdrop with no late attachment or layout jump.
 - **Ice Dragon remaining scenery/components:** NOT YET ADMITTED.
 - All other legacy Chat structure, message surface, transport, settings, context meter, account/session UI, diagnostics, and optional tooling: NOT YET ADMITTED.
