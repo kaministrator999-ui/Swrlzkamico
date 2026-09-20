@@ -167,23 +167,21 @@ jobs:
           print(state)
           PY
 
-      - name: Prepare accepted runtime generation
+      - name: Prepare promoted runtime generation
         id: runtime_generation
         shell: bash
         run: |
           set -euo pipefail
-          git fetch --no-tags origin runtime
-          runtime_sha="$(git rev-parse origin/runtime)"
-          runtime_root="${{ runner.temp }}/swrlz-runtime-authority"
-          rm -rf "$runtime_root"
-          git worktree add --detach "$runtime_root" "$runtime_sha"
           python scripts/prepare_runtime_generation.py \
-            --runtime-root "$runtime_root" \
-            --output-root ".swrzl-prepared-runtime" \
-            --runtime-sha "$runtime_sha"
-          git worktree remove --force "$runtime_root"
-          echo "sha=$runtime_sha" >> "$GITHUB_OUTPUT"
-          echo "Prepared runtime generation: $runtime_sha" >> "$GITHUB_STEP_SUMMARY"
+            --accepted-root "accepted_runtime" \
+            --output-root ".swrzl-prepared-runtime"
+          source_runtime_sha="$(python - <<'PY'
+          import json
+          print(json.load(open(".swrzl-prepared-runtime/generation.json"))["sourceRuntimeCommit"])
+          PY
+          )"
+          echo "sha=$source_runtime_sha" >> "$GITHUB_OUTPUT"
+          echo "Prepared promoted runtime generation: $source_runtime_sha" >> "$GITHUB_STEP_SUMMARY"
           cat .swrzl-prepared-runtime/generation.json >> "$GITHUB_STEP_SUMMARY"
 
       - name: Build production artifact
