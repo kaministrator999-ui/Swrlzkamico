@@ -36,6 +36,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE CONTINUATION ENDED — 2026-09-20 — recursive R39 ancestry moved behind curtain
+
+- **Recursive ancestry bounded and transferred:** executable boot tracing established the inherited lineage floor at v22, whose required v17 engine archive and v22 batch-prefill adapter are local-file consumers with no historical source-fetch dependency. Pre-deploy preparation now materializes the pinned v23→v73 ancestry plus the v22/v17/batch floor into the immutable prepared generation.
+- **Historical substitution semantics preserved:** the v67-selected fixed v65 source is pinned at `0103eaa9162f8e6cf7c396f9e5238c2d05abc773`; v65's no-longer-resolvable historical v61 URL is explicitly mapped to the byte-identical surviving v61 source from accepted rehearsal commit `b7076a6fbd2a8028a13326f32511316f18de07ba`. Existing v65→v60e and v60e→v58e substitution behavior remains inside the historical source lineage rather than being flattened away.
+- **Prepared source transport:** the generated R39 entry installs a fail-closed local source transport before v74 hydration. Recognized immutable historical source URLs resolve only to packaged prepared-generation files; any unknown source URL raises `R39_PREPARED_UNKNOWN_NETWORK_SOURCE`.
+- **Gate 2 executable result:** verification run `35514273997` built the prepared generation, validated the full packaged lineage, booted the prepared R39 through v90 with external historical source access blocked, and passed the ordinary request-path synchronization-inert audit.
+- **Truth state:** Gate 1 **BUILD-ARTIFACT VERIFIED**; Gate 2 **RUNTIME BOOT VERIFIED in non-production CI** with zero historical GitHub source fetch required at boot; request-path synchronization contract **VERIFIED**. No production deployment/restart/live activation occurred.
+- **Next action:** complete the broader Gate 3 audience/request-path audit (legacy Chat, clean-room Chat boundary, Online Research/history-policy/get_engine ownership), reconcile terminal versions/freeze, then perform the single governed production deployment and live acceptance.
+
+
 ### UPDATE CONTINUATION — 2026-09-20 — prepared-generation executable verification
 
 - **Non-production verification harness added:** `.github/workflows/verify-prepared-runtime.yml` now executes the accepted-generation preparer independently of the production deployment workflow. It does not trigger Vercel production deployment.
