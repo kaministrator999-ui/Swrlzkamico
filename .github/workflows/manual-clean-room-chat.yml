@@ -78,5 +78,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          start="$(date +%s%3N)"\n          url="$(npx --yes vercel@59.23.2 deploy --prod --yes --token="$VERCEL_TOKEN")"\n          end="$(date +%s%3N)"\n          echo "deploy_ms=$((end-start))" >> "$GITHUB_STEP_SUMMARY"
+          start="$(date +%s%3N)"
+          stage="$(mktemp -d)"
+          mkdir -p "$stage/chat/§wyrlz"
+          cp 'chat/§wyrlz/index.html' "$stage/chat/§wyrlz/index.html"
+          cp 'file_00000000b13c81f5a7f9fe99c0264ef0.png' "$stage/"
+          cp vercel.json "$stage/vercel.json"
+          cd "$stage"
+          url="$(npx --yes vercel@59.23.2 deploy --prod --yes --token="$VERCEL_TOKEN")"
+          end="$(date +%s%3N)"
+          echo "deploy_ms=$((end-start))" >> "$GITHUB_STEP_SUMMARY"
           echo "Production deployment: $url" >> "$GITHUB_STEP_SUMMARY"
