@@ -279,3 +279,29 @@ Ordinary Chat/LALM reads do not invoke a refresher. `api/runtime_hot.py` keeps t
 This is intentionally the first transfer tier, not the final queue implementation. Explicit activation is still worker-local under the current serverless ABI, so cross-worker durable queued activation remains a later architecture tier. The prepared production generation solves the deployment baseline first: every newly deployed function starts from the same accepted immutable runtime commit without making its first audience request assemble that state.
 
 The runtime R39 entrypoint itself still composes historical overlays from immutable commit URLs during module hydration. That is LALM-internal composition and is a separate next optimization target from runtime-branch discovery. The production workflow should eventually precompose/validate that chain as well if cameras show meaningful startup cost.
+
+
+## Explicit acceptance promotion
+
+Production deployment does not consume the mutable `runtime` branch directly.
+
+When a runtime-hot experiment is satisfactory, run the bounded promotion tool from a current `main` checkout after fetching the intended runtime authority:
+
+```bash
+git fetch origin runtime
+python scripts/promote_runtime_acceptance.py --runtime-ref origin/runtime
+```
+
+The promotion copies only the allowlisted accepted owners into `main:accepted_runtime/` and writes `accepted_runtime/accepted.json` with the exact source runtime commit and SHA-256 for every promoted file. Review and commit that accepted snapshot as normal governed main-source integration. Promotion itself does not deploy.
+
+The production workflow runs `scripts/prepare_runtime_generation.py` only against `accepted_runtime/`. It validates every hash and fails closed when the accepted authority is missing, empty, bootstrap-only, or inconsistent. The production workflow no longer fetches `origin/runtime` as application input.
+
+This establishes three distinct states:
+
+```text
+runtime/*              = rehearsal / mutable experiment
+accepted_runtime/*     = accepted canonical deployable snapshot on main
+swrzl_prepared_runtime = immutable build artifact derived from accepted main
+```
+
+A runtime commit after the accepted commit is simply unpromoted work. It has no production effect until deliberately tested, promoted, reviewed, committed to main, and later deployed through the separate deployment approval gate.
