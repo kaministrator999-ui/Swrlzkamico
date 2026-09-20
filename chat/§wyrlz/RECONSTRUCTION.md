@@ -53,6 +53,6 @@ The component acceptance cadence is therefore:
 
 - **Foundation:** ACCEPTED as 1.0.1 — minimal document and viewport metadata only. The visible `§wyrlz` placeholder and page-title label were removed; the body is intentionally empty.
 - **Ice Dragon wallpaper / first-paint scenery:** ACCEPTED as 1.0.2 — canonical Ice Dragon image is initial-document scenery with no JavaScript/runtime/late injector. Repeated fresh-deployment audience tests showed immediate clean first paint.
-- **Composer / opening stage scenery:** SOURCE-INTEGRATED as 1.0.7 — compact single-line bar retained; send control reduced to 32×32px with a 15px glyph and re-centered vertically so it reads as a secondary action rather than dominating the composer. Native input behavior only; no Chat-specific runtime behavior.
+- **Composer / opening stage scenery:** SOURCE-INTEGRATED as 1.0.7 — tightened to a 42px mobile / 44px desktop single-line input rail with a 28×28px send control and 13px glyph. Bottom anchoring now uses the safe-area inset so native viewport resizing can keep the fixed composer at the visible bottom when the keyboard opens; no JavaScript keyboard choreography or Chat-specific behavior is added.
 - **Ice Dragon remaining scenery/components:** NOT YET ADMITTED.
 - All other legacy Chat structure, message surface, transport, settings, context meter, account/session UI, diagnostics, and optional tooling: NOT YET ADMITTED.
