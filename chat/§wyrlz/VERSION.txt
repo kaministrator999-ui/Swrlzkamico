@@ -1,7 +1,7 @@
-1.0.2
+1.0.3
 lineage=clean-room-chat
 authority=main:chat/§wyrlz/
 state=server-deployed-source
 runtime_hot=false
 deploy_when=explicitly-approved-load-checkpoint
-component=ice-dragon-wallpaper-first-paint
+component=ice-dragon-wallpaper+legacy-composer-opening-scenery
