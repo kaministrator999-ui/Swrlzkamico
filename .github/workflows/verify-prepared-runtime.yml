@@ -1,0 +1,106 @@
+name: Verify Prepared Runtime Generation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "accepted_runtime/**"
+      - "scripts/prepare_runtime_generation.py"
+      - "api/hot_loader.py"
+      - "api/runtime_hot.py"
+      - "api/index.py"
+      - ".github/workflows/verify-prepared-runtime.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-prepared-runtime-verification
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build prepared runtime generation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/prepare_runtime_generation.py \
+            --accepted-root accepted_runtime \
+            --output-root .swrlz-prepared-runtime
+
+      - name: Verify prepared generation contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path(".swrlz-prepared-runtime")
+          generation = json.loads((root / "generation.json").read_text(encoding="utf-8"))
+          assert generation["contract"] == "swrlz-prepared-runtime-generation-v3", generation
+          assert generation["requestPathSyncRequired"] is False, generation
+          assert generation["r39HistoricalNetworkFetchRequired"] is False, generation
+          assert generation["r39SourceDelivery"] == "local-precomposed-chain-v1", generation
+
+          entry = root / "lalm" / "r39_engine.py"
+          source = entry.read_text(encoding="utf-8")
+          assert "urllib.request.urlopen(" not in source
+          compile(source, str(entry), "exec")
+
+          chain = generation["r39OverlayChain"]
+          assert len(chain) == 16, len(chain)
+          for item in chain:
+              path = root / item["acceptedTarget"]
+              assert path.is_file(), path
+              compile(path.read_text(encoding="utf-8"), str(path), "exec")
+
+          print("prepared-runtime-v3 contract verified")
+          print("overlay-chain-files", len(chain))
+          print("historical-network-fetch", False)
+          PY
+
+      - name: Verify ordinary request path is synchronization-inert
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          hot_loader = Path("api/hot_loader.py").read_text(encoding="utf-8")
+          runtime_hot = Path("api/runtime_hot.py").read_text(encoding="utf-8")
+          index = Path("api/index.py").read_text(encoding="utf-8")
+
+          assert "register_hot_refresher(None)" in runtime_hot
+          assert '"requestPath": False' in runtime_hot
+          assert "requestPathSync\":False" in index.replace(" ", "")
+          assert "r39HistoricalNetworkFetch\":False" in index.replace(" ", "")
+          assert "PREPARED_INFERENCE" in hot_loader
+          assert "PREPARED_CHAT" in hot_loader
+          assert "PREPARED_CHAT_HISTORY_POLICY" in hot_loader
+          print("ordinary request-path synchronization contract verified")
+          PY
+
+      - name: Publish verification summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## §wyrlz prepared-runtime verification"
+            echo
+            echo "- Production deployment: **not triggered by this workflow**"
+            echo "- Prepared generation contract: `swrlz-prepared-runtime-generation-v3`"
+            echo "- Historical R39 source delivery: local precomposed chain"
+            echo "- Audience request-path repository synchronization: disabled by contract"
+          } >> "$GITHUB_STEP_SUMMARY"
