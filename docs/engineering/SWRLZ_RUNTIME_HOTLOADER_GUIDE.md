@@ -225,3 +225,26 @@ If a tier fails, preserve the failure in roadmap lineage and correct it in a lat
 ## Bottom line
 
 **Repository Work tracks the engineering journey. Component versions track the pieces. Runtime Manifest tracks runtime page/asset activation. Server Runtime tracks deployed Server releases. Runtime-hot lets the stage evolve without pretending every prop change rebuilt the theater.**
+
+
+## Prepared production generation — first transfer implementation
+
+The first implemented transfer path covers the legacy Chat control surface plus hydrated LALM/history policy.
+
+The canonical manual production workflow now resolves one immutable `runtime` commit, materializes it in a detached worktree, and runs `scripts/prepare_runtime_generation.py`. The preparer copies the accepted legacy Chat assets, R39 hot entrypoint, and Chat history policy into a hash-described `swrlz-prepared-runtime-generation-v1` generation. The workflow injects that generation into each Python production function bundle before deployment.
+
+Stable readers use this precedence:
+
+```text
+explicitly activated worker-local hot override
+        ↓
+prepared deployment generation
+        ↓
+bundled stable fallback
+```
+
+Ordinary Chat/LALM reads do not invoke a refresher. `api/runtime_hot.py` keeps the authenticated explicit `POST /api/hot/sync` control for post-deployment development activation, but the request middleware and hot read paths no longer call it. `/api/hot/status` is observational and does not synchronize.
+
+This is intentionally the first transfer tier, not the final queue implementation. Explicit activation is still worker-local under the current serverless ABI, so cross-worker durable queued activation remains a later architecture tier. The prepared production generation solves the deployment baseline first: every newly deployed function starts from the same accepted immutable runtime commit without making its first audience request assemble that state.
+
+The runtime R39 entrypoint itself still composes historical overlays from immutable commit URLs during module hydration. That is LALM-internal composition and is a separate next optimization target from runtime-branch discovery. The production workflow should eventually precompose/validate that chain as well if cameras show meaningful startup cost.
