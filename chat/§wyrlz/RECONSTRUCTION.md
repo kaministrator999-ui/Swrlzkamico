@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.1  
+**Version:** 1.0.2  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -52,5 +52,6 @@ The component acceptance cadence is therefore:
 ## Current component inventory
 
 - **Foundation:** ACCEPTED as 1.0.1 — minimal document and viewport metadata only. The visible `§wyrlz` placeholder and page-title label were removed; the body is intentionally empty.
-- **Ice Dragon canonical scenery:** NEXT.
+- **Ice Dragon wallpaper / first-paint scenery:** SOURCE-INTEGRATED as 1.0.2 — the canonical Ice Dragon image is declared directly in the initial document CSS with a dark fallback; no JavaScript, runtime loader, legacy shell, or late wallpaper injector participates. Live camera acceptance remains pending an approved server deployment checkpoint.
+- **Ice Dragon remaining scenery/components:** NOT YET ADMITTED.
 - All other legacy Chat structure, composer, message surface, transport, settings, context meter, account/session UI, diagnostics, and optional tooling: NOT YET ADMITTED.
