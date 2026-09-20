@@ -6,4 +6,4 @@ ASSET=file_00000000b13c81f5a7f9fe99c0264ef0.png
 PURPOSE=deploy clean-room Chat 1.0.20 with same-origin server API
 REQUESTED_AT=2026-09-20
 TEST=clean-room-plus-server-api-account-camera
-RETRY=26
+RETRY=27
