@@ -297,7 +297,8 @@ jobs:
           assert caps.get("chat-rmcca-direct-transport", {}).get("ready") is True
           assert caps.get("chat-rmcca-direct-transport", {}).get("contract") == "rmcca-direct-v1"
           assert caps.get("runtime-delivery-optimization", {}).get("ready") is True
-          assert caps.get("runtime-delivery-optimization", {}).get("contract") == "hot-runtime-delivery-v1"
+          assert caps.get("runtime-delivery-optimization", {}).get("contract") == "prepared-runtime-generation-v1"
+          assert caps.get("runtime-delivery-optimization", {}).get("requestPathSync") is False
           assert caps.get("runtime-manifest-authority", {}).get("ready") is True
           assert caps.get("runtime-manifest-authority", {}).get("contract") == "github-contents-manifest-v1"
           live = caps.get("instance-independent-live-source", {})
