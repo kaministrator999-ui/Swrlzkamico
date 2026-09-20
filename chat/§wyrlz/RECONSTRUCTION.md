@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.7  
+**Version:** 1.0.8  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -53,6 +53,6 @@ The component acceptance cadence is therefore:
 
 - **Foundation:** ACCEPTED as 1.0.1 — minimal document and viewport metadata only. The visible `§wyrlz` placeholder and page-title label were removed; the body is intentionally empty.
 - **Ice Dragon wallpaper / first-paint scenery:** ACCEPTED as 1.0.2 — canonical Ice Dragon image is initial-document scenery with no JavaScript/runtime/late injector. Repeated fresh-deployment audience tests showed immediate clean first paint.
-- **Composer / opening stage scenery:** SOURCE-INTEGRATED as 1.0.7 — tightened to a 42px mobile / 44px desktop single-line input rail with a 28×28px send control and 13px glyph. Bottom anchoring now uses the safe-area inset so native viewport resizing can keep the fixed composer at the visible bottom when the keyboard opens; no JavaScript keyboard choreography or Chat-specific behavior is added.
+- **Composer / opening stage scenery:** SOURCE-INTEGRATED as 1.0.8 — tightened into a 42px mobile / 44px desktop single-line rail with a 28px mobile / 30px desktop circular send control. Footer anchors to the visual viewport bottom/safe-area boundary with fixed positioning and `env(safe-area-inset-bottom)`, allowing native keyboard viewport resize to lift the composer without custom JavaScript. Native input/focus behavior only; no Chat-specific runtime behavior.
 - **Ice Dragon remaining scenery/components:** NOT YET ADMITTED.
 - All other legacy Chat structure, message surface, transport, settings, context meter, account/session UI, diagnostics, and optional tooling: NOT YET ADMITTED.
