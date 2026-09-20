@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.17
+CHAT_VERSION=1.0.18
 SOURCE=main:chat/§wyrlz/
 ASSET=file_00000000b13c81f5a7f9fe99c0264ef0.png
-PURPOSE=deploy canonical clean-room Chat 1.0.17
+PURPOSE=deploy canonical clean-room Chat 1.0.18
 REQUESTED_AT=2026-09-20
-TEST=google-account-and-collapsible-version-panel
-RETRY=21
+TEST=legacy-google-account-server-contract
+RETRY=22
