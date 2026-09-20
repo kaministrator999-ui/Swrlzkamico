@@ -43,7 +43,38 @@ Server production deployment
 ordinary production requests consume the prepared active generation
 ```
 
-After deployment, development may continue through runtime-hot and accepted updates may still be explicitly activated without waiting for the next Server release where the stable ABI supports that behavior. That does **not** authorize request-path discovery or global hydration.
+After deployment, runtime-hot is **idle by default**. It does not poll, poke, discover, hydrate, or synchronize merely because the stable ABI can do so. Runtime-hot wakes only when an engineer is actively proving a new change.
+
+The intended feature lifecycle is:
+
+```text
+stable/main accepted generation N
+        ↓
+new feature/change begins
+        ↓
+runtime-hot working copy N+1
+        ↓
+explicit activate → inspect live → debug → refine
+        ↺ repeat only while the feature is under test
+        ↓
+SATISFACTORY / ACCEPTED
+        ↓
+promote the accepted runtime delta into canonical deployable main source
+        ↓
+validate + freeze production generation
+        ↓
+one Server production deployment
+        ↓
+stable/main accepted generation N+1
+        ↓
+runtime-hot returns idle until the next experiment
+```
+
+Runtime-hot is therefore a **front-stage rehearsal/proving surface**, not a parallel permanent production authority. Accepted work graduates out of runtime-hot. Production deployment is built from the promoted canonical source so the real show does not depend on the rehearsal layer remaining active.
+
+This promotion law intentionally avoids nested deployments during visual/behavioral iteration: a button, layout, LALM behavior, or other feature can be changed and observed repeatedly through runtime-hot; only the satisfactory accepted state is integrated into the deployable Server generation and sent through the production deployment gate.
+
+Post-deployment emergency hot activation, if retained, is an explicit exception/rehearsal mechanism rather than normal production operation. It does **not** authorize request-path discovery, polling, global hydration, or an indefinitely divergent runtime branch.
 
 **No audience-triggered suiting-up:** Chat page loads, `POST /api/chat` inference, and tool/Online Research execution must not become synchronization workers merely because runtime authority may have advanced. A serving request consumes an already active generation.
 
