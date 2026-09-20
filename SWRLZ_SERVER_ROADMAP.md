@@ -36,6 +36,18 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE STARTED — 2026-09-20 — clean-room Chat 1.0.1 component-by-component reconstruction
+
+- **Primary Focus:** Clean-room Chat.
+- **Starting version:** **1.0.1**. This is a new clean-room Chat lineage and does not inherit the legacy Web Chat 1.5.x version number.
+- **Canonical construction source:** stable `main:chat/§wyrlz/`. Runtime-hot is explicitly out of scope for this reconstruction phase.
+- **Starting shell:** `chat/§wyrlz/index.html` remains intentionally minimal: only the §wyrlz identity is present before components are deliberately admitted.
+- **Migration law:** legacy `web/chat.html` is reference material, not a template to copy wholesale. Components are integrated **one at a time** into the clean-room Chat. Each component must have an identified responsibility, dependencies, opening-scene effect, and verification evidence before the next component is admitted.
+- **First-paint invariant:** a legacy/base Chat presentation must never be loaded merely to be transformed into the final Ice Dragon presentation. When Ice Dragon presentation is admitted, it becomes canonical source-owned scenery for the clean-room shell.
+- **No hidden inheritance:** no bulk legacy loader, runtime manifest, late injector, or compatibility layer may silently reconstruct the old Chat behind the clean-room page. Required behavior must be explicitly selected and integrated.
+- **Acceptance cadence:** integrate one component → inspect/camera-test → accept or correct → document → proceed to the next component. Do not stack multiple unverified visual/structural migrations.
+- **Deployment state:** SOURCE/DOCUMENTATION ONLY. No deployment or runtime-hot activation is authorized by this event.
+
 ### UPDATE STARTED — 2026-09-20 — clean-room Chat three-frame first-paint trace
 
 - **Observed defect:** one mobile refresh visibly traverses at least three materially different Chat compositions before settling: base shell, transient Ice Dragon topbar selector/header reflow, then selector removal plus context/composer augmentation.
