@@ -36,6 +36,17 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE STARTED — 2026-09-19 — project focus-group handoff semantics
+
+- **Requested outcome:** make current/last project focus a grouped engineering scope rather than a single module. When Chat and LALM participate in connected work, both remain visible in the latest focus group; whichever was most recently the main work target is Primary Focus, and materially connected modules are included as companions.
+- **Observed baseline:** Repository Work `1.0.12`; Web Chat `1.5.86`; LALM Engine `2.1.112`; Server Runtime `2.3.287`; Runtime Manifest `152`. Existing startup distinguishes newest completed/unresolved events but does not yet preserve feature-focus grouping across connected modules.
+- **Canonical owners:** Project Start owns startup reconstruction; Project Work Response Standard owns presentation; Version Evolution owns durable event/module lineage.
+- **Architecture reconciliation:** add focus metadata as Roadmap/startup interpretation only. Do not create a competing version authority or a new module registry.
+- **Expected impact:** governance/docs + Repository Work only.
+- **Deployment expectation:** NONE.
+- **Verification plan:** harden all three owners, fetch back, concurrency-check Repository Work, advance Repository Work only, and close this event.
+
+
 ### UPDATE CONTINUATION ENDED — 2026-09-19 — lockdown acceptance + client-debug 401/logger freeze repair
 
 - **500 candidate:** current production traffic now traverses the repaired runtime-hot middleware cameras (`middleware-sync-enter/exit`, `middleware-call-next-enter/exit`) and returns HTTP 200 on status traffic. This proves the deployed stable bundle no longer universally fails at the historical undefined-`request_id` boundary. A fresh authenticated stream POST remains the final user-path acceptance check for the original reproduction.
