@@ -36,6 +36,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE CONTINUATION — 2026-09-20 — prepared-generation executable verification
+
+- **Non-production verification harness added:** `.github/workflows/verify-prepared-runtime.yml` now executes the accepted-generation preparer independently of the production deployment workflow. It does not trigger Vercel production deployment.
+- **Gate 1 executable result:** the first run correctly failed at `_v84_overlay` because v84 is provenance-only and has no active acquisition boundary in the accepted v90 entrypoint. `scripts/prepare_runtime_generation.py` was corrected to localize the 15 active v74/v75-v82/v85-v90 acquisitions while retaining v84 in the registered 16-artifact provenance chain. The second verification run completed successfully: v3 generation built, all registered blobs validated, all 16 chain files packaged/compiled, and the prepared entrypoint contained no remaining top-level `urllib.request.urlopen(` boundary.
+- **Gate 2 executable result / newly exposed deeper boundary:** a stronger boot test then loaded the prepared v90 entrypoint with network access deliberately blocked. That test proved the top-level v90→v74 delivery is local, then failed inside the packaged v74 source because v74 itself still performs an immutable historical v73 GitHub fetch. Camera evidence reached `v73-fetch-start` and the network guard raised `NETWORK_FETCH_ATTEMPTED_DURING_PREPARED_R39_BOOT`.
+- **Correction to previous source-complete claim:** v74→v90 top-level localization is source-complete, but the entire inherited R39 lineage is **not yet fully local-precomposed**. Production deployment remains blocked until the recursive pre-v74 ancestry required by v74 is transferred into pre-deployment preparation or otherwise packaged locally and the network-blocked boot test reaches v90 successfully.
+- **Truth state:** Gate 1 executable preparation **VERIFIED**. Gate 2 full local boot **FAILED AS DESIGNED and exposed remaining historical assembly**. No production deployment/restart/live activation occurred.
+- **Next action:** continue moving the recursive v74→v73→earlier inherited source lineage behind the pre-deploy curtain, then rerun the network-blocked boot test before request-path audit/version freeze.
+
+
 ### UPDATE CONTINUATION STARTED — 2026-09-19 — runtime-hot pre-deploy transfer architecture
 
 - **Intent:** document and begin transferring runtime-hot from audience/request-path synchronization into a pre-deployment proving/assembly stage. Runtime-hot remains available after deployment for deliberate development updates, but ordinary production Chat/LALM requests must consume the last prepared active generation rather than performing repository discovery/hydration themselves.
