@@ -147,6 +147,24 @@ Then include a visually distinct **Where we actually left off** section identify
 
 The agent may reconstruct more forensic detail internally than it displays. Surface the details needed to understand readiness, ownership, activation, blockers, and the current handoff; keep low-value retrieval narration backstage.
 
+### Current focus-group presentation
+
+Startup/project handoffs should present one compact **Current Focus** block when feature work spans connected modules:
+
+- **Primary:** the most recently active main feature/module;
+- **Group:** the materially connected modules participating in that work stream;
+- **State:** the important shared truth boundary or unresolved acceptance.
+
+Example shape:
+
+```text
+Current Focus: Chat
+Group: Chat + LALM Engine + Stream Contract
+State: Chat runtime-hot active; LALM response path coupled; final live acceptance pending
+```
+
+Do not let a later documentation-only Repository Work bump make the project appear to have "switched focus" away from the actual Chat/LALM engineering stream. Do not list unrelated modules merely because they exist in the version registry.
+
 ---
 
 ## 7. Version/deployment reporting
