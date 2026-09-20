@@ -133,7 +133,7 @@ jobs:
         run: |
           set -euo pipefail
           for n in $(seq 1 30); do
-            code="$(curl -sS -o /tmp/account.json -w '%{http_code}' "$DEPLOYMENT_URL/api/account/status" || true)"
+            code="$(curl -L --max-time 15 -sS -o /tmp/account.json -w '%{http_code}' "$DEPLOYMENT_URL/api/account/status" || true)"
             if [[ "$code" == "200" ]] && python -m json.tool /tmp/account.json >/dev/null 2>&1; then
               cat /tmp/account.json
               echo "Account API verified at $DEPLOYMENT_URL" >> "$GITHUB_STEP_SUMMARY"
