@@ -36,6 +36,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE FINISHED — 2026-09-19 — clean-room Chat focus correction
+
+- **Result:** COMPLETE — project focus now names the actual product surface rather than collapsing both Chat routes into the shared Web Chat module.
+- **Primary Focus:** Clean-room Chat `/chat/§wyrlz` → `runtime:chat/§wyrlz/index.html`.
+- **Control/reference:** legacy `/chat` → `runtime:web/chat.html`. Its Web Chat `1.5.86` lockdown/logger repair remains valid historical/control-surface lineage and is not inherited into the clean-room implementation.
+- **Current Focus Group:** Clean-room Chat + Runtime Manifest `152`. Additional registered modules join only when the clean-room route materially integrates with them. Legacy dependencies alone do not qualify.
+- **Project Start hardening:** focus reconstruction must distinguish route/product identity inside a shared module authority; a shared Web Chat version can no longer collapse clean-room and legacy architectural roles.
+- **Clean-room source verification:** `runtime:chat/§wyrlz/index.html` remains untouched and intentionally minimal (`<body>§wyrlz</body>`). No scenery/component implementation was smuggled into this correction.
+- **Resulting version:** Repository Work `1.0.14` (from `1.0.13`). Web Chat remains `1.5.86`; Runtime Manifest remains `152`; all other runtime modules remain unchanged.
+- **Deployment/restart:** NONE. Governance-only correction.
+- **Next build handoff:** begin clean-room scenery inventory/pre-separation against the canonical Chat stage overview, using legacy `/chat` only as evidence/reference where useful and not as a source template to copy wholesale.
+
+
 ### UPDATE STARTED — 2026-09-19 — clean-room Chat focus correction
 
 - **Requested outcome:** correct the current project handoff so the new clean-room Chat route, not legacy Chat, is the active build target.
