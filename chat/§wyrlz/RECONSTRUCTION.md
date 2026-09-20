@@ -23,7 +23,7 @@ The browser must not construct a generic legacy Chat and then transform it into 
 
 ## Runtime boundary
 
-Runtime-hot is not part of this reconstruction phase. Permanent page structure and accepted components are integrated into stable source before deployment. Runtime-hot remains reserved for deliberately runtime-loadable artifacts and later scoped experiments.
+Runtime-hot is not part of this reconstruction phase. The clean-room Chat is a server-deployed product surface: permanent page structure and accepted components are integrated into stable source, and the server deployment carries the accepted Chat generation only when the reconstruction reaches an explicitly approved load checkpoint. The audience must not assemble or hot-load this Chat from runtime repositories.
 
 ## Version lineage
 
@@ -31,6 +31,6 @@ Clean-room Chat starts at **1.0.1**. It is independent from the legacy Web Chat 
 
 ## Current component inventory
 
-- **Foundation / identity:** ACCEPTED as 1.0.1 — minimal document, viewport metadata, title, and literal §wyrlz body identity.
+- **Foundation:** ACCEPTED as 1.0.1 — minimal document and viewport metadata only. The visible `§wyrlz` placeholder and page-title label were removed; the body is intentionally empty.
 - **Ice Dragon canonical scenery:** NEXT.
 - All other legacy Chat structure, composer, message surface, transport, settings, context meter, account/session UI, diagnostics, and optional tooling: NOT YET ADMITTED.
