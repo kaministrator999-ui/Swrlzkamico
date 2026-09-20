@@ -23,6 +23,36 @@ live application observes new runtime source
 
 A runtime-hot update does not inherently deploy the stable Server. Repository Work still advances because governed repository work occurred. The changed component advances because its source changed. Server Runtime advances only when a Server release/deployment advances deployed Server lineage.
 
+### Runtime-hot lifecycle boundary — Batcave / stage law
+
+Runtime-hot is the **development proving and explicit activation plane**, not work that an ordinary production request should perform on behalf of the system.
+
+Canonical lifecycle:
+
+```text
+runtime-hot edit
+   ↓
+explicit owner-scoped activation
+   ↓
+camera/test/acceptance
+   ↓
+prepare + validate + freeze deployment generation
+   ↓
+Server production deployment
+   ↓
+ordinary production requests consume the prepared active generation
+```
+
+After deployment, development may continue through runtime-hot and accepted updates may still be explicitly activated without waiting for the next Server release where the stable ABI supports that behavior. That does **not** authorize request-path discovery or global hydration.
+
+**No audience-triggered suiting-up:** Chat page loads, `POST /api/chat` inference, and tool/Online Research execution must not become synchronization workers merely because runtime authority may have advanced. A serving request consumes an already active generation.
+
+The legacy `/chat` surface is the first transfer/proving target. Its latest accepted runtime-hot state, together with accepted LALM/hydrated-module state, should be assembled as the final pre-production generation before a Server deployment. Clean-room `/chat/§wyrlz` remains isolated until this boundary is proven.
+
+Activation work must be owner/module scoped. A legacy Chat update must not require LALM or clean-room Chat hydration; an LALM update must not rebuild unrelated page state. Queue/coalescing semantics may stage generation N+1 while requests continue consuming generation N, then atomically activate the validated owner generation.
+
+Do not implement the activation queue as process-local memory unless architecture reconciliation proves that worker locality is sufficient. Serverless workers may not share memory or lifetime; activation truth must therefore have a durable/explicit authority compatible with the repository source-of-truth and deployment model.
+
 ---
 
 ## 2. Two runtime-hot delivery mechanisms
