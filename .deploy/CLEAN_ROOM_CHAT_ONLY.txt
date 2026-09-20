@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.8
+CHAT_VERSION=1.0.11
 SOURCE=main:chat/§wyrlz/
 ASSET=file_00000000b13c81f5a7f9fe99c0264ef0.png
-PURPOSE=deploy latest canonical clean-room Chat 1.0.8
+PURPOSE=deploy latest canonical clean-room Chat 1.0.11
 REQUESTED_AT=2026-09-20
-TEST=latest-canonical-clean-room-chat
-RETRY=15
+TEST=viewport-edge-anchoring-and-bounded-composer
+RETRY=16
