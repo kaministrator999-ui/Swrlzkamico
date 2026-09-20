@@ -3,7 +3,6 @@ from __future__ import annotations
 import importlib.util
 import sys
 import threading
-import time
 from pathlib import Path
 from types import ModuleType
 from typing import Callable
@@ -18,7 +17,6 @@ PREPARED_ROOT = Path(__file__).resolve().parents[1] / "swrzl_prepared_runtime"
 PREPARED_CHAT = PREPARED_ROOT / "legacy-chat"
 PREPARED_INFERENCE = PREPARED_ROOT / "lalm" / "r39_engine.py"
 PREPARED_CHAT_HISTORY_POLICY = PREPARED_ROOT / "server-policy" / "chat_history_policy.py"
-AUTO_REFRESH_SECONDS = 30.0
 
 _lock = threading.RLock()
 _cached_module: ModuleType | None = None
@@ -26,7 +24,6 @@ _cached_signature: tuple[int, int] | None = None
 _cached_history_policy: ModuleType | None = None
 _cached_history_signature: tuple[int, int] | None = None
 _hot_refresher: Callable[[bool], None] | None = None
-_last_refresh_attempt = 0.0
 
 
 def register_hot_refresher(callback: Callable[[bool], None] | None) -> None:
@@ -36,26 +33,9 @@ def register_hot_refresher(callback: Callable[[bool], None] | None) -> None:
     allowlist, but it does not own routing/auth contracts. Failures are swallowed
     here so GitHub/network trouble never takes the bundled fallback offline.
     """
-    global _hot_refresher, _last_refresh_attempt
+    global _hot_refresher
     with _lock:
         _hot_refresher = callback
-        _last_refresh_attempt = 0.0
-
-
-def _refresh_if_due(force: bool = False) -> None:
-    global _last_refresh_attempt
-    callback = _hot_refresher
-    if callback is None:
-        return
-    now = time.monotonic()
-    with _lock:
-        if not force and _last_refresh_attempt and now - _last_refresh_attempt < AUTO_REFRESH_SECONDS:
-            return
-        _last_refresh_attempt = now
-    try:
-        callback(force)
-    except Exception:
-        return
 
 
 def hot_chat_path(name: str, bundled: Path) -> Path:
