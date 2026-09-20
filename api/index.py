@@ -6,7 +6,7 @@ runtime branch by the dedicated hot/live loaders. The stable frozen-web
 collector host applies authentication and a fixed runtime-module contract while
 the collector implementation and page remain runtime-owned.
 
-Server 2.3.111 adds bounded server-visible Chat client boot diagnostics while
+Server 2.3.288 release candidate completes prepared-runtime audience-path transfer while
 preserving the runtime-source-of-truth delivery boundary.
 """
 from __future__ import annotations
@@ -31,7 +31,7 @@ from api.chat_transcript_store import STORE as _transcript_store
 from api.chat_state import app as _chat_state_app
 import api.chat_extensions as _chat_extensions
 
-VERSION = "2.3.111"
+VERSION = "2.3.288"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {"kind":"runtime-execution","ready":True,"engineId":"swrlz_r39_native_qmatvec_v1","fallbackEngineId":"swrlz_r39_python_reference_v1","boundary":"compiled direct-quantized R39 execution; hot reasoning overlay remains independent of bundled server release"}
