@@ -158,6 +158,13 @@ jobs:
           cp 'file_00000000b13c81f5a7f9fe99c0264ef0.png' "$stage/"
           git fetch --depth=1 origin runtime
           git archive --format=tar origin/runtime api requirements.txt pyproject.toml setup.py swyrlz native web | tar -x -C "$stage"
+          python - <<'PY' "$stage/api/runtime_hot.py"
+          import pathlib, sys
+          p=pathlib.Path(sys.argv[1])
+          s=p.read_text(encoding="utf-8")
+          s=s.replace('b"<!doctype html><meta charset=\'utf-8\'><title>§wyrlz Runtime</title><p>Runtime source: runtime branch.</p>"', '"<!doctype html><meta charset=\'utf-8\'><title>§wyrlz Runtime</title><p>Runtime source: runtime branch.</p>".encode("utf-8")')
+          p.write_text(s,encoding="utf-8")
+          PY
           cp vercel.json "$stage/vercel.json"
           cd "$stage"
           url="$(npx --yes vercel@59.23.2 deploy --prod --yes --token="$VERCEL_TOKEN")"
