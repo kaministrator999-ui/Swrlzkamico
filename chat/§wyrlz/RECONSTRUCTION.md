@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.13  
+**Version:** 1.0.14  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -59,3 +59,5 @@ The component acceptance cadence is therefore:
 - All other legacy Chat structure, message surface, transport, settings, context meter, account/session UI, diagnostics, and optional tooling: NOT YET ADMITTED.
 
 - **1.0.13 opening geometry:** composer shell is explicitly pinned to the viewport bottom; top-left side-menu shortcut remains a three-horizontal-line hamburger control. No drawer behavior added.
+
+- **1.0.14 parser repair:** removed literal `\\n` tokens between menu-button CSS rules. Those tokens invalidated the selector/rule boundary and swallowed the following `.composer-shell` declaration, which is why the footer rendered in normal document flow at the top despite its source text saying `position:fixed; bottom:0`.
