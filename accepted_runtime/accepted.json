@@ -1,7 +1,7 @@
 {
   "contract": "swrlz-accepted-runtime-v1",
   "sourceRuntimeCommit": "b7076a6fbd2a8028a13326f32511316f18de07ba",
-  "promotionScope": "legacy-chat+lalm+chat-history-policy",
+  "promotionScope": "legacy-chat+lalm+chat-history-policy+online-research-reasoner",
   "deploymentInput": true,
   "runtimePollingRequired": false,
   "status": "accepted",
@@ -42,6 +42,12 @@
       "runtimeSource": "runtime_hot/chat_history_policy.py",
       "acceptedTarget": "server-policy/chat_history_policy.py",
       "sourceBlobSha": "1e684e9719365566f4c8ec3589469898c3b3bece"
+    },
+    {
+      "owner": "online-research",
+      "runtimeSource": "runtime_hot/online_research_reasoner_v1.py",
+      "acceptedTarget": "research/online_research_reasoner.py",
+      "sourceBlobSha": "f786cd449f8e92991cb809aa1bc7cb5bcda9a1c8"
     }
   ],
   "overlayChain": [
