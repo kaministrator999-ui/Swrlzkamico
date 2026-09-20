@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.17">
+  <meta name="swrlz-chat-version" content="1.0.18">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -125,22 +125,22 @@
         if(user) googleSlot.innerHTML="";
       };
       const renderGoogle = async () => {
-        const status = await fetch("/api/account/status",{credentials:"same-origin",cache:"no-store"}).then(r=>r.json());
+        const status = await fetch("/live/api/account/status",{credentials:"same-origin",cache:"no-store"}).then(r=>r.json());
         if(!status?.googleClientId || !window.google?.accounts?.id) throw new Error("Google account service unavailable");
         googleSlot.innerHTML="";
         google.accounts.id.initialize({client_id:status.googleClientId,callback:async response=>{
-          const result=await fetch("/api/account/google",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({credential:response.credential})});
+          const result=await fetch("/live/api/account/google",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({credential:response.credential})});
           if(!result.ok) throw new Error("Google sign-in failed");
           const data=await result.json(); showUser(data.user);
         }});
         google.accounts.id.renderButton(googleSlot,{type:"standard",theme:"outline",size:"medium",text:"signin_with",shape:"pill",width:250});
       };
       const refreshAccount = async () => {
-        try{const r=await fetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user);return;}}catch(_){}
+        try{const r=await fetch("/live/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user);return;}}catch(_){}
         showUser(null);
       };
       accountAction.addEventListener("click",async()=>{
-        if(accountUser){await fetch("/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null);return;}
+        if(accountUser){await fetch("/live/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null);return;}
         try{await renderGoogle();}catch(e){accountMeta.textContent=e.message;}
       });
       refreshAccount();
