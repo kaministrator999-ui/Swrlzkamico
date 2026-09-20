@@ -52,7 +52,7 @@ jobs:
           assert generation["contract"] == "swrlz-prepared-runtime-generation-v3", generation
           assert generation["requestPathSyncRequired"] is False, generation
           assert generation["r39HistoricalNetworkFetchRequired"] is False, generation
-          assert generation["r39SourceDelivery"] == "local-precomposed-chain-v1", generation
+          assert generation["r39SourceDelivery"] == "local-precomposed-full-lineage-v2", generation
 
           entry = root / "lalm" / "r39_engine.py"
           source = entry.read_text(encoding="utf-8")
@@ -67,7 +67,14 @@ jobs:
               compile(path.read_text(encoding="utf-8"), str(path), "exec")
 
           print("prepared-runtime-v3 contract verified")
+          ancestry = generation["r39HistoricalAncestry"]
+          assert len(ancestry) >= 45, len(ancestry)
+          for item in ancestry:
+              path = root / "lalm" / "ancestry" / item["name"]
+              assert path.is_file(), path
+              compile(path.read_text(encoding="utf-8"), str(path), "exec")
           print("overlay-chain-files", len(chain))
+          print("historical-ancestry-files", len(ancestry))
           print("historical-network-fetch", False)
           PY
 
@@ -149,6 +156,6 @@ jobs:
             echo
             echo "- Production deployment: **not triggered by this workflow**"
             echo "- Prepared generation contract: `swrlz-prepared-runtime-generation-v3`"
-            echo "- Historical R39 source delivery: local precomposed chain"
+            echo "- Historical R39 source delivery: full local precomposed lineage"
             echo "- Audience request-path repository synchronization: disabled by contract"
           } >> "$GITHUB_STEP_SUMMARY"
