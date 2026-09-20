@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.12
+CHAT_VERSION=1.0.13
 SOURCE=main:chat/§wyrlz/
 ASSET=file_00000000b13c81f5a7f9fe99c0264ef0.png
-PURPOSE=deploy canonical Chat 1.0.12 with accepted legacy comparison surface
+PURPOSE=deploy canonical clean-room Chat 1.0.13
 REQUESTED_AT=2026-09-20
-TEST=clean-room-plus-accepted-legacy-chat-package
-RETRY=17
+TEST=bottom-composer-and-hamburger-menu-shortcut
+RETRY=18
