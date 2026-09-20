@@ -120,6 +120,18 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 - **Deployment:** NONE authorized by this continuation.
 
 
+
+### UPDATE CONTINUATION ENDED — 2026-09-20 — R39 local source precomposition source-complete
+
+- **Recovered continuation:** all 16 immutable historical R39 source files were already present under `main:accepted_runtime/lalm/chain/` after the interrupted tool turn: v74-v81, v82 batch, and v84-v90.
+- **Repair:** the interrupted edit had left `scripts/prepare_runtime_generation.py` structurally corrupted. It was replaced with one coherent preparer and re-fetched before continuing.
+- **Accepted authority:** `accepted_runtime/accepted.json` now registers `precomposition=local-overlay-chain-v1` and records source commit + accepted Git blob SHA for every historical chain file.
+- **Preparation behavior:** production preparation validates the accepted blobs, copies the chain into the immutable generation, rewrites only the R39 source-acquisition statements to local reads, compiles the localized entrypoint as a syntax gate, and fails if any `urllib.request.urlopen(` source-fetch call remains.
+- **Semantics preserved:** overlay execution order, cameras, version/revision assignment, self-tests, and inference behavior remain in the accepted R39 entrypoint. This tier changes delivery of historical Python source only.
+- **Generation contract:** advanced in source to `swrlz-prepared-runtime-generation-v3`; capability declares `requestPathSync=false` and `r39HistoricalNetworkFetch=false`; production workflow verifies both before accepting deployment.
+- **Truth state:** SOURCE + STATIC VERIFIED by GitHub fetch-back/registered blob identities. The production preparation script has not been executed in the GitHub runner during this continuation, so build-artifact/E2E acceptance remains pending.
+- **Deployment/restart:** NONE. No production workflow was dispatched.
+
 ### UPDATE CONTINUATION ENDED — 2026-09-19 — R39 overlay precomposition source complete
 
 - **Accepted historical authority:** immutable R39 v74-v90 source artifacts are now vendored under `main:accepted_runtime/lalm/chain/` with historical commit + Git blob provenance in `accepted_runtime/accepted.json`.
