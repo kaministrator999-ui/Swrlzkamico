@@ -1,6 +1,6 @@
 ID=online-research
 VERSION=1.0.2
-REVISION=1.0.1-hot-bounded-evidence-v2
+REVISION=1.0.2-prepared-request-path-v1
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
