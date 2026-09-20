@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
 PURPOSE=deploy persistent SWRLZ server/API plane
-RETRY=4
+RETRY=5
