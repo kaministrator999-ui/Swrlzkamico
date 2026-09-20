@@ -36,6 +36,17 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE CONTINUATION ENDED — 2026-09-20 — Gate 3 audience/request-path audit
+
+- **Legacy Chat/LALM:** ordinary GET/POST Chat paths resolve explicit worker-local override → prepared deployment generation → bundled fallback. `runtime_hot` middleware is consumer-only and `register_hot_refresher(None)` prevents audience requests from becoming repository synchronization workers. `get_engine()` performs no repository discovery.
+- **Online Research correction:** Gate 3 found one remaining audience-triggered assembly path in `api/online_research.py`: `_load_hot()` called `_refresh_hot()`, which fetched `runtime/runtime_hot/online_research_reasoner_v1.py` on research/status requests. That refresh has been removed from the request path. Research now consumes only an explicitly activated worker-local reasoner, a prepared reasoner when present, or the bundled legacy research path; public search/page retrieval remains legitimate user-requested evidence network I/O.
+- **History/resume ownership:** resumable Chat owns durable transcript continuity and invokes Online Research only after explicit admitted +ONLINE intent. No runtime HEAD resolution or hot synchronization occurs in the resume/generation path. Chat history policy remains bounded to worker-local/prepared/bundled loader authority and does not own persistence/auth writes.
+- **Clean-room boundary:** no main-owned clean-room Chat source was found in the stable production tree; the clean-room `/chat/§wyrlz` remains a separately manifest/runtime-owned product surface and is not coupled into legacy Chat/LALM synchronization by this transfer. This Gate therefore does not promote or hydrate clean-room assets incidentally.
+- **Executable evidence:** verification run `35514722624` passed prepared-generation build, full-lineage network-blocked R39 boot, and the extended ordinary request-path audit including Online Research and resumable Chat assertions.
+- **Truth state:** Gate 3 **SOURCE + BUILD/RUNTIME AUDIT VERIFIED** for the production legacy Chat/LALM/Online Research request path. No production deployment/restart/live activation occurred.
+- **Next action:** Gate 4 — reconcile authoritative module versions, freeze the terminal candidate, verify deployment workflow consumes only the prepared accepted generation, then use the single governed production trigger if all authorities are coherent.
+
+
 ### UPDATE CONTINUATION ENDED — 2026-09-20 — recursive R39 ancestry moved behind curtain
 
 - **Recursive ancestry bounded and transferred:** executable boot tracing established the inherited lineage floor at v22, whose required v17 engine archive and v22 batch-prefill adapter are local-file consumers with no historical source-fetch dependency. Pre-deploy preparation now materializes the pinned v23→v73 ancestry plus the v22/v17/batch floor into the immutable prepared generation.
