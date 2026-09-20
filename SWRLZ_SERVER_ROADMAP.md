@@ -62,6 +62,17 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 - **Version state:** version assignment intentionally deferred because this continuation is not terminal and stable Server/deployment-control sources have changed without production release. Re-read authorities before terminal assignment. No Server Runtime version is advanced before an actual deployment/release event.
 - **Deployment/restart:** NONE. No deployment-producing action was fired.
 
+
+### UPDATE CONTINUATION STARTED — 2026-09-19 — runtime rehearsal-to-main promotion law
+
+- **User correction:** runtime-hot must not remain an active production-side update watcher after a satisfactory feature is proven. Its normal role is temporary live rehearsal: make a feature/UI/LALM change hot, explicitly activate it, inspect/debug/refine it live without repeated Server deployments, then promote the satisfactory accepted delta into canonical deployable `main` source.
+- **Canonical lifecycle:** stable/main generation N → runtime-hot experiment N+1 → explicit activation/test/refinement loop → acceptance → promotion into canonical deployable main source → pre-deploy validation/freeze → one production deployment → stable/main generation N+1 → runtime-hot idle.
+- **Idle law:** when no feature is actively being tested, runtime-hot performs no polling, runtime-head poking, hydration, or synchronization. The existence of newer runtime authority is not itself permission to perform work.
+- **Authority law:** runtime-hot is a rehearsal/proving surface, not a permanently divergent second production authority. Accepted work graduates into deployable canonical source. Emergency hot activation is an explicit exception, not the ordinary serving model.
+- **Reason:** preserve rapid live visual/behavioral iteration while avoiding multi-deployment nesting during development and eliminating rehearsal machinery from the real production show.
+- **Current implementation relationship:** tier 1 already removes ordinary request-path synchronization and prepares a deployment generation. The next architecture tier must add an explicit promotion/integration step so the deployment workflow consumes accepted canonical source rather than treating the mutable runtime branch itself as the long-term production authority.
+- **Truth state:** governance/lifecycle contract updated. No deployment/restart/live activation.
+
 ### UPDATE STARTED — 2026-09-19 — legacy-to-clean-room hot-runtime coupling probe
 
 - **Intent:** deliberately mutate only the legacy `runtime:web/chat.html` source, then have the user refresh clean-room `/chat/§wyrlz` to test whether a legacy runtime-head change causes transient loading/routing inconsistencies on the clean-room route.
