@@ -305,3 +305,16 @@ swrzl_prepared_runtime = immutable build artifact derived from accepted main
 ```
 
 A runtime commit after the accepted commit is simply unpromoted work. It has no production effect until deliberately tested, promoted, reviewed, committed to main, and later deployed through the separate deployment approval gate.
+
+
+## R39 historical overlay precomposition
+
+The accepted LALM generation vendors the immutable R39 historical source chain under `accepted_runtime/lalm/chain/`. Each chain entry records the historical commit and Git blob identity in `accepted_runtime/accepted.json`.
+
+During production preparation, `scripts/prepare_runtime_generation.py` verifies those accepted blobs, copies them into the prepared LALM generation, and rewrites the accepted R39 entrypoint's historical `urllib.request.urlopen(...)` source acquisitions into local reads beside the prepared entrypoint. Preparation fails if any expected active fetch boundary is missing, duplicated, has an integrity mismatch, or if any historical `urllib.request.urlopen(` source fetch remains afterward. The rewritten entrypoint is syntax-compiled before the generation is accepted.
+
+The execution semantics remain layered: v74 base and the active overlay/batch sequence still execute in the same order and existing self-tests/cameras remain intact. The optimization is **source delivery**, not a semantic flattening of the Python overlay functions. This deliberately avoids changing inference behavior while eliminating historical GitHub network acquisition from production module hydration.
+
+The accepted manifest also preserves v84 historical provenance because the v90 entrypoint declares that immutable authority, although the current accepted v90 loader does not execute a v84 `urlopen` boundary. The active network-fetch chain contains 15 acquisitions; the registered provenance set contains 16 immutable historical artifacts.
+
+Prepared contract: `swrlz-prepared-runtime-generation-v3` with `r39SourceDelivery=local-precomposed-chain-v1`.
