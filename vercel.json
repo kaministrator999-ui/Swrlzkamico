@@ -16,5 +16,8 @@
       "src": "/file_00000000b13c81f5a7f9fe99c0264ef0.png$",
       "dest": "/file_00000000b13c81f5a7f9fe99c0264ef0.png"
     }
-  ]
+  ],
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": ""
 }
