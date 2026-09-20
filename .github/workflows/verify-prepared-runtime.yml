@@ -14,6 +14,7 @@ on:
       - "api/chat_extensions.py"
       - "api/chat_resume_sessions.py"
       - ".github/workflows/verify-prepared-runtime.yml"
+      - ".github/workflows/manual-vercel-production.yml"
 
 permissions:
   contents: read
@@ -142,6 +143,7 @@ jobs:
           research = Path("api/online_research.py").read_text(encoding="utf-8")
           chat_extensions = Path("api/chat_extensions.py").read_text(encoding="utf-8")
           resume = Path("api/chat_resume_sessions.py").read_text(encoding="utf-8")
+          production_workflow = Path(".github/workflows/manual-vercel-production.yml").read_text(encoding="utf-8")
 
           assert "register_hot_refresher(None)" in runtime_hot
           assert '"requestPath": False' in runtime_hot
@@ -159,7 +161,13 @@ jobs:
           assert "_resolve_runtime_head()" not in chat_extensions
           assert "_resolve_runtime_head()" not in resume
           print("ordinary request-path synchronization contract verified")
+          assert 'local-precomposed-full-lineage-v2' in production_workflow
+          assert 'research/online_research_reasoner.py' in production_workflow
+          assert 'Prepare promoted runtime generation' in production_workflow
+          assert 'Deploy production artifact' in production_workflow
+          assert production_workflow.index('Prepare promoted runtime generation') < production_workflow.index('Deploy production artifact')
           print("online-research reasoner request-path refresh", False)
+          print("production prepared-generation gate verified")
           PY
 
       - name: Publish verification summary
