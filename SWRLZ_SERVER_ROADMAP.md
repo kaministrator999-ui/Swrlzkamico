@@ -36,6 +36,17 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE STARTED — 2026-09-19 — legacy-to-clean-room hot-runtime coupling probe
+
+- **Intent:** deliberately mutate only the legacy `runtime:web/chat.html` source, then have the user refresh clean-room `/chat/§wyrlz` to test whether a legacy runtime-head change causes transient loading/routing inconsistencies on the clean-room route.
+- **Primary Focus:** Clean-room Chat `/chat/§wyrlz` investigation. **Probe surface:** legacy `/chat` only.
+- **Baseline:** Repository Work `1.0.14`; Web Chat `1.5.86`; clean-room source remains minimal and must not be changed by this probe.
+- **Probe mutation:** one inert HTML comment in legacy `web/chat.html`; no UI behavior, transport, inference, auth, manifest, or clean-room source semantics changed.
+- **Evidence target:** correlate the resulting runtime head with clean-room refresh cameras/logs and determine whether shared runtime-hot synchronization runs before/around clean-room route resolution.
+- **Deployment expectation:** NONE; runtime-hot only.
+- **Completion gate:** user performs clean-room refresh after probe activation; then inspect production evidence before closing/versioning the experiment.
+
+
 ### UPDATE FINISHED — 2026-09-19 — clean-room Chat focus correction
 
 - **Result:** COMPLETE — project focus now names the actual product surface rather than collapsing both Chat routes into the shared Web Chat module.
