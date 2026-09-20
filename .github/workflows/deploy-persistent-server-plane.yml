@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  VERCEL_ORG_ID: team_E4y2LpTSFo9UxTErO9aw6HW1
+  SWRLZ_ORG_ID: team_E4y2LpTSFo9UxTErO9aw6HW1
   SOURCE_PROJECT_ID: prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp
   TARGET_PROJECT_NAME: swrlzkamico-server
   TARGET_SCOPE: kamiswrlzco-cloud
