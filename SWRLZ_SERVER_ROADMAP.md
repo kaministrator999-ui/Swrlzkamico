@@ -36,6 +36,17 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE STARTED — 2026-09-19 — Roadmap newest-handoff retrieval hardening
+
+- **Requested outcome:** prevent compact Project Start from manufacturing a reconciliation defect when the newest Roadmap event is outside an arbitrarily retrieved tail/chunk.
+- **Observed baseline:** Repository Work `1.0.10`; the Roadmap already contains the complete Chat stage overview `1.0.9 → 1.0.10` FINISHED handoff near the current journal head, but the prior startup reconstruction missed it and incorrectly treated `1.0.10` as unexplained.
+- **Canonical owner:** `§wyrlz_§tart.md` owns startup reconstruction/retrieval behavior. The Roadmap remains chronological history and is not defective.
+- **Architecture reconciliation:** harden the existing compact-bootstrap Roadmap traversal rather than adding another ledger, index, or version source. Startup must establish newest completed/unresolved events from Roadmap structure and current authority correlation, not retrieval position.
+- **Expected impact:** Project Start governance + Repository Work only. Runtime modules remain unchanged.
+- **Deployment expectation:** NONE; documentation/governance only.
+- **Verification plan:** update Project Start with retrieval-completeness rules, fetch it back, re-read Repository Work for concurrency, advance Repository Work only, then close this event.
+
+
 ### Chat stage overview contract
 
 **UPDATE STARTED**
