@@ -75,6 +75,65 @@ jobs:
           set -euo pipefail
           test -n "${VERCEL_TOKEN:-}" || { echo "VERCEL_TOKEN is required" >&2; exit 1; }
 
+      - name: Purge existing Vercel deployments
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, time, urllib.parse, urllib.request
+
+          token = os.environ["VERCEL_TOKEN"]
+          team = os.environ["VERCEL_ORG_ID"]
+          project = os.environ["VERCEL_PROJECT_ID"]
+          headers = {
+              "Authorization": f"Bearer {token}",
+              "Content-Type": "application/json",
+          }
+
+          def request(url, method="GET"):
+              req = urllib.request.Request(url, headers=headers, method=method)
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  body = r.read().decode("utf-8")
+                  return json.loads(body) if body else {}
+
+          deleted = []
+          while True:
+              qs = urllib.parse.urlencode({
+                  "projectId": project,
+                  "teamId": team,
+                  "limit": 100,
+              })
+              data = request(f"https://api.vercel.com/v7/deployments?{qs}")
+              deployments = data.get("deployments", [])
+              if not deployments:
+                  break
+
+              for dep in deployments:
+                  dep_id = dep.get("uid") or dep.get("id")
+                  if not dep_id:
+                      raise RuntimeError(f"deployment missing id: {dep}")
+                  request(
+                      f"https://api.vercel.com/v13/deployments/{dep_id}?teamId={urllib.parse.quote(team)}",
+                      method="DELETE",
+                  )
+                  deleted.append(dep_id)
+
+              time.sleep(0.5)
+
+          verify_qs = urllib.parse.urlencode({
+              "projectId": project,
+              "teamId": team,
+              "limit": 1,
+          })
+          remaining = request(f"https://api.vercel.com/v7/deployments?{verify_qs}").get("deployments", [])
+          if remaining:
+              raise RuntimeError(f"purge verification failed: {remaining}")
+
+          print(f"purged {len(deleted)} deployment(s); project is empty before replacement deploy")
+          PY
+
       - name: Deploy clean-room Chat only
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
