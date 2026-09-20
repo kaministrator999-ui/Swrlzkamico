@@ -49,6 +49,19 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 - **Deployment expectation:** documentation/source preparation may proceed without deployment. Any stable `main:api/runtime_hot.py` behavior change will remain source-only until a separately approved production deployment; no deployment-producing action is authorized by this continuation.
 - **Acceptance:** (1) accepted legacy Chat and LALM revisions can be explicitly prepared before deployment; (2) ordinary `POST /api/chat` no longer triggers runtime-head resolution/global sync; (3) post-deploy runtime-hot updates remain deliberately activatable; (4) clean-room requests show zero legacy/LALM synchronization unless explicitly targeted; (5) before/after cameras permit compute/TTFT comparison.
 
+### UPDATE CONTINUATION ENDED — 2026-09-19 — runtime-hot pre-deploy transfer tier 1 source complete
+
+- **Implemented source tier:** manual production workflow now resolves one immutable `runtime` commit, materializes it, prepares a hash-described legacy Chat + LALM/history-policy generation, and injects it into Python production function bundles before deploy.
+- **Stable reader boundary:** `api/hot_loader.py` no longer performs timed refresh from Chat/LALM read paths. Resolution precedence is explicit worker-local hot override → prepared deployment generation → bundled fallback.
+- **Request middleware boundary:** `api/runtime_hot.py` no longer synchronizes repository state for ordinary `/api/chat` requests and `/api/hot/status` is observational. Authenticated `POST /api/hot/sync` remains the deliberate post-deployment activation control.
+- **Startup boundary:** `api/index.py` warms the LALM from the prepared/activated generation without first calling runtime repository synchronization. Runtime-delivery capability now declares `prepared-runtime-generation-v1` and `requestPathSync=false`.
+- **Deployment verification contract:** production workflow refuses acceptance unless the deployed capability reports the prepared-generation contract with request-path sync disabled.
+- **Important remaining LALM cost:** current runtime `r39_engine.py` is itself a composition loader over immutable historical overlay URLs. Runtime-branch discovery has been moved off the audience path in source, but overlay precomposition remains a separate next transfer/optimization tier.
+- **Serverless activation limitation preserved:** explicit post-deploy hot activation remains worker-local; no fake process-local durable queue was introduced. Durable cross-worker scoped queue/activation is still pending architecture work.
+- **Truth state:** SOURCE + STATIC VERIFIED by fetch-back only. NOT deployed, NOT production activated, NOT live/user-visible verified. Existing production behavior remains unchanged until an explicitly approved production deployment occurs.
+- **Version state:** version assignment intentionally deferred because this continuation is not terminal and stable Server/deployment-control sources have changed without production release. Re-read authorities before terminal assignment. No Server Runtime version is advanced before an actual deployment/release event.
+- **Deployment/restart:** NONE. No deployment-producing action was fired.
+
 ### UPDATE STARTED — 2026-09-19 — legacy-to-clean-room hot-runtime coupling probe
 
 - **Intent:** deliberately mutate only the legacy `runtime:web/chat.html` source, then have the user refresh clean-room `/chat/§wyrlz` to test whether a legacy runtime-head change causes transient loading/routing inconsistencies on the clean-room route.
