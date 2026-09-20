@@ -299,8 +299,11 @@ jobs:
           assert caps.get("runtime-delivery-optimization", {}).get("requestPathSync") is False
           assert caps.get("runtime-delivery-optimization", {}).get("r39HistoricalNetworkFetch") is False
           generation = json.load(open(".swrzl-prepared-runtime/generation.json"))
-          assert generation.get("r39SourceDelivery") == "local-precomposed-chain-v1"
+          assert generation.get("r39SourceDelivery") == "local-precomposed-full-lineage-v2"
           assert len(generation.get("r39OverlayChain") or []) == 16
+          assert len(generation.get("r39HistoricalAncestry") or []) >= 1
+          prepared_files = {item.get("acceptedTarget") for item in generation.get("files", [])}
+          assert "research/online_research_reasoner.py" in prepared_files
           assert caps.get("runtime-manifest-authority", {}).get("ready") is True
           assert caps.get("runtime-manifest-authority", {}).get("contract") == "github-contents-manifest-v1"
           live = caps.get("instance-independent-live-source", {})
