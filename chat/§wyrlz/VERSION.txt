@@ -1,4 +1,4 @@
-1.0.14
+1.0.15
 lineage=clean-room-chat
 authority=main:chat/§wyrlz/
 state=server-deployed-source
