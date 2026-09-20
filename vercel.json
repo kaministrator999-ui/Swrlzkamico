@@ -1,23 +1,15 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
+  "fluid": true,
+  "regions": ["iad1"],
   "git": {
     "deploymentEnabled": false
   },
-  "github": {
-    "enabled": false
-  },
-  "routes": [
-    {
-      "src": "/chat/(?:%C2%A7|§)wyrlz/?$",
-      "dest": "/chat/§wyrlz/index.html"
-    },
-    {
-      "src": "/file_00000000b13c81f5a7f9fe99c0264ef0.png$",
-      "dest": "/file_00000000b13c81f5a7f9fe99c0264ef0.png"
+  "functions": {
+    "api/**/*.py": {
+      "maxDuration": 300,
+      "excludeFiles": "{.transport/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
     }
-  ],
-  "framework": null,
-  "installCommand": "",
-  "buildCommand": ""
+  }
 }
