@@ -1,4 +1,6 @@
 1.0.1
 lineage=clean-room-chat
 authority=main:chat/§wyrlz/
-state=source-only
+state=server-deployed-source
+runtime_hot=false
+deploy_when=explicitly-approved-load-checkpoint
