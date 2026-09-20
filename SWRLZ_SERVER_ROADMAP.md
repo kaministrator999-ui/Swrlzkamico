@@ -119,6 +119,20 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 - **Semantics:** preserve overlay execution order and existing cameras/self-tests. This tier changes source delivery, not inference behavior.
 - **Deployment:** NONE authorized by this continuation.
 
+
+### UPDATE CONTINUATION ENDED — 2026-09-19 — R39 overlay precomposition source complete
+
+- **Accepted historical authority:** immutable R39 v74-v90 source artifacts are now vendored under `main:accepted_runtime/lalm/chain/` with historical commit + Git blob provenance in `accepted_runtime/accepted.json`.
+- **Active chain truth:** accepted v90 entrypoint has 15 actual historical `urlopen` acquisition boundaries. v84 is declared by that loader but has no active fetch/exec boundary; its immutable artifact is retained for provenance, giving 16 registered chain artifacts.
+- **Production preparation:** `scripts/prepare_runtime_generation.py` validates every chain blob, packages it locally, replaces all 15 active historical network acquisitions with local file reads, rejects any boundary-count mismatch, rejects any remaining `urllib.request.urlopen(`, and syntax-compiles the rewritten entrypoint.
+- **Prepared contract:** advanced in source to `swrlz-prepared-runtime-generation-v3` with `r39SourceDelivery=local-precomposed-chain-v1`. Server capability and production workflow acceptance checks require v3.
+- **Semantic boundary:** overlay execution order, cameras, self-tests, and inference behavior are preserved. This is source-delivery precomposition, not a speculative inference rewrite.
+- **Static verification:** accepted entrypoint inspection confirms exactly 15 `urlopen` calls and exactly one match for each of the 15 localization targets. Fetch-back confirms all registered chain files exist on main.
+- **Expected production effect after a separately approved deployment:** LALM hydration reads the historical chain from the deployed immutable function bundle instead of performing 15 GitHub raw source requests.
+- **Truth state:** SOURCE + STATIC VERIFIED. Build-workflow execution, deployed import, cameras, TTFT, and compute deltas remain unverified until the production release gate is intentionally exercised.
+- **Deployment/restart:** NONE. No workflow dispatch.
+- **Version state:** registered version assignment remains deferred to the terminal parent transfer event; Server Runtime remains `2.3.287` until an actual release.
+
 ### UPDATE STARTED — 2026-09-19 — legacy-to-clean-room hot-runtime coupling probe
 
 - **Intent:** deliberately mutate only the legacy `runtime:web/chat.html` source, then have the user refresh clean-room `/chat/§wyrlz` to test whether a legacy runtime-head change causes transient loading/routing inconsistencies on the clean-room route.
