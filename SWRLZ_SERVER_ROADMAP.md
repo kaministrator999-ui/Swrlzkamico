@@ -36,6 +36,18 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE FINISHED — 2026-09-19 — project focus-group handoff semantics
+
+- **Result:** COMPLETE — current project focus is now a grouped engineering handoff, not a single-module/latest-commit guess.
+- **Changed Project Start:** startup reconstructs a Primary Focus plus a bounded Focus Group of materially connected modules; Chat and LALM remain visible together when they share one active work stream, and whichever is the most recent main target is Primary.
+- **Changed response standard:** project/startup handoffs now present Current Focus with Primary, Group, and shared truth/acceptance state.
+- **Changed Version Evolution:** relevant Roadmap events preserve Primary Focus / Focus Group lineage without causing artificial module version bumps. Governance-only Repository Work advances no longer steal feature focus.
+- **Current feature focus after this event:** Primary Focus = Web Chat. Focus Group = Web Chat `1.5.86` + LALM Engine `2.1.112` + Chat Stream Contract `V2` + Server Runtime `2.3.287` + Runtime Manifest `152`. These companions are grouped because the current Chat acceptance path spans runtime-hot Chat, stream protocol, LALM generation, stable server middleware, and manifest/hotload activation. Only Web Chat changed in the runtime repair; companion versions remain unchanged.
+- **Resulting version:** Repository Work `1.0.13` (from `1.0.12`).
+- **Verification:** all three governance owners were fetched back with the new focus-group clauses before version assignment; Repository Work concurrency check remained at `1.0.12` and then advanced to `1.0.13`.
+- **Deployment/restart:** NONE. Documentation/governance only.
+
+
 ### UPDATE STARTED — 2026-09-19 — project focus-group handoff semantics
 
 - **Requested outcome:** make current/last project focus a grouped engineering scope rather than a single module. When Chat and LALM participate in connected work, both remain visible in the latest focus group; whichever was most recently the main work target is Primary Focus, and materially connected modules are included as companions.
