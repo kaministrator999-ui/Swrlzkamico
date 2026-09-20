@@ -110,7 +110,7 @@ def main() -> int:
         "_v76_overlay": "v76.py", "_v77_overlay": "v77.py",
         "_v78_overlay": "v78.py", "_v79_overlay": "v79.py",
         "_v80_overlay": "v80.py", "_v81_overlay": "v81.py",
-        "_v82_batch_source": "v82_batch.py", "_v84_overlay": "v84.py",
+        "_v82_batch_source": "v82_batch.py",
         "_v85_overlay": "v85.py", "_v86_overlay": "v86.py",
         "_v87_overlay": "v87.py", "_v88_overlay": "v88.py",
         "_v89_overlay": "v89.py", "_v90_overlay": "v90.py",
