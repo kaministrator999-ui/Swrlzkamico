@@ -48,6 +48,14 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Deployment expectation:** NONE.  
 **Verification plan:** create the Chat overview, wire it into §wyrlz Start mandatory routing/ownership, fetch back, bump Repository Work, and close this event.
 
+**UPDATE FINISHED**
+
+**Result:** COMPLETE — CANONICAL CHAT STAGE OVERVIEW ADDED AND ROUTED FROM §WYRLZ START.  
+**Actual change:** created `docs/engineering/SWRLZ_CHAT_OVERVIEW.md` with the six-primitives model (Scenery, Starting Props, Actors, Temporary Actors/Props, Scene-Transition Props, Stagehands), immutable/open-curtain/closed-curtain mutation rules, curtain/scene commit lifecycle, component audit schema, stagehand law, clean-room `/chat/§wyrlz` construction order, camera relationship, runtime-hot relationship, and architectural acceptance test. `§wyrlz_§tart.md` now includes this overview in its mandatory startup contract and ownership map.  
+**Resulting versions:** Repository Work `1.0.10`; Server Runtime remains `2.3.287`; Web Chat remains `1.5.85`; Runtime Manifest remains `152`.  
+**Verification:** fetch-back confirms §wyrlz Start SHA `4701f90fccb4d3ddc8700dfb64f17ba23d9f8ab4`, Chat Overview SHA `4ff83932cc6e401e4058a35f8d2e9a69d96b0892`, Repository Work `1.0.10`; Server/Chat/Manifest authorities re-read unchanged.  
+**Deployment / restart:** NONE. Documentation/governance only; current runtime-hot `/chat/§wyrlz` remains untouched.
+
 
 ### §wyrlz Start filename correction
 
