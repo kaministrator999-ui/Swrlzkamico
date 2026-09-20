@@ -10,6 +10,9 @@ on:
       - "api/hot_loader.py"
       - "api/runtime_hot.py"
       - "api/index.py"
+      - "api/online_research.py"
+      - "api/chat_extensions.py"
+      - "api/chat_resume_sessions.py"
       - ".github/workflows/verify-prepared-runtime.yml"
 
 permissions:
@@ -136,6 +139,9 @@ jobs:
           hot_loader = Path("api/hot_loader.py").read_text(encoding="utf-8")
           runtime_hot = Path("api/runtime_hot.py").read_text(encoding="utf-8")
           index = Path("api/index.py").read_text(encoding="utf-8")
+          research = Path("api/online_research.py").read_text(encoding="utf-8")
+          chat_extensions = Path("api/chat_extensions.py").read_text(encoding="utf-8")
+          resume = Path("api/chat_resume_sessions.py").read_text(encoding="utf-8")
 
           assert "register_hot_refresher(None)" in runtime_hot
           assert '"requestPath": False' in runtime_hot
@@ -144,7 +150,16 @@ jobs:
           assert "PREPARED_INFERENCE" in hot_loader
           assert "PREPARED_CHAT" in hot_loader
           assert "PREPARED_CHAT_HISTORY_POLICY" in hot_loader
+          assert "def _refresh_hot(force:bool=False)->None:" in research
+          refresh_body = research.split("def _refresh_hot(force:bool=False)->None:",1)[1].split("def _reasoner_path()",1)[0]
+          assert "urlopen(" not in refresh_body
+          assert "requestPathSync" in research
+          assert "run_online_research(payload)" in chat_extensions
+          assert "run_online_research(payload)" in resume
+          assert "_resolve_runtime_head()" not in chat_extensions
+          assert "_resolve_runtime_head()" not in resume
           print("ordinary request-path synchronization contract verified")
+          print("online-research reasoner request-path refresh", False)
           PY
 
       - name: Publish verification summary
