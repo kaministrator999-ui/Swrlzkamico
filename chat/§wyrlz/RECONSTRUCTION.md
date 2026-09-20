@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.16  
+**Version:** 1.0.17  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -65,3 +65,5 @@ The component acceptance cadence is therefore:
 - **1.0.15 side menu:** hamburger now opens a left sliding drawer with a full-viewport blue dimming shade. The bottom drawer box displays the complete canonical runtime VERSION.txt registry values read from their owning `runtime:versions/*.txt` authorities at this integration checkpoint. Shade tap closes the drawer; no legacy Chat surface is reintroduced.
 
 - **1.0.16 version panel:** reduced the drawer Versions box maximum height from 42vh to 26vh while preserving independent vertical scrolling and hiding horizontal overflow.
+
+- **1.0.17 drawer account + versions:** Versions is now a header-toggled collapsible panel that retains bounded scrolling when expanded. Immediately above it, the drawer uses the existing server account contract (`/api/account/status`, `/api/account/me`, `/api/account/google`, `/api/account/logout`) and Google Identity Services; it does not create a second account authority. Existing signed HttpOnly session state is checked on load, sign-in credentials are server-verified, and sign-out uses the canonical account route.
