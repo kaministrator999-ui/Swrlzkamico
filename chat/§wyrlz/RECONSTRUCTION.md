@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.11  
+**Version:** 1.0.12  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -53,7 +53,7 @@ The component acceptance cadence is therefore:
 
 - **Foundation:** ACCEPTED as 1.0.1 — minimal document and viewport metadata only. The visible `§wyrlz` placeholder and page-title label were removed; the body is intentionally empty.
 - **Ice Dragon wallpaper / first-paint scenery:** ACCEPTED as 1.0.2 — canonical Ice Dragon image is initial-document scenery with no JavaScript/runtime/late injector. Repeated fresh-deployment audience tests showed immediate clean first paint.
-- **Composer / opening stage scenery:** SOURCE-INTEGRATED as 1.0.11 — preserves the compact 42px mobile / 44px desktop resting rail and native keyboard-safe anchoring, then auto-grows upward with wrapped input text. Growth is bounded to 50% of the current visible viewport; beyond that cap the textarea becomes vertically scrollable. The send control remains anchored at the lower-right of the expanding composer. This is the first minimal composer behavior rigging; no send/transport behavior is admitted. Composer shell now uses an explicit `bottom:0`; safe-area inset is applied as padding rather than as the positioning coordinate, preventing environment-variable resolution from moving the fixed shell away from the viewport edge.
+- **Composer / opening stage scenery:** SOURCE-INTEGRATED as 1.0.12 — preserves the compact 42px mobile / 44px desktop resting rail and native keyboard-safe anchoring, then auto-grows upward with wrapped input text. Growth is bounded to 50% of the current visible viewport; beyond that cap the textarea becomes vertically scrollable. The send control remains anchored at the lower-right of the expanding composer. This is the first minimal composer behavior rigging; no send/transport behavior is admitted. Composer shell now uses an explicit `bottom:0`; safe-area inset is applied as padding rather than as the positioning coordinate, preventing environment-variable resolution from moving the fixed shell away from the viewport edge. Correction: removed `max()`/`env()` from the shell padding declaration entirely; the shell now uses the last-known-good fixed 8px bottom padding while retaining `bottom:0`.
 - **Side-menu control / opening stage scenery:** SOURCE-INTEGRATED as 1.0.11 — compact fixed top-left glass menu button with a hamburger glyph, safe-area-aware placement, and accessibility semantics. Button is scenery/control affordance only; drawer opening behavior and side-menu contents are not yet admitted. Top anchoring is explicitly 12px rather than using the safe-area environment variable as the positioning coordinate.
 - **Ice Dragon remaining scenery/components:** NOT YET ADMITTED.
 - All other legacy Chat structure, message surface, transport, settings, context meter, account/session UI, diagnostics, and optional tooling: NOT YET ADMITTED.
