@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.5
+CHAT_VERSION=1.0.6
 SOURCE=main:chat/§wyrlz/
 ASSET=file_00000000b13c81f5a7f9fe99c0264ef0.png
-PURPOSE=deploy clean-room Chat 1.0.5 compact composer opening scenery checkpoint
+PURPOSE=deploy clean-room Chat 1.0.6 single-line composer opening scenery checkpoint
 REQUESTED_AT=2026-09-20
-TEST=compact-composer-first-visible-frame
-RETRY=12
+TEST=single-line-composer-first-visible-frame
+RETRY=13
