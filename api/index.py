@@ -12,7 +12,7 @@ preserving the runtime-source-of-truth delivery boundary.
 from __future__ import annotations
 
 from api import server_v213 as _server
-from api.runtime_hot import install as _install_hot_runtime, _safe_auto_sync
+from api.runtime_hot import install as _install_hot_runtime
 from api.hot_loader import get_engine
 from api.chat_admin_session import install as _install_chat_admin_session
 from api.chat_fast_status import install as _install_chat_fast_status
@@ -41,7 +41,7 @@ _server.CAPABILITIES["chat-generation-transcript"] = {"kind":"transport-continui
 _server.CAPABILITIES["chat-shared-generation-transcript"] = {"kind":"durable-transport-continuity","ready":bool(_transcript_store.configured),"contract":"shared-private-blob-v1","access":"private","ttlSeconds":1800,"detail":"The active model state remains worker-owned; bounded transcript checkpoints are shared privately across workers so a different worker can synchronize the same response without starting a duplicate generation."}
 _server.CAPABILITIES["chat-account-state"] = {"kind":"durable-user-state","ready":bool(_transcript_store.configured),"contract":"swrlz-chat-account-state-v1","access":"private","authority":"server","browserLocalStorageAuthoritative":False,"detail":"Authenticated account-scoped thread/message presentation state is durable in private Blob storage; browser localStorage is a cache only."}
 _server.CAPABILITIES["chat-rmcca-direct-transport"] = {"kind":"cognitive-context-transport","ready":True,"contract":"rmcca-direct-v1","fallback":"history-carrier-v1","detail":"Validated RMCCA cognitive and user-time context survives stable request normalization as bounded first-class metadata; the compact history carrier remains compatibility transport."}
-_server.CAPABILITIES["runtime-delivery-optimization"] = {"kind":"performance","ready":True,"contract":"hot-runtime-delivery-v1","syncGateSeconds":30,"parallelSourceChecks":True,"assetCacheContract":"manifest-versioned-immutable-v1","detail":"Ordinary Chat requests share a gated runtime refresh authority; due source checks run concurrently; revisioned JS/CSS may remain browser-cached while HTML and manifest stay live/no-store."}
+_server.CAPABILITIES["runtime-delivery-optimization"] = {"kind":"performance","ready":True,"contract":"prepared-runtime-generation-v1","requestPathSync":False,"explicitHotActivation":True,"assetCacheContract":"manifest-versioned-immutable-v1","detail":"Legacy Chat and LALM consume an accepted generation prepared before production deployment; later runtime-hot changes require explicit activation and ordinary Chat requests never synchronize repository state."}
 _server.CAPABILITIES["runtime-manifest-authority"] = {"kind":"runtime-source-integrity","ready":True,"contract":"github-contents-manifest-v1","authority":"github-contents-api-v1","failurePolicy":"fail-closed-no-stale-raw-manifest","assetPath":"raw-github-revisioned","detail":"The runtime manifest resolves from repository-content authority; versioned assets remain on the fast immutable raw path, and stale raw branch content cannot silently select an older manifest revision."}
 _install_admin_auth_guard(_server)
 _install_hot_runtime(_server)
@@ -63,13 +63,12 @@ _install_chat_rmcca_passthrough(_chat_extensions)
 def _warm_lalm_at_start() -> None:
     """Hydrate and probe the local LALM before Chat handles user traffic."""
     try:
-        sync = _safe_auto_sync(_server)
         engine, source = get_engine()
         state = engine.inspect_engine()
         _chat_extensions.LOCAL_READINESS.clear()
         _chat_extensions.LOCAL_READINESS.update({"checked": True, "engineSource": source, **state})
-        _server.CAPABILITIES["lalm-startup-warm"] = {"kind":"runtime-execution","ready":bool(state.get("interactiveReady", state.get("modelReady", True))),"phase":"server-start-complete","engineSource":source,"sync":sync,"state":state}
-        _server.activity("lalm-startup-warm", source=source, ready=True, branch=sync.get("branch", "runtime"))
+        _server.CAPABILITIES["lalm-startup-warm"] = {"kind":"runtime-execution","ready":bool(state.get("interactiveReady", state.get("modelReady", True))),"phase":"server-start-complete","engineSource":source,"requestPathSync":False,"state":state}
+        _server.activity("lalm-startup-warm", source=source, ready=True, branch="prepared-runtime")
     except Exception as exc:
         _server.CAPABILITIES["lalm-startup-warm"] = {"kind":"runtime-execution","ready":False,"phase":"server-start-fallback","error":f"{type(exc).__name__}: {exc}"}
         _server.activity("lalm-startup-warm-failed", error=f"{type(exc).__name__}: {exc}")
