@@ -167,10 +167,45 @@ jobs:
           print(state)
           PY
 
+      - name: Prepare accepted runtime generation
+        id: runtime_generation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin runtime
+          runtime_sha="$(git rev-parse origin/runtime)"
+          python scripts/prepare_runtime_generation.py \
+            --runtime-root "${{ runner.temp }}/swrlz-runtime-authority" \
+            --output-root ".swrzl-prepared-runtime" \
+            --runtime-sha "$runtime_sha"
+          echo "sha=$runtime_sha" >> "$GITHUB_OUTPUT"
+          echo "Prepared runtime generation: $runtime_sha" >> "$GITHUB_STEP_SUMMARY"
+          cat .swrzl-prepared-runtime/generation.json >> "$GITHUB_STEP_SUMMARY"
+
       - name: Build production artifact
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: vercel build --prod --token="$VERCEL_TOKEN"
+
+      - name: Inject prepared runtime generation into Python function bundles
+        shell: bash
+        run: |
+          set -euo pipefail
+          python_functions=0
+          while IFS= read -r -d '' func_dir; do
+            config="$func_dir/.vc-config.json"
+            if [[ ! -f "$config" ]] || ! grep -Eq '"runtime"[[:space:]]*:[[:space:]]*"python' "$config"; then
+              continue
+            fi
+            mkdir -p "$func_dir/swrzl_prepared_runtime"
+            cp -a .swrzl-prepared-runtime/. "$func_dir/swrzl_prepared_runtime/"
+            python_functions=$((python_functions + 1))
+          done < <(find .vercel/output/functions -type d -name '*.func' -print0)
+          if [[ "$python_functions" -lt 1 ]]; then
+            echo "No Python Vercel function bundles were found for prepared runtime injection." >&2
+            exit 1
+          fi
+          echo "Injected prepared runtime generation into $python_functions Python function bundles." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Inject native R39 artifacts into Python function bundles
         shell: bash
