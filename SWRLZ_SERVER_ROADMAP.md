@@ -83,6 +83,20 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 - **Promotion evidence:** accepted snapshot records source runtime commit and per-file hashes so rehearsal provenance remains auditable after graduation.
 - **Deployment expectation:** NONE during this implementation. No production workflow dispatch is authorized.
 
+
+### UPDATE CONTINUATION ENDED — 2026-09-19 — accepted runtime promotion source tier complete
+
+- **Implemented:** `scripts/promote_runtime_acceptance.py` creates the bounded accepted snapshot from an explicitly selected runtime rehearsal commit, preserving exact source commit + SHA-256 per promoted owner.
+- **New canonical deployable authority:** `main:accepted_runtime/`. A bootstrap marker exists but is deliberately non-deployable until the first explicit promotion populates it.
+- **Production preparation:** `scripts/prepare_runtime_generation.py` now reads only the accepted main snapshot, verifies every promoted hash, and emits `swrlz-prepared-runtime-generation-v2`. It fails closed for bootstrap/empty/unpromoted authority.
+- **Deployment workflow:** no longer fetches `origin/runtime` as application input. It packages the main-owned accepted snapshot, then injects that immutable generation into Python function bundles. Runtime provenance is still carried in the generation manifest.
+- **Stable capability/acceptance:** Server capability and production verification now name `prepared-runtime-generation-v2` with `requestPathSync=false`.
+- **Operational lifecycle now encoded:** runtime experiment → explicit acceptance promotion → reviewed/committed main snapshot → production preparation → separately approved deployment. New runtime commits after promotion are harmless unpromoted rehearsal work.
+- **Current acceptance blocker by design:** no real runtime rehearsal has yet been promoted into `accepted_runtime/`; therefore a production workflow run would fail closed rather than silently consume mutable runtime. This is intentional until the current legacy Chat/LALM state is explicitly accepted for graduation.
+- **Truth state:** SOURCE + STATIC VERIFIED by GitHub fetch-back. NOT runtime/live verified and NOT deployed.
+- **Deployment/restart:** NONE. No workflow dispatch or production action.
+- **Version state:** still deferred under the open transfer event. Stable main/deployment-control behavior has changed; re-read authorities and assign registered versions atomically with the terminal Roadmap event. Server Runtime remains `2.3.287` until an actual production release.
+
 ### UPDATE STARTED — 2026-09-19 — legacy-to-clean-room hot-runtime coupling probe
 
 - **Intent:** deliberately mutate only the legacy `runtime:web/chat.html` source, then have the user refresh clean-room `/chat/§wyrlz` to test whether a legacy runtime-head change causes transient loading/routing inconsistencies on the clean-room route.
