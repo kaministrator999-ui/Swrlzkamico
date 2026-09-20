@@ -71,6 +71,54 @@ jobs:
           print("historical-network-fetch", False)
           PY
 
+      - name: Install LALM verification dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "numpy==2.2.6"
+
+      - name: Boot prepared R39 with historical network blocked
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH="$GITHUB_WORKSPACE" python - <<'PY'
+          import importlib.util
+          import sys
+          import urllib.request
+          from pathlib import Path
+
+          entry = Path(".swrlz-prepared-runtime/lalm/r39_engine.py").resolve()
+          lalm_dir = str(entry.parent)
+          if lalm_dir not in sys.path:
+              sys.path.insert(0, lalm_dir)
+
+          def blocked(*args, **kwargs):
+              raise RuntimeError("NETWORK_FETCH_ATTEMPTED_DURING_PREPARED_R39_BOOT")
+
+          urllib.request.urlopen = blocked
+          spec = importlib.util.spec_from_file_location("swrlz_prepared_r39_verification", entry)
+          assert spec is not None and spec.loader is not None
+          module = importlib.util.module_from_spec(spec)
+          sys.modules[spec.name] = module
+          spec.loader.exec_module(module)
+
+          for required in ("generate_events", "inspect_engine", "ENGINE_ID", "MODEL_SHA256"):
+              assert hasattr(module, required), required
+
+          state = module.inspect_engine()
+          assert isinstance(state, dict), type(state)
+          revision = str(
+              state.get("hotRevision")
+              or state.get("revision")
+              or getattr(module, "HOT_REVISION", "")
+          )
+          assert "v90" in revision.lower(), revision
+          print("prepared R39 boot verified")
+          print("revision", revision)
+          print("network source fetches", 0)
+          print("engine", getattr(module, "ENGINE_ID", ""))
+          PY
+
       - name: Verify ordinary request path is synchronization-inert
         shell: bash
         run: |
