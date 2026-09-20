@@ -111,18 +111,19 @@ Treat those nine documents as one coordinated project-work contract. Then follow
 
 ### Project response identity opener — mandatory
 
-Once this project-work contract is loaded, every governed project-work response must begin with the exact §wyrlz identity mark below as the **first visible element**, rendered as a **large centered heading**:
+Once this project-work contract is loaded, every governed project-work response must begin with the exact §wyrlz identity mark below as the **first visible element**, rendered as a **small, lightweight identity starter**:
 
 ```html
-<h1 align="center">𓆩𓆩⁽§⁾𓆪wyrlz𓆪</h1>
+<small>𓆩𓆩⁽§⁾𓆪wyrlz𓆪</small>
 ```
 
 Rules:
 
 - use the exact glyph sequence `𓆩𓆩⁽§⁾𓆪wyrlz𓆪`;
 - place no prose, heading, status label, bullet, or other visible content before it;
-- render it prominently and centered rather than as a small inline prefix;
-- if the current response surface strips raw HTML alignment, use the strongest available centered heading equivalent while preserving the exact glyph sequence and first-element position;
+- keep it visually small/subordinate to the actual response content; do **not** render it as an H1, hero title, large centered banner, or other dominant heading;
+- if the current response surface strips raw HTML sizing, use a short plain-text/inline equivalent while preserving the exact glyph sequence and first-element position;
+- this same compact identity treatment applies to the terminal response produced by the `§§` / `@GitHub §§` Bat-Signal bootstrap. The Bat-Signal still executes the complete startup contract; only its visible identity starter is compact;
 - this rule owns the **project-entry identity opener only**. All response structure after the opener remains owned by `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md`.
 
 ### Conditional references
