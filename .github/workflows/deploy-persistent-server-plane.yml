@@ -61,7 +61,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .vercel
-          printf '{"orgId":"%s","projectId":"%s"}\n' "$VERCEL_ORG_ID" "$SOURCE_PROJECT_ID" > .vercel/project.json
+          printf '{"orgId":"%s","projectId":"%s"}\n' "$SWRLZ_ORG_ID" "$SOURCE_PROJECT_ID" > .vercel/project.json
           vercel env pull /tmp/swrlz-source.env --environment=production --yes --token="$VERCEL_TOKEN"
 
       - name: Create or link persistent server project
