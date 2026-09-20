@@ -155,7 +155,7 @@ jobs:
             echo "## §wyrlz prepared-runtime verification"
             echo
             echo "- Production deployment: **not triggered by this workflow**"
-            echo "- Prepared generation contract: `swrlz-prepared-runtime-generation-v3`"
+            echo '- Prepared generation contract: swrlz-prepared-runtime-generation-v3'
             echo "- Historical R39 source delivery: full local precomposed lineage"
             echo "- Audience request-path repository synchronization: disabled by contract"
           } >> "$GITHUB_STEP_SUMMARY"
