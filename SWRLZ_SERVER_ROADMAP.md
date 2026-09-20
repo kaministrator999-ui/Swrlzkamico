@@ -36,6 +36,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE FINISHED — 2026-09-19 — Roadmap newest-handoff retrieval hardening
+
+- **Result:** COMPLETE — compact startup now distinguishes incomplete retrieval from genuine lineage inconsistency.
+- **Changed Project Start:** startup must inspect the current Active update journal from its head/current section, parse lifecycle markers structurally, correlate candidate newest events against current runtime version authorities, continue targeted retrieval when a response is partial/truncated, and treat absence from a retrieved chunk as non-evidence of Roadmap absence.
+- **Defect prevented:** a current authority such as Repository Work `1.0.10` may no longer be called unexplained merely because its matching FINISHED handoff was outside the initially retrieved tail/chunk.
+- **Resulting version:** Repository Work `1.0.11` (from `1.0.10`). Server Runtime, Web Chat, Runtime Manifest, LALM Engine, Deployment Control, and all other runtime modules are unchanged.
+- **Verification:** Project Start fetch-back SHA `73ada71449154ad47d820a42fd2910831f520627` contains the mandatory retrieval-completeness rule; Repository Work fetch-back reports `1.0.11` active.
+- **Deployment/restart:** NONE. Governance-only and deployment-inert.
+- **Existing unresolved work preserved:** lockdown route-enter 500 live acceptance and adjacent client-debug 401/freeze remain unresolved and are not superseded by this event.
+
 ### UPDATE STARTED — 2026-09-19 — Roadmap newest-handoff retrieval hardening
 
 - **Requested outcome:** prevent compact Project Start from manufacturing a reconciliation defect when the newest Roadmap event is outside an arbitrarily retrieved tail/chunk.
