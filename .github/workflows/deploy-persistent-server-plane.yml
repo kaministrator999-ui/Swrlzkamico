@@ -33,13 +33,32 @@ jobs:
         run: |
           set -euo pipefail
           grep -qx 'APPROVED=1' .deploy/SERVER_PLANE.txt
-          grep -qx 'SOURCE_REF=runtime' .deploy/SERVER_PLANE.txt
+          grep -qx 'SOURCE_REF=main' .deploy/SERVER_PLANE.txt
 
       - name: Checkout server source
         uses: actions/checkout@v4
         with:
-          ref: runtime
+          ref: main
           clean: true
+
+      - name: Apply server-plane Vercel contract
+        shell: bash
+        run: |
+          cat > vercel.json <<'JSON'
+          {
+            "$schema": "https://openapi.vercel.sh/vercel.json",
+            "version": 2,
+            "fluid": true,
+            "regions": ["iad1"],
+            "git": {"deploymentEnabled": false},
+            "functions": {
+              "api/**/*.py": {
+                "maxDuration": 300,
+                "excludeFiles": "{.transport/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
+              }
+            }
+          }
+          JSON
 
       - name: Set up Node
         uses: actions/setup-node@v4
