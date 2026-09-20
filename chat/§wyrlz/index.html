@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.16">
+  <meta name="swrlz-chat-version" content="1.0.17">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -27,7 +27,11 @@
     body.menu-open .menu-shade{opacity:1;visibility:visible;transition-delay:0s}
     body.menu-open .side-menu{transform:translateX(0)}
     body.menu-open .menu-button{z-index:8}
-    .version-box{margin-top:auto;max-height:26vh;overflow-y:auto;overflow-x:hidden;padding:11px;border:1px solid rgba(95,192,255,.28);border-radius:14px;background:rgba(2,15,31,.72);font-size:11px;line-height:1.45;color:var(--secondary)}
+
+    .account-card{margin-top:auto;margin-bottom:10px;padding:10px;border:1px solid rgba(95,192,255,.28);border-radius:14px;background:rgba(2,15,31,.72)}
+    .account-main{display:flex;align-items:center;gap:9px;min-height:38px}.account-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid rgba(95,192,255,.3);display:none}.account-copy{min-width:0;flex:1}.account-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-meta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-action{border:1px solid rgba(95,192,255,.28);border-radius:10px;padding:7px 9px;color:var(--text);background:rgba(31,72,108,.42);font-size:11px;cursor:pointer}.google-slot{margin-top:8px;min-height:0;overflow:hidden}
+    .version-head{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 0 7px;border:0;color:var(--text);background:transparent;cursor:pointer}.version-chevron{transition:transform 180ms ease}.version-box.collapsed .version-chevron{transform:rotate(-90deg)}.version-list{max-height:26vh;overflow-y:auto;overflow-x:hidden;transition:max-height 200ms ease,opacity 160ms ease}.version-box.collapsed .version-list{max-height:0;opacity:0;overflow:hidden}
+    .version-box{margin-top:0;padding:11px;border:1px solid rgba(95,192,255,.28);border-radius:14px;background:rgba(2,15,31,.72);font-size:11px;line-height:1.45;color:var(--secondary)}
     .version-title{margin:0 0 7px;color:var(--text);font-size:12px;font-weight:700;letter-spacing:.04em}
     .version-row{display:flex;justify-content:space-between;gap:12px;padding:3px 0;border-bottom:1px solid rgba(145,169,192,.09)}
     .version-row:last-child{border-bottom:0}.version-row span:last-child{color:#9fefff;text-align:right}
@@ -44,12 +48,22 @@
     .send-button svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     @media(min-width:601px){.composer-shell{padding:0 14px 10px}.composer-box{min-height:44px;border-radius:22px}#prompt{height:42px;max-height:calc(50dvh - 2px);padding-top:11px;padding-bottom:11px;font-size:14px;line-height:20px}.composer-tools{bottom:7px}.send-button{width:30px;height:30px}.send-button svg{width:14px;height:14px}}
   </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <div class="menu-shade" id="menuShade" aria-hidden="true"></div>
   <aside class="side-menu" id="sideMenu" aria-label="Side menu" aria-hidden="true">
-    <div class="version-box">
-      <div class="version-title">Versions</div>
+    <div class="account-card" id="accountCard">
+      <div class="account-main">
+        <img class="account-avatar" id="accountAvatar" alt="">
+        <div class="account-copy"><div class="account-name" id="accountName">Google Account</div><div class="account-meta" id="accountMeta">Checking account…</div></div>
+        <button class="account-action" id="accountAction" type="button">Sign in</button>
+      </div>
+      <div class="google-slot" id="googleSlot"></div>
+    </div>
+    <div class="version-box" id="versionBox">
+      <button class="version-head" id="versionToggle" type="button" aria-expanded="true"><span class="version-title">Versions</span><span class="version-chevron">⌄</span></button>
+      <div class="version-list">
         <div class="version-row"><span>Repository Work</span><span>1.0.15</span></div>
         <div class="version-row"><span>Server Runtime</span><span>2.3.287</span></div>
         <div class="version-row"><span>Server UI</span><span>1.0.0</span></div>
@@ -66,6 +80,7 @@
         <div class="version-row"><span>Server APK</span><span>UNASSIGNED</span></div>
         <div class="version-row"><span>Frozen Web Collector</span><span>1.0.9</span></div>
         <div class="version-row"><span>Deployment Control</span><span>1.0.11</span></div>
+      </div>
     </div>
   </aside>
   <button class="menu-button" id="menuButton" type="button" aria-label="Open side menu" aria-expanded="false">
@@ -89,6 +104,46 @@
       const menuButton = document.getElementById("menuButton");
       const menuShade = document.getElementById("menuShade");
       const sideMenu = document.getElementById("sideMenu");
+      const versionBox = document.getElementById("versionBox");
+      const versionToggle = document.getElementById("versionToggle");
+      versionToggle.addEventListener("click", () => {
+        const collapsed = versionBox.classList.toggle("collapsed");
+        versionToggle.setAttribute("aria-expanded", String(!collapsed));
+      });
+      const accountName = document.getElementById("accountName");
+      const accountMeta = document.getElementById("accountMeta");
+      const accountAvatar = document.getElementById("accountAvatar");
+      const accountAction = document.getElementById("accountAction");
+      const googleSlot = document.getElementById("googleSlot");
+      let accountUser = null;
+      const showUser = user => {
+        accountUser = user || null;
+        accountName.textContent = user?.displayName || user?.email || "Google Account";
+        accountMeta.textContent = user?.email || (user ? "Signed in" : "Not signed in");
+        if(user?.picture){ accountAvatar.src=user.picture; accountAvatar.style.display="block"; } else { accountAvatar.style.display="none"; }
+        accountAction.textContent = user ? "Sign out" : "Sign in";
+        if(user) googleSlot.innerHTML="";
+      };
+      const renderGoogle = async () => {
+        const status = await fetch("/api/account/status",{credentials:"same-origin",cache:"no-store"}).then(r=>r.json());
+        if(!status?.googleClientId || !window.google?.accounts?.id) throw new Error("Google account service unavailable");
+        googleSlot.innerHTML="";
+        google.accounts.id.initialize({client_id:status.googleClientId,callback:async response=>{
+          const result=await fetch("/api/account/google",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({credential:response.credential})});
+          if(!result.ok) throw new Error("Google sign-in failed");
+          const data=await result.json(); showUser(data.user);
+        }});
+        google.accounts.id.renderButton(googleSlot,{type:"standard",theme:"outline",size:"medium",text:"signin_with",shape:"pill",width:250});
+      };
+      const refreshAccount = async () => {
+        try{const r=await fetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user);return;}}catch(_){}
+        showUser(null);
+      };
+      accountAction.addEventListener("click",async()=>{
+        if(accountUser){await fetch("/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null);return;}
+        try{await renderGoogle();}catch(e){accountMeta.textContent=e.message;}
+      });
+      refreshAccount();
       const setMenu = (open) => {
         document.body.classList.toggle("menu-open", open);
         menuButton.setAttribute("aria-expanded", String(open));
