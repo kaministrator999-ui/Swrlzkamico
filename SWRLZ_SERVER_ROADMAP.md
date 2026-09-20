@@ -1223,3 +1223,15 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Expected impact:** documentation/governance only. Repository Work advances; runtime component versions remain unchanged.
 - **Deployment expectation:** none; this is deployment-inert.
 - **Verification plan:** add a mandatory runtime-hot discovery rule to Project Start, add the operational route/source resolution convention to the Hotloader Guide, fetch both back, concurrency-check Repository Work, advance Repository Work only, then close this event.
+
+
+### UPDATE FINISHED — 2026-09-19 — runtime-hot route/source discovery hardening
+
+- **Changed Project Start:** added a mandatory runtime-hot discovery rule: classify the surface first, trace live route/component → runtime manifest or hotloader registry → declared source, preserve literal Unicode/sigil path segments, and never infer absence from a default/`main` 404 alone.
+- **Changed Hotloader Guide:** added the canonical route-to-source discovery convention and documented `/chat/§wyrlz` → manifest → `runtime:chat/§wyrlz/index.html` as the concrete example while explicitly forbidding blind `index.html` guessing.
+- **Architecture reconciliation:** existing Project Start and Runtime Hotloader authorities were extended; no new owner, loader, registry, or runtime behavior was introduced.
+- **Resulting version:** Repository Work `1.0.9` (from `1.0.8`). Web Chat remains `1.5.85`; Runtime Manifest remains `152`; Server Runtime remains `2.3.287`; all other runtime component versions are unchanged.
+- **Verification:** fetch-back confirmed the new Project Start rule (SHA `66505c614e42f976e0fbe1e69e01cb945e60ea09`), Hotloader Guide convention (SHA `43badd13305d77392b59b886ee15022fe895d760`), and runtime Repository Work authority at `1.0.9`.
+- **Deployment/restart:** none. Documentation/governance only; deployment-inert.
+- **Existing unresolved work preserved:** lockdown route-enter 500 live acceptance and adjacent client-debug 401/freeze remain unresolved and are not superseded by this discovery hardening.
+- **Result:** COMPLETE.
