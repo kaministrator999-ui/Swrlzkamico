@@ -36,6 +36,18 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE FINISHED — 2026-09-20 — Gate 4 terminal candidate frozen
+
+- **Result:** COMPLETE — source/static/non-production runtime freeze verified; live activation intentionally pending.
+- **Canonical prepared input:** `main:accepted_runtime/` now includes legacy Chat, LALM v90, Chat history policy, and the accepted Online Research reasoner. The reasoner is the byte-identical accepted rehearsal source from runtime commit `b7076a6fbd2a8028a13326f32511316f18de07ba`.
+- **Production contract reconciled:** production now requires `local-precomposed-full-lineage-v2`, packaged historical ancestry, and `research/online_research_reasoner.py` before deployment. Preparation occurs before the production artifact is deployed.
+- **Release candidate identity:** stable source is staged as Server **2.3.288** in `api/index.py`. Canonical deployed Server Runtime authority remains **2.3.287** until an actual successful production release advances that lineage; this preserves the version-evolution law rather than pre-claiming activation.
+- **Registered version transaction:** Repository Work **1.0.14 → 1.0.15**; Online Research **1.0.1 → 1.0.2** with revision `1.0.2-prepared-request-path-v1`; Deployment Control **1.0.10 → 1.0.11**. LALM Engine **2.1.112/v90**, Web Chat **1.5.86**, Runtime Manifest **152**, and deployed Server Runtime **2.3.287** intentionally remain unchanged.
+- **Historical deployment request retired:** `.deploy/REQUEST.txt` is fail-closed at `APPROVED=0`; the 2026-09-19 baseline-test request cannot be reused as terminal authorization.
+- **Executable freeze evidence:** Gate 4 verification run `35515332751` passed prepared-generation build, generation contract validation, full-lineage network-blocked R39 boot, ordinary request-path synchronization-inert audit, Online Research no-refresh assertion, and production prepared-generation ordering/contract assertions.
+- **Deployment state:** **NOT ACTIVATED by Gate 4.** The next production action is the one terminal governed trigger for this frozen candidate. After that release succeeds, Server Runtime authority must advance to 2.3.288 and live acceptance must hammer legacy `/chat`, clean-room `/chat/§wyrlz`, POST Chat generation, LALM, and Online Research while cameras prove zero audience-triggered repository assembly.
+
+
 ### UPDATE CONTINUATION STARTED — 2026-09-20 — Gate 4 terminal version/freeze reconciliation
 
 - **Primary Focus:** Deployment Control / prepared-runtime terminal candidate.
