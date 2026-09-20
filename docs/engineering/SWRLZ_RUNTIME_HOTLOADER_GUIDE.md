@@ -59,6 +59,32 @@ Use this mechanism only when the stable runtime already expects a worker-local h
 
 ---
 
+## 2A. Route-to-source discovery convention
+
+Runtime-hot naming is resolved from authority, not guessed from the default branch.
+
+For a user-facing route or page reference:
+
+```text
+live/user route
+   ↓
+runtime:runtime_pages/manifest.json
+   ↓
+exact route entry
+   ↓
+source + styles + scripts
+   ↓
+runtime-owned files
+```
+
+Preserve route segments exactly, including Unicode characters and sigils. For example, `/chat/§wyrlz` resolves through the manifest to `runtime:chat/§wyrlz/index.html`; the implicit page filename is `index.html` because the manifest declares that source, not because callers should blindly append `index.html` to every route.
+
+For hydrated runtime sources, use the stable hotloader registry/owner to resolve the runtime source path. Do not infer absence from a `main`-branch 404 when the component class is runtime-hot capable. A generic/default-branch code search is secondary discovery evidence because it may not index the `runtime` authority.
+
+When the user supplies a live route or recognizable runtime-hot component name, prefer **route/component → manifest/registry → declared source** over filename guessing.
+
+---
+
 ## 3. Adding a new manifest-routed page
 
 1. Enter through `SWRLZ_PROJECT_START.md` and read the required contracts.
