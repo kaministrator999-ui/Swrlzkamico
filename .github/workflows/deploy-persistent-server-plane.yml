@@ -92,6 +92,7 @@ jobs:
           vercel project add "$TARGET_PROJECT_NAME" --scope "$TARGET_SCOPE" --token="$VERCEL_TOKEN" >/tmp/project-add.txt 2>&1 || true
           rm -rf .vercel
           vercel link --yes --project "$TARGET_PROJECT_NAME" --scope "$TARGET_SCOPE" --token="$VERCEL_TOKEN"
+          vercel project protection disable "$TARGET_PROJECT_NAME" --sso --scope "$TARGET_SCOPE" --token="$VERCEL_TOKEN"
           cat .vercel/project.json
 
       - name: Clone production environment
