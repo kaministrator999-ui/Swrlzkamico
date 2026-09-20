@@ -163,6 +163,9 @@ jobs:
           p=pathlib.Path(sys.argv[1])
           s=p.read_text(encoding="utf-8")
           s=s.replace('b"<!doctype html><meta charset=\'utf-8\'><title>§wyrlz Runtime</title><p>Runtime source: runtime branch.</p>"', '"<!doctype html><meta charset=\'utf-8\'><title>§wyrlz Runtime</title><p>Runtime source: runtime branch.</p>".encode("utf-8")')
+          lines=s.splitlines()
+          lines[129] = """    return '''<!doctype html><html><body style="font-family:system-ui;background:#050914;color:#eef7ff;padding:20px"><h1>Hot Runtime Control</h1><p>Source: <b>runtime</b>.</p><input id="t" type="password" placeholder="SWRLZ_ADMIN_TOKEN"><button onclick="call('/api/hot/sync','POST')">SYNC RUNTIME</button><button onclick="call('/api/hot/status')">STATUS</button><pre id="o">Ready.</pre><script>const t=document.querySelector('#t'),o=document.querySelector('#o');t.value=sessionStorage.getItem('swrlzAdminToken')||'';async function call(u,m='GET'){sessionStorage.setItem('swrlzAdminToken',t.value.trim());const r=await fetch(u,{method:m,headers:{'x-swrlz-admin-token':t.value.trim()},cache:'no-store'});const x=await r.text();try{o.textContent=JSON.stringify(JSON.parse(x),null,2)}catch{o.textContent=x}}</script></body></html>'''"""
+          s="\\n".join(lines)+"\\n"
           p.write_text(s,encoding="utf-8")
           PY
           cp vercel.json "$stage/vercel.json"
