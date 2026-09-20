@@ -321,6 +321,22 @@ Whenever a module registered in `runtime:VERSION.txt` receives a new version val
 
 The invariant is: **registered version mutation ⇄ same-event Roadmap lineage**. Neither side is governably complete without the other.
 
+## 11B. Project focus-group lineage — mandatory
+
+Roadmap events that establish or materially continue feature/module work should preserve **focus-group metadata** so startup can reconstruct what the project is actually working on across connected modules.
+
+For relevant events record, explicitly or unambiguously:
+
+- **Primary Focus:** the module/surface that is the main target of the event;
+- **Focus Group:** the bounded set of registered modules materially coupled to that active work stream;
+- whether each companion is changed, unchanged-but-required, activation-coupled, or carrying unresolved acceptance.
+
+Focus-group membership does **not** cause version bumps. Version law remains change-based. A module may be in the focus group while its version remains unchanged because the current event depends on or verifies it without mutating it.
+
+Successive connected events may keep the same focus group while Primary Focus flips between members. For example, Chat may be primary during UI/transport work and LALM Engine may become primary during inference work while both remain in the same current project focus group. A documentation/governance-only event does not replace that feature focus unless it explicitly changes project intent.
+
+Focus grouping is durable handoff context, not a new registry, version axis, or architecture owner.
+
 ---
 
 ## 12. Roadmap / release record — mandatory
