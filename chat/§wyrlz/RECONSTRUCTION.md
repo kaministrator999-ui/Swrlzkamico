@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.15  
+**Version:** 1.0.16  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -63,3 +63,5 @@ The component acceptance cadence is therefore:
 - **1.0.14 parser repair:** removed literal `\\n` tokens between menu-button CSS rules. Those tokens invalidated the selector/rule boundary and swallowed the following `.composer-shell` declaration, which is why the footer rendered in normal document flow at the top despite its source text saying `position:fixed; bottom:0`.
 
 - **1.0.15 side menu:** hamburger now opens a left sliding drawer with a full-viewport blue dimming shade. The bottom drawer box displays the complete canonical runtime VERSION.txt registry values read from their owning `runtime:versions/*.txt` authorities at this integration checkpoint. Shade tap closes the drawer; no legacy Chat surface is reintroduced.
+
+- **1.0.16 version panel:** reduced the drawer Versions box maximum height from 42vh to 26vh while preserving independent vertical scrolling and hiding horizontal overflow.
