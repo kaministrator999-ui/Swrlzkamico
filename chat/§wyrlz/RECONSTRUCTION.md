@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.12  
+**Version:** 1.0.13  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -57,3 +57,5 @@ The component acceptance cadence is therefore:
 - **Side-menu control / opening stage scenery:** SOURCE-INTEGRATED as 1.0.11 — compact fixed top-left glass menu button with a hamburger glyph, safe-area-aware placement, and accessibility semantics. Button is scenery/control affordance only; drawer opening behavior and side-menu contents are not yet admitted. Top anchoring is explicitly 12px rather than using the safe-area environment variable as the positioning coordinate.
 - **Ice Dragon remaining scenery/components:** NOT YET ADMITTED.
 - All other legacy Chat structure, message surface, transport, settings, context meter, account/session UI, diagnostics, and optional tooling: NOT YET ADMITTED.
+
+- **1.0.13 opening geometry:** composer shell is explicitly pinned to the viewport bottom; top-left side-menu shortcut remains a three-horizontal-line hamburger control. No drawer behavior added.
