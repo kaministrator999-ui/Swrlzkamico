@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
-APPROVED=1
-REQUEST_ID=2026-09-19-chat-load-all-five-on-baseline-retest-v1
-REQUESTED_BY=user-explicit-chat-load-baseline-retest
+APPROVED=0
+REQUEST_ID=none
+REQUESTED_BY=none
 SOURCE_REF=main
-REASON=Controlled baseline confirmation: restore all five original suspect behaviors and retest whether the slow Chat load reproduces. This distinguishes code-local behavior from transient external/runtime/cache effects before further causal debugging. One terminal production trigger only; observe before any further mutation.
+REASON=Gate 4 freeze state. Historical request retired; no production deployment is authorized by this file until the terminal governed trigger is written.
