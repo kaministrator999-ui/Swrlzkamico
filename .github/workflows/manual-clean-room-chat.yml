@@ -64,10 +64,6 @@ jobs:
           print("isolated clean-room Chat contract verified")
           PY
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
       - name: Verify Vercel token
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -76,14 +72,11 @@ jobs:
           set -euo pipefail
           test -n "${VERCEL_TOKEN:-}" || { echo "VERCEL_TOKEN is required" >&2; exit 1; }
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
       - name: Deploy clean-room Chat only
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
-          url="$(vercel deploy --prod --yes --token="$VERCEL_TOKEN")"
+          start="$(date +%s%3N)"\n          url="$(npx --yes vercel@59.23.2 deploy --prod --yes --token="$VERCEL_TOKEN")"\n          end="$(date +%s%3N)"\n          echo "deploy_ms=$((end-start))" >> "$GITHUB_STEP_SUMMARY"
           echo "Production deployment: $url" >> "$GITHUB_STEP_SUMMARY"
