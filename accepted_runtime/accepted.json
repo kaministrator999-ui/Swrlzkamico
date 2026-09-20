@@ -1,0 +1,9 @@
+{
+  "contract": "swrlz-accepted-runtime-v1",
+  "sourceRuntimeCommit": "f1def525541a9148950ca8202b86b7bc1b51470d",
+  "promotionScope": "legacy-chat+lalm+chat-history-policy",
+  "deploymentInput": true,
+  "runtimePollingRequired": false,
+  "status": "bootstrap-pending-explicit-promotion",
+  "files": []
+}
