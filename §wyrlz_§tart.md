@@ -75,8 +75,9 @@ Read these documents in this order before implementation:
 6. `docs/engineering/SWRLZ_LOCKDOWN_CAMERA_SYSTEM.md` — build-time camera architecture, runtime-switchable lockdown modes, component integration, and ON/OFF parity requirements.
 7. `SWRLZ_CHAT_CAMERA_LOGS.md` — project-wide diagnostic cameras/logs/evidence workflow. The compatibility filename remains historical; the document is project-wide, not Chat-only.
 8. `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` — how project-work progress and final results are formatted and reported to the user.
+9. `docs/engineering/SWRLZ_CHAT_OVERVIEW.md` — canonical Chat stage/theater composition: scenery, props, actors, stagehands, curtain/scene lifecycle, ownership, legal mutation phases, and clean-room `/chat/§wyrlz` build direction.
 
-Treat those eight documents as one coordinated project-work contract. Then follow any subsystem operating guide routed below before changing that subsystem.
+Treat those nine documents as one coordinated project-work contract. Then follow any subsystem operating guide routed below before changing that subsystem.
 
 ### Project response identity opener — mandatory
 
@@ -187,6 +188,7 @@ Each rule family has one primary owner.
 | Durable progress/release history | `SWRLZ_SERVER_ROADMAP.md` |
 | Lockdown camera architecture / build-time integration | `docs/engineering/SWRLZ_LOCKDOWN_CAMERA_SYSTEM.md` |
 | Cameras/logs/diagnostic evidence | `SWRLZ_CHAT_CAMERA_LOGS.md` |
+| Chat stage/theater composition | `docs/engineering/SWRLZ_CHAT_OVERVIEW.md` |
 | Project-work response formatting/readability | `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` |
 | Architecture teaching for user-owned projects | `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md` |
 | Programming LALM runtime target + implementation truth | `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md` |
