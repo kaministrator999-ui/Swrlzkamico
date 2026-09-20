@@ -28,6 +28,7 @@ PAGE_TIMEOUT_SECONDS=10.0
 USER_AGENT="SWRLZ-Research/2.0 (+hot-reasoner; stable-network-boundary)"
 HOT_REASONER_URL="https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/runtime/runtime_hot/online_research_reasoner_v1.py"
 HOT_REASONER_PATH=Path("/tmp/swrlz-admin/runtime/hot/research/online_research_reasoner.py")
+PREPARED_REASONER_PATH=Path(__file__).resolve().parents[1]/"swrzl_prepared_runtime"/"research"/"online_research_reasoner.py"
 HOT_REFRESH_SECONDS=15.0
 _hot_lock=threading.RLock();_hot_module:ModuleType|None=None;_hot_sig:tuple[int,int]|None=None;_last_hot_refresh=0.0
 
@@ -107,34 +108,30 @@ def _page_fetch(url:str)->dict[str,Any]:
     return {"finalUrl":final,"status":int(status),"title":title,"extract":extract,"fetchedAt":int(time.time()*1000)}
 
 def _refresh_hot(force:bool=False)->None:
-    global _last_hot_refresh
-    now=time.monotonic()
-    with _hot_lock:
-        if not force and _last_hot_refresh and now-_last_hot_refresh<HOT_REFRESH_SECONDS:return
-        _last_hot_refresh=now
-    try:
-        req=urllib.request.Request(HOT_REASONER_URL+"?t="+str(int(time.time())),headers={"User-Agent":USER_AGENT,"Cache-Control":"no-cache"})
-        with urllib.request.urlopen(req,timeout=8.0) as response:raw=response.read(400_001)
-        if len(raw)>400_000:raise ValueError("HOT_REASONER_TOO_LARGE")
-        source=raw.decode("utf-8");HOT_REASONER_PATH.parent.mkdir(parents=True,exist_ok=True);tmp=HOT_REASONER_PATH.with_suffix(".tmp");tmp.write_text(source,"utf-8");tmp.replace(HOT_REASONER_PATH)
-    except Exception as exc:
-        print("SWRLZ_RESEARCH_HOT_REFRESH "+json.dumps({"ok":False,"at":int(time.time()*1000),"error":type(exc).__name__},separators=(",",":")),flush=True)
+    # Runtime reasoner activation is explicit. Audience research requests must
+    # never discover/fetch the mutable runtime branch.
+    return
+
+def _reasoner_path()->Path|None:
+    if HOT_REASONER_PATH.is_file(): return HOT_REASONER_PATH
+    if PREPARED_REASONER_PATH.is_file(): return PREPARED_REASONER_PATH
+    return None
 
 def _load_hot()->ModuleType|None:
     global _hot_module,_hot_sig
-    _refresh_hot()
-    if not HOT_REASONER_PATH.is_file():return None
-    st=HOT_REASONER_PATH.stat();sig=(st.st_mtime_ns,st.st_size)
+    path=_reasoner_path()
+    if path is None:return None
+    st=path.stat();sig=(st.st_mtime_ns,st.st_size)
     with _hot_lock:
         if _hot_module is not None and _hot_sig==sig:return _hot_module
-        spec=importlib.util.spec_from_file_location("swrlz_hot_online_research",HOT_REASONER_PATH)
+        spec=importlib.util.spec_from_file_location("swrlz_hot_online_research",path)
         if spec is None or spec.loader is None:return None
         module=importlib.util.module_from_spec(spec);sys.modules[spec.name]=module;spec.loader.exec_module(module)
         if not callable(getattr(module,"research",None)):raise RuntimeError("HOT_RESEARCH_CONTRACT_MISSING")
         _hot_module=module;_hot_sig=sig;return module
 
 def inspect_research()->dict[str,Any]:
-    module=_load_hot();base={"available":True,"stableNetworkBoundary":True,"hotReasonerAvailable":bool(module),"hotRefreshSeconds":HOT_REFRESH_SECONDS,"networkPolicy":"public-http-s-80-443-no-credentials-private-address-block"}
+    module=_load_hot();base={"available":True,"stableNetworkBoundary":True,"hotReasonerAvailable":bool(module),"hotRefreshSeconds":0,"requestPathSync":False,"networkPolicy":"public-http-s-80-443-no-credentials-private-address-block"}
     if module and callable(getattr(module,"inspect_research",None)):
         try:base["hotReasoner"]=module.inspect_research()
         except Exception:pass
