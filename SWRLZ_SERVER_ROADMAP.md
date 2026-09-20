@@ -36,6 +36,20 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE STARTED — 2026-09-19 — clean-room Chat focus correction
+
+- **Requested outcome:** correct the current project handoff so the new clean-room Chat route, not legacy Chat, is the active build target.
+- **Observed baseline:** Repository Work `1.0.13`; Web Chat `1.5.86`; Runtime Manifest `152`. Runtime manifest owns both `/chat` and `/chat/§wyrlz`. The clean-room source `runtime:chat/§wyrlz/index.html` remains the intentional minimal `§wyrlz` stage; legacy `runtime:web/chat.html` contains the recently repaired lockdown diagnostic viewer.
+- **Correction:** the prior focus-group FINISHED record was too broad when it named “Web Chat” as Primary Focus and grouped the legacy acceptance path as though it were the next product build. Preserve that record as historical evidence of the legacy-control repair, but supersede its focus interpretation here.
+- **Canonical product focus:** Primary Focus = Clean-room Chat `/chat/§wyrlz`. Legacy `/chat` = control/reference/diagnostic surface only.
+- **Architecture law:** useful legacy fixes/evidence may inform the clean-room build, but legacy implementation does not become clean-room architecture by inheritance. The new page continues through the documented stage order: scenery → starting props → starting actors → open-curtain actors → temporary actors/props → controlled scene transitions → stagehands/integration as required.
+- **Focus Group at correction entry:** Clean-room Chat + Runtime Manifest. LALM Engine, Stream Contract, Server Runtime, Online Research, and other modules join the clean-room focus group only when the new route materially integrates with them; they are not included merely because legacy `/chat` currently uses them.
+- **Legacy diagnostic state:** Web Chat `1.5.86` remains valid lineage for the legacy-control logger/auth repair. That work is not reverted and does not define the clean-room page.
+- **Expected impact:** Project Start/handoff semantics + Repository Work only unless a clean-room runtime source is subsequently changed. This correction does not modify `chat/§wyrlz/index.html` yet.
+- **Deployment expectation:** NONE.
+- **Verification plan:** harden Project Start to distinguish feature identity/route within a module, fetch back, confirm clean-room source remains untouched/minimal, advance Repository Work only, then close correction.
+
+
 ### UPDATE FINISHED — 2026-09-19 — project focus-group handoff semantics
 
 - **Result:** COMPLETE — current project focus is now a grouped engineering handoff, not a single-module/latest-commit guess.
