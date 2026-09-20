@@ -262,7 +262,7 @@ If a tier fails, preserve the failure in roadmap lineage and correct it in a lat
 
 The first implemented transfer path covers the legacy Chat control surface plus hydrated LALM/history policy.
 
-The canonical manual production workflow now resolves one immutable `runtime` commit, materializes it in a detached worktree, and runs `scripts/prepare_runtime_generation.py`. The preparer copies the accepted legacy Chat assets, R39 hot entrypoint, and Chat history policy into a hash-described `swrlz-prepared-runtime-generation-v1` generation. The workflow injects that generation into each Python production function bundle before deployment.
+Runtime-hot rehearsal is explicitly promoted into `main:accepted_runtime/` after acceptance. The canonical manual production workflow does **not** fetch the mutable runtime branch as application input; it runs `scripts/prepare_runtime_generation.py` against that main-owned accepted snapshot, verifies its promotion hashes, and emits a hash-described `swrlz-prepared-runtime-generation-v2` generation. The workflow injects that generation into each Python production function bundle before deployment.
 
 Stable readers use this precedence:
 
