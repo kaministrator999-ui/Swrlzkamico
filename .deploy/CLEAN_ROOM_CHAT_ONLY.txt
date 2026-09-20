@@ -6,4 +6,4 @@ ASSET=file_00000000b13c81f5a7f9fe99c0264ef0.png
 PURPOSE=deploy clean-room Chat 1.0.3 opening scenery checkpoint
 REQUESTED_AT=2026-09-20
 TEST=dragon-plus-composer-first-visible-frame
-RETRY=7
+RETRY=8
