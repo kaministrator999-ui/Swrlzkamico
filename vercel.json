@@ -9,29 +9,13 @@
   },
   "routes": [
     {
-      "src": "/api/chat/client-debug/?$",
-      "methods": [
-        "GET",
-        "POST"
-      ],
-      "dest": "/api/chat.py",
-      "transforms": [
-        {
-          "type": "request.query",
-          "op": "set",
-          "target": {
-            "key": "__swrlz_client_debug"
-          },
-          "args": "1"
-        }
-      ]
+      "src": "/chat/(?:%C2%A7|§)wyrlz/?$",
+      "dest": "/chat/§wyrlz/index.html"
+    },
+    {
+      "src": "/file_00000000b13c81f5a7f9fe99c0264ef0.png$",
+      "dest": "/file_00000000b13c81f5a7f9fe99c0264ef0.png"
     }
   ],
-  "functions": {
-    "api/**/*.py": {
-      "maxDuration": 300,
-      "excludeFiles": "{.transport/**,swrlz-core/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}",
-      "includeFiles": "{swyrlz/**,native/**}"
-    }
-  }
+  "functions": {}
 }
