@@ -1,4 +1,4 @@
-/* SWRLZ Ice Dragon Theme controller v3.2.1 — state + persistent diagnostics UI */
+/* SWRLZ Ice Dragon Theme controller v3.2.2 — state + persistent diagnostics UI; Appearance owns theme selection */
 (function(global){
   'use strict';
   const STORAGE_KEY='swrlz.chat.theme';
@@ -99,13 +99,13 @@
   }
 
   function mountControl(){
-    if(document.getElementById(SELECT_ID)){debug.log('selector-existing');mountLogsButton();return;}
-    const host=document.querySelector('.topbar-right');if(!host){debug.log('selector-mount-missed','.topbar-right missing');return;}
-    const select=document.createElement('select');select.id=SELECT_ID;select.className='swrlz-theme-select';select.setAttribute('aria-label','Chat theme');select.title='Chat theme';
-    const def=document.createElement('option');def.value=DEFAULT;def.textContent='Default';
-    const ice=document.createElement('option');ice.value=THEME;ice.textContent='❄ Ice Dragon';
-    select.append(def,ice);select.value=current();select.addEventListener('change',()=>{debug.log('selector-change',select.value);set(select.value,true)});host.insertBefore(select,host.firstChild);
-    debug.log('selector-mounted',select.value);mountLogsButton();
+    /* Theme selection moved to Account Settings > Appearance.
+       Never mount a transient topbar selector during boot: doing so mutates
+       header geometry after first paint and is immediately undone by the
+       compatibility cleanup layer. */
+    const legacy=document.getElementById(SELECT_ID);
+    if(legacy){legacy.remove();debug.log('legacy-selector-removed','appearance-owner')}
+    mountLogsButton();
   }
   function init(){
     let saved=THEME;try{saved=localStorage.getItem(STORAGE_KEY)||THEME}catch(error){debug.log('theme-storage-read-error',String(error))}
