@@ -54,6 +54,21 @@ For each registry entry, correlate its current authority file with the Roadmap a
 
 Do not invent a historical handoff when the Roadmap does not contain one. Say that no module-specific Roadmap handoff was found and preserve the authority file as current version truth.
 
+### Roadmap retrieval completeness — mandatory
+
+Compact startup must not infer chronology from API response order, a file tail, an arbitrary line window, search-result ranking, or whichever Roadmap chunk happened to be retrieved first.
+
+Before reporting the newest completed or unresolved governed event:
+
+1. inspect the Roadmap's **current Active update journal from its head/current section**, not only its tail;
+2. identify event boundaries and lifecycle markers (`UPDATE STARTED`, `UPDATE CONTINUATION STARTED/ENDED`, `UPDATE FINISHED`, `ABORTED`, `SUPERSEDED`) from the Roadmap structure;
+3. correlate candidate newest events against current `runtime:VERSION.txt` authorities, especially Repository Work, so a current authority version is not called unexplained while a matching FINISHED handoff exists elsewhere in the Roadmap;
+4. if retrieval is partial/truncated, continue targeted retrieval/search until the current authority's handoff and the newest unresolved lifecycle can be established, or explicitly report that retrieval remains incomplete;
+5. **absence from the retrieved chunk is not absence from the Roadmap**. Never manufacture a reconciliation defect from incomplete retrieval; and
+6. only report a genuine Roadmap/version synchronization defect after the relevant authority version has been searched/correlated across the Roadmap and no matching lineage exists, or contradictory canonical lineage is actually found.
+
+This is a retrieval-completeness rule. It does not make the Roadmap a competing version authority; module-owned version files remain current version truth.
+
 After the per-module ledger, present a separate **Where we actually left off** handoff that identifies:
 
 1. the newest completed governed event overall; and
