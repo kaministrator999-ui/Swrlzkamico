@@ -204,7 +204,7 @@
       const renderStationGeneration=()=>{
         document.querySelectorAll(".station-live-message").forEach(n=>n.remove());
         const g=stationGeneration;
-        if(!g||g.terminal||!g.text||g.threadId!==activeThreadId)return;
+        if(!g||!g.text||g.threadId!==activeThreadId)return;
         const thread=currentThread();
         const committed=(thread?.messages||[]).some(m=>m.role==="assistant"&&m.meta?.requestId===g.requestId);
         if(committed)return;
