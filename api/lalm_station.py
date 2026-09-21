@@ -7,6 +7,7 @@ renderer/subscriber; it is never conversation or generation authority.
 from __future__ import annotations
 
 import time
+import hashlib
 from typing import Any
 
 from fastapi import Request
@@ -59,6 +60,7 @@ def install(server, chat_extensions) -> None:
     async def station_sync(request: Request):
         try:
             user_id = user_id_from_request(request)
+            account_scope = hashlib.sha256(str(user_id).encode("utf-8")).hexdigest()[:24]
             value = _read_blob(user_id)
             revision, state, _ = _state_value(value)
             state = state or {"version": 1, "currentId": "", "threads": []}
@@ -84,11 +86,11 @@ def install(server, chat_extensions) -> None:
                 # than crossing account boundaries.
                 session_thread = str(identity.get("threadId") or session.get("threadId") or "")
                 session_scope = str(identity.get("accountScope") or session.get("accountScope") or "")
-                if session_thread and current_id and session_thread != current_id:
+                if not session_scope or session_scope != account_scope:
                     continue
-                if not session_thread and not session_scope:
-                    continue
-                active.append(_generation_view(session))
+                view = _generation_view(session)
+                view["threadId"] = session_thread
+                active.append(view)
                 if len(active) >= MAX_ACTIVE:
                     break
 
