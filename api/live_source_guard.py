@@ -16,6 +16,7 @@ from api.chat_admin_session import attach_browser_session_cookie
 OWNER = "kaministrator999-ui"
 REPO = "Swrlzkamico"
 BRANCH = "runtime"
+CHAT_APP_BRANCH = "main"
 RAW_BASE = f"https://raw.githubusercontent.com/{OWNER}/{REPO}"
 CONTENTS_API_BASE = f"https://api.github.com/repos/{OWNER}/{REPO}/contents"
 ROOT = Path(__file__).resolve().parents[1]
@@ -151,9 +152,21 @@ def _safe_runtime_source(source: object) -> str | None:
     return source
 
 
-def _serve_source(source: str, fallback: Path | None = None, *, cache_control: str = NO_STORE_CACHE) -> Response:
+def _fetch_ref(source: str, limit: int = MAX_SOURCE_BYTES, *, ref: str) -> bytes:
+    encoded_ref = urllib.parse.quote(ref, safe='-._/')
+    encoded_source = urllib.parse.quote(source, safe='-._/')
+    url = f"{RAW_BASE}/{encoded_ref}/{encoded_source}?swrlz_source={int(time.time() * 1000)}"
+    req = urllib.request.Request(url, headers={"User-Agent": "swrlz-live-source/9", "Cache-Control": "no-cache, no-store, max-age=0", "Pragma": "no-cache"})
+    with urllib.request.urlopen(req, timeout=FETCH_TIMEOUT) as response:
+        data = response.read(limit + 1)
+    if len(data) > limit:
+        raise ValueError(f"LIVE_SOURCE_TOO_LARGE:{source}")
+    return data
+
+
+def _serve_source(source: str, fallback: Path | None = None, *, cache_control: str = NO_STORE_CACHE, ref: str = BRANCH) -> Response:
     try:
-        data = _fetch(source)
+        data = _fetch(source) if ref == BRANCH else _fetch_ref(source, ref=ref)
         resolved = "github-runtime"
     except Exception:
         if fallback is None or not fallback.is_file():
@@ -191,6 +204,19 @@ def _serve_manifest() -> Response:
     headers["X-SWRLZ-Manifest-Authority"] = "github-contents-api-v1"
     headers["X-SWRLZ-Manifest-Revision"] = revision
     return Response(content=data, media_type="application/json; charset=utf-8", headers=headers)
+
+
+def _serve_chat_app_source(source: str) -> Response:
+    try:
+        data = _fetch_ref(source, ref=CHAT_APP_BRANCH)
+    except Exception:
+        return Response("Chat application source unavailable", status_code=503, media_type="text/plain", headers=_headers(source, "main-unavailable", cache_control=NO_STORE_CACHE))
+    media = mimetypes.guess_type(source)[0] or "application/octet-stream"
+    if source.endswith(".html"):
+        media = "text/html; charset=utf-8"
+    headers = _headers(source, "github-main", cache_control=NO_STORE_CACHE)
+    headers["X-SWRLZ-Live-Branch"] = CHAT_APP_BRANCH
+    return Response(content=data, media_type=media, headers=headers)
 
 
 def _fallback(source: str) -> Path | None:
@@ -245,6 +271,15 @@ def install(server) -> None:
 
         if path == "/live/manifest.json":
             return _serve_manifest()
+
+        if path == "/chat/§wyrlz":
+            return attach_browser_session_cookie(_serve_chat_app_source("chat/§wyrlz/index.html"), request)
+
+        if path.startswith("/chat/§wyrlz/"):
+            rel = path[len("/chat/§wyrlz/"):]
+            if rel and ".." not in Path(rel).parts:
+                return _serve_chat_app_source("chat/§wyrlz/" + rel)
+            return Response("Chat application asset not found", status_code=404, media_type="text/plain")
 
         if path == "/chat":
             try:
