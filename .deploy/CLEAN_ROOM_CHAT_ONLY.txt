@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.22
+CHAT_VERSION=1.0.23
 SOURCE=main:chat/§wyrlz/
 ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png
-PURPOSE=redeploy clean-room Chat 1.0.22 durable dragon
+PURPOSE=serve clean-room Chat and dragon assets from main source
 REQUESTED_AT=2026-09-21
-TEST=durable-dragon-asset+account-routes-production-load
-RETRY=41
+TEST=main-chat-source+dragon-asset-route
+RETRY=42
