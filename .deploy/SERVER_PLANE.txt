@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=deploy persistent SWRLZ server/API plane
-RETRY=8
+PURPOSE=deploy pre-deployment LALM station sync, authenticated generation ingress, canonical turn identity, durable status trail
+RETRY=9
