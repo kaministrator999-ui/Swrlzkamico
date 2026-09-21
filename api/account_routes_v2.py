@@ -52,6 +52,32 @@ def install(server) -> None:
         against the server instead of trusting a locally decoded Google credential.
         """
         path = request.url.path
+
+        # Account identity display must not depend on durable profile storage.
+        # A valid signed Google session is enough to restore the visible account
+        # card even when Redis/profile reads are temporarily unavailable.
+        if path == "/api/account/me" and request.method.upper() == "GET":
+            try:
+                session = verify_session(request.cookies.get(SESSION_COOKIE))
+                identity = session.get("identity") if isinstance(session.get("identity"), dict) else {}
+                user_id = str(session.get("sub") or "")
+                identity = {**identity, "userId": user_id, "durable": RedisRestChatStore.configured()}
+                return JSONResponse(
+                    content={
+                        "ok": True,
+                        "durable": RedisRestChatStore.configured(),
+                        "user": {
+                            "id": user_id,
+                            "displayName": identity.get("name"),
+                            "email": identity.get("email"),
+                            "picture": identity.get("picture"),
+                        },
+                        "profile": _stateless_profile(identity),
+                    }
+                )
+            except AuthenticationError:
+                pass
+
         if RedisRestChatStore.configured():
             return await call_next(request)
 
