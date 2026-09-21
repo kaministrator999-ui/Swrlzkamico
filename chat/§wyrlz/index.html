@@ -272,17 +272,29 @@
         try{
           if(draftThread){
             const id=threadId(), now=Date.now(), title=titleFrom(text);
-            // Chat-state metadata persistence is best-effort here. The Station is
-            // the canonical turn authority and must not be blocked by an auxiliary
-            // thread-metadata store outage.
-            const stateOk=await mutateChat([{type:"UPSERT_THREAD",threadId:id,title,pinned:false,createdAt:now},{type:"SET_CURRENT_THREAD",threadId:id}]);
-            draftThread=false;activeThreadId=id;renderThreads();
+            // Establish the local thread identity before best-effort metadata sync.
+            // mutateChat/applyChatState may otherwise replace activeThreadId with stale
+            // server currentId, causing the visible user turn and Station send to diverge.
+            draftThread=false;activeThreadId=id;
+            let localThread={id,title,pinned:false,createdAt:now,messages:[]};
+            chatThreads=[localThread,...chatThreads.filter(t=>t.id!==id)];
+            renderThreads();
+            await mutateChat([{type:"UPSERT_THREAD",threadId:id,title,pinned:false,createdAt:now},{type:"SET_CURRENT_THREAD",threadId:id}]);
+            activeThreadId=id;
           }else{
             const t=currentThread(); if(t&&(!t.title||t.title==="New conversation"))await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:titleFrom(text),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);
           }
           const requestId=uid("web"), userMessageId=uid("message"), assistantMessageId=uid("assistant");
           stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING"}],terminal:false,lastSeq:0};
-          // Render the submitted user turn immediately; Station remains the durable authority.\n          let localThread=currentThread();\n          if(!localThread){\n            localThread={id:activeThreadId,title:titleFrom(text),pinned:false,createdAt:Date.now(),messages:[]};\n            chatThreads=[localThread,...chatThreads.filter(t=>t.id!==activeThreadId)];\n          }\n          localThread.messages=Array.isArray(localThread.messages)?localThread.messages:[];\n          if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,meta:{requestId,localPending:true}});\n          prompt.value=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
+          // Render the submitted user turn immediately; Station remains the durable authority.
+          let localThread=chatThreads.find(t=>t.id===activeThreadId);
+          if(!localThread){
+            localThread={id:activeThreadId,title:titleFrom(text),pinned:false,createdAt:Date.now(),messages:[]};
+            chatThreads=[localThread,...chatThreads.filter(t=>t.id!==activeThreadId)];
+          }
+          localThread.messages=Array.isArray(localThread.messages)?localThread.messages:[];
+          if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,meta:{requestId,localPending:true}});
+          prompt.value=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
           const response=await fetch("/api/lalm_station/send",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,profileId:"LALM",ingress:"SWRLZ_LALM_STATION"})});
           await consumeGeneration(response);
           await syncStation();
