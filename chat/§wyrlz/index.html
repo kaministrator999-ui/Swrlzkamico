@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.32">
+  <meta name="swrlz-chat-version" content="1.0.33">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -190,8 +190,38 @@
           threadList.appendChild(row);
         }
       };
-      const applyChatState = data => { chatRevision=Number(data?.revision||0); chatThreads=Array.isArray(data?.state?.threads)?data.state.threads:[]; if(!draftThread){activeThreadId=data?.state?.currentId||activeThreadId;} renderThreads(); if(!draftThread)renderConversation(currentThread()); };
-      const loadChatState = async () => { try{const r=await fetch("/api/chat_state",{credentials:"same-origin",cache:"no-store"}); if(r.ok)applyChatState(await r.json()); else renderThreads();}catch(_){renderThreads();} };
+      let stationGeneration=null, stationPoll=0, sending=false;
+      const applyChatState = data => {
+        chatRevision=Number(data?.revision||0);
+        const stationThreads=Array.isArray(data?.threads)?data.threads:null;
+        chatThreads=stationThreads || (Array.isArray(data?.state?.threads)?data.state.threads:[]);
+        const stationCurrent=data?.currentThread?.id||"";
+        if(!draftThread) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
+        stationGeneration=data?.activeGeneration||stationGeneration;
+        renderThreads(); if(!draftThread)renderConversation(currentThread());
+        renderStationGeneration();
+      };
+      const renderStationGeneration=()=>{
+        document.querySelectorAll(".station-live-message").forEach(n=>n.remove());
+        const g=stationGeneration;
+        if(!g||g.terminal||!g.text||g.threadId!==activeThreadId)return;
+        const thread=currentThread();
+        const committed=(thread?.messages||[]).some(m=>m.role==="assistant"&&m.meta?.requestId===g.requestId);
+        if(committed)return;
+        const node=assistantTemplate.cloneNode(true);node.removeAttribute("id");node.classList.add("visible","rendered-message","station-live-message");node.removeAttribute("aria-hidden");
+        node.querySelector(".assistant-body").textContent=g.text||"";messageList.appendChild(node);
+      };
+      const syncStation = async () => {
+        try{
+          const r=await fetch("/api/lalm_station/sync",{credentials:"same-origin",cache:"no-store"});
+          if(!r.ok){renderThreads();return false}
+          const data=await r.json(); stationGeneration=data.activeGeneration||null; applyChatState(data);
+          if(stationGeneration&&!stationGeneration.terminal) scheduleStationSync();
+          return true;
+        }catch(_){renderThreads();return false}
+      };
+      const scheduleStationSync=()=>{clearTimeout(stationPoll);stationPoll=setTimeout(syncStation,700)};
+      const loadChatState = syncStation;
       const mutateChat = async operations => {
         try{
           let r=await fetch("/api/chat_state",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({contract:CHAT_STATE_CONTRACT,expectedRevision:chatRevision,operations})});
@@ -203,16 +233,47 @@
       const startDraft = () => { draftThread=true; activeThreadId=""; prompt.value=""; renderConversation(null); renderThreads(); closeThreadPopups(); setMenu(false); };
       newThreadButton.addEventListener("click",startDraft);
       document.addEventListener("click",()=>closeThreadPopups());
-      const commitDraftFromPrompt = async () => {
-        const text=prompt.value.trim(); if(!text)return false;
-        if(draftThread){
-          const id=threadId(), now=Date.now(), title=titleFrom(text);
-          const ok=await mutateChat([{type:"UPSERT_THREAD",threadId:id,title,pinned:false,createdAt:now},{type:"SET_CURRENT_THREAD",threadId:id}]);
-          if(ok){draftThread=false;activeThreadId=id;renderThreads();}
-          return ok;
+      const uid = prefix => prefix+"-"+Date.now().toString(36)+"-"+crypto.getRandomValues(new Uint32Array(2)).join("-");
+      const consumeGeneration = async response => {
+        if(!response.ok) throw new Error("Generation HTTP "+response.status);
+        const reader=response.body.getReader(), decoder=new TextDecoder(); let buffer="";
+        while(true){
+          const {value,done}=await reader.read(); if(done)break;
+          buffer+=decoder.decode(value,{stream:true}); const lines=buffer.split("\n"); buffer=lines.pop()||"";
+          for(const line of lines){
+            if(!line.trim())continue;
+            let event;try{event=JSON.parse(line)}catch(_){continue}
+            if(!stationGeneration)stationGeneration={requestId:event.requestId||"",threadId:activeThreadId,text:"",status:[],terminal:false,lastSeq:0};
+            stationGeneration.lastSeq=Number(event.seq||stationGeneration.lastSeq||0);
+            if(event.type==="DELTA")stationGeneration.text=(stationGeneration.text||"")+String(event.text||"");
+            else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||""}].slice(-256);
+            if(event.terminal){stationGeneration.terminal=true;stationGeneration.terminalType=event.type||""}
+            renderStationGeneration();
+          }
         }
-        const t=currentThread(); if(t && (!t.title || t.title==="New conversation")) await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:titleFrom(text),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);
-        return true;
+      };
+      const commitDraftFromPrompt = async () => {
+        const text=prompt.value.trim(); if(!text||sending)return false;
+        sending=true; sendButton.disabled=true;
+        try{
+          if(draftThread){
+            const id=threadId(), now=Date.now(), title=titleFrom(text);
+            const ok=await mutateChat([{type:"UPSERT_THREAD",threadId:id,title,pinned:false,createdAt:now},{type:"SET_CURRENT_THREAD",threadId:id}]);
+            if(!ok)return false; draftThread=false;activeThreadId=id;renderThreads();
+          }else{
+            const t=currentThread(); if(t&&(!t.title||t.title==="New conversation"))await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:titleFrom(text),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);
+          }
+          const requestId=uid("web"), userMessageId=uid("message"), assistantMessageId=uid("assistant");
+          stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING"}],terminal:false,lastSeq:0};
+          prompt.value=""; renderStationGeneration();
+          const response=await fetch("/api/chat?action=stream",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,profileId:"LALM",ingress:"SWRLZ_LALM_STATION"})});
+          await consumeGeneration(response);
+          await syncStation();
+          return true;
+        }catch(err){
+          if(stationGeneration){stationGeneration.status=[...(stationGeneration.status||[]),{type:"FAILED",phase:"CLIENT_TRANSPORT",reason:String(err)}];stationGeneration.terminal=true;renderStationGeneration();}
+          return false;
+        }finally{sending=false;sendButton.disabled=false;scheduleStationSync()}
       };
       sendButton.addEventListener("click",commitDraftFromPrompt);
       prompt.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();commitDraftFromPrompt();}});
