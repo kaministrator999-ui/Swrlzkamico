@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.20">
+  <meta name="swrlz-chat-version" content="1.0.21">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -57,7 +57,7 @@
       <div class="account-main">
         <img class="account-avatar" id="accountAvatar" alt="">
         <div class="account-copy"><div class="account-name" id="accountName">Google Account</div><div class="account-meta" id="accountMeta">Checking account…</div></div>
-        <button class="account-action" id="accountAction" type="button">Sign in</button>
+        <button class="account-action" id="accountAction" type="button" style="display:none">Sign out</button>
       </div>
       <div class="google-slot" id="googleSlot"></div>
     </div>
@@ -140,9 +140,11 @@
       const showUser = user => {
         accountUser = user || null;
         accountName.textContent = user?.displayName || user?.email || "Google Account";
-        accountMeta.textContent = user?.email || (user ? "Signed in" : "Not signed in");
+        accountMeta.textContent = user ? "" : "Not signed in";
+        accountMeta.style.display = user ? "none" : "block";
         if(user?.picture){ accountAvatar.src=user.picture; accountAvatar.style.display="block"; } else { accountAvatar.style.display="none"; }
-        accountAction.textContent = user ? "Sign out" : "Sign in";
+        accountAction.textContent = "Sign out";
+        accountAction.style.display = user ? "inline-block" : "none";
         if(user) googleSlot.innerHTML="";
       };
       const renderGoogle = async () => {
@@ -159,10 +161,10 @@
       const refreshAccount = async () => {
         try{const r=await accountFetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user);return;}}catch(_){}
         showUser(null);
+        try{await renderGoogle();}catch(e){accountMeta.textContent=e.message;}
       };
       accountAction.addEventListener("click",async()=>{
         if(accountUser){await accountFetch("/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null);return;}
-        try{await renderGoogle();}catch(e){accountMeta.textContent=e.message;}
       });
       refreshAccount();
       const setMenu = (open) => {
