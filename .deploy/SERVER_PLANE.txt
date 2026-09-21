@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=bundle prepared LALM generation into canonical server plane
-RETRY=17
+PURPOSE=release full prepared LALM materialization and nonblocking Station send
+RETRY=18
