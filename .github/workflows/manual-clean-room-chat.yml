@@ -51,7 +51,7 @@ jobs:
         run: |
           set -euo pipefail
           test -f 'chat/§wyrlz/index.html'
-          test -f 'file_00000000b13c81f5a7f9fe99c0264ef0.png'
+          test -f 'chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png'
           python - <<'PY'
           import json, re
 
@@ -153,9 +153,9 @@ jobs:
           set -euo pipefail
           start="$(date +%s%3N)"
           stage="$(mktemp -d)"
-          mkdir -p "$stage/chat/§wyrlz"
+          mkdir -p "$stage/chat/§wyrlz/assets"
           cp 'chat/§wyrlz/index.html' "$stage/chat/§wyrlz/index.html"
-          cp 'file_00000000b13c81f5a7f9fe99c0264ef0.png' "$stage/"
+          cp 'chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png' "$stage/chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png"
           git fetch --depth=1 origin runtime
           git archive --format=tar origin/runtime api requirements.txt pyproject.toml setup.py swyrlz native web | tar -x -C "$stage"
           # Stable main owns the server entrypoint/account/debug route registration.
