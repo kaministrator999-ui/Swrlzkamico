@@ -17,7 +17,8 @@ from api.google_account import (
     auth_configured,
     google_client_id,
     issue_session,
-    user_id_from_request,\n    verify_session,
+    user_id_from_request,
+    verify_session,
     verify_google_credential,
 )
 from swyrlz.interpretation_contract import InterpretationEnvelope, normalize_provenance, presentation_mode_for_request
