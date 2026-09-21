@@ -11,7 +11,9 @@ import hashlib
 from typing import Any
 
 from fastapi import Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse
+
+import api.chat as chat, StreamingResponse
 
 from api.google_account import AuthenticationError, user_id_from_request
 from api.chat_state import _read_blob, _state_value, _headers
@@ -109,6 +111,33 @@ def install(server, chat_extensions) -> None:
             return response
         except AuthenticationError as exc:
             return JSONResponse({"ok": False, "contract": CONTRACT, "code": "ACCOUNT_SESSION_INVALID", "detail": str(exc)}, status_code=401, headers=_headers())
+        except Exception as exc:
+            return JSONResponse({"ok": False, "contract": CONTRACT, "code": "LALM_STATION_SEND_FAILED", "detail": f"{type(exc).__name__}: {exc}"}, status_code=503, headers=_headers())
+
+
+    @app.post("/api/lalm_station/send", include_in_schema=False)
+    async def station_send(request: Request):
+        """Admit a user turn through the Station and hand generation to R39.
+
+        The existing canonical-turn middleware remains the durable commit/history
+        authority.  The Station owns the public Chat contract and delegates to the
+        already-installed resumable generation owner rather than proxying through a
+        second browser-facing bridge.
+        """
+        try:
+            user_id_from_request(request)
+            payload = await chat._read_json(request)
+            payload["ingress"] = "SWRLZ_LALM_STATION"
+            request._body = __import__("json").dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+            request._json = payload
+            # Reuse the canonical Chat action internally so its middleware commits
+            # the turn, installs server-owned history, binds stationIdentity, and
+            # the resumable owner keeps R39 alive after browser disconnect.
+            return await chat._post_action(request, "stream")
+        except AuthenticationError as exc:
+            return JSONResponse({"ok": False, "contract": CONTRACT, "code": "ACCOUNT_SESSION_INVALID", "detail": str(exc)}, status_code=401, headers=_headers())
+        except chat.BridgeError as exc:
+            return chat._json_error(exc.status, exc.code, exc.detail)
         except Exception as exc:
             return JSONResponse({"ok": False, "contract": CONTRACT, "code": "LALM_STATION_SEND_FAILED", "detail": f"{type(exc).__name__}: {exc}"}, status_code=503, headers=_headers())
 
