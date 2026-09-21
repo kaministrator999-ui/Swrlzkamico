@@ -102,14 +102,8 @@ def _web_token_state() -> tuple[str, bool]:
 
 def _require_web_token(request: Request) -> None:
     expected, configured = _web_token_state()
-    if not configured:
-        raise BridgeError(
-            503,
-            "WEB_CHAT_TOKEN_NOT_CONFIGURED",
-            "Set SWRLZ_WEB_CHAT_TOKEN or /tmp/swrlz-admin/runtime/web-chat-token.txt to a private value of at least 16 characters.",
-        )
     supplied = request.headers.get("x-swrlz-chat-token", "")
-    if supplied and hmac.compare_digest(expected, supplied):
+    if configured and supplied and hmac.compare_digest(expected, supplied):
         return
     # The clean-room Chat uses the authenticated account session instead of
     # exposing the private bridge token to the browser.
@@ -119,6 +113,8 @@ def _require_web_token(request: Request) -> None:
             return
     except Exception:
         pass
+    if not configured:
+        raise BridgeError(503, "WEB_CHAT_TOKEN_NOT_CONFIGURED", "Chat requires either an authenticated account session or a configured private bridge token.")
     raise BridgeError(401, "WEB_CHAT_TOKEN_REJECTED", "The chat access token or authenticated account session was rejected.")
 
 
