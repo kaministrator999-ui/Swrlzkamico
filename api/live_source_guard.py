@@ -207,16 +207,16 @@ def _serve_manifest() -> Response:
 
 
 def _serve_chat_app_source(source: str) -> Response:
-    try:
-        data = _fetch_ref(source, ref=CHAT_APP_BRANCH)
-    except Exception:
-        return Response("Chat application source unavailable", status_code=503, media_type="text/plain", headers=_headers(source, "main-unavailable", cache_control=NO_STORE_CACHE))
+    deployed = ROOT / source
+    if not deployed.is_file():
+        return Response("Deployed Chat application source unavailable", status_code=503, media_type="text/plain", headers=_headers(source, "deployment-missing", cache_control=NO_STORE_CACHE))
     media = mimetypes.guess_type(source)[0] or "application/octet-stream"
     if source.endswith(".html"):
         media = "text/html; charset=utf-8"
-    headers = _headers(source, "github-main", cache_control=NO_STORE_CACHE)
+    cache_control = "public, max-age=31536000, immutable" if "/assets/" in source else NO_STORE_CACHE
+    headers = _headers(source, "deployed-main-bundle", cache_control=cache_control)
     headers["X-SWRLZ-Live-Branch"] = CHAT_APP_BRANCH
-    return Response(content=data, media_type=media, headers=headers)
+    return Response(content=deployed.read_bytes(), media_type=media, headers=headers)
 
 
 def _fallback(source: str) -> Path | None:
