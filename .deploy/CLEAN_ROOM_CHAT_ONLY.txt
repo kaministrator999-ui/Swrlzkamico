@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.21
+CHAT_VERSION=1.0.22
 SOURCE=main:chat/§wyrlz/
-ASSET=file_00000000b13c81f5a7f9fe99c0264ef0.png
-PURPOSE=repair account verifier import syntax
-REQUESTED_AT=2026-09-20
-TEST=account-routes-import-clean-production-load
-RETRY=39
+ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png
+PURPOSE=deploy durable Ice Dragon backdrop and account-route repair
+REQUESTED_AT=2026-09-21
+TEST=durable-dragon-asset+account-routes-production-load
+RETRY=40
