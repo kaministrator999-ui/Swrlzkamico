@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=deploy pre-deployment LALM station sync, authenticated generation ingress, canonical turn identity, durable status trail
-RETRY=9
+PURPOSE=deploy direct LALM Station generation authority and pre-deployed R39 delegation
+RETRY=10
