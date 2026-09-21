@@ -15,7 +15,8 @@ HOT_SERVER_DIR = HOT_ROOT / "server"
 HOT_CHAT_HISTORY_POLICY = HOT_SERVER_DIR / "chat_history_policy.py"
 PREPARED_ROOT = Path(__file__).resolve().parents[1] / "swrzl_prepared_runtime"
 PREPARED_CHAT = PREPARED_ROOT / "legacy-chat"
-PREPARED_INFERENCE = PREPARED_ROOT / "lalm" / "r39_engine.py"
+PREPARED_INFERENCE_DIR = PREPARED_ROOT / "lalm"
+PREPARED_INFERENCE = PREPARED_INFERENCE_DIR / "r39_engine.py"
 PREPARED_CHAT_HISTORY_POLICY = PREPARED_ROOT / "server-policy" / "chat_history_policy.py"
 
 _lock = threading.RLock()
@@ -109,8 +110,14 @@ def get_engine() -> tuple[ModuleType, str]:
     if PREPARED_INFERENCE.is_file():
         # Materialize the immutable deployment generation into the existing
         # loader target so contract validation/cache semantics stay singular.
-        HOT_INFERENCE.parent.mkdir(parents=True, exist_ok=True)
-        HOT_INFERENCE.write_bytes(PREPARED_INFERENCE.read_bytes())
+        # The prepared engine is a directory-scoped generation: r39_engine.py
+        # resolves its immutable chain/ and ancestry/ siblings at import time.
+        # Materializing only the entrypoint produces a broken half-generation.
+        import shutil
+        HOT_INFERENCE_DIR.parent.mkdir(parents=True, exist_ok=True)
+        if HOT_INFERENCE_DIR.exists():
+            shutil.rmtree(HOT_INFERENCE_DIR)
+        shutil.copytree(PREPARED_INFERENCE_DIR, HOT_INFERENCE_DIR)
         override = _load_override()
         if override is not None:
             return override, "prepared-deployment"
