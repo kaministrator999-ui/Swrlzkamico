@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=deploy finalized single LALM Station send+sync boundary with direct predeployed R39 delegation
-RETRY=11
+PURPOSE=restore last verified Station runtime boundary while preserving Chat v1.0.34 send ingress
+RETRY=12
