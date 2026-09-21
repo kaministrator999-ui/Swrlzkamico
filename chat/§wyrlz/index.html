@@ -182,7 +182,7 @@
             const wrap=document.createElement("div"); wrap.className="thread-more-wrap";
             const more=document.createElement("button"); more.type="button"; more.className="thread-icon-button"; more.setAttribute("aria-label","More options"); more.textContent="⋮";
             const pop=document.createElement("div"); pop.className="thread-popup"; pop.hidden=true;
-            const rename=document.createElement("button"); rename.type="button"; rename.textContent="Rename"; rename.onclick=async()=>{const name=prompt("Rename chat",t.title||""); if(name&&name.trim()) await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:name.trim().slice(0,120),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);};
+            const rename=document.createElement("button"); rename.type="button"; rename.textContent="Rename"; rename.onclick=async()=>{const name=window.prompt("Rename chat",t.title||""); if(name&&name.trim()) await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:name.trim().slice(0,120),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);};
             const pin=document.createElement("button"); pin.type="button"; pin.textContent=t.pinned?"Unpin":"Pin"; pin.onclick=async()=>mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:t.title||"New conversation",pinned:!t.pinned,createdAt:t.createdAt||Date.now()}]);
             const fresh=document.createElement("button"); fresh.type="button"; fresh.textContent="New chat"; fresh.onclick=()=>startDraft();
             pop.append(rename,pin,fresh); more.onclick=e=>{e.stopPropagation();const opening=pop.hidden;closeThreadPopups(pop);pop.hidden=!opening;}; wrap.append(more,pop); row.appendChild(wrap);
