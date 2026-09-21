@@ -3,5 +3,5 @@ APPROVED=1
 KEEP=current-production-host
 PROJECT=swrlzkamico-o3nu
 REQUESTED_AT=2026-09-21
-PURPOSE=predeploy cleanup after purge workflow repair
-RETRY=4
+PURPOSE=predeploy cleanup before draft-thread identity render fix
+RETRY=5
