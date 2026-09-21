@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.27
+CHAT_VERSION=1.0.28
 SOURCE=main:chat/§wyrlz/
 ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png;chat/§wyrlz/assets/kompanion.png
-PURPOSE=prepared chat message viewport plus collapsible glass composer
+PURPOSE=legacy-style light blur and inward-curved composer surround
 REQUESTED_AT=2026-09-21
-TEST=message-viewport+assistant-header+composer-collapse
-RETRY=46
+TEST=sculpted-composer-blur+collapse-follow
+RETRY=47
