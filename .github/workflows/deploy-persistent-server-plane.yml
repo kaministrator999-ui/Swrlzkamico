@@ -63,6 +63,22 @@ jobs:
           }
           JSON
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Prepare promoted runtime generation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/prepare_runtime_generation.py \
+            --accepted-root "accepted_runtime" \
+            --output-root "swrzl_prepared_runtime"
+          test -f swrzl_prepared_runtime/lalm/r39_engine.py
+          test -f swrzl_prepared_runtime/generation.json
+          echo "Prepared LALM generation bundled into canonical server plane." >> "$GITHUB_STEP_SUMMARY"
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
