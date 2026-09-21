@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.24
+CHAT_VERSION=1.0.25
 SOURCE=main:chat/§wyrlz/
-ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png
-PURPOSE=serve dragon directly from deployed Chat bundle
+ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png;chat/§wyrlz/assets/kompanion.png
+PURPOSE=deploy clean-room Chat 1.0.25 kompanion branding and collapsed versions
 REQUESTED_AT=2026-09-21
-TEST=deployed-chat-bundle+immutable-dragon-asset
-RETRY=43
+TEST=main-chat-source+bundled-assets+kompanion-branding
+RETRY=44
