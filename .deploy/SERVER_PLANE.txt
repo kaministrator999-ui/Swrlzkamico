@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=render submitted user turn on clean-room Chat stage
-RETRY=22
+PURPOSE=release pending user-turn persistence and signed Google session restore
+RETRY=23
