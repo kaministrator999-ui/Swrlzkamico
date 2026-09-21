@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.29
+CHAT_VERSION=1.0.30
 SOURCE=main:chat/§wyrlz/
 ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png;chat/§wyrlz/assets/kompanion.png
-PURPOSE=refine legacy-style frosted composer shelf with inward curved shoulders
+PURPOSE=tighten sci-fi frosted composer shelf while preserving curved arrow treatment
 REQUESTED_AT=2026-09-21
-TEST=frosted-shelf+inward-shoulders+collapse-follow
-RETRY=48
+TEST=thin-frosted-shelf+preserve-arrow-curves
+RETRY=49
