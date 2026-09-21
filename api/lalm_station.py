@@ -14,7 +14,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from api.google_account import AuthenticationError, user_id_from_request
-from api.chat_state import _read_blob, _state_value, _headers
+from api.chat_state import _read_state, _state_value, _headers
 from api.chat_transcript_store import STORE
 import api.chat as chat
 
@@ -117,7 +117,7 @@ def install(server, chat_extensions) -> None:
         try:
             user_id = user_id_from_request(request)
             account_scope = hashlib.sha256(str(user_id).encode("utf-8")).hexdigest()[:24]
-            value = _read_blob(user_id)
+            value = _read_state(user_id)
             revision, state, _ = _state_value(value)
             state = state or {"version": 1, "currentId": "", "threads": []}
             current_id = str(state.get("currentId") or "")
