@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.30
+CHAT_VERSION=1.0.31
 SOURCE=main:chat/§wyrlz/
 ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png;chat/§wyrlz/assets/kompanion.png
-PURPOSE=tighten sci-fi frosted composer shelf while preserving curved arrow treatment
+PURPOSE=account thread history with lazy first-message persistence delete and overflow options
 REQUESTED_AT=2026-09-21
-TEST=thin-frosted-shelf+preserve-arrow-curves
-RETRY=49
+TEST=draft-thread+history+delete+overflow-menu+rename+pin
+RETRY=50
