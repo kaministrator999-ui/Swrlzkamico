@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.26">
+  <meta name="swrlz-chat-version" content="1.0.27">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -32,8 +32,6 @@
     .kompanion-icon{display:block;width:48px;height:48px;flex:0 0 48px;border-radius:14px;object-fit:cover;border:1px solid rgba(95,192,255,.38);box-shadow:0 8px 24px rgba(0,0,0,.32)}
     .side-brand-copy{min-width:0;flex:1}.side-brand-name{font-family:Georgia,"Times New Roman",serif;font-size:18px;font-weight:700;letter-spacing:.08em;color:#dff8ff;text-shadow:0 0 10px rgba(56,232,255,.38);white-space:nowrap}
     .settings-gear{display:inline-grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border:1px solid rgba(95,192,255,.25);border-radius:11px;color:#c9f7ff;background:rgba(9,31,51,.7);cursor:pointer}.settings-gear svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
-    .center-kompanion{position:fixed;z-index:2;left:50%;top:29%;transform:translate(-50%,-50%);display:grid;place-items:center;justify-items:center;gap:14px;pointer-events:none}
-    .center-kompanion .kompanion-icon{width:116px;height:116px;border-radius:28px;box-shadow:0 16px 42px rgba(0,0,0,.42),0 0 28px rgba(56,232,255,.14)} .center-kompanion-name{font-family:Georgia,"Times New Roman",serif;font-size:30px;font-weight:700;letter-spacing:.08em;color:#e5fbff;text-shadow:0 0 8px rgba(95,220,255,.8),0 0 22px rgba(56,160,255,.55);white-space:nowrap}
     .account-card{margin-top:auto;margin-bottom:10px;padding:10px;border:1px solid rgba(95,192,255,.28);border-radius:14px;background:rgba(2,15,31,.72)}
     .account-main{display:flex;align-items:center;gap:9px;min-height:38px}.account-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid rgba(95,192,255,.3);display:none}.account-copy{min-width:0;flex:1}.account-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-meta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-action{border:1px solid rgba(95,192,255,.28);border-radius:10px;padding:7px 9px;color:var(--text);background:rgba(31,72,108,.42);font-size:11px;cursor:pointer}.google-slot{margin-top:8px;min-height:0;overflow:hidden}
     .version-head{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 0 7px;border:0;color:var(--text);background:transparent;cursor:pointer}.version-chevron{transition:transform 180ms ease}.version-box.collapsed .version-chevron{transform:rotate(-90deg)}.version-list{max-height:26vh;overflow-y:auto;overflow-x:hidden;transition:max-height 200ms ease,opacity 160ms ease}.version-box.collapsed .version-list{max-height:0;opacity:0;overflow:hidden}
@@ -43,7 +41,14 @@
     .version-row:last-child{border-bottom:0}.version-row span:last-child{color:#9fefff;text-align:right}
     .menu-button{position:fixed;z-index:5;top:12px;left:12px;display:inline-grid;place-items:center;width:36px;height:36px;padding:0;border:1px solid rgba(95,192,255,.38);border-radius:12px;color:#dffaff;background:linear-gradient(145deg,rgba(21,43,65,.94),rgba(7,25,43,.91));box-shadow:0 8px 24px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(22px) saturate(125%);cursor:pointer}
     .menu-button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
-    .composer-shell{position:fixed;z-index:4;left:0;right:0;bottom:0;padding:0 12px 8px;background:linear-gradient(to top,rgba(3,10,24,.52),transparent)}
+    .chat-viewport{position:fixed;z-index:2;inset:0 0 70px;overflow-y:auto;padding:70px 14px 24px;scrollbar-width:thin}
+    .message-list{width:min(680px,100%);min-height:100%;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+    .message{display:none}.message.visible{display:block}.assistant-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}.assistant-head .kompanion-icon{width:42px;height:42px;flex-basis:42px}.assistant-name{font-family:Georgia,"Times New Roman",serif;font-size:20px;font-weight:700;letter-spacing:.06em;color:#e5fbff;text-shadow:0 0 8px rgba(95,220,255,.7)}
+    .assistant-body{margin-left:52px;padding:12px 14px;border:1px solid rgba(95,192,255,.24);border-radius:16px;background:rgba(7,25,43,.58);backdrop-filter:blur(18px) saturate(125%)}
+    .composer-shell{position:fixed;z-index:4;left:0;right:0;bottom:0;padding:0 12px 8px;background:linear-gradient(to top,rgba(3,10,24,.38),transparent);transition:transform .28s ease}
+    .composer-shell.collapsed{transform:translateY(calc(100% - 26px))}
+    .composer-collapse{display:grid;place-items:center;width:54px;height:28px;margin:0 auto -1px;border:1px solid rgba(95,192,255,.38);border-bottom:0;border-radius:16px 16px 0 0;background:rgba(8,30,50,.68);color:#bfefff;backdrop-filter:blur(22px) saturate(130%);cursor:pointer}
+    .composer-collapse svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;transition:transform .28s ease}.composer-shell.collapsed .composer-collapse svg{transform:rotate(180deg)}
     .composer{width:min(520px,100%);margin:0 auto}
     .composer-box{position:relative;overflow:hidden;min-height:42px;max-height:50dvh;border:1px solid rgba(95,192,255,.38);border-radius:21px;background:linear-gradient(145deg,rgba(21,43,65,.94),rgba(7,25,43,.91));box-shadow:0 12px 36px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(22px) saturate(125%)}
     .composer-box:focus-within{border-color:rgba(56,232,255,.58);box-shadow:0 12px 36px rgba(0,0,0,.42),0 0 0 2px rgba(56,232,255,.06)}
@@ -96,11 +101,19 @@
       </div>
     </div>
   </aside>
-  <div class="center-kompanion" aria-hidden="true"><img class="kompanion-icon" src="/chat/§wyrlz/assets/kompanion.png" alt=""><div class="center-kompanion-name">𓆩𓆩⁽§⁾𓆪wyrlz𓆪</div></div>
+  <main class="chat-viewport" id="chatViewport" aria-label="Conversation">
+    <div class="message-list" id="messageList">
+      <article class="message assistant-message" id="assistantTemplate" aria-hidden="true">
+        <div class="assistant-head"><img class="kompanion-icon" src="/chat/§wyrlz/assets/kompanion.png" alt=""><div class="assistant-name">𓆩𓆩⁽§⁾𓆪wyrlz𓆪</div></div>
+        <div class="assistant-body"></div>
+      </article>
+    </div>
+  </main>
   <button class="menu-button" id="menuButton" type="button" aria-label="Open side menu" aria-expanded="false">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg>
   </button>
-  <footer class="composer-shell" data-component="composer-scenery">
+  <footer class="composer-shell" id="composerShell" data-component="composer-scenery">
+    <button class="composer-collapse" id="composerCollapse" type="button" aria-label="Collapse composer" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
     <form class="composer" id="composer">
       <div class="composer-box">
         <textarea id="prompt" rows="1" maxlength="16000" aria-label="Message §wyrlz" placeholder="Message §wyrlz…"></textarea>
@@ -115,6 +128,13 @@
   <script>
     (() => {
       const prompt = document.getElementById("prompt");
+      const composerShell = document.getElementById("composerShell");
+      const composerCollapse = document.getElementById("composerCollapse");
+      composerCollapse.addEventListener("click", () => {
+        const collapsed = composerShell.classList.toggle("collapsed");
+        composerCollapse.setAttribute("aria-expanded", String(!collapsed));
+        composerCollapse.setAttribute("aria-label", collapsed ? "Expand composer" : "Collapse composer");
+      });
       const menuButton = document.getElementById("menuButton");
       const menuShade = document.getElementById("menuShade");
       const sideMenu = document.getElementById("sideMenu");
