@@ -109,8 +109,17 @@ def _require_web_token(request: Request) -> None:
             "Set SWRLZ_WEB_CHAT_TOKEN or /tmp/swrlz-admin/runtime/web-chat-token.txt to a private value of at least 16 characters.",
         )
     supplied = request.headers.get("x-swrlz-chat-token", "")
-    if not supplied or not hmac.compare_digest(expected, supplied):
-        raise BridgeError(401, "WEB_CHAT_TOKEN_REJECTED", "The chat access token was rejected.")
+    if supplied and hmac.compare_digest(expected, supplied):
+        return
+    # The clean-room Chat uses the authenticated account session instead of
+    # exposing the private bridge token to the browser.
+    try:
+        from api.google_account import user_id_from_request
+        if user_id_from_request(request):
+            return
+    except Exception:
+        pass
+    raise BridgeError(401, "WEB_CHAT_TOKEN_REJECTED", "The chat access token or authenticated account session was rejected.")
 
 
 def _raw_upstream_url() -> str:
