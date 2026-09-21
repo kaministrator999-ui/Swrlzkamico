@@ -215,7 +215,7 @@
         try{
           const r=await fetch("/api/lalm_station/sync",{credentials:"same-origin",cache:"no-store"});
           if(!r.ok){renderThreads();return false}
-          const data=await r.json(); stationGeneration=data.activeGeneration||null; applyChatState(data);
+          const data=await r.json(); applyChatState(data);
           if(stationGeneration&&!stationGeneration.terminal) scheduleStationSync();
           return true;
         }catch(_){renderThreads();return false}
