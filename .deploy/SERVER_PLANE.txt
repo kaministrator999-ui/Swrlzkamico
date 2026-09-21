@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=restore send path with Redis canonical chat state and deploy Chat 1.0.35 menu layout
-RETRY=15
+PURPOSE=fix canonical Redis chat-state import and restore live send path
+RETRY=16
