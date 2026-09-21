@@ -19,8 +19,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from api.google_account import AuthenticationError, user_id_from_request
+from api.canonical_redis_state import redis_command
 
-APP_VERSION = "1.1.3"
+APP_VERSION = "1.1.4"
 CONTRACT = "swrlz-chat-account-state-v1"
 MUTATION_CONTRACT = "swrlz-chat-account-mutation-v1"
 BLOB_API = "https://vercel.com/api/blob"
@@ -30,6 +31,7 @@ MAX_THREADS = 80
 MAX_MESSAGES_PER_THREAD = 1000
 MAX_MUTATIONS = 32
 MAX_TOMBSTONES = 320
+REDIS_PREFIX = "swrlz:v1:chat-state:"
 
 app = FastAPI(title="SWRLZ Chat State", version=APP_VERSION, docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -104,6 +106,39 @@ def _path(user_id: str) -> str:
 def _private_blob_url(store_id: str, user_id: str) -> str:
     pathname = urllib.parse.quote(_path(user_id), safe="/-._~")
     return f"https://{store_id}.private.blob.vercel-storage.com/{pathname}?cache=0&t={int(time.time()*1000)}"
+
+
+def _redis_key(user_id: str) -> str:
+    return REDIS_PREFIX + hashlib.sha256(user_id.encode("utf-8")).hexdigest()
+
+
+def _read_state(user_id: str) -> dict[str, Any] | None:
+    """Prefer canonical Redis; migrate readable legacy Blob state when available."""
+    try:
+        raw = redis_command("GET", _redis_key(user_id))
+        if raw:
+            value = json.loads(raw)
+            if isinstance(value, dict) and value.get("contract") == CONTRACT and value.get("userId") == user_id:
+                return value
+    except Exception:
+        pass
+    try:
+        legacy = _read_blob(user_id)
+    except Exception:
+        legacy = None
+    if legacy:
+        try:
+            redis_command("SET", _redis_key(user_id), json.dumps(legacy, ensure_ascii=False, separators=(",", ":")))
+        except Exception:
+            pass
+    return legacy
+
+
+def _write_state(user_id: str, value: dict[str, Any]) -> None:
+    body = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+    if len(body.encode("utf-8")) > MAX_STATE_BYTES:
+        raise RuntimeError("CHAT_STATE_TOO_LARGE")
+    redis_command("SET", _redis_key(user_id), body)
 
 
 def _read_blob(user_id: str) -> dict[str, Any] | None:
@@ -333,7 +368,7 @@ def _apply_mutation(state: dict[str, Any], tombstones: list[dict[str, Any]], ope
 async def get_state(request: Request):
     try:
         user_id = _user(request)
-        value = _read_blob(user_id)
+        value = _read_state(user_id)
         token, store_id, auth_kind = _blob_auth()
         revision, state, _ = _state_value(value)
         return JSONResponse({"ok": True, "contract": CONTRACT, "mutationContract": MUTATION_CONTRACT, "revision": revision, "updatedAt": int(value.get("updatedAt") or 0) if value else 0, "state": state if value else None, "stateAuthority": "server", "snapshotWriteAuthority": "retired", "storage": {"configured": bool(token and store_id), "access": "private", "authKind": auth_kind}}, headers=_headers())
@@ -359,7 +394,7 @@ async def mutate_state(request: Request):
         if not all(isinstance(item, dict) for item in raw_operations):
             return _error(400, "CHAT_STATE_MUTATION_INVALID", "Every operation must be an object.")
         expected_revision = int(payload.get("expectedRevision") or 0)
-        current = _read_blob(user_id)
+        current = _read_state(user_id)
         revision, state, tombstones = _state_value(current)
         if expected_revision != revision:
             return _mutation_response(revision=revision, state=state, updated_at=int(current.get("updatedAt") or 0) if current else 0, conflict=True)
@@ -372,7 +407,7 @@ async def mutate_state(request: Request):
             return _mutation_response(revision=revision, state=state, updated_at=int(current.get("updatedAt") or 0) if current else stamp)
         next_revision = revision + 1
         record = {"contract": CONTRACT, "mutationContract": MUTATION_CONTRACT, "userId": user_id, "revision": next_revision, "updatedAt": stamp, "state": state, "tombstones": tombstones}
-        _write_blob(user_id, record)
+        _write_state(user_id, record)
         return _mutation_response(revision=next_revision, state=state, updated_at=stamp)
     except AuthenticationError as exc:
         return _error(401, "ACCOUNT_SESSION_INVALID", str(exc))
