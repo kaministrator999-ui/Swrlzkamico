@@ -84,7 +84,7 @@ jobs:
 
           echo "Current production deployment protected: $keep_id"
           echo "### Vercel stale-deployment purge" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Protected production deployment: `$keep_id`" >> "$GITHUB_STEP_SUMMARY"
+          printf -- '- Protected production deployment: `%s`\n' "$keep_id" >> "$GITHUB_STEP_SUMMARY"
 
           deleted=0
           failed=0
@@ -95,7 +95,7 @@ jobs:
           # converges from fresh project state instead.
           for pass in $(seq 1 20); do
             page="$(curl --fail-with-body --silent --show-error "${auth[@]}" \
-              "https://api.vercel.com/v13/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=100")"
+              "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=100")"
             mapfile -t ids < <(jq -r '.deployments[]? | .uid // .id // empty' <<<"$page")
 
             stale=()
@@ -118,12 +118,12 @@ jobs:
                 "https://api.vercel.com/v13/deployments/$id?teamId=$VERCEL_ORG_ID" || true)"
               if [[ "$code" =~ ^2 ]]; then
                 deleted=$((deleted+1))
-                echo "- deleted `$id`" >> "$GITHUB_STEP_SUMMARY"
+                printf -- '- deleted `%s`\n' "$id" >> "$GITHUB_STEP_SUMMARY"
               else
                 failed=$((failed+1))
                 echo "::warning::Delete failed for $id (HTTP $code)"
                 cat delete.json || true
-                echo "- FAILED `$id` (HTTP $code)" >> "$GITHUB_STEP_SUMMARY"
+                printf -- '- FAILED `%s` (HTTP %s)\n' "$id" "$code" >> "$GITHUB_STEP_SUMMARY"
               fi
             done
           done
@@ -134,11 +134,11 @@ jobs:
           fi
 
           verify="$(curl --fail-with-body --silent --show-error "${auth[@]}" \
-            "https://api.vercel.com/v13/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=100")"
+            "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=100")"
           mapfile -t remaining < <(jq -r '.deployments[]? | .uid // .id // empty' <<<"$verify")
           echo "- Deleted: $deleted" >> "$GITHUB_STEP_SUMMARY"
           echo "- Failed: $failed" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Remaining deployment IDs: `${remaining[*]:-none}`" >> "$GITHUB_STEP_SUMMARY"
+          printf -- '- Remaining deployment IDs: `%s`\n' "${remaining[*]:-none}" >> "$GITHUB_STEP_SUMMARY"
 
           if [[ "$failed" -ne 0 ]]; then
             exit 1
