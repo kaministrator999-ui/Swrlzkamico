@@ -266,7 +266,7 @@
           const requestId=uid("web"), userMessageId=uid("message"), assistantMessageId=uid("assistant");
           stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING"}],terminal:false,lastSeq:0};
           prompt.value=""; renderStationGeneration();
-          const response=await fetch("/api/lalm_station/generate",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,profileId:"LALM",ingress:"SWRLZ_LALM_STATION"})});
+          const response=await fetch("/api/lalm_station/send",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,profileId:"LALM",ingress:"SWRLZ_LALM_STATION"})});
           await consumeGeneration(response);
           await syncStation();
           return true;
