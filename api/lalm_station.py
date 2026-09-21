@@ -16,6 +16,7 @@ from fastapi.responses import JSONResponse
 from api.google_account import AuthenticationError, user_id_from_request
 from api.chat_state import _read_blob, _state_value, _headers
 from api.chat_transcript_store import STORE
+import api.chat as chat
 
 CONTRACT = "swrlz-lalm-station-sync-v1"
 MAX_ACTIVE = 8
@@ -55,6 +56,27 @@ def _generation_view(snapshot: dict[str, Any]) -> dict[str, Any]:
 
 def install(server, chat_extensions) -> None:
     app = server.app
+
+    @app.post("/api/lalm_station/generate", include_in_schema=False)
+    async def station_generate(request: Request):
+        """Admit one authenticated Chat turn and delegate generation to the installed R39 owner."""
+        try:
+            user_id = user_id_from_request(request)
+            payload = await chat._read_json(request)
+            # Account authentication is the Station boundary; canonical turn/state
+            # wrappers installed on chat._normalize_chat_request remain authoritative.
+            payload["ingress"] = "SWRLZ_LALM_STATION"
+            normalized = chat._normalize_chat_request(payload)
+            response = chat._stream_response(normalized)
+            response.headers["X-SWRLZ-LALM-Station"] = CONTRACT
+            response.headers["X-SWRLZ-LALM-Station-Account"] = hashlib.sha256(str(user_id).encode("utf-8")).hexdigest()[:24]
+            return response
+        except AuthenticationError as exc:
+            return JSONResponse({"ok": False, "contract": CONTRACT, "code": "ACCOUNT_SESSION_INVALID", "detail": str(exc)}, status_code=401, headers=_headers())
+        except chat.BridgeError as exc:
+            return chat._json_error(exc.status, exc.code, exc.detail)
+        except Exception as exc:
+            return JSONResponse({"ok": False, "contract": CONTRACT, "code": "LALM_STATION_GENERATE_FAILED", "detail": f"{type(exc).__name__}: {exc}"}, status_code=503, headers=_headers())
 
     @app.get("/api/lalm_station/sync", include_in_schema=False)
     async def station_sync(request: Request):
