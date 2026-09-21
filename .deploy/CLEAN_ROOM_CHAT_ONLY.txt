@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.31
+CHAT_VERSION=1.0.32
 SOURCE=main:chat/§wyrlz/
 ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png;chat/§wyrlz/assets/kompanion.png
-PURPOSE=account thread history with lazy first-message persistence delete and overflow options
+PURPOSE=place chat thread history directly below swyrlz header divider
 REQUESTED_AT=2026-09-21
-TEST=draft-thread+history+delete+overflow-menu+rename+pin
-RETRY=50
+TEST=sidebar-order+swyrlz-divider+thread-history
+RETRY=51
