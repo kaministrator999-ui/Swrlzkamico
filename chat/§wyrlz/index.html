@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.30">
+  <meta name="swrlz-chat-version" content="1.0.31">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -32,6 +32,7 @@
     .kompanion-icon{display:block;width:48px;height:48px;flex:0 0 48px;border-radius:14px;object-fit:cover;border:1px solid rgba(95,192,255,.38);box-shadow:0 8px 24px rgba(0,0,0,.32)}
     .side-brand-copy{min-width:0;flex:1}.side-brand-name{font-family:Georgia,"Times New Roman",serif;font-size:18px;font-weight:700;letter-spacing:.08em;color:#dff8ff;text-shadow:0 0 10px rgba(56,232,255,.38);white-space:nowrap}
     .settings-gear{display:inline-grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border:1px solid rgba(95,192,255,.25);border-radius:11px;color:#c9f7ff;background:rgba(9,31,51,.7);cursor:pointer}.settings-gear svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+    .thread-panel{margin:4px 0 12px;min-height:0}.thread-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.thread-panel-title{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#9fc7db}.new-thread-button{border:1px solid rgba(95,192,255,.3);border-radius:10px;background:rgba(12,38,59,.72);color:#dff8ff;padding:7px 10px;font-weight:700;cursor:pointer}.thread-list{display:flex;flex-direction:column;gap:7px;max-height:36dvh;overflow:auto}.thread-row{display:flex;align-items:center;gap:5px;border:1px solid rgba(95,192,255,.18);border-radius:12px;background:rgba(8,28,45,.58);padding:5px}.thread-row.active{border-color:rgba(95,210,255,.5);background:rgba(19,55,80,.72)}.thread-main{min-width:0;flex:1;border:0;background:transparent;color:#e6f7ff;text-align:left;padding:7px 8px;cursor:pointer}.thread-title{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}.thread-meta{display:block;margin-top:2px;color:#82a5b8;font-size:11px}.thread-icon-button{display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:#bfe9f8;cursor:pointer;font-size:18px}.thread-icon-button:hover{background:rgba(95,192,255,.12)}.thread-more-wrap{position:relative}.thread-popup{position:absolute;z-index:12;right:0;top:34px;width:142px;padding:5px;border:1px solid rgba(95,192,255,.28);border-radius:11px;background:rgba(4,20,34,.97);box-shadow:0 14px 34px rgba(0,0,0,.45);backdrop-filter:blur(18px)}.thread-popup[hidden]{display:none}.thread-popup button{display:block;width:100%;border:0;border-radius:7px;background:transparent;color:#def6ff;text-align:left;padding:8px 9px;cursor:pointer}.thread-popup button:hover{background:rgba(95,192,255,.12)}.draft-badge{color:#77dff6}.user-message{align-self:flex-end;max-width:88%;padding:11px 14px;border:1px solid rgba(95,192,255,.28);border-radius:16px 16px 5px 16px;background:rgba(13,43,66,.72);backdrop-filter:blur(16px)}.message.visible{display:block}
     .account-card{margin-top:auto;margin-bottom:10px;padding:10px;border:1px solid rgba(95,192,255,.28);border-radius:14px;background:rgba(2,15,31,.72)}
     .account-main{display:flex;align-items:center;gap:9px;min-height:38px}.account-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid rgba(95,192,255,.3);display:none}.account-copy{min-width:0;flex:1}.account-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-meta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-action{border:1px solid rgba(95,192,255,.28);border-radius:10px;padding:7px 9px;color:var(--text);background:rgba(31,72,108,.42);font-size:11px;cursor:pointer}.google-slot{margin-top:8px;min-height:0;overflow:hidden}
     .version-head{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 0 7px;border:0;color:var(--text);background:transparent;cursor:pointer}.version-chevron{transition:transform 180ms ease}.version-box.collapsed .version-chevron{transform:rotate(-90deg)}.version-list{max-height:26vh;overflow-y:auto;overflow-x:hidden;transition:max-height 200ms ease,opacity 160ms ease}.version-box.collapsed .version-list{max-height:0;opacity:0;overflow:hidden}
@@ -81,6 +82,10 @@
       </div>
       <div class="google-slot" id="googleSlot"></div>
     </div>
+    <section class="thread-panel" aria-label="Chat threads">
+      <div class="thread-panel-head"><div class="thread-panel-title">Chats</div><button class="new-thread-button" id="newThreadButton" type="button">+ New chat</button></div>
+      <div class="thread-list" id="threadList"></div>
+    </section>
     <div class="version-box collapsed" id="versionBox">
       <button class="version-head" id="versionToggle" type="button" aria-expanded="false"><span class="version-title">Versions</span><span class="version-chevron">⌄</span></button>
       <div class="version-list">
@@ -130,6 +135,89 @@
   <script>
     (() => {
       const prompt = document.getElementById("prompt");
+      const sendButton = document.getElementById("sendButton");
+      const threadList = document.getElementById("threadList");
+      const newThreadButton = document.getElementById("newThreadButton");
+      const messageList = document.getElementById("messageList");
+      const assistantTemplate = document.getElementById("assistantTemplate");
+      const CHAT_STATE_CONTRACT = "swrlz-chat-account-mutation-v1";
+      let chatRevision = 0;
+      let chatThreads = [];
+      let activeThreadId = "";
+      let draftThread = true;
+      const threadId = () => "web-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
+      const titleFrom = text => {
+        const clean=String(text||"").replace(/\s+/g," ").trim();
+        return clean.length>48 ? clean.slice(0,47).trimEnd()+"…" : (clean || "New conversation");
+      };
+      const currentThread = () => chatThreads.find(t=>t.id===activeThreadId) || null;
+      const renderConversation = thread => {
+        [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
+        if(!thread) return;
+        for(const msg of (thread.messages||[])){
+          if(msg.role==="assistant"){
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); node.querySelector(".assistant-body").textContent=msg.text||""; messageList.appendChild(node);
+          } else if(msg.role==="user"){
+            const node=document.createElement("article"); node.className="user-message rendered-message"; node.textContent=msg.text||""; messageList.appendChild(node);
+          }
+        }
+      };
+      const closeThreadPopups = except => document.querySelectorAll(".thread-popup").forEach(p=>{if(p!==except)p.hidden=true;});
+      const renderThreads = () => {
+        threadList.innerHTML="";
+        const rows = draftThread ? [{id:"__draft__",title:"New conversation",messages:[],draft:true},...chatThreads] : chatThreads;
+        for(const t of rows){
+          const row=document.createElement("div"); row.className="thread-row"+((t.draft||t.id===activeThreadId)?" active":"");
+          const main=document.createElement("button"); main.type="button"; main.className="thread-main";
+          main.innerHTML='<span class="thread-title"></span><span class="thread-meta"></span>';
+          main.querySelector(".thread-title").textContent=t.title||"New conversation";
+          main.querySelector(".thread-meta").textContent=t.draft ? "Unsaved · starts on first message" : ((t.messages||[]).length+" messages");
+          if(t.draft) main.querySelector(".thread-meta").classList.add("draft-badge");
+          main.onclick=async()=>{ if(t.draft)return; draftThread=false; activeThreadId=t.id; renderThreads(); renderConversation(t); await mutateChat([{type:"SET_CURRENT_THREAD",threadId:t.id}]); setMenu(false); };
+          row.appendChild(main);
+          if(!t.draft){
+            const del=document.createElement("button"); del.type="button"; del.className="thread-icon-button"; del.title="Delete chat"; del.setAttribute("aria-label","Delete "+(t.title||"chat")); del.textContent="⌫";
+            del.onclick=async e=>{e.stopPropagation(); if(!confirm('Delete "'+(t.title||"this chat")+'"?'))return; await mutateChat([{type:"DELETE_THREAD",threadId:t.id}]); if(activeThreadId===t.id) startDraft();};
+            row.appendChild(del);
+            const wrap=document.createElement("div"); wrap.className="thread-more-wrap";
+            const more=document.createElement("button"); more.type="button"; more.className="thread-icon-button"; more.setAttribute("aria-label","More options"); more.textContent="⋮";
+            const pop=document.createElement("div"); pop.className="thread-popup"; pop.hidden=true;
+            const rename=document.createElement("button"); rename.type="button"; rename.textContent="Rename"; rename.onclick=async()=>{const name=prompt("Rename chat",t.title||""); if(name&&name.trim()) await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:name.trim().slice(0,120),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);};
+            const pin=document.createElement("button"); pin.type="button"; pin.textContent=t.pinned?"Unpin":"Pin"; pin.onclick=async()=>mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:t.title||"New conversation",pinned:!t.pinned,createdAt:t.createdAt||Date.now()}]);
+            const fresh=document.createElement("button"); fresh.type="button"; fresh.textContent="New chat"; fresh.onclick=()=>startDraft();
+            pop.append(rename,pin,fresh); more.onclick=e=>{e.stopPropagation();const opening=pop.hidden;closeThreadPopups(pop);pop.hidden=!opening;}; wrap.append(more,pop); row.appendChild(wrap);
+          }
+          threadList.appendChild(row);
+        }
+      };
+      const applyChatState = data => { chatRevision=Number(data?.revision||0); chatThreads=Array.isArray(data?.state?.threads)?data.state.threads:[]; if(!draftThread){activeThreadId=data?.state?.currentId||activeThreadId;} renderThreads(); if(!draftThread)renderConversation(currentThread()); };
+      const loadChatState = async () => { try{const r=await fetch("/api/chat_state",{credentials:"same-origin",cache:"no-store"}); if(r.ok)applyChatState(await r.json()); else renderThreads();}catch(_){renderThreads();} };
+      const mutateChat = async operations => {
+        try{
+          let r=await fetch("/api/chat_state",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({contract:CHAT_STATE_CONTRACT,expectedRevision:chatRevision,operations})});
+          let data=await r.json().catch(()=>({}));
+          if(r.status===409){applyChatState(data);r=await fetch("/api/chat_state",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({contract:CHAT_STATE_CONTRACT,expectedRevision:chatRevision,operations})});data=await r.json().catch(()=>({}));}
+          if(r.ok)applyChatState(data); return r.ok;
+        }catch(_){return false;}
+      };
+      const startDraft = () => { draftThread=true; activeThreadId=""; prompt.value=""; renderConversation(null); renderThreads(); closeThreadPopups(); setMenu(false); };
+      newThreadButton.addEventListener("click",startDraft);
+      document.addEventListener("click",()=>closeThreadPopups());
+      const commitDraftFromPrompt = async () => {
+        const text=prompt.value.trim(); if(!text)return false;
+        if(draftThread){
+          const id=threadId(), now=Date.now(), title=titleFrom(text);
+          const ok=await mutateChat([{type:"UPSERT_THREAD",threadId:id,title,pinned:false,createdAt:now},{type:"SET_CURRENT_THREAD",threadId:id}]);
+          if(ok){draftThread=false;activeThreadId=id;renderThreads();}
+          return ok;
+        }
+        const t=currentThread(); if(t && (!t.title || t.title==="New conversation")) await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:titleFrom(text),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);
+        return true;
+      };
+      sendButton.addEventListener("click",commitDraftFromPrompt);
+      prompt.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();commitDraftFromPrompt();}});
+      renderThreads();
+      loadChatState();
       const composerShell = document.getElementById("composerShell");
       const composerCollapse = document.getElementById("composerCollapse");
       composerCollapse.addEventListener("click", () => {
