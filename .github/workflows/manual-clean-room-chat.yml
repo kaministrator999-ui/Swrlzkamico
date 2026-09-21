@@ -159,7 +159,7 @@ jobs:
           git fetch --depth=1 origin runtime
           git archive --format=tar origin/runtime api requirements.txt pyproject.toml setup.py swyrlz native web | tar -x -C "$stage"
           # Stable main owns the server entrypoint/account/debug route registration.
-          git archive --format=tar HEAD api swyrlz | tar -x -C "$stage"
+          git archive --format=tar HEAD api swyrlz requirements.txt pyproject.toml setup.py | tar -x -C "$stage"
           python - <<'PY' "$stage/api/runtime_hot.py"
           import pathlib, sys
           p=pathlib.Path(sys.argv[1])
