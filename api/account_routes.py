@@ -17,7 +17,7 @@ from api.google_account import (
     auth_configured,
     google_client_id,
     issue_session,
-    user_id_from_request,
+    user_id_from_request,\n    verify_session,
     verify_google_credential,
 )
 from swyrlz.interpretation_contract import InterpretationEnvelope, normalize_provenance, presentation_mode_for_request
@@ -184,7 +184,9 @@ def install(server) -> None:
         store, user_id = auth
         try:
             profile = store.get_profile(user_id=user_id)
-            session = verify_session(request.cookies.get(SESSION_COOKIE))\n            identity = session.get("identity") if isinstance(session.get("identity"), dict) else {}\n            return {"ok": True, "user": {"id": user_id, "displayName": profile.display_name or identity.get("name"), "email": identity.get("email"), "picture": identity.get("picture")}, "profile": asdict(profile)}
+            session = verify_session(request.cookies.get(SESSION_COOKIE))
+            identity = session.get("identity") if isinstance(session.get("identity"), dict) else {}
+            return {"ok": True, "user": {"id": user_id, "displayName": profile.display_name or identity.get("name"), "email": identity.get("email"), "picture": identity.get("picture")}, "profile": asdict(profile)}
         except Exception as exc:
             return _json_error(503, "ACCOUNT_READ_FAILED", str(exc))
 
