@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release terminal Station response rendering fix
-RETRY=19
+PURPOSE=retain completed Station response across empty post-generation sync
+RETRY=20
