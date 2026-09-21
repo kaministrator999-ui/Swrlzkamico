@@ -11,7 +11,7 @@ import hashlib
 from typing import Any
 
 from fastapi import Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 
 from api.google_account import AuthenticationError, user_id_from_request
 from api.chat_state import _read_blob, _state_value, _headers
@@ -77,6 +77,40 @@ def install(server, chat_extensions) -> None:
             return chat._json_error(exc.status, exc.code, exc.detail)
         except Exception as exc:
             return JSONResponse({"ok": False, "contract": CONTRACT, "code": "LALM_STATION_GENERATE_FAILED", "detail": f"{type(exc).__name__}: {exc}"}, status_code=503, headers=_headers())
+
+    @app.post("/api/lalm_station/send", include_in_schema=False)
+    async def station_send(request: Request):
+        """Accept one authenticated Chat turn and dispatch it to the installed R39 owner."""
+        try:
+            user_id_from_request(request)
+            # Reuse the canonical Chat ingress middleware and installed resumable
+            # generation owner instead of creating a second inference path.
+            payload = await request.json()
+            if not isinstance(payload, dict):
+                return JSONResponse({"ok": False, "contract": CONTRACT, "code": "INVALID_REQUEST"}, status_code=400, headers=_headers())
+            payload["ingress"] = "SWRLZ_LALM_STATION"
+            body = __import__("json").dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+            # Starlette's middleware chain is the authority that installs canonical
+            # turn identity/history. Route internally through /api/chat so the same
+            # admission/commit contracts remain in force.
+            scope = dict(request.scope)
+            scope["path"] = "/api/chat"
+            scope["raw_path"] = b"/api/chat"
+            scope["query_string"] = b"action=stream"
+            sent = False
+            async def receive():
+                nonlocal sent
+                if sent:
+                    return {"type": "http.disconnect"}
+                sent = True
+                return {"type": "http.request", "body": body, "more_body": False}
+            forwarded = Request(scope, receive)
+            response = await chat_extensions.chat._post_action(forwarded, "stream")
+            return response
+        except AuthenticationError as exc:
+            return JSONResponse({"ok": False, "contract": CONTRACT, "code": "ACCOUNT_SESSION_INVALID", "detail": str(exc)}, status_code=401, headers=_headers())
+        except Exception as exc:
+            return JSONResponse({"ok": False, "contract": CONTRACT, "code": "LALM_STATION_SEND_FAILED", "detail": f"{type(exc).__name__}: {exc}"}, status_code=503, headers=_headers())
 
     @app.get("/api/lalm_station/sync", include_in_schema=False)
     async def station_sync(request: Request):
