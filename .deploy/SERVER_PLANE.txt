@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=deploy direct LALM Station generation authority and pre-deployed R39 delegation
+PURPOSE=deploy direct Chat -> LALM Station -> pre-deployed R39 generation ingress
 RETRY=10
