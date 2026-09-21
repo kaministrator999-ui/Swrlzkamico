@@ -11,13 +11,14 @@ import hashlib
 from typing import Any
 
 from fastapi import Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 
 import api.chat as chat, StreamingResponse
 
 from api.google_account import AuthenticationError, user_id_from_request
 from api.chat_state import _read_blob, _state_value, _headers
 from api.chat_transcript_store import STORE
+from api.chat_turn_state import begin_turn, canonical_history, finish_turn
 import api.chat as chat
 
 CONTRACT = "swrlz-lalm-station-sync-v1"
@@ -139,6 +140,91 @@ def install(server, chat_extensions) -> None:
         except chat.BridgeError as exc:
             return chat._json_error(exc.status, exc.code, exc.detail)
         except Exception as exc:
+            return JSONResponse({"ok": False, "contract": CONTRACT, "code": "LALM_STATION_SEND_FAILED", "detail": f"{type(exc).__name__}: {exc}"}, status_code=503, headers=_headers())
+
+    @app.post("/api/lalm_station/send", include_in_schema=False)
+    async def station_send(request: Request):
+        """Admit one canonical user turn and dispatch it directly to local R39."""
+        turn = None
+        try:
+            # Authentication happens before any state mutation.
+            user_id_from_request(request)
+            payload = await request.json()
+            if not isinstance(payload, dict):
+                return JSONResponse({"ok": False, "contract": CONTRACT, "code": "INVALID_JSON_OBJECT"}, status_code=400, headers=_headers())
+            prompt = str(payload.get("prompt") or "").strip()
+            if not prompt:
+                return JSONResponse({"ok": False, "contract": CONTRACT, "code": "PROMPT_INVALID"}, status_code=400, headers=_headers())
+
+            turn = begin_turn(request, payload)
+            history, history_revision = canonical_history(request, thread_id=turn.thread_id, request_id=turn.request_id)
+            admitted = dict(payload)
+            admitted["history"] = history
+            admitted["threadId"] = turn.thread_id
+            admitted["requestId"] = turn.request_id
+            admitted["stationIdentity"] = {
+                "accountScope": turn.account_scope,
+                "threadId": turn.thread_id,
+                "requestId": turn.request_id,
+                "userMessageId": turn.user_message_id,
+                "assistantMessageId": turn.assistant_message_id,
+            }
+
+            # Reuse the already-installed resumable owner. With no upstream URL it
+            # dispatches to the pre-deployed local R39 engine and owns generation
+            # independently of this browser connection.
+            chat = chat_extensions.chat
+            normalized = chat._normalize_chat_request(admitted)
+            response = chat._stream_response(normalized)
+            if getattr(response, "status_code", 200) >= 400:
+                finish_turn(turn, text="", terminal_type="FAILED", reason=f"STATION_DISPATCH_HTTP_{response.status_code}")
+                return response
+
+            original = getattr(response, "body_iterator", None)
+            if original is None:
+                finish_turn(turn, text="", terminal_type="FAILED", reason="STATION_STREAM_MISSING")
+                return JSONResponse({"ok": False, "contract": CONTRACT, "code": "STATION_STREAM_MISSING"}, status_code=503, headers=_headers())
+
+            async def tracked():
+                buffer = ""
+                answer = ""
+                terminal_seen = False
+                async for chunk in original:
+                    decoded = chunk.decode("utf-8", errors="replace") if isinstance(chunk, bytes) else str(chunk)
+                    buffer += decoded
+                    lines = buffer.split("\n")
+                    buffer = lines.pop() or ""
+                    for line in lines:
+                        if not line.strip():
+                            continue
+                        try:
+                            event = __import__("json").loads(line)
+                        except Exception:
+                            continue
+                        kind = str(event.get("type") or "").upper()
+                        if kind == "RESET":
+                            answer = ""
+                        elif kind == "DELTA":
+                            answer += str(event.get("text") or "")
+                        if kind in {"COMPLETED", "CANCELLED", "FAILED"} and not terminal_seen:
+                            finish_turn(turn, text=answer, terminal_type=kind, reason=str(event.get("reason") or "")[:2000])
+                            terminal_seen = True
+                    yield chunk
+                if not terminal_seen:
+                    finish_turn(turn, text=answer, terminal_type="FAILED", reason="STATION_STREAM_ENDED_WITHOUT_TERMINAL")
+
+            headers = dict(getattr(response, "headers", {}) or {})
+            headers["X-SWRLZ-LALM-Station"] = CONTRACT
+            headers["X-SWRLZ-Canonical-History-Revision"] = str(history_revision)
+            return StreamingResponse(tracked(), media_type="application/x-ndjson", headers=headers)
+        except AuthenticationError as exc:
+            return JSONResponse({"ok": False, "contract": CONTRACT, "code": "ACCOUNT_SESSION_INVALID", "detail": str(exc)}, status_code=401, headers=_headers())
+        except Exception as exc:
+            if turn is not None:
+                try:
+                    finish_turn(turn, text="", terminal_type="FAILED", reason=f"STATION_EXCEPTION:{type(exc).__name__}")
+                except Exception:
+                    pass
             return JSONResponse({"ok": False, "contract": CONTRACT, "code": "LALM_STATION_SEND_FAILED", "detail": f"{type(exc).__name__}: {exc}"}, status_code=503, headers=_headers())
 
     @app.get("/api/lalm_station/sync", include_in_schema=False)
