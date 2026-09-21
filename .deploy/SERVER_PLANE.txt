@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=deploy direct Chat to LALM Station send ingress and predeployed R39 delegation
-RETRY=10
+PURPOSE=deploy finalized single LALM Station send+sync boundary with direct predeployed R39 delegation
+RETRY=11
