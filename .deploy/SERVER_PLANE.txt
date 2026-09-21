@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release pending user-turn persistence and signed Google session restore
-RETRY=23
+PURPOSE=release draft-thread identity pinning for visible user turns
+RETRY=24
