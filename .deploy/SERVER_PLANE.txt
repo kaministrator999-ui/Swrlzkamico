@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=deploy canonical turn syntax repair and restore live chat server import
-RETRY=13
+PURPOSE=deploy latest Chat Station and canonical turn repair to canonical swrlzkamico-o3nu project
+RETRY=14
