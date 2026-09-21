@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=fix canonical Redis chat-state import and restore live send path
-RETRY=16
+PURPOSE=bundle prepared LALM generation into canonical server plane
+RETRY=17
