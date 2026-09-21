@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.32
+CHAT_VERSION=1.0.33
 SOURCE=main:chat/§wyrlz/
 ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png;chat/§wyrlz/assets/kompanion.png
-PURPOSE=place chat thread history directly below swyrlz header divider
+PURPOSE=connect clean-room chat to unified LALM station generation and synchronization
 REQUESTED_AT=2026-09-21
-TEST=sidebar-order+swyrlz-divider+thread-history
-RETRY=51
+TEST=station-sync+authenticated-send+generation-stream+reload-resync+canonical-thread-history
+RETRY=52
