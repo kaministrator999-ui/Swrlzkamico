@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release full prepared LALM materialization and nonblocking Station send
-RETRY=18
+PURPOSE=release terminal Station response rendering fix
+RETRY=19
