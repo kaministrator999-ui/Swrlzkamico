@@ -157,28 +157,36 @@ class RedisRestChatStore(DurableChatStore):
                 user = UserRecord(user_id=user_id, created_at=now, updated_at=now)
         self._set_json(self._key("user", user.user_id), user)
         identity = UserIdentityRecord(
-            identity_id=new_id("identity"),
             user_id=user.user_id,
             provider=provider,
             provider_subject=subject,
             email=email,
             email_verified=email_verified,
-            created_at=now,
-            updated_at=now,
+            claims_updated_at=now,
         )
         self._set_json(self._key("identity_record", provider, subject), identity)
         return user, identity
 
-    def get_or_create_profile(self, user_id: str) -> UserProfileRecord:
+    def get_profile(self, *, user_id: str) -> UserProfileRecord:
         key = self._key("profile", user_id)
         profile = self._get_json(key, UserProfileRecord)
         if profile is not None:
             assert_owned(user_id, profile.user_id)
             return profile
-        now = time.time()
-        profile = UserProfileRecord(profile_id=new_id("profile"), user_id=user_id, created_at=now, updated_at=now)
+        profile = UserProfileRecord(user_id=user_id)
         self._set_json(key, profile)
         return profile
+
+    def get_or_create_profile(self, user_id: str) -> UserProfileRecord:
+        return self.get_profile(user_id=user_id)
+
+    def put_profile(self, profile: UserProfileRecord, *, expected_version: int | None = None) -> UserProfileRecord:
+        current = self.get_profile(user_id=profile.user_id)
+        if expected_version is not None and current.version != expected_version:
+            raise ConflictError("profile version conflict")
+        saved = replace(profile, version=current.version + 1, updated_at=time.time())
+        self._set_json(self._key("profile", profile.user_id), saved)
+        return saved
 
     def create_thread(self, thread: ThreadRecord) -> ThreadRecord:
         assert_owned(thread.user_id, thread.user_id)
