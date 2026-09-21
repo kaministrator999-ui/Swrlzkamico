@@ -39,6 +39,15 @@ def install(chat_extensions) -> None:
         raw_profile = str(payload.get("profileId") or "")[:96]
         normalized = base_normalize(payload)
         normalized_profile = str(normalized.get("profileId") or "")[:96]
+        station_identity = payload.get("stationIdentity")
+        if isinstance(station_identity, dict):
+            normalized["stationIdentity"] = {
+                "accountScope": str(station_identity.get("accountScope") or "")[:64],
+                "threadId": str(station_identity.get("threadId") or "")[:160],
+                "requestId": str(station_identity.get("requestId") or "")[:128],
+                "userMessageId": str(station_identity.get("userMessageId") or "")[:160],
+                "assistantMessageId": str(station_identity.get("assistantMessageId") or "")[:160],
+            }
         try:
             normalized["resumeAfterSeq"] = max(0, int(payload.get("resumeAfterSeq") or 0))
         except (TypeError, ValueError):
@@ -90,6 +99,9 @@ def install(chat_extensions) -> None:
                 "terminal": bool(session.get("terminal")),
                 "terminalType": str(session.get("terminalType") or ""),
                 "identity": dict(session.get("identity") or {}),
+                "threadId": str(session.get("threadId") or ""),
+                "accountScope": str(session.get("accountScope") or ""),
+                "status": list(session.get("status") or [])[-256:],
                 "createdAt": float(session.get("createdAt") or 0),
                 "updatedAt": float(session.get("updatedAt") or 0),
                 "storage": {
@@ -157,7 +169,19 @@ def install(chat_extensions) -> None:
             phase = str(event.get("phase") or "").strip()
             if phase:
                 session["phase"] = phase
-            if str(event.get("type") or "") == "DELTA":
+            event_type = str(event.get("type") or "")
+            if event_type != "DELTA":
+                status = session.setdefault("status", [])
+                status.append({
+                    "seq": seq,
+                    "type": event_type,
+                    "phase": phase,
+                    "reason": str(event.get("reason") or "")[:1000],
+                    "at": time.time(),
+                })
+                if len(status) > 256:
+                    session["status"] = status[-256:]
+            if event_type == "DELTA":
                 text = str(event.get("text") or "")
                 if text:
                     session["transcript"] = str(session.get("transcript") or "") + text
@@ -326,7 +350,10 @@ def install(chat_extensions) -> None:
                 "phase": "ANALYZING_REQUEST",
                 "transcript": "",
                 "textRevision": 0,
-                "identity": {},
+                "identity": dict(clean.get("stationIdentity") or {}),
+                "threadId": str((clean.get("stationIdentity") or {}).get("threadId") or ""),
+                "accountScope": str((clean.get("stationIdentity") or {}).get("accountScope") or ""),
+                "status": [],
                 "terminal": False,
                 "terminalType": "",
                 "createdAt": now,
