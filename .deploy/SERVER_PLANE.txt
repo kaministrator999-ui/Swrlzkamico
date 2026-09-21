@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=retain completed Station response across empty post-generation sync
-RETRY=20
+PURPOSE=remove duplicate sync generation clear before Station state application
+RETRY=21
