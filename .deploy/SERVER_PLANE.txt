@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=restore last verified Station runtime boundary while preserving Chat v1.0.34 send ingress
-RETRY=12
+PURPOSE=deploy canonical turn syntax repair and restore live chat server import
+RETRY=13
