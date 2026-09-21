@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.25">
+  <meta name="swrlz-chat-version" content="1.0.26">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -32,8 +32,8 @@
     .kompanion-icon{display:block;width:48px;height:48px;flex:0 0 48px;border-radius:14px;object-fit:cover;border:1px solid rgba(95,192,255,.38);box-shadow:0 8px 24px rgba(0,0,0,.32)}
     .side-brand-copy{min-width:0;flex:1}.side-brand-name{font-family:Georgia,"Times New Roman",serif;font-size:18px;font-weight:700;letter-spacing:.08em;color:#dff8ff;text-shadow:0 0 10px rgba(56,232,255,.38);white-space:nowrap}
     .settings-gear{display:inline-grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border:1px solid rgba(95,192,255,.25);border-radius:11px;color:#c9f7ff;background:rgba(9,31,51,.7);cursor:pointer}.settings-gear svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
-    .center-kompanion{position:fixed;z-index:2;left:50%;top:42%;transform:translate(-50%,-50%);display:grid;place-items:center;pointer-events:none}
-    .center-kompanion .kompanion-icon{width:116px;height:116px;border-radius:28px;box-shadow:0 16px 42px rgba(0,0,0,.42),0 0 28px rgba(56,232,255,.14)}
+    .center-kompanion{position:fixed;z-index:2;left:50%;top:29%;transform:translate(-50%,-50%);display:grid;place-items:center;justify-items:center;gap:14px;pointer-events:none}
+    .center-kompanion .kompanion-icon{width:116px;height:116px;border-radius:28px;box-shadow:0 16px 42px rgba(0,0,0,.42),0 0 28px rgba(56,232,255,.14)} .center-kompanion-name{font-family:Georgia,"Times New Roman",serif;font-size:30px;font-weight:700;letter-spacing:.08em;color:#e5fbff;text-shadow:0 0 8px rgba(95,220,255,.8),0 0 22px rgba(56,160,255,.55);white-space:nowrap}
     .account-card{margin-top:auto;margin-bottom:10px;padding:10px;border:1px solid rgba(95,192,255,.28);border-radius:14px;background:rgba(2,15,31,.72)}
     .account-main{display:flex;align-items:center;gap:9px;min-height:38px}.account-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid rgba(95,192,255,.3);display:none}.account-copy{min-width:0;flex:1}.account-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-meta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-action{border:1px solid rgba(95,192,255,.28);border-radius:10px;padding:7px 9px;color:var(--text);background:rgba(31,72,108,.42);font-size:11px;cursor:pointer}.google-slot{margin-top:8px;min-height:0;overflow:hidden}
     .version-head{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 0 7px;border:0;color:var(--text);background:transparent;cursor:pointer}.version-chevron{transition:transform 180ms ease}.version-box.collapsed .version-chevron{transform:rotate(-90deg)}.version-list{max-height:26vh;overflow-y:auto;overflow-x:hidden;transition:max-height 200ms ease,opacity 160ms ease}.version-box.collapsed .version-list{max-height:0;opacity:0;overflow:hidden}
@@ -96,7 +96,7 @@
       </div>
     </div>
   </aside>
-  <div class="center-kompanion" aria-hidden="true"><img class="kompanion-icon" src="/chat/§wyrlz/assets/kompanion.png" alt=""></div>
+  <div class="center-kompanion" aria-hidden="true"><img class="kompanion-icon" src="/chat/§wyrlz/assets/kompanion.png" alt=""><div class="center-kompanion-name">𓆩𓆩⁽§⁾𓆪wyrlz𓆪</div></div>
   <button class="menu-button" id="menuButton" type="button" aria-label="Open side menu" aria-expanded="false">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg>
   </button>
