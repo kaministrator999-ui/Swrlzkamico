@@ -6,4 +6,4 @@ ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png;chat/§wyrlz/assets/kom
 PURPOSE=direct clean-room Chat send and synchronization through unified LALM Station
 REQUESTED_AT=2026-09-21
 TEST=station-send+station-sync+r39-stream+reload-resync+canonical-thread-history
-RETRY=53
+RETRY=54
