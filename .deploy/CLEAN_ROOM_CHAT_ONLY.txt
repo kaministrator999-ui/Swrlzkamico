@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.33
+CHAT_VERSION=1.0.34
 SOURCE=main:chat/§wyrlz/
 ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png;chat/§wyrlz/assets/kompanion.png
-PURPOSE=connect clean-room chat to unified LALM station generation and synchronization
+PURPOSE=direct clean-room Chat SEND and SYNC through LALM Station
 REQUESTED_AT=2026-09-21
-TEST=station-sync+authenticated-send+generation-stream+reload-resync+canonical-thread-history
-RETRY=52
+TEST=station-generate+station-sync+authenticated-send+generation-stream+reload-resync+canonical-thread-history
+RETRY=53
