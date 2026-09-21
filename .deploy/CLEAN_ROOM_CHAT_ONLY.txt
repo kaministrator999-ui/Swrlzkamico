@@ -1,9 +1,9 @@
 TARGET=clean-room-chat-only
 APPROVED=1
-CHAT_VERSION=1.0.25
+CHAT_VERSION=1.0.26
 SOURCE=main:chat/§wyrlz/
 ASSET=chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png;chat/§wyrlz/assets/kompanion.png
-PURPOSE=deploy clean-room Chat 1.0.25 kompanion branding and collapsed versions
+PURPOSE=raise center kompanion and add large swyrlz branding below
 REQUESTED_AT=2026-09-21
-TEST=main-chat-source+bundled-assets+kompanion-branding
-RETRY=44
+TEST=center-kompanion-top-placement+brand-label
+RETRY=45
