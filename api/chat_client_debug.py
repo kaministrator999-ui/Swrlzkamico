@@ -67,7 +67,13 @@ def _expected_web_token() -> str:
 def _authorized_chat_ingress(request) -> bool:
     expected = _expected_web_token()
     supplied = request.headers.get("x-swrlz-chat-token", "")
-    return bool(expected and supplied and hmac.compare_digest(expected, supplied))
+    if expected and supplied and hmac.compare_digest(expected, supplied):
+        return True
+    try:
+        from api.google_account import user_id_from_request
+        return bool(user_id_from_request(request))
+    except Exception:
+        return False
 
 
 def _navigation_boot_event(value) -> dict | None:
@@ -304,6 +310,13 @@ def install(server) -> None:
                     # stream transport. Replace only the browser-supplied history
                     # with the authenticated server account's canonical history.
                     raw["history"] = history
+                    raw["stationIdentity"] = {
+                        "accountScope": turn.account_scope,
+                        "threadId": turn.thread_id,
+                        "requestId": turn.request_id,
+                        "userMessageId": turn.user_message_id,
+                        "assistantMessageId": turn.assistant_message_id,
+                    }
                     request._body = json.dumps(raw, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
                     request._json = raw
                     _lockdown("canonical-history-installed", request_id=turn.request_id, threadId=turn.thread_id, historyMessages=len(history), historyRevision=history_revision, canonicalHistory=_clean(history))
