@@ -258,8 +258,11 @@
         try{
           if(draftThread){
             const id=threadId(), now=Date.now(), title=titleFrom(text);
-            const ok=await mutateChat([{type:"UPSERT_THREAD",threadId:id,title,pinned:false,createdAt:now},{type:"SET_CURRENT_THREAD",threadId:id}]);
-            if(!ok)return false; draftThread=false;activeThreadId=id;renderThreads();
+            // Chat-state metadata persistence is best-effort here. The Station is
+            // the canonical turn authority and must not be blocked by an auxiliary
+            // thread-metadata store outage.
+            const stateOk=await mutateChat([{type:"UPSERT_THREAD",threadId:id,title,pinned:false,createdAt:now},{type:"SET_CURRENT_THREAD",threadId:id}]);
+            draftThread=false;activeThreadId=id;renderThreads();
           }else{
             const t=currentThread(); if(t&&(!t.title||t.title==="New conversation"))await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:titleFrom(text),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);
           }
