@@ -193,8 +193,22 @@
       let stationGeneration=null, stationPoll=0, sending=false;
       const applyChatState = data => {
         chatRevision=Number(data?.revision||0);
+        const priorThreads=chatThreads;
         const stationThreads=Array.isArray(data?.threads)?data.threads:null;
-        chatThreads=stationThreads || (Array.isArray(data?.state?.threads)?data.state.threads:[]);
+        const incomingThreads=stationThreads || (Array.isArray(data?.state?.threads)?data.state.threads:[]);
+        const mergedThreads=incomingThreads.map(thread=>{
+          const prior=priorThreads.find(t=>t.id===thread.id);
+          const serverMessages=Array.isArray(thread.messages)?thread.messages:[];
+          const serverIds=new Set(serverMessages.map(m=>m.id));
+          const pending=(prior?.messages||[]).filter(m=>m?.meta?.localPending&&!serverIds.has(m.id));
+          return {...thread,messages:[...serverMessages,...pending]};
+        });
+        for(const prior of priorThreads){
+          if(mergedThreads.some(t=>t.id===prior.id))continue;
+          const pending=(prior?.messages||[]).filter(m=>m?.meta?.localPending);
+          if(pending.length)mergedThreads.push({...prior,messages:pending});
+        }
+        chatThreads=mergedThreads;
         const stationCurrent=data?.currentThread?.id||"";
         if(!draftThread) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
         // Keep the last completed Station generation until canonical thread state contains it.\n        // A sync with no active generation must not erase the just-rendered terminal response.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration) stationGeneration=syncedGeneration;
