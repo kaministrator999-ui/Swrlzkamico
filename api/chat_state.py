@@ -19,7 +19,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from api.google_account import AuthenticationError, user_id_from_request
-from api.canonical_redis_state import redis_command
+from api.canonical_redis_state import store as canonical_redis_store
 
 APP_VERSION = "1.1.4"
 CONTRACT = "swrlz-chat-account-state-v1"
@@ -115,7 +115,7 @@ def _redis_key(user_id: str) -> str:
 def _read_state(user_id: str) -> dict[str, Any] | None:
     """Prefer canonical Redis; migrate readable legacy Blob state when available."""
     try:
-        raw = redis_command("GET", _redis_key(user_id))
+        raw = canonical_redis_store()._command("GET", _redis_key(user_id))
         if raw:
             value = json.loads(raw)
             if isinstance(value, dict) and value.get("contract") == CONTRACT and value.get("userId") == user_id:
@@ -128,7 +128,7 @@ def _read_state(user_id: str) -> dict[str, Any] | None:
         legacy = None
     if legacy:
         try:
-            redis_command("SET", _redis_key(user_id), json.dumps(legacy, ensure_ascii=False, separators=(",", ":")))
+            canonical_redis_store()._command("SET", _redis_key(user_id), json.dumps(legacy, ensure_ascii=False, separators=(",", ":")))
         except Exception:
             pass
     return legacy
@@ -138,7 +138,7 @@ def _write_state(user_id: str, value: dict[str, Any]) -> None:
     body = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
     if len(body.encode("utf-8")) > MAX_STATE_BYTES:
         raise RuntimeError("CHAT_STATE_TOO_LARGE")
-    redis_command("SET", _redis_key(user_id), body)
+    canonical_redis_store()._command("SET", _redis_key(user_id), body)
 
 
 def _read_blob(user_id: str) -> dict[str, Any] | None:
