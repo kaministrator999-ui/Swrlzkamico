@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=deploy latest Chat Station and canonical turn repair to canonical swrlzkamico-o3nu project
-RETRY=14
+PURPOSE=restore send path with Redis canonical chat state and deploy Chat 1.0.35 menu layout
+RETRY=15
