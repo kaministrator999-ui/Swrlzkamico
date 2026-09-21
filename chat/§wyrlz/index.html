@@ -268,7 +268,7 @@
           }
           const requestId=uid("web"), userMessageId=uid("message"), assistantMessageId=uid("assistant");
           stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING"}],terminal:false,lastSeq:0};
-          prompt.value=""; renderStationGeneration();
+          // Render the submitted user turn immediately; Station remains the durable authority.\n          let localThread=currentThread();\n          if(!localThread){\n            localThread={id:activeThreadId,title:titleFrom(text),pinned:false,createdAt:Date.now(),messages:[]};\n            chatThreads=[localThread,...chatThreads.filter(t=>t.id!==activeThreadId)];\n          }\n          localThread.messages=Array.isArray(localThread.messages)?localThread.messages:[];\n          if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,meta:{requestId,localPending:true}});\n          prompt.value=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
           const response=await fetch("/api/lalm_station/send",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,profileId:"LALM",ingress:"SWRLZ_LALM_STATION"})});
           await consumeGeneration(response);
           await syncStation();
