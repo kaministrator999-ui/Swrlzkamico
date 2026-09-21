@@ -197,7 +197,7 @@
         chatThreads=stationThreads || (Array.isArray(data?.state?.threads)?data.state.threads:[]);
         const stationCurrent=data?.currentThread?.id||"";
         if(!draftThread) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
-        stationGeneration=data?.activeGeneration||stationGeneration;
+        // Keep the last completed Station generation until canonical thread state contains it.\n        // A sync with no active generation must not erase the just-rendered terminal response.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration) stationGeneration=syncedGeneration;
         renderThreads(); if(!draftThread)renderConversation(currentThread());
         renderStationGeneration();
       };
