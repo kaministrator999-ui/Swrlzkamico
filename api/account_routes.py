@@ -157,7 +157,7 @@ def install(server) -> None:
             )
             response.set_cookie(
                 SESSION_COOKIE,
-                issue_session(user.user_id),
+                issue_session(user.user_id, claims={"provider":"google","providerSubject":verified.subject,"email":verified.email,"emailVerified":verified.email_verified,"name":verified.name,"picture":verified.picture,"durable":True}),
                 httponly=True,
                 secure=True,
                 samesite="lax",
@@ -184,7 +184,7 @@ def install(server) -> None:
         store, user_id = auth
         try:
             profile = store.get_profile(user_id=user_id)
-            return {"ok": True, "user": {"id": user_id, "displayName": profile.display_name}, "profile": asdict(profile)}
+            session = verify_session(request.cookies.get(SESSION_COOKIE))\n            identity = session.get("identity") if isinstance(session.get("identity"), dict) else {}\n            return {"ok": True, "user": {"id": user_id, "displayName": profile.display_name or identity.get("name"), "email": identity.get("email"), "picture": identity.get("picture")}, "profile": asdict(profile)}
         except Exception as exc:
             return _json_error(503, "ACCOUNT_READ_FAILED", str(exc))
 
