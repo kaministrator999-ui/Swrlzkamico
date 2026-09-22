@@ -230,6 +230,25 @@ Do not create a second policy document for a concern that already has a canonica
 
 ---
 
+### Mandatory mutation → version → roadmap → GitHub deploy → Vercel watch sequence
+
+For **every GitHub file mutation** performed as part of governed project work, the mutation is not terminal by itself.
+
+Mandatory sequence:
+
+1. update the affected canonical version authority or authorities according to `SWRLZ_VERSION_MODULE_EVOLUTION.md`;
+2. update `SWRLZ_SERVER_ROADMAP.md` with the governed event, exact version movement, verification state, and deployment intent/result;
+3. only after those source/lineage records are coherent, trigger deployment through the canonical GitHub deployment workflow for the existing project;
+4. watch the GitHub workflow until it reaches a terminal state;
+5. if GitHub deployment succeeds, switch to the connected Vercel project and watch the resulting deployment until it reaches its terminal Vercel state (for successful production release, `READY`);
+6. only after both GitHub and Vercel have reached terminal states may the user-facing final deployment response be completed.
+
+Do **not** finish the response at “queued,” “building,” “workflow started,” “deployment triggered,” or equivalent intermediate states when the same turn authorized deployment. Preserve exact truth if either system fails.
+
+This sequence applies even when the file mutation is diagnostic-only. A governed GitHub mutation still advances Repository Work, must be journaled in the Roadmap, and must be reconciled before deployment.
+
+---
+
 ## 3. Automatic workflow for every governed development event
 
 ```text
