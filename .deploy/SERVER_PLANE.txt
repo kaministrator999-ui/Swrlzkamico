@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Server 2.3.289 prepared model transport and terminal truth repair
-RETRY=32
+PURPOSE=release Clean-room Chat 1.0.40 terminal projection and browser camera repair
+RETRY=33
