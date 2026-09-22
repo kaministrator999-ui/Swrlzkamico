@@ -145,12 +145,13 @@
       let chatThreads = [];
       let activeThreadId = "";
       let draftThread = true;
+      let pendingDraftThread = null;
       const threadId = () => "web-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       const titleFrom = text => {
         const clean=String(text||"").replace(/\s+/g," ").trim();
         return clean.length>48 ? clean.slice(0,47).trimEnd()+"…" : (clean || "New conversation");
       };
-      const currentThread = () => chatThreads.find(t=>t.id===activeThreadId) || null;
+      const currentThread = () => chatThreads.find(t=>t.id===activeThreadId) || (pendingDraftThread?.id===activeThreadId ? pendingDraftThread : null);
       const renderConversation = thread => {
         [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
         if(!thread) return;
@@ -209,6 +210,7 @@
           if(pending.length)mergedThreads.push({...prior,messages:pending});
         }
         chatThreads=mergedThreads;
+        if(pendingDraftThread && chatThreads.some(t=>t.id===pendingDraftThread.id)) pendingDraftThread=null;
         const stationCurrent=data?.currentThread?.id||"";
         if(!draftThread) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
         // Keep the last completed Station generation until canonical thread state contains it.\n        // A sync with no active generation must not erase the just-rendered terminal response.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration) stationGeneration=syncedGeneration;
@@ -244,7 +246,7 @@
           if(r.ok)applyChatState(data); return r.ok;
         }catch(_){return false;}
       };
-      const startDraft = () => { draftThread=true; activeThreadId=""; prompt.value=""; renderConversation(null); renderThreads(); closeThreadPopups(); setMenu(false); };
+      const startDraft = () => { draftThread=true; pendingDraftThread=null; activeThreadId=""; prompt.value=""; renderConversation(null); renderThreads(); closeThreadPopups(); setMenu(false); };
       newThreadButton.addEventListener("click",startDraft);
       document.addEventListener("click",()=>closeThreadPopups());
       const uid = prefix => prefix+"-"+Date.now().toString(36)+"-"+crypto.getRandomValues(new Uint32Array(2)).join("-");
@@ -272,25 +274,21 @@
         try{
           if(draftThread){
             const id=threadId(), now=Date.now(), title=titleFrom(text);
-            // Establish the local thread identity before best-effort metadata sync.
-            // mutateChat/applyChatState may otherwise replace activeThreadId with stale
-            // server currentId, causing the visible user turn and Station send to diverge.
-            draftThread=false;activeThreadId=id;
-            let localThread={id,title,pinned:false,createdAt:now,messages:[]};
-            chatThreads=[localThread,...chatThreads.filter(t=>t.id!==id)];
-            renderThreads();
-            await mutateChat([{type:"UPSERT_THREAD",threadId:id,title,pinned:false,createdAt:now},{type:"SET_CURRENT_THREAD",threadId:id}]);
-            activeThreadId=id;
+            // The Mask may stage the first turn optimistically, but it does not
+            // create an official conversation or populate the drawer. The
+            // Workstation promotes/persists the thread when it accepts this send.
+            draftThread=false; activeThreadId=id;
+            pendingDraftThread={id,title,pinned:false,createdAt:now,messages:[]};
           }else{
             const t=currentThread(); if(t&&(!t.title||t.title==="New conversation"))await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:titleFrom(text),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);
           }
           const requestId=uid("web"), userMessageId=uid("message"), assistantMessageId=uid("assistant");
           stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING"}],terminal:false,lastSeq:0};
           // Render the submitted user turn immediately; Station remains the durable authority.
-          let localThread=chatThreads.find(t=>t.id===activeThreadId);
+          let localThread=currentThread();
           if(!localThread){
             localThread={id:activeThreadId,title:titleFrom(text),pinned:false,createdAt:Date.now(),messages:[]};
-            chatThreads=[localThread,...chatThreads.filter(t=>t.id!==activeThreadId)];
+            pendingDraftThread=localThread;
           }
           localThread.messages=Array.isArray(localThread.messages)?localThread.messages:[];
           if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,meta:{requestId,localPending:true}});
