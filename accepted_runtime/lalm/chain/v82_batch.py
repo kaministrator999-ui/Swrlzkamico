@@ -361,7 +361,9 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
             return result
 
         pending.append(int(token))
-        _lockdown("prefill-token-buffered", tokenId=int(token), pendingTokens=len(pending), blockTokens=block_tokens, needLogits=bool(need_logits))
+        if metrics is not None:
+            metrics["prefillTokenOrdinal"] = int(metrics.get("prefillTokenOrdinal") or 0) + 1
+        _lockdown("prefill-token-buffered", tokenId=int(token), tokenOrdinal=int((metrics or {}).get("prefillTokenOrdinal") or 0), pendingTokens=len(pending), blockTokens=block_tokens, needLogits=bool(need_logits), statePos=int(state.pos))
         if not need_logits and len(pending) < block_tokens:
             return None
 
@@ -371,21 +373,25 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
         # back to serial execution without repairing a half-mutated recurrent state.
         trial = impl._clone_state(state)
         batch_started = time.monotonic()
-        _lockdown("batch-attempt-enter", tokenCount=len(block), tokenIds=block, statePos=int(state.pos))
+        if metrics is not None:
+            metrics["prefillBlockOrdinal"] = int(metrics.get("prefillBlockOrdinal") or 0) + 1
+        block_ordinal=int((metrics or {}).get("prefillBlockOrdinal") or 0)
+        _lockdown("prefill-block-dispatch", blockOrdinal=block_ordinal, tokenStartOrdinal=max(1,int((metrics or {}).get("prefillTokenOrdinal") or 0)-len(block)+1), tokenEndOrdinal=int((metrics or {}).get("prefillTokenOrdinal") or 0), tokenCount=len(block), tokenIds=block, statePos=int(state.pos), needLogits=bool(need_logits))
+        _lockdown("batch-attempt-enter", blockOrdinal=block_ordinal, tokenCount=len(block), tokenIds=block, statePos=int(state.pos))
         try:
             hidden = forward_token_block(impl.base, impl.native_bridge, model, trial, block)
             logits = model.matvec("token_embd.weight", hidden) if need_logits else None
             state.conv = trial.conv
             state.kv = trial.kv
             state.pos = trial.pos
-            _lockdown("batch-attempt-exit", tokenCount=len(block), path="batch", statePos=int(state.pos), durationNs=int((time.monotonic()-batch_started)*1_000_000_000))
+            _lockdown("batch-attempt-exit", blockOrdinal=block_ordinal, tokenCount=len(block), path="batch", statePos=int(state.pos), durationNs=int((time.monotonic()-batch_started)*1_000_000_000))
             if metrics is not None and phase == "PREFILL":
                 metrics["batchBlocks"] += 1
                 metrics["batchPrefillTokens"] += len(block)
                 metrics["batchComputeSeconds"] += time.monotonic() - batch_started
             return logits
         except Exception as exc:
-            _lockdown("batch-attempt-fallback", tokenCount=len(block), errorType=type(exc).__name__, error=str(exc)[:2000])
+            _lockdown("batch-attempt-fallback", blockOrdinal=block_ordinal, tokenCount=len(block), errorType=type(exc).__name__, error=str(exc)[:2000])
             if metrics is not None and phase == "PREFILL":
                 metrics["batchFallbacks"] += 1
                 metrics["lastBatchFallback"] = f"{type(exc).__name__}:{exc}"[:240]
@@ -394,14 +400,14 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
             serial_started = time.monotonic()
             for index, buffered_token in enumerate(block):
                 token_started=time.perf_counter_ns()
-                _lockdown("serial-prefill-token-enter", index=index, tokenId=int(buffered_token), statePos=int(state.pos))
+                _lockdown("serial-prefill-token-enter", blockOrdinal=block_ordinal, index=index, tokenOrdinal=max(1,int((metrics or {}).get("prefillTokenOrdinal") or 0)-len(block)+index+1), tokenId=int(buffered_token), statePos=int(state.pos))
                 logits = original_forward(
                     model,
                     buffered_token,
                     state,
                     need_logits=bool(need_logits and index == len(block) - 1),
                 )
-                _lockdown("serial-prefill-token-exit", index=index, tokenId=int(buffered_token), statePos=int(state.pos), durationNs=time.perf_counter_ns()-token_started)
+                _lockdown("serial-prefill-token-exit", blockOrdinal=block_ordinal, index=index, tokenOrdinal=max(1,int((metrics or {}).get("prefillTokenOrdinal") or 0)-len(block)+index+1), tokenId=int(buffered_token), statePos=int(state.pos), durationNs=time.perf_counter_ns()-token_started)
             if metrics is not None and phase == "PREFILL":
                 metrics["serialPrefillTokens"] += len(block)
                 metrics["serialPrefillSeconds"] += time.monotonic() - serial_started
@@ -427,11 +433,16 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
             "decodeTokens": 0,
             "decodeComputeSeconds": 0.0,
             "firstDeltaLatencyMs": None,
+            "prefillTokenOrdinal": 0,
+            "prefillBlockOrdinal": 0,
+            "generatedEventOrdinal": 0,
         }
         _TLS.metrics = metrics
         _lockdown("generate-enter", promptChars=len(str(payload.get("prompt") or "")) if isinstance(payload,dict) else 0, historyMessages=len(payload.get("history") or []) if isinstance(payload,dict) and isinstance(payload.get("history"),list) else 0)
         try:
             for event in original_generate_hot_events(payload, is_cancelled):
+                metrics["generatedEventOrdinal"] = int(metrics.get("generatedEventOrdinal") or 0) + 1
+                _lockdown("response-event", eventOrdinal=int(metrics["generatedEventOrdinal"]), eventType=str(event.get("type") or ""), eventPhase=str(event.get("phase") or ""), seq=event.get("seq"), textChars=len(str(event.get("text") or "")), reasonChars=len(str(event.get("reason") or "")))
                 _lockdown("generate-event", eventType=str(event.get("type") or ""), seq=event.get("seq"), eventPhase=str(event.get("phase") or ""), reason=str(event.get("reason") or "")[:4000], text=str(event.get("text") or "")[:16000])
                 phase = str(event.get("phase") or "")
                 reason = str(event.get("reason") or "")
@@ -454,10 +465,14 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
                     if metrics["prefillFinished"] is None:
                         metrics["prefillFinished"] = time.monotonic()
                     metrics["phase"] = "GENERATING"
+                if event.get("type") == "DELTA":
+                    _lockdown("response-delta", eventOrdinal=int(metrics["generatedEventOrdinal"]), seq=event.get("seq"), textChars=len(str(event.get("text") or "")), text=str(event.get("text") or "")[:16000])
                 if event.get("type") == "DELTA" and metrics["firstDeltaLatencyMs"] is None:
                     value = event.get("firstDeltaLatencyMs")
                     if value is not None:
                         metrics["firstDeltaLatencyMs"] = int(value)
+                if event.get("type") in {"COMPLETED","FAILED","CANCELLED"}:
+                    _lockdown("response-terminal", eventOrdinal=int(metrics["generatedEventOrdinal"]), terminalType=str(event.get("type") or ""), eventPhase=str(event.get("phase") or ""), seq=event.get("seq"), reason=str(event.get("reason") or "")[:4000])
                 if event.get("type") == "COMPLETED":
                     now = time.monotonic()
                     prefill_start = metrics["prefillStarted"] or metrics["started"]
