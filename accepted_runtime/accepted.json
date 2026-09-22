@@ -103,7 +103,7 @@
       "name": "v82-batch",
       "sourceCommit": "c52341389f884f37fa9c6ba1c5950aea54fceffe",
       "acceptedTarget": "lalm/chain/v82_batch.py",
-      "sourceBlobSha": "baeaa9fb18c1d8e78df8fd5bb6240334abc2f339"
+      "sourceBlobSha": "377630541ca49a4b8bd8353ce990e8de6f6da672"
     },
     {
       "name": "v84",
