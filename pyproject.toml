@@ -19,5 +19,4 @@ dependencies = [
 [[tool.vercel.subscribers]]
 entrypoint = "queues.swrlz_generation_v3"
 topics = ["swrlz-generation"]
-retry_after_seconds = 300
 max_concurrency = 1
