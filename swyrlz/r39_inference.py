@@ -6,6 +6,7 @@ import mmap
 import re
 import struct
 import time
+import traceback
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Iterator
@@ -546,10 +547,24 @@ def generate_events(payload: dict[str, Any], is_cancelled: Callable[[], bool] | 
     model: R39Model | None = None
     yield {"type": "STATUS", "phase": "MODEL_LOADING", "reason": "Reconstructing/verifying R39 and opening the canonical SWRLZX tensor view."}
     try:
-        load = ensure_r39()
+        yield {"type":"STATUS","phase":"MODEL_ARTIFACT_DISCOVERY","reason":f"R39 loader checkpoint: rawExists={RAW.is_file()} rawPath={RAW}."}
+        ensure_started=time.monotonic()
+        try:
+            load=ensure_r39()
+        except Exception as exc:
+            yield {"type":"STATUS","phase":"MODEL_LOAD_DIAGNOSTIC","reason":f"ensure_r39 raised {type(exc).__name__}: {str(exc)[:1200]}","categories":["R39_ENSURE_EXCEPTION"],"checkpoint":"ensure_r39","traceback":traceback.format_exc(limit=8)[-6000:]}
+            raise
+        yield {"type":"STATUS","phase":"MODEL_LOAD_DIAGNOSTIC","reason":f"ensure_r39 returned in {int((time.monotonic()-ensure_started)*1000)}ms: modelReady={bool(load.get('modelReady'))} source={load.get('source')} code={load.get('code')} detail={str(load.get('detail') or '')[:1200]}","checkpoint":"ensure_r39-return","modelReady":bool(load.get("modelReady")),"loadCode":str(load.get("code") or ""),"loadSource":str(load.get("source") or "")}
         if not load.get("modelReady"):
             raise R39InferenceError(str(load.get("code", "R39_LOAD_FAILED")), str(load.get("detail", "R39 reconstruction failed.")))
-        model = R39Model(RAW)
+        yield {"type":"STATUS","phase":"MODEL_VIEW_OPENING","reason":f"R39 loader checkpoint: verified raw artifact; opening SWRLZX tensor view at {RAW}."}
+        model_started=time.monotonic()
+        try:
+            model=R39Model(RAW)
+        except Exception as exc:
+            yield {"type":"STATUS","phase":"MODEL_LOAD_DIAGNOSTIC","reason":f"R39Model open raised {type(exc).__name__}: {str(exc)[:1200]}","categories":["R39_MODEL_OPEN_EXCEPTION"],"checkpoint":"R39Model","traceback":traceback.format_exc(limit=8)[-6000:]}
+            raise
+        yield {"type":"STATUS","phase":"MODEL_READY","reason":f"R39 tensor view opened in {int((time.monotonic()-model_started)*1000)}ms; modelId={model.manifest.get('modelId','R39')} tensors={len(model.desc)} tokens={len(model.tokenizer.tokens)}.","checkpoint":"R39Model-ready"}
         yield {"type": "ROUTE", "phase": "ROUTE_RESOLVED", "reason": "Using local R39 Python reference inference.", "identity": {"route": "LOCAL_R39", "engineId": ENGINE_ID, "modelId": str(model.manifest.get("modelId") or "R39"), "modelSha256": MODEL_SHA256}}
         prompt = render_chat_prompt(payload)
         tokens = model.tokenizer.encode(prompt)
