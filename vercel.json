@@ -14,10 +14,12 @@
       "excludeFiles": "{.transport/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
     },
     "api/index.py": {
-      "maxDuration": 300
+      "maxDuration": 300,
+      "excludeFiles": "{.transport/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
     },
     "queues/swrlz_generation_v3.py": {
-      "maxDuration": 300
+      "maxDuration": 300,
+      "excludeFiles": "{.transport/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
     }
   }
 }
