@@ -4,4 +4,4 @@ KEEP=current-production-host
 PROJECT=swrlzkamico-o3nu
 REQUESTED_AT=2026-09-22
 PURPOSE=predeploy cleanup before detached subscriber boundary camera release
-RETRY=9
+RETRY=10
