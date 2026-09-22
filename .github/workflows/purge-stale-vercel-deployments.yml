@@ -74,7 +74,7 @@ jobs:
 
           current_json="$(curl --fail-with-body --silent --show-error \
             "${auth[@]}" \
-            "https://api.vercel.com/v13/deployments/$VERCEL_PRODUCTION_HOST?teamId=$VERCEL_ORG_ID")"
+            "https://api.vercel.com/v13/deployments/$VERCEL_PRODUCTION_HOST?teamId=$VERCEL_ORG_ID&url=$VERCEL_PRODUCTION_HOST")"
           keep_id="$(jq -r '.id // .uid // empty' <<<"$current_json")"
           if [[ -z "$keep_id" || "$keep_id" != dpl_* ]]; then
             echo "Could not resolve current production deployment; refusing destructive cleanup." >&2
