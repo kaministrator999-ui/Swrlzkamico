@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate/package the accepted runtime generation with local R39 sources."""
 from __future__ import annotations
-import argparse, base64, hashlib, json, re, shutil, urllib.request
+import argparse, base64, hashlib, json, re, shutil, urllib.parse, urllib.request
 from pathlib import Path
 
 # Historical R39 ancestry is acquired only during pre-deploy preparation. Every
@@ -139,7 +139,7 @@ def main() -> int:
     # Install a fail-closed local source transport before v74 executes. Historical
     # wrappers may keep their original urllib calls, but recognized R39 source URLs
     # are served only from this immutable prepared generation; unknown URLs fail.
-    shim='''\nclass _SwrlzLocalResponse:\n    def __init__(self,data): self._data=data\n    def __enter__(self): return self\n    def __exit__(self,*args): return False\n    def read(self,limit=-1): return self._data if limit is None or limit<0 else self._data[:limit]\n\n_SWRLZ_SOURCE_URLS='''+repr(url_map)+'''\n_SWRLZ_ORIGINAL_URLOPEN=urllib.request.urlopen\ndef _swrlz_local_urlopen(request,*args,**kwargs):\n    url=getattr(request,"full_url",request)\n    rel=_SWRLZ_SOURCE_URLS.get(str(url))\n    if rel is None:\n        raise RuntimeError("R39_PREPARED_UNKNOWN_NETWORK_SOURCE:"+str(url))\n    return _SwrlzLocalResponse((Path(__file__).parent/rel).read_bytes())\nurllib.request.urlopen=_swrlz_local_urlopen\n'''
+    shim='''\nclass _SwrlzLocalResponse:\n    def __init__(self,data): self._data=data\n    def __enter__(self): return self\n    def __exit__(self,*args): return False\n    def read(self,limit=-1): return self._data if limit is None or limit<0 else self._data[:limit]\n\n_SWRLZ_SOURCE_URLS='''+repr(url_map)+'''\n_SWRLZ_ORIGINAL_URLOPEN=urllib.request.urlopen\ndef _swrlz_local_urlopen(request,*args,**kwargs):\n    url=getattr(request,"full_url",request)\n    url_text=str(url)\n    rel=_SWRLZ_SOURCE_URLS.get(url_text)\n    if rel is not None:\n        return _SwrlzLocalResponse((Path(__file__).parent/rel).read_bytes())\n    parsed=urllib.parse.urlparse(url_text)\n    transport_prefix="/kaministrator999-ui/Swrlzkamico/"\n    transport_marker="/.transport/lalm%C2%A7wyrlz/lalm%C2%A7wyrlz.zip.part"\n    if parsed.scheme=="https" and parsed.netloc=="raw.githubusercontent.com" and parsed.path.startswith(transport_prefix) and transport_marker in parsed.path:\n        return _SWRLZ_ORIGINAL_URLOPEN(request,*args,**kwargs)\n    raise RuntimeError("R39_PREPARED_UNKNOWN_NETWORK_SOURCE:"+url_text)\nurllib.request.urlopen=_swrlz_local_urlopen\n'''
     anchor='_SWRLZ_ANCESTRY=Path(__file__).with_name("ancestry")\n'
     source=source.replace(anchor,anchor+shim,1)
     if "urllib.request.urlopen(" in source:
