@@ -243,7 +243,7 @@ class RedisRestChatStore(DurableChatStore):
         if existing is None:
             raise DurableStoreUnavailable("generation job does not exist")
         self._set_json(self._key("job", job.user_id, job.request_id), job)
-        if job.status in {"queued", "running"}:
+        if str(job.state or "").upper() in {"QUEUED", "RUNNING", "STREAMING"}:
             self._command("SADD", self._key("active_jobs", job.user_id), job.request_id)
         else:
             self._command("SREM", self._key("active_jobs", job.user_id), job.request_id)
