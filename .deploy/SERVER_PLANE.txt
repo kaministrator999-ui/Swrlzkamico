@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release draft-thread identity pinning for visible user turns
-RETRY=24
+PURPOSE=verify deploy then automatically purge stale Vercel deployments
+RETRY=25
