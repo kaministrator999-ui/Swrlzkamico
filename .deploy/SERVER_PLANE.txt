@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Server 2.3.296 request-scoped prefill checkpoints
-RETRY=40
+PURPOSE=release Server 2.3.297 first-block token microscope
+RETRY=41
