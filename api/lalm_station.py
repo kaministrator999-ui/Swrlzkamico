@@ -16,6 +16,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from api.google_account import AuthenticationError, user_id_from_request
 from api.chat_state import _read_state, _state_value, _headers
 from api.chat_transcript_store import STORE
+from api.canonical_redis_state import store as canonical_redis_store, _canonical_messages_compatible
 import api.chat as chat
 
 CONTRACT = "swrlz-lalm-station-sync-v1"
@@ -120,8 +121,50 @@ def install(server, chat_extensions) -> None:
             value = _read_state(user_id)
             revision, state, _ = _state_value(value)
             state = state or {"version": 1, "currentId": "", "threads": []}
+            # Canonical Redis is the conversation authority. chat_state is metadata
+            # only (current selection, title/pin overrides, tombstones). The Station
+            # projects durable threads/messages into one account snapshot for the Mask.
+            metadata_threads = {str(t.get("id") or ""): t for t in state.get("threads", []) if isinstance(t, dict)}
+            tombstones = {str(t.get("threadId") or "") for t in (value or {}).get("tombstones", []) if isinstance(t, dict)}
+            redis = canonical_redis_store()
+            threads: list[dict[str, Any]] = []
+            for record in redis.list_threads(user_id, limit=80):
+                thread_id = str(record.thread_id)
+                if not thread_id or thread_id in tombstones:
+                    continue
+                meta = metadata_threads.get(thread_id, {})
+                durable_messages, _legacy_count = _canonical_messages_compatible(redis, user_id=user_id, thread_id=thread_id, limit=1000)
+                rendered_messages: list[dict[str, Any]] = []
+                for message in durable_messages:
+                    role = str(message.role or "").upper()
+                    if role not in {"USER", "ASSISTANT"}:
+                        continue
+                    text = str(message.committed_text or "")
+                    # Streaming assistant placeholders are generation state, not
+                    # committed conversation messages.
+                    if role == "ASSISTANT" and (not text or str(message.state or "").upper() == "STREAMING"):
+                        continue
+                    rendered_messages.append({
+                        "id": str(message.message_id),
+                        "role": role.lower(),
+                        "text": text,
+                        "createdAt": int(float(message.created_at or 0) * 1000),
+                        "state": str(message.state or "").lower(),
+                        "pinned": bool(meta.get("pinned", False)),
+                        "meta": {"requestId": str(message.request_id or ""), "authority": "workstation"},
+                    })
+                threads.append({
+                    "id": thread_id,
+                    "title": str(meta.get("title") or record.title or "New conversation"),
+                    "createdAt": int(float(record.created_at or 0) * 1000),
+                    "updatedAt": int(float(record.updated_at or 0) * 1000),
+                    "pinned": bool(meta.get("pinned", False)),
+                    "messages": rendered_messages,
+                })
+
             current_id = str(state.get("currentId") or "")
-            threads = list(state.get("threads") or [])
+            if current_id not in {str(t.get("id") or "") for t in threads}:
+                current_id = str(threads[0].get("id") or "") if threads else ""
             current = next((t for t in threads if str(t.get("id") or "") == current_id), None)
             messages = list(current.get("messages") or []) if isinstance(current, dict) else []
 
