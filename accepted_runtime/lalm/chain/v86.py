@@ -6,7 +6,7 @@ semantic owner using cumulative tokenization of the same tokenizer/render framin
 by generation. Marginal segment counts sum to the exact rendered prompt token count.
 """
 from __future__ import annotations
-import hashlib,time
+import hashlib,time,json
 
 _V85_INSPECT_V86=inspect_engine
 _V85_RENDER_CAMERA_V86=_render_camera
@@ -112,9 +112,31 @@ def _v86_lightweight_inventory(payload,request_id):
     except Exception as exc:
         _camera(request_id,"prompt-inventory-error",contract="r39-v86-lightweight-prompt-inventory-v1",errorType=type(exc).__name__)
 
+def _v86_prefill_accounting(payload,request_id):
+    """One-pass exact prompt/token accounting plus block timing hooks."""
+    try:
+        prepared,segments=_v86_segments(payload)
+        model=_get_model(); tokenizer=model.tokenizer
+        exact_prompt=base.render_chat_prompt(prepared)
+        tokens=tokenizer.encode(exact_prompt)
+        owners={}; entries=[]
+        for index,(owner,label,rendered) in enumerate(segments):
+            item={"index":index,"owner":owner,"label":label,"renderedChars":len(rendered),"fingerprint":_v86_hash(rendered)}
+            entries.append(item)
+            bucket=owners.setdefault(owner,{"segments":0,"renderedChars":0})
+            bucket["segments"]+=1;bucket["renderedChars"]+=len(rendered)
+        _camera(request_id,"prefill-input-accounting",contract="r39-v86-prefill-accounting-v1",
+            promptChars=len(str(prepared.get("prompt") or "")),historyEntries=len(prepared.get("history",[]) or []),
+            renderedChars=len(exact_prompt),renderedTokens=len(tokens),blockTokens=96,
+            expectedBlocks=(len(tokens)+95)//96,owners=owners,segments=entries,
+            promptFingerprint=_v86_hash(exact_prompt))
+    except Exception as exc:
+        _camera(request_id,"prefill-input-accounting-error",contract="r39-v86-prefill-accounting-v1",errorType=type(exc).__name__)
+
 def _v86_render_camera(payload,request_id):
     _V85_RENDER_CAMERA_V86(payload,request_id)
     _v86_lightweight_inventory(payload,request_id)
+    _v86_prefill_accounting(payload,request_id)
     # Prompt-composition attribution is a diagnostic, not part of inference.
     # On the Python/Numpy fallback it re-tokenizes every cumulative segment and
     # then renders/tokenizes the full prompt again before real prefill. That can
