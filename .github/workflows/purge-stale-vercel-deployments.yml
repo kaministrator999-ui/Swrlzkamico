@@ -74,7 +74,7 @@ jobs:
 
           current_json="$(curl --fail-with-body --silent --show-error \
             "${auth[@]}" \
-            "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID")"
+            "https://api.vercel.com/v7/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID")"
           keep_id="$(jq -r --arg host "$VERCEL_PRODUCTION_HOST" '
             [.deployments[]?
               | select(
@@ -103,7 +103,7 @@ jobs:
           # converges from fresh project state instead.
           for pass in $(seq 1 20); do
             page="$(curl --fail-with-body --silent --show-error "${auth[@]}" \
-              "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID")"
+              "https://api.vercel.com/v7/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID")"
             mapfile -t ids < <(jq -r '.deployments[]? | .uid // .id // empty' <<<"$page")
 
             stale=()
@@ -142,7 +142,7 @@ jobs:
           fi
 
           verify="$(curl --fail-with-body --silent --show-error "${auth[@]}" \
-            "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID")"
+            "https://api.vercel.com/v7/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID")"
           mapfile -t remaining < <(jq -r '.deployments[]? | .uid // .id // empty' <<<"$verify")
           echo "- Deleted: $deleted" >> "$GITHUB_STEP_SUMMARY"
           echo "- Failed: $failed" >> "$GITHUB_STEP_SUMMARY"
