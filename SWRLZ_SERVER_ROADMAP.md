@@ -1632,3 +1632,11 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Deployment/restart:** none. Documentation/governance only; deployment-inert.
 - **Existing unresolved work preserved:** lockdown route-enter 500 live acceptance and adjacent client-debug 401/freeze remain unresolved and are not superseded by this discovery hardening.
 - **Result:** COMPLETE.
+
+
+### Server 2.3.292 — lightweight prompt inventory camera
+- Adds an always-on non-tokenizing camera at the R39 prompt boundary.
+- Records each history entry's role, semantic owner, character count, and SHA-256 fingerprint without logging its text.
+- Records per-owner entry/character totals plus response-directive and current-user character counts.
+- Keeps expensive exact token attribution opt-in; normal inference does not cumulatively re-tokenize prompt segments.
+- Purpose: identify which system-contract families inflate ordinary full-R39 prefill without turning observability into request-path compute.
