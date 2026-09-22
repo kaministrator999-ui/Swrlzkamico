@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Server 2.3.294 Unicode policy separation test
-RETRY=38
+PURPOSE=release Server 2.3.295 end-to-end inference flight recorder
+RETRY=39
