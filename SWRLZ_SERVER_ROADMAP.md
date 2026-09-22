@@ -36,6 +36,18 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE FINISHED — 2026-09-22 — deployment-governance mutation/version/watch contract
+
+- **Repository Work:** **1.0.15 → 1.0.16**.
+- **Deployment Control:** **1.0.11 → 1.0.12**.
+- **Project-start contract:** every governed GitHub file mutation must update affected version authorities and this Roadmap before deployment.
+- **Predeploy cleanup contract:** before the canonical GitHub → Vercel production deploy, run `.github/workflows/purge-stale-vercel-deployments.yml` for the existing `swrlzkamico-o3nu` project, preserve the currently serving production deployment, and require successful terminal cleanup before deployment continues.
+- **Deployment observation contract:** after cleanup, trigger deployment through the canonical GitHub production workflow, watch GitHub Actions to a terminal result, then watch the resulting Vercel deployment to its terminal state. Do not finish the user-facing deployment response at queued/building/triggered.
+- **Diagnostic mutation included:** detached Workstation subscriber execution-boundary cameras were added in main commit `ffea33d374a5e28a392bb8da747731f013e334af` to distinguish normal R39 return, Python exception/finally, and external invocation disappearance without changing CLIENT → SERVER ownership.
+- **Governance commits:** §tart contract was updated by `539bd0416be12a2d7808fb13f677ebb431e8ba7b` and `01117da532498b33b9face82d4937c199512bb29`.
+- **Deployment state:** governed production release authorized in this conversation; cleanup and deployment must be watched through terminal GitHub and Vercel states before reporting completion.
+
+
 ### PERFORMANCE HOTFIX — 2026-09-22 — Server 2.3.291 full-R39 request-path camera isolation
 
 - **Server Runtime candidate:** **2.3.290 → 2.3.291**.
