@@ -6,7 +6,7 @@ runtime branch by the dedicated hot/live loaders. The stable frozen-web
 collector host applies authentication and a fixed runtime-module contract while
 the collector implementation and page remain runtime-owned.
 
-Server 2.3.292 removes diagnostic re-tokenization from normal full-inference requests
+Server 2.3.293 removes diagnostic re-tokenization from normal full-inference requests
 preserving the runtime-source-of-truth delivery boundary.
 """
 from __future__ import annotations
@@ -32,7 +32,7 @@ from api.lalm_station import install as _install_lalm_station
 from api.chat_state import app as _chat_state_app
 import api.chat_extensions as _chat_extensions
 
-VERSION = "2.3.292"
+VERSION = "2.3.293"
 _server.VERSION = VERSION
 _server.app.version = VERSION
 _server.CAPABILITIES["local-r39-inference"] = {"kind":"runtime-execution","ready":True,"engineId":"swrlz_r39_native_qmatvec_v1","fallbackEngineId":"swrlz_r39_python_reference_v1","boundary":"compiled direct-quantized R39 execution; hot reasoning overlay remains independent of bundled server release"}
