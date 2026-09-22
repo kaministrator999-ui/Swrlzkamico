@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Chat 1.0.38 durable assistant terminal persistence across refresh
-RETRY=30
+PURPOSE=release Chat 1.0.39 preserve Workstation message projection on thread selection
+RETRY=31
