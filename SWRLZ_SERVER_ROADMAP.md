@@ -36,6 +36,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE STARTED — 2026-09-22 — verifier repair + self-populating terminal assistant projection
+
+- **Requested outcome:** repair the stale-deployment verifier and make completed assistant messages appear in the open Chat automatically without requiring the user to send another message.
+- **Observed production evidence:** newest turn `web-mud8oe85-1741027292-2228406394` was accepted CLIENT → SERVER, canonical Redis USER/ASSISTANT placeholders were created, and the detached subscriber was invoked. The immediately preceding `Hey` turn terminalized FAILED with empty assistant text. Current sync traffic is live, but the browser polling contract can stop when Station reports terminal before canonical assistant commit is observed.
+- **Verifier defect:** standalone purge CI receives an empty deployment enumeration even while connected Vercel evidence shows the existing canonical project `swrlzkamico-o3nu` has a READY production deployment. Cleanup must fail closed until canonical project enumeration/protection is reliable.
+- **Expected owners:** `.github/workflows/purge-stale-vercel-deployments.yml` for verifier repair; `chat/§wyrlz/index.html` for client projection/poll lifecycle. No new Vercel project is permitted.
+- **Deployment expectation:** stable production activation required after source/version reconciliation. Reuse only `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`.
+- **Verification plan:** static diff; successful stale-deployment verification; canonical GitHub production workflow terminal success; Vercel deployment terminal READY; then runtime Chat message test/log inspection.
+
+
 ### UPDATE FINISHED — 2026-09-22 — deployment-governance mutation/version/watch contract
 
 - **Repository Work:** **1.0.15 → 1.0.16**.
