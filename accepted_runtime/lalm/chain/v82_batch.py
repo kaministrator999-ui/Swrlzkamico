@@ -349,6 +349,13 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
             setattr(state, "_swrlz_batch_prefill_tokens", pending)
         metrics = _metric()
         phase = str((metrics or {}).get("phase") or "")
+        # First-block token microscope: prove exactly which already-tokenized token
+        # reaches the consumer, plus bounded decoded neighborhood when the tokenizer
+        # wrapper has supplied it. This is observational only.
+        next_ordinal=int((metrics or {}).get("prefillTokenOrdinal") or 0)+1
+        microscope=(metrics or {}).get("prefillMicroscope") or {}
+        micro=microscope.get(next_ordinal,{}) if isinstance(microscope,dict) else {}
+        _lockdown("prefill-token-consume-enter", tokenOrdinal=next_ordinal, tokenId=int(token), decodedPiece=str(micro.get("piece") or "")[:128], previousTokenId=micro.get("previousTokenId"), previousPiece=str(micro.get("previousPiece") or "")[:128], nextTokenId=micro.get("nextTokenId"), nextPiece=str(micro.get("nextPiece") or "")[:128], needLogits=bool(need_logits), statePos=int(state.pos), pendingTokens=len(pending))
         _lockdown("forward-token-enter", tokenId=int(token), needLogits=bool(need_logits), statePos=int(state.pos), pendingTokens=len(pending))
 
         # Decode stays single-token. This preserves ITL and avoids batching a lone token.
@@ -445,6 +452,7 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
             "prefillTokenOrdinal": 0,
             "prefillBlockOrdinal": 0,
             "generatedEventOrdinal": 0,
+            "prefillMicroscope": {},
         }
         _TLS.metrics = metrics
         _lockdown("generate-enter", promptChars=len(str(payload.get("prompt") or "")) if isinstance(payload,dict) else 0, historyMessages=len(payload.get("history") or []) if isinstance(payload,dict) and isinstance(payload.get("history"),list) else 0)
