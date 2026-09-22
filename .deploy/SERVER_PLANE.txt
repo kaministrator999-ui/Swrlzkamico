@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Server 2.3.303 detached R39 inference execution window
-RETRY=47
+PURPOSE=retry Server 2.3.303 detached R39 inference execution window
+RETRY=48
