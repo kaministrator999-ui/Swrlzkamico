@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=retry Server 2.3.303 detached R39 inference execution window
-RETRY=48
+PURPOSE=retry Server 2.3.303 with valid Vercel subscriber config
+RETRY=49
