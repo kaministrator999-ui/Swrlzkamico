@@ -162,6 +162,40 @@ def install(server, chat_extensions) -> None:
                     "messages": rendered_messages,
                 })
 
+            # If the first canonical turn created a durable thread before metadata
+            # knew about it, promote that thread into account metadata here. This keeps
+            # the Workstation authoritative while making the new thread immediately
+            # eligible for drawer population and later metadata actions.
+            durable_ids = {str(t.get("id") or "") for t in threads}
+            metadata_ids = set(metadata_threads)
+            missing_metadata = durable_ids - metadata_ids
+            if missing_metadata:
+                from api.chat_state import _write_state
+                stamp = int(time.time() * 1000)
+                state_threads = list(state.get("threads") or [])
+                by_id = {str(t.get("id") or ""): t for t in threads}
+                for thread_id in missing_metadata:
+                    projected = by_id[thread_id]
+                    state_threads.insert(0, {
+                        "id": thread_id,
+                        "title": str(projected.get("title") or "New conversation"),
+                        "createdAt": int(projected.get("createdAt") or stamp),
+                        "updatedAt": stamp,
+                        "pinned": False,
+                        "messages": [],
+                    })
+                revision += 1
+                state = {"version": 1, "currentId": next(iter(missing_metadata)), "threads": state_threads}
+                _write_state(user_id, {
+                    "contract": "swrlz-chat-account-state-v1",
+                    "mutationContract": "swrlz-chat-account-mutation-v1",
+                    "userId": user_id,
+                    "revision": revision,
+                    "updatedAt": stamp,
+                    "state": state,
+                    "tombstones": list((value or {}).get("tombstones") or []),
+                })
+
             current_id = str(state.get("currentId") or "")
             if current_id not in {str(t.get("id") or "") for t in threads}:
                 current_id = str(threads[0].get("id") or "") if threads else ""
