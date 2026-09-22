@@ -1654,3 +1654,10 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Unicode tokenizer/model/runtime capability remains unchanged.
 - Adds unicode-policy-separated camera with removed message/character counts for before/after measurement.
 - Test goal: compare rendered prompt tokens, 96-token prefill blocks, and terminal completion against 2.3.293 before touching any other policy family.
+
+
+### Server 2.3.295 — end-to-end inference flight recorder
+- Extends the existing operator/prompt cameras through every prefill token, 96-token block dispatch, batch attempt/fallback, serial fallback token, generation event, DELTA, and terminal event.
+- Adds monotonic tokenOrdinal, blockOrdinal, and eventOrdinal fields so one request can be reconstructed in exact order.
+- Existing layer/operator cameras remain active for RMS, RoPE, SiLU, row/vector/matrix, matvec/matmat, attention, FFN, residual, KV/state position, sampling, and timing.
+- Unicode policy separation experiment remains isolated; this release adds observation only around the inference/response path.
