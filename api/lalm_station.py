@@ -133,9 +133,27 @@ def install(server, chat_extensions) -> None:
                     terminal_reason = "stream ended without terminal event"
                     inference_failed = False
                     inference_failure_reason = ""
+                    pull_ordinal = 0
+                    request_id = str(turn.request_id or "")
+                    iterator = source.__aiter__()
+                    def _station_stream_camera(stage: str, **fields):
+                        record = {"contract":"swrlz-station-stream-driver-v1","stage":stage,"requestId":request_id,"pullOrdinal":pull_ordinal,"atUnixMs":int(time.time()*1000)}
+                        record.update(fields)
+                        print("SWRLZ_STATION_STREAM "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
                     try:
-                        async for chunk in source:
+                        while True:
+                            pull_ordinal += 1
+                            _station_stream_camera("source-next-enter")
+                            try:
+                                chunk = await iterator.__anext__()
+                            except StopAsyncIteration:
+                                _station_stream_camera("source-next-stop")
+                                break
+                            except BaseException as exc:
+                                _station_stream_camera("source-next-error",errorType=type(exc).__name__,errorMessage=str(exc)[:500])
+                                raise
                             raw = chunk.encode("utf-8") if isinstance(chunk, str) else bytes(chunk)
+                            _station_stream_camera("source-next-exit",chunkBytes=len(raw))
                             buffer += raw.decode("utf-8", errors="replace")
                             lines = buffer.split("\n")
                             buffer = lines.pop()
@@ -155,7 +173,9 @@ def install(server, chat_extensions) -> None:
                                 if event.get("terminal"):
                                     terminal_type = event_type or "FAILED"
                                     terminal_reason = str(event.get("reason") or "")
+                            _station_stream_camera("outer-yield-enter",chunkBytes=len(raw))
                             yield raw
+                            _station_stream_camera("outer-yield-resumed",chunkBytes=len(raw))
                         if buffer.strip():
                             try:
                                 event = json.loads(buffer)
@@ -171,6 +191,7 @@ def install(server, chat_extensions) -> None:
                             except Exception:
                                 pass
                     finally:
+                        _station_stream_camera("stream-finally-enter",terminalType=terminal_type,textChars=sum(len(x) for x in text_parts))
                         committed_text = "".join(text_parts)
                         # Fail closed when any inference pass failed and the outer
                         # contract later emits an empty COMPLETED terminal. A repair
