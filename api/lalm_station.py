@@ -115,7 +115,7 @@ def install(server, chat_extensions) -> None:
                 "acceptedAt": time.time(),
             }
             message_id = await queue_send(
-                "swrlz-lalm-generation",
+                "swrlz-generation",
                 work,
                 idempotency_key=turn.request_id,
             )
