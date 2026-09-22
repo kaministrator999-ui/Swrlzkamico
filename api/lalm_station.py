@@ -12,6 +12,7 @@ from typing import Any
 
 from fastapi import Request
 from fastapi.responses import JSONResponse, StreamingResponse
+from vercel.queue import send as queue_send
 
 from api.google_account import AuthenticationError, user_id_from_request
 from api.chat_state import _read_state, _state_value, _headers
@@ -82,136 +83,61 @@ def install(server, chat_extensions) -> None:
 
     @app.post("/api/lalm_station/send", include_in_schema=False)
     async def station_send(request: Request):
-        """Accept one authenticated Chat turn and dispatch it to the installed R39 owner."""
+        """Persist one authenticated turn, enqueue generation, and return immediately.
+
+        The browser is only an ingress/subscriber. Once the canonical turn is
+        accepted, the Workstation queue owns generation lifetime.
+        """
         try:
             user_id_from_request(request)
-            # Reuse the canonical Chat ingress middleware and installed resumable
-            # generation owner instead of creating a second inference path.
             payload = await request.json()
             if not isinstance(payload, dict):
                 return JSONResponse({"ok": False, "contract": CONTRACT, "code": "INVALID_REQUEST"}, status_code=400, headers=_headers())
             payload["ingress"] = "SWRLZ_LALM_STATION"
-            # Internal forwarding does not traverse the outer canonical-turn
-            # middleware. Claim the authenticated durable turn here before inference
-            # so first-message thread creation is Workstation-owned and immediately
-            # visible to account-scoped sync.
             turn = chat_turn_state.begin_turn(request, payload)
-            payload["threadId"] = turn.thread_id
-            payload["messageId"] = turn.user_message_id
-            payload["assistantMessageId"] = turn.assistant_message_id
             history, _history_revision = chat_turn_state.canonical_history(
                 request, thread_id=turn.thread_id, request_id=turn.request_id, limit=32
             )
-            payload["history"] = history
-            body = __import__("json").dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-            # Starlette's middleware chain is the authority that installs canonical
-            # turn identity/history. Route internally through /api/chat so the same
-            # admission/commit contracts remain in force.
-            scope = dict(request.scope)
-            scope["path"] = "/api/chat"
-            scope["raw_path"] = b"/api/chat"
-            scope["query_string"] = b"action=stream"
-            sent = False
-            async def receive():
-                nonlocal sent
-                if sent:
-                    return {"type": "http.disconnect"}
-                sent = True
-                return {"type": "http.request", "body": body, "more_body": False}
-            forwarded = Request(scope, receive)
-            response = await chat_extensions.chat._post_action(forwarded, "stream")
-            # Because this dispatch is internal, the outer canonical-turn response
-            # middleware is not traversed. Mirror the streamed NDJSON while collecting
-            # the assistant text, then terminal-commit it before the stream closes.
-            if isinstance(response, StreamingResponse):
-                source = response.body_iterator
-                async def committed_stream():
-                    import json
-                    buffer = ""
-                    text_parts: list[str] = []
-                    terminal_type = "FAILED"
-                    terminal_reason = "stream ended without terminal event"
-                    inference_failed = False
-                    inference_failure_reason = ""
-                    pull_ordinal = 0
-                    request_id = str(turn.request_id or "")
-                    iterator = source.__aiter__()
-                    def _station_stream_camera(stage: str, **fields):
-                        record = {"contract":"swrlz-station-stream-driver-v1","stage":stage,"requestId":request_id,"pullOrdinal":pull_ordinal,"atUnixMs":int(time.time()*1000)}
-                        record.update(fields)
-                        print("SWRLZ_STATION_STREAM "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
-                    try:
-                        while True:
-                            pull_ordinal += 1
-                            _station_stream_camera("source-next-enter")
-                            try:
-                                chunk = await iterator.__anext__()
-                            except StopAsyncIteration:
-                                _station_stream_camera("source-next-stop")
-                                break
-                            except BaseException as exc:
-                                _station_stream_camera("source-next-error",errorType=type(exc).__name__,errorMessage=str(exc)[:500])
-                                raise
-                            raw = chunk.encode("utf-8") if isinstance(chunk, str) else bytes(chunk)
-                            _station_stream_camera("source-next-exit",chunkBytes=len(raw))
-                            buffer += raw.decode("utf-8", errors="replace")
-                            lines = buffer.split("\n")
-                            buffer = lines.pop()
-                            for line in lines:
-                                if not line.strip():
-                                    continue
-                                try:
-                                    event = json.loads(line)
-                                except Exception:
-                                    continue
-                                event_type = str(event.get("type") or "").upper()
-                                if event_type == "DELTA":
-                                    text_parts.append(str(event.get("text") or ""))
-                                if event_type == "FAILED":
-                                    inference_failed = True
-                                    inference_failure_reason = str(event.get("reason") or inference_failure_reason)
-                                if event.get("terminal"):
-                                    terminal_type = event_type or "FAILED"
-                                    terminal_reason = str(event.get("reason") or "")
-                            _station_stream_camera("outer-yield-enter",chunkBytes=len(raw))
-                            yield raw
-                            _station_stream_camera("outer-yield-resumed",chunkBytes=len(raw))
-                        if buffer.strip():
-                            try:
-                                event = json.loads(buffer)
-                                event_type = str(event.get("type") or "").upper()
-                                if event_type == "DELTA":
-                                    text_parts.append(str(event.get("text") or ""))
-                                if event_type == "FAILED":
-                                    inference_failed = True
-                                    inference_failure_reason = str(event.get("reason") or inference_failure_reason)
-                                if event.get("terminal"):
-                                    terminal_type = event_type or "FAILED"
-                                    terminal_reason = str(event.get("reason") or "")
-                            except Exception:
-                                pass
-                    finally:
-                        _station_stream_camera("stream-finally-enter",terminalType=terminal_type,textChars=sum(len(x) for x in text_parts))
-                        committed_text = "".join(text_parts)
-                        # Fail closed when any inference pass failed and the outer
-                        # contract later emits an empty COMPLETED terminal. A repair
-                        # wrapper may recover only by producing actual assistant text.
-                        if inference_failed and not committed_text and terminal_type == "COMPLETED":
-                            terminal_type = "FAILED"
-                            terminal_reason = inference_failure_reason or "inference failed before producing assistant text"
-                        chat_turn_state.finish_turn(
-                            turn,
-                            text=committed_text,
-                            terminal_type=terminal_type,
-                            reason=terminal_reason,
-                        )
-                return StreamingResponse(
-                    committed_stream(),
-                    status_code=response.status_code,
-                    headers=dict(response.headers),
-                    media_type=response.media_type,
-                )
-            return response
+            work = {
+                "contract": "swrlz-lalm-workstation-job-v1",
+                "requestId": turn.request_id,
+                "userId": turn.user_id,
+                "accountScope": turn.account_scope,
+                "threadId": turn.thread_id,
+                "userMessageId": turn.user_message_id,
+                "assistantMessageId": turn.assistant_message_id,
+                "prompt": str(payload.get("prompt") or ""),
+                "history": history,
+                "payload": {
+                    key: value for key, value in payload.items()
+                    if key not in {"history", "session", "cookie", "authorization"}
+                },
+                "acceptedAt": time.time(),
+            }
+            message_id = await queue_send(
+                "swrlz-lalm-generation",
+                work,
+                idempotency_key=turn.request_id,
+            )
+            print("SWRLZ_WORKSTATION_QUEUE "+__import__("json").dumps({
+                "contract":"swrlz-lalm-workstation-job-v1","stage":"enqueued",
+                "requestId":turn.request_id,"threadId":turn.thread_id,
+                "queueMessageId":str(message_id),"atUnixMs":int(time.time()*1000)
+            },separators=(",",":")),flush=True)
+            return JSONResponse({
+                "ok": True,
+                "contract": CONTRACT,
+                "accepted": True,
+                "requestId": turn.request_id,
+                "threadId": turn.thread_id,
+                "userMessageId": turn.user_message_id,
+                "assistantMessageId": turn.assistant_message_id,
+                "generationOwner": "workstation-queue",
+                "synchronize": {
+                    "endpoint": "/api/lalm_station/sync",
+                    "strategy": "snapshot-follow",
+                },
+            }, status_code=202, headers=_headers())
         except AuthenticationError as exc:
             return JSONResponse({"ok": False, "contract": CONTRACT, "code": "ACCOUNT_SESSION_INVALID", "detail": str(exc)}, status_code=401, headers=_headers())
         except Exception as exc:
