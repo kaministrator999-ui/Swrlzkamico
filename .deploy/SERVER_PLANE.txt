@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Server 2.3.300 durable queue lifecycle repair
-RETRY=44
+PURPOSE=release Server 2.3.301 queue canonical message repair
+RETRY=45
