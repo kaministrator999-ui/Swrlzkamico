@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import time
 from dataclasses import replace
 from typing import Any
@@ -11,6 +12,22 @@ from api.durable_redis_store import RedisRestChatStore
 
 TERMINAL = {"COMPLETED", "FAILED", "CANCELLED"}
 CONTRACT = "swrlz_llm_stream_v2"
+
+
+def _camera(stage: str, *, request_id: str = "", **fields: Any) -> None:
+    """Emit one durable-subscriber boundary camera line for Vercel runtime logs."""
+    record = {
+        "camera": "SWRLZ_WORKSTATION_SUBSCRIBER",
+        "stage": stage,
+        "requestId": request_id,
+        "ts": time.time(),
+        **fields,
+    }
+    try:
+        print(json.dumps(record, ensure_ascii=False, separators=(",", ":"), default=str), flush=True)
+    except Exception:
+        # Diagnostics must never become a generation dependency.
+        print(f"SWRLZ_WORKSTATION_SUBSCRIBER stage={stage} requestId={request_id}", flush=True)
 
 
 def _wire(raw: dict[str, Any], *, seq: int, request_id: str, engine) -> dict[str, Any]:
@@ -56,24 +73,49 @@ async def generate_swrlz_response(payload) -> None:
     raw_payload = getattr(payload, "payload", payload)
     data = dict(raw_payload or {})
     user_id, request_id, thread_id = (str(data.get(k) or "") for k in ("userId", "requestId", "threadId"))
+    invocation_started = time.time()
+    _camera(
+        "subscriber-entry",
+        request_id=request_id,
+        threadId=thread_id,
+        hasUserId=bool(user_id),
+    )
     if not user_id or not request_id or not thread_id:
+        _camera("identity-invalid", request_id=request_id, threadId=thread_id)
         raise ValueError("durable generation payload is missing identity")
 
     store = RedisRestChatStore.from_env()
     job = store.get_generation(user_id=user_id, request_id=request_id)
     if job is None:
+        _camera("job-missing", request_id=request_id, threadId=thread_id)
         raise ValueError("generation job does not exist")
+    _camera(
+        "job-read",
+        request_id=request_id,
+        threadId=thread_id,
+        jobState=job.state,
+        lastSeq=int(job.last_seq),
+    )
     if job.state in {"COMPLETE", "FAILED", "CANCELLED"}:
+        _camera("subscriber-skip-terminal", request_id=request_id, jobState=job.state)
         return
 
     # At-least-once delivery is safe because the persisted job is the idempotency boundary.
     job = store.update_generation(replace(job, state="RUNNING", updated_at=time.time()))
+    _camera("job-claimed-running", request_id=request_id, lastSeq=int(job.last_seq))
     assistant = next((m for m in store.list_messages(user_id=user_id, thread_id=thread_id) if m.message_id == job.assistant_message_id), None)
     if assistant is None:
         raise ValueError("assistant placeholder is missing")
 
     from api.hot_loader import get_engine
+    _camera("engine-load-enter", request_id=request_id)
     engine, _engine_source = get_engine()
+    _camera(
+        "engine-load-exit",
+        request_id=request_id,
+        engineSource=str(_engine_source),
+        engineId=str(getattr(engine, "ENGINE_ID", "")),
+    )
 
     history: list[dict[str, str]] = []
     for item in store.list_messages(user_id=user_id, thread_id=thread_id):
@@ -108,12 +150,27 @@ async def generate_swrlz_response(payload) -> None:
 
     seq, committed, last_type = int(job.last_seq), assistant.committed_text, "FAILED"
     started = time.time()
+    _camera(
+        "generate-events-enter",
+        request_id=request_id,
+        historyCount=len(history[-32:]),
+        promptChars=len(str(data.get("prompt") or "")),
+    )
     try:
         for raw in engine.generate_events(engine_payload, cancelled):
             if not isinstance(raw, dict):
                 continue
             seq += 1
             event = _wire(raw, seq=seq, request_id=request_id, engine=engine)
+            _camera(
+                "model-event",
+                request_id=request_id,
+                seq=seq,
+                eventType=str(event["type"]),
+                phase=str(event["phase"]),
+                elapsedMs=int((time.time() - started) * 1000),
+                textChars=len(str(event.get("text") or "")),
+            )
             _append(store, user_id=user_id, request_id=request_id, event=event)
             # Every emitted model event renews the Workstation lease and advances
             # the durable snapshot independently of any connected Chat client.
@@ -124,13 +181,35 @@ async def generate_swrlz_response(payload) -> None:
             if last_type == "DELTA":
                 committed += str(event["text"])
             if last_type in TERMINAL:
+                _camera(
+                    "model-terminal-event",
+                    request_id=request_id,
+                    seq=seq,
+                    eventType=last_type,
+                    elapsedMs=int((time.time() - started) * 1000),
+                )
                 break
+        _camera(
+            "generate-events-return",
+            request_id=request_id,
+            lastType=last_type,
+            seq=seq,
+            elapsedMs=int((time.time() - started) * 1000),
+        )
         if last_type not in TERMINAL:
             seq += 1
             last_type = "CANCELLED" if cancelled() else "FAILED"
             event = _wire({"type": last_type, "phase": "CANCELLED" if last_type == "CANCELLED" else "ERROR", "reason": "Generation cancelled." if last_type == "CANCELLED" else "Generation ended without a terminal event.", "totalLatencyMs": int((time.time()-started)*1000)}, seq=seq, request_id=request_id, engine=engine)
             _append(store, user_id=user_id, request_id=request_id, event=event)
     except Exception as exc:
+        _camera(
+            "subscriber-exception",
+            request_id=request_id,
+            errorType=type(exc).__name__,
+            error=str(exc)[:1000],
+            seq=seq,
+            elapsedMs=int((time.time() - started) * 1000),
+        )
         seq += 1
         last_type = "FAILED"
         event = _wire({"type": "FAILED", "phase": "ERROR", "reason": f"{type(exc).__name__}: {exc}", "totalLatencyMs": int((time.time()-started)*1000)}, seq=seq, request_id=request_id, engine=engine)
@@ -138,7 +217,25 @@ async def generate_swrlz_response(payload) -> None:
         raise
     finally:
         state = "COMPLETE" if last_type == "COMPLETED" else "CANCELLED" if last_type == "CANCELLED" else "FAILED"
+        _camera(
+            "subscriber-finally-enter",
+            request_id=request_id,
+            finalState=state,
+            lastType=last_type,
+            seq=seq,
+            committedChars=len(committed),
+            generationElapsedMs=int((time.time() - started) * 1000),
+            invocationElapsedMs=int((time.time() - invocation_started) * 1000),
+        )
         store.update_message(replace(assistant, committed_text=committed, state=state, updated_at=time.time()))
         current = store.get_generation(user_id=user_id, request_id=request_id)
         if current is not None:
             store.update_generation(replace(current, state=state, last_seq=seq, completed_at=time.time()))
+        _camera(
+            "subscriber-finally-exit",
+            request_id=request_id,
+            finalState=state,
+            seq=seq,
+            committedChars=len(committed),
+            invocationElapsedMs=int((time.time() - invocation_started) * 1000),
+        )
