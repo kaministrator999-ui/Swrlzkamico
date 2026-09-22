@@ -210,6 +210,14 @@ def install(server, chat_extensions) -> None:
             metadata_threads = {str(t.get("id") or ""): t for t in state.get("threads", []) if isinstance(t, dict)}
             tombstones = {str(t.get("threadId") or "") for t in (value or {}).get("tombstones", []) if isinstance(t, dict)}
             redis = canonical_redis_store()
+            # A serverless worker can disappear while full R39 inference is in flight.
+            # Reap durable jobs that outlive the bounded active-generation window so
+            # no assistant placeholder can remain STREAMING forever.
+            try:
+                from api import canonical_redis_state
+                canonical_redis_state.expire_stale_active_turns(user_id=user_id, max_age_seconds=120.0)
+            except Exception as exc:
+                print(f"SWRLZ_STATION_STALE_REAPER_FAILED {type(exc).__name__}: {exc}", flush=True)
             threads: list[dict[str, Any]] = []
             for record in redis.list_threads(user_id, limit=80):
                 thread_id = str(record.thread_id)
