@@ -44,6 +44,10 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 - **Expected owners:** `.github/workflows/purge-stale-vercel-deployments.yml` for verifier repair; `chat/§wyrlz/index.html` for client projection/poll lifecycle. No new Vercel project is permitted.
 - **Deployment expectation:** stable production activation required after source/version reconciliation. Reuse only `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`.
 - **Verification plan:** static diff; successful stale-deployment verification; canonical GitHub production workflow terminal success; Vercel deployment terminal READY; then runtime Chat message test/log inspection.
+- **Implementation checkpoint:** clean-room Chat **1.0.40 → 1.0.41** now keeps its 700 ms Station sync loop armed for the submitted request until the canonical assistant terminal commit is actually observed, rather than allowing a terminal Station projection to stop polling before the durable message reaches the thread snapshot.
+- **Verifier checkpoint:** stale cleanup now resolves the protected production deployment from the canonical production alias, links the checkout to the existing project, enumerates deployments through the Vercel CLI scoped to `swrlzkamico-o3nu`, deletes only non-protected deployment URLs, and verifies exactly one protected deployment remains. Project creation remains forbidden.
+- **Version checkpoint:** Repository Work **1.0.16 → 1.0.17**; Deployment Control **1.0.12 → 1.0.13**; Chat **1.0.40 → 1.0.41**.
+- **Activation truth:** source complete / deployment pending.
 
 
 ### UPDATE FINISHED — 2026-09-22 — deployment-governance mutation/version/watch contract
