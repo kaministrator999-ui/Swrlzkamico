@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Chat 1.0.39 preserve Workstation message projection on thread selection
-RETRY=31
+PURPOSE=release Server 2.3.289 prepared model transport and terminal truth repair
+RETRY=32
