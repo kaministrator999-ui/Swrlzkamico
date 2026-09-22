@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=hotfix Chat 1.0.37 durable Redis transport restore station send and sync
-RETRY=29
+PURPOSE=release Chat 1.0.38 durable assistant terminal persistence across refresh
+RETRY=30
