@@ -3,8 +3,7 @@ from __future__ import annotations
 import json
 import os
 import time
-import urllib.error
-import urllib.request
+import requests
 from dataclasses import asdict, replace
 from typing import Any
 
@@ -96,26 +95,23 @@ class RedisRestChatStore(DurableChatStore):
     def _command(self, *command: Any) -> Any:
         started_ns=time.perf_counter_ns()
         op=str(command[0] if command else "")[:64].upper()
-        safe_command=[]
-        for index,value in enumerate(command):
-            text=str(value)
-            # Never expose provider credentials; command arguments are application state.
-            safe_command.append(text[:16000])
+        safe_command=[str(value)[:16000] for value in command]
         _chat_lockdown("redis-command-enter", operation=op, argumentCount=len(command), command=safe_command)
-        request = urllib.request.Request(
-            self.url,
-            data=json.dumps(list(command), ensure_ascii=False, separators=(",", ":")).encode("utf-8"),
-            headers={
-                "Authorization": f"Bearer {self.token}",
-                "Content-Type": "application/json",
-                "User-Agent": "swrlz-durable-chat/1",
-            },
-            method="POST",
-        )
         try:
-            with urllib.request.urlopen(request, timeout=15) as response:
-                payload = json.loads(response.read())
-        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+            response=requests.post(
+                self.url,
+                headers={
+                    "Authorization": f"Bearer {self.token}",
+                    "Content-Type": "application/json",
+                    "User-Agent": "swrlz-durable-chat/2",
+                },
+                data=json.dumps(list(command), ensure_ascii=False, separators=(",", ":")).encode("utf-8"),
+                timeout=(3,15),
+            )
+            _chat_lockdown("redis-http-response", operation=op, durationNs=time.perf_counter_ns()-started_ns, httpStatus=response.status_code, responseBytes=len(response.content))
+            response.raise_for_status()
+            payload=response.json()
+        except (requests.RequestException, ValueError, json.JSONDecodeError) as exc:
             _chat_lockdown("redis-command-error", operation=op, durationNs=time.perf_counter_ns()-started_ns, errorType=type(exc).__name__, error=str(exc)[:2000])
             raise DurableStoreUnavailable(f"durable Redis REST request failed: {type(exc).__name__}") from exc
         if not isinstance(payload, dict) or payload.get("error"):
