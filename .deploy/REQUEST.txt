@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
-APPROVED=0
-REQUEST_ID=none
-REQUESTED_BY=none
+APPROVED=1
+REQUEST_ID=server-subscriber-camera-20260922
+REQUESTED_BY=user
 SOURCE_REF=main
-REASON=Gate 4 freeze state. Historical request retired; no production deployment is authorized by this file until the terminal governed trigger is written.
+REASON=Deploy detached Workstation subscriber boundary cameras for R39 execution-lifetime diagnosis.
