@@ -18,6 +18,7 @@ from api.chat_state import _read_state, _state_value, _headers
 from api.chat_transcript_store import STORE
 from api.canonical_redis_state import store as canonical_redis_store, _canonical_messages_compatible
 import api.chat as chat
+from api import chat_turn_state
 
 CONTRACT = "swrlz-lalm-station-sync-v1"
 MAX_ACTIVE = 8
@@ -90,6 +91,18 @@ def install(server, chat_extensions) -> None:
             if not isinstance(payload, dict):
                 return JSONResponse({"ok": False, "contract": CONTRACT, "code": "INVALID_REQUEST"}, status_code=400, headers=_headers())
             payload["ingress"] = "SWRLZ_LALM_STATION"
+            # Internal forwarding does not traverse the outer canonical-turn
+            # middleware. Claim the authenticated durable turn here before inference
+            # so first-message thread creation is Workstation-owned and immediately
+            # visible to account-scoped sync.
+            turn = chat_turn_state.begin_turn(request, payload)
+            payload["threadId"] = turn.thread_id
+            payload["messageId"] = turn.user_message_id
+            payload["assistantMessageId"] = turn.assistant_message_id
+            history, _history_revision = chat_turn_state.canonical_history(
+                request, thread_id=turn.thread_id, request_id=turn.request_id, limit=32
+            )
+            payload["history"] = history
             body = __import__("json").dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
             # Starlette's middleware chain is the authority that installs canonical
             # turn identity/history. Route internally through /api/chat so the same
