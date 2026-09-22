@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Server 2.3.302 Workstation generation lease heartbeat
-RETRY=46
+PURPOSE=release Server 2.3.303 detached R39 inference execution window
+RETRY=47
