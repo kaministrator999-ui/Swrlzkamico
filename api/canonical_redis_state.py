@@ -107,10 +107,15 @@ def expire_stale_active_turns(*,user_id:str,max_age_seconds:float=120.0)->int:
    redis._command("SREM",redis._key("active_jobs",user_id),rid);continue
   if str(job.state or "").upper() in {"COMPLETE","FAILED","CANCELLED"}:
    redis._command("SREM",redis._key("active_jobs",user_id),rid);continue
+  # RUNNING jobs are owned by the detached Workstation queue. Their liveness is
+  # lease/heartbeat based; a browser sync must never kill them by wall-clock age.
+  state=str(job.state or "").upper()
+  if state=="RUNNING":
+   continue
   age=max(0.0,now-float(job.updated_at or job.created_at or now))
   if age<max_age_seconds:continue
-  _camera("stale-active-expire",requestId=rid,ageSeconds=round(age,3),maxAgeSeconds=max_age_seconds)
-  finish_canonical_turn(user_id=user_id,request_id=rid,assistant_message_id=job.assistant_message_id,text="",terminal_type="FAILED",reason=f"generation exceeded durable active lifetime ({int(max_age_seconds)}s)",turn_contract="swrlz-chat-canonical-turn-v1")
+  _camera("stale-active-expire",requestId=rid,ageSeconds=round(age,3),maxAgeSeconds=max_age_seconds,state=state)
+  finish_canonical_turn(user_id=user_id,request_id=rid,assistant_message_id=job.assistant_message_id,text="",terminal_type="FAILED",reason=f"queued generation was never claimed within {int(max_age_seconds)}s",turn_contract="swrlz-chat-canonical-turn-v1")
   expired+=1
  return expired
 def finish_canonical_turn(*,user_id:str,request_id:str,assistant_message_id:str,text:str,terminal_type:str,reason:str,turn_contract:str)->None:
