@@ -1647,3 +1647,10 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Records no prompt text or token text.
 - Reuses one exact render/tokenization pass only; it does not cumulatively re-tokenize segments.
 - Purpose: prove where oversized prefill originates before optimizing system-contract composition and block execution.
+
+
+### Server 2.3.294 — Unicode policy separation experiment
+- Removes only the inherited _UNICODE_AWARENESS_POLICY system-prose record immediately before the exact R39 inference boundary.
+- Unicode tokenizer/model/runtime capability remains unchanged.
+- Adds unicode-policy-separated camera with removed message/character counts for before/after measurement.
+- Test goal: compare rendered prompt tokens, 96-token prefill blocks, and terminal completion against 2.3.293 before touching any other policy family.
