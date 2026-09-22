@@ -63,6 +63,16 @@ jobs:
           set -euo pipefail
           test -n "${VERCEL_TOKEN:-}" || { echo "VERCEL_TOKEN is required" >&2; exit 1; }
 
+      - name: Set up Node.js for Vercel verifier
+        if: steps.gate.outputs.allowed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Vercel CLI for project-scoped enumeration
+        if: steps.gate.outputs.allowed == 'true'
+        run: npm install --global vercel@latest
+
       - name: Purge every stale deployment, preserve current production
         if: steps.gate.outputs.allowed == 'true'
         shell: bash
@@ -72,87 +82,79 @@ jobs:
           set -euo pipefail
           auth=(-H "Authorization: Bearer $VERCEL_TOKEN")
 
-          current_json="$(curl --fail-with-body --silent --show-error \
+          # Resolve the protected production deployment from the production alias.
+          # This is the authoritative mapping; never guess from recency.
+          alias_json="$(curl --fail-with-body --silent --show-error \
             "${auth[@]}" \
-            "https://api.vercel.com/v7/deployments?projectId=$VERCEL_PROJECT_ID&slug=kamiswrlzco-cloud")"
-          keep_id="$(jq -r --arg host "$VERCEL_PRODUCTION_HOST" '
-            [.deployments[]?
-              | select(
-                  ((.alias // []) | index($host)) != null
-                  or .url == $host
-                )
-              | .uid // .id // empty
-            ][0] // empty
-          ' <<<"$current_json")"
-          if [[ -z "$keep_id" || "$keep_id" != dpl_* ]]; then
-            echo "Could not resolve current production deployment from project enumeration; refusing destructive cleanup." >&2
-            echo "$current_json" | jq .
+            "https://api.vercel.com/v4/aliases/$VERCEL_PRODUCTION_HOST?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID")"
+          keep_id="$(jq -r '.deploymentId // .deployment.id // empty' <<<"$alias_json")"
+          keep_url="$(jq -r '.deployment.url // empty' <<<"$alias_json")"
+          resolved_project="$(jq -r '.projectId // empty' <<<"$alias_json")"
+          if [[ "$resolved_project" != "$VERCEL_PROJECT_ID" || -z "$keep_id" || "$keep_id" != dpl_* ]]; then
+            echo "Could not prove the production alias belongs to the canonical project; refusing destructive cleanup." >&2
+            echo "$alias_json" | jq .
             exit 1
           fi
 
-          echo "Current production deployment protected: $keep_id"
+          # Link the checkout to the existing project. vercel pull MUST reuse the
+          # supplied canonical project/org IDs; project creation is forbidden.
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN" >/dev/null
+
+          enumerate() {
+            vercel list swrlzkamico-o3nu --team kamiswrlzco-cloud --yes --token="$VERCEL_TOKEN" 2>&1 \
+              | sed -r 's/\x1B\[[0-9;]*[mK]//g' \
+              | grep -Eo 'https://[^[:space:]]+\.vercel\.app' \
+              | sort -u || true
+          }
+
+          mapfile -t urls < <(enumerate)
+          if [[ "${#urls[@]}" -eq 0 ]]; then
+            echo "Project-scoped Vercel CLI enumeration returned no deployments; refusing to call cleanup verified." >&2
+            exit 1
+          fi
+
+          # Resolve the protected deployment URL directly when the alias payload
+          # omits it, while still pinning by deployment ID.
+          if [[ -z "$keep_url" ]]; then
+            keep_json="$(curl --fail-with-body --silent --show-error "${auth[@]}" \
+              "https://api.vercel.com/v13/deployments/$keep_id?teamId=$VERCEL_ORG_ID")"
+            keep_url="$(jq -r '.url // empty' <<<"$keep_json")"
+          fi
+          keep_full="https://$keep_url"
+          if [[ -z "$keep_url" || ! " ${urls[*]} " =~ " $keep_full " ]]; then
+            echo "Protected production deployment was not present in project-scoped CLI enumeration; refusing cleanup." >&2
+            printf 'Protected: %s\nEnumerated: %s\n' "$keep_full" "${urls[*]:-none}" >&2
+            exit 1
+          fi
+
+          echo "Current production deployment protected: $keep_id ($keep_full)"
           echo "### Vercel stale-deployment purge" >> "$GITHUB_STEP_SUMMARY"
           printf -- '- Protected production deployment: `%s`\n' "$keep_id" >> "$GITHUB_STEP_SUMMARY"
 
           deleted=0
           failed=0
-          seen_keep=0
-
-          # Re-read the first page after each deletion batch. Mutating a paginated
-          # collection while walking old cursors can skip entries, so cleanup
-          # converges from fresh project state instead.
-          for pass in $(seq 1 20); do
-            page="$(curl --fail-with-body --silent --show-error "${auth[@]}" \
-              "https://api.vercel.com/v7/deployments?projectId=$VERCEL_PROJECT_ID&slug=kamiswrlzco-cloud")"
-            mapfile -t ids < <(jq -r '.deployments[]? | .uid // .id // empty' <<<"$page")
-
-            stale=()
-            for id in "${ids[@]}"; do
-              if [[ "$id" == "$keep_id" ]]; then
-                seen_keep=1
-              else
-                stale+=("$id")
-              fi
-            done
-
-            if [[ "${#stale[@]}" -eq 0 ]]; then
-              break
+          for url in "${urls[@]}"; do
+            [[ "$url" == "$keep_full" ]] && continue
+            echo "Deleting stale deployment $url"
+            if vercel remove "$url" --yes --team kamiswrlzco-cloud --token="$VERCEL_TOKEN"; then
+              deleted=$((deleted+1))
+              printf -- '- deleted `%s`\n' "$url" >> "$GITHUB_STEP_SUMMARY"
+            else
+              failed=$((failed+1))
+              printf -- '- FAILED `%s`\n' "$url" >> "$GITHUB_STEP_SUMMARY"
             fi
-
-            for id in "${stale[@]}"; do
-              echo "Deleting stale deployment $id"
-              code="$(curl --silent --show-error --output delete.json --write-out '%{http_code}' \
-                -X DELETE "${auth[@]}" \
-                "https://api.vercel.com/v13/deployments/$id?slug=kamiswrlzco-cloud" || true)"
-              if [[ "$code" =~ ^2 ]]; then
-                deleted=$((deleted+1))
-                printf -- '- deleted `%s`\n' "$id" >> "$GITHUB_STEP_SUMMARY"
-              else
-                failed=$((failed+1))
-                echo "::warning::Delete failed for $id (HTTP $code)"
-                cat delete.json || true
-                printf -- '- FAILED `%s` (HTTP %s)\n' "$id" "$code" >> "$GITHUB_STEP_SUMMARY"
-              fi
-            done
           done
 
-          if [[ "$seen_keep" -ne 1 ]]; then
-            echo "Protected production deployment was not present in project enumeration; refusing to call cleanup verified." >&2
-            exit 1
-          fi
-
-          verify="$(curl --fail-with-body --silent --show-error "${auth[@]}" \
-            "https://api.vercel.com/v7/deployments?projectId=$VERCEL_PROJECT_ID&slug=kamiswrlzco-cloud")"
-          mapfile -t remaining < <(jq -r '.deployments[]? | .uid // .id // empty' <<<"$verify")
+          mapfile -t remaining < <(enumerate)
           echo "- Deleted: $deleted" >> "$GITHUB_STEP_SUMMARY"
           echo "- Failed: $failed" >> "$GITHUB_STEP_SUMMARY"
-          printf -- '- Remaining deployment IDs: `%s`\n' "${remaining[*]:-none}" >> "$GITHUB_STEP_SUMMARY"
+          printf -- '- Remaining deployment URLs: `%s`\n' "${remaining[*]:-none}" >> "$GITHUB_STEP_SUMMARY"
 
           if [[ "$failed" -ne 0 ]]; then
             exit 1
           fi
-          if [[ "${#remaining[@]}" -ne 1 || "${remaining[0]}" != "$keep_id" ]]; then
-            echo "Cleanup incomplete: expected only $keep_id to remain, got: ${remaining[*]:-none}" >&2
+          if [[ "${#remaining[@]}" -ne 1 || "${remaining[0]}" != "$keep_full" ]]; then
+            echo "Cleanup incomplete: expected only $keep_full to remain, got: ${remaining[*]:-none}" >&2
             exit 1
           fi
 
