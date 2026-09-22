@@ -68,7 +68,7 @@ async def generate_swrlz_response(payload) -> None:
 
     # At-least-once delivery is safe because the persisted job is the idempotency boundary.
     job = store.update_generation(replace(job, state="RUNNING"))
-    assistant = store.get_message(user_id=user_id, message_id=job.assistant_message_id)
+    assistant = next((m for m in store.list_messages(user_id=user_id, thread_id=thread_id) if m.message_id == job.assistant_message_id), None)
     if assistant is None:
         raise ValueError("assistant placeholder is missing")
 
@@ -133,7 +133,7 @@ async def generate_swrlz_response(payload) -> None:
         raise
     finally:
         state = "COMPLETE" if last_type == "COMPLETED" else "CANCELLED" if last_type == "CANCELLED" else "FAILED"
-        store.put_message(replace(assistant, committed_text=committed, state=state, updated_at=time.time()))
+        store.update_message(replace(assistant, committed_text=committed, state=state, updated_at=time.time()))
         current = store.get_generation(user_id=user_id, request_id=request_id)
         if current is not None:
             store.update_generation(replace(current, state=state, last_seq=seq, completed_at=time.time()))
