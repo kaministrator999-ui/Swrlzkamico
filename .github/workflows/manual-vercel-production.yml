@@ -184,6 +184,29 @@ jobs:
           echo "Prepared promoted runtime generation: $source_runtime_sha" >> "$GITHUB_STEP_SUMMARY"
           cat .swrzl-prepared-runtime/generation.json >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Stage build-only payload outside Vercel source tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/swrlz-build-stage/native"
+          # The Git integration builds the clean source tree successfully. The
+          # Actions-only generated runtime and native binaries are injected AFTER
+          # vercel build, never traced into every Python function by the builder.
+          mv .swrzl-prepared-runtime "$RUNNER_TEMP/swrlz-build-stage/prepared-runtime"
+          shopt -s nullglob
+          for artifact in swyrlz/_r39_native*.so swyrlz/_r39_native*.pyd swyrlz/_r39_native*.dylib swyrlz/_r39_batch*.so swyrlz/_r39_batch*.pyd swyrlz/_r39_batch*.dylib; do
+            mv "$artifact" "$RUNNER_TEMP/swrlz-build-stage/native/"
+          done
+          # Transport chunks are excluded from Git deployments and must not
+          # inflate the local prebuilt function trace either.
+          if [[ -d .transport ]]; then
+            mv .transport "$RUNNER_TEMP/swrlz-build-stage/transport"
+          fi
+          if [[ -f SWRLZ_NEW_SERVER_GITHUB_READY.zip ]]; then
+            mv SWRLZ_NEW_SERVER_GITHUB_READY.zip "$RUNNER_TEMP/swrlz-build-stage/"
+          fi
+          du -sh "$RUNNER_TEMP/swrlz-build-stage" . || true
+
       - name: Build production artifact
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -200,7 +223,7 @@ jobs:
               continue
             fi
             mkdir -p "$func_dir/swrzl_prepared_runtime"
-            cp -a .swrzl-prepared-runtime/. "$func_dir/swrzl_prepared_runtime/"
+            cp -a "$RUNNER_TEMP/swrlz-build-stage/prepared-runtime/." "$func_dir/swrzl_prepared_runtime/"
             python_functions=$((python_functions + 1))
           done < <(find .vercel/output/functions -type d -name '*.func' -print0)
           if [[ "$python_functions" -lt 1 ]]; then
@@ -214,8 +237,8 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          native_artifacts=(swyrlz/_r39_native*.so swyrlz/_r39_native*.pyd swyrlz/_r39_native*.dylib)
-          batch_artifacts=(swyrlz/_r39_batch*.so swyrlz/_r39_batch*.pyd swyrlz/_r39_batch*.dylib)
+          native_artifacts=("$RUNNER_TEMP"/swrlz-build-stage/native/_r39_native*.so "$RUNNER_TEMP"/swrlz-build-stage/native/_r39_native*.pyd "$RUNNER_TEMP"/swrlz-build-stage/native/_r39_native*.dylib)
+          batch_artifacts=("$RUNNER_TEMP"/swrlz-build-stage/native/_r39_batch*.so "$RUNNER_TEMP"/swrlz-build-stage/native/_r39_batch*.pyd "$RUNNER_TEMP"/swrlz-build-stage/native/_r39_batch*.dylib)
           if [[ "${#native_artifacts[@]}" -lt 1 || "${#batch_artifacts[@]}" -lt 1 ]]; then
             echo "Compiled R39 artifacts disappeared before function-bundle injection." >&2
             exit 1
@@ -298,7 +321,7 @@ jobs:
           assert caps.get("runtime-delivery-optimization", {}).get("contract") == "prepared-runtime-generation-v3"
           assert caps.get("runtime-delivery-optimization", {}).get("requestPathSync") is False
           assert caps.get("runtime-delivery-optimization", {}).get("r39HistoricalNetworkFetch") is False
-          generation = json.load(open(".swrzl-prepared-runtime/generation.json"))
+          generation = json.load(open(os.path.join(os.environ["RUNNER_TEMP"], "swrlz-build-stage/prepared-runtime/generation.json")))
           assert generation.get("r39SourceDelivery") == "local-precomposed-full-lineage-v2"
           assert len(generation.get("r39OverlayChain") or []) == 16
           assert len(generation.get("r39HistoricalAncestry") or []) >= 1
