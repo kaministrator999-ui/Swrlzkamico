@@ -1640,3 +1640,10 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Records per-owner entry/character totals plus response-directive and current-user character counts.
 - Keeps expensive exact token attribution opt-in; normal inference does not cumulatively re-tokenize prompt segments.
 - Purpose: identify which system-contract families inflate ordinary full-R39 prefill without turning observability into request-path compute.
+
+
+### Server 2.3.293 — exact prefill accounting camera
+- Adds one-pass accounting at the exact rendered R39 prefill boundary: rendered characters, exact token total, expected 96-token block count, prompt fingerprint, segment labels/owners, and per-owner character totals.
+- Records no prompt text or token text.
+- Reuses one exact render/tokenization pass only; it does not cumulatively re-tokenize segments.
+- Purpose: prove where oversized prefill originates before optimizing system-contract composition and block execution.
