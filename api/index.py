@@ -6,7 +6,7 @@ runtime branch by the dedicated hot/live loaders. The stable frozen-web
 collector host applies authentication and a fixed runtime-module contract while
 the collector implementation and page remain runtime-owned.
 
-Server 2.3.297 removes diagnostic re-tokenization from normal full-inference requests
+Server 2.3.298 removes diagnostic re-tokenization from normal full-inference requests
 preserving the runtime-source-of-truth delivery boundary.
 """
 from __future__ import annotations
