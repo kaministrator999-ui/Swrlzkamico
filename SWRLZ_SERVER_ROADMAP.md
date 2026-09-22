@@ -1,4 +1,10 @@
 
+### 2026-09-22 — manual Git deployment vs Actions prebuilt bundle repair
+- Vercel Git deployment `dpl_2t3376oaeQmPzNkkk2xahtyAU99o` is READY on source `520957e6697ba2fa266c188c64875dd3dba37b6f`, proving the R39 diagnostic source can build through the clean Git path.
+- Actions run #36 failed before deployment: generated runtime/native artifacts were placed inside the source tree before `vercel build --prod`; Python function bundle measured 341.51 MB against 225 MB.
+- Workflow stages prepared runtime, compiled native binaries, and transport payload outside source tree before local build, then injects required prepared/native artifacts into the completed function bundles. This aligns builder input with clean Git deployment while preserving the production prebuilt runtime contract.
+- Existing production deployment is protected; replacement must pass readiness before post-promotion stale cleanup.
+
 ### DIAGNOSTIC HOTFIX — 2026-09-22 — R39 MODEL_LOADING boundary cameras
 
 - **Observed production boundary:** CLIENT → SERVER, durable queue/subscriber, and bundled `swrlz_r39_python_reference_v1` all execute; generation emits `MODEL_LOADING` and then FAILED before ROUTE/PREFILL or any DELTA.
