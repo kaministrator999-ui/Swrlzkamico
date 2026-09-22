@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Server 2.3.291 full R39 request path optimization
-RETRY=35
+PURPOSE=release Server 2.3.292 lightweight prompt inventory camera
+RETRY=36
