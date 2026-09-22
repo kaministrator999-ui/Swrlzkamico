@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=chat-terminal-projection-1.0.41-20260922
+REQUEST_ID=chat-terminal-projection-1.0.41-bundle-retry-20260922
 REQUESTED_BY=user
 SOURCE_REF=main
-REASON=Deploy Chat 1.0.41 self-populating canonical assistant terminal projection and repaired stale-deployment verifier.
+REASON=Retry Chat 1.0.41 release after excluding transport payload from explicit Python function bundles.
