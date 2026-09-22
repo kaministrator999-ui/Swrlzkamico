@@ -131,3 +131,53 @@ jobs:
           echo "Account API did not become ready" >&2
           cat /tmp/account.json || true
           exit 1
+
+      - name: Purge stale deployments after verified production
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ env.SWRLZ_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ env.SOURCE_PROJECT_ID }}
+          VERCEL_PRODUCTION_HOST: swrlzkamico-o3nu.vercel.app
+        shell: bash
+        run: |
+          set -euo pipefail
+          auth=(-H "Authorization: Bearer $VERCEL_TOKEN")
+
+          current_json="$(curl --fail-with-body --silent --show-error \
+            "${auth[@]}" \
+            "https://api.vercel.com/v13/deployments/$VERCEL_PRODUCTION_HOST?teamId=$VERCEL_ORG_ID")"
+          keep_id="$(jq -r '.id // .uid // empty' <<<"$current_json")"
+          [[ "$keep_id" == dpl_* ]] || { echo "Could not resolve production deployment; refusing purge." >&2; exit 1; }
+
+          echo "Protecting verified production deployment: $keep_id"
+          deleted=0
+          failed=0
+          for pass in $(seq 1 20); do
+            page="$(curl --fail-with-body --silent --show-error "${auth[@]}" \
+              "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=100")"
+            mapfile -t stale < <(jq -r --arg keep "$keep_id" '.deployments[]? | (.uid // .id // empty) | select(. != $keep)' <<<"$page")
+            [[ "${#stale[@]}" -gt 0 ]] || break
+            for id in "${stale[@]}"; do
+              echo "Deleting stale deployment $id"
+              code="$(curl --silent --show-error --output /tmp/delete.json --write-out '%{http_code}' \
+                -X DELETE "${auth[@]}" \
+                "https://api.vercel.com/v13/deployments/$id?teamId=$VERCEL_ORG_ID" || true)"
+              if [[ "$code" =~ ^2 ]]; then
+                deleted=$((deleted+1))
+              else
+                failed=$((failed+1))
+                echo "::warning::Delete failed for $id (HTTP $code)"
+                cat /tmp/delete.json || true
+              fi
+            done
+          done
+
+          verify="$(curl --fail-with-body --silent --show-error "${auth[@]}" \
+            "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=100")"
+          mapfile -t remaining < <(jq -r '.deployments[]? | .uid // .id // empty' <<<"$verify")
+          printf 'Post-deploy purge: deleted=%s failed=%s remaining=%s\n' "$deleted" "$failed" "${remaining[*]:-none}" | tee -a "$GITHUB_STEP_SUMMARY"
+          [[ "$failed" -eq 0 ]]
+          [[ "${#remaining[@]}" -eq 1 && "${remaining[0]}" == "$keep_id" ]] || {
+            echo "Post-deploy purge incomplete; expected only $keep_id." >&2
+            exit 1
+          }
