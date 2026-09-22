@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Workstation-authoritative Chat history and first-turn promotion
-RETRY=26
+PURPOSE=release account-scoped thread promotion multi-select and viewport-safe thread menus
+RETRY=27
