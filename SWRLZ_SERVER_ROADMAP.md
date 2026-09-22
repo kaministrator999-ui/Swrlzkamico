@@ -36,6 +36,15 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### HOTFIX — 2026-09-21 — clean-room Chat 1.0.39 thread-selection projection integrity
+
+- **Clean-room Chat version:** **1.0.38 → 1.0.39**.
+- **Observed defect:** Station sync initially populated durable message counts correctly, but selecting a thread immediately changed its drawer count to zero and cleared the conversation viewport.
+- **Root cause:** the click handler rendered the correct Workstation thread, then posted `SET_CURRENT_THREAD` to metadata-only `/api/chat_state`; its response contains intentionally empty metadata `messages` arrays and was incorrectly passed through the full Station `applyChatState` projection, overwriting canonical messages.
+- **Repair:** thread selection now updates current-thread metadata without applying that metadata-only response as conversation state. Workstation `/api/lalm_station/sync` remains the sole conversation/message projection authority.
+- **Invariant:** selecting a thread may change selection metadata but may never reduce or replace its canonical Workstation message projection.
+
+
 ### HOTFIX — 2026-09-21 — clean-room Chat 1.0.38 durable assistant terminal commit
 
 - **Clean-room Chat version:** **1.0.37 → 1.0.38**.
