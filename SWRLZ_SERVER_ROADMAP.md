@@ -36,6 +36,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### HOTFIX — 2026-09-22 — Clean-room Chat 1.0.40 terminal projection + browser camera repair
+
+- **Clean-room Chat:** **1.0.39 → 1.0.40**; HTML version metadata is reconciled to the same authority.
+- **Observed failure:** Server 2.3.289 generated and durably committed a non-empty assistant response, but the active browser showed no response.
+- **Projection repair:** terminal Station output remains visible while canonical sync catches up, and a terminal response missing from the current canonical projection schedules another Station reconciliation instead of silently stopping.
+- **Metadata ownership repair:** rename/pin/delete mutations no longer pass metadata-only `/api/chat_state` snapshots through full conversation projection. They update metadata revision and then re-project canonical Workstation state.
+- **Browser camera repair:** Clean-room account telemetry now targets the installed diagnostic middleware path `/api/chat?__swrlz_client_debug=1` instead of the unmapped `/api/chat/client-debug` URL that returned 404.
+- **Invariant:** Workstation owns conversation existence/messages; metadata mutations cannot erase canonical messages; terminal generated text cannot disappear merely because durable projection lands one sync later.
+
+
 ### HOTFIX — 2026-09-21 — Server 2.3.289 prepared-model transport + terminal truth
 
 - **Server Runtime candidate:** **2.3.288 → 2.3.289**.
