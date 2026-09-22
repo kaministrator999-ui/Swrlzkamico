@@ -212,7 +212,7 @@
           threadList.appendChild(row);
         }
       };
-      let stationGeneration=null, stationPoll=0, sending=false;
+      let stationGeneration=null, stationPoll=0, sending=false, stationAwaitingCommit="";
       const applyChatState = data => {
         chatRevision=Number(data?.revision||0);
         const priorThreads=chatThreads;
@@ -239,9 +239,13 @@
         // Keep the last completed Station generation until canonical thread state contains it.\n        // A sync with no active generation must not erase the just-rendered terminal response.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration) stationGeneration=syncedGeneration;
         renderThreads(); if(!draftThread)renderConversation(currentThread());
         renderStationGeneration();
-        if(stationGeneration?.terminal && stationGeneration?.text){
-          const committed=(currentThread()?.messages||[]).some(m=>m.role==="assistant"&&m.meta?.requestId===stationGeneration.requestId);
-          if(!committed) scheduleStationSync();
+        if(stationAwaitingCommit){
+          const awaited=(currentThread()?.messages||[]).find(m=>m.role==="assistant"&&m.meta?.requestId===stationAwaitingCommit);
+          if(awaited && ["COMPLETE","FAILED","CANCELLED"].includes(String(awaited.meta?.state||awaited.state||"").toUpperCase())){
+            stationAwaitingCommit="";
+          }else{
+            scheduleStationSync();
+          }
         }
       };
       const renderStationGeneration=()=>{
@@ -259,7 +263,7 @@
           const r=await fetch("/api/lalm_station/sync",{credentials:"same-origin",cache:"no-store"});
           if(!r.ok){renderThreads();return false}
           const data=await r.json(); applyChatState(data);
-          if(stationGeneration&&!stationGeneration.terminal) scheduleStationSync();
+          if(stationAwaitingCommit || (stationGeneration&&!stationGeneration.terminal)) scheduleStationSync();
           return true;
         }catch(_){renderThreads();return false}
       };
@@ -332,6 +336,7 @@
           }
           const requestId=uid("web"), userMessageId=uid("message"), assistantMessageId=uid("assistant");
           stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING"}],terminal:false,lastSeq:0};
+          stationAwaitingCommit=requestId;
           // Render the submitted user turn immediately; Station remains the durable authority.
           let localThread=currentThread();
           if(!localThread){
