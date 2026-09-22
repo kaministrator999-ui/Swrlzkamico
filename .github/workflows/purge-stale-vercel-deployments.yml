@@ -74,10 +74,18 @@ jobs:
 
           current_json="$(curl --fail-with-body --silent --show-error \
             "${auth[@]}" \
-            "https://api.vercel.com/v13/deployments/$VERCEL_PRODUCTION_HOST?teamId=$VERCEL_ORG_ID&url=$VERCEL_PRODUCTION_HOST")"
-          keep_id="$(jq -r '.id // .uid // empty' <<<"$current_json")"
+            "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&target=production&state=READY&limit=100")"
+          keep_id="$(jq -r --arg host "$VERCEL_PRODUCTION_HOST" '
+            [.deployments[]?
+              | select(
+                  ((.alias // []) | index($host)) != null
+                  or .url == $host
+                )
+              | .uid // .id // empty
+            ][0] // empty
+          ' <<<"$current_json")"
           if [[ -z "$keep_id" || "$keep_id" != dpl_* ]]; then
-            echo "Could not resolve current production deployment; refusing destructive cleanup." >&2
+            echo "Could not resolve current production deployment from project enumeration; refusing destructive cleanup." >&2
             echo "$current_json" | jq .
             exit 1
           fi
