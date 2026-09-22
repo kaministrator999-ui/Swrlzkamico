@@ -36,6 +36,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### HOTFIX — 2026-09-21 — Server 2.3.289 prepared-model transport + terminal truth
+
+- **Server Runtime candidate:** **2.3.288 → 2.3.289**.
+- **Camera evidence:** request `web-muc71twr-…` reached R39 but produced zero prefill/decode tokens because the prepared-generation urllib shim rejected the verified Forge model chunk URL with `R39_PREPARED_UNKNOWN_NETWORK_SOURCE`.
+- **Transport repair:** prepared R39 remains fail-closed for historical Python/source acquisition, but permits the exact repository-scoped `.transport/lalm§wyrlz/lalm§wyrlz.zip.part*` family to pass through the original network opener. Forge chunk SHA/size verification in `swyrlz/backend.py` remains authoritative before reconstruction.
+- **Terminal-truth repair:** LALM Station now remembers any FAILED inference event. If an outer repair wrapper later emits COMPLETED without producing assistant text, the durable canonical turn is committed FAILED rather than COMPLETE-with-empty-text.
+- **Native performance finding:** production cameras report Python/Numpy fallback because no `_r39_native` / `_r39_batch` binary is present on the worker. This release does not claim native acceleration; native packaging remains a separate measured optimization target after inference correctness is restored.
+- **Verification gate:** production release must prove model reconstruction/inference succeeds, DELTA text is produced, canonical assistant text is non-empty on COMPLETED turns, and the canonical Vercel project returns to exactly one READY production deployment.
+
+
 ### HOTFIX — 2026-09-21 — clean-room Chat 1.0.39 thread-selection projection integrity
 
 - **Clean-room Chat version:** **1.0.38 → 1.0.39**.
