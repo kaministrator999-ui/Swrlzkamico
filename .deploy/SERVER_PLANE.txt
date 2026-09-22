@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Server 2.3.293 exact prefill accounting cameras
-RETRY=37
+PURPOSE=release Server 2.3.294 Unicode policy separation test
+RETRY=38
