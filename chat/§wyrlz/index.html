@@ -212,7 +212,9 @@
         chatThreads=mergedThreads;
         if(pendingDraftThread && chatThreads.some(t=>t.id===pendingDraftThread.id)) pendingDraftThread=null;
         const stationCurrent=data?.currentThread?.id||"";
-        if(!draftThread) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
+        // Keep the currently presented thread when the Workstation snapshot proves
+        // it exists; selection metadata must not redirect a just-promoted first turn.
+        if(!draftThread && !chatThreads.some(t=>t.id===activeThreadId)) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
         // Keep the last completed Station generation until canonical thread state contains it.\n        // A sync with no active generation must not erase the just-rendered terminal response.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration) stationGeneration=syncedGeneration;
         renderThreads(); if(!draftThread)renderConversation(currentThread());
         renderStationGeneration();
