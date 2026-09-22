@@ -36,6 +36,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### PERFORMANCE HOTFIX — 2026-09-22 — Server 2.3.291 full-R39 request-path camera isolation
+
+- **Server Runtime candidate:** **2.3.290 → 2.3.291**.
+- **Measured failure mode:** ordinary conversational turns that miss the social fastpath enter Python/Numpy R39 and can outlive the serverless execution window.
+- **Concrete request-path waste removed:** the v86 prompt-composition diagnostic cumulatively re-tokenized every semantic prompt segment, then rendered and tokenized the entire prompt again before actual model prefill. That diagnostic work is now opt-in via `_swrlz_prompt_composition_diagnostic=true` instead of executing on every generation.
+- **Observability preserved:** the camera implementation remains intact for targeted profiling; ordinary inference no longer pays its repeated tokenization/render cost.
+- **Lifecycle safety:** Server 2.3.290's 120-second durable orphan terminalization remains active.
+- **Next measurement:** compare prefill/first-token/terminal timing on the same multi-turn social phrase after deployment. Do not claim a speedup until production cameras measure it.
+
+
 ### HOTFIX — 2026-09-22 — Server 2.3.290 orphaned-generation terminalization
 
 - **Server Runtime candidate:** **2.3.289 → 2.3.290**.
