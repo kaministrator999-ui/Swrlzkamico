@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=verify deploy then automatically purge stale Vercel deployments
-RETRY=25
+PURPOSE=release Workstation-authoritative Chat history and first-turn promotion
+RETRY=26
