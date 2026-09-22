@@ -1667,3 +1667,9 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Repairs inference flight-recorder correlation by carrying active block ordinal and token-range state through block/layer cameras under the generation TLS metrics context.
 - Adds explicit prefill-checkpoint after every successfully committed batch or serial-fallback block with completedTokens/totalTokens/statePos/path.
 - Goal: make live observation answer exactly where a request is in prefill (96/2720, 192/2720, etc.) and identify the final completed block/layer before a worker disappears.
+
+
+### Server 2.3.297 — first-block token microscope
+- Records the first 100 tokenizer output IDs and bounded per-token decoded pieces before inference consumption.
+- Adds a pre-consume camera before forward-token-enter so the next ordinal is visible even if the consumer never reaches the existing forward camera.
+- Observational only: no tokenizer, batching, model, or generation semantics are changed.
