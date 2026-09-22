@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release Server 2.3.298 Station stream driver trace
-RETRY=42
+PURPOSE=release Server 2.3.299 detached Workstation generation ownership
+RETRY=43
