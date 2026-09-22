@@ -386,6 +386,59 @@ Core invariant:
 
 Before an action that is explicitly deployment-producing under the current deployment contract, determine the current deployment configuration/workflow.
 
+### Canonical production release pipeline — mandatory
+
+For stable production work owned by the persistent Server Plane, deployment is a **single self-cleaning terminal pipeline**, not a collection of manual cleanup/deploy steps.
+
+Canonical authority:
+
+- trigger file: `.deploy/SERVER_PLANE.txt`;
+- workflow: `.github/workflows/deploy-persistent-server-plane.yml`;
+- canonical Vercel project: `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`;
+- production alias: `swrlzkamico-o3nu.vercel.app`.
+
+Required terminal sequence:
+
+```text
+FINISH + VERIFY SOURCE CANDIDATE
+        ↓
+TRIGGER SERVER_PLANE ONCE
+        ↓
+PIN EXISTING CANONICAL VERCEL PROJECT
+        ↓
+PREPARE PROMOTED RUNTIME GENERATION
+        ↓
+DEPLOY PRODUCTION
+        ↓
+VERIFY PUBLIC PRODUCTION ALIAS / REQUIRED API
+        ↓
+RESOLVE THE NEW CURRENT PRODUCTION DEPLOYMENT ID
+        ↓
+PURGE EVERY OTHER DEPLOYMENT FOR THE CANONICAL PROJECT
+        ↓
+VERIFY EXACTLY ONE DEPLOYMENT REMAINS
+        ↓
+ONLY THEN REPORT DEPLOYMENT SUCCESS
+```
+
+The stale-deployment purge belongs **after** the replacement production deployment is READY and publicly verified. Do not run cleanup as a pre-deployment ritual: doing so merely creates a second deployment again when the new release is produced.
+
+The deployment workflow owns this post-release cleanup automatically. A successful workflow must protect the deployment currently resolved by the production alias, delete all other deployments belonging to the canonical project, fail if any deletion fails, and fail if final enumeration contains anything other than the protected production deployment.
+
+**Green workflow status alone is not sufficient evidence.** Before reporting the release complete, inspect the GitHub Actions run through its terminal state and verify Vercel project state. The expected terminal invariant is:
+
+```text
+GitHub deployment workflow = SUCCESS
+new production deployment = READY
+canonical production alias = verified
+Vercel project deployment count = 1
+remaining deployment ID = current production deployment ID
+```
+
+Do not create a new Vercel project, silently switch project IDs, or infer deployment from a Git commit. Do not claim deployment success while Vercel is BUILDING or the workflow is still in progress.
+
+The standalone stale-purge workflow/trigger may remain available as a repair/maintenance tool, but it is **not** the normal release path and must not replace the automatic post-deploy cleanup owned by the canonical Server Plane workflow.
+
 ### Project standing approval — single terminal production trigger
 
 For this repository, the user grants standing approval for **one production deployment trigger at the end of a governed update when that update actually requires production deployment**. This standing approval is deliberately narrow:
