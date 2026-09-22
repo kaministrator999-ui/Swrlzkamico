@@ -189,7 +189,7 @@
           main.querySelector(".thread-title").textContent=t.title||"New conversation";
           main.querySelector(".thread-meta").textContent=t.draft ? "Unsaved · starts on first message" : ((t.messages||[]).length+" messages");
           if(t.draft) main.querySelector(".thread-meta").classList.add("draft-badge");
-          main.onclick=async()=>{ if(t.draft)return; if(threadSelectionMode){selectedThreadIds.has(t.id)?selectedThreadIds.delete(t.id):selectedThreadIds.add(t.id);if(!selectedThreadIds.size)threadSelectionMode=false;renderThreads();return;} draftThread=false; activeThreadId=t.id; renderThreads(); renderConversation(t); await mutateChat([{type:"SET_CURRENT_THREAD",threadId:t.id}]); setMenu(false); };
+          main.onclick=async()=>{ if(t.draft)return; if(threadSelectionMode){selectedThreadIds.has(t.id)?selectedThreadIds.delete(t.id):selectedThreadIds.add(t.id);if(!selectedThreadIds.size)threadSelectionMode=false;renderThreads();return;} draftThread=false; activeThreadId=t.id; renderThreads(); renderConversation(t); setMenu(false); /* Selection is presentation state. Do not feed the metadata-only chat_state response back through applyChatState: that response intentionally carries empty message arrays and would overwrite the Workstation projection. */ await setCurrentThreadMetadata(t.id); };
           row.appendChild(main);
           if(!t.draft){
             let holdTimer=0,held=false;
@@ -261,6 +261,19 @@
       };
       const scheduleStationSync=()=>{clearTimeout(stationPoll);stationPoll=setTimeout(syncStation,700)};
       const loadChatState = syncStation;
+      const setCurrentThreadMetadata = async threadId => {
+        try{
+          let r=await fetch("/api/chat_state",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({contract:CHAT_STATE_CONTRACT,expectedRevision:chatRevision,operations:[{type:"SET_CURRENT_THREAD",threadId}]})});
+          let data=await r.json().catch(()=>({}));
+          if(r.status===409){
+            chatRevision=Number(data?.revision||chatRevision);
+            r=await fetch("/api/chat_state",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({contract:CHAT_STATE_CONTRACT,expectedRevision:chatRevision,operations:[{type:"SET_CURRENT_THREAD",threadId}]})});
+            data=await r.json().catch(()=>({}));
+          }
+          if(r.ok) chatRevision=Number(data?.revision||chatRevision);
+          return r.ok;
+        }catch(_){return false;}
+      };
       const mutateChat = async operations => {
         try{
           let r=await fetch("/api/chat_state",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({contract:CHAT_STATE_CONTRACT,expectedRevision:chatRevision,operations})});
