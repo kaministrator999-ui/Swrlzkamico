@@ -5,3 +5,5 @@ PROJECT=swrlzkamico-o3nu
 REQUESTED_AT=2026-09-22
 PURPOSE=predeploy cleanup before Chat 1.0.41 terminal projection + verifier repair release
 RETRY=14
+
+CLEAN_GATE=prebuilt-staging-repair-20260922
