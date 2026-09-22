@@ -5,3 +5,5 @@ REQUEST_ID=chat-terminal-projection-1.0.41-bundle-retry-20260922
 REQUESTED_BY=user
 SOURCE_REF=main
 REASON=Retry Chat 1.0.41 release after excluding transport payload from explicit Python function bundles.
+
+R39_MODEL_LOADING_DIAGNOSTIC_RELEASE=8fc565c6b243c640f72a4d00b03e09ffdef8341a
