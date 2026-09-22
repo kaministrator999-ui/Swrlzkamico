@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.35">
+  <meta name="swrlz-chat-version" content="1.0.40">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -239,6 +239,10 @@
         // Keep the last completed Station generation until canonical thread state contains it.\n        // A sync with no active generation must not erase the just-rendered terminal response.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration) stationGeneration=syncedGeneration;
         renderThreads(); if(!draftThread)renderConversation(currentThread());
         renderStationGeneration();
+        if(stationGeneration?.terminal && stationGeneration?.text){
+          const committed=(currentThread()?.messages||[]).some(m=>m.role==="assistant"&&m.meta?.requestId===stationGeneration.requestId);
+          if(!committed) scheduleStationSync();
+        }
       };
       const renderStationGeneration=()=>{
         document.querySelectorAll(".station-live-message").forEach(n=>n.remove());
@@ -278,8 +282,16 @@
         try{
           let r=await fetch("/api/chat_state",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({contract:CHAT_STATE_CONTRACT,expectedRevision:chatRevision,operations})});
           let data=await r.json().catch(()=>({}));
-          if(r.status===409){applyChatState(data);r=await fetch("/api/chat_state",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({contract:CHAT_STATE_CONTRACT,expectedRevision:chatRevision,operations})});data=await r.json().catch(()=>({}));}
-          if(r.ok)applyChatState(data); return r.ok;
+          if(r.status===409){
+            chatRevision=Number(data?.revision||chatRevision);
+            r=await fetch("/api/chat_state",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({contract:CHAT_STATE_CONTRACT,expectedRevision:chatRevision,operations})});
+            data=await r.json().catch(()=>({}));
+          }
+          if(r.ok){
+            chatRevision=Number(data?.revision||chatRevision);
+            await syncStation();
+          }
+          return r.ok;
         }catch(_){return false;}
       };
       const startDraft = () => { draftThread=true; pendingDraftThread=null; activeThreadId=""; prompt.value=""; renderConversation(null); renderThreads(); closeThreadPopups(); setMenu(false); };
@@ -375,7 +387,7 @@
       const accountTrace = async (phase,data={}) => {
         try {
           console.info("[§wyrlz account camera]",phase,data);
-          await fetch("/api/chat/client-debug",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"clean-room-account-v1",url:location.pathname,ua:navigator.userAgent,event:{at:new Date().toISOString(),type:"account-camera",message:phase,data}}),keepalive:true,cache:"no-store",credentials:"same-origin"});
+          await fetch("/api/chat?__swrlz_client_debug=1",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"clean-room-account-v1",url:location.pathname,ua:navigator.userAgent,event:{at:new Date().toISOString(),type:"account-camera",message:phase,data}}),keepalive:true,cache:"no-store",credentials:"same-origin"});
         } catch (_) {}
       };
       const accountFetch = async (path, init={}) => {
