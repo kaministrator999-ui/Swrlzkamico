@@ -1661,3 +1661,9 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Adds monotonic tokenOrdinal, blockOrdinal, and eventOrdinal fields so one request can be reconstructed in exact order.
 - Existing layer/operator cameras remain active for RMS, RoPE, SiLU, row/vector/matrix, matvec/matmat, attention, FFN, residual, KV/state position, sampling, and timing.
 - Unicode policy separation experiment remains isolated; this release adds observation only around the inference/response path.
+
+
+### Server 2.3.296 — request-scoped prefill checkpoints
+- Repairs inference flight-recorder correlation by carrying active block ordinal and token-range state through block/layer cameras under the generation TLS metrics context.
+- Adds explicit prefill-checkpoint after every successfully committed batch or serial-fallback block with completedTokens/totalTokens/statePos/path.
+- Goal: make live observation answer exactly where a request is in prefill (96/2720, 192/2720, etc.) and identify the final completed block/layer before a worker disappears.
