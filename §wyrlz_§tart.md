@@ -457,6 +457,16 @@ remaining deployment ID = current production deployment ID
 
 Do not create a new Vercel project, silently switch project IDs, or infer deployment from a Git commit. Do not claim deployment success while Vercel is BUILDING or the workflow is still in progress.
 
+### Canonical Vercel project lock — mandatory
+
+All Server deployment, cleanup, inspection, repair, retry, rollback, and release operations MUST target the already-existing canonical Vercel project `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`.
+
+- **Never create, bootstrap, clone, import, or substitute a new Vercel project for Server work.**
+- If a deployment command/workflow would create a project because linking/project resolution is missing, ambiguous, or broken, **stop and repair the link/configuration instead of proceeding**.
+- A failed deployment or failed cleanup does not authorize project creation.
+- Retries must reuse the same canonical project ID and production lineage.
+- Before reporting a GitHub → Vercel deployment as started, verify that a deployment-producing GitHub workflow actually ran and that Vercel received a deployment for this canonical project. A GitHub commit, queued cleanup job, or documentation mutation is not a Vercel deployment.
+
 The standalone stale-purge workflow/trigger may remain available as a repair/maintenance tool, but it is **not** the normal release path and must not replace the automatic post-deploy cleanup owned by the canonical Server Plane workflow.
 
 ### Project standing approval — single terminal production trigger
