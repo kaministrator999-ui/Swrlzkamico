@@ -36,6 +36,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### HOTFIX — 2026-09-21 — clean-room Chat 1.0.38 durable assistant terminal commit
+
+- **Clean-room Chat version:** **1.0.37 → 1.0.38**.
+- **Observed refresh defect:** canonical threads and USER messages survived refresh, but generated assistant records remained `STREAMING` with empty `committed_text`; Station correctly excludes those placeholders, so refreshed conversations appeared empty/incomplete.
+- **Root cause:** LALM Station internally dispatches generation and therefore bypasses the outer response middleware that normally terminal-commits the assistant record.
+- **Repair:** Station now transparently mirrors the generated NDJSON stream, accumulates DELTA text and terminal state, and calls the canonical `finish_turn` boundary before stream teardown.
+- **Persistence invariant:** a successfully completed visible assistant response must have the same durable account/thread/request identity and non-empty terminal committed text returned by subsequent Station sync.
+- **Account authority:** history remains scoped by authenticated Google-account user ID and populated only from Workstation canonical state.
+
+
 ### HOTFIX — 2026-09-21 — clean-room Chat 1.0.37 durable Redis transport
 
 - **Clean-room Chat version:** **1.0.36 → 1.0.37**.
