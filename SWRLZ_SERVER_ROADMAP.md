@@ -1,3 +1,11 @@
+
+### DIAGNOSTIC HOTFIX — 2026-09-22 — R39 MODEL_LOADING boundary cameras
+
+- **Observed production boundary:** CLIENT → SERVER, durable queue/subscriber, and bundled `swrlz_r39_python_reference_v1` all execute; generation emits `MODEL_LOADING` and then FAILED before ROUTE/PREFILL or any DELTA.
+- **Mutation:** `swyrlz/r39_inference.py` now emits bounded checkpoints for artifact discovery, `ensure_r39()` return/exception, verified raw handoff, `R39Model` open exception, and model-ready metadata. Unexpected exceptions include bounded traceback evidence in the diagnostic event instead of collapsing immediately to generic `R39_INFERENCE_RUNTIME_FAILED`.
+- **Architecture:** observational only; CLIENT → SERVER ownership, model transport verification, inference behavior, and terminal semantics are unchanged.
+- **Version note:** no standalone Server Runtime version file exists on current main; deployed Server Runtime authority is not pre-advanced by this source-only diagnostic mutation. Repository Work bookkeeping is recorded here and deployment activation remains pending until the governed cleanup/deploy gates succeed.
+- **Deployment intent:** authorized by user; run canonical stale-deployment cleanup first, then canonical production workflow against existing Vercel project `swrlzkamico-o3nu` only.
 # §wyrlz Server Roadmap & Version Ledger
 
 **Role:** durable chronological memory of Server/module evolution, architecture decisions, diagnostics, verification, deployment state, and completed project progress.
