@@ -36,6 +36,17 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### UPDATE COMPLETED — 2026-09-21 — clean-room Chat 1.0.36 Workstation-authoritative thread lifecycle + response actions
+
+- **Clean-room Chat version:** advanced from **1.0.35 → 1.0.36**.
+- **Authority correction:** LALM Station now claims the authenticated canonical turn before its internal generation dispatch. Internal request forwarding does not traverse the outer canonical-turn middleware, so relying on that middleware left first-message threads absent from the account thread index even though generation succeeded.
+- **Account isolation:** thread/history projection remains keyed exclusively by the authenticated Google-account user ID at the Workstation boundary; the browser does not choose the account scope.
+- **History population:** first user send creates the durable canonical thread before inference; Station sync projects canonical account threads/messages back to the Chat drawer.
+- **Thread controls:** viewport-safe per-thread popup plus hold-to-select multi-thread mode and multi-delete.
+- **Response UI:** every committed or live assistant response now renders a **Copy** action directly beneath the response.
+- **Release discipline:** version authority and this roadmap entry are part of the governed change and must accompany future accepted Chat feature releases.
+
+
 ### UPDATE STARTED — 2026-09-20 — clean-room Chat 1.0.1 component-by-component reconstruction
 
 - **Primary Focus:** Clean-room Chat.
