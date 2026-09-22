@@ -6,7 +6,7 @@ runtime branch by the dedicated hot/live loaders. The stable frozen-web
 collector host applies authentication and a fixed runtime-module contract while
 the collector implementation and page remain runtime-owned.
 
-Server 2.3.301 makes the Workstation queue the generation-lifetime authority: Chat submits a durable turn and may disconnect while R39 continues independently.
+Server 2.3.302 makes the Workstation queue the generation-lifetime authority: Chat submits a durable turn and may disconnect while R39 continues independently.
 """
 from __future__ import annotations
 
