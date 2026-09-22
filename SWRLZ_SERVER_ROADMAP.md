@@ -36,6 +36,15 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### HOTFIX — 2026-09-22 — Server 2.3.290 orphaned-generation terminalization
+
+- **Server Runtime candidate:** **2.3.289 → 2.3.290**.
+- **Camera evidence:** full R39 request `web-muc80b9y-3271194238-3760495743` entered PREFILL but never emitted a terminal event; its durable assistant remained `STREAMING` long after the request lifetime.
+- **Durable watchdog:** authoritative Station sync now inspects the account's Redis active-generation set and terminalizes non-terminal jobs older than 120 seconds as `FAILED`, atomically removing them from `active_jobs`.
+- **Invariant:** a vanished serverless inference worker may lose a response, but it may not leave a canonical assistant in `STREAMING` forever.
+- **Scope:** this repairs orphan cleanup and truthful terminal state. It does not claim to solve the underlying Python/Numpy full-inference throughput limit; that remains a separate measured performance target.
+
+
 ### HOTFIX — 2026-09-22 — Clean-room Chat 1.0.40 terminal projection + browser camera repair
 
 - **Clean-room Chat:** **1.0.39 → 1.0.40**; HTML version metadata is reconciled to the same authority.
