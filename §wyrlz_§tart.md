@@ -457,6 +457,21 @@ remaining deployment ID = current production deployment ID
 
 Do not create a new Vercel project, silently switch project IDs, or infer deployment from a Git commit. Do not claim deployment success while Vercel is BUILDING or the workflow is still in progress.
 
+### Deployment watch, failure recovery, and one-minute bound — mandatory
+
+A deployment/watch operation must never become an indefinite polling loop.
+
+1. For each stage — stale-deployment cleanup, GitHub production workflow, and resulting Vercel deployment — watch only until that stage reaches a terminal state or approximately **one minute** of active waiting has elapsed.
+2. **Terminal success:** stop polling that stage immediately and advance to the next required stage. Never continue polling a workflow or deployment that is already terminal-success.
+3. **Terminal failure:** stop polling immediately and inspect the failure evidence/logs. When the failure is safely repairable within the authorized project scope, repair the actual cause, perform all required mutation bookkeeping (affected versions + Roadmap), then restart the required sequence from the appropriate predeploy gate and rerun deployment on the same canonical project.
+4. If the failure cannot be safely repaired, requires missing information/authorization, or remains unresolved, finish the response with the exact failed stage, terminal failure evidence, and current blocker. Never imply deployment succeeded.
+5. **One-minute unresolved bound:** if a stage remains queued/in-progress/building after approximately one minute, stop active polling and finish the response with its exact current state. Do not call an in-progress stage failed merely because the watch bound elapsed.
+6. A GitHub production workflow that fails before its Vercel deployment step means **no new Vercel deployment was produced**; do not wait for or claim a Vercel deployment in that case.
+7. A successful GitHub stage should be followed only by the next required stage; success is a transition signal, not a reason to keep watching the completed stage.
+8. Failure recovery must never create a replacement Server/Vercel project. Always reuse `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`.
+
+---
+
 ### Canonical Vercel project lock — mandatory
 
 All Server deployment, cleanup, inspection, repair, retry, rollback, and release operations MUST target the already-existing canonical Vercel project `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`.
