@@ -92,7 +92,13 @@ def _v86_composition_camera(payload,request_id):
 
 def _v86_render_camera(payload,request_id):
     _V85_RENDER_CAMERA_V86(payload,request_id)
-    _v86_composition_camera(payload,request_id)
+    # Prompt-composition attribution is a diagnostic, not part of inference.
+    # On the Python/Numpy fallback it re-tokenizes every cumulative segment and
+    # then renders/tokenizes the full prompt again before real prefill. That can
+    # multiply cold-path work enough to consume the serverless request budget.
+    # Keep the camera available for explicit diagnostic runs only.
+    if isinstance(payload,dict) and payload.get("_swrlz_prompt_composition_diagnostic") is True:
+        _v86_composition_camera(payload,request_id)
 
 _render_camera=_v86_render_camera
 
