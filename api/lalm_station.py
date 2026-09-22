@@ -131,6 +131,8 @@ def install(server, chat_extensions) -> None:
                     text_parts: list[str] = []
                     terminal_type = "FAILED"
                     terminal_reason = "stream ended without terminal event"
+                    inference_failed = False
+                    inference_failure_reason = ""
                     try:
                         async for chunk in source:
                             raw = chunk.encode("utf-8") if isinstance(chunk, str) else bytes(chunk)
@@ -144,26 +146,41 @@ def install(server, chat_extensions) -> None:
                                     event = json.loads(line)
                                 except Exception:
                                     continue
-                                if str(event.get("type") or "").upper() == "DELTA":
+                                event_type = str(event.get("type") or "").upper()
+                                if event_type == "DELTA":
                                     text_parts.append(str(event.get("text") or ""))
+                                if event_type == "FAILED":
+                                    inference_failed = True
+                                    inference_failure_reason = str(event.get("reason") or inference_failure_reason)
                                 if event.get("terminal"):
-                                    terminal_type = str(event.get("type") or "FAILED").upper()
+                                    terminal_type = event_type or "FAILED"
                                     terminal_reason = str(event.get("reason") or "")
                             yield raw
                         if buffer.strip():
                             try:
                                 event = json.loads(buffer)
-                                if str(event.get("type") or "").upper() == "DELTA":
+                                event_type = str(event.get("type") or "").upper()
+                                if event_type == "DELTA":
                                     text_parts.append(str(event.get("text") or ""))
+                                if event_type == "FAILED":
+                                    inference_failed = True
+                                    inference_failure_reason = str(event.get("reason") or inference_failure_reason)
                                 if event.get("terminal"):
-                                    terminal_type = str(event.get("type") or "FAILED").upper()
+                                    terminal_type = event_type or "FAILED"
                                     terminal_reason = str(event.get("reason") or "")
                             except Exception:
                                 pass
                     finally:
+                        committed_text = "".join(text_parts)
+                        # Fail closed when any inference pass failed and the outer
+                        # contract later emits an empty COMPLETED terminal. A repair
+                        # wrapper may recover only by producing actual assistant text.
+                        if inference_failed and not committed_text and terminal_type == "COMPLETED":
+                            terminal_type = "FAILED"
+                            terminal_reason = inference_failure_reason or "inference failed before producing assistant text"
                         chat_turn_state.finish_turn(
                             turn,
-                            text="".join(text_parts),
+                            text=committed_text,
                             terminal_type=terminal_type,
                             reason=terminal_reason,
                         )
