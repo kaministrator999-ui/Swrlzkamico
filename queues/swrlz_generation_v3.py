@@ -67,7 +67,7 @@ async def generate_swrlz_response(payload) -> None:
         return
 
     # At-least-once delivery is safe because the persisted job is the idempotency boundary.
-    job = store.update_generation(replace(job, state="RUNNING"))
+    job = store.update_generation(replace(job, state="RUNNING", updated_at=time.time()))
     assistant = next((m for m in store.list_messages(user_id=user_id, thread_id=thread_id) if m.message_id == job.assistant_message_id), None)
     if assistant is None:
         raise ValueError("assistant placeholder is missing")
@@ -115,6 +115,11 @@ async def generate_swrlz_response(payload) -> None:
             seq += 1
             event = _wire(raw, seq=seq, request_id=request_id, engine=engine)
             _append(store, user_id=user_id, request_id=request_id, event=event)
+            # Every emitted model event renews the Workstation lease and advances
+            # the durable snapshot independently of any connected Chat client.
+            current_job = store.get_generation(user_id=user_id, request_id=request_id)
+            if current_job is not None and current_job.state not in {"COMPLETE", "FAILED", "CANCELLED"}:
+                store.update_generation(replace(current_job, state="RUNNING", last_seq=seq, updated_at=time.time()))
             last_type = str(event["type"])
             if last_type == "DELTA":
                 committed += str(event["text"])
