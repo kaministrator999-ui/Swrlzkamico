@@ -53,7 +53,8 @@ def _append(store, *, user_id: str, request_id: str, event: dict[str, Any]) -> N
 
 @subscribe(topic="swrlz-generation")
 async def generate_swrlz_response(payload) -> None:
-    data = dict(payload or {})
+    raw_payload = getattr(payload, "payload", payload)
+    data = dict(raw_payload or {})
     user_id, request_id, thread_id = (str(data.get(k) or "") for k in ("userId", "requestId", "threadId"))
     if not user_id or not request_id or not thread_id:
         raise ValueError("durable generation payload is missing identity")
@@ -71,7 +72,8 @@ async def generate_swrlz_response(payload) -> None:
     if assistant is None:
         raise ValueError("assistant placeholder is missing")
 
-    from runtime_hot import r39_engine_v35 as engine
+    from api.hot_loader import get_engine
+    engine, _engine_source = get_engine()
 
     history: list[dict[str, str]] = []
     for item in store.list_messages(user_id=user_id, thread_id=thread_id):
