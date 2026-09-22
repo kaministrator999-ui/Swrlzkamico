@@ -199,10 +199,11 @@ def forward_token_block(base, bridge, model, state, tokens: list[int]) -> np.nda
     start_pos = int(state.pos)
     count = len(tokens)
     x = np.stack([model.row("token_embd.weight", int(token)).astype(np.float32) for token in tokens], axis=1)
-    _lockdown("prefill-block-enter", startPos=start_pos, tokenCount=count, tokenIds=[int(t) for t in tokens])
+    m=_metric()
+    _lockdown("prefill-block-enter", blockOrdinal=int((m or {}).get("activeBlockOrdinal") or 0), tokenStartOrdinal=int((m or {}).get("activeBlockStartOrdinal") or 0), tokenEndOrdinal=int((m or {}).get("activeBlockEndOrdinal") or 0), startPos=start_pos, tokenCount=count, tokenIds=[int(t) for t in tokens])
     for i, kvh in enumerate(base.LAYER_KV):
         layer_started = time.perf_counter_ns()
-        _lockdown("layer-enter", layer=i, layerType="shortconv" if kvh == 0 else "attention", startPos=start_pos, tokenCount=count, hiddenRows=int(x.shape[0]), hiddenColumns=int(x.shape[1]))
+        _lockdown("layer-enter", blockOrdinal=int((m or {}).get("activeBlockOrdinal") or 0), layer=i, layerType="shortconv" if kvh == 0 else "attention", startPos=start_pos, tokenCount=count, hiddenRows=int(x.shape[0]), hiddenColumns=int(x.shape[1]))
         norm_started=time.perf_counter_ns()
         n = _rms_cols(x, model.vector(f"blk.{i}.attn_norm.weight"))
         _lockdown("layer-attn-norm", layer=i, durationNs=time.perf_counter_ns()-norm_started)
@@ -243,12 +244,12 @@ def forward_token_block(base, bridge, model, state, tokens: list[int]) -> np.nda
         _lockdown("layer-ffn-activation", layer=i)
         ff = _matmat(bridge, model, f"blk.{i}.ffn_down.weight", (base._silu(gate) * up).astype(np.float32))
         x = (residual + ff).astype(np.float32)
-        _lockdown("layer-exit", layer=i, durationNs=time.perf_counter_ns()-layer_started)
+        _lockdown("layer-exit", blockOrdinal=int((m or {}).get("activeBlockOrdinal") or 0), layer=i, durationNs=time.perf_counter_ns()-layer_started)
     final_norm_started=time.perf_counter_ns()
     hidden = _rms_cols(x, model.vector("token_embd_norm.weight"))
     _lockdown("prefill-final-norm", durationNs=time.perf_counter_ns()-final_norm_started)
     state.pos = start_pos + count
-    _lockdown("prefill-block-exit", startPos=start_pos, endPos=state.pos, tokenCount=count)
+    _lockdown("prefill-block-exit", blockOrdinal=int((m or {}).get("activeBlockOrdinal") or 0), tokenStartOrdinal=int((m or {}).get("activeBlockStartOrdinal") or 0), tokenEndOrdinal=int((m or {}).get("activeBlockEndOrdinal") or 0), startPos=start_pos, endPos=state.pos, tokenCount=count)
     return hidden[:, -1].copy()
 
 
@@ -376,7 +377,13 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
         if metrics is not None:
             metrics["prefillBlockOrdinal"] = int(metrics.get("prefillBlockOrdinal") or 0) + 1
         block_ordinal=int((metrics or {}).get("prefillBlockOrdinal") or 0)
-        _lockdown("prefill-block-dispatch", blockOrdinal=block_ordinal, tokenStartOrdinal=max(1,int((metrics or {}).get("prefillTokenOrdinal") or 0)-len(block)+1), tokenEndOrdinal=int((metrics or {}).get("prefillTokenOrdinal") or 0), tokenCount=len(block), tokenIds=block, statePos=int(state.pos), needLogits=bool(need_logits))
+        block_start=max(1,int((metrics or {}).get("prefillTokenOrdinal") or 0)-len(block)+1)
+        block_end=int((metrics or {}).get("prefillTokenOrdinal") or 0)
+        if metrics is not None:
+            metrics["activeBlockOrdinal"]=block_ordinal
+            metrics["activeBlockStartOrdinal"]=block_start
+            metrics["activeBlockEndOrdinal"]=block_end
+        _lockdown("prefill-block-dispatch", blockOrdinal=block_ordinal, tokenStartOrdinal=block_start, tokenEndOrdinal=block_end, tokenCount=len(block), tokenIds=block, statePos=int(state.pos), needLogits=bool(need_logits))
         _lockdown("batch-attempt-enter", blockOrdinal=block_ordinal, tokenCount=len(block), tokenIds=block, statePos=int(state.pos))
         try:
             hidden = forward_token_block(impl.base, impl.native_bridge, model, trial, block)
@@ -385,6 +392,7 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
             state.kv = trial.kv
             state.pos = trial.pos
             _lockdown("batch-attempt-exit", blockOrdinal=block_ordinal, tokenCount=len(block), path="batch", statePos=int(state.pos), durationNs=int((time.monotonic()-batch_started)*1_000_000_000))
+            _lockdown("prefill-checkpoint", blockOrdinal=block_ordinal, completedTokens=block_end, totalTokens=int((metrics or {}).get("newPrefillTokens") or 0), statePos=int(state.pos), path="batch")
             if metrics is not None and phase == "PREFILL":
                 metrics["batchBlocks"] += 1
                 metrics["batchPrefillTokens"] += len(block)
@@ -408,6 +416,7 @@ def install(impl, block_tokens: int = _DEFAULT_BLOCK_TOKENS) -> dict[str, Any]:
                     need_logits=bool(need_logits and index == len(block) - 1),
                 )
                 _lockdown("serial-prefill-token-exit", blockOrdinal=block_ordinal, index=index, tokenOrdinal=max(1,int((metrics or {}).get("prefillTokenOrdinal") or 0)-len(block)+index+1), tokenId=int(buffered_token), statePos=int(state.pos), durationNs=time.perf_counter_ns()-token_started)
+            _lockdown("prefill-checkpoint", blockOrdinal=block_ordinal, completedTokens=block_end, totalTokens=int((metrics or {}).get("newPrefillTokens") or 0), statePos=int(state.pos), path="serial-fallback")
             if metrics is not None and phase == "PREFILL":
                 metrics["serialPrefillTokens"] += len(block)
                 metrics["serialPrefillSeconds"] += time.monotonic() - serial_started
