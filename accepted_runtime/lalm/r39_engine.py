@@ -201,7 +201,22 @@ try:
                     _semantic_lockdown("tokenizer-encode-enter",textChars=len(str(text)),text=str(text)[:64000])
                     started=time.perf_counter_ns()
                     out=_original(self,text)
-                    _semantic_lockdown("tokenizer-encode-exit",tokenCount=len(out),tokenIds=[int(x) for x in out],durationNs=time.perf_counter_ns()-started)
+                    ids=[int(x) for x in out]
+                    # Bounded first-block look-ahead: decode each token independently
+                    # when the tokenizer exposes decode(), so corruption can be
+                    # separated from consumer/generator suspension.
+                    microscope=[]
+                    decode_fn=getattr(self,"decode",None)
+                    for idx,tid in enumerate(ids[:100]):
+                        piece=""
+                        if callable(decode_fn):
+                            try:
+                                piece=str(decode_fn([tid]))
+                            except Exception as exc:
+                                piece="<decode-error:"+type(exc).__name__+">"
+                        microscope.append({"ordinal":idx+1,"tokenId":tid,"piece":piece[:128],"previousTokenId":ids[idx-1] if idx>0 else None,"nextTokenId":ids[idx+1] if idx+1<len(ids) else None})
+                    _semantic_lockdown("tokenizer-first-block-microscope",tokenCount=len(ids),tokens=microscope)
+                    _semantic_lockdown("tokenizer-encode-exit",tokenCount=len(out),tokenIds=ids,durationNs=time.perf_counter_ns()-started)
                     return out
                 _traced_encode._swrlz_lockdown_wrapper=True
                 _tok_cls.encode=_traced_encode
