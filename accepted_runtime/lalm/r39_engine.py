@@ -262,6 +262,30 @@ try:
         except Exception:
             pass
 
+    # Unicode prompt-policy separation experiment. Unicode capability remains in the
+    # tokenizer/model/runtime; only the inherited prose policy is removed from model
+    # history before the exact inference boundary. Cameras prove the mutation.
+    _unicode_policy=globals().get("_UNICODE_AWARENESS_POLICY")
+    _pre_unicode_v41=globals().get("_V41_GENERATE")
+    if isinstance(_unicode_policy,str) and _unicode_policy and callable(_pre_unicode_v41):
+        def _v41_without_unicode_policy(payload,is_cancelled=None,_original=_pre_unicode_v41):
+            if not isinstance(payload,dict):
+                for event in _original(payload,is_cancelled): yield event
+                return
+            out=dict(payload); before=list(out.get("history") or []); after=[]; removed=0; removed_chars=0
+            for item in before:
+                if isinstance(item,dict) and str(item.get("role") or "").strip().lower()=="system":
+                    value=str(item.get("text") or item.get("content") or "")
+                    if value==_unicode_policy:
+                        removed+=1; removed_chars+=len(value); continue
+                after.append(item)
+            out["history"]=after
+            _entry("unicode-policy-separated",requestId=_request_id(payload),removedMessages=removed,
+                   removedChars=removed_chars,beforeMessages=len(before),afterMessages=len(after),
+                   unicodeCapabilityPreserved=True)
+            for event in _original(out,is_cancelled): yield event
+        globals()["_V41_GENERATE"]=_v41_without_unicode_policy
+
     # Full-map trace: retain all existing cameras and extend observation upward
     # through every reachable inherited generation bridge. This is observational only.
     def _discover_generate_chain(start,limit=80):
