@@ -120,6 +120,59 @@ def install(server, chat_extensions) -> None:
                 return {"type": "http.request", "body": body, "more_body": False}
             forwarded = Request(scope, receive)
             response = await chat_extensions.chat._post_action(forwarded, "stream")
+            # Because this dispatch is internal, the outer canonical-turn response
+            # middleware is not traversed. Mirror the streamed NDJSON while collecting
+            # the assistant text, then terminal-commit it before the stream closes.
+            if isinstance(response, StreamingResponse):
+                source = response.body_iterator
+                async def committed_stream():
+                    import json
+                    buffer = ""
+                    text_parts: list[str] = []
+                    terminal_type = "FAILED"
+                    terminal_reason = "stream ended without terminal event"
+                    try:
+                        async for chunk in source:
+                            raw = chunk.encode("utf-8") if isinstance(chunk, str) else bytes(chunk)
+                            buffer += raw.decode("utf-8", errors="replace")
+                            lines = buffer.split("\n")
+                            buffer = lines.pop()
+                            for line in lines:
+                                if not line.strip():
+                                    continue
+                                try:
+                                    event = json.loads(line)
+                                except Exception:
+                                    continue
+                                if str(event.get("type") or "").upper() == "DELTA":
+                                    text_parts.append(str(event.get("text") or ""))
+                                if event.get("terminal"):
+                                    terminal_type = str(event.get("type") or "FAILED").upper()
+                                    terminal_reason = str(event.get("reason") or "")
+                            yield raw
+                        if buffer.strip():
+                            try:
+                                event = json.loads(buffer)
+                                if str(event.get("type") or "").upper() == "DELTA":
+                                    text_parts.append(str(event.get("text") or ""))
+                                if event.get("terminal"):
+                                    terminal_type = str(event.get("type") or "FAILED").upper()
+                                    terminal_reason = str(event.get("reason") or "")
+                            except Exception:
+                                pass
+                    finally:
+                        chat_turn_state.finish_turn(
+                            turn,
+                            text="".join(text_parts),
+                            terminal_type=terminal_type,
+                            reason=terminal_reason,
+                        )
+                return StreamingResponse(
+                    committed_stream(),
+                    status_code=response.status_code,
+                    headers=dict(response.headers),
+                    media_type=response.media_type,
+                )
             return response
         except AuthenticationError as exc:
             return JSONResponse({"ok": False, "contract": CONTRACT, "code": "ACCOUNT_SESSION_INVALID", "detail": str(exc)}, status_code=401, headers=_headers())
