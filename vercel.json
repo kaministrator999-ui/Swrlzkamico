@@ -2,7 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "fluid": true,
-  "regions": ["iad1"],
+  "regions": [
+    "iad1"
+  ],
   "git": {
     "deploymentEnabled": false
   },
@@ -10,6 +12,12 @@
     "api/**/*.py": {
       "maxDuration": 300,
       "excludeFiles": "{.transport/**,SWRLZ_NEW_SERVER_GITHUB_READY.zip}"
+    },
+    "api/index.py": {
+      "maxDuration": 300
+    },
+    "queues/swrlz_generation_v3.py": {
+      "maxDuration": 300
     }
   }
 }
