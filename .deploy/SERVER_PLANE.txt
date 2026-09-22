@@ -1,4 +1,4 @@
 APPROVED=1
 SOURCE_REF=main
-PURPOSE=release account-scoped thread promotion multi-select and viewport-safe thread menus
-RETRY=27
+PURPOSE=release Chat 1.0.36 canonical first-turn creation copy actions and roadmap lineage
+RETRY=28
