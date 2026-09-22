@@ -36,6 +36,16 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+### HOTFIX — 2026-09-21 — clean-room Chat 1.0.37 durable Redis transport
+
+- **Clean-room Chat version:** **1.0.36 → 1.0.37**.
+- **Regression observed in production:** first-turn canonical admission caused `POST /api/lalm_station/send` to return **503**, so §wyrlz stopped responding; account Station sync was also returning **503**.
+- **Camera evidence:** both failures stopped immediately after `redis-command-enter`, before a Redis result was observed.
+- **Transport repair:** durable Redis REST calls now use the same requests-based HTTP stack used elsewhere in the server and emit an explicit `redis-http-response` camera with status/byte count before decoding.
+- **Intended invariant:** first send durably claims the account-scoped canonical thread, generation continues, and Station sync can populate that thread from Workstation authority.
+- **1.0.36 features retained:** response Copy action and governed thread UI remain in place.
+
+
 ### UPDATE COMPLETED — 2026-09-21 — clean-room Chat 1.0.36 Workstation-authoritative thread lifecycle + response actions
 
 - **Clean-room Chat version:** advanced from **1.0.35 → 1.0.36**.
