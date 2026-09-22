@@ -90,8 +90,31 @@ def _v86_composition_camera(payload,request_id):
     except Exception as exc:
         _camera(request_id,"prompt-composition-error",contract=_V86_CONTRACT,errorType=type(exc).__name__,elapsedMs=int((time.monotonic()-started)*1000))
 
+def _v86_lightweight_inventory(payload,request_id):
+    """Always-on, non-tokenizing prompt inventory. No prompt text is logged."""
+    try:
+        prepared,_segments=_v86_segments(payload)
+        history=prepared.get("history",[]) or []
+        owners={};system_entries=0;conversation_entries=0
+        for index,turn in enumerate(history):
+            if not isinstance(turn,dict):continue
+            role=str(turn.get("role","USER")).strip().lower()
+            text=str(turn.get("text",""))
+            owner=_v86_owner(role,text)
+            owners.setdefault(owner,{"entries":0,"chars":0})
+            owners[owner]["entries"]+=1;owners[owner]["chars"]+=len(text)
+            if role=="system":system_entries+=1
+            else:conversation_entries+=1
+            _camera(request_id,"prompt-inventory-entry",contract="r39-v86-lightweight-prompt-inventory-v1",index=index,role=role,owner=owner,chars=len(text),fingerprint=_v86_hash(text))
+        directive=str(prepared.get("responseDirective") or "You are §wyrlz. Answer directly and truthfully.")
+        user=str(prepared.get("prompt") or "")
+        _camera(request_id,"prompt-inventory-summary",contract="r39-v86-lightweight-prompt-inventory-v1",historyEntries=len(history),systemEntries=system_entries,conversationEntries=conversation_entries,historyChars=sum(v["chars"] for v in owners.values()),directiveChars=len(directive),currentUserChars=len(user),owners=owners)
+    except Exception as exc:
+        _camera(request_id,"prompt-inventory-error",contract="r39-v86-lightweight-prompt-inventory-v1",errorType=type(exc).__name__)
+
 def _v86_render_camera(payload,request_id):
     _V85_RENDER_CAMERA_V86(payload,request_id)
+    _v86_lightweight_inventory(payload,request_id)
     # Prompt-composition attribution is a diagnostic, not part of inference.
     # On the Python/Numpy fallback it re-tokenizes every cumulative segment and
     # then renders/tokenizes the full prompt again before real prefill. That can
