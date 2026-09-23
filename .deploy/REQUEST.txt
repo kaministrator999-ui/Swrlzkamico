@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=clean-room-send-transport-diagnostic-20260923-0610
+REQUEST_ID=chat-send-transport-diagnostic-20260923-0610
 REQUESTED_BY=user
 SOURCE_REF=main
-REASON=Deploy latest clean-room send transport diagnostics and direct R39 bring-up isolation using canonical prepare-clear-deploy-verify workflow.
+REASON=Deploy latest source with direct R39 bring-up isolation, canonical pre-deploy cleanup, and bounded composer send-event diagnostic to trace messages that currently produce no server traffic.
