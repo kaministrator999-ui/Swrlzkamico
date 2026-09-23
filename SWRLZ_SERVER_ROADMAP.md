@@ -1,4 +1,10 @@
 
+### UPDATE FINISHED — 2026-09-23 — clean-room send transport visibility
+- **Observed:** two user sends from clean-room `/chat/§wyrlz` produced no Vercel runtime traffic at the Station/subscriber/tokenizer boundaries. Current production remained READY but therefore provided no server-side evidence for those sends.
+- **Architecture reconciliation:** canonical clean-room source on main posts directly to `/api/lalm_station/send`; the server route exists in `api/lalm_station.py`. The existing client catch collapsed network and non-2xx HTTP failures into a generic CLIENT_TRANSPORT state without preserving endpoint/status detail.
+- **Mutation:** Web Chat 1.0.42 makes the send boundary fail visibly with `SEND_NETWORK_FAILED` or `SEND_HTTP_<status>`, endpoint, and bounded response detail. No alternate transport owner or fallback was added.
+- **Verification state:** source/static verified; production activation pending canonical update → prepared replacement → clear existing Vercel deployments → GitHub deploy → terminal GitHub/Vercel/alias/SHA verification.
+
 ### 2026-09-23 — bring-up isolation + pre-deploy cleanup repair
 - Live post-deploy trace proved the promoted R39 hot overlay lineage still expanded a tiny turn to 2,698 prefill tokens even after subscriber history/profile removal. Commit 96db666 bypasses the hot overlay stack in the v3 generation subscriber during baseline bring-up and invokes swyrlz.r39_inference directly; this isolates raw current-turn chat framing/tokenization/model/decode.
 - The production workflow had no previous-deployment cleanup step. Commit 262e1b7 adds fail-closed Vercel API cleanup after the replacement artifact is fully built/injected/verified locally and immediately before production deployment, minimizing the destructive gap while enforcing the requested clear-before-deploy order.
