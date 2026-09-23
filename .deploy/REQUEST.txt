@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=chat-identity-polish-20260923
+REQUEST_ID=chat-ui-balance-20260923b
 REQUESTED_BY=user
 SOURCE_REF=main
-REASON=Deploy chat identity and visual polish: Google user name/avatar, tidier assistant identity, typography, bubbles, and copy action positioning.
+REASON=Deploy refined chat UI from main using the repository production workflow, including its existing previous-deployment cleanup step.
