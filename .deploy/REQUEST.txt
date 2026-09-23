@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=adaptive-prefill-runtime-repair-20260923
-REASON=Deploy adaptive batched prefill blocks after registering the accepted R39 entrypoint integrity blob.
-SOURCE_COMMIT=c00a116b9d4246934c00b830ed309e9642b39542
+REQUEST_ID=request-correlated-prefill-metric-20260923
+REASON=Deploy terminal PREFILL_END camera with request ID, token count, adaptive batch size, duration, and throughput.
+SOURCE_COMMIT=ab32e1b0f7c168f3c89d18f2ebc7708127c10d8a
