@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.40">
+  <meta name="swrlz-chat-version" content="1.0.41">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -267,8 +267,15 @@
           return true;
         }catch(_){renderThreads();return false}
       };
-      const scheduleStationSync=()=>{clearTimeout(stationPoll);stationPoll=setTimeout(syncStation,700)};
+      const scheduleStationSync=(delay=700)=>{clearTimeout(stationPoll);stationPoll=setTimeout(syncStation,delay)};
+      // Server owns conversation/generation state; keep the visible projection hydrated.
+      const keepStationHydrated=()=>{if(document.visibilityState==="visible")scheduleStationSync(0)};
       const loadChatState = syncStation;
+      document.addEventListener("visibilitychange",keepStationHydrated);
+      window.addEventListener("focus",keepStationHydrated);
+      window.addEventListener("pageshow",keepStationHydrated);
+      window.addEventListener("online",keepStationHydrated);
+      setInterval(()=>{if(document.visibilityState==="visible"&&!sending)syncStation()},2000);
       const setCurrentThreadMetadata = async threadId => {
         try{
           let r=await fetch("/api/chat_state",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({contract:CHAT_STATE_CONTRACT,expectedRevision:chatRevision,operations:[{type:"SET_CURRENT_THREAD",threadId}]})});
