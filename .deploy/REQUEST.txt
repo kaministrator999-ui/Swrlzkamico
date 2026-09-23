@@ -1,3 +1,6 @@
-request_id=r39-prefill-instrumentation-20260923
-reason=Deploy bounded R39 prompt-token and prefill-throughput instrumentation without reducing existing trace cameras.
-source_commit=d04b4cf851d1532d352b196cff38e2ad268be51b
+TARGET=production
+APPROVED=1
+SOURCE_REF=main
+REQUEST_ID=r39-prefill-instrumentation-20260923
+REASON=Deploy bounded R39 prompt-token and prefill-throughput instrumentation without reducing existing trace cameras.
+SOURCE_COMMIT=d04b4cf851d1532d352b196cff38e2ad268be51b
