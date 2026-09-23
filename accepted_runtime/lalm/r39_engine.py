@@ -301,6 +301,26 @@ try:
             for event in _original(out,is_cancelled): yield event
         globals()["_V41_GENERATE"]=_v41_without_unicode_policy
 
+    # Contract architecture bridge: preserve inherited contract computation while
+    # removing only exact duplicate system-contract prose before lower inference.
+    def _compact_contract_history(payload):
+        if not isinstance(payload,dict): return payload
+        history=list(payload.get("history") or [])
+        seen=set(); after=[]; removed=0; removed_chars=0
+        for item in history:
+            if not isinstance(item,dict): after.append(item); continue
+            role=str(item.get("role") or "").strip().lower()
+            value=str(item.get("text") or item.get("content") or "")
+            if role=="system":
+                key=value.strip()
+                if key and key in seen:
+                    removed+=1; removed_chars+=len(value); continue
+                if key: seen.add(key)
+            after.append(item)
+        if not removed: return payload
+        out=dict(payload); out["history"]=after
+        _entry("contract-state-compacted",requestId=_request_id(payload),beforeMessages=len(history),afterMessages=len(after),removedMessages=removed,removedChars=removed_chars,semanticsPreserved=True,mode="dedupe-system-contract-prose")
+        return out
     # Full-map trace: retain all existing cameras and extend observation upward
     # through every reachable inherited generation bridge. This is observational only.
     def _discover_generate_chain(start,limit=80):
@@ -356,7 +376,11 @@ try:
         def _make_camera_bridge(boundary,original):
             def _bridge(payload,is_cancelled=None):
                 _diag_payload("prefill-boundary-"+boundary,payload)
-                for event in original(payload,is_cancelled):
+                routed=payload
+                if boundary=="v51-v50":
+                    routed=_compact_contract_history(payload)
+                    _diag_payload("prefill-boundary-"+boundary+"-compacted",routed)
+                for event in original(routed,is_cancelled):
                     yield event
             return _bridge
         _owner.__globals__[_slot]=_make_camera_bridge(_boundary,_original)
