@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=restore-r39-optimized-prefill-20260923
-REASON=Restore prepared hot R39 native and batched prefill lineage after direct baseline proved compact prompt tokenization.
-SOURCE_COMMIT=f0626a86368a188b342a4d897e47ed6eec4d6473
+REQUEST_ID=contract-state-compaction-20260923
+REASON=Deploy conservative v51-v50 duplicate contract prose compaction with before and after cameras.
+SOURCE_COMMIT=3f8a1e5a3590e3649138527a15c0e65d7ecfcbba
