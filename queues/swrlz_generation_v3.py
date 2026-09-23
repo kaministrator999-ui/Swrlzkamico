@@ -107,12 +107,13 @@ async def generate_swrlz_response(payload) -> None:
     if assistant is None:
         raise ValueError("assistant placeholder is missing")
 
-    # R39 bring-up isolation: bypass the promoted hot overlay lineage entirely.
-    # The overlay stack owns substantial prompt-composition machinery, so testing
-    # baseline inference through it cannot prove raw-turn latency/token count.
-    from swyrlz import r39_inference as engine
+    # Prompt-size bring-up proved the raw turn is compact (for example, "Hey"
+    # reached R39 as 10 tokens). Restore the prepared/hot R39 lineage now so the
+    # already-proven native matvec + batched prefill kernels execute again.
+    # Keep prompt/token/prefill cameras below to verify the restored path live.
+    from api.hot_loader import get_engine
     _camera("engine-load-enter", request_id=request_id)
-    _engine_source = "direct-r39-bringup"
+    engine, _engine_source = get_engine()
     _camera(
         "engine-load-exit",
         request_id=request_id,
