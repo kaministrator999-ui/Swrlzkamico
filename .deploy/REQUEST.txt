@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=r39-minimal-prompt-bringup-20260922-2204
+REQUEST_ID=clean-room-send-transport-diagnostic-20260923-0610
 REQUESTED_BY=user
 SOURCE_REF=main
-REASON=Deploy minimal R39 bring-up prompt path: disable transcript/profile injection and default response directive so fresh tiny turns reach inference with only irreducible chat framing.
+REASON=Deploy latest clean-room send transport diagnostics and direct R39 bring-up isolation using canonical prepare-clear-deploy-verify workflow.
