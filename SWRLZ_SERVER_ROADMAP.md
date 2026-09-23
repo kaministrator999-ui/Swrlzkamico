@@ -1,4 +1,9 @@
 
+### 2026-09-23 — production verifier canonical-alias repair
+- Production deployment `dpl_2LiSiW7yrpKQc9RWkvRhkk4GpP3x` reached Vercel READY and was aliased to `https://swrlzkamico-o3nu.vercel.app`, but the GitHub verification step polled the deployment-specific URL and received Vercel's protection redirect instead of JSON from `/api/server/status`.
+- Workflow repair `d367c9276c5a52bee263488974057f4b217baeac` verifies the canonical production alias after promotion. Exact source identity remains fail-closed through the existing `deploymentCommit == EXPECTED_SOURCE_SHA` assertion, so alias verification cannot accidentally bless an older deployment.
+- R39 section-sign tokenizer fix remains included in the current main lineage. A fresh governed deployment will be triggered and watched to terminal GitHub + Vercel states.
+
 ### 2026-09-23 — canonical §WYRLZX_BPE tokenizer compatibility
 - Live manual-deploy traces for both greetings show verified R39 model reconstruction, then `R39_TOKENIZER_KIND_UNSUPPORTED` on canonical producer label `§WYRLZX_BPE` at `BpeTokenizer.__init__`. The Python engine previously accepted only `SWYRLZX_BPE` (ASCII S) and `GGML_BPE`.
 - Commit `1c927ee255f1f043e19ab197ff2fc91577669533` adds an explicit section-sign spelling alias with serialized token/merge schema validation. No arbitrary BPE fallback, no change to vocabulary IDs or merge ordering. Await manual deployment and live test to verify model-open/prefill and any next gate.
