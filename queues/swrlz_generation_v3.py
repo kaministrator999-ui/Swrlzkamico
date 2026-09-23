@@ -163,6 +163,13 @@ async def generate_swrlz_response(payload) -> None:
                 elapsedMs=int((time.time() - started) * 1000),
                 textChars=len(str(event.get("text") or "")),
             )
+            if str(raw.get("phase") or "") in {"PROMPT_DIAGNOSTIC", "PREFILL_COMPLETE"}:
+                _camera(
+                    "r39-inference-metrics",
+                    request_id=request_id,
+                    phase=str(raw.get("phase") or ""),
+                    reason=str(raw.get("reason") or "")[:1000],
+                )
             if str(raw.get("phase") or "") == "MODEL_LOAD_DIAGNOSTIC":
                 # The stream contract intentionally drops engine-private fields.
                 # Emit bounded diagnostic evidence at the subscriber boundary,
