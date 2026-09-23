@@ -522,8 +522,14 @@ def _sample(logits: np.ndarray, history: list[int], temperature: float, top_p: f
 
 def render_chat_prompt(payload: dict[str, Any]) -> str:
     parts = ["<|startoftext|>"]
-    directive = str(payload.get("responseDirective") or "You are §wyrlz. Answer directly and truthfully.").strip()
-    parts.append(f"<|im_start|>system\n{directive}<|im_end|>\n")
+    # Bring-up mode intentionally omits the default/system directive when the
+    # caller supplies an empty responseDirective. This keeps a fresh "Hey"
+    # close to the model's irreducible chat framing instead of silently adding
+    # prompt machinery before baseline inference is proven.
+    directive_value = payload.get("responseDirective")
+    directive = str(directive_value).strip() if directive_value is not None else "You are §wyrlz. Answer directly and truthfully."
+    if directive:
+        parts.append(f"<|im_start|>system\n{directive}<|im_end|>\n")
     for turn in payload.get("history", []):
         if not isinstance(turn, dict):
             continue
