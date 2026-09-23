@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=chat-ui-balance-20260923b
+REQUEST_ID=chat-ui-legibility-20260923
 REQUESTED_BY=user
 SOURCE_REF=main
-REASON=Deploy refined chat UI from main using the repository production workflow, including its existing previous-deployment cleanup step.
+REASON=Deploy corrected sender orientation plus subtle identity backdrops and text shadows for chat legibility.
