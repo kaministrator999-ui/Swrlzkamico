@@ -1,4 +1,9 @@
 
+### 2026-09-23 — UPDATE STARTED: clean-room send transport disappearance
+- Symptom: two user sends rendered locally but produced no Vercel runtime traffic in the observed production window, placing the defect before Workstation enqueue/inference.
+- Diagnostic mutation: commit 93da40d adds bounded server cameras at /api/lalm_station/send entry/auth/failure; commit 2c9e8b3 adds a clean-room client camera immediately before fetch and after/failing the fetch. These cameras distinguish click/composer execution, browser network dispatch, route entry, authentication, and queue handoff without changing send ownership.
+- Deployment intent: deploy through the canonical update → prepare → clear existing project deployments → deploy latest → GitHub terminal → Vercel READY/source-SHA verification sequence, then reproduce one send and inspect the new cameras before behavioral mutation.
+
 ### UPDATE FINISHED — 2026-09-23 — clean-room send transport visibility
 - **Observed:** two user sends from clean-room `/chat/§wyrlz` produced no Vercel runtime traffic at the Station/subscriber/tokenizer boundaries. Current production remained READY but therefore provided no server-side evidence for those sends.
 - **Architecture reconciliation:** canonical clean-room source on main posts directly to `/api/lalm_station/send`; the server route exists in `api/lalm_station.py`. The existing client catch collapsed network and non-2xx HTTP failures into a generic CLIENT_TRANSPORT state without preserving endpoint/status detail.
