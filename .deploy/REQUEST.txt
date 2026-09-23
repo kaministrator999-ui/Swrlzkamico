@@ -7,3 +7,5 @@ SOURCE_REF=main
 REASON=Retry Chat 1.0.41 release after excluding transport payload from explicit Python function bundles.
 
 R39_MODEL_LOADING_DIAGNOSTIC_RELEASE=8fc565c6b243c640f72a4d00b03e09ffdef8341a
+
+R39_DIAGNOSTIC_VISIBILITY_RELEASE=a2cb2ee47ec42f8e4c7d27601c9424e4da5f0e7a
