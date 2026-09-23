@@ -346,7 +346,17 @@
           localThread.messages=Array.isArray(localThread.messages)?localThread.messages:[];
           if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,meta:{requestId,localPending:true}});
           prompt.value=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
-          const response=await fetch("/api/lalm_station/send",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,profileId:"LALM",ingress:"SWRLZ_LALM_STATION"})});
+          const sendPath="/api/lalm_station/send";
+          let response;
+          try{
+            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,profileId:"LALM",ingress:"SWRLZ_LALM_STATION"})});
+          }catch(networkError){
+            throw new Error("SEND_NETWORK_FAILED "+sendPath+" "+String(networkError?.message||networkError));
+          }
+          if(!response.ok){
+            let detail="";try{detail=await response.clone().text()}catch(_){}
+            throw new Error("SEND_HTTP_"+response.status+" "+sendPath+(detail?" "+detail.slice(0,600):""));
+          }
           await consumeGeneration(response);
           await syncStation();
           return true;
