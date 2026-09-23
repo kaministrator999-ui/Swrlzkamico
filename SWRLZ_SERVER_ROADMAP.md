@@ -1,4 +1,8 @@
 
+### 2026-09-23 — minimal R39 bring-up prompt isolation
+- Fresh-thread live inference reached PREFILL with 2,788 tokens despite a tiny user turn. For baseline model bring-up, commit 944e1bc disables transcript/profile injection in the generation subscriber and sends an explicitly empty response directive; commit 3251c8f makes the renderer honor that empty directive rather than silently restoring its default system prompt.
+- The resulting test path retains only irreducible chat framing plus the current user text. Context/profile machinery will be reintroduced separately behind measured token budgets after decode/DELTA is proven.
+
 ### 2026-09-23 — Vercel native runtime libgomp portability repair
 - Canonical production alias advanced to the new deployment, but /api/lalm/native reported both R39 native modules unavailable because the Actions-built extensions linked libgomp.so.1, which is absent from Vercel's Python runtime image.
 - Production workflow commit ef969130c48fa89b425dc3c69aa0d235e8b0cf4c now builds R39 native extensions with SWYRLZ_OPENMP=0 and fails closed if ldd still finds a libgomp dependency. The C kernels already guard OpenMP usage behind _OPENMP, so this preserves native execution while removing the unavailable runtime dependency.
