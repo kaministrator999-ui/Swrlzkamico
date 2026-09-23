@@ -230,23 +230,40 @@ Do not create a second policy document for a concern that already has a canonica
 
 ---
 
-### Mandatory mutation → version → roadmap → GitHub deploy → Vercel watch sequence
+### Mandatory mutation → version → roadmap → clear current server → deploy latest → verify sequence
 
-For **every GitHub file mutation** performed as part of governed project work, the mutation is not terminal by itself.
+For **every governed GitHub/server production update**, use this exact release order consistently. A source mutation is not terminal by itself.
 
 Mandatory sequence:
 
-1. update the affected canonical version authority or authorities according to `SWRLZ_VERSION_MODULE_EVOLUTION.md`;
-2. update `SWRLZ_SERVER_ROADMAP.md` with the governed event, exact version movement, verification state, and deployment intent/result;
-3. before triggering any GitHub → Vercel production deployment, run the repository's canonical **remove stale server deployments** cleanup action/workflow for the existing Vercel project and wait for that cleanup to reach its terminal state; do not create a new Vercel project as a cleanup shortcut;
-4. only after stale-server cleanup has completed successfully and the source/lineage records are coherent, trigger deployment through the canonical GitHub deployment workflow for the existing project;
-5. watch the GitHub workflow until it reaches a terminal state;
-6. if GitHub deployment succeeds, switch to the connected Vercel project and watch the resulting deployment until it reaches its terminal Vercel state (for successful production release, `READY`);
-7. only after cleanup, GitHub deployment, and Vercel deployment have each reached terminal states may the user-facing final deployment response be completed.
+1. **Update source first.** Complete the requested implementation in the canonical GitHub owners. Update the affected canonical version authority/authorities according to `SWRLZ_VERSION_MODULE_EVOLUTION.md`, and journal the governed event in `SWRLZ_SERVER_ROADMAP.md`.
+2. **Prepare and verify the replacement before destructive cleanup.** The canonical GitHub deployment workflow must check out the exact intended source SHA, build/inject/verify the production artifact, and stop on any preparation failure. Do not clear the currently deployed server while the replacement is still unprepared.
+3. **Clear the current Vercel server deployments immediately before deploy.** After the replacement artifact is ready, enumerate deployments belonging to the existing canonical Vercel project and remove the previous/current project deployments. Wait for cleanup to reach a terminal successful state. Never create a new Vercel project as a cleanup shortcut.
+4. **Deploy the latest updated server through GitHub.** Immediately after successful cleanup, the same canonical GitHub workflow deploys the already-prepared artifact/source lineage to the one existing Vercel project. Do not deploy an older SHA, a runtime scratch copy, or an independently reconstructed artifact.
+5. **Watch GitHub to terminal.** Stay on the GitHub Actions run until it succeeds or fails. Do not report `queued`, `building`, or `triggered` as completion.
+6. **Watch Vercel to terminal and prove lineage.** On GitHub deployment success, inspect the connected Vercel project until the new production deployment is `READY` (or terminal failure), confirm the production alias points to it, and confirm the deployed source SHA matches the intended latest GitHub source SHA.
+7. **Only then report deployment completion.** The release is complete only when source/version/Roadmap state is coherent, previous deployments were cleared in the prescribed pre-deploy window, GitHub reached terminal success, Vercel reached `READY`, the production alias is on the replacement, and source lineage is verified.
 
-Do **not** finish the response at “queued,” “building,” “workflow started,” “deployment triggered,” or equivalent intermediate states when the same turn authorized deployment. Preserve exact truth if either system fails.
+Canonical shorthand:
 
-This sequence applies even when the file mutation is diagnostic-only. A governed GitHub mutation still advances Repository Work, must be journaled in the Roadmap, and must be reconciled before deployment.
+```text
+UPDATE GITHUB SOURCE + VERSION + ROADMAP
+        ↓
+BUILD / VERIFY LATEST REPLACEMENT ARTIFACT
+        ↓
+CLEAR CURRENT/PREVIOUS DEPLOYMENTS ON THE EXISTING VERCEL PROJECT
+        ↓
+DEPLOY THE LATEST UPDATED SERVER THROUGH THE CANONICAL GITHUB WORKFLOW
+        ↓
+WATCH GITHUB TO TERMINAL
+        ↓
+WATCH VERCEL TO READY + VERIFY ALIAS + SOURCE SHA
+        ↓
+REPORT COMPLETE
+```
+
+**Consistency rule:** use this order for every production server deployment unless the user explicitly changes the release policy in a later governed update. Do not silently reorder cleanup after deployment, skip cleanup, create a replacement Vercel project, or finish before terminal verification.
+
 
 ---
 
