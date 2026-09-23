@@ -347,10 +347,14 @@
           if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,meta:{requestId,localPending:true}});
           prompt.value=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
           const sendPath="/api/lalm_station/send";
+          const transportCamera=(stage,data={})=>{try{fetch("/api/chat?__swrlz_client_debug=1",{method:"POST",credentials:"same-origin",cache:"no-store",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"station-send-transport-v1",url:location.pathname,event:{at:new Date().toISOString(),type:"station-send-transport",message:stage,data:{requestId,sendPath,...data}}})}).catch(()=>{})}catch(_){}};
+          transportCamera("before-fetch");
           let response;
           try{
             response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,profileId:"LALM",ingress:"SWRLZ_LALM_STATION"})});
+            transportCamera("fetch-response",{status:response.status,ok:response.ok});
           }catch(networkError){
+            transportCamera("fetch-network-failed",{error:String(networkError?.message||networkError)});
             throw new Error("SEND_NETWORK_FAILED "+sendPath+" "+String(networkError?.message||networkError));
           }
           if(!response.ok){
