@@ -584,10 +584,21 @@ def generate_events(payload: dict[str, Any], is_cancelled: Callable[[], bool] | 
         yield {"type": "ROUTE", "phase": "ROUTE_RESOLVED", "reason": "Using local R39 Python reference inference.", "identity": {"route": "LOCAL_R39", "engineId": ENGINE_ID, "modelId": str(model.manifest.get("modelId") or "R39"), "modelSha256": MODEL_SHA256}}
         prompt = render_chat_prompt(payload)
         tokens = model.tokenizer.encode(prompt)
+        raw_token_count = len(tokens)
         if len(tokens) > 32768:
             tokens = tokens[-32768:]
         if not tokens:
             raise R39InferenceError("R39_PROMPT_TOKENIZATION_EMPTY", "Prompt produced no model tokens.")
+        yield {
+            "type": "STATUS",
+            "phase": "PROMPT_DIAGNOSTIC",
+            "reason": (
+                f"R39 prompt boundary: chars={len(prompt)} utf8Bytes={len(prompt.encode('utf-8'))} "
+                f"rawTokens={raw_token_count} effectiveTokens={len(tokens)} "
+                f"historyCount={len(payload.get('history', [])) if isinstance(payload.get('history'), list) else 0} "
+                f"directiveChars={len(str(payload.get('responseDirective') or ''))}."
+            ),
+        }
         generation = payload.get("generation") if isinstance(payload.get("generation"), dict) else {}
         max_tokens = min(512, max(1, int(generation.get("maxTokens", 128))))
         temperature = min(2.0, max(0.0, float(generation.get("temperature", 0.1))))
@@ -595,6 +606,7 @@ def generate_events(payload: dict[str, Any], is_cancelled: Callable[[], bool] | 
         state = RecurrentState()
         yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefilling {len(tokens)} token(s) into local R39 recurrent state."}
         logits: np.ndarray | None = None
+        prefill_started = time.monotonic()
         for ordinal, token in enumerate(tokens):
             if is_cancelled and is_cancelled():
                 raise R39InferenceError("REQUEST_CANCELLED", "Generation was cancelled.")
@@ -602,6 +614,16 @@ def generate_events(payload: dict[str, Any], is_cancelled: Callable[[], bool] | 
             if ordinal and ordinal % 16 == 0:
                 yield {"type": "STATUS", "phase": "PREFILL", "reason": f"Prefill {ordinal}/{len(tokens)}."}
         assert logits is not None
+        prefill_ms = max(0.0, (time.monotonic() - prefill_started) * 1000.0)
+        prefill_tps = (len(tokens) * 1000.0 / prefill_ms) if prefill_ms > 0 else 0.0
+        yield {
+            "type": "STATUS",
+            "phase": "PREFILL_COMPLETE",
+            "reason": (
+                f"R39 prefill complete: tokens={len(tokens)} durationMs={prefill_ms:.3f} "
+                f"tokensPerSecond={prefill_tps:.3f}."
+            ),
+        }
         decoder = IncrementalDecoder(model.tokenizer)
         recent: list[int] = []
         first_ms: int | None = None
