@@ -154,10 +154,18 @@ jobs:
 
       - name: Build native R39 extensions
         shell: bash
+        env:
+          # Vercel's Python runtime image does not ship libgomp.so.1.
+          # Build portable native kernels without the OpenMP runtime dependency.
+          SWYRLZ_OPENMP: "0"
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check "numpy==2.2.6" "setuptools>=75,<82" wheel
           python setup.py build_ext --inplace
+          if find swyrlz -maxdepth 1 -type f -name '_r39_*.so' -print0 | xargs -0 -r ldd | grep -Fq 'libgomp'; then
+            echo "R39 production native artifacts unexpectedly depend on libgomp; refusing to deploy." >&2
+            exit 1
+          fi
           PYTHONPATH="$GITHUB_WORKSPACE" python scripts/verify_r39_native.py
           PYTHONPATH="$GITHUB_WORKSPACE" python - <<'PY'
           from swyrlz import r39_native
