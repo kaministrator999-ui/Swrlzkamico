@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=chat-hydration-20260923
+REQUEST_ID=chat-live-progress-20260923
 REQUESTED_BY=user
 SOURCE_REF=main
-REASON=Deploy chat hydration fix; clear existing project deployments immediately before deploying the prepared latest source.
+REASON=Deploy visible server-owned generation status, progressive text projection, and non-overlapping chat sync; clear previous deployments immediately before production deploy.
