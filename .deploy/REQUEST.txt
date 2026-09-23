@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=r39-tokenizer-libgomp-portable-retry-20260922-2120
+REQUEST_ID=r39-minimal-prompt-bringup-20260922-2204
 REQUESTED_BY=user
 SOURCE_REF=main
-REASON=Retry governed production release with canonical §WYRLZX_BPE support, canonical alias verification, and libgomp-free R39 native binaries for Vercel.
+REASON=Deploy minimal R39 bring-up prompt path: disable transcript/profile injection and default response directive so fresh tiny turns reach inference with only irreducible chat framing.
