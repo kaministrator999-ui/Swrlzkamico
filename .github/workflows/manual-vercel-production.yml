@@ -205,6 +205,14 @@ jobs:
           if [[ -f SWRLZ_NEW_SERVER_GITHUB_READY.zip ]]; then
             mv SWRLZ_NEW_SERVER_GITHUB_READY.zip "$RUNNER_TEMP/swrlz-build-stage/"
           fi
+          # This historical inbox contains a second ~216 MB copy of the LALM
+          # transport archive. It is not a Python runtime dependency.
+          if [[ -d swrlz-core ]]; then
+            mv swrlz-core "$RUNNER_TEMP/swrlz-build-stage/swrlz-core"
+          fi
+          # Fail closed if either transport copy remains in the builder input.
+          test ! -d .transport
+          test ! -d swrlz-core
           du -sh "$RUNNER_TEMP/swrlz-build-stage" . || true
 
       - name: Build production artifact
