@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.44">
+  <meta name="swrlz-chat-version" content="1.0.45">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -170,13 +170,14 @@
             const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); node.querySelector(".assistant-body").textContent=msg.text||""; addCopyButton(node); messageList.appendChild(node);
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";
+            const meta=document.createElement("div");meta.className="user-meta";meta.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";
             const bubble=document.createElement("div");bubble.className="user-bubble";bubble.textContent=msg.text||"";
-            const signature=document.createElement("div");signature.className="user-signature";
-            const name=document.createElement("span");name.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";
-            let avatar;
-            if(chatAccountUser?.picture){avatar=document.createElement("img");avatar.className="user-avatar";avatar.src=chatAccountUser.picture;avatar.alt="";}
-            else{avatar=document.createElement("div");avatar.className="user-avatar-fallback";avatar.textContent=(name.textContent||"Y").trim().charAt(0).toUpperCase();}
-            signature.append(name,avatar);node.append(bubble,signature);messageList.appendChild(node);
+            if(chatAccountUser?.picture){
+              const avatar=document.createElement("img");avatar.className="user-avatar";avatar.src=chatAccountUser.picture;avatar.alt="";node.append(meta,bubble,avatar);
+            }else{
+              const avatar=document.createElement("div");avatar.className="user-avatar-fallback";avatar.textContent=(meta.textContent||"Y").trim().charAt(0).toUpperCase();node.append(meta,bubble,avatar);
+            }
+            messageList.appendChild(node);
           }
         }
       };
