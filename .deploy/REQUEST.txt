@@ -1,11 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=chat-terminal-projection-1.0.41-bundle-retry-20260922
+REQUEST_ID=r39-section-sign-tokenizer-production-20260922-2056
 REQUESTED_BY=user
 SOURCE_REF=main
-REASON=Retry Chat 1.0.41 release after excluding transport payload from explicit Python function bundles.
-
-R39_MODEL_LOADING_DIAGNOSTIC_RELEASE=8fc565c6b243c640f72a4d00b03e09ffdef8341a
-
-R39_DIAGNOSTIC_VISIBILITY_RELEASE=a2cb2ee47ec42f8e4c7d27601c9424e4da5f0e7a
+REASON=Deploy current main with canonical §WYRLZX_BPE tokenizer compatibility and corrected Actions build staging to existing swrlzkamico-o3nu production project.
