@@ -36,7 +36,8 @@ _batch_replacement='''        prefill_started = time.monotonic()
         batch_used = False
         batch_available = bool(native and callable(getattr(native_bridge, "matmat_available", None)) and native_bridge.matmat_available())
         if remaining and batch_available:
-            batch_size = 64
+            # Wider blocks amortize Python/native bridge overhead on long prompts.
+            batch_size = 256 if remaining >= 1024 else (128 if remaining >= 256 else 64)
             batch_hidden = None
             batch_processed = 0
             yield {"type":"STATUS","phase":"PREFILL_BATCH_START","reason":f"Vector-GQA dense-cache block prefill armed · remaining={remaining} · block={batch_size} · native quantized matmat fallback preserved."}
