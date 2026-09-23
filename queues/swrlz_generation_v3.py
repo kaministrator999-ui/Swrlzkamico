@@ -117,21 +117,10 @@ async def generate_swrlz_response(payload) -> None:
         engineId=str(getattr(engine, "ENGINE_ID", "")),
     )
 
+    # R39 bring-up: isolate raw turn -> tokenizer -> model -> decode.
+    # Do not inject transcript/profile machinery while proving baseline inference.
+    # Reintroduce each source later behind an explicit bounded context budget.
     history: list[dict[str, str]] = []
-    for item in store.list_messages(user_id=user_id, thread_id=thread_id):
-        if item.message_id == job.user_message_id:
-            break
-        if item.role in {"USER", "ASSISTANT"} and item.committed_text:
-            history.append({"role": item.role, "text": item.committed_text[-12000:]})
-
-    profile = store.get_profile(user_id=user_id)
-    if profile.display_name or profile.preferences or profile.model_preferences:
-        import json
-        history.insert(0, {"role": "SYSTEM", "text": "USER_PROFILE_EVIDENCE " + json.dumps({
-            "displayName": profile.display_name,
-            "preferences": profile.preferences,
-            "modelPreferences": profile.model_preferences,
-        }, ensure_ascii=False, separators=(",", ":"))})
 
     engine_payload = {
         "protocolVersion": 2, "requestId": request_id,
@@ -141,7 +130,7 @@ async def generate_swrlz_response(payload) -> None:
         "presentationIntent": str(data.get("presentationIntent") or "PROSE"),
         "generation": data.get("generation") if isinstance(data.get("generation"), dict) else {},
         "profileId": str(data.get("profileId") or "AUTO"),
-        "responseDirective": "Answer the current user directly and truthfully. Preserve received user wording as the receipt. Stream only committed assistant text as DELTA.",
+        "responseDirective": "",
     }
 
     def cancelled() -> bool:
