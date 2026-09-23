@@ -386,6 +386,33 @@ try:
         _owner.__globals__[_slot]=_make_camera_bridge(_boundary,_original)
         _installed_boundaries+=1
     _entry("prefill-boundary-cameras-installed",boundaries=_installed_boundaries, mutationMode="observe-only", coverage="full-reachable-generation-chain")
+    # Request-correlated terminal PREFILL summary; inherited inference behavior is unchanged.
+    _prefill_metric_generate=globals().get("generate_events")
+    if callable(_prefill_metric_generate):
+        def _request_correlated_generate(payload,is_cancelled=None,_original=_prefill_metric_generate):
+            rid=_request_id(payload); started=None; finished=None; total_tokens=0; cached_tokens=0; batch_size=0
+            for event in _original(payload,is_cancelled):
+                phase=str(event.get("phase") or "") if isinstance(event,dict) else ""
+                reason=str(event.get("reason") or "") if isinstance(event,dict) else ""
+                now=time.perf_counter()
+                if phase.startswith("PREFILL"):
+                    if started is None: started=now
+                    import re as _re
+                    for pattern in (r"remaining=(\\d+)",r"Prefilling (\\d+) token",r"Prefill new \\d+/(\\d+)"):
+                        m=_re.search(pattern,reason)
+                        if m: total_tokens=max(total_tokens,int(m.group(1)))
+                    m=_re.search(r"cached (\\d+)",reason)
+                    if m: cached_tokens=max(cached_tokens,int(m.group(1)))
+                    m=_re.search(r"(?:block=|blockTokens=)(\\d+)",reason)
+                    if m: batch_size=max(batch_size,int(m.group(1)))
+                elif phase=="GENERATING" and started is not None and finished is None:
+                    finished=now; ms=max(0.001,(finished-started)*1000.0); uncached=max(0,total_tokens-cached_tokens)
+                    _entry("PREFILL_END",requestId=rid,tokens=total_tokens,cachedTokens=cached_tokens,uncachedTokens=uncached,batch=batch_size,durationMs=round(ms,3),tokPerSec=round((uncached*1000.0)/ms,3) if uncached else 0.0)
+                yield event
+            if started is not None and finished is None:
+                ms=max(0.001,(time.perf_counter()-started)*1000.0); uncached=max(0,total_tokens-cached_tokens)
+                _entry("PREFILL_END",requestId=rid,tokens=total_tokens,cachedTokens=cached_tokens,uncachedTokens=uncached,batch=batch_size,durationMs=round(ms,3),tokPerSec=round((uncached*1000.0)/ms,3) if uncached else 0.0,terminalWithoutGenerating=True)
+        globals()["generate_events"]=_request_correlated_generate
     _entry("hydrate-ok",hotServerVersion=HOT_SERVER_VERSION,
            hotRevision=HOT_REVISION,batchSourceCommit=_V82_BATCH_COMMIT,
            responseContract=callable(globals().get("_response_contract")),
