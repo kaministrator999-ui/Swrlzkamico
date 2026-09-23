@@ -107,9 +107,12 @@ async def generate_swrlz_response(payload) -> None:
     if assistant is None:
         raise ValueError("assistant placeholder is missing")
 
-    from api.hot_loader import get_engine
+    # R39 bring-up isolation: bypass the promoted hot overlay lineage entirely.
+    # The overlay stack owns substantial prompt-composition machinery, so testing
+    # baseline inference through it cannot prove raw-turn latency/token count.
+    from swyrlz import r39_inference as engine
     _camera("engine-load-enter", request_id=request_id)
-    engine, _engine_source = get_engine()
+    _engine_source = "direct-r39-bringup"
     _camera(
         "engine-load-exit",
         request_id=request_id,
