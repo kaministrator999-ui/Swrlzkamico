@@ -1,4 +1,8 @@
 
+### 2026-09-23 — bring-up isolation + pre-deploy cleanup repair
+- Live post-deploy trace proved the promoted R39 hot overlay lineage still expanded a tiny turn to 2,698 prefill tokens even after subscriber history/profile removal. Commit 96db666 bypasses the hot overlay stack in the v3 generation subscriber during baseline bring-up and invokes swyrlz.r39_inference directly; this isolates raw current-turn chat framing/tokenization/model/decode.
+- The production workflow had no previous-deployment cleanup step. Commit 262e1b7 adds fail-closed Vercel API cleanup after the replacement artifact is fully built/injected/verified locally and immediately before production deployment, minimizing the destructive gap while enforcing the requested clear-before-deploy order.
+
 ### 2026-09-23 — minimal R39 bring-up prompt isolation
 - Fresh-thread live inference reached PREFILL with 2,788 tokens despite a tiny user turn. For baseline model bring-up, commit 944e1bc disables transcript/profile injection in the generation subscriber and sends an explicitly empty response directive; commit 3251c8f makes the renderer honor that empty directive rather than silently restoring its default system prompt.
 - The resulting test path retains only irreducible chat framing plus the current user text. Context/profile machinery will be reintroduced separately behind measured token budgets after decode/DELTA is proven.
