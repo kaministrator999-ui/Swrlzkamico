@@ -1,4 +1,7 @@
 
+### 2026-09-23 — R39 tensor-view diagnostic visibility
+- Subscriber now logs bounded `model-load-diagnostic` checkpoint, reason, categories and exception traceback for R39 `MODEL_LOAD_DIAGNOSTIC` events; no prompt/history included. This exposes the exact `R39Model` open exception previously discarded by stream normalization. Commit `a2cb2ee47ec42f8e4c7d27601c9424e4da5f0e7a`. Pending production activation and new test.
+
 ### 2026-09-22 — manual Git deployment vs Actions prebuilt bundle repair
 - Vercel Git deployment `dpl_2t3376oaeQmPzNkkk2xahtyAU99o` is READY on source `520957e6697ba2fa266c188c64875dd3dba37b6f`, proving the R39 diagnostic source can build through the clean Git path.
 - Actions run #36 failed before deployment: generated runtime/native artifacts were placed inside the source tree before `vercel build --prod`; Python function bundle measured 341.51 MB against 225 MB.
