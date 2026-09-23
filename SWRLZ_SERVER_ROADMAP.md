@@ -1,4 +1,9 @@
 
+### 2026-09-23 — Vercel native runtime libgomp portability repair
+- Canonical production alias advanced to the new deployment, but /api/lalm/native reported both R39 native modules unavailable because the Actions-built extensions linked libgomp.so.1, which is absent from Vercel's Python runtime image.
+- Production workflow commit ef969130c48fa89b425dc3c69aa0d235e8b0cf4c now builds R39 native extensions with SWYRLZ_OPENMP=0 and fails closed if ldd still finds a libgomp dependency. The C kernels already guard OpenMP usage behind _OPENMP, so this preserves native execution while removing the unavailable runtime dependency.
+- The canonical alias verifier repair remains active and exact source identity is still enforced by the deploymentCommit assertion. Retry required.
+
 ### 2026-09-23 — production verifier canonical-alias repair
 - Production deployment `dpl_2LiSiW7yrpKQc9RWkvRhkk4GpP3x` reached Vercel READY and was aliased to `https://swrlzkamico-o3nu.vercel.app`, but the GitHub verification step polled the deployment-specific URL and received Vercel's protection redirect instead of JSON from `/api/server/status`.
 - Workflow repair `d367c9276c5a52bee263488974057f4b217baeac` verifies the canonical production alias after promotion. Exact source identity remains fail-closed through the existing `deploymentCommit == EXPECTED_SOURCE_SHA` assertion, so alias verification cannot accidentally bless an older deployment.
