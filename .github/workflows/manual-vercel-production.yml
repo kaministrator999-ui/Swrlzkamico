@@ -296,7 +296,10 @@ jobs:
       - name: Verify production server, manifest authority, and collector
         shell: bash
         env:
-          DEPLOYMENT_URL: ${{ steps.deploy.outputs.url }}
+          # Verify the canonical production alias. Deployment-specific URLs can
+          # be protected and return a Vercel auth redirect even after the same
+          # deployment has been successfully promoted/aliased to production.
+          DEPLOYMENT_URL: https://swrlzkamico-o3nu.vercel.app
           EXPECTED_SOURCE_SHA: ${{ steps.source.outputs.sha }}
           EXPECTED_STABLE_VERSION: ${{ steps.source.outputs.stable_version }}
         run: |
