@@ -1,4 +1,8 @@
 
+### 2026-09-23 — canonical §WYRLZX_BPE tokenizer compatibility
+- Live manual-deploy traces for both greetings show verified R39 model reconstruction, then `R39_TOKENIZER_KIND_UNSUPPORTED` on canonical producer label `§WYRLZX_BPE` at `BpeTokenizer.__init__`. The Python engine previously accepted only `SWYRLZX_BPE` (ASCII S) and `GGML_BPE`.
+- Commit `1c927ee255f1f043e19ab197ff2fc91577669533` adds an explicit section-sign spelling alias with serialized token/merge schema validation. No arbitrary BPE fallback, no change to vocabulary IDs or merge ordering. Await manual deployment and live test to verify model-open/prefill and any next gate.
+
 ### 2026-09-23 — build #37 root cause: duplicate historical transport
 - Repository tree confirms `.transport/` ~215.58 MiB AND `swrlz-core/requests/inbox/.transport/` ~215.60 MiB. Run #37 staged the first copy but left `swrlz-core/` inside the local builder tree (457 MB remained); resulting bundle 340.73 MB > 225 MB. This is the missing large payload, not evidence that NumPy alone caused the excess.
 - Workflow commit `104616cd29929c69122348e2d2d1c5e7a70fffb9` stages the historical inbox outside the builder and asserts neither transport tree remains. It preserves repository content and the existing production deployment. Await actual build/deploy verification.
