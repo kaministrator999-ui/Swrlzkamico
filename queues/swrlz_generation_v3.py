@@ -171,6 +171,18 @@ async def generate_swrlz_response(payload) -> None:
                 elapsedMs=int((time.time() - started) * 1000),
                 textChars=len(str(event.get("text") or "")),
             )
+            if str(raw.get("phase") or "") == "MODEL_LOAD_DIAGNOSTIC":
+                # The stream contract intentionally drops engine-private fields.
+                # Emit bounded diagnostic evidence at the subscriber boundary,
+                # without logging prompts, history, credentials, or full payloads.
+                _camera(
+                    "model-load-diagnostic",
+                    request_id=request_id,
+                    checkpoint=str(raw.get("checkpoint") or "")[:100],
+                    reason=str(raw.get("reason") or "")[:1600],
+                    categories=[str(item)[:100] for item in (raw.get("categories") or [])[:8]],
+                    errorTraceback=str(raw.get("traceback") or "")[-4000:],
+                )
             _append(store, user_id=user_id, request_id=request_id, event=event)
             # Every emitted model event renews the Workstation lease and advances
             # the durable snapshot independently of any connected Chat client.
