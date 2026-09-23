@@ -89,7 +89,17 @@ class BpeTokenizer:
         self.eos = spec.get("eosTokenId")
         self.add_bos = bool(spec.get("addBos", False))
         self.add_eos = bool(spec.get("addEos", False))
-        kind = str(spec.get("kind", "")).upper()
+        kind = str(spec.get("kind", "")).strip().upper()
+        # The canonical SWRLZX producer uses the section-sign brand glyph.
+        # This is an explicit spelling alias, not a generic tokenizer fallback:
+        # both spellings use the same serialized byte-level BPE vocabulary,
+        # ordered pair merges, and special-token ID contract.
+        if kind == "§WYRLZX_BPE":
+            if not isinstance(spec.get("tokens"), list) or not isinstance(spec.get("merges"), list):
+                raise R39InferenceError("R39_TOKENIZER_SCHEMA_INVALID", "Canonical §WYRLZX_BPE requires tokens and merges arrays.")
+            if any(not isinstance(m, str) or " " not in m for m in spec["merges"]):
+                raise R39InferenceError("R39_TOKENIZER_MERGES_INVALID", "Canonical §WYRLZX_BPE merges must be ordered string pairs.")
+            kind = "SWYRLZX_BPE"
         if kind not in {"GGML_BPE", "SWYRLZX_BPE"}:
             raise R39InferenceError("R39_TOKENIZER_KIND_UNSUPPORTED", f"Tokenizer kind {kind or '<missing>'} is not supported by the Python reference engine.")
 
