@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=r39-section-sign-tokenizer-production-20260922-2056
+REQUEST_ID=r39-tokenizer-verifier-alias-retry-20260922-2114
 REQUESTED_BY=user
 SOURCE_REF=main
-REASON=Deploy current main with canonical §WYRLZX_BPE tokenizer compatibility and corrected Actions build staging to existing swrlzkamico-o3nu production project.
+REASON=Retry governed production release after repairing verifier to poll canonical production alias while retaining exact deploymentCommit source-SHA assertion.
