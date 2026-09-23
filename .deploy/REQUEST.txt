@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=contract-state-compaction-20260923
-REASON=Deploy conservative v51-v50 duplicate contract prose compaction with before and after cameras.
-SOURCE_COMMIT=3f8a1e5a3590e3649138527a15c0e65d7ecfcbba
+REQUEST_ID=adaptive-prefill-blocks-20260923
+REASON=Deploy adaptive 64/128/256 token batched prefill blocks for improved long-prompt throughput.
+SOURCE_COMMIT=ef939c34e3e0703381d8d9175bf1a996775a4f43
