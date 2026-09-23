@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=adaptive-prefill-blocks-20260923
-REASON=Deploy adaptive 64/128/256 token batched prefill blocks for improved long-prompt throughput.
-SOURCE_COMMIT=ef939c34e3e0703381d8d9175bf1a996775a4f43
+REQUEST_ID=adaptive-prefill-runtime-repair-20260923
+REASON=Deploy adaptive batched prefill blocks after registering the accepted R39 entrypoint integrity blob.
+SOURCE_COMMIT=c00a116b9d4246934c00b830ed309e9642b39542
