@@ -1,4 +1,8 @@
 
+### 2026-09-23 — build #37 root cause: duplicate historical transport
+- Repository tree confirms `.transport/` ~215.58 MiB AND `swrlz-core/requests/inbox/.transport/` ~215.60 MiB. Run #37 staged the first copy but left `swrlz-core/` inside the local builder tree (457 MB remained); resulting bundle 340.73 MB > 225 MB. This is the missing large payload, not evidence that NumPy alone caused the excess.
+- Workflow commit `104616cd29929c69122348e2d2d1c5e7a70fffb9` stages the historical inbox outside the builder and asserts neither transport tree remains. It preserves repository content and the existing production deployment. Await actual build/deploy verification.
+
 ### 2026-09-23 — R39 tensor-view diagnostic visibility
 - Subscriber now logs bounded `model-load-diagnostic` checkpoint, reason, categories and exception traceback for R39 `MODEL_LOAD_DIAGNOSTIC` events; no prompt/history included. This exposes the exact `R39Model` open exception previously discarded by stream normalization. Commit `a2cb2ee47ec42f8e4c7d27601c9424e4da5f0e7a`. Pending production activation and new test.
 
