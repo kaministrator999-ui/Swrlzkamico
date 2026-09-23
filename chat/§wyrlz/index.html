@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.42">
+  <meta name="swrlz-chat-version" content="1.0.43">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -147,6 +147,7 @@
       let draftThread = true;
       let pendingDraftThread = null;
       let threadSelectionMode=false;
+      let chatAccountUser=null;
       const selectedThreadIds=new Set();
       const threadId = () => "web-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       const titleFrom = text => {
@@ -168,7 +169,15 @@
           if(msg.role==="assistant"){
             const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); node.querySelector(".assistant-body").textContent=msg.text||""; addCopyButton(node); messageList.appendChild(node);
           } else if(msg.role==="user"){
-            const node=document.createElement("article"); node.className="user-message rendered-message"; node.textContent=msg.text||""; messageList.appendChild(node);
+            const node=document.createElement("article");node.className="user-message rendered-message";
+            const meta=document.createElement("div");meta.className="user-meta";meta.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";
+            const bubble=document.createElement("div");bubble.className="user-bubble";bubble.textContent=msg.text||"";
+            if(chatAccountUser?.picture){
+              const avatar=document.createElement("img");avatar.className="user-avatar";avatar.src=chatAccountUser.picture;avatar.alt="";node.append(meta,bubble,avatar);
+            }else{
+              const avatar=document.createElement("div");avatar.className="user-avatar-fallback";avatar.textContent=(meta.textContent||"Y").trim().charAt(0).toUpperCase();node.append(meta,bubble,avatar);
+            }
+            messageList.appendChild(node);
           }
         }
       };
@@ -463,6 +472,8 @@
       };
       const showUser = user => {
         accountUser = user || null;
+        chatAccountUser = accountUser;
+        if(!draftThread)renderConversation(currentThread());
         accountName.textContent = user?.displayName || user?.email || "Google Account";
         accountMeta.textContent = user ? "" : "Not signed in";
         accountMeta.style.display = user ? "none" : "block";
