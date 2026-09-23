@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=r39-prefill-instrumentation-20260923
-REASON=Deploy bounded R39 prompt-token and prefill-throughput instrumentation without reducing existing trace cameras.
-SOURCE_COMMIT=d04b4cf851d1532d352b196cff38e2ad268be51b
+REQUEST_ID=restore-r39-optimized-prefill-20260923
+REASON=Restore prepared hot R39 native and batched prefill lineage after direct baseline proved compact prompt tokenization.
+SOURCE_COMMIT=f0626a86368a188b342a4d897e47ed6eec4d6473
