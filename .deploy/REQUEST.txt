@@ -1,7 +1,7 @@
 # §wyrlz terminal production deployment request
 TARGET=production
 APPROVED=1
-REQUEST_ID=r39-tokenizer-verifier-alias-retry-20260922-2114
+REQUEST_ID=r39-tokenizer-libgomp-portable-retry-20260922-2120
 REQUESTED_BY=user
 SOURCE_REF=main
-REASON=Retry governed production release after repairing verifier to poll canonical production alias while retaining exact deploymentCommit source-SHA assertion.
+REASON=Retry governed production release with canonical §WYRLZX_BPE support, canonical alias verification, and libgomp-free R39 native binaries for Vercel.
