@@ -983,10 +983,10 @@
       finally { refs.verify.disabled = false; refs.verify.textContent = "Verify R39 container"; }
     }
 
-    refs.composer.addEventListener("submit", event => { event.preventDefault(); sendMessage(); });
+    refs.composer.addEventListener("submit", event => { event.preventDefault(); window.__SWRLZ_SEND_LAST_EVENT__ = {kind:"submit", at:Date.now(), promptChars:refs.prompt.value.length}; sendMessage(); });
     refs.prompt.addEventListener("input", resizePrompt);
     refs.prompt.addEventListener("keydown", event => { if (event.key === "Enter" && !event.shiftKey && !event.isComposing) { event.preventDefault(); sendMessage(); } });
-    refs.send.addEventListener("click", event => { if (active) { event.preventDefault(); stopActive(); } });
+    refs.send.addEventListener("click", event => { window.__SWRLZ_SEND_LAST_EVENT__ = {kind:"click", at:Date.now(), active:Boolean(active), promptChars:refs.prompt.value.length}; if (active) { event.preventDefault(); stopActive(); } });
     $("#newChat").addEventListener("click", createThread); $("#renameCurrent").addEventListener("click", renameCurrent); $("#exportChat").addEventListener("click", exportChat);
     $("#mobileMenu").addEventListener("click", () => document.body.classList.add("sidebar-open")); document.addEventListener("click", event => { if (document.body.classList.contains("sidebar-open") && event.target.closest(".sidebar") === null && event.target.closest("#mobileMenu") === null) closeSidebar(); });
     $("#settingsButton").addEventListener("click", openSettings); $("#openSettings").addEventListener("click", openSettings);
