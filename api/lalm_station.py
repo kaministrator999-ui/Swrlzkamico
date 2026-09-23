@@ -88,8 +88,16 @@ def install(server, chat_extensions) -> None:
         The browser is only an ingress/subscriber. Once the canonical turn is
         accepted, the Workstation queue owns generation lifetime.
         """
+        request_id = str(request.headers.get("X-SWRLZ-Request-Id") or "").strip()
+        print("SWRLZ_STATION_TRANSPORT "+__import__("json").dumps({
+            "stage":"send-enter","requestId":request_id,"path":str(request.url.path),
+            "method":request.method,"atUnixMs":int(time.time()*1000)
+        },separators=(",",":")),flush=True)
         try:
             user_id_from_request(request)
+            print("SWRLZ_STATION_TRANSPORT "+__import__("json").dumps({
+                "stage":"auth-ok","requestId":request_id,"atUnixMs":int(time.time()*1000)
+            },separators=(",",":")),flush=True)
             payload = await request.json()
             if not isinstance(payload, dict):
                 return JSONResponse({"ok": False, "contract": CONTRACT, "code": "INVALID_REQUEST"}, status_code=400, headers=_headers())
@@ -139,8 +147,10 @@ def install(server, chat_extensions) -> None:
                 },
             }, status_code=202, headers=_headers())
         except AuthenticationError as exc:
+            print("SWRLZ_STATION_TRANSPORT "+__import__("json").dumps({"stage":"auth-failed","requestId":request_id,"error":str(exc),"atUnixMs":int(time.time()*1000)},separators=(",",":")),flush=True)
             return JSONResponse({"ok": False, "contract": CONTRACT, "code": "ACCOUNT_SESSION_INVALID", "detail": str(exc)}, status_code=401, headers=_headers())
         except Exception as exc:
+            print("SWRLZ_STATION_TRANSPORT "+__import__("json").dumps({"stage":"send-failed","requestId":request_id,"errorType":type(exc).__name__,"error":str(exc),"atUnixMs":int(time.time()*1000)},separators=(",",":")),flush=True)
             return JSONResponse({"ok": False, "contract": CONTRACT, "code": "LALM_STATION_SEND_FAILED", "detail": f"{type(exc).__name__}: {exc}"}, status_code=503, headers=_headers())
 
     @app.get("/api/lalm_station/sync", include_in_schema=False)
