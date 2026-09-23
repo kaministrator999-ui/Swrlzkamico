@@ -7,3 +7,5 @@ PURPOSE=predeploy cleanup before Chat 1.0.41 terminal projection + verifier repa
 RETRY=14
 
 CLEAN_GATE=prebuilt-staging-repair-20260922
+
+CLEAN_GATE=r39-diagnostic-visibility-20260923
