@@ -290,6 +290,39 @@ jobs:
             exit 1
           fi
 
+      - name: Clear previous project deployments
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          # The prebuilt replacement already exists locally at this point, so the
+          # destructive cleanup happens at the last possible moment before deploy.
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=100" \
+            > previous-deployments.json
+          python - <<'PY' > previous-deployment-ids.txt
+          import json
+          value=json.load(open("previous-deployments.json",encoding="utf-8"))
+          for item in value.get("deployments",[]):
+              deployment_id=str(item.get("uid") or item.get("id") or "").strip()
+              if deployment_id:
+                  print(deployment_id)
+          PY
+          count=0
+          while IFS= read -r deployment_id; do
+            [[ -n "$deployment_id" ]] || continue
+            echo "Removing previous deployment $deployment_id"
+            curl --fail --silent --show-error \
+              -X DELETE \
+              -H "Authorization: Bearer $VERCEL_TOKEN" \
+              "https://api.vercel.com/v13/deployments/$deployment_id?teamId=$VERCEL_ORG_ID" \
+              >/dev/null
+            count=$((count + 1))
+          done < previous-deployment-ids.txt
+          echo "Removed $count previous deployment(s) immediately before production deploy." >> "$GITHUB_STEP_SUMMARY"
+
       - name: Deploy production artifact
         id: deploy
         shell: bash
