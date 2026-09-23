@@ -1,7 +1,3 @@
-# §wyrlz terminal production deployment request
-TARGET=production
-APPROVED=1
-REQUEST_ID=chat-ui-legibility-20260923
-REQUESTED_BY=user
-SOURCE_REF=main
-REASON=Deploy corrected sender orientation plus subtle identity backdrops and text shadows for chat legibility.
+request_id=r39-prefill-instrumentation-20260923
+reason=Deploy bounded R39 prompt-token and prefill-throughput instrumentation without reducing existing trace cameras.
+source_commit=d04b4cf851d1532d352b196cff38e2ad268be51b
