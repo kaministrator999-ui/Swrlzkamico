@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=r39-deep-lockdown-gates-20260924
-REASON=Deploy deep LALM Lockdown shutter benchmark: suppress inherited token/operator/tensor camera payload work while retaining R39 PREFILL throughput and HW_USAGE CPU/RAM telemetry.
-SOURCE_COMMIT=992622b4f77487c1d47d5312a7413519eb51411d
+REQUEST_ID=r39-deep-lockdown-integrity-repaired-20260924
+REASON=Deploy verified R39 deep LALM Lockdown shutter candidate after accepted-runtime integrity repair and successful prepared-runtime verification.
+SOURCE_COMMIT=69ad2286f2c298a0d1f60637bee8ed5a98152bb7
