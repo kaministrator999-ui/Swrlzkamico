@@ -1,3 +1,13 @@
+### UPDATE CONTINUATION CHECKPOINT — 2026-09-24 — resource profiler + dual-worker candidate preflight complete
+
+- **LALM candidate:** 2.1.114 / `2.1.114-hot-resource-task-manager-cpu-delegation-v90`.
+- **Resource attribution:** gated `SWRLZ_RESOURCE_TASK` cameras now bucket queue/subscriber ingress, Redis/state work, engine loading, LALM phase transitions, terminal persistence, and recovery with process CPU time, wall time, CPU percentage, RSS, and request correlation.
+- **CPU delegation:** production-portable native matvec and batched-prefill kernels now support `SWRLZ_R39_WORKERS=1|2` through pthread row partitioning without libgomp. Adaptive policy selects one or two workers from recent process CPU headroom and exposes the decision through a gated CPU-delegation camera.
+- **Verification:** prepared-runtime integrity passes; all 23 accepted targets match their registered Git blob identities. Non-deploying CI run 36040414444 passed prepared generation, R39 boot, queue Python compilation, portable native build, one-worker native verification, two-worker native verification, and no-libgomp verification.
+- **Deployment-control hardening:** the production workflow now re-enumerates the canonical Vercel project after destructive cleanup and refuses replacement deployment unless zero previous deployments remain.
+- **Versions:** Repository Work 1.0.20; LALM Engine 2.1.114; Deployment Control 1.0.15. Server Runtime remains 2.3.287 until an actual Server release advances deployed lineage.
+- **Activation:** source/static verified; production activation is the next governed stage under the user's explicit approval.
+
 ### UPDATE CONTINUATION STARTED — 2026-09-24 — resource attribution + adaptive dual-CPU LALM benchmark
 
 - **Observed live evidence:** R39 2.1.113 HW_USAGE cameras show the production process near 100% CPU during PREFILL while the runtime exposes 2 CPUs; RSS remains roughly 290–315 MiB with about 1.96–1.98 GiB available. Current evidence therefore suggests one-core saturation rather than RAM pressure, but does not yet attribute baseline/background load.
