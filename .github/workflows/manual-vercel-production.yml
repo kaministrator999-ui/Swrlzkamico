@@ -323,6 +323,22 @@ jobs:
           done < previous-deployment-ids.txt
           echo "Removed $count previous deployment(s) immediately before production deploy." >> "$GITHUB_STEP_SUMMARY"
 
+          # Re-enumerate from Vercel after deletion. The release must fail closed
+          # unless the canonical project is actually empty before replacement.
+          curl --fail --silent --show-error             -H "Authorization: Bearer $VERCEL_TOKEN"             "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=100"             > post-delete-deployments.json
+          remaining="$(python - <<'PY'
+          import json
+          value=json.load(open("post-delete-deployments.json",encoding="utf-8"))
+          print(len(value.get("deployments",[])))
+          PY
+          )"
+          echo "Previous deployments remaining after destructive cleanup: $remaining" >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$remaining" != "0" ]]; then
+            echo "Canonical project still contains $remaining deployment(s) after destructive cleanup; refusing replacement deploy." >&2
+            cat post-delete-deployments.json >&2
+            exit 1
+          fi
+
       - name: Deploy production artifact
         id: deploy
         shell: bash
