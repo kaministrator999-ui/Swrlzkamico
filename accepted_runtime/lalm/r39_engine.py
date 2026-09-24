@@ -226,16 +226,35 @@ try:
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-    HOT_SERVER_VERSION="2.1.114"
-    HOT_REVISION="2.1.114-hot-resource-task-manager-cpu-delegation-v90"
+    HOT_SERVER_VERSION="2.1.115"
+    HOT_REVISION="2.1.115-native-backend-diagnostics-v90"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
+
+    def _native_backend_snapshot(request_id,stage):
+        if not _camera_enabled("RESOURCE_TASKS"):
+            return
+        bridge=getattr(_impl,"native_bridge",None)
+        diagnostics={}
+        try:
+            diagnostics=bridge.diagnostics() if callable(getattr(bridge,"diagnostics",None)) else {}
+        except Exception as exc:
+            diagnostics={"diagnosticError":type(exc).__name__}
+        _resource_sample("native-backend",stage,request_id,
+            nativeAvailable=bool(diagnostics.get("available")),
+            batchAvailable=bool(diagnostics.get("batchAvailable")),
+            nativeImportError=str(diagnostics.get("importError") or "")[:160],
+            batchImportError=str(diagnostics.get("batchImportError") or "")[:160],
+            nativeLoadedFrom=str(diagnostics.get("loadedFrom") or "")[-180:],
+            batchLoadedFrom=str(diagnostics.get("batchLoadedFrom") or "")[-180:],
+            batchInstalled=bool(getattr(_impl,"_swrlz_batch_prefill_installed",False)))
 
     _original_generate_resource_profile=_impl._generate_hot_events
     def _resource_profiled_generate(payload,is_cancelled=None):
         rid=_request_id(payload)
         policy,selected,visible,recent_cpu_pct=_apply_cpu_delegation(payload,rid)
         _resource_sample("lalm","REQUEST_START",rid,cpuPolicy=policy,selectedCpus=selected,visibleCpus=visible,recentProcessCpuPct=round(recent_cpu_pct,2))
+        _native_backend_snapshot(rid,"REQUEST_START")
         last_phase="REQUEST_START"
         try:
             for event in _original_generate_resource_profile(payload,is_cancelled):
@@ -245,6 +264,7 @@ try:
                     last_phase=phase
                 yield event
         finally:
+            _native_backend_snapshot(rid,"REQUEST_END")
             _resource_sample("lalm","RECOVERY",rid,cpuPolicy=policy,selectedCpus=selected)
     _impl._generate_hot_events=_resource_profiled_generate
 
