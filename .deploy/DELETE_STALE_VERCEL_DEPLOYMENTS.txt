@@ -13,3 +13,4 @@ CLEAN_GATE=r39-diagnostic-visibility-20260923
 CLEAN_GATE=r39-camera-gating-benchmark-20260924
 
 CLEAN_GATE=r39-deep-lockdown-gates-20260924
+CLEAN_GATE=r39-deep-lockdown-integrity-repair-20260924
