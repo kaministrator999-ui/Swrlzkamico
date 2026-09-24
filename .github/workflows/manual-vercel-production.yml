@@ -159,6 +159,8 @@ jobs:
           # ubuntu-latest may have a newer libc than Vercel. Build in a
           # manylinux_2_28 image instead of trusting runner-local imports.
           # The CPython 3.12 ABI matches the deployed Python extension suffix.
+          rm -f swyrlz/_r39_native*.so swyrlz/_r39_batch*.so
+          rm -rf build/temp.* build/lib.*
           docker run --rm --platform linux/amd64 \
             -v "$GITHUB_WORKSPACE:/work" -w /work \
             -e SWYRLZ_OPENMP=0 -e SWRLZ_R39_WORKERS=2 \
