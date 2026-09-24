@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=r39-deep-lockdown-integrity-repaired-20260924
-REASON=Deploy verified R39 deep LALM Lockdown shutter candidate after accepted-runtime integrity repair and successful prepared-runtime verification.
-SOURCE_COMMIT=69ad2286f2c298a0d1f60637bee8ed5a98152bb7
+REQUEST_ID=r39-resource-attribution-dual-worker-20260924
+REASON=Deploy verified R39 2.1.114 resource-attribution cameras, portable 1/2/adaptive CPU delegation, and fail-closed zero-old-deployment cleanup verification.
+SOURCE_COMMIT=74873229114a493acd1d863e695962248a5ca015
