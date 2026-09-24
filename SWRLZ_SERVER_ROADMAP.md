@@ -1,3 +1,10 @@
+### UPDATE CONTINUATION STARTED — 2026-09-24 — distinguish stale-purge maintenance from destructive release cleanup
+
+- **Evidence correction:** standalone `Purge Stale Vercel Deployments` #19 succeeded while the hour-old production deployment remained. Source inspection proves this is intentional: that workflow protects the deployment serving the production alias and deletes only other stale deployments.
+- **Contract defect:** §tart/release guidance incorrectly treated the standalone stale purge as the pre-deploy clear-current-server gate, while the actual canonical production workflow owns destructive clear-current cleanup at the last possible moment after the replacement artifact is prepared.
+- **Plan:** align §tart and the clean-release guide with executable truth; harden `manual-vercel-production.yml` so its destructive cleanup re-enumerates the canonical project and refuses to deploy unless zero old deployments remain; preserve standalone stale purge as maintenance-only.
+- **Deployment:** no production request will be fired by this documentation/workflow repair.
+
 ### UPDATE FINISHED — 2026-09-24 — accepted-runtime integrity repair + clean-release contract
 
 - **Root cause repaired:** v82-batch accepted overlay registration now declares source commit `c51160873d26c202a39ccc562a20d589d2d8516e` and exact accepted-target blob `f44ed601c5dda8aa771a4253d615d5f3a498b3bf`.
