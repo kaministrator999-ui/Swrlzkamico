@@ -1,3 +1,10 @@
+### UPDATE CONTINUATION — 2026-09-24 — glibc compatibility repair prepared
+
+- Live 2.1.115 native bridge diagnostics identify both native modules failing import because `GLIBC_2.38` is unavailable in Vercel production. The governor selected two workers but inference fell back to Python. One short social-fastpath request completed; the longer request entered prefill.
+- Production workflow now builds CPython 3.12 native and batch extensions in a manylinux glibc 2.28 baseline container, runs one- and two-worker equivalence tests there, and rejects either artifact if ELF GLIBC symbol requirements exceed 2.28 or if libgomp is linked. These gates execute **before** destructive cleanup.
+- This is a build/release fix, not an inference semantic change. A successful source commit does not prove production compatibility until the production `/api/lalm/native` verification returns both native and batch availability.
+- Prior production workflow's post-deploy verification failed despite Vercel reporting READY; do not conflate the two. Do not trigger another replacement until the build preflight is checked.
+
 ### UPDATE CONTINUATION — 2026-09-24 — backend truth and camera-overhead isolation
 
 - Production 2.1.114 showed adaptive selected 2 visible workers but the request's prefill profile reported `backend=python-fallback`; selection alone did not prove parallel native execution.
