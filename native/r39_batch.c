@@ -5,6 +5,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#include <pthread.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -25,21 +26,67 @@ static void row_q80(const uint8_t *row,int cols,const float *x,int batch,float *
 static void row_q4k(const uint8_t *row,int cols,const float *x,int batch,float *y,float *scratch){float *sx0=scratch,*sx1=scratch+batch,*qx0=scratch+2*batch,*qx1=scratch+3*batch;for(int b=0;b<cols/256;++b){const uint8_t *p=row+b*144;float d=fp16_to_f32(rd16(p)),dm=fp16_to_f32(rd16(p+2));const uint8_t *sc=p+4,*qs=p+16;int scale[8],minv[8];q4k_scales(sc,scale,minv);int base=b*256;for(int g=0;g<4;++g){memset(sx0,0,(size_t)batch*sizeof(float));memset(sx1,0,(size_t)batch*sizeof(float));memset(qx0,0,(size_t)batch*sizeof(float));memset(qx1,0,(size_t)batch*sizeof(float));const uint8_t *q=qs+g*32;int o=base+g*64;for(int i=0;i<32;++i){const float *x0=x+(size_t)(o+i)*batch,*x1=x+(size_t)(o+32+i)*batch;float q0=(float)(q[i]&15),q1=(float)(q[i]>>4);for(int t=0;t<batch;++t){float a=x0[t],c=x1[t];sx0[t]+=a;sx1[t]+=c;qx0[t]+=q0*a;qx1[t]+=q1*c;}}for(int t=0;t<batch;++t){y[t]+=d*(float)scale[2*g]*qx0[t]-dm*(float)minv[2*g]*sx0[t];y[t]+=d*(float)scale[2*g+1]*qx1[t]-dm*(float)minv[2*g+1]*sx1[t];}}}}
 static void row_q6k(const uint8_t *row,int cols,const float *x,int batch,float *y){for(int b=0;b<cols/256;++b){const uint8_t *p=row+b*210,*ql=p,*qh=p+128;const int8_t *sc=(const int8_t*)(p+192);float d=fp16_to_f32(rd16(p+208));int base=b*256;for(int half=0;half<2;++half){const uint8_t *lo0=ql+half*64,*lo1=ql+half*64+32,*hi=qh+half*32;int s=half*8,o=base+half*128;for(int i=0;i<32;++i){int ix=i/16,q1=(int)((lo0[i]&15)|(((hi[i]>>0)&3)<<4))-32,q2=(int)((lo1[i]&15)|(((hi[i]>>2)&3)<<4))-32,q3=(int)(((lo0[i]>>4)&15)|(((hi[i]>>4)&3)<<4))-32,q4=(int)(((lo1[i]>>4)&15)|(((hi[i]>>6)&3)<<4))-32;const float *x0=x+(size_t)(o+i)*batch,*x1=x+(size_t)(o+32+i)*batch,*x2=x+(size_t)(o+64+i)*batch,*x3=x+(size_t)(o+96+i)*batch;float w1=d*(float)sc[s+ix]*(float)q1,w2=d*(float)sc[s+2+ix]*(float)q2,w3=d*(float)sc[s+4+ix]*(float)q3,w4=d*(float)sc[s+6+ix]*(float)q4;for(int t=0;t<batch;++t)y[t]+=w1*x0[t]+w2*x1[t]+w3*x2[t]+w4*x3[t];}}}}
 
-static PyObject *py_matmat(PyObject *self,PyObject *args){const char *kind=NULL;PyObject *raw_obj=NULL,*x_obj=NULL;int cols=0,rows=0;if(!PyArg_ParseTuple(args,"sOiiO",&kind,&raw_obj,&cols,&rows,&x_obj))return NULL;if(cols<=0||rows<=0){PyErr_SetString(PyExc_ValueError,"cols and rows must be positive");return NULL;}int rb=row_bytes(kind,cols);if(!rb){PyErr_SetString(PyExc_ValueError,"unsupported quantizer or block mismatch");return NULL;}Py_buffer raw;if(PyObject_GetBuffer(raw_obj,&raw,PyBUF_CONTIG_RO)!=0)return NULL;PyArrayObject *x=(PyArrayObject*)PyArray_FROM_OTF(x_obj,NPY_FLOAT32,NPY_ARRAY_IN_ARRAY);if(!x){PyBuffer_Release(&raw);return NULL;}if(PyArray_NDIM(x)!=2||PyArray_DIM(x,0)!=cols){Py_DECREF(x);PyBuffer_Release(&raw);PyErr_SetString(PyExc_ValueError,"x must have shape (cols,batch)");return NULL;}int batch=(int)PyArray_DIM(x,1);if(batch<=0||batch>4096){Py_DECREF(x);PyBuffer_Release(&raw);PyErr_SetString(PyExc_ValueError,"batch must be 1..4096");return NULL;}if(raw.len<(Py_ssize_t)rb*rows){Py_DECREF(x);PyBuffer_Release(&raw);PyErr_SetString(PyExc_ValueError,"raw tensor is shorter than expected");return NULL;}npy_intp dims[2]={rows,batch};PyArrayObject *out=(PyArrayObject*)PyArray_ZEROS(2,dims,NPY_FLOAT32,0);if(!out){Py_DECREF(x);PyBuffer_Release(&raw);return NULL;}const uint8_t *rp=(const uint8_t*)raw.buf;const float *xp=(const float*)PyArray_DATA(x);float *yp=(float*)PyArray_DATA(out);int workers=1;
-#ifdef _OPENMP
-workers=omp_get_max_threads();
-if(workers<1)workers=1;
-#endif
+
+typedef struct {
+    const char *kind;
+    const uint8_t *rp;
+    int rb;
+    int cols;
+    int batch;
+    int start_row;
+    int end_row;
+    const float *x;
+    float *y;
+    float *scratch;
+} swrlz_matmat_task;
+
+static int swrlz_worker_count(int rows) {
+    const char *raw=getenv("SWRLZ_R39_WORKERS");
+    int workers=raw ? atoi(raw) : 1;
+    if(workers<1)workers=1;
+    if(workers>2)workers=2;
+    if(rows<128)workers=1;
+    return workers;
+}
+
+static void swrlz_matmat_range(swrlz_matmat_task *task) {
+    for(int r=task->start_row;r<task->end_row;++r){
+        float *row_scratch=task->scratch;
+        float *y=task->y+(size_t)r*task->batch;
+        const uint8_t *row=task->rp+(size_t)r*task->rb;
+        if(strcmp(task->kind,"f32")==0)row_f32(row,task->cols,task->x,task->batch,y);
+        else if(strcmp(task->kind,"f16")==0)row_f16(row,task->cols,task->x,task->batch,y);
+        else if(strcmp(task->kind,"bf16")==0)row_bf16(row,task->cols,task->x,task->batch,y);
+        else if(strcmp(task->kind,"q4_0")==0)row_q40(row,task->cols,task->x,task->batch,y,row_scratch);
+        else if(strcmp(task->kind,"q8_0")==0)row_q80(row,task->cols,task->x,task->batch,y,row_scratch);
+        else if(strcmp(task->kind,"q4_k")==0)row_q4k(row,task->cols,task->x,task->batch,y,row_scratch);
+        else if(strcmp(task->kind,"q6_k")==0)row_q6k(row,task->cols,task->x,task->batch,y);
+    }
+}
+
+static void *swrlz_matmat_thread(void *arg) {
+    swrlz_matmat_range((swrlz_matmat_task *)arg);
+    return NULL;
+}
+
+static PyObject *py_matmat(PyObject *self,PyObject *args){const char *kind=NULL;PyObject *raw_obj=NULL,*x_obj=NULL;int cols=0,rows=0;if(!PyArg_ParseTuple(args,"sOiiO",&kind,&raw_obj,&cols,&rows,&x_obj))return NULL;if(cols<=0||rows<=0){PyErr_SetString(PyExc_ValueError,"cols and rows must be positive");return NULL;}int rb=row_bytes(kind,cols);if(!rb){PyErr_SetString(PyExc_ValueError,"unsupported quantizer or block mismatch");return NULL;}Py_buffer raw;if(PyObject_GetBuffer(raw_obj,&raw,PyBUF_CONTIG_RO)!=0)return NULL;PyArrayObject *x=(PyArrayObject*)PyArray_FROM_OTF(x_obj,NPY_FLOAT32,NPY_ARRAY_IN_ARRAY);if(!x){PyBuffer_Release(&raw);return NULL;}if(PyArray_NDIM(x)!=2||PyArray_DIM(x,0)!=cols){Py_DECREF(x);PyBuffer_Release(&raw);PyErr_SetString(PyExc_ValueError,"x must have shape (cols,batch)");return NULL;}int batch=(int)PyArray_DIM(x,1);if(batch<=0||batch>4096){Py_DECREF(x);PyBuffer_Release(&raw);PyErr_SetString(PyExc_ValueError,"batch must be 1..4096");return NULL;}if(raw.len<(Py_ssize_t)rb*rows){Py_DECREF(x);PyBuffer_Release(&raw);PyErr_SetString(PyExc_ValueError,"raw tensor is shorter than expected");return NULL;}npy_intp dims[2]={rows,batch};PyArrayObject *out=(PyArrayObject*)PyArray_ZEROS(2,dims,NPY_FLOAT32,0);if(!out){Py_DECREF(x);PyBuffer_Release(&raw);return NULL;}const uint8_t *rp=(const uint8_t*)raw.buf;const float *xp=(const float*)PyArray_DATA(x);float *yp=(float*)PyArray_DATA(out);int workers=swrlz_worker_count(rows);
 float *scratch=(float*)malloc((size_t)workers*(size_t)batch*4*sizeof(float));if(!scratch){Py_DECREF(out);Py_DECREF(x);PyBuffer_Release(&raw);return PyErr_NoMemory();}
 Py_BEGIN_ALLOW_THREADS
-#ifdef _OPENMP
-#pragma omp parallel for schedule(static) if(rows >= 128)
-#endif
-for(int r=0;r<rows;++r){int worker=0;
-#ifdef _OPENMP
-worker=omp_get_thread_num();
-#endif
-float *row_scratch=scratch+(size_t)worker*(size_t)batch*4;float *y=yp+(size_t)r*batch;const uint8_t *row=rp+(size_t)r*rb;if(strcmp(kind,"f32")==0)row_f32(row,cols,xp,batch,y);else if(strcmp(kind,"f16")==0)row_f16(row,cols,xp,batch,y);else if(strcmp(kind,"bf16")==0)row_bf16(row,cols,xp,batch,y);else if(strcmp(kind,"q4_0")==0)row_q40(row,cols,xp,batch,y,row_scratch);else if(strcmp(kind,"q8_0")==0)row_q80(row,cols,xp,batch,y,row_scratch);else if(strcmp(kind,"q4_k")==0)row_q4k(row,cols,xp,batch,y,row_scratch);else if(strcmp(kind,"q6_k")==0)row_q6k(row,cols,xp,batch,y);}
+swrlz_matmat_task full={kind,rp,rb,cols,batch,0,rows,xp,yp,scratch};
+if(workers>=2){
+    int mid=rows/2;
+    swrlz_matmat_task left={kind,rp,rb,cols,batch,0,mid,xp,yp,scratch};
+    swrlz_matmat_task right={kind,rp,rb,cols,batch,mid,rows,xp,yp,scratch+(size_t)batch*4};
+    pthread_t thread;
+    if(pthread_create(&thread,NULL,swrlz_matmat_thread,&right)==0){
+        swrlz_matmat_range(&left);
+        pthread_join(thread,NULL);
+    }else{
+        swrlz_matmat_range(&full);
+    }
+}else{
+    swrlz_matmat_range(&full);
+}
 Py_END_ALLOW_THREADS
 free(scratch);Py_DECREF(x);PyBuffer_Release(&raw);return(PyObject*)out;}
 
