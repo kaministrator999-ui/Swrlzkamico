@@ -2,10 +2,10 @@ from setuptools import Extension, setup
 import os
 import numpy
 
-COMMON_ARGS = ["-O3", "-ffast-math", "-fno-math-errno", "-funroll-loops"]
+COMMON_ARGS = ["-O3", "-ffast-math", "-fno-math-errno", "-funroll-loops", "-pthread"]
 USE_OPENMP = os.environ.get("SWYRLZ_OPENMP", "1") not in {"0", "false", "False"}
 OPENMP_COMPILE = ["-fopenmp"] if USE_OPENMP else []
-OPENMP_LINK = ["-fopenmp"] if USE_OPENMP else []
+OPENMP_LINK = (["-fopenmp"] if USE_OPENMP else []) + ["-pthread"]
 
 setup(
     name="swrlzkamico-native",
