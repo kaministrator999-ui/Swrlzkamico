@@ -61,11 +61,11 @@ def _resource_sample(bucket,phase,request_id="",**fields):
     now=time.perf_counter_ns(); cpu=time.process_time_ns()
     try: rss=float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)/1024.0
     except Exception: rss=None
-    key=str(bucket)[:64]
+    key=(str(request_id or "")[:128]+"|"+str(bucket)[:64])
     with _RESOURCE_LOCK:
         prev=_RESOURCE_BUCKETS.get(key)
         _RESOURCE_BUCKETS[key]=(now,cpu,rss)
-    record={"contract":"swrlz-resource-task-manager-v1","stage":"RESOURCE_TASK","bucket":key,"phase":str(phase)[:64],"requestId":str(request_id or "")[:128],"atUnixMs":int(time.time()*1000),"cpuCount":int(os.cpu_count() or 1),"rssMiB":rss}
+    record={"contract":"swrlz-resource-task-manager-v1","stage":"RESOURCE_TASK","bucket":key,"phase":str(phase)[:64],"requestId":str(request_id or "")[:128],"atUnixMs":int(time.time()*1000),"cpuCount":int(os.cpu_count() or 1),"rssMiB":rss,"attributionScope":"process-wide-interval-not-exclusive"}
     if prev:
         record["wallDeltaMs"]=round((now-prev[0])/1_000_000,3); record["cpuDeltaMs"]=round((cpu-prev[1])/1_000_000,3); record["rssDeltaMiB"]=round((rss-prev[2]),3) if rss is not None and prev[2] is not None else None
     for k,v in fields.items():
