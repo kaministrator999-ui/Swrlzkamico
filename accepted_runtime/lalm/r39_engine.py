@@ -102,7 +102,7 @@ try:
     _entry("v82-batch-fetch-ok",batchBytes=len(_v82_batch_source))
     exec(compile(_v82_batch_source.decode("utf-8"),_V82_BATCH_URL+"#v82-batch","exec"),_batch.__dict__,_batch.__dict__)
 
-    _batch_install=_batch.install(_impl)
+    _batch_install=_batch.install(_impl,block_tokens=256)
     if not isinstance(_batch_install,dict) or not _batch_install.get("installed"):
         raise RuntimeError("R39_V83_BATCH_REINSTALL_NOT_PROVEN")
     _entry("v83-batch-reinstall-ok",installed=True,blockTokens=int(_batch_install.get("blockTokens") or 0),nativeBatchAvailable=bool(_batch_install.get("nativeBatchAvailable")))
