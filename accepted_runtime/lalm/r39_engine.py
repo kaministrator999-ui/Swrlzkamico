@@ -1,6 +1,6 @@
 """Hot R39 entrypoint v90: protected factual evidence over v89."""
 from __future__ import annotations
-import json,time,urllib.request,os
+import json,time,urllib.request,os,threading,resource
 
 _V74_COMMIT="58bfd905d0d3281b6adc1669ca8482cd04cc300c"
 _V74_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V74_COMMIT}/runtime_hot/r39_engine_v74.py"
@@ -44,12 +44,50 @@ _CAMERA_GATES={
     "PREFILL_BOUNDARY":False,
     "PREFILL_METRIC":True,
     "HW_USAGE":True,
+    "RESOURCE_TASKS":True,
+    "CPU_DELEGATION":True,
 }
 def _camera_enabled(category):
     return bool(_CAMERA_MASTER and _CAMERA_GATES.get(str(category),False))
 
+
+_RESOURCE_BUCKETS={}
+_RESOURCE_LOCK=threading.Lock()
+def _resource_sample(bucket,phase,request_id="",**fields):
+    if not _camera_enabled("RESOURCE_TASKS"):
+        return
+    now=time.perf_counter_ns(); cpu=time.process_time_ns()
+    try: rss=float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)/1024.0
+    except Exception: rss=None
+    key=str(bucket)[:64]
+    with _RESOURCE_LOCK:
+        prev=_RESOURCE_BUCKETS.get(key)
+        _RESOURCE_BUCKETS[key]=(now,cpu,rss)
+    record={"contract":"swrlz-resource-task-manager-v1","stage":"RESOURCE_TASK","bucket":key,"phase":str(phase)[:64],"requestId":str(request_id or "")[:128],"atUnixMs":int(time.time()*1000),"cpuCount":int(os.cpu_count() or 1),"rssMiB":rss}
+    if prev:
+        record["wallDeltaMs"]=round((now-prev[0])/1_000_000,3); record["cpuDeltaMs"]=round((cpu-prev[1])/1_000_000,3); record["rssDeltaMiB"]=round((rss-prev[2]),3) if rss is not None and prev[2] is not None else None
+    for k,v in fields.items():
+        if v is None or isinstance(v,(str,int,float,bool)): record[str(k)[:64]]=v
+    print("SWRLZ_RESOURCE_TASK "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
+
+def _cpu_policy(payload=None):
+    raw=str((payload or {}).get("cpuDelegation") or os.environ.get("SWRLZ_LALM_CPU_DELEGATION","adaptive")).lower() if isinstance(payload,dict) else str(os.environ.get("SWRLZ_LALM_CPU_DELEGATION","adaptive")).lower()
+    if raw not in {"1","2","adaptive"}: raw="adaptive"
+    visible=max(1,int(os.cpu_count() or 1)); selected=1 if raw=="1" else min(2,visible)
+    return raw,selected,visible
+
+def _apply_cpu_delegation(payload=None,request_id=""):
+    policy,selected,visible=_cpu_policy(payload)
+    # Native BLAS/OpenMP-capable kernels consume this limit where supported. The
+    # existing single-threaded path remains correct when the backend cannot parallelize.
+    for name in ("OMP_NUM_THREADS","OPENBLAS_NUM_THREADS","MKL_NUM_THREADS","NUMEXPR_NUM_THREADS"):
+        os.environ[name]=str(selected)
+    if _camera_enabled("CPU_DELEGATION"):
+        _entry("CPU_DELEGATION",requestId=request_id,policy=policy,selectedCpus=selected,visibleCpus=visible)
+    return policy,selected,visible
+
 def _entry(stage,**fields):
-    _category="HW_USAGE" if stage=="HW_USAGE" else ("PREFILL_METRIC" if stage=="PREFILL_END" else "HOT_ENTRY")
+    _category="HW_USAGE" if stage=="HW_USAGE" else ("PREFILL_METRIC" if stage=="PREFILL_END" else ("CPU_DELEGATION" if stage=="CPU_DELEGATION" else "HOT_ENTRY"))
     if not _camera_enabled(_category):
         return
     record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v90","atUnixMs":int(time.time()*1000)}
@@ -169,10 +207,27 @@ try:
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-    HOT_SERVER_VERSION="2.1.113"
-    HOT_REVISION="2.1.113-hot-camera-gates-prefill-hw-v90"
+    HOT_SERVER_VERSION="2.1.114"
+    HOT_REVISION="2.1.114-hot-resource-task-manager-cpu-delegation-v90"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
+
+    _original_generate_resource_profile=_impl._generate_hot_events
+    def _resource_profiled_generate(payload,is_cancelled=None):
+        rid=_request_id(payload)
+        policy,selected,visible=_apply_cpu_delegation(payload,rid)
+        _resource_sample("lalm","REQUEST_START",rid,cpuPolicy=policy,selectedCpus=selected,visibleCpus=visible)
+        last_phase="REQUEST_START"
+        try:
+            for event in _original_generate_resource_profile(payload,is_cancelled):
+                phase=str(event.get("phase") or event.get("type") or "EVENT") if isinstance(event,dict) else "EVENT"
+                if phase!=last_phase:
+                    _resource_sample("lalm",phase,rid,cpuPolicy=policy,selectedCpus=selected)
+                    last_phase=phase
+                yield event
+        finally:
+            _resource_sample("lalm","RECOVERY",rid,cpuPolicy=policy,selectedCpus=selected)
+    _impl._generate_hot_events=_resource_profiled_generate
 
     def _request_id(payload):
         if not isinstance(payload,dict):
