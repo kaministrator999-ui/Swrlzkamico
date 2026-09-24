@@ -161,7 +161,16 @@ def _turn_log(event: dict) -> None:
     print("SWRLZ_CHAT_TURN " + json.dumps(event, separators=(",", ":"), ensure_ascii=True), flush=True)
 
 
+_LOCKDOWN_REDIS_VERBOSE = os.environ.get("SWRLZ_REDIS_VERBOSE_CAMERA", "0").lower() in {"1", "true", "yes"}
+_LOCKDOWN_BRAIN_VERBOSE = os.environ.get("SWRLZ_BRAIN_MIRROR_CAMERA", "0").lower() in {"1", "true", "yes"}
+
 def _lockdown(stage: str, *, request_id: str = "", **fields) -> None:
+    # Return before sanitization, ring-buffer writes and JSON serialization.
+    # Keep errors and other diagnostic families; shutter high-volume Redis payloads.
+    if str(stage).startswith("redis-") and not _LOCKDOWN_REDIS_VERBOSE:
+        return
+    if str(stage).startswith("brain-") and not _LOCKDOWN_BRAIN_VERBOSE:
+        return
     global _TRACE_SEQ
     record = {
         "contract": "swrlz-full-lockdown-trace-v1",
