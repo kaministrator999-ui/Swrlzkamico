@@ -391,6 +391,37 @@ try:
     if callable(_prefill_metric_generate):
         def _request_correlated_generate(payload,is_cancelled=None,_original=_prefill_metric_generate):
             rid=_request_id(payload); started=None; finished=None; total_tokens=0; cached_tokens=0; batch_size=0
+            import os as _os, threading as _threading, resource as _resource
+            _hw_stop=_threading.Event()
+            def _hw_sample():
+                _clk=float(_os.sysconf("SC_CLK_TCK")) if hasattr(_os,"sysconf") else 100.0
+                _pages=float(_os.sysconf("SC_PAGE_SIZE")) if hasattr(_os,"sysconf") else 4096.0
+                _last_wall=time.monotonic(); _last_cpu=time.process_time()
+                while not _hw_stop.wait(2.0):
+                    _now=time.monotonic(); _cpu=time.process_time(); _wall=max(1e-9,_now-_last_wall)
+                    _cpu_pct=max(0.0,100.0*(_cpu-_last_cpu)/_wall)
+                    _last_wall=_now; _last_cpu=_cpu
+                    _rss_mib=0.0; _avail_mib=None; _limit_mib=None
+                    try:
+                        with open("/proc/self/statm","r") as _f:_rss_mib=float(_f.read().split()[1])*_pages/1048576.0
+                    except Exception:
+                        try:_rss_mib=float(_resource.getrusage(_resource.RUSAGE_SELF).ru_maxrss)/1024.0
+                        except Exception:pass
+                    try:
+                        with open("/proc/meminfo","r") as _f:
+                            for _line in _f:
+                                if _line.startswith("MemAvailable:"):_avail_mib=float(_line.split()[1])/1024.0;break
+                    except Exception:pass
+                    for _lp in ("/sys/fs/cgroup/memory.max","/sys/fs/cgroup/memory/memory.limit_in_bytes"):
+                        try:
+                            _raw=open(_lp,"r").read().strip()
+                            if _raw and _raw!="max":
+                                _v=float(_raw)/1048576.0
+                                if _v < 1024*1024:_limit_mib=_v
+                            break
+                        except Exception:pass
+                    _entry("HW_USAGE",requestId=rid,cpuProcessPct=round(_cpu_pct,2),cpuCount=_os.cpu_count() or 0,rssMiB=round(_rss_mib,2),memAvailableMiB=round(_avail_mib,2) if _avail_mib is not None else None,memLimitMiB=round(_limit_mib,2) if _limit_mib is not None else None,rssLimitPct=round(100.0*_rss_mib/_limit_mib,2) if _limit_mib else None)
+            _hw_thread=_threading.Thread(target=_hw_sample,name="r39-hw-usage",daemon=True); _hw_thread.start()
             for event in _original(payload,is_cancelled):
                 phase=str(event.get("phase") or "") if isinstance(event,dict) else ""
                 reason=str(event.get("reason") or "") if isinstance(event,dict) else ""
@@ -409,6 +440,7 @@ try:
                     finished=now; ms=max(0.001,(finished-started)*1000.0); uncached=max(0,total_tokens-cached_tokens)
                     _entry("PREFILL_END",requestId=rid,tokens=total_tokens,cachedTokens=cached_tokens,uncachedTokens=uncached,batch=batch_size,durationMs=round(ms,3),tokPerSec=round((uncached*1000.0)/ms,3) if uncached else 0.0)
                 yield event
+            _hw_stop.set()
             if started is not None and finished is None:
                 ms=max(0.001,(time.perf_counter()-started)*1000.0); uncached=max(0,total_tokens-cached_tokens)
                 _entry("PREFILL_END",requestId=rid,tokens=total_tokens,cachedTokens=cached_tokens,uncachedTokens=uncached,batch=batch_size,durationMs=round(ms,3),tokPerSec=round((uncached*1000.0)/ms,3) if uncached else 0.0,terminalWithoutGenerating=True)
