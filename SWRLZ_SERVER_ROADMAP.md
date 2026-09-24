@@ -1,3 +1,13 @@
+### UPDATE FINISHED — 2026-09-24 — accepted-runtime integrity repair + clean-release contract
+
+- **Root cause repaired:** v82-batch accepted overlay registration now declares source commit `c51160873d26c202a39ccc562a20d589d2d8516e` and exact accepted-target blob `f44ed601c5dda8aa771a4253d615d5f3a498b3bf`.
+- **Integrity verification:** every `accepted_runtime/accepted.json` file and overlay entry was re-read from `main`; every declared Git blob SHA matches its actual accepted target, including v82-batch.
+- **Governance hardening:** added `docs/engineering/SWRLZ_CLEAN_PRODUCTION_RELEASE_INTEGRITY.md` and made it mandatory from `§wyrlz_§tart.md`. Stable releases now require accepted-runtime registration + prepared-runtime integrity preflight before cleanup, followed by observed cleanup → one production trigger → GitHub Actions → canonical Vercel → runtime verification.
+- **Resulting version:** Repository Work `1.0.19` (from `1.0.18`). Runtime component versions are otherwise unchanged by this repair.
+- **Deployment state at closure:** source/static integrity repaired and verified; cleanup and production activation are the next release stages and must be observed separately before live success is claimed.
+- **Canonical project lock:** `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`.
+- **Result:** SOURCE/INTEGRITY COMPLETE; PRODUCTION ACTIVATION PENDING.
+
 ### UPDATE CONTINUATION STARTED — 2026-09-24 — repair accepted-runtime integrity and harden cleanup/deploy preflight
 
 - **Resumes:** R39 deep LALM Lockdown shutter benchmark after GitHub Actions evidence showed cleanup succeeded but both prepared-runtime verification and production deployment failed before Vercel with `accepted overlay blob mismatch: lalm/chain/v82_batch.py`.
