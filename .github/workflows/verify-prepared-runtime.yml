@@ -104,6 +104,49 @@ jobs:
             exit 1
           fi
 
+      - name: Verify native R39 production ABI baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          # ubuntu-latest may have a newer libc than Vercel. Build in a
+          # manylinux_2_28 image instead of trusting runner-local imports.
+          # The CPython 3.12 ABI matches the deployed Python extension suffix.
+          rm -f swyrlz/_r39_native*.so swyrlz/_r39_batch*.so
+          rm -rf build/temp.* build/lib.*
+          docker run --rm --platform linux/amd64 \
+            -v "$GITHUB_WORKSPACE:/work" -w /work \
+            -e SWYRLZ_OPENMP=0 -e SWRLZ_R39_WORKERS=2 \
+            quay.io/pypa/manylinux_2_28_x86_64:latest \
+            /bin/bash -euo pipefail -c '
+              PY=/opt/python/cp312-cp312/bin/python
+              "$PY" -m pip install --disable-pip-version-check "numpy==2.3.2" "setuptools>=75,<82" wheel
+              "$PY" setup.py build_ext --inplace
+              PYTHONPATH=/work SWRLZ_R39_WORKERS=1 "$PY" scripts/verify_r39_native.py
+              PYTHONPATH=/work SWRLZ_R39_WORKERS=2 "$PY" scripts/verify_r39_native.py
+            '
+          shopt -s nullglob
+          artifacts=(swyrlz/_r39_native*.so swyrlz/_r39_batch*.so)
+          if [[ "${#artifacts[@]}" -ne 2 ]]; then
+            echo "Expected exactly one native and one batch artifact; got ${#artifacts[@]}." >&2
+            exit 1
+          fi
+          # Read the binary's required GLIBC symbol versions, not the builder
+          # host's ldd output. Reject any ABI newer than the chosen 2.28 floor.
+          python - "${artifacts[@]}" <<'PY'
+          import re, subprocess, sys
+          for path in sys.argv[1:]:
+              data=subprocess.check_output(["readelf","-W","--version-info",path],text=True)
+              versions=[tuple(map(int,m)) for m in re.findall(r"GLIBC_(\d+)\.(\d+)",data)]
+              newest=max(versions,default=(0,0))
+              print(f"{path}: highest required GLIBC={newest[0]}.{newest[1]}")
+              if newest>(2,28):
+                  raise SystemExit(f"{path} exceeds production-compatible glibc 2.28 baseline")
+              dynamic=subprocess.check_output(["readelf","-d",path],text=True)
+              if "libgomp" in dynamic:
+                  raise SystemExit(f"{path} unexpectedly depends on libgomp")
+          PY
+          echo "Both R39 native extensions built and verified at GLIBC <= 2.28 before destructive cleanup." >> "$GITHUB_STEP_SUMMARY"
+
       - name: Boot prepared R39 with historical network blocked
         shell: bash
         run: |
