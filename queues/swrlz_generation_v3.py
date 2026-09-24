@@ -237,15 +237,18 @@ async def generate_swrlz_response(payload) -> None:
                     categories=[str(item)[:100] for item in (raw.get("categories") or [])[:8]],
                     errorTraceback=str(raw.get("traceback") or "")[-4000:],
                 )
+            last_type = str(event["type"])
+
             _append(store, user_id=user_id, request_id=request_id, event=event)
+
             if last_type in TERMINAL:
+
                 _resource_camera("redis-state","TERMINAL_EVENT_APPEND",request_id=request_id)
             # Every emitted model event renews the Workstation lease and advances
             # the durable snapshot independently of any connected Chat client.
             current_job = store.get_generation(user_id=user_id, request_id=request_id)
             if current_job is not None and current_job.state not in {"COMPLETE", "FAILED", "CANCELLED"}:
                 store.update_generation(replace(current_job, state="RUNNING", last_seq=seq, updated_at=time.time()))
-            last_type = str(event["type"])
             if last_type == "DELTA":
                 committed += str(event["text"])
             if last_type in TERMINAL:
