@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
+#include <pthread.h>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -170,6 +172,45 @@ static float dot_row_q6k(const uint8_t *row, int cols, const float *x) {
     return (float)sum;
 }
 
+
+typedef struct {
+    const char *kind;
+    const uint8_t *rp;
+    int rb;
+    int cols;
+    int start_row;
+    int end_row;
+    const float *x;
+    float *y;
+} swrlz_matvec_task;
+
+static int swrlz_worker_count(int rows) {
+    const char *raw = getenv("SWRLZ_R39_WORKERS");
+    int workers = raw ? atoi(raw) : 1;
+    if (workers < 1) workers = 1;
+    if (workers > 2) workers = 2;
+    if (rows < 256) workers = 1;
+    return workers;
+}
+
+static void swrlz_matvec_range(swrlz_matvec_task *task) {
+    for (int r = task->start_row; r < task->end_row; ++r) {
+        const uint8_t *row = task->rp + (size_t)r * task->rb;
+        if (strcmp(task->kind, "f32") == 0) task->y[r] = dot_row_f32(row, task->cols, task->x);
+        else if (strcmp(task->kind, "f16") == 0) task->y[r] = dot_row_f16(row, task->cols, task->x);
+        else if (strcmp(task->kind, "bf16") == 0) task->y[r] = dot_row_bf16(row, task->cols, task->x);
+        else if (strcmp(task->kind, "q4_0") == 0) task->y[r] = dot_row_q40(row, task->cols, task->x);
+        else if (strcmp(task->kind, "q8_0") == 0) task->y[r] = dot_row_q80(row, task->cols, task->x);
+        else if (strcmp(task->kind, "q4_k") == 0) task->y[r] = dot_row_q4k(row, task->cols, task->x);
+        else task->y[r] = dot_row_q6k(row, task->cols, task->x);
+    }
+}
+
+static void *swrlz_matvec_thread(void *arg) {
+    swrlz_matvec_range((swrlz_matvec_task *)arg);
+    return NULL;
+}
+
 static PyObject *py_matvec(PyObject *self, PyObject *args) {
     const char *kind = NULL;
     PyObject *raw_obj = NULL, *x_obj = NULL;
@@ -215,19 +256,22 @@ static PyObject *py_matvec(PyObject *self, PyObject *args) {
     const float *x = (const float *)PyArray_DATA(x_arr);
     float *y = (float *)PyArray_DATA(out);
 
+    const int workers = swrlz_worker_count(rows);
     Py_BEGIN_ALLOW_THREADS
-#ifdef _OPENMP
-    #pragma omp parallel for schedule(static) if(rows >= 256)
-#endif
-    for (int r = 0; r < rows; ++r) {
-        const uint8_t *row = rp + (size_t)r * rb;
-        if (strcmp(kind, "f32") == 0) y[r] = dot_row_f32(row, cols, x);
-        else if (strcmp(kind, "f16") == 0) y[r] = dot_row_f16(row, cols, x);
-        else if (strcmp(kind, "bf16") == 0) y[r] = dot_row_bf16(row, cols, x);
-        else if (strcmp(kind, "q4_0") == 0) y[r] = dot_row_q40(row, cols, x);
-        else if (strcmp(kind, "q8_0") == 0) y[r] = dot_row_q80(row, cols, x);
-        else if (strcmp(kind, "q4_k") == 0) y[r] = dot_row_q4k(row, cols, x);
-        else y[r] = dot_row_q6k(row, cols, x);
+    swrlz_matvec_task full = {kind, rp, rb, cols, 0, rows, x, y};
+    if (workers >= 2) {
+        const int mid = rows / 2;
+        swrlz_matvec_task left = {kind, rp, rb, cols, 0, mid, x, y};
+        swrlz_matvec_task right = {kind, rp, rb, cols, mid, rows, x, y};
+        pthread_t thread;
+        if (pthread_create(&thread, NULL, swrlz_matvec_thread, &right) == 0) {
+            swrlz_matvec_range(&left);
+            pthread_join(thread, NULL);
+        } else {
+            swrlz_matvec_range(&full);
+        }
+    } else {
+        swrlz_matvec_range(&full);
     }
     Py_END_ALLOW_THREADS
 
