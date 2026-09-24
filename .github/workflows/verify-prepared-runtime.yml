@@ -88,6 +88,22 @@ jobs:
           set -euo pipefail
           python -m pip install --disable-pip-version-check "numpy==2.2.6"
 
+      - name: Build and verify portable R39 native workers
+        shell: bash
+        env:
+          SWYRLZ_OPENMP: "0"
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "setuptools>=75,<82" wheel
+          python setup.py build_ext --inplace
+          python -m py_compile queues/swrlz_generation_v3.py
+          SWRLZ_R39_WORKERS=1 PYTHONPATH="$GITHUB_WORKSPACE" python scripts/verify_r39_native.py
+          SWRLZ_R39_WORKERS=2 PYTHONPATH="$GITHUB_WORKSPACE" python scripts/verify_r39_native.py
+          if find swyrlz -maxdepth 1 -type f -name '_r39_*.so' -print0 | xargs -0 -r ldd | grep -Fq 'libgomp'; then
+            echo "Portable R39 verification unexpectedly linked libgomp." >&2
+            exit 1
+          fi
+
       - name: Boot prepared R39 with historical network blocked
         shell: bash
         run: |
