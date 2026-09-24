@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import json
 import time
+import os
+import resource
+import threading
 from dataclasses import replace
 from typing import Any
 
@@ -12,6 +15,47 @@ from api.durable_redis_store import RedisRestChatStore
 
 TERMINAL = {"COMPLETED", "FAILED", "CANCELLED"}
 CONTRACT = "swrlz_llm_stream_v2"
+
+_RESOURCE_CAMERA_ENABLED = os.environ.get("SWRLZ_RESOURCE_CAMERA","1") not in {"0","false","False"}
+_RESOURCE_LAST: dict[str, tuple[int,int,float|None]] = {}
+_RESOURCE_LOCK = threading.Lock()
+
+def _resource_camera(bucket: str, phase: str, *, request_id: str = "", **fields: Any) -> None:
+    if not _RESOURCE_CAMERA_ENABLED:
+        return
+    now = time.perf_counter_ns()
+    cpu = time.process_time_ns()
+    try:
+        rss = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) / 1024.0
+    except Exception:
+        rss = None
+    key = str(bucket)[:64]
+    with _RESOURCE_LOCK:
+        prev = _RESOURCE_LAST.get(key)
+        _RESOURCE_LAST[key] = (now, cpu, rss)
+    record: dict[str, Any] = {
+        "contract": "swrlz-resource-task-manager-v1",
+        "stage": "RESOURCE_TASK",
+        "bucket": key,
+        "phase": str(phase)[:64],
+        "requestId": str(request_id or "")[:128],
+        "atUnixMs": int(time.time() * 1000),
+        "cpuCount": int(os.cpu_count() or 1),
+        "rssMiB": rss,
+    }
+    if prev is not None:
+        wall = max(1, now - prev[0])
+        cpu_delta = max(0, cpu - prev[1])
+        record["wallDeltaMs"] = round(wall / 1_000_000, 3)
+        record["cpuDeltaMs"] = round(cpu_delta / 1_000_000, 3)
+        record["processCpuPct"] = round(100.0 * cpu_delta / wall, 2)
+        if rss is not None and prev[2] is not None:
+            record["rssDeltaMiB"] = round(rss - prev[2], 3)
+    for key_name, value in fields.items():
+        if value is None or isinstance(value, (str, int, float, bool)):
+            record[str(key_name)[:64]] = value
+    print("SWRLZ_RESOURCE_TASK " + json.dumps(record, ensure_ascii=False, separators=(",", ":")), flush=True)
+
 
 
 def _camera(stage: str, *, request_id: str = "", **fields: Any) -> None:
@@ -74,6 +118,7 @@ async def generate_swrlz_response(payload) -> None:
     data = dict(raw_payload or {})
     user_id, request_id, thread_id = (str(data.get(k) or "") for k in ("userId", "requestId", "threadId"))
     invocation_started = time.time()
+    _resource_camera("queue-subscriber","INGRESS",request_id=request_id,threadId=thread_id)
     _camera(
         "subscriber-entry",
         request_id=request_id,
@@ -86,6 +131,7 @@ async def generate_swrlz_response(payload) -> None:
 
     store = RedisRestChatStore.from_env()
     job = store.get_generation(user_id=user_id, request_id=request_id)
+    _resource_camera("redis-state","JOB_READ",request_id=request_id)
     if job is None:
         _camera("job-missing", request_id=request_id, threadId=thread_id)
         raise ValueError("generation job does not exist")
@@ -102,6 +148,7 @@ async def generate_swrlz_response(payload) -> None:
 
     # At-least-once delivery is safe because the persisted job is the idempotency boundary.
     job = store.update_generation(replace(job, state="RUNNING", updated_at=time.time()))
+    _resource_camera("redis-state","JOB_CLAIM",request_id=request_id)
     _camera("job-claimed-running", request_id=request_id, lastSeq=int(job.last_seq))
     assistant = next((m for m in store.list_messages(user_id=user_id, thread_id=thread_id) if m.message_id == job.assistant_message_id), None)
     if assistant is None:
@@ -114,6 +161,7 @@ async def generate_swrlz_response(payload) -> None:
     from api.hot_loader import get_engine
     _camera("engine-load-enter", request_id=request_id)
     engine, _engine_source = get_engine()
+    _resource_camera("engine-loader","ENGINE_READY",request_id=request_id)
     _camera(
         "engine-load-exit",
         request_id=request_id,
@@ -143,17 +191,23 @@ async def generate_swrlz_response(payload) -> None:
 
     seq, committed, last_type = int(job.last_seq), assistant.committed_text, "FAILED"
     started = time.time()
+    _resource_camera("lalm","GENERATE_ENTER",request_id=request_id)
     _camera(
         "generate-events-enter",
         request_id=request_id,
         historyCount=len(history[-32:]),
         promptChars=len(str(data.get("prompt") or "")),
     )
+    last_resource_phase = ""
     try:
         for raw in engine.generate_events(engine_payload, cancelled):
             if not isinstance(raw, dict):
                 continue
             seq += 1
+            resource_phase = str(raw.get("phase") or raw.get("type") or "EVENT")
+            if resource_phase != last_resource_phase:
+                _resource_camera("lalm", resource_phase, request_id=request_id)
+                last_resource_phase = resource_phase
             event = _wire(raw, seq=seq, request_id=request_id, engine=engine)
             _camera(
                 "model-event",
@@ -184,6 +238,8 @@ async def generate_swrlz_response(payload) -> None:
                     errorTraceback=str(raw.get("traceback") or "")[-4000:],
                 )
             _append(store, user_id=user_id, request_id=request_id, event=event)
+            if last_type in TERMINAL:
+                _resource_camera("redis-state","TERMINAL_EVENT_APPEND",request_id=request_id)
             # Every emitted model event renews the Workstation lease and advances
             # the durable snapshot independently of any connected Chat client.
             current_job = store.get_generation(user_id=user_id, request_id=request_id)
@@ -240,9 +296,11 @@ async def generate_swrlz_response(payload) -> None:
             invocationElapsedMs=int((time.time() - invocation_started) * 1000),
         )
         store.update_message(replace(assistant, committed_text=committed, state=state, updated_at=time.time()))
+        _resource_camera("redis-state","MESSAGE_COMMIT",request_id=request_id)
         current = store.get_generation(user_id=user_id, request_id=request_id)
         if current is not None:
             store.update_generation(replace(current, state=state, last_seq=seq, completed_at=time.time()))
+        _resource_camera("queue-subscriber","RECOVERY",request_id=request_id,finalState=state)
         _camera(
             "subscriber-finally-exit",
             request_id=request_id,
