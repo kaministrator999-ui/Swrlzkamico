@@ -53,6 +53,7 @@ def _camera_enabled(category):
 
 _RESOURCE_BUCKETS={}
 _RESOURCE_LOCK=threading.Lock()
+_CPU_POLICY_LAST={"wallNs":time.perf_counter_ns(),"cpuNs":time.process_time_ns()}
 def _resource_sample(bucket,phase,request_id="",**fields):
     if not _camera_enabled("RESOURCE_TASKS"):
         return
@@ -73,18 +74,35 @@ def _resource_sample(bucket,phase,request_id="",**fields):
 def _cpu_policy(payload=None):
     raw=str((payload or {}).get("cpuDelegation") or os.environ.get("SWRLZ_LALM_CPU_DELEGATION","adaptive")).lower() if isinstance(payload,dict) else str(os.environ.get("SWRLZ_LALM_CPU_DELEGATION","adaptive")).lower()
     if raw not in {"1","2","adaptive"}: raw="adaptive"
-    visible=max(1,int(os.cpu_count() or 1)); selected=1 if raw=="1" else min(2,visible)
-    return raw,selected,visible
+    visible=max(1,int(os.cpu_count() or 1))
+    now_wall=time.perf_counter_ns(); now_cpu=time.process_time_ns()
+    with _RESOURCE_LOCK:
+        prev_wall=int(_CPU_POLICY_LAST.get("wallNs") or now_wall)
+        prev_cpu=int(_CPU_POLICY_LAST.get("cpuNs") or now_cpu)
+        _CPU_POLICY_LAST["wallNs"]=now_wall; _CPU_POLICY_LAST["cpuNs"]=now_cpu
+    wall=max(1,now_wall-prev_wall)
+    recent_process_cpu_pct=max(0.0,100.0*float(now_cpu-prev_cpu)/float(wall))
+    if raw=="1" or visible<2:
+        selected=1
+    elif raw=="2":
+        selected=min(2,visible)
+    else:
+        # Adaptive mode uses the second CPU only when recent process demand leaves
+        # headroom. Concurrent/heavy server work (>~1.25 cores) falls back to one
+        # inference worker so Redis/queue/health handling is not starved.
+        selected=2 if recent_process_cpu_pct < 125.0 else 1
+    return raw,selected,visible,recent_process_cpu_pct
 
 def _apply_cpu_delegation(payload=None,request_id=""):
-    policy,selected,visible=_cpu_policy(payload)
+    policy,selected,visible,recent_cpu_pct=_cpu_policy(payload)
     # Native BLAS/OpenMP-capable kernels consume this limit where supported. The
     # existing single-threaded path remains correct when the backend cannot parallelize.
     for name in ("OMP_NUM_THREADS","OPENBLAS_NUM_THREADS","MKL_NUM_THREADS","NUMEXPR_NUM_THREADS"):
         os.environ[name]=str(selected)
+    os.environ["SWRLZ_R39_WORKERS"]=str(selected)
     if _camera_enabled("CPU_DELEGATION"):
-        _entry("CPU_DELEGATION",requestId=request_id,policy=policy,selectedCpus=selected,visibleCpus=visible)
-    return policy,selected,visible
+        _entry("CPU_DELEGATION",requestId=request_id,policy=policy,selectedCpus=selected,visibleCpus=visible,recentProcessCpuPct=round(recent_cpu_pct,2))
+    return policy,selected,visible,recent_cpu_pct
 
 def _entry(stage,**fields):
     _category="HW_USAGE" if stage=="HW_USAGE" else ("PREFILL_METRIC" if stage=="PREFILL_END" else ("CPU_DELEGATION" if stage=="CPU_DELEGATION" else "HOT_ENTRY"))
@@ -215,8 +233,8 @@ try:
     _original_generate_resource_profile=_impl._generate_hot_events
     def _resource_profiled_generate(payload,is_cancelled=None):
         rid=_request_id(payload)
-        policy,selected,visible=_apply_cpu_delegation(payload,rid)
-        _resource_sample("lalm","REQUEST_START",rid,cpuPolicy=policy,selectedCpus=selected,visibleCpus=visible)
+        policy,selected,visible,recent_cpu_pct=_apply_cpu_delegation(payload,rid)
+        _resource_sample("lalm","REQUEST_START",rid,cpuPolicy=policy,selectedCpus=selected,visibleCpus=visible,recentProcessCpuPct=round(recent_cpu_pct,2))
         last_phase="REQUEST_START"
         try:
             for event in _original_generate_resource_profile(payload,is_cancelled):
