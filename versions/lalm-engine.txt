@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.112
-REVISION=2.1.112-hot-lockdown-retrace-v90
+VERSION=2.1.114
+REVISION=2.1.114-hot-resource-task-manager-cpu-delegation-v90
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
