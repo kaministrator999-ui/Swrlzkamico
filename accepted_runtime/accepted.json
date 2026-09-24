@@ -35,7 +35,7 @@
       "owner": "lalm",
       "runtimeSource": "runtime_hot/r39_engine.py",
       "acceptedTarget": "lalm/r39_engine.py",
-      "sourceBlobSha": "50d422baab889fbaa7afeee31faa6d5d58bd89af"
+      "sourceBlobSha": "bcb3d42943853a31750fbc15a4ced75ba3ef93b8"
     },
     {
       "owner": "server-policy",
