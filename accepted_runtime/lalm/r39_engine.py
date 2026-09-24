@@ -1,6 +1,6 @@
 """Hot R39 entrypoint v90: protected factual evidence over v89."""
 from __future__ import annotations
-import json,time,urllib.request
+import json,time,urllib.request,os
 
 _V74_COMMIT="58bfd905d0d3281b6adc1669ca8482cd04cc300c"
 _V74_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V74_COMMIT}/runtime_hot/r39_engine_v74.py"
@@ -35,7 +35,23 @@ _V89_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V
 _V90_COMMIT="5c242ddc4246e388ebc6478c74c3e21ceb6864ec"
 _V90_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V90_COMMIT}/runtime_hot/r39_engine_v90_overlay.py"
 
+# Camera lockdown gates. Disabled categories return before payload construction/serialization.
+# Benchmark profile: preserve only terminal PREFILL throughput + active hardware usage.
+_CAMERA_MASTER=True
+_CAMERA_GATES={
+    "HOT_ENTRY":False,
+    "SEMANTIC":False,
+    "PREFILL_BOUNDARY":False,
+    "PREFILL_METRIC":True,
+    "HW_USAGE":True,
+}
+def _camera_enabled(category):
+    return bool(_CAMERA_MASTER and _CAMERA_GATES.get(str(category),False))
+
 def _entry(stage,**fields):
+    _category="HW_USAGE" if stage=="HW_USAGE" else ("PREFILL_METRIC" if stage=="PREFILL_END" else "HOT_ENTRY")
+    if not _camera_enabled(_category):
+        return
     record={"contract":"r39-hot-entry-camera-v1","stage":stage,"target":"v90","atUnixMs":int(time.time()*1000)}
     for k,v in fields.items():
         if v is None or isinstance(v,(str,int,float,bool)):record[str(k)[:64]]=v
@@ -153,8 +169,8 @@ try:
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-    HOT_SERVER_VERSION="2.1.112"
-    HOT_REVISION="2.1.112-hot-lockdown-retrace-v90"
+    HOT_SERVER_VERSION="2.1.113"
+    HOT_REVISION="2.1.113-hot-camera-gates-prefill-hw-v90"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
 
@@ -164,6 +180,8 @@ try:
         return str(payload.get("requestId") or payload.get("request_id") or "")[:128]
 
     def _semantic_lockdown(stage,request_id="",**fields):
+        if not _camera_enabled("SEMANTIC"):
+            return
         record={"contract":"r39-semantic-primitive-lockdown-v1","stage":str(stage)[:160],"requestId":str(request_id or "")[:128],"atUnixNs":time.time_ns(),"monotonicNs":time.perf_counter_ns()}
         for key,value in fields.items():
             if value is None or isinstance(value,(str,int,float,bool)):
@@ -239,6 +257,8 @@ try:
     # gradual-mutation rule; cameras below identify which inherited boundary
     # actually changes prompt material before any next behavioral mutation.
     def _diag_payload(stage,payload):
+        if not _camera_enabled("PREFILL_BOUNDARY"):
+            return
         if not isinstance(payload,dict):
             _entry(stage,payloadType=type(payload).__name__)
             return
@@ -421,7 +441,9 @@ try:
                             break
                         except Exception:pass
                     _entry("HW_USAGE",requestId=rid,cpuProcessPct=round(_cpu_pct,2),cpuCount=_os.cpu_count() or 0,rssMiB=round(_rss_mib,2),memAvailableMiB=round(_avail_mib,2) if _avail_mib is not None else None,memLimitMiB=round(_limit_mib,2) if _limit_mib is not None else None,rssLimitPct=round(100.0*_rss_mib/_limit_mib,2) if _limit_mib else None)
-            _hw_thread=_threading.Thread(target=_hw_sample,name="r39-hw-usage",daemon=True); _hw_thread.start()
+            _hw_thread=None
+            if _camera_enabled("HW_USAGE"):
+                _hw_thread=_threading.Thread(target=_hw_sample,name="r39-hw-usage",daemon=True); _hw_thread.start()
             for event in _original(payload,is_cancelled):
                 phase=str(event.get("phase") or "") if isinstance(event,dict) else ""
                 reason=str(event.get("reason") or "") if isinstance(event,dict) else ""
