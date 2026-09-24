@@ -1,6 +1,7 @@
 """Hot R39 entrypoint v90: protected factual evidence over v89."""
 from __future__ import annotations
-import json,time,urllib.request,os,threading,resource
+import json,time,urllib.request,os
+import threading,resource
 
 _V74_COMMIT="58bfd905d0d3281b6adc1669ca8482cd04cc300c"
 _V74_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V74_COMMIT}/runtime_hot/r39_engine_v74.py"
