@@ -2,10 +2,12 @@ TARGET=vercel-stale-deployment-purge
 APPROVED=1
 KEEP=current-production-host
 PROJECT=swrlzkamico-o3nu
-REQUESTED_AT=2026-09-22
-PURPOSE=predeploy cleanup before Chat 1.0.41 terminal projection + verifier repair release
-RETRY=14
+REQUESTED_AT=2026-09-24
+PURPOSE=predeploy cleanup before R39 camera lockdown gating benchmark release
+RETRY=15
 
 CLEAN_GATE=prebuilt-staging-repair-20260922
 
 CLEAN_GATE=r39-diagnostic-visibility-20260923
+
+CLEAN_GATE=r39-camera-gating-benchmark-20260924
