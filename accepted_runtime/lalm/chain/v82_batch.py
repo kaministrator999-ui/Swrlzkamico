@@ -31,6 +31,8 @@ _DENSE_MATERIALIZE_MIN_BATCH = 32
 _DEFAULT_BLOCK_TOKENS = 96
 _TLS = threading.local()
 _FALLBACK_CAMERA_CONTRACT = "r39-v82-batch-fallback-except-v1"
+# Deep Lockdown shutter: preserve instrumentation code, but make disabled LALM cameras zero-payload fast returns.
+_LOCKDOWN_CAMERA_ENABLED = False
 
 def _emit_batch_fallback(exc: Exception, metrics: dict[str, Any] | None) -> None:
     """Emit one bounded exception signature per inference from the actual fallback site."""
@@ -48,6 +50,8 @@ def _emit_batch_fallback(exc: Exception, metrics: dict[str, Any] | None) -> None
 
 
 def _lockdown(stage: str, **fields) -> None:
+    if not _LOCKDOWN_CAMERA_ENABLED:
+        return
     metrics = getattr(_TLS, "metrics", None)
     record = {
         "contract": "r39-full-lockdown-trace-v1",
