@@ -1,3 +1,8 @@
+### 2026-09-24 — R39 deep LALM Lockdown shutter benchmark
+- Extended the camera gating boundary into the accepted v82 LALM batch/inference layer. Its common `_lockdown(...)` emitter now returns before metrics lookup, timestamps, record construction, JSON serialization, printing, or server `brain-*` mirroring while the benchmark shutter is closed.
+- Lockdown instrumentation remains in source and can be re-enabled; this benchmark deliberately preserves R39 2.1.113 wrapper PREFILL_END throughput and HW_USAGE CPU/RAM cameras while suppressing the inherited token/operator/tensor camera flood.
+- Accepted-runtime authority was advanced to the new v82 blob. Inference arithmetic, 256-token runtime installation, queue semantics, and fallback behavior are unchanged.
+
 ### 2026-09-24 — R39 camera lockdown gating benchmark profile
 - R39 2.1.113 adds lazy camera-category gates so disabled telemetry returns before record construction/serialization. The benchmark profile keeps only terminal PREFILL throughput (tokens/sec) and request-correlated HW_USAGE CPU/RAM sampling enabled; hot-entry, semantic, and prefill-boundary camera categories are disabled without deleting their instrumentation.
 - Purpose: compare PREFILL latency/resource utilization against the full-camera baseline while preserving the ability to re-enable individual camera families for future diagnostics. Inference semantics, the 256-token V82 batch configuration, native/serial fallbacks, and queue behavior remain unchanged.
