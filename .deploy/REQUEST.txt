@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=activate-v82-256-prefill-20260924
-REASON=Configure the actual pinned V82 batch adapter to use 256-token prefill blocks instead of its default 96; preserve native batch and serial fallback.
-SOURCE_COMMIT=2e3b2002afe6d9d8234d495c658c731d640defe3
+REQUEST_ID=r39-hardware-telemetry-20260924
+REASON=Deploy request-correlated CPU and memory telemetry sampled every 2 seconds during active R39 generation while preserving existing inference behavior and verbose cameras.
+SOURCE_COMMIT=1a867375b675d1447904acacc2e84297af6c6463
