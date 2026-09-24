@@ -29,7 +29,7 @@ def _resource_camera(bucket: str, phase: str, *, request_id: str = "", **fields:
         rss = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) / 1024.0
     except Exception:
         rss = None
-    key = str(bucket)[:64]
+    key = str(request_id or "")[:128] + "|" + str(bucket)[:64]
     with _RESOURCE_LOCK:
         prev = _RESOURCE_LAST.get(key)
         _RESOURCE_LAST[key] = (now, cpu, rss)
@@ -42,6 +42,7 @@ def _resource_camera(bucket: str, phase: str, *, request_id: str = "", **fields:
         "atUnixMs": int(time.time() * 1000),
         "cpuCount": int(os.cpu_count() or 1),
         "rssMiB": rss,
+        "attributionScope": "process-wide-interval-not-exclusive",
     }
     if prev is not None:
         wall = max(1, now - prev[0])
