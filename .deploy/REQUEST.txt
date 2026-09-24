@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=request-correlated-prefill-metric-20260923
-REASON=Deploy terminal PREFILL_END camera with request ID, token count, adaptive batch size, duration, and throughput.
-SOURCE_COMMIT=ab32e1b0f7c168f3c89d18f2ebc7708127c10d8a
+REQUEST_ID=activate-v82-256-prefill-20260924
+REASON=Configure the actual pinned V82 batch adapter to use 256-token prefill blocks instead of its default 96; preserve native batch and serial fallback.
+SOURCE_COMMIT=2e3b2002afe6d9d8234d495c658c731d640defe3
