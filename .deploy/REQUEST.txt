@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=r39-native-backend-proof-215-20260924
-REASON=Deploy verified R39 2.1.115 native backend diagnostics, request-correlated process-wide resource camera, and default-gated verbose Redis and brain mirror cameras to canonical Vercel production.
-SOURCE_COMMIT=c3458250a85cf38e8bdb8d5742e060e4685cb92d
+REQUEST_ID=r39-glibc228-native-repair-20260924
+REASON=Activate independently verified glibc-2.28-compatible R39 native and batch extensions with fail-closed pre-cleanup ABI checks; verify live native availability after deployment.
+SOURCE_COMMIT=184650e0875dada916383ef9cde523de9b1fefb7
