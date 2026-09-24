@@ -1,3 +1,11 @@
+### UPDATE CONTINUATION — 2026-09-24 — backend truth and camera-overhead isolation
+
+- Production 2.1.114 showed adaptive selected 2 visible workers but the request's prefill profile reported `backend=python-fallback`; selection alone did not prove parallel native execution.
+- R39 2.1.115 adds bounded request-start/end native bridge diagnostics (native/batch availability, import errors, loaded module paths) and request-correlated resource intervals explicitly labeled **process-wide, non-exclusive**. This avoids interpreting concurrent CPU as a subsystem's exclusive consumption.
+- Server Chat camera now shutters verbose `redis-*` and `brain-*` mirrored traces before cleaning, ring-buffer insertion, and JSON serialization by default. `SWRLZ_REDIS_VERBOSE_CAMERA=1` and `SWRLZ_BRAIN_MIRROR_CAMERA=1` re-arm those categories independently. Error/other diagnostic families remain.
+- Native two-worker kernels are preserved, not presumed effective: next live response must prove actual batch/native availability and compare matched 1/2/adaptive requests for wall time, CPU-time, throughput, and fallback count before any speedup claim.
+- Source authority: Repository Work 1.0.21; LALM Engine 2.1.115. Server Runtime stays unchanged until actual deployment/verification. Production deployment remains a separate governed gate.
+
 ### UPDATE CONTINUATION CHECKPOINT — 2026-09-24 — resource profiler + dual-worker candidate preflight complete
 
 - **LALM candidate:** 2.1.114 / `2.1.114-hot-resource-task-manager-cpu-delegation-v90`.
