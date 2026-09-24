@@ -152,28 +152,47 @@ jobs:
           version: "0.12.13"
           enable-cache: false
 
-      - name: Build native R39 extensions
+      - name: Build native R39 extensions against glibc 2.28 baseline
         shell: bash
-        env:
-          # Vercel's Python runtime image does not ship libgomp.so.1.
-          # Build portable native kernels without the OpenMP runtime dependency.
-          SWYRLZ_OPENMP: "0"
         run: |
           set -euo pipefail
-          python -m pip install --disable-pip-version-check "numpy==2.2.6" "setuptools>=75,<82" wheel
-          python setup.py build_ext --inplace
-          if find swyrlz -maxdepth 1 -type f -name '_r39_*.so' -print0 | xargs -0 -r ldd | grep -Fq 'libgomp'; then
-            echo "R39 production native artifacts unexpectedly depend on libgomp; refusing to deploy." >&2
+          # ubuntu-latest may have a newer libc than Vercel. Build in a pinned
+          # manylinux_2_28 image instead of trusting runner-local imports.
+          # The CPython 3.12 ABI matches the deployed Python extension suffix.
+          docker run --rm --platform linux/amd64 \
+            -v "$GITHUB_WORKSPACE:/work" -w /work \
+            -e SWYRLZ_OPENMP=0 -e SWRLZ_R39_WORKERS=2 \
+            quay.io/pypa/manylinux_2_28_x86_64:2025-05-03-6c8e0d0 \
+            /bin/bash -euo pipefail -c '
+              PY=/opt/python/cp312-cp312/bin/python
+              "$PY" -m pip install --disable-pip-version-check "numpy==2.3.2" "setuptools>=75,<82" wheel
+              "$PY" setup.py build_ext --inplace
+              PYTHONPATH=/work SWRLZ_R39_WORKERS=1 "$PY" scripts/verify_r39_native.py
+              PYTHONPATH=/work SWRLZ_R39_WORKERS=2 "$PY" scripts/verify_r39_native.py
+              PYTHONPATH=/work "$PY" -c "from swyrlz import r39_native; d=r39_native.diagnostics(); assert d.get(\\"available\\") and d.get(\\"batchAvailable\\"), d; print(d)"
+            '
+          shopt -s nullglob
+          artifacts=(swyrlz/_r39_native*.so swyrlz/_r39_batch*.so)
+          if [[ "${#artifacts[@]}" -ne 2 ]]; then
+            echo "Expected exactly one native and one batch artifact; got ${#artifacts[@]}." >&2
             exit 1
           fi
-          PYTHONPATH="$GITHUB_WORKSPACE" python scripts/verify_r39_native.py
-          PYTHONPATH="$GITHUB_WORKSPACE" python - <<'PY'
-          from swyrlz import r39_native
-          state = r39_native.diagnostics()
-          assert state.get("available") is True, state
-          assert state.get("batchAvailable") is True, state
-          print(state)
+          # Read the binary's required GLIBC symbol versions, not the builder
+          # host's ldd output. Reject any ABI newer than the chosen 2.28 floor.
+          python - "${artifacts[@]}" <<'PY'
+          import re, subprocess, sys
+          for path in sys.argv[1:]:
+              data=subprocess.check_output(["readelf","-W","--version-info",path],text=True)
+              versions=[tuple(map(int,m)) for m in re.findall(r"GLIBC_(\d+)\.(\d+)",data)]
+              newest=max(versions,default=(0,0))
+              print(f"{path}: highest required GLIBC={newest[0]}.{newest[1]}")
+              if newest>(2,28):
+                  raise SystemExit(f"{path} exceeds production-compatible glibc 2.28 baseline")
+              dynamic=subprocess.check_output(["readelf","-d",path],text=True)
+              if "libgomp" in dynamic:
+                  raise SystemExit(f"{path} unexpectedly depends on libgomp")
           PY
+          echo "Both R39 native extensions built and verified at GLIBC <= 2.28 before destructive cleanup." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Prepare promoted runtime generation
         id: runtime_generation
