@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=r39-resource-attribution-dual-worker-20260924
-REASON=Deploy verified R39 2.1.114 resource-attribution cameras, portable 1/2/adaptive CPU delegation, and fail-closed zero-old-deployment cleanup verification.
-SOURCE_COMMIT=74873229114a493acd1d863e695962248a5ca015
+REQUEST_ID=r39-native-backend-proof-215-20260924
+REASON=Deploy verified R39 2.1.115 native backend diagnostics, request-correlated process-wide resource camera, and default-gated verbose Redis and brain mirror cameras to canonical Vercel production.
+SOURCE_COMMIT=c3458250a85cf38e8bdb8d5742e060e4685cb92d
