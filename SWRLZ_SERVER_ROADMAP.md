@@ -1,3 +1,12 @@
+### UPDATE CONTINUATION STARTED — 2026-09-24 — resource attribution + adaptive dual-CPU LALM benchmark
+
+- **Observed live evidence:** R39 2.1.113 HW_USAGE cameras show the production process near 100% CPU during PREFILL while the runtime exposes 2 CPUs; RSS remains roughly 290–315 MiB with about 1.96–1.98 GiB available. Current evidence therefore suggests one-core saturation rather than RAM pressure, but does not yet attribute baseline/background load.
+- **Requested outcome:** instrument the complete receive → queue/state → prompt/tokenization → PREFILL → decode → persistence/sync → recovery lifecycle as a Task-Manager-style resource timeline, separating CPU and memory attribution by subsystem and phase before/during/after response processing.
+- **Camera contract:** preserve category gates and early returns; add bounded/aggregated resource cameras rather than restoring per-token/operator/tensor flood. Instrumentation overhead must itself be attributable and switchable.
+- **Compute delegation:** add benchmarkable 1-CPU, 2-CPU, and adaptive 1↔2 execution policy. Adaptive mode may consume the second visible CPU only when measured server headroom permits, while preserving capacity for queue/state/Redis/health work. Parallelism must occur at proven parallelizable native/inference boundaries rather than merely moving the same single-threaded work to another CPU.
+- **Acceptance:** compare idle baseline, ingress/pre-response, PREFILL, decode, persistence/sync, and post-response recovery; report CPU-time, wall time, peak/average process CPU, RSS/available-memory deltas, throughput/TTFT, delegation decisions, and unattributed visible usage. Benchmark 1 vs 2 vs adaptive before selecting production policy.
+- **Deployment:** source work does not itself authorize another production trigger; activation remains a separate governed gate.
+
 ### UPDATE CONTINUATION STARTED — 2026-09-24 — distinguish stale-purge maintenance from destructive release cleanup
 
 - **Evidence correction:** standalone `Purge Stale Vercel Deployments` #19 succeeded while the hour-old production deployment remained. Source inspection proves this is intentional: that workflow protects the deployment serving the production alias and deletes only other stale deployments.
