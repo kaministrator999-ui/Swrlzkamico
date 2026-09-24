@@ -106,8 +106,9 @@ Read these documents in this order before implementation:
 7. `SWRLZ_CHAT_CAMERA_LOGS.md` — project-wide diagnostic cameras/logs/evidence workflow. The compatibility filename remains historical; the document is project-wide, not Chat-only.
 8. `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` — how project-work progress and final results are formatted and reported to the user.
 9. `docs/engineering/SWRLZ_CHAT_OVERVIEW.md` — canonical Chat stage/theater composition: scenery, props, actors, stagehands, curtain/scene lifecycle, ownership, legal mutation phases, and clean-room `/chat/§wyrlz` build direction.
+10. `docs/engineering/SWRLZ_CLEAN_PRODUCTION_RELEASE_INTEGRITY.md` — mandatory accepted-runtime integrity preflight and clean cleanup → production deployment → live-verification sequence for stable Server releases.
 
-Treat those nine documents as one coordinated project-work contract. Then follow any subsystem operating guide routed below before changing that subsystem.
+Treat those ten documents as one coordinated project-work contract. Then follow any subsystem operating guide routed below before changing that subsystem.
 
 ### Project response identity opener — mandatory
 
@@ -213,6 +214,7 @@ Each rule family has one primary owner.
 |---|---|
 | Project-work entry/order | `§wyrlz_§tart.md` |
 | Runtime vs main, hotfix/deploy boundary | `SWRLZ_HOTFIX_RULES.md` |
+| Clean production release integrity/preflight | `docs/engineering/SWRLZ_CLEAN_PRODUCTION_RELEASE_INTEGRITY.md` |
 | Runtime-hot integration/how-to | `docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md` |
 | Repository/Server/module version lineage | `SWRLZ_VERSION_MODULE_EVOLUTION.md` |
 | Pre-feature architecture discovery/reconciliation | `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md` |
@@ -229,6 +231,10 @@ Each rule family has one primary owner.
 Do not create a second policy document for a concern that already has a canonical owner. Extend the owner or deliberately migrate/retire the old contract.
 
 ---
+
+### Stable-release integrity preflight — mandatory
+
+Before any stale-deployment cleanup or production request for a stable Server candidate, execute `docs/engineering/SWRLZ_CLEAN_PRODUCTION_RELEASE_INTEGRITY.md` completely. In particular, any changed `accepted_runtime/` target must have its final Git blob identity registered in `accepted_runtime/accepted.json`, and the prepared-runtime integrity boundary must pass **before cleanup**. A cleanup or production trigger must never be used as the first test of accepted-runtime integrity.
 
 ### Mandatory mutation → version → roadmap → clear current server → deploy latest → verify sequence
 
