@@ -1,3 +1,11 @@
+### UPDATE CONTINUATION STARTED — 2026-09-24 — repair accepted-runtime integrity and harden cleanup/deploy preflight
+
+- **Resumes:** R39 deep LALM Lockdown shutter benchmark after GitHub Actions evidence showed cleanup succeeded but both prepared-runtime verification and production deployment failed before Vercel with `accepted overlay blob mismatch: lalm/chain/v82_batch.py`.
+- **Observed source baseline:** `accepted_runtime/lalm/chain/v82_batch.py` blob `f44ed601c5dda8aa771a4253d615d5f3a498b3bf`; `accepted_runtime/accepted.json` still declared stale v82-batch blob `4ddaf2a5a6347281759f1fcc4794156488afb198`.
+- **Architecture reconciliation:** deployment triggers and cleanup wiring are healthy; the defect is accepted-runtime integrity registration plus insufficient pre-trigger integrity discipline.
+- **Plan:** repair v82-batch accepted overlay registration, add a canonical deployment-integrity/preflight guide, route §wyrlz §tart through it, advance Repository Work, then run the established cleanup → single production request → GitHub Actions → canonical Vercel verification chain.
+- **Safety:** reuse only canonical Vercel project `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`; no replacement project.
+
 ### 2026-09-24 — R39 deep LALM Lockdown shutter benchmark
 - Extended the camera gating boundary into the accepted v82 LALM batch/inference layer. Its common `_lockdown(...)` emitter now returns before metrics lookup, timestamps, record construction, JSON serialization, printing, or server `brain-*` mirroring while the benchmark shutter is closed.
 - Lockdown instrumentation remains in source and can be re-enabled; this benchmark deliberately preserves R39 2.1.113 wrapper PREFILL_END throughput and HW_USAGE CPU/RAM cameras while suppressing the inherited token/operator/tensor camera flood.
