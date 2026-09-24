@@ -234,7 +234,9 @@ Do not create a second policy document for a concern that already has a canonica
 
 ### Stable-release integrity preflight — mandatory
 
-Before any stale-deployment cleanup or production request for a stable Server candidate, execute `docs/engineering/SWRLZ_CLEAN_PRODUCTION_RELEASE_INTEGRITY.md` completely. In particular, any changed `accepted_runtime/` target must have its final Git blob identity registered in `accepted_runtime/accepted.json`, and the prepared-runtime integrity boundary must pass **before cleanup**. A cleanup or production trigger must never be used as the first test of accepted-runtime integrity.
+Before any production request for a stable Server candidate, execute `docs/engineering/SWRLZ_CLEAN_PRODUCTION_RELEASE_INTEGRITY.md` completely. In particular, any changed `accepted_runtime/` target must have its final Git blob identity registered in `accepted_runtime/accepted.json`, the prepared-runtime integrity boundary must pass, and the current production workflow's complete pre-deploy success path must be proved from source plus known-good evidence **before the trigger is mutated**. The trigger itself is never the experiment.
+
+The standalone `Purge Stale Vercel Deployments` workflow is maintenance-only: it preserves the deployment serving the production alias while deleting other stale deployments. Its green status must never be interpreted as “current production cleared.” Destructive clear-current cleanup belongs inside the canonical production workflow after the replacement artifact is prepared and immediately before deployment.
 
 ### Mandatory mutation → version → roadmap → clear current server → deploy latest → verify sequence
 
