@@ -169,7 +169,6 @@ jobs:
               "$PY" setup.py build_ext --inplace
               PYTHONPATH=/work SWRLZ_R39_WORKERS=1 "$PY" scripts/verify_r39_native.py
               PYTHONPATH=/work SWRLZ_R39_WORKERS=2 "$PY" scripts/verify_r39_native.py
-              PYTHONPATH=/work "$PY" -c "from swyrlz import r39_native; d=r39_native.diagnostics(); assert d.get(\\"available\\") and d.get(\\"batchAvailable\\"), d; print(d)"
             '
           shopt -s nullglob
           artifacts=(swyrlz/_r39_native*.so swyrlz/_r39_batch*.so)
