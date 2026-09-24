@@ -156,13 +156,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # ubuntu-latest may have a newer libc than Vercel. Build in a pinned
+          # ubuntu-latest may have a newer libc than Vercel. Build in a
           # manylinux_2_28 image instead of trusting runner-local imports.
           # The CPython 3.12 ABI matches the deployed Python extension suffix.
           docker run --rm --platform linux/amd64 \
             -v "$GITHUB_WORKSPACE:/work" -w /work \
             -e SWYRLZ_OPENMP=0 -e SWRLZ_R39_WORKERS=2 \
-            quay.io/pypa/manylinux_2_28_x86_64:2025-05-03-6c8e0d0 \
+            quay.io/pypa/manylinux_2_28_x86_64:latest \
             /bin/bash -euo pipefail -c '
               PY=/opt/python/cp312-cp312/bin/python
               "$PY" -m pip install --disable-pip-version-check "numpy==2.3.2" "setuptools>=75,<82" wheel
