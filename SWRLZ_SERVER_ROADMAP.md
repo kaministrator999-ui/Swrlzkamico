@@ -1,3 +1,7 @@
+### 2026-09-24 — R39 camera lockdown gating benchmark profile
+- R39 2.1.113 adds lazy camera-category gates so disabled telemetry returns before record construction/serialization. The benchmark profile keeps only terminal PREFILL throughput (tokens/sec) and request-correlated HW_USAGE CPU/RAM sampling enabled; hot-entry, semantic, and prefill-boundary camera categories are disabled without deleting their instrumentation.
+- Purpose: compare PREFILL latency/resource utilization against the full-camera baseline while preserving the ability to re-enable individual camera families for future diagnostics. Inference semantics, the 256-token V82 batch configuration, native/serial fallbacks, and queue behavior remain unchanged.
+
 
 ### 2026-09-23 — UPDATE STARTED: clean-room send transport disappearance
 - Symptom: two user sends rendered locally but produced no Vercel runtime traffic in the observed production window, placing the defect before Workstation enqueue/inference.
