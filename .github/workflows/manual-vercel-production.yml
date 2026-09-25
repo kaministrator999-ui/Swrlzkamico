@@ -172,6 +172,12 @@ jobs:
               PYTHONPATH=/work SWRLZ_R39_WORKERS=1 "$PY" scripts/verify_r39_native.py
               PYTHONPATH=/work SWRLZ_R39_WORKERS=2 "$PY" scripts/verify_r39_native.py
             '
+          # The manylinux container runs as root. Restore runner ownership so
+          # Vercel's uv/setuptools build can create its own build/lib tree.
+          sudo chown -R "$(id -u):$(id -g)" build swyrlz
+          # Container build output is not the Vercel wheel's build directory.
+          # Native .so artifacts remain in swyrlz until staged after validation.
+          rm -rf build
           shopt -s nullglob
           artifacts=(swyrlz/_r39_native*.so swyrlz/_r39_batch*.so)
           if [[ "${#artifacts[@]}" -ne 2 ]]; then
