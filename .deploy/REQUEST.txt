@@ -1,6 +1,6 @@
 TARGET=production
 APPROVED=1
 SOURCE_REF=main
-REQUEST_ID=r39-glibc228-native-repair-20260924
-REASON=Activate independently verified glibc-2.28-compatible R39 native and batch extensions with fail-closed pre-cleanup ABI checks; verify live native availability after deployment.
-SOURCE_COMMIT=184650e0875dada916383ef9cde523de9b1fefb7
+REQUEST_ID=r39-glibc228-build-permission-repair-20260924
+REASON=Retry the failed glibc-compatible R39 production build after correcting root-owned manylinux build directory permissions; preserve pre-cleanup fail-closed gates.
+SOURCE_COMMIT=3933321569681cc1cd3511066749cfce5992958e
