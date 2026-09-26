@@ -1,0 +1,83 @@
+name: Manual Hugging Face Space Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Validate package without publishing, or explicitly deploy"
+        required: true
+        type: choice
+        options: [validate, deploy]
+        default: validate
+      approved:
+        description: "Confirm replacement of files in kamiloki/Swyrlz"
+        required: true
+        type: choice
+        options: ["no", "yes"]
+        default: "no"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate isolated Space package
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f hf_space/README.md || { echo "::error::Missing hf_space/README.md; no deployable package has been accepted."; exit 1; }
+          test -f hf_space/app.py || { echo "::error::Missing hf_space/app.py; do not publish a placeholder."; exit 1; }
+          test -f hf_space/requirements.txt || { echo "::error::Missing isolated dependencies."; exit 1; }
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          root = Path("hf_space")
+          card = (root / "README.md").read_text(encoding="utf-8")
+          assert card.startswith("---\n") and "\nsdk: gradio\n" in card, "Existing Gradio Space SDK must be preserved"
+          app = (root / "app.py").read_text(encoding="utf-8")
+          ast.parse(app)
+          assert "§wyrlz" in app or "Swyrlz" in app, "App must identify the actual project"
+          assert "accepted_runtime" in app or "r39_engine" in app, "App must integrate the real R39 runtime, not a bootstrap echo"
+          assert (root / "accepted_runtime" / "lalm" / "r39_engine.py").is_file(), "R39 engine is not staged"
+          assert (root / "chat" / "§wyrlz" / "index.html").is_file(), "Clean-room Chat is not staged"
+          assert (root / "MODEL_PROVENANCE.json").is_file(), "Model identity/provenance not staged"
+          print("Static package shape accepted; runtime inference still requires separate verification.")
+          PY
+      - name: Require explicit publish authorization
+        if: ${{ inputs.mode == 'deploy' }}
+        env:
+          APPROVED: ${{ inputs.approved }}
+        run: |
+          test "$APPROVED" = yes || { echo "::error::Publish approval missing."; exit 1; }
+      - name: Verify destination and upload only isolated package
+        if: ${{ inputs.mode == 'deploy' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$HF_TOKEN" || { echo "::error::HF_TOKEN secret is missing."; exit 1; }
+          python -m pip install 'huggingface_hub>=0.34,<2'
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from huggingface_hub import HfApi
+          api = HfApi(token=os.environ["HF_TOKEN"])
+          info = api.repo_info("kamiloki/Swyrlz", repo_type="space")
+          assert info.id == "kamiloki/Swyrlz", "Destination mismatch"
+          assert info.cardData and info.cardData.get("sdk") == "gradio", "Refuse SDK change"
+          api.upload_folder(
+              folder_path=str(Path("hf_space")),
+              repo_id="kamiloki/Swyrlz",
+              repo_type="space",
+              commit_message="Manual verified §wyrlz candidate from GitHub",
+          )
+          print("Upload submitted to the existing Space; inspect build and live inference separately.")
+          PY
