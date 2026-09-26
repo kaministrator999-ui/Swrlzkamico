@@ -28,6 +28,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Stage canonical R39 sources and model provenance
+        run: |
+          python scripts/prepare_hf_space.py
+          python scripts/prepare_hf_space.py --check
       - name: Validate isolated Space package
         shell: bash
         run: |
