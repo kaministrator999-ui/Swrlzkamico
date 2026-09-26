@@ -13,7 +13,7 @@ def main():
     revision=subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip()
     manifest=json.loads((ROOT/"lalm§wyrlz.transport.json").read_text(encoding="utf-8"))
     assert len(manifest["chunks"])==54 and manifest["sha256"]=="f0a466c869447345eb2e13d8ad4cf267830a1d69f20bb88de4e1ecf3ade863c7"
-    assert all((ROOT/c["path"]).is_file() for c in manifest["chunks"]), "Missing source model transport chunk"
+    assert all((ROOT/c["path"]).is_file() for c in manifest["chunks"]), "Missing source model transport chunk"\n    assert manifest["size_bytes"]==sum(int(c["size_bytes"]) for c in manifest["chunks"]), "Chunk sizes disagree with transport manifest"
     for rel in SOURCES:
         source=ROOT/rel
         assert source.is_file(), f"Missing canonical source: {rel}"
