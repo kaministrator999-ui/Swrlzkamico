@@ -3,6 +3,8 @@ from __future__ import annotations
 import json, os, runpy, threading, time, uuid
 from pathlib import Path
 import gradio as gr
+import uvicorn
+from station import app as station_app, set_generator
 from model_router import dispatch, routes, ModelUnavailable
 
 ROOT=Path(__file__).resolve().parent
@@ -55,6 +57,8 @@ def available_models():
     return [dict(modelId=r.model_id,label=r.label,available=r.available,checkpoint=r.checkpoint,reason=r.reason) for r in routes()]
 
 demo=gr.ChatInterface(fn=respond,type="messages",title="§wyrlz R39 — isolated inference candidate",description="Real accepted R39 inference probe. Canonical clean-room Chat and account persistence are not migrated yet.")
+set_generator(lambda payload: engine()[1](payload))
+app=gr.mount_gradio_app(station_app,demo,path="/probe")
 if __name__=="__main__":
     print(json.dumps({"event":"HF_MODEL_ROUTES","routes":available_models()}),flush=True)
-    demo.launch()
+    uvicorn.run(app,host="0.0.0.0",port=int(os.environ.get("PORT","7860")))
