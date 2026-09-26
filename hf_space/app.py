@@ -28,7 +28,7 @@ def engine():
             if not callable(inspect) or not callable(generate):
                 raise RuntimeError("Accepted R39 engine lacks inspect/generate contract")
             state=inspect()
-            if not state.get("modelReady",False):
+            if not (state.get("interactiveReady") or state.get("oneTokenReady")):
                 raise RuntimeError("R39 model not ready: "+str(state.get("code") or state))
             _engine=(inspect,generate)
         return _engine
