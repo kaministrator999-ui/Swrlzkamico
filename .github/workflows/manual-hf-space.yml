@@ -10,7 +10,7 @@ on:
         options: [validate, deploy]
         default: validate
       approved:
-        description: "Confirm creation/upload ONLY to kamiloki/Swyrlz-R39-Test"
+        description: "Confirm replacement ONLY of existing kamiloki/Swyrlz after snapshot"
         required: true
         type: choice
         options: ["no", "yes"]
@@ -29,6 +29,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Stage canonical R39 sources and model provenance
+        env:
+          SWRLZ_SOURCE_COMMIT: ${{ github.sha }}
         run: |
           python scripts/prepare_hf_space.py
           python scripts/prepare_hf_space.py --check
@@ -87,7 +89,7 @@ jobs:
           name: hf-predeploy-reference
           path: hf-reference-snapshot/
           retention-days: 30
-      - name: Create or verify separate test Space and upload isolated package
+      - name: Upload approved candidate to existing Space after snapshot
         if: ${{ inputs.mode == 'deploy' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -102,12 +104,7 @@ jobs:
           from huggingface_hub import HfApi
           api = HfApi(token=os.environ["HF_TOKEN"])
           from huggingface_hub.utils import RepositoryNotFoundError
-          target = "kamiloki/Swyrlz-R39-Test"
-          assert target != "kamiloki/Swyrlz", "Production Space must never be the target"
-          try:
-              info = api.repo_info(target, repo_type="space")
-          except RepositoryNotFoundError:
-              api.create_repo(repo_id=target, repo_type="space", space_sdk="gradio", private=True, exist_ok=False)
+          target = "kamiloki/Swyrlz"
           current = api.repo_info(target, repo_type="space")
           assert current.id == target, "Test destination mismatch"
           assert current.cardData and current.cardData.get("sdk") == "gradio", "Refuse SDK change"
@@ -117,5 +114,5 @@ jobs:
               repo_type="space",
               commit_message="Manual verified §wyrlz candidate from GitHub",
           )
-          print("Candidate uploaded to separate test Space only; production Space remains unchanged.")
+          print("Approved candidate uploaded to existing Space after reference snapshot.")
           PY
