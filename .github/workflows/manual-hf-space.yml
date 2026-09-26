@@ -10,7 +10,7 @@ on:
         options: [validate, deploy]
         default: validate
       approved:
-        description: "Confirm replacement of files in kamiloki/Swyrlz"
+        description: "Confirm creation/upload ONLY to kamiloki/Swyrlz-R39-Test"
         required: true
         type: choice
         options: ["no", "yes"]
@@ -60,7 +60,7 @@ jobs:
           APPROVED: ${{ inputs.approved }}
         run: |
           test "$APPROVED" = yes || { echo "::error::Publish approval missing."; exit 1; }
-      - name: Snapshot existing HF reference before any publish
+      - name: Snapshot existing production HF reference (read only)
         if: ${{ inputs.mode == 'deploy' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -87,7 +87,7 @@ jobs:
           name: hf-predeploy-reference
           path: hf-reference-snapshot/
           retention-days: 30
-      - name: Verify destination and upload only isolated package
+      - name: Create or verify separate test Space and upload isolated package
         if: ${{ inputs.mode == 'deploy' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -101,14 +101,21 @@ jobs:
           from pathlib import Path
           from huggingface_hub import HfApi
           api = HfApi(token=os.environ["HF_TOKEN"])
-          info = api.repo_info("kamiloki/Swyrlz", repo_type="space")
-          assert info.id == "kamiloki/Swyrlz", "Destination mismatch"
-          assert info.cardData and info.cardData.get("sdk") == "gradio", "Refuse SDK change"
+          from huggingface_hub.utils import RepositoryNotFoundError
+          target = "kamiloki/Swyrlz-R39-Test"
+          assert target != "kamiloki/Swyrlz", "Production Space must never be the target"
+          try:
+              info = api.repo_info(target, repo_type="space")
+          except RepositoryNotFoundError:
+              info = api.create_repo(repo_id=target, repo_type="space", space_sdk="gradio", private=True, exist_ok=False)
+          assert info.id == target, "Test destination mismatch"
+          current = api.repo_info(target, repo_type="space")
+          assert current.cardData and current.cardData.get("sdk") == "gradio", "Refuse SDK change"
           api.upload_folder(
               folder_path=str(Path("hf_space")),
-              repo_id="kamiloki/Swyrlz",
+              repo_id=target,
               repo_type="space",
               commit_message="Manual verified §wyrlz candidate from GitHub",
           )
-          print("Upload submitted to the existing Space; inspect build and live inference separately.")
+          print("Candidate uploaded to separate test Space only; production Space remains unchanged.")
           PY
