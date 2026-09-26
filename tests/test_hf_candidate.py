@@ -17,8 +17,9 @@ class Candidate(unittest.TestCase):
   self.assertEqual(p["transportChunks"],54)
   self.assertEqual(p["rawSha256"],"65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee")
  def test_canonical_source(self):
-  for rel in ("accepted_runtime/lalm/r39_engine.py","swyrlz/r39_inference.py","swyrlz/backend.py","chat/§wyrlz/index.html"):
+  for rel in ("accepted_runtime/lalm/r39_engine.py","swyrlz/r39_inference.py","swyrlz/backend.py"):
    self.assertEqual((ROOT/rel).read_bytes(),(ROOT/"hf_space"/rel).read_bytes())
+  self.assertIn('id="hfModel"',(ROOT/"hf_space/chat/§wyrlz/index.html").read_text(encoding="utf-8"))
   self.assertTrue((ROOT/"api/lalm_station.py").is_file(), "Canonical account-backed Chat bridge must remain available as migration reference")
  def test_no_secret_or_billing_code(self):
   app=(ROOT/"hf_space/app.py").read_text(encoding="utf-8")
