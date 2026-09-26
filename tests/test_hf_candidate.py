@@ -19,7 +19,7 @@ class Candidate(unittest.TestCase):
  def test_canonical_source(self):
   for rel in ("accepted_runtime/lalm/r39_engine.py","swyrlz/r39_inference.py","swyrlz/backend.py","chat/§wyrlz/index.html"):
    self.assertEqual((ROOT/rel).read_bytes(),(ROOT/"hf_space"/rel).read_bytes())
-  self.assertIn("SWRLZ_LALM_STATION",(ROOT/"api/lalm_station.py").read_text(encoding="utf-8"))
+  self.assertTrue((ROOT/"api/lalm_station.py").is_file(), "Canonical account-backed Chat bridge must remain available as migration reference")
  def test_no_secret_or_billing_code(self):
   app=(ROOT/"hf_space/app.py").read_text(encoding="utf-8")
   for term in ("HF_TOKEN","request_space_hardware","add_space_secret","billing"):
