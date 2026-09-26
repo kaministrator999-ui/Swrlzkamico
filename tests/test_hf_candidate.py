@@ -1,8 +1,17 @@
 """Offline structural and contract checks; never misreport these as live model inference."""
-import ast,json,unittest
+import ast,json,unittest,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT/"hf_space"))
+from model_router import dispatch, ModelUnavailable, routes
 class Candidate(unittest.TestCase):
+ def test_model_routes_fail_closed(self):
+  self.assertEqual([r.model_id for r in routes()],["r39","stock","compare"])
+  self.assertFalse(routes()[1].available)
+  self.assertFalse(routes()[2].available)
+  with self.assertRaises(ModelUnavailable): list(dispatch("stock",{},lambda p:iter([{"type":"DELTA","text":"wrong model"}])))
+  with self.assertRaises(ModelUnavailable): list(dispatch("compare",{},lambda p:iter([])))
+  self.assertEqual(list(dispatch("r39",{},lambda p:iter([{"type":"DELTA","text":"real route"}])))[0]["text"],"real route")
  def test_source_contract(self):
   src=(ROOT/"hf_space/app.py").read_text(encoding="utf-8")
   tree=ast.parse(src)
