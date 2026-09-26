@@ -3,6 +3,7 @@ from __future__ import annotations
 import json, os, runpy, threading, time, uuid
 from pathlib import Path
 import gradio as gr
+from model_router import dispatch, routes, ModelUnavailable
 
 ROOT=Path(__file__).resolve().parent
 PROVENANCE=json.loads((ROOT/"MODEL_PROVENANCE.json").read_text(encoding="utf-8"))
@@ -36,7 +37,7 @@ def respond(message,history):
         inspect,generate=engine()
         payload={"requestId":str(uuid.uuid4()),"prompt":message,"history":[{"role":item.get("role"),"text":item.get("content")} for item in (history or []) if isinstance(item,dict) and item.get("role") in ("user","assistant") and isinstance(item.get("content"),str)],"profileId":"LALM"}
         output=""
-        for event in generate(payload):
+        for event in dispatch("r39",payload,generate):
             if not isinstance(event,dict): continue
             kind=str(event.get("type") or "")
             if kind=="DELTA":
@@ -50,6 +51,10 @@ def respond(message,history):
         print(json.dumps({"event":"HF_R39_FAILED","errorType":type(exc).__name__,"detail":str(exc)[:300]}),flush=True)
         raise gr.Error("R39 unavailable: "+str(exc)[:220])
 
+def available_models():
+    return [dict(modelId=r.model_id,label=r.label,available=r.available,checkpoint=r.checkpoint,reason=r.reason) for r in routes()]
+
 demo=gr.ChatInterface(fn=respond,type="messages",title="§wyrlz R39 — isolated inference candidate",description="Real accepted R39 inference probe. Canonical clean-room Chat and account persistence are not migrated yet.")
 if __name__=="__main__":
+    print(json.dumps({"event":"HF_MODEL_ROUTES","routes":available_models()}),flush=True)
     demo.launch()
