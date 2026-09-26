@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Prepare an isolated, source-pinned HF candidate without mutating canonical runtime."""
 from __future__ import annotations
-import argparse, hashlib, json, shutil, subprocess
+import argparse, hashlib, json, os, re, shutil, subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"hf_space"
@@ -10,7 +10,8 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--check",action="store_true")
     args=parser.parse_args()
-    revision=subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip()
+    revision=os.environ.get("SWRLZ_SOURCE_COMMIT","").strip() or subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip()
+    assert re.fullmatch(r"[0-9a-f]{40}",revision), "Source revision must be a full immutable Git commit"
     manifest=json.loads((ROOT/"lalm§wyrlz.transport.json").read_text(encoding="utf-8"))
     assert len(manifest["chunks"])==54 and manifest["sha256"]=="f0a466c869447345eb2e13d8ad4cf267830a1d69f20bb88de4e1ecf3ade863c7"
     assert all((ROOT/c["path"]).is_file() for c in manifest["chunks"]), "Missing source model transport chunk"
