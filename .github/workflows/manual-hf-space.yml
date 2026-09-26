@@ -60,6 +60,33 @@ jobs:
           APPROVED: ${{ inputs.approved }}
         run: |
           test "$APPROVED" = yes || { echo "::error::Publish approval missing."; exit 1; }
+      - name: Snapshot existing HF reference before any publish
+        if: ${{ inputs.mode == 'deploy' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2'
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ['HF_TOKEN'])
+          info=api.repo_info('kamiloki/Swyrlz',repo_type='space',files_metadata=False)
+          files=api.list_repo_files('kamiloki/Swyrlz',repo_type='space',revision=info.sha)
+          out=Path('hf-reference-snapshot');out.mkdir(exist_ok=True)
+          (out/'manifest.json').write_text(json.dumps({'repo':'kamiloki/Swyrlz','revision':info.sha,'files':files,'cardData':dict(info.cardData or {})},indent=2,default=str))
+          for name in ('README.md','app.py','requirements.txt','packages.txt'):
+              if name in files:
+                  content=api.hf_hub_download('kamiloki/Swyrlz',name,repo_type='space',revision=info.sha,token=os.environ['HF_TOKEN'])
+                  (out/name).write_bytes(Path(content).read_bytes())
+          print('Preserved prior Space revision and bootstrap reference:',info.sha)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode == 'deploy' }}
+        with:
+          name: hf-predeploy-reference
+          path: hf-reference-snapshot/
+          retention-days: 30
       - name: Verify destination and upload only isolated package
         if: ${{ inputs.mode == 'deploy' }}
         env:
