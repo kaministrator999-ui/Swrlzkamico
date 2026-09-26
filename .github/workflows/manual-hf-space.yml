@@ -56,6 +56,25 @@ jobs:
           assert (root / "MODEL_PROVENANCE.json").is_file(), "Model identity/provenance not staged"
           print("Static package shape accepted; runtime inference still requires separate verification.")
           PY
+      - name: Reconstruct and verify real R39 model before any publication
+        env:
+          SWRLZ_REPO_ROOT: ${{ github.workspace }}/hf_space
+          SWRLZ_R39_TRANSPORT_MANIFEST: ${{ github.workspace }}/hf_space/lalm§wyrlz.transport.json
+          SWRLZ_GITHUB_OWNER: kaministrator999-ui
+          SWRLZ_GITHUB_REPO: Swrlzkamico
+          SWRLZ_GITHUB_REF: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, sys
+          from pathlib import Path
+          sys.path.insert(0,str(Path("hf_space").resolve()))
+          from swyrlz.backend import ensure_r39, RAW
+          state=ensure_r39()
+          assert state.get("modelReady"), state
+          assert RAW.stat().st_size==233637480
+          assert state["rawSha256"]=="65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee"
+          print(json.dumps({"modelReady":True,"rawBytes":RAW.stat().st_size,"sha256":state["rawSha256"],"source":state["source"]}))
+          PY
       - name: Require explicit publish authorization
         if: ${{ inputs.mode == 'deploy' }}
         env:
