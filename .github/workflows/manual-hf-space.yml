@@ -56,6 +56,8 @@ jobs:
           assert (root / "MODEL_PROVENANCE.json").is_file(), "Model identity/provenance not staged"
           print("Static package shape accepted; runtime inference still requires separate verification.")
           PY
+      - name: Install candidate runtime dependencies
+        run: python -m pip install -r hf_space/requirements.txt
       - name: Reconstruct and verify real R39 model before any publication
         env:
           SWRLZ_REPO_ROOT: ${{ github.workspace }}/hf_space
@@ -74,6 +76,12 @@ jobs:
           assert RAW.stat().st_size==233637480
           assert state["rawSha256"]=="65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee"
           print(json.dumps({"modelReady":True,"rawBytes":RAW.stat().st_size,"sha256":state["rawSha256"],"source":state["source"]}))
+          import runpy
+          engine=runpy.run_path("hf_space/accepted_runtime/lalm/r39_engine.py")
+          status=engine["inspect_engine"]()
+          assert status.get("interactiveReady") or status.get("oneTokenReady"), status
+          assert callable(engine.get("generate_events"))
+          print(json.dumps({"acceptedEngineReady":True,"engineId":status.get("engineId"),"modelSha256":status.get("modelSha256")}))
           PY
       - name: Require explicit publish authorization
         if: ${{ inputs.mode == 'deploy' }}
