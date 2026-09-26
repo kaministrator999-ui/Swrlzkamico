@@ -107,9 +107,9 @@ jobs:
           try:
               info = api.repo_info(target, repo_type="space")
           except RepositoryNotFoundError:
-              info = api.create_repo(repo_id=target, repo_type="space", space_sdk="gradio", private=True, exist_ok=False)
-          assert info.id == target, "Test destination mismatch"
+              api.create_repo(repo_id=target, repo_type="space", space_sdk="gradio", private=True, exist_ok=False)
           current = api.repo_info(target, repo_type="space")
+          assert current.id == target, "Test destination mismatch"
           assert current.cardData and current.cardData.get("sdk") == "gradio", "Refuse SDK change"
           api.upload_folder(
               folder_path=str(Path("hf_space")),
