@@ -69,7 +69,7 @@ jobs:
           python - <<'PY'
           import json, os
           from pathlib import Path
-          from huggingface_hub import HfApi
+          from huggingface_hub import HfApi, hf_hub_download
           api=HfApi(token=os.environ['HF_TOKEN'])
           info=api.repo_info('kamiloki/Swyrlz',repo_type='space',files_metadata=False)
           files=api.list_repo_files('kamiloki/Swyrlz',repo_type='space',revision=info.sha)
@@ -77,7 +77,7 @@ jobs:
           (out/'manifest.json').write_text(json.dumps({'repo':'kamiloki/Swyrlz','revision':info.sha,'files':files,'cardData':dict(info.cardData or {})},indent=2,default=str))
           for name in ('README.md','app.py','requirements.txt','packages.txt'):
               if name in files:
-                  content=api.hf_hub_download('kamiloki/Swyrlz',name,repo_type='space',revision=info.sha,token=os.environ['HF_TOKEN'])
+                  content=hf_hub_download('kamiloki/Swyrlz',name,repo_type='space',revision=info.sha,token=os.environ['HF_TOKEN'])
                   (out/name).write_bytes(Path(content).read_bytes())
           print('Preserved prior Space revision and bootstrap reference:',info.sha)
           PY
