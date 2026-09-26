@@ -1,0 +1,28 @@
+name: HF Candidate Offline Validation
+on:
+  pull_request:
+    paths:
+      - 'hf_space/**'
+      - 'scripts/prepare_hf_space.py'
+      - 'tests/test_hf_candidate.py'
+      - '.github/workflows/hf-candidate-validation.yml'
+      - '.github/workflows/manual-hf-space.yml'
+      - 'accepted_runtime/lalm/**'
+      - 'swyrlz/**'
+      - 'lalm§wyrlz.transport.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stage canonical candidate
+        run: python scripts/prepare_hf_space.py && python scripts/prepare_hf_space.py --check
+      - name: Check syntax and contracts
+        run: |
+          python -m py_compile hf_space/app.py hf_space/accepted_runtime/lalm/r39_engine.py hf_space/swyrlz/backend.py hf_space/swyrlz/r39_inference.py
+          python -m unittest discover -s tests -p test_hf_candidate.py -v
+      - name: Report scope
+        run: echo "Offline checks only. Model reconstruction, inference, HF Space and Chat parity remain unverified."
