@@ -45,3 +45,13 @@ Implementation gates:
 5. Compare matched hardware and warm/cold state: original stock llama.cpp, existing R39 native, and converted R39 llama.cpp. Measure prompt tokens, prefill tok/s, decode tok/s, first DELTA, total, RSS and CPU at 128 and 2,000 output-token budgets. Do not infer tokens/s from delta count or character count. Require correctness and measurable gain before promoting route to Chat.
 
 **Current state:** compatibility investigation only; no verified R39 GGUF artifact, no llama.cpp R39 runtime result, no production speed-parity claim. Existing HF publish remains explicit-owner-approved after snapshot/validation.
+
+### Implemented read-only compatibility probe
+
+Source: `scripts/inspect_r39_gguf.py` (commit `0cbf8c4f64c4c17799a3542a175ae5ac002e6f10`). Run from the repository root after `python scripts/prepare_hf_space.py` and dependency installation:
+
+```bash
+PYTHONPATH=hf_space python scripts/inspect_r39_gguf.py --download-stock --output r39-gguf-compatibility.json
+```
+
+It SHA-verifies the canonical R39 artifact, downloads the exact pinned original GGUF revision, reads GGUF metadata and tensor directory, and reports tensor name/shape/quantizer differences, tokenizer ID equality, and LFM2 metadata. It does not export GGUF, modify the live Space, or prove runtime/logit parity. A `DIRECT_LAYOUT_CANDIDATE` result is necessary but not sufficient for lossless conversion. Treat `ADAPTER_REQUIRED` as an explicit mapping task, not permission to silently substitute the original.
