@@ -5,7 +5,7 @@ import argparse, hashlib, json, os, re, shutil, subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"hf_space"
-SOURCES=["accepted_runtime/lalm/r39_engine.py","accepted_runtime/accepted.json","swyrlz/backend.py","swyrlz/r39_inference.py","swyrlz/r39_native.py","swyrlz/r39_matvec_patch.py","swyrlz/r39_tokenizer_patch.py","swyrlz/__init__.py","lalm§wyrlz.transport.json","chat/§wyrlz/index.html","chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png","chat/§wyrlz/assets/kompanion.png"]
+SOURCES=["accepted_runtime/lalm/r39_engine.py","accepted_runtime/accepted.json","swyrlz/backend.py","swyrlz/r39_inference.py","swyrlz/r39_native.py","native/r39_native.c","native/r39_batch.c","scripts/build_r39_native.py","swyrlz/r39_matvec_patch.py","swyrlz/r39_tokenizer_patch.py","swyrlz/__init__.py","lalm§wyrlz.transport.json","chat/§wyrlz/index.html","chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png","chat/§wyrlz/assets/kompanion.png"]
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--check",action="store_true")
