@@ -60,6 +60,14 @@ def available_models():
 demo=gr.ChatInterface(fn=respond,type="messages",additional_inputs=[gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39")],value="stock",label="Inference model")],title="§wyrlz Inference Laboratory",description="Independent model probe. The dragon Chat is at /; HF-only session state is not durable account storage.")
 set_generator(lambda payload: engine()[1](payload),original_generate)
 app=gr.mount_gradio_app(station_app,demo,path="/probe")
+# Keep the pinned original Test Bench available independently of R39.
+legacy_source=ROOT/"original_workstation.py"
+if not legacy_source.is_file():
+    raise RuntimeError("Pinned original Test Bench missing; refuse to replace live Space")
+legacy=runpy.run_path(str(legacy_source))
+if "demo" not in legacy:
+    raise RuntimeError("Original Test Bench does not export its Gradio demo")
+app=gr.mount_gradio_app(app,legacy["demo"],path="/legacy")
 if __name__=="__main__":
     print(json.dumps({"event":"HF_MODEL_ROUTES","routes":available_models()}),flush=True)
     uvicorn.run(app,host="0.0.0.0",port=int(os.environ.get("PORT","7860")))
