@@ -34,7 +34,7 @@ def main():
         html=ui.read_text(encoding="utf-8")
         marker='<div class="composer-box">'
         assert html.count(marker)==1, "Canonical composer insertion point changed"
-        html=html.replace(marker, '<label class="hf-model-picker" for="hfModel"><span>Model</span><select id="hfModel" aria-label="Inference model"><option value="r39">§wyrlz R39 — fixed</option><option value="stock" disabled>Stock reference — not configured</option><option value="compare" disabled>Compare both — not configured</option></select></label>'+marker,1)
+        html=html.replace(marker, '<label class="hf-model-picker" for="hfModel"><span>Model</span><select id="hfModel" aria-label="Inference model"><option value="stock">Original HF · LFM2-350M</option><option value="r39">§wyrlz R39 — fixed</option><option value="compare" disabled>Compare both — not configured</option></select></label>'+marker,1)
         html=html.replace('const sendButton = document.getElementById("sendButton");','const sendButton = document.getElementById("sendButton");\n      const hfModel = document.getElementById("hfModel");',1)
         html=html.replace('profileId:"LALM",ingress:"SWRLZ_LALM_STATION"','profileId:"LALM",modelId:hfModel.value,ingress:"SWRLZ_LALM_STATION"',1)
         html=html.replace("</style>", '.hf-model-picker{display:flex;align-items:center;gap:8px;color:#c2d4e5;font-size:12px;padding:4px 8px}.hf-model-picker select{min-width:0;background:#092038;color:#e6f7ff;border:1px solid #37617a;border-radius:8px;padding:5px}</style>',1)
@@ -42,6 +42,6 @@ def main():
     else:
         html=ui.read_text(encoding="utf-8")
         assert 'id="hfModel"' in html and 'modelId:hfModel.value' in html, "HF model selector missing"
-        assert 'option value="stock" disabled' in html, "Unconfigured stock model must remain disabled"
+        assert '<option value="stock">Original HF · LFM2-350M</option>' in html, "Original HF model selector missing"
     print("HF candidate source staging verified:",revision,"chunks:",len(manifest["chunks"]))
 if __name__=="__main__": main()
