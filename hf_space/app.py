@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json, os, runpy, threading, time, uuid
 from pathlib import Path
+import spaces
 import gradio as gr
 import uvicorn
 from station import app as station_app, set_generator
@@ -57,7 +58,21 @@ def respond(message,history,model_id):
 def available_models():
     return [dict(modelId=r.model_id,label=r.label,available=r.available,checkpoint=r.checkpoint,reason=r.reason) for r in routes()]
 
-demo=gr.ChatInterface(fn=respond,additional_inputs=[gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39")],value="stock",label="Inference model")],title="§wyrlz Inference Laboratory",description="Independent model probe. The dragon Chat is at /; HF-only session state is not durable account storage.")
+@spaces.GPU(duration=1)
+def _zerogpu_registration_probe():
+    """Registered Gradio handler used only so ZeroGPU can validate this mounted app."""
+    return "ZeroGPU handler registered"
+
+with gr.Blocks(title="§wyrlz Inference Laboratory") as demo:
+    gr.ChatInterface(
+        fn=respond,
+        additional_inputs=[gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39")],value="stock",label="Inference model")],
+        title="§wyrlz Inference Laboratory",
+        description="Independent model probe. The dragon Chat is at /; HF-only session state is not durable account storage.",
+    )
+    _zg_button=gr.Button("ZeroGPU registration probe",visible=False)
+    _zg_output=gr.Textbox(visible=False)
+    _zg_button.click(fn=_zerogpu_registration_probe,inputs=[],outputs=_zg_output,api_visibility="private")
 set_generator(lambda payload: engine()[1](payload),original_generate)
 app=gr.mount_gradio_app(station_app,demo,path="/probe")
 # Keep the pinned original Test Bench available independently of R39.
