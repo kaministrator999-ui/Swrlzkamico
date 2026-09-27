@@ -10,8 +10,11 @@ import uvicorn
 try:
     from scripts.build_r39_native import build as build_r39_native
     _native_build = build_r39_native(Path(__file__).resolve().parent)
+    _native_build_error = None
     print(json.dumps({"event":"R39_NATIVE_BUILD","result":_native_build}),flush=True)
 except Exception as _native_exc:
+    _native_build = None
+    _native_build_error = f"{type(_native_exc).__name__}: {_native_exc}"
     print(json.dumps({"event":"R39_NATIVE_BUILD_FAILED","errorType":type(_native_exc).__name__,"detail":str(_native_exc)[-700:]}),flush=True)
 from station import app as station_app, set_generator
 from model_router import dispatch, routes, ModelUnavailable
@@ -31,6 +34,14 @@ def engine():
     global _engine
     with _lock:
         if _engine is None:
+            # R39 must never silently spend minutes in the Python/NumPy path.
+            # This gate affects only R39; the independent original remains available.
+            from swyrlz import r39_native
+            native = r39_native.diagnostics()
+            if not (native["available"] and native["batchAvailable"]):
+                detail = _native_build_error or native["importError"] or native["batchImportError"] or "native extensions unavailable"
+                print(json.dumps({"event":"R39_NATIVE_REQUIRED","diagnostics":native,"buildError":_native_build_error}),flush=True)
+                raise RuntimeError("R39_NATIVE_REQUIRED: "+detail[:300])
             # Load the accepted v90 chain, rather than a generic HF model.
             candidate=runpy.run_path(str(ROOT/"accepted_runtime/lalm/r39_engine.py"))
             inspect=candidate.get("inspect_engine")
@@ -38,6 +49,7 @@ def engine():
             if not callable(inspect) or not callable(generate):
                 raise RuntimeError("Accepted R39 engine lacks inspect/generate contract")
             state=inspect()
+            print(json.dumps({"event":"R39_ENGINE_INSPECT","native":native,"engineId":state.get("engineId"),"nativeBackendAvailable":state.get("nativeBackendAvailable"),"batchInstalled":state.get("batchInstalled")}),flush=True)
             if not (state.get("interactiveReady") or state.get("oneTokenReady")):
                 raise RuntimeError("R39 model not ready: "+str(state.get("code") or state))
             _engine=(inspect,generate)
