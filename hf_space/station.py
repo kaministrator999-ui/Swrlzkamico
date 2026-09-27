@@ -89,7 +89,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
     with _lock:
         s=_sessions[key];g=s["activeGeneration"];g["phase"]="GENERATING";g["status"].append({"phase":"GENERATING"})
     try:
-        if _generate is None:raise RuntimeError("R39 generator is not installed")
+        if model_id=="r39" and _generate is None:raise RuntimeError("R39 generator is not installed")
+        if model_id=="stock" and _stock_generate is None:raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         for event in dispatch(model_id,payload,_generate,_stock_generate):
             if not isinstance(event,dict):continue
