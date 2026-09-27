@@ -7,7 +7,7 @@ on:
         description: "Validate package without publishing, or explicitly deploy"
         required: true
         type: choice
-        options: [validate, deploy]
+        options: [inspect, validate, deploy]
         default: validate
       approved:
         description: "Confirm replacement ONLY of existing kamiloki/Swyrlz after snapshot"
@@ -29,12 +29,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Stage canonical R39 sources and model provenance
+        if: ${{ inputs.mode != 'inspect' }}
         env:
           SWRLZ_SOURCE_COMMIT: ${{ github.sha }}
         run: |
           python scripts/prepare_hf_space.py
           python scripts/prepare_hf_space.py --check
       - name: Validate isolated Space package
+        if: ${{ inputs.mode != 'inspect' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -57,8 +59,10 @@ jobs:
           print("Static package shape accepted; runtime inference still requires separate verification.")
           PY
       - name: Install candidate runtime dependencies
+        if: ${{ inputs.mode != 'inspect' }}
         run: python -m pip install -r hf_space/requirements.txt
       - name: Reconstruct and verify real R39 model before any publication
+        if: ${{ inputs.mode != 'inspect' }}
         env:
           SWRLZ_REPO_ROOT: ${{ github.workspace }}/hf_space
           SWRLZ_R39_TRANSPORT_MANIFEST: ${{ github.workspace }}/hf_space/lalm§wyrlz.transport.json
@@ -84,6 +88,7 @@ jobs:
           print(json.dumps({"acceptedEngineReady":True,"engineId":status.get("engineId"),"modelSha256":status.get("modelSha256")}))
           PY
       - name: Execute real bounded R39 inference smoke test
+        if: ${{ inputs.mode != 'inspect' }}
         timeout-minutes: 8
         env:
           SWRLZ_REPO_ROOT: ${{ github.workspace }}/hf_space
@@ -123,7 +128,7 @@ jobs:
         run: |
           test "$APPROVED" = yes || { echo "::error::Publish approval missing."; exit 1; }
       - name: Snapshot existing production HF reference (read only)
-        if: ${{ inputs.mode == 'deploy' }}
+        if: ${{ inputs.mode == 'deploy' || inputs.mode == 'inspect' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
@@ -137,20 +142,23 @@ jobs:
           files=api.list_repo_files('kamiloki/Swyrlz',repo_type='space',revision=info.sha)
           out=Path('hf-reference-snapshot');out.mkdir(exist_ok=True)
           (out/'manifest.json').write_text(json.dumps({'repo':'kamiloki/Swyrlz','revision':info.sha,'files':files,'cardData':dict(info.cardData or {})},indent=2,default=str))
-          for name in ('README.md','app.py','requirements.txt','packages.txt'):
+          for name in files:
+              if name.startswith(('.git/','.cache/')) or name.endswith(('.gguf','.bin','.safetensors','.zip')): continue
+              if not (name.endswith(('.py','.md','.txt','.json','.toml','.yaml','.yml','.js','.css','.html')) or name in ('Dockerfile','packages.txt')): continue
               if name in files:
+                  (out/name).parent.mkdir(parents=True,exist_ok=True)
                   content=hf_hub_download('kamiloki/Swyrlz',name,repo_type='space',revision=info.sha,token=os.environ['HF_TOKEN'])
                   (out/name).write_bytes(Path(content).read_bytes())
           print('Preserved prior Space revision and bootstrap reference:',info.sha)
           PY
       - uses: actions/upload-artifact@v4
-        if: ${{ inputs.mode == 'deploy' }}
+        if: ${{ inputs.mode == 'deploy' || inputs.mode == 'inspect' }}
         with:
           name: hf-predeploy-reference
           path: hf-reference-snapshot/
           retention-days: 30
       - name: Upload approved candidate to existing Space after snapshot
-        if: ${{ inputs.mode == 'deploy' }}
+        if: ${{ inputs.mode == 'deploy' || inputs.mode == 'inspect' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         shell: bash
