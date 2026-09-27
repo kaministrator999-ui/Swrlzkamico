@@ -114,6 +114,23 @@ jobs:
           assert callable(engine.get("generate_events"))
           print(json.dumps({"acceptedEngineReady":True,"engineId":status.get("engineId"),"modelSha256":status.get("modelSha256")}))
           PY
+      - name: Inspect R39 versus pinned stock GGUF compatibility (read only)
+        if: ${{ inputs.mode != 'inspect' }}
+        env:
+          SWRLZ_REPO_ROOT: ${{ github.workspace }}/hf_space
+          SWRLZ_R39_TRANSPORT_MANIFEST: ${{ github.workspace }}/hf_space/lalm§wyrlz.transport.json
+          SWRLZ_GITHUB_OWNER: kaministrator999-ui
+          SWRLZ_GITHUB_REPO: Swrlzkamico
+          SWRLZ_GITHUB_REF: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python scripts/inspect_r39_gguf.py --download-stock --output r39-gguf-compatibility.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode != 'inspect' }}
+        with:
+          name: r39-gguf-compatibility
+          path: r39-gguf-compatibility.json
+          retention-days: 30
       - name: Protect existing fast HF inference and Chat integration
         if: ${{ inputs.mode == 'deploy' }}
         run: |
