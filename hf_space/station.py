@@ -20,10 +20,12 @@ _lock=threading.RLock()
 _sessions={}
 _pool=ThreadPoolExecutor(max_workers=2,thread_name_prefix="hf-r39")
 _generate=None
+_stock_generate=None
 
-def set_generator(fn):
-    global _generate
+def set_generator(fn,stock_fn=None):
+    global _generate,_stock_generate
     _generate=fn
+    _stock_generate=stock_fn
 
 def _session(request):
     key=request.cookies.get("swrlz_hf_sid")
@@ -89,7 +91,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
     try:
         if _generate is None:raise RuntimeError("R39 generator is not installed")
         text=""; completed=False
-        for event in dispatch(model_id,payload,_generate):
+        for event in dispatch(model_id,payload,_generate,_stock_generate):
             if not isinstance(event,dict):continue
             kind=str(event.get("type") or "")
             with _lock:
@@ -122,7 +124,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
 async def send(request:Request):
     key,s=_session(request)
     body=await request.json()
-    model_id=body.get("modelId","r39")
+    model_id=body.get("modelId","stock")
     route=next((r for r in routes() if r.model_id==model_id),None)
     if route is None or not route.available:raise HTTPException(422,"Selected model is not configured")
     prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
