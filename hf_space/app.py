@@ -74,7 +74,7 @@ with gr.Blocks(title="§wyrlz Inference Laboratory") as demo:
     _zg_output=gr.Textbox(visible=False)
     _zg_button.click(fn=_zerogpu_registration_probe,inputs=[],outputs=_zg_output,api_visibility="private")
 set_generator(lambda payload: engine()[1](payload),original_generate)
-app=gr.mount_gradio_app(station_app,demo,path="/probe")
+app=gr.mount_gradio_app(station_app,demo,path="/probe",ssr_mode=False)
 # Keep the pinned original Test Bench available independently of R39.
 legacy_source=ROOT/"original_workstation.py"
 if not legacy_source.is_file():
@@ -82,7 +82,7 @@ if not legacy_source.is_file():
 legacy=runpy.run_path(str(legacy_source))
 if "demo" not in legacy:
     raise RuntimeError("Original Test Bench does not export its Gradio demo")
-app=gr.mount_gradio_app(app,legacy["demo"],path="/legacy")
+app=gr.mount_gradio_app(app,legacy["demo"],path="/legacy",ssr_mode=False)
 
 def _report_zerogpu_startup():
     """mount_gradio_app + uvicorn bypass Gradio's normal launch hook on ZeroGPU."""
@@ -96,4 +96,4 @@ def _report_zerogpu_startup():
 if __name__=="__main__":
     print(json.dumps({"event":"HF_MODEL_ROUTES","routes":available_models()}),flush=True)
     _report_zerogpu_startup()
-    uvicorn.run(app,host="0.0.0.0",port=int(os.environ.get("PORT","7860")))
+    # HF Gradio SDK reserves PORT for its frontend proxy; bind the Python app to 7860.\n    uvicorn.run(app,host="0.0.0.0",port=int(os.environ.get("APP_PORT","7860")))
