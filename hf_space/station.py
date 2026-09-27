@@ -4,10 +4,10 @@ Candidate limitations: process-local state, anonymous session, no durable accoun
 storage or Vercel queue. Do not claim production parity.
 """
 from __future__ import annotations
-import copy, threading, time, uuid
+import copy, json, threading, time, uuid
 from concurrent.futures import ThreadPoolExecutor
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
@@ -59,6 +59,16 @@ def sync(request:Request):
     with _lock: response=JSONResponse(_snapshot(s))
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400)
     return response
+
+@app.get("/api/lalm_station/export")
+def export_session(request:Request):
+    """Download only the caller's process-local conversation and generation diagnostics."""
+    key=request.cookies.get("swrlz_hf_sid")
+    with _lock:
+        if not key or key not in _sessions:raise HTTPException(404,"No active HF session")
+        snapshot=_snapshot(_sessions[key])
+    document={"format":"swrlz-hf-session-export-v1","exportedAtUnixMs":int(time.time()*1000),"storage":"process-local; not durable account history","threads":snapshot["threads"],"activeGeneration":snapshot["activeGeneration"]}
+    return Response(content=json.dumps(document,ensure_ascii=False,indent=2),media_type="application/json",headers={"Content-Disposition":"attachment; filename=swrlz-dragon-chat.json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"})
 
 @app.post("/api/chat_state")
 async def mutate(request:Request):
