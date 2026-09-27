@@ -1,6 +1,6 @@
 """Original HF LFM2 inference path, kept independent of R39."""
 from __future__ import annotations
-import os, threading, time
+import os, threading, time, json
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 
@@ -13,7 +13,7 @@ _model=None
 def prepare():
     return hf_hub_download(repo_id=MODEL_REPO,filename=MODEL_FILE,revision=MODEL_REVISION)
 
-def load(threads=2,context=2048):
+def load(threads=4,context=1024):
     global _model
     with _lock:
         if _model is None:
@@ -30,11 +30,15 @@ def generate_events(payload):
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
-    yield {"type":"STATUS","phase":"GENERATING"}
+    loaded=time.perf_counter()
+    yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":round((loaded-started)*1000,3)}
     # llama.cpp model context is shared; serialize independent conversations.
+    first_delta=None
     with _lock:
         for chunk in model.create_chat_completion(messages=messages,max_tokens=128,temperature=0.3,stream=True):
             choices=chunk.get("choices") or []
             delta=(choices[0].get("delta") or {}).get("content") if choices else None
-            if delta: yield {"type":"DELTA","text":delta}
-    yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":round((time.perf_counter()-started)*1000)}
+            if delta:
+                if first_delta is None:first_delta=round((time.perf_counter()-started)*1000,3)
+                yield {"type":"DELTA","text":delta}
+    yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":round((time.perf_counter()-started)*1000),"loadLatencyMs":round((loaded-started)*1000,3),"firstDeltaLatencyMs":first_delta}
