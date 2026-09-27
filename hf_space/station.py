@@ -143,4 +143,6 @@ async def send(request:Request):
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}]}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"profileId":"LALM"}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
-    return {"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id}
+    response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
+    response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400)
+    return response
