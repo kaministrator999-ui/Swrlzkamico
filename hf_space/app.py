@@ -1,6 +1,6 @@
 """§wyrlz isolated R39 inference probe; not the canonical account-backed Chat."""
 from __future__ import annotations
-import json, os, runpy, threading, time, uuid
+import json, os, runpy, tempfile, threading, time, uuid
 from pathlib import Path
 import spaces
 import gradio as gr
@@ -57,6 +57,8 @@ def engine():
 
 def respond(message,history,model_id):
     started=time.perf_counter()
+    first_delta_seconds=None
+    payload=None
     try:
         generate=(engine()[1] if model_id=="r39" else original_generate)
         payload={"requestId":str(uuid.uuid4()),"prompt":message,"history":[{"role":item.get("role"),"text":item.get("content")} for item in (history or []) if isinstance(item,dict) and item.get("role") in ("user","assistant") and isinstance(item.get("content"),str)],"profileId":"LALM"}
@@ -65,11 +67,17 @@ def respond(message,history,model_id):
             if not isinstance(event,dict): continue
             kind=str(event.get("type") or "")
             if kind=="DELTA":
+                if first_delta_seconds is None:first_delta_seconds=round(time.perf_counter()-started,3)
                 output+=str(event.get("text") or "")
-                yield output
+                yield output, None
             elif kind=="FAILED":
                 raise RuntimeError(str(event.get("reason") or "R39 generation failed"))
         if not output: raise RuntimeError("R39 returned no assistant DELTA")
+        report={"format":"swrlz-hf-probe-export-v1","modelId":model_id,"requestId":payload["requestId"],"prompt":message,"history":payload["history"],"response":output,"timeToFirstDeltaSeconds":first_delta_seconds,"elapsedSeconds":round(time.perf_counter()-started,3),"note":"This is the current probe turn and supplied history, not the Space's container logs."}
+        with tempfile.NamedTemporaryFile(mode="w",encoding="utf-8",suffix=".json",prefix="swrlz-probe-",delete=False) as export:
+            json.dump(report,export,ensure_ascii=False,indent=2)
+            export_path=export.name
+        yield output, export_path
         print(json.dumps({"event":"HF_MODEL_TERMINAL","modelId":model_id,"elapsedSeconds":round(time.perf_counter()-started,3),"chars":len(output)}),flush=True)
     except Exception as exc:
         print(json.dumps({"event":"HF_MODEL_FAILED","modelId":model_id,"errorType":type(exc).__name__,"detail":str(exc)[:300]}),flush=True)
@@ -86,6 +94,7 @@ def _zerogpu_registration_probe():
 with gr.Blocks(title="§wyrlz Inference Laboratory") as demo:
     gr.ChatInterface(
         fn=respond,
+        additional_outputs=[gr.File(label="Download probe chat + timing JSON",interactive=False)],
         additional_inputs=[gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39")],value="stock",label="Inference model")],
         title="§wyrlz Inference Laboratory",
         description="Independent model probe. The dragon Chat is at /; HF-only session state is not durable account storage.",
