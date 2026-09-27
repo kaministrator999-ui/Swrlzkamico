@@ -131,6 +131,34 @@ jobs:
           name: r39-gguf-compatibility
           path: r39-gguf-compatibility.json
           retention-days: 30
+      - name: Convert R39 weights and vocabulary into isolated llama.cpp GGUF candidate
+        if: ${{ inputs.mode == 'validate' }}
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python - <<'PY'
+          from huggingface_hub import hf_hub_download
+          from swyrlz.backend import RAW
+          import subprocess,sys
+          stock=hf_hub_download('LiquidAI/LFM2-350M-GGUF','LFM2-350M-Q4_K_M.gguf',revision='31cd51db1365')
+          subprocess.run([sys.executable,'scripts/convert_r39_to_gguf.py','--r39',str(RAW),'--stock',stock,'--output','/tmp/swrlz-r39-llama-candidate.gguf'],check=True)
+          from llama_cpp import Llama
+          import time,json
+          start=time.perf_counter()
+          model=Llama(model_path='/tmp/swrlz-r39-llama-candidate.gguf',n_ctx=1024,n_threads=4,n_threads_batch=4,n_batch=128,n_gpu_layers=0,use_mmap=True,verbose=False)
+          load_ms=round((time.perf_counter()-start)*1000,3)
+          start=time.perf_counter()
+          result=model.create_chat_completion(messages=[{'role':'user','content':"What's your name?"}],max_tokens=32,temperature=0.0)
+          elapsed_ms=round((time.perf_counter()-start)*1000,3)
+          text=(result.get('choices') or [{}])[0].get('message',{}).get('content','')
+          assert isinstance(text,str) and text.strip(), 'Converted R39 generated no response'
+          print(json.dumps({'route':'r39-llama-experimental','loadMs':load_ms,'warmShortResponseMs':elapsed_ms,'response':text[:300]}))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode == 'validate' }}
+        with:
+          name: r39-llama-candidate-provenance
+          path: /tmp/swrlz-r39-llama-candidate.gguf.provenance.json
+          retention-days: 30
       - name: Protect existing fast HF inference and Chat integration
         if: ${{ inputs.mode == 'deploy' }}
         run: |
