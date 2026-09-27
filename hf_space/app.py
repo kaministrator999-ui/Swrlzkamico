@@ -18,7 +18,7 @@ except Exception as _native_exc:
     print(json.dumps({"event":"R39_NATIVE_BUILD_FAILED","errorType":type(_native_exc).__name__,"detail":str(_native_exc)[-700:]}),flush=True)
 from station import app as station_app, set_generator
 from model_router import dispatch, routes, ModelUnavailable
-from original_engine import generate_events as original_generate
+from original_engine import generate_events as original_generate, load as original_load
 
 ROOT=Path(__file__).resolve().parent
 PROVENANCE=json.loads((ROOT/"MODEL_PROVENANCE.json").read_text(encoding="utf-8"))
@@ -52,6 +52,8 @@ def engine():
             print(json.dumps({"event":"R39_ENGINE_INSPECT","native":native,"engineId":state.get("engineId"),"nativeBackendAvailable":state.get("nativeBackendAvailable"),"batchInstalled":state.get("batchInstalled")}),flush=True)
             if not (state.get("interactiveReady") or state.get("oneTokenReady")):
                 raise RuntimeError("R39 model not ready: "+str(state.get("code") or state))
+            if not state.get("batchInstalled"):
+                raise RuntimeError("R39_BATCH_PREFILL_NOT_INSTALLED: native extension alone does not prove batched execution")
             _engine=(inspect,generate)
         return _engine
 
@@ -141,8 +143,16 @@ def respond(message,history,model_id):
             elif event_type in ("COMPLETE","COMPLETED"):
                 status=snapshot("FINALIZING")
             else:
-                # Capture bounded engine status, never serialize arbitrary internals.
-                status=snapshot("ENGINE_"+event_type[:32],value.get("phase") or value.get("reason"))
+                # Preserve bounded, structured engine diagnostics during prefill.
+                # Exclude arbitrary payload fields, prompt text and secrets.
+                detail=value.get("reason") or value.get("phase")
+                status=snapshot("ENGINE_"+event_type[:32],detail)
+                if event_type in ("STATUS","ROUTE"):
+                    report["events"][-1]["enginePhase"]=str(value.get("phase") or "")[:80]
+                    for metric in ("totalLatencyMs","firstDeltaLatencyMs","loadLatencyMs"):
+                        if isinstance(value.get(metric),(int,float)):
+                            report["events"][-1][metric]=value[metric]
+                    snapshot()
         else:
             status=snapshot()
         yield report["response"],export_path,status
@@ -177,6 +187,16 @@ if "demo" not in legacy:
     raise RuntimeError("Original Test Bench does not export its Gradio demo")
 app=gr.mount_gradio_app(app,legacy["demo"],path="/legacy",ssr_mode=False)
 
+def _warm_backends():
+    """Move one-time model setup off the first interactive request."""
+    for name,loader in (("stock",original_load),("r39",engine)):
+        start=time.perf_counter()
+        try:
+            loader()
+            print(json.dumps({"event":"HF_WARMUP_READY","modelId":name,"elapsedSeconds":round(time.perf_counter()-start,3)}),flush=True)
+        except Exception as exc:
+            print(json.dumps({"event":"HF_WARMUP_FAILED","modelId":name,"errorType":type(exc).__name__,"detail":str(exc)[:300]}),flush=True)
+
 def _report_zerogpu_startup():
     """mount_gradio_app + uvicorn bypass Gradio's normal launch hook on ZeroGPU."""
     try:
@@ -189,5 +209,6 @@ def _report_zerogpu_startup():
 if __name__=="__main__":
     print(json.dumps({"event":"HF_MODEL_ROUTES","routes":available_models()}),flush=True)
     _report_zerogpu_startup()
+    threading.Thread(target=_warm_backends,daemon=True,name="swrlz-model-warmup").start()
     # Bind the Python ASGI app to the Space application port.
     uvicorn.run(app,host="0.0.0.0",port=int(os.environ.get("APP_PORT","7860")))
