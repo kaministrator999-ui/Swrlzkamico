@@ -1,3 +1,11 @@
+### UPDATE CONTINUATION STARTED — 2026-09-27 — Hugging Face server continuation and R39 speed parity
+
+- **Direction:** existing `kamiloki/Swyrlz` becomes active server/inference candidate development surface; retain pinned original LFM2 GGUF/llama.cpp and independent §wyrlz R39 routes. Vercel persistence/account retirement is not implied.
+- **Authority:** feature branch `feature/hf-space-manual-deploy` contains staged Space, explicit manual deploy workflow, pinned original, R39 native build and accepted v90 chain. Project Start now routes to the HF migration/performance guide.
+- **Baseline evidence:** one user-supplied original-model probe reports 0.255 s total and 0.056 s first DELTA, 31 DELTAs, 128 characters. Not a matched tokens/s benchmark. R39 parity is unverified.
+- **Next:** matched HF hardware warm/cold benchmarks; inspect native/batch availability, Python fallback, prefill/decode throughput, prompt token inflation, camera overhead, and stream timing. Preserve semantics and original model. Validate candidate without publishing, then explicit approval before Space upload/restart.
+- **State:** documentation/source checkpoint only; no HF publish, model optimization, production activation or live parity claim in this event. Version reconciliation remains pending governed closure.
+
 ### UPDATE CONTINUATION — 2026-09-24 — glibc compatibility repair prepared
 
 - Live 2.1.115 native bridge diagnostics identify both native modules failing import because `GLIBC_2.38` is unavailable in Vercel production. The governor selected two workers but inference fell back to Python. One short social-fastpath request completed; the longer request entered prefill.
