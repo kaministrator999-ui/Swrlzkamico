@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 import shutil
+import struct
 from pathlib import Path
 from inspect_r39_gguf import Reader, GGUF_TYPES, sha256
 
@@ -39,7 +40,18 @@ def main():
         if meta.get("general.architecture")!="lfm2":raise ValueError("Original GGUF is not LFM2")
         tensors=original["tensors"]
         if set(tensors)!=set(model.desc):raise ValueError(f"Tensor names differ: missing={sorted(set(model.desc)-set(tensors))[:12]}, extra={sorted(set(tensors)-set(model.desc))[:12]}")
-        if model.tokenizer.tokens!=meta.get("tokenizer.ggml.tokens"):raise ValueError("Tokenizer IDs differ; unsafe to reuse stock GGUF metadata")
+        stock_tokens=meta.get("tokenizer.ggml.tokens")
+        r39_tokens=model.tokenizer.tokens
+        if not isinstance(stock_tokens,list) or len(r39_tokens)!=len(stock_tokens):raise ValueError("Tokenizer vocabulary size differs")
+        spans=original["metadataSpans"]
+        if "tokenizer.ggml.tokens" not in spans or spans["tokenizer.ggml.tokens"][0]!=9:
+            raise ValueError("Cannot safely rewrite GGUF vocabulary metadata")
+        def pack_string(s):
+            b=s.encode("utf-8")
+            return struct.pack("<Q",len(b))+b
+        vocabulary=struct.pack("<IQ",8,len(r39_tokens))+b"".join(pack_string(s) for s in r39_tokens)
+        _,vocab_start,vocab_end=spans["tokenizer.ggml.tokens"]
+        if vocab_end-vocab_start<12:raise ValueError("Invalid original vocabulary span")
         if model.tokenizer_spec.get("merges",[])!=meta.get("tokenizer.ggml.merges",[]):raise ValueError("BPE merges differ; unsafe to reuse stock GGUF metadata")
         for key,stock_key in (("bosTokenId","tokenizer.ggml.bos_token_id"),("eosTokenId","tokenizer.ggml.eos_token_id")):
             if key in model.tokenizer_spec and int(model.tokenizer_spec[key])!=int(meta.get(stock_key,-1)):
@@ -49,6 +61,12 @@ def main():
         header_end=original["tensorDataStart"]
         data_start=(header_end+alignment-1)//alignment*alignment
         original_size=args.stock.stat().st_size
+        old_data_start=data_start
+        with args.stock.open("rb") as template:
+            header=template.read(original["tensorDataStart"])
+        header=header[:vocab_start]+vocabulary+header[vocab_end:]
+        new_data_start=(len(header)+alignment-1)//alignment*alignment
+        data_start=new_data_start
         operations=[]
         for name,entry in tensors.items():
             d=model.desc[name]
@@ -59,7 +77,7 @@ def main():
             if size!=int(d["storedLengthBytes"]):raise ValueError(f"Tensor byte length mismatch: {name}")
             destination=data_start+entry["offset"]
             source=d["section"].offset+int(d["dataOffsetBytes"])
-            if destination< data_start or destination+size>original_size:raise ValueError(f"GGUF tensor bounds invalid: {name}")
+            if destination<data_start or old_data_start+entry["offset"]+size>original_size:raise ValueError(f"GGUF tensor bounds invalid: {name}")
             operations.append((destination,source,size,name))
         ordered=sorted(operations)
         for prev,next_ in zip(ordered,ordered[1:]):
@@ -67,7 +85,11 @@ def main():
         args.output.parent.mkdir(parents=True,exist_ok=True)
         temp=args.output.with_name(args.output.name+".part")
         try:
-            shutil.copyfile(args.stock,temp)
+            with args.stock.open("rb") as template,temp.open("wb") as dst:
+                dst.write(header)
+                dst.write(b"\\0"*(new_data_start-len(header)))
+                template.seek(old_data_start)
+                shutil.copyfileobj(template,dst,1024*1024)
             with args.r39.open("rb") as src,temp.open("r+b") as dst:
                 for offset,source,length,name in operations:
                     src.seek(source);dst.seek(offset)
@@ -80,7 +102,7 @@ def main():
         finally:temp.unlink(missing_ok=True)
         result={"status":"EXPERIMENTAL_UNVERIFIED","format":"GGUF","architecture":"lfm2",
                 "sourceR39Sha256":MODEL_SHA256,"stockEnvelopeSha256":sha256(args.stock),
-                "convertedSha256":sha256(args.output),"tensorCount":len(operations),
+                "convertedSha256":sha256(args.output),"tensorCount":len(operations),"r39VocabularyEntries":len(r39_tokens),"vocabularyEntriesReplaced":sum(a!=b for a,b in zip(r39_tokens,stock_tokens)),
                 "note":"Exact byte-layout substitution only; compare logits and outputs before serving."}
         args.output.with_suffix(args.output.suffix+".provenance.json").write_text(json.dumps(result,indent=2)+"\n")
         print(json.dumps(result))
