@@ -34,13 +34,13 @@ def engine():
             _engine=(inspect,generate)
         return _engine
 
-def respond(message,history):
+def respond(message,history,model_id):
     started=time.perf_counter()
     try:
-        inspect,generate=engine()
+        generate=(engine()[1] if model_id=="r39" else original_generate)
         payload={"requestId":str(uuid.uuid4()),"prompt":message,"history":[{"role":item.get("role"),"text":item.get("content")} for item in (history or []) if isinstance(item,dict) and item.get("role") in ("user","assistant") and isinstance(item.get("content"),str)],"profileId":"LALM"}
         output=""
-        for event in dispatch("r39",payload,generate):
+        for event in dispatch(model_id,payload,generate,original_generate):
             if not isinstance(event,dict): continue
             kind=str(event.get("type") or "")
             if kind=="DELTA":
@@ -49,15 +49,15 @@ def respond(message,history):
             elif kind=="FAILED":
                 raise RuntimeError(str(event.get("reason") or "R39 generation failed"))
         if not output: raise RuntimeError("R39 returned no assistant DELTA")
-        print(json.dumps({"event":"HF_R39_TERMINAL","elapsedSeconds":round(time.perf_counter()-started,3),"chars":len(output)}),flush=True)
+        print(json.dumps({"event":"HF_MODEL_TERMINAL","modelId":model_id,"elapsedSeconds":round(time.perf_counter()-started,3),"chars":len(output)}),flush=True)
     except Exception as exc:
-        print(json.dumps({"event":"HF_R39_FAILED","errorType":type(exc).__name__,"detail":str(exc)[:300]}),flush=True)
-        raise gr.Error("R39 unavailable: "+str(exc)[:220])
+        print(json.dumps({"event":"HF_MODEL_FAILED","modelId":model_id,"errorType":type(exc).__name__,"detail":str(exc)[:300]}),flush=True)
+        raise gr.Error(model_id+" unavailable: "+str(exc)[:220])
 
 def available_models():
     return [dict(modelId=r.model_id,label=r.label,available=r.available,checkpoint=r.checkpoint,reason=r.reason) for r in routes()]
 
-demo=gr.ChatInterface(fn=respond,type="messages",title="§wyrlz R39 — isolated inference candidate",description="Real accepted R39 inference probe. Canonical clean-room Chat and account persistence are not migrated yet.")
+demo=gr.ChatInterface(fn=respond,type="messages",additional_inputs=[gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39")],value="stock",label="Inference model")],title="§wyrlz Inference Laboratory",description="Independent model probe. The dragon Chat is at /; HF-only session state is not durable account storage.")
 set_generator(lambda payload: engine()[1](payload),original_generate)
 app=gr.mount_gradio_app(station_app,demo,path="/probe")
 if __name__=="__main__":
