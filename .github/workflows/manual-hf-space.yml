@@ -83,6 +83,34 @@ jobs:
           assert callable(engine.get("generate_events"))
           print(json.dumps({"acceptedEngineReady":True,"engineId":status.get("engineId"),"modelSha256":status.get("modelSha256")}))
           PY
+      - name: Execute real bounded R39 inference smoke test
+        timeout-minutes: 8
+        env:
+          SWRLZ_REPO_ROOT: ${{ github.workspace }}/hf_space
+          SWRLZ_R39_TRANSPORT_MANIFEST: ${{ github.workspace }}/hf_space/lalm§wyrlz.transport.json
+          SWRLZ_GITHUB_OWNER: kaministrator999-ui
+          SWRLZ_GITHUB_REPO: Swrlzkamico
+          SWRLZ_GITHUB_REF: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import json, runpy, time
+          entry=runpy.run_path("hf_space/accepted_runtime/lalm/r39_engine.py")
+          payload={"requestId":"hf-real-inference-smoke","prompt":"Reply with a brief greeting.","history":[],"profileId":"LALM","generation":{"maxTokens":2,"temperature":0.0}}
+          started=time.monotonic()
+          phases=[]; delta_count=0; terminal=None
+          for event in entry["generate_events"](payload):
+              kind=str(event.get("type") or "")
+              phase=str(event.get("phase") or "")
+              if phase: phases.append(phase)
+              if kind=="DELTA": delta_count+=1
+              if kind in ("COMPLETED","FAILED","CANCELLED"):
+                  terminal=kind
+                  if kind!="COMPLETED": print(json.dumps({"failure":event}),flush=True)
+              print(json.dumps({"event":kind,"phase":phase,"elapsedSeconds":round(time.monotonic()-started,3),"firstDeltaLatencyMs":event.get("firstDeltaLatencyMs"),"totalLatencyMs":event.get("totalLatencyMs")}),flush=True)
+          assert "PREFILL_COMPLETE" in phases, "R39 did not complete real prefill"
+          assert terminal=="COMPLETED", f"R39 did not finish decoding: {terminal}"
+          print(json.dumps({"realInferenceSmoke":"passed","deltaEvents":delta_count,"elapsedSeconds":round(time.monotonic()-started,3)}),flush=True)
+          PY
       - name: Require explicit publish authorization
         if: ${{ inputs.mode == 'deploy' }}
         env:
