@@ -5,6 +5,14 @@ from pathlib import Path
 import spaces
 import gradio as gr
 import uvicorn
+# Compile against the Space's own Python/NumPy ABI before R39 is imported.
+# Keep the existing Python fallback if the build environment lacks a compiler.
+try:
+    from scripts.build_r39_native import build as build_r39_native
+    _native_build = build_r39_native(Path(__file__).resolve().parent)
+    print(json.dumps({"event":"R39_NATIVE_BUILD","result":_native_build}),flush=True)
+except Exception as _native_exc:
+    print(json.dumps({"event":"R39_NATIVE_BUILD_FAILED","errorType":type(_native_exc).__name__,"detail":str(_native_exc)[-700:]}),flush=True)
 from station import app as station_app, set_generator
 from model_router import dispatch, routes, ModelUnavailable
 from original_engine import generate_events as original_generate
