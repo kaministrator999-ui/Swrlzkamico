@@ -68,6 +68,17 @@ legacy=runpy.run_path(str(legacy_source))
 if "demo" not in legacy:
     raise RuntimeError("Original Test Bench does not export its Gradio demo")
 app=gr.mount_gradio_app(app,legacy["demo"],path="/legacy")
+
+def _report_zerogpu_startup():
+    """mount_gradio_app + uvicorn bypass Gradio's normal launch hook on ZeroGPU."""
+    try:
+        from spaces.zero import startup as zero_startup
+    except ImportError:
+        return
+    zero_startup()
+    print(json.dumps({"event":"ZEROGPU_STARTUP_REPORTED"}),flush=True)
+
 if __name__=="__main__":
     print(json.dumps({"event":"HF_MODEL_ROUTES","routes":available_models()}),flush=True)
+    _report_zerogpu_startup()
     uvicorn.run(app,host="0.0.0.0",port=int(os.environ.get("PORT","7860")))
