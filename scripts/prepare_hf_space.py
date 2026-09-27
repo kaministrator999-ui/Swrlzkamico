@@ -34,7 +34,7 @@ def main():
     marker='<div class="composer-box">'
     assert html.count(marker)==1, "Canonical composer insertion point changed"
     html=html.replace(marker, '<a class="hf-lab-link" href="/probe" target="_blank" rel="noopener">Inference Laboratory ↗</a><label class="hf-model-picker" for="hfModel"><span>Model</span><select id="hfModel" aria-label="Inference model"><option value="stock">Original HF · LFM2-350M</option><option value="r39">§wyrlz R39 — fixed</option><option value="compare" disabled>Compare both — not configured</option></select></label>'+marker,1)
-    html=html.replace('const sendButton = document.getElementById("sendButton");','const sendButton = document.getElementById("sendButton");\\n      const hfModel = document.getElementById("hfModel");',1)
+    html=html.replace('const sendButton = document.getElementById("sendButton");','const sendButton = document.getElementById("sendButton");\n      const hfModel = document.getElementById("hfModel");',1)
     html=html.replace('profileId:"LALM",ingress:"SWRLZ_LALM_STATION"','profileId:"LALM",modelId:hfModel.value,ingress:"SWRLZ_LALM_STATION"',1)
     html=html.replace("</style>", '.hf-lab-link{font-size:12px;color:#b5dfff;padding:4px 8px}.hf-model-picker{display:flex;align-items:center;gap:8px;color:#c2d4e5;font-size:12px;padding:4px 8px}.hf-model-picker select{min-width:0;background:#092038;color:#e6f7ff;border:1px solid #37617a;border-radius:8px;padding:5px}</style>',1)
     assert 'modelId:hfModel.value' in html and 'id="hfModel"' in html, "Chat transport model selection injection failed"
