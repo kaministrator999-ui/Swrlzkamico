@@ -57,7 +57,7 @@ def respond(message,history,model_id):
 def available_models():
     return [dict(modelId=r.model_id,label=r.label,available=r.available,checkpoint=r.checkpoint,reason=r.reason) for r in routes()]
 
-demo=gr.ChatInterface(fn=respond,type="messages",additional_inputs=[gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39")],value="stock",label="Inference model")],title="§wyrlz Inference Laboratory",description="Independent model probe. The dragon Chat is at /; HF-only session state is not durable account storage.")
+demo=gr.ChatInterface(fn=respond,additional_inputs=[gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39")],value="stock",label="Inference model")],title="§wyrlz Inference Laboratory",description="Independent model probe. The dragon Chat is at /; HF-only session state is not durable account storage.")
 set_generator(lambda payload: engine()[1](payload),original_generate)
 app=gr.mount_gradio_app(station_app,demo,path="/probe")
 # Keep the pinned original Test Bench available independently of R39.
