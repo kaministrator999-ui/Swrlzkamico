@@ -8,6 +8,10 @@ This file deliberately does **not** duplicate every architecture, versioning, di
 
 ---
 
+### Active Hugging Face continuation (2026-09-27)
+
+For current server/LALM development, read `docs/engineering/SWRLZ_HF_MIGRATION_AND_BASELINE.md` immediately after this router and before planning changes. The existing `kamiloki/Swyrlz` Space is the active candidate server/inference proving surface; the original pinned LFM2 GGUF/llama.cpp path is the speed-control model and §wyrlz R39 remains its own cognitive/inference engine. Preserve both model choices, the legacy Test Bench, the Chat/Station candidate and the Space revision. The active engineering objective is measured R39 native prefill/decode speed parity with the original on matched HF hardware, including longer 2k-token output trials. Do not claim parity from a short single probe or from UI streaming alone. Use the feature-branch manual HF workflow's validate/inspect gates before any approved publish; never dispatch the main registration-only workflow as a deploy. HF publish rebuilds/restarts the existing Space and requires explicit approval. Vercel account/persistence retirement is not implied by this development focus. Record progress and unresolved acceptance in the Roadmap; reconcile version authorities at governed closure.
+
 ## 1. Start command
 
 ### Compact executable bootstrap — `§§`
