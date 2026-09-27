@@ -1,6 +1,6 @@
 """§wyrlz isolated R39 inference probe; not the canonical account-backed Chat."""
 from __future__ import annotations
-import json, os, runpy, tempfile, threading, time, uuid
+import json, os, queue, runpy, tempfile, threading, time, uuid
 from pathlib import Path
 import spaces
 import gradio as gr
@@ -56,32 +56,96 @@ def engine():
         return _engine
 
 def respond(message,history,model_id):
+    """Stream a downloadable diagnostic snapshot while inference is still running."""
     started=time.perf_counter()
-    first_delta_seconds=None
-    payload=None
-    try:
-        generate=(engine()[1] if model_id=="r39" else original_generate)
-        payload={"requestId":str(uuid.uuid4()),"prompt":message,"history":[{"role":item.get("role"),"text":item.get("content")} for item in (history or []) if isinstance(item,dict) and item.get("role") in ("user","assistant") and isinstance(item.get("content"),str)],"profileId":"LALM"}
-        output=""
-        for event in dispatch(model_id,payload,generate,original_generate):
-            if not isinstance(event,dict): continue
-            kind=str(event.get("type") or "")
-            if kind=="DELTA":
-                if first_delta_seconds is None:first_delta_seconds=round(time.perf_counter()-started,3)
-                output+=str(event.get("text") or "")
-                yield output, None
-            elif kind=="FAILED":
-                raise RuntimeError(str(event.get("reason") or "R39 generation failed"))
-        if not output: raise RuntimeError("R39 returned no assistant DELTA")
-        report={"format":"swrlz-hf-probe-export-v1","modelId":model_id,"requestId":payload["requestId"],"prompt":message,"history":payload["history"],"response":output,"timeToFirstDeltaSeconds":first_delta_seconds,"elapsedSeconds":round(time.perf_counter()-started,3),"note":"This is the current probe turn and supplied history, not the Space's container logs."}
-        with tempfile.NamedTemporaryFile(mode="w",encoding="utf-8",suffix=".json",prefix="swrlz-probe-",delete=False) as export:
-            json.dump(report,export,ensure_ascii=False,indent=2)
-            export_path=export.name
-        yield output, export_path
-        print(json.dumps({"event":"HF_MODEL_TERMINAL","modelId":model_id,"elapsedSeconds":round(time.perf_counter()-started,3),"chars":len(output)}),flush=True)
-    except Exception as exc:
-        print(json.dumps({"event":"HF_MODEL_FAILED","modelId":model_id,"errorType":type(exc).__name__,"detail":str(exc)[:300]}),flush=True)
-        raise gr.Error(model_id+" unavailable: "+str(exc)[:220])
+    request_id=str(uuid.uuid4())
+    history_items=[{"role":item.get("role"),"text":item.get("content")} for item in (history or []) if isinstance(item,dict) and item.get("role") in ("user","assistant") and isinstance(item.get("content"),str)]
+    payload={"requestId":request_id,"prompt":message,"history":history_items,"profileId":"LALM"}
+    events=queue.Queue()
+    report={"format":"swrlz-hf-probe-export-v2","modelId":model_id,"requestId":request_id,
+            "prompt":message,"history":history_items,"response":"","phase":"STARTING",
+            "timeToFirstDeltaSeconds":None,"elapsedSeconds":0.0,"deltaCount":0,
+            "events":[],"note":"Live probe timeline, not container logs. Download again for the latest snapshot."}
+    with tempfile.NamedTemporaryFile(mode="w",encoding="utf-8",suffix=".json",prefix="swrlz-probe-",delete=False) as f:
+        export_path=f.name
+
+    def snapshot(phase=None,detail=None):
+        if phase is not None:
+            report["phase"]=phase
+            report["events"].append({"elapsedSeconds":round(time.perf_counter()-started,3),
+                                     "phase":phase,**({"detail":str(detail)[:300]} if detail else {})})
+        report["elapsedSeconds"]=round(time.perf_counter()-started,3)
+        # Atomic replacement avoids serving partially written JSON during a download.
+        temporary=export_path+".tmp"
+        Path(temporary).write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
+        os.replace(temporary,export_path)
+        return {"phase":report["phase"],"elapsedSeconds":report["elapsedSeconds"],
+                "timeToFirstDeltaSeconds":report["timeToFirstDeltaSeconds"],
+                "deltaCount":report["deltaCount"],"responseChars":len(report["response"]),
+                "requestId":request_id}
+
+    def worker():
+        try:
+            events.put(("phase","LOADING_BACKEND"))
+            generate=(engine()[1] if model_id=="r39" else original_generate)
+            events.put(("phase","INFERENCE_RUNNING"))
+            for event in dispatch(model_id,payload,generate,original_generate):
+                events.put(("event",event))
+            events.put(("done",None))
+        except Exception as exc:
+            events.put(("error",exc))
+
+    status=snapshot("STARTING")
+    yield "",export_path,status
+    threading.Thread(target=worker,daemon=True,name="swrlz-probe-"+request_id[:8]).start()
+    while True:
+        try:
+            kind,value=events.get(timeout=2.0)
+        except queue.Empty:
+            # The inference worker may still be blocked in prefill. Keep the
+            # report downloadable and update elapsed time without fake tokens.
+            status=snapshot()
+            yield report["response"],export_path,status
+            continue
+        if kind=="phase":
+            status=snapshot(value)
+        elif kind=="error":
+            status=snapshot("FAILED",type(value).__name__+": "+str(value))
+            yield report["response"],export_path,status
+            print(json.dumps({"event":"HF_MODEL_FAILED","modelId":model_id,"requestId":request_id,
+                              "elapsedSeconds":report["elapsedSeconds"],"detail":str(value)[:300]}),flush=True)
+            raise gr.Error(model_id+" unavailable: "+str(value)[:220])
+        elif kind=="done":
+            if not report["response"]:
+                status=snapshot("FAILED","No assistant DELTA")
+                yield report["response"],export_path,status
+                raise gr.Error(model_id+" returned no assistant text")
+            status=snapshot("COMPLETE")
+            yield report["response"],export_path,status
+            print(json.dumps({"event":"HF_MODEL_TERMINAL","modelId":model_id,"requestId":request_id,
+                              "elapsedSeconds":report["elapsedSeconds"],"chars":len(report["response"])}),flush=True)
+            return
+        elif kind=="event" and isinstance(value,dict):
+            event_type=str(value.get("type") or "")
+            if event_type=="DELTA":
+                if report["timeToFirstDeltaSeconds"] is None:
+                    report["timeToFirstDeltaSeconds"]=round(time.perf_counter()-started,3)
+                    snapshot("FIRST_DELTA")
+                report["response"]+=str(value.get("text") or "")
+                report["deltaCount"]+=1
+                status=snapshot("GENERATING")
+            elif event_type=="FAILED":
+                status=snapshot("FAILED",value.get("reason") or "Generation failed")
+                yield report["response"],export_path,status
+                raise gr.Error(str(value.get("reason") or "Generation failed")[:220])
+            elif event_type in ("COMPLETE","COMPLETED"):
+                status=snapshot("FINALIZING")
+            else:
+                # Capture bounded engine status, never serialize arbitrary internals.
+                status=snapshot("ENGINE_"+event_type[:32],value.get("phase") or value.get("reason"))
+        else:
+            status=snapshot()
+        yield report["response"],export_path,status
 
 def available_models():
     return [dict(modelId=r.model_id,label=r.label,available=r.available,checkpoint=r.checkpoint,reason=r.reason) for r in routes()]
@@ -94,7 +158,7 @@ def _zerogpu_registration_probe():
 with gr.Blocks(title="§wyrlz Inference Laboratory") as demo:
     gr.ChatInterface(
         fn=respond,
-        additional_outputs=[gr.File(label="Download probe chat + timing JSON",interactive=False)],
+        additional_outputs=[gr.File(label="Download LIVE probe JSON (available during generation)",interactive=False),gr.JSON(label="Live inference status")],
         additional_inputs=[gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39")],value="stock",label="Inference model")],
         title="§wyrlz Inference Laboratory",
         description="Independent model probe. The dragon Chat is at /; HF-only session state is not durable account storage.",
