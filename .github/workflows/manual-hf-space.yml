@@ -111,6 +111,11 @@ jobs:
           assert terminal=="COMPLETED", f"R39 did not finish decoding: {terminal}"
           print(json.dumps({"realInferenceSmoke":"passed","deltaEvents":delta_count,"elapsedSeconds":round(time.monotonic()-started,3)}),flush=True)
           PY
+      - name: Protect existing fast HF inference and Chat integration
+        if: ${{ inputs.mode == 'deploy' }}
+        run: |
+          echo "::error::Additive integration is not verified: candidate currently replaces the original HF app and disables its original model. Preserve and adapt the live app before enabling deploy."
+          exit 1
       - name: Require explicit publish authorization
         if: ${{ inputs.mode == 'deploy' }}
         env:
