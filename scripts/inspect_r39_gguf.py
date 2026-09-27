@@ -1,6 +1,6 @@
 """Read-only compatibility gate for the canonical R39 SWRLZX and pinned LFM2 GGUF.
 
-Run inside the staged HF candidate: PYTHONPATH=hf_space python hf_space/scripts/inspect_r39_gguf.py
+Run from repository root: PYTHONPATH=hf_space python scripts/inspect_r39_gguf.py
 This does not convert, publish, or mutate either model.
 """
 from __future__ import annotations
@@ -59,7 +59,7 @@ class Reader:
             shape=[self.u64() for _ in range(ndim)]
             typ=self.u32();offset=self.u64()
             tensors[name]={"shape":shape,"type":GGUF_TYPES.get(typ,f"ggml_type_{typ}"),"typeId":typ,"offset":offset}
-        return {"version":version,"metadata":metadata,"tensors":tensors}
+        return {"version":version,"metadata":metadata,"tensors":tensors,"tensorDataStart":self.f.tell()}
 
 def main():
     ap=argparse.ArgumentParser()
