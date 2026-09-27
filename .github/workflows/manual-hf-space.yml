@@ -1,0 +1,25 @@
+name: Manual Hugging Face Space Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Validate only or explicitly deploy"
+        required: true
+        type: choice
+        options: [validate, deploy]
+        default: validate
+      approved:
+        description: "Explicit approval required for deploy"
+        required: true
+        type: choice
+        options: ["no", "yes"]
+        default: "no"
+permissions:
+  contents: read
+jobs:
+  default-branch-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "::error::This registration-only workflow must be dispatched against feature/hf-space-manual-deploy, not main."
+          exit 1
