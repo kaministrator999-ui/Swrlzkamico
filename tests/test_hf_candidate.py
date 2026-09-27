@@ -8,12 +8,20 @@ from fastapi.testclient import TestClient
 from station import app as station_app, set_generator
 class Candidate(unittest.TestCase):
  def test_station_send_sync_and_route_rejection(self):
-  set_generator(lambda payload:iter([{"type":"DELTA","text":"R39 test output"},{"type":"COMPLETE"}]))
+  set_generator(lambda payload:iter([{"type":"DELTA","text":"R39 test output"},{"type":"COMPLETE"}]),lambda payload:iter([{"type":"DELTA","text":"Original test output"},{"type":"COMPLETED"}]))
   with TestClient(station_app) as client:
    self.assertEqual(client.get("/").status_code,200)
    self.assertEqual(client.get("/api/lalm_station/sync").status_code,200)
    body={"requestId":"req-test","threadId":"thread-test","messageId":"user-test","assistantMessageId":"assistant-test","prompt":"hello","modelId":"stock"}
-   self.assertEqual(client.post("/api/lalm_station/send",json=body).status_code,422)
+   self.assertEqual(client.post("/api/lalm_station/send",json=body).status_code,202)
+   import time
+   for _ in range(100):
+    original=client.get("/api/lalm_station/sync").json()
+    if original["activeGeneration"] and original["activeGeneration"]["terminal"]:break
+    time.sleep(.01)
+   self.assertEqual(original["threads"][0]["messages"][-1]["text"],"Original test output")
+   self.assertEqual(original["threads"][0]["messages"][-1]["meta"]["modelId"],"stock")
+   body["requestId"]="req-r39";body["messageId"]="user-r39";body["assistantMessageId"]="assistant-r39"
    body["modelId"]="r39"
    self.assertEqual(client.post("/api/lalm_station/send",json=body).status_code,202)
    import time
@@ -26,7 +34,7 @@ class Candidate(unittest.TestCase):
    self.assertEqual(snap["threads"][0]["messages"][-1]["meta"]["modelId"],"r39")
  def test_model_routes_fail_closed(self):
   self.assertEqual([r.model_id for r in routes()],["r39","stock","compare"])
-  self.assertFalse(routes()[1].available)
+  self.assertTrue(routes()[1].available)
   self.assertFalse(routes()[2].available)
   with self.assertRaises(ModelUnavailable): list(dispatch("stock",{},lambda p:iter([{"type":"DELTA","text":"wrong model"}])))
   with self.assertRaises(ModelUnavailable): list(dispatch("compare",{},lambda p:iter([])))
