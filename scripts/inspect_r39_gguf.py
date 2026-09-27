@@ -97,6 +97,8 @@ def main():
         tokens=tokenizer.get("tokens",[])
         stock_tokens=meta.get("tokenizer.ggml.tokens",[])
         token_match=bool(tokens) and tokens==stock_tokens
+        token_differences=[{"id":i,"r39":a,"stock":b} for i,(a,b) in enumerate(zip(tokens,stock_tokens)) if a!=b]
+        merge_differences=[{"index":i,"r39":a,"stock":b} for i,(a,b) in enumerate(zip(tokenizer.get("merges",[]),meta.get("tokenizer.ggml.merges",[]))) if a!=b]
         report={
             "schema":"swrlz-r39-gguf-compat-v1","r39Sha256":digest,
             "stockRepo":"LiquidAI/LFM2-350M-GGUF","stockRevision":"31cd51db1365",
@@ -107,6 +109,10 @@ def main():
             "missingInStock":missing_stock,"extraInStock":extra_stock,"shapeOrTypeMismatch":mismatch,
             "r39TokenCount":len(tokens),"stockTokenCount":len(stock_tokens),
             "tokenIdsExactlyEqual":token_match,
+            "tokenMismatchCount":len(token_differences)+abs(len(tokens)-len(stock_tokens)),
+            "firstTokenMismatches":token_differences[:20],
+            "mergeMismatchCount":len(merge_differences)+abs(len(tokenizer.get("merges",[]))-len(meta.get("tokenizer.ggml.merges",[]))),
+            "firstMergeMismatches":merge_differences[:10],
             "r39SpecialIds":{k:v for k,v in tokenizer.items() if "token" in k.lower() and "id" in k.lower()},
             "stockSpecialIds":{k:v for k,v in meta.items() if k.startswith("tokenizer.ggml.") and k.endswith("_token_id")},
             "stockArchitectureMetadata":{k:v for k,v in meta.items() if k.startswith(str(architecture)+".")},
@@ -118,7 +124,7 @@ def main():
             "note":"Structural comparison only. Conversion requires byte-layout verification, logit parity, and accepted-overlay preservation."
         }
         args.output.write_text(json.dumps(report,indent=2,ensure_ascii=False,default=str)+"\n",encoding="utf-8")
-        print(json.dumps({k:report[k] for k in ("status","architecture","r39TensorCount","stockTensorCount","r39TokenCount","stockTokenCount","tokenIdsExactlyEqual","missingInStock","extraInStock","shapeOrTypeMismatch")},ensure_ascii=False))
+        print(json.dumps({k:report[k] for k in ("status","architecture","r39TensorCount","stockTensorCount","r39TokenCount","stockTokenCount","tokenIdsExactlyEqual","tokenMismatchCount","firstTokenMismatches","mergeMismatchCount","firstMergeMismatches","missingInStock","extraInStock","shapeOrTypeMismatch")},ensure_ascii=False))
         print(f"Report: {args.output}")
     finally:model.close()
 
