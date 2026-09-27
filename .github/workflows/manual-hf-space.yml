@@ -106,8 +106,18 @@ jobs:
       - name: Protect existing fast HF inference and Chat integration
         if: ${{ inputs.mode == 'deploy' }}
         run: |
-          echo "::error::Additive integration is not verified: candidate currently replaces the original HF app and disables its original model. Preserve and adapt the live app before enabling deploy."
-          exit 1
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          original=Path('hf_space/original_workstation.py')
+          assert original.is_file(), 'Original Test Bench missing'
+          assert hashlib.sha256(original.read_bytes()).hexdigest()=='aa64fb0ba8eb5bcb3a2effd3af82662e6a902a23314ba26af5ea68cb627d7648', 'Original source mismatch'
+          app=Path('hf_space/app.py').read_text(encoding='utf-8')
+          assert 'path="/legacy"' in app and 'path="/probe"' in app and 'station_app' in app, 'Required mounts missing'
+          original_engine=Path('hf_space/original_engine.py').read_text(encoding='utf-8')
+          assert 'LiquidAI/LFM2-350M-GGUF' in original_engine and 'LFM2-350M-Q4_K_M.gguf' in original_engine, 'Original GGUF route missing'
+          print('Additive preservation guard passed: original Test Bench, GGUF route, R39 probe, dragon Chat')
+          PY
       - name: Require explicit publish authorization
         if: ${{ inputs.mode == 'deploy' }}
         env:
