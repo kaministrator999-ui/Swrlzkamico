@@ -77,6 +77,17 @@ jobs:
       - name: Install candidate runtime dependencies
         if: ${{ inputs.mode != 'inspect' }}
         run: python -m pip install -r hf_space/requirements.txt
+      - name: Build and verify native R39 kernels in validation environment
+        if: ${{ inputs.mode != 'inspect' }}
+        run: |
+          set -euo pipefail
+          python hf_space/scripts/build_r39_native.py
+          PYTHONPATH=hf_space python scripts/verify_r39_native.py
+          PYTHONPATH=hf_space python - <<'PY'
+          from swyrlz import r39_native
+          assert r39_native.available() and r39_native.matmat_available(), r39_native.diagnostics()
+          print("R39 native matvec and batched prefill imports: PASS")
+          PY
       - name: Reconstruct and verify real R39 model before any publication
         if: ${{ inputs.mode != 'inspect' }}
         env:
