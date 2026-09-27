@@ -49,9 +49,9 @@ class Reader:
         if self.read(4)!=b"GGUF":raise ValueError("Not GGUF")
         version=self.u32();count=self.u64();kv_count=self.u64()
         if version not in (2,3) or count>MAX_ITEMS or kv_count>MAX_ITEMS:raise ValueError("Unsupported GGUF header")
-        metadata={}
+        metadata={}; metadata_spans={}
         for _ in range(kv_count):
-            key=self.string();metadata[key]=self.value(self.u32())
+            key=self.string(); typ=self.u32(); start=self.f.tell(); metadata[key]=self.value(typ); metadata_spans[key]=(typ,start,self.f.tell())
         tensors={}
         for _ in range(count):
             name=self.string();ndim=self.u32()
@@ -59,7 +59,7 @@ class Reader:
             shape=[self.u64() for _ in range(ndim)]
             typ=self.u32();offset=self.u64()
             tensors[name]={"shape":shape,"type":GGUF_TYPES.get(typ,f"ggml_type_{typ}"),"typeId":typ,"offset":offset}
-        return {"version":version,"metadata":metadata,"tensors":tensors,"tensorDataStart":self.f.tell()}
+        return {"version":version,"metadata":metadata,"tensors":tensors,"tensorDataStart":self.f.tell(),"metadataSpans":metadata_spans}
 
 def main():
     ap=argparse.ArgumentParser()
