@@ -158,7 +158,7 @@ jobs:
           path: hf-reference-snapshot/
           retention-days: 30
       - name: Upload approved candidate to existing Space after snapshot
-        if: ${{ inputs.mode == 'deploy' || inputs.mode == 'inspect' }}
+        if: ${{ inputs.mode == 'deploy' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         shell: bash
