@@ -52,8 +52,13 @@ def engine():
             print(json.dumps({"event":"R39_ENGINE_INSPECT","native":native,"engineId":state.get("engineId"),"nativeBackendAvailable":state.get("nativeBackendAvailable"),"batchInstalled":state.get("batchInstalled")}),flush=True)
             if not (state.get("interactiveReady") or state.get("oneTokenReady")):
                 raise RuntimeError("R39 model not ready: "+str(state.get("code") or state))
-            if not state.get("batchInstalled"):
-                raise RuntimeError("R39_BATCH_PREFILL_NOT_INSTALLED: native extension alone does not prove batched execution")
+            # The accepted entrypoint records installation in its module globals,
+            # not in inspect_engine()'s returned schema.
+            batch_install=candidate.get("_batch_install")
+            batch_installed=isinstance(batch_install,dict) and batch_install.get("installed") is True
+            print(json.dumps({"event":"R39_BATCH_INSTALL_CHECK","installed":batch_installed,"install":batch_install if isinstance(batch_install,dict) else None}),flush=True)
+            if not batch_installed:
+                raise RuntimeError("R39_BATCH_PREFILL_NOT_INSTALLED: accepted entrypoint did not confirm batch installation")
             _engine=(inspect,generate)
         return _engine
 
