@@ -35,6 +35,22 @@ jobs:
         run: |
           python scripts/prepare_hf_space.py
           python scripts/prepare_hf_space.py --check
+      - name: Stage pinned original Test Bench without altering its callbacks
+        if: ${{ inputs.mode != 'inspect' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2'
+          python - <<'PY'
+          import hashlib, os, shutil
+          from pathlib import Path
+          from huggingface_hub import hf_hub_download
+          source=hf_hub_download('kamiloki/Swyrlz','app.py',repo_type='space',revision='bc62f0fe0f8e84914e4b7fa8348a5e75ef15819b',token=os.environ.get('HF_TOKEN') or None)
+          data=Path(source).read_bytes()
+          assert hashlib.sha256(data).hexdigest()=='aa64fb0ba8eb5bcb3a2effd3af82662e6a902a23314ba26af5ea68cb627d7648', 'Original Test Bench source drift'
+          Path('hf_space/original_workstation.py').write_bytes(data)
+          print('Pinned original Test Bench preserved and verified')
+          PY
       - name: Validate isolated Space package
         if: ${{ inputs.mode != 'inspect' }}
         shell: bash
