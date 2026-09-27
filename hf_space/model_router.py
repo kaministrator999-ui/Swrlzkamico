@@ -19,13 +19,17 @@ class ModelRoute:
 def routes(stock_checkpoint: str | None = None) -> list[ModelRoute]:
     return [
         ModelRoute("r39","§wyrlz R39 — fixed",True,"65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee"),
-        ModelRoute("stock","Original HF · LiquidAI LFM2-350M Q4_K_M",False,"LiquidAI/LFM2-350M-GGUF@31cd51db1365/LFM2-350M-Q4_K_M.gguf","Identified from live Space revision bc62f0fe; additive backend integration pending"),
+        ModelRoute("stock","Original HF · LFM2-350M Q4_K_M",True,"LiquidAI/LFM2-350M-GGUF@31cd51db1365/LFM2-350M-Q4_K_M.gguf"),
         ModelRoute("compare","Compare both",False,None,"Requires two verified independent inference backends"),
     ]
 
-def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict[str,Any]],Iterator[dict[str,Any]]]):
+def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict[str,Any]],Iterator[dict[str,Any]]], stock_generate=None):
     if model_id=="r39":
         yield from r39_generate(payload)
+        return
+    if model_id=="stock":
+        if stock_generate is None: raise ModelUnavailable(model_id,"Original HF backend not installed")
+        yield from stock_generate(payload)
         return
     route=next((x for x in routes() if x.model_id==model_id),None)
     if route is None:
