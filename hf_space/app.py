@@ -6,6 +6,7 @@ import gradio as gr
 import uvicorn
 from station import app as station_app, set_generator
 from model_router import dispatch, routes, ModelUnavailable
+from original_engine import generate_events as original_generate
 
 ROOT=Path(__file__).resolve().parent
 PROVENANCE=json.loads((ROOT/"MODEL_PROVENANCE.json").read_text(encoding="utf-8"))
@@ -57,7 +58,7 @@ def available_models():
     return [dict(modelId=r.model_id,label=r.label,available=r.available,checkpoint=r.checkpoint,reason=r.reason) for r in routes()]
 
 demo=gr.ChatInterface(fn=respond,type="messages",title="§wyrlz R39 — isolated inference candidate",description="Real accepted R39 inference probe. Canonical clean-room Chat and account persistence are not migrated yet.")
-set_generator(lambda payload: engine()[1](payload))
+set_generator(lambda payload: engine()[1](payload),original_generate)
 app=gr.mount_gradio_app(station_app,demo,path="/probe")
 if __name__=="__main__":
     print(json.dumps({"event":"HF_MODEL_ROUTES","routes":available_models()}),flush=True)
