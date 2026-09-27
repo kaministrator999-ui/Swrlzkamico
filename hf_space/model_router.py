@@ -19,7 +19,7 @@ class ModelRoute:
 def routes(stock_checkpoint: str | None = None) -> list[ModelRoute]:
     return [
         ModelRoute("r39","§wyrlz R39 — fixed",True,"65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee"),
-        ModelRoute("stock","Stock reference",False,stock_checkpoint,"Exact checkpoint and independent inference backend not configured"),
+        ModelRoute("stock","Original HF · LiquidAI LFM2-350M Q4_K_M",False,"LiquidAI/LFM2-350M-GGUF@31cd51db1365/LFM2-350M-Q4_K_M.gguf","Identified from live Space revision bc62f0fe; additive backend integration pending"),
         ModelRoute("compare","Compare both",False,None,"Requires two verified independent inference backends"),
     ]
 
