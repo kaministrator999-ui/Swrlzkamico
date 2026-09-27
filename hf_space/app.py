@@ -96,4 +96,5 @@ def _report_zerogpu_startup():
 if __name__=="__main__":
     print(json.dumps({"event":"HF_MODEL_ROUTES","routes":available_models()}),flush=True)
     _report_zerogpu_startup()
-    # HF Gradio SDK reserves PORT for its frontend proxy; bind the Python app to 7860.\n    uvicorn.run(app,host="0.0.0.0",port=int(os.environ.get("APP_PORT","7860")))
+    # Bind the Python ASGI app to the Space application port.
+    uvicorn.run(app,host="0.0.0.0",port=int(os.environ.get("APP_PORT","7860")))
