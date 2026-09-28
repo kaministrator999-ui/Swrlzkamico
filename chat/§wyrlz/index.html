@@ -198,7 +198,7 @@
           <div class="settings-note"><strong>Truth boundary:</strong> these model preferences are inspectable account data, not a claim that the active LALM runtime already honors them.</div>
         </section>
         <section class="settings-pane" data-settings-pane="you">
-          <h3>You</h3><p class="settings-pane-lead">Durable user profile details stay separate from creative lore. Saving here updates the existing account profile authority.</p>
+          <h3>You</h3><p class="settings-pane-lead">Durable user profile details stay separate from creative lore. Saving here updates the existing account profile authority; Tier C does not yet inject these fields into LALM inference.</p>
           <div class="setting-group">
             <div class="profile-grid">
               <div class="profile-field"><label for="settingDisplayName">Display name</label><div class="setting-control"><input id="settingDisplayName" type="text" maxlength="120" autocomplete="name" placeholder="How §wyrlz should address you"></div></div>
@@ -210,7 +210,7 @@
           </div>
         </section>
         <section class="settings-pane" data-settings-pane="companion">
-          <h3>§wyrlz</h3><p class="settings-pane-lead">Companion identity is versioned separately from your own profile preferences. This screen is user-controlled; §wyrlz cannot silently rewrite it.</p>
+          <h3>§wyrlz</h3><p class="settings-pane-lead">Companion identity is versioned separately from your own profile preferences. Name changes preview in Chat presentation; personality fields are stored profile state and are not yet an inference-persona binding.</p>
           <div class="setting-group">
             <div class="profile-grid">
               <div class="profile-field"><label for="settingCompanionName">Name</label><div class="setting-control"><input id="settingCompanionName" type="text" maxlength="120" value="§wyrlz"></div></div>
@@ -226,7 +226,7 @@
           <div class="settings-note"><strong>Authority:</strong> AI-originated companion profile changes remain disabled until Tier D adds proposal + approval semantics.</div>
         </section>
         <section class="settings-pane" data-settings-pane="lore">
-          <h3>Lore & Memory</h3><p class="settings-pane-lead">Account-owned continuity records with explicit type, origin, scope, activity state, and version. Nothing is extracted from conversations automatically in Tier C.</p>
+          <h3>Lore & Memory</h3><p class="settings-pane-lead">Account-owned continuity records with explicit type, origin, scope, activity state, and version. Tier C stores and manages them; nothing is extracted from conversations or injected into LALM inference automatically yet.</p>
           <div class="lore-toolbar">
             <div class="setting-control"><select id="loreFilter" aria-label="Filter lore"><option value="ALL">All records</option><option value="USER_FACT">User Facts</option><option value="USER_LORE">User Lore</option><option value="COMPANION_SELF_LORE">§wyrlz Self Lore</option><option value="SHARED_LORE">Shared Lore</option></select></div>
             <div class="lore-toolbar-spacer"></div>
