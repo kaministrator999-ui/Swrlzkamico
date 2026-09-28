@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from typing import Any
+import hashlib
+import re
 
 from api.account_proposals import submit_ai_proposal
 
@@ -8,6 +10,7 @@ SIGNAL_TYPE = "ACCOUNT_PROPOSAL"
 SIGNAL_CONTRACT = "swrlz-account-proposal-signal-v1"
 _ALLOWED_FIELDS = {"category", "targetKind", "operation", "payload", "rationale", "risk", "targetId"}
 _REQUIRED_FIELDS = {"category", "targetKind", "operation", "payload", "rationale"}
+_SIGNAL_ID = re.compile(r"^[A-Za-z0-9._:-]{1,160}$")
 
 
 class StructuredProposalSignalError(ValueError):
@@ -20,6 +23,41 @@ def is_structured_proposal_event(raw: Any) -> bool:
         and str(raw.get("type") or "").upper() == SIGNAL_TYPE
         and str(raw.get("contract") or "") == SIGNAL_CONTRACT
     )
+
+
+def build_structured_proposal_event(
+    *,
+    signal_id: str,
+    category: str,
+    target_kind: str,
+    operation: str,
+    payload: dict[str, Any],
+    rationale: str,
+    risk: str = "MEDIUM",
+    target_id: str | None = None,
+) -> dict[str, Any]:
+    """Trusted producer helper. This constructs metadata; it performs no durable write."""
+    signal_id = str(signal_id or "").strip()
+    if not _SIGNAL_ID.fullmatch(signal_id):
+        raise StructuredProposalSignalError("structured proposal signalId is invalid")
+    proposal = {
+        "category": str(category or ""),
+        "targetKind": str(target_kind or ""),
+        "operation": str(operation or ""),
+        "payload": dict(payload or {}),
+        "rationale": str(rationale or ""),
+        "risk": str(risk or "MEDIUM"),
+    }
+    if target_id:
+        proposal["targetId"] = str(target_id)
+    return {"type": SIGNAL_TYPE, "contract": SIGNAL_CONTRACT, "signalId": signal_id, "proposal": proposal}
+
+
+def _signal_id(raw: dict[str, Any]) -> str:
+    value = str(raw.get("signalId") or "").strip()
+    if not _SIGNAL_ID.fullmatch(value):
+        raise StructuredProposalSignalError("structured proposal signalId is required and must be a bounded identifier")
+    return value
 
 
 def _proposal_object(raw: dict[str, Any]) -> dict[str, Any]:
@@ -52,7 +90,9 @@ def consume_structured_proposal_event(
     """
     if not is_structured_proposal_event(raw):
         raise StructuredProposalSignalError("event is not the structured proposal contract")
+    signal_id = _signal_id(raw)
     proposal = _proposal_object(raw)
+    stable_id = "proposal_signal_" + hashlib.sha256(f"{request_id}:{signal_id}".encode("utf-8")).hexdigest()[:32]
     result = submit_ai_proposal(
         store,
         user_id=user_id,
@@ -65,10 +105,12 @@ def consume_structured_proposal_event(
         target_id=str(proposal.get("targetId") or "").strip() or None,
         source_thread_id=thread_id,
         source_request_id=request_id,
+        proposal_id=stable_id,
     )
     saved = result.get("proposal")
     return {
         "contract": SIGNAL_CONTRACT,
+        "signalId": signal_id,
         "decision": str(result.get("decision") or "ASK"),
         "proposalId": str(getattr(saved, "proposal_id", "") or ""),
         "state": str(getattr(saved, "state", "") or ""),
