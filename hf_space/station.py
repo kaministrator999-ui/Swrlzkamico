@@ -21,11 +21,13 @@ _sessions={}
 _pool=ThreadPoolExecutor(max_workers=2,thread_name_prefix="hf-r39")
 _generate=None
 _stock_generate=None
+_large_generate=None
 
-def set_generator(fn,stock_fn=None):
-    global _generate,_stock_generate
+def set_generator(fn,stock_fn=None,large_fn=None):
+    global _generate,_stock_generate,_large_generate
     _generate=fn
     _stock_generate=stock_fn
+    _large_generate=large_fn
 
 def _session(request):
     key=request.cookies.get("swrlz_hf_sid")
@@ -102,7 +104,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
         if model_id=="r39" and _generate is None:raise RuntimeError("R39 generator is not installed")
         if model_id=="stock" and _stock_generate is None:raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
-        for event in dispatch(model_id,payload,_generate,_stock_generate):
+        for event in dispatch(model_id,payload,_generate,_stock_generate,_large_generate):
             if not isinstance(event,dict):continue
             kind=str(event.get("type") or "")
             with _lock:
