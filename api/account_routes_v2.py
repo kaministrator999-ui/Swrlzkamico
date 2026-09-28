@@ -34,6 +34,7 @@ def _stateless_profile(identity: dict[str, Any]) -> dict[str, Any]:
         "preferences": {},
         "model_preferences": {},
         "ui_preferences": {},
+        "companion_profile": {},
         "version": 0,
         "updated_at": 0,
         "durable": False,
