@@ -1,3 +1,13 @@
+### UPDATE CONTINUATION — 2026-09-27 — HF reproducible checkpoint and rollback contract
+
+- **Requested outcome:** make every approved HF update recoverable to an exact prior checkpoint and separate ordinary commits, rollback checkpoints, deployed candidates and verified known-good releases.
+- **Implementation:** `.github/workflows/manual-hf-space.yml` now creates a pre-deploy `swrlz-hf-checkpoint-v1` manifest from the existing Space snapshot before mutation, records exact Git source commit + prior Space revision + snapshot-manifest digest, and retains it as `hf-rollback-checkpoint`. After upload it reads the resulting exact Space revision and emits `hf-release-checkpoint` with `verificationState=DEPLOYED_UNVERIFIED` and an explicit pointer to the prior Space revision.
+- **Governance:** deployment success is not known-good promotion. Rollback and known-good promotion both require evidence and remain separate governed actions; rollback never occurs automatically from a failed check.
+- **Canonical contract:** `docs/engineering/SWRLZ_HF_CHECKPOINT_ROLLBACK.md`. Existing Space only; no replacement Space. Restore verification must cover expected Space revision plus `/legacy`, `/probe`, Dragon Chat/Station and model routes.
+- **Retention truth:** the full pre-deploy snapshot artifact remains 30 days under the existing workflow; checkpoint/release manifests are retained 90 days. Git commit and HF Space revision are long-lived identities, but Actions artifacts are not treated as permanent archival.
+- **Capability knowledge direction:** model-facing capability knowledge should represent the current verified checkpoint's abilities; historical update chronology remains Roadmap knowledge.
+- **Truth state:** SOURCE/STATIC CHECKPOINT CONTRACT IMPLEMENTED on the feature branch. No HF deployment, rollback, restart or known-good promotion occurred in this documentation/workflow update.
+
 ### UPDATE CONTINUATION — 2026-09-27 — HF multi-model integration, role/profile separation, diagnostics and memory-candidate checkpoint
 
 - **Primary Focus:** Hugging Face §wyrlz Chat + LFM2-700M behavioral integration. **Focus Group:** HF Chat/Station candidate, LFM2-700M route, pinned LFM2-350M control, §wyrlz R39 route, Inference Laboratory, documentation/retrieval.
