@@ -41,9 +41,9 @@ class UserProfileRecord:
     preferences: dict[str, Any] = field(default_factory=dict)
     model_preferences: dict[str, Any] = field(default_factory=dict)
     ui_preferences: dict[str, Any] = field(default_factory=dict)
-    companion_profile: dict[str, Any] = field(default_factory=dict)
     version: int = 1
     updated_at: float = field(default_factory=time.time)
+    companion_profile: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
