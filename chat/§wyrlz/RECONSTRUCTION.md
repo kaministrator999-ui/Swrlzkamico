@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.54  
+**Version:** 1.0.55  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -94,3 +94,6 @@ Tier C requires a later explicitly approved stable-server deployment before its 
 
 
 - **1.0.54 — Tier F companion animation state machine:** binds companion presentation to existing Chat/Station truth rather than a parallel runtime authority. States are idle, listen, accepted, thinking, acting, responding, approval, and error. Prompt focus/input may produce listen only when no active generation exists; send start/ack produces accepted; active pre-output generation maps conservatively to thinking unless an explicit action/tool/work phase exists; visible generated text produces responding; proposal wait/approval phases produce approval; terminal/client failures produce error. Unknown active phases default to thinking/responding based on whether response text exists. State is exposed through `data-companion-state` plus an accessible text chip, so meaning never depends on motion alone. CSS-only restrained animations decorate the top dragon mark and assistant avatar; no canvas/WebGL/particle engine/animation-frame loop/network decoration was added. Reduced/Off/system-reduced-motion modes disable looping icon/dot animations and retain static state color/border cues.
+
+
+- **1.0.55 — Tier G work surface, agent cards, and evidence:** completes the research blueprint with a compact right-side Work surface that stays backstage from the main conversation. Tool/action cards are rendered only from explicit structured Station phase/category metadata; assistant prose is never scanned or interpreted as tool activity. Proposal receipts and real pending Tier-D records render as approval cards that navigate to the existing Proposal Inbox rather than creating a second approval authority. The artifacts section consumes only explicit structured artifact metadata and otherwise states that no structured artifacts were emitted. Assistant messages gain expandable Evidence / provenance details from allowlisted committed-message lineage (requestId, projection authority, source authority, turn contract, commit phase, terminal type) plus any already-structured source/evidence arrays if present. External links are limited to validated HTTP(S) URLs. The side surface adds no background polling, canvas/WebGL, animation loop, or decorative network call; mobile becomes full-screen and reduced-motion/high-contrast/reduced-transparency remain supported.
