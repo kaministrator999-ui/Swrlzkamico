@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.53  
+**Version:** 1.0.54  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -91,3 +91,6 @@ Tier C requires a later explicitly approved stable-server deployment before its 
 
 
 - **1.0.53 — Tier E shared rapport:** introduces a separate account-owned Rapport domain for shared vocabulary, callbacks, and interaction conventions. Rapport records carry kind, cue, meaning, optional preferred response, source/provenance, GLOBAL/THREAD/PROJECT scope, active state, generation, optimistic version, and authorship. A versioned RapportControl owns pause state and lineage-preserving reset generations: reset advances the current generation instead of deleting history. Current Chat can inspect reset history, edit only the active generation, pause/resume, and reset. THREAD scope is ownership-validated; new PROJECT scope is blocked until a project authority exists. AI-originated rapport changes use the existing Tier D proposal gate under SHARED_RAPPORT with bounded RAPPORT_CREATE/UPDATE/DELETE operations; auto-low-risk is suppressed while rapport is paused. Tier E does not inject rapport into R39 inference.
+
+
+- **1.0.54 — Tier F companion animation state machine:** binds companion presentation to existing Chat/Station truth rather than a parallel runtime authority. States are idle, listen, accepted, thinking, acting, responding, approval, and error. Prompt focus/input may produce listen only when no active generation exists; send start/ack produces accepted; active pre-output generation maps conservatively to thinking unless an explicit action/tool/work phase exists; visible generated text produces responding; proposal wait/approval phases produce approval; terminal/client failures produce error. Unknown active phases default to thinking/responding based on whether response text exists. State is exposed through `data-companion-state` plus an accessible text chip, so meaning never depends on motion alone. CSS-only restrained animations decorate the top dragon mark and assistant avatar; no canvas/WebGL/particle engine/animation-frame loop/network decoration was added. Reduced/Off/system-reduced-motion modes disable looping icon/dot animations and retain static state color/border cues.
