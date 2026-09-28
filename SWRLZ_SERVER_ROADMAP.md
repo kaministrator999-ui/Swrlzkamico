@@ -1,3 +1,18 @@
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier G artifacts and agent cards
+
+- **Requested outcome:** finish the final research tier: tool/action cards, side work surface, approval cards, and source/evidence expansion.
+- **Truth boundary:** Tier G consumes only structured truth already present in Chat/Station/Tier-D state. It does not infer tool usage from assistant prose and does not invent artifacts/sources that the runtime did not emit.
+- **Work-surface plan:** add a compact right-side work surface opened from the top edge. It remains backstage and does not widen the primary conversation stage.
+- **Action-card plan:** create action cards only from structured Station status entries whose explicit phase/category denotes tool/action/search/fetch/execute/work semantics. Generic thinking/status events remain status, not fake tool cards.
+- **Approval-card plan:** proposal receipts and actual Tier-D proposal records may render as approval cards with state/risk/category/operation and direct navigation into Proposal Inbox. Approval actions themselves remain owned by the existing proposal API/UI.
+- **Evidence plan:** assistant messages gain expandable evidence/provenance details using committed message metadata such as requestId/authority and any already-structured source/evidence arrays if present. Missing source arrays render no fake citations.
+- **Artifact plan:** the work surface includes an artifacts area that accepts only explicitly structured artifact metadata if present. Current runtime has no artifact registry/contract, so empty state must say that no structured artifacts were emitted.
+- **Performance/accessibility:** no canvas/WebGL, no animation loop, no new background polling cadence, and no decorative network fetch. Surface is keyboard-accessible, mobile-fullscreen, and compatible with reduced-motion/high-contrast settings.
+- **Baseline:** Clean-room Chat **1.0.54**; Server Runtime **2.3.307**; Repository Work **1.0.28**.
+- **Version plan:** Clean-room Chat **1.0.55**; Repository Work **1.0.29**. Server Runtime remains **2.3.307** unless source evidence proves a server change is required.
+- **Deployment expectation:** NONE. This approval authorizes final Tier G Chat source/UI/version/Roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, model/runtime behavior changes, or a new artifact protocol.
+- **Status:** IN PROGRESS.
+
 ### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier F companion animation state machine
 
 - **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier F binds companion presentation to existing Chat/Station truth without creating a parallel runtime state authority.
