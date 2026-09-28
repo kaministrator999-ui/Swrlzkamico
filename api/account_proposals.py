@@ -9,9 +9,11 @@ from api.durable_chat_contract import (
     LoreRecord,
     ProposalAuditRecord,
     ProposalRecord,
+    RapportRecord,
     UserProfileRecord,
     new_id,
 )
+from api.account_rapport import rapport_snapshot, validate_rapport_fields
 
 POLICY_MODES = {"ASK", "AUTO_LOW_RISK", "SESSION_ONLY", "NEVER"}
 PROPOSAL_CATEGORIES = {
@@ -21,6 +23,7 @@ PROPOSAL_CATEGORIES = {
     "USER_LORE",
     "COMPANION_SELF_LORE",
     "SHARED_LORE",
+    "SHARED_RAPPORT",
 }
 PROFILE_STYLE_VALUES = {
     "communicationStyle": {"adaptive", "direct", "collaborative", "technical", "playful"},
@@ -32,7 +35,7 @@ COMPANION_ENUM_VALUES = {
     "humor": {"adaptive", "low", "medium", "high"},
     "loreDensity": {"adaptive", "minimal", "balanced", "mythic"},
 }
-AUTO_LOW_RISK_OPERATIONS = {"USER_PROFILE_PATCH", "COMPANION_PROFILE_PATCH", "LORE_CREATE", "LORE_UPDATE"}
+AUTO_LOW_RISK_OPERATIONS = {"USER_PROFILE_PATCH", "COMPANION_PROFILE_PATCH", "LORE_CREATE", "LORE_UPDATE", "RAPPORT_CREATE", "RAPPORT_UPDATE"}
 
 
 class ProposalPolicyError(ValueError):
@@ -122,6 +125,10 @@ def _validate_category_operation(category: str, target_kind: str, operation: str
         if target_kind != "LORE" or category not in {"USER_FACT", "USER_LORE", "COMPANION_SELF_LORE", "SHARED_LORE"}:
             raise ProposalPolicyError("lore proposal target mismatch")
         return
+    if operation in {"RAPPORT_CREATE", "RAPPORT_UPDATE", "RAPPORT_DELETE"}:
+        if target_kind != "RAPPORT" or category != "SHARED_RAPPORT":
+            raise ProposalPolicyError("rapport proposal target mismatch")
+        return
     raise ProposalPolicyError("unsupported proposal operation")
 
 
@@ -201,6 +208,18 @@ def _current_target_version(store, *, user_id: str, operation: str, target_id: s
         return int(store.get_profile(user_id=user_id).version)
     if operation == "LORE_CREATE":
         return 0
+    if operation == "RAPPORT_CREATE":
+        return int(store.get_rapport_control(user_id=user_id).version)
+    if operation in {"RAPPORT_UPDATE", "RAPPORT_DELETE"}:
+        if not target_id:
+            raise ProposalPolicyError("rapport update/delete requires target id")
+        record = store.get_rapport(user_id=user_id, rapport_id=target_id)
+        if record is None:
+            raise ProposalPolicyError("rapport proposal target does not exist")
+        control = store.get_rapport_control(user_id=user_id)
+        if record.generation != control.current_generation:
+            raise ProposalPolicyError("rapport proposal target is from an archived generation")
+        return int(record.version)
     if not target_id:
         raise ProposalPolicyError("lore update/delete requires target id")
     lore = store.get_lore(user_id=user_id, lore_id=target_id)
@@ -214,6 +233,33 @@ def _normalize_payload(store, *, user_id: str, category: str, operation: str, ta
         return _validate_user_profile_patch(payload)
     if operation == "COMPANION_PROFILE_PATCH":
         return _validate_companion_patch(payload)
+    if operation in {"RAPPORT_CREATE", "RAPPORT_UPDATE", "RAPPORT_DELETE"}:
+        current_rapport = None
+        if operation in {"RAPPORT_UPDATE", "RAPPORT_DELETE"}:
+            if not target_id:
+                raise ProposalPolicyError("rapport target id is required")
+            current_rapport = store.get_rapport(user_id=user_id, rapport_id=target_id)
+            if current_rapport is None:
+                raise ProposalPolicyError("rapport target does not exist")
+            control = store.get_rapport_control(user_id=user_id)
+            if current_rapport.generation != control.current_generation:
+                raise ProposalPolicyError("rapport target is from an archived generation")
+        if operation == "RAPPORT_DELETE":
+            return {}
+        try:
+            fields = validate_rapport_fields(payload, current=current_rapport)
+        except ValueError as exc:
+            raise ProposalPolicyError(str(exc)) from exc
+        return {
+            "kind": fields["kind"],
+            "label": fields["label"],
+            "cue": fields["cue"],
+            "meaning": fields["meaning"],
+            "preferredResponse": fields["preferred_response"],
+            "scope": fields["scope"],
+            "scopeId": fields["scope_id"],
+            "active": fields["active"],
+        }
     current = None
     if operation in {"LORE_UPDATE", "LORE_DELETE"}:
         if not target_id:
@@ -452,6 +498,82 @@ def _apply_lore(store, proposal: ProposalRecord) -> tuple[dict[str, Any], dict[s
     return before, _lore_snapshot(saved)
 
 
+def _apply_rapport(store, proposal: ProposalRecord) -> tuple[dict[str, Any], dict[str, Any]]:
+    control = store.get_rapport_control(user_id=proposal.user_id)
+    if proposal.operation == "RAPPORT_CREATE":
+        if proposal.target_version is not None and control.version != proposal.target_version:
+            raise ConflictError("proposal rapport control version conflict")
+        try:
+            fields = validate_rapport_fields(proposal.payload)
+        except ValueError as exc:
+            raise ProposalPolicyError(str(exc)) from exc
+        rapport_id = proposal.target_id or new_id("rapport")
+        if store.get_rapport(user_id=proposal.user_id, rapport_id=rapport_id) is not None:
+            raise ConflictError("proposal rapport create target already exists")
+        now = time.time()
+        created = store.put_rapport(
+            RapportRecord(
+                rapport_id=rapport_id,
+                user_id=proposal.user_id,
+                kind=fields["kind"],
+                label=fields["label"],
+                cue=fields["cue"],
+                meaning=fields["meaning"],
+                preferred_response=fields["preferred_response"],
+                source="assistant-proposal-approved",
+                provenance={
+                    "kind": "assistant-proposal",
+                    "proposalId": proposal.proposal_id,
+                    "sourceThreadId": proposal.source_thread_id,
+                    "sourceRequestId": proposal.source_request_id,
+                    "rapportGeneration": control.current_generation,
+                },
+                scope=fields["scope"],
+                scope_id=fields["scope_id"],
+                authored_by="ASSISTANT",
+                active=fields["active"],
+                generation=control.current_generation,
+                version=1,
+                created_at=now,
+                updated_at=now,
+            ),
+            expected_version=0,
+        )
+        return {}, rapport_snapshot(created)
+    if not proposal.target_id:
+        raise ProposalPolicyError("rapport proposal requires target id")
+    current = store.get_rapport(user_id=proposal.user_id, rapport_id=proposal.target_id)
+    if current is None:
+        raise ConflictError("proposal rapport target missing")
+    if current.generation != control.current_generation:
+        raise ConflictError("proposal rapport target generation conflict")
+    if proposal.target_version is not None and current.version != proposal.target_version:
+        raise ConflictError("proposal target version conflict")
+    before = rapport_snapshot(current)
+    if proposal.operation == "RAPPORT_DELETE":
+        store.delete_rapport(user_id=proposal.user_id, rapport_id=current.rapport_id, expected_version=current.version)
+        return before, {}
+    try:
+        fields = validate_rapport_fields(proposal.payload, current=current)
+    except ValueError as exc:
+        raise ProposalPolicyError(str(exc)) from exc
+    saved = store.put_rapport(
+        replace(
+            current,
+            kind=fields["kind"],
+            label=fields["label"],
+            cue=fields["cue"],
+            meaning=fields["meaning"],
+            preferred_response=fields["preferred_response"],
+            scope=fields["scope"],
+            scope_id=fields["scope_id"],
+            active=fields["active"],
+        ),
+        expected_version=current.version,
+    )
+    return before, rapport_snapshot(saved)
+
+
 def apply_proposal(store, *, user_id: str, proposal_id: str, actor: str = "USER", auto: bool = False) -> ProposalRecord:
     current = store.get_proposal(user_id=user_id, proposal_id=proposal_id)
     if current is None:
@@ -465,6 +587,8 @@ def apply_proposal(store, *, user_id: str, proposal_id: str, actor: str = "USER"
             before, after = _apply_user_profile(store, claimed)
         elif claimed.operation == "COMPANION_PROFILE_PATCH":
             before, after = _apply_companion_profile(store, claimed)
+        elif claimed.operation.startswith("RAPPORT_"):
+            before, after = _apply_rapport(store, claimed)
         else:
             before, after = _apply_lore(store, claimed)
     except Exception as exc:
@@ -558,6 +682,49 @@ def _restore_lore(store, proposal: ProposalRecord) -> tuple[dict[str, Any], dict
     return current_snapshot, _lore_snapshot(saved)
 
 
+def _restore_rapport(store, proposal: ProposalRecord) -> tuple[dict[str, Any], dict[str, Any]]:
+    before_record = dict(proposal.before_snapshot or {})
+    after_record = dict(proposal.after_snapshot or {})
+    control = store.get_rapport_control(user_id=proposal.user_id)
+    if proposal.operation == "RAPPORT_CREATE":
+        rapport_id = str(after_record.get("rapport_id") or "")
+        current = store.get_rapport(user_id=proposal.user_id, rapport_id=rapport_id) if rapport_id else None
+        if current is None:
+            raise ConflictError("created rapport record no longer exists")
+        if current.generation != control.current_generation:
+            raise ConflictError("proposal revert rapport generation conflict")
+        expected_version = int(after_record.get("version") or -1)
+        if current.version != expected_version:
+            raise ConflictError("proposal revert target version conflict")
+        current_snapshot = rapport_snapshot(current)
+        store.delete_rapport(user_id=proposal.user_id, rapport_id=rapport_id, expected_version=current.version)
+        return current_snapshot, {}
+    if proposal.operation == "RAPPORT_DELETE":
+        rapport_id = str(before_record.get("rapport_id") or "")
+        before_generation = int(before_record.get("generation") or -1)
+        if before_generation != control.current_generation:
+            raise ConflictError("proposal revert rapport generation conflict")
+        if not rapport_id or store.get_rapport(user_id=proposal.user_id, rapport_id=rapport_id) is not None:
+            raise ConflictError("deleted rapport id is unavailable for restore")
+        restored = RapportRecord(**before_record)
+        saved = store.put_rapport(restored, expected_version=0)
+        return {}, rapport_snapshot(saved)
+    rapport_id = str(after_record.get("rapport_id") or proposal.target_id or "")
+    current = store.get_rapport(user_id=proposal.user_id, rapport_id=rapport_id) if rapport_id else None
+    if current is None:
+        raise ConflictError("updated rapport record no longer exists")
+    if current.generation != control.current_generation:
+        raise ConflictError("proposal revert rapport generation conflict")
+    expected_version = int(after_record.get("version") or -1)
+    if current.version != expected_version:
+        raise ConflictError("proposal revert target version conflict")
+    current_snapshot = rapport_snapshot(current)
+    restored = RapportRecord(**before_record)
+    restored = replace(restored, version=current.version, updated_at=current.updated_at)
+    saved = store.put_rapport(restored, expected_version=current.version)
+    return current_snapshot, rapport_snapshot(saved)
+
+
 def revert_proposal(store, *, user_id: str, proposal_id: str) -> ProposalRecord:
     current = store.get_proposal(user_id=user_id, proposal_id=proposal_id)
     if current is None:
@@ -572,6 +739,8 @@ def revert_proposal(store, *, user_id: str, proposal_id: str) -> ProposalRecord:
             reverted_from, restored = _restore_profile(store, claimed, companion=False)
         elif claimed.operation == "COMPANION_PROFILE_PATCH":
             reverted_from, restored = _restore_profile(store, claimed, companion=True)
+        elif claimed.operation.startswith("RAPPORT_"):
+            reverted_from, restored = _restore_rapport(store, claimed)
         else:
             reverted_from, restored = _restore_lore(store, claimed)
     except Exception as exc:
