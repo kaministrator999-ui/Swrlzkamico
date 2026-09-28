@@ -121,6 +121,44 @@ def _memory_candidates(prompt,user_profile):
         "requiresValidation":True
     }]
 
+
+def _convergence_candidate(history,prompt):
+    """Emit a compact review candidate when a multi-turn exchange appears to reach a validated answer.
+    This is not durable memory and is never auto-promoted."""
+    if len(history) < 2:
+        return None
+    text=prompt.strip()
+    lower=text.lower()
+    positive_markers=("exactly","that's it","thats it","there you go","yep","yeah that's","yeah thats","correct","right","nailed it","that's the answer","thats the answer")
+    correction_markers=("no ","i meant","not what i said","correction","actually","who said","just ")
+    prior_user=" ".join(m.get("content","") for m in history if m.get("role")=="user").lower()
+    had_repair=any(m in prior_user for m in correction_markers)
+    confirmed=any(m in lower for m in positive_markers)
+    if not (had_repair and confirmed):
+        return None
+    tail=history[-6:]
+    return {
+        "schema":"swrlz-convergence-candidate-v1",
+        "status":"review_candidate",
+        "source":"current-thread",
+        "turnWindow":len(tail)+1,
+        "hadCorrectionOrScopeRepair":True,
+        "userConfirmedResolution":True,
+        "memoryProvenance":"THREAD-ONLY",
+        "autoPromote":False,
+        "requiresReview":True,
+        "trajectory":[{"role":m.get("role"),"text":str(m.get("content") or "")[:500]} for m in tail]+[{"role":"user","text":text[:500]}],
+        "reviewTargets":[
+            "validated conclusion",
+            "generalizable pattern",
+            "failed/partial approach",
+            "decisive cue or evidence",
+            "applicability conditions",
+            "memory impact",
+            "deduplication against existing knowledge/rules/evals"
+        ]
+    }
+
 def _token_count(model,messages):
     total=0
     for message in messages:
@@ -173,6 +211,9 @@ def generate_events(payload):
     yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}
     for candidate in _memory_candidates(prompt,user_profile):
         yield {"type":"MEMORY_CANDIDATE","candidate":candidate}
+    convergence=_convergence_candidate(history,prompt)
+    if convergence:
+        yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
     system=("You are §wyrlz, a conversational AI companion. Respond to the user's actual message. Be direct, natural "
             "and conversational; do not narrate internal decisions, announce routine adjustments, deliver generic lectures, "
             "repeat profiles, or tack on unnecessary follow-up questions. Do not imply a long relationship or many prior "
