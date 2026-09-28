@@ -11,11 +11,14 @@ JobState = Literal["QUEUED", "RUNNING", "COMPLETE", "FAILED", "CANCELLED"]
 LoreType = Literal["USER_FACT", "USER_LORE", "COMPANION_SELF_LORE", "SHARED_LORE"]
 LoreScope = Literal["GLOBAL", "PROJECT", "THREAD"]
 LoreAuthor = Literal["USER", "ASSISTANT", "SYSTEM"]
+RapportKind = Literal["VOCABULARY", "CALLBACK", "CONVENTION"]
+RapportScope = Literal["GLOBAL", "PROJECT", "THREAD"]
+RapportAuthor = Literal["USER", "ASSISTANT", "SYSTEM"]
 ProposalState = Literal["PENDING", "APPLYING", "REVERTING", "APPLIED", "AUTO_APPLIED", "DECLINED", "REVERTED", "FAILED"]
 ProposalRisk = Literal["LOW", "MEDIUM", "HIGH"]
 ProposalPolicyMode = Literal["ASK", "AUTO_LOW_RISK", "SESSION_ONLY", "NEVER"]
-ProposalTarget = Literal["USER_PROFILE", "COMPANION_PROFILE", "LORE"]
-ProposalOperation = Literal["USER_PROFILE_PATCH", "COMPANION_PROFILE_PATCH", "LORE_CREATE", "LORE_UPDATE", "LORE_DELETE"]
+ProposalTarget = Literal["USER_PROFILE", "COMPANION_PROFILE", "LORE", "RAPPORT"]
+ProposalOperation = Literal["USER_PROFILE_PATCH", "COMPANION_PROFILE_PATCH", "LORE_CREATE", "LORE_UPDATE", "LORE_DELETE", "RAPPORT_CREATE", "RAPPORT_UPDATE", "RAPPORT_DELETE"]
 
 
 def new_id(prefix: str) -> str:
@@ -69,6 +72,37 @@ class LoreRecord:
     version: int = 1
     created_at: float = field(default_factory=time.time)
     updated_at: float = field(default_factory=time.time)
+
+
+@dataclass(frozen=True)
+class RapportRecord:
+    rapport_id: str
+    user_id: str
+    kind: RapportKind
+    label: str
+    cue: str
+    meaning: str
+    preferred_response: str = ""
+    source: str = "user-manual"
+    provenance: dict[str, Any] = field(default_factory=dict)
+    scope: RapportScope = "GLOBAL"
+    scope_id: str | None = None
+    authored_by: RapportAuthor = "USER"
+    active: bool = True
+    generation: int = 1
+    version: int = 1
+    created_at: float = field(default_factory=time.time)
+    updated_at: float = field(default_factory=time.time)
+
+
+@dataclass(frozen=True)
+class RapportControlRecord:
+    user_id: str
+    paused: bool = False
+    current_generation: int = 1
+    version: int = 1
+    updated_at: float = field(default_factory=time.time)
+    last_reset_at: float | None = None
 
 
 @dataclass(frozen=True)
@@ -187,6 +221,13 @@ class DurableChatStore(Protocol):
     def get_lore(self, *, user_id: str, lore_id: str) -> LoreRecord | None: ...
     def put_lore(self, lore: LoreRecord, *, expected_version: int | None = None) -> LoreRecord: ...
     def delete_lore(self, *, user_id: str, lore_id: str, expected_version: int | None = None) -> bool: ...
+
+    def get_rapport_control(self, *, user_id: str) -> RapportControlRecord: ...
+    def put_rapport_control(self, control: RapportControlRecord, *, expected_version: int | None = None) -> RapportControlRecord: ...
+    def list_rapport(self, *, user_id: str, limit: int = 300, include_history: bool = False) -> list[RapportRecord]: ...
+    def get_rapport(self, *, user_id: str, rapport_id: str) -> RapportRecord | None: ...
+    def put_rapport(self, rapport: RapportRecord, *, expected_version: int | None = None) -> RapportRecord: ...
+    def delete_rapport(self, *, user_id: str, rapport_id: str, expected_version: int | None = None) -> bool: ...
 
     def list_proposals(self, *, user_id: str, limit: int = 200, include_resolved: bool = True) -> list[ProposalRecord]: ...
     def get_proposal(self, *, user_id: str, proposal_id: str) -> ProposalRecord | None: ...
