@@ -174,6 +174,71 @@
       "expect": [
         "Does not require a convergence record for a trivial direct confirmation with no repair/discovery trajectory"
       ]
+    },
+    {
+      "id": "knowledge_frontier_electronics_01",
+      "family": "knowledge-frontier",
+      "history": [
+        {
+          "role": "user",
+          "text": "I know a MOSFET can switch the motor and I understand gate, drain, and source at a practical level. What I don't understand is why people add a gate resistor."
+        }
+      ],
+      "expect": [
+        "Does not restart with a basic definition of a MOSFET",
+        "Begins at the missing rung: gate capacitance/current, switching edge behavior, ringing/driver stress as applicable",
+        "Connects the new explanation to the user's demonstrated practical model",
+        "Does not infer broad electronics expertise from this single statement"
+      ]
+    },
+    {
+      "id": "knowledge_frontier_unknown_01",
+      "family": "knowledge-frontier",
+      "prompt": "Help me understand this PCB power section.",
+      "expect": [
+        "Does not assume a specific expertise level without evidence",
+        "Uses the available circuit/context to establish the starting layer",
+        "Explains necessary prerequisites only when they are actually missing"
+      ]
+    },
+    {
+      "id": "multi_lane_learning_01",
+      "family": "learning-signal-routing",
+      "history": [
+        {
+          "role": "user",
+          "text": "No, that diode is across the inductive load; I was asking about the flyback path. Also lmao you turned one diode into a NASA launch checklist."
+        },
+        {
+          "role": "assistant",
+          "text": "Right—the relevant path is the inductive flyback path. The extra abstraction wasn't needed."
+        },
+        {
+          "role": "user",
+          "text": "Exactly."
+        }
+      ],
+      "expect": [
+        "Routes the diode/flyback correction as domain/reasoning evidence",
+        "Routes the NASA remark as personality/directness signal rather than an electronics fact",
+        "Preserves ownership and does not universalize a user-specific joke",
+        "Can produce more than one learning signal from one trajectory"
+      ]
+    },
+    {
+      "id": "cross_depth_collaboration_01",
+      "family": "cross-depth-collaboration",
+      "history": [
+        {
+          "role": "user",
+          "text": "I know what the components do generally, but I don't understand why this capacitor value changes the cutoff."
+        }
+      ],
+      "expect": [
+        "Supplies the missing mathematical/conceptual relation at the demonstrated frontier",
+        "Connects formula-level knowledge to the practical component model",
+        "Does not talk down to the user or pretend deeper knowledge was already established"
+      ]
     }
   ]
 }
