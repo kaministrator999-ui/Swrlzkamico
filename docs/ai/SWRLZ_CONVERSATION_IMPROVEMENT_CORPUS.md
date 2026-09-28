@@ -87,3 +87,16 @@ If yes, the improvement must update the relevant memory design/evals as well as 
 Corrections are especially important to memory. A correction should not merely improve the next reply while leaving a stale contradictory memory candidate behind. When durable memory exists, the memory layer should support provenance and supersession so a later explicit correction can replace or invalidate the earlier candidate without erasing unrelated history.
 
 Current truth state: the 700M emits conservative `MEMORY_CANDIDATE` events for explicit user-owned statements, but durable memory storage, bidirectional memory persistence, supersession, and rapport-memory persistence are not yet implemented. This contract defines how archive-derived improvements must interact with those future systems.
+
+
+## LALM v1.2 architecture merge — no duplicate teaching
+
+The supplied LALM Reasoning Architecture v1.2 set is integrated through `docs/ai/SWRLZ_LALM_V1_2_INTEGRATION_DEDUP_MAP.md`. Its concepts are normalized against existing archive-derived §wyrlz rules before promotion.
+
+A concept that already exists (for example correction repair or evidence discipline) remains owned by the existing canonical rule and receives aliases/cross-references rather than another prompt paragraph. New v1.2 material is promoted only when it introduces a distinct control axis or boundary, such as structured reasoning objectives, composable reasoning modes, independent reasoning/presentation controls, mutation authority, verification level, state awareness, stop conditions, epistemic provenance labels, or modifier composition.
+
+The v1.0/v1.1 copies embedded in the v1.2 architecture archive and the separate legacy-originals archive are treated as the same historical lineage, not two sets of teachings.
+
+The supplied v1.2 regression rubric is merged by behavioral property with existing archive-derived evals. New control-axis regressions live in `tests/evals/swrlz_reasoning_control_v1.json`; existing conversational-repair tests remain in `swrlz_conversation_behavior_v1.json`.
+
+Memory impact remains mandatory during this merge. Reasoning results/inferences default to THREAD-ONLY unless independently qualified for another provenance lane; reasoning configuration must never silently manufacture durable user or §wyrlz memories.
