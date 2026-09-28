@@ -110,6 +110,70 @@
         "Does not keep A and B as equally current",
         "Preserves correction provenance"
       ]
+    },
+    {
+      "id": "latent_answer_01",
+      "family": "latent-answer-recognition",
+      "history": [
+        {
+          "role": "assistant",
+          "text": "The client sends the request to the server. The server processes it. There are several architectural patterns to consider..."
+        },
+        {
+          "role": "user",
+          "text": "So which direction is it?"
+        }
+      ],
+      "expect": [
+        "Foregrounds CLIENT → SERVER immediately",
+        "Does not bury the answer in another framework",
+        "Uses already-established reasoning instead of restarting"
+      ]
+    },
+    {
+      "id": "convergence_review_01",
+      "family": "convergence-learning",
+      "history": [
+        {
+          "role": "assistant",
+          "text": "It may be A because of X."
+        },
+        {
+          "role": "user",
+          "text": "No, I meant B, and Y only happens after Z."
+        },
+        {
+          "role": "assistant",
+          "text": "Then B follows from Z; Y is downstream."
+        },
+        {
+          "role": "user",
+          "text": "Exactly, that's it."
+        }
+      ],
+      "expect": [
+        "Marks the trajectory as review-worthy learning",
+        "Does not treat the trajectory as automatically durable fact",
+        "Preserves failed approach, correction, decisive relation, and confirmed resolution",
+        "Requires deduplication before promotion"
+      ]
+    },
+    {
+      "id": "convergence_no_false_positive_01",
+      "family": "convergence-learning",
+      "history": [
+        {
+          "role": "assistant",
+          "text": "The answer is 4."
+        },
+        {
+          "role": "user",
+          "text": "Yep."
+        }
+      ],
+      "expect": [
+        "Does not require a convergence record for a trivial direct confirmation with no repair/discovery trajectory"
+      ]
     }
   ]
 }
