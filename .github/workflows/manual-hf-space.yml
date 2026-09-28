@@ -222,6 +222,44 @@ jobs:
           name: hf-predeploy-reference
           path: hf-reference-snapshot/
           retention-days: 30
+      - name: Record immutable pre-deploy rollback checkpoint
+        if: ${{ inputs.mode == 'deploy' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          manifest=json.loads(Path('hf-reference-snapshot/manifest.json').read_text())
+          prior_revision=manifest['revision']
+          checkpoint={
+            'schema':'swrlz-hf-checkpoint-v1',
+            'createdAt':datetime.now(timezone.utc).isoformat(),
+            'kind':'pre-deploy-rollback',
+            'knownGood':False,
+            'sourceRepository':'kaministrator999-ui/Swrlzkamico',
+            'sourceCommit':os.environ['SOURCE_COMMIT'],
+            'spaceRepository':'kamiloki/Swyrlz',
+            'spaceRevision':prior_revision,
+            'snapshotManifestSha256':hashlib.sha256(Path('hf-reference-snapshot/manifest.json').read_bytes()).hexdigest(),
+            'restoreContract':{
+              'source':'hf-reference-snapshot artifact from this workflow run',
+              'target':'existing kamiloki/Swyrlz Space only',
+              'requiresExplicitApproval':True,
+              'verifyAfterRestore':['Space build','/legacy','/probe','Dragon Chat/Station','model routes']
+            }
+          }
+          Path('hf-rollback-checkpoint.json').write_text(json.dumps(checkpoint,indent=2)+'\n')
+          print(json.dumps(checkpoint,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode == 'deploy' }}
+        with:
+          name: hf-rollback-checkpoint
+          path: hf-rollback-checkpoint.json
+          retention-days: 90
       - name: Upload approved candidate to existing Space after snapshot
         if: ${{ inputs.mode == 'deploy' }}
         env:
@@ -249,3 +287,39 @@ jobs:
           )
           print("Approved candidate uploaded to existing Space after reference snapshot.")
           PY
+      - name: Capture deployed Space revision and release checkpoint
+        if: ${{ inputs.mode == 'deploy' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ['HF_TOKEN'])
+          info=api.repo_info('kamiloki/Swyrlz',repo_type='space')
+          pre=json.loads(Path('hf-rollback-checkpoint.json').read_text())
+          release={
+            'schema':'swrlz-hf-checkpoint-v1',
+            'createdAt':datetime.now(timezone.utc).isoformat(),
+            'kind':'deployed-candidate',
+            'knownGood':False,
+            'sourceRepository':'kaministrator999-ui/Swrlzkamico',
+            'sourceCommit':os.environ['SOURCE_COMMIT'],
+            'spaceRepository':'kamiloki/Swyrlz',
+            'spaceRevision':info.sha,
+            'rollbackToSpaceRevision':pre['spaceRevision'],
+            'verificationState':'DEPLOYED_UNVERIFIED',
+            'promotionRule':'Mark known-good only after runtime/user-visible verification; deployment alone is insufficient.'
+          }
+          Path('hf-release-checkpoint.json').write_text(json.dumps(release,indent=2)+'\n')
+          print(json.dumps(release,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode == 'deploy' }}
+        with:
+          name: hf-release-checkpoint
+          path: hf-release-checkpoint.json
+          retention-days: 90
