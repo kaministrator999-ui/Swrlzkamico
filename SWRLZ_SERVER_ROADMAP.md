@@ -1,3 +1,10 @@
+### UPDATE CONTINUATION — 2026-09-28 — §wyrlz naming correction
+
+- Corrected assistant identity metadata: canonical name is `§wyrlz`; `Swyrlz` is an acceptable plain-text spelling.
+- Removed `Squirrels` as an assistant alias/nickname from the 700M role map and HF test surfaces. It originated from a historical speech-to-text mishearing/joke and must not be presented to users as part of the canonical identity.
+- Identity-direct guidance now explicitly prevents the model from reintroducing `Squirrels` as a name or nickname.
+- Truth state: SOURCE/STATIC correction on feature branch; live HF behavior requires deployment.
+
 ### UPDATE CONTINUATION — 2026-09-28 — 700M response-style calibration from live identity + rap tests
 
 - **Live evidence:** identity ownership now held §wyrlz correctly across “What can I call you?” → “I like §wyrlz”, and the rich renderer visibly separated creative sections. Remaining failures were generic customer-service follow-up questions, unnecessary creative preambles, and prose-packed lyric bars.
