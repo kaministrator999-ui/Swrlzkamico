@@ -754,7 +754,8 @@
         try {
           const response = await fetch(url,{...init,credentials:"include",cache:"no-store"});
           const contentType=response.headers.get("content-type")||"";
-          const preview=await response.clone().text().then(t=>t.slice(0,180)).catch(()=>"");
+          const redactAccountBody=["/api/account/me","/api/account/google","/api/account/profile"].includes(path);
+          const preview=redactAccountBody?"[redacted account payload]":await response.clone().text().then(t=>t.slice(0,180)).catch(()=>"");
           accountTrace("response",{path,status:response.status,ok:response.ok,contentType,preview,durationMs:Math.round(performance.now()-started)});
           return response;
         } catch (error) {
