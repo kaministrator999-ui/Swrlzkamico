@@ -7,7 +7,7 @@ on:
         description: "Validate package without publishing, or explicitly deploy"
         required: true
         type: choice
-        options: [inspect, validate, deploy]
+        options: [inspect, benchmark, validate, deploy]
         default: validate
       approved:
         description: "Confirm replacement ONLY of existing kamiloki/Swyrlz after snapshot"
@@ -28,8 +28,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Benchmark untouched 350M and 700M GGUF models on the same CPU
+        if: ${{ inputs.mode == 'benchmark' }}
+        run: |
+          set -euo pipefail
+          python -m pip install 'huggingface_hub>=0.34,<2' --only-binary llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu 'llama-cpp-python==0.3.35'
+          python scripts/benchmark_lfm2_gguf.py --output lfm2-350m-vs-700m.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode == 'benchmark' }}
+        with:
+          name: lfm2-350m-vs-700m
+          path: lfm2-350m-vs-700m.json
+          retention-days: 30
       - name: Stage canonical R39 sources and model provenance
-        if: ${{ inputs.mode != 'inspect' }}
+        if: ${{ inputs.mode == 'validate' || inputs.mode == 'deploy' }}
         env:
           SWRLZ_SOURCE_COMMIT: ${{ github.sha }}
         run: |
