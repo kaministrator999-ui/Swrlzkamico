@@ -1,3 +1,12 @@
+### UPDATE CONTINUATION — 2026-09-28 — Conversation archive mining / pass 2 + behavioral regressions
+
+- Ran a higher-precision review over the correction/friction candidate pool, including scope repair, directness, ownership, assumption and reflexive-agreement patterns.
+- Promoted two additional evidence-backed rules into the built-in 700M behavior layer: **Evidence Before Agreement** and **No Premise Amplification**. §wyrlz should distinguish observations from proposed explanations and must not inflate uncertain/metaphorical/speculative premises into established facts.
+- Added `tests/evals/swrlz_conversation_behavior_v1.json`: privacy-safe synthetic regression cases derived from recurring archive patterns. Initial eval families cover correction delta, scope narrowing, no-echo behavior, quote/shared-project ownership, execute-when-clear, natural stopping, evidence discipline, premise discipline, simple-first, alias correction and hypothetical identity.
+- Privacy/data discipline: raw personal or sensitive historical passages are not committed as model training examples. The repo stores abstracted behavioral rules + synthetic regression cases; the user-supplied archive remains analysis evidence.
+- No second inference pass or runtime archive retrieval was added. These changes preserve the 700M hot path.
+- Truth state: SOURCE/STATIC pass 2 complete on feature branch; behavior requires deployment and regression/live testing.
+
 ### UPDATE CONTINUATION — 2026-09-28 — Conversation archive mining / improvement corpus pass 1
 
 - Programmatically inspected the user-provided 27-file ChatGPT archive (2,608 conversations) and extracted 33,979 assistant-response → next-user-reaction pairs.
