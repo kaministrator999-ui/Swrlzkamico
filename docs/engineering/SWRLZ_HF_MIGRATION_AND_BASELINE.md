@@ -55,3 +55,34 @@ PYTHONPATH=hf_space python scripts/inspect_r39_gguf.py --download-stock --output
 ```
 
 It SHA-verifies the canonical R39 artifact, downloads the exact pinned original GGUF revision, reads GGUF metadata and tensor directory, and reports tensor name/shape/quantizer differences, tokenizer ID equality, and LFM2 metadata. It does not export GGUF, modify the live Space, or prove runtime/logit parity. A `DIRECT_LAYOUT_CANDIDATE` result is necessary but not sufficient for lossless conversion. Treat `ADAPTER_REQUIRED` as an explicit mapping task, not permission to silently substitute the original.
+
+
+## HF model knowledge retrieval index — 2026-09-27
+
+This section is the compact machine/human retrieval surface for the current HF work. When an engineering agent or §wyrlz runtime needs project knowledge about model integration, query this guide first and follow the source pointers rather than inferring behavior from model output.
+
+| Knowledge | Canonical source / surface | Current truth |
+| --- | --- | --- |
+| Original speed/control model | `original_engine.py`, pinned original Test Bench at `/legacy` | LFM2-350M GGUF control; preserve independently |
+| §wyrlz R39 | `accepted_runtime/lalm/r39_engine.py`, R39 transport + native files | Independent §wyrlz engine; do not substitute stock/700M |
+| 700M test model | `hf_space/lfm2_700m_engine.py` | Independent LFM2-700M Q4_K_M route |
+| Model routing | `hf_space/model_router.py` | Stock / R39 / 700M remain attributable routes |
+| Probe | `hf_space/app.py`, `/probe` | Downloadable response/timing/diagnostic JSON |
+| Dragon Chat station | `hf_space/station.py`, `/` | Process-local HF session/thread candidate; not durable account parity |
+| Built-in §wyrlz core | `BUILTIN_ASSISTANT_PROFILE` in 700M engine | Always active for 700M; customization layers over it |
+| Assistant customization | payload `profile` | Optional §wyrlz personalization; not user identity/history |
+| User profile | payload `userProfile` | Current-user identity/context; test default Kami, replaceable |
+| Thread history | payload `history` | Only supplied turns are evidence of prior thread events |
+| Role map | `_role_frame` | Prompt/metadata perspective scaffold; not yet a full parser/validator |
+| Decision diagnostics | `_diagnostic_trace`, `DIAGNOSTIC` | Structured observable trace; no raw private chain-of-thought storage |
+| Memory candidates | `_memory_candidates`, `MEMORY_CANDIDATE` | Explicit user-statement candidates only; validation/persistence still separate |
+| Durable progress | `SWRLZ_SERVER_ROADMAP.md` | Read newest HF continuation before changing this workstream |
+
+### Runtime/project-knowledge retrieval contract
+
+1. For engineering startup, `§wyrlz_§tart.md` routes the active HF continuation here, then the Roadmap supplies chronological truth.
+2. For model/runtime retrieval, use a bounded project-knowledge provider that reads approved documentation records (starting with this guide + relevant Roadmap HF sections) and injects only retrieved excerpts with source/path metadata. **Do not place the whole Roadmap into every prompt.**
+3. Retrieved project documentation is reference knowledge, not conversation history and not user memory. Keep it in a separate context class such as `projectKnowledge`.
+4. Retrieval must prefer current canonical source and newest non-superseded Roadmap continuation, preserve truth-state labels (source/static/runtime/live), and never convert plans into completed/live claims.
+5. Until a runtime `projectKnowledge` retriever is implemented and verified, model access to these notes is **engineering-agent/documentation retrieval only**. Do not claim the 700M model can autonomously read GitHub.
+6. Future runtime implementation should expose a small query contract (topic/query + bounded top-k excerpts + source path/commit) and cache/index documentation outside the generation hot path so normal chat latency is not penalized.
