@@ -151,8 +151,8 @@ async def send(request:Request):
     prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
     profile=body.get("profile","")
     user_profile=body.get("userProfile","")
-    if not isinstance(profile,str) or len(profile)>6000:raise HTTPException(400,"Invalid test profile")
-    if not isinstance(user_profile,str) or len(user_profile)>6000:raise HTTPException(400,"Invalid user profile")
+    if not isinstance(profile,str) or len(profile)>2000:raise HTTPException(400,"Invalid test profile")
+    if not isinstance(user_profile,str) or len(user_profile)>2000:raise HTTPException(400,"Invalid user profile")
     if not isinstance(prompt,str) or not prompt.strip() or len(prompt)>16000:raise HTTPException(400,"Invalid prompt")
     if not all(isinstance(v,str) and 0<len(v)<=160 for v in (tid,rid)):raise HTTPException(400,"Invalid IDs")
     with _lock:
