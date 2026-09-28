@@ -9,7 +9,7 @@ from typing import Any
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from api.durable_chat_contract import MessageRecord, ThreadRecord, UserProfileRecord, new_id
+from api.durable_chat_contract import ConflictError, LoreRecord, MessageRecord, ThreadRecord, UserProfileRecord, new_id
 from api.durable_redis_store import DurableStoreUnavailable, RedisRestChatStore
 from api.google_account import (
     AuthenticationError,
@@ -24,6 +24,8 @@ from api.google_account import (
 from swyrlz.interpretation_contract import InterpretationEnvelope, normalize_provenance, presentation_mode_for_request
 
 _ID = re.compile(r"^[A-Za-z0-9._:-]{1,160}$")
+_LORE_TYPES = {"USER_FACT", "USER_LORE", "COMPANION_SELF_LORE", "SHARED_LORE"}
+_LORE_SCOPES = {"GLOBAL", "PROJECT", "THREAD"}
 QUEUE_TOPIC = "swrlz-generation"
 
 
@@ -83,6 +85,47 @@ def _job_public(job) -> dict[str, Any]:
     }
 
 
+def _lore_public(lore: LoreRecord) -> dict[str, Any]:
+    return {
+        "id": lore.lore_id,
+        "title": lore.title,
+        "content": lore.content,
+        "type": lore.lore_type,
+        "source": lore.source,
+        "provenance": dict(lore.provenance),
+        "confidence": lore.confidence,
+        "scope": lore.scope,
+        "scopeId": lore.scope_id,
+        "authoredBy": lore.authored_by,
+        "editable": lore.editable,
+        "active": lore.active,
+        "version": lore.version,
+        "createdAt": int(lore.created_at * 1000),
+        "updatedAt": int(lore.updated_at * 1000),
+    }
+
+
+def _validated_lore_fields(body: dict[str, Any], *, current: LoreRecord | None = None) -> dict[str, Any]:
+    lore_type = str(body.get("type") or (current.lore_type if current else "")).strip().upper()
+    if lore_type not in _LORE_TYPES:
+        raise ValueError("unsupported lore type")
+    title = str(body.get("title") if "title" in body else (current.title if current else "")).strip()[:120]
+    content = str(body.get("content") if "content" in body else (current.content if current else "")).strip()[:24000]
+    if not title or not content:
+        raise ValueError("lore title and content are required")
+    scope = str(body.get("scope") or (current.scope if current else "GLOBAL")).strip().upper()
+    if scope not in _LORE_SCOPES:
+        raise ValueError("unsupported lore scope")
+    scope_id_raw = body.get("scopeId") if "scopeId" in body else (current.scope_id if current else None)
+    scope_id = str(scope_id_raw or "").strip() or None
+    if scope == "GLOBAL":
+        scope_id = None
+    elif scope_id is None or not _ID.fullmatch(scope_id):
+        raise ValueError("project/thread lore requires a valid scopeId")
+    active = bool(body.get("active", current.active if current else True))
+    return {"lore_type": lore_type, "title": title, "content": content, "scope": scope, "scope_id": scope_id, "active": active}
+
+
 def _authenticated(request: Request) -> tuple[RedisRestChatStore, str] | JSONResponse:
     try:
         user_id = user_id_from_request(request)
@@ -113,6 +156,14 @@ def install(server) -> None:
         "ready": RedisRestChatStore.configured(),
         "browserLocalStorageAuthoritative": False,
         "backend": "redis-rest",
+    }
+    server.CAPABILITIES["durable-lore-state"] = {
+        "kind": "durable-user-state",
+        "ready": RedisRestChatStore.configured(),
+        "contract": "swrlz-account-lore-v1",
+        "authority": "account-owned-redis-rest",
+        "aiWrites": False,
+        "proposalProtocol": False,
     }
     server.CAPABILITIES["detached-generation"] = {
         "kind": "durable-execution",
@@ -223,6 +274,7 @@ def install(server) -> None:
             preferences = body.get("preferences") if isinstance(body.get("preferences"), dict) else current.preferences
             model_preferences = body.get("modelPreferences") if isinstance(body.get("modelPreferences"), dict) else current.model_preferences
             ui_preferences = body.get("uiPreferences") if isinstance(body.get("uiPreferences"), dict) else current.ui_preferences
+            companion_profile = body.get("companionProfile") if isinstance(body.get("companionProfile"), dict) else current.companion_profile
             expected = int(body.get("version", current.version))
             saved = store.put_profile(
                 UserProfileRecord(
@@ -231,6 +283,7 @@ def install(server) -> None:
                     preferences=dict(preferences),
                     model_preferences=dict(model_preferences),
                     ui_preferences=dict(ui_preferences),
+                    companion_profile=dict(companion_profile),
                     version=current.version,
                     updated_at=current.updated_at,
                 ),
@@ -239,6 +292,111 @@ def install(server) -> None:
             return {"ok": True, "profile": asdict(saved)}
         except Exception as exc:
             return _json_error(409 if "version" in str(exc).lower() else 400, "PROFILE_UPDATE_FAILED", str(exc))
+
+    @server.app.get("/api/account/lore")
+    async def account_lore_list(request: Request, limit: int = 300):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            records = store.list_lore(user_id=user_id, limit=max(1, min(int(limit), 500)))
+            return {"ok": True, "records": [_lore_public(record) for record in records], "contract": "swrlz-account-lore-v1"}
+        except Exception as exc:
+            return _json_error(503, "LORE_READ_FAILED", str(exc))
+
+    @server.app.post("/api/account/lore")
+    async def account_lore_create(request: Request):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            body = await request.json()
+            if not isinstance(body, dict):
+                raise ValueError("lore payload must be an object")
+            fields = _validated_lore_fields(body)
+            now = time.time()
+            provenance = {"kind": "manual-user", "surface": "chat-settings", "scope": fields["scope"].lower()}
+            if fields["scope_id"]:
+                provenance["scopeId"] = fields["scope_id"]
+            record = LoreRecord(
+                lore_id=_clean_id(body.get("loreId"), "lore"),
+                user_id=user_id,
+                title=fields["title"],
+                content=fields["content"],
+                lore_type=fields["lore_type"],
+                source="user-manual",
+                provenance=provenance,
+                confidence=1.0,
+                scope=fields["scope"],
+                scope_id=fields["scope_id"],
+                authored_by="USER",
+                editable=True,
+                active=fields["active"],
+                version=1,
+                created_at=now,
+                updated_at=now,
+            )
+            saved = store.put_lore(record, expected_version=0)
+            return {"ok": True, "record": _lore_public(saved), "contract": "swrlz-account-lore-v1"}
+        except ConflictError as exc:
+            return _json_error(409, "LORE_CREATE_CONFLICT", str(exc))
+        except Exception as exc:
+            return _json_error(400, "LORE_CREATE_FAILED", str(exc))
+
+    @server.app.put("/api/account/lore/{lore_id}")
+    async def account_lore_update(request: Request, lore_id: str):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            if not _ID.fullmatch(lore_id):
+                return _json_error(400, "LORE_ID_INVALID", "invalid lore id")
+            current = store.get_lore(user_id=user_id, lore_id=lore_id)
+            if current is None:
+                return _json_error(404, "LORE_NOT_FOUND", "lore record does not exist")
+            if not current.editable:
+                return _json_error(403, "LORE_NOT_EDITABLE", "lore record is not editable")
+            body = await request.json()
+            if not isinstance(body, dict):
+                raise ValueError("lore payload must be an object")
+            fields = _validated_lore_fields(body, current=current)
+            expected = int(body.get("version", current.version))
+            updated = replace(
+                current,
+                title=fields["title"],
+                content=fields["content"],
+                lore_type=fields["lore_type"],
+                scope=fields["scope"],
+                scope_id=fields["scope_id"],
+                active=fields["active"],
+            )
+            saved = store.put_lore(updated, expected_version=expected)
+            return {"ok": True, "record": _lore_public(saved), "contract": "swrlz-account-lore-v1"}
+        except ConflictError as exc:
+            return _json_error(409, "LORE_UPDATE_CONFLICT", str(exc))
+        except Exception as exc:
+            return _json_error(400, "LORE_UPDATE_FAILED", str(exc))
+
+    @server.app.delete("/api/account/lore/{lore_id}")
+    async def account_lore_delete(request: Request, lore_id: str, version: int | None = None):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            if not _ID.fullmatch(lore_id):
+                return _json_error(400, "LORE_ID_INVALID", "invalid lore id")
+            deleted = store.delete_lore(user_id=user_id, lore_id=lore_id, expected_version=version)
+            if not deleted:
+                return _json_error(404, "LORE_NOT_FOUND", "lore record does not exist")
+            return {"ok": True, "deleted": True, "id": lore_id, "contract": "swrlz-account-lore-v1"}
+        except ConflictError as exc:
+            return _json_error(409, "LORE_DELETE_CONFLICT", str(exc))
+        except Exception as exc:
+            return _json_error(400, "LORE_DELETE_FAILED", str(exc))
 
     @server.app.post("/api/account/thread")
     async def account_thread(request: Request):
