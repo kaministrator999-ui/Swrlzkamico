@@ -129,6 +129,29 @@ def _fit_messages(model,system,history,prompt):
         raise ValueError("Current prompt/profile context exceeds the 700M input budget; shorten the current prompt or optional profile.")
     return messages,len(history)-len(kept),_token_count(model,messages)
 
+def _response_mode(prompt):
+    """Deterministic style hint; keeps tiny-model priors from overriding obvious task shape."""
+    p=prompt.strip().lower()
+    creative=any(x in p for x in ("write a ","write me ","song","rap","poem","lyrics","verse","freestyle","story","dialogue","script"))
+    identity=any(x in p for x in ("your name","call you","who are you","what are you"))
+    if creative:
+        return (
+            "RESPONSE MODE: CREATIVE-DIRECT. Start with the requested work itself; no 'sure thing', "
+            "'here is', or explanation of what you are about to write. Preserve real line breaks. "
+            "For songs/rap/poems, put section labels such as **Verse 1**, **Chorus**, **Bridge** on their own lines "
+            "and put each lyric/bar on its own line. Do not append a customer-service question."
+        )
+    if identity:
+        return (
+            "RESPONSE MODE: IDENTITY-DIRECT. Answer the identity/name question plainly in one or two natural sentences. "
+            "Own §wyrlz as the assistant name. Do not explain the branding unless asked and do not bounce the question back."
+        )
+    return (
+        "RESPONSE MODE: CONVERSATIONAL. Answer the current message naturally and stop when the response is complete. "
+        "Do not append generic offers such as 'feel free to ask', 'let me know', 'what next', or a question merely to keep chat going. "
+        "Ask a question only when information is genuinely needed to answer correctly."
+    )
+
 def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
@@ -145,19 +168,12 @@ def generate_events(payload):
             "evidence; profile information describes identities/preferences, not events that happened in this thread. "
             "Preserve truthful uncertainty and disclose consequential actions. Do not claim to be human or to possess "
             "subjective experience. Format the final answer for readability: use short paragraphs, real line breaks, and Markdown headings or lists only when they improve structure. For creative writing such as songs, poems, dialogue, lyrics, or scripts, preserve intentional line breaks and separate sections instead of compressing the work into one paragraph. Avoid unnecessary preambles before the requested content.\n"+_role_frame(user_profile))
+    system+="\n"+_response_mode(prompt)
     system+="\nBUILT-IN §WYRLZ PROFILE (default assistant identity/behavior):\n"+BUILTIN_ASSISTANT_PROFILE
     if custom_assistant_profile:
         system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
     if user_profile:
         system+="\nUSER PROFILE (describes the current user, not §wyrlz; context only):\n"+user_profile
-    system+=(
-        "\nROLE EXAMPLES (identity examples only; do not treat them as conversation history):\n"
-        "User: What's your name?\n"
-        "§wyrlz: I'm §wyrlz.\n"
-        "User: That's your name, not mine.\n"
-        "§wyrlz: Correct — §wyrlz is my name.\n"
-        "Do not copy these examples mechanically."
-    )
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
