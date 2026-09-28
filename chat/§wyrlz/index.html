@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.51">
+  <meta name="swrlz-chat-version" content="1.0.52">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -338,8 +338,8 @@
     <div class="version-box collapsed" id="versionBox">
       <button class="version-head" id="versionToggle" type="button" aria-expanded="false"><span class="version-title">Versions</span><span class="version-chevron">⌄</span></button>
       <div class="version-list">
-        <div class="version-row"><span>Repository Work</span><span>1.0.25</span></div>
-        <div class="version-row"><span>Server Runtime</span><span>2.3.305</span></div>
+        <div class="version-row"><span>Repository Work</span><span>1.0.26</span></div>
+        <div class="version-row"><span>Server Runtime</span><span>2.3.306</span></div>
         <div class="version-row"><span>Server UI</span><span>1.0.0</span></div>
         <div class="version-row"><span>Web Frontend</span><span>1.0.5</span></div>
         <div class="version-row"><span>Web Chat</span><span>1.5.86</span></div>
@@ -392,7 +392,7 @@
       const topEdge = document.getElementById("topEdge");
       const topThreadTitle = document.getElementById("topThreadTitle");
       const topReadyLabel = document.getElementById("topReadyLabel");
-      const SWRLZ_CHAT_VERSION = "1.0.51";
+      const SWRLZ_CHAT_VERSION = "1.0.52";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       const uiCamera = (event,data={}) => {
@@ -425,6 +425,7 @@
       let proposalRecords=[];
       let proposalLoadedForUser="";
       let proposalAuditCache=new Map();
+      let lastProposalReceiptKey="";
       const selectedThreadIds=new Set();
       const threadId = () => "web-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       const titleFrom = text => {
@@ -561,6 +562,15 @@
         }
         // Status comes from the acknowledged send or actual Station snapshot, never a fabricated percentage.
         const last=(g.status||[]).at(-1)||{};
+        const receipt=last?.proposalReceipt;
+        if(receipt&&receipt.contract==="swrlz-account-proposal-signal-v1"){
+          const receiptKey=[receipt.signalId,receipt.proposalId,receipt.decision,receipt.state,receipt.version].join("|");
+          if(receiptKey&&receiptKey!==lastProposalReceiptKey){
+            lastProposalReceiptKey=receiptKey;
+            proposalLoadedForUser="";
+            window.dispatchEvent(new CustomEvent("swrlz-proposal-receipt",{detail:receipt}));
+          }
+        }
         const phase=String(last.phase||g.phase||last.type||"QUEUED").replace(/_/g," ");
         const label=g.terminal?(g.terminalType||phase):phase;
         const terminalKind=String(g.terminalType||label||"").toUpperCase();
@@ -1023,6 +1033,22 @@
       };
       proposalFilter.addEventListener("change",renderProposalRecords);
       proposalRefresh.addEventListener("click",()=>loadProposalRecords(true));
+      window.addEventListener("swrlz-proposal-receipt",event=>{
+        const receipt=event?.detail&&typeof event.detail==="object"?event.detail:{};
+        proposalLoadedForUser="";
+        const activePane=document.querySelector(".settings-pane.active")?.dataset?.settingsPane||"";
+        if(document.body.classList.contains("settings-open")&&activePane==="proposals"&&accountProfileDurable)loadProposalRecords(true);
+        uiCamera("proposal-receipt",{
+          signalId:String(receipt.signalId||""),
+          id:String(receipt.proposalId||""),
+          decision:String(receipt.decision||""),
+          state:String(receipt.state||""),
+          category:String(receipt.category||""),
+          operation:String(receipt.operation||""),
+          risk:String(receipt.risk||""),
+          version:Number(receipt.version||0)
+        });
+      });
 
       const loreTypeLabel=value=>({
         USER_FACT:"User Fact",USER_LORE:"User Lore",COMPANION_SELF_LORE:"§wyrlz Self Lore",SHARED_LORE:"Shared Lore"
