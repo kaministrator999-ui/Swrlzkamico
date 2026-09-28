@@ -181,12 +181,12 @@ class RedisRestChatStore(DurableChatStore):
 
     def get_profile(self, *, user_id: str) -> UserProfileRecord:
         key = self._key("profile", user_id)
-        profile = self._get_json(key, UserProfileRecord)
+        profile = self._get_json(key, UserProfileRecord, sensitive=True)
         if profile is not None:
             assert_owned(user_id, profile.user_id)
             return profile
         profile = UserProfileRecord(user_id=user_id)
-        self._set_json(key, profile)
+        self._set_json(key, profile, sensitive=True)
         return profile
 
     def get_or_create_profile(self, user_id: str) -> UserProfileRecord:
@@ -197,7 +197,7 @@ class RedisRestChatStore(DurableChatStore):
         if expected_version is not None and current.version != expected_version:
             raise ConflictError("profile version conflict")
         saved = replace(profile, version=current.version + 1, updated_at=time.time())
-        self._set_json(self._key("profile", profile.user_id), saved)
+        self._set_json(self._key("profile", profile.user_id), saved, sensitive=True)
         return saved
 
     def get_lore(self, *, user_id: str, lore_id: str) -> LoreRecord | None:
