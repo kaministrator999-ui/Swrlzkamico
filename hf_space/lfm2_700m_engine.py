@@ -133,8 +133,8 @@ def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
     history=[{"role":m["role"],"content":m["text"]} for m in payload.get("history",[]) if isinstance(m,dict) and m.get("role") in ("user","assistant") and isinstance(m.get("text"),str)]
-    custom_assistant_profile=str(payload.get("profile") or "").strip()[:6000]
-    user_profile=str(payload.get("userProfile") or "").strip()[:6000]
+    custom_assistant_profile=str(payload.get("profile") or "").strip()[:2000]
+    user_profile=str(payload.get("userProfile") or "").strip()[:2000]
     yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}
     for candidate in _memory_candidates(prompt,user_profile):
         yield {"type":"MEMORY_CANDIDATE","candidate":candidate}
