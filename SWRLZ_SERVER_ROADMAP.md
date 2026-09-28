@@ -1,3 +1,15 @@
+### UPDATE CONTINUATION — 2026-09-28 — LALM v1.2 architecture integration + duplicate-teaching gate
+
+- Reviewed the supplied v1.2 reasoning architecture set and its v1.0/v1.1 lineage against the current §wyrlz behavior/corpus work.
+- Added `docs/ai/SWRLZ_LALM_V1_2_INTEGRATION_DEDUP_MAP.md` as the canonical semantic crosswalk. Every incoming concept is classified EXISTING / EXTEND / NEW / LEGACY-ONLY before implementation; synonymous concepts point to one runtime owner instead of creating duplicate prompt rules.
+- Explicitly treats the v1.0/v1.1 copies inside the architecture archive and the separately supplied legacy-originals archive as duplicate historical lineage, not separate teachings.
+- Existing owners retained for Simple-First, Correction Economy, No Echo Tax, ownership, evidence discipline, Project Mode and memory provenance. v1.2 primarily extends these into structured control dimensions rather than re-teaching them.
+- Identified genuinely new structured axes: reasoning objective, composable reasoning modes/pipelines, modifier composition/conflict resolution, explicit mutation authority, verification level, state awareness, stop condition, and normalized epistemic provenance labels.
+- Added `tests/evals/swrlz_reasoning_control_v1.json` with non-duplicative regressions for brief+deep separation, inspect-not-modify, current-state verification, concise+exhaustive composition, root-cause objective, epistemic calibration, reasoning-vs-authority separation, stopping, memory provenance, and future memory supersession.
+- Memory gate preserved: inferred reasoning output defaults THREAD-ONLY and cannot silently become USER→AI, AI→USER or RAPPORT durable memory. Correction/supersession remains a required future memory behavior.
+- No full v1.2 document dump was added to the 700M system prompt and no second inference pass was added. The target is a compact resolved control contract so latency/context are protected.
+- Truth state: SOURCE/STATIC architecture map + eval integration complete; structured controller/ontology registry itself is not yet live.
+
 ### UPDATE CONTINUATION — 2026-09-28 — Memory-aware improvement promotion contract
 
 - Archive-derived conversational improvements are now explicitly coupled to memory/rapport design. Any change touching identity ownership, corrections, preferences, callbacks, inference confidence, continuity or profiles must receive a memory-impact review before promotion.
