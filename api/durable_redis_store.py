@@ -27,6 +27,30 @@ from api.durable_chat_contract import (
 )
 
 
+_CREATE_PROPOSAL_LUA = r"""
+if redis.call('EXISTS', KEYS[1]) == 1 then
+  return 0
+end
+redis.call('SET', KEYS[1], ARGV[1])
+redis.call('ZADD', KEYS[2], ARGV[2], ARGV[3])
+return 1
+"""
+
+_CAS_PROPOSAL_LUA = r"""
+local raw = redis.call('GET', KEYS[1])
+if not raw then
+  return -1
+end
+local current = cjson.decode(raw)
+if tonumber(current.version or 0) ~= tonumber(ARGV[1]) then
+  return 0
+end
+redis.call('SET', KEYS[1], ARGV[2])
+redis.call('ZADD', KEYS[2], ARGV[3], ARGV[4])
+return 1
+"""
+
+
 class DurableStoreUnavailable(RuntimeError):
     pass
 
@@ -276,28 +300,46 @@ class RedisRestChatStore(DurableChatStore):
     def put_proposal(self, proposal: ProposalRecord, *, expected_version: int | None = None) -> ProposalRecord:
         assert_owned(proposal.user_id, proposal.user_id)
         key=self._key("proposal", proposal.user_id, proposal.proposal_id)
+        index_key=self._key("proposal_index", proposal.user_id)
         current=self.get_proposal(user_id=proposal.user_id, proposal_id=proposal.proposal_id)
         now=time.time()
         if current is None:
             if expected_version not in (None, 0):
                 raise ConflictError("proposal version conflict")
             saved=replace(proposal, version=1, created_at=now, updated_at=now)
-            claimed=self._command(
-                "SET",
+            claimed=int(self._command(
+                "EVAL",
+                _CREATE_PROPOSAL_LUA,
+                2,
                 key,
+                index_key,
                 json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
-                "NX",
+                str(saved.updated_at),
+                saved.proposal_id,
                 sensitive=True,
-            )
-            if claimed is None:
+            ) or 0)
+            if claimed != 1:
                 raise ConflictError("proposal create conflict")
-        else:
-            assert_owned(proposal.user_id, current.user_id)
-            if expected_version is not None and current.version != expected_version:
-                raise ConflictError("proposal version conflict")
-            saved=replace(proposal, version=current.version + 1, created_at=current.created_at, updated_at=now)
-            self._set_json(key, saved, sensitive=True)
-        self._command("ZADD", self._key("proposal_index", proposal.user_id), saved.updated_at, saved.proposal_id, sensitive=True)
+            return saved
+        assert_owned(proposal.user_id, current.user_id)
+        expected=current.version if expected_version is None else int(expected_version)
+        if current.version != expected:
+            raise ConflictError("proposal version conflict")
+        saved=replace(proposal, version=current.version + 1, created_at=current.created_at, updated_at=now)
+        updated=int(self._command(
+            "EVAL",
+            _CAS_PROPOSAL_LUA,
+            2,
+            key,
+            index_key,
+            str(expected),
+            json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
+            str(saved.updated_at),
+            saved.proposal_id,
+            sensitive=True,
+        ) or 0)
+        if updated != 1:
+            raise ConflictError("proposal version conflict")
         return saved
 
     def append_proposal_audit(self, event: ProposalAuditRecord) -> ProposalAuditRecord:
