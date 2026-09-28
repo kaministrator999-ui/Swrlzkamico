@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.54">
+  <meta name="swrlz-chat-version" content="1.0.55">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -209,6 +209,17 @@
     }
     @media(max-width:680px){.top-status{gap:4px}.companion-state-chip{padding:3px 5px;max-width:72px;overflow:hidden;text-overflow:ellipsis}.top-ready-label{display:none}}
 
+
+    /* Glitch Dragon Chat — Tier G work surface, cards, and evidence. */
+    .work-surface-button{display:inline-flex;align-items:center;gap:5px;min-height:26px;padding:4px 7px;border:1px solid rgba(126,214,255,.20);border-radius:8px;background:rgba(5,24,40,.56);color:#cdeef7;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.work-surface-button:hover{border-color:rgba(56,232,255,.46);background:rgba(12,44,62,.68)}.work-count{display:grid;place-items:center;min-width:16px;height:16px;padding:0 4px;border-radius:9px;background:rgba(165,120,255,.24);color:#eee7ff;font-size:8px}.work-count[data-empty="true"]{opacity:.48}
+    .work-shade{position:fixed;z-index:8;inset:0;background:rgba(0,8,18,.58);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:opacity .18s ease,visibility 0s linear .18s}.work-surface{position:fixed;z-index:9;top:0;right:0;bottom:0;width:min(92vw,420px);display:flex;flex-direction:column;background:linear-gradient(155deg,rgba(3,18,32,.988),rgba(6,27,44,.982) 62%,rgba(20,19,45,.985));border-left:1px solid rgba(126,214,255,.24);box-shadow:-20px 0 58px rgba(0,0,0,.42);transform:translateX(104%);transition:transform .22s cubic-bezier(.2,.8,.2,1)}body.work-open .work-shade{opacity:1;visibility:visible;transition-delay:0s}body.work-open .work-surface{transform:translateX(0)}
+    .work-head{display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid rgba(126,214,255,.13)}.work-head-copy{min-width:0;flex:1}.work-kicker{font-family:var(--font-telemetry);font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:#81a9ba}.work-title{margin:2px 0 0;color:#effbff;font-size:15px}.work-close{display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(126,214,255,.20);border-radius:10px;background:rgba(10,38,57,.56);color:#dff7ff;cursor:pointer}.work-body{min-height:0;overflow:auto;padding:12px 13px 24px}.work-section{margin-bottom:15px}.work-section-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}.work-section-title{flex:1;color:#cfeaf4;font-family:var(--font-telemetry);font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}.work-section-count{color:#6f93a3;font-family:var(--font-telemetry);font-size:8px}.work-card-list{display:flex;flex-direction:column;gap:8px}
+    .agent-card{padding:10px;border:1px solid rgba(126,214,255,.13);border-radius:11px;background:linear-gradient(135deg,rgba(6,27,44,.62),rgba(23,27,55,.38))}.agent-card.action{border-color:rgba(79,140,255,.22)}.agent-card.approval{border-color:rgba(255,201,105,.25);background:linear-gradient(135deg,rgba(74,52,18,.30),rgba(31,27,52,.40))}.agent-card.artifact{border-color:rgba(165,120,255,.22)}.agent-card-head{display:flex;align-items:flex-start;gap:7px}.agent-card-title{min-width:0;flex:1;color:#effaff;font-size:11px;font-weight:780;overflow-wrap:anywhere}.agent-card-badge{padding:3px 5px;border:1px solid rgba(126,214,255,.16);border-radius:7px;color:#a9c6d3;font-family:var(--font-telemetry);font-size:7px;letter-spacing:.05em;text-transform:uppercase}.agent-card-body{margin-top:6px;color:#9eb9c5;font-size:9px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.agent-card-meta{display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:7px;color:#6d91a2;font-family:var(--font-telemetry);font-size:7px}.agent-card-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}.agent-card-button{border:1px solid rgba(126,214,255,.20);border-radius:8px;background:rgba(10,39,58,.68);color:#dff7ff;padding:6px 8px;font-size:8px;font-weight:760;cursor:pointer}.agent-card-button:hover{border-color:rgba(56,232,255,.48)}.work-empty{padding:12px;border:1px dashed rgba(126,214,255,.14);border-radius:10px;color:#718f9d;font-size:9px;line-height:1.45;text-align:center}
+    .message-evidence{margin:6px 0 0 38px;border-top:1px solid rgba(126,214,255,.08);padding-top:5px}.message-evidence summary{width:max-content;max-width:100%;cursor:pointer;color:#80a9ba;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.05em;list-style:none}.message-evidence summary::-webkit-details-marker{display:none}.message-evidence summary::before{content:"▸";display:inline-block;margin-right:5px;transition:transform .15s ease}.message-evidence[open] summary::before{transform:rotate(90deg)}.message-evidence-body{margin-top:6px;padding:7px 8px;border:1px solid rgba(126,214,255,.09);border-radius:8px;background:rgba(2,17,29,.38);color:#829fad;font-family:var(--font-telemetry);font-size:8px;line-height:1.5}.evidence-row{display:grid;grid-template-columns:minmax(74px,auto) 1fr;gap:8px;padding:2px 0}.evidence-key{color:#6e8f9f}.evidence-value{color:#b4ced8;overflow-wrap:anywhere}.evidence-link{color:#8feaff;text-decoration:none}.evidence-link:hover{text-decoration:underline}
+    body.motion-reduced .work-shade,body.motion-reduced .work-surface,body.motion-off .work-shade,body.motion-off .work-surface,body.motion-reduced .message-evidence summary::before,body.motion-off .message-evidence summary::before{transition:none!important}
+    @media(prefers-reduced-motion:reduce){body:not(.motion-full) .work-shade,body:not(.motion-full) .work-surface,body:not(.motion-full) .message-evidence summary::before{transition:none!important}}
+    @media(max-width:760px){.work-surface{width:100vw}.work-surface-button{padding:4px 6px}.work-surface-button .work-label{display:none}.top-model{display:none}.message-evidence{margin-left:38px}}
+
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -222,10 +233,38 @@
     <div class="top-status">
       <span class="top-model">LALM</span>
       <span class="companion-state-chip" id="companionStateLabel" role="status" aria-live="polite">idle</span>
+      <button class="work-surface-button" id="workSurfaceButton" type="button" aria-expanded="false" aria-controls="workSurface"><span class="work-label">Work</span><span class="work-count" id="workSurfaceCount" data-empty="true">0</span></button>
       <span class="ready-dot" aria-hidden="true"></span>
       <span class="top-ready-label" id="topReadyLabel">ready</span>
     </div>
   </header>
+
+  <div class="work-shade" id="workShade" aria-hidden="true"></div>
+  <aside class="work-surface" id="workSurface" aria-hidden="true" aria-labelledby="workSurfaceTitle">
+    <header class="work-head">
+      <div class="work-head-copy"><div class="work-kicker">Structured runtime surface</div><h2 class="work-title" id="workSurfaceTitle">Work</h2></div>
+      <button class="work-close" id="workClose" type="button" aria-label="Close work surface">✕</button>
+    </header>
+    <div class="work-body">
+      <section class="work-section">
+        <div class="work-section-head"><div class="work-section-title">Actions</div><div class="work-section-count" id="workActionCount">0</div></div>
+        <div class="work-card-list" id="workActionList"></div>
+      </section>
+      <section class="work-section">
+        <div class="work-section-head"><div class="work-section-title">Approvals</div><div class="work-section-count" id="workApprovalCount">0</div></div>
+        <div class="work-card-list" id="workApprovalList"></div>
+      </section>
+      <section class="work-section">
+        <div class="work-section-head"><div class="work-section-title">Artifacts</div><div class="work-section-count" id="workArtifactCount">0</div></div>
+        <div class="work-card-list" id="workArtifactList"></div>
+      </section>
+      <section class="work-section">
+        <div class="work-section-head"><div class="work-section-title">Evidence</div><div class="work-section-count" id="workEvidenceCount">0</div></div>
+        <div class="work-card-list" id="workEvidenceList"></div>
+      </section>
+      <div class="work-empty" id="workTruthNote">Only structured Station, proposal, artifact, and committed message metadata render here. Assistant prose is never interpreted as tool activity.</div>
+    </div>
+  </aside>
   <div class="settings-shade" id="settingsShade" aria-hidden="true"></div>
   <section class="settings-sheet" id="settingsSheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" aria-hidden="true">
     <header class="settings-header">
@@ -429,7 +468,7 @@
     <div class="version-box collapsed" id="versionBox">
       <button class="version-head" id="versionToggle" type="button" aria-expanded="false"><span class="version-title">Versions</span><span class="version-chevron">⌄</span></button>
       <div class="version-list">
-        <div class="version-row"><span>Repository Work</span><span>1.0.28</span></div>
+        <div class="version-row"><span>Repository Work</span><span>1.0.29</span></div>
         <div class="version-row"><span>Server Runtime</span><span>2.3.307</span></div>
         <div class="version-row"><span>Server UI</span><span>1.0.0</span></div>
         <div class="version-row"><span>Web Frontend</span><span>1.0.5</span></div>
@@ -484,7 +523,20 @@
       const topThreadTitle = document.getElementById("topThreadTitle");
       const topReadyLabel = document.getElementById("topReadyLabel");
       const companionStateLabel = document.getElementById("companionStateLabel");
-      const SWRLZ_CHAT_VERSION = "1.0.54";
+      const workSurfaceButton = document.getElementById("workSurfaceButton");
+      const workSurfaceCount = document.getElementById("workSurfaceCount");
+      const workShade = document.getElementById("workShade");
+      const workSurface = document.getElementById("workSurface");
+      const workClose = document.getElementById("workClose");
+      const workActionCount = document.getElementById("workActionCount");
+      const workActionList = document.getElementById("workActionList");
+      const workApprovalCount = document.getElementById("workApprovalCount");
+      const workApprovalList = document.getElementById("workApprovalList");
+      const workArtifactCount = document.getElementById("workArtifactCount");
+      const workArtifactList = document.getElementById("workArtifactList");
+      const workEvidenceCount = document.getElementById("workEvidenceCount");
+      const workEvidenceList = document.getElementById("workEvidenceList");
+      const SWRLZ_CHAT_VERSION = "1.0.55";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -584,6 +636,155 @@
           uiCamera("top-status",{state,label});
         }
       };
+
+      const safeHttpUrl=value=>{
+        const text=String(value||"").trim();
+        if(!/^https?:\/\//i.test(text))return "";
+        try{const url=new URL(text);return ["http:","https:"].includes(url.protocol)?url.href:"";}catch(_){return "";}
+      };
+      const evidenceRowsFromMessage=msg=>{
+        const meta=msg?.meta&&typeof msg.meta==="object"?msg.meta:{};
+        const rows=[];
+        if(meta.requestId)rows.push(["Request",String(meta.requestId)]);
+        if(meta.authority)rows.push(["Authority",String(meta.authority)]);
+        if(msg?.state)rows.push(["State",String(msg.state)]);
+        if(msg?.createdAt)rows.push(["Committed",new Date(msg.createdAt).toLocaleString()]);
+        return rows;
+      };
+      const structuredSourcesFromMessage=msg=>{
+        const meta=msg?.meta&&typeof msg.meta==="object"?msg.meta:{};
+        const values=[...(Array.isArray(meta.sources)?meta.sources:[]),...(Array.isArray(meta.evidence)?meta.evidence:[])];
+        return values.filter(item=>item&&typeof item==="object").slice(0,24);
+      };
+      const structuredArtifacts=()=>{
+        const out=[];
+        const push=item=>{if(item&&typeof item==="object")out.push(item);};
+        if(Array.isArray(stationGeneration?.artifacts))stationGeneration.artifacts.slice(0,24).forEach(push);
+        const thread=currentThread();
+        for(const msg of (thread?.messages||[])){
+          const items=Array.isArray(msg?.meta?.artifacts)?msg.meta.artifacts:[];
+          items.slice(0,24).forEach(push);
+        }
+        const seen=new Set();
+        return out.filter(item=>{
+          const key=String(item.id||item.uri||item.url||item.title||item.name||JSON.stringify(item));
+          if(seen.has(key))return false;seen.add(key);return true;
+        }).slice(0,24);
+      };
+      const isStructuredActionStatus=status=>{
+        if(!status||typeof status!=="object")return false;
+        const phase=String(status.phase||status.type||"").toUpperCase();
+        const categories=Array.isArray(status.categories)?status.categories.map(value=>String(value).toUpperCase()):[];
+        return ["ACTION","TOOL","ACTING","EXECUT","SEARCH","FETCH","WORK","RESOURCE_TASK"].some(token=>phase.includes(token)||categories.some(category=>category.includes(token)));
+      };
+      const currentActionStatuses=()=>{
+        const statuses=Array.isArray(stationGeneration?.status)?stationGeneration.status:[];
+        const seen=new Set(),out=[];
+        for(const status of statuses){
+          if(!isStructuredActionStatus(status))continue;
+          const key=[status.seq,status.phase,status.type,(status.categories||[]).join("|")].join(":");
+          if(seen.has(key))continue;seen.add(key);out.push(status);
+        }
+        return out.slice(-12).reverse();
+      };
+      const currentApprovalReceipts=()=>{
+        const statuses=Array.isArray(stationGeneration?.status)?stationGeneration.status:[];
+        const out=[],seen=new Set();
+        for(const status of statuses){
+          const receipt=status?.proposalReceipt;
+          if(!receipt||receipt.contract!=="swrlz-account-proposal-signal-v1")continue;
+          const key=String(receipt.proposalId||receipt.signalId||"");
+          if(seen.has(key))continue;seen.add(key);out.push(receipt);
+        }
+        for(const proposal of proposalRecords.filter(item=>item.state==="PENDING")){
+          const key=String(proposal.id||"");if(seen.has(key))continue;seen.add(key);
+          out.push({proposalId:proposal.id,state:proposal.state,category:proposal.category,operation:proposal.operation,risk:proposal.risk,version:proposal.version,decision:"ASK"});
+        }
+        return out.slice(0,24);
+      };
+      const evidenceItems=()=>{
+        const thread=currentThread();if(!thread)return [];
+        return (thread.messages||[]).filter(msg=>msg.role==="assistant").slice(-12).reverse().map(msg=>({
+          id:msg.id,requestId:msg?.meta?.requestId||"",authority:msg?.meta?.authority||"",state:msg.state||"",createdAt:msg.createdAt||0,sources:structuredSourcesFromMessage(msg)
+        }));
+      };
+      const makeEmpty=textValue=>{
+        const empty=document.createElement("div");empty.className="work-empty";empty.textContent=textValue;return empty;
+      };
+      const makeAgentCard=(kind,title,badge,bodyText,metaValues=[])=>{
+        const card=document.createElement("article");card.className="agent-card "+kind;
+        const head=document.createElement("div");head.className="agent-card-head";
+        const titleNode=document.createElement("div");titleNode.className="agent-card-title";titleNode.textContent=title;
+        const badgeNode=document.createElement("span");badgeNode.className="agent-card-badge";badgeNode.textContent=badge;head.append(titleNode,badgeNode);card.appendChild(head);
+        if(bodyText){const body=document.createElement("div");body.className="agent-card-body";body.textContent=bodyText;card.appendChild(body);}
+        const meta=document.createElement("div");meta.className="agent-card-meta";metaValues.filter(Boolean).forEach(value=>{const span=document.createElement("span");span.textContent=String(value);meta.appendChild(span);});if(meta.childNodes.length)card.appendChild(meta);
+        return card;
+      };
+      const openProposalInbox=async()=>{
+        setWorkSurfaceOpen(false);
+        setSettingsOpen(true);activateSettingsPane("proposals");
+        if(accountProfileDurable)await loadProposalRecords(true);
+      };
+      const renderWorkSurface=()=>{
+        const actions=currentActionStatuses(),approvals=currentApprovalReceipts(),artifacts=structuredArtifacts(),evidence=evidenceItems();
+        workActionCount.textContent=String(actions.length);workApprovalCount.textContent=String(approvals.length);workArtifactCount.textContent=String(artifacts.length);workEvidenceCount.textContent=String(evidence.length);
+        const total=actions.length+approvals.length+artifacts.length;
+        workSurfaceCount.textContent=String(total);workSurfaceCount.dataset.empty=String(total===0);
+        workActionList.innerHTML="";workApprovalList.innerHTML="";workArtifactList.innerHTML="";workEvidenceList.innerHTML="";
+        if(!actions.length)workActionList.appendChild(makeEmpty("No structured action/tool events in the current Station state."));
+        for(const status of actions){
+          const phase=String(status.phase||status.type||"ACTION").replaceAll("_"," ");
+          const categories=Array.isArray(status.categories)?status.categories.map(String):[];
+          const card=makeAgentCard("action",phase,"action",String(status.reason||""),[
+            status.seq?("event "+status.seq):"",
+            ...categories.slice(0,4)
+          ]);
+          workActionList.appendChild(card);
+        }
+        if(!approvals.length)workApprovalList.appendChild(makeEmpty("No structured proposal receipts or pending approvals."));
+        for(const receipt of approvals){
+          const card=makeAgentCard("approval",String(receipt.category||"Proposal").replaceAll("_"," "),String(receipt.state||receipt.decision||"approval"),String(receipt.operation||"").replaceAll("_"," "),[
+            receipt.risk?("risk "+receipt.risk):"",
+            receipt.proposalId?("id "+receipt.proposalId):"",
+            receipt.version?("v"+receipt.version):""
+          ]);
+          const actionsNode=document.createElement("div");actionsNode.className="agent-card-actions";
+          const open=document.createElement("button");open.type="button";open.className="agent-card-button";open.textContent="Open Proposal Inbox";open.onclick=openProposalInbox;actionsNode.appendChild(open);card.appendChild(actionsNode);workApprovalList.appendChild(card);
+        }
+        if(!artifacts.length)workArtifactList.appendChild(makeEmpty("No structured artifacts were emitted by the current runtime."));
+        for(const artifact of artifacts){
+          const title=String(artifact.title||artifact.name||artifact.id||"Artifact");
+          const type=String(artifact.type||artifact.kind||"artifact");
+          const card=makeAgentCard("artifact",title,type,String(artifact.summary||artifact.description||""),[
+            artifact.id?("id "+artifact.id):"",
+            artifact.mimeType||artifact.mime||""
+          ]);
+          const url=safeHttpUrl(artifact.url||artifact.uri);
+          if(url){const actionsNode=document.createElement("div");actionsNode.className="agent-card-actions";const open=document.createElement("a");open.className="agent-card-button evidence-link";open.href=url;open.target="_blank";open.rel="noopener noreferrer";open.textContent="Open";actionsNode.appendChild(open);card.appendChild(actionsNode);}
+          workArtifactList.appendChild(card);
+        }
+        if(!evidence.length)workEvidenceList.appendChild(makeEmpty("No committed assistant evidence metadata in this conversation."));
+        for(const item of evidence){
+          const sourceCount=item.sources.length;
+          const card=makeAgentCard("",item.requestId?("Response "+item.requestId):"Committed response","evidence","",[
+            item.authority?("authority "+item.authority):"",
+            item.state?("state "+item.state):"",
+            sourceCount?(sourceCount+" structured source"+(sourceCount===1?"":"s")):"no structured source list"
+          ]);
+          workEvidenceList.appendChild(card);
+        }
+      };
+      const setWorkSurfaceOpen=open=>{
+        document.body.classList.toggle("work-open",open);
+        workSurface.setAttribute("aria-hidden",String(!open));workShade.setAttribute("aria-hidden",String(!open));workSurfaceButton.setAttribute("aria-expanded",String(open));
+        if(open){
+          document.body.classList.remove("menu-open");
+          if(document.body.classList.contains("settings-open"))setSettingsOpen(false);
+          renderWorkSurface();workClose.focus();uiCamera("work-surface-open",{actions:currentActionStatuses().length,approvals:currentApprovalReceipts().length,artifacts:structuredArtifacts().length});
+          if(accountProfileDurable&&proposalLoadedForUser!==String(chatAccountUser?.id||""))loadProposalRecords(true).then(renderWorkSurface);
+        }else uiCamera("work-surface-close",{});
+      };
+
       const addCopyButton = node => {
         const body=node.querySelector(".assistant-body"); if(!body)return;
         const actions=document.createElement("div");actions.className="assistant-actions";
@@ -591,13 +792,38 @@
         copy.onclick=async()=>{try{await navigator.clipboard.writeText(body.textContent||"");copy.textContent="Copied";setTimeout(()=>copy.textContent="Copy",1200);}catch(_){copy.textContent="Copy failed";setTimeout(()=>copy.textContent="Copy",1200);}};
         actions.appendChild(copy);node.appendChild(actions);
       };
+
+      const addEvidenceBlock=(node,msg)=>{
+        const rows=evidenceRowsFromMessage(msg),sources=structuredSourcesFromMessage(msg);
+        if(!rows.length&&!sources.length)return;
+        const details=document.createElement("details");details.className="message-evidence";
+        const summary=document.createElement("summary");summary.textContent=sources.length?("Evidence · "+sources.length+" source"+(sources.length===1?"":"s")):"Evidence / provenance";
+        const body=document.createElement("div");body.className="message-evidence-body";
+        for(const [key,value] of rows){
+          const row=document.createElement("div");row.className="evidence-row";
+          const k=document.createElement("span");k.className="evidence-key";k.textContent=key;
+          const v=document.createElement("span");v.className="evidence-value";v.textContent=value;row.append(k,v);body.appendChild(row);
+        }
+        sources.forEach((source,index)=>{
+          const row=document.createElement("div");row.className="evidence-row";
+          const k=document.createElement("span");k.className="evidence-key";k.textContent="Source "+String(index+1);
+          const v=document.createElement("span");v.className="evidence-value";
+          const label=String(source.title||source.name||source.provider||source.ref||source.id||"Structured source");
+          const url=safeHttpUrl(source.url||source.uri);
+          if(url){const link=document.createElement("a");link.className="evidence-link";link.href=url;link.target="_blank";link.rel="noopener noreferrer";link.textContent=label;v.appendChild(link);}
+          else v.textContent=label;
+          row.append(k,v);body.appendChild(row);
+        });
+        details.append(summary,body);node.appendChild(details);
+      };
+
       const renderConversation = thread => {
         syncTopEdge(thread);
         [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
         if(!thread) return;
         for(const msg of (thread.messages||[])){
           if(msg.role==="assistant"){
-            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); node.querySelector(".assistant-body").textContent=msg.text||""; addCopyButton(node); messageList.appendChild(node);
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); node.querySelector(".assistant-body").textContent=msg.text||""; addCopyButton(node); addEvidenceBlock(node,msg); messageList.appendChild(node);
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";
             const meta=document.createElement("div");meta.className="user-meta";meta.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";
@@ -677,7 +903,7 @@
         if(!draftThread && !chatThreads.some(t=>t.id===activeThreadId)) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
         // Keep the last completed Station generation until canonical thread state contains it.\n        // A sync with no active generation must not erase the just-rendered terminal response.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration) stationGeneration=syncedGeneration;
         renderThreads(); if(!draftThread)renderConversation(currentThread());
-        renderStationGeneration();
+        renderStationGeneration();renderWorkSurface();
         if(stationAwaitingCommit){
           const awaited=(currentThread()?.messages||[]).find(m=>m.role==="assistant"&&m.meta?.requestId===stationAwaitingCommit);
           if(awaited && ["COMPLETE","FAILED","CANCELLED"].includes(String(awaited.meta?.state||awaited.state||"").toUpperCase())){
@@ -735,6 +961,7 @@
         const nextText=String(g.text||"");
         if(body.textContent!==nextText)body.textContent=nextText;
         body.hidden=!nextText;
+        renderWorkSurface();
       };
       const syncStation = async () => {
         if(stationSyncInFlight){stationSyncAgain=true;return false;}
@@ -756,6 +983,7 @@
       window.addEventListener("focus",keepStationHydrated);
       window.addEventListener("pageshow",keepStationHydrated);
       window.addEventListener("online",keepStationHydrated);
+      document.addEventListener("keydown",event=>{if(event.key==="Escape"&&document.body.classList.contains("work-open"))setWorkSurfaceOpen(false);});
       setInterval(()=>{if(document.visibilityState==="visible"&&!sending)syncStation()},2000);
       const setCurrentThreadMetadata = async threadId => {
         try{
@@ -891,6 +1119,7 @@
         versionToggle.setAttribute("aria-expanded", String(!collapsed));
       });
       settingsGear.addEventListener("click", () => {
+        setWorkSurfaceOpen(false);
         document.body.classList.remove("menu-open");
         menuButton.setAttribute("aria-expanded","false");
         sideMenu.setAttribute("aria-hidden","true");
@@ -1363,6 +1592,7 @@
         const activePane=document.querySelector(".settings-pane.active")?.dataset?.settingsPane||"";
         if(document.body.classList.contains("settings-open")&&activePane==="proposals"&&accountProfileDurable)loadProposalRecords(true);
         if(document.body.classList.contains("settings-open")&&activePane==="rapport"&&accountProfileDurable&&String(receipt.category||"")==="SHARED_RAPPORT")loadRapportRecords(true);
+        renderWorkSurface();
         uiCamera("proposal-receipt",{
           signalId:String(receipt.signalId||""),
           id:String(receipt.proposalId||""),
@@ -1578,7 +1808,10 @@
         menuShade.setAttribute("aria-hidden", String(!open));
         sideMenu.setAttribute("aria-hidden", String(!open));
       };
-      menuButton.addEventListener("click", () => setMenu(!document.body.classList.contains("menu-open")));
+      workSurfaceButton.addEventListener("click",()=>setWorkSurfaceOpen(!document.body.classList.contains("work-open")));
+      workShade.addEventListener("click",()=>setWorkSurfaceOpen(false));
+      workClose.addEventListener("click",()=>setWorkSurfaceOpen(false));
+      menuButton.addEventListener("click", () => {setWorkSurfaceOpen(false);setMenu(!document.body.classList.contains("menu-open"));});
       menuShade.addEventListener("click", () => setMenu(false));
       const resizeComposer = () => {
         prompt.style.height = "auto";
