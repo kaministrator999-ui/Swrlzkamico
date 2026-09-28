@@ -185,7 +185,10 @@ def install(server) -> None:
         "authority": "account-owned-redis-rest",
         "browserCanForgeAssistantProposal": False,
         "trustedSubmissionHelper": True,
+        "structuredSignalContract": "swrlz-account-proposal-signal-v1",
+        "structuredEventBridgeReady": True,
         "modelEmitterConnected": False,
+        "naturalLanguageScraping": False,
         "resolutionActions": ["edit", "approve", "decline", "revert"],
         "policyModes": ["ASK", "AUTO_LOW_RISK", "SESSION_ONLY", "NEVER"],
     }
