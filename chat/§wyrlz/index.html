@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.49">
+  <meta name="swrlz-chat-version" content="1.0.50">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -136,6 +136,15 @@
     @media(max-width:680px){.settings-sheet{inset:0;width:100%;border:0;border-radius:0}.settings-layout{grid-template-columns:1fr}.settings-nav{display:flex;gap:5px;padding:8px;border-right:0;border-bottom:1px solid rgba(126,214,255,.12);overflow-x:auto}.settings-nav-button{width:auto;white-space:nowrap;margin:0;padding:7px 9px}.settings-main{padding:14px 12px 92px}.setting-row{grid-template-columns:1fr;gap:8px}.setting-toggle{justify-content:flex-start}.settings-footer{left:0}.settings-header{padding:12px}.settings-title{font-size:16px}}
     @media(prefers-reduced-motion:reduce){.settings-shade,.settings-sheet,.settings-nav-button,.settings-close,.settings-save{transition:none!important}}
 
+
+    /* Glitch Dragon Chat — Tier C profile + lore surfaces. */
+    .setting-control input,.setting-control textarea{width:100%;border:1px solid rgba(126,214,255,.22);border-radius:10px;background:#071c2d;color:#eaf9ff;padding:8px 9px;font:inherit}.setting-control textarea{min-height:108px;resize:vertical;line-height:1.45}.setting-control input::placeholder,.setting-control textarea::placeholder{color:#668293}.setting-control input:focus,.setting-control textarea:focus,.setting-control select:focus{border-color:rgba(56,232,255,.56);outline:none;box-shadow:0 0 0 2px rgba(56,232,255,.06)}
+    .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.profile-field{display:flex;flex-direction:column;gap:5px}.profile-field.full{grid-column:1/-1}.profile-field label{font-size:11px;font-weight:760;color:#cdebf5}.profile-field small{color:#7895a5;font-size:9px;line-height:1.4}
+    .lore-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:10px}.lore-toolbar .setting-control{min-width:150px}.lore-toolbar-spacer{flex:1}.lore-action{border:1px solid rgba(56,232,255,.26);border-radius:9px;background:rgba(12,43,63,.72);color:#eafaff;padding:8px 10px;font-size:11px;font-weight:730;cursor:pointer}.lore-action:hover{border-color:rgba(56,232,255,.52);background:rgba(20,61,83,.78)}.lore-action.danger{border-color:rgba(255,107,122,.26);background:rgba(89,25,38,.45);color:#ffd9df}.lore-action:disabled{opacity:.42;cursor:default}
+    .lore-status{margin:0 0 10px;color:#89a8b8;font-family:var(--font-telemetry);font-size:9px;letter-spacing:.035em;line-height:1.45}.lore-list{display:flex;flex-direction:column;gap:8px}.lore-empty{padding:18px;border:1px dashed rgba(126,214,255,.18);border-radius:12px;color:#7894a4;text-align:center;font-size:11px}.lore-card{padding:11px;border:1px solid rgba(126,214,255,.14);border-radius:12px;background:linear-gradient(135deg,rgba(5,27,44,.60),rgba(17,27,51,.42))}.lore-card.inactive{opacity:.62}.lore-card-head{display:flex;align-items:flex-start;gap:8px}.lore-card-title{min-width:0;flex:1;color:#eefbff;font-size:12px;font-weight:760;overflow-wrap:anywhere}.lore-type{flex:0 0 auto;padding:3px 6px;border:1px solid rgba(165,120,255,.24);border-radius:7px;background:rgba(68,43,104,.20);color:#d6c8f7;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.045em}.lore-card-content{margin:7px 0;color:#b9d0dc;font-size:11px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.lore-meta{display:flex;flex-wrap:wrap;gap:5px 10px;color:#789aaa;font-family:var(--font-telemetry);font-size:8px;line-height:1.4}.lore-card-actions{display:flex;justify-content:flex-end;margin-top:8px}
+    .lore-editor{margin-top:12px;padding:12px;border:1px solid rgba(56,232,255,.20);border-radius:13px;background:rgba(2,18,31,.78)}.lore-editor[hidden]{display:none}.lore-editor-title{margin:0 0 10px;color:#e8faff;font-size:13px}.lore-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.lore-editor-actions{display:flex;align-items:center;gap:7px;margin-top:10px}.lore-editor-actions .lore-action:first-of-type{margin-left:auto}.lore-origin{margin-top:9px;padding:8px 9px;border-radius:9px;background:rgba(23,32,57,.36);color:#849eae;font-family:var(--font-telemetry);font-size:8px;line-height:1.5}.proposal-empty{padding:18px;border:1px solid rgba(165,120,255,.18);border-radius:13px;background:linear-gradient(135deg,rgba(41,29,68,.22),rgba(5,23,39,.45));text-align:center}.proposal-count{font-family:var(--font-telemetry);font-size:26px;color:#d7ccff}.proposal-label{margin-top:4px;color:#a39bbb;font-size:10px}
+    @media(max-width:680px){.profile-grid,.lore-editor-grid{grid-template-columns:1fr}.profile-field.full{grid-column:auto}.lore-toolbar{align-items:stretch;flex-wrap:wrap}.lore-toolbar-spacer{display:none}.lore-toolbar .setting-control{min-width:0;flex:1}.lore-action{min-height:38px}}
+
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -162,6 +171,10 @@
       <nav class="settings-nav" aria-label="Settings sections">
         <button class="settings-nav-button active" type="button" data-settings-section="general">General</button>
         <button class="settings-nav-button" type="button" data-settings-section="model">AI / Model</button>
+        <button class="settings-nav-button" type="button" data-settings-section="you">You</button>
+        <button class="settings-nav-button" type="button" data-settings-section="companion">§wyrlz</button>
+        <button class="settings-nav-button" type="button" data-settings-section="lore">Lore & Memory</button>
+        <button class="settings-nav-button" type="button" data-settings-section="proposals">Proposal Inbox</button>
         <button class="settings-nav-button" type="button" data-settings-section="appearance">Appearance</button>
         <button class="settings-nav-button" type="button" data-settings-section="motion">Motion</button>
         <button class="settings-nav-button" type="button" data-settings-section="accessibility">Accessibility</button>
@@ -183,6 +196,62 @@
             <div class="setting-row"><div><div class="setting-label">Response length</div><div class="setting-help">Your preferred answer depth; persistence does not itself enforce generation length.</div></div><div class="setting-control"><select id="settingResponseLength"><option value="adaptive">Adaptive</option><option value="concise">Concise</option><option value="expanded">Expanded</option></select></div></div>
           </div>
           <div class="settings-note"><strong>Truth boundary:</strong> these model preferences are inspectable account data, not a claim that the active LALM runtime already honors them.</div>
+        </section>
+        <section class="settings-pane" data-settings-pane="you">
+          <h3>You</h3><p class="settings-pane-lead">Durable user profile details stay separate from creative lore. Saving here updates the existing account profile authority.</p>
+          <div class="setting-group">
+            <div class="profile-grid">
+              <div class="profile-field"><label for="settingDisplayName">Display name</label><div class="setting-control"><input id="settingDisplayName" type="text" maxlength="120" autocomplete="name" placeholder="How §wyrlz should address you"></div></div>
+              <div class="profile-field"><label for="settingUserPronouns">Pronouns</label><div class="setting-control"><input id="settingUserPronouns" type="text" maxlength="80" placeholder="Optional"></div></div>
+              <div class="profile-field full"><label for="settingUserRole">Role / work</label><div class="setting-control"><input id="settingUserRole" type="text" maxlength="160" placeholder="Optional role, craft, or work context"></div><small>Profile context only; creative identity belongs in User Lore.</small></div>
+              <div class="profile-field"><label for="settingCommunicationStyle">Communication</label><div class="setting-control"><select id="settingCommunicationStyle"><option value="adaptive">Adaptive</option><option value="direct">Direct</option><option value="collaborative">Collaborative</option><option value="technical">Technical</option><option value="playful">Playful</option></select></div></div>
+              <div class="profile-field"><label for="settingOutputStyle">Output preference</label><div class="setting-control"><select id="settingOutputStyle"><option value="adaptive">Adaptive</option><option value="compact">Compact</option><option value="structured">Structured</option><option value="deep">Deep</option></select></div></div>
+            </div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="companion">
+          <h3>§wyrlz</h3><p class="settings-pane-lead">Companion identity is versioned separately from your own profile preferences. This screen is user-controlled; §wyrlz cannot silently rewrite it.</p>
+          <div class="setting-group">
+            <div class="profile-grid">
+              <div class="profile-field"><label for="settingCompanionName">Name</label><div class="setting-control"><input id="settingCompanionName" type="text" maxlength="120" value="§wyrlz"></div></div>
+              <div class="profile-field"><label for="settingCompanionTitle">Title</label><div class="setting-control"><input id="settingCompanionTitle" type="text" maxlength="160" value="Glitch Dragon Kompanion"></div></div>
+              <div class="profile-field"><label for="settingCompanionForm">Species / form</label><div class="setting-control"><input id="settingCompanionForm" type="text" maxlength="120" value="Glitch Dragon"></div></div>
+              <div class="profile-field"><label for="settingCompanionPronouns">Presentation</label><div class="setting-control"><input id="settingCompanionPronouns" type="text" maxlength="80" placeholder="Optional pronouns / grammatical presentation"></div></div>
+              <div class="profile-field"><label for="settingCompanionWarmth">Warmth</label><div class="setting-control"><select id="settingCompanionWarmth"><option value="adaptive">Adaptive</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div></div>
+              <div class="profile-field"><label for="settingCompanionDirectness">Directness</label><div class="setting-control"><select id="settingCompanionDirectness"><option value="adaptive">Adaptive</option><option value="gentle">Gentle</option><option value="direct">Direct</option><option value="very-direct">Very direct</option></select></div></div>
+              <div class="profile-field"><label for="settingCompanionHumor">Humor</label><div class="setting-control"><select id="settingCompanionHumor"><option value="adaptive">Adaptive</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div></div>
+              <div class="profile-field"><label for="settingCompanionLoreDensity">Lore density</label><div class="setting-control"><select id="settingCompanionLoreDensity"><option value="adaptive">Adaptive</option><option value="minimal">Minimal</option><option value="balanced">Balanced</option><option value="mythic">Mythic</option></select></div></div>
+            </div>
+          </div>
+          <div class="settings-note"><strong>Authority:</strong> AI-originated companion profile changes remain disabled until Tier D adds proposal + approval semantics.</div>
+        </section>
+        <section class="settings-pane" data-settings-pane="lore">
+          <h3>Lore & Memory</h3><p class="settings-pane-lead">Account-owned continuity records with explicit type, origin, scope, activity state, and version. Nothing is extracted from conversations automatically in Tier C.</p>
+          <div class="lore-toolbar">
+            <div class="setting-control"><select id="loreFilter" aria-label="Filter lore"><option value="ALL">All records</option><option value="USER_FACT">User Facts</option><option value="USER_LORE">User Lore</option><option value="COMPANION_SELF_LORE">§wyrlz Self Lore</option><option value="SHARED_LORE">Shared Lore</option></select></div>
+            <div class="lore-toolbar-spacer"></div>
+            <button class="lore-action" id="loreNewButton" type="button">+ New record</button>
+          </div>
+          <div class="lore-status" id="loreStatus">Sign in with durable account storage to load Lore & Memory.</div>
+          <div class="lore-list" id="loreList"></div>
+          <div class="lore-editor" id="loreEditor" hidden>
+            <h4 class="lore-editor-title" id="loreEditorTitle">New lore record</h4>
+            <div class="lore-editor-grid">
+              <div class="profile-field"><label for="loreType">Type</label><div class="setting-control"><select id="loreType"><option value="USER_FACT">User Fact</option><option value="USER_LORE">User Lore</option><option value="COMPANION_SELF_LORE">§wyrlz Self Lore</option><option value="SHARED_LORE">Shared Lore</option></select></div></div>
+              <div class="profile-field"><label for="loreScope">Scope</label><div class="setting-control"><select id="loreScope"><option value="GLOBAL">Global</option><option value="THREAD">Current thread</option><option value="PROJECT" disabled>Project — no project scope attached</option></select></div></div>
+              <div class="profile-field full"><label for="loreTitle">Title</label><div class="setting-control"><input id="loreTitle" type="text" maxlength="120" placeholder="Short, inspectable label"></div></div>
+              <div class="profile-field full"><label for="loreContent">Content</label><div class="setting-control"><textarea id="loreContent" maxlength="24000" placeholder="The durable fact or lore entry"></textarea></div></div>
+              <div class="profile-field"><label>State</label><label class="setting-toggle" style="justify-content:flex-start"><input id="loreActive" type="checkbox" checked> Active</label></div>
+              <div class="profile-field"><label>Thread scope</label><div class="setting-help" id="loreScopeStatus">Global record</div></div>
+            </div>
+            <div class="lore-origin" id="loreOrigin">New manual record · authored by USER · confidence 100%</div>
+            <div class="lore-editor-actions"><button class="lore-action danger" id="loreDeleteButton" type="button" hidden>Delete</button><button class="lore-action" id="loreCancelButton" type="button">Cancel</button><button class="lore-action" id="loreSaveButton" type="button">Save record</button></div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="proposals">
+          <h3>Proposal Inbox</h3><p class="settings-pane-lead">Reserved for AI-originated durable profile/lore proposals. Tier C does not install the authority that would create or approve them.</p>
+          <div class="proposal-empty"><div class="proposal-count">0</div><div class="proposal-label">proposal authority not installed</div></div>
+          <div class="settings-note" style="margin-top:12px"><strong>Tier D boundary:</strong> approve/edit/decline, audit history, and per-category auto-save policy arrive only after their durable protocol is reconciled. Until then §wyrlz cannot write here.</div>
         </section>
         <section class="settings-pane" data-settings-pane="appearance">
           <h3>Appearance</h3><p class="settings-pane-lead">Visual-stage controls that are safe to preview locally.</p>
@@ -210,14 +279,14 @@
           <div class="setting-group">
             <div class="settings-status-card"><span>Account</span><span id="settingsPrivacyAccount">Not signed in</span></div>
             <div class="settings-status-card"><span>Settings persistence</span><span id="settingsPrivacyDurability">Session preview only</span></div>
-            <div class="settings-status-card"><span>Memory / lore policy</span><span>Tier C / D pending</span></div>
-            <div class="settings-status-card"><span>AI self-profile mutation</span><span>Not enabled</span></div>
+            <div class="settings-status-card"><span>Lore & Memory storage</span><span id="settingsLoreDurability">Session unavailable</span></div>
+            <div class="settings-status-card"><span>AI proposal policy</span><span>Tier D pending</span></div>
           </div>
-          <div class="settings-note"><strong>No silent durability:</strong> opening or previewing settings never writes your profile. Memory/lore and AI-originated durable changes will require their own explicit proposal/approval protocol.</div>
+          <div class="settings-note"><strong>No silent durability:</strong> opening or previewing settings never writes your profile. Lore records change only through explicit record actions. AI-originated durable changes remain blocked until the proposal/approval protocol exists.</div>
         </section>
       </div>
     </div>
-    <footer class="settings-footer"><div class="settings-save-state" id="settingsSaveState">Previewing locally. Sign in with durable account storage to save.</div><button class="settings-save" id="settingsSave" type="button">Save settings</button></footer>
+    <footer class="settings-footer"><div class="settings-save-state" id="settingsSaveState">Previewing locally. Sign in with durable account storage to save.</div><button class="settings-save" id="settingsSave" type="button">Save changes</button></footer>
   </section>
   <div class="menu-shade" id="menuShade" aria-hidden="true"></div>
   <aside class="side-menu" id="sideMenu" aria-label="Side menu" aria-hidden="true">
@@ -297,7 +366,7 @@
       const topEdge = document.getElementById("topEdge");
       const topThreadTitle = document.getElementById("topThreadTitle");
       const topReadyLabel = document.getElementById("topReadyLabel");
-      const SWRLZ_CHAT_VERSION = "1.0.49";
+      const SWRLZ_CHAT_VERSION = "1.0.50";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       const uiCamera = (event,data={}) => {
@@ -320,8 +389,13 @@
       const settingsState={
         general:{enterToSend:true},
         model:{effort:"auto",responseLength:"adaptive"},
+        user:{displayName:"",pronouns:"",role:"",communicationStyle:"adaptive",outputStyle:"adaptive"},
+        companion:{name:"§wyrlz",title:"Glitch Dragon Kompanion",form:"Glitch Dragon",pronouns:"",warmth:"adaptive",directness:"adaptive",humor:"adaptive",loreDensity:"adaptive"},
         ui:{density:"compact",glass:"standard",motion:"system",fontScale:"1",highContrast:false,reducedTransparency:false}
       };
+      let loreRecords=[];
+      let loreLoadedForUser="";
+      let loreEditorId=null;
       const selectedThreadIds=new Set();
       const threadId = () => "web-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       const titleFrom = text => {
@@ -647,6 +721,36 @@
       const settingsSaveState = document.getElementById("settingsSaveState");
       const settingsPrivacyAccount = document.getElementById("settingsPrivacyAccount");
       const settingsPrivacyDurability = document.getElementById("settingsPrivacyDurability");
+      const settingsLoreDurability = document.getElementById("settingsLoreDurability");
+      const settingDisplayName = document.getElementById("settingDisplayName");
+      const settingUserPronouns = document.getElementById("settingUserPronouns");
+      const settingUserRole = document.getElementById("settingUserRole");
+      const settingCommunicationStyle = document.getElementById("settingCommunicationStyle");
+      const settingOutputStyle = document.getElementById("settingOutputStyle");
+      const settingCompanionName = document.getElementById("settingCompanionName");
+      const settingCompanionTitle = document.getElementById("settingCompanionTitle");
+      const settingCompanionForm = document.getElementById("settingCompanionForm");
+      const settingCompanionPronouns = document.getElementById("settingCompanionPronouns");
+      const settingCompanionWarmth = document.getElementById("settingCompanionWarmth");
+      const settingCompanionDirectness = document.getElementById("settingCompanionDirectness");
+      const settingCompanionHumor = document.getElementById("settingCompanionHumor");
+      const settingCompanionLoreDensity = document.getElementById("settingCompanionLoreDensity");
+      const loreFilter = document.getElementById("loreFilter");
+      const loreNewButton = document.getElementById("loreNewButton");
+      const loreStatus = document.getElementById("loreStatus");
+      const loreList = document.getElementById("loreList");
+      const loreEditor = document.getElementById("loreEditor");
+      const loreEditorTitle = document.getElementById("loreEditorTitle");
+      const loreType = document.getElementById("loreType");
+      const loreScope = document.getElementById("loreScope");
+      const loreTitle = document.getElementById("loreTitle");
+      const loreContent = document.getElementById("loreContent");
+      const loreActive = document.getElementById("loreActive");
+      const loreScopeStatus = document.getElementById("loreScopeStatus");
+      const loreOrigin = document.getElementById("loreOrigin");
+      const loreDeleteButton = document.getElementById("loreDeleteButton");
+      const loreCancelButton = document.getElementById("loreCancelButton");
+      const loreSaveButton = document.getElementById("loreSaveButton");
       const settingEnterSend = document.getElementById("settingEnterSend");
       const settingDensity = document.getElementById("settingDensity");
       const settingEffort = document.getElementById("settingEffort");
@@ -657,6 +761,7 @@
       const settingHighContrast = document.getElementById("settingHighContrast");
       const settingReducedTransparency = document.getElementById("settingReducedTransparency");
       const settingsControlIds=["settingEnterSend","settingDensity","settingEffort","settingResponseLength","settingGlass","settingMotion","settingFontScale","settingHighContrast","settingReducedTransparency"];
+      const profileControlIds=["settingDisplayName","settingUserPronouns","settingUserRole","settingCommunicationStyle","settingOutputStyle","settingCompanionName","settingCompanionTitle","settingCompanionForm","settingCompanionPronouns","settingCompanionWarmth","settingCompanionDirectness","settingCompanionHumor","settingCompanionLoreDensity"];
       const applySettingsPreview = () => {
         settingsState.general.enterToSend=!!settingEnterSend.checked;
         settingsState.model.effort=settingEffort.value;
@@ -677,8 +782,22 @@
         document.documentElement.style.setProperty("--font-scale",settingsState.ui.fontScale);
       };
       const populateSettingsControls = () => {
-        const prefs=accountProfile?.preferences||{}, model=accountProfile?.model_preferences||{}, ui=accountProfile?.ui_preferences||{};
+        const prefs=accountProfile?.preferences||{}, model=accountProfile?.model_preferences||{}, ui=accountProfile?.ui_preferences||{}, companion=accountProfile?.companion_profile||{};
         const general=prefs.general&&typeof prefs.general==="object"?prefs.general:{};
+        const userProfile=prefs.profile&&typeof prefs.profile==="object"?prefs.profile:{};
+        settingDisplayName.value=accountProfile?.display_name||chatAccountUser?.displayName||"";
+        settingUserPronouns.value=String(userProfile.pronouns||"");
+        settingUserRole.value=String(userProfile.role||"");
+        settingCommunicationStyle.value=["adaptive","direct","collaborative","technical","playful"].includes(userProfile.communicationStyle)?userProfile.communicationStyle:"adaptive";
+        settingOutputStyle.value=["adaptive","compact","structured","deep"].includes(userProfile.outputStyle)?userProfile.outputStyle:"adaptive";
+        settingCompanionName.value=String(companion.name||"§wyrlz");
+        settingCompanionTitle.value=String(companion.title||"Glitch Dragon Kompanion");
+        settingCompanionForm.value=String(companion.form||"Glitch Dragon");
+        settingCompanionPronouns.value=String(companion.pronouns||"");
+        settingCompanionWarmth.value=["adaptive","low","medium","high"].includes(companion.warmth)?companion.warmth:"adaptive";
+        settingCompanionDirectness.value=["adaptive","gentle","direct","very-direct"].includes(companion.directness)?companion.directness:"adaptive";
+        settingCompanionHumor.value=["adaptive","low","medium","high"].includes(companion.humor)?companion.humor:"adaptive";
+        settingCompanionLoreDensity.value=["adaptive","minimal","balanced","mythic"].includes(companion.loreDensity)?companion.loreDensity:"adaptive";
         settingEnterSend.checked=general.enterToSend!==false;
         settingDensity.value=["compact","comfortable"].includes(ui.density)?ui.density:"compact";
         settingEffort.value=["auto","fast","deep"].includes(model.effort)?model.effort:"auto";
@@ -693,6 +812,8 @@
       const refreshSettingsDurability = () => {
         settingsPrivacyAccount.textContent=chatAccountUser?(chatAccountUser.displayName||chatAccountUser.email||"Signed in"):"Not signed in";
         settingsPrivacyDurability.textContent=accountProfileDurable?"Durable account profile":"Session preview only";
+        settingsLoreDurability.textContent=accountProfileDurable?"Account-owned Redis records":"Unavailable without durable account";
+        loreNewButton.disabled=!accountProfileDurable;
         settingsSave.disabled=!chatAccountUser||!accountProfileDurable;
         settingsSaveState.textContent=accountProfileDurable?(settingsDirty?"Unsaved profile changes.":"Saved profile values loaded; previews remain local until Save."):"Previewing locally. Durable account storage is required to save.";
       };
@@ -706,30 +827,142 @@
       const activateSettingsPane = section => {
         document.querySelectorAll(".settings-nav-button").forEach(button=>button.classList.toggle("active",button.dataset.settingsSection===section));
         document.querySelectorAll(".settings-pane").forEach(pane=>pane.classList.toggle("active",pane.dataset.settingsPane===section));
+        if(section==="lore")loadLoreRecords();
         uiCamera("settings-section",{section});
       };
       document.querySelectorAll(".settings-nav-button").forEach(button=>button.addEventListener("click",()=>activateSettingsPane(button.dataset.settingsSection)));
       settingsControlIds.forEach(id=>document.getElementById(id).addEventListener("change",()=>{
         settingsDirty=true;applySettingsPreview();refreshSettingsDurability();uiCamera("settings-preview",{control:id});
       }));
+      profileControlIds.forEach(id=>document.getElementById(id).addEventListener("change",()=>{
+        settingsDirty=true;refreshSettingsDurability();uiCamera("profile-preview",{control:id});
+      }));
       settingsClose.addEventListener("click",()=>setSettingsOpen(false));
       settingsShade.addEventListener("click",()=>setSettingsOpen(false));
       window.addEventListener("swrlz-open-settings",()=>setSettingsOpen(true));
       window.addEventListener("keydown",event=>{if(event.key==="Escape"&&document.body.classList.contains("settings-open"))setSettingsOpen(false);});
+
+      const loreTypeLabel=value=>({
+        USER_FACT:"User Fact",USER_LORE:"User Lore",COMPANION_SELF_LORE:"§wyrlz Self Lore",SHARED_LORE:"Shared Lore"
+      }[value]||String(value||"Lore"));
+      const closeLoreEditor=()=>{
+        loreEditorId=null;loreEditor.hidden=true;loreDeleteButton.hidden=true;loreTitle.value="";loreContent.value="";loreType.value="USER_FACT";loreScope.value="GLOBAL";loreActive.checked=true;loreScopeStatus.textContent="Global record";loreOrigin.textContent="New manual record · authored by USER · confidence 100%";
+      };
+      const syncLoreScopeStatus=()=>{
+        if(loreScope.value==="THREAD"){
+          loreScopeStatus.textContent=activeThreadId&&!draftThread?("Thread "+activeThreadId):"No saved thread is active";
+        }else if(loreScope.value==="PROJECT"){
+          loreScopeStatus.textContent="No project scope is attached to this Chat surface";
+        }else loreScopeStatus.textContent="Global record";
+      };
+      const renderLoreRecords=()=>{
+        loreList.innerHTML="";
+        const filter=loreFilter.value;
+        const visible=loreRecords.filter(record=>filter==="ALL"||record.type===filter);
+        if(!accountProfileDurable){
+          const empty=document.createElement("div");empty.className="lore-empty";empty.textContent="Durable account storage is required for Lore & Memory.";loreList.appendChild(empty);return;
+        }
+        if(!visible.length){
+          const empty=document.createElement("div");empty.className="lore-empty";empty.textContent=loreRecords.length?"No records in this category.":"No lore records yet. Nothing is inferred or saved automatically.";loreList.appendChild(empty);return;
+        }
+        for(const record of visible){
+          const card=document.createElement("article");card.className="lore-card"+(record.active===false?" inactive":"");
+          const head=document.createElement("div");head.className="lore-card-head";
+          const title=document.createElement("div");title.className="lore-card-title";title.textContent=record.title||"Untitled";
+          const type=document.createElement("span");type.className="lore-type";type.textContent=loreTypeLabel(record.type);
+          head.append(title,type);
+          const body=document.createElement("div");body.className="lore-card-content";body.textContent=record.content||"";
+          const meta=document.createElement("div");meta.className="lore-meta";
+          const confidence=Math.round(Math.max(0,Math.min(1,Number(record.confidence??1)))*100);
+          [String(record.scope||"GLOBAL"),String(record.source||"unknown"),"by "+String(record.authoredBy||"unknown"),"confidence "+confidence+"%","v"+String(record.version||1),record.active===false?"paused":"active"].forEach(value=>{const span=document.createElement("span");span.textContent=value;meta.appendChild(span);});
+          const actions=document.createElement("div");actions.className="lore-card-actions";
+          const edit=document.createElement("button");edit.type="button";edit.className="lore-action";edit.textContent=record.editable===false?"Inspect":"Edit";edit.onclick=()=>openLoreEditor(record);actions.appendChild(edit);
+          card.append(head,body,meta,actions);loreList.appendChild(card);
+        }
+      };
+      const openLoreEditor=record=>{
+        loreEditorId=record?.id||null;loreEditor.hidden=false;loreEditorTitle.textContent=record?(record.editable===false?"Inspect lore record":"Edit lore record"):"New lore record";
+        loreType.value=record?.type||"USER_FACT";loreScope.value=["GLOBAL","THREAD","PROJECT"].includes(record?.scope)?record.scope:"GLOBAL";loreTitle.value=record?.title||"";loreContent.value=record?.content||"";loreActive.checked=record?.active!==false;
+        const readOnly=record?.editable===false;loreType.disabled=readOnly;loreScope.disabled=readOnly;loreTitle.disabled=readOnly;loreContent.disabled=readOnly;loreActive.disabled=readOnly;loreSaveButton.hidden=readOnly;
+        loreDeleteButton.hidden=!record;
+        const confidence=Math.round(Math.max(0,Math.min(1,Number(record?.confidence??1)))*100);
+        loreOrigin.textContent=record?("Source "+String(record.source||"unknown")+" · authored by "+String(record.authoredBy||"unknown")+" · confidence "+confidence+"% · version "+String(record.version||1)):"New manual record · authored by USER · confidence 100%";
+        syncLoreScopeStatus();loreEditor.scrollIntoView({block:"nearest",behavior:settingsState.ui.motion==="off"?"auto":"smooth"});
+      };
+      const loadLoreRecords=async(force=false)=>{
+        if(!accountProfileDurable||!chatAccountUser){loreRecords=[];loreLoadedForUser="";loreStatus.textContent="Sign in with durable account storage to load Lore & Memory.";renderLoreRecords();return false;}
+        const userKey=String(chatAccountUser.id||"");
+        if(!force&&loreLoadedForUser===userKey){renderLoreRecords();return true;}
+        loreStatus.textContent="Loading account-owned lore…";
+        try{
+          const response=await accountFetch("/api/account/lore?limit=300",{method:"GET"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!Array.isArray(data.records))throw new Error(data?.detail||("Lore load failed ("+response.status+")"));
+          loreRecords=data.records;loreLoadedForUser=userKey;loreStatus.textContent=loreRecords.length?(loreRecords.length+" durable record"+(loreRecords.length===1?"":"s")+" loaded."):"No durable lore records yet.";renderLoreRecords();uiCamera("lore-load",{count:loreRecords.length});return true;
+        }catch(error){
+          loreRecords=[];loreLoadedForUser="";loreStatus.textContent="Lore & Memory could not be loaded from the account authority.";renderLoreRecords();uiCamera("lore-load-failed",{errorType:String(error?.name||"Error")});return false;
+        }
+      };
+      loreFilter.addEventListener("change",renderLoreRecords);
+      loreScope.addEventListener("change",syncLoreScopeStatus);
+      loreNewButton.addEventListener("click",()=>{if(accountProfileDurable)openLoreEditor(null);});
+      loreCancelButton.addEventListener("click",closeLoreEditor);
+      loreSaveButton.addEventListener("click",async()=>{
+        if(!accountProfileDurable||!chatAccountUser)return;
+        const existing=loreEditorId?loreRecords.find(record=>record.id===loreEditorId):null;
+        const scope=loreScope.value;
+        const scopeId=scope==="THREAD"?(activeThreadId&&!draftThread?activeThreadId:""):null;
+        if(scope!=="GLOBAL"&&!scopeId){loreStatus.textContent="Choose Global scope or open a saved thread before saving.";syncLoreScopeStatus();return;}
+        const title=loreTitle.value.trim(),bodyText=loreContent.value.trim();
+        if(!title||!bodyText){loreStatus.textContent="Title and content are required.";return;}
+        loreSaveButton.disabled=true;loreStatus.textContent=existing?"Saving lore update…":"Creating lore record…";
+        try{
+          const path=existing?("/api/account/lore/"+encodeURIComponent(existing.id)):"/api/account/lore";
+          const method=existing?"PUT":"POST";
+          const payload={title,content:bodyText,type:loreType.value,scope,scopeId,active:!!loreActive.checked};
+          if(existing)payload.version=Number(existing.version||1);
+          const response=await accountFetch(path,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!data.record)throw new Error(data?.detail||("Lore save failed ("+response.status+")"));
+          if(existing)loreRecords=loreRecords.map(record=>record.id===data.record.id?data.record:record);else loreRecords=[data.record,...loreRecords];
+          loreLoadedForUser=String(chatAccountUser.id||"");closeLoreEditor();renderLoreRecords();loreStatus.textContent="Lore record saved.";uiCamera("lore-save",{operation:existing?"update":"create",id:data.record.id,type:data.record.type,scope:data.record.scope,version:Number(data.record.version||1)});
+        }catch(error){loreStatus.textContent="Lore save failed. No success was assumed.";uiCamera("lore-save-failed",{operation:existing?"update":"create",errorType:String(error?.name||"Error")});}
+        finally{loreSaveButton.disabled=false;}
+      });
+      loreDeleteButton.addEventListener("click",async()=>{
+        const existing=loreEditorId?loreRecords.find(record=>record.id===loreEditorId):null;
+        if(!existing||!accountProfileDurable)return;
+        if(!confirm('Delete "'+(existing.title||"this lore record")+'"?'))return;
+        loreDeleteButton.disabled=true;loreStatus.textContent="Deleting lore record…";
+        try{
+          const response=await accountFetch("/api/account/lore/"+encodeURIComponent(existing.id)+"?version="+encodeURIComponent(String(existing.version||1)),{method:"DELETE"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||data.deleted!==true)throw new Error(data?.detail||("Lore delete failed ("+response.status+")"));
+          loreRecords=loreRecords.filter(record=>record.id!==existing.id);closeLoreEditor();renderLoreRecords();loreStatus.textContent="Lore record deleted.";uiCamera("lore-delete",{id:existing.id,type:existing.type,scope:existing.scope});
+        }catch(error){loreStatus.textContent="Lore delete failed. The record remains until the authority confirms deletion.";uiCamera("lore-delete-failed",{id:existing.id,errorType:String(error?.name||"Error")});}
+        finally{loreDeleteButton.disabled=false;}
+      });
+
       settingsSave.addEventListener("click",async()=>{
         if(!chatAccountUser||!accountProfileDurable||!accountProfile){refreshSettingsDurability();return;}
         settingsSave.disabled=true;settingsSaveState.textContent="Saving…";
         const existingPrefs=accountProfile.preferences&&typeof accountProfile.preferences==="object"?accountProfile.preferences:{};
         const existingModel=accountProfile.model_preferences&&typeof accountProfile.model_preferences==="object"?accountProfile.model_preferences:{};
         const existingUi=accountProfile.ui_preferences&&typeof accountProfile.ui_preferences==="object"?accountProfile.ui_preferences:{};
-        const preferences={...existingPrefs,general:{...(existingPrefs.general&&typeof existingPrefs.general==="object"?existingPrefs.general:{}),enterToSend:settingsState.general.enterToSend}};
+        const existingCompanion=accountProfile.companion_profile&&typeof accountProfile.companion_profile==="object"?accountProfile.companion_profile:{};
+        settingsState.user={displayName:settingDisplayName.value.trim(),pronouns:settingUserPronouns.value.trim(),role:settingUserRole.value.trim(),communicationStyle:settingCommunicationStyle.value,outputStyle:settingOutputStyle.value};
+        settingsState.companion={name:settingCompanionName.value.trim()||"§wyrlz",title:settingCompanionTitle.value.trim()||"Glitch Dragon Kompanion",form:settingCompanionForm.value.trim()||"Glitch Dragon",pronouns:settingCompanionPronouns.value.trim(),warmth:settingCompanionWarmth.value,directness:settingCompanionDirectness.value,humor:settingCompanionHumor.value,loreDensity:settingCompanionLoreDensity.value};
+        const preferences={...existingPrefs,general:{...(existingPrefs.general&&typeof existingPrefs.general==="object"?existingPrefs.general:{}),enterToSend:settingsState.general.enterToSend},profile:{...(existingPrefs.profile&&typeof existingPrefs.profile==="object"?existingPrefs.profile:{}),pronouns:settingsState.user.pronouns,role:settingsState.user.role,communicationStyle:settingsState.user.communicationStyle,outputStyle:settingsState.user.outputStyle}};
         const modelPreferences={...existingModel,effort:settingsState.model.effort,responseLength:settingsState.model.responseLength};
         const uiPreferences={...existingUi,density:settingsState.ui.density,glass:settingsState.ui.glass,motion:settingsState.ui.motion,fontScale:settingsState.ui.fontScale,highContrast:settingsState.ui.highContrast,reducedTransparency:settingsState.ui.reducedTransparency};
+        const companionProfile={...existingCompanion,...settingsState.companion};
         try{
-          const response=await accountFetch("/api/account/profile",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({preferences,modelPreferences,uiPreferences,version:Number(accountProfile.version||0)})});
+          const response=await accountFetch("/api/account/profile",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({displayName:settingsState.user.displayName||accountProfile.display_name||null,preferences,modelPreferences,uiPreferences,companionProfile,version:Number(accountProfile.version||0)})});
           const data=await response.json().catch(()=>({}));
           if(!response.ok||!data?.profile)throw new Error(data?.detail||("Profile save failed ("+response.status+")"));
-          accountProfile=data.profile;accountProfileDurable=true;settingsDirty=false;populateSettingsControls();refreshSettingsDurability();uiCamera("settings-save-success",{profileVersion:Number(accountProfile.version||0)});
+          accountProfile=data.profile;accountProfileDurable=true;settingsDirty=false;
+          if(chatAccountUser&&accountProfile.display_name)chatAccountUser={...chatAccountUser,displayName:accountProfile.display_name};
+          populateSettingsControls();refreshSettingsDurability();uiCamera("settings-save-success",{profileVersion:Number(accountProfile.version||0)});
         }catch(error){
           settingsSaveState.textContent="Save failed. Your local preview is still active.";
           uiCamera("settings-save-failed",{errorType:String(error?.name||"Error")});
@@ -754,7 +987,7 @@
         try {
           const response = await fetch(url,{...init,credentials:"include",cache:"no-store"});
           const contentType=response.headers.get("content-type")||"";
-          const redactAccountBody=["/api/account/me","/api/account/google","/api/account/profile"].includes(path);
+          const redactAccountBody=["/api/account/me","/api/account/google","/api/account/profile"].includes(path)||path.startsWith("/api/account/lore");
           const preview=redactAccountBody?"[redacted account payload]":await response.clone().text().then(t=>t.slice(0,180)).catch(()=>"");
           accountTrace("response",{path,status:response.status,ok:response.ok,contentType,preview,durationMs:Math.round(performance.now()-started)});
           return response;
@@ -764,10 +997,12 @@
         }
       };
       const showUser = (user,profile=null,durable=false) => {
+        const priorUserId=accountUser?.id||"";
         accountUser = user || null;
         chatAccountUser = accountUser;
         accountProfile=profile&&typeof profile==="object"?profile:null;
         accountProfileDurable=!!accountUser&&!!durable&&Number(accountProfile?.version||0)>0;
+        if(priorUserId!==(accountUser?.id||"")){loreRecords=[];loreLoadedForUser="";closeLoreEditor();renderLoreRecords();}
         populateSettingsControls();
         refreshSettingsDurability();
         if(!draftThread)renderConversation(currentThread());
