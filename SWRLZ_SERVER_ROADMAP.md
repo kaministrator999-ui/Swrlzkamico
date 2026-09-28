@@ -1,3 +1,17 @@
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier D approval protocol
+
+- **Requested outcome:** implement approved Tier D from the Glitch Dragon Chat research authority: durable setting/profile proposal schema; real Proposal Inbox data; approve/edit/decline; audit/history; and per-category save policy.
+- **Sovereignty boundary:** AI-originated state may propose but never bypass the configured policy. Manual user profile/lore editing from Tier C remains direct user action; Tier D governs AI-originated durable changes only.
+- **Proposal authority plan:** add account-owned `ProposalRecord` + append-only `ProposalAuditRecord` under the existing Redis REST authority. Proposal payloads are private/sensitive and must use payload-redacted Redis diagnostics.
+- **Target plan:** bounded proposal operations for user-profile patch, companion-profile patch, lore create/update/delete. Target application reuses the existing versioned profile/lore authorities; no generic arbitrary JSON mutation route is allowed.
+- **Resolution plan:** pending proposals may be edited, approved, or declined. Approval applies the bounded target mutation using optimistic target versions, records before/after snapshots for inspectability/reversal, and then transitions the proposal terminally. Applied proposals gain an explicit user-triggered revert path.
+- **Policy plan:** per-category durable preferences use `ASK`, `AUTO_LOW_RISK`, `SESSION_ONLY`, or `NEVER`. Default is `ASK`. `AUTO_LOW_RISK` may act only when a trusted server-side proposal marks risk LOW and the bounded operation is auto-save eligible; SESSION_ONLY/NEVER never create a durable mutation.
+- **Creation boundary:** the browser Proposal Inbox is not allowed to forge AI proposals. Tier D will expose list/resolution policy surfaces to the authenticated user and a server-side proposal submission helper for future LALM/tool integration; no public browser route may claim assistant authorship.
+- **Baseline:** Clean-room Chat `1.0.50`; Server Runtime `2.3.304`; Repository Work `1.0.24`; Runtime Manifest `152`; legacy Web Chat `1.5.86`.
+- **Version plan:** Clean-room Chat **1.0.51**; Server Runtime **2.3.305**; Repository Work **1.0.25** after concurrency re-read. Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged unless evidence proves otherwise.
+- **Deployment expectation:** NONE. Approval authorizes Tier D source/schema/UI/version/roadmap work only. It does not authorize deployment, workflow dispatch, Vercel action, production promotion, live Redis/profile/lore/proposal mutation, or Tier E rapport.
+- **Status:** IN PROGRESS.
+
 ### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier C profile + lore UI
 
 - **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier C is integrated across the clean-room Chat UI and the existing account-owned durable state boundary. No competing browser storage or parallel identity authority was introduced.
