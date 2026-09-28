@@ -1,3 +1,24 @@
+### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier F companion animation state machine
+
+- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier F binds companion presentation to existing Chat/Station truth without creating a parallel runtime state authority.
+- **States:** implemented `idle`, `listen`, `accepted`, `thinking`, `acting`, `responding`, `approval`, and `error`.
+- **State authority:** one `data-companion-state` value is mirrored on `body` and the compact top edge. A visible/accessibility `companionStateLabel` exposes the current state in text; animation is never the sole carrier of meaning.
+- **Input mapping:** prompt focus/input maps to `listen` only when no uncommitted Station generation is active. Empty/unfocused composer with no active generation resolves to `idle`.
+- **Send mapping:** local send start and successful 202 queue acknowledgement map to `accepted`.
+- **Generation mapping:** active generation with no visible text maps conservatively to `thinking`; explicit phase names containing ACTION / TOOL / ACTING / EXECUT / SEARCH / FETCH or proposal auto-apply map to `acting`; once visible response text exists, state maps to `responding`.
+- **Approval mapping:** explicit approval/proposal-wait phases, including `PROPOSAL_QUEUED`, map to `approval`. Natural-language response text is never inspected to infer approval/action state.
+- **Error mapping:** terminal/runtime/client transport failures map to `error`; completed/cancelled terminal state resolves back toward idle/composer state.
+- **Visual behavior:** top dragon mark + assistant avatar use restrained CSS-only breathing/listening/acceptance/thinking/action/responding/approval/error motion. Ready-dot and state-chip colors also encode the state.
+- **Reduced motion:** explicit Reduced, explicit Off, and system `prefers-reduced-motion` disable companion icon loops, the existing busy-dot loop, and state-chip transitions while preserving static border/color/text state. Full mode may intentionally override system reduction only when explicitly selected.
+- **Performance:** no canvas, WebGL, particle engine, new requestAnimationFrame loop, image-loop decoder, or decorative network call was added. Existing Station/chat-state transport call-site counts remain unchanged.
+- **Truth boundary:** unknown active runtime phases fall back to `thinking` before output and `responding` after output; Tier F does not fabricate tool/action semantics from prose.
+- **Versioning:** Clean-room Chat **1.0.53 → 1.0.54**; Repository Work **1.0.27 → 1.0.28**. Server Runtime remains **2.3.307** because no server/runtime behavior changed. Runtime Manifest remains **152**; legacy Web Chat remains **1.5.86**.
+- **Final source blobs before Roadmap close:** Chat `5781bb90f4c80f167d0df16c6a158a4d13673338`; reconstruction `34c6b414a58c11ffa12641efc31b189eae71d020`.
+- **Primary receipts:** Roadmap start `323095fcff5c605be6b4aa0de89351fe51bd2663`; Tier F implementation `ba1d5ba8e77b3f1cdc42e4a627d90ec13869d705`; reduced-motion completion `af8b14016498f54bc16e320b1fcd91489e8518a9`; reconstruction `231071d939b4ca9aab32446b8ff53ec746770519`; Chat version `65037437a9f6e16f11fd3c4ac7ce38a9dea608e7`; Repository Work authority `0865134f34e06cd2a851e6f24974b793e840f8c5`.
+- **Static verification:** browser inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; all eight state names present; visible state chip present; body/top-edge state authority present; reduced/off/system motion suppression present; no canvas added; Tier G work surface marker absent.
+- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live runtime activation, or performance benchmark run occurred.
+- **Next research checkpoint:** Tier G — tool/action cards, side work surface, approval cards, source/evidence expansion. Tier G must consume existing tool/action/proposal/source truth and must not fabricate tool activity.
+
 ### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier F companion animation state machine
 
 - **Requested outcome:** implement approved Tier F from the Glitch Dragon Chat research authority: companion presentation states idle, listen, accepted, thinking, acting, responding, approval, error, with reduced-motion equivalents.
