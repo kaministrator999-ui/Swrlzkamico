@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.47">
+  <meta name="swrlz-chat-version" content="1.0.48">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
-    :root{--bg:#010812;--text:#eef8ff;--secondary:#c2d4e5;--muted:#91a9c0;--line:rgba(145,169,192,.2);--cyan:#38e8ff;--blue:#4f8cff}
+    :root{--bg:#010812;--bg-deep:#00050d;--panel:rgba(5,22,38,.78);--panel-strong:rgba(4,17,31,.94);--panel-soft:rgba(11,37,58,.58);--text:#eef8ff;--secondary:#c2d4e5;--muted:#91a9c0;--line:rgba(145,169,192,.20);--line-bright:rgba(126,214,255,.42);--cyan:#38e8ff;--ice:#8feaff;--blue:#4f8cff;--violet:#a578ff;--magenta:#eb68ff;--amber:#ffc969;--danger:#ff6b7a;--success:#68f4cf;--shadow:0 18px 48px rgba(0,0,0,.36);--font-ui:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--font-telemetry:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;--conversation-width:740px}
     *{box-sizing:border-box}
     html,body{width:100%;height:100%;margin:0;background:#010812}
     body{
@@ -76,11 +76,53 @@
     .composer-tools{position:absolute;right:6px;bottom:6px;display:flex;align-items:center;padding:0}
     .send-button{display:inline-grid;place-items:center;width:28px;height:28px;border:0;border-radius:50%;cursor:pointer;color:#dffaff;background:linear-gradient(145deg,#7de5ff,#58a8ff);box-shadow:0 6px 16px rgba(56,168,255,.24)}
     .send-button svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+    /* Glitch Dragon Chat — Tier A visual foundation. One canonical page/style owner. */
+    body::before{content:"";position:fixed;z-index:0;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,5,13,.18),rgba(0,5,13,.38) 42%,rgba(0,5,13,.68)),radial-gradient(circle at 74% 16%,rgba(56,232,255,.12),transparent 28%),radial-gradient(circle at 16% 78%,rgba(165,120,255,.08),transparent 30%)}
+    body::after{content:"";position:fixed;z-index:1;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(115deg,transparent 0 48%,rgba(56,232,255,.10) 49%,transparent 50% 100%),linear-gradient(25deg,transparent 0 72%,rgba(165,120,255,.08) 73%,transparent 74% 100%);background-size:180px 140px,240px 180px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.75),transparent 66%)}
+    button,textarea{font-family:var(--font-ui)}
+    button:focus-visible,textarea:focus-visible{outline:2px solid rgba(56,232,255,.78);outline-offset:2px}
+    .top-edge{position:fixed;z-index:3;top:8px;left:8px;right:8px;height:42px;display:grid;grid-template-columns:minmax(92px,auto) minmax(0,1fr) auto;align-items:center;gap:10px;padding:0 10px 0 50px;border:1px solid rgba(126,214,255,.20);border-radius:14px;background:linear-gradient(120deg,rgba(3,16,29,.86),rgba(7,29,47,.66) 56%,rgba(12,26,48,.74));box-shadow:0 10px 30px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(16px) saturate(125%);-webkit-backdrop-filter:blur(16px) saturate(125%);overflow:hidden}
+    .top-edge::after{content:"";position:absolute;left:50px;right:10px;bottom:0;height:1px;background:linear-gradient(90deg,rgba(56,232,255,.48),rgba(165,120,255,.16),transparent 82%);pointer-events:none}
+    .top-brand{display:flex;align-items:center;gap:7px;min-width:0}.top-brand-mark{width:24px;height:24px;border-radius:7px;object-fit:cover;border:1px solid rgba(126,214,255,.34);box-shadow:0 0 16px rgba(56,232,255,.11)}.top-brand-name{font-size:12px;font-weight:800;letter-spacing:.08em;color:#e6fbff;white-space:nowrap}
+    .top-thread{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;color:#cfe3ee;font-size:12px;font-weight:650;letter-spacing:.01em}
+    .top-status{display:flex;align-items:center;gap:6px;min-width:0;font-family:var(--font-telemetry);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#9dbacb}.top-model{padding:4px 6px;border:1px solid rgba(165,120,255,.24);border-radius:7px;background:rgba(88,59,132,.15);color:#d8c7ff}.ready-dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 9px rgba(104,244,207,.48)}.top-edge[data-state="busy"] .ready-dot{background:var(--cyan);box-shadow:0 0 10px rgba(56,232,255,.62);animation:swrlzSignal 2.4s ease-in-out infinite}.top-edge[data-state="error"] .ready-dot{background:var(--danger);box-shadow:0 0 10px rgba(255,107,122,.48)}
+    @keyframes swrlzSignal{0%,100%{opacity:.56;transform:scale(.9)}50%{opacity:1;transform:scale(1.2)}}
+    .menu-shade{background:rgba(0,8,18,.72);backdrop-filter:blur(3px)}
+    .side-menu{width:min(88vw,354px);padding:62px 14px 14px;background:linear-gradient(155deg,rgba(3,19,34,.985),rgba(5,25,43,.975) 62%,rgba(14,18,42,.98));border-right:1px solid rgba(126,214,255,.28);box-shadow:24px 0 68px rgba(0,0,0,.46),inset -1px 0 0 rgba(165,120,255,.08)}
+    .side-menu::before{content:"";position:absolute;top:0;right:0;width:1px;height:42%;background:linear-gradient(180deg,rgba(56,232,255,.68),rgba(165,120,255,.18),transparent)}
+    .side-brand{padding:0 2px 13px;margin-bottom:13px}.side-brand-name{font-family:var(--font-ui);font-size:15px;letter-spacing:.075em}.side-brand .kompanion-icon{border-radius:12px;box-shadow:0 8px 26px rgba(0,0,0,.28),0 0 18px rgba(56,232,255,.08)}
+    .settings-gear,.new-thread-button,.account-action,.thread-selection-bar button{transition:border-color .16s ease,background .16s ease,transform .16s ease}.settings-gear:hover,.new-thread-button:hover,.account-action:hover,.thread-selection-bar button:hover{border-color:rgba(56,232,255,.48);background:rgba(24,63,88,.72)}.settings-gear:active,.new-thread-button:active,.account-action:active{transform:translateY(1px)}
+    .account-card,.version-box{border-color:rgba(126,214,255,.20);background:linear-gradient(145deg,rgba(2,15,29,.82),rgba(8,28,45,.60));box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+    .thread-panel-title,.version-title{font-family:var(--font-telemetry);font-size:10px;letter-spacing:.16em;color:#9acfe0}
+    .thread-row{border-color:rgba(126,214,255,.13);background:rgba(6,25,42,.55);transition:border-color .15s ease,background .15s ease,transform .15s ease}.thread-row:hover{border-color:rgba(126,214,255,.30);background:rgba(10,38,59,.72)}.thread-row.active{border-color:rgba(56,232,255,.40);background:linear-gradient(100deg,rgba(17,58,80,.78),rgba(47,39,79,.34))}.thread-row.selected{border-color:rgba(165,120,255,.58);box-shadow:inset 3px 0 0 rgba(165,120,255,.52)}
+    .thread-meta{font-family:var(--font-telemetry);font-size:9px;letter-spacing:.04em}.thread-popup{border-color:rgba(126,214,255,.24);background:rgba(3,17,30,.975)}
+    .menu-button{top:11px;left:11px;width:36px;height:36px;border-color:rgba(126,214,255,.32);border-radius:11px;background:linear-gradient(145deg,rgba(12,42,63,.96),rgba(5,21,37,.96));box-shadow:0 8px 22px rgba(0,0,0,.32),0 0 0 1px rgba(165,120,255,.045);backdrop-filter:blur(14px) saturate(120%)}.menu-button:hover{border-color:rgba(56,232,255,.58)}
+    .chat-viewport{inset:0 0 70px;padding:64px 14px 28px;scroll-padding-top:66px;scrollbar-color:rgba(126,214,255,.24) transparent}.message-list{width:min(var(--conversation-width),100%);gap:20px;padding-top:8px}
+    .assistant-message{position:relative}.assistant-head{border-color:rgba(126,214,255,.16)!important;background:linear-gradient(110deg,rgba(4,21,36,.64),rgba(21,28,54,.38))!important}.assistant-head .kompanion-icon{border-color:rgba(56,232,255,.32);box-shadow:0 0 16px rgba(56,232,255,.10)}.assistant-name{font-family:var(--font-ui)!important;font-weight:760!important;letter-spacing:.035em!important}.assistant-body{border-color:rgba(126,214,255,.18)!important;border-radius:6px 16px 16px 16px!important;background:linear-gradient(135deg,rgba(4,22,38,.72),rgba(9,29,47,.54))!important;box-shadow:0 8px 24px rgba(0,0,0,.16),inset 2px 0 0 rgba(56,232,255,.12)!important;backdrop-filter:blur(14px) saturate(118%)!important}.station-progress{font-family:var(--font-telemetry);color:#8ddff3!important}
+    .user-bubble{border-color:rgba(126,214,255,.22);border-radius:15px 5px 15px 15px;background:linear-gradient(135deg,rgba(18,61,84,.86),rgba(25,48,79,.82));box-shadow:0 8px 22px rgba(0,0,0,.18),inset -2px 0 0 rgba(165,120,255,.10)}.user-meta{font-family:var(--font-telemetry);font-size:9px;letter-spacing:.045em;color:#bceeff;background:rgba(3,19,33,.56)}
+    .assistant-actions{opacity:.72;transition:opacity .15s ease}.assistant-message:hover .assistant-actions,.assistant-actions:focus-within{opacity:1}.copy-response{font-family:var(--font-telemetry);font-size:9px;letter-spacing:.07em;text-transform:uppercase;border:1px solid transparent;padding:5px 7px}.copy-response:hover,.copy-response:focus-visible{border-color:rgba(126,214,255,.20);background:rgba(7,31,49,.72)}
+    .composer-shell{padding:11px 12px 8px}.composer-shell::before{background:linear-gradient(180deg,rgba(146,211,255,.11),rgba(35,80,119,.13) 38%,rgba(2,13,26,.70));backdrop-filter:blur(16px) saturate(120%);-webkit-backdrop-filter:blur(16px) saturate(120%)}.composer-shell::after{background:linear-gradient(180deg,rgba(203,237,255,.12),rgba(165,120,255,.035) 42%,transparent 68%)}.composer{width:min(620px,100%)}.composer-box{border-color:rgba(126,214,255,.28);background:linear-gradient(145deg,rgba(8,30,48,.94),rgba(5,18,33,.96));box-shadow:0 10px 28px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.055)}.composer-box:focus-within{border-color:rgba(56,232,255,.56);box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 2px rgba(56,232,255,.055),inset 0 1px 0 rgba(255,255,255,.065)}.composer-collapse{border-color:rgba(126,214,255,.26);background:rgba(5,24,41,.78);color:#a9e9f7}.send-button{background:linear-gradient(145deg,#80e8ff,#5a9dff 58%,#8c79ff);box-shadow:0 6px 16px rgba(56,168,255,.20);transition:transform .14s ease,filter .14s ease,opacity .14s ease}.send-button:hover{filter:brightness(1.08);transform:translateY(-1px)}.send-button:active{transform:translateY(0)}.send-button:disabled{opacity:.42;cursor:default;filter:saturate(.45);transform:none}
+    @media(max-width:600px){.top-edge{grid-template-columns:34px minmax(0,1fr) auto;padding-left:48px;gap:7px;height:40px}.top-brand-name{display:none}.top-brand-mark{width:23px;height:23px}.top-thread{font-size:11px;text-align:left}.top-status{gap:5px}.top-ready-label{display:none}.top-model{padding:3px 5px}.chat-viewport{padding-top:60px}.message-list{gap:17px}.assistant-body{margin-left:34px!important;padding:9px 11px!important}.station-progress{margin-left:34px!important}.assistant-actions{margin-left:34px}.user-message{max-width:91%}.composer{width:100%}}
+    @media(prefers-reduced-motion:reduce){.menu-shade,.side-menu,.version-chevron,.thread-row,.settings-gear,.new-thread-button,.account-action,.composer-shell,.composer-collapse svg,.send-button,.assistant-actions{transition:none!important}.top-edge[data-state="busy"] .ready-dot{animation:none!important}.send-button:hover{transform:none}.thread-row:hover{transform:none}}
+
     @media(min-width:601px){.composer-shell{padding:12px 14px 10px}.composer-box{min-height:44px;border-radius:22px}#prompt{height:42px;max-height:calc(50dvh - 2px);padding-top:11px;padding-bottom:11px;font-size:14px;line-height:20px}.composer-tools{bottom:7px}.send-button{width:30px;height:30px}.send-button svg{width:14px;height:14px}}
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
+  <header class="top-edge" id="topEdge" data-component="top-edge" data-state="ready" aria-label="Chat status">
+    <div class="top-brand" aria-label="§wyrlz">
+      <img class="top-brand-mark" src="/chat/§wyrlz/assets/kompanion.png" alt="">
+      <span class="top-brand-name">§wyrlz</span>
+    </div>
+    <div class="top-thread" id="topThreadTitle" title="New conversation">New conversation</div>
+    <div class="top-status">
+      <span class="top-model">LALM</span>
+      <span class="ready-dot" aria-hidden="true"></span>
+      <span class="top-ready-label" id="topReadyLabel">ready</span>
+    </div>
+  </header>
   <div class="menu-shade" id="menuShade" aria-hidden="true"></div>
   <aside class="side-menu" id="sideMenu" aria-label="Side menu" aria-hidden="true">
     <div class="side-brand">
@@ -156,6 +198,18 @@
       const newThreadButton = document.getElementById("newThreadButton");
       const messageList = document.getElementById("messageList");
       const assistantTemplate = document.getElementById("assistantTemplate");
+      const topEdge = document.getElementById("topEdge");
+      const topThreadTitle = document.getElementById("topThreadTitle");
+      const topReadyLabel = document.getElementById("topReadyLabel");
+      const SWRLZ_CHAT_VERSION = "1.0.48";
+      const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
+      let lastUiStatusCamera = "";
+      const uiCamera = (event,data={}) => {
+        try{
+          fetch("/api/chat?__swrlz_client_debug=1",{method:"POST",credentials:"same-origin",cache:"no-store",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"glitch-dragon-tier-a-v1",url:location.pathname,event:{at:new Date().toISOString(),type:"clean-room-ui-camera",message:event,data:{chatVersion:SWRLZ_CHAT_VERSION,navTraceId,...data}}})}).catch(()=>{});
+        }catch(_){}
+      };
+      document.body.dataset.chatVersion=SWRLZ_CHAT_VERSION;
       const CHAT_STATE_CONTRACT = "swrlz-chat-account-mutation-v1";
       let chatRevision = 0;
       let chatThreads = [];
@@ -171,6 +225,20 @@
         return clean.length>48 ? clean.slice(0,47).trimEnd()+"…" : (clean || "New conversation");
       };
       const currentThread = () => chatThreads.find(t=>t.id===activeThreadId) || (pendingDraftThread?.id===activeThreadId ? pendingDraftThread : null);
+      const syncTopEdge = thread => {
+        const title=thread?.title || "New conversation";
+        if(topThreadTitle.textContent!==title) topThreadTitle.textContent=title;
+        topThreadTitle.title=title;
+      };
+      const setTopStatus = (label,state="ready") => {
+        topReadyLabel.textContent=label;
+        topEdge.dataset.state=state;
+        const cameraKey=state+":"+label;
+        if(cameraKey!==lastUiStatusCamera){
+          lastUiStatusCamera=cameraKey;
+          uiCamera("top-status",{state,label});
+        }
+      };
       const addCopyButton = node => {
         const body=node.querySelector(".assistant-body"); if(!body)return;
         const actions=document.createElement("div");actions.className="assistant-actions";
@@ -179,6 +247,7 @@
         actions.appendChild(copy);node.appendChild(actions);
       };
       const renderConversation = thread => {
+        syncTopEdge(thread);
         [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
         if(!thread) return;
         for(const msg of (thread.messages||[])){
@@ -280,12 +349,16 @@
         const committed=!!g&&(thread?.messages||[]).some(m=>m.role==="assistant"&&m.meta?.requestId===g.requestId);
         if(!g||g.threadId!==activeThreadId||committed){
           if(existing)existing.remove();
+          setTopStatus("ready","ready");
           return;
         }
         // Status comes from the acknowledged send or actual Station snapshot, never a fabricated percentage.
         const last=(g.status||[]).at(-1)||{};
         const phase=String(last.phase||g.phase||last.type||"QUEUED").replace(/_/g," ");
         const label=g.terminal?(g.terminalType||phase):phase;
+        const terminalKind=String(g.terminalType||label||"").toUpperCase();
+        if(g.terminal) setTopStatus(terminalKind==="FAILED"?"attention":"ready",terminalKind==="FAILED"?"error":"ready");
+        else setTopStatus("generating","busy");
         let node=existing;
         if(!node){
           node=assistantTemplate.cloneNode(true);node.removeAttribute("id");
@@ -536,6 +609,17 @@
       prompt.addEventListener("input", resizeComposer, {passive:true});
       window.addEventListener("resize", resizeComposer, {passive:true});
       resizeComposer();
+      requestAnimationFrame(()=>{
+        const topRect=topEdge.getBoundingClientRect();
+        const composerRect=composerShell.getBoundingClientRect();
+        uiCamera("tier-a-settled",{
+          reducedMotion:matchMedia("(prefers-reduced-motion: reduce)").matches,
+          viewportWidth:Math.round(window.innerWidth),
+          viewportHeight:Math.round(window.innerHeight),
+          topEdge:{width:Math.round(topRect.width),height:Math.round(topRect.height)},
+          composer:{width:Math.round(composerRect.width),height:Math.round(composerRect.height)}
+        });
+      });
     })();
   </script>
 </body>
