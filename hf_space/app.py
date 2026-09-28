@@ -73,7 +73,7 @@ def respond(message,history,model_id,profile,user_profile):
     report={"format":"swrlz-hf-probe-export-v2","modelId":model_id,"requestId":request_id,
             "prompt":message,"history":history_items,"profile":str(profile or "")[:6000],"userProfile":str(user_profile or "")[:6000],"response":"","phase":"STARTING",
             "timeToFirstDeltaSeconds":None,"elapsedSeconds":0.0,"deltaCount":0,
-            "events":[],"note":"Live probe timeline, not container logs. Download again for the latest snapshot."}
+            "events":[],"diagnosticTrace":None,"memoryCandidates":[],"note":"Live probe timeline with structured observable diagnostics; no private chain-of-thought is stored. Download again for the latest snapshot."}
     with tempfile.NamedTemporaryFile(mode="w",encoding="utf-8",suffix=".json",prefix="swrlz-probe-",delete=False) as f:
         export_path=f.name
 
@@ -135,6 +135,18 @@ def respond(message,history,model_id,profile,user_profile):
             return
         elif kind=="event" and isinstance(value,dict):
             event_type=str(value.get("type") or "")
+            if event_type=="DIAGNOSTIC":
+                trace=value.get("trace")
+                if isinstance(trace,dict):report["diagnosticTrace"]=trace
+                status=snapshot("DIAGNOSTIC_READY")
+                yield report["response"],export_path,status
+                continue
+            if event_type=="MEMORY_CANDIDATE":
+                candidate=value.get("candidate")
+                if isinstance(candidate,dict):report["memoryCandidates"].append(candidate)
+                status=snapshot("MEMORY_CANDIDATE")
+                yield report["response"],export_path,status
+                continue
             if event_type=="DELTA":
                 if report["timeToFirstDeltaSeconds"] is None:
                     report["timeToFirstDeltaSeconds"]=round(time.perf_counter()-started,3)
