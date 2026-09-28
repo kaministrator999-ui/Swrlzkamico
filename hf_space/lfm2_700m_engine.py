@@ -48,6 +48,32 @@ def _diagnostic_trace(history,user_profile,custom_assistant_profile):
             break
     return {"schema":"swrlz-decision-trace-v1","assistant":"§wyrlz","user":user_name,"historyTurns":len(history),"historyDepth":"none" if not history else "shallow" if len(history)<=4 else "established","profileLayers":{"builtinAssistant":True,"assistantCustomization":bool(custom_assistant_profile),"userProfile":bool(user_profile)},"guards":{"longHistoryClaimSupported":len(history)>4,"profileIsNotThreadHistory":True,"roleOwnershipEnabled":True},"memoryPolicy":{"source":"conversation evidence only","rawPrivateReasoningStored":False,"candidateValidationRequired":True}}
 
+def _memory_candidates(prompt,user_profile):
+    """Extract only explicit, user-owned memory candidates without another model pass."""
+    text=prompt.strip()
+    if not text:
+        return []
+    lower=text.lower()
+    markers=(
+        "remember that ","remember i ","remember my ","my name is ","call me ",
+        "i prefer ","i like ","i love ","i hate ","i dislike ","i use ",
+        "i work on ","i'm working on ","i am working on ","my project "
+    )
+    if not any(marker in lower for marker in markers):
+        return []
+    return [{
+        "schema":"swrlz-memory-candidate-v1",
+        "owner":"user",
+        "kind":"explicit-user-statement",
+        "evidence":text[:1000],
+        "confidence":"high",
+        "durability":"candidate",
+        "source":"current-user-turn",
+        "validated":False,
+        "persisted":False,
+        "requiresValidation":True
+    }]
+
 def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
@@ -55,6 +81,8 @@ def generate_events(payload):
     custom_assistant_profile=str(payload.get("profile") or "").strip()[:6000]
     user_profile=str(payload.get("userProfile") or "").strip()[:6000]
     yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}
+    for candidate in _memory_candidates(prompt,user_profile):
+        yield {"type":"MEMORY_CANDIDATE","candidate":candidate}
     system=("You are §wyrlz, a conversational AI companion. Respond to the user's actual message. Be direct, natural "
             "and conversational; do not narrate internal decisions, announce routine adjustments, deliver generic lectures, "
             "repeat profiles, or tack on unnecessary follow-up questions. Do not imply a long relationship or many prior "
