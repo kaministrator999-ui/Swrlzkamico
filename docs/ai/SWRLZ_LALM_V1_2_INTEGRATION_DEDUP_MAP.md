@@ -138,3 +138,52 @@ A separate target behavior is **latent-answer recognition**: if §wyrlz's own ge
 
 ### Deduplication requirement
 Convergence review uses the same EXISTING / EXTEND / NEW / LEGACY-ONLY gate as the v1.2 architecture merge. Rediscovering an existing concept should strengthen evidence, add conditions/exceptions, or add a distinct regression—not create a duplicate teaching.
+
+
+## Knowledge-frontier and learning-signal routing
+
+Conversation-derived learning must distinguish **what was learned** from **how the interaction felt**. One exchange may produce multiple independently routed signals.
+
+### Learning lanes
+- **DOMAIN / CORRECTNESS:** mathematics, equations, programming, chemistry, electronics, PCB design, electrical engineering, terminology, architecture, and other factual/technical material. Preserve constraints, equations, evidence, applicability, and epistemic provenance rather than memorizing a bare final answer.
+- **REASONING / PATTERN:** wrong inference branches, buried/latent answers, unnecessary abstraction, successful convergence, counterexamples, and reusable diagnostic relationships.
+- **USER MODEL:** demonstrated user knowledge, preferences, requirements, corrections, and working conventions. User-specific evidence must not become a universal rule.
+- **PERSONALITY / RAPPORT:** humor timing, callbacks, playful escalation, teasing versus genuine disagreement, conversational rhythm, and stylistic adaptation. These signals may shape expression but must not masquerade as factual knowledge.
+- **CONTEXT / NOISE:** STT errors, accidental wording, one-off roleplay, transient situations, and unsupported interpretations. Default THREAD-ONLY unless independently qualified.
+
+A single trajectory may contribute to several lanes. Each extracted claim keeps its own scope, owner, provenance, confidence, and promotion destination.
+
+### Knowledge-frontier detection
+Target behavior: infer the **highest layer of understanding actually established by conversation evidence**, then begin explanation at the first materially missing rung.
+
+This prevents two opposite failures:
+1. restarting from elementary definitions when the user already demonstrates practical/domain competence;
+2. assuming deeper expertise that has not been demonstrated.
+
+For technical work, the preferred pattern is:
+```text
+established practical model
+→ identify missing conceptual/mathematical/design rung
+→ supply that rung
+→ connect it to the user's existing model
+→ apply constraints/evidence
+→ verify the resulting design or conclusion
+```
+
+The frontier is provisional and local to the evidence. It is not a permanent claim that the user does or does not understand a domain. Durable user-knowledge claims require the normal memory review/provenance gate.
+
+### Cross-depth collaboration
+§wyrlz may contribute formal equations, terminology, device physics, software semantics, chemistry, or design constraints while the user contributes practical context, physical observations, requirements, counterexamples, or corrections. Neither source automatically outranks the other: evidence and applicability decide.
+
+When a correction aligns the two models, review should preserve:
+- what the user already knew/demonstrated;
+- what §wyrlz supplied;
+- the mismatch that caused the failure;
+- the decisive correction/evidence;
+- the resulting relation or answer;
+- conditions under which that relation applies.
+
+This lets reviewed trajectories teach future §wyrlz builds to bridge knowledge depths rather than replaying the entire original work-up.
+
+### Promotion constraint
+Do not add domain facts to the built-in persona prompt. Domain/correctness material belongs in a future reviewed knowledge/pattern layer or model training corpus. Runtime persona rules should remain compact and behavior-oriented.
