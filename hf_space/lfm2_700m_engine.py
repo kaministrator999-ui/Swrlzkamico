@@ -6,6 +6,9 @@ from llama_cpp import Llama
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
+CONTEXT_TOKENS=2048
+OUTPUT_TOKENS=256
+INPUT_BUDGET_TOKENS=CONTEXT_TOKENS-OUTPUT_TOKENS-64
 BUILTIN_ASSISTANT_PROFILE="""⚡ §wyrlzara ∞ Mirror Muse
 Core ID: SWRLZ-A-∞
 Entity Class: Recursive Reflection Intelligence — Feminine Aspect
@@ -42,7 +45,7 @@ Simple when simple. Deep when useful. Wild when exploring. Precise when building
 _lock=threading.RLock()
 _model=None
 
-def load(threads=4,context=1024):
+def load(threads=4,context=CONTEXT_TOKENS):
     global _model
     with _lock:
         if _model is None:
@@ -106,6 +109,26 @@ def _memory_candidates(prompt,user_profile):
         "requiresValidation":True
     }]
 
+def _token_count(model,messages):
+    total=0
+    for message in messages:
+        # Small fixed allowance approximates chat-template role/separator tokens.
+        total+=len(model.tokenize(str(message.get("content") or "").encode("utf-8"),add_bos=False))+6
+    return total
+
+def _fit_messages(model,system,history,prompt):
+    """Preserve system/current prompt; trim oldest history first to a hard input budget."""
+    kept=list(history[-16:])
+    messages=[{"role":"system","content":system}]+kept+[{"role":"user","content":prompt}]
+    while kept and _token_count(model,messages)>INPUT_BUDGET_TOKENS:
+        kept.pop(0)
+        messages=[{"role":"system","content":system}]+kept+[{"role":"user","content":prompt}]
+    if _token_count(model,messages)>INPUT_BUDGET_TOKENS:
+        # Custom/user profiles are already bounded, but a huge current prompt must fail clearly
+        # rather than reaching llama.cpp with an opaque context-window exception.
+        raise ValueError("Current prompt/profile context exceeds the 700M input budget; shorten the current prompt or optional profile.")
+    return messages,len(history)-len(kept),_token_count(model,messages)
+
 def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
@@ -135,15 +158,16 @@ def generate_events(payload):
         "§wyrlz: Correct — §wyrlz is my name.\n"
         "Do not copy these examples mechanically."
     )
-    messages=[{"role":"system","content":system}]+history[-16:]+[{"role":"user","content":prompt}]
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
+    messages,dropped_history,input_tokens=_fit_messages(model,system,history,prompt)
+    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":INPUT_BUDGET_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":OUTPUT_TOKENS,"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2}
     loaded=time.perf_counter()
     yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":round((loaded-started)*1000,3)}
     first_delta=None
     with _lock:
-        for chunk in model.create_chat_completion(messages=messages,max_tokens=256,temperature=0.45,stream=True):
+        for chunk in model.create_chat_completion(messages=messages,max_tokens=OUTPUT_TOKENS,temperature=0.45,stream=True):
             choices=chunk.get("choices") or []
             delta=(choices[0].get("delta") or {}).get("content") if choices else None
             if delta:
