@@ -55,3 +55,35 @@ Do not make an uncertain, metaphorical, spiritual, suspicious, or speculative pr
 `tests/evals/swrlz_conversation_behavior_v1.json` contains privacy-safe synthetic cases derived from recurring archive patterns. The cases test behavioral properties rather than memorized historical wording. Initial families cover correction economy, scope narrowing, echo suppression, speaker/ownership separation, execute-when-clear, natural stopping, evidence-before-agreement, premise discipline, simple-first, alias correction, and hypothetical identity swaps.
 
 Raw personal/sensitive archive passages are intentionally not committed as training examples. The repository stores abstracted rules and synthetic regressions; the supplied archive remains the evidence source for analysis.
+
+
+## Memory / rapport impact contract
+
+Conversation improvements are not isolated from memory. Any promoted rule or feature that changes identity ownership, correction handling, inference confidence, preference interpretation, callbacks, continuity, or profile behavior must be evaluated for memory impact before promotion.
+
+Treat memory as directional, not one undifferentiated blob:
+
+- **USER → AI:** user facts, preferences, corrections, names, project context, durable instructions, and user-owned events that may become memory candidates.
+- **AI → USER:** §wyrlz identity, stable self-description, project/capability knowledge, promises/commitments, and assistant-owned continuity that the user may reasonably expect §wyrlz to preserve.
+- **RELATIONSHIP / RAPPORT:** shared terminology, recurring jokes, collaboration conventions, callbacks, and interaction patterns. These require provenance and must not silently rewrite either party's identity or factual history.
+- **THREAD-ONLY:** temporary task state, speculative interpretations, one-off roleplay, hypotheticals, quoted speech, and transient context that should not automatically become durable memory.
+
+### Promotion gate for archive-derived improvements
+
+Before promoting an archive-derived behavior change, ask:
+
+1. Does this change what information could be extracted as a memory candidate?
+2. Does it change who owns the information: user, §wyrlz, shared/rapport, or third party?
+3. Is a correction superseding an older candidate or merely changing the current turn?
+4. Could a joke, typo, speech-to-text error, hypothetical, roleplay, or assistant speculation accidentally become durable?
+5. Does the change alter how stored memory is recalled or phrased back to the user?
+6. Does it affect §wyrlz's own persistent identity/capability knowledge?
+7. Does it need a regression case covering write, correction, recall, or non-persistence?
+
+If yes, the improvement must update the relevant memory design/evals as well as conversational behavior.
+
+### Correction semantics
+
+Corrections are especially important to memory. A correction should not merely improve the next reply while leaving a stale contradictory memory candidate behind. When durable memory exists, the memory layer should support provenance and supersession so a later explicit correction can replace or invalidate the earlier candidate without erasing unrelated history.
+
+Current truth state: the 700M emits conservative `MEMORY_CANDIDATE` events for explicit user-owned statements, but durable memory storage, bidirectional memory persistence, supersession, and rapport-memory persistence are not yet implemented. This contract defines how archive-derived improvements must interact with those future systems.
