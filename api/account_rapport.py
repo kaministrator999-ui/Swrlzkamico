@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from dataclasses import asdict, replace
 from typing import Any
+import re
 import time
 
 from api.durable_chat_contract import RapportControlRecord, RapportRecord
 
 RAPPORT_KINDS = {"VOCABULARY", "CALLBACK", "CONVENTION"}
 RAPPORT_SCOPES = {"GLOBAL", "PROJECT", "THREAD"}
+_SCOPE_ID = re.compile(r"^[A-Za-z0-9._:-]{1,160}$")
 
 
 class RapportValidationError(ValueError):
@@ -75,8 +77,8 @@ def validate_rapport_fields(
     scope_id = str(raw_scope_id or "").strip()[:160] or None
     if scope == "GLOBAL":
         scope_id = None
-    elif not scope_id:
-        raise RapportValidationError("scoped rapport requires scopeId")
+    elif not scope_id or not _SCOPE_ID.fullmatch(scope_id):
+        raise RapportValidationError("scoped rapport requires a valid scopeId")
     active = bool(body.get("active", current.active if current else True))
     return {
         "kind": kind,
