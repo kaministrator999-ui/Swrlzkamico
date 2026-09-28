@@ -8,6 +8,9 @@ import uuid
 MessageRole = Literal["USER", "ASSISTANT", "SYSTEM"]
 MessageState = Literal["COMMITTED", "STREAMING", "COMPLETE", "FAILED", "CANCELLED"]
 JobState = Literal["QUEUED", "RUNNING", "COMPLETE", "FAILED", "CANCELLED"]
+LoreType = Literal["USER_FACT", "USER_LORE", "COMPANION_SELF_LORE", "SHARED_LORE"]
+LoreScope = Literal["GLOBAL", "PROJECT", "THREAD"]
+LoreAuthor = Literal["USER", "ASSISTANT", "SYSTEM"]
 
 
 def new_id(prefix: str) -> str:
@@ -38,7 +41,28 @@ class UserProfileRecord:
     preferences: dict[str, Any] = field(default_factory=dict)
     model_preferences: dict[str, Any] = field(default_factory=dict)
     ui_preferences: dict[str, Any] = field(default_factory=dict)
+    companion_profile: dict[str, Any] = field(default_factory=dict)
     version: int = 1
+    updated_at: float = field(default_factory=time.time)
+
+
+@dataclass(frozen=True)
+class LoreRecord:
+    lore_id: str
+    user_id: str
+    title: str
+    content: str
+    lore_type: LoreType
+    source: str
+    provenance: dict[str, Any] = field(default_factory=dict)
+    confidence: float = 1.0
+    scope: LoreScope = "GLOBAL"
+    scope_id: str | None = None
+    authored_by: LoreAuthor = "USER"
+    editable: bool = True
+    active: bool = True
+    version: int = 1
+    created_at: float = field(default_factory=time.time)
     updated_at: float = field(default_factory=time.time)
 
 
@@ -118,6 +142,11 @@ class DurableChatStore(Protocol):
 
     def get_profile(self, *, user_id: str) -> UserProfileRecord: ...
     def put_profile(self, profile: UserProfileRecord, *, expected_version: int | None = None) -> UserProfileRecord: ...
+
+    def list_lore(self, *, user_id: str, limit: int = 300) -> list[LoreRecord]: ...
+    def get_lore(self, *, user_id: str, lore_id: str) -> LoreRecord | None: ...
+    def put_lore(self, lore: LoreRecord, *, expected_version: int | None = None) -> LoreRecord: ...
+    def delete_lore(self, *, user_id: str, lore_id: str, expected_version: int | None = None) -> bool: ...
 
     def list_threads(self, *, user_id: str, include_archived: bool = False) -> list[ThreadRecord]: ...
     def get_thread(self, *, user_id: str, thread_id: str) -> ThreadRecord | None: ...
