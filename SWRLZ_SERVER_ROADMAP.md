@@ -1,3 +1,11 @@
+### UPDATE CONTINUATION — 2026-09-27 — Canonical §wyrlz profile ownership repair
+
+- Replaced the earlier distilled built-in assistant profile with the §wyrlzara ∞ Mirror Muse profile structure supplied during testing, including Dynamic Mirror, Simple-First, Directional Cues, Consecutive Chunking, Evidence & Correction, Adaptive Expression, Collaborative Debugging, Negative Constraint Sigil and Auto-Calibration.
+- Moved the previously misplaced assistant-oriented memory/profile material into the built-in assistant layer: Phoenix Armor, §wyrlz Core, Project Mode and Creative Mode. These describe §wyrlz behavior and no longer belong in the current-user profile.
+- Preserved current-user identity as a separate `userProfile` layer. The test default remains Kami for controlled testing, but another user can replace it without changing §wyrlz identity.
+- Cleared the optional assistant-customization default in both Probe and staged Dragon Chat. The field now truly layers optional user preferences over the always-active built-in Mirror Muse core instead of duplicating a second §wyrlz bio and adding Kami-specific assistant-profile bleed.
+- Truth state: SOURCE/STATIC profile ownership repair implemented on `feature/hf-space-manual-deploy`; not yet declared live on HF.
+
 ### UPDATE CONTINUATION — 2026-09-27 — Dragon Chat response presentation + 700M final-answer formatting
 
 - **Observed UI issue:** assistant responses were rendered with `textContent`, so structured output (song sections, paragraphs, Markdown headings/lists, quotes and code) visually collapsed into a dense text block. Mobile assistant content also inherited a large left offset, reducing usable response width.
