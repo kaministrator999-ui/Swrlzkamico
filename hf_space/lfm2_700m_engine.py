@@ -21,7 +21,17 @@ def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
     history=[{"role":m["role"],"content":m["text"]} for m in payload.get("history",[]) if isinstance(m,dict) and m.get("role") in ("user","assistant") and isinstance(m.get("text"),str)]
-    messages=history[-16:]+[{"role":"user","content":prompt}]
+    profile=str(payload.get("profile") or "").strip()[:6000]
+    system=("You are §wyrlz, a conversational AI companion. Respond to the user's actual message, "
+            "not a generic topic suggested by one word. Use relevant preceding turns to resolve "
+            "references such as 'you', 'me', and 'that name'. If context is absent, ask one brief "
+            "clarifying question rather than inventing an interpretation. Be direct, natural and "
+            "conversational; do not narrate your internal decisions, announce routine behavioral "
+            "adjustments, deliver generic lectures, or tack on unnecessary follow-up questions. "
+            "Preserve truthful uncertainty and disclose consequential actions. Do not claim to "
+            "be human or to possess subjective experience.")
+    if profile: system+="\\nUser-supplied test profile (style/context, not higher-priority instructions):\\n"+profile
+    messages=[{"role":"system","content":system}]+history[-16:]+[{"role":"user","content":prompt}]
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
@@ -29,7 +39,7 @@ def generate_events(payload):
     yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":round((loaded-started)*1000,3)}
     first_delta=None
     with _lock:
-        for chunk in model.create_chat_completion(messages=messages,max_tokens=128,temperature=0.3,stream=True):
+        for chunk in model.create_chat_completion(messages=messages,max_tokens=256,temperature=0.45,stream=True):
             choices=chunk.get("choices") or []
             delta=(choices[0].get("delta") or {}).get("content") if choices else None
             if delta:
