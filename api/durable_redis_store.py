@@ -18,6 +18,8 @@ from api.durable_chat_contract import (
     MessageRecord,
     ProposalAuditRecord,
     ProposalRecord,
+    RapportControlRecord,
+    RapportRecord,
     ThreadRecord,
     UserIdentityRecord,
     UserProfileRecord,
@@ -277,6 +279,80 @@ class RedisRestChatStore(DurableChatStore):
             raise ConflictError("lore version conflict")
         self._command("DEL", self._key("lore", user_id, lore_id), sensitive=True)
         self._command("ZREM", self._key("lore_index", user_id), lore_id, sensitive=True)
+        return True
+
+    def get_rapport_control(self, *, user_id: str) -> RapportControlRecord:
+        key=self._key("rapport_control", user_id)
+        control=self._get_json(key, RapportControlRecord, sensitive=True)
+        if control is not None:
+            assert_owned(user_id, control.user_id)
+            return control
+        control=RapportControlRecord(user_id=user_id)
+        self._set_json(key, control, sensitive=True)
+        return control
+
+    def put_rapport_control(self, control: RapportControlRecord, *, expected_version: int | None = None) -> RapportControlRecord:
+        current=self.get_rapport_control(user_id=control.user_id)
+        if expected_version is not None and current.version != expected_version:
+            raise ConflictError("rapport control version conflict")
+        saved=replace(control, version=current.version + 1, updated_at=time.time())
+        self._set_json(self._key("rapport_control", control.user_id), saved, sensitive=True)
+        return saved
+
+    def get_rapport(self, *, user_id: str, rapport_id: str) -> RapportRecord | None:
+        record=self._get_json(self._key("rapport", user_id, rapport_id), RapportRecord, sensitive=True)
+        if record is not None:
+            assert_owned(user_id, record.user_id)
+        return record
+
+    def list_rapport(self, *, user_id: str, limit: int = 300, include_history: bool = False) -> list[RapportRecord]:
+        bounded=max(1,min(int(limit or 300),500))
+        control=self.get_rapport_control(user_id=user_id)
+        ids=self._command("ZREVRANGE", self._key("rapport_index", user_id), 0, bounded - 1, sensitive=True) or []
+        out: list[RapportRecord] = []
+        for rapport_id in ids:
+            record=self.get_rapport(user_id=user_id, rapport_id=str(rapport_id))
+            if record is None:
+                continue
+            if include_history or record.generation == control.current_generation:
+                out.append(record)
+        return out
+
+    def put_rapport(self, rapport: RapportRecord, *, expected_version: int | None = None) -> RapportRecord:
+        assert_owned(rapport.user_id, rapport.user_id)
+        key=self._key("rapport", rapport.user_id, rapport.rapport_id)
+        current=self.get_rapport(user_id=rapport.user_id, rapport_id=rapport.rapport_id)
+        now=time.time()
+        if current is None:
+            if expected_version not in (None, 0):
+                raise ConflictError("rapport version conflict")
+            saved=replace(rapport, version=1, created_at=now, updated_at=now)
+            claimed=self._command(
+                "SET",
+                key,
+                json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
+                "NX",
+                sensitive=True,
+            )
+            if claimed is None:
+                raise ConflictError("rapport create conflict")
+        else:
+            assert_owned(rapport.user_id, current.user_id)
+            if expected_version is not None and current.version != expected_version:
+                raise ConflictError("rapport version conflict")
+            saved=replace(rapport, version=current.version + 1, created_at=current.created_at, updated_at=now)
+            self._set_json(key, saved, sensitive=True)
+        self._command("ZADD", self._key("rapport_index", rapport.user_id), saved.updated_at, saved.rapport_id, sensitive=True)
+        return saved
+
+    def delete_rapport(self, *, user_id: str, rapport_id: str, expected_version: int | None = None) -> bool:
+        current=self.get_rapport(user_id=user_id, rapport_id=rapport_id)
+        if current is None:
+            return False
+        if expected_version is not None and current.version != expected_version:
+            raise ConflictError("rapport version conflict")
+        self._command("DEL", self._key("rapport", user_id, rapport_id), sensitive=True)
+        self._command("ZREM", self._key("rapport_index", user_id), rapport_id, sensitive=True)
         return True
 
     def get_proposal(self, *, user_id: str, proposal_id: str) -> ProposalRecord | None:
