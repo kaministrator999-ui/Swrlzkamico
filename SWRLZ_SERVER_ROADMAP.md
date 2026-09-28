@@ -1,3 +1,16 @@
+### UPDATE CONTINUATION — 2026-09-28 — Convergence learning architecture for 700M
+
+- Incorporated collaborative discovery/convergence into the 700M architecture without turning every successful conversation into durable memory.
+- Added a deterministic `CONVERGENCE_CANDIDATE` event (`swrlz-convergence-candidate-v1`) in `hf_space/lfm2_700m_engine.py`. It emits only when recent supplied history contains a correction/scope-repair trajectory and the current user turn explicitly confirms resolution.
+- Candidate state is **THREAD-ONLY / review_candidate** with `autoPromote=false`; it carries a bounded recent trajectory and review targets for validated conclusion, generalizable pattern, failed/partial approach, decisive cue/evidence, applicability conditions, memory impact, and deduplication.
+- No extra model inference pass was added. Detector is lightweight/deterministic to preserve latency on the 700M hot path.
+- Added convergence-learning architecture to `docs/ai/SWRLZ_LALM_V1_2_INTEGRATION_DEDUP_MAP.md`: review → classify → deduplicate → route to knowledge, pattern recognition, behavior rule, provenance-aware memory, or eval.
+- Added **compression gain** as a future intelligence metric: compare original turns-to-convergence against later analogous encounters to test whether reviewed knowledge enables faster correct recognition.
+- Added **latent-answer recognition** as a distinct target: when sufficient answer material already exists in context/reasoning, foreground it instead of restarting or burying it.
+- Extended `tests/evals/swrlz_reasoning_control_v1.json` with latent-answer recognition, review-worthy convergence, and no-false-positive trivial confirmation cases.
+- Dedup gate remains mandatory before promotion: rediscovery strengthens evidence/conditions/evals rather than creating duplicate teachings.
+- Truth state: SOURCE/STATIC implementation on feature branch. Durable convergence store, reviewer/promoter, knowledge index, pattern library, and retrieval loop are not yet implemented or live.
+
 ### UPDATE CONTINUATION — 2026-09-28 — LALM v1.2 architecture integration + duplicate-teaching gate
 
 - Reviewed the supplied v1.2 reasoning architecture set and its v1.0/v1.1 lineage against the current §wyrlz behavior/corpus work.
