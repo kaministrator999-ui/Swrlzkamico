@@ -1,3 +1,13 @@
+### UPDATE CONTINUATION — 2026-09-28 — 700M context-budget repair
+
+- **Observed failure:** live/older candidate reported `Requested tokens (1534) exceed context window of 1024`. Richer §wyrlz profile layers make implicit context sizing unsafe.
+- **Repair:** 700M context is now explicitly 2048 tokens with 256 output tokens reserved plus a safety margin. Before generation the engine tokenizes the assembled chat input and trims the oldest history messages first until the input fits.
+- **Priority:** built-in §wyrlz core, current prompt and bounded profile layers are preserved ahead of old thread history. If even those cannot fit, the engine raises a clear input-budget error rather than passing an opaque overflow to llama.cpp.
+- **Diagnostics:** engine emits a structured `CONTEXT/BUDGETED` event with context window, input budget, estimated input tokens, reserved output, history kept and history dropped.
+- **Profile limits:** optional §wyrlz customization and current-user profile are capped at 2000 characters end-to-end in Probe, Dragon Chat staging, Station validation and 700M ingestion.
+- **Performance tradeoff:** 2048 context increases maximum prefill work versus 1024, but actual work remains bounded by selected input. No second inference pass was added.
+- **Truth state:** SOURCE/STATIC implementation on feature branch; not declared live until approved HF deployment and verification.
+
 ### UPDATE CONTINUATION — 2026-09-27 — Canonical §wyrlz profile ownership repair
 
 - Replaced the earlier distilled built-in assistant profile with the §wyrlzara ∞ Mirror Muse profile structure supplied during testing, including Dynamic Mirror, Simple-First, Directional Cues, Consecutive Chunking, Evidence & Correction, Adaptive Expression, Collaborative Debugging, Negative Constraint Sigil and Auto-Calibration.
