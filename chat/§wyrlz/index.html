@@ -200,7 +200,13 @@
     @keyframes dragonError{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.5px)}55%{transform:translateX(1.5px)}78%{transform:translateX(-.7px)}}
     body.motion-reduced .top-brand-mark,body.motion-reduced .assistant-head .kompanion-icon,body.motion-reduced .side-brand .kompanion-icon,
     body.motion-off .top-brand-mark,body.motion-off .assistant-head .kompanion-icon,body.motion-off .side-brand .kompanion-icon{animation:none!important;transform:none!important;filter:none!important}
-    @media(prefers-reduced-motion:reduce){body:not(.motion-full) .top-brand-mark,body:not(.motion-full) .assistant-head .kompanion-icon,body:not(.motion-full) .side-brand .kompanion-icon{animation:none!important;transform:none!important;filter:none!important}}
+    body.motion-reduced .ready-dot,body.motion-off .ready-dot{animation:none!important}
+    body.motion-reduced .companion-state-chip,body.motion-off .companion-state-chip{transition:none!important}
+    @media(prefers-reduced-motion:reduce){
+      body:not(.motion-full) .top-brand-mark,body:not(.motion-full) .assistant-head .kompanion-icon,body:not(.motion-full) .side-brand .kompanion-icon{animation:none!important;transform:none!important;filter:none!important}
+      body:not(.motion-full) .ready-dot{animation:none!important}
+      body:not(.motion-full) .companion-state-chip{transition:none!important}
+    }
     @media(max-width:680px){.top-status{gap:4px}.companion-state-chip{padding:3px 5px;max-width:72px;overflow:hidden;text-overflow:ellipsis}.top-ready-label{display:none}}
 
   </style>
