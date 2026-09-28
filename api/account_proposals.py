@@ -250,6 +250,10 @@ def _normalize_payload(store, *, user_id: str, category: str, operation: str, ta
             fields = validate_rapport_fields(payload, current=current_rapport)
         except ValueError as exc:
             raise ProposalPolicyError(str(exc)) from exc
+        if fields["scope"] == "PROJECT" and (current_rapport is None or current_rapport.scope != "PROJECT"):
+            raise ProposalPolicyError("project-scoped rapport requires an attached project authority")
+        if fields["scope"] == "THREAD" and store.get_thread(user_id=user_id, thread_id=str(fields["scope_id"])) is None:
+            raise ProposalPolicyError("thread-scoped rapport requires a thread owned by this account")
         return {
             "kind": fields["kind"],
             "label": fields["label"],
