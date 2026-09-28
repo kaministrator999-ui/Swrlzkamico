@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.50  
+**Version:** 1.0.51  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -82,3 +82,6 @@ The component inventory above is historical through the early clean-room reconst
 - **1.0.50 — Tier C profile + lore source integration:** adds You and §wyrlz profile surfaces plus Lore & Memory inspect/create/edit/delete UI. The stable account authority gains `companion_profile` and account-owned `LoreRecord` storage with USER-authored manual writes, source/provenance, scope, active/editable state, optimistic versioning, and payload-redacted Redis diagnostics. Proposal Inbox is presentation-only until Tier D installs the durable proposal/approval protocol. Shared rapport remains Tier E.
 
 Tier C requires a later explicitly approved stable-server deployment before its new `/api/account/lore` routes can be accepted as live. Source integration alone is not runtime acceptance.
+
+
+- **1.0.51 — Tier D approval protocol:** account-owned AI proposal records + append-only audit history, bounded profile/companion/lore operations, user Edit/Approve/Decline/Revert, per-category ASK/AUTO_LOW_RISK/SESSION_ONLY/NEVER policy, Redis compare-and-set proposal claims, reversible before/after snapshots, and payload-redacted diagnostics. Browser clients cannot forge assistant-authored proposals. A trusted server submission helper exists, but the current R39 stream does not yet emit a structured proposal event; natural-language output is not scraped into durable proposals.
