@@ -140,7 +140,7 @@ async def send(request:Request):
     model_id=body.get("modelId","stock")
     route=next((r for r in routes() if r.model_id==model_id),None)
     if route is None or not route.available:raise HTTPException(422,"Selected model is not configured")
-    prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
+    prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")\n    profile=body.get("profile","")\n    if not isinstance(profile,str) or len(profile)>6000:raise HTTPException(400,"Invalid test profile")
     if not isinstance(prompt,str) or not prompt.strip() or len(prompt)>16000:raise HTTPException(400,"Invalid prompt")
     if not all(isinstance(v,str) and 0<len(v)<=160 for v in (tid,rid)):raise HTTPException(400,"Invalid IDs")
     with _lock:
@@ -153,7 +153,7 @@ async def send(request:Request):
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"meta":{"requestId":rid,"modelId":model_id}})
         s["currentId"]=tid;s["revision"]+=1
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}]}
-    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"profileId":"LALM"}
+    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"profileId":"LALM","profile":profile}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400)
