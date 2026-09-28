@@ -112,6 +112,7 @@ def _wire(raw: dict[str, Any], *, seq: int, request_id: str, engine) -> dict[str
     if isinstance(receipt, dict):
         event["proposalReceipt"] = {
             "contract": str(receipt.get("contract") or "")[:96],
+            "signalId": str(receipt.get("signalId") or "")[:160],
             "decision": str(receipt.get("decision") or "")[:32],
             "proposalId": str(receipt.get("proposalId") or "")[:160],
             "state": str(receipt.get("state") or "")[:32],
@@ -236,11 +237,13 @@ async def generate_swrlz_response(payload) -> None:
                         "AUTO_APPLIED": "PROPOSAL_AUTO_APPLIED",
                         "SESSION_ONLY": "PROPOSAL_SESSION_ONLY",
                         "NEVER": "PROPOSAL_BLOCKED_POLICY",
+                        "EXISTING": "PROPOSAL_DUPLICATE_SUPPRESSED",
                     }.get(decision, "PROPOSAL_HANDLED")
                     _camera(
                         "structured-proposal-handled",
                         request_id=request_id,
                         decision=decision,
+                        signalId=str(receipt.get("signalId") or ""),
                         proposalId=str(receipt.get("proposalId") or ""),
                         state=str(receipt.get("state") or ""),
                         category=str(receipt.get("category") or ""),
