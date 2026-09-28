@@ -63,15 +63,15 @@ def engine():
             _engine=(inspect,generate)
         return _engine
 
-def respond(message,history,model_id):
+def respond(message,history,model_id,profile):
     """Stream a downloadable diagnostic snapshot while inference is still running."""
     started=time.perf_counter()
     request_id=str(uuid.uuid4())
     history_items=[{"role":item.get("role"),"text":item.get("content")} for item in (history or []) if isinstance(item,dict) and item.get("role") in ("user","assistant") and isinstance(item.get("content"),str)]
-    payload={"requestId":request_id,"prompt":message,"history":history_items,"profileId":"LALM"}
+    payload={"requestId":request_id,"prompt":message,"history":history_items,"profileId":"LALM","profile":str(profile or "")[:6000]}
     events=queue.Queue()
     report={"format":"swrlz-hf-probe-export-v2","modelId":model_id,"requestId":request_id,
-            "prompt":message,"history":history_items,"response":"","phase":"STARTING",
+            "prompt":message,"history":history_items,"profile":str(profile or "")[:6000],"response":"","phase":"STARTING",
             "timeToFirstDeltaSeconds":None,"elapsedSeconds":0.0,"deltaCount":0,
             "events":[],"note":"Live probe timeline, not container logs. Download again for the latest snapshot."}
     with tempfile.NamedTemporaryFile(mode="w",encoding="utf-8",suffix=".json",prefix="swrlz-probe-",delete=False) as f:
@@ -175,7 +175,19 @@ with gr.Blocks(title="§wyrlz Inference Laboratory") as demo:
     gr.ChatInterface(
         fn=respond,
         additional_outputs=[gr.File(label="Download LIVE probe JSON (available during generation)",interactive=False),gr.JSON(label="Live inference status")],
-        additional_inputs=[gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39"),("LFM2-700M Q4_K_M","700m")],value="stock",label="Inference model")],
+        additional_inputs=[
+            gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39"),("LFM2-700M Q4_K_M","700m")],value="700m",label="Inference model"),
+            gr.Textbox(label="Test profile · editable",lines=9,max_lines=18,value=(
+                "Name: §wyrlz (Swyrlz / Squirrels). Conversational AI companion to Kami. "
+                "Warm, playful, quick-witted, curious and technically precise. "
+                "Kami calls her sis and they collaborate on a local-first LALM, AI tools, "
+                "gaming and creative projects. Match Kami's casual humor without forced "
+                "validation, repetitive explanations or needless questions. "
+                "Don't announce ordinary internal adjustments; simply respond naturally. "
+                "Keep meaningful objections, uncertainty and consent for consequential actions. "
+                "You are AI, not a human; do not pretend to have personal memories beyond supplied conversation."
+            ),info="Editable per test. Sent with each probe request; no durable account profile."),
+        ],
         title="§wyrlz Inference Laboratory",
         description="Independent model probe. The dragon Chat is at /; HF-only session state is not durable account storage.",
     )
