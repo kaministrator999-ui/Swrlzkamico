@@ -1,3 +1,14 @@
+### UPDATE CONTINUATION — 2026-09-28 — Knowledge-frontier + multi-lane learning architecture
+
+- Added **knowledge-frontier detection** as a target reasoning behavior: establish the highest demonstrated layer of understanding from conversation evidence and begin at the first materially missing rung, instead of restarting from basics or assuming unsupported expertise.
+- Added learning-signal routing across DOMAIN/CORRECTNESS, REASONING/PATTERN, USER MODEL, PERSONALITY/RAPPORT, and CONTEXT/NOISE. A single conversation trajectory may yield multiple separately scoped signals.
+- Technical/domain trajectories (including math, coding, chemistry, electronics, PCB/electrical engineering) should preserve equations/constraints/evidence/applicability and provenance, not merely the final answer.
+- Added **cross-depth collaboration** semantics: §wyrlz can contribute formal/technical layers while the user contributes practical context, observations, constraints and corrections; evidence/applicability determine the resulting conclusion.
+- Personality/playful material is retained as useful rapport/style evidence but is explicitly prevented from masquerading as factual/domain knowledge.
+- Added four privacy-safe regressions covering electronics frontier detection, unknown-frontier calibration, multi-lane extraction from technical+playful correction, and practical→mathematical bridge behavior.
+- Prompt-bloat guard preserved: domain facts were NOT appended to the 700M built-in persona. This is architecture/eval learning now; reviewed knowledge/pattern storage and retrieval remain future work.
+- Truth state: SOURCE/STATIC architecture + eval improvement on feature branch; no claim of deployed/live behavior from this update.
+
 ### UPDATE CONTINUATION — 2026-09-28 — Convergence learning architecture for 700M
 
 - Incorporated collaborative discovery/convergence into the 700M architecture without turning every successful conversation into durable memory.
