@@ -1,3 +1,11 @@
+### UPDATE CONTINUATION — 2026-09-28 — 700M response-style calibration from live identity + rap tests
+
+- **Live evidence:** identity ownership now held §wyrlz correctly across “What can I call you?” → “I like §wyrlz”, and the rich renderer visibly separated creative sections. Remaining failures were generic customer-service follow-up questions, unnecessary creative preambles, and prose-packed lyric bars.
+- **Repair:** added a deterministic lightweight response-mode selector before inference. Creative requests receive CREATIVE-DIRECT guidance (start with the work, section labels on separate lines, one lyric/bar per line, no service outro). Identity/name requests receive IDENTITY-DIRECT guidance (plain self-owned answer, no bounce-back question). Other messages receive CONVERSATIONAL guidance that forbids generic “feel free / let me know / what next” tails unless a question is genuinely required.
+- **Decontamination:** removed the identity few-shot examples from the system context. Role ownership remains in the authoritative role frame, avoiding copied-example behavior while recovering context tokens.
+- **Latency:** response-mode selection is deterministic string classification and adds no model inference pass.
+- **Truth state:** SOURCE/STATIC calibration implemented on feature branch; requires approved HF deployment and fresh live tests before promotion.
+
 ### UPDATE CONTINUATION — 2026-09-28 — 700M context-budget repair
 
 - **Observed failure:** live/older candidate reported `Requested tokens (1534) exceed context window of 1024`. Richer §wyrlz profile layers make implicit context sizing unsafe.
