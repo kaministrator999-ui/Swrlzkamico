@@ -174,7 +174,8 @@ def install(server) -> None:
         "ready": RedisRestChatStore.configured(),
         "contract": "swrlz-account-lore-v1",
         "authority": "account-owned-redis-rest",
-        "aiWrites": False,
+        "directAiWrites": False,
+        "proposalGatedWrites": True,
         "proposalProtocol": True,
     }
     server.CAPABILITIES["durable-proposal-state"] = {
@@ -183,6 +184,8 @@ def install(server) -> None:
         "contract": "swrlz-account-proposal-v1",
         "authority": "account-owned-redis-rest",
         "browserCanForgeAssistantProposal": False,
+        "trustedSubmissionHelper": True,
+        "modelEmitterConnected": False,
         "resolutionActions": ["edit", "approve", "decline", "revert"],
         "policyModes": ["ASK", "AUTO_LOW_RISK", "SESSION_ONLY", "NEVER"],
     }
