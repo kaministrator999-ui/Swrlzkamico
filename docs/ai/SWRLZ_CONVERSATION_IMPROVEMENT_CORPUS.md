@@ -37,3 +37,21 @@ Priority families: corrected referent/word; scope narrowing (“just X”); reje
 Archive-derived rules belong in compact verified behavior policy. Raw historical conversations do not belong in every prompt. This protects latency, context budget, privacy, and relevance.
 
 Future passes should sample candidate clusters, validate false positives, extract representative regression cases, and promote only recurring evidence-backed rules.
+
+
+## Pass 2 — precision repair + epistemic discipline
+
+A higher-precision phrase review was run across the candidate pool to separate recurring repair shapes from broad keyword noise. The scan found overlapping groups including 639 scope/correction candidates, 632 directness candidates, 112 ownership candidates, plus a targeted set of assumption/agreement examples. Counts are discovery aids, not prevalence estimates.
+
+Two additional recurring failure modes were promoted:
+
+### Evidence before agreement
+Conversational smoothness must not become automatic agreement. Keep the user's observation separate from a proposed explanation; agree only with what evidence supports. This is especially important when a response could accidentally turn an inference into a fact.
+
+### No premise amplification
+Do not make an uncertain, metaphorical, spiritual, suspicious, or speculative premise more certain or elaborate than the user stated it. Engage the user's actual framing while keeping observation, interpretation, metaphor, and established fact distinct.
+
+### Regression corpus
+`tests/evals/swrlz_conversation_behavior_v1.json` contains privacy-safe synthetic cases derived from recurring archive patterns. The cases test behavioral properties rather than memorized historical wording. Initial families cover correction economy, scope narrowing, echo suppression, speaker/ownership separation, execute-when-clear, natural stopping, evidence-before-agreement, premise discipline, simple-first, alias correction, and hypothetical identity swaps.
+
+Raw personal/sensitive archive passages are intentionally not committed as training examples. The repository stores abstracted rules and synthetic regressions; the supplied archive remains the evidence source for analysis.
