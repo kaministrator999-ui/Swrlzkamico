@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.52">
+  <meta name="swrlz-chat-version" content="1.0.53">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -154,6 +154,15 @@
     .proposal-audit{margin-top:9px;border-top:1px solid rgba(126,214,255,.09);padding-top:8px}.proposal-audit[hidden]{display:none}.proposal-audit-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px;padding:5px 0;color:#87a5b5;font-family:var(--font-telemetry);font-size:8px;border-bottom:1px solid rgba(126,214,255,.055)}.proposal-audit-row:last-child{border-bottom:0}.proposal-empty{padding:18px;border:1px dashed rgba(126,214,255,.18);border-radius:12px;color:#7d9aa9;text-align:center;font-size:10px;background:rgba(4,20,34,.36)}.proposal-empty .proposal-count{font-family:var(--font-telemetry);font-size:25px;color:#bdefff}
     @media(max-width:680px){.proposal-policy-grid{grid-template-columns:1fr}.proposal-toolbar{align-items:stretch;flex-wrap:wrap}.proposal-status{width:100%;flex-basis:100%}.proposal-toolbar .setting-control{min-width:0;flex:1}.proposal-card-actions .proposal-action{min-height:34px}}
 
+
+    /* Glitch Dragon Chat — Tier E shared rapport. */
+    .rapport-control-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px;padding:10px;border:1px solid rgba(126,214,255,.13);border-radius:12px;background:linear-gradient(135deg,rgba(6,26,43,.58),rgba(24,27,55,.38))}
+    .rapport-state{min-width:0;flex:1;color:#bfeaf5;font-family:var(--font-telemetry);font-size:9px;line-height:1.45}.rapport-state strong{color:#effcff}
+    .rapport-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px}.rapport-toolbar .setting-control{min-width:150px}.rapport-history-toggle{display:flex;align-items:center;gap:6px;color:#9db5c4;font-size:10px}.rapport-history-toggle input{width:16px;height:16px;accent-color:#48dff7}.rapport-spacer{flex:1}
+    .rapport-list{display:flex;flex-direction:column;gap:8px}.rapport-card{padding:11px;border:1px solid rgba(126,214,255,.14);border-radius:12px;background:linear-gradient(135deg,rgba(5,27,44,.60),rgba(23,28,58,.42))}.rapport-card.inactive{opacity:.64}.rapport-card.archived{border-style:dashed;opacity:.72}.rapport-card-head{display:flex;align-items:flex-start;gap:8px}.rapport-card-title{min-width:0;flex:1;color:#eefbff;font-size:12px;font-weight:760;overflow-wrap:anywhere}.rapport-kind{flex:0 0 auto;padding:3px 6px;border:1px solid rgba(104,244,207,.20);border-radius:7px;background:rgba(24,76,67,.18);color:#bdf4e5;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.045em}.rapport-cue{margin:7px 0 3px;color:#c8e4ed;font-size:10px;line-height:1.4;overflow-wrap:anywhere}.rapport-meaning{margin:0;color:#9ebdca;font-size:10px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.rapport-response{margin-top:6px;padding:6px 7px;border-left:2px solid rgba(165,120,255,.26);color:#adacd0;font-size:9px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.rapport-meta{display:flex;flex-wrap:wrap;gap:5px 10px;margin-top:8px;color:#789aaa;font-family:var(--font-telemetry);font-size:8px}.rapport-actions{display:flex;justify-content:flex-end;margin-top:8px}.rapport-empty{padding:18px;border:1px dashed rgba(126,214,255,.18);border-radius:12px;color:#7894a4;text-align:center;font-size:11px}
+    .rapport-editor{margin-top:12px;padding:12px;border:1px solid rgba(104,244,207,.18);border-radius:13px;background:rgba(2,18,31,.78)}.rapport-editor[hidden]{display:none}.rapport-editor-title{margin:0 0 10px;color:#e8faff;font-size:13px}.rapport-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.rapport-editor-actions{display:flex;align-items:center;gap:7px;margin-top:10px}.rapport-editor-actions .lore-action:first-of-type{margin-left:auto}.rapport-origin{margin-top:9px;padding:8px 9px;border-radius:9px;background:rgba(21,43,52,.34);color:#849eae;font-family:var(--font-telemetry);font-size:8px;line-height:1.5}
+    @media(max-width:680px){.rapport-editor-grid{grid-template-columns:1fr}.rapport-toolbar{align-items:stretch}.rapport-spacer{display:none}.rapport-toolbar .setting-control{min-width:0;flex:1}.rapport-control-bar .lore-action{min-height:36px}}
+
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -183,6 +192,7 @@
         <button class="settings-nav-button" type="button" data-settings-section="you">You</button>
         <button class="settings-nav-button" type="button" data-settings-section="companion">§wyrlz</button>
         <button class="settings-nav-button" type="button" data-settings-section="lore">Lore & Memory</button>
+        <button class="settings-nav-button" type="button" data-settings-section="rapport">Rapport</button>
         <button class="settings-nav-button" type="button" data-settings-section="proposals">Proposal Inbox</button>
         <button class="settings-nav-button" type="button" data-settings-section="appearance">Appearance</button>
         <button class="settings-nav-button" type="button" data-settings-section="motion">Motion</button>
@@ -257,6 +267,38 @@
             <div class="lore-editor-actions"><button class="lore-action danger" id="loreDeleteButton" type="button" hidden>Delete</button><button class="lore-action" id="loreCancelButton" type="button">Cancel</button><button class="lore-action" id="loreSaveButton" type="button">Save record</button></div>
           </div>
         </section>
+        <section class="settings-pane" data-settings-pane="rapport">
+          <h3>Rapport</h3><p class="settings-pane-lead">Shared vocabulary, callbacks, and interaction conventions live here as inspectable state. Tier E stores and scopes rapport; it does not yet inject rapport into R39 inference.</p>
+          <div class="rapport-control-bar">
+            <div class="rapport-state" id="rapportState">Sign in with durable account storage to load rapport state.</div>
+            <button class="lore-action" id="rapportPauseButton" type="button">Pause rapport</button>
+            <button class="lore-action danger" id="rapportResetButton" type="button">Reset rapport</button>
+          </div>
+          <div class="rapport-toolbar">
+            <div class="setting-control"><select id="rapportFilter" aria-label="Filter rapport"><option value="ALL">All rapport</option><option value="VOCABULARY">Vocabulary</option><option value="CALLBACK">Callbacks</option><option value="CONVENTION">Conventions</option></select></div>
+            <label class="rapport-history-toggle"><input id="rapportHistoryToggle" type="checkbox"> Show reset history</label>
+            <div class="rapport-spacer"></div>
+            <button class="lore-action" id="rapportNewButton" type="button">+ New rapport</button>
+          </div>
+          <div class="lore-status" id="rapportStatus">Current generation only. Reset history remains preserved.</div>
+          <div class="rapport-list" id="rapportList"></div>
+          <div class="rapport-editor" id="rapportEditor" hidden>
+            <h4 class="rapport-editor-title" id="rapportEditorTitle">New rapport record</h4>
+            <div class="rapport-editor-grid">
+              <div class="profile-field"><label for="rapportKind">Kind</label><div class="setting-control"><select id="rapportKind"><option value="VOCABULARY">Vocabulary</option><option value="CALLBACK">Callback</option><option value="CONVENTION">Convention</option></select></div></div>
+              <div class="profile-field"><label for="rapportScope">Scope</label><div class="setting-control"><select id="rapportScope"><option value="GLOBAL">Global</option><option value="THREAD">Current thread</option><option value="PROJECT" disabled>Project — no project scope attached</option></select></div></div>
+              <div class="profile-field full"><label for="rapportLabel">Label</label><div class="setting-control"><input id="rapportLabel" type="text" maxlength="120" placeholder="Short inspectable name"></div></div>
+              <div class="profile-field full"><label for="rapportCue">Cue / phrase / situation</label><div class="setting-control"><textarea id="rapportCue" maxlength="500" placeholder="What shared cue should this record recognize?"></textarea></div></div>
+              <div class="profile-field full"><label for="rapportMeaning">Shared meaning</label><div class="setting-control"><textarea id="rapportMeaning" maxlength="4000" placeholder="What does the cue mean between you and §wyrlz?"></textarea></div></div>
+              <div class="profile-field full"><label for="rapportPreferredResponse">Preferred response / convention</label><div class="setting-control"><textarea id="rapportPreferredResponse" maxlength="4000" placeholder="Optional response pattern or convention"></textarea></div></div>
+              <div class="profile-field"><label>State</label><label class="setting-toggle" style="justify-content:flex-start"><input id="rapportActive" type="checkbox" checked> Active</label></div>
+              <div class="profile-field"><label>Scope status</label><div class="setting-help" id="rapportScopeStatus">Global rapport</div></div>
+            </div>
+            <div class="rapport-origin" id="rapportOrigin">New manual rapport · authored by USER · current generation</div>
+            <div class="rapport-editor-actions"><button class="lore-action danger" id="rapportDeleteButton" type="button" hidden>Delete</button><button class="lore-action" id="rapportCancelButton" type="button">Cancel</button><button class="lore-action" id="rapportSaveButton" type="button">Save rapport</button></div>
+          </div>
+          <div class="settings-note" style="margin-top:12px"><strong>Reset semantics:</strong> Reset advances the active rapport generation. Older generations remain inspectable when “Show reset history” is enabled; they are not silently destroyed or reused.</div>
+        </section>
         <section class="settings-pane" data-settings-pane="proposals">
           <h3>Proposal Inbox</h3><p class="settings-pane-lead">AI-originated durable changes land here under your policy. The browser can resolve proposals but cannot forge assistant-authored proposals.</p>
           <div class="setting-group">
@@ -268,6 +310,7 @@
               <div class="proposal-policy-item"><label for="proposalPolicyUserLore">User Lore</label><select id="proposalPolicyUserLore" data-proposal-policy="USER_LORE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
               <div class="proposal-policy-item"><label for="proposalPolicyCompanionLore">§wyrlz Self Lore</label><select id="proposalPolicyCompanionLore" data-proposal-policy="COMPANION_SELF_LORE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
               <div class="proposal-policy-item"><label for="proposalPolicySharedLore">Shared Lore</label><select id="proposalPolicySharedLore" data-proposal-policy="SHARED_LORE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicySharedRapport">Shared Rapport</label><select id="proposalPolicySharedRapport" data-proposal-policy="SHARED_RAPPORT"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
             </div>
             <div class="proposal-policy-help"><code>ASK</code> queues a durable proposal. <code>AUTO_LOW_RISK</code> may apply only trusted LOW-risk, bounded operations and still records audit + revert state. <code>SESSION_ONLY</code> and <code>NEVER</code> create no durable proposal or target mutation.</div>
           </div>
@@ -306,6 +349,7 @@
             <div class="settings-status-card"><span>Account</span><span id="settingsPrivacyAccount">Not signed in</span></div>
             <div class="settings-status-card"><span>Settings persistence</span><span id="settingsPrivacyDurability">Session preview only</span></div>
             <div class="settings-status-card"><span>Lore & Memory storage</span><span id="settingsLoreDurability">Session unavailable</span></div>
+            <div class="settings-status-card"><span>Rapport storage</span><span id="settingsRapportDurability">Session unavailable</span></div>
             <div class="settings-status-card"><span>AI proposal authority</span><span id="settingsProposalAuthority">Unavailable without durable account</span></div>
           </div>
           <div class="settings-note"><strong>No silent durability:</strong> opening or previewing settings never writes your profile. AI-originated durable changes must pass the configured Tier D policy; direct assistant mutation remains unavailable.</div>
@@ -338,8 +382,8 @@
     <div class="version-box collapsed" id="versionBox">
       <button class="version-head" id="versionToggle" type="button" aria-expanded="false"><span class="version-title">Versions</span><span class="version-chevron">⌄</span></button>
       <div class="version-list">
-        <div class="version-row"><span>Repository Work</span><span>1.0.26</span></div>
-        <div class="version-row"><span>Server Runtime</span><span>2.3.306</span></div>
+        <div class="version-row"><span>Repository Work</span><span>1.0.27</span></div>
+        <div class="version-row"><span>Server Runtime</span><span>2.3.307</span></div>
         <div class="version-row"><span>Server UI</span><span>1.0.0</span></div>
         <div class="version-row"><span>Web Frontend</span><span>1.0.5</span></div>
         <div class="version-row"><span>Web Chat</span><span>1.5.86</span></div>
@@ -392,7 +436,7 @@
       const topEdge = document.getElementById("topEdge");
       const topThreadTitle = document.getElementById("topThreadTitle");
       const topReadyLabel = document.getElementById("topReadyLabel");
-      const SWRLZ_CHAT_VERSION = "1.0.52";
+      const SWRLZ_CHAT_VERSION = "1.0.53";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       const uiCamera = (event,data={}) => {
@@ -422,6 +466,10 @@
       let loreRecords=[];
       let loreLoadedForUser="";
       let loreEditorId=null;
+      let rapportRecords=[];
+      let rapportControl=null;
+      let rapportLoadedKey="";
+      let rapportEditorId=null;
       let proposalRecords=[];
       let proposalLoadedForUser="";
       let proposalAuditCache=new Map();
@@ -761,6 +809,29 @@
       const settingsPrivacyAccount = document.getElementById("settingsPrivacyAccount");
       const settingsPrivacyDurability = document.getElementById("settingsPrivacyDurability");
       const settingsLoreDurability = document.getElementById("settingsLoreDurability");
+      const settingsRapportDurability = document.getElementById("settingsRapportDurability");
+      const rapportState = document.getElementById("rapportState");
+      const rapportPauseButton = document.getElementById("rapportPauseButton");
+      const rapportResetButton = document.getElementById("rapportResetButton");
+      const rapportFilter = document.getElementById("rapportFilter");
+      const rapportHistoryToggle = document.getElementById("rapportHistoryToggle");
+      const rapportNewButton = document.getElementById("rapportNewButton");
+      const rapportStatus = document.getElementById("rapportStatus");
+      const rapportList = document.getElementById("rapportList");
+      const rapportEditor = document.getElementById("rapportEditor");
+      const rapportEditorTitle = document.getElementById("rapportEditorTitle");
+      const rapportKind = document.getElementById("rapportKind");
+      const rapportScope = document.getElementById("rapportScope");
+      const rapportLabel = document.getElementById("rapportLabel");
+      const rapportCue = document.getElementById("rapportCue");
+      const rapportMeaning = document.getElementById("rapportMeaning");
+      const rapportPreferredResponse = document.getElementById("rapportPreferredResponse");
+      const rapportActive = document.getElementById("rapportActive");
+      const rapportScopeStatus = document.getElementById("rapportScopeStatus");
+      const rapportOrigin = document.getElementById("rapportOrigin");
+      const rapportDeleteButton = document.getElementById("rapportDeleteButton");
+      const rapportCancelButton = document.getElementById("rapportCancelButton");
+      const rapportSaveButton = document.getElementById("rapportSaveButton");
       const settingsProposalAuthority = document.getElementById("settingsProposalAuthority");
       const proposalFilter = document.getElementById("proposalFilter");
       const proposalRefresh = document.getElementById("proposalRefresh");
@@ -807,7 +878,7 @@
       const settingReducedTransparency = document.getElementById("settingReducedTransparency");
       const settingsControlIds=["settingEnterSend","settingDensity","settingEffort","settingResponseLength","settingGlass","settingMotion","settingFontScale","settingHighContrast","settingReducedTransparency"];
       const profileControlIds=["settingDisplayName","settingUserPronouns","settingUserRole","settingCommunicationStyle","settingOutputStyle","settingCompanionName","settingCompanionTitle","settingCompanionForm","settingCompanionPronouns","settingCompanionWarmth","settingCompanionDirectness","settingCompanionHumor","settingCompanionLoreDensity"];
-      const proposalPolicyDefaults={USER_PROFILE:"ASK",COMPANION_PROFILE:"ASK",USER_FACT:"ASK",USER_LORE:"ASK",COMPANION_SELF_LORE:"ASK",SHARED_LORE:"ASK"};
+      const proposalPolicyDefaults={USER_PROFILE:"ASK",COMPANION_PROFILE:"ASK",USER_FACT:"ASK",USER_LORE:"ASK",COMPANION_SELF_LORE:"ASK",SHARED_LORE:"ASK",SHARED_RAPPORT:"ASK"};
       const applySettingsPreview = () => {
         settingsState.general.enterToSend=!!settingEnterSend.checked;
         settingsState.model.effort=settingEffort.value;
@@ -873,8 +944,12 @@
         settingsPrivacyAccount.textContent=chatAccountUser?(chatAccountUser.displayName||chatAccountUser.email||"Signed in"):"Not signed in";
         settingsPrivacyDurability.textContent=accountProfileDurable?"Durable account profile":"Session preview only";
         settingsLoreDurability.textContent=accountProfileDurable?"Account-owned Redis records":"Unavailable without durable account";
+        settingsRapportDurability.textContent=accountProfileDurable?"Account-owned generation state":"Unavailable without durable account";
         settingsProposalAuthority.textContent=accountProfileDurable?"Tier D account-owned queue":"Unavailable without durable account";
         loreNewButton.disabled=!accountProfileDurable;
+        rapportNewButton.disabled=!accountProfileDurable;
+        rapportPauseButton.disabled=!accountProfileDurable;
+        rapportResetButton.disabled=!accountProfileDurable;
         proposalRefresh.disabled=!accountProfileDurable;
         settingsSave.disabled=!chatAccountUser||!accountProfileDurable;
         settingsSaveState.textContent=accountProfileDurable?(settingsDirty?"Unsaved profile changes.":"Saved profile values loaded; previews remain local until Save."):"Previewing locally. Durable account storage is required to save.";
@@ -890,6 +965,7 @@
         document.querySelectorAll(".settings-nav-button").forEach(button=>button.classList.toggle("active",button.dataset.settingsSection===section));
         document.querySelectorAll(".settings-pane").forEach(pane=>pane.classList.toggle("active",pane.dataset.settingsPane===section));
         if(section==="lore")loadLoreRecords();
+        if(section==="rapport")loadRapportRecords();
         if(section==="proposals")loadProposalRecords();
         uiCamera("settings-section",{section});
       };
@@ -910,9 +986,161 @@
       window.addEventListener("keydown",event=>{if(event.key==="Escape"&&document.body.classList.contains("settings-open"))setSettingsOpen(false);});
 
 
+
+      const rapportKindLabel=value=>({VOCABULARY:"Vocabulary",CALLBACK:"Callback",CONVENTION:"Convention"}[value]||String(value||"Rapport"));
+      const renderRapportControl=()=>{
+        if(!accountProfileDurable||!rapportControl){
+          rapportState.textContent="Sign in with durable account storage to load rapport state.";
+          rapportPauseButton.textContent="Pause rapport";return;
+        }
+        const paused=rapportControl.paused===true;
+        rapportState.innerHTML="<strong>"+(paused?"Paused":"Active")+"</strong> · generation "+String(rapportControl.currentGeneration||1)+" · control v"+String(rapportControl.version||1);
+        rapportPauseButton.textContent=paused?"Resume rapport":"Pause rapport";
+      };
+      const closeRapportEditor=()=>{
+        rapportEditorId=null;rapportEditor.hidden=true;rapportDeleteButton.hidden=true;rapportSaveButton.hidden=false;
+        [rapportKind,rapportScope,rapportLabel,rapportCue,rapportMeaning,rapportPreferredResponse,rapportActive].forEach(control=>control.disabled=false);
+        rapportKind.value="VOCABULARY";rapportScope.value="GLOBAL";rapportLabel.value="";rapportCue.value="";rapportMeaning.value="";rapportPreferredResponse.value="";rapportActive.checked=true;
+        rapportScopeStatus.textContent="Global rapport";rapportOrigin.textContent="New manual rapport · authored by USER · current generation";
+      };
+      const syncRapportScopeStatus=()=>{
+        const existing=rapportEditorId?rapportRecords.find(record=>record.id===rapportEditorId):null;
+        if(rapportScope.value==="THREAD"){
+          const scopeId=existing?.scope==="THREAD"&&existing.scopeId?existing.scopeId:(activeThreadId&&!draftThread?activeThreadId:"");
+          rapportScopeStatus.textContent=scopeId?("Thread "+scopeId):"No saved thread is active";
+        }else if(rapportScope.value==="PROJECT"){
+          rapportScopeStatus.textContent=existing?.scopeId?("Project "+existing.scopeId):"No project scope is attached to this Chat surface";
+        }else rapportScopeStatus.textContent="Global rapport";
+      };
+      const renderRapportRecords=()=>{
+        rapportList.innerHTML="";renderRapportControl();
+        const filter=rapportFilter.value;
+        const currentGeneration=Number(rapportControl?.currentGeneration||1);
+        const visible=rapportRecords.filter(record=>filter==="ALL"||record.kind===filter);
+        if(!accountProfileDurable){
+          const empty=document.createElement("div");empty.className="rapport-empty";empty.textContent="Durable account storage is required for Rapport.";rapportList.appendChild(empty);return;
+        }
+        if(!visible.length){
+          const empty=document.createElement("div");empty.className="rapport-empty";empty.textContent=rapportRecords.length?"No rapport records match this filter.":"No rapport records in this generation.";rapportList.appendChild(empty);return;
+        }
+        for(const record of visible){
+          const historical=Number(record.generation||1)!==currentGeneration;
+          const card=document.createElement("article");card.className="rapport-card"+(record.active===false?" inactive":"")+(historical?" archived":"");
+          const head=document.createElement("div");head.className="rapport-card-head";
+          const title=document.createElement("div");title.className="rapport-card-title";title.textContent=record.label||"Untitled rapport";
+          const kind=document.createElement("span");kind.className="rapport-kind";kind.textContent=rapportKindLabel(record.kind);head.append(title,kind);
+          const cue=document.createElement("div");cue.className="rapport-cue";cue.textContent="Cue: "+String(record.cue||"");
+          const meaning=document.createElement("div");meaning.className="rapport-meaning";meaning.textContent=record.meaning||"";
+          card.append(head,cue,meaning);
+          if(record.preferredResponse){
+            const response=document.createElement("div");response.className="rapport-response";response.textContent="Convention: "+record.preferredResponse;card.appendChild(response);
+          }
+          const meta=document.createElement("div");meta.className="rapport-meta";
+          const scopeLabel=record.scopeId?(String(record.scope||"GLOBAL")+" · "+String(record.scopeId)):String(record.scope||"GLOBAL");
+          const provenanceKind=record.provenance?.kind||record.provenance?.surface||"unknown";
+          [scopeLabel,"gen "+String(record.generation||1),String(record.source||"unknown"),"provenance "+String(provenanceKind),"by "+String(record.authoredBy||"unknown"),"v"+String(record.version||1),historical?"reset history":(record.active===false?"inactive":"active")].forEach(value=>{const span=document.createElement("span");span.textContent=value;meta.appendChild(span);});
+          const actions=document.createElement("div");actions.className="rapport-actions";
+          const edit=document.createElement("button");edit.type="button";edit.className="lore-action";edit.textContent=historical?"Inspect":"Edit";edit.onclick=()=>openRapportEditor(record);actions.appendChild(edit);
+          card.append(meta,actions);rapportList.appendChild(card);
+        }
+      };
+      const openRapportEditor=record=>{
+        const currentGeneration=Number(rapportControl?.currentGeneration||1);
+        const historical=!!record&&Number(record.generation||1)!==currentGeneration;
+        rapportEditorId=record?.id||null;rapportEditor.hidden=false;rapportEditorTitle.textContent=record?(historical?"Inspect reset-history rapport":"Edit rapport record"):"New rapport record";
+        rapportKind.value=record?.kind||"VOCABULARY";rapportScope.value=["GLOBAL","THREAD","PROJECT"].includes(record?.scope)?record.scope:"GLOBAL";rapportLabel.value=record?.label||"";rapportCue.value=record?.cue||"";rapportMeaning.value=record?.meaning||"";rapportPreferredResponse.value=record?.preferredResponse||"";rapportActive.checked=record?.active!==false;
+        [rapportKind,rapportScope,rapportLabel,rapportCue,rapportMeaning,rapportPreferredResponse,rapportActive].forEach(control=>control.disabled=historical);
+        rapportDeleteButton.hidden=!record||historical;rapportSaveButton.hidden=historical;
+        rapportOrigin.textContent=record?("Source "+String(record.source||"unknown")+" · authored by "+String(record.authoredBy||"unknown")+" · generation "+String(record.generation||1)+" · version "+String(record.version||1)):"New manual rapport · authored by USER · generation "+String(currentGeneration);
+        syncRapportScopeStatus();rapportEditor.scrollIntoView({block:"nearest",behavior:settingsState.ui.motion==="off"?"auto":"smooth"});
+      };
+      const loadRapportRecords=async(force=false)=>{
+        if(!accountProfileDurable||!chatAccountUser){rapportRecords=[];rapportControl=null;rapportLoadedKey="";rapportStatus.textContent="Sign in with durable account storage to load Rapport.";renderRapportRecords();return false;}
+        const key=String(chatAccountUser.id||"")+"|"+(rapportHistoryToggle.checked?"history":"current");
+        if(!force&&rapportLoadedKey===key){renderRapportRecords();return true;}
+        rapportStatus.textContent="Loading account-owned rapport…";
+        try{
+          const response=await accountFetch("/api/account/rapport?limit=300&includeHistory="+(rapportHistoryToggle.checked?"true":"false"),{method:"GET"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!Array.isArray(data.records)||!data.control)throw new Error(data?.detail||("Rapport load failed ("+response.status+")"));
+          rapportRecords=data.records;rapportControl=data.control;rapportLoadedKey=key;
+          rapportStatus.textContent=rapportRecords.length?(rapportRecords.length+" rapport record"+(rapportRecords.length===1?"":"s")+" loaded."):"No rapport records in this generation.";
+          renderRapportRecords();uiCamera("rapport-load",{count:rapportRecords.length,generation:Number(rapportControl.currentGeneration||1),paused:rapportControl.paused===true,history:rapportHistoryToggle.checked});return true;
+        }catch(error){
+          rapportRecords=[];rapportControl=null;rapportLoadedKey="";rapportStatus.textContent="Rapport could not be loaded from the account authority.";renderRapportRecords();uiCamera("rapport-load-failed",{errorType:String(error?.name||"Error")});return false;
+        }
+      };
+      rapportFilter.addEventListener("change",renderRapportRecords);
+      rapportHistoryToggle.addEventListener("change",()=>loadRapportRecords(true));
+      rapportScope.addEventListener("change",syncRapportScopeStatus);
+      rapportNewButton.addEventListener("click",()=>{if(accountProfileDurable)openRapportEditor(null);});
+      rapportCancelButton.addEventListener("click",closeRapportEditor);
+      rapportPauseButton.addEventListener("click",async()=>{
+        if(!accountProfileDurable||!rapportControl)return;
+        const nextPaused=rapportControl.paused!==true;
+        rapportPauseButton.disabled=true;rapportStatus.textContent=nextPaused?"Pausing rapport…":"Resuming rapport…";
+        try{
+          const response=await accountFetch("/api/account/rapport/control",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({paused:nextPaused,version:Number(rapportControl.version||1)})});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!data.control)throw new Error(data?.detail||"Rapport control failed");
+          rapportControl=data.control;renderRapportControl();rapportStatus.textContent=nextPaused?"Rapport paused. Stored state remains inspectable.":"Rapport resumed.";uiCamera("rapport-pause",{paused:nextPaused,generation:Number(rapportControl.currentGeneration||1),version:Number(rapportControl.version||1)});
+        }catch(error){rapportStatus.textContent="Rapport pause/resume failed. No state change was assumed.";uiCamera("rapport-pause-failed",{errorType:String(error?.name||"Error")});}
+        finally{rapportPauseButton.disabled=!accountProfileDurable;}
+      });
+      rapportResetButton.addEventListener("click",async()=>{
+        if(!accountProfileDurable||!rapportControl)return;
+        if(!confirm("Reset shared rapport? Current records will move to preserved reset history and a new empty generation will become active."))return;
+        rapportResetButton.disabled=true;rapportStatus.textContent="Resetting rapport generation…";
+        try{
+          const response=await accountFetch("/api/account/rapport/reset",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({version:Number(rapportControl.version||1)})});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!data.control||data.reset!==true)throw new Error(data?.detail||"Rapport reset failed");
+          rapportControl=data.control;rapportLoadedKey="";closeRapportEditor();await loadRapportRecords(true);rapportStatus.textContent="Rapport reset to generation "+String(rapportControl.currentGeneration||1)+". Prior generations remain preserved.";uiCamera("rapport-reset",{generation:Number(rapportControl.currentGeneration||1),version:Number(rapportControl.version||1)});
+        }catch(error){rapportStatus.textContent="Rapport reset failed. Existing generation remains authoritative.";uiCamera("rapport-reset-failed",{errorType:String(error?.name||"Error")});}
+        finally{rapportResetButton.disabled=!accountProfileDurable;}
+      });
+      rapportSaveButton.addEventListener("click",async()=>{
+        if(!accountProfileDurable||!chatAccountUser||!rapportControl)return;
+        const existing=rapportEditorId?rapportRecords.find(record=>record.id===rapportEditorId):null;
+        if(existing&&Number(existing.generation||1)!==Number(rapportControl.currentGeneration||1)){rapportStatus.textContent="Reset-history rapport is inspect-only.";return;}
+        const scope=rapportScope.value;
+        const scopeId=scope==="THREAD"?(existing?.scope==="THREAD"&&existing.scopeId?existing.scopeId:(activeThreadId&&!draftThread?activeThreadId:"")):scope==="PROJECT"?(existing?.scope==="PROJECT"?existing.scopeId:""):null;
+        if(scope!=="GLOBAL"&&!scopeId){rapportStatus.textContent="Choose Global scope or open a saved thread before saving.";syncRapportScopeStatus();return;}
+        const label=rapportLabel.value.trim(),cue=rapportCue.value.trim(),meaning=rapportMeaning.value.trim();
+        if(!label||!cue||!meaning){rapportStatus.textContent="Label, cue, and shared meaning are required.";return;}
+        rapportSaveButton.disabled=true;rapportStatus.textContent=existing?"Saving rapport update…":"Creating rapport record…";
+        try{
+          const path=existing?("/api/account/rapport/"+encodeURIComponent(existing.id)):"/api/account/rapport";
+          const method=existing?"PUT":"POST";
+          const payload={kind:rapportKind.value,label,cue,meaning,preferredResponse:rapportPreferredResponse.value.trim(),scope,scopeId,active:!!rapportActive.checked};
+          if(existing)payload.version=Number(existing.version||1);
+          const response=await accountFetch(path,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!data.record)throw new Error(data?.detail||("Rapport save failed ("+response.status+")"));
+          rapportControl=data.control||rapportControl;
+          if(existing)rapportRecords=rapportRecords.map(record=>record.id===data.record.id?data.record:record);else rapportRecords=[data.record,...rapportRecords];
+          closeRapportEditor();renderRapportRecords();rapportStatus.textContent="Rapport record saved.";uiCamera("rapport-save",{operation:existing?"update":"create",id:data.record.id,kind:data.record.kind,scope:data.record.scope,generation:Number(data.record.generation||1),version:Number(data.record.version||1)});
+        }catch(error){rapportStatus.textContent="Rapport save failed. No success was assumed.";uiCamera("rapport-save-failed",{operation:existing?"update":"create",errorType:String(error?.name||"Error")});}
+        finally{rapportSaveButton.disabled=false;}
+      });
+      rapportDeleteButton.addEventListener("click",async()=>{
+        const existing=rapportEditorId?rapportRecords.find(record=>record.id===rapportEditorId):null;
+        if(!existing||!accountProfileDurable||!rapportControl)return;
+        if(Number(existing.generation||1)!==Number(rapportControl.currentGeneration||1)){rapportStatus.textContent="Reset-history rapport is inspect-only.";return;}
+        if(!confirm('Delete "'+(existing.label||"this rapport record")+'"?'))return;
+        rapportDeleteButton.disabled=true;rapportStatus.textContent="Deleting rapport record…";
+        try{
+          const response=await accountFetch("/api/account/rapport/"+encodeURIComponent(existing.id)+"?version="+encodeURIComponent(String(existing.version||1)),{method:"DELETE"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||data.deleted!==true)throw new Error(data?.detail||("Rapport delete failed ("+response.status+")"));
+          rapportRecords=rapportRecords.filter(record=>record.id!==existing.id);closeRapportEditor();renderRapportRecords();rapportStatus.textContent="Rapport record deleted.";uiCamera("rapport-delete",{id:existing.id,kind:existing.kind,scope:existing.scope,generation:Number(existing.generation||1)});
+        }catch(error){rapportStatus.textContent="Rapport delete failed. The record remains until the authority confirms deletion.";uiCamera("rapport-delete-failed",{id:existing.id,errorType:String(error?.name||"Error")});}
+        finally{rapportDeleteButton.disabled=false;}
+      });
+
       const proposalStateLabel=value=>String(value||"PENDING").replaceAll("_"," ");
       const proposalCategoryLabel=value=>({
-        USER_PROFILE:"You profile",COMPANION_PROFILE:"§wyrlz profile",USER_FACT:"User Fact",USER_LORE:"User Lore",COMPANION_SELF_LORE:"§wyrlz Self Lore",SHARED_LORE:"Shared Lore"
+        USER_PROFILE:"You profile",COMPANION_PROFILE:"§wyrlz profile",USER_FACT:"User Fact",USER_LORE:"User Lore",COMPANION_SELF_LORE:"§wyrlz Self Lore",SHARED_LORE:"Shared Lore",SHARED_RAPPORT:"Shared Rapport"
       }[value]||String(value||"Proposal"));
       const proposalPayloadPreview=proposal=>{
         try{return JSON.stringify(proposal?.payload||{},null,2)}catch(_){return "{}"}
@@ -997,7 +1225,7 @@
           if(proposal.state==="PENDING"){
             const edit=document.createElement("button");edit.type="button";edit.className="proposal-action";edit.textContent="Edit";actions.appendChild(edit);
             const decline=document.createElement("button");decline.type="button";decline.className="proposal-action decline";decline.textContent="Decline";decline.onclick=async()=>{if(!confirm("Decline this proposal?"))return;try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id)+"/decline",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({version:Number(proposal.version||1)})},"proposal-decline");}catch(error){proposalStatus.textContent="Decline failed: "+String(error?.message||error);}};actions.appendChild(decline);
-            const approve=document.createElement("button");approve.type="button";approve.className="proposal-action approve";approve.textContent="Approve";approve.onclick=async()=>{if(!confirm("Approve and apply this durable change?"))return;try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id)+"/approve",{method:"POST"},"proposal-approve");await refreshAccount();loreLoadedForUser="";}catch(error){proposalStatus.textContent="Approval failed: "+String(error?.message||error);}};actions.appendChild(approve);
+            const approve=document.createElement("button");approve.type="button";approve.className="proposal-action approve";approve.textContent="Approve";approve.onclick=async()=>{if(!confirm("Approve and apply this durable change?"))return;try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id)+"/approve",{method:"POST"},"proposal-approve");await refreshAccount();loreLoadedForUser="";rapportLoadedKey="";}catch(error){proposalStatus.textContent="Approval failed: "+String(error?.message||error);}};actions.appendChild(approve);
             const editor=document.createElement("div");editor.className="proposal-editor";editor.hidden=true;
             const textarea=document.createElement("textarea");textarea.value=proposalPayloadPreview(proposal);textarea.setAttribute("aria-label","Edit proposal payload JSON");
             const editorActions=document.createElement("div");editorActions.className="proposal-editor-actions";
@@ -1010,7 +1238,7 @@
             editorActions.append(cancel,save);editor.append(textarea,editorActions);edit.onclick=()=>{editor.hidden=!editor.hidden;};card.append(head,rationale,payload,meta,actions,editor,audit);proposalList.appendChild(card);continue;
           }
           if(proposal.state==="APPLIED"||proposal.state==="AUTO_APPLIED"){
-            const revert=document.createElement("button");revert.type="button";revert.className="proposal-action revert";revert.textContent="Revert";revert.onclick=async()=>{if(!confirm("Revert this applied change? This will stop if the target changed afterward."))return;try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id)+"/revert",{method:"POST"},"proposal-revert");await refreshAccount();loreLoadedForUser="";}catch(error){proposalStatus.textContent="Revert failed: "+String(error?.message||error);}};actions.appendChild(revert);
+            const revert=document.createElement("button");revert.type="button";revert.className="proposal-action revert";revert.textContent="Revert";revert.onclick=async()=>{if(!confirm("Revert this applied change? This will stop if the target changed afterward."))return;try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id)+"/revert",{method:"POST"},"proposal-revert");await refreshAccount();loreLoadedForUser="";rapportLoadedKey="";}catch(error){proposalStatus.textContent="Revert failed: "+String(error?.message||error);}};actions.appendChild(revert);
           }
           card.append(head,rationale,payload,meta,actions,audit);proposalList.appendChild(card);
         }
@@ -1036,8 +1264,10 @@
       window.addEventListener("swrlz-proposal-receipt",event=>{
         const receipt=event?.detail&&typeof event.detail==="object"?event.detail:{};
         proposalLoadedForUser="";
+        if(String(receipt.category||"")==="SHARED_RAPPORT")rapportLoadedKey="";
         const activePane=document.querySelector(".settings-pane.active")?.dataset?.settingsPane||"";
         if(document.body.classList.contains("settings-open")&&activePane==="proposals"&&accountProfileDurable)loadProposalRecords(true);
+        if(document.body.classList.contains("settings-open")&&activePane==="rapport"&&accountProfileDurable&&String(receipt.category||"")==="SHARED_RAPPORT")loadRapportRecords(true);
         uiCamera("proposal-receipt",{
           signalId:String(receipt.signalId||""),
           id:String(receipt.proposalId||""),
@@ -1200,7 +1430,7 @@
         try {
           const response = await fetch(url,{...init,credentials:"include",cache:"no-store"});
           const contentType=response.headers.get("content-type")||"";
-          const redactAccountBody=["/api/account/me","/api/account/google","/api/account/profile"].includes(path)||path.startsWith("/api/account/lore")||path.startsWith("/api/account/proposals");
+          const redactAccountBody=["/api/account/me","/api/account/google","/api/account/profile"].includes(path)||path.startsWith("/api/account/lore")||path.startsWith("/api/account/rapport")||path.startsWith("/api/account/proposals");
           const preview=redactAccountBody?"[redacted account payload]":await response.clone().text().then(t=>t.slice(0,180)).catch(()=>"");
           accountTrace("response",{path,status:response.status,ok:response.ok,contentType,preview,durationMs:Math.round(performance.now()-started)});
           return response;
@@ -1215,7 +1445,7 @@
         chatAccountUser = accountUser;
         accountProfile=profile&&typeof profile==="object"?profile:null;
         accountProfileDurable=!!accountUser&&!!durable&&Number(accountProfile?.version||0)>0;
-        if(priorUserId!==(accountUser?.id||"")){loreRecords=[];loreLoadedForUser="";closeLoreEditor();renderLoreRecords();proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();renderProposalRecords();}
+        if(priorUserId!==(accountUser?.id||"")){loreRecords=[];loreLoadedForUser="";closeLoreEditor();renderLoreRecords();rapportRecords=[];rapportControl=null;rapportLoadedKey="";closeRapportEditor();renderRapportRecords();proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();renderProposalRecords();}
         populateSettingsControls();
         refreshSettingsDurability();
         if(!draftThread)renderConversation(currentThread());
