@@ -71,3 +71,14 @@ The component acceptance cadence is therefore:
 - **1.0.18 legacy-account routing correction:** the clean-room drawer account UI now routes status, session restore, Google credential verification, and logout through the existing `/live/api/account/*` server surface used by the legacy/server-backed Chat architecture. The clean-room static Vercel deployment does not own Python account functions, so direct `/api/account/*` calls on that isolated project were the wrong boundary. No duplicate auth authority was introduced.
 
 - **1.0.19 account transport trace:** ancestry/source inspection confirmed legacy Google verification is canonically `/api/account/*`; `/live/api/account/*` was an incorrect inferred prefix and produced non-JSON responses. Clean-room account requests now target the canonical account paths at the legacy server origin and wrap every request with an account camera capturing path/status/content-type/body preview/duration or network error. The camera also attempts relay to `/api/chat/client-debug`; console trace remains available when the isolated static deployment has no debug ingestion route.
+
+
+## Research-tier continuation
+
+The component inventory above is historical through the early clean-room reconstruction. Later research-driven Chat evolution continues the same canonical owner and does not replace that lineage.
+
+- **1.0.48 — Tier A visual foundation:** tokenized Glitch Dragon/Ice Dragon visual system, compact top edge, drawer/message/composer refinement, reduced-motion baseline, and bounded UI cameras. No transport/account/LALM ownership changed.
+- **1.0.49 — Tier B settings shell:** General, AI/Model, Appearance, Motion, Accessibility, and Privacy surfaces. Existing account profile authority is reused for explicit user-triggered settings persistence; previews remain local until Save.
+- **1.0.50 — Tier C profile + lore source integration:** adds You and §wyrlz profile surfaces plus Lore & Memory inspect/create/edit/delete UI. The stable account authority gains `companion_profile` and account-owned `LoreRecord` storage with USER-authored manual writes, source/provenance, scope, active/editable state, optimistic versioning, and payload-redacted Redis diagnostics. Proposal Inbox is presentation-only until Tier D installs the durable proposal/approval protocol. Shared rapport remains Tier E.
+
+Tier C requires a later explicitly approved stable-server deployment before its new `/api/account/lore` routes can be accepted as live. Source integration alone is not runtime acceptance.
