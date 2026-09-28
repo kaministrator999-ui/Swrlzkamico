@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.50">
+  <meta name="swrlz-chat-version" content="1.0.51">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -145,6 +145,15 @@
     .lore-editor{margin-top:12px;padding:12px;border:1px solid rgba(56,232,255,.20);border-radius:13px;background:rgba(2,18,31,.78)}.lore-editor[hidden]{display:none}.lore-editor-title{margin:0 0 10px;color:#e8faff;font-size:13px}.lore-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.lore-editor-actions{display:flex;align-items:center;gap:7px;margin-top:10px}.lore-editor-actions .lore-action:first-of-type{margin-left:auto}.lore-origin{margin-top:9px;padding:8px 9px;border-radius:9px;background:rgba(23,32,57,.36);color:#849eae;font-family:var(--font-telemetry);font-size:8px;line-height:1.5}.proposal-empty{padding:18px;border:1px solid rgba(165,120,255,.18);border-radius:13px;background:linear-gradient(135deg,rgba(41,29,68,.22),rgba(5,23,39,.45));text-align:center}.proposal-count{font-family:var(--font-telemetry);font-size:26px;color:#d7ccff}.proposal-label{margin-top:4px;color:#a39bbb;font-size:10px}
     @media(max-width:680px){.profile-grid,.lore-editor-grid{grid-template-columns:1fr}.profile-field.full{grid-column:auto}.lore-toolbar{align-items:stretch;flex-wrap:wrap}.lore-toolbar-spacer{display:none}.lore-toolbar .setting-control{min-width:0;flex:1}.lore-action{min-height:38px}}
 
+
+    /* Glitch Dragon Chat — Tier D approval protocol. */
+    .proposal-policy-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.proposal-policy-item{padding:9px;border:1px solid rgba(126,214,255,.11);border-radius:10px;background:rgba(5,24,40,.44)}.proposal-policy-item label{display:block;margin-bottom:5px;color:#d6eef6;font-size:10px;font-weight:760}.proposal-policy-item select{width:100%;min-height:34px;border:1px solid rgba(126,214,255,.20);border-radius:8px;background:#071c2d;color:#e9f8ff;padding:6px 8px;font-size:10px}
+    .proposal-policy-help{margin-top:10px;color:#7f9ba9;font-size:9px;line-height:1.5}.proposal-policy-help code{color:#aeeaff}
+    .proposal-toolbar{display:flex;align-items:center;gap:8px;margin:12px 0 9px}.proposal-toolbar .setting-control{min-width:148px}.proposal-status{flex:1;color:#86a5b5;font-family:var(--font-telemetry);font-size:9px;line-height:1.4}.proposal-list{display:flex;flex-direction:column;gap:9px}.proposal-card{padding:11px;border:1px solid rgba(126,214,255,.14);border-radius:12px;background:linear-gradient(135deg,rgba(7,29,47,.64),rgba(32,28,60,.42))}.proposal-card.pending{border-color:rgba(56,232,255,.27)}.proposal-card.applied,.proposal-card.auto-applied{border-color:rgba(104,244,207,.22)}.proposal-card.declined{opacity:.7}.proposal-card.reverted{border-color:rgba(255,201,105,.20)}.proposal-card-head{display:flex;align-items:flex-start;gap:7px}.proposal-card-title{min-width:0;flex:1;color:#eefbff;font-size:12px;font-weight:780}.proposal-badge{padding:3px 6px;border:1px solid rgba(165,120,255,.22);border-radius:7px;background:rgba(65,43,101,.22);color:#d8ccf5;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.04em}.proposal-risk-low{border-color:rgba(104,244,207,.24);color:#b9f8e6}.proposal-risk-medium{border-color:rgba(255,201,105,.24);color:#ffe0a5}.proposal-risk-high{border-color:rgba(255,107,122,.28);color:#ffc0c9}.proposal-rationale{margin:7px 0;color:#b5cbd6;font-size:10px;line-height:1.45;white-space:pre-wrap}.proposal-payload{margin:8px 0 0;padding:8px;border:1px solid rgba(126,214,255,.09);border-radius:8px;background:rgba(0,12,23,.42);font-family:var(--font-telemetry);font-size:8px;line-height:1.5;color:#9dc5d4;white-space:pre-wrap;overflow-wrap:anywhere;max-height:126px;overflow:auto}.proposal-meta{display:flex;flex-wrap:wrap;gap:4px 9px;margin-top:8px;color:#6f93a4;font-family:var(--font-telemetry);font-size:8px}.proposal-card-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:6px;margin-top:9px}.proposal-action{border:1px solid rgba(126,214,255,.20);border-radius:8px;background:rgba(10,38,57,.72);color:#dff7ff;padding:6px 9px;font-size:9px;font-weight:760;cursor:pointer}.proposal-action:hover{border-color:rgba(56,232,255,.50)}.proposal-action.approve{border-color:rgba(104,244,207,.30);background:rgba(21,75,66,.40)}.proposal-action.decline{border-color:rgba(255,107,122,.25);background:rgba(82,27,40,.36)}.proposal-action.revert{border-color:rgba(255,201,105,.28);background:rgba(80,57,21,.34)}.proposal-action:disabled{opacity:.42;cursor:default}
+    .proposal-editor{margin-top:10px;padding:10px;border:1px solid rgba(165,120,255,.20);border-radius:10px;background:rgba(25,20,48,.50)}.proposal-editor[hidden]{display:none}.proposal-editor textarea{width:100%;min-height:150px;border:1px solid rgba(126,214,255,.20);border-radius:8px;background:#061827;color:#dff4fb;padding:8px;font:10px/1.45 var(--font-telemetry);resize:vertical}.proposal-editor-actions{display:flex;align-items:center;gap:6px;margin-top:7px}.proposal-editor-actions .proposal-action:first-of-type{margin-left:auto}
+    .proposal-audit{margin-top:9px;border-top:1px solid rgba(126,214,255,.09);padding-top:8px}.proposal-audit[hidden]{display:none}.proposal-audit-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px;padding:5px 0;color:#87a5b5;font-family:var(--font-telemetry);font-size:8px;border-bottom:1px solid rgba(126,214,255,.055)}.proposal-audit-row:last-child{border-bottom:0}.proposal-empty{padding:18px;border:1px dashed rgba(126,214,255,.18);border-radius:12px;color:#7d9aa9;text-align:center;font-size:10px;background:rgba(4,20,34,.36)}.proposal-empty .proposal-count{font-family:var(--font-telemetry);font-size:25px;color:#bdefff}
+    @media(max-width:680px){.proposal-policy-grid{grid-template-columns:1fr}.proposal-toolbar{align-items:stretch;flex-wrap:wrap}.proposal-status{width:100%;flex-basis:100%}.proposal-toolbar .setting-control{min-width:0;flex:1}.proposal-card-actions .proposal-action{min-height:34px}}
+
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -249,9 +258,26 @@
           </div>
         </section>
         <section class="settings-pane" data-settings-pane="proposals">
-          <h3>Proposal Inbox</h3><p class="settings-pane-lead">Reserved for AI-originated durable profile/lore proposals. Tier C does not install the authority that would create or approve them.</p>
-          <div class="proposal-empty"><div class="proposal-count">0</div><div class="proposal-label">proposal authority not installed</div></div>
-          <div class="settings-note" style="margin-top:12px"><strong>Tier D boundary:</strong> approve/edit/decline, audit history, and per-category auto-save policy arrive only after their durable protocol is reconciled. Until then §wyrlz cannot write here.</div>
+          <h3>Proposal Inbox</h3><p class="settings-pane-lead">AI-originated durable changes land here under your policy. The browser can resolve proposals but cannot forge assistant-authored proposals.</p>
+          <div class="setting-group">
+            <div class="setting-label" style="margin-bottom:8px">Per-category policy</div>
+            <div class="proposal-policy-grid">
+              <div class="proposal-policy-item"><label for="proposalPolicyUserProfile">You profile</label><select id="proposalPolicyUserProfile" data-proposal-policy="USER_PROFILE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicyCompanion">§wyrlz profile</label><select id="proposalPolicyCompanion" data-proposal-policy="COMPANION_PROFILE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicyUserFact">User Facts</label><select id="proposalPolicyUserFact" data-proposal-policy="USER_FACT"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicyUserLore">User Lore</label><select id="proposalPolicyUserLore" data-proposal-policy="USER_LORE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicyCompanionLore">§wyrlz Self Lore</label><select id="proposalPolicyCompanionLore" data-proposal-policy="COMPANION_SELF_LORE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicySharedLore">Shared Lore</label><select id="proposalPolicySharedLore" data-proposal-policy="SHARED_LORE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+            </div>
+            <div class="proposal-policy-help"><code>ASK</code> queues a durable proposal. <code>AUTO_LOW_RISK</code> may apply only trusted LOW-risk, bounded operations and still records audit + revert state. <code>SESSION_ONLY</code> and <code>NEVER</code> create no durable proposal or target mutation.</div>
+          </div>
+          <div class="proposal-toolbar">
+            <div class="setting-control"><select id="proposalFilter" aria-label="Proposal filter"><option value="PENDING">Pending</option><option value="ALL">All history</option><option value="APPLIED">Applied</option><option value="DECLINED">Declined</option><option value="REVERTED">Reverted</option></select></div>
+            <button class="proposal-action" id="proposalRefresh" type="button">Refresh</button>
+            <div class="proposal-status" id="proposalStatus">Open this section while signed in to load proposal state.</div>
+          </div>
+          <div class="proposal-list" id="proposalList"></div>
+          <div class="settings-note" style="margin-top:12px"><strong>Trust boundary:</strong> Tier D installs the durable queue and resolver. Proposal emission is server-side only; no client endpoint may label arbitrary browser JSON as an assistant proposal.</div>
         </section>
         <section class="settings-pane" data-settings-pane="appearance">
           <h3>Appearance</h3><p class="settings-pane-lead">Visual-stage controls that are safe to preview locally.</p>
@@ -280,9 +306,9 @@
             <div class="settings-status-card"><span>Account</span><span id="settingsPrivacyAccount">Not signed in</span></div>
             <div class="settings-status-card"><span>Settings persistence</span><span id="settingsPrivacyDurability">Session preview only</span></div>
             <div class="settings-status-card"><span>Lore & Memory storage</span><span id="settingsLoreDurability">Session unavailable</span></div>
-            <div class="settings-status-card"><span>AI proposal policy</span><span>Tier D pending</span></div>
+            <div class="settings-status-card"><span>AI proposal authority</span><span id="settingsProposalAuthority">Unavailable without durable account</span></div>
           </div>
-          <div class="settings-note"><strong>No silent durability:</strong> opening or previewing settings never writes your profile. Lore records change only through explicit record actions. AI-originated durable changes remain blocked until the proposal/approval protocol exists.</div>
+          <div class="settings-note"><strong>No silent durability:</strong> opening or previewing settings never writes your profile. AI-originated durable changes must pass the configured Tier D policy; direct assistant mutation remains unavailable.</div>
         </section>
       </div>
     </div>
@@ -312,8 +338,8 @@
     <div class="version-box collapsed" id="versionBox">
       <button class="version-head" id="versionToggle" type="button" aria-expanded="false"><span class="version-title">Versions</span><span class="version-chevron">⌄</span></button>
       <div class="version-list">
-        <div class="version-row"><span>Repository Work</span><span>1.0.24</span></div>
-        <div class="version-row"><span>Server Runtime</span><span>2.3.304</span></div>
+        <div class="version-row"><span>Repository Work</span><span>1.0.25</span></div>
+        <div class="version-row"><span>Server Runtime</span><span>2.3.305</span></div>
         <div class="version-row"><span>Server UI</span><span>1.0.0</span></div>
         <div class="version-row"><span>Web Frontend</span><span>1.0.5</span></div>
         <div class="version-row"><span>Web Chat</span><span>1.5.86</span></div>
@@ -366,7 +392,7 @@
       const topEdge = document.getElementById("topEdge");
       const topThreadTitle = document.getElementById("topThreadTitle");
       const topReadyLabel = document.getElementById("topReadyLabel");
-      const SWRLZ_CHAT_VERSION = "1.0.50";
+      const SWRLZ_CHAT_VERSION = "1.0.51";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       const uiCamera = (event,data={}) => {
@@ -396,6 +422,9 @@
       let loreRecords=[];
       let loreLoadedForUser="";
       let loreEditorId=null;
+      let proposalRecords=[];
+      let proposalLoadedForUser="";
+      let proposalAuditCache=new Map();
       const selectedThreadIds=new Set();
       const threadId = () => "web-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       const titleFrom = text => {
@@ -722,6 +751,12 @@
       const settingsPrivacyAccount = document.getElementById("settingsPrivacyAccount");
       const settingsPrivacyDurability = document.getElementById("settingsPrivacyDurability");
       const settingsLoreDurability = document.getElementById("settingsLoreDurability");
+      const settingsProposalAuthority = document.getElementById("settingsProposalAuthority");
+      const proposalFilter = document.getElementById("proposalFilter");
+      const proposalRefresh = document.getElementById("proposalRefresh");
+      const proposalStatus = document.getElementById("proposalStatus");
+      const proposalList = document.getElementById("proposalList");
+      const proposalPolicyControls=[...document.querySelectorAll("[data-proposal-policy]")];
       const settingDisplayName = document.getElementById("settingDisplayName");
       const settingUserPronouns = document.getElementById("settingUserPronouns");
       const settingUserRole = document.getElementById("settingUserRole");
@@ -762,6 +797,7 @@
       const settingReducedTransparency = document.getElementById("settingReducedTransparency");
       const settingsControlIds=["settingEnterSend","settingDensity","settingEffort","settingResponseLength","settingGlass","settingMotion","settingFontScale","settingHighContrast","settingReducedTransparency"];
       const profileControlIds=["settingDisplayName","settingUserPronouns","settingUserRole","settingCommunicationStyle","settingOutputStyle","settingCompanionName","settingCompanionTitle","settingCompanionForm","settingCompanionPronouns","settingCompanionWarmth","settingCompanionDirectness","settingCompanionHumor","settingCompanionLoreDensity"];
+      const proposalPolicyDefaults={USER_PROFILE:"ASK",COMPANION_PROFILE:"ASK",USER_FACT:"ASK",USER_LORE:"ASK",COMPANION_SELF_LORE:"ASK",SHARED_LORE:"ASK"};
       const applySettingsPreview = () => {
         settingsState.general.enterToSend=!!settingEnterSend.checked;
         settingsState.model.effort=settingEffort.value;
@@ -815,13 +851,21 @@
         settingFontScale.value=["0.9","1","1.1","1.2"].includes(String(ui.fontScale))?String(ui.fontScale):"1";
         settingHighContrast.checked=ui.highContrast===true;
         settingReducedTransparency.checked=ui.reducedTransparency===true;
+        const proposalPolicy=prefs.proposalPolicy&&typeof prefs.proposalPolicy==="object"?prefs.proposalPolicy:{};
+        proposalPolicyControls.forEach(control=>{
+          const category=control.dataset.proposalPolicy;
+          const value=String(proposalPolicy[category]||proposalPolicyDefaults[category]||"ASK").toUpperCase();
+          control.value=["ASK","AUTO_LOW_RISK","SESSION_ONLY","NEVER"].includes(value)?value:"ASK";
+        });
         settingsDirty=false;applySettingsPreview();applyCompanionPreview();
       };
       const refreshSettingsDurability = () => {
         settingsPrivacyAccount.textContent=chatAccountUser?(chatAccountUser.displayName||chatAccountUser.email||"Signed in"):"Not signed in";
         settingsPrivacyDurability.textContent=accountProfileDurable?"Durable account profile":"Session preview only";
         settingsLoreDurability.textContent=accountProfileDurable?"Account-owned Redis records":"Unavailable without durable account";
+        settingsProposalAuthority.textContent=accountProfileDurable?"Tier D account-owned queue":"Unavailable without durable account";
         loreNewButton.disabled=!accountProfileDurable;
+        proposalRefresh.disabled=!accountProfileDurable;
         settingsSave.disabled=!chatAccountUser||!accountProfileDurable;
         settingsSaveState.textContent=accountProfileDurable?(settingsDirty?"Unsaved profile changes.":"Saved profile values loaded; previews remain local until Save."):"Previewing locally. Durable account storage is required to save.";
       };
@@ -836,6 +880,7 @@
         document.querySelectorAll(".settings-nav-button").forEach(button=>button.classList.toggle("active",button.dataset.settingsSection===section));
         document.querySelectorAll(".settings-pane").forEach(pane=>pane.classList.toggle("active",pane.dataset.settingsPane===section));
         if(section==="lore")loadLoreRecords();
+        if(section==="proposals")loadProposalRecords();
         uiCamera("settings-section",{section});
       };
       document.querySelectorAll(".settings-nav-button").forEach(button=>button.addEventListener("click",()=>activateSettingsPane(button.dataset.settingsSection)));
@@ -845,11 +890,139 @@
       profileControlIds.forEach(id=>document.getElementById(id).addEventListener("change",()=>{
         settingsDirty=true;if(id==="settingCompanionName")applyCompanionPreview();refreshSettingsDurability();uiCamera("profile-preview",{control:id});
       }));
+      proposalPolicyControls.forEach(control=>control.addEventListener("change",()=>{
+        settingsDirty=true;refreshSettingsDurability();uiCamera("proposal-policy-preview",{category:control.dataset.proposalPolicy,mode:control.value});
+      }));
       settingCompanionName.addEventListener("input",applyCompanionPreview,{passive:true});
       settingsClose.addEventListener("click",()=>setSettingsOpen(false));
       settingsShade.addEventListener("click",()=>setSettingsOpen(false));
       window.addEventListener("swrlz-open-settings",()=>setSettingsOpen(true));
       window.addEventListener("keydown",event=>{if(event.key==="Escape"&&document.body.classList.contains("settings-open"))setSettingsOpen(false);});
+
+
+      const proposalStateLabel=value=>String(value||"PENDING").replaceAll("_"," ");
+      const proposalCategoryLabel=value=>({
+        USER_PROFILE:"You profile",COMPANION_PROFILE:"§wyrlz profile",USER_FACT:"User Fact",USER_LORE:"User Lore",COMPANION_SELF_LORE:"§wyrlz Self Lore",SHARED_LORE:"Shared Lore"
+      }[value]||String(value||"Proposal"));
+      const proposalPayloadPreview=proposal=>{
+        try{return JSON.stringify(proposal?.payload||{},null,2)}catch(_){return "{}"}
+      };
+      const proposalVisible=proposal=>{
+        const filter=proposalFilter.value;
+        if(filter==="ALL")return true;
+        if(filter==="APPLIED")return proposal.state==="APPLIED"||proposal.state==="AUTO_APPLIED";
+        return proposal.state===filter;
+      };
+      const updateProposalStatus=()=>{
+        if(!accountProfileDurable){proposalStatus.textContent="Durable account storage is required for proposal state.";return;}
+        const pending=proposalRecords.filter(item=>item.state==="PENDING").length;
+        proposalStatus.textContent=proposalRecords.length?(pending+" pending · "+proposalRecords.length+" total"):"No proposals yet.";
+      };
+      const loadProposalAudit=async(proposalId,container,force=false)=>{
+        if(!accountProfileDurable)return;
+        if(!force&&proposalAuditCache.has(proposalId)){renderProposalAudit(proposalAuditCache.get(proposalId),container);return;}
+        container.hidden=false;container.textContent="Loading history…";
+        try{
+          const response=await accountFetch("/api/account/proposals/"+encodeURIComponent(proposalId)+"/audit",{method:"GET"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!Array.isArray(data.events))throw new Error(data?.detail||"Audit load failed");
+          proposalAuditCache.set(proposalId,data.events);renderProposalAudit(data.events,container);uiCamera("proposal-audit-load",{id:proposalId,count:data.events.length});
+        }catch(error){container.textContent="History unavailable.";uiCamera("proposal-audit-failed",{id:proposalId,errorType:String(error?.name||"Error")});}
+      };
+      const renderProposalAudit=(events,container)=>{
+        container.innerHTML="";
+        if(!events?.length){container.textContent="No audit events.";return;}
+        for(const event of events){
+          const row=document.createElement("div");row.className="proposal-audit-row";
+          const seq=document.createElement("span");seq.textContent="#"+String(event.seq||0);
+          const action=document.createElement("span");action.textContent=String(event.action||"event")+" · "+String(event.actor||"unknown");
+          const time=document.createElement("span");time.textContent=event.createdAt?new Date(event.createdAt).toLocaleString():"";
+          row.append(seq,action,time);container.appendChild(row);
+        }
+      };
+      const replaceProposal=proposal=>{
+        proposalRecords=proposalRecords.map(item=>item.id===proposal.id?proposal:item);
+        proposalAuditCache.delete(proposal.id);renderProposalRecords();updateProposalStatus();
+      };
+      const proposalRequest=async(proposal,path,init,eventName)=>{
+        const response=await accountFetch(path,init);
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok||!data.proposal)throw new Error(data?.detail||("Proposal action failed ("+response.status+")"));
+        replaceProposal(data.proposal);
+        uiCamera(eventName,{id:data.proposal.id,state:data.proposal.state,category:data.proposal.category,operation:data.proposal.operation,version:Number(data.proposal.version||1)});
+        return data.proposal;
+      };
+      const renderProposalRecords=()=>{
+        proposalList.innerHTML="";
+        const visible=proposalRecords.filter(proposalVisible);
+        if(!accountProfileDurable){
+          const empty=document.createElement("div");empty.className="proposal-empty";empty.textContent="Sign in with durable account storage to use the proposal inbox.";proposalList.appendChild(empty);return;
+        }
+        if(!visible.length){
+          const empty=document.createElement("div");empty.className="proposal-empty";
+          const count=document.createElement("div");count.className="proposal-count";count.textContent="0";
+          const label=document.createElement("div");label.className="proposal-label";label.textContent=proposalRecords.length?"No proposals match this filter.":"No AI proposals have been submitted.";
+          empty.append(count,label);proposalList.appendChild(empty);return;
+        }
+        for(const proposal of visible){
+          const card=document.createElement("article");card.className="proposal-card "+String(proposal.state||"pending").toLowerCase().replaceAll("_","-");
+          const head=document.createElement("div");head.className="proposal-card-head";
+          const title=document.createElement("div");title.className="proposal-card-title";title.textContent=proposalCategoryLabel(proposal.category)+" · "+String(proposal.operation||"").replaceAll("_"," ");
+          const risk=document.createElement("span");risk.className="proposal-badge proposal-risk-"+String(proposal.risk||"MEDIUM").toLowerCase();risk.textContent=String(proposal.risk||"MEDIUM")+" RISK";
+          const state=document.createElement("span");state.className="proposal-badge";state.textContent=proposalStateLabel(proposal.state);
+          head.append(title,risk,state);
+          const rationale=document.createElement("div");rationale.className="proposal-rationale";rationale.textContent=proposal.rationale||"No rationale supplied.";
+          const payload=document.createElement("pre");payload.className="proposal-payload";payload.textContent=proposalPayloadPreview(proposal);
+          const meta=document.createElement("div");meta.className="proposal-meta";
+          [
+            "v"+String(proposal.version||1),
+            "target v"+String(proposal.targetVersion??"—"),
+            proposal.sourceThreadId?("thread "+proposal.sourceThreadId):"no thread",
+            proposal.sourceRequestId?("request "+proposal.sourceRequestId):"no request",
+            proposal.updatedAt?new Date(proposal.updatedAt).toLocaleString():""
+          ].forEach(value=>{const span=document.createElement("span");span.textContent=value;meta.appendChild(span);});
+          const actions=document.createElement("div");actions.className="proposal-card-actions";
+          const audit=document.createElement("div");audit.className="proposal-audit";audit.hidden=true;
+          const history=document.createElement("button");history.type="button";history.className="proposal-action";history.textContent="History";history.onclick=()=>{if(audit.hidden)loadProposalAudit(proposal.id,audit);else audit.hidden=true;};actions.appendChild(history);
+          if(proposal.state==="PENDING"){
+            const edit=document.createElement("button");edit.type="button";edit.className="proposal-action";edit.textContent="Edit";actions.appendChild(edit);
+            const decline=document.createElement("button");decline.type="button";decline.className="proposal-action decline";decline.textContent="Decline";decline.onclick=async()=>{if(!confirm("Decline this proposal?"))return;try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id)+"/decline",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({version:Number(proposal.version||1)})},"proposal-decline");}catch(error){proposalStatus.textContent="Decline failed: "+String(error?.message||error);}};actions.appendChild(decline);
+            const approve=document.createElement("button");approve.type="button";approve.className="proposal-action approve";approve.textContent="Approve";approve.onclick=async()=>{if(!confirm("Approve and apply this durable change?"))return;try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id)+"/approve",{method:"POST"},"proposal-approve");await refreshAccount();loreLoadedForUser="";}catch(error){proposalStatus.textContent="Approval failed: "+String(error?.message||error);}};actions.appendChild(approve);
+            const editor=document.createElement("div");editor.className="proposal-editor";editor.hidden=true;
+            const textarea=document.createElement("textarea");textarea.value=proposalPayloadPreview(proposal);textarea.setAttribute("aria-label","Edit proposal payload JSON");
+            const editorActions=document.createElement("div");editorActions.className="proposal-editor-actions";
+            const cancel=document.createElement("button");cancel.type="button";cancel.className="proposal-action";cancel.textContent="Cancel";cancel.onclick=()=>{editor.hidden=true;};
+            const save=document.createElement("button");save.type="button";save.className="proposal-action approve";save.textContent="Save edit";save.onclick=async()=>{
+              let parsed;try{parsed=JSON.parse(textarea.value)}catch(_){proposalStatus.textContent="Proposal edit must be valid JSON.";return;}
+              if(!parsed||Array.isArray(parsed)||typeof parsed!=="object"){proposalStatus.textContent="Proposal edit payload must be an object.";return;}
+              try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id),{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({payload:parsed,rationale:proposal.rationale,version:Number(proposal.version||1)})},"proposal-edit");}catch(error){proposalStatus.textContent="Edit failed: "+String(error?.message||error);}
+            };
+            editorActions.append(cancel,save);editor.append(textarea,editorActions);edit.onclick=()=>{editor.hidden=!editor.hidden;};card.append(head,rationale,payload,meta,actions,editor,audit);proposalList.appendChild(card);continue;
+          }
+          if(proposal.state==="APPLIED"||proposal.state==="AUTO_APPLIED"){
+            const revert=document.createElement("button");revert.type="button";revert.className="proposal-action revert";revert.textContent="Revert";revert.onclick=async()=>{if(!confirm("Revert this applied change? This will stop if the target changed afterward."))return;try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id)+"/revert",{method:"POST"},"proposal-revert");await refreshAccount();loreLoadedForUser="";}catch(error){proposalStatus.textContent="Revert failed: "+String(error?.message||error);}};actions.appendChild(revert);
+          }
+          card.append(head,rationale,payload,meta,actions,audit);proposalList.appendChild(card);
+        }
+      };
+      const loadProposalRecords=async(force=false)=>{
+        if(!accountProfileDurable||!chatAccountUser){proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();renderProposalRecords();updateProposalStatus();return false;}
+        const userKey=String(chatAccountUser.id||"");
+        if(!force&&proposalLoadedForUser===userKey){renderProposalRecords();updateProposalStatus();return true;}
+        proposalStatus.textContent="Loading proposal authority…";
+        try{
+          const response=await accountFetch("/api/account/proposals?includeResolved=true&limit=200",{method:"GET"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!Array.isArray(data.proposals))throw new Error(data?.detail||("Proposal load failed ("+response.status+")"));
+          proposalRecords=data.proposals;proposalLoadedForUser=userKey;proposalAuditCache.clear();
+          if(data.policies&&typeof data.policies==="object")proposalPolicyControls.forEach(control=>{const value=String(data.policies[control.dataset.proposalPolicy]||"ASK");if(["ASK","AUTO_LOW_RISK","SESSION_ONLY","NEVER"].includes(value))control.value=value;});
+          renderProposalRecords();updateProposalStatus();uiCamera("proposal-load",{count:proposalRecords.length,pending:proposalRecords.filter(item=>item.state==="PENDING").length});return true;
+        }catch(error){
+          proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();proposalStatus.textContent="Proposal authority could not be loaded.";renderProposalRecords();uiCamera("proposal-load-failed",{errorType:String(error?.name||"Error")});return false;
+        }
+      };
+      proposalFilter.addEventListener("change",renderProposalRecords);
+      proposalRefresh.addEventListener("click",()=>loadProposalRecords(true));
 
       const loreTypeLabel=value=>({
         USER_FACT:"User Fact",USER_LORE:"User Lore",COMPANION_SELF_LORE:"§wyrlz Self Lore",SHARED_LORE:"Shared Lore"
@@ -965,7 +1138,8 @@
         const existingCompanion=accountProfile.companion_profile&&typeof accountProfile.companion_profile==="object"?accountProfile.companion_profile:{};
         settingsState.user={displayName:settingDisplayName.value.trim(),pronouns:settingUserPronouns.value.trim(),role:settingUserRole.value.trim(),communicationStyle:settingCommunicationStyle.value,outputStyle:settingOutputStyle.value};
         settingsState.companion={name:settingCompanionName.value.trim()||"§wyrlz",title:settingCompanionTitle.value.trim()||"Glitch Dragon Kompanion",form:settingCompanionForm.value.trim()||"Glitch Dragon",pronouns:settingCompanionPronouns.value.trim(),warmth:settingCompanionWarmth.value,directness:settingCompanionDirectness.value,humor:settingCompanionHumor.value,loreDensity:settingCompanionLoreDensity.value};
-        const preferences={...existingPrefs,general:{...(existingPrefs.general&&typeof existingPrefs.general==="object"?existingPrefs.general:{}),enterToSend:settingsState.general.enterToSend},profile:{...(existingPrefs.profile&&typeof existingPrefs.profile==="object"?existingPrefs.profile:{}),pronouns:settingsState.user.pronouns,role:settingsState.user.role,communicationStyle:settingsState.user.communicationStyle,outputStyle:settingsState.user.outputStyle}};
+        const proposalPolicy={...proposalPolicyDefaults};proposalPolicyControls.forEach(control=>proposalPolicy[control.dataset.proposalPolicy]=control.value);
+        const preferences={...existingPrefs,general:{...(existingPrefs.general&&typeof existingPrefs.general==="object"?existingPrefs.general:{}),enterToSend:settingsState.general.enterToSend},profile:{...(existingPrefs.profile&&typeof existingPrefs.profile==="object"?existingPrefs.profile:{}),pronouns:settingsState.user.pronouns,role:settingsState.user.role,communicationStyle:settingsState.user.communicationStyle,outputStyle:settingsState.user.outputStyle},proposalPolicy};
         const modelPreferences={...existingModel,effort:settingsState.model.effort,responseLength:settingsState.model.responseLength};
         const uiPreferences={...existingUi,density:settingsState.ui.density,glass:settingsState.ui.glass,motion:settingsState.ui.motion,fontScale:settingsState.ui.fontScale,highContrast:settingsState.ui.highContrast,reducedTransparency:settingsState.ui.reducedTransparency};
         const companionProfile={...existingCompanion,...settingsState.companion};
@@ -1000,7 +1174,7 @@
         try {
           const response = await fetch(url,{...init,credentials:"include",cache:"no-store"});
           const contentType=response.headers.get("content-type")||"";
-          const redactAccountBody=["/api/account/me","/api/account/google","/api/account/profile"].includes(path)||path.startsWith("/api/account/lore");
+          const redactAccountBody=["/api/account/me","/api/account/google","/api/account/profile"].includes(path)||path.startsWith("/api/account/lore")||path.startsWith("/api/account/proposals");
           const preview=redactAccountBody?"[redacted account payload]":await response.clone().text().then(t=>t.slice(0,180)).catch(()=>"");
           accountTrace("response",{path,status:response.status,ok:response.ok,contentType,preview,durationMs:Math.round(performance.now()-started)});
           return response;
@@ -1015,7 +1189,7 @@
         chatAccountUser = accountUser;
         accountProfile=profile&&typeof profile==="object"?profile:null;
         accountProfileDurable=!!accountUser&&!!durable&&Number(accountProfile?.version||0)>0;
-        if(priorUserId!==(accountUser?.id||"")){loreRecords=[];loreLoadedForUser="";closeLoreEditor();renderLoreRecords();}
+        if(priorUserId!==(accountUser?.id||"")){loreRecords=[];loreLoadedForUser="";closeLoreEditor();renderLoreRecords();proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();renderProposalRecords();}
         populateSettingsControls();
         refreshSettingsDurability();
         if(!draftThread)renderConversation(currentThread());
