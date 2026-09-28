@@ -12,6 +12,11 @@ from vercel.queue import subscribe
 
 from api.durable_chat_contract import GenerationEventRecord
 from api.durable_redis_store import RedisRestChatStore
+from api.account_proposal_bridge import (
+    StructuredProposalSignalError,
+    consume_structured_proposal_event,
+    is_structured_proposal_event,
+)
 
 TERMINAL = {"COMPLETED", "FAILED", "CANCELLED"}
 CONTRACT = "swrlz_llm_stream_v2"
@@ -103,6 +108,18 @@ def _wire(raw: dict[str, Any], *, seq: int, request_id: str, engine) -> dict[str
         event["firstDeltaLatencyMs"] = int(raw["firstDeltaLatencyMs"])
     if raw.get("totalLatencyMs") is not None:
         event["totalLatencyMs"] = int(raw["totalLatencyMs"])
+    receipt = raw.get("proposalReceipt")
+    if isinstance(receipt, dict):
+        event["proposalReceipt"] = {
+            "contract": str(receipt.get("contract") or "")[:96],
+            "decision": str(receipt.get("decision") or "")[:32],
+            "proposalId": str(receipt.get("proposalId") or "")[:160],
+            "state": str(receipt.get("state") or "")[:32],
+            "category": str(receipt.get("category") or "")[:64],
+            "operation": str(receipt.get("operation") or "")[:64],
+            "risk": str(receipt.get("risk") or "")[:16],
+            "version": int(receipt.get("version") or 0),
+        }
     return event
 
 
@@ -204,6 +221,64 @@ async def generate_swrlz_response(payload) -> None:
         for raw in engine.generate_events(engine_payload, cancelled):
             if not isinstance(raw, dict):
                 continue
+            if is_structured_proposal_event(raw):
+                try:
+                    receipt = consume_structured_proposal_event(
+                        store,
+                        user_id=user_id,
+                        thread_id=thread_id,
+                        request_id=request_id,
+                        raw=raw,
+                    )
+                    decision = str(receipt.get("decision") or "ASK").upper()
+                    phase = {
+                        "ASK": "PROPOSAL_QUEUED",
+                        "AUTO_APPLIED": "PROPOSAL_AUTO_APPLIED",
+                        "SESSION_ONLY": "PROPOSAL_SESSION_ONLY",
+                        "NEVER": "PROPOSAL_BLOCKED_POLICY",
+                    }.get(decision, "PROPOSAL_HANDLED")
+                    _camera(
+                        "structured-proposal-handled",
+                        request_id=request_id,
+                        decision=decision,
+                        proposalId=str(receipt.get("proposalId") or ""),
+                        state=str(receipt.get("state") or ""),
+                        category=str(receipt.get("category") or ""),
+                        operation=str(receipt.get("operation") or ""),
+                        risk=str(receipt.get("risk") or ""),
+                        version=int(receipt.get("version") or 0),
+                    )
+                    raw = {
+                        "type": "STATUS",
+                        "phase": phase,
+                        "reason": "Structured account proposal handled by the configured user policy.",
+                        "categories": ["ACCOUNT_PROPOSAL_SIGNAL"],
+                        "proposalReceipt": receipt,
+                    }
+                except StructuredProposalSignalError as exc:
+                    _camera(
+                        "structured-proposal-rejected",
+                        request_id=request_id,
+                        errorType=type(exc).__name__,
+                    )
+                    raw = {
+                        "type": "STATUS",
+                        "phase": "PROPOSAL_REJECTED",
+                        "reason": "A structured account proposal signal was rejected by the proposal contract.",
+                        "categories": ["ACCOUNT_PROPOSAL_SIGNAL_REJECTED"],
+                    }
+                except Exception as exc:
+                    _camera(
+                        "structured-proposal-failed",
+                        request_id=request_id,
+                        errorType=type(exc).__name__,
+                    )
+                    raw = {
+                        "type": "STATUS",
+                        "phase": "PROPOSAL_FAILED",
+                        "reason": "A structured account proposal could not be processed.",
+                        "categories": ["ACCOUNT_PROPOSAL_SIGNAL_FAILED"],
+                    }
             seq += 1
             resource_phase = str(raw.get("phase") or raw.get("type") or "EVENT")
             if resource_phase != last_resource_phase:
