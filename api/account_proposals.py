@@ -321,6 +321,7 @@ def submit_ai_proposal(
     )
     profile = store.get_profile(user_id=user_id)
     policy = normalized_policy_map(profile)[category]
+    rapport_paused = category == "SHARED_RAPPORT" and store.get_rapport_control(user_id=user_id).paused
     if policy == "NEVER":
         return {"decision": "NEVER", "proposal": None}
     if policy == "SESSION_ONLY":
@@ -343,8 +344,8 @@ def submit_ai_proposal(
         state="PENDING",
     )
     proposal = store.put_proposal(proposal, expected_version=0)
-    _audit(store, proposal, "CREATED", "ASSISTANT", {"policy": policy, "risk": risk, "operation": operation, "category": category})
-    if policy == "AUTO_LOW_RISK" and risk == "LOW" and operation in AUTO_LOW_RISK_OPERATIONS:
+    _audit(store, proposal, "CREATED", "ASSISTANT", {"policy": policy, "risk": risk, "operation": operation, "category": category, "rapportPaused": bool(rapport_paused)})
+    if policy == "AUTO_LOW_RISK" and risk == "LOW" and operation in AUTO_LOW_RISK_OPERATIONS and not rapport_paused:
         applied = apply_proposal(store, user_id=user_id, proposal_id=proposal.proposal_id, actor="SYSTEM", auto=True)
         return {"decision": "AUTO_APPLIED", "proposal": applied}
     return {"decision": "ASK", "proposal": proposal}
