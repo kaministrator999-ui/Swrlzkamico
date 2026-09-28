@@ -1,3 +1,23 @@
+### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier B settings shell
+
+- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier B from `SWRLZ_GLITCH_DRAGON_CHAT_UI_RESEARCH.md` is implemented in the canonical clean-room Chat owner.
+- **Settings shell:** one responsive right-side sheet / mobile full-height settings surface, opened from the existing drawer gear. Sections are exactly the research Tier B set: **General, AI / Model, Appearance, Motion, Accessibility, Privacy**.
+- **General:** Enter-to-send is a real page-owned control. When disabled, Enter inserts a newline while Ctrl/⌘ + Enter still sends. Conversation density previews immediately.
+- **AI / Model truth boundary:** current route identity remains §wyrlz LALM. Effort and response-length values are stored only as `modelPreferences`; the UI explicitly states that Tier B does not claim the active inference engine consumes those values yet. Existing `defaultModel` is preserved untouched.
+- **Appearance / Motion / Accessibility:** page-owned density, glass intensity, motion mode, text scale, high contrast, and reduced transparency preview immediately. Existing theme ownership is preserved; Tier B does not overwrite another saved `theme` value.
+- **Privacy:** reports actual sign-in/durability state and explicitly marks Memory/Lore policy as Tier C/D pending and AI self-profile mutation as not enabled. No fake privacy toggle was added for a subsystem that cannot yet enforce it.
+- **Durable settings authority:** explicit user Save uses the existing authenticated `PUT /api/account/profile` boundary and optimistic profile `version`. Unsigned/stateless users can preview locally but Save remains disabled. The engineering agent did not perform any live user-profile write.
+- **Preservation semantics:** Save merges existing `preferences`, `model_preferences`, and `ui_preferences`; it changes only Tier-B-owned keys. It does not write `displayName`, `defaultModel`, `theme`, companion lore, rapport, or memory/lore state.
+- **Identity isolation:** sign-out/account changes immediately repopulate preview controls from the new/null profile so one account's visual preferences do not remain as another account's preview state.
+- **Camera/privacy:** settings open/close, pane selection, local preview, save success/failure, and durability state flow through bounded UI cameras. Account diagnostic response previews are now redacted for `/api/account/me`, `/api/account/google`, and `/api/account/profile`; no profile body/free-text is emitted through that preview field.
+- **Call-site invariance:** `/api/lalm_station/send`, `/api/lalm_station/sync`, `/api/chat_state`, and existing account status/me/google/logout call-site counts are unchanged from the Tier A baseline. Tier B adds exactly one new account call site: explicit `PUT /api/account/profile`.
+- **Static verification:** final page blob `d58316b5c66eb633ef7636bc8e7a9ff07f9bd0ae`; inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; settings nav/pane sets match 1:1 across all six sections; profile-save guard and redaction markers present.
+- **Versions:** clean-room Chat **1.0.48 → 1.0.49**; Repository Work **1.0.22 → 1.0.23**.
+- **Intentionally unchanged:** legacy Web Chat **1.5.86**; Runtime Manifest **152**; Server Runtime **2.3.287**; account/server contract version; Stream Contract; LALM Engine.
+- **Source receipts:** primary Tier B implementation `901af245fde2296f9cb11138f4b44ca8288d341d`; account-camera redaction `5b2c01a06c89dba5c0ff76785f18a2ee71854144`; identity-preview reset `305378d19446ba6c4010886cacf79eaca2012089`; bounded-save repair `40e5559fa9f58348e724c12cce55904d3d4f5af4`; clean-room version `302acaa947ebb2d3da210db5db68e5e30dcaa975`; Repository Work `5813b4e45b5f0742d5fe2202a055ebd8b8950bfe`.
+- **Runtime/live acceptance:** NOT PERFORMED. No production deployment, GitHub workflow dispatch, Vercel action, runtime promotion, release request, or live account/profile mutation was authorized or triggered.
+- **Next blueprint checkpoint:** Tier C — **You + §wyrlz + Lore & Memory UI**, including inspect/edit/delete, scope/provenance presentation, and proposal inbox. Tier C must reconcile a real durable ownership/schema boundary before companion self-lore or shared lore can be persisted.
+
 ### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier B settings shell
 
 - **Requested outcome:** implement Tier B from the approved Glitch Dragon Chat research blueprint on the canonical clean-room `/chat/§wyrlz` surface.
