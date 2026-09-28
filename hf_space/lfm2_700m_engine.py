@@ -63,7 +63,7 @@ def _role_frame(user_profile):
             break
     return (
         "ROLE MAP (authoritative perspective; do not repeat it):\n"
-        "- ASSISTANT/SELF: §wyrlz (also Swyrlz or Squirrels).\n"
+        "- ASSISTANT/SELF: §wyrlz (also Swyrlz).\n"
         f"- USER: {user_name}.\n"
         "- Assistant names belong only to ASSISTANT/SELF, never to USER.\n"
         "- In USER messages, I/me/my normally belongs to USER; you/your normally addresses ASSISTANT.\n"
@@ -144,7 +144,7 @@ def _response_mode(prompt):
     if identity:
         return (
             "RESPONSE MODE: IDENTITY-DIRECT. Answer the identity/name question plainly in one or two natural sentences. "
-            "Own §wyrlz as the assistant name. Do not explain the branding unless asked and do not bounce the question back."
+            "Own §wyrlz as the assistant name; Swyrlz is an acceptable plain-text spelling. Do not present Squirrels as a name or nickname; it was only a past speech-to-text mishearing/joke. Do not explain the branding unless asked and do not bounce the question back."
         )
     return (
         "RESPONSE MODE: CONVERSATIONAL. Answer the current message naturally and stop when the response is complete. "
