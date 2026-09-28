@@ -11,6 +11,18 @@ from fastapi.responses import JSONResponse
 
 from api.durable_chat_contract import ConflictError, LoreRecord, MessageRecord, ThreadRecord, UserProfileRecord, new_id
 from api.durable_redis_store import DurableStoreUnavailable, RedisRestChatStore
+from api.account_proposals import (
+    ProposalPolicyError,
+    ProposalStateError,
+    apply_proposal,
+    audit_public,
+    decline_proposal,
+    edit_proposal,
+    normalized_policy_map,
+    proposal_public,
+    revert_proposal,
+    submit_ai_proposal,
+)
 from api.google_account import (
     AuthenticationError,
     SESSION_COOKIE,
@@ -163,8 +175,20 @@ def install(server) -> None:
         "contract": "swrlz-account-lore-v1",
         "authority": "account-owned-redis-rest",
         "aiWrites": False,
-        "proposalProtocol": False,
+        "proposalProtocol": True,
     }
+    server.CAPABILITIES["durable-proposal-state"] = {
+        "kind": "durable-user-state",
+        "ready": RedisRestChatStore.configured(),
+        "contract": "swrlz-account-proposal-v1",
+        "authority": "account-owned-redis-rest",
+        "browserCanForgeAssistantProposal": False,
+        "resolutionActions": ["edit", "approve", "decline", "revert"],
+        "policyModes": ["ASK", "AUTO_LOW_RISK", "SESSION_ONLY", "NEVER"],
+    }
+    def _submit_account_proposal(**kwargs):
+        return submit_ai_proposal(_store(), **kwargs)
+    server.submit_account_proposal = _submit_account_proposal
     server.CAPABILITIES["detached-generation"] = {
         "kind": "durable-execution",
         "ready": RedisRestChatStore.configured(),
@@ -397,6 +421,125 @@ def install(server) -> None:
             return _json_error(409, "LORE_DELETE_CONFLICT", str(exc))
         except Exception as exc:
             return _json_error(400, "LORE_DELETE_FAILED", str(exc))
+
+    @server.app.get("/api/account/proposals")
+    async def account_proposal_list(request: Request, includeResolved: bool = True, limit: int = 200):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            profile = store.get_profile(user_id=user_id)
+            proposals = store.list_proposals(user_id=user_id, limit=max(1, min(int(limit), 500)), include_resolved=bool(includeResolved))
+            return {
+                "ok": True,
+                "contract": "swrlz-account-proposal-v1",
+                "policies": normalized_policy_map(profile),
+                "proposals": [proposal_public(proposal) for proposal in proposals],
+            }
+        except Exception as exc:
+            return _json_error(503, "PROPOSAL_READ_FAILED", str(exc))
+
+    @server.app.get("/api/account/proposals/{proposal_id}/audit")
+    async def account_proposal_audit(request: Request, proposal_id: str):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            if not _ID.fullmatch(proposal_id):
+                return _json_error(400, "PROPOSAL_ID_INVALID", "invalid proposal id")
+            proposal = store.get_proposal(user_id=user_id, proposal_id=proposal_id)
+            if proposal is None:
+                return _json_error(404, "PROPOSAL_NOT_FOUND", "proposal does not exist")
+            events = store.list_proposal_audit(user_id=user_id, proposal_id=proposal_id)
+            return {"ok": True, "proposal": proposal_public(proposal), "events": [audit_public(event) for event in events]}
+        except Exception as exc:
+            return _json_error(503, "PROPOSAL_AUDIT_FAILED", str(exc))
+
+    @server.app.put("/api/account/proposals/{proposal_id}")
+    async def account_proposal_edit(request: Request, proposal_id: str):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            if not _ID.fullmatch(proposal_id):
+                return _json_error(400, "PROPOSAL_ID_INVALID", "invalid proposal id")
+            body = await request.json()
+            if not isinstance(body, dict) or not isinstance(body.get("payload"), dict):
+                return _json_error(400, "PROPOSAL_EDIT_INVALID", "payload object is required")
+            saved = edit_proposal(
+                store,
+                user_id=user_id,
+                proposal_id=proposal_id,
+                payload=body["payload"],
+                rationale=str(body.get("rationale")) if "rationale" in body else None,
+                expected_version=int(body["version"]) if body.get("version") is not None else None,
+            )
+            return {"ok": True, "proposal": proposal_public(saved)}
+        except ConflictError as exc:
+            return _json_error(409, "PROPOSAL_EDIT_CONFLICT", str(exc))
+        except (ProposalPolicyError, ProposalStateError, ValueError) as exc:
+            return _json_error(400, "PROPOSAL_EDIT_FAILED", str(exc))
+        except Exception as exc:
+            return _json_error(503, "PROPOSAL_EDIT_FAILED", str(exc))
+
+    @server.app.post("/api/account/proposals/{proposal_id}/approve")
+    async def account_proposal_approve(request: Request, proposal_id: str):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            if not _ID.fullmatch(proposal_id):
+                return _json_error(400, "PROPOSAL_ID_INVALID", "invalid proposal id")
+            saved = apply_proposal(store, user_id=user_id, proposal_id=proposal_id, actor="USER", auto=False)
+            return {"ok": True, "proposal": proposal_public(saved)}
+        except ConflictError as exc:
+            return _json_error(409, "PROPOSAL_APPLY_CONFLICT", str(exc))
+        except (ProposalPolicyError, ProposalStateError, ValueError) as exc:
+            return _json_error(400, "PROPOSAL_APPROVE_FAILED", str(exc))
+        except Exception as exc:
+            return _json_error(503, "PROPOSAL_APPROVE_FAILED", str(exc))
+
+    @server.app.post("/api/account/proposals/{proposal_id}/decline")
+    async def account_proposal_decline(request: Request, proposal_id: str):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            if not _ID.fullmatch(proposal_id):
+                return _json_error(400, "PROPOSAL_ID_INVALID", "invalid proposal id")
+            body = await request.json()
+            version = int(body.get("version")) if isinstance(body, dict) and body.get("version") is not None else None
+            saved = decline_proposal(store, user_id=user_id, proposal_id=proposal_id, expected_version=version)
+            return {"ok": True, "proposal": proposal_public(saved)}
+        except ConflictError as exc:
+            return _json_error(409, "PROPOSAL_DECLINE_CONFLICT", str(exc))
+        except (ProposalStateError, ValueError) as exc:
+            return _json_error(400, "PROPOSAL_DECLINE_FAILED", str(exc))
+        except Exception as exc:
+            return _json_error(503, "PROPOSAL_DECLINE_FAILED", str(exc))
+
+    @server.app.post("/api/account/proposals/{proposal_id}/revert")
+    async def account_proposal_revert(request: Request, proposal_id: str):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            if not _ID.fullmatch(proposal_id):
+                return _json_error(400, "PROPOSAL_ID_INVALID", "invalid proposal id")
+            saved = revert_proposal(store, user_id=user_id, proposal_id=proposal_id)
+            return {"ok": True, "proposal": proposal_public(saved)}
+        except ConflictError as exc:
+            return _json_error(409, "PROPOSAL_REVERT_CONFLICT", str(exc))
+        except (ProposalStateError, ValueError) as exc:
+            return _json_error(400, "PROPOSAL_REVERT_FAILED", str(exc))
+        except Exception as exc:
+            return _json_error(503, "PROPOSAL_REVERT_FAILED", str(exc))
 
     @server.app.post("/api/account/thread")
     async def account_thread(request: Request):
