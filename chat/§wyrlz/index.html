@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.48">
+  <meta name="swrlz-chat-version" content="1.0.49">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -107,6 +107,35 @@
     @media(prefers-reduced-motion:reduce){.menu-shade,.side-menu,.version-chevron,.thread-row,.settings-gear,.new-thread-button,.account-action,.composer-shell,.composer-collapse svg,.send-button,.assistant-actions{transition:none!important}.top-edge[data-state="busy"] .ready-dot{animation:none!important}.send-button:hover{transform:none}.thread-row:hover{transform:none}}
 
     @media(min-width:601px){.composer-shell{padding:12px 14px 10px}.composer-box{min-height:44px;border-radius:22px}#prompt{height:42px;max-height:calc(50dvh - 2px);padding-top:11px;padding-bottom:11px;font-size:14px;line-height:20px}.composer-tools{bottom:7px}.send-button{width:30px;height:30px}.send-button svg{width:14px;height:14px}}
+
+
+    /* Glitch Dragon Chat — Tier B settings shell. */
+    .settings-shade{position:fixed;z-index:30;inset:0;background:rgba(0,7,16,.76);backdrop-filter:blur(5px);opacity:0;visibility:hidden;transition:opacity .18s ease,visibility 0s linear .18s}
+    .settings-sheet{position:fixed;z-index:31;top:10px;right:10px;bottom:10px;width:min(94vw,780px);display:flex;flex-direction:column;border:1px solid rgba(126,214,255,.24);border-radius:18px;background:linear-gradient(145deg,rgba(3,16,29,.985),rgba(7,25,42,.98) 58%,rgba(14,18,40,.985));box-shadow:0 24px 80px rgba(0,0,0,.56),inset 0 1px 0 rgba(255,255,255,.045);transform:translateX(calc(100% + 28px));transition:transform .22s cubic-bezier(.2,.8,.2,1);overflow:hidden}
+    body.settings-open .settings-shade{opacity:1;visibility:visible;transition-delay:0s}
+    body.settings-open .settings-sheet{transform:translateX(0)}
+    .settings-header{display:flex;align-items:center;gap:12px;padding:14px 15px;border-bottom:1px solid rgba(126,214,255,.14);background:linear-gradient(90deg,rgba(10,39,60,.55),rgba(37,28,67,.22))}
+    .settings-header-copy{min-width:0;flex:1}.settings-kicker{font-family:var(--font-telemetry);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#8fd8ed}.settings-title{margin:2px 0 0;font-size:18px;letter-spacing:.02em;color:#effbff}.settings-close{display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(126,214,255,.22);border-radius:10px;background:rgba(8,29,47,.72);color:#dff8ff;cursor:pointer}.settings-close:hover{border-color:rgba(56,232,255,.48)}
+    .settings-layout{display:grid;grid-template-columns:176px minmax(0,1fr);min-height:0;flex:1}
+    .settings-nav{padding:12px 9px;border-right:1px solid rgba(126,214,255,.12);overflow:auto;background:rgba(1,12,24,.36)}
+    .settings-nav-button{display:flex;align-items:center;width:100%;margin:0 0 5px;padding:9px 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:#a9bfcd;text-align:left;font-size:12px;font-weight:700;cursor:pointer}.settings-nav-button:hover{background:rgba(22,58,80,.38);color:#e9faff}.settings-nav-button.active{border-color:rgba(56,232,255,.26);background:linear-gradient(100deg,rgba(23,70,91,.54),rgba(70,45,110,.25));color:#e9fbff;box-shadow:inset 2px 0 0 rgba(56,232,255,.55)}
+    .settings-main{min-width:0;min-height:0;overflow:auto;padding:16px 18px 86px}
+    .settings-pane{display:none;max-width:620px}.settings-pane.active{display:block}.settings-pane h3{margin:0 0 5px;font-size:17px;color:#f0fbff}.settings-pane-lead{margin:0 0 15px;color:#94afbf;font-size:12px;line-height:1.5}
+    .setting-group{margin:0 0 12px;padding:12px;border:1px solid rgba(126,214,255,.13);border-radius:13px;background:linear-gradient(135deg,rgba(6,26,43,.55),rgba(10,24,44,.40))}.setting-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,220px);gap:14px;align-items:center}.setting-row+.setting-row{margin-top:12px;padding-top:12px;border-top:1px solid rgba(126,214,255,.09)}.setting-label{font-size:13px;font-weight:730;color:#e9f9ff}.setting-help{margin-top:3px;color:#839faf;font-size:10px;line-height:1.45}.setting-control select{width:100%;min-height:36px;border:1px solid rgba(126,214,255,.22);border-radius:10px;background:#071c2d;color:#eaf9ff;padding:7px 9px}.setting-toggle{display:flex;justify-content:flex-end;align-items:center;gap:8px;color:#bbd5e1;font-size:11px}.setting-toggle input{width:18px;height:18px;accent-color:#48dff7}.setting-control output{font-family:var(--font-telemetry);font-size:10px;color:#a8dbea}
+    .settings-note{padding:11px 12px;border:1px solid rgba(165,120,255,.18);border-radius:11px;background:rgba(52,35,82,.20);color:#b9b4d3;font-size:11px;line-height:1.5}.settings-note strong{color:#e0d7ff}
+    .settings-status-card{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px 0;border-bottom:1px solid rgba(126,214,255,.08);font-size:11px}.settings-status-card:last-child{border-bottom:0}.settings-status-card span:first-child{color:#9db5c4}.settings-status-card span:last-child{font-family:var(--font-telemetry);color:#c8eff9;text-align:right}
+    .settings-footer{position:absolute;left:176px;right:0;bottom:0;display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid rgba(126,214,255,.14);background:rgba(3,16,29,.96);backdrop-filter:blur(14px)}.settings-save-state{min-width:0;flex:1;color:#8fa8b7;font-size:10px;line-height:1.35}.settings-save{min-width:108px;border:1px solid rgba(56,232,255,.34);border-radius:10px;background:linear-gradient(135deg,rgba(24,102,126,.72),rgba(68,62,136,.58));color:#effcff;padding:9px 13px;font-weight:760;cursor:pointer}.settings-save:hover{border-color:rgba(56,232,255,.62)}.settings-save:disabled{opacity:.45;cursor:default}
+    body.settings-density-comfortable .message-list{gap:26px}.settings-density-comfortable .assistant-body,.settings-density-comfortable .user-bubble{padding-top:13px!important;padding-bottom:13px!important}
+    body.settings-glass-low .top-edge,body.settings-glass-low .side-menu,body.settings-glass-low .assistant-body,body.settings-glass-low .composer-shell::before{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+    body.settings-glass-low .assistant-body{background:rgba(5,23,39,.90)!important}body.settings-glass-low .top-edge{background:rgba(3,18,31,.94)}
+    body.a11y-high-contrast{--text:#fff;--secondary:#e8f5ff;--muted:#c5d5df;--line:rgba(225,245,255,.38);--line-bright:rgba(165,235,255,.72)}body.a11y-high-contrast .assistant-body,body.a11y-high-contrast .user-bubble,body.a11y-high-contrast .top-edge,body.a11y-high-contrast .composer-box{border-color:rgba(215,245,255,.56)!important;background-color:rgba(0,10,20,.92)!important}
+    body.a11y-reduced-transparency .top-edge,body.a11y-reduced-transparency .side-menu,body.a11y-reduced-transparency .assistant-body,body.a11y-reduced-transparency .user-bubble,body.a11y-reduced-transparency .composer-shell::before,body.a11y-reduced-transparency .settings-sheet{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}body.a11y-reduced-transparency .top-edge,body.a11y-reduced-transparency .side-menu,body.a11y-reduced-transparency .settings-sheet{background:#061727!important}body.a11y-reduced-transparency .assistant-body{background:#082139!important}body.a11y-reduced-transparency .user-bubble{background:#173e5a!important}
+    body.motion-reduced *,body.motion-off *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}body.motion-off *{animation:none!important;transition:none!important}
+    .assistant-body,.user-bubble{font-size:calc(15px * var(--font-scale,1))!important}.side-menu,.settings-sheet{font-size:calc(1em * var(--font-scale,1))}#prompt{font-size:calc(13px * var(--font-scale,1))!important}
+    @media(min-width:601px){#prompt{font-size:calc(14px * var(--font-scale,1))!important}}
+    @media(max-width:680px){.settings-sheet{inset:0;width:100%;border:0;border-radius:0}.settings-layout{grid-template-columns:1fr}.settings-nav{display:flex;gap:5px;padding:8px;border-right:0;border-bottom:1px solid rgba(126,214,255,.12);overflow-x:auto}.settings-nav-button{width:auto;white-space:nowrap;margin:0;padding:7px 9px}.settings-main{padding:14px 12px 92px}.setting-row{grid-template-columns:1fr;gap:8px}.setting-toggle{justify-content:flex-start}.settings-footer{left:0}.settings-header{padding:12px}.settings-title{font-size:16px}}
+    @media(prefers-reduced-motion:reduce){.settings-shade,.settings-sheet,.settings-nav-button,.settings-close,.settings-save{transition:none!important}}
+
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -123,6 +152,73 @@
       <span class="top-ready-label" id="topReadyLabel">ready</span>
     </div>
   </header>
+  <div class="settings-shade" id="settingsShade" aria-hidden="true"></div>
+  <section class="settings-sheet" id="settingsSheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" aria-hidden="true">
+    <header class="settings-header">
+      <div class="settings-header-copy"><div class="settings-kicker">Glitch Dragon control surface</div><h2 class="settings-title" id="settingsTitle">Settings</h2></div>
+      <button class="settings-close" id="settingsClose" type="button" aria-label="Close settings">✕</button>
+    </header>
+    <div class="settings-layout">
+      <nav class="settings-nav" aria-label="Settings sections">
+        <button class="settings-nav-button active" type="button" data-settings-section="general">General</button>
+        <button class="settings-nav-button" type="button" data-settings-section="model">AI / Model</button>
+        <button class="settings-nav-button" type="button" data-settings-section="appearance">Appearance</button>
+        <button class="settings-nav-button" type="button" data-settings-section="motion">Motion</button>
+        <button class="settings-nav-button" type="button" data-settings-section="accessibility">Accessibility</button>
+        <button class="settings-nav-button" type="button" data-settings-section="privacy">Privacy</button>
+      </nav>
+      <div class="settings-main">
+        <section class="settings-pane active" data-settings-pane="general">
+          <h3>General</h3><p class="settings-pane-lead">Chat interaction defaults. Previewed immediately; saved only when you choose Save.</p>
+          <div class="setting-group">
+            <div class="setting-row"><div><div class="setting-label">Enter to send</div><div class="setting-help">When off, Enter inserts a newline. Ctrl/⌘ + Enter still sends.</div></div><label class="setting-toggle"><input id="settingEnterSend" type="checkbox" checked> Enabled</label></div>
+            <div class="setting-row"><div><div class="setting-label">Conversation density</div><div class="setting-help">Changes vertical breathing room without widening the conversation stage.</div></div><div class="setting-control"><select id="settingDensity"><option value="compact">Compact</option><option value="comfortable">Comfortable</option></select></div></div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="model">
+          <h3>AI / Model</h3><p class="settings-pane-lead">Profile preferences for future LALM routing. Tier B does not pretend these knobs already alter inference.</p>
+          <div class="setting-group">
+            <div class="setting-row"><div><div class="setting-label">Default model</div><div class="setting-help">Current clean-room Chat route is bound to the §wyrlz LALM.</div></div><div class="setting-control"><select id="settingDefaultModel" disabled><option value="LALM">§wyrlz LALM</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">Effort preference</div><div class="setting-help">Saved as a model preference only until the LALM routing tier consumes it.</div></div><div class="setting-control"><select id="settingEffort"><option value="auto">Adaptive</option><option value="fast">Fast</option><option value="deep">Deep</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">Response length</div><div class="setting-help">Your preferred answer depth; persistence does not itself enforce generation length.</div></div><div class="setting-control"><select id="settingResponseLength"><option value="adaptive">Adaptive</option><option value="concise">Concise</option><option value="expanded">Expanded</option></select></div></div>
+          </div>
+          <div class="settings-note"><strong>Truth boundary:</strong> these model preferences are inspectable account data, not a claim that the active LALM runtime already honors them.</div>
+        </section>
+        <section class="settings-pane" data-settings-pane="appearance">
+          <h3>Appearance</h3><p class="settings-pane-lead">Visual-stage controls that are safe to preview locally.</p>
+          <div class="setting-group">
+            <div class="setting-row"><div><div class="setting-label">Theme</div><div class="setting-help">Tier A established the Glitch Dragon / Ice Dragon stage as the authoritative theme.</div></div><div class="setting-control"><select id="settingTheme" disabled><option value="glitch-dragon">Glitch Dragon</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">Glass intensity</div><div class="setting-help">Lower glass reduces translucent blur surfaces while preserving the theme geometry.</div></div><div class="setting-control"><select id="settingGlass"><option value="standard">Standard</option><option value="low">Low</option></select></div></div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="motion">
+          <h3>Motion</h3><p class="settings-pane-lead">Motion is state communication, not decoration. System mode respects your OS preference.</p>
+          <div class="setting-group">
+            <div class="setting-row"><div><div class="setting-label">Motion mode</div><div class="setting-help">Reduced and Off suppress transition/animation timing without changing functional behavior.</div></div><div class="setting-control"><select id="settingMotion"><option value="system">System</option><option value="full">Full</option><option value="reduced">Reduced</option><option value="off">Off</option></select></div></div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="accessibility">
+          <h3>Accessibility</h3><p class="settings-pane-lead">Presentation controls stay independent from model behavior.</p>
+          <div class="setting-group">
+            <div class="setting-row"><div><div class="setting-label">Text scale</div><div class="setting-help">Scales conversation and settings text without changing stored content.</div></div><div class="setting-control"><select id="settingFontScale"><option value="0.9">90%</option><option value="1" selected>100%</option><option value="1.1">110%</option><option value="1.2">120%</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">High contrast</div><div class="setting-help">Raises foreground and boundary contrast.</div></div><label class="setting-toggle"><input id="settingHighContrast" type="checkbox"> Enabled</label></div>
+            <div class="setting-row"><div><div class="setting-label">Reduce transparency</div><div class="setting-help">Replaces translucent glass with more opaque surfaces.</div></div><label class="setting-toggle"><input id="settingReducedTransparency" type="checkbox"> Enabled</label></div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="privacy">
+          <h3>Privacy</h3><p class="settings-pane-lead">This panel reports real storage state. Controls that do not yet have an enforcement owner remain explicitly unavailable.</p>
+          <div class="setting-group">
+            <div class="settings-status-card"><span>Account</span><span id="settingsPrivacyAccount">Not signed in</span></div>
+            <div class="settings-status-card"><span>Settings persistence</span><span id="settingsPrivacyDurability">Session preview only</span></div>
+            <div class="settings-status-card"><span>Memory / lore policy</span><span>Tier C / D pending</span></div>
+            <div class="settings-status-card"><span>AI self-profile mutation</span><span>Not enabled</span></div>
+          </div>
+          <div class="settings-note"><strong>No silent durability:</strong> opening or previewing settings never writes your profile. Memory/lore and AI-originated durable changes will require their own explicit proposal/approval protocol.</div>
+        </section>
+      </div>
+    </div>
+    <footer class="settings-footer"><div class="settings-save-state" id="settingsSaveState">Previewing locally. Sign in with durable account storage to save.</div><button class="settings-save" id="settingsSave" type="button">Save settings</button></footer>
+  </section>
   <div class="menu-shade" id="menuShade" aria-hidden="true"></div>
   <aside class="side-menu" id="sideMenu" aria-label="Side menu" aria-hidden="true">
     <div class="side-brand">
@@ -201,7 +297,7 @@
       const topEdge = document.getElementById("topEdge");
       const topThreadTitle = document.getElementById("topThreadTitle");
       const topReadyLabel = document.getElementById("topReadyLabel");
-      const SWRLZ_CHAT_VERSION = "1.0.48";
+      const SWRLZ_CHAT_VERSION = "1.0.49";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       const uiCamera = (event,data={}) => {
@@ -218,6 +314,14 @@
       let pendingDraftThread = null;
       let threadSelectionMode=false;
       let chatAccountUser=null;
+      let accountProfile=null;
+      let accountProfileDurable=false;
+      let settingsDirty=false;
+      const settingsState={
+        general:{enterToSend:true},
+        model:{effort:"auto",responseLength:"adaptive"},
+        ui:{density:"compact",glass:"standard",motion:"system",fontScale:"1",highContrast:false,reducedTransparency:false}
+      };
       const selectedThreadIds=new Set();
       const threadId = () => "web-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       const titleFrom = text => {
@@ -506,7 +610,11 @@
         }finally{sending=false;sendButton.disabled=false;scheduleStationSync()}
       };
       sendButton.addEventListener("click",commitDraftFromPrompt);
-      prompt.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();commitDraftFromPrompt();}});
+      prompt.addEventListener("keydown",e=>{
+        if(e.key!=="Enter"||e.shiftKey)return;
+        const shortcut=e.ctrlKey||e.metaKey;
+        if(settingsState.general.enterToSend||shortcut){e.preventDefault();commitDraftFromPrompt();}
+      });
       renderThreads();
       loadChatState();
       const composerShell = document.getElementById("composerShell");
@@ -531,6 +639,101 @@
         menuButton.setAttribute("aria-expanded","false");
         sideMenu.setAttribute("aria-hidden","true");
         window.dispatchEvent(new CustomEvent("swrlz-open-settings"));
+      });
+      const settingsShade = document.getElementById("settingsShade");
+      const settingsSheet = document.getElementById("settingsSheet");
+      const settingsClose = document.getElementById("settingsClose");
+      const settingsSave = document.getElementById("settingsSave");
+      const settingsSaveState = document.getElementById("settingsSaveState");
+      const settingsPrivacyAccount = document.getElementById("settingsPrivacyAccount");
+      const settingsPrivacyDurability = document.getElementById("settingsPrivacyDurability");
+      const settingEnterSend = document.getElementById("settingEnterSend");
+      const settingDensity = document.getElementById("settingDensity");
+      const settingEffort = document.getElementById("settingEffort");
+      const settingResponseLength = document.getElementById("settingResponseLength");
+      const settingGlass = document.getElementById("settingGlass");
+      const settingMotion = document.getElementById("settingMotion");
+      const settingFontScale = document.getElementById("settingFontScale");
+      const settingHighContrast = document.getElementById("settingHighContrast");
+      const settingReducedTransparency = document.getElementById("settingReducedTransparency");
+      const settingsControlIds=["settingEnterSend","settingDensity","settingEffort","settingResponseLength","settingGlass","settingMotion","settingFontScale","settingHighContrast","settingReducedTransparency"];
+      const applySettingsPreview = () => {
+        settingsState.general.enterToSend=!!settingEnterSend.checked;
+        settingsState.model.effort=settingEffort.value;
+        settingsState.model.responseLength=settingResponseLength.value;
+        settingsState.ui.density=settingDensity.value;
+        settingsState.ui.glass=settingGlass.value;
+        settingsState.ui.motion=settingMotion.value;
+        settingsState.ui.fontScale=settingFontScale.value;
+        settingsState.ui.highContrast=!!settingHighContrast.checked;
+        settingsState.ui.reducedTransparency=!!settingReducedTransparency.checked;
+        document.body.classList.toggle("settings-density-comfortable",settingsState.ui.density==="comfortable");
+        document.body.classList.toggle("settings-glass-low",settingsState.ui.glass==="low");
+        document.body.classList.toggle("motion-reduced",settingsState.ui.motion==="reduced");
+        document.body.classList.toggle("motion-off",settingsState.ui.motion==="off");
+        document.body.classList.toggle("motion-full",settingsState.ui.motion==="full");
+        document.body.classList.toggle("a11y-high-contrast",settingsState.ui.highContrast);
+        document.body.classList.toggle("a11y-reduced-transparency",settingsState.ui.reducedTransparency);
+        document.documentElement.style.setProperty("--font-scale",settingsState.ui.fontScale);
+      };
+      const populateSettingsControls = () => {
+        const prefs=accountProfile?.preferences||{}, model=accountProfile?.model_preferences||{}, ui=accountProfile?.ui_preferences||{};
+        const general=prefs.general&&typeof prefs.general==="object"?prefs.general:{};
+        settingEnterSend.checked=general.enterToSend!==false;
+        settingDensity.value=["compact","comfortable"].includes(ui.density)?ui.density:"compact";
+        settingEffort.value=["auto","fast","deep"].includes(model.effort)?model.effort:"auto";
+        settingResponseLength.value=["adaptive","concise","expanded"].includes(model.responseLength)?model.responseLength:"adaptive";
+        settingGlass.value=["standard","low"].includes(ui.glass)?ui.glass:"standard";
+        settingMotion.value=["system","full","reduced","off"].includes(ui.motion)?ui.motion:"system";
+        settingFontScale.value=["0.9","1","1.1","1.2"].includes(String(ui.fontScale))?String(ui.fontScale):"1";
+        settingHighContrast.checked=ui.highContrast===true;
+        settingReducedTransparency.checked=ui.reducedTransparency===true;
+        settingsDirty=false;applySettingsPreview();
+      };
+      const refreshSettingsDurability = () => {
+        settingsPrivacyAccount.textContent=chatAccountUser?(chatAccountUser.displayName||chatAccountUser.email||"Signed in"):"Not signed in";
+        settingsPrivacyDurability.textContent=accountProfileDurable?"Durable account profile":"Session preview only";
+        settingsSave.disabled=!chatAccountUser||!accountProfileDurable;
+        settingsSaveState.textContent=accountProfileDurable?(settingsDirty?"Unsaved profile changes.":"Saved profile values loaded; previews remain local until Save."):"Previewing locally. Durable account storage is required to save.";
+      };
+      const setSettingsOpen = open => {
+        document.body.classList.toggle("settings-open",open);
+        settingsSheet.setAttribute("aria-hidden",String(!open));
+        settingsShade.setAttribute("aria-hidden",String(!open));
+        if(open){populateSettingsControls();refreshSettingsDurability();settingsClose.focus();uiCamera("settings-open",{durable:accountProfileDurable});}
+        else uiCamera("settings-close",{dirty:settingsDirty});
+      };
+      const activateSettingsPane = section => {
+        document.querySelectorAll(".settings-nav-button").forEach(button=>button.classList.toggle("active",button.dataset.settingsSection===section));
+        document.querySelectorAll(".settings-pane").forEach(pane=>pane.classList.toggle("active",pane.dataset.settingsPane===section));
+        uiCamera("settings-section",{section});
+      };
+      document.querySelectorAll(".settings-nav-button").forEach(button=>button.addEventListener("click",()=>activateSettingsPane(button.dataset.settingsSection)));
+      settingsControlIds.forEach(id=>document.getElementById(id).addEventListener("change",()=>{
+        settingsDirty=true;applySettingsPreview();refreshSettingsDurability();uiCamera("settings-preview",{control:id});
+      }));
+      settingsClose.addEventListener("click",()=>setSettingsOpen(false));
+      settingsShade.addEventListener("click",()=>setSettingsOpen(false));
+      window.addEventListener("swrlz-open-settings",()=>setSettingsOpen(true));
+      window.addEventListener("keydown",event=>{if(event.key==="Escape"&&document.body.classList.contains("settings-open"))setSettingsOpen(false);});
+      settingsSave.addEventListener("click",async()=>{
+        if(!chatAccountUser||!accountProfileDurable||!accountProfile){refreshSettingsDurability();return;}
+        settingsSave.disabled=true;settingsSaveState.textContent="Saving…";
+        const existingPrefs=accountProfile.preferences&&typeof accountProfile.preferences==="object"?accountProfile.preferences:{};
+        const existingModel=accountProfile.model_preferences&&typeof accountProfile.model_preferences==="object"?accountProfile.model_preferences:{};
+        const existingUi=accountProfile.ui_preferences&&typeof accountProfile.ui_preferences==="object"?accountProfile.ui_preferences:{};
+        const preferences={...existingPrefs,general:{...(existingPrefs.general&&typeof existingPrefs.general==="object"?existingPrefs.general:{}),enterToSend:settingsState.general.enterToSend}};
+        const modelPreferences={...existingModel,defaultModel:"LALM",effort:settingsState.model.effort,responseLength:settingsState.model.responseLength};
+        const uiPreferences={...existingUi,density:settingsState.ui.density,glass:settingsState.ui.glass,motion:settingsState.ui.motion,fontScale:settingsState.ui.fontScale,highContrast:settingsState.ui.highContrast,reducedTransparency:settingsState.ui.reducedTransparency,theme:"glitch-dragon"};
+        try{
+          const response=await accountFetch("/api/account/profile",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({displayName:accountProfile.display_name||chatAccountUser.displayName||null,preferences,modelPreferences,uiPreferences,version:Number(accountProfile.version||0)})});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!data?.profile)throw new Error(data?.detail||("Profile save failed ("+response.status+")"));
+          accountProfile=data.profile;accountProfileDurable=true;settingsDirty=false;populateSettingsControls();refreshSettingsDurability();uiCamera("settings-save-success",{profileVersion:Number(accountProfile.version||0)});
+        }catch(error){
+          settingsSaveState.textContent="Save failed. Your local preview is still active.";
+          uiCamera("settings-save-failed",{errorType:String(error?.name||"Error")});
+        }finally{settingsSave.disabled=!chatAccountUser||!accountProfileDurable;}
       });
       const accountName = document.getElementById("accountName");
       const accountMeta = document.getElementById("accountMeta");
@@ -559,9 +762,13 @@
           throw error;
         }
       };
-      const showUser = user => {
+      const showUser = (user,profile=null,durable=false) => {
         accountUser = user || null;
         chatAccountUser = accountUser;
+        accountProfile=profile&&typeof profile==="object"?profile:null;
+        accountProfileDurable=!!accountUser&&!!durable&&Number(accountProfile?.version||0)>0;
+        if(accountProfile)populateSettingsControls();
+        refreshSettingsDurability();
         if(!draftThread)renderConversation(currentThread());
         accountName.textContent = user?.displayName || user?.email || "Google Account";
         accountMeta.textContent = user ? "" : "Not signed in";
@@ -578,17 +785,17 @@
         google.accounts.id.initialize({client_id:status.googleClientId,callback:async response=>{
           const result=await accountFetch("/api/account/google",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({credential:response.credential})});
           if(!result.ok) throw new Error("Google sign-in failed");
-          const data=await result.json(); showUser(data.user);
+          const data=await result.json(); showUser(data.user,data.profile,data.durable!==false&&Number(data.profile?.version||0)>0);
         }});
         google.accounts.id.renderButton(googleSlot,{type:"standard",theme:"outline",size:"medium",text:"signin_with",shape:"pill",width:250});
       };
       const refreshAccount = async () => {
-        try{const r=await accountFetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user);return;}}catch(_){}
-        showUser(null);
+        try{const r=await accountFetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user,d.profile,d.durable!==false&&Number(d.profile?.version||0)>0);return;}}catch(_){}
+        showUser(null,null,false);
         try{await renderGoogle();}catch(e){accountMeta.textContent=e.message;}
       };
       accountAction.addEventListener("click",async()=>{
-        if(accountUser){await accountFetch("/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null);return;}
+        if(accountUser){await accountFetch("/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null,null,false);return;}
       });
       refreshAccount();
       const setMenu = (open) => {
@@ -608,6 +815,8 @@
       };
       prompt.addEventListener("input", resizeComposer, {passive:true});
       window.addEventListener("resize", resizeComposer, {passive:true});
+      populateSettingsControls();
+      refreshSettingsDurability();
       resizeComposer();
       requestAnimationFrame(()=>{
         const topRect=topEdge.getBoundingClientRect();
