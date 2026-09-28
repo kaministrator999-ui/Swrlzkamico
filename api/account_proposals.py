@@ -316,11 +316,18 @@ def edit_proposal(
         target_id=current.target_id,
         payload=dict(payload or {}),
     )
+    target_version = _current_target_version(
+        store,
+        user_id=user_id,
+        operation=current.operation,
+        target_id=current.target_id,
+    )
     saved = store.put_proposal(
         replace(
             current,
             payload=clean_payload,
             rationale=_bounded_text(rationale, 4000) if rationale is not None else current.rationale,
+            target_version=target_version,
         ),
         expected_version=current.version if expected_version is None else expected_version,
     )
@@ -445,26 +452,32 @@ def apply_proposal(store, *, user_id: str, proposal_id: str, actor: str = "USER"
         raise ProposalStateError("proposal does not exist")
     if current.state != "PENDING":
         raise ProposalStateError("proposal is not pending")
+    claimed = store.put_proposal(replace(current, state="APPLYING"), expected_version=current.version)
+    _audit(store, claimed, "APPLYING", actor, {"proposalVersion": claimed.version})
     try:
-        if current.operation == "USER_PROFILE_PATCH":
-            before, after = _apply_user_profile(store, current)
-        elif current.operation == "COMPANION_PROFILE_PATCH":
-            before, after = _apply_companion_profile(store, current)
+        if claimed.operation == "USER_PROFILE_PATCH":
+            before, after = _apply_user_profile(store, claimed)
+        elif claimed.operation == "COMPANION_PROFILE_PATCH":
+            before, after = _apply_companion_profile(store, claimed)
         else:
-            before, after = _apply_lore(store, current)
+            before, after = _apply_lore(store, claimed)
     except Exception as exc:
-        _audit(store, current, "APPLY_FAILED", actor, {"errorType": type(exc).__name__})
+        try:
+            recovered = store.put_proposal(replace(claimed, state="PENDING"), expected_version=claimed.version)
+            _audit(store, recovered, "APPLY_FAILED", actor, {"errorType": type(exc).__name__, "proposalVersion": recovered.version})
+        except Exception:
+            _audit(store, claimed, "APPLY_RECOVERY_FAILED", "SYSTEM", {"errorType": type(exc).__name__})
         raise
     terminal = "AUTO_APPLIED" if auto else "APPLIED"
     saved = store.put_proposal(
         replace(
-            current,
+            claimed,
             state=terminal,
             before_snapshot=before,
             after_snapshot=after,
             resolved_at=time.time(),
         ),
-        expected_version=current.version,
+        expected_version=claimed.version,
     )
     _audit(store, saved, terminal, actor, {"proposalVersion": saved.version, "targetVersion": after.get("version")})
     return saved
@@ -545,15 +558,26 @@ def revert_proposal(store, *, user_id: str, proposal_id: str) -> ProposalRecord:
         raise ProposalStateError("proposal does not exist")
     if current.state not in {"APPLIED", "AUTO_APPLIED"}:
         raise ProposalStateError("only applied proposals can be reverted")
-    if current.operation == "USER_PROFILE_PATCH":
-        reverted_from, restored = _restore_profile(store, current, companion=False)
-    elif current.operation == "COMPANION_PROFILE_PATCH":
-        reverted_from, restored = _restore_profile(store, current, companion=True)
-    else:
-        reverted_from, restored = _restore_lore(store, current)
+    original_state = current.state
+    claimed = store.put_proposal(replace(current, state="REVERTING"), expected_version=current.version)
+    _audit(store, claimed, "REVERTING", "USER", {"proposalVersion": claimed.version})
+    try:
+        if claimed.operation == "USER_PROFILE_PATCH":
+            reverted_from, restored = _restore_profile(store, claimed, companion=False)
+        elif claimed.operation == "COMPANION_PROFILE_PATCH":
+            reverted_from, restored = _restore_profile(store, claimed, companion=True)
+        else:
+            reverted_from, restored = _restore_lore(store, claimed)
+    except Exception as exc:
+        try:
+            recovered = store.put_proposal(replace(claimed, state=original_state), expected_version=claimed.version)
+            _audit(store, recovered, "REVERT_FAILED", "USER", {"errorType": type(exc).__name__, "proposalVersion": recovered.version})
+        except Exception:
+            _audit(store, claimed, "REVERT_RECOVERY_FAILED", "SYSTEM", {"errorType": type(exc).__name__})
+        raise
     saved = store.put_proposal(
-        replace(current, state="REVERTED", resolved_at=time.time()),
-        expected_version=current.version,
+        replace(claimed, state="REVERTED", resolved_at=time.time()),
+        expected_version=claimed.version,
     )
     _audit(store, saved, "REVERTED", "USER", {
         "proposalVersion": saved.version,
