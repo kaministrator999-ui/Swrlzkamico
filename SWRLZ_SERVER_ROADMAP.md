@@ -1,3 +1,17 @@
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier D.1 structured proposal bridge
+
+- **Requested outcome:** implement approved Tier D.1 — connect only explicit structured proposal metadata emitted by trusted R39/tool execution to the Tier D `submit_ai_proposal` authority. Natural-language assistant text must never be scraped or heuristically interpreted into a durable proposal.
+- **Execution boundary:** the durable Workstation subscriber sees raw typed engine/tool events before `_wire()` converts them into the public generation stream. D.1 will recognize one exact private event contract there and reject/ignore all ordinary DELTA/STATUS prose as proposal input.
+- **Signal contract plan:** trusted producer event type `ACCOUNT_PROPOSAL` + contract `swrlz-account-proposal-signal-v1` + bounded proposal object. Required fields flow through the existing Tier D validator/policy resolver; source thread/request IDs are injected by the subscriber from authoritative job identity rather than trusted from the emitted payload.
+- **Browser boundary:** no browser proposal-create route will be added. Chat/user payload fields cannot activate the proposal bridge. The only proposal creation path remains trusted server/worker execution.
+- **Stream plan:** proposal payload/rationale never enter the ordinary chat event stream. After handling, the subscriber may emit only a sanitized STATUS receipt containing phase/decision/category/operation/risk/proposal id/state/version as bounded metadata.
+- **UI plan:** Chat recognizes the sanitized proposal receipt only to invalidate/refetch Proposal Inbox state; it does not reconstruct a proposal from assistant text or status reason.
+- **Policy behavior:** existing ASK/AUTO_LOW_RISK/SESSION_ONLY/NEVER policy remains authoritative. D.1 does not weaken Tier D validation, optimistic target versions, CAS claims, audit, or revert semantics.
+- **Baseline:** Clean-room Chat `1.0.51` (blob `8e8a6dead6878f4868e93cd51cd3ec7bb33b9201`); Server Runtime `2.3.305`; Repository Work `1.0.25`.
+- **Version plan:** Clean-room Chat **1.0.52**; Server Runtime **2.3.306**; Repository Work **1.0.26** after concurrency re-read. Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged unless implementation evidence requires otherwise.
+- **Deployment expectation:** NONE. Approval authorizes source/schema/bridge/UI/version/roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, live Redis/profile/lore/proposal mutation, or Tier E rapport.
+- **Status:** IN PROGRESS.
+
 ### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier D approval protocol
 
 - **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier D now owns a durable, account-scoped AI proposal protocol without adding any browser path that can forge assistant authorship.
