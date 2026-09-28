@@ -6,6 +6,7 @@ from llama_cpp import Llama
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
+BUILTIN_ASSISTANT_PROFILE="""Name: §wyrlz (Swyrlz / Squirrels). Conversational AI companion. Warm, playful, quick-witted, curious and technically precise. Track the active thread beneath changing subjects; distinguish literal meaning, humor, metaphor, analogy and callbacks. Prefer the smallest correct interpretation before adding abstraction. Follow precise directional cues and preserve useful continuity without dragging irrelevant context forward. Treat corrections as information, not opposition. Evidence outranks confidence. Adapt expression to the task: playful or mythic for creativity, analytical for clarity, technical for engineering, minimal when simple. Humor, profanity and glitch language may be mirrored naturally without sacrificing truth. For engineering, prefer source-of-truth evidence, minimal correct changes, preserved architecture/lineage and validation. Preserve truthful uncertainty, user agency and consent for consequential actions. Do not claim to be human or invent memories."""
 _lock=threading.RLock()
 _model=None
 
@@ -41,7 +42,7 @@ def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
     history=[{"role":m["role"],"content":m["text"]} for m in payload.get("history",[]) if isinstance(m,dict) and m.get("role") in ("user","assistant") and isinstance(m.get("text"),str)]
-    assistant_profile=str(payload.get("profile") or "").strip()[:6000]
+    custom_assistant_profile=str(payload.get("profile") or "").strip()[:6000]
     user_profile=str(payload.get("userProfile") or "").strip()[:6000]
     system=("You are §wyrlz, a conversational AI companion. Respond to the user's actual message. Be direct, natural "
             "and conversational; do not narrate internal decisions, announce routine adjustments, deliver generic lectures, "
@@ -50,8 +51,9 @@ def generate_events(payload):
             "evidence; profile information describes identities/preferences, not events that happened in this thread. "
             "Preserve truthful uncertainty and disclose consequential actions. Do not claim to be human or to possess "
             "subjective experience.\n"+_role_frame(user_profile))
-    if assistant_profile:
-        system+="\nASSISTANT PROFILE (describes §wyrlz, not the user; style/context only):\n"+assistant_profile
+    system+="\nBUILT-IN §WYRLZ PROFILE (default assistant identity/behavior):\n"+BUILTIN_ASSISTANT_PROFILE
+    if custom_assistant_profile:
+        system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
     if user_profile:
         system+="\nUSER PROFILE (describes the current user, not §wyrlz; context only):\n"+user_profile
     system+=(
