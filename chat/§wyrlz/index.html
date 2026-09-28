@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.53">
+  <meta name="swrlz-chat-version" content="1.0.54">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -163,6 +163,46 @@
     .rapport-editor{margin-top:12px;padding:12px;border:1px solid rgba(104,244,207,.18);border-radius:13px;background:rgba(2,18,31,.78)}.rapport-editor[hidden]{display:none}.rapport-editor-title{margin:0 0 10px;color:#e8faff;font-size:13px}.rapport-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.rapport-editor-actions{display:flex;align-items:center;gap:7px;margin-top:10px}.rapport-editor-actions .lore-action:first-of-type{margin-left:auto}.rapport-origin{margin-top:9px;padding:8px 9px;border-radius:9px;background:rgba(21,43,52,.34);color:#849eae;font-family:var(--font-telemetry);font-size:8px;line-height:1.5}
     @media(max-width:680px){.rapport-editor-grid{grid-template-columns:1fr}.rapport-toolbar{align-items:stretch}.rapport-spacer{display:none}.rapport-toolbar .setting-control{min-width:0;flex:1}.rapport-control-bar .lore-action{min-height:36px}}
 
+
+    /* Glitch Dragon Chat — Tier F companion presentation state machine. */
+    .top-brand{position:relative}.top-brand-mark,.assistant-head .kompanion-icon,.side-brand .kompanion-icon{will-change:transform,box-shadow,filter;transform-origin:center;transition:box-shadow .24s ease,filter .24s ease,border-color .24s ease}
+    .companion-state-chip{display:inline-flex;align-items:center;min-width:0;padding:3px 6px;border:1px solid rgba(126,214,255,.16);border-radius:7px;background:rgba(5,24,40,.52);color:#a7c4d1;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;transition:border-color .18s ease,color .18s ease,background .18s ease,box-shadow .18s ease}
+    body[data-companion-state="idle"] .companion-state-chip{color:#9eb9c7}
+    body[data-companion-state="listen"] .companion-state-chip{color:#bff8ff;border-color:rgba(56,232,255,.38);background:rgba(8,55,67,.36)}
+    body[data-companion-state="accepted"] .companion-state-chip{color:#bfffe9;border-color:rgba(104,244,207,.34);background:rgba(18,70,62,.34)}
+    body[data-companion-state="thinking"] .companion-state-chip{color:#d5c7ff;border-color:rgba(165,120,255,.36);background:rgba(58,42,94,.32)}
+    body[data-companion-state="acting"] .companion-state-chip{color:#d8f6ff;border-color:rgba(79,140,255,.42);background:rgba(28,50,92,.36)}
+    body[data-companion-state="responding"] .companion-state-chip{color:#c5fbff;border-color:rgba(56,232,255,.44);background:rgba(10,62,76,.34)}
+    body[data-companion-state="approval"] .companion-state-chip{color:#ffe3ab;border-color:rgba(255,201,105,.46);background:rgba(88,59,17,.34);box-shadow:0 0 12px rgba(255,201,105,.08)}
+    body[data-companion-state="error"] .companion-state-chip{color:#ffd2d8;border-color:rgba(255,107,122,.48);background:rgba(93,29,41,.34)}
+    body[data-companion-state="idle"] .top-brand-mark,body[data-companion-state="idle"] .assistant-head .kompanion-icon{animation:dragonIdle 5.6s ease-in-out infinite}
+    body[data-companion-state="listen"] .top-brand-mark,body[data-companion-state="listen"] .assistant-head .kompanion-icon{animation:dragonListen 1.9s ease-in-out infinite;border-color:rgba(56,232,255,.56);box-shadow:0 0 18px rgba(56,232,255,.20)}
+    body[data-companion-state="accepted"] .top-brand-mark,body[data-companion-state="accepted"] .assistant-head .kompanion-icon{animation:dragonAccepted .72s cubic-bezier(.2,.9,.25,1) 1;border-color:rgba(104,244,207,.56);box-shadow:0 0 18px rgba(104,244,207,.20)}
+    body[data-companion-state="thinking"] .top-brand-mark,body[data-companion-state="thinking"] .assistant-head .kompanion-icon{animation:dragonThink 2.25s ease-in-out infinite;border-color:rgba(165,120,255,.52);box-shadow:0 0 20px rgba(165,120,255,.18)}
+    body[data-companion-state="acting"] .top-brand-mark,body[data-companion-state="acting"] .assistant-head .kompanion-icon{animation:dragonAct 1.15s steps(1,end) infinite;border-color:rgba(79,140,255,.58);box-shadow:0 0 20px rgba(79,140,255,.22)}
+    body[data-companion-state="responding"] .top-brand-mark,body[data-companion-state="responding"] .assistant-head .kompanion-icon{animation:dragonRespond 1.65s ease-in-out infinite;border-color:rgba(56,232,255,.58);box-shadow:0 0 20px rgba(56,232,255,.22)}
+    body[data-companion-state="approval"] .top-brand-mark,body[data-companion-state="approval"] .assistant-head .kompanion-icon{animation:dragonApproval 1.55s ease-in-out infinite;border-color:rgba(255,201,105,.62);box-shadow:0 0 22px rgba(255,201,105,.24)}
+    body[data-companion-state="error"] .top-brand-mark,body[data-companion-state="error"] .assistant-head .kompanion-icon{animation:dragonError .44s ease-out 1;border-color:rgba(255,107,122,.70);box-shadow:0 0 20px rgba(255,107,122,.24)}
+    body[data-companion-state="listen"] .ready-dot{background:var(--cyan);box-shadow:0 0 9px rgba(56,232,255,.48)}
+    body[data-companion-state="accepted"] .ready-dot{background:var(--success);box-shadow:0 0 9px rgba(104,244,207,.48)}
+    body[data-companion-state="thinking"] .ready-dot{background:var(--violet);box-shadow:0 0 10px rgba(165,120,255,.52)}
+    body[data-companion-state="acting"] .ready-dot{background:var(--blue);box-shadow:0 0 10px rgba(79,140,255,.52)}
+    body[data-companion-state="responding"] .ready-dot{background:var(--cyan);box-shadow:0 0 10px rgba(56,232,255,.58)}
+    body[data-companion-state="approval"] .ready-dot{background:var(--amber);box-shadow:0 0 10px rgba(255,201,105,.58)}
+    body[data-companion-state="error"] .ready-dot{background:var(--danger);box-shadow:0 0 10px rgba(255,107,122,.58)}
+    @keyframes dragonIdle{0%,100%{transform:translateY(0) scale(1);box-shadow:0 0 12px rgba(56,232,255,.06)}50%{transform:translateY(-1px) scale(1.018);box-shadow:0 0 17px rgba(56,232,255,.12)}}
+    @keyframes dragonListen{0%,100%{transform:rotate(0deg) scale(1)}50%{transform:rotate(-1.2deg) scale(1.025)}}
+    @keyframes dragonAccepted{0%{transform:scale(.96)}42%{transform:scale(1.08)}100%{transform:scale(1)}}
+    @keyframes dragonThink{0%,100%{transform:translateY(0) scale(1);filter:saturate(1)}50%{transform:translateY(-1px) scale(1.035);filter:saturate(1.16)}}
+    @keyframes dragonAct{0%,100%{transform:translate(0,0)}24%{transform:translate(1px,0)}26%{transform:translate(-1px,1px)}28%{transform:translate(0,0)}72%{transform:translate(0,0)}74%{transform:translate(1px,-1px)}76%{transform:translate(0,0)}}
+    @keyframes dragonRespond{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.025);filter:brightness(1.09)}}
+    @keyframes dragonApproval{0%,100%{transform:scale(1);box-shadow:0 0 14px rgba(255,201,105,.16)}50%{transform:scale(1.04);box-shadow:0 0 24px rgba(255,201,105,.30)}}
+    @keyframes dragonError{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.5px)}55%{transform:translateX(1.5px)}78%{transform:translateX(-.7px)}}
+    body.motion-reduced .top-brand-mark,body.motion-reduced .assistant-head .kompanion-icon,body.motion-reduced .side-brand .kompanion-icon,
+    body.motion-off .top-brand-mark,body.motion-off .assistant-head .kompanion-icon,body.motion-off .side-brand .kompanion-icon{animation:none!important;transform:none!important;filter:none!important}
+    @media(prefers-reduced-motion:reduce){body:not(.motion-full) .top-brand-mark,body:not(.motion-full) .assistant-head .kompanion-icon,body:not(.motion-full) .side-brand .kompanion-icon{animation:none!important;transform:none!important;filter:none!important}}
+    @media(max-width:680px){.top-status{gap:4px}.companion-state-chip{padding:3px 5px;max-width:72px;overflow:hidden;text-overflow:ellipsis}.top-ready-label{display:none}}
+
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -175,6 +215,7 @@
     <div class="top-thread" id="topThreadTitle" title="New conversation">New conversation</div>
     <div class="top-status">
       <span class="top-model">LALM</span>
+      <span class="companion-state-chip" id="companionStateLabel" role="status" aria-live="polite">idle</span>
       <span class="ready-dot" aria-hidden="true"></span>
       <span class="top-ready-label" id="topReadyLabel">ready</span>
     </div>
@@ -382,7 +423,7 @@
     <div class="version-box collapsed" id="versionBox">
       <button class="version-head" id="versionToggle" type="button" aria-expanded="false"><span class="version-title">Versions</span><span class="version-chevron">⌄</span></button>
       <div class="version-list">
-        <div class="version-row"><span>Repository Work</span><span>1.0.27</span></div>
+        <div class="version-row"><span>Repository Work</span><span>1.0.28</span></div>
         <div class="version-row"><span>Server Runtime</span><span>2.3.307</span></div>
         <div class="version-row"><span>Server UI</span><span>1.0.0</span></div>
         <div class="version-row"><span>Web Frontend</span><span>1.0.5</span></div>
@@ -436,15 +477,20 @@
       const topEdge = document.getElementById("topEdge");
       const topThreadTitle = document.getElementById("topThreadTitle");
       const topReadyLabel = document.getElementById("topReadyLabel");
-      const SWRLZ_CHAT_VERSION = "1.0.53";
+      const companionStateLabel = document.getElementById("companionStateLabel");
+      const SWRLZ_CHAT_VERSION = "1.0.54";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
+      let companionState="idle";
+      let companionStateSource="boot";
       const uiCamera = (event,data={}) => {
         try{
           fetch("/api/chat?__swrlz_client_debug=1",{method:"POST",credentials:"same-origin",cache:"no-store",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"glitch-dragon-tier-a-v1",url:location.pathname,event:{at:new Date().toISOString(),type:"clean-room-ui-camera",message:event,data:{chatVersion:SWRLZ_CHAT_VERSION,navTraceId,...data}}})}).catch(()=>{});
         }catch(_){}
       };
       document.body.dataset.chatVersion=SWRLZ_CHAT_VERSION;
+      document.body.dataset.companionState="idle";
+      topEdge.dataset.companionState="idle";
       const CHAT_STATE_CONTRACT = "swrlz-chat-account-mutation-v1";
       let chatRevision = 0;
       let chatThreads = [];
@@ -485,6 +531,43 @@
         const title=thread?.title || "New conversation";
         if(topThreadTitle.textContent!==title) topThreadTitle.textContent=title;
         topThreadTitle.title=title;
+      };
+      const companionStates=new Set(["idle","listen","accepted","thinking","acting","responding","approval","error"]);
+      const setCompanionState=(next,source="ui")=>{
+        const state=companionStates.has(next)?next:"idle";
+        if(state===companionState&&source===companionStateSource)return;
+        const changed=state!==companionState;
+        companionState=state;companionStateSource=source;
+        document.body.dataset.companionState=state;
+        topEdge.dataset.companionState=state;
+        companionStateLabel.textContent=state;
+        companionStateLabel.setAttribute("aria-label","§wyrlz state: "+state);
+        if(changed)uiCamera("companion-state",{state,source});
+      };
+      const phaseToCompanionState=(last,g)=>{
+        const phase=String(last?.phase||g?.phase||last?.type||"").toUpperCase();
+        const terminal=String(g?.terminalType||"").toUpperCase();
+        if(g?.terminal){
+          if(terminal==="FAILED"||phase.includes("FAILED")||phase.includes("ERROR"))return "error";
+          return "idle";
+        }
+        if(phase.includes("APPROVAL")||phase==="PROPOSAL_QUEUED")return "approval";
+        if(phase.includes("ERROR")||phase.includes("FAILED"))return "error";
+        if(phase.includes("ACTION")||phase.includes("TOOL")||phase.includes("ACTING")||phase.includes("EXECUT")||phase.includes("SEARCH")||phase.includes("FETCH")||phase.includes("PROPOSAL_AUTO_APPLIED"))return "acting";
+        if(String(g?.text||"").length>0)return "responding";
+        if(phase==="CONNECTING"||phase==="QUEUED"||phase.includes("ACCEPT"))return "accepted";
+        return "thinking";
+      };
+      const hasActiveGeneration=()=>{
+        const g=stationGeneration;
+        if(!g||g.terminal)return false;
+        const thread=currentThread();
+        return !((thread?.messages||[]).some(m=>m.role==="assistant"&&m.meta?.requestId===g.requestId));
+      };
+      const syncComposerCompanionState=(source="composer")=>{
+        if(hasActiveGeneration())return;
+        if(document.activeElement===prompt||prompt.value.trim())setCompanionState("listen",source);
+        else setCompanionState("idle",source);
       };
       const setTopStatus = (label,state="ready") => {
         topReadyLabel.textContent=label;
@@ -606,6 +689,7 @@
         if(!g||g.threadId!==activeThreadId||committed){
           if(existing)existing.remove();
           setTopStatus("ready","ready");
+          syncComposerCompanionState("station-idle");
           return;
         }
         // Status comes from the acknowledged send or actual Station snapshot, never a fabricated percentage.
@@ -622,6 +706,8 @@
         const phase=String(last.phase||g.phase||last.type||"QUEUED").replace(/_/g," ");
         const label=g.terminal?(g.terminalType||phase):phase;
         const terminalKind=String(g.terminalType||label||"").toUpperCase();
+        const visualState=phaseToCompanionState(last,g);
+        setCompanionState(visualState,"station:"+String(last.phase||g.phase||last.type||"unknown").toLowerCase());
         if(g.terminal) setTopStatus(terminalKind==="FAILED"?"attention":"ready",terminalKind==="FAILED"?"error":"ready");
         else setTopStatus("generating","busy");
         let node=existing;
@@ -732,6 +818,7 @@
           }
           const requestId=uid("web"), userMessageId=uid("message"), assistantMessageId=uid("assistant");
           stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING"}],terminal:false,lastSeq:0};
+          setCompanionState("accepted","send-start");
           stationAwaitingCommit=requestId;
           // Render the submitted user turn immediately; Station remains the durable authority.
           let localThread=currentThread();
@@ -762,10 +849,12 @@
           const accepted=await response.json();
           if(accepted.requestId!==requestId)throw new Error("SEND_ACK_REQUEST_MISMATCH");
           stationGeneration.status=[{type:"QUEUED",phase:"QUEUED"}];
+          setCompanionState("accepted","send-ack");
           renderStationGeneration();
           await syncStation();
           return true;
         }catch(err){
+          setCompanionState("error","client-transport");
           if(stationGeneration){stationGeneration.status=[...(stationGeneration.status||[]),{type:"FAILED",phase:"CLIENT_TRANSPORT",reason:String(err)}];stationGeneration.terminal=true;renderStationGeneration();}
           return false;
         }finally{sending=false;sendButton.disabled=false;scheduleStationSync()}
@@ -1492,11 +1581,14 @@
         prompt.style.height = nextHeight + "px";
         prompt.style.overflowY = prompt.scrollHeight > maxHeight ? "auto" : "hidden";
       };
-      prompt.addEventListener("input", resizeComposer, {passive:true});
+      prompt.addEventListener("input",()=>{resizeComposer();syncComposerCompanionState("prompt-input");},{passive:true});
+      prompt.addEventListener("focus",()=>syncComposerCompanionState("prompt-focus"));
+      prompt.addEventListener("blur",()=>syncComposerCompanionState("prompt-blur"));
       window.addEventListener("resize", resizeComposer, {passive:true});
       populateSettingsControls();
       refreshSettingsDurability();
       resizeComposer();
+      syncComposerCompanionState("boot");
       requestAnimationFrame(()=>{
         const topRect=topEdge.getBoundingClientRect();
         const composerRect=composerShell.getBoundingClientRect();
