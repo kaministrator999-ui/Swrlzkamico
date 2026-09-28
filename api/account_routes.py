@@ -480,6 +480,10 @@ def install(server) -> None:
             if not isinstance(body, dict):
                 raise RapportValidationError("rapport payload must be an object")
             fields = validate_rapport_fields(body)
+            if fields["scope"] == "PROJECT":
+                raise RapportValidationError("project-scoped rapport creation requires an attached project authority")
+            if fields["scope"] == "THREAD" and store.get_thread(user_id=user_id, thread_id=str(fields["scope_id"])) is None:
+                raise RapportValidationError("thread-scoped rapport requires a thread owned by this account")
             control = store.get_rapport_control(user_id=user_id)
             now = time.time()
             provenance = {
@@ -542,6 +546,10 @@ def install(server) -> None:
             if not isinstance(body, dict):
                 raise RapportValidationError("rapport payload must be an object")
             fields = validate_rapport_fields(body, current=current)
+            if fields["scope"] == "PROJECT" and current.scope != "PROJECT":
+                raise RapportValidationError("moving rapport into project scope requires an attached project authority")
+            if fields["scope"] == "THREAD" and store.get_thread(user_id=user_id, thread_id=str(fields["scope_id"])) is None:
+                raise RapportValidationError("thread-scoped rapport requires a thread owned by this account")
             expected = int(body.get("version", current.version))
             saved = store.put_rapport(
                 replace(
