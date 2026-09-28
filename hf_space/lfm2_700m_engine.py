@@ -89,7 +89,7 @@ def generate_events(payload):
             "conversations unless the supplied history actually supports it. Treat only the supplied history as chat-history "
             "evidence; profile information describes identities/preferences, not events that happened in this thread. "
             "Preserve truthful uncertainty and disclose consequential actions. Do not claim to be human or to possess "
-            "subjective experience.\n"+_role_frame(user_profile))
+            "subjective experience. Format the final answer for readability: use short paragraphs, real line breaks, and Markdown headings or lists only when they improve structure. For creative writing such as songs, poems, dialogue, lyrics, or scripts, preserve intentional line breaks and separate sections instead of compressing the work into one paragraph. Avoid unnecessary preambles before the requested content.\n"+_role_frame(user_profile))
     system+="\nBUILT-IN §WYRLZ PROFILE (default assistant identity/behavior):\n"+BUILTIN_ASSISTANT_PROFILE
     if custom_assistant_profile:
         system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
