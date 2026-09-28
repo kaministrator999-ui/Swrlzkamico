@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.51  
+**Version:** 1.0.52  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -85,3 +85,6 @@ Tier C requires a later explicitly approved stable-server deployment before its 
 
 
 - **1.0.51 — Tier D approval protocol:** account-owned AI proposal records + append-only audit history, bounded profile/companion/lore operations, user Edit/Approve/Decline/Revert, per-category ASK/AUTO_LOW_RISK/SESSION_ONLY/NEVER policy, Redis compare-and-set proposal claims, reversible before/after snapshots, and payload-redacted diagnostics. Browser clients cannot forge assistant-authored proposals. A trusted server submission helper exists, but the current R39 stream does not yet emit a structured proposal event; natural-language output is not scraped into durable proposals.
+
+
+- **1.0.52 — Tier D.1 structured proposal bridge:** the durable Workstation subscriber now consumes only exact trusted `ACCOUNT_PROPOSAL` events using `swrlz-account-proposal-signal-v1`. Signals require bounded `signalId`, category/target/operation/payload/rationale fields, and receive authoritative thread/request identity from the Workstation job. A stable proposal ID derived from `requestId + signalId` suppresses at-least-once duplicates before target lookup. Proposal payload/rationale never enter the ordinary chat stream; only sanitized decision/id/state/category/operation/risk/version receipts may flow as STATUS metadata. Chat invalidates/refetches Proposal Inbox state from those receipts. Browser clients still cannot create assistant-authored proposals, natural-language output is never scraped, and the current R39 generator does not autonomously decide when to emit the structured signal.
