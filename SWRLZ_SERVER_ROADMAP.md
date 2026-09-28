@@ -1,3 +1,17 @@
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier F companion animation state machine
+
+- **Requested outcome:** implement approved Tier F from the Glitch Dragon Chat research authority: companion presentation states idle, listen, accepted, thinking, acting, responding, approval, error, with reduced-motion equivalents.
+- **Authority boundary:** Tier F is presentation-state only. It derives visual state from existing prompt focus/input, send acknowledgement, Station generation/status/text, proposal receipts, terminal failure, and settings motion preference. It does not create a new runtime state authority.
+- **State plan:** `idle` when no active interaction; `listen` while the user is actively composing/focusing the prompt; `accepted` after send acknowledgement/queue acceptance; `thinking` for active generation before visible response text; `acting` for explicit action/tool/work phases; `responding` once response text is arriving; `approval` for proposal/approval phases; `error` for terminal/client/runtime failures.
+- **Visual plan:** top-edge dragon mark, assistant avatar, state chip/label, and restrained edge/aura effects will share one `data-companion-state` authority. Motion communicates state but does not obscure text or move layout.
+- **Reduced-motion plan:** system reduced-motion, explicit Reduced, and Off suppress looping transforms/glitches and retain static color/border/icon state. No state information may depend on animation alone.
+- **Performance plan:** CSS-only transforms/opacity/filter where practical; no canvas/WebGL/particle engine, timers, animation-frame loops, image decoding loop, or network request is added for decoration.
+- **Truth boundary:** generic runtime phase names are mapped conservatively; unknown active phases resolve to thinking/responding based on whether output text exists. No fabricated tool/action state is inferred from prose.
+- **Baseline:** Clean-room Chat `1.0.53`; Server Runtime `2.3.307`; Repository Work `1.0.27`.
+- **Version plan:** Clean-room Chat **1.0.54**; Repository Work **1.0.28** after concurrency re-read. Server Runtime remains **2.3.307** because Tier F is client presentation only; Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged.
+- **Deployment expectation:** NONE. Approval authorizes Tier F Chat source/UI/version/roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, server behavior changes, inference changes, or Tier G.
+- **Status:** IN PROGRESS.
+
 ### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier E rapport
 
 - **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier E introduces a separate account-owned Rapport authority for shared vocabulary, callbacks, and interaction conventions without collapsing that state into Profile or Lore.
