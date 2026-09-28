@@ -1,3 +1,17 @@
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier E rapport
+
+- **Requested outcome:** implement approved Tier E from the Glitch Dragon Chat research authority: shared vocabulary/callback management, approved rapport state, project/thread scope, reset/pause.
+- **Concept boundary:** rapport is a separate account-owned continuity domain. Profile remains user/companion preferences; Lore remains facts/story continuity; Rapport represents shared interaction conventions/callbacks/vocabulary; Proposals remain the approval gate.
+- **Durable model plan:** add typed `RapportRecord` with kind (`VOCABULARY`, `CALLBACK`, `CONVENTION`), label/cue/meaning/preferredResponse, source/provenance, scope + scopeId, authoredBy, active state, generation, optimistic version, timestamps.
+- **Pause/reset plan:** add versioned `RapportControlRecord` with `paused` and `current_generation`. Reset is lineage-preserving: increment the generation instead of destructively deleting historical records. Old generations remain inspectable; only the current generation is active rapport state.
+- **Proposal integration plan:** extend Tier D with category `SHARED_RAPPORT`, target `RAPPORT`, and bounded create/update/delete operations. AI-originated rapport changes continue through ASK/AUTO_LOW_RISK/SESSION_ONLY/NEVER; direct AI writes remain forbidden.
+- **Scope plan:** GLOBAL is always available; THREAD requires a saved active thread; PROJECT remains inspectable/preservable when present but manual creation stays unavailable on this Chat surface until a project authority is attached.
+- **Inference truth boundary:** Tier E persists/manages rapport only. It will not claim the current R39 prompt consumes rapport until a separate bounded context-injection checkpoint is explicitly approved and verified.
+- **Baseline:** Clean-room Chat `1.0.52`; Server Runtime `2.3.306`; Repository Work `1.0.26`.
+- **Version plan:** Clean-room Chat **1.0.53**; Server Runtime **2.3.307**; Repository Work **1.0.27** after concurrency re-read. Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged unless evidence requires otherwise.
+- **Deployment expectation:** NONE. Approval authorizes Tier E source/schema/UI/version/roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, live account/Redis mutation, or rapport injection into inference.
+- **Status:** IN PROGRESS.
+
 ### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier D.1 structured proposal bridge
 
 - **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier D.1 now connects one exact trusted structured proposal event contract at the Workstation subscriber boundary to the existing Tier D account proposal authority. Assistant prose remains incapable of creating durable proposal state.
