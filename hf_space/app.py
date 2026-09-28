@@ -68,10 +68,10 @@ def respond(message,history,model_id,profile,user_profile):
     started=time.perf_counter()
     request_id=str(uuid.uuid4())
     history_items=[{"role":item.get("role"),"text":item.get("content")} for item in (history or []) if isinstance(item,dict) and item.get("role") in ("user","assistant") and isinstance(item.get("content"),str)]
-    payload={"requestId":request_id,"prompt":message,"history":history_items,"profileId":"LALM","profile":str(profile or "")[:6000],"userProfile":str(user_profile or "")[:6000]}
+    payload={"requestId":request_id,"prompt":message,"history":history_items,"profileId":"LALM","profile":str(profile or "")[:2000],"userProfile":str(user_profile or "")[:2000]}
     events=queue.Queue()
     report={"format":"swrlz-hf-probe-export-v2","modelId":model_id,"requestId":request_id,
-            "prompt":message,"history":history_items,"profile":str(profile or "")[:6000],"userProfile":str(user_profile or "")[:6000],"response":"","phase":"STARTING",
+            "prompt":message,"history":history_items,"profile":str(profile or "")[:2000],"userProfile":str(user_profile or "")[:2000],"response":"","phase":"STARTING",
             "timeToFirstDeltaSeconds":None,"elapsedSeconds":0.0,"deltaCount":0,
             "events":[],"diagnosticTrace":None,"memoryCandidates":[],"note":"Live probe timeline with structured observable diagnostics; no private chain-of-thought is stored. Download again for the latest snapshot."}
     with tempfile.NamedTemporaryFile(mode="w",encoding="utf-8",suffix=".json",prefix="swrlz-probe-",delete=False) as f:
@@ -189,8 +189,8 @@ with gr.Blocks(title="§wyrlz Inference Laboratory") as demo:
         additional_outputs=[gr.File(label="Download LIVE probe JSON (available during generation)",interactive=False),gr.JSON(label="Live inference status")],
         additional_inputs=[
             gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39"),("LFM2-700M Q4_K_M","700m")],value="700m",label="Inference model"),
-            gr.Textbox(label="Optional §wyrlz customization · layered over built-in Mirror Muse core",lines=9,max_lines=18,value="",info="Optional user-authored assistant customization. The built-in §wyrlzara Mirror Muse + Phoenix Armor/Core/Project/Creative profile is always active and is not replaced by this field."),
-            gr.Textbox(label="Test user profile · editable",lines=5,max_lines=12,value=(
+            gr.Textbox(label="Optional §wyrlz customization · layered over built-in Mirror Muse core",lines=9,max_lines=18,max_length=2000,value="",info="Optional user-authored assistant customization. The built-in §wyrlzara Mirror Muse + Phoenix Armor/Core/Project/Creative profile is always active and is not replaced by this field."),
+            gr.Textbox(label="Test user profile · editable",lines=5,max_lines=12,max_length=2000,value=(
                 "Name: Kami. Collaborative technical/creative partner testing §wyrlz. "
                 "Uses casual humor, callbacks, analogies and direct corrections. Prefers simple correct answers before "
                 "needless abstraction, evidence over assumptions, and precise iterative debugging."
