@@ -14,6 +14,7 @@ from api.durable_chat_contract import (
     GenerationCreateResult,
     GenerationEventRecord,
     GenerationJobRecord,
+    LoreRecord,
     MessageRecord,
     ThreadRecord,
     UserIdentityRecord,
@@ -92,11 +93,17 @@ class RedisRestChatStore(DurableChatStore):
     def _key(self, *parts: str) -> str:
         return ":".join([self.prefix, *[str(p).replace(":", "_") for p in parts]])
 
-    def _command(self, *command: Any) -> Any:
+    def _command(self, *command: Any, sensitive: bool = False) -> Any:
         started_ns=time.perf_counter_ns()
         op=str(command[0] if command else "")[:64].upper()
         safe_command=[str(value)[:16000] for value in command]
-        _chat_lockdown("redis-command-enter", operation=op, argumentCount=len(command), command=safe_command)
+        if sensitive:
+            safe_command=[
+                str(command[0])[:64] if command else "",
+                str(command[1])[:512] if len(command) > 1 else "",
+                *([f"[redacted:{len(str(value))} chars]" for value in command[2:]] if len(command) > 2 else []),
+            ]
+        _chat_lockdown("redis-command-enter", operation=op, argumentCount=len(command), command=safe_command, sensitive=sensitive)
         try:
             response=requests.post(
                 self.url,
@@ -118,14 +125,23 @@ class RedisRestChatStore(DurableChatStore):
             _chat_lockdown("redis-command-rejected", operation=op, durationNs=time.perf_counter_ns()-started_ns, error=str(payload.get("error") if isinstance(payload,dict) else "invalid response")[:2000])
             raise DurableStoreUnavailable(str(payload.get("error") if isinstance(payload, dict) else "invalid Redis REST response"))
         result=payload.get("result")
-        _chat_lockdown("redis-command-exit", operation=op, durationNs=time.perf_counter_ns()-started_ns, result=str(result)[:16000])
+        if sensitive:
+            if result is None:
+                result_log = None
+            elif isinstance(result, (list, tuple)):
+                result_log = {"redacted": True, "kind": "list", "items": len(result)}
+            else:
+                result_log = {"redacted": True, "kind": type(result).__name__, "chars": len(str(result))}
+        else:
+            result_log = str(result)[:16000]
+        _chat_lockdown("redis-command-exit", operation=op, durationNs=time.perf_counter_ns()-started_ns, result=result_log, sensitive=sensitive)
         return result
 
-    def _set_json(self, key: str, value: Any) -> None:
-        self._command("SET", key, json.dumps(asdict(value), ensure_ascii=False, separators=(",", ":")))
+    def _set_json(self, key: str, value: Any, *, sensitive: bool = False) -> None:
+        self._command("SET", key, json.dumps(asdict(value), ensure_ascii=False, separators=(",", ":")), sensitive=sensitive)
 
-    def _get_json(self, key: str, cls):
-        return _loads_record(cls, self._command("GET", key))
+    def _get_json(self, key: str, cls, *, sensitive: bool = False):
+        return _loads_record(cls, self._command("GET", key, sensitive=sensitive))
 
     def resolve_identity(self, *, provider: str, provider_subject: str, email: str | None, email_verified: bool) -> tuple[UserRecord, UserIdentityRecord]:
         provider = provider.lower().strip()
@@ -183,6 +199,59 @@ class RedisRestChatStore(DurableChatStore):
         saved = replace(profile, version=current.version + 1, updated_at=time.time())
         self._set_json(self._key("profile", profile.user_id), saved)
         return saved
+
+    def get_lore(self, *, user_id: str, lore_id: str) -> LoreRecord | None:
+        lore = self._get_json(self._key("lore", user_id, lore_id), LoreRecord, sensitive=True)
+        if lore is not None:
+            assert_owned(user_id, lore.user_id)
+        return lore
+
+    def list_lore(self, *, user_id: str, limit: int = 300) -> list[LoreRecord]:
+        bounded=max(1,min(int(limit or 300),500))
+        ids=self._command("ZREVRANGE", self._key("lore_index", user_id), 0, bounded - 1, sensitive=True) or []
+        out: list[LoreRecord] = []
+        for lore_id in ids:
+            lore=self.get_lore(user_id=user_id, lore_id=str(lore_id))
+            if lore is not None:
+                out.append(lore)
+        return out
+
+    def put_lore(self, lore: LoreRecord, *, expected_version: int | None = None) -> LoreRecord:
+        assert_owned(lore.user_id, lore.user_id)
+        key=self._key("lore", lore.user_id, lore.lore_id)
+        current=self.get_lore(user_id=lore.user_id, lore_id=lore.lore_id)
+        now=time.time()
+        if current is None:
+            if expected_version not in (None, 0):
+                raise ConflictError("lore version conflict")
+            saved=replace(lore, version=1, created_at=now, updated_at=now)
+            claimed=self._command(
+                "SET",
+                key,
+                json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
+                "NX",
+                sensitive=True,
+            )
+            if claimed is None:
+                raise ConflictError("lore create conflict")
+        else:
+            assert_owned(lore.user_id, current.user_id)
+            if expected_version is not None and current.version != expected_version:
+                raise ConflictError("lore version conflict")
+            saved=replace(lore, version=current.version + 1, created_at=current.created_at, updated_at=now)
+            self._set_json(key, saved, sensitive=True)
+        self._command("ZADD", self._key("lore_index", lore.user_id), saved.updated_at, saved.lore_id, sensitive=True)
+        return saved
+
+    def delete_lore(self, *, user_id: str, lore_id: str, expected_version: int | None = None) -> bool:
+        current=self.get_lore(user_id=user_id, lore_id=lore_id)
+        if current is None:
+            return False
+        if expected_version is not None and current.version != expected_version:
+            raise ConflictError("lore version conflict")
+        self._command("DEL", self._key("lore", user_id, lore_id), sensitive=True)
+        self._command("ZREM", self._key("lore_index", user_id), lore_id, sensitive=True)
+        return True
 
     def create_thread(self, thread: ThreadRecord) -> ThreadRecord:
         assert_owned(thread.user_id, thread.user_id)
