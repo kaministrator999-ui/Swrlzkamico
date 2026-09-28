@@ -1,3 +1,19 @@
+### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier A visual foundation
+
+- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier A from the Glitch Dragon Chat research blueprint is implemented in the canonical clean-room owner `main:chat/§wyrlz/index.html`.
+- **Visual foundation added:** expanded theme tokens (ice/cyan primary, violet secondary, bounded semantic status colors); restrained spectral background linework; compact glass top edge with kompanion mark, active thread title, LALM badge, and ready/generating/attention signal; refined drawer surfaces/thread selection; improved message hierarchy/action treatment; refined compact composer; mobile-specific tightening; OS `prefers-reduced-motion` baseline.
+- **State integration:** the top-edge thread label follows the already-owned active/draft thread projection. Generation status follows the existing Station generation state and never creates a second inference/status authority.
+- **Camera contract:** added page-owned `glitch-dragon-tier-a-v1` client camera events for bounded top-status transitions and one settled geometry sample (viewport/top-edge/composer + reduced-motion state). Events reuse the existing sanitized client-debug ingestion boundary; no prompt/message/account content is included.
+- **Architecture preserved:** no new loader, stylesheet file, store, transport, auth, inference path, runtime manifest mapping, or legacy `/chat` mutation. `/chat/§wyrlz` remains served by the deployed-main bundle through the existing `api/live_source_guard.py` special-case.
+- **Lineage repair-forward:** page metadata was already at `1.0.47` while `chat/§wyrlz/VERSION.txt` had remained at `1.0.42`. The stale authority was not rewritten historically; the completed Tier A state advances both the page declaration and clean-room version authority to **1.0.48**.
+- **Repository Work:** advanced **1.0.21 → 1.0.22** on canonical `runtime:versions/repository-work.txt` after a concurrency re-read.
+- **Intentionally unchanged:** legacy Web Chat **1.5.86**; Runtime Manifest **152**; Server Runtime **2.3.287**; Stream Contract; account/auth; LALM; deployment control.
+- **Source receipts:** Tier A implementation commit `bdba8a6a43e3eef57b828b8df1ce7942c224e02d`; clean-room version commit `34dc7752856c4ed98d855dd5764b6fe3a560ba8b`; Repository Work commit `a01c66435595e2f3d0cd3651c8ce1fdc01df1515`.
+- **Static verification:** updated source blob `28feeffa006b5f00dfb02e10c7e1c7e4c64f6127`; page meta `1.0.48`; inline JavaScript syntax compile PASS; CSS brace balance 0; duplicate DOM IDs NONE; required top-edge/Tier-A/reduced-motion/UI-camera markers present exactly as expected.
+- **Behavioral invariance check:** counts for `/api/lalm_station/send`, `/api/lalm_station/sync`, `/api/chat_state`, and all four existing `/api/account/*` routes are identical before/after the visual tier.
+- **Runtime/live acceptance:** NOT PERFORMED. No Server deployment, GitHub workflow dispatch, Vercel action, release request, or runtime activation was authorized or triggered in this tier.
+- **Next scoped tier from the research blueprint:** Tier B — settings shell (General, AI/Model, Conversation, Companion, You, Lore & Memory, Privacy & Data, Appearance, Motion, Accessibility, Advanced), reusing existing profile/account authorities rather than creating competing stores.
+
 ### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier A visual foundation
 
 - **Requested outcome:** continue the approved Glitch Dragon Chat UI research into the first bounded implementation tier for the canonical clean-room `/chat/§wyrlz` product surface.
