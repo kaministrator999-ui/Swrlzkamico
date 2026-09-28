@@ -768,7 +768,7 @@
         chatAccountUser = accountUser;
         accountProfile=profile&&typeof profile==="object"?profile:null;
         accountProfileDurable=!!accountUser&&!!durable&&Number(accountProfile?.version||0)>0;
-        if(accountProfile)populateSettingsControls();
+        populateSettingsControls();
         refreshSettingsDurability();
         if(!draftThread)renderConversation(currentThread());
         accountName.textContent = user?.displayName || user?.email || "Google Account";
