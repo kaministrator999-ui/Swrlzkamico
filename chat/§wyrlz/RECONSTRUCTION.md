@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.52  
+**Version:** 1.0.53  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -88,3 +88,6 @@ Tier C requires a later explicitly approved stable-server deployment before its 
 
 
 - **1.0.52 — Tier D.1 structured proposal bridge:** the durable Workstation subscriber now consumes only exact trusted `ACCOUNT_PROPOSAL` events using `swrlz-account-proposal-signal-v1`. Signals require bounded `signalId`, category/target/operation/payload/rationale fields, and receive authoritative thread/request identity from the Workstation job. A stable proposal ID derived from `requestId + signalId` suppresses at-least-once duplicates before target lookup. Proposal payload/rationale never enter the ordinary chat stream; only sanitized decision/id/state/category/operation/risk/version receipts may flow as STATUS metadata. Chat invalidates/refetches Proposal Inbox state from those receipts. Browser clients still cannot create assistant-authored proposals, natural-language output is never scraped, and the current R39 generator does not autonomously decide when to emit the structured signal.
+
+
+- **1.0.53 — Tier E shared rapport:** introduces a separate account-owned Rapport domain for shared vocabulary, callbacks, and interaction conventions. Rapport records carry kind, cue, meaning, optional preferred response, source/provenance, GLOBAL/THREAD/PROJECT scope, active state, generation, optimistic version, and authorship. A versioned RapportControl owns pause state and lineage-preserving reset generations: reset advances the current generation instead of deleting history. Current Chat can inspect reset history, edit only the active generation, pause/resume, and reset. THREAD scope is ownership-validated; new PROJECT scope is blocked until a project authority exists. AI-originated rapport changes use the existing Tier D proposal gate under SHARED_RAPPORT with bounded RAPPORT_CREATE/UPDATE/DELETE operations; auto-low-risk is suppressed while rapport is paused. Tier E does not inject rapport into R39 inference.
