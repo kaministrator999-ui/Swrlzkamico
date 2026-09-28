@@ -52,6 +52,56 @@ redis.call('ZADD', KEYS[2], ARGV[3], ARGV[4])
 return 1
 """
 
+_CAS_VERSIONED_JSON_LUA = r"""
+local raw = redis.call('GET', KEYS[1])
+if not raw then
+  return -1
+end
+local current = cjson.decode(raw)
+if tonumber(current.version or 0) ~= tonumber(ARGV[1]) then
+  return 0
+end
+redis.call('SET', KEYS[1], ARGV[2])
+return 1
+"""
+
+_CREATE_INDEXED_JSON_LUA = r"""
+if redis.call('EXISTS', KEYS[1]) == 1 then
+  return 0
+end
+redis.call('SET', KEYS[1], ARGV[1])
+redis.call('ZADD', KEYS[2], ARGV[2], ARGV[3])
+return 1
+"""
+
+_CAS_INDEXED_JSON_LUA = r"""
+local raw = redis.call('GET', KEYS[1])
+if not raw then
+  return -1
+end
+local current = cjson.decode(raw)
+if tonumber(current.version or 0) ~= tonumber(ARGV[1]) then
+  return 0
+end
+redis.call('SET', KEYS[1], ARGV[2])
+redis.call('ZADD', KEYS[2], ARGV[3], ARGV[4])
+return 1
+"""
+
+_DELETE_INDEXED_JSON_LUA = r"""
+local raw = redis.call('GET', KEYS[1])
+if not raw then
+  return -1
+end
+local current = cjson.decode(raw)
+if tonumber(current.version or 0) ~= tonumber(ARGV[1]) then
+  return 0
+end
+redis.call('DEL', KEYS[1])
+redis.call('ZREM', KEYS[2], ARGV[2])
+return 1
+"""
+
 
 class DurableStoreUnavailable(RuntimeError):
     pass
@@ -293,10 +343,21 @@ class RedisRestChatStore(DurableChatStore):
 
     def put_rapport_control(self, control: RapportControlRecord, *, expected_version: int | None = None) -> RapportControlRecord:
         current=self.get_rapport_control(user_id=control.user_id)
-        if expected_version is not None and current.version != expected_version:
+        expected=current.version if expected_version is None else int(expected_version)
+        if current.version != expected:
             raise ConflictError("rapport control version conflict")
         saved=replace(control, version=current.version + 1, updated_at=time.time())
-        self._set_json(self._key("rapport_control", control.user_id), saved, sensitive=True)
+        updated=int(self._command(
+            "EVAL",
+            _CAS_VERSIONED_JSON_LUA,
+            1,
+            self._key("rapport_control", control.user_id),
+            str(expected),
+            json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
+            sensitive=True,
+        ) or 0)
+        if updated != 1:
+            raise ConflictError("rapport control version conflict")
         return saved
 
     def get_rapport(self, *, user_id: str, rapport_id: str) -> RapportRecord | None:
@@ -321,38 +382,69 @@ class RedisRestChatStore(DurableChatStore):
     def put_rapport(self, rapport: RapportRecord, *, expected_version: int | None = None) -> RapportRecord:
         assert_owned(rapport.user_id, rapport.user_id)
         key=self._key("rapport", rapport.user_id, rapport.rapport_id)
+        index_key=self._key("rapport_index", rapport.user_id)
         current=self.get_rapport(user_id=rapport.user_id, rapport_id=rapport.rapport_id)
         now=time.time()
         if current is None:
             if expected_version not in (None, 0):
                 raise ConflictError("rapport version conflict")
             saved=replace(rapport, version=1, created_at=now, updated_at=now)
-            claimed=self._command(
-                "SET",
+            claimed=int(self._command(
+                "EVAL",
+                _CREATE_INDEXED_JSON_LUA,
+                2,
                 key,
+                index_key,
                 json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
-                "NX",
+                str(saved.updated_at),
+                saved.rapport_id,
                 sensitive=True,
-            )
-            if claimed is None:
+            ) or 0)
+            if claimed != 1:
                 raise ConflictError("rapport create conflict")
-        else:
-            assert_owned(rapport.user_id, current.user_id)
-            if expected_version is not None and current.version != expected_version:
-                raise ConflictError("rapport version conflict")
-            saved=replace(rapport, version=current.version + 1, created_at=current.created_at, updated_at=now)
-            self._set_json(key, saved, sensitive=True)
-        self._command("ZADD", self._key("rapport_index", rapport.user_id), saved.updated_at, saved.rapport_id, sensitive=True)
+            return saved
+        assert_owned(rapport.user_id, current.user_id)
+        expected=current.version if expected_version is None else int(expected_version)
+        if current.version != expected:
+            raise ConflictError("rapport version conflict")
+        saved=replace(rapport, version=current.version + 1, created_at=current.created_at, updated_at=now)
+        updated=int(self._command(
+            "EVAL",
+            _CAS_INDEXED_JSON_LUA,
+            2,
+            key,
+            index_key,
+            str(expected),
+            json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
+            str(saved.updated_at),
+            saved.rapport_id,
+            sensitive=True,
+        ) or 0)
+        if updated != 1:
+            raise ConflictError("rapport version conflict")
         return saved
 
     def delete_rapport(self, *, user_id: str, rapport_id: str, expected_version: int | None = None) -> bool:
         current=self.get_rapport(user_id=user_id, rapport_id=rapport_id)
         if current is None:
             return False
-        if expected_version is not None and current.version != expected_version:
+        expected=current.version if expected_version is None else int(expected_version)
+        if current.version != expected:
             raise ConflictError("rapport version conflict")
-        self._command("DEL", self._key("rapport", user_id, rapport_id), sensitive=True)
-        self._command("ZREM", self._key("rapport_index", user_id), rapport_id, sensitive=True)
+        deleted=int(self._command(
+            "EVAL",
+            _DELETE_INDEXED_JSON_LUA,
+            2,
+            self._key("rapport", user_id, rapport_id),
+            self._key("rapport_index", user_id),
+            str(expected),
+            rapport_id,
+            sensitive=True,
+        ) or 0)
+        if deleted == -1:
+            return False
+        if deleted != 1:
+            raise ConflictError("rapport version conflict")
         return True
 
     def get_proposal(self, *, user_id: str, proposal_id: str) -> ProposalRecord | None:
