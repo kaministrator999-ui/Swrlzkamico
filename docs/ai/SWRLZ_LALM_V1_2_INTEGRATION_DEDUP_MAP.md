@@ -86,3 +86,55 @@ The supplied v1.2 rubric extends—not replaces—the existing archive-derived b
 
 ## Truth state
 This document is an integration map. It does not claim that a structured reasoning controller, ontology registry, durable memory, or mutation-authority engine is live. Current 700M behavior remains prompt/rule driven plus deterministic response-mode selection and conservative MEMORY_CANDIDATE extraction.
+
+
+## Convergence learning architecture
+
+The 700M path now has a lightweight **Convergence Candidate** concept to connect collaborative discovery with later intelligence improvement without turning every conversation into permanent memory.
+
+### Purpose
+When a thread contains a real repair/discovery trajectory and the user explicitly confirms the resulting answer, §wyrlz may emit a compact review candidate. The candidate preserves enough of the local trajectory to support later analysis while remaining **THREAD-ONLY** and **review-only**.
+
+### Runtime event
+`CONVERGENCE_CANDIDATE` / schema `swrlz-convergence-candidate-v1`
+
+Current detector is intentionally conservative and deterministic:
+- requires prior correction/scope-repair language in supplied history;
+- requires an explicit user confirmation marker in the current turn;
+- emits no extra model inference pass;
+- never writes durable memory;
+- never self-promotes a rule or fact;
+- carries a bounded recent trajectory window for later review.
+
+### Review/promotion pipeline
+```text
+thread trajectory
+→ convergence candidate
+→ human/system review
+→ extract validated conclusion + pattern + failed approach + decisive cue/evidence
+→ classify epistemic status and provenance
+→ deduplicate against existing knowledge/rules/evals
+→ route to one or more destinations:
+   knowledge
+   pattern-recognition library
+   behavior/intelligence rule
+   USER→AI memory
+   AI→USER self/project knowledge
+   RAPPORT memory
+   regression/eval
+→ future retrieval/recognition
+```
+
+The trajectory is evidence; it is not the final teaching itself. The goal is to let later §wyrlz builds compress previously expensive discovery into faster recognition when conditions match, while retaining the original path as fallback evidence.
+
+### Compression gain
+Reviewed convergence records should eventually track whether the same class of problem requires fewer turns after promotion. A useful future metric is:
+- original turns-to-convergence;
+- later analogous turns-to-convergence;
+- whether a validated one-turn answer became possible without loss of correctness.
+
+### Latent-answer recognition
+A separate target behavior is **latent-answer recognition**: if §wyrlz's own generated reasoning/context already contains a sufficient answer, foreground it instead of continuing to search, elaborate, or contradict it. This is distinct from missing knowledge and should receive dedicated regression coverage.
+
+### Deduplication requirement
+Convergence review uses the same EXISTING / EXTEND / NEW / LEGACY-ONLY gate as the v1.2 architecture merge. Rediscovering an existing concept should strengthen evidence, add conditions/exceptions, or add a distinct regression—not create a duplicate teaching.
