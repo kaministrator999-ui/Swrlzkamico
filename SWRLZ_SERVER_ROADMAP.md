@@ -1,3 +1,17 @@
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier B settings shell
+
+- **Requested outcome:** implement Tier B from the approved Glitch Dragon Chat research blueprint on the canonical clean-room `/chat/§wyrlz` surface.
+- **Tier B scope from research authority:** settings sheet + General + AI/Model + Appearance + Motion + Accessibility + Privacy. Tier C profile/lore, Tier D proposal approval, Tier E rapport, and later animation/artifact tiers remain out of scope.
+- **Canonical owner:** `main:chat/§wyrlz/index.html`. Existing `/api/account/profile` remains the durable profile authority for `displayName`, `preferences`, `modelPreferences`, and `uiPreferences`; no competing profile store or settings backend is introduced.
+- **Profile contract evidence:** `UserProfileRecord` already owns `preferences`, `model_preferences`, `ui_preferences`, optimistic `version`, and `updated_at`. Existing account routes expose authenticated GET `/api/account/me` and PUT `/api/account/profile`.
+- **Durability boundary:** only explicit user Save may write existing profile fields. Unsigned/stateless users may preview local visual settings but must not be told durable profile storage succeeded. Companion self-lore, shared rapport, memory/lore records, and AI-originated durable changes are not created in this tier.
+- **Truthful-control rule:** General/Appearance/Motion/Accessibility controls may affect current page presentation immediately. AI/Model values may be stored as profile preferences but must not claim engine enforcement until LALM integration exists. Privacy shows actual account/durability state and keeps future memory/lore policy controls non-operational rather than pretending enforcement exists.
+- **Baseline:** clean-room Chat `1.0.48`; page/source blob `28feeffa006b5f00dfb02e10c7e1c7e4c64f6127`; Repository Work `1.0.22`; legacy Web Chat `1.5.86`; Runtime Manifest `152`; Server Runtime `2.3.287`.
+- **Version plan:** clean-room Chat `1.0.49`; Repository Work `1.0.23` after concurrency re-read. No Runtime Manifest, legacy Web Chat, Server Runtime, account, Stream Contract, or LALM version bump is expected.
+- **Camera contract:** settings open/close, section activation, local preview application, profile load/save success/failure, and durability state are bounded UI-camera events. No credentials, prompt content, profile free-text payload, or Google token material may be logged.
+- **Deployment expectation:** NONE. Approval authorizes Tier B source implementation and governed version/roadmap receipts only; it does not authorize production deployment, workflow dispatch, Vercel action, release request, promotion, or live profile mutation by the engineering agent.
+- **Status:** IN PROGRESS.
+
 ### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier A visual foundation
 
 - **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier A from the Glitch Dragon Chat research blueprint is implemented in the canonical clean-room owner `main:chat/§wyrlz/index.html`.
