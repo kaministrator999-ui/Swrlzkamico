@@ -38,12 +38,23 @@ def _role_frame(user_profile):
         "- Resolve perspective per utterance and answer naturally."
     )
 
+def _diagnostic_trace(history,user_profile,custom_assistant_profile):
+    """Observable decision metadata only; never a hidden chain-of-thought transcript."""
+    user_name="the user"
+    for line in user_profile.splitlines():
+        if line.lower().startswith("name:"):
+            candidate=line.split(":",1)[1].strip()
+            if candidate:user_name=candidate[:80]
+            break
+    return {"schema":"swrlz-decision-trace-v1","assistant":"§wyrlz","user":user_name,"historyTurns":len(history),"historyDepth":"none" if not history else "shallow" if len(history)<=4 else "established","profileLayers":{"builtinAssistant":True,"assistantCustomization":bool(custom_assistant_profile),"userProfile":bool(user_profile)},"guards":{"longHistoryClaimSupported":len(history)>4,"profileIsNotThreadHistory":True,"roleOwnershipEnabled":True},"memoryPolicy":{"source":"conversation evidence only","rawPrivateReasoningStored":False,"candidateValidationRequired":True}}
+
 def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
     history=[{"role":m["role"],"content":m["text"]} for m in payload.get("history",[]) if isinstance(m,dict) and m.get("role") in ("user","assistant") and isinstance(m.get("text"),str)]
     custom_assistant_profile=str(payload.get("profile") or "").strip()[:6000]
     user_profile=str(payload.get("userProfile") or "").strip()[:6000]
+    yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}
     system=("You are §wyrlz, a conversational AI companion. Respond to the user's actual message. Be direct, natural "
             "and conversational; do not narrate internal decisions, announce routine adjustments, deliver generic lectures, "
             "repeat profiles, or tack on unnecessary follow-up questions. Do not imply a long relationship or many prior "
