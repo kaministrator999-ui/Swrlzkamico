@@ -19,6 +19,7 @@ except Exception as _native_exc:
 from station import app as station_app, set_generator
 from model_router import dispatch, routes, ModelUnavailable
 from original_engine import generate_events as original_generate, load as original_load
+from lfm2_700m_engine import generate_events as large_generate
 
 ROOT=Path(__file__).resolve().parent
 PROVENANCE=json.loads((ROOT/"MODEL_PROVENANCE.json").read_text(encoding="utf-8"))
@@ -94,9 +95,9 @@ def respond(message,history,model_id):
     def worker():
         try:
             events.put(("phase","LOADING_BACKEND"))
-            generate=(engine()[1] if model_id=="r39" else original_generate)
+            generate=(engine()[1] if model_id=="r39" else large_generate if model_id=="700m" else original_generate)
             events.put(("phase","INFERENCE_RUNNING"))
-            for event in dispatch(model_id,payload,generate,original_generate):
+            for event in dispatch(model_id,payload,generate,original_generate,large_generate):
                 events.put(("event",event))
             events.put(("done",None))
         except Exception as exc:
@@ -174,14 +175,14 @@ with gr.Blocks(title="§wyrlz Inference Laboratory") as demo:
     gr.ChatInterface(
         fn=respond,
         additional_outputs=[gr.File(label="Download LIVE probe JSON (available during generation)",interactive=False),gr.JSON(label="Live inference status")],
-        additional_inputs=[gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39")],value="stock",label="Inference model")],
+        additional_inputs=[gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39"),("LFM2-700M Q4_K_M","700m")],value="stock",label="Inference model")],
         title="§wyrlz Inference Laboratory",
         description="Independent model probe. The dragon Chat is at /; HF-only session state is not durable account storage.",
     )
     _zg_button=gr.Button("ZeroGPU registration probe",visible=False)
     _zg_output=gr.Textbox(visible=False)
     _zg_button.click(fn=_zerogpu_registration_probe,inputs=[],outputs=_zg_output,api_visibility="private")
-set_generator(lambda payload: engine()[1](payload),original_generate)
+set_generator(lambda payload: engine()[1](payload),original_generate,large_generate)
 app=gr.mount_gradio_app(station_app,demo,path="/probe",ssr_mode=False)
 # Keep the pinned original Test Bench available independently of R39.
 legacy_source=ROOT/"original_workstation.py"
