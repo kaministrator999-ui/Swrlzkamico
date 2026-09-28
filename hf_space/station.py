@@ -113,6 +113,14 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 g["lastSeq"]+=1
                 if kind=="DELTA":
                     delta=str(event.get("text") or "");text+=delta;g["text"]=text
+                elif kind=="DIAGNOSTIC":
+                    trace=event.get("trace")
+                    if isinstance(trace,dict):g["diagnosticTrace"]=copy.deepcopy(trace)
+                    g["status"].append({"seq":g["lastSeq"],"phase":"DIAGNOSTIC_READY","reason":""})
+                elif kind=="MEMORY_CANDIDATE":
+                    candidate=event.get("candidate")
+                    if isinstance(candidate,dict):g.setdefault("memoryCandidates",[]).append(copy.deepcopy(candidate))
+                    g["status"].append({"seq":g["lastSeq"],"phase":"MEMORY_CANDIDATE","reason":""})
                 else:g["status"].append({"seq":g["lastSeq"],"phase":str(event.get("phase") or kind),"reason":str(event.get("reason") or "")[:200]})
             if kind=="FAILED":raise RuntimeError(str(event.get("reason") or "Generation failed"))
             if kind in ("COMPLETE","COMPLETED"):completed=True
@@ -156,7 +164,7 @@ async def send(request:Request):
         history=[{"role":m["role"],"text":m["text"]} for m in t["messages"] if m["role"] in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"meta":{"requestId":rid,"modelId":model_id}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}]}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}],"diagnosticTrace":None,"memoryCandidates":[]}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"profileId":"LALM","profile":profile,"userProfile":user_profile}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
