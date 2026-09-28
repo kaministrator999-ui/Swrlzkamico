@@ -723,10 +723,10 @@
         const existingModel=accountProfile.model_preferences&&typeof accountProfile.model_preferences==="object"?accountProfile.model_preferences:{};
         const existingUi=accountProfile.ui_preferences&&typeof accountProfile.ui_preferences==="object"?accountProfile.ui_preferences:{};
         const preferences={...existingPrefs,general:{...(existingPrefs.general&&typeof existingPrefs.general==="object"?existingPrefs.general:{}),enterToSend:settingsState.general.enterToSend}};
-        const modelPreferences={...existingModel,defaultModel:"LALM",effort:settingsState.model.effort,responseLength:settingsState.model.responseLength};
-        const uiPreferences={...existingUi,density:settingsState.ui.density,glass:settingsState.ui.glass,motion:settingsState.ui.motion,fontScale:settingsState.ui.fontScale,highContrast:settingsState.ui.highContrast,reducedTransparency:settingsState.ui.reducedTransparency,theme:"glitch-dragon"};
+        const modelPreferences={...existingModel,effort:settingsState.model.effort,responseLength:settingsState.model.responseLength};
+        const uiPreferences={...existingUi,density:settingsState.ui.density,glass:settingsState.ui.glass,motion:settingsState.ui.motion,fontScale:settingsState.ui.fontScale,highContrast:settingsState.ui.highContrast,reducedTransparency:settingsState.ui.reducedTransparency};
         try{
-          const response=await accountFetch("/api/account/profile",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({displayName:accountProfile.display_name||chatAccountUser.displayName||null,preferences,modelPreferences,uiPreferences,version:Number(accountProfile.version||0)})});
+          const response=await accountFetch("/api/account/profile",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({preferences,modelPreferences,uiPreferences,version:Number(accountProfile.version||0)})});
           const data=await response.json().catch(()=>({}));
           if(!response.ok||!data?.profile)throw new Error(data?.detail||("Profile save failed ("+response.status+")"));
           accountProfile=data.profile;accountProfileDurable=true;settingsDirty=false;populateSettingsControls();refreshSettingsDurability();uiCamera("settings-save-success",{profileVersion:Number(accountProfile.version||0)});
