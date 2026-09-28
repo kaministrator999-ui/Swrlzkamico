@@ -216,6 +216,10 @@
     .work-head{display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid rgba(126,214,255,.13)}.work-head-copy{min-width:0;flex:1}.work-kicker{font-family:var(--font-telemetry);font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:#81a9ba}.work-title{margin:2px 0 0;color:#effbff;font-size:15px}.work-close{display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(126,214,255,.20);border-radius:10px;background:rgba(10,38,57,.56);color:#dff7ff;cursor:pointer}.work-body{min-height:0;overflow:auto;padding:12px 13px 24px}.work-section{margin-bottom:15px}.work-section-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}.work-section-title{flex:1;color:#cfeaf4;font-family:var(--font-telemetry);font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}.work-section-count{color:#6f93a3;font-family:var(--font-telemetry);font-size:8px}.work-card-list{display:flex;flex-direction:column;gap:8px}
     .agent-card{padding:10px;border:1px solid rgba(126,214,255,.13);border-radius:11px;background:linear-gradient(135deg,rgba(6,27,44,.62),rgba(23,27,55,.38))}.agent-card.action{border-color:rgba(79,140,255,.22)}.agent-card.approval{border-color:rgba(255,201,105,.25);background:linear-gradient(135deg,rgba(74,52,18,.30),rgba(31,27,52,.40))}.agent-card.artifact{border-color:rgba(165,120,255,.22)}.agent-card-head{display:flex;align-items:flex-start;gap:7px}.agent-card-title{min-width:0;flex:1;color:#effaff;font-size:11px;font-weight:780;overflow-wrap:anywhere}.agent-card-badge{padding:3px 5px;border:1px solid rgba(126,214,255,.16);border-radius:7px;color:#a9c6d3;font-family:var(--font-telemetry);font-size:7px;letter-spacing:.05em;text-transform:uppercase}.agent-card-body{margin-top:6px;color:#9eb9c5;font-size:9px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.agent-card-meta{display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:7px;color:#6d91a2;font-family:var(--font-telemetry);font-size:7px}.agent-card-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}.agent-card-button{border:1px solid rgba(126,214,255,.20);border-radius:8px;background:rgba(10,39,58,.68);color:#dff7ff;padding:6px 8px;font-size:8px;font-weight:760;cursor:pointer}.agent-card-button:hover{border-color:rgba(56,232,255,.48)}.work-empty{padding:12px;border:1px dashed rgba(126,214,255,.14);border-radius:10px;color:#718f9d;font-size:9px;line-height:1.45;text-align:center}
     .message-evidence{margin:6px 0 0 38px;border-top:1px solid rgba(126,214,255,.08);padding-top:5px}.message-evidence summary{width:max-content;max-width:100%;cursor:pointer;color:#80a9ba;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.05em;list-style:none}.message-evidence summary::-webkit-details-marker{display:none}.message-evidence summary::before{content:"▸";display:inline-block;margin-right:5px;transition:transform .15s ease}.message-evidence[open] summary::before{transform:rotate(90deg)}.message-evidence-body{margin-top:6px;padding:7px 8px;border:1px solid rgba(126,214,255,.09);border-radius:8px;background:rgba(2,17,29,.38);color:#829fad;font-family:var(--font-telemetry);font-size:8px;line-height:1.5}.evidence-row{display:grid;grid-template-columns:minmax(74px,auto) 1fr;gap:8px;padding:2px 0}.evidence-key{color:#6e8f9f}.evidence-value{color:#b4ced8;overflow-wrap:anywhere}.evidence-link{color:#8feaff;text-decoration:none}.evidence-link:hover{text-decoration:underline}
+    body.a11y-high-contrast .work-surface,body.a11y-high-contrast .agent-card,body.a11y-high-contrast .message-evidence-body{border-color:rgba(215,245,255,.56)!important;background-color:rgba(0,10,20,.94)!important}
+    body.a11y-reduced-transparency .work-shade{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+    body.a11y-reduced-transparency .work-surface{background:#061727!important}
+    body.a11y-reduced-transparency .agent-card,body.a11y-reduced-transparency .message-evidence-body{background:#082139!important}
     body.motion-reduced .work-shade,body.motion-reduced .work-surface,body.motion-off .work-shade,body.motion-off .work-surface,body.motion-reduced .message-evidence summary::before,body.motion-off .message-evidence summary::before{transition:none!important}
     @media(prefers-reduced-motion:reduce){body:not(.motion-full) .work-shade,body:not(.motion-full) .work-surface,body:not(.motion-full) .message-evidence summary::before{transition:none!important}}
     @media(max-width:760px){.work-surface{width:100vw}.work-surface-button{padding:4px 6px}.work-surface-button .work-label{display:none}.top-model{display:none}.message-evidence{margin-left:38px}}
@@ -646,7 +650,12 @@
         const meta=msg?.meta&&typeof msg.meta==="object"?msg.meta:{};
         const rows=[];
         if(meta.requestId)rows.push(["Request",String(meta.requestId)]);
-        if(meta.authority)rows.push(["Authority",String(meta.authority)]);
+        if(meta.authority)rows.push(["Projection authority",String(meta.authority)]);
+        const provenance=meta.provenance&&typeof meta.provenance==="object"?meta.provenance:{};
+        if(provenance.sourceAuthority)rows.push(["Source authority",String(provenance.sourceAuthority)]);
+        if(provenance.turnContract)rows.push(["Turn contract",String(provenance.turnContract)]);
+        if(provenance.commitPhase)rows.push(["Commit phase",String(provenance.commitPhase)]);
+        if(provenance.terminalType)rows.push(["Terminal",String(provenance.terminalType)]);
         if(msg?.state)rows.push(["State",String(msg.state)]);
         if(msg?.createdAt)rows.push(["Committed",new Date(msg.createdAt).toLocaleString()]);
         return rows;
@@ -820,7 +829,7 @@
       const renderConversation = thread => {
         syncTopEdge(thread);
         [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
-        if(!thread) return;
+        if(!thread){renderWorkSurface();return;}
         for(const msg of (thread.messages||[])){
           if(msg.role==="assistant"){
             const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); node.querySelector(".assistant-body").textContent=msg.text||""; addCopyButton(node); addEvidenceBlock(node,msg); messageList.appendChild(node);
@@ -836,6 +845,7 @@
             messageList.appendChild(node);
           }
         }
+        renderWorkSurface();
       };
       const closeThreadPopups = except => document.querySelectorAll(".thread-popup").forEach(p=>{if(p!==except)p.hidden=true;});
       const renderThreads = () => {
@@ -1030,7 +1040,7 @@
             if(!stationGeneration)stationGeneration={requestId:event.requestId||"",threadId:activeThreadId,text:"",status:[],terminal:false,lastSeq:0};
             stationGeneration.lastSeq=Number(event.seq||stationGeneration.lastSeq||0);
             if(event.type==="DELTA")stationGeneration.text=(stationGeneration.text||"")+String(event.text||"");
-            else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||""}].slice(-256);
+            else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||"",categories:Array.isArray(event.categories)?event.categories.slice(0,16):[],proposalReceipt:event.proposalReceipt&&typeof event.proposalReceipt==="object"?event.proposalReceipt:null}].slice(-256);
             if(event.terminal){stationGeneration.terminal=true;stationGeneration.terminalType=event.type||""}
             renderStationGeneration();
           }
@@ -1504,7 +1514,7 @@
       };
       const replaceProposal=proposal=>{
         proposalRecords=proposalRecords.map(item=>item.id===proposal.id?proposal:item);
-        proposalAuditCache.delete(proposal.id);renderProposalRecords();updateProposalStatus();
+        proposalAuditCache.delete(proposal.id);renderProposalRecords();updateProposalStatus();renderWorkSurface();
       };
       const proposalRequest=async(proposal,path,init,eventName)=>{
         const response=await accountFetch(path,init);
@@ -1578,7 +1588,7 @@
           if(!response.ok||!Array.isArray(data.proposals))throw new Error(data?.detail||("Proposal load failed ("+response.status+")"));
           proposalRecords=data.proposals;proposalLoadedForUser=userKey;proposalAuditCache.clear();
           if(data.policies&&typeof data.policies==="object")proposalPolicyControls.forEach(control=>{const value=String(data.policies[control.dataset.proposalPolicy]||"ASK");if(["ASK","AUTO_LOW_RISK","SESSION_ONLY","NEVER"].includes(value))control.value=value;});
-          renderProposalRecords();updateProposalStatus();uiCamera("proposal-load",{count:proposalRecords.length,pending:proposalRecords.filter(item=>item.state==="PENDING").length});return true;
+          renderProposalRecords();updateProposalStatus();renderWorkSurface();uiCamera("proposal-load",{count:proposalRecords.length,pending:proposalRecords.filter(item=>item.state==="PENDING").length});return true;
         }catch(error){
           proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();proposalStatus.textContent="Proposal authority could not be loaded.";renderProposalRecords();uiCamera("proposal-load-failed",{errorType:String(error?.name||"Error")});return false;
         }
