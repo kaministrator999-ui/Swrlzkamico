@@ -11,6 +11,11 @@ JobState = Literal["QUEUED", "RUNNING", "COMPLETE", "FAILED", "CANCELLED"]
 LoreType = Literal["USER_FACT", "USER_LORE", "COMPANION_SELF_LORE", "SHARED_LORE"]
 LoreScope = Literal["GLOBAL", "PROJECT", "THREAD"]
 LoreAuthor = Literal["USER", "ASSISTANT", "SYSTEM"]
+ProposalState = Literal["PENDING", "APPLIED", "AUTO_APPLIED", "DECLINED", "REVERTED", "FAILED"]
+ProposalRisk = Literal["LOW", "MEDIUM", "HIGH"]
+ProposalPolicyMode = Literal["ASK", "AUTO_LOW_RISK", "SESSION_ONLY", "NEVER"]
+ProposalTarget = Literal["USER_PROFILE", "COMPANION_PROFILE", "LORE"]
+ProposalOperation = Literal["USER_PROFILE_PATCH", "COMPANION_PROFILE_PATCH", "LORE_CREATE", "LORE_UPDATE", "LORE_DELETE"]
 
 
 def new_id(prefix: str) -> str:
@@ -64,6 +69,41 @@ class LoreRecord:
     version: int = 1
     created_at: float = field(default_factory=time.time)
     updated_at: float = field(default_factory=time.time)
+
+
+@dataclass(frozen=True)
+class ProposalRecord:
+    proposal_id: str
+    user_id: str
+    category: str
+    target_kind: ProposalTarget
+    operation: ProposalOperation
+    payload: dict[str, Any]
+    rationale: str
+    risk: ProposalRisk = "MEDIUM"
+    target_id: str | None = None
+    source_thread_id: str | None = None
+    source_request_id: str | None = None
+    created_by: Literal["ASSISTANT", "SYSTEM"] = "ASSISTANT"
+    state: ProposalState = "PENDING"
+    target_version: int | None = None
+    before_snapshot: dict[str, Any] = field(default_factory=dict)
+    after_snapshot: dict[str, Any] = field(default_factory=dict)
+    version: int = 1
+    created_at: float = field(default_factory=time.time)
+    updated_at: float = field(default_factory=time.time)
+    resolved_at: float | None = None
+
+
+@dataclass(frozen=True)
+class ProposalAuditRecord:
+    proposal_id: str
+    user_id: str
+    seq: int
+    action: str
+    actor: Literal["USER", "ASSISTANT", "SYSTEM"]
+    details: dict[str, Any] = field(default_factory=dict)
+    created_at: float = field(default_factory=time.time)
 
 
 @dataclass(frozen=True)
@@ -147,6 +187,12 @@ class DurableChatStore(Protocol):
     def get_lore(self, *, user_id: str, lore_id: str) -> LoreRecord | None: ...
     def put_lore(self, lore: LoreRecord, *, expected_version: int | None = None) -> LoreRecord: ...
     def delete_lore(self, *, user_id: str, lore_id: str, expected_version: int | None = None) -> bool: ...
+
+    def list_proposals(self, *, user_id: str, limit: int = 200, include_resolved: bool = True) -> list[ProposalRecord]: ...
+    def get_proposal(self, *, user_id: str, proposal_id: str) -> ProposalRecord | None: ...
+    def put_proposal(self, proposal: ProposalRecord, *, expected_version: int | None = None) -> ProposalRecord: ...
+    def append_proposal_audit(self, event: ProposalAuditRecord) -> ProposalAuditRecord: ...
+    def list_proposal_audit(self, *, user_id: str, proposal_id: str) -> list[ProposalAuditRecord]: ...
 
     def list_threads(self, *, user_id: str, include_archived: bool = False) -> list[ThreadRecord]: ...
     def get_thread(self, *, user_id: str, thread_id: str) -> ThreadRecord | None: ...
