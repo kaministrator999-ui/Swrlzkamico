@@ -1,3 +1,12 @@
+### UPDATE CONTINUATION — 2026-09-28 — Memory-aware improvement promotion contract
+
+- Archive-derived conversational improvements are now explicitly coupled to memory/rapport design. Any change touching identity ownership, corrections, preferences, callbacks, inference confidence, continuity or profiles must receive a memory-impact review before promotion.
+- Defined four provenance lanes: **USER → AI**, **AI → USER**, **RELATIONSHIP/RAPPORT**, and **THREAD-ONLY**. Jokes, STT errors, hypotheticals, roleplay, quotes and transient speculation must not silently cross into durable memory.
+- Correction handling must eventually propagate beyond the immediate reply: durable memory needs provenance + supersession so an explicit correction can invalidate/replace the stale candidate without deleting unrelated history.
+- Added a seven-question memory promotion gate to `docs/ai/SWRLZ_CONVERSATION_IMPROVEMENT_CORPUS.md`, including whether a behavior change affects extraction, ownership, correction/supersession, recall phrasing, §wyrlz self-knowledge, or memory regression coverage.
+- Current implementation truth remains unchanged: `MEMORY_CANDIDATE` is conservative candidate extraction only. Durable bidirectional memory, supersession and rapport-memory persistence are still future work and must not be implied as live.
+- This contract applies to subsequent corpus-mining passes so behavior and memory cannot evolve independently by accident.
+
 ### UPDATE CONTINUATION — 2026-09-28 — Conversation archive mining / pass 2 + behavioral regressions
 
 - Ran a higher-precision review over the correction/friction candidate pool, including scope repair, directness, ownership, assumption and reflexive-agreement patterns.
