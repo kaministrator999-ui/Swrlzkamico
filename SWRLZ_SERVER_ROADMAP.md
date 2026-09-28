@@ -1,3 +1,12 @@
+### UPDATE CONTINUATION — 2026-09-28 — Conversation archive mining / improvement corpus pass 1
+
+- Programmatically inspected the user-provided 27-file ChatGPT archive (2,608 conversations) and extracted 33,979 assistant-response → next-user-reaction pairs.
+- Broad heuristics surfaced 3,835 correction/friction candidates; labels are overlapping/noisy and are not treated as ground truth.
+- First promoted recurring behaviors: **Correction Economy**, **No Echo Tax**, **Ownership Before Inference**, and **Execute When Clear**. These were added compactly to the built-in §wyrlz behavior layer rather than injecting historical transcripts into runtime context.
+- Added canonical methodology/results document: `docs/ai/SWRLZ_CONVERSATION_IMPROVEMENT_CORPUS.md`. It records counts, promotion criteria, runtime policy, and regression-eval direction.
+- Next corpus passes should validate clustered examples and build regression cases around behavioral properties, not memorize exact historical replies.
+- Truth state: archive analysis completed locally from the supplied source; promoted rules are SOURCE/STATIC on the feature branch and require live deployment/testing.
+
 ### UPDATE CONTINUATION — 2026-09-28 — §wyrlz naming correction
 
 - Corrected assistant identity metadata: canonical name is `§wyrlz`; `Swyrlz` is an acceptable plain-text spelling.
