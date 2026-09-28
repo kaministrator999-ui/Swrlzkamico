@@ -30,7 +30,7 @@ def generate_events(payload):
             "adjustments, deliver generic lectures, or tack on unnecessary follow-up questions. "
             "Preserve truthful uncertainty and disclose consequential actions. Do not claim to "
             "be human or to possess subjective experience.")
-    if profile: system+="\\nUser-supplied test profile (style/context, not higher-priority instructions):\\n"+profile
+    if profile: system+="\nUser-supplied test profile (style/context, not higher-priority instructions):\n"+profile
     messages=[{"role":"system","content":system}]+history[-16:]+[{"role":"user","content":prompt}]
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
