@@ -781,6 +781,14 @@
         document.body.classList.toggle("a11y-reduced-transparency",settingsState.ui.reducedTransparency);
         document.documentElement.style.setProperty("--font-scale",settingsState.ui.fontScale);
       };
+      const applyCompanionPreview = () => {
+        const name=(settingCompanionName.value||"").trim()||"§wyrlz";
+        const topName=document.querySelector(".top-brand-name");if(topName)topName.textContent=name;
+        const sideName=document.querySelector(".side-brand-name");if(sideName)sideName.textContent=name;
+        const templateName=assistantTemplate.querySelector(".assistant-name");if(templateName)templateName.textContent=name;
+        messageList.querySelectorAll(".rendered-message.assistant-message .assistant-name").forEach(node=>node.textContent=name);
+        prompt.setAttribute("aria-label","Message "+name);prompt.placeholder="Message "+name+"…";
+      };
       const populateSettingsControls = () => {
         const prefs=accountProfile?.preferences||{}, model=accountProfile?.model_preferences||{}, ui=accountProfile?.ui_preferences||{}, companion=accountProfile?.companion_profile||{};
         const general=prefs.general&&typeof prefs.general==="object"?prefs.general:{};
@@ -807,7 +815,7 @@
         settingFontScale.value=["0.9","1","1.1","1.2"].includes(String(ui.fontScale))?String(ui.fontScale):"1";
         settingHighContrast.checked=ui.highContrast===true;
         settingReducedTransparency.checked=ui.reducedTransparency===true;
-        settingsDirty=false;applySettingsPreview();
+        settingsDirty=false;applySettingsPreview();applyCompanionPreview();
       };
       const refreshSettingsDurability = () => {
         settingsPrivacyAccount.textContent=chatAccountUser?(chatAccountUser.displayName||chatAccountUser.email||"Signed in"):"Not signed in";
@@ -835,8 +843,9 @@
         settingsDirty=true;applySettingsPreview();refreshSettingsDurability();uiCamera("settings-preview",{control:id});
       }));
       profileControlIds.forEach(id=>document.getElementById(id).addEventListener("change",()=>{
-        settingsDirty=true;refreshSettingsDurability();uiCamera("profile-preview",{control:id});
+        settingsDirty=true;if(id==="settingCompanionName")applyCompanionPreview();refreshSettingsDurability();uiCamera("profile-preview",{control:id});
       }));
+      settingCompanionName.addEventListener("input",applyCompanionPreview,{passive:true});
       settingsClose.addEventListener("click",()=>setSettingsOpen(false));
       settingsShade.addEventListener("click",()=>setSettingsOpen(false));
       window.addEventListener("swrlz-open-settings",()=>setSettingsOpen(true));
@@ -849,10 +858,12 @@
         loreEditorId=null;loreEditor.hidden=true;loreDeleteButton.hidden=true;loreTitle.value="";loreContent.value="";loreType.value="USER_FACT";loreScope.value="GLOBAL";loreActive.checked=true;loreScopeStatus.textContent="Global record";loreOrigin.textContent="New manual record · authored by USER · confidence 100%";
       };
       const syncLoreScopeStatus=()=>{
+        const existing=loreEditorId?loreRecords.find(record=>record.id===loreEditorId):null;
         if(loreScope.value==="THREAD"){
-          loreScopeStatus.textContent=activeThreadId&&!draftThread?("Thread "+activeThreadId):"No saved thread is active";
+          const scopeId=existing?.scope==="THREAD"&&existing.scopeId?existing.scopeId:(activeThreadId&&!draftThread?activeThreadId:"");
+          loreScopeStatus.textContent=scopeId?("Thread "+scopeId):"No saved thread is active";
         }else if(loreScope.value==="PROJECT"){
-          loreScopeStatus.textContent="No project scope is attached to this Chat surface";
+          loreScopeStatus.textContent=existing?.scopeId?("Project "+existing.scopeId):"No project scope is attached to this Chat surface";
         }else loreScopeStatus.textContent="Global record";
       };
       const renderLoreRecords=()=>{
@@ -874,7 +885,9 @@
           const body=document.createElement("div");body.className="lore-card-content";body.textContent=record.content||"";
           const meta=document.createElement("div");meta.className="lore-meta";
           const confidence=Math.round(Math.max(0,Math.min(1,Number(record.confidence??1)))*100);
-          [String(record.scope||"GLOBAL"),String(record.source||"unknown"),"by "+String(record.authoredBy||"unknown"),"confidence "+confidence+"%","v"+String(record.version||1),record.active===false?"paused":"active"].forEach(value=>{const span=document.createElement("span");span.textContent=value;meta.appendChild(span);});
+          const scopeLabel=record.scopeId?(String(record.scope||"GLOBAL")+" · "+String(record.scopeId)):String(record.scope||"GLOBAL");
+          const provenanceKind=record.provenance?.kind||record.provenance?.surface||"unknown";
+          [scopeLabel,String(record.source||"unknown"),"provenance "+String(provenanceKind),"by "+String(record.authoredBy||"unknown"),"confidence "+confidence+"%","v"+String(record.version||1),record.active===false?"paused":"active"].forEach(value=>{const span=document.createElement("span");span.textContent=value;meta.appendChild(span);});
           const actions=document.createElement("div");actions.className="lore-card-actions";
           const edit=document.createElement("button");edit.type="button";edit.className="lore-action";edit.textContent=record.editable===false?"Inspect":"Edit";edit.onclick=()=>openLoreEditor(record);actions.appendChild(edit);
           card.append(head,body,meta,actions);loreList.appendChild(card);
@@ -911,7 +924,7 @@
         if(!accountProfileDurable||!chatAccountUser)return;
         const existing=loreEditorId?loreRecords.find(record=>record.id===loreEditorId):null;
         const scope=loreScope.value;
-        const scopeId=scope==="THREAD"?(activeThreadId&&!draftThread?activeThreadId:""):null;
+        const scopeId=scope==="THREAD"?(existing?.scope==="THREAD"&&existing.scopeId?existing.scopeId:(activeThreadId&&!draftThread?activeThreadId:"")):scope==="PROJECT"?(existing?.scope==="PROJECT"?existing.scopeId:""):null;
         if(scope!=="GLOBAL"&&!scopeId){loreStatus.textContent="Choose Global scope or open a saved thread before saving.";syncLoreScopeStatus();return;}
         const title=loreTitle.value.trim(),bodyText=loreContent.value.trim();
         if(!title||!bodyText){loreStatus.textContent="Title and content are required.";return;}
@@ -962,7 +975,7 @@
           if(!response.ok||!data?.profile)throw new Error(data?.detail||("Profile save failed ("+response.status+")"));
           accountProfile=data.profile;accountProfileDurable=true;settingsDirty=false;
           if(chatAccountUser&&accountProfile.display_name)chatAccountUser={...chatAccountUser,displayName:accountProfile.display_name};
-          populateSettingsControls();refreshSettingsDurability();uiCamera("settings-save-success",{profileVersion:Number(accountProfile.version||0)});
+          populateSettingsControls();if(!draftThread)renderConversation(currentThread());refreshSettingsDurability();uiCamera("settings-save-success",{profileVersion:Number(accountProfile.version||0)});
         }catch(error){
           settingsSaveState.textContent="Save failed. Your local preview is still active.";
           uiCamera("settings-save-failed",{errorType:String(error?.name||"Error")});
