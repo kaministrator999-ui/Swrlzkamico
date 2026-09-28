@@ -1,3 +1,12 @@
+### UPDATE CONTINUATION — 2026-09-27 — Dragon Chat response presentation + 700M final-answer formatting
+
+- **Observed UI issue:** assistant responses were rendered with `textContent`, so structured output (song sections, paragraphs, Markdown headings/lists, quotes and code) visually collapsed into a dense text block. Mobile assistant content also inherited a large left offset, reducing usable response width.
+- **Presentation repair:** canonical clean-room Chat now uses a bounded local formatter for assistant text. It HTML-escapes model output first, then renders paragraphs, H2/H3-style Markdown headings, ordered/unordered lists, block quotes, fenced code, inline code, bold/italic and horizontal rules. Raw model HTML is never trusted.
+- **Streaming parity:** both committed messages and the live Station generation use the same renderer; live rendering tracks raw text separately while preserving the copy action's readable text.
+- **Mobile visual repair:** assistant answer cards use the full mobile response width below the §wyrlz identity header, with clearer glass-card contrast, spacing and typography; user bubbles remain visually distinct/right-aligned.
+- **700M response contract:** the 700M system instruction now requests short paragraphs and real line breaks, uses Markdown structure only when useful, preserves intentional line breaks/sections for songs/poems/dialogue/scripts, and avoids unnecessary preambles.
+- **Scope/truth:** SOURCE changes only on `feature/hf-space-manual-deploy`; not yet declared deployed/live. Existing checkpoint/rollback contract governs the next approved HF publish.
+
 ### UPDATE CONTINUATION — 2026-09-27 — HF reproducible checkpoint and rollback contract
 
 - **Requested outcome:** make every approved HF update recoverable to an exact prior checkpoint and separate ordinary commits, rollback checkpoints, deployed candidates and verified known-good releases.
