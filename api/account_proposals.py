@@ -241,6 +241,7 @@ def submit_ai_proposal(
     target_id: str | None = None,
     source_thread_id: str | None = None,
     source_request_id: str | None = None,
+    proposal_id: str | None = None,
 ) -> dict[str, Any]:
     """Trusted server-side proposal entrypoint.
 
@@ -270,8 +271,13 @@ def submit_ai_proposal(
     if policy == "SESSION_ONLY":
         return {"decision": "SESSION_ONLY", "proposal": None}
     target_version = _current_target_version(store, user_id=user_id, operation=operation, target_id=target_id)
+    stable_proposal_id = str(proposal_id or "").strip()
+    if stable_proposal_id:
+        existing = store.get_proposal(user_id=user_id, proposal_id=stable_proposal_id)
+        if existing is not None:
+            return {"decision": "EXISTING", "proposal": existing}
     proposal = ProposalRecord(
-        proposal_id=new_id("proposal"),
+        proposal_id=stable_proposal_id or new_id("proposal"),
         user_id=user_id,
         category=category,
         target_kind=target_kind,
