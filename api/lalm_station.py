@@ -192,6 +192,14 @@ def install(server, chat_extensions) -> None:
                     # committed conversation messages.
                     if role == "ASSISTANT" and (not text or str(message.state or "").upper() == "STREAMING"):
                         continue
+                    provenance = message.provenance if isinstance(message.provenance, dict) else {}
+                    safe_provenance = {
+                        "sourceAuthority": str(provenance.get("authority") or "")[:64],
+                        "turnContract": str(provenance.get("turnContract") or "")[:96],
+                        "commitPhase": str(provenance.get("commitPhase") or "")[:64],
+                        "terminalType": str(provenance.get("terminalType") or "")[:32],
+                    }
+                    safe_provenance = {key: value for key, value in safe_provenance.items() if value}
                     rendered_messages.append({
                         "id": str(message.message_id),
                         "role": role.lower(),
@@ -199,7 +207,11 @@ def install(server, chat_extensions) -> None:
                         "createdAt": int(float(message.created_at or 0) * 1000),
                         "state": str(message.state or "").lower(),
                         "pinned": bool(meta.get("pinned", False)),
-                        "meta": {"requestId": str(message.request_id or ""), "authority": "workstation"},
+                        "meta": {
+                            "requestId": str(message.request_id or ""),
+                            "authority": "workstation",
+                            "provenance": safe_provenance,
+                        },
                     })
                 threads.append({
                     "id": thread_id,
