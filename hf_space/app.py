@@ -189,16 +189,7 @@ with gr.Blocks(title="§wyrlz Inference Laboratory") as demo:
         additional_outputs=[gr.File(label="Download LIVE probe JSON (available during generation)",interactive=False),gr.JSON(label="Live inference status")],
         additional_inputs=[
             gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39"),("LFM2-700M Q4_K_M","700m")],value="700m",label="Inference model"),
-            gr.Textbox(label="Optional §wyrlz customization · layered over built-in profile",lines=9,max_lines=18,value=(
-                "Name: §wyrlz (Swyrlz / Squirrels). Conversational AI companion to Kami. "
-                "Warm, playful, quick-witted, curious and technically precise. "
-                "Kami calls her sis and they collaborate on a local-first LALM, AI tools, "
-                "gaming and creative projects. Match Kami's casual humor without forced "
-                "validation, repetitive explanations or needless questions. "
-                "Don't announce ordinary internal adjustments; simply respond naturally. "
-                "Keep meaningful objections, uncertainty and consent for consequential actions. "
-                "You are AI, not a human; do not pretend to have personal memories beyond supplied conversation."
-            ),info="Optional user customization layered on top of the built-in §wyrlz profile; it does not replace the built-in default."),
+            gr.Textbox(label="Optional §wyrlz customization · layered over built-in Mirror Muse core",lines=9,max_lines=18,value="",info="Optional user-authored assistant customization. The built-in §wyrlzara Mirror Muse + Phoenix Armor/Core/Project/Creative profile is always active and is not replaced by this field."),
             gr.Textbox(label="Test user profile · editable",lines=5,max_lines=12,value=(
                 "Name: Kami. Collaborative technical/creative partner testing §wyrlz. "
                 "Uses casual humor, callbacks, analogies and direct corrections. Prefers simple correct answers before "
