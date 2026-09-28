@@ -77,6 +77,25 @@
     .send-button{display:inline-grid;place-items:center;width:28px;height:28px;border:0;border-radius:50%;cursor:pointer;color:#dffaff;background:linear-gradient(145deg,#7de5ff,#58a8ff);box-shadow:0 6px 16px rgba(56,168,255,.24)}
     .send-button svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     @media(min-width:601px){.composer-shell{padding:12px 14px 10px}.composer-box{min-height:44px;border-radius:22px}#prompt{height:42px;max-height:calc(50dvh - 2px);padding-top:11px;padding-bottom:11px;font-size:14px;line-height:20px}.composer-tools{bottom:7px}.send-button{width:30px;height:30px}.send-button svg{width:14px;height:14px}}
+      .assistant-body{white-space:normal;overflow-wrap:anywhere}
+    .assistant-body .swrlz-p{margin:0 0 .78em}.assistant-body .swrlz-p:last-child{margin-bottom:0}
+    .assistant-body .swrlz-h{margin:.95em 0 .42em;font-weight:800;letter-spacing:.015em;color:#e9fbff;line-height:1.25}
+    .assistant-body .swrlz-h:first-child{margin-top:0}.assistant-body .swrlz-h2{font-size:1.08em}.assistant-body .swrlz-h3{font-size:1em;color:#c9f4ff}
+    .assistant-body .swrlz-list{margin:.35em 0 .8em;padding-left:1.25em}.assistant-body .swrlz-list li{margin:.26em 0;padding-left:.12em}
+    .assistant-body .swrlz-quote{margin:.7em 0;padding:.55em .75em;border-left:3px solid rgba(82,220,255,.7);border-radius:0 9px 9px 0;background:rgba(13,48,72,.42);color:#d9f4ff}
+    .assistant-body .swrlz-code{display:block;margin:.65em 0;padding:.7em .8em;overflow-x:auto;border:1px solid rgba(95,192,255,.2);border-radius:10px;background:rgba(1,12,24,.7);font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap}
+    .assistant-body .swrlz-inline-code{padding:.08em .3em;border-radius:5px;background:rgba(1,12,24,.62);font: .9em ui-monospace,SFMono-Regular,Consolas,monospace;color:#c9f6ff}
+    .assistant-body strong{color:#fff}.assistant-body em{color:#d9effa}.assistant-body hr{border:0;border-top:1px solid rgba(126,214,255,.2);margin:.9em 0}
+    .assistant-body a{color:#8eeaff;text-decoration-thickness:1px;text-underline-offset:2px}
+      @media(max-width:600px){
+      .chat-viewport{padding-left:10px;padding-right:10px}
+      .message-list{gap:16px}
+      .assistant-message{max-width:100%}
+      .assistant-body{margin-left:0!important;margin-top:7px!important;padding:12px 13px!important;border-radius:14px!important;background:linear-gradient(145deg,rgba(7,28,48,.84),rgba(10,42,65,.72))!important}
+      .assistant-actions{margin-left:0!important}
+      .user-message{max-width:88%}
+      .user-bubble{font-size:15px;line-height:1.5;padding:10px 12px}
+    }
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -171,6 +190,36 @@
         return clean.length>48 ? clean.slice(0,47).trimEnd()+"…" : (clean || "New conversation");
       };
       const currentThread = () => chatThreads.find(t=>t.id===activeThreadId) || (pendingDraftThread?.id===activeThreadId ? pendingDraftThread : null);
+      const escapeHtml = value => String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+      const inlineFormat = value => {
+        let s=escapeHtml(value);
+        s=s.replace(/`([^`\n]+)`/g,'<code class="swrlz-inline-code">$1</code>');
+        s=s.replace(/\*\*([^*\n][\s\S]*?)\*\*/g,'<strong>$1</strong>');
+        s=s.replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>');
+        return s;
+      };
+      const formatAssistantText = value => {
+        const lines=String(value??"").replace(/\r\n?/g,"\n").split("\n");
+        const out=[]; let para=[], list=[], listType="", code=[], inCode=false;
+        const flushPara=()=>{if(para.length){out.push('<p class="swrlz-p">'+inlineFormat(para.join(" ").trim())+'</p>');para=[];}};
+        const flushList=()=>{if(list.length){const tag=listType==="ol"?"ol":"ul";out.push('<'+tag+' class="swrlz-list">'+list.map(x=>'<li>'+inlineFormat(x)+'</li>').join("")+'</'+tag+'>');list=[];listType="";}};
+        const flushCode=()=>{if(code.length){out.push('<pre class="swrlz-code"><code>'+escapeHtml(code.join("\n"))+'</code></pre>');code=[];}};
+        for(const raw of lines){
+          const line=raw.trimEnd(), trimmed=line.trim();
+          if(trimmed.startsWith("```")){flushPara();flushList();if(inCode){flushCode();inCode=false;}else inCode=true;continue;}
+          if(inCode){code.push(raw);continue;}
+          if(!trimmed){flushPara();flushList();continue;}
+          const h=trimmed.match(/^(#{2,3})\s+(.+)$/); if(h){flushPara();flushList();out.push('<div class="swrlz-h swrlz-h'+h[1].length+'">'+inlineFormat(h[2])+'</div>');continue;}
+          if(/^---+$/.test(trimmed)){flushPara();flushList();out.push("<hr>");continue;}
+          const ul=trimmed.match(/^[-*]\s+(.+)$/); if(ul){flushPara();if(listType&&listType!=="ul")flushList();listType="ul";list.push(ul[1]);continue;}
+          const ol=trimmed.match(/^\d+[.)]\s+(.+)$/); if(ol){flushPara();if(listType&&listType!=="ol")flushList();listType="ol";list.push(ol[1]);continue;}
+          const q=trimmed.match(/^>\s?(.*)$/); if(q){flushPara();flushList();out.push('<div class="swrlz-quote">'+inlineFormat(q[1])+'</div>');continue;}
+          para.push(trimmed);
+        }
+        flushPara();flushList();if(inCode||code.length)flushCode();
+        return out.join("");
+      };
+      const renderAssistantBody = (body,text) => { if(body) body.innerHTML=formatAssistantText(text); };
       const addCopyButton = node => {
         const body=node.querySelector(".assistant-body"); if(!body)return;
         const actions=document.createElement("div");actions.className="assistant-actions";
@@ -183,7 +232,7 @@
         if(!thread) return;
         for(const msg of (thread.messages||[])){
           if(msg.role==="assistant"){
-            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); node.querySelector(".assistant-body").textContent=msg.text||""; addCopyButton(node); messageList.appendChild(node);
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantBody(node.querySelector(".assistant-body"),msg.text||""); addCopyButton(node); messageList.appendChild(node);
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";
             const meta=document.createElement("div");meta.className="user-meta";meta.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";
@@ -303,7 +352,7 @@
         if(status.textContent!==nextLabel)status.textContent=nextLabel;
         const body=node.querySelector(".assistant-body");
         const nextText=String(g.text||"");
-        if(body.textContent!==nextText)body.textContent=nextText;
+        if(body.dataset.rawText!==nextText){body.dataset.rawText=nextText;renderAssistantBody(body,nextText);}
         body.hidden=!nextText;
       };
       const syncStation = async () => {
