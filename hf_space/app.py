@@ -63,15 +63,15 @@ def engine():
             _engine=(inspect,generate)
         return _engine
 
-def respond(message,history,model_id,profile):
+def respond(message,history,model_id,profile,user_profile):
     """Stream a downloadable diagnostic snapshot while inference is still running."""
     started=time.perf_counter()
     request_id=str(uuid.uuid4())
     history_items=[{"role":item.get("role"),"text":item.get("content")} for item in (history or []) if isinstance(item,dict) and item.get("role") in ("user","assistant") and isinstance(item.get("content"),str)]
-    payload={"requestId":request_id,"prompt":message,"history":history_items,"profileId":"LALM","profile":str(profile or "")[:6000]}
+    payload={"requestId":request_id,"prompt":message,"history":history_items,"profileId":"LALM","profile":str(profile or "")[:6000],"userProfile":str(user_profile or "")[:6000]}
     events=queue.Queue()
     report={"format":"swrlz-hf-probe-export-v2","modelId":model_id,"requestId":request_id,
-            "prompt":message,"history":history_items,"profile":str(profile or "")[:6000],"response":"","phase":"STARTING",
+            "prompt":message,"history":history_items,"profile":str(profile or "")[:6000],"userProfile":str(user_profile or "")[:6000],"response":"","phase":"STARTING",
             "timeToFirstDeltaSeconds":None,"elapsedSeconds":0.0,"deltaCount":0,
             "events":[],"note":"Live probe timeline, not container logs. Download again for the latest snapshot."}
     with tempfile.NamedTemporaryFile(mode="w",encoding="utf-8",suffix=".json",prefix="swrlz-probe-",delete=False) as f:
@@ -187,6 +187,11 @@ with gr.Blocks(title="§wyrlz Inference Laboratory") as demo:
                 "Keep meaningful objections, uncertainty and consent for consequential actions. "
                 "You are AI, not a human; do not pretend to have personal memories beyond supplied conversation."
             ),info="Editable per test. Sent with each probe request; no durable account profile."),
+            gr.Textbox(label="Test user profile · editable",lines=5,max_lines=12,value=(
+                "Name: Kami. Collaborative technical/creative partner testing §wyrlz. "
+                "Uses casual humor, callbacks, analogies and direct corrections. Prefers simple correct answers before "
+                "needless abstraction, evidence over assumptions, and precise iterative debugging."
+            ),info="Current-user identity/context for testing. Defaulted to Kami; replace this for another user."),
         ],
         title="§wyrlz Inference Laboratory",
         description="Independent model probe. The dragon Chat is at /; HF-only session state is not durable account storage.",
