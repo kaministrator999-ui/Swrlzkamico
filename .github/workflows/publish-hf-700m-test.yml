@@ -1,0 +1,49 @@
+name: Publish isolated 700M HF test Space
+on:
+  workflow_dispatch:
+    inputs:
+      approved:
+        description: "Create/update ONLY kamiloki/Swyrlz-700M-Test (never production)"
+        required: true
+        type: choice
+        options: ["no", "yes"]
+        default: "no"
+permissions:
+  contents: read
+jobs:
+  publish-test:
+    if: ${{ inputs.approved == 'yes' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify isolated 700M test package
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          root=Path("hf_700m_test")
+          assert all((root/p).is_file() for p in ("README.md","app.py","requirements.txt"))
+          ast.parse((root/"app.py").read_text())
+          assert "LiquidAI/LFM2-700M-GGUF" in (root/"app.py").read_text()
+          assert "llama-cpp-python==0.3.35" in (root/"requirements.txt").read_text()
+          print("Isolated 700M package ready")
+          PY
+      - name: Create or update ONLY dedicated HF 700M test Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python -m pip install 'huggingface_hub>=0.34,<2'
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+          token=os.environ.get("HF_TOKEN")
+          assert token, "HF_TOKEN secret missing"
+          api=HfApi(token=token)
+          target="kamiloki/Swyrlz-700M-Test"
+          api.create_repo(repo_id=target,repo_type="space",space_sdk="gradio",exist_ok=True)
+          info=api.repo_info(target,repo_type="space")
+          assert info.id==target, "Unexpected target Space"
+          api.upload_folder(folder_path="hf_700m_test",repo_id=target,repo_type="space",commit_message="Isolated native llama.cpp LFM2-700M test bench")
+          print("TEST_SPACE=https://huggingface.co/spaces/"+target)
+          PY
