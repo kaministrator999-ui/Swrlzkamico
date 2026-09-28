@@ -9,8 +9,16 @@ from typing import Any
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from api.durable_chat_contract import ConflictError, LoreRecord, MessageRecord, ThreadRecord, UserProfileRecord, new_id
+from api.durable_chat_contract import ConflictError, LoreRecord, MessageRecord, RapportRecord, ThreadRecord, UserProfileRecord, new_id
 from api.durable_redis_store import DurableStoreUnavailable, RedisRestChatStore
+from api.account_rapport import (
+    RapportValidationError,
+    rapport_control_public,
+    rapport_public,
+    reset_rapport_generation,
+    set_rapport_paused,
+    validate_rapport_fields,
+)
 from api.account_proposals import (
     ProposalPolicyError,
     ProposalStateError,
@@ -177,6 +185,17 @@ def install(server) -> None:
         "directAiWrites": False,
         "proposalGatedWrites": True,
         "proposalProtocol": True,
+    }
+    server.CAPABILITIES["durable-rapport-state"] = {
+        "kind": "durable-user-state",
+        "ready": RedisRestChatStore.configured(),
+        "contract": "swrlz-account-rapport-v1",
+        "authority": "account-owned-redis-rest",
+        "directAiWrites": False,
+        "proposalGatedWrites": True,
+        "scope": ["GLOBAL", "PROJECT", "THREAD"],
+        "resetSemantics": "generation-advance-preserve-history",
+        "inferenceBound": False,
     }
     server.CAPABILITIES["durable-proposal-state"] = {
         "kind": "durable-user-state",
@@ -427,6 +446,198 @@ def install(server) -> None:
             return _json_error(409, "LORE_DELETE_CONFLICT", str(exc))
         except Exception as exc:
             return _json_error(400, "LORE_DELETE_FAILED", str(exc))
+
+    @server.app.get("/api/account/rapport")
+    async def account_rapport_list(request: Request, limit: int = 300, includeHistory: bool = False):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            control = store.get_rapport_control(user_id=user_id)
+            records = store.list_rapport(
+                user_id=user_id,
+                limit=max(1, min(int(limit), 500)),
+                include_history=bool(includeHistory),
+            )
+            return {
+                "ok": True,
+                "contract": "swrlz-account-rapport-v1",
+                "control": rapport_control_public(control),
+                "records": [rapport_public(record) for record in records],
+            }
+        except Exception as exc:
+            return _json_error(503, "RAPPORT_READ_FAILED", str(exc))
+
+    @server.app.post("/api/account/rapport")
+    async def account_rapport_create(request: Request):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            body = await request.json()
+            if not isinstance(body, dict):
+                raise RapportValidationError("rapport payload must be an object")
+            fields = validate_rapport_fields(body)
+            control = store.get_rapport_control(user_id=user_id)
+            now = time.time()
+            provenance = {
+                "kind": "manual-user",
+                "surface": "chat-settings",
+                "scope": fields["scope"].lower(),
+                "rapportGeneration": control.current_generation,
+            }
+            if fields["scope_id"]:
+                provenance["scopeId"] = fields["scope_id"]
+            record = RapportRecord(
+                rapport_id=_clean_id(body.get("rapportId"), "rapport"),
+                user_id=user_id,
+                kind=fields["kind"],
+                label=fields["label"],
+                cue=fields["cue"],
+                meaning=fields["meaning"],
+                preferred_response=fields["preferred_response"],
+                source="user-manual",
+                provenance=provenance,
+                scope=fields["scope"],
+                scope_id=fields["scope_id"],
+                authored_by="USER",
+                active=fields["active"],
+                generation=control.current_generation,
+                version=1,
+                created_at=now,
+                updated_at=now,
+            )
+            saved = store.put_rapport(record, expected_version=0)
+            return {
+                "ok": True,
+                "record": rapport_public(saved),
+                "control": rapport_control_public(control),
+                "contract": "swrlz-account-rapport-v1",
+            }
+        except ConflictError as exc:
+            return _json_error(409, "RAPPORT_CREATE_CONFLICT", str(exc))
+        except RapportValidationError as exc:
+            return _json_error(400, "RAPPORT_CREATE_FAILED", str(exc))
+        except Exception as exc:
+            return _json_error(400, "RAPPORT_CREATE_FAILED", str(exc))
+
+    @server.app.put("/api/account/rapport/{rapport_id}")
+    async def account_rapport_update(request: Request, rapport_id: str):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            if not _ID.fullmatch(rapport_id):
+                return _json_error(400, "RAPPORT_ID_INVALID", "invalid rapport id")
+            current = store.get_rapport(user_id=user_id, rapport_id=rapport_id)
+            if current is None:
+                return _json_error(404, "RAPPORT_NOT_FOUND", "rapport record does not exist")
+            control = store.get_rapport_control(user_id=user_id)
+            if current.generation != control.current_generation:
+                return _json_error(409, "RAPPORT_GENERATION_ARCHIVED", "historical rapport records are inspect-only")
+            body = await request.json()
+            if not isinstance(body, dict):
+                raise RapportValidationError("rapport payload must be an object")
+            fields = validate_rapport_fields(body, current=current)
+            expected = int(body.get("version", current.version))
+            saved = store.put_rapport(
+                replace(
+                    current,
+                    kind=fields["kind"],
+                    label=fields["label"],
+                    cue=fields["cue"],
+                    meaning=fields["meaning"],
+                    preferred_response=fields["preferred_response"],
+                    scope=fields["scope"],
+                    scope_id=fields["scope_id"],
+                    active=fields["active"],
+                ),
+                expected_version=expected,
+            )
+            return {
+                "ok": True,
+                "record": rapport_public(saved),
+                "control": rapport_control_public(control),
+                "contract": "swrlz-account-rapport-v1",
+            }
+        except ConflictError as exc:
+            return _json_error(409, "RAPPORT_UPDATE_CONFLICT", str(exc))
+        except RapportValidationError as exc:
+            return _json_error(400, "RAPPORT_UPDATE_FAILED", str(exc))
+        except Exception as exc:
+            return _json_error(400, "RAPPORT_UPDATE_FAILED", str(exc))
+
+    @server.app.delete("/api/account/rapport/{rapport_id}")
+    async def account_rapport_delete(request: Request, rapport_id: str, version: int | None = None):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            if not _ID.fullmatch(rapport_id):
+                return _json_error(400, "RAPPORT_ID_INVALID", "invalid rapport id")
+            current = store.get_rapport(user_id=user_id, rapport_id=rapport_id)
+            if current is None:
+                return _json_error(404, "RAPPORT_NOT_FOUND", "rapport record does not exist")
+            control = store.get_rapport_control(user_id=user_id)
+            if current.generation != control.current_generation:
+                return _json_error(409, "RAPPORT_GENERATION_ARCHIVED", "historical rapport records are inspect-only")
+            deleted = store.delete_rapport(user_id=user_id, rapport_id=rapport_id, expected_version=version)
+            if not deleted:
+                return _json_error(404, "RAPPORT_NOT_FOUND", "rapport record does not exist")
+            return {"ok": True, "deleted": True, "id": rapport_id, "contract": "swrlz-account-rapport-v1"}
+        except ConflictError as exc:
+            return _json_error(409, "RAPPORT_DELETE_CONFLICT", str(exc))
+        except Exception as exc:
+            return _json_error(400, "RAPPORT_DELETE_FAILED", str(exc))
+
+    @server.app.put("/api/account/rapport/control")
+    async def account_rapport_control(request: Request):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            body = await request.json()
+            if not isinstance(body, dict) or "paused" not in body:
+                return _json_error(400, "RAPPORT_CONTROL_INVALID", "paused is required")
+            current = store.get_rapport_control(user_id=user_id)
+            saved = set_rapport_paused(
+                store,
+                user_id=user_id,
+                paused=bool(body.get("paused")),
+                expected_version=int(body.get("version", current.version)),
+            )
+            return {"ok": True, "control": rapport_control_public(saved), "contract": "swrlz-account-rapport-v1"}
+        except ConflictError as exc:
+            return _json_error(409, "RAPPORT_CONTROL_CONFLICT", str(exc))
+        except Exception as exc:
+            return _json_error(400, "RAPPORT_CONTROL_FAILED", str(exc))
+
+    @server.app.post("/api/account/rapport/reset")
+    async def account_rapport_reset(request: Request):
+        auth = _authenticated(request)
+        if isinstance(auth, JSONResponse):
+            return auth
+        store, user_id = auth
+        try:
+            body = await request.json()
+            current = store.get_rapport_control(user_id=user_id)
+            version = int(body.get("version", current.version)) if isinstance(body, dict) else current.version
+            saved = reset_rapport_generation(store, user_id=user_id, expected_version=version)
+            return {
+                "ok": True,
+                "control": rapport_control_public(saved),
+                "contract": "swrlz-account-rapport-v1",
+                "reset": True,
+            }
+        except ConflictError as exc:
+            return _json_error(409, "RAPPORT_RESET_CONFLICT", str(exc))
+        except Exception as exc:
+            return _json_error(400, "RAPPORT_RESET_FAILED", str(exc))
 
     @server.app.get("/api/account/proposals")
     async def account_proposal_list(request: Request, includeResolved: bool = True, limit: int = 200):
