@@ -140,7 +140,9 @@ async def send(request:Request):
     model_id=body.get("modelId","stock")
     route=next((r for r in routes() if r.model_id==model_id),None)
     if route is None or not route.available:raise HTTPException(422,"Selected model is not configured")
-    prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")\n    profile=body.get("profile","")\n    if not isinstance(profile,str) or len(profile)>6000:raise HTTPException(400,"Invalid test profile")
+    prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
+    profile=body.get("profile","")
+    if not isinstance(profile,str) or len(profile)>6000:raise HTTPException(400,"Invalid test profile")
     if not isinstance(prompt,str) or not prompt.strip() or len(prompt)>16000:raise HTTPException(400,"Invalid prompt")
     if not all(isinstance(v,str) and 0<len(v)<=160 for v in (tid,rid)):raise HTTPException(400,"Invalid IDs")
     with _lock:
