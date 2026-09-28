@@ -1,3 +1,16 @@
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier A visual foundation
+
+- **Requested outcome:** continue the approved Glitch Dragon Chat UI research into the first bounded implementation tier for the canonical clean-room `/chat/§wyrlz` product surface.
+- **Research authority:** `ui-research-glitch-dragon-chat` commit `bb25ba7b79c0d6572ef8b37bef47f20a09a9c9ea`, `docs/design/SWRLZ_GLITCH_DRAGON_CHAT_UI_RESEARCH.md`, Tier A.
+- **Primary Focus:** Clean-room Chat `main:chat/§wyrlz/index.html`. **Focus Group:** Clean-room Chat + deployed-main Chat source guard; Runtime Manifest remains unchanged-but-required for route identity; legacy `/chat` is reference/control only.
+- **Architecture reconciliation:** `api/live_source_guard.py` explicitly serves `/chat/§wyrlz` from the deployed main bundle (`CHAT_APP_BRANCH = "main"`) rather than runtime-hot page source. Tier A therefore extends the existing clean-room owner and does not create a second visual shell, stylesheet owner, transport owner, state store, or loader.
+- **Observed baseline:** clean-room page source blob `6017a2b1de090c22d0a5c31c21b906ebdeb0d2c1`; page metadata declares `1.0.47`; `chat/§wyrlz/VERSION.txt` is stale at `1.0.42` (pre-existing lineage drift to be repaired forward, not rewritten); Repository Work `1.0.21`; legacy Web Chat `1.5.86`; Runtime Manifest `152`; Server Runtime `2.3.287`.
+- **Tier A scope:** tokenized Glitch Dragon visual system; compact top-edge brand/thread/model/status chrome; drawer visual refinement; composer refinement; message/action polish; OS reduced-motion baseline; bounded page-owned visual/status cameras. Existing account, thread, Station transport, persistence, and LALM semantics remain unchanged.
+- **Version plan:** clean-room Chat advances to `1.0.48`; Repository Work advances from the current concurrency-checked authority at completion. Legacy Web Chat, Runtime Manifest, Server Runtime, Stream Contract, account, and LALM versions do not advance unless implementation evidence proves they changed.
+- **Deployment expectation:** NONE. This source implementation does not authorize a production deployment, workflow dispatch, hot activation, release request, or Vercel action.
+- **Verification plan:** fetch-back exact source/version blobs; validate required Tier A DOM/CSS/camera markers; validate inline JavaScript syntax; verify no manifest/transport/account endpoint mutation; re-read version authorities for concurrency before final assignment.
+- **Status:** IN PROGRESS.
+
 ### UPDATE CONTINUATION — 2026-09-24 — glibc compatibility repair prepared
 
 - Live 2.1.115 native bridge diagnostics identify both native modules failing import because `GLIBC_2.38` is unavailable in Vercel production. The governor selected two workers but inference fell back to Python. One short social-fastpath request completed; the longer request entered prefill.
