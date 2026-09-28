@@ -1,3 +1,17 @@
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier C profile + lore UI
+
+- **Requested outcome:** implement approved Tier C — You + §wyrlz + Lore & Memory UI, inspect/edit/delete presentation, scope/provenance, and proposal-inbox surface — without jumping ahead into Tier D's AI proposal approval protocol.
+- **Architecture reconciliation:** current main tree has no independent lore/memory/rapport/proposal durable module. Existing account/profile + Redis REST store is the only durable personal-state authority. Tier C therefore extends that authority with a typed account-owned lore record rather than creating browser-local or competing storage.
+- **Durable record plan:** introduce `LoreRecord` with account ownership, typed category (`USER_FACT`, `USER_LORE`, `COMPANION_SELF_LORE`, `SHARED_LORE`), title/content, source/provenance, confidence, global/project/thread scope, authored-by, editable/active state, version, and timestamps. Manual UI creation is always authored by USER; the client cannot forge an AI-authored record.
+- **Profile plan:** preserve the existing `UserProfileRecord` authority and add `companion_profile` as a versioned sibling to user/model/UI preferences. User profile presentation remains inside existing `preferences`; shared rapport remains Tier E and is not invented here.
+- **API plan:** authenticated account-scoped list/create/update/delete lore endpoints under `/api/account/lore`, using existing session ownership and Redis configuration. Create/update/delete require explicit user interaction. No automatic conversation extraction or AI writes are added.
+- **Privacy/camera plan:** lore Redis operations must not emit lore content into lockdown logs; sensitive command arguments/results will be redacted while preserving operation/key/size diagnostics. Browser account diagnostics must redact all lore endpoint bodies.
+- **Proposal inbox:** Tier C installs the product surface only and truthfully reports that no proposal authority exists yet. Tier D remains responsible for durable proposal schema, approve/edit/decline, audit/history, and auto-save policy.
+- **Baseline:** clean-room Chat `1.0.49` (blob `d58316b5c66eb633ef7636bc8e7a9ff07f9bd0ae`); Repository Work `1.0.23`. Stable server code declares runtime `2.3.299`, historical server release lineage reached `2.3.303`, while `runtime:versions/server-runtime.txt` is stale at `2.3.287`.
+- **Version plan:** clean-room Chat **1.0.50**; Server Runtime repair-forward to **2.3.304** (first unused generation after documented 2.3.303 lineage); Repository Work **1.0.24**. Runtime Manifest and legacy Web Chat remain unchanged unless evidence proves otherwise.
+- **Deployment expectation:** NONE. This approval authorizes Tier C source/schema/UI/version/roadmap work only. It does not authorize deployment, workflow dispatch, Vercel action, production promotion, live Redis migration/write, AI-authored lore mutation, or Tier D approval automation.
+- **Status:** IN PROGRESS.
+
 ### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier B settings shell
 
 - **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier B from `SWRLZ_GLITCH_DRAGON_CHAT_UI_RESEARCH.md` is implemented in the canonical clean-room Chat owner.
