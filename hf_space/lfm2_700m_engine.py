@@ -3,6 +3,7 @@ from __future__ import annotations
 import threading, time
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
+from brain_programming import programming_intent
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -231,33 +232,6 @@ def _response_mode(prompt):
         "Ask a question only when information is genuinely needed to answer correctly."
     )
 
-def _programming_intent(prompt,history,pinned_context):
-    """Brain-owned semantic routing hints. These guide cognition; they grant no write/tool authority."""
-    text=str(prompt or "").strip()
-    p=" ".join(text.lower().split())
-    code_pins=[x for x in (pinned_context or []) if isinstance(x,dict) and "```" in str(x.get("text") or "")]
-    coding_terms=("code","html","css","javascript","typescript","python","kotlin","java","cpp","c++","function","class","file","project","api","server","bug","compile")
-    inherited=bool(code_pins) or any(any(term in str(m.get("content") or "").lower() for term in coding_terms) for m in (history or [])[-4:])
-    coding=any(term in p for term in coding_terms) or inherited
-    if not coding:return {"codingTask":False,"changeClass":"none","artifactContinuation":False,"newProject":False}
-    if any(x in p for x in ("separate project","separately","new project","another project","different project","from scratch")):
-        change="create";new_project=True
-    elif any(x in p for x in ("fix","bug","broken","error","issue","repair")):
-        change="fix";new_project=False
-    elif any(x in p for x in ("refactor","clean up","restructure","optimize")):
-        change="refactor";new_project=False
-    elif any(x in p for x in ("add","implement","feature","support")):
-        change="feature";new_project=False
-    elif any(x in p for x in ("review","audit","inspect")):
-        change="review";new_project=False
-    elif any(x in p for x in ("explain","what does","how does")):
-        change="explain";new_project=False
-    else:
-        change="create" if not code_pins else "feature";new_project=False
-    continuation=bool(code_pins) and not new_project and (any(x in p for x in ("this","that","it","same","previous","pinned","code","file","project")) or change in {"fix","refactor","feature"})
-    return {"codingTask":True,"changeClass":change,"artifactContinuation":continuation,"newProject":new_project,"pinnedCodeArtifactCount":len(code_pins)}
-
-
 def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
@@ -270,8 +244,7 @@ def generate_events(payload):
     convergence=_convergence_candidate(history,prompt)
     if convergence:
         yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
-    programming=_programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [])
-    yield {"type":"PROGRAMMING_INTENT","intent":programming}
+    programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [])
     system=("You are §wyrlz, a conversational AI companion. Respond to the user's actual message. Be direct, natural "
             "and conversational; do not narrate internal decisions, announce routine adjustments, deliver generic lectures, "
             "repeat profiles, or tack on unnecessary follow-up questions. Do not imply a long relationship or many prior "
@@ -282,7 +255,7 @@ def generate_events(payload):
     system+="\n"+_response_mode(prompt)
     if programming.get("codingTask"):
         system+="\nPROGRAMMING COGNITION: changeClass="+str(programming.get("changeClass"))+"; artifactContinuation="+str(bool(programming.get("artifactContinuation"))).lower()+"; newProject="+str(bool(programming.get("newProject"))).lower()+". Treat these as reasoning/routing context only; never claim a file, pin, deployment, or persistent mutation occurred without a Workstation/server receipt."
-    if payload.get("pinnedCodeEditTargetId") or programming.get("artifactContinuation"):
+    if programming.get("artifactMutationRequested") and programming.get("artifactTargetId"):
         system+="\nPINNED CODE EDIT MODE: The current request targets an already-pinned code artifact. Return the complete revised code fence(s) needed for that artifact, followed by only a concise explanation of what changed. Do not describe the revised code as a new project or duplicate artifact."
     system+="\nBUILT-IN §WYRLZ PROFILE (default assistant identity/behavior):\n"+BUILTIN_ASSISTANT_PROFILE
     if custom_assistant_profile:
