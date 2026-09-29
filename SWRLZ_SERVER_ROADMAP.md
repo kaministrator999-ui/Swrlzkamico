@@ -1,3 +1,14 @@
+### UPDATE STARTED — 2026-09-28 — HF Chat 1.0.55 acceptance + 700M context repair
+
+- **Observed live defects:** `kamiloki/Swyrlz` / `miloki-swyrlz.hf.space` still presents the pre-acceptance visual state and normal short user turns can fail with `Current prompt/profile context exceeds the 700M input budget`.
+- **Source finding:** canonical and HF-deploy-branch `chat/§wyrlz/index.html` are already byte-identical at Chat **1.0.55**; the visual mismatch is therefore deployment/runtime state, not missing Tier A–G source.
+- **700M finding:** HF 700M uses `n_ctx=4096` with a hard input budget of **3712 tokens** while an always-on built-in §wyrlz profile, role frame, response-mode frame, optional profile, user profile, current prompt, and retained history share that budget. History is trimmed first, but fixed prompt/profile layers can independently exceed 3712 and trigger the reported failure for a tiny current prompt.
+- **Authorized repair:** increase the bounded HF 700M context allocation while preserving output reserve and oldest-history-first trimming; add explicit budget diagnostics so failures report measured tokens/budget. Do not remove the built-in identity/profile merely to make the request fit.
+- **Deployment scope:** dispatch the existing guarded Hugging Face deployment workflow against this branch with explicit approval, preserving its pre-deploy snapshot and rollback checkpoint.
+- **Acceptance scope:** verify the deployed Space revision and live Chat/700M behavior after workflow completion.
+- **Not authorized:** Vercel deployment, model retraining, unrelated architecture/features, or silent profile/lore mutations.
+- **Status:** IN PROGRESS.
+
 ### UPDATE CONTINUATION — 2026-09-28 — Knowledge-frontier + multi-lane learning architecture
 
 - Added **knowledge-frontier detection** as a target reasoning behavior: establish the highest demonstrated layer of understanding from conversation evidence and begin at the first materially missing rung, instead of restarting from basics or assuming unsupported expertise.
