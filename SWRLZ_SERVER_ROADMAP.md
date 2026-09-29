@@ -1993,3 +1993,11 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Verification source:** final branch re-read confirms the Brain router, shared intent event, Workstation revision authority, removal of the old Station edit-target keywords, Chat artifact renderer, aligned VERSION.txt, regression coverage, and CI syntax inclusion. tests/test_hf_candidate.py now includes same-artifact r1→r2 continuation, immutable source-message text, separate explanation, and explicit-new-project non-mutation cases.
 - **Verification boundary:** the new tests and syntax workflow are committed but were not executed in this session because the available GitHub connector exposes workflow reads/logs but no workflow-dispatch action. Therefore this event is **SOURCE COMPLETE / SOURCE-INSPECTED / OFFLINE TEST EXECUTION PENDING**, not runtime- or live-verified.
 - **Deployment:** none. The existing HF Space was not rebuilt or restarted; explicit approval remains required before the manual HF publish workflow may deploy this source.
+
+### UPDATE CONTINUATION STARTED — 2026-09-29 — streaming open-fence code-container repair
+
+- **Observed live symptom:** during a live assistant code response, Chat displayed the literal opening Markdown fence (` ```html `) and raw source as ordinary prose instead of entering the code container.
+- **Cause boundary:** `renderAssistantContent()` only recognizes a fence after a closing triple-backtick already exists. Streaming generation necessarily has a period where the opening fence and code body exist before the closing fence arrives, so the Mask falls back to prose until completion.
+- **Requested repair:** preserve the existing complete-fence parser, but treat one trailing unmatched opening fence as a provisional streaming code block using the same code-container renderer and stable scroll key. Once the closing fence arrives, normal parsing replaces the provisional block without changing Brain/Workstation semantics.
+- **Ownership:** presentation-only Mask repair. No LALM cognition, pin authority, artifact identity, revision storage, or deployment semantics change.
+- **Deployment:** source-only continuation; no HF publish/restart without explicit approval.
