@@ -41,6 +41,7 @@
     .station-progress{margin:0 0 5px 38px!important;color:#8fd8ed!important;font-size:10px!important;letter-spacing:.055em;text-transform:uppercase}
     .assistant-body{margin-left:38px!important;padding:10px 12px!important;color:#f4f9fd!important;font-size:15px;line-height:1.5}
     .assistant-actions{display:flex;justify-content:flex-end;margin:4px 0 0 38px;padding-right:2px}.copy-response{border:0;border-radius:7px;background:transparent;color:#9fd6e9;padding:4px 6px;font-size:10px;cursor:pointer;opacity:.86}.copy-response:hover{background:rgba(10,38,59,.55);color:#d8f7ff}.copy-response:active{transform:translateY(1px)}
+    .assistant-body .message-text{white-space:pre-wrap;overflow-wrap:anywhere}.assistant-body .code-block{margin:10px 0;border:1px solid rgba(126,214,255,.26);border-radius:12px;overflow:hidden;background:rgba(1,10,19,.92);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}.assistant-body .code-block:first-child{margin-top:0}.assistant-body .code-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 9px;border-bottom:1px solid rgba(126,214,255,.16);background:linear-gradient(90deg,rgba(10,39,59,.9),rgba(25,27,57,.72));font-family:var(--font-telemetry);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#9fdff0}.assistant-body .copy-code{border:1px solid rgba(126,214,255,.20);border-radius:7px;padding:4px 7px;background:rgba(7,28,45,.72);color:#d9f7ff;font:inherit;letter-spacing:.05em;cursor:pointer}.assistant-body .copy-code:hover,.assistant-body .copy-code:focus-visible{border-color:rgba(56,232,255,.48);background:rgba(13,48,70,.86)}.assistant-body pre{margin:0;padding:12px 13px;overflow:auto;max-height:62vh;white-space:pre;tab-size:2;background:transparent;color:#eaf8ff;font-family:var(--font-telemetry);font-size:12px;line-height:1.55;text-shadow:none}.assistant-body code{font-family:inherit}
     .user-message{grid-template-columns:minmax(0,1fr) 30px;grid-template-areas:"identity avatar" "bubble avatar";column-gap:8px}
     .user-meta{justify-self:end;padding:4px 7px;border:1px solid rgba(126,214,255,.18);border-radius:8px;background:rgba(5,22,38,.46);backdrop-filter:blur(10px);text-shadow:0 1px 3px rgba(0,0,0,.85)}
     .user-avatar,.user-avatar-fallback{width:30px;height:30px;box-shadow:0 2px 8px rgba(0,0,0,.42)}
@@ -826,13 +827,34 @@
         details.append(summary,body);node.appendChild(details);
       };
 
+      const renderAssistantContent=(container,text)=>{
+        container.innerHTML="";
+        const source=String(text||"");
+        const fence=/```([^\n`]*)\n?([\s\S]*?)```/g;
+        let cursor=0,match;
+        const appendText=value=>{if(!value)return;const span=document.createElement("div");span.className="message-text";span.textContent=value;container.appendChild(span);};
+        while((match=fence.exec(source))){
+          appendText(source.slice(cursor,match.index));
+          const language=String(match[1]||"code").trim().toLowerCase()||"code";
+          const raw=String(match[2]||"").replace(/\n$/,"");
+          const block=document.createElement("section");block.className="code-block";
+          const head=document.createElement("div");head.className="code-head";
+          const label=document.createElement("span");label.textContent=language;
+          const copy=document.createElement("button");copy.type="button";copy.className="copy-code";copy.textContent="Copy code";
+          copy.onclick=async()=>{try{await navigator.clipboard.writeText(raw);copy.textContent="Copied";setTimeout(()=>copy.textContent="Copy code",1200);}catch(_){copy.textContent="Copy failed";setTimeout(()=>copy.textContent="Copy code",1200);}};
+          const pre=document.createElement("pre");const code=document.createElement("code");code.textContent=raw;pre.appendChild(code);head.append(label,copy);block.append(head,pre);container.appendChild(block);
+          cursor=fence.lastIndex;
+        }
+        appendText(source.slice(cursor));
+        if(!container.childNodes.length)appendText(source);
+      };
       const renderConversation = thread => {
         syncTopEdge(thread);
         [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
         if(!thread){renderWorkSurface();return;}
         for(const msg of (thread.messages||[])){
           if(msg.role==="assistant"){
-            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); node.querySelector(".assistant-body").textContent=msg.text||""; addCopyButton(node); addEvidenceBlock(node,msg); messageList.appendChild(node);
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||""); addCopyButton(node); addEvidenceBlock(node,msg); messageList.appendChild(node);
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";
             const meta=document.createElement("div");meta.className="user-meta";meta.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";
