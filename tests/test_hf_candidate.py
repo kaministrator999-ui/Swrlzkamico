@@ -22,6 +22,8 @@ class Candidate(unittest.TestCase):
     time.sleep(.01)
    self.assertEqual(original["threads"][0]["messages"][-1]["text"],"Original test output")
    self.assertEqual(original["threads"][0]["messages"][-1]["meta"]["modelId"],"stock")
+   self.assertIsInstance(original["threads"][0]["messages"][0]["createdAt"],int)
+   self.assertIsInstance(original["threads"][0]["messages"][-1]["createdAt"],int)
    self.assertIsInstance(original["activeGeneration"]["programmingIntent"],dict)
    body["requestId"]="req-r39";body["messageId"]="user-r39";body["assistantMessageId"]="assistant-r39";body["modelId"]="r39"
    self.assertEqual(client.post("/api/lalm_station/send",json=body).status_code,202)
@@ -32,6 +34,25 @@ class Candidate(unittest.TestCase):
    self.assertEqual(snap["activeGeneration"]["terminalType"],"COMPLETE")
    self.assertEqual(snap["threads"][0]["messages"][-1]["text"],"R39 test output")
    self.assertEqual(snap["threads"][0]["messages"][-1]["meta"]["modelId"],"r39")
+
+ def test_station_live_stream_projects_incremental_delta(self):
+  def stock(_payload):
+   yield {"type":"STATUS","phase":"LOADING"}
+   yield {"type":"DELTA","text":"Hello "}
+   time.sleep(.03)
+   yield {"type":"DELTA","text":"stream"}
+   yield {"type":"COMPLETED","phase":"COMPLETE"}
+  set_generator(lambda payload:iter([{"type":"DELTA","text":"unused"},{"type":"COMPLETE"}]),stock)
+  with TestClient(station_app) as client:
+   body={"requestId":"req-stream","threadId":"thread-stream","messageId":"user-stream","assistantMessageId":"assistant-stream","prompt":"hello","modelId":"stock"}
+   self.assertEqual(client.post("/api/lalm_station/send",json=body).status_code,202)
+   with client.stream("GET","/api/lalm_station/stream?requestId=req-stream") as response:
+    self.assertEqual(response.status_code,200)
+    lines=[line for line in response.iter_lines() if line]
+   events=[json.loads(line) for line in lines]
+   self.assertTrue(any(e.get("type")=="STATUS" and e.get("phase")=="LOADING" for e in events))
+   self.assertEqual("".join(e.get("text","") for e in events if e.get("type")=="DELTA"),"Hello stream")
+   self.assertTrue(events[-1].get("terminal"))
 
  def test_brain_routes_pinned_code_edit_to_same_artifact_revision(self):
   def stock(payload):
@@ -99,6 +120,10 @@ class Candidate(unittest.TestCase):
   self.assertIn('kind=="DELTA"',src)
   self.assertIn('kind=="FAILED"',src)
   self.assertNotIn("torch.hub",src)
+  station=(ROOT/"hf_space/station.py").read_text(encoding="utf-8")
+  self.assertIn('StreamingResponse(events()',station)
+  self.assertIn('/api/lalm_station/stream',station)
+  self.assertIn('"createdAt":int(time.time()*1000)',station)
 
  def test_model_provenance(self):
   p=json.loads((ROOT/"hf_space/MODEL_PROVENANCE.json").read_text(encoding="utf-8"))
