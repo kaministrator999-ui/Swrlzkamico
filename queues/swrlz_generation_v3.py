@@ -401,6 +401,21 @@ async def generate_swrlz_response(payload) -> None:
         )
         store.update_message(replace(assistant, committed_text=committed, state=state, updated_at=time.time()))
         _resource_camera("redis-state","MESSAGE_COMMIT",request_id=request_id)
+        if state == "COMPLETE":
+            first_fence = committed.find("```")
+            closing_fence = committed.find("```", first_fence + 3) if first_fence >= 0 else -1
+            if first_fence >= 0 and closing_fence >= 0 and len(committed[first_fence + 3:closing_fence].strip()) >= 24:
+                try:
+                    from api.chat_state import set_message_pinned_for_user
+                    set_message_pinned_for_user(
+                        user_id=user_id,
+                        thread_id=thread_id,
+                        message_id=job.assistant_message_id,
+                        pinned=True,
+                    )
+                    _camera("code-response-auto-pinned", request_id=request_id, messageId=job.assistant_message_id)
+                except Exception as pin_exc:
+                    _camera("code-response-auto-pin-failed", request_id=request_id, errorType=type(pin_exc).__name__)
         current = store.get_generation(user_id=user_id, request_id=request_id)
         if current is not None:
             store.update_generation(replace(current, state=state, last_seq=seq, completed_at=time.time()))
