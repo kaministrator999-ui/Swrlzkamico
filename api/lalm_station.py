@@ -57,6 +57,28 @@ def _generation_view(snapshot: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+
+def _pinned_context(*, user_id: str, thread_id: str, limit: int = 24) -> list[dict[str, Any]]:
+    """Project authoritative pinned messages for Brain context without trusting browser text."""
+    value = _read_state(user_id)
+    _revision, state, _tombstones = _state_value(value)
+    meta = next((item for item in state.get("threads", []) if str(item.get("id") or "") == thread_id), None)
+    pins = meta.get("messagePins") if isinstance(meta, dict) and isinstance(meta.get("messagePins"), dict) else {}
+    wanted = {str(message_id) for message_id, enabled in pins.items() if enabled}
+    if not wanted:
+        return []
+    redis = canonical_redis_store()
+    durable, _legacy_count = _canonical_messages_compatible(redis, user_id=user_id, thread_id=thread_id, limit=1000)
+    result: list[dict[str, Any]] = []
+    for message in durable:
+        message_id = str(message.message_id or "")
+        role = str(message.role or "").upper()
+        text = str(message.committed_text or "")
+        if message_id in wanted and role in {"USER", "ASSISTANT"} and text:
+            result.append({"messageId": message_id, "role": role, "text": text[:12000], "pinned": True})
+    return result[-max(1, min(int(limit), 24)):]
+
+
 def install(server, chat_extensions) -> None:
     app = server.app
 
@@ -94,7 +116,7 @@ def install(server, chat_extensions) -> None:
             "method":request.method,"atUnixMs":int(time.time()*1000)
         },separators=(",",":")),flush=True)
         try:
-            user_id_from_request(request)
+            user_id = user_id_from_request(request)
             print("SWRLZ_STATION_TRANSPORT "+__import__("json").dumps({
                 "stage":"auth-ok","requestId":request_id,"atUnixMs":int(time.time()*1000)
             },separators=(",",":")),flush=True)
@@ -116,9 +138,13 @@ def install(server, chat_extensions) -> None:
                 "assistantMessageId": turn.assistant_message_id,
                 "prompt": str(payload.get("prompt") or ""),
                 "history": history,
+                "pinnedContext": _pinned_context(user_id=user_id, thread_id=turn.thread_id),
                 "payload": {
-                    key: value for key, value in payload.items()
-                    if key not in {"history", "session", "cookie", "authorization"}
+                    **{
+                        key: value for key, value in payload.items()
+                        if key not in {"history", "pinnedContext", "session", "cookie", "authorization"}
+                    },
+                    "pinnedContext": _pinned_context(user_id=user_id, thread_id=turn.thread_id),
                 },
                 "acceptedAt": time.time(),
             }
@@ -192,21 +218,34 @@ def install(server, chat_extensions) -> None:
                     # committed conversation messages.
                     if role == "ASSISTANT" and (not text or str(message.state or "").upper() == "STREAMING"):
                         continue
+                    provenance = message.provenance if isinstance(message.provenance, dict) else {}
+                    safe_provenance = {
+                        "sourceAuthority": str(provenance.get("authority") or "")[:64],
+                        "turnContract": str(provenance.get("turnContract") or "")[:96],
+                        "commitPhase": str(provenance.get("commitPhase") or "")[:64],
+                        "terminalType": str(provenance.get("terminalType") or "")[:32],
+                    }
+                    safe_provenance = {key: value for key, value in safe_provenance.items() if value}
                     rendered_messages.append({
                         "id": str(message.message_id),
                         "role": role.lower(),
                         "text": text,
                         "createdAt": int(float(message.created_at or 0) * 1000),
                         "state": str(message.state or "").lower(),
-                        "pinned": bool(meta.get("pinned", False)),
-                        "meta": {"requestId": str(message.request_id or ""), "authority": "workstation"},
+                        "pinned": bool((meta.get("messagePins") if isinstance(meta.get("messagePins"), dict) else {}).get(str(message.message_id), False)),
+                        "meta": {
+                            "requestId": str(message.request_id or ""),
+                            "authority": "workstation",
+                            "provenance": safe_provenance,
+                        },
                     })
                 threads.append({
                     "id": thread_id,
-                    "title": str(meta.get("title") or record.title or "New conversation"),
+                    "title": str((record.title if str(meta.get("title") or "").strip() in {"", "New conversation"} else meta.get("title")) or "New conversation"),
                     "createdAt": int(float(record.created_at or 0) * 1000),
                     "updatedAt": int(float(record.updated_at or 0) * 1000),
                     "pinned": bool(meta.get("pinned", False)),
+                    "messagePins": dict(meta.get("messagePins") or {}) if isinstance(meta.get("messagePins"), dict) else {},
                     "messages": rendered_messages,
                 })
 
@@ -230,6 +269,7 @@ def install(server, chat_extensions) -> None:
                         "createdAt": int(projected.get("createdAt") or stamp),
                         "updatedAt": stamp,
                         "pinned": False,
+                        "messagePins": {},
                         "messages": [],
                     })
                 revision += 1
