@@ -12,6 +12,11 @@ from vercel.queue import subscribe
 
 from api.durable_chat_contract import GenerationEventRecord
 from api.durable_redis_store import RedisRestChatStore
+from api.account_proposal_bridge import (
+    StructuredProposalSignalError,
+    consume_structured_proposal_event,
+    is_structured_proposal_event,
+)
 
 TERMINAL = {"COMPLETED", "FAILED", "CANCELLED"}
 CONTRACT = "swrlz_llm_stream_v2"
@@ -103,6 +108,19 @@ def _wire(raw: dict[str, Any], *, seq: int, request_id: str, engine) -> dict[str
         event["firstDeltaLatencyMs"] = int(raw["firstDeltaLatencyMs"])
     if raw.get("totalLatencyMs") is not None:
         event["totalLatencyMs"] = int(raw["totalLatencyMs"])
+    receipt = raw.get("proposalReceipt")
+    if isinstance(receipt, dict):
+        event["proposalReceipt"] = {
+            "contract": str(receipt.get("contract") or "")[:96],
+            "signalId": str(receipt.get("signalId") or "")[:160],
+            "decision": str(receipt.get("decision") or "")[:32],
+            "proposalId": str(receipt.get("proposalId") or "")[:160],
+            "state": str(receipt.get("state") or "")[:32],
+            "category": str(receipt.get("category") or "")[:64],
+            "operation": str(receipt.get("operation") or "")[:64],
+            "risk": str(receipt.get("risk") or "")[:16],
+            "version": int(receipt.get("version") or 0),
+        }
     return event
 
 
@@ -170,20 +188,40 @@ async def generate_swrlz_response(payload) -> None:
         engineId=str(getattr(engine, "ENGINE_ID", "")),
     )
 
-    # R39 bring-up: isolate raw turn -> tokenizer -> model -> decode.
-    # Do not inject transcript/profile machinery while proving baseline inference.
-    # Reintroduce each source later behind an explicit bounded context budget.
-    history: list[dict[str, str]] = []
+    # Keep ordinary transcript/profile machinery out of the bring-up path, but
+    # explicitly pinned messages are user-selected working context and therefore
+    # receive a separate bounded budget.
+    raw_pins = data.get("pinnedContext") if isinstance(data.get("pinnedContext"), list) else []
+    pinned_context: list[dict[str, str]] = []
+    for item in raw_pins[-6:]:
+        if not isinstance(item, dict):
+            continue
+        role = str(item.get("role") or "").strip().upper()
+        text = str(item.get("text") or "").strip()
+        if role in {"USER", "ASSISTANT"} and text:
+            pinned_context.append({"role": role, "text": "[PINNED] " + text[:2000]})
+    history: list[dict[str, str]] = pinned_context
+
+    prompt_text = str(data.get("prompt") or "")
+    compact_prompt = " ".join(prompt_text.lower().split())
+    greeting_only = compact_prompt in {"hey", "hi", "hello", "yo", "sup", "hey there", "hi there", "hello there"}
+    directive_parts = [
+        "Pinned history entries, when present, are explicit working references selected by the user/system; use them when the current request refers to pinned material.",
+        "When returning a multi-file code project, label each fenced block with language plus file=path (example: cpp file=src/Player.cpp) so Chat can render file tabs. Do not split a single-file solution unnecessarily.",
+    ]
+    if greeting_only:
+        directive_parts.append("This is a casual greeting only. Reply naturally and briefly in one or two short sentences; do not explain profiles, roles, system context, or capabilities unless asked.")
 
     engine_payload = {
         "protocolVersion": 2, "requestId": request_id,
-        "prompt": str(data.get("prompt") or ""), "receivedText": str(data.get("prompt") or ""),
-        "history": history[-32:],
+        "prompt": prompt_text, "receivedText": prompt_text,
+        "history": history[-6:],
+        "pinnedContext": pinned_context,
         "inputProvenance": data.get("inputProvenance") if isinstance(data.get("inputProvenance"), dict) else {},
         "presentationIntent": str(data.get("presentationIntent") or "PROSE"),
         "generation": data.get("generation") if isinstance(data.get("generation"), dict) else {},
         "profileId": str(data.get("profileId") or "AUTO"),
-        "responseDirective": "",
+        "responseDirective": " ".join(directive_parts),
     }
 
     def cancelled() -> bool:
@@ -196,7 +234,9 @@ async def generate_swrlz_response(payload) -> None:
     _camera(
         "generate-events-enter",
         request_id=request_id,
-        historyCount=len(history[-32:]),
+        historyCount=len(history[-6:]),
+        pinnedContextCount=len(pinned_context),
+        greetingOnly=greeting_only,
         promptChars=len(str(data.get("prompt") or "")),
     )
     last_resource_phase = ""
@@ -204,6 +244,66 @@ async def generate_swrlz_response(payload) -> None:
         for raw in engine.generate_events(engine_payload, cancelled):
             if not isinstance(raw, dict):
                 continue
+            if is_structured_proposal_event(raw):
+                try:
+                    receipt = consume_structured_proposal_event(
+                        store,
+                        user_id=user_id,
+                        thread_id=thread_id,
+                        request_id=request_id,
+                        raw=raw,
+                    )
+                    decision = str(receipt.get("decision") or "ASK").upper()
+                    phase = {
+                        "ASK": "PROPOSAL_QUEUED",
+                        "AUTO_APPLIED": "PROPOSAL_AUTO_APPLIED",
+                        "SESSION_ONLY": "PROPOSAL_SESSION_ONLY",
+                        "NEVER": "PROPOSAL_BLOCKED_POLICY",
+                        "EXISTING": "PROPOSAL_DUPLICATE_SUPPRESSED",
+                    }.get(decision, "PROPOSAL_HANDLED")
+                    _camera(
+                        "structured-proposal-handled",
+                        request_id=request_id,
+                        decision=decision,
+                        signalId=str(receipt.get("signalId") or ""),
+                        proposalId=str(receipt.get("proposalId") or ""),
+                        state=str(receipt.get("state") or ""),
+                        category=str(receipt.get("category") or ""),
+                        operation=str(receipt.get("operation") or ""),
+                        risk=str(receipt.get("risk") or ""),
+                        version=int(receipt.get("version") or 0),
+                    )
+                    raw = {
+                        "type": "STATUS",
+                        "phase": phase,
+                        "reason": "Structured account proposal handled by the configured user policy.",
+                        "categories": ["ACCOUNT_PROPOSAL_SIGNAL"],
+                        "proposalReceipt": receipt,
+                    }
+                except StructuredProposalSignalError as exc:
+                    _camera(
+                        "structured-proposal-rejected",
+                        request_id=request_id,
+                        errorType=type(exc).__name__,
+                    )
+                    raw = {
+                        "type": "STATUS",
+                        "phase": "PROPOSAL_REJECTED",
+                        "reason": "A structured account proposal signal was rejected by the proposal contract.",
+                        "categories": ["ACCOUNT_PROPOSAL_SIGNAL_REJECTED"],
+                    }
+                except Exception as exc:
+                    _camera(
+                        "structured-proposal-failed",
+                        request_id=request_id,
+                        errorType=type(exc).__name__,
+                    )
+                    raw = {
+                        "type": "STATUS",
+                        "phase": "PROPOSAL_FAILED",
+                        "reason": "A structured account proposal could not be processed.",
+                        "categories": ["ACCOUNT_PROPOSAL_SIGNAL_FAILED"],
+                    }
             seq += 1
             resource_phase = str(raw.get("phase") or raw.get("type") or "EVENT")
             if resource_phase != last_resource_phase:
@@ -301,6 +401,21 @@ async def generate_swrlz_response(payload) -> None:
         )
         store.update_message(replace(assistant, committed_text=committed, state=state, updated_at=time.time()))
         _resource_camera("redis-state","MESSAGE_COMMIT",request_id=request_id)
+        if state == "COMPLETE":
+            first_fence = committed.find("```")
+            closing_fence = committed.find("```", first_fence + 3) if first_fence >= 0 else -1
+            if first_fence >= 0 and closing_fence >= 0 and len(committed[first_fence + 3:closing_fence].strip()) >= 24:
+                try:
+                    from api.chat_state import set_message_pinned_for_user
+                    set_message_pinned_for_user(
+                        user_id=user_id,
+                        thread_id=thread_id,
+                        message_id=job.assistant_message_id,
+                        pinned=True,
+                    )
+                    _camera("code-response-auto-pinned", request_id=request_id, messageId=job.assistant_message_id)
+                except Exception as pin_exc:
+                    _camera("code-response-auto-pin-failed", request_id=request_id, errorType=type(pin_exc).__name__)
         current = store.get_generation(user_id=user_id, request_id=request_id)
         if current is not None:
             store.update_generation(replace(current, state=state, last_seq=seq, completed_at=time.time()))
