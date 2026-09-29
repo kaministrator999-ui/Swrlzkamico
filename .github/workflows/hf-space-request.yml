@@ -1,0 +1,52 @@
+name: Hugging Face Space Deploy Request
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_SPACE_REQUEST.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-hf-space-request
+  cancel-in-progress: false
+
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    outputs:
+      source_ref: ${{ steps.request.outputs.source_ref }}
+      approved: ${{ steps.request.outputs.approved }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate explicit deployment request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=".deploy/HF_SPACE_REQUEST.txt"
+          test -f "$file" || { echo "::error::Missing $file"; exit 1; }
+          get() { sed -n "s/^$1=//p" "$file" | tail -n 1; }
+          target="$(get TARGET)"
+          approved="$(get APPROVED)"
+          source_ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          test "$target" = "kamiloki/Swyrlz" || { echo "::error::TARGET must be the existing kamiloki/Swyrlz Space."; exit 1; }
+          test "$approved" = "1" || { echo "::error::APPROVED=1 is required."; exit 1; }
+          test -n "$source_ref" || { echo "::error::SOURCE_REF is required."; exit 1; }
+          test -n "$nonce" || { echo "::error::REQUEST_NONCE is required so each approved deployment is an intentional new request."; exit 1; }
+          echo "source_ref=$source_ref" >> "$GITHUB_OUTPUT"
+          echo "approved=yes" >> "$GITHUB_OUTPUT"
+          echo "Approved HF deployment request: target=$target source_ref=$source_ref nonce=$nonce"
+
+  deploy:
+    needs: request
+    uses: ./.github/workflows/manual-hf-space.yml
+    with:
+      source_ref: ${{ needs.request.outputs.source_ref }}
+      mode: deploy
+      approved: ${{ needs.request.outputs.approved }}
+    secrets:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
