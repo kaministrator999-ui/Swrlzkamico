@@ -22,6 +22,7 @@ from api.chat_state import (
     _clean_tombstones,
     _read_blob,
     _write_blob,
+    set_message_pinned_for_user,
 )
 from api.google_account import user_id_from_request
 from api.hot_loader import get_chat_history_policy
@@ -350,6 +351,32 @@ def begin_turn(request: Request, payload: dict[str, Any]) -> CanonicalTurn:
     return turn
 
 
+def _should_auto_pin_code(text: str, terminal: str) -> bool:
+    if terminal != "COMPLETED":
+        return False
+    source = str(text or "")
+    start = source.find("\`\`\`")
+    if start < 0:
+        return False
+    end = source.find("\`\`\`", start + 3)
+    return end >= 0 and len(source[start + 3:end].strip()) >= 24
+
+
+def _auto_pin_completed_code(turn: CanonicalTurn, text: str, terminal: str) -> None:
+    if not _should_auto_pin_code(text, terminal):
+        return
+    try:
+        set_message_pinned_for_user(
+            user_id=turn.user_id,
+            thread_id=turn.thread_id,
+            message_id=turn.assistant_message_id,
+            pinned=True,
+        )
+        _chat_lockdown("turn-code-auto-pin", request_id=turn.request_id, threadId=turn.thread_id, assistantMessageId=turn.assistant_message_id, pinned=True)
+    except Exception as exc:
+        _chat_lockdown("turn-code-auto-pin-failed", request_id=turn.request_id, threadId=turn.thread_id, assistantMessageId=turn.assistant_message_id, errorType=type(exc).__name__)
+
+
 def finish_turn(turn: CanonicalTurn, *, text: str, terminal_type: str, reason: str = "") -> int:
     terminal = _bounded(terminal_type, 32).upper() or "FAILED"
     _chat_lockdown("turn-finish-enter", request_id=turn.request_id, threadId=turn.thread_id, assistantMessageId=turn.assistant_message_id, backend=turn.storage_backend, terminalType=terminal, reason=reason, textChars=len(str(text or "")), text=str(text or "")[:16000])
@@ -358,9 +385,11 @@ def finish_turn(turn: CanonicalTurn, *, text: str, terminal_type: str, reason: s
             user_id=turn.user_id, request_id=turn.request_id, assistant_message_id=turn.assistant_message_id,
             text=str(text or "")[:200000], terminal_type=terminal, reason=_bounded(reason, 2000), turn_contract=TURN_CONTRACT,
         )
+        _auto_pin_completed_code(turn, str(text or ""), terminal)
         _chat_lockdown("turn-finish-exit", request_id=turn.request_id, threadId=turn.thread_id, backend="redis", revision=0, terminalType=terminal)
         return 0
     state_name = {"COMPLETED": "complete", "CANCELLED": "cancelled", "FAILED": "failed"}.get(terminal, "failed")
     revision = _commit_blob_message(turn.user_id, thread_id=turn.thread_id, message_id=turn.assistant_message_id, role="assistant", text=str(text or "")[:200000], created_at=turn.assistant_created_at, state_name=state_name, request_id=turn.request_id, extra_meta={"commitPhase": "TERMINAL", "terminalType": terminal, "terminalReason": _bounded(reason, 2000)})
+    _auto_pin_completed_code(turn, str(text or ""), terminal)
     _chat_lockdown("turn-finish-exit", request_id=turn.request_id, threadId=turn.thread_id, backend="blob", revision=revision, terminalType=terminal)
     return revision
