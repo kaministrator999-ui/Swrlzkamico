@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.58">
+  <meta name="swrlz-chat-version" content="1.0.59">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -54,6 +54,11 @@
     .assistant-head{display:inline-flex!important;padding:4px 8px 4px 5px;border:1px solid rgba(126,214,255,.18);border-radius:11px;background:rgba(5,22,38,.48);backdrop-filter:blur(11px);box-shadow:0 3px 12px rgba(0,0,0,.18)}
     .assistant-name{text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 7px rgba(95,220,255,.42)!important}
     .assistant-body{text-shadow:0 1px 2px rgba(0,0,0,.58);box-shadow:0 5px 16px rgba(0,0,0,.14)}
+
+
+    .message-pin-actions{display:flex;justify-content:flex-end;gap:6px;margin:4px 0 0}.message-pin-button{border:1px solid rgba(126,214,255,.18);border-radius:8px;background:rgba(5,25,42,.58);color:#bfefff;padding:4px 7px;font-size:10px;cursor:pointer}.message-pin-button[aria-pressed="true"]{border-color:rgba(91,242,208,.48);color:#baffef;background:rgba(8,60,57,.5)}
+    .pin-rail{position:sticky;top:0;z-index:3;border:1px solid rgba(126,214,255,.28);border-radius:14px;background:rgba(3,19,34,.92);backdrop-filter:blur(18px);box-shadow:0 8px 24px rgba(0,0,0,.24);overflow:hidden}.pin-rail-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 9px}.pin-rail-title{font-family:var(--font-telemetry);font-size:10px;letter-spacing:.07em;color:#bdefff}.pin-rail-toggle,.pin-item-toggle,.pin-jump{border:0;background:transparent;color:#9fdff0;font-size:10px;cursor:pointer}.pin-rail-items{display:grid;gap:6px;padding:0 7px 7px;max-height:38vh;overflow:auto}.pin-rail.collapsed .pin-rail-items{display:none}.pin-item{border:1px solid rgba(126,214,255,.16);border-radius:10px;background:rgba(8,34,52,.72);overflow:hidden}.pin-item-head{display:flex;align-items:center;gap:6px;padding:6px 7px}.pin-item-label{min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#dff8ff;font-size:11px}.pin-item-body{padding:7px 9px;border-top:1px solid rgba(126,214,255,.12);white-space:pre-wrap;overflow-wrap:anywhere;max-height:22vh;overflow:auto;color:#cce8f2;font-size:11px}.pin-item.collapsed .pin-item-body{display:none}
+    .assistant-body .code-artifact{margin:10px 0;border:1px solid rgba(126,214,255,.28);border-radius:13px;overflow:hidden;background:rgba(1,10,19,.94)}.assistant-body .code-tabs{display:flex;align-items:center;gap:5px;overflow-x:auto;padding:6px;border-bottom:1px solid rgba(126,214,255,.16);background:rgba(8,31,49,.92)}.assistant-body .code-tab{flex:0 0 auto;border:1px solid rgba(126,214,255,.16);border-radius:7px;background:rgba(5,22,38,.7);color:#9fcfe0;padding:5px 8px;font:9px var(--font-telemetry);cursor:pointer}.assistant-body .code-tab[aria-selected="true"]{border-color:rgba(56,232,255,.5);color:#e6fbff;background:rgba(15,57,78,.9)}.assistant-body .code-artifact>.code-block{margin:0;border:0;border-radius:0}.assistant-body .download-code{border:1px solid rgba(126,214,255,.20);border-radius:7px;padding:4px 7px;background:rgba(7,28,45,.72);color:#d9f7ff;font:inherit;letter-spacing:.05em;cursor:pointer}.assistant-body .code-head-actions{display:flex;gap:5px}
 
     .account-card{margin-top:12px;margin-bottom:10px;padding:10px;border:1px solid rgba(95,192,255,.28);border-radius:14px;background:rgba(2,15,31,.72)}
     .account-main{display:flex;align-items:center;gap:9px;min-height:38px}.account-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid rgba(95,192,255,.3);display:none}.account-copy{min-width:0;flex:1}.account-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-meta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-action{border:1px solid rgba(95,192,255,.28);border-radius:10px;padding:7px 9px;color:var(--text);background:rgba(31,72,108,.42);font-size:11px;cursor:pointer}.google-slot{margin-top:8px;min-height:0;overflow:hidden}
@@ -546,7 +551,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.58";
+      const SWRLZ_CHAT_VERSION = "1.0.59";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -832,28 +837,97 @@
         details.append(summary,body);node.appendChild(details);
       };
 
-      const renderAssistantContent=(container,text)=>{
+      const codeViewState=new Map();
+      const pinItemCollapsed=new Set();
+      let pinRailCollapsed=false;
+      const downloadTextFile=(name,content)=>{
+        const safe=String(name||"code.txt").replace(/[^A-Za-z0-9._/\\-]+/g,"_").replace(/^[/\\]+/,"")||"code.txt";
+        const blob=new Blob([content],{type:"text/plain;charset=utf-8"});const url=URL.createObjectURL(blob);
+        const a=document.createElement("a");a.href=url;a.download=safe.split(/[\\/]/).pop()||"code.txt";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      };
+      const parseFenceInfo=info=>{
+        const parts=String(info||"").trim().split(/\s+/).filter(Boolean);const language=(parts.shift()||"code").toLowerCase();const attrs={};
+        for(const part of parts){const m=part.match(/^([a-zA-Z][\w-]*)=(?:"([^"]+)"|'([^']+)'|(.+))$/);if(m)attrs[m[1].toLowerCase()]=m[2]||m[3]||m[4]||"";}
+        return {language,file:attrs.file||attrs.filename||"",project:attrs.project||attrs.group||""};
+      };
+      const enhanceCodeArtifacts=container=>{
+        const children=[...container.children];let i=0;
+        while(i<children.length){
+          const first=children[i];if(!first.classList.contains("code-block")||!first.dataset.file){i++;continue;}
+          const run=[first];let j=i+1;
+          while(j<children.length){
+            const candidate=children[j];
+            if(candidate.classList.contains("message-text")&&!candidate.textContent.trim()){j++;continue;}
+            if(candidate.classList.contains("code-block")&&candidate.dataset.file){run.push(candidate);j++;continue;}
+            break;
+          }
+          if(run.length>1){
+            const artifact=document.createElement("section");artifact.className="code-artifact";artifact.dataset.artifactKey=run.map(b=>b.dataset.file).join("|");
+            const tabs=document.createElement("div");tabs.className="code-tabs";tabs.setAttribute("role","tablist");
+            run.forEach((block,index)=>{
+              const tab=document.createElement("button");tab.type="button";tab.className="code-tab";tab.setAttribute("role","tab");tab.textContent=block.dataset.file;tab.setAttribute("aria-selected",String(index===0));
+              tab.onclick=()=>{run.forEach((b,k)=>{b.hidden=k!==index;tabs.children[k].setAttribute("aria-selected",String(k===index));});artifact.dataset.activeFile=block.dataset.file;};
+              tabs.appendChild(tab);block.hidden=index!==0;
+            });
+            artifact.appendChild(tabs);first.before(artifact);run.forEach(block=>artifact.appendChild(block));
+          }
+          i=j;
+        }
+      };
+      const renderAssistantContent=(container,text,messageId="")=>{
         container.innerHTML="";
         const source=String(text||"");
-        const fence=/```([^\n`]*)\n?([\s\S]*?)```/g;
-        let cursor=0,match;
+        const fence=/\`\`\`([^\n\`]*)\n?([\s\S]*?)\`\`\`/g;
+        let cursor=0,match,codeIndex=0;
         const appendText=value=>{if(!value)return;const span=document.createElement("div");span.className="message-text";span.textContent=value;container.appendChild(span);};
         while((match=fence.exec(source))){
           appendText(source.slice(cursor,match.index));
-          const language=String(match[1]||"code").trim().toLowerCase()||"code";
+          const info=parseFenceInfo(match[1]);const language=info.language;
           const raw=String(match[2]||"").replace(/\n$/,"");
-          const block=document.createElement("section");block.className="code-block";
+          const block=document.createElement("section");block.className="code-block";block.dataset.file=info.file;block.dataset.project=info.project;
+          const key=(messageId||"stream")+":"+(info.file||codeIndex++);block.dataset.codeKey=key;
           const head=document.createElement("div");head.className="code-head";
-          const label=document.createElement("span");label.textContent=language;
-          const copy=document.createElement("button");copy.type="button";copy.className="copy-code";copy.textContent="Copy code";
-          copy.onclick=async()=>{try{await navigator.clipboard.writeText(raw);copy.textContent="Copied";setTimeout(()=>copy.textContent="Copy code",1200);}catch(_){copy.textContent="Copy failed";setTimeout(()=>copy.textContent="Copy code",1200);}};
-          const pre=document.createElement("pre");const code=document.createElement("code");code.textContent=raw;pre.appendChild(code);head.append(label,copy);block.append(head,pre);container.appendChild(block);
+          const label=document.createElement("span");label.textContent=info.file||language;
+          const actions=document.createElement("div");actions.className="code-head-actions";
+          const copy=document.createElement("button");copy.type="button";copy.className="copy-code";copy.textContent="Copy";
+          copy.onclick=async()=>{try{await navigator.clipboard.writeText(raw);copy.textContent="Copied";setTimeout(()=>copy.textContent="Copy",1200);}catch(_){copy.textContent="Copy failed";setTimeout(()=>copy.textContent="Copy",1200);}};
+          const dl=document.createElement("button");dl.type="button";dl.className="download-code";dl.textContent="Download";dl.onclick=()=>downloadTextFile(info.file||("code."+({javascript:"js",typescript:"ts",python:"py",cpp:"cpp",c:"c",html:"html",css:"css",json:"json"}[language]||"txt")),raw);
+          const pre=document.createElement("pre");pre.dataset.codeKey=key;const code=document.createElement("code");code.textContent=raw;pre.appendChild(code);actions.append(copy,dl);head.append(label,actions);block.append(head,pre);container.appendChild(block);
           cursor=fence.lastIndex;
         }
         appendText(source.slice(cursor));
         if(!container.childNodes.length)appendText(source);
+        enhanceCodeArtifacts(container);
       };
-      const renderFirstRunWelcome = () => {
+      const captureCodeViewState=()=>{
+        messageList.querySelectorAll(".code-block pre[data-code-key]").forEach(pre=>codeViewState.set(pre.dataset.codeKey,{top:pre.scrollTop,left:pre.scrollLeft}));
+      };
+      const restoreCodeViewState=()=>{
+        messageList.querySelectorAll(".code-block pre[data-code-key]").forEach(pre=>{const state=codeViewState.get(pre.dataset.codeKey);if(state){pre.scrollTop=state.top;pre.scrollLeft=state.left;}});
+      };
+      const setMessagePinned=(thread,msg,pinned)=>mutateChat([{type:"SET_MESSAGE_PINNED",threadId:thread.id,messageId:msg.id,pinned:!!pinned}]);
+      const addMessagePinButton=(node,thread,msg)=>{
+        if(!msg?.id||msg?.meta?.localPending)return;
+        const actions=document.createElement("div");actions.className="message-pin-actions";
+        const pin=document.createElement("button");pin.type="button";pin.className="message-pin-button";pin.setAttribute("aria-pressed",String(!!msg.pinned));pin.textContent=msg.pinned?"📍 Unpin":"📍 Pin";pin.onclick=()=>setMessagePinned(thread,msg,!msg.pinned);actions.appendChild(pin);node.appendChild(actions);
+      };
+      const renderPinRail=thread=>{
+        messageList.querySelector(".pin-rail")?.remove();if(!thread)return;
+        const pins=(thread.messages||[]).filter(msg=>msg.pinned);if(!pins.length)return;
+        const rail=document.createElement("section");rail.className="pin-rail"+(pinRailCollapsed?" collapsed":"");
+        const head=document.createElement("div");head.className="pin-rail-head";
+        const title=document.createElement("div");title.className="pin-rail-title";title.textContent="📍 "+pins.length+" pinned";
+        const toggle=document.createElement("button");toggle.type="button";toggle.className="pin-rail-toggle";toggle.textContent=pinRailCollapsed?"Expand all":"Collapse all";toggle.onclick=()=>{pinRailCollapsed=!pinRailCollapsed;renderConversation(thread);};
+        head.append(title,toggle);const items=document.createElement("div");items.className="pin-rail-items";
+        pins.forEach(msg=>{const item=document.createElement("article");item.className="pin-item"+(pinItemCollapsed.has(msg.id)?" collapsed":"");
+          const ih=document.createElement("div");ih.className="pin-item-head";const label=document.createElement("div");label.className="pin-item-label";label.textContent=(msg.role==="assistant"?"§wyrlz":"You")+" · "+String(msg.text||"").replace(/\s+/g," ").slice(0,72);
+          const collapse=document.createElement("button");collapse.type="button";collapse.className="pin-item-toggle";collapse.textContent=pinItemCollapsed.has(msg.id)?"Expand":"Collapse";collapse.onclick=()=>{pinItemCollapsed.has(msg.id)?pinItemCollapsed.delete(msg.id):pinItemCollapsed.add(msg.id);renderConversation(thread);};
+          const jump=document.createElement("button");jump.type="button";jump.className="pin-jump";jump.textContent="Jump";jump.onclick=()=>document.querySelector('[data-message-id="'+CSS.escape(msg.id)+'"]')?.scrollIntoView({behavior:"smooth",block:"center"});
+          const unpin=document.createElement("button");unpin.type="button";unpin.className="message-pin-button";unpin.textContent="Unpin";unpin.onclick=()=>setMessagePinned(thread,msg,false);
+          const body=document.createElement("div");body.className="pin-item-body";body.textContent=String(msg.text||"").slice(0,5000);ih.append(label,collapse,jump,unpin);item.append(ih,body);items.appendChild(item);});
+        rail.append(head,items);messageList.prepend(rail);
+      };
+            const renderFirstRunWelcome = () => {
         messageList.querySelector(".first-run-welcome")?.remove();
         if(chatThreads.length||!draftThread)return;
         const displayName=String(accountProfile?.display_name||chatAccountUser?.displayName||"").trim();
@@ -868,14 +942,15 @@
         card.append(kicker,title,copy,hint);messageList.appendChild(card);
       };
       const renderConversation = thread => {
-        syncTopEdge(thread);
+        captureCodeViewState();syncTopEdge(thread);
         [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
+        messageList.querySelector(".pin-rail")?.remove();
         if(!thread){renderFirstRunWelcome();renderWorkSurface();return;}
         for(const msg of (thread.messages||[])){
           if(msg.role==="assistant"){
-            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||""); addCopyButton(node); addEvidenceBlock(node,msg); messageList.appendChild(node);
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||""); addCopyButton(node); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
           } else if(msg.role==="user"){
-            const node=document.createElement("article");node.className="user-message rendered-message";
+            const node=document.createElement("article");node.className="user-message rendered-message";node.dataset.messageId=msg.id||"";
             const meta=document.createElement("div");meta.className="user-meta";meta.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";
             const bubble=document.createElement("div");bubble.className="user-bubble";bubble.textContent=msg.text||"";
             if(chatAccountUser?.picture){
@@ -883,10 +958,10 @@
             }else{
               const avatar=document.createElement("div");avatar.className="user-avatar-fallback";avatar.textContent=(meta.textContent||"Y").trim().charAt(0).toUpperCase();node.append(meta,bubble,avatar);
             }
-            messageList.appendChild(node);
+            addMessagePinButton(node,thread,msg);messageList.appendChild(node);
           }
         }
-        renderWorkSurface();
+        renderPinRail(thread);restoreCodeViewState();renderWorkSurface();
       };
       const closeThreadPopups = except => document.querySelectorAll(".thread-popup").forEach(p=>{if(p!==except)p.hidden=true;});
       const renderThreads = () => {
