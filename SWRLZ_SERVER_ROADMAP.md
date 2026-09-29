@@ -1,3 +1,13 @@
+### UPDATE STARTED — 2026-09-28 — HF Chat 1.0.55 acceptance and 700M context fix
+
+- **Approval:** user explicitly approved `APPROVE HF CHAT 1.0.55 DEPLOY AND 700M FIX`.
+- **Observed live defects:** Hugging Face Space displayed the older-looking deployed Chat surface and LFM2-700M rejected a tiny user turn with `Current prompt/profile context exceeds the 700M input budget`.
+- **Source findings:** canonical and HF feature-branch `chat/§wyrlz/index.html` both resolve to blob `049c033ac6c07ca96f813cce4bf637e41b4162e8` / Chat **1.0.55**; therefore the visible UI mismatch is deployment/runtime state, not a missing Tier A–G source merge. The HF packager stages that canonical Chat and injects HF-only model/profile controls.
+- **700M finding:** HF 700M route uses a 4096-token llama.cpp context with a 3712-token hard input budget. It always injects the built-in §wyrlz profile, role/system framing, response mode, optional assistant profile and user profile before budget validation; only history is evicted. A fixed profile/system payload can therefore exhaust the budget before a tiny current prompt is considered.
+- **Bounded repair plan:** enlarge the HF 700M inference context/budget while retaining hard budgeting and oldest-history eviction; add explicit budget diagnostics/error wording; preserve the built-in profile and user/custom profile semantics. No model weights/training changes.
+- **HF acceptance plan:** validate the feature-branch package, preserve the pre-deploy HF snapshot/rollback checkpoint, publish only to existing `kamiloki/Swyrlz`, then inspect workflow/runtime evidence. No Vercel action.
+- **Status:** IN PROGRESS.
+
 ### UPDATE STARTED — 2026-09-28 — HF Chat 1.0.55 deployment and 700M context repair
 
 - **Observed live defects:** `kamiloki/Swyrlz` / `miloki-swyrlz.hf.space` is serving the older HF-staged Chat surface rather than canonical clean-room Chat **1.0.55**, and short user prompts can fail with `Current prompt/profile context exceeds the 700M input budget`.
