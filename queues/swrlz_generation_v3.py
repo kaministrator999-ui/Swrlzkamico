@@ -188,20 +188,40 @@ async def generate_swrlz_response(payload) -> None:
         engineId=str(getattr(engine, "ENGINE_ID", "")),
     )
 
-    # R39 bring-up: isolate raw turn -> tokenizer -> model -> decode.
-    # Do not inject transcript/profile machinery while proving baseline inference.
-    # Reintroduce each source later behind an explicit bounded context budget.
-    history: list[dict[str, str]] = []
+    # Keep ordinary transcript/profile machinery out of the bring-up path, but
+    # explicitly pinned messages are user-selected working context and therefore
+    # receive a separate bounded budget.
+    raw_pins = data.get("pinnedContext") if isinstance(data.get("pinnedContext"), list) else []
+    pinned_context: list[dict[str, str]] = []
+    for item in raw_pins[-6:]:
+        if not isinstance(item, dict):
+            continue
+        role = str(item.get("role") or "").strip().upper()
+        text = str(item.get("text") or "").strip()
+        if role in {"USER", "ASSISTANT"} and text:
+            pinned_context.append({"role": role, "text": "[PINNED] " + text[:2000]})
+    history: list[dict[str, str]] = pinned_context
+
+    prompt_text = str(data.get("prompt") or "")
+    compact_prompt = " ".join(prompt_text.lower().split())
+    greeting_only = compact_prompt in {"hey", "hi", "hello", "yo", "sup", "hey there", "hi there", "hello there"}
+    directive_parts = [
+        "Pinned history entries, when present, are explicit working references selected by the user/system; use them when the current request refers to pinned material.",
+        "When returning a multi-file code project, label each fenced block with language plus file=path (example: cpp file=src/Player.cpp) so Chat can render file tabs. Do not split a single-file solution unnecessarily.",
+    ]
+    if greeting_only:
+        directive_parts.append("This is a casual greeting only. Reply naturally and briefly in one or two short sentences; do not explain profiles, roles, system context, or capabilities unless asked.")
 
     engine_payload = {
         "protocolVersion": 2, "requestId": request_id,
-        "prompt": str(data.get("prompt") or ""), "receivedText": str(data.get("prompt") or ""),
-        "history": history[-32:],
+        "prompt": prompt_text, "receivedText": prompt_text,
+        "history": history[-6:],
+        "pinnedContext": pinned_context,
         "inputProvenance": data.get("inputProvenance") if isinstance(data.get("inputProvenance"), dict) else {},
         "presentationIntent": str(data.get("presentationIntent") or "PROSE"),
         "generation": data.get("generation") if isinstance(data.get("generation"), dict) else {},
         "profileId": str(data.get("profileId") or "AUTO"),
-        "responseDirective": "",
+        "responseDirective": " ".join(directive_parts),
     }
 
     def cancelled() -> bool:
@@ -214,7 +234,9 @@ async def generate_swrlz_response(payload) -> None:
     _camera(
         "generate-events-enter",
         request_id=request_id,
-        historyCount=len(history[-32:]),
+        historyCount=len(history[-6:]),
+        pinnedContextCount=len(pinned_context),
+        greetingOnly=greeting_only,
         promptChars=len(str(data.get("prompt") or "")),
     )
     last_resource_phase = ""
