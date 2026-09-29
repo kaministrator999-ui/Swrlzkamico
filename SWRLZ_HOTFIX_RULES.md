@@ -39,46 +39,48 @@ Do not manufacture deployment uncertainty for ordinary Git work. Under the curre
 
 ---
 
-## 3. Current production deployment-control contract
+## 3. Current production deployment-control contract — Hugging Face
 
-The current production deployment boundary is durable project state, not a per-event suspicion loop. Re-check it when deployment-control files/integration change, when an explicit deployment is proposed, or when platform evidence contradicts the recorded contract.
+The current application hosting/deployment authority is the existing Hugging Face Space `kamiloki/Swyrlz`.
 
-### Automatic Git deployment must remain fail-closed
+**Vercel is deprecated for current §wyrlz application deployment.** Vercel-era workflows/configuration may remain in the repository as historical provenance, rollback/reference material, or migration evidence, but they are not a current production deployment path and must not be selected for new application releases.
 
-`vercel.json` currently carries **both** supported/compatibility Git-disable guards:
+### Canonical HF deployment branch + workflow
 
-```json
-"git": {
-  "deploymentEnabled": false
-},
-"github": {
-  "enabled": false
-}
+For the current HF candidate/release path, the deployment source branch is:
+
+```text
+feature/hf-space-manual-deploy
 ```
 
-The modern `git.deploymentEnabled=false` guard is the primary declaration. The GitHub-specific `github.enabled=false` compatibility guard is retained because production evidence showed that the modern guard by itself did not prevent a native Git deployment of a documentation-only `main` commit.
+The canonical publish workflow on that branch is:
 
-These guards mean an ordinary Git commit must **not** be treated as the canonical production deployment path. After changing either guard or any Vercel Git-integration behavior, verify the result against the Vercel deployment list rather than assuming the config was honored.
+```text
+.github/workflows/manual-hf-space.yml
+```
 
-### Canonical production deployment path
+It supports inspect/benchmark/validate/deploy modes and publishes only to the existing `kamiloki/Swyrlz` Space. Deploy mode requires explicit approval, snapshots the current Space before upload, records rollback/release checkpoints, validates the isolated package, and verifies required model/Chat integration before publication.
 
-The canonical application deployment path is `.github/workflows/manual-vercel-production.yml` (or an explicitly approved equivalent that deliberately replaces it).
+Current HF package/runtime-owned files on that branch include `hf_space/*`, the staged `accepted_runtime/lalm/r39_engine.py`, canonical Chat source staged by `scripts/prepare_hf_space.py`, and related HF validation/build scripts.
 
-That workflow:
+### Deployment gate
 
-- requires explicit approval for `workflow_dispatch`, or an explicitly approved `.deploy/REQUEST.txt` request;
-- checks out the approved source ref;
-- records the exact checked-out source SHA;
-- derives the stable server version from the canonical `VERSION` assignment in `api/index.py` rather than duplicating a stale literal;
-- builds and deploys through the Vercel CLI;
-- verifies that production reports both the expected stable server version **and the exact approved deployment commit SHA**;
-- verifies required runtime/manifest/collector capabilities before acceptance.
+Ordinary source commits to `feature/hf-space-manual-deploy`, `runtime`, or `main` do not themselves authorize publication.
 
-The workflow's source-bound verification is part of deployment correctness. Do not replace it with a remembered Server/runtime version number: the stable deployed server version and the runtime-hot Server lineage are separate authorities.
+The deployment-producing action is an explicit dispatch of **Manual Hugging Face Space Deploy** with:
 
-If configuration changes later, re-evaluate immediately.
+```text
+mode=deploy
+approved=yes
+```
 
----
+That action rebuilds/restarts the existing Space and therefore requires explicit user approval immediately before dispatch unless the same current request already clearly authorizes that deploy action.
+
+Validate/inspect/benchmark modes do not publish the Space.
+
+### Historical Vercel material
+
+Do not use `.github/workflows/manual-vercel-production.yml`, old Vercel aliases, project IDs, deployment receipts, or Vercel-era guides as current deployment instructions. They are historical unless a later explicit governance change reactivates Vercel.
 
 ## 4. Runtime-hot work
 
