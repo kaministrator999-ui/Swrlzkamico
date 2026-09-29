@@ -2186,3 +2186,17 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Acceptance cases:** (1) generate `Inventory.h` + `Inventory.cpp` → one auto-pinned two-tab project; (2) “add item stacking” → same artifact identity, new revision, surrounding old response prose unchanged, new explanatory assistant turn allowed; (3) “separately make a save manager” → new project identity without contaminating Inventory; (4) pin a user constraint → Brain can enumerate and honor it as pinned context; (5) user or §wyrlz can pin/unpin through real persisted actions; (6) §wyrlz can add another file/tab to an existing pinned code project when architecture requires it.
 - **Current truth state:** ROADMAP / DESIGN REQUIREMENT ONLY. This entry does not claim the pin protocol, artifact revision store, Brain binding, multi-tab renderer, downloads, or code mutation semantics are implemented or live.
 - **Deployment expectation:** none from this roadmap update. Runtime implementation and activation require separate governed work and explicit deployment approval.
+
+
+### UPDATE CONTINUATION STARTED — 2026-09-29 — collapsible multi-pin workspace presentation
+
+- **Additional requested outcome:** the active thread may hold multiple pinned messages/artifacts simultaneously without allowing the pin workspace to consume the usable chat viewport.
+- **Multiple-pin contract:** pin state is a collection, not a singleton. Several user messages, assistant messages, and code-project artifacts may be pinned at the same time and remain independently addressable by stable pin/message/artifact identity.
+- **Per-pin collapse:** every pinned item can independently collapse to a compact header/summary row and expand back to its full pinned presentation. Collapsing is presentation state only; the item remains pinned and remains available to Brain/LALM context/reference resolution.
+- **Whole-workspace collapse:** the complete pinned-context rail at the top of the thread can collapse into one compact bar/badge showing that pinned context exists and, where practical, its item count. Expanding restores the collection without changing pin membership.
+- **Screen-space invariant:** collapsed state must materially reclaim chat viewport space, especially on mobile. The pinned rail must not permanently push the active conversation below a large stack of pinned content.
+- **State separation:** pinned/unpinned, expanded/collapsed per pin, and workspace expanded/collapsed are distinct states. Collapsing never means unpinning, deleting, or withholding the pin from the Brain.
+- **Context invariant:** Brain/LALM can enumerate and reference all authoritative pins regardless of how the Mask currently presents or collapses them. UI visibility state must not become semantic-context authority.
+- **Usability:** the top rail should provide clear expand/collapse-all behavior plus individual expand/collapse and unpin controls, while preserving jump-to-original and code-artifact file/revision controls when an item is expanded.
+- **Current truth state:** ROADMAP / DESIGN REQUIREMENT ONLY; no live/runtime implementation is claimed by this continuation.
+- **Deployment expectation:** none.
