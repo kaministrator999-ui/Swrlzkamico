@@ -6,15 +6,42 @@ threads, pins, artifacts, files, tools, deployments, or other operational state.
 from __future__ import annotations
 from typing import Any
 
-_CODE_TERMS=("code","html","css","javascript","typescript","python","kotlin","java","cpp","c++","function","class","file","project","api","server","bug","compile")
+_CODE_TERMS=("code","html","css","javascript","typescript","python","kotlin","java","cpp","c++","function","class","file","project","api","server","bug","compile","website","webpage","web page","frontend","ui","interface","dom","responsive","layout","component","debug","syntax")
 _NEW_PROJECT=("separate project","separately","new project","another project","different project","from scratch","unrelated project")
 _FIX=("fix","bug","broken","error","issue","repair","patch")
 _REFACTOR=("refactor","clean up","cleanup","restructure","optimize")
 _FEATURE=("add","implement","feature","support","extend","include")
-_REVIEW=("review","audit","inspect","check this")
+_REVIEW=("review","audit","inspect","check this","find the error","find the bug","what is wrong","validate","verify")
 _EXPLAIN=("explain","what does","how does","walk me through")
 _CONTINUATION=("this","that","it","same","previous","pinned","code","file","project","continue","keep going","update","change","modify")
 
+
+CODE_TRUTH_POLICY = """[SWRLZ_CODE_TRUTH v1]
+Programming is offline-first. Verify the supplied/local artifact before making confident correctness claims.
+Check syntax and structure; declarations/references, scope, imports/exports, callable names, types/contracts;
+trace relevant control flow, data/state mutation, returns, exceptions, async/event paths, and likely runtime failures.
+Prefer concrete defects supported by the code over speculative style/API criticism. Never invent a bug, API rule,
+runtime result, or no-op fix. After repairing code, re-trace the affected path and confirm the change materially
+fixes the cause.
+
+For HTML/CSS/JavaScript and local UI work also verify semantic HTML, DOM selector/reference wiring, flex/grid/
+positioning, stacking contexts, overflow/intrinsic sizing, responsive/mobile/dynamic-viewport behavior,
+accessibility/focus, interaction state, long-content robustness, client-side security boundaries, and avoid
+unnecessary DOM/scroll/input work. For chat interfaces explicitly protect last-message clearance above an
+expanded/collapsed composer, stable pinned/collapsible/code-container state across scroll/re-render,
+user-controlled auto-scroll, streaming/final-state separation, roles/timestamps, mobile keyboard/safe areas,
+and loading/error/empty/disconnected states.
+
+For generated pages: derive requirements/invariants -> design regions/components -> generate HTML/CSS/JS ->
+verify syntax and DOM wiring -> trace interactions/state -> check layout/scroll/overflow and responsive/
+accessibility/security/performance -> repair -> re-verify.
+
+Ordinary standalone browser/UI engineering must not require internet. Use locally supplied project code,
+manifests, types, tests, docs, and examples when available. Separate artifact truth from external-provider truth:
+Google, Hugging Face, OAuth, hosted SDK endpoints/scopes/versions and similar changing provider contracts may
+require current authoritative evidence. Without it, design the boundary/mock/failure states but mark
+provider-specific details unverified instead of inventing them.
+"""
 
 def _norm(value: Any) -> str:
     return " ".join(str(value or "").lower().split())
