@@ -2227,3 +2227,16 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Deployment/restart:** none. The source changes are deployment-inert. Activating the stable Chat/Station/Workstation changes in production requires the explicit production deployment workflow and user approval under the deployment gate.
 - **Remaining later capability:** versioned mutable code artifacts (edit code block without rewriting historical prose), diff/restore history, Download All packaging, and arbitrary Brain-issued structured pin/unpin actions remain roadmap work rather than falsely claimed as implemented.
 - **Result:** SOURCE COMPLETE / STATIC CHAT VERIFIED / PRODUCTION ACTIVATION PENDING.
+
+
+### UPDATE COMPLETED — 2026-09-29 — clean-room Chat real pins, code artifacts, and scroll-stability repair
+
+- **Implemented on deployed-main source:** durable per-message pin metadata (`messagePins`) with bounded authenticated mutation authority; Station projects pin state into messages and sends authoritative `pinnedContext` in generation jobs.
+- **Automatic code pins:** successfully completed assistant responses containing a substantive fenced code block are auto-pinned by trusted server turn-finalization code. Failed/cancelled generations are not auto-pinned.
+- **Mask controls:** every committed user/assistant message now exposes Pin/Unpin; pinned items render in a collapsible rail with per-item Collapse, Jump, and Unpin controls.
+- **Code workbench:** filename-tagged fenced blocks (for example `cpp file=Player.h project=player`) group into a tabbed multi-file artifact. Each file has Copy and Download; grouped artifacts expose Download all. Single-file fenced code remains lightweight.
+- **Scroll stability:** code scroll offsets and active multi-file tab are retained across canonical Station re-renders; live streaming code uses the same renderer rather than flattening back to plain text.
+- **Version:** clean-room Chat source advanced to `1.0.59` (the version file was already at 1.0.59 and now matches the HTML source).
+- **Verification performed:** source-level contract reconciliation across `api/chat_state.py`, `api/lalm_station.py`, `api/chat_turn_state.py`, and `chat/§wyrlz/index.html`; pin authority remains server-owned and canonical message text is not mutated by pinning.
+- **Deployment status:** source changes are committed to `main` only. Per project deployment rules, no production deployment was triggered without explicit user approval.
+- **Remaining separate issue:** greeting verbosity/identity binding belongs to LALM cognition/context assembly and was not disguised as part of this UI/state repair.
