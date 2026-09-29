@@ -140,10 +140,18 @@ async def mutate(request:Request):
             elif kind=="UPSERT_THREAD" and tid:
                 t=next((t for t in s["threads"] if t["id"]==tid),None)
                 if t is None:
-                    t={"id":tid,"title":str(op.get("title") or "New conversation")[:120],"pinned":False,"createdAt":time.time()*1000,"messages":[]}
+                    t={"id":tid,"title":str(op.get("title") or "New conversation")[:120],"pinned":False,"messagePins":{},"createdAt":time.time()*1000,"messages":[]}
                     s["threads"].append(t)
                 for k in ("title","pinned"):
                     if k in op:t[k]=op[k]
+            elif kind=="SET_MESSAGE_PINNED" and tid:
+                t=next((t for t in s["threads"] if t["id"]==tid),None)
+                if t is None:raise HTTPException(404,"Thread not found")
+                mid=str(op.get("messageId") or "").strip()
+                if not mid:raise HTTPException(400,"Message id required")
+                pins=t.setdefault("messagePins",{})
+                if bool(op.get("pinned")):pins[mid]=True
+                else:pins.pop(mid,None)
             else:raise HTTPException(400,"Unsupported state operation")
         s["revision"]+=1
         return {"ok":True,"revision":s["revision"]}
@@ -179,7 +187,9 @@ def _run(key,request_id,model_id,payload,assistant_id):
         with _lock:
             g=s["activeGeneration"];g.update(terminal=True,terminalType="COMPLETE",phase="COMPLETE")
             thread=next(t for t in s["threads"] if t["id"]==payload["threadId"])
-            thread["messages"].append({"id":assistant_id,"role":"assistant","text":text,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE"}})
+            message={"id":assistant_id,"role":"assistant","text":text,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE"}}
+            thread["messages"].append(message)
+            if "```" in text and len(text)>=120:thread.setdefault("messagePins",{})[assistant_id]=True
             s["revision"]+=1
     except Exception as exc:
         with _lock:
@@ -210,13 +220,15 @@ async def send(request:Request):
         if s["activeGeneration"] and not s["activeGeneration"]["terminal"]:raise HTTPException(409,"Generation already active")
         t=next((t for t in s["threads"] if t["id"]==tid),None)
         if t is None:
-            t={"id":tid,"title":prompt[:48],"pinned":False,"createdAt":time.time()*1000,"messages":[]}
+            t={"id":tid,"title":prompt[:48],"pinned":False,"messagePins":{},"createdAt":time.time()*1000,"messages":[]}
             s["threads"].append(t)
         history=[{"role":m["role"],"text":m["text"]} for m in t["messages"] if m["role"] in ("user","assistant")]
+        pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
+        pinned_context=[{"messageId":m.get("id"),"role":str(m.get("role") or "").upper(),"text":str(m.get("text") or "")[:12000],"pinned":True} for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"meta":{"requestId":rid,"modelId":model_id}})
         s["currentId"]=tid;s["revision"]+=1
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}],"diagnosticTrace":None,"memoryCandidates":[]}
-    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"profileId":"LALM","profile":profile,"userProfile":user_profile}
+    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400)
