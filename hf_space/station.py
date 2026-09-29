@@ -213,6 +213,10 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     candidate=event.get("candidate")
                     if isinstance(candidate,dict):g.setdefault("memoryCandidates",[]).append(copy.deepcopy(candidate))
                     g["status"].append({"seq":g["lastSeq"],"phase":"MEMORY_CANDIDATE","reason":""})
+                elif kind=="PROGRAMMING_INTENT":
+                    intent=event.get("intent")
+                    if isinstance(intent,dict):g["programmingIntent"]=copy.deepcopy(intent)
+                    g["status"].append({"seq":g["lastSeq"],"phase":"PROGRAMMING_INTENT","reason":""})
                 else:g["status"].append({"seq":g["lastSeq"],"phase":str(event.get("phase") or kind),"reason":str(event.get("reason") or "")[:200]})
             if kind=="FAILED":raise RuntimeError(str(event.get("reason") or "Generation failed"))
             if kind in ("COMPLETE","COMPLETED"):completed=True
@@ -280,7 +284,7 @@ async def send(request:Request):
         code_edit_target=_latest_code_pin(t) if _looks_like_pinned_code_edit(prompt,pinned_context) else None
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"meta":{"requestId":rid,"modelId":model_id}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}],"diagnosticTrace":None,"memoryCandidates":[]}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}],"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"pinnedCodeEditTargetId":str(code_edit_target.get("id") or "") if code_edit_target else "","profileId":"LALM","profile":profile,"userProfile":user_profile}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
