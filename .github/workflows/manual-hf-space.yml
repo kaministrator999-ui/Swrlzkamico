@@ -190,13 +190,14 @@ jobs:
           context=next((e for e in events if e.get('type')=='CONTEXT'),None)
           text=''.join(str(e.get('text') or '') for e in events if e.get('type')=='DELTA').strip()
           assert CONTEXT_TOKENS==8192, CONTEXT_TOKENS
-          assert INPUT_BUDGET_TOKENS==7808, INPUT_BUDGET_TOKENS
+          assert INPUT_BUDGET_TOKENS==6016, INPUT_BUDGET_TOKENS
           assert context and context.get('estimatedInputTokens',10**9)<=INPUT_BUDGET_TOKENS, context
           assert text, '700M context smoke generated no response'
           print(json.dumps({
               'route':'700m',
               'contextWindowTokens':CONTEXT_TOKENS,
               'inputBudgetTokens':INPUT_BUDGET_TOKENS,
+              'reservedOutputTokens':2048,
               'estimatedInputTokens':context.get('estimatedInputTokens'),
               'historyMessagesDropped':context.get('historyMessagesDropped'),
               'responseChars':len(text),
