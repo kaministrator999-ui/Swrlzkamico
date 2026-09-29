@@ -34,7 +34,11 @@ jobs:
           source_ref="$(get SOURCE_REF)"
           nonce="$(get REQUEST_NONCE)"
           test "$target" = "kamiloki/Swyrlz" || { echo "::error::TARGET must be the existing kamiloki/Swyrlz Space."; exit 1; }
-          test "$approved" = "1" || { echo "::error::APPROVED=1 is required."; exit 1; }
+          if [ "$approved" != "1" ]; then
+            echo "approved=no" >> "$GITHUB_OUTPUT"
+            echo "HF request file is inert (APPROVED is not 1); no deployment will run."
+            exit 0
+          fi
           test -n "$source_ref" || { echo "::error::SOURCE_REF is required."; exit 1; }
           test -n "$nonce" || { echo "::error::REQUEST_NONCE is required so each approved deployment is an intentional new request."; exit 1; }
           echo "source_ref=$source_ref" >> "$GITHUB_OUTPUT"
@@ -43,6 +47,7 @@ jobs:
 
   deploy:
     needs: request
+    if: ${{ needs.request.outputs.approved == 'yes' }}
     uses: ./.github/workflows/manual-hf-space.yml
     with:
       source_ref: ${{ needs.request.outputs.source_ref }}
