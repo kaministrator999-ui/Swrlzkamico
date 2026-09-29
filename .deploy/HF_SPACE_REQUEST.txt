@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Explicitly approved by user in chat on 2026-09-29 for composer-aware viewport repair.
+# Explicitly approved by user in chat on 2026-09-29 for Chat 1.0.65 live streaming/status/timestamp work.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-29-composer-viewport-chat-1.0.64
+REQUEST_NONCE=2026-09-29-chat-1.0.65-live-stream-status-time
