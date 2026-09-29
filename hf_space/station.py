@@ -4,13 +4,19 @@ Candidate limitations: process-local state, anonymous session, no durable accoun
 storage or Vercel queue. Do not claim production parity.
 """
 from __future__ import annotations
-import copy, json, threading, time, uuid
+import base64, copy, json, os, threading, time, uuid
 from concurrent.futures import ThreadPoolExecutor
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
+try:
+    from google.auth.transport import requests as google_requests
+    from google.oauth2 import id_token as google_id_token
+except Exception:
+    google_requests=None
+    google_id_token=None
 
 ROOT=Path(__file__).resolve().parent
 CONTRACT="swrlz-lalm-station-sync-v1"
@@ -54,6 +60,51 @@ def chat():
 @app.get("/api/hf/models")
 def models():
     return {"models":[vars(r) for r in routes()]}
+
+GOOGLE_CLIENT_ID=os.environ.get("SWRLZ_GOOGLE_CLIENT_ID","").strip() or "1083208613166-bj7isingvbv5dcns9ldtru8cjfj993mc.apps.googleusercontent.com"
+_hf_accounts={}
+
+def _account_session(request:Request):
+    sid=request.cookies.get("swrlz_hf_account")
+    return sid,_hf_accounts.get(sid) if sid else None
+
+@app.get("/api/account/status")
+def account_status():
+    return {"googleClientId":GOOGLE_CLIENT_ID if google_id_token is not None else "","durable":False,"authority":"hf-process-local-google"}
+
+@app.get("/api/account/me")
+def account_me(request:Request):
+    _,user=_account_session(request)
+    if not user:return JSONResponse({"ok":False,"code":"ACCOUNT_SESSION_INVALID"},status_code=401)
+    return {"user":user,"profile":{"version":0},"durable":False}
+
+@app.post("/api/account/google")
+async def account_google(request:Request):
+    if google_id_token is None or google_requests is None:
+        return JSONResponse({"ok":False,"code":"GOOGLE_AUTH_UNAVAILABLE"},status_code=503)
+    body=await request.json();credential=str(body.get("credential") or "").strip()
+    if not credential:return JSONResponse({"ok":False,"code":"GOOGLE_CREDENTIAL_REQUIRED"},status_code=400)
+    try:
+        claims=google_id_token.verify_oauth2_token(credential,google_requests.Request(),GOOGLE_CLIENT_ID)
+        subject=str(claims.get("sub") or "").strip()
+        if not subject:raise ValueError("Google token has no subject")
+        user={"id":"google:"+subject,"email":claims.get("email"),"displayName":claims.get("name") or claims.get("email") or "Google user","picture":claims.get("picture")}
+    except Exception:
+        return JSONResponse({"ok":False,"code":"GOOGLE_CREDENTIAL_INVALID"},status_code=401)
+    sid=uuid.uuid4().hex
+    with _lock:_hf_accounts[sid]=user
+    response=JSONResponse({"user":user,"profile":{"version":0},"durable":False})
+    response.set_cookie("swrlz_hf_account",sid,httponly=True,samesite="lax",secure=True,max_age=7*86400)
+    return response
+
+@app.post("/api/account/logout")
+def account_logout(request:Request):
+    sid,_=_account_session(request)
+    if sid:
+        with _lock:_hf_accounts.pop(sid,None)
+    response=JSONResponse({"ok":True})
+    response.delete_cookie("swrlz_hf_account")
+    return response
 
 @app.get("/api/lalm_station/sync")
 def sync(request:Request):
