@@ -234,7 +234,7 @@ try:
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-        HOT_SERVER_VERSION="2.1.116"
+    HOT_SERVER_VERSION="2.1.116"
     HOT_REVISION="2.1.116-hot-offline-code-truth-web-ui-v91"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
