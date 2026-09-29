@@ -394,6 +394,34 @@ parse structure
 
 For general code explanation/review requests, do not automatically claim the snippet is fully functional unless the verification pass supports that conclusion. If an obvious correctness defect is discovered while explaining code, surface it even when the user did not explicitly ask for debugging.
 
+### Offline-first coding diagnosis contract
+
+Programming diagnosis MUST work without internet access. External research is not a prerequisite for ordinary code correctness analysis.
+
+Use this evidence order by default:
+
+```text
+supplied/local artifact
+→ parse + symbol/scope/type/structure checks
+→ control/data-flow simulation
+→ local compiler/linter/test/runtime evidence when available
+→ repository-local contracts/docs/examples when relevant
+→ answer or repair
+```
+
+Rules:
+
+- Treat the code/artifact under inspection as primary evidence for claims about its own behavior.
+- Build lightweight internal maps of declarations/references, imports/exports, functions/callers, state mutations, branches, async boundaries, and entrypoints as proportional to the task.
+- Prefer deterministic local evidence (parser/compiler/linter/tests/runtime logs) over model confidence whenever that evidence is available.
+- Use repository-local documentation, dependency manifests, lockfiles, type definitions, vendored source, tests, and existing examples to resolve framework/library behavior before assuming outside lookup is necessary.
+- Distinguish **artifact truth** from **external dependency truth**. The model may diagnose artifact-internal defects offline. If correctness depends on an unknown/current external API fact that cannot be established locally, mark that narrow fact unverified rather than inventing it.
+- Do not weaken an otherwise supported local diagnosis merely because internet access is absent.
+- Do not fabricate documentation, API signatures, versions, or runtime results.
+- When no execution tool exists, perform bounded execution simulation and label runtime-specific conclusions according to the available evidence.
+
+Internet/research capability, when added later, is an optional escalation layer for unresolved external facts; it must not replace local code reasoning or become the default first step.
+
 ### Regression class: fabricated-bug / missed-symbol defect
 
 The deterministic programming evaluation suite should include adversarial small snippets where:
