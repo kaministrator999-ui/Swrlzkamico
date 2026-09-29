@@ -140,7 +140,7 @@ async def mutate(request:Request):
             elif kind=="UPSERT_THREAD" and tid:
                 t=next((t for t in s["threads"] if t["id"]==tid),None)
                 if t is None:
-                    t={"id":tid,"title":str(op.get("title") or "New conversation")[:120],"pinned":False,"messagePins":{},"createdAt":time.time()*1000,"messages":[]}
+                    t={"id":tid,"title":str(op.get("title") or "New conversation")[:120],"pinned":False,"messagePins":{},"codeArtifacts":[],"createdAt":time.time()*1000,"messages":[]}
                     s["threads"].append(t)
                 for k in ("title","pinned"):
                     if k in op:t[k]=op[k]
@@ -150,7 +150,10 @@ async def mutate(request:Request):
                 mid=str(op.get("messageId") or "").strip()
                 if not mid:raise HTTPException(400,"Message id required")
                 pins=t.setdefault("messagePins",{})
-                if bool(op.get("pinned")):pins[mid]=True
+                if bool(op.get("pinned")):
+                    pins[mid]=True
+                    message=next((m for m in t.get("messages",[]) if str(m.get("id") or "")==mid),None)
+                    if message is not None:_promote_pinned_code_artifact(t,message)
                 else:pins.pop(mid,None)
             else:raise HTTPException(400,"Unsupported state operation")
         s["revision"]+=1
@@ -160,33 +163,83 @@ def _code_fences(text):
     import re
     return re.findall(r"```[^\n]*\n[\s\S]*?```",str(text or ""))
 
-def _looks_like_pinned_code_edit(prompt,pinned_context):
-    p=" ".join(str(prompt or "").lower().split())
-    edit_words=("fix","edit","change","update","modify","refactor","add","remove","replace","rename","implement","patch")
-    code_pins=[x for x in pinned_context if isinstance(x,dict) and "```" in str(x.get("text") or "")]
-    return code_pins and any(w in p for w in edit_words)
+def _parse_code_files(text):
+    import re
+    files=[]
+    pattern=re.compile(r"```([^\n]*)\n([\s\S]*?)```")
+    for index,match in enumerate(pattern.finditer(str(text or "")),start=1):
+        header=str(match.group(1) or "").strip()
+        parts=header.split()
+        language=parts[0] if parts and "=" not in parts[0] else "text"
+        attrs={}
+        for part in parts[1:] if parts and "=" not in parts[0] else parts:
+            if "=" in part:
+                key,value=part.split("=",1);attrs[key.strip().lower()]=value.strip().strip('"').strip("'")
+        path=attrs.get("file") or attrs.get("path") or ("code."+({"python":"py","javascript":"js","typescript":"ts","html":"html","css":"css","java":"java","kotlin":"kt","cpp":"cpp","c":"c","json":"json"}.get(language.lower(),"txt")) if index==1 else f"file-{index}.txt")
+        files.append({"path":path[:240],"language":language[:40],"content":match.group(2)})
+    return files
 
-def _latest_code_pin(thread):
-    pins=thread.get("messagePins") if isinstance(thread.get("messagePins"),dict) else {}
-    for message in reversed(thread.get("messages") or []):
-        if pins.get(str(message.get("id") or "")) and message.get("role")=="assistant" and "```" in str(message.get("text") or ""):
-            return message
-    return None
+def _artifact_markdown(files):
+    chunks=[]
+    for item in files or []:
+        language=str(item.get("language") or "text")
+        path=str(item.get("path") or "code.txt")
+        chunks.append(f"```{language} file={path}\n{str(item.get('content') or '')}```")
+    return "\n\n".join(chunks)
 
-def _replace_code_artifact(previous_text,new_text):
-    old_fences=_code_fences(previous_text);new_fences=_code_fences(new_text)
-    if not new_fences:return None
-    # The pinned artifact owns code; the new turn owns prose. Preserve prior surrounding prose
-    # and replace its code payload in-place so historical explanation is not rewritten.
-    updated=str(previous_text or "")
-    if old_fences:
-        for index,fence in enumerate(old_fences):
-            replacement=new_fences[index] if index<len(new_fences) else ""
-            updated=updated.replace(fence,replacement,1)
-        if len(new_fences)>len(old_fences):
-            updated=updated.rstrip()+"\n\n"+"\n\n".join(new_fences[len(old_fences):])
-        return updated
-    return str(previous_text or "").rstrip()+"\n\n"+"\n\n".join(new_fences)
+def _find_artifact(thread,artifact_id):
+    return next((a for a in thread.get("codeArtifacts",[]) if str(a.get("id") or "")==str(artifact_id or "")),None)
+
+def _artifact_for_message(thread,message_id):
+    return next((a for a in thread.get("codeArtifacts",[]) if str(a.get("sourceMessageId") or "")==str(message_id or "")),None)
+
+def _create_code_artifact(thread,message,request_id,text):
+    files=_parse_code_files(text)
+    if not files or len(str(text or ""))<120:return None
+    existing=_artifact_for_message(thread,message.get("id"))
+    if existing:return existing
+    artifact_id="artifact-"+uuid.uuid4().hex
+    now=int(time.time()*1000)
+    revision={"revision":1,"requestId":str(request_id or ""),"createdAt":now,"files":copy.deepcopy(files)}
+    artifact={"id":artifact_id,"type":"code","sourceMessageId":str(message.get("id") or ""),"title":files[0]["path"],"currentRevision":1,"files":copy.deepcopy(files),"revisions":[revision],"createdAt":now,"updatedAt":now}
+    thread.setdefault("codeArtifacts",[]).append(artifact)
+    message.setdefault("meta",{})["codeArtifactId"]=artifact_id
+    message["meta"]["artifactRevision"]=1
+    return artifact
+
+def _promote_pinned_code_artifact(thread,message):
+    if message.get("role")!="assistant" or "```" not in str(message.get("text") or ""):return None
+    existing=_artifact_for_message(thread,message.get("id"))
+    if existing:return existing
+    return _create_code_artifact(thread,message,(message.get("meta") or {}).get("requestId"),message.get("text"))
+
+def _artifact_context_item(thread,message):
+    artifact=_artifact_for_message(thread,message.get("id"))
+    if artifact is None:
+        artifact=_promote_pinned_code_artifact(thread,message)
+    if artifact is None:
+        return {"messageId":message.get("id"),"role":str(message.get("role") or "").upper(),"text":str(message.get("text") or "")[:12000],"pinned":True}
+    files=copy.deepcopy(artifact.get("files") or [])
+    return {"messageId":message.get("id"),"role":str(message.get("role") or "").upper(),"text":_artifact_markdown(files)[:12000],"pinned":True,"artifactType":"code","artifactId":artifact.get("id"),"artifactTitle":artifact.get("title"),"artifactRevision":int(artifact.get("currentRevision") or 1),"files":[{"path":f.get("path"),"language":f.get("language")} for f in files]}
+
+def _commit_code_artifact_revision(artifact,text,request_id,base_revision=0):
+    files=_parse_code_files(text)
+    if not files:return False,"NO_CODE"
+    current=int(artifact.get("currentRevision") or 0)
+    if int(base_revision or 0) not in (0,current):return False,"REVISION_CONFLICT"
+    next_revision=current+1
+    now=int(time.time()*1000)
+    artifact.setdefault("revisions",[]).append({"revision":next_revision,"requestId":str(request_id or ""),"createdAt":now,"files":copy.deepcopy(files)})
+    artifact["currentRevision"]=next_revision
+    artifact["files"]=copy.deepcopy(files)
+    artifact["updatedAt"]=now
+    if files:artifact["title"]=artifact.get("title") or files[0]["path"]
+    return True,"COMMITTED"
+
+def _response_prose(text):
+    prose=str(text or "")
+    for fence in _code_fences(prose):prose=prose.replace(fence,"")
+    return prose.strip()
 
 
 def _run(key,request_id,model_id,payload,assistant_id):
@@ -224,28 +277,31 @@ def _run(key,request_id,model_id,payload,assistant_id):
         with _lock:
             g=s["activeGeneration"];g.update(terminal=True,terminalType="COMPLETE",phase="COMPLETE")
             thread=next(t for t in s["threads"] if t["id"]==payload["threadId"])
-            edit_target_id=str(payload.get("pinnedCodeEditTargetId") or "")
-            edit_target=next((m for m in thread["messages"] if str(m.get("id") or "")==edit_target_id),None) if edit_target_id else None
-            if edit_target is not None:
-                updated=_replace_code_artifact(str(edit_target.get("text") or ""),text)
-                if updated:
-                    revisions=edit_target.setdefault("meta",{}).setdefault("artifactRevisions",[])
-                    revisions.append({"requestId":request_id,"text":str(edit_target.get("text") or ""), "revisedAt":int(time.time()*1000)})
-                    edit_target["text"]=updated
-                    edit_target["meta"]["artifactRevision"]=int(edit_target["meta"].get("artifactRevision") or 1)+1
-                    edit_target["meta"]["lastArtifactRequestId"]=request_id
-                    prose=text
-                    for fence in _code_fences(text):prose=prose.replace(fence,"")
-                    prose=prose.strip() or "Updated the pinned code artifact."
-                    message={"id":assistant_id,"role":"assistant","text":prose,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","updatedPinnedArtifactId":edit_target_id}}
+            intent=g.get("programmingIntent") if isinstance(g.get("programmingIntent"),dict) else {}
+            artifact_id=str(intent.get("artifactTargetId") or "")
+            artifact=_find_artifact(thread,artifact_id) if artifact_id and intent.get("artifactMutationRequested") else None
+            if artifact is not None:
+                committed,reason=_commit_code_artifact_revision(artifact,text,request_id,int(intent.get("baseRevision") or 0))
+                if committed:
+                    source=next((m for m in thread.get("messages",[]) if str(m.get("id") or "")==str(artifact.get("sourceMessageId") or "")),None)
+                    if source is not None:
+                        source.setdefault("meta",{})["codeArtifactId"]=artifact["id"]
+                        source["meta"]["artifactRevision"]=artifact["currentRevision"]
+                    prose=_response_prose(text) or ("Updated pinned code artifact to revision "+str(artifact["currentRevision"])+".")
+                    message={"id":assistant_id,"role":"assistant","text":prose,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","updatedCodeArtifactId":artifact["id"],"artifactRevision":artifact["currentRevision"]}}
                     thread["messages"].append(message)
+                    g["artifactReceipt"]={"action":"REVISION_COMMITTED","artifactId":artifact["id"],"revision":artifact["currentRevision"],"baseRevision":int(intent.get("baseRevision") or 0)}
                 else:
-                    message={"id":assistant_id,"role":"assistant","text":text,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE"}}
+                    message={"id":assistant_id,"role":"assistant","text":_response_prose(text) or text,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","artifactMutationRejected":reason}}
                     thread["messages"].append(message)
+                    g["artifactReceipt"]={"action":"REVISION_REJECTED","artifactId":artifact["id"],"reason":reason}
             else:
                 message={"id":assistant_id,"role":"assistant","text":text,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE"}}
                 thread["messages"].append(message)
-                if "```" in text and len(text)>=120:thread.setdefault("messagePins",{})[assistant_id]=True
+                artifact=_create_code_artifact(thread,message,request_id,text)
+                if artifact is not None:
+                    thread.setdefault("messagePins",{})[assistant_id]=True
+                    g["artifactReceipt"]={"action":"ARTIFACT_CREATED","artifactId":artifact["id"],"revision":1}
             s["revision"]+=1
     except Exception as exc:
         with _lock:
@@ -276,16 +332,15 @@ async def send(request:Request):
         if s["activeGeneration"] and not s["activeGeneration"]["terminal"]:raise HTTPException(409,"Generation already active")
         t=next((t for t in s["threads"] if t["id"]==tid),None)
         if t is None:
-            t={"id":tid,"title":prompt[:48],"pinned":False,"messagePins":{},"createdAt":time.time()*1000,"messages":[]}
+            t={"id":tid,"title":prompt[:48],"pinned":False,"messagePins":{},"codeArtifacts":[],"createdAt":time.time()*1000,"messages":[]}
             s["threads"].append(t)
         history=[{"role":m["role"],"text":m["text"]} for m in t["messages"] if m["role"] in ("user","assistant")]
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
-        pinned_context=[{"messageId":m.get("id"),"role":str(m.get("role") or "").upper(),"text":str(m.get("text") or "")[:12000],"pinned":True} for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
-        code_edit_target=_latest_code_pin(t) if _looks_like_pinned_code_edit(prompt,pinned_context) else None
+        pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"meta":{"requestId":rid,"modelId":model_id}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}],"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None}
-    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"pinnedCodeEditTargetId":str(code_edit_target.get("id") or "") if code_edit_target else "","profileId":"LALM","profile":profile,"userProfile":user_profile}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}],"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"artifactReceipt":None}
+    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400)
