@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.64">
+  <meta name="swrlz-chat-version" content="1.0.65">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -43,7 +43,7 @@
     .first-run-copy{margin:0;color:#cce7f1;font-size:14px;line-height:1.55}
     .first-run-hint{margin-top:11px;color:#89a9b8;font-size:11px;line-height:1.45}
     .message.visible{display:block}.assistant-message{max-width:100%}.assistant-head{gap:8px!important;margin-bottom:5px!important}.assistant-head .kompanion-icon{width:30px!important;height:30px!important;flex-basis:30px!important;border-radius:9px}.assistant-name{font-size:15px!important;letter-spacing:.025em!important;color:#dff8ff!important;text-shadow:0 0 7px rgba(95,220,255,.42)!important}
-    .station-progress{margin:0 0 5px 38px!important;color:#8fd8ed!important;font-size:10px!important;letter-spacing:.055em;text-transform:uppercase}
+    .station-progress{margin:0 0 5px 38px!important;color:#8fd8ed!important;font-size:10px!important;letter-spacing:.055em;text-transform:uppercase}.message-time{margin-left:7px;color:#789caf;font:9px var(--font-telemetry);font-weight:500;letter-spacing:.02em;text-shadow:none}.user-meta .message-time{margin-left:5px;color:#84aabd}
     .assistant-body{margin-left:38px!important;padding:10px 12px!important;color:#f4f9fd!important;font-size:15px;line-height:1.5}
     .assistant-actions{display:flex;justify-content:flex-end;margin:4px 0 0 38px;padding-right:2px}.copy-response{border:0;border-radius:7px;background:transparent;color:#9fd6e9;padding:4px 6px;font-size:10px;cursor:pointer;opacity:.86}.copy-response:hover{background:rgba(10,38,59,.55);color:#d8f7ff}.copy-response:active{transform:translateY(1px)}
     .assistant-body .message-text{white-space:pre-wrap;overflow-wrap:anywhere}.assistant-body .code-block{margin:10px 0;border:1px solid rgba(126,214,255,.26);border-radius:12px;overflow:hidden;background:rgba(1,10,19,.92);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}.assistant-body .code-block:first-child{margin-top:0}.assistant-body .code-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 9px;border-bottom:1px solid rgba(126,214,255,.16);background:linear-gradient(90deg,rgba(10,39,59,.9),rgba(25,27,57,.72));font-family:var(--font-telemetry);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#9fdff0}.assistant-body .copy-code{border:1px solid rgba(126,214,255,.20);border-radius:7px;padding:4px 7px;background:rgba(7,28,45,.72);color:#d9f7ff;font:inherit;letter-spacing:.05em;cursor:pointer}.assistant-body .copy-code:hover,.assistant-body .copy-code:focus-visible{border-color:rgba(56,232,255,.48);background:rgba(13,48,70,.86)}.assistant-body pre{margin:0;padding:12px 13px;overflow:auto;max-height:62vh;white-space:pre;tab-size:2;background:transparent;color:#eaf8ff;font-family:var(--font-telemetry);font-size:12px;line-height:1.55;text-shadow:none}.assistant-body code{font-family:inherit}
@@ -551,7 +551,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.59";
+      const SWRLZ_CHAT_VERSION = "1.0.65";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -982,6 +982,8 @@
         const hint=document.createElement("div");hint.className="first-run-hint";hint.textContent="You can change your profile, preferences, and companion settings later from Settings.";
         card.append(kicker,title,copy,hint);messageList.appendChild(card);
       };
+      const formatMessageTime=value=>{const ms=Number(value||0);if(!Number.isFinite(ms)||ms<=0)return "";try{return new Intl.DateTimeFormat(undefined,{hour:"numeric",minute:"2-digit"}).format(new Date(ms));}catch(_){return new Date(ms).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});}};
+      const attachAssistantTime=(node,msg)=>{const value=formatMessageTime(msg?.createdAt);if(!value)return;const name=node.querySelector(".assistant-name");if(!name)return;const time=document.createElement("span");time.className="message-time";time.textContent=value;time.title=new Date(Number(msg.createdAt)).toLocaleString();name.after(time);};
       const conversationRenderSignature=thread=>{
         if(!thread)return "draft:"+String(draftThread);
         const pins=thread?.messagePins&&typeof thread.messagePins==="object"?thread.messagePins:{};
@@ -989,7 +991,7 @@
         const messages=(thread.messages||[]).map(msg=>[
           String(msg?.id||""),String(msg?.role||""),String(msg?.text||""),
           !!pins[String(msg?.id||"")],String(msg?.meta?.state||msg?.state||""),
-          String(msg?.meta?.artifactRevision||"")
+          String(msg?.meta?.artifactRevision||""),Number(msg?.createdAt||0)
         ]);
         const artifactState=artifacts.map(a=>[
           String(a?.id||""),Number(a?.currentRevision||0),String(a?.title||""),
@@ -1006,15 +1008,15 @@
         if(!thread){renderedConversationSignature=signature;renderFirstRunWelcome();renderWorkSurface();return true;}
         for(const msg of (thread.messages||[])){
           if(msg.role==="assistant"){
-            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||""); addCopyButton(node); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||""); attachAssistantTime(node,msg); addCopyButton(node); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";node.dataset.messageId=msg.id||"";
-            const meta=document.createElement("div");meta.className="user-meta";meta.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";
+            const meta=document.createElement("div");meta.className="user-meta";const who=document.createElement("span");who.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";meta.appendChild(who);const timeText=formatMessageTime(msg.createdAt);if(timeText){const time=document.createElement("span");time.className="message-time";time.textContent=timeText;time.title=new Date(Number(msg.createdAt)).toLocaleString();meta.appendChild(time);}
             const bubble=document.createElement("div");bubble.className="user-bubble";bubble.textContent=msg.text||"";
             if(chatAccountUser?.picture){
               const avatar=document.createElement("img");avatar.className="user-avatar";avatar.src=chatAccountUser.picture;avatar.alt="";node.append(meta,bubble,avatar);
             }else{
-              const avatar=document.createElement("div");avatar.className="user-avatar-fallback";avatar.textContent=(meta.textContent||"Y").trim().charAt(0).toUpperCase();node.append(meta,bubble,avatar);
+              const avatar=document.createElement("div");avatar.className="user-avatar-fallback";avatar.textContent=(who.textContent||"Y").trim().charAt(0).toUpperCase();node.append(meta,bubble,avatar);
             }
             addMessagePinButton(node,thread,msg);messageList.appendChild(node);
           }
@@ -1128,8 +1130,10 @@
             window.dispatchEvent(new CustomEvent("swrlz-proposal-receipt",{detail:receipt}));
           }
         }
-        const phase=String(last.phase||g.phase||last.type||"QUEUED").replace(/_/g," ");
-        const label=g.terminal?(g.terminalType||phase):phase;
+        const rawPhase=String(last.phase||g.phase||last.type||"QUEUED").toUpperCase();
+        const phaseLabels={CONNECTING:"Connecting",QUEUED:"Queued",LOADING:"Loading model",BUDGETED:"Preparing context",CONTEXT:"Preparing context",DIAGNOSTIC_READY:"Preparing response",PROGRAMMING_INTENT:"Planning code change",MEMORY_CANDIDATE:"Preparing context",GENERATING:"Generating response",COMPLETE:"Complete",COMPLETED:"Complete",FAILED:"Failed"};
+        const phase=phaseLabels[rawPhase]||rawPhase.replace(/_/g," ").toLowerCase().replace(/^./,c=>c.toUpperCase());
+        const label=g.terminal?(g.terminalType||phase):(String(g.text||"").length?"Streaming response":phase);
         const terminalKind=String(g.terminalType||label||"").toUpperCase();
         const visualState=phaseToCompanionState(last,g);
         setCompanionState(visualState,"station:"+String(last.phase||g.phase||last.type||"unknown").toLowerCase());
@@ -1148,7 +1152,7 @@
           node.querySelector(".assistant-body").before(status);
         }
         const seq=Number(g.lastSeq||0);
-        const nextLabel="§wyrlz · "+label+(seq?" · event "+seq:"");
+        const nextLabel="§wyrlz · "+label;
         if(status.textContent!==nextLabel)status.textContent=nextLabel;
         const body=node.querySelector(".assistant-body");
         const nextText=String(g.text||"");
@@ -1225,7 +1229,7 @@
           for(const line of lines){
             if(!line.trim())continue;
             let event;try{event=JSON.parse(line)}catch(_){continue}
-            if(!stationGeneration)stationGeneration={requestId:event.requestId||"",threadId:activeThreadId,text:"",status:[],terminal:false,lastSeq:0};
+            if(!stationGeneration)stationGeneration={requestId:event.requestId||"",threadId:activeThreadId,text:"",status:[],terminal:false,lastSeq:0,createdAt:Date.now()};
             stationGeneration.lastSeq=Number(event.seq||stationGeneration.lastSeq||0);
             if(event.type==="DELTA")stationGeneration.text=(stationGeneration.text||"")+String(event.text||"");
             else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||"",categories:Array.isArray(event.categories)?event.categories.slice(0,16):[],proposalReceipt:event.proposalReceipt&&typeof event.proposalReceipt==="object"?event.proposalReceipt:null}].slice(-256);
@@ -1249,7 +1253,7 @@
             const t=currentThread(); if(t&&(!t.title||t.title==="New conversation"))await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:titleFrom(text),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);
           }
           const requestId=uid("web"), userMessageId=uid("message"), assistantMessageId=uid("assistant");
-          stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING"}],terminal:false,lastSeq:0};
+          stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING"}],terminal:false,lastSeq:0,createdAt:Date.now()};
           setCompanionState("accepted","send-start");
           stationAwaitingCommit=requestId;
           // Render the submitted user turn immediately; Station remains the durable authority.
@@ -1259,7 +1263,7 @@
             pendingDraftThread=localThread;
           }
           localThread.messages=Array.isArray(localThread.messages)?localThread.messages:[];
-          if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,meta:{requestId,localPending:true}});
+          if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,createdAt:Date.now(),meta:{requestId,localPending:true}});
           prompt.value=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
           const sendPath="/api/lalm_station/send";
           const transportCamera=(stage,data={})=>{try{fetch("/api/chat?__swrlz_client_debug=1",{method:"POST",credentials:"same-origin",cache:"no-store",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"station-send-transport-v1",url:location.pathname,event:{at:new Date().toISOString(),type:"station-send-transport",message:stage,data:{requestId,sendPath,...data}}})}).catch(()=>{})}catch(_){}};
@@ -1276,13 +1280,16 @@
             let detail="";try{detail=await response.clone().text()}catch(_){}
             throw new Error("SEND_HTTP_"+response.status+" "+sendPath+(detail?" "+detail.slice(0,600):""));
           }
-          // /send returns a 202 acknowledgement, not a token stream. Follow the
-          // authoritative Station snapshot without blocking the composer.
+          // /send acknowledges the authoritative Station generation. The accepted
+          // request then gets its own NDJSON event stream so model deltas can
+          // reach the Mask as they are generated instead of waiting on snapshot polling.
           const accepted=await response.json();
           if(accepted.requestId!==requestId)throw new Error("SEND_ACK_REQUEST_MISMATCH");
           stationGeneration.status=[{type:"QUEUED",phase:"QUEUED"}];
           setCompanionState("accepted","send-ack");
           renderStationGeneration();
+          const streamResponse=await fetch("/api/lalm_station/stream?requestId="+encodeURIComponent(requestId),{credentials:"same-origin",cache:"no-store",headers:{"Accept":"application/x-ndjson"}});
+          await consumeGeneration(streamResponse);
           await syncStation();
           return true;
         }catch(err){
