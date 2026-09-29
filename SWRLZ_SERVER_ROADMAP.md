@@ -1,3 +1,17 @@
+### UPDATE CHECKPOINT — 2026-09-28 — HF Chat 1.0.55 source repaired; deploy dispatch pending
+
+- **Approval remains active:** `APPROVE HF CHAT 1.0.55 DEPLOY AND 700M FIX`.
+- **HF deployment branch:** `feature/hf-space-manual-deploy` HEAD `7256b12e3ae7112a74954ca80fdb7706dd1ad206`.
+- **UI source verified:** HF branch canonical Chat blob is `049c033ac6c07ca96f813cce4bf637e41b4162e8`, meta **1.0.55**, matching the completed A–G clean-room source. The HF packager stages this file and applies only the explicit HF model/profile control injection. Therefore the older-looking live Space is a deployed-state mismatch, not missing source work.
+- **700M repair:** `hf_space/lfm2_700m_engine.py` commit `f2d0da116f99a2eab674f2c932f0d2426514a624` expands the bounded llama.cpp context **4096 → 8192**, retaining **256** output tokens and **128** safety reserve; usable input budget becomes **7808**. Oldest-history eviction remains unchanged. Built-in §wyrlz identity and user/custom profile layers are preserved.
+- **Deployment proof gate:** workflow commit `7256b12e3ae7112a74954ca80fdb7706dd1ad206` adds a deploy-only 700M smoke using the observed failing prompt `How's things going 😊`. Publication is blocked unless the route loads with context 8192/input budget 7808, emits a CONTEXT event within budget, and produces a non-empty response.
+- **Safety/rollback unchanged:** workflow still snapshots existing `kamiloki/Swyrlz`, records immutable pre-deploy rollback metadata, verifies the target/SDK, uploads only after explicit approval, and records the deployed revision as unverified until acceptance.
+- **Static/source verification:** PASS for Chat 1.0.55 source, packager Chat staging, 8192/7808 budget constants, absence of the old opaque 700M error string, presence of the exact short-prompt smoke, non-empty-response assertion, pre-deploy snapshot, rollback checkpoint, and destination guard.
+- **Deployment state:** **NOT YET DISPATCHED**. The connected GitHub toolset in this session exposes workflow read/rerun operations but no workflow-dispatch creation operation. No HF write-capable connector is available either; the connected HF credential is read/jobs scoped. The assistant did not weaken the workflow into an automatic push deploy or fabricate a deployment receipt.
+- **Next execution:** manually dispatch **Manual Hugging Face Space Deploy** against `feature/hf-space-manual-deploy` with `mode=deploy`, `approved=yes`. The already-approved workflow will then run the new 700M smoke before any publication. After a run exists, its jobs/logs/artifacts can be inspected through the connected GitHub tools.
+- **No Vercel action:** none performed.
+- **Status:** SOURCE REPAIR COMPLETE / LIVE DEPLOYMENT PENDING DISPATCH.
+
 ### UPDATE STARTED — 2026-09-28 — HF Chat 1.0.55 acceptance and 700M context fix
 
 - **Approval:** user explicitly approved `APPROVE HF CHAT 1.0.55 DEPLOY AND 700M FIX`.
