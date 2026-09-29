@@ -2016,3 +2016,11 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Repair contract:** preserve the existing collapsible composer and collapsible pin rail. Measure the composer's current visible overlap and publish it as Mask layout state; the conversation viewport must reserve that exact bottom space in both expanded and collapsed modes, including resize/orientation changes.
 - **Ownership:** Mask geometry/presentation only. No Brain, Workstation, artifact, or persistence semantics change.
 - **Deployment:** explicitly approved by the user together with this repair; deploy only after source/version verification.
+
+### UPDATE FINISHED — 2026-09-29 — composer-aware conversation viewport (Chat 1.0.64)
+
+- The fixed 70px conversation bottom boundary is replaced by `--composer-visible-height`.
+- Chat measures the actual visible composer overlap from its live bounding rectangle and refreshes the inset on composer resize, viewport resize/orientation change, and collapse/expand transition.
+- Existing composer and pin-rail collapse behavior is preserved; only the conversation's available geometry changes.
+- Source re-read confirmed the 1.0.64 page marker, dynamic CSS inset, ResizeObserver path, and collapse synchronization. VERSION.txt is aligned at 1.0.64.
+- User explicitly approved deployment with this repair; proceed through the guarded main request-file deployment path.
