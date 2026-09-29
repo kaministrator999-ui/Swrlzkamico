@@ -206,6 +206,37 @@ Untouched component                     → stays exactly where it is
 
 A repository commit is not a Server deployment. A runtime-hot activation is not automatically a Server release. A component may advance across many Repository Work tiers while Server Runtime remains unchanged.
 
+## 1A. Current hosting + deployment authority — Hugging Face is canonical
+
+The current application hosting/deployment target for this project is the existing Hugging Face Space `kamiloki/Swyrlz`.
+
+**Vercel is deprecated for current §wyrlz application deployment.** Historical Vercel workflows, guides, deployment records, project IDs, aliases, and cleanup contracts may remain in the repository as lineage/reference, but they are **not the current deployment path** and must not be selected merely because an older project document names them.
+
+Current deployment-control rules:
+
+- ordinary source commits remain deployment-inert;
+- source work may continue on its architecturally correct branch without implying deployment approval;
+- the canonical HF package/publish workflow is `.github/workflows/manual-hf-space.yml`;
+- Chat/HF candidate work currently deploys from the explicitly selected `SOURCE_REF` (normally `feature/hf-space-manual-deploy` while that branch remains the accepted candidate authority);
+- after the user explicitly approves deployment, an engineering agent with GitHub write access may start it by changing **only** `.deploy/HF_SPACE_REQUEST.txt` on `main` to a fresh approved request;
+- the request must target `kamiloki/Swyrlz`, set `APPROVED=1`, name the exact `SOURCE_REF`, and use a fresh `REQUEST_NONCE`;
+- `.github/workflows/hf-space-request.yml` validates that request and calls the canonical HF workflow;
+- the checked-out source SHA, pre-deploy HF snapshot/rollback checkpoint, package validation, publish result, and post-deploy evidence remain part of deployment truth;
+- changing unrelated files on `main` must **not** deploy the Space;
+- never set `APPROVED=1` or rotate the request nonce without explicit deployment approval.
+
+An inert request is intentionally represented by `APPROVED=0`. A commit to the request file with `APPROVED=0` may start the request-check workflow, but the deploy job must remain skipped.
+
+### Deprecated Vercel documentation rule
+
+Where older canonical/subordinate documents describe Vercel as the current production host or `.deploy/REQUEST.txt` / `manual-vercel-production.yml` as the current application deployment trigger, treat those statements as **historical/deprecated deployment lineage** unless a later governed migration explicitly restores Vercel.
+
+Do not delete historical Vercel evidence solely because it is deprecated. Preserve it for archaeology/rollback history, but do not let it override this hosting authority during startup, implementation, deployment planning, or readiness reporting.
+
+For deployment work, startup must inspect the current HF request gate and HF workflow before acting. If their source contradicts this section, stop and reconcile deployment control rather than falling back to Vercel.
+
+---
+
 ## 2. Document ownership map
 
 Each rule family has one primary owner.
