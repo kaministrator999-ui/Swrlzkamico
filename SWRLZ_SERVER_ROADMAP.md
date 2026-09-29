@@ -1,3 +1,17 @@
+### UPDATE FINISHED — 2026-09-29 — LALM v91 offline Code Truth + local web/UI engineering
+
+- **User authorization:** ensure the coding/web-design improvements are implemented on the runtime branch required by §tart and follow the Hugging Face project authority rather than remaining documentation-only on main.
+- **Architecture reconciliation:** §tart + Hotfix Rules classify runtime-loadable LALM/R39 behavior as `runtime` authority. Current runtime baseline was re-read before mutation: LALM Engine **2.1.115**, Repository Work **1.0.32**, hot entry `runtime_hot/r39_engine.py`, preserved v90 overlay stack.
+- **Executable runtime change:** added `runtime_hot/r39_engine_v91_overlay.py` with bounded programming-only offline Code Truth + web/UI engineering policy. It covers syntax/structure, symbols/scope/types/contracts, control/data/state flow, concrete runtime failures, repair re-verification, DOM/CSS/layout/responsive/accessibility/state/security/performance, and chat-specific composer/scroll/pinned/code-container/streaming/mobile invariants.
+- **External-service boundary:** ordinary standalone HTML/CSS/JavaScript engineering does not require internet. Google, Hugging Face, OAuth, hosted SDK endpoints/scopes/versions and similar changing provider facts remain an external-evidence boundary and must be marked unverified when current authority is unavailable.
+- **Activation wiring:** runtime hot entry now fetches and executes pinned v91 overlay commit `a7dbee3dcc68e7a9f677865337a91c4cc6821a3c` after v90. Entrypoint activation commits: `fe4170a179f656b7dac916bfacae7496c28f8996`, indentation correction `065e0e219e6d21d310b936f4d1c03ad9505c8cd0`.
+- **Deterministic self-test:** v91 self-test covers programming detection, single policy injection/deduplication, non-programming isolation, offline-first contract, syntax/structure, control/data/state, chat UI invariants, provider boundary, and repair re-verification. It fail-closes overlay hydration if the suite does not pass.
+- **Versions:** LALM Engine **2.1.115 → 2.1.116**, revision `2.1.116-hot-offline-code-truth-web-ui-v91`; Repository Work **1.0.32 → 1.0.33**. Server Runtime, Chat, Runtime Manifest, and unrelated modules remain unchanged.
+- **Documentation:** programming runtime architecture aligned to executable v91; prior evidence-first/offline web curriculum on main is now backed by a runtime policy rather than being documentation-only.
+- **Verification truth:** SOURCE COMPLETE / STATIC STRUCTURAL RE-READ COMPLETE. Runtime-hot source and authorities are committed. No fresh HF inference/user-turn acceptance was performed in this connector session, so live behavior is **not yet claimed verified**.
+- **Deployment:** no Vercel action. No Hugging Face deployment workflow was dispatched. Under current §tart architecture this is runtime-hot LALM source; HF follow-through remains the canonical hosting path and live acceptance is pending.
+- **Status:** RUNTIME SOURCE COMPLETE / LALM 2.1.116 AUTHORITY ACTIVE IN REPO / LIVE HF v91 ACCEPTANCE PENDING.
+
 ### UPDATE FINISHED — 2026-09-29 — New-thread isolation repair + Hugging Face hosting authority
 
 - **User authorization:** fix the observed Chat defect where creating a new thread after messaging in another thread could be redirected back to the prior thread and the attempted first message would not send; discontinue Vercel and make Hugging Face the hosting authority throughout future follow-through.
