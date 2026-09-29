@@ -171,6 +171,38 @@ jobs:
           name: r39-llama-candidate-provenance
           path: /tmp/swrlz-r39-llama-candidate.gguf.provenance.json
           retention-days: 30
+      - name: Smoke test 700M assembled profile budget before publication
+        if: ${{ inputs.mode == 'deploy' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python - <<'PY'
+          import json
+          from lfm2_700m_engine import generate_events, CONTEXT_TOKENS, INPUT_BUDGET_TOKENS
+          payload={
+              'requestId':'hf-predeploy-700m-context-smoke',
+              'prompt':"How's things going 😊",
+              'history':[],
+              'profile':'',
+              'userProfile':'Name: Kami. Collaborative technical/creative partner testing §wyrlz.',
+          }
+          events=list(generate_events(payload))
+          context=next((e for e in events if e.get('type')=='CONTEXT'),None)
+          text=''.join(str(e.get('text') or '') for e in events if e.get('type')=='DELTA').strip()
+          assert CONTEXT_TOKENS==8192, CONTEXT_TOKENS
+          assert INPUT_BUDGET_TOKENS==7808, INPUT_BUDGET_TOKENS
+          assert context and context.get('estimatedInputTokens',10**9)<=INPUT_BUDGET_TOKENS, context
+          assert text, '700M context smoke generated no response'
+          print(json.dumps({
+              'route':'700m',
+              'contextWindowTokens':CONTEXT_TOKENS,
+              'inputBudgetTokens':INPUT_BUDGET_TOKENS,
+              'estimatedInputTokens':context.get('estimatedInputTokens'),
+              'historyMessagesDropped':context.get('historyMessagesDropped'),
+              'responseChars':len(text),
+              'status':'PASS',
+          }))
+          PY
       - name: Protect existing fast HF inference and Chat integration
         if: ${{ inputs.mode == 'deploy' }}
         run: |
