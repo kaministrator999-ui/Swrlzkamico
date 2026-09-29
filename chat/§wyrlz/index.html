@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.47">
+  <meta name="swrlz-chat-version" content="1.0.55">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
-    :root{--bg:#010812;--text:#eef8ff;--secondary:#c2d4e5;--muted:#91a9c0;--line:rgba(145,169,192,.2);--cyan:#38e8ff;--blue:#4f8cff}
+    :root{--bg:#010812;--bg-deep:#00050d;--panel:rgba(5,22,38,.78);--panel-strong:rgba(4,17,31,.94);--panel-soft:rgba(11,37,58,.58);--text:#eef8ff;--secondary:#c2d4e5;--muted:#91a9c0;--line:rgba(145,169,192,.20);--line-bright:rgba(126,214,255,.42);--cyan:#38e8ff;--ice:#8feaff;--blue:#4f8cff;--violet:#a578ff;--magenta:#eb68ff;--amber:#ffc969;--danger:#ff6b7a;--success:#68f4cf;--shadow:0 18px 48px rgba(0,0,0,.36);--font-ui:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--font-telemetry:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;--conversation-width:740px}
     *{box-sizing:border-box}
     html,body{width:100%;height:100%;margin:0;background:#010812}
     body{
@@ -76,30 +76,378 @@
     .composer-tools{position:absolute;right:6px;bottom:6px;display:flex;align-items:center;padding:0}
     .send-button{display:inline-grid;place-items:center;width:28px;height:28px;border:0;border-radius:50%;cursor:pointer;color:#dffaff;background:linear-gradient(145deg,#7de5ff,#58a8ff);box-shadow:0 6px 16px rgba(56,168,255,.24)}
     .send-button svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+    /* Glitch Dragon Chat — Tier A visual foundation. One canonical page/style owner. */
+    body::before{content:"";position:fixed;z-index:0;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,5,13,.18),rgba(0,5,13,.38) 42%,rgba(0,5,13,.68)),radial-gradient(circle at 74% 16%,rgba(56,232,255,.12),transparent 28%),radial-gradient(circle at 16% 78%,rgba(165,120,255,.08),transparent 30%)}
+    body::after{content:"";position:fixed;z-index:1;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(115deg,transparent 0 48%,rgba(56,232,255,.10) 49%,transparent 50% 100%),linear-gradient(25deg,transparent 0 72%,rgba(165,120,255,.08) 73%,transparent 74% 100%);background-size:180px 140px,240px 180px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.75),transparent 66%)}
+    button,textarea{font-family:var(--font-ui)}
+    button:focus-visible,textarea:focus-visible{outline:2px solid rgba(56,232,255,.78);outline-offset:2px}
+    .top-edge{position:fixed;z-index:3;top:8px;left:8px;right:8px;height:42px;display:grid;grid-template-columns:minmax(92px,auto) minmax(0,1fr) auto;align-items:center;gap:10px;padding:0 10px 0 50px;border:1px solid rgba(126,214,255,.20);border-radius:14px;background:linear-gradient(120deg,rgba(3,16,29,.86),rgba(7,29,47,.66) 56%,rgba(12,26,48,.74));box-shadow:0 10px 30px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(16px) saturate(125%);-webkit-backdrop-filter:blur(16px) saturate(125%);overflow:hidden}
+    .top-edge::after{content:"";position:absolute;left:50px;right:10px;bottom:0;height:1px;background:linear-gradient(90deg,rgba(56,232,255,.48),rgba(165,120,255,.16),transparent 82%);pointer-events:none}
+    .top-brand{display:flex;align-items:center;gap:7px;min-width:0}.top-brand-mark{width:24px;height:24px;border-radius:7px;object-fit:cover;border:1px solid rgba(126,214,255,.34);box-shadow:0 0 16px rgba(56,232,255,.11)}.top-brand-name{font-size:12px;font-weight:800;letter-spacing:.08em;color:#e6fbff;white-space:nowrap}
+    .top-thread{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;color:#cfe3ee;font-size:12px;font-weight:650;letter-spacing:.01em}
+    .top-status{display:flex;align-items:center;gap:6px;min-width:0;font-family:var(--font-telemetry);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#9dbacb}.top-model{padding:4px 6px;border:1px solid rgba(165,120,255,.24);border-radius:7px;background:rgba(88,59,132,.15);color:#d8c7ff}.ready-dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 9px rgba(104,244,207,.48)}.top-edge[data-state="busy"] .ready-dot{background:var(--cyan);box-shadow:0 0 10px rgba(56,232,255,.62);animation:swrlzSignal 2.4s ease-in-out infinite}.top-edge[data-state="error"] .ready-dot{background:var(--danger);box-shadow:0 0 10px rgba(255,107,122,.48)}
+    @keyframes swrlzSignal{0%,100%{opacity:.56;transform:scale(.9)}50%{opacity:1;transform:scale(1.2)}}
+    .menu-shade{background:rgba(0,8,18,.72);backdrop-filter:blur(3px)}
+    .side-menu{width:min(88vw,354px);padding:62px 14px 14px;background:linear-gradient(155deg,rgba(3,19,34,.985),rgba(5,25,43,.975) 62%,rgba(14,18,42,.98));border-right:1px solid rgba(126,214,255,.28);box-shadow:24px 0 68px rgba(0,0,0,.46),inset -1px 0 0 rgba(165,120,255,.08)}
+    .side-menu::before{content:"";position:absolute;top:0;right:0;width:1px;height:42%;background:linear-gradient(180deg,rgba(56,232,255,.68),rgba(165,120,255,.18),transparent)}
+    .side-brand{padding:0 2px 13px;margin-bottom:13px}.side-brand-name{font-family:var(--font-ui);font-size:15px;letter-spacing:.075em}.side-brand .kompanion-icon{border-radius:12px;box-shadow:0 8px 26px rgba(0,0,0,.28),0 0 18px rgba(56,232,255,.08)}
+    .settings-gear,.new-thread-button,.account-action,.thread-selection-bar button{transition:border-color .16s ease,background .16s ease,transform .16s ease}.settings-gear:hover,.new-thread-button:hover,.account-action:hover,.thread-selection-bar button:hover{border-color:rgba(56,232,255,.48);background:rgba(24,63,88,.72)}.settings-gear:active,.new-thread-button:active,.account-action:active{transform:translateY(1px)}
+    .account-card,.version-box{border-color:rgba(126,214,255,.20);background:linear-gradient(145deg,rgba(2,15,29,.82),rgba(8,28,45,.60));box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+    .thread-panel-title,.version-title{font-family:var(--font-telemetry);font-size:10px;letter-spacing:.16em;color:#9acfe0}
+    .thread-row{border-color:rgba(126,214,255,.13);background:rgba(6,25,42,.55);transition:border-color .15s ease,background .15s ease,transform .15s ease}.thread-row:hover{border-color:rgba(126,214,255,.30);background:rgba(10,38,59,.72)}.thread-row.active{border-color:rgba(56,232,255,.40);background:linear-gradient(100deg,rgba(17,58,80,.78),rgba(47,39,79,.34))}.thread-row.selected{border-color:rgba(165,120,255,.58);box-shadow:inset 3px 0 0 rgba(165,120,255,.52)}
+    .thread-meta{font-family:var(--font-telemetry);font-size:9px;letter-spacing:.04em}.thread-popup{border-color:rgba(126,214,255,.24);background:rgba(3,17,30,.975)}
+    .menu-button{top:11px;left:11px;width:36px;height:36px;border-color:rgba(126,214,255,.32);border-radius:11px;background:linear-gradient(145deg,rgba(12,42,63,.96),rgba(5,21,37,.96));box-shadow:0 8px 22px rgba(0,0,0,.32),0 0 0 1px rgba(165,120,255,.045);backdrop-filter:blur(14px) saturate(120%)}.menu-button:hover{border-color:rgba(56,232,255,.58)}
+    .chat-viewport{inset:0 0 70px;padding:64px 14px 28px;scroll-padding-top:66px;scrollbar-color:rgba(126,214,255,.24) transparent}.message-list{width:min(var(--conversation-width),100%);gap:20px;padding-top:8px}
+    .assistant-message{position:relative}.assistant-head{border-color:rgba(126,214,255,.16)!important;background:linear-gradient(110deg,rgba(4,21,36,.64),rgba(21,28,54,.38))!important}.assistant-head .kompanion-icon{border-color:rgba(56,232,255,.32);box-shadow:0 0 16px rgba(56,232,255,.10)}.assistant-name{font-family:var(--font-ui)!important;font-weight:760!important;letter-spacing:.035em!important}.assistant-body{border-color:rgba(126,214,255,.18)!important;border-radius:6px 16px 16px 16px!important;background:linear-gradient(135deg,rgba(4,22,38,.72),rgba(9,29,47,.54))!important;box-shadow:0 8px 24px rgba(0,0,0,.16),inset 2px 0 0 rgba(56,232,255,.12)!important;backdrop-filter:blur(14px) saturate(118%)!important}.station-progress{font-family:var(--font-telemetry);color:#8ddff3!important}
+    .user-bubble{border-color:rgba(126,214,255,.22);border-radius:15px 5px 15px 15px;background:linear-gradient(135deg,rgba(18,61,84,.86),rgba(25,48,79,.82));box-shadow:0 8px 22px rgba(0,0,0,.18),inset -2px 0 0 rgba(165,120,255,.10)}.user-meta{font-family:var(--font-telemetry);font-size:9px;letter-spacing:.045em;color:#bceeff;background:rgba(3,19,33,.56)}
+    .assistant-actions{opacity:.72;transition:opacity .15s ease}.assistant-message:hover .assistant-actions,.assistant-actions:focus-within{opacity:1}.copy-response{font-family:var(--font-telemetry);font-size:9px;letter-spacing:.07em;text-transform:uppercase;border:1px solid transparent;padding:5px 7px}.copy-response:hover,.copy-response:focus-visible{border-color:rgba(126,214,255,.20);background:rgba(7,31,49,.72)}
+    .composer-shell{padding:11px 12px 8px}.composer-shell::before{background:linear-gradient(180deg,rgba(146,211,255,.11),rgba(35,80,119,.13) 38%,rgba(2,13,26,.70));backdrop-filter:blur(16px) saturate(120%);-webkit-backdrop-filter:blur(16px) saturate(120%)}.composer-shell::after{background:linear-gradient(180deg,rgba(203,237,255,.12),rgba(165,120,255,.035) 42%,transparent 68%)}.composer{width:min(620px,100%)}.composer-box{border-color:rgba(126,214,255,.28);background:linear-gradient(145deg,rgba(8,30,48,.94),rgba(5,18,33,.96));box-shadow:0 10px 28px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.055)}.composer-box:focus-within{border-color:rgba(56,232,255,.56);box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 2px rgba(56,232,255,.055),inset 0 1px 0 rgba(255,255,255,.065)}.composer-collapse{border-color:rgba(126,214,255,.26);background:rgba(5,24,41,.78);color:#a9e9f7}.send-button{background:linear-gradient(145deg,#80e8ff,#5a9dff 58%,#8c79ff);box-shadow:0 6px 16px rgba(56,168,255,.20);transition:transform .14s ease,filter .14s ease,opacity .14s ease}.send-button:hover{filter:brightness(1.08);transform:translateY(-1px)}.send-button:active{transform:translateY(0)}.send-button:disabled{opacity:.42;cursor:default;filter:saturate(.45);transform:none}
+    @media(max-width:600px){.top-edge{grid-template-columns:34px minmax(0,1fr) auto;padding-left:48px;gap:7px;height:40px}.top-brand-name{display:none}.top-brand-mark{width:23px;height:23px}.top-thread{font-size:11px;text-align:left}.top-status{gap:5px}.top-ready-label{display:none}.top-model{padding:3px 5px}.chat-viewport{padding-top:60px}.message-list{gap:17px}.assistant-body{margin-left:34px!important;padding:9px 11px!important}.station-progress{margin-left:34px!important}.assistant-actions{margin-left:34px}.user-message{max-width:91%}.composer{width:100%}}
+    @media(prefers-reduced-motion:reduce){.menu-shade,.side-menu,.version-chevron,.thread-row,.settings-gear,.new-thread-button,.account-action,.composer-shell,.composer-collapse svg,.send-button,.assistant-actions{transition:none!important}.top-edge[data-state="busy"] .ready-dot{animation:none!important}.send-button:hover{transform:none}.thread-row:hover{transform:none}}
+
     @media(min-width:601px){.composer-shell{padding:12px 14px 10px}.composer-box{min-height:44px;border-radius:22px}#prompt{height:42px;max-height:calc(50dvh - 2px);padding-top:11px;padding-bottom:11px;font-size:14px;line-height:20px}.composer-tools{bottom:7px}.send-button{width:30px;height:30px}.send-button svg{width:14px;height:14px}}
-      .assistant-body{white-space:normal;overflow-wrap:anywhere}
-    .assistant-body .swrlz-p{margin:0 0 .78em}.assistant-body .swrlz-p:last-child{margin-bottom:0}
-    .assistant-body .swrlz-h{margin:.95em 0 .42em;font-weight:800;letter-spacing:.015em;color:#e9fbff;line-height:1.25}
-    .assistant-body .swrlz-h:first-child{margin-top:0}.assistant-body .swrlz-h2{font-size:1.08em}.assistant-body .swrlz-h3{font-size:1em;color:#c9f4ff}
-    .assistant-body .swrlz-list{margin:.35em 0 .8em;padding-left:1.25em}.assistant-body .swrlz-list li{margin:.26em 0;padding-left:.12em}
-    .assistant-body .swrlz-quote{margin:.7em 0;padding:.55em .75em;border-left:3px solid rgba(82,220,255,.7);border-radius:0 9px 9px 0;background:rgba(13,48,72,.42);color:#d9f4ff}
-    .assistant-body .swrlz-code{display:block;margin:.65em 0;padding:.7em .8em;overflow-x:auto;border:1px solid rgba(95,192,255,.2);border-radius:10px;background:rgba(1,12,24,.7);font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap}
-    .assistant-body .swrlz-inline-code{padding:.08em .3em;border-radius:5px;background:rgba(1,12,24,.62);font: .9em ui-monospace,SFMono-Regular,Consolas,monospace;color:#c9f6ff}
-    .assistant-body strong{color:#fff}.assistant-body em{color:#d9effa}.assistant-body hr{border:0;border-top:1px solid rgba(126,214,255,.2);margin:.9em 0}
-    .assistant-body a{color:#8eeaff;text-decoration-thickness:1px;text-underline-offset:2px}
-      @media(max-width:600px){
-      .chat-viewport{padding-left:10px;padding-right:10px}
-      .message-list{gap:16px}
-      .assistant-message{max-width:100%}
-      .assistant-body{margin-left:0!important;margin-top:7px!important;padding:12px 13px!important;border-radius:14px!important;background:linear-gradient(145deg,rgba(7,28,48,.84),rgba(10,42,65,.72))!important}
-      .assistant-actions{margin-left:0!important}
-      .user-message{max-width:88%}
-      .user-bubble{font-size:15px;line-height:1.5;padding:10px 12px}
+
+
+    /* Glitch Dragon Chat — Tier B settings shell. */
+    .settings-shade{position:fixed;z-index:30;inset:0;background:rgba(0,7,16,.76);backdrop-filter:blur(5px);opacity:0;visibility:hidden;transition:opacity .18s ease,visibility 0s linear .18s}
+    .settings-sheet{position:fixed;z-index:31;top:10px;right:10px;bottom:10px;width:min(94vw,780px);display:flex;flex-direction:column;border:1px solid rgba(126,214,255,.24);border-radius:18px;background:linear-gradient(145deg,rgba(3,16,29,.985),rgba(7,25,42,.98) 58%,rgba(14,18,40,.985));box-shadow:0 24px 80px rgba(0,0,0,.56),inset 0 1px 0 rgba(255,255,255,.045);transform:translateX(calc(100% + 28px));transition:transform .22s cubic-bezier(.2,.8,.2,1);overflow:hidden}
+    body.settings-open .settings-shade{opacity:1;visibility:visible;transition-delay:0s}
+    body.settings-open .settings-sheet{transform:translateX(0)}
+    .settings-header{display:flex;align-items:center;gap:12px;padding:14px 15px;border-bottom:1px solid rgba(126,214,255,.14);background:linear-gradient(90deg,rgba(10,39,60,.55),rgba(37,28,67,.22))}
+    .settings-header-copy{min-width:0;flex:1}.settings-kicker{font-family:var(--font-telemetry);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#8fd8ed}.settings-title{margin:2px 0 0;font-size:18px;letter-spacing:.02em;color:#effbff}.settings-close{display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(126,214,255,.22);border-radius:10px;background:rgba(8,29,47,.72);color:#dff8ff;cursor:pointer}.settings-close:hover{border-color:rgba(56,232,255,.48)}
+    .settings-layout{display:grid;grid-template-columns:176px minmax(0,1fr);min-height:0;flex:1}
+    .settings-nav{padding:12px 9px;border-right:1px solid rgba(126,214,255,.12);overflow:auto;background:rgba(1,12,24,.36)}
+    .settings-nav-button{display:flex;align-items:center;width:100%;margin:0 0 5px;padding:9px 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:#a9bfcd;text-align:left;font-size:12px;font-weight:700;cursor:pointer}.settings-nav-button:hover{background:rgba(22,58,80,.38);color:#e9faff}.settings-nav-button.active{border-color:rgba(56,232,255,.26);background:linear-gradient(100deg,rgba(23,70,91,.54),rgba(70,45,110,.25));color:#e9fbff;box-shadow:inset 2px 0 0 rgba(56,232,255,.55)}
+    .settings-main{min-width:0;min-height:0;overflow:auto;padding:16px 18px 86px}
+    .settings-pane{display:none;max-width:620px}.settings-pane.active{display:block}.settings-pane h3{margin:0 0 5px;font-size:17px;color:#f0fbff}.settings-pane-lead{margin:0 0 15px;color:#94afbf;font-size:12px;line-height:1.5}
+    .setting-group{margin:0 0 12px;padding:12px;border:1px solid rgba(126,214,255,.13);border-radius:13px;background:linear-gradient(135deg,rgba(6,26,43,.55),rgba(10,24,44,.40))}.setting-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,220px);gap:14px;align-items:center}.setting-row+.setting-row{margin-top:12px;padding-top:12px;border-top:1px solid rgba(126,214,255,.09)}.setting-label{font-size:13px;font-weight:730;color:#e9f9ff}.setting-help{margin-top:3px;color:#839faf;font-size:10px;line-height:1.45}.setting-control select{width:100%;min-height:36px;border:1px solid rgba(126,214,255,.22);border-radius:10px;background:#071c2d;color:#eaf9ff;padding:7px 9px}.setting-toggle{display:flex;justify-content:flex-end;align-items:center;gap:8px;color:#bbd5e1;font-size:11px}.setting-toggle input{width:18px;height:18px;accent-color:#48dff7}.setting-control output{font-family:var(--font-telemetry);font-size:10px;color:#a8dbea}
+    .settings-note{padding:11px 12px;border:1px solid rgba(165,120,255,.18);border-radius:11px;background:rgba(52,35,82,.20);color:#b9b4d3;font-size:11px;line-height:1.5}.settings-note strong{color:#e0d7ff}
+    .settings-status-card{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px 0;border-bottom:1px solid rgba(126,214,255,.08);font-size:11px}.settings-status-card:last-child{border-bottom:0}.settings-status-card span:first-child{color:#9db5c4}.settings-status-card span:last-child{font-family:var(--font-telemetry);color:#c8eff9;text-align:right}
+    .settings-footer{position:absolute;left:176px;right:0;bottom:0;display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid rgba(126,214,255,.14);background:rgba(3,16,29,.96);backdrop-filter:blur(14px)}.settings-save-state{min-width:0;flex:1;color:#8fa8b7;font-size:10px;line-height:1.35}.settings-save{min-width:108px;border:1px solid rgba(56,232,255,.34);border-radius:10px;background:linear-gradient(135deg,rgba(24,102,126,.72),rgba(68,62,136,.58));color:#effcff;padding:9px 13px;font-weight:760;cursor:pointer}.settings-save:hover{border-color:rgba(56,232,255,.62)}.settings-save:disabled{opacity:.45;cursor:default}
+    body.settings-density-comfortable .message-list{gap:26px}.settings-density-comfortable .assistant-body,.settings-density-comfortable .user-bubble{padding-top:13px!important;padding-bottom:13px!important}
+    body.settings-glass-low .top-edge,body.settings-glass-low .side-menu,body.settings-glass-low .assistant-body,body.settings-glass-low .composer-shell::before{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+    body.settings-glass-low .assistant-body{background:rgba(5,23,39,.90)!important}body.settings-glass-low .top-edge{background:rgba(3,18,31,.94)}
+    body.a11y-high-contrast{--text:#fff;--secondary:#e8f5ff;--muted:#c5d5df;--line:rgba(225,245,255,.38);--line-bright:rgba(165,235,255,.72)}body.a11y-high-contrast .assistant-body,body.a11y-high-contrast .user-bubble,body.a11y-high-contrast .top-edge,body.a11y-high-contrast .composer-box{border-color:rgba(215,245,255,.56)!important;background-color:rgba(0,10,20,.92)!important}
+    body.a11y-reduced-transparency .top-edge,body.a11y-reduced-transparency .side-menu,body.a11y-reduced-transparency .assistant-body,body.a11y-reduced-transparency .user-bubble,body.a11y-reduced-transparency .composer-shell::before,body.a11y-reduced-transparency .settings-sheet{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}body.a11y-reduced-transparency .top-edge,body.a11y-reduced-transparency .side-menu,body.a11y-reduced-transparency .settings-sheet{background:#061727!important}body.a11y-reduced-transparency .assistant-body{background:#082139!important}body.a11y-reduced-transparency .user-bubble{background:#173e5a!important}
+    body.motion-reduced *,body.motion-off *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}body.motion-off *{animation:none!important;transition:none!important}
+    .assistant-body,.user-bubble{font-size:calc(15px * var(--font-scale,1))!important}.side-menu,.settings-sheet{font-size:calc(1em * var(--font-scale,1))}#prompt{font-size:calc(13px * var(--font-scale,1))!important}
+    @media(min-width:601px){#prompt{font-size:calc(14px * var(--font-scale,1))!important}}
+    @media(max-width:680px){.settings-sheet{inset:0;width:100%;border:0;border-radius:0}.settings-layout{grid-template-columns:1fr}.settings-nav{display:flex;gap:5px;padding:8px;border-right:0;border-bottom:1px solid rgba(126,214,255,.12);overflow-x:auto}.settings-nav-button{width:auto;white-space:nowrap;margin:0;padding:7px 9px}.settings-main{padding:14px 12px 92px}.setting-row{grid-template-columns:1fr;gap:8px}.setting-toggle{justify-content:flex-start}.settings-footer{left:0}.settings-header{padding:12px}.settings-title{font-size:16px}}
+    @media(prefers-reduced-motion:reduce){.settings-shade,.settings-sheet,.settings-nav-button,.settings-close,.settings-save{transition:none!important}}
+
+
+    /* Glitch Dragon Chat — Tier C profile + lore surfaces. */
+    .setting-control input,.setting-control textarea{width:100%;border:1px solid rgba(126,214,255,.22);border-radius:10px;background:#071c2d;color:#eaf9ff;padding:8px 9px;font:inherit}.setting-control textarea{min-height:108px;resize:vertical;line-height:1.45}.setting-control input::placeholder,.setting-control textarea::placeholder{color:#668293}.setting-control input:focus,.setting-control textarea:focus,.setting-control select:focus{border-color:rgba(56,232,255,.56);outline:none;box-shadow:0 0 0 2px rgba(56,232,255,.06)}
+    .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.profile-field{display:flex;flex-direction:column;gap:5px}.profile-field.full{grid-column:1/-1}.profile-field label{font-size:11px;font-weight:760;color:#cdebf5}.profile-field small{color:#7895a5;font-size:9px;line-height:1.4}
+    .lore-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:10px}.lore-toolbar .setting-control{min-width:150px}.lore-toolbar-spacer{flex:1}.lore-action{border:1px solid rgba(56,232,255,.26);border-radius:9px;background:rgba(12,43,63,.72);color:#eafaff;padding:8px 10px;font-size:11px;font-weight:730;cursor:pointer}.lore-action:hover{border-color:rgba(56,232,255,.52);background:rgba(20,61,83,.78)}.lore-action.danger{border-color:rgba(255,107,122,.26);background:rgba(89,25,38,.45);color:#ffd9df}.lore-action:disabled{opacity:.42;cursor:default}
+    .lore-status{margin:0 0 10px;color:#89a8b8;font-family:var(--font-telemetry);font-size:9px;letter-spacing:.035em;line-height:1.45}.lore-list{display:flex;flex-direction:column;gap:8px}.lore-empty{padding:18px;border:1px dashed rgba(126,214,255,.18);border-radius:12px;color:#7894a4;text-align:center;font-size:11px}.lore-card{padding:11px;border:1px solid rgba(126,214,255,.14);border-radius:12px;background:linear-gradient(135deg,rgba(5,27,44,.60),rgba(17,27,51,.42))}.lore-card.inactive{opacity:.62}.lore-card-head{display:flex;align-items:flex-start;gap:8px}.lore-card-title{min-width:0;flex:1;color:#eefbff;font-size:12px;font-weight:760;overflow-wrap:anywhere}.lore-type{flex:0 0 auto;padding:3px 6px;border:1px solid rgba(165,120,255,.24);border-radius:7px;background:rgba(68,43,104,.20);color:#d6c8f7;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.045em}.lore-card-content{margin:7px 0;color:#b9d0dc;font-size:11px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.lore-meta{display:flex;flex-wrap:wrap;gap:5px 10px;color:#789aaa;font-family:var(--font-telemetry);font-size:8px;line-height:1.4}.lore-card-actions{display:flex;justify-content:flex-end;margin-top:8px}
+    .lore-editor{margin-top:12px;padding:12px;border:1px solid rgba(56,232,255,.20);border-radius:13px;background:rgba(2,18,31,.78)}.lore-editor[hidden]{display:none}.lore-editor-title{margin:0 0 10px;color:#e8faff;font-size:13px}.lore-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.lore-editor-actions{display:flex;align-items:center;gap:7px;margin-top:10px}.lore-editor-actions .lore-action:first-of-type{margin-left:auto}.lore-origin{margin-top:9px;padding:8px 9px;border-radius:9px;background:rgba(23,32,57,.36);color:#849eae;font-family:var(--font-telemetry);font-size:8px;line-height:1.5}.proposal-empty{padding:18px;border:1px solid rgba(165,120,255,.18);border-radius:13px;background:linear-gradient(135deg,rgba(41,29,68,.22),rgba(5,23,39,.45));text-align:center}.proposal-count{font-family:var(--font-telemetry);font-size:26px;color:#d7ccff}.proposal-label{margin-top:4px;color:#a39bbb;font-size:10px}
+    @media(max-width:680px){.profile-grid,.lore-editor-grid{grid-template-columns:1fr}.profile-field.full{grid-column:auto}.lore-toolbar{align-items:stretch;flex-wrap:wrap}.lore-toolbar-spacer{display:none}.lore-toolbar .setting-control{min-width:0;flex:1}.lore-action{min-height:38px}}
+
+
+    /* Glitch Dragon Chat — Tier D approval protocol. */
+    .proposal-policy-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.proposal-policy-item{padding:9px;border:1px solid rgba(126,214,255,.11);border-radius:10px;background:rgba(5,24,40,.44)}.proposal-policy-item label{display:block;margin-bottom:5px;color:#d6eef6;font-size:10px;font-weight:760}.proposal-policy-item select{width:100%;min-height:34px;border:1px solid rgba(126,214,255,.20);border-radius:8px;background:#071c2d;color:#e9f8ff;padding:6px 8px;font-size:10px}
+    .proposal-policy-help{margin-top:10px;color:#7f9ba9;font-size:9px;line-height:1.5}.proposal-policy-help code{color:#aeeaff}
+    .proposal-toolbar{display:flex;align-items:center;gap:8px;margin:12px 0 9px}.proposal-toolbar .setting-control{min-width:148px}.proposal-status{flex:1;color:#86a5b5;font-family:var(--font-telemetry);font-size:9px;line-height:1.4}.proposal-list{display:flex;flex-direction:column;gap:9px}.proposal-card{padding:11px;border:1px solid rgba(126,214,255,.14);border-radius:12px;background:linear-gradient(135deg,rgba(7,29,47,.64),rgba(32,28,60,.42))}.proposal-card.pending{border-color:rgba(56,232,255,.27)}.proposal-card.applied,.proposal-card.auto-applied{border-color:rgba(104,244,207,.22)}.proposal-card.declined{opacity:.7}.proposal-card.reverted{border-color:rgba(255,201,105,.20)}.proposal-card-head{display:flex;align-items:flex-start;gap:7px}.proposal-card-title{min-width:0;flex:1;color:#eefbff;font-size:12px;font-weight:780}.proposal-badge{padding:3px 6px;border:1px solid rgba(165,120,255,.22);border-radius:7px;background:rgba(65,43,101,.22);color:#d8ccf5;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.04em}.proposal-risk-low{border-color:rgba(104,244,207,.24);color:#b9f8e6}.proposal-risk-medium{border-color:rgba(255,201,105,.24);color:#ffe0a5}.proposal-risk-high{border-color:rgba(255,107,122,.28);color:#ffc0c9}.proposal-rationale{margin:7px 0;color:#b5cbd6;font-size:10px;line-height:1.45;white-space:pre-wrap}.proposal-payload{margin:8px 0 0;padding:8px;border:1px solid rgba(126,214,255,.09);border-radius:8px;background:rgba(0,12,23,.42);font-family:var(--font-telemetry);font-size:8px;line-height:1.5;color:#9dc5d4;white-space:pre-wrap;overflow-wrap:anywhere;max-height:126px;overflow:auto}.proposal-meta{display:flex;flex-wrap:wrap;gap:4px 9px;margin-top:8px;color:#6f93a4;font-family:var(--font-telemetry);font-size:8px}.proposal-card-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:6px;margin-top:9px}.proposal-action{border:1px solid rgba(126,214,255,.20);border-radius:8px;background:rgba(10,38,57,.72);color:#dff7ff;padding:6px 9px;font-size:9px;font-weight:760;cursor:pointer}.proposal-action:hover{border-color:rgba(56,232,255,.50)}.proposal-action.approve{border-color:rgba(104,244,207,.30);background:rgba(21,75,66,.40)}.proposal-action.decline{border-color:rgba(255,107,122,.25);background:rgba(82,27,40,.36)}.proposal-action.revert{border-color:rgba(255,201,105,.28);background:rgba(80,57,21,.34)}.proposal-action:disabled{opacity:.42;cursor:default}
+    .proposal-editor{margin-top:10px;padding:10px;border:1px solid rgba(165,120,255,.20);border-radius:10px;background:rgba(25,20,48,.50)}.proposal-editor[hidden]{display:none}.proposal-editor textarea{width:100%;min-height:150px;border:1px solid rgba(126,214,255,.20);border-radius:8px;background:#061827;color:#dff4fb;padding:8px;font:10px/1.45 var(--font-telemetry);resize:vertical}.proposal-editor-actions{display:flex;align-items:center;gap:6px;margin-top:7px}.proposal-editor-actions .proposal-action:first-of-type{margin-left:auto}
+    .proposal-audit{margin-top:9px;border-top:1px solid rgba(126,214,255,.09);padding-top:8px}.proposal-audit[hidden]{display:none}.proposal-audit-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px;padding:5px 0;color:#87a5b5;font-family:var(--font-telemetry);font-size:8px;border-bottom:1px solid rgba(126,214,255,.055)}.proposal-audit-row:last-child{border-bottom:0}.proposal-empty{padding:18px;border:1px dashed rgba(126,214,255,.18);border-radius:12px;color:#7d9aa9;text-align:center;font-size:10px;background:rgba(4,20,34,.36)}.proposal-empty .proposal-count{font-family:var(--font-telemetry);font-size:25px;color:#bdefff}
+    @media(max-width:680px){.proposal-policy-grid{grid-template-columns:1fr}.proposal-toolbar{align-items:stretch;flex-wrap:wrap}.proposal-status{width:100%;flex-basis:100%}.proposal-toolbar .setting-control{min-width:0;flex:1}.proposal-card-actions .proposal-action{min-height:34px}}
+
+
+    /* Glitch Dragon Chat — Tier E shared rapport. */
+    .rapport-control-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px;padding:10px;border:1px solid rgba(126,214,255,.13);border-radius:12px;background:linear-gradient(135deg,rgba(6,26,43,.58),rgba(24,27,55,.38))}
+    .rapport-state{min-width:0;flex:1;color:#bfeaf5;font-family:var(--font-telemetry);font-size:9px;line-height:1.45}.rapport-state strong{color:#effcff}
+    .rapport-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px}.rapport-toolbar .setting-control{min-width:150px}.rapport-history-toggle{display:flex;align-items:center;gap:6px;color:#9db5c4;font-size:10px}.rapport-history-toggle input{width:16px;height:16px;accent-color:#48dff7}.rapport-spacer{flex:1}
+    .rapport-list{display:flex;flex-direction:column;gap:8px}.rapport-card{padding:11px;border:1px solid rgba(126,214,255,.14);border-radius:12px;background:linear-gradient(135deg,rgba(5,27,44,.60),rgba(23,28,58,.42))}.rapport-card.inactive{opacity:.64}.rapport-card.archived{border-style:dashed;opacity:.72}.rapport-card-head{display:flex;align-items:flex-start;gap:8px}.rapport-card-title{min-width:0;flex:1;color:#eefbff;font-size:12px;font-weight:760;overflow-wrap:anywhere}.rapport-kind{flex:0 0 auto;padding:3px 6px;border:1px solid rgba(104,244,207,.20);border-radius:7px;background:rgba(24,76,67,.18);color:#bdf4e5;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.045em}.rapport-cue{margin:7px 0 3px;color:#c8e4ed;font-size:10px;line-height:1.4;overflow-wrap:anywhere}.rapport-meaning{margin:0;color:#9ebdca;font-size:10px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.rapport-response{margin-top:6px;padding:6px 7px;border-left:2px solid rgba(165,120,255,.26);color:#adacd0;font-size:9px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.rapport-meta{display:flex;flex-wrap:wrap;gap:5px 10px;margin-top:8px;color:#789aaa;font-family:var(--font-telemetry);font-size:8px}.rapport-actions{display:flex;justify-content:flex-end;margin-top:8px}.rapport-empty{padding:18px;border:1px dashed rgba(126,214,255,.18);border-radius:12px;color:#7894a4;text-align:center;font-size:11px}
+    .rapport-editor{margin-top:12px;padding:12px;border:1px solid rgba(104,244,207,.18);border-radius:13px;background:rgba(2,18,31,.78)}.rapport-editor[hidden]{display:none}.rapport-editor-title{margin:0 0 10px;color:#e8faff;font-size:13px}.rapport-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.rapport-editor-actions{display:flex;align-items:center;gap:7px;margin-top:10px}.rapport-editor-actions .lore-action:first-of-type{margin-left:auto}.rapport-origin{margin-top:9px;padding:8px 9px;border-radius:9px;background:rgba(21,43,52,.34);color:#849eae;font-family:var(--font-telemetry);font-size:8px;line-height:1.5}
+    @media(max-width:680px){.rapport-editor-grid{grid-template-columns:1fr}.rapport-toolbar{align-items:stretch}.rapport-spacer{display:none}.rapport-toolbar .setting-control{min-width:0;flex:1}.rapport-control-bar .lore-action{min-height:36px}}
+
+
+    /* Glitch Dragon Chat — Tier F companion presentation state machine. */
+    .top-brand{position:relative}.top-brand-mark,.assistant-head .kompanion-icon,.side-brand .kompanion-icon{will-change:transform,box-shadow,filter;transform-origin:center;transition:box-shadow .24s ease,filter .24s ease,border-color .24s ease}
+    .companion-state-chip{display:inline-flex;align-items:center;min-width:0;padding:3px 6px;border:1px solid rgba(126,214,255,.16);border-radius:7px;background:rgba(5,24,40,.52);color:#a7c4d1;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;transition:border-color .18s ease,color .18s ease,background .18s ease,box-shadow .18s ease}
+    body[data-companion-state="idle"] .companion-state-chip{color:#9eb9c7}
+    body[data-companion-state="listen"] .companion-state-chip{color:#bff8ff;border-color:rgba(56,232,255,.38);background:rgba(8,55,67,.36)}
+    body[data-companion-state="accepted"] .companion-state-chip{color:#bfffe9;border-color:rgba(104,244,207,.34);background:rgba(18,70,62,.34)}
+    body[data-companion-state="thinking"] .companion-state-chip{color:#d5c7ff;border-color:rgba(165,120,255,.36);background:rgba(58,42,94,.32)}
+    body[data-companion-state="acting"] .companion-state-chip{color:#d8f6ff;border-color:rgba(79,140,255,.42);background:rgba(28,50,92,.36)}
+    body[data-companion-state="responding"] .companion-state-chip{color:#c5fbff;border-color:rgba(56,232,255,.44);background:rgba(10,62,76,.34)}
+    body[data-companion-state="approval"] .companion-state-chip{color:#ffe3ab;border-color:rgba(255,201,105,.46);background:rgba(88,59,17,.34);box-shadow:0 0 12px rgba(255,201,105,.08)}
+    body[data-companion-state="error"] .companion-state-chip{color:#ffd2d8;border-color:rgba(255,107,122,.48);background:rgba(93,29,41,.34)}
+    body[data-companion-state="idle"] .top-brand-mark,body[data-companion-state="idle"] .assistant-head .kompanion-icon{animation:dragonIdle 5.6s ease-in-out infinite}
+    body[data-companion-state="listen"] .top-brand-mark,body[data-companion-state="listen"] .assistant-head .kompanion-icon{animation:dragonListen 1.9s ease-in-out infinite;border-color:rgba(56,232,255,.56);box-shadow:0 0 18px rgba(56,232,255,.20)}
+    body[data-companion-state="accepted"] .top-brand-mark,body[data-companion-state="accepted"] .assistant-head .kompanion-icon{animation:dragonAccepted .72s cubic-bezier(.2,.9,.25,1) 1;border-color:rgba(104,244,207,.56);box-shadow:0 0 18px rgba(104,244,207,.20)}
+    body[data-companion-state="thinking"] .top-brand-mark,body[data-companion-state="thinking"] .assistant-head .kompanion-icon{animation:dragonThink 2.25s ease-in-out infinite;border-color:rgba(165,120,255,.52);box-shadow:0 0 20px rgba(165,120,255,.18)}
+    body[data-companion-state="acting"] .top-brand-mark,body[data-companion-state="acting"] .assistant-head .kompanion-icon{animation:dragonAct 1.15s steps(1,end) infinite;border-color:rgba(79,140,255,.58);box-shadow:0 0 20px rgba(79,140,255,.22)}
+    body[data-companion-state="responding"] .top-brand-mark,body[data-companion-state="responding"] .assistant-head .kompanion-icon{animation:dragonRespond 1.65s ease-in-out infinite;border-color:rgba(56,232,255,.58);box-shadow:0 0 20px rgba(56,232,255,.22)}
+    body[data-companion-state="approval"] .top-brand-mark,body[data-companion-state="approval"] .assistant-head .kompanion-icon{animation:dragonApproval 1.55s ease-in-out infinite;border-color:rgba(255,201,105,.62);box-shadow:0 0 22px rgba(255,201,105,.24)}
+    body[data-companion-state="error"] .top-brand-mark,body[data-companion-state="error"] .assistant-head .kompanion-icon{animation:dragonError .44s ease-out 1;border-color:rgba(255,107,122,.70);box-shadow:0 0 20px rgba(255,107,122,.24)}
+    body[data-companion-state="listen"] .ready-dot{background:var(--cyan);box-shadow:0 0 9px rgba(56,232,255,.48)}
+    body[data-companion-state="accepted"] .ready-dot{background:var(--success);box-shadow:0 0 9px rgba(104,244,207,.48)}
+    body[data-companion-state="thinking"] .ready-dot{background:var(--violet);box-shadow:0 0 10px rgba(165,120,255,.52)}
+    body[data-companion-state="acting"] .ready-dot{background:var(--blue);box-shadow:0 0 10px rgba(79,140,255,.52)}
+    body[data-companion-state="responding"] .ready-dot{background:var(--cyan);box-shadow:0 0 10px rgba(56,232,255,.58)}
+    body[data-companion-state="approval"] .ready-dot{background:var(--amber);box-shadow:0 0 10px rgba(255,201,105,.58)}
+    body[data-companion-state="error"] .ready-dot{background:var(--danger);box-shadow:0 0 10px rgba(255,107,122,.58)}
+    @keyframes dragonIdle{0%,100%{transform:translateY(0) scale(1);box-shadow:0 0 12px rgba(56,232,255,.06)}50%{transform:translateY(-1px) scale(1.018);box-shadow:0 0 17px rgba(56,232,255,.12)}}
+    @keyframes dragonListen{0%,100%{transform:rotate(0deg) scale(1)}50%{transform:rotate(-1.2deg) scale(1.025)}}
+    @keyframes dragonAccepted{0%{transform:scale(.96)}42%{transform:scale(1.08)}100%{transform:scale(1)}}
+    @keyframes dragonThink{0%,100%{transform:translateY(0) scale(1);filter:saturate(1)}50%{transform:translateY(-1px) scale(1.035);filter:saturate(1.16)}}
+    @keyframes dragonAct{0%,100%{transform:translate(0,0)}24%{transform:translate(1px,0)}26%{transform:translate(-1px,1px)}28%{transform:translate(0,0)}72%{transform:translate(0,0)}74%{transform:translate(1px,-1px)}76%{transform:translate(0,0)}}
+    @keyframes dragonRespond{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.025);filter:brightness(1.09)}}
+    @keyframes dragonApproval{0%,100%{transform:scale(1);box-shadow:0 0 14px rgba(255,201,105,.16)}50%{transform:scale(1.04);box-shadow:0 0 24px rgba(255,201,105,.30)}}
+    @keyframes dragonError{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.5px)}55%{transform:translateX(1.5px)}78%{transform:translateX(-.7px)}}
+    body.motion-reduced .top-brand-mark,body.motion-reduced .assistant-head .kompanion-icon,body.motion-reduced .side-brand .kompanion-icon,
+    body.motion-off .top-brand-mark,body.motion-off .assistant-head .kompanion-icon,body.motion-off .side-brand .kompanion-icon{animation:none!important;transform:none!important;filter:none!important}
+    body.motion-reduced .ready-dot,body.motion-off .ready-dot{animation:none!important}
+    body.motion-reduced .companion-state-chip,body.motion-off .companion-state-chip{transition:none!important}
+    @media(prefers-reduced-motion:reduce){
+      body:not(.motion-full) .top-brand-mark,body:not(.motion-full) .assistant-head .kompanion-icon,body:not(.motion-full) .side-brand .kompanion-icon{animation:none!important;transform:none!important;filter:none!important}
+      body:not(.motion-full) .ready-dot{animation:none!important}
+      body:not(.motion-full) .companion-state-chip{transition:none!important}
     }
+    @media(max-width:680px){.top-status{gap:4px}.companion-state-chip{padding:3px 5px;max-width:72px;overflow:hidden;text-overflow:ellipsis}.top-ready-label{display:none}}
+
+
+    /* Glitch Dragon Chat — Tier G work surface, cards, and evidence. */
+    .work-surface-button{display:inline-flex;align-items:center;gap:5px;min-height:26px;padding:4px 7px;border:1px solid rgba(126,214,255,.20);border-radius:8px;background:rgba(5,24,40,.56);color:#cdeef7;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.work-surface-button:hover{border-color:rgba(56,232,255,.46);background:rgba(12,44,62,.68)}.work-count{display:grid;place-items:center;min-width:16px;height:16px;padding:0 4px;border-radius:9px;background:rgba(165,120,255,.24);color:#eee7ff;font-size:8px}.work-count[data-empty="true"]{opacity:.48}
+    .work-shade{position:fixed;z-index:8;inset:0;background:rgba(0,8,18,.58);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:opacity .18s ease,visibility 0s linear .18s}.work-surface{position:fixed;z-index:9;top:0;right:0;bottom:0;width:min(92vw,420px);display:flex;flex-direction:column;background:linear-gradient(155deg,rgba(3,18,32,.988),rgba(6,27,44,.982) 62%,rgba(20,19,45,.985));border-left:1px solid rgba(126,214,255,.24);box-shadow:-20px 0 58px rgba(0,0,0,.42);transform:translateX(104%);transition:transform .22s cubic-bezier(.2,.8,.2,1)}body.work-open .work-shade{opacity:1;visibility:visible;transition-delay:0s}body.work-open .work-surface{transform:translateX(0)}
+    .work-head{display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid rgba(126,214,255,.13)}.work-head-copy{min-width:0;flex:1}.work-kicker{font-family:var(--font-telemetry);font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:#81a9ba}.work-title{margin:2px 0 0;color:#effbff;font-size:15px}.work-close{display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(126,214,255,.20);border-radius:10px;background:rgba(10,38,57,.56);color:#dff7ff;cursor:pointer}.work-body{min-height:0;overflow:auto;padding:12px 13px 24px}.work-section{margin-bottom:15px}.work-section-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}.work-section-title{flex:1;color:#cfeaf4;font-family:var(--font-telemetry);font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}.work-section-count{color:#6f93a3;font-family:var(--font-telemetry);font-size:8px}.work-card-list{display:flex;flex-direction:column;gap:8px}
+    .agent-card{padding:10px;border:1px solid rgba(126,214,255,.13);border-radius:11px;background:linear-gradient(135deg,rgba(6,27,44,.62),rgba(23,27,55,.38))}.agent-card.action{border-color:rgba(79,140,255,.22)}.agent-card.approval{border-color:rgba(255,201,105,.25);background:linear-gradient(135deg,rgba(74,52,18,.30),rgba(31,27,52,.40))}.agent-card.artifact{border-color:rgba(165,120,255,.22)}.agent-card-head{display:flex;align-items:flex-start;gap:7px}.agent-card-title{min-width:0;flex:1;color:#effaff;font-size:11px;font-weight:780;overflow-wrap:anywhere}.agent-card-badge{padding:3px 5px;border:1px solid rgba(126,214,255,.16);border-radius:7px;color:#a9c6d3;font-family:var(--font-telemetry);font-size:7px;letter-spacing:.05em;text-transform:uppercase}.agent-card-body{margin-top:6px;color:#9eb9c5;font-size:9px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.agent-card-meta{display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:7px;color:#6d91a2;font-family:var(--font-telemetry);font-size:7px}.agent-card-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}.agent-card-button{border:1px solid rgba(126,214,255,.20);border-radius:8px;background:rgba(10,39,58,.68);color:#dff7ff;padding:6px 8px;font-size:8px;font-weight:760;cursor:pointer}.agent-card-button:hover{border-color:rgba(56,232,255,.48)}.work-empty{padding:12px;border:1px dashed rgba(126,214,255,.14);border-radius:10px;color:#718f9d;font-size:9px;line-height:1.45;text-align:center}
+    .message-evidence{margin:6px 0 0 38px;border-top:1px solid rgba(126,214,255,.08);padding-top:5px}.message-evidence summary{width:max-content;max-width:100%;cursor:pointer;color:#80a9ba;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.05em;list-style:none}.message-evidence summary::-webkit-details-marker{display:none}.message-evidence summary::before{content:"▸";display:inline-block;margin-right:5px;transition:transform .15s ease}.message-evidence[open] summary::before{transform:rotate(90deg)}.message-evidence-body{margin-top:6px;padding:7px 8px;border:1px solid rgba(126,214,255,.09);border-radius:8px;background:rgba(2,17,29,.38);color:#829fad;font-family:var(--font-telemetry);font-size:8px;line-height:1.5}.evidence-row{display:grid;grid-template-columns:minmax(74px,auto) 1fr;gap:8px;padding:2px 0}.evidence-key{color:#6e8f9f}.evidence-value{color:#b4ced8;overflow-wrap:anywhere}.evidence-link{color:#8feaff;text-decoration:none}.evidence-link:hover{text-decoration:underline}
+    body.a11y-high-contrast .work-surface,body.a11y-high-contrast .agent-card,body.a11y-high-contrast .message-evidence-body{border-color:rgba(215,245,255,.56)!important;background-color:rgba(0,10,20,.94)!important}
+    body.a11y-reduced-transparency .work-shade{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+    body.a11y-reduced-transparency .work-surface{background:#061727!important}
+    body.a11y-reduced-transparency .agent-card,body.a11y-reduced-transparency .message-evidence-body{background:#082139!important}
+    body.motion-reduced .work-shade,body.motion-reduced .work-surface,body.motion-off .work-shade,body.motion-off .work-surface,body.motion-reduced .message-evidence summary::before,body.motion-off .message-evidence summary::before{transition:none!important}
+    @media(prefers-reduced-motion:reduce){body:not(.motion-full) .work-shade,body:not(.motion-full) .work-surface,body:not(.motion-full) .message-evidence summary::before{transition:none!important}}
+    @media(max-width:760px){.work-surface{width:100vw}.work-surface-button{padding:4px 6px}.work-surface-button .work-label{display:none}.top-model{display:none}.message-evidence{margin-left:38px}}
+
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
+  <header class="top-edge" id="topEdge" data-component="top-edge" data-state="ready" aria-label="Chat status">
+    <div class="top-brand" aria-label="§wyrlz">
+      <img class="top-brand-mark" src="/chat/§wyrlz/assets/kompanion.png" alt="">
+      <span class="top-brand-name">§wyrlz</span>
+    </div>
+    <div class="top-thread" id="topThreadTitle" title="New conversation">New conversation</div>
+    <div class="top-status">
+      <span class="top-model">LALM</span>
+      <span class="companion-state-chip" id="companionStateLabel" role="status" aria-live="polite">idle</span>
+      <button class="work-surface-button" id="workSurfaceButton" type="button" aria-expanded="false" aria-controls="workSurface"><span class="work-label">Work</span><span class="work-count" id="workSurfaceCount" data-empty="true">0</span></button>
+      <span class="ready-dot" aria-hidden="true"></span>
+      <span class="top-ready-label" id="topReadyLabel">ready</span>
+    </div>
+  </header>
+
+  <div class="work-shade" id="workShade" aria-hidden="true"></div>
+  <aside class="work-surface" id="workSurface" aria-hidden="true" aria-labelledby="workSurfaceTitle">
+    <header class="work-head">
+      <div class="work-head-copy"><div class="work-kicker">Structured runtime surface</div><h2 class="work-title" id="workSurfaceTitle">Work</h2></div>
+      <button class="work-close" id="workClose" type="button" aria-label="Close work surface">✕</button>
+    </header>
+    <div class="work-body">
+      <section class="work-section">
+        <div class="work-section-head"><div class="work-section-title">Actions</div><div class="work-section-count" id="workActionCount">0</div></div>
+        <div class="work-card-list" id="workActionList"></div>
+      </section>
+      <section class="work-section">
+        <div class="work-section-head"><div class="work-section-title">Approvals</div><div class="work-section-count" id="workApprovalCount">0</div></div>
+        <div class="work-card-list" id="workApprovalList"></div>
+      </section>
+      <section class="work-section">
+        <div class="work-section-head"><div class="work-section-title">Artifacts</div><div class="work-section-count" id="workArtifactCount">0</div></div>
+        <div class="work-card-list" id="workArtifactList"></div>
+      </section>
+      <section class="work-section">
+        <div class="work-section-head"><div class="work-section-title">Evidence</div><div class="work-section-count" id="workEvidenceCount">0</div></div>
+        <div class="work-card-list" id="workEvidenceList"></div>
+      </section>
+      <div class="work-empty" id="workTruthNote">Only structured Station, proposal, artifact, and committed message metadata render here. Assistant prose is never interpreted as tool activity.</div>
+    </div>
+  </aside>
+  <div class="settings-shade" id="settingsShade" aria-hidden="true"></div>
+  <section class="settings-sheet" id="settingsSheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" aria-hidden="true">
+    <header class="settings-header">
+      <div class="settings-header-copy"><div class="settings-kicker">Glitch Dragon control surface</div><h2 class="settings-title" id="settingsTitle">Settings</h2></div>
+      <button class="settings-close" id="settingsClose" type="button" aria-label="Close settings">✕</button>
+    </header>
+    <div class="settings-layout">
+      <nav class="settings-nav" aria-label="Settings sections">
+        <button class="settings-nav-button active" type="button" data-settings-section="general">General</button>
+        <button class="settings-nav-button" type="button" data-settings-section="model">AI / Model</button>
+        <button class="settings-nav-button" type="button" data-settings-section="you">You</button>
+        <button class="settings-nav-button" type="button" data-settings-section="companion">§wyrlz</button>
+        <button class="settings-nav-button" type="button" data-settings-section="lore">Lore & Memory</button>
+        <button class="settings-nav-button" type="button" data-settings-section="rapport">Rapport</button>
+        <button class="settings-nav-button" type="button" data-settings-section="proposals">Proposal Inbox</button>
+        <button class="settings-nav-button" type="button" data-settings-section="appearance">Appearance</button>
+        <button class="settings-nav-button" type="button" data-settings-section="motion">Motion</button>
+        <button class="settings-nav-button" type="button" data-settings-section="accessibility">Accessibility</button>
+        <button class="settings-nav-button" type="button" data-settings-section="privacy">Privacy</button>
+      </nav>
+      <div class="settings-main">
+        <section class="settings-pane active" data-settings-pane="general">
+          <h3>General</h3><p class="settings-pane-lead">Chat interaction defaults. Previewed immediately; saved only when you choose Save.</p>
+          <div class="setting-group">
+            <div class="setting-row"><div><div class="setting-label">Enter to send</div><div class="setting-help">When off, Enter inserts a newline. Ctrl/⌘ + Enter still sends.</div></div><label class="setting-toggle"><input id="settingEnterSend" type="checkbox" checked> Enabled</label></div>
+            <div class="setting-row"><div><div class="setting-label">Conversation density</div><div class="setting-help">Changes vertical breathing room without widening the conversation stage.</div></div><div class="setting-control"><select id="settingDensity"><option value="compact">Compact</option><option value="comfortable">Comfortable</option></select></div></div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="model">
+          <h3>AI / Model</h3><p class="settings-pane-lead">Profile preferences for future LALM routing. Tier B does not pretend these knobs already alter inference.</p>
+          <div class="setting-group">
+            <div class="setting-row"><div><div class="setting-label">Default model</div><div class="setting-help">Current clean-room Chat route is bound to the §wyrlz LALM.</div></div><div class="setting-control"><select id="settingDefaultModel" disabled><option value="LALM">§wyrlz LALM</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">Effort preference</div><div class="setting-help">Saved as a model preference only until the LALM routing tier consumes it.</div></div><div class="setting-control"><select id="settingEffort"><option value="auto">Adaptive</option><option value="fast">Fast</option><option value="deep">Deep</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">Response length</div><div class="setting-help">Your preferred answer depth; persistence does not itself enforce generation length.</div></div><div class="setting-control"><select id="settingResponseLength"><option value="adaptive">Adaptive</option><option value="concise">Concise</option><option value="expanded">Expanded</option></select></div></div>
+          </div>
+          <div class="settings-note"><strong>Truth boundary:</strong> these model preferences are inspectable account data, not a claim that the active LALM runtime already honors them.</div>
+        </section>
+        <section class="settings-pane" data-settings-pane="you">
+          <h3>You</h3><p class="settings-pane-lead">Durable user profile details stay separate from creative lore. Saving here updates the existing account profile authority; Tier C does not yet inject these fields into LALM inference.</p>
+          <div class="setting-group">
+            <div class="profile-grid">
+              <div class="profile-field"><label for="settingDisplayName">Display name</label><div class="setting-control"><input id="settingDisplayName" type="text" maxlength="120" autocomplete="name" placeholder="How §wyrlz should address you"></div></div>
+              <div class="profile-field"><label for="settingUserPronouns">Pronouns</label><div class="setting-control"><input id="settingUserPronouns" type="text" maxlength="80" placeholder="Optional"></div></div>
+              <div class="profile-field full"><label for="settingUserRole">Role / work</label><div class="setting-control"><input id="settingUserRole" type="text" maxlength="160" placeholder="Optional role, craft, or work context"></div><small>Profile context only; creative identity belongs in User Lore.</small></div>
+              <div class="profile-field"><label for="settingCommunicationStyle">Communication</label><div class="setting-control"><select id="settingCommunicationStyle"><option value="adaptive">Adaptive</option><option value="direct">Direct</option><option value="collaborative">Collaborative</option><option value="technical">Technical</option><option value="playful">Playful</option></select></div></div>
+              <div class="profile-field"><label for="settingOutputStyle">Output preference</label><div class="setting-control"><select id="settingOutputStyle"><option value="adaptive">Adaptive</option><option value="compact">Compact</option><option value="structured">Structured</option><option value="deep">Deep</option></select></div></div>
+            </div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="companion">
+          <h3>§wyrlz</h3><p class="settings-pane-lead">Companion identity is versioned separately from your own profile preferences. Name changes preview in Chat presentation; personality fields are stored profile state and are not yet an inference-persona binding.</p>
+          <div class="setting-group">
+            <div class="profile-grid">
+              <div class="profile-field"><label for="settingCompanionName">Name</label><div class="setting-control"><input id="settingCompanionName" type="text" maxlength="120" value="§wyrlz"></div></div>
+              <div class="profile-field"><label for="settingCompanionTitle">Title</label><div class="setting-control"><input id="settingCompanionTitle" type="text" maxlength="160" value="Glitch Dragon Kompanion"></div></div>
+              <div class="profile-field"><label for="settingCompanionForm">Species / form</label><div class="setting-control"><input id="settingCompanionForm" type="text" maxlength="120" value="Glitch Dragon"></div></div>
+              <div class="profile-field"><label for="settingCompanionPronouns">Presentation</label><div class="setting-control"><input id="settingCompanionPronouns" type="text" maxlength="80" placeholder="Optional pronouns / grammatical presentation"></div></div>
+              <div class="profile-field"><label for="settingCompanionWarmth">Warmth</label><div class="setting-control"><select id="settingCompanionWarmth"><option value="adaptive">Adaptive</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div></div>
+              <div class="profile-field"><label for="settingCompanionDirectness">Directness</label><div class="setting-control"><select id="settingCompanionDirectness"><option value="adaptive">Adaptive</option><option value="gentle">Gentle</option><option value="direct">Direct</option><option value="very-direct">Very direct</option></select></div></div>
+              <div class="profile-field"><label for="settingCompanionHumor">Humor</label><div class="setting-control"><select id="settingCompanionHumor"><option value="adaptive">Adaptive</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div></div>
+              <div class="profile-field"><label for="settingCompanionLoreDensity">Lore density</label><div class="setting-control"><select id="settingCompanionLoreDensity"><option value="adaptive">Adaptive</option><option value="minimal">Minimal</option><option value="balanced">Balanced</option><option value="mythic">Mythic</option></select></div></div>
+            </div>
+          </div>
+          <div class="settings-note"><strong>Authority:</strong> AI-originated companion profile changes remain disabled until Tier D adds proposal + approval semantics.</div>
+        </section>
+        <section class="settings-pane" data-settings-pane="lore">
+          <h3>Lore & Memory</h3><p class="settings-pane-lead">Account-owned continuity records with explicit type, origin, scope, activity state, and version. Tier C stores and manages them; nothing is extracted from conversations or injected into LALM inference automatically yet.</p>
+          <div class="lore-toolbar">
+            <div class="setting-control"><select id="loreFilter" aria-label="Filter lore"><option value="ALL">All records</option><option value="USER_FACT">User Facts</option><option value="USER_LORE">User Lore</option><option value="COMPANION_SELF_LORE">§wyrlz Self Lore</option><option value="SHARED_LORE">Shared Lore</option></select></div>
+            <div class="lore-toolbar-spacer"></div>
+            <button class="lore-action" id="loreNewButton" type="button">+ New record</button>
+          </div>
+          <div class="lore-status" id="loreStatus">Sign in with durable account storage to load Lore & Memory.</div>
+          <div class="lore-list" id="loreList"></div>
+          <div class="lore-editor" id="loreEditor" hidden>
+            <h4 class="lore-editor-title" id="loreEditorTitle">New lore record</h4>
+            <div class="lore-editor-grid">
+              <div class="profile-field"><label for="loreType">Type</label><div class="setting-control"><select id="loreType"><option value="USER_FACT">User Fact</option><option value="USER_LORE">User Lore</option><option value="COMPANION_SELF_LORE">§wyrlz Self Lore</option><option value="SHARED_LORE">Shared Lore</option></select></div></div>
+              <div class="profile-field"><label for="loreScope">Scope</label><div class="setting-control"><select id="loreScope"><option value="GLOBAL">Global</option><option value="THREAD">Current thread</option><option value="PROJECT" disabled>Project — no project scope attached</option></select></div></div>
+              <div class="profile-field full"><label for="loreTitle">Title</label><div class="setting-control"><input id="loreTitle" type="text" maxlength="120" placeholder="Short, inspectable label"></div></div>
+              <div class="profile-field full"><label for="loreContent">Content</label><div class="setting-control"><textarea id="loreContent" maxlength="24000" placeholder="The durable fact or lore entry"></textarea></div></div>
+              <div class="profile-field"><label>State</label><label class="setting-toggle" style="justify-content:flex-start"><input id="loreActive" type="checkbox" checked> Active</label></div>
+              <div class="profile-field"><label>Thread scope</label><div class="setting-help" id="loreScopeStatus">Global record</div></div>
+            </div>
+            <div class="lore-origin" id="loreOrigin">New manual record · authored by USER · confidence 100%</div>
+            <div class="lore-editor-actions"><button class="lore-action danger" id="loreDeleteButton" type="button" hidden>Delete</button><button class="lore-action" id="loreCancelButton" type="button">Cancel</button><button class="lore-action" id="loreSaveButton" type="button">Save record</button></div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="rapport">
+          <h3>Rapport</h3><p class="settings-pane-lead">Shared vocabulary, callbacks, and interaction conventions live here as inspectable state. Tier E stores and scopes rapport; it does not yet inject rapport into R39 inference.</p>
+          <div class="rapport-control-bar">
+            <div class="rapport-state" id="rapportState">Sign in with durable account storage to load rapport state.</div>
+            <button class="lore-action" id="rapportPauseButton" type="button">Pause rapport</button>
+            <button class="lore-action danger" id="rapportResetButton" type="button">Reset rapport</button>
+          </div>
+          <div class="rapport-toolbar">
+            <div class="setting-control"><select id="rapportFilter" aria-label="Filter rapport"><option value="ALL">All rapport</option><option value="VOCABULARY">Vocabulary</option><option value="CALLBACK">Callbacks</option><option value="CONVENTION">Conventions</option></select></div>
+            <label class="rapport-history-toggle"><input id="rapportHistoryToggle" type="checkbox"> Show reset history</label>
+            <div class="rapport-spacer"></div>
+            <button class="lore-action" id="rapportNewButton" type="button">+ New rapport</button>
+          </div>
+          <div class="lore-status" id="rapportStatus">Current generation only. Reset history remains preserved.</div>
+          <div class="rapport-list" id="rapportList"></div>
+          <div class="rapport-editor" id="rapportEditor" hidden>
+            <h4 class="rapport-editor-title" id="rapportEditorTitle">New rapport record</h4>
+            <div class="rapport-editor-grid">
+              <div class="profile-field"><label for="rapportKind">Kind</label><div class="setting-control"><select id="rapportKind"><option value="VOCABULARY">Vocabulary</option><option value="CALLBACK">Callback</option><option value="CONVENTION">Convention</option></select></div></div>
+              <div class="profile-field"><label for="rapportScope">Scope</label><div class="setting-control"><select id="rapportScope"><option value="GLOBAL">Global</option><option value="THREAD">Current thread</option><option value="PROJECT" disabled>Project — no project scope attached</option></select></div></div>
+              <div class="profile-field full"><label for="rapportLabel">Label</label><div class="setting-control"><input id="rapportLabel" type="text" maxlength="120" placeholder="Short inspectable name"></div></div>
+              <div class="profile-field full"><label for="rapportCue">Cue / phrase / situation</label><div class="setting-control"><textarea id="rapportCue" maxlength="500" placeholder="What shared cue should this record recognize?"></textarea></div></div>
+              <div class="profile-field full"><label for="rapportMeaning">Shared meaning</label><div class="setting-control"><textarea id="rapportMeaning" maxlength="4000" placeholder="What does the cue mean between you and §wyrlz?"></textarea></div></div>
+              <div class="profile-field full"><label for="rapportPreferredResponse">Preferred response / convention</label><div class="setting-control"><textarea id="rapportPreferredResponse" maxlength="4000" placeholder="Optional response pattern or convention"></textarea></div></div>
+              <div class="profile-field"><label>State</label><label class="setting-toggle" style="justify-content:flex-start"><input id="rapportActive" type="checkbox" checked> Active</label></div>
+              <div class="profile-field"><label>Scope status</label><div class="setting-help" id="rapportScopeStatus">Global rapport</div></div>
+            </div>
+            <div class="rapport-origin" id="rapportOrigin">New manual rapport · authored by USER · current generation</div>
+            <div class="rapport-editor-actions"><button class="lore-action danger" id="rapportDeleteButton" type="button" hidden>Delete</button><button class="lore-action" id="rapportCancelButton" type="button">Cancel</button><button class="lore-action" id="rapportSaveButton" type="button">Save rapport</button></div>
+          </div>
+          <div class="settings-note" style="margin-top:12px"><strong>Reset semantics:</strong> Reset advances the active rapport generation. Older generations remain inspectable when “Show reset history” is enabled; they are not silently destroyed or reused.</div>
+        </section>
+        <section class="settings-pane" data-settings-pane="proposals">
+          <h3>Proposal Inbox</h3><p class="settings-pane-lead">AI-originated durable changes land here under your policy. The browser can resolve proposals but cannot forge assistant-authored proposals.</p>
+          <div class="setting-group">
+            <div class="setting-label" style="margin-bottom:8px">Per-category policy</div>
+            <div class="proposal-policy-grid">
+              <div class="proposal-policy-item"><label for="proposalPolicyUserProfile">You profile</label><select id="proposalPolicyUserProfile" data-proposal-policy="USER_PROFILE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicyCompanion">§wyrlz profile</label><select id="proposalPolicyCompanion" data-proposal-policy="COMPANION_PROFILE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicyUserFact">User Facts</label><select id="proposalPolicyUserFact" data-proposal-policy="USER_FACT"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicyUserLore">User Lore</label><select id="proposalPolicyUserLore" data-proposal-policy="USER_LORE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicyCompanionLore">§wyrlz Self Lore</label><select id="proposalPolicyCompanionLore" data-proposal-policy="COMPANION_SELF_LORE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicySharedLore">Shared Lore</label><select id="proposalPolicySharedLore" data-proposal-policy="SHARED_LORE"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+              <div class="proposal-policy-item"><label for="proposalPolicySharedRapport">Shared Rapport</label><select id="proposalPolicySharedRapport" data-proposal-policy="SHARED_RAPPORT"><option value="ASK">Ask every time</option><option value="AUTO_LOW_RISK">Auto-save low-risk</option><option value="SESSION_ONLY">Session only</option><option value="NEVER">Never</option></select></div>
+            </div>
+            <div class="proposal-policy-help"><code>ASK</code> queues a durable proposal. <code>AUTO_LOW_RISK</code> may apply only trusted LOW-risk, bounded operations and still records audit + revert state. <code>SESSION_ONLY</code> and <code>NEVER</code> create no durable proposal or target mutation.</div>
+          </div>
+          <div class="proposal-toolbar">
+            <div class="setting-control"><select id="proposalFilter" aria-label="Proposal filter"><option value="PENDING">Pending</option><option value="ALL">All history</option><option value="APPLIED">Applied</option><option value="DECLINED">Declined</option><option value="REVERTED">Reverted</option></select></div>
+            <button class="proposal-action" id="proposalRefresh" type="button">Refresh</button>
+            <div class="proposal-status" id="proposalStatus">Open this section while signed in to load proposal state.</div>
+          </div>
+          <div class="proposal-list" id="proposalList"></div>
+          <div class="settings-note" style="margin-top:12px"><strong>Trust boundary:</strong> Tier D installs the durable queue, policy, resolver, audit, and trusted server submission helper. The current R39 stream does not yet emit a structured proposal event, and no client endpoint may label arbitrary browser JSON as an assistant proposal.</div>
+        </section>
+        <section class="settings-pane" data-settings-pane="appearance">
+          <h3>Appearance</h3><p class="settings-pane-lead">Visual-stage controls that are safe to preview locally.</p>
+          <div class="setting-group">
+            <div class="setting-row"><div><div class="setting-label">Theme</div><div class="setting-help">Tier A established the Glitch Dragon / Ice Dragon stage as the authoritative theme.</div></div><div class="setting-control"><select id="settingTheme" disabled><option value="glitch-dragon">Glitch Dragon</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">Glass intensity</div><div class="setting-help">Lower glass reduces translucent blur surfaces while preserving the theme geometry.</div></div><div class="setting-control"><select id="settingGlass"><option value="standard">Standard</option><option value="low">Low</option></select></div></div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="motion">
+          <h3>Motion</h3><p class="settings-pane-lead">Motion is state communication, not decoration. System mode respects your OS preference.</p>
+          <div class="setting-group">
+            <div class="setting-row"><div><div class="setting-label">Motion mode</div><div class="setting-help">Reduced and Off suppress transition/animation timing without changing functional behavior.</div></div><div class="setting-control"><select id="settingMotion"><option value="system">System</option><option value="full">Full</option><option value="reduced">Reduced</option><option value="off">Off</option></select></div></div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="accessibility">
+          <h3>Accessibility</h3><p class="settings-pane-lead">Presentation controls stay independent from model behavior.</p>
+          <div class="setting-group">
+            <div class="setting-row"><div><div class="setting-label">Text scale</div><div class="setting-help">Scales conversation and settings text without changing stored content.</div></div><div class="setting-control"><select id="settingFontScale"><option value="0.9">90%</option><option value="1" selected>100%</option><option value="1.1">110%</option><option value="1.2">120%</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">High contrast</div><div class="setting-help">Raises foreground and boundary contrast.</div></div><label class="setting-toggle"><input id="settingHighContrast" type="checkbox"> Enabled</label></div>
+            <div class="setting-row"><div><div class="setting-label">Reduce transparency</div><div class="setting-help">Replaces translucent glass with more opaque surfaces.</div></div><label class="setting-toggle"><input id="settingReducedTransparency" type="checkbox"> Enabled</label></div>
+          </div>
+        </section>
+        <section class="settings-pane" data-settings-pane="privacy">
+          <h3>Privacy</h3><p class="settings-pane-lead">This panel reports real storage state. Controls that do not yet have an enforcement owner remain explicitly unavailable.</p>
+          <div class="setting-group">
+            <div class="settings-status-card"><span>Account</span><span id="settingsPrivacyAccount">Not signed in</span></div>
+            <div class="settings-status-card"><span>Settings persistence</span><span id="settingsPrivacyDurability">Session preview only</span></div>
+            <div class="settings-status-card"><span>Lore & Memory storage</span><span id="settingsLoreDurability">Session unavailable</span></div>
+            <div class="settings-status-card"><span>Rapport storage</span><span id="settingsRapportDurability">Session unavailable</span></div>
+            <div class="settings-status-card"><span>AI proposal authority</span><span id="settingsProposalAuthority">Unavailable without durable account</span></div>
+          </div>
+          <div class="settings-note"><strong>No silent durability:</strong> opening or previewing settings never writes your profile. AI-originated durable changes must pass the configured Tier D policy; direct assistant mutation remains unavailable.</div>
+        </section>
+      </div>
+    </div>
+    <footer class="settings-footer"><div class="settings-save-state" id="settingsSaveState">Previewing locally. Sign in with durable account storage to save.</div><button class="settings-save" id="settingsSave" type="button">Save changes</button></footer>
+  </section>
   <div class="menu-shade" id="menuShade" aria-hidden="true"></div>
   <aside class="side-menu" id="sideMenu" aria-label="Side menu" aria-hidden="true">
     <div class="side-brand">
@@ -124,15 +472,15 @@
     <div class="version-box collapsed" id="versionBox">
       <button class="version-head" id="versionToggle" type="button" aria-expanded="false"><span class="version-title">Versions</span><span class="version-chevron">⌄</span></button>
       <div class="version-list">
-        <div class="version-row"><span>Repository Work</span><span>1.0.15</span></div>
-        <div class="version-row"><span>Server Runtime</span><span>2.3.287</span></div>
+        <div class="version-row"><span>Repository Work</span><span>1.0.29</span></div>
+        <div class="version-row"><span>Server Runtime</span><span>2.3.308</span></div>
         <div class="version-row"><span>Server UI</span><span>1.0.0</span></div>
         <div class="version-row"><span>Web Frontend</span><span>1.0.5</span></div>
         <div class="version-row"><span>Web Chat</span><span>1.5.86</span></div>
         <div class="version-row"><span>Runtime Manifest</span><span>152</span></div>
         <div class="version-row"><span>Stream Contract</span><span>V2</span></div>
         <div class="version-row"><span>LALM UI</span><span>1.0.0</span></div>
-        <div class="version-row"><span>LALM Engine</span><span>2.1.112</span></div>
+        <div class="version-row"><span>LALM Engine</span><span>2.1.115</span></div>
         <div class="version-row"><span>Online Research</span><span>1.0.2</span></div>
         <div class="version-row"><span>Admin Web</span><span>1.0.0</span></div>
         <div class="version-row"><span>Google Account</span><span>1.0.8</span></div>
@@ -175,6 +523,36 @@
       const newThreadButton = document.getElementById("newThreadButton");
       const messageList = document.getElementById("messageList");
       const assistantTemplate = document.getElementById("assistantTemplate");
+      const topEdge = document.getElementById("topEdge");
+      const topThreadTitle = document.getElementById("topThreadTitle");
+      const topReadyLabel = document.getElementById("topReadyLabel");
+      const companionStateLabel = document.getElementById("companionStateLabel");
+      const workSurfaceButton = document.getElementById("workSurfaceButton");
+      const workSurfaceCount = document.getElementById("workSurfaceCount");
+      const workShade = document.getElementById("workShade");
+      const workSurface = document.getElementById("workSurface");
+      const workClose = document.getElementById("workClose");
+      const workActionCount = document.getElementById("workActionCount");
+      const workActionList = document.getElementById("workActionList");
+      const workApprovalCount = document.getElementById("workApprovalCount");
+      const workApprovalList = document.getElementById("workApprovalList");
+      const workArtifactCount = document.getElementById("workArtifactCount");
+      const workArtifactList = document.getElementById("workArtifactList");
+      const workEvidenceCount = document.getElementById("workEvidenceCount");
+      const workEvidenceList = document.getElementById("workEvidenceList");
+      const SWRLZ_CHAT_VERSION = "1.0.55";
+      const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
+      let lastUiStatusCamera = "";
+      let companionState="idle";
+      let companionStateSource="boot";
+      const uiCamera = (event,data={}) => {
+        try{
+          fetch("/api/chat?__swrlz_client_debug=1",{method:"POST",credentials:"same-origin",cache:"no-store",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"glitch-dragon-tier-a-v1",url:location.pathname,event:{at:new Date().toISOString(),type:"clean-room-ui-camera",message:event,data:{chatVersion:SWRLZ_CHAT_VERSION,navTraceId,...data}}})}).catch(()=>{});
+        }catch(_){}
+      };
+      document.body.dataset.chatVersion=SWRLZ_CHAT_VERSION;
+      document.body.dataset.companionState="idle";
+      topEdge.dataset.companionState="idle";
       const CHAT_STATE_CONTRACT = "swrlz-chat-account-mutation-v1";
       let chatRevision = 0;
       let chatThreads = [];
@@ -183,6 +561,27 @@
       let pendingDraftThread = null;
       let threadSelectionMode=false;
       let chatAccountUser=null;
+      let accountProfile=null;
+      let accountProfileDurable=false;
+      let settingsDirty=false;
+      const settingsState={
+        general:{enterToSend:true},
+        model:{effort:"auto",responseLength:"adaptive"},
+        user:{displayName:"",pronouns:"",role:"",communicationStyle:"adaptive",outputStyle:"adaptive"},
+        companion:{name:"§wyrlz",title:"Glitch Dragon Kompanion",form:"Glitch Dragon",pronouns:"",warmth:"adaptive",directness:"adaptive",humor:"adaptive",loreDensity:"adaptive"},
+        ui:{density:"compact",glass:"standard",motion:"system",fontScale:"1",highContrast:false,reducedTransparency:false}
+      };
+      let loreRecords=[];
+      let loreLoadedForUser="";
+      let loreEditorId=null;
+      let rapportRecords=[];
+      let rapportControl=null;
+      let rapportLoadedKey="";
+      let rapportEditorId=null;
+      let proposalRecords=[];
+      let proposalLoadedForUser="";
+      let proposalAuditCache=new Map();
+      let lastProposalReceiptKey="";
       const selectedThreadIds=new Set();
       const threadId = () => "web-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       const titleFrom = text => {
@@ -190,36 +589,211 @@
         return clean.length>48 ? clean.slice(0,47).trimEnd()+"…" : (clean || "New conversation");
       };
       const currentThread = () => chatThreads.find(t=>t.id===activeThreadId) || (pendingDraftThread?.id===activeThreadId ? pendingDraftThread : null);
-      const escapeHtml = value => String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
-      const inlineFormat = value => {
-        let s=escapeHtml(value);
-        s=s.replace(/`([^`\n]+)`/g,'<code class="swrlz-inline-code">$1</code>');
-        s=s.replace(/\*\*([^*\n][\s\S]*?)\*\*/g,'<strong>$1</strong>');
-        s=s.replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>');
-        return s;
+      const syncTopEdge = thread => {
+        const title=thread?.title || "New conversation";
+        if(topThreadTitle.textContent!==title) topThreadTitle.textContent=title;
+        topThreadTitle.title=title;
       };
-      const formatAssistantText = value => {
-        const lines=String(value??"").replace(/\r\n?/g,"\n").split("\n");
-        const out=[]; let para=[], list=[], listType="", code=[], inCode=false;
-        const flushPara=()=>{if(para.length){out.push('<p class="swrlz-p">'+inlineFormat(para.join(" ").trim())+'</p>');para=[];}};
-        const flushList=()=>{if(list.length){const tag=listType==="ol"?"ol":"ul";out.push('<'+tag+' class="swrlz-list">'+list.map(x=>'<li>'+inlineFormat(x)+'</li>').join("")+'</'+tag+'>');list=[];listType="";}};
-        const flushCode=()=>{if(code.length){out.push('<pre class="swrlz-code"><code>'+escapeHtml(code.join("\n"))+'</code></pre>');code=[];}};
-        for(const raw of lines){
-          const line=raw.trimEnd(), trimmed=line.trim();
-          if(trimmed.startsWith("```")){flushPara();flushList();if(inCode){flushCode();inCode=false;}else inCode=true;continue;}
-          if(inCode){code.push(raw);continue;}
-          if(!trimmed){flushPara();flushList();continue;}
-          const h=trimmed.match(/^(#{2,3})\s+(.+)$/); if(h){flushPara();flushList();out.push('<div class="swrlz-h swrlz-h'+h[1].length+'">'+inlineFormat(h[2])+'</div>');continue;}
-          if(/^---+$/.test(trimmed)){flushPara();flushList();out.push("<hr>");continue;}
-          const ul=trimmed.match(/^[-*]\s+(.+)$/); if(ul){flushPara();if(listType&&listType!=="ul")flushList();listType="ul";list.push(ul[1]);continue;}
-          const ol=trimmed.match(/^\d+[.)]\s+(.+)$/); if(ol){flushPara();if(listType&&listType!=="ol")flushList();listType="ol";list.push(ol[1]);continue;}
-          const q=trimmed.match(/^>\s?(.*)$/); if(q){flushPara();flushList();out.push('<div class="swrlz-quote">'+inlineFormat(q[1])+'</div>');continue;}
-          para.push(trimmed);
+      const companionStates=new Set(["idle","listen","accepted","thinking","acting","responding","approval","error"]);
+      const setCompanionState=(next,source="ui")=>{
+        const state=companionStates.has(next)?next:"idle";
+        if(state===companionState&&source===companionStateSource)return;
+        const changed=state!==companionState;
+        companionState=state;companionStateSource=source;
+        document.body.dataset.companionState=state;
+        topEdge.dataset.companionState=state;
+        companionStateLabel.textContent=state;
+        companionStateLabel.setAttribute("aria-label","§wyrlz state: "+state);
+        if(changed)uiCamera("companion-state",{state,source});
+      };
+      const phaseToCompanionState=(last,g)=>{
+        const phase=String(last?.phase||g?.phase||last?.type||"").toUpperCase();
+        const terminal=String(g?.terminalType||"").toUpperCase();
+        if(g?.terminal){
+          if(terminal==="FAILED"||phase.includes("FAILED")||phase.includes("ERROR"))return "error";
+          return "idle";
         }
-        flushPara();flushList();if(inCode||code.length)flushCode();
-        return out.join("");
+        if(phase.includes("APPROVAL")||phase==="PROPOSAL_QUEUED")return "approval";
+        if(phase.includes("ERROR")||phase.includes("FAILED"))return "error";
+        if(phase.includes("ACTION")||phase.includes("TOOL")||phase.includes("ACTING")||phase.includes("EXECUT")||phase.includes("SEARCH")||phase.includes("FETCH")||phase.includes("PROPOSAL_AUTO_APPLIED"))return "acting";
+        if(String(g?.text||"").length>0)return "responding";
+        if(phase==="CONNECTING"||phase==="QUEUED"||phase.includes("ACCEPT"))return "accepted";
+        return "thinking";
       };
-      const renderAssistantBody = (body,text) => { if(body) body.innerHTML=formatAssistantText(text); };
+      const hasActiveGeneration=()=>{
+        const g=stationGeneration;
+        if(!g||g.terminal)return false;
+        const thread=currentThread();
+        return !((thread?.messages||[]).some(m=>m.role==="assistant"&&m.meta?.requestId===g.requestId));
+      };
+      const syncComposerCompanionState=(source="composer")=>{
+        if(hasActiveGeneration())return;
+        if(document.activeElement===prompt||prompt.value.trim())setCompanionState("listen",source);
+        else setCompanionState("idle",source);
+      };
+      const setTopStatus = (label,state="ready") => {
+        topReadyLabel.textContent=label;
+        topEdge.dataset.state=state;
+        const cameraKey=state+":"+label;
+        if(cameraKey!==lastUiStatusCamera){
+          lastUiStatusCamera=cameraKey;
+          uiCamera("top-status",{state,label});
+        }
+      };
+
+      const safeHttpUrl=value=>{
+        const text=String(value||"").trim();
+        if(!/^https?:\/\//i.test(text))return "";
+        try{const url=new URL(text);return ["http:","https:"].includes(url.protocol)?url.href:"";}catch(_){return "";}
+      };
+      const evidenceRowsFromMessage=msg=>{
+        const meta=msg?.meta&&typeof msg.meta==="object"?msg.meta:{};
+        const rows=[];
+        if(meta.requestId)rows.push(["Request",String(meta.requestId)]);
+        if(meta.authority)rows.push(["Projection authority",String(meta.authority)]);
+        const provenance=meta.provenance&&typeof meta.provenance==="object"?meta.provenance:{};
+        if(provenance.sourceAuthority)rows.push(["Source authority",String(provenance.sourceAuthority)]);
+        if(provenance.turnContract)rows.push(["Turn contract",String(provenance.turnContract)]);
+        if(provenance.commitPhase)rows.push(["Commit phase",String(provenance.commitPhase)]);
+        if(provenance.terminalType)rows.push(["Terminal",String(provenance.terminalType)]);
+        if(msg?.state)rows.push(["State",String(msg.state)]);
+        if(msg?.createdAt)rows.push(["Committed",new Date(msg.createdAt).toLocaleString()]);
+        return rows;
+      };
+      const structuredSourcesFromMessage=msg=>{
+        const meta=msg?.meta&&typeof msg.meta==="object"?msg.meta:{};
+        const values=[...(Array.isArray(meta.sources)?meta.sources:[]),...(Array.isArray(meta.evidence)?meta.evidence:[])];
+        return values.filter(item=>item&&typeof item==="object").slice(0,24);
+      };
+      const structuredArtifacts=()=>{
+        const out=[];
+        const push=item=>{if(item&&typeof item==="object")out.push(item);};
+        if(Array.isArray(stationGeneration?.artifacts))stationGeneration.artifacts.slice(0,24).forEach(push);
+        const thread=currentThread();
+        for(const msg of (thread?.messages||[])){
+          const items=Array.isArray(msg?.meta?.artifacts)?msg.meta.artifacts:[];
+          items.slice(0,24).forEach(push);
+        }
+        const seen=new Set();
+        return out.filter(item=>{
+          const key=String(item.id||item.uri||item.url||item.title||item.name||JSON.stringify(item));
+          if(seen.has(key))return false;seen.add(key);return true;
+        }).slice(0,24);
+      };
+      const isStructuredActionStatus=status=>{
+        if(!status||typeof status!=="object")return false;
+        const phase=String(status.phase||status.type||"").toUpperCase();
+        const categories=Array.isArray(status.categories)?status.categories.map(value=>String(value).toUpperCase()):[];
+        return ["ACTION","TOOL","ACTING","EXECUT","SEARCH","FETCH","WORK","RESOURCE_TASK"].some(token=>phase.includes(token)||categories.some(category=>category.includes(token)));
+      };
+      const currentActionStatuses=()=>{
+        const statuses=Array.isArray(stationGeneration?.status)?stationGeneration.status:[];
+        const seen=new Set(),out=[];
+        for(const status of statuses){
+          if(!isStructuredActionStatus(status))continue;
+          const key=[status.seq,status.phase,status.type,(status.categories||[]).join("|")].join(":");
+          if(seen.has(key))continue;seen.add(key);out.push(status);
+        }
+        return out.slice(-12).reverse();
+      };
+      const currentApprovalReceipts=()=>{
+        const statuses=Array.isArray(stationGeneration?.status)?stationGeneration.status:[];
+        const out=[],seen=new Set();
+        for(const status of statuses){
+          const receipt=status?.proposalReceipt;
+          if(!receipt||receipt.contract!=="swrlz-account-proposal-signal-v1")continue;
+          const key=String(receipt.proposalId||receipt.signalId||"");
+          if(seen.has(key))continue;seen.add(key);out.push(receipt);
+        }
+        for(const proposal of proposalRecords.filter(item=>item.state==="PENDING")){
+          const key=String(proposal.id||"");if(seen.has(key))continue;seen.add(key);
+          out.push({proposalId:proposal.id,state:proposal.state,category:proposal.category,operation:proposal.operation,risk:proposal.risk,version:proposal.version,decision:"ASK"});
+        }
+        return out.slice(0,24);
+      };
+      const evidenceItems=()=>{
+        const thread=currentThread();if(!thread)return [];
+        return (thread.messages||[]).filter(msg=>msg.role==="assistant").slice(-12).reverse().map(msg=>({
+          id:msg.id,requestId:msg?.meta?.requestId||"",authority:msg?.meta?.authority||"",state:msg.state||"",createdAt:msg.createdAt||0,sources:structuredSourcesFromMessage(msg)
+        }));
+      };
+      const makeEmpty=textValue=>{
+        const empty=document.createElement("div");empty.className="work-empty";empty.textContent=textValue;return empty;
+      };
+      const makeAgentCard=(kind,title,badge,bodyText,metaValues=[])=>{
+        const card=document.createElement("article");card.className="agent-card "+kind;
+        const head=document.createElement("div");head.className="agent-card-head";
+        const titleNode=document.createElement("div");titleNode.className="agent-card-title";titleNode.textContent=title;
+        const badgeNode=document.createElement("span");badgeNode.className="agent-card-badge";badgeNode.textContent=badge;head.append(titleNode,badgeNode);card.appendChild(head);
+        if(bodyText){const body=document.createElement("div");body.className="agent-card-body";body.textContent=bodyText;card.appendChild(body);}
+        const meta=document.createElement("div");meta.className="agent-card-meta";metaValues.filter(Boolean).forEach(value=>{const span=document.createElement("span");span.textContent=String(value);meta.appendChild(span);});if(meta.childNodes.length)card.appendChild(meta);
+        return card;
+      };
+      const openProposalInbox=async()=>{
+        setWorkSurfaceOpen(false);
+        setSettingsOpen(true);activateSettingsPane("proposals");
+        if(accountProfileDurable)await loadProposalRecords(true);
+      };
+      const renderWorkSurface=()=>{
+        const actions=currentActionStatuses(),approvals=currentApprovalReceipts(),artifacts=structuredArtifacts(),evidence=evidenceItems();
+        workActionCount.textContent=String(actions.length);workApprovalCount.textContent=String(approvals.length);workArtifactCount.textContent=String(artifacts.length);workEvidenceCount.textContent=String(evidence.length);
+        const total=actions.length+approvals.length+artifacts.length;
+        workSurfaceCount.textContent=String(total);workSurfaceCount.dataset.empty=String(total===0);
+        workActionList.innerHTML="";workApprovalList.innerHTML="";workArtifactList.innerHTML="";workEvidenceList.innerHTML="";
+        if(!actions.length)workActionList.appendChild(makeEmpty("No structured action/tool events in the current Station state."));
+        for(const status of actions){
+          const phase=String(status.phase||status.type||"ACTION").replaceAll("_"," ");
+          const categories=Array.isArray(status.categories)?status.categories.map(String):[];
+          const card=makeAgentCard("action",phase,"action",String(status.reason||""),[
+            status.seq?("event "+status.seq):"",
+            ...categories.slice(0,4)
+          ]);
+          workActionList.appendChild(card);
+        }
+        if(!approvals.length)workApprovalList.appendChild(makeEmpty("No structured proposal receipts or pending approvals."));
+        for(const receipt of approvals){
+          const card=makeAgentCard("approval",String(receipt.category||"Proposal").replaceAll("_"," "),String(receipt.state||receipt.decision||"approval"),String(receipt.operation||"").replaceAll("_"," "),[
+            receipt.risk?("risk "+receipt.risk):"",
+            receipt.proposalId?("id "+receipt.proposalId):"",
+            receipt.version?("v"+receipt.version):""
+          ]);
+          const actionsNode=document.createElement("div");actionsNode.className="agent-card-actions";
+          const open=document.createElement("button");open.type="button";open.className="agent-card-button";open.textContent="Open Proposal Inbox";open.onclick=openProposalInbox;actionsNode.appendChild(open);card.appendChild(actionsNode);workApprovalList.appendChild(card);
+        }
+        if(!artifacts.length)workArtifactList.appendChild(makeEmpty("No structured artifacts were emitted by the current runtime."));
+        for(const artifact of artifacts){
+          const title=String(artifact.title||artifact.name||artifact.id||"Artifact");
+          const type=String(artifact.type||artifact.kind||"artifact");
+          const card=makeAgentCard("artifact",title,type,String(artifact.summary||artifact.description||""),[
+            artifact.id?("id "+artifact.id):"",
+            artifact.mimeType||artifact.mime||""
+          ]);
+          const url=safeHttpUrl(artifact.url||artifact.uri);
+          if(url){const actionsNode=document.createElement("div");actionsNode.className="agent-card-actions";const open=document.createElement("a");open.className="agent-card-button evidence-link";open.href=url;open.target="_blank";open.rel="noopener noreferrer";open.textContent="Open";actionsNode.appendChild(open);card.appendChild(actionsNode);}
+          workArtifactList.appendChild(card);
+        }
+        if(!evidence.length)workEvidenceList.appendChild(makeEmpty("No committed assistant evidence metadata in this conversation."));
+        for(const item of evidence){
+          const sourceCount=item.sources.length;
+          const card=makeAgentCard("",item.requestId?("Response "+item.requestId):"Committed response","evidence","",[
+            item.authority?("authority "+item.authority):"",
+            item.state?("state "+item.state):"",
+            sourceCount?(sourceCount+" structured source"+(sourceCount===1?"":"s")):"no structured source list"
+          ]);
+          workEvidenceList.appendChild(card);
+        }
+      };
+      const setWorkSurfaceOpen=open=>{
+        document.body.classList.toggle("work-open",open);
+        workSurface.setAttribute("aria-hidden",String(!open));workShade.setAttribute("aria-hidden",String(!open));workSurfaceButton.setAttribute("aria-expanded",String(open));
+        if(open){
+          document.body.classList.remove("menu-open");
+          if(document.body.classList.contains("settings-open"))setSettingsOpen(false);
+          renderWorkSurface();workClose.focus();uiCamera("work-surface-open",{actions:currentActionStatuses().length,approvals:currentApprovalReceipts().length,artifacts:structuredArtifacts().length});
+          if(accountProfileDurable&&proposalLoadedForUser!==String(chatAccountUser?.id||""))loadProposalRecords(true).then(renderWorkSurface);
+        }else uiCamera("work-surface-close",{});
+      };
+
       const addCopyButton = node => {
         const body=node.querySelector(".assistant-body"); if(!body)return;
         const actions=document.createElement("div");actions.className="assistant-actions";
@@ -227,12 +801,38 @@
         copy.onclick=async()=>{try{await navigator.clipboard.writeText(body.textContent||"");copy.textContent="Copied";setTimeout(()=>copy.textContent="Copy",1200);}catch(_){copy.textContent="Copy failed";setTimeout(()=>copy.textContent="Copy",1200);}};
         actions.appendChild(copy);node.appendChild(actions);
       };
+
+      const addEvidenceBlock=(node,msg)=>{
+        const rows=evidenceRowsFromMessage(msg),sources=structuredSourcesFromMessage(msg);
+        if(!rows.length&&!sources.length)return;
+        const details=document.createElement("details");details.className="message-evidence";
+        const summary=document.createElement("summary");summary.textContent=sources.length?("Evidence · "+sources.length+" source"+(sources.length===1?"":"s")):"Evidence / provenance";
+        const body=document.createElement("div");body.className="message-evidence-body";
+        for(const [key,value] of rows){
+          const row=document.createElement("div");row.className="evidence-row";
+          const k=document.createElement("span");k.className="evidence-key";k.textContent=key;
+          const v=document.createElement("span");v.className="evidence-value";v.textContent=value;row.append(k,v);body.appendChild(row);
+        }
+        sources.forEach((source,index)=>{
+          const row=document.createElement("div");row.className="evidence-row";
+          const k=document.createElement("span");k.className="evidence-key";k.textContent="Source "+String(index+1);
+          const v=document.createElement("span");v.className="evidence-value";
+          const label=String(source.title||source.name||source.provider||source.ref||source.id||"Structured source");
+          const url=safeHttpUrl(source.url||source.uri);
+          if(url){const link=document.createElement("a");link.className="evidence-link";link.href=url;link.target="_blank";link.rel="noopener noreferrer";link.textContent=label;v.appendChild(link);}
+          else v.textContent=label;
+          row.append(k,v);body.appendChild(row);
+        });
+        details.append(summary,body);node.appendChild(details);
+      };
+
       const renderConversation = thread => {
+        syncTopEdge(thread);
         [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
-        if(!thread) return;
+        if(!thread){renderWorkSurface();return;}
         for(const msg of (thread.messages||[])){
           if(msg.role==="assistant"){
-            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantBody(node.querySelector(".assistant-body"),msg.text||""); addCopyButton(node); messageList.appendChild(node);
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); node.querySelector(".assistant-body").textContent=msg.text||""; addCopyButton(node); addEvidenceBlock(node,msg); messageList.appendChild(node);
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";
             const meta=document.createElement("div");meta.className="user-meta";meta.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";
@@ -245,6 +845,7 @@
             messageList.appendChild(node);
           }
         }
+        renderWorkSurface();
       };
       const closeThreadPopups = except => document.querySelectorAll(".thread-popup").forEach(p=>{if(p!==except)p.hidden=true;});
       const renderThreads = () => {
@@ -312,7 +913,7 @@
         if(!draftThread && !chatThreads.some(t=>t.id===activeThreadId)) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
         // Keep the last completed Station generation until canonical thread state contains it.\n        // A sync with no active generation must not erase the just-rendered terminal response.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration) stationGeneration=syncedGeneration;
         renderThreads(); if(!draftThread)renderConversation(currentThread());
-        renderStationGeneration();
+        renderStationGeneration();renderWorkSurface();
         if(stationAwaitingCommit){
           const awaited=(currentThread()?.messages||[]).find(m=>m.role==="assistant"&&m.meta?.requestId===stationAwaitingCommit);
           if(awaited && ["COMPLETE","FAILED","CANCELLED"].includes(String(awaited.meta?.state||awaited.state||"").toUpperCase())){
@@ -329,12 +930,28 @@
         const committed=!!g&&(thread?.messages||[]).some(m=>m.role==="assistant"&&m.meta?.requestId===g.requestId);
         if(!g||g.threadId!==activeThreadId||committed){
           if(existing)existing.remove();
+          setTopStatus("ready","ready");
+          syncComposerCompanionState("station-idle");
           return;
         }
         // Status comes from the acknowledged send or actual Station snapshot, never a fabricated percentage.
         const last=(g.status||[]).at(-1)||{};
+        const receipt=last?.proposalReceipt;
+        if(receipt&&receipt.contract==="swrlz-account-proposal-signal-v1"){
+          const receiptKey=[receipt.signalId,receipt.proposalId,receipt.decision,receipt.state,receipt.version].join("|");
+          if(receiptKey&&receiptKey!==lastProposalReceiptKey){
+            lastProposalReceiptKey=receiptKey;
+            proposalLoadedForUser="";
+            window.dispatchEvent(new CustomEvent("swrlz-proposal-receipt",{detail:receipt}));
+          }
+        }
         const phase=String(last.phase||g.phase||last.type||"QUEUED").replace(/_/g," ");
         const label=g.terminal?(g.terminalType||phase):phase;
+        const terminalKind=String(g.terminalType||label||"").toUpperCase();
+        const visualState=phaseToCompanionState(last,g);
+        setCompanionState(visualState,"station:"+String(last.phase||g.phase||last.type||"unknown").toLowerCase());
+        if(g.terminal) setTopStatus(terminalKind==="FAILED"?"attention":"ready",terminalKind==="FAILED"?"error":"ready");
+        else setTopStatus("generating","busy");
         let node=existing;
         if(!node){
           node=assistantTemplate.cloneNode(true);node.removeAttribute("id");
@@ -352,8 +969,9 @@
         if(status.textContent!==nextLabel)status.textContent=nextLabel;
         const body=node.querySelector(".assistant-body");
         const nextText=String(g.text||"");
-        if(body.dataset.rawText!==nextText){body.dataset.rawText=nextText;renderAssistantBody(body,nextText);}
+        if(body.textContent!==nextText)body.textContent=nextText;
         body.hidden=!nextText;
+        renderWorkSurface();
       };
       const syncStation = async () => {
         if(stationSyncInFlight){stationSyncAgain=true;return false;}
@@ -375,6 +993,7 @@
       window.addEventListener("focus",keepStationHydrated);
       window.addEventListener("pageshow",keepStationHydrated);
       window.addEventListener("online",keepStationHydrated);
+      document.addEventListener("keydown",event=>{if(event.key==="Escape"&&document.body.classList.contains("work-open"))setWorkSurfaceOpen(false);});
       setInterval(()=>{if(document.visibilityState==="visible"&&!sending)syncStation()},2000);
       const setCurrentThreadMetadata = async threadId => {
         try{
@@ -421,7 +1040,7 @@
             if(!stationGeneration)stationGeneration={requestId:event.requestId||"",threadId:activeThreadId,text:"",status:[],terminal:false,lastSeq:0};
             stationGeneration.lastSeq=Number(event.seq||stationGeneration.lastSeq||0);
             if(event.type==="DELTA")stationGeneration.text=(stationGeneration.text||"")+String(event.text||"");
-            else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||""}].slice(-256);
+            else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||"",categories:Array.isArray(event.categories)?event.categories.slice(0,16):[],proposalReceipt:event.proposalReceipt&&typeof event.proposalReceipt==="object"?event.proposalReceipt:null}].slice(-256);
             if(event.terminal){stationGeneration.terminal=true;stationGeneration.terminalType=event.type||""}
             renderStationGeneration();
           }
@@ -443,6 +1062,7 @@
           }
           const requestId=uid("web"), userMessageId=uid("message"), assistantMessageId=uid("assistant");
           stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING"}],terminal:false,lastSeq:0};
+          setCompanionState("accepted","send-start");
           stationAwaitingCommit=requestId;
           // Render the submitted user turn immediately; Station remains the durable authority.
           let localThread=currentThread();
@@ -473,16 +1093,22 @@
           const accepted=await response.json();
           if(accepted.requestId!==requestId)throw new Error("SEND_ACK_REQUEST_MISMATCH");
           stationGeneration.status=[{type:"QUEUED",phase:"QUEUED"}];
+          setCompanionState("accepted","send-ack");
           renderStationGeneration();
           await syncStation();
           return true;
         }catch(err){
+          setCompanionState("error","client-transport");
           if(stationGeneration){stationGeneration.status=[...(stationGeneration.status||[]),{type:"FAILED",phase:"CLIENT_TRANSPORT",reason:String(err)}];stationGeneration.terminal=true;renderStationGeneration();}
           return false;
         }finally{sending=false;sendButton.disabled=false;scheduleStationSync()}
       };
       sendButton.addEventListener("click",commitDraftFromPrompt);
-      prompt.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();commitDraftFromPrompt();}});
+      prompt.addEventListener("keydown",e=>{
+        if(e.key!=="Enter"||e.shiftKey)return;
+        const shortcut=e.ctrlKey||e.metaKey;
+        if(settingsState.general.enterToSend||shortcut){e.preventDefault();commitDraftFromPrompt();}
+      });
       renderThreads();
       loadChatState();
       const composerShell = document.getElementById("composerShell");
@@ -503,10 +1129,622 @@
         versionToggle.setAttribute("aria-expanded", String(!collapsed));
       });
       settingsGear.addEventListener("click", () => {
+        setWorkSurfaceOpen(false);
         document.body.classList.remove("menu-open");
         menuButton.setAttribute("aria-expanded","false");
         sideMenu.setAttribute("aria-hidden","true");
         window.dispatchEvent(new CustomEvent("swrlz-open-settings"));
+      });
+      const settingsShade = document.getElementById("settingsShade");
+      const settingsSheet = document.getElementById("settingsSheet");
+      const settingsClose = document.getElementById("settingsClose");
+      const settingsSave = document.getElementById("settingsSave");
+      const settingsSaveState = document.getElementById("settingsSaveState");
+      const settingsPrivacyAccount = document.getElementById("settingsPrivacyAccount");
+      const settingsPrivacyDurability = document.getElementById("settingsPrivacyDurability");
+      const settingsLoreDurability = document.getElementById("settingsLoreDurability");
+      const settingsRapportDurability = document.getElementById("settingsRapportDurability");
+      const rapportState = document.getElementById("rapportState");
+      const rapportPauseButton = document.getElementById("rapportPauseButton");
+      const rapportResetButton = document.getElementById("rapportResetButton");
+      const rapportFilter = document.getElementById("rapportFilter");
+      const rapportHistoryToggle = document.getElementById("rapportHistoryToggle");
+      const rapportNewButton = document.getElementById("rapportNewButton");
+      const rapportStatus = document.getElementById("rapportStatus");
+      const rapportList = document.getElementById("rapportList");
+      const rapportEditor = document.getElementById("rapportEditor");
+      const rapportEditorTitle = document.getElementById("rapportEditorTitle");
+      const rapportKind = document.getElementById("rapportKind");
+      const rapportScope = document.getElementById("rapportScope");
+      const rapportLabel = document.getElementById("rapportLabel");
+      const rapportCue = document.getElementById("rapportCue");
+      const rapportMeaning = document.getElementById("rapportMeaning");
+      const rapportPreferredResponse = document.getElementById("rapportPreferredResponse");
+      const rapportActive = document.getElementById("rapportActive");
+      const rapportScopeStatus = document.getElementById("rapportScopeStatus");
+      const rapportOrigin = document.getElementById("rapportOrigin");
+      const rapportDeleteButton = document.getElementById("rapportDeleteButton");
+      const rapportCancelButton = document.getElementById("rapportCancelButton");
+      const rapportSaveButton = document.getElementById("rapportSaveButton");
+      const settingsProposalAuthority = document.getElementById("settingsProposalAuthority");
+      const proposalFilter = document.getElementById("proposalFilter");
+      const proposalRefresh = document.getElementById("proposalRefresh");
+      const proposalStatus = document.getElementById("proposalStatus");
+      const proposalList = document.getElementById("proposalList");
+      const proposalPolicyControls=[...document.querySelectorAll("[data-proposal-policy]")];
+      const settingDisplayName = document.getElementById("settingDisplayName");
+      const settingUserPronouns = document.getElementById("settingUserPronouns");
+      const settingUserRole = document.getElementById("settingUserRole");
+      const settingCommunicationStyle = document.getElementById("settingCommunicationStyle");
+      const settingOutputStyle = document.getElementById("settingOutputStyle");
+      const settingCompanionName = document.getElementById("settingCompanionName");
+      const settingCompanionTitle = document.getElementById("settingCompanionTitle");
+      const settingCompanionForm = document.getElementById("settingCompanionForm");
+      const settingCompanionPronouns = document.getElementById("settingCompanionPronouns");
+      const settingCompanionWarmth = document.getElementById("settingCompanionWarmth");
+      const settingCompanionDirectness = document.getElementById("settingCompanionDirectness");
+      const settingCompanionHumor = document.getElementById("settingCompanionHumor");
+      const settingCompanionLoreDensity = document.getElementById("settingCompanionLoreDensity");
+      const loreFilter = document.getElementById("loreFilter");
+      const loreNewButton = document.getElementById("loreNewButton");
+      const loreStatus = document.getElementById("loreStatus");
+      const loreList = document.getElementById("loreList");
+      const loreEditor = document.getElementById("loreEditor");
+      const loreEditorTitle = document.getElementById("loreEditorTitle");
+      const loreType = document.getElementById("loreType");
+      const loreScope = document.getElementById("loreScope");
+      const loreTitle = document.getElementById("loreTitle");
+      const loreContent = document.getElementById("loreContent");
+      const loreActive = document.getElementById("loreActive");
+      const loreScopeStatus = document.getElementById("loreScopeStatus");
+      const loreOrigin = document.getElementById("loreOrigin");
+      const loreDeleteButton = document.getElementById("loreDeleteButton");
+      const loreCancelButton = document.getElementById("loreCancelButton");
+      const loreSaveButton = document.getElementById("loreSaveButton");
+      const settingEnterSend = document.getElementById("settingEnterSend");
+      const settingDensity = document.getElementById("settingDensity");
+      const settingEffort = document.getElementById("settingEffort");
+      const settingResponseLength = document.getElementById("settingResponseLength");
+      const settingGlass = document.getElementById("settingGlass");
+      const settingMotion = document.getElementById("settingMotion");
+      const settingFontScale = document.getElementById("settingFontScale");
+      const settingHighContrast = document.getElementById("settingHighContrast");
+      const settingReducedTransparency = document.getElementById("settingReducedTransparency");
+      const settingsControlIds=["settingEnterSend","settingDensity","settingEffort","settingResponseLength","settingGlass","settingMotion","settingFontScale","settingHighContrast","settingReducedTransparency"];
+      const profileControlIds=["settingDisplayName","settingUserPronouns","settingUserRole","settingCommunicationStyle","settingOutputStyle","settingCompanionName","settingCompanionTitle","settingCompanionForm","settingCompanionPronouns","settingCompanionWarmth","settingCompanionDirectness","settingCompanionHumor","settingCompanionLoreDensity"];
+      const proposalPolicyDefaults={USER_PROFILE:"ASK",COMPANION_PROFILE:"ASK",USER_FACT:"ASK",USER_LORE:"ASK",COMPANION_SELF_LORE:"ASK",SHARED_LORE:"ASK",SHARED_RAPPORT:"ASK"};
+      const applySettingsPreview = () => {
+        settingsState.general.enterToSend=!!settingEnterSend.checked;
+        settingsState.model.effort=settingEffort.value;
+        settingsState.model.responseLength=settingResponseLength.value;
+        settingsState.ui.density=settingDensity.value;
+        settingsState.ui.glass=settingGlass.value;
+        settingsState.ui.motion=settingMotion.value;
+        settingsState.ui.fontScale=settingFontScale.value;
+        settingsState.ui.highContrast=!!settingHighContrast.checked;
+        settingsState.ui.reducedTransparency=!!settingReducedTransparency.checked;
+        document.body.classList.toggle("settings-density-comfortable",settingsState.ui.density==="comfortable");
+        document.body.classList.toggle("settings-glass-low",settingsState.ui.glass==="low");
+        document.body.classList.toggle("motion-reduced",settingsState.ui.motion==="reduced");
+        document.body.classList.toggle("motion-off",settingsState.ui.motion==="off");
+        document.body.classList.toggle("motion-full",settingsState.ui.motion==="full");
+        document.body.classList.toggle("a11y-high-contrast",settingsState.ui.highContrast);
+        document.body.classList.toggle("a11y-reduced-transparency",settingsState.ui.reducedTransparency);
+        document.documentElement.style.setProperty("--font-scale",settingsState.ui.fontScale);
+      };
+      const applyCompanionPreview = () => {
+        const name=(settingCompanionName.value||"").trim()||"§wyrlz";
+        const topName=document.querySelector(".top-brand-name");if(topName)topName.textContent=name;
+        const sideName=document.querySelector(".side-brand-name");if(sideName)sideName.textContent=name;
+        const templateName=assistantTemplate.querySelector(".assistant-name");if(templateName)templateName.textContent=name;
+        messageList.querySelectorAll(".rendered-message.assistant-message .assistant-name").forEach(node=>node.textContent=name);
+        prompt.setAttribute("aria-label","Message "+name);prompt.placeholder="Message "+name+"…";
+      };
+      const populateSettingsControls = () => {
+        const prefs=accountProfile?.preferences||{}, model=accountProfile?.model_preferences||{}, ui=accountProfile?.ui_preferences||{}, companion=accountProfile?.companion_profile||{};
+        const general=prefs.general&&typeof prefs.general==="object"?prefs.general:{};
+        const userProfile=prefs.profile&&typeof prefs.profile==="object"?prefs.profile:{};
+        settingDisplayName.value=accountProfile?.display_name||chatAccountUser?.displayName||"";
+        settingUserPronouns.value=String(userProfile.pronouns||"");
+        settingUserRole.value=String(userProfile.role||"");
+        settingCommunicationStyle.value=["adaptive","direct","collaborative","technical","playful"].includes(userProfile.communicationStyle)?userProfile.communicationStyle:"adaptive";
+        settingOutputStyle.value=["adaptive","compact","structured","deep"].includes(userProfile.outputStyle)?userProfile.outputStyle:"adaptive";
+        settingCompanionName.value=String(companion.name||"§wyrlz");
+        settingCompanionTitle.value=String(companion.title||"Glitch Dragon Kompanion");
+        settingCompanionForm.value=String(companion.form||"Glitch Dragon");
+        settingCompanionPronouns.value=String(companion.pronouns||"");
+        settingCompanionWarmth.value=["adaptive","low","medium","high"].includes(companion.warmth)?companion.warmth:"adaptive";
+        settingCompanionDirectness.value=["adaptive","gentle","direct","very-direct"].includes(companion.directness)?companion.directness:"adaptive";
+        settingCompanionHumor.value=["adaptive","low","medium","high"].includes(companion.humor)?companion.humor:"adaptive";
+        settingCompanionLoreDensity.value=["adaptive","minimal","balanced","mythic"].includes(companion.loreDensity)?companion.loreDensity:"adaptive";
+        settingEnterSend.checked=general.enterToSend!==false;
+        settingDensity.value=["compact","comfortable"].includes(ui.density)?ui.density:"compact";
+        settingEffort.value=["auto","fast","deep"].includes(model.effort)?model.effort:"auto";
+        settingResponseLength.value=["adaptive","concise","expanded"].includes(model.responseLength)?model.responseLength:"adaptive";
+        settingGlass.value=["standard","low"].includes(ui.glass)?ui.glass:"standard";
+        settingMotion.value=["system","full","reduced","off"].includes(ui.motion)?ui.motion:"system";
+        settingFontScale.value=["0.9","1","1.1","1.2"].includes(String(ui.fontScale))?String(ui.fontScale):"1";
+        settingHighContrast.checked=ui.highContrast===true;
+        settingReducedTransparency.checked=ui.reducedTransparency===true;
+        const proposalPolicy=prefs.proposalPolicy&&typeof prefs.proposalPolicy==="object"?prefs.proposalPolicy:{};
+        proposalPolicyControls.forEach(control=>{
+          const category=control.dataset.proposalPolicy;
+          const value=String(proposalPolicy[category]||proposalPolicyDefaults[category]||"ASK").toUpperCase();
+          control.value=["ASK","AUTO_LOW_RISK","SESSION_ONLY","NEVER"].includes(value)?value:"ASK";
+        });
+        settingsDirty=false;applySettingsPreview();applyCompanionPreview();
+      };
+      const refreshSettingsDurability = () => {
+        settingsPrivacyAccount.textContent=chatAccountUser?(chatAccountUser.displayName||chatAccountUser.email||"Signed in"):"Not signed in";
+        settingsPrivacyDurability.textContent=accountProfileDurable?"Durable account profile":"Session preview only";
+        settingsLoreDurability.textContent=accountProfileDurable?"Account-owned Redis records":"Unavailable without durable account";
+        settingsRapportDurability.textContent=accountProfileDurable?"Account-owned generation state":"Unavailable without durable account";
+        settingsProposalAuthority.textContent=accountProfileDurable?"Tier D account-owned queue":"Unavailable without durable account";
+        loreNewButton.disabled=!accountProfileDurable;
+        rapportNewButton.disabled=!accountProfileDurable;
+        rapportPauseButton.disabled=!accountProfileDurable;
+        rapportResetButton.disabled=!accountProfileDurable;
+        proposalRefresh.disabled=!accountProfileDurable;
+        settingsSave.disabled=!chatAccountUser||!accountProfileDurable;
+        settingsSaveState.textContent=accountProfileDurable?(settingsDirty?"Unsaved profile changes.":"Saved profile values loaded; previews remain local until Save."):"Previewing locally. Durable account storage is required to save.";
+      };
+      const setSettingsOpen = open => {
+        document.body.classList.toggle("settings-open",open);
+        settingsSheet.setAttribute("aria-hidden",String(!open));
+        settingsShade.setAttribute("aria-hidden",String(!open));
+        if(open){populateSettingsControls();refreshSettingsDurability();settingsClose.focus();uiCamera("settings-open",{durable:accountProfileDurable});}
+        else uiCamera("settings-close",{dirty:settingsDirty});
+      };
+      const activateSettingsPane = section => {
+        document.querySelectorAll(".settings-nav-button").forEach(button=>button.classList.toggle("active",button.dataset.settingsSection===section));
+        document.querySelectorAll(".settings-pane").forEach(pane=>pane.classList.toggle("active",pane.dataset.settingsPane===section));
+        if(section==="lore")loadLoreRecords();
+        if(section==="rapport")loadRapportRecords();
+        if(section==="proposals")loadProposalRecords();
+        uiCamera("settings-section",{section});
+      };
+      document.querySelectorAll(".settings-nav-button").forEach(button=>button.addEventListener("click",()=>activateSettingsPane(button.dataset.settingsSection)));
+      settingsControlIds.forEach(id=>document.getElementById(id).addEventListener("change",()=>{
+        settingsDirty=true;applySettingsPreview();refreshSettingsDurability();uiCamera("settings-preview",{control:id});
+      }));
+      profileControlIds.forEach(id=>document.getElementById(id).addEventListener("change",()=>{
+        settingsDirty=true;if(id==="settingCompanionName")applyCompanionPreview();refreshSettingsDurability();uiCamera("profile-preview",{control:id});
+      }));
+      proposalPolicyControls.forEach(control=>control.addEventListener("change",()=>{
+        settingsDirty=true;refreshSettingsDurability();uiCamera("proposal-policy-preview",{category:control.dataset.proposalPolicy,mode:control.value});
+      }));
+      settingCompanionName.addEventListener("input",applyCompanionPreview,{passive:true});
+      settingsClose.addEventListener("click",()=>setSettingsOpen(false));
+      settingsShade.addEventListener("click",()=>setSettingsOpen(false));
+      window.addEventListener("swrlz-open-settings",()=>setSettingsOpen(true));
+      window.addEventListener("keydown",event=>{if(event.key==="Escape"&&document.body.classList.contains("settings-open"))setSettingsOpen(false);});
+
+
+
+      const rapportKindLabel=value=>({VOCABULARY:"Vocabulary",CALLBACK:"Callback",CONVENTION:"Convention"}[value]||String(value||"Rapport"));
+      const renderRapportControl=()=>{
+        if(!accountProfileDurable||!rapportControl){
+          rapportState.textContent="Sign in with durable account storage to load rapport state.";
+          rapportPauseButton.textContent="Pause rapport";return;
+        }
+        const paused=rapportControl.paused===true;
+        rapportState.innerHTML="<strong>"+(paused?"Paused":"Active")+"</strong> · generation "+String(rapportControl.currentGeneration||1)+" · control v"+String(rapportControl.version||1);
+        rapportPauseButton.textContent=paused?"Resume rapport":"Pause rapport";
+      };
+      const closeRapportEditor=()=>{
+        rapportEditorId=null;rapportEditor.hidden=true;rapportDeleteButton.hidden=true;rapportSaveButton.hidden=false;
+        [rapportKind,rapportScope,rapportLabel,rapportCue,rapportMeaning,rapportPreferredResponse,rapportActive].forEach(control=>control.disabled=false);
+        rapportKind.value="VOCABULARY";rapportScope.value="GLOBAL";rapportLabel.value="";rapportCue.value="";rapportMeaning.value="";rapportPreferredResponse.value="";rapportActive.checked=true;
+        rapportScopeStatus.textContent="Global rapport";rapportOrigin.textContent="New manual rapport · authored by USER · current generation";
+      };
+      const syncRapportScopeStatus=()=>{
+        const existing=rapportEditorId?rapportRecords.find(record=>record.id===rapportEditorId):null;
+        if(rapportScope.value==="THREAD"){
+          const scopeId=existing?.scope==="THREAD"&&existing.scopeId?existing.scopeId:(activeThreadId&&!draftThread?activeThreadId:"");
+          rapportScopeStatus.textContent=scopeId?("Thread "+scopeId):"No saved thread is active";
+        }else if(rapportScope.value==="PROJECT"){
+          rapportScopeStatus.textContent=existing?.scopeId?("Project "+existing.scopeId):"No project scope is attached to this Chat surface";
+        }else rapportScopeStatus.textContent="Global rapport";
+      };
+      const renderRapportRecords=()=>{
+        rapportList.innerHTML="";renderRapportControl();
+        const filter=rapportFilter.value;
+        const currentGeneration=Number(rapportControl?.currentGeneration||1);
+        const visible=rapportRecords.filter(record=>filter==="ALL"||record.kind===filter);
+        if(!accountProfileDurable){
+          const empty=document.createElement("div");empty.className="rapport-empty";empty.textContent="Durable account storage is required for Rapport.";rapportList.appendChild(empty);return;
+        }
+        if(!visible.length){
+          const empty=document.createElement("div");empty.className="rapport-empty";empty.textContent=rapportRecords.length?"No rapport records match this filter.":"No rapport records in this generation.";rapportList.appendChild(empty);return;
+        }
+        for(const record of visible){
+          const historical=Number(record.generation||1)!==currentGeneration;
+          const card=document.createElement("article");card.className="rapport-card"+(record.active===false?" inactive":"")+(historical?" archived":"");
+          const head=document.createElement("div");head.className="rapport-card-head";
+          const title=document.createElement("div");title.className="rapport-card-title";title.textContent=record.label||"Untitled rapport";
+          const kind=document.createElement("span");kind.className="rapport-kind";kind.textContent=rapportKindLabel(record.kind);head.append(title,kind);
+          const cue=document.createElement("div");cue.className="rapport-cue";cue.textContent="Cue: "+String(record.cue||"");
+          const meaning=document.createElement("div");meaning.className="rapport-meaning";meaning.textContent=record.meaning||"";
+          card.append(head,cue,meaning);
+          if(record.preferredResponse){
+            const response=document.createElement("div");response.className="rapport-response";response.textContent="Convention: "+record.preferredResponse;card.appendChild(response);
+          }
+          const meta=document.createElement("div");meta.className="rapport-meta";
+          const scopeLabel=record.scopeId?(String(record.scope||"GLOBAL")+" · "+String(record.scopeId)):String(record.scope||"GLOBAL");
+          const provenanceKind=record.provenance?.kind||record.provenance?.surface||"unknown";
+          [scopeLabel,"gen "+String(record.generation||1),String(record.source||"unknown"),"provenance "+String(provenanceKind),"by "+String(record.authoredBy||"unknown"),"v"+String(record.version||1),historical?"reset history":(record.active===false?"inactive":"active")].forEach(value=>{const span=document.createElement("span");span.textContent=value;meta.appendChild(span);});
+          const actions=document.createElement("div");actions.className="rapport-actions";
+          const edit=document.createElement("button");edit.type="button";edit.className="lore-action";edit.textContent=historical?"Inspect":"Edit";edit.onclick=()=>openRapportEditor(record);actions.appendChild(edit);
+          card.append(meta,actions);rapportList.appendChild(card);
+        }
+      };
+      const openRapportEditor=record=>{
+        const currentGeneration=Number(rapportControl?.currentGeneration||1);
+        const historical=!!record&&Number(record.generation||1)!==currentGeneration;
+        rapportEditorId=record?.id||null;rapportEditor.hidden=false;rapportEditorTitle.textContent=record?(historical?"Inspect reset-history rapport":"Edit rapport record"):"New rapport record";
+        rapportKind.value=record?.kind||"VOCABULARY";rapportScope.value=["GLOBAL","THREAD","PROJECT"].includes(record?.scope)?record.scope:"GLOBAL";rapportLabel.value=record?.label||"";rapportCue.value=record?.cue||"";rapportMeaning.value=record?.meaning||"";rapportPreferredResponse.value=record?.preferredResponse||"";rapportActive.checked=record?.active!==false;
+        [rapportKind,rapportScope,rapportLabel,rapportCue,rapportMeaning,rapportPreferredResponse,rapportActive].forEach(control=>control.disabled=historical);
+        rapportDeleteButton.hidden=!record||historical;rapportSaveButton.hidden=historical;
+        rapportOrigin.textContent=record?("Source "+String(record.source||"unknown")+" · authored by "+String(record.authoredBy||"unknown")+" · generation "+String(record.generation||1)+" · version "+String(record.version||1)):"New manual rapport · authored by USER · generation "+String(currentGeneration);
+        syncRapportScopeStatus();rapportEditor.scrollIntoView({block:"nearest",behavior:settingsState.ui.motion==="off"?"auto":"smooth"});
+      };
+      const loadRapportRecords=async(force=false)=>{
+        if(!accountProfileDurable||!chatAccountUser){rapportRecords=[];rapportControl=null;rapportLoadedKey="";rapportStatus.textContent="Sign in with durable account storage to load Rapport.";renderRapportRecords();return false;}
+        const key=String(chatAccountUser.id||"")+"|"+(rapportHistoryToggle.checked?"history":"current");
+        if(!force&&rapportLoadedKey===key){renderRapportRecords();return true;}
+        rapportStatus.textContent="Loading account-owned rapport…";
+        try{
+          const response=await accountFetch("/api/account/rapport?limit=300&includeHistory="+(rapportHistoryToggle.checked?"true":"false"),{method:"GET"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!Array.isArray(data.records)||!data.control)throw new Error(data?.detail||("Rapport load failed ("+response.status+")"));
+          rapportRecords=data.records;rapportControl=data.control;rapportLoadedKey=key;
+          rapportStatus.textContent=rapportRecords.length?(rapportRecords.length+" rapport record"+(rapportRecords.length===1?"":"s")+" loaded."):"No rapport records in this generation.";
+          renderRapportRecords();uiCamera("rapport-load",{count:rapportRecords.length,generation:Number(rapportControl.currentGeneration||1),paused:rapportControl.paused===true,history:rapportHistoryToggle.checked});return true;
+        }catch(error){
+          rapportRecords=[];rapportControl=null;rapportLoadedKey="";rapportStatus.textContent="Rapport could not be loaded from the account authority.";renderRapportRecords();uiCamera("rapport-load-failed",{errorType:String(error?.name||"Error")});return false;
+        }
+      };
+      rapportFilter.addEventListener("change",renderRapportRecords);
+      rapportHistoryToggle.addEventListener("change",()=>loadRapportRecords(true));
+      rapportScope.addEventListener("change",syncRapportScopeStatus);
+      rapportNewButton.addEventListener("click",()=>{if(accountProfileDurable)openRapportEditor(null);});
+      rapportCancelButton.addEventListener("click",closeRapportEditor);
+      rapportPauseButton.addEventListener("click",async()=>{
+        if(!accountProfileDurable||!rapportControl)return;
+        const nextPaused=rapportControl.paused!==true;
+        rapportPauseButton.disabled=true;rapportStatus.textContent=nextPaused?"Pausing rapport…":"Resuming rapport…";
+        try{
+          const response=await accountFetch("/api/account/rapport/control",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({paused:nextPaused,version:Number(rapportControl.version||1)})});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!data.control)throw new Error(data?.detail||"Rapport control failed");
+          rapportControl=data.control;renderRapportControl();rapportStatus.textContent=nextPaused?"Rapport paused. Stored state remains inspectable.":"Rapport resumed.";uiCamera("rapport-pause",{paused:nextPaused,generation:Number(rapportControl.currentGeneration||1),version:Number(rapportControl.version||1)});
+        }catch(error){rapportStatus.textContent="Rapport pause/resume failed. No state change was assumed.";uiCamera("rapport-pause-failed",{errorType:String(error?.name||"Error")});}
+        finally{rapportPauseButton.disabled=!accountProfileDurable;}
+      });
+      rapportResetButton.addEventListener("click",async()=>{
+        if(!accountProfileDurable||!rapportControl)return;
+        if(!confirm("Reset shared rapport? Current records will move to preserved reset history and a new empty generation will become active."))return;
+        rapportResetButton.disabled=true;rapportStatus.textContent="Resetting rapport generation…";
+        try{
+          const response=await accountFetch("/api/account/rapport/reset",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({version:Number(rapportControl.version||1)})});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!data.control||data.reset!==true)throw new Error(data?.detail||"Rapport reset failed");
+          rapportControl=data.control;rapportLoadedKey="";closeRapportEditor();await loadRapportRecords(true);rapportStatus.textContent="Rapport reset to generation "+String(rapportControl.currentGeneration||1)+". Prior generations remain preserved.";uiCamera("rapport-reset",{generation:Number(rapportControl.currentGeneration||1),version:Number(rapportControl.version||1)});
+        }catch(error){rapportStatus.textContent="Rapport reset failed. Existing generation remains authoritative.";uiCamera("rapport-reset-failed",{errorType:String(error?.name||"Error")});}
+        finally{rapportResetButton.disabled=!accountProfileDurable;}
+      });
+      rapportSaveButton.addEventListener("click",async()=>{
+        if(!accountProfileDurable||!chatAccountUser||!rapportControl)return;
+        const existing=rapportEditorId?rapportRecords.find(record=>record.id===rapportEditorId):null;
+        if(existing&&Number(existing.generation||1)!==Number(rapportControl.currentGeneration||1)){rapportStatus.textContent="Reset-history rapport is inspect-only.";return;}
+        const scope=rapportScope.value;
+        const scopeId=scope==="THREAD"?(existing?.scope==="THREAD"&&existing.scopeId?existing.scopeId:(activeThreadId&&!draftThread?activeThreadId:"")):scope==="PROJECT"?(existing?.scope==="PROJECT"?existing.scopeId:""):null;
+        if(scope!=="GLOBAL"&&!scopeId){rapportStatus.textContent="Choose Global scope or open a saved thread before saving.";syncRapportScopeStatus();return;}
+        const label=rapportLabel.value.trim(),cue=rapportCue.value.trim(),meaning=rapportMeaning.value.trim();
+        if(!label||!cue||!meaning){rapportStatus.textContent="Label, cue, and shared meaning are required.";return;}
+        rapportSaveButton.disabled=true;rapportStatus.textContent=existing?"Saving rapport update…":"Creating rapport record…";
+        try{
+          const path=existing?("/api/account/rapport/"+encodeURIComponent(existing.id)):"/api/account/rapport";
+          const method=existing?"PUT":"POST";
+          const payload={kind:rapportKind.value,label,cue,meaning,preferredResponse:rapportPreferredResponse.value.trim(),scope,scopeId,active:!!rapportActive.checked};
+          if(existing)payload.version=Number(existing.version||1);
+          const response=await accountFetch(path,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!data.record)throw new Error(data?.detail||("Rapport save failed ("+response.status+")"));
+          rapportControl=data.control||rapportControl;
+          if(existing)rapportRecords=rapportRecords.map(record=>record.id===data.record.id?data.record:record);else rapportRecords=[data.record,...rapportRecords];
+          closeRapportEditor();renderRapportRecords();rapportStatus.textContent="Rapport record saved.";uiCamera("rapport-save",{operation:existing?"update":"create",id:data.record.id,kind:data.record.kind,scope:data.record.scope,generation:Number(data.record.generation||1),version:Number(data.record.version||1)});
+        }catch(error){rapportStatus.textContent="Rapport save failed. No success was assumed.";uiCamera("rapport-save-failed",{operation:existing?"update":"create",errorType:String(error?.name||"Error")});}
+        finally{rapportSaveButton.disabled=false;}
+      });
+      rapportDeleteButton.addEventListener("click",async()=>{
+        const existing=rapportEditorId?rapportRecords.find(record=>record.id===rapportEditorId):null;
+        if(!existing||!accountProfileDurable||!rapportControl)return;
+        if(Number(existing.generation||1)!==Number(rapportControl.currentGeneration||1)){rapportStatus.textContent="Reset-history rapport is inspect-only.";return;}
+        if(!confirm('Delete "'+(existing.label||"this rapport record")+'"?'))return;
+        rapportDeleteButton.disabled=true;rapportStatus.textContent="Deleting rapport record…";
+        try{
+          const response=await accountFetch("/api/account/rapport/"+encodeURIComponent(existing.id)+"?version="+encodeURIComponent(String(existing.version||1)),{method:"DELETE"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||data.deleted!==true)throw new Error(data?.detail||("Rapport delete failed ("+response.status+")"));
+          rapportRecords=rapportRecords.filter(record=>record.id!==existing.id);closeRapportEditor();renderRapportRecords();rapportStatus.textContent="Rapport record deleted.";uiCamera("rapport-delete",{id:existing.id,kind:existing.kind,scope:existing.scope,generation:Number(existing.generation||1)});
+        }catch(error){rapportStatus.textContent="Rapport delete failed. The record remains until the authority confirms deletion.";uiCamera("rapport-delete-failed",{id:existing.id,errorType:String(error?.name||"Error")});}
+        finally{rapportDeleteButton.disabled=false;}
+      });
+
+      const proposalStateLabel=value=>String(value||"PENDING").replaceAll("_"," ");
+      const proposalCategoryLabel=value=>({
+        USER_PROFILE:"You profile",COMPANION_PROFILE:"§wyrlz profile",USER_FACT:"User Fact",USER_LORE:"User Lore",COMPANION_SELF_LORE:"§wyrlz Self Lore",SHARED_LORE:"Shared Lore",SHARED_RAPPORT:"Shared Rapport"
+      }[value]||String(value||"Proposal"));
+      const proposalPayloadPreview=proposal=>{
+        try{return JSON.stringify(proposal?.payload||{},null,2)}catch(_){return "{}"}
+      };
+      const proposalVisible=proposal=>{
+        const filter=proposalFilter.value;
+        if(filter==="ALL")return true;
+        if(filter==="APPLIED")return proposal.state==="APPLIED"||proposal.state==="AUTO_APPLIED";
+        return proposal.state===filter;
+      };
+      const updateProposalStatus=()=>{
+        if(!accountProfileDurable){proposalStatus.textContent="Durable account storage is required for proposal state.";return;}
+        const pending=proposalRecords.filter(item=>item.state==="PENDING").length;
+        proposalStatus.textContent=proposalRecords.length?(pending+" pending · "+proposalRecords.length+" total"):"No proposals yet.";
+      };
+      const loadProposalAudit=async(proposalId,container,force=false)=>{
+        if(!accountProfileDurable)return;
+        if(!force&&proposalAuditCache.has(proposalId)){renderProposalAudit(proposalAuditCache.get(proposalId),container);return;}
+        container.hidden=false;container.textContent="Loading history…";
+        try{
+          const response=await accountFetch("/api/account/proposals/"+encodeURIComponent(proposalId)+"/audit",{method:"GET"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!Array.isArray(data.events))throw new Error(data?.detail||"Audit load failed");
+          proposalAuditCache.set(proposalId,data.events);renderProposalAudit(data.events,container);uiCamera("proposal-audit-load",{id:proposalId,count:data.events.length});
+        }catch(error){container.textContent="History unavailable.";uiCamera("proposal-audit-failed",{id:proposalId,errorType:String(error?.name||"Error")});}
+      };
+      const renderProposalAudit=(events,container)=>{
+        container.innerHTML="";
+        if(!events?.length){container.textContent="No audit events.";return;}
+        for(const event of events){
+          const row=document.createElement("div");row.className="proposal-audit-row";
+          const seq=document.createElement("span");seq.textContent="#"+String(event.seq||0);
+          const action=document.createElement("span");action.textContent=String(event.action||"event")+" · "+String(event.actor||"unknown");
+          const time=document.createElement("span");time.textContent=event.createdAt?new Date(event.createdAt).toLocaleString():"";
+          row.append(seq,action,time);container.appendChild(row);
+        }
+      };
+      const replaceProposal=proposal=>{
+        proposalRecords=proposalRecords.map(item=>item.id===proposal.id?proposal:item);
+        proposalAuditCache.delete(proposal.id);renderProposalRecords();updateProposalStatus();renderWorkSurface();
+      };
+      const proposalRequest=async(proposal,path,init,eventName)=>{
+        const response=await accountFetch(path,init);
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok||!data.proposal)throw new Error(data?.detail||("Proposal action failed ("+response.status+")"));
+        replaceProposal(data.proposal);
+        uiCamera(eventName,{id:data.proposal.id,state:data.proposal.state,category:data.proposal.category,operation:data.proposal.operation,version:Number(data.proposal.version||1)});
+        return data.proposal;
+      };
+      const renderProposalRecords=()=>{
+        proposalList.innerHTML="";
+        const visible=proposalRecords.filter(proposalVisible);
+        if(!accountProfileDurable){
+          const empty=document.createElement("div");empty.className="proposal-empty";empty.textContent="Sign in with durable account storage to use the proposal inbox.";proposalList.appendChild(empty);return;
+        }
+        if(!visible.length){
+          const empty=document.createElement("div");empty.className="proposal-empty";
+          const count=document.createElement("div");count.className="proposal-count";count.textContent="0";
+          const label=document.createElement("div");label.className="proposal-label";label.textContent=proposalRecords.length?"No proposals match this filter.":"No AI proposals have been submitted.";
+          empty.append(count,label);proposalList.appendChild(empty);return;
+        }
+        for(const proposal of visible){
+          const card=document.createElement("article");card.className="proposal-card "+String(proposal.state||"pending").toLowerCase().replaceAll("_","-");
+          const head=document.createElement("div");head.className="proposal-card-head";
+          const title=document.createElement("div");title.className="proposal-card-title";title.textContent=proposalCategoryLabel(proposal.category)+" · "+String(proposal.operation||"").replaceAll("_"," ");
+          const risk=document.createElement("span");risk.className="proposal-badge proposal-risk-"+String(proposal.risk||"MEDIUM").toLowerCase();risk.textContent=String(proposal.risk||"MEDIUM")+" RISK";
+          const state=document.createElement("span");state.className="proposal-badge";state.textContent=proposalStateLabel(proposal.state);
+          head.append(title,risk,state);
+          const rationale=document.createElement("div");rationale.className="proposal-rationale";rationale.textContent=proposal.rationale||"No rationale supplied.";
+          const payload=document.createElement("pre");payload.className="proposal-payload";payload.textContent=proposalPayloadPreview(proposal);
+          const meta=document.createElement("div");meta.className="proposal-meta";
+          [
+            "v"+String(proposal.version||1),
+            "target v"+String(proposal.targetVersion??"—"),
+            proposal.sourceThreadId?("thread "+proposal.sourceThreadId):"no thread",
+            proposal.sourceRequestId?("request "+proposal.sourceRequestId):"no request",
+            proposal.updatedAt?new Date(proposal.updatedAt).toLocaleString():""
+          ].forEach(value=>{const span=document.createElement("span");span.textContent=value;meta.appendChild(span);});
+          const actions=document.createElement("div");actions.className="proposal-card-actions";
+          const audit=document.createElement("div");audit.className="proposal-audit";audit.hidden=true;
+          const history=document.createElement("button");history.type="button";history.className="proposal-action";history.textContent="History";history.onclick=()=>{if(audit.hidden)loadProposalAudit(proposal.id,audit);else audit.hidden=true;};actions.appendChild(history);
+          if(proposal.state==="PENDING"){
+            const edit=document.createElement("button");edit.type="button";edit.className="proposal-action";edit.textContent="Edit";actions.appendChild(edit);
+            const decline=document.createElement("button");decline.type="button";decline.className="proposal-action decline";decline.textContent="Decline";decline.onclick=async()=>{if(!confirm("Decline this proposal?"))return;try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id)+"/decline",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({version:Number(proposal.version||1)})},"proposal-decline");}catch(error){proposalStatus.textContent="Decline failed: "+String(error?.message||error);}};actions.appendChild(decline);
+            const approve=document.createElement("button");approve.type="button";approve.className="proposal-action approve";approve.textContent="Approve";approve.onclick=async()=>{if(!confirm("Approve and apply this durable change?"))return;try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id)+"/approve",{method:"POST"},"proposal-approve");await refreshAccount();loreLoadedForUser="";rapportLoadedKey="";}catch(error){proposalStatus.textContent="Approval failed: "+String(error?.message||error);}};actions.appendChild(approve);
+            const editor=document.createElement("div");editor.className="proposal-editor";editor.hidden=true;
+            const textarea=document.createElement("textarea");textarea.value=proposalPayloadPreview(proposal);textarea.setAttribute("aria-label","Edit proposal payload JSON");
+            const editorActions=document.createElement("div");editorActions.className="proposal-editor-actions";
+            const cancel=document.createElement("button");cancel.type="button";cancel.className="proposal-action";cancel.textContent="Cancel";cancel.onclick=()=>{editor.hidden=true;};
+            const save=document.createElement("button");save.type="button";save.className="proposal-action approve";save.textContent="Save edit";save.onclick=async()=>{
+              let parsed;try{parsed=JSON.parse(textarea.value)}catch(_){proposalStatus.textContent="Proposal edit must be valid JSON.";return;}
+              if(!parsed||Array.isArray(parsed)||typeof parsed!=="object"){proposalStatus.textContent="Proposal edit payload must be an object.";return;}
+              try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id),{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({payload:parsed,rationale:proposal.rationale,version:Number(proposal.version||1)})},"proposal-edit");}catch(error){proposalStatus.textContent="Edit failed: "+String(error?.message||error);}
+            };
+            editorActions.append(cancel,save);editor.append(textarea,editorActions);edit.onclick=()=>{editor.hidden=!editor.hidden;};card.append(head,rationale,payload,meta,actions,editor,audit);proposalList.appendChild(card);continue;
+          }
+          if(proposal.state==="APPLIED"||proposal.state==="AUTO_APPLIED"){
+            const revert=document.createElement("button");revert.type="button";revert.className="proposal-action revert";revert.textContent="Revert";revert.onclick=async()=>{if(!confirm("Revert this applied change? This will stop if the target changed afterward."))return;try{await proposalRequest(proposal,"/api/account/proposals/"+encodeURIComponent(proposal.id)+"/revert",{method:"POST"},"proposal-revert");await refreshAccount();loreLoadedForUser="";rapportLoadedKey="";}catch(error){proposalStatus.textContent="Revert failed: "+String(error?.message||error);}};actions.appendChild(revert);
+          }
+          card.append(head,rationale,payload,meta,actions,audit);proposalList.appendChild(card);
+        }
+      };
+      const loadProposalRecords=async(force=false)=>{
+        if(!accountProfileDurable||!chatAccountUser){proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();renderProposalRecords();updateProposalStatus();return false;}
+        const userKey=String(chatAccountUser.id||"");
+        if(!force&&proposalLoadedForUser===userKey){renderProposalRecords();updateProposalStatus();return true;}
+        proposalStatus.textContent="Loading proposal authority…";
+        try{
+          const response=await accountFetch("/api/account/proposals?includeResolved=true&limit=200",{method:"GET"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!Array.isArray(data.proposals))throw new Error(data?.detail||("Proposal load failed ("+response.status+")"));
+          proposalRecords=data.proposals;proposalLoadedForUser=userKey;proposalAuditCache.clear();
+          if(data.policies&&typeof data.policies==="object")proposalPolicyControls.forEach(control=>{const value=String(data.policies[control.dataset.proposalPolicy]||"ASK");if(["ASK","AUTO_LOW_RISK","SESSION_ONLY","NEVER"].includes(value))control.value=value;});
+          renderProposalRecords();updateProposalStatus();renderWorkSurface();uiCamera("proposal-load",{count:proposalRecords.length,pending:proposalRecords.filter(item=>item.state==="PENDING").length});return true;
+        }catch(error){
+          proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();proposalStatus.textContent="Proposal authority could not be loaded.";renderProposalRecords();uiCamera("proposal-load-failed",{errorType:String(error?.name||"Error")});return false;
+        }
+      };
+      proposalFilter.addEventListener("change",renderProposalRecords);
+      proposalRefresh.addEventListener("click",()=>loadProposalRecords(true));
+      window.addEventListener("swrlz-proposal-receipt",event=>{
+        const receipt=event?.detail&&typeof event.detail==="object"?event.detail:{};
+        proposalLoadedForUser="";
+        if(String(receipt.category||"")==="SHARED_RAPPORT")rapportLoadedKey="";
+        const activePane=document.querySelector(".settings-pane.active")?.dataset?.settingsPane||"";
+        if(document.body.classList.contains("settings-open")&&activePane==="proposals"&&accountProfileDurable)loadProposalRecords(true);
+        if(document.body.classList.contains("settings-open")&&activePane==="rapport"&&accountProfileDurable&&String(receipt.category||"")==="SHARED_RAPPORT")loadRapportRecords(true);
+        renderWorkSurface();
+        uiCamera("proposal-receipt",{
+          signalId:String(receipt.signalId||""),
+          id:String(receipt.proposalId||""),
+          decision:String(receipt.decision||""),
+          state:String(receipt.state||""),
+          category:String(receipt.category||""),
+          operation:String(receipt.operation||""),
+          risk:String(receipt.risk||""),
+          version:Number(receipt.version||0)
+        });
+      });
+
+      const loreTypeLabel=value=>({
+        USER_FACT:"User Fact",USER_LORE:"User Lore",COMPANION_SELF_LORE:"§wyrlz Self Lore",SHARED_LORE:"Shared Lore"
+      }[value]||String(value||"Lore"));
+      const closeLoreEditor=()=>{
+        loreEditorId=null;loreEditor.hidden=true;loreDeleteButton.hidden=true;loreTitle.value="";loreContent.value="";loreType.value="USER_FACT";loreScope.value="GLOBAL";loreActive.checked=true;loreScopeStatus.textContent="Global record";loreOrigin.textContent="New manual record · authored by USER · confidence 100%";
+      };
+      const syncLoreScopeStatus=()=>{
+        const existing=loreEditorId?loreRecords.find(record=>record.id===loreEditorId):null;
+        if(loreScope.value==="THREAD"){
+          const scopeId=existing?.scope==="THREAD"&&existing.scopeId?existing.scopeId:(activeThreadId&&!draftThread?activeThreadId:"");
+          loreScopeStatus.textContent=scopeId?("Thread "+scopeId):"No saved thread is active";
+        }else if(loreScope.value==="PROJECT"){
+          loreScopeStatus.textContent=existing?.scopeId?("Project "+existing.scopeId):"No project scope is attached to this Chat surface";
+        }else loreScopeStatus.textContent="Global record";
+      };
+      const renderLoreRecords=()=>{
+        loreList.innerHTML="";
+        const filter=loreFilter.value;
+        const visible=loreRecords.filter(record=>filter==="ALL"||record.type===filter);
+        if(!accountProfileDurable){
+          const empty=document.createElement("div");empty.className="lore-empty";empty.textContent="Durable account storage is required for Lore & Memory.";loreList.appendChild(empty);return;
+        }
+        if(!visible.length){
+          const empty=document.createElement("div");empty.className="lore-empty";empty.textContent=loreRecords.length?"No records in this category.":"No lore records yet. Nothing is inferred or saved automatically.";loreList.appendChild(empty);return;
+        }
+        for(const record of visible){
+          const card=document.createElement("article");card.className="lore-card"+(record.active===false?" inactive":"");
+          const head=document.createElement("div");head.className="lore-card-head";
+          const title=document.createElement("div");title.className="lore-card-title";title.textContent=record.title||"Untitled";
+          const type=document.createElement("span");type.className="lore-type";type.textContent=loreTypeLabel(record.type);
+          head.append(title,type);
+          const body=document.createElement("div");body.className="lore-card-content";body.textContent=record.content||"";
+          const meta=document.createElement("div");meta.className="lore-meta";
+          const confidence=Math.round(Math.max(0,Math.min(1,Number(record.confidence??1)))*100);
+          const scopeLabel=record.scopeId?(String(record.scope||"GLOBAL")+" · "+String(record.scopeId)):String(record.scope||"GLOBAL");
+          const provenanceKind=record.provenance?.kind||record.provenance?.surface||"unknown";
+          [scopeLabel,String(record.source||"unknown"),"provenance "+String(provenanceKind),"by "+String(record.authoredBy||"unknown"),"confidence "+confidence+"%","v"+String(record.version||1),record.active===false?"paused":"active"].forEach(value=>{const span=document.createElement("span");span.textContent=value;meta.appendChild(span);});
+          const actions=document.createElement("div");actions.className="lore-card-actions";
+          const edit=document.createElement("button");edit.type="button";edit.className="lore-action";edit.textContent=record.editable===false?"Inspect":"Edit";edit.onclick=()=>openLoreEditor(record);actions.appendChild(edit);
+          card.append(head,body,meta,actions);loreList.appendChild(card);
+        }
+      };
+      const openLoreEditor=record=>{
+        loreEditorId=record?.id||null;loreEditor.hidden=false;loreEditorTitle.textContent=record?(record.editable===false?"Inspect lore record":"Edit lore record"):"New lore record";
+        loreType.value=record?.type||"USER_FACT";loreScope.value=["GLOBAL","THREAD","PROJECT"].includes(record?.scope)?record.scope:"GLOBAL";loreTitle.value=record?.title||"";loreContent.value=record?.content||"";loreActive.checked=record?.active!==false;
+        const readOnly=record?.editable===false;loreType.disabled=readOnly;loreScope.disabled=readOnly;loreTitle.disabled=readOnly;loreContent.disabled=readOnly;loreActive.disabled=readOnly;loreSaveButton.hidden=readOnly;
+        loreDeleteButton.hidden=!record;
+        const confidence=Math.round(Math.max(0,Math.min(1,Number(record?.confidence??1)))*100);
+        loreOrigin.textContent=record?("Source "+String(record.source||"unknown")+" · authored by "+String(record.authoredBy||"unknown")+" · confidence "+confidence+"% · version "+String(record.version||1)):"New manual record · authored by USER · confidence 100%";
+        syncLoreScopeStatus();loreEditor.scrollIntoView({block:"nearest",behavior:settingsState.ui.motion==="off"?"auto":"smooth"});
+      };
+      const loadLoreRecords=async(force=false)=>{
+        if(!accountProfileDurable||!chatAccountUser){loreRecords=[];loreLoadedForUser="";loreStatus.textContent="Sign in with durable account storage to load Lore & Memory.";renderLoreRecords();return false;}
+        const userKey=String(chatAccountUser.id||"");
+        if(!force&&loreLoadedForUser===userKey){renderLoreRecords();return true;}
+        loreStatus.textContent="Loading account-owned lore…";
+        try{
+          const response=await accountFetch("/api/account/lore?limit=300",{method:"GET"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!Array.isArray(data.records))throw new Error(data?.detail||("Lore load failed ("+response.status+")"));
+          loreRecords=data.records;loreLoadedForUser=userKey;loreStatus.textContent=loreRecords.length?(loreRecords.length+" durable record"+(loreRecords.length===1?"":"s")+" loaded."):"No durable lore records yet.";renderLoreRecords();uiCamera("lore-load",{count:loreRecords.length});return true;
+        }catch(error){
+          loreRecords=[];loreLoadedForUser="";loreStatus.textContent="Lore & Memory could not be loaded from the account authority.";renderLoreRecords();uiCamera("lore-load-failed",{errorType:String(error?.name||"Error")});return false;
+        }
+      };
+      loreFilter.addEventListener("change",renderLoreRecords);
+      loreScope.addEventListener("change",syncLoreScopeStatus);
+      loreNewButton.addEventListener("click",()=>{if(accountProfileDurable)openLoreEditor(null);});
+      loreCancelButton.addEventListener("click",closeLoreEditor);
+      loreSaveButton.addEventListener("click",async()=>{
+        if(!accountProfileDurable||!chatAccountUser)return;
+        const existing=loreEditorId?loreRecords.find(record=>record.id===loreEditorId):null;
+        const scope=loreScope.value;
+        const scopeId=scope==="THREAD"?(existing?.scope==="THREAD"&&existing.scopeId?existing.scopeId:(activeThreadId&&!draftThread?activeThreadId:"")):scope==="PROJECT"?(existing?.scope==="PROJECT"?existing.scopeId:""):null;
+        if(scope!=="GLOBAL"&&!scopeId){loreStatus.textContent="Choose Global scope or open a saved thread before saving.";syncLoreScopeStatus();return;}
+        const title=loreTitle.value.trim(),bodyText=loreContent.value.trim();
+        if(!title||!bodyText){loreStatus.textContent="Title and content are required.";return;}
+        loreSaveButton.disabled=true;loreStatus.textContent=existing?"Saving lore update…":"Creating lore record…";
+        try{
+          const path=existing?("/api/account/lore/"+encodeURIComponent(existing.id)):"/api/account/lore";
+          const method=existing?"PUT":"POST";
+          const payload={title,content:bodyText,type:loreType.value,scope,scopeId,active:!!loreActive.checked};
+          if(existing)payload.version=Number(existing.version||1);
+          const response=await accountFetch(path,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!data.record)throw new Error(data?.detail||("Lore save failed ("+response.status+")"));
+          if(existing)loreRecords=loreRecords.map(record=>record.id===data.record.id?data.record:record);else loreRecords=[data.record,...loreRecords];
+          loreLoadedForUser=String(chatAccountUser.id||"");closeLoreEditor();renderLoreRecords();loreStatus.textContent="Lore record saved.";uiCamera("lore-save",{operation:existing?"update":"create",id:data.record.id,type:data.record.type,scope:data.record.scope,version:Number(data.record.version||1)});
+        }catch(error){loreStatus.textContent="Lore save failed. No success was assumed.";uiCamera("lore-save-failed",{operation:existing?"update":"create",errorType:String(error?.name||"Error")});}
+        finally{loreSaveButton.disabled=false;}
+      });
+      loreDeleteButton.addEventListener("click",async()=>{
+        const existing=loreEditorId?loreRecords.find(record=>record.id===loreEditorId):null;
+        if(!existing||!accountProfileDurable)return;
+        if(!confirm('Delete "'+(existing.title||"this lore record")+'"?'))return;
+        loreDeleteButton.disabled=true;loreStatus.textContent="Deleting lore record…";
+        try{
+          const response=await accountFetch("/api/account/lore/"+encodeURIComponent(existing.id)+"?version="+encodeURIComponent(String(existing.version||1)),{method:"DELETE"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||data.deleted!==true)throw new Error(data?.detail||("Lore delete failed ("+response.status+")"));
+          loreRecords=loreRecords.filter(record=>record.id!==existing.id);closeLoreEditor();renderLoreRecords();loreStatus.textContent="Lore record deleted.";uiCamera("lore-delete",{id:existing.id,type:existing.type,scope:existing.scope});
+        }catch(error){loreStatus.textContent="Lore delete failed. The record remains until the authority confirms deletion.";uiCamera("lore-delete-failed",{id:existing.id,errorType:String(error?.name||"Error")});}
+        finally{loreDeleteButton.disabled=false;}
+      });
+
+      settingsSave.addEventListener("click",async()=>{
+        if(!chatAccountUser||!accountProfileDurable||!accountProfile){refreshSettingsDurability();return;}
+        settingsSave.disabled=true;settingsSaveState.textContent="Saving…";
+        const existingPrefs=accountProfile.preferences&&typeof accountProfile.preferences==="object"?accountProfile.preferences:{};
+        const existingModel=accountProfile.model_preferences&&typeof accountProfile.model_preferences==="object"?accountProfile.model_preferences:{};
+        const existingUi=accountProfile.ui_preferences&&typeof accountProfile.ui_preferences==="object"?accountProfile.ui_preferences:{};
+        const existingCompanion=accountProfile.companion_profile&&typeof accountProfile.companion_profile==="object"?accountProfile.companion_profile:{};
+        settingsState.user={displayName:settingDisplayName.value.trim(),pronouns:settingUserPronouns.value.trim(),role:settingUserRole.value.trim(),communicationStyle:settingCommunicationStyle.value,outputStyle:settingOutputStyle.value};
+        settingsState.companion={name:settingCompanionName.value.trim()||"§wyrlz",title:settingCompanionTitle.value.trim()||"Glitch Dragon Kompanion",form:settingCompanionForm.value.trim()||"Glitch Dragon",pronouns:settingCompanionPronouns.value.trim(),warmth:settingCompanionWarmth.value,directness:settingCompanionDirectness.value,humor:settingCompanionHumor.value,loreDensity:settingCompanionLoreDensity.value};
+        const proposalPolicy={...proposalPolicyDefaults};proposalPolicyControls.forEach(control=>proposalPolicy[control.dataset.proposalPolicy]=control.value);
+        const preferences={...existingPrefs,general:{...(existingPrefs.general&&typeof existingPrefs.general==="object"?existingPrefs.general:{}),enterToSend:settingsState.general.enterToSend},profile:{...(existingPrefs.profile&&typeof existingPrefs.profile==="object"?existingPrefs.profile:{}),pronouns:settingsState.user.pronouns,role:settingsState.user.role,communicationStyle:settingsState.user.communicationStyle,outputStyle:settingsState.user.outputStyle},proposalPolicy};
+        const modelPreferences={...existingModel,effort:settingsState.model.effort,responseLength:settingsState.model.responseLength};
+        const uiPreferences={...existingUi,density:settingsState.ui.density,glass:settingsState.ui.glass,motion:settingsState.ui.motion,fontScale:settingsState.ui.fontScale,highContrast:settingsState.ui.highContrast,reducedTransparency:settingsState.ui.reducedTransparency};
+        const companionProfile={...existingCompanion,...settingsState.companion};
+        try{
+          const response=await accountFetch("/api/account/profile",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({displayName:settingsState.user.displayName||accountProfile.display_name||null,preferences,modelPreferences,uiPreferences,companionProfile,version:Number(accountProfile.version||0)})});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok||!data?.profile)throw new Error(data?.detail||("Profile save failed ("+response.status+")"));
+          accountProfile=data.profile;accountProfileDurable=true;settingsDirty=false;
+          if(chatAccountUser&&accountProfile.display_name)chatAccountUser={...chatAccountUser,displayName:accountProfile.display_name};
+          populateSettingsControls();if(!draftThread)renderConversation(currentThread());refreshSettingsDurability();uiCamera("settings-save-success",{profileVersion:Number(accountProfile.version||0)});
+        }catch(error){
+          settingsSaveState.textContent="Save failed. Your local preview is still active.";
+          uiCamera("settings-save-failed",{errorType:String(error?.name||"Error")});
+        }finally{settingsSave.disabled=!chatAccountUser||!accountProfileDurable;}
       });
       const accountName = document.getElementById("accountName");
       const accountMeta = document.getElementById("accountMeta");
@@ -527,7 +1765,8 @@
         try {
           const response = await fetch(url,{...init,credentials:"include",cache:"no-store"});
           const contentType=response.headers.get("content-type")||"";
-          const preview=await response.clone().text().then(t=>t.slice(0,180)).catch(()=>"");
+          const redactAccountBody=["/api/account/me","/api/account/google","/api/account/profile"].includes(path)||path.startsWith("/api/account/lore")||path.startsWith("/api/account/rapport")||path.startsWith("/api/account/proposals");
+          const preview=redactAccountBody?"[redacted account payload]":await response.clone().text().then(t=>t.slice(0,180)).catch(()=>"");
           accountTrace("response",{path,status:response.status,ok:response.ok,contentType,preview,durationMs:Math.round(performance.now()-started)});
           return response;
         } catch (error) {
@@ -535,9 +1774,15 @@
           throw error;
         }
       };
-      const showUser = user => {
+      const showUser = (user,profile=null,durable=false) => {
+        const priorUserId=accountUser?.id||"";
         accountUser = user || null;
         chatAccountUser = accountUser;
+        accountProfile=profile&&typeof profile==="object"?profile:null;
+        accountProfileDurable=!!accountUser&&!!durable&&Number(accountProfile?.version||0)>0;
+        if(priorUserId!==(accountUser?.id||"")){loreRecords=[];loreLoadedForUser="";closeLoreEditor();renderLoreRecords();rapportRecords=[];rapportControl=null;rapportLoadedKey="";closeRapportEditor();renderRapportRecords();proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();renderProposalRecords();}
+        populateSettingsControls();
+        refreshSettingsDurability();
         if(!draftThread)renderConversation(currentThread());
         accountName.textContent = user?.displayName || user?.email || "Google Account";
         accountMeta.textContent = user ? "" : "Not signed in";
@@ -554,17 +1799,17 @@
         google.accounts.id.initialize({client_id:status.googleClientId,callback:async response=>{
           const result=await accountFetch("/api/account/google",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({credential:response.credential})});
           if(!result.ok) throw new Error("Google sign-in failed");
-          const data=await result.json(); showUser(data.user);
+          const data=await result.json(); showUser(data.user,data.profile,data.durable!==false&&Number(data.profile?.version||0)>0);
         }});
         google.accounts.id.renderButton(googleSlot,{type:"standard",theme:"outline",size:"medium",text:"signin_with",shape:"pill",width:250});
       };
       const refreshAccount = async () => {
-        try{const r=await accountFetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user);return;}}catch(_){}
-        showUser(null);
+        try{const r=await accountFetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user,d.profile,d.durable!==false&&Number(d.profile?.version||0)>0);return;}}catch(_){}
+        showUser(null,null,false);
         try{await renderGoogle();}catch(e){accountMeta.textContent=e.message;}
       };
       accountAction.addEventListener("click",async()=>{
-        if(accountUser){await accountFetch("/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null);return;}
+        if(accountUser){await accountFetch("/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null,null,false);return;}
       });
       refreshAccount();
       const setMenu = (open) => {
@@ -573,7 +1818,10 @@
         menuShade.setAttribute("aria-hidden", String(!open));
         sideMenu.setAttribute("aria-hidden", String(!open));
       };
-      menuButton.addEventListener("click", () => setMenu(!document.body.classList.contains("menu-open")));
+      workSurfaceButton.addEventListener("click",()=>setWorkSurfaceOpen(!document.body.classList.contains("work-open")));
+      workShade.addEventListener("click",()=>setWorkSurfaceOpen(false));
+      workClose.addEventListener("click",()=>setWorkSurfaceOpen(false));
+      menuButton.addEventListener("click", () => {setWorkSurfaceOpen(false);setMenu(!document.body.classList.contains("menu-open"));});
       menuShade.addEventListener("click", () => setMenu(false));
       const resizeComposer = () => {
         prompt.style.height = "auto";
@@ -582,9 +1830,25 @@
         prompt.style.height = nextHeight + "px";
         prompt.style.overflowY = prompt.scrollHeight > maxHeight ? "auto" : "hidden";
       };
-      prompt.addEventListener("input", resizeComposer, {passive:true});
+      prompt.addEventListener("input",()=>{resizeComposer();syncComposerCompanionState("prompt-input");},{passive:true});
+      prompt.addEventListener("focus",()=>syncComposerCompanionState("prompt-focus"));
+      prompt.addEventListener("blur",()=>syncComposerCompanionState("prompt-blur"));
       window.addEventListener("resize", resizeComposer, {passive:true});
+      populateSettingsControls();
+      refreshSettingsDurability();
       resizeComposer();
+      syncComposerCompanionState("boot");
+      requestAnimationFrame(()=>{
+        const topRect=topEdge.getBoundingClientRect();
+        const composerRect=composerShell.getBoundingClientRect();
+        uiCamera("tier-a-settled",{
+          reducedMotion:matchMedia("(prefers-reduced-motion: reduce)").matches,
+          viewportWidth:Math.round(window.innerWidth),
+          viewportHeight:Math.round(window.innerHeight),
+          topEdge:{width:Math.round(topRect.width),height:Math.round(topRect.height)},
+          composer:{width:Math.round(composerRect.width),height:Math.round(composerRect.height)}
+        });
+      });
     })();
   </script>
 </body>
