@@ -251,6 +251,8 @@ def generate_events(payload):
             "Preserve truthful uncertainty and disclose consequential actions. Do not claim to be human or to possess "
             "subjective experience. Format the final answer for readability: use short paragraphs, real line breaks, and Markdown headings or lists only when they improve structure. For creative writing such as songs, poems, dialogue, lyrics, or scripts, preserve intentional line breaks and separate sections instead of compressing the work into one paragraph. Avoid unnecessary preambles before the requested content.\n"+_role_frame(user_profile))
     system+="\n"+_response_mode(prompt)
+    if payload.get("pinnedCodeEditTargetId"):
+        system+="\nPINNED CODE EDIT MODE: The current request targets an already-pinned code artifact. Return the complete revised code fence(s) needed for that artifact, followed by only a concise explanation of what changed. Do not describe the revised code as a new project or duplicate artifact."
     system+="\nBUILT-IN §WYRLZ PROFILE (default assistant identity/behavior):\n"+BUILTIN_ASSISTANT_PROFILE
     if custom_assistant_profile:
         system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
