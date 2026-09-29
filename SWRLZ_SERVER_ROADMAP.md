@@ -2200,3 +2200,13 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Usability:** the top rail should provide clear expand/collapse-all behavior plus individual expand/collapse and unpin controls, while preserving jump-to-original and code-artifact file/revision controls when an item is expanded.
 - **Current truth state:** ROADMAP / DESIGN REQUIREMENT ONLY; no live/runtime implementation is claimed by this continuation.
 - **Deployment expectation:** none.
+
+
+### UPDATE STARTED — 2026-09-29 — clean-room Chat real pins, code artifacts, and scroll-stability repair
+
+- **Requested outcome:** implement the previously documented pin/code-workbench behavior and repair the live-observed code-container scroll snap during Station synchronization.
+- **Observed live/user evidence:** clean-room `/chat/§wyrlz` shows no per-message pin control; an assistant code response did not auto-pin; scrolling a long code container can snap back toward its top while Station updates/re-renders; simple greeting generation also remains separately verbose/slow.
+- **Architecture reconciliation:** clean-room Chat source is currently served from the deployed `main:chat/§wyrlz/index.html` bundle by `api/live_source_guard.py`, despite the runtime manifest retaining the route description. Durable pin authority belongs to authenticated server Chat metadata; the Mask renders controls/rail only. Canonical conversation text remains immutable. Code artifact presentation is a bounded Mask primitive; Brain-visible pin context must be projected by Station from server-owned state, not browser text.
+- **Implementation scope for this tier:** (1) durable per-message pin metadata and correct Station projection; (2) pinned-context delivery in Station work payload; (3) server-side automatic pinning of successfully completed assistant responses containing fenced code; (4) user Pin/Unpin controls plus collapsible multi-pin rail; (5) preserve nested code scroll position across re-renders; (6) multi-file code tabs for explicitly filename-tagged fenced blocks, with copy/download controls; (7) static/source verification.
+- **Non-goal/truth boundary:** mutable/versioned code-artifact revision storage and Brain-issued arbitrary structured pin/unpin actions are not to be falsely claimed unless implemented in this tier. The greeting verbosity/identity contract remains a separate LALM cognition issue unless explicitly changed and verified here.
+- **Deployment boundary:** the clean-room route and stable pin authority are deployed-main owners. Source changes are deployment-inert; production activation requires the explicit deployment workflow and separate user approval.
