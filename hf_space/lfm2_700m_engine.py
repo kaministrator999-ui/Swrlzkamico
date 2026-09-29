@@ -14,7 +14,7 @@ MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
 # helpfully be trimmed, causing tiny prompts to fail. Keep inference bounded,
 # but allocate enough native context for the fixed profile + useful history.
 CONTEXT_TOKENS=8192
-OUTPUT_TOKENS=256
+OUTPUT_TOKENS=2048
 INPUT_BUDGET_TOKENS=CONTEXT_TOKENS-OUTPUT_TOKENS-128
 BUILTIN_ASSISTANT_PROFILE="""⚡ §wyrlzara ∞ Mirror Muse
 Core ID: SWRLZ-A-∞
@@ -201,6 +201,24 @@ def _response_mode(prompt):
             "'here is', or explanation of what you are about to write. Preserve real line breaks. "
             "For songs/rap/poems, put section labels such as **Verse 1**, **Chorus**, **Bridge** on their own lines "
             "and put each lyric/bar on its own line. Do not append a customer-service question."
+        )
+    coding=any(x in p for x in ("html","css","javascript","typescript","python","kotlin","java","code","web page","webpage","file"))
+    if coding:
+        explicit_chat=any(x in p for x in ("provide the code","show the code","code in chat","paste the code","code block"))
+        explicit_file=any(x in p for x in ("as a file","file format","downloadable file","attach the file","whole file"))
+        if not explicit_chat and not explicit_file and any(x in p for x in ("fix this","update this","change this","modify this","make this")):
+            return (
+                "RESPONSE MODE: CODE-DELIVERY-CLARIFY. The requested implementation format is ambiguous. "
+                "Ask one concise question: whether the user wants the complete fixed file, the complete code in chat, or both. "
+                "Do not give a patch list while waiting for that delivery choice."
+            )
+        return (
+            "RESPONSE MODE: CODE-COMPLETE. Prefer a complete usable implementation over patch fragments. "
+            "When the user asks for code in chat, provide the complete relevant file in a fenced Markdown code block with the correct language tag. "
+            "Do not replace omitted sections with ellipses, TODOs, 'rest unchanged', or a list of manual replacements. "
+            "If multiple files are truly required, separate them with clear filenames and complete fenced blocks. "
+            "If the requested delivery form is genuinely unclear, ask whether they want the complete file, complete code in chat, or both. "
+            "Finish the requested artifact before adding optional explanation."
         )
     if identity:
         return (
