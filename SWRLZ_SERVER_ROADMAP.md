@@ -2008,3 +2008,11 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Root cause:** the 2-second Station hydration path calls `applyChatState()` → `renderConversation()` unconditionally. That destroys and recreates every message, pin rail, and `<pre>` node while the user is interacting. Offset restoration races the browser/touch scroll lifecycle; caching offsets cannot make a replaced DOM node stable.
 - **Repair:** make canonical conversation rendering content-signature aware so unchanged Station syncs do not rebuild the conversation DOM. Preserve explicit force renders for navigation and pin/collapse actions. Keep code scroll capture/restore only for actual content changes.
 - **Ownership:** Mask presentation lifecycle only; no Brain, artifact authority, or Workstation persistence semantics change.
+
+### UPDATE CONTINUATION STARTED — 2026-09-29 — composer-aware conversation viewport
+
+- **Observed live symptom:** with the collapsible composer expanded, the conversation can reach its nominal scroll bottom while the tail of the last response remains physically behind the fixed composer. Collapsing the composer reveals that hidden tail.
+- **Root cause:** `.chat-viewport` reserves a fixed 70px bottom inset even though the fixed composer has variable visible height.
+- **Repair contract:** preserve the existing collapsible composer and collapsible pin rail. Measure the composer's current visible overlap and publish it as Mask layout state; the conversation viewport must reserve that exact bottom space in both expanded and collapsed modes, including resize/orientation changes.
+- **Ownership:** Mask geometry/presentation only. No Brain, Workstation, artifact, or persistence semantics change.
+- **Deployment:** explicitly approved by the user together with this repair; deploy only after source/version verification.
