@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.59">
+  <meta name="swrlz-chat-version" content="1.0.60">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -904,15 +904,27 @@
         }
         appendText(source.slice(cursor));
         if(!container.childNodes.length)appendText(source);
-        enhanceCodeArtifacts(container);
+        enhanceCodeArtifacts(container);bindCodeViewState(container);
       };
       const captureCodeViewState=()=>{
         messageList.querySelectorAll(".code-block pre[data-code-key]").forEach(pre=>codeViewState.set(pre.dataset.codeKey,{top:pre.scrollTop,left:pre.scrollLeft}));
       };
       const restoreCodeViewState=()=>{
-        messageList.querySelectorAll(".code-block pre[data-code-key]").forEach(pre=>{const state=codeViewState.get(pre.dataset.codeKey);if(state){pre.scrollTop=state.top;pre.scrollLeft=state.left;}});
+        messageList.querySelectorAll(".code-block pre[data-code-key]").forEach(pre=>{const state=codeViewState.get(pre.dataset.codeKey);if(state){requestAnimationFrame(()=>{pre.scrollTop=state.top;pre.scrollLeft=state.left;});}});
       };
-      const setMessagePinned=(thread,msg,pinned)=>mutateChat([{type:"SET_MESSAGE_PINNED",threadId:thread.id,messageId:msg.id,pinned:!!pinned}]);
+      const bindCodeViewState=container=>{
+        container.querySelectorAll(".code-block pre[data-code-key]").forEach(pre=>{
+          const remember=()=>codeViewState.set(pre.dataset.codeKey,{top:pre.scrollTop,left:pre.scrollLeft});
+          pre.addEventListener("scroll",remember,{passive:true});pre.addEventListener("touchmove",remember,{passive:true});
+        });
+      };
+      const setMessagePinned=async(thread,msg,pinned)=>{
+        if(!thread?.id||!msg?.id)return false;
+        const prior=!!msg.pinned;msg.pinned=!!pinned;renderConversation(thread);
+        const ok=await mutateChat([{type:"SET_MESSAGE_PINNED",threadId:thread.id,messageId:msg.id,pinned:!!pinned}]);
+        if(!ok){msg.pinned=prior;renderConversation(thread);}
+        return ok;
+      };
       const addMessagePinButton=(node,thread,msg)=>{
         if(!msg?.id||msg?.meta?.localPending)return;
         const actions=document.createElement("div");actions.className="message-pin-actions";
@@ -1019,8 +1031,11 @@
         const mergedThreads=incomingThreads.map(thread=>{
           const prior=priorThreads.find(t=>t.id===thread.id);
           const serverMessages=Array.isArray(thread.messages)?thread.messages:[];
-          const pinMap=thread?.messagePins&&typeof thread.messagePins==="object"?thread.messagePins:{};
-          serverMessages.forEach(message=>{if(message?.id)message.pinned=!!pinMap[message.id]||!!message.pinned;});
+          const priorPinMap=prior?.messagePins&&typeof prior.messagePins==="object"?prior.messagePins:{};
+          const hasAuthoritativePins=thread?.messagePins&&typeof thread.messagePins==="object";
+          const pinMap=hasAuthoritativePins?thread.messagePins:priorPinMap;
+          thread.messagePins={...pinMap};
+          serverMessages.forEach(message=>{if(message?.id)message.pinned=!!pinMap[message.id];});
           const serverIds=new Set(serverMessages.map(m=>m.id));
           const pending=(prior?.messages||[]).filter(m=>m?.meta?.localPending&&!serverIds.has(m.id));
           return {...thread,messages:[...serverMessages,...pending]};
