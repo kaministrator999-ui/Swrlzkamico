@@ -1,5 +1,7 @@
 # §wyrlz Clean Production Release Integrity Guide
 
+> **DEPRECATED CURRENT-HOSTING PATH — 2026-09-29:** Vercel is no longer the current §wyrlz application deployment target. This guide is retained as historical Vercel release-integrity lineage only. Current deployment authority is the existing Hugging Face Space `kamiloki/Swyrlz`, routed through `.deploy/HF_SPACE_REQUEST.txt` → `.github/workflows/hf-space-request.yml` → `.github/workflows/manual-hf-space.yml` after explicit user approval. See `§wyrlz_§tart.md §1A`. Do not use the Vercel trigger/cleanup sequence below for current application releases unless a later governed migration explicitly restores Vercel.
+
 **Role:** canonical preflight and release-integrity procedure for governed stable Server deployments.
 
 **Purpose:** make cleanup and deployment deterministic by proving the candidate is internally valid *before* destructive/remote release stages begin.
