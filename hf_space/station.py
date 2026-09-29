@@ -156,6 +156,39 @@ async def mutate(request:Request):
         s["revision"]+=1
         return {"ok":True,"revision":s["revision"]}
 
+def _code_fences(text):
+    import re
+    return re.findall(r"```[^\n]*\n[\s\S]*?```",str(text or ""))
+
+def _looks_like_pinned_code_edit(prompt,pinned_context):
+    p=" ".join(str(prompt or "").lower().split())
+    edit_words=("fix","edit","change","update","modify","refactor","add","remove","replace","rename","implement","patch")
+    code_pins=[x for x in pinned_context if isinstance(x,dict) and "```" in str(x.get("text") or "")]
+    return code_pins and any(w in p for w in edit_words)
+
+def _latest_code_pin(thread):
+    pins=thread.get("messagePins") if isinstance(thread.get("messagePins"),dict) else {}
+    for message in reversed(thread.get("messages") or []):
+        if pins.get(str(message.get("id") or "")) and message.get("role")=="assistant" and "```" in str(message.get("text") or ""):
+            return message
+    return None
+
+def _replace_code_artifact(previous_text,new_text):
+    old_fences=_code_fences(previous_text);new_fences=_code_fences(new_text)
+    if not new_fences:return None
+    # The pinned artifact owns code; the new turn owns prose. Preserve prior surrounding prose
+    # and replace its code payload in-place so historical explanation is not rewritten.
+    updated=str(previous_text or "")
+    if old_fences:
+        for index,fence in enumerate(old_fences):
+            replacement=new_fences[index] if index<len(new_fences) else ""
+            updated=updated.replace(fence,replacement,1)
+        if len(new_fences)>len(old_fences):
+            updated=updated.rstrip()+"\n\n"+"\n\n".join(new_fences[len(old_fences):])
+        return updated
+    return str(previous_text or "").rstrip()+"\n\n"+"\n\n".join(new_fences)
+
+
 def _run(key,request_id,model_id,payload,assistant_id):
     with _lock:
         s=_sessions[key];g=s["activeGeneration"];g["phase"]="GENERATING";g["status"].append({"phase":"GENERATING"})
@@ -187,9 +220,28 @@ def _run(key,request_id,model_id,payload,assistant_id):
         with _lock:
             g=s["activeGeneration"];g.update(terminal=True,terminalType="COMPLETE",phase="COMPLETE")
             thread=next(t for t in s["threads"] if t["id"]==payload["threadId"])
-            message={"id":assistant_id,"role":"assistant","text":text,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE"}}
-            thread["messages"].append(message)
-            if "```" in text and len(text)>=120:thread.setdefault("messagePins",{})[assistant_id]=True
+            edit_target_id=str(payload.get("pinnedCodeEditTargetId") or "")
+            edit_target=next((m for m in thread["messages"] if str(m.get("id") or "")==edit_target_id),None) if edit_target_id else None
+            if edit_target is not None:
+                updated=_replace_code_artifact(str(edit_target.get("text") or ""),text)
+                if updated:
+                    revisions=edit_target.setdefault("meta",{}).setdefault("artifactRevisions",[])
+                    revisions.append({"requestId":request_id,"text":str(edit_target.get("text") or ""), "revisedAt":int(time.time()*1000)})
+                    edit_target["text"]=updated
+                    edit_target["meta"]["artifactRevision"]=int(edit_target["meta"].get("artifactRevision") or 1)+1
+                    edit_target["meta"]["lastArtifactRequestId"]=request_id
+                    prose=text
+                    for fence in _code_fences(text):prose=prose.replace(fence,"")
+                    prose=prose.strip() or "Updated the pinned code artifact."
+                    message={"id":assistant_id,"role":"assistant","text":prose,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","updatedPinnedArtifactId":edit_target_id}}
+                    thread["messages"].append(message)
+                else:
+                    message={"id":assistant_id,"role":"assistant","text":text,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE"}}
+                    thread["messages"].append(message)
+            else:
+                message={"id":assistant_id,"role":"assistant","text":text,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE"}}
+                thread["messages"].append(message)
+                if "```" in text and len(text)>=120:thread.setdefault("messagePins",{})[assistant_id]=True
             s["revision"]+=1
     except Exception as exc:
         with _lock:
@@ -225,10 +277,11 @@ async def send(request:Request):
         history=[{"role":m["role"],"text":m["text"]} for m in t["messages"] if m["role"] in ("user","assistant")]
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[{"messageId":m.get("id"),"role":str(m.get("role") or "").upper(),"text":str(m.get("text") or "")[:12000],"pinned":True} for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
+        code_edit_target=_latest_code_pin(t) if _looks_like_pinned_code_edit(prompt,pinned_context) else None
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"meta":{"requestId":rid,"modelId":model_id}})
         s["currentId"]=tid;s["revision"]+=1
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}],"diagnosticTrace":None,"memoryCandidates":[]}
-    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile}
+    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"pinnedCodeEditTargetId":str(code_edit_target.get("id") or "") if code_edit_target else "","profileId":"LALM","profile":profile,"userProfile":user_profile}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400)
