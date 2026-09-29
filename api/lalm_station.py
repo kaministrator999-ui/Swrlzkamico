@@ -241,7 +241,7 @@ def install(server, chat_extensions) -> None:
                     })
                 threads.append({
                     "id": thread_id,
-                    "title": str(meta.get("title") or record.title or "New conversation"),
+                    "title": str((record.title if str(meta.get("title") or "").strip() in {"", "New conversation"} else meta.get("title")) or "New conversation"),
                     "createdAt": int(float(record.created_at or 0) * 1000),
                     "updatedAt": int(float(record.updated_at or 0) * 1000),
                     "pinned": bool(meta.get("pinned", False)),
