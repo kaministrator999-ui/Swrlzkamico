@@ -7,7 +7,7 @@ from __future__ import annotations
 import base64, copy, json, os, threading, time, uuid
 from concurrent.futures import ThreadPoolExecutor
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
@@ -112,6 +112,45 @@ def sync(request:Request):
     with _lock: response=JSONResponse(_snapshot(s))
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400)
     return response
+
+@app.get("/api/lalm_station/stream")
+async def stream_generation(request:Request, requestId:str):
+    """NDJSON projection of one accepted Station generation.
+
+    The model generator remains authoritative for token deltas. This endpoint
+    forwards newly observed text/status state promptly so Chat does not need to
+    discover incremental output through whole-session snapshot polling.
+    """
+    key,s=_session(request)
+    rid=str(requestId or "").strip()
+    if not rid or len(rid)>160:raise HTTPException(400,"Invalid requestId")
+    async def events():
+        sent_text=""
+        sent_status=0
+        terminal_sent=False
+        while True:
+            if await request.is_disconnected():return
+            with _lock:
+                g=copy.deepcopy(s.get("activeGeneration"))
+            if not g or str(g.get("requestId") or "")!=rid:
+                yield json.dumps({"type":"FAILED","phase":"STREAM_UNAVAILABLE","reason":"Generation is no longer active","terminal":True,"requestId":rid},ensure_ascii=False)+"\n"
+                return
+            statuses=g.get("status") if isinstance(g.get("status"),list) else []
+            while sent_status<len(statuses):
+                item=statuses[sent_status] if isinstance(statuses[sent_status],dict) else {}
+                sent_status+=1
+                yield json.dumps({"type":"STATUS","phase":str(item.get("phase") or "STATUS"),"reason":str(item.get("reason") or ""), "seq":sent_status,"requestId":rid},ensure_ascii=False)+"\n"
+            text_now=str(g.get("text") or "")
+            if len(text_now)>len(sent_text):
+                delta=text_now[len(sent_text):]
+                sent_text=text_now
+                yield json.dumps({"type":"DELTA","text":delta,"seq":int(g.get("lastSeq") or 0),"requestId":rid},ensure_ascii=False)+"\n"
+            if g.get("terminal") and not terminal_sent:
+                terminal_sent=True
+                yield json.dumps({"type":str(g.get("terminalType") or "COMPLETE"),"phase":str(g.get("phase") or "COMPLETE"),"terminal":True,"seq":int(g.get("lastSeq") or 0),"requestId":rid},ensure_ascii=False)+"\n"
+                return
+            await asyncio.sleep(0.025)
+    return StreamingResponse(events(),media_type="application/x-ndjson",headers={"Cache-Control":"no-store, no-transform","X-Accel-Buffering":"no"})
 
 @app.get("/api/lalm_station/export")
 def export_session(request:Request):
@@ -288,15 +327,15 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         source.setdefault("meta",{})["codeArtifactId"]=artifact["id"]
                         source["meta"]["artifactRevision"]=artifact["currentRevision"]
                     prose=_response_prose(text) or ("Updated pinned code artifact to revision "+str(artifact["currentRevision"])+".")
-                    message={"id":assistant_id,"role":"assistant","text":prose,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","updatedCodeArtifactId":artifact["id"],"artifactRevision":artifact["currentRevision"]}}
+                    message={"id":assistant_id,"role":"assistant","text":prose,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","updatedCodeArtifactId":artifact["id"],"artifactRevision":artifact["currentRevision"]}}
                     thread["messages"].append(message)
                     g["artifactReceipt"]={"action":"REVISION_COMMITTED","artifactId":artifact["id"],"revision":artifact["currentRevision"],"baseRevision":int(intent.get("baseRevision") or 0)}
                 else:
-                    message={"id":assistant_id,"role":"assistant","text":_response_prose(text) or text,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","artifactMutationRejected":reason}}
+                    message={"id":assistant_id,"role":"assistant","text":_response_prose(text) or text,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","artifactMutationRejected":reason}}
                     thread["messages"].append(message)
                     g["artifactReceipt"]={"action":"REVISION_REJECTED","artifactId":artifact["id"],"reason":reason}
             else:
-                message={"id":assistant_id,"role":"assistant","text":text,"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE"}}
+                message={"id":assistant_id,"role":"assistant","text":text,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE"}}
                 thread["messages"].append(message)
                 artifact=_create_code_artifact(thread,message,request_id,text)
                 if artifact is not None:
@@ -311,7 +350,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 g["status"].append({"phase":"FAILED","reason":str(exc)[:240]})
                 thread=next((t for t in s["threads"] if t["id"]==payload["threadId"]),None)
                 if thread:
-                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":"Generation failed: "+str(exc)[:240],"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED"}})
+                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":"Generation failed: "+str(exc)[:240],"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED"}})
                     s["revision"]+=1
 
 @app.post("/api/lalm_station/send",status_code=202)
@@ -337,7 +376,7 @@ async def send(request:Request):
         history=[{"role":m["role"],"text":m["text"]} for m in t["messages"] if m["role"] in ("user","assistant")]
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
-        t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"meta":{"requestId":rid,"modelId":model_id}})
+        t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":int(time.time()*1000),"meta":{"requestId":rid,"modelId":model_id}})
         s["currentId"]=tid;s["revision"]+=1
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}],"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"artifactReceipt":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile}
