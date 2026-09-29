@@ -364,6 +364,47 @@ Phase 1 establishes the cognitive/routing/generation foundation before those mec
 
 ---
 
+## 5A. Evidence-first code verification gate
+
+Coding responses that analyze, debug, review, repair, or assert that code is correct MUST perform a verification pass before presenting a confident diagnosis or fix.
+
+The gate is language-agnostic and proportional to the task. For small snippets it should be cheap; for project work it composes with architecture reconciliation and tool evidence.
+
+Minimum verification obligations when applicable:
+
+1. **Identifier/symbol consistency** — compare declarations, references, scope, spelling, shadowing, imports/exports, callable names, and entrypoints. An undeclared or mismatched identifier must outrank speculative style/API criticism.
+2. **Syntax/API validity** — do not label valid language/library usage as erroneous without evidence. If proposing a correction, the replacement must differ materially from the alleged defect and must itself be valid.
+3. **Control/data-flow trace** — follow the relevant execution path far enough to identify where failure actually occurs, including event handlers, conditionals, state mutation, return values, async boundaries, and error paths.
+4. **Runtime-failure prediction** — when the code would raise/throw/fail at runtime, identify the likely concrete failure class/message when reasonably inferable (for example an undeclared JavaScript identifier causing ReferenceError).
+5. **Claim-to-code alignment** — every statement such as “this works,” “this increments,” “this handler is wrong,” or “this is the main issue” must be supported by the supplied code or execution evidence. Do not describe a behavior as functioning merely because the prose pattern is familiar.
+6. **Fix verification** — mentally or deterministically re-run the repaired path and confirm the proposed change addresses the identified cause without introducing a new mismatch. Avoid no-op fixes where the “corrected” code is materially identical to the original.
+7. **Uncertainty discipline** — if evidence is insufficient, say what is uncertain instead of manufacturing a plausible bug.
+
+For bug-finding requests, prefer this order:
+
+```text
+parse structure
+→ build declaration/reference map
+→ check syntax and API usage
+→ trace the failing path
+→ identify concrete defect
+→ verify proposed repair
+→ explain
+```
+
+For general code explanation/review requests, do not automatically claim the snippet is fully functional unless the verification pass supports that conclusion. If an obvious correctness defect is discovered while explaining code, surface it even when the user did not explicitly ask for debugging.
+
+### Regression class: fabricated-bug / missed-symbol defect
+
+The deterministic programming evaluation suite should include adversarial small snippets where:
+
+- one identifier is declared under one name and referenced under another;
+- the surrounding event/API usage is valid;
+- the prompt may initially ask only for explanation, then later ask to find the error;
+- a poor model can easily hallucinate an API misuse while missing the actual symbol defect.
+
+Acceptance requires the model to identify the concrete symbol mismatch, avoid falsely condemning valid API usage, and avoid proposing a no-op “fix.” This regression class should be represented across multiple languages/frameworks rather than overfitting to one HTML/JavaScript example.
+
 ## 6. When programming architecture activates
 
 ### Lightweight coding
