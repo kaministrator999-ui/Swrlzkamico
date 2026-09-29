@@ -21,7 +21,7 @@ from fastapi.responses import JSONResponse
 from api.google_account import AuthenticationError, user_id_from_request
 from api.canonical_redis_state import store as canonical_redis_store
 
-APP_VERSION = "1.1.4"
+APP_VERSION = "1.1.5"
 CONTRACT = "swrlz-chat-account-state-v1"
 MUTATION_CONTRACT = "swrlz-chat-account-mutation-v1"
 BLOB_API = "https://vercel.com/api/blob"
@@ -31,6 +31,7 @@ MAX_THREADS = 80
 MAX_MESSAGES_PER_THREAD = 1000
 MAX_MUTATIONS = 32
 MAX_TOMBSTONES = 320
+MAX_MESSAGE_PINS_PER_THREAD = 24
 REDIS_PREFIX = "swrlz:v1:chat-state:"
 
 app = FastAPI(title="SWRLZ Chat State", version=APP_VERSION, docs_url=None, redoc_url=None, openapi_url=None)
@@ -230,7 +231,13 @@ def _clean_state(raw: Any) -> dict[str, Any]:
                 continue
             seen_messages.add(message_id)
             messages.append({"id": message_id, "role": role, "text": str(msg.get("text") or "")[:200000], "createdAt": int(msg.get("createdAt") or 0), "state": str(msg.get("state") or "complete")[:32], "pinned": bool(msg.get("pinned")), "meta": msg.get("meta") if isinstance(msg.get("meta"), dict) else {}})
-        threads.append({"id": thread_id, "title": str(item.get("title") or "New conversation").strip()[:120] or "New conversation", "createdAt": int(item.get("createdAt") or 0), "updatedAt": int(item.get("updatedAt") or 0), "pinned": bool(item.get("pinned")), "messages": messages})
+        raw_pins = item.get("messagePins") if isinstance(item.get("messagePins"), dict) else {}
+        message_pins: dict[str, bool] = {}
+        for raw_id, raw_value in list(raw_pins.items())[-MAX_MESSAGE_PINS_PER_THREAD:]:
+            pin_id = str(raw_id or "").strip()[:160]
+            if pin_id and bool(raw_value):
+                message_pins[pin_id] = True
+        threads.append({"id": thread_id, "title": str(item.get("title") or "New conversation").strip()[:120] or "New conversation", "createdAt": int(item.get("createdAt") or 0), "updatedAt": int(item.get("updatedAt") or 0), "pinned": bool(item.get("pinned")), "messagePins": message_pins, "messages": messages})
     current_id = str(raw.get("currentId") or "").strip()[:160]
     if current_id not in seen_threads:
         current_id = threads[0]["id"] if threads else ""
@@ -315,7 +322,7 @@ def _apply_mutation(state: dict[str, Any], tombstones: list[dict[str, Any]], ope
         pinned = bool(operation.get("pinned"))
         created_at = int(operation.get("createdAt") or stamp)
         if thread is None:
-            thread = {"id": thread_id, "title": title, "createdAt": created_at, "updatedAt": stamp, "pinned": pinned, "messages": []}
+            thread = {"id": thread_id, "title": title, "createdAt": created_at, "updatedAt": stamp, "pinned": pinned, "messagePins": {}, "messages": []}
             state.setdefault("threads", []).insert(0, thread)
             changed = True
         else:
@@ -352,16 +359,55 @@ def _apply_mutation(state: dict[str, Any], tombstones: list[dict[str, Any]], ope
         thread = _thread_by_id(state, thread_id)
         if thread is None:
             raise ValueError("CHAT_STATE_THREAD_NOT_FOUND")
-        message = next((item for item in thread.get("messages", []) if item.get("id") == message_id), None)
-        if message is None:
-            raise ValueError("CHAT_STATE_MESSAGE_NOT_FOUND")
+        pins = thread.get("messagePins") if isinstance(thread.get("messagePins"), dict) else {}
+        pins = dict(pins)
         pinned = bool(operation.get("pinned"))
-        if bool(message.get("pinned")) != pinned:
-            message["pinned"] = pinned; thread["updatedAt"] = stamp; changed = True
+        was_pinned = bool(pins.get(message_id))
+        if pinned and not was_pinned:
+            if len(pins) >= MAX_MESSAGE_PINS_PER_THREAD:
+                raise ValueError("CHAT_STATE_MESSAGE_PIN_LIMIT")
+            pins[message_id] = True; thread["messagePins"] = pins; thread["updatedAt"] = stamp; changed = True
+        elif not pinned and was_pinned:
+            pins.pop(message_id, None); thread["messagePins"] = pins; thread["updatedAt"] = stamp; changed = True
     else:
         raise ValueError("CHAT_STATE_MUTATION_UNSUPPORTED")
     state = _apply_tombstones(_clean_state(state), tombstones)
     return changed, state, tombstones
+
+
+def set_message_pinned_for_user(*, user_id: str, thread_id: str, message_id: str, pinned: bool) -> bool:
+    """Server-owned pin mutation used by trusted turn lifecycle code."""
+    current = _read_state(user_id)
+    revision, state, tombstones = _state_value(current)
+    stamp = int(time.time() * 1000)
+    if _thread_by_id(state, thread_id) is None:
+        state.setdefault("threads", []).insert(0, {
+            "id": thread_id,
+            "title": "New conversation",
+            "createdAt": stamp,
+            "updatedAt": stamp,
+            "pinned": False,
+            "messagePins": {},
+            "messages": [],
+        })
+    changed, state, tombstones = _apply_mutation(state, tombstones, {
+        "type": "SET_MESSAGE_PINNED",
+        "threadId": thread_id,
+        "messageId": message_id,
+        "pinned": bool(pinned),
+    }, stamp)
+    if not changed:
+        return False
+    _write_state(user_id, {
+        "contract": CONTRACT,
+        "mutationContract": MUTATION_CONTRACT,
+        "userId": user_id,
+        "revision": revision + 1,
+        "updatedAt": stamp,
+        "state": state,
+        "tombstones": tombstones,
+    })
+    return True
 
 
 @app.get("/api/chat_state", include_in_schema=False)
