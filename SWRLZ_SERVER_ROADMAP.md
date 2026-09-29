@@ -1,3 +1,16 @@
+### UPDATE FINISHED — 2026-09-29 — New-thread isolation repair + Hugging Face hosting authority
+
+- **User authorization:** fix the observed Chat defect where creating a new thread after messaging in another thread could be redirected back to the prior thread and the attempted first message would not send; discontinue Vercel and make Hugging Face the hosting authority throughout future follow-through.
+- **Diagnosis:** the clean-room Chat intentionally represents a new conversation as local `draftThread=true` with no active thread ID until the first send. Background Station synchronization can continue while that draft is open. The draft must therefore be treated as an explicit navigation state: server current-thread metadata from the prior conversation may hydrate data but must not own navigation while the unsent draft is active.
+- **Chat repair:** `applyChatState()` now documents and preserves the draft-navigation invariant. Server current-thread fallback remains eligible only when `draftThread` is false. The first draft send continues to allocate a fresh thread ID before constructing the Station request, so the request is bound to the new conversation rather than the previous server-current thread.
+- **Canonical Chat:** **1.0.56 → 1.0.57**. Source metadata and `chat/§wyrlz/VERSION.txt` are aligned to 1.0.57.
+- **Hosting authority migration:** repository README now declares existing Hugging Face Space `kamiloki/Swyrlz` as the active hosting/deployment authority. Vercel is discontinued and retained only as historical provenance/migration material. Future implementation, deployment, repair, acceptance, and documentation follow-through must target the existing HF Space and must not treat old Vercel-era files as current deployment instructions.
+- **Preserved lineage:** historical Vercel contracts, changelogs, releases, and receipts are not deleted or rewritten; they remain evidence of prior architecture. Where they conflict with current hosting intent, they are historical rather than authoritative.
+- **Source receipts:** thread isolation `7de9459715710f0c6c5284fde11bd3f6931ba77a`; Chat version authority `ed25c92f08078c6b3e8e6a0628bbf1c6db3bc038`; Chat source metadata `bd75688fbed34d1380b12646833548e2db0d59c1`; HF authority README `5c19d0d916eca5471ded13e1594e2ddcc3542ada`.
+- **Verification:** source re-read required after this checkpoint; live HF browser acceptance is still pending until the updated HF package is deployed/served.
+- **Deployment state:** no Vercel action. This event changes canonical source/governance only; Hugging Face deployment/acceptance remains a separate activation step through the existing guarded HF path.
+- **Status:** SOURCE FIX COMPLETE / HF HOSTING AUTHORITY MIGRATED / LIVE HF ACCEPTANCE PENDING.
+
 ### UPDATE CHECKPOINT — 2026-09-29 — HF Chat 1.0.56 code delivery and Google identity repair
 
 - **User authorization:** user requested the observed Google-account defect, incomplete/sloppy code delivery, code-container UX, and complete-file delivery behavior be fixed in the same bounded HF acceptance repair.
