@@ -838,6 +838,7 @@
       };
 
       const codeViewState=new Map();
+      const codeArtifactState=new Map();
       const pinItemCollapsed=new Set();
       let pinRailCollapsed=false;
       const downloadTextFile=(name,content)=>{
@@ -854,22 +855,28 @@
         const children=[...container.children];let i=0;
         while(i<children.length){
           const first=children[i];if(!first.classList.contains("code-block")||!first.dataset.file){i++;continue;}
+          const project=first.dataset.project||"";
           const run=[first];let j=i+1;
           while(j<children.length){
             const candidate=children[j];
             if(candidate.classList.contains("message-text")&&!candidate.textContent.trim()){j++;continue;}
-            if(candidate.classList.contains("code-block")&&candidate.dataset.file){run.push(candidate);j++;continue;}
+            if(candidate.classList.contains("code-block")&&candidate.dataset.file&&(!project||!candidate.dataset.project||candidate.dataset.project===project)){run.push(candidate);j++;continue;}
             break;
           }
           if(run.length>1){
-            const artifact=document.createElement("section");artifact.className="code-artifact";artifact.dataset.artifactKey=run.map(b=>b.dataset.file).join("|");
+            const artifact=document.createElement("section");artifact.className="code-artifact";
+            const artifactKey=(container.closest("[data-message-id]")?.dataset.messageId||"stream")+":"+(project||run.map(b=>b.dataset.file).join("|"));
+            artifact.dataset.artifactKey=artifactKey;
             const tabs=document.createElement("div");tabs.className="code-tabs";tabs.setAttribute("role","tablist");
+            const remembered=codeArtifactState.get(artifactKey);let activeIndex=Math.max(0,run.findIndex(b=>b.dataset.file===remembered));if(activeIndex<0)activeIndex=0;
+            const activate=index=>{run.forEach((b,k)=>{b.hidden=k!==index;tabs.children[k]?.setAttribute("aria-selected",String(k===index));});artifact.dataset.activeFile=run[index].dataset.file;codeArtifactState.set(artifactKey,run[index].dataset.file);};
             run.forEach((block,index)=>{
-              const tab=document.createElement("button");tab.type="button";tab.className="code-tab";tab.setAttribute("role","tab");tab.textContent=block.dataset.file;tab.setAttribute("aria-selected",String(index===0));
-              tab.onclick=()=>{run.forEach((b,k)=>{b.hidden=k!==index;tabs.children[k].setAttribute("aria-selected",String(k===index));});artifact.dataset.activeFile=block.dataset.file;};
-              tabs.appendChild(tab);block.hidden=index!==0;
+              const tab=document.createElement("button");tab.type="button";tab.className="code-tab";tab.setAttribute("role","tab");tab.textContent=block.dataset.file;tab.setAttribute("aria-selected",String(index===activeIndex));tab.onclick=()=>activate(index);
+              tabs.appendChild(tab);block.hidden=index!==activeIndex;
             });
-            artifact.appendChild(tabs);first.before(artifact);run.forEach(block=>artifact.appendChild(block));
+            const all=document.createElement("button");all.type="button";all.className="download-code download-all-code";all.textContent="Download all";
+            all.onclick=()=>run.forEach((block,index)=>setTimeout(()=>downloadTextFile(block.dataset.file||("file-"+(index+1)+".txt"),block.querySelector("code")?.textContent||""),index*120));
+            tabs.appendChild(all);artifact.appendChild(tabs);first.before(artifact);run.forEach(block=>artifact.appendChild(block));activate(activeIndex);
           }
           i=j;
         }
@@ -1012,6 +1019,8 @@
         const mergedThreads=incomingThreads.map(thread=>{
           const prior=priorThreads.find(t=>t.id===thread.id);
           const serverMessages=Array.isArray(thread.messages)?thread.messages:[];
+          const pinMap=thread?.messagePins&&typeof thread.messagePins==="object"?thread.messagePins:{};
+          serverMessages.forEach(message=>{if(message?.id)message.pinned=!!pinMap[message.id]||!!message.pinned;});
           const serverIds=new Set(serverMessages.map(m=>m.id));
           const pending=(prior?.messages||[]).filter(m=>m?.meta?.localPending&&!serverIds.has(m.id));
           return {...thread,messages:[...serverMessages,...pending]};
@@ -1086,7 +1095,12 @@
         if(status.textContent!==nextLabel)status.textContent=nextLabel;
         const body=node.querySelector(".assistant-body");
         const nextText=String(g.text||"");
-        if(body.textContent!==nextText)body.textContent=nextText;
+        if(body.dataset.renderedSource!==nextText){
+          captureCodeViewState();
+          renderAssistantContent(body,nextText,"live-"+String(g.requestId||""));
+          body.dataset.renderedSource=nextText;
+          restoreCodeViewState();
+        }
         body.hidden=!nextText;
         renderWorkSurface();
       };
