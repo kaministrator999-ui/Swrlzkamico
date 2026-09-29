@@ -14,7 +14,12 @@ from api.durable_chat_contract import (
     GenerationCreateResult,
     GenerationEventRecord,
     GenerationJobRecord,
+    LoreRecord,
     MessageRecord,
+    ProposalAuditRecord,
+    ProposalRecord,
+    RapportControlRecord,
+    RapportRecord,
     ThreadRecord,
     UserIdentityRecord,
     UserProfileRecord,
@@ -22,6 +27,80 @@ from api.durable_chat_contract import (
     assert_owned,
     new_id,
 )
+
+
+_CREATE_PROPOSAL_LUA = r"""
+if redis.call('EXISTS', KEYS[1]) == 1 then
+  return 0
+end
+redis.call('SET', KEYS[1], ARGV[1])
+redis.call('ZADD', KEYS[2], ARGV[2], ARGV[3])
+return 1
+"""
+
+_CAS_PROPOSAL_LUA = r"""
+local raw = redis.call('GET', KEYS[1])
+if not raw then
+  return -1
+end
+local current = cjson.decode(raw)
+if tonumber(current.version or 0) ~= tonumber(ARGV[1]) then
+  return 0
+end
+redis.call('SET', KEYS[1], ARGV[2])
+redis.call('ZADD', KEYS[2], ARGV[3], ARGV[4])
+return 1
+"""
+
+_CAS_VERSIONED_JSON_LUA = r"""
+local raw = redis.call('GET', KEYS[1])
+if not raw then
+  return -1
+end
+local current = cjson.decode(raw)
+if tonumber(current.version or 0) ~= tonumber(ARGV[1]) then
+  return 0
+end
+redis.call('SET', KEYS[1], ARGV[2])
+return 1
+"""
+
+_CREATE_INDEXED_JSON_LUA = r"""
+if redis.call('EXISTS', KEYS[1]) == 1 then
+  return 0
+end
+redis.call('SET', KEYS[1], ARGV[1])
+redis.call('ZADD', KEYS[2], ARGV[2], ARGV[3])
+return 1
+"""
+
+_CAS_INDEXED_JSON_LUA = r"""
+local raw = redis.call('GET', KEYS[1])
+if not raw then
+  return -1
+end
+local current = cjson.decode(raw)
+if tonumber(current.version or 0) ~= tonumber(ARGV[1]) then
+  return 0
+end
+redis.call('SET', KEYS[1], ARGV[2])
+redis.call('ZADD', KEYS[2], ARGV[3], ARGV[4])
+return 1
+"""
+
+_DELETE_INDEXED_JSON_LUA = r"""
+local raw = redis.call('GET', KEYS[1])
+if not raw then
+  return -1
+end
+local current = cjson.decode(raw)
+if tonumber(current.version or 0) ~= tonumber(ARGV[1]) then
+  return 0
+end
+redis.call('DEL', KEYS[1])
+redis.call('ZREM', KEYS[2], ARGV[2])
+return 1
+"""
 
 
 class DurableStoreUnavailable(RuntimeError):
@@ -92,11 +171,17 @@ class RedisRestChatStore(DurableChatStore):
     def _key(self, *parts: str) -> str:
         return ":".join([self.prefix, *[str(p).replace(":", "_") for p in parts]])
 
-    def _command(self, *command: Any) -> Any:
+    def _command(self, *command: Any, sensitive: bool = False) -> Any:
         started_ns=time.perf_counter_ns()
         op=str(command[0] if command else "")[:64].upper()
         safe_command=[str(value)[:16000] for value in command]
-        _chat_lockdown("redis-command-enter", operation=op, argumentCount=len(command), command=safe_command)
+        if sensitive:
+            safe_command=[
+                str(command[0])[:64] if command else "",
+                str(command[1])[:512] if len(command) > 1 else "",
+                *([f"[redacted:{len(str(value))} chars]" for value in command[2:]] if len(command) > 2 else []),
+            ]
+        _chat_lockdown("redis-command-enter", operation=op, argumentCount=len(command), command=safe_command, sensitive=sensitive)
         try:
             response=requests.post(
                 self.url,
@@ -118,14 +203,23 @@ class RedisRestChatStore(DurableChatStore):
             _chat_lockdown("redis-command-rejected", operation=op, durationNs=time.perf_counter_ns()-started_ns, error=str(payload.get("error") if isinstance(payload,dict) else "invalid response")[:2000])
             raise DurableStoreUnavailable(str(payload.get("error") if isinstance(payload, dict) else "invalid Redis REST response"))
         result=payload.get("result")
-        _chat_lockdown("redis-command-exit", operation=op, durationNs=time.perf_counter_ns()-started_ns, result=str(result)[:16000])
+        if sensitive:
+            if result is None:
+                result_log = None
+            elif isinstance(result, (list, tuple)):
+                result_log = {"redacted": True, "kind": "list", "items": len(result)}
+            else:
+                result_log = {"redacted": True, "kind": type(result).__name__, "chars": len(str(result))}
+        else:
+            result_log = str(result)[:16000]
+        _chat_lockdown("redis-command-exit", operation=op, durationNs=time.perf_counter_ns()-started_ns, result=result_log, sensitive=sensitive)
         return result
 
-    def _set_json(self, key: str, value: Any) -> None:
-        self._command("SET", key, json.dumps(asdict(value), ensure_ascii=False, separators=(",", ":")))
+    def _set_json(self, key: str, value: Any, *, sensitive: bool = False) -> None:
+        self._command("SET", key, json.dumps(asdict(value), ensure_ascii=False, separators=(",", ":")), sensitive=sensitive)
 
-    def _get_json(self, key: str, cls):
-        return _loads_record(cls, self._command("GET", key))
+    def _get_json(self, key: str, cls, *, sensitive: bool = False):
+        return _loads_record(cls, self._command("GET", key, sensitive=sensitive))
 
     def resolve_identity(self, *, provider: str, provider_subject: str, email: str | None, email_verified: bool) -> tuple[UserRecord, UserIdentityRecord]:
         provider = provider.lower().strip()
@@ -165,12 +259,12 @@ class RedisRestChatStore(DurableChatStore):
 
     def get_profile(self, *, user_id: str) -> UserProfileRecord:
         key = self._key("profile", user_id)
-        profile = self._get_json(key, UserProfileRecord)
+        profile = self._get_json(key, UserProfileRecord, sensitive=True)
         if profile is not None:
             assert_owned(user_id, profile.user_id)
             return profile
         profile = UserProfileRecord(user_id=user_id)
-        self._set_json(key, profile)
+        self._set_json(key, profile, sensitive=True)
         return profile
 
     def get_or_create_profile(self, user_id: str) -> UserProfileRecord:
@@ -181,8 +275,265 @@ class RedisRestChatStore(DurableChatStore):
         if expected_version is not None and current.version != expected_version:
             raise ConflictError("profile version conflict")
         saved = replace(profile, version=current.version + 1, updated_at=time.time())
-        self._set_json(self._key("profile", profile.user_id), saved)
+        self._set_json(self._key("profile", profile.user_id), saved, sensitive=True)
         return saved
+
+    def get_lore(self, *, user_id: str, lore_id: str) -> LoreRecord | None:
+        lore = self._get_json(self._key("lore", user_id, lore_id), LoreRecord, sensitive=True)
+        if lore is not None:
+            assert_owned(user_id, lore.user_id)
+        return lore
+
+    def list_lore(self, *, user_id: str, limit: int = 300) -> list[LoreRecord]:
+        bounded=max(1,min(int(limit or 300),500))
+        ids=self._command("ZREVRANGE", self._key("lore_index", user_id), 0, bounded - 1, sensitive=True) or []
+        out: list[LoreRecord] = []
+        for lore_id in ids:
+            lore=self.get_lore(user_id=user_id, lore_id=str(lore_id))
+            if lore is not None:
+                out.append(lore)
+        return out
+
+    def put_lore(self, lore: LoreRecord, *, expected_version: int | None = None) -> LoreRecord:
+        assert_owned(lore.user_id, lore.user_id)
+        key=self._key("lore", lore.user_id, lore.lore_id)
+        current=self.get_lore(user_id=lore.user_id, lore_id=lore.lore_id)
+        now=time.time()
+        if current is None:
+            if expected_version not in (None, 0):
+                raise ConflictError("lore version conflict")
+            saved=replace(lore, version=1, created_at=now, updated_at=now)
+            claimed=self._command(
+                "SET",
+                key,
+                json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
+                "NX",
+                sensitive=True,
+            )
+            if claimed is None:
+                raise ConflictError("lore create conflict")
+        else:
+            assert_owned(lore.user_id, current.user_id)
+            if expected_version is not None and current.version != expected_version:
+                raise ConflictError("lore version conflict")
+            saved=replace(lore, version=current.version + 1, created_at=current.created_at, updated_at=now)
+            self._set_json(key, saved, sensitive=True)
+        self._command("ZADD", self._key("lore_index", lore.user_id), saved.updated_at, saved.lore_id, sensitive=True)
+        return saved
+
+    def delete_lore(self, *, user_id: str, lore_id: str, expected_version: int | None = None) -> bool:
+        current=self.get_lore(user_id=user_id, lore_id=lore_id)
+        if current is None:
+            return False
+        if expected_version is not None and current.version != expected_version:
+            raise ConflictError("lore version conflict")
+        self._command("DEL", self._key("lore", user_id, lore_id), sensitive=True)
+        self._command("ZREM", self._key("lore_index", user_id), lore_id, sensitive=True)
+        return True
+
+    def get_rapport_control(self, *, user_id: str) -> RapportControlRecord:
+        key=self._key("rapport_control", user_id)
+        control=self._get_json(key, RapportControlRecord, sensitive=True)
+        if control is not None:
+            assert_owned(user_id, control.user_id)
+            return control
+        control=RapportControlRecord(user_id=user_id)
+        self._set_json(key, control, sensitive=True)
+        return control
+
+    def put_rapport_control(self, control: RapportControlRecord, *, expected_version: int | None = None) -> RapportControlRecord:
+        current=self.get_rapport_control(user_id=control.user_id)
+        expected=current.version if expected_version is None else int(expected_version)
+        if current.version != expected:
+            raise ConflictError("rapport control version conflict")
+        saved=replace(control, version=current.version + 1, updated_at=time.time())
+        updated=int(self._command(
+            "EVAL",
+            _CAS_VERSIONED_JSON_LUA,
+            1,
+            self._key("rapport_control", control.user_id),
+            str(expected),
+            json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
+            sensitive=True,
+        ) or 0)
+        if updated != 1:
+            raise ConflictError("rapport control version conflict")
+        return saved
+
+    def get_rapport(self, *, user_id: str, rapport_id: str) -> RapportRecord | None:
+        record=self._get_json(self._key("rapport", user_id, rapport_id), RapportRecord, sensitive=True)
+        if record is not None:
+            assert_owned(user_id, record.user_id)
+        return record
+
+    def list_rapport(self, *, user_id: str, limit: int = 300, include_history: bool = False) -> list[RapportRecord]:
+        bounded=max(1,min(int(limit or 300),500))
+        control=self.get_rapport_control(user_id=user_id)
+        ids=self._command("ZREVRANGE", self._key("rapport_index", user_id), 0, bounded - 1, sensitive=True) or []
+        out: list[RapportRecord] = []
+        for rapport_id in ids:
+            record=self.get_rapport(user_id=user_id, rapport_id=str(rapport_id))
+            if record is None:
+                continue
+            if include_history or record.generation == control.current_generation:
+                out.append(record)
+        return out
+
+    def put_rapport(self, rapport: RapportRecord, *, expected_version: int | None = None) -> RapportRecord:
+        assert_owned(rapport.user_id, rapport.user_id)
+        key=self._key("rapport", rapport.user_id, rapport.rapport_id)
+        index_key=self._key("rapport_index", rapport.user_id)
+        current=self.get_rapport(user_id=rapport.user_id, rapport_id=rapport.rapport_id)
+        now=time.time()
+        if current is None:
+            if expected_version not in (None, 0):
+                raise ConflictError("rapport version conflict")
+            saved=replace(rapport, version=1, created_at=now, updated_at=now)
+            claimed=int(self._command(
+                "EVAL",
+                _CREATE_INDEXED_JSON_LUA,
+                2,
+                key,
+                index_key,
+                json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
+                str(saved.updated_at),
+                saved.rapport_id,
+                sensitive=True,
+            ) or 0)
+            if claimed != 1:
+                raise ConflictError("rapport create conflict")
+            return saved
+        assert_owned(rapport.user_id, current.user_id)
+        expected=current.version if expected_version is None else int(expected_version)
+        if current.version != expected:
+            raise ConflictError("rapport version conflict")
+        saved=replace(rapport, version=current.version + 1, created_at=current.created_at, updated_at=now)
+        updated=int(self._command(
+            "EVAL",
+            _CAS_INDEXED_JSON_LUA,
+            2,
+            key,
+            index_key,
+            str(expected),
+            json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
+            str(saved.updated_at),
+            saved.rapport_id,
+            sensitive=True,
+        ) or 0)
+        if updated != 1:
+            raise ConflictError("rapport version conflict")
+        return saved
+
+    def delete_rapport(self, *, user_id: str, rapport_id: str, expected_version: int | None = None) -> bool:
+        current=self.get_rapport(user_id=user_id, rapport_id=rapport_id)
+        if current is None:
+            return False
+        expected=current.version if expected_version is None else int(expected_version)
+        if current.version != expected:
+            raise ConflictError("rapport version conflict")
+        deleted=int(self._command(
+            "EVAL",
+            _DELETE_INDEXED_JSON_LUA,
+            2,
+            self._key("rapport", user_id, rapport_id),
+            self._key("rapport_index", user_id),
+            str(expected),
+            rapport_id,
+            sensitive=True,
+        ) or 0)
+        if deleted == -1:
+            return False
+        if deleted != 1:
+            raise ConflictError("rapport version conflict")
+        return True
+
+    def get_proposal(self, *, user_id: str, proposal_id: str) -> ProposalRecord | None:
+        proposal = self._get_json(self._key("proposal", user_id, proposal_id), ProposalRecord, sensitive=True)
+        if proposal is not None:
+            assert_owned(user_id, proposal.user_id)
+        return proposal
+
+    def list_proposals(self, *, user_id: str, limit: int = 200, include_resolved: bool = True) -> list[ProposalRecord]:
+        bounded=max(1,min(int(limit or 200),500))
+        ids=self._command("ZREVRANGE", self._key("proposal_index", user_id), 0, bounded - 1, sensitive=True) or []
+        out: list[ProposalRecord] = []
+        for proposal_id in ids:
+            proposal=self.get_proposal(user_id=user_id, proposal_id=str(proposal_id))
+            if proposal is None:
+                continue
+            if include_resolved or proposal.state == "PENDING":
+                out.append(proposal)
+        return out
+
+    def put_proposal(self, proposal: ProposalRecord, *, expected_version: int | None = None) -> ProposalRecord:
+        assert_owned(proposal.user_id, proposal.user_id)
+        key=self._key("proposal", proposal.user_id, proposal.proposal_id)
+        index_key=self._key("proposal_index", proposal.user_id)
+        current=self.get_proposal(user_id=proposal.user_id, proposal_id=proposal.proposal_id)
+        now=time.time()
+        if current is None:
+            if expected_version not in (None, 0):
+                raise ConflictError("proposal version conflict")
+            saved=replace(proposal, version=1, created_at=now, updated_at=now)
+            claimed=int(self._command(
+                "EVAL",
+                _CREATE_PROPOSAL_LUA,
+                2,
+                key,
+                index_key,
+                json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
+                str(saved.updated_at),
+                saved.proposal_id,
+                sensitive=True,
+            ) or 0)
+            if claimed != 1:
+                raise ConflictError("proposal create conflict")
+            return saved
+        assert_owned(proposal.user_id, current.user_id)
+        expected=current.version if expected_version is None else int(expected_version)
+        if current.version != expected:
+            raise ConflictError("proposal version conflict")
+        saved=replace(proposal, version=current.version + 1, created_at=current.created_at, updated_at=now)
+        updated=int(self._command(
+            "EVAL",
+            _CAS_PROPOSAL_LUA,
+            2,
+            key,
+            index_key,
+            str(expected),
+            json.dumps(asdict(saved), ensure_ascii=False, separators=(",", ":")),
+            str(saved.updated_at),
+            saved.proposal_id,
+            sensitive=True,
+        ) or 0)
+        if updated != 1:
+            raise ConflictError("proposal version conflict")
+        return saved
+
+    def append_proposal_audit(self, event: ProposalAuditRecord) -> ProposalAuditRecord:
+        proposal=self.get_proposal(user_id=event.user_id, proposal_id=event.proposal_id)
+        if proposal is None:
+            raise DurableStoreUnavailable("proposal audit references missing proposal")
+        assert_owned(event.user_id, proposal.user_id)
+        seq=int(self._command("INCR", self._key("proposal_audit_seq", event.user_id, event.proposal_id), sensitive=True) or 0)
+        saved=replace(event, seq=seq, created_at=time.time())
+        key=self._key("proposal_audit", event.user_id, event.proposal_id, str(seq))
+        self._set_json(key, saved, sensitive=True)
+        self._command("ZADD", self._key("proposal_audit_index", event.user_id, event.proposal_id), seq, str(seq), sensitive=True)
+        return saved
+
+    def list_proposal_audit(self, *, user_id: str, proposal_id: str) -> list[ProposalAuditRecord]:
+        proposal=self.get_proposal(user_id=user_id, proposal_id=proposal_id)
+        if proposal is None:
+            return []
+        seqs=self._command("ZRANGE", self._key("proposal_audit_index", user_id, proposal_id), 0, -1, sensitive=True) or []
+        out: list[ProposalAuditRecord] = []
+        for seq in seqs:
+            event=self._get_json(self._key("proposal_audit", user_id, proposal_id, str(seq)), ProposalAuditRecord, sensitive=True)
+            if event is not None:
+                assert_owned(user_id, event.user_id)
+                out.append(event)
+        return out
 
     def create_thread(self, thread: ThreadRecord) -> ThreadRecord:
         assert_owned(thread.user_id, thread.user_id)
