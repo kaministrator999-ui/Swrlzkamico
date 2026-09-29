@@ -140,8 +140,11 @@ def install(server, chat_extensions) -> None:
                 "history": history,
                 "pinnedContext": _pinned_context(user_id=user_id, thread_id=turn.thread_id),
                 "payload": {
-                    key: value for key, value in payload.items()
-                    if key not in {"history", "session", "cookie", "authorization"}
+                    **{
+                        key: value for key, value in payload.items()
+                        if key not in {"history", "pinnedContext", "session", "cookie", "authorization"}
+                    },
+                    "pinnedContext": _pinned_context(user_id=user_id, thread_id=turn.thread_id),
                 },
                 "acceptedAt": time.time(),
             }
