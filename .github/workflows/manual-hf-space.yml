@@ -1,25 +1,390 @@
 name: Manual Hugging Face Space Deploy
+
 on:
   workflow_dispatch:
     inputs:
+      source_ref:
+        description: "Exact Swrlzkamico source ref to package/deploy"
+        required: true
+        type: string
+        default: "feature/hf-space-manual-deploy"
       mode:
-        description: "Validate only or explicitly deploy"
+        description: "Validate package without publishing, or explicitly deploy"
         required: true
         type: choice
-        options: [validate, deploy]
+        options: [inspect, benchmark, validate, deploy]
         default: validate
       approved:
-        description: "Explicit approval required for deploy"
+        description: "Confirm replacement ONLY of existing kamiloki/Swyrlz after snapshot"
         required: true
         type: choice
         options: ["no", "yes"]
         default: "no"
+  workflow_call:
+    inputs:
+      source_ref:
+        description: "Exact Swrlzkamico source ref to package/deploy"
+        required: true
+        type: string
+      mode:
+        required: true
+        type: string
+      approved:
+        required: true
+        type: string
+    secrets:
+      HF_TOKEN:
+        required: true
+
 permissions:
   contents: read
+
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+
 jobs:
-  default-branch-guard:
+  prepare:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo "::error::This registration-only workflow must be dispatched against feature/hf-space-manual-deploy, not main."
-          exit 1
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 1
+      - name: Record exact selected source
+        id: selected-source
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "ref=${{ inputs.source_ref }}" >> "$GITHUB_OUTPUT"
+          echo "Selected source ref: ${{ inputs.source_ref }}"
+          echo "Selected source SHA: $(git rev-parse HEAD)"
+      - name: Benchmark untouched 350M and 700M GGUF models on the same CPU
+        if: ${{ inputs.mode == 'benchmark' }}
+        run: |
+          set -euo pipefail
+          python -m pip install 'huggingface_hub>=0.34,<2' --only-binary llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu 'llama-cpp-python==0.3.35'
+          python scripts/benchmark_lfm2_gguf.py --output lfm2-350m-vs-700m.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode == 'benchmark' }}
+        with:
+          name: lfm2-350m-vs-700m
+          path: lfm2-350m-vs-700m.json
+          retention-days: 30
+      - name: Stage canonical R39 sources and model provenance
+        if: ${{ inputs.mode == 'validate' || inputs.mode == 'deploy' }}
+        env:
+          SWRLZ_SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          python scripts/prepare_hf_space.py
+          python scripts/prepare_hf_space.py --check
+      - name: Stage pinned original Test Bench without altering its callbacks
+        if: ${{ inputs.mode != 'inspect' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2'
+          python - <<'PY'
+          import hashlib, os, shutil
+          from pathlib import Path
+          from huggingface_hub import hf_hub_download
+          source=hf_hub_download('kamiloki/Swyrlz','app.py',repo_type='space',revision='bc62f0fe0f8e84914e4b7fa8348a5e75ef15819b',token=os.environ.get('HF_TOKEN') or None)
+          data=Path(source).read_bytes()
+          assert hashlib.sha256(data).hexdigest()=='aa64fb0ba8eb5bcb3a2effd3af82662e6a902a23314ba26af5ea68cb627d7648', 'Original Test Bench source drift'
+          Path('hf_space/original_workstation.py').write_bytes(data)
+          print('Pinned original Test Bench preserved and verified')
+          PY
+      - name: Validate isolated Space package
+        if: ${{ inputs.mode != 'inspect' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f hf_space/README.md || { echo "::error::Missing hf_space/README.md; no deployable package has been accepted."; exit 1; }
+          test -f hf_space/app.py || { echo "::error::Missing hf_space/app.py; do not publish a placeholder."; exit 1; }
+          test -f hf_space/requirements.txt || { echo "::error::Missing isolated dependencies."; exit 1; }
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          root = Path("hf_space")
+          card = (root / "README.md").read_text(encoding="utf-8")
+          assert card.startswith("---\n") and "\nsdk: gradio\n" in card, "Existing Gradio Space SDK must be preserved"
+          app = (root / "app.py").read_text(encoding="utf-8")
+          ast.parse(app)
+          assert "§wyrlz" in app or "Swyrlz" in app, "App must identify the actual project"
+          assert "accepted_runtime" in app or "r39_engine" in app, "App must integrate the real R39 runtime, not a bootstrap echo"
+          assert (root / "accepted_runtime" / "lalm" / "r39_engine.py").is_file(), "R39 engine is not staged"
+          assert (root / "chat" / "§wyrlz" / "index.html").is_file(), "Clean-room Chat is not staged"
+          assert (root / "MODEL_PROVENANCE.json").is_file(), "Model identity/provenance not staged"
+          print("Static package shape accepted; runtime inference still requires separate verification.")
+          PY
+      - name: Install candidate runtime dependencies
+        if: ${{ inputs.mode != 'inspect' }}
+        run: python -m pip install -r hf_space/requirements.txt
+      - name: Build and verify native R39 kernels in validation environment
+        if: ${{ inputs.mode != 'inspect' }}
+        run: |
+          set -euo pipefail
+          python hf_space/scripts/build_r39_native.py
+          PYTHONPATH=hf_space python scripts/verify_r39_native.py
+          PYTHONPATH=hf_space python - <<'PY'
+          from swyrlz import r39_native
+          assert r39_native.available() and r39_native.matmat_available(), r39_native.diagnostics()
+          print("R39 native matvec and batched prefill imports: PASS")
+          PY
+      - name: Reconstruct and verify real R39 model before any publication
+        if: ${{ inputs.mode != 'inspect' }}
+        env:
+          SWRLZ_REPO_ROOT: ${{ github.workspace }}/hf_space
+          SWRLZ_R39_TRANSPORT_MANIFEST: ${{ github.workspace }}/hf_space/lalm§wyrlz.transport.json
+          SWRLZ_GITHUB_OWNER: kaministrator999-ui
+          SWRLZ_GITHUB_REPO: Swrlzkamico
+          SWRLZ_GITHUB_REF: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, sys
+          from pathlib import Path
+          sys.path.insert(0,str(Path("hf_space").resolve()))
+          from swyrlz.backend import ensure_r39, RAW
+          state=ensure_r39()
+          assert state.get("modelReady"), state
+          assert RAW.stat().st_size==233637480
+          assert state["rawSha256"]=="65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee"
+          print(json.dumps({"modelReady":True,"rawBytes":RAW.stat().st_size,"sha256":state["rawSha256"],"source":state["source"]}))
+          import runpy
+          engine=runpy.run_path("hf_space/accepted_runtime/lalm/r39_engine.py")
+          status=engine["inspect_engine"]()
+          assert status.get("interactiveReady") or status.get("oneTokenReady"), status
+          assert callable(engine.get("generate_events"))
+          print(json.dumps({"acceptedEngineReady":True,"engineId":status.get("engineId"),"modelSha256":status.get("modelSha256")}))
+          PY
+      - name: Inspect R39 versus pinned stock GGUF compatibility (read only)
+        if: ${{ inputs.mode != 'inspect' }}
+        env:
+          SWRLZ_REPO_ROOT: ${{ github.workspace }}/hf_space
+          SWRLZ_R39_TRANSPORT_MANIFEST: ${{ github.workspace }}/hf_space/lalm§wyrlz.transport.json
+          SWRLZ_GITHUB_OWNER: kaministrator999-ui
+          SWRLZ_GITHUB_REPO: Swrlzkamico
+          SWRLZ_GITHUB_REF: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python scripts/inspect_r39_gguf.py --download-stock --output r39-gguf-compatibility.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode != 'inspect' }}
+        with:
+          name: r39-gguf-compatibility
+          path: r39-gguf-compatibility.json
+          retention-days: 30
+      - name: Convert R39 weights and vocabulary into isolated llama.cpp GGUF candidate
+        if: ${{ inputs.mode == 'validate' }}
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python - <<'PY'
+          from huggingface_hub import hf_hub_download
+          from swyrlz.backend import RAW
+          import subprocess,sys
+          stock=hf_hub_download('LiquidAI/LFM2-350M-GGUF','LFM2-350M-Q4_K_M.gguf',revision='31cd51db1365')
+          subprocess.run([sys.executable,'scripts/convert_r39_to_gguf.py','--r39',str(RAW),'--stock',stock,'--output','/tmp/swrlz-r39-llama-candidate.gguf'],check=True)
+          from llama_cpp import Llama
+          import time,json
+          start=time.perf_counter()
+          model=Llama(model_path='/tmp/swrlz-r39-llama-candidate.gguf',n_ctx=1024,n_threads=4,n_threads_batch=4,n_batch=128,n_gpu_layers=0,use_mmap=True,verbose=False)
+          load_ms=round((time.perf_counter()-start)*1000,3)
+          start=time.perf_counter()
+          result=model.create_chat_completion(messages=[{'role':'user','content':"What's your name?"}],max_tokens=32,temperature=0.0)
+          elapsed_ms=round((time.perf_counter()-start)*1000,3)
+          text=(result.get('choices') or [{}])[0].get('message',{}).get('content','')
+          assert isinstance(text,str) and text.strip(), 'Converted R39 generated no response'
+          print(json.dumps({'route':'r39-llama-experimental','loadMs':load_ms,'warmShortResponseMs':elapsed_ms,'response':text[:300]}))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode == 'validate' }}
+        with:
+          name: r39-llama-candidate-provenance
+          path: /tmp/swrlz-r39-llama-candidate.gguf.provenance.json
+          retention-days: 30
+      - name: Smoke test 700M assembled profile budget before publication
+        if: ${{ inputs.mode == 'deploy' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python - <<'PY'
+          import json
+          from lfm2_700m_engine import generate_events, CONTEXT_TOKENS, INPUT_BUDGET_TOKENS
+          payload={
+              'requestId':'hf-predeploy-700m-context-smoke',
+              'prompt':"How's things going 😊",
+              'history':[],
+              'profile':'',
+              'userProfile':'Name: Kami. Collaborative technical/creative partner testing §wyrlz.',
+          }
+          events=list(generate_events(payload))
+          context=next((e for e in events if e.get('type')=='CONTEXT'),None)
+          text=''.join(str(e.get('text') or '') for e in events if e.get('type')=='DELTA').strip()
+          assert CONTEXT_TOKENS==8192, CONTEXT_TOKENS
+          assert INPUT_BUDGET_TOKENS==6016, INPUT_BUDGET_TOKENS
+          assert context and context.get('estimatedInputTokens',10**9)<=INPUT_BUDGET_TOKENS, context
+          assert text, '700M context smoke generated no response'
+          print(json.dumps({
+              'route':'700m',
+              'contextWindowTokens':CONTEXT_TOKENS,
+              'inputBudgetTokens':INPUT_BUDGET_TOKENS,
+              'reservedOutputTokens':2048,
+              'estimatedInputTokens':context.get('estimatedInputTokens'),
+              'historyMessagesDropped':context.get('historyMessagesDropped'),
+              'responseChars':len(text),
+              'status':'PASS',
+          }))
+          PY
+      - name: Protect existing fast HF inference and Chat integration
+        if: ${{ inputs.mode == 'deploy' }}
+        run: |
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          original=Path('hf_space/original_workstation.py')
+          assert original.is_file(), 'Original Test Bench missing'
+          assert hashlib.sha256(original.read_bytes()).hexdigest()=='aa64fb0ba8eb5bcb3a2effd3af82662e6a902a23314ba26af5ea68cb627d7648', 'Original source mismatch'
+          app=Path('hf_space/app.py').read_text(encoding='utf-8')
+          assert 'path="/legacy"' in app and 'path="/probe"' in app and 'station_app' in app, 'Required mounts missing'
+          original_engine=Path('hf_space/original_engine.py').read_text(encoding='utf-8')
+          assert 'LiquidAI/LFM2-350M-GGUF' in original_engine and 'LFM2-350M-Q4_K_M.gguf' in original_engine, 'Original GGUF route missing'
+          print('Additive preservation guard passed: original Test Bench, GGUF route, R39 probe, dragon Chat')
+          PY
+      - name: Require explicit publish authorization
+        if: ${{ inputs.mode == 'deploy' }}
+        env:
+          APPROVED: ${{ inputs.approved }}
+        run: |
+          test "$APPROVED" = yes || { echo "::error::Publish approval missing."; exit 1; }
+      - name: Snapshot existing production HF reference (read only)
+        if: ${{ inputs.mode == 'deploy' || inputs.mode == 'inspect' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2'
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from huggingface_hub import HfApi, hf_hub_download
+          api=HfApi(token=os.environ['HF_TOKEN'])
+          info=api.repo_info('kamiloki/Swyrlz',repo_type='space',files_metadata=False)
+          files=api.list_repo_files('kamiloki/Swyrlz',repo_type='space',revision=info.sha)
+          out=Path('hf-reference-snapshot');out.mkdir(exist_ok=True)
+          (out/'manifest.json').write_text(json.dumps({'repo':'kamiloki/Swyrlz','revision':info.sha,'files':files,'cardData':(info.cardData.to_dict() if info.cardData is not None else {})},indent=2,default=str))
+          for name in files:
+              if name.startswith(('.git/','.cache/')) or name.endswith(('.gguf','.bin','.safetensors','.zip')): continue
+              if not (name.endswith(('.py','.md','.txt','.json','.toml','.yaml','.yml','.js','.css','.html')) or name in ('Dockerfile','packages.txt')): continue
+              if name in files:
+                  (out/name).parent.mkdir(parents=True,exist_ok=True)
+                  content=hf_hub_download('kamiloki/Swyrlz',name,repo_type='space',revision=info.sha,token=os.environ['HF_TOKEN'])
+                  (out/name).write_bytes(Path(content).read_bytes())
+          print('Preserved prior Space revision and bootstrap reference:',info.sha)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode == 'deploy' || inputs.mode == 'inspect' }}
+        with:
+          name: hf-predeploy-reference
+          path: hf-reference-snapshot/
+          retention-days: 30
+      - name: Record immutable pre-deploy rollback checkpoint
+        if: ${{ inputs.mode == 'deploy' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          manifest=json.loads(Path('hf-reference-snapshot/manifest.json').read_text())
+          prior_revision=manifest['revision']
+          checkpoint={
+            'schema':'swrlz-hf-checkpoint-v1',
+            'createdAt':datetime.now(timezone.utc).isoformat(),
+            'kind':'pre-deploy-rollback',
+            'knownGood':False,
+            'sourceRepository':'kaministrator999-ui/Swrlzkamico',
+            'sourceCommit':os.environ['SOURCE_COMMIT'],
+            'spaceRepository':'kamiloki/Swyrlz',
+            'spaceRevision':prior_revision,
+            'snapshotManifestSha256':hashlib.sha256(Path('hf-reference-snapshot/manifest.json').read_bytes()).hexdigest(),
+            'restoreContract':{
+              'source':'hf-reference-snapshot artifact from this workflow run',
+              'target':'existing kamiloki/Swyrlz Space only',
+              'requiresExplicitApproval':True,
+              'verifyAfterRestore':['Space build','/legacy','/probe','Dragon Chat/Station','model routes']
+            }
+          }
+          Path('hf-rollback-checkpoint.json').write_text(json.dumps(checkpoint,indent=2)+'\n')
+          print(json.dumps(checkpoint,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode == 'deploy' }}
+        with:
+          name: hf-rollback-checkpoint
+          path: hf-rollback-checkpoint.json
+          retention-days: 90
+      - name: Upload approved candidate to existing Space after snapshot
+        if: ${{ inputs.mode == 'deploy' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$HF_TOKEN" || { echo "::error::HF_TOKEN secret is missing."; exit 1; }
+          python -m pip install 'huggingface_hub>=0.34,<2'
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from huggingface_hub import HfApi
+          api = HfApi(token=os.environ["HF_TOKEN"])
+          from huggingface_hub.utils import RepositoryNotFoundError
+          target = "kamiloki/Swyrlz"
+          current = api.repo_info(target, repo_type="space")
+          assert current.id == target, "Test destination mismatch"
+          assert current.cardData and current.cardData.get("sdk") == "gradio", "Refuse SDK change"
+          api.upload_folder(
+              folder_path=str(Path("hf_space")),
+              repo_id=target,
+              repo_type="space",
+              commit_message="Manual verified §wyrlz candidate from GitHub",
+          )
+          print("Approved candidate uploaded to existing Space after reference snapshot.")
+          PY
+      - name: Capture deployed Space revision and release checkpoint
+        if: ${{ inputs.mode == 'deploy' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ['HF_TOKEN'])
+          info=api.repo_info('kamiloki/Swyrlz',repo_type='space')
+          pre=json.loads(Path('hf-rollback-checkpoint.json').read_text())
+          release={
+            'schema':'swrlz-hf-checkpoint-v1',
+            'createdAt':datetime.now(timezone.utc).isoformat(),
+            'kind':'deployed-candidate',
+            'knownGood':False,
+            'sourceRepository':'kaministrator999-ui/Swrlzkamico',
+            'sourceCommit':os.environ['SOURCE_COMMIT'],
+            'spaceRepository':'kamiloki/Swyrlz',
+            'spaceRevision':info.sha,
+            'rollbackToSpaceRevision':pre['spaceRevision'],
+            'verificationState':'DEPLOYED_UNVERIFIED',
+            'promotionRule':'Mark known-good only after runtime/user-visible verification; deployment alone is insufficient.'
+          }
+          Path('hf-release-checkpoint.json').write_text(json.dumps(release,indent=2)+'\n')
+          print(json.dumps(release,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.mode == 'deploy' }}
+        with:
+          name: hf-release-checkpoint
+          path: hf-release-checkpoint.json
+          retention-days: 90
