@@ -2,7 +2,7 @@
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **Phase 1 core programming generation/history integration is live verified through LALM `2.1.87` / R39 `v75`; Server 2.3.257's runtime-hot canonical-history policy is active in production and has recovered both current-index and legacy-index authenticated threads. v75 is production-hydrated and deterministically evaluated for multi-hop artifact provenance + runnable edit semantics; a fresh authenticated post-v75 continuation remains the final user-turn acceptance checkpoint for those new semantic gates.** v69 live-verified proportional lightweight-programming context compaction. v70 owns coding-terminal/repair hardening. v71 made terminal-source diagnostics collision-proof. v72 added bounded lower-failure detail. v73 repaired the inherited v55 n-gram NumPy fault and a real authenticated turn completed runnable Python + explanation beyond the former two-token failure. v74 added proportional first-hop programming-artifact continuation routing. Server `2.3.257` activated a read-only runtime-hot canonical-history policy seam; production authenticated turns have since proved current-index history delivery and legacy-index recovery. v75 preserves v74 while adding bounded edit-chain provenance plus runnable-edit semantic preservation. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain later states.
+**Current implementation state:** **Runtime-hot programming behavior is active through LALM `2.1.116` / R39 `v91`. v91 adds an executable offline-first Code Truth + local web/UI engineering policy over the preserved v90 stack. Programming turns now receive bounded verification guidance covering syntax/structure, symbols/scope/types/contracts, control/data/state flow, repair re-verification, and HTML/CSS/JavaScript UI/chat invariants. External-provider details remain a separate evidence boundary. Runtime source/static activation is complete; fresh HF user-turn acceptance for v91 remains pending. Repository/tool execution, full deterministic architecture acceptance, coder-model delegation, and model training remain later states.**
 
 ---
 
@@ -266,6 +266,16 @@ The inherited programming suite covers seven generalized behavior classes:
 The lineage reports this suite **7/7**. v74 adds five artifact-continuation cases, and the runtime-hot history policy adds six deterministic canonical-history compatibility checks. These are routing/history-policy evaluations, not the later full Phase 2 architecture-acceptance suite.
 
 ---
+
+### N. Offline Code Truth + web/UI engineering runtime — v91
+
+v91 turns the documented evidence-first/offline web curriculum into executable runtime prompt policy for programming turns. It is injected only when the existing programming classifier is active and is deduplicated across inherited history.
+
+The bounded policy requires artifact-first syntax/structure, symbol/scope/type/contract, control/data/state-flow, runtime-failure, repair, and re-verification reasoning. HTML/CSS/JavaScript work additionally covers DOM wiring, layout/overflow/stacking, responsive/mobile viewport behavior, accessibility/focus, interaction state, security/performance, and chat-specific invariants such as composer clearance, pinned/code-container state preservation, streaming/final separation, auto-scroll ownership, roles/timestamps, and error/loading states.
+
+Provider-specific current facts (for example Google, Hugging Face, OAuth, hosted SDK endpoints/scopes/versions) remain an explicit external-evidence boundary. Lack of internet does not block ordinary standalone webpage engineering; unknown provider facts must be marked unverified rather than invented.
+
+v91 includes a hydration self-test for programming detection, single policy injection/deduplication, non-programming isolation, offline-first wording, syntax/structure + control/data/state coverage, chat UI invariants, provider boundary, and repair re-verification.
 
 ## 4. Runtime lineage and activation
 
