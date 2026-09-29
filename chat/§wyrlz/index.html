@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.62">
+  <meta name="swrlz-chat-version" content="1.0.63">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -838,6 +838,7 @@
       };
 
       const codeViewState=new Map();
+      let renderedConversationSignature="";
       const codeArtifactState=new Map();
       const pinItemCollapsed=new Set();
       let pinRailCollapsed=false;
@@ -948,7 +949,7 @@
         const rail=document.createElement("section");rail.className="pin-rail"+(pinRailCollapsed?" collapsed":"");
         const head=document.createElement("div");head.className="pin-rail-head";
         const title=document.createElement("div");title.className="pin-rail-title";title.textContent="📍 "+pins.length+" pinned";
-        const toggle=document.createElement("button");toggle.type="button";toggle.className="pin-rail-toggle";toggle.textContent=pinRailCollapsed?"Expand all":"Collapse all";toggle.onclick=()=>{pinRailCollapsed=!pinRailCollapsed;renderConversation(thread);};
+        const toggle=document.createElement("button");toggle.type="button";toggle.className="pin-rail-toggle";toggle.textContent=pinRailCollapsed?"Expand all":"Collapse all";toggle.onclick=()=>{pinRailCollapsed=!pinRailCollapsed;renderConversation(thread,true);};
         head.append(title,toggle);const items=document.createElement("div");items.className="pin-rail-items";
         pins.forEach(msg=>{const item=document.createElement("article");item.className="pin-item"+(pinItemCollapsed.has(msg.id)?" collapsed":"");
           const artifact=msg.codeArtifact||null;
@@ -956,7 +957,7 @@
           label.textContent=artifact
             ?((msg.role==="assistant"?"§wyrlz":"You")+" · "+String(artifact.title||"Code artifact")+" · r"+String(artifact.currentRevision||1))
             :((msg.role==="assistant"?"§wyrlz":"You")+" · "+String(msg.text||"").replace(/\s+/g," ").slice(0,72));
-          const collapse=document.createElement("button");collapse.type="button";collapse.className="pin-item-toggle";collapse.textContent=pinItemCollapsed.has(msg.id)?"Expand":"Collapse";collapse.onclick=()=>{pinItemCollapsed.has(msg.id)?pinItemCollapsed.delete(msg.id):pinItemCollapsed.add(msg.id);renderConversation(thread);};
+          const collapse=document.createElement("button");collapse.type="button";collapse.className="pin-item-toggle";collapse.textContent=pinItemCollapsed.has(msg.id)?"Expand":"Collapse";collapse.onclick=()=>{pinItemCollapsed.has(msg.id)?pinItemCollapsed.delete(msg.id):pinItemCollapsed.add(msg.id);renderConversation(thread,true);};
           const jump=document.createElement("button");jump.type="button";jump.className="pin-jump";jump.textContent="Jump";jump.onclick=()=>document.querySelector('[data-message-id="'+CSS.escape(msg.id)+'"]')?.scrollIntoView({behavior:"smooth",block:"center"});
           const unpin=document.createElement("button");unpin.type="button";unpin.className="message-pin-button";unpin.textContent="Unpin";unpin.onclick=()=>setMessagePinned(thread,msg,false);
           const body=document.createElement("div");body.className="pin-item-body";
@@ -981,11 +982,28 @@
         const hint=document.createElement("div");hint.className="first-run-hint";hint.textContent="You can change your profile, preferences, and companion settings later from Settings.";
         card.append(kicker,title,copy,hint);messageList.appendChild(card);
       };
-      const renderConversation = thread => {
+      const conversationRenderSignature=thread=>{
+        if(!thread)return "draft:"+String(draftThread);
+        const pins=thread?.messagePins&&typeof thread.messagePins==="object"?thread.messagePins:{};
+        const artifacts=Array.isArray(thread?.codeArtifacts)?thread.codeArtifacts:[];
+        const messages=(thread.messages||[]).map(msg=>[
+          String(msg?.id||""),String(msg?.role||""),String(msg?.text||""),
+          !!pins[String(msg?.id||"")],String(msg?.meta?.state||msg?.state||""),
+          String(msg?.meta?.artifactRevision||"")
+        ]);
+        const artifactState=artifacts.map(a=>[
+          String(a?.id||""),Number(a?.currentRevision||0),String(a?.title||""),
+          (a?.files||[]).map(file=>[String(file?.path||""),String(file?.language||""),String(file?.content||"")])
+        ]);
+        return JSON.stringify([String(thread.id||""),messages,artifactState]);
+      };
+      const renderConversation = (thread,force=false) => {
+        const signature=conversationRenderSignature(thread);
+        if(!force&&signature===renderedConversationSignature)return false;
         captureCodeViewState();syncTopEdge(thread);
         [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
         messageList.querySelector(".pin-rail")?.remove();
-        if(!thread){renderFirstRunWelcome();renderWorkSurface();return;}
+        if(!thread){renderedConversationSignature=signature;renderFirstRunWelcome();renderWorkSurface();return true;}
         for(const msg of (thread.messages||[])){
           if(msg.role==="assistant"){
             const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||""); addCopyButton(node); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
@@ -1001,7 +1019,7 @@
             addMessagePinButton(node,thread,msg);messageList.appendChild(node);
           }
         }
-        renderPinRail(thread);restoreCodeViewState();renderWorkSurface();
+        renderPinRail(thread);restoreCodeViewState();renderWorkSurface();renderedConversationSignature=signature;return true;
       };
       const closeThreadPopups = except => document.querySelectorAll(".thread-popup").forEach(p=>{if(p!==except)p.hidden=true;});
       const renderThreads = () => {
@@ -1020,7 +1038,7 @@
           main.querySelector(".thread-title").textContent=t.title||"New conversation";
           main.querySelector(".thread-meta").textContent=t.draft ? "Unsaved · starts on first message" : ((t.messages||[]).length+" messages");
           if(t.draft) main.querySelector(".thread-meta").classList.add("draft-badge");
-          main.onclick=async()=>{ if(t.draft)return; if(threadSelectionMode){selectedThreadIds.has(t.id)?selectedThreadIds.delete(t.id):selectedThreadIds.add(t.id);if(!selectedThreadIds.size)threadSelectionMode=false;renderThreads();return;} draftThread=false; activeThreadId=t.id; renderThreads(); renderConversation(t); setMenu(false); /* Selection is presentation state. Do not feed the metadata-only chat_state response back through applyChatState: that response intentionally carries empty message arrays and would overwrite the Workstation projection. */ await setCurrentThreadMetadata(t.id); };
+          main.onclick=async()=>{ if(t.draft)return; if(threadSelectionMode){selectedThreadIds.has(t.id)?selectedThreadIds.delete(t.id):selectedThreadIds.add(t.id);if(!selectedThreadIds.size)threadSelectionMode=false;renderThreads();return;} draftThread=false; activeThreadId=t.id; renderThreads(); renderConversation(t,true); setMenu(false); /* Selection is presentation state. Do not feed the metadata-only chat_state response back through applyChatState: that response intentionally carries empty message arrays and would overwrite the Workstation projection. */ await setCurrentThreadMetadata(t.id); };
           row.appendChild(main);
           if(!t.draft){
             let holdTimer=0,held=false;
@@ -1194,7 +1212,7 @@
           return r.ok;
         }catch(_){return false;}
       };
-      const startDraft = () => { draftThread=true; pendingDraftThread=null; activeThreadId=""; prompt.value=""; renderConversation(null); renderThreads(); closeThreadPopups(); setMenu(false); };
+      const startDraft = () => { draftThread=true; pendingDraftThread=null; activeThreadId=""; prompt.value=""; renderedConversationSignature=""; renderConversation(null,true); renderThreads(); closeThreadPopups(); setMenu(false); };
       newThreadButton.addEventListener("click",startDraft);
       document.addEventListener("click",()=>closeThreadPopups());
       const uid = prefix => prefix+"-"+Date.now().toString(36)+"-"+crypto.getRandomValues(new Uint32Array(2)).join("-");
