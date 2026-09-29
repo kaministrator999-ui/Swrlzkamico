@@ -245,6 +245,7 @@ def install(server, chat_extensions) -> None:
                     "createdAt": int(float(record.created_at or 0) * 1000),
                     "updatedAt": int(float(record.updated_at or 0) * 1000),
                     "pinned": bool(meta.get("pinned", False)),
+                    "messagePins": dict(meta.get("messagePins") or {}) if isinstance(meta.get("messagePins"), dict) else {},
                     "messages": rendered_messages,
                 })
 
@@ -268,6 +269,7 @@ def install(server, chat_extensions) -> None:
                         "createdAt": int(projected.get("createdAt") or stamp),
                         "updatedAt": stamp,
                         "pinned": False,
+                        "messagePins": {},
                         "messages": [],
                     })
                 revision += 1
