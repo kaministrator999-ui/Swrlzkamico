@@ -2024,3 +2024,10 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Existing composer and pin-rail collapse behavior is preserved; only the conversation's available geometry changes.
 - Source re-read confirmed the 1.0.64 page marker, dynamic CSS inset, ResizeObserver path, and collapse synchronization. VERSION.txt is aligned at 1.0.64.
 - User explicitly approved deployment with this repair; proceed through the guarded main request-file deployment path.
+
+### UPDATE STARTED — 2026-09-29 — live token transport + generation statuses + message timestamps
+
+- **Requested outcome:** verify whether the HF LLM generates incrementally; if so, preserve that generator behavior and expose it to Chat as a live HTTP stream instead of making the Mask discover deltas only through Station snapshot polling. Show truthful generation statuses before response text and timestamps on user/assistant turns, then deploy with explicit user approval.
+- **Verified source state:** the LFM2-700M route already calls llama.cpp `create_chat_completion(..., stream=True)` and emits each non-empty model delta as a `DELTA` event. The missing layer is transport: `/api/lalm_station/send` returns only a 202 acknowledgement and Chat currently polls `/sync` for the growing aggregate text.
+- **Architecture:** model token generation remains Brain/inference-owned; Station exposes a bounded event projection; Chat consumes/presents events. Status labels must derive from actual Station phases, never fabricated percentages. Workstation owns message creation timestamps; the Mask formats them in the browser's local timezone.
+- **Deployment:** explicitly approved by the user with this request; deploy only after source/version verification.
