@@ -1,116 +1,30 @@
-# §wyrlz Unified Vercel Server
+# §wyrlz — Hugging Face Hosted LALM Server
 
-- Server runtime revision: **2.3.121**
-- Frozen Web Collector revision: **1.0.8**
-- Chat/runtime hotfix rules: **SWRLZ_HOTFIX_RULES.md**
-- Production deployment: **https://swrlzkamico-o3nu.vercel.app**
-- Checkpoint lineage: `FROZEN-WEB-COLLECTOR-001`
+## Hosting authority
 
-This repository is the unified §wyrlz Vercel server. The stable `main` branch provides the deployed loader/infrastructure; the `runtime` branch is the durable live application source for hot-editable pages, Chat, page-owned assets, and runtime LALM/inference.
+**Hugging Face is the active hosting and deployment authority for §wyrlz.**
 
-## ⚠️ READ FIRST FOR CHAT / PAGE / LALM WORK
+- Canonical Space: `kamiloki/Swyrlz`
+- Canonical Chat source: `chat/§wyrlz/index.html`
+- HF deployment integration branch: `feature/hf-space-manual-deploy`
+- Vercel: **DISCONTINUED / historical only**
 
-**Canonical hotfix instructions:** `SWRLZ_HOTFIX_RULES.md`
+Do not plan, trigger, repair, or require Vercel deployments for current §wyrlz work. Existing Vercel source, contracts, changelogs, and release receipts remain in repository history for provenance and migration reference only; they are not current deployment authority.
 
-Normal runtime change:
+## Current operating rule
 
-`edit runtime → commit → reload/request → verify → NO VERCEL DEPLOY → NO SERVER RESTART`
+Current application work targets the existing Hugging Face Space. Preserve the established HF manual guarded deployment path, rollback lineage, model routes, Chat architecture, authentication boundaries, and validation gates.
 
-Do not use `dev` for Chat/runtime hotfixes. Do not replace a complete page for a one-line change. Do not treat `/tmp` as durable source.
+For Chat changes, edit the canonical clean-room Chat first, synchronize the HF deployment branch/package as required, run source/static validation, then use the existing HF deployment/acceptance flow. Never create a replacement Space merely to recover from a failed deployment.
 
-## Control planes
+## Repository lineage
 
-- `/server/` — stable infrastructure, routing, deployment/base-version receipts, and server capabilities.
-- `/lalm/` — LALM/R39 status and verification surfaces.
-- `/api/chat` — stable conversational transport surface.
-- `/api/admin` — Admin workbench.
-- `/collector` — authenticated Frozen Web Snapshot Collector control room.
-- `/api/collector/*` — collector status, actions, frozen search/documents, and snapshot manifests.
-- `/live/` — runtime live launchpad/source surface.
+The repository intentionally preserves older Vercel-era files and receipts. Their presence must not be interpreted as current hosting intent. Where an old instruction conflicts with this hosting authority, treat the Vercel instruction as historical and follow the current Hugging Face path.
 
-## Runtime ownership
+## Current migration state
 
-The `runtime` branch owns the live application source:
+The existing Space is `kamiloki/Swyrlz`. Recent HF work integrates the Glitch Dragon Chat, selectable LALM routes, 700M context/output-budget repairs, and HF-local Google identity support. Live acceptance remains evidence-driven: source completion is not equivalent to a deployed/live verification receipt.
 
-- Chat HTML/UI
-- Chat JavaScript and CSS
-- stream UI and Chat enhancements
-- Chat version display
-- runtime page routes via `runtime_pages/manifest.json`
-- runtime page assets
-- runtime-loadable LALM/R39 inference code
-- compatible Frozen Web Collector interface and engine revisions
+## Governance
 
-These changes are designed to be served from current `runtime` source without a Vercel deployment or server restart.
-
-## Frozen Web Snapshot Collector
-
-Server 2.3.79 installs a stable authenticated host for Frozen Web Collector 1.0.0. The browser page and compatible engine stay on `runtime`, while private Vercel Blob stores resumable control state, provenance, immutable frozen snapshots, lexical search indexes, and separately reviewed training artifacts. Robots compliance, public-address-only requests, redirect/MIME/byte/rate/domain/storage limits, and explicit rights confirmation are enforced by the collector contract.
-
-The initial host installation requires the approved production deployment. After that, compatible collector page and engine changes follow the normal `runtime` hot-update path without redeploying the server.
-
-## Stable boundary / deployment ownership
-
-`main` owns the stable infrastructure that loads and serves `runtime`.
-
-A Vercel deployment is required when changing the stable boundary itself, such as:
-
-- Python API routes or middleware
-- authentication/session/security behavior
-- runtime loader/source-resolution logic
-- runtime hydration/sync mechanism
-- `vercel.json` or build/runtime configuration
-- new bundled dependencies or stable server capabilities
-- a capability the existing runtime loader cannot serve
-
-## Durable vs ephemeral state
-
-GitHub `runtime` is durable source of truth. `/tmp`, memory caches, loaded Python module objects, and Vercel instance state are disposable execution/cache state. A restart/cold start must recreate active runtime state from the durable `runtime` source.
-
-## LALM / R39 runtime
-
-The runtime-loadable LALM/R39 source belongs to `runtime`. Changing inference internals does not require changing the Chat version unless user-facing Chat behavior or protocol actually changes.
-
-Authoritative raw R39 SHA-256 currently recorded by the project:
-
-`65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee`
-
-## Page lifecycle
-
-Add/remove/update pages through the runtime source and `runtime_pages/manifest.json`. See `HOT_RUNTIME_UPDATE_GUIDE.md` on `runtime` for the exact workflow.
-
-## Verification
-
-Before declaring a runtime hotfix complete:
-
-- fetch the current target file first;
-- make the smallest targeted edit;
-- commit to `runtime`;
-- confirm no Vercel deployment was created;
-- request/reload the affected route;
-- verify the live response comes from current `runtime` source;
-- verify browser behavior/version;
-- verify no legacy injector or loader overrides the change.
-
-## Key records
-
-- `SWRLZ_HOTFIX_RULES.md` — canonical future-§wyrlz hotfix instructions.
-- `HOT_RUNTIME_UPDATE_GUIDE.md` — runtime workflow and page lifecycle guide.
-- `docs/contracts/SWRLZ_HOT_RUNTIME_V1.md`
-- `docs/contracts/SWRLZ_LIVE_PAGE_RUNTIME_V1.md`
-- `docs/contracts/SWRLZ_VERCEL_CHAT_BRIDGE_V1.md`
-- `docs/contracts/SWRLZ_FROZEN_WEB_COLLECTOR_V1.md`
-- `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md`
-- `docs/releases/SERVER_2.3.79_FROZEN_WEB_COLLECTOR.md`
-- `SWRLZ_VERCEL_CHAT_CHANGELOG.md`
-
-## Collector deployment status
-
-Collector 1.0.8 is live through the runtime loader and repairs the reported ETag mismatch. A separate GitHub verification job now checks authenticated save-and-reload with unchanged settings. See `docs/checkpoints/FROZEN-WEB-COLLECTOR-001_CHECKPOINT.md` for the actual result and saved continuation. Compatible collector updates require no server redeployment.
-
-
-## Server 2.3.121 / Deployment Control 1.0.6 — collector storage acceptance
-
-Collector remains 1.0.8. The preceding verification confirmed mismatched strong metadata and weak delivery ETags, then failed at authenticated status (HTTP 401) before any write. This event recognizes non-readable credential exports and can perform one unchanged configuration save through the exact live engine using the existing private storage credential, with explicit scope and complete state preservation checks. Live result pending. No deployment, restart, source reset, collection, or training review. See [release](https://github.com/kaministrator999-ui/Swrlzkamico/blob/main/docs/releases/SERVER_2.3.121_COLLECTOR_STORAGE_ACCEPTANCE.md).
-
-Production collector storage acceptance passed at 2026-09-13T19:52:26Z: revision 1 → 2 survived a new session read, with settings and collection content unchanged. The application credential is intentionally redacted, so signed-in browser/API mutation acceptance is not claimed. [Successful verification](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/34778963286).
+Project Start, Roadmap, version authorities, deployment documentation, and future follow-through must describe Hugging Face as the current hosting authority and Vercel as retired. Historical records should be preserved rather than rewritten or deleted.
