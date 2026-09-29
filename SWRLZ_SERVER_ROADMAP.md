@@ -2001,3 +2001,10 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Requested repair:** preserve the existing complete-fence parser, but treat one trailing unmatched opening fence as a provisional streaming code block using the same code-container renderer and stable scroll key. Once the closing fence arrives, normal parsing replaces the provisional block without changing Brain/Workstation semantics.
 - **Ownership:** presentation-only Mask repair. No LALM cognition, pin authority, artifact identity, revision storage, or deployment semantics change.
 - **Deployment:** source-only continuation; no HF publish/restart without explicit approval.
+
+### UPDATE CONTINUATION STARTED — 2026-09-29 — code-scroll DOM stability
+
+- **Observed live symptom:** scrolling either a normal code container or the pinned artifact code container snaps the code viewport back, even after scroll offsets were cached.
+- **Root cause:** the 2-second Station hydration path calls `applyChatState()` → `renderConversation()` unconditionally. That destroys and recreates every message, pin rail, and `<pre>` node while the user is interacting. Offset restoration races the browser/touch scroll lifecycle; caching offsets cannot make a replaced DOM node stable.
+- **Repair:** make canonical conversation rendering content-signature aware so unchanged Station syncs do not rebuild the conversation DOM. Preserve explicit force renders for navigation and pin/collapse actions. Keep code scroll capture/restore only for actual content changes.
+- **Ownership:** Mask presentation lifecycle only; no Brain, artifact authority, or Workstation persistence semantics change.
