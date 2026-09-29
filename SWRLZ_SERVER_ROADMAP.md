@@ -1,3 +1,17 @@
+### UPDATE CHECKPOINT — 2026-09-29 — HF Chat 1.0.56 code delivery and Google identity repair
+
+- **User authorization:** user requested the observed Google-account defect, incomplete/sloppy code delivery, code-container UX, and complete-file delivery behavior be fixed in the same bounded HF acceptance repair.
+- **Canonical Chat:** advanced **1.0.55 → 1.0.56**. Assistant fenced Markdown code now renders as bounded code containers with a language label and dedicated **Copy code** control; whole-response Copy remains separate. Plain assistant text remains text-safe and no HTML from model output is executed.
+- **700M completion budget:** HF LFM2-700M keeps context **8192** but reserves **2048 output tokens** instead of 256. With the existing 128-token safety reserve, hard input budget is now **6016**. Oldest-history eviction and hard budget rejection remain.
+- **Code-delivery policy:** deterministic response-mode routing now prefers complete usable files over patch fragments for coding requests; explicit chat-code requests require complete fenced blocks; omitted sections/ellipses/TODO/rest-unchanged placeholders are disallowed. When a modification request is genuinely ambiguous about delivery, §wyrlz asks whether the user wants the complete file, complete code in chat, or both.
+- **HF Google identity:** added real HF-local `/api/account/status`, `/api/account/me`, `/api/account/google`, and `/api/account/logout` routes plus `google-auth`. Google ID tokens are server-verified against the configured/default client ID. The HF session is HttpOnly and process-local/non-durable; no false Redis/Vercel durability claim was introduced.
+- **Google external dependency:** source support is complete, but live sign-in still requires the Google OAuth client configuration to authorize the deployed `*.hf.space` web origin. That external configuration cannot be proven from repository source and must be checked in live acceptance.
+- **HF deployment branch receipts:** complete-output engine `3e8c450f182624bdbee7a9f0ffa331dbde96b9a0`; Google identity bridge `6c82910315919fdd328d2e409cec5ae59f60c6ca`; Google auth dependency `d44e8b9af1f4d018df33176b354e13d0561fd64b`; canonical code renderer sync `e562b268096a87013b0825af564787a92c60090a`; Chat 1.0.56 sync `1aa7cdfc8e9eeba810c5dcffcddbb6893c1ce0b1`; smoke-budget alignment `4a5b0ebd67dcf02ddb30d34e7aed9bc021eeac3e`; HF Chat authority `7548cfdca1de9523a6e685621e132f3210fa4324`.
+- **Canonical receipts:** code-container source `cfd756f44b86d82a61cab11ce6e3e985d336b9bc`; Chat 1.0.56 source `06d8e90b4c37402d219a51f19102842e6924383a`; clean-room version authority `f4169d5113d9990c74bb4a1ef1f11d6b280e4ba0`; Repository Work **1.0.30** authority `4d27eb52f38d9588936d10efa21276e38adfe5ba`.
+- **Static verification:** PASS — inline browser JS syntax, CSS brace balance 0, duplicate IDs none, code renderer/copy control present, Chat meta/version authority both 1.0.56, engine constants 8192/2048, complete/clarify code modes present, HF account endpoints present, `google-auth` dependency present, deployment smoke updated to 6016 input budget.
+- **Deployment state:** NOT DISPATCHED from this session. Existing connector limitation remains: no new workflow-dispatch operation is exposed. No auto-deploy backdoor was introduced.
+- **Status:** SOURCE REPAIR COMPLETE / LIVE HF 1.0.56 DEPLOYMENT + GOOGLE ORIGIN ACCEPTANCE PENDING.
+
 ### UPDATE CHECKPOINT — 2026-09-28 — HF Chat 1.0.55 source repaired; deploy dispatch pending
 
 - **Approval remains active:** `APPROVE HF CHAT 1.0.55 DEPLOY AND 700M FIX`.
