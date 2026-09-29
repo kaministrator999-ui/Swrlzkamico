@@ -1,3 +1,11 @@
+### UPDATE STARTED — 2026-09-28 — HF Chat 1.0.55 deployment and 700M context repair
+
+- **Observed live defects:** `kamiloki/Swyrlz` / `miloki-swyrlz.hf.space` is serving the older HF-staged Chat surface rather than canonical clean-room Chat **1.0.55**, and short user prompts can fail with `Current prompt/profile context exceeds the 700M input budget`.
+- **Source diagnosis:** the HF deploy workflow runs from `feature/hf-space-manual-deploy`; its staging script copies `chat/§wyrlz/index.html` from that branch, so a stale branch Chat source can be deployed even while `main` owns a newer clean-room Chat. The 700M route uses a **2048-token** context with only **1728 input tokens** after output/safety reservation while always injecting the built-in Mirror Muse profile, role frame, response mode, optional assistant customization, user profile, current prompt, and history.
+- **Authorized repair:** synchronize the HF deployment branch's clean-room Chat source to canonical main **1.0.55**, preserve HF-only additive controls during staging, enlarge the 700M context budget within the model's supported context, retain oldest-history-first trimming, validate the staged package, deploy only the existing HF Space, and verify live behavior.
+- **Non-goals:** no Vercel deployment, no model retraining, no new UI tier, no unrelated architecture changes, and no silent durable profile/lore mutation.
+- **Status:** IN PROGRESS.
+
 ### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier G artifacts and agent cards
 
 - **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier G completes the Glitch Dragon Chat research implementation sequence (A–G, including D.1) with a truthful backstage work surface rather than adding another conversation-layer control system.
