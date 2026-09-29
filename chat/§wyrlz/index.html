@@ -929,9 +929,9 @@
       };
       const setMessagePinned=async(thread,msg,pinned)=>{
         if(!thread?.id||!msg?.id)return false;
-        const prior=!!msg.pinned;msg.pinned=!!pinned;renderConversation(thread);
+        const prior=!!msg.pinned;msg.pinned=!!pinned;thread.messagePins={...(thread.messagePins||{})};if(pinned)thread.messagePins[msg.id]=true;else delete thread.messagePins[msg.id];renderConversation(thread,true);
         const ok=await mutateChat([{type:"SET_MESSAGE_PINNED",threadId:thread.id,messageId:msg.id,pinned:!!pinned}]);
-        if(!ok){msg.pinned=prior;renderConversation(thread);}
+        if(!ok){msg.pinned=prior;thread.messagePins={...(thread.messagePins||{})};if(prior)thread.messagePins[msg.id]=true;else delete thread.messagePins[msg.id];renderConversation(thread,true);}
         return ok;
       };
       const addMessagePinButton=(node,thread,msg)=>{
