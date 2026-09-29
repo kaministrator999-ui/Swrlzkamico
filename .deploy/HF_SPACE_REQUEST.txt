@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Keep APPROVED=0 unless the user explicitly approves a deployment.
+# Explicitly approved by user in chat on 2026-09-29.
 TARGET=kamiloki/Swyrlz
-APPROVED=0
+APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=inactive
+REQUEST_NONCE=2026-09-29T17-23-00-05-00-chat-approved
