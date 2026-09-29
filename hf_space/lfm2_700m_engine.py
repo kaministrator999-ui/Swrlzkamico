@@ -9,7 +9,11 @@ MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
 # LFM2 supports a substantially larger native context than this HF probe needs.
 # 4096 keeps the CPU/KV footprint bounded while leaving the always-on §wyrlz
 # profile, role frame, user profile, current prompt and useful history room to coexist.
-CONTEXT_TOKENS=4096
+# The always-on §wyrlz identity/profile is intentionally substantial. 4096 made
+# that fixed context compete with the current user turn before history could
+# helpfully be trimmed, causing tiny prompts to fail. Keep inference bounded,
+# but allocate enough native context for the fixed profile + useful history.
+CONTEXT_TOKENS=8192
 OUTPUT_TOKENS=256
 INPUT_BUDGET_TOKENS=CONTEXT_TOKENS-OUTPUT_TOKENS-128
 BUILTIN_ASSISTANT_PROFILE="""⚡ §wyrlzara ∞ Mirror Muse
@@ -176,11 +180,15 @@ def _fit_messages(model,system,history,prompt):
     while kept and _token_count(model,messages)>INPUT_BUDGET_TOKENS:
         kept.pop(0)
         messages=[{"role":"system","content":system}]+kept+[{"role":"user","content":prompt}]
-    if _token_count(model,messages)>INPUT_BUDGET_TOKENS:
-        # Custom/user profiles are already bounded, but a huge current prompt must fail clearly
-        # rather than reaching llama.cpp with an opaque context-window exception.
-        raise ValueError("Current prompt/profile context exceeds the 700M input budget; shorten the current prompt or optional profile.")
-    return messages,len(history)-len(kept),_token_count(model,messages)
+    input_tokens=_token_count(model,messages)
+    if input_tokens>INPUT_BUDGET_TOKENS:
+        # History is already empty here. Report the measured budget so a fixed
+        # profile regression cannot masquerade as a huge user prompt again.
+        raise ValueError(
+            f"Current prompt/profile context uses {input_tokens} tokens but the 700M input budget is "
+            f"{INPUT_BUDGET_TOKENS}; shorten the current prompt or optional profile."
+        )
+    return messages,len(history)-len(kept),input_tokens
 
 def _response_mode(prompt):
     """Deterministic style hint; keeps tiny-model priors from overriding obvious task shape."""
