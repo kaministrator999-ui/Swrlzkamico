@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.61">
+  <meta name="swrlz-chat-version" content="1.0.62">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -887,22 +887,30 @@
         const fence=/\`\`\`([^\n\`]*)\n?([\s\S]*?)\`\`\`/g;
         let cursor=0,match,codeIndex=0;
         const appendText=value=>{if(!value)return;const span=document.createElement("div");span.className="message-text";span.textContent=value;container.appendChild(span);};
-        while((match=fence.exec(source))){
-          appendText(source.slice(cursor,match.index));
-          const info=parseFenceInfo(match[1]);const language=info.language;
-          const raw=String(match[2]||"").replace(/\n$/,"");
-          const block=document.createElement("section");block.className="code-block";block.dataset.file=info.file;block.dataset.project=info.project;
+        const appendCode=(header,body,provisional=false)=>{
+          const info=parseFenceInfo(header);const language=info.language;
+          const raw=String(body||"").replace(/\n$/,"");
+          const block=document.createElement("section");block.className="code-block"+(provisional?" provisional":"");block.dataset.file=info.file;block.dataset.project=info.project;
           const key=(messageId||"stream")+":"+(info.file||codeIndex++);block.dataset.codeKey=key;
           const head=document.createElement("div");head.className="code-head";
-          const label=document.createElement("span");label.textContent=info.file||language;
+          const label=document.createElement("span");label.textContent=(info.file||language)+(provisional?" · streaming":"");
           const actions=document.createElement("div");actions.className="code-head-actions";
           const copy=document.createElement("button");copy.type="button";copy.className="copy-code";copy.textContent="Copy";
           copy.onclick=async()=>{try{await navigator.clipboard.writeText(raw);copy.textContent="Copied";setTimeout(()=>copy.textContent="Copy",1200);}catch(_){copy.textContent="Copy failed";setTimeout(()=>copy.textContent="Copy",1200);}};
           const dl=document.createElement("button");dl.type="button";dl.className="download-code";dl.textContent="Download";dl.onclick=()=>downloadTextFile(info.file||("code."+({javascript:"js",typescript:"ts",python:"py",cpp:"cpp",c:"c",html:"html",css:"css",json:"json"}[language]||"txt")),raw);
           const pre=document.createElement("pre");pre.dataset.codeKey=key;const code=document.createElement("code");code.textContent=raw;pre.appendChild(code);actions.append(copy,dl);head.append(label,actions);block.append(head,pre);container.appendChild(block);
+        };
+        while((match=fence.exec(source))){
+          appendText(source.slice(cursor,match.index));
+          appendCode(match[1],match[2],false);
           cursor=fence.lastIndex;
         }
-        appendText(source.slice(cursor));
+        const tail=source.slice(cursor);
+        const open=tail.match(/\`\`\`([^\n\`]*)\n?([\s\S]*)$/);
+        if(open){
+          appendText(tail.slice(0,open.index));
+          appendCode(open[1],open[2],true);
+        }else appendText(tail);
         if(!container.childNodes.length)appendText(source);
         enhanceCodeArtifacts(container);bindCodeViewState(container);
       };
