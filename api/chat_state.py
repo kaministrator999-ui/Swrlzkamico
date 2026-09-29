@@ -380,6 +380,16 @@ def set_message_pinned_for_user(*, user_id: str, thread_id: str, message_id: str
     current = _read_state(user_id)
     revision, state, tombstones = _state_value(current)
     stamp = int(time.time() * 1000)
+    if _thread_by_id(state, thread_id) is None:
+        state.setdefault("threads", []).insert(0, {
+            "id": thread_id,
+            "title": "New conversation",
+            "createdAt": stamp,
+            "updatedAt": stamp,
+            "pinned": False,
+            "messagePins": {},
+            "messages": [],
+        })
     changed, state, tombstones = _apply_mutation(state, tombstones, {
         "type": "SET_MESSAGE_PINNED",
         "threadId": thread_id,
