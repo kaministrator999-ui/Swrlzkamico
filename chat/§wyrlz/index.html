@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.60">
+  <meta name="swrlz-chat-version" content="1.0.61">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -930,6 +930,10 @@
         const actions=document.createElement("div");actions.className="message-pin-actions";
         const pin=document.createElement("button");pin.type="button";pin.className="message-pin-button";pin.setAttribute("aria-pressed",String(!!msg.pinned));pin.textContent=msg.pinned?"📍 Unpin":"📍 Pin";pin.onclick=()=>setMessagePinned(thread,msg,!msg.pinned);actions.appendChild(pin);node.appendChild(actions);
       };
+      const artifactMarkdownFromRecord=artifact=>{
+        const files=Array.isArray(artifact?.files)?artifact.files:[];
+        return files.map(file=>"```"+String(file?.language||"text")+" file="+String(file?.path||"code.txt")+"\n"+String(file?.content||"")+"```").join("\n\n");
+      };
       const renderPinRail=thread=>{
         messageList.querySelector(".pin-rail")?.remove();if(!thread)return;
         const pins=(thread.messages||[]).filter(msg=>msg.pinned);if(!pins.length)return;
@@ -939,11 +943,20 @@
         const toggle=document.createElement("button");toggle.type="button";toggle.className="pin-rail-toggle";toggle.textContent=pinRailCollapsed?"Expand all":"Collapse all";toggle.onclick=()=>{pinRailCollapsed=!pinRailCollapsed;renderConversation(thread);};
         head.append(title,toggle);const items=document.createElement("div");items.className="pin-rail-items";
         pins.forEach(msg=>{const item=document.createElement("article");item.className="pin-item"+(pinItemCollapsed.has(msg.id)?" collapsed":"");
-          const ih=document.createElement("div");ih.className="pin-item-head";const label=document.createElement("div");label.className="pin-item-label";label.textContent=(msg.role==="assistant"?"§wyrlz":"You")+" · "+String(msg.text||"").replace(/\s+/g," ").slice(0,72);
+          const artifact=msg.codeArtifact||null;
+          const ih=document.createElement("div");ih.className="pin-item-head";const label=document.createElement("div");label.className="pin-item-label";
+          label.textContent=artifact
+            ?((msg.role==="assistant"?"§wyrlz":"You")+" · "+String(artifact.title||"Code artifact")+" · r"+String(artifact.currentRevision||1))
+            :((msg.role==="assistant"?"§wyrlz":"You")+" · "+String(msg.text||"").replace(/\s+/g," ").slice(0,72));
           const collapse=document.createElement("button");collapse.type="button";collapse.className="pin-item-toggle";collapse.textContent=pinItemCollapsed.has(msg.id)?"Expand":"Collapse";collapse.onclick=()=>{pinItemCollapsed.has(msg.id)?pinItemCollapsed.delete(msg.id):pinItemCollapsed.add(msg.id);renderConversation(thread);};
           const jump=document.createElement("button");jump.type="button";jump.className="pin-jump";jump.textContent="Jump";jump.onclick=()=>document.querySelector('[data-message-id="'+CSS.escape(msg.id)+'"]')?.scrollIntoView({behavior:"smooth",block:"center"});
           const unpin=document.createElement("button");unpin.type="button";unpin.className="message-pin-button";unpin.textContent="Unpin";unpin.onclick=()=>setMessagePinned(thread,msg,false);
-          const body=document.createElement("div");body.className="pin-item-body";body.textContent=String(msg.text||"").slice(0,5000);ih.append(label,collapse,jump,unpin);item.append(ih,body);items.appendChild(item);});
+          const body=document.createElement("div");body.className="pin-item-body";
+          if(artifact){
+            body.classList.add("pin-artifact-body");
+            renderAssistantContent(body,artifactMarkdownFromRecord(artifact),"pin-artifact:"+String(artifact.id||msg.id));
+          }else body.textContent=String(msg.text||"").slice(0,5000);
+          ih.append(label,collapse,jump,unpin);item.append(ih,body);items.appendChild(item);});
         rail.append(head,items);messageList.prepend(rail);
       };
             const renderFirstRunWelcome = () => {
@@ -1035,7 +1048,10 @@
           const hasAuthoritativePins=thread?.messagePins&&typeof thread.messagePins==="object";
           const pinMap=hasAuthoritativePins?thread.messagePins:priorPinMap;
           thread.messagePins={...pinMap};
-          serverMessages.forEach(message=>{if(message?.id)message.pinned=!!pinMap[message.id];});
+          const codeArtifacts=Array.isArray(thread?.codeArtifacts)?thread.codeArtifacts:(Array.isArray(prior?.codeArtifacts)?prior.codeArtifacts:[]);
+          thread.codeArtifacts=codeArtifacts;
+          const artifactByMessage=new Map(codeArtifacts.map(artifact=>[String(artifact?.sourceMessageId||""),artifact]));
+          serverMessages.forEach(message=>{if(message?.id){message.pinned=!!pinMap[message.id];message.codeArtifact=artifactByMessage.get(String(message.id))||null;}});
           const serverIds=new Set(serverMessages.map(m=>m.id));
           const pending=(prior?.messages||[]).filter(m=>m?.meta?.localPending&&!serverIds.has(m.id));
           return {...thread,messages:[...serverMessages,...pending]};
