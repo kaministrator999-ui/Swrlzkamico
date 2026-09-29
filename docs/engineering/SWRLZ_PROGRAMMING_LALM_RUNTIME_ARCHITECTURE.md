@@ -2,7 +2,7 @@
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **Phase 1 core programming generation/history integration is live verified through LALM `2.1.87` / R39 `v75`; Server 2.3.257's runtime-hot canonical-history policy is active in production and has recovered both current-index and legacy-index authenticated threads. v75 is production-hydrated and deterministically evaluated for multi-hop artifact provenance + runnable edit semantics; a fresh authenticated post-v75 continuation remains the final user-turn acceptance checkpoint for those new semantic gates.** v69 live-verified proportional lightweight-programming context compaction. v70 owns coding-terminal/repair hardening. v71 made terminal-source diagnostics collision-proof. v72 added bounded lower-failure detail. v73 repaired the inherited v55 n-gram NumPy fault and a real authenticated turn completed runnable Python + explanation beyond the former two-token failure. v74 added proportional first-hop programming-artifact continuation routing. Server `2.3.257` activated a read-only runtime-hot canonical-history policy seam; production authenticated turns have since proved current-index history delivery and legacy-index recovery. v75 preserves v74 while adding bounded edit-chain provenance plus runnable-edit semantic preservation. Repository/tool execution, full architecture acceptance, coder-model delegation, and model training remain later states.
+**Current implementation state:** **Runtime-hot programming behavior is active through LALM `2.1.116` / R39 `v91`. v91 adds an executable offline-first Code Truth + local web/UI engineering policy over the preserved v90 stack. Programming turns now receive bounded verification guidance covering syntax/structure, symbols/scope/types/contracts, control/data/state flow, repair re-verification, and HTML/CSS/JavaScript UI/chat invariants. External-provider details remain a separate evidence boundary. Runtime source/static activation is complete; fresh HF user-turn acceptance for v91 remains pending. Repository/tool execution, full deterministic architecture acceptance, coder-model delegation, and model training remain later states.**
 
 ---
 
@@ -267,6 +267,16 @@ The lineage reports this suite **7/7**. v74 adds five artifact-continuation case
 
 ---
 
+### N. Offline Code Truth + web/UI engineering runtime — v91
+
+v91 turns the documented evidence-first/offline web curriculum into executable runtime prompt policy for programming turns. It is injected only when the existing programming classifier is active and is deduplicated across inherited history.
+
+The bounded policy requires artifact-first syntax/structure, symbol/scope/type/contract, control/data/state-flow, runtime-failure, repair, and re-verification reasoning. HTML/CSS/JavaScript work additionally covers DOM wiring, layout/overflow/stacking, responsive/mobile viewport behavior, accessibility/focus, interaction state, security/performance, and chat-specific invariants such as composer clearance, pinned/code-container state preservation, streaming/final separation, auto-scroll ownership, roles/timestamps, and error/loading states.
+
+Provider-specific current facts (for example Google, Hugging Face, OAuth, hosted SDK endpoints/scopes/versions) remain an explicit external-evidence boundary. Lack of internet does not block ordinary standalone webpage engineering; unknown provider facts must be marked unverified rather than invented.
+
+v91 includes a hydration self-test for programming detection, single policy injection/deduplication, non-programming isolation, offline-first wording, syntax/structure + control/data/state coverage, chat UI invariants, provider boundary, and repair re-verification.
+
 ## 4. Runtime lineage and activation
 
 Relevant programming lineage:
@@ -363,6 +373,165 @@ The following remain later work:
 Phase 1 establishes the cognitive/routing/generation foundation before those mechanisms are layered on top.
 
 ---
+
+## 5A. Evidence-first code verification gate
+
+Coding responses that analyze, debug, review, repair, or assert that code is correct MUST perform a verification pass before presenting a confident diagnosis or fix.
+
+The gate is language-agnostic and proportional to the task. For small snippets it should be cheap; for project work it composes with architecture reconciliation and tool evidence.
+
+Minimum verification obligations when applicable:
+
+1. **Identifier/symbol consistency** — compare declarations, references, scope, spelling, shadowing, imports/exports, callable names, and entrypoints. An undeclared or mismatched identifier must outrank speculative style/API criticism.
+2. **Syntax/API validity** — do not label valid language/library usage as erroneous without evidence. If proposing a correction, the replacement must differ materially from the alleged defect and must itself be valid.
+3. **Control/data-flow trace** — follow the relevant execution path far enough to identify where failure actually occurs, including event handlers, conditionals, state mutation, return values, async boundaries, and error paths.
+4. **Runtime-failure prediction** — when the code would raise/throw/fail at runtime, identify the likely concrete failure class/message when reasonably inferable (for example an undeclared JavaScript identifier causing ReferenceError).
+5. **Claim-to-code alignment** — every statement such as “this works,” “this increments,” “this handler is wrong,” or “this is the main issue” must be supported by the supplied code or execution evidence. Do not describe a behavior as functioning merely because the prose pattern is familiar.
+6. **Fix verification** — mentally or deterministically re-run the repaired path and confirm the proposed change addresses the identified cause without introducing a new mismatch. Avoid no-op fixes where the “corrected” code is materially identical to the original.
+7. **Uncertainty discipline** — if evidence is insufficient, say what is uncertain instead of manufacturing a plausible bug.
+
+For bug-finding requests, prefer this order:
+
+```text
+parse structure
+→ build declaration/reference map
+→ check syntax and API usage
+→ trace the failing path
+→ identify concrete defect
+→ verify proposed repair
+→ explain
+```
+
+For general code explanation/review requests, do not automatically claim the snippet is fully functional unless the verification pass supports that conclusion. If an obvious correctness defect is discovered while explaining code, surface it even when the user did not explicitly ask for debugging.
+
+### Offline-first coding diagnosis contract
+
+Programming diagnosis MUST work without internet access. External research is not a prerequisite for ordinary code correctness analysis.
+
+Use this evidence order by default:
+
+```text
+supplied/local artifact
+→ parse + symbol/scope/type/structure checks
+→ control/data-flow simulation
+→ local compiler/linter/test/runtime evidence when available
+→ repository-local contracts/docs/examples when relevant
+→ answer or repair
+```
+
+Rules:
+
+- Treat the code/artifact under inspection as primary evidence for claims about its own behavior.
+- Build lightweight internal maps of declarations/references, imports/exports, functions/callers, state mutations, branches, async boundaries, and entrypoints as proportional to the task.
+- Prefer deterministic local evidence (parser/compiler/linter/tests/runtime logs) over model confidence whenever that evidence is available.
+- Use repository-local documentation, dependency manifests, lockfiles, type definitions, vendored source, tests, and existing examples to resolve framework/library behavior before assuming outside lookup is necessary.
+- Distinguish **artifact truth** from **external dependency truth**. The model may diagnose artifact-internal defects offline. If correctness depends on an unknown/current external API fact that cannot be established locally, mark that narrow fact unverified rather than inventing it.
+- Do not weaken an otherwise supported local diagnosis merely because internet access is absent.
+- Do not fabricate documentation, API signatures, versions, or runtime results.
+- When no execution tool exists, perform bounded execution simulation and label runtime-specific conclusions according to the available evidence.
+
+Internet/research capability, when added later, is an optional escalation layer for unresolved external facts; it must not replace local code reasoning or become the default first step.
+
+## 5B. Local web/UI engineering competence profile
+
+The programming cortex should be capable of designing, explaining, debugging, and repairing substantial HTML/CSS/JavaScript interfaces without internet access when the requested behavior depends only on browser-platform capabilities and locally supplied/project evidence.
+
+### Core webpage construction
+
+For local webpage work, reason across the page as a system rather than emitting visually plausible markup only:
+
+1. **Semantic HTML and document structure** — correct hierarchy, landmarks, forms, buttons, labels, lists, headings, metadata, and native elements where appropriate.
+2. **CSS layout** — normal flow, flexbox, grid, positioning, stacking contexts, overflow, intrinsic sizing, min/max constraints, viewport units, safe areas, and container behavior.
+3. **Responsive design** — mobile-first constraints, narrow/wide layouts, wrapping, touch targets, keyboard appearance, dynamic viewport height, orientation changes, and content that remains reachable at zoomed or constrained sizes.
+4. **Interaction/state** — event handlers, toggles, collapsible regions, menus, dialogs, tabs, selections, pinned content, editable content, state transitions, persistence boundaries, and disabled/loading/error states.
+5. **DOM integrity** — IDs, selectors, references, creation/removal, event ownership, mutation ordering, focus targets, and relationships between markup and JavaScript.
+6. **Accessibility** — keyboard operability, focus visibility/management, labels, semantic roles, ARIA only when needed, reduced-motion considerations, readable contrast assumptions, and screen-reader-relevant state.
+7. **Visual hierarchy** — spacing, typography, density, grouping, emphasis, component consistency, readable code/content, and deliberate rather than accidental decoration.
+8. **Robustness** — long text, long code lines, empty states, large histories, repeated components, resizing, scrolling, overflow, missing optional data, and malformed/user-generated content.
+9. **Performance** — avoid unnecessary DOM churn, duplicate listeners, unbounded expensive work on scroll/input, layout thrashing, and gratuitous animation work.
+10. **Security boundaries** — distinguish text from trusted HTML, avoid unsafe injection patterns, validate/sanitize untrusted content at appropriate boundaries, and do not expose secrets in client code.
+
+### Chat-interface specialization
+
+When designing chat interfaces, explicitly model these interacting regions and invariants when applicable:
+
+- application shell/header/navigation;
+- scrollable conversation viewport;
+- user/assistant/system/tool role presentation;
+- message content and markdown/code rendering;
+- code containers with wrapping/horizontal-scroll/copy behavior;
+- pinned content that may expand/collapse without resetting unrelated state;
+- composer whose collapsed/expanded height changes the usable conversation viewport;
+- bottom clearance so the last message remains fully readable above the composer;
+- auto-scroll behavior that does not fight a user who intentionally scrolled upward;
+- streaming/generating/status presentation without duplicating finalized content;
+- timestamps and message metadata;
+- loading, retry, error, empty, disconnected, and disabled states;
+- mobile keyboard, safe-area, touch, and dynamic viewport behavior;
+- preservation of component state across ordinary scrolling/re-rendering.
+
+A visually attractive first render is not sufficient acceptance. The model should mentally test layout and interaction invariants across representative states such as: short/long messages, code blocks, pinned expanded/collapsed, composer expanded/collapsed, narrow viewport, long conversation, streaming response, error state, and user scrolled away from bottom.
+
+### Webpage generation verification loop
+
+Prefer this offline loop for generated pages:
+
+```text
+extract requirements + invariants
+→ design component/region structure
+→ generate HTML/CSS/JS
+→ validate syntax/DOM references
+→ trace interactions and state transitions
+→ inspect layout/scroll/overflow constraints
+→ inspect responsive + accessibility behavior
+→ inspect security/performance hazards
+→ repair defects
+→ re-run relevant invariants
+→ return the page/code
+```
+
+Do not equate syntactically valid HTML with a correct interface. Conversely, do not invent defects merely to appear thorough; findings must be supported by code, browser-platform rules, local project contracts, or execution evidence.
+
+### External-service boundary
+
+Separate ordinary browser/UI engineering from provider-specific integration. Google APIs, Hugging Face services, OAuth providers, hosted SDKs, rapidly changing third-party frameworks, and similar external systems may require current authoritative documentation or locally pinned provider contracts.
+
+Without verified external evidence, the model may still design the integration boundary, UI states, adapters, configuration shape, mock implementation, and failure handling, but MUST label uncertain provider-specific endpoints, scopes, SDK calls, authentication requirements, quotas, or version behavior as unverified rather than inventing them.
+
+External lookup is therefore an escalation for **provider truth**, not a prerequisite for designing a strong standalone webpage.
+
+### Web/UI regression curriculum
+
+Deterministic evaluation should grow beyond identifier mistakes and include small and project-scale cases for:
+
+- invalid and valid syntax discrimination;
+- broken DOM selector/reference wiring;
+- malformed HTML structure;
+- CSS overflow/clipping and stacking-context defects;
+- fixed/sticky/composer overlap with scrollable content;
+- state reset caused by re-render/reconstruction;
+- duplicate event listeners;
+- incorrect toggle/collapse behavior;
+- async loading/streaming state bugs;
+- mobile viewport and keyboard-sensitive layout;
+- inaccessible interactive elements/focus traps;
+- unsafe HTML injection;
+- responsive layout breakpoints and long-content stress;
+- no-op fixes and fabricated bugs;
+- valid pages containing no planted defect, where acceptance requires not hallucinating one.
+
+Evaluation examples should vary names, structure, styling, framework/no-framework form, and defect location so the model learns transferable web-engineering behavior rather than memorizing one chat page or one coding pattern.
+
+### Regression class: fabricated-bug / missed-symbol defect
+
+The deterministic programming evaluation suite should include adversarial small snippets where:
+
+- one identifier is declared under one name and referenced under another;
+- the surrounding event/API usage is valid;
+- the prompt may initially ask only for explanation, then later ask to find the error;
+- a poor model can easily hallucinate an API misuse while missing the actual symbol defect.
+
+Acceptance requires the model to identify the concrete symbol mismatch, avoid falsely condemning valid API usage, and avoid proposing a no-op “fix.” This regression class should be represented across multiple languages/frameworks rather than overfitting to one HTML/JavaScript example.
 
 ## 6. When programming architecture activates
 
