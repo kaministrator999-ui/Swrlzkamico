@@ -355,10 +355,10 @@ def _should_auto_pin_code(text: str, terminal: str) -> bool:
     if terminal != "COMPLETED":
         return False
     source = str(text or "")
-    start = source.find("\`\`\`")
+    start = source.find("```")
     if start < 0:
         return False
-    end = source.find("\`\`\`", start + 3)
+    end = source.find("```", start + 3)
     return end >= 0 and len(source[start + 3:end].strip()) >= 24
 
 
