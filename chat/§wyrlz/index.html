@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.63">
+  <meta name="swrlz-chat-version" content="1.0.64">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -69,7 +69,7 @@
     .version-row:last-child{border-bottom:0}.version-row span:last-child{color:#9fefff;text-align:right}
     .menu-button{position:fixed;z-index:5;top:12px;left:12px;display:inline-grid;place-items:center;width:36px;height:36px;padding:0;border:1px solid rgba(95,192,255,.38);border-radius:12px;color:#dffaff;background:linear-gradient(145deg,rgba(21,43,65,.94),rgba(7,25,43,.91));box-shadow:0 8px 24px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(22px) saturate(125%);cursor:pointer}
     .menu-button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
-    .chat-viewport{position:fixed;z-index:2;inset:0 0 70px;overflow-y:auto;padding:70px 14px 24px;scrollbar-width:thin}
+    .chat-viewport{position:fixed;z-index:2;inset:0 0 var(--composer-visible-height,70px);overflow-y:auto;padding:70px 14px 24px;scrollbar-width:thin;transition:bottom .28s ease}
     .message-list{width:min(680px,100%);min-height:100%;margin:0 auto;display:flex;flex-direction:column;gap:18px}
     .message{display:none}.message.visible{display:block}.assistant-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}.assistant-head .kompanion-icon{width:42px;height:42px;flex-basis:42px}.assistant-name{font-family:Georgia,"Times New Roman",serif;font-size:20px;font-weight:700;letter-spacing:.06em;color:#e5fbff;text-shadow:0 0 8px rgba(95,220,255,.7)}
     .station-progress{margin:0 0 6px 52px;color:#9fefff;font-size:11px;letter-spacing:.04em}.station-live-message .assistant-body[hidden]{display:none}.assistant-body{margin-left:52px;padding:12px 14px;border:1px solid rgba(95,192,255,.24);border-radius:16px;background:rgba(7,25,43,.58);backdrop-filter:blur(18px) saturate(125%)}
@@ -1301,10 +1301,23 @@
       loadChatState();
       const composerShell = document.getElementById("composerShell");
       const composerCollapse = document.getElementById("composerCollapse");
+      const syncComposerViewportInset=()=>{
+        const rect=composerShell.getBoundingClientRect();
+        const visible=Math.max(0,Math.min(window.innerHeight,window.innerHeight-rect.top));
+        document.documentElement.style.setProperty("--composer-visible-height",Math.ceil(visible)+"px");
+      };
+      const composerResizeObserver=typeof ResizeObserver==="function"?new ResizeObserver(syncComposerViewportInset):null;
+      composerResizeObserver?.observe(composerShell);
+      window.addEventListener("resize",syncComposerViewportInset,{passive:true});
+      window.addEventListener("orientationchange",()=>requestAnimationFrame(syncComposerViewportInset),{passive:true});
+      composerShell.addEventListener("transitionrun",syncComposerViewportInset);
+      composerShell.addEventListener("transitionend",syncComposerViewportInset);
+      requestAnimationFrame(syncComposerViewportInset);
       composerCollapse.addEventListener("click", () => {
         const collapsed = composerShell.classList.toggle("collapsed");
         composerCollapse.setAttribute("aria-expanded", String(!collapsed));
         composerCollapse.setAttribute("aria-label", collapsed ? "Expand composer" : "Collapse composer");
+        requestAnimationFrame(syncComposerViewportInset);
       });
       const menuButton = document.getElementById("menuButton");
       const menuShade = document.getElementById("menuShade");
