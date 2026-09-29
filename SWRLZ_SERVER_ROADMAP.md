@@ -1973,3 +1973,12 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - Records the first 100 tokenizer output IDs and bounded per-token decoded pieces before inference consumption.
 - Adds a pre-consume camera before forward-token-enter so the next ordinal is visible even if the consumer never reaches the existing forward camera.
 - Observational only: no tokenizer, batching, model, or generation semantics are changed.
+
+
+### UPDATE STARTED — 2026-09-29 — HF Brain-owned artifact continuation + Workstation revision store
+
+- **Requested outcome:** replace the temporary Station keyword-based pinned-code edit targeting with a Brain-owned structured programming-intent decision and a first-class Workstation code-artifact revision store.
+- **Architecture placement:** Brain/LALM owns coding/change classification, artifact-continuation meaning, and target selection from authoritative pinned context. HF Station/Workstation owns artifact identity, current revision, revision history, authorized mutation, and receipts. Chat/Mask only renders the current pinned artifact revision and conversation explanation.
+- **State invariant:** canonical historical message prose/text remains immutable. A substantive code response may create one code artifact linked to its source assistant message. Later compatible edits create a new artifact revision under the same artifact ID and a separate ordinary assistant explanation turn.
+- **Compatibility:** existing pinned assistant code messages may be lazily promoted to code artifacts. Pin/unpin remains per-thread message state; unpinning hides the working reference without destroying artifact revision lineage.
+- **Deployment boundary:** source changes on the HF deployment branch are deployment-inert. Publishing/restarting the existing Space remains an explicit-approval action.
