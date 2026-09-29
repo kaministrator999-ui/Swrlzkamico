@@ -1,6 +1,6 @@
 # §wyrlz Clean-room Chat Reconstruction
 
-**Version:** 1.0.19  
+**Version:** 1.0.55  
 **Canonical source:** `main:chat/§wyrlz/`  
 **Legacy reference:** `main:web/chat.html`
 
@@ -71,3 +71,29 @@ The component acceptance cadence is therefore:
 - **1.0.18 legacy-account routing correction:** the clean-room drawer account UI now routes status, session restore, Google credential verification, and logout through the existing `/live/api/account/*` server surface used by the legacy/server-backed Chat architecture. The clean-room static Vercel deployment does not own Python account functions, so direct `/api/account/*` calls on that isolated project were the wrong boundary. No duplicate auth authority was introduced.
 
 - **1.0.19 account transport trace:** ancestry/source inspection confirmed legacy Google verification is canonically `/api/account/*`; `/live/api/account/*` was an incorrect inferred prefix and produced non-JSON responses. Clean-room account requests now target the canonical account paths at the legacy server origin and wrap every request with an account camera capturing path/status/content-type/body preview/duration or network error. The camera also attempts relay to `/api/chat/client-debug`; console trace remains available when the isolated static deployment has no debug ingestion route.
+
+
+## Research-tier continuation
+
+The component inventory above is historical through the early clean-room reconstruction. Later research-driven Chat evolution continues the same canonical owner and does not replace that lineage.
+
+- **1.0.48 — Tier A visual foundation:** tokenized Glitch Dragon/Ice Dragon visual system, compact top edge, drawer/message/composer refinement, reduced-motion baseline, and bounded UI cameras. No transport/account/LALM ownership changed.
+- **1.0.49 — Tier B settings shell:** General, AI/Model, Appearance, Motion, Accessibility, and Privacy surfaces. Existing account profile authority is reused for explicit user-triggered settings persistence; previews remain local until Save.
+- **1.0.50 — Tier C profile + lore source integration:** adds You and §wyrlz profile surfaces plus Lore & Memory inspect/create/edit/delete UI. The stable account authority gains `companion_profile` and account-owned `LoreRecord` storage with USER-authored manual writes, source/provenance, scope, active/editable state, optimistic versioning, and payload-redacted Redis diagnostics. Proposal Inbox is presentation-only until Tier D installs the durable proposal/approval protocol. Shared rapport remains Tier E.
+
+Tier C requires a later explicitly approved stable-server deployment before its new `/api/account/lore` routes can be accepted as live. Source integration alone is not runtime acceptance.
+
+
+- **1.0.51 — Tier D approval protocol:** account-owned AI proposal records + append-only audit history, bounded profile/companion/lore operations, user Edit/Approve/Decline/Revert, per-category ASK/AUTO_LOW_RISK/SESSION_ONLY/NEVER policy, Redis compare-and-set proposal claims, reversible before/after snapshots, and payload-redacted diagnostics. Browser clients cannot forge assistant-authored proposals. A trusted server submission helper exists, but the current R39 stream does not yet emit a structured proposal event; natural-language output is not scraped into durable proposals.
+
+
+- **1.0.52 — Tier D.1 structured proposal bridge:** the durable Workstation subscriber now consumes only exact trusted `ACCOUNT_PROPOSAL` events using `swrlz-account-proposal-signal-v1`. Signals require bounded `signalId`, category/target/operation/payload/rationale fields, and receive authoritative thread/request identity from the Workstation job. A stable proposal ID derived from `requestId + signalId` suppresses at-least-once duplicates before target lookup. Proposal payload/rationale never enter the ordinary chat stream; only sanitized decision/id/state/category/operation/risk/version receipts may flow as STATUS metadata. Chat invalidates/refetches Proposal Inbox state from those receipts. Browser clients still cannot create assistant-authored proposals, natural-language output is never scraped, and the current R39 generator does not autonomously decide when to emit the structured signal.
+
+
+- **1.0.53 — Tier E shared rapport:** introduces a separate account-owned Rapport domain for shared vocabulary, callbacks, and interaction conventions. Rapport records carry kind, cue, meaning, optional preferred response, source/provenance, GLOBAL/THREAD/PROJECT scope, active state, generation, optimistic version, and authorship. A versioned RapportControl owns pause state and lineage-preserving reset generations: reset advances the current generation instead of deleting history. Current Chat can inspect reset history, edit only the active generation, pause/resume, and reset. THREAD scope is ownership-validated; new PROJECT scope is blocked until a project authority exists. AI-originated rapport changes use the existing Tier D proposal gate under SHARED_RAPPORT with bounded RAPPORT_CREATE/UPDATE/DELETE operations; auto-low-risk is suppressed while rapport is paused. Tier E does not inject rapport into R39 inference.
+
+
+- **1.0.54 — Tier F companion animation state machine:** binds companion presentation to existing Chat/Station truth rather than a parallel runtime authority. States are idle, listen, accepted, thinking, acting, responding, approval, and error. Prompt focus/input may produce listen only when no active generation exists; send start/ack produces accepted; active pre-output generation maps conservatively to thinking unless an explicit action/tool/work phase exists; visible generated text produces responding; proposal wait/approval phases produce approval; terminal/client failures produce error. Unknown active phases default to thinking/responding based on whether response text exists. State is exposed through `data-companion-state` plus an accessible text chip, so meaning never depends on motion alone. CSS-only restrained animations decorate the top dragon mark and assistant avatar; no canvas/WebGL/particle engine/animation-frame loop/network decoration was added. Reduced/Off/system-reduced-motion modes disable looping icon/dot animations and retain static state color/border cues.
+
+
+- **1.0.55 — Tier G work surface, agent cards, and evidence:** completes the research blueprint with a compact right-side Work surface that stays backstage from the main conversation. Tool/action cards are rendered only from explicit structured Station phase/category metadata; assistant prose is never scanned or interpreted as tool activity. Proposal receipts and real pending Tier-D records render as approval cards that navigate to the existing Proposal Inbox rather than creating a second approval authority. The artifacts section consumes only explicit structured artifact metadata and otherwise states that no structured artifacts were emitted. Assistant messages gain expandable Evidence / provenance details from allowlisted committed-message lineage (requestId, projection authority, source authority, turn contract, commit phase, terminal type) plus any already-structured source/evidence arrays if present. External links are limited to validated HTTP(S) URLs. The side surface adds no background polling, canvas/WebGL, animation loop, or decorative network call; mobile becomes full-screen and reduced-motion/high-contrast/reduced-transparency remain supported.
