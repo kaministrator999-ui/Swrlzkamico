@@ -35,6 +35,8 @@ _V89_COMMIT="4cee6d758121526d170ef2a44e1ad2d365676c43"
 _V89_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V89_COMMIT}/runtime_hot/r39_engine_v89_overlay.py"
 _V90_COMMIT="5c242ddc4246e388ebc6478c74c3e21ceb6864ec"
 _V90_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V90_COMMIT}/runtime_hot/r39_engine_v90_overlay.py"
+_V91_COMMIT="a7dbee3dcc68e7a9f677865337a91c4cc6821a3c"
+_V91_URL=f"https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/{_V91_COMMIT}/runtime_hot/r39_engine_v91_overlay.py"
 
 # Camera lockdown gates. Disabled categories return before payload construction/serialization.
 # Benchmark profile: preserve only terminal PREFILL throughput + active hardware usage.
@@ -220,14 +222,20 @@ try:
     _entry("v90-overlay-fetch-ok",overlayBytes=len(_v90_overlay))
     exec(compile(_v90_overlay.decode("utf-8"),_V90_URL+"#v90-overlay","exec"),globals(),globals())
 
+    _v91_request=urllib.request.Request(_V91_URL,headers={"User-Agent":"swrlz-hf-r39-v91-overlay"})
+    with urllib.request.urlopen(_v91_request,timeout=20) as _response:_v91_overlay=_response.read(1000001)
+    if len(_v91_overlay)>1000000:raise RuntimeError("R39_V91_OVERLAY_TOO_LARGE")
+    _entry("v91-overlay-fetch-ok",overlayBytes=len(_v91_overlay),v91OverlayCommit=_V91_COMMIT)
+    exec(compile(_v91_overlay.decode("utf-8"),_V91_URL+"#v91-overlay","exec"),globals(),globals())
+
     _inspect=inspect_engine() if callable(globals().get("inspect_engine")) else {}
     _self_test=_inspect.get("programmingContinuationSemanticSelfTest") if isinstance(_inspect,dict) else None
     if not isinstance(_self_test,dict) or not _self_test.get("ok"):
         raise RuntimeError("R39_V75_ENTRY_SELF_TEST_NOT_PROVEN")
     # v90 semantic overlays are preserved, but the active runtime authority is
     # the optimized 2.1.103 kernel lineage selected by this entrypoint.
-    HOT_SERVER_VERSION="2.1.115"
-    HOT_REVISION="2.1.115-native-backend-diagnostics-v90"
+        HOT_SERVER_VERSION="2.1.116"
+    HOT_REVISION="2.1.116-hot-offline-code-truth-web-ui-v91"
     _impl.HOT_SERVER_VERSION=HOT_SERVER_VERSION
     _impl.HOT_REVISION=HOT_REVISION
 
