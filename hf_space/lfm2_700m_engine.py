@@ -3,7 +3,7 @@ from __future__ import annotations
 import threading, time
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
-from brain_programming import programming_intent
+from brain_programming import programming_intent, CODE_TRUTH_POLICY
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -255,6 +255,7 @@ def generate_events(payload):
     system+="\n"+_response_mode(prompt)
     if programming.get("codingTask"):
         system+="\nPROGRAMMING COGNITION: changeClass="+str(programming.get("changeClass"))+"; artifactContinuation="+str(bool(programming.get("artifactContinuation"))).lower()+"; newProject="+str(bool(programming.get("newProject"))).lower()+". Treat these as reasoning/routing context only; never claim a file, pin, deployment, or persistent mutation occurred without a Workstation/server receipt."
+        system+="\n"+CODE_TRUTH_POLICY
     if programming.get("artifactMutationRequested") and programming.get("artifactTargetId"):
         system+="\nPINNED CODE EDIT MODE: The current request targets an already-pinned code artifact. Return the complete revised code fence(s) needed for that artifact, followed by only a concise explanation of what changed. Do not describe the revised code as a new project or duplicate artifact."
     system+="\nBUILT-IN §WYRLZ PROFILE (default assistant identity/behavior):\n"+BUILTIN_ASSISTANT_PROFILE
