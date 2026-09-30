@@ -29,6 +29,8 @@ For an explicitly user-approved deployment, update `main:.deploy/HF_SPACE_REQUES
 
 Do not require the user to manually press **Run workflow** when the current request already explicitly authorizes deployment and the request-file trigger is available. Conversely, ordinary repository edits without current deployment authorization remain deployment-inert.
 
+**Deployment response receipt — mandatory:** whenever a deployment is triggered, the same-turn user-facing update must include a directly usable link to the specific GitHub Actions workflow run that was triggered. Resolve the actual run created by the deployment request and provide its `html_url`; do not provide only a run number, generic Actions page, workflow file, or repository link. If the run has not appeared yet, state that explicitly and resolve/provide the specific run link as soon as it is available before treating the deployment handoff as complete.
+
 **Vercel is retired/deprecated for current §wyrlz application hosting and deployment.** Do not create, deploy, clean up, or select Vercel projects as current application infrastructure. Remaining Vercel repository material is removal/migration debt or historical provenance only and must not outrank this HF contract.
 
 ## Declared-action completion — mandatory
