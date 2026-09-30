@@ -1,3 +1,13 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.82 stable live code streaming
+
+- **Observed residual flicker:** static chat scrolling improved in 1.0.81, but an actively streaming fenced-code response still refreshed visibly.
+- **Root cause:** every DELTA called `renderAssistantContent()`, which cleared `container.innerHTML` and rebuilt the complete code container, header, buttons, artwork, and code DOM on every streamed chunk.
+- **Repair:** once a live fenced code block exists and the source is monotonically growing, subsequent open-fence DELTAs update the existing `<code>` text node in place. The expensive full parser/container rebuild is retained for structural transitions (including fence close/final formatted render).
+- **Frame contract clarified:** decorative artwork belongs to an outer/perimeter frame around the original readable code surface; it must not replace the code surface or become a full content-plane background.
+- **Version:** **1.0.82**.
+- **Receipts:** live-stream UI `ac6055390887179e9815ca2e7580c47c0b6e0cd5`; VERSION `bcc624b610b644a35a396abaa62cb2b2364a7209`.
+- **Status:** SOURCE COMPLETE / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.81 32K context + mobile scroll stability
 
 - Expanded the LFM2-700M runtime context from 8K to 32K and normal response ceiling from 2048 to 4096 tokens.
