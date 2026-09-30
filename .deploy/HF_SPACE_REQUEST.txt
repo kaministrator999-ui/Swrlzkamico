@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Explicitly approved by user in chat on 2026-09-29 for integrated feature work.
+# Explicitly approved by user in chat on 2026-09-30 for the HF Chat first-turn transport/state repair.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-29-chat-1.0.66-temporal-context
+REQUEST_NONCE=2026-09-30-chat-1.0.67-first-turn-transport-repair
