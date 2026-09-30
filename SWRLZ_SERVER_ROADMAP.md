@@ -1,3 +1,14 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.81 32K context + mobile scroll stability
+
+- Expanded the LFM2-700M runtime context from 8K to 32K and normal response ceiling from 2048 to 4096 tokens.
+- Input budgeting now keeps only a 512-token minimum reply reserve plus 256-token safety margin, then dynamically grants up to 4096 reply tokens from remaining context. This prevents ordinary long pasted code from failing against the old fixed 6016-token input partition.
+- Existing oldest-history-first trimming remains as the final context-pressure mechanism; the current user turn remains protected.
+- Removed nested `backdrop-filter` effects from scrolling message/code surfaces and promoted message surfaces to stable compositing layers. Fixed chrome can retain glass effects without forcing Android/WebView to repeatedly re-rasterize long response cards during scroll.
+- Preserved the 3-column container sprite crop on mobile; the prior mobile override incorrectly changed the sprite from 300% to 100%, exposing the whole image.
+- Version: **1.0.81**.
+- Receipts: runtime `476f6c883a0dd7d530a90b40b31aca31720cebf9`; UI `0c38fd249230fb88a7b469af035cf5793903ea18`; VERSION `dee86ecc21f88c7be0ff72f491affc62fe88cc0a`.
+- Status: SOURCE COMPLETE / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.80 correct transparent container sprite
 
 - **Root cause:** container CSS mixed older September image assets with the newly uploaded transparent frame sheet, so code containers rendered an older border instead of the new Glitch Ice Dragon artwork.
