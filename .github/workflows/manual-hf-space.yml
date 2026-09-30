@@ -84,7 +84,13 @@ jobs:
           assert (root / "accepted_runtime" / "lalm" / "r39_engine.py").is_file(), "R39 engine is not staged"
           assert (root / "chat" / "§wyrlz" / "index.html").is_file(), "Clean-room Chat is not staged"
           assert (root / "MODEL_PROVENANCE.json").is_file(), "Model identity/provenance not staged"
-          print("Static package shape accepted; runtime inference still requires separate verification.")
+          brain = (root / "brain_programming.py").read_text(encoding="utf-8")
+          engine700 = (root / "lfm2_700m_engine.py").read_text(encoding="utf-8")
+          r39 = (root / "accepted_runtime" / "lalm" / "r39_engine.py").read_text(encoding="utf-8")
+          assert "SWRLZ_CODE_TRUTH v1" in brain and "offline-first" in brain, "HF Code Truth policy missing"
+          assert "CODE_TRUTH_POLICY" in engine700, "700M programming route is not consuming Code Truth policy"
+          assert "_V91_COMMIT" in r39 and "r39_engine_v91_overlay.py" in r39, "Staged R39 v91 programming overlay missing"
+          print("Static package shape + Code Truth programming layer accepted; runtime inference still requires separate verification.")
           PY
       - name: Install candidate runtime dependencies
         if: ${{ inputs.mode != 'inspect' }}
