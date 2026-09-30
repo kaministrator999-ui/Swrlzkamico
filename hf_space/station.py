@@ -353,6 +353,46 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     thread["messages"].append({"id":assistant_id,"role":"assistant","text":"Generation failed: "+str(exc)[:240],"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED"}})
                     s["revision"]+=1
 
+def _gap_label(ms):
+    if ms is None:return None
+    seconds=max(0,int(ms)//1000)
+    if seconds<45:return "moments"
+    minutes=seconds//60
+    if minutes<60:return str(minutes)+" minute"+("" if minutes==1 else "s")
+    hours=minutes//60
+    if hours<24:return str(hours)+" hour"+("" if hours==1 else "s")
+    days=hours//24
+    return str(days)+" day"+("" if days==1 else "s")
+
+def _temporal_context(messages,client_timezone,now_ms):
+    zone_name=str(client_timezone or "").strip()[:80]
+    try: zone=ZoneInfo(zone_name) if zone_name else timezone.utc
+    except Exception:
+        zone_name="UTC";zone=timezone.utc
+    def stamp(ms):
+        if not isinstance(ms,(int,float)) or ms<=0:return None
+        dt=datetime.fromtimestamp(ms/1000,tz=timezone.utc).astimezone(zone)
+        return {"unixMs":int(ms),"local":dt.isoformat(timespec="minutes"),"localDate":dt.date().isoformat()}
+    prior=[m for m in messages if isinstance(m,dict) and isinstance(m.get("createdAt"),(int,float))]
+    last_user=next((m for m in reversed(prior) if m.get("role")=="user"),None)
+    last_assistant=next((m for m in reversed(prior) if m.get("role")=="assistant"),None)
+    previous=prior[-1] if prior else None
+    def gap(m):
+        if not m:return None
+        ms=max(0,int(now_ms-int(m["createdAt"])))
+        return {"milliseconds":ms,"semantic":_gap_label(ms)}
+    now=datetime.fromtimestamp(now_ms/1000,tz=timezone.utc).astimezone(zone)
+    return {
+        "schema":"swrlz-temporal-context-v1","timeZone":zone_name or "UTC",
+        "nowUtc":datetime.fromtimestamp(now_ms/1000,tz=timezone.utc).isoformat(timespec="seconds"),
+        "localNow":now.isoformat(timespec="minutes"),"localDate":now.date().isoformat(),
+        "previousMessage":stamp(previous.get("createdAt")) if previous else None,
+        "previousMessageRole":previous.get("role") if previous else None,
+        "previousUserMessage":stamp(last_user.get("createdAt")) if last_user else None,
+        "previousAssistantMessage":stamp(last_assistant.get("createdAt")) if last_assistant else None,
+        "gapSincePreviousMessage":gap(previous),"gapSinceLastUserTurn":gap(last_user),"gapSinceLastAssistantTurn":gap(last_assistant)
+    }
+
 @app.post("/api/lalm_station/send",status_code=202)
 async def send(request:Request):
     key,s=_session(request)
@@ -363,6 +403,8 @@ async def send(request:Request):
     prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
     profile=body.get("profile","")
     user_profile=body.get("userProfile","")
+    client_timezone=body.get("timeZone","UTC")
+    if not isinstance(client_timezone,str) or len(client_timezone)>80:raise HTTPException(400,"Invalid timezone")
     if not isinstance(profile,str) or len(profile)>2000:raise HTTPException(400,"Invalid test profile")
     if not isinstance(user_profile,str) or len(user_profile)>2000:raise HTTPException(400,"Invalid user profile")
     if not isinstance(prompt,str) or not prompt.strip() or len(prompt)>16000:raise HTTPException(400,"Invalid prompt")
@@ -373,13 +415,15 @@ async def send(request:Request):
         if t is None:
             t={"id":tid,"title":prompt[:48],"pinned":False,"messagePins":{},"codeArtifacts":[],"createdAt":time.time()*1000,"messages":[]}
             s["threads"].append(t)
-        history=[{"role":m["role"],"text":m["text"]} for m in t["messages"] if m["role"] in ("user","assistant")]
+        now_ms=int(time.time()*1000)
+        temporal_context=_temporal_context(t["messages"],client_timezone,now_ms)
+        history=[{"role":m["role"],"text":m["text"],"createdAt":m.get("createdAt")} for m in t["messages"] if m["role"] in ("user","assistant")]
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
-        t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":int(time.time()*1000),"meta":{"requestId":rid,"modelId":model_id}})
+        t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id}})
         s["currentId"]=tid;s["revision"]+=1
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}],"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"artifactReceipt":None}
-    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile}
+    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400)
