@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.66">
+  <meta name="swrlz-chat-version" content="1.0.67">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -551,7 +551,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.66";
+      const SWRLZ_CHAT_VERSION = "1.0.67";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -1087,7 +1087,7 @@
       let stationGeneration=null, stationPoll=0, stationSyncInFlight=false, stationSyncAgain=false, sending=false, stationAwaitingCommit="";
       const applyChatState = data => {
         chatRevision=Number(data?.revision||0);
-        const priorThreads=chatThreads;
+        const priorThreads=(pendingDraftThread&&!chatThreads.some(t=>t.id===pendingDraftThread.id))?[...chatThreads,pendingDraftThread]:chatThreads;
         const stationThreads=Array.isArray(data?.threads)?data.threads:null;
         const incomingThreads=stationThreads || (Array.isArray(data?.state?.threads)?data.state.threads:[]);
         const mergedThreads=incomingThreads.map(thread=>{
@@ -1116,8 +1116,8 @@
         // Draft mode is an explicit local navigation state. Background Station
         // sync may hydrate thread data, but it must never navigate an unsent new
         // chat back to the server's previously-current thread.
-        if(!draftThread && !chatThreads.some(t=>t.id===activeThreadId)) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
-        // Keep the last completed Station generation until canonical thread state contains it.\n        // A sync with no active generation must not erase the just-rendered terminal response.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration) stationGeneration=syncedGeneration;
+        if(!draftThread && !stationAwaitingCommit && !chatThreads.some(t=>t.id===activeThreadId)) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
+        // Keep the local accepted generation until Station reports that same request, so a stale/background snapshot cannot replace the in-flight turn.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration && (!stationGeneration || syncedGeneration.requestId===stationGeneration.requestId || stationGeneration.terminal)) stationGeneration=syncedGeneration;
         renderThreads(); if(!draftThread)renderConversation(currentThread());
         renderStationGeneration();renderWorkSurface();
         if(stationAwaitingCommit){
@@ -1309,8 +1309,18 @@
           stationGeneration.status=[{type:"QUEUED",phase:"QUEUED"}];
           setCompanionState("accepted","send-ack");
           renderStationGeneration();
-          const streamResponse=await fetch("/api/lalm_station/stream?requestId="+encodeURIComponent(requestId),{credentials:"same-origin",cache:"no-store",headers:{"Accept":"application/x-ndjson"}});
-          await consumeGeneration(streamResponse);
+          try{
+            const streamResponse=await fetch("/api/lalm_station/stream?requestId="+encodeURIComponent(requestId),{credentials:"same-origin",cache:"no-store",headers:{"Accept":"application/x-ndjson"}});
+            await consumeGeneration(streamResponse);
+          }catch(streamError){
+            // The send was already accepted. A stream transport failure must not
+            // erase the submitted turn or relabel the accepted generation as a
+            // failed send; Station snapshot polling is the bounded fallback.
+            transportCamera("stream-failed-fallback-sync",{error:String(streamError?.message||streamError)});
+            await syncStation();
+            scheduleStationSync(250);
+            return true;
+          }
           await syncStation();
           return true;
         }catch(err){
