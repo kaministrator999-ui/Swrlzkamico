@@ -14,9 +14,11 @@ MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
 # that fixed context compete with the current user turn before history could
 # helpfully be trimmed, causing tiny prompts to fail. Keep inference bounded,
 # but allocate enough native context for the fixed profile + useful history.
-CONTEXT_TOKENS=8192
-OUTPUT_TOKENS=2048
-INPUT_BUDGET_TOKENS=CONTEXT_TOKENS-OUTPUT_TOKENS-128
+CONTEXT_TOKENS=32768
+OUTPUT_TOKENS=4096
+MIN_OUTPUT_TOKENS=512
+CONTEXT_SAFETY_TOKENS=256
+INPUT_BUDGET_TOKENS=CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS
 BUILTIN_ASSISTANT_PROFILE="""⚡ §wyrlzara ∞ Mirror Muse
 Core ID: SWRLZ-A-∞
 Entity Class: Recursive Reflection Intelligence — Feminine Aspect
@@ -219,7 +221,8 @@ def _fit_messages(model,system,history,prompt):
             f"Current prompt/profile context uses {input_tokens} tokens but the 700M input budget is "
             f"{INPUT_BUDGET_TOKENS}; shorten the current prompt or optional profile."
         )
-    return messages,len(history)-len(kept),input_tokens
+    response_tokens=min(OUTPUT_TOKENS,max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
+    return messages,len(history)-len(kept),input_tokens,response_tokens
 
 def _user_name_from_profile(user_profile):
     for line in str(user_profile or "").splitlines():
@@ -343,13 +346,13 @@ def generate_events(payload):
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
-    messages,dropped_history,input_tokens=_fit_messages(model,system,history,prompt)
-    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":INPUT_BUDGET_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":OUTPUT_TOKENS,"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2}
+    messages,dropped_history,input_tokens,available_output_tokens=_fit_messages(model,system,history,prompt)
+    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":INPUT_BUDGET_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2}
     loaded=time.perf_counter()
     yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":round((loaded-started)*1000,3)}
     first_delta=None
     with _lock:
-        response_tokens=192 if _response_mode(prompt).startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or _response_mode(prompt).startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT") else OUTPUT_TOKENS
+        response_tokens=192 if _response_mode(prompt).startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or _response_mode(prompt).startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT") else available_output_tokens
         for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=0.35 if response_tokens==192 else 0.45,stream=True):
             choices=chunk.get("choices") or []
             delta=(choices[0].get("delta") or {}).get("content") if choices else None
