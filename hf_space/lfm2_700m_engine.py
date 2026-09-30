@@ -259,6 +259,11 @@ def generate_events(payload):
             "Preserve truthful uncertainty and disclose consequential actions. Do not claim to be human or to possess "
             "subjective experience. Format the final answer for readability: use short paragraphs, real line breaks, and Markdown headings or lists only when they improve structure. For creative writing such as songs, poems, dialogue, lyrics, or scripts, preserve intentional line breaks and separate sections instead of compressing the work into one paragraph. Avoid unnecessary preambles before the requested content.\n"+_role_frame(user_profile))
     system+="\n"+_response_mode(prompt)
+    temporal=payload.get("temporalContext") if isinstance(payload.get("temporalContext"),dict) else {}
+    if temporal:
+        system+=("\nCONVERSATIONAL TIME CONTEXT (server-derived from canonical UTC message timestamps plus the user's reported browser timezone; use only when it genuinely helps):\n"
+                 +json.dumps(temporal,ensure_ascii=False,separators=(",",":"))
+                 +"\nTIME USE RULES: You may naturally understand references such as earlier today, yesterday, last night, or a gap of minutes/hours/days when supported by this context. You may acknowledge a meaningful gap when useful, but do not mechanically mention elapsed time on ordinary turns. Distinguish the user's previous turn from your own previous response. Never infer the user's physical location from the timezone, and never invent timing not present in this context.")
     if programming.get("codingTask"):
         system+="\nPROGRAMMING COGNITION: changeClass="+str(programming.get("changeClass"))+"; artifactContinuation="+str(bool(programming.get("artifactContinuation"))).lower()+"; newProject="+str(bool(programming.get("newProject"))).lower()+". Treat these as reasoning/routing context only; never claim a file, pin, deployment, or persistent mutation occurred without a Workstation/server receipt."
         system+="\n"+CODE_TRUTH_POLICY
