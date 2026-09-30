@@ -26,7 +26,11 @@ def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
     history=[{"role":m["role"],"content":m["text"]} for m in payload.get("history",[]) if isinstance(m,dict) and m.get("role") in ("user","assistant") and isinstance(m.get("text"),str)]
-    messages=(history[-16:]+[{"role":"user","content":prompt}])
+    temporal=payload.get("temporalContext") if isinstance(payload.get("temporalContext"),dict) else {}
+    messages=[]
+    if temporal:
+        messages.append({"role":"system","content":"Conversational time context (server-derived from UTC message timestamps and the user's reported browser timezone): "+json.dumps(temporal,ensure_ascii=False,separators=(",",":"))+". Use timing only when it helps. Distinguish user and assistant turn gaps. Do not infer physical location from timezone or mention elapsed time mechanically."})
+    messages.extend(history[-16:]+[{"role":"user","content":prompt}])
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
