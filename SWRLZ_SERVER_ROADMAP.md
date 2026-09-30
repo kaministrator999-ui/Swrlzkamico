@@ -1,3 +1,15 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.68 explicit inference-model routing
+
+- **Observed continuation:** Chat 1.0.67 preserved the submitted user turn, but live generation could remain at a transport/progress surface.
+- **Routing defect:** clean-room Chat did not send `modelId` to `/api/lalm_station/send`; HF Station therefore applied its backend default `stock` even while the visible inference laboratory selector showed LFM2-700M.
+- **Repair:** Chat AI / Model settings now expose the three Station route IDs (`700m`, `r39`, `stock`), default the clean-room Chat to `700m`, keep the selection in Chat settings state, and send the selected `modelId` explicitly with every Station request.
+- **Truth correction:** the AI / Model copy now distinguishes the live Default model route from effort/response-length preferences that still lack inference consumers.
+- **Version:** HF clean-room Chat **1.0.67 → 1.0.68**.
+- **Source receipt:** model-routing repair commit `e3a8203dd9e831978048c45ff36a1c63e285bdd1`; version receipt `700df9c71e8cef05ddda1572f41b4d2876833277`.
+- **Verification:** static re-read confirms selector, state, preview/population, explicit send payload and 1.0.68 identity. Live HF inference acceptance remains pending deployment.
+- **Deployment target:** existing Hugging Face Space `kamiloki/Swyrlz` through the guarded request chain from `feature/hf-space-manual-deploy`.
+- **Status:** SOURCE COMPLETE / STATIC VERIFIED / LIVE HF ACCEPTANCE PENDING.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.67 first-turn projection + stream fallback repair
 
 - **Observed symptom:** after sending a new message, the optimistic user turn could appear and then disappear while the assistant surface remained at a transport/progress state.
