@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Standing terminal deployment for HF Chat 1.0.79 identity routing + latency fast path.
+# Standing terminal deployment for HF Chat 1.0.80 transparent container sprite correction.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-30-chat-1.0.79-identity-fast-path
+REQUEST_NONCE=2026-09-30-chat-1.0.80-container-sprite
