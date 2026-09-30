@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Standing terminal deployment for HF Chat 1.0.73 grammatical-role + identity signature repair.
+# Standing terminal deployment for HF Chat 1.0.74 composer/message clearance repair.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-30-chat-1.0.73-role-signature
+REQUEST_NONCE=2026-09-30-chat-1.0.74-composer-clearance
