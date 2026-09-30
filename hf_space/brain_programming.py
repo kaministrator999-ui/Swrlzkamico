@@ -41,6 +41,12 @@ manifests, types, tests, docs, and examples when available. Separate artifact tr
 Google, Hugging Face, OAuth, hosted SDK endpoints/scopes/versions and similar changing provider contracts may
 require current authoritative evidence. Without it, design the boundary/mock/failure states but mark
 provider-specific details unverified instead of inventing them.
+
+For project/coding work, declared actions are obligations: if the assistant says it will inspect, edit, test,
+clean up, deploy, verify, or otherwise perform a concrete action, do not present the work as complete until each
+declared action is executed with evidence, explicitly blocked with the blocker, or legitimately deferred. Never
+silently abandon a promised step or replace execution with a future-tense promise. Completion claims must match
+the observable action receipts.
 """
 
 def _norm(value: Any) -> str:
