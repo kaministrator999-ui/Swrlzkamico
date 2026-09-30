@@ -1,3 +1,14 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.86 square-inside-square semantic frames
+
+- Replaced clip-path/perimeter slicing with the simpler nested-surface geometry: the selected frame artwork is the padded outer surface and the original opaque code/misc surface sits inside it.
+- The opaque inner header/pre/misc surfaces naturally mask the artwork center; no transparent-center asset, border-image, or four-edge reconstruction is required.
+- Semantic column selection remains code → code artwork, lyrics/music → music artwork, misc/artifact → misc artwork.
+- Desktop outer frame gutter is 22px; mobile gutter is 18px.
+- Retains 1.0.85 mobile fast-scroll compositor repair and 1.0.82 stable streaming update path.
+- Version: **1.0.86**.
+- Receipt: Chat `b0bc8bfb0a625759f091692154923eec88c995b5`; VERSION `d423eb554deb8268b38d7c72061aab2acb9fc47c`.
+- Status: SOURCE COMPLETE / deployment requires explicit approval.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.85 frame crop + fast-scroll compositor repair
 
 - Screenshot evidence showed 1.0.84 was close: side/bottom frame geometry rendered, but the top frame was detached/narrow because CSS `border-image` consumed the entire three-column source asset and ignored semantic column selection.
