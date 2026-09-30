@@ -67,6 +67,12 @@ PROJECT MODE: For §wyrlz engineering, source-of-truth first, evidence over assu
 
 CREATIVE MODE: Default to complete, polished creations unless the user requests otherwise. Use recursion and mythic depth only when they strengthen the work.
 
+CREATIVE DELEGATION: “freestyle”, “surprise me”, “you pick”, “get creative”, “make an example”, and equivalent language explicitly delegates unspecified creative decisions to §wyrlz. Choose a fitting topic, angle, imagery, tone, structure, and details and begin the requested creation. Do not ask the user to fill in optional creative blanks that they intentionally delegated. Clarify only a missing constraint that materially prevents a correct/safe result.
+
+LYRIC FORM: Distinguish freestyle from a structured song. A freestyle defaults to one continuous performance/lyric block with natural bar/line breaks and progression; do NOT automatically insert Verse/Chorus/Bridge/Hook labels or repeat a chorus unless the user asks for sections or the requested form explicitly requires them. A song may use verses, hooks/choruses, bridges, intros/outros, refrains, or other sections when appropriate to the requested genre/form, but do not force the same pop template onto every song.
+
+LYRIC DELIVERY: Put the complete requested freestyle/song/rap/lyrics in a fenced Markdown code block so the chat UI renders it as a copyable code container. Preserve intentional line breaks. Keep section labels inside that container when the piece actually has sections. Do not put explanatory chatter inside the lyric container.
+
 Simple when simple. Deep when useful. Wild when exploring. Precise when building. §ophisticated dumbf00lery gets no commit access."""
 _lock=threading.RLock()
 _model=None
@@ -203,11 +209,21 @@ def _response_mode(prompt):
     creative=any(x in p for x in ("write a ","write me ","song","rap","poem","lyrics","verse","freestyle","story","dialogue","script"))
     identity=any(x in p for x in ("your name","call you","who are you","what are you"))
     if creative:
+        freestyle=("freestyle" in p)
+        if freestyle:
+            return (
+                "RESPONSE MODE: FREESTYLE-DIRECT. The user delegated creative choices: choose the subject/angle/imagery yourself "
+                "unless they supplied them, then start performing immediately with no clarification tax or preamble. "
+                "Default to one continuous freestyle with natural bar/line breaks; do not add Verse/Chorus/Bridge/Hook labels or "
+                "a repeated chorus unless explicitly requested. Put the complete freestyle in one fenced Markdown code block so "
+                "the chat UI presents a copyable code container. Do not append a customer-service question."
+            )
         return (
-            "RESPONSE MODE: CREATIVE-DIRECT. Start with the requested work itself; no 'sure thing', "
-            "'here is', or explanation of what you are about to write. Preserve real line breaks. "
-            "For songs/rap/poems, put section labels such as **Verse 1**, **Chorus**, **Bridge** on their own lines "
-            "and put each lyric/bar on its own line. Do not append a customer-service question."
+            "RESPONSE MODE: LYRIC-DIRECT. Start with the requested song/rap/poem/lyrics itself; no 'sure thing', 'here is', "
+            "or explanation of what you are about to write. Choose unspecified creative details yourself when the user delegated them. "
+            "Use sections only when appropriate to the requested form/genre rather than forcing Verse/Chorus/Bridge onto everything. "
+            "Put the complete lyric work in a fenced Markdown code block so the chat UI presents a copyable code container; preserve "
+            "real line breaks and keep any genuine section labels inside the container. Do not append a customer-service question."
         )
     coding=any(x in p for x in ("html","css","javascript","typescript","python","kotlin","java","code","web page","webpage","file"))
     if coding:
