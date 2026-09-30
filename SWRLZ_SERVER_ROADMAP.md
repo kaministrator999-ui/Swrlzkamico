@@ -1,3 +1,12 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.80 correct transparent container sprite
+
+- **Root cause:** container CSS mixed older September image assets with the newly uploaded transparent frame sheet, so code containers rendered an older border instead of the new Glitch Ice Dragon artwork.
+- **Repair:** all code/lyrics/misc container frames now source the new main-branch transparent sheet `file_00000000359481f6835018078d9201af.png` as a 3-column sprite: code left, lyrics/music center, misc/artifact right.
+- **Parity:** the same sprite mapping applies to assistant and recognized user containers.
+- **Version:** HF clean-room Chat **1.0.79 → 1.0.80**.
+- **Receipts:** UI `0103eecfe98f196626c9cac8aa4246f1881ebba2`; VERSION `c0b4ff8d70b12fc605a28d63a255556365d732f8`.
+- **Status:** SOURCE COMPLETE / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.79 identity routing + latency fast path
 
 - **Export diagnosis:** the supplied live session shows the failing `Do you know my name` turn was routed through the 700M generator even though diagnostic metadata already identified the user as Kami. The same trace also incorrectly classified the identity turn as `codingTask:true`, adding irrelevant programming cognition.
