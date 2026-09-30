@@ -1,6 +1,6 @@
 {
   "contract": "swrlz-accepted-runtime-v1",
-  "sourceRuntimeCommit": "b7076a6fbd2a8028a13326f32511316f18de07ba",
+  "sourceRuntimeCommit": "065e0e219e6d21d310b936f4d1c03ad9505c8cd0",
   "promotionScope": "legacy-chat+lalm+chat-history-policy+online-research-reasoner",
   "deploymentInput": true,
   "runtimePollingRequired": false,
@@ -35,7 +35,7 @@
       "owner": "lalm",
       "runtimeSource": "runtime_hot/r39_engine.py",
       "acceptedTarget": "lalm/r39_engine.py",
-      "sourceBlobSha": "5b966246596b5e33d74b72daff6fae51692c8dfc"
+      "sourceBlobSha": "1f3fa6d956eb10862459e9ff8e6b90fb9a4ab1e4"
     },
     {
       "owner": "server-policy",
@@ -146,6 +146,12 @@
       "sourceCommit": "5c242ddc4246e388ebc6478c74c3e21ceb6864ec",
       "acceptedTarget": "lalm/chain/v90.py",
       "sourceBlobSha": "9a4051e5e12637998bc81e4adf78f740fc4e62d4"
+    },
+    {
+      "name": "v91",
+      "sourceCommit": "a7dbee3dcc68e7a9f677865337a91c4cc6821a3c",
+      "acceptedTarget": "lalm/chain/v91.py",
+      "sourceBlobSha": "590f6951c3c6a0ffc705f1e5b5270d47ee2cca20"
     }
   ],
   "precomposition": "local-overlay-chain-v1"
