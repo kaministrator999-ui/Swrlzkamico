@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Explicitly approved by user in chat on 2026-09-29 as the standard follow-through for governed HF updates.
+# User-authorized follow-through for governed HF updates.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-29-hf-start-contract-vercel-retirement-01
+REQUEST_NONCE=2026-09-29-scope-correction-vercel-repo-cleanup-01
