@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Standing terminal deployment for HF Chat 1.0.70.
+# Standing terminal deployment for HF Chat 1.0.71 700M JSON runtime repair.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-30-chat-1.0.70-runtime-imports
+REQUEST_NONCE=2026-09-30-chat-1.0.71-700m-json-import
