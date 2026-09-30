@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Explicitly approved by user in chat on 2026-09-30 for HF Chat 1.0.68 model-routing repair.
+# Explicitly approved by user in chat on 2026-09-30 for HF Chat 1.0.69 Station session continuity repair.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-30-chat-1.0.68-explicit-model-routing
+REQUEST_NONCE=2026-09-30-chat-1.0.69-station-session-cookie-root
