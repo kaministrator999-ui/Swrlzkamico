@@ -1,6 +1,6 @@
 """Independent lazy-loaded LFM2-700M GGUF route; original 350M remains untouched."""
 from __future__ import annotations
-import threading, time
+import json, threading, time
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY
