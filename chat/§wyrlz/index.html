@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.73">
+  <meta name="swrlz-chat-version" content="1.0.74">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -551,7 +551,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.73";
+      const SWRLZ_CHAT_VERSION = "1.0.74";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -1341,8 +1341,14 @@
       const composerCollapse = document.getElementById("composerCollapse");
       const syncComposerViewportInset=()=>{
         const rect=composerShell.getBoundingClientRect();
-        const visible=Math.max(0,Math.min(window.innerHeight,window.innerHeight-rect.top));
-        document.documentElement.style.setProperty("--composer-visible-height",Math.ceil(visible)+"px");
+        const viewportHeight=window.visualViewport?.height||window.innerHeight;
+        const visible=Math.max(0,Math.min(viewportHeight,viewportHeight-rect.top));
+        const inset=Math.ceil(visible);
+        document.documentElement.style.setProperty("--composer-visible-height",inset+"px");
+        // Keep the scrollable chat's final content fully above the fixed composer.
+        // The extra gap belongs to the message list, so neither expanded nor
+        // auto-growing composer states can cover the final message.
+        messageList.style.paddingBottom=(inset+18)+"px";
       };
       const composerResizeObserver=typeof ResizeObserver==="function"?new ResizeObserver(syncComposerViewportInset):null;
       composerResizeObserver?.observe(composerShell);
