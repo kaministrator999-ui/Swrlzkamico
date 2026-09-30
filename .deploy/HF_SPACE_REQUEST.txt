@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# User-authorized follow-through for governed HF updates.
+# Explicitly approved by user in chat on 2026-09-29 for integrated feature work.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-29-freestyle-song-copyable-container-01
+REQUEST_NONCE=2026-09-29-chat-1.0.66-temporal-context
