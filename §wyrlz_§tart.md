@@ -12,6 +12,25 @@ This file deliberately does **not** duplicate every architecture, versioning, di
 
 For current server/LALM development, read `docs/engineering/SWRLZ_HF_MIGRATION_AND_BASELINE.md` immediately after this router and before planning changes. Treat its **HF model knowledge retrieval index** as the compact feature map for stock/R39/700M routing, profile layers, role ownership, diagnostics, memory candidates, and project-knowledge retrieval; correlate it with the newest HF Roadmap continuation before mutation. The existing `kamiloki/Swyrlz` Space is the active candidate server/inference proving surface; the original pinned LFM2 GGUF/llama.cpp path is the speed-control model and §wyrlz R39 remains its own cognitive/inference engine. Preserve both model choices, the legacy Test Bench, the Chat/Station candidate and the Space revision. The active engineering objective is measured R39 native prefill/decode speed parity with the original on matched HF hardware, including longer 2k-token output trials. Do not claim parity from a short single probe or from UI streaming alone. Use the feature-branch manual HF workflow's validate/inspect gates before any approved publish; never dispatch the main registration-only workflow as a deploy. HF publish rebuilds/restarts the existing Space and requires explicit approval. **Vercel is deprecated for current §wyrlz application deployment and must not be used as a current hosting/deployment target.** Historical Vercel files remain provenance only unless a later explicit governance event reactivates them. Record progress and unresolved acceptance in the Roadmap; reconcile version authorities at governed closure.
 
+## Current Hugging Face deployment method — mandatory
+
+Current application publication uses the existing source-controlled request chain; do not invent a second deployment trigger and do not use Vercel:
+
+```text
+main:.deploy/HF_SPACE_REQUEST.txt
+  -> main:.github/workflows/hf-space-request.yml
+  -> main:.github/workflows/manual-hf-space.yml
+  -> checkout SOURCE_REF=feature/hf-space-manual-deploy
+  -> validate + snapshot + guarded publish
+  -> existing Hugging Face Space kamiloki/Swyrlz
+```
+
+For an explicitly user-approved deployment, update `main:.deploy/HF_SPACE_REQUEST.txt` with `TARGET=kamiloki/Swyrlz`, `APPROVED=1`, `SOURCE_REF=feature/hf-space-manual-deploy`, and a fresh unique `REQUEST_NONCE`. The push to that request file is the deployment trigger. The request workflow must call the guarded manual HF workflow; preserve its validation, snapshot, rollback, target, and approval gates.
+
+Do not require the user to manually press **Run workflow** when the current request already explicitly authorizes deployment and the request-file trigger is available. Conversely, ordinary repository edits without current deployment authorization remain deployment-inert.
+
+**Vercel is retired/deprecated for current §wyrlz application hosting and deployment.** Do not create, deploy, clean up, or select Vercel projects as current application infrastructure. Remaining Vercel repository material is removal/migration debt or historical provenance only and must not outrank this HF contract.
+
 ## 1. Start command
 
 ### Compact executable bootstrap — `§§`
