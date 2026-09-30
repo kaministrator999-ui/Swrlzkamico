@@ -1,3 +1,12 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.75 Glitch Dragon response-container themes
+
+- **Feature:** fenced response containers now select a Glitch Dragon visual identity by semantic fence language: programming/code, lyrics/music, or miscellaneous.
+- **Rendering:** repository artwork is used as decorative frame trim while the actual code surface remains live translucent glass with CSS backdrop blur; code stays selectable, scrollable, copyable, downloadable, and streaming-safe.
+- **Assets:** uses the three user-uploaded PNG assets now present on `main`; deployment source resolves them from the Space root so the visual layer does not replace code content.
+- **Version:** HF clean-room Chat **1.0.74 → 1.0.75**.
+- **Source receipt:** `68e16b604b9ac3054a94f1e60a7e8454c2bc89d1`; VERSION receipt `805ce120a461400cbbd4fd1c8df615cd4e491e8d`.
+- **Status:** SOURCE COMPLETE / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.74 composer/message clearance repair
 
 - **Observed defect:** the fixed bottom composer could cover the final chat message, especially when the composer was expanded or changed height.
