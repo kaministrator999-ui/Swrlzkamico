@@ -1,3 +1,14 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.73 grammatical-role binding + identity signature
+
+- **Live teaching evidence:** after correctly answering “What’s your name?”, the 700M route answered the follow-up “And what’s my name” with §wyrlz’s identity again instead of resolving `my` to the current USER (Kami).
+- **Inference repair:** added grammatical perspective binding: in USER messages, `I/me/my/mine` bind to USER and `you/your/yours` bind to ASSISTANT unless explicitly quoted/re-scoped. Follow-up subject/object is resolved before prior-turn context.
+- **Presentation repair:** the two requested identity surfaces — sidebar/header companion identity and assistant-message author label — use the project signature `𓆩𓆩⁽§⁾𓆪wyrlz𓆪` when the canonical companion name is `§wyrlz`. Custom companion names remain custom rather than being overwritten globally.
+- **Asset discovery:** new transparent container PNG uploads are present on `main` at repository root; this update records/discovers them but does not prematurely wire them into runtime containers.
+- **Version:** HF clean-room Chat **1.0.72 → 1.0.73**.
+- **Source receipts:** role teaching `fef0eaf6e21115f5d27d267122ffdc3a701236c5`; Chat identity/version `4e954e09a57cf06470b4f12f01133676770d0aeb`; VERSION `8141b67f66488b230bd8baf70010416c867bdc1b`.
+- **Verification:** static re-read confirms grammatical-perspective rule, explicit “What’s my name?” USER binding, Chat 1.0.73 identity, and conditional signature presentation.
+- **Status:** SOURCE COMPLETE / STATIC VERIFIED / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.72 conversation teaching pass
 
 - **Teaching basis:** the live conversation from the first successful post-repair exchange through the identity/CEO joke, correction cascade, sneaky humor-reconstruction test, and numbered-list observation. These adjacent examples are preserved as distinct capability tests rather than falsely treated as one causal chain.
