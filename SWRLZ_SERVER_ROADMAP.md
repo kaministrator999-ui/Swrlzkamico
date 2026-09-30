@@ -1,3 +1,14 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.69 Station session continuity repair
+
+- **Observed continuation:** Chat user turn persists after 1.0.67 and explicit 700M routing is present after 1.0.68, but the assistant projection can still remain stuck at CLIENT TRANSPORT.
+- **Next concrete transport boundary:** Station creates/recovers the anonymous session on `/api/lalm_station/sync` and again acknowledges it on `/api/lalm_station/send`, but the session cookie did not declare an explicit root path. The Chat depends on the same `swrlz_hf_sid` reaching `/sync`, `/send`, and `/stream` consistently.
+- **Repair:** both Station session-cookie writes now explicitly set `path="/"`, keeping one session identity across all Chat/Station endpoints rather than relying on user-agent default-path behavior.
+- **Preserved fixes:** 1.0.67 optimistic-turn reconciliation/stream fallback and 1.0.68 explicit model routing remain intact.
+- **Version:** HF clean-room Chat **1.0.68 → 1.0.69**.
+- **Source receipts:** Station cookie repair `f58947092c01a71978b2640260ea866242da482d`; version `4090ee903bc2ad28fc94deeedf654d62f7b8cb1e`; Chat identity `09762039cd0e3da40d1121de8ed7157c253d51b6`.
+- **Verification:** static re-read confirms two root-scoped Station cookie writes, 1.0.69 identity, explicit 700M modelId send, and stream-fallback preservation.
+- **Status:** SOURCE COMPLETE / STATIC VERIFIED / LIVE HF ACCEPTANCE PENDING.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.68 explicit inference-model routing
 
 - **Observed continuation:** Chat 1.0.67 preserved the submitted user turn, but live generation could remain at a transport/progress surface.
