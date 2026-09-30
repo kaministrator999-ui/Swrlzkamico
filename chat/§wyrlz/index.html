@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.75">
+  <meta name="swrlz-chat-version" content="1.0.76">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -52,12 +52,19 @@
     .assistant-body .code-block{position:relative;isolation:isolate;border-color:rgba(111,220,255,.42);border-radius:16px;background:linear-gradient(145deg,rgba(3,17,31,.68),rgba(12,25,48,.58));backdrop-filter:blur(18px) saturate(132%);-webkit-backdrop-filter:blur(18px) saturate(132%);box-shadow:0 12px 34px rgba(0,0,0,.34),inset 0 0 30px rgba(72,177,255,.045);overflow:hidden}
     .assistant-body .code-block::before{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background-image:var(--container-frame-image);background-size:100% 100%;background-position:center;background-repeat:no-repeat;opacity:.92}
     .assistant-body .code-block::after{content:"";position:absolute;z-index:-2;inset:8px;pointer-events:none;border-radius:11px;background:linear-gradient(145deg,rgba(2,12,24,.34),rgba(18,22,50,.24));backdrop-filter:blur(15px) saturate(125%);-webkit-backdrop-filter:blur(15px) saturate(125%)}
-    .assistant-body .code-block.theme-code{--container-frame-image:url("/file_0000000031a881f5853e6d54e3dd2cf2.png")}
-    .assistant-body .code-block.theme-lyrics{--container-frame-image:url("/file_00000000359481f6835018078d9201af.png")}
-    .assistant-body .code-block.theme-misc{--container-frame-image:url("/file_00000000487c81f788a57c8b4dbe9495.png")}
+    .assistant-body .code-block.theme-code{--container-frame-image:url("https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/main/file_0000000031a881f5853e6d54e3dd2cf2.png")}
+    .assistant-body .code-block.theme-lyrics{--container-frame-image:url("https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/main/file_00000000359481f6835018078d9201af.png")}
+    .assistant-body .code-block.theme-misc{--container-frame-image:url("https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/main/file_00000000487c81f788a57c8b4dbe9495.png")}
     .assistant-body .code-block .code-head{position:relative;z-index:1;margin:7px 9px 0;border:1px solid rgba(126,214,255,.15);border-radius:9px;background:rgba(3,19,34,.48);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
     .assistant-body .code-block pre{position:relative;z-index:1;margin:5px 9px 9px;border-radius:9px;background:rgba(1,9,18,.36);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
     @media(max-width:600px){.assistant-body .code-block::before{background-size:100% 100%}.assistant-body .code-block .code-head{margin:6px 7px 0}.assistant-body .code-block pre{margin:4px 7px 7px}}
+    .user-bubble.user-container-message{padding:4px!important;background:rgba(4,14,28,.32)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);overflow:visible}
+    .user-bubble.user-container-message .code-block{position:relative;isolation:isolate;overflow:hidden;border:1px solid rgba(126,214,255,.38);border-radius:16px;background:linear-gradient(145deg,rgba(3,17,31,.62),rgba(12,25,48,.52));backdrop-filter:blur(18px) saturate(132%);-webkit-backdrop-filter:blur(18px) saturate(132%);box-shadow:0 12px 30px rgba(0,0,0,.3)}
+    .user-bubble.user-container-message .code-block::before{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background-image:var(--container-frame-image);background-size:100% 100%;background-position:center;background-repeat:no-repeat;opacity:.92}
+    .user-bubble.user-container-message .theme-code{--container-frame-image:url("https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/main/file_0000000031a881f5853e6d54e3dd2cf2.png")}
+    .user-bubble.user-container-message .theme-lyrics{--container-frame-image:url("https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/main/file_00000000359481f6835018078d9201af.png")}
+    .user-bubble.user-container-message .code-head{margin:7px 9px 0;padding:7px 9px;border-radius:9px;background:rgba(3,19,34,.48);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+    .user-bubble.user-container-message pre{margin:5px 9px 9px;padding:12px 13px;overflow:auto;max-height:62vh;white-space:pre;background:rgba(1,9,18,.34);border-radius:9px;font-family:var(--font-telemetry);font-size:12px;line-height:1.55}
     .user-message{grid-template-columns:minmax(0,1fr) 30px;grid-template-areas:"identity avatar" "bubble avatar";column-gap:8px}
     .user-meta{justify-self:end;padding:4px 7px;border:1px solid rgba(126,214,255,.18);border-radius:8px;background:rgba(5,22,38,.46);backdrop-filter:blur(10px);text-shadow:0 1px 3px rgba(0,0,0,.85)}
     .user-avatar,.user-avatar-fallback{width:30px;height:30px;box-shadow:0 2px 8px rgba(0,0,0,.42)}
@@ -562,7 +569,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.75";
+      const SWRLZ_CHAT_VERSION = "1.0.76";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -1027,7 +1034,7 @@
         const messages=(thread.messages||[]).map(msg=>[
           String(msg?.id||""),String(msg?.role||""),String(msg?.text||""),
           !!pins[String(msg?.id||"")],String(msg?.meta?.state||msg?.state||""),
-          String(msg?.meta?.artifactRevision||""),Number(msg?.createdAt||0)
+          String(msg?.meta?.artifactRevision||""),String(msg?.meta?.contentTag||""),Number(msg?.createdAt||0)
         ]);
         const artifactState=artifacts.map(a=>[
           String(a?.id||""),Number(a?.currentRevision||0),String(a?.title||""),
@@ -1048,7 +1055,13 @@
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";node.dataset.messageId=msg.id||"";
             const meta=document.createElement("div");meta.className="user-meta";const who=document.createElement("span");who.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";meta.appendChild(who);const timeText=formatMessageTime(msg.createdAt);if(timeText){const time=document.createElement("span");time.className="message-time";time.textContent=timeText;time.title=new Date(Number(msg.createdAt)).toLocaleString();meta.appendChild(time);}
-            const bubble=document.createElement("div");bubble.className="user-bubble";bubble.textContent=msg.text||"";
+            const bubble=document.createElement("div");bubble.className="user-bubble";
+            const persistedTag=String(msg?.meta?.contentTag||"").toLowerCase();
+            if(persistedTag==="container:code"||persistedTag==="container:lyrics"){
+              bubble.classList.add("user-container-message");
+              const syntheticFence=(persistedTag==="container:lyrics"?"lyrics":"code")+"\n"+String(msg.text||"");
+              renderAssistantContent(bubble,"```"+syntheticFence+"```",msg.id||"");
+            }else bubble.textContent=msg.text||"";
             if(chatAccountUser?.picture){
               const avatar=document.createElement("img");avatar.className="user-avatar";avatar.src=chatAccountUser.picture;avatar.alt="";node.append(meta,bubble,avatar);
             }else{
@@ -1274,8 +1287,26 @@
           }
         }
       };
+      const classifyUserContent=text=>{
+        const source=String(text||"").trim();
+        const fenced=source.match(/^```([^\n`]*)\n?[\s\S]*```$/);
+        if(fenced){
+          const lang=String(fenced[1]||"").trim().toLowerCase().split(/\s+/)[0];
+          if(["lyrics","lyric","song","music","verse","chorus"].includes(lang))return "container:lyrics";
+          return "container:code";
+        }
+        if(/^(lyrics?|song)\s*:/i.test(source)||/(^|\n)\s*\[(verse|chorus|bridge|hook|pre-chorus|outro|intro)(?:\s+\d+)?\]\s*($|\n)/i.test(source))return "container:lyrics";
+        const codeSignals=[
+          /(^|\n)\s*(const|let|var|function|class|def|import|from|package|public|private|protected|fun|val|using|namespace|SELECT|INSERT|UPDATE|CREATE)\b/,
+          /=>|\bconsole\.log\s*\(|\bprint\s*\(|<\/?[a-z][^>]*>|\{[\s\S]*[;:=][\s\S]*\}/i,
+          /(^|\n)\s*[.#]?[a-z][\w-]*\s*\{[^}]*:[^}]*\}/i
+        ];
+        if(source.includes("\n")&&codeSignals.some(rule=>rule.test(source)))return "container:code";
+        return "";
+      };
       const commitDraftFromPrompt = async () => {
         const text=prompt.value.trim(); if(!text||sending)return false;
+        const contentTag=classifyUserContent(text);
         sending=true; sendButton.disabled=true;
         try{
           if(draftThread){
@@ -1299,14 +1330,14 @@
             pendingDraftThread=localThread;
           }
           localThread.messages=Array.isArray(localThread.messages)?localThread.messages:[];
-          if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,createdAt:Date.now(),meta:{requestId,localPending:true}});
+          if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,createdAt:Date.now(),meta:{requestId,localPending:true,...(contentTag?{contentTag}: {})}});
           prompt.value=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
           const sendPath="/api/lalm_station/send";
           const transportCamera=(stage,data={})=>{try{fetch("/api/chat?__swrlz_client_debug=1",{method:"POST",credentials:"same-origin",cache:"no-store",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"station-send-transport-v1",url:location.pathname,event:{at:new Date().toISOString(),type:"station-send-transport",message:stage,data:{requestId,sendPath,...data}}})}).catch(()=>{})}catch(_){}};
           transportCamera("before-fetch");
           let response;
           try{
-            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,modelId:String(settingsState.model.defaultModel||"700m"),profileId:"LALM",ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})()})});
+            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,contentTag,modelId:String(settingsState.model.defaultModel||"700m"),profileId:"LALM",ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})()})});
             transportCamera("fetch-response",{status:response.status,ok:response.ok});
           }catch(networkError){
             transportCamera("fetch-network-failed",{error:String(networkError?.message||networkError)});
