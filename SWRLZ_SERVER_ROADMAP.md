@@ -1,3 +1,18 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.72 conversation teaching pass
+
+- **Teaching basis:** the live conversation from the first successful post-repair exchange through the identity/CEO joke, correction cascade, sneaky humor-reconstruction test, and numbered-list observation. These adjacent examples are preserved as distinct capability tests rather than falsely treated as one causal chain.
+- **Role/identity lesson:** bind profile identity to the current USER from the authoritative role map; never treat Kami as an unrelated third party and later silently merge, and never infer USER and ASSISTANT are "both Kami."
+- **Event ownership lesson:** preserve WHO DID/SAID WHAT -> TO/ABOUT WHOM. The user's compliment to §wyrlz must not become Kami praising Kami or self-deprecation.
+- **Correction lesson:** apply the smallest corrected delta, re-read exact wording, and do not invent replacement dialogue while explaining a prior misunderstanding.
+- **Conversation-structure lesson:** adjacent turns may test identity grounding, humor, correction handling, formatting, or engineering independently; connect only where evidence supplies a bridge.
+- **Humor lesson:** reconstruct actual setup -> expectation -> reversal/reveal before explaining a joke; avoid elaborate analysis built on a wrong premise or unsupported psychology.
+- **Formatting lesson:** numbered lists must increment and contain distinct points; do not regress to repeated `1.` items or malformed joke ordering.
+- **Implementation:** added bounded behavioral rules to the existing LFM2-700M built-in §wyrlz profile rather than hard-coding canned replies or replacing existing behavior.
+- **Version:** HF clean-room Chat **1.0.71 → 1.0.72**.
+- **Source receipts:** teaching `4d524efd33b552e3bf3d2702596bae7924b060c3`; version `1bcd7aefaf50ea69c739e0e86a6cbe2d62a240ae`; Chat identity `606e1a069cd0df23506562c4491268ead9f390d0`.
+- **Verification:** static re-read confirms all five teaching guards are present and Chat identity is 1.0.72.
+- **Status:** SOURCE COMPLETE / STATIC VERIFIED / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.71 700M JSON runtime repair
 
 - **Live evidence:** after the 1.0.70 Station runtime-import repair, Chat accepted and persisted the user turn and surfaced the model-path exception `Generation failed: name 'json' is not defined`.
