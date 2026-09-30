@@ -8,6 +8,25 @@ This file deliberately does **not** duplicate every architecture, versioning, di
 
 ---
 
+## Current Hugging Face deployment method — mandatory
+
+Current application publication uses the existing source-controlled request chain; do not invent a second deployment trigger and do not use Vercel:
+
+```text
+main:.deploy/HF_SPACE_REQUEST.txt
+  -> main:.github/workflows/hf-space-request.yml
+  -> main:.github/workflows/manual-hf-space.yml
+  -> checkout SOURCE_REF=feature/hf-space-manual-deploy
+  -> validate + snapshot + guarded publish
+  -> existing Hugging Face Space kamiloki/Swyrlz
+```
+
+For an explicitly user-approved deployment, update `main:.deploy/HF_SPACE_REQUEST.txt` with `TARGET=kamiloki/Swyrlz`, `APPROVED=1`, `SOURCE_REF=feature/hf-space-manual-deploy`, and a fresh unique `REQUEST_NONCE`. The push to that request file is the deployment trigger. The request workflow must call the guarded manual HF workflow; preserve its validation, snapshot, rollback, target, and approval gates.
+
+Do not require the user to manually press **Run workflow** when the current request already explicitly authorizes deployment and the request-file trigger is available. Conversely, ordinary repository edits without current deployment authorization remain deployment-inert.
+
+**Vercel is retired/deprecated for current §wyrlz application hosting and deployment.** Do not create, deploy, clean up, or select Vercel projects as current application infrastructure. Remaining Vercel repository material is removal/migration debt or historical provenance only and must not outrank this HF contract.
+
 ## 1. Start command
 
 ### Compact executable bootstrap — `§§`
