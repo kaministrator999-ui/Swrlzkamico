@@ -1,3 +1,14 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.76 durable user code/lyrics containers
+
+- **User recognition:** submitted user turns are conservatively classified as code or lyrics from fenced language tags and strong structural signals. Recognized turns render in the matching Glitch Dragon container instead of a plain user bubble.
+- **Durable tag contract:** recognized messages carry `meta.contentTag` as `container:code` or `container:lyrics`. The tag is sent to Station, validated, persisted in thread message history, included in the render snapshot signature, and read back on reload so container choice does not depend on re-guessing old text.
+- **Assistant history:** completed assistant messages that actually contain fenced containers also persist a container tag, keeping snapshot/history semantics aligned with rendered container use.
+- **Asset-path correction:** the three binary frame assets currently live on `main` while HF deploys `feature/hf-space-manual-deploy`; frame URLs now explicitly resolve those canonical main assets rather than assuming the binaries exist in the deployment checkout.
+- **Version:** HF clean-room Chat **1.0.75 → 1.0.76**.
+- **Receipts:** client/render/persistence request `abc13ae941757fc3c76a5e2f399de2c12e3b873b`; Station user-tag persistence `7b2c57a221cdc7264606aee7283e0c05819d8f29`; assistant snapshot tag persistence `9cb69a4b281c5c2ad2b2f5f0df40e49bd881da88`; VERSION `b48d932205742e468df5ddc27146fe48c50da0b0`.
+- **Verification:** static re-read confirms classifier, optimistic tag, send payload, Station validation/persistence, reload rendering, snapshot-signature participation, assistant container tagging, and main-asset resolution.
+- **Status:** SOURCE COMPLETE / STATIC VERIFIED / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.75 Glitch Dragon response-container themes
 
 - **Feature:** fenced response containers now select a Glitch Dragon visual identity by semantic fence language: programming/code, lyrics/music, or miscellaneous.
