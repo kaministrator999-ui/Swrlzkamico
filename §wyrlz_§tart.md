@@ -31,6 +31,12 @@ Do not require the user to manually press **Run workflow** when the current requ
 
 **Vercel is retired/deprecated for current §wyrlz application hosting and deployment.** Do not create, deploy, clean up, or select Vercel projects as current application infrastructure. Remaining Vercel repository material is removal/migration debt or historical provenance only and must not outrank this HF contract.
 
+## Declared-action completion — mandatory
+
+During governed project work, any concrete action the engineering agent declares it will perform in the current turn becomes an open obligation. Before presenting a terminal/completion response, reconcile every such obligation as **executed with evidence**, **blocked with the concrete blocker**, or **legitimately deferred**. Do not silently omit a declared step, substitute narration for execution, or claim completion while a promised in-scope action remains open.
+
+This applies to inspection, repository edits, tests, cleanup, versioning, documentation, deployment triggers, verification, and other actionable project steps. Scope corrections may explicitly remove or replace obligations. Otherwise, saying “I’ll do X” means X belongs to the current work ledger until reconciled.
+
 ## 1. Start command
 
 ### Compact executable bootstrap — `§§`
