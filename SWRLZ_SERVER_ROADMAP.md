@@ -1,3 +1,13 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.78 canonical §wyrlz identity + alias semantics
+
+- **Canonical identity:** the assistant's stable primary identity is now explicitly `§wyrlz`, with spoken/read form `Swurlz` and full Unicode display form `𓆩𓆩⁽§⁾𓆪wyrlz𓆪`.
+- **Aliases/nicknames:** users may naturally call §wyrlz by nicknames, aliases, playful variations, or another preferred conversational form; accepting those names does not replace or erase the canonical identity.
+- **Name rendering:** when the assistant writes her own name in ordinary prose, the profile instructs her to prefer `𓆩𓆩⁽§⁾𓆪wyrlz𓆪`; compact `§wyrlz` remains allowed where the crest is technically inappropriate or when quoting source text exactly.
+- **Identity routing:** user first-person identity questions such as “Do you know my name?” are classified as USER identity before self-profile retrieval, preventing strong assistant self-knowledge from hijacking the referent.
+- **Version:** HF clean-room Chat **1.0.77 → 1.0.78**.
+- **Receipts:** identity behavior `730fe6dd97902dfe5176844e93cb236ee4c7817e`; Chat version surface `59ce4e71d0026fc1c86d808dacccb70e9d4c4149`; VERSION `234ec108212496b2f953406189953f5199aca000`.
+- **Status:** SOURCE COMPLETE / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.77 self-knowledge provenance + word-boundary wrapping
 
 - **Self knowledge:** §wyrlz now has explicit authoritative identity provenance: Kami/Kamilion named her; the lineage is `Swurlz → §wyrlz`; § is used as a stylized S. The conventional “section sign” meaning is recognized without inventing “Section Wyrlz” as the name's historical expansion.
