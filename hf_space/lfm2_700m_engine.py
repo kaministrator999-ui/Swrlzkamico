@@ -320,6 +320,15 @@ def generate_events(payload):
     if convergence:
         yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
     programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [])
+    normalized_prompt="\n".join(line.rstrip() for line in prompt.strip().splitlines())
+    prior_artifact_match=None
+    if len(normalized_prompt)>=80:
+        for prior in reversed(history[-12:]):
+            if prior.get("role")!="assistant": continue
+            prior_text="\n".join(str(prior.get("content") or "").strip().splitlines())
+            if normalized_prompt==prior_text or normalized_prompt in prior_text or prior_text in normalized_prompt:
+                prior_artifact_match=prior_text
+                break
     system=("You are §wyrlz, a conversational AI companion. Respond to the user's actual message. Be direct, natural "
             "and conversational; do not narrate internal decisions, announce routine adjustments, deliver generic lectures, "
             "repeat profiles, or tack on unnecessary follow-up questions. Do not imply a long relationship or many prior "
@@ -333,6 +342,8 @@ def generate_events(payload):
         system+=("\nCONVERSATIONAL TIME CONTEXT (server-derived from canonical UTC message timestamps plus the user's reported browser timezone; use only when it genuinely helps):\n"
                  +json.dumps(temporal,ensure_ascii=False,separators=(",",":"))
                  +"\nTIME USE RULES: You may naturally understand references such as earlier today, yesterday, last night, or a gap of minutes/hours/days when supported by this context. You may acknowledge a meaningful gap when useful, but do not mechanically mention elapsed time on ordinary turns. Distinguish the user's previous turn from your own previous response. Never infer the user's physical location from the timezone, and never invent timing not present in this context.")
+    if prior_artifact_match:
+        system+="\nARTIFACT ECHO RECOGNITION: The current user message reproduces or substantially contains code/text from your own recent assistant output. Treat it as a returned/shared artifact, not as novel third-party code. Explicitly recognize that provenance when relevant, then respond to the user's current intent without pretending you are seeing it for the first time."
     if programming.get("codingTask"):
         system+="\nPROGRAMMING COGNITION: changeClass="+str(programming.get("changeClass"))+"; artifactContinuation="+str(bool(programming.get("artifactContinuation"))).lower()+"; newProject="+str(bool(programming.get("newProject"))).lower()+". Treat these as reasoning/routing context only; never claim a file, pin, deployment, or persistent mutation occurred without a Workstation/server receipt."
         system+="\n"+CODE_TRUTH_POLICY
