@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Explicit redeploy request for HF Chat 1.0.83 outer Glitch Ice Dragon container frame.
+# Retry HF Chat 1.0.83 after updating 32K predeploy smoke guard.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-30-chat-1.0.83-outer-frame-redeploy-2
+REQUEST_NONCE=2026-09-30-chat-1.0.83-redeploy-after-smoke-guard
