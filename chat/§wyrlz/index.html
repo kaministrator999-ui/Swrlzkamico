@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.84">
+  <meta name="swrlz-chat-version" content="1.0.85">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -63,12 +63,10 @@
     .assistant-body .code-block::before,
     .user-bubble.user-container-message .code-block::before{
       content:"";position:absolute;z-index:3;inset:-8px;pointer-events:none;
-      border:18px solid transparent;
-      border-image-source:var(--frame-image);
-      border-image-slice:16% 5.333333% fill;
-      border-image-width:18px;
-      border-image-outset:0;
-      border-image-repeat:stretch;
+      background-image:var(--frame-image);
+      background-size:300% 100%;
+      background-position:var(--frame-position);
+      background-repeat:no-repeat;
       clip-path:polygon(0 0,100% 0,100% 100%,0 100%,0 0,18px 18px,18px calc(100% - 18px),calc(100% - 18px) calc(100% - 18px),calc(100% - 18px) 18px,18px 18px);
       opacity:1;
     }
@@ -113,10 +111,10 @@
       .assistant-body .code-block,.user-bubble.user-container-message .code-block{padding:17px}
     }
     .user-message{grid-template-columns:minmax(0,1fr) 30px;grid-template-areas:"identity avatar" "bubble avatar";column-gap:8px}
-    .user-meta{justify-self:end;padding:4px 7px;border:1px solid rgba(126,214,255,.18);border-radius:8px;background:rgba(5,22,38,.46);backdrop-filter:blur(10px);text-shadow:0 1px 3px rgba(0,0,0,.85)}
+    .user-meta{justify-self:end;padding:4px 7px;border:1px solid rgba(126,214,255,.18);border-radius:8px;background:rgba(5,22,38,.90);backdrop-filter:none;-webkit-backdrop-filter:none;text-shadow:0 1px 3px rgba(0,0,0,.85)}
     .user-avatar,.user-avatar-fallback{width:30px;height:30px;box-shadow:0 2px 8px rgba(0,0,0,.42)}
     .user-bubble{text-shadow:0 1px 2px rgba(0,0,0,.58);box-shadow:0 5px 16px rgba(0,0,0,.16)}
-    .assistant-head{display:inline-flex!important;padding:4px 8px 4px 5px;border:1px solid rgba(126,214,255,.18);border-radius:11px;background:rgba(5,22,38,.48);backdrop-filter:blur(11px);box-shadow:0 3px 12px rgba(0,0,0,.18)}
+    .assistant-head{display:inline-flex!important;padding:4px 8px 4px 5px;border:1px solid rgba(126,214,255,.18);border-radius:11px;background:rgba(5,22,38,.92);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 3px 12px rgba(0,0,0,.18)}
     .assistant-name{text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 7px rgba(95,220,255,.42)!important}
     .assistant-name,.top-brand-name,.side-brand-name{overflow-wrap:normal;word-break:keep-all;hyphens:none}
     .assistant-body{text-shadow:0 1px 2px rgba(0,0,0,.58);box-shadow:0 5px 16px rgba(0,0,0,.14)}
@@ -176,7 +174,7 @@
     .thread-meta{font-family:var(--font-telemetry);font-size:9px;letter-spacing:.04em}.thread-popup{border-color:rgba(126,214,255,.24);background:rgba(3,17,30,.975)}
     .menu-button{top:11px;left:11px;width:36px;height:36px;border-color:rgba(126,214,255,.32);border-radius:11px;background:linear-gradient(145deg,rgba(12,42,63,.96),rgba(5,21,37,.96));box-shadow:0 8px 22px rgba(0,0,0,.32),0 0 0 1px rgba(165,120,255,.045);backdrop-filter:blur(14px) saturate(120%)}.menu-button:hover{border-color:rgba(56,232,255,.58)}
     .chat-viewport{inset:0 0 70px;padding:64px 14px 28px;scroll-padding-top:66px;scrollbar-color:rgba(126,214,255,.24) transparent}.message-list{width:min(var(--conversation-width),100%);gap:20px;padding-top:8px}
-    .assistant-message{position:relative}.assistant-head{border-color:rgba(126,214,255,.16)!important;background:linear-gradient(110deg,rgba(4,21,36,.64),rgba(21,28,54,.38))!important}.assistant-head .kompanion-icon{border-color:rgba(56,232,255,.32);box-shadow:0 0 16px rgba(56,232,255,.10)}.assistant-name{font-family:var(--font-ui)!important;font-weight:760!important;letter-spacing:.035em!important}.assistant-body{border-color:rgba(126,214,255,.18)!important;border-radius:6px 16px 16px 16px!important;background:linear-gradient(135deg,rgba(4,22,38,.72),rgba(9,29,47,.54))!important;box-shadow:0 8px 24px rgba(0,0,0,.16),inset 2px 0 0 rgba(56,232,255,.12)!important;backdrop-filter:blur(14px) saturate(118%)!important}.station-progress{font-family:var(--font-telemetry);color:#8ddff3!important}
+    .assistant-message{position:relative}.assistant-head{border-color:rgba(126,214,255,.16)!important;background:linear-gradient(110deg,rgba(4,21,36,.64),rgba(21,28,54,.38))!important}.assistant-head .kompanion-icon{border-color:rgba(56,232,255,.32);box-shadow:0 0 16px rgba(56,232,255,.10)}.assistant-name{font-family:var(--font-ui)!important;font-weight:760!important;letter-spacing:.035em!important}.assistant-body{border-color:rgba(126,214,255,.18)!important;border-radius:6px 16px 16px 16px!important;background:linear-gradient(135deg,rgb(4,22,38),rgb(9,29,47))!important;box-shadow:0 8px 24px rgba(0,0,0,.16),inset 2px 0 0 rgba(56,232,255,.12)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}.station-progress{font-family:var(--font-telemetry);color:#8ddff3!important}
     .user-bubble{border-color:rgba(126,214,255,.22);border-radius:15px 5px 15px 15px;background:linear-gradient(135deg,rgba(18,61,84,.86),rgba(25,48,79,.82));box-shadow:0 8px 22px rgba(0,0,0,.18),inset -2px 0 0 rgba(165,120,255,.10)}.user-meta{font-family:var(--font-telemetry);font-size:9px;letter-spacing:.045em;color:#bceeff;background:rgba(3,19,33,.56)}
     .assistant-actions{opacity:.72;transition:opacity .15s ease}.assistant-message:hover .assistant-actions,.assistant-actions:focus-within{opacity:1}.copy-response{font-family:var(--font-telemetry);font-size:9px;letter-spacing:.07em;text-transform:uppercase;border:1px solid transparent;padding:5px 7px}.copy-response:hover,.copy-response:focus-visible{border-color:rgba(126,214,255,.20);background:rgba(7,31,49,.72)}
     .composer-shell{padding:11px 12px 8px}.composer-shell::before{background:linear-gradient(180deg,rgba(146,211,255,.11),rgba(35,80,119,.13) 38%,rgba(2,13,26,.70));backdrop-filter:blur(16px) saturate(120%);-webkit-backdrop-filter:blur(16px) saturate(120%)}.composer-shell::after{background:linear-gradient(180deg,rgba(203,237,255,.12),rgba(165,120,255,.035) 42%,transparent 68%)}.composer{width:min(620px,100%)}.composer-box{border-color:rgba(126,214,255,.28);background:linear-gradient(145deg,rgba(8,30,48,.94),rgba(5,18,33,.96));box-shadow:0 10px 28px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.055)}.composer-box:focus-within{border-color:rgba(56,232,255,.56);box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 2px rgba(56,232,255,.055),inset 0 1px 0 rgba(255,255,255,.065)}.composer-collapse{border-color:rgba(126,214,255,.26);background:rgba(5,24,41,.78);color:#a9e9f7}.send-button{background:linear-gradient(145deg,#80e8ff,#5a9dff 58%,#8c79ff);box-shadow:0 6px 16px rgba(56,168,255,.20);transition:transform .14s ease,filter .14s ease,opacity .14s ease}.send-button:hover{filter:brightness(1.08);transform:translateY(-1px)}.send-button:active{transform:translateY(0)}.send-button:disabled{opacity:.42;cursor:default;filter:saturate(.45);transform:none}
@@ -617,7 +615,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.84";
+      const SWRLZ_CHAT_VERSION = "1.0.85";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
