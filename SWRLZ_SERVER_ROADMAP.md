@@ -1,3 +1,14 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.83 outer Glitch Ice Dragon container frame
+
+- Confirmed `file_00000000359481f6835018078d9201af.png` as the current Glitch Ice Dragon container-border asset.
+- Reworked assistant and user code containers so the artwork is a dedicated outer/perimeter layer, while the original dark code header/content surfaces are opaque readable inner layers above it.
+- Removed content-plane glass/blur from code surfaces; artwork can extend beneath the box geometrically but only the perimeter remains visible.
+- Kept code/lyrics/misc sprite positions and mobile 300% crop behavior.
+- Preserved the 1.0.82 in-place streaming code-node update, so the frame is not rebuilt for every generation delta.
+- Version: **1.0.83**.
+- Receipts: UI `b0bbcde00867ac42e2ca2a666f68fdc8e2837f52`; VERSION `86087fcd46edf49095e95831954e4284986fa903`.
+- Status: SOURCE COMPLETE / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.82 stable live code streaming
 
 - **Observed residual flicker:** static chat scrolling improved in 1.0.81, but an actively streaming fenced-code response still refreshed visibly.
