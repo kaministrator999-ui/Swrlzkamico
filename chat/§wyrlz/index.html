@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.85">
+  <meta name="swrlz-chat-version" content="1.0.86">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -47,35 +47,30 @@
     .assistant-body{margin-left:38px!important;padding:10px 12px!important;color:#f4f9fd!important;font-size:15px;line-height:1.5}
     .assistant-actions{display:flex;justify-content:flex-end;margin:4px 0 0 38px;padding-right:2px}.copy-response{border:0;border-radius:7px;background:transparent;color:#9fd6e9;padding:4px 6px;font-size:10px;cursor:pointer;opacity:.86}.copy-response:hover{background:rgba(10,38,59,.55);color:#d8f7ff}.copy-response:active{transform:translateY(1px)}
     .assistant-body .message-text{white-space:pre-wrap;overflow-wrap:normal;word-break:normal;hyphens:none}.assistant-body .message-text strong{font-weight:800;color:#fff}.assistant-body .message-text em{font-style:italic}.assistant-body .message-text .ai-color{color:var(--ai-color,currentColor)}.assistant-body .message-text .ai-size{font-size:var(--ai-size,1em)}.assistant-body .message-text .ai-font{font-family:var(--ai-font,inherit)}.assistant-body .message-text .ai-weight{font-weight:var(--ai-weight,inherit)}.assistant-body .message-text .ai-underline{text-decoration:underline;text-underline-offset:.16em}.assistant-body .message-text .ai-strike{text-decoration:line-through}.assistant-body .message-text .ai-highlight{background:var(--ai-highlight,transparent);padding:.03em .16em;border-radius:.22em}.assistant-body .message-text .ai-letter{letter-spacing:var(--ai-letter,normal)}.assistant-body .code-block{margin:10px 0;border:1px solid rgba(126,214,255,.26);border-radius:12px;overflow:hidden;background:rgba(1,10,19,.92);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}.assistant-body .code-block:first-child{margin-top:0}.assistant-body .code-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 9px;border-bottom:1px solid rgba(126,214,255,.16);background:linear-gradient(90deg,rgba(10,39,59,.9),rgba(25,27,57,.72));font-family:var(--font-telemetry);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#9fdff0}.assistant-body .copy-code{border:1px solid rgba(126,214,255,.20);border-radius:7px;padding:4px 7px;background:rgba(7,28,45,.72);color:#d9f7ff;font:inherit;letter-spacing:.05em;cursor:pointer}.assistant-body .copy-code:hover,.assistant-body .copy-code:focus-visible{border-color:rgba(56,232,255,.48);background:rgba(13,48,70,.86)}.assistant-body pre{margin:0;padding:12px 13px;overflow:auto;max-height:62vh;white-space:pre;tab-size:2;background:transparent;color:#eaf8ff;font-family:var(--font-telemetry);font-size:12px;line-height:1.55;text-shadow:none}.assistant-body code{font-family:inherit}
-    /* Glitch Ice Dragon container frames.
-       The PNG is decorative perimeter artwork. The original dark code surface stays above it,
-       so artwork never occupies the readable content plane. */
+    /* Glitch Ice Dragon semantic frames: square-inside-square.
+       The artwork is the outer padded surface; opaque inner surfaces cover its center. */
     .assistant-body .code-block,
     .user-bubble.user-container-message .code-block{
       --frame-image:url("https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/main/file_00000000359481f6835018078d9201af.png");
       --frame-position:0% 50%;
       position:relative;isolation:isolate;overflow:visible;
-      border:0;border-radius:18px;background:transparent;
-      padding:20px;
-      box-shadow:none;
-      transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden;
-    }
-    .assistant-body .code-block::before,
-    .user-bubble.user-container-message .code-block::before{
-      content:"";position:absolute;z-index:3;inset:-8px;pointer-events:none;
+      border:0;border-radius:18px;
+      padding:22px;
       background-image:var(--frame-image);
       background-size:300% 100%;
       background-position:var(--frame-position);
       background-repeat:no-repeat;
-      clip-path:polygon(0 0,100% 0,100% 100%,0 100%,0 0,18px 18px,18px calc(100% - 18px),calc(100% - 18px) calc(100% - 18px),calc(100% - 18px) 18px,18px 18px);
-      opacity:1;
+      box-shadow:none;
+      transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden;
     }
+    .assistant-body .code-block::before,
+    .user-bubble.user-container-message .code-block::before{display:none!important}
     .assistant-body .code-block.theme-code,
-    .user-bubble.user-container-message .theme-code{--frame-position:0% 50%;--frame-column:0}
+    .user-bubble.user-container-message .theme-code{--frame-position:0% 50%}
     .assistant-body .code-block.theme-lyrics,
-    .user-bubble.user-container-message .theme-lyrics{--frame-position:50% 50%;--frame-column:1}
+    .user-bubble.user-container-message .theme-lyrics{--frame-position:50% 50%}
     .assistant-body .code-block.theme-misc,
-    .user-bubble.user-container-message .theme-misc{--frame-position:100% 50%;--frame-column:2}
+    .user-bubble.user-container-message .theme-misc{--frame-position:100% 50%}
     .assistant-body .code-block::after{display:none}
     .assistant-body .code-block .code-head,
     .user-bubble.user-container-message .code-head{
@@ -108,7 +103,7 @@
       backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
     }
     @media(max-width:600px){
-      .assistant-body .code-block,.user-bubble.user-container-message .code-block{padding:17px}
+      .assistant-body .code-block,.user-bubble.user-container-message .code-block{padding:18px}
     }
     .user-message{grid-template-columns:minmax(0,1fr) 30px;grid-template-areas:"identity avatar" "bubble avatar";column-gap:8px}
     .user-meta{justify-self:end;padding:4px 7px;border:1px solid rgba(126,214,255,.18);border-radius:8px;background:rgba(5,22,38,.90);backdrop-filter:none;-webkit-backdrop-filter:none;text-shadow:0 1px 3px rgba(0,0,0,.85)}
@@ -615,7 +610,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.85";
+      const SWRLZ_CHAT_VERSION = "1.0.86";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
