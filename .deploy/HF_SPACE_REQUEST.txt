@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Approved deployment for HF Chat 1.0.84 semantic containers + returned-artifact recognition.
+# Approved deployment for HF Chat 1.0.85 frame crop + fast-scroll compositor repair.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-30-chat-1.0.84-semantic-containers
+REQUEST_NONCE=2026-09-30-chat-1.0.85-frame-scroll-repair
