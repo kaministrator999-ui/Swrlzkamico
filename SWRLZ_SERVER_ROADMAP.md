@@ -1,3 +1,13 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.71 700M JSON runtime repair
+
+- **Live evidence:** after the 1.0.70 Station runtime-import repair, Chat accepted and persisted the user turn and surfaced the model-path exception `Generation failed: name 'json' is not defined`.
+- **Root cause:** `hf_space/lfm2_700m_engine.py` serializes `temporalContext` with `json.dumps(...)` but did not import `json`.
+- **Repair:** added the missing standard-library `json` import to the independent LFM2-700M route; no model-routing, Station, Google account, or original 350M behavior was changed.
+- **Version:** HF clean-room Chat **1.0.70 → 1.0.71**.
+- **Source receipts:** 700M repair `ee8db5940077f911db4aa169f2db2946130bffe4`; version `bd1d456d1c4d8dba1adc3fc1a097836e3af17144`; Chat identity `5884a3e4f1b079b725a23fb1db9831740408e14e`.
+- **Verification:** static re-read confirms `json` is imported and the existing `json.dumps(temporal,...)` call remains present.
+- **Status:** SOURCE COMPLETE / STATIC VERIFIED / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.69 Station session continuity repair
 
 - **Observed continuation:** Chat user turn persists after 1.0.67 and explicit 700M routing is present after 1.0.68, but the assistant projection can still remain stuck at CLIENT TRANSPORT.
