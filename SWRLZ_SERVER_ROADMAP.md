@@ -1,3 +1,13 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.79 identity routing + latency fast path
+
+- **Export diagnosis:** the supplied live session shows the failing `Do you know my name` turn was routed through the 700M generator even though diagnostic metadata already identified the user as Kami. The same trace also incorrectly classified the identity turn as `codingTask:true`, adding irrelevant programming cognition.
+- **Identity routing repair:** response-mode classification now distinguishes USER identity (`my name / who am I / do you know me`) from ASSISTANT identity (`your name / who are you`) instead of recognizing only assistant-directed forms.
+- **Deterministic profile fast path:** simple supported identity questions are answered directly from the authoritative user profile or canonical assistant identity before GGUF inference. This removes the tiny model's referent failure and avoids paying full model-generation latency for a fact already resolved by the role/profile layer.
+- **Bounded fallback:** identity generations that do reach the model use a small output ceiling and lower temperature; normal creative/code/general generations retain their existing budget.
+- **Version:** HF clean-room Chat **1.0.78 → 1.0.79**.
+- **Receipts:** identity routing/bounded inference `78deda0dbff58daea0c2a579be9a4847a9cbd104`; deterministic identity fast path `a0e665a9d64120d9f876bb38569fa84bacde78ab`; Chat surface `efe0bff61715ae1640358f0b772b97ecccd70efb`; VERSION `75088ee43072dfec773d650d6f62f43fbefeead0`.
+- **Status:** SOURCE COMPLETE / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.78 canonical §wyrlz identity + alias semantics
 
 - **Canonical identity:** the assistant's stable primary identity is now explicitly `§wyrlz`, with spoken/read form `Swurlz` and full Unicode display form `𓆩𓆩⁽§⁾𓆪wyrlz𓆪`.
