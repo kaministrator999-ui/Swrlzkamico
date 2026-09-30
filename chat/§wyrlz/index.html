@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.72">
+  <meta name="swrlz-chat-version" content="1.0.73">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -551,7 +551,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.72";
+      const SWRLZ_CHAT_VERSION = "1.0.73";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -1475,10 +1475,11 @@
       };
       const applyCompanionPreview = () => {
         const name=(settingCompanionName.value||"").trim()||"§wyrlz";
-        const topName=document.querySelector(".top-brand-name");if(topName)topName.textContent=name;
-        const sideName=document.querySelector(".side-brand-name");if(sideName)sideName.textContent=name;
-        const templateName=assistantTemplate.querySelector(".assistant-name");if(templateName)templateName.textContent=name;
-        messageList.querySelectorAll(".rendered-message.assistant-message .assistant-name").forEach(node=>node.textContent=name);
+        const identityDisplay=name==="§wyrlz"?"𓆩𓆩⁽§⁾𓆪wyrlz𓆪":name;
+        const topName=document.querySelector(".top-brand-name");if(topName)topName.textContent=identityDisplay;
+        const sideName=document.querySelector(".side-brand-name");if(sideName)sideName.textContent=identityDisplay;
+        const templateName=assistantTemplate.querySelector(".assistant-name");if(templateName)templateName.textContent=identityDisplay;
+        messageList.querySelectorAll(".rendered-message.assistant-message .assistant-name").forEach(node=>node.textContent=identityDisplay);
         prompt.setAttribute("aria-label","Message "+name);prompt.placeholder="Message "+name+"…";
       };
       const populateSettingsControls = () => {
