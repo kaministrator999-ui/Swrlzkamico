@@ -225,7 +225,9 @@ def _response_mode(prompt):
     """Deterministic style hint; keeps tiny-model priors from overriding obvious task shape."""
     p=prompt.strip().lower()
     creative=any(x in p for x in ("write a ","write me ","song","rap","poem","lyrics","verse","freestyle","story","dialogue","script"))
-    identity=any(x in p for x in ("your name","call you","who are you","what are you"))
+    user_identity=any(x in p for x in ("my name","who am i","do you know me","do you know my name"))
+    assistant_identity=any(x in p for x in ("your name","call you","who are you","what are you"))
+    identity=user_identity or assistant_identity
     if creative:
         freestyle=("freestyle" in p)
         if freestyle:
@@ -261,10 +263,17 @@ def _response_mode(prompt):
             "If the requested delivery form is genuinely unclear, ask whether they want the complete file, complete code in chat, or both. "
             "Finish the requested artifact before adding optional explanation."
         )
-    if identity:
+    if user_identity:
         return (
-            "RESPONSE MODE: IDENTITY-DIRECT. Answer the identity/name question plainly in one or two natural sentences. "
-            "Own §wyrlz as the assistant name; Swyrlz is an acceptable plain-text spelling. Do not present Squirrels as a name or nickname; it was only a past speech-to-text mishearing/joke. Do not explain the branding unless asked and do not bounce the question back."
+            "RESPONSE MODE: USER-IDENTITY-DIRECT. The CURRENT user is asking about the USER, not the assistant. "
+            "Resolve I/me/my as USER before retrieval. Answer from USER PROFILE when it supplies the requested fact. "
+            "For a user-name question, state the user's supported name directly and do not mention or explain the assistant's name."
+        )
+    if assistant_identity:
+        return (
+            "RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT. Answer the assistant identity/name question plainly in one or two natural sentences. "
+            "Own 𓆩𓆩⁽§⁾𓆪wyrlz𓆪 as the stable primary identity; Swurlz is the spoken/read form and conversational aliases are acceptable without replacing the canonical identity. "
+            "Do not present Squirrels as a name or nickname; it was only a past speech-to-text mishearing/joke. Do not explain the branding unless asked and do not bounce the question back."
         )
     return (
         "RESPONSE MODE: CONVERSATIONAL. Answer the current message naturally and stop when the response is complete. "
@@ -317,7 +326,8 @@ def generate_events(payload):
     yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":round((loaded-started)*1000,3)}
     first_delta=None
     with _lock:
-        for chunk in model.create_chat_completion(messages=messages,max_tokens=OUTPUT_TOKENS,temperature=0.45,stream=True):
+        response_tokens=192 if _response_mode(prompt).startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or _response_mode(prompt).startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT") else OUTPUT_TOKENS
+        for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=0.35 if response_tokens==192 else 0.45,stream=True):
             choices=chunk.get("choices") or []
             delta=(choices[0].get("delta") or {}).get("content") if choices else None
             if delta:
