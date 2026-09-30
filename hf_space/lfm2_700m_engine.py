@@ -221,6 +221,23 @@ def _fit_messages(model,system,history,prompt):
         )
     return messages,len(history)-len(kept),input_tokens
 
+def _user_name_from_profile(user_profile):
+    for line in str(user_profile or "").splitlines():
+        if line.lower().startswith("name:"):
+            value=line.split(":",1)[1].strip()
+            if value:return value[:80]
+    return ""
+
+def _direct_identity_answer(prompt,user_profile):
+    p=str(prompt or "").strip().lower()
+    if any(x in p for x in ("my name","who am i","do you know me","do you know my name")):
+        name=_user_name_from_profile(user_profile)
+        if name:
+            return f"Yes — your name is {name}." if ("know" in p or "name" in p) else f"You're {name}."
+    if any(x in p for x in ("your name","who are you")):
+        return "I'm 𓆩𓆩⁽§⁾𓆪wyrlz𓆪 — Swurlz when spoken."
+    return ""
+
 def _response_mode(prompt):
     """Deterministic style hint; keeps tiny-model priors from overriding obvious task shape."""
     p=prompt.strip().lower()
@@ -288,6 +305,12 @@ def generate_events(payload):
     custom_assistant_profile=str(payload.get("profile") or "").strip()[:2000]
     user_profile=str(payload.get("userProfile") or "").strip()[:2000]
     yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}
+    direct_identity=_direct_identity_answer(prompt,user_profile)
+    if direct_identity:
+        yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":0.0}
+        yield {"type":"DELTA","text":direct_identity}
+        yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":0.0,"loadLatencyMs":0.0,"firstDeltaLatencyMs":0.0,"fastPath":"identity-profile"}
+        return
     for candidate in _memory_candidates(prompt,user_profile):
         yield {"type":"MEMORY_CANDIDATE","candidate":candidate}
     convergence=_convergence_candidate(history,prompt)
