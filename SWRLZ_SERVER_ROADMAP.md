@@ -1,3 +1,15 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.67 first-turn projection + stream fallback repair
+
+- **Observed symptom:** after sending a new message, the optimistic user turn could appear and then disappear while the assistant surface remained at a transport/progress state.
+- **Cause:** HF Chat staged a first-turn thread in `pendingDraftThread`, but `applyChatState()` reconciled only `chatThreads`. A Station sync arriving during first-turn promotion could therefore omit the local pending projection and allow prior current-thread metadata or a stale active-generation snapshot to replace the in-flight view.
+- **Repair:** Chat reconciliation now includes the pending draft in its prior projection, prevents current-thread fallback navigation while an accepted request is awaiting canonical commit, and only adopts a Station active-generation snapshot when it belongs to the same request (or no conflicting live local generation exists).
+- **Stream resilience:** after `/api/lalm_station/send` has been accepted, a dedicated NDJSON stream transport failure falls back to authoritative Station sync/polling instead of relabeling the accepted send as `CLIENT_TRANSPORT` and losing the visible turn.
+- **Version:** HF clean-room Chat **1.0.66 → 1.0.67**.
+- **Source receipt:** Chat repair commit `48a9224f0cf51174a28c26dd4d29a4c4bf72cbe6`.
+- **Verification truth:** source re-read/static verification pending immediately after this Roadmap close; live HF acceptance requires the guarded HF deployment workflow.
+- **Deployment target:** existing Hugging Face Space `kamiloki/Swyrlz` via branch `feature/hf-space-manual-deploy`; no Vercel action.
+- **Status:** SOURCE REPAIR COMPLETE / LIVE HF ACCEPTANCE PENDING.
+
 ### UPDATE FINISHED — 2026-09-29 — HF deployment-branch Code Truth/web-UI programming follow-through
 
 - **User correction / authority:** current §wyrlz application deployment is Hugging Face, not Vercel, and current deployable source is branch `feature/hf-space-manual-deploy` as used by the **Manual Hugging Face Space Deploy** workflow.
