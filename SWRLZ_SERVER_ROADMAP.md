@@ -1,3 +1,11 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.74 composer/message clearance repair
+
+- **Observed defect:** the fixed bottom composer could cover the final chat message, especially when the composer was expanded or changed height.
+- **Repair:** composer geometry now drives both the chat viewport inset and explicit bottom clearance on the message list. The measurement uses the visual viewport when available, preserving clearance on mobile/soft-keyboard layouts and while the composer collapses, expands, or resizes.
+- **Version:** HF clean-room Chat **1.0.73 → 1.0.74**.
+- **Source receipt:** `cd9d80f6060f0c827a5125f5db3bfa09089b8feb`; VERSION receipt `ff8c152271db02fcce125a861d11d54a9dbd9e37`.
+- **Status:** SOURCE COMPLETE / STATIC VERIFIED / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.73 grammatical-role binding + identity signature
 
 - **Live teaching evidence:** after correctly answering “What’s your name?”, the 700M route answered the follow-up “And what’s my name” with §wyrlz’s identity again instead of resolving `my` to the current USER (Kami).
