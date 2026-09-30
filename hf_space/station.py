@@ -406,6 +406,8 @@ async def send(request:Request):
     profile=body.get("profile","")
     user_profile=body.get("userProfile","")
     client_timezone=body.get("timeZone","UTC")
+    content_tag=body.get("contentTag","")
+    if content_tag not in ("","container:code","container:lyrics"):raise HTTPException(400,"Invalid content tag")
     if not isinstance(client_timezone,str) or len(client_timezone)>80:raise HTTPException(400,"Invalid timezone")
     if not isinstance(profile,str) or len(profile)>2000:raise HTTPException(400,"Invalid test profile")
     if not isinstance(user_profile,str) or len(user_profile)>2000:raise HTTPException(400,"Invalid user profile")
@@ -422,7 +424,7 @@ async def send(request:Request):
         history=[{"role":m["role"],"text":m["text"],"createdAt":m.get("createdAt")} for m in t["messages"] if m["role"] in ("user","assistant")]
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
-        t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id}})
+        t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
         s["currentId"]=tid;s["revision"]+=1
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}],"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"artifactReceipt":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context}
