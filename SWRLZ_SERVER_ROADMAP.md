@@ -1,3 +1,13 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.85 frame crop + fast-scroll compositor repair
+
+- Screenshot evidence showed 1.0.84 was close: side/bottom frame geometry rendered, but the top frame was detached/narrow because CSS `border-image` consumed the entire three-column source asset and ignored semantic column selection.
+- Replaced `border-image` with the existing 300%-width semantic frame crop plus a perimeter-only clip. This preserves code/music/misc column selection while excluding the readable center.
+- Fast-scroll screenshots also exposed a remaining glass-compositor path: later high-specificity CSS re-enabled `backdrop-filter` on assistant bodies after the earlier anti-strobe rule. Removed that residual message-surface blur and made the message surface opaque enough to avoid Chrome/Android showing a transient blurred layer before text repaint.
+- Also removed blur from assistant identity heads and user metadata chips on the scrolling message plane.
+- Version: **1.0.85**.
+- Receipt: Chat `799b3a2eb6961c345b2745db8d6da3337c092924`; VERSION `2a419ee0dad3a9b83d66aaf2958014176f15128f`.
+- Status: SOURCE COMPLETE / deployment requires explicit approval.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.84 semantic containers + returned-artifact recognition
 
 - Replaced the full-plane border background treatment with perimeter-only clipping so the decorative asset no longer paints through the readable center.
