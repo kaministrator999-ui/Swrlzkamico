@@ -1,3 +1,14 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.87 nested frame gutter tuning
+
+- Finalized the square-inside-square implementation around the existing opaque code/misc surfaces.
+- Outer artwork remains a single semantic frame image; inner UI masks its center naturally.
+- Tuned asymmetric gutters to preserve more top/bottom artwork while keeping side rails compact: desktop 26/22/24px and mobile 22/18/20px.
+- Explicit background origin/clip keeps artwork bound to the outer frame box.
+- No clip-path, border-image, or edge reconstruction remains in the active semantic-frame path.
+- Version: **1.0.87**.
+- Receipt: Chat `d1e930b533c63ed69f7df0411dd3076576c757b0`; VERSION `d5c596162284f648edbb1922a4b96f0b830637ad`.
+- Status: SOURCE COMPLETE / deployment requires explicit approval.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.86 square-inside-square semantic frames
 
 - Replaced clip-path/perimeter slicing with the simpler nested-surface geometry: the selected frame artwork is the padded outer surface and the original opaque code/misc surface sits inside it.
