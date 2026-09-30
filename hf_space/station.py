@@ -337,7 +337,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     thread["messages"].append(message)
                     g["artifactReceipt"]={"action":"REVISION_REJECTED","artifactId":artifact["id"],"reason":reason}
             else:
-                message={"id":assistant_id,"role":"assistant","text":text,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE"}}
+                assistant_tag=_container_content_tag(text)
+                message={"id":assistant_id,"role":"assistant","text":text,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE",**({"contentTag":assistant_tag} if assistant_tag else {})}}
                 thread["messages"].append(message)
                 artifact=_create_code_artifact(thread,message,request_id,text)
                 if artifact is not None:
@@ -354,6 +355,15 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 if thread:
                     thread["messages"].append({"id":assistant_id,"role":"assistant","text":"Generation failed: "+str(exc)[:240],"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED"}})
                     s["revision"]+=1
+
+def _container_content_tag(text):
+    source=str(text or "")
+    import re
+    fences=re.findall(r"```([^\n`]*)\n?[\s\S]*?```",source)
+    if not fences:return ""
+    lyric={"lyrics","lyric","song","music","verse","chorus"}
+    langs=[str(header or "").strip().lower().split()[0] if str(header or "").strip() else "code" for header in fences]
+    return "container:lyrics" if langs and all(lang in lyric for lang in langs) else "container:code"
 
 def _gap_label(ms):
     if ms is None:return None
