@@ -2063,3 +2063,12 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Ownership:** Chat reports browser timezone only; Workstation/Station owns canonical UTC message timestamps and derives elapsed facts; Brain/model receives a bounded temporal-context object and decides whether timing is relevant. Location/GPS is not required or inferred.
 - **Privacy/truth:** accept only a bounded IANA-style timezone identifier from the client, retain UTC milliseconds as the durable timing basis, derive local calendar labels server-side, and instruct the model not to mention timing mechanically when it does not help the response.
 - **Deployment:** not implicitly authorized by this feature request; source work only unless separately approved.
+
+### UPDATE FINISHED — 2026-09-29 — timezone-aware conversational timing context (Chat 1.0.66 source complete)
+
+- **Mask:** Chat reports only the browser's IANA timezone identifier with each Station send; no GPS/location data is requested. Chat version authorities are aligned at 1.0.66.
+- **Workstation/Station:** canonical message `createdAt` UTC milliseconds remain the timing source. Before accepting the new user turn, Station derives `swrlz-temporal-context-v1`: local now/date, previous user/assistant/message timestamps, role of the immediately previous message, and elapsed gaps since the previous message, last user turn, and last assistant turn with bounded semantic labels.
+- **Brain/model:** the 700M companion receives the bounded temporal object with explicit instructions to use timing naturally only when relevant, distinguish user vs assistant gaps, avoid mechanical gap mentions, and never infer physical location from timezone. The original stock route receives the same timing facts in a compact system context.
+- **History:** Station now preserves `createdAt` in model-route history objects instead of stripping timestamps before routing.
+- **Verification:** source re-read confirms timezone transport, Station derivation, history timestamps, 700M/stock cognition context, and all Chat 1.0.66 version authorities. Regression coverage was added for timezone identity and user/assistant gap derivation. Tests are committed but not claimed executed.
+- **Deployment:** not triggered; this feature request authorized implementation, not publication.
