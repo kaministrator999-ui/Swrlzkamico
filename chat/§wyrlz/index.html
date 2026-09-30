@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.80">
+  <meta name="swrlz-chat-version" content="1.0.81">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -57,7 +57,13 @@
     .assistant-body .code-block.theme-misc{--container-frame-position:100% 50%}
     .assistant-body .code-block .code-head{position:relative;z-index:1;margin:7px 9px 0;border:1px solid rgba(126,214,255,.15);border-radius:9px;background:rgba(3,19,34,.48);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
     .assistant-body .code-block pre{position:relative;z-index:1;margin:5px 9px 9px;border-radius:9px;background:rgba(1,9,18,.36);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-    @media(max-width:600px){.assistant-body .code-block::before{background-size:100% 100%}.assistant-body .code-block .code-head{margin:6px 7px 0}.assistant-body .code-block pre{margin:4px 7px 7px}}
+    @media(max-width:600px){.assistant-body .code-block::before{background-size:300% 100%}.assistant-body .code-block .code-head{margin:6px 7px 0}.assistant-body .code-block pre{margin:4px 7px 7px}}
+    /* Android/WebView scroll stability: nested backdrop-filter surfaces can be evicted/recomposited while scrolling,
+       producing the visible strobe. Keep the visual glass treatment on fixed chrome; use stable translucent message surfaces. */
+    .assistant-body,.user-bubble,.assistant-body .code-block,.assistant-body .code-block::after,.assistant-body .code-block .code-head,.assistant-body .code-block pre,.user-bubble.user-container-message,.user-bubble.user-container-message .code-block,.user-bubble.user-container-message .code-head{
+      backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+    }
+    .assistant-body,.user-bubble,.assistant-body .code-block,.user-bubble.user-container-message .code-block{transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden}
     .user-bubble.user-container-message{padding:4px!important;background:rgba(4,14,28,.32)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);overflow:visible}
     .user-bubble.user-container-message .code-block{position:relative;isolation:isolate;overflow:hidden;border:1px solid rgba(126,214,255,.38);border-radius:16px;background:linear-gradient(145deg,rgba(3,17,31,.62),rgba(12,25,48,.52));backdrop-filter:blur(18px) saturate(132%);-webkit-backdrop-filter:blur(18px) saturate(132%);box-shadow:0 12px 30px rgba(0,0,0,.3)}
     .user-bubble.user-container-message .code-block::before{content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;background-image:url("https://raw.githubusercontent.com/kaministrator999-ui/Swrlzkamico/main/file_00000000359481f6835018078d9201af.png");background-size:300% 100%;background-position:var(--container-frame-position,0% 50%);background-repeat:no-repeat;opacity:.92}
@@ -571,7 +577,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.80";
+      const SWRLZ_CHAT_VERSION = "1.0.81";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
