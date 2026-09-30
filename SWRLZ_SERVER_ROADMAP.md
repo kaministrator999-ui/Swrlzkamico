@@ -1,3 +1,14 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.84 semantic containers + returned-artifact recognition
+
+- Replaced the full-plane border background treatment with perimeter-only clipping so the decorative asset no longer paints through the readable center.
+- Preserved semantic frame routing: code → code frame, lyrics/music → music frame, structured explanatory prose → misc/artifact frame.
+- Added a styled misc response surface for long structured headings/lists instead of leaving those responses as one oversized generic assistant bubble.
+- Added bounded recent-assistant artifact echo recognition in the 700M context so code/text copied back from a recent §wyrlz response is recognized as returned assistant material rather than treated as unfamiliar third-party input.
+- Retains 1.0.82 stable in-place streaming code updates.
+- Version: **1.0.84**.
+- Receipts: Chat `fd5a83d83db4c4f0016d21b350839b3cbd5146a1`; 700M `e621a205ea928400026481a212edf3b1895f9af3`; VERSION `a5c4b0608dfb26b8c6d5423548ee9e1a0e255d8b`.
+- Status: SOURCE COMPLETE / deployment requires current explicit approval.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.83 outer Glitch Ice Dragon container frame
 
 - Confirmed `file_00000000359481f6835018078d9201af.png` as the current Glitch Ice Dragon border asset.
