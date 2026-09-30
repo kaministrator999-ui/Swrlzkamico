@@ -1,5 +1,17 @@
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.83 outer Glitch Ice Dragon container frame
 
+- Confirmed `file_00000000359481f6835018078d9201af.png` as the current Glitch Ice Dragon border asset.
+- Repositioned the decorative artwork to the outside/perimeter of the original code container rather than the readable content plane.
+- Increased the protected inner gutter so the opaque code header/pre surfaces cover the artwork center while decorative edge graphics remain visible outside them.
+- Expanded the artwork layer beyond the code-block bounds by 8px; container overflow remains visible.
+- Applied the same geometry to assistant and recognized user code/lyrics containers.
+- Retains 1.0.82's in-place streaming code updates to prevent container rebuild flicker.
+- Version: **1.0.83**.
+- Receipts: UI `192b33a679950dc1993ef00e601999dbf2d2c1da`; VERSION `d280038f2791262b2fdd3f1b333a7ea8682ce2ee`.
+- Status: SOURCE COMPLETE / TERMINAL HF DEPLOYMENT NEXT.
+
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.83 outer Glitch Ice Dragon container frame
+
 - Confirmed `file_00000000359481f6835018078d9201af.png` as the current Glitch Ice Dragon container-border asset.
 - Reworked assistant and user code containers so the artwork is a dedicated outer/perimeter layer, while the original dark code header/content surfaces are opaque readable inner layers above it.
 - Removed content-plane glass/blur from code surfaces; artwork can extend beneath the box geometrically but only the perimeter remains visible.
