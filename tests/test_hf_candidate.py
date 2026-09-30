@@ -35,6 +35,33 @@ class Candidate(unittest.TestCase):
    self.assertEqual(snap["threads"][0]["messages"][-1]["text"],"R39 test output")
    self.assertEqual(snap["threads"][0]["messages"][-1]["meta"]["modelId"],"r39")
 
+ def test_station_derives_timezone_aware_turn_gaps(self):
+  captured={}
+  def stock(payload):
+   captured.update(payload)
+   return iter([{"type":"DELTA","text":"ok"},{"type":"COMPLETED"}])
+  set_generator(lambda payload:iter([{"type":"DELTA","text":"unused"},{"type":"COMPLETE"}]),stock)
+  with TestClient(station_app) as client:
+   first={"requestId":"time-r1","threadId":"time-thread","messageId":"time-u1","assistantMessageId":"time-a1","prompt":"first","modelId":"stock","timeZone":"America/Chicago"}
+   self.assertEqual(client.post("/api/lalm_station/send",json=first).status_code,202)
+   for _ in range(100):
+    snap=client.get("/api/lalm_station/sync").json()
+    if snap["activeGeneration"] and snap["activeGeneration"]["terminal"]:break
+    time.sleep(.01)
+   second={"requestId":"time-r2","threadId":"time-thread","messageId":"time-u2","assistantMessageId":"time-a2","prompt":"second","modelId":"stock","timeZone":"America/Chicago"}
+   self.assertEqual(client.post("/api/lalm_station/send",json=second).status_code,202)
+   for _ in range(100):
+    snap=client.get("/api/lalm_station/sync").json()
+    if snap["activeGeneration"] and snap["activeGeneration"]["terminal"]:break
+    time.sleep(.01)
+   temporal=captured["temporalContext"]
+   self.assertEqual(temporal["schema"],"swrlz-temporal-context-v1")
+   self.assertEqual(temporal["timeZone"],"America/Chicago")
+   self.assertEqual(temporal["previousMessageRole"],"assistant")
+   self.assertIsNotNone(temporal["gapSinceLastUserTurn"])
+   self.assertIsNotNone(temporal["gapSinceLastAssistantTurn"])
+   self.assertIn("createdAt",captured["history"][0])
+
  def test_station_live_stream_projects_incremental_delta(self):
   def stock(_payload):
    yield {"type":"STATUS","phase":"LOADING"}
