@@ -1,3 +1,13 @@
+### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.77 self-knowledge provenance + word-boundary wrapping
+
+- **Self knowledge:** §wyrlz now has explicit authoritative identity provenance: Kami/Kamilion named her; the lineage is `Swurlz → §wyrlz`; § is used as a stylized S. The conventional “section sign” meaning is recognized without inventing “Section Wyrlz” as the name's historical expansion.
+- **Self-description behavior:** questions about §wyrlz herself now prioritize specific supported identity, role, project/runtime facts, capabilities, limitations, lineage, and relevant lore over generic AI-assistant boilerplate, while prohibiting invented biography/etymology.
+- **Typography repair:** ordinary user and assistant prose no longer uses `overflow-wrap:anywhere`; normal word boundaries are preserved, and the §wyrlz identity surfaces use `word-break:keep-all` so the crest/name is not split mid-word on narrow mobile lines.
+- **Version:** HF clean-room Chat **1.0.76 → 1.0.77**.
+- **Receipts:** self-knowledge `74eb13fde3a3aa729e7534d36a6c918b6b041eac`; wrapping/UI `391e5f4778f156f17cfbd875f6c4482520fd9054`; VERSION `b80f4538adbebe56ff28ed494f6df5f2a23881de`.
+- **Verification:** static re-read confirms provenance guard, self-description depth rule, Chat 1.0.77, normal prose wrapping, and identity no-split styling.
+- **Status:** SOURCE COMPLETE / STATIC VERIFIED / TERMINAL HF DEPLOYMENT NEXT.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.76 durable user code/lyrics containers
 
 - **User recognition:** submitted user turns are conservatively classified as code or lyrics from fenced language tags and strong structural signals. Recognized turns render in the matching Glitch Dragon container instead of a plain user bubble.
