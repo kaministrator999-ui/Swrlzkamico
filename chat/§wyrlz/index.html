@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.67">
+  <meta name="swrlz-chat-version" content="1.0.68">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -309,13 +309,13 @@
           </div>
         </section>
         <section class="settings-pane" data-settings-pane="model">
-          <h3>AI / Model</h3><p class="settings-pane-lead">Profile preferences for future LALM routing. Tier B does not pretend these knobs already alter inference.</p>
+          <h3>AI / Model</h3><p class="settings-pane-lead">Choose the inference model used by this clean-room Chat. The selected model is sent explicitly with every Station request.</p>
           <div class="setting-group">
-            <div class="setting-row"><div><div class="setting-label">Default model</div><div class="setting-help">Current clean-room Chat route is bound to the §wyrlz LALM.</div></div><div class="setting-control"><select id="settingDefaultModel" disabled><option value="LALM">§wyrlz LALM</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">Default model</div><div class="setting-help">Controls the actual Station inference route for new messages.</div></div><div class="setting-control"><select id="settingDefaultModel"><option value="700m">LFM2-700M Q4_K_M</option><option value="r39">§wyrlz R39</option><option value="stock">Original HF · LFM2-350M</option></select></div></div>
             <div class="setting-row"><div><div class="setting-label">Effort preference</div><div class="setting-help">Saved as a model preference only until the LALM routing tier consumes it.</div></div><div class="setting-control"><select id="settingEffort"><option value="auto">Adaptive</option><option value="fast">Fast</option><option value="deep">Deep</option></select></div></div>
             <div class="setting-row"><div><div class="setting-label">Response length</div><div class="setting-help">Your preferred answer depth; persistence does not itself enforce generation length.</div></div><div class="setting-control"><select id="settingResponseLength"><option value="adaptive">Adaptive</option><option value="concise">Concise</option><option value="expanded">Expanded</option></select></div></div>
           </div>
-          <div class="settings-note"><strong>Truth boundary:</strong> these model preferences are inspectable account data, not a claim that the active LALM runtime already honors them.</div>
+          <div class="settings-note"><strong>Routing truth:</strong> Default model is live inference routing. Effort and response-length preferences remain profile preferences until their runtime consumers are wired.</div>
         </section>
         <section class="settings-pane" data-settings-pane="you">
           <h3>You</h3><p class="settings-pane-lead">Durable user profile details stay separate from creative lore. Saving here updates the existing account profile authority; Tier C does not yet inject these fields into LALM inference.</p>
@@ -551,7 +551,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.67";
+      const SWRLZ_CHAT_VERSION = "1.0.68";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -577,7 +577,7 @@
       let settingsDirty=false;
       const settingsState={
         general:{enterToSend:true},
-        model:{effort:"auto",responseLength:"adaptive"},
+        model:{defaultModel:"700m",effort:"auto",responseLength:"adaptive"},
         user:{displayName:"",pronouns:"",role:"",communicationStyle:"adaptive",outputStyle:"adaptive"},
         companion:{name:"§wyrlz",title:"Glitch Dragon Kompanion",form:"Glitch Dragon",pronouns:"",warmth:"adaptive",directness:"adaptive",humor:"adaptive",loreDensity:"adaptive"},
         ui:{density:"compact",glass:"standard",motion:"system",fontScale:"1",highContrast:false,reducedTransparency:false}
@@ -1291,7 +1291,7 @@
           transportCamera("before-fetch");
           let response;
           try{
-            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,profileId:"LALM",ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})()})});
+            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,modelId:String(settingsState.model.defaultModel||"700m"),profileId:"LALM",ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})()})});
             transportCamera("fetch-response",{status:response.status,ok:response.ok});
           }catch(networkError){
             transportCamera("fetch-network-failed",{error:String(networkError?.message||networkError)});
@@ -1442,6 +1442,7 @@
       const loreSaveButton = document.getElementById("loreSaveButton");
       const settingEnterSend = document.getElementById("settingEnterSend");
       const settingDensity = document.getElementById("settingDensity");
+      const settingDefaultModel = document.getElementById("settingDefaultModel");
       const settingEffort = document.getElementById("settingEffort");
       const settingResponseLength = document.getElementById("settingResponseLength");
       const settingGlass = document.getElementById("settingGlass");
@@ -1449,11 +1450,12 @@
       const settingFontScale = document.getElementById("settingFontScale");
       const settingHighContrast = document.getElementById("settingHighContrast");
       const settingReducedTransparency = document.getElementById("settingReducedTransparency");
-      const settingsControlIds=["settingEnterSend","settingDensity","settingEffort","settingResponseLength","settingGlass","settingMotion","settingFontScale","settingHighContrast","settingReducedTransparency"];
+      const settingsControlIds=["settingEnterSend","settingDensity","settingDefaultModel","settingEffort","settingResponseLength","settingGlass","settingMotion","settingFontScale","settingHighContrast","settingReducedTransparency"];
       const profileControlIds=["settingDisplayName","settingUserPronouns","settingUserRole","settingCommunicationStyle","settingOutputStyle","settingCompanionName","settingCompanionTitle","settingCompanionForm","settingCompanionPronouns","settingCompanionWarmth","settingCompanionDirectness","settingCompanionHumor","settingCompanionLoreDensity"];
       const proposalPolicyDefaults={USER_PROFILE:"ASK",COMPANION_PROFILE:"ASK",USER_FACT:"ASK",USER_LORE:"ASK",COMPANION_SELF_LORE:"ASK",SHARED_LORE:"ASK",SHARED_RAPPORT:"ASK"};
       const applySettingsPreview = () => {
         settingsState.general.enterToSend=!!settingEnterSend.checked;
+        settingsState.model.defaultModel=["700m","r39","stock"].includes(settingDefaultModel.value)?settingDefaultModel.value:"700m";
         settingsState.model.effort=settingEffort.value;
         settingsState.model.responseLength=settingResponseLength.value;
         settingsState.ui.density=settingDensity.value;
@@ -1498,6 +1500,7 @@
         settingCompanionLoreDensity.value=["adaptive","minimal","balanced","mythic"].includes(companion.loreDensity)?companion.loreDensity:"adaptive";
         settingEnterSend.checked=general.enterToSend!==false;
         settingDensity.value=["compact","comfortable"].includes(ui.density)?ui.density:"compact";
+        settingDefaultModel.value=["700m","r39","stock"].includes(model.defaultModel)?model.defaultModel:"700m";
         settingEffort.value=["auto","fast","deep"].includes(model.effort)?model.effort:"auto";
         settingResponseLength.value=["adaptive","concise","expanded"].includes(model.responseLength)?model.responseLength:"adaptive";
         settingGlass.value=["standard","low"].includes(ui.glass)?ui.glass:"standard";
