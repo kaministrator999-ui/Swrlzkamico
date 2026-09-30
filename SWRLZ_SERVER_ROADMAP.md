@@ -2056,3 +2056,10 @@ If module authorities disagree with this snapshot, module-owned authorities win 
 - **Version reconciliation:** page meta, `SWRLZ_CHAT_VERSION`, and `chat/§wyrlz/VERSION.txt` all read 1.0.65. This also repairs the previously stale page-local camera constant that still identified itself as 1.0.59.
 - **Verification:** source re-read confirms the stream endpoint, stream consumer handoff, timestamp formatting, server timestamp ownership, 1.0.65 authorities, and HF packaging includes the clean-room Chat. Regression coverage was added for incremental stream projection and timestamps. Tests are committed but not claimed executed before the deployment workflow validation runs.
 - **Deployment:** user explicitly approved deployment in the same request; proceed through the guarded `main:.deploy/HF_SPACE_REQUEST.txt` path.
+
+### UPDATE STARTED — 2026-09-29 — timezone-aware conversational timing context
+
+- **Requested outcome:** let §wyrlz understand the user's local conversational time, elapsed gaps between turns, and the timing of its own/user messages so temporal references can be natural when useful.
+- **Ownership:** Chat reports browser timezone only; Workstation/Station owns canonical UTC message timestamps and derives elapsed facts; Brain/model receives a bounded temporal-context object and decides whether timing is relevant. Location/GPS is not required or inferred.
+- **Privacy/truth:** accept only a bounded IANA-style timezone identifier from the client, retain UTC milliseconds as the durable timing basis, derive local calendar labels server-side, and instruct the model not to mention timing mechanically when it does not help the response.
+- **Deployment:** not implicitly authorized by this feature request; source work only unless separately approved.
