@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.83">
+  <meta name="swrlz-chat-version" content="1.0.84">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -62,17 +62,22 @@
     }
     .assistant-body .code-block::before,
     .user-bubble.user-container-message .code-block::before{
-      content:"";position:absolute;z-index:0;inset:-8px;pointer-events:none;
-      background-image:var(--frame-image);background-size:300% 100%;
-      background-position:var(--frame-position);background-repeat:no-repeat;
+      content:"";position:absolute;z-index:3;inset:-8px;pointer-events:none;
+      border:18px solid transparent;
+      border-image-source:var(--frame-image);
+      border-image-slice:16% 5.333333% fill;
+      border-image-width:18px;
+      border-image-outset:0;
+      border-image-repeat:stretch;
+      clip-path:polygon(0 0,100% 0,100% 100%,0 100%,0 0,18px 18px,18px calc(100% - 18px),calc(100% - 18px) calc(100% - 18px),calc(100% - 18px) 18px,18px 18px);
       opacity:1;
     }
     .assistant-body .code-block.theme-code,
-    .user-bubble.user-container-message .theme-code{--frame-position:0% 50%}
+    .user-bubble.user-container-message .theme-code{--frame-position:0% 50%;--frame-column:0}
     .assistant-body .code-block.theme-lyrics,
-    .user-bubble.user-container-message .theme-lyrics{--frame-position:50% 50%}
+    .user-bubble.user-container-message .theme-lyrics{--frame-position:50% 50%;--frame-column:1}
     .assistant-body .code-block.theme-misc,
-    .user-bubble.user-container-message .theme-misc{--frame-position:100% 50%}
+    .user-bubble.user-container-message .theme-misc{--frame-position:100% 50%;--frame-column:2}
     .assistant-body .code-block::after{display:none}
     .assistant-body .code-block .code-head,
     .user-bubble.user-container-message .code-head{
@@ -89,6 +94,13 @@
       background:rgb(1,9,18);
       backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
     }
+    .assistant-body .prose-container .misc-surface{
+      position:relative;z-index:2;padding:14px 16px;
+      border:1px solid rgba(126,214,255,.18);border-radius:8px 8px 11px 11px;
+      background:rgb(3,19,34);
+    }
+    .assistant-body .prose-container .message-text{margin:0 0 10px}
+    .assistant-body .prose-container .message-text:last-child{margin-bottom:0}
     .user-bubble.user-container-message{
       padding:0!important;background:transparent!important;
       backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
@@ -99,7 +111,6 @@
     }
     @media(max-width:600px){
       .assistant-body .code-block,.user-bubble.user-container-message .code-block{padding:17px}
-      .assistant-body .code-block::before,.user-bubble.user-container-message .code-block::before{background-size:300% 100%}
     }
     .user-message{grid-template-columns:minmax(0,1fr) 30px;grid-template-areas:"identity avatar" "bubble avatar";column-gap:8px}
     .user-meta{justify-self:end;padding:4px 7px;border:1px solid rgba(126,214,255,.18);border-radius:8px;background:rgba(5,22,38,.46);backdrop-filter:blur(10px);text-shadow:0 1px 3px rgba(0,0,0,.85)}
@@ -606,7 +617,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.83";
+      const SWRLZ_CHAT_VERSION = "1.0.84";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -964,6 +975,19 @@
           if(cursor<input.length)parent.appendChild(document.createTextNode(input.slice(cursor)));
         };
                 const appendText=value=>{if(!value)return;const span=document.createElement("div");span.className="message-text";appendInlineFormatting(span,value);container.appendChild(span);};
+        const wrapMiscResponse=()=>{
+          const children=[...container.children];
+          if(!children.length||children.some(node=>node.classList?.contains("code-block")))return;
+          const meaningful=source.trim();
+          const structured=/^(?:#{1,6}\s|[-*]\s|\d+[.)]\s)|\n\s*(?:#{1,6}\s|[-*]\s|\d+[.)]\s)/m.test(meaningful);
+          if(!structured||meaningful.length<180)return;
+          const block=document.createElement("section");block.className="code-block theme-misc prose-container";block.dataset.containerTheme="misc";
+          const head=document.createElement("div");head.className="code-head";
+          const label=document.createElement("span");label.textContent="Response";
+          head.appendChild(label);block.appendChild(head);
+          const surface=document.createElement("div");surface.className="misc-surface";
+          children.forEach(node=>surface.appendChild(node));block.appendChild(surface);container.appendChild(block);
+        };
         const appendCode=(header,body,provisional=false)=>{
           const info=parseFenceInfo(header);const language=info.language;
           const raw=String(body||"").replace(/\n$/,"");
@@ -993,6 +1017,7 @@
           appendCode(open[1],open[2],true);
         }else appendText(tail);
         if(!container.childNodes.length)appendText(source);
+        wrapMiscResponse();
         enhanceCodeArtifacts(container);bindCodeViewState(container);
       };
       const captureCodeViewState=()=>{
