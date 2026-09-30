@@ -1,3 +1,18 @@
+### UPDATE FINISHED — 2026-09-29 — HF deployment-branch Code Truth/web-UI programming follow-through
+
+- **User correction / authority:** current §wyrlz application deployment is Hugging Face, not Vercel, and current deployable source is branch `feature/hf-space-manual-deploy` as used by the **Manual Hugging Face Space Deploy** workflow.
+- **HF programming router:** `hf_space/brain_programming.py` now recognizes broader webpage/UI/debug vocabulary and owns bounded `SWRLZ_CODE_TRUTH v1` offline-first programming policy covering syntax/structure, symbols/scope/types/contracts, control/data/state flow, repair re-verification, HTML/CSS/JS DOM/layout/responsive/accessibility/security/performance checks, chat-interface invariants, and external-provider truth boundaries. Commit `697464deacd0b130e0774116254b547df599dacd`.
+- **700M route:** `hf_space/lfm2_700m_engine.py` now injects the Code Truth policy only for programming turns while preserving the existing 8192 context / 2048 output budget and complete-code delivery behavior. Commit `9d14fb9b607bd9b778f366e4dd7754e9ef5d9fb5`.
+- **R39 route:** HF staged `accepted_runtime/lalm/r39_engine.py` now pins and executes R39 v91 Code Truth overlay commit `a7dbee3dcc68e7a9f677865337a91c4cc6821a3c`; accepted runtime reports LALM `2.1.116-hot-offline-code-truth-web-ui-v91`. Activation commits `ba49390942e113fc55f9b3256191ef0ee9f69f15` and indentation correction `4d53fda62201d3736d65a4f64969fc77536122f4`.
+- **Accepted lineage:** `accepted_runtime/accepted.json` now records runtime v91 source/overlay provenance. Commit `9cc3f667d1b73ae05adfd501020752ee1b9b0d08`.
+- **HF deployment gate:** `.github/workflows/manual-hf-space.yml` now refuses package validation if the HF Code Truth policy, 700M consumption hook, or staged R39 v91 overlay wiring is missing. Commit `11b3452d972d263fcafad90d5620f4af9e3af27f`.
+- **Governance correction:** branch `§wyrlz_§tart.md` now explicitly declares Vercel deprecated for current application deployment and Hugging Face as current authority. `SWRLZ_HOTFIX_RULES.md` now names `feature/hf-space-manual-deploy` + `.github/workflows/manual-hf-space.yml` as the canonical HF deployment path. Commits `ca81c63e630880a0ec9e1acbf55b9d89e5a316ec` and `e492578f01677a57c2ea9237b242f5149ad331f4`.
+- **Vercel fail-closed:** historical Vercel production and cleanup workflows on the HF branch are hard-disabled and exit with deprecation errors rather than mutating Vercel. Commits `c13ecac4339399423dae02b6164d7ca7b718652a` and `5d9f362b095ebefb3e60bb06b947baae823c69c1`.
+- **Programming architecture:** HF branch copy of `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md` synchronized through executable v91 behavior. Commit `b920af24105245b0b2c2d908c54081d0ca763e61`.
+- **Preserved control:** the untouched original 350M route remains the speed/control model; these programming-policy changes target §wyrlz R39 + the 700M companion route rather than contaminating the stock comparison baseline.
+- **Verification truth:** branch source/static wiring re-read after mutation. No Hugging Face workflow dispatch or Space publication was performed in this checkpoint.
+- **Status:** HF BRANCH SOURCE COMPLETE / DEPLOY GUARDS ALIGNED / LIVE HF ACCEPTANCE PENDING.
+
 ### UPDATE STARTED — 2026-09-28 — HF Chat 1.0.55 acceptance + 700M context repair
 
 - **Observed live defects:** `kamiloki/Swyrlz` / `miloki-swyrlz.hf.space` still presents the pre-acceptance visual state and normal short user turns can fail with `Current prompt/profile context exceeds the 700M input budget`.
