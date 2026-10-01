@@ -1,3 +1,29 @@
+## UPDATE FINISHED — 2026-10-01 — 700M round-two coding preservation + regression reliability v94
+
+**Evidence basis:** two October 1 700M coding evaluations. The second round showed 0/5 tasks fully satisfying all requirements after one correction, with local repairs commonly regressing names/configuration or missing original constraints. The earlier round showed the same multi-requirement weakness despite some successful narrow fixes.
+
+**Source changes**
+- `feature/hf-space-manual-deploy:hf_space/brain_programming.py`
+  - corrections now snapshot and preserve interface/configuration compatibility surfaces;
+  - explicit MUST/MUST-NOT/change-only constraints are hard boundaries;
+  - correction verification re-runs the original requirement set, not only the newest failing case;
+  - adds bounded domain checks for async fetch ordering/error identity, incremental NDJSON buffering, CSS negative-position constraints, and workflow/config preservation;
+  - explanations are explicitly non-verifying: behavior claims must align with the returned artifact.
+- `feature/hf-space-manual-deploy:hf_space/lfm2_700m_engine.py`
+  - carries the preservation/regression gate directly into the active 700M system prompt;
+  - reinforces async JavaScript, streaming-buffer, CSS/layout, and repository-workflow invariants.
+
+**Important boundary**
+- This improves inference guidance; it does not create an executable code-test tool loop. The evaluations themselves recommend syntax/behavior execution and regression reruns; that remains the stronger next architecture tier.
+- No fresh HF deployment or post-v94 acceptance run is claimed by this event.
+
+**Versions**
+- Repository Work: `1.0.36`
+- LALM Engine: `2.1.119` — `2.1.119-hf-coding-preservation-regression-v94`
+- Server Runtime unchanged.
+
+**Truth:** SOURCE COMPLETE / STATIC STRUCTURAL RE-READ PENDING FINAL RECEIPT / DEPLOYMENT NOT REQUESTED / LIVE ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-01 — HF Workstation CPU prefill + 700M acceptance reliability v93
 
 **Scope:** improve the current HF candidate's single-inference CPU use, response constraint reliability, and Workstation generation observability without claiming multi-generation CPU redistribution or live activation.
