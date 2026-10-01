@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.116
-REVISION=2.1.116-hot-offline-code-truth-web-ui-v91
+VERSION=2.1.117
+REVISION=2.1.117-hf-700m-reliability-latency-v92
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
