@@ -1,3 +1,18 @@
+### UPDATE CHECKPOINT — 2026-09-30 — HF Chat usability + 700M reliability repair
+
+- **User authorization:** implement the findings from five guest-session Chat tasks across desktop/mobile: reading-position/auto-follow, composer footprint, pinned-code behavior, Markdown rendering, instruction following, response latency, Stop control, accessibility, and disconnected settings.
+- **Architecture reconciliation:** clean-room `/chat/§wyrlz` remains the Mask/UI owner; `hf_space/station.py` owns HF Station generation lifecycle/artifact persistence; `hf_space/brain_programming.py` owns bounded programming/artifact intent; `hf_space/lfm2_700m_engine.py` owns the independent 700M inference route. No new competing owner was introduced.
+- **Chat source:** deployment branch Chat **1.0.87 → 1.0.88**. Added follow-latest behavior plus a visible **Jump to latest** affordance, reading-position preservation when composer geometry changes, compact collapse that keeps the message field available, smaller mobile composer growth, larger Send target, and a visible Stop control during active generation.
+- **Rendering/artifacts:** ordinary headings and ordered/unordered lists now render as safe DOM structure instead of raw Markdown; code remains fenced/containerized. The pinned rail defaults collapsed and is no longer sticky over replies. New code artifacts are no longer auto-pinned, and pinned-artifact revisions require an explicit artifact/code/file continuation reference rather than treating any later coding task as a revision.
+- **Generation lifecycle:** HF Station now exposes bounded user cancellation; the worker observes `cancelRequested` between generation events and terminates as `CANCELLED` without committing partial assistant text.
+- **700M reliability:** reduced the regressed 32K/4K context-output configuration back to an 8K/2K bounded route, added thread-local user-name resolution so explicit conversation identity can outrank unrelated built-in Kami provenance, added exact numbered-step routing, and strengthened categorical Python/code-example verification guidance.
+- **Accessibility/settings:** hidden settings sheet is now inert while closed; disconnected effort/response-length controls are hidden until they have live generation consumers.
+- **Versions:** Repository Work **1.0.33 → 1.0.34**; Web Chat **1.5.86 → 1.5.87**; LALM Engine **2.1.116 → 2.1.117** revision `2.1.117-hf-700m-reliability-latency-v92`. Server Runtime remains **2.3.308** because no Server release/deployment has occurred. Runtime Manifest remains **152**.
+- **Source receipts:** Chat usability `8910515a4c098810c1b91cd24462764d5a031e65`; artifact routing `fa428e89dd0d9997bfb39c512b869de1c2d1d108`; Station cancellation/artifact behavior `7372773d5b9aea6fee295b1d8f85fb7b649e78f3`; 700M reliability/latency `acf0790ef0479d8337abf5f47ca4eada27284ae6`.
+- **Verification truth:** SOURCE COMPLETE / STRUCTURAL RE-READ PENDING FINAL DEPLOY CANDIDATE CHECK. No live HF claim is made from source mutation alone.
+- **Deployment state:** NOT YET TRIGGERED. Current HF contract requires the guarded request-file deployment path; live desktop/mobile and the five reported task regressions remain acceptance targets after deployment.
+- **Status:** SOURCE REPAIR COMPLETE / VERSION + ROADMAP RECONCILED / HF DEPLOYMENT + LIVE ACCEPTANCE PENDING.
+
 ### UPDATE FINISHED — 2026-09-29 — LALM v91 offline Code Truth + local web/UI engineering
 
 - **User authorization:** ensure the coding/web-design improvements are implemented on the runtime branch required by §tart and follow the Hugging Face project authority rather than remaining documentation-only on main.
