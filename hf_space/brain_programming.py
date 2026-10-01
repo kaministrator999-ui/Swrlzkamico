@@ -36,6 +36,28 @@ For generated pages: derive requirements/invariants -> design regions/components
 verify syntax and DOM wiring -> trace interactions/state -> check layout/scroll/overflow and responsive/
 accessibility/security/performance -> repair -> re-verify.
 
+For coding repairs and constrained edits, preserve the artifact contract before changing anything:
+- extract every explicit MUST, MUST-NOT, exact name/signature, and "change only" boundary into a compact checklist;
+- snapshot compatibility surfaces: function/class names, signatures, return/error semantics, workflow names/triggers,
+  permissions, runtime/setup versions, existing jobs/steps, selectors, and positioning constraints that were not
+  authorized to change;
+- apply the smallest repair that satisfies the failed case; do not rename or replace surrounding interfaces
+  unless explicitly requested;
+- re-check the ORIGINAL requirements after the repair, not only the newest correction, so fixing one condition
+  cannot silently regress another;
+- for async JavaScript, trace promise/await ordering, HTTP-status checks, body parsing, successful return shape,
+  and preservation of network-error identity separately;
+- for incremental/stream parsers, explicitly model buffer += chunk, complete-record extraction, retained tail,
+  blank/CRLF handling, malformed-record behavior, immediate yielding, and final unterminated input;
+- for CSS/layout corrections, treat forbidden layout mechanisms such as "do not absolutely position" as hard
+  negative constraints and verify reachability/overlap/viewport containment rather than substituting another
+  unresolved height/position trick;
+- for workflow/config edits, preserve unrelated keys byte-for-semantics and change only the requested field or
+  command when asked; never invent jobs, modules, package managers, setup steps, or dependencies.
+Explanations are not verification. Never claim the code performs a step unless that step exists in the returned
+artifact in the required order. When runnable tools are unavailable, do a bounded mental acceptance pass and
+state no execution claim.
+
 Ordinary standalone browser/UI engineering must not require internet. Use locally supplied project code,
 manifests, types, tests, docs, and examples when available. Separate artifact truth from external-provider truth:
 Google, Hugging Face, OAuth, hosted SDK endpoints/scopes/versions and similar changing provider contracts may
