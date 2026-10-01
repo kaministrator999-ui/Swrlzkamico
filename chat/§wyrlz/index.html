@@ -74,6 +74,52 @@
     .assistant-body .code-block.theme-misc,
     .user-bubble.user-container-message .theme-misc{--frame-position:50% 50%}
     .assistant-body .code-block::after{display:none}
+    /* Code frame composition: the artwork owns the frame; language and tools float in its top gutter. */
+    .assistant-body .code-block.theme-code,
+    .user-bubble.user-container-message .code-block.theme-code{
+      padding:58px 30px 30px;
+    }
+    .assistant-body .code-block.theme-code .code-head,
+    .user-bubble.user-container-message .code-block.theme-code .code-head{
+      position:absolute;z-index:3;left:30px;right:30px;top:17px;
+      height:34px;margin:0;padding:0;
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+      border:0;background:transparent;
+    }
+    .assistant-body .code-block.theme-code .code-head>span,
+    .user-bubble.user-container-message .code-block.theme-code .code-head>span{
+      display:inline-flex;align-items:center;min-height:32px;padding:0 12px;
+      border:1px solid rgba(126,214,255,.24);border-radius:10px;
+      background:rgb(3,19,34);
+    }
+    .assistant-body .code-block.theme-code .code-head-actions,
+    .user-bubble.user-container-message .code-block.theme-code .code-head-actions{
+      display:flex;gap:6px;margin-left:auto;
+    }
+    .assistant-body .code-block.theme-code .copy-code,
+    .assistant-body .code-block.theme-code .download-code,
+    .user-bubble.user-container-message .code-block.theme-code .copy-code,
+    .user-bubble.user-container-message .code-block.theme-code .download-code{
+      min-height:32px;padding:0 10px;
+      background:rgba(3,19,34,.92);
+    }
+    .assistant-body .code-block.theme-code pre,
+    .user-bubble.user-container-message .code-block.theme-code pre{
+      margin:0;
+    }
+    @media(max-width:600px){
+      .assistant-body .code-block.theme-code,
+      .user-bubble.user-container-message .code-block.theme-code{padding:56px 26px 28px}
+      .assistant-body .code-block.theme-code .code-head,
+      .user-bubble.user-container-message .code-block.theme-code .code-head{left:26px;right:26px;top:16px}
+      .assistant-body .code-block.theme-code .code-head>span,
+      .user-bubble.user-container-message .code-block.theme-code .code-head>span{padding:0 9px}
+      .assistant-body .code-block.theme-code .copy-code,
+      .assistant-body .code-block.theme-code .download-code,
+      .user-bubble.user-container-message .code-block.theme-code .copy-code,
+      .user-bubble.user-container-message .code-block.theme-code .download-code{padding:0 8px}
+    }
+
     .assistant-body .code-block .code-head,
     .user-bubble.user-container-message .code-head{
       position:relative;z-index:2;margin:0;padding:8px 10px;
