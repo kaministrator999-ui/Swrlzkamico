@@ -1,3 +1,22 @@
+## UPDATE FINISHED — 2026-10-01 — Student → Teacher independent-evaluator ownership contract
+
+**Scope:** make the long-term LALM learning/verification ownership explicit before building a future evaluator loop.
+
+- Current 700M is the **student**: generated answers are candidate artifacts, not authoritative grades.
+- Self-review remains useful pre-submission reasoning, but model confidence/explanation is not an acceptance receipt.
+- Corrections should teach reusable intent → requirements → implementation → observed-behavior relationships.
+- A future **teacher** LALM may explain, critique, propose tests, and teach other agents, but it does not become the sole grader of its own work.
+- Independent evidence — deterministic fixtures/tests, compiler/runtime/browser evidence, repository contracts, and grounded engineering review — owns final acceptance.
+- The canonical programming architecture now records this separation between producer/teacher and evaluator ownership.
+
+**Implementation boundary:** this tier is an architecture/governance correction only. Attempts to duplicate the rule into the HF candidate prompt policy were blocked by connector safety checks, so no executable LALM behavior change is claimed here.
+
+**Versions**
+- Repository Work: `1.0.37`
+- LALM Engine remains `2.1.119`; executable engine behavior did not change.
+
+**Truth:** ARCHITECTURE CONTRACT COMPLETE / SOURCE BEHAVIOR UNCHANGED / DEPLOYMENT NOT REQUIRED.
+
 ## UPDATE FINISHED — 2026-10-01 — 700M round-two coding preservation + regression reliability v94
 
 **Evidence basis:** two October 1 700M coding evaluations. The second round showed 0/5 tasks fully satisfying all requirements after one correction, with local repairs commonly regressing names/configuration or missing original constraints. The earlier round showed the same multi-requirement weakness despite some successful narrow fixes.
