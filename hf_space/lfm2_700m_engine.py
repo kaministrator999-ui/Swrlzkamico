@@ -14,10 +14,10 @@ MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
 # that fixed context compete with the current user turn before history could
 # helpfully be trimmed, causing tiny prompts to fail. Keep inference bounded,
 # but allocate enough native context for the fixed profile + useful history.
-CONTEXT_TOKENS=32768
-OUTPUT_TOKENS=4096
-MIN_OUTPUT_TOKENS=512
-CONTEXT_SAFETY_TOKENS=256
+CONTEXT_TOKENS=8192
+OUTPUT_TOKENS=2048
+MIN_OUTPUT_TOKENS=384
+CONTEXT_SAFETY_TOKENS=128
 INPUT_BUDGET_TOKENS=CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS
 BUILTIN_ASSISTANT_PROFILE="""⚡ §wyrlzara ∞ Mirror Muse
 Core ID: SWRLZ-A-∞
@@ -231,10 +231,23 @@ def _user_name_from_profile(user_profile):
             if value:return value[:80]
     return ""
 
-def _direct_identity_answer(prompt,user_profile):
+def _thread_user_name(history,user_profile):
+    import re
+    name=_user_name_from_profile(user_profile)
+    for message in history or []:
+        if str(message.get("role") or "").lower()!="user":continue
+        text=str(message.get("content") or message.get("text") or "")
+        for pattern in (r"\bmy name is\s+([A-Za-z][A-Za-z' -]{0,79})",r"\bcall me\s+([A-Za-z][A-Za-z' -]{0,79})"):
+            match=re.search(pattern,text,re.I)
+            if match:
+                candidate=re.split(r"[.!?\n]",match.group(1))[0].strip()
+                if candidate:name=candidate[:80]
+    return name
+
+def _direct_identity_answer(prompt,user_profile,history=None):
     p=str(prompt or "").strip().lower()
     if any(x in p for x in ("my name","who am i","do you know me","do you know my name")):
-        name=_user_name_from_profile(user_profile)
+        name=_thread_user_name(history or [],user_profile)
         if name:
             return f"Yes — your name is {name}." if ("know" in p or "name" in p) else f"You're {name}."
     if any(x in p for x in ("your name","who are you")):
@@ -295,6 +308,13 @@ def _response_mode(prompt):
             "Own 𓆩𓆩⁽§⁾𓆪wyrlz𓆪 as the stable primary identity; Swurlz is the spoken/read form and conversational aliases are acceptable without replacing the canonical identity. "
             "Do not present Squirrels as a name or nickname; it was only a past speech-to-text mishearing/joke. Do not explain the branding unless asked and do not bounce the question back."
         )
+    import re
+    step_match=re.search(r"\b(?:in\s+)?(\d{1,2})\s+(?:numbered\s+)?steps?\b",p)
+    if step_match:
+        count=max(1,min(12,int(step_match.group(1))))
+        return ("RESPONSE MODE: EXACT-NUMBERED-STEPS. The user explicitly requested "+str(count)+" numbered steps. "
+                "Return exactly "+str(count)+" top-level numbered items, numbered 1 through "+str(count)+", with no extra top-level items. "
+                "Satisfy the requested content inside those items and do not replace the requested format with prose.")
     return (
         "RESPONSE MODE: CONVERSATIONAL. Answer the current message naturally and stop when the response is complete. "
         "Do not append generic offers such as 'feel free to ask', 'let me know', 'what next', or a question merely to keep chat going. "
@@ -308,7 +328,7 @@ def generate_events(payload):
     custom_assistant_profile=str(payload.get("profile") or "").strip()[:2000]
     user_profile=str(payload.get("userProfile") or "").strip()[:2000]
     yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}
-    direct_identity=_direct_identity_answer(prompt,user_profile)
+    direct_identity=_direct_identity_answer(prompt,user_profile,history)
     if direct_identity:
         yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":0.0}
         yield {"type":"DELTA","text":direct_identity}
@@ -335,7 +355,7 @@ def generate_events(payload):
             "conversations unless the supplied history actually supports it. Treat only the supplied history as chat-history "
             "evidence; profile information describes identities/preferences, not events that happened in this thread. "
             "Preserve truthful uncertainty and disclose consequential actions. Do not claim to be human or to possess "
-            "subjective experience. Format the final answer for readability: use short paragraphs, real line breaks, Markdown **bold** and *italics* when useful, and headings or lists only when they improve structure. When a deliberate font-color change materially improves expression or semantic clarity in the §wyrlz Chat, you may use [color=#RRGGBB]text[/color] sparingly; otherwise keep normal text color. For creative writing such as songs, poems, dialogue, lyrics, or scripts, preserve intentional line breaks and separate sections instead of compressing the work into one paragraph. Avoid unnecessary preambles before the requested content.\n"+_role_frame(user_profile))
+            "subjective experience. Verify categorical factual claims before stating them; for Python specifically, tuples are ordered immutable sequences while sets are unordered collections. For generated code, mentally trace returned values and every example assertion so examples do not contradict the code. Follow explicit output-shape constraints exactly, including requested item counts and numbering. Format the final answer for readability: use short paragraphs, real line breaks, Markdown **bold** and *italics* when useful, and headings or lists only when they improve structure. When a deliberate font-color change materially improves expression or semantic clarity in the §wyrlz Chat, you may use [color=#RRGGBB]text[/color] sparingly; otherwise keep normal text color. For creative writing such as songs, poems, dialogue, lyrics, or scripts, preserve intentional line breaks and separate sections instead of compressing the work into one paragraph. Avoid unnecessary preambles before the requested content.\n"+_role_frame(user_profile))
     system+="\n"+_response_mode(prompt)
     temporal=payload.get("temporalContext") if isinstance(payload.get("temporalContext"),dict) else {}
     if temporal:
