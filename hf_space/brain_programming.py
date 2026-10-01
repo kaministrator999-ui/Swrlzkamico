@@ -124,9 +124,12 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     else:
         change="create" if not pins else "feature"
 
-    continuation=bool(pins) and not new_project and (
-        any(x in p for x in _CONTINUATION) or change in {"fix","refactor","feature"}
+    explicit_reference=any(x in p for x in _CONTINUATION) or any(
+        _norm((value.get("path") or value.get("file") or "") if isinstance(value,dict) else value) in p
+        for item in pins for value in (item.get("files") or [])
+        if _norm((value.get("path") or value.get("file") or "") if isinstance(value,dict) else value)
     )
+    continuation=bool(pins) and not new_project and explicit_reference
     target=_pick_artifact_target(text,pins) if continuation else None
     artifact_id=str((target or {}).get("artifactId") or "")
     target_message_id=str((target or {}).get("messageId") or "")
