@@ -285,7 +285,10 @@ def _response_prose(text):
 
 def _run(key,request_id,model_id,payload,assistant_id):
     with _lock:
-        s=_sessions[key];g=s["activeGeneration"];g["phase"]="GENERATING";g["status"].append({"phase":"GENERATING"})
+        s=_sessions[key];g=s["activeGeneration"];g["phase"]="GENERATING"
+        g["startedAtUnixMs"]=int(time.time()*1000)
+        g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
+        g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation"})
     try:
         if model_id=="r39" and _generate is None:raise RuntimeError("R39 generator is not installed")
         if model_id=="stock" and _stock_generate is None:raise RuntimeError("Original HF generator is not installed")
@@ -318,6 +321,14 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     intent=event.get("intent")
                     if isinstance(intent,dict):g["programmingIntent"]=copy.deepcopy(intent)
                     g["status"].append({"seq":g["lastSeq"],"phase":"PROGRAMMING_INTENT","reason":""})
+                elif kind=="RESOURCE":
+                    g["resourcePlan"]={
+                        "cpuCapacity":int(event.get("cpuCapacity") or 1),
+                        "decodeThreads":int(event.get("decodeThreads") or 1),
+                        "batchThreads":int(event.get("batchThreads") or 1),
+                        "maxResponseTokens":int(event.get("maxResponseTokens") or 0),
+                    }
+                    g["status"].append({"seq":g["lastSeq"],"phase":"RESOURCE_ALLOCATED","reason":"Workstation inference budget active"})
                 else:g["status"].append({"seq":g["lastSeq"],"phase":str(event.get("phase") or kind),"reason":str(event.get("reason") or "")[:200]})
             if kind=="FAILED":raise RuntimeError(str(event.get("reason") or "Generation failed"))
             if kind in ("COMPLETE","COMPLETED"):completed=True
@@ -462,7 +473,7 @@ async def send(request:Request):
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED"}],"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"artifactReceipt":None}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"queueWaitMs":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"artifactReceipt":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
