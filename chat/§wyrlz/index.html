@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.87">
+  <meta name="swrlz-chat-version" content="1.0.88">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -342,6 +342,16 @@
     @media(prefers-reduced-motion:reduce){body:not(.motion-full) .work-shade,body:not(.motion-full) .work-surface,body:not(.motion-full) .message-evidence summary::before{transition:none!important}}
     @media(max-width:760px){.work-surface{width:100vw}.work-surface-button{padding:4px 6px}.work-surface-button .work-label{display:none}.top-model{display:none}.message-evidence{margin-left:38px}}
 
+    /* Chat usability pass 1.0.88 */
+    .jump-latest{position:fixed;z-index:5;right:16px;bottom:calc(var(--composer-visible-height,70px) + 12px);min-height:38px;padding:0 13px;border:1px solid rgba(56,232,255,.38);border-radius:999px;background:rgba(3,19,34,.94);color:#dffaff;box-shadow:0 8px 24px rgba(0,0,0,.32);cursor:pointer}.jump-latest[hidden]{display:none}
+    .stop-button{display:inline-grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,107,122,.42);border-radius:50%;background:rgba(65,18,31,.92);color:#ffdce2;cursor:pointer;font-size:13px}.stop-button[hidden]{display:none}
+    .send-button{width:36px!important;height:36px!important}.send-button svg{width:16px!important;height:16px!important}
+    .composer-box{max-height:34dvh}.composer-shell.collapsed{transform:none}.composer-shell.collapsed #prompt{height:40px!important;max-height:40px!important;overflow-y:hidden!important}#prompt{max-height:calc(34dvh - 2px)}
+    .pin-rail{position:relative;top:auto;z-index:1}.pin-rail-items{max-height:28vh}.pin-item-body{max-height:18vh}
+    .assistant-body .message-text{white-space:normal}.assistant-body .message-text p{margin:.55em 0}.assistant-body .message-text p:first-child{margin-top:0}.assistant-body .message-text p:last-child{margin-bottom:0}
+    .assistant-body .message-text h1,.assistant-body .message-text h2,.assistant-body .message-text h3,.assistant-body .message-text h4,.assistant-body .message-text h5,.assistant-body .message-text h6{margin:.85em 0 .35em;line-height:1.25;color:#f4fbff}.assistant-body .message-text h1{font-size:1.35em}.assistant-body .message-text h2{font-size:1.22em}.assistant-body .message-text h3{font-size:1.12em}
+    .assistant-body .message-text ul,.assistant-body .message-text ol{margin:.55em 0;padding-left:1.5em}.assistant-body .message-text li{margin:.28em 0}
+    @media(max-width:600px){.composer-box{max-height:28dvh}#prompt{max-height:calc(28dvh - 2px)}.composer-shell{padding-left:8px;padding-right:8px}.jump-latest{right:10px}.pin-rail-items{max-height:22vh}}
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -419,10 +429,10 @@
           <h3>AI / Model</h3><p class="settings-pane-lead">Choose the inference model used by this clean-room Chat. The selected model is sent explicitly with every Station request.</p>
           <div class="setting-group">
             <div class="setting-row"><div><div class="setting-label">Default model</div><div class="setting-help">Controls the actual Station inference route for new messages.</div></div><div class="setting-control"><select id="settingDefaultModel"><option value="700m">LFM2-700M Q4_K_M</option><option value="r39">§wyrlz R39</option><option value="stock">Original HF · LFM2-350M</option></select></div></div>
-            <div class="setting-row"><div><div class="setting-label">Effort preference</div><div class="setting-help">Saved as a model preference only until the LALM routing tier consumes it.</div></div><div class="setting-control"><select id="settingEffort"><option value="auto">Adaptive</option><option value="fast">Fast</option><option value="deep">Deep</option></select></div></div>
-            <div class="setting-row"><div><div class="setting-label">Response length</div><div class="setting-help">Your preferred answer depth; persistence does not itself enforce generation length.</div></div><div class="setting-control"><select id="settingResponseLength"><option value="adaptive">Adaptive</option><option value="concise">Concise</option><option value="expanded">Expanded</option></select></div></div>
+            <div class="setting-row" hidden><div><div class="setting-label">Effort preference</div><div class="setting-help">Saved as a model preference only until the LALM routing tier consumes it.</div></div><div class="setting-control"><select id="settingEffort"><option value="auto">Adaptive</option><option value="fast">Fast</option><option value="deep">Deep</option></select></div></div>
+            <div class="setting-row" hidden><div><div class="setting-label">Response length</div><div class="setting-help">Your preferred answer depth; persistence does not itself enforce generation length.</div></div><div class="setting-control"><select id="settingResponseLength"><option value="adaptive">Adaptive</option><option value="concise">Concise</option><option value="expanded">Expanded</option></select></div></div>
           </div>
-          <div class="settings-note"><strong>Routing truth:</strong> Default model is live inference routing. Effort and response-length preferences remain profile preferences until their runtime consumers are wired.</div>
+          <div class="settings-note"><strong>Routing truth:</strong> Only controls connected to live generation are shown here.</div>
         </section>
         <section class="settings-pane" data-settings-pane="you">
           <h3>You</h3><p class="settings-pane-lead">Durable user profile details stay separate from creative lore. Saving here updates the existing account profile authority; Tier C does not yet inject these fields into LALM inference.</p>
@@ -590,7 +600,7 @@
     <div class="version-box collapsed" id="versionBox">
       <button class="version-head" id="versionToggle" type="button" aria-expanded="false"><span class="version-title">Versions</span><span class="version-chevron">⌄</span></button>
       <div class="version-list">
-        <div class="version-row"><span>Repository Work</span><span>1.0.29</span></div>
+        <div class="version-row"><span>Repository Work</span><span>1.0.34</span></div>
         <div class="version-row"><span>Server Runtime</span><span>2.3.308</span></div>
         <div class="version-row"><span>Server UI</span><span>1.0.0</span></div>
         <div class="version-row"><span>Web Frontend</span><span>1.0.5</span></div>
@@ -598,14 +608,14 @@
         <div class="version-row"><span>Runtime Manifest</span><span>152</span></div>
         <div class="version-row"><span>Stream Contract</span><span>V2</span></div>
         <div class="version-row"><span>LALM UI</span><span>1.0.0</span></div>
-        <div class="version-row"><span>LALM Engine</span><span>2.1.115</span></div>
+        <div class="version-row"><span>LALM Engine</span><span>2.1.117</span></div>
         <div class="version-row"><span>Online Research</span><span>1.0.2</span></div>
         <div class="version-row"><span>Admin Web</span><span>1.0.0</span></div>
         <div class="version-row"><span>Google Account</span><span>1.0.8</span></div>
         <div class="version-row"><span>Client APK</span><span>UNASSIGNED</span></div>
         <div class="version-row"><span>Server APK</span><span>UNASSIGNED</span></div>
         <div class="version-row"><span>Frozen Web Collector</span><span>1.0.9</span></div>
-        <div class="version-row"><span>Deployment Control</span><span>1.0.11</span></div>
+        <div class="version-row"><span>Deployment Control</span><span>1.0.15</span></div>
       </div>
     </div>
   </aside>
@@ -617,6 +627,7 @@
       </article>
     </div>
   </main>
+  <button class="jump-latest" id="jumpLatest" type="button" hidden aria-label="Jump to latest message">Jump to latest ↓</button>
   <button class="menu-button" id="menuButton" type="button" aria-label="Open side menu" aria-expanded="false">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg>
   </button>
@@ -626,6 +637,7 @@
       <div class="composer-box">
         <textarea id="prompt" rows="1" maxlength="16000" aria-label="Message §wyrlz" placeholder="Message §wyrlz…"></textarea>
         <div class="composer-tools">
+          <button class="stop-button" id="stopButton" type="button" aria-label="Stop generating" title="Stop generating" hidden>■</button>
           <button class="send-button" id="sendButton" type="button" aria-label="Send message">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/><path d="m11 13 9-9"/></svg>
           </button>
@@ -637,6 +649,9 @@
     (() => {
       const prompt = document.getElementById("prompt");
       const sendButton = document.getElementById("sendButton");
+      const stopButton = document.getElementById("stopButton");
+      const chatViewport = document.getElementById("chatViewport");
+      const jumpLatest = document.getElementById("jumpLatest");
       const threadList = document.getElementById("threadList");
       const newThreadButton = document.getElementById("newThreadButton");
       const messageList = document.getElementById("messageList");
@@ -658,7 +673,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.0.87";
+      const SWRLZ_CHAT_VERSION = "1.0.88";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -948,7 +963,7 @@
       let renderedConversationSignature="";
       const codeArtifactState=new Map();
       const pinItemCollapsed=new Set();
-      let pinRailCollapsed=false;
+      let pinRailCollapsed=true;
       const downloadTextFile=(name,content)=>{
         const safe=String(name||"code.txt").replace(/[^A-Za-z0-9._/\\-]+/g,"_").replace(/^[/\\]+/,"")||"code.txt";
         const blob=new Blob([content],{type:"text/plain;charset=utf-8"});const url=URL.createObjectURL(blob);
@@ -1015,7 +1030,20 @@
           }
           if(cursor<input.length)parent.appendChild(document.createTextNode(input.slice(cursor)));
         };
-                const appendText=value=>{if(!value)return;const span=document.createElement("div");span.className="message-text";appendInlineFormatting(span,value);container.appendChild(span);};
+        const appendText=value=>{
+          if(!value)return;
+          const root=document.createElement("div");root.className="message-text";
+          const lines=String(value).replace(/\r\n?/g,"\n").split("\n");let list=null,listType="";
+          const closeList=()=>{list=null;listType="";};
+          const addParagraph=text=>{if(!text.trim())return;const p=document.createElement("p");appendInlineFormatting(p,text.trim());root.appendChild(p);};
+          for(const rawLine of lines){
+            const line=rawLine.trimEnd(),heading=line.match(/^(#{1,6})\s+(.+)$/),ordered=line.match(/^\s*\d+[.)]\s+(.+)$/),unordered=line.match(/^\s*[-*+]\s+(.+)$/);
+            if(heading){closeList();const h=document.createElement("h"+Math.min(6,heading[1].length));appendInlineFormatting(h,heading[2]);root.appendChild(h);continue;}
+            if(ordered||unordered){const type=ordered?"ol":"ul";if(!list||listType!==type){list=document.createElement(type);root.appendChild(list);listType=type;}const li=document.createElement("li");appendInlineFormatting(li,(ordered||unordered)[1]);list.appendChild(li);continue;}
+            closeList();addParagraph(line);
+          }
+          if(!root.childNodes.length)appendInlineFormatting(root,String(value));container.appendChild(root);
+        };
         const wrapMiscResponse=()=>{
           const children=[...container.children];
           if(!children.length||children.some(node=>node.classList?.contains("code-block")))return;
@@ -1173,7 +1201,7 @@
             addMessagePinButton(node,thread,msg);messageList.appendChild(node);
           }
         }
-        renderPinRail(thread);restoreCodeViewState();renderWorkSurface();renderedConversationSignature=signature;return true;
+        renderPinRail(thread);restoreCodeViewState();renderWorkSurface();renderedConversationSignature=signature;followLatestIfNeeded();return true;
       };
       const closeThreadPopups = except => document.querySelectorAll(".thread-popup").forEach(p=>{if(p!==except)p.hidden=true;});
       const renderThreads = () => {
@@ -1216,6 +1244,12 @@
         }
       };
       let stationGeneration=null, stationPoll=0, stationSyncInFlight=false, stationSyncAgain=false, sending=false, stationAwaitingCommit="";
+      let followLatest=true,streamAbortController=null;
+      const distanceFromLatest=()=>Math.max(0,chatViewport.scrollHeight-chatViewport.clientHeight-chatViewport.scrollTop);
+      const syncLatestAffordance=()=>{followLatest=distanceFromLatest()<72;jumpLatest.hidden=followLatest;};
+      const scrollToLatest=(behavior="auto")=>{chatViewport.scrollTo({top:chatViewport.scrollHeight,behavior});followLatest=true;jumpLatest.hidden=true;};
+      const followLatestIfNeeded=()=>{if(followLatest)requestAnimationFrame(()=>scrollToLatest("auto"));else syncLatestAffordance();};
+      chatViewport.addEventListener("scroll",syncLatestAffordance,{passive:true});jumpLatest.addEventListener("click",()=>scrollToLatest("smooth"));
       const applyChatState = data => {
         chatRevision=Number(data?.revision||0);
         const priorThreads=(pendingDraftThread&&!chatThreads.some(t=>t.id===pendingDraftThread.id))?[...chatThreads,pendingDraftThread]:chatThreads;
@@ -1325,7 +1359,8 @@
           body.dataset.renderedSource=nextText;
         }
         body.hidden=!nextText;
-        renderWorkSurface();
+        stopButton.hidden=!!g.terminal;sendButton.hidden=!g.terminal;
+        renderWorkSurface();followLatestIfNeeded();
       };
       const syncStation = async () => {
         if(stationSyncInFlight){stationSyncAgain=true;return false;}
@@ -1444,7 +1479,7 @@
           }
           localThread.messages=Array.isArray(localThread.messages)?localThread.messages:[];
           if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,createdAt:Date.now(),meta:{requestId,localPending:true,...(contentTag?{contentTag}: {})}});
-          prompt.value=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
+          prompt.value=""; resizeComposer(); followLatest=true; renderConversation(localThread); renderThreads(); renderStationGeneration(); scrollToLatest("auto");
           const sendPath="/api/lalm_station/send";
           const transportCamera=(stage,data={})=>{try{fetch("/api/chat?__swrlz_client_debug=1",{method:"POST",credentials:"same-origin",cache:"no-store",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"station-send-transport-v1",url:location.pathname,event:{at:new Date().toISOString(),type:"station-send-transport",message:stage,data:{requestId,sendPath,...data}}})}).catch(()=>{})}catch(_){}};
           transportCamera("before-fetch");
@@ -1469,7 +1504,8 @@
           setCompanionState("accepted","send-ack");
           renderStationGeneration();
           try{
-            const streamResponse=await fetch("/api/lalm_station/stream?requestId="+encodeURIComponent(requestId),{credentials:"same-origin",cache:"no-store",headers:{"Accept":"application/x-ndjson"}});
+            streamAbortController=new AbortController();
+            const streamResponse=await fetch("/api/lalm_station/stream?requestId="+encodeURIComponent(requestId),{credentials:"same-origin",cache:"no-store",headers:{"Accept":"application/x-ndjson"},signal:streamAbortController.signal});
             await consumeGeneration(streamResponse);
           }catch(streamError){
             // The send was already accepted. A stream transport failure must not
@@ -1486,8 +1522,9 @@
           setCompanionState("error","client-transport");
           if(stationGeneration){stationGeneration.status=[...(stationGeneration.status||[]),{type:"FAILED",phase:"CLIENT_TRANSPORT",reason:String(err)}];stationGeneration.terminal=true;renderStationGeneration();}
           return false;
-        }finally{sending=false;sendButton.disabled=false;scheduleStationSync()}
+        }finally{sending=false;streamAbortController=null;sendButton.disabled=false;sendButton.hidden=false;stopButton.hidden=true;scheduleStationSync()}
       };
+      stopButton.addEventListener("click",async()=>{const rid=String(stationGeneration?.requestId||"");if(!rid)return;stopButton.disabled=true;try{streamAbortController?.abort();await fetch("/api/lalm_station/cancel",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json"},body:JSON.stringify({requestId:rid})});await syncStation();}finally{stopButton.disabled=false;stopButton.hidden=true;sendButton.hidden=false;}});
       sendButton.addEventListener("click",commitDraftFromPrompt);
       prompt.addEventListener("keydown",e=>{
         if(e.key!=="Enter"||e.shiftKey)return;
@@ -1517,10 +1554,9 @@
       composerShell.addEventListener("transitionend",syncComposerViewportInset);
       requestAnimationFrame(syncComposerViewportInset);
       composerCollapse.addEventListener("click", () => {
-        const collapsed = composerShell.classList.toggle("collapsed");
-        composerCollapse.setAttribute("aria-expanded", String(!collapsed));
-        composerCollapse.setAttribute("aria-label", collapsed ? "Expand composer" : "Collapse composer");
-        requestAnimationFrame(syncComposerViewportInset);
+        const keepDistance=distanceFromLatest();const collapsed=composerShell.classList.toggle("collapsed");
+        composerCollapse.setAttribute("aria-expanded",String(!collapsed));composerCollapse.setAttribute("aria-label",collapsed?"Expand composer":"Collapse composer");resizeComposer();
+        requestAnimationFrame(()=>{syncComposerViewportInset();if(followLatest)scrollToLatest("auto");else chatViewport.scrollTop=Math.max(0,chatViewport.scrollHeight-chatViewport.clientHeight-keepDistance);});
       });
       const menuButton = document.getElementById("menuButton");
       const menuShade = document.getElementById("menuShade");
@@ -1700,6 +1736,7 @@
         document.body.classList.toggle("settings-open",open);
         settingsSheet.setAttribute("aria-hidden",String(!open));
         settingsShade.setAttribute("aria-hidden",String(!open));
+        settingsSheet.inert=!open;
         if(open){populateSettingsControls();refreshSettingsDurability();settingsClose.focus();uiCamera("settings-open",{durable:accountProfileDurable});}
         else uiCamera("settings-close",{dirty:settingsDirty});
       };
@@ -2233,8 +2270,9 @@
       menuShade.addEventListener("click", () => setMenu(false));
       const resizeComposer = () => {
         prompt.style.height = "auto";
-        const maxHeight = Math.max(40, Math.floor(window.innerHeight * 0.5) - 2);
-        const nextHeight = Math.min(prompt.scrollHeight, maxHeight);
+        const ratio=window.innerWidth<=600?0.28:0.34;
+        const maxHeight=composerShell.classList.contains("collapsed")?40:Math.max(40,Math.floor((window.visualViewport?.height||window.innerHeight)*ratio)-2);
+        const nextHeight=Math.min(prompt.scrollHeight,maxHeight);
         prompt.style.height = nextHeight + "px";
         prompt.style.overflowY = prompt.scrollHeight > maxHeight ? "auto" : "hidden";
       };
