@@ -9,7 +9,7 @@
 - **Accessibility/settings:** hidden settings sheet is now inert while closed; disconnected effort/response-length controls are hidden until they have live generation consumers.
 - **Versions:** Repository Work **1.0.33 → 1.0.34**; Web Chat **1.5.86 → 1.5.87**; LALM Engine **2.1.116 → 2.1.117** revision `2.1.117-hf-700m-reliability-latency-v92`. Server Runtime remains **2.3.308** because no Server release/deployment has occurred. Runtime Manifest remains **152**.
 - **Source receipts:** Chat usability `8910515a4c098810c1b91cd24462764d5a031e65`; artifact routing `fa428e89dd0d9997bfb39c512b869de1c2d1d108`; Station cancellation/artifact behavior `7372773d5b9aea6fee295b1d8f85fb7b649e78f3`; 700M reliability/latency `acf0790ef0479d8337abf5f47ca4eada27284ae6`.
-- **Verification truth:** SOURCE COMPLETE / STRUCTURAL RE-READ PENDING FINAL DEPLOY CANDIDATE CHECK. No live HF claim is made from source mutation alone.
+- **Verification truth:** SOURCE COMPLETE / STATIC STRUCTURAL RE-READ COMPLETE. Re-read confirmed Chat 1.0.88 controls/rendering markers, Station cancel state, explicit artifact-routing guard, 700M 8K/2K bounds, identity/format reliability hooks, and reconciled version authorities. No live HF claim is made from source mutation alone.
 - **Deployment state:** NOT YET TRIGGERED. Current HF contract requires the guarded request-file deployment path; live desktop/mobile and the five reported task regressions remain acceptance targets after deployment.
 - **Status:** SOURCE REPAIR COMPLETE / VERSION + ROADMAP RECONCILED / HF DEPLOYMENT + LIVE ACCEPTANCE PENDING.
 
