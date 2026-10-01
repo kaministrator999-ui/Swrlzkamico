@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Approved deployment for HF Chat 1.0.87 nested square-inside-square frame gutters.
+# Approved deployment for HF Chat code-container stretch frame update.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-30-chat-1.0.87-nested-frame
+REQUEST_NONCE=2026-09-30-code-frame-1790813853334
