@@ -290,7 +290,14 @@ def _run(key,request_id,model_id,payload,assistant_id):
         if model_id=="r39" and _generate is None:raise RuntimeError("R39 generator is not installed")
         if model_id=="stock" and _stock_generate is None:raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
+        cancelled=False
         for event in dispatch(model_id,payload,_generate,_stock_generate,_large_generate):
+            with _lock:
+                active=s.get("activeGeneration")
+                if not active or active.get("requestId")!=request_id:return
+                if active.get("cancelRequested"):
+                    cancelled=True
+                    break
             if not isinstance(event,dict):continue
             kind=str(event.get("type") or "")
             with _lock:
@@ -314,6 +321,13 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 else:g["status"].append({"seq":g["lastSeq"],"phase":str(event.get("phase") or kind),"reason":str(event.get("reason") or "")[:200]})
             if kind=="FAILED":raise RuntimeError(str(event.get("reason") or "Generation failed"))
             if kind in ("COMPLETE","COMPLETED"):completed=True
+        if cancelled:
+            with _lock:
+                g=s.get("activeGeneration")
+                if g and g.get("requestId")==request_id:
+                    g.update(terminal=True,terminalType="CANCELLED",phase="CANCELLED")
+                    g["status"].append({"phase":"CANCELLED","reason":"Stopped by user"});s["revision"]+=1
+            return
         if not text:raise RuntimeError("R39 emitted no DELTA")
         with _lock:
             g=s["activeGeneration"];g.update(terminal=True,terminalType="COMPLETE",phase="COMPLETE")
@@ -342,7 +356,6 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 thread["messages"].append(message)
                 artifact=_create_code_artifact(thread,message,request_id,text)
                 if artifact is not None:
-                    thread.setdefault("messagePins",{})[assistant_id]=True
                     g["artifactReceipt"]={"action":"ARTIFACT_CREATED","artifactId":artifact["id"],"revision":1}
             s["revision"]+=1
     except Exception as exc:
@@ -404,6 +417,19 @@ def _temporal_context(messages,client_timezone,now_ms):
         "previousAssistantMessage":stamp(last_assistant.get("createdAt")) if last_assistant else None,
         "gapSincePreviousMessage":gap(previous),"gapSinceLastUserTurn":gap(last_user),"gapSinceLastAssistantTurn":gap(last_assistant)
     }
+
+@app.post("/api/lalm_station/cancel")
+async def cancel_generation(request:Request):
+    body=await request.json();rid=str(body.get("requestId") or "").strip()
+    if not rid:raise HTTPException(400,"requestId required")
+    key,s=_session(request)
+    with _lock:
+        g=s.get("activeGeneration")
+        if not g or g.get("requestId")!=rid:return JSONResponse({"ok":False,"requestId":rid,"state":"NOT_ACTIVE"},status_code=409)
+        if g.get("terminal"):return {"ok":True,"requestId":rid,"state":str(g.get("terminalType") or "TERMINAL")}
+        g["cancelRequested"]=True;g["status"].append({"phase":"CANCEL_REQUESTED","reason":"User requested stop"})
+    return {"ok":True,"requestId":rid,"state":"CANCEL_REQUESTED"}
+
 
 @app.post("/api/lalm_station/send",status_code=202)
 async def send(request:Request):
