@@ -1,6 +1,6 @@
 """Independent lazy-loaded LFM2-700M GGUF route; original 350M remains untouched."""
 from __future__ import annotations
-import json, threading, time
+import json, os, threading, time
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY
@@ -97,12 +97,26 @@ Simple when simple. Deep when useful. Wild when exploring. Precise when building
 _lock=threading.RLock()
 _model=None
 
-def load(threads=4,context=CONTEXT_TOKENS):
+def _cpu_capacity():
+    """Bound inference to CPUs available to this process, capped by the Workstation contract."""
+    try:
+        available=len(os.sched_getaffinity(0))
+    except (AttributeError,OSError):
+        available=os.cpu_count() or 1
+    return max(1,min(16,int(available)))
+
+def _thread_plan():
+    """Favor broad prompt-prefill parallelism while keeping token decode conservative."""
+    capacity=_cpu_capacity()
+    return min(8,capacity),capacity
+
+def load(context=CONTEXT_TOKENS):
     global _model
     with _lock:
         if _model is None:
+            decode_threads,batch_threads=_thread_plan()
             path=hf_hub_download(repo_id=MODEL_REPO,filename=MODEL_FILE)
-            _model=Llama(model_path=path,n_ctx=context,n_threads=threads,n_threads_batch=threads,n_batch=128,n_gpu_layers=0,use_mmap=True,verbose=False)
+            _model=Llama(model_path=path,n_ctx=context,n_threads=decode_threads,n_threads_batch=batch_threads,n_batch=512,n_ubatch=512,n_gpu_layers=0,use_mmap=True,verbose=False)
         return _model
 
 def _role_frame(user_profile):
@@ -294,7 +308,7 @@ def _response_mode(prompt):
             "Do not replace omitted sections with ellipses, TODOs, 'rest unchanged', or a list of manual replacements. "
             "If multiple files are truly required, separate them with clear filenames and complete fenced blocks. "
             "If the requested delivery form is genuinely unclear, ask whether they want the complete file, complete code in chat, or both. "
-            "Finish the requested artifact before adding optional explanation."
+            "Treat each explicit requirement as a must-pass acceptance condition. Before finalizing, check the returned artifact against each condition and repair any miss. Never state that a condition is satisfied when the artifact still violates it. For repository/workflow work, do not invent dependencies or commands absent from supplied evidence. If the user asks only for code, return code without unsolicited explanation. Finish the requested artifact before adding optional explanation."
         )
     if user_identity:
         return (
@@ -355,7 +369,7 @@ def generate_events(payload):
             "conversations unless the supplied history actually supports it. Treat only the supplied history as chat-history "
             "evidence; profile information describes identities/preferences, not events that happened in this thread. "
             "Preserve truthful uncertainty and disclose consequential actions. Do not claim to be human or to possess "
-            "subjective experience. Verify categorical factual claims before stating them; for Python specifically, tuples are ordered immutable sequences while sets are unordered collections. For generated code, mentally trace returned values and every example assertion so examples do not contradict the code. Follow explicit output-shape constraints exactly, including requested item counts and numbering. Format the final answer for readability: use short paragraphs, real line breaks, Markdown **bold** and *italics* when useful, and headings or lists only when they improve structure. When a deliberate font-color change materially improves expression or semantic clarity in the §wyrlz Chat, you may use [color=#RRGGBB]text[/color] sparingly; otherwise keep normal text color. For creative writing such as songs, poems, dialogue, lyrics, or scripts, preserve intentional line breaks and separate sections instead of compressing the work into one paragraph. Avoid unnecessary preambles before the requested content.\n"+_role_frame(user_profile))
+            "subjective experience. Verify categorical factual claims before stating them; for Python specifically, tuples are ordered immutable sequences while sets are unordered collections. For generated code, convert every explicit user requirement into an acceptance condition before answering, then verify the finished artifact against every condition. Never claim a requirement is fixed unless the returned artifact actually satisfies it. Mentally trace returned values and every example assertion so examples do not contradict the code. In Python validation, remember bool is a subclass of int: when booleans are invalid, reject them explicitly before or alongside integer checks. For HTML accessibility, explicit labeling, accessible names, live-region semantics, and requested size/overflow limits are acceptance conditions, not suggestions. For repository/workflow tasks, use only dependencies, jobs, commands, files, and modules supported by supplied project evidence; do not invent missing infrastructure. Distinguish the requested operation from the subject text: echo/quote, explain, transform, evaluate, generate, and execute are different operations. Follow explicit output-shape constraints exactly, including requested item counts and numbering. Format the final answer for readability: use short paragraphs, real line breaks, Markdown **bold** and *italics* when useful, and headings or lists only when they improve structure. When a deliberate font-color change materially improves expression or semantic clarity in the §wyrlz Chat, you may use [color=#RRGGBB]text[/color] sparingly; otherwise keep normal text color. For creative writing such as songs, poems, dialogue, lyrics, or scripts, preserve intentional line breaks and separate sections instead of compressing the work into one paragraph. Avoid unnecessary preambles before the requested content.\n"+_role_frame(user_profile))
     system+="\n"+_response_mode(prompt)
     temporal=payload.get("temporalContext") if isinstance(payload.get("temporalContext"),dict) else {}
     if temporal:
@@ -383,8 +397,17 @@ def generate_events(payload):
     yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":round((loaded-started)*1000,3)}
     first_delta=None
     with _lock:
-        response_tokens=192 if _response_mode(prompt).startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or _response_mode(prompt).startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT") else available_output_tokens
-        for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=0.35 if response_tokens==192 else 0.45,stream=True):
+        mode=_response_mode(prompt)
+        if mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
+            response_tokens=min(192,available_output_tokens);temperature=0.35
+        elif mode.startswith("RESPONSE MODE: CODE-"):
+            response_tokens=min(1024,available_output_tokens);temperature=0.30
+        elif mode.startswith("RESPONSE MODE: EXACT-NUMBERED-STEPS"):
+            response_tokens=min(512,available_output_tokens);temperature=0.35
+        else:
+            response_tokens=min(768,available_output_tokens);temperature=0.40
+        yield {"type":"RESOURCE","cpuCapacity":_cpu_capacity(),"decodeThreads":_thread_plan()[0],"batchThreads":_thread_plan()[1],"maxResponseTokens":response_tokens}
+        for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=True):
             choices=chunk.get("choices") or []
             delta=(choices[0].get("delta") or {}).get("content") if choices else None
             if delta:
