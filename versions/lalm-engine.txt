@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.117
-REVISION=2.1.117-hf-700m-reliability-latency-v92
+VERSION=2.1.118
+REVISION=2.1.118-hf-workstation-cpu-acceptance-v93
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
