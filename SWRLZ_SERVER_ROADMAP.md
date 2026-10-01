@@ -1,539 +1,3 @@
-### UPDATE CHECKPOINT — 2026-09-30 — HF Chat usability + 700M reliability repair
-
-- **User authorization:** implement the findings from five guest-session Chat tasks across desktop/mobile: reading-position/auto-follow, composer footprint, pinned-code behavior, Markdown rendering, instruction following, response latency, Stop control, accessibility, and disconnected settings.
-- **Architecture reconciliation:** clean-room `/chat/§wyrlz` remains the Mask/UI owner; `hf_space/station.py` owns HF Station generation lifecycle/artifact persistence; `hf_space/brain_programming.py` owns bounded programming/artifact intent; `hf_space/lfm2_700m_engine.py` owns the independent 700M inference route. No new competing owner was introduced.
-- **Chat source:** deployment branch Chat **1.0.87 → 1.0.88**. Added follow-latest behavior plus a visible **Jump to latest** affordance, reading-position preservation when composer geometry changes, compact collapse that keeps the message field available, smaller mobile composer growth, larger Send target, and a visible Stop control during active generation.
-- **Rendering/artifacts:** ordinary headings and ordered/unordered lists now render as safe DOM structure instead of raw Markdown; code remains fenced/containerized. The pinned rail defaults collapsed and is no longer sticky over replies. New code artifacts are no longer auto-pinned, and pinned-artifact revisions require an explicit artifact/code/file continuation reference rather than treating any later coding task as a revision.
-- **Generation lifecycle:** HF Station now exposes bounded user cancellation; the worker observes `cancelRequested` between generation events and terminates as `CANCELLED` without committing partial assistant text.
-- **700M reliability:** reduced the regressed 32K/4K context-output configuration back to an 8K/2K bounded route, added thread-local user-name resolution so explicit conversation identity can outrank unrelated built-in Kami provenance, added exact numbered-step routing, and strengthened categorical Python/code-example verification guidance.
-- **Accessibility/settings:** hidden settings sheet is now inert while closed; disconnected effort/response-length controls are hidden until they have live generation consumers.
-- **Versions:** Repository Work **1.0.33 → 1.0.34**; Web Chat **1.5.86 → 1.5.87**; LALM Engine **2.1.116 → 2.1.117** revision `2.1.117-hf-700m-reliability-latency-v92`. Server Runtime remains **2.3.308** because no Server release/deployment has occurred. Runtime Manifest remains **152**.
-- **Source receipts:** Chat usability `8910515a4c098810c1b91cd24462764d5a031e65`; artifact routing `fa428e89dd0d9997bfb39c512b869de1c2d1d108`; Station cancellation/artifact behavior `7372773d5b9aea6fee295b1d8f85fb7b649e78f3`; 700M reliability/latency `acf0790ef0479d8337abf5f47ca4eada27284ae6`.
-- **Verification truth:** SOURCE COMPLETE / STATIC STRUCTURAL RE-READ COMPLETE. Re-read confirmed Chat 1.0.88 controls/rendering markers, Station cancel state, explicit artifact-routing guard, 700M 8K/2K bounds, identity/format reliability hooks, and reconciled version authorities. No live HF claim is made from source mutation alone.
-- **Deployment state:** NOT YET TRIGGERED. Current HF contract requires the guarded request-file deployment path; live desktop/mobile and the five reported task regressions remain acceptance targets after deployment.
-- **Status:** SOURCE REPAIR COMPLETE / VERSION + ROADMAP RECONCILED / HF DEPLOYMENT + LIVE ACCEPTANCE PENDING.
-
-### UPDATE FINISHED — 2026-09-29 — LALM v91 offline Code Truth + local web/UI engineering
-
-- **User authorization:** ensure the coding/web-design improvements are implemented on the runtime branch required by §tart and follow the Hugging Face project authority rather than remaining documentation-only on main.
-- **Architecture reconciliation:** §tart + Hotfix Rules classify runtime-loadable LALM/R39 behavior as `runtime` authority. Current runtime baseline was re-read before mutation: LALM Engine **2.1.115**, Repository Work **1.0.32**, hot entry `runtime_hot/r39_engine.py`, preserved v90 overlay stack.
-- **Executable runtime change:** added `runtime_hot/r39_engine_v91_overlay.py` with bounded programming-only offline Code Truth + web/UI engineering policy. It covers syntax/structure, symbols/scope/types/contracts, control/data/state flow, concrete runtime failures, repair re-verification, DOM/CSS/layout/responsive/accessibility/state/security/performance, and chat-specific composer/scroll/pinned/code-container/streaming/mobile invariants.
-- **External-service boundary:** ordinary standalone HTML/CSS/JavaScript engineering does not require internet. Google, Hugging Face, OAuth, hosted SDK endpoints/scopes/versions and similar changing provider facts remain an external-evidence boundary and must be marked unverified when current authority is unavailable.
-- **Activation wiring:** runtime hot entry now fetches and executes pinned v91 overlay commit `a7dbee3dcc68e7a9f677865337a91c4cc6821a3c` after v90. Entrypoint activation commits: `fe4170a179f656b7dac916bfacae7496c28f8996`, indentation correction `065e0e219e6d21d310b936f4d1c03ad9505c8cd0`.
-- **Deterministic self-test:** v91 self-test covers programming detection, single policy injection/deduplication, non-programming isolation, offline-first contract, syntax/structure, control/data/state, chat UI invariants, provider boundary, and repair re-verification. It fail-closes overlay hydration if the suite does not pass.
-- **Versions:** LALM Engine **2.1.115 → 2.1.116**, revision `2.1.116-hot-offline-code-truth-web-ui-v91`; Repository Work **1.0.32 → 1.0.33**. Server Runtime, Chat, Runtime Manifest, and unrelated modules remain unchanged.
-- **Documentation:** programming runtime architecture aligned to executable v91; prior evidence-first/offline web curriculum on main is now backed by a runtime policy rather than being documentation-only.
-- **Verification truth:** SOURCE COMPLETE / STATIC STRUCTURAL RE-READ COMPLETE. Runtime-hot source and authorities are committed. No fresh HF inference/user-turn acceptance was performed in this connector session, so live behavior is **not yet claimed verified**.
-- **Deployment:** no Vercel action. No Hugging Face deployment workflow was dispatched. Under current §tart architecture this is runtime-hot LALM source; HF follow-through remains the canonical hosting path and live acceptance is pending.
-- **Status:** RUNTIME SOURCE COMPLETE / LALM 2.1.116 AUTHORITY ACTIVE IN REPO / LIVE HF v91 ACCEPTANCE PENDING.
-
-### UPDATE FINISHED — 2026-09-29 — New-thread isolation repair + Hugging Face hosting authority
-
-- **User authorization:** fix the observed Chat defect where creating a new thread after messaging in another thread could be redirected back to the prior thread and the attempted first message would not send; discontinue Vercel and make Hugging Face the hosting authority throughout future follow-through.
-- **Diagnosis:** the clean-room Chat intentionally represents a new conversation as local `draftThread=true` with no active thread ID until the first send. Background Station synchronization can continue while that draft is open. The draft must therefore be treated as an explicit navigation state: server current-thread metadata from the prior conversation may hydrate data but must not own navigation while the unsent draft is active.
-- **Chat repair:** `applyChatState()` now documents and preserves the draft-navigation invariant. Server current-thread fallback remains eligible only when `draftThread` is false. The first draft send continues to allocate a fresh thread ID before constructing the Station request, so the request is bound to the new conversation rather than the previous server-current thread.
-- **Canonical Chat:** **1.0.56 → 1.0.57**. Source metadata and `chat/§wyrlz/VERSION.txt` are aligned to 1.0.57.
-- **Hosting authority migration:** repository README now declares existing Hugging Face Space `kamiloki/Swyrlz` as the active hosting/deployment authority. Vercel is discontinued and retained only as historical provenance/migration material. Future implementation, deployment, repair, acceptance, and documentation follow-through must target the existing HF Space and must not treat old Vercel-era files as current deployment instructions.
-- **Preserved lineage:** historical Vercel contracts, changelogs, releases, and receipts are not deleted or rewritten; they remain evidence of prior architecture. Where they conflict with current hosting intent, they are historical rather than authoritative.
-- **Source receipts:** thread isolation `7de9459715710f0c6c5284fde11bd3f6931ba77a`; Chat version authority `ed25c92f08078c6b3e8e6a0628bbf1c6db3bc038`; Chat source metadata `bd75688fbed34d1380b12646833548e2db0d59c1`; HF authority README `5c19d0d916eca5471ded13e1594e2ddcc3542ada`.
-- **Verification:** source re-read required after this checkpoint; live HF browser acceptance is still pending until the updated HF package is deployed/served.
-- **Deployment state:** no Vercel action. This event changes canonical source/governance only; Hugging Face deployment/acceptance remains a separate activation step through the existing guarded HF path.
-- **Status:** SOURCE FIX COMPLETE / HF HOSTING AUTHORITY MIGRATED / LIVE HF ACCEPTANCE PENDING.
-
-### UPDATE CHECKPOINT — 2026-09-29 — HF Chat 1.0.56 code delivery and Google identity repair
-
-- **User authorization:** user requested the observed Google-account defect, incomplete/sloppy code delivery, code-container UX, and complete-file delivery behavior be fixed in the same bounded HF acceptance repair.
-- **Canonical Chat:** advanced **1.0.55 → 1.0.56**. Assistant fenced Markdown code now renders as bounded code containers with a language label and dedicated **Copy code** control; whole-response Copy remains separate. Plain assistant text remains text-safe and no HTML from model output is executed.
-- **700M completion budget:** HF LFM2-700M keeps context **8192** but reserves **2048 output tokens** instead of 256. With the existing 128-token safety reserve, hard input budget is now **6016**. Oldest-history eviction and hard budget rejection remain.
-- **Code-delivery policy:** deterministic response-mode routing now prefers complete usable files over patch fragments for coding requests; explicit chat-code requests require complete fenced blocks; omitted sections/ellipses/TODO/rest-unchanged placeholders are disallowed. When a modification request is genuinely ambiguous about delivery, §wyrlz asks whether the user wants the complete file, complete code in chat, or both.
-- **HF Google identity:** added real HF-local `/api/account/status`, `/api/account/me`, `/api/account/google`, and `/api/account/logout` routes plus `google-auth`. Google ID tokens are server-verified against the configured/default client ID. The HF session is HttpOnly and process-local/non-durable; no false Redis/Vercel durability claim was introduced.
-- **Google external dependency:** source support is complete, but live sign-in still requires the Google OAuth client configuration to authorize the deployed `*.hf.space` web origin. That external configuration cannot be proven from repository source and must be checked in live acceptance.
-- **HF deployment branch receipts:** complete-output engine `3e8c450f182624bdbee7a9f0ffa331dbde96b9a0`; Google identity bridge `6c82910315919fdd328d2e409cec5ae59f60c6ca`; Google auth dependency `d44e8b9af1f4d018df33176b354e13d0561fd64b`; canonical code renderer sync `e562b268096a87013b0825af564787a92c60090a`; Chat 1.0.56 sync `1aa7cdfc8e9eeba810c5dcffcddbb6893c1ce0b1`; smoke-budget alignment `4a5b0ebd67dcf02ddb30d34e7aed9bc021eeac3e`; HF Chat authority `7548cfdca1de9523a6e685621e132f3210fa4324`.
-- **Canonical receipts:** code-container source `cfd756f44b86d82a61cab11ce6e3e985d336b9bc`; Chat 1.0.56 source `06d8e90b4c37402d219a51f19102842e6924383a`; clean-room version authority `f4169d5113d9990c74bb4a1ef1f11d6b280e4ba0`; Repository Work **1.0.30** authority `4d27eb52f38d9588936d10efa21276e38adfe5ba`.
-- **Static verification:** PASS — inline browser JS syntax, CSS brace balance 0, duplicate IDs none, code renderer/copy control present, Chat meta/version authority both 1.0.56, engine constants 8192/2048, complete/clarify code modes present, HF account endpoints present, `google-auth` dependency present, deployment smoke updated to 6016 input budget.
-- **Deployment state:** NOT DISPATCHED from this session. Existing connector limitation remains: no new workflow-dispatch operation is exposed. No auto-deploy backdoor was introduced.
-- **Status:** SOURCE REPAIR COMPLETE / LIVE HF 1.0.56 DEPLOYMENT + GOOGLE ORIGIN ACCEPTANCE PENDING.
-
-### UPDATE CHECKPOINT — 2026-09-28 — HF Chat 1.0.55 source repaired; deploy dispatch pending
-
-- **Approval remains active:** `APPROVE HF CHAT 1.0.55 DEPLOY AND 700M FIX`.
-- **HF deployment branch:** `feature/hf-space-manual-deploy` HEAD `7256b12e3ae7112a74954ca80fdb7706dd1ad206`.
-- **UI source verified:** HF branch canonical Chat blob is `049c033ac6c07ca96f813cce4bf637e41b4162e8`, meta **1.0.55**, matching the completed A–G clean-room source. The HF packager stages this file and applies only the explicit HF model/profile control injection. Therefore the older-looking live Space is a deployed-state mismatch, not missing source work.
-- **700M repair:** `hf_space/lfm2_700m_engine.py` commit `f2d0da116f99a2eab674f2c932f0d2426514a624` expands the bounded llama.cpp context **4096 → 8192**, retaining **256** output tokens and **128** safety reserve; usable input budget becomes **7808**. Oldest-history eviction remains unchanged. Built-in §wyrlz identity and user/custom profile layers are preserved.
-- **Deployment proof gate:** workflow commit `7256b12e3ae7112a74954ca80fdb7706dd1ad206` adds a deploy-only 700M smoke using the observed failing prompt `How's things going 😊`. Publication is blocked unless the route loads with context 8192/input budget 7808, emits a CONTEXT event within budget, and produces a non-empty response.
-- **Safety/rollback unchanged:** workflow still snapshots existing `kamiloki/Swyrlz`, records immutable pre-deploy rollback metadata, verifies the target/SDK, uploads only after explicit approval, and records the deployed revision as unverified until acceptance.
-- **Static/source verification:** PASS for Chat 1.0.55 source, packager Chat staging, 8192/7808 budget constants, absence of the old opaque 700M error string, presence of the exact short-prompt smoke, non-empty-response assertion, pre-deploy snapshot, rollback checkpoint, and destination guard.
-- **Deployment state:** **NOT YET DISPATCHED**. The connected GitHub toolset in this session exposes workflow read/rerun operations but no workflow-dispatch creation operation. No HF write-capable connector is available either; the connected HF credential is read/jobs scoped. The assistant did not weaken the workflow into an automatic push deploy or fabricate a deployment receipt.
-- **Next execution:** manually dispatch **Manual Hugging Face Space Deploy** against `feature/hf-space-manual-deploy` with `mode=deploy`, `approved=yes`. The already-approved workflow will then run the new 700M smoke before any publication. After a run exists, its jobs/logs/artifacts can be inspected through the connected GitHub tools.
-- **No Vercel action:** none performed.
-- **Status:** SOURCE REPAIR COMPLETE / LIVE DEPLOYMENT PENDING DISPATCH.
-
-### UPDATE STARTED — 2026-09-28 — HF Chat 1.0.55 acceptance and 700M context fix
-
-- **Approval:** user explicitly approved `APPROVE HF CHAT 1.0.55 DEPLOY AND 700M FIX`.
-- **Observed live defects:** Hugging Face Space displayed the older-looking deployed Chat surface and LFM2-700M rejected a tiny user turn with `Current prompt/profile context exceeds the 700M input budget`.
-- **Source findings:** canonical and HF feature-branch `chat/§wyrlz/index.html` both resolve to blob `049c033ac6c07ca96f813cce4bf637e41b4162e8` / Chat **1.0.55**; therefore the visible UI mismatch is deployment/runtime state, not a missing Tier A–G source merge. The HF packager stages that canonical Chat and injects HF-only model/profile controls.
-- **700M finding:** HF 700M route uses a 4096-token llama.cpp context with a 3712-token hard input budget. It always injects the built-in §wyrlz profile, role/system framing, response mode, optional assistant profile and user profile before budget validation; only history is evicted. A fixed profile/system payload can therefore exhaust the budget before a tiny current prompt is considered.
-- **Bounded repair plan:** enlarge the HF 700M inference context/budget while retaining hard budgeting and oldest-history eviction; add explicit budget diagnostics/error wording; preserve the built-in profile and user/custom profile semantics. No model weights/training changes.
-- **HF acceptance plan:** validate the feature-branch package, preserve the pre-deploy HF snapshot/rollback checkpoint, publish only to existing `kamiloki/Swyrlz`, then inspect workflow/runtime evidence. No Vercel action.
-- **Status:** IN PROGRESS.
-
-### UPDATE STARTED — 2026-09-28 — HF Chat 1.0.55 deployment and 700M context repair
-
-- **Observed live defects:** `kamiloki/Swyrlz` / `miloki-swyrlz.hf.space` is serving the older HF-staged Chat surface rather than canonical clean-room Chat **1.0.55**, and short user prompts can fail with `Current prompt/profile context exceeds the 700M input budget`.
-- **Source diagnosis:** the HF deploy workflow runs from `feature/hf-space-manual-deploy`; its staging script copies `chat/§wyrlz/index.html` from that branch, so a stale branch Chat source can be deployed even while `main` owns a newer clean-room Chat. The 700M route uses a **2048-token** context with only **1728 input tokens** after output/safety reservation while always injecting the built-in Mirror Muse profile, role frame, response mode, optional assistant customization, user profile, current prompt, and history.
-- **Authorized repair:** synchronize the HF deployment branch's clean-room Chat source to canonical main **1.0.55**, preserve HF-only additive controls during staging, enlarge the 700M context budget within the model's supported context, retain oldest-history-first trimming, validate the staged package, deploy only the existing HF Space, and verify live behavior.
-- **Non-goals:** no Vercel deployment, no model retraining, no new UI tier, no unrelated architecture changes, and no silent durable profile/lore mutation.
-- **Status:** IN PROGRESS.
-
-### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier G artifacts and agent cards
-
-- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier G completes the Glitch Dragon Chat research implementation sequence (A–G, including D.1) with a truthful backstage work surface rather than adding another conversation-layer control system.
-- **Work surface:** added a compact right-side **Work** surface opened from the top edge. Desktop uses a bounded right drawer; mobile uses the full viewport. Opening it closes competing drawer/settings presentation surfaces without changing Chat/runtime authority.
-- **Structured action cards:** cards are created only from existing Station status objects whose explicit `phase` or `categories` contains ACTION / TOOL / ACTING / EXECUT / SEARCH / FETCH / WORK / RESOURCE_TASK semantics. Assistant response text/reason prose is never searched or classified to invent tool activity.
-- **Approval cards:** sanitized structured proposal receipts plus real pending Tier-D proposal records render as approval cards with state/category/operation/risk/version. Their action navigates to the existing Proposal Inbox; Tier G adds no second approve/decline authority.
-- **Artifact surface:** explicit artifact metadata is renderable when already present on trusted Station/message state. Current runtime has no artifact registry/contract, so the surface truthfully displays **No structured artifacts were emitted by the current runtime** rather than fabricating files/results.
-- **Evidence expansion:** committed assistant messages now expose expandable **Evidence / provenance**. The Station adds a bounded allowlist from canonical message provenance: source authority, turn contract, commit phase, terminal type, plus existing requestId/projection authority/state/timestamp. Arbitrary provenance and terminal reason text are not projected.
-- **Structured source forward-compatibility:** if already-structured message `sources` / `evidence` arrays are present, the UI can list them. External links are accepted only after HTTP(S) URL validation and use `noopener noreferrer`. Missing source arrays produce no fake citation/source entries.
-- **Legacy stream preservation:** the older direct stream consumer now retains structured `categories` and `proposalReceipt` metadata when present instead of dropping them; this does not create a new event type or transport path.
-- **Refresh behavior:** the Work surface refreshes from existing render/sync/proposal events only. No new polling interval, requestAnimationFrame loop, canvas/WebGL renderer, decorative fetch, or background task was added.
-- **Accessibility:** Work is keyboard closeable with Escape; mobile is full-screen; explicit/system reduced-motion remove drawer/details transitions; high-contrast and reduced-transparency modes include the new surface/cards/evidence containers.
-- **Truth boundary:** Work is a renderer of already-structured state. It does not parse assistant prose into actions, approvals, artifacts, sources, or evidence.
-- **Transport invariants:** compared with the Tier-F baseline, Station send remains **1 → 1**, Station sync **1 → 1**, `/api/chat_state` **4 → 4**, `setInterval` **1 → 1**, `requestAnimationFrame` **1 → 1**, canvas elements **0 → 0**.
-- **Versions:** Clean-room Chat **1.0.54 → 1.0.55**; Server Runtime **2.3.307 → 2.3.308** because the bounded committed-message provenance projection changes the stable Station response shape; Repository Work **1.0.28 → 1.0.29**. Runtime Manifest remains **152**; legacy Web Chat remains **1.5.86**.
-- **Final source blobs before Roadmap close:** Chat `049c033ac6c07ca96f813cce4bf637e41b4162e8`; Station `5558f3cce143828fe7ea42d7ac468d014d041452`; stable index `e8323c94d1286c080fd6cf63f545ab3c9a9151a5`; reconstruction `6c97672441dd8a1f371d079c575dc593bf8b289b`.
-- **Primary receipts:** Roadmap start `af741b9c72c7ca455d791af402f3ab6a041f7007`; Tier G work surface `315e4a3f92d73d9ff4b8002b755eaf748098b1a1`; bounded Station provenance `9b87947b2cd7cac6849917d1a62364b340d53e29`; provenance/work refresh completion `895a3271d8d7d85c177bf8ecce48a43eb495242d`; Server 2.3.308 `9af63b8648f1fb67f87e2e01912cdd18b1a86c57`; reconstruction `4872eb19bbe2812f90a746a662270ccea31fb176`; Chat version `a0f255c0a78c417700b16ed709cebb093f6ddcd2`; Server Runtime authority `2ac951284fcb877e40ea7c65e0c94eeb7833b06a`; Repository Work authority `aa8d6aa9d670bd8173188aa4f2277d277b7ea9e1`; UI server-version alignment `17fd76e998574b45f16d13ca5526ff317cb0db07`.
-- **Static verification:** browser inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; all 11 settings nav/panes remain matched; work surface/action/approval/artifact/evidence markers present; action classifier reads structured status phase/categories only; no prose-to-tool inference path found; HTTP(S)-only link gate present; high-contrast/reduced-transparency/reduced-motion support present; allowlisted Station provenance fields present and arbitrary provenance excluded.
-- **Runtime execution verification:** NOT PERFORMED. No browser acceptance against a deployed server, Python import/compile execution, live queue generation, or performance benchmark was run in this source-only checkpoint.
-- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live Redis/profile/lore/rapport/proposal mutation, or model/runtime activation occurred.
-- **Research implementation status:** **A through G COMPLETE**, including **D.1 structured proposal bridge**. There is no remaining research UI tier in `SWRLZ_GLITCH_DRAGON_CHAT_UI_RESEARCH.md`.
-- **Remaining independent checkpoint:** live runtime acceptance/deployment. That must be separately authorized and should verify first paint, mobile composer geometry, Station streaming, proposal/rapport APIs, work-surface structured cards/evidence, reduced-motion/high-contrast behavior, and performance before any production promotion.
-
-### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier G artifacts and agent cards
-
-- **Requested outcome:** finish the final research tier: tool/action cards, side work surface, approval cards, and source/evidence expansion.
-- **Truth boundary:** Tier G consumes only structured truth already present in Chat/Station/Tier-D state. It does not infer tool usage from assistant prose and does not invent artifacts/sources that the runtime did not emit.
-- **Work-surface plan:** add a compact right-side work surface opened from the top edge. It remains backstage and does not widen the primary conversation stage.
-- **Action-card plan:** create action cards only from structured Station status entries whose explicit phase/category denotes tool/action/search/fetch/execute/work semantics. Generic thinking/status events remain status, not fake tool cards.
-- **Approval-card plan:** proposal receipts and actual Tier-D proposal records may render as approval cards with state/risk/category/operation and direct navigation into Proposal Inbox. Approval actions themselves remain owned by the existing proposal API/UI.
-- **Evidence plan:** assistant messages gain expandable evidence/provenance details using committed message metadata such as requestId/authority and any already-structured source/evidence arrays if present. Missing source arrays render no fake citations.
-- **Artifact plan:** the work surface includes an artifacts area that accepts only explicitly structured artifact metadata if present. Current runtime has no artifact registry/contract, so empty state must say that no structured artifacts were emitted.
-- **Performance/accessibility:** no canvas/WebGL, no animation loop, no new background polling cadence, and no decorative network fetch. Surface is keyboard-accessible, mobile-fullscreen, and compatible with reduced-motion/high-contrast settings.
-- **Baseline:** Clean-room Chat **1.0.54**; Server Runtime **2.3.307**; Repository Work **1.0.28**.
-- **Version plan:** Clean-room Chat **1.0.55**; Repository Work **1.0.29**. Server Runtime remains **2.3.307** unless source evidence proves a server change is required.
-- **Deployment expectation:** NONE. This approval authorizes final Tier G Chat source/UI/version/Roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, model/runtime behavior changes, or a new artifact protocol.
-- **Status:** IN PROGRESS.
-
-### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier F companion animation state machine
-
-- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier F binds companion presentation to existing Chat/Station truth without creating a parallel runtime state authority.
-- **States:** implemented `idle`, `listen`, `accepted`, `thinking`, `acting`, `responding`, `approval`, and `error`.
-- **State authority:** one `data-companion-state` value is mirrored on `body` and the compact top edge. A visible/accessibility `companionStateLabel` exposes the current state in text; animation is never the sole carrier of meaning.
-- **Input mapping:** prompt focus/input maps to `listen` only when no uncommitted Station generation is active. Empty/unfocused composer with no active generation resolves to `idle`.
-- **Send mapping:** local send start and successful 202 queue acknowledgement map to `accepted`.
-- **Generation mapping:** active generation with no visible text maps conservatively to `thinking`; explicit phase names containing ACTION / TOOL / ACTING / EXECUT / SEARCH / FETCH or proposal auto-apply map to `acting`; once visible response text exists, state maps to `responding`.
-- **Approval mapping:** explicit approval/proposal-wait phases, including `PROPOSAL_QUEUED`, map to `approval`. Natural-language response text is never inspected to infer approval/action state.
-- **Error mapping:** terminal/runtime/client transport failures map to `error`; completed/cancelled terminal state resolves back toward idle/composer state.
-- **Visual behavior:** top dragon mark + assistant avatar use restrained CSS-only breathing/listening/acceptance/thinking/action/responding/approval/error motion. Ready-dot and state-chip colors also encode the state.
-- **Reduced motion:** explicit Reduced, explicit Off, and system `prefers-reduced-motion` disable companion icon loops, the existing busy-dot loop, and state-chip transitions while preserving static border/color/text state. Full mode may intentionally override system reduction only when explicitly selected.
-- **Performance:** no canvas, WebGL, particle engine, new requestAnimationFrame loop, image-loop decoder, or decorative network call was added. Existing Station/chat-state transport call-site counts remain unchanged.
-- **Truth boundary:** unknown active runtime phases fall back to `thinking` before output and `responding` after output; Tier F does not fabricate tool/action semantics from prose.
-- **Versioning:** Clean-room Chat **1.0.53 → 1.0.54**; Repository Work **1.0.27 → 1.0.28**. Server Runtime remains **2.3.307** because no server/runtime behavior changed. Runtime Manifest remains **152**; legacy Web Chat remains **1.5.86**.
-- **Final source blobs before Roadmap close:** Chat `5781bb90f4c80f167d0df16c6a158a4d13673338`; reconstruction `34c6b414a58c11ffa12641efc31b189eae71d020`.
-- **Primary receipts:** Roadmap start `323095fcff5c605be6b4aa0de89351fe51bd2663`; Tier F implementation `ba1d5ba8e77b3f1cdc42e4a627d90ec13869d705`; reduced-motion completion `af8b14016498f54bc16e320b1fcd91489e8518a9`; reconstruction `231071d939b4ca9aab32446b8ff53ec746770519`; Chat version `65037437a9f6e16f11fd3c4ac7ce38a9dea608e7`; Repository Work authority `0865134f34e06cd2a851e6f24974b793e840f8c5`.
-- **Static verification:** browser inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; all eight state names present; visible state chip present; body/top-edge state authority present; reduced/off/system motion suppression present; no canvas added; Tier G work surface marker absent.
-- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live runtime activation, or performance benchmark run occurred.
-- **Next research checkpoint:** Tier G — tool/action cards, side work surface, approval cards, source/evidence expansion. Tier G must consume existing tool/action/proposal/source truth and must not fabricate tool activity.
-
-### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier F companion animation state machine
-
-- **Requested outcome:** implement approved Tier F from the Glitch Dragon Chat research authority: companion presentation states idle, listen, accepted, thinking, acting, responding, approval, error, with reduced-motion equivalents.
-- **Authority boundary:** Tier F is presentation-state only. It derives visual state from existing prompt focus/input, send acknowledgement, Station generation/status/text, proposal receipts, terminal failure, and settings motion preference. It does not create a new runtime state authority.
-- **State plan:** `idle` when no active interaction; `listen` while the user is actively composing/focusing the prompt; `accepted` after send acknowledgement/queue acceptance; `thinking` for active generation before visible response text; `acting` for explicit action/tool/work phases; `responding` once response text is arriving; `approval` for proposal/approval phases; `error` for terminal/client/runtime failures.
-- **Visual plan:** top-edge dragon mark, assistant avatar, state chip/label, and restrained edge/aura effects will share one `data-companion-state` authority. Motion communicates state but does not obscure text or move layout.
-- **Reduced-motion plan:** system reduced-motion, explicit Reduced, and Off suppress looping transforms/glitches and retain static color/border/icon state. No state information may depend on animation alone.
-- **Performance plan:** CSS-only transforms/opacity/filter where practical; no canvas/WebGL/particle engine, timers, animation-frame loops, image decoding loop, or network request is added for decoration.
-- **Truth boundary:** generic runtime phase names are mapped conservatively; unknown active phases resolve to thinking/responding based on whether output text exists. No fabricated tool/action state is inferred from prose.
-- **Baseline:** Clean-room Chat `1.0.53`; Server Runtime `2.3.307`; Repository Work `1.0.27`.
-- **Version plan:** Clean-room Chat **1.0.54**; Repository Work **1.0.28** after concurrency re-read. Server Runtime remains **2.3.307** because Tier F is client presentation only; Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged.
-- **Deployment expectation:** NONE. Approval authorizes Tier F Chat source/UI/version/roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, server behavior changes, inference changes, or Tier G.
-- **Status:** IN PROGRESS.
-
-### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier E rapport
-
-- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier E introduces a separate account-owned Rapport authority for shared vocabulary, callbacks, and interaction conventions without collapsing that state into Profile or Lore.
-- **Durable schema:** added `RapportRecord` with kind (`VOCABULARY`, `CALLBACK`, `CONVENTION`), label, cue, shared meaning, optional preferred response, source/provenance, GLOBAL/PROJECT/THREAD scope, authored-by, active state, lineage generation, optimistic version, and timestamps.
-- **Pause/reset control:** added versioned `RapportControlRecord` with `paused`, `current_generation`, control version, update timestamp, and last reset timestamp. Reset increments the active generation rather than deleting prior records; reset history remains inspectable.
-- **Atomicity:** rapport control writes use Redis version compare-and-set. Rapport create/update/delete use indexed atomic Lua create/CAS/delete operations so proposal target versions and direct user edits cannot silently race.
-- **Manual authority:** authenticated users can list, create, edit, and delete active-generation rapport; pause/resume the rapport authority; and reset to a new generation. Manual records are server-authored as USER / user-manual. Historical generations are inspect-only in the Chat surface.
-- **Scope integrity:** THREAD scope is accepted only when the referenced thread belongs to the authenticated account. New PROJECT-scoped rapport creation/migration is rejected until an actual project authority is attached; existing project-scoped records can remain inspectable/preservable.
-- **Tier-D integration:** added proposal category `SHARED_RAPPORT`, target `RAPPORT`, and bounded `RAPPORT_CREATE`, `RAPPORT_UPDATE`, `RAPPORT_DELETE`. AI-originated rapport changes remain behind the existing ASK / AUTO_LOW_RISK / SESSION_ONLY / NEVER policy, audit, CAS claims, optimistic target versions, and guarded revert path.
-- **Pause semantics:** when rapport is paused, `AUTO_LOW_RISK` does not auto-apply rapport changes. A proposal may still queue under ASK semantics and an explicit user approval can still manage state.
-- **Revert semantics:** approved rapport create/update/delete proposals store before/after snapshots and can be reverted only when target version + current rapport generation still match, preventing rollback over newer edits or across a reset boundary.
-- **UI:** Settings now includes a dedicated **Rapport** pane between Lore & Memory and Proposal Inbox. It provides kind filtering, current/reset-history views, pause/resume, reset, create/edit/delete, scope status, generation/source/provenance metadata, and inspect-only treatment for historical generations.
-- **Proposal policy UI:** added **Shared Rapport** as the seventh proposal-policy category.
-- **Privacy/cameras:** `/api/account/rapport*` response previews are redacted. Rapport UI cameras emit operation/id/kind/scope/generation/version/control state only, not cue/meaning/preferred-response text.
-- **Inference truth boundary:** stable capability explicitly reports `inferenceBound=False`. Tier E stores/manages shared rapport but does not inject it into the current R39 prompt or claim behavioral consumption.
-- **Transport preservation:** Station send/sync and `/api/chat_state` call-site counts are unchanged from the Tier D.1 baseline.
-- **Versions:** Clean-room Chat **1.0.52 → 1.0.53**; Server Runtime **2.3.306 → 2.3.307**; Repository Work **1.0.26 → 1.0.27**. Runtime Manifest remains **152**; legacy Web Chat remains **1.5.86**.
-- **Final source blobs before Roadmap close:** Chat `5f5e7a950ec36d8a4243419f69af439e26b66164`; durable contract `3c339c97cbed0c29036ca21ec00be1f98980a45b`; Redis store `dfdde6ca7dca6686859557d1213a78531e11fb1c`; rapport helpers `039b5ee985bedd31c03089726567404db056f577`; proposal resolver `cb78374f0706d1fc0916fc31d34df7356519d484`; account routes `12a961700b35bfc2be80d4fc64daea3bf310af8f`; stable index `926a5254f5c9e05f7c30dbf5a9103e9e42af0eee`; reconstruction `94f748c3a0e6a16682652a0867740705331266c6`.
-- **Primary receipts:** Roadmap start `40a2d03a520c0ace23a79d5023ff0f6d5d0bd3e7`; contract `9f60e29d4953af75c32098b4527b577a7ef1315c`; rapport helper `beadebd053f1893a5da92b594c5149e846634497`; scope validation `31a2fa100c8d4fb45c30062e9aa1c24c5ef7fca2`; rapport storage `d7e515c7807248bff88ed0b0841093144eb3b86b`; routes `dbdbf07b85f60b241576c07ad35c4612156ce105`; proposal integration `0d7da4a7516a7bcba1a9cfc6a2604f84bf071ebf`; Tier E UI `31f564ac7a0053170d1838558a3cd1b8f45b211d`; atomic rapport storage `5f9e13a69b82d8ebf3a82a5d5d9b39b98cbfceb4`; scope authority `767019fb2ce7d9798a18e4471d008a7b97dfdbcb`; proposal scope authority `e615248ff4a06dc82a6337ed7d5099d40d217cb2`; paused auto-apply suppression `24a7ee00563381690ff6e74b3e8de3e8c4993a60`; Server 2.3.307 `84874a9a366349bc735d636a2e39fc00d1f970d4`; reconstruction `34a0237700c23a9faecdcb1cd6da2a3c25506dba`; Chat version `e3101ab8f96165ade49520a639ecd1497e94e3b9`; Server Runtime authority `ea94678c8ead3b27e10310c5a235b58eb1e28fe8`; Repository Work authority `bd6308248043f85ad4352c8f2f47e56068e87ec1`.
-- **Static verification:** browser inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; all 11 settings nav/pane names match; seven proposal-policy controls present; rapport reset/history/pause controls present; exact rapport contract/store/proposal/route markers present; atomic CAS/delete scripts present; scope ownership and `inferenceBound=False` markers present; stable source/runtime version both report 2.3.307.
-- **Python execution verification:** NOT RUN. Connector-backed source was structurally inspected; no runtime import/build/deployment execution was performed, so no compile/runtime pass is claimed.
-- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live Redis/profile/lore/rapport/proposal mutation, or inference-context activation occurred.
-- **Next research checkpoint:** Tier F — companion animation state machine: idle, listen, accepted, thinking, acting, responding, approval, error, plus reduced-motion equivalents. Tier F must remain presentation-state only unless a separate runtime contract is explicitly approved.
-
-### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier E rapport
-
-- **Requested outcome:** implement approved Tier E from the Glitch Dragon Chat research authority: shared vocabulary/callback management, approved rapport state, project/thread scope, reset/pause.
-- **Concept boundary:** rapport is a separate account-owned continuity domain. Profile remains user/companion preferences; Lore remains facts/story continuity; Rapport represents shared interaction conventions/callbacks/vocabulary; Proposals remain the approval gate.
-- **Durable model plan:** add typed `RapportRecord` with kind (`VOCABULARY`, `CALLBACK`, `CONVENTION`), label/cue/meaning/preferredResponse, source/provenance, scope + scopeId, authoredBy, active state, generation, optimistic version, timestamps.
-- **Pause/reset plan:** add versioned `RapportControlRecord` with `paused` and `current_generation`. Reset is lineage-preserving: increment the generation instead of destructively deleting historical records. Old generations remain inspectable; only the current generation is active rapport state.
-- **Proposal integration plan:** extend Tier D with category `SHARED_RAPPORT`, target `RAPPORT`, and bounded create/update/delete operations. AI-originated rapport changes continue through ASK/AUTO_LOW_RISK/SESSION_ONLY/NEVER; direct AI writes remain forbidden.
-- **Scope plan:** GLOBAL is always available; THREAD requires a saved active thread; PROJECT remains inspectable/preservable when present but manual creation stays unavailable on this Chat surface until a project authority is attached.
-- **Inference truth boundary:** Tier E persists/manages rapport only. It will not claim the current R39 prompt consumes rapport until a separate bounded context-injection checkpoint is explicitly approved and verified.
-- **Baseline:** Clean-room Chat `1.0.52`; Server Runtime `2.3.306`; Repository Work `1.0.26`.
-- **Version plan:** Clean-room Chat **1.0.53**; Server Runtime **2.3.307**; Repository Work **1.0.27** after concurrency re-read. Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged unless evidence requires otherwise.
-- **Deployment expectation:** NONE. Approval authorizes Tier E source/schema/UI/version/roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, live account/Redis mutation, or rapport injection into inference.
-- **Status:** IN PROGRESS.
-
-### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier D.1 structured proposal bridge
-
-- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier D.1 now connects one exact trusted structured proposal event contract at the Workstation subscriber boundary to the existing Tier D account proposal authority. Assistant prose remains incapable of creating durable proposal state.
-- **Signal contract:** trusted producers may emit `type="ACCOUNT_PROPOSAL"`, `contract="swrlz-account-proposal-signal-v1"`, bounded `signalId`, and a strict proposal object containing only category / targetKind / operation / payload / rationale / risk / optional targetId. Unknown proposal fields are rejected.
-- **Trusted producer helper:** `api/account_proposal_bridge.py` exposes `build_structured_proposal_event(...)` for trusted R39/tool code. The helper constructs metadata only; it performs no durable write.
-- **Authority injection:** emitted source thread/request identifiers are never accepted from the proposal object. The Workstation subscriber injects authoritative `thread_id` and `request_id` from the durable generation job.
-- **No prose scraping:** ordinary DELTA/STATUS text is never parsed, searched, regexed, classified, or heuristically converted into a proposal. Capability explicitly reports `naturalLanguageScraping=False`.
-- **No browser forge path:** no public `POST /api/account/proposals` creation endpoint exists. The browser may resolve/read proposals but cannot label arbitrary client JSON as assistant-authored state.
-- **Bridge execution:** `queues/swrlz_generation_v3.py` intercepts the exact structured event before ordinary stream wiring, calls the Tier D policy resolver, and converts the result into a sanitized STATUS receipt. Proposal payload/rationale never enter the public generation event.
-- **Sanitized receipt fields:** contract, signalId, decision, proposalId, state, category, operation, risk, version. Policy phases include PROPOSAL_QUEUED, PROPOSAL_AUTO_APPLIED, PROPOSAL_SESSION_ONLY, PROPOSAL_BLOCKED_POLICY, PROPOSAL_DUPLICATE_SUPPRESSED, PROPOSAL_REJECTED, and PROPOSAL_FAILED.
-- **At-least-once idempotency:** every trusted signal requires a bounded `signalId`; stable proposal identity is derived from SHA-256 of authoritative `requestId + signalId`. Duplicate detection occurs before payload target lookup, so replay of an already-applied LORE_DELETE cannot create a second proposal or fail merely because the first application removed the target.
-- **Tier D preservation:** the existing ASK / AUTO_LOW_RISK / SESSION_ONLY / NEVER policy, bounded operation validators, Redis proposal CAS, APPLYING/REVERTING claims, target optimistic versions, append-only audit, and guarded revert semantics remain authoritative.
-- **Chat receipt behavior:** clean-room Chat recognizes only the sanitized proposal-receipt contract. It invalidates Proposal Inbox cache and refetches when that settings pane is open; it does not reconstruct proposal state from status text.
-- **Emitter truth:** the bridge and trusted producer contract are installed, but current R39 generation does not autonomously decide when to emit an ACCOUNT_PROPOSAL signal. `modelEmitterConnected=False` remains explicit. No LALM Engine version is advanced in D.1.
-- **Transport preservation:** baseline Station send/sync and `/api/chat_state` call-site counts remain unchanged. D.1 does not replace or broaden the stream contract; proposalReceipt is optional sanitized STATUS metadata.
-- **Versions:** Clean-room Chat **1.0.51 → 1.0.52**; Server Runtime **2.3.305 → 2.3.306**; Repository Work **1.0.25 → 1.0.26**. Runtime Manifest remains **152**; legacy Web Chat remains **1.5.86**.
-- **Final source blobs:** Chat `ff7043052973957c8082736e68cd268ca8e73f3a`; proposal bridge `cf1abca819a678e33bb65cc012daeeede5b11898`; Workstation subscriber `7330142e29109db63a1377d5dea6d572ab668127`; proposal policy/resolver `884e1ae6ce07a79c8d6d16b4216ac016c8fb9a02`; account routes `b23b9e715e078041a6d2670410019b7d43bb5af2`; stable index `bc1a3142e24a3cb070a0d5898ccbf18e1ca801b6`; reconstruction `c83254776d01f5b8d6304163633a7b4317181f31`.
-- **Primary receipts:** Roadmap start `984109c541efd0969d490715fd25d2a449b65940`; bridge creation `d1a9c6b6d151095d3e0d6058a4a7b00711ae3422`; worker bridge `02960de412a47ec35694749e44ba600374b2e12b`; idempotent proposal helper `611f126d332a35397b2cf567da3cee6d755389ad`; signal-id contract `dda69e0778ad4c6d6389af51c0817ef5d78a7ae2`; duplicate suppression `b1ba2e84ace926fb8b07c9fa3b7b2a8a7b8a9d7e`; Chat receipt refresh `fa19a66655738e2ba6801b0ab51a35604a8971a4`; capability declaration `5c75a17ea6566f01e97d811bf13b8c173e4ec579`; duplicate-before-target repair `216bfea216edd97a9023596854cc6610dcd72c9b`; Server 2.3.306 `426e1340b9d8f3a062c98306fe69ccd4efeaa494`; reconstruction `4fab99308284ec90478e9d4d26d13c39ee4c1362`; Chat version `44a24f100888e5269f8c404e7eff863c2329d988`; Server Runtime authority `d163b2a46d35baed8e4a4078ce2d8b6401827276`; Repository Work authority `2246f94bc65d490bd2d73137beb87d83daefadc7`.
-- **Static verification:** browser inline JavaScript syntax PASS; duplicate DOM IDs NONE; exact signal type/contract present; required signalId + deterministic stable-id path present; bridge interception precedes ordinary `_wire()`; no public proposal-create route; natural-language scraping disabled; duplicate resolution occurs before target normalization; Chat receipt invalidation present; stable source/runtime version both report 2.3.306.
-- **Python execution verification:** NOT RUN. GitHub connector source was structurally inspected, but no repository materialization/build/runtime execution was authorized or available in this checkpoint. This is not reported as a compile pass.
-- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live queue execution, or live Redis/profile/lore/proposal mutation occurred.
-- **Next research checkpoint:** Tier E — shared vocabulary/callback management, approved rapport state, project/thread scope, reset/pause. Rapport must remain explicit shared state, not hidden inference magic.
-
-### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier D.1 structured proposal bridge
-
-- **Requested outcome:** implement approved Tier D.1 — connect only explicit structured proposal metadata emitted by trusted R39/tool execution to the Tier D `submit_ai_proposal` authority. Natural-language assistant text must never be scraped or heuristically interpreted into a durable proposal.
-- **Execution boundary:** the durable Workstation subscriber sees raw typed engine/tool events before `_wire()` converts them into the public generation stream. D.1 will recognize one exact private event contract there and reject/ignore all ordinary DELTA/STATUS prose as proposal input.
-- **Signal contract plan:** trusted producer event type `ACCOUNT_PROPOSAL` + contract `swrlz-account-proposal-signal-v1` + bounded proposal object. Required fields flow through the existing Tier D validator/policy resolver; source thread/request IDs are injected by the subscriber from authoritative job identity rather than trusted from the emitted payload.
-- **Browser boundary:** no browser proposal-create route will be added. Chat/user payload fields cannot activate the proposal bridge. The only proposal creation path remains trusted server/worker execution.
-- **Stream plan:** proposal payload/rationale never enter the ordinary chat event stream. After handling, the subscriber may emit only a sanitized STATUS receipt containing phase/decision/category/operation/risk/proposal id/state/version as bounded metadata.
-- **UI plan:** Chat recognizes the sanitized proposal receipt only to invalidate/refetch Proposal Inbox state; it does not reconstruct a proposal from assistant text or status reason.
-- **Policy behavior:** existing ASK/AUTO_LOW_RISK/SESSION_ONLY/NEVER policy remains authoritative. D.1 does not weaken Tier D validation, optimistic target versions, CAS claims, audit, or revert semantics.
-- **Baseline:** Clean-room Chat `1.0.51` (blob `8e8a6dead6878f4868e93cd51cd3ec7bb33b9201`); Server Runtime `2.3.305`; Repository Work `1.0.25`.
-- **Version plan:** Clean-room Chat **1.0.52**; Server Runtime **2.3.306**; Repository Work **1.0.26** after concurrency re-read. Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged unless implementation evidence requires otherwise.
-- **Deployment expectation:** NONE. Approval authorizes source/schema/bridge/UI/version/roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, live Redis/profile/lore/proposal mutation, or Tier E rapport.
-- **Status:** IN PROGRESS.
-
-### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier D approval protocol
-
-- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier D now owns a durable, account-scoped AI proposal protocol without adding any browser path that can forge assistant authorship.
-- **Durable schema:** added versioned `ProposalRecord` plus append-only `ProposalAuditRecord`. Proposal state supports PENDING, short-lived APPLYING/REVERTING claims, APPLIED/AUTO_APPLIED, DECLINED, REVERTED, and FAILED.
-- **Policy modes:** per-category policy is persisted inside the existing account profile preferences for USER_PROFILE, COMPANION_PROFILE, USER_FACT, USER_LORE, COMPANION_SELF_LORE, and SHARED_LORE. Allowed modes are **ASK**, **AUTO_LOW_RISK**, **SESSION_ONLY**, and **NEVER**; invalid/missing values normalize safely to ASK.
-- **Trusted creation boundary:** there is deliberately no public `POST /api/account/proposals` browser route. Stable server exposes only an internal `submit_account_proposal` helper. Assistant-authored proposals are therefore not forgeable from ordinary Chat JavaScript.
-- **Current emitter truth:** the current R39/Workstation generation stream does **not** emit a structured proposal event and is not wired to the trusted helper. Natural-language assistant text is not scraped or heuristically converted into durable proposals.
-- **Bounded mutations:** proposal resolver accepts only whitelisted USER_PROFILE_PATCH, COMPANION_PROFILE_PATCH, LORE_CREATE, LORE_UPDATE, and LORE_DELETE operations. Profile/companion patch fields and lore type/scope payloads are explicitly validated.
-- **Auto-save boundary:** AUTO_LOW_RISK can act only for a trusted server-side proposal explicitly marked LOW risk and only for the bounded eligible operations; lore delete is never in the auto-save allowlist. SESSION_ONLY and NEVER create no durable proposal or target mutation.
-- **Resolution protocol:** authenticated users can list proposals, inspect audit history, Edit pending payload JSON through bounded server validation, Approve, Decline, and Revert applied proposals. Approval/revert are optimistic-versioned against both proposal and target authorities.
-- **Concurrency:** proposal creates/updates now use Redis Lua compare-and-set + index mutation. Apply claims PENDING → APPLYING before touching profile/lore; Revert claims APPLIED/AUTO_APPLIED → REVERTING. Failed target mutations attempt to return the proposal to its prior actionable state and append a failure audit event.
-- **Rebase rule:** explicit user Edit refreshes the target version against current authority so a changed target cannot be silently overwritten using a stale proposal version.
-- **Reversibility:** successful application stores private before/after snapshots. Revert is allowed only if the current target version still matches the applied snapshot, preventing rollback over newer user edits.
-- **Audit/privacy:** proposal + audit Redis bodies use sensitive diagnostics; browser `/api/account/proposals*` response previews are redacted. UI cameras log proposal id/state/category/operation/version/count only, never proposal payload/rationale text.
-- **UI:** Proposal Inbox now displays real queue/history state, risk/state badges, bounded payload preview, source request/thread metadata, History, Edit, Approve, Decline, and Revert. Six category policy selectors persist through the existing explicit account-profile Save.
-- **Privacy panel:** now reports Tier D account-owned proposal authority. Direct assistant writes remain disabled; proposal-gated writes are represented separately.
-- **Transport preservation:** Tier-C baseline Station send/sync, `/api/chat_state`, and account profile Save call-site counts remain unchanged. Tier D adds proposal list/audit/edit/approve/decline/revert calls only.
-- **Versions:** Clean-room Chat **1.0.50 → 1.0.51**; Server Runtime **2.3.304 → 2.3.305**; Repository Work **1.0.24 → 1.0.25**. Runtime Manifest remains **152**; legacy Web Chat remains **1.5.86**.
-- **Final source blobs:** Chat `8e8a6dead6878f4868e93cd51cd3ec7bb33b9201`; durable contract `3f55185d16d70d0e574f068b054fda0bfaf48588`; Redis store `3bf34314130f8a956f24bb41992bdffe3ae85442`; proposal resolver `e4148236626ac2598d9586edb6819cd8eb414fe3`; account routes `d7b1dd8f2f33099d4a7ba949df63b26e1b6652b5`; stable index `591fb4d08aeedc1d069dd9b3867766ee814d5cc9`; reconstruction `12b1e383b7567a7c26448edc680ca7a4c48c4387`.
-- **Primary receipts:** proposal contract `c9ed460febd2fdaeeaed3154079b4b743a8fda89`; proposal storage `c6e021f874af27eec00a7fa496bc8b6a8b95ae73`; resolver `91d67e941d5558f7c94f48714204f2ce227ef285`; account routes `b59d9614116d823893cf5e0a2cf7779e748eb853`; Tier D UI `49450d509b63868d5c73af4699e0f7ae7135f5ec`; server 2.3.305 `6e6c717603b831e5ac6bb9a35b506229d67d8502`; proposal CAS `891bedbad6ff975baacf256ee2879a0f61621926`; claim-state resolver `6dfda578771633569f7f94c16c89c116a949a6b5`; emission-boundary capability `b857898ef248c0d562d8418470f4e867c82f5ffb`; Chat version `83ecc840de0d3972a48023cb177b508d77e32563`; Server Runtime authority `13174cd5497e1e941f182bae4859f968ebb45f14`; Repository Work authority `70ba01f2eaab80228bab32cef26195bceb0d73d1`.
-- **Static verification:** browser inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; all 10 settings nav/pane names still match; six proposal policy controls present; proposal payload account diagnostics redacted; no browser proposal-create endpoint; required proposal schema/store/resolver/CAS/claim/revert markers present.
-- **Python compile limitation:** attempted a read-only local `py_compile` validation by cloning current main into a temporary directory; the shell environment could not resolve `github.com`, so the compile step did not run. This is recorded as an environment-verification gap, not reported as a pass.
-- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live Redis/profile/lore/proposal write, or runtime activation occurred.
-- **Missing rung before automatic proposal use:** Tier D protocol is ready, but current R39 events have no structured proposal event. The recommended bounded checkpoint before Tier E is **Tier D.1 — structured proposal emission bridge**, connecting only explicit structured proposal metadata from trusted generation/tool code to `submit_account_proposal`; natural-language scraping remains forbidden.
-- **Research sequence after that:** Tier E — rapport.
-
-### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier D approval protocol
-
-- **Requested outcome:** implement approved Tier D from the Glitch Dragon Chat research authority: durable setting/profile proposal schema; real Proposal Inbox data; approve/edit/decline; audit/history; and per-category save policy.
-- **Sovereignty boundary:** AI-originated state may propose but never bypass the configured policy. Manual user profile/lore editing from Tier C remains direct user action; Tier D governs AI-originated durable changes only.
-- **Proposal authority plan:** add account-owned `ProposalRecord` + append-only `ProposalAuditRecord` under the existing Redis REST authority. Proposal payloads are private/sensitive and must use payload-redacted Redis diagnostics.
-- **Target plan:** bounded proposal operations for user-profile patch, companion-profile patch, lore create/update/delete. Target application reuses the existing versioned profile/lore authorities; no generic arbitrary JSON mutation route is allowed.
-- **Resolution plan:** pending proposals may be edited, approved, or declined. Approval applies the bounded target mutation using optimistic target versions, records before/after snapshots for inspectability/reversal, and then transitions the proposal terminally. Applied proposals gain an explicit user-triggered revert path.
-- **Policy plan:** per-category durable preferences use `ASK`, `AUTO_LOW_RISK`, `SESSION_ONLY`, or `NEVER`. Default is `ASK`. `AUTO_LOW_RISK` may act only when a trusted server-side proposal marks risk LOW and the bounded operation is auto-save eligible; SESSION_ONLY/NEVER never create a durable mutation.
-- **Creation boundary:** the browser Proposal Inbox is not allowed to forge AI proposals. Tier D will expose list/resolution policy surfaces to the authenticated user and a server-side proposal submission helper for future LALM/tool integration; no public browser route may claim assistant authorship.
-- **Baseline:** Clean-room Chat `1.0.50`; Server Runtime `2.3.304`; Repository Work `1.0.24`; Runtime Manifest `152`; legacy Web Chat `1.5.86`.
-- **Version plan:** Clean-room Chat **1.0.51**; Server Runtime **2.3.305**; Repository Work **1.0.25** after concurrency re-read. Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged unless evidence proves otherwise.
-- **Deployment expectation:** NONE. Approval authorizes Tier D source/schema/UI/version/roadmap work only. It does not authorize deployment, workflow dispatch, Vercel action, production promotion, live Redis/profile/lore/proposal mutation, or Tier E rapport.
-- **Status:** IN PROGRESS.
-
-### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier C profile + lore UI
-
-- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier C is integrated across the clean-room Chat UI and the existing account-owned durable state boundary. No competing browser storage or parallel identity authority was introduced.
-- **You profile:** added display name, pronouns, role/work, communication style, and output preference controls under the existing account `preferences.profile` authority. Changes persist only through explicit Save.
-- **§wyrlz profile:** `UserProfileRecord` now exposes a backward-compatible `companion_profile` field appended after legacy positional fields. Chat presentation previews the companion name; title/form/presentation/warmth/directness/humor/lore-density remain stored profile state and are explicitly not represented as active LALM inference bindings.
-- **Lore & Memory contract:** added typed account-owned `LoreRecord` categories `USER_FACT`, `USER_LORE`, `COMPANION_SELF_LORE`, and `SHARED_LORE`, with title/content, source/provenance, confidence, global/project/thread scope + scope ID, authored-by, editable/active state, optimistic version field, and timestamps.
-- **Lore API:** added authenticated account-scoped GET/POST/PUT/DELETE `/api/account/lore` routes. Manual creation is server-forced to `authored_by="USER"`, `source="user-manual"`, confidence `1.0`; the browser cannot forge AI authorship. Existing source/provenance/authorship are preserved on edits.
-- **Lore storage:** existing Redis REST account store now owns lore records and a per-user lore index. Profile + lore GET/SET diagnostic commands use sensitive-mode cameras: operation/key/argument-size/result-shape remain observable while profile/lore payload text is redacted.
-- **UI:** settings navigation now contains General, AI/Model, You, §wyrlz, Lore & Memory, Proposal Inbox, Appearance, Motion, Accessibility, Privacy. Lore loading is lazy; records can be filtered, inspected, created, edited, activated/paused, and deleted with source/provenance/scope/version metadata visible.
-- **Scope correctness:** editing an existing THREAD/PROJECT record preserves its original `scopeId` instead of rebinding it to the currently visible thread. New THREAD records require a saved active thread; PROJECT creation remains unavailable because this Chat surface has no project-scope authority attached.
-- **Proposal Inbox boundary:** UI surface exists but reports **0 / proposal authority not installed**. Tier C installs no AI proposal writer, approve/edit/decline protocol, audit history, or auto-save policy. Those remain Tier D.
-- **Inference truth boundary:** User profile, companion personality fields, and Lore & Memory are durable/manageable account state only in Tier C. They are not automatically extracted from conversations and are not automatically injected into LALM inference. No claim of rapport/model behavior was made.
-- **Identity/privacy:** account identity changes clear prior lore UI state; browser account diagnostics redact all `/api/account/lore*`, profile, account-me, and Google credential response previews. UI cameras record IDs/types/scopes/versions/counts only, not lore content/title.
-- **Transport preservation:** baseline Station send/sync and `/api/chat_state` call-site counts remain unchanged. Existing `PUT /api/account/profile` remains one call site; Tier C adds only lore list/create-update/delete account calls.
-- **Version diagnostics:** clean-room engineering version panel refreshed from stale reconstruction values for Repository Work, Server Runtime, and LALM Engine.
-- **Lineage repair-forward:** historical stable server release commits reached **2.3.303** while source `VERSION` remained 2.3.299 and `runtime:versions/server-runtime.txt` remained 2.3.287. Tier C uses first-unused **Server Runtime 2.3.304**, aligning stable source and version authority without rewriting history.
-- **Final versions:** Clean-room Chat **1.0.50**; Server Runtime **2.3.304**; Repository Work **1.0.24**. Legacy Web Chat remains **1.5.86**; Runtime Manifest remains **152**.
-- **Final source blobs:** Chat `aca6fe43b5e09c11a6a6d0c339fe1f28ffa6e9c3`; durable contract `e5b99c1e5a2f343b13addf24513571d3eff132ff`; Redis store `28915194be0b80225db2bd48178d483ef79fc0c1`; account routes `943ab61ef4ff9f2aa4744ee5b273ff6c7d019c90`; stateless account bridge `b37da10b606fa4f92977b54248179d15acfc6091`; stable index `ecc08d110f4b4030b9a27fb34b4fce384e61564d`; reconstruction doc `c57072a5c16f8268db8b06ac4a42a7038db4aa4d`.
-- **Primary implementation receipts:** contract `75923822082fd351355b0934eb47885ac25be39b`; durable lore store `f14ae836bd4a251dc7d49a0529e0634a7f421c37`; account routes `460ccea44dd00e6ccd85a7189e4fc31f1207a475`; Tier C UI `78d4214cf83fd3fa7be04bbcab71a96c58a3295e`; profile/lore privacy `c40dc0ec4b0c91bc7dc1e54e602fff0ba1071f2c`; server 2.3.304 `4a877a3cd097b5e9bbb119fd1ec7e7b43f25d8f4`; scope/companion refinement `333e663f509e558439a7b3c054e6bbc122f83f52`; clean-room version `b2497810973ba3597369c1b50677c4db26629631`; Server Runtime authority `bd9e3c9c6499e7b3e22133f1f5e54c78db0fb8b4`; Repository Work authority `004942a141c0c623fdefbc1f348621e4c6029f7f`.
-- **Static verification:** browser inline JavaScript parse PASS; CSS brace balance 0; duplicate DOM IDs NONE; all 10 settings nav/pane names match; required lore routes/types/authorship/redaction/companion compatibility markers are present. Python modules were source-inspected but not imported/executed against a live server because no build/deployment/runtime execution was authorized.
-- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live Redis migration/write, live profile/lore mutation, or Tier D proposal action occurred.
-- **Next blueprint checkpoint:** Tier D — durable proposal schema + proposal inbox data, approve/edit/decline semantics, audit/history, and per-category save policy. Tier D must continue to forbid AI-side direct durable mutation outside an approved policy.
-
-### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier C profile + lore UI
-
-- **Requested outcome:** implement approved Tier C — You + §wyrlz + Lore & Memory UI, inspect/edit/delete presentation, scope/provenance, and proposal-inbox surface — without jumping ahead into Tier D's AI proposal approval protocol.
-- **Architecture reconciliation:** current main tree has no independent lore/memory/rapport/proposal durable module. Existing account/profile + Redis REST store is the only durable personal-state authority. Tier C therefore extends that authority with a typed account-owned lore record rather than creating browser-local or competing storage.
-- **Durable record plan:** introduce `LoreRecord` with account ownership, typed category (`USER_FACT`, `USER_LORE`, `COMPANION_SELF_LORE`, `SHARED_LORE`), title/content, source/provenance, confidence, global/project/thread scope, authored-by, editable/active state, version, and timestamps. Manual UI creation is always authored by USER; the client cannot forge an AI-authored record.
-- **Profile plan:** preserve the existing `UserProfileRecord` authority and add `companion_profile` as a versioned sibling to user/model/UI preferences. User profile presentation remains inside existing `preferences`; shared rapport remains Tier E and is not invented here.
-- **API plan:** authenticated account-scoped list/create/update/delete lore endpoints under `/api/account/lore`, using existing session ownership and Redis configuration. Create/update/delete require explicit user interaction. No automatic conversation extraction or AI writes are added.
-- **Privacy/camera plan:** lore Redis operations must not emit lore content into lockdown logs; sensitive command arguments/results will be redacted while preserving operation/key/size diagnostics. Browser account diagnostics must redact all lore endpoint bodies.
-- **Proposal inbox:** Tier C installs the product surface only and truthfully reports that no proposal authority exists yet. Tier D remains responsible for durable proposal schema, approve/edit/decline, audit/history, and auto-save policy.
-- **Baseline:** clean-room Chat `1.0.49` (blob `d58316b5c66eb633ef7636bc8e7a9ff07f9bd0ae`); Repository Work `1.0.23`. Stable server code declares runtime `2.3.299`, historical server release lineage reached `2.3.303`, while `runtime:versions/server-runtime.txt` is stale at `2.3.287`.
-- **Version plan:** clean-room Chat **1.0.50**; Server Runtime repair-forward to **2.3.304** (first unused generation after documented 2.3.303 lineage); Repository Work **1.0.24**. Runtime Manifest and legacy Web Chat remain unchanged unless evidence proves otherwise.
-- **Deployment expectation:** NONE. This approval authorizes Tier C source/schema/UI/version/roadmap work only. It does not authorize deployment, workflow dispatch, Vercel action, production promotion, live Redis migration/write, AI-authored lore mutation, or Tier D approval automation.
-- **Status:** IN PROGRESS.
-
-### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier B settings shell
-
-- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier B from `SWRLZ_GLITCH_DRAGON_CHAT_UI_RESEARCH.md` is implemented in the canonical clean-room Chat owner.
-- **Settings shell:** one responsive right-side sheet / mobile full-height settings surface, opened from the existing drawer gear. Sections are exactly the research Tier B set: **General, AI / Model, Appearance, Motion, Accessibility, Privacy**.
-- **General:** Enter-to-send is a real page-owned control. When disabled, Enter inserts a newline while Ctrl/⌘ + Enter still sends. Conversation density previews immediately.
-- **AI / Model truth boundary:** current route identity remains §wyrlz LALM. Effort and response-length values are stored only as `modelPreferences`; the UI explicitly states that Tier B does not claim the active inference engine consumes those values yet. Existing `defaultModel` is preserved untouched.
-- **Appearance / Motion / Accessibility:** page-owned density, glass intensity, motion mode, text scale, high contrast, and reduced transparency preview immediately. Existing theme ownership is preserved; Tier B does not overwrite another saved `theme` value.
-- **Privacy:** reports actual sign-in/durability state and explicitly marks Memory/Lore policy as Tier C/D pending and AI self-profile mutation as not enabled. No fake privacy toggle was added for a subsystem that cannot yet enforce it.
-- **Durable settings authority:** explicit user Save uses the existing authenticated `PUT /api/account/profile` boundary and optimistic profile `version`. Unsigned/stateless users can preview locally but Save remains disabled. The engineering agent did not perform any live user-profile write.
-- **Preservation semantics:** Save merges existing `preferences`, `model_preferences`, and `ui_preferences`; it changes only Tier-B-owned keys. It does not write `displayName`, `defaultModel`, `theme`, companion lore, rapport, or memory/lore state.
-- **Identity isolation:** sign-out/account changes immediately repopulate preview controls from the new/null profile so one account's visual preferences do not remain as another account's preview state.
-- **Camera/privacy:** settings open/close, pane selection, local preview, save success/failure, and durability state flow through bounded UI cameras. Account diagnostic response previews are now redacted for `/api/account/me`, `/api/account/google`, and `/api/account/profile`; no profile body/free-text is emitted through that preview field.
-- **Call-site invariance:** `/api/lalm_station/send`, `/api/lalm_station/sync`, `/api/chat_state`, and existing account status/me/google/logout call-site counts are unchanged from the Tier A baseline. Tier B adds exactly one new account call site: explicit `PUT /api/account/profile`.
-- **Static verification:** final page blob `d58316b5c66eb633ef7636bc8e7a9ff07f9bd0ae`; inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; settings nav/pane sets match 1:1 across all six sections; profile-save guard and redaction markers present.
-- **Versions:** clean-room Chat **1.0.48 → 1.0.49**; Repository Work **1.0.22 → 1.0.23**.
-- **Intentionally unchanged:** legacy Web Chat **1.5.86**; Runtime Manifest **152**; Server Runtime **2.3.287**; account/server contract version; Stream Contract; LALM Engine.
-- **Source receipts:** primary Tier B implementation `901af245fde2296f9cb11138f4b44ca8288d341d`; account-camera redaction `5b2c01a06c89dba5c0ff76785f18a2ee71854144`; identity-preview reset `305378d19446ba6c4010886cacf79eaca2012089`; bounded-save repair `40e5559fa9f58348e724c12cce55904d3d4f5af4`; clean-room version `302acaa947ebb2d3da210db5db68e5e30dcaa975`; Repository Work `5813b4e45b5f0742d5fe2202a055ebd8b8950bfe`.
-- **Runtime/live acceptance:** NOT PERFORMED. No production deployment, GitHub workflow dispatch, Vercel action, runtime promotion, release request, or live account/profile mutation was authorized or triggered.
-- **Next blueprint checkpoint:** Tier C — **You + §wyrlz + Lore & Memory UI**, including inspect/edit/delete, scope/provenance presentation, and proposal inbox. Tier C must reconcile a real durable ownership/schema boundary before companion self-lore or shared lore can be persisted.
-
-### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier B settings shell
-
-- **Requested outcome:** implement Tier B from the approved Glitch Dragon Chat research blueprint on the canonical clean-room `/chat/§wyrlz` surface.
-- **Tier B scope from research authority:** settings sheet + General + AI/Model + Appearance + Motion + Accessibility + Privacy. Tier C profile/lore, Tier D proposal approval, Tier E rapport, and later animation/artifact tiers remain out of scope.
-- **Canonical owner:** `main:chat/§wyrlz/index.html`. Existing `/api/account/profile` remains the durable profile authority for `displayName`, `preferences`, `modelPreferences`, and `uiPreferences`; no competing profile store or settings backend is introduced.
-- **Profile contract evidence:** `UserProfileRecord` already owns `preferences`, `model_preferences`, `ui_preferences`, optimistic `version`, and `updated_at`. Existing account routes expose authenticated GET `/api/account/me` and PUT `/api/account/profile`.
-- **Durability boundary:** only explicit user Save may write existing profile fields. Unsigned/stateless users may preview local visual settings but must not be told durable profile storage succeeded. Companion self-lore, shared rapport, memory/lore records, and AI-originated durable changes are not created in this tier.
-- **Truthful-control rule:** General/Appearance/Motion/Accessibility controls may affect current page presentation immediately. AI/Model values may be stored as profile preferences but must not claim engine enforcement until LALM integration exists. Privacy shows actual account/durability state and keeps future memory/lore policy controls non-operational rather than pretending enforcement exists.
-- **Baseline:** clean-room Chat `1.0.48`; page/source blob `28feeffa006b5f00dfb02e10c7e1c7e4c64f6127`; Repository Work `1.0.22`; legacy Web Chat `1.5.86`; Runtime Manifest `152`; Server Runtime `2.3.287`.
-- **Version plan:** clean-room Chat `1.0.49`; Repository Work `1.0.23` after concurrency re-read. No Runtime Manifest, legacy Web Chat, Server Runtime, account, Stream Contract, or LALM version bump is expected.
-- **Camera contract:** settings open/close, section activation, local preview application, profile load/save success/failure, and durability state are bounded UI-camera events. No credentials, prompt content, profile free-text payload, or Google token material may be logged.
-- **Deployment expectation:** NONE. Approval authorizes Tier B source implementation and governed version/roadmap receipts only; it does not authorize production deployment, workflow dispatch, Vercel action, release request, promotion, or live profile mutation by the engineering agent.
-- **Status:** IN PROGRESS.
-
-### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier A visual foundation
-
-- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier A from the Glitch Dragon Chat research blueprint is implemented in the canonical clean-room owner `main:chat/§wyrlz/index.html`.
-- **Visual foundation added:** expanded theme tokens (ice/cyan primary, violet secondary, bounded semantic status colors); restrained spectral background linework; compact glass top edge with kompanion mark, active thread title, LALM badge, and ready/generating/attention signal; refined drawer surfaces/thread selection; improved message hierarchy/action treatment; refined compact composer; mobile-specific tightening; OS `prefers-reduced-motion` baseline.
-- **State integration:** the top-edge thread label follows the already-owned active/draft thread projection. Generation status follows the existing Station generation state and never creates a second inference/status authority.
-- **Camera contract:** added page-owned `glitch-dragon-tier-a-v1` client camera events for bounded top-status transitions and one settled geometry sample (viewport/top-edge/composer + reduced-motion state). Events reuse the existing sanitized client-debug ingestion boundary; no prompt/message/account content is included.
-- **Architecture preserved:** no new loader, stylesheet file, store, transport, auth, inference path, runtime manifest mapping, or legacy `/chat` mutation. `/chat/§wyrlz` remains served by the deployed-main bundle through the existing `api/live_source_guard.py` special-case.
-- **Lineage repair-forward:** page metadata was already at `1.0.47` while `chat/§wyrlz/VERSION.txt` had remained at `1.0.42`. The stale authority was not rewritten historically; the completed Tier A state advances both the page declaration and clean-room version authority to **1.0.48**.
-- **Repository Work:** advanced **1.0.21 → 1.0.22** on canonical `runtime:versions/repository-work.txt` after a concurrency re-read.
-- **Intentionally unchanged:** legacy Web Chat **1.5.86**; Runtime Manifest **152**; Server Runtime **2.3.287**; Stream Contract; account/auth; LALM; deployment control.
-- **Source receipts:** Tier A implementation commit `bdba8a6a43e3eef57b828b8df1ce7942c224e02d`; clean-room version commit `34dc7752856c4ed98d855dd5764b6fe3a560ba8b`; Repository Work commit `a01c66435595e2f3d0cd3651c8ce1fdc01df1515`.
-- **Static verification:** updated source blob `28feeffa006b5f00dfb02e10c7e1c7e4c64f6127`; page meta `1.0.48`; inline JavaScript syntax compile PASS; CSS brace balance 0; duplicate DOM IDs NONE; required top-edge/Tier-A/reduced-motion/UI-camera markers present exactly as expected.
-- **Behavioral invariance check:** counts for `/api/lalm_station/send`, `/api/lalm_station/sync`, `/api/chat_state`, and all four existing `/api/account/*` routes are identical before/after the visual tier.
-- **Runtime/live acceptance:** NOT PERFORMED. No Server deployment, GitHub workflow dispatch, Vercel action, release request, or runtime activation was authorized or triggered in this tier.
-- **Next scoped tier from the research blueprint:** Tier B — settings shell (General, AI/Model, Conversation, Companion, You, Lore & Memory, Privacy & Data, Appearance, Motion, Accessibility, Advanced), reusing existing profile/account authorities rather than creating competing stores.
-
-### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier A visual foundation
-
-- **Requested outcome:** continue the approved Glitch Dragon Chat UI research into the first bounded implementation tier for the canonical clean-room `/chat/§wyrlz` product surface.
-- **Research authority:** `ui-research-glitch-dragon-chat` commit `bb25ba7b79c0d6572ef8b37bef47f20a09a9c9ea`, `docs/design/SWRLZ_GLITCH_DRAGON_CHAT_UI_RESEARCH.md`, Tier A.
-- **Primary Focus:** Clean-room Chat `main:chat/§wyrlz/index.html`. **Focus Group:** Clean-room Chat + deployed-main Chat source guard; Runtime Manifest remains unchanged-but-required for route identity; legacy `/chat` is reference/control only.
-- **Architecture reconciliation:** `api/live_source_guard.py` explicitly serves `/chat/§wyrlz` from the deployed main bundle (`CHAT_APP_BRANCH = "main"`) rather than runtime-hot page source. Tier A therefore extends the existing clean-room owner and does not create a second visual shell, stylesheet owner, transport owner, state store, or loader.
-- **Observed baseline:** clean-room page source blob `6017a2b1de090c22d0a5c31c21b906ebdeb0d2c1`; page metadata declares `1.0.47`; `chat/§wyrlz/VERSION.txt` is stale at `1.0.42` (pre-existing lineage drift to be repaired forward, not rewritten); Repository Work `1.0.21`; legacy Web Chat `1.5.86`; Runtime Manifest `152`; Server Runtime `2.3.287`.
-- **Tier A scope:** tokenized Glitch Dragon visual system; compact top-edge brand/thread/model/status chrome; drawer visual refinement; composer refinement; message/action polish; OS reduced-motion baseline; bounded page-owned visual/status cameras. Existing account, thread, Station transport, persistence, and LALM semantics remain unchanged.
-- **Version plan:** clean-room Chat advances to `1.0.48`; Repository Work advances from the current concurrency-checked authority at completion. Legacy Web Chat, Runtime Manifest, Server Runtime, Stream Contract, account, and LALM versions do not advance unless implementation evidence proves they changed.
-- **Deployment expectation:** NONE. This source implementation does not authorize a production deployment, workflow dispatch, hot activation, release request, or Vercel action.
-- **Verification plan:** fetch-back exact source/version blobs; validate required Tier A DOM/CSS/camera markers; validate inline JavaScript syntax; verify no manifest/transport/account endpoint mutation; re-read version authorities for concurrency before final assignment.
-- **Status:** IN PROGRESS.
-
-### UPDATE CONTINUATION — 2026-09-24 — glibc compatibility repair prepared
-
-- Live 2.1.115 native bridge diagnostics identify both native modules failing import because `GLIBC_2.38` is unavailable in Vercel production. The governor selected two workers but inference fell back to Python. One short social-fastpath request completed; the longer request entered prefill.
-- Production workflow now builds CPython 3.12 native and batch extensions in a manylinux glibc 2.28 baseline container, runs one- and two-worker equivalence tests there, and rejects either artifact if ELF GLIBC symbol requirements exceed 2.28 or if libgomp is linked. These gates execute **before** destructive cleanup.
-- This is a build/release fix, not an inference semantic change. A successful source commit does not prove production compatibility until the production `/api/lalm/native` verification returns both native and batch availability.
-- Prior production workflow's post-deploy verification failed despite Vercel reporting READY; do not conflate the two. Do not trigger another replacement until the build preflight is checked.
-
-### UPDATE CONTINUATION — 2026-09-24 — backend truth and camera-overhead isolation
-
-- Production 2.1.114 showed adaptive selected 2 visible workers but the request's prefill profile reported `backend=python-fallback`; selection alone did not prove parallel native execution.
-- R39 2.1.115 adds bounded request-start/end native bridge diagnostics (native/batch availability, import errors, loaded module paths) and request-correlated resource intervals explicitly labeled **process-wide, non-exclusive**. This avoids interpreting concurrent CPU as a subsystem's exclusive consumption.
-- Server Chat camera now shutters verbose `redis-*` and `brain-*` mirrored traces before cleaning, ring-buffer insertion, and JSON serialization by default. `SWRLZ_REDIS_VERBOSE_CAMERA=1` and `SWRLZ_BRAIN_MIRROR_CAMERA=1` re-arm those categories independently. Error/other diagnostic families remain.
-- Native two-worker kernels are preserved, not presumed effective: next live response must prove actual batch/native availability and compare matched 1/2/adaptive requests for wall time, CPU-time, throughput, and fallback count before any speedup claim.
-- Source authority: Repository Work 1.0.21; LALM Engine 2.1.115. Server Runtime stays unchanged until actual deployment/verification. Production deployment remains a separate governed gate.
-
-### UPDATE CONTINUATION CHECKPOINT — 2026-09-24 — resource profiler + dual-worker candidate preflight complete
-
-- **LALM candidate:** 2.1.114 / `2.1.114-hot-resource-task-manager-cpu-delegation-v90`.
-- **Resource attribution:** gated `SWRLZ_RESOURCE_TASK` cameras now bucket queue/subscriber ingress, Redis/state work, engine loading, LALM phase transitions, terminal persistence, and recovery with process CPU time, wall time, CPU percentage, RSS, and request correlation.
-- **CPU delegation:** production-portable native matvec and batched-prefill kernels now support `SWRLZ_R39_WORKERS=1|2` through pthread row partitioning without libgomp. Adaptive policy selects one or two workers from recent process CPU headroom and exposes the decision through a gated CPU-delegation camera.
-- **Verification:** prepared-runtime integrity passes; all 23 accepted targets match their registered Git blob identities. Non-deploying CI run 36040414444 passed prepared generation, R39 boot, queue Python compilation, portable native build, one-worker native verification, two-worker native verification, and no-libgomp verification.
-- **Deployment-control hardening:** the production workflow now re-enumerates the canonical Vercel project after destructive cleanup and refuses replacement deployment unless zero previous deployments remain.
-- **Versions:** Repository Work 1.0.20; LALM Engine 2.1.114; Deployment Control 1.0.15. Server Runtime remains 2.3.287 until an actual Server release advances deployed lineage.
-- **Activation:** source/static verified; production activation is the next governed stage under the user's explicit approval.
-
-### UPDATE CONTINUATION STARTED — 2026-09-24 — resource attribution + adaptive dual-CPU LALM benchmark
-
-- **Observed live evidence:** R39 2.1.113 HW_USAGE cameras show the production process near 100% CPU during PREFILL while the runtime exposes 2 CPUs; RSS remains roughly 290–315 MiB with about 1.96–1.98 GiB available. Current evidence therefore suggests one-core saturation rather than RAM pressure, but does not yet attribute baseline/background load.
-- **Requested outcome:** instrument the complete receive → queue/state → prompt/tokenization → PREFILL → decode → persistence/sync → recovery lifecycle as a Task-Manager-style resource timeline, separating CPU and memory attribution by subsystem and phase before/during/after response processing.
-- **Camera contract:** preserve category gates and early returns; add bounded/aggregated resource cameras rather than restoring per-token/operator/tensor flood. Instrumentation overhead must itself be attributable and switchable.
-- **Compute delegation:** add benchmarkable 1-CPU, 2-CPU, and adaptive 1↔2 execution policy. Adaptive mode may consume the second visible CPU only when measured server headroom permits, while preserving capacity for queue/state/Redis/health work. Parallelism must occur at proven parallelizable native/inference boundaries rather than merely moving the same single-threaded work to another CPU.
-- **Acceptance:** compare idle baseline, ingress/pre-response, PREFILL, decode, persistence/sync, and post-response recovery; report CPU-time, wall time, peak/average process CPU, RSS/available-memory deltas, throughput/TTFT, delegation decisions, and unattributed visible usage. Benchmark 1 vs 2 vs adaptive before selecting production policy.
-- **Deployment:** source work does not itself authorize another production trigger; activation remains a separate governed gate.
-
-### UPDATE CONTINUATION STARTED — 2026-09-24 — distinguish stale-purge maintenance from destructive release cleanup
-
-- **Evidence correction:** standalone `Purge Stale Vercel Deployments` #19 succeeded while the hour-old production deployment remained. Source inspection proves this is intentional: that workflow protects the deployment serving the production alias and deletes only other stale deployments.
-- **Contract defect:** §tart/release guidance incorrectly treated the standalone stale purge as the pre-deploy clear-current-server gate, while the actual canonical production workflow owns destructive clear-current cleanup at the last possible moment after the replacement artifact is prepared.
-- **Plan:** align §tart and the clean-release guide with executable truth; harden `manual-vercel-production.yml` so its destructive cleanup re-enumerates the canonical project and refuses to deploy unless zero old deployments remain; preserve standalone stale purge as maintenance-only.
-- **Deployment:** no production request will be fired by this documentation/workflow repair.
-
-### UPDATE FINISHED — 2026-09-24 — accepted-runtime integrity repair + clean-release contract
-
-- **Root cause repaired:** v82-batch accepted overlay registration now declares source commit `c51160873d26c202a39ccc562a20d589d2d8516e` and exact accepted-target blob `f44ed601c5dda8aa771a4253d615d5f3a498b3bf`.
-- **Integrity verification:** every `accepted_runtime/accepted.json` file and overlay entry was re-read from `main`; every declared Git blob SHA matches its actual accepted target, including v82-batch.
-- **Governance hardening:** added `docs/engineering/SWRLZ_CLEAN_PRODUCTION_RELEASE_INTEGRITY.md` and made it mandatory from `§wyrlz_§tart.md`. Stable releases now require accepted-runtime registration + prepared-runtime integrity preflight before cleanup, followed by observed cleanup → one production trigger → GitHub Actions → canonical Vercel → runtime verification.
-- **Resulting version:** Repository Work `1.0.19` (from `1.0.18`). Runtime component versions are otherwise unchanged by this repair.
-- **Deployment state at closure:** source/static integrity repaired and verified; cleanup and production activation are the next release stages and must be observed separately before live success is claimed.
-- **Canonical project lock:** `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`.
-- **Result:** SOURCE/INTEGRITY COMPLETE; PRODUCTION ACTIVATION PENDING.
-
-### UPDATE CONTINUATION STARTED — 2026-09-24 — repair accepted-runtime integrity and harden cleanup/deploy preflight
-
-- **Resumes:** R39 deep LALM Lockdown shutter benchmark after GitHub Actions evidence showed cleanup succeeded but both prepared-runtime verification and production deployment failed before Vercel with `accepted overlay blob mismatch: lalm/chain/v82_batch.py`.
-- **Observed source baseline:** `accepted_runtime/lalm/chain/v82_batch.py` blob `f44ed601c5dda8aa771a4253d615d5f3a498b3bf`; `accepted_runtime/accepted.json` still declared stale v82-batch blob `4ddaf2a5a6347281759f1fcc4794156488afb198`.
-- **Architecture reconciliation:** deployment triggers and cleanup wiring are healthy; the defect is accepted-runtime integrity registration plus insufficient pre-trigger integrity discipline.
-- **Plan:** repair v82-batch accepted overlay registration, add a canonical deployment-integrity/preflight guide, route §wyrlz §tart through it, advance Repository Work, then run the established cleanup → single production request → GitHub Actions → canonical Vercel verification chain.
-- **Safety:** reuse only canonical Vercel project `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`; no replacement project.
-
-### 2026-09-24 — R39 deep LALM Lockdown shutter benchmark
-- Extended the camera gating boundary into the accepted v82 LALM batch/inference layer. Its common `_lockdown(...)` emitter now returns before metrics lookup, timestamps, record construction, JSON serialization, printing, or server `brain-*` mirroring while the benchmark shutter is closed.
-- Lockdown instrumentation remains in source and can be re-enabled; this benchmark deliberately preserves R39 2.1.113 wrapper PREFILL_END throughput and HW_USAGE CPU/RAM cameras while suppressing the inherited token/operator/tensor camera flood.
-- Accepted-runtime authority was advanced to the new v82 blob. Inference arithmetic, 256-token runtime installation, queue semantics, and fallback behavior are unchanged.
-
-### 2026-09-24 — R39 camera lockdown gating benchmark profile
-- R39 2.1.113 adds lazy camera-category gates so disabled telemetry returns before record construction/serialization. The benchmark profile keeps only terminal PREFILL throughput (tokens/sec) and request-correlated HW_USAGE CPU/RAM sampling enabled; hot-entry, semantic, and prefill-boundary camera categories are disabled without deleting their instrumentation.
-- Purpose: compare PREFILL latency/resource utilization against the full-camera baseline while preserving the ability to re-enable individual camera families for future diagnostics. Inference semantics, the 256-token V82 batch configuration, native/serial fallbacks, and queue behavior remain unchanged.
-
-
-### 2026-09-23 — UPDATE STARTED: clean-room send transport disappearance
-- Symptom: two user sends rendered locally but produced no Vercel runtime traffic in the observed production window, placing the defect before Workstation enqueue/inference.
-- Diagnostic mutation: commit 93da40d adds bounded server cameras at /api/lalm_station/send entry/auth/failure; commit 2c9e8b3 adds a clean-room client camera immediately before fetch and after/failing the fetch. These cameras distinguish click/composer execution, browser network dispatch, route entry, authentication, and queue handoff without changing send ownership.
-- Deployment intent: deploy through the canonical update → prepare → clear existing project deployments → deploy latest → GitHub terminal → Vercel READY/source-SHA verification sequence, then reproduce one send and inspect the new cameras before behavioral mutation.
-
-### UPDATE FINISHED — 2026-09-23 — clean-room send transport visibility
-- **Observed:** two user sends from clean-room `/chat/§wyrlz` produced no Vercel runtime traffic at the Station/subscriber/tokenizer boundaries. Current production remained READY but therefore provided no server-side evidence for those sends.
-- **Architecture reconciliation:** canonical clean-room source on main posts directly to `/api/lalm_station/send`; the server route exists in `api/lalm_station.py`. The existing client catch collapsed network and non-2xx HTTP failures into a generic CLIENT_TRANSPORT state without preserving endpoint/status detail.
-- **Mutation:** Web Chat 1.0.42 makes the send boundary fail visibly with `SEND_NETWORK_FAILED` or `SEND_HTTP_<status>`, endpoint, and bounded response detail. No alternate transport owner or fallback was added.
-- **Verification state:** source/static verified; production activation pending canonical update → prepared replacement → clear existing Vercel deployments → GitHub deploy → terminal GitHub/Vercel/alias/SHA verification.
-
-### 2026-09-23 — bring-up isolation + pre-deploy cleanup repair
-- Live post-deploy trace proved the promoted R39 hot overlay lineage still expanded a tiny turn to 2,698 prefill tokens even after subscriber history/profile removal. Commit 96db666 bypasses the hot overlay stack in the v3 generation subscriber during baseline bring-up and invokes swyrlz.r39_inference directly; this isolates raw current-turn chat framing/tokenization/model/decode.
-- The production workflow had no previous-deployment cleanup step. Commit 262e1b7 adds fail-closed Vercel API cleanup after the replacement artifact is fully built/injected/verified locally and immediately before production deployment, minimizing the destructive gap while enforcing the requested clear-before-deploy order.
-
-### 2026-09-23 — minimal R39 bring-up prompt isolation
-- Fresh-thread live inference reached PREFILL with 2,788 tokens despite a tiny user turn. For baseline model bring-up, commit 944e1bc disables transcript/profile injection in the generation subscriber and sends an explicitly empty response directive; commit 3251c8f makes the renderer honor that empty directive rather than silently restoring its default system prompt.
-- The resulting test path retains only irreducible chat framing plus the current user text. Context/profile machinery will be reintroduced separately behind measured token budgets after decode/DELTA is proven.
-
-### 2026-09-23 — Vercel native runtime libgomp portability repair
-- Canonical production alias advanced to the new deployment, but /api/lalm/native reported both R39 native modules unavailable because the Actions-built extensions linked libgomp.so.1, which is absent from Vercel's Python runtime image.
-- Production workflow commit ef969130c48fa89b425dc3c69aa0d235e8b0cf4c now builds R39 native extensions with SWYRLZ_OPENMP=0 and fails closed if ldd still finds a libgomp dependency. The C kernels already guard OpenMP usage behind _OPENMP, so this preserves native execution while removing the unavailable runtime dependency.
-- The canonical alias verifier repair remains active and exact source identity is still enforced by the deploymentCommit assertion. Retry required.
-
-### 2026-09-23 — production verifier canonical-alias repair
-- Production deployment `dpl_2LiSiW7yrpKQc9RWkvRhkk4GpP3x` reached Vercel READY and was aliased to `https://swrlzkamico-o3nu.vercel.app`, but the GitHub verification step polled the deployment-specific URL and received Vercel's protection redirect instead of JSON from `/api/server/status`.
-- Workflow repair `d367c9276c5a52bee263488974057f4b217baeac` verifies the canonical production alias after promotion. Exact source identity remains fail-closed through the existing `deploymentCommit == EXPECTED_SOURCE_SHA` assertion, so alias verification cannot accidentally bless an older deployment.
-- R39 section-sign tokenizer fix remains included in the current main lineage. A fresh governed deployment will be triggered and watched to terminal GitHub + Vercel states.
-
-### 2026-09-23 — canonical §WYRLZX_BPE tokenizer compatibility
-- Live manual-deploy traces for both greetings show verified R39 model reconstruction, then `R39_TOKENIZER_KIND_UNSUPPORTED` on canonical producer label `§WYRLZX_BPE` at `BpeTokenizer.__init__`. The Python engine previously accepted only `SWYRLZX_BPE` (ASCII S) and `GGML_BPE`.
-- Commit `1c927ee255f1f043e19ab197ff2fc91577669533` adds an explicit section-sign spelling alias with serialized token/merge schema validation. No arbitrary BPE fallback, no change to vocabulary IDs or merge ordering. Await manual deployment and live test to verify model-open/prefill and any next gate.
-
-### 2026-09-23 — build #37 root cause: duplicate historical transport
-- Repository tree confirms `.transport/` ~215.58 MiB AND `swrlz-core/requests/inbox/.transport/` ~215.60 MiB. Run #37 staged the first copy but left `swrlz-core/` inside the local builder tree (457 MB remained); resulting bundle 340.73 MB > 225 MB. This is the missing large payload, not evidence that NumPy alone caused the excess.
-- Workflow commit `104616cd29929c69122348e2d2d1c5e7a70fffb9` stages the historical inbox outside the builder and asserts neither transport tree remains. It preserves repository content and the existing production deployment. Await actual build/deploy verification.
-
-### 2026-09-23 — R39 tensor-view diagnostic visibility
-- Subscriber now logs bounded `model-load-diagnostic` checkpoint, reason, categories and exception traceback for R39 `MODEL_LOAD_DIAGNOSTIC` events; no prompt/history included. This exposes the exact `R39Model` open exception previously discarded by stream normalization. Commit `a2cb2ee47ec42f8e4c7d27601c9424e4da5f0e7a`. Pending production activation and new test.
-
-### 2026-09-22 — manual Git deployment vs Actions prebuilt bundle repair
-- Vercel Git deployment `dpl_2t3376oaeQmPzNkkk2xahtyAU99o` is READY on source `520957e6697ba2fa266c188c64875dd3dba37b6f`, proving the R39 diagnostic source can build through the clean Git path.
-- Actions run #36 failed before deployment: generated runtime/native artifacts were placed inside the source tree before `vercel build --prod`; Python function bundle measured 341.51 MB against 225 MB.
-- Workflow stages prepared runtime, compiled native binaries, and transport payload outside source tree before local build, then injects required prepared/native artifacts into the completed function bundles. This aligns builder input with clean Git deployment while preserving the production prebuilt runtime contract.
-- Existing production deployment is protected; replacement must pass readiness before post-promotion stale cleanup.
-
-### DIAGNOSTIC HOTFIX — 2026-09-22 — R39 MODEL_LOADING boundary cameras
-
-- **Observed production boundary:** CLIENT → SERVER, durable queue/subscriber, and bundled `swrlz_r39_python_reference_v1` all execute; generation emits `MODEL_LOADING` and then FAILED before ROUTE/PREFILL or any DELTA.
-- **Mutation:** `swyrlz/r39_inference.py` now emits bounded checkpoints for artifact discovery, `ensure_r39()` return/exception, verified raw handoff, `R39Model` open exception, and model-ready metadata. Unexpected exceptions include bounded traceback evidence in the diagnostic event instead of collapsing immediately to generic `R39_INFERENCE_RUNTIME_FAILED`.
-- **Architecture:** observational only; CLIENT → SERVER ownership, model transport verification, inference behavior, and terminal semantics are unchanged.
-- **Version note:** no standalone Server Runtime version file exists on current main; deployed Server Runtime authority is not pre-advanced by this source-only diagnostic mutation. Repository Work bookkeeping is recorded here and deployment activation remains pending until the governed cleanup/deploy gates succeed.
-- **Deployment intent:** authorized by user; run canonical stale-deployment cleanup first, then canonical production workflow against existing Vercel project `swrlzkamico-o3nu` only.
-# §wyrlz Server Roadmap & Version Ledger
-
-**Role:** durable chronological memory of Server/module evolution, architecture decisions, diagnostics, verification, deployment state, and completed project progress.
-
-**Startup/read order is owned by `SWRLZ_PROJECT_START.md`.** This ledger reports what happened; it does not redefine the operating workflow.
-
-## Current authoritative baseline
-
-- **Repository Work:** `1.0.3`
-- **Server Runtime:** `2.3.287`
-- **Chat:** `1.5.85`
-- **Runtime Manifest:** `152`
-- **LALM Engine:** `2.1.112`
-- **Web Frontend:** `1.0.5`
-- **LALM UI:** `1.0.0`
-- **Frozen Web Collector:** `1.0.9`
-- **Deployment Control:** `1.0.8`
-
-`VERSION.txt` and the referenced `versions/<module-id>.txt` files remain the version/status authorities. This roadmap is history/lineage and must be reconciled to those owners rather than treated as a competing version source.
-
----
-
-## Current project-work contract
-
-Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
-
-- Hotfix/deployment mechanics → `SWRLZ_HOTFIX_RULES.md`
-- Server/module lineage → `SWRLZ_VERSION_MODULE_EVOLUTION.md`
-- Architecture reconciliation → `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md`
-- Project-wide cameras/logs → `SWRLZ_CHAT_CAMERA_LOGS.md`
-- Project-work response/readability → `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md`
-- User-project architecture teaching → `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md`
-- Programming-LALM target + implementation truth → `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md`
-
----
-
-## Active update journal
-
 ## UPDATE FINISHED — 2026-10-01 — HF Workstation CPU prefill + 700M acceptance reliability v93
 
 **Scope:** improve the current HF candidate's single-inference CPU use, response constraint reliability, and Workstation generation observability without claiming multi-generation CPU redistribution or live activation.
@@ -1267,6 +731,542 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 **Version state:** implementation source changed, but governed version authorities are intentionally not advanced yet because the stable-server repair cannot be activated/accepted without a deployment-producing action. Current published authorities remain Server `2.3.284`, Online Research `1.0.1`, LALM `2.1.102`/v90, Manifest `149`. This event remains blocked rather than falsely claiming an active 2.3.285 runtime.  
 **Verification:** source fetch-back confirms the repaired parser and bounded provider camera. Live provider acceptance requires the stable-server source to be deployed, then a fresh Kansas City weather request must show nonzero `resultAnchors` / `acceptedResults`, nonzero evidence, v90 `protected-evidence-ready`, and a grounded answer.  
 **Deployment / restart:** NOT PERFORMED. Explicit approval is required before the production deployment action.
+
+### UPDATE CHECKPOINT — 2026-09-30 — HF Chat usability + 700M reliability repair
+
+- **User authorization:** implement the findings from five guest-session Chat tasks across desktop/mobile: reading-position/auto-follow, composer footprint, pinned-code behavior, Markdown rendering, instruction following, response latency, Stop control, accessibility, and disconnected settings.
+- **Architecture reconciliation:** clean-room `/chat/§wyrlz` remains the Mask/UI owner; `hf_space/station.py` owns HF Station generation lifecycle/artifact persistence; `hf_space/brain_programming.py` owns bounded programming/artifact intent; `hf_space/lfm2_700m_engine.py` owns the independent 700M inference route. No new competing owner was introduced.
+- **Chat source:** deployment branch Chat **1.0.87 → 1.0.88**. Added follow-latest behavior plus a visible **Jump to latest** affordance, reading-position preservation when composer geometry changes, compact collapse that keeps the message field available, smaller mobile composer growth, larger Send target, and a visible Stop control during active generation.
+- **Rendering/artifacts:** ordinary headings and ordered/unordered lists now render as safe DOM structure instead of raw Markdown; code remains fenced/containerized. The pinned rail defaults collapsed and is no longer sticky over replies. New code artifacts are no longer auto-pinned, and pinned-artifact revisions require an explicit artifact/code/file continuation reference rather than treating any later coding task as a revision.
+- **Generation lifecycle:** HF Station now exposes bounded user cancellation; the worker observes `cancelRequested` between generation events and terminates as `CANCELLED` without committing partial assistant text.
+- **700M reliability:** reduced the regressed 32K/4K context-output configuration back to an 8K/2K bounded route, added thread-local user-name resolution so explicit conversation identity can outrank unrelated built-in Kami provenance, added exact numbered-step routing, and strengthened categorical Python/code-example verification guidance.
+- **Accessibility/settings:** hidden settings sheet is now inert while closed; disconnected effort/response-length controls are hidden until they have live generation consumers.
+- **Versions:** Repository Work **1.0.33 → 1.0.34**; Web Chat **1.5.86 → 1.5.87**; LALM Engine **2.1.116 → 2.1.117** revision `2.1.117-hf-700m-reliability-latency-v92`. Server Runtime remains **2.3.308** because no Server release/deployment has occurred. Runtime Manifest remains **152**.
+- **Source receipts:** Chat usability `8910515a4c098810c1b91cd24462764d5a031e65`; artifact routing `fa428e89dd0d9997bfb39c512b869de1c2d1d108`; Station cancellation/artifact behavior `7372773d5b9aea6fee295b1d8f85fb7b649e78f3`; 700M reliability/latency `acf0790ef0479d8337abf5f47ca4eada27284ae6`.
+- **Verification truth:** SOURCE COMPLETE / STATIC STRUCTURAL RE-READ COMPLETE. Re-read confirmed Chat 1.0.88 controls/rendering markers, Station cancel state, explicit artifact-routing guard, 700M 8K/2K bounds, identity/format reliability hooks, and reconciled version authorities. No live HF claim is made from source mutation alone.
+- **Deployment state:** NOT YET TRIGGERED. Current HF contract requires the guarded request-file deployment path; live desktop/mobile and the five reported task regressions remain acceptance targets after deployment.
+- **Status:** SOURCE REPAIR COMPLETE / VERSION + ROADMAP RECONCILED / HF DEPLOYMENT + LIVE ACCEPTANCE PENDING.
+
+### UPDATE FINISHED — 2026-09-29 — LALM v91 offline Code Truth + local web/UI engineering
+
+- **User authorization:** ensure the coding/web-design improvements are implemented on the runtime branch required by §tart and follow the Hugging Face project authority rather than remaining documentation-only on main.
+- **Architecture reconciliation:** §tart + Hotfix Rules classify runtime-loadable LALM/R39 behavior as `runtime` authority. Current runtime baseline was re-read before mutation: LALM Engine **2.1.115**, Repository Work **1.0.32**, hot entry `runtime_hot/r39_engine.py`, preserved v90 overlay stack.
+- **Executable runtime change:** added `runtime_hot/r39_engine_v91_overlay.py` with bounded programming-only offline Code Truth + web/UI engineering policy. It covers syntax/structure, symbols/scope/types/contracts, control/data/state flow, concrete runtime failures, repair re-verification, DOM/CSS/layout/responsive/accessibility/state/security/performance, and chat-specific composer/scroll/pinned/code-container/streaming/mobile invariants.
+- **External-service boundary:** ordinary standalone HTML/CSS/JavaScript engineering does not require internet. Google, Hugging Face, OAuth, hosted SDK endpoints/scopes/versions and similar changing provider facts remain an external-evidence boundary and must be marked unverified when current authority is unavailable.
+- **Activation wiring:** runtime hot entry now fetches and executes pinned v91 overlay commit `a7dbee3dcc68e7a9f677865337a91c4cc6821a3c` after v90. Entrypoint activation commits: `fe4170a179f656b7dac916bfacae7496c28f8996`, indentation correction `065e0e219e6d21d310b936f4d1c03ad9505c8cd0`.
+- **Deterministic self-test:** v91 self-test covers programming detection, single policy injection/deduplication, non-programming isolation, offline-first contract, syntax/structure, control/data/state, chat UI invariants, provider boundary, and repair re-verification. It fail-closes overlay hydration if the suite does not pass.
+- **Versions:** LALM Engine **2.1.115 → 2.1.116**, revision `2.1.116-hot-offline-code-truth-web-ui-v91`; Repository Work **1.0.32 → 1.0.33**. Server Runtime, Chat, Runtime Manifest, and unrelated modules remain unchanged.
+- **Documentation:** programming runtime architecture aligned to executable v91; prior evidence-first/offline web curriculum on main is now backed by a runtime policy rather than being documentation-only.
+- **Verification truth:** SOURCE COMPLETE / STATIC STRUCTURAL RE-READ COMPLETE. Runtime-hot source and authorities are committed. No fresh HF inference/user-turn acceptance was performed in this connector session, so live behavior is **not yet claimed verified**.
+- **Deployment:** no Vercel action. No Hugging Face deployment workflow was dispatched. Under current §tart architecture this is runtime-hot LALM source; HF follow-through remains the canonical hosting path and live acceptance is pending.
+- **Status:** RUNTIME SOURCE COMPLETE / LALM 2.1.116 AUTHORITY ACTIVE IN REPO / LIVE HF v91 ACCEPTANCE PENDING.
+
+### UPDATE FINISHED — 2026-09-29 — New-thread isolation repair + Hugging Face hosting authority
+
+- **User authorization:** fix the observed Chat defect where creating a new thread after messaging in another thread could be redirected back to the prior thread and the attempted first message would not send; discontinue Vercel and make Hugging Face the hosting authority throughout future follow-through.
+- **Diagnosis:** the clean-room Chat intentionally represents a new conversation as local `draftThread=true` with no active thread ID until the first send. Background Station synchronization can continue while that draft is open. The draft must therefore be treated as an explicit navigation state: server current-thread metadata from the prior conversation may hydrate data but must not own navigation while the unsent draft is active.
+- **Chat repair:** `applyChatState()` now documents and preserves the draft-navigation invariant. Server current-thread fallback remains eligible only when `draftThread` is false. The first draft send continues to allocate a fresh thread ID before constructing the Station request, so the request is bound to the new conversation rather than the previous server-current thread.
+- **Canonical Chat:** **1.0.56 → 1.0.57**. Source metadata and `chat/§wyrlz/VERSION.txt` are aligned to 1.0.57.
+- **Hosting authority migration:** repository README now declares existing Hugging Face Space `kamiloki/Swyrlz` as the active hosting/deployment authority. Vercel is discontinued and retained only as historical provenance/migration material. Future implementation, deployment, repair, acceptance, and documentation follow-through must target the existing HF Space and must not treat old Vercel-era files as current deployment instructions.
+- **Preserved lineage:** historical Vercel contracts, changelogs, releases, and receipts are not deleted or rewritten; they remain evidence of prior architecture. Where they conflict with current hosting intent, they are historical rather than authoritative.
+- **Source receipts:** thread isolation `7de9459715710f0c6c5284fde11bd3f6931ba77a`; Chat version authority `ed25c92f08078c6b3e8e6a0628bbf1c6db3bc038`; Chat source metadata `bd75688fbed34d1380b12646833548e2db0d59c1`; HF authority README `5c19d0d916eca5471ded13e1594e2ddcc3542ada`.
+- **Verification:** source re-read required after this checkpoint; live HF browser acceptance is still pending until the updated HF package is deployed/served.
+- **Deployment state:** no Vercel action. This event changes canonical source/governance only; Hugging Face deployment/acceptance remains a separate activation step through the existing guarded HF path.
+- **Status:** SOURCE FIX COMPLETE / HF HOSTING AUTHORITY MIGRATED / LIVE HF ACCEPTANCE PENDING.
+
+### UPDATE CHECKPOINT — 2026-09-29 — HF Chat 1.0.56 code delivery and Google identity repair
+
+- **User authorization:** user requested the observed Google-account defect, incomplete/sloppy code delivery, code-container UX, and complete-file delivery behavior be fixed in the same bounded HF acceptance repair.
+- **Canonical Chat:** advanced **1.0.55 → 1.0.56**. Assistant fenced Markdown code now renders as bounded code containers with a language label and dedicated **Copy code** control; whole-response Copy remains separate. Plain assistant text remains text-safe and no HTML from model output is executed.
+- **700M completion budget:** HF LFM2-700M keeps context **8192** but reserves **2048 output tokens** instead of 256. With the existing 128-token safety reserve, hard input budget is now **6016**. Oldest-history eviction and hard budget rejection remain.
+- **Code-delivery policy:** deterministic response-mode routing now prefers complete usable files over patch fragments for coding requests; explicit chat-code requests require complete fenced blocks; omitted sections/ellipses/TODO/rest-unchanged placeholders are disallowed. When a modification request is genuinely ambiguous about delivery, §wyrlz asks whether the user wants the complete file, complete code in chat, or both.
+- **HF Google identity:** added real HF-local `/api/account/status`, `/api/account/me`, `/api/account/google`, and `/api/account/logout` routes plus `google-auth`. Google ID tokens are server-verified against the configured/default client ID. The HF session is HttpOnly and process-local/non-durable; no false Redis/Vercel durability claim was introduced.
+- **Google external dependency:** source support is complete, but live sign-in still requires the Google OAuth client configuration to authorize the deployed `*.hf.space` web origin. That external configuration cannot be proven from repository source and must be checked in live acceptance.
+- **HF deployment branch receipts:** complete-output engine `3e8c450f182624bdbee7a9f0ffa331dbde96b9a0`; Google identity bridge `6c82910315919fdd328d2e409cec5ae59f60c6ca`; Google auth dependency `d44e8b9af1f4d018df33176b354e13d0561fd64b`; canonical code renderer sync `e562b268096a87013b0825af564787a92c60090a`; Chat 1.0.56 sync `1aa7cdfc8e9eeba810c5dcffcddbb6893c1ce0b1`; smoke-budget alignment `4a5b0ebd67dcf02ddb30d34e7aed9bc021eeac3e`; HF Chat authority `7548cfdca1de9523a6e685621e132f3210fa4324`.
+- **Canonical receipts:** code-container source `cfd756f44b86d82a61cab11ce6e3e985d336b9bc`; Chat 1.0.56 source `06d8e90b4c37402d219a51f19102842e6924383a`; clean-room version authority `f4169d5113d9990c74bb4a1ef1f11d6b280e4ba0`; Repository Work **1.0.30** authority `4d27eb52f38d9588936d10efa21276e38adfe5ba`.
+- **Static verification:** PASS — inline browser JS syntax, CSS brace balance 0, duplicate IDs none, code renderer/copy control present, Chat meta/version authority both 1.0.56, engine constants 8192/2048, complete/clarify code modes present, HF account endpoints present, `google-auth` dependency present, deployment smoke updated to 6016 input budget.
+- **Deployment state:** NOT DISPATCHED from this session. Existing connector limitation remains: no new workflow-dispatch operation is exposed. No auto-deploy backdoor was introduced.
+- **Status:** SOURCE REPAIR COMPLETE / LIVE HF 1.0.56 DEPLOYMENT + GOOGLE ORIGIN ACCEPTANCE PENDING.
+
+### UPDATE CHECKPOINT — 2026-09-28 — HF Chat 1.0.55 source repaired; deploy dispatch pending
+
+- **Approval remains active:** `APPROVE HF CHAT 1.0.55 DEPLOY AND 700M FIX`.
+- **HF deployment branch:** `feature/hf-space-manual-deploy` HEAD `7256b12e3ae7112a74954ca80fdb7706dd1ad206`.
+- **UI source verified:** HF branch canonical Chat blob is `049c033ac6c07ca96f813cce4bf637e41b4162e8`, meta **1.0.55**, matching the completed A–G clean-room source. The HF packager stages this file and applies only the explicit HF model/profile control injection. Therefore the older-looking live Space is a deployed-state mismatch, not missing source work.
+- **700M repair:** `hf_space/lfm2_700m_engine.py` commit `f2d0da116f99a2eab674f2c932f0d2426514a624` expands the bounded llama.cpp context **4096 → 8192**, retaining **256** output tokens and **128** safety reserve; usable input budget becomes **7808**. Oldest-history eviction remains unchanged. Built-in §wyrlz identity and user/custom profile layers are preserved.
+- **Deployment proof gate:** workflow commit `7256b12e3ae7112a74954ca80fdb7706dd1ad206` adds a deploy-only 700M smoke using the observed failing prompt `How's things going 😊`. Publication is blocked unless the route loads with context 8192/input budget 7808, emits a CONTEXT event within budget, and produces a non-empty response.
+- **Safety/rollback unchanged:** workflow still snapshots existing `kamiloki/Swyrlz`, records immutable pre-deploy rollback metadata, verifies the target/SDK, uploads only after explicit approval, and records the deployed revision as unverified until acceptance.
+- **Static/source verification:** PASS for Chat 1.0.55 source, packager Chat staging, 8192/7808 budget constants, absence of the old opaque 700M error string, presence of the exact short-prompt smoke, non-empty-response assertion, pre-deploy snapshot, rollback checkpoint, and destination guard.
+- **Deployment state:** **NOT YET DISPATCHED**. The connected GitHub toolset in this session exposes workflow read/rerun operations but no workflow-dispatch creation operation. No HF write-capable connector is available either; the connected HF credential is read/jobs scoped. The assistant did not weaken the workflow into an automatic push deploy or fabricate a deployment receipt.
+- **Next execution:** manually dispatch **Manual Hugging Face Space Deploy** against `feature/hf-space-manual-deploy` with `mode=deploy`, `approved=yes`. The already-approved workflow will then run the new 700M smoke before any publication. After a run exists, its jobs/logs/artifacts can be inspected through the connected GitHub tools.
+- **No Vercel action:** none performed.
+- **Status:** SOURCE REPAIR COMPLETE / LIVE DEPLOYMENT PENDING DISPATCH.
+
+### UPDATE STARTED — 2026-09-28 — HF Chat 1.0.55 acceptance and 700M context fix
+
+- **Approval:** user explicitly approved `APPROVE HF CHAT 1.0.55 DEPLOY AND 700M FIX`.
+- **Observed live defects:** Hugging Face Space displayed the older-looking deployed Chat surface and LFM2-700M rejected a tiny user turn with `Current prompt/profile context exceeds the 700M input budget`.
+- **Source findings:** canonical and HF feature-branch `chat/§wyrlz/index.html` both resolve to blob `049c033ac6c07ca96f813cce4bf637e41b4162e8` / Chat **1.0.55**; therefore the visible UI mismatch is deployment/runtime state, not a missing Tier A–G source merge. The HF packager stages that canonical Chat and injects HF-only model/profile controls.
+- **700M finding:** HF 700M route uses a 4096-token llama.cpp context with a 3712-token hard input budget. It always injects the built-in §wyrlz profile, role/system framing, response mode, optional assistant profile and user profile before budget validation; only history is evicted. A fixed profile/system payload can therefore exhaust the budget before a tiny current prompt is considered.
+- **Bounded repair plan:** enlarge the HF 700M inference context/budget while retaining hard budgeting and oldest-history eviction; add explicit budget diagnostics/error wording; preserve the built-in profile and user/custom profile semantics. No model weights/training changes.
+- **HF acceptance plan:** validate the feature-branch package, preserve the pre-deploy HF snapshot/rollback checkpoint, publish only to existing `kamiloki/Swyrlz`, then inspect workflow/runtime evidence. No Vercel action.
+- **Status:** IN PROGRESS.
+
+### UPDATE STARTED — 2026-09-28 — HF Chat 1.0.55 deployment and 700M context repair
+
+- **Observed live defects:** `kamiloki/Swyrlz` / `miloki-swyrlz.hf.space` is serving the older HF-staged Chat surface rather than canonical clean-room Chat **1.0.55**, and short user prompts can fail with `Current prompt/profile context exceeds the 700M input budget`.
+- **Source diagnosis:** the HF deploy workflow runs from `feature/hf-space-manual-deploy`; its staging script copies `chat/§wyrlz/index.html` from that branch, so a stale branch Chat source can be deployed even while `main` owns a newer clean-room Chat. The 700M route uses a **2048-token** context with only **1728 input tokens** after output/safety reservation while always injecting the built-in Mirror Muse profile, role frame, response mode, optional assistant customization, user profile, current prompt, and history.
+- **Authorized repair:** synchronize the HF deployment branch's clean-room Chat source to canonical main **1.0.55**, preserve HF-only additive controls during staging, enlarge the 700M context budget within the model's supported context, retain oldest-history-first trimming, validate the staged package, deploy only the existing HF Space, and verify live behavior.
+- **Non-goals:** no Vercel deployment, no model retraining, no new UI tier, no unrelated architecture changes, and no silent durable profile/lore mutation.
+- **Status:** IN PROGRESS.
+
+### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier G artifacts and agent cards
+
+- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier G completes the Glitch Dragon Chat research implementation sequence (A–G, including D.1) with a truthful backstage work surface rather than adding another conversation-layer control system.
+- **Work surface:** added a compact right-side **Work** surface opened from the top edge. Desktop uses a bounded right drawer; mobile uses the full viewport. Opening it closes competing drawer/settings presentation surfaces without changing Chat/runtime authority.
+- **Structured action cards:** cards are created only from existing Station status objects whose explicit `phase` or `categories` contains ACTION / TOOL / ACTING / EXECUT / SEARCH / FETCH / WORK / RESOURCE_TASK semantics. Assistant response text/reason prose is never searched or classified to invent tool activity.
+- **Approval cards:** sanitized structured proposal receipts plus real pending Tier-D proposal records render as approval cards with state/category/operation/risk/version. Their action navigates to the existing Proposal Inbox; Tier G adds no second approve/decline authority.
+- **Artifact surface:** explicit artifact metadata is renderable when already present on trusted Station/message state. Current runtime has no artifact registry/contract, so the surface truthfully displays **No structured artifacts were emitted by the current runtime** rather than fabricating files/results.
+- **Evidence expansion:** committed assistant messages now expose expandable **Evidence / provenance**. The Station adds a bounded allowlist from canonical message provenance: source authority, turn contract, commit phase, terminal type, plus existing requestId/projection authority/state/timestamp. Arbitrary provenance and terminal reason text are not projected.
+- **Structured source forward-compatibility:** if already-structured message `sources` / `evidence` arrays are present, the UI can list them. External links are accepted only after HTTP(S) URL validation and use `noopener noreferrer`. Missing source arrays produce no fake citation/source entries.
+- **Legacy stream preservation:** the older direct stream consumer now retains structured `categories` and `proposalReceipt` metadata when present instead of dropping them; this does not create a new event type or transport path.
+- **Refresh behavior:** the Work surface refreshes from existing render/sync/proposal events only. No new polling interval, requestAnimationFrame loop, canvas/WebGL renderer, decorative fetch, or background task was added.
+- **Accessibility:** Work is keyboard closeable with Escape; mobile is full-screen; explicit/system reduced-motion remove drawer/details transitions; high-contrast and reduced-transparency modes include the new surface/cards/evidence containers.
+- **Truth boundary:** Work is a renderer of already-structured state. It does not parse assistant prose into actions, approvals, artifacts, sources, or evidence.
+- **Transport invariants:** compared with the Tier-F baseline, Station send remains **1 → 1**, Station sync **1 → 1**, `/api/chat_state` **4 → 4**, `setInterval` **1 → 1**, `requestAnimationFrame` **1 → 1**, canvas elements **0 → 0**.
+- **Versions:** Clean-room Chat **1.0.54 → 1.0.55**; Server Runtime **2.3.307 → 2.3.308** because the bounded committed-message provenance projection changes the stable Station response shape; Repository Work **1.0.28 → 1.0.29**. Runtime Manifest remains **152**; legacy Web Chat remains **1.5.86**.
+- **Final source blobs before Roadmap close:** Chat `049c033ac6c07ca96f813cce4bf637e41b4162e8`; Station `5558f3cce143828fe7ea42d7ac468d014d041452`; stable index `e8323c94d1286c080fd6cf63f545ab3c9a9151a5`; reconstruction `6c97672441dd8a1f371d079c575dc593bf8b289b`.
+- **Primary receipts:** Roadmap start `af741b9c72c7ca455d791af402f3ab6a041f7007`; Tier G work surface `315e4a3f92d73d9ff4b8002b755eaf748098b1a1`; bounded Station provenance `9b87947b2cd7cac6849917d1a62364b340d53e29`; provenance/work refresh completion `895a3271d8d7d85c177bf8ecce48a43eb495242d`; Server 2.3.308 `9af63b8648f1fb67f87e2e01912cdd18b1a86c57`; reconstruction `4872eb19bbe2812f90a746a662270ccea31fb176`; Chat version `a0f255c0a78c417700b16ed709cebb093f6ddcd2`; Server Runtime authority `2ac951284fcb877e40ea7c65e0c94eeb7833b06a`; Repository Work authority `aa8d6aa9d670bd8173188aa4f2277d277b7ea9e1`; UI server-version alignment `17fd76e998574b45f16d13ca5526ff317cb0db07`.
+- **Static verification:** browser inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; all 11 settings nav/panes remain matched; work surface/action/approval/artifact/evidence markers present; action classifier reads structured status phase/categories only; no prose-to-tool inference path found; HTTP(S)-only link gate present; high-contrast/reduced-transparency/reduced-motion support present; allowlisted Station provenance fields present and arbitrary provenance excluded.
+- **Runtime execution verification:** NOT PERFORMED. No browser acceptance against a deployed server, Python import/compile execution, live queue generation, or performance benchmark was run in this source-only checkpoint.
+- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live Redis/profile/lore/rapport/proposal mutation, or model/runtime activation occurred.
+- **Research implementation status:** **A through G COMPLETE**, including **D.1 structured proposal bridge**. There is no remaining research UI tier in `SWRLZ_GLITCH_DRAGON_CHAT_UI_RESEARCH.md`.
+- **Remaining independent checkpoint:** live runtime acceptance/deployment. That must be separately authorized and should verify first paint, mobile composer geometry, Station streaming, proposal/rapport APIs, work-surface structured cards/evidence, reduced-motion/high-contrast behavior, and performance before any production promotion.
+
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier G artifacts and agent cards
+
+- **Requested outcome:** finish the final research tier: tool/action cards, side work surface, approval cards, and source/evidence expansion.
+- **Truth boundary:** Tier G consumes only structured truth already present in Chat/Station/Tier-D state. It does not infer tool usage from assistant prose and does not invent artifacts/sources that the runtime did not emit.
+- **Work-surface plan:** add a compact right-side work surface opened from the top edge. It remains backstage and does not widen the primary conversation stage.
+- **Action-card plan:** create action cards only from structured Station status entries whose explicit phase/category denotes tool/action/search/fetch/execute/work semantics. Generic thinking/status events remain status, not fake tool cards.
+- **Approval-card plan:** proposal receipts and actual Tier-D proposal records may render as approval cards with state/risk/category/operation and direct navigation into Proposal Inbox. Approval actions themselves remain owned by the existing proposal API/UI.
+- **Evidence plan:** assistant messages gain expandable evidence/provenance details using committed message metadata such as requestId/authority and any already-structured source/evidence arrays if present. Missing source arrays render no fake citations.
+- **Artifact plan:** the work surface includes an artifacts area that accepts only explicitly structured artifact metadata if present. Current runtime has no artifact registry/contract, so empty state must say that no structured artifacts were emitted.
+- **Performance/accessibility:** no canvas/WebGL, no animation loop, no new background polling cadence, and no decorative network fetch. Surface is keyboard-accessible, mobile-fullscreen, and compatible with reduced-motion/high-contrast settings.
+- **Baseline:** Clean-room Chat **1.0.54**; Server Runtime **2.3.307**; Repository Work **1.0.28**.
+- **Version plan:** Clean-room Chat **1.0.55**; Repository Work **1.0.29**. Server Runtime remains **2.3.307** unless source evidence proves a server change is required.
+- **Deployment expectation:** NONE. This approval authorizes final Tier G Chat source/UI/version/Roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, model/runtime behavior changes, or a new artifact protocol.
+- **Status:** IN PROGRESS.
+
+### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier F companion animation state machine
+
+- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier F binds companion presentation to existing Chat/Station truth without creating a parallel runtime state authority.
+- **States:** implemented `idle`, `listen`, `accepted`, `thinking`, `acting`, `responding`, `approval`, and `error`.
+- **State authority:** one `data-companion-state` value is mirrored on `body` and the compact top edge. A visible/accessibility `companionStateLabel` exposes the current state in text; animation is never the sole carrier of meaning.
+- **Input mapping:** prompt focus/input maps to `listen` only when no uncommitted Station generation is active. Empty/unfocused composer with no active generation resolves to `idle`.
+- **Send mapping:** local send start and successful 202 queue acknowledgement map to `accepted`.
+- **Generation mapping:** active generation with no visible text maps conservatively to `thinking`; explicit phase names containing ACTION / TOOL / ACTING / EXECUT / SEARCH / FETCH or proposal auto-apply map to `acting`; once visible response text exists, state maps to `responding`.
+- **Approval mapping:** explicit approval/proposal-wait phases, including `PROPOSAL_QUEUED`, map to `approval`. Natural-language response text is never inspected to infer approval/action state.
+- **Error mapping:** terminal/runtime/client transport failures map to `error`; completed/cancelled terminal state resolves back toward idle/composer state.
+- **Visual behavior:** top dragon mark + assistant avatar use restrained CSS-only breathing/listening/acceptance/thinking/action/responding/approval/error motion. Ready-dot and state-chip colors also encode the state.
+- **Reduced motion:** explicit Reduced, explicit Off, and system `prefers-reduced-motion` disable companion icon loops, the existing busy-dot loop, and state-chip transitions while preserving static border/color/text state. Full mode may intentionally override system reduction only when explicitly selected.
+- **Performance:** no canvas, WebGL, particle engine, new requestAnimationFrame loop, image-loop decoder, or decorative network call was added. Existing Station/chat-state transport call-site counts remain unchanged.
+- **Truth boundary:** unknown active runtime phases fall back to `thinking` before output and `responding` after output; Tier F does not fabricate tool/action semantics from prose.
+- **Versioning:** Clean-room Chat **1.0.53 → 1.0.54**; Repository Work **1.0.27 → 1.0.28**. Server Runtime remains **2.3.307** because no server/runtime behavior changed. Runtime Manifest remains **152**; legacy Web Chat remains **1.5.86**.
+- **Final source blobs before Roadmap close:** Chat `5781bb90f4c80f167d0df16c6a158a4d13673338`; reconstruction `34c6b414a58c11ffa12641efc31b189eae71d020`.
+- **Primary receipts:** Roadmap start `323095fcff5c605be6b4aa0de89351fe51bd2663`; Tier F implementation `ba1d5ba8e77b3f1cdc42e4a627d90ec13869d705`; reduced-motion completion `af8b14016498f54bc16e320b1fcd91489e8518a9`; reconstruction `231071d939b4ca9aab32446b8ff53ec746770519`; Chat version `65037437a9f6e16f11fd3c4ac7ce38a9dea608e7`; Repository Work authority `0865134f34e06cd2a851e6f24974b793e840f8c5`.
+- **Static verification:** browser inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; all eight state names present; visible state chip present; body/top-edge state authority present; reduced/off/system motion suppression present; no canvas added; Tier G work surface marker absent.
+- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live runtime activation, or performance benchmark run occurred.
+- **Next research checkpoint:** Tier G — tool/action cards, side work surface, approval cards, source/evidence expansion. Tier G must consume existing tool/action/proposal/source truth and must not fabricate tool activity.
+
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier F companion animation state machine
+
+- **Requested outcome:** implement approved Tier F from the Glitch Dragon Chat research authority: companion presentation states idle, listen, accepted, thinking, acting, responding, approval, error, with reduced-motion equivalents.
+- **Authority boundary:** Tier F is presentation-state only. It derives visual state from existing prompt focus/input, send acknowledgement, Station generation/status/text, proposal receipts, terminal failure, and settings motion preference. It does not create a new runtime state authority.
+- **State plan:** `idle` when no active interaction; `listen` while the user is actively composing/focusing the prompt; `accepted` after send acknowledgement/queue acceptance; `thinking` for active generation before visible response text; `acting` for explicit action/tool/work phases; `responding` once response text is arriving; `approval` for proposal/approval phases; `error` for terminal/client/runtime failures.
+- **Visual plan:** top-edge dragon mark, assistant avatar, state chip/label, and restrained edge/aura effects will share one `data-companion-state` authority. Motion communicates state but does not obscure text or move layout.
+- **Reduced-motion plan:** system reduced-motion, explicit Reduced, and Off suppress looping transforms/glitches and retain static color/border/icon state. No state information may depend on animation alone.
+- **Performance plan:** CSS-only transforms/opacity/filter where practical; no canvas/WebGL/particle engine, timers, animation-frame loops, image decoding loop, or network request is added for decoration.
+- **Truth boundary:** generic runtime phase names are mapped conservatively; unknown active phases resolve to thinking/responding based on whether output text exists. No fabricated tool/action state is inferred from prose.
+- **Baseline:** Clean-room Chat `1.0.53`; Server Runtime `2.3.307`; Repository Work `1.0.27`.
+- **Version plan:** Clean-room Chat **1.0.54**; Repository Work **1.0.28** after concurrency re-read. Server Runtime remains **2.3.307** because Tier F is client presentation only; Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged.
+- **Deployment expectation:** NONE. Approval authorizes Tier F Chat source/UI/version/roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, server behavior changes, inference changes, or Tier G.
+- **Status:** IN PROGRESS.
+
+### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier E rapport
+
+- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier E introduces a separate account-owned Rapport authority for shared vocabulary, callbacks, and interaction conventions without collapsing that state into Profile or Lore.
+- **Durable schema:** added `RapportRecord` with kind (`VOCABULARY`, `CALLBACK`, `CONVENTION`), label, cue, shared meaning, optional preferred response, source/provenance, GLOBAL/PROJECT/THREAD scope, authored-by, active state, lineage generation, optimistic version, and timestamps.
+- **Pause/reset control:** added versioned `RapportControlRecord` with `paused`, `current_generation`, control version, update timestamp, and last reset timestamp. Reset increments the active generation rather than deleting prior records; reset history remains inspectable.
+- **Atomicity:** rapport control writes use Redis version compare-and-set. Rapport create/update/delete use indexed atomic Lua create/CAS/delete operations so proposal target versions and direct user edits cannot silently race.
+- **Manual authority:** authenticated users can list, create, edit, and delete active-generation rapport; pause/resume the rapport authority; and reset to a new generation. Manual records are server-authored as USER / user-manual. Historical generations are inspect-only in the Chat surface.
+- **Scope integrity:** THREAD scope is accepted only when the referenced thread belongs to the authenticated account. New PROJECT-scoped rapport creation/migration is rejected until an actual project authority is attached; existing project-scoped records can remain inspectable/preservable.
+- **Tier-D integration:** added proposal category `SHARED_RAPPORT`, target `RAPPORT`, and bounded `RAPPORT_CREATE`, `RAPPORT_UPDATE`, `RAPPORT_DELETE`. AI-originated rapport changes remain behind the existing ASK / AUTO_LOW_RISK / SESSION_ONLY / NEVER policy, audit, CAS claims, optimistic target versions, and guarded revert path.
+- **Pause semantics:** when rapport is paused, `AUTO_LOW_RISK` does not auto-apply rapport changes. A proposal may still queue under ASK semantics and an explicit user approval can still manage state.
+- **Revert semantics:** approved rapport create/update/delete proposals store before/after snapshots and can be reverted only when target version + current rapport generation still match, preventing rollback over newer edits or across a reset boundary.
+- **UI:** Settings now includes a dedicated **Rapport** pane between Lore & Memory and Proposal Inbox. It provides kind filtering, current/reset-history views, pause/resume, reset, create/edit/delete, scope status, generation/source/provenance metadata, and inspect-only treatment for historical generations.
+- **Proposal policy UI:** added **Shared Rapport** as the seventh proposal-policy category.
+- **Privacy/cameras:** `/api/account/rapport*` response previews are redacted. Rapport UI cameras emit operation/id/kind/scope/generation/version/control state only, not cue/meaning/preferred-response text.
+- **Inference truth boundary:** stable capability explicitly reports `inferenceBound=False`. Tier E stores/manages shared rapport but does not inject it into the current R39 prompt or claim behavioral consumption.
+- **Transport preservation:** Station send/sync and `/api/chat_state` call-site counts are unchanged from the Tier D.1 baseline.
+- **Versions:** Clean-room Chat **1.0.52 → 1.0.53**; Server Runtime **2.3.306 → 2.3.307**; Repository Work **1.0.26 → 1.0.27**. Runtime Manifest remains **152**; legacy Web Chat remains **1.5.86**.
+- **Final source blobs before Roadmap close:** Chat `5f5e7a950ec36d8a4243419f69af439e26b66164`; durable contract `3c339c97cbed0c29036ca21ec00be1f98980a45b`; Redis store `dfdde6ca7dca6686859557d1213a78531e11fb1c`; rapport helpers `039b5ee985bedd31c03089726567404db056f577`; proposal resolver `cb78374f0706d1fc0916fc31d34df7356519d484`; account routes `12a961700b35bfc2be80d4fc64daea3bf310af8f`; stable index `926a5254f5c9e05f7c30dbf5a9103e9e42af0eee`; reconstruction `94f748c3a0e6a16682652a0867740705331266c6`.
+- **Primary receipts:** Roadmap start `40a2d03a520c0ace23a79d5023ff0f6d5d0bd3e7`; contract `9f60e29d4953af75c32098b4527b577a7ef1315c`; rapport helper `beadebd053f1893a5da92b594c5149e846634497`; scope validation `31a2fa100c8d4fb45c30062e9aa1c24c5ef7fca2`; rapport storage `d7e515c7807248bff88ed0b0841093144eb3b86b`; routes `dbdbf07b85f60b241576c07ad35c4612156ce105`; proposal integration `0d7da4a7516a7bcba1a9cfc6a2604f84bf071ebf`; Tier E UI `31f564ac7a0053170d1838558a3cd1b8f45b211d`; atomic rapport storage `5f9e13a69b82d8ebf3a82a5d5d9b39b98cbfceb4`; scope authority `767019fb2ce7d9798a18e4471d008a7b97dfdbcb`; proposal scope authority `e615248ff4a06dc82a6337ed7d5099d40d217cb2`; paused auto-apply suppression `24a7ee00563381690ff6e74b3e8de3e8c4993a60`; Server 2.3.307 `84874a9a366349bc735d636a2e39fc00d1f970d4`; reconstruction `34a0237700c23a9faecdcb1cd6da2a3c25506dba`; Chat version `e3101ab8f96165ade49520a639ecd1497e94e3b9`; Server Runtime authority `ea94678c8ead3b27e10310c5a235b58eb1e28fe8`; Repository Work authority `bd6308248043f85ad4352c8f2f47e56068e87ec1`.
+- **Static verification:** browser inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; all 11 settings nav/pane names match; seven proposal-policy controls present; rapport reset/history/pause controls present; exact rapport contract/store/proposal/route markers present; atomic CAS/delete scripts present; scope ownership and `inferenceBound=False` markers present; stable source/runtime version both report 2.3.307.
+- **Python execution verification:** NOT RUN. Connector-backed source was structurally inspected; no runtime import/build/deployment execution was performed, so no compile/runtime pass is claimed.
+- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live Redis/profile/lore/rapport/proposal mutation, or inference-context activation occurred.
+- **Next research checkpoint:** Tier F — companion animation state machine: idle, listen, accepted, thinking, acting, responding, approval, error, plus reduced-motion equivalents. Tier F must remain presentation-state only unless a separate runtime contract is explicitly approved.
+
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier E rapport
+
+- **Requested outcome:** implement approved Tier E from the Glitch Dragon Chat research authority: shared vocabulary/callback management, approved rapport state, project/thread scope, reset/pause.
+- **Concept boundary:** rapport is a separate account-owned continuity domain. Profile remains user/companion preferences; Lore remains facts/story continuity; Rapport represents shared interaction conventions/callbacks/vocabulary; Proposals remain the approval gate.
+- **Durable model plan:** add typed `RapportRecord` with kind (`VOCABULARY`, `CALLBACK`, `CONVENTION`), label/cue/meaning/preferredResponse, source/provenance, scope + scopeId, authoredBy, active state, generation, optimistic version, timestamps.
+- **Pause/reset plan:** add versioned `RapportControlRecord` with `paused` and `current_generation`. Reset is lineage-preserving: increment the generation instead of destructively deleting historical records. Old generations remain inspectable; only the current generation is active rapport state.
+- **Proposal integration plan:** extend Tier D with category `SHARED_RAPPORT`, target `RAPPORT`, and bounded create/update/delete operations. AI-originated rapport changes continue through ASK/AUTO_LOW_RISK/SESSION_ONLY/NEVER; direct AI writes remain forbidden.
+- **Scope plan:** GLOBAL is always available; THREAD requires a saved active thread; PROJECT remains inspectable/preservable when present but manual creation stays unavailable on this Chat surface until a project authority is attached.
+- **Inference truth boundary:** Tier E persists/manages rapport only. It will not claim the current R39 prompt consumes rapport until a separate bounded context-injection checkpoint is explicitly approved and verified.
+- **Baseline:** Clean-room Chat `1.0.52`; Server Runtime `2.3.306`; Repository Work `1.0.26`.
+- **Version plan:** Clean-room Chat **1.0.53**; Server Runtime **2.3.307**; Repository Work **1.0.27** after concurrency re-read. Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged unless evidence requires otherwise.
+- **Deployment expectation:** NONE. Approval authorizes Tier E source/schema/UI/version/roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, live account/Redis mutation, or rapport injection into inference.
+- **Status:** IN PROGRESS.
+
+### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier D.1 structured proposal bridge
+
+- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier D.1 now connects one exact trusted structured proposal event contract at the Workstation subscriber boundary to the existing Tier D account proposal authority. Assistant prose remains incapable of creating durable proposal state.
+- **Signal contract:** trusted producers may emit `type="ACCOUNT_PROPOSAL"`, `contract="swrlz-account-proposal-signal-v1"`, bounded `signalId`, and a strict proposal object containing only category / targetKind / operation / payload / rationale / risk / optional targetId. Unknown proposal fields are rejected.
+- **Trusted producer helper:** `api/account_proposal_bridge.py` exposes `build_structured_proposal_event(...)` for trusted R39/tool code. The helper constructs metadata only; it performs no durable write.
+- **Authority injection:** emitted source thread/request identifiers are never accepted from the proposal object. The Workstation subscriber injects authoritative `thread_id` and `request_id` from the durable generation job.
+- **No prose scraping:** ordinary DELTA/STATUS text is never parsed, searched, regexed, classified, or heuristically converted into a proposal. Capability explicitly reports `naturalLanguageScraping=False`.
+- **No browser forge path:** no public `POST /api/account/proposals` creation endpoint exists. The browser may resolve/read proposals but cannot label arbitrary client JSON as assistant-authored state.
+- **Bridge execution:** `queues/swrlz_generation_v3.py` intercepts the exact structured event before ordinary stream wiring, calls the Tier D policy resolver, and converts the result into a sanitized STATUS receipt. Proposal payload/rationale never enter the public generation event.
+- **Sanitized receipt fields:** contract, signalId, decision, proposalId, state, category, operation, risk, version. Policy phases include PROPOSAL_QUEUED, PROPOSAL_AUTO_APPLIED, PROPOSAL_SESSION_ONLY, PROPOSAL_BLOCKED_POLICY, PROPOSAL_DUPLICATE_SUPPRESSED, PROPOSAL_REJECTED, and PROPOSAL_FAILED.
+- **At-least-once idempotency:** every trusted signal requires a bounded `signalId`; stable proposal identity is derived from SHA-256 of authoritative `requestId + signalId`. Duplicate detection occurs before payload target lookup, so replay of an already-applied LORE_DELETE cannot create a second proposal or fail merely because the first application removed the target.
+- **Tier D preservation:** the existing ASK / AUTO_LOW_RISK / SESSION_ONLY / NEVER policy, bounded operation validators, Redis proposal CAS, APPLYING/REVERTING claims, target optimistic versions, append-only audit, and guarded revert semantics remain authoritative.
+- **Chat receipt behavior:** clean-room Chat recognizes only the sanitized proposal-receipt contract. It invalidates Proposal Inbox cache and refetches when that settings pane is open; it does not reconstruct proposal state from status text.
+- **Emitter truth:** the bridge and trusted producer contract are installed, but current R39 generation does not autonomously decide when to emit an ACCOUNT_PROPOSAL signal. `modelEmitterConnected=False` remains explicit. No LALM Engine version is advanced in D.1.
+- **Transport preservation:** baseline Station send/sync and `/api/chat_state` call-site counts remain unchanged. D.1 does not replace or broaden the stream contract; proposalReceipt is optional sanitized STATUS metadata.
+- **Versions:** Clean-room Chat **1.0.51 → 1.0.52**; Server Runtime **2.3.305 → 2.3.306**; Repository Work **1.0.25 → 1.0.26**. Runtime Manifest remains **152**; legacy Web Chat remains **1.5.86**.
+- **Final source blobs:** Chat `ff7043052973957c8082736e68cd268ca8e73f3a`; proposal bridge `cf1abca819a678e33bb65cc012daeeede5b11898`; Workstation subscriber `7330142e29109db63a1377d5dea6d572ab668127`; proposal policy/resolver `884e1ae6ce07a79c8d6d16b4216ac016c8fb9a02`; account routes `b23b9e715e078041a6d2670410019b7d43bb5af2`; stable index `bc1a3142e24a3cb070a0d5898ccbf18e1ca801b6`; reconstruction `c83254776d01f5b8d6304163633a7b4317181f31`.
+- **Primary receipts:** Roadmap start `984109c541efd0969d490715fd25d2a449b65940`; bridge creation `d1a9c6b6d151095d3e0d6058a4a7b00711ae3422`; worker bridge `02960de412a47ec35694749e44ba600374b2e12b`; idempotent proposal helper `611f126d332a35397b2cf567da3cee6d755389ad`; signal-id contract `dda69e0778ad4c6d6389af51c0817ef5d78a7ae2`; duplicate suppression `b1ba2e84ace926fb8b07c9fa3b7b2a8a7b8a9d7e`; Chat receipt refresh `fa19a66655738e2ba6801b0ab51a35604a8971a4`; capability declaration `5c75a17ea6566f01e97d811bf13b8c173e4ec579`; duplicate-before-target repair `216bfea216edd97a9023596854cc6610dcd72c9b`; Server 2.3.306 `426e1340b9d8f3a062c98306fe69ccd4efeaa494`; reconstruction `4fab99308284ec90478e9d4d26d13c39ee4c1362`; Chat version `44a24f100888e5269f8c404e7eff863c2329d988`; Server Runtime authority `d163b2a46d35baed8e4a4078ce2d8b6401827276`; Repository Work authority `2246f94bc65d490bd2d73137beb87d83daefadc7`.
+- **Static verification:** browser inline JavaScript syntax PASS; duplicate DOM IDs NONE; exact signal type/contract present; required signalId + deterministic stable-id path present; bridge interception precedes ordinary `_wire()`; no public proposal-create route; natural-language scraping disabled; duplicate resolution occurs before target normalization; Chat receipt invalidation present; stable source/runtime version both report 2.3.306.
+- **Python execution verification:** NOT RUN. GitHub connector source was structurally inspected, but no repository materialization/build/runtime execution was authorized or available in this checkpoint. This is not reported as a compile pass.
+- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live queue execution, or live Redis/profile/lore/proposal mutation occurred.
+- **Next research checkpoint:** Tier E — shared vocabulary/callback management, approved rapport state, project/thread scope, reset/pause. Rapport must remain explicit shared state, not hidden inference magic.
+
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier D.1 structured proposal bridge
+
+- **Requested outcome:** implement approved Tier D.1 — connect only explicit structured proposal metadata emitted by trusted R39/tool execution to the Tier D `submit_ai_proposal` authority. Natural-language assistant text must never be scraped or heuristically interpreted into a durable proposal.
+- **Execution boundary:** the durable Workstation subscriber sees raw typed engine/tool events before `_wire()` converts them into the public generation stream. D.1 will recognize one exact private event contract there and reject/ignore all ordinary DELTA/STATUS prose as proposal input.
+- **Signal contract plan:** trusted producer event type `ACCOUNT_PROPOSAL` + contract `swrlz-account-proposal-signal-v1` + bounded proposal object. Required fields flow through the existing Tier D validator/policy resolver; source thread/request IDs are injected by the subscriber from authoritative job identity rather than trusted from the emitted payload.
+- **Browser boundary:** no browser proposal-create route will be added. Chat/user payload fields cannot activate the proposal bridge. The only proposal creation path remains trusted server/worker execution.
+- **Stream plan:** proposal payload/rationale never enter the ordinary chat event stream. After handling, the subscriber may emit only a sanitized STATUS receipt containing phase/decision/category/operation/risk/proposal id/state/version as bounded metadata.
+- **UI plan:** Chat recognizes the sanitized proposal receipt only to invalidate/refetch Proposal Inbox state; it does not reconstruct a proposal from assistant text or status reason.
+- **Policy behavior:** existing ASK/AUTO_LOW_RISK/SESSION_ONLY/NEVER policy remains authoritative. D.1 does not weaken Tier D validation, optimistic target versions, CAS claims, audit, or revert semantics.
+- **Baseline:** Clean-room Chat `1.0.51` (blob `8e8a6dead6878f4868e93cd51cd3ec7bb33b9201`); Server Runtime `2.3.305`; Repository Work `1.0.25`.
+- **Version plan:** Clean-room Chat **1.0.52**; Server Runtime **2.3.306**; Repository Work **1.0.26** after concurrency re-read. Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged unless implementation evidence requires otherwise.
+- **Deployment expectation:** NONE. Approval authorizes source/schema/bridge/UI/version/roadmap work only; it does not authorize deployment, workflow dispatch, Vercel action, production promotion, live Redis/profile/lore/proposal mutation, or Tier E rapport.
+- **Status:** IN PROGRESS.
+
+### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier D approval protocol
+
+- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier D now owns a durable, account-scoped AI proposal protocol without adding any browser path that can forge assistant authorship.
+- **Durable schema:** added versioned `ProposalRecord` plus append-only `ProposalAuditRecord`. Proposal state supports PENDING, short-lived APPLYING/REVERTING claims, APPLIED/AUTO_APPLIED, DECLINED, REVERTED, and FAILED.
+- **Policy modes:** per-category policy is persisted inside the existing account profile preferences for USER_PROFILE, COMPANION_PROFILE, USER_FACT, USER_LORE, COMPANION_SELF_LORE, and SHARED_LORE. Allowed modes are **ASK**, **AUTO_LOW_RISK**, **SESSION_ONLY**, and **NEVER**; invalid/missing values normalize safely to ASK.
+- **Trusted creation boundary:** there is deliberately no public `POST /api/account/proposals` browser route. Stable server exposes only an internal `submit_account_proposal` helper. Assistant-authored proposals are therefore not forgeable from ordinary Chat JavaScript.
+- **Current emitter truth:** the current R39/Workstation generation stream does **not** emit a structured proposal event and is not wired to the trusted helper. Natural-language assistant text is not scraped or heuristically converted into durable proposals.
+- **Bounded mutations:** proposal resolver accepts only whitelisted USER_PROFILE_PATCH, COMPANION_PROFILE_PATCH, LORE_CREATE, LORE_UPDATE, and LORE_DELETE operations. Profile/companion patch fields and lore type/scope payloads are explicitly validated.
+- **Auto-save boundary:** AUTO_LOW_RISK can act only for a trusted server-side proposal explicitly marked LOW risk and only for the bounded eligible operations; lore delete is never in the auto-save allowlist. SESSION_ONLY and NEVER create no durable proposal or target mutation.
+- **Resolution protocol:** authenticated users can list proposals, inspect audit history, Edit pending payload JSON through bounded server validation, Approve, Decline, and Revert applied proposals. Approval/revert are optimistic-versioned against both proposal and target authorities.
+- **Concurrency:** proposal creates/updates now use Redis Lua compare-and-set + index mutation. Apply claims PENDING → APPLYING before touching profile/lore; Revert claims APPLIED/AUTO_APPLIED → REVERTING. Failed target mutations attempt to return the proposal to its prior actionable state and append a failure audit event.
+- **Rebase rule:** explicit user Edit refreshes the target version against current authority so a changed target cannot be silently overwritten using a stale proposal version.
+- **Reversibility:** successful application stores private before/after snapshots. Revert is allowed only if the current target version still matches the applied snapshot, preventing rollback over newer user edits.
+- **Audit/privacy:** proposal + audit Redis bodies use sensitive diagnostics; browser `/api/account/proposals*` response previews are redacted. UI cameras log proposal id/state/category/operation/version/count only, never proposal payload/rationale text.
+- **UI:** Proposal Inbox now displays real queue/history state, risk/state badges, bounded payload preview, source request/thread metadata, History, Edit, Approve, Decline, and Revert. Six category policy selectors persist through the existing explicit account-profile Save.
+- **Privacy panel:** now reports Tier D account-owned proposal authority. Direct assistant writes remain disabled; proposal-gated writes are represented separately.
+- **Transport preservation:** Tier-C baseline Station send/sync, `/api/chat_state`, and account profile Save call-site counts remain unchanged. Tier D adds proposal list/audit/edit/approve/decline/revert calls only.
+- **Versions:** Clean-room Chat **1.0.50 → 1.0.51**; Server Runtime **2.3.304 → 2.3.305**; Repository Work **1.0.24 → 1.0.25**. Runtime Manifest remains **152**; legacy Web Chat remains **1.5.86**.
+- **Final source blobs:** Chat `8e8a6dead6878f4868e93cd51cd3ec7bb33b9201`; durable contract `3f55185d16d70d0e574f068b054fda0bfaf48588`; Redis store `3bf34314130f8a956f24bb41992bdffe3ae85442`; proposal resolver `e4148236626ac2598d9586edb6819cd8eb414fe3`; account routes `d7b1dd8f2f33099d4a7ba949df63b26e1b6652b5`; stable index `591fb4d08aeedc1d069dd9b3867766ee814d5cc9`; reconstruction `12b1e383b7567a7c26448edc680ca7a4c48c4387`.
+- **Primary receipts:** proposal contract `c9ed460febd2fdaeeaed3154079b4b743a8fda89`; proposal storage `c6e021f874af27eec00a7fa496bc8b6a8b95ae73`; resolver `91d67e941d5558f7c94f48714204f2ce227ef285`; account routes `b59d9614116d823893cf5e0a2cf7779e748eb853`; Tier D UI `49450d509b63868d5c73af4699e0f7ae7135f5ec`; server 2.3.305 `6e6c717603b831e5ac6bb9a35b506229d67d8502`; proposal CAS `891bedbad6ff975baacf256ee2879a0f61621926`; claim-state resolver `6dfda578771633569f7f94c16c89c116a949a6b5`; emission-boundary capability `b857898ef248c0d562d8418470f4e867c82f5ffb`; Chat version `83ecc840de0d3972a48023cb177b508d77e32563`; Server Runtime authority `13174cd5497e1e941f182bae4859f968ebb45f14`; Repository Work authority `70ba01f2eaab80228bab32cef26195bceb0d73d1`.
+- **Static verification:** browser inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; all 10 settings nav/pane names still match; six proposal policy controls present; proposal payload account diagnostics redacted; no browser proposal-create endpoint; required proposal schema/store/resolver/CAS/claim/revert markers present.
+- **Python compile limitation:** attempted a read-only local `py_compile` validation by cloning current main into a temporary directory; the shell environment could not resolve `github.com`, so the compile step did not run. This is recorded as an environment-verification gap, not reported as a pass.
+- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live Redis/profile/lore/proposal write, or runtime activation occurred.
+- **Missing rung before automatic proposal use:** Tier D protocol is ready, but current R39 events have no structured proposal event. The recommended bounded checkpoint before Tier E is **Tier D.1 — structured proposal emission bridge**, connecting only explicit structured proposal metadata from trusted generation/tool code to `submit_account_proposal`; natural-language scraping remains forbidden.
+- **Research sequence after that:** Tier E — rapport.
+
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier D approval protocol
+
+- **Requested outcome:** implement approved Tier D from the Glitch Dragon Chat research authority: durable setting/profile proposal schema; real Proposal Inbox data; approve/edit/decline; audit/history; and per-category save policy.
+- **Sovereignty boundary:** AI-originated state may propose but never bypass the configured policy. Manual user profile/lore editing from Tier C remains direct user action; Tier D governs AI-originated durable changes only.
+- **Proposal authority plan:** add account-owned `ProposalRecord` + append-only `ProposalAuditRecord` under the existing Redis REST authority. Proposal payloads are private/sensitive and must use payload-redacted Redis diagnostics.
+- **Target plan:** bounded proposal operations for user-profile patch, companion-profile patch, lore create/update/delete. Target application reuses the existing versioned profile/lore authorities; no generic arbitrary JSON mutation route is allowed.
+- **Resolution plan:** pending proposals may be edited, approved, or declined. Approval applies the bounded target mutation using optimistic target versions, records before/after snapshots for inspectability/reversal, and then transitions the proposal terminally. Applied proposals gain an explicit user-triggered revert path.
+- **Policy plan:** per-category durable preferences use `ASK`, `AUTO_LOW_RISK`, `SESSION_ONLY`, or `NEVER`. Default is `ASK`. `AUTO_LOW_RISK` may act only when a trusted server-side proposal marks risk LOW and the bounded operation is auto-save eligible; SESSION_ONLY/NEVER never create a durable mutation.
+- **Creation boundary:** the browser Proposal Inbox is not allowed to forge AI proposals. Tier D will expose list/resolution policy surfaces to the authenticated user and a server-side proposal submission helper for future LALM/tool integration; no public browser route may claim assistant authorship.
+- **Baseline:** Clean-room Chat `1.0.50`; Server Runtime `2.3.304`; Repository Work `1.0.24`; Runtime Manifest `152`; legacy Web Chat `1.5.86`.
+- **Version plan:** Clean-room Chat **1.0.51**; Server Runtime **2.3.305**; Repository Work **1.0.25** after concurrency re-read. Runtime Manifest / legacy Web Chat / LALM Engine remain unchanged unless evidence proves otherwise.
+- **Deployment expectation:** NONE. Approval authorizes Tier D source/schema/UI/version/roadmap work only. It does not authorize deployment, workflow dispatch, Vercel action, production promotion, live Redis/profile/lore/proposal mutation, or Tier E rapport.
+- **Status:** IN PROGRESS.
+
+### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier C profile + lore UI
+
+- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier C is integrated across the clean-room Chat UI and the existing account-owned durable state boundary. No competing browser storage or parallel identity authority was introduced.
+- **You profile:** added display name, pronouns, role/work, communication style, and output preference controls under the existing account `preferences.profile` authority. Changes persist only through explicit Save.
+- **§wyrlz profile:** `UserProfileRecord` now exposes a backward-compatible `companion_profile` field appended after legacy positional fields. Chat presentation previews the companion name; title/form/presentation/warmth/directness/humor/lore-density remain stored profile state and are explicitly not represented as active LALM inference bindings.
+- **Lore & Memory contract:** added typed account-owned `LoreRecord` categories `USER_FACT`, `USER_LORE`, `COMPANION_SELF_LORE`, and `SHARED_LORE`, with title/content, source/provenance, confidence, global/project/thread scope + scope ID, authored-by, editable/active state, optimistic version field, and timestamps.
+- **Lore API:** added authenticated account-scoped GET/POST/PUT/DELETE `/api/account/lore` routes. Manual creation is server-forced to `authored_by="USER"`, `source="user-manual"`, confidence `1.0`; the browser cannot forge AI authorship. Existing source/provenance/authorship are preserved on edits.
+- **Lore storage:** existing Redis REST account store now owns lore records and a per-user lore index. Profile + lore GET/SET diagnostic commands use sensitive-mode cameras: operation/key/argument-size/result-shape remain observable while profile/lore payload text is redacted.
+- **UI:** settings navigation now contains General, AI/Model, You, §wyrlz, Lore & Memory, Proposal Inbox, Appearance, Motion, Accessibility, Privacy. Lore loading is lazy; records can be filtered, inspected, created, edited, activated/paused, and deleted with source/provenance/scope/version metadata visible.
+- **Scope correctness:** editing an existing THREAD/PROJECT record preserves its original `scopeId` instead of rebinding it to the currently visible thread. New THREAD records require a saved active thread; PROJECT creation remains unavailable because this Chat surface has no project-scope authority attached.
+- **Proposal Inbox boundary:** UI surface exists but reports **0 / proposal authority not installed**. Tier C installs no AI proposal writer, approve/edit/decline protocol, audit history, or auto-save policy. Those remain Tier D.
+- **Inference truth boundary:** User profile, companion personality fields, and Lore & Memory are durable/manageable account state only in Tier C. They are not automatically extracted from conversations and are not automatically injected into LALM inference. No claim of rapport/model behavior was made.
+- **Identity/privacy:** account identity changes clear prior lore UI state; browser account diagnostics redact all `/api/account/lore*`, profile, account-me, and Google credential response previews. UI cameras record IDs/types/scopes/versions/counts only, not lore content/title.
+- **Transport preservation:** baseline Station send/sync and `/api/chat_state` call-site counts remain unchanged. Existing `PUT /api/account/profile` remains one call site; Tier C adds only lore list/create-update/delete account calls.
+- **Version diagnostics:** clean-room engineering version panel refreshed from stale reconstruction values for Repository Work, Server Runtime, and LALM Engine.
+- **Lineage repair-forward:** historical stable server release commits reached **2.3.303** while source `VERSION` remained 2.3.299 and `runtime:versions/server-runtime.txt` remained 2.3.287. Tier C uses first-unused **Server Runtime 2.3.304**, aligning stable source and version authority without rewriting history.
+- **Final versions:** Clean-room Chat **1.0.50**; Server Runtime **2.3.304**; Repository Work **1.0.24**. Legacy Web Chat remains **1.5.86**; Runtime Manifest remains **152**.
+- **Final source blobs:** Chat `aca6fe43b5e09c11a6a6d0c339fe1f28ffa6e9c3`; durable contract `e5b99c1e5a2f343b13addf24513571d3eff132ff`; Redis store `28915194be0b80225db2bd48178d483ef79fc0c1`; account routes `943ab61ef4ff9f2aa4744ee5b273ff6c7d019c90`; stateless account bridge `b37da10b606fa4f92977b54248179d15acfc6091`; stable index `ecc08d110f4b4030b9a27fb34b4fce384e61564d`; reconstruction doc `c57072a5c16f8268db8b06ac4a42a7038db4aa4d`.
+- **Primary implementation receipts:** contract `75923822082fd351355b0934eb47885ac25be39b`; durable lore store `f14ae836bd4a251dc7d49a0529e0634a7f421c37`; account routes `460ccea44dd00e6ccd85a7189e4fc31f1207a475`; Tier C UI `78d4214cf83fd3fa7be04bbcab71a96c58a3295e`; profile/lore privacy `c40dc0ec4b0c91bc7dc1e54e602fff0ba1071f2c`; server 2.3.304 `4a877a3cd097b5e9bbb119fd1ec7e7b43f25d8f4`; scope/companion refinement `333e663f509e558439a7b3c054e6bbc122f83f52`; clean-room version `b2497810973ba3597369c1b50677c4db26629631`; Server Runtime authority `bd9e3c9c6499e7b3e22133f1f5e54c78db0fb8b4`; Repository Work authority `004942a141c0c623fdefbc1f348621e4c6029f7f`.
+- **Static verification:** browser inline JavaScript parse PASS; CSS brace balance 0; duplicate DOM IDs NONE; all 10 settings nav/pane names match; required lore routes/types/authorship/redaction/companion compatibility markers are present. Python modules were source-inspected but not imported/executed against a live server because no build/deployment/runtime execution was authorized.
+- **Runtime/live acceptance:** NOT PERFORMED. No Vercel deployment, GitHub workflow dispatch, production promotion, live Redis migration/write, live profile/lore mutation, or Tier D proposal action occurred.
+- **Next blueprint checkpoint:** Tier D — durable proposal schema + proposal inbox data, approve/edit/decline semantics, audit/history, and per-category save policy. Tier D must continue to forbid AI-side direct durable mutation outside an approved policy.
+
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier C profile + lore UI
+
+- **Requested outcome:** implement approved Tier C — You + §wyrlz + Lore & Memory UI, inspect/edit/delete presentation, scope/provenance, and proposal-inbox surface — without jumping ahead into Tier D's AI proposal approval protocol.
+- **Architecture reconciliation:** current main tree has no independent lore/memory/rapport/proposal durable module. Existing account/profile + Redis REST store is the only durable personal-state authority. Tier C therefore extends that authority with a typed account-owned lore record rather than creating browser-local or competing storage.
+- **Durable record plan:** introduce `LoreRecord` with account ownership, typed category (`USER_FACT`, `USER_LORE`, `COMPANION_SELF_LORE`, `SHARED_LORE`), title/content, source/provenance, confidence, global/project/thread scope, authored-by, editable/active state, version, and timestamps. Manual UI creation is always authored by USER; the client cannot forge an AI-authored record.
+- **Profile plan:** preserve the existing `UserProfileRecord` authority and add `companion_profile` as a versioned sibling to user/model/UI preferences. User profile presentation remains inside existing `preferences`; shared rapport remains Tier E and is not invented here.
+- **API plan:** authenticated account-scoped list/create/update/delete lore endpoints under `/api/account/lore`, using existing session ownership and Redis configuration. Create/update/delete require explicit user interaction. No automatic conversation extraction or AI writes are added.
+- **Privacy/camera plan:** lore Redis operations must not emit lore content into lockdown logs; sensitive command arguments/results will be redacted while preserving operation/key/size diagnostics. Browser account diagnostics must redact all lore endpoint bodies.
+- **Proposal inbox:** Tier C installs the product surface only and truthfully reports that no proposal authority exists yet. Tier D remains responsible for durable proposal schema, approve/edit/decline, audit/history, and auto-save policy.
+- **Baseline:** clean-room Chat `1.0.49` (blob `d58316b5c66eb633ef7636bc8e7a9ff07f9bd0ae`); Repository Work `1.0.23`. Stable server code declares runtime `2.3.299`, historical server release lineage reached `2.3.303`, while `runtime:versions/server-runtime.txt` is stale at `2.3.287`.
+- **Version plan:** clean-room Chat **1.0.50**; Server Runtime repair-forward to **2.3.304** (first unused generation after documented 2.3.303 lineage); Repository Work **1.0.24**. Runtime Manifest and legacy Web Chat remain unchanged unless evidence proves otherwise.
+- **Deployment expectation:** NONE. This approval authorizes Tier C source/schema/UI/version/roadmap work only. It does not authorize deployment, workflow dispatch, Vercel action, production promotion, live Redis migration/write, AI-authored lore mutation, or Tier D approval automation.
+- **Status:** IN PROGRESS.
+
+### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier B settings shell
+
+- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier B from `SWRLZ_GLITCH_DRAGON_CHAT_UI_RESEARCH.md` is implemented in the canonical clean-room Chat owner.
+- **Settings shell:** one responsive right-side sheet / mobile full-height settings surface, opened from the existing drawer gear. Sections are exactly the research Tier B set: **General, AI / Model, Appearance, Motion, Accessibility, Privacy**.
+- **General:** Enter-to-send is a real page-owned control. When disabled, Enter inserts a newline while Ctrl/⌘ + Enter still sends. Conversation density previews immediately.
+- **AI / Model truth boundary:** current route identity remains §wyrlz LALM. Effort and response-length values are stored only as `modelPreferences`; the UI explicitly states that Tier B does not claim the active inference engine consumes those values yet. Existing `defaultModel` is preserved untouched.
+- **Appearance / Motion / Accessibility:** page-owned density, glass intensity, motion mode, text scale, high contrast, and reduced transparency preview immediately. Existing theme ownership is preserved; Tier B does not overwrite another saved `theme` value.
+- **Privacy:** reports actual sign-in/durability state and explicitly marks Memory/Lore policy as Tier C/D pending and AI self-profile mutation as not enabled. No fake privacy toggle was added for a subsystem that cannot yet enforce it.
+- **Durable settings authority:** explicit user Save uses the existing authenticated `PUT /api/account/profile` boundary and optimistic profile `version`. Unsigned/stateless users can preview locally but Save remains disabled. The engineering agent did not perform any live user-profile write.
+- **Preservation semantics:** Save merges existing `preferences`, `model_preferences`, and `ui_preferences`; it changes only Tier-B-owned keys. It does not write `displayName`, `defaultModel`, `theme`, companion lore, rapport, or memory/lore state.
+- **Identity isolation:** sign-out/account changes immediately repopulate preview controls from the new/null profile so one account's visual preferences do not remain as another account's preview state.
+- **Camera/privacy:** settings open/close, pane selection, local preview, save success/failure, and durability state flow through bounded UI cameras. Account diagnostic response previews are now redacted for `/api/account/me`, `/api/account/google`, and `/api/account/profile`; no profile body/free-text is emitted through that preview field.
+- **Call-site invariance:** `/api/lalm_station/send`, `/api/lalm_station/sync`, `/api/chat_state`, and existing account status/me/google/logout call-site counts are unchanged from the Tier A baseline. Tier B adds exactly one new account call site: explicit `PUT /api/account/profile`.
+- **Static verification:** final page blob `d58316b5c66eb633ef7636bc8e7a9ff07f9bd0ae`; inline JavaScript syntax PASS; CSS brace balance 0; duplicate DOM IDs NONE; settings nav/pane sets match 1:1 across all six sections; profile-save guard and redaction markers present.
+- **Versions:** clean-room Chat **1.0.48 → 1.0.49**; Repository Work **1.0.22 → 1.0.23**.
+- **Intentionally unchanged:** legacy Web Chat **1.5.86**; Runtime Manifest **152**; Server Runtime **2.3.287**; account/server contract version; Stream Contract; LALM Engine.
+- **Source receipts:** primary Tier B implementation `901af245fde2296f9cb11138f4b44ca8288d341d`; account-camera redaction `5b2c01a06c89dba5c0ff76785f18a2ee71854144`; identity-preview reset `305378d19446ba6c4010886cacf79eaca2012089`; bounded-save repair `40e5559fa9f58348e724c12cce55904d3d4f5af4`; clean-room version `302acaa947ebb2d3da210db5db68e5e30dcaa975`; Repository Work `5813b4e45b5f0742d5fe2202a055ebd8b8950bfe`.
+- **Runtime/live acceptance:** NOT PERFORMED. No production deployment, GitHub workflow dispatch, Vercel action, runtime promotion, release request, or live account/profile mutation was authorized or triggered.
+- **Next blueprint checkpoint:** Tier C — **You + §wyrlz + Lore & Memory UI**, including inspect/edit/delete, scope/provenance presentation, and proposal inbox. Tier C must reconcile a real durable ownership/schema boundary before companion self-lore or shared lore can be persisted.
+
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier B settings shell
+
+- **Requested outcome:** implement Tier B from the approved Glitch Dragon Chat research blueprint on the canonical clean-room `/chat/§wyrlz` surface.
+- **Tier B scope from research authority:** settings sheet + General + AI/Model + Appearance + Motion + Accessibility + Privacy. Tier C profile/lore, Tier D proposal approval, Tier E rapport, and later animation/artifact tiers remain out of scope.
+- **Canonical owner:** `main:chat/§wyrlz/index.html`. Existing `/api/account/profile` remains the durable profile authority for `displayName`, `preferences`, `modelPreferences`, and `uiPreferences`; no competing profile store or settings backend is introduced.
+- **Profile contract evidence:** `UserProfileRecord` already owns `preferences`, `model_preferences`, `ui_preferences`, optimistic `version`, and `updated_at`. Existing account routes expose authenticated GET `/api/account/me` and PUT `/api/account/profile`.
+- **Durability boundary:** only explicit user Save may write existing profile fields. Unsigned/stateless users may preview local visual settings but must not be told durable profile storage succeeded. Companion self-lore, shared rapport, memory/lore records, and AI-originated durable changes are not created in this tier.
+- **Truthful-control rule:** General/Appearance/Motion/Accessibility controls may affect current page presentation immediately. AI/Model values may be stored as profile preferences but must not claim engine enforcement until LALM integration exists. Privacy shows actual account/durability state and keeps future memory/lore policy controls non-operational rather than pretending enforcement exists.
+- **Baseline:** clean-room Chat `1.0.48`; page/source blob `28feeffa006b5f00dfb02e10c7e1c7e4c64f6127`; Repository Work `1.0.22`; legacy Web Chat `1.5.86`; Runtime Manifest `152`; Server Runtime `2.3.287`.
+- **Version plan:** clean-room Chat `1.0.49`; Repository Work `1.0.23` after concurrency re-read. No Runtime Manifest, legacy Web Chat, Server Runtime, account, Stream Contract, or LALM version bump is expected.
+- **Camera contract:** settings open/close, section activation, local preview application, profile load/save success/failure, and durability state are bounded UI-camera events. No credentials, prompt content, profile free-text payload, or Google token material may be logged.
+- **Deployment expectation:** NONE. Approval authorizes Tier B source implementation and governed version/roadmap receipts only; it does not authorize production deployment, workflow dispatch, Vercel action, release request, promotion, or live profile mutation by the engineering agent.
+- **Status:** IN PROGRESS.
+
+### UPDATE FINISHED — 2026-09-28 — Glitch Dragon Chat Tier A visual foundation
+
+- **Result:** SOURCE COMPLETE + STATIC VERIFIED. Tier A from the Glitch Dragon Chat research blueprint is implemented in the canonical clean-room owner `main:chat/§wyrlz/index.html`.
+- **Visual foundation added:** expanded theme tokens (ice/cyan primary, violet secondary, bounded semantic status colors); restrained spectral background linework; compact glass top edge with kompanion mark, active thread title, LALM badge, and ready/generating/attention signal; refined drawer surfaces/thread selection; improved message hierarchy/action treatment; refined compact composer; mobile-specific tightening; OS `prefers-reduced-motion` baseline.
+- **State integration:** the top-edge thread label follows the already-owned active/draft thread projection. Generation status follows the existing Station generation state and never creates a second inference/status authority.
+- **Camera contract:** added page-owned `glitch-dragon-tier-a-v1` client camera events for bounded top-status transitions and one settled geometry sample (viewport/top-edge/composer + reduced-motion state). Events reuse the existing sanitized client-debug ingestion boundary; no prompt/message/account content is included.
+- **Architecture preserved:** no new loader, stylesheet file, store, transport, auth, inference path, runtime manifest mapping, or legacy `/chat` mutation. `/chat/§wyrlz` remains served by the deployed-main bundle through the existing `api/live_source_guard.py` special-case.
+- **Lineage repair-forward:** page metadata was already at `1.0.47` while `chat/§wyrlz/VERSION.txt` had remained at `1.0.42`. The stale authority was not rewritten historically; the completed Tier A state advances both the page declaration and clean-room version authority to **1.0.48**.
+- **Repository Work:** advanced **1.0.21 → 1.0.22** on canonical `runtime:versions/repository-work.txt` after a concurrency re-read.
+- **Intentionally unchanged:** legacy Web Chat **1.5.86**; Runtime Manifest **152**; Server Runtime **2.3.287**; Stream Contract; account/auth; LALM; deployment control.
+- **Source receipts:** Tier A implementation commit `bdba8a6a43e3eef57b828b8df1ce7942c224e02d`; clean-room version commit `34dc7752856c4ed98d855dd5764b6fe3a560ba8b`; Repository Work commit `a01c66435595e2f3d0cd3651c8ce1fdc01df1515`.
+- **Static verification:** updated source blob `28feeffa006b5f00dfb02e10c7e1c7e4c64f6127`; page meta `1.0.48`; inline JavaScript syntax compile PASS; CSS brace balance 0; duplicate DOM IDs NONE; required top-edge/Tier-A/reduced-motion/UI-camera markers present exactly as expected.
+- **Behavioral invariance check:** counts for `/api/lalm_station/send`, `/api/lalm_station/sync`, `/api/chat_state`, and all four existing `/api/account/*` routes are identical before/after the visual tier.
+- **Runtime/live acceptance:** NOT PERFORMED. No Server deployment, GitHub workflow dispatch, Vercel action, release request, or runtime activation was authorized or triggered in this tier.
+- **Next scoped tier from the research blueprint:** Tier B — settings shell (General, AI/Model, Conversation, Companion, You, Lore & Memory, Privacy & Data, Appearance, Motion, Accessibility, Advanced), reusing existing profile/account authorities rather than creating competing stores.
+
+### UPDATE STARTED — 2026-09-28 — Glitch Dragon Chat Tier A visual foundation
+
+- **Requested outcome:** continue the approved Glitch Dragon Chat UI research into the first bounded implementation tier for the canonical clean-room `/chat/§wyrlz` product surface.
+- **Research authority:** `ui-research-glitch-dragon-chat` commit `bb25ba7b79c0d6572ef8b37bef47f20a09a9c9ea`, `docs/design/SWRLZ_GLITCH_DRAGON_CHAT_UI_RESEARCH.md`, Tier A.
+- **Primary Focus:** Clean-room Chat `main:chat/§wyrlz/index.html`. **Focus Group:** Clean-room Chat + deployed-main Chat source guard; Runtime Manifest remains unchanged-but-required for route identity; legacy `/chat` is reference/control only.
+- **Architecture reconciliation:** `api/live_source_guard.py` explicitly serves `/chat/§wyrlz` from the deployed main bundle (`CHAT_APP_BRANCH = "main"`) rather than runtime-hot page source. Tier A therefore extends the existing clean-room owner and does not create a second visual shell, stylesheet owner, transport owner, state store, or loader.
+- **Observed baseline:** clean-room page source blob `6017a2b1de090c22d0a5c31c21b906ebdeb0d2c1`; page metadata declares `1.0.47`; `chat/§wyrlz/VERSION.txt` is stale at `1.0.42` (pre-existing lineage drift to be repaired forward, not rewritten); Repository Work `1.0.21`; legacy Web Chat `1.5.86`; Runtime Manifest `152`; Server Runtime `2.3.287`.
+- **Tier A scope:** tokenized Glitch Dragon visual system; compact top-edge brand/thread/model/status chrome; drawer visual refinement; composer refinement; message/action polish; OS reduced-motion baseline; bounded page-owned visual/status cameras. Existing account, thread, Station transport, persistence, and LALM semantics remain unchanged.
+- **Version plan:** clean-room Chat advances to `1.0.48`; Repository Work advances from the current concurrency-checked authority at completion. Legacy Web Chat, Runtime Manifest, Server Runtime, Stream Contract, account, and LALM versions do not advance unless implementation evidence proves they changed.
+- **Deployment expectation:** NONE. This source implementation does not authorize a production deployment, workflow dispatch, hot activation, release request, or Vercel action.
+- **Verification plan:** fetch-back exact source/version blobs; validate required Tier A DOM/CSS/camera markers; validate inline JavaScript syntax; verify no manifest/transport/account endpoint mutation; re-read version authorities for concurrency before final assignment.
+- **Status:** IN PROGRESS.
+
+### UPDATE CONTINUATION — 2026-09-24 — glibc compatibility repair prepared
+
+- Live 2.1.115 native bridge diagnostics identify both native modules failing import because `GLIBC_2.38` is unavailable in Vercel production. The governor selected two workers but inference fell back to Python. One short social-fastpath request completed; the longer request entered prefill.
+- Production workflow now builds CPython 3.12 native and batch extensions in a manylinux glibc 2.28 baseline container, runs one- and two-worker equivalence tests there, and rejects either artifact if ELF GLIBC symbol requirements exceed 2.28 or if libgomp is linked. These gates execute **before** destructive cleanup.
+- This is a build/release fix, not an inference semantic change. A successful source commit does not prove production compatibility until the production `/api/lalm/native` verification returns both native and batch availability.
+- Prior production workflow's post-deploy verification failed despite Vercel reporting READY; do not conflate the two. Do not trigger another replacement until the build preflight is checked.
+
+### UPDATE CONTINUATION — 2026-09-24 — backend truth and camera-overhead isolation
+
+- Production 2.1.114 showed adaptive selected 2 visible workers but the request's prefill profile reported `backend=python-fallback`; selection alone did not prove parallel native execution.
+- R39 2.1.115 adds bounded request-start/end native bridge diagnostics (native/batch availability, import errors, loaded module paths) and request-correlated resource intervals explicitly labeled **process-wide, non-exclusive**. This avoids interpreting concurrent CPU as a subsystem's exclusive consumption.
+- Server Chat camera now shutters verbose `redis-*` and `brain-*` mirrored traces before cleaning, ring-buffer insertion, and JSON serialization by default. `SWRLZ_REDIS_VERBOSE_CAMERA=1` and `SWRLZ_BRAIN_MIRROR_CAMERA=1` re-arm those categories independently. Error/other diagnostic families remain.
+- Native two-worker kernels are preserved, not presumed effective: next live response must prove actual batch/native availability and compare matched 1/2/adaptive requests for wall time, CPU-time, throughput, and fallback count before any speedup claim.
+- Source authority: Repository Work 1.0.21; LALM Engine 2.1.115. Server Runtime stays unchanged until actual deployment/verification. Production deployment remains a separate governed gate.
+
+### UPDATE CONTINUATION CHECKPOINT — 2026-09-24 — resource profiler + dual-worker candidate preflight complete
+
+- **LALM candidate:** 2.1.114 / `2.1.114-hot-resource-task-manager-cpu-delegation-v90`.
+- **Resource attribution:** gated `SWRLZ_RESOURCE_TASK` cameras now bucket queue/subscriber ingress, Redis/state work, engine loading, LALM phase transitions, terminal persistence, and recovery with process CPU time, wall time, CPU percentage, RSS, and request correlation.
+- **CPU delegation:** production-portable native matvec and batched-prefill kernels now support `SWRLZ_R39_WORKERS=1|2` through pthread row partitioning without libgomp. Adaptive policy selects one or two workers from recent process CPU headroom and exposes the decision through a gated CPU-delegation camera.
+- **Verification:** prepared-runtime integrity passes; all 23 accepted targets match their registered Git blob identities. Non-deploying CI run 36040414444 passed prepared generation, R39 boot, queue Python compilation, portable native build, one-worker native verification, two-worker native verification, and no-libgomp verification.
+- **Deployment-control hardening:** the production workflow now re-enumerates the canonical Vercel project after destructive cleanup and refuses replacement deployment unless zero previous deployments remain.
+- **Versions:** Repository Work 1.0.20; LALM Engine 2.1.114; Deployment Control 1.0.15. Server Runtime remains 2.3.287 until an actual Server release advances deployed lineage.
+- **Activation:** source/static verified; production activation is the next governed stage under the user's explicit approval.
+
+### UPDATE CONTINUATION STARTED — 2026-09-24 — resource attribution + adaptive dual-CPU LALM benchmark
+
+- **Observed live evidence:** R39 2.1.113 HW_USAGE cameras show the production process near 100% CPU during PREFILL while the runtime exposes 2 CPUs; RSS remains roughly 290–315 MiB with about 1.96–1.98 GiB available. Current evidence therefore suggests one-core saturation rather than RAM pressure, but does not yet attribute baseline/background load.
+- **Requested outcome:** instrument the complete receive → queue/state → prompt/tokenization → PREFILL → decode → persistence/sync → recovery lifecycle as a Task-Manager-style resource timeline, separating CPU and memory attribution by subsystem and phase before/during/after response processing.
+- **Camera contract:** preserve category gates and early returns; add bounded/aggregated resource cameras rather than restoring per-token/operator/tensor flood. Instrumentation overhead must itself be attributable and switchable.
+- **Compute delegation:** add benchmarkable 1-CPU, 2-CPU, and adaptive 1↔2 execution policy. Adaptive mode may consume the second visible CPU only when measured server headroom permits, while preserving capacity for queue/state/Redis/health work. Parallelism must occur at proven parallelizable native/inference boundaries rather than merely moving the same single-threaded work to another CPU.
+- **Acceptance:** compare idle baseline, ingress/pre-response, PREFILL, decode, persistence/sync, and post-response recovery; report CPU-time, wall time, peak/average process CPU, RSS/available-memory deltas, throughput/TTFT, delegation decisions, and unattributed visible usage. Benchmark 1 vs 2 vs adaptive before selecting production policy.
+- **Deployment:** source work does not itself authorize another production trigger; activation remains a separate governed gate.
+
+### UPDATE CONTINUATION STARTED — 2026-09-24 — distinguish stale-purge maintenance from destructive release cleanup
+
+- **Evidence correction:** standalone `Purge Stale Vercel Deployments` #19 succeeded while the hour-old production deployment remained. Source inspection proves this is intentional: that workflow protects the deployment serving the production alias and deletes only other stale deployments.
+- **Contract defect:** §tart/release guidance incorrectly treated the standalone stale purge as the pre-deploy clear-current-server gate, while the actual canonical production workflow owns destructive clear-current cleanup at the last possible moment after the replacement artifact is prepared.
+- **Plan:** align §tart and the clean-release guide with executable truth; harden `manual-vercel-production.yml` so its destructive cleanup re-enumerates the canonical project and refuses to deploy unless zero old deployments remain; preserve standalone stale purge as maintenance-only.
+- **Deployment:** no production request will be fired by this documentation/workflow repair.
+
+### UPDATE FINISHED — 2026-09-24 — accepted-runtime integrity repair + clean-release contract
+
+- **Root cause repaired:** v82-batch accepted overlay registration now declares source commit `c51160873d26c202a39ccc562a20d589d2d8516e` and exact accepted-target blob `f44ed601c5dda8aa771a4253d615d5f3a498b3bf`.
+- **Integrity verification:** every `accepted_runtime/accepted.json` file and overlay entry was re-read from `main`; every declared Git blob SHA matches its actual accepted target, including v82-batch.
+- **Governance hardening:** added `docs/engineering/SWRLZ_CLEAN_PRODUCTION_RELEASE_INTEGRITY.md` and made it mandatory from `§wyrlz_§tart.md`. Stable releases now require accepted-runtime registration + prepared-runtime integrity preflight before cleanup, followed by observed cleanup → one production trigger → GitHub Actions → canonical Vercel → runtime verification.
+- **Resulting version:** Repository Work `1.0.19` (from `1.0.18`). Runtime component versions are otherwise unchanged by this repair.
+- **Deployment state at closure:** source/static integrity repaired and verified; cleanup and production activation are the next release stages and must be observed separately before live success is claimed.
+- **Canonical project lock:** `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`.
+- **Result:** SOURCE/INTEGRITY COMPLETE; PRODUCTION ACTIVATION PENDING.
+
+### UPDATE CONTINUATION STARTED — 2026-09-24 — repair accepted-runtime integrity and harden cleanup/deploy preflight
+
+- **Resumes:** R39 deep LALM Lockdown shutter benchmark after GitHub Actions evidence showed cleanup succeeded but both prepared-runtime verification and production deployment failed before Vercel with `accepted overlay blob mismatch: lalm/chain/v82_batch.py`.
+- **Observed source baseline:** `accepted_runtime/lalm/chain/v82_batch.py` blob `f44ed601c5dda8aa771a4253d615d5f3a498b3bf`; `accepted_runtime/accepted.json` still declared stale v82-batch blob `4ddaf2a5a6347281759f1fcc4794156488afb198`.
+- **Architecture reconciliation:** deployment triggers and cleanup wiring are healthy; the defect is accepted-runtime integrity registration plus insufficient pre-trigger integrity discipline.
+- **Plan:** repair v82-batch accepted overlay registration, add a canonical deployment-integrity/preflight guide, route §wyrlz §tart through it, advance Repository Work, then run the established cleanup → single production request → GitHub Actions → canonical Vercel verification chain.
+- **Safety:** reuse only canonical Vercel project `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`; no replacement project.
+
+### 2026-09-24 — R39 deep LALM Lockdown shutter benchmark
+- Extended the camera gating boundary into the accepted v82 LALM batch/inference layer. Its common `_lockdown(...)` emitter now returns before metrics lookup, timestamps, record construction, JSON serialization, printing, or server `brain-*` mirroring while the benchmark shutter is closed.
+- Lockdown instrumentation remains in source and can be re-enabled; this benchmark deliberately preserves R39 2.1.113 wrapper PREFILL_END throughput and HW_USAGE CPU/RAM cameras while suppressing the inherited token/operator/tensor camera flood.
+- Accepted-runtime authority was advanced to the new v82 blob. Inference arithmetic, 256-token runtime installation, queue semantics, and fallback behavior are unchanged.
+
+### 2026-09-24 — R39 camera lockdown gating benchmark profile
+- R39 2.1.113 adds lazy camera-category gates so disabled telemetry returns before record construction/serialization. The benchmark profile keeps only terminal PREFILL throughput (tokens/sec) and request-correlated HW_USAGE CPU/RAM sampling enabled; hot-entry, semantic, and prefill-boundary camera categories are disabled without deleting their instrumentation.
+- Purpose: compare PREFILL latency/resource utilization against the full-camera baseline while preserving the ability to re-enable individual camera families for future diagnostics. Inference semantics, the 256-token V82 batch configuration, native/serial fallbacks, and queue behavior remain unchanged.
+
+
+### 2026-09-23 — UPDATE STARTED: clean-room send transport disappearance
+- Symptom: two user sends rendered locally but produced no Vercel runtime traffic in the observed production window, placing the defect before Workstation enqueue/inference.
+- Diagnostic mutation: commit 93da40d adds bounded server cameras at /api/lalm_station/send entry/auth/failure; commit 2c9e8b3 adds a clean-room client camera immediately before fetch and after/failing the fetch. These cameras distinguish click/composer execution, browser network dispatch, route entry, authentication, and queue handoff without changing send ownership.
+- Deployment intent: deploy through the canonical update → prepare → clear existing project deployments → deploy latest → GitHub terminal → Vercel READY/source-SHA verification sequence, then reproduce one send and inspect the new cameras before behavioral mutation.
+
+### UPDATE FINISHED — 2026-09-23 — clean-room send transport visibility
+- **Observed:** two user sends from clean-room `/chat/§wyrlz` produced no Vercel runtime traffic at the Station/subscriber/tokenizer boundaries. Current production remained READY but therefore provided no server-side evidence for those sends.
+- **Architecture reconciliation:** canonical clean-room source on main posts directly to `/api/lalm_station/send`; the server route exists in `api/lalm_station.py`. The existing client catch collapsed network and non-2xx HTTP failures into a generic CLIENT_TRANSPORT state without preserving endpoint/status detail.
+- **Mutation:** Web Chat 1.0.42 makes the send boundary fail visibly with `SEND_NETWORK_FAILED` or `SEND_HTTP_<status>`, endpoint, and bounded response detail. No alternate transport owner or fallback was added.
+- **Verification state:** source/static verified; production activation pending canonical update → prepared replacement → clear existing Vercel deployments → GitHub deploy → terminal GitHub/Vercel/alias/SHA verification.
+
+### 2026-09-23 — bring-up isolation + pre-deploy cleanup repair
+- Live post-deploy trace proved the promoted R39 hot overlay lineage still expanded a tiny turn to 2,698 prefill tokens even after subscriber history/profile removal. Commit 96db666 bypasses the hot overlay stack in the v3 generation subscriber during baseline bring-up and invokes swyrlz.r39_inference directly; this isolates raw current-turn chat framing/tokenization/model/decode.
+- The production workflow had no previous-deployment cleanup step. Commit 262e1b7 adds fail-closed Vercel API cleanup after the replacement artifact is fully built/injected/verified locally and immediately before production deployment, minimizing the destructive gap while enforcing the requested clear-before-deploy order.
+
+### 2026-09-23 — minimal R39 bring-up prompt isolation
+- Fresh-thread live inference reached PREFILL with 2,788 tokens despite a tiny user turn. For baseline model bring-up, commit 944e1bc disables transcript/profile injection in the generation subscriber and sends an explicitly empty response directive; commit 3251c8f makes the renderer honor that empty directive rather than silently restoring its default system prompt.
+- The resulting test path retains only irreducible chat framing plus the current user text. Context/profile machinery will be reintroduced separately behind measured token budgets after decode/DELTA is proven.
+
+### 2026-09-23 — Vercel native runtime libgomp portability repair
+- Canonical production alias advanced to the new deployment, but /api/lalm/native reported both R39 native modules unavailable because the Actions-built extensions linked libgomp.so.1, which is absent from Vercel's Python runtime image.
+- Production workflow commit ef969130c48fa89b425dc3c69aa0d235e8b0cf4c now builds R39 native extensions with SWYRLZ_OPENMP=0 and fails closed if ldd still finds a libgomp dependency. The C kernels already guard OpenMP usage behind _OPENMP, so this preserves native execution while removing the unavailable runtime dependency.
+- The canonical alias verifier repair remains active and exact source identity is still enforced by the deploymentCommit assertion. Retry required.
+
+### 2026-09-23 — production verifier canonical-alias repair
+- Production deployment `dpl_2LiSiW7yrpKQc9RWkvRhkk4GpP3x` reached Vercel READY and was aliased to `https://swrlzkamico-o3nu.vercel.app`, but the GitHub verification step polled the deployment-specific URL and received Vercel's protection redirect instead of JSON from `/api/server/status`.
+- Workflow repair `d367c9276c5a52bee263488974057f4b217baeac` verifies the canonical production alias after promotion. Exact source identity remains fail-closed through the existing `deploymentCommit == EXPECTED_SOURCE_SHA` assertion, so alias verification cannot accidentally bless an older deployment.
+- R39 section-sign tokenizer fix remains included in the current main lineage. A fresh governed deployment will be triggered and watched to terminal GitHub + Vercel states.
+
+### 2026-09-23 — canonical §WYRLZX_BPE tokenizer compatibility
+- Live manual-deploy traces for both greetings show verified R39 model reconstruction, then `R39_TOKENIZER_KIND_UNSUPPORTED` on canonical producer label `§WYRLZX_BPE` at `BpeTokenizer.__init__`. The Python engine previously accepted only `SWYRLZX_BPE` (ASCII S) and `GGML_BPE`.
+- Commit `1c927ee255f1f043e19ab197ff2fc91577669533` adds an explicit section-sign spelling alias with serialized token/merge schema validation. No arbitrary BPE fallback, no change to vocabulary IDs or merge ordering. Await manual deployment and live test to verify model-open/prefill and any next gate.
+
+### 2026-09-23 — build #37 root cause: duplicate historical transport
+- Repository tree confirms `.transport/` ~215.58 MiB AND `swrlz-core/requests/inbox/.transport/` ~215.60 MiB. Run #37 staged the first copy but left `swrlz-core/` inside the local builder tree (457 MB remained); resulting bundle 340.73 MB > 225 MB. This is the missing large payload, not evidence that NumPy alone caused the excess.
+- Workflow commit `104616cd29929c69122348e2d2d1c5e7a70fffb9` stages the historical inbox outside the builder and asserts neither transport tree remains. It preserves repository content and the existing production deployment. Await actual build/deploy verification.
+
+### 2026-09-23 — R39 tensor-view diagnostic visibility
+- Subscriber now logs bounded `model-load-diagnostic` checkpoint, reason, categories and exception traceback for R39 `MODEL_LOAD_DIAGNOSTIC` events; no prompt/history included. This exposes the exact `R39Model` open exception previously discarded by stream normalization. Commit `a2cb2ee47ec42f8e4c7d27601c9424e4da5f0e7a`. Pending production activation and new test.
+
+### 2026-09-22 — manual Git deployment vs Actions prebuilt bundle repair
+- Vercel Git deployment `dpl_2t3376oaeQmPzNkkk2xahtyAU99o` is READY on source `520957e6697ba2fa266c188c64875dd3dba37b6f`, proving the R39 diagnostic source can build through the clean Git path.
+- Actions run #36 failed before deployment: generated runtime/native artifacts were placed inside the source tree before `vercel build --prod`; Python function bundle measured 341.51 MB against 225 MB.
+- Workflow stages prepared runtime, compiled native binaries, and transport payload outside source tree before local build, then injects required prepared/native artifacts into the completed function bundles. This aligns builder input with clean Git deployment while preserving the production prebuilt runtime contract.
+- Existing production deployment is protected; replacement must pass readiness before post-promotion stale cleanup.
+
+### DIAGNOSTIC HOTFIX — 2026-09-22 — R39 MODEL_LOADING boundary cameras
+
+- **Observed production boundary:** CLIENT → SERVER, durable queue/subscriber, and bundled `swrlz_r39_python_reference_v1` all execute; generation emits `MODEL_LOADING` and then FAILED before ROUTE/PREFILL or any DELTA.
+- **Mutation:** `swyrlz/r39_inference.py` now emits bounded checkpoints for artifact discovery, `ensure_r39()` return/exception, verified raw handoff, `R39Model` open exception, and model-ready metadata. Unexpected exceptions include bounded traceback evidence in the diagnostic event instead of collapsing immediately to generic `R39_INFERENCE_RUNTIME_FAILED`.
+- **Architecture:** observational only; CLIENT → SERVER ownership, model transport verification, inference behavior, and terminal semantics are unchanged.
+- **Version note:** no standalone Server Runtime version file exists on current main; deployed Server Runtime authority is not pre-advanced by this source-only diagnostic mutation. Repository Work bookkeeping is recorded here and deployment activation remains pending until the governed cleanup/deploy gates succeed.
+- **Deployment intent:** authorized by user; run canonical stale-deployment cleanup first, then canonical production workflow against existing Vercel project `swrlzkamico-o3nu` only.
+# §wyrlz Server Roadmap & Version Ledger
+
+**Role:** durable chronological memory of Server/module evolution, architecture decisions, diagnostics, verification, deployment state, and completed project progress.
+
+**Startup/read order is owned by `SWRLZ_PROJECT_START.md`.** This ledger reports what happened; it does not redefine the operating workflow.
+
+## Current authoritative baseline
+
+- **Repository Work:** `1.0.3`
+- **Server Runtime:** `2.3.287`
+- **Chat:** `1.5.85`
+- **Runtime Manifest:** `152`
+- **LALM Engine:** `2.1.112`
+- **Web Frontend:** `1.0.5`
+- **LALM UI:** `1.0.0`
+- **Frozen Web Collector:** `1.0.9`
+- **Deployment Control:** `1.0.8`
+
+`VERSION.txt` and the referenced `versions/<module-id>.txt` files remain the version/status authorities. This roadmap is history/lineage and must be reconciled to those owners rather than treated as a competing version source.
+
+---
+
+## Current project-work contract
+
+Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
+
+- Hotfix/deployment mechanics → `SWRLZ_HOTFIX_RULES.md`
+- Server/module lineage → `SWRLZ_VERSION_MODULE_EVOLUTION.md`
+- Architecture reconciliation → `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md`
+- Project-wide cameras/logs → `SWRLZ_CHAT_CAMERA_LOGS.md`
+- Project-work response/readability → `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md`
+- User-project architecture teaching → `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md`
+- Programming-LALM target + implementation truth → `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md`
+
+---
+
+## Active update journal
 
 ## Release ledger
 
