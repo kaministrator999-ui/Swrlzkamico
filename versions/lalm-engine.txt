@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.118
-REVISION=2.1.118-hf-workstation-cpu-acceptance-v93
+VERSION=2.1.119
+REVISION=2.1.119-hf-coding-preservation-regression-v94
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
