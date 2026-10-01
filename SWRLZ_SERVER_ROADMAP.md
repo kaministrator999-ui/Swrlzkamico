@@ -534,6 +534,34 @@ Project development is routed from `SWRLZ_PROJECT_START.md` to canonical owners:
 
 ## Active update journal
 
+## UPDATE FINISHED — 2026-10-01 — HF Workstation CPU prefill + 700M acceptance reliability v93
+
+**Scope:** improve the current HF candidate's single-inference CPU use, response constraint reliability, and Workstation generation observability without claiming multi-generation CPU redistribution or live activation.
+
+**Source changes**
+- `feature/hf-space-manual-deploy:hf_space/lfm2_700m_engine.py`
+  - detects CPUs available to the process and caps the inference plan at 16;
+  - uses up to 16 batch/prefill threads, up to 8 decode threads, and raises llama.cpp batch/ubatch from 128 to 512;
+  - adds task-bounded output caps (identity 192, code 1024, exact-step 512, ordinary 768) and lower coding temperature;
+  - strengthens intent→acceptance→artifact verification, explicit Python bool/int handling, accessibility constraints, repository-evidence grounding, and operation distinctions such as echo vs generate;
+  - emits bounded RESOURCE telemetry for the Workstation.
+- `feature/hf-space-manual-deploy:hf_space/station.py`
+  - records accepted/start timestamps and queue wait;
+  - records the engine's bounded resource plan and exposes a RESOURCE_ALLOCATED status.
+
+**Important boundary**
+- This tier does **not** yet implement the desired two-request 16→8+8 live rebalance. The current 700M engine still serializes access to its singleton llama.cpp context. The Workstation telemetry/resource boundary is now explicit, but true concurrent fair-share scheduling requires a safe multi-context/worker design rather than unsafe concurrent access to one context.
+- Source/static structural verification is complete. No fresh HF deployment or live latency/acceptance run is claimed by this event.
+
+**Versions**
+- Repository Work: `1.0.35`
+- LALM Engine: `2.1.118` — `2.1.118-hf-workstation-cpu-acceptance-v93`
+- Server Runtime remains unchanged because no stable Server release/deployment occurred.
+
+**Truth:** SOURCE COMPLETE / STATIC STRUCTURAL RE-READ COMPLETE / DEPLOYMENT NOT REQUESTED / LIVE ACCEPTANCE PENDING.
+
+
+
 ### UPDATE STARTED — 2026-09-22 — verifier repair + self-populating terminal assistant projection
 
 - **Requested outcome:** repair the stale-deployment verifier and make completed assistant messages appear in the open Chat automatically without requiring the user to send another message.
