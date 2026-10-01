@@ -374,6 +374,35 @@ Phase 1 establishes the cognitive/routing/generation foundation before those mec
 
 ---
 
+
+## Student → Teacher → Independent Evaluator boundary
+
+The current 700M development loop treats the model as a **student**. Its generated answer is a candidate artifact, not an authoritative grade. Known-answer fixtures, deterministic tests, compiler/runtime/browser evidence, repository contracts, and engineering review determine whether the candidate actually passes.
+
+Self-review remains useful: the model should trace its own work, compare it with requirements, and repair obvious misses before submission. That is **pre-submission review**, not independent acceptance. Model confidence or an explanation that says a requirement was satisfied is never, by itself, a verification receipt.
+
+Corrections should teach reusable relationships — intent → requirements → implementation → observed behavior — rather than memorize one literal failed answer. The desired progression is:
+
+```text
+STUDENT
+  → receives known-answer tasks and grounded corrections
+  → learns reusable reasoning relationships
+  → becomes a competent practitioner
+  → may later operate as TEACHER for other agents/tasks
+```
+
+Teacher status does not collapse the evaluator boundary. A future teacher-capable LALM may explain, critique, propose tests, and teach another agent, but it must not be the sole authority grading its own work. Acceptance remains independently grounded in the strongest available evidence.
+
+```text
+PRODUCER / TEACHER
+        ↓ candidate + self-review
+INDEPENDENT EVALUATOR
+        ↓ tests / runtime / browser / contracts / grounded review
+ACCEPT / REPAIR
+```
+
+This separation is architectural, not merely pedagogical: generation/reasoning and authoritative acceptance have different owners.
+
 ## 5A. Evidence-first code verification gate
 
 Coding responses that analyze, debug, review, repair, or assert that code is correct MUST perform a verification pass before presenting a confident diagnosis or fix.
