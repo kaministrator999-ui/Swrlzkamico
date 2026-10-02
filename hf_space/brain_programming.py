@@ -17,59 +17,10 @@ _EXPLAIN=("explain","what does","how does","walk me through")
 _CONTINUATION=("this","that","it","same","previous","pinned","code","file","project","continue","keep going","update","change","modify")
 
 
-CODE_TRUTH_POLICY = """[SWRLZ_CODE_TRUTH v1]
-Programming is offline-first. Verify the supplied/local artifact before making confident correctness claims.
-Check syntax and structure; declarations/references, scope, imports/exports, callable names, types/contracts;
-trace relevant control flow, data/state mutation, returns, exceptions, async/event paths, and likely runtime failures.
-Prefer concrete defects supported by the code over speculative style/API criticism. Never invent a bug, API rule,
-runtime result, or no-op fix. After repairing code, re-trace the affected path and confirm the change materially
-fixes the cause.
-
-For HTML/CSS/JavaScript and local UI work also verify semantic HTML, DOM selector/reference wiring, flex/grid/
-positioning, stacking contexts, overflow/intrinsic sizing, responsive/mobile/dynamic-viewport behavior,
-accessibility/focus, interaction state, long-content robustness, client-side security boundaries, and avoid
-unnecessary DOM/scroll/input work. For chat interfaces explicitly protect last-message clearance above an
-expanded/collapsed composer, stable pinned/collapsible/code-container state across scroll/re-render,
-user-controlled auto-scroll, streaming/final-state separation, roles/timestamps, mobile keyboard/safe areas,
-and loading/error/empty/disconnected states.
-
-For generated pages: derive requirements/invariants -> design regions/components -> generate HTML/CSS/JS ->
-verify syntax and DOM wiring -> trace interactions/state -> check layout/scroll/overflow and responsive/
-accessibility/security/performance -> repair -> re-verify.
-
-For coding repairs and constrained edits, preserve the artifact contract before changing anything:
-- extract every explicit MUST, MUST-NOT, exact name/signature, and "change only" boundary into a compact checklist;
-- snapshot compatibility surfaces: function/class names, signatures, return/error semantics, workflow names/triggers,
-  permissions, runtime/setup versions, existing jobs/steps, selectors, and positioning constraints that were not
-  authorized to change;
-- apply the smallest repair that satisfies the failed case; do not rename or replace surrounding interfaces
-  unless explicitly requested;
-- re-check the ORIGINAL requirements after the repair, not only the newest correction, so fixing one condition
-  cannot silently regress another;
-- for async JavaScript, trace promise/await ordering, HTTP-status checks, body parsing, successful return shape,
-  and preservation of network-error identity separately;
-- for incremental/stream parsers, explicitly model buffer += chunk, complete-record extraction, retained tail,
-  blank/CRLF handling, malformed-record behavior, immediate yielding, and final unterminated input;
-- for CSS/layout corrections, treat forbidden layout mechanisms such as "do not absolutely position" as hard
-  negative constraints and verify reachability/overlap/viewport containment rather than substituting another
-  unresolved height/position trick;
-- for workflow/config edits, preserve unrelated keys byte-for-semantics and change only the requested field or
-  command when asked; never invent jobs, modules, package managers, setup steps, or dependencies.
-Explanations are not verification. Never claim the code performs a step unless that step exists in the returned
-artifact in the required order. When runnable tools are unavailable, do a bounded mental acceptance pass and
-state no execution claim.
-
-Ordinary standalone browser/UI engineering must not require internet. Use locally supplied project code,
-manifests, types, tests, docs, and examples when available. Separate artifact truth from external-provider truth:
-Google, Hugging Face, OAuth, hosted SDK endpoints/scopes/versions and similar changing provider contracts may
-require current authoritative evidence. Without it, design the boundary/mock/failure states but mark
-provider-specific details unverified instead of inventing them.
-
-For project/coding work, declared actions are obligations: if the assistant says it will inspect, edit, test,
-clean up, deploy, verify, or otherwise perform a concrete action, do not present the work as complete until each
-declared action is executed with evidence, explicitly blocked with the blocker, or legitimately deferred. Never
-silently abandon a promised step or replace execution with a future-tense promise. Completion claims must match
-the observable action receipts.
+CODE_TRUTH_POLICY = """[SWRLZ_CODE_TRUTH v2]
+Original request = acceptance contract. Preserve required API names/signatures, behavior, negative constraints, and unrelated interfaces unless explicitly changed. Repair the smallest necessary surface.
+Before returning code, check complete syntax/source shape, declarations/references/imports/exports, relevant control/data flow, return/error semantics, mutation constraints, and explicit acceptance examples. Python: distinguish bool from exact built-in int when required. JavaScript: preserve the established loading/API format; do not introduce module/export semantics unless requested. UI: verify DOM wiring, layout/overflow/reachability and accessibility. Config/workflows: preserve unrelated semantics and do not invent infrastructure.
+Return the complete required candidate, never a fragment/TODO/ellipsis/prose substitute. Explanations must match the literal code. Self-review is not execution evidence; never claim compiler/runtime/test success without a real receipt.
 """
 
 def _norm(value: Any) -> str:
