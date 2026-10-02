@@ -146,14 +146,28 @@ def _programming_intent_contract(prompt: str, change_class: str) -> dict[str, An
     }
 
 
+
+def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[str, Any] | None:
+    raw=str(prompt or "").strip()
+    lower=raw.lower()
+    markers=("syntaxerror","typeerror","nameerror","referenceerror","error:","compilation failed","build failed","failed to compile","cannot find symbol","unresolved reference","undefined reference","exit code","test failed","tests failed","assertionerror")
+    if not raw or not any(marker in lower for marker in markers):
+        return None
+    prior=next((m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"),None)
+    if prior is None:
+        return None
+    return {"schema":"swrlz-user-failure-evidence-v1","kind":"execution-failure","source":"user-response","evidence":raw[:6000],"repairTarget":"previous-assistant-candidate"}
+
+
 def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_context: list[dict[str, Any]]) -> dict[str, Any]:
     """Return bounded semantic routing metadata consumed by the Workstation."""
     text=str(prompt or "").strip()
     p=_norm(text)
     pins=_code_pins(pinned_context or [])
+    failure_evidence=_user_failure_evidence(text,history or [])
     recent=" ".join(_norm(m.get("content") or m.get("text")) for m in (history or [])[-4:] if isinstance(m,dict))
     inherited=bool(pins) or any(term in recent for term in _CODE_TERMS)
-    coding=any(term in p for term in _CODE_TERMS) or inherited
+    coding=any(term in p for term in _CODE_TERMS) or inherited or bool(failure_evidence)
     if not coding:
         return {
             "schema":"swrlz-programming-intent-v1",
@@ -164,7 +178,9 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         }
 
     new_project=any(x in p for x in _NEW_PROJECT)
-    if new_project:
+    if failure_evidence:
+        change="fix"
+    elif new_project:
         change="create"
     elif any(x in p for x in _FIX):
         change="fix"
@@ -203,5 +219,6 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         "newProject":new_project,
         "pinnedCodeArtifactCount":len(pins),
         "intentContract":_programming_intent_contract(text,change),
+        "failureEvidence":failure_evidence,
         "source":"brain-router",
     }
