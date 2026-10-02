@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.123
-REVISION=2.1.123-hf-repair-budget-source-audit-v99
+VERSION=2.1.124
+REVISION=2.1.124-hf-routing-budget-telemetry-v100
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
