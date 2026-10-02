@@ -400,6 +400,22 @@ Ownership remains separated: the Brain/LALM reasons from the contract and produc
 **Current implementation tier:** the HF 700M Brain now compiles and injects a bounded persistent intent contract and applies the two-gate completion rule during generation. The Workstation carries that contract as lifecycle metadata. This tier does **not** yet provide an autonomous compiler/browser/repository tool executor or independent evaluator loop; executable receipts remain a later tool-integrated tier.
 
 
+### Canonical intent ownership during repair
+
+The original coding request owns the active intent contract for the lifetime of that repair exchange. Compiler output, stack traces, test failures, source excerpts, and later repair directions are separate evidence/delta channels and must not be reparsed as replacements for the canonical contract.
+
+A receipt-driven repair binds three distinct inputs:
+
+```text
+CANONICAL ORIGINAL INTENT
++ PREVIOUS COMPLETE CANDIDATE
++ NEW FAILURE EVIDENCE / USER REPAIR DIRECTION
+→ repaired complete candidate
+→ re-check original contract + failing case
+```
+
+Diagnostic text may explain *why* Gate 1 failed, but cannot create new MUST/preserve requirements merely because a stack frame or broken source line contains words such as return, use, or pass. Repair output preserves the complete API/wrapper/signature unless the original request explicitly authorizes a fragment or interface change.
+
 ### User-returned compiler/runtime evidence bridge
 
 Before autonomous execution tooling exists, the user can act as the external execution surface. When a user reply contains recognizable compiler, build, runtime, or test failure output after an assistant coding candidate, the Brain treats that reply as **Gate 1 failure evidence**, not as a new unrelated coding request.
