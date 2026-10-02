@@ -221,22 +221,38 @@ def _token_count(model,messages):
     return total
 
 def _fit_messages(model,system,history,prompt):
-    """Preserve system/current prompt; trim oldest history first to a hard input budget."""
+    """Fit context deterministically; keep recent repair evidence while reserving enough output for complete code."""
     kept=list(history[-16:])
     messages=[{"role":"system","content":system}]+kept+[{"role":"user","content":prompt}]
-    while kept and _token_count(model,messages)>INPUT_BUDGET_TOKENS:
+    target_input=INPUT_BUDGET_TOKENS
+    while kept and _token_count(model,messages)>target_input:
         kept.pop(0)
         messages=[{"role":"system","content":system}]+kept+[{"role":"user","content":prompt}]
     input_tokens=_token_count(model,messages)
-    if input_tokens>INPUT_BUDGET_TOKENS:
-        # History is already empty here. Report the measured budget so a fixed
-        # profile regression cannot masquerade as a huge user prompt again.
+    if input_tokens>target_input:
         raise ValueError(
             f"Current prompt/profile context uses {input_tokens} tokens but the 700M input budget is "
-            f"{INPUT_BUDGET_TOKENS}; shorten the current prompt or optional profile."
+            f"{target_input}; shorten the current prompt or optional profile."
         )
     response_tokens=min(OUTPUT_TOKENS,max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
     return messages,len(history)-len(kept),input_tokens,response_tokens
+
+def _fit_repair_messages(model,system,history,prompt):
+    """Repair turns use explicit evidence/candidate blocks in system context, so avoid duplicating bulky chat history."""
+    recent=[]
+    # Keep only short recent conversational directions; previous candidate/evidence are already bound in system.
+    for item in list(history or [])[-6:]:
+        content=str(item.get("content") or "")
+        if item.get("role")=="user" and len(content)<=1600:
+            recent.append(item)
+    messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":prompt}]
+    while recent and _token_count(model,messages)>INPUT_BUDGET_TOKENS:
+        recent.pop(0); messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":prompt}]
+    input_tokens=_token_count(model,messages)
+    if input_tokens>INPUT_BUDGET_TOKENS:
+        raise ValueError(f"Repair context uses {input_tokens} tokens but the 700M input budget is {INPUT_BUDGET_TOKENS}.")
+    response_tokens=min(OUTPUT_TOKENS,max(768,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
+    return messages,len(history)-len(recent),input_tokens,response_tokens
 
 def _user_name_from_profile(user_profile):
     for line in str(user_profile or "").splitlines():
@@ -407,8 +423,13 @@ def generate_events(payload):
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
-    messages,dropped_history,input_tokens,available_output_tokens=_fit_messages(model,system,history,prompt)
-    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":INPUT_BUDGET_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2}
+    repair_turn=bool(programming.get("failureEvidence"))
+    fitter=_fit_repair_messages if repair_turn else _fit_messages
+    messages,dropped_history,input_tokens,available_output_tokens=fitter(model,system,history,prompt)
+    system_tokens=_token_count(model,[{"role":"system","content":system}])
+    prompt_tokens=_token_count(model,[{"role":"user","content":prompt}])
+    history_tokens=max(0,input_tokens-system_tokens-prompt_tokens)
+    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":INPUT_BUDGET_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2,"repairTurn":repair_turn,"tokenBreakdown":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
     loaded=time.perf_counter()
     yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":round((loaded-started)*1000,3)}
     first_delta=None
@@ -417,7 +438,7 @@ def generate_events(payload):
         if mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
             response_tokens=min(192,available_output_tokens);temperature=0.35
         elif mode.startswith("RESPONSE MODE: CODE-"):
-            response_tokens=min(1024,available_output_tokens);temperature=0.30
+            response_tokens=min(1536 if repair_turn else 1024,available_output_tokens);temperature=0.25 if repair_turn else 0.30
         elif mode.startswith("RESPONSE MODE: EXACT-NUMBERED-STEPS"):
             response_tokens=min(512,available_output_tokens);temperature=0.35
         else:
