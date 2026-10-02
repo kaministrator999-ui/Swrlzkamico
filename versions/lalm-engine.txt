@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.125
-REVISION=2.1.125-hf-response-mode-scope-hotfix-v101
+VERSION=2.1.126
+REVISION=2.1.126-hf-compact-repair-learning-v102
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
