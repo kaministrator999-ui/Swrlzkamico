@@ -14,7 +14,7 @@
 - LALM Engine authority remains `2.1.119`; the attempted authority bump was blocked, and the changed Station documentation does not alter inference behavior.
 - Server Runtime unchanged.
 
-**Truth:** ARCHITECTURE + HF STATION SOURCE BOUNDARY COMPLETE / STATIC RE-READ PENDING / DEPLOYMENT NOT REQUESTED / LIVE BEHAVIOR UNCHANGED.
+**Truth:** ARCHITECTURE + HF STATION SOURCE BOUNDARY COMPLETE / STATIC STRUCTURAL RE-READ COMPLETE / DEPLOYMENT NOT REQUESTED / LIVE BEHAVIOR UNCHANGED.
 
 ## UPDATE FINISHED — 2026-10-01 — Student → Teacher independent-evaluator ownership contract
 
