@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.122
-REVISION=2.1.122-hf-canonical-intent-repair-v98
+VERSION=2.1.123
+REVISION=2.1.123-hf-repair-budget-source-audit-v99
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
