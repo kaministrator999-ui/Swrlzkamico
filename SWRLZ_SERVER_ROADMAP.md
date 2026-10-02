@@ -1,3 +1,26 @@
+## UPDATE FINISHED — 2026-10-01 — User-returned compiler/runtime failure repair bridge v97
+
+**Scope:** use a user's returned compiler/build/runtime/test failure as grounded repair evidence for the previous LALM coding candidate.
+
+- Brain programming recognizes bounded common failure markers in a user reply when prior assistant context exists and emits `swrlz-user-failure-evidence-v1`.
+- Such turns are routed as `fix` programming work rather than unrelated creation.
+- 700M receives the failure receipt as Gate 1 evidence and is instructed to diagnose it, return corrected code, preserve the original intent contract, and re-check both technical and intent validity.
+- The model must not claim successful execution without a real execution receipt.
+- Workstation carries the evidence as lifecycle metadata only; semantic diagnosis/grading remains outside Workstation.
+- This user-as-execution-surface bridge is designed to feed the same repair path a future independent evaluator will use.
+
+**Versions**
+- Repository Work: `1.0.41`
+- LALM Engine: `2.1.121` / `2.1.121-hf-user-failure-repair-v97`
+- Server Runtime remains `2.3.309`.
+
+**Verification boundary**
+- Static source re-read is required for the new recognition/routing/injection path.
+- No autonomous compiler/browser/repository executor is claimed.
+- No deployment was requested.
+
+**Truth:** SOURCE COMPLETE / DEPLOYMENT NOT REQUESTED / LIVE V97 ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-01 — 700M intent-grounded two-gate coding loop v96
 
 **Scope:** implement the discussed distinction between technical validity and successful completion of the user's programming request.
