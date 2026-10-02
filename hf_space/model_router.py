@@ -28,7 +28,7 @@ def routes(stock_checkpoint: str | None = None) -> list[ModelRoute]:
 def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict[str,Any]],Iterator[dict[str,Any]]], stock_generate=None,large_generate=None):
     history=payload.get("history") if isinstance(payload.get("history"),list) else []
     pins=payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else []
-    intent=programming_intent(str(payload.get("prompt") or ""),history,pins)
+    intent=programming_intent(str(payload.get("prompt") or ""),history,pins,payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
     payload=dict(payload)
     payload["programmingIntent"]=intent
     yield {"type":"PROGRAMMING_INTENT","intent":intent}
