@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.130
-REVISION=2.1.130-hf-repair-diagnostics-v106
+VERSION=2.1.131
+REVISION=2.1.131-hf-durable-repair-logs-v107
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
