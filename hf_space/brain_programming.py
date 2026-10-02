@@ -109,7 +109,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     prior=next((m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"),None)
     if prior is None:
         return None
-    return {"schema":"swrlz-user-failure-evidence-v2","kind":"execution-failure","source":"user-response","evidence":raw[:6000],"repairTarget":"previous-assistant-candidate"}
+    return {"schema":"swrlz-user-failure-evidence-v3","kind":"execution-failure","source":"user-response","evidence":raw[:6000],"repairTarget":"previous-assistant-candidate","repairTargetMessageId":str(prior.get("id") or "")}
 
 
 def _looks_like_failure_receipt(text: str) -> bool:
