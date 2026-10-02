@@ -1,10 +1,11 @@
 """§wyrlz isolated R39 inference probe; not the canonical account-backed Chat."""
 from __future__ import annotations
-import json, os, queue, runpy, tempfile, threading, time, uuid
+import base64, json, os, queue, runpy, tempfile, threading, time, uuid
 from pathlib import Path
 import spaces
 import gradio as gr
 import uvicorn
+import requests
 # Compile against the Space's own Python/NumPy ABI before R39 is imported.
 # Keep the existing Python fallback if the build environment lacks a compiler.
 try:
@@ -30,6 +31,34 @@ os.environ["SWRLZ_GITHUB_REF"]=PROVENANCE["sourceCommit"]
 os.environ["SWRLZ_R39_TRANSPORT_MANIFEST"]=str(ROOT/"lalm§wyrlz.transport.json")
 _engine=None
 _lock=threading.Lock()
+
+def _persist_repair_diagnostic(request_id,model_id,event_type,diagnostic):
+    """Best-effort bounded GitHub persistence using a dedicated diagnostics-only token."""
+    token=str(os.environ.get("SWRLZ_DIAGNOSTIC_GITHUB_TOKEN") or "").strip()
+    if not token:
+        print(json.dumps({"event":"REPAIR_DIAGNOSTIC_PERSIST_SKIPPED","requestId":request_id,"reason":"diagnostic-token-not-configured"}),flush=True)
+        return False
+    if event_type not in ("REPAIR_DIAGNOSTIC","REPAIR_OUTCOME_DIAGNOSTIC") or not isinstance(diagnostic,dict):
+        return False
+    owner=os.environ.get("SWRLZ_GITHUB_OWNER","kaministrator999-ui")
+    repo=os.environ.get("SWRLZ_GITHUB_REPO","Swrlzkamico")
+    safe_request="".join(ch for ch in request_id if ch.isalnum() or ch in "-_")[:80]
+    safe_event=event_type.lower().replace("_","-")
+    path=f"runtime-diagnostics/repair/{safe_request}/{safe_event}.json"
+    body=json.dumps({"schema":"swrlz-github-repair-log-v1","requestId":request_id,"modelId":model_id,"eventType":event_type,"diagnostic":diagnostic},ensure_ascii=False,indent=2)+"\n"
+    url=f"https://api.github.com/repos/{owner}/{repo}/contents/{path}"
+    headers={"Authorization":"Bearer "+token,"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"}
+    payload={"message":f"Record {safe_event} {safe_request[:12]}","content":base64.b64encode(body.encode("utf-8")).decode("ascii"),"branch":"runtime"}
+    try:
+        response=requests.put(url,headers=headers,json=payload,timeout=12)
+        if response.status_code not in (200,201):
+            print(json.dumps({"event":"REPAIR_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,"status":response.status_code,"detail":response.text[:300]}),flush=True)
+            return False
+        print(json.dumps({"event":"REPAIR_DIAGNOSTIC_PERSISTED","requestId":request_id,"path":path,"branch":"runtime"}),flush=True)
+        return True
+    except Exception as exc:
+        print(json.dumps({"event":"REPAIR_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,"errorType":type(exc).__name__,"detail":str(exc)[:300]}),flush=True)
+        return False
 
 def engine():
     global _engine
@@ -152,6 +181,7 @@ def respond(message,history,model_id,profile,user_profile):
                 if isinstance(diagnostic,dict):
                     report["repairDiagnostics"].append(diagnostic)
                     print(json.dumps({"event":"REPAIR_DIAGNOSTIC","modelId":model_id,"requestId":request_id,"diagnostic":diagnostic},ensure_ascii=False,separators=(",",":")),flush=True)
+                    threading.Thread(target=_persist_repair_diagnostic,args=(request_id,model_id,event_type,diagnostic),daemon=True,name="repair-log-"+request_id[:8]).start()
                 status=snapshot("REPAIR_DIAGNOSTIC")
                 yield report["response"],export_path,status
                 continue
@@ -160,6 +190,7 @@ def respond(message,history,model_id,profile,user_profile):
                 if isinstance(diagnostic,dict):
                     report["repairOutcomeDiagnostics"].append(diagnostic)
                     print(json.dumps({"event":"REPAIR_OUTCOME_DIAGNOSTIC","modelId":model_id,"requestId":request_id,"diagnostic":diagnostic},ensure_ascii=False,separators=(",",":")),flush=True)
+                    threading.Thread(target=_persist_repair_diagnostic,args=(request_id,model_id,event_type,diagnostic),daemon=True,name="repair-outcome-log-"+request_id[:8]).start()
                 status=snapshot("REPAIR_OUTCOME_DIAGNOSTIC")
                 yield report["response"],export_path,status
                 continue
