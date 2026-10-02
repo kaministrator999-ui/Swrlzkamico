@@ -1,3 +1,25 @@
+## UPDATE FINISHED — 2026-10-02 — Repair budgeting + complete-source acceptance v99
+
+**Evidence basis:** nine-reply live 700M retest supplied by the user after canonical-contract repair deployment.
+
+- Receipt handoff improved: all three receipt cases preserved their original contract, but no tested task reached a fully correct repair.
+- Two receipt-only requests exceeded the 7,680 input budget (7,709 and 7,718 tokens), Python repairs truncated mid-source, sorting repeated the same in-place mutation while prose claimed a copy, and the add repair corrected the expression but dropped the required function wrapper.
+- Contract extraction also retained broken source/test-stage material as requirements, and the live page's displayed version labels remained stale/unverified.
+
+**Implemented**
+- Intent contract v2 strips fenced code payloads before prose requirement extraction and removes generic `return/use/run` words from requirement triggers, reducing broken-code-as-requirement pollution.
+- Receipt repair context no longer duplicates bulky assistant candidates/history already bound into the system repair block; it retains bounded short user directions.
+- CONTEXT telemetry now exposes system/history/current-prompt token breakdown and a `repairTurn` marker.
+- Repair code output can use up to 1,536 tokens when budget permits, with lower repair temperature.
+- Repair preflight explicitly audits required wrapper/name/signature, balanced/finished source shape, preservation against forbidden in-place mutation, explicit acceptance examples, and prose/code consistency.
+
+**Versions**
+- Repository Work: `1.0.43`
+- LALM Engine: `2.1.123` / `2.1.123-hf-repair-budget-source-audit-v99`
+- Server Runtime remains `2.3.309` until successful deployment closes this event.
+
+**Truth:** SOURCE COMPLETE / STATIC STRUCTURAL RE-READ REQUIRED / STANDING SOURCE-MUTATION DEPLOYMENT APPROVAL APPLIES / LIVE V99 ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-01 — Canonical original-intent repair binding v98
 
 **Evidence basis:** live 700M failure-receipt retest supplied by the user after v97 deployment.
