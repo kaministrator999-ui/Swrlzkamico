@@ -159,15 +159,19 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     return {"schema":"swrlz-user-failure-evidence-v2","kind":"execution-failure","source":"user-response","evidence":raw[:6000],"repairTarget":"previous-assistant-candidate"}
 
 
+def _looks_like_failure_receipt(text: str) -> bool:
+    lower=str(text or "").lower()
+    markers=("syntaxerror","typeerror","nameerror","referenceerror","error:","compilation failed","build failed","failed to compile","cannot find symbol","unresolved reference","undefined reference","exit code","test failed","tests failed","assertionerror")
+    return bool(text) and any(marker in lower for marker in markers)
+
+
 def _original_programming_request(history: list[dict[str, Any]]) -> str:
     """Recover the earliest user request in the current coding exchange, excluding execution receipts."""
     for item in history or []:
         if not isinstance(item,dict) or str(item.get("role") or "")!="user":
             continue
         text=str(item.get("content") or item.get("text") or "").strip()
-        if not text:
-            continue
-        if _user_failure_evidence(text,history[:max(0,(history or []).index(item))]):
+        if not text or _looks_like_failure_receipt(text):
             continue
         if any(term in _norm(text) for term in _CODE_TERMS):
             return text[:4000]
