@@ -25,6 +25,7 @@ This ledger records successful cases already demonstrated in historical test evi
 | H700-007 | Python parse_max_tokens latest repair | Directed repair passed only 1/20. | DO NOT TRAIN | Strong negative example for exact-type/None/range semantics and regression after guidance. |
 | H700-008 | JavaScript sorting receipt-only fragments | Wrapper lost/truncated; API could not load. | DO NOT TRAIN | Negative example for complete-source/API preservation. |
 | H700-009 | JavaScript add receipt repetition | Forty repeated error headings and no code. | DO NOT TRAIN | Negative example for repetition/no-code rejection. |
+| H700-010 | JavaScript add receipt retention (round 5) | Initial complete plain function passed 5/5; after a genuine compiler receipt explicitly owned by the original user seed, the assistant retained the same correct plain function and still passed 5/5. | EVIDENCE READY / SOURCE RECOVERY NEEDED | Positive preservation example, but not evidence that the receipt repaired a failing assistant candidate. Recover exact source/prompt/receipt from round-5 artifacts before normalization. |
 
 ## Corpus construction rule
 
