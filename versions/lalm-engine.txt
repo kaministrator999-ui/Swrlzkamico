@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.119
-REVISION=2.1.119-hf-coding-preservation-regression-v94
+VERSION=2.1.120
+REVISION=2.1.120-hf-intent-two-gate-v96
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
