@@ -16,9 +16,18 @@
 - Repository Work: `1.0.39`
 - Deployment Control: `1.0.16`
 - LALM Engine remains `2.1.119`; engine inference configuration was not changed.
-- Server Runtime remains `2.3.308` until an actual successful release/deployment event warrants movement.
+- Server Runtime: `2.3.309` after successful HF deployment advanced the deployed Server lineage.
 
-**Truth:** DEPLOYMENT GATE SOURCE FIXED / STATIC VERIFICATION REQUIRED / FRESH USER-APPROVED DEPLOYMENT TO FOLLOW.
+**Deployment closure**
+- Fresh approved request commit: `8f211c68e4c879580ec1ac02dcbf179ced53f9b1`
+- GitHub Actions: HF deploy request run **#39 / 36948729273** → **success**.
+- Repaired 700M smoke gate passed with `contextWindowTokens=8192`, `inputBudgetTokens=7680`, `reservedOutputTokens=2048`, `estimatedInputTokens=4379`, and non-empty generation.
+- Predeploy rollback Space revision: `57c546e1b5e6ee1456cf0e89e1c66660b7c42021`.
+- Uploaded Space revision: `9fe73f88df99a8b0b9e98229d651865f2fdb0d44`.
+- Workflow release checkpoint records `verificationState=DEPLOYED_UNVERIFIED`; publication succeeded, but direct user-visible runtime verification remains a separate acceptance step.
+- Server Runtime advanced to `2.3.309` because this event actually advanced the deployed Server lineage.
+
+**Truth:** DEPLOYMENT GATE FIXED / STATIC STRUCTURAL VERIFICATION COMPLETE / GUARDED HF WORKFLOW SUCCESS / SPACE REVISION PUBLISHED / USER-VISIBLE RUNTIME ACCEPTANCE STILL PENDING.
 
 ## UPDATE FINISHED — 2026-10-01 — Workstation orchestration ownership boundary
 
