@@ -403,6 +403,35 @@ ACCEPT / REPAIR
 
 This separation is architectural, not merely pedagogical: generation/reasoning and authoritative acceptance have different owners.
 
+### Workstation orchestration boundary
+
+The Workstation is **not** a semantic evaluator and does not grade response content. It owns operational orchestration around a response:
+
+```text
+request accepted
+→ identify/routable workload
+→ queue/admit
+→ select worker/engine
+→ assign available compute budget
+→ track start/progress/cancel/terminal lifecycle
+→ receive result/stream terminal state
+→ persist/project response state as owned
+→ synchronize/deliver to the correct client/thread
+```
+
+The Workstation may decide **operational readiness** from transport/lifecycle facts: a job was admitted, a worker started, a stream is active, a terminal result arrived, persistence completed, cancellation occurred, or a response envelope is ready for delivery. It must not inspect semantic content and convert its own interpretation into a correctness grade.
+
+Content correctness, pedagogical review, and acceptance belong outside Workstation scheduling. When an evaluation workflow is requested, the Workstation may route a candidate to an independent evaluator and transport the evaluator's result, but it does not become that evaluator.
+
+```text
+Brain/LALM → produces/reasons
+Evaluator  → independently assesses when required
+Workstation → delegates/schedules/resources/tracks/routes/delivers
+Mask/Chat   → presents/synchronizes
+```
+
+Therefore response **ready** at the Workstation means operationally complete/available for its next routed stage, not semantically proven correct.
+
 ## 5A. Evidence-first code verification gate
 
 Coding responses that analyze, debug, review, repair, or assert that code is correct MUST perform a verification pass before presenting a confident diagnosis or fix.
