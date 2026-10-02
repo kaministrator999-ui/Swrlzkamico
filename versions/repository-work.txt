@@ -1,5 +1,5 @@
 ID=repository-work
-VERSION=1.0.38
+VERSION=1.0.39
 KIND=repository-work-lineage
 SOURCE_BRANCH=runtime
 STATUS=active
