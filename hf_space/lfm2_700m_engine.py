@@ -389,6 +389,30 @@ def _candidate_structure_check(text, programming, history):
     if previous and "export " not in previous and "export " in source and not re.search(r"\b(?:module|esm|es module|export)\b",original,re.I): reasons.append("loading-format-changed-to-module")
     return {"status":"REJECT" if reasons else "PASS","reasons":reasons}
 
+def _repair_diagnostic(programming,history):
+    """Bounded observable repair telemetry; never hidden chain-of-thought."""
+    evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
+    if not evidence:
+        return None
+    target_mid=str(evidence.get("repairTargetMessageId") or "")
+    previous=next((str(m.get("content") or "") for m in reversed(history or []) if m.get("role")=="assistant" and (not target_mid or str(m.get("id") or "")==target_mid) and str(m.get("content") or "").strip()),"")
+    normalized=" ".join(previous.split())
+    fingerprint=hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:16] if normalized else None
+    signals=evidence.get("failureSignals") if isinstance(evidence.get("failureSignals"),list) else []
+    return {
+        "schema":"swrlz-repair-diagnostic-v1",
+        "receiptType":evidence.get("type"),
+        "receiptSourceOwnership":evidence.get("receiptSourceOwnership"),
+        "repairTargetMessageId":target_mid or None,
+        "candidateFingerprint":fingerprint,
+        "exactCandidateRepeatCount":int(evidence.get("exactCandidateRepeatCount") or 0),
+        "stalledRepair":bool(evidence.get("stalledRepair")),
+        "failureSignalCount":len(signals),
+        "failureSignals":[str(x)[:300] for x in signals[:8]],
+        "contractBound":bool(programming.get("intentContract")),
+        "canonicalCarry":bool(programming.get("canonicalCarry")),
+    }
+
 def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
@@ -408,6 +432,9 @@ def generate_events(payload):
     if convergence:
         yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
     programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [],payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
+    repair_diagnostic=_repair_diagnostic(programming,history)
+    if repair_diagnostic:
+        yield {"type":"REPAIR_DIAGNOSTIC","diagnostic":repair_diagnostic}
     if programming.get("codingTask"):
         yield {"type":"PROGRAMMING_INTENT","intent":programming}
     normalized_prompt="\n".join(line.rstrip() for line in prompt.strip().splitlines())
@@ -507,6 +534,21 @@ def generate_events(payload):
                 generated_parts.append(delta)
                 if first_delta is None:first_delta=round((time.perf_counter()-started)*1000,3)
                 yield {"type":"DELTA","text":delta}
-    candidate_check=_candidate_structure_check("".join(generated_parts),programming,history)
+    candidate_text="".join(generated_parts)
+    candidate_check=_candidate_structure_check(candidate_text,programming,history)
     yield {"type":"CANDIDATE_VALIDATION","validation":candidate_check}
+    if repair_diagnostic:
+        candidate_norm=" ".join(candidate_text.split())
+        previous_fp=repair_diagnostic.get("candidateFingerprint")
+        candidate_fp=hashlib.sha256(candidate_norm.encode("utf-8")).hexdigest()[:16] if candidate_norm else None
+        yield {"type":"REPAIR_OUTCOME_DIAGNOSTIC","diagnostic":{
+            "schema":"swrlz-repair-outcome-v1",
+            "previousCandidateFingerprint":previous_fp,
+            "newCandidateFingerprint":candidate_fp,
+            "candidateChanged":bool(candidate_fp and candidate_fp!=previous_fp),
+            "stalledRepairInput":bool(repair_diagnostic.get("stalledRepair")),
+            "candidateValidationStatus":candidate_check.get("status"),
+            "candidateValidationReasons":candidate_check.get("reasons",[])[:8],
+            "executionVerified":False,
+        }}
     yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":round((time.perf_counter()-started)*1000,3),"loadLatencyMs":round((loaded-started)*1000,3),"firstDeltaLatencyMs":first_delta}
