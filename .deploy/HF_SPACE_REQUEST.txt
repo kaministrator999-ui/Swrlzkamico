@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-02-v106-repair-diagnostics-013
+REQUEST_NONCE=2026-10-02-v107-durable-repair-logs-014
