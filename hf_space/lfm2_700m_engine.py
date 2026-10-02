@@ -380,6 +380,11 @@ def generate_events(payload):
         system+="\nARTIFACT ECHO RECOGNITION: The current user message reproduces or substantially contains code/text from your own recent assistant output. Treat it as a returned/shared artifact, not as novel third-party code. Explicitly recognize that provenance when relevant, then respond to the user's current intent without pretending you are seeing it for the first time."
     if programming.get("codingTask"):
         system+="\nPROGRAMMING COGNITION: changeClass="+str(programming.get("changeClass"))+"; artifactContinuation="+str(bool(programming.get("artifactContinuation"))).lower()+"; newProject="+str(bool(programming.get("newProject"))).lower()+". Treat these as reasoning/routing context only; never claim a file, pin, deployment, or persistent mutation occurred without a Workstation/server receipt."
+        intent_contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
+        if intent_contract:
+            system+=("\nPERSISTENT USER INTENT CONTRACT (acceptance target; preserve across every repair):\n"
+                     +json.dumps(intent_contract,ensure_ascii=False,separators=(",",":"))
+                     +"\nTWO-GATE COMPLETION: Gate 1 is technical validity (syntax/build/runtime as applicable). Gate 2 is user-intent validity (all original MUST/MUST-NOT/preserve constraints and acceptance behavior). An exit code 0, successful compile, or successful runtime alone is never completion. After any repair, re-run/reason through BOTH gates against the ORIGINAL contract plus the newest failure evidence. Do not delete, rename, bypass, or weaken a requested feature merely to make Gate 1 pass. If executable evidence is unavailable, do not fabricate it; return the candidate as unverified where appropriate.")
         system+="\n"+CODE_TRUTH_POLICY
     if programming.get("artifactMutationRequested") and programming.get("artifactTargetId"):
         system+="\nPINNED CODE EDIT MODE: The current request targets an already-pinned code artifact. Return the complete revised code fence(s) needed for that artifact, followed by only a concise explanation of what changed. Do not describe the revised code as a new project or duplicate artifact."
