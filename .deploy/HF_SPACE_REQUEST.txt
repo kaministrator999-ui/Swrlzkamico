@@ -3,4 +3,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-02-v99-repair-budget-source-audit-005
+REQUEST_NONCE=2026-10-02-v100-routing-budget-telemetry-006
