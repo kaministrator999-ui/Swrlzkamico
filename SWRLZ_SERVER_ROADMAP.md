@@ -1,3 +1,19 @@
+## UPDATE FINISHED — 2026-10-02 — 700M weight-learning pipeline bootstrap
+
+**Goal:** move stable programming behavior out of repeated per-request prefill and into trained model parameters where evidence supports it.
+
+- Added `training/700m/README.md` as the governed validated-corpus contract.
+- Added `training/700m/train_lora.py` as an executable LoRA SFT entrypoint for `LiquidAI/LFM2-700M`.
+- Training loader hard-rejects rows without `swrlz-700m-training-example-v1`, independent evaluator `PASS`, original request, and corrected target.
+- Default adapter plan is rank 16 / alpha 32 / dropout 0.05 over all linear layers, with configurable epochs and learning rate.
+- Runtime task-specific contracts remain runtime state; generalized repair/coding behavior is the intended weight-learning target.
+- No adapter/checkpoint is promoted merely because training completes. Promotion requires held-out regression evidence against the current 700M route.
+- Current historical review evidence is sufficient to identify failure modes but is **not yet a normalized, sufficiently broad validated training corpus**. Therefore no paid GPU training job or weight promotion was started in this tier; doing so now would overfit a handful of cases and violate the validated-learning boundary.
+
+**Repository Work:** `1.0.47`
+
+**Truth:** TRAINING PIPELINE SOURCE COMPLETE / MODEL WEIGHTS UNCHANGED / VALIDATED CORPUS NORMALIZATION + HELD-OUT SUITE REQUIRED BEFORE WEIGHT PROMOTION / NO RUNTIME DEPLOYMENT REQUIRED FOR TRAINING-ONLY SOURCE.
+
 ## UPDATE FINISHED — 2026-10-02 — Compact repair state + validated-learning boundary v102
 
 **Evidence basis:** latest nine-request 700M repeat supplied by the user. Infrastructure fixes are observable, while Python repair regressed, add entered a repetition/no-code turn, ordinary guidance rebuilt contracts, and coding system context still consumed most of the 8,192-token window.
