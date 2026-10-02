@@ -1,3 +1,19 @@
+## UPDATE FINISHED — 2026-10-02 — Start deployment-completion contract clarification
+
+**Goal:** remove ambiguity about whether a governed runtime-affecting source update stops at source-complete or continues through deployment.
+
+**Implemented**
+- `§wyrlz_§tart.md` now explicitly requires runtime-affecting stable source mutations to continue through the canonical single guarded terminal deployment trigger under the repository's standing approval.
+- The canonical sequence now states source mutation → reconciliation/versioning/roadmap → deployment-inert verification → guarded terminal deployment → terminal deployment observation → activation truth → live/behavioral acceptance when applicable.
+- Explicit deployment-inert exceptions remain non-deploying: documentation-only work, training/corpus preparation that does not change the active runtime/model reference, runtime-hot work whose owner activates without stable production deployment, bookkeeping-only work, and other architecture-owned non-deploying changes.
+- The standing-approval section and Bottom line were aligned so future sessions do not stop and ask for a redundant “deploy” command after an eligible runtime-affecting update.
+
+**Versions**
+- Repository Work: `1.0.51`
+- Runtime modules: unchanged
+
+**Verification truth:** SOURCE COMPLETE / CONTRACT TEXT RECONCILED / DOCUMENTATION-ONLY MUTATION / NO RUNTIME DEPLOYMENT REQUIRED.
+
 ## UPDATE FINISHED — 2026-10-02 — Round-6 exact-contract repair + receipt ownership v104
 
 **Evidence basis:** user-supplied `review (10).md`, eight sequential live 700M turns on deployed v103.
