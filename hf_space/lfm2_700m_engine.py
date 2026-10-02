@@ -1,6 +1,6 @@
 """Independent lazy-loaded LFM2-700M GGUF route; original 350M remains untouched."""
 from __future__ import annotations
-import json, os, threading, time
+import json, os, re, threading, time
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY
@@ -344,7 +344,6 @@ def _response_mode(prompt, programming=None):
             "Own 𓆩𓆩⁽§⁾𓆪wyrlz𓆪 as the stable primary identity; Swurlz is the spoken/read form and conversational aliases are acceptable without replacing the canonical identity. "
             "Do not present Squirrels as a name or nickname; it was only a past speech-to-text mishearing/joke. Do not explain the branding unless asked and do not bounce the question back."
         )
-    import re
     step_match=re.search(r"\b(?:in\s+)?(\d{1,2})\s+(?:numbered\s+)?steps?\b",p)
     if step_match:
         count=max(1,min(12,int(step_match.group(1))))
