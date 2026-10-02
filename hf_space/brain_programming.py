@@ -117,7 +117,7 @@ def _pick_artifact_target(prompt: str, code_pins: list[dict[str, Any]]) -> dict[
 
 def _strip_fenced_code(text: str) -> str:
     """Remove fenced source/test payloads before extracting natural-language requirements."""
-    return re.sub(r"\`\`\`[\\s\\S]*?\`\`\`"," [CODE_PAYLOAD] ",str(text or ""),flags=re.M)
+    return re.sub(r"```[\s\S]*?```"," [CODE_PAYLOAD] ",str(text or ""),flags=re.M)
 
 
 def _programming_intent_contract(prompt: str, change_class: str) -> dict[str, Any]:
