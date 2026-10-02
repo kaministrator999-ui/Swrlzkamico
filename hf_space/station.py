@@ -332,6 +332,10 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         evidence=intent.get("failureEvidence")
                         if isinstance(evidence,dict):g["failureEvidence"]=copy.deepcopy(evidence)
                     g["status"].append({"seq":g["lastSeq"],"phase":"PROGRAMMING_INTENT","reason":""})
+                elif kind=="CANDIDATE_VALIDATION":
+                    validation=event.get("validation") if isinstance(event.get("validation"),dict) else {}
+                    g["candidateValidation"]=copy.deepcopy(validation)
+                    g["status"].append({"seq":g["lastSeq"],"phase":"CANDIDATE_"+str(validation.get("status") or "UNKNOWN"),"reason":",".join(str(x) for x in (validation.get("reasons") or []))[:200]})
                 elif kind=="CONTEXT":
                     g["contextBudget"]={
                         "contextWindowTokens":int(event.get("contextWindowTokens") or 0),
@@ -367,7 +371,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
             g=s["activeGeneration"];g.update(terminal=True,terminalType="COMPLETE",phase="COMPLETE")
             thread=next(t for t in s["threads"] if t["id"]==payload["threadId"])
             intent=g.get("programmingIntent") if isinstance(g.get("programmingIntent"),dict) else {}
-            artifact_id=str(intent.get("artifactTargetId") or "")
+            if intent.get("codingTask"): thread["programmingState"]=copy.deepcopy(intent)\n            artifact_id=str(intent.get("artifactTargetId") or "")
             artifact=_find_artifact(thread,artifact_id) if artifact_id and intent.get("artifactMutationRequested") else None
             if artifact is not None:
                 committed,reason=_commit_code_artifact_revision(artifact,text,request_id,int(intent.get("baseRevision") or 0))
@@ -487,17 +491,17 @@ async def send(request:Request):
         if s["activeGeneration"] and not s["activeGeneration"]["terminal"]:raise HTTPException(409,"Generation already active")
         t=next((t for t in s["threads"] if t["id"]==tid),None)
         if t is None:
-            t={"id":tid,"title":prompt[:48],"pinned":False,"messagePins":{},"codeArtifacts":[],"createdAt":time.time()*1000,"messages":[]}
+            t={"id":tid,"title":prompt[:48],"pinned":False,"messagePins":{},"codeArtifacts":[],"programmingState":None,"createdAt":time.time()*1000,"messages":[]}
             s["threads"].append(t)
         now_ms=int(time.time()*1000)
         temporal_context=_temporal_context(t["messages"],client_timezone,now_ms)
-        history=[{"role":m["role"],"text":m["text"],"createdAt":m.get("createdAt")} for m in t["messages"] if m["role"] in ("user","assistant")]
+        history=[{"id":m.get("id"),"role":m["role"],"text":m["text"],"createdAt":m.get("createdAt")} for m in t["messages"] if m["role"] in ("user","assistant")]
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"queueWaitMs":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"artifactReceipt":None}
-    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"queueWaitMs":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"candidateValidation":None,"artifactReceipt":None}
+    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400,path="/")
