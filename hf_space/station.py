@@ -1,7 +1,13 @@
 """HF-only in-process Station adapter for the canonical Chat projection.
 
+The Station/Workstation owns operational response orchestration: admission,
+queue/lifecycle state, worker/engine delegation, resource telemetry, cancellation,
+state projection, synchronization, and delivery readiness. It does not grade the
+semantic correctness of response content. Ready/terminal means operationally
+complete for the next routed stage, not independently proven correct.
+
 Candidate limitations: process-local state, anonymous session, no durable account
-storage or Vercel queue. Do not claim production parity.
+storage or external durable queue. Do not claim production parity.
 """
 from __future__ import annotations
 import asyncio, base64, copy, json, os, threading, time, uuid
