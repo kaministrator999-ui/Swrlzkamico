@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.129
-REVISION=2.1.129-hf-receipt-convergence-v105
+VERSION=2.1.130
+REVISION=2.1.130-hf-repair-diagnostics-v106
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
