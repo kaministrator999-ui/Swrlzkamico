@@ -156,8 +156,22 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     prior=next((m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"),None)
     if prior is None:
         return None
-    return {"schema":"swrlz-user-failure-evidence-v1","kind":"execution-failure","source":"user-response","evidence":raw[:6000],"repairTarget":"previous-assistant-candidate"}
+    return {"schema":"swrlz-user-failure-evidence-v2","kind":"execution-failure","source":"user-response","evidence":raw[:6000],"repairTarget":"previous-assistant-candidate"}
 
+
+def _original_programming_request(history: list[dict[str, Any]]) -> str:
+    """Recover the earliest user request in the current coding exchange, excluding execution receipts."""
+    for item in history or []:
+        if not isinstance(item,dict) or str(item.get("role") or "")!="user":
+            continue
+        text=str(item.get("content") or item.get("text") or "").strip()
+        if not text:
+            continue
+        if _user_failure_evidence(text,history[:max(0,(history or []).index(item))]):
+            continue
+        if any(term in _norm(text) for term in _CODE_TERMS):
+            return text[:4000]
+    return ""
 
 def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_context: list[dict[str, Any]]) -> dict[str, Any]:
     """Return bounded semantic routing metadata consumed by the Workstation."""
@@ -165,6 +179,7 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     p=_norm(text)
     pins=_code_pins(pinned_context or [])
     failure_evidence=_user_failure_evidence(text,history or [])
+    original_request=_original_programming_request(history or []) if failure_evidence else ""
     recent=" ".join(_norm(m.get("content") or m.get("text")) for m in (history or [])[-4:] if isinstance(m,dict))
     inherited=bool(pins) or any(term in recent for term in _CODE_TERMS)
     coding=any(term in p for term in _CODE_TERMS) or inherited or bool(failure_evidence)
@@ -218,7 +233,8 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         "baseRevision":base_revision,
         "newProject":new_project,
         "pinnedCodeArtifactCount":len(pins),
-        "intentContract":_programming_intent_contract(text,change),
+        "intentContract":_programming_intent_contract(original_request or text,change),
+        "repairDirection":text[:4000] if failure_evidence and original_request else "",
         "failureEvidence":failure_evidence,
         "source":"brain-router",
     }
