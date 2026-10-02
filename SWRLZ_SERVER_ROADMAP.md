@@ -20,7 +20,7 @@
 - LALM Engine: `2.1.127` / `2.1.127-hf-contract-carry-api-validation-v103`
 - Server Runtime: unchanged `2.3.309`
 
-**Verification truth:** SOURCE COMPLETE / STATIC REREAD PENDING / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD VERIFIED / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
 
 ## UPDATE FINISHED — 2026-10-02 — 700M verified-success harvest + Start-linked weight-learning guide
 
