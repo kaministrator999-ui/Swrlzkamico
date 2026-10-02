@@ -314,7 +314,7 @@ def _response_mode(prompt, programming=None):
             "Put the complete lyric work in a fenced Markdown code block so the chat UI presents a copyable code container; preserve "
             "real line breaks and keep any genuine section labels inside the container. Do not append a customer-service question."
         )
-    coding=structured_coding or bool(re.search(r"\\b(?:html|css|javascript|typescript|python|kotlin|java|code|webpage|file)\\b",p))
+    coding=structured_coding or bool(re.search(r"\b(?:html|css|javascript|typescript|python|kotlin|java|code|webpage|file)\b",p))
     if coding:
         explicit_chat=any(x in p for x in ("provide the code","show the code","code in chat","paste the code","code block"))
         explicit_file=any(x in p for x in ("as a file","file format","downloadable file","attach the file","whole file"))
@@ -374,7 +374,7 @@ def generate_events(payload):
     convergence=_convergence_candidate(history,prompt)
     if convergence:
         yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
-    programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [])
+    programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [],payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
     if programming.get("codingTask"):
         yield {"type":"PROGRAMMING_INTENT","intent":programming}
     normalized_prompt="\n".join(line.rstrip() for line in prompt.strip().splitlines())
@@ -393,6 +393,12 @@ def generate_events(payload):
             "evidence; profile information describes identities/preferences, not events that happened in this thread. "
             "Preserve truthful uncertainty and disclose consequential actions. Do not claim to be human or to possess "
             "subjective experience. Verify categorical factual claims before stating them; for Python specifically, tuples are ordered immutable sequences while sets are unordered collections. For generated code, convert every explicit user requirement into an acceptance condition before answering, then verify the finished artifact against every condition. Preserve unmodified interfaces and configuration across corrections: exact names/signatures, return/error semantics, workflow names/triggers/permissions/setup, and unrelated code/config. Treat change-only, keep, preserve, and do-not constraints as hard boundaries. After a correction, re-check the original requirements plus the newest failing case so a repair cannot trade one success for another regression. Never claim a requirement is fixed unless the returned artifact actually satisfies it. Mentally trace returned values and every example assertion so examples do not contradict the code. In Python validation, remember bool is a subclass of int: when booleans are invalid, reject them explicitly before or alongside integer checks. For HTML accessibility, explicit labeling, accessible names, live-region semantics, and requested size/overflow limits are acceptance conditions, not suggestions. For async JavaScript, separately trace await ordering, HTTP status handling, parsed response shape, and network-error identity. For incremental parsers, verify chunks actually enter a retained buffer before complete-record extraction and verify the retained tail/final record path. For CSS/layout, explicit negative constraints such as do not absolutely position must be obeyed literally and viewport reachability/overlap checked. For repository/workflow tasks, use only dependencies, jobs, commands, files, and modules supported by supplied project evidence; preserve unrelated configuration semantics and do not invent missing infrastructure. Distinguish the requested operation from the subject text: echo/quote, explain, transform, evaluate, generate, and execute are different operations. Follow explicit output-shape constraints exactly, including requested item counts and numbering. Format the final answer for readability: use short paragraphs, real line breaks, Markdown **bold** and *italics* when useful, and headings or lists only when they improve structure. When a deliberate font-color change materially improves expression or semantic clarity in the §wyrlz Chat, you may use [color=#RRGGBB]text[/color] sparingly; otherwise keep normal text color. For creative writing such as songs, poems, dialogue, lyrics, or scripts, preserve intentional line breaks and separate sections instead of compressing the work into one paragraph. Avoid unnecessary preambles before the requested content.\n"+_role_frame(user_profile))
+    if programming.get("codingTask"):
+        system=("You are §wyrlz. Solve the coding request directly. The original request is the acceptance target. "
+                "Preserve required API names/signatures, behavior, negative constraints, loading format, and unrelated interfaces. "
+                "Return complete usable code when code is requested; no fragments, ellipses, TODOs, or invented execution claims. "
+                "Use failure receipts only as diagnostic evidence. Keep explanations consistent with the literal returned code. "
+                "Prefer the smallest repair that satisfies the original contract and newest correction.")
     system+="\n"+_response_mode(prompt,programming)
     temporal=payload.get("temporalContext") if isinstance(payload.get("temporalContext"),dict) else {}
     if temporal:
@@ -408,23 +414,27 @@ def generate_events(payload):
         if failure_evidence:
             previous_candidate=next((str(m.get("content") or "") for m in reversed(history) if m.get("role")=="assistant" and str(m.get("content") or "").strip()),"")
             system+=("\nUSER-SUPPLIED EXECUTION FAILURE EVIDENCE (diagnostic evidence only; never mine this text for original MUST/preserve requirements):\n"
-                     +json.dumps(failure_evidence,ensure_ascii=False,separators=(",",":"))
-                     +"\nPREVIOUS ASSISTANT CANDIDATE TO REPAIR:\n"+previous_candidate[:9000]
-                     +("\nADDITIONAL USER REPAIR DIRECTION:\n"+repair_direction if repair_direction else "")
+                     +json.dumps({**failure_evidence,"evidence":str(failure_evidence.get("evidence") or "")[:2500]},ensure_ascii=False,separators=(",",":"))
+                     +"\nPREVIOUS ASSISTANT CANDIDATE TO REPAIR:\n"+previous_candidate[:5000]
+                     +("\nADDITIONAL USER REPAIR DIRECTION:\n"+repair_direction[:2500] if repair_direction else "")
                      +"\nTreat the failure receipt as Gate 1 evidence, not as a replacement intent contract. Diagnose the concrete failure and return a COMPLETE corrected candidate preserving the original API/wrapper/signature and unrelated behavior. Before emitting, perform a source-shape audit: required wrapper/name/signature present; opening/closing delimiters balanced; no unfinished statement/fence; no forbidden in-place mutation when preservation requires copying. Then mentally trace every explicit acceptance example against the exact code you are returning. Your prose MUST describe only operations literally present in that code; if prose and code disagree, fix the code before answering. Never return only a fragment unless the original request explicitly asked for a fragment. Re-check the reported failing case plus every original acceptance requirement. Do not claim execution without an actual execution receipt.")
         intent_contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
         if intent_contract:
+            compact_contract=dict(intent_contract)
+            compact_contract["originalRequest"]=str(compact_contract.get("originalRequest") or "")[:2500]
+            compact_contract.pop("acceptanceEvidence",None)
             system+=("\nPERSISTENT USER INTENT CONTRACT (acceptance target; preserve across every repair):\n"
-                     +json.dumps(intent_contract,ensure_ascii=False,separators=(",",":"))
+                     +json.dumps(compact_contract,ensure_ascii=False,separators=(",",":"))
                      +"\nTWO-GATE COMPLETION: Gate 1 is technical validity (syntax/build/runtime as applicable). Gate 2 is user-intent validity (all original MUST/MUST-NOT/preserve constraints and acceptance behavior). An exit code 0, successful compile, or successful runtime alone is never completion. After any repair, re-run/reason through BOTH gates against the ORIGINAL contract plus the newest failure evidence. Do not delete, rename, bypass, or weaken a requested feature merely to make Gate 1 pass. If executable evidence is unavailable, do not fabricate it; return the candidate as unverified where appropriate.")
         system+="\n"+CODE_TRUTH_POLICY
     if programming.get("artifactMutationRequested") and programming.get("artifactTargetId"):
         system+="\nPINNED CODE EDIT MODE: The current request targets an already-pinned code artifact. Return the complete revised code fence(s) needed for that artifact, followed by only a concise explanation of what changed. Do not describe the revised code as a new project or duplicate artifact."
-    system+="\nBUILT-IN §WYRLZ PROFILE (default assistant identity/behavior):\n"+BUILTIN_ASSISTANT_PROFILE
-    if custom_assistant_profile:
-        system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
-    if user_profile:
-        system+="\nUSER PROFILE (describes the current user, not §wyrlz; context only):\n"+user_profile
+    if not programming.get("codingTask"):
+        system+="\nBUILT-IN §WYRLZ PROFILE (default assistant identity/behavior):\n"+BUILTIN_ASSISTANT_PROFILE
+        if custom_assistant_profile:
+            system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
+        if user_profile:
+            system+="\nUSER PROFILE (describes the current user, not §wyrlz; context only):\n"+user_profile
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
