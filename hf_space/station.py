@@ -372,7 +372,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
             thread=next(t for t in s["threads"] if t["id"]==payload["threadId"])
             intent=g.get("programmingIntent") if isinstance(g.get("programmingIntent"),dict) else {}
             if intent.get("codingTask"): thread["programmingState"]=copy.deepcopy(intent)\n            artifact_id=str(intent.get("artifactTargetId") or "")
-            artifact=_find_artifact(thread,artifact_id) if artifact_id and intent.get("artifactMutationRequested") else None
+            artifact=_find_artifact(thread,artifact_id) if artifact_id and intent.get("artifactMutationRequested") and not rejected else None
             if artifact is not None:
                 committed,reason=_commit_code_artifact_revision(artifact,text,request_id,int(intent.get("baseRevision") or 0))
                 if committed:
@@ -390,11 +390,15 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     g["artifactReceipt"]={"action":"REVISION_REJECTED","artifactId":artifact["id"],"reason":reason}
             else:
                 assistant_tag=_container_content_tag(text)
-                message={"id":assistant_id,"role":"assistant","text":text,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE",**({"contentTag":assistant_tag} if assistant_tag else {})}}
+                state="CANDIDATE_REJECTED" if rejected else "COMPLETE"
+                message={"id":assistant_id,"role":"assistant","text":text,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":state,**({"contentTag":assistant_tag} if assistant_tag else {})}}
                 thread["messages"].append(message)
-                artifact=_create_code_artifact(thread,message,request_id,text)
-                if artifact is not None:
-                    g["artifactReceipt"]={"action":"ARTIFACT_CREATED","artifactId":artifact["id"],"revision":1}
+                if rejected:
+                    g["artifactReceipt"]={"action":"CANDIDATE_REJECTED","reasons":copy.deepcopy(validation.get("reasons") or [])}
+                else:
+                    artifact=_create_code_artifact(thread,message,request_id,text)
+                    if artifact is not None:
+                        g["artifactReceipt"]={"action":"ARTIFACT_CREATED","artifactId":artifact["id"],"revision":1}
             s["revision"]+=1
     except Exception as exc:
         with _lock:
