@@ -1,3 +1,27 @@
+## UPDATE FINISHED — 2026-10-02 — Round-5 700M contract-carry + API-validation repair v103
+
+**Evidence basis:** user-supplied `review (9).md`, eight sequential 700M turns against the newly deployed v102 source.
+
+**Observed**
+- Matching-turn median completion improved from 21.08 s to 6.17 s (~3.4×), with estimated input totals 1,119–2,718 and all five repair turns receiving the intended 1,536-token cap.
+- Addition now preserves a complete correct plain function through the receipt and remains 5/5.
+- Python still regresses to 1/20 after receipt/direction; sorting improves only to 2/4 because mutation is fixed while required ascending order is reversed.
+- Candidate API validation falsely interpreted prose words `named` and `for` as required API identifiers.
+- `priorProgrammingState` existed at Station/engine boundaries, but `model_router.dispatch` recomputed programming intent without passing it, leaving `canonicalCarry=false`.
+
+**Implemented**
+- `hf_space/model_router.py`: dispatch now passes `priorProgrammingState` into `programming_intent`, closing the router bypass and allowing ordinary correction turns to reuse the saved canonical contract.
+- `hf_space/lfm2_700m_engine.py`: required API-name extraction now recognizes actual declaration/name positions such as `function named X`, `function X(...)`, and `def X(...)`; it no longer treats ordinary glue words as APIs.
+- Candidate API presence is checked against declaration syntax in candidate code rather than arbitrary word presence in explanation/comments, preventing `# named` / `// for` from satisfying the gate.
+- `training/700m/harvested_successes.md`: round-5 addition retention recorded as a verified positive preservation example pending exact artifact recovery; Python/sorting failures remain negative/repair evidence rather than positive training targets.
+
+**Versions**
+- Repository Work: `1.0.49`
+- LALM Engine: `2.1.127` / `2.1.127-hf-contract-carry-api-validation-v103`
+- Server Runtime: unchanged `2.3.309`
+
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD PENDING / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-02 — 700M verified-success harvest + Start-linked weight-learning guide
 
 **Goal:** preserve the independently verified successes already produced by the 700M and route future model-growth work through a canonical document linked from Project Start.
