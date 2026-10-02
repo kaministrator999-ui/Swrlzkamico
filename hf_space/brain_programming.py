@@ -113,6 +113,22 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     prior_text=str(prior.get("content") or prior.get("text") or "").strip()
     raw_norm=" ".join(raw.lower().split())
     prior_norm=" ".join(prior_text.lower().split())
+    # Convergence signal: receipts can be routed perfectly while a small model
+    # repeats the same candidate. Count exact normalized candidate repeats so the
+    # engine can force a strategy change instead of rewarding cosmetic rewrites.
+    assistant_norms=[]
+    for item in history or []:
+        if not isinstance(item,dict) or str(item.get("role") or "")!="assistant":
+            continue
+        candidate_norm=" ".join(str(item.get("content") or item.get("text") or "").lower().split())
+        if candidate_norm:
+            assistant_norms.append(candidate_norm)
+    exact_repeat_count=sum(1 for candidate_norm in assistant_norms if candidate_norm==prior_norm)
+    receipt_failure_lines=[
+        line.strip()[:500]
+        for line in raw.splitlines()
+        if re.search(r"\\b(?:fail(?:ed|ure)?|assert(?:ion)?|expected|actual|mismatch|error)\\b",line,re.I)
+    ][:12]
     user_seed_markers=("original user seed","original seed","user seed","provided source","supplied source","baseline source","original source")
     seed_owned=any(marker in raw_norm for marker in user_seed_markers)
     assistant_owned=any(marker in raw_norm for marker in ("your code","your function","your candidate","assistant code","assistant candidate","previous response","previous assistant"))
@@ -127,6 +143,9 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
         "repairTargetMessageId":str(prior.get("id") or "") if ownership=="previous-assistant-candidate" else "",
         "previousAssistantCandidateId":str(prior.get("id") or ""),
         "previousAssistantCandidateComparable":bool(prior_norm),
+        "exactCandidateRepeatCount":exact_repeat_count,
+        "stalledRepair":exact_repeat_count>=2,
+        "failureSignals":receipt_failure_lines,
     }
 
 def _looks_like_failure_receipt(text: str) -> bool:
