@@ -106,11 +106,28 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     markers=("syntaxerror","typeerror","nameerror","referenceerror","error:","compilation failed","build failed","failed to compile","cannot find symbol","unresolved reference","undefined reference","exit code","test failed","tests failed","assertionerror")
     if not raw or not any(marker in lower for marker in markers):
         return None
-    prior=next((m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"),None)
-    if prior is None:
+    assistants=[m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"]
+    if not assistants:
         return None
-    return {"schema":"swrlz-user-failure-evidence-v3","kind":"execution-failure","source":"user-response","evidence":raw[:6000],"repairTarget":"previous-assistant-candidate","repairTargetMessageId":str(prior.get("id") or "")}
-
+    prior=assistants[0]
+    prior_text=str(prior.get("content") or prior.get("text") or "").strip()
+    raw_norm=" ".join(raw.lower().split())
+    prior_norm=" ".join(prior_text.lower().split())
+    user_seed_markers=("original user seed","original seed","user seed","provided source","supplied source","baseline source","original source")
+    seed_owned=any(marker in raw_norm for marker in user_seed_markers)
+    assistant_owned=any(marker in raw_norm for marker in ("your code","your function","your candidate","assistant code","assistant candidate","previous response","previous assistant"))
+    ownership="user-seed" if seed_owned and not assistant_owned else "previous-assistant-candidate"
+    # A receipt may describe source that was never the assistant's candidate. Keep
+    # that distinction explicit so a passing assistant candidate is not repaired
+    # toward a failing user seed merely because it is the nearest message.
+    return {
+        "schema":"swrlz-user-failure-evidence-v4","kind":"execution-failure","source":"user-response",
+        "evidence":raw[:6000],"receiptSourceOwnership":ownership,
+        "repairTarget":ownership,
+        "repairTargetMessageId":str(prior.get("id") or "") if ownership=="previous-assistant-candidate" else "",
+        "previousAssistantCandidateId":str(prior.get("id") or ""),
+        "previousAssistantCandidateComparable":bool(prior_norm),
+    }
 
 def _looks_like_failure_receipt(text: str) -> bool:
     lower=str(text or "").lower()
