@@ -1,3 +1,29 @@
+## UPDATE FINISHED — 2026-10-01 — 700M intent-grounded two-gate coding loop v96
+
+**Scope:** implement the discussed distinction between technical validity and successful completion of the user's programming request.
+
+- Brain programming now compiles a bounded `swrlz-programming-intent-contract-v1` from the original coding request, retaining the original request plus explicit MUST, MUST-NOT, preservation/change-only constraints, acceptance evidence expectations, and the completion rule.
+- 700M emits that programming-intent contract and receives it as persistent generation context.
+- Coding completion now has two explicit gates:
+  1. technical validity — syntax/build/runtime evidence where executable tooling exists;
+  2. user-intent validity — recheck the original requirements and preservation constraints after every repair.
+- A compile success, runtime start, or exit code 0 is explicitly insufficient by itself.
+- Repair guidance forbids deleting, renaming, bypassing, or weakening requested behavior merely to satisfy technical validity.
+- Workstation carries the intent contract as lifecycle metadata for routing/synchronization only; it remains outside semantic grading.
+- Architecture documentation records the same ownership and loop.
+
+**Versions**
+- Repository Work: `1.0.40`
+- LALM Engine: `2.1.120` / `2.1.120-hf-intent-two-gate-v96`
+- Server Runtime remains `2.3.309`; this tier is source-only and has not been deployed.
+
+**Verification boundary**
+- Static source re-read confirms the intent contract compiler, 700M injection/emission, Workstation carriage, and architecture contract are present.
+- This does **not** yet implement an autonomous compiler/browser/repository executor or independent evaluator. Therefore the full generate → execute → evidence → repair → rerun loop remains the next tool-integrated tier.
+- No fresh HF deployment or live v96 acceptance was requested in this tier.
+
+**Truth:** SOURCE COMPLETE / STATIC STRUCTURAL VERIFICATION COMPLETE / EXECUTABLE INDEPENDENT EVALUATOR LOOP NOT YET IMPLEMENTED / DEPLOYMENT NOT REQUESTED / LIVE V96 ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-01 — HF 700M predeploy smoke contract repair
 
 **Scope:** repair the deployment gate that caused HF runs #37 and #38 to fail before publication.
