@@ -238,20 +238,24 @@ def _fit_messages(model,system,history,prompt):
     return messages,len(history)-len(kept),input_tokens,response_tokens
 
 def _fit_repair_messages(model,system,history,prompt):
-    """Repair turns use explicit evidence/candidate blocks in system context, so avoid duplicating bulky chat history."""
+    """Budget repair input and output against one shared context equation."""
     recent=[]
-    # Keep only short recent conversational directions; previous candidate/evidence are already bound in system.
     for item in list(history or [])[-6:]:
         content=str(item.get("content") or "")
         if item.get("role")=="user" and len(content)<=1600:
             recent.append(item)
+    desired_output=min(1536,OUTPUT_TOKENS)
+    repair_input_budget=CONTEXT_TOKENS-desired_output-CONTEXT_SAFETY_TOKENS
     messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":prompt}]
-    while recent and _token_count(model,messages)>INPUT_BUDGET_TOKENS:
+    while recent and _token_count(model,messages)>repair_input_budget:
         recent.pop(0); messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":prompt}]
     input_tokens=_token_count(model,messages)
-    if input_tokens>INPUT_BUDGET_TOKENS:
-        raise ValueError(f"Repair context uses {input_tokens} tokens but the 700M input budget is {INPUT_BUDGET_TOKENS}.")
-    response_tokens=min(OUTPUT_TOKENS,max(768,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
+    if input_tokens>repair_input_budget:
+        desired_output=max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS)
+        repair_input_budget=CONTEXT_TOKENS-desired_output-CONTEXT_SAFETY_TOKENS
+    if input_tokens>repair_input_budget:
+        raise ValueError(f"Repair context uses {input_tokens} tokens; shared input/output budget leaves {repair_input_budget} input tokens.")
+    response_tokens=min(OUTPUT_TOKENS,desired_output,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS)
     return messages,len(history)-len(recent),input_tokens,response_tokens
 
 def _user_name_from_profile(user_profile):
@@ -284,14 +288,16 @@ def _direct_identity_answer(prompt,user_profile,history=None):
         return "I'm 𓆩𓆩⁽§⁾𓆪wyrlz𓆪 — Swurlz when spoken."
     return ""
 
-def _response_mode(prompt):
+def _response_mode(prompt, programming=None):
     """Deterministic style hint; keeps tiny-model priors from overriding obvious task shape."""
     p=prompt.strip().lower()
-    creative=any(x in p for x in ("write a ","write me ","song","rap","poem","lyrics","verse","freestyle","story","dialogue","script"))
+    programming=programming if isinstance(programming,dict) else {}
+    structured_coding=bool(programming.get("codingTask"))
+    creative=bool(re.search(r"\\b(?:song|rap|poem|lyrics|verse|freestyle|story|dialogue|screenplay)\\b",p)) or bool(re.search(r"\\bwrite\\s+(?:me\\s+)?(?:a|an)\\s+(?:song|rap|poem|story|dialogue)\\b",p))
     user_identity=any(x in p for x in ("my name","who am i","do you know me","do you know my name"))
     assistant_identity=any(x in p for x in ("your name","call you","who are you","what are you"))
     identity=user_identity or assistant_identity
-    if creative:
+    if creative and not structured_coding:
         freestyle=("freestyle" in p)
         if freestyle:
             return (
@@ -308,7 +314,7 @@ def _response_mode(prompt):
             "Put the complete lyric work in a fenced Markdown code block so the chat UI presents a copyable code container; preserve "
             "real line breaks and keep any genuine section labels inside the container. Do not append a customer-service question."
         )
-    coding=any(x in p for x in ("html","css","javascript","typescript","python","kotlin","java","code","web page","webpage","file"))
+    coding=structured_coding or bool(re.search(r"\\b(?:html|css|javascript|typescript|python|kotlin|java|code|webpage|file)\\b",p))
     if coding:
         explicit_chat=any(x in p for x in ("provide the code","show the code","code in chat","paste the code","code block"))
         explicit_file=any(x in p for x in ("as a file","file format","downloadable file","attach the file","whole file"))
@@ -388,7 +394,7 @@ def generate_events(payload):
             "evidence; profile information describes identities/preferences, not events that happened in this thread. "
             "Preserve truthful uncertainty and disclose consequential actions. Do not claim to be human or to possess "
             "subjective experience. Verify categorical factual claims before stating them; for Python specifically, tuples are ordered immutable sequences while sets are unordered collections. For generated code, convert every explicit user requirement into an acceptance condition before answering, then verify the finished artifact against every condition. Preserve unmodified interfaces and configuration across corrections: exact names/signatures, return/error semantics, workflow names/triggers/permissions/setup, and unrelated code/config. Treat change-only, keep, preserve, and do-not constraints as hard boundaries. After a correction, re-check the original requirements plus the newest failing case so a repair cannot trade one success for another regression. Never claim a requirement is fixed unless the returned artifact actually satisfies it. Mentally trace returned values and every example assertion so examples do not contradict the code. In Python validation, remember bool is a subclass of int: when booleans are invalid, reject them explicitly before or alongside integer checks. For HTML accessibility, explicit labeling, accessible names, live-region semantics, and requested size/overflow limits are acceptance conditions, not suggestions. For async JavaScript, separately trace await ordering, HTTP status handling, parsed response shape, and network-error identity. For incremental parsers, verify chunks actually enter a retained buffer before complete-record extraction and verify the retained tail/final record path. For CSS/layout, explicit negative constraints such as do not absolutely position must be obeyed literally and viewport reachability/overlap checked. For repository/workflow tasks, use only dependencies, jobs, commands, files, and modules supported by supplied project evidence; preserve unrelated configuration semantics and do not invent missing infrastructure. Distinguish the requested operation from the subject text: echo/quote, explain, transform, evaluate, generate, and execute are different operations. Follow explicit output-shape constraints exactly, including requested item counts and numbering. Format the final answer for readability: use short paragraphs, real line breaks, Markdown **bold** and *italics* when useful, and headings or lists only when they improve structure. When a deliberate font-color change materially improves expression or semantic clarity in the §wyrlz Chat, you may use [color=#RRGGBB]text[/color] sparingly; otherwise keep normal text color. For creative writing such as songs, poems, dialogue, lyrics, or scripts, preserve intentional line breaks and separate sections instead of compressing the work into one paragraph. Avoid unnecessary preambles before the requested content.\n"+_role_frame(user_profile))
-    system+="\n"+_response_mode(prompt)
+    system+="\n"+_response_mode(prompt,programming)
     temporal=payload.get("temporalContext") if isinstance(payload.get("temporalContext"),dict) else {}
     if temporal:
         system+=("\nCONVERSATIONAL TIME CONTEXT (server-derived from canonical UTC message timestamps plus the user's reported browser timezone; use only when it genuinely helps):\n"
@@ -434,7 +440,7 @@ def generate_events(payload):
     yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":round((loaded-started)*1000,3)}
     first_delta=None
     with _lock:
-        mode=_response_mode(prompt)
+        mode=_response_mode(prompt,programming)
         if mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
             response_tokens=min(192,available_output_tokens);temperature=0.35
         elif mode.startswith("RESPONSE MODE: CODE-"):
