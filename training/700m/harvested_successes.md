@@ -35,3 +35,13 @@ This ledger records successful cases already demonstrated in historical test evi
 The next normalization pass should recover exact artifacts for H700-001, H700-002, H700-004, and H700-005 from retained test outputs. At least one independently passing case from each capability family should be reserved as held-out rather than trained on.
 
 Do **not** fabricate missing code from these summaries. The historical reviews prove pass/fail behavior, but training requires byte-exact targets and provenance.
+
+
+## Round 7 — receipt-only convergence failures (review 11)
+
+**Evidence status: DO NOT TRAIN as positive targets / preserve as negative repair trajectories.**
+
+- Python `parse_max_tokens`: `13/20` initially and `13/20` after each of five genuine receipt rounds. The candidate retained `int(value)` conversion, omitted the required `None` default, and continued accepting bool/string/float/int-subclass cases that violate the strict contract. Later turns changed comments/error prose or repeated source without clearing an assertion.
+- JavaScript `sortMessages`: `0/4` initially and through five receipt rounds. The initial in-place ascending sort already violated input preservation; later repair introduced `reverse().sort((a,b)=>b.createdAt-a.createdAt)`, preserving mutation while regressing chronological direction and equal-timestamp stability.
+- All ten repair receipts were authentic compiler/test-process feedback and correctly bound to the immediately previous assistant candidate. Receipt routing, contract retention, budgeting, and delivery-envelope validation remained operational; the failure is repair convergence, not receipt handoff.
+- Training implication: repeated/no-progress and regression-producing candidates are contrastive evidence. They must not be promoted as successful targets. A future positive record requires an independently verified candidate that clears the original contract.
