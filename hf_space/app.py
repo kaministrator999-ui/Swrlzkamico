@@ -73,7 +73,7 @@ def respond(message,history,model_id,profile,user_profile):
     report={"format":"swrlz-hf-probe-export-v2","modelId":model_id,"requestId":request_id,
             "prompt":message,"history":history_items,"profile":str(profile or "")[:2000],"userProfile":str(user_profile or "")[:2000],"response":"","phase":"STARTING",
             "timeToFirstDeltaSeconds":None,"elapsedSeconds":0.0,"deltaCount":0,
-            "events":[],"diagnosticTrace":None,"memoryCandidates":[],"note":"Live probe timeline with structured observable diagnostics; no private chain-of-thought is stored. Download again for the latest snapshot."}
+            "events":[],"diagnosticTrace":None,"memoryCandidates":[],"repairDiagnostics":[],"repairOutcomeDiagnostics":[],"note":"Live probe timeline with structured observable diagnostics; no private chain-of-thought is stored. Download again for the latest snapshot."}
     with tempfile.NamedTemporaryFile(mode="w",encoding="utf-8",suffix=".json",prefix="swrlz-probe-",delete=False) as f:
         export_path=f.name
 
@@ -145,6 +145,22 @@ def respond(message,history,model_id,profile,user_profile):
                 candidate=value.get("candidate")
                 if isinstance(candidate,dict):report["memoryCandidates"].append(candidate)
                 status=snapshot("MEMORY_CANDIDATE")
+                yield report["response"],export_path,status
+                continue
+            if event_type=="REPAIR_DIAGNOSTIC":
+                diagnostic=value.get("diagnostic")
+                if isinstance(diagnostic,dict):
+                    report["repairDiagnostics"].append(diagnostic)
+                    print(json.dumps({"event":"REPAIR_DIAGNOSTIC","modelId":model_id,"requestId":request_id,"diagnostic":diagnostic},ensure_ascii=False,separators=(",",":")),flush=True)
+                status=snapshot("REPAIR_DIAGNOSTIC")
+                yield report["response"],export_path,status
+                continue
+            if event_type=="REPAIR_OUTCOME_DIAGNOSTIC":
+                diagnostic=value.get("diagnostic")
+                if isinstance(diagnostic,dict):
+                    report["repairOutcomeDiagnostics"].append(diagnostic)
+                    print(json.dumps({"event":"REPAIR_OUTCOME_DIAGNOSTIC","modelId":model_id,"requestId":request_id,"diagnostic":diagnostic},ensure_ascii=False,separators=(",",":")),flush=True)
+                status=snapshot("REPAIR_OUTCOME_DIAGNOSTIC")
                 yield report["response"],export_path,status
                 continue
             if event_type=="DELTA":
