@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.121
-REVISION=2.1.121-hf-user-failure-repair-v97
+VERSION=2.1.122
+REVISION=2.1.122-hf-canonical-intent-repair-v98
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
