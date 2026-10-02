@@ -127,7 +127,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     receipt_failure_lines=[
         line.strip()[:500]
         for line in raw.splitlines()
-        if re.search(r"\\b(?:fail(?:ed|ure)?|assert(?:ion)?|expected|actual|mismatch|error)\\b",line,re.I)
+        if re.search(r"\b(?:fail(?:ed|ure)?|assert(?:ion)?|expected|actual|mismatch|error)\b",line,re.I)
     ][:12]
     user_seed_markers=("original user seed","original seed","user seed","provided source","supplied source","baseline source","original source")
     seed_owned=any(marker in raw_norm for marker in user_seed_markers)
