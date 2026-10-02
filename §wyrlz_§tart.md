@@ -23,7 +23,27 @@ main:.deploy/HF_SPACE_REQUEST.txt
 
 For an explicitly user-approved deployment, update `main:.deploy/HF_SPACE_REQUEST.txt` with `TARGET=kamiloki/Swyrlz`, `APPROVED=1`, `SOURCE_REF=feature/hf-space-manual-deploy`, and a fresh unique `REQUEST_NONCE`. The push to that request file is the deployment trigger. The request workflow must call the guarded manual HF workflow; preserve its validation, snapshot, rollback, target, and approval gates.
 
-Do not require the user to manually press **Run workflow** when the current request already explicitly authorizes deployment and the request-file trigger is available. Conversely, ordinary repository edits without current deployment authorization remain deployment-inert.
+Do not require the user to manually press **Run workflow** when the current request already explicitly authorizes deployment and the request-file trigger is available.
+
+### Runtime-affecting source mutation → terminal deployment — mandatory
+
+For governed work, a completed update that mutates source used by the running application is **not finished at commit/source-complete state**. The same work turn must continue through the canonical guarded deployment path when the repository's standing deployment approval applies.
+
+Canonical completion sequence:
+
+```text
+runtime-affecting source mutation
+  -> architecture/version/roadmap reconciliation
+  -> deployment-inert verification
+  -> one guarded terminal deployment trigger
+  -> observe terminal deployment result
+  -> report activation truth
+  -> live/behavioral acceptance when applicable
+```
+
+Do **not** stop after source mutation and wait for the user to separately say “deploy.” The standing approval defined later in this document authorizes the single terminal production trigger for a completed governed update that actually requires deployment. Deployment success proves publication/activation only to the level observed; it does **not** by itself prove behavioral acceptance.
+
+Explicit deployment-inert exceptions remain deployment-inert: documentation-only work, training/corpus preparation that does not change the active runtime/model reference, runtime-hot work whose owning contract activates without stable production deployment, bookkeeping-only changes, and any other change the owning architecture explicitly classifies as non-deploying. If applicability is genuinely ambiguous, reconcile it against the owning deployment/hotfix contract rather than silently skipping deployment.
 
 **Vercel is retired/deprecated for current §wyrlz application hosting and deployment.** Do not create, deploy, clean up, or select Vercel projects as current application infrastructure. Remaining Vercel repository material is removal/migration debt or historical provenance only and must not outrank this HF contract.
 
@@ -575,6 +595,7 @@ For this repository, the user grants standing approval for **one production depl
 - trigger production **once only** for that completed candidate;
 - use the canonical repository deployment authority. As of 2026-09-19, that authority is the `main`-branch `.deploy/REQUEST.txt` request consumed by `.github/workflows/manual-vercel-production.yml`, which performs the Vercel CLI production build/deploy and source-bound verification;
 - do not repeatedly rewrite/retrigger the request to chase a failure. A failed, cancelled, ambiguous, or materially changed candidate requires diagnosis and a new explicit user approval before another production trigger;
+- **runtime-affecting stable source mutation requires this terminal deployment as part of completing the governed update; do not stop at source-complete and wait for another user message asking to deploy;**
 - do not deploy updates that are runtime-hot/deployment-inert or otherwise do not require stable production activation;
 - do not treat ordinary commits, documentation writes, version bumps, or roadmap bookkeeping as deployment triggers;
 - after the single trigger, observe the workflow/deployment result and report the exact activation/verification truth state. Never claim live success merely because the trigger fired.
@@ -801,4 +822,4 @@ A governed project event is not complete until the applicable parts are true:
 
 ## Bottom line
 
-**Project Start is the router. Read the seven required project-work documents, then follow their ownership instead of duplicating their rules. Begin governed project-work responses with the required large centered `𓆩𓆩⁽§⁾𓆪wyrlz𓆪` identity opener. Reconcile architecture before implementing. During issue work, automatically inspect repository/live logs and add bounded cameras only where evidence is missing. Resolve module VERSION and declared STATUS through `VERSION.txt` and the module-owned authority; reconcile that declared state with observed runtime health before a consumer chooses behavior or UI. Version from current authority, preserve concurrency and roadmap lineage, never trigger deployment without explicit approval, and report the result in a structured readable way. When helping users build their own projects, teach these architecture principles proportionally and respect their informed choice to simplify optional structure. When changing programming-LALM/coder capability, read the Programming LALM Runtime Architecture spec and never confuse documented curriculum with executable or trained capability.**
+**Project Start is the router. Read the seven required project-work documents, then follow their ownership instead of duplicating their rules. Begin governed project-work responses with the required large centered `𓆩𓆩⁽§⁾𓆪wyrlz𓆪` identity opener. Reconcile architecture before implementing. During issue work, automatically inspect repository/live logs and add bounded cameras only where evidence is missing. Resolve module VERSION and declared STATUS through `VERSION.txt` and the module-owned authority; reconcile that declared state with observed runtime health before a consumer chooses behavior or UI. Version from current authority, preserve concurrency and roadmap lineage, use the repository's standing single-terminal deployment approval for runtime-affecting stable source mutations, never trigger deployment outside that approval/authorization contract, and report the result in a structured readable way. When helping users build their own projects, teach these architecture principles proportionally and respect their informed choice to simplify optional structure. When changing programming-LALM/coder capability, read the Programming LALM Runtime Architecture spec and never confuse documented curriculum with executable or trained capability.**
