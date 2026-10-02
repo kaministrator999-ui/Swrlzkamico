@@ -371,7 +371,13 @@ def _run(key,request_id,model_id,payload,assistant_id):
             g=s["activeGeneration"];g.update(terminal=True,terminalType="COMPLETE",phase="COMPLETE")
             thread=next(t for t in s["threads"] if t["id"]==payload["threadId"])
             intent=g.get("programmingIntent") if isinstance(g.get("programmingIntent"),dict) else {}
-            if intent.get("codingTask"): thread["programmingState"]=copy.deepcopy(intent)\n            artifact_id=str(intent.get("artifactTargetId") or "")
+            if intent.get("codingTask"):
+                thread["programmingState"]=copy.deepcopy(intent)
+            validation=g.get("candidateValidation") if isinstance(g.get("candidateValidation"),dict) else {}
+            rejected=validation.get("status")=="REJECT"
+            if rejected:
+                g.update(terminalType="CANDIDATE_REJECTED",phase="CANDIDATE_REJECTED")
+            artifact_id=str(intent.get("artifactTargetId") or "")
             artifact=_find_artifact(thread,artifact_id) if artifact_id and intent.get("artifactMutationRequested") and not rejected else None
             if artifact is not None:
                 committed,reason=_commit_code_artifact_revision(artifact,text,request_id,int(intent.get("baseRevision") or 0))
