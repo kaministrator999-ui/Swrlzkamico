@@ -1,3 +1,28 @@
+## Validated learning promotion pipeline
+
+Runtime prompting and model learning are separate layers. The 700M must not rewrite its own weights from unverified conversation output.
+
+The governed growth path is:
+
+```text
+coding task + canonical intent
+→ student candidate
+→ deterministic structural checks
+→ independent compiler/runtime/test/browser evidence
+→ accepted corrected candidate
+→ normalized training example
+→ held-out regression suite
+→ LoRA/fine-tune candidate
+→ independent regression comparison
+→ promote model checkpoint only if acceptance improves without protected regressions
+```
+
+Only independently validated examples may enter the promoted training corpus. Generation completion, self-review, user praise, or an explanation that claims a fix are not sufficient labels. Failed candidates remain useful as contrastive/repair examples only when paired with the exact failure evidence and a separately validated corrected target.
+
+Each promoted example should preserve: canonical contract ID, source/candidate lineage, original request, compact requirements, candidate revision, failure/evaluator evidence, corrected target, language/runtime, and acceptance results. Training data must exclude secrets, credentials, unrelated personal profile material, and bulky conversational prose that is not necessary to teach the programming relationship.
+
+The runtime should prefer compact structured state over repeated policy prose. Weight training is a separate release event: changing prompts/contracts does not mean the 700M weights learned. A trained checkpoint/adapter must have its own provenance, dataset revision, evaluation receipt, and rollback path before it can replace the current model route.
+
 # §wyrlz Programming LALM Runtime Architecture — TARGET STATE + IMPLEMENTATION TRUTH
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
