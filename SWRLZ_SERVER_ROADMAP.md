@@ -1,3 +1,24 @@
+## UPDATE FINISHED — 2026-10-02 — Compact repair state + validated-learning boundary v102
+
+**Evidence basis:** latest nine-request 700M repeat supplied by the user. Infrastructure fixes are observable, while Python repair regressed, add entered a repetition/no-code turn, ordinary guidance rebuilt contracts, and coding system context still consumed most of the 8,192-token window.
+
+**Implemented**
+- Compressed the coding-only truth policy and coding system profile; ordinary identity/user-profile prose is no longer injected into coding turns.
+- Repair evidence, previous candidate, repair direction, and originalRequest are bounded independently instead of duplicating the full conversational payload.
+- Ordinary correction/guidance turns can carry the prior canonical intent contract instead of rebuilding it as a new task; these turns use the repair-context budget path.
+- Failure evidence schema v3 binds the repair target to a concrete assistant message ID, and the engine resolves that ID instead of blindly selecting the latest assistant prose.
+- Fixed the latent coding fallback word-boundary regex.
+- Added deterministic candidate-envelope checks for repetition/no-code, required function API presence when explicitly named, and unrequested plain-script → ES-module export changes.
+- Workstation persists candidate-validation telemetry and marks rejected candidates `CANDIDATE_REJECTED`; rejected output is not promoted into a code artifact.
+- Added the governed Student → validated example → held-out regression → LoRA/fine-tune → independently evaluated checkpoint promotion architecture. This tier does **not** claim that model weights have been trained yet.
+
+**Versions**
+- Repository Work: `1.0.46`
+- LALM Engine: `2.1.126` / `2.1.126-hf-compact-repair-learning-v102`
+- Server Runtime remains `2.3.309` until successful deployment.
+
+**Truth:** SOURCE COMPLETE / STATIC RE-READ REQUIRED / WEIGHT TRAINING NOT YET EXECUTED / STANDING SOURCE-MUTATION DEPLOYMENT APPROVAL APPLIES / LIVE V102 ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-02 — Response-mode regex scope hotfix v101
 
 **Failure receipt:** HF deployment run #43 failed in the 700M context smoke before publication. The guarded workflow reached `hf_space/lfm2_700m_engine.py::_response_mode` and raised `UnboundLocalError: cannot access local variable 're' where it is not associated with a value`.
