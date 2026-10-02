@@ -27,7 +27,7 @@ The runtime should prefer compact structured state over repeated policy prose. W
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **Runtime-hot programming behavior is active through LALM `2.1.116` / R39 `v91`. v91 adds an executable offline-first Code Truth + local web/UI engineering policy over the preserved v90 stack. Programming turns now receive bounded verification guidance covering syntax/structure, symbols/scope/types/contracts, control/data/state flow, repair re-verification, and HTML/CSS/JavaScript UI/chat invariants. External-provider details remain a separate evidence boundary. Runtime source/static activation is complete; fresh HF user-turn acceptance for v91 remains pending. Repository/tool execution, full deterministic architecture acceptance, coder-model delegation, and model training remain later states.**
+**Current implementation state:** **LALM `2.1.126` / v102 source implements compact coding context, canonical contract carry across receipt and ordinary guidance turns, concrete repair-target message IDs, context-budget telemetry, and deterministic candidate-envelope rejection for repetition/no-code/API-loading-format regressions. The validated-learning promotion architecture is documented, but no 700M weight training/LoRA checkpoint has yet been executed or promoted. Independent compiler/runtime/browser evaluation remains the next authority layer before verified examples can become training data. Live v102 acceptance remains pending deployment verification.**
 
 ---
 
