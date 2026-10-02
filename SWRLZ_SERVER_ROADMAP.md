@@ -1,3 +1,22 @@
+## UPDATE FINISHED — 2026-10-01 — Canonical original-intent repair binding v98
+
+**Evidence basis:** live 700M failure-receipt retest supplied by the user after v97 deployment.
+
+- The retest confirmed receipt-recognition metadata but found the active intent contract was rebuilt from diagnostic/error text, causing original requirements to disappear or broken source/stack-frame lines to become false requirements.
+- Repair turns now recover the original coding request from the conversation and compile the active intent contract from that canonical request rather than from the failure receipt.
+- Failure output remains a separate evidence channel. Additional user repair wording remains a separate repair-direction channel.
+- 700M repair context now explicitly binds: original intent contract + previous complete assistant candidate + newest failure evidence/direction.
+- Receipt text is forbidden as a source of original MUST/preserve requirements.
+- Repair output is required to be a complete candidate preserving API/wrapper/signature unless the original request explicitly requested a fragment.
+- This directly targets the observed bare-`return` regression and requirement loss; it does not claim autonomous execution or guaranteed model repair.
+
+**Versions**
+- Repository Work: `1.0.42`
+- LALM Engine: `2.1.122` / `2.1.122-hf-canonical-intent-repair-v98`
+- Server Runtime remains `2.3.309` until a new deployment event.
+
+**Truth:** SOURCE COMPLETE / STATIC STRUCTURAL VERIFICATION REQUIRED / DEPLOYMENT NOT REQUESTED / LIVE V98 ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-01 — User-returned compiler/runtime failure repair bridge v97
 
 **Scope:** use a user's returned compiler/build/runtime/test failure as grounded repair evidence for the previous LALM coding candidate.
