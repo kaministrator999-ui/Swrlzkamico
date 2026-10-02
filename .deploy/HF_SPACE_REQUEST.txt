@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Explicitly approved by user for the current HF candidate.
+# Explicitly approved by user after repairing the failed predeploy smoke gate.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-01-v95-current-candidate-001
+REQUEST_NONCE=2026-10-01-v95-smoke-gate-fixed-002
