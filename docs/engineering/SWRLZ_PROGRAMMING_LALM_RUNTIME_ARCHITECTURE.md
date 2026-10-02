@@ -400,6 +400,20 @@ Ownership remains separated: the Brain/LALM reasons from the contract and produc
 **Current implementation tier:** the HF 700M Brain now compiles and injects a bounded persistent intent contract and applies the two-gate completion rule during generation. The Workstation carries that contract as lifecycle metadata. This tier does **not** yet provide an autonomous compiler/browser/repository tool executor or independent evaluator loop; executable receipts remain a later tool-integrated tier.
 
 
+### User-returned compiler/runtime evidence bridge
+
+Before autonomous execution tooling exists, the user can act as the external execution surface. When a user reply contains recognizable compiler, build, runtime, or test failure output after an assistant coding candidate, the Brain treats that reply as **Gate 1 failure evidence**, not as a new unrelated coding request.
+
+The repair turn receives the failure evidence and must:
+1. diagnose the concrete reported failure against the previous candidate;
+2. produce corrected code, not merely explain the error;
+3. preserve the original intent contract and unrelated interfaces/configuration;
+4. re-check Gate 1 conceptually against the reported failure and Gate 2 against the original user requirements; and
+5. avoid claiming successful execution until a real execution receipt exists.
+
+The Workstation may carry this evidence with the job lifecycle but does not interpret or grade it. This bridge is deliberately compatible with the later independent evaluator: user-returned evidence and evaluator-returned evidence use the same conceptual repair path.
+
+
 ## Student → Teacher → Independent Evaluator boundary
 
 The current 700M development loop treats the model as a **student**. Its generated answer is a candidate artifact, not an authoritative grade. Known-answer fixtures, deterministic tests, compiler/runtime/browser evidence, repository contracts, and engineering review determine whether the candidate actually passes.
