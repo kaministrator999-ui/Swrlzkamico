@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.124
-REVISION=2.1.124-hf-routing-budget-telemetry-v100
+VERSION=2.1.125
+REVISION=2.1.125-hf-response-mode-scope-hotfix-v101
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
