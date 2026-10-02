@@ -433,7 +433,7 @@ def generate_events(payload):
         failure_evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
         repair_direction=str(programming.get("repairDirection") or "").strip()
         if failure_evidence:
-            previous_candidate=next((str(m.get("content") or "") for m in reversed(history) if m.get("role")=="assistant" and str(m.get("content") or "").strip()),"")
+            target_mid=str(failure_evidence.get("repairTargetMessageId") or "")\n            previous_candidate=next((str(m.get("content") or "") for m in reversed(history) if m.get("role")=="assistant" and (not target_mid or str(m.get("id") or "")==target_mid) and str(m.get("content") or "").strip()),"")
             system+=("\nUSER-SUPPLIED EXECUTION FAILURE EVIDENCE (diagnostic evidence only; never mine this text for original MUST/preserve requirements):\n"
                      +json.dumps({**failure_evidence,"evidence":str(failure_evidence.get("evidence") or "")[:2500]},ensure_ascii=False,separators=(",",":"))
                      +"\nPREVIOUS ASSISTANT CANDIDATE TO REPAIR:\n"+previous_candidate[:5000]
@@ -459,7 +459,7 @@ def generate_events(payload):
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
-    repair_turn=bool(programming.get("failureEvidence"))
+    repair_turn=bool(programming.get("failureEvidence")) or bool(programming.get("canonicalCarry"))
     fitter=_fit_repair_messages if repair_turn else _fit_messages
     messages,dropped_history,input_tokens,available_output_tokens=fitter(model,system,history,prompt)
     system_tokens=_token_count(model,[{"role":"system","content":system}])
