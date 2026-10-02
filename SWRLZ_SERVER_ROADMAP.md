@@ -1,3 +1,19 @@
+## UPDATE FINISHED — 2026-10-02 — Repair observability diagnostics v106
+
+**Purpose:** make the next receipt-only acceptance run diagnostically useful if semantic convergence still fails, without exposing/storing hidden chain-of-thought or adding large normal-response context.
+
+**Implemented**
+- `hf_space/lfm2_700m_engine.py`: emits bounded `REPAIR_DIAGNOSTIC` telemetry on genuine repair turns: receipt ownership/type, target message id, prior-candidate SHA-256 fingerprint, exact-repeat count, stalled-repair flag, bounded extracted failure signals, and whether the original intent contract/canonical carry is bound.
+- Emits `REPAIR_OUTCOME_DIAGNOSTIC` after generation: prior/new candidate fingerprints, whether the candidate actually changed, whether generation entered under a stalled-repair condition, structural validation status/reasons, and an explicit `executionVerified=false` boundary until an external receipt exists.
+- Telemetry is observable state only; no hidden chain-of-thought transcript is persisted or emitted.
+
+**Versions**
+- Repository Work: `1.0.53`
+- LALM Engine: `2.1.130` / `2.1.130-hf-repair-diagnostics-v106`
+- Server Runtime: unchanged `2.3.309`
+
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD VERIFIED / DEPLOYMENT REQUIRED FOR LIVE DIAGNOSTIC ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-02 — Round-7 receipt convergence repair v105
 
 **Evidence basis:** user-supplied `review (11).md`, two fresh conversations and ten genuine receipt-only repair turns on deployed v104.
