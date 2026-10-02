@@ -1,3 +1,24 @@
+## UPDATE FINISHED — 2026-10-02 — 700M verified-success harvest + Start-linked weight-learning guide
+
+**Goal:** preserve the independently verified successes already produced by the 700M and route future model-growth work through a canonical document linked from Project Start.
+
+**Implemented**
+- Added `docs/engineering/SWRLZ_700M_WEIGHT_LEARNING_PIPELINE.md` as the canonical operating guide for harvesting evidence, normalizing training records, configuring LoRA/fine-tuning, held-out evaluation, weight adjustment, promotion, packaging, and runtime deployment.
+- The new guide links back to `§wyrlz_§tart.md`; Project Start now links forward to the weight-learning guide as a mandatory conditional reference for training/corpus/weight-promotion work.
+- Added `training/700m/harvested_successes.md` and harvested the currently evidenced successful capability cases from the recent evaluation history:
+  - JavaScript sorting repair: functional 4/4 contract pass after explicit guidance.
+  - JavaScript add: verified 5/5 arithmetic plain-script success.
+  - JavaScript add ES-module variant: arithmetic pass retained as a held-out compatibility case, not a positive plain-script training target.
+  - Earlier JavaScript chat-rendering correction: browser pass.
+  - Earlier Python conversation-history answer: 7/7 pass.
+- Explicitly retained partial/failing cases as negative/repair evidence rather than positive training targets, including 17/18 bool-validation, latest 1/20 `parse_max_tokens`, wrapper-loss sorting, and add repetition/no-code.
+- The harvest ledger marks successes whose exact candidate bytes are not present in the review summaries as `EVIDENCE READY / SOURCE RECOVERY NEEDED`. It forbids reconstructing missing source from prose; exact retained run artifacts must be recovered before JSONL promotion.
+- No model-weight change is claimed from this harvest. No training run is started until enough exact, independently validated examples are normalized and a held-out split is protected.
+
+**Repository Work:** `1.0.48`
+
+**Truth:** VERIFIED SUCCESS HARVEST COMPLETE AT REVIEW-EVIDENCE LEVEL / EXACT SOURCE RECOVERY STILL REQUIRED FOR TRAINABLE RECORDS / START ↔ WEIGHT-LEARNING GUIDE LINKED / MODEL WEIGHTS UNCHANGED / NO RUNTIME DEPLOYMENT REQUIRED FOR DOC+TRAINING-LEDGER MUTATION.
+
 ## UPDATE FINISHED — 2026-10-02 — 700M weight-learning pipeline bootstrap
 
 **Goal:** move stable programming behavior out of repeated per-request prefill and into trained model parameters where evidence supports it.
