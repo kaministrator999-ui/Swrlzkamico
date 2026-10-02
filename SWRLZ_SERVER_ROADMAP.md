@@ -17,7 +17,7 @@
 - LALM Engine: `2.1.129` / `2.1.129-hf-receipt-convergence-v105`
 - Server Runtime: unchanged `2.3.309`
 
-**Verification truth:** SOURCE COMPLETE / STATIC REREAD VERIFIED (including correction of the failure-signal regex before deployment) / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD VERIFIED (including correction of the failure-signal regex before deployment) / HF DEPLOYMENT TRIGGERED VIA RUN #49 (`37067518540`) / RUN STILL IN PROGRESS AT WATCH BOUND / LIVE BEHAVIORAL ACCEPTANCE PENDING.
 
 ## UPDATE FINISHED — 2026-10-02 — Start deployment-completion contract clarification
 
