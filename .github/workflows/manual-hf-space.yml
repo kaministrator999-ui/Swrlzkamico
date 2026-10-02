@@ -210,7 +210,10 @@ jobs:
           set -euo pipefail
           PYTHONPATH=hf_space python - <<'PY'
           import json
-          from lfm2_700m_engine import generate_events, CONTEXT_TOKENS, INPUT_BUDGET_TOKENS
+          from lfm2_700m_engine import (
+              generate_events, CONTEXT_TOKENS, INPUT_BUDGET_TOKENS,
+              MIN_OUTPUT_TOKENS, CONTEXT_SAFETY_TOKENS,
+          )
           payload={
               'requestId':'hf-predeploy-700m-context-smoke',
               'prompt':"How's things going 😊",
@@ -221,9 +224,17 @@ jobs:
           events=list(generate_events(payload))
           context=next((e for e in events if e.get('type')=='CONTEXT'),None)
           text=''.join(str(e.get('text') or '') for e in events if e.get('type')=='DELTA').strip()
-          assert CONTEXT_TOKENS==32768, CONTEXT_TOKENS
-          assert INPUT_BUDGET_TOKENS==32000, INPUT_BUDGET_TOKENS
-          assert context and context.get('estimatedInputTokens',10**9)<=INPUT_BUDGET_TOKENS, context
+          assert CONTEXT_TOKENS >= 4096, CONTEXT_TOKENS
+          assert INPUT_BUDGET_TOKENS == CONTEXT_TOKENS - MIN_OUTPUT_TOKENS - CONTEXT_SAFETY_TOKENS, {
+              'context': CONTEXT_TOKENS,
+              'inputBudget': INPUT_BUDGET_TOKENS,
+              'minOutput': MIN_OUTPUT_TOKENS,
+              'safety': CONTEXT_SAFETY_TOKENS,
+          }
+          assert 0 < INPUT_BUDGET_TOKENS < CONTEXT_TOKENS, INPUT_BUDGET_TOKENS
+          assert context and context.get('contextWindowTokens') == CONTEXT_TOKENS, context
+          assert context.get('inputBudgetTokens') == INPUT_BUDGET_TOKENS, context
+          assert context.get('estimatedInputTokens',10**9)<=INPUT_BUDGET_TOKENS, context
           assert text, '700M context smoke generated no response'
           print(json.dumps({
               'route':'700m',
