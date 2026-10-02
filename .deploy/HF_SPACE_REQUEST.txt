@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Approved deployment for current Chat usability repair.
+# Explicitly approved by user for the current HF candidate.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-09-30-chat-usability-001
+REQUEST_NONCE=2026-10-01-v95-current-candidate-001
