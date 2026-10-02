@@ -1,3 +1,21 @@
+## UPDATE FINISHED — 2026-10-02 — Durable repair diagnostic capture v107
+
+**Finding:** no existing runtime-to-GitHub repair-log persistence path was present. The HF probe only produced a temporary downloadable JSON and stdout logs; unknown engine events were reduced to phase/detail and the new repair diagnostic payloads were not durably stored.
+
+**Implemented**
+- `hf_space/app.py`: preserves complete bounded `REPAIR_DIAGNOSTIC` and `REPAIR_OUTCOME_DIAGNOSTIC` payloads in the downloadable probe report and emits them to structured Space stdout.
+- Added best-effort GitHub persistence to `runtime:runtime-diagnostics/repair/<request-id>/...` using a dedicated `SWRLZ_DIAGNOSTIC_GITHUB_TOKEN` only. Persistence is asynchronous and cannot block inference.
+- Missing credential and GitHub write failures are explicit structured events; diagnostics remain available in probe JSON/stdout rather than being silently lost.
+- No hidden chain-of-thought is stored; only bounded observable repair metadata is eligible for persistence.
+- The connected GitHub app cannot provision repository/Space secrets, so automatic GitHub persistence is **prepared but not active until the dedicated token is configured in the HF runtime environment**.
+
+**Versions**
+- Repository Work: `1.0.54`
+- LALM Engine: `2.1.131` / `2.1.131-hf-durable-repair-logs-v107`
+- Server Runtime: unchanged `2.3.309`
+
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD VERIFIED / GITHUB PERSISTENCE HOOK PREPARED / CREDENTIAL ACTIVATION REQUIRED / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-02 — Repair observability diagnostics v106
 
 **Purpose:** make the next receipt-only acceptance run diagnostically useful if semantic convergence still fails, without exposing/storing hidden chain-of-thought or adding large normal-response context.
