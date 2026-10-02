@@ -382,6 +382,11 @@ def generate_events(payload):
         system+="\nARTIFACT ECHO RECOGNITION: The current user message reproduces or substantially contains code/text from your own recent assistant output. Treat it as a returned/shared artifact, not as novel third-party code. Explicitly recognize that provenance when relevant, then respond to the user's current intent without pretending you are seeing it for the first time."
     if programming.get("codingTask"):
         system+="\nPROGRAMMING COGNITION: changeClass="+str(programming.get("changeClass"))+"; artifactContinuation="+str(bool(programming.get("artifactContinuation"))).lower()+"; newProject="+str(bool(programming.get("newProject"))).lower()+". Treat these as reasoning/routing context only; never claim a file, pin, deployment, or persistent mutation occurred without a Workstation/server receipt."
+        failure_evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
+        if failure_evidence:
+            system+=("\nUSER-SUPPLIED EXECUTION FAILURE EVIDENCE:\n"
+                     +json.dumps(failure_evidence,ensure_ascii=False,separators=(",",":"))
+                     +"\nTreat this as evidence that the prior coding candidate failed Gate 1. Diagnose the concrete failure, repair the prior candidate, preserve the ORIGINAL user-intent contract and unrelated interfaces/configuration, then re-check both technical validity and the full original intent. Return corrected code rather than merely explaining the error. Do not claim the repaired code was executed unless actual execution evidence is available.")
         intent_contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
         if intent_contract:
             system+=("\nPERSISTENT USER INTENT CONTRACT (acceptance target; preserve across every repair):\n"
