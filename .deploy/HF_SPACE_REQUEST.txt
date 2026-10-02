@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Explicitly approved by user after repairing the failed predeploy smoke gate.
+# Explicitly approved by user for v97 user-returned failure repair bridge.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-01-v95-smoke-gate-fixed-002
+REQUEST_NONCE=2026-10-01-v97-user-failure-repair-003
