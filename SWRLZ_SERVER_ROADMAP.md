@@ -1,3 +1,21 @@
+## UPDATE FINISHED — 2026-10-01 — Workstation orchestration ownership boundary
+
+**Scope:** prevent response orchestration from drifting into semantic grading.
+
+- Workstation owns admission, queueing, worker/engine delegation, resource assignment/telemetry, lifecycle, cancellation, state projection, synchronization, and delivery routing.
+- Workstation operational readiness means a result reached the required lifecycle/transport state for its next routed stage; it does not mean the response content was proven correct.
+- Brain/LALM owns response reasoning/content.
+- Independent evaluation owns semantic acceptance when an evaluation workflow is required.
+- Workstation may route work to an evaluator and transport its result without becoming the evaluator.
+- HF Station source now states this boundary explicitly; no semantic grading logic was added.
+
+**Versions**
+- Repository Work: `1.0.38`
+- LALM Engine authority remains `2.1.119`; the attempted authority bump was blocked, and the changed Station documentation does not alter inference behavior.
+- Server Runtime unchanged.
+
+**Truth:** ARCHITECTURE + HF STATION SOURCE BOUNDARY COMPLETE / STATIC RE-READ PENDING / DEPLOYMENT NOT REQUESTED / LIVE BEHAVIOR UNCHANGED.
+
 ## UPDATE FINISHED — 2026-10-01 — Student → Teacher independent-evaluator ownership contract
 
 **Scope:** make the long-term LALM learning/verification ownership explicit before building a future evaluator loop.
