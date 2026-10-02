@@ -182,7 +182,8 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     target_message_id=str((target or {}).get("messageId") or "")
     base_revision=int((target or {}).get("artifactRevision") or 0)
     mutation=bool(target and change in {"fix","refactor","feature","migrate"})
-    active_contract=prior_contract if canonical_carry else _programming_intent_contract(original_request or text,change)\n    return {
+    active_contract=prior_contract if canonical_carry else _programming_intent_contract(original_request or text,change)
+    return {
         "schema":"swrlz-programming-intent-v1",
         "codingTask":True,
         "projectContext":"new" if new_project else ("existing" if pins else "none"),
@@ -195,7 +196,8 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         "newProject":new_project,
         "pinnedCodeArtifactCount":len(pins),
         "intentContract":active_contract,
-        "repairDirection":text[:4000] if ((failure_evidence and original_request) or canonical_carry) else "",\n        "canonicalCarry":canonical_carry,
+        "repairDirection":text[:4000] if ((failure_evidence and original_request) or canonical_carry) else "",
+        "canonicalCarry":canonical_carry,
         "failureEvidence":failure_evidence,
         "source":"brain-router",
     }
