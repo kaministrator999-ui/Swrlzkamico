@@ -1,6 +1,6 @@
 # Hugging Face Space deployment request.
-# Explicitly approved by user for v97 user-returned failure repair bridge.
+# Explicit standing approval from user: when an approved governed update mutates deployable source, deploy at the end of that update.
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-01-v97-user-failure-repair-003
+REQUEST_NONCE=2026-10-01-v98-canonical-intent-repair-004
