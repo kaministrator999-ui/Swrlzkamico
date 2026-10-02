@@ -130,12 +130,16 @@ def _original_programming_request(history: list[dict[str, Any]]) -> str:
             return text[:4000]
     return ""
 
-def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_context: list[dict[str, Any]]) -> dict[str, Any]:
+def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_context: list[dict[str, Any]], prior_state: dict[str, Any] | None = None) -> dict[str, Any]:
     """Return bounded semantic routing metadata consumed by the Workstation."""
     text=str(prompt or "").strip()
     p=_norm(text)
     pins=_code_pins(pinned_context or [])
     failure_evidence=_user_failure_evidence(text,history or [])
+    prior_state=prior_state if isinstance(prior_state,dict) else {}
+    prior_contract=prior_state.get("intentContract") if isinstance(prior_state.get("intentContract"),dict) else {}
+    correction_direction=bool(prior_contract) and any(x in p for x in ("still","instead","required","requirement","must","should","keep","preserve","do not","don't","wrong","incorrect","guidance","fix","repair","change only","return only"))
+    canonical_carry=bool(prior_contract) and not failure_evidence and correction_direction and not any(x in p for x in _NEW_PROJECT)
     original_request=_original_programming_request(history or []) if failure_evidence else ""
     recent=" ".join(_norm(m.get("content") or m.get("text")) for m in (history or [])[-4:] if isinstance(m,dict))
     inherited=bool(pins) or any(term in recent for term in _CODE_TERMS)
@@ -178,7 +182,7 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     target_message_id=str((target or {}).get("messageId") or "")
     base_revision=int((target or {}).get("artifactRevision") or 0)
     mutation=bool(target and change in {"fix","refactor","feature","migrate"})
-    return {
+    active_contract=prior_contract if canonical_carry else _programming_intent_contract(original_request or text,change)\n    return {
         "schema":"swrlz-programming-intent-v1",
         "codingTask":True,
         "projectContext":"new" if new_project else ("existing" if pins else "none"),
@@ -190,8 +194,8 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         "baseRevision":base_revision,
         "newProject":new_project,
         "pinnedCodeArtifactCount":len(pins),
-        "intentContract":_programming_intent_contract(original_request or text,change),
-        "repairDirection":text[:4000] if failure_evidence and original_request else "",
+        "intentContract":active_contract,
+        "repairDirection":text[:4000] if ((failure_evidence and original_request) or canonical_carry) else "",\n        "canonicalCarry":canonical_carry,
         "failureEvidence":failure_evidence,
         "source":"brain-router",
     }
