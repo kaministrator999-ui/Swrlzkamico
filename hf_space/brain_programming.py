@@ -115,36 +115,38 @@ def _pick_artifact_target(prompt: str, code_pins: list[dict[str, Any]]) -> dict[
 
 
 
+def _strip_fenced_code(text: str) -> str:
+    """Remove fenced source/test payloads before extracting natural-language requirements."""
+    return re.sub(r"\`\`\`[\\s\\S]*?\`\`\`"," [CODE_PAYLOAD] ",str(text or ""),flags=re.M)
+
+
 def _programming_intent_contract(prompt: str, change_class: str) -> dict[str, Any]:
-    """Compile a bounded, inspectable acceptance contract from explicit user wording."""
+    """Compile bounded acceptance requirements from prose, keeping source/test payloads separate."""
     raw=str(prompt or "").strip()
-    clauses=[part.strip(" \t-*") for part in re.split(r"(?:\r?\n+|(?<=[.!?;])\s+)",raw) if part.strip(" \t-*")]
+    prose=_strip_fenced_code(raw)
+    clauses=[part.strip(" \t-*") for part in re.split(r"(?:\r?\n+|(?<=[.!?;])\s+)",prose) if part.strip(" \t-*") and part.strip()!="[CODE_PAYLOAD]"]
     must=[]; must_not=[]; preserve=[]; evidence=[]
     negative=re.compile(r"\b(?:must\s+not|mustn't|do\s+not|don't|never|without|avoid|no\s+)\b",re.I)
     preserve_rx=re.compile(r"\b(?:keep|preserve|unchanged|do not change|don't change|change only|only change|same\s+(?:name|signature|settings?|config|configuration|permissions?))\b",re.I)
-    requirement_rx=re.compile(r"\b(?:must|should|need(?:s)?\s+to|has\s+to|have\s+to|make\s+sure|ensure|require(?:s|d)?|implement|add|fix|return|accept|reject|use|support|compile|build|run|test|pass)\b",re.I)
+    requirement_rx=re.compile(r"\b(?:must|should|need(?:s)?\s+to|has\s+to|have\s+to|make\s+sure|ensure|require(?:s|d)?|implement|add|fix|accept|reject|support|compile|build|test|pass)\b",re.I)
     for clause in clauses[:32]:
         item=" ".join(clause.split())[:500]
-        if negative.search(item):
-            must_not.append(item)
-        elif preserve_rx.search(item):
-            preserve.append(item)
-        elif requirement_rx.search(item):
-            must.append(item)
+        if negative.search(item): must_not.append(item)
+        elif preserve_rx.search(item): preserve.append(item)
+        elif requirement_rx.search(item): must.append(item)
     if not must and raw:
         must.append("Satisfy the requested "+str(change_class or "programming")+" operation without changing unrelated behavior.")
-    evidence.append("technical-validity: syntax/build/runtime evidence when executable tooling exists")
-    evidence.append("intent-validity: original requirements and preservation constraints rechecked after every repair")
+    evidence.extend([
+        "technical-validity: returned candidate must be complete and syntactically/build valid when applicable",
+        "intent-validity: original requirements and preservation constraints must be rechecked after every repair",
+        "api-validity: required wrapper/name/signature must remain present unless explicitly changed",
+    ])
     return {
-        "schema":"swrlz-programming-intent-contract-v1",
-        "originalRequest":raw[:4000],
-        "must":must[:16],
-        "mustNot":must_not[:16],
-        "preserve":preserve[:16],
+        "schema":"swrlz-programming-intent-contract-v2","originalRequest":raw[:4000],
+        "must":must[:16],"mustNot":must_not[:16],"preserve":preserve[:16],
         "acceptanceEvidence":evidence,
-        "completionRule":"done only when technical validity and intent validity both pass",
+        "completionRule":"done only when complete-source, technical validity, and intent validity all pass",
     }
-
 
 
 def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[str, Any] | None:
