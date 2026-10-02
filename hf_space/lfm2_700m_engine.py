@@ -370,9 +370,21 @@ def _candidate_structure_check(text, programming, history):
     contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
     original=str(contract.get("originalRequest") or "")
     names=[]
-    for pattern in (r"\bfunction\s+([A-Za-z_$][\w$]*)",r"\bdef\s+([A-Za-z_]\w*)"): names.extend(re.findall(pattern,original))
+    name_patterns=(
+        r"\bfunction\s+(?:named\s+|called\s+)?([A-Za-z_$][\w$]*)\s*(?=\()",
+        r"\bfunction\s+(?:named\s+|called\s+)([A-Za-z_$][\w$]*)\b",
+        r"\bdef\s+([A-Za-z_]\w*)\s*\(",
+        r"\b(?:function|method)\s+(?:named|called)\s+([A-Za-z_$][\w$]*)\b",
+    )
+    for pattern in name_patterns: names.extend(re.findall(pattern,original,re.I))
+    candidate_code="\n".join(match.group(2) for match in re.finditer(r"```([^\n`]*)\n([\s\S]*?)```",source)) or source
     for name in dict.fromkeys(names[:4]):
-        if not re.search(r"\b"+re.escape(name)+r"\b",source): reasons.append("missing-required-api:"+name)
+        decl_patterns=(
+            r"\bdef\s+"+re.escape(name)+r"\s*\(",
+            r"\bfunction\s+"+re.escape(name)+r"\s*\(",
+            r"\b(?:const|let|var)\s+"+re.escape(name)+r"\s*=\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>",
+        )
+        if not any(re.search(pattern,candidate_code) for pattern in decl_patterns): reasons.append("missing-required-api:"+name)
     previous=next((str(m.get("content") or "") for m in reversed(history or []) if m.get("role")=="assistant" and str(m.get("content") or "").strip()),"")
     if previous and "export " not in previous and "export " in source and not re.search(r"\b(?:module|esm|es module|export)\b",original,re.I): reasons.append("loading-format-changed-to-module")
     return {"status":"REJECT" if reasons else "PASS","reasons":reasons}
