@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.126
-REVISION=2.1.126-hf-compact-repair-learning-v102
+VERSION=2.1.127
+REVISION=2.1.127-hf-contract-carry-api-validation-v103
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
