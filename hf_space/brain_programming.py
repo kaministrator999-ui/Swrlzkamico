@@ -5,6 +5,7 @@ threads, pins, artifacts, files, tools, deployments, or other operational state.
 """
 from __future__ import annotations
 from typing import Any
+import re
 
 _CODE_TERMS=("code","html","css","javascript","typescript","python","kotlin","java","cpp","c++","function","class","file","project","api","server","bug","compile","website","webpage","web page","frontend","ui","interface","dom","responsive","layout","component","debug","syntax")
 _NEW_PROJECT=("separate project","separately","new project","another project","different project","from scratch","unrelated project")
@@ -113,6 +114,38 @@ def _pick_artifact_target(prompt: str, code_pins: list[dict[str, Any]]) -> dict[
     return scored[-1][1]
 
 
+
+def _programming_intent_contract(prompt: str, change_class: str) -> dict[str, Any]:
+    """Compile a bounded, inspectable acceptance contract from explicit user wording."""
+    raw=str(prompt or "").strip()
+    clauses=[part.strip(" \t-*") for part in re.split(r"(?:\r?\n+|(?<=[.!?;])\s+)",raw) if part.strip(" \t-*")]
+    must=[]; must_not=[]; preserve=[]; evidence=[]
+    negative=re.compile(r"\b(?:must\s+not|mustn't|do\s+not|don't|never|without|avoid|no\s+)\b",re.I)
+    preserve_rx=re.compile(r"\b(?:keep|preserve|unchanged|do not change|don't change|change only|only change|same\s+(?:name|signature|settings?|config|configuration|permissions?))\b",re.I)
+    requirement_rx=re.compile(r"\b(?:must|should|need(?:s)?\s+to|has\s+to|have\s+to|make\s+sure|ensure|require(?:s|d)?|implement|add|fix|return|accept|reject|use|support|compile|build|run|test|pass)\b",re.I)
+    for clause in clauses[:32]:
+        item=" ".join(clause.split())[:500]
+        if negative.search(item):
+            must_not.append(item)
+        elif preserve_rx.search(item):
+            preserve.append(item)
+        elif requirement_rx.search(item):
+            must.append(item)
+    if not must and raw:
+        must.append("Satisfy the requested "+str(change_class or "programming")+" operation without changing unrelated behavior.")
+    evidence.append("technical-validity: syntax/build/runtime evidence when executable tooling exists")
+    evidence.append("intent-validity: original requirements and preservation constraints rechecked after every repair")
+    return {
+        "schema":"swrlz-programming-intent-contract-v1",
+        "originalRequest":raw[:4000],
+        "must":must[:16],
+        "mustNot":must_not[:16],
+        "preserve":preserve[:16],
+        "acceptanceEvidence":evidence,
+        "completionRule":"done only when technical validity and intent validity both pass",
+    }
+
+
 def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_context: list[dict[str, Any]]) -> dict[str, Any]:
     """Return bounded semantic routing metadata consumed by the Workstation."""
     text=str(prompt or "").strip()
@@ -169,5 +202,6 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         "baseRevision":base_revision,
         "newProject":new_project,
         "pinnedCodeArtifactCount":len(pins),
+        "intentContract":_programming_intent_contract(text,change),
         "source":"brain-router",
     }
