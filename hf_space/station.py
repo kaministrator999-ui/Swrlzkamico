@@ -332,6 +332,18 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         evidence=intent.get("failureEvidence")
                         if isinstance(evidence,dict):g["failureEvidence"]=copy.deepcopy(evidence)
                     g["status"].append({"seq":g["lastSeq"],"phase":"PROGRAMMING_INTENT","reason":""})
+                elif kind=="CONTEXT":
+                    g["contextBudget"]={
+                        "contextWindowTokens":int(event.get("contextWindowTokens") or 0),
+                        "inputBudgetTokens":int(event.get("inputBudgetTokens") or 0),
+                        "estimatedInputTokens":int(event.get("estimatedInputTokens") or 0),
+                        "reservedOutputTokens":int(event.get("reservedOutputTokens") or 0),
+                        "historyMessagesDropped":int(event.get("historyMessagesDropped") or 0),
+                        "historyMessagesKept":int(event.get("historyMessagesKept") or 0),
+                        "repairTurn":bool(event.get("repairTurn")),
+                        "tokenBreakdown":copy.deepcopy(event.get("tokenBreakdown") or {}),
+                    }
+                    g["status"].append({"seq":g["lastSeq"],"phase":"CONTEXT_BUDGETED","reason":""})
                 elif kind=="RESOURCE":
                     g["resourcePlan"]={
                         "cpuCapacity":int(event.get("cpuCapacity") or 1),
