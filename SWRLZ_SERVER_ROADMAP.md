@@ -1,3 +1,23 @@
+## UPDATE FINISHED — 2026-10-02 — Response-mode regex scope hotfix v101
+
+**Failure receipt:** HF deployment run #43 failed in the 700M context smoke before publication. The guarded workflow reached `hf_space/lfm2_700m_engine.py::_response_mode` and raised `UnboundLocalError: cannot access local variable 're' where it is not associated with a value`.
+
+**Root cause**
+- v100 introduced `re.search(...)` near the top of `_response_mode`.
+- The same function still contained a later local `import re`, making `re` a local variable for the whole function and therefore unbound at the earlier call site.
+
+**Fix**
+- Promote `re` to the module import list.
+- Remove the later function-local import.
+- Preserve the v100 structured coding routing, word-aware matching, shared repair budgeting, and CONTEXT telemetry changes unchanged.
+
+**Versions**
+- Repository Work: `1.0.45`
+- LALM Engine: `2.1.125` / `2.1.125-hf-response-mode-scope-hotfix-v101`
+- Server Runtime remains `2.3.309` until deployment succeeds.
+
+**Truth:** SOURCE HOTFIX COMPLETE / FAILURE DIAGNOSED FROM WORKFLOW LOG / STANDING DEPLOYMENT APPROVAL APPLIES / LIVE V101 PENDING.
+
 ## UPDATE FINISHED — 2026-10-02 — Coding routing + repair budget telemetry v100
 
 **Evidence basis:** live v99 repeat supplied by the user.
