@@ -1,3 +1,25 @@
+## UPDATE FINISHED — 2026-10-01 — HF 700M predeploy smoke contract repair
+
+**Scope:** repair the deployment gate that caused HF runs #37 and #38 to fail before publication.
+
+- Failure evidence: both runs reached the 700M predeploy smoke test and failed on the stale fixed assertion `CONTEXT_TOKENS == 32768`; the current 700M engine authority is `CONTEXT_TOKENS=8192`.
+- The smoke test now validates the engine's own context contract instead of pinning obsolete historical constants:
+  - context is at least 4096;
+  - input budget equals `context - minimum output reserve - safety reserve`;
+  - input budget is positive and smaller than context;
+  - emitted CONTEXT telemetry matches the engine constants;
+  - assembled prompt remains within the input budget;
+  - generation still must produce non-empty output.
+- This preserves a meaningful prepublish gate while preventing deployment infrastructure from rejecting an intentional context configuration change solely because a historical number was hard-coded.
+
+**Versions**
+- Repository Work: `1.0.39`
+- Deployment Control: `1.0.16`
+- LALM Engine remains `2.1.119`; engine inference configuration was not changed.
+- Server Runtime remains `2.3.308` until an actual successful release/deployment event warrants movement.
+
+**Truth:** DEPLOYMENT GATE SOURCE FIXED / STATIC VERIFICATION REQUIRED / FRESH USER-APPROVED DEPLOYMENT TO FOLLOW.
+
 ## UPDATE FINISHED — 2026-10-01 — Workstation orchestration ownership boundary
 
 **Scope:** prevent response orchestration from drifting into semantic grading.
