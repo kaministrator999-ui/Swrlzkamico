@@ -356,6 +356,27 @@ def _response_mode(prompt, programming=None):
         "Ask a question only when information is genuinely needed to answer correctly."
     )
 
+def _candidate_structure_check(text, programming, history):
+    """Deterministic delivery-envelope checks only; not a semantic correctness grade."""
+    if not isinstance(programming,dict) or not programming.get("codingTask"): return {"status":"NOT_APPLICABLE","reasons":[]}
+    if str(programming.get("changeClass") or "") in ("review","explain"): return {"status":"NOT_APPLICABLE","reasons":[]}
+    source=str(text or "").strip(); reasons=[]
+    lines=[line.strip() for line in source.splitlines() if line.strip()]
+    if lines:
+        from collections import Counter
+        if max(Counter(lines).values())>=8: reasons.append("repetition-loop")
+    code_like=bool(re.search(r"\b(?:def|function|class|const|let|var|import|export)\b|=>|[{};]",source))
+    if not code_like: reasons.append("no-code-candidate")
+    contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
+    original=str(contract.get("originalRequest") or "")
+    names=[]
+    for pattern in (r"\bfunction\s+([A-Za-z_$][\w$]*)",r"\bdef\s+([A-Za-z_]\w*)"): names.extend(re.findall(pattern,original))
+    for name in dict.fromkeys(names[:4]):
+        if not re.search(r"\b"+re.escape(name)+r"\b",source): reasons.append("missing-required-api:"+name)
+    previous=next((str(m.get("content") or "") for m in reversed(history or []) if m.get("role")=="assistant" and str(m.get("content") or "").strip()),"")
+    if previous and "export " not in previous and "export " in source and not re.search(r"\b(?:module|esm|es module|export)\b",original,re.I): reasons.append("loading-format-changed-to-module")
+    return {"status":"REJECT" if reasons else "PASS","reasons":reasons}
+
 def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
@@ -459,10 +480,14 @@ def generate_events(payload):
         else:
             response_tokens=min(768,available_output_tokens);temperature=0.40
         yield {"type":"RESOURCE","cpuCapacity":_cpu_capacity(),"decodeThreads":_thread_plan()[0],"batchThreads":_thread_plan()[1],"maxResponseTokens":response_tokens}
+        generated_parts=[]
         for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=True):
             choices=chunk.get("choices") or []
             delta=(choices[0].get("delta") or {}).get("content") if choices else None
             if delta:
+                generated_parts.append(delta)
                 if first_delta is None:first_delta=round((time.perf_counter()-started)*1000,3)
                 yield {"type":"DELTA","text":delta}
+    candidate_check=_candidate_structure_check("".join(generated_parts),programming,history)
+    yield {"type":"CANDIDATE_VALIDATION","validation":candidate_check}
     yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":round((time.perf_counter()-started)*1000,3),"loadLatencyMs":round((loaded-started)*1000,3),"firstDeltaLatencyMs":first_delta}
