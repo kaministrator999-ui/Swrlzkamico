@@ -1,3 +1,24 @@
+## UPDATE FINISHED — 2026-10-02 — Round-7 receipt convergence repair v105
+
+**Evidence basis:** user-supplied `review (11).md`, two fresh conversations and ten genuine receipt-only repair turns on deployed v104.
+
+**Observed**
+- Python `parse_max_tokens` remains `13/20` through five receipts. Receipt routing and original-contract binding work, but the model repeats the same conversion algorithm or makes cosmetic comment/error-message changes.
+- JavaScript `sortMessages` remains `0/4` through five receipts. The initial candidate mutates input; a later repair adds descending order and equal-timestamp reversal, then repeats that regressed source.
+- All ten failure receipts bind to the exact previous assistant candidate with failure-evidence-v4. Context budgeting remains functional and all candidates compile, isolating the defect to semantic repair convergence rather than handoff, compilation, or context overflow.
+
+**Implemented**
+- `hf_space/brain_programming.py`: failure evidence now counts exact normalized assistant-candidate repeats, marks stalled repairs after repeated identical candidates, and carries bounded assertion/failure signal lines from the authentic receipt.
+- `hf_space/lfm2_700m_engine.py`: receipt repair now requires expected/actual failures to be translated into source-operation changes. A stalled repair must change strategy rather than returning the same algorithm with comment/prose/exception-message edits, and newly failing assertions are explicitly treated as regressions.
+- `training/700m/harvested_successes.md`: records both round-7 loops as negative/contrastive repair trajectories; neither is eligible as a positive training target.
+
+**Versions**
+- Repository Work: `1.0.52`
+- LALM Engine: `2.1.129` / `2.1.129-hf-receipt-convergence-v105`
+- Server Runtime: unchanged `2.3.309`
+
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD REQUIRED / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-02 — Start deployment-completion contract clarification
 
 **Goal:** remove ambiguity about whether a governed runtime-affecting source update stops at source-complete or continues through deployment.
