@@ -354,6 +354,8 @@ def generate_events(payload):
     if convergence:
         yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
     programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [])
+    if programming.get("codingTask"):
+        yield {"type":"PROGRAMMING_INTENT","intent":programming}
     normalized_prompt="\n".join(line.rstrip() for line in prompt.strip().splitlines())
     prior_artifact_match=None
     if len(normalized_prompt)>=80:
