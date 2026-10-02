@@ -383,10 +383,14 @@ def generate_events(payload):
     if programming.get("codingTask"):
         system+="\nPROGRAMMING COGNITION: changeClass="+str(programming.get("changeClass"))+"; artifactContinuation="+str(bool(programming.get("artifactContinuation"))).lower()+"; newProject="+str(bool(programming.get("newProject"))).lower()+". Treat these as reasoning/routing context only; never claim a file, pin, deployment, or persistent mutation occurred without a Workstation/server receipt."
         failure_evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
+        repair_direction=str(programming.get("repairDirection") or "").strip()
         if failure_evidence:
-            system+=("\nUSER-SUPPLIED EXECUTION FAILURE EVIDENCE:\n"
+            previous_candidate=next((str(m.get("content") or "") for m in reversed(history) if m.get("role")=="assistant" and str(m.get("content") or "").strip()),"")
+            system+=("\nUSER-SUPPLIED EXECUTION FAILURE EVIDENCE (diagnostic evidence only; never mine this text for original MUST/preserve requirements):\n"
                      +json.dumps(failure_evidence,ensure_ascii=False,separators=(",",":"))
-                     +"\nTreat this as evidence that the prior coding candidate failed Gate 1. Diagnose the concrete failure, repair the prior candidate, preserve the ORIGINAL user-intent contract and unrelated interfaces/configuration, then re-check both technical validity and the full original intent. Return corrected code rather than merely explaining the error. Do not claim the repaired code was executed unless actual execution evidence is available.")
+                     +"\nPREVIOUS ASSISTANT CANDIDATE TO REPAIR:\n"+previous_candidate[:9000]
+                     +("\nADDITIONAL USER REPAIR DIRECTION:\n"+repair_direction if repair_direction else "")
+                     +"\nTreat the failure receipt as Gate 1 evidence, not as a replacement intent contract. Diagnose the concrete failure and return a COMPLETE corrected candidate preserving the original API/wrapper/signature and unrelated behavior. Never return only a fragment unless the original request explicitly asked for a fragment. Re-check the reported failing case plus every original acceptance requirement. Do not claim execution without an actual execution receipt.")
         intent_contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
         if intent_contract:
             system+=("\nPERSISTENT USER INTENT CONTRACT (acceptance target; preserve across every repair):\n"
