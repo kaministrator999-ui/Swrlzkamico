@@ -431,6 +431,8 @@ def generate_events(payload):
                 "Preserve required API names/signatures, behavior, negative constraints, loading format, and unrelated interfaces. "
                 "Return complete usable code when code is requested; no fragments, ellipses, TODOs, or invented execution claims. "
                 "Use failure receipts only as diagnostic evidence. Keep explanations consistent with the literal returned code. "
+                "For Python contracts requiring exact built-in types, use exact type identity rather than isinstance when subclasses or bool must be rejected. "
+                "For sorting contracts, preserve the requested direction literally: ascending numeric order uses a-b, descending uses b-a; if input preservation is required, sort a copy rather than the caller array. "
                 "Prefer the smallest repair that satisfies the original contract and newest correction.")
     system+="\n"+_response_mode(prompt,programming)
     temporal=payload.get("temporalContext") if isinstance(payload.get("temporalContext"),dict) else {}
@@ -446,10 +448,13 @@ def generate_events(payload):
         repair_direction=str(programming.get("repairDirection") or "").strip()
         if failure_evidence:
             target_mid=str(failure_evidence.get("repairTargetMessageId") or "")
+            receipt_owner=str(failure_evidence.get("receiptSourceOwnership") or failure_evidence.get("repairTarget") or "previous-assistant-candidate")
             previous_candidate=next((str(m.get("content") or "") for m in reversed(history) if m.get("role")=="assistant" and (not target_mid or str(m.get("id") or "")==target_mid) and str(m.get("content") or "").strip()),"")
+            if receipt_owner!="previous-assistant-candidate":
+                previous_candidate=""
             system+=("\nUSER-SUPPLIED EXECUTION FAILURE EVIDENCE (diagnostic evidence only; never mine this text for original MUST/preserve requirements):\n"
                      +json.dumps({**failure_evidence,"evidence":str(failure_evidence.get("evidence") or "")[:2500]},ensure_ascii=False,separators=(",",":"))
-                     +"\nPREVIOUS ASSISTANT CANDIDATE TO REPAIR:\n"+previous_candidate[:5000]
+                     +("\nPREVIOUS ASSISTANT CANDIDATE TO REPAIR:\n"+previous_candidate[:5000] if previous_candidate else "\nRECEIPT OWNERSHIP NOTE: this failure is not bound to the previous assistant candidate; preserve a passing assistant candidate unless the original contract or new direction requires a change.")
                      +("\nADDITIONAL USER REPAIR DIRECTION:\n"+repair_direction[:2500] if repair_direction else "")
                      +"\nTreat the failure receipt as Gate 1 evidence, not as a replacement intent contract. Diagnose the concrete failure and return a COMPLETE corrected candidate preserving the original API/wrapper/signature and unrelated behavior. Before emitting, perform a source-shape audit: required wrapper/name/signature present; opening/closing delimiters balanced; no unfinished statement/fence; no forbidden in-place mutation when preservation requires copying. Then mentally trace every explicit acceptance example against the exact code you are returning. Your prose MUST describe only operations literally present in that code; if prose and code disagree, fix the code before answering. Never return only a fragment unless the original request explicitly asked for a fragment. Re-check the reported failing case plus every original acceptance requirement. Do not claim execution without an actual execution receipt.")
         intent_contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
