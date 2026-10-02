@@ -433,7 +433,8 @@ def generate_events(payload):
         failure_evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
         repair_direction=str(programming.get("repairDirection") or "").strip()
         if failure_evidence:
-            target_mid=str(failure_evidence.get("repairTargetMessageId") or "")\n            previous_candidate=next((str(m.get("content") or "") for m in reversed(history) if m.get("role")=="assistant" and (not target_mid or str(m.get("id") or "")==target_mid) and str(m.get("content") or "").strip()),"")
+            target_mid=str(failure_evidence.get("repairTargetMessageId") or "")
+            previous_candidate=next((str(m.get("content") or "") for m in reversed(history) if m.get("role")=="assistant" and (not target_mid or str(m.get("id") or "")==target_mid) and str(m.get("content") or "").strip()),"")
             system+=("\nUSER-SUPPLIED EXECUTION FAILURE EVIDENCE (diagnostic evidence only; never mine this text for original MUST/preserve requirements):\n"
                      +json.dumps({**failure_evidence,"evidence":str(failure_evidence.get("evidence") or "")[:2500]},ensure_ascii=False,separators=(",",":"))
                      +"\nPREVIOUS ASSISTANT CANDIDATE TO REPAIR:\n"+previous_candidate[:5000]
