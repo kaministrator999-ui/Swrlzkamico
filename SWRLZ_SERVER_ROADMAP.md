@@ -1,3 +1,27 @@
+## UPDATE FINISHED — 2026-10-02 — Round-6 exact-contract repair + receipt ownership v104
+
+**Evidence basis:** user-supplied `review (10).md`, eight sequential live 700M turns on deployed v103.
+
+**Observed**
+- Python improves materially to `1/20 → 12/20 → 18/20`; canonical saved-contract carry is now live on the guided continuation. The remaining misses are exact-type semantics: `True` and an `int` subclass are still accepted through `isinstance(value, int)`.
+- Sorting remains `0/4 → 0/4 → 2/4`: copying fixes frozen-input mutation, but `b.createdAt-a.createdAt` reverses the required ascending order.
+- Addition remains `5/5 → 5/5`; its genuine compiler receipt belongs to the original user seed, not the already-passing assistant candidate.
+- Prior false API-name rejections are gone. All eight delivery-envelope checks report PASS, correctly demonstrating that envelope validation is not semantic execution certification.
+- Median browser completion improves from 6.17 s to 4.52 s (~27% lower) with no context overflow.
+
+**Implemented**
+- `brain_programming.py`: failure evidence schema advances to v4 with explicit `receiptSourceOwnership`; receipts explicitly identified as original/user seed are no longer bound as failures of the nearest assistant candidate.
+- `lfm2_700m_engine.py`: receipt prompts no longer present an assistant candidate as the repair target when receipt ownership says the failure came from user seed/source.
+- Compact coding cognition now states exact Python built-in type identity when subclasses/bool must be rejected, and literal comparator direction for numeric sorting while preserving copy-before-sort semantics.
+- `training/700m/harvested_successes.md`: records round-6 Python 18/20 and sorting 2/4 as negative/contrastive trajectories, while preserving the 5/5 addition receipt-retention case as positive evidence pending exact-source recovery.
+
+**Versions**
+- Repository Work: `1.0.50`
+- LALM Engine: `2.1.128` / `2.1.128-hf-exact-contract-repair-v104`
+- Server Runtime: unchanged `2.3.309`
+
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD PENDING / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-02 — Round-5 700M contract-carry + API-validation repair v103
 
 **Evidence basis:** user-supplied `review (9).md`, eight sequential 700M turns against the newly deployed v102 source.
