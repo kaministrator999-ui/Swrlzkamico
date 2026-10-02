@@ -375,6 +375,31 @@ Phase 1 establishes the cognitive/routing/generation foundation before those mec
 ---
 
 
+
+## Intent-grounded iterative development loop
+
+Programming completion has two independent gates. Technical validity is necessary but not sufficient.
+
+```text
+USER INTENT
+  → compile persistent intent contract
+  → generate/modify candidate
+  → Gate 1: build / execute / syntax-runtime validity
+      FAIL → capture evidence → repair → retry
+  → Gate 2: validate ORIGINAL user intent
+      FAIL → identify failed requirement → repair → rebuild/retest
+  → DONE only when technical validity + intent validity both pass
+```
+
+The intent contract persists across correction iterations and records explicit MUST, MUST-NOT, preservation/change-only boundaries, and acceptance evidence expectations. Every repair receives the original contract plus the newest failure evidence. A successful compile, zero exit code, or runtime start cannot by itself satisfy the request.
+
+Repairs must not make Gate 1 pass by deleting, renaming, bypassing, or weakening the requested feature or unrelated compatibility surface. After every repair, the full original acceptance contract is rechecked alongside the newly failing case.
+
+Ownership remains separated: the Brain/LALM reasons from the contract and produces candidates; an independent evaluator/test/tool surface supplies authoritative acceptance evidence when available; the Workstation only orchestrates routing/lifecycle/resources and carries the contract/evidence between stages.
+
+**Current implementation tier:** the HF 700M Brain now compiles and injects a bounded persistent intent contract and applies the two-gate completion rule during generation. The Workstation carries that contract as lifecycle metadata. This tier does **not** yet provide an autonomous compiler/browser/repository tool executor or independent evaluator loop; executable receipts remain a later tool-integrated tier.
+
+
 ## Student → Teacher → Independent Evaluator boundary
 
 The current 700M development loop treats the model as a **student**. Its generated answer is a candidate artifact, not an authoritative grade. Known-answer fixtures, deterministic tests, compiler/runtime/browser evidence, repository contracts, and engineering review determine whether the candidate actually passes.
