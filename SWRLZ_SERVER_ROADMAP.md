@@ -1,3 +1,22 @@
+## UPDATE FINISHED — 2026-10-02 — Coding routing + repair budget telemetry v100
+
+**Evidence basis:** live v99 repeat supplied by the user.
+
+- All eight requests completed and all receipt turns retained their original contracts; complete add-function preservation improved.
+- Remaining evidence identified four concrete integration defects: over-escaped fenced-code stripping, creative substring routing overriding coding, CONTEXT telemetry not persisted by Workstation, and inconsistent repair input/output reservation.
+- Intent extraction now uses the intended fenced-code regex `r"\`\`\`[\\s\\S]*?\`\`\`"`.
+- Structured `programmingIntent.codingTask` now outranks creative lexical hints; creative detection uses word-aware patterns, preventing Python/JavaScript and stack-frame substrings from routing as lyrics/rap.
+- Repair input and desired output are budgeted from the same 8,192-token context equation with the 128-token safety reserve.
+- Workstation now persists CONTEXT budget telemetry, including system/history/current-prompt breakdown, repair-turn marker, history retention/drop counts, and output reservation.
+- This tier improves routing/observability/budget integrity. It does not claim independent behavioral acceptance; Python semantics and sorting/API correctness still require grounded evaluator evidence.
+
+**Versions**
+- Repository Work: `1.0.44`
+- LALM Engine: `2.1.124` / `2.1.124-hf-routing-budget-telemetry-v100`
+- Server Runtime remains `2.3.309` until deployment.
+
+**Truth:** SOURCE COMPLETE / STATIC RE-READ REQUIRED / STANDING DEPLOYMENT APPROVAL APPLIES / LIVE V100 ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-02 — Repair budgeting + complete-source acceptance v99
 
 **Evidence basis:** nine-reply live 700M retest supplied by the user after canonical-contract repair deployment.
