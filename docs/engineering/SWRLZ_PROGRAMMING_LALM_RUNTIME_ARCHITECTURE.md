@@ -27,7 +27,7 @@ The runtime should prefer compact structured state over repeated policy prose. W
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **LALM `2.1.126` / v102 source implements compact coding context, canonical contract carry across receipt and ordinary guidance turns, concrete repair-target message IDs, context-budget telemetry, and deterministic candidate-envelope rejection for repetition/no-code/API-loading-format regressions. The validated-learning promotion architecture is documented, but no 700M weight training/LoRA checkpoint has yet been executed or promoted. Independent compiler/runtime/browser evaluation remains the next authority layer before verified examples can become training data. Live v102 acceptance remains pending deployment verification.**
+**Current implementation state:** **LALM `2.1.137` / v113 source generalizes log-driven repair across compiler/test/runtime/build scenarios. It preserves canonical intent and receipt ownership, extracts bounded receipt semantics, compares primary executable candidates, carries repair diagnostics, and performs one bounded pre-commit strategy-change regeneration when a repair repeats the failing executable candidate or fails structural validation. Structural checks remain envelope checks rather than semantic proof; independent execution evidence remains the authority for behavioral acceptance and validated-learning promotion. Live v113 acceptance requires deployment + multi-scenario receipt testing.**
 
 ---
 
