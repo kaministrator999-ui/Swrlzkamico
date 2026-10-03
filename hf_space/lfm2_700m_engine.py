@@ -550,6 +550,8 @@ def generate_events(payload):
     loaded=time.perf_counter()
     yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":round((loaded-started)*1000,3)}
     first_delta=None
+    regeneration_attempted=False
+    regeneration_reason=""
     with _lock:
         mode=_response_mode(prompt,programming)
         if mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
@@ -561,26 +563,53 @@ def generate_events(payload):
         else:
             response_tokens=min(768,available_output_tokens);temperature=0.40
         yield {"type":"RESOURCE","cpuCapacity":_cpu_capacity(),"decodeThreads":_thread_plan()[0],"batchThreads":_thread_plan()[1],"maxResponseTokens":response_tokens}
-        generated_parts=[]
-        for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=True):
-            choices=chunk.get("choices") or []
-            delta=(choices[0].get("delta") or {}).get("content") if choices else None
-            if delta:
-                generated_parts.append(delta)
-                if first_delta is None:first_delta=round((time.perf_counter()-started)*1000,3)
-                yield {"type":"DELTA","text":delta}
-    candidate_text="".join(generated_parts)
+        if repair_turn:
+            # Repair turns are buffered so a structurally rejected or byte-equivalent
+            # executable candidate can receive one bounded strategy-change attempt
+            # before anything incorrect is committed to the visible conversation.
+            first=model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=False)
+            candidate_text=str((((first.get("choices") or [{}])[0].get("message") or {}).get("content")) or "")
+            first_check=_candidate_structure_check(candidate_text,programming,history)
+            previous_fp=repair_diagnostic.get("candidateFingerprint") if repair_diagnostic else None
+            first_fp=_candidate_fingerprint(candidate_text)
+            unchanged=bool(previous_fp and first_fp and previous_fp==first_fp)
+            if unchanged or first_check.get("status")=="REJECT":
+                regeneration_attempted=True
+                regeneration_reason="unchanged-executable-candidate" if unchanged else "structural-rejection"
+                retry_messages=list(messages)+[{"role":"system","content":
+                    "REPAIR RETRY GATE: the first proposed repair was not acceptable because it was "
+                    +("the same executable candidate as the failing predecessor." if unchanged else "structurally incomplete or incompatible.")
+                    +" Produce one different COMPLETE executable candidate. Change the source operation implicated by the genuine failure evidence, preserve passing behavior and the original contract, and do not use prose/comments/placeholders as the change."}]
+                second=model.create_chat_completion(messages=retry_messages,max_tokens=response_tokens,temperature=min(0.45,temperature+0.10),stream=False)
+                retry_text=str((((second.get("choices") or [{}])[0].get("message") or {}).get("content")) or "")
+                if retry_text.strip():
+                    candidate_text=retry_text
+            if candidate_text:
+                first_delta=round((time.perf_counter()-started)*1000,3)
+                yield {"type":"DELTA","text":candidate_text}
+        else:
+            generated_parts=[]
+            for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=True):
+                choices=chunk.get("choices") or []
+                delta=(choices[0].get("delta") or {}).get("content") if choices else None
+                if delta:
+                    generated_parts.append(delta)
+                    if first_delta is None:first_delta=round((time.perf_counter()-started)*1000,3)
+                    yield {"type":"DELTA","text":delta}
+            candidate_text="".join(generated_parts)
     candidate_check=_candidate_structure_check(candidate_text,programming,history)
     yield {"type":"CANDIDATE_VALIDATION","validation":candidate_check}
     if repair_diagnostic:
         previous_fp=repair_diagnostic.get("candidateFingerprint")
         candidate_fp=_candidate_fingerprint(candidate_text)
         yield {"type":"REPAIR_OUTCOME_DIAGNOSTIC","diagnostic":{
-            "schema":"swrlz-repair-outcome-v1",
+            "schema":"swrlz-repair-outcome-v2",
             "previousCandidateFingerprint":previous_fp,
             "newCandidateFingerprint":candidate_fp,
             "candidateChanged":bool(candidate_fp and candidate_fp!=previous_fp),
             "stalledRepairInput":bool(repair_diagnostic.get("stalledRepair")),
+            "regenerationAttempted":regeneration_attempted,
+            "regenerationReason":regeneration_reason or None,
             "candidateValidationStatus":candidate_check.get("status"),
             "candidateValidationReasons":candidate_check.get("reasons",[])[:8],
             "executionVerified":False,
