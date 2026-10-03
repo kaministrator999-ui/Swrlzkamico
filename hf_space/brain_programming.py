@@ -155,6 +155,44 @@ def _receipt_semantics(raw: str) -> dict[str, Any]:
     }
 
 
+def _failure_receipt_detected(text: str) -> bool:
+    """Recognize common compiler, test-runner, build, runtime and CI failure logs."""
+    raw=str(text or "")
+    if not raw.strip():
+        return False
+    patterns=(
+        r"\b(?:syntaxerror|typeerror|nameerror|referenceerror|assertionerror|indentationerror|runtimeerror|exception|traceback)\b",
+        r"\b(?:compilation|build|link|lint|typecheck|test(?:s| suite)?)\s+(?:failed|failure|error)\b",
+        r"\b(?:failed to compile|cannot find symbol|unresolved reference|undefined reference|module not found|cannot resolve)\b",
+        r"(?im)^\s*(?:FAIL|FAILED|ERROR)\b",
+        r"\b(?:exit(?:\s+code|\s+status)?|status)\s*[:=]?\s*[1-9]\d*\b",
+        r"\b\d+\s+failed(?:,|\b)",
+        r"\bexpected\b[\s\S]{0,240}\b(?:actual|got|received)\b",
+        r"\b(?:actual|got|received)\b[\s\S]{0,240}\bexpected\b",
+    )
+    return any(re.search(pattern,raw,re.I) for pattern in patterns)
+
+
+def _repair_actions(semantics: dict[str, Any]) -> list[str]:
+    categories=set(str(x) for x in (semantics.get("categories") or []))
+    actions=[]
+    mapping=(
+        ("syntax","repair parser/syntax failure at the reported source location before changing behavior"),
+        ("name-or-symbol","restore or correctly resolve the reported identifier/module/symbol without renaming required public APIs"),
+        ("type","trace concrete runtime types through the failing operation and change the operation or validation causing the mismatch"),
+        ("assertion","map each failing assertion to the exact source operation that produces its observed value"),
+        ("behavior-mismatch","change the producer of the actual value so it matches the expected contract; do not patch only the displayed example"),
+        ("build","repair the failing build/compile stage while preserving unrelated build configuration"),
+        ("runtime","trace the exception to its first relevant application frame and repair the causing state/operation"),
+        ("timeout","remove the blocking/unbounded operation while preserving required ordering and completion semantics"),
+    )
+    for key,action in mapping:
+        if key in categories: actions.append(action)
+    if not actions:
+        actions.append("use the failing receipt to identify the first concrete failing operation, then change that operation while preserving passing behavior")
+    return actions[:6]
+
+
 def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[str, Any] | None:
     raw=str(prompt or "").strip()
     lower=raw.lower()
@@ -202,7 +240,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
         "exactCandidateRepeatCount":exact_repeat_count,
         "stalledRepair":exact_repeat_count>=1,
         "failureSignals":receipt_failure_lines,
-        "receiptSemantics":_receipt_semantics(raw),
+        "receiptSemantics":_receipt_semantics(raw),\n        "repairActions":_repair_actions(_receipt_semantics(raw)),
     }
 
 def _looks_like_failure_receipt(text: str) -> bool:
