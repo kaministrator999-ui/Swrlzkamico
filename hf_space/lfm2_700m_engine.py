@@ -579,11 +579,22 @@ def generate_events(payload):
                 retry_messages=list(messages)+[{"role":"system","content":
                     "REPAIR RETRY GATE: the first proposed repair was not acceptable because it was "
                     +("the same executable candidate as the failing predecessor." if unchanged else "structurally incomplete or incompatible.")
-                    +" Produce one different COMPLETE executable candidate. Change the source operation implicated by the genuine failure evidence, preserve passing behavior and the original contract, and do not use prose/comments/placeholders as the change."}]
+                    +" Produce one different COMPLETE executable candidate. Use the structured receipt categories, failure signals, expected/actual facts, and repairActions already supplied. Change the source operation implicated by those genuine logs, preserve passing behavior and the original contract, and do not use prose/comments/placeholders as the change."}]
                 second=model.create_chat_completion(messages=retry_messages,max_tokens=response_tokens,temperature=min(0.45,temperature+0.10),stream=False)
                 retry_text=str((((second.get("choices") or [{}])[0].get("message") or {}).get("content")) or "")
                 if retry_text.strip():
                     candidate_text=retry_text
+                retry_check=_candidate_structure_check(candidate_text,programming,history)
+                retry_fp=_candidate_fingerprint(candidate_text)
+                retry_unchanged=bool(previous_fp and retry_fp and previous_fp==retry_fp)
+                if retry_unchanged or retry_check.get("status")=="REJECT":
+                    regeneration_reason+=";second-attempt-"+("unchanged" if retry_unchanged else "structurally-rejected")
+                    final_messages=list(retry_messages)+[{"role":"system","content":
+                        "FINAL REPAIR STRATEGY GATE: two proposals have failed to produce an acceptable executable change. Stop editing around the failure. Re-derive the smallest implementation from the ORIGINAL contract plus the genuine receipt facts. Preserve the required public API and every passing invariant, but replace the faulty algorithm/operation itself. Return exactly one complete executable candidate; no alternate examples, fake logs, TODOs, or commentary-as-a-fix."}]
+                    third=model.create_chat_completion(messages=final_messages,max_tokens=response_tokens,temperature=min(0.50,temperature+0.15),stream=False)
+                    third_text=str((((third.get("choices") or [{}])[0].get("message") or {}).get("content")) or "")
+                    if third_text.strip():
+                        candidate_text=third_text
             if candidate_text:
                 first_delta=round((time.perf_counter()-started)*1000,3)
                 yield {"type":"DELTA","text":candidate_text}
@@ -598,6 +609,14 @@ def generate_events(payload):
                     yield {"type":"DELTA","text":delta}
             candidate_text="".join(generated_parts)
     candidate_check=_candidate_structure_check(candidate_text,programming,history)
+    if repair_diagnostic:
+        previous_fp=repair_diagnostic.get("candidateFingerprint")
+        final_fp=_candidate_fingerprint(candidate_text)
+        if previous_fp and final_fp and previous_fp==final_fp:
+            reasons=list(candidate_check.get("reasons") or [])
+            if "repair-stalled-no-executable-change" not in reasons:
+                reasons.append("repair-stalled-no-executable-change")
+            candidate_check={"status":"REJECT","reasons":reasons}
     yield {"type":"CANDIDATE_VALIDATION","validation":candidate_check}
     if repair_diagnostic:
         previous_fp=repair_diagnostic.get("candidateFingerprint")
