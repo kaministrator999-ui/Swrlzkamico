@@ -1,3 +1,24 @@
+## UPDATE FINISHED — 2026-10-03 — Generalized coding-log semantics + repair telemetry v116
+
+**Goal:** continue improving the 700M programming path across coding languages and toolchains so compiler/test/runtime/lint/type/dependency logs become structured repair evidence rather than task-specific prompt hacks.
+
+**Evidence basis:** latest unchanged-task receipt loops still compile every selected candidate but fail full behavioral contracts: Python remains stalled at 16/20 through five receipts, while JavaScript sorting reaches 2/4 and then repeats a data-loss algorithm. The review also confirms that structural PASS and successful compilation are not semantic acceptance, and that normalized executable-candidate comparison must be consistent across repair telemetry.
+
+**Implemented**
+- `hf_space/brain_programming.py`: expanded language-agnostic receipt semantics beyond syntax/runtime/assertion evidence to include lint, static type-check, and dependency/module failures.
+- Receipt semantics now retain bounded source-location and failing-test identifiers where logs expose them, in addition to exception types, exit codes, failing/passing signals, and expected/actual mismatches.
+- General repair actions now map those categories to source-level repair behavior without hard-coding one benchmark task: repair the implicated parser/source location, producer/consumer type boundary, dependency boundary, assertion producer, runtime application frame, build stage, or blocking operation while preserving already-passing behavior.
+- `hf_space/lfm2_700m_engine.py`: REPAIR_DIAGNOSTIC now exports the structured receipt semantics and proposed repair-action classes; REPAIR_OUTCOME_DIAGNOSTIC carries the same category/action context beside the normalized executable fingerprints, regeneration state, structural validation, and `executionVerified=false`.
+- Existing v115 behavior remains authoritative: primary executable candidate fingerprints ignore prose/comment churn, repair turns can regenerate stalled/structurally rejected candidates, failure history remains a regression guard, and context telemetry uses the fitted/compacted prompt.
+- This does **not** claim semantic execution inside the model. External compiler/test/browser/runtime receipts remain the independent truth source.
+
+**Versions**
+- Repository Work: `1.0.63`
+- LALM Engine: `2.1.140` / `2.1.140-hf-structured-log-semantics-v116`
+- Server Runtime: unchanged `2.3.309`
+
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD PENDING / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-03 — Generalized coding/log repair continuation v115
 
 **Goal:** continue broad coding/log repair work across languages and failure modes, using the latest verified repository lineage rather than fixture-specific patches.
