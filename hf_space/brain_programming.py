@@ -76,7 +76,8 @@ def _programming_intent_contract(prompt: str, change_class: str) -> dict[str, An
     """Compile bounded acceptance requirements from prose, keeping source/test payloads separate."""
     raw=str(prompt or "").strip()
     prose=_strip_fenced_code(raw)
-    clauses=[part.strip(" \t-*") for part in re.split(r"(?:\r?\n+|(?<=[.!?;])\s+)",prose) if part.strip(" \t-*") and part.strip()!="[CODE_PAYLOAD]"]
+    clauses=[part.strip(" \t-*") for part in re.split(r"(?:\r?
++|(?<=[.!?;])\s+)",prose) if part.strip(" \t-*") and part.strip()!="[CODE_PAYLOAD]"]
     must=[]; must_not=[]; preserve=[]; evidence=[]
     negative=re.compile(r"\b(?:must\s+not|mustn't|do\s+not|don't|never|without|avoid|no\s+)\b",re.I)
     preserve_rx=re.compile(r"\b(?:keep|preserve|unchanged|do not change|don't change|change only|only change|same\s+(?:name|signature|settings?|config|configuration|permissions?))\b",re.I)
@@ -104,7 +105,9 @@ def _programming_intent_contract(prompt: str, change_class: str) -> dict[str, An
 def _extract_candidate_code(text: str) -> str:
     """Return the primary executable candidate, ignoring prose/examples/comments."""
     raw=str(text or "").strip()
-    fenced=re.findall(r"```[^\n`]*\n([\s\S]*?)```",raw)
+    fenced=re.findall(r"```[^
+`]*
+([\s\S]*?)```",raw)
     candidate=next((part for part in fenced if part.strip()),raw)
     lines=[]
     for line in candidate.strip().splitlines():
@@ -112,7 +115,8 @@ def _extract_candidate_code(text: str) -> str:
         if not stripped or stripped.startswith(("#","//","/*","*","*/")):
             continue
         lines.append(line.rstrip())
-    return "\n".join(lines)
+    return "
+".join(lines)
 
 
 
@@ -195,7 +199,9 @@ def _repair_actions(semantics: dict[str, Any]) -> list[str]:
 
 def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[str, Any] | None:
     raw=str(prompt or "").strip()
-    if not _failure_receipt_detected(raw):\n        return None\n    assistants=[m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"]
+    if not _failure_receipt_detected(raw):
+        return None
+    assistants=[m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"]
     if not assistants:
         return None
     prior=assistants[0]
@@ -236,7 +242,8 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
         "exactCandidateRepeatCount":exact_repeat_count,
         "stalledRepair":exact_repeat_count>=1,
         "failureSignals":receipt_failure_lines,
-        "receiptSemantics":_receipt_semantics(raw),\n        "repairActions":_repair_actions(_receipt_semantics(raw)),
+        "receiptSemantics":_receipt_semantics(raw),
+        "repairActions":_repair_actions(_receipt_semantics(raw)),
     }
 
 def _looks_like_failure_receipt(text: str) -> bool:
