@@ -121,7 +121,8 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     prior=assistants[0]
     prior_text=str(prior.get("content") or prior.get("text") or "").strip()
     raw_norm=" ".join(raw.lower().split())
-    prior_candidate=_extract_candidate_code(prior_text)\n    prior_norm=" ".join(prior_candidate.lower().split())
+    prior_candidate=_extract_candidate_code(prior_text)
+    prior_norm=" ".join(prior_candidate.lower().split())
     # Convergence signal: receipts can be routed perfectly while a small model
     # repeats the same candidate. Count exact normalized candidate repeats so the
     # engine can force a strategy change instead of rewarding cosmetic rewrites.
