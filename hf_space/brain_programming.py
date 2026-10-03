@@ -3,7 +3,8 @@
 This module classifies semantic programming continuation only. It never mutates
 threads, pins, artifacts, files, tools, deployments, or other operational state.
 """
-from __future__ import annotations\nimport hashlib
+from __future__ import annotations
+import hashlib
 from typing import Any
 import re
 
