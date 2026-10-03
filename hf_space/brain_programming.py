@@ -146,12 +146,29 @@ def _receipt_semantics(raw: str) -> dict[str, Any]:
         ("runtime",r"(?i)runtimeerror|exception|traceback"),
         ("timeout",r"(?i)timeout|timed out"),
         ("behavior-mismatch",r"(?i)expected.+(?:actual|got|received)|(?:actual|got|received).+expected"),
+        ("lint",r"(?i)\\blint(?:er|ing)?\\b|eslint|ruff|flake8|pylint"),
+        ("typecheck",r"(?i)typecheck|type-check|mypy|pyright|tsc\\b|typescript.+error"),
+        ("dependency",r"(?i)module not found|no module named|cannot resolve|package.+not found|dependency"),
     )
     for name,pattern in probes:
         if re.search(pattern,text): categories.append(name)
+    locations=[]
+    for pattern in (
+        r"(?m)([A-Za-z0-9_./\\-]+\\.[A-Za-z0-9_]+):(\\d+)(?::(\\d+))?",
+        r'(?i)File "([^"]+)", line (\\d+)(?:, in ([^\\n]+))?',
+        r"(?i)\\bline\\s+(\\d+)(?:[, :]\\s*column\\s+(\\d+))?",
+    ):
+        for match in re.finditer(pattern,text):
+            value=":".join(str(x) for x in match.groups() if x)
+            if value and value not in locations: locations.append(value[:300])
+    test_names=[]
+    for line in lines:
+        match=re.search(r"(?i)(?:FAIL|FAILED|ERROR)\\s+([^\\s:]+(?:::[^\\s:]+)*)",line)
+        if match and match.group(1) not in test_names:test_names.append(match.group(1)[:300])
     return {
-        "categories":categories[:8],"exceptionTypes":exceptions[:8],"exitCodes":exit_codes[:8],
+        "categories":categories[:12],"exceptionTypes":exceptions[:8],"exitCodes":exit_codes[:8],
         "failingSignals":failing[:12],"passingSignals":passing[:8],"expectedActual":mismatches[:8],
+        "sourceLocations":locations[:12],"failingTests":test_names[:12],
     }
 
 
@@ -185,6 +202,9 @@ def _repair_actions(semantics: dict[str, Any]) -> list[str]:
         ("build","repair the failing build/compile stage while preserving unrelated build configuration"),
         ("runtime","trace the exception to its first relevant application frame and repair the causing state/operation"),
         ("timeout","remove the blocking/unbounded operation while preserving required ordering and completion semantics"),
+        ("lint","repair the reported lint rule at the implicated source without changing unrelated behavior"),
+        ("typecheck","repair the static type mismatch at the producer/consumer boundary while preserving runtime semantics"),
+        ("dependency","repair the import/module/dependency boundary using only dependencies supported by project evidence"),
     )
     for key,action in mapping:
         if key in categories: actions.append(action)
