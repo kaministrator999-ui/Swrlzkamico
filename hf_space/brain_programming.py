@@ -240,10 +240,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     }
 
 def _looks_like_failure_receipt(text: str) -> bool:
-    lower=str(text or "").lower()
-    markers=("syntaxerror","typeerror","nameerror","referenceerror","error:","compilation failed","build failed","failed to compile","cannot find symbol","unresolved reference","undefined reference","exit code","test failed","tests failed","assertionerror")
-    return bool(text) and any(marker in lower for marker in markers)
-
+    return _failure_receipt_detected(text)
 
 def _original_programming_request(history: list[dict[str, Any]]) -> str:
     """Recover the earliest user request in the current coding exchange, excluding execution receipts."""
