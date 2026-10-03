@@ -161,7 +161,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
         "previousAssistantCandidateId":str(prior.get("id") or ""),
         "previousAssistantCandidateComparable":bool(prior_norm),
         "exactCandidateRepeatCount":exact_repeat_count,
-        "stalledRepair":exact_repeat_count>=2,
+        "stalledRepair":exact_repeat_count>=1,
         "failureSignals":receipt_failure_lines,
     }
 
