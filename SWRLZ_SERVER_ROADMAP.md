@@ -1,3 +1,18 @@
+## UPDATE FINISHED — 2026-10-02 — Receipt repair crash + transport ceiling v108
+
+Review 12 independently reproduced a pre-inference `NameError`: repair diagnostics call `hashlib.sha256()` without importing `hashlib`. Both Python and JavaScript receipt loops therefore stopped on their first genuine receipt.
+
+**Changes**
+- `hf_space/lfm2_700m_engine.py`: import standard-library `hashlib`; no repair semantics changed.
+- `hf_space/station.py`: raise account-backed chat prompt transport ceiling from 16,000 to 32,768 characters so the observed 18,976-character authentic Python receipt can enter the server. Structured repair evidence remains independently bounded at 6,000 characters and model context budgeting remains unchanged.
+- Preserve Review 12 as blocked/non-positive evidence; no repair-quality conclusion is promoted from this run.
+
+**Versions**
+- Repository Work: `1.0.55`
+- LALM Engine: `2.1.132` / `2.1.132-hf-repair-crash-fix-v108`
+
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD VERIFIED / REVIEW-REPRODUCED ROOT CAUSE ADDRESSED / DEPLOYMENT REQUIRED / BEHAVIORAL ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-02 — Durable repair diagnostic capture v107
 
 **Finding:** no existing runtime-to-GitHub repair-log persistence path was present. The HF probe only produced a temporary downloadable JSON and stdout logs; unknown engine events were reduced to phase/detail and the new repair diagnostic payloads were not durably stored.
