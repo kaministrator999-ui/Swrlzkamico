@@ -265,6 +265,11 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     failure_evidence=_user_failure_evidence(text,history or [])
     prior_state=prior_state if isinstance(prior_state,dict) else {}
     prior_contract=prior_state.get("intentContract") if isinstance(prior_state.get("intentContract"),dict) else {}
+    prior_failure_history=prior_state.get("failureHistory") if isinstance(prior_state.get("failureHistory"),list) else []
+    failure_history=[dict(x) for x in prior_failure_history[-3:] if isinstance(x,dict)]
+    if failure_evidence:
+        failure_history.append({"categories":list((failure_evidence.get("receiptSemantics") or {}).get("categories") or [])[:6],"failureSignals":list(failure_evidence.get("failureSignals") or [])[:8],"candidateFingerprint":failure_evidence.get("candidateFingerprint"),"repairActions":list(failure_evidence.get("repairActions") or [])[:6]})
+        failure_history=failure_history[-4:]
     correction_direction=bool(prior_contract) and any(x in p for x in ("still","instead","required","requirement","must","should","keep","preserve","do not","don't","wrong","incorrect","guidance","fix","repair","change only","return only"))
     canonical_carry=bool(prior_contract) and not failure_evidence and correction_direction and not any(x in p for x in _NEW_PROJECT)
     original_request=_original_programming_request(history or []) if failure_evidence else ""
@@ -326,5 +331,6 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         "repairDirection":text[:4000] if ((failure_evidence and original_request) or canonical_carry) else "",
         "canonicalCarry":canonical_carry,
         "failureEvidence":failure_evidence,
+        "failureHistory":failure_history,
         "source":"brain-router",
     }
