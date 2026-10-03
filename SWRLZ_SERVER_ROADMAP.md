@@ -1,3 +1,23 @@
+## UPDATE FINISHED — 2026-10-03 — Review-15 semantic repair convergence v111
+
+**Evidence:** unchanged 700M receipt-only Python and JavaScript tasks, five genuine receipts each.
+
+**Observed**
+- Python stalled at 16/20 across all six candidates. Its persistent defect was equality-based boolean membership: integer 1 equals True, while exact integer-subclass rejection also remained wrong.
+- Sorting improved from 0/4 to 2/4 after allocating a new array, but the reduce/splice repair dropped messages; the last four candidate sources were byte-identical.
+- Receipt routing, original-contract carry, diagnostics, compilation, and context budgeting were stable; neither task achieved the full original behavioral contract.
+- Previous/new repair fingerprints used different normalization, so outcome telemetry could claim candidateChanged when executable code had not changed.
+
+**Implemented**
+- Engine repair outcome now fingerprints the new response with the same primary-candidate normalizer used for the previous candidate.
+- Brain stall detection now uses only the first/primary executable fence, strips Markdown container indentation, and ignores comment-only changes; examples and documentation no longer reset executable stall detection.
+- Compact Python repair prior now distinguishes type identity from equality/membership against booleans and preserves explicit sentinel/default behavior separately.
+- Compact JavaScript sorting prior now requires a shallow copied message array and preservation of every original message object/field; Date mapping and replacement operations that drop accumulated elements are explicitly excluded.
+
+**Versions:** Repository Work `1.0.58`; LALM Engine `2.1.135` / `2.1.135-hf-semantic-repair-convergence-v111`; Server Runtime unchanged.
+
+**Truth:** SOURCE COMPLETE / STATIC REREAD REQUIRED / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-03 — Review-14 primary-candidate convergence v110
 
 **Evidence:** independent receipt-only retry on live 700M. Python ended 11/20 after five receipts and sorting remained 0/4; neither repair chain beat its best known candidate. Context overflow was eliminated and repair diagnostics exported, but convergence comparison still mixed executable code with prose/comments/examples.
