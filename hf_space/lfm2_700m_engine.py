@@ -435,6 +435,8 @@ def _repair_diagnostic(programming,history):
         "stalledRepair":bool(evidence.get("stalledRepair")),
         "failureSignalCount":len(signals),
         "failureSignals":[str(x)[:300] for x in signals[:8]],
+        "receiptSemantics":evidence.get("receiptSemantics") if isinstance(evidence.get("receiptSemantics"),dict) else {},
+        "repairActions":[str(x)[:500] for x in (evidence.get("repairActions") or [])[:6]],
         "contractBound":bool(programming.get("intentContract")),
         "canonicalCarry":bool(programming.get("canonicalCarry")),
     }
@@ -633,6 +635,8 @@ def generate_events(payload):
             "regenerationReason":regeneration_reason or None,
             "candidateValidationStatus":candidate_check.get("status"),
             "candidateValidationReasons":candidate_check.get("reasons",[])[:8],
+            "receiptCategories":list((repair_diagnostic.get("receiptSemantics") or {}).get("categories") or [])[:12],
+            "repairActions":list(repair_diagnostic.get("repairActions") or [])[:6],
             "executionVerified":False,
         }}
     yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":round((time.perf_counter()-started)*1000,3),"loadLatencyMs":round((loaded-started)*1000,3),"firstDeltaLatencyMs":first_delta}
