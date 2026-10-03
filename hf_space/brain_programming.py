@@ -201,7 +201,9 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
         "previousAssistantCandidateComparable":bool(prior_norm),
         "exactCandidateRepeatCount":exact_repeat_count,
         "stalledRepair":exact_repeat_count>=1,
-        "failureSignals":receipt_failure_lines,\n        "receiptSemantics":_receipt_semantics(raw),\n    }
+        "failureSignals":receipt_failure_lines,
+        "receiptSemantics":_receipt_semantics(raw),
+    }
 
 def _looks_like_failure_receipt(text: str) -> bool:
     lower=str(text or "").lower()
