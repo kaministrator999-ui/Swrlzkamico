@@ -563,9 +563,8 @@ def generate_events(payload):
     candidate_check=_candidate_structure_check(candidate_text,programming,history)
     yield {"type":"CANDIDATE_VALIDATION","validation":candidate_check}
     if repair_diagnostic:
-        candidate_norm=" ".join(candidate_text.split())
         previous_fp=repair_diagnostic.get("candidateFingerprint")
-        candidate_fp=hashlib.sha256(candidate_norm.encode("utf-8")).hexdigest()[:16] if candidate_norm else None
+        candidate_fp=_candidate_fingerprint(candidate_text)
         yield {"type":"REPAIR_OUTCOME_DIAGNOSTIC","diagnostic":{
             "schema":"swrlz-repair-outcome-v1",
             "previousCandidateFingerprint":previous_fp,
