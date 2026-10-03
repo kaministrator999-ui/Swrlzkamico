@@ -1,3 +1,23 @@
+## UPDATE FINISHED — 2026-10-03 — Generalized coding/log repair continuation v115
+
+**Goal:** continue broad coding/log repair work across languages and failure modes, using the latest verified repository lineage rather than fixture-specific patches.
+
+**Evidence basis:** latest unchanged-fixture review shows Python fixed at 16/20 across all five receipts and JavaScript reaching 2/4 then stalling. Receipt recognition, original-contract carry, compilation, diagnostic export, and context handling are working; semantic repair and cross-round convergence remain the limiting layer. file evidence retained in conversation review (15).md.
+
+**Implemented**
+- Added bounded failure-history carry to programming state: up to four recent receipt summaries survive across repair rounds with failure categories, observed failure signals, candidate identity, and generalized repair actions.
+- Added the bounded history to repair cognition as a regression guard so each new repair considers earlier unresolved failures instead of treating only the newest receipt as the whole problem.
+- Preserved language-agnostic handling for compiler, build, runtime, test/assertion, expected/actual, symbol/name, type, and timeout evidence.
+- Preserved primary-executable fingerprinting and bounded regeneration gates already present in current source; logs remain evidence and structural validation remains explicitly non-semantic.
+- Corrected version lineage after static reread showed runtime had already advanced beyond the earlier checkpoint.
+
+**Versions**
+- Repository Work: `1.0.62`
+- LALM Engine: `2.1.139` / `2.1.139-hf-generalized-log-repair-v115`
+- Server Runtime: unchanged pending successful deployment verification.
+
+**Truth:** SOURCE COMPLETE / STATIC REREAD VERIFIED / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-03 — Generalized coding/log repair continuation v104
 
 **Goal:** improve coding repair across languages and failure types rather than overfitting the runtime to the two current fixtures.
