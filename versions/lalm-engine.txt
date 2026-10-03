@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.139
-REVISION=2.1.139-hf-generalized-log-repair-v115
+VERSION=2.1.140
+REVISION=2.1.140-hf-structured-log-semantics-v116
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
