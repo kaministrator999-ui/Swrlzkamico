@@ -393,6 +393,25 @@ def _candidate_structure_check(text, programming, history):
     if previous and "export " not in previous and "export " in source and not re.search(r"\b(?:module|esm|es module|export)\b",original,re.I): reasons.append("loading-format-changed-to-module")
     return {"status":"REJECT" if reasons else "PASS","reasons":reasons}
 
+def _primary_candidate_code(text):
+    source=str(text or "")
+    matches=list(re.finditer(r"```([^\n`]*)\n([\s\S]*?)```",source))
+    if not matches:
+        return "\n".join(line.rstrip() for line in source.strip().splitlines())
+    match=matches[0]
+    code=str(match.group(2) or "")
+    nonempty=[len(line)-len(line.lstrip(" ")) for line in code.splitlines() if line.strip()]
+    trim=min(nonempty) if nonempty else 0
+    if trim:
+        code="\n".join(line[trim:] if line.strip() else "" for line in code.splitlines())
+    return "\n".join(line.rstrip() for line in code.strip().splitlines())
+
+def _candidate_fingerprint(text):
+    code=_primary_candidate_code(text)
+    semantic="\n".join(line for line in code.splitlines() if not re.match(r"^\s*(?:#|//)",line))
+    normalized=" ".join(semantic.split())
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:16] if normalized else None
+
 def _repair_diagnostic(programming,history):
     """Bounded observable repair telemetry; never hidden chain-of-thought."""
     evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
