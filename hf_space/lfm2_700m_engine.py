@@ -257,10 +257,11 @@ def _fit_repair_messages(model,system,history,prompt):
         messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":fitted_prompt}]
     input_tokens=_token_count(model,messages)
     if input_tokens>max_input:
-        raise ValueError(f"Repair context uses {input_tokens} tokens; shared input/output budget leaves {max_input} input tokens.")
+        # Return the fitted components so callers can emit truthful rejection telemetry.
+        return messages,len(history)-len(recent),input_tokens,0,fitted_prompt
     desired_output=min(desired_output,max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
     response_tokens=min(OUTPUT_TOKENS,desired_output)
-    return messages,len(history)-len(recent),input_tokens,response_tokens
+    return messages,len(history)-len(recent),input_tokens,response_tokens,fitted_prompt
 
 def _user_name_from_profile(user_profile):
     for line in str(user_profile or "").splitlines():
@@ -531,11 +532,19 @@ def generate_events(payload):
     model=load()
     repair_turn=bool(programming.get("failureEvidence")) or bool(programming.get("canonicalCarry"))
     fitter=_fit_repair_messages if repair_turn else _fit_messages
-    messages,dropped_history,input_tokens,available_output_tokens=fitter(model,system,history,prompt)
+    fitted=fitter(model,system,history,prompt)
+    if repair_turn:
+        messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
+    else:
+        messages,dropped_history,input_tokens,available_output_tokens=fitted
+        fitted_prompt=prompt
     system_tokens=_token_count(model,[{"role":"system","content":system}])
-    prompt_tokens=_token_count(model,[{"role":"user","content":prompt}])
+    prompt_tokens=_token_count(model,[{"role":"user","content":fitted_prompt}])
     history_tokens=max(0,input_tokens-system_tokens-prompt_tokens)
     yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":INPUT_BUDGET_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2,"repairTurn":repair_turn,"tokenBreakdown":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
+    if repair_turn and available_output_tokens<=0:
+        yield {"type":"FAILED","phase":"CONTEXT_REJECTED","reason":f"Repair context uses {input_tokens} tokens; maximum fitted input is {CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS}.","contextBudget":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
+        return
     loaded=time.perf_counter()
     yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":round((loaded-started)*1000,3)}
     first_delta=None
