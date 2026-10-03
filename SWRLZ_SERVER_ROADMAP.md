@@ -1,3 +1,23 @@
+## UPDATE FINISHED — 2026-10-03 — 700M primary-code stall + repair-budget convergence v112
+
+**Evidence basis:** independently audited unchanged Python `parse_max_tokens` and JavaScript `sortMessages` receipt loops from the latest user-supplied review. Python remained 16/20 through five receipts; sorting improved from 0/4 to 2/4 but then repeated a data-losing reduce/splice implementation.
+
+**Implemented**
+- Unified Brain stall comparison around the primary executable fence, excluding surrounding prose, secondary examples, and comment-only edits from executable-progress identity.
+- First exact executable repeat now marks the repair stalled; the engine's mandatory strategy-change path no longer waits for a second repeated repair.
+- Tightened Python exact-type guidance against equality/membership boolean tests such as `value in (True, False)`, which incorrectly catches integers 0/1 and does not reject integer subclasses.
+- Tightened sorting preservation guidance: copy the complete caller array shallowly, preserve every original element/object identity, and sort the copy; explicitly reject splice/replacement reconstruction that drops messages.
+- Repair-context fitting now returns the actual fitted/compacted prompt to telemetry. `currentPrompt` token accounting therefore describes the prompt actually sent to inference.
+- If repair context still cannot fit, the engine emits a CONTEXT event with fitted component breakdown followed by a terminal CONTEXT_REJECTED failure instead of raising before context telemetry.
+- Existing engine `_candidate_fingerprint` already hashes primary executable code with comment-only lines removed; outcome comparison continues using that normalization.
+
+**Versions**
+- Repository Work: `1.0.59`
+- LALM Engine: `2.1.136` / `2.1.136-hf-primary-code-stall-budget-v112`
+- Server Runtime: unchanged `2.3.309`
+
+**Truth:** SOURCE COMPLETE / STATIC REREAD PENDING / RUNTIME DEPLOYMENT REQUIRED / BEHAVIORAL ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-03 — Review-15 semantic repair convergence v111
 
 **Evidence:** unchanged 700M receipt-only Python and JavaScript tasks, five genuine receipts each.
