@@ -3,7 +3,7 @@
 This module classifies semantic programming continuation only. It never mutates
 threads, pins, artifacts, files, tools, deployments, or other operational state.
 """
-from __future__ import annotations
+from __future__ import annotations\nimport hashlib
 from typing import Any
 import re
 
@@ -100,6 +100,14 @@ def _programming_intent_contract(prompt: str, change_class: str) -> dict[str, An
     }
 
 
+def _extract_candidate_code(text: str) -> str:
+    """Normalize executable candidate content separately from surrounding prose."""
+    raw=str(text or "").strip()
+    fenced=re.findall(r"```[^\n`]*\n([\s\S]*?)```",raw)
+    candidate="\n\n".join(part.strip() for part in fenced if part.strip()) if fenced else raw
+    return "\n".join(line.rstrip() for line in candidate.strip().splitlines())
+
+
 def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[str, Any] | None:
     raw=str(prompt or "").strip()
     lower=raw.lower()
@@ -112,7 +120,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     prior=assistants[0]
     prior_text=str(prior.get("content") or prior.get("text") or "").strip()
     raw_norm=" ".join(raw.lower().split())
-    prior_norm=" ".join(prior_text.lower().split())
+    prior_candidate=_extract_candidate_code(prior_text)\n    prior_norm=" ".join(prior_candidate.lower().split())
     # Convergence signal: receipts can be routed perfectly while a small model
     # repeats the same candidate. Count exact normalized candidate repeats so the
     # engine can force a strategy change instead of rewarding cosmetic rewrites.
@@ -120,7 +128,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     for item in history or []:
         if not isinstance(item,dict) or str(item.get("role") or "")!="assistant":
             continue
-        candidate_norm=" ".join(str(item.get("content") or item.get("text") or "").lower().split())
+        candidate_norm=" ".join(_extract_candidate_code(str(item.get("content") or item.get("text") or "")).lower().split())
         if candidate_norm:
             assistant_norms.append(candidate_norm)
     exact_repeat_count=sum(1 for candidate_norm in assistant_norms if candidate_norm==prior_norm)
