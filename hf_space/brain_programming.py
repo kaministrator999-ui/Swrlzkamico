@@ -195,11 +195,7 @@ def _repair_actions(semantics: dict[str, Any]) -> list[str]:
 
 def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[str, Any] | None:
     raw=str(prompt or "").strip()
-    lower=raw.lower()
-    markers=("syntaxerror","typeerror","nameerror","referenceerror","error:","compilation failed","build failed","failed to compile","cannot find symbol","unresolved reference","undefined reference","exit code","test failed","tests failed","assertionerror")
-    if not raw or not any(marker in lower for marker in markers):
-        return None
-    assistants=[m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"]
+    if not _failure_receipt_detected(raw):\n        return None\n    assistants=[m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"]
     if not assistants:
         return None
     prior=assistants[0]
