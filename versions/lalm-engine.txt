@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.134
-REVISION=2.1.134-hf-primary-candidate-convergence-v110
+VERSION=2.1.135
+REVISION=2.1.135-hf-semantic-repair-convergence-v111
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
