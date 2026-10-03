@@ -1,3 +1,25 @@
+## UPDATE FINISHED — 2026-10-03 — General log-driven coding repair v113
+
+**Goal:** improve coding + log-driven repair as a general capability rather than continuing to hard-code the two current Python/JavaScript fixtures.
+
+**Evidence basis:** latest unchanged-task receipt runs show reliable receipt routing/contract retention but repeated semantic stalls: Python remains 16/20 across all five receipts and JavaScript plateaus at 2/4; structural PASS and compilation are not semantic proof.
+
+**Implemented**
+- Brain now extracts bounded language-agnostic receipt semantics from compiler/test/runtime/build feedback: failure categories, exception/failure types, exit codes, failing signals, passing signals, and expected-vs-actual mismatch lines.
+- Programming repair policy is generalized across languages/toolchains. Logs are evidence about the candidate, not replacement requirements. The model is directed to map observed failures to source operations while preserving passing behavior and the original contract.
+- Removed fixture-specific Python/sorting coaching from the compact coding system prompt so improvement is not coupled to the current benchmark.
+- Repair generations are now buffered before commit. If the first proposed executable candidate is unchanged from the failing predecessor or fails deterministic structural validation, the engine performs one bounded strategy-change regeneration before exposing/committing the candidate.
+- The retry gate explicitly requires a different complete executable candidate and forbids comments/prose/placeholders as the repair itself.
+- Repair outcome diagnostics advance to v2 and expose whether bounded regeneration occurred and why, while keeping `executionVerified=false` until genuine external execution evidence exists.
+- Existing primary-code fingerprints, canonical intent carry, receipt ownership, context compaction, structural/API checks, and diagnostic export remain in place.
+
+**Versions**
+- Repository Work: `1.0.60`
+- LALM Engine: `2.1.137` / `2.1.137-hf-general-log-repair-v113`
+- Server Runtime: unchanged until deployment verification.
+
+**Truth:** SOURCE COMPLETE / STATIC REREAD VERIFIED / LIVE SEMANTIC ACCEPTANCE REQUIRES DEPLOYMENT + INDEPENDENT MULTI-SCENARIO RECEIPT TESTING.
+
 ## UPDATE FINISHED — 2026-10-03 — 700M primary-code stall + repair-budget convergence v112
 
 **Evidence basis:** independently audited unchanged Python `parse_max_tokens` and JavaScript `sortMessages` receipt loops from the latest user-supplied review. Python remained 16/20 through five receipts; sorting improved from 0/4 to 2/4 but then repeated a data-losing reduce/splice implementation.
