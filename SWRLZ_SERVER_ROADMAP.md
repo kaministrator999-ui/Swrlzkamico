@@ -1,3 +1,23 @@
+## UPDATE FINISHED — 2026-10-03 — Review-14 primary-candidate convergence v110
+
+**Evidence:** independent receipt-only retry on live 700M. Python ended 11/20 after five receipts and sorting remained 0/4; neither repair chain beat its best known candidate. Context overflow was eliminated and repair diagnostics exported, but convergence comparison still mixed executable code with prose/comments/examples.
+
+**Implemented**
+- Repair convergence/outcome fingerprints now use the primary executable fenced candidate rather than the whole assistant reply.
+- Common Markdown container indentation on the primary fence is removed before fingerprinting, preserving relative code indentation.
+- Comment-only changes are excluded from the semantic repair fingerprint so cosmetic comments cannot masquerade as algorithmic progress.
+- Candidate validation now rejects explicit TODO/FIXME/rest-of-code placeholders instead of structurally passing an unfinished stub.
+- Existing compact receipt transport and diagnostic carriage remain intact.
+
+**Still independent-evaluator work**
+- Structural validation remains distinct from behavioral execution; no generated command/log is treated as proof.
+- Full original-contract execution remains the external acceptance authority.
+- Token telemetry still needs fitted-component accounting on compacted receipts.
+
+**Versions:** Repository Work `1.0.57`; LALM `2.1.134` / `2.1.134-hf-primary-candidate-convergence-v110`; Server Runtime unchanged.
+
+**Truth:** SOURCE COMPLETE / STATIC REREAD PENDING / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-02 — Receipt-only loop convergence hardening v109
 
 **Evidence basis:** user-supplied `review (13).md`.
