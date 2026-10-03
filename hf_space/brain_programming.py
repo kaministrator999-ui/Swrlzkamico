@@ -102,12 +102,16 @@ def _programming_intent_contract(prompt: str, change_class: str) -> dict[str, An
 
 
 def _extract_candidate_code(text: str) -> str:
-    """Normalize executable candidate content separately from surrounding prose."""
+    """Normalize the primary executable candidate independently of prose/examples."""
     raw=str(text or "").strip()
-    fenced=re.findall(r"```[^\n`]*\n([\s\S]*?)```",raw)
-    candidate="\n\n".join(part.strip() for part in fenced if part.strip()) if fenced else raw
-    return "\n".join(line.rstrip() for line in candidate.strip().splitlines())
-
+    match=re.search(r"```[^\\n`]*\\n([\\s\\S]*?)```",raw)
+    candidate=str(match.group(1) or "") if match else raw
+    lines=candidate.splitlines()
+    nonempty=[len(line)-len(line.lstrip(" ")) for line in lines if line.strip()]
+    trim=min(nonempty) if nonempty else 0
+    if trim: lines=[line[trim:] if line.strip() else "" for line in lines]
+    semantic=[line.rstrip() for line in lines if not re.match(r"^\\s*(?:#|//)",line)]
+    return "\\n".join(semantic).strip()
 
 def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[str, Any] | None:
     raw=str(prompt or "").strip()
