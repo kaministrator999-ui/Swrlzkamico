@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.137
-REVISION=2.1.137-hf-general-log-repair-v113
+VERSION=2.1.138
+REVISION=2.1.138-hf-generalized-repair-controller-v114
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
