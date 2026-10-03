@@ -370,7 +370,7 @@ def _candidate_structure_check(text, programming, history):
         from collections import Counter
         if max(Counter(lines).values())>=8: reasons.append("repetition-loop")
     code_like=bool(re.search(r"\b(?:def|function|class|const|let|var|import|export)\b|=>|[{};]",source))
-    if not code_like: reasons.append("no-code-candidate")
+    if not code_like: reasons.append("no-code-candidate")\n    candidate_primary=_primary_candidate_code(source)\n    if re.search(r"(?im)^\\s*(?:#|//)\\s*(?:rest of|remaining|todo|implementation continues|code continues)|\\b(?:TODO|FIXME)\\b",candidate_primary): reasons.append("placeholder-or-incomplete-candidate")
     contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
     original=str(contract.get("originalRequest") or "")
     names=[]
