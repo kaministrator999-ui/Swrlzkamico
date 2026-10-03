@@ -1,3 +1,24 @@
+## UPDATE FINISHED — 2026-10-03 — Generalized coding/log repair continuation v104
+
+**Goal:** improve coding repair across languages and failure types rather than overfitting the runtime to the two current fixtures.
+
+**Evidence basis:** the latest unchanged-fixture 700M run still stalls: Python remains 16/20 through five receipts and JavaScript reaches 2/4 then repeats the same broken executable candidate. The evidence also shows receipt recognition, contract retention, diagnostic export, compilation, and context budgeting are now functioning; the remaining weakness is semantic repair and convergence.
+
+**Implemented**
+- Preserved the language-agnostic receipt classifier for compiler, build, runtime, test/assertion, expected/actual, symbol/name, type, and timeout failures.
+- Unified repair behavior around executable-candidate fingerprints rather than whole-reply prose and retained bounded retry gates for unchanged or structurally rejected repairs.
+- Added bounded **failure-history carry** to the programming state. Up to four recent receipt summaries now survive across repair rounds with categories, failing signals, candidate identity, and repair actions.
+- Injected that bounded history into repair cognition as a regression guard so a later repair must preserve fixes and cannot treat only the newest log line as the entire problem.
+- Kept the original intent contract authoritative; logs remain diagnostic evidence, never replacement requirements.
+- Kept structural validation explicitly separate from semantic/execution truth. A compile/PASS envelope still cannot claim behavioral correctness without independent execution evidence.
+
+**Versions**
+- Repository Work: `1.0.50`
+- LALM Engine: `2.1.128` / `2.1.128-hf-generalized-log-repair-v104`
+- Server Runtime: unchanged pending successful deployment verification.
+
+**Truth:** SOURCE COMPLETE / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-03 — Generalized coding/log repair controller v114
 
 **Goal:** improve coding repair as a general capability rather than teaching the 700M two benchmark answers.
