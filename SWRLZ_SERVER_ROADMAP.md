@@ -1,3 +1,27 @@
+## UPDATE FINISHED — 2026-10-02 — Receipt-loop convergence + repair-budget hardening v104
+
+**Evidence basis:** user-supplied `review (13).md`, receipt-only 700M workflow.
+
+**Observed**
+- Python remains 8/20 after receipt 1, then receipt 2 is rejected at 7,738 input tokens versus the 7,680-token minimum-output input ceiling.
+- Sorting completes five receipt rounds but ends 1/4: later candidates avoid mutation by returning sorted Date objects rather than the original messages.
+- All evaluated candidates compile; failures are semantic/original-contract failures rather than syntax/wrapper failures.
+- Stall detection compares whole assistant replies, so identical code with different prose is missed.
+- Repair diagnostic phase names survive in Station status, but diagnostic payloads were not persisted for export.
+
+**Implemented**
+- Brain repair repetition now fingerprints/exact-compares extracted fenced candidate code rather than whole assistant prose, so prose-only changes cannot hide a repeated implementation.
+- Oversized repair prompts are budgeted before inference; after disposable short history is dropped, large receipt prose is bounded by preserving head/tail evidence rather than failing immediately when the full receipt would crowd out the minimum response reservation.
+- Station now persists `REPAIR_DIAGNOSTIC` and `REPAIR_OUTCOME_DIAGNOSTIC` payloads in generation state instead of retaining only phase names.
+- Existing original-contract/two-gate behavior remains authoritative; envelope PASS is not semantic acceptance.
+
+**Versions**
+- Repository Work: `1.0.50`
+- LALM Engine: `2.1.128` / `2.1.128-hf-receipt-loop-convergence-v104`
+- Server Runtime: unchanged `2.3.309`
+
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD PENDING / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-02 — Receipt repair crash + transport ceiling v108
 
 Review 12 independently reproduced a pre-inference `NameError`: repair diagnostics call `hashlib.sha256()` without importing `hashlib`. Both Python and JavaScript receipt loops therefore stopped on their first genuine receipt.
