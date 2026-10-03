@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.136
-REVISION=2.1.136-hf-primary-code-stall-budget-v112
+VERSION=2.1.137
+REVISION=2.1.137-hf-general-log-repair-v113
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
