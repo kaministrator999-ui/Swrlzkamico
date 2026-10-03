@@ -1,3 +1,27 @@
+## UPDATE FINISHED — 2026-10-02 — Receipt-only loop convergence hardening v109
+
+**Evidence basis:** user-supplied `review (13).md`.
+
+**Observed**
+- Python remains 8/20 after receipt 1; receipt 2 has no candidate because repair input reaches 7,738 tokens against a 7,680-token minimum-output ceiling.
+- Sorting completes five receipt rounds but ends 1/4; later repairs avoid mutation by returning Date objects instead of the original message objects.
+- All eight evaluated candidates compile, isolating the remaining failures to semantics/original-contract satisfaction plus repair-context budgeting.
+- Existing stall telemetry compares normalized whole assistant replies, so byte-identical code with changed prose is missed.
+- Station records repair diagnostic phase names but previously discarded their detailed payloads from exported generation state.
+
+**Implemented**
+- Repair repetition detection now extracts fenced candidate code before normalization/fingerprinting, separating executable candidate identity from surrounding prose.
+- Repair fitting now pre-budgets against the minimum-output context ceiling, drops disposable short history first, and bounds oversized receipt text with preserved head/tail evidence before rejecting the turn.
+- Station now persists full `REPAIR_DIAGNOSTIC` / `REPAIR_OUTCOME_DIAGNOSTIC` payloads in generation state for export/audit.
+- Original contract and two-gate completion remain authoritative; candidate-envelope PASS is explicitly not semantic acceptance.
+
+**Versions**
+- Repository Work: `1.0.56`
+- LALM Engine: `2.1.133` / `2.1.133-hf-receipt-convergence-v109`
+- Server Runtime: unchanged `2.3.309`
+
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD PENDING / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-02 — Receipt-loop convergence + repair-budget hardening v104
 
 **Evidence basis:** user-supplied `review (13).md`, receipt-only 700M workflow.
