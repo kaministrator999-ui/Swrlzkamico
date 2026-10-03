@@ -116,6 +116,45 @@ def _extract_candidate_code(text: str) -> str:
 
 
 
+def _receipt_semantics(raw: str) -> dict[str, Any]:
+    """Extract bounded, language-agnostic repair facts from compiler/test/runtime logs."""
+    text=str(raw or "")
+    lines=[line.strip() for line in text.splitlines() if line.strip()]
+    exceptions=[]
+    for match in re.finditer(r"\b([A-Za-z_][A-Za-z0-9_]*(?:Error|Exception|Failure))\b",text):
+        value=match.group(1)
+        if value not in exceptions: exceptions.append(value)
+    exit_codes=[]
+    for match in re.finditer(r"(?i)\b(?:exit(?:\s+code|\s+status)?|status)\s*[:=]?\s*(-?\d+)\b",text):
+        value=int(match.group(1))
+        if value not in exit_codes: exit_codes.append(value)
+    failing=[]; passing=[]; mismatches=[]
+    for line in lines:
+        if re.search(r"(?i)\b(?:fail(?:ed|ure)?|assert(?:ion)?|mismatch|expected|actual|error)\b",line):
+            failing.append(line[:500])
+        elif re.search(r"(?i)\b(?:pass(?:ed)?|ok|success(?:ful)?)\b",line):
+            passing.append(line[:500])
+        if re.search(r"(?i)\bexpected\b",line) and re.search(r"(?i)\bactual|got|received\b",line):
+            mismatches.append(line[:500])
+    categories=[]
+    probes=(
+        ("syntax",r"(?i)syntax|parse error|unexpected token|indentationerror"),
+        ("type",r"(?i)typeerror|wrong type|type mismatch"),
+        ("name-or-symbol",r"(?i)nameerror|referenceerror|cannot find symbol|unresolved reference|not defined"),
+        ("assertion",r"(?i)assertionerror|assertion failed|test failed|tests failed"),
+        ("build",r"(?i)compilation failed|build failed|failed to compile"),
+        ("runtime",r"(?i)runtimeerror|exception|traceback"),
+        ("timeout",r"(?i)timeout|timed out"),
+        ("behavior-mismatch",r"(?i)expected.+(?:actual|got|received)|(?:actual|got|received).+expected"),
+    )
+    for name,pattern in probes:
+        if re.search(pattern,text): categories.append(name)
+    return {
+        "categories":categories[:8],"exceptionTypes":exceptions[:8],"exitCodes":exit_codes[:8],
+        "failingSignals":failing[:12],"passingSignals":passing[:8],"expectedActual":mismatches[:8],
+    }
+
+
 def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[str, Any] | None:
     raw=str(prompt or "").strip()
     lower=raw.lower()
@@ -162,8 +201,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
         "previousAssistantCandidateComparable":bool(prior_norm),
         "exactCandidateRepeatCount":exact_repeat_count,
         "stalledRepair":exact_repeat_count>=1,
-        "failureSignals":receipt_failure_lines,
-    }
+        "failureSignals":receipt_failure_lines,\n        "receiptSemantics":_receipt_semantics(raw),\n    }
 
 def _looks_like_failure_receipt(text: str) -> bool:
     lower=str(text or "").lower()
