@@ -419,8 +419,7 @@ def _repair_diagnostic(programming,history):
         return None
     target_mid=str(evidence.get("repairTargetMessageId") or "")
     previous=next((str(m.get("content") or "") for m in reversed(history or []) if m.get("role")=="assistant" and (not target_mid or str(m.get("id") or "")==target_mid) and str(m.get("content") or "").strip()),"")
-    normalized=" ".join(previous.split())
-    fingerprint=hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:16] if normalized else None
+    fingerprint=_candidate_fingerprint(previous)
     signals=evidence.get("failureSignals") if isinstance(evidence.get("failureSignals"),list) else []
     return {
         "schema":"swrlz-repair-diagnostic-v1",
