@@ -238,24 +238,28 @@ def _fit_messages(model,system,history,prompt):
     return messages,len(history)-len(kept),input_tokens,response_tokens
 
 def _fit_repair_messages(model,system,history,prompt):
-    """Budget repair input and output against one shared context equation."""
+    """Budget repair input/output before inference; compact oversized receipt prose."""
     recent=[]
     for item in list(history or [])[-6:]:
         content=str(item.get("content") or "")
         if item.get("role")=="user" and len(content)<=1600:
             recent.append(item)
     desired_output=min(1536,OUTPUT_TOKENS)
-    repair_input_budget=CONTEXT_TOKENS-desired_output-CONTEXT_SAFETY_TOKENS
-    messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":prompt}]
-    while recent and _token_count(model,messages)>repair_input_budget:
-        recent.pop(0); messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":prompt}]
+    fitted_prompt=str(prompt or "")
+    max_input=CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS
+    messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":fitted_prompt}]
+    while recent and _token_count(model,messages)>max_input:
+        recent.pop(0); messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":fitted_prompt}]
+    if _token_count(model,messages)>max_input and len(fitted_prompt)>9000:
+        head=fitted_prompt[:3000]
+        tail=fitted_prompt[-6000:]
+        fitted_prompt=head+"\n[...receipt compacted to fit repair context...]\n"+tail
+        messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":fitted_prompt}]
     input_tokens=_token_count(model,messages)
-    if input_tokens>repair_input_budget:
-        desired_output=max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS)
-        repair_input_budget=CONTEXT_TOKENS-desired_output-CONTEXT_SAFETY_TOKENS
-    if input_tokens>repair_input_budget:
-        raise ValueError(f"Repair context uses {input_tokens} tokens; shared input/output budget leaves {repair_input_budget} input tokens.")
-    response_tokens=min(OUTPUT_TOKENS,desired_output,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS)
+    if input_tokens>max_input:
+        raise ValueError(f"Repair context uses {input_tokens} tokens; shared input/output budget leaves {max_input} input tokens.")
+    desired_output=min(desired_output,max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
+    response_tokens=min(OUTPUT_TOKENS,desired_output)
     return messages,len(history)-len(recent),input_tokens,response_tokens
 
 def _user_name_from_profile(user_profile):
