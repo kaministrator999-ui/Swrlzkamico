@@ -1,3 +1,28 @@
+## UPDATE FINISHED — 2026-10-03 — Generalized coding/log repair controller v114
+
+**Goal:** improve coding repair as a general capability rather than teaching the 700M two benchmark answers.
+
+**Evidence basis:** repeated independently audited receipt-loop runs show reliable receipt transport/contract retention but weak semantic repair: Python can remain stuck on the same incorrect operation, sorting can fix ownership while losing data, structural PASS does not imply behavioral correctness, and repeated executable code can hide behind prose/comment changes.
+
+**Implemented**
+- Generalized failure-receipt recognition in `brain_programming.py` across compiler, linker, build, lint/typecheck, test-runner, assertion, runtime/traceback, non-zero exit-status, timeout, and expected-vs-actual log shapes.
+- Added bounded language-agnostic `receiptSemantics` plus `repairActions`: failure categories are converted into source-level obligations such as resolving symbols, tracing types, mapping failed assertions to producing operations, preserving passing behavior, and repairing the first relevant runtime frame.
+- Preserved exact original intent-contract carry and receipt ownership; logs remain evidence and never replace the user's original contract.
+- Upgraded repair generation to a bounded multi-strategy controller. An unchanged executable candidate or structural rejection receives a second attempt driven by structured log facts. If that attempt is still unchanged/structurally rejected, a final strategy gate re-derives the smallest implementation from the original contract plus genuine receipt facts.
+- Final repair candidates that are still executable-code-identical to the failing predecessor are now explicitly rejected with `repair-stalled-no-executable-change`; prose/comment churn can no longer be reported as a successful repair.
+- The controller continues to mark semantic execution as unverified unless genuine external execution evidence exists. Structural validation is not promoted into a semantic PASS.
+
+**Scope discipline**
+- No benchmark-specific answer is hard-coded. Python exact-type and sorting lessons already present remain useful invariants, but this update targets arbitrary languages/tools/log formats through generalized failure categories and source-operation repair.
+- No model-weight promotion is claimed. This is runtime repair-controller improvement; independently validated trajectories remain eligible for the separate weight-learning pipeline.
+
+**Versions**
+- Repository Work: `1.0.61`
+- LALM Engine: `2.1.138` / `2.1.138-hf-generalized-repair-controller-v114`
+- Server Runtime: unchanged until live deployment verification.
+
+**Verification truth:** SOURCE COMPLETE / STATIC REREAD IN PROGRESS / DEPLOYMENT REQUIRED FOR LIVE ACCEPTANCE.
+
 ## UPDATE FINISHED — 2026-10-03 — General log-driven coding repair v113
 
 **Goal:** improve coding + log-driven repair as a general capability rather than continuing to hard-code the two current Python/JavaScript fixtures.
