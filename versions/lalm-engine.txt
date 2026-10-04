@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.140
-REVISION=2.1.128-hf-auto-qwen-coder-v104
+VERSION=2.1.141
+REVISION=2.1.141-hf-auto-qwen-coder-1p5b-v105
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
