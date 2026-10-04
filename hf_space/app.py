@@ -20,7 +20,8 @@ except Exception as _native_exc:
 from station import app as station_app, set_generator
 from model_router import dispatch, routes, ModelUnavailable
 from original_engine import generate_events as original_generate, load as original_load
-from lfm2_700m_engine import generate_events as large_generate\nfrom qwen_coder_engine import generate_events as coder_generate, load as coder_load
+from lfm2_700m_engine import generate_events as large_generate
+from qwen_coder_engine import generate_events as coder_generate, load as coder_load
 
 ROOT=Path(__file__).resolve().parent
 PROVENANCE=json.loads((ROOT/"MODEL_PROVENANCE.json").read_text(encoding="utf-8"))
