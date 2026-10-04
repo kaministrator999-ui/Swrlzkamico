@@ -17,7 +17,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 24
     steps:
       - uses: actions/checkout@v4
 
@@ -75,7 +75,7 @@ jobs:
                       return response.status, json.loads(response.read().decode("utf-8"))
 
               def send_and_wait(self, thread_id, prompt):
-                  rid = "v119-" + uuid.uuid4().hex[:12]
+                  rid = "v120-" + uuid.uuid4().hex[:12]
                   status, ack = self.post("/api/lalm_station/send", {
                       "modelId":"700m",
                       "threadId":thread_id,
@@ -154,6 +154,21 @@ jobs:
                           payload = json.loads(response.read().decode("utf-8"))
                       content = base64.b64decode(payload["content"]).decode("utf-8")
                       return path, json.loads(content)
+                  except (urllib.error.HTTPError, urllib.error.URLError, KeyError, ValueError) as exc:
+                      latest_error = repr(exc)
+                      time.sleep(1)
+              raise AssertionError(("github-runtime-log-unavailable", path, latest_error))
+
+          def fetch_runtime_log_path(path):
+              url = "https://api.github.com/repos/kaministrator999-ui/Swrlzkamico/contents/" + path + "?ref=runtime"
+              latest_error = None
+              for _ in range(40):
+                  try:
+                      req = urllib.request.Request(url, headers={"User-Agent":"swrlz-programming-contract-live/1.0"})
+                      with urllib.request.urlopen(req, timeout=30) as response:
+                          payload = json.loads(response.read().decode("utf-8"))
+                      content = base64.b64decode(payload["content"]).decode("utf-8")
+                      return json.loads(content)
                   except (urllib.error.HTTPError, urllib.error.URLError, KeyError, ValueError) as exc:
                       latest_error = repr(exc)
                       time.sleep(1)
@@ -265,6 +280,52 @@ jobs:
           hashlib_name_used = any(isinstance(node, ast.Name) and node.id == "hashlib" for node in ast.walk(tree2))
           assert has_hashlib_import or not hashlib_name_used, source2
           receipts.append({"case":"user-seed-compiler-repair","validation":validation2,"status":"PASS"})
+          # v120: repair context must stay compact on a concrete follow-up and
+          # canonical failure evidence must survive history pruning.
+          context2 = g2.get("contextBudget") or {}
+          repair_context2 = context2.get("repairContext") or {}
+          assert repair_context2.get("mode") == "compact-repair", (context2, repair_context2)
+          assert context2.get("estimatedInputTokens", 999999) <= context2.get("inputBudgetTokens", 0), context2
+          assert context2.get("reservedOutputTokens", 0) > 0, context2
+
+          thread2 = g2.get("threadId")
+          g2b, _ = c2.send_and_wait(
+              thread2,
+              "Keep the same digest signature. Use the supported standard library only and preserve the original behavior; return the complete corrected source.",
+          )
+          _, intent2b, validation2b = route_state(g2b)
+          assert g2b.get("terminalType") != "FAILED", g2b
+          evidence2b = intent2b.get("failureEvidence") or {}
+          assert evidence2b.get("continuedByGuidance") is True, evidence2b
+          context2b = g2b.get("contextBudget") or {}
+          repair_context2b = context2b.get("repairContext") or {}
+          assert repair_context2b.get("mode") == "compact-repair", context2b
+          assert context2b.get("estimatedInputTokens", 999999) <= context2b.get("inputBudgetTokens", 0), context2b
+          assert context2b.get("reservedOutputTokens", 0) > 0, context2b
+
+          # One repair request launches repair diagnostic, repair outcome, and
+          # programming telemetry persistence. All three must become durable.
+          rid2 = g2.get("requestId")
+          safe2 = "".join(ch for ch in rid2 if ch.isalnum() or ch in "-_")[:80]
+          repair_diag_path2 = f"runtime-diagnostics/repair/{safe2}/repair-diagnostic.json"
+          repair_outcome_path2 = f"runtime-diagnostics/repair/{safe2}/repair-outcome-diagnostic.json"
+          programming_path2 = f"runtime-diagnostics/programming/{safe2}/candidate-attempt-telemetry.json"
+          repair_diag_log2 = fetch_runtime_log_path(repair_diag_path2)
+          repair_outcome_log2 = fetch_runtime_log_path(repair_outcome_path2)
+          programming_log2 = fetch_runtime_log_path(programming_path2)
+          for persisted2 in (repair_diag_log2, repair_outcome_log2, programming_log2):
+              assert persisted2.get("requestId") == rid2, persisted2
+              assert persisted2.get("sourceRef") == expected_source, persisted2
+
+          receipts.append({
+              "case":"v120-compact-repair-context-and-persistence-trio",
+              "initialInputTokens":context2.get("estimatedInputTokens"),
+              "guidanceInputTokens":context2b.get("estimatedInputTokens"),
+              "inputBudgetTokens":context2b.get("inputBudgetTokens"),
+              "guidanceValidationStatus":validation2b.get("status"),
+              "persistedPaths":[repair_diag_path2,repair_outcome_path2,programming_path2],
+              "status":"PASS",
+          })
 
           c3 = Client()
           thread3 = "artifact-lineage-" + uuid.uuid4().hex[:10]
@@ -272,8 +333,12 @@ jobs:
           _, intent3a, validation3a = route_state(g3a)
           assert g3a.get("terminalType") == "COMPLETE", g3a
           assert validation3a.get("status") == "PASS", validation3a
-          artifact3 = (g3a.get("artifactReceipt") or {}).get("artifactId")
-          assert artifact3, g3a.get("artifactReceipt")
+          artifact_receipt3a = g3a.get("artifactReceipt") or {}
+          artifact3 = artifact_receipt3a.get("artifactId")
+          artifact_hash3 = artifact_receipt3a.get("sourceHash")
+          assert artifact3, artifact_receipt3a
+          assert artifact_receipt3a.get("revision") == 1, artifact_receipt3a
+          assert artifact_hash3 and len(str(artifact_hash3)) == 64, artifact_receipt3a
 
           g3b, _ = c3.send_and_wait(thread3, "it doesn't work")
           _, intent3b, validation3b = route_state(g3b)
@@ -291,6 +356,10 @@ jobs:
           assert intent3c.get("artifactMutationRequested") is True, intent3c
           assert evidence3.get("repairTargetArtifactId") == artifact3, evidence3
           assert evidence3.get("receiptSourceOwnership") == "previous-assistant-candidate", evidence3
+          assert evidence3.get("repairTargetArtifactRevision") == 1, evidence3
+          assert evidence3.get("repairTargetArtifactSourceHash") == artifact_hash3, (evidence3, artifact_hash3)
+          assert intent3c.get("baseRevision") == 1, intent3c
+          assert intent3c.get("baseSourceHash") == artifact_hash3, intent3c
           receipts.append({
               "case":"generated-artifact-evidence-lineage",
               "evidenceRequestValidation":validation3b,
@@ -416,8 +485,46 @@ jobs:
               "status":"PASS",
           })
 
+          # v120 case 8: unavailable dependency must be removed, not repeated.
+          c8 = Client()
+          slug_prompt = "\n".join([
+              "Fix this Python function. Do not install anything; use only the Python standard library and preserve make_slug(value).",
+              "```python",
+              "from slugify import slugify",
+              "",
+              "def make_slug(value):",
+              "    return slugify(value)",
+              "```",
+              "ModuleNotFoundError: No module named 'slugify'",
+          ])
+          g8, _ = c8.send_and_wait("v120-dependency-" + uuid.uuid4().hex[:10], slug_prompt)
+          _, intent8, validation8 = route_state(g8)
+          evidence8 = intent8.get("failureEvidence") or {}
+          semantics8 = evidence8.get("receiptSemantics") or {}
+          assert "dependency" in (semantics8.get("categories") or []), semantics8
+          assert "slugify" in (semantics8.get("reportedDependencies") or []), semantics8
+          assert validation8.get("status") == "PASS", validation8
+          text8 = str(g8.get("text") or "")
+          assert not re.search(r"(?m)^\s*(?:from\s+slugify\s+import|import\s+slugify\b)", text8), text8
+          attempts8 = g8.get("candidateAttempts") if isinstance(g8.get("candidateAttempts"), list) else []
+          for attempt8 in attempts8:
+              if attempt8.get("validationStatus") == "REJECT":
+                  reasons8 = attempt8.get("validationReasons") or []
+                  assert (
+                      "repair-stalled-no-executable-change" in reasons8
+                      or "dependency-still-referenced:slugify" in reasons8
+                      or "strategy-repeat-previous-attempt" in reasons8
+                  ), attempt8
+          receipts.append({
+              "case":"v120-unavailable-dependency-strategy-change",
+              "attemptCount":len(attempts8),
+              "reportedDependencies":semantics8.get("reportedDependencies"),
+              "validationStatus":validation8.get("status"),
+              "status":"PASS",
+          })
+
           receipt = {
-              "checkpoint":"live-programming-contract-v119",
+              "checkpoint":"live-programming-contract-v120",
               "spaceRevision":live_revision,
               "expectedSource":expected_source,
               "coderCheckpoint":coder.get("checkpoint"),
