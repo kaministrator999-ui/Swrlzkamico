@@ -20,7 +20,7 @@ except Exception as _native_exc:
 from station import app as station_app, set_generator
 from model_router import dispatch, routes, ModelUnavailable
 from original_engine import generate_events as original_generate, load as original_load
-from lfm2_700m_engine import generate_events as large_generate
+from lfm2_700m_engine import generate_events as large_generate\nfrom qwen_coder_engine import generate_events as coder_generate
 
 ROOT=Path(__file__).resolve().parent
 PROVENANCE=json.loads((ROOT/"MODEL_PROVENANCE.json").read_text(encoding="utf-8"))
@@ -124,9 +124,9 @@ def respond(message,history,model_id,profile,user_profile):
     def worker():
         try:
             events.put(("phase","LOADING_BACKEND"))
-            generate=(engine()[1] if model_id=="r39" else large_generate if model_id=="700m" else original_generate)
+            generate=(engine()[1] if model_id=="r39" else coder_generate if model_id=="coder" else large_generate if model_id=="700m" else original_generate)
             events.put(("phase","INFERENCE_RUNNING"))
-            for event in dispatch(model_id,payload,generate,original_generate,large_generate):
+            for event in dispatch(model_id,payload,generate,original_generate,large_generate,coder_generate):
                 events.put(("event",event))
             events.put(("done",None))
         except Exception as exc:
@@ -249,7 +249,7 @@ with gr.Blocks(title="§wyrlz Inference Laboratory") as demo:
     _zg_button=gr.Button("ZeroGPU registration probe",visible=False)
     _zg_output=gr.Textbox(visible=False)
     _zg_button.click(fn=_zerogpu_registration_probe,inputs=[],outputs=_zg_output,api_visibility="private")
-set_generator(lambda payload: engine()[1](payload),original_generate,large_generate)
+set_generator(lambda payload: engine()[1](payload),original_generate,large_generate,coder_generate)
 app=gr.mount_gradio_app(station_app,demo,path="/probe",ssr_mode=False)
 # Keep the pinned original Test Bench available independently of R39.
 legacy_source=ROOT/"original_workstation.py"
