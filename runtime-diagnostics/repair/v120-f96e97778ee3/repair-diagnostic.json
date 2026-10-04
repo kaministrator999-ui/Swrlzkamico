@@ -1,0 +1,51 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v120-f96e97778ee3",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791153244508,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "14d16a1d31ca6675",
+    "candidateFingerprint": "14d16a1d31ca6675",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "AssertionError: expected '12.34', got '12'"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "assertion",
+        "behavior-mismatch"
+      ],
+      "exceptionTypes": [
+        "AssertionError"
+      ],
+      "exitCodes": [],
+      "failingSignals": [
+        "AssertionError: expected '12.34', got '12'"
+      ],
+      "passingSignals": [],
+      "expectedActual": [
+        "AssertionError: expected '12.34', got '12'"
+      ],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": [],
+      "reportedDependencies": []
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
