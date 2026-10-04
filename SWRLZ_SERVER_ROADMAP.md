@@ -1,3 +1,45 @@
+## UPDATE FINISHED — 2026-10-03 — Universal language fidelity + evidence-grounded repair gates v117
+
+**Goal:** enforce explicit programming-language requests as hard acceptance constraints and make compiler/test/runtime/log-driven repair an evidence-bound continuation of the original coding intent and code artifact. When the user reports only that code does not work, request concrete failure evidence instead of inventing a diagnosis.
+
+**Implemented**
+- Brain now owns a shared `swrlz-language-contract-v1` inside the programming intent contract. Explicitly requested languages become `requiredLanguages`; non-requested substitutes are rejected. Companion languages are allowed only when they genuinely belong to the requested artifact contract (for example an HTML web page may legitimately contain CSS/JavaScript), while `substitutionAllowed=false` remains authoritative.
+- Explicit recognized languages themselves now route into programming intent, so language-only requests such as SQL/Rust/C++ do not require an extra generic word like `code` to reach the coder.
+- Shared candidate validation now detects returned language/artifact evidence and rejects `missing-required-language:*` and `language-contract-mismatch:*` before a candidate can be accepted.
+- Qwen coder and the 700M engine both consume the same Brain-owned contract gate. Explicit-language turns are buffered behind the gate; wrong-language candidates receive bounded regeneration attempts and rejected code is not streamed/committed as an accepted artifact.
+- Failure receipts now extract bounded compiler/test/runtime semantics including categories, exception types, exit codes, source locations, failing tests, expected/actual signals, and reported unresolved symbols.
+- Diagnostic repair gating rejects unchanged executable candidates and requires unresolved reported symbols to be removed or visibly resolved. A grounded repair remains `executionVerified=false` / `AWAITING_EXTERNAL_RECEIPT` until an external compiler/test/runtime receipt proves it.
+- First-turn user-owned source plus a compiler/test/runtime receipt is supported as repair evidence; the log remains evidence, not a replacement for the user's intent/language contract.
+- Station now carries bounded assistant message artifact metadata into programming-intent history. When a user returns a failure receipt for code §wyrlz generated, Brain binds the repair to the exact prior artifact ID/message/revision so the repair remains in the same lineage without requiring a manual pin.
+- Vague failure reports such as `it doesn't work` enter an `EVIDENCE_REQUIRED` fast path. §wyrlz asks for the compiler/test/runtime/browser/linter/type-check output and does not mutate the artifact or guess a cause while evidence is missing.
+- The three-turn sequence `generated code → vague failure → evidence request → returned log` skips the intervening prose-only assistant turn and rebinds the receipt to the newest actual code artifact.
+
+**Static verification**
+- Added `hf_space/test_programming_contract_v117.py` plus `.github/workflows/verify-programming-contract.yml` as reusable deterministic contract verification.
+- Static verifier run #1 exposed the C++ token-boundary detector hole; run #2 exposed that explicit SQL alone did not enter programming intent. Both were fixed without weakening the tests.
+- Run #3 / `37173229294`: SUCCESS after the generalized language-classifier corrections.
+- Run #4 / `37173523227`: SUCCESS after adding the full three-turn evidence-request/receipt-rebind case. Compilation passed for Brain, Qwen coder, 700M engine, model router, Station, and the test suite; receipt: `programming-contract-v117 PASS`.
+
+**Deployment**
+- Guarded HF run #64 / `37173315813`: SUCCESS for the first source-complete v117 checkpoint; published Space revision `9caa2d795f4048fb22e017cc60fcf2143e322b14`.
+- Before live acceptance, the three-turn lineage edge was corrected. Final source head became `1597650cce42a0d084ae73a2ab9ed49aede37ea1`.
+- Guarded HF run #65 / `37173573213`: SUCCESS from that exact final source. Prior revision `9caa2d795f4048fb22e017cc60fcf2143e322b14` was preserved as rollback; final deployed Space revision is `c4d134386e6955c4d26a7685ef8e0d9efc9a71ec`.
+
+**Live acceptance**
+- Added `.github/workflows/verify-hf-programming-contract-live.yml` with revision-bound live checks against the existing `kamiloki/Swyrlz` Space.
+- Live run #1 / `37173821100`: SUCCESS against final Space revision `c4d134386e6955c4d26a7685ef8e0d9efc9a71ec` and expected source `1597650cce42a0d084ae73a2ab9ed49aede37ea1`.
+- HTML fidelity case: request `Can you write me an example html page` routed through `CODER_AUTO_ROUTE`; language contract required HTML, allowed only relevant HTML/CSS/JavaScript companions, detected output language was HTML, Python was absent, and candidate validation passed.
+- User-seed compiler repair case: Python source with `NameError: name 'hashlib' is not defined` was classified as user-owned failure evidence; `hashlib` was extracted as the reported symbol, returned code remained Python, diagnostic grounding passed, and truth state remained `AWAITING_EXTERNAL_RECEIPT` rather than falsely claiming execution.
+- Generated-artifact lineage case: generated Python code created an artifact; `it doesn't work` produced `EVIDENCE_REQUIRED` without artifact mutation; the subsequent runtime receipt rebound to that same artifact ID and entered grounded repair with the original Python language contract preserved.
+
+**Versions**
+- LALM Engine: `2.1.142` / `2.1.142-hf-language-evidence-gates-v117`.
+- Repository Work: `1.0.66`.
+- Server Runtime: unchanged `2.3.309`.
+- Deployment Control: unchanged `1.0.16`.
+
+**Truth:** LIVE RUNTIME VERIFIED for explicit-language fidelity, first-turn compiler/log repair grounding, generated-artifact evidence requesting, and three-turn receipt rebinding. External execution remains authoritative for whether any individual repair actually compiles/tests/runs successfully; §wyrlz may produce a grounded repair candidate but must not claim execution success until a real receipt proves it.
+
 ## UPDATE CHECKPOINT — 2026-10-03 — v117 three-turn repair-lineage closure
 
 **Finding after first successful v117 publish:** before live acceptance, the three-turn sequence `generated code → user says it does not work → assistant requests error evidence → user supplies compiler/test/runtime log` exposed a lineage risk: the newest assistant turn is the evidence-request prose, not the original code candidate.
