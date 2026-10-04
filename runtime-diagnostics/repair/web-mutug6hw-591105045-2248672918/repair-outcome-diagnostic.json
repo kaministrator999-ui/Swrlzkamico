@@ -1,0 +1,28 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-mutug6hw-591105045-2248672918",
+  "modelId": "700m",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "76befef43857d41f1eb3b7fafb3a9f83cbb3b60f",
+  "persistedAtUnixMs": 1791119752527,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "a209dfdf51f46ab6",
+    "newCandidateFingerprint": "9e17484a3616347d",
+    "candidateChanged": true,
+    "stalledRepairInput": false,
+    "regenerationAttempted": false,
+    "regenerationReason": null,
+    "candidateValidationStatus": "PASS",
+    "candidateValidationReasons": [],
+    "receiptCategories": [
+      "type",
+      "typecheck"
+    ],
+    "repairActions": [
+      "trace concrete runtime types through the failing operation and change the operation or validation causing the mismatch",
+      "repair the static type mismatch at the producer/consumer boundary while preserving runtime semantics"
+    ],
+    "executionVerified": false
+  }
+}
