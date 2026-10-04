@@ -379,6 +379,34 @@ def _find_artifact(thread,artifact_id):
 def _artifact_for_message(thread,message_id):
     return next((a for a in thread.get("codeArtifacts",[]) if str(a.get("sourceMessageId") or "")==str(message_id or "")),None)
 
+def _artifact_source_hash(files):
+    normalized=[
+        {
+            "path":str(item.get("path") or ""),
+            "language":str(item.get("language") or ""),
+            "content":str(item.get("content") or ""),
+        }
+        for item in (files or [])
+        if isinstance(item,dict)
+    ]
+    payload=json.dumps(normalized,ensure_ascii=False,sort_keys=True,separators=(",",":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _artifact_revision_record(artifact,revision):
+    target=int(revision or 0)
+    for item in artifact.get("revisions") or []:
+        if isinstance(item,dict) and int(item.get("revision") or 0)==target:
+            return item
+    return None
+
+
+def _artifact_revision_markdown(artifact,revision):
+    record=_artifact_revision_record(artifact,revision)
+    files=copy.deepcopy((record or {}).get("files") or [])
+    return _artifact_markdown(files)[:12000] if files else ""
+
+
 def _create_code_artifact(thread,message,request_id,text):
     files=_parse_code_files(text)
     if not files or len(str(text or ""))<120:return None
@@ -386,11 +414,30 @@ def _create_code_artifact(thread,message,request_id,text):
     if existing:return existing
     artifact_id="artifact-"+uuid.uuid4().hex
     now=int(time.time()*1000)
-    revision={"revision":1,"requestId":str(request_id or ""),"createdAt":now,"files":copy.deepcopy(files)}
-    artifact={"id":artifact_id,"type":"code","sourceMessageId":str(message.get("id") or ""),"title":files[0]["path"],"currentRevision":1,"files":copy.deepcopy(files),"revisions":[revision],"createdAt":now,"updatedAt":now}
+    source_hash=_artifact_source_hash(files)
+    revision={
+        "revision":1,
+        "requestId":str(request_id or ""),
+        "createdAt":now,
+        "sourceHash":source_hash,
+        "files":copy.deepcopy(files),
+    }
+    artifact={
+        "id":artifact_id,
+        "type":"code",
+        "sourceMessageId":str(message.get("id") or ""),
+        "title":files[0]["path"],
+        "currentRevision":1,
+        "currentSourceHash":source_hash,
+        "files":copy.deepcopy(files),
+        "revisions":[revision],
+        "createdAt":now,
+        "updatedAt":now,
+    }
     thread.setdefault("codeArtifacts",[]).append(artifact)
     message.setdefault("meta",{})["codeArtifactId"]=artifact_id
     message["meta"]["artifactRevision"]=1
+    message["meta"]["artifactSourceHash"]=source_hash
     return artifact
 
 def _promote_pinned_code_artifact(thread,message):
@@ -406,17 +453,50 @@ def _artifact_context_item(thread,message):
     if artifact is None:
         return {"messageId":message.get("id"),"role":str(message.get("role") or "").upper(),"text":str(message.get("text") or "")[:12000],"pinned":True}
     files=copy.deepcopy(artifact.get("files") or [])
-    return {"messageId":message.get("id"),"role":str(message.get("role") or "").upper(),"text":_artifact_markdown(files)[:12000],"pinned":True,"artifactType":"code","artifactId":artifact.get("id"),"artifactTitle":artifact.get("title"),"artifactRevision":int(artifact.get("currentRevision") or 1),"files":[{"path":f.get("path"),"language":f.get("language")} for f in files]}
+    source_hash=str(artifact.get("currentSourceHash") or "") or _artifact_source_hash(files)
+    return {
+        "messageId":message.get("id"),
+        "role":str(message.get("role") or "").upper(),
+        "text":_artifact_markdown(files)[:12000],
+        "pinned":True,
+        "artifactType":"code",
+        "artifactId":artifact.get("id"),
+        "artifactTitle":artifact.get("title"),
+        "artifactRevision":int(artifact.get("currentRevision") or 1),
+        "artifactSourceHash":source_hash,
+        "files":[{"path":f.get("path"),"language":f.get("language")} for f in files],
+    }
 
-def _commit_code_artifact_revision(artifact,text,request_id,base_revision=0):
+def _commit_code_artifact_revision(artifact,text,request_id,base_revision=0,base_source_hash=""):
     files=_parse_code_files(text)
     if not files:return False,"NO_CODE"
     current=int(artifact.get("currentRevision") or 0)
-    if int(base_revision or 0) not in (0,current):return False,"REVISION_CONFLICT"
+    current_files=copy.deepcopy(artifact.get("files") or [])
+    current_hash=str(artifact.get("currentSourceHash") or "") or _artifact_source_hash(current_files)
+    requested_revision=int(base_revision or 0)
+    requested_hash=str(base_source_hash or "")
+    if requested_revision<=0:
+        return False,"BASE_REVISION_REQUIRED"
+    if requested_revision!=current:
+        return False,"REVISION_CONFLICT"
+    if not requested_hash:
+        return False,"SOURCE_HASH_REQUIRED"
+    if requested_hash!=current_hash:
+        return False,"SOURCE_HASH_CONFLICT"
     next_revision=current+1
     now=int(time.time()*1000)
-    artifact.setdefault("revisions",[]).append({"revision":next_revision,"requestId":str(request_id or ""),"createdAt":now,"files":copy.deepcopy(files)})
+    next_hash=_artifact_source_hash(files)
+    artifact.setdefault("revisions",[]).append({
+        "revision":next_revision,
+        "requestId":str(request_id or ""),
+        "createdAt":now,
+        "sourceHash":next_hash,
+        "parentRevision":current,
+        "parentSourceHash":current_hash,
+        "files":copy.deepcopy(files),
+    })
     artifact["currentRevision"]=next_revision
+    artifact["currentSourceHash"]=next_hash
     artifact["files"]=copy.deepcopy(files)
     artifact["updatedAt"]=now
     if files:artifact["title"]=artifact.get("title") or files[0]["path"]
@@ -426,6 +506,34 @@ def _response_prose(text):
     prose=str(text or "")
     for fence in _code_fences(prose):prose=prose.replace(fence,"")
     return prose.strip()
+
+
+def _history_projection(thread):
+    projected=[]
+    for message in thread.get("messages") or []:
+        if message.get("role") not in ("user","assistant"):
+            continue
+        meta=copy.deepcopy(message.get("meta") or {})
+        artifact_id=str(meta.get("codeArtifactId") or meta.get("updatedCodeArtifactId") or "")
+        if artifact_id:
+            artifact=_find_artifact(thread,artifact_id)
+            revision=int(meta.get("artifactRevision") or 0)
+            if artifact is not None and revision>0:
+                record=_artifact_revision_record(artifact,revision)
+                if record is not None:
+                    source_hash=str(record.get("sourceHash") or "") or _artifact_source_hash(record.get("files") or [])
+                    meta["codeArtifactId"]=artifact_id
+                    meta["artifactRevision"]=revision
+                    meta["artifactSourceHash"]=source_hash
+                    meta["artifactSourceSnapshot"]=_artifact_markdown(record.get("files") or [])[:12000]
+        projected.append({
+            "id":message.get("id"),
+            "role":message["role"],
+            "text":message["text"],
+            "createdAt":message.get("createdAt"),
+            "meta":meta,
+        })
+    return projected
 
 
 def _run(key,request_id,model_id,payload,assistant_id):
@@ -501,6 +609,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         "historyMessagesDropped":int(event.get("historyMessagesDropped") or 0),
                         "historyMessagesKept":int(event.get("historyMessagesKept") or 0),
                         "repairTurn":bool(event.get("repairTurn")),
+                        "repairContext":copy.deepcopy(event.get("repairContext") or {}),
                         "tokenBreakdown":copy.deepcopy(event.get("tokenBreakdown") or {}),
                     }
                     g["status"].append({"seq":g["lastSeq"],"phase":"CONTEXT_BUDGETED","reason":""})
@@ -572,20 +681,53 @@ def _run(key,request_id,model_id,payload,assistant_id):
             artifact_id=str(intent.get("artifactTargetId") or "")
             artifact=_find_artifact(thread,artifact_id) if artifact_id and intent.get("artifactMutationRequested") and not rejected else None
             if artifact is not None:
-                committed,reason=_commit_code_artifact_revision(artifact,text,request_id,int(intent.get("baseRevision") or 0))
+                committed,reason=_commit_code_artifact_revision(
+                    artifact,
+                    text,
+                    request_id,
+                    int(intent.get("baseRevision") or 0),
+                    str(intent.get("baseSourceHash") or ""),
+                )
                 if committed:
-                    source=next((m for m in thread.get("messages",[]) if str(m.get("id") or "")==str(artifact.get("sourceMessageId") or "")),None)
-                    if source is not None:
-                        source.setdefault("meta",{})["codeArtifactId"]=artifact["id"]
-                        source["meta"]["artifactRevision"]=artifact["currentRevision"]
+                    current_hash=str(artifact.get("currentSourceHash") or "")
                     prose=_response_prose(text) or ("Updated pinned code artifact to revision "+str(artifact["currentRevision"])+".")
-                    message={"id":assistant_id,"role":"assistant","text":prose,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","updatedCodeArtifactId":artifact["id"],"artifactRevision":artifact["currentRevision"],**telemetry_meta}}
+                    message={
+                        "id":assistant_id,
+                        "role":"assistant",
+                        "text":prose,
+                        "createdAt":int(time.time()*1000),
+                        "meta":{
+                            "requestId":request_id,
+                            "modelId":model_id,
+                            "state":"COMPLETE",
+                            "updatedCodeArtifactId":artifact["id"],
+                            "codeArtifactId":artifact["id"],
+                            "artifactRevision":artifact["currentRevision"],
+                            "artifactSourceHash":current_hash,
+                            **telemetry_meta,
+                        },
+                    }
                     thread["messages"].append(message)
-                    g["artifactReceipt"]={"action":"REVISION_COMMITTED","artifactId":artifact["id"],"revision":artifact["currentRevision"],"baseRevision":int(intent.get("baseRevision") or 0)}
+                    g["artifactReceipt"]={
+                        "action":"REVISION_COMMITTED",
+                        "artifactId":artifact["id"],
+                        "revision":artifact["currentRevision"],
+                        "sourceHash":current_hash,
+                        "baseRevision":int(intent.get("baseRevision") or 0),
+                        "baseSourceHash":str(intent.get("baseSourceHash") or ""),
+                    }
                 else:
                     message={"id":assistant_id,"role":"assistant","text":_response_prose(text) or text,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","artifactMutationRejected":reason,**telemetry_meta}}
                     thread["messages"].append(message)
-                    g["artifactReceipt"]={"action":"REVISION_REJECTED","artifactId":artifact["id"],"reason":reason}
+                    g["artifactReceipt"]={
+                        "action":"REVISION_REJECTED",
+                        "artifactId":artifact["id"],
+                        "reason":reason,
+                        "requestedBaseRevision":int(intent.get("baseRevision") or 0),
+                        "requestedBaseSourceHash":str(intent.get("baseSourceHash") or ""),
+                        "currentRevision":int(artifact.get("currentRevision") or 0),
+                        "currentSourceHash":str(artifact.get("currentSourceHash") or ""),
+                    }
             else:
                 assistant_tag=_container_content_tag(text)
                 state="CANDIDATE_REJECTED" if rejected else "COMPLETE"
@@ -596,7 +738,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 else:
                     artifact=_create_code_artifact(thread,message,request_id,text)
                     if artifact is not None:
-                        g["artifactReceipt"]={"action":"ARTIFACT_CREATED","artifactId":artifact["id"],"revision":1}
+                        g["artifactReceipt"]={"action":"ARTIFACT_CREATED","artifactId":artifact["id"],"revision":1,"sourceHash":artifact.get("currentSourceHash")}
             if intent.get("codingTask") and generation_telemetry:
                 github_telemetry={
                     "schema":"swrlz-station-programming-log-v1",
@@ -612,6 +754,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     "artifactReceipt":{
                         "action":(g.get("artifactReceipt") or {}).get("action"),
                         "revision":(g.get("artifactReceipt") or {}).get("revision"),
+                        "sourceHash":(g.get("artifactReceipt") or {}).get("sourceHash"),
+                        "reason":(g.get("artifactReceipt") or {}).get("reason"),
                     },
                 }
                 g["githubTelemetryPersistence"]={"state":"QUEUED","path":"runtime-diagnostics/programming/"+request_id+"/candidate-attempt-telemetry.json","branch":"runtime"}
@@ -729,7 +873,7 @@ async def send(request:Request):
             s["threads"].append(t)
         now_ms=int(time.time()*1000)
         temporal_context=_temporal_context(t["messages"],client_timezone,now_ms)
-        history=[{"id":m.get("id"),"role":m["role"],"text":m["text"],"createdAt":m.get("createdAt"),"meta":copy.deepcopy(m.get("meta") or {})} for m in t["messages"] if m["role"] in ("user","assistant")]
+        history=_history_projection(t)
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
