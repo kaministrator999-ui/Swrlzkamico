@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.142
-REVISION=2.1.142-hf-language-evidence-gates-v117
+VERSION=2.1.143
+REVISION=2.1.143-hf-candidate-attempt-camera-v118
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
