@@ -1,3 +1,24 @@
+## UPDATE STARTED — 2026-10-04 — Repair context, strategy, persistence + artifact lineage v120
+
+**Goal:** close review (18)'s downstream repair defects without reopening v119 receipt/source ownership: reduce repair-context prefill below the coder input ceiling, force materially different repair strategy when repeated proposals stall, make runtime-diagnostic GitHub writes resilient to 409 conflicts, harden failing-test/convergence semantics, and bind repair receipts to exact artifact revision + source hash.
+
+**Evidence basis:** review (18) repeated the same deployed v119 build and held receipt routing steady: 10/10 genuine receipts recognized, all canonical sources correct, 16/16 original request texts retained, and no clean baseline false positives. Remaining failures were downstream: currency guidance hit 8,115 input tokens against a 7,680 limit after all six history messages were dropped; unavailable `slugify` guidance produced three proposals with the original executable fingerprint; 24 internal attempts included 13 rejections and four structurally accepted candidates that failed independent execution/original gates; unittest failure-name extraction retained summary text instead of individual tests; correction/error wording emitted convergence candidates through substring matches such as `correct`; GitHub telemetry reported nine successful writes plus six HTTP 409 failures; stale artifact revision/source binding was not dynamically exercised.
+
+**Architecture reconciliation:**
+- Brain continues to own intent, receipt semantics, canonical repair source, and repair lineage. v119 receipt/source separation remains authoritative and is not redesigned.
+- Shared programming-context rendering may compact repair state, but must preserve the original request, hard constraints, canonical source, newest receipt semantics, user repair direction, and truth boundary. History is expendable before those fields.
+- Candidate gate/repair controller must turn repeated fingerprint stalls into explicit strategy constraints. For dependency failures, a reported unavailable dependency that remains imported/referenced is a hard rejection and retry reason.
+- Station remains the sole GitHub runtime-diagnostic writer. Add bounded conflict retry/readback evidence there rather than creating another persistence transport.
+- Resolution/convergence metadata requires explicit whole-utterance confirmation, never substring coincidence inside phrases such as `corrected source`.
+- Artifact repair lineage must carry artifact ID, exact revision, and a source-content hash; mutation commit must reject stale revision/hash rather than relying only on originating message text.
+- Structural validation remains distinct from execution verification. v120 must not relabel a structural PASS as compiler/test/runtime PASS.
+
+**Camera contract:** preserve v118 per-attempt timing and GitHub persistence telemetry; add bounded context-compaction, strategy-gate, persistence-retry, and artifact-lineage fields sufficient to prove each new boundary without storing prompt/source/private reasoning in repository diagnostics.
+
+**Expected module impact:** LALM Engine + Repository Work. Deployment Control stays unchanged unless the HF workflow itself changes. Server Runtime stays unchanged unless host/server authority changes.
+
+**Deployment expectation:** runtime-affecting HF source mutation; run full v117/v118/v119 regression plus v120 deterministic tests before one guarded Hugging Face deployment and live acceptance.
+
 ## UPDATE FINISHED — 2026-10-04 — Post-v119 continuation reconciliation
 
 **Outcome:** RECONCILED — NO NET RUNTIME SOURCE CHANGE.
