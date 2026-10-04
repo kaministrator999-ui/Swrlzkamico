@@ -663,8 +663,10 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     prior=code_assistants[0] if code_assistants else None
     prior_text=str((prior or {}).get("content") or (prior or {}).get("text") or "").strip()
     prior_meta=(prior or {}).get("meta") if isinstance((prior or {}).get("meta"),dict) else {}
-    assistant_source=_inline_source_from_prompt(prior_text)
-    if not assistant_source and prior_text and prior_meta.get("codeArtifactId"):
+    assistant_source=str(prior_meta.get("artifactSourceSnapshot") or "").strip()
+    if not assistant_source:
+        assistant_source=_inline_source_from_prompt(prior_text)
+    if not assistant_source and prior_text and prior_meta.get("codeArtifactId") and "```" in prior_text:
         assistant_source=_candidate_primary_code(prior_text)
 
     inline_source=_inline_source_from_prompt(raw)
