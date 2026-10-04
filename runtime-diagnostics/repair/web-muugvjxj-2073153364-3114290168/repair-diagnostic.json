@@ -1,0 +1,54 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muugvjxj-2073153364-3114290168",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791157411547,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "assistant-muugv9e8-192865940-3069217991",
+    "repairSourceMessageId": "assistant-muugv9e8-192865940-3069217991",
+    "repairSourceFingerprint": "61b1120c656531fb",
+    "candidateFingerprint": "61b1120c656531fb",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 6,
+    "failureSignals": [
+      "\"passed\": false,",
+      "\"error\": \"Expected values to be strictly equal:\\n\\n'' !== '(untitled)'\\n\"",
+      "\"passed\": false,",
+      "\"error\": \"Expected values to be strictly equal:\\n\\n'' !== '(untitled)'\\n\"",
+      "\"passed\": false,",
+      "\"error\": \"Expected values to be strictly equal:\\n\\n'' !== '(untitled)'\\n\""
+    ],
+    "receiptSemantics": {
+      "categories": [],
+      "exceptionTypes": [],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [
+        "\"passed\": false,",
+        "\"error\": \"Expected values to be strictly equal:\\n\\n'' !== '(untitled)'\\n\""
+      ],
+      "passingSignals": [
+        "\"passed\": 6,",
+        "\"passed\": true"
+      ],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": [],
+      "reportedDependencies": []
+    },
+    "repairActions": [
+      "use the failing receipt to identify the first concrete failing operation, then change that operation while preserving passing behavior"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
