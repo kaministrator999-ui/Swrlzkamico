@@ -9,6 +9,7 @@
 - Station owns persistence/export of bounded telemetry only: candidate-attempt receipts, completion timing, end-to-end wall latency, and a compact attempt summary. Telemetry must not gain routing, acceptance, prompt, or artifact authority.
 - No raw private reasoning or duplicate candidate source is stored in the camera; use attempt number, trigger reason, timing, validation status/reasons, fingerprint, and candidate-change boolean only.
 - The final assistant message should retain a compact telemetry receipt so timing/attempt facts survive after a later generation replaces `activeGeneration`.
+- Reuse the existing response-triggered GitHub diagnostics transport and dedicated `SWRLZ_DIAGNOSTIC_GITHUB_TOKEN`: persist one privacy-bounded programming telemetry document to `runtime-diagnostics/programming/<request-id>/candidate-attempt-telemetry.json` on the `runtime` branch. Do not create a second credential/transport owner, and do not persist prompt/code/profile/private reasoning in this log.
 
 **Expected module impact:** LALM Engine + Repository Work. Server Runtime and Deployment Control stay unchanged unless host/deployment authority changes.
 
