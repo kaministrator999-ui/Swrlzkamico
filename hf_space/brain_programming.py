@@ -243,6 +243,39 @@ def _reported_symbols(text: str) -> list[str]:
     return symbols[:12]
 
 
+def _reported_dependencies(text: str) -> list[str]:
+    raw=str(text or "")
+    values=[]
+    patterns=(
+        r"(?i)No module named ['\"]([^'\"]+)['\"]",
+        r"(?i)Cannot find module ['\"]([^'\"]+)['\"]",
+        r"(?i)Can['’]?t resolve ['\"]([^'\"]+)['\"]",
+        r"(?i)Module not found[^\n]*['\"]([^'\"]+)['\"]",
+        r"(?i)package\s+['\"]?([A-Za-z0-9_.@/\-]+)['\"]?\s+(?:was\s+)?not found",
+    )
+    for pattern in patterns:
+        for match in re.finditer(pattern,raw):
+            value=str(match.group(1) or "").strip()
+            if value and value not in values:
+                values.append(value)
+    return values[:12]
+
+
+def _candidate_dependency_referenced(code: str, dependency: str) -> bool:
+    dep=str(dependency or "").strip()
+    if not dep:
+        return False
+    root=dep.split(".")[0]
+    patterns=(
+        r"(?m)^\s*import\s+"+re.escape(root)+r"\b",
+        r"(?m)^\s*from\s+"+re.escape(root)+r"(?:\.|\s)",
+        r"(?m)^\s*import\s+[^\n]*\s+from\s+['\"]"+re.escape(dep)+r"['\"]",
+        r"\brequire\(\s*['\"]"+re.escape(dep)+r"['\"]\s*\)",
+        r"\bimport\(\s*['\"]"+re.escape(dep)+r"['\"]\s*\)",
+    )
+    return any(re.search(pattern,str(code or ""),re.I) for pattern in patterns)
+
+
 def _symbol_is_resolved_or_removed(code: str, symbol: str) -> bool:
     if not symbol:
         return True
@@ -296,6 +329,9 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
     for symbol in semantics.get("reportedSymbols") or []:
         if not _symbol_is_resolved_or_removed(candidate_code,str(symbol)):
             reasons.append("diagnostic-symbol-resolution-unproven:"+str(symbol)[:80])
+    for dependency in semantics.get("reportedDependencies") or []:
+        if _candidate_dependency_referenced(candidate_code,str(dependency)):
+            reasons.append("dependency-still-referenced:"+str(dependency)[:100])
     verification="AWAITING_EXTERNAL_RECEIPT" if evidence else "NOT_EXECUTION_VERIFIED"
     return {
         "status":"REJECT" if reasons else "PASS",
@@ -333,6 +369,7 @@ def _last_assistant_artifact(history: list[dict[str, Any]]) -> dict[str, Any]:
                 "messageId":str(item.get("id") or ""),
                 "artifactId":str(meta.get("codeArtifactId") or ""),
                 "artifactRevision":int(meta.get("artifactRevision") or 0),
+                "artifactSourceHash":str(meta.get("artifactSourceHash") or ""),
                 "text":text,
             }
     return {}
@@ -537,9 +574,28 @@ def _receipt_semantics(raw: str) -> dict[str, Any]:
 
     test_names=[]
     for line in lines:
+        # unittest: FAIL: test_01 (module.Class.test_01)
+        match=re.search(r"(?i)^(?:FAIL|ERROR):\s+([A-Za-z_][\w.]*)\s+\(([^)]+)\)",line)
+        if match:
+            short=str(match.group(1) or "").strip()
+            qualified=str(match.group(2) or "").strip()
+            value=qualified if qualified and short in qualified else short
+            if value and value not in test_names:
+                test_names.append(value[:300])
+            continue
+        # pytest: FAILED tests/test_file.py::test_name - ...
+        match=re.search(r"(?i)^FAILED\s+([^\s]+::[^\s]+)",line)
+        if match:
+            value=str(match.group(1) or "").strip()
+            if value and value not in test_names:
+                test_names.append(value[:300])
+            continue
+        # Generic named FAIL/ERROR record, excluding summary tuples like (failures=4).
         match=re.search(r"(?i)^(?:FAIL|FAILED|ERROR)\s+([^\s:]+(?:::[^\s:]+)*)",line)
-        if match and match.group(1) not in test_names:
-            test_names.append(match.group(1)[:300])
+        if match:
+            value=str(match.group(1) or "").strip()
+            if value and not value.startswith("(") and "=" not in value and value not in test_names:
+                test_names.append(value[:300])
             continue
         match=re.search(r"^[✕×]\s+(.+)$",line)
         if match:
@@ -557,6 +613,7 @@ def _receipt_semantics(raw: str) -> dict[str, Any]:
         "sourceLocations":locations[:12],
         "failingTests":test_names[:12],
         "reportedSymbols":_reported_symbols(text),
+        "reportedDependencies":_reported_dependencies(text),
     }
 
 
@@ -624,6 +681,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
         repair_target_message_id=""
         repair_target_artifact_id=""
         repair_target_artifact_revision=0
+        repair_target_artifact_source_hash=""
     else:
         ownership="previous-assistant-candidate"
         repair_source=assistant_source
@@ -632,6 +690,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
         repair_target_message_id=repair_source_message_id
         repair_target_artifact_id=str(meta.get("codeArtifactId") or "")
         repair_target_artifact_revision=int(meta.get("artifactRevision") or 0)
+        repair_target_artifact_source_hash=str(meta.get("artifactSourceHash") or "")
 
     if not repair_source:
         return None
@@ -664,6 +723,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
         "repairTargetMessageId":repair_target_message_id,
         "repairTargetArtifactId":repair_target_artifact_id,
         "repairTargetArtifactRevision":repair_target_artifact_revision,
+        "repairTargetArtifactSourceHash":repair_target_artifact_source_hash,
         "repairSource":repair_source[:12000],
         "repairSourceMessageId":repair_source_message_id,
         "repairSourceFingerprint":repair_source_fingerprint,
@@ -725,7 +785,7 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
             "schema":"swrlz-programming-intent-v1",
             "codingTask":False,"projectContext":"none","changeClass":"none",
             "artifactContinuation":False,"artifactMutationRequested":False,
-            "artifactTargetId":"","artifactTargetMessageId":"","baseRevision":0,
+            "artifactTargetId":"","artifactTargetMessageId":"","baseRevision":0,"baseSourceHash":"",
             "newProject":False,"source":"brain-router"
         }
 
@@ -756,14 +816,17 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     artifact_id=str((target or {}).get("artifactId") or "")
     target_message_id=str((target or {}).get("messageId") or "")
     base_revision=int((target or {}).get("artifactRevision") or 0)
+    base_source_hash=str((target or {}).get("artifactSourceHash") or "")
     if failure_evidence and failure_evidence.get("repairTargetArtifactId"):
         artifact_id=str(failure_evidence.get("repairTargetArtifactId") or "")
         target_message_id=str(failure_evidence.get("repairTargetMessageId") or "")
         base_revision=int(failure_evidence.get("repairTargetArtifactRevision") or 0)
+        base_source_hash=str(failure_evidence.get("repairTargetArtifactSourceHash") or "")
     elif vague_failure and last_artifact:
         artifact_id=str(last_artifact.get("artifactId") or "")
         target_message_id=str(last_artifact.get("messageId") or "")
         base_revision=int(last_artifact.get("artifactRevision") or 0)
+        base_source_hash=str(last_artifact.get("artifactSourceHash") or "")
     continuation=bool(artifact_id or target)
     mutation=bool(continuation and change in {"fix","refactor","feature","migrate"} and not vague_failure)
 
@@ -791,6 +854,7 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         "artifactTargetId":artifact_id,
         "artifactTargetMessageId":target_message_id,
         "baseRevision":base_revision,
+        "baseSourceHash":base_source_hash,
         "newProject":new_project,
         "pinnedCodeArtifactCount":len(pins),
         "intentContract":active_contract,
