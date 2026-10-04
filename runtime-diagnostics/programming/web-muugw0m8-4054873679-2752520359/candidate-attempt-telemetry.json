@@ -1,0 +1,82 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "web-muugw0m8-4054873679-2752520359",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791157439624,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 2,
+      "regenerationCount": 1,
+      "firstCandidateRejected": true,
+      "finalAcceptedAttempt": 2,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": true,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 18.283,
+      "visibleFirstDeltaLatencyMs": 6405.432,
+      "engineTotalLatencyMs": 6406.55,
+      "totalCandidateGenerationMs": 6386.135,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 4414.022,
+          "firstTokenLatencyMs": 3407.708,
+          "deltaChunks": 43,
+          "candidateFingerprint": "824d84d6d41bebb6",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": false,
+          "validationStatus": "REJECT",
+          "validationReasons": [
+            "diagnostic-repair-no-executable-change",
+            "repair-stalled-no-executable-change"
+          ],
+          "accepted": false
+        },
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 2,
+          "trigger": "retry:unchanged-executable-candidate",
+          "durationMs": 1972.113,
+          "firstTokenLatencyMs": 265.724,
+          "deltaChunks": 74,
+          "candidateFingerprint": "84d43363cb222fe5",
+          "changedFromPreviousAttempt": true,
+          "changedFromRepairTarget": true,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791157433214,
+      "startedAtUnixMs": 1791157433214,
+      "completedAtUnixMs": 1791157439624,
+      "queueWaitMs": 0,
+      "stationRunMs": 6410,
+      "endToEndMs": 6410
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "javascript"
+      ],
+      "executionVerified": false,
+      "verificationState": "AWAITING_EXTERNAL_RECEIPT"
+    },
+    "artifactReceipt": {
+      "action": "ARTIFACT_CREATED",
+      "revision": 1,
+      "sourceHash": "6d0f6650e4529d208a2f9bc6f6b4ce7deb86d77bd9ae7554f36f0569290af8d4",
+      "reason": null
+    }
+  }
+}
