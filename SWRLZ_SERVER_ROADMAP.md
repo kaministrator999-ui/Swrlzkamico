@@ -1,3 +1,18 @@
+## UPDATE CHECKPOINT — 2026-10-03 — Candidate attempt + generation timing camera v118
+
+**Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
+
+- Final verified feature head: `f7287f751a01bf12210349098a918794084df0e0`.
+- Static verifier run #5 / `37176381493`: SUCCESS.
+- Existing v117 programming contract suite still prints `programming-contract-v117 PASS`.
+- New v118 telemetry suite prints `programming-telemetry-v118 PASS`.
+- Qwen coder and 700M engines now emit bounded `CANDIDATE_ATTEMPT` receipts plus one `GENERATION_TELEMETRY` summary. Guarded attempts are buffered with per-attempt first-token/total timing before validation; unguarded streaming attempts still receive a terminal attempt receipt.
+- Station persists attempt receipts, engine timing, Station queue/run/end-to-end timing, and a compact telemetry receipt into assistant message metadata so later session exports retain the facts after `activeGeneration` changes.
+- Station now reuses the existing dedicated diagnostics writer for response-triggered GitHub persistence. Coding telemetry targets `runtime-diagnostics/programming/<request-id>/candidate-attempt-telemetry.json` on `runtime`; raw prompt/code/profile/private reasoning is excluded.
+- Existing repair-diagnostic persistence is also routed through the Station-owned writer so Dragon Chat and probe paths share one persistence owner.
+
+**Next governed state:** advance LALM Engine + Repository Work authorities, then guarded HF deployment and live verification of session export telemetry plus actual GitHub runtime-diagnostic storage.
+
 ## UPDATE STARTED — 2026-10-03 — Candidate attempt + generation timing camera v118
 
 **Goal:** make exported §wyrlz coding sessions answer, from explicit telemetry, how long generation took, how many candidate generations were attempted, whether the first candidate was rejected, why a retry happened, whether executable candidate fingerprints changed between attempts, and which attempt was ultimately accepted.
