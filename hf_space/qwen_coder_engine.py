@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib, json, os, re, threading, time
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
-from brain_programming import programming_intent, CODE_TRUTH_POLICY
+from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate
 
 MODEL_REPO=os.environ.get("SWRLZ_CODER_MODEL_REPO","Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF")
 MODEL_FILE=os.environ.get("SWRLZ_CODER_MODEL_FILE","qwen2.5-coder-1.5b-instruct-q4_k_m.gguf")
@@ -370,7 +370,7 @@ def _candidate_structure_check(text, programming, history):
     if lines:
         from collections import Counter
         if max(Counter(lines).values())>=8: reasons.append("repetition-loop")
-    code_like=bool(re.search(r"\b(?:def|function|class|const|let|var|import|export)\b|=>|[{};]",source))
+    code_like=bool(re.search(r"\b(?:def|function|class|const|let|var|import|export|fun|fn)\b|=>|[{};]|<!doctype\\s+html|<[A-Za-z][^>]*>|(?m)^\\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE\\s+TABLE)\\b|(?m)^\\s*[A-Za-z0-9_.-]+\\s*:",source,re.I))
     if not code_like: reasons.append("no-code-candidate")
     candidate_primary=_primary_candidate_code(source)
     if re.search(r"(?im)^\s*(?:#|//)\s*(?:rest of|remaining|todo|implementation continues|code continues)|\b(?:TODO|FIXME)\b",candidate_primary):
@@ -395,7 +395,15 @@ def _candidate_structure_check(text, programming, history):
         if not any(re.search(pattern,candidate_code) for pattern in decl_patterns): reasons.append("missing-required-api:"+name)
     previous=next((str(m.get("content") or "") for m in reversed(history or []) if m.get("role")=="assistant" and str(m.get("content") or "").strip()),"")
     if previous and "export " not in previous and "export " in source and not re.search(r"\b(?:module|esm|es module|export)\b",original,re.I): reasons.append("loading-format-changed-to-module")
-    return {"status":"REJECT" if reasons else "PASS","reasons":reasons}
+    shared=candidate_contract_gate(source,programming,history)
+    for reason in shared.get("reasons") or []:
+        if reason not in reasons:
+            reasons.append(reason)
+    result={"status":"REJECT" if reasons else "PASS","reasons":reasons}
+    for key in ("languageContract","detectedLanguages","diagnosticGrounded","receiptCategories","executionVerified","verificationState"):
+        if key in shared:
+            result[key]=shared[key]
+    return result
 
 def _primary_candidate_code(text):
     source=str(text or "")
@@ -460,6 +468,19 @@ def generate_events(payload):
     if convergence:
         yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
     programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [],payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
+    if programming.get("needsFailureEvidence"):
+        yield {"type":"PROGRAMMING_INTENT","intent":programming}
+        answer=str(programming.get("evidenceRequest") or "Paste the compiler, test, runtime, browser-console, linter, or type-checker error output so I can ground the repair in the actual failure.")
+        yield {"type":"STATUS","phase":"EVIDENCE_REQUIRED","loadLatencyMs":0.0}
+        yield {"type":"DELTA","text":answer}
+        yield {"type":"CANDIDATE_VALIDATION","validation":{
+            "status":"EVIDENCE_REQUIRED",
+            "reasons":["failure-evidence-required"],
+            "executionVerified":False,
+            "verificationState":"AWAITING_FAILURE_EVIDENCE",
+        }}
+        yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":0.0,"loadLatencyMs":0.0,"firstDeltaLatencyMs":0.0,"fastPath":"failure-evidence-request"}
+        return
     repair_diagnostic=_repair_diagnostic(programming,history)
     if repair_diagnostic:
         yield {"type":"REPAIR_DIAGNOSTIC","diagnostic":repair_diagnostic}
@@ -556,6 +577,12 @@ def generate_events(payload):
     first_delta=None
     regeneration_attempted=False
     regeneration_reason=""
+    intent_contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
+    language_contract=intent_contract.get("languageContract") if isinstance(intent_contract.get("languageContract"),dict) else {}
+    strict_language=bool(language_contract.get("explicit"))
+    guarded_turn=bool(repair_turn or strict_language)
+    candidate_text=""
+    candidate_check=None
     with _lock:
         mode=_response_mode(prompt,programming)
         if mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
@@ -567,41 +594,68 @@ def generate_events(payload):
         else:
             response_tokens=min(768,available_output_tokens);temperature=0.40
         yield {"type":"RESOURCE","cpuCapacity":_cpu_capacity(),"decodeThreads":_thread_plan()[0],"batchThreads":_thread_plan()[1],"maxResponseTokens":response_tokens}
-        if repair_turn:
-            # Repair turns are buffered so a structurally rejected or byte-equivalent
-            # executable candidate can receive one bounded strategy-change attempt
-            # before anything incorrect is committed to the visible conversation.
+        if guarded_turn:
             first=model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=False)
             candidate_text=str((((first.get("choices") or [{}])[0].get("message") or {}).get("content")) or "")
-            first_check=_candidate_structure_check(candidate_text,programming,history)
+            candidate_check=_candidate_structure_check(candidate_text,programming,history)
             previous_fp=repair_diagnostic.get("candidateFingerprint") if repair_diagnostic else None
-            first_fp=_candidate_fingerprint(candidate_text)
-            unchanged=bool(previous_fp and first_fp and previous_fp==first_fp)
-            if unchanged or first_check.get("status")=="REJECT":
+            candidate_fp=_candidate_fingerprint(candidate_text)
+            unchanged=bool(previous_fp and candidate_fp and previous_fp==candidate_fp)
+            if unchanged or candidate_check.get("status")=="REJECT":
                 regeneration_attempted=True
-                regeneration_reason="unchanged-executable-candidate" if unchanged else "structural-rejection"
-                retry_messages=list(messages)+[{"role":"system","content":
-                    "REPAIR RETRY GATE: the first proposed repair was not acceptable because it was "
-                    +("the same executable candidate as the failing predecessor." if unchanged else "structurally incomplete or incompatible.")
-                    +" Produce one different COMPLETE executable candidate. Use the structured receipt categories, failure signals, expected/actual facts, and repairActions already supplied. Change the source operation implicated by those genuine logs, preserve passing behavior and the original contract, and do not use prose/comments/placeholders as the change."}]
+                regeneration_reason="unchanged-executable-candidate" if unchanged else "contract-or-structural-rejection"
+                if repair_turn:
+                    retry_instruction=(
+                        "REPAIR RETRY GATE: the first proposed repair was not acceptable. Use the structured receipt facts and ORIGINAL intent contract. "
+                        "Change the source operation implicated by genuine evidence, preserve passing behavior, required language/artifact constraints, public API and unrelated behavior. "
+                        "Return one different COMPLETE executable candidate; no prose/comments/placeholders as the repair."
+                    )
+                else:
+                    retry_instruction=(
+                        "LANGUAGE/INTENT RETRY GATE: the first candidate violated the deterministic programming contract. "
+                        "Return one COMPLETE candidate in the explicitly requested language/artifact form. Do not substitute another programming language or framework. "
+                        "Requested language contract: "+json.dumps(language_contract,ensure_ascii=False,separators=(",",":"))
+                    )
+                retry_messages=list(messages)+[{"role":"system","content":retry_instruction}]
                 second=model.create_chat_completion(messages=retry_messages,max_tokens=response_tokens,temperature=min(0.45,temperature+0.10),stream=False)
                 retry_text=str((((second.get("choices") or [{}])[0].get("message") or {}).get("content")) or "")
                 if retry_text.strip():
                     candidate_text=retry_text
-                retry_check=_candidate_structure_check(candidate_text,programming,history)
+                candidate_check=_candidate_structure_check(candidate_text,programming,history)
                 retry_fp=_candidate_fingerprint(candidate_text)
                 retry_unchanged=bool(previous_fp and retry_fp and previous_fp==retry_fp)
-                if retry_unchanged or retry_check.get("status")=="REJECT":
-                    regeneration_reason+=";second-attempt-"+("unchanged" if retry_unchanged else "structurally-rejected")
-                    final_messages=list(retry_messages)+[{"role":"system","content":
-                        "FINAL REPAIR STRATEGY GATE: two proposals have failed to produce an acceptable executable change. Stop editing around the failure. Re-derive the smallest implementation from the ORIGINAL contract plus the genuine receipt facts. Preserve the required public API and every passing invariant, but replace the faulty algorithm/operation itself. Return exactly one complete executable candidate; no alternate examples, fake logs, TODOs, or commentary-as-a-fix."}]
-                    third=model.create_chat_completion(messages=final_messages,max_tokens=response_tokens,temperature=min(0.50,temperature+0.15),stream=False)
+                if retry_unchanged or candidate_check.get("status")=="REJECT":
+                    regeneration_reason+=";second-attempt-"+("unchanged" if retry_unchanged else "rejected")
+                    final_instruction=(
+                        "FINAL PROGRAMMING CONTRACT GATE: two proposals failed deterministic acceptance. Re-derive the smallest complete implementation from the ORIGINAL request. "
+                        "Obey the explicit language contract exactly, preserve required APIs and passing behavior, and ground any repair in the supplied compiler/test/runtime evidence. "
+                        "Return exactly one complete candidate in the allowed language set; no alternate-language substitute, fake execution claim, TODO, or placeholder."
+                    )
+                    third=model.create_chat_completion(messages=list(retry_messages)+[{"role":"system","content":final_instruction}],max_tokens=response_tokens,temperature=min(0.50,temperature+0.15),stream=False)
                     third_text=str((((third.get("choices") or [{}])[0].get("message") or {}).get("content")) or "")
                     if third_text.strip():
                         candidate_text=third_text
-            if candidate_text:
+                    candidate_check=_candidate_structure_check(candidate_text,programming,history)
+            if repair_diagnostic:
+                previous_fp=repair_diagnostic.get("candidateFingerprint")
+                final_fp=_candidate_fingerprint(candidate_text)
+                if previous_fp and final_fp and previous_fp==final_fp:
+                    reasons=list(candidate_check.get("reasons") or [])
+                    if "repair-stalled-no-executable-change" not in reasons:
+                        reasons.append("repair-stalled-no-executable-change")
+                    candidate_check={**candidate_check,"status":"REJECT","reasons":reasons}
+            if candidate_check.get("status")=="PASS":
+                if candidate_text:
+                    first_delta=round((time.perf_counter()-started)*1000,3)
+                    yield {"type":"DELTA","text":candidate_text}
+            else:
+                safe_text="I couldn't produce a candidate that satisfies the programming contract, so I did not return the rejected code."
+                if strict_language:
+                    safe_text+=" The requested language/artifact constraint remains authoritative."
+                if repair_turn:
+                    safe_text+=" The failure evidence remains attached to the repair lineage."
                 first_delta=round((time.perf_counter()-started)*1000,3)
-                yield {"type":"DELTA","text":candidate_text}
+                yield {"type":"DELTA","text":safe_text}
         else:
             generated_parts=[]
             for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=True):
@@ -612,15 +666,7 @@ def generate_events(payload):
                     if first_delta is None:first_delta=round((time.perf_counter()-started)*1000,3)
                     yield {"type":"DELTA","text":delta}
             candidate_text="".join(generated_parts)
-    candidate_check=_candidate_structure_check(candidate_text,programming,history)
-    if repair_diagnostic:
-        previous_fp=repair_diagnostic.get("candidateFingerprint")
-        final_fp=_candidate_fingerprint(candidate_text)
-        if previous_fp and final_fp and previous_fp==final_fp:
-            reasons=list(candidate_check.get("reasons") or [])
-            if "repair-stalled-no-executable-change" not in reasons:
-                reasons.append("repair-stalled-no-executable-change")
-            candidate_check={"status":"REJECT","reasons":reasons}
+            candidate_check=_candidate_structure_check(candidate_text,programming,history)
     yield {"type":"CANDIDATE_VALIDATION","validation":candidate_check}
     if repair_diagnostic:
         previous_fp=repair_diagnostic.get("candidateFingerprint")
