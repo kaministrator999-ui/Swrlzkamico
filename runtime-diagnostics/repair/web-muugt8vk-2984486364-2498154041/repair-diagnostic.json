@@ -1,0 +1,93 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muugt8vk-2984486364-2498154041",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791157303924,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "assistant-muugt1zi-2216731497-1347860321",
+    "repairSourceMessageId": "assistant-muugt1zi-2216731497-1347860321",
+    "repairSourceFingerprint": "7185ad0f9d70da54",
+    "candidateFingerprint": "7185ad0f9d70da54",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 12,
+    "failureSignals": [
+      "{\"passed\": 5, \"total\": 9, \"executed\": 9, \"cases\": [{\"test\": \"test_00\", \"passed\": false}, {\"test\": \"test_01\", \"passed\": false}, {\"test\": \"test_02\", \"passed\": false}, {\"test\": \"test_03\", \"passed\": true}, {\"test\": \"test_04\", \"passed\": true}, {\"test\": \"test_05\", \"passed\": false}, {\"test\": \"test_06\", \"pa",
+      "test_00 (__main__.Tests.test_00) ... FAIL",
+      "test_01 (__main__.Tests.test_01) ... FAIL",
+      "test_02 (__main__.Tests.test_02) ... FAIL",
+      "test_05 (__main__.Tests.test_05) ... FAIL",
+      "FAIL: test_00 (__main__.Tests.test_00)",
+      "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")",
+      ": Expected: 'hello-web-42'; actual: 'H-e-l-l-o-W-e-b-4-2'"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "assertion",
+        "runtime",
+        "behavior-mismatch",
+        "dependency"
+      ],
+      "exceptionTypes": [
+        "AssertionError"
+      ],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [
+        "{\"passed\": 5, \"total\": 9, \"executed\": 9, \"cases\": [{\"test\": \"test_00\", \"passed\": false}, {\"test\": \"test_01\", \"passed\": false}, {\"test\": \"test_02\", \"passed\": false}, {\"test\": \"test_03\", \"passed\": true}, {\"test\": \"test_04\", \"passed\": true}, {\"test\": \"test_05\", \"passed\": false}, {\"test\": \"test_06\", \"passed\": true}, {\"test\": \"test_07\", \"passed\": true}, {\"test\": \"test_api_signature\", \"passed\": true}], \"pass\": false}",
+        "test_00 (__main__.Tests.test_00) ... FAIL",
+        "test_01 (__main__.Tests.test_01) ... FAIL",
+        "test_02 (__main__.Tests.test_02) ... FAIL",
+        "test_05 (__main__.Tests.test_05) ... FAIL",
+        "FAIL: test_00 (__main__.Tests.test_00)",
+        "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")",
+        ": Expected: 'hello-web-42'; actual: 'H-e-l-l-o-W-e-b-4-2'",
+        "FAIL: test_01 (__main__.Tests.test_01)",
+        ": Expected: 'github-pages'; actual: 'G-i-t-H-u-b-P-a-g-e-s'",
+        "FAIL: test_02 (__main__.Tests.test_02)",
+        ": Expected: 'caf'; actual: 'C-a-f-é'"
+      ],
+      "passingSignals": [
+        "test_03 (__main__.Tests.test_03) ... ok",
+        "test_04 (__main__.Tests.test_04) ... ok",
+        "test_06 (__main__.Tests.test_06) ... ok",
+        "test_07 (__main__.Tests.test_07) ... ok",
+        "test_api_signature (__main__.Tests.test_api_signature) ... ok"
+      ],
+      "expectedActual": [
+        "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")",
+        ": Expected: 'hello-web-42'; actual: 'H-e-l-l-o-W-e-b-4-2'",
+        ": Expected: 'github-pages'; actual: 'G-i-t-H-u-b-P-a-g-e-s'",
+        ": Expected: 'caf'; actual: 'C-a-f-é'",
+        ": Expected: 'a1b2'; actual: 'A-1-B-2'"
+      ],
+      "sourceLocations": [
+        "/workspace/swyrlz-coding-route-retry4-2026-10-04/py-dependency/test_contract.py:31:test",
+        "line:31"
+      ],
+      "failingTests": [
+        "__main__.Tests.test_00",
+        "__main__.Tests.test_01",
+        "__main__.Tests.test_02",
+        "__main__.Tests.test_05"
+      ],
+      "reportedSymbols": [],
+      "reportedDependencies": []
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example",
+      "trace the exception to its first relevant application frame and repair the causing state/operation",
+      "repair the import/module/dependency boundary using only dependencies supported by project evidence"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
