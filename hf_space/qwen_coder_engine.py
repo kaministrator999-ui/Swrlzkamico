@@ -5,6 +5,7 @@ from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
+from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive
 
 MODEL_REPO=os.environ.get("SWRLZ_CODER_MODEL_REPO","Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF")
 MODEL_FILE=os.environ.get("SWRLZ_CODER_MODEL_FILE","qwen2.5-coder-1.5b-instruct-q4_k_m.gguf")
@@ -178,27 +179,36 @@ def _memory_candidates(prompt,user_profile):
 
 
 def _convergence_candidate(history,prompt):
-    """Emit a compact review candidate when a multi-turn exchange appears to reach a validated answer.
-    This is not durable memory and is never auto-promoted."""
+    """Emit review metadata only after an explicit whole-utterance resolution signal."""
     if len(history) < 2:
         return None
-    text=prompt.strip()
-    lower=text.lower()
-    positive_markers=("exactly","that's it","thats it","there you go","yep","yeah that's","yeah thats","correct","right","nailed it","that's the answer","thats the answer")
-    correction_markers=("no ","i meant","not what i said","correction","actually","who said","just ")
-    prior_user=" ".join(m.get("content","") for m in history if m.get("role")=="user").lower()
-    had_repair=any(m in prior_user for m in correction_markers)
-    confirmed=any(m in lower for m in positive_markers)
-    if not (had_repair and confirmed):
+    text=str(prompt or "").strip()
+    normalized=re.sub(r"[\s.!?✅👍👌]+$","",text.lower().strip())
+    confirmation_patterns=(
+        r"^(?:exactly|that['’]?s it|thats it|there you go|yep|yes|right|correct|nailed it)$",
+        r"^(?:yeah|yes|yep)[, ]+(?:that['’]?s|thats)\s+(?:right|correct|it)$",
+        r"^(?:that['’]?s|thats)\s+(?:the answer|correct|right)$",
+    )
+    confirmed=any(re.fullmatch(pattern,normalized,re.I) for pattern in confirmation_patterns)
+    if not confirmed:
+        return None
+    prior_user="\n".join(str(m.get("content") or "") for m in history if m.get("role")=="user")
+    correction_patterns=(
+        r"(?im)^\s*(?:no\b|i meant\b|not what i said\b|correction\b|actually\b)",
+        r"(?i)\b(?:fix|repair|wrong|incorrect|doesn['’]?t work|failed|error)\b",
+    )
+    had_repair=any(re.search(pattern,prior_user) for pattern in correction_patterns)
+    if not had_repair:
         return None
     tail=history[-6:]
     return {
-        "schema":"swrlz-convergence-candidate-v1",
+        "schema":"swrlz-convergence-candidate-v2",
         "status":"review_candidate",
         "source":"current-thread",
         "turnWindow":len(tail)+1,
         "hadCorrectionOrScopeRepair":True,
         "userConfirmedResolution":True,
+        "resolutionSignal":"explicit-whole-utterance-confirmation",
         "memoryProvenance":"THREAD-ONLY",
         "autoPromote":False,
         "requiresReview":True,
@@ -210,10 +220,9 @@ def _convergence_candidate(history,prompt):
             "decisive cue or evidence",
             "applicability conditions",
             "memory impact",
-            "deduplication against existing knowledge/rules/evals"
-        ]
+            "deduplication against existing knowledge/rules/evals",
+        ],
     }
-
 def _token_count(model,messages):
     total=0
     for message in messages:
@@ -567,17 +576,23 @@ def generate_events(payload):
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
     repair_turn=bool(programming.get("failureEvidence")) or bool(programming.get("canonicalCarry"))
-    fitter=_fit_repair_messages if repair_turn else _fit_messages
-    fitted=fitter(model,system,history,prompt)
+    repair_context_telemetry=None
     if repair_turn:
+        system,fitted_prompt,repair_context_telemetry=build_compact_repair_context(
+            programming,
+            prompt,
+            _response_mode(prompt,programming),
+        )
+        fitted=_fit_repair_messages(model,system,history,fitted_prompt)
         messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
     else:
+        fitted=_fit_messages(model,system,history,prompt)
         messages,dropped_history,input_tokens,available_output_tokens=fitted
         fitted_prompt=prompt
     system_tokens=_token_count(model,[{"role":"system","content":system}])
     prompt_tokens=_token_count(model,[{"role":"user","content":fitted_prompt}])
     history_tokens=max(0,input_tokens-system_tokens-prompt_tokens)
-    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":INPUT_BUDGET_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2,"repairTurn":repair_turn,"tokenBreakdown":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
+    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":INPUT_BUDGET_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2,"repairTurn":repair_turn,"repairContext":repair_context_telemetry,"tokenBreakdown":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
     if repair_turn and available_output_tokens<=0:
         yield {"type":"FAILED","phase":"CONTEXT_REJECTED","reason":f"Repair context uses {input_tokens} tokens; maximum fitted input is {CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS}.","contextBudget":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
         return
@@ -607,14 +622,15 @@ def generate_events(payload):
         if guarded_turn:
             repair_target_fp=repair_diagnostic.get("candidateFingerprint") if repair_diagnostic else None
 
-            def validate_attempt(text_value):
+            def validate_attempt(text_value,previous_attempt_fp=None):
                 check=_candidate_structure_check(text_value,programming,history)
                 fp=_candidate_fingerprint(text_value)
-                if repair_target_fp and fp and repair_target_fp==fp:
-                    reasons=list(check.get("reasons") or [])
-                    if "repair-stalled-no-executable-change" not in reasons:
-                        reasons.append("repair-stalled-no-executable-change")
-                    check={**check,"status":"REJECT","reasons":reasons}
+                check=enforce_strategy_change(
+                    check,
+                    fp,
+                    repair_target_fp,
+                    previous_attempt_fp,
+                )
                 return check,fp
 
             candidate_text,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
@@ -632,11 +648,7 @@ def generate_events(payload):
                 stalled="repair-stalled-no-executable-change" in (candidate_check.get("reasons") or [])
                 regeneration_reason="unchanged-executable-candidate" if stalled else "contract-or-structural-rejection"
                 if repair_turn:
-                    retry_instruction=(
-                        "REPAIR RETRY GATE: the first proposed repair was not acceptable. Use the structured receipt facts and ORIGINAL intent contract. "
-                        "Change the source operation implicated by genuine evidence, preserve passing behavior, required language/artifact constraints, public API and unrelated behavior. "
-                        "Return one different COMPLETE executable candidate; no prose/comments/placeholders as the repair."
-                    )
+                    retry_instruction=strategy_change_directive(programming,candidate_check,2)
                 else:
                     retry_instruction=(
                         "LANGUAGE/INTENT RETRY GATE: the first candidate violated the deterministic programming contract. "
@@ -647,7 +659,7 @@ def generate_events(payload):
                 retry_text,retry_timing=buffered_chat_completion(model,retry_messages,response_tokens,min(0.45,temperature+0.10))
                 if retry_text.strip():
                     candidate_text=retry_text
-                candidate_check,retry_fp=validate_attempt(candidate_text)
+                candidate_check,retry_fp=validate_attempt(candidate_text,candidate_fp)
                 attempt=candidate_attempt_receipt(
                     2,"retry:"+regeneration_reason,retry_timing,candidate_check,retry_fp,
                     previous_attempt_fingerprint=candidate_fp,
@@ -661,15 +673,15 @@ def generate_events(payload):
                     retry_stalled="repair-stalled-no-executable-change" in (candidate_check.get("reasons") or [])
                     regeneration_reason+=";second-attempt-"+("unchanged" if retry_stalled else "rejected")
                     final_instruction=(
-                        "FINAL PROGRAMMING CONTRACT GATE: two proposals failed deterministic acceptance. Re-derive the smallest complete implementation from the ORIGINAL request. "
-                        "Obey the explicit language contract exactly, preserve required APIs and passing behavior, and ground any repair in the supplied compiler/test/runtime evidence. "
-                        "Return exactly one complete candidate in the allowed language set; no alternate-language substitute, fake execution claim, TODO, or placeholder."
+                        strategy_change_directive(programming,candidate_check,3)
+                        if repair_turn else
+                        "FINAL PROGRAMMING CONTRACT GATE: two proposals failed deterministic acceptance. Return one complete candidate that obeys the explicit language/artifact contract exactly; no alternate-language substitute, fake execution claim, TODO, or placeholder."
                     )
                     final_messages=list(retry_messages)+[{"role":"system","content":final_instruction}]
                     third_text,third_timing=buffered_chat_completion(model,final_messages,response_tokens,min(0.50,temperature+0.15))
                     if third_text.strip():
                         candidate_text=third_text
-                    candidate_check,third_fp=validate_attempt(candidate_text)
+                    candidate_check,third_fp=validate_attempt(candidate_text,candidate_fp)
                     attempt=candidate_attempt_receipt(
                         3,"final-strategy-gate",third_timing,candidate_check,third_fp,
                         previous_attempt_fingerprint=candidate_fp,
