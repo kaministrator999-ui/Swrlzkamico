@@ -1,0 +1,49 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v120-180034822da9",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791153223925,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "3ac906c7cf4e16dc",
+    "candidateFingerprint": "3ac906c7cf4e16dc",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "src/label.ts(2,12): error TS18047: 'value' is possibly 'null'."
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "type",
+        "typecheck"
+      ],
+      "exceptionTypes": [],
+      "exitCodes": [],
+      "failingSignals": [
+        "src/label.ts(2,12): error TS18047: 'value' is possibly 'null'."
+      ],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [
+        "src/label.ts:2:12"
+      ],
+      "failingTests": [],
+      "reportedSymbols": [],
+      "reportedDependencies": []
+    },
+    "repairActions": [
+      "trace concrete runtime types through the failing operation and change the operation or validation causing the mismatch",
+      "repair the static type mismatch at the producer/consumer boundary while preserving runtime semantics"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
