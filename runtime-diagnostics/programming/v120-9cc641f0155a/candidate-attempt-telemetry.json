@@ -1,0 +1,65 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "v120-9cc641f0155a",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791153184238,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": 1,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": false,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 11.401,
+      "visibleFirstDeltaLatencyMs": 7463.002,
+      "engineTotalLatencyMs": 7463.035,
+      "totalCandidateGenerationMs": 7451.077,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 7451.077,
+          "firstTokenLatencyMs": 2111.193,
+          "deltaChunks": 232,
+          "candidateFingerprint": "9886381f816fe0e3",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791153176773,
+      "startedAtUnixMs": 1791153176774,
+      "completedAtUnixMs": 1791153184238,
+      "queueWaitMs": 1,
+      "stationRunMs": 7464,
+      "endToEndMs": 7465
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "html"
+      ],
+      "executionVerified": false,
+      "verificationState": "NOT_EXECUTION_VERIFIED"
+    },
+    "artifactReceipt": {
+      "action": "ARTIFACT_CREATED",
+      "revision": 1,
+      "sourceHash": "9b1b97411c8100524f7f56a4c14a1eeb2d74bf1b0f9a864d8701736a7cab2017",
+      "reason": null
+    }
+  }
+}
