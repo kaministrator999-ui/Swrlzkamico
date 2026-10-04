@@ -307,22 +307,36 @@ Do not treat an old release/engineering-log entry as proof that the same behavio
 
 The repository can contain **engineering logs, release records, workflow logs, exported diagnostic artifacts, and instrumentation source**. Those are valuable and should be checked automatically when relevant.
 
-However, normal production Chat/LALM camera events are not magically stored in a GitHub `/logs/` folder.
+Normal production Chat/LALM camera events are **not universally mirrored** into GitHub. Repository persistence exists only where a governed camera explicitly owns a bounded writer.
+
+Current explicit runtime-diagnostic persistence includes:
+
+```text
+runtime-diagnostics/repair/<request-id>/repair-diagnostic.json
+runtime-diagnostics/repair/<request-id>/repair-outcome-diagnostic.json
+runtime-diagnostics/programming/<request-id>/candidate-attempt-telemetry.json
+```
+
+The programming attempt file is a privacy-bounded receipt, not conversation archival. It may contain attempt number, retry trigger, timing, deterministic validation status/reasons, candidate fingerprints/change flags, Station timing, final artifact action/revision, source revision, and GitHub persistence status. It must not contain the user's prompt, generated source code, user/assistant profile text, credentials, cookies, or hidden/private reasoning.
+
+These writes reuse the dedicated `SWRLZ_DIAGNOSTIC_GITHUB_TOKEN` transport and target the `runtime` branch. They are asynchronous and best-effort so repository I/O cannot become inference authority or block the generation critical path. The Station/session export should expose the persistence receipt so an engineer can distinguish `QUEUED`, successful GitHub storage, and a bounded persistence failure.
 
 Use this distinction:
 
 ```text
 GitHub / repository
 → source, instrumentation, engineering history, release records, CI/workflow evidence
+→ plus explicitly governed bounded runtime-diagnostic artifacts under runtime-diagnostics/
 
 Runtime provider / active system
 → live production events and currently executing behavior
+→ process-local/full session evidence that is intentionally too rich for repository persistence
 
 User/device evidence
 → what the user actually saw/experienced
 ```
 
-If a repository artifact explicitly contains an exported runtime capture, it may of course be used as runtime evidence with its timestamp/source recorded.
+If a repository artifact explicitly contains an exported runtime capture or bounded runtime diagnostic, it may be used as runtime evidence with its timestamp/source recorded. Never infer that all runtime events are durable merely because some governed camera families are persisted.
 
 ---
 
