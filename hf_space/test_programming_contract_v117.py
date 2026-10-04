@@ -86,6 +86,16 @@ check(vague["artifactTargetId"]=="artifact-1",vague)
 check(vague["artifactMutationRequested"] is False,vague)
 check("Paste the compiler" in vague["evidenceRequest"],vague)
 
+# The evidence-request prose turn must not steal repair ownership from the code artifact.
+history_after_request=history+[
+    {"id":"a2","role":"assistant","text":vague["evidenceRequest"],"meta":{"requestId":"r2","state":"COMPLETE"}},
+]
+receipt_after_request=programming_intent(receipt,history_after_request,[],vague)
+check(receipt_after_request["artifactTargetId"]=="artifact-1",receipt_after_request)
+check(receipt_after_request["artifactTargetMessageId"]=="a1",receipt_after_request)
+check(receipt_after_request["artifactMutationRequested"] is True,receipt_after_request)
+check(receipt_after_request["failureEvidence"]["repairTargetArtifactId"]=="artifact-1",receipt_after_request["failureEvidence"])
+
 # First-turn user-owned source + compiler receipt is also supported.
 inline="""Fix this Python code.
 ```python
