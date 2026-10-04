@@ -428,12 +428,13 @@ def _looks_like_source_body(body: str) -> bool:
     if not text.strip() or _receipt_shape_detected(text):
         return False
     return bool(re.search(
-        r"(?is)<!doctype\s+html|<html\b|<body\b|"
-        r"(?m)^\s*(?:from\s+[A-Za-z_][\w.]*\s+import\s+|import\s+[A-Za-z_][\w.]*|def\s+[A-Za-z_]\w*\s*\(|class\s+[A-Za-z_]\w*)|"
+        r"<!doctype\s+html|<html\b|<body\b|"
+        r"^\s*(?:from\s+[A-Za-z_][\w.]*\s+import\s+|import\s+[A-Za-z_][\w.]*|def\s+[A-Za-z_]\w*\s*\(|class\s+[A-Za-z_]\w*)|"
         r"\b(?:function|const|let|var|interface|type|fun|fn|public\s+class)\b|"
         r"#include\s*[<\"]|\bstd::|"
-        r"(?im)^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE\s+TABLE)\b",
-        text
+        r"^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE\s+TABLE)\b",
+        text,
+        re.I|re.M|re.S,
     ))
 
 
