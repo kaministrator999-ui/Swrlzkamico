@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.141
-REVISION=2.1.141-hf-auto-qwen-coder-1p5b-v105
+VERSION=2.1.142
+REVISION=2.1.142-hf-language-evidence-gates-v117
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
