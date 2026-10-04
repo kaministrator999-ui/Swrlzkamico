@@ -1,0 +1,48 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muts5348-2973373140-1912992177",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "f7287f751a01bf12210349098a918794084df0e0",
+  "persistedAtUnixMs": 1791115865939,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v1",
+    "receiptType": null,
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "candidateFingerprint": "b163ee194ebd32e7",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "The traceback reports an unavailable third-party module. The ORIGINAL requirements forbid third-party packages and installation. Remove that dependency and return a complete standard-library implementation of make_slug(text). Preserve the required ASCII URL-slug behavior and the original signature. "
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "runtime",
+        "dependency"
+      ],
+      "exceptionTypes": [
+        "ValueError",
+        "ModuleNotFoundError"
+      ],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [
+        "The traceback reports an unavailable third-party module. The ORIGINAL requirements forbid third-party packages and installation. Remove that dependency and return a complete standard-library implementation of make_slug(text). Preserve the required ASCII URL-slug behavior and the original signature. A repeated import or an installation suggestion does not repair this failure."
+      ],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": []
+    },
+    "repairActions": [
+      "trace the exception to its first relevant application frame and repair the causing state/operation",
+      "repair the import/module/dependency boundary using only dependencies supported by project evidence"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
