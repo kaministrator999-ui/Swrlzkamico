@@ -1,3 +1,19 @@
+## UPDATE STARTED — 2026-10-03 — Universal language fidelity + evidence-grounded repair gates v117
+
+**Goal:** make explicit programming-language requests hard acceptance constraints and make compiler/test/runtime/log-driven repair an evidence-bound continuation of the original coding artifact/intent. When a user reports only that generated code does not work and supplies no actionable error evidence, request the smallest useful compiler/test/runtime error instead of inventing a diagnosis.
+
+**Evidence basis:** a live exported Station session accepted the request `Can you write me an example html page`, correctly routed it through `CODER_AUTO_ROUTE`, but returned a Python/Flask artifact and still emitted `CANDIDATE_PASS`. Routing is working; candidate acceptance is too permissive about language/artifact fidelity. Existing v113-v116 repair infrastructure already parses compiler/test/runtime evidence and carries bounded failure history, but failure evidence is not yet a universal hard acceptance contract and generated artifacts are not automatically rebound by artifact metadata when the user returns a failure receipt.
+
+**Architecture reconciliation:**
+- Brain owns semantic programming intent, explicit language/artifact constraints, failure-evidence classification, vague-failure evidence requests, and repair lineage metadata.
+- Model engines own generation but must consume the shared Brain contract and apply the shared deterministic candidate gate; do not create model-specific language rules.
+- Station owns operational artifact identity/revision. History passed to Brain must retain bounded assistant message metadata so a returned failure receipt can target the exact previously generated code artifact without requiring the user to pin it manually.
+- External compiler/test/runtime receipts remain the final execution truth. A model-generated repair may be contract/diagnostic-grounded but must not claim execution success without a new external receipt.
+
+**Expected module impact:** LALM Engine + Repository Work. Server Runtime version remains unchanged unless deployment mechanics/runtime host authority itself changes. Deployment Control remains unchanged.
+
+**Deployment expectation:** runtime-affecting HF source mutation; after source/static verification and version reconciliation, continue through the existing guarded Hugging Face deployment request and terminal observation under the standing §tart deployment contract.
+
 ## UPDATE FINISHED — 2026-10-03 — Live dedicated coder routing acceptance
 
 **Goal:** close the v105 live activation/behavior gap for both fresh coding and repair/log input without redeploying the already-published Hugging Face candidate.
