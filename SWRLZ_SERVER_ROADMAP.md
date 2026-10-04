@@ -3,6 +3,50 @@
 **Outcome:** LIVE RUNTIME VERIFIED.
 
 ### Implemented
+- Brain now separates fenced source from receipt-shaped execution output before deciding whether a user turn contains compiler/test/runtime/lint/type-check evidence. Error-type names inside ordinary source/requirements are not execution proof.
+- Native TypeScript `error TS####` and ESLint line/column/problem-summary formats are recognized as structured failure evidence.
+- Receipt semantics now preserve corrected source locations, common failing-test identifiers, expected/actual mismatches, mixed pass/fail summaries, and structured JSON false results. `"passed": false` is a failing signal and is not also counted as passing.
+- Brain emits one canonical `repairSource`, `repairSourceFingerprint`, source ownership, and `repairComparator=canonical-repair-source` for every recognized repair receipt.
+- Candidate validation compares proposed repairs against that canonical fingerprint instead of reconstructing the comparator from recent assistant text.
+- Qwen coder and 700M repair diagnostics/retry stall gates/prompt grounding/outcome telemetry consume the same Brain-owned source identity.
+- Prose-only evidence requests/refusals cannot become the repair source. An explicitly supplied original/user seed remains authoritative even when a newer assistant candidate exists.
+
+### Static verification
+- Added `hf_space/test_programming_receipts_v119.py` and extended the existing programming-contract verifier.
+- Early verifier runs #6-#8 exposed and corrected a regex flag construction defect, a prose-as-source ownership edge, and mixed `failed + passed` summary polarity. The tests were not weakened.
+- Static run #9 / `37202727522`: SUCCESS with `programming-contract-v117 PASS`, `programming-telemetry-v118 PASS`, and `programming-receipts-v119 PASS`.
+
+### Deployment
+- Guarded HF deployment #68 / `37202857288`: SUCCESS from exact source `76befef43857d41f1eb3b7fafb3a9f83cbb3b60f`.
+- Prior live revision `8968b9db478893026067a3bf050ce914f5922cb1` was preserved as rollback.
+- Final v119 HF Space revision: `aca32f9f3a980c853fbd4cc8d3502d4becdd6e86`.
+- Deployment provenance correctly records selected source `76befef43857d41f1eb3b7fafb3a9f83cbb3b60f`.
+
+### Live acceptance
+- Live run #6 / `37203043164` bound successfully to the v119 Space/source but stalled on the pre-existing HTML regression fixture before candidate attempt 1; no v119 assertion executed and no source mutation followed.
+- Unchanged retry live run #7 / `37203619258`: SUCCESS against Space revision `aca32f9f3a980c853fbd4cc8d3502d4becdd6e86` and expected source `76befef43857d41f1eb3b7fafb3a9f83cbb3b60f`.
+- Clean source/requirement mentioning and throwing `TypeError` produced no `failureEvidence`.
+- Native TypeScript receipt `src/label.ts(2,12): error TS18047: ...` produced user-seed evidence with categories `type` + `typecheck`, location `src/label.ts:2:12`, and canonical repair fingerprint `3ac906c7cf4e16dc`.
+- Native ESLint output produced user-seed evidence with category `lint` and location `/workspace/user-label.js:2:11`.
+- Canonical user-seed comparator case preserved fingerprint `14d16a1d31ca6675` through Brain failure evidence and engine `REPAIR_DIAGNOSTIC`, despite a newer assistant candidate in the same thread; final validation passed.
+- The v117 user-seed compiler repair and generated-artifact evidence-lineage cases re-passed.
+- The v118 attempt/timing camera and durable GitHub programming telemetry re-passed. Independent readback of `runtime-diagnostics/programming/v119-2bc653819b9f/candidate-attempt-telemetry.json` confirmed `sourceRef=76befef43857d41f1eb3b7fafb3a9f83cbb3b60f` and the persisted attempt/timing receipt.
+
+### Versions
+- LALM Engine: `2.1.144` / `2.1.144-hf-native-receipt-canonical-source-v119`.
+- Repository Work: `1.0.70`.
+- Deployment Control: unchanged `1.0.17`.
+- Server Runtime: unchanged `2.3.309`.
+
+**Deployment state:** final active HF revision is `aca32f9f3a980c853fbd4cc8d3502d4becdd6e86`. No additional deployment is required.
+
+**Truth:** `LIVE RUNTIME VERIFIED — NATIVE RECEIPT RECOGNITION + SOURCE/RECEIPT SEPARATION + CANONICAL REPAIR-SOURCE COMPARATOR PASS.` This closes review (16)'s structured TS/ESLint recognition, TypeError false-positive, mixed result semantics, and wrong-comparator findings for the exercised cases. It does not claim universal parser coverage or universal repair correctness across every toolchain.
+
+## UPDATE FINISHED — 2026-10-04 — Native failure receipts + canonical repair source v119
+
+**Outcome:** LIVE RUNTIME VERIFIED.
+
+### Implemented
 - Brain separates fenced source from receipt-shaped execution output before classifying failure evidence. Source/requirement text that merely mentions names such as `TypeError` no longer establishes an execution receipt.
 - Native receipt recognition now covers TypeScript `error TS####` diagnostics, ESLint line/column output and problem summaries, structured JSON failure results, common compiler/runtime/test receipts, and mixed fail/pass summaries.
 - Receipt semantics preserve correct polarity for structured booleans such as `"passed": false`, extract TypeScript/ESLint source locations, and recover common failing-test identifiers.
