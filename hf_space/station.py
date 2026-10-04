@@ -511,7 +511,7 @@ async def send(request:Request):
             s["threads"].append(t)
         now_ms=int(time.time()*1000)
         temporal_context=_temporal_context(t["messages"],client_timezone,now_ms)
-        history=[{"id":m.get("id"),"role":m["role"],"text":m["text"],"createdAt":m.get("createdAt")} for m in t["messages"] if m["role"] in ("user","assistant")]
+        history=[{"id":m.get("id"),"role":m["role"],"text":m["text"],"createdAt":m.get("createdAt"),"meta":copy.deepcopy(m.get("meta") or {})} for m in t["messages"] if m["role"] in ("user","assistant")]
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
