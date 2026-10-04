@@ -1,3 +1,19 @@
+## UPDATE STARTED — 2026-10-03 — Candidate attempt + generation timing camera v118
+
+**Goal:** make exported §wyrlz coding sessions answer, from explicit telemetry, how long generation took, how many candidate generations were attempted, whether the first candidate was rejected, why a retry happened, whether executable candidate fingerprints changed between attempts, and which attempt was ultimately accepted.
+
+**Evidence basis:** the latest live HTML export records queue wait, final validation, artifact revision, and timestamps, but it does not persist engine `totalLatencyMs` / `firstDeltaLatencyMs` or the bounded internal regeneration attempts used by the language/repair gates. Therefore a successful final artifact cannot currently prove whether Qwen succeeded on attempt 1 or was internally regenerated before acceptance.
+
+**Architecture reconciliation:**
+- Model engines own observable per-attempt generation telemetry because they know when each model call starts/ends and which deterministic candidate check follows it.
+- Station owns persistence/export of bounded telemetry only: candidate-attempt receipts, completion timing, end-to-end wall latency, and a compact attempt summary. Telemetry must not gain routing, acceptance, prompt, or artifact authority.
+- No raw private reasoning or duplicate candidate source is stored in the camera; use attempt number, trigger reason, timing, validation status/reasons, fingerprint, and candidate-change boolean only.
+- The final assistant message should retain a compact telemetry receipt so timing/attempt facts survive after a later generation replaces `activeGeneration`.
+
+**Expected module impact:** LALM Engine + Repository Work. Server Runtime and Deployment Control stay unchanged unless host/deployment authority changes.
+
+**Deployment expectation:** runtime-affecting HF source change; static verification first, then one guarded HF publish and live export-shape acceptance.
+
 ## UPDATE FINISHED — 2026-10-03 — Universal language fidelity + evidence-grounded repair gates v117
 
 **Goal:** enforce explicit programming-language requests as hard acceptance constraints and make compiler/test/runtime/log-driven repair an evidence-bound continuation of the original coding intent and code artifact. When the user reports only that code does not work, request concrete failure evidence instead of inventing a diagnosis.
