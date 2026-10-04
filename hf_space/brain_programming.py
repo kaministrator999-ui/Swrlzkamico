@@ -547,7 +547,7 @@ def _original_programming_request(history: list[dict[str, Any]]) -> str:
         text=str(item.get("content") or item.get("text") or "").strip()
         if not text or _looks_like_failure_receipt(text):
             continue
-        if any(term in _norm(text) for term in _CODE_TERMS):
+        if any(term in _norm(text) for term in _CODE_TERMS) or bool(_explicit_languages(text)):
             return text[:4000]
     return ""
 
@@ -576,7 +576,7 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     original_request=_original_programming_request(history or []) if failure_evidence else ""
     recent=" ".join(_norm(m.get("content") or m.get("text")) for m in (history or [])[-4:] if isinstance(m,dict))
     inherited=bool(pins) or bool(prior_contract) or any(term in recent for term in _CODE_TERMS)
-    coding=any(term in p for term in _CODE_TERMS) or inherited or bool(failure_evidence) or vague_failure
+    coding=any(term in p for term in _CODE_TERMS) or bool(_explicit_languages(text)) or inherited or bool(failure_evidence) or vague_failure
     if not coding:
         return {
             "schema":"swrlz-programming-intent-v1",
