@@ -1,0 +1,28 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muugvjxj-2073153364-3114290168",
+  "modelId": "700m",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791157417002,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "61b1120c656531fb",
+    "newCandidateFingerprint": "61b1120c656531fb",
+    "candidateChanged": false,
+    "stalledRepairInput": true,
+    "regenerationAttempted": true,
+    "regenerationReason": "unchanged-executable-candidate;second-attempt-unchanged",
+    "candidateValidationStatus": "REJECT",
+    "candidateValidationReasons": [
+      "diagnostic-repair-no-executable-change",
+      "repair-stalled-no-executable-change",
+      "strategy-repeat-previous-attempt"
+    ],
+    "receiptCategories": [],
+    "repairActions": [
+      "use the failing receipt to identify the first concrete failing operation, then change that operation while preserving passing behavior"
+    ],
+    "executionVerified": false
+  }
+}
