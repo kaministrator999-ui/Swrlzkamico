@@ -1,3 +1,49 @@
+## UPDATE FINISHED — 2026-10-04 — Native failure receipts + canonical repair source v119
+
+**Outcome:** LIVE RUNTIME VERIFIED.
+
+### Implemented
+- Brain separates fenced source from receipt-shaped execution output before classifying failure evidence. Source/requirement text that merely mentions names such as `TypeError` no longer establishes an execution receipt.
+- Native receipt recognition now covers TypeScript `error TS####` diagnostics, ESLint line/column output and problem summaries, structured JSON failure results, common compiler/runtime/test receipts, and mixed fail/pass summaries.
+- Receipt semantics preserve correct polarity for structured booleans such as `"passed": false`, extract TypeScript/ESLint source locations, and recover common failing-test identifiers.
+- Brain emits one canonical `repairSource`, `repairSourceFingerprint`, ownership record, and `repairComparator=canonical-repair-source` for every grounded repair.
+- Candidate validation, Qwen retry/stall logic, 700M retry/stall logic, repair prompt grounding, repair diagnostics, and repair outcome telemetry consume that Brain-owned source identity instead of independently selecting recent assistant prose or a newer already-passing candidate.
+- Prose-only evidence requests/refusals are excluded from source ownership, preserving the three-turn `generated code → ask for evidence → returned receipt` lineage from v117.
+- v118 per-attempt timing and GitHub diagnostic persistence remain intact.
+
+### Static verification
+- Static verifier run #6 / `37202508735` caught a regex-flag defect before v119 tests ran; no deployment followed.
+- Static verifier run #7 / `37202562930` then caught the three-turn ownership regression where technical prose could be mistaken for code; the source-selection boundary was tightened rather than weakening the test.
+- Static verifier run #8 / `37202654743` exposed mixed pass/fail receipt polarity handling; receipt semantics were corrected.
+- Static verifier run #9 / `37202727522`: SUCCESS.
+- Final regression stack: `programming-contract-v117 PASS`, `programming-telemetry-v118 PASS`, `programming-receipts-v119 PASS`.
+
+### Deployment
+- Guarded HF deployment #68 / `37202857288`: SUCCESS.
+- Exact selected feature source: `76befef43857d41f1eb3b7fafb3a9f83cbb3b60f`.
+- Previous Space revision `8968b9db478893026067a3bf050ce914f5922cb1` was preserved as rollback.
+- Final deployed Space revision: `aca32f9f3a980c853fbd4cc8d3502d4becdd6e86`.
+
+### Live acceptance
+- Live run #6 / `37203043164`: failed by generation timeout while the first HTML fixture was still generating; no source change followed because the receipt did not establish a deterministic v119 semantic defect.
+- Live run #7 / `37203619258`: SUCCESS against Space revision `aca32f9f3a980c853fbd4cc8d3502d4becdd6e86` and source `76befef43857d41f1eb3b7fafb3a9f83cbb3b60f`.
+- Existing v117/v118 HTML language fidelity, compiler-log repair, generated-artifact evidence lineage, attempt telemetry, and GitHub persistence cases remained green.
+- `TypeError` appearing inside clean source/requirements was not classified as a failure receipt.
+- Native TypeScript `TS18047` was recognized as user-seed failure evidence with categories `type` + `typecheck`, source location `src/label.ts:2:12`, and a canonical repair-source fingerprint.
+- Native ESLint output was recognized as user-seed failure evidence with category `lint` and source location `/workspace/user-label.js:2:11`.
+- Canonical user-seed comparator case passed: the repair remained bound to the broken user seed rather than a newer assistant candidate/refusal, and repair diagnostics exposed the same canonical fingerprint.
+- Durable v119 programming telemetry was independently read back from `runtime-diagnostics/programming/v119-2bc653819b9f/candidate-attempt-telemetry.json`; it reports `sourceRef=76befef43857d41f1eb3b7fafb3a9f83cbb3b60f`, final candidate PASS, two measured attempts, and Station end-to-end timing.
+
+### Versions
+- LALM Engine: `2.1.144` / `2.1.144-hf-native-receipt-canonical-source-v119`.
+- Repository Work: `1.0.70`.
+- Deployment Control: unchanged `1.0.17`.
+- Server Runtime: unchanged `2.3.309`.
+
+**Deployment state:** v119 is active at HF revision `aca32f9f3a980c853fbd4cc8d3502d4becdd6e86`. No additional deployment is required.
+
+**Truth:** `LIVE RUNTIME VERIFIED — NATIVE FAILURE-RECEIPT RECOGNITION + SOURCE/RECEIPT SEPARATION + CANONICAL REPAIR-SOURCE COMPARATOR PASS.` This closes the specific structured-repair defects identified by review (16); it does not claim universal correctness for every compiler, linter, framework, dependency failure, or coding task.
+
 ## UPDATE CHECKPOINT — 2026-10-04 — Native failure receipts + canonical repair source v119
 
 **Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
