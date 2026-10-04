@@ -1,0 +1,82 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "v120-563230487ed5",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791153079749,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 2,
+      "regenerationCount": 1,
+      "firstCandidateRejected": true,
+      "finalAcceptedAttempt": 2,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": false,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 14.131,
+      "visibleFirstDeltaLatencyMs": 14961.037,
+      "engineTotalLatencyMs": 14961.072,
+      "totalCandidateGenerationMs": 14943.719,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 7716.329,
+          "firstTokenLatencyMs": 3593.291,
+          "deltaChunks": 159,
+          "candidateFingerprint": "b7fa9b4e40710832",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "REJECT",
+          "validationReasons": [
+            "missing-required-language:html",
+            "language-contract-mismatch:python"
+          ],
+          "accepted": false
+        },
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 2,
+          "trigger": "retry:contract-or-structural-rejection",
+          "durationMs": 7227.39,
+          "firstTokenLatencyMs": 351.226,
+          "deltaChunks": 289,
+          "candidateFingerprint": "88d3bbc3c54f7c0b",
+          "changedFromPreviousAttempt": true,
+          "changedFromRepairTarget": null,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791153064777,
+      "startedAtUnixMs": 1791153064781,
+      "completedAtUnixMs": 1791153079748,
+      "queueWaitMs": 4,
+      "stationRunMs": 14967,
+      "endToEndMs": 14971
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "html"
+      ],
+      "executionVerified": false,
+      "verificationState": "NOT_EXECUTION_VERIFIED"
+    },
+    "artifactReceipt": {
+      "action": "ARTIFACT_CREATED",
+      "revision": 1,
+      "sourceHash": "0fc0ba07b59d75ddf6ee5da4e7f5ecee47be7b58eead4bc5e9796029213c8c11",
+      "reason": null
+    }
+  }
+}
