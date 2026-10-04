@@ -449,6 +449,11 @@ def _promote_pinned_code_artifact(thread,message):
 def _artifact_context_item(thread,message):
     artifact=_artifact_for_message(thread,message.get("id"))
     if artifact is None:
+        meta=message.get("meta") if isinstance(message.get("meta"),dict) else {}
+        artifact_id=str(meta.get("codeArtifactId") or meta.get("updatedCodeArtifactId") or "")
+        if artifact_id:
+            artifact=_find_artifact(thread,artifact_id)
+    if artifact is None:
         artifact=_promote_pinned_code_artifact(thread,message)
     if artifact is None:
         return {"messageId":message.get("id"),"role":str(message.get("role") or "").upper(),"text":str(message.get("text") or "")[:12000],"pinned":True}
