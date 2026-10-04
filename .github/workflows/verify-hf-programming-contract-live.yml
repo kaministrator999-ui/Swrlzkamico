@@ -27,6 +27,7 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           import ast
+          import base64
           import http.cookiejar
           import json
           import re
@@ -73,7 +74,7 @@ jobs:
                       return response.status, json.loads(response.read().decode("utf-8"))
 
               def send_and_wait(self, thread_id, prompt):
-                  rid = "v117-" + uuid.uuid4().hex[:12]
+                  rid = "v118-" + uuid.uuid4().hex[:12]
                   status, ack = self.post("/api/lalm_station/send", {
                       "modelId":"700m",
                       "threadId":thread_id,
@@ -124,13 +125,63 @@ jobs:
               assert "CODER_AUTO_ROUTE" in phases, phases
               return phases, intent, validation
 
+          def wait_for_github_persistence(client, request_id):
+              latest = None
+              for _ in range(45):
+                  status, snapshot = client.get("/api/lalm_station/sync")
+                  assert status == 200, status
+                  generation = snapshot.get("activeGeneration") or {}
+                  if generation.get("requestId") == request_id:
+                      latest = (generation, snapshot)
+                      persisted = generation.get("githubTelemetryPersistence") or {}
+                      if persisted.get("ok") is True:
+                          return generation, snapshot, persisted
+                      if persisted.get("ok") is False and persisted.get("state") != "QUEUED":
+                          raise AssertionError(("github-telemetry-persistence-failed", persisted))
+                  time.sleep(1)
+              raise AssertionError(("github-telemetry-persistence-timeout", request_id, latest))
+
+          def fetch_runtime_programming_log(request_id):
+              safe_request = "".join(ch for ch in request_id if ch.isalnum() or ch in "-_")[:80]
+              path = f"runtime-diagnostics/programming/{safe_request}/candidate-attempt-telemetry.json"
+              url = "https://api.github.com/repos/kaministrator999-ui/Swrlzkamico/contents/" + path + "?ref=runtime"
+              latest_error = None
+              for _ in range(30):
+                  try:
+                      req = urllib.request.Request(url, headers={"User-Agent":"swrlz-programming-contract-live/1.0"})
+                      with urllib.request.urlopen(req, timeout=30) as response:
+                          payload = json.loads(response.read().decode("utf-8"))
+                      content = base64.b64decode(payload["content"]).decode("utf-8")
+                      return path, json.loads(content)
+                  except (urllib.error.HTTPError, urllib.error.URLError, KeyError, ValueError) as exc:
+                      latest_error = repr(exc)
+                      time.sleep(1)
+              raise AssertionError(("github-runtime-log-unavailable", path, latest_error))
+
           receipts = []
 
           c1 = Client()
-          g1, _ = c1.send_and_wait("language-" + uuid.uuid4().hex[:10], "Can you write me an example html page")
+          g1, s1 = c1.send_and_wait("language-" + uuid.uuid4().hex[:10], "Can you write me an example html page")
           _, intent1, validation1 = route_state(g1)
           assert g1.get("terminalType") == "COMPLETE", g1
           assert validation1.get("status") == "PASS", validation1
+          attempts1 = g1.get("candidateAttempts") if isinstance(g1.get("candidateAttempts"), list) else []
+          telemetry1 = g1.get("generationTelemetry") if isinstance(g1.get("generationTelemetry"), dict) else {}
+          station1 = g1.get("stationTiming") if isinstance(g1.get("stationTiming"), dict) else {}
+          assert len(attempts1) >= 1, g1
+          assert telemetry1.get("attemptCount") == len(attempts1), (telemetry1, attempts1)
+          assert telemetry1.get("regenerationCount") == max(0, len(attempts1)-1), telemetry1
+          assert telemetry1.get("finalCandidateStatus") == "PASS", telemetry1
+          assert telemetry1.get("finalAcceptedAttempt") == len(attempts1), telemetry1
+          assert isinstance(telemetry1.get("engineTotalLatencyMs"), (int,float)), telemetry1
+          assert isinstance(telemetry1.get("visibleFirstDeltaLatencyMs"), (int,float)), telemetry1
+          assert isinstance(station1.get("endToEndMs"), int) and station1.get("endToEndMs") >= 0, station1
+          assert station1.get("endToEndMs") >= station1.get("stationRunMs",0), station1
+          for index, attempt_receipt in enumerate(attempts1, start=1):
+              assert attempt_receipt.get("attempt") == index, attempt_receipt
+              assert isinstance(attempt_receipt.get("durationMs"), (int,float)), attempt_receipt
+              assert attempt_receipt.get("candidateFingerprint"), attempt_receipt
+              assert attempt_receipt.get("validationStatus") in ("PASS","REJECT"), attempt_receipt
           language1 = ((intent1.get("intentContract") or {}).get("languageContract") or {})
           assert language1.get("requestedLanguages") == ["html"], language1
           assert "html" in (validation1.get("detectedLanguages") or []), validation1
@@ -138,7 +189,46 @@ jobs:
           text1 = str(g1.get("text") or "")
           assert re.search(r"(?is)<!doctype\s+html|<html\b", text1), text1
           assert not re.search(r"```python\b|\bfrom\s+flask\s+import\b", text1, re.I), text1
-          receipts.append({"case":"html-language-fidelity","validation":validation1,"status":"PASS"})
+          g1, s1, persistence1 = wait_for_github_persistence(c1, g1.get("requestId"))
+          expected_log_path = "runtime-diagnostics/programming/" + g1.get("requestId") + "/candidate-attempt-telemetry.json"
+          assert persistence1.get("path") == expected_log_path, persistence1
+          assert persistence1.get("branch") == "runtime", persistence1
+
+          thread1 = next((thread for thread in (s1.get("threads") or []) if thread.get("id") == g1.get("threadId")), None)
+          assert thread1, s1
+          assistant1 = next((msg for msg in reversed(thread1.get("messages") or []) if (msg.get("meta") or {}).get("requestId") == g1.get("requestId") and msg.get("role") == "assistant"), None)
+          assert assistant1, thread1
+          message_telemetry = ((assistant1.get("meta") or {}).get("programmingTelemetry") or {})
+          assert (message_telemetry.get("generation") or {}).get("attemptCount") == len(attempts1), message_telemetry
+          assert (assistant1.get("meta") or {}).get("githubTelemetryPersistence",{}).get("ok") is True, assistant1.get("meta")
+
+          log_path1, repo_log1 = fetch_runtime_programming_log(g1.get("requestId"))
+          assert log_path1 == expected_log_path, log_path1
+          assert repo_log1.get("schema") == "swrlz-github-programming-attempt-log-v1", repo_log1
+          assert repo_log1.get("requestId") == g1.get("requestId"), repo_log1
+          assert repo_log1.get("sourceRef") == expected_source, repo_log1
+          diagnostic1 = repo_log1.get("diagnostic") or {}
+          persisted_generation1 = diagnostic1.get("generationTelemetry") or {}
+          persisted_station1 = diagnostic1.get("stationTiming") or {}
+          assert persisted_generation1.get("attemptCount") == len(attempts1), persisted_generation1
+          assert persisted_generation1.get("regenerationCount") == max(0,len(attempts1)-1), persisted_generation1
+          assert persisted_station1.get("endToEndMs") == station1.get("endToEndMs"), (persisted_station1, station1)
+          serialized_log1 = json.dumps(repo_log1, ensure_ascii=False).lower()
+          assert "can you write me an example html page" not in serialized_log1, serialized_log1
+          assert "<!doctype html" not in serialized_log1 and "<html" not in serialized_log1, serialized_log1
+          assert "userprofile" not in serialized_log1 and "profile" not in (repo_log1.get("diagnostic") or {}), repo_log1
+
+          receipts.append({
+              "case":"html-language-fidelity-and-attempt-camera",
+              "validation":validation1,
+              "attemptCount":len(attempts1),
+              "regenerationCount":telemetry1.get("regenerationCount"),
+              "engineTotalLatencyMs":telemetry1.get("engineTotalLatencyMs"),
+              "stationEndToEndMs":station1.get("endToEndMs"),
+              "githubLogPath":log_path1,
+              "githubPersisted":True,
+              "status":"PASS",
+          })
 
           c2 = Client()
           repair_prompt = "\n".join([
@@ -209,7 +299,7 @@ jobs:
           })
 
           receipt = {
-              "checkpoint":"live-programming-contract-v117",
+              "checkpoint":"live-programming-contract-v118",
               "spaceRevision":live_revision,
               "expectedSource":expected_source,
               "coderCheckpoint":coder.get("checkpoint"),
