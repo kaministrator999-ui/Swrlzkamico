@@ -1,0 +1,26 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muuasqfz-1795413-860757638",
+  "modelId": "700m",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "76befef43857d41f1eb3b7fafb3a9f83cbb3b60f",
+  "persistedAtUnixMs": 1791147217893,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "824d84d6d41bebb6",
+    "newCandidateFingerprint": "774f5bea9fcb1ef9",
+    "candidateChanged": true,
+    "stalledRepairInput": true,
+    "regenerationAttempted": false,
+    "regenerationReason": null,
+    "candidateValidationStatus": "PASS",
+    "candidateValidationReasons": [],
+    "receiptCategories": [
+      "lint"
+    ],
+    "repairActions": [
+      "repair the reported lint rule at the implicated source without changing unrelated behavior"
+    ],
+    "executionVerified": false
+  }
+}
