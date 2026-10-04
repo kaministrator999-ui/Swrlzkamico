@@ -35,7 +35,7 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     yield {"type":"PROGRAMMING_INTENT","intent":intent}
     # Programming questions/examples/reasoning are automatically routed to the dedicated coder.
     requested_model_id=model_id
-    if intent.get("codingTask") and model_id in ("700m","stock","coder"):
+    if intent.get("codingTask") and model_id in ("700m","stock","r39","coder"):
         model_id="coder"
         yield {"type":"ROUTE","phase":"CODER_AUTO_ROUTE","requestedModelId":requested_model_id,"selectedModelId":"coder","reason":"programming-intent"}
     if model_id=="r39":
