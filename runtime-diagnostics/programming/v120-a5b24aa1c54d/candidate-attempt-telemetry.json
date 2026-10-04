@@ -1,0 +1,108 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "v120-a5b24aa1c54d",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791153217935,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 3,
+      "regenerationCount": 2,
+      "firstCandidateRejected": true,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "REJECT",
+      "guardedTurn": true,
+      "repairTurn": true,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 16.96,
+      "visibleFirstDeltaLatencyMs": 12252.15,
+      "engineTotalLatencyMs": 12253.31,
+      "totalCandidateGenerationMs": 12233.72,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 5713.687,
+          "firstTokenLatencyMs": 2816.381,
+          "deltaChunks": 127,
+          "candidateFingerprint": "624377df91869f09",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": false,
+          "validationStatus": "REJECT",
+          "validationReasons": [
+            "diagnostic-repair-no-executable-change",
+            "repair-stalled-no-executable-change"
+          ],
+          "accepted": false
+        },
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 2,
+          "trigger": "retry:unchanged-executable-candidate",
+          "durationMs": 3280.619,
+          "firstTokenLatencyMs": 279.797,
+          "deltaChunks": 127,
+          "candidateFingerprint": "624377df91869f09",
+          "changedFromPreviousAttempt": false,
+          "changedFromRepairTarget": false,
+          "validationStatus": "REJECT",
+          "validationReasons": [
+            "diagnostic-repair-no-executable-change",
+            "repair-stalled-no-executable-change",
+            "strategy-repeat-previous-attempt"
+          ],
+          "accepted": false
+        },
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 3,
+          "trigger": "final-strategy-gate",
+          "durationMs": 3239.414,
+          "firstTokenLatencyMs": 317.283,
+          "deltaChunks": 127,
+          "candidateFingerprint": "624377df91869f09",
+          "changedFromPreviousAttempt": false,
+          "changedFromRepairTarget": false,
+          "validationStatus": "REJECT",
+          "validationReasons": [
+            "diagnostic-repair-no-executable-change",
+            "repair-stalled-no-executable-change",
+            "strategy-repeat-previous-attempt"
+          ],
+          "accepted": false
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791153205679,
+      "startedAtUnixMs": 1791153205680,
+      "completedAtUnixMs": 1791153217935,
+      "queueWaitMs": 1,
+      "stationRunMs": 12255,
+      "endToEndMs": 12256
+    },
+    "candidateValidation": {
+      "status": "REJECT",
+      "reasons": [
+        "diagnostic-repair-no-executable-change",
+        "repair-stalled-no-executable-change",
+        "strategy-repeat-previous-attempt"
+      ],
+      "detectedLanguages": [
+        "python"
+      ],
+      "executionVerified": false,
+      "verificationState": "AWAITING_EXTERNAL_RECEIPT"
+    },
+    "artifactReceipt": {
+      "action": "CANDIDATE_REJECTED",
+      "revision": null,
+      "sourceHash": null,
+      "reason": null
+    }
+  }
+}
