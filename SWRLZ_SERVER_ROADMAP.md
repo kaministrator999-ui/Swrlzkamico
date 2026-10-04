@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-03 — Live dedicated coder routing acceptance
+
+**Goal:** close the v105 activation gap with a reusable deployment-inert live verifier against the existing Hugging Face Space. The verifier must request the general `700m` route with an unambiguously programming task and independently prove that the deployed Station classifies the turn as programming, emits `CODER_AUTO_ROUTE`, completes through the dedicated coder backend, and returns a structurally acceptable complete code candidate.
+
+**Observed baseline:** Repository Work `1.0.64`; LALM Engine `2.1.141` / `2.1.141-hf-auto-qwen-coder-1p5b-v105`; Server Runtime `2.3.309`; successful guarded HF deployment run #63 published source `13e32421fff6e57c9d9ee4b8abfac9a55394a4ac` to Space revision `8a4f37e952dec2089b144f6bf901d4062fbe80b4`. The package/deployment path is verified; live routing/model behavior is not yet accepted.
+
+**Architecture reconciliation:** verification belongs in repository diagnostic/acceptance infrastructure, not Chat, Brain cognition, model routing, or deployment authority. Add one bounded GitHub Actions verifier that only performs read/request traffic against the already-deployed HF Station; it must not publish, redeploy, mutate HF state beyond the ordinary anonymous test conversation, or alter model/runtime source.
+
+**Expected module impact:** Repository Work only unless the live receipt exposes an actual runtime defect requiring a later corrective event. LALM Engine, Server Runtime, Web Chat, Runtime Manifest, and Deployment Control remain unchanged by the verifier itself.
+
+**Deployment expectation:** NONE. This is deployment-inert verification infrastructure and a live acceptance request against the already-published Space.
+
 ## UPDATE FINISHED — 2026-10-03 — Dedicated coding model auto-route v105
 
 **Goal:** activate a code-specialized GGUF automatically whenever the programming-intent layer recognizes coding questions, examples, repair/log input, or coding reasoning.
