@@ -1,3 +1,13 @@
+## UPDATE CHECKPOINT — 2026-10-03 — v118 live telemetry works; deployment source provenance repair required
+
+**Live run #3 finding:** candidate-attempt telemetry and GitHub persistence are operational on deployed v118. The HTML fixture produced two measured model attempts: attempt 1 was rejected for `missing-required-language:html` + `language-contract-mismatch:python`; attempt 2 changed fingerprint and passed as HTML. Station timing and the repository log were both present.
+
+**Acceptance blocker:** the persisted GitHub document reports `sourceRef=a1135bc30addf96bca4f9b15fd14ac273217240e`, the main deployment-trigger commit, while deployment #66 selected and packaged feature source `f7287f751a01bf12210349098a918794084df0e0`. The live verifier correctly rejected this provenance mismatch.
+
+**Diagnosis:** reusable `.github/workflows/manual-hf-space.yml` uses `${{ github.sha }}` in five source-provenance positions even after its `selected-source` step records the actual checked-out source SHA. Under workflow-call execution, `github.sha` resolves to the caller/main trigger lineage, not the selected feature source. Correct owner is deployment-control provenance.
+
+**Required correction:** replace those five provenance uses with `${{ steps.selected-source.outputs.sha }}` so staged `MODEL_PROVENANCE.json`, R39 source-ref checks, rollback checkpoint, and release checkpoint all identify the exact selected feature source. Do not weaken live acceptance to accept the wrong commit.
+
 ## UPDATE CHECKPOINT — 2026-10-03 — Candidate attempt + generation timing camera v118
 
 **Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
