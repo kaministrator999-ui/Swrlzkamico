@@ -1,0 +1,65 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "web-muugu6oq-3982325232-282405280",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791157352866,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": 1,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": true,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 19.513,
+      "visibleFirstDeltaLatencyMs": 5130.435,
+      "engineTotalLatencyMs": 5131.558,
+      "totalCandidateGenerationMs": 5110.318,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 5110.318,
+          "firstTokenLatencyMs": 3533.382,
+          "deltaChunks": 65,
+          "candidateFingerprint": "c5f47639b50baa97",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": true,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791157347730,
+      "startedAtUnixMs": 1791157347731,
+      "completedAtUnixMs": 1791157352866,
+      "queueWaitMs": 1,
+      "stationRunMs": 5135,
+      "endToEndMs": 5136
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "javascript"
+      ],
+      "executionVerified": false,
+      "verificationState": "AWAITING_EXTERNAL_RECEIPT"
+    },
+    "artifactReceipt": {
+      "action": "ARTIFACT_CREATED",
+      "revision": 1,
+      "sourceHash": "0e7552e4e8c69f4e775c384d91025da68bfe55c2fbc26235a70ea93f80ac7559",
+      "reason": null
+    }
+  }
+}
