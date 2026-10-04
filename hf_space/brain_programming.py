@@ -485,12 +485,11 @@ def _receipt_semantics(raw: str) -> dict[str, Any]:
         json_true=bool(re.search(r'(?i)"(?:passed|success|ok)"\s*:\s*true\b',line))
         if json_false:
             failing.append(line[:500])
-        elif json_true:
-            passing.append(line[:500])
-        elif re.search(r"(?i)\b(?:fail(?:ed|ure)?|assert(?:ion)?|mismatch|expected|actual|error|exception|undefined|unresolved)\b",line):
-            failing.append(line[:500])
-        elif re.search(r"(?i)\b(?:pass(?:ed)?|\bok\b|success(?:ful)?)\b",line):
-            passing.append(line[:500])
+        else:
+            if re.search(r"(?i)\b(?:fail(?:ed|ure)?|assert(?:ion)?|mismatch|expected|actual|error|exception|undefined|unresolved)\b",line):
+                failing.append(line[:500])
+            if json_true or re.search(r"(?i)\b(?:pass(?:ed)?|\bok\b|success(?:ful)?)\b",line):
+                passing.append(line[:500])
         if re.search(r"(?i)\bexpected\b",line) and re.search(r"(?i)\b(?:actual|got|received)\b",line):
             mismatches.append(line[:500])
 
@@ -500,7 +499,7 @@ def _receipt_semantics(raw: str) -> dict[str, Any]:
         ("type",r"(?i)\btypeerror\b|wrong type|type mismatch|possibly ['\"]?null|not assignable to type"),
         ("name-or-symbol",r"(?i)\bnameerror\b|\breferenceerror\b|cannot find symbol|unresolved reference|not defined"),
         ("assertion",r"(?i)\bassertionerror\b|assertion failed|tests? failed"),
-        ("build",r"(?i)compilation failed|build failed|failed to compile|(?:fatal\s+)?error:"),
+        ("build",r"(?im)compilation failed|build failed|failed to compile|^\s*(?:fatal\s+)?error:\s|^[^\n:]+\.[A-Za-z0-9_]+:\d+(?::\d+)?:\s*(?:fatal\s+)?error:"),
         ("runtime",r"(?i)\bruntimeerror\b|\bexception\b|traceback"),
         ("timeout",r"(?i)timeout|timed out"),
         ("behavior-mismatch",r"(?i)expected[\s\S]{0,240}(?:actual|got|received)|(?:actual|got|received)[\s\S]{0,240}expected"),
