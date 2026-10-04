@@ -4,6 +4,7 @@ import hashlib, json, os, re, threading, time
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate
+from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -583,6 +584,7 @@ def generate_events(payload):
     guarded_turn=bool(repair_turn or strict_language)
     candidate_text=""
     candidate_check=None
+    candidate_attempts=[]
     with _lock:
         mode=_response_mode(prompt,programming)
         if mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
@@ -595,15 +597,32 @@ def generate_events(payload):
             response_tokens=min(768,available_output_tokens);temperature=0.40
         yield {"type":"RESOURCE","cpuCapacity":_cpu_capacity(),"decodeThreads":_thread_plan()[0],"batchThreads":_thread_plan()[1],"maxResponseTokens":response_tokens}
         if guarded_turn:
-            first=model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=False)
-            candidate_text=str((((first.get("choices") or [{}])[0].get("message") or {}).get("content")) or "")
-            candidate_check=_candidate_structure_check(candidate_text,programming,history)
-            previous_fp=repair_diagnostic.get("candidateFingerprint") if repair_diagnostic else None
-            candidate_fp=_candidate_fingerprint(candidate_text)
-            unchanged=bool(previous_fp and candidate_fp and previous_fp==candidate_fp)
-            if unchanged or candidate_check.get("status")=="REJECT":
+            repair_target_fp=repair_diagnostic.get("candidateFingerprint") if repair_diagnostic else None
+
+            def validate_attempt(text_value):
+                check=_candidate_structure_check(text_value,programming,history)
+                fp=_candidate_fingerprint(text_value)
+                if repair_target_fp and fp and repair_target_fp==fp:
+                    reasons=list(check.get("reasons") or [])
+                    if "repair-stalled-no-executable-change" not in reasons:
+                        reasons.append("repair-stalled-no-executable-change")
+                    check={**check,"status":"REJECT","reasons":reasons}
+                return check,fp
+
+            candidate_text,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
+            candidate_check,candidate_fp=validate_attempt(candidate_text)
+            attempt=candidate_attempt_receipt(
+                1,"initial",timing,candidate_check,candidate_fp,
+                previous_attempt_fingerprint=None,
+                repair_target_fingerprint=repair_target_fp,
+            )
+            candidate_attempts.append(attempt)
+            yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
+
+            if candidate_check.get("status")=="REJECT":
                 regeneration_attempted=True
-                regeneration_reason="unchanged-executable-candidate" if unchanged else "contract-or-structural-rejection"
+                stalled="repair-stalled-no-executable-change" in (candidate_check.get("reasons") or [])
+                regeneration_reason="unchanged-executable-candidate" if stalled else "contract-or-structural-rejection"
                 if repair_turn:
                     retry_instruction=(
                         "REPAIR RETRY GATE: the first proposed repair was not acceptable. Use the structured receipt facts and ORIGINAL intent contract. "
@@ -617,33 +636,40 @@ def generate_events(payload):
                         "Requested language contract: "+json.dumps(language_contract,ensure_ascii=False,separators=(",",":"))
                     )
                 retry_messages=list(messages)+[{"role":"system","content":retry_instruction}]
-                second=model.create_chat_completion(messages=retry_messages,max_tokens=response_tokens,temperature=min(0.45,temperature+0.10),stream=False)
-                retry_text=str((((second.get("choices") or [{}])[0].get("message") or {}).get("content")) or "")
+                retry_text,retry_timing=buffered_chat_completion(model,retry_messages,response_tokens,min(0.45,temperature+0.10))
                 if retry_text.strip():
                     candidate_text=retry_text
-                candidate_check=_candidate_structure_check(candidate_text,programming,history)
-                retry_fp=_candidate_fingerprint(candidate_text)
-                retry_unchanged=bool(previous_fp and retry_fp and previous_fp==retry_fp)
-                if retry_unchanged or candidate_check.get("status")=="REJECT":
-                    regeneration_reason+=";second-attempt-"+("unchanged" if retry_unchanged else "rejected")
+                candidate_check,retry_fp=validate_attempt(candidate_text)
+                attempt=candidate_attempt_receipt(
+                    2,"retry:"+regeneration_reason,retry_timing,candidate_check,retry_fp,
+                    previous_attempt_fingerprint=candidate_fp,
+                    repair_target_fingerprint=repair_target_fp,
+                )
+                candidate_attempts.append(attempt)
+                yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
+                candidate_fp=retry_fp
+
+                if candidate_check.get("status")=="REJECT":
+                    retry_stalled="repair-stalled-no-executable-change" in (candidate_check.get("reasons") or [])
+                    regeneration_reason+=";second-attempt-"+("unchanged" if retry_stalled else "rejected")
                     final_instruction=(
                         "FINAL PROGRAMMING CONTRACT GATE: two proposals failed deterministic acceptance. Re-derive the smallest complete implementation from the ORIGINAL request. "
                         "Obey the explicit language contract exactly, preserve required APIs and passing behavior, and ground any repair in the supplied compiler/test/runtime evidence. "
                         "Return exactly one complete candidate in the allowed language set; no alternate-language substitute, fake execution claim, TODO, or placeholder."
                     )
-                    third=model.create_chat_completion(messages=list(retry_messages)+[{"role":"system","content":final_instruction}],max_tokens=response_tokens,temperature=min(0.50,temperature+0.15),stream=False)
-                    third_text=str((((third.get("choices") or [{}])[0].get("message") or {}).get("content")) or "")
+                    final_messages=list(retry_messages)+[{"role":"system","content":final_instruction}]
+                    third_text,third_timing=buffered_chat_completion(model,final_messages,response_tokens,min(0.50,temperature+0.15))
                     if third_text.strip():
                         candidate_text=third_text
-                    candidate_check=_candidate_structure_check(candidate_text,programming,history)
-            if repair_diagnostic:
-                previous_fp=repair_diagnostic.get("candidateFingerprint")
-                final_fp=_candidate_fingerprint(candidate_text)
-                if previous_fp and final_fp and previous_fp==final_fp:
-                    reasons=list(candidate_check.get("reasons") or [])
-                    if "repair-stalled-no-executable-change" not in reasons:
-                        reasons.append("repair-stalled-no-executable-change")
-                    candidate_check={**candidate_check,"status":"REJECT","reasons":reasons}
+                    candidate_check,third_fp=validate_attempt(candidate_text)
+                    attempt=candidate_attempt_receipt(
+                        3,"final-strategy-gate",third_timing,candidate_check,third_fp,
+                        previous_attempt_fingerprint=candidate_fp,
+                        repair_target_fingerprint=repair_target_fp,
+                    )
+                    candidate_attempts.append(attempt)
+                    yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
+
             if candidate_check.get("status")=="PASS":
                 if candidate_text:
                     first_delta=round((time.perf_counter()-started)*1000,3)
@@ -658,15 +684,32 @@ def generate_events(payload):
                 yield {"type":"DELTA","text":safe_text}
         else:
             generated_parts=[]
+            attempt_started=time.perf_counter()
+            attempt_first_token=None
+            attempt_chunks=0
             for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=True):
                 choices=chunk.get("choices") or []
                 delta=(choices[0].get("delta") or {}).get("content") if choices else None
                 if delta:
+                    now=time.perf_counter()
+                    if attempt_first_token is None:
+                        attempt_first_token=now
+                    attempt_chunks+=1
                     generated_parts.append(delta)
-                    if first_delta is None:first_delta=round((time.perf_counter()-started)*1000,3)
+                    if first_delta is None:first_delta=round((now-started)*1000,3)
                     yield {"type":"DELTA","text":delta}
+            attempt_ended=time.perf_counter()
             candidate_text="".join(generated_parts)
             candidate_check=_candidate_structure_check(candidate_text,programming,history)
+            candidate_fp=_candidate_fingerprint(candidate_text)
+            timing={
+                "durationMs":round((attempt_ended-attempt_started)*1000,3),
+                "firstTokenLatencyMs":round((attempt_first_token-attempt_started)*1000,3) if attempt_first_token is not None else None,
+                "deltaChunks":attempt_chunks,
+            }
+            attempt=candidate_attempt_receipt(1,"initial-streaming",timing,candidate_check,candidate_fp)
+            candidate_attempts.append(attempt)
+            yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
     yield {"type":"CANDIDATE_VALIDATION","validation":candidate_check}
     if repair_diagnostic:
         previous_fp=repair_diagnostic.get("candidateFingerprint")
@@ -685,4 +728,14 @@ def generate_events(payload):
             "repairActions":list(repair_diagnostic.get("repairActions") or [])[:6],
             "executionVerified":False,
         }}
-    yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":round((time.perf_counter()-started)*1000,3),"loadLatencyMs":round((loaded-started)*1000,3),"firstDeltaLatencyMs":first_delta}
+    telemetry=generation_summary(
+        candidate_attempts,
+        total_latency_ms=round((time.perf_counter()-started)*1000,3),
+        load_latency_ms=round((loaded-started)*1000,3),
+        visible_first_delta_latency_ms=first_delta,
+        guarded_turn=guarded_turn,
+        repair_turn=repair_turn,
+        strict_language=strict_language,
+    )
+    yield {"type":"GENERATION_TELEMETRY","telemetry":telemetry}
+    yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":telemetry["engineTotalLatencyMs"],"loadLatencyMs":telemetry["modelLoadLatencyMs"],"firstDeltaLatencyMs":first_delta}
