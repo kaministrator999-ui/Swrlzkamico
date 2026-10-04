@@ -1,0 +1,3 @@
+SOURCE_REF=feature/hf-space-manual-deploy
+SUITE=programming-contract-v117
+REQUEST_NONCE=2026-10-03-v117-programming-contract-static-001
