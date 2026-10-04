@@ -1,0 +1,46 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-mutuetgd-2752238075-2760527957",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "76befef43857d41f1eb3b7fafb3a9f83cbb3b60f",
+  "persistedAtUnixMs": 1791119679201,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "a97537f5da6f4caa",
+    "candidateFingerprint": "a97537f5da6f4caa",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 0,
+    "failureSignals": [],
+    "receiptSemantics": {
+      "categories": [
+        "syntax"
+      ],
+      "exceptionTypes": [
+        "SyntaxError"
+      ],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [
+        "/workspace/swyrlz-coding-route-retry2-2026-10-04/js-syntax/seed.js:2"
+      ],
+      "failingTests": [],
+      "reportedSymbols": []
+    },
+    "repairActions": [
+      "repair parser/syntax failure at the reported source location before changing behavior"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
