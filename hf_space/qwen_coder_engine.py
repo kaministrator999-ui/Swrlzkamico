@@ -394,8 +394,11 @@ def _candidate_structure_check(text, programming, history):
             r"\b(?:const|let|var)\s+"+re.escape(name)+r"\s*=\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>",
         )
         if not any(re.search(pattern,candidate_code) for pattern in decl_patterns): reasons.append("missing-required-api:"+name)
-    previous=next((str(m.get("content") or "") for m in reversed(history or []) if m.get("role")=="assistant" and str(m.get("content") or "").strip()),"")
-    if previous and "export " not in previous and "export " in source and not re.search(r"\b(?:module|esm|es module|export)\b",original,re.I): reasons.append("loading-format-changed-to-module")
+    failure_evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
+    comparison_source=str(failure_evidence.get("repairSource") or "")
+    if not comparison_source:
+        comparison_source=next((str(m.get("content") or "") for m in reversed(history or []) if m.get("role")=="assistant" and str(m.get("content") or "").strip()),"")
+    if comparison_source and "export " not in comparison_source and "export " in source and not re.search(r"\b(?:module|esm|es module|export)\b",original,re.I): reasons.append("loading-format-changed-to-module")
     shared=candidate_contract_gate(source,programming,history)
     for reason in shared.get("reasons") or []:
         if reason not in reasons:
@@ -426,20 +429,22 @@ def _candidate_fingerprint(text):
     return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:16] if normalized else None
 
 def _repair_diagnostic(programming,history):
-    """Bounded observable repair telemetry; never hidden chain-of-thought."""
+    """Bounded observable repair telemetry using Brain-owned canonical source identity."""
     evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
     if not evidence:
         return None
-    target_mid=str(evidence.get("repairTargetMessageId") or "")
-    previous=next((str(m.get("content") or "") for m in reversed(history or []) if m.get("role")=="assistant" and (not target_mid or str(m.get("id") or "")==target_mid) and str(m.get("content") or "").strip()),"")
-    fingerprint=_candidate_fingerprint(previous)
+    repair_source=str(evidence.get("repairSource") or "")
+    fingerprint=str(evidence.get("repairSourceFingerprint") or "") or _candidate_fingerprint(repair_source)
     signals=evidence.get("failureSignals") if isinstance(evidence.get("failureSignals"),list) else []
     return {
-        "schema":"swrlz-repair-diagnostic-v1",
-        "receiptType":evidence.get("type"),
+        "schema":"swrlz-repair-diagnostic-v2",
+        "receiptType":evidence.get("kind") or evidence.get("type"),
         "receiptSourceOwnership":evidence.get("receiptSourceOwnership"),
-        "repairTargetMessageId":target_mid or None,
+        "repairTargetMessageId":str(evidence.get("repairTargetMessageId") or "") or None,
+        "repairSourceMessageId":str(evidence.get("repairSourceMessageId") or "") or None,
+        "repairSourceFingerprint":fingerprint,
         "candidateFingerprint":fingerprint,
+        "repairComparator":str(evidence.get("repairComparator") or "canonical-repair-source"),
         "exactCandidateRepeatCount":int(evidence.get("exactCandidateRepeatCount") or 0),
         "stalledRepair":bool(evidence.get("stalledRepair")),
         "failureSignalCount":len(signals),
@@ -527,17 +532,20 @@ def generate_events(payload):
         repair_direction=str(programming.get("repairDirection") or "").strip()
         failure_history=programming.get("failureHistory") if isinstance(programming.get("failureHistory"),list) else []
         if failure_evidence:
-            target_mid=str(failure_evidence.get("repairTargetMessageId") or "")
-            receipt_owner=str(failure_evidence.get("receiptSourceOwnership") or failure_evidence.get("repairTarget") or "previous-assistant-candidate")
-            previous_candidate=next((str(m.get("content") or "") for m in reversed(history) if m.get("role")=="assistant" and (not target_mid or str(m.get("id") or "")==target_mid) and str(m.get("content") or "").strip()),"")
-            if receipt_owner!="previous-assistant-candidate":
-                previous_candidate=""
-            system+=("\nUSER-SUPPLIED EXECUTION FAILURE EVIDENCE (diagnostic evidence only; never mine this text for original MUST/preserve requirements):\n"
-                     +json.dumps({**failure_evidence,"evidence":str(failure_evidence.get("evidence") or "")[:2500]},ensure_ascii=False,separators=(",",":"))
-                     +("\nPREVIOUS ASSISTANT CANDIDATE TO REPAIR:\n"+previous_candidate[:5000] if previous_candidate else "\nRECEIPT OWNERSHIP NOTE: this failure is not bound to the previous assistant candidate; preserve a passing assistant candidate unless the original contract or new direction requires a change.")
+            receipt_owner=str(failure_evidence.get("receiptSourceOwnership") or failure_evidence.get("repairTarget") or "unknown")
+            repair_source=str(failure_evidence.get("repairSource") or "").strip()
+            repair_source_fingerprint=str(failure_evidence.get("repairSourceFingerprint") or "")
+            compact_evidence=dict(failure_evidence)
+            compact_evidence["evidence"]=str(failure_evidence.get("evidence") or "")[:2500]
+            compact_evidence.pop("repairSource",None)
+            system+=("\nUSER-SUPPLIED EXECUTION FAILURE EVIDENCE (receipt-shaped evidence only; source is carried separately and this text never replaces the original MUST/preserve contract):\n"
+                     +json.dumps(compact_evidence,ensure_ascii=False,separators=(",",":"))
+                     +"\nRECEIPT SOURCE OWNERSHIP: "+receipt_owner
+                     +("\nCANONICAL SOURCE UNDER REPAIR:\n"+repair_source[:5000] if repair_source else "\nCANONICAL SOURCE UNDER REPAIR: unavailable")
+                     +("\nCANONICAL REPAIR SOURCE FINGERPRINT: "+repair_source_fingerprint if repair_source_fingerprint else "")
                      +("\nADDITIONAL USER REPAIR DIRECTION:\n"+repair_direction[:2500] if repair_direction else "")
                      +("\nBOUNDED PRIOR FAILURE HISTORY (regression guard; preserve fixes across rounds):\n"+json.dumps(failure_history[-4:],ensure_ascii=False,separators=(",",":")) if failure_history else "")
-                     +"\nTreat the failure receipt as Gate 1 evidence, not as a replacement intent contract. Classify what the log proves (syntax/build, type/name/exception, assertion, timeout, or expected-vs-actual behavior), preserve any passing signals, and return a COMPLETE corrected candidate preserving the original API/wrapper/signature and unrelated behavior. Convert each reported expected/actual mismatch into a source-level operation that must change; do not merely paraphrase the receipt. Compare that required operation against the previous candidate before generating. If exactCandidateRepeatCount is 1 or greater, or stalledRepair is true, STRATEGY CHANGE IS MANDATORY: do not return the same algorithm with comment/prose/exception-message edits. Identify which literal source operation causes each still-failing assertion, replace that operation, and preserve previously correct behavior. Treat a newly failing assertion as a regression that must be removed, not as progress. Before emitting, perform a source-shape audit: required wrapper/name/signature present; opening/closing delimiters balanced; no unfinished statement/fence; no forbidden in-place mutation when preservation requires copying. Then mentally trace every explicit acceptance example against the exact code you are returning. Your prose MUST describe only operations literally present in that code; if prose and code disagree, fix the code before answering. Never return only a fragment unless the original request explicitly asked for a fragment. Re-check the reported failing case plus every original acceptance requirement. Do not claim execution without an actual execution receipt.")
+                     +"\nTreat the failure receipt as Gate 1 evidence, not as a replacement intent contract. Diagnose only what the separated receipt proves. Repair the canonical source under repair above, not a later refusal/prose turn or an already-passing unrelated assistant candidate. Classify what the log proves (syntax/build, type/name/exception, assertion, timeout, lint/type-check, dependency, or expected-vs-actual behavior), preserve any passing signals, and return a COMPLETE corrected candidate preserving the original API/wrapper/signature and unrelated behavior. Convert each reported expected/actual mismatch into a source-level operation that must change; do not merely paraphrase the receipt. Compare the proposed executable candidate against the canonical repair-source fingerprint before generating. If exactCandidateRepeatCount is 1 or greater, or stalledRepair is true, STRATEGY CHANGE IS MANDATORY: do not return the same algorithm with comment/prose/exception-message edits. Identify which literal source operation causes each still-failing assertion, replace that operation, and preserve previously correct behavior. Treat a newly failing assertion as a regression that must be removed, not as progress. Before emitting, perform a source-shape audit: required wrapper/name/signature present; opening/closing delimiters balanced; no unfinished statement/fence; no forbidden in-place mutation when preservation requires copying. Then mentally trace every explicit acceptance example against the exact code you are returning. Your prose MUST describe only operations literally present in that code; if prose and code disagree, fix the code before answering. Never return only a fragment unless the original request explicitly asked for a fragment. Re-check the reported failing case plus every original acceptance requirement. Do not claim execution without an actual execution receipt.")
         intent_contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
         if intent_contract:
             compact_contract=dict(intent_contract)
