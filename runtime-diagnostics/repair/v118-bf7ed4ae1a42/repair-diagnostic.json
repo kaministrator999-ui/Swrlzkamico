@@ -1,0 +1,43 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v118-bf7ed4ae1a42",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "f7287f751a01bf12210349098a918794084df0e0",
+  "persistedAtUnixMs": 1791113524221,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v1",
+    "receiptType": null,
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "candidateFingerprint": null,
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 0,
+    "failureSignals": [],
+    "receiptSemantics": {
+      "categories": [
+        "name-or-symbol",
+        "runtime"
+      ],
+      "exceptionTypes": [
+        "NameError"
+      ],
+      "exitCodes": [],
+      "failingSignals": [],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": [
+        "hashlib"
+      ]
+    },
+    "repairActions": [
+      "restore or correctly resolve the reported identifier/module/symbol without renaming required public APIs",
+      "trace the exception to its first relevant application frame and repair the causing state/operation"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
