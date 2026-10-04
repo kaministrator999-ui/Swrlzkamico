@@ -10,7 +10,7 @@ Candidate limitations: process-local state, anonymous session, no durable accoun
 storage or external durable queue. Do not claim production parity.
 """
 from __future__ import annotations
-import asyncio, base64, copy, json, os, threading, time, uuid, urllib.error, urllib.parse, urllib.request
+import asyncio, base64, copy, hashlib, json, os, threading, time, uuid, urllib.error, urllib.parse, urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
@@ -31,6 +31,7 @@ CONTRACT="swrlz-lalm-station-sync-v1"
 app=FastAPI(title="§wyrlz HF Station candidate")
 app.mount("/chat/§wyrlz/assets",StaticFiles(directory=ROOT/"chat/§wyrlz/assets"),name="chat-assets")
 _lock=threading.RLock()
+_github_diagnostic_lock=threading.Lock()
 _sessions={}
 _pool=ThreadPoolExecutor(max_workers=2,thread_name_prefix="hf-r39")
 _generate=None
@@ -47,15 +48,10 @@ def set_generator(fn,stock_fn=None,large_fn=None,coder_fn=None):
 
 
 def persist_runtime_diagnostic(request_id,model_id,event_type,diagnostic):
-    """Persist one bounded diagnostic document to the runtime branch.
-
-    This writer uses the dedicated diagnostics-only token already provisioned for
-    response-triggered repair logs. It never stores prompt/code/history/private
-    reasoning and never blocks the generation critical path.
-    """
+    """Persist one bounded diagnostic document with serialized 409 recovery."""
     token=str(os.environ.get("SWRLZ_DIAGNOSTIC_GITHUB_TOKEN") or "").strip()
     if not token:
-        result={"ok":False,"reason":"diagnostic-token-not-configured"}
+        result={"ok":False,"reason":"diagnostic-token-not-configured","attempts":0,"conflictCount":0}
         print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_SKIPPED","requestId":request_id,**result}),flush=True)
         return result
     allowed={
@@ -65,13 +61,13 @@ def persist_runtime_diagnostic(request_id,model_id,event_type,diagnostic):
     }
     spec=allowed.get(str(event_type or ""))
     if spec is None or not isinstance(diagnostic,dict):
-        return {"ok":False,"reason":"unsupported-diagnostic"}
+        return {"ok":False,"reason":"unsupported-diagnostic","attempts":0,"conflictCount":0}
     category,filename,schema=spec
     owner=str(os.environ.get("SWRLZ_GITHUB_OWNER") or "kaministrator999-ui").strip()
     repo=str(os.environ.get("SWRLZ_GITHUB_REPO") or "Swrlzkamico").strip()
     safe_request="".join(ch for ch in str(request_id or "") if ch.isalnum() or ch in "-_")[:80]
     if not safe_request:
-        return {"ok":False,"reason":"invalid-request-id"}
+        return {"ok":False,"reason":"invalid-request-id","attempts":0,"conflictCount":0}
     path=f"runtime-diagnostics/{category}/{safe_request}/{filename}"
     document={
         "schema":schema,
@@ -91,48 +87,100 @@ def persist_runtime_diagnostic(request_id,model_id,event_type,diagnostic):
         "X-GitHub-Api-Version":"2022-11-28",
         "User-Agent":"swrlz-runtime-diagnostics/1",
     }
-    existing_sha=None
-    try:
-        read_request=urllib.request.Request(url+"?ref=runtime",headers=headers,method="GET")
-        with urllib.request.urlopen(read_request,timeout=12) as response:
-            current=json.loads(response.read().decode("utf-8"))
-            existing_sha=str(current.get("sha") or "") or None
-    except urllib.error.HTTPError as exc:
-        if exc.code!=404:
-            result={"ok":False,"reason":"github-read-failed","status":int(exc.code),"path":path,"branch":"runtime"}
-            print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
-            return result
-    except Exception as exc:
-        result={"ok":False,"reason":"github-read-failed","errorType":type(exc).__name__,"path":path,"branch":"runtime"}
-        print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
-        return result
-    payload={
-        "message":f"Record {category} diagnostic {safe_request[:12]}",
-        "content":base64.b64encode(body.encode("utf-8")).decode("ascii"),
-        "branch":"runtime",
+    max_attempts=4
+    conflicts=0
+    last_error_preview=None
+    with _github_diagnostic_lock:
+        for attempt in range(1,max_attempts+1):
+            existing_sha=None
+            try:
+                read_request=urllib.request.Request(url+"?ref=runtime",headers=headers,method="GET")
+                with urllib.request.urlopen(read_request,timeout=12) as response:
+                    current=json.loads(response.read().decode("utf-8"))
+                    existing_sha=str(current.get("sha") or "") or None
+            except urllib.error.HTTPError as exc:
+                preview=""
+                try:
+                    preview=exc.read().decode("utf-8","replace")[:600]
+                except Exception:
+                    preview=""
+                if exc.code!=404:
+                    result={
+                        "ok":False,"reason":"github-read-failed","status":int(exc.code),
+                        "path":path,"branch":"runtime","attempts":attempt,
+                        "conflictCount":conflicts,"errorPreview":preview or None,
+                    }
+                    print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
+                    return result
+            except Exception as exc:
+                result={
+                    "ok":False,"reason":"github-read-failed","errorType":type(exc).__name__,
+                    "path":path,"branch":"runtime","attempts":attempt,"conflictCount":conflicts,
+                }
+                print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
+                return result
+
+            payload={
+                "message":f"Record {category} diagnostic {safe_request[:12]}",
+                "content":base64.b64encode(body.encode("utf-8")).decode("ascii"),
+                "branch":"runtime",
+            }
+            if existing_sha:
+                payload["sha"]=existing_sha
+            try:
+                write_request=urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={**headers,"Content-Type":"application/json"},
+                    method="PUT",
+                )
+                with urllib.request.urlopen(write_request,timeout=12) as response:
+                    status=int(response.status)
+                result={
+                    "ok":status in (200,201),"path":path,"branch":"runtime","status":status,
+                    "attempts":attempt,"conflictCount":conflicts,
+                    "conflictRecovered":bool(conflicts),
+                    "errorPreview":last_error_preview,
+                }
+                print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSISTED" if result["ok"] else "RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
+                return result
+            except urllib.error.HTTPError as exc:
+                preview=""
+                try:
+                    preview=exc.read().decode("utf-8","replace")[:600]
+                except Exception:
+                    preview=""
+                last_error_preview=preview or None
+                if exc.code==409 and attempt<max_attempts:
+                    conflicts+=1
+                    print(json.dumps({
+                        "event":"RUNTIME_DIAGNOSTIC_PERSIST_RETRY",
+                        "requestId":request_id,"path":path,"branch":"runtime",
+                        "status":409,"attempt":attempt,"nextAttempt":attempt+1,
+                        "errorPreview":last_error_preview,
+                    }),flush=True)
+                    time.sleep(0.15*attempt)
+                    continue
+                result={
+                    "ok":False,"reason":"github-write-failed","status":int(exc.code),
+                    "path":path,"branch":"runtime","attempts":attempt,
+                    "conflictCount":conflicts+(1 if exc.code==409 else 0),
+                    "errorPreview":last_error_preview,
+                }
+                print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
+                return result
+            except Exception as exc:
+                result={
+                    "ok":False,"reason":"github-write-failed","errorType":type(exc).__name__,
+                    "path":path,"branch":"runtime","attempts":attempt,"conflictCount":conflicts,
+                    "errorPreview":last_error_preview,
+                }
+                print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
+                return result
+    return {
+        "ok":False,"reason":"github-write-retry-exhausted","path":path,"branch":"runtime",
+        "attempts":max_attempts,"conflictCount":conflicts,"errorPreview":last_error_preview,
     }
-    if existing_sha:
-        payload["sha"]=existing_sha
-    try:
-        write_request=urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={**headers,"Content-Type":"application/json"},
-            method="PUT",
-        )
-        with urllib.request.urlopen(write_request,timeout=12) as response:
-            status=int(response.status)
-        result={"ok":status in (200,201),"path":path,"branch":"runtime","status":status}
-        print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSISTED" if result["ok"] else "RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
-        return result
-    except urllib.error.HTTPError as exc:
-        result={"ok":False,"reason":"github-write-failed","status":int(exc.code),"path":path,"branch":"runtime"}
-        print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
-        return result
-    except Exception as exc:
-        result={"ok":False,"reason":"github-write-failed","errorType":type(exc).__name__,"path":path,"branch":"runtime"}
-        print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
-        return result
 
 def _session(request):
     key=request.cookies.get("swrlz_hf_sid")
