@@ -1,0 +1,93 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muugto0x-1433173103-3566542113",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791157323553,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "assistant-muugtfu3-3222569433-4123876721",
+    "repairSourceMessageId": "assistant-muugtfu3-3222569433-4123876721",
+    "repairSourceFingerprint": "94a948a61bee9410",
+    "candidateFingerprint": "94a948a61bee9410",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 12,
+    "failureSignals": [
+      "Use this genuine failure output to repair your last candidate. Diagnose the failed assertions, preserve every original requirement and the original API, and return the entire corrected source. Check that each claimed change is actually present in the code.",
+      "{\"passed\": 5, \"total\": 9, \"executed\": 9, \"cases\": [{\"test\": \"test_00\", \"passed\": false}, {\"test\": \"test_01\", \"passed\": false}, {\"test\": \"test_02\", \"passed\": false}, {\"test\": \"test_03\", \"passed\": true}, {\"test\": \"test_04\", \"passed\": true}, {\"test\": \"test_05\", \"passed\": false}, {\"test\": \"test_06\", \"pa",
+      "test_00 (__main__.Tests.test_00) ... FAIL",
+      "test_01 (__main__.Tests.test_01) ... FAIL",
+      "test_02 (__main__.Tests.test_02) ... FAIL",
+      "test_05 (__main__.Tests.test_05) ... FAIL",
+      "FAIL: test_00 (__main__.Tests.test_00)",
+      "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "assertion",
+        "runtime",
+        "behavior-mismatch",
+        "dependency"
+      ],
+      "exceptionTypes": [
+        "AssertionError"
+      ],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [
+        "Use this genuine failure output to repair your last candidate. Diagnose the failed assertions, preserve every original requirement and the original API, and return the entire corrected source. Check that each claimed change is actually present in the code.",
+        "{\"passed\": 5, \"total\": 9, \"executed\": 9, \"cases\": [{\"test\": \"test_00\", \"passed\": false}, {\"test\": \"test_01\", \"passed\": false}, {\"test\": \"test_02\", \"passed\": false}, {\"test\": \"test_03\", \"passed\": true}, {\"test\": \"test_04\", \"passed\": true}, {\"test\": \"test_05\", \"passed\": false}, {\"test\": \"test_06\", \"passed\": true}, {\"test\": \"test_07\", \"passed\": true}, {\"test\": \"test_api_signature\", \"passed\": true}], \"pass\": false}",
+        "test_00 (__main__.Tests.test_00) ... FAIL",
+        "test_01 (__main__.Tests.test_01) ... FAIL",
+        "test_02 (__main__.Tests.test_02) ... FAIL",
+        "test_05 (__main__.Tests.test_05) ... FAIL",
+        "FAIL: test_00 (__main__.Tests.test_00)",
+        "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")",
+        ": Expected: 'hello-web-42'; actual: 'HelloWeb42'",
+        "FAIL: test_01 (__main__.Tests.test_01)",
+        ": Expected: 'github-pages'; actual: 'GitHubPages'",
+        "FAIL: test_02 (__main__.Tests.test_02)"
+      ],
+      "passingSignals": [
+        "test_03 (__main__.Tests.test_03) ... ok",
+        "test_04 (__main__.Tests.test_04) ... ok",
+        "test_06 (__main__.Tests.test_06) ... ok",
+        "test_07 (__main__.Tests.test_07) ... ok",
+        "test_api_signature (__main__.Tests.test_api_signature) ... ok"
+      ],
+      "expectedActual": [
+        "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")",
+        ": Expected: 'hello-web-42'; actual: 'HelloWeb42'",
+        ": Expected: 'github-pages'; actual: 'GitHubPages'",
+        ": Expected: 'caf'; actual: 'Café'",
+        ": Expected: 'a1b2'; actual: 'A1B2'"
+      ],
+      "sourceLocations": [
+        "/workspace/swyrlz-coding-route-retry4-2026-10-04/py-dependency/test_contract.py:31:test",
+        "line:31"
+      ],
+      "failingTests": [
+        "__main__.Tests.test_00",
+        "__main__.Tests.test_01",
+        "__main__.Tests.test_02",
+        "__main__.Tests.test_05"
+      ],
+      "reportedSymbols": [],
+      "reportedDependencies": []
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example",
+      "trace the exception to its first relevant application frame and repair the causing state/operation",
+      "repair the import/module/dependency boundary using only dependencies supported by project evidence"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
