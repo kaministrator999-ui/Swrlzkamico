@@ -75,7 +75,7 @@ jobs:
       - name: Stage canonical R39 sources and model provenance
         if: ${{ inputs.mode == 'validate' || inputs.mode == 'deploy' }}
         env:
-          SWRLZ_SOURCE_COMMIT: ${{ github.sha }}
+          SWRLZ_SOURCE_COMMIT: ${{ steps.selected-source.outputs.sha }}
         run: |
           python scripts/prepare_hf_space.py
           python scripts/prepare_hf_space.py --check
@@ -139,7 +139,7 @@ jobs:
           SWRLZ_R39_TRANSPORT_MANIFEST: ${{ github.workspace }}/hf_space/lalm§wyrlz.transport.json
           SWRLZ_GITHUB_OWNER: kaministrator999-ui
           SWRLZ_GITHUB_REPO: Swrlzkamico
-          SWRLZ_GITHUB_REF: ${{ github.sha }}
+          SWRLZ_GITHUB_REF: ${{ steps.selected-source.outputs.sha }}
         run: |
           python - <<'PY'
           import hashlib, json, os, sys
@@ -165,7 +165,7 @@ jobs:
           SWRLZ_R39_TRANSPORT_MANIFEST: ${{ github.workspace }}/hf_space/lalm§wyrlz.transport.json
           SWRLZ_GITHUB_OWNER: kaministrator999-ui
           SWRLZ_GITHUB_REPO: Swrlzkamico
-          SWRLZ_GITHUB_REF: ${{ github.sha }}
+          SWRLZ_GITHUB_REF: ${{ steps.selected-source.outputs.sha }}
         run: |
           set -euo pipefail
           PYTHONPATH=hf_space python scripts/inspect_r39_gguf.py --download-stock --output r39-gguf-compatibility.json
@@ -302,7 +302,7 @@ jobs:
         if: ${{ inputs.mode == 'deploy' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          SOURCE_COMMIT: ${{ github.sha }}
+          SOURCE_COMMIT: ${{ steps.selected-source.outputs.sha }}
         run: |
           python - <<'PY'
           import hashlib, json, os
@@ -367,7 +367,7 @@ jobs:
         if: ${{ inputs.mode == 'deploy' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          SOURCE_COMMIT: ${{ github.sha }}
+          SOURCE_COMMIT: ${{ steps.selected-source.outputs.sha }}
         run: |
           python - <<'PY'
           import json, os
