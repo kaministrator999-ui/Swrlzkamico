@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.144
-REVISION=2.1.144-hf-native-receipt-canonical-source-v119
+VERSION=2.1.145
+REVISION=2.1.145-hf-downstream-repair-hardening-v120
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
