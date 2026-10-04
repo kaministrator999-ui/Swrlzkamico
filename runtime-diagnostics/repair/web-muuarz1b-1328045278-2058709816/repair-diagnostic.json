@@ -1,0 +1,90 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muuarz1b-1328045278-2058709816",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "76befef43857d41f1eb3b7fafb3a9f83cbb3b60f",
+  "persistedAtUnixMs": 1791147166834,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "a71a9a8610e6e6ad",
+    "candidateFingerprint": "a71a9a8610e6e6ad",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 12,
+    "failureSignals": [
+      "The reported failure is arithmetic: cents // 100 discards the fractional cents before formatting. Preserve the exact built-in integer validation. Derive dollars and the two-digit cents component with integer arithmetic; avoid converting large integers to float. Check the original 1, 105, 1999 and la",
+      "{\"passed\": 8, \"total\": 12, \"executed\": 12, \"cases\": [{\"test\": \"test_00\", \"passed\": true}, {\"test\": \"test_01\", \"passed\": false}, {\"test\": \"test_02\", \"passed\": false}, {\"test\": \"test_03\", \"passed\": false}, {\"test\": \"test_04\", \"passed\": false}, {\"test\": \"test_05\", \"passed\": true}, {\"test\": \"test_06\", \"",
+      "test_01 (__main__.Tests.test_01) ... FAIL",
+      "test_02 (__main__.Tests.test_02) ... FAIL",
+      "test_03 (__main__.Tests.test_03) ... FAIL",
+      "test_04 (__main__.Tests.test_04) ... FAIL",
+      "FAIL: test_01 (__main__.Tests.test_01)",
+      "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "assertion",
+        "runtime",
+        "behavior-mismatch"
+      ],
+      "exceptionTypes": [
+        "AssertionError"
+      ],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [
+        "The reported failure is arithmetic: cents // 100 discards the fractional cents before formatting. Preserve the exact built-in integer validation. Derive dollars and the two-digit cents component with integer arithmetic; avoid converting large integers to float. Check the original 1, 105, 1999 and large-integer examples. Return a complete format_total(cents), not a fragment.",
+        "{\"passed\": 8, \"total\": 12, \"executed\": 12, \"cases\": [{\"test\": \"test_00\", \"passed\": true}, {\"test\": \"test_01\", \"passed\": false}, {\"test\": \"test_02\", \"passed\": false}, {\"test\": \"test_03\", \"passed\": false}, {\"test\": \"test_04\", \"passed\": false}, {\"test\": \"test_05\", \"passed\": true}, {\"test\": \"test_06\", \"passed\": true}, {\"test\": \"test_07\", \"passed\": true}, {\"test\": \"test_08\", \"passed\": true}, {\"test\": \"test_09\", \"passed\": true}, {\"test\": \"test_10\", \"passed\": true}, {\"test\": \"test_api_signature\", \"pass",
+        "test_01 (__main__.Tests.test_01) ... FAIL",
+        "test_02 (__main__.Tests.test_02) ... FAIL",
+        "test_03 (__main__.Tests.test_03) ... FAIL",
+        "test_04 (__main__.Tests.test_04) ... FAIL",
+        "FAIL: test_01 (__main__.Tests.test_01)",
+        "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")",
+        ": Expected: '$0.01'; actual: '$0.00'",
+        "FAIL: test_02 (__main__.Tests.test_02)",
+        ": Expected: '$1.05'; actual: '$1.00'",
+        "FAIL: test_03 (__main__.Tests.test_03)"
+      ],
+      "passingSignals": [
+        "test_00 (__main__.Tests.test_00) ... ok",
+        "test_05 (__main__.Tests.test_05) ... ok",
+        "test_06 (__main__.Tests.test_06) ... ok",
+        "test_07 (__main__.Tests.test_07) ... ok",
+        "test_08 (__main__.Tests.test_08) ... ok",
+        "test_09 (__main__.Tests.test_09) ... ok",
+        "test_10 (__main__.Tests.test_10) ... ok",
+        "test_api_signature (__main__.Tests.test_api_signature) ... ok"
+      ],
+      "expectedActual": [
+        "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")",
+        ": Expected: '$0.01'; actual: '$0.00'",
+        ": Expected: '$1.05'; actual: '$1.00'",
+        ": Expected: '$19.99'; actual: '$19.00'",
+        ": Expected: '$1000000000000000000.07'; actual: '$1000000000000000000.00'"
+      ],
+      "sourceLocations": [
+        "/workspace/swyrlz-coding-route-retry3-2026-10-04/py-test/test_contract.py:35:test",
+        "line:35"
+      ],
+      "failingTests": [
+        "(failures=4)"
+      ],
+      "reportedSymbols": []
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example",
+      "trace the exception to its first relevant application frame and repair the causing state/operation"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
