@@ -763,12 +763,14 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     pins=_code_pins(pinned_context or [])
     prior_state=prior_state if isinstance(prior_state,dict) else {}
     prior_contract=prior_state.get("intentContract") if isinstance(prior_state.get("intentContract"),dict) else {}
+    prior_failure_evidence=prior_state.get("failureEvidence") if isinstance(prior_state.get("failureEvidence"),dict) else {}
     last_artifact=_last_assistant_artifact(history or [])
-    failure_evidence=_user_failure_evidence(text,history or [])
+    new_failure_evidence=_user_failure_evidence(text,history or [])
+    failure_evidence=new_failure_evidence
     vague_failure=_vague_failure_report(text) and bool(prior_contract or last_artifact or pins)
     prior_failure_history=prior_state.get("failureHistory") if isinstance(prior_state.get("failureHistory"),list) else []
     failure_history=[dict(x) for x in prior_failure_history[-3:] if isinstance(x,dict)]
-    if failure_evidence:
+    if new_failure_evidence:
         failure_history.append({
             "categories":list((failure_evidence.get("receiptSemantics") or {}).get("categories") or [])[:6],
             "failureSignals":list(failure_evidence.get("failureSignals") or [])[:8],
@@ -777,8 +779,12 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         })
         failure_history=failure_history[-4:]
     correction_direction=bool(prior_contract) and any(x in p for x in ("still","instead","required","requirement","must","should","keep","preserve","do not","don't","wrong","incorrect","guidance","fix","repair","change only","return only"))
-    canonical_carry=bool(prior_contract) and not failure_evidence and not vague_failure and correction_direction and not any(x in p for x in _NEW_PROJECT)
-    original_request=_original_programming_request(history or []) if failure_evidence else ""
+    canonical_carry=bool(prior_contract) and not new_failure_evidence and not vague_failure and correction_direction and not any(x in p for x in _NEW_PROJECT)
+    if canonical_carry and not failure_evidence and prior_failure_evidence:
+        failure_evidence=dict(prior_failure_evidence)
+        failure_evidence["source"]="prior-repair-lineage"
+        failure_evidence["continuedByGuidance"]=True
+    original_request=_original_programming_request(history or []) if new_failure_evidence else ""
     recent=" ".join(_norm(m.get("content") or m.get("text")) for m in (history or [])[-4:] if isinstance(m,dict))
     inherited=bool(pins) or bool(prior_contract) or any(term in recent for term in _CODE_TERMS)
     coding=any(term in p for term in _CODE_TERMS) or bool(_explicit_languages(text)) or inherited or bool(failure_evidence) or vague_failure
