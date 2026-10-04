@@ -1,0 +1,41 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-mutrzbsl-572225006-1852448940",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "f7287f751a01bf12210349098a918794084df0e0",
+  "persistedAtUnixMs": 1791115597238,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v1",
+    "receiptType": null,
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "candidateFingerprint": "3a8d06982541695b",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 0,
+    "failureSignals": [],
+    "receiptSemantics": {
+      "categories": [
+        "type"
+      ],
+      "exceptionTypes": [
+        "TypeError"
+      ],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": []
+    },
+    "repairActions": [
+      "trace concrete runtime types through the failing operation and change the operation or validation causing the mismatch"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
