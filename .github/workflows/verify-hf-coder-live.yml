@@ -1,0 +1,192 @@
+name: Verify live HF coder routing
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".acceptance/HF_CODER_VERIFY_REQUEST.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-hf-coder-live-acceptance
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify deployed coder auto-route and candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast
+          import http.cookiejar
+          import json
+          import re
+          import time
+          import urllib.request
+          import uuid
+          from pathlib import Path
+
+          request = {}
+          for raw in Path(".acceptance/HF_CODER_VERIFY_REQUEST.txt").read_text(encoding="utf-8").splitlines():
+              if "=" in raw:
+                  key, value = raw.split("=", 1)
+                  request[key.strip()] = value.strip()
+
+          base = request.get("SPACE_BASE", "https://kamiloki-swyrlz.hf.space").rstrip("/")
+          expected_revision = request.get("EXPECTED_SPACE_REVISION", "")
+          expected_source = request.get("EXPECTED_SOURCE", "")
+
+          with urllib.request.urlopen("https://huggingface.co/api/spaces/kamiloki/Swyrlz", timeout=30) as response:
+              space_meta = json.loads(response.read().decode("utf-8"))
+          live_revision = str(space_meta.get("sha") or "")
+          if expected_revision:
+              assert live_revision == expected_revision, (live_revision, expected_revision)
+          print(json.dumps({
+              "checkpoint": "space-revision",
+              "spaceRevision": live_revision,
+              "expectedSource": expected_source,
+              "status": "PASS",
+          }))
+
+          jar = http.cookiejar.CookieJar()
+          opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
+
+          def get_json(path):
+              req = urllib.request.Request(
+                  base + path,
+                  headers={"User-Agent": "swrlz-github-live-coder-acceptance/1.0"},
+              )
+              with opener.open(req, timeout=45) as response:
+                  return response.status, json.loads(response.read().decode("utf-8"))
+
+          def post_json(path, payload):
+              req = urllib.request.Request(
+                  base + path,
+                  data=json.dumps(payload).encode("utf-8"),
+                  method="POST",
+                  headers={
+                      "Content-Type": "application/json",
+                      "User-Agent": "swrlz-github-live-coder-acceptance/1.0",
+                  },
+              )
+              with opener.open(req, timeout=45) as response:
+                  return response.status, json.loads(response.read().decode("utf-8"))
+
+          status, models = get_json("/api/hf/models")
+          assert status == 200, status
+          routes = models.get("models") if isinstance(models, dict) else None
+          assert isinstance(routes, list), models
+          coder = next((item for item in routes if item.get("model_id") == "coder" or item.get("modelId") == "coder"), None)
+          assert coder is not None, routes
+          checkpoint = str(coder.get("checkpoint") or "")
+          assert "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF" in checkpoint, checkpoint
+          print(json.dumps({"checkpoint": "coder-route-advertised", "model": coder, "status": "PASS"}, ensure_ascii=False))
+
+          thread_id = "live-coder-" + uuid.uuid4().hex[:12]
+          request_id = "live-coder-" + uuid.uuid4().hex[:12]
+          payload = {
+              "modelId": "700m",
+              "threadId": thread_id,
+              "requestId": request_id,
+              "messageId": "u-" + uuid.uuid4().hex[:12],
+              "assistantMessageId": "a-" + uuid.uuid4().hex[:12],
+              "prompt": "Write a Python function named add(a, b) that returns a + b. Return complete runnable code.",
+              "profile": "",
+              "userProfile": "",
+              "timeZone": "America/Chicago",
+          }
+          status, ack = post_json("/api/lalm_station/send", payload)
+          assert status == 202, (status, ack)
+          assert ack.get("modelId") == "700m", ack
+          print(json.dumps({"checkpoint": "request-admitted", "ack": ack, "status": "PASS"}, ensure_ascii=False))
+
+          terminal = None
+          for attempt in range(180):
+              status, snapshot = get_json("/api/lalm_station/sync")
+              assert status == 200, status
+              generation = snapshot.get("activeGeneration") or {}
+              if generation.get("requestId") != request_id:
+                  time.sleep(2)
+                  continue
+              if attempt % 10 == 0:
+                  print(json.dumps({
+                      "checkpoint": "poll",
+                      "attempt": attempt,
+                      "phase": generation.get("phase"),
+                      "terminal": generation.get("terminal"),
+                  }))
+              if generation.get("terminal"):
+                  terminal = generation
+                  break
+              time.sleep(2)
+
+          assert terminal is not None, "live coder acceptance timed out"
+          statuses = terminal.get("status") if isinstance(terminal.get("status"), list) else []
+          phases = [str(item.get("phase") or "") for item in statuses if isinstance(item, dict)]
+          intent = terminal.get("programmingIntent") if isinstance(terminal.get("programmingIntent"), dict) else {}
+          validation = terminal.get("candidateValidation") if isinstance(terminal.get("candidateValidation"), dict) else {}
+          text = str(terminal.get("text") or "")
+
+          assert intent.get("codingTask") is True, intent
+          assert "PROGRAMMING_INTENT" in phases, phases
+          assert "CODER_AUTO_ROUTE" in phases, phases
+          assert terminal.get("terminalType") == "COMPLETE", {
+              "terminalType": terminal.get("terminalType"),
+              "phase": terminal.get("phase"),
+              "statuses": statuses,
+          }
+          assert validation.get("status") != "REJECT", validation
+
+          fenced = re.search(r"```(?:python)?\s*\n([\s\S]*?)```", text, re.I)
+          source = fenced.group(1).strip() if fenced else text.strip()
+          tree = ast.parse(source)
+          funcs = [node for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "add"]
+          assert funcs, source
+          fn = funcs[0]
+          assert [arg.arg for arg in fn.args.args] == ["a", "b"], ast.dump(fn)
+          returns = [node for node in ast.walk(fn) if isinstance(node, ast.Return)]
+          assert any(
+              isinstance(node.value, ast.BinOp)
+              and isinstance(node.value.op, ast.Add)
+              and isinstance(node.value.left, ast.Name)
+              and node.value.left.id == "a"
+              and isinstance(node.value.right, ast.Name)
+              and node.value.right.id == "b"
+              for node in returns
+          ), ast.dump(fn)
+
+          receipt = {
+              "checkpoint": "live-coder-acceptance",
+              "requestedModelId": "700m",
+              "programmingIntent": True,
+              "autoRoutePhase": "CODER_AUTO_ROUTE",
+              "coderCheckpoint": checkpoint,
+              "terminalType": terminal.get("terminalType"),
+              "candidateValidation": validation,
+              "semanticFixture": "python-add-ast",
+              "spaceRevision": live_revision,
+              "expectedSource": expected_source,
+              "status": "PASS",
+          }
+          print(json.dumps(receipt, ensure_ascii=False))
+          with open("hf-coder-live-acceptance.json", "w", encoding="utf-8") as handle:
+              json.dump(receipt, handle, ensure_ascii=False, indent=2)
+              handle.write("\n")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hf-coder-live-acceptance
+          path: hf-coder-live-acceptance.json
+          if-no-files-found: ignore
+          retention-days: 30
