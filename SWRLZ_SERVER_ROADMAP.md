@@ -1,3 +1,14 @@
+## UPDATE CHECKPOINT — 2026-10-03 — v117 three-turn repair-lineage closure
+
+**Finding after first successful v117 publish:** before live acceptance, the three-turn sequence `generated code → user says it does not work → assistant requests error evidence → user supplies compiler/test/runtime log` exposed a lineage risk: the newest assistant turn is the evidence-request prose, not the original code candidate.
+
+**Correction:** failure-receipt binding now skips non-code assistant prose and targets the newest actual code artifact/message metadata. The returned receipt therefore reattaches to the original generated artifact ID/revision and can request an artifact mutation only after concrete failure evidence exists.
+
+- Final feature source head: `1597650cce42a0d084ae73a2ab9ed49aede37ea1`.
+- Static verifier run #4 / `37173523227`: SUCCESS; deterministic suite again printed `programming-contract-v117 PASS`, including the explicit three-turn lineage test.
+- Versions remain within the same active governed event: LALM Engine `2.1.142` / `2.1.142-hf-language-evidence-gates-v117`; Repository Work `1.0.66`.
+- Deployment run #64 successfully published the earlier v117 checkpoint, but live acceptance was intentionally withheld because this final source correction occurred afterward. A new guarded publish of the final verified source is required.
+
 ## UPDATE CHECKPOINT — 2026-10-03 — Universal language fidelity + evidence-grounded repair gates v117
 
 **Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
