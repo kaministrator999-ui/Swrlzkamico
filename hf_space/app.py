@@ -17,7 +17,7 @@ except Exception as _native_exc:
     _native_build = None
     _native_build_error = f"{type(_native_exc).__name__}: {_native_exc}"
     print(json.dumps({"event":"R39_NATIVE_BUILD_FAILED","errorType":type(_native_exc).__name__,"detail":str(_native_exc)[-700:]}),flush=True)
-from station import app as station_app, set_generator
+from station import app as station_app, set_generator, persist_runtime_diagnostic
 from model_router import dispatch, routes, ModelUnavailable
 from original_engine import generate_events as original_generate, load as original_load
 from lfm2_700m_engine import generate_events as large_generate
@@ -34,32 +34,8 @@ _engine=None
 _lock=threading.Lock()
 
 def _persist_repair_diagnostic(request_id,model_id,event_type,diagnostic):
-    """Best-effort bounded GitHub persistence using a dedicated diagnostics-only token."""
-    token=str(os.environ.get("SWRLZ_DIAGNOSTIC_GITHUB_TOKEN") or "").strip()
-    if not token:
-        print(json.dumps({"event":"REPAIR_DIAGNOSTIC_PERSIST_SKIPPED","requestId":request_id,"reason":"diagnostic-token-not-configured"}),flush=True)
-        return False
-    if event_type not in ("REPAIR_DIAGNOSTIC","REPAIR_OUTCOME_DIAGNOSTIC") or not isinstance(diagnostic,dict):
-        return False
-    owner=os.environ.get("SWRLZ_GITHUB_OWNER","kaministrator999-ui")
-    repo=os.environ.get("SWRLZ_GITHUB_REPO","Swrlzkamico")
-    safe_request="".join(ch for ch in request_id if ch.isalnum() or ch in "-_")[:80]
-    safe_event=event_type.lower().replace("_","-")
-    path=f"runtime-diagnostics/repair/{safe_request}/{safe_event}.json"
-    body=json.dumps({"schema":"swrlz-github-repair-log-v1","requestId":request_id,"modelId":model_id,"eventType":event_type,"diagnostic":diagnostic},ensure_ascii=False,indent=2)+"\n"
-    url=f"https://api.github.com/repos/{owner}/{repo}/contents/{path}"
-    headers={"Authorization":"Bearer "+token,"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"}
-    payload={"message":f"Record {safe_event} {safe_request[:12]}","content":base64.b64encode(body.encode("utf-8")).decode("ascii"),"branch":"runtime"}
-    try:
-        response=requests.put(url,headers=headers,json=payload,timeout=12)
-        if response.status_code not in (200,201):
-            print(json.dumps({"event":"REPAIR_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,"status":response.status_code,"detail":response.text[:300]}),flush=True)
-            return False
-        print(json.dumps({"event":"REPAIR_DIAGNOSTIC_PERSISTED","requestId":request_id,"path":path,"branch":"runtime"}),flush=True)
-        return True
-    except Exception as exc:
-        print(json.dumps({"event":"REPAIR_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,"errorType":type(exc).__name__,"detail":str(exc)[:300]}),flush=True)
-        return False
+    """Compatibility wrapper around Station-owned GitHub diagnostic persistence."""
+    return persist_runtime_diagnostic(request_id,model_id,event_type,diagnostic)
 
 def engine():
     global _engine
@@ -103,7 +79,7 @@ def respond(message,history,model_id,profile,user_profile):
     report={"format":"swrlz-hf-probe-export-v2","modelId":model_id,"requestId":request_id,
             "prompt":message,"history":history_items,"profile":str(profile or "")[:2000],"userProfile":str(user_profile or "")[:2000],"response":"","phase":"STARTING",
             "timeToFirstDeltaSeconds":None,"elapsedSeconds":0.0,"deltaCount":0,
-            "events":[],"diagnosticTrace":None,"memoryCandidates":[],"repairDiagnostics":[],"repairOutcomeDiagnostics":[],"note":"Live probe timeline with structured observable diagnostics; no private chain-of-thought is stored. Download again for the latest snapshot."}
+            "events":[],"diagnosticTrace":None,"memoryCandidates":[],"candidateAttempts":[],"generationTelemetry":None,"repairDiagnostics":[],"repairOutcomeDiagnostics":[],"note":"Live probe timeline with structured observable diagnostics; no private chain-of-thought is stored. Download again for the latest snapshot."}
     with tempfile.NamedTemporaryFile(mode="w",encoding="utf-8",suffix=".json",prefix="swrlz-probe-",delete=False) as f:
         export_path=f.name
 
@@ -175,6 +151,30 @@ def respond(message,history,model_id,profile,user_profile):
                 candidate=value.get("candidate")
                 if isinstance(candidate,dict):report["memoryCandidates"].append(candidate)
                 status=snapshot("MEMORY_CANDIDATE")
+                yield report["response"],export_path,status
+                continue
+            if event_type=="CANDIDATE_ATTEMPT":
+                attempt=value.get("attempt")
+                if isinstance(attempt,dict):
+                    report["candidateAttempts"].append(attempt)
+                status=snapshot("CANDIDATE_ATTEMPT")
+                yield report["response"],export_path,status
+                continue
+            if event_type=="GENERATION_TELEMETRY":
+                telemetry=value.get("telemetry")
+                if isinstance(telemetry,dict):
+                    report["generationTelemetry"]=telemetry
+                    threading.Thread(
+                        target=persist_runtime_diagnostic,
+                        args=(request_id,model_id,"PROGRAMMING_GENERATION_TELEMETRY",{
+                            "schema":"swrlz-probe-programming-log-v1",
+                            "generationTelemetry":telemetry,
+                            "probeElapsedSeconds":round(time.perf_counter()-started,3),
+                        }),
+                        daemon=True,
+                        name="programming-log-"+request_id[:8],
+                    ).start()
+                status=snapshot("GENERATION_TELEMETRY")
                 yield report["response"],export_path,status
                 continue
             if event_type=="REPAIR_DIAGNOSTIC":
