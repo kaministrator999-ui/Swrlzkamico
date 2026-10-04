@@ -1,4 +1,4 @@
 SPACE_BASE=https://kamiloki-swyrlz.hf.space
 EXPECTED_SOURCE=0dd7ffacdbce9e60cb78b12085ce829a862e0669
 EXPECTED_SPACE_REVISION=110be76f8915c1e2675bff084b8bcbe18bf41069
-REQUEST_NONCE=2026-10-04-v120-live-downstream-repair-002
+REQUEST_NONCE=2026-10-04-v120-live-downstream-repair-003
