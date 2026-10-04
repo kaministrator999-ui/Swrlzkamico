@@ -91,6 +91,22 @@ jobs:
           assert "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF" in checkpoint, checkpoint
           print(json.dumps({"checkpoint": "coder-route-advertised", "model": coder, "status": "PASS"}, ensure_ascii=False))
 
+          case_name = request.get("CASE", "code").strip().lower()
+          if case_name == "repair":
+              prompt = """Repair this Python function and return the complete runnable corrected code.
+
+Broken source:
+def add(a, b):
+    return a - b
+
+Test receipt:
+AssertionError: add(2, 3) expected 5, got -1
+"""
+              semantic_fixture = "python-add-repair-ast"
+          else:
+              prompt = "Write a Python function named add(a, b) that returns a + b. Return complete runnable code."
+              semantic_fixture = "python-add-ast"
+
           thread_id = "live-coder-" + uuid.uuid4().hex[:12]
           request_id = "live-coder-" + uuid.uuid4().hex[:12]
           payload = {
@@ -99,7 +115,7 @@ jobs:
               "requestId": request_id,
               "messageId": "u-" + uuid.uuid4().hex[:12],
               "assistantMessageId": "a-" + uuid.uuid4().hex[:12],
-              "prompt": "Write a Python function named add(a, b) that returns a + b. Return complete runnable code.",
+              "prompt": prompt,
               "profile": "",
               "userProfile": "",
               "timeZone": "America/Chicago",
@@ -172,7 +188,8 @@ jobs:
               "coderCheckpoint": checkpoint,
               "terminalType": terminal.get("terminalType"),
               "candidateValidation": validation,
-              "semanticFixture": "python-add-ast",
+              "semanticFixture": semantic_fixture,
+              "acceptanceCase": case_name,
               "spaceRevision": live_revision,
               "expectedSource": expected_source,
               "status": "PASS",
