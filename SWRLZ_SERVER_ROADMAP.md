@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-04 — Post-v119 continuation reconciliation
+
+**Goal:** reconcile resumed-chat work that occurred after v119 had already reached its terminal live-verified state, without introducing an unversioned runtime drift.
+
+**Finding:** the resumed turn created one additional feature-branch source change after the already-deployed v119 source `76befef43857d41f1eb3b7fafb3a9f83cbb3b60f`. Comparison showed exactly one file diff in `hf_space/brain_programming.py`: a stricter fallback source-body detector. The completed v119 implementation already excludes prose-only evidence requests/refusals from repair ownership through fenced-source/artifact-backed selection, and all v119 static/live acceptance had passed before this extra diff.
+
+**Reconciliation action:** restore `hf_space/brain_programming.py` to the exact live-verified v119 content rather than creating a new unrequested runtime behavior revision. Restore commit `ade320825c5c895b1710ba9425ca3142c962c0bf` now has Git tree `685f92cedd139e4cff7b62b7079e189833da4b23`, exactly equal to deployed v119 source commit `76befef43857d41f1eb3b7fafb3a9f83cbb3b60f`.
+
+**Expected version impact:** Repository Work only. LALM Engine remains `2.1.144`; Deployment Control remains `1.0.17`; Server Runtime remains `2.3.309`. No HF deployment is permitted/required because net runtime source content is identical to the already live-verified deployment.
+
 ## UPDATE FINISHED — 2026-10-04 — Native failure receipts + canonical repair source v119
 
 **Outcome:** LIVE RUNTIME VERIFIED.
