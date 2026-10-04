@@ -1,0 +1,65 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "web-muugv9e8-2053799363-172488937",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791157402088,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": 1,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": true,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 15.969,
+      "visibleFirstDeltaLatencyMs": 4188.719,
+      "engineTotalLatencyMs": 4189.692,
+      "totalCandidateGenerationMs": 4172.285,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 4172.285,
+          "firstTokenLatencyMs": 3145.312,
+          "deltaChunks": 40,
+          "candidateFingerprint": "61b1120c656531fb",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": true,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791157397895,
+      "startedAtUnixMs": 1791157397896,
+      "completedAtUnixMs": 1791157402088,
+      "queueWaitMs": 1,
+      "stationRunMs": 4192,
+      "endToEndMs": 4193
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "typescript"
+      ],
+      "executionVerified": false,
+      "verificationState": "AWAITING_EXTERNAL_RECEIPT"
+    },
+    "artifactReceipt": {
+      "action": "ARTIFACT_CREATED",
+      "revision": 1,
+      "sourceHash": "1b414ffca656d7e7c6c0e2e8d62642e2ac09bc652fdf971d043d60a7fb337190",
+      "reason": null
+    }
+  }
+}
