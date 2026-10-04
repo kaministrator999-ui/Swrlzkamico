@@ -430,12 +430,7 @@ def _looks_like_source_body(body: str) -> bool:
     return bool(re.search(
         r"<!doctype\s+html|<html\b|<body\b|"
         r"^\s*(?:from\s+[A-Za-z_][\w.]*\s+import\s+|import\s+[A-Za-z_][\w.]*|def\s+[A-Za-z_]\w*\s*\(|class\s+[A-Za-z_]\w*)|"
-        r"\bfunction\s+[A-Za-z_$][\w$]*\s*\(|"
-        r"\b(?:const|let|var)\s+[A-Za-z_$][\w$]*\s*=|"
-        r"\binterface\s+[A-Za-z_$][\w$]*\s*\{|"
-        r"\btype\s+[A-Za-z_$][\w$]*\s*=|"
-        r"\b(?:fun|fn)\s+[A-Za-z_]\w*\s*\(|"
-        r"\bpublic\s+class\s+[A-Za-z_]\w*|"
+        r"\b(?:function|const|let|var|interface|type|fun|fn|public\s+class)\b|"
         r"#include\s*[<\"]|\bstd::|"
         r"^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE\s+TABLE)\b",
         text,
