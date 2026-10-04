@@ -1,0 +1,45 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v120-8d30b22323ba",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791153249294,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "5f5d1ac33e82bf1a",
+    "candidateFingerprint": "5f5d1ac33e82bf1a",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 0,
+    "failureSignals": [],
+    "receiptSemantics": {
+      "categories": [
+        "dependency"
+      ],
+      "exceptionTypes": [
+        "ModuleNotFoundError"
+      ],
+      "exitCodes": [],
+      "failingSignals": [],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": [],
+      "reportedDependencies": [
+        "slugify"
+      ]
+    },
+    "repairActions": [
+      "repair the import/module/dependency boundary using only dependencies supported by project evidence"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
