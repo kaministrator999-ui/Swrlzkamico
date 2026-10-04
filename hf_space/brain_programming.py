@@ -26,7 +26,7 @@ _LANGUAGE_PATTERNS=(
     ("kotlin",(r"\bkotlin\b",)),
     ("java",(r"\bjava\b",)),
     ("cpp",(r"(?<!\w)c\+\+(?!\w)",r"\bcpp\b",r"\bcxx\b")),
-    ("csharp",(r"\bc#\b",r"\bcsharp\b",r"\bc\s*sharp\b")),
+    ("csharp",(r"(?<!\w)c#(?!\w)",r"\bcsharp\b",r"\bc\s*sharp\b")),
     ("rust",(r"\brust\b",)),
     ("go",(r"\bgolang\b",r"\bgo\s+(?:code|language|program|file|function|package)\b")),
     ("swift",(r"\bswift\b",)),
