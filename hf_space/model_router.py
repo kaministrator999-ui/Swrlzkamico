@@ -21,11 +21,11 @@ def routes(stock_checkpoint: str | None = None) -> list[ModelRoute]:
     return [
         ModelRoute("r39","§wyrlz R39 — fixed",True,"65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee"),
         ModelRoute("stock","Original HF · LFM2-350M Q4_K_M",True,"LiquidAI/LFM2-350M-GGUF@31cd51db1365/LFM2-350M-Q4_K_M.gguf"),
-        ModelRoute("700m","LFM2-700M Q4_K_M",True,"LiquidAI/LFM2-700M-GGUF/LFM2-700M-Q4_K_M.gguf"),
+        ModelRoute("700m","LFM2-700M Q4_K_M",True,"LiquidAI/LFM2-700M-GGUF/LFM2-700M-Q4_K_M.gguf"),\n        ModelRoute("coder","Qwen2.5-Coder-0.5B Instruct Q4_K_M",True,"Qwen/Qwen2.5-Coder-0.5B-Instruct-GGUF/qwen2.5-coder-0.5b-instruct-q4_k_m.gguf"),
         ModelRoute("compare","Compare both",False,None,"Requires two verified independent inference backends"),
     ]
 
-def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict[str,Any]],Iterator[dict[str,Any]]], stock_generate=None,large_generate=None):
+def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict[str,Any]],Iterator[dict[str,Any]]], stock_generate=None,large_generate=None,coder_generate=None):
     history=payload.get("history") if isinstance(payload.get("history"),list) else []
     pins=payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else []
     intent=programming_intent(str(payload.get("prompt") or ""),history,pins,payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
