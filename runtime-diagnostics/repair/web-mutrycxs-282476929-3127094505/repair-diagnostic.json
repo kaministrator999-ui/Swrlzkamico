@@ -1,0 +1,45 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-mutrycxs-282476929-3127094505",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "f7287f751a01bf12210349098a918794084df0e0",
+  "persistedAtUnixMs": 1791115552079,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v1",
+    "receiptType": null,
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "candidateFingerprint": null,
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "Repair this small JavaScript function for a web page. Keep the complete plain-script function renderCount(count), with one argument and no dependencies or unrelated code. For a nonnegative integer number count, return exactly <span class=\"count\">COUNT</span>, with COUNT replaced by its decimal strin"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "syntax",
+        "type"
+      ],
+      "exceptionTypes": [
+        "TypeError"
+      ],
+      "exitCodes": [],
+      "failingSignals": [
+        "Repair this small JavaScript function for a web page. Keep the complete plain-script function renderCount(count), with one argument and no dependencies or unrelated code. For a nonnegative integer number count, return exactly <span class=\"count\">COUNT</span>, with COUNT replaced by its decimal string. Accept zero. For negative numbers, fractions, NaN, infinity, strings, booleans, null, or undefined, throw TypeError. Preserve all original requirements while fixing the syntax error. Return only th"
+      ],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": []
+    },
+    "repairActions": [
+      "repair parser/syntax failure at the reported source location before changing behavior",
+      "trace concrete runtime types through the failing operation and change the operation or validation causing the mismatch"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
