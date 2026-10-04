@@ -1,0 +1,54 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muugtfu3-3798499053-1436415202",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791157312941,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "assistant-muugt8vk-592240885-660369044",
+    "repairSourceMessageId": "assistant-muugt8vk-592240885-660369044",
+    "repairSourceFingerprint": "292652045d9374b5",
+    "candidateFingerprint": "292652045d9374b5",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 0,
+    "failureSignals": [],
+    "receiptSemantics": {
+      "categories": [
+        "runtime",
+        "dependency"
+      ],
+      "exceptionTypes": [
+        "ModuleNotFoundError"
+      ],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [
+        "/workspace/swyrlz-coding-route-retry4-2026-10-04/py-dependency/test_contract.py:11:<module>",
+        "/workspace/swyrlz-coding-route-retry4-2026-10-04/py-dependency/py-dependency-receipt-1-candidate.py:1:<module>",
+        "line:11",
+        "line:1"
+      ],
+      "failingTests": [],
+      "reportedSymbols": [],
+      "reportedDependencies": [
+        "slugify"
+      ]
+    },
+    "repairActions": [
+      "trace the exception to its first relevant application frame and repair the causing state/operation",
+      "repair the import/module/dependency boundary using only dependencies supported by project evidence"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
