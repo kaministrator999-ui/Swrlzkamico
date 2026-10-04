@@ -597,14 +597,19 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
         return None
 
     assistants=[m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"]
-    code_assistants=[
-        m for m in assistants
-        if ((m.get("meta") if isinstance(m.get("meta"),dict) else {}).get("codeArtifactId")
-            or _looks_like_source_body(_candidate_primary_code(str(m.get("content") or m.get("text") or ""))))
-    ]
+    code_assistants=[]
+    for item in assistants:
+        meta=item.get("meta") if isinstance(item.get("meta"),dict) else {}
+        item_text=str(item.get("content") or item.get("text") or "")
+        fenced_source=_inline_source_from_prompt(item_text)
+        if meta.get("codeArtifactId") or fenced_source:
+            code_assistants.append(item)
     prior=code_assistants[0] if code_assistants else None
     prior_text=str((prior or {}).get("content") or (prior or {}).get("text") or "").strip()
-    assistant_source=_candidate_primary_code(prior_text) if prior_text else ""
+    prior_meta=(prior or {}).get("meta") if isinstance((prior or {}).get("meta"),dict) else {}
+    assistant_source=_inline_source_from_prompt(prior_text)
+    if not assistant_source and prior_text and prior_meta.get("codeArtifactId"):
+        assistant_source=_candidate_primary_code(prior_text)
 
     inline_source=_inline_source_from_prompt(raw)
     historical_user_source,historical_user_source_id=_latest_user_source(history or [])
