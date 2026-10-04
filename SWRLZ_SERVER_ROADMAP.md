@@ -1,3 +1,19 @@
+## UPDATE CHECKPOINT — 2026-10-04 — Native failure receipts + canonical repair source v119
+
+**Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
+
+- Verified feature source head: `76befef43857d41f1eb3b7fafb3a9f83cbb3b60f`.
+- Static verifier run #9 / `37202727522`: SUCCESS.
+- Regression stack: `programming-contract-v117 PASS`, `programming-telemetry-v118 PASS`, `programming-receipts-v119 PASS`.
+- Brain now separates fenced source from receipt-shaped execution output before failure classification. Bare source/requirement mentions such as `TypeError` no longer establish execution evidence.
+- Native receipt recognition covers TypeScript `error TS####`, ESLint line/column errors and problem summaries, structured false-result JSON, common compiler/runtime/test receipts, and preserves mixed fail/pass summary signals.
+- Receipt semantics now extract TypeScript/ESLint source locations and common failing-test identifiers with corrected regex escaping.
+- Brain emits one canonical `repairSource`, `repairSourceFingerprint`, source ownership, and `repairComparator=canonical-repair-source`.
+- Candidate validation, Qwen retry/stall logic, 700M retry/stall logic, prompt grounding, and repair outcome telemetry all consume that canonical source identity instead of independently selecting recent assistant prose/candidates.
+- Prose-only evidence-request/refusal turns are explicitly excluded from source ownership.
+
+**Next governed state:** advance LALM Engine + Repository Work authorities, then guarded HF deployment and live native-receipt/source-identity acceptance.
+
 ## UPDATE STARTED — 2026-10-04 — Native failure receipts + canonical repair source v119
 
 **Goal:** close review (16)'s coupled repair-path defects without fixture-specific patches: recognize native TypeScript/ESLint/compiler/test receipts, stop treating source/requirements that merely mention error names as execution evidence, and make one Brain-owned source-under-repair/fingerprint authoritative across candidate validation, retry telemetry, and repair outcome comparison.
