@@ -1,3 +1,20 @@
+## UPDATE STARTED — 2026-10-04 — Native failure receipts + canonical repair source v119
+
+**Goal:** close review (16)'s coupled repair-path defects without fixture-specific patches: recognize native TypeScript/ESLint/compiler/test receipts, stop treating source/requirements that merely mention error names as execution evidence, and make one Brain-owned source-under-repair/fingerprint authoritative across candidate validation, retry telemetry, and repair outcome comparison.
+
+**Evidence basis:** independent current-route review exercised 14 actual chat requests across six unchanged fixtures. Five of six cases eventually passed, all 14 routed through `CODER_AUTO_ROUTE`, and v118 exposed 21 internal proposals / 10 rejected proposals. Remaining semantic defects are: only 6/8 log-bearing turns produced structured failure evidence (TS18047 + ESLint missed); a clean HTML baseline mentioning TypeError was falsely classified as user-seed execution evidence; JSON `"passed": false` leaked into passing signals; source-location/failing-test extraction remained empty; and retry/outcome fingerprints sometimes compared against a passing assistant response/refusal rather than the actual broken source under repair.
+
+**Architecture reconciliation:**
+- Brain owns receipt/source separation, native receipt recognition, bounded receipt semantics, source ownership, and the single canonical `repairSource` / `repairSourceFingerprint`.
+- Candidate gate must compare every repair proposal against that canonical source fingerprint; it must not reconstruct a comparator from recent assistant prose.
+- Qwen coder and 700M engines consume the Brain-owned repair source/fingerprint for repair diagnostics, retry stall checks, prompt grounding, and outcome telemetry. They do not independently choose a previous candidate.
+- Logs remain evidence, not intent. Original request/language contract stays authoritative. Source text that merely contains strings such as `TypeError` is not execution evidence without receipt-shaped output.
+- Preserve v118 candidate-attempt/GitHub telemetry. No UI requested-vs-routed-model presentation changes in this event; that remains a separate product/UI concern.
+
+**Expected module impact:** LALM Engine + Repository Work. Server Runtime and Deployment Control unchanged unless deployment mechanics themselves change.
+
+**Deployment expectation:** runtime-affecting HF source mutation; deterministic receipt/source tests first, then guarded HF deployment and bounded live acceptance.
+
 ## UPDATE FINISHED — 2026-10-04 — Candidate attempt + generation timing camera v118
 
 **Outcome:** LIVE RUNTIME VERIFIED.
