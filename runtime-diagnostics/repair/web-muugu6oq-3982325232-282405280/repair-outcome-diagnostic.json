@@ -1,0 +1,26 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muugu6oq-3982325232-282405280",
+  "modelId": "700m",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791157352865,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "a97537f5da6f4caa",
+    "newCandidateFingerprint": "c5f47639b50baa97",
+    "candidateChanged": true,
+    "stalledRepairInput": false,
+    "regenerationAttempted": false,
+    "regenerationReason": null,
+    "candidateValidationStatus": "PASS",
+    "candidateValidationReasons": [],
+    "receiptCategories": [
+      "syntax"
+    ],
+    "repairActions": [
+      "repair parser/syntax failure at the reported source location before changing behavior"
+    ],
+    "executionVerified": false
+  }
+}
