@@ -404,3 +404,15 @@ Why did it happen?      → diagnosis after correlating the evidence.
 ## Bottom line
 
 **When fixing issues anywhere in §wyrlz, automatically inspect the relevant repository-side diagnostic evidence and the available live/runtime/workflow logs. If existing observability cannot distinguish the cause, add the smallest bounded camera at the architecture boundary that can. Use structured, correlated, privacy-safe diagnostics; fix the canonical owner; then inspect the same evidence again for acceptance. Keep repository engineering history, live runtime evidence, and user-visible evidence distinct so source completion is never mistaken for a verified live fix.**
+
+
+## v120 programming repair camera additions
+
+For programming repair turns, the Station/session camera may now include bounded `contextBudget.repairContext` metadata. This reports the compaction mode and size/count summaries needed to prove that original intent, canonical source, receipt semantics and repair direction were retained while oversized generic/history context was dropped. It is budgeting telemetry, not model reasoning.
+
+Programming candidate attempts may include deterministic rejection reasons such as `repair-stalled-no-executable-change`, `strategy-repeat-previous-attempt`, or `dependency-still-referenced:<name>`. These are gate receipts only; a later structural PASS is still not external execution proof.
+
+Repository diagnostic persistence remains asynchronous and best-effort, but the Station-owned writer now serializes writes and applies bounded HTTP 409 recovery. Persistence receipts may report `attempts`, `conflictCount`, `conflictRecovered`, and a bounded `errorPreview`. The preview is only the GitHub API error response and must never contain prompt/source/profile/private reasoning. A successful live run can prove durable files landed without proving that a 409 was actually induced during that run.
+
+Code-artifact lineage now carries `artifactRevision` plus `artifactSourceHash`. Repair intent may expose `baseRevision` / `baseSourceHash`, and mutation receipts may expose requested/current revision/hash on rejection. Exact revision/hash identity is stronger than originating-message identity and is the authority for stale-edit protection.
+
