@@ -1,3 +1,33 @@
+## UPDATE FINISHED — 2026-10-03 — Live dedicated coder routing acceptance
+
+**Goal:** close the v105 live activation/behavior gap for both fresh coding and repair/log input without redeploying the already-published Hugging Face candidate.
+
+**Implemented verifier**
+- Added `.github/workflows/verify-hf-coder-live.yml`, a deployment-inert live acceptance workflow against the existing `kamiloki/Swyrlz` Space.
+- Added `.acceptance/HF_CODER_VERIFY_REQUEST.txt` as the explicit verification trigger/receipt input. The verifier does not publish, redeploy, or mutate runtime source.
+- The verifier binds acceptance to deployed Space revision `8a4f37e952dec2089b144f6bf901d4062fbe80b4` and expected deployment source `13e32421fff6e57c9d9ee4b8abfac9a55394a4ac` before exercising Station.
+- It deliberately requests `modelId=700m`; acceptance requires live `programmingIntent.codingTask=true`, `PROGRAMMING_INTENT`, and `CODER_AUTO_ROUTE`, proving the deployed router—not the test harness—selects `coder`.
+- Candidate acceptance also requires Station terminal `COMPLETE`, candidate validation not rejected, and an independent Python AST check proving a complete `add(a, b)` implementation returns `a + b`.
+
+**Live evidence**
+- Run #1 / `37170984552`: SUCCESS for fresh code generation. Live Space advertised `Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf`; request was admitted as `700m`; runtime reported programming intent + `CODER_AUTO_ROUTE`; terminal type `COMPLETE`; candidate validation `PASS`; independent `python-add-ast` semantic fixture passed.
+- Runs #2 and #3 were verifier-definition failures only: the first repair-case edit introduced an invalid YAML block through an unindented multiline Python string, so GitHub produced no verification job. This did not execute or fail the live runtime. The verifier YAML was repaired in commit `313dbf49dacfdae16a5af4479b8f107b564ad666`.
+- Run #4 / `37171088634`: SUCCESS for repair/log input. A broken `add()` returning subtraction plus an `AssertionError` receipt was submitted while requesting `700m`; live Station again reported programming intent + `CODER_AUTO_ROUTE`, executed the Qwen coder route, ended `COMPLETE`, candidate validation `PASS`, and the independent `python-add-repair-ast` check proved the returned function repairs the source operation to `a + b`.
+
+**Architecture / truth**
+- Verification remains diagnostic/acceptance infrastructure. No Chat, Brain, model-router, Station, Server, Runtime Manifest, or deployed Space source was changed by this event.
+- v105 is now **LIVE RUNTIME VERIFIED for the exercised fresh-code and repair/log fixtures**. This proves automatic coder selection, model availability/generation, structural candidate acceptance, and the two bounded semantic fixtures; it does not claim universal coding correctness across arbitrary languages/tasks.
+
+**Versions**
+- Repository Work: `1.0.64 → 1.0.65`
+- LALM Engine: unchanged `2.1.141` / `2.1.141-hf-auto-qwen-coder-1p5b-v105`
+- Server Runtime: unchanged `2.3.309`
+- Deployment Control: unchanged `1.0.16`
+
+**Deployment / restart:** NONE. Existing successful HF deployment run #63 and Space revision remain active; this event only verified them.
+
+**Verification truth:** LIVE RUNTIME VERIFIED — FRESH CODING PASS + REPAIR/LOG PASS / BROADER MULTI-LANGUAGE GENERALIZATION REMAINS AN INDEPENDENT EVALUATION AXIS.
+
 ## UPDATE STARTED — 2026-10-03 — Live dedicated coder routing acceptance
 
 **Goal:** close the v105 activation gap with a reusable deployment-inert live verifier against the existing Hugging Face Space. The verifier must request the general `700m` route with an unambiguously programming task and independently prove that the deployed Station classifies the turn as programming, emits `CODER_AUTO_ROUTE`, completes through the dedicated coder backend, and returns a structurally acceptable complete code candidate.
