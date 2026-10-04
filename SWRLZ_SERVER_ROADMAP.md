@@ -1,3 +1,20 @@
+## UPDATE CHECKPOINT — 2026-10-03 — Universal language fidelity + evidence-grounded repair gates v117
+
+**Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
+
+- Feature source head: `0ddf05a16dcf5a0fc78d6605e602b46b806837ea`.
+- Static verifier run #3 / `37173229294`: SUCCESS. Python compilation passed for Brain, Qwen coder engine, 700M engine, model router, Station, and the v117 contract tests; deterministic suite printed `programming-contract-v117 PASS`.
+- Earlier verifier runs #1/#2 correctly exposed contract holes before deployment: C++ boundary detection and explicit-language programming classification for SQL. Both defects were corrected; the tests were not weakened.
+- Shared Brain contract now covers explicit language fidelity, companion-language allowance, diagnostic-symbol grounding, vague-failure evidence requests, first-turn user-seed receipts, and generated-artifact rebinding through Station message metadata.
+
+**Version authority reconciled:**
+- LALM Engine: `2.1.142` / `2.1.142-hf-language-evidence-gates-v117`.
+- Repository Work: `1.0.66`.
+- Server Runtime: unchanged `2.3.309`.
+- Deployment Control: unchanged `1.0.16`.
+
+**Next governed state:** guarded Hugging Face deployment required; live acceptance pending.
+
 ## UPDATE STARTED — 2026-10-03 — Universal language fidelity + evidence-grounded repair gates v117
 
 **Goal:** make explicit programming-language requests hard acceptance constraints and make compiler/test/runtime/log-driven repair an evidence-bound continuation of the original coding artifact/intent. When a user reports only that generated code does not work and supplies no actionable error evidence, request the smallest useful compiler/test/runtime error instead of inventing a diagnosis.
