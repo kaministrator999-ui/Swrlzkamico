@@ -21,7 +21,8 @@ def routes(stock_checkpoint: str | None = None) -> list[ModelRoute]:
     return [
         ModelRoute("r39","§wyrlz R39 — fixed",True,"65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee"),
         ModelRoute("stock","Original HF · LFM2-350M Q4_K_M",True,"LiquidAI/LFM2-350M-GGUF@31cd51db1365/LFM2-350M-Q4_K_M.gguf"),
-        ModelRoute("700m","LFM2-700M Q4_K_M",True,"LiquidAI/LFM2-700M-GGUF/LFM2-700M-Q4_K_M.gguf"),\n        ModelRoute("coder","Qwen2.5-Coder-1.5B Instruct Q4_K_M",True,"Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"),
+        ModelRoute("700m","LFM2-700M Q4_K_M",True,"LiquidAI/LFM2-700M-GGUF/LFM2-700M-Q4_K_M.gguf"),
+        ModelRoute("coder","Qwen2.5-Coder-1.5B Instruct Q4_K_M",True,"Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"),
         ModelRoute("compare","Compare both",False,None,"Requires two verified independent inference backends"),
     ]
 
@@ -32,7 +33,12 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     payload=dict(payload)
     payload["programmingIntent"]=intent
     yield {"type":"PROGRAMMING_INTENT","intent":intent}
-    # Programming questions/examples/reasoning are automatically routed to the dedicated coder.\n    requested_model_id=model_id\n    if intent.get("codingTask") and model_id in ("700m","stock","coder"):\n        model_id="coder"\n        yield {"type":"ROUTE","phase":"CODER_AUTO_ROUTE","requestedModelId":requested_model_id,"selectedModelId":"coder","reason":"programming-intent"}\n    if model_id=="r39":
+    # Programming questions/examples/reasoning are automatically routed to the dedicated coder.
+    requested_model_id=model_id
+    if intent.get("codingTask") and model_id in ("700m","stock","coder"):
+        model_id="coder"
+        yield {"type":"ROUTE","phase":"CODER_AUTO_ROUTE","requestedModelId":requested_model_id,"selectedModelId":"coder","reason":"programming-intent"}
+    if model_id=="r39":
         yield from r39_generate(payload)
         return
     if model_id=="stock":
@@ -43,7 +49,11 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
         if large_generate is None: raise ModelUnavailable(model_id,"700M backend not installed")
         yield from large_generate(payload)
         return
-    if model_id=="coder":\n        if coder_generate is None: raise ModelUnavailable(model_id,"Coder backend not installed")\n        yield from coder_generate(payload)\n        return\n    route=next((x for x in routes() if x.model_id==model_id),None)
+    if model_id=="coder":
+        if coder_generate is None: raise ModelUnavailable(model_id,"Coder backend not installed")
+        yield from coder_generate(payload)
+        return
+    route=next((x for x in routes() if x.model_id==model_id),None)
     if route is None:
         raise ModelUnavailable(model_id,"Unknown model route")
     raise ModelUnavailable(model_id,route.reason or "Model route unavailable")
