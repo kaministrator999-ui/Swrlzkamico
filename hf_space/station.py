@@ -35,7 +35,7 @@ _sessions={}
 _pool=ThreadPoolExecutor(max_workers=2,thread_name_prefix="hf-r39")
 _generate=None
 _stock_generate=None
-_large_generate=None
+_large_generate=None\n_coder_generate=None
 
 def set_generator(fn,stock_fn=None,large_fn=None):
     global _generate,_stock_generate,_large_generate
@@ -300,7 +300,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
         if model_id=="stock" and _stock_generate is None:raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
-        for event in dispatch(model_id,payload,_generate,_stock_generate,_large_generate):
+        for event in dispatch(model_id,payload,_generate,_stock_generate,_large_generate,_coder_generate):
             with _lock:
                 active=s.get("activeGeneration")
                 if not active or active.get("requestId")!=request_id:return
@@ -487,7 +487,7 @@ async def cancel_generation(request:Request):
 async def send(request:Request):
     key,s=_session(request)
     body=await request.json()
-    model_id=body.get("modelId","stock")
+    model_id=body.get("modelId","auto")
     route=next((r for r in routes() if r.model_id==model_id),None)
     if route is None or not route.available:raise HTTPException(422,"Selected model is not configured")
     prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
