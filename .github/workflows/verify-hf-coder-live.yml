@@ -93,15 +93,16 @@ jobs:
 
           case_name = request.get("CASE", "code").strip().lower()
           if case_name == "repair":
-              prompt = """Repair this Python function and return the complete runnable corrected code.
-
-Broken source:
-def add(a, b):
-    return a - b
-
-Test receipt:
-AssertionError: add(2, 3) expected 5, got -1
-"""
+              prompt = "\n".join([
+                  "Repair this Python function and return the complete runnable corrected code.",
+                  "",
+                  "Broken source:",
+                  "def add(a, b):",
+                  "    return a - b",
+                  "",
+                  "Test receipt:",
+                  "AssertionError: add(2, 3) expected 5, got -1",
+              ])
               semantic_fixture = "python-add-repair-ast"
           else:
               prompt = "Write a Python function named add(a, b) that returns a + b. Return complete runnable code."
