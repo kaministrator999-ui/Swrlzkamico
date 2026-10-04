@@ -1,0 +1,47 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v120-d03ae50640d8",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791153085944,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "f10ca213f9c28b31",
+    "candidateFingerprint": "f10ca213f9c28b31",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 0,
+    "failureSignals": [],
+    "receiptSemantics": {
+      "categories": [
+        "name-or-symbol",
+        "runtime"
+      ],
+      "exceptionTypes": [
+        "NameError"
+      ],
+      "exitCodes": [],
+      "failingSignals": [],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": [
+        "hashlib"
+      ],
+      "reportedDependencies": []
+    },
+    "repairActions": [
+      "restore or correctly resolve the reported identifier/module/symbol without renaming required public APIs",
+      "trace the exception to its first relevant application frame and repair the causing state/operation"
+    ],
+    "contractBound": true,
+    "canonicalCarry": true
+  }
+}
