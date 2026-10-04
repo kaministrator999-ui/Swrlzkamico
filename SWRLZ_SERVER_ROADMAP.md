@@ -1,3 +1,53 @@
+## UPDATE FINISHED — 2026-10-04 — Repair context, strategy, persistence + artifact lineage v120
+
+**Outcome:** LIVE RUNTIME VERIFIED.
+
+### Review (18) targets closed
+- v119 receipt/source grounding was preserved rather than redesigned. The new work begins downstream of canonical failure evidence.
+- Repair inference now uses a compact structured repair context rather than replaying the full programming policy/history payload. It retains original request, MUST/MUST-NOT/preserve constraints, language contract, canonical repair source, newest receipt semantics, bounded prior-failure fingerprints and concrete user repair direction.
+- Concrete guidance following an existing failure carries the prior canonical failure evidence forward with `continuedByGuidance=true`, so history pruning cannot detach guidance from the source/receipt under repair.
+- Missing-dependency receipts extract package names. A candidate that still imports/references the reported unavailable dependency is rejected with `dependency-still-referenced:<name>`; retry prompts require a materially different supported strategy and honor original constraints such as standard-library-only / no installation.
+- Retry gating now compares both the canonical broken-source fingerprint and the immediately previous internal attempt. Repeating the prior attempt is rejected as `strategy-repeat-previous-attempt`.
+- unittest failure tracking now prefers actual test identifiers and excludes summary tuples such as `(failures=4)`.
+- Convergence/review candidates now require an explicit whole-utterance confirmation rather than substring matches such as `correct` inside `corrected source`.
+- Station remains the sole repository-diagnostic writer. Writes are serialized locally and HTTP 409 is retried up to four attempts after re-reading current GitHub state; bounded conflict counters/recovery/error preview are observable. No prompt/source/profile/private reasoning was added to repository logs.
+- Code artifacts now have SHA-256 source identity per revision. Repair lineage carries artifact ID + exact revision + source hash; history supplies the exact revision snapshot; commits require matching base revision/hash and reject missing/stale identity.
+- Structural candidate acceptance remains explicitly separate from external compiler/test/runtime verification.
+
+### Static verification
+- Static run #11 / `37239625006`: stopped at a syntax defect in the new repair-context helper before downstream tests; no deployment followed.
+- Static run #12 / `37239685982`: compilation plus v117/v118/v119 passed; v120 exposed that dependency retry strategy was not consulting the original standard-library/no-install constraint. The renderer was fixed rather than weakening the test.
+- Static run #13 / `37239737637`: SUCCESS.
+- Final stack: `programming-contract-v117 PASS`, `programming-telemetry-v118 PASS`, `programming-receipts-v119 PASS`, `programming-repair-v120 PASS`.
+- Exact verified/deployed runtime source: `0dd7ffacdbce9e60cb78b12085ce829a862e0669`.
+
+### Deployment
+- Guarded HF deployment #69 / `37240027896`: SUCCESS.
+- Selected source SHA: `0dd7ffacdbce9e60cb78b12085ce829a862e0669`.
+- Previous v119 Space revision `aca32f9f3a980c853fbd4cc8d3502d4becdd6e86` preserved as rollback.
+- Published v120 Space revision: `110be76f8915c1e2675bff084b8bcbe18bf41069`.
+
+### Live acceptance
+- Live run #8 / `37240228243`: correctly rejected because HF repository metadata had advanced to v120 while the serving worker still emitted v119 `sourceRef=76befef43857d41f1eb3b7fafb3a9f83cbb3b60f`. This was an activation race; no source mutation/redeploy followed.
+- Live run #9 / `37240305362`: v120 was active, but the artifact-lineage fixture's tiny `add(a,b)` response fell below Station's 120-character artifact-creation threshold. The verifier fixture was made deterministically artifact-sized; runtime source remained unchanged.
+- Live run #10 / `37240423712`: SUCCESS against Space revision `110be76f8915c1e2675bff084b8bcbe18bf41069` and source `0dd7ffacdbce9e60cb78b12085ce829a862e0669`.
+- Existing v117/v118/v119 language fidelity, attempt telemetry, compiler-log grounding, source/receipt separation, TS18047, ESLint, and canonical-user-seed comparator cases remained green.
+- Compact repair budget case: initial repair input `597` tokens; concrete follow-up guidance `778` tokens; input budget `7680`; both retained positive output budget and the guidance candidate structurally passed. This directly exercises the path that review (18) previously observed at 8,115 tokens before inference.
+- Persistence concurrency case: all three bounded files for request `v120-67897988127c` were independently read back from `runtime`: `repair-diagnostic.json`, `repair-outcome-diagnostic.json`, and `candidate-attempt-telemetry.json`, each with the exact deployed source provenance. This run proves durable concurrent-family persistence; it did not deliberately force an HTTP 409, so the 409 retry branch remains deterministically/source verified rather than dynamically induced.
+- Artifact lineage case: initial code artifact emitted revision `1` plus a 64-character source hash; the later failure receipt targeted the same artifact ID/revision/hash and intent carried the same `baseRevision` / `baseSourceHash`. The simulated failure repair itself was correctly rejected as unchanged/repeated, so no false revision commit occurred.
+- Dependency strategy case: `ModuleNotFoundError: No module named 'slugify'` produced `reportedDependencies=['slugify']`; the live repair escaped the unavailable-import strategy in `2` internal attempts, final structural validation PASS, and the delivered code did not import `slugify`.
+- HTML language-fidelity camera also passed first attempt on this run: `attemptCount=1`, `regenerationCount=0`, engine `7463.035 ms`, Station end-to-end `7465 ms`, durable GitHub telemetry present.
+
+### Versions
+- LALM Engine: `2.1.145` / `2.1.145-hf-downstream-repair-hardening-v120`.
+- Repository Work: `1.0.73`.
+- Deployment Control: unchanged `1.0.17`.
+- Server Runtime: unchanged `2.3.309`.
+
+**Deployment state:** v120 is active at HF Space revision `110be76f8915c1e2675bff084b8bcbe18bf41069`. No further deployment is pending.
+
+**Truth:** `LIVE RUNTIME VERIFIED — COMPACT REPAIR CONTEXT + STRATEGY CHANGE + DURABLE DIAGNOSTIC TRIO + EXACT ARTIFACT REVISION/HASH BINDING PASS.` The exercised cases prove these specific boundaries. Structural PASS remains non-execution proof, the live run did not deliberately induce a GitHub 409 conflict, and broad correctness across every compiler/framework/dependency/task is not claimed.
+
 ## UPDATE CHECKPOINT — 2026-10-04 — Repair context, strategy, persistence + artifact lineage v120
 
 **Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
