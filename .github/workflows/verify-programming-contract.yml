@@ -1,0 +1,49 @@
+name: Verify programming contract
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".acceptance/PROGRAMMING_CONTRACT_VERIFY_REQUEST.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-programming-contract-verification
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Checkout verification request
+        uses: actions/checkout@v4
+
+      - name: Resolve source ref
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_ref="$(grep '^SOURCE_REF=' .acceptance/PROGRAMMING_CONTRACT_VERIFY_REQUEST.txt | tail -n1 | cut -d= -f2-)"
+          test "$source_ref" = "feature/hf-space-manual-deploy"
+          echo "source_ref=$source_ref" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout programming source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.request.outputs.source_ref }}
+
+      - name: Compile programming owners
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile             hf_space/brain_programming.py             hf_space/qwen_coder_engine.py             hf_space/lfm2_700m_engine.py             hf_space/model_router.py             hf_space/station.py             hf_space/test_programming_contract_v117.py
+
+      - name: Run deterministic programming contract tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python hf_space/test_programming_contract_v117.py
