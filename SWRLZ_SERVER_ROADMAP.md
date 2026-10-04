@@ -1,3 +1,22 @@
+## UPDATE FINISHED — 2026-10-03 — Dedicated coding model auto-route v105
+
+**Goal:** activate a code-specialized GGUF automatically whenever the programming-intent layer recognizes coding questions, examples, repair/log input, or coding reasoning.
+
+**Implemented**
+- Added/activated the dedicated `coder` route using `Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF` / `qwen2.5-coder-1.5b-instruct-q4_k_m.gguf`.
+- Programming intent now automatically selects `coder` regardless of whether the caller selected R39, stock 350M, 700M, or coder explicitly; non-programming turns retain the selected general route.
+- Station now carries the coder generator through the same operational lifecycle, intent contract, failure-receipt, repair diagnostic, context-budget, candidate-validation, and artifact paths used by the existing model routes.
+- Inference Laboratory exposes the coder explicitly for direct A/B testing while normal Chat does not require the user to manually switch models.
+- Existing receipt/log repair infrastructure remains the orchestration layer around the coder; model specialization does not convert structural validation into semantic proof.
+- Official Qwen model metadata identifies Qwen2.5-Coder as code-specific and intended for code generation/reasoning/fixing; the 1.5B Instruct GGUF has a Q4_K_M artifact compatible with llama.cpp.
+
+**Versions**
+- LALM Engine: `2.1.141` / `2.1.141-hf-auto-qwen-coder-1p5b-v105`
+- Repository Work: `1.0.64`
+- Server Runtime: unchanged `2.3.309`
+
+**Verification truth:** SOURCE WIRED + STATIC REREAD VERIFIED / LIVE MODEL DOWNLOAD + ROUTING ACCEPTANCE REQUIRES DEPLOYMENT.
+
 ## UPDATE FINISHED — 2026-10-03 — Generalized coding-log semantics + repair telemetry v116
 
 **Goal:** continue improving the 700M programming path across coding languages and toolchains so compiler/test/runtime/lint/type/dependency logs become structured repair evidence rather than task-specific prompt hacks.
