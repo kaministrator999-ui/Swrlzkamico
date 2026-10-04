@@ -35,13 +35,15 @@ _sessions={}
 _pool=ThreadPoolExecutor(max_workers=2,thread_name_prefix="hf-r39")
 _generate=None
 _stock_generate=None
-_large_generate=None\n_coder_generate=None
+_large_generate=None
+_coder_generate=None
 
-def set_generator(fn,stock_fn=None,large_fn=None):
-    global _generate,_stock_generate,_large_generate
+def set_generator(fn,stock_fn=None,large_fn=None,coder_fn=None):
+    global _generate,_stock_generate,_large_generate,_coder_generate
     _generate=fn
     _stock_generate=stock_fn
     _large_generate=large_fn
+    _coder_generate=coder_fn
 
 def _session(request):
     key=request.cookies.get("swrlz_hf_sid")
