@@ -1,0 +1,63 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "web-mutrzbsl-572225006-1852448940",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "f7287f751a01bf12210349098a918794084df0e0",
+  "persistedAtUnixMs": 1791115610729,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": 1,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": true,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 49.697,
+      "visibleFirstDeltaLatencyMs": 13487.865,
+      "engineTotalLatencyMs": 13489.063,
+      "totalCandidateGenerationMs": 13437.456,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 13437.456,
+          "firstTokenLatencyMs": 11902.055,
+          "deltaChunks": 47,
+          "candidateFingerprint": "67cae62d248a134b",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": true,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791115597235,
+      "startedAtUnixMs": 1791115597236,
+      "completedAtUnixMs": 1791115610728,
+      "queueWaitMs": 1,
+      "stationRunMs": 13492,
+      "endToEndMs": 13493
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "javascript"
+      ],
+      "executionVerified": false,
+      "verificationState": "AWAITING_EXTERNAL_RECEIPT"
+    },
+    "artifactReceipt": {
+      "action": "ARTIFACT_CREATED",
+      "revision": 1
+    }
+  }
+}
