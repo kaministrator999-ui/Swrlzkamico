@@ -1,0 +1,48 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muuaqt6m-1404423009-4202325785",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "76befef43857d41f1eb3b7fafb3a9f83cbb3b60f",
+  "persistedAtUnixMs": 1791147112573,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "a209dfdf51f46ab6",
+    "candidateFingerprint": "a209dfdf51f46ab6",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "seed.ts(2,17): error TS18047: 'input' is possibly 'null'."
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "type",
+        "typecheck"
+      ],
+      "exceptionTypes": [],
+      "exitCodes": [],
+      "failingSignals": [
+        "seed.ts(2,17): error TS18047: 'input' is possibly 'null'."
+      ],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [
+        "seed.ts:2:17"
+      ],
+      "failingTests": [],
+      "reportedSymbols": []
+    },
+    "repairActions": [
+      "trace concrete runtime types through the failing operation and change the operation or validation causing the mismatch",
+      "repair the static type mismatch at the producer/consumer boundary while preserving runtime semantics"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
