@@ -23,10 +23,7 @@ def _bounded(values: Any, limit: int, chars: int) -> list[str]:
 
 
 def _strip_fences(text: str) -> str:
-    return re.sub(r"```[^
-`]*
-[\s\S]*?```"," ",str(text or ""))
-
+    return re.sub(r"```[^\n`]*\n[\s\S]*?```"," ",str(text or ""))
 
 def _compact_user_direction(programming: dict[str, Any], prompt: str) -> str:
     direction=str(programming.get("repairDirection") or "").strip() or str(prompt or "").strip()
