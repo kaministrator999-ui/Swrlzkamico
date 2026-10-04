@@ -40,7 +40,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m py_compile             hf_space/brain_programming.py             hf_space/programming_telemetry.py             hf_space/qwen_coder_engine.py             hf_space/lfm2_700m_engine.py             hf_space/model_router.py             hf_space/station.py             hf_space/app.py             hf_space/test_programming_contract_v117.py             hf_space/test_programming_telemetry_v118.py             hf_space/test_programming_receipts_v119.py             hf_space/test_programming_repair_v120.py
+          python -m py_compile             hf_space/brain_programming.py             hf_space/programming_telemetry.py             hf_space/programming_repair_context.py             hf_space/qwen_coder_engine.py             hf_space/lfm2_700m_engine.py             hf_space/model_router.py             hf_space/station.py             hf_space/app.py             hf_space/test_programming_contract_v117.py             hf_space/test_programming_telemetry_v118.py             hf_space/test_programming_receipts_v119.py             hf_space/test_programming_repair_v120.py
 
       - name: Run deterministic programming contract tests
         shell: bash
