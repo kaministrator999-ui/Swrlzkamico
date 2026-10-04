@@ -491,7 +491,8 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     if not _failure_receipt_detected(raw):
         return None
     assistants=[m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"]
-    prior=assistants[0] if assistants else None
+    code_assistants=[m for m in assistants if ((m.get("meta") if isinstance(m.get("meta"),dict) else {}).get("codeArtifactId") or "```" in str(m.get("content") or m.get("text") or ""))]
+    prior=code_assistants[0] if code_assistants else (assistants[0] if assistants else None)
     prior_text=str((prior or {}).get("content") or (prior or {}).get("text") or "").strip()
     inline_source=_candidate_primary_code(raw) if "```" in raw else ""
     if not prior and not inline_source:
