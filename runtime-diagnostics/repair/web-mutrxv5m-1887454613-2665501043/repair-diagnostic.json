@@ -1,0 +1,44 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-mutrxv5m-1887454613-2665501043",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "f7287f751a01bf12210349098a918794084df0e0",
+  "persistedAtUnixMs": 1791115529041,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v1",
+    "receiptType": null,
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "candidateFingerprint": "6c11948a6ebe6cf8",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 0,
+    "failureSignals": [],
+    "receiptSemantics": {
+      "categories": [
+        "runtime",
+        "dependency"
+      ],
+      "exceptionTypes": [
+        "ValueError",
+        "ModuleNotFoundError"
+      ],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": []
+    },
+    "repairActions": [
+      "trace the exception to its first relevant application frame and repair the causing state/operation",
+      "repair the import/module/dependency boundary using only dependencies supported by project evidence"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
