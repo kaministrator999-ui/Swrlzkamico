@@ -1,0 +1,34 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muugsj19-2314777588-3907389549",
+  "modelId": "700m",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791157278551,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "e4348735e3a332f7",
+    "newCandidateFingerprint": "e4348735e3a332f7",
+    "candidateChanged": false,
+    "stalledRepairInput": false,
+    "regenerationAttempted": true,
+    "regenerationReason": "unchanged-executable-candidate;second-attempt-unchanged",
+    "candidateValidationStatus": "REJECT",
+    "candidateValidationReasons": [
+      "diagnostic-repair-no-executable-change",
+      "repair-stalled-no-executable-change",
+      "strategy-repeat-previous-attempt"
+    ],
+    "receiptCategories": [
+      "assertion",
+      "runtime",
+      "behavior-mismatch"
+    ],
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example",
+      "trace the exception to its first relevant application frame and repair the causing state/operation"
+    ],
+    "executionVerified": false
+  }
+}
