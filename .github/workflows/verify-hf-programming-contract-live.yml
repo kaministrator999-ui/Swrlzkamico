@@ -329,7 +329,10 @@ jobs:
 
           c3 = Client()
           thread3 = "artifact-lineage-" + uuid.uuid4().hex[:10]
-          g3a, _ = c3.send_and_wait(thread3, "Write a Python function named add(a, b) that returns a + b. Return complete runnable code.")
+          g3a, _ = c3.send_and_wait(
+              thread3,
+              "Write a complete runnable Python module with a module docstring, a typed function named add(a, b) that returns a + b, and an if __name__ == '__main__' demonstration that prints add(2, 3). Return the complete module in one Python code fence.",
+          )
           _, intent3a, validation3a = route_state(g3a)
           assert g3a.get("terminalType") == "COMPLETE", g3a
           assert validation3a.get("status") == "PASS", validation3a
