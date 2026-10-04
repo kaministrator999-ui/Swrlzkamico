@@ -1,3 +1,23 @@
+## UPDATE CHECKPOINT — 2026-10-04 — Repair context, strategy, persistence + artifact lineage v120
+
+**Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
+
+- Verified feature source head: `0dd7ffacdbce9e60cb78b12085ce829a862e0669`.
+- Static verifier run #13 / `37239737637`: SUCCESS.
+- Regression stack: `programming-contract-v117 PASS`, `programming-telemetry-v118 PASS`, `programming-receipts-v119 PASS`, `programming-repair-v120 PASS`.
+- Repair turns now render a compact structured context that preserves original request, hard constraints, canonical source, receipt semantics, prior failure fingerprints, and user repair direction without replaying the full programming policy/history payload.
+- Canonical failure evidence is carried through later concrete guidance turns, so guidance can still target the same source/receipt after history pruning.
+- Dependency receipts extract unavailable package names; candidates that continue importing the failed dependency are deterministically rejected, and retry directives explicitly require a materially different supported strategy.
+- Retry validation now rejects a proposal that repeats the immediately prior executable fingerprint, not only the original broken source fingerprint.
+- unittest failure-name extraction prefers actual named tests and excludes summary tuples such as `(failures=4)`.
+- Convergence metadata now requires an explicit whole-utterance user confirmation; substring matches inside phrases like `corrected source` no longer count as resolution.
+- Station serializes diagnostic GitHub writes and retries HTTP 409 conflicts up to four attempts with bounded error-body telemetry instead of discarding the conflict evidence.
+- Code artifacts now carry a source hash per revision. Returned repair receipts can bind artifact ID + exact revision + source hash, history projection supplies the exact revision snapshot to Brain, and commits reject missing/stale revision/hash.
+
+**Versions before assignment:** LALM Engine `2.1.144`; Repository Work `1.0.71`; Deployment Control `1.0.17`; Server Runtime `2.3.309`.
+
+**Next governed state:** advance LALM Engine + Repository Work, extend live acceptance for v120 boundaries, then one guarded Hugging Face deployment from the exact verified feature source.
+
 ## UPDATE STARTED — 2026-10-04 — Repair context, strategy, persistence + artifact lineage v120
 
 **Goal:** close review (18)'s downstream repair defects without reopening v119 receipt/source ownership: reduce repair-context prefill below the coder input ceiling, force materially different repair strategy when repeated proposals stall, make runtime-diagnostic GitHub writes resilient to 409 conflicts, harden failing-test/convergence semantics, and bind repair receipts to exact artifact revision + source hash.
