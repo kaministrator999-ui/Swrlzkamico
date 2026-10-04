@@ -5,8 +5,8 @@ from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY
 
-MODEL_REPO=os.environ.get("SWRLZ_CODER_MODEL_REPO","Qwen/Qwen2.5-Coder-0.5B-Instruct-GGUF")
-MODEL_FILE=os.environ.get("SWRLZ_CODER_MODEL_FILE","qwen2.5-coder-0.5b-instruct-q4_k_m.gguf")
+MODEL_REPO=os.environ.get("SWRLZ_CODER_MODEL_REPO","Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF")
+MODEL_FILE=os.environ.get("SWRLZ_CODER_MODEL_FILE","qwen2.5-coder-1.5b-instruct-q4_k_m.gguf")
 # LFM2 supports a substantially larger native context than this HF probe needs.
 # 4096 keeps the CPU/KV footprint bounded while leaving the always-on §wyrlz
 # profile, role frame, user profile, current prompt and useful history room to coexist.
@@ -231,7 +231,7 @@ def _fit_messages(model,system,history,prompt):
     input_tokens=_token_count(model,messages)
     if input_tokens>target_input:
         raise ValueError(
-            f"Current prompt/profile context uses {input_tokens} tokens but the 700M input budget is "
+            f"Current prompt/profile context uses {input_tokens} tokens but the coder input budget is "
             f"{target_input}; shorten the current prompt or optional profile."
         )
     response_tokens=min(OUTPUT_TOKENS,max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
