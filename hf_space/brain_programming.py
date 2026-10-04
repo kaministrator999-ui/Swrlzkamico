@@ -286,14 +286,9 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
                 reasons.append("language-contract-mismatch:"+item)
     evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
     semantics=evidence.get("receiptSemantics") if isinstance(evidence.get("receiptSemantics"),dict) else {}
-    previous=""
-    target_mid=str(evidence.get("repairTargetMessageId") or "")
-    if evidence.get("receiptSourceOwnership")=="previous-assistant-candidate":
-        previous=next((str(m.get("content") or m.get("text") or "") for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant" and (not target_mid or str(m.get("id") or "")==target_mid)),"")
-    elif evidence.get("receiptSourceOwnership")=="user-seed":
-        previous=str(evidence.get("repairSource") or "")
-    if evidence and previous:
-        before=_code_fingerprint(previous)
+    repair_source=str(evidence.get("repairSource") or "")
+    if evidence and repair_source:
+        before=str(evidence.get("repairSourceFingerprint") or "") or _code_fingerprint(repair_source)
         after=_code_fingerprint(text)
         if before and after and before==after:
             reasons.append("diagnostic-repair-no-executable-change")
@@ -388,79 +383,187 @@ def _extract_candidate_code(text: str) -> str:
 
 
 
+def _receipt_shape_detected(text: str) -> bool:
+    """Detect receipt-shaped execution output without treating error words in source/prose as proof."""
+    raw=str(text or "")
+    if not raw.strip():
+        return False
+    strong=(
+        r"(?im)^\s*Traceback \(most recent call last\):",
+        r"(?im)^\s*[A-Za-z_][A-Za-z0-9_]*(?:Error|Exception|Failure)\s*:\s*\S",
+        r"(?im)^(?:[^\n]+\.(?:ts|tsx)\(\d+,\d+\):\s*)?error\s+TS\d{3,6}\s*:",
+        r"(?im)^\s*\d+:\d+\s+error\s+\S",
+        r"(?im)^\s*[✖×x]\s+\d+\s+problems?\s+\(\d+\s+errors?",
+        r"(?im)^[^\n:]+\.[A-Za-z0-9_]+:\d+(?::\d+)?:\s*(?:fatal\s+)?error:",
+        r"(?im)^\s*(?:FAIL|FAILED|ERROR)\b",
+        r"(?im)^\s*(?:npm\s+ERR!|fatal\s+error:|error:)\s+\S",
+        r"(?i)\b(?:failed to compile|compilation failed|build failed|tests? failed|test suite failed)\b",
+        r"(?i)\b(?:cannot find symbol|unresolved reference|undefined reference|module not found|no module named|cannot resolve)\b",
+        r'(?i)"(?:passed|success|ok)"\s*:\s*false\b',
+        r"(?i)\b(?:exit(?:\s+code|\s+status)?|status)\s*[:=]?\s*[1-9]\d*\b",
+        r"(?i)\b\d+\s+failed\b",
+    )
+    if any(re.search(pattern,raw) for pattern in strong):
+        return True
+    expected=bool(re.search(r"(?i)\bexpected\b",raw))
+    observed=bool(re.search(r"(?i)\b(?:actual|got|received)\b",raw))
+    return expected and observed
+
+
+def _receipt_evidence_text(raw: str) -> str:
+    """Separate execution receipt text from fenced source before semantic parsing."""
+    source=str(raw or "")
+    blocks=list(re.finditer(r"```([^\n`]*)\n([\s\S]*?)```",source))
+    outside=re.sub(r"```[^\n`]*\n[\s\S]*?```","\n",source)
+    pieces=[outside]
+    for block in blocks:
+        body=str(block.group(2) or "")
+        if _receipt_shape_detected(body):
+            pieces.append(body)
+    return "\n".join(piece for piece in pieces if piece.strip()).strip()
+
+
+def _looks_like_source_body(body: str) -> bool:
+    text=str(body or "")
+    if not text.strip() or _receipt_shape_detected(text):
+        return False
+    return bool(re.search(
+        r"(?is)<!doctype\s+html|<html\b|<body\b|"
+        r"(?m)^\s*(?:from\s+[A-Za-z_][\w.]*\s+import\s+|import\s+[A-Za-z_][\w.]*|def\s+[A-Za-z_]\w*\s*\(|class\s+[A-Za-z_]\w*)|"
+        r"\b(?:function|const|let|var|interface|type|fun|fn|public\s+class)\b|"
+        r"#include\s*[<\"]|\bstd::|"
+        r"(?im)^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE\s+TABLE)\b",
+        text
+    ))
+
+
+def _inline_source_from_prompt(raw: str) -> str:
+    """Return the first actual source fence, never a log/output fence."""
+    source=str(raw or "")
+    fallback=""
+    for match in re.finditer(r"```([^\n`]*)\n([\s\S]*?)```",source):
+        tag=str(match.group(1) or "").strip().split()[0] if str(match.group(1) or "").strip() else ""
+        body=str(match.group(2) or "").strip()
+        language=_normalize_language_tag(tag)
+        if language and not _receipt_shape_detected(body):
+            return body
+        if not fallback and _looks_like_source_body(body):
+            fallback=body
+    return fallback
+
+
+def _latest_user_source(history: list[dict[str, Any]]) -> tuple[str, str]:
+    for item in reversed(history or []):
+        if not isinstance(item,dict) or str(item.get("role") or "")!="user":
+            continue
+        text=str(item.get("content") or item.get("text") or "")
+        source=_inline_source_from_prompt(text)
+        if source:
+            return source,str(item.get("id") or "")
+    return "",""
+
+
 def _receipt_semantics(raw: str) -> dict[str, Any]:
-    """Extract bounded, language-agnostic repair facts from compiler/test/runtime logs."""
-    text=str(raw or "")
+    """Extract bounded repair facts from receipt-shaped output only."""
+    text=_receipt_evidence_text(raw)
     lines=[line.strip() for line in text.splitlines() if line.strip()]
     exceptions=[]
-    for match in re.finditer(r"\b([A-Za-z_][A-Za-z0-9_]*(?:Error|Exception|Failure))\b",text):
-        value=match.group(1)
-        if value not in exceptions: exceptions.append(value)
+    for line in lines:
+        match=re.match(r"^\s*([A-Za-z_][A-Za-z0-9_]*(?:Error|Exception|Failure))\s*:",line)
+        if match and match.group(1) not in exceptions:
+            exceptions.append(match.group(1))
     exit_codes=[]
     for match in re.finditer(r"(?i)\b(?:exit(?:\s+code|\s+status)?|status)\s*[:=]?\s*(-?\d+)\b",text):
         value=int(match.group(1))
-        if value not in exit_codes: exit_codes.append(value)
+        if value not in exit_codes:
+            exit_codes.append(value)
+
     failing=[]; passing=[]; mismatches=[]
     for line in lines:
-        if re.search(r"(?i)\b(?:fail(?:ed|ure)?|assert(?:ion)?|mismatch|expected|actual|error)\b",line):
+        json_false=bool(re.search(r'(?i)"(?:passed|success|ok)"\s*:\s*false\b',line))
+        json_true=bool(re.search(r'(?i)"(?:passed|success|ok)"\s*:\s*true\b',line))
+        if json_false:
             failing.append(line[:500])
-        elif re.search(r"(?i)\b(?:pass(?:ed)?|ok|success(?:ful)?)\b",line):
+        elif json_true:
             passing.append(line[:500])
-        if re.search(r"(?i)\bexpected\b",line) and re.search(r"(?i)\bactual|got|received\b",line):
+        elif re.search(r"(?i)\b(?:fail(?:ed|ure)?|assert(?:ion)?|mismatch|expected|actual|error|exception|undefined|unresolved)\b",line):
+            failing.append(line[:500])
+        elif re.search(r"(?i)\b(?:pass(?:ed)?|\bok\b|success(?:ful)?)\b",line):
+            passing.append(line[:500])
+        if re.search(r"(?i)\bexpected\b",line) and re.search(r"(?i)\b(?:actual|got|received)\b",line):
             mismatches.append(line[:500])
+
     categories=[]
     probes=(
-        ("syntax",r"(?i)syntax|parse error|unexpected token|indentationerror"),
-        ("type",r"(?i)typeerror|wrong type|type mismatch"),
-        ("name-or-symbol",r"(?i)nameerror|referenceerror|cannot find symbol|unresolved reference|not defined"),
-        ("assertion",r"(?i)assertionerror|assertion failed|test failed|tests failed"),
-        ("build",r"(?i)compilation failed|build failed|failed to compile"),
-        ("runtime",r"(?i)runtimeerror|exception|traceback"),
+        ("syntax",r"(?i)\bsyntax(?:error)?\b|parse error|unexpected token|indentationerror"),
+        ("type",r"(?i)\btypeerror\b|wrong type|type mismatch|possibly ['\"]?null|not assignable to type"),
+        ("name-or-symbol",r"(?i)\bnameerror\b|\breferenceerror\b|cannot find symbol|unresolved reference|not defined"),
+        ("assertion",r"(?i)\bassertionerror\b|assertion failed|tests? failed"),
+        ("build",r"(?i)compilation failed|build failed|failed to compile|(?:fatal\s+)?error:"),
+        ("runtime",r"(?i)\bruntimeerror\b|\bexception\b|traceback"),
         ("timeout",r"(?i)timeout|timed out"),
-        ("behavior-mismatch",r"(?i)expected.+(?:actual|got|received)|(?:actual|got|received).+expected"),
-        ("lint",r"(?i)\\blint(?:er|ing)?\\b|eslint|ruff|flake8|pylint"),
-        ("typecheck",r"(?i)typecheck|type-check|mypy|pyright|tsc\\b|typescript.+error"),
-        ("dependency",r"(?i)module not found|no module named|cannot resolve|package.+not found|dependency"),
+        ("behavior-mismatch",r"(?i)expected[\s\S]{0,240}(?:actual|got|received)|(?:actual|got|received)[\s\S]{0,240}expected"),
+        ("lint",r"(?i)\blint(?:er|ing)?\b|\beslint\b|\bruff\b|\bflake8\b|\bpylint\b|\d+:\d+\s+error\s+.*\b[A-Za-z][\w-]+\b"),
+        ("typecheck",r"(?i)\btypecheck\b|type-check|\bmypy\b|\bpyright\b|\btsc\b|\berror\s+TS\d{3,6}\b|typescript[^\n]*error"),
+        ("dependency",r"(?i)module not found|no module named|cannot resolve|package[^\n]*not found|dependency|\bmodulenotfounderror\b|\bimporterror\b"),
     )
     for name,pattern in probes:
-        if re.search(pattern,text): categories.append(name)
+        if re.search(pattern,text):
+            categories.append(name)
+
     locations=[]
-    for pattern in (
-        r"(?m)([A-Za-z0-9_./\\-]+\\.[A-Za-z0-9_]+):(\\d+)(?::(\\d+))?",
-        r'(?i)File "([^"]+)", line (\\d+)(?:, in ([^\\n]+))?',
-        r"(?i)\\bline\\s+(\\d+)(?:[, :]\\s*column\\s+(\\d+))?",
-    ):
-        for match in re.finditer(pattern,text):
-            value=":".join(str(x) for x in match.groups() if x)
-            if value and value not in locations: locations.append(value[:300])
+    def add_location(value):
+        value=str(value or "").strip()
+        if value and value not in locations:
+            locations.append(value[:300])
+
+    for match in re.finditer(r"(?m)([A-Za-z0-9_./\\-]+\.[A-Za-z0-9_]+):(\d+)(?::(\d+))?",text):
+        add_location(":".join(x for x in match.groups() if x))
+    for match in re.finditer(r"(?m)([A-Za-z0-9_./\\-]+\.(?:ts|tsx))\((\d+),(\d+)\)",text,re.I):
+        add_location(":".join(match.groups()))
+    for match in re.finditer(r'(?i)File "([^"]+)", line (\d+)(?:, in ([^\n]+))?',text):
+        add_location(":".join(x for x in match.groups() if x))
+    for match in re.finditer(r"(?i)\bline\s+(\d+)(?:[, :]\s*column\s+(\d+))?",text):
+        add_location("line:"+":".join(x for x in match.groups() if x))
+
+    current_file=""
+    for line in lines:
+        if re.match(r"^(?:[A-Za-z]:)?[/\\].+\.[A-Za-z0-9_]+$",line) or re.match(r"^[A-Za-z0-9_./\\-]+\.[A-Za-z0-9_]+$",line):
+            current_file=line
+            continue
+        match=re.match(r"^(\d+):(\d+)\s+(?:error|warning)\b",line,re.I)
+        if match and current_file:
+            add_location(current_file+":"+match.group(1)+":"+match.group(2))
+
     test_names=[]
     for line in lines:
-        match=re.search(r"(?i)(?:FAIL|FAILED|ERROR)\\s+([^\\s:]+(?:::[^\\s:]+)*)",line)
-        if match and match.group(1) not in test_names:test_names.append(match.group(1)[:300])
+        match=re.search(r"(?i)^(?:FAIL|FAILED|ERROR)\s+([^\s:]+(?:::[^\s:]+)*)",line)
+        if match and match.group(1) not in test_names:
+            test_names.append(match.group(1)[:300])
+            continue
+        match=re.search(r"^[✕×]\s+(.+)$",line)
+        if match:
+            name=match.group(1).strip()[:300]
+            if name and name not in test_names:
+                test_names.append(name)
+
     return {
-        "categories":categories[:12],"exceptionTypes":exceptions[:8],"exitCodes":exit_codes[:8],
-        "failingSignals":failing[:12],"passingSignals":passing[:8],"expectedActual":mismatches[:8],
-        "sourceLocations":locations[:12],"failingTests":test_names[:12],
+        "categories":categories[:12],
+        "exceptionTypes":exceptions[:8],
+        "exitCodes":exit_codes[:8],
+        "failingSignals":_unique(failing)[:12],
+        "passingSignals":_unique(passing)[:8],
+        "expectedActual":_unique(mismatches)[:8],
+        "sourceLocations":locations[:12],
+        "failingTests":test_names[:12],
         "reportedSymbols":_reported_symbols(text),
     }
 
 
 def _failure_receipt_detected(text: str) -> bool:
-    """Recognize common compiler, test-runner, build, runtime and CI failure logs."""
-    raw=str(text or "")
-    if not raw.strip():
-        return False
-    patterns=(
-        r"\b(?:syntaxerror|typeerror|nameerror|referenceerror|assertionerror|indentationerror|runtimeerror|exception|traceback)\b",
-        r"\b(?:compilation|build|link|lint|typecheck|test(?:s| suite)?)\s+(?:failed|failure|error)\b",
-        r"\b(?:failed to compile|cannot find symbol|unresolved reference|undefined reference|module not found|cannot resolve)\b",
-        r"(?im)^\s*(?:FAIL|FAILED|ERROR)\b",
-        r"\b(?:exit(?:\s+code|\s+status)?|status)\s*[:=]?\s*[1-9]\d*\b",
-        r"\b\d+\s+failed(?:,|\b)",
-        r"\bexpected\b[\s\S]{0,240}\b(?:actual|got|received)\b",
-        r"\b(?:actual|got|received)\b[\s\S]{0,240}\bexpected\b",
-    )
-    return any(re.search(pattern,raw,re.I) for pattern in patterns)
+    """Recognize execution receipts after separating source fences from output evidence."""
+    evidence=_receipt_evidence_text(text)
+    return _receipt_shape_detected(evidence)
 
 
 def _repair_actions(semantics: dict[str, Any]) -> list[str]:
@@ -488,47 +591,81 @@ def _repair_actions(semantics: dict[str, Any]) -> list[str]:
 
 def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[str, Any] | None:
     raw=str(prompt or "").strip()
-    if not _failure_receipt_detected(raw):
+    receipt_text=_receipt_evidence_text(raw)
+    if not _receipt_shape_detected(receipt_text):
         return None
+
     assistants=[m for m in reversed(history or []) if isinstance(m,dict) and str(m.get("role") or "")=="assistant"]
-    code_assistants=[m for m in assistants if ((m.get("meta") if isinstance(m.get("meta"),dict) else {}).get("codeArtifactId") or "```" in str(m.get("content") or m.get("text") or ""))]
-    prior=code_assistants[0] if code_assistants else (assistants[0] if assistants else None)
+    code_assistants=[
+        m for m in assistants
+        if ((m.get("meta") if isinstance(m.get("meta"),dict) else {}).get("codeArtifactId")
+            or _looks_like_source_body(_candidate_primary_code(str(m.get("content") or m.get("text") or ""))))
+    ]
+    prior=code_assistants[0] if code_assistants else None
     prior_text=str((prior or {}).get("content") or (prior or {}).get("text") or "").strip()
-    inline_source=_candidate_primary_code(raw) if "```" in raw else ""
-    if not prior and not inline_source:
-        return None
+    assistant_source=_candidate_primary_code(prior_text) if prior_text else ""
+
+    inline_source=_inline_source_from_prompt(raw)
+    historical_user_source,historical_user_source_id=_latest_user_source(history or [])
     raw_norm=" ".join(raw.lower().split())
-    prior_candidate=_extract_candidate_code(prior_text) if prior_text else ""
-    prior_norm=" ".join(prior_candidate.lower().split())
-    assistant_norms=[]
-    for item in history or []:
-        if not isinstance(item,dict) or str(item.get("role") or "")!="assistant":
-            continue
-        candidate_norm=" ".join(_extract_candidate_code(str(item.get("content") or item.get("text") or "")).lower().split())
-        if candidate_norm:
-            assistant_norms.append(candidate_norm)
-    exact_repeat_count=sum(1 for candidate_norm in assistant_norms if prior_norm and candidate_norm==prior_norm)
+    user_seed_markers=("original user seed","original seed","user seed","provided source","supplied source","baseline source","original source")
+    assistant_owned=any(marker in raw_norm for marker in ("your code","your function","your candidate","assistant code","assistant candidate","previous response","previous assistant"))
+    explicit_user_seed=bool(inline_source) or any(marker in raw_norm for marker in user_seed_markers)
+
+    if explicit_user_seed and not assistant_owned:
+        ownership="user-seed"
+        repair_source=inline_source or historical_user_source
+        repair_source_message_id="" if inline_source else historical_user_source_id
+        repair_target_message_id=""
+        repair_target_artifact_id=""
+        repair_target_artifact_revision=0
+    else:
+        ownership="previous-assistant-candidate"
+        repair_source=assistant_source
+        repair_source_message_id=str((prior or {}).get("id") or "")
+        meta=(prior or {}).get("meta") if isinstance((prior or {}).get("meta"),dict) else {}
+        repair_target_message_id=repair_source_message_id
+        repair_target_artifact_id=str(meta.get("codeArtifactId") or "")
+        repair_target_artifact_revision=int(meta.get("artifactRevision") or 0)
+
+    if not repair_source:
+        return None
+
+    repair_source_fingerprint=_code_fingerprint(repair_source)
+    exact_repeat_count=0
+    if repair_source_fingerprint:
+        for item in history or []:
+            if not isinstance(item,dict) or str(item.get("role") or "")!="assistant":
+                continue
+            candidate=str(item.get("content") or item.get("text") or "")
+            if _code_fingerprint(candidate)==repair_source_fingerprint:
+                exact_repeat_count+=1
+
     receipt_failure_lines=[
         line.strip()[:500]
-        for line in raw.splitlines()
-        if re.search(r"\b(?:fail(?:ed|ure)?|assert(?:ion)?|expected|actual|mismatch|error|exception|undefined|unresolved)\b",line,re.I)
+        for line in receipt_text.splitlines()
+        if re.search(r"(?i)\b(?:fail(?:ed|ure)?|assert(?:ion)?|expected|actual|mismatch|error|exception|undefined|unresolved)\b",line)
+        or re.search(r'(?i)"(?:passed|success|ok)"\s*:\s*false\b',line)
     ][:12]
-    user_seed_markers=("original user seed","original seed","user seed","provided source","supplied source","baseline source","original source")
-    seed_owned=bool(inline_source) or any(marker in raw_norm for marker in user_seed_markers)
-    assistant_owned=any(marker in raw_norm for marker in ("your code","your function","your candidate","assistant code","assistant candidate","previous response","previous assistant"))
-    ownership="user-seed" if seed_owned and not assistant_owned else "previous-assistant-candidate"
-    meta=(prior or {}).get("meta") if isinstance((prior or {}).get("meta"),dict) else {}
-    semantics=_receipt_semantics(raw)
+    semantics=_receipt_semantics(receipt_text)
     return {
-        "schema":"swrlz-user-failure-evidence-v5","kind":"execution-failure","source":"user-response",
-        "evidence":raw[:6000],"receiptSourceOwnership":ownership,
+        "schema":"swrlz-user-failure-evidence-v6",
+        "kind":"execution-failure",
+        "source":"user-response",
+        "evidence":receipt_text[:6000],
+        "receiptTextSeparatedFromSource":True,
+        "receiptSourceOwnership":ownership,
         "repairTarget":ownership,
-        "repairTargetMessageId":str((prior or {}).get("id") or "") if ownership=="previous-assistant-candidate" else "",
-        "repairTargetArtifactId":str(meta.get("codeArtifactId") or "") if ownership=="previous-assistant-candidate" else "",
-        "repairTargetArtifactRevision":int(meta.get("artifactRevision") or 0) if ownership=="previous-assistant-candidate" else 0,
-        "repairSource":inline_source[:12000] if ownership=="user-seed" else "",
+        "repairTargetMessageId":repair_target_message_id,
+        "repairTargetArtifactId":repair_target_artifact_id,
+        "repairTargetArtifactRevision":repair_target_artifact_revision,
+        "repairSource":repair_source[:12000],
+        "repairSourceMessageId":repair_source_message_id,
+        "repairSourceFingerprint":repair_source_fingerprint,
+        "candidateFingerprint":repair_source_fingerprint,
+        "repairComparator":"canonical-repair-source",
         "previousAssistantCandidateId":str((prior or {}).get("id") or ""),
-        "previousAssistantCandidateComparable":bool(prior_norm),
+        "previousAssistantCandidateComparable":bool(assistant_source),
         "exactCandidateRepeatCount":exact_repeat_count,
         "stalledRepair":exact_repeat_count>=1,
         "failureSignals":receipt_failure_lines,
