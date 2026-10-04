@@ -1,0 +1,48 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muuaq2r8-1856041156-2981070507",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "76befef43857d41f1eb3b7fafb3a9f83cbb3b60f",
+  "persistedAtUnixMs": 1791147078322,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "8bf4bd57730de638",
+    "candidateFingerprint": "8bf4bd57730de638",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 0,
+    "failureSignals": [],
+    "receiptSemantics": {
+      "categories": [
+        "type"
+      ],
+      "exceptionTypes": [
+        "TypeError"
+      ],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [
+        "/workspace/swyrlz-coding-route-retry3-2026-10-04/js-runtime/seed.js:2",
+        "/workspace/swyrlz-coding-route-retry3-2026-10-04/js-runtime/seed.js:2:16",
+        "///workspace/swyrlz-coding-route-retry3-2026-10-04/js-runtime/reproduce.mjs:8:28"
+      ],
+      "failingTests": [],
+      "reportedSymbols": []
+    },
+    "repairActions": [
+      "trace concrete runtime types through the failing operation and change the operation or validation causing the mismatch"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
