@@ -1,3 +1,45 @@
+## UPDATE FINISHED — 2026-10-04 — Candidate attempt + generation timing camera v118
+
+**Outcome:** LIVE RUNTIME VERIFIED.
+
+### Implemented
+- Qwen coder and 700M programming paths emit bounded `CANDIDATE_ATTEMPT` receipts and one `GENERATION_TELEMETRY` summary per completed candidate sequence.
+- Guarded language/repair turns record attempt number, trigger, total attempt duration, first-token latency, delta-chunk count, candidate fingerprint/change relation, deterministic validation result/reasons, accepted attempt, regeneration count, model-load time, visible first-delta time, and engine total latency.
+- Station persists the compact telemetry into `activeGeneration` and final assistant message metadata together with queue wait, Station run time, and end-to-end wall time so the evidence survives replacement of `activeGeneration` in the session export.
+- Station owns the shared bounded runtime-diagnostic writer. It reuses the already provisioned `SWRLZ_DIAGNOSTIC_GITHUB_TOKEN` and writes programming telemetry to `runtime-diagnostics/programming/<request-id>/candidate-attempt-telemetry.json` on `runtime` without storing prompt text, generated source, profile text, credentials, or private reasoning.
+- Existing repair diagnostic persistence uses the same Station-owned writer rather than a second GitHub transport owner.
+- `SWRLZ_CHAT_CAMERA_LOGS.md` now documents these governed repository-persisted runtime-diagnostic exceptions and preserves the distinction between bounded GitHub receipts and richer process-local/runtime evidence.
+
+### Verification
+- Static verifier run #5 / `37176381493`: SUCCESS. Existing v117 programming tests remained green (`programming-contract-v117 PASS`) and the new telemetry suite passed (`programming-telemetry-v118 PASS`).
+- Deployment #66 / `37176579554`: SUCCESS from exact feature source `f7287f751a01bf12210349098a918794084df0e0`; initial Space revision `968544f6394b92ff7e3d440dab431acf5b192688`.
+- Live run #2 / `37176704705`: failed during the HF activation window because the repository revision had advanced while the serving worker still exposed the old v117 Station shape. No source regression was inferred from this activation race.
+- Live run #3 / `37176755126`: v118 camera + GitHub persistence worked and exposed a real deployment-provenance defect: the persisted `sourceRef` used the caller/main trigger SHA instead of the selected feature SHA.
+- Deployment Control was repaired so all five HF provenance sites use `steps.selected-source.outputs.sha`. Deployment Control advanced to `1.0.17`.
+- Deployment #67 / `37176853242`: SUCCESS. It selected `f7287f751a01bf12210349098a918794084df0e0`, preserved prior Space revision `968544f6394b92ff7e3d440dab431acf5b192688`, stamped the selected source into rollback/release receipts, and published final Space revision `8968b9db478893026067a3bf050ce914f5922cb1`.
+- Live run #4 / `37176986747`: provenance-correct v118 was active, but the HTML retry fixture hit a transient verifier timeout after recording attempt 1. No source change followed because this did not establish a deterministic runtime defect.
+- Live run #5 / `37199029066`: SUCCESS against Space revision `8968b9db478893026067a3bf050ce914f5922cb1` and expected source `f7287f751a01bf12210349098a918794084df0e0`.
+
+### Live v118 camera receipt
+- HTML request routed through `CODER_AUTO_ROUTE` to Qwen2.5-Coder-1.5B.
+- Attempt count: `2`; regeneration count: `1`; final accepted attempt: `2`.
+- Attempt 1: `9059.079 ms`, first token `4124.502 ms`; rejected for `missing-required-language:html` and `language-contract-mismatch:python`.
+- Attempt 2: `7539.226 ms`, first token `401.541 ms`; fingerprint changed from attempt 1 and validation passed as HTML.
+- Engine total latency: `16621.429 ms`; Station end-to-end: `16632 ms`.
+- Durable GitHub receipt: `runtime-diagnostics/programming/v118-afee6f3317d6/candidate-attempt-telemetry.json` on `runtime`.
+- Independent repository readback confirmed `schema=swrlz-github-programming-attempt-log-v1`, `sourceRef=f7287f751a01bf12210349098a918794084df0e0`, final candidate `PASS`, artifact action `ARTIFACT_CREATED`, and the same timing/attempt data.
+- The live verifier also re-passed the v117 user-seed compiler repair and generated-artifact evidence-lineage cases. External compiler/test/runtime receipts remain authoritative for execution success; the camera does not turn structural acceptance into execution proof.
+
+### Versions
+- LALM Engine: `2.1.143` / `2.1.143-hf-candidate-attempt-camera-v118`.
+- Repository Work: `1.0.68`.
+- Deployment Control: `1.0.17`.
+- Server Runtime: unchanged `2.3.309`.
+
+**Deployment state:** final active HF revision is `8968b9db478893026067a3bf050ce914f5922cb1`. No additional deployment is required after this closure.
+
+**Truth:** `LIVE RUNTIME VERIFIED — PER-ATTEMPT GENERATION/TIMING CAMERA + SESSION RETENTION + DURABLE GITHUB PROGRAMMING LOG PERSISTENCE PASS.` This proves the exercised telemetry/persistence and bounded programming fixtures; it does not claim universal correctness for every language, compiler, framework, or repair task.
+
 ## UPDATE CHECKPOINT — 2026-10-03 — v118 live telemetry works; deployment source provenance repair required
 
 **Live run #3 finding:** candidate-attempt telemetry and GitHub persistence are operational on deployed v118. The HTML fixture produced two measured model attempts: attempt 1 was rejected for `missing-required-language:html` + `language-contract-mismatch:python`; attempt 2 changed fingerprint and passed as HTML. Station timing and the repository log were both present.
