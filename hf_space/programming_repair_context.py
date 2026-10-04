@@ -141,7 +141,9 @@ def strategy_change_directive(programming: dict[str, Any], validation: dict[str,
     reasons=[str(x) for x in ((validation or {}).get("reasons") or [])]
     categories=set(str(x) for x in (semantics.get("categories") or []))
     dependencies=[str(x) for x in (semantics.get("reportedDependencies") or []) if str(x)]
-    direction=_compact_user_direction(programming,"").lower()
+    contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
+    original=_strip_fences(str(contract.get("originalRequest") or ""))
+    direction=(" ".join((_compact_user_direction(programming,""),original))).lower()
 
     directives=[
         f"STRATEGY CHANGE GATE attempt {int(attempt)}: the previous proposal was rejected.",
