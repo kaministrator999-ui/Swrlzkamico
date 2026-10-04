@@ -10,7 +10,7 @@ Candidate limitations: process-local state, anonymous session, no durable accoun
 storage or external durable queue. Do not claim production parity.
 """
 from __future__ import annotations
-import asyncio, base64, copy, json, os, threading, time, uuid
+import asyncio, base64, copy, json, os, threading, time, uuid, urllib.error, urllib.parse, urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
@@ -44,6 +44,95 @@ def set_generator(fn,stock_fn=None,large_fn=None,coder_fn=None):
     _stock_generate=stock_fn
     _large_generate=large_fn
     _coder_generate=coder_fn
+
+
+def persist_runtime_diagnostic(request_id,model_id,event_type,diagnostic):
+    """Persist one bounded diagnostic document to the runtime branch.
+
+    This writer uses the dedicated diagnostics-only token already provisioned for
+    response-triggered repair logs. It never stores prompt/code/history/private
+    reasoning and never blocks the generation critical path.
+    """
+    token=str(os.environ.get("SWRLZ_DIAGNOSTIC_GITHUB_TOKEN") or "").strip()
+    if not token:
+        result={"ok":False,"reason":"diagnostic-token-not-configured"}
+        print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_SKIPPED","requestId":request_id,**result}),flush=True)
+        return result
+    allowed={
+        "REPAIR_DIAGNOSTIC":("repair","repair-diagnostic.json","swrlz-github-repair-log-v1"),
+        "REPAIR_OUTCOME_DIAGNOSTIC":("repair","repair-outcome-diagnostic.json","swrlz-github-repair-log-v1"),
+        "PROGRAMMING_GENERATION_TELEMETRY":("programming","candidate-attempt-telemetry.json","swrlz-github-programming-attempt-log-v1"),
+    }
+    spec=allowed.get(str(event_type or ""))
+    if spec is None or not isinstance(diagnostic,dict):
+        return {"ok":False,"reason":"unsupported-diagnostic"}
+    category,filename,schema=spec
+    owner=str(os.environ.get("SWRLZ_GITHUB_OWNER") or "kaministrator999-ui").strip()
+    repo=str(os.environ.get("SWRLZ_GITHUB_REPO") or "Swrlzkamico").strip()
+    safe_request="".join(ch for ch in str(request_id or "") if ch.isalnum() or ch in "-_")[:80]
+    if not safe_request:
+        return {"ok":False,"reason":"invalid-request-id"}
+    path=f"runtime-diagnostics/{category}/{safe_request}/{filename}"
+    document={
+        "schema":schema,
+        "requestId":str(request_id or "")[:160],
+        "modelId":str(model_id or "")[:80],
+        "eventType":str(event_type or "")[:80],
+        "sourceRef":str(os.environ.get("SWRLZ_GITHUB_REF") or "")[:80] or None,
+        "persistedAtUnixMs":int(time.time()*1000),
+        "diagnostic":diagnostic,
+    }
+    body=json.dumps(document,ensure_ascii=False,indent=2)+"\n"
+    encoded_path=urllib.parse.quote(path,safe="/")
+    url=f"https://api.github.com/repos/{owner}/{repo}/contents/{encoded_path}"
+    headers={
+        "Authorization":"Bearer "+token,
+        "Accept":"application/vnd.github+json",
+        "X-GitHub-Api-Version":"2022-11-28",
+        "User-Agent":"swrlz-runtime-diagnostics/1",
+    }
+    existing_sha=None
+    try:
+        read_request=urllib.request.Request(url+"?ref=runtime",headers=headers,method="GET")
+        with urllib.request.urlopen(read_request,timeout=12) as response:
+            current=json.loads(response.read().decode("utf-8"))
+            existing_sha=str(current.get("sha") or "") or None
+    except urllib.error.HTTPError as exc:
+        if exc.code!=404:
+            result={"ok":False,"reason":"github-read-failed","status":int(exc.code),"path":path,"branch":"runtime"}
+            print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
+            return result
+    except Exception as exc:
+        result={"ok":False,"reason":"github-read-failed","errorType":type(exc).__name__,"path":path,"branch":"runtime"}
+        print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
+        return result
+    payload={
+        "message":f"Record {category} diagnostic {safe_request[:12]}",
+        "content":base64.b64encode(body.encode("utf-8")).decode("ascii"),
+        "branch":"runtime",
+    }
+    if existing_sha:
+        payload["sha"]=existing_sha
+    try:
+        write_request=urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={**headers,"Content-Type":"application/json"},
+            method="PUT",
+        )
+        with urllib.request.urlopen(write_request,timeout=12) as response:
+            status=int(response.status)
+        result={"ok":status in (200,201),"path":path,"branch":"runtime","status":status}
+        print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSISTED" if result["ok"] else "RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
+        return result
+    except urllib.error.HTTPError as exc:
+        result={"ok":False,"reason":"github-write-failed","status":int(exc.code),"path":path,"branch":"runtime"}
+        print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
+        return result
+    except Exception as exc:
+        result={"ok":False,"reason":"github-write-failed","errorType":type(exc).__name__,"path":path,"branch":"runtime"}
+        print(json.dumps({"event":"RUNTIME_DIAGNOSTIC_PERSIST_FAILED","requestId":request_id,**result}),flush=True)
+        return result
 
 def _session(request):
     key=request.cookies.get("swrlz_hf_sid")
@@ -311,6 +400,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     break
             if not isinstance(event,dict):continue
             kind=str(event.get("type") or "")
+            persist_event=None
             with _lock:
                 g=s["activeGeneration"]
                 if not g or g["requestId"]!=request_id:return
@@ -338,6 +428,18 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     diagnostic=event.get("diagnostic") if isinstance(event.get("diagnostic"),dict) else {}
                     g.setdefault("repairDiagnostics",[]).append({"type":kind,"diagnostic":copy.deepcopy(diagnostic)})
                     g["status"].append({"seq":g["lastSeq"],"phase":kind,"reason":""})
+                    if diagnostic:
+                        persist_event=(kind,copy.deepcopy(diagnostic))
+                elif kind=="CANDIDATE_ATTEMPT":
+                    attempt=event.get("attempt") if isinstance(event.get("attempt"),dict) else {}
+                    if attempt:
+                        g.setdefault("candidateAttempts",[]).append(copy.deepcopy(attempt))
+                    g["status"].append({"seq":g["lastSeq"],"phase":"CANDIDATE_ATTEMPT","reason":"attempt="+str(attempt.get("attempt") or "")})
+                elif kind=="GENERATION_TELEMETRY":
+                    telemetry=event.get("telemetry") if isinstance(event.get("telemetry"),dict) else {}
+                    if telemetry:
+                        g["generationTelemetry"]=copy.deepcopy(telemetry)
+                    g["status"].append({"seq":g["lastSeq"],"phase":"GENERATION_TELEMETRY","reason":""})
                 elif kind=="CANDIDATE_VALIDATION":
                     validation=event.get("validation") if isinstance(event.get("validation"),dict) else {}
                     g["candidateValidation"]=copy.deepcopy(validation)
@@ -362,7 +464,22 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         "maxResponseTokens":int(event.get("maxResponseTokens") or 0),
                     }
                     g["status"].append({"seq":g["lastSeq"],"phase":"RESOURCE_ALLOCATED","reason":"Workstation inference budget active"})
+                elif kind in ("COMPLETE","COMPLETED"):
+                    g["engineCompletionTelemetry"]={
+                        "totalLatencyMs":event.get("totalLatencyMs"),
+                        "loadLatencyMs":event.get("loadLatencyMs"),
+                        "firstDeltaLatencyMs":event.get("firstDeltaLatencyMs"),
+                    }
+                    g["status"].append({"seq":g["lastSeq"],"phase":"COMPLETE","reason":""})
                 else:g["status"].append({"seq":g["lastSeq"],"phase":str(event.get("phase") or kind),"reason":str(event.get("reason") or "")[:200]})
+            if persist_event is not None:
+                persist_kind,persist_payload=persist_event
+                threading.Thread(
+                    target=persist_runtime_diagnostic,
+                    args=(request_id,model_id,persist_kind,persist_payload),
+                    daemon=True,
+                    name="runtime-diagnostic-"+request_id[:8],
+                ).start()
             if kind=="FAILED":raise RuntimeError(str(event.get("reason") or "Generation failed"))
             if kind in ("COMPLETE","COMPLETED"):completed=True
         if cancelled:
@@ -373,8 +490,21 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     g["status"].append({"phase":"CANCELLED","reason":"Stopped by user"});s["revision"]+=1
             return
         if not text:raise RuntimeError("R39 emitted no DELTA")
+        github_telemetry=None
         with _lock:
-            g=s["activeGeneration"];g.update(terminal=True,terminalType="COMPLETE",phase="COMPLETE")
+            g=s["activeGeneration"]
+            completed_ms=int(time.time()*1000)
+            g.update(terminal=True,terminalType="COMPLETE",phase="COMPLETE",completedAtUnixMs=completed_ms)
+            started_ms=int(g.get("startedAtUnixMs") or completed_ms)
+            accepted_ms=int(g.get("acceptedAtUnixMs") or started_ms)
+            g["stationTiming"]={
+                "acceptedAtUnixMs":accepted_ms,
+                "startedAtUnixMs":started_ms,
+                "completedAtUnixMs":completed_ms,
+                "queueWaitMs":int(g.get("queueWaitMs") or 0),
+                "stationRunMs":max(0,completed_ms-started_ms),
+                "endToEndMs":max(0,completed_ms-accepted_ms),
+            }
             thread=next(t for t in s["threads"] if t["id"]==payload["threadId"])
             intent=g.get("programmingIntent") if isinstance(g.get("programmingIntent"),dict) else {}
             if intent.get("codingTask"):
@@ -383,6 +513,14 @@ def _run(key,request_id,model_id,payload,assistant_id):
             rejected=validation.get("status")=="REJECT"
             if rejected:
                 g.update(terminalType="CANDIDATE_REJECTED",phase="CANDIDATE_REJECTED")
+            generation_telemetry=copy.deepcopy(g.get("generationTelemetry") or {})
+            station_timing=copy.deepcopy(g.get("stationTiming") or {})
+            programming_telemetry={
+                "schema":"swrlz-station-programming-telemetry-v1",
+                "generation":generation_telemetry,
+                "station":station_timing,
+            } if intent.get("codingTask") else None
+            telemetry_meta={"programmingTelemetry":programming_telemetry} if programming_telemetry else {}
             artifact_id=str(intent.get("artifactTargetId") or "")
             artifact=_find_artifact(thread,artifact_id) if artifact_id and intent.get("artifactMutationRequested") and not rejected else None
             if artifact is not None:
@@ -393,17 +531,17 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         source.setdefault("meta",{})["codeArtifactId"]=artifact["id"]
                         source["meta"]["artifactRevision"]=artifact["currentRevision"]
                     prose=_response_prose(text) or ("Updated pinned code artifact to revision "+str(artifact["currentRevision"])+".")
-                    message={"id":assistant_id,"role":"assistant","text":prose,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","updatedCodeArtifactId":artifact["id"],"artifactRevision":artifact["currentRevision"]}}
+                    message={"id":assistant_id,"role":"assistant","text":prose,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","updatedCodeArtifactId":artifact["id"],"artifactRevision":artifact["currentRevision"],**telemetry_meta}}
                     thread["messages"].append(message)
                     g["artifactReceipt"]={"action":"REVISION_COMMITTED","artifactId":artifact["id"],"revision":artifact["currentRevision"],"baseRevision":int(intent.get("baseRevision") or 0)}
                 else:
-                    message={"id":assistant_id,"role":"assistant","text":_response_prose(text) or text,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","artifactMutationRejected":reason}}
+                    message={"id":assistant_id,"role":"assistant","text":_response_prose(text) or text,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"COMPLETE","artifactMutationRejected":reason,**telemetry_meta}}
                     thread["messages"].append(message)
                     g["artifactReceipt"]={"action":"REVISION_REJECTED","artifactId":artifact["id"],"reason":reason}
             else:
                 assistant_tag=_container_content_tag(text)
                 state="CANDIDATE_REJECTED" if rejected else "COMPLETE"
-                message={"id":assistant_id,"role":"assistant","text":text,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":state,**({"contentTag":assistant_tag} if assistant_tag else {})}}
+                message={"id":assistant_id,"role":"assistant","text":text,"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":state,**({"contentTag":assistant_tag} if assistant_tag else {}),**telemetry_meta}}
                 thread["messages"].append(message)
                 if rejected:
                     g["artifactReceipt"]={"action":"CANDIDATE_REJECTED","reasons":copy.deepcopy(validation.get("reasons") or [])}
@@ -411,7 +549,39 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     artifact=_create_code_artifact(thread,message,request_id,text)
                     if artifact is not None:
                         g["artifactReceipt"]={"action":"ARTIFACT_CREATED","artifactId":artifact["id"],"revision":1}
+            if intent.get("codingTask") and generation_telemetry:
+                github_telemetry={
+                    "schema":"swrlz-station-programming-log-v1",
+                    "generationTelemetry":generation_telemetry,
+                    "stationTiming":station_timing,
+                    "candidateValidation":{
+                        "status":validation.get("status"),
+                        "reasons":[str(x)[:160] for x in (validation.get("reasons") or [])[:8]],
+                        "detectedLanguages":copy.deepcopy(validation.get("detectedLanguages") or []),
+                        "executionVerified":validation.get("executionVerified"),
+                        "verificationState":validation.get("verificationState"),
+                    },
+                    "artifactReceipt":{
+                        "action":(g.get("artifactReceipt") or {}).get("action"),
+                        "revision":(g.get("artifactReceipt") or {}).get("revision"),
+                    },
+                }
+                g["githubTelemetryPersistence"]={"state":"QUEUED","path":"runtime-diagnostics/programming/"+request_id+"/candidate-attempt-telemetry.json","branch":"runtime"}
             s["revision"]+=1
+        if github_telemetry is not None:
+            def persist_programming_log():
+                result=persist_runtime_diagnostic(request_id,model_id,"PROGRAMMING_GENERATION_TELEMETRY",github_telemetry)
+                with _lock:
+                    current=s.get("activeGeneration")
+                    if current and current.get("requestId")==request_id:
+                        current["githubTelemetryPersistence"]=copy.deepcopy(result)
+                    target_thread=next((t for t in s.get("threads",[]) if t.get("id")==payload.get("threadId")),None)
+                    if target_thread:
+                        target_message=next((m for m in reversed(target_thread.get("messages",[])) if str(m.get("id") or "")==str(assistant_id)),None)
+                        if target_message is not None:
+                            target_message.setdefault("meta",{})["githubTelemetryPersistence"]=copy.deepcopy(result)
+                    s["revision"]+=1
+            threading.Thread(target=persist_programming_log,daemon=True,name="programming-log-"+request_id[:8]).start()
     except Exception as exc:
         with _lock:
             g=s["activeGeneration"]
@@ -516,7 +686,7 @@ async def send(request:Request):
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"queueWaitMs":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"candidateValidation":None,"repairDiagnostics":[],"artifactReceipt":None}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
