@@ -311,6 +311,21 @@ def classify_online_request(
     programming = programming if isinstance(programming, dict) else {}
     explicit_web = bool(_EXPLICIT_WEB.search(text))
     weather_negated=_weather_negated(text)
+    # An explicit request to search/browse the web owns the turn even when the
+    # search subject contains weather vocabulary (e.g. weather API docs).
+    # Dedicated weather retrieval remains for direct weather/forecast requests.
+    if explicit_web:
+        return {
+            "contract": ONLINE_CONTRACT,
+            "requested": True,
+            "kind": "search",
+            "reason": "explicit-web-intent",
+            "query": _search_query_from_prompt(text),
+            "locationText": "",
+            "clientLocation": None,
+            "locationRequired": False,
+            "programming": bool(programming.get("codingTask")),
+        }
     if _WEATHER_TERMS.search(text) and not weather_negated and not programming.get("codingTask"):
         shared = _normalize_client_location(client_location)
         location_text = _weather_location_from_prompt(text)
