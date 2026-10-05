@@ -31,6 +31,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - name: Rebuild and integrity-check the exact Forge HTML
         run: |
           set -euo pipefail
@@ -41,6 +46,18 @@ jobs:
           grep -q "<title>§wyrl§ Engine · Maker v5.1</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
+
+      - name: Syntax-check generated §wyrl§ Engine module
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("dist/swrlz-forge-moba/index.html").read_text(encoding="utf-8")
+          start=s.index('<script type="module">')+len('<script type="module">')
+          end=s.rindex('</script>')
+          Path("/tmp/swyrl-engine.mjs").write_text(s[start:end],encoding="utf-8")
+          PY
+          node --check /tmp/swyrl-engine.mjs
 
       - name: Install Hugging Face Hub client
         run: python -m pip install "huggingface_hub>=0.34,<2"
@@ -98,7 +115,8 @@ jobs:
               "sourceRepository": "kaministrator999-ui/Swrlzkamico",
               "sourceCommit": source_sha,
               "sourcePath": "projects/swrlz-forge-moba",
-              "sourceVersion": "v5.1",\n              "engineName": "§wyrl§ Engine",
+              "sourceVersion": "v5.1",
+              "engineName": "§wyrl§ Engine",
               "sourceSha256": "a653064ce2be625d67d561a1db249a1bb4fa0637dc69377480cf6311e43fdf51",
               "spaceRepository": target,
               "spaceRevision": info.sha,
@@ -127,7 +145,7 @@ jobs:
           for attempt in 1 2 3 4 5 6; do
             echo "Live verification attempt $attempt"
             if curl -fsSL --max-time 30 "$URL&attempt=$attempt" -o /tmp/forge-live.html; then
-              if grep -q "SWRLZ_FORGE_DEPLOY_MARKER: V5_1_SEED_DEN" /tmp/forge-live.html; then
+              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN" /tmp/forge-live.html; then
                 echo "Verified: live HF Space is serving §wyrl§ Engine v5.1."
                 exit 0
               fi
