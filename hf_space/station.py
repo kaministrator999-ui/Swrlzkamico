@@ -576,6 +576,10 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     candidate=event.get("candidate")
                     if isinstance(candidate,dict):g.setdefault("memoryCandidates",[]).append(copy.deepcopy(candidate))
                     g["status"].append({"seq":g["lastSeq"],"phase":"MEMORY_CANDIDATE","reason":""})
+                elif kind=="RESPONSE_COGNITION":
+                    state=event.get("state")
+                    if isinstance(state,dict):g["responseCognition"]=copy.deepcopy(state)
+                    g["status"].append({"seq":g["lastSeq"],"phase":"RESPONSE_COGNITION","reason":""})
                 elif kind=="PROGRAMMING_INTENT":
                     intent=event.get("intent")
                     if isinstance(intent,dict):
@@ -695,6 +699,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 "bestKnownArtifact":copy.deepcopy(behavior.get("bestKnownArtifact")),
                 "repairBaseMode":behavior_base.get("mode"),
             }
+            response_cognition=copy.deepcopy(g.get("responseCognition") or {})
             programming_telemetry={
                 "schema":"swrlz-station-programming-telemetry-v3",
                 "generation":generation_telemetry,
@@ -703,7 +708,9 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 "behaviorLedger":behavior_camera,
                 "structuredReceipt":copy.deepcopy(((intent.get("failureEvidence") or {}).get("receiptSemantics") or {}).get("structuredReceipt") or {}),
             } if intent.get("codingTask") else None
-            telemetry_meta={"programmingTelemetry":programming_telemetry} if programming_telemetry else {}
+            telemetry_meta={}
+            if response_cognition: telemetry_meta["responseCognition"]=response_cognition
+            if programming_telemetry: telemetry_meta["programmingTelemetry"]=programming_telemetry
             artifact_id=str(intent.get("artifactTargetId") or "")
             artifact=_find_artifact(thread,artifact_id) if artifact_id and intent.get("artifactMutationRequested") and not rejected else None
             if artifact is not None:
@@ -911,7 +918,7 @@ async def send(request:Request):
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
