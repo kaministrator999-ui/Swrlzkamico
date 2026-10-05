@@ -1,3 +1,24 @@
+## UPDATE CHECKPOINT — 2026-10-05 — v125 current-head verification + live observability gate
+
+**Exact deployment source:** `d8710d6401cf5080649274e66064d061ae6f05c5` on `feature/hf-space-manual-deploy`.
+
+**Static verification:** run #44 / `37322240443` SUCCESS. The workflow explicitly checked out `d8710d6401cf5080649274e66064d061ae6f05c5` before compile/tests. Full v117-v125 stack passed, including `online-trace-observability-v125 PASS`.
+
+**Live gate now requires:**
+- deployed Chat HTML contains the live online trail and search/weather phase labels;
+- real weather trace includes Open-Meteo geocoding + forecast hosts with sanitized URLs;
+- real web search trace includes an actual provider/site visit;
+- 700M search/weather and explicit Qwen Coder online search remain successful;
+- Qwen Coder online retrieval is bound to selected model `coder`;
+- each online request successfully persists:
+  - `runtime-diagnostics/online-research/<requestId>/online-research-trace.json`
+  - `runtime-diagnostics/online-research/<requestId>/online-research-outcome.json`
+- persistence receipts must report `ok=true` for both trace and outcome.
+
+**Versions remain:** LALM Engine `2.1.152`; Online Research `1.0.6`; Web Chat `1.5.89`; clean-room Chat `1.0.90`; Repository Work `1.0.83`.
+
+**Status:** CURRENT HEAD STATIC VERIFIED / GUARDED DEPLOYMENT READY.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — Online Research trace logs + live Chat site status v125
 
 **Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
