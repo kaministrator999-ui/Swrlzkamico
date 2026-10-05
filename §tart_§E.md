@@ -104,12 +104,15 @@ projects/swrlz-forge-moba/
 
 `build_space.py` reconstructs the original `index.html` byte-for-byte, verifies its hash and byte count, and stages the deployable Space package.
 
-Current accepted source integrity at creation of this router:
+Current accepted source integrity after the Unreal-inspired v3 pass:
 
 ```text
-bytes: 59285
-sha256: 4d56013b8d1301b95e385789744f3a90735bcc8b9c9fcabd13f4806b93ccf39a
+artifact: swrlz_forge_unreal_pass_v3.html
+bytes: 89746
+sha256: 5459e050394a7cbab9bcf0cde16598975611dd0896273f9c04a21e45c309a2a9
 ```
+
+The design study that informed this pass is recorded in `projects/swrlz-forge-moba/UNREAL_STUDY.md`.
 
 If the engine source changes, update the payload and `source-manifest.json` together so the builder continues to prove the deployed HTML came from the intended GitHub source.
 
@@ -293,18 +296,26 @@ This is historical lineage, not a permanent claim that the same revision is curr
 Current Forge capabilities include:
 
 - browser-native Three.js editor;
-- world outliner;
-- transform gizmos;
+- searchable hierarchical World Outliner with folders and visibility;
+- Details-style Transform / Components / Gameplay / Physics inspector;
+- transform gizmos with World / Local space;
+- translation / rotation / scale snapping;
+- Perspective + Top / Front / Right cameras;
+- Lit / Unlit / Wireframe viewport modes;
+- Undo / Redo transaction history;
+- Content Drawer, asset search, Output Log, and Build Validation;
+- reusable actor-component metadata and runtime execution;
+- Play In Editor and Simulate In Editor;
+- Pause / Resume, Play From Here, and Keep Simulation Changes;
 - ghost placement → Bake;
-- MOBA prefabs;
-- prebuilt three-lane arena;
-- terrain height and river depression;
-- foliage/rocks/walls/camps/towers/cores;
-- hero movement, gravity, jumping and blocker collision;
+- bounded `window.SWRLZ_FORGE_AGENT` editor command API;
+- MOBA prefabs and prebuilt three-lane arena;
+- terrain, river, foliage, rocks, walls, camps, towers, and cores;
+- hero movement, gravity, jumping, terrain following, and blocker collision;
 - minion waves and lane combat;
-- tower combat;
+- tower combat and simple physics bodies;
 - project JSON save/load;
-- playable HTML export;
+- standalone playable HTML export with component behavior support;
 - mobile editor controls.
 
 Planned architecture may evolve toward:
