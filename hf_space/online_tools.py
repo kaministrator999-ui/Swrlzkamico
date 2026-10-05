@@ -187,7 +187,7 @@ def classify_online_request(
             "programming": bool(programming.get("codingTask")),
         }
     freshness = bool(_FRESHNESS.search(text))
-    requested = explicit_web or (freshness and not programming.get("codingTask"))
+    requested = explicit_web or freshness
     return {
         "contract": ONLINE_CONTRACT,
         "requested": requested,
