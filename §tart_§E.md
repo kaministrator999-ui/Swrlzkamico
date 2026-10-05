@@ -182,3 +182,37 @@ Dragon's Den boots with **Wisp Visitor / Creator** as its player avatar.
 - first-person camera uses the Wisp's lower eye height
 - first-person body hiding includes sprites as well as meshes so the glow does not obstruct the camera
 - Blank Starter World and MOBA retain their existing player pawn styles
+
+
+## Verified v5.4 deployment checkpoint
+
+```text
+Engine:
+§wyrl§ Engine v5.4
+
+GitHub source/deploy commit:
+afb098ba8a046640608f4b1f2e23e76ab15e09e2
+
+Final source:
+151952 bytes
+
+SHA-256:
+add2c872e99097285a4ed68372aae3c6f7a42dff4cac4315771c56e8e9c0aea5
+
+Hugging Face revision:
+15d26de311d793b41833a83f2b3dc123444d16b3
+
+Static host:
+https://kamiloki-swrlz-forge-moba.static.hf.space/
+
+Stage:
+RUNNING
+
+Live marker:
+SWYRL_ENGINE_DEPLOY_MARKER: V5_4_WISP_AVATAR
+
+Live verification:
+PASS on attempt 1
+```
+
+The current default Dragon's Den player is **Wisp Visitor / Creator** using the procedural Wisp visual system.
