@@ -1,4 +1,4 @@
 SPACE_BASE=https://kamiloki-swyrlz.hf.space
 EXPECTED_SOURCE=0503dfc4010a0309a88250f49e8a5f3cd642548f
 EXPECTED_SPACE_REVISION=9e7982fd60a495fda5313f7ecbd229ac58b240ef
-REQUEST_NONCE=2026-10-05-v127-live-screenshot-routing-composer-001
+REQUEST_NONCE=2026-10-05-v127-live-screenshot-routing-composer-002
