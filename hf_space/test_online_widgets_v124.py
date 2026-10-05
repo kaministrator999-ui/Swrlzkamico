@@ -508,6 +508,57 @@ assert 'uiCamera("composer-collapse-toggle"' in chat
 
 print("weather-continuation-real-user-v126 PASS")
 
+# Real user logs: recent programming history must not hijack ordinary follow-ups.
+programming_history=[
+    {"role":"user","text":"Fix the JavaScript API handler in this website."},
+    {"role":"assistant","text":"Updated the code.","meta":{"codeArtifactId":"artifact-1","artifactRevision":1}},
+]
+noncode_today=programming_intent("Yes for today",programming_history,[],{})
+assert noncode_today["codingTask"] is False,noncode_today
+noncode_lookup=programming_intent("I didn't mean look up weather I want you to look up the word hey",programming_history,[],{})
+assert noncode_lookup["codingTask"] is False,noncode_lookup
+explicit_code_follow=programming_intent("Keep going with that code and fix the API error",programming_history,[],{})
+assert explicit_code_follow["codingTask"] is True,explicit_code_follow
+
+# With the prior programming history present, ordinary search stays on 700M instead of auto-routing to coder.
+orig_stream=model_router.stream_online_request
+route_capture={}
+def noncode_search_stream(payload,intent):
+    route_capture["intent"]=dict(intent)
+    yield {"type":"result","result":{
+        "kind":"search","status":"OK","query":"hey","provider":"test","sources":[],
+        "widgets":[],"modelContext":{"query":"hey","evidence":[{"title":"HEY | Dictionary","snippet":"a greeting"}]},
+        "plan":{"reason":"explicit-web-intent"},
+    }}
+def capture_700(payload):
+    route_capture["selected"]="700m"
+    yield {"type":"DELTA","text":"The search found a dictionary definition for hey."}
+    yield {"type":"COMPLETED","phase":"COMPLETE"}
+def capture_coder(payload):
+    route_capture["selected"]="coder"
+    yield {"type":"DELTA","text":"coder"}
+    yield {"type":"COMPLETED","phase":"COMPLETE"}
+try:
+    model_router.stream_online_request=noncode_search_stream
+    events=list(model_router.dispatch(
+        "700m",
+        {"requestId":"real-noncode","prompt":"I didn't mean look up weather I want you to look up the word hey","history":programming_history},
+        capture_700,capture_700,capture_700,capture_coder,
+    ))
+finally:
+    model_router.stream_online_request=orig_stream
+assert route_capture.get("intent",{}).get("codingTask") is False,route_capture
+assert route_capture.get("selected")=="700m",route_capture
+assert not any(event.get("phase")=="CODER_AUTO_ROUTE" for event in events),events
+
+# Composer collapse regression: no later CSS rule may cancel the collapsed transform.
+chat=(root/"chat/§wyrlz/index.html").read_text(encoding="utf-8")
+assert ".composer-shell.collapsed{transform:none}" not in chat
+assert chat.count(".composer-shell.collapsed{transform:translateY(calc(100% - 26px))}")>=1
+
+print("real-user-noncode-history-v126 PASS")
+
+
 # Real user logs proved these ordinary turns were falsely routed through the
 # programming validator because old history contained broad technical words.
 noncode_history=[
