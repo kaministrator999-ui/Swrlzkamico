@@ -1,0 +1,30 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muuizr5r-1240888135-1076904991",
+  "modelId": "700m",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "9faa59d8d8109680fb01f20b6606bb1f09249012",
+  "persistedAtUnixMs": 1791160970402,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "2ef3234420c63970",
+    "newCandidateFingerprint": "af467dcf11a935b8",
+    "candidateChanged": true,
+    "stalledRepairInput": true,
+    "regenerationAttempted": false,
+    "regenerationReason": null,
+    "candidateValidationStatus": "PASS",
+    "candidateValidationReasons": [],
+    "receiptCategories": [
+      "lint",
+      "behavior-mismatch",
+      "assertion"
+    ],
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example",
+      "repair the reported lint rule at the implicated source without changing unrelated behavior"
+    ],
+    "executionVerified": false
+  }
+}
