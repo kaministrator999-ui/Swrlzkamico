@@ -195,7 +195,7 @@ print("online-search-provider-fallback-v124 PASS")
 captures={}
 orig_stream=model_router.stream_online_request
 def fake_online_stream(payload,intent):
-    yield {"type":"progress","event":{"contract":"swrlz-online-trace-v1","phase":"SEARCH_PROVIDER_VISIT","provider":"test-provider","site":"example.com","url":"https://example.com/","activity":"Searching provider"}}
+    yield {"type":"progress","event":{"contract":"swrlz-online-trace-event-v1","phase":"SEARCH_PROVIDER_VISIT","provider":"test-provider","site":"example.com","url":"https://example.com/","activity":"Searching provider"}}
     yield {"type":"result","result":{
         "contract":"swrlz-hf-online-capability-v1",
         "kind":"search",
