@@ -38,7 +38,7 @@ jobs:
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
           grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN" dist/swrlz-forge-moba/index.html
-          grep -q "§wyrl§ ENGINE · MAKER v5.1" dist/swrlz-forge-moba/index.html
+          grep -q "<title>§wyrl§ Engine · Maker v5.1</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
