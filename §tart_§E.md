@@ -212,15 +212,21 @@ Integration does not mean deployment ownership is merged.
 
 ## 6. Deployment trigger behavior
 
-The Forge workflow is path-filtered to:
+The Forge workflow is path-filtered to **deployment-affecting Forge files only**:
 
 ```text
-projects/swrlz-forge-moba/**
+projects/swrlz-forge-moba/payload/**
+projects/swrlz-forge-moba/source-manifest.json
+projects/swrlz-forge-moba/build_space.py
+projects/swrlz-forge-moba/SPACE_README.md
+.github/workflows/deploy-swrlz-forge-moba.yml
 ```
 
-and also supports manual workflow dispatch.
+It also supports manual workflow dispatch.
 
-Therefore a completed Forge source change on `main` automatically starts the dedicated Hugging Face deployment.
+Documentation-only changes such as `§tart_§E.md` or `projects/swrlz-forge-moba/README.md` are deployment-inert and must not publish a new Space revision merely because documentation changed.
+
+Therefore a completed **deployment-affecting Forge source change** on `main` automatically starts the dedicated Hugging Face deployment.
 
 The deployment job must:
 
