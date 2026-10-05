@@ -2,118 +2,110 @@
 
 **Role:** canonical entrypoint for SWRLZ Forge / browser-engine work.
 
-**Invocation:** `§tart §E` or `@GitHub §tart §E` means enter the dedicated Forge project lane, reconstruct current GitHub/Hugging Face state, and continue engine work independently from the §wyrlz AI Chat/LALM application.
+**Invocation:** `§tart §E` or `@GitHub §tart §E` means enter the dedicated Forge engine lane, reconstruct current source/deployment truth, and continue independently from the §wyrlz AI Chat/LALM application.
 
 ## Canonical lane
 
 ```text
 GitHub: kaministrator999-ui/Swrlzkamico
-  -> projects/swrlz-forge-moba/
+  -> projects/swrlz-forge-moba/   (legacy folder name; engine is generic in v5)
   -> .github/workflows/deploy-swrlz-forge-moba.yml
   -> Hugging Face: kamiloki/swrlz-forge-moba
   -> https://kamiloki-swrlz-forge-moba.static.hf.space/
 ```
 
-**Hard boundary:** never route ordinary Forge releases through `kamiloki/Swyrlz` or the AI Chat/LALM deployment workflows.
-
 ## Startup contract
 
 On `§tart §E`:
 
-1. Read this router.
-2. Read `projects/swrlz-forge-moba/README.md`.
-3. Read `source-manifest.json`, `build_space.py`, current patch modules, and `SPACE_README.md`.
-4. Read `.github/workflows/deploy-swrlz-forge-moba.yml`.
-5. Inspect current GitHub main, last Forge workflow result, and current Hugging Face Space state before editing.
-6. Keep edits scoped to Forge unless an explicit integration requires another subsystem.
-7. Preserve base and final integrity contracts whenever source patches change.
-8. Merge the validated candidate to `main`.
-9. Observe the dedicated Forge workflow through terminal status.
-10. Require publication success **and live-page marker verification** before calling the release live.
-11. Report the exact GitHub source commit, HF Space revision, build version/marker, and failure path if any.
+1. Read this router and the Forge README.
+2. Read `source-manifest.json`, `build_space.py`, all listed patch modules, and `SPACE_README.md`.
+3. Inspect current GitHub main, last Forge workflow, and Hugging Face Space state.
+4. Preserve the hard boundary from `kamiloki/Swyrlz`.
+5. Preserve project/template separation: engine core ≠ MOBA example.
+6. Preserve base and final source integrity.
+7. Merge validated runtime changes to `main`.
+8. Follow the dedicated Forge deploy workflow to terminal state.
+9. Require the live static host to serve the current build marker before calling the release live.
 
-## Current v4.1 source authority
+## Current v5 source authority
 
 ```text
-base artifact: swrlz_forge_v4.html
-base bytes: 99591
-base sha256: a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856
+base:
+  swrlz_forge_v4.html
+  bytes 99591
+  sha256 a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856
 
-patch: patches/v4_1.py
+patch chain:
+  patches/v4_1.py
+  patches/v5_projects.py
 
-final artifact: swrlz_forge_v4_1.html
-final bytes: 100610
-final sha256: 647a80a6a1062e8e4068c63593cca3c5566fe8ee9da5dcdcbc1810d42673132f
-deploy marker: V4_1_GROUND_ADHESION_RUNTIME_CLEANUP
+final:
+  swrlz_forge_v5.html
+  bytes 120501
+  sha256 c5b44363460fc29ec3a119967c082c1fd95b035d781c50a4affa9d8ecd686593
+
+marker:
+  V5_PROJECT_TEMPLATES_DRAGONS_DEN
 ```
 
-## v4.1 state
+## v5 project model
 
-The current bugfix pass addresses real mobile playtest evidence:
+Forge starts in **Starter World**, not the MOBA.
 
-- hero feet align to the terrain surface instead of carrying the old +1.05 group offset
-- grounded step-down adhesion follows slopes and river dips without hovering
-- PIE hides editor BoxHelper selection chrome and restores it on Stop
-- mobile PIE suppresses editor-only World/Inspector/help/tool clutter
-- the default jungle walls are relocated away from awkward combat positions
-- example-only physics/Blueprint actors no longer clutter the default MOBA map
-- exported runtime uses the same grounded movement model
-- agent API: `forge-agent-v2.1`
+Built-in templates:
+
+- `default` / `sandbox` → Starter World
+- `moba` → MOBA Arena Example
+- `dragons-den` → Dragon's Den
+
+Project state is serialized into normal `.forge.json` saves and can be loaded later. The project record owns `name`, `template`, `kind`, and `environment`.
+
+MOBA runtime systems are explicitly gated by `currentProject.kind === 'moba'`.
+
+Dragon's Den provides embodied-agent anchors and decorative actors but does **not** claim that spatial voice transport is implemented. Roles/tags exist so the later LALM/voice bridge has explicit semantic locations.
+
+## Dragon's Den canonical v5 content
+
+```text
+Council Rune Dais
+├── Memory Crystal
+├── §wyrlz Dragon
+├── Forge Dragon
+├── Coder Dragon
+├── Kamilion Throne
+├── Code Portal
+├── World Portal
+├── Spatial Voice Anchor
+├── Inference Core
+├── Arcane rune crystals
+├── cavern perimeter
+├── Visitor Pawn
+└── Ascension Pad
+```
+
+The Den is an example project: users can edit it, save variants, reload them, export them, or delete/rebuild actors without mutating Forge's default template.
 
 ## Deployment truth contract
 
 ```text
-rebuild base
-→ verify base integrity
+reconstruct base
+→ verify base
 → apply governed patches
-→ verify final integrity
+→ verify final v5 bytes/SHA
 → upload dedicated static Space
-→ obtain actual Space host from Hugging Face
-→ fetch live page
-→ require current build marker
+→ obtain actual host from Hugging Face
+→ fetch served page
+→ require V5_PROJECT_TEMPLATES_DRAGONS_DEN
 → SUCCESS
 ```
 
-Do not regress to a guessed Space hostname or treat upload alone as proof of live state.
+Never infer that upload success means the browser is serving the new engine.
 
-## Verified v4 deployment lineage
+## Historical checkpoints
 
-The previous v4 checkpoint remains:
+v4.1:
+- GitHub: `5d22b9411597a872900a3e9efe457f04c7b74120`
+- HF: `5c4bae00017273ab8d8de5aa512b329394a90de9`
 
-- engine commit: `948489ba3c255c69e78ccb321f9239fba566c437`
-- final verified workflow commit: `b6190a91c27a9f451335d12ea251a9c50ddaf11d`
-- HF revision: `0945cd9417bdcb4331f2d86a2297b67b1895d6b0`
-- actual host: `https://kamiloki-swrlz-forge-moba.static.hf.space/`
-
-This is historical lineage after v4.1 becomes current.
-
-## Verified v4.1 deployment checkpoint
-
-```text
-GitHub source commit:
-5d22b9411597a872900a3e9efe457f04c7b74120
-
-Final source SHA-256:
-647a80a6a1062e8e4068c63593cca3c5566fe8ee9da5dcdcbc1810d42673132f
-
-Hugging Face Space revision:
-5c4bae00017273ab8d8de5aa512b329394a90de9
-
-Actual static host:
-https://kamiloki-swrlz-forge-moba.static.hf.space/
-
-Space stage:
-RUNNING
-
-Live marker:
-V4_1_GROUND_ADHESION_RUNTIME_CLEANUP
-
-Live verification:
-PASS on attempt 1
-```
-
-This v4.1 checkpoint is now the current observed deployment state until a later §tart §E traversal proves otherwise.
-
-## Bottom line
-
-**`§tart §E` = load Forge from GitHub, preserve its separate deployment lane, reconstruct/patch/verify the exact engine source, deploy only to `kamiloki/swrlz-forge-moba`, verify the actual static host serves the current marker, then continue from observed truth.**
+Future `§tart §E` runs must replace history with observed current truth rather than assuming this or any v5 revision remains latest.

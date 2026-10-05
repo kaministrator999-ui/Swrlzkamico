@@ -1,12 +1,12 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "SWRLZ Forge Editor v4.1",
+  "name": "SWRLZ Forge Editor v5",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swrlz_forge_v4_1.html",
-  "finalBytes": 100610,
-  "finalSha256": "647a80a6a1062e8e4068c63593cca3c5566fe8ee9da5dcdcbc1810d42673132f",
+  "finalArtifact": "swrlz_forge_v5.html",
+  "finalBytes": 120501,
+  "finalSha256": "c5b44363460fc29ec3a119967c082c1fd95b035d781c50a4affa9d8ecd686593",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -17,6 +17,7 @@
     "payload/part-06.txt"
   ],
   "patches": [
-    "patches/v4_1.py"
+    "patches/v4_1.py",
+    "patches/v5_projects.py"
   ]
 }

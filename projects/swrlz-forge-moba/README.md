@@ -1,58 +1,119 @@
-# SWRLZ Forge · Editor v4.1
+# SWRLZ Forge · Editor v5
 
 ## Project entry command
 
-Use `§tart §E` or `@GitHub §tart §E` to enter the Forge engine workflow. The canonical router is [`/§tart_§E.md`](../../§tart_§E.md). Forge remains separate from the main §wyrlz AI Chat/LALM deployment lane.
+Use `§tart §E` or `@GitHub §tart §E` to enter the Forge engine workflow. Forge remains deployment-isolated from the main §wyrlz AI Chat/LALM application.
 
-## v4.1 source authority
+## v5 architecture change
 
-v4.1 introduces a deterministic patch layer so bugfix passes no longer require rewriting the entire compressed HTML payload for every small change.
+The engine is no longer the MOBA.
 
-`build_space.py` now:
+Forge now owns a **project system**, and game-specific content is loaded as a project/template:
 
 ```text
-reconstruct base v4 payload
-→ verify base bytes + SHA-256
-→ apply patches/v4_1.py
-→ verify final v4.1 bytes + SHA-256
-→ stage exact index.html
+SWRLZ Forge engine
+├── Starter World          ← default
+├── MOBA Arena             ← example project
+└── Dragon's Den           ← example project
 ```
 
-Base:
-- artifact: `swrlz_forge_v4.html`
+The existing folder name `projects/swrlz-forge-moba/` is retained for deployment/source lineage, but MOBA semantics no longer own the editor startup state.
+
+### Starter World
+
+The default project is a neutral sandbox with terrain, river/scenery, a playable pawn, a physics prop, and component examples. MOBA waves, bases, paths, and validation rules are inactive.
+
+### MOBA Arena example
+
+The original Forge three-lane map is preserved as `MOBA Arena Example`. Creating that project restores lane paths, bases, towers, camps, minion spawning, tower combat, and MOBA-specific build validation.
+
+MOBA prefabs were removed from the always-visible core sidebar and moved to `/Examples/MOBA` in the Content Drawer.
+
+### Dragon's Den example
+
+Dragon's Den is a separate editable project containing:
+
+- §wyrlz Dragon — primary LALM avatar
+- Forge Dragon — world-building agent avatar
+- Coder Dragon — coding-reasoner avatar
+- Kamilion Throne — human-author seat
+- Council Rune Dais
+- Memory Crystal
+- Inference Core
+- Spatial Voice Anchor hook
+- Code Portal
+- World Portal
+- Arcane rune crystals
+- cavern perimeter
+- visitor/player pawn
+- Ascension Pad
+
+New actor types include `dragon`, `crystal`, `portal`, `throne`, and `pedestal`. Project actor metadata now serializes `role`, `tags`, and `visualColor`, giving the later LALM/voice layer explicit world anchors without pretending spatial audio is implemented yet.
+
+## Project workflow
+
+Use **Projects** in the editor to create a template. Each created template becomes normal editable project state.
+
+```text
+Create template
+→ edit actors/components
+→ ghost → Bake
+→ Save .forge.json
+→ Load later
+→ Simulate / PIE
+→ Export standalone HTML
+```
+
+Project JSON now includes:
+
+- project name
+- template
+- project kind
+- environment preset
+- editor state
+- actors/components
+- paths
+- scene settings
+
+Build validation is project-aware. MOBA rules only run for MOBA projects; Dragon's Den has its own checks; sandbox projects use generic checks.
+
+## Runtime separation
+
+MOBA wave/minion/tower runtime systems only execute when `currentProject.kind === 'moba'`. They remain engine capabilities available to the example without leaking into every project.
+
+The exported playable HTML follows the same project-kind gate.
+
+## Agent surface
+
+`window.SWRLZ_FORGE_AGENT` advances to `forge-agent-v3` and exposes project inspection/creation in addition to actor editing, components, validation, camera control, terrain snapping, and Bake.
+
+## Source integrity
+
+Base v4 source:
+
 - bytes: `99591`
 - SHA-256: `a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856`
 
-Final:
-- artifact: `swrlz_forge_v4_1.html`
-- bytes: `100610`
-- SHA-256: `647a80a6a1062e8e4068c63593cca3c5566fe8ee9da5dcdcbc1810d42673132f`
-- deploy marker: `V4_1_GROUND_ADHESION_RUNTIME_CLEANUP`
+Patch chain:
 
-## v4.1 fixes from mobile playtest
+```text
+patches/v4_1.py
+patches/v5_projects.py
+```
 
-- hero group origin now sits at the terrain surface instead of being offset roughly one unit above it
-- grounded movement uses step-down adhesion so descending slopes/river depressions does not temporarily turn the hero airborne
-- jumping still breaks ground adhesion normally
-- PIE hides the purple editor selection BoxHelper and restores it on Stop
-- mobile PIE hides editor-only World/Inspector/help/tool controls and moves the play hint to a compact lower overlay
-- the two default jungle walls are moved outward and reduced so they no longer sit awkwardly across the main combat area
-- physics/Blueprint showcase props are removed from the default gameplay map but remain available from the Content Drawer
-- exported playable HTML receives the same hero-grounding logic
-- agent protocol version advances to `forge-agent-v2.1`
+Final v5 source:
+
+- artifact: `swrlz_forge_v5.html`
+- bytes: `120501`
+- SHA-256: `c5b44363460fc29ec3a119967c082c1fd95b035d781c50a4affa9d8ecd686593`
+- marker: `V5_PROJECT_TEMPLATES_DRAGONS_DEN`
+
+The v5 candidate was materialized and Node syntax-checked against the exact reconstructed v4.1 source before entering the release branch.
 
 ## Deployment
 
-Target Space: `kamiloki/swrlz-forge-moba`
+Target Space remains `kamiloki/swrlz-forge-moba` for continuity.
 
 Live static host: `https://kamiloki-swrlz-forge-moba.static.hf.space/`
 
-Workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`
-
-The workflow requires the actual Hugging Face-reported static host to serve the current build marker before the deployment is considered successful.
-
-## Rebuild locally
-
-```bash
-python projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-forge-space
-```
+The deployment workflow must rebuild exact source, verify final integrity, upload the dedicated static Space, then fetch the actual Hugging Face-reported host and prove the v5 marker is live before success is reported.
