@@ -5,7 +5,9 @@ on:
     branches: [swyls-engine-v5-1]
     paths:
       - ".github/workflows/validate-swyl-engine-v5-1.yml"
-      - "projects/swrlz-forge-moba/patches/v5_1_swyl_engine_seed_den.py"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/**"
+      - "projects/swrlz-forge-moba/build_space.py"
 
 permissions:
   contents: read
@@ -23,33 +25,26 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Rebuild exact v5 source
+
+      - name: Rebuild exact §wyrl§ Engine v5.1 source
         run: |
           set -euo pipefail
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge-v5
-      - name: Apply v5.1 patch and report integrity
-        run: |
-          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/swyrl-engine
           python - <<'PY'
-          import hashlib, importlib.util, json
           from pathlib import Path
-          root=Path("projects/swrlz-forge-moba")
-          source=Path("/tmp/forge-v5/index.html").read_text(encoding="utf-8")
-          path=root/"patches/v5_1_swyl_engine_seed_den.py"
-          spec=importlib.util.spec_from_file_location("v5_1",path)
-          mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
-          out=mod.apply(source)
-          data=out.encode("utf-8")
-          result={"bytes":len(data),"sha256":hashlib.sha256(data).hexdigest()}
-          print("SWYRL_V5_1_INTEGRITY="+json.dumps(result,sort_keys=True))
-          Path("/tmp/swyl-engine-v5-1.html").write_text(out,encoding="utf-8")
+          import hashlib
+          p=Path("/tmp/swyrl-engine/index.html")
+          data=p.read_bytes()
+          print("SWYRL_V5_1_BYTES="+str(len(data)))
+          print("SWYRL_V5_1_SHA256="+hashlib.sha256(data).hexdigest())
           PY
+
       - name: Verify v5.1 semantics
         run: |
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          s=Path("/tmp/swyl-engine-v5-1.html").read_text(encoding="utf-8")
+          s=Path("/tmp/swyrl-engine/index.html").read_text(encoding="utf-8")
           required=[
             "SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN",
             "§wyrl§ ENGINE · MAKER v5.1",
@@ -61,20 +56,22 @@ jobs:
             "Memory Vault Exit",
             "Inference Core Exit",
             "window.SWYRL_ENGINE_AGENT",
+            "buildDragonsDenProject();refreshAssetList()",
           ]
           missing=[x for x in required if x not in s]
           print("MISSING=",missing)
           print("ASCENSION_PAD_COUNT=",s.count("Ascension Pad"))
           if missing: raise SystemExit(1)
           PY
-      - name: Syntax-check editor module
+
+      - name: Syntax-check generated editor module
         run: |
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          s=Path("/tmp/swyl-engine-v5-1.html").read_text(encoding="utf-8")
+          s=Path("/tmp/swyrl-engine/index.html").read_text(encoding="utf-8")
           start=s.index('<script type="module">')+len('<script type="module">')
           end=s.rindex('</script>')
-          Path("/tmp/swyl-engine-v5-1.mjs").write_text(s[start:end],encoding="utf-8")
+          Path("/tmp/swyrl-engine.mjs").write_text(s[start:end],encoding="utf-8")
           PY
-          node --check /tmp/swyl-engine-v5-1.mjs
+          node --check /tmp/swyrl-engine.mjs
