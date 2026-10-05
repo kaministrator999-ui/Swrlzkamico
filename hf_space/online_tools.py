@@ -56,6 +56,20 @@ _FRESHNESS = re.compile(
 )
 _LOCATION_REQUIRED = re.compile(r"\b(?:my|here|near\s+me|current\s+location|where\s+i\s+am)\b", re.I)
 
+_US_STATE_ALIASES = {
+    "alabama":"AL","alaska":"AK","arizona":"AZ","arkansas":"AR","california":"CA","colorado":"CO",
+    "connecticut":"CT","delaware":"DE","florida":"FL","georgia":"GA","hawaii":"HI","idaho":"ID",
+    "illinois":"IL","indiana":"IN","iowa":"IA","kansas":"KS","kentucky":"KY","louisiana":"LA",
+    "maine":"ME","maryland":"MD","massachusetts":"MA","michigan":"MI","minnesota":"MN",
+    "mississippi":"MS","missouri":"MO","montana":"MT","nebraska":"NE","nevada":"NV",
+    "new hampshire":"NH","new jersey":"NJ","new mexico":"NM","new york":"NY",
+    "north carolina":"NC","north dakota":"ND","ohio":"OH","oklahoma":"OK","oregon":"OR",
+    "pennsylvania":"PA","rhode island":"RI","south carolina":"SC","south dakota":"SD",
+    "tennessee":"TN","texas":"TX","utah":"UT","vermont":"VT","virginia":"VA","washington":"WA",
+    "west virginia":"WV","wisconsin":"WI","wyoming":"WY","district of columbia":"DC",
+}
+_US_STATE_BY_ABBR = {abbr.casefold(): name for name, abbr in _US_STATE_ALIASES.items()}
+
 _WMO = {
     0: "Clear sky",
     1: "Mainly clear",
@@ -190,6 +204,40 @@ def _weather_location_from_prompt(prompt: str) -> str:
     return ""
 
 
+def _split_us_city_state(location: str) -> tuple[str, str, str] | None:
+    raw=_clean(location,180).strip(" ,")
+    low=raw.casefold()
+    for state_name,abbr in sorted(_US_STATE_ALIASES.items(),key=lambda item:len(item[0]),reverse=True):
+        for suffix in (state_name,abbr.casefold()):
+            if low==suffix:
+                continue
+            if low.endswith(" "+suffix) or low.endswith(", "+suffix):
+                city=raw[:len(raw)-len(suffix)].rstrip(" ,")
+                if city:
+                    return city,state_name,abbr
+    return None
+
+def _select_us_state_result(results: list[dict[str,Any]], city: str, state_name: str, state_abbr: str) -> dict[str,Any] | None:
+    city_cf=_clean(city,120).casefold()
+    state_cf=state_name.casefold()
+    abbr_cf=state_abbr.casefold()
+    matches=[]
+    for item in results:
+        if not isinstance(item,dict):
+            continue
+        country=_clean(item.get("country_code"),8).casefold()
+        admin=_clean(item.get("admin1"),120).casefold()
+        admin_code=_clean(item.get("admin1_code"),40).casefold()
+        name=_clean(item.get("name"),120).casefold()
+        region_match=(admin==state_cf or admin_code.endswith("-"+abbr_cf) or admin_code==abbr_cf)
+        if country=="us" and region_match:
+            score=2 if name==city_cf else 1
+            matches.append((score,item))
+    if not matches:
+        return None
+    matches.sort(key=lambda pair:pair[0],reverse=True)
+    return matches[0][1]
+
 def _search_query_from_prompt(prompt: str) -> str:
     text = _clean(prompt, 1200)
     text = re.sub(
@@ -258,24 +306,55 @@ def _weather_coordinates(plan: dict[str, Any], progress: Callable[[dict[str, Any
     location = _clean(plan.get("locationText"), 180)
     if not location:
         raise ValueError("WEATHER_LOCATION_REQUIRED")
-    url = GEOCODING_ENDPOINT + "?" + urllib.parse.urlencode(
-        {"name": location, "count": 1, "language": "en", "format": "json"}
-    )
-    payload = _json_get(url, progress, phase="WEATHER_GEOCODE_VISIT", activity="Resolving weather location")
-    results = payload.get("results") if isinstance(payload.get("results"), list) else []
-    if not results:
-        raise ValueError("WEATHER_LOCATION_NOT_FOUND")
-    item = results[0] if isinstance(results[0], dict) else {}
-    return {
-        "name": _clean(item.get("name") or location, 120),
-        "admin1": _clean(item.get("admin1"), 120),
-        "country": _clean(item.get("country"), 120),
-        "country_code": _clean(item.get("country_code"), 8).upper(),
-        "timezone": _clean(item.get("timezone") or "auto", 100),
-        "latitude": float(item["latitude"]),
-        "longitude": float(item["longitude"]),
-        "shared": False,
-    }, False
+
+    state_parts=_split_us_city_state(location)
+    attempts=[("exact",location,1)]
+    if state_parts:
+        city,state_name,state_abbr=state_parts
+        attempts.append(("us-state-fallback",city,10))
+    else:
+        city=state_name=state_abbr=""
+
+    for mode,query,count in attempts:
+        if progress and mode!="exact":
+            progress(_trace_event(
+                "WEATHER_GEOCODE_RETRY",
+                provider=WEATHER_PROVIDER,
+                url=GEOCODING_ENDPOINT,
+                activity="Retrying city lookup with state-qualified candidate matching",
+            ))
+        url = GEOCODING_ENDPOINT + "?" + urllib.parse.urlencode(
+            {"name": query, "count": count, "language": "en", "format": "json"}
+        )
+        payload = _json_get(url, progress, phase="WEATHER_GEOCODE_VISIT", activity="Resolving weather location")
+        results = payload.get("results") if isinstance(payload.get("results"), list) else []
+        if not results:
+            continue
+        if mode=="us-state-fallback":
+            item=_select_us_state_result(results,city,state_name,state_abbr)
+            if item is None:
+                continue
+        else:
+            item=results[0] if isinstance(results[0],dict) else {}
+        return {
+            "name": _clean(item.get("name") or location, 120),
+            "admin1": _clean(item.get("admin1"), 120),
+            "country": _clean(item.get("country"), 120),
+            "country_code": _clean(item.get("country_code"), 8).upper(),
+            "timezone": _clean(item.get("timezone") or "auto", 100),
+            "latitude": float(item["latitude"]),
+            "longitude": float(item["longitude"]),
+            "shared": False,
+        }, False
+
+    if progress:
+        progress(_trace_event(
+            "WEATHER_LOCATION_NOT_FOUND",
+            provider=WEATHER_PROVIDER,
+            url=GEOCODING_ENDPOINT,
+            activity="Weather location could not be resolved",
+        ))
+    raise ValueError("WEATHER_LOCATION_NOT_FOUND")
 
 
 def _daily_rows(daily: dict[str, Any], units: dict[str, Any]) -> list[dict[str, Any]]:
@@ -563,8 +642,11 @@ def execute_online_request(
                 "instructionAuthority": False,
                 "errorType": type(exc).__name__,
                 "message": "Online retrieval failed. Do not fabricate current data; explain that live retrieval was unavailable.",
+                "errorCode": _clean(str(exc), 120),
             },
             "errorType": type(exc).__name__,
+            "errorCode": _clean(str(exc), 120),
+            "errorCode": _clean(str(exc), 120),
         }
     result["plan"] = plan
     result["elapsedMs"] = round((time.perf_counter() - started) * 1000)
