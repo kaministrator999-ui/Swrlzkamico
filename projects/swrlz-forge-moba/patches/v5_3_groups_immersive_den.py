@@ -105,6 +105,12 @@ function rootGroupFor(a){
   return cur;
 }
 function groupChildren(g){return actors.filter(a=>a.userData.groupParentId===g?.userData?.id);}
+function isGroupableActor(a){
+  if(!a||a.userData.actorType==='ground')return false;
+  if(a.userData.actorType==='group')return true;
+  const dynamic=['CharacterMovement','PhysicsBody','LaunchPad','Combat'];
+  return !dynamic.some(name=>hasComponent(a,name));
+}
 function groupDescendants(g){
   const out=[];const visit=x=>{for(const c of groupChildren(x)){out.push(c);if(c.userData.actorType==='group')visit(c);}};visit(g);return out;
 }
@@ -114,8 +120,9 @@ function makeGroupActor(name='Group',baked=true){
 }
 function groupActors(members,name='Group',options={}){
   const record=options.record!==false,select=options.select!==false;
-  const roots=[...new Set((members||[]).map(rootGroupFor).filter(Boolean))].filter(a=>a.userData.actorType!=='ground');
-  if(roots.length<2){if(record)toast('Select at least two objects to group');return null;}
+  const requested=[...new Set((members||[]).map(rootGroupFor).filter(Boolean))],roots=requested.filter(isGroupableActor);
+  if(roots.length<2){if(record)toast(requested.some(a=>!isGroupableActor(a))?'Need 2 static/editor objects · gameplay/physics actors stay independent':'Select at least two objects to group');return null;}
+  if(record&&roots.length!==requested.length)toast((requested.length-roots.length)+' dynamic actor(s) skipped');
   if(record)beginTransaction('Group '+roots.length+' objects');
   const center=new THREE.Vector3();
   for(const a of roots){const p=new THREE.Vector3();a.getWorldPosition(p);center.add(p);}
