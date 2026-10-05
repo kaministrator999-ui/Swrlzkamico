@@ -43,7 +43,7 @@
     .first-run-copy{margin:0;color:#cce7f1;font-size:14px;line-height:1.55}
     .first-run-hint{margin-top:11px;color:#89a9b8;font-size:11px;line-height:1.45}
     .message.visible{display:block}.assistant-message{max-width:100%}.assistant-head{gap:8px!important;margin-bottom:5px!important}.assistant-head .kompanion-icon{width:30px!important;height:30px!important;flex-basis:30px!important;border-radius:9px}.assistant-name{font-size:15px!important;letter-spacing:.025em!important;color:#dff8ff!important;text-shadow:0 0 7px rgba(95,220,255,.42)!important}
-    .station-progress{margin:0 0 5px 38px!important;color:#8fd8ed!important;font-size:10px!important;letter-spacing:.055em;text-transform:uppercase}.message-time{margin-left:7px;color:#789caf;font:9px var(--font-telemetry);font-weight:500;letter-spacing:.02em;text-shadow:none}.user-meta .message-time{margin-left:5px;color:#84aabd}
+    .station-progress{margin:0 0 5px 38px!important;color:#8fd8ed!important;font-size:10px!important;letter-spacing:.055em;text-transform:uppercase}.station-online-trail{margin:0 0 8px 38px;display:flex;flex-direction:column;gap:3px;max-width:min(760px,88vw)}.station-online-event{display:flex;align-items:center;gap:6px;min-width:0;color:#89afbf;font:8px var(--font-telemetry);line-height:1.35}.station-online-event::before{content:"↳";color:#56def4;flex:0 0 auto}.station-online-phase{color:#bcecf8;font-weight:760;flex:0 0 auto}.station-online-site{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#79dff4}.station-online-site[href]{text-decoration:none}.station-online-site[href]:hover{text-decoration:underline;color:#c7f6ff}.station-online-detail{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6f909f}.message-time{margin-left:7px;color:#789caf;font:9px var(--font-telemetry);font-weight:500;letter-spacing:.02em;text-shadow:none}.user-meta .message-time{margin-left:5px;color:#84aabd}
     .assistant-body{margin-left:38px!important;padding:10px 12px!important;color:#f4f9fd!important;font-size:15px;line-height:1.5}
     .assistant-actions{display:flex;justify-content:flex-end;margin:4px 0 0 38px;padding-right:2px}.copy-response{border:0;border-radius:7px;background:transparent;color:#9fd6e9;padding:4px 6px;font-size:10px;cursor:pointer;opacity:.86}.copy-response:hover{background:rgba(10,38,59,.55);color:#d8f7ff}.copy-response:active{transform:translateY(1px)}
     .assistant-body .message-text{white-space:pre-wrap;overflow-wrap:normal;word-break:normal;hyphens:none}.assistant-body .message-text strong{font-weight:800;color:#fff}.assistant-body .message-text em{font-style:italic}.assistant-body .message-text .ai-color{color:var(--ai-color,currentColor)}.assistant-body .message-text .ai-size{font-size:var(--ai-size,1em)}.assistant-body .message-text .ai-font{font-family:var(--ai-font,inherit)}.assistant-body .message-text .ai-weight{font-weight:var(--ai-weight,inherit)}.assistant-body .message-text .ai-underline{text-decoration:underline;text-underline-offset:.16em}.assistant-body .message-text .ai-strike{text-decoration:line-through}.assistant-body .message-text .ai-highlight{background:var(--ai-highlight,transparent);padding:.03em .16em;border-radius:.22em}.assistant-body .message-text .ai-letter{letter-spacing:var(--ai-letter,normal)}.assistant-body .code-block{margin:10px 0;border:1px solid rgba(126,214,255,.26);border-radius:12px;overflow:hidden;background:rgba(1,10,19,.92);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}.assistant-body .code-block:first-child{margin-top:0}.assistant-body .code-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 9px;border-bottom:1px solid rgba(126,214,255,.16);background:linear-gradient(90deg,rgba(10,39,59,.9),rgba(25,27,57,.72));font-family:var(--font-telemetry);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#9fdff0}.assistant-body .copy-code{border:1px solid rgba(126,214,255,.20);border-radius:7px;padding:4px 7px;background:rgba(7,28,45,.72);color:#d9f7ff;font:inherit;letter-spacing:.05em;cursor:pointer}.assistant-body .copy-code:hover,.assistant-body .copy-code:focus-visible{border-color:rgba(56,232,255,.48);background:rgba(13,48,70,.86)}.assistant-body pre{margin:0;padding:12px 13px;overflow:auto;max-height:62vh;white-space:pre;tab-size:2;background:transparent;color:#eaf8ff;font-family:var(--font-telemetry);font-size:12px;line-height:1.55;text-shadow:none}.assistant-body code{font-family:inherit}
@@ -825,7 +825,7 @@
         const seen=new Set(),out=[];
         for(const status of statuses){
           if(!isStructuredActionStatus(status))continue;
-          const key=[status.seq,status.phase,status.type,(status.categories||[]).join("|")].join(":");
+          const key=[status.seq,status.phase,status.type,status.site,status.url,status.provider,(status.categories||[]).join("|")].join(":");
           if(seen.has(key))continue;seen.add(key);out.push(status);
         }
         return out.slice(-12).reverse();
@@ -1382,11 +1382,12 @@
           }
         }
         const rawPhase=String(last.phase||g.phase||last.type||"QUEUED").toUpperCase();
-        const phaseLabels={CONNECTING:"Connecting",QUEUED:"Queued",LOADING:"Loading model",BUDGETED:"Preparing context",CONTEXT:"Preparing context",DIAGNOSTIC_READY:"Preparing response",PROGRAMMING_INTENT:"Planning code change",MEMORY_CANDIDATE:"Preparing context",SEARCH_STARTED:"Starting web search",SEARCH_PROVIDER_VISIT:"Searching website",SEARCH_PROVIDER_RESULT:"Search provider complete",SEARCH_PROVIDER_ERROR:"Search provider failed",PAGE_VISIT:"Visiting website",PAGE_FETCH_COMPLETE:"Website fetched",PAGE_FETCH_ERROR:"Website fetch failed",WEATHER_FETCH_STARTED:"Starting weather lookup",WEATHER_GEOCODE_VISIT:"Finding weather location",WEATHER_GEOCODE_COMPLETE:"Location resolved",WEATHER_FORECAST_VISIT:"Fetching weather",WEATHER_FORECAST_COMPLETE:"Weather received",WEATHER_FETCH_COMPLETE:"Weather lookup complete",ONLINE_RESEARCH:"Online research complete",GENERATING:"Generating response",COMPLETE:"Complete",COMPLETED:"Complete",FAILED:"Failed"};
+        const phaseLabels={CONNECTING:"Connecting",QUEUED:"Queued",LOADING:"Loading model",BUDGETED:"Preparing context",CONTEXT:"Preparing context",DIAGNOSTIC_READY:"Preparing response",PROGRAMMING_INTENT:"Planning code change",MEMORY_CANDIDATE:"Preparing context",SEARCH_STARTED:"Starting web search",SEARCH_PROVIDER_VISIT:"Searching website",SEARCH_PROVIDER_RESULTS:"Search results found",SEARCH_PROVIDER_EMPTY:"No results from provider",SEARCH_PROVIDER_SELECTED:"Search provider selected",SEARCH_PROVIDER_ERROR:"Search provider failed",PAGE_FETCH_STARTED:"Visiting website",PAGE_FETCH_COMPLETE:"Website fetched",PAGE_FETCH_ERROR:"Website fetch failed",RESEARCH_STARTED:"Starting online research",RESEARCH_COMPLETE:"Online research complete",RESEARCH_REASONER_ERROR:"Research fallback engaged",WEATHER_FETCH_STARTED:"Starting weather lookup",WEATHER_GEOCODE_VISIT:"Finding weather location",WEATHER_GEOCODE_COMPLETE:"Location resolved",WEATHER_FORECAST_VISIT:"Fetching weather",WEATHER_FORECAST_COMPLETE:"Weather received",WEATHER_FETCH_COMPLETE:"Weather lookup complete",ONLINE_RESEARCH:"Online research complete",GENERATING:"Generating response",COMPLETE:"Complete",COMPLETED:"Complete",FAILED:"Failed"};
         const phase=phaseLabels[rawPhase]||rawPhase.replace(/_/g," ").toLowerCase().replace(/^./,c=>c.toUpperCase());
         const label=g.terminal?(g.terminalType||phase):(String(g.text||"").length?"Streaming response":phase);
         const activitySite=String(last.site||"").trim();
         const activityProvider=String(last.provider||"").trim();
+        const activityReason=String(last.reason||"").trim();
         const activityDetail=activitySite||activityProvider;
         const terminalKind=String(g.terminalType||label||"").toUpperCase();
         const visualState=phaseToCompanionState(last,g);
@@ -1406,8 +1407,35 @@
           node.querySelector(".assistant-body").before(status);
         }
         const seq=Number(g.lastSeq||0);
-        const nextLabel="§wyrlz · "+label+(activityDetail?(" · "+activityDetail):"");
+        const nextLabel="§wyrlz · "+label+(activityDetail?(" · "+activityDetail):"")+(activityReason&&!activityReason.toLowerCase().includes(activityDetail.toLowerCase())?(" · "+activityReason):"");
         if(status.textContent!==nextLabel)status.textContent=nextLabel;
+        let onlineTrail=node.querySelector(".station-online-trail");
+        const onlineEvents=(Array.isArray(g.status)?g.status:[]).filter(item=>{
+          const phase=String(item?.phase||item?.type||"").toUpperCase();
+          const cats=Array.isArray(item?.categories)?item.categories.map(v=>String(v).toUpperCase()):[];
+          return cats.some(v=>v.includes("ONLINE_RESEARCH")||v.includes("SEARCH")||v.includes("FETCH")||v.includes("WEATHER"))||/(SEARCH|FETCH|WEATHER|RESEARCH)/.test(phase);
+        }).slice(-6);
+        if(onlineEvents.length){
+          if(!onlineTrail){onlineTrail=document.createElement("div");onlineTrail.className="station-online-trail";status.after(onlineTrail);}
+          onlineTrail.replaceChildren();
+          for(const item of onlineEvents){
+            const row=document.createElement("div");row.className="station-online-event";
+            const phaseNode=document.createElement("span");phaseNode.className="station-online-phase";
+            const itemPhase=String(item.phase||item.type||"online").replaceAll("_"," ").toLowerCase().replace(/^./,ch=>ch.toUpperCase());
+            phaseNode.textContent=itemPhase;
+            row.appendChild(phaseNode);
+            const safe=safeHttpUrl(item.url);
+            const siteText=String(item.site||item.provider||"").trim();
+            if(siteText){
+              const siteNode=document.createElement(safe?"a":"span");siteNode.className="station-online-site";siteNode.textContent=siteText;
+              if(safe){siteNode.href=safe;siteNode.target="_blank";siteNode.rel="noopener noreferrer";siteNode.title=safe;}
+              row.appendChild(siteNode);
+            }
+            const detail=String(item.reason||"").trim();
+            if(detail){const detailNode=document.createElement("span");detailNode.className="station-online-detail";detailNode.textContent=detail;row.appendChild(detailNode);}
+            onlineTrail.appendChild(row);
+          }
+        }else if(onlineTrail){onlineTrail.remove();onlineTrail=null;}
         const body=node.querySelector(".assistant-body");
         const nextText=String(g.text||"");
         if(body.dataset.renderedSource!==nextText){
