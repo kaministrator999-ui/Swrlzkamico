@@ -54,7 +54,7 @@ jobs:
             "function updateWispVisuals(",
             "BP_WispVisitor",
             "Wisp Visitor / Creator",
-            "avatarStyle:'wisp'",
+            "o.userData.avatarStyle='wisp'",
             "defaultDenAvatar:'wisp'",
             "wispGlowTexture",
             "THREE.AdditiveBlending",
