@@ -1,0 +1,75 @@
+name: Validate materialized Forge v5 patch
+
+on:
+  push:
+    branches: [forge-v5-materialize]
+    paths:
+      - ".github/workflows/validate-forge-v5-materialized.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: forge-v5-materialize
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Apply v5 patch to exact v4.1 source
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, importlib.util, json
+          from pathlib import Path
+
+          root=Path("projects/swrlz-forge-moba")
+          source=(root/"generated/current-v4-1.html").read_text(encoding="utf-8")
+          p=root/"patches/v5_projects.py"
+          spec=importlib.util.spec_from_file_location("v5_projects",p)
+          mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+          out=mod.apply(source)
+          data=out.encode("utf-8")
+          sha=hashlib.sha256(data).hexdigest()
+          (root/"generated/current-v5.html").write_text(out,encoding="utf-8")
+          (root/"generated/v5-integrity.json").write_text(json.dumps({"bytes":len(data),"sha256":sha},indent=2)+"\n",encoding="utf-8")
+          print(json.dumps({"bytes":len(data),"sha256":sha},indent=2))
+          PY
+      - name: Verify required v5 semantics
+        run: |
+          set -euo pipefail
+          FILE=projects/swrlz-forge-moba/generated/current-v5.html
+          grep -q "V5_PROJECT_TEMPLATES_DRAGONS_DEN" "$FILE"
+          grep -q "function buildDefaultProject" "$FILE"
+          grep -q "function buildMobaProject" "$FILE"
+          grep -q "function buildDragonsDenProject" "$FILE"
+          grep -q "§wyrlz Dragon" "$FILE"
+          grep -q "MOBA actors moved to the example project" "$FILE"
+          grep -q "currentProject.kind==='moba'" "$FILE"
+          grep -q "forge-agent-v3" "$FILE"
+      - name: Syntax-check editor module
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("projects/swrlz-forge-moba/generated/current-v5.html").read_text(encoding="utf-8")
+          start=s.index('<script type="module">')+len('<script type="module">')
+          end=s.rindex('</script>')
+          Path("/tmp/forge-v5.mjs").write_text(s[start:end],encoding="utf-8")
+          PY
+          node --check /tmp/forge-v5.mjs
+      - name: Commit validated materialized v5
+        run: |
+          set -euo pipefail
+          git config user.name "swrlz-forge-validator"
+          git config user.email "actions@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/generated/current-v5.html projects/swrlz-forge-moba/generated/v5-integrity.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Materialize validated Forge v5 candidate"
+          git push origin HEAD:forge-v5-materialize
