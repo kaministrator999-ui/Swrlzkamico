@@ -109,3 +109,34 @@ v4.1:
 - HF: `5c4bae00017273ab8d8de5aa512b329394a90de9`
 
 Future `§tart §E` runs must replace history with observed current truth rather than assuming this or any v5 revision remains latest.
+
+
+## Verified v5 deployment checkpoint
+
+```text
+GitHub source commit:
+e3dcc4b24aa3737ef1fdfe1690421e8bf384b58b
+
+Final source bytes:
+120501
+
+Final source SHA-256:
+c5b44363460fc29ec3a119967c082c1fd95b035d781c50a4affa9d8ecd686593
+
+Hugging Face Space revision:
+16d49cbe240800baf138a33f23e86c21015ace57
+
+Actual static host:
+https://kamiloki-swrlz-forge-moba.static.hf.space/
+
+Space stage:
+RUNNING
+
+Live marker:
+V5_PROJECT_TEMPLATES_DRAGONS_DEN
+
+Live verification:
+PASS on attempt 1
+```
+
+v5 is the current observed Forge state at this checkpoint. The live page now starts in Starter World, with MOBA Arena and Dragon's Den available as independent project templates.
