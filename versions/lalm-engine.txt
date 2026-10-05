@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.147
-REVISION=2.1.147-hf-behavior-ledger-best-base-v122
+VERSION=2.1.148
+REVISION=2.1.148-hf-response-cognition-v123
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
