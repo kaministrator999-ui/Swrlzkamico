@@ -1,0 +1,83 @@
+name: Validate §wyrl§ Engine v5.2 candidate
+
+on:
+  push:
+    branches: [swyrl-engine-v5-2-first-person]
+    paths:
+      - ".github/workflows/validate-swyrl-engine-v5-2.yml"
+      - "projects/swrlz-forge-moba/patches/v5_2_first_person_twin_stick.py"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: swyrl-engine-v5-2-first-person
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Rebuild exact v5.1 source
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/v5-1
+
+      - name: Apply v5.2 patch and report integrity
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path("projects/swrlz-forge-moba")
+          s=Path("/tmp/v5-1/index.html").read_text(encoding="utf-8")
+          p=root/"patches/v5_2_first_person_twin_stick.py"
+          spec=importlib.util.spec_from_file_location("v52",p)
+          mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+          out=mod.apply(s)
+          data=out.encode("utf-8")
+          Path("/tmp/v5-2.html").write_text(out,encoding="utf-8")
+          print("SWYRL_V5_2_INTEGRITY="+json.dumps({"bytes":len(data),"sha256":hashlib.sha256(data).hexdigest()},sort_keys=True))
+          PY
+
+      - name: Verify first-person and twin-stick semantics
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("/tmp/v5-2.html").read_text(encoding="utf-8")
+          required=[
+            "SWYRL_ENGINE_DEPLOY_MARKER: V5_2_FIRST_PERSON_TWIN_STICK",
+            "§wyrl§ Engine · Maker v5.2",
+            'id="moveStick"',
+            'id="lookStick"',
+            "FP_EYE_HEIGHT=1.62",
+            "bindVirtualStick('moveStick',fpMove)",
+            "bindVirtualStick('lookStick',fpLook)",
+            "First-person Play In Editor started",
+            "perspectiveCamera.position.copy(eye)",
+            "requestPointerLock",
+            "mobileControls:'twin-stick'",
+          ]
+          missing=[x for x in required if x not in s]
+          print("MISSING=",missing)
+          if missing: raise SystemExit(1)
+          PY
+
+      - name: Syntax-check generated module
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("/tmp/v5-2.html").read_text(encoding="utf-8")
+          start=s.index('<script type="module">')+len('<script type="module">')
+          end=s.rindex('</script>')
+          Path("/tmp/v5-2.mjs").write_text(s[start:end],encoding="utf-8")
+          PY
+          node --check /tmp/v5-2.mjs
