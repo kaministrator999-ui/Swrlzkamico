@@ -1,4 +1,5 @@
 import json
+import urllib.parse
 from pathlib import Path
 
 import online_tools
@@ -318,3 +319,71 @@ assert "station-online-trail" in chat and "station-online-event" in chat
 assert "safeHttpUrl(item.url)" in chat
 
 print("online-trace-observability-v125 PASS")
+
+
+# v126 real-user regression: natural "City state" phrasing must recover from
+# Open-Meteo's empty combined-name lookup by retrying city-only and filtering region.
+v126_calls=[]
+v126_trace=[]
+orig_json_get=online_tools._json_get
+def v126_weather_json(url,*args,**kwargs):
+    v126_calls.append(url)
+    progress=args[0] if args and callable(args[0]) else kwargs.get("progress")
+    phase=kwargs.get("phase","WEATHER_PROVIDER_VISIT")
+    activity=kwargs.get("activity","Fetching weather data")
+    online_tools._progress(progress,phase,provider=online_tools.WEATHER_PROVIDER,url=url,activity=activity)
+    if "geocoding-api.open-meteo.com" in url:
+        query=urllib.parse.parse_qs(urllib.parse.urlsplit(url).query).get("name",[""])[0]
+        if query.casefold()=="leavenworth kansas":
+            payload={}
+        else:
+            payload={"results":[
+                {"name":"Leavenworth","admin1":"Washington","country":"United States","country_code":"US","admin1_code":"US-WA","timezone":"America/Los_Angeles","latitude":47.5962,"longitude":-120.6615},
+                {"name":"Leavenworth","admin1":"Kansas","country":"United States","country_code":"US","admin1_code":"US-KS","timezone":"America/Chicago","latitude":39.3111,"longitude":-94.9225},
+            ]}
+        online_tools._progress(progress,phase.replace("_VISIT","_COMPLETE"),provider=online_tools.WEATHER_PROVIDER,url=url,activity="Weather provider response received",httpStatus=200)
+        return payload
+    online_tools._progress(progress,phase.replace("_VISIT","_COMPLETE"),provider=online_tools.WEATHER_PROVIDER,url=url,activity="Weather provider response received",httpStatus=200)
+    return {
+        "timezone":"America/Chicago",
+        "current":{"time":"2026-10-05T10:00","temperature_2m":68.0,"relative_humidity_2m":55,"apparent_temperature":67.0,"precipitation":0.0,"rain":0.0,"snowfall":0.0,"weather_code":1,"cloud_cover":15,"surface_pressure":1009.0,"wind_speed_10m":7.0,"wind_direction_10m":180,"wind_gusts_10m":12.0},
+        "current_units":{"temperature_2m":"°F","relative_humidity_2m":"%","apparent_temperature":"°F","precipitation":"inch","surface_pressure":"hPa","wind_speed_10m":"mp/h","wind_gusts_10m":"mp/h"},
+        "daily":{"time":[]},"daily_units":{},
+    }
+try:
+    online_tools._json_get=v126_weather_json
+    exact_plan=classify_online_request("Can you check the weather in Leavenworth kansas",HISTORY,{},None)
+    exact_result=weather_lookup(exact_plan,v126_trace.append)
+finally:
+    online_tools._json_get=orig_json_get
+assert exact_plan["locationText"].casefold()=="leavenworth kansas",exact_plan
+assert exact_result["status"]=="OK",exact_result
+assert exact_result["widgets"][0]["data"]["location"]["label"]=="Leavenworth, Kansas, United States",exact_result
+assert any(item.get("phase")=="WEATHER_GEOCODE_RETRY" for item in v126_trace),v126_trace
+assert sum("geocoding-api.open-meteo.com" in url for url in v126_calls)==2,v126_calls
+
+# Weather retrieval failure must terminate deterministically before any model can
+# improvise stale/current conditions.
+orig_stream=model_router.stream_online_request
+model_called={"value":False}
+def failed_weather_stream(payload,intent):
+    yield {"type":"result","result":{
+        "kind":"weather","status":"ERROR","errorCode":"WEATHER_LOCATION_NOT_FOUND",
+        "modelContext":{"status":"ERROR","errorCode":"WEATHER_LOCATION_NOT_FOUND"},
+        "sources":[],"widgets":[],"plan":{"reason":"weather-intent"},
+    }}
+def should_not_generate(payload):
+    model_called["value"]=True
+    yield {"type":"DELTA","text":"stale hallucinated weather"}
+try:
+    model_router.stream_online_request=failed_weather_stream
+    events=list(model_router.dispatch("700m",{"requestId":"v126","prompt":"Can you check the weather in Nowhere kansas","history":[]},should_not_generate,should_not_generate,should_not_generate,should_not_generate))
+finally:
+    model_router.stream_online_request=orig_stream
+assert model_called["value"] is False,events
+joined="".join(str(event.get("text") or "") for event in events)
+assert "couldn't resolve that place" in joined.lower(),events
+assert any(event.get("phase")=="WEATHER_RETRIEVAL_BLOCKED" for event in events),events
+assert events[-1].get("type")=="COMPLETED",events
+
+print("real-user-weather-v126 PASS")
