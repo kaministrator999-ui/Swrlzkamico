@@ -2,385 +2,98 @@
 
 **Role:** canonical entrypoint for SWRLZ Forge / browser-engine work.
 
-**Invocation:** when the user says `§tart §E` or `@GitHub §tart §E`, treat it as an execution command to enter the engine project, reconstruct its current source/deployment state, and continue engine work from GitHub through its dedicated Hugging Face deployment path.
+**Invocation:** `§tart §E` or `@GitHub §tart §E` means enter the dedicated Forge project lane, reconstruct current GitHub/Hugging Face state, and continue engine work independently from the §wyrlz AI Chat/LALM application.
 
-This router exists specifically so Forge can be engineered and deployed **separately from the §wyrlz AI Chat / LALM application**.
-
----
-
-## 1. Engine identity and boundaries
-
-### GitHub source repository
+## Canonical lane
 
 ```text
-kaministrator999-ui/Swrlzkamico
-```
-
-### Engine project root
-
-```text
-projects/swrlz-forge-moba/
-```
-
-### Dedicated deployment workflow
-
-```text
-.github/workflows/deploy-swrlz-forge-moba.yml
-```
-
-### Dedicated Hugging Face Space
-
-```text
-kamiloki/swrlz-forge-moba
-```
-
-### Standalone live page
-
-```text
-https://kamiloki-swrlz-forge-moba.hf.space/
-```
-
-### Hugging Face project page
-
-```text
-https://huggingface.co/spaces/kamiloki/swrlz-forge-moba
-```
-
-The Forge Space is a **static Space** and is independent from the main AI Chat/LALM Space `kamiloki/Swyrlz`.
-
-**Hard boundary:** Forge work must not deploy through, overwrite, or repurpose the main Chat/LALM Hugging Face workflow or Space unless the user explicitly asks to integrate the two systems.
-
----
-
-## 2. §tart §E execution contract
-
-When `§tart §E` is received:
-
-1. Use the GitHub connector.
-2. Open `kaministrator999-ui/Swrlzkamico`.
-3. Read this document first.
-4. Inspect `projects/swrlz-forge-moba/README.md`.
-5. Inspect the current engine source manifest and builder:
-   - `projects/swrlz-forge-moba/source-manifest.json`
-   - `projects/swrlz-forge-moba/build_space.py`
-   - `projects/swrlz-forge-moba/SPACE_README.md`
-6. Inspect `.github/workflows/deploy-swrlz-forge-moba.yml`.
-7. Reconstruct the current engine source/deployment state before editing.
-8. Keep engine work scoped to the Forge project and its dedicated deployment workflow unless another subsystem is explicitly required.
-9. After runtime-affecting engine updates, commit the finished candidate and let the dedicated Forge workflow deploy it to `kamiloki/swrlz-forge-moba`.
-10. Observe the terminal GitHub Actions result and report the exact GitHub source commit plus Hugging Face Space revision when available.
-
-Do not stop at “file found” or “ready.” The startup result should tell the user the current Forge source state, deployment state, live target, and any unresolved engine work discovered.
-
----
-
-## 3. Current source-of-truth layout
-
-The current Forge v3 editor still ships as one HTML project, with source bytes preserved losslessly for deterministic deployment. The exact source bytes are preserved losslessly in the repository as gzip + base64 chunks:
-
-```text
-projects/swrlz-forge-moba/
-├── README.md
-├── §tart linkage via this root router
-├── SPACE_README.md
-├── source-manifest.json
-├── build_space.py
-├── DEPLOY_REQUEST.json
-└── payload/
-    ├── part-01.txt
-    ├── part-02.txt
-    ├── part-03.txt
-    ├── part-04.txt
-    ├── part-05.txt
-    └── part-06.txt
-```
-
-`source-manifest.json` owns the integrity contract for the current serialized HTML source:
-
-- original byte length;
-- SHA-256;
-- payload encoding;
-- ordered payload chunk list.
-
-`build_space.py` reconstructs the original `index.html` byte-for-byte, verifies its hash and byte count, and stages the deployable Space package.
-
-Current accepted source integrity after the Unreal-inspired v3 pass:
-
-```text
-artifact: swrlz_forge_unreal_pass_v3.html
-bytes: 89746
-sha256: 5459e050394a7cbab9bcf0cde16598975611dd0896273f9c04a21e45c309a2a9
-```
-
-The design study that informed this pass is recorded in `projects/swrlz-forge-moba/UNREAL_STUDY.md`.
-
-If the engine source changes, update the payload and `source-manifest.json` together so the builder continues to prove the deployed HTML came from the intended GitHub source.
-
-If the project is later refactored into normal editable source files/modules, update this router and `build_space.py` in the same governed change so the source authority never becomes ambiguous.
-
----
-
-## 4. Canonical engine build flow
-
-```text
-user asks for Forge change
-        ↓
-§tart §E
-        ↓
 GitHub: kaministrator999-ui/Swrlzkamico
-        ↓
-projects/swrlz-forge-moba/
-        ↓
-inspect current source + manifest + deployment workflow
-        ↓
-implement engine/editor/game changes
-        ↓
-update source integrity manifest
-        ↓
-commit to main
-        ↓
-path-filtered GitHub Action
-.deploy? NO
-main Chat/LALM deployment? NO
-        ↓
-.github/workflows/deploy-swrlz-forge-moba.yml
-        ↓
-rebuild exact index.html
-        ↓
-verify byte count + SHA-256 + Space metadata
-        ↓
-create/update dedicated static Space
-        ↓
-kamiloki/swrlz-forge-moba
-        ↓
-https://kamiloki-swrlz-forge-moba.hf.space/
-        ↓
-capture deploy receipt + HF revision
+  -> projects/swrlz-forge-moba/
+  -> .github/workflows/deploy-swrlz-forge-moba.yml
+  -> Hugging Face: kamiloki/swrlz-forge-moba
+  -> https://kamiloki-swrlz-forge-moba.hf.space/
 ```
 
-This is the canonical Forge deployment lane.
+**Hard boundary:** never route ordinary Forge releases through `kamiloki/Swyrlz` or the AI Chat/LALM deployment workflows.
 
----
+## Startup contract
 
-## 5. Separation from AI Chat / LALM
+On `§tart §E`:
 
-Forge and the AI Chat share a GitHub repository today, but they have different runtime/deployment owners.
+1. Read this router.
+2. Read `projects/swrlz-forge-moba/README.md`.
+3. Read `source-manifest.json`, `build_space.py`, and `SPACE_README.md`.
+4. Read `.github/workflows/deploy-swrlz-forge-moba.yml`.
+5. Inspect the current GitHub main revision, last Forge workflow result, and current Hugging Face Space state before editing.
+6. Keep edits scoped to the Forge project unless an explicit integration requires another subsystem.
+7. For runtime-affecting changes, update the exact source payload and manifest together.
+8. Merge the validated candidate to `main`.
+9. Observe the dedicated Forge workflow through terminal status.
+10. Require both publication success **and live-page marker verification** before calling the release live.
+11. Report the exact GitHub source commit, HF Space revision, build version/marker, and any failures encountered.
 
-### Forge
+## Current v4 source authority
 
 ```text
-projects/swrlz-forge-moba/**
-    -> deploy-swrlz-forge-moba.yml
-    -> kamiloki/swrlz-forge-moba
+artifact: swrlz_forge_v4.html
+bytes: 99591
+sha256: a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856
+deploy marker: V4_SOLID_TERRAIN_LOCKED_VIEWS
 ```
 
-### AI Chat / LALM
+The source is stored losslessly in six gzip+base64 payload chunks. `build_space.py` reconstructs the exact HTML and verifies its integrity before deployment.
+
+## v4 editor state
+
+Forge v4 includes:
+
+- separate Perspective and Orthographic editor cameras
+- locked Top / Front / Right authoring views
+- unrestricted Perspective/Free camera including underside inspection
+- solid terrain underside + edge skirts
+- brighter lighting/fog and improved scenery
+- smaller mobile gizmos
+- mobile Tools drawer
+- Terrain Snap and Snap Selected to Ground
+- World/Local transform spaces and transform snapping
+- Outliner, Details, Components, Content Drawer, Output Log
+- Undo/Redo and Build Validation
+- Play In Editor / Simulate In Editor / Pause / Play From Here / Keep Simulation Changes
+- PhysicsBody gravity/bounce/drag plus simple blocker collision
+- MOBA lane/minion/tower/runtime systems
+- ghost → Bake authoring
+- `window.SWRLZ_FORGE_AGENT` using `forge-agent-v2`
+- standalone HTML runtime export
+
+## Deployment truth contract
+
+A GitHub/HF upload receipt is not sufficient by itself.
+
+The v4 workflow must:
 
 ```text
-main §wyrlz application source
-    -> its guarded HF application deployment chain
-    -> kamiloki/Swyrlz
+rebuild exact source
+  -> verify SHA/bytes
+  -> upload dedicated static Space
+  -> request the live hf.space page with cache-busting query
+  -> find V4_SOLID_TERRAIN_LOCKED_VIEWS
+  -> only then report deployment SUCCESS
 ```
 
-Engine work must not casually modify:
+If the live marker check fails, treat the release as not-live and debug the serving/cache/build state.
 
-- the main Chat/LALM Space target;
-- `.deploy/HF_SPACE_REQUEST.txt`;
-- `.github/workflows/hf-space-request.yml`;
-- `.github/workflows/manual-hf-space.yml`;
-- Chat/LALM runtime packaging;
-- model/runtime deployment contracts.
+## Historical lineage
 
-Likewise, ordinary Chat/LALM changes must not be treated as Forge releases.
+Initial dedicated Forge deployment:
+- GitHub: `3024b4e8d81ec515ab8d08d6d7d2b81547e57f4b`
+- HF: `a22686c4b1326c10fd8884965b18cdad8e50224e`
 
-If a future agent tunnel intentionally connects the AI to Forge, preserve the boundary:
+v3 deployment checkpoint:
+- GitHub: `018b7351c5d473018ac5ca5a0ff4a0079c98fb8f`
+- HF: `650c0defa60d0db3f68e9a93b3f39384a23c8da8`
 
-```text
-AI / agent inference
-        ↓
-bounded Forge command/API tunnel
-        ↓
-ghost/proposal layer
-        ↓
-validation
-        ↓
-user/authorized bake
-        ↓
-authoritative scene
-```
-
-Integration does not mean deployment ownership is merged.
-
----
-
-## 6. Deployment trigger behavior
-
-The Forge workflow is path-filtered to **deployment-affecting Forge files only**:
-
-```text
-projects/swrlz-forge-moba/payload/**
-projects/swrlz-forge-moba/source-manifest.json
-projects/swrlz-forge-moba/build_space.py
-projects/swrlz-forge-moba/SPACE_README.md
-.github/workflows/deploy-swrlz-forge-moba.yml
-```
-
-It also supports manual workflow dispatch.
-
-Documentation-only changes such as `§tart_§E.md` or `projects/swrlz-forge-moba/README.md` are deployment-inert and must not publish a new Space revision merely because documentation changed.
-
-Therefore a completed **deployment-affecting Forge source change** on `main` automatically starts the dedicated Hugging Face deployment.
-
-The deployment job must:
-
-1. checkout the exact triggering GitHub commit;
-2. run `build_space.py`;
-3. validate reconstructed `index.html`;
-4. validate Hugging Face static-Space metadata;
-5. use the repository `HF_TOKEN` secret;
-6. create/update only `kamiloki/swrlz-forge-moba`;
-7. upload the staged Space folder;
-8. capture a deployment receipt containing the source commit and resulting Space revision.
-
-Do not use the main `kamiloki/Swyrlz` deployment chain as a shortcut for Forge.
-
----
-
-## 7. Failure/debug loop
-
-If the Forge GitHub Action fails:
-
-```text
-workflow failure
-    ↓
-read exact failed step + logs
-    ↓
-identify source/build/metadata/HF failure
-    ↓
-repair only the owning Forge source/workflow
-    ↓
-commit corrected candidate
-    ↓
-observe new Forge deployment run
-    ↓
-report source/static/deployed/live truth separately
-```
-
-Do not call a failed deployment successful merely because the commit exists.
-
-Creation-history example: the first Forge deploy reached Hugging Face but failed metadata validation because `short_description` exceeded Hugging Face's 60-character limit. The metadata was corrected and the next dedicated Forge workflow completed successfully. Preserve failures like this as evidence instead of rewriting history.
-
----
-
-## 8. Current initial successful deployment lineage
-
-Initial dedicated deployment:
-
-```text
-GitHub source commit:
-3024b4e8d81ec515ab8d08d6d7d2b81547e57f4b
-
-Hugging Face Space:
-kamiloki/swrlz-forge-moba
-
-HF Space revision:
-a22686c4b1326c10fd8884965b18cdad8e50224e
-```
-
-This is historical lineage, not a permanent claim that the same revision is current. On every `§tart §E` invocation, inspect the current GitHub and Hugging Face state rather than assuming this initial deployment is still latest.
-
-### Latest verified v3 deployment at this checkpoint
-
-```text
-Forge version:
-Unreal-Inspired Editor Pass v3
-
-GitHub source commit:
-018b7351c5d473018ac5ca5a0ff4a0079c98fb8f
-
-Hugging Face Space:
-kamiloki/swrlz-forge-moba
-
-HF Space revision:
-650c0defa60d0db3f68e9a93b3f39384a23c8da8
-
-Deployment result:
-SUCCESS
-```
-
-The GitHub workflow rebuilt and integrity-checked the v3 source before publication. Treat this as a durable checkpoint; future `§tart §E` runs must still inspect current state rather than assuming it remains latest.
-
----
-
-## 9. Engine architecture direction
-
-Current Forge capabilities include:
-
-- browser-native Three.js editor;
-- searchable hierarchical World Outliner with folders and visibility;
-- Details-style Transform / Components / Gameplay / Physics inspector;
-- transform gizmos with World / Local space;
-- translation / rotation / scale snapping;
-- Perspective + Top / Front / Right cameras;
-- Lit / Unlit / Wireframe viewport modes;
-- Undo / Redo transaction history;
-- Content Drawer, asset search, Output Log, and Build Validation;
-- reusable actor-component metadata and runtime execution;
-- Play In Editor and Simulate In Editor;
-- Pause / Resume, Play From Here, and Keep Simulation Changes;
-- ghost placement → Bake;
-- bounded `window.SWRLZ_FORGE_AGENT` editor command API;
-- MOBA prefabs and prebuilt three-lane arena;
-- terrain, river, foliage, rocks, walls, camps, towers, and cores;
-- hero movement, gravity, jumping, terrain following, and blocker collision;
-- minion waves and lane combat;
-- tower combat and simple physics bodies;
-- project JSON save/load;
-- standalone playable HTML export with component behavior support;
-- mobile editor controls.
-
-Planned architecture may evolve toward:
-
-```text
-Forge Editor
-├── Scene graph
-├── Asset/prefab system
-├── Physics/collision
-├── Components/scripts
-├── Materials/terrain
-├── Project persistence
-├── Multiplayer collaboration
-│   ├── per-user presence orb
-│   ├── ghost/proposal layers
-│   └── Bake/commit revisions
-├── Agent command tunnel
-│   ├── read scene
-│   ├── propose ghost edits
-│   ├── validate/test
-│   └── request/perform authorized bake
-└── Exported runtime/game
-```
-
-Prefer editor-camera precision for creation. FPS/player-style control belongs to play/test mode, not as the default editing model.
-
----
-
-## 10. Definition of done for Forge changes
-
-A Forge update is complete when applicable:
-
-- current engine source authority was read first;
-- implementation is scoped to the Forge project;
-- no accidental Chat/LALM deployment path was touched;
-- source integrity data matches the new source;
-- the dedicated Forge workflow rebuilt the project successfully;
-- Hugging Face publication completed successfully;
-- the resulting Space revision was observed;
-- live-page behavior was verified when the change requires it;
-- any failure/repair path is reported accurately.
-
----
+These are historical checkpoints only. Never assume they remain current.
 
 ## Bottom line
 
-**`§tart §E` means: enter SWRLZ Forge as its own project lane, read this router, operate from `projects/swrlz-forge-moba/`, build from GitHub source, deploy only through `.github/workflows/deploy-swrlz-forge-moba.yml`, publish only to `kamiloki/swrlz-forge-moba`, and keep that entire engine lifecycle separate from the §wyrlz AI Chat/LALM deployment path.**
+**`§tart §E` = load Forge from GitHub, preserve the separate engine lane, change the engine, validate exact source, deploy only to `kamiloki/swrlz-forge-moba`, verify the actual live page is serving the new marker, then continue from that observed truth.**

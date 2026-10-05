@@ -1,8 +1,8 @@
 {
   "schema": "swrlz-forge-source-v1",
-  "name": "SWRLZ Forge Unreal-Inspired Editor Pass v3",
-  "bytes": 89746,
-  "sha256": "5459e050394a7cbab9bcf0cde16598975611dd0896273f9c04a21e45c309a2a9",
+  "name": "SWRLZ Forge Editor v4",
+  "bytes": 99591,
+  "sha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -12,5 +12,5 @@
     "payload/part-05.txt",
     "payload/part-06.txt"
   ],
-  "sourceArtifact": "swrlz_forge_unreal_pass_v3.html"
+  "sourceArtifact": "swrlz_forge_v4.html"
 }
