@@ -1,3 +1,19 @@
+## UPDATE STARTED — 2026-10-06 — Server-complete online cameras + widget-first response ordering v128
+
+**Trigger:** live weather request `web-muvstykj-2120212379-1100634544` proved the Chat/session export retained substantially richer server execution state than the durable GitHub Online Research logs. The same request also rendered the fast weather widget before inference completed, then inserted the generated prose above the already-visible widget with no persistent semantic analysis state below it.
+
+**Architecture reconciliation:**
+- Station/Workstation remains the canonical execution authority. Durable GitHub cameras must consume the same bounded server telemetry already projected to Chat; the browser must not be the richest debugging authority for server execution.
+- Online Research durable outcome will retain bounded sources/evidence, widget envelopes, status/phase trail, response cognition, routing/validation state, resource/context/generation timing, and final generated response while continuing to exclude raw prompt/history, precise coordinates, credentials, provider HTML, and private reasoning.
+- Chat remains presentation-only. Once a structured widget arrives, it occupies its permanent position before the live assistant prose. Until first response text arrives, the live status moves below the widget and reports a semantic state such as `§wyrlz · Analyzing weather information…` or `Analyzing search results…`. The streamed prose then appears below the widget without reordering existing content.
+- Existing provider/network ownership, SSRF guards, weather no-fabrication gate, model routing, and search/widget contracts remain unchanged.
+
+**Verification target:** deterministic source regression for expanded privacy-bounded outcome camera fields and widget-before-status-before-response DOM contract, then existing v117-v127 regression stack before any deployment claim.
+
+**Expected module impact:** Online Research diagnostics + Web Chat/clean-room Chat + Repository Work. Server Runtime remains unchanged unless a separate deployment event is actually performed.
+
+**Status:** IN PROGRESS.
+
 ### UPDATE FINISHED — 2026-09-30 — HF Chat 1.0.87 nested frame gutter tuning
 
 - Finalized the square-inside-square implementation around the existing opaque code/misc surfaces.
