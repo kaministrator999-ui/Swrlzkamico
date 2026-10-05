@@ -1,0 +1,156 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "v122-ada1bfa1dfb7",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "d8710d6401cf5080649274e66064d061ae6f05c5",
+  "persistedAtUnixMs": 1791210904881,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": 1,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": true,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 21.836,
+      "visibleFirstDeltaLatencyMs": 4673.627,
+      "engineTotalLatencyMs": 4674.721,
+      "totalCandidateGenerationMs": 4651.309,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 4651.309,
+          "firstTokenLatencyMs": 4073.129,
+          "deltaChunks": 23,
+          "candidateFingerprint": "8422a8710c696c15",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": true,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791210900199,
+      "startedAtUnixMs": 1791210900199,
+      "completedAtUnixMs": 1791210904879,
+      "queueWaitMs": 0,
+      "stationRunMs": 4680,
+      "endToEndMs": 4680
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "typescript"
+      ],
+      "activeRepairConstraints": {
+        "dependencyPolicy": "evidence-bounded",
+        "unavailableDependencies": [],
+        "carriedUnavailableDependencies": []
+      },
+      "behaviorLedger": {
+        "currentScore": {
+          "passed": 2,
+          "total": 5,
+          "failed": 3
+        },
+        "bestKnownScore": {
+          "passed": 2,
+          "total": 5,
+          "failed": 3
+        },
+        "regressedCases": [],
+        "resolvedCases": [],
+        "preservePassingCases": [
+          "null",
+          "empty"
+        ],
+        "rebaseRecommended": false,
+        "bestKnownArtifact": {
+          "artifactId": "artifact-bccaf21b0c414eb59dd2986888f73244",
+          "revision": 1,
+          "sourceHash": "f7fd266ca6278adf2e19969951bf72e71fb4f1d03e1f9c50a79c2b60756b6016",
+          "sourceFingerprint": "89611f49dcb5da1b"
+        },
+        "repairBaseMode": "latest-failing-source"
+      },
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 5,
+        "failedCaseCount": 3
+      },
+      "executionVerified": false,
+      "verificationState": "AWAITING_EXTERNAL_RECEIPT"
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": {
+        "passed": 2,
+        "total": 5,
+        "failed": 3
+      },
+      "bestKnownScore": {
+        "passed": 2,
+        "total": 5,
+        "failed": 3
+      },
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [
+        "null",
+        "empty"
+      ],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": {
+        "artifactId": "artifact-bccaf21b0c414eb59dd2986888f73244",
+        "revision": 1,
+        "sourceHash": "f7fd266ca6278adf2e19969951bf72e71fb4f1d03e1f9c50a79c2b60756b6016",
+        "sourceFingerprint": "89611f49dcb5da1b"
+      },
+      "repairBaseMode": "latest-failing-source"
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": "89611f49dcb5da1b",
+      "artifactId": "artifact-bccaf21b0c414eb59dd2986888f73244",
+      "revision": 1,
+      "sourceHash": "f7fd266ca6278adf2e19969951bf72e71fb4f1d03e1f9c50a79c2b60756b6016"
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 5,
+      "failedCaseCount": 3
+    },
+    "artifactReceipt": {
+      "action": "REVISION_COMMITTED",
+      "revision": 2,
+      "sourceHash": "97a263a069559ecf164c7438f2f36cae5aaf4d76acb7c7778de8a069ffb9db8a",
+      "reason": null
+    }
+  }
+}
