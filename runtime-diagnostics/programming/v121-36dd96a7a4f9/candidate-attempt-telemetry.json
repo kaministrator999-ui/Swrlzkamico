@@ -1,0 +1,82 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "v121-36dd96a7a4f9",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "0dd7ffacdbce9e60cb78b12085ce829a862e0669",
+  "persistedAtUnixMs": 1791160200344,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 2,
+      "regenerationCount": 1,
+      "firstCandidateRejected": true,
+      "finalAcceptedAttempt": 2,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": false,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 14.471,
+      "visibleFirstDeltaLatencyMs": 25184.868,
+      "engineTotalLatencyMs": 25184.916,
+      "totalCandidateGenerationMs": 25168.588,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 11786.031,
+          "firstTokenLatencyMs": 4101.335,
+          "deltaChunks": 297,
+          "candidateFingerprint": "02c922d95d870dfa",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "REJECT",
+          "validationReasons": [
+            "missing-required-language:html",
+            "language-contract-mismatch:python"
+          ],
+          "accepted": false
+        },
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 2,
+          "trigger": "retry:contract-or-structural-rejection",
+          "durationMs": 13382.557,
+          "firstTokenLatencyMs": 366.224,
+          "deltaChunks": 499,
+          "candidateFingerprint": "69b727a9a33750d0",
+          "changedFromPreviousAttempt": true,
+          "changedFromRepairTarget": null,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791160175157,
+      "startedAtUnixMs": 1791160175158,
+      "completedAtUnixMs": 1791160200344,
+      "queueWaitMs": 1,
+      "stationRunMs": 25186,
+      "endToEndMs": 25187
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "html"
+      ],
+      "executionVerified": false,
+      "verificationState": "NOT_EXECUTION_VERIFIED"
+    },
+    "artifactReceipt": {
+      "action": "ARTIFACT_CREATED",
+      "revision": 1,
+      "sourceHash": "08d208c92ec7bc506fdb1ff4238aa2ca209af316f6e61f2c5663958ed8d529dc",
+      "reason": null
+    }
+  }
+}
