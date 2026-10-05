@@ -7,7 +7,7 @@ sdk: static
 app_file: index.html
 fullWidth: true
 header: mini
-short_description: Browser-native 3D MOBA editor/runtime built in one HTML project.
+short_description: Browser-native 3D MOBA editor and playable runtime.
 ---
 
 # SWRLZ Forge · MOBA Lab
