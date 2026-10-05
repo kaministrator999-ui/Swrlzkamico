@@ -234,9 +234,12 @@ assert "§WYRLZ ONLINE EXTERNAL EVIDENCE" in captures["r39"].get("prompt",""),ca
 stock_source=(root/"hf_space/original_engine.py").read_text(encoding="utf-8")
 large_source=(root/"hf_space/lfm2_700m_engine.py").read_text(encoding="utf-8")
 coder_source=(root/"hf_space/qwen_coder_engine.py").read_text(encoding="utf-8")
+app_source=(root/"hf_space/app.py").read_text(encoding="utf-8")
 assert "ONLINE EXTERNAL EVIDENCE (bounded server retrieval" in stock_source
 assert "ONLINE EXTERNAL EVIDENCE (bounded server retrieval" in large_source
 assert "ONLINE EXTERNAL EVIDENCE (bounded server retrieval" in coder_source
 assert "_r39_online_payload" in router and "onlineContextEmbeddedForR39" in router
+assert "load as large_load" in app_source
+assert '(("700m",large_load),("coder",coder_load),("stock",original_load),("r39",engine))' in app_source
 
 print("all-model-online-context-v124 PASS")
