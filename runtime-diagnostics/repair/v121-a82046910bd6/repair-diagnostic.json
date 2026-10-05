@@ -1,0 +1,70 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v121-a82046910bd6",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "9faa59d8d8109680fb01f20b6606bb1f09249012",
+  "persistedAtUnixMs": 1791160287123,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "a-99c111c6d2b7",
+    "repairSourceMessageId": "a-99c111c6d2b7",
+    "repairSourceFingerprint": "d462dab16075d3be",
+    "candidateFingerprint": "d462dab16075d3be",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "RuntimeError: simulated external verification failure"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "runtime"
+      ],
+      "exceptionTypes": [
+        "RuntimeError"
+      ],
+      "exitCodes": [],
+      "failingSignals": [
+        "RuntimeError: simulated external verification failure"
+      ],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [],
+        "jsonObjectCount": 0,
+        "caseCount": 0,
+        "failedCaseCount": 0
+      }
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "structuredReceipt": {
+      "formats": [],
+      "jsonObjectCount": 0,
+      "caseCount": 0,
+      "failedCaseCount": 0
+    },
+    "repairActions": [
+      "trace the exception to its first relevant application frame and repair the causing state/operation"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
