@@ -184,9 +184,9 @@
     .composer-shell::before{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,rgba(185,224,255,.18),rgba(94,159,211,.14) 34%,rgba(5,18,35,.56));backdrop-filter:blur(20px) saturate(128%);-webkit-backdrop-filter:blur(20px) saturate(128%);clip-path:polygon(0 14px,18px 0,calc(50% - 52px) 0,calc(50% - 42px) 16px,calc(50% - 34px) 28px,calc(50% + 34px) 28px,calc(50% + 42px) 16px,calc(50% + 52px) 0,calc(100% - 18px) 0,100% 14px,100% 100%,0 100%)}
     .composer-shell::after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,rgba(205,235,255,.10),transparent 54%);clip-path:polygon(0 15px,19px 1px,calc(50% - 53px) 1px,calc(50% - 43px) 17px,calc(50% - 35px) 29px,calc(50% + 35px) 29px,calc(50% + 43px) 17px,calc(50% + 53px) 1px,calc(100% - 19px) 1px,100% 15px,100% 18px,calc(100% - 18px) 4px,calc(50% + 55px) 4px,calc(50% + 45px) 20px,calc(50% + 37px) 32px,calc(50% - 37px) 32px,calc(50% - 45px) 20px,calc(50% - 55px) 4px,18px 4px,0 18px);pointer-events:none}
     .composer-shell.collapsed{transform:translateY(calc(100% - 26px))}
-    .composer-collapse{display:grid;place-items:center;width:54px;height:28px;margin:-12px auto -1px;border:1px solid rgba(95,192,255,.38);border-bottom:0;border-radius:16px 16px 0 0;background:rgba(8,30,50,.68);color:#bfefff;backdrop-filter:blur(22px) saturate(130%);cursor:pointer}
+    .composer-collapse{position:relative;z-index:8;display:grid;place-items:center;width:58px;height:32px;margin:-14px auto -1px;border:1px solid rgba(95,192,255,.38);border-bottom:0;border-radius:16px 16px 0 0;background:rgba(8,30,50,.84);color:#bfefff;backdrop-filter:blur(22px) saturate(130%);cursor:pointer;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     .composer-collapse svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;transition:transform .28s ease}.composer-shell.collapsed .composer-collapse svg{transform:rotate(180deg)}
-    .composer{width:min(520px,100%);margin:0 auto}
+    .composer{position:relative;z-index:2;width:min(520px,100%);margin:0 auto}
     .composer-box{position:relative;overflow:hidden;min-height:42px;max-height:50dvh;border:1px solid rgba(95,192,255,.38);border-radius:21px;background:linear-gradient(145deg,rgba(21,43,65,.94),rgba(7,25,43,.91));box-shadow:0 12px 36px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(22px) saturate(125%)}
     .composer-box:focus-within{border-color:rgba(56,232,255,.58);box-shadow:0 12px 36px rgba(0,0,0,.42),0 0 0 2px rgba(56,232,255,.06)}
     #prompt{display:block;width:calc(100% - 46px);height:40px;max-height:calc(50dvh - 2px);resize:none;padding:11px 5px 11px 15px;border:0;outline:0;color:var(--text);background:transparent;font:inherit;font-size:13px;line-height:18px;white-space:pre-wrap;overflow-y:hidden;overflow-x:hidden}
@@ -1668,11 +1668,21 @@
       composerShell.addEventListener("transitionrun",syncComposerViewportInset);
       composerShell.addEventListener("transitionend",syncComposerViewportInset);
       requestAnimationFrame(syncComposerViewportInset);
-      composerCollapse.addEventListener("click", () => {
-        const keepDistance=distanceFromLatest();const collapsed=composerShell.classList.toggle("collapsed");
-        composerCollapse.setAttribute("aria-expanded",String(!collapsed));composerCollapse.setAttribute("aria-label",collapsed?"Expand composer":"Collapse composer");resizeComposer();
-        requestAnimationFrame(()=>{syncComposerViewportInset();if(followLatest)scrollToLatest("auto");else chatViewport.scrollTop=Math.max(0,chatViewport.scrollHeight-chatViewport.clientHeight-keepDistance);});
-      });
+      const toggleComposerCollapsed = event => {
+        event?.preventDefault?.();event?.stopPropagation?.();
+        const keepDistance=distanceFromLatest();
+        const collapsed=composerShell.classList.toggle("collapsed");
+        composerCollapse.setAttribute("aria-expanded",String(!collapsed));
+        composerCollapse.setAttribute("aria-label",collapsed?"Expand composer":"Collapse composer");
+        resizeComposer();
+        uiCamera("composer-collapse-toggle",{collapsed,source:String(event?.type||"programmatic")});
+        requestAnimationFrame(()=>{
+          syncComposerViewportInset();
+          if(followLatest)scrollToLatest("auto");
+          else chatViewport.scrollTop=Math.max(0,chatViewport.scrollHeight-chatViewport.clientHeight-keepDistance);
+        });
+      };
+      composerCollapse.addEventListener("click",toggleComposerCollapsed);
       const menuButton = document.getElementById("menuButton");
       const menuShade = document.getElementById("menuShade");
       const sideMenu = document.getElementById("sideMenu");
