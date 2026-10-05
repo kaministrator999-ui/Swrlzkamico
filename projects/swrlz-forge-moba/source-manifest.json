@@ -1,12 +1,12 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v5.1",
+  "name": "§wyrl§ Engine v5.2",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyl_engine_v5_1.html",
-  "finalBytes": 129398,
-  "finalSha256": "a653064ce2be625d67d561a1db249a1bb4fa0637dc69377480cf6311e43fdf51",
+  "finalArtifact": "swyrl_engine_v5_2.html",
+  "finalBytes": 135148,
+  "finalSha256": "e3ea58f80f83a2b001f087f5852b6ce7fa5a4dbf4af2f5d67c414eb46c196ad8",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -19,6 +19,7 @@
   "patches": [
     "patches/v4_1.py",
     "patches/v5_projects.py",
-    "patches/v5_1_swyl_engine_seed_den.py"
+    "patches/v5_1_swyl_engine_seed_den.py",
+    "patches/v5_2_first_person_twin_stick.py"
   ]
 }

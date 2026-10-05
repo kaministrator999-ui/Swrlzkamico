@@ -1,4 +1,4 @@
-# §wyrl§ Engine · Maker v5.1
+# §wyrl§ Engine · Maker v5.2
 
 ## Project entry command
 
@@ -94,12 +94,12 @@ patches/v5_projects.py
 patches/v5_1_swyl_engine_seed_den.py
 ```
 
-Final v5.1 candidate:
+Final v5.2 candidate:
 
-- artifact: `swyl_engine_v5_1.html`
-- bytes: `129398`
-- SHA-256: `a653064ce2be625d67d561a1db249a1bb4fa0637dc69377480cf6311e43fdf51`
-- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN`
+- artifact: `swyrl_engine_v5_2.html`
+- bytes: `135148`
+- SHA-256: `e3ea58f80f83a2b001f087f5852b6ce7fa5a4dbf4af2f5d67c414eb46c196ad8`
+- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_2_FIRST_PERSON_TWIN_STICK`
 
 ## Deployment
 
@@ -109,4 +109,23 @@ Current infrastructure is intentionally preserved for lineage:
 - live host: `https://kamiloki-swrlz-forge-moba.static.hf.space/`
 - workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`
 
-The workflow rebuilds exact source, verifies bytes/SHA, syntax-checks the editor module, uploads the static Space, asks Hugging Face for the actual serving host, then requires the current v5.1 marker on the live page before success.
+The workflow rebuilds exact source, verifies bytes/SHA, syntax-checks the editor module, uploads the static Space, asks Hugging Face for the actual serving host, then requires the current v5.2 marker on the live page before success.
+
+
+## v5.2 first-person controls
+
+Play In Editor now uses a first-person embodiment model instead of a floating third-person camera.
+
+- camera eye height is anchored to the player pawn
+- player body meshes are hidden while in first-person and restored on Stop
+- movement is relative to camera yaw
+- mobile/touch gets two translucent joystick pads:
+  - **left:** movement
+  - **right:** look
+- desktop keeps WASD/arrow movement and uses pointer-lock mouse look
+- pitch is clamped to prevent camera inversion
+- first-person field of view expands during PIE and restores on exit
+- editor badges/tool clutter are reduced on mobile while playing
+- a center reticle provides a stable forward reference
+
+This is still Play In Editor, not the later VR immersive/work mode.
