@@ -302,13 +302,18 @@ assert any(item.get("phase")=="WEATHER_FORECAST_VISIT" and item.get("site")=="ap
 assert all("?" not in str(item.get("url") or "") for item in weather_trace),weather_trace
 
 station_source=(root/"hf_space/station.py").read_text(encoding="utf-8")
-assert '"ONLINE_RESEARCH_TRACE":("online","search-trace.json"' in station_source
+assert '"ONLINE_RESEARCH_TRACE":("online-research","online-research-trace.json"' in station_source
+assert '"ONLINE_RESEARCH_OUTCOME":("online-research","online-research-outcome.json"' in station_source
 assert 'kind=="ONLINE_TRACE"' in station_source
 assert '"onlineTrace":[]' in station_source
 assert '"site":str(item.get("site") or "")' in station_source
-assert "runtime-diagnostics/online/" in station_source
-assert "SEARCH_PROVIDER_VISIT" in chat and "PAGE_VISIT" in chat and "WEATHER_FORECAST_VISIT" in chat
+assert "runtime-diagnostics/online-research/" in station_source
+assert '"requestedModelId"' in station_source and '"selectedModelId"' in station_source
+assert 'kind=="ROUTE"' in station_source
+assert "SEARCH_PROVIDER_VISIT" in chat and "SEARCH_PROVIDER_RESULTS" in chat and "PAGE_FETCH_STARTED" in chat and "WEATHER_FORECAST_VISIT" in chat
 assert 'site:String(event.site||"")' in chat
 assert 'activityDetail=activitySite||activityProvider' in chat
+assert "station-online-trail" in chat and "station-online-event" in chat
+assert "safeHttpUrl(item.url)" in chat
 
-print("online-trace-observability-v124 PASS")
+print("online-trace-observability-v125 PASS")
