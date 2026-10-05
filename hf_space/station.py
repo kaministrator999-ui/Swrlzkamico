@@ -872,19 +872,47 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     if artifact is not None:
                         g["artifactReceipt"]={"action":"ARTIFACT_CREATED","artifactId":artifact["id"],"revision":1,"sourceHash":artifact.get("currentSourceHash")}
             if online_research:
+                # Durable Online Research diagnostics consume the same bounded server
+                # telemetry projected to Chat.  The browser must never be the richest
+                # authority for a server-owned generation.  Keep prompt/history/private
+                # reasoning and precise coordinates out of the repository camera.
+                bounded_sources=[]
+                for item in online_sources[:24]:
+                    if not isinstance(item,dict):continue
+                    bounded_sources.append({
+                        "title":str(item.get("title") or item.get("name") or "")[:300],
+                        "source":str(item.get("source") or item.get("provider") or "")[:180],
+                        "url":str(item.get("url") or "")[:1200],
+                        "snippet":str(item.get("snippet") or "")[:1200],
+                        "rank":item.get("rank") if isinstance(item.get("rank"),(int,float)) else None,
+                    })
                 online_outcome={
-                    "schema":"swrlz-online-research-outcome-v1",
+                    "schema":"swrlz-online-research-outcome-v2",
                     "terminalState":str(g.get("terminalType") or "COMPLETE")[:80],
                     "research":online_research,
                     "trace":copy.deepcopy((g.get("onlineTrace") or [])[-64:]),
+                    "sources":bounded_sources,
                     "sourceSites":sorted({str(urllib.parse.urlsplit(str(item.get("url") or "")).hostname or "").lower() for item in online_sources if item.get("url")})[:24],
+                    "widgets":copy.deepcopy(online_widgets[:8]),
                     "widgetKinds":[str(item.get("kind") or "")[:80] for item in online_widgets if isinstance(item,dict)][:8],
+                    "statusTrail":copy.deepcopy((g.get("status") or [])[-128:]),
+                    "responseCognition":copy.deepcopy(g.get("responseCognition") or {}),
+                    "programmingIntent":copy.deepcopy(g.get("programmingIntent") or {}),
+                    "candidateValidation":copy.deepcopy(g.get("candidateValidation") or {}),
+                    "candidateAttempts":copy.deepcopy((g.get("candidateAttempts") or [])[-16:]),
+                    "generationTelemetry":copy.deepcopy(g.get("generationTelemetry") or {}),
+                    "engineCompletionTelemetry":copy.deepcopy(g.get("engineCompletionTelemetry") or {}),
+                    "contextBudget":copy.deepcopy(g.get("contextBudget") or {}),
+                    "resourcePlan":copy.deepcopy(g.get("resourcePlan") or {}),
+                    "finalResponse":str(text or "")[:24000],
+                    "finalResponseSha256":hashlib.sha256(str(text or "").encode("utf-8")).hexdigest(),
                     "requestedModelId":str(g.get("requestedModelId") or model_id)[:80],
                     "selectedModelId":str(g.get("selectedModelId") or model_id)[:80],
                     "stationTiming":station_timing,
                     "rawPromptStored":False,
                     "historyStored":False,
                     "preciseLocationStored":False,
+                    "privateReasoningStored":False,
                 }
             if intent.get("codingTask") and generation_telemetry:
                 github_telemetry={
