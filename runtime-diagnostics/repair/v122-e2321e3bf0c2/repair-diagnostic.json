@@ -1,0 +1,153 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v122-e2321e3bf0c2",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "005267858ae6a187acc86e064b6651409d7380fd",
+  "persistedAtUnixMs": 1791165546257,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "a-b6a9aa0945f1",
+    "repairSourceMessageId": "a-b6a9aa0945f1",
+    "repairSourceFingerprint": "923244086307a310",
+    "candidateFingerprint": "923244086307a310",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "{\"passed\": 6, \"total\": 9, \"cases\": [{\"test\": \"null\", \"passed\": true}, {\"test\": \"empty\", \"passed\": true}, {\"test\": \"whitespace_spaces\", \"passed\": false, \"error\": \"Expected values to be strictly equal: '' !== '(untitled)'\"}, {\"name\": \"whitespace_tabs\", \"passed\": false, \"expected\": \"(untitled)\", \"recei"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "behavior-mismatch",
+        "assertion"
+      ],
+      "exceptionTypes": [],
+      "exitCodes": [],
+      "failingSignals": [
+        "{\"passed\": 6, \"total\": 9, \"cases\": [{\"test\": \"null\", \"passed\": true}, {\"test\": \"empty\", \"passed\": true}, {\"test\": \"whitespace_spaces\", \"passed\": false, \"error\": \"Expected values to be strictly equal: '' !== '(untitled)'\"}, {\"name\": \"whitespace_tabs\", \"passed\": false, \"expected\": \"(untitled)\", \"received\": \"\"}, {\"id\": \"whitespace_newline\", \"success\": false, \"expected\": \"(untitled)\", \"actual\": \"\"}]}",
+        "whitespace_spaces: Expected values to be strictly equal: '' !== '(untitled)'"
+      ],
+      "passingSignals": [],
+      "expectedActual": [
+        "{\"passed\": 6, \"total\": 9, \"cases\": [{\"test\": \"null\", \"passed\": true}, {\"test\": \"empty\", \"passed\": true}, {\"test\": \"whitespace_spaces\", \"passed\": false, \"error\": \"Expected values to be strictly equal: '' !== '(untitled)'\"}, {\"name\": \"whitespace_tabs\", \"passed\": false, \"expected\": \"(untitled)\", \"received\": \"\"}, {\"id\": \"whitespace_newline\", \"success\": false, \"expected\": \"(untitled)\", \"actual\": \"\"}]}",
+        "whitespace_spaces: actual=Expected values to be strictly equal: ''; expected='(untitled)'",
+        "whitespace_tabs: expected='(untitled)'; actual=''",
+        "whitespace_newline: expected='(untitled)'; actual=''"
+      ],
+      "sourceLocations": [],
+      "failingTests": [
+        "whitespace_spaces",
+        "whitespace_tabs",
+        "whitespace_newline"
+      ],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 5,
+        "failedCaseCount": 3
+      },
+      "behaviorCases": [
+        {
+          "id": "null",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "empty",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "whitespace_spaces",
+          "status": "failed",
+          "expected": null,
+          "actual": null,
+          "message": "Expected values to be strictly equal: '' !== '(untitled)'"
+        },
+        {
+          "id": "whitespace_tabs",
+          "status": "failed",
+          "expected": "'(untitled)'",
+          "actual": "''",
+          "message": null
+        },
+        {
+          "id": "whitespace_newline",
+          "status": "failed",
+          "expected": "'(untitled)'",
+          "actual": "''",
+          "message": null
+        }
+      ]
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": {
+        "passed": 2,
+        "total": 5,
+        "failed": 3
+      },
+      "bestKnownScore": {
+        "passed": 2,
+        "total": 5,
+        "failed": 3
+      },
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [
+        "null",
+        "empty"
+      ],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": {
+        "artifactId": "artifact-79c1d523a24d4d3bb049f44ca3ab2232",
+        "revision": 1,
+        "sourceHash": "bde2a083644116cb6a0e30bcafea4a31ab5e138c7f591d813e69706049b490b6",
+        "sourceFingerprint": "923244086307a310"
+      }
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": "923244086307a310",
+      "artifactId": "artifact-79c1d523a24d4d3bb049f44ca3ab2232",
+      "revision": 1,
+      "sourceHash": "bde2a083644116cb6a0e30bcafea4a31ab5e138c7f591d813e69706049b490b6"
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 5,
+      "failedCaseCount": 3
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
