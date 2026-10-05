@@ -1,3 +1,19 @@
+## UPDATE CHECKPOINT — 2026-10-05 — v127 final explicit-web priority head
+
+**Exact deployment source:** `f3f437ef6d811a615e9b4e561496de701c5df8da` on `feature/hf-space-manual-deploy`.
+
+**Static verification:** verifier #51 / `37357129735` SUCCESS.
+
+**Additional live-regression repair:** explicit web-search intent now outranks incidental weather vocabulary. A prompt such as `Search online for Open-Meteo weather API documentation` remains ordinary web search instead of being misclassified as a weather-location request.
+
+**Preserved v127 receipts:** screenshot continuation/correction routing, non-code history isolation from Coder, evidence/refusal grounding guard, real Leavenworth weather fallback, online trace observability, and mobile composer collapse contract all remain static-green.
+
+**Live evidence from prior deployed v127 candidate:** the rebuilt Chat bundle already passed the composer contract; `Yes for today` completed as weather-continuation on 700M; the exact `look up the word hey` correction completed as web search on 700M with no Coder route. The prior live run failed only on the later Open-Meteo documentation query, which this source repairs.
+
+**Versions unchanged within v127:** LALM Engine `2.1.154`; Online Research `1.0.8`; Web Chat `1.5.90`; clean-room Chat `1.0.91`; Repository Work `1.0.85`.
+
+**Status:** FINAL v127 SOURCE STATIC VERIFIED / GUARDED DEPLOYMENT READY.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — v127 exact screenshot regressions + mobile composer final head
 
 **Exact deployment source:** `0503dfc4010a0309a88250f49e8a5f3cd642548f` on `feature/hf-space-manual-deploy`.
