@@ -1,10 +1,15 @@
-# §wyrl§ Engine · Maker v5.3
+# §wyrl§ Engine · Maker v5.4
 
 ## Project entry command
 
 Use `§tart §E` or `@GitHub §tart §E` to enter the dedicated §wyrl§ Engine lane. This engine remains deployment-isolated from the main §wyrlz AI Chat/LALM application.
 
 ## Current default
+
+### Wisp visitor avatar
+
+The Dragon's Den now spawns the player as a glowing Wisp-style spirit avatar instead of the old blue capsule. The model uses procedural additive glow sprites, a bright core, orbiting motes, wispy trailing particles, team glow, and gentle hover/pulse animation. The Blank Starter and MOBA templates keep their existing player models.
+
 
 **Dragon's Den — Seed Chamber** remains the default project.
 
@@ -86,7 +91,7 @@ The roof is therefore no longer a pile of unrelated objects in normal editing—
 - standalone export
 - structured agent API
 
-Agent version: `swyrl-engine-agent-v3.3`
+Agent version: `swyrl-engine-agent-v3.4`
 
 New agent operations:
 
@@ -108,14 +113,15 @@ patches/v5_projects.py
 patches/v5_1_swyl_engine_seed_den.py
 patches/v5_2_first_person_twin_stick.py
 patches/v5_3_groups_immersive_den.py
+patches/v5_4_wisp_avatar.py
 ```
 
-Final v5.3:
+Final v5.4:
 
-- artifact: `swyrl_engine_v5_3.html`
-- bytes: `146986`
-- SHA-256: `ef68a0906430de83a5da464efe864eed26e757f03d6fdce5e81df6411c75f995`
-- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_3_GROUPS_IMMERSIVE_DEN`
+- artifact: `swyrl_engine_v5_4.html`
+- bytes: `151952`
+- SHA-256: `add2c872e99097285a4ed68372aae3c6f7a42dff4cac4315771c56e8e9c0aea5`
+- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_4_WISP_AVATAR`
 
 ## Deployment
 
