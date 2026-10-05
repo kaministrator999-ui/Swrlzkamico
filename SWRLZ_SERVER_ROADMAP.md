@@ -1,3 +1,30 @@
+## UPDATE STARTED — 2026-10-04 — Persistent repair constraints + structured JSON receipts v121
+
+**Goal:** close review (19)'s two remaining camera-proven repair-state defects: preserve proven dependency restrictions across later receipts that report a different failure, and normalize structured JSON test reports into the same failing-test / expected-vs-actual / category contract used by text test runners.
+
+**Review (19) evidence:** the v120 rerun finished 4/6. Compact repair context, exact artifact revision/hash binding, receipt ownership, GitHub persistence and false-convergence fixes held; currency reached 12/12. Remaining failures were the dependency case and TypeScript nullable-label case.
+
+**Camera-first reconciliation:** existing `runtime-diagnostics/repair/...` logs independently reproduce both defects on deployed source `0dd7ffacdbce9e60cb78b12085ce829a862e0669`:
+- Dependency seed request `web-muugt1zi-2687108918-555144845` recorded `categories=['runtime','dependency']` and `reportedDependencies=['slugify']`.
+- Its later behavior receipt `web-muugt8vk-2984486364-2498154041` retained only broad behavioral/dependency categories while `reportedDependencies=[]`; a later import receipt again rediscovered `slugify`. The identifier is therefore not durable across receipt changes.
+- TypeScript seed receipt `web-muugv9e8-2053799363-172488937` correctly recorded `type` + `typecheck`; its later JSON test receipt `web-muugvjxj-2073153364-3114290168` recorded `categories=[]`, `failingTests=[]`, `expectedActual=[]` even though its failure signals contain `"passed": false` and `'' !== '(untitled)'`. The evidence is present but not normalized.
+
+**Architecture reconciliation:**
+- Brain remains the authority for intent, receipt normalization and repair state. Add bounded `repairConstraints` that accumulate proven unavailable dependency identifiers across receipts instead of relying only on the newest receipt.
+- A newer behavioral/type/assertion receipt may add evidence but must not silently erase an earlier proven environment constraint. Unavailable dependencies remain active until a new task begins or explicit evidence says the dependency is now available/installed.
+- Candidate validation and retry strategy consume accumulated `repairConstraints`; importing an active unavailable dependency is rejected even if the newest receipt itself is behavioral rather than dependency-shaped.
+- Structured JSON is a receipt transport, not a separate acceptance system. Parse bounded JSON objects/cases and normalize failed test IDs, false status, expected/actual/received values, assertion/error messages and source location fields into existing receipt semantics.
+- Preserve structural-vs-execution truth: normalized JSON improves evidence grounding but does not make the model its own grader.
+
+**Camera additions:**
+- Persist/export a bounded `repairConstraints` snapshot including active unavailable dependencies, whether each was carried from earlier receipts, and dependency-policy mode.
+- Add bounded structured-receipt normalization metadata (`formats`, JSON object/case counts, failed-case count) to repair diagnostics so later reviews can prove what the parser extracted without storing additional source/private reasoning.
+- Add active repair constraints to candidate-validation/programming telemetry receipts so a future regression can distinguish parser loss from gate loss.
+
+**Expected module impact:** LALM Engine + Repository Work. Deployment Control and Server Runtime unchanged unless their owners actually change.
+
+**Deployment expectation:** runtime-affecting HF source mutation; run v117→v120 regression plus new v121 deterministic tests before one guarded HF deployment and live multi-receipt acceptance.
+
 ## UPDATE FINISHED — 2026-10-04 — Repair context, strategy, persistence + artifact lineage v120
 
 **Outcome:** LIVE RUNTIME VERIFIED.
