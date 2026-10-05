@@ -1,3 +1,3 @@
 SOURCE_REF=feature/hf-space-manual-deploy
-SUITE=programming-contract-v117
-REQUEST_NONCE=2026-10-05-v122-behavior-ledger-static-003
+SUITE=programming-contract-v123
+REQUEST_NONCE=2026-10-05-v123-response-cognition-static-001
