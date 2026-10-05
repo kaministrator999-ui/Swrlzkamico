@@ -144,6 +144,68 @@ jobs:
           assert rc_assistant, rc_thread_state
           assert ((rc_assistant.get("meta") or {}).get("responseCognition") or {}).get("relation") == "correction", rc_assistant
 
+          # v124 weather vertical: real provider data must reach both live generation
+          # and the committed assistant-message widget/source envelope.
+          weather_client = Client()
+          weather_thread = "weather-" + uuid.uuid4().hex[:10]
+          wg, ws = weather_client.send_and_wait(weather_thread, "What's the weather in Kansas City, Missouri right now?")
+          assert wg.get("terminalType") == "COMPLETE", wg
+          weather_research = wg.get("onlineResearch") if isinstance(wg.get("onlineResearch"), dict) else {}
+          weather_widgets = wg.get("widgets") if isinstance(wg.get("widgets"), list) else []
+          weather_sources = wg.get("sources") if isinstance(wg.get("sources"), list) else []
+          assert weather_research.get("kind") == "weather" and weather_research.get("status") == "OK", weather_research
+          assert weather_research.get("provider") == "Open-Meteo", weather_research
+          assert weather_widgets and weather_widgets[0].get("contract") == "swrlz-widget-v1", weather_widgets
+          assert weather_widgets[0].get("kind") == "weather", weather_widgets[0]
+          weather_current = ((weather_widgets[0].get("data") or {}).get("current") or {})
+          assert weather_current.get("temperature") is not None, weather_current
+          assert weather_current.get("humidity") is not None, weather_current
+          assert weather_current.get("windSpeed") is not None, weather_current
+          assert weather_sources and any("open-meteo.com" in str(item.get("url") or "") for item in weather_sources), weather_sources
+          weather_thread_state = next((thread for thread in (ws.get("threads") or []) if thread.get("id") == weather_thread), None)
+          assert weather_thread_state, ws
+          weather_assistant = next((msg for msg in reversed(weather_thread_state.get("messages") or []) if (msg.get("meta") or {}).get("requestId") == wg.get("requestId") and msg.get("role") == "assistant"), None)
+          assert weather_assistant, weather_thread_state
+          persisted_weather_widgets = (weather_assistant.get("meta") or {}).get("widgets") or []
+          assert persisted_weather_widgets and persisted_weather_widgets[0].get("kind") == "weather", weather_assistant
+          receipts.append({
+              "case":"v124-weather-widget-live",
+              "provider":weather_research.get("provider"),
+              "condition":weather_current.get("condition"),
+              "temperature":weather_current.get("temperature"),
+              "widgetKind":weather_widgets[0].get("kind"),
+              "sourceCount":len(weather_sources),
+              "status":"PASS",
+          })
+
+          # v124 general web search: exercise the canonical bounded search owner
+          # through Station and require provenance-bearing structured results.
+          search_client = Client()
+          search_thread = "search-" + uuid.uuid4().hex[:10]
+          sg, ss = search_client.send_and_wait(search_thread, "Search online for Open-Meteo weather API documentation")
+          assert sg.get("terminalType") == "COMPLETE", sg
+          search_research = sg.get("onlineResearch") if isinstance(sg.get("onlineResearch"), dict) else {}
+          search_widgets = sg.get("widgets") if isinstance(sg.get("widgets"), list) else []
+          search_sources = sg.get("sources") if isinstance(sg.get("sources"), list) else []
+          assert search_research.get("kind") == "search", search_research
+          assert search_research.get("status") == "OK", search_research
+          assert int(search_research.get("resultCount") or 0) > 0, search_research
+          assert search_widgets and search_widgets[0].get("kind") == "search-results", search_widgets
+          assert search_sources and all(str(item.get("url") or "").startswith(("http://","https://")) for item in search_sources), search_sources
+          search_thread_state = next((thread for thread in (ss.get("threads") or []) if thread.get("id") == search_thread), None)
+          assert search_thread_state, ss
+          search_assistant = next((msg for msg in reversed(search_thread_state.get("messages") or []) if (msg.get("meta") or {}).get("requestId") == sg.get("requestId") and msg.get("role") == "assistant"), None)
+          assert search_assistant, search_thread_state
+          assert ((search_assistant.get("meta") or {}).get("widgets") or [])[0].get("kind") == "search-results", search_assistant
+          receipts.append({
+              "case":"v124-online-search-widget-live",
+              "provider":search_research.get("provider"),
+              "resultCount":search_research.get("resultCount"),
+              "widgetKind":search_widgets[0].get("kind"),
+              "sourceCount":len(search_sources),
+              "status":"PASS",
+          })
+
           def route_state(generation):
               statuses = generation.get("status") if isinstance(generation.get("status"), list) else []
               phases = [str(item.get("phase") or "") for item in statuses if isinstance(item, dict)]
