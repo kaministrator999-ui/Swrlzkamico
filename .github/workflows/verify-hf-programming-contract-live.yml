@@ -17,7 +17,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 36
     steps:
       - uses: actions/checkout@v4
 
@@ -75,7 +75,7 @@ jobs:
                       return response.status, json.loads(response.read().decode("utf-8"))
 
               def send_and_wait(self, thread_id, prompt):
-                  rid = "v121-" + uuid.uuid4().hex[:12]
+                  rid = "v122-" + uuid.uuid4().hex[:12]
                   status, ack = self.post("/api/lalm_station/send", {
                       "modelId":"700m",
                       "threadId":thread_id,
@@ -628,8 +628,132 @@ jobs:
               "status":"PASS",
           })
 
+          # v122: externally measured regression must preserve the better tested
+          # artifact as the next repair base instead of compounding on the worse one.
+          c9 = Client()
+          thread9 = "v122-behavior-ledger-" + uuid.uuid4().hex[:10]
+          g9a, _ = c9.send_and_wait(
+              thread9,
+              "Write a complete runnable Python module with a typed function normalize_token(value: str) -> str that returns value unchanged, plus an if __name__ == '__main__' demo. Use only the standard library and return the complete module in one Python code fence.",
+          )
+          _, intent9a, validation9a = route_state(g9a)
+          assert validation9a.get("status") == "PASS", validation9a
+          artifact9a = g9a.get("artifactReceipt") or {}
+          assert artifact9a.get("action") == "ARTIFACT_CREATED", artifact9a
+          assert artifact9a.get("revision") == 1, artifact9a
+          artifact9 = artifact9a.get("artifactId")
+          hash9a = artifact9a.get("sourceHash")
+          assert artifact9 and hash9a, artifact9a
+
+          receipt9b = json.dumps({
+              "passed":5,
+              "total":9,
+              "cases":[
+                  {"test":"test_00","passed":False,"expected":"hello","actual":"Hello"},
+                  {"test":"test_01","passed":False,"expected":"world","actual":"WORLD"},
+                  {"test":"test_02","passed":False,"expected":"abc","actual":"AbC"},
+                  {"test":"test_03","passed":True},
+                  {"test":"test_04","passed":True},
+                  {"test":"test_05","passed":True},
+                  {"test":"test_06","passed":True},
+                  {"test":"test_07","passed":False,"expected":"x","actual":"X"},
+                  {"test":"test_api_signature","passed":True},
+              ],
+          })
+          g9b, _ = c9.send_and_wait(thread9, receipt9b)
+          _, intent9b, validation9b = route_state(g9b)
+          ledger9b = intent9b.get("behaviorLedger") or {}
+          assert ledger9b.get("currentScore") == {"passed":5,"total":9,"failed":4}, ledger9b
+          assert ledger9b.get("bestKnownScore") == {"passed":5,"total":9,"failed":4}, ledger9b
+          assert (ledger9b.get("bestKnownArtifact") or {}).get("revision") == 1, ledger9b
+          artifact9b = g9b.get("artifactReceipt") or {}
+          assert artifact9b.get("action") == "REVISION_COMMITTED", (artifact9b, validation9b, g9b)
+          assert artifact9b.get("revision") == 2, artifact9b
+          hash9b = artifact9b.get("sourceHash")
+          assert hash9b and hash9b != hash9a, (hash9a, hash9b)
+
+          receipt9c = json.dumps({
+              "passed":4,
+              "total":9,
+              "cases":[
+                  {"test":"test_00","passed":False,"expected":"hello","actual":"HELLO"},
+                  {"test":"test_01","passed":False,"expected":"world","actual":"WORLD"},
+                  {"test":"test_02","passed":False,"expected":"abc","actual":"ABC"},
+                  {"test":"test_03","passed":True},
+                  {"test":"test_04","passed":True},
+                  {"test":"test_05","passed":False,"expected":"a1b2","actual":"A1B2"},
+                  {"test":"test_06","passed":True},
+                  {"test":"test_07","passed":False,"expected":"x","actual":"X"},
+                  {"test":"test_api_signature","passed":True},
+              ],
+          })
+          g9c, _ = c9.send_and_wait(thread9, receipt9c)
+          _, intent9c, validation9c = route_state(g9c)
+          ledger9c = intent9c.get("behaviorLedger") or {}
+          base9c = intent9c.get("behaviorRepairBase") or {}
+          assert ledger9c.get("currentScore") == {"passed":4,"total":9,"failed":5}, ledger9c
+          assert ledger9c.get("bestKnownScore") == {"passed":5,"total":9,"failed":4}, ledger9c
+          assert ledger9c.get("rebaseRecommended") is True, ledger9c
+          assert "test_05" in (ledger9c.get("regressedCases") or []), ledger9c
+          assert "test_05" in (ledger9c.get("preservePassingCases") or []), ledger9c
+          assert (ledger9c.get("currentTestedArtifact") or {}).get("revision") == 2, ledger9c
+          assert (ledger9c.get("bestKnownArtifact") or {}).get("revision") == 1, ledger9c
+          assert (ledger9c.get("bestKnownArtifact") or {}).get("sourceHash") == hash9a, (ledger9c, hash9a)
+          assert base9c.get("mode") == "best-known-tested-source", base9c
+          assert base9c.get("revision") == 1, base9c
+          assert base9c.get("sourceHash") == hash9a, (base9c, hash9a)
+          assert validation9c.get("executionVerified") is False, validation9c
+          validation_ledger9c = validation9c.get("behaviorLedger") or {}
+          assert validation_ledger9c.get("repairBaseMode") == "best-known-tested-source", validation_ledger9c
+          assert "test_05" in (validation_ledger9c.get("regressedCases") or []), validation_ledger9c
+
+          context9c = g9c.get("contextBudget") or {}
+          repair_context9c = context9c.get("repairContext") or {}
+          assert repair_context9c.get("behaviorRepairBaseMode") == "best-known-tested-source", repair_context9c
+          assert (repair_context9c.get("behaviorCurrentScore") or {}).get("passed") == 4, repair_context9c
+          assert (repair_context9c.get("behaviorBestKnownScore") or {}).get("passed") == 5, repair_context9c
+          assert repair_context9c.get("behaviorRegressionCount", 0) >= 1, repair_context9c
+
+          g9c, _, persistence9c = wait_for_github_persistence(c9, g9c.get("requestId"))
+          path9c, repo9c = fetch_runtime_programming_log(g9c.get("requestId"))
+          diag9c = repo9c.get("diagnostic") or {}
+          assert repo9c.get("sourceRef") == expected_source, repo9c
+          persisted_ledger9c = diag9c.get("behaviorLedger") or {}
+          persisted_base9c = diag9c.get("behaviorRepairBase") or {}
+          assert (persisted_ledger9c.get("currentScore") or {}).get("passed") == 4, persisted_ledger9c
+          assert (persisted_ledger9c.get("bestKnownScore") or {}).get("passed") == 5, persisted_ledger9c
+          assert "test_05" in (persisted_ledger9c.get("regressedCases") or []), persisted_ledger9c
+          assert persisted_ledger9c.get("repairBaseMode") == "best-known-tested-source", persisted_ledger9c
+          assert persisted_base9c.get("mode") == "best-known-tested-source", persisted_base9c
+          assert persisted_base9c.get("revision") == 1, persisted_base9c
+          assert persisted_base9c.get("sourceHash") == hash9a, (persisted_base9c, hash9a)
+
+          repair_path9c = "runtime-diagnostics/repair/" + g9c.get("requestId") + "/repair-diagnostic.json"
+          repair_log9c = fetch_runtime_log_path(repair_path9c)
+          repair_diag9c = repair_log9c.get("diagnostic") or {}
+          repair_ledger9c = repair_diag9c.get("behaviorLedger") or {}
+          repair_base_diag9c = repair_diag9c.get("behaviorRepairBase") or {}
+          assert (repair_ledger9c.get("currentScore") or {}).get("passed") == 4, repair_ledger9c
+          assert (repair_ledger9c.get("bestKnownScore") or {}).get("passed") == 5, repair_ledger9c
+          assert "test_05" in (repair_ledger9c.get("regressedCases") or []), repair_ledger9c
+          assert repair_base_diag9c.get("mode") == "best-known-tested-source", repair_base_diag9c
+          assert repair_base_diag9c.get("revision") == 1, repair_base_diag9c
+
+          receipts.append({
+              "case":"v122-behavior-regression-best-known-rebase",
+              "currentScore":ledger9c.get("currentScore"),
+              "bestKnownScore":ledger9c.get("bestKnownScore"),
+              "regressedCases":ledger9c.get("regressedCases"),
+              "preservePassingCases":ledger9c.get("preservePassingCases"),
+              "repairBase":base9c,
+              "validationStatus":validation9c.get("status"),
+              "githubLogPath":path9c,
+              "githubPersisted":bool(persistence9c.get("ok")),
+              "status":"PASS",
+          })
+
           receipt = {
-              "checkpoint":"live-programming-contract-v121",
+              "checkpoint":"live-programming-contract-v122",
               "spaceRevision":live_revision,
               "expectedSource":expected_source,
               "coderCheckpoint":coder.get("checkpoint"),
