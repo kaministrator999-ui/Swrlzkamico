@@ -1,0 +1,179 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "v122-35a43e01a0c4",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "d8710d6401cf5080649274e66064d061ae6f05c5",
+  "persistedAtUnixMs": 1791210969519,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 2,
+      "regenerationCount": 1,
+      "firstCandidateRejected": true,
+      "finalAcceptedAttempt": 2,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": true,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 23.552,
+      "visibleFirstDeltaLatencyMs": 12199.549,
+      "engineTotalLatencyMs": 12200.758,
+      "totalCandidateGenerationMs": 12174.886,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 7862.072,
+          "firstTokenLatencyMs": 5652.623,
+          "deltaChunks": 77,
+          "candidateFingerprint": "e4c9fc852b96bf09",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": false,
+          "validationStatus": "REJECT",
+          "validationReasons": [
+            "diagnostic-repair-no-executable-change",
+            "repair-stalled-no-executable-change"
+          ],
+          "accepted": false
+        },
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 2,
+          "trigger": "retry:unchanged-executable-candidate",
+          "durationMs": 4312.814,
+          "firstTokenLatencyMs": 540.444,
+          "deltaChunks": 142,
+          "candidateFingerprint": "fc424e1708f089bb",
+          "changedFromPreviousAttempt": true,
+          "changedFromRepairTarget": true,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791210957312,
+      "startedAtUnixMs": 1791210957313,
+      "completedAtUnixMs": 1791210969518,
+      "queueWaitMs": 1,
+      "stationRunMs": 12205,
+      "endToEndMs": 12206
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "python"
+      ],
+      "activeRepairConstraints": {
+        "dependencyPolicy": "standard-library-only",
+        "unavailableDependencies": [],
+        "carriedUnavailableDependencies": []
+      },
+      "behaviorLedger": {
+        "currentScore": {
+          "passed": 5,
+          "total": 9,
+          "failed": 4
+        },
+        "bestKnownScore": {
+          "passed": 5,
+          "total": 9,
+          "failed": 4
+        },
+        "regressedCases": [],
+        "resolvedCases": [],
+        "preservePassingCases": [
+          "test_03",
+          "test_04",
+          "test_05",
+          "test_06",
+          "test_api_signature"
+        ],
+        "rebaseRecommended": false,
+        "bestKnownArtifact": {
+          "artifactId": "artifact-d0d7049817ec45818836e7a68e6bbb21",
+          "revision": 1,
+          "sourceHash": "2e225eb2deddd310fce983b430dad2b60c89fc64cf5ca3d164629c20af7fce40",
+          "sourceFingerprint": "e4c9fc852b96bf09"
+        },
+        "repairBaseMode": "latest-failing-source"
+      },
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 9,
+        "failedCaseCount": 4
+      },
+      "executionVerified": false,
+      "verificationState": "AWAITING_EXTERNAL_RECEIPT"
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "standard-library-only",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": {
+        "passed": 5,
+        "total": 9,
+        "failed": 4
+      },
+      "bestKnownScore": {
+        "passed": 5,
+        "total": 9,
+        "failed": 4
+      },
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [
+        "test_03",
+        "test_04",
+        "test_05",
+        "test_06",
+        "test_api_signature"
+      ],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": {
+        "artifactId": "artifact-d0d7049817ec45818836e7a68e6bbb21",
+        "revision": 1,
+        "sourceHash": "2e225eb2deddd310fce983b430dad2b60c89fc64cf5ca3d164629c20af7fce40",
+        "sourceFingerprint": "e4c9fc852b96bf09"
+      },
+      "repairBaseMode": "latest-failing-source"
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": "e4c9fc852b96bf09",
+      "artifactId": "artifact-d0d7049817ec45818836e7a68e6bbb21",
+      "revision": 1,
+      "sourceHash": "2e225eb2deddd310fce983b430dad2b60c89fc64cf5ca3d164629c20af7fce40"
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 9,
+      "failedCaseCount": 4
+    },
+    "artifactReceipt": {
+      "action": "REVISION_COMMITTED",
+      "revision": 2,
+      "sourceHash": "0874498c66a4bb1a492835291638442c283e4eac52fafa1a0d38126090c908b1",
+      "reason": null
+    }
+  }
+}
