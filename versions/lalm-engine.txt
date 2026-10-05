@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.148
-REVISION=2.1.148-hf-response-cognition-v123
+VERSION=2.1.149
+REVISION=2.1.149-hf-online-evidence-widgets-v124
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
