@@ -1,3 +1,59 @@
+## UPDATE FINISHED — 2026-10-04 — Persistent repair constraints + structured JSON receipts v121
+
+**Outcome:** LIVE RUNTIME VERIFIED for the targeted state/parser boundaries.
+
+### Camera-first diagnosis
+- Existing v120 repository cameras were inspected before mutation.
+- Dependency seed log `web-muugt1zi-2687108918-555144845` proved `reportedDependencies=['slugify']`; the later behavior log `web-muugt8vk-2984486364-2498154041` had `reportedDependencies=[]`. This established identifier loss across receipt changes rather than receipt-routing loss.
+- TypeScript log `web-muugvjxj-2073153364-3114290168` showed `categories=[]`, `failingTests=[]`, `expectedActual=[]` while its failure signals still contained structured `passed:false` / strict-equality evidence. This established normalization loss rather than source-binding loss.
+
+### Implemented
+- Brain now owns bounded `swrlz-repair-constraints-v1` state. Proven unavailable dependencies accumulate across receipts and are exposed as active forbidden dependencies until explicit current evidence says the package is now installed/available.
+- Newer assertion/type/behavior receipts add evidence without erasing an earlier unavailable dependency identifier. The state distinguishes `currentReceiptDependencies`, `addedDependencies`, `carriedUnavailableDependencies`, `releasedDependencies`, policy and active count.
+- Candidate validation checks accumulated forbidden dependencies in addition to newest-receipt semantics. Compact repair context and retry strategy consume the same state.
+- Failure history retains dependency identifiers and structured-receipt summary metadata.
+- Structured JSON receipts are decoded boundedly and recursively. False result objects normalize test/name/id labels, expected/actual/received values, assertion/error text and bounded location fields into existing `categories`, `failingTests`, `expectedActual`, `failureSignals` and `sourceLocations`.
+- Receipt semantics now expose bounded `structuredReceipt` camera metadata: format list, JSON object count, case count and failed-case count.
+- Qwen coder and 700M repair diagnostics expose the Brain-owned repair-constraint snapshot and structured-receipt summary; candidate validation propagates `activeRepairConstraints` and `structuredReceipt`.
+- Station persists those bounded summaries in active generation state, final assistant programming telemetry and `runtime-diagnostics/programming/...` durable receipts. No prompt/source/private reasoning was added to repository telemetry.
+- `SWRLZ_CHAT_CAMERA_LOGS.md` documents the new v121 camera contract.
+
+### Static verification
+- Static verifier #14 / `37247278474`: SUCCESS.
+- Full stack: `programming-contract-v117 PASS`, `programming-telemetry-v118 PASS`, `programming-receipts-v119 PASS`, `programming-repair-v120 PASS`, `programming-repair-state-v121 PASS`.
+- Exact verified runtime source: `9faa59d8d8109680fb01f20b6606bb1f09249012`.
+
+### Deployment
+- Guarded HF deployment #70 / `37247526191`: SUCCESS.
+- Selected source SHA: `9faa59d8d8109680fb01f20b6606bb1f09249012`.
+- Prior v120 Space revision `110be76f8915c1e2675bff084b8bcbe18bf41069` preserved as rollback.
+- Published v121 Space revision: `250a73ee0e31bcfbbabf0ff73cb31be46253d742`.
+
+### Live acceptance
+- Live #11 / `37247716729`: correctly rejected as an HF activation race. Space metadata already reported v121, but the first durable programming log still emitted v120 `sourceRef=0dd7ffacdbce9e60cb78b12085ce829a862e0669`. No source change/redeploy followed.
+- Live #12 / `37247796093`: SUCCESS on actual v121 source and Space revision.
+- TypeScript JSON continuation: normalized `categories=['behavior-mismatch','assertion']`, failing tests `whitespace_spaces`, `whitespace_tabs`, `whitespace_newline`, four bounded expected/actual signals, and structured receipt `{formats:['json'], jsonObjectCount:1, caseCount:5, failedCaseCount:3}`.
+- Durable TypeScript camera readback `runtime-diagnostics/repair/v121-32ac78ef5bf2/repair-diagnostic.json` and matching programming telemetry both report source `9faa59d8...` and the same structured-receipt summary.
+- Dependency continuation: newest behavior receipt reports `currentReceiptDependencies=[]`, while Brain/validation/durable cameras retain `unavailableDependencies=['slugify']` and `carriedUnavailableDependencies=['slugify']` under `dependencyPolicy='standard-library-only'`.
+- Durable dependency camera readback `runtime-diagnostics/repair/v121-e86da604ed08/repair-diagnostic.json` and matching programming telemetry both preserve that carried constraint despite the newer JSON receipt naming only behavior failures.
+- Existing v117-v120 route, language, receipt/source, context-budget, artifact lineage and persistence cases remained green in the live suite.
+
+### Bounded truth / remaining convergence issue
+- v121 fixes the repair-state persistence and structured JSON normalization defects identified by review (19).
+- The live TypeScript JSON continuation still produced three identical executable fingerprints; all were correctly rejected as unchanged/repeated. The dependency behavior continuation also ended in a rejected unchanged/repeated candidate while retaining the forbidden dependency state.
+- Therefore this event does **not** claim the coder now solves every downstream behavior repair. The camera now isolates the remaining issue as model/repair-strategy convergence after correct evidence/state delivery, not parser loss or constraint loss.
+- Structural PASS/REJECT remains distinct from external execution correctness.
+
+### Versions
+- LALM Engine: `2.1.146` / `2.1.146-hf-persistent-repair-state-json-v121`.
+- Repository Work: `1.0.75`.
+- Deployment Control: unchanged `1.0.17`.
+- Server Runtime: unchanged `2.3.309`.
+
+**Deployment state:** v121 is active at HF Space revision `250a73ee0e31bcfbbabf0ff73cb31be46253d742`. No further deployment is pending.
+
+**Truth:** `LIVE RUNTIME VERIFIED — PERSISTENT REPAIR CONSTRAINTS + STRUCTURED JSON RECEIPT NORMALIZATION + CAMERA PROPAGATION PASS.` Remaining repeated-candidate behavior is a separate convergence axis, not silently counted as solved.
+
 ## UPDATE CHECKPOINT — 2026-10-04 — Persistent repair constraints + structured JSON receipts v121
 
 **Camera-first/static state:** SOURCE COMPLETE + STATIC VERIFIED.
