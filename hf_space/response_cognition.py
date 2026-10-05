@@ -51,6 +51,8 @@ def _operation(text: str, relation: str) -> str:
     p = text.casefold()
     if relation == "correction":
         return "correct"
+    if relation == "creative-delegation":
+        return "create"
     if relation in ("continuation","expansion","return-to-prior"):
         return "continue"
     if relation == "selection":
