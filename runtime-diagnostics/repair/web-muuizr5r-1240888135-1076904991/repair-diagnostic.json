@@ -1,0 +1,93 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muuizr5r-1240888135-1076904991",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "9faa59d8d8109680fb01f20b6606bb1f09249012",
+  "persistedAtUnixMs": 1791160966778,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "assistant-muuizj68-2508349098-692522581",
+    "repairSourceMessageId": "assistant-muuizj68-2508349098-692522581",
+    "repairSourceFingerprint": "2ef3234420c63970",
+    "candidateFingerprint": "2ef3234420c63970",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 4,
+    "failureSignals": [
+      "\"passed\": false,",
+      "\"error\": \"Expected values to be strictly equal:\\n\\n'' !== 'Anonymous'\\n\"",
+      "\"passed\": false,",
+      "\"error\": \"user.name.trim is not a function\""
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "lint",
+        "behavior-mismatch",
+        "assertion"
+      ],
+      "exceptionTypes": [],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [
+        "\"passed\": false,",
+        "\"error\": \"Expected values to be strictly equal:\\n\\n'' !== 'Anonymous'\\n\"",
+        "\"error\": \"user.name.trim is not a function\"",
+        "whitespace name fallback: Expected values to be strictly equal:\n\n'' !== 'Anonymous'",
+        "numeric name fallback: user.name.trim is not a function"
+      ],
+      "passingSignals": [
+        "\"passed\": 7,",
+        "\"passed\": true"
+      ],
+      "expectedActual": [
+        "whitespace name fallback: actual=''; expected='Anonymous'"
+      ],
+      "sourceLocations": [],
+      "failingTests": [
+        "whitespace name fallback",
+        "numeric name fallback"
+      ],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 9,
+        "failedCaseCount": 2
+      }
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 9,
+      "failedCaseCount": 2
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example",
+      "repair the reported lint rule at the implicated source without changing unrelated behavior"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
