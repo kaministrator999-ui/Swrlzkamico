@@ -1,0 +1,7 @@
+{
+  "schema": "swrlz-forge-deploy-request-v1",
+  "requestedBy": "ChatGPT",
+  "target": "kamiloki/swrlz-forge-moba",
+  "reason": "Initial dedicated SWRLZ Forge MOBA web deployment",
+  "sourceIntegritySha256": "4d56013b8d1301b95e385789744f3a90735bcc8b9c9fcabd13f4806b93ccf39a"
+}
