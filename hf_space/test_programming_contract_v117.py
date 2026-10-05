@@ -111,3 +111,37 @@ check("def digest" in user_seed["failureEvidence"]["repairSource"],user_seed["fa
 check(user_seed["intentContract"]["languageContract"]["requestedLanguages"]==["python"],user_seed["intentContract"])
 
 print("programming-contract-v117 PASS")
+
+
+# Non-code history must not leak into coder routing merely because prior prose mentions websites/UI/API-like words.
+weather_history=[
+    {"id":"u-weather","role":"user","text":"Can you check the weather in Leavenworth kansas","meta":{}},
+    {"id":"a-weather","role":"assistant","text":"You can check an online weather website or API for current conditions.","meta":{"state":"COMPLETE"}},
+]
+weather_follow=programming_intent("Yes for today",weather_history,[],{})
+check(weather_follow["codingTask"] is False,weather_follow)
+
+lookup_follow=programming_intent(
+    "I didn't mean look up weather I want you to look up the word hey",
+    weather_history+[{"id":"u2","role":"user","text":"Yes for today","meta":{}}],
+    [],
+    {},
+)
+check(lookup_follow["codingTask"] is False,lookup_follow)
+
+# Weak software-adjacent nouns need an actual programming action.
+check(programming_intent("What website is Weather.com?",[],[],{})["codingTask"] is False,"website lookup misrouted")
+check(programming_intent("Check the current API documentation online",[],[],{})["codingTask"] is False,"documentation lookup misrouted")
+check(programming_intent("Build a website with a responsive UI",[],[],{})["codingTask"] is True,"website build lost coder route")
+check(programming_intent("Fix the server handler code",[],[],{})["codingTask"] is True,"server repair lost coder route")
+
+# Genuine terse continuation still inherits an active coding contract.
+prior_code=programming_intent("Write a Python function that returns 1",[],[],{})
+code_history=[
+    {"id":"u-code","role":"user","text":"Write a Python function that returns 1","meta":{}},
+    {"id":"a-code","role":"assistant","text":"```python\ndef one():\n    return 1\n```","meta":{"codeArtifactId":"artifact-code","artifactRevision":1}},
+]
+continued_code=programming_intent("keep going",code_history,[],prior_code)
+check(continued_code["codingTask"] is True,continued_code)
+
+print("programming-routing-negative-regressions-v126 PASS")
