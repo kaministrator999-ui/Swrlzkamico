@@ -1,0 +1,28 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v122-f4545101fcdd",
+  "modelId": "700m",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "60555e2712fa7a0dcc67d46922e727eff40d5b40",
+  "persistedAtUnixMs": 1791214226397,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "f10ca213f9c28b31",
+    "newCandidateFingerprint": "6819bb277daa2dba",
+    "candidateChanged": true,
+    "stalledRepairInput": false,
+    "regenerationAttempted": false,
+    "regenerationReason": null,
+    "candidateValidationStatus": "PASS",
+    "candidateValidationReasons": [],
+    "receiptCategories": [
+      "name-or-symbol",
+      "runtime"
+    ],
+    "repairActions": [
+      "restore or correctly resolve the reported identifier/module/symbol without renaming required public APIs",
+      "trace the exception to its first relevant application frame and repair the causing state/operation"
+    ],
+    "executionVerified": false
+  }
+}
