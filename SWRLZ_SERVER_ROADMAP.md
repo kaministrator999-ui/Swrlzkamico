@@ -1,3 +1,20 @@
+## UPDATE CHECKPOINT — 2026-10-05 — General response cognition + continuation coherence v123
+
+**Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
+
+- Exact feature source: `a67077a46080674c09e0fbd0a379d625bee320a3`.
+- Static verifier #18 / `37256428851`: SUCCESS after two bounded classifier corrections caught by the new suite.
+- Full regression stack: `programming-contract-v117 PASS`, `programming-telemetry-v118 PASS`, `programming-receipts-v119 PASS`, `programming-repair-v120 PASS`, `programming-repair-state-v121 PASS`, `programming-behavior-ledger-v122 PASS`, `response-cognition-v123 PASS`.
+- Brain now owns `swrlz-response-cognition-v1`, shared by HF 700M general responses and Qwen coder responses.
+- Current-turn relation classes cover standalone, topic reset, continuation, correction, expansion, selection, confirmation, decline, creative delegation, and return-to-prior.
+- Operation/detail/count/output-only/preserve constraints are compiled into compact model-facing policy. Current-turn scope/grammar always outranks history.
+- Station retains privacy-bounded response-cognition metadata in active generation/final message metadata; no prompt/history text or hidden reasoning is duplicated into the camera.
+- Existing v117-v122 programming intent, receipt, repair-source, persistent-constraint, behavior-ledger, and external-execution truth boundaries remain unchanged.
+
+**Versions assigned after concurrency re-read:** LALM Engine `2.1.148` / `2.1.148-hf-response-cognition-v123`; Repository Work `1.0.78`; Deployment Control unchanged `1.0.17`; Server Runtime unchanged `2.3.309`.
+
+**Next governed state:** one guarded HF deployment from exact feature source, then live acceptance proving standalone → terse continuation → correction cognition through Station plus the existing programming regression contract.
+
 ## UPDATE STARTED — 2026-10-05 — General response cognition + continuation coherence v123
 
 **Goal:** improve overall answer quality across the broadest practical range of ordinary user inputs and continuation inputs without replacing the existing programming repair system with prompt-specific special cases.
