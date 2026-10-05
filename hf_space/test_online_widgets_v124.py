@@ -236,6 +236,7 @@ try:
         generators["700m"],
         generators["coder"],
     ))
+    coder_online_payload=dict(captures["coder"])
     before_noncode=len(online_calls)
     noncode_events=list(model_router.dispatch(
         "coder",
@@ -250,8 +251,9 @@ try:
 finally:
     model_router.stream_online_request=orig_stream
 
-for model_id in ("stock","700m","coder"):
+for model_id in ("stock","700m"):
     assert (captures[model_id].get("onlineContext") or {}).get("contractId")=="test-online-context",(model_id,captures[model_id])
+assert (coder_online_payload.get("onlineContext") or {}).get("contractId")=="test-online-context",coder_online_payload
 assert captures["r39"].get("onlineContextEmbeddedForR39") is True,captures["r39"]
 assert "§WYRLZ ONLINE EXTERNAL EVIDENCE" in captures["r39"].get("prompt",""),captures["r39"]
 assert any(call["codingTask"] is True and "FastAPI" in call["prompt"] for call in online_calls),online_calls
