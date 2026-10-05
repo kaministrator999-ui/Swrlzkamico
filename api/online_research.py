@@ -39,8 +39,7 @@ class Evidence:
 def requested(profile_id:Any)->bool:return "+ONLINE" in str(profile_id or "").upper()
 def _clean_query(value:Any)->str:return re.sub(r"\s+"," ",str(value or "")).strip()[:500]
 def _provider()->str:
-    configured=os.environ.get("SWRLZ_SEARCH_PROVIDER","duckduckgo-html").strip().lower()
-    return configured if configured in {"duckduckgo-html"} else "duckduckgo-html"
+    return "bounded-web-search-chain-v1"
 
 def _safe_public_host(hostname:str)->None:
     if not hostname:raise ValueError("URL_HOST_REQUIRED")
@@ -65,37 +64,102 @@ class _SafeRedirect(urllib.request.HTTPRedirectHandler):
 
 def _opener():return urllib.request.build_opener(_SafeRedirect())
 
-def _ddg_search(query:str)->list[dict[str,Any]]:
-    url="https://html.duckduckgo.com/html/?"+urllib.parse.urlencode({"q":query})
-    req=urllib.request.Request(url,headers={"User-Agent":USER_AGENT,"Accept":"text/html"})
+def _search_html(url:str)->tuple[int,str,int]:
+    safe=_validate_public_url(url)
+    req=urllib.request.Request(safe,headers={"User-Agent":USER_AGENT,"Accept":"text/html,application/xhtml+xml;q=0.9,*/*;q=0.1","Accept-Language":"en-US,en;q=0.8"})
     with _opener().open(req,timeout=SEARCH_TIMEOUT_SECONDS) as response:
         raw=response.read(MAX_FETCH_BYTES+1)
         status=int(getattr(response,"status",200) or 200)
     if len(raw)>MAX_FETCH_BYTES:raise ValueError("SEARCH_RESPONSE_TOO_LARGE")
-    text=raw.decode("utf-8","replace")
-    # DDG changes wrapper nesting independently of the stable result__a/result__snippet
-    # classes. Parse each result anchor and bound its local result region instead of
-    # requiring one exact nested </div></div> shape.
-    anchors=list(re.finditer(r'<a[^>]+class=["\'][^"\']*\bresult__a\b[^"\']*["\'][^>]+href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>',text,re.I))
+    return status,raw.decode("utf-8","replace"),len(raw)
+
+def _clean_search_text(value:str,limit:int)->str:
+    value=re.sub(r"(?is)<(script|style|svg)[^>]*>.*?</\\1>"," ",str(value or ""))
+    value=html.unescape(re.sub(r"<[^>]+>"," ",value))
+    return re.sub(r"\\s+"," ",value).strip()[:limit]
+
+def _ddg_target(href:str)->str:
+    value=html.unescape(str(href or ""))
+    if value.startswith("//"):value="https:"+value
+    parsed=urllib.parse.urlsplit(value)
+    if parsed.netloc.endswith("duckduckgo.com"):
+        target=urllib.parse.parse_qs(parsed.query).get("uddg",[""])[0]
+        if target:value=urllib.parse.unquote(target)
+    return value
+
+def _evidence_result(query:str,href:str,title:str,snippet:str,rank:int)->dict[str,Any]|None:
+    try:safe=_validate_public_url(_ddg_target(href))
+    except ValueError:return None
+    target=urllib.parse.urlsplit(safe)
+    clean_title=_clean_search_text(title,300)
+    if not clean_title:return None
+    return asdict(Evidence(title=clean_title,url=safe,snippet=_clean_search_text(snippet,1200),source=target.netloc.lower(),query=query,rank=rank,fetched_at=int(time.time())))
+
+def _parse_ddg_html(query:str,text:str)->tuple[list[dict[str,Any]],int]:
+    anchors=list(re.finditer(r'<a[^>]+class=["\'][^"\']*\\bresult__a\\b[^"\']*["\'][^>]+href=["\']([^"\']+)["\'][^>]*>([\\s\\S]*?)</a>',text,re.I))
     results=[]
     for index,anchor in enumerate(anchors):
-        href=html.unescape(anchor.group(1));parsed=urllib.parse.urlsplit(href)
-        if parsed.netloc.endswith("duckduckgo.com"):
-            target=urllib.parse.parse_qs(parsed.query).get("uddg",[""])[0]
-            if target:href=urllib.parse.unquote(target)
-        try:href=_validate_public_url(href)
-        except ValueError:continue
-        target=urllib.parse.urlsplit(href)
-        title=html.unescape(re.sub(r"\s+"," ",re.sub(r"<[^>]+>"," ",anchor.group(2)))).strip()
         region_end=anchors[index+1].start() if index+1<len(anchors) else min(len(text),anchor.end()+5000)
         region=text[anchor.end():region_end]
-        sm=re.search(r'class=["\'][^"\']*\bresult__snippet\b[^"\']*["\'][^>]*>([\s\S]*?)</(?:a|div)>',region,re.I)
-        snippet=re.sub(r"<[^>]+>"," ",sm.group(1)) if sm else ""
-        snippet=html.unescape(re.sub(r"\\s+"," ",snippet)).strip()[:1200]
-        results.append(asdict(Evidence(title=title[:300],url=href,snippet=snippet,source=target.netloc.lower(),query=query,rank=len(results)+1,fetched_at=int(time.time()))))
+        sm=re.search(r'class=["\'][^"\']*\\bresult__snippet\\b[^"\']*["\'][^>]*>([\\s\\S]*?)</(?:a|div)>',region,re.I)
+        item=_evidence_result(query,anchor.group(1),anchor.group(2),sm.group(1) if sm else "",len(results)+1)
+        if item:results.append(item)
         if len(results)>=MAX_RESULTS_PER_QUERY:break
-    print("SWRLZ_SEARCH_PROVIDER_CAMERA "+json.dumps({"contract":"swrlz-search-provider-camera-v1","provider":"duckduckgo-html","httpStatus":status,"responseBytes":len(raw),"resultAnchors":len(anchors),"acceptedResults":len(results)},separators=(",",":")),flush=True)
-    return results
+    return results,len(anchors)
+
+def _parse_ddg_lite(query:str,text:str)->tuple[list[dict[str,Any]],int]:
+    anchors=list(re.finditer(r'<a[^>]+(?:class=["\'][^"\']*\\bresult-link\\b[^"\']*["\'][^>]*)?href=["\']([^"\']+)["\'][^>]*>([\\s\\S]*?)</a>',text,re.I))
+    results=[]
+    accepted_anchors=0
+    for index,anchor in enumerate(anchors):
+        href=_ddg_target(anchor.group(1))
+        parsed=urllib.parse.urlsplit(href)
+        if not parsed.hostname or parsed.hostname.endswith("duckduckgo.com"):continue
+        accepted_anchors+=1
+        region_end=anchors[index+1].start() if index+1<len(anchors) else min(len(text),anchor.end()+2500)
+        region=text[anchor.end():region_end]
+        sm=re.search(r'class=["\'][^"\']*\\bresult-snippet\\b[^"\']*["\'][^>]*>([\\s\\S]*?)</(?:td|div|span)>',region,re.I)
+        item=_evidence_result(query,href,anchor.group(2),sm.group(1) if sm else "",len(results)+1)
+        if item:results.append(item)
+        if len(results)>=MAX_RESULTS_PER_QUERY:break
+    return results,accepted_anchors
+
+def _parse_bing_html(query:str,text:str)->tuple[list[dict[str,Any]],int]:
+    blocks=list(re.finditer(r'<li[^>]+class=["\'][^"\']*\\bb_algo\\b[^"\']*["\'][^>]*>([\\s\\S]*?)</li>',text,re.I))
+    results=[]
+    for block in blocks:
+        body=block.group(1)
+        am=re.search(r'<h2[^>]*>\\s*<a[^>]+href=["\']([^"\']+)["\'][^>]*>([\\s\\S]*?)</a>',body,re.I)
+        if not am:continue
+        sm=re.search(r'<p[^>]*>([\\s\\S]*?)</p>',body,re.I)
+        item=_evidence_result(query,am.group(1),am.group(2),sm.group(1) if sm else "",len(results)+1)
+        if item:results.append(item)
+        if len(results)>=MAX_RESULTS_PER_QUERY:break
+    return results,len(blocks)
+
+def _provider_attempt(provider:str,url:str,parser,query:str)->list[dict[str,Any]]:
+    try:
+        status,text,response_bytes=_search_html(url)
+        results,anchors=parser(query,text)
+        print("SWRLZ_SEARCH_PROVIDER_CAMERA "+json.dumps({"contract":"swrlz-search-provider-camera-v2","provider":provider,"httpStatus":status,"responseBytes":response_bytes,"resultAnchors":anchors,"acceptedResults":len(results)},separators=(",",":")),flush=True)
+        return results
+    except Exception as exc:
+        print("SWRLZ_SEARCH_PROVIDER_CAMERA "+json.dumps({"contract":"swrlz-search-provider-camera-v2","provider":provider,"errorType":type(exc).__name__,"acceptedResults":0},separators=(",",":")),flush=True)
+        return []
+
+def _ddg_search(query:str)->list[dict[str,Any]]:
+    encoded=urllib.parse.urlencode({"q":query})
+    attempts=[
+        ("duckduckgo-html","https://html.duckduckgo.com/html/?"+encoded,_parse_ddg_html),
+        ("duckduckgo-lite","https://lite.duckduckgo.com/lite/?"+encoded,_parse_ddg_lite),
+        ("bing-html","https://www.bing.com/search?"+urllib.parse.urlencode({"q":query,"setlang":"en-us"}),_parse_bing_html),
+    ]
+    for provider,url,parser in attempts:
+        results=_provider_attempt(provider,url,parser,query)
+        if results:
+            print("SWRLZ_SEARCH_PROVIDER_SELECTED "+json.dumps({"contract":"swrlz-search-provider-selected-v1","provider":provider,"resultCount":len(results)},separators=(",",":")),flush=True)
+            return results
+    return []
 
 def _page_fetch(url:str)->dict[str,Any]:
     safe=_validate_public_url(url);req=urllib.request.Request(safe,headers={"User-Agent":USER_AGENT,"Accept":"text/html,text/plain;q=0.9,*/*;q=0.1"})
