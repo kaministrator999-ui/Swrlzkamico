@@ -1,0 +1,87 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muuj490s-1243901293-4097235667",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "9faa59d8d8109680fb01f20b6606bb1f09249012",
+  "persistedAtUnixMs": 1791161176599,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "6c11948a6ebe6cf8",
+    "candidateFingerprint": "6c11948a6ebe6cf8",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "The traceback reports an unavailable third-party module. The ORIGINAL requirements forbid third-party packages and installation. Remove that dependency and return a complete standard-library implementation of make_slug(text). Preserve the required ASCII URL-slug behavior and the original signature. "
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "runtime",
+        "dependency"
+      ],
+      "exceptionTypes": [
+        "ModuleNotFoundError"
+      ],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [
+        "The traceback reports an unavailable third-party module. The ORIGINAL requirements forbid third-party packages and installation. Remove that dependency and return a complete standard-library implementation of make_slug(text). Preserve the required ASCII URL-slug behavior and the original signature. A repeated import or an installation suggestion does not repair this failure."
+      ],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [
+        "/workspace/swyrlz-coding-route-retry5-2026-10-05/py-dependency/test_contract.py:11:<module>",
+        "/workspace/swyrlz-coding-route-retry5-2026-10-05/py-dependency/seed.py:1:<module>",
+        "line:11",
+        "line:1"
+      ],
+      "failingTests": [],
+      "reportedSymbols": [],
+      "reportedDependencies": [
+        "slugify"
+      ],
+      "structuredReceipt": {
+        "formats": [],
+        "jsonObjectCount": 0,
+        "caseCount": 0,
+        "failedCaseCount": 0
+      }
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "standard-library-only",
+      "unavailableDependencies": [
+        "slugify"
+      ],
+      "forbiddenDependencies": [
+        "slugify"
+      ],
+      "currentReceiptDependencies": [
+        "slugify"
+      ],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 1
+    },
+    "structuredReceipt": {
+      "formats": [],
+      "jsonObjectCount": 0,
+      "caseCount": 0,
+      "failedCaseCount": 0
+    },
+    "repairActions": [
+      "trace the exception to its first relevant application frame and repair the causing state/operation",
+      "repair the import/module/dependency boundary using only dependencies supported by project evidence"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
