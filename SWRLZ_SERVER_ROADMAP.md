@@ -1,3 +1,27 @@
+## UPDATE CHECKPOINT — 2026-10-05 — v127 exact screenshot regressions + mobile composer final head
+
+**Exact deployment source:** `0503dfc4010a0309a88250f49e8a5f3cd642548f` on `feature/hf-space-manual-deploy`.
+
+**Static verification:** verifier #50 / `37354441876` SUCCESS after explicitly checking out the feature branch at `0503dfc4010a0309a88250f49e8a5f3cd642548f`.
+
+**Exact user-reported regressions now covered:**
+- `Can you check the weather in Leavenworth kansas` → weather/Open-Meteo with Kansas city-state fallback.
+- `Yes for today` → non-programming weather continuation on 700M, preserving Leavenworth/Kansas; never literal web search.
+- `I didn't mean look up weather I want you to look up the word hey` → ordinary search query `hey`, remains on 700M, no Coder auto-route, successful evidence cannot end as `can't assist/access`.
+- durable programming logs from both bad production turns proved `no-code-candidate`, so the repair is upstream programming classification rather than making Coder answer non-code turns.
+- Coder online search remains allowed only when the current turn is genuinely programming/coding work.
+- genuine programming continuation such as `keep going` still inherits an active code contract.
+
+**Composer root cause + repair:** a later Chat usability rule contained `.composer-shell.collapsed{transform:none}`, overriding the real collapse transform on mobile. That override is removed. The top-layer touch target, explicit toggle handler, viewport-inset recalculation, and UI camera remain intact. Static tests require the real collapse transform and forbid the cancelling rule.
+
+**Regression receipts:** full v117-v126 stack PASS plus `programming-routing-negative-regressions-v126 PASS`, `real-user-weather-v126 PASS`, `weather-continuation-real-user-v126 PASS`, and `non-programming-history-carry-v126 PASS`.
+
+**Versions unchanged within this v127 tier:** LALM Engine `2.1.154`; Online Research `1.0.8`; Web Chat `1.5.90`; clean-room Chat `1.0.91`; Repository Work `1.0.85`.
+
+**Live gate extension:** deployed Chat must contain the active collapse transform, must not contain the cancelling `transform:none`, and must retain the composer click handler, in addition to the existing exact weather continuation/search correction/Coder isolation checks.
+
+**Status:** CURRENT HEAD STATIC VERIFIED / GUARDED DEPLOYMENT READY.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — Search continuation, coder-route isolation + composer recovery v127
 
 **Exact source/static state:** feature source `5e6dc7d95a8276a3fe7229dd6c2c64dfba3c0ce3` (0 ahead / 0 behind) passed static verifier #47 / `37337217200` SUCCESS.
