@@ -338,6 +338,12 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
     for dependency in active_dependencies:
         if _candidate_dependency_referenced(candidate_code,str(dependency)):
             reasons.append("dependency-still-referenced:"+str(dependency)[:100])
+    behavior=programming.get("behaviorLedger") if isinstance(programming.get("behaviorLedger"),dict) else {}
+    repair_base=programming.get("behaviorRepairBase") if isinstance(programming.get("behaviorRepairBase"),dict) else {}
+    after_fp=_code_fingerprint(text)
+    base_fp=str(repair_base.get("sourceFingerprint") or "")
+    if repair_base.get("mode")=="best-known-tested-source" and base_fp and after_fp==base_fp:
+        reasons.append("behavior-repair-base-unchanged")
     verification="AWAITING_EXTERNAL_RECEIPT" if evidence else "NOT_EXECUTION_VERIFIED"
     return {
         "status":"REJECT" if reasons else "PASS",
@@ -350,6 +356,16 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
             "dependencyPolicy":constraints.get("dependencyPolicy"),
             "unavailableDependencies":list(constraints.get("unavailableDependencies") or [])[:16],
             "carriedUnavailableDependencies":list(constraints.get("carriedUnavailableDependencies") or [])[:16],
+        },
+        "behaviorLedger":{
+            "currentScore":dict(behavior.get("currentScore") or {}) if isinstance(behavior.get("currentScore"),dict) else None,
+            "bestKnownScore":dict(behavior.get("bestKnownScore") or {}) if isinstance(behavior.get("bestKnownScore"),dict) else None,
+            "regressedCases":list(behavior.get("regressedCases") or [])[:20],
+            "resolvedCases":list(behavior.get("resolvedCases") or [])[:20],
+            "preservePassingCases":list(behavior.get("preservePassingCases") or [])[:30],
+            "rebaseRecommended":bool(behavior.get("rebaseRecommended")),
+            "bestKnownArtifact":dict(behavior.get("bestKnownArtifact") or {}) if isinstance(behavior.get("bestKnownArtifact"),dict) else None,
+            "repairBaseMode":repair_base.get("mode"),
         },
         "structuredReceipt":dict(semantics.get("structuredReceipt") or {}),
         "executionVerified":False,
@@ -542,6 +558,7 @@ def _structured_json_receipt_semantics(text: str) -> dict[str, Any]:
     failure_signals=[]
     locations=[]
     categories=[]
+    cases=[]
     case_count=0
     failed_count=0
     visited=0
@@ -598,6 +615,16 @@ def _structured_json_receipt_semantics(text: str) -> dict[str, Any]:
                 message=value.strip()
                 break
 
+        if explicit_case and name and len(cases)<40:
+            case_status="failed" if failed else "passed"
+            cases.append({
+                "id":name[:180],
+                "status":case_status,
+                "expected":repr(expected)[:220] if expected is not None else None,
+                "actual":repr(actual)[:220] if actual is not None else None,
+                "message":message[:280] if message else None,
+            })
+
         if failed:
             if name:
                 add(failing_tests,name)
@@ -649,6 +676,7 @@ def _structured_json_receipt_semantics(text: str) -> dict[str, Any]:
         "failureSignals":failure_signals[:12],
         "sourceLocations":locations[:12],
         "categories":categories[:8],
+        "cases":cases[:40],
     }
 
 
@@ -787,6 +815,7 @@ def _receipt_semantics(raw: str) -> dict[str, Any]:
             "caseCount":int(structured.get("caseCount") or 0),
             "failedCaseCount":int(structured.get("failedCaseCount") or 0),
         },
+        "behaviorCases":[dict(item) for item in (structured.get("cases") or [])[:40] if isinstance(item,dict)],
     }
 
 
@@ -928,6 +957,180 @@ def _original_programming_request(history: list[dict[str, Any]]) -> str:
         if any(term in _norm(text) for term in _CODE_TERMS) or bool(_explicit_languages(text)):
             return text[:4000]
     return ""
+
+def _behavior_suite_key(case_ids: list[str]) -> str:
+    values=sorted(_unique([str(x) for x in case_ids if str(x).strip()]))
+    if not values:
+        return ""
+    return hashlib.sha256("\n".join(values).encode("utf-8")).hexdigest()[:20]
+
+
+def _artifact_snapshot_for_lineage(
+    history: list[dict[str, Any]],
+    artifact_id: str,
+    revision: int,
+    source_hash: str,
+) -> str:
+    aid=str(artifact_id or "")
+    rev=int(revision or 0)
+    sh=str(source_hash or "")
+    if not aid or rev<=0:
+        return ""
+    for item in reversed(history or []):
+        if not isinstance(item,dict) or str(item.get("role") or "")!="assistant":
+            continue
+        meta=item.get("meta") if isinstance(item.get("meta"),dict) else {}
+        if str(meta.get("codeArtifactId") or meta.get("updatedCodeArtifactId") or "")!=aid:
+            continue
+        if int(meta.get("artifactRevision") or 0)!=rev:
+            continue
+        candidate_hash=str(meta.get("artifactSourceHash") or "")
+        if sh and candidate_hash and candidate_hash!=sh:
+            continue
+        snapshot=str(meta.get("artifactSourceSnapshot") or "").strip()
+        if snapshot:
+            return snapshot[:12000]
+    return ""
+
+
+def _behavior_ledger(
+    prior_state: dict[str, Any],
+    new_failure_evidence: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Accumulate only externally observed named test behavior across one repair lineage."""
+    prior=prior_state.get("behaviorLedger") if isinstance(prior_state.get("behaviorLedger"),dict) else {}
+    semantics=(new_failure_evidence or {}).get("receiptSemantics") if isinstance((new_failure_evidence or {}).get("receiptSemantics"),dict) else {}
+    raw_cases=[dict(x) for x in (semantics.get("behaviorCases") or []) if isinstance(x,dict) and str(x.get("id") or "").strip()][:40]
+    if not raw_cases:
+        return dict(prior) if prior else {
+            "schema":"swrlz-behavior-ledger-v1",
+            "suiteKey":"",
+            "currentPassingCases":[],"currentFailingCases":[],
+            "previousPassingCases":[],"previousFailingCases":[],
+            "knownPassingCases":[],"preservePassingCases":[],
+            "resolvedCases":[],"regressedCases":[],"newlyPassingCases":[],
+            "currentScore":None,"bestKnownScore":None,
+            "currentTestedArtifact":None,"bestKnownArtifact":None,
+            "rebaseRecommended":False,
+        }
+
+    current_ids=_unique([str(x.get("id") or "") for x in raw_cases if str(x.get("id") or "").strip()])
+    current_passing=_unique([str(x.get("id") or "") for x in raw_cases if x.get("status")=="passed"])
+    current_failing=_unique([str(x.get("id") or "") for x in raw_cases if x.get("status")=="failed"])
+    suite_key=_behavior_suite_key(current_ids)
+
+    prior_suite=str(prior.get("suiteKey") or "")
+    comparable=bool(prior_suite and suite_key and prior_suite==suite_key)
+    previous_passing=list(prior.get("currentPassingCases") or []) if comparable else []
+    previous_failing=list(prior.get("currentFailingCases") or []) if comparable else []
+    prior_known=list(prior.get("knownPassingCases") or []) if comparable else []
+    known_passing=_unique(prior_known+current_passing)
+    regressed=[x for x in current_failing if x in prior_known]
+    resolved=[x for x in current_passing if x in previous_failing]
+    newly_passing=[x for x in current_passing if x not in prior_known]
+    preserved=[x for x in current_passing if x in prior_known]
+
+    target={
+        "artifactId":str((new_failure_evidence or {}).get("repairTargetArtifactId") or ""),
+        "revision":int((new_failure_evidence or {}).get("repairTargetArtifactRevision") or 0),
+        "sourceHash":str((new_failure_evidence or {}).get("repairTargetArtifactSourceHash") or ""),
+        "sourceFingerprint":str((new_failure_evidence or {}).get("repairSourceFingerprint") or ""),
+    }
+    current_score={"passed":len(current_passing),"total":len(current_ids),"failed":len(current_failing)}
+
+    prior_best=prior.get("bestKnownScore") if isinstance(prior.get("bestKnownScore"),dict) else None
+    prior_best_artifact=prior.get("bestKnownArtifact") if isinstance(prior.get("bestKnownArtifact"),dict) else None
+    if comparable and prior_best and int(prior_best.get("total") or 0)==len(current_ids):
+        best_score=dict(prior_best)
+        best_artifact=dict(prior_best_artifact or {})
+        if len(current_passing)>int(prior_best.get("passed") or 0):
+            best_score=dict(current_score)
+            best_artifact=dict(target)
+    else:
+        best_score=dict(current_score)
+        best_artifact=dict(target)
+
+    rebase=bool(
+        comparable
+        and best_score
+        and int(best_score.get("total") or 0)==len(current_ids)
+        and len(current_passing)<int(best_score.get("passed") or 0)
+        and best_artifact
+        and (
+            str(best_artifact.get("sourceHash") or "")!=str(target.get("sourceHash") or "")
+            or int(best_artifact.get("revision") or 0)!=int(target.get("revision") or 0)
+        )
+    )
+
+    obligations=[]
+    by_id={str(x.get("id") or ""):x for x in raw_cases}
+    for case_id in current_failing:
+        item=by_id.get(case_id) or {}
+        obligations.append({
+            "caseId":case_id,
+            "kind":"restore-regression" if case_id in regressed else "fix-current-failure",
+            "expected":item.get("expected"),
+            "actual":item.get("actual"),
+            "message":item.get("message"),
+        })
+
+    return {
+        "schema":"swrlz-behavior-ledger-v1",
+        "suiteKey":suite_key,
+        "receiptComparableToPrevious":comparable,
+        "currentPassingCases":current_passing[:40],
+        "currentFailingCases":current_failing[:40],
+        "previousPassingCases":previous_passing[:40],
+        "previousFailingCases":previous_failing[:40],
+        "knownPassingCases":known_passing[:40],
+        "preservePassingCases":known_passing[:40],
+        "preservedPassingCases":preserved[:40],
+        "resolvedCases":resolved[:40],
+        "regressedCases":regressed[:40],
+        "newlyPassingCases":newly_passing[:40],
+        "currentScore":current_score,
+        "bestKnownScore":best_score,
+        "currentTestedArtifact":target,
+        "bestKnownArtifact":best_artifact,
+        "rebaseRecommended":rebase,
+        "repairObligations":obligations[:24],
+    }
+
+
+def _behavior_repair_base(
+    ledger: dict[str, Any],
+    evidence: dict[str, Any] | None,
+    history: list[dict[str, Any]],
+) -> dict[str, Any]:
+    latest_source=str((evidence or {}).get("repairSource") or "")
+    latest_fp=str((evidence or {}).get("repairSourceFingerprint") or "") or _code_fingerprint(latest_source)
+    best=ledger.get("bestKnownArtifact") if isinstance(ledger.get("bestKnownArtifact"),dict) else {}
+    if ledger.get("rebaseRecommended") and best:
+        best_source=_artifact_snapshot_for_lineage(
+            history,
+            str(best.get("artifactId") or ""),
+            int(best.get("revision") or 0),
+            str(best.get("sourceHash") or ""),
+        )
+        best_fp=_code_fingerprint(best_source)
+        if best_source and best_fp and best_fp!=latest_fp:
+            return {
+                "mode":"best-known-tested-source",
+                "source":best_source,
+                "sourceFingerprint":best_fp,
+                "artifactId":str(best.get("artifactId") or ""),
+                "revision":int(best.get("revision") or 0),
+                "sourceHash":str(best.get("sourceHash") or ""),
+            }
+    return {
+        "mode":"latest-failing-source",
+        "source":latest_source,
+        "sourceFingerprint":latest_fp,
+        "artifactId":str((evidence or {}).get("repairTargetArtifactId") or ""),
+        "revision":int((evidence or {}).get("repairTargetArtifactRevision") or 0),
+        "sourceHash":str((evidence or {}).get("repairTargetArtifactSourceHash") or ""),
+    }
+
 
 def _dependency_policy(original_request: str) -> str:
     prose=_norm(_strip_fenced_code(original_request))
@@ -1096,6 +1299,14 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         active_contract,
         text,
     )
+    behavior_ledger=_behavior_ledger(prior_state,new_failure_evidence)
+    if canonical_carry and not new_failure_evidence and isinstance(prior_state.get("behaviorLedger"),dict):
+        behavior_ledger=dict(prior_state.get("behaviorLedger") or {})
+    behavior_repair_base=_behavior_repair_base(
+        behavior_ledger,
+        failure_evidence,
+        history or [],
+    )
 
     evidence_request=(
         "I can repair it, but I need the failure evidence first. Paste the compiler, test, runtime, browser-console, linter, or type-checker error output you get. "
@@ -1121,6 +1332,15 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         "failureEvidence":failure_evidence,
         "failureHistory":failure_history,
         "repairConstraints":repair_constraints,
+        "behaviorLedger":behavior_ledger,
+        "behaviorRepairBase":{
+            "mode":behavior_repair_base.get("mode"),
+            "sourceFingerprint":behavior_repair_base.get("sourceFingerprint"),
+            "artifactId":behavior_repair_base.get("artifactId"),
+            "revision":behavior_repair_base.get("revision"),
+            "sourceHash":behavior_repair_base.get("sourceHash"),
+        },
+        "behaviorRepairBaseSource":str(behavior_repair_base.get("source") or "")[:12000],
         "needsFailureEvidence":vague_failure,
         "evidenceRequest":evidence_request,
         "repairLifecycleState":"EVIDENCE_REQUIRED" if vague_failure else ("REPAIR_CANDIDATE" if failure_evidence else "CANDIDATE_GENERATION"),
