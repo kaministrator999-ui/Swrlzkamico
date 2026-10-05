@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import json
 from typing import Callable, Iterator, Any
 from brain_programming import programming_intent
-from online_tools import classify_online_request, execute_online_request, online_camera
+from online_tools import classify_online_request, stream_online_request, online_camera
 
 class ModelUnavailable(RuntimeError):
     def __init__(self, model_id: str, reason: str):
@@ -50,7 +50,14 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     if online_plan.get("requested"):
         phase="WEATHER_FETCH_STARTED" if online_plan.get("kind")=="weather" else "SEARCH_STARTED"
         yield {"type":"STATUS","phase":phase,"reason":"Retrieving bounded online evidence.","categories":["ONLINE_RESEARCH",str(online_plan.get("kind") or "search").upper()]}
-        online_result=execute_online_request(payload,intent)
+        online_result=None
+        for update in stream_online_request(payload,intent):
+            if update.get("type")=="progress":
+                trace=update.get("event") if isinstance(update.get("event"),dict) else {}
+                if trace:
+                    yield {"type":"ONLINE_TRACE","trace":trace}
+                continue
+            online_result=update.get("result")
         if online_result:
             payload["onlineContext"]=online_result.get("modelContext") if isinstance(online_result.get("modelContext"),dict) else {}
             payload["onlineEvidence"]=payload["onlineContext"]
