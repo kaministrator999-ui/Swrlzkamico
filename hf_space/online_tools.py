@@ -6,21 +6,25 @@ Weather is a bounded fixed-provider vertical using Open-Meteo geocoding + foreca
 from __future__ import annotations
 
 import json
+import queue
 import re
 import sys
+import threading
 import time
 import urllib.parse
 import urllib.request
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Iterator
 
 try:
-    from api.online_research import research as run_online_research
+    import api.online_research as canonical_online_research
 except ModuleNotFoundError:
     root = Path(__file__).resolve().parents[1]
     if (root / "api").is_dir() and str(root) not in sys.path:
         sys.path.insert(0, str(root))
-    from api.online_research import research as run_online_research
+    import api.online_research as canonical_online_research
+
+run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
@@ -87,7 +91,42 @@ def _clean(value: Any, limit: int = 1000) -> str:
     return " ".join(str(value or "").split())[:limit]
 
 
-def _json_get(url: str) -> dict[str, Any]:
+def _safe_trace_url(url: str) -> tuple[str, str]:
+    try:
+        parsed = urllib.parse.urlsplit(str(url or ""))
+        site = str(parsed.hostname or "")[:180].lower()
+        safe = urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))[:1000]
+        return site, safe
+    except Exception:
+        return "", ""
+
+
+def _progress(progress: Callable[[dict[str, Any]], None] | None, phase: str, *, provider: str = "", url: str = "", activity: str = "", **extra: Any) -> None:
+    if not callable(progress):
+        return
+    site, safe_url = _safe_trace_url(url)
+    event = {
+        "contract": "swrlz-online-trace-v1",
+        "phase": _clean(phase, 80),
+        "provider": _clean(provider, 120),
+        "site": site,
+        "url": safe_url,
+        "activity": _clean(activity, 180),
+        "atUnixMs": int(time.time() * 1000),
+    }
+    for key, value in extra.items():
+        if value is None:
+            continue
+        if isinstance(value, (str, int, float, bool)):
+            event[str(key)[:64]] = _clean(value, 500) if isinstance(value, str) else value
+    try:
+        progress(event)
+    except Exception:
+        pass
+
+
+def _json_get(url: str, progress: Callable[[dict[str, Any]], None] | None = None, *, phase: str = "WEATHER_PROVIDER_VISIT", activity: str = "Fetching weather data") -> dict[str, Any]:
+    _progress(progress, phase, provider=WEATHER_PROVIDER, url=url, activity=activity)
     req = urllib.request.Request(
         url,
         headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
@@ -104,6 +143,7 @@ def _json_get(url: str) -> dict[str, Any]:
         raise ValueError("JSON_OBJECT_REQUIRED")
     if payload.get("error"):
         raise RuntimeError(_clean(payload.get("reason") or "PROVIDER_ERROR", 180))
+    _progress(progress, phase.replace("_VISIT", "_COMPLETE"), provider=WEATHER_PROVIDER, url=url, activity="Weather provider response received", httpStatus=status, responseBytes=len(raw))
     return payload
 
 
@@ -201,7 +241,7 @@ def classify_online_request(
     }
 
 
-def _weather_coordinates(plan: dict[str, Any]) -> tuple[dict[str, Any], bool]:
+def _weather_coordinates(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None] | None = None) -> tuple[dict[str, Any], bool]:
     shared = plan.get("clientLocation") if isinstance(plan.get("clientLocation"), dict) else None
     if shared:
         return {
@@ -220,7 +260,7 @@ def _weather_coordinates(plan: dict[str, Any]) -> tuple[dict[str, Any], bool]:
     url = GEOCODING_ENDPOINT + "?" + urllib.parse.urlencode(
         {"name": location, "count": 1, "language": "en", "format": "json"}
     )
-    payload = _json_get(url)
+    payload = _json_get(url, progress, phase="WEATHER_GEOCODE_VISIT", activity="Resolving weather location")
     results = payload.get("results") if isinstance(payload.get("results"), list) else []
     if not results:
         raise ValueError("WEATHER_LOCATION_NOT_FOUND")
@@ -265,8 +305,8 @@ def _daily_rows(daily: dict[str, Any], units: dict[str, Any]) -> list[dict[str, 
     return out
 
 
-def weather_lookup(plan: dict[str, Any]) -> dict[str, Any]:
-    location, shared = _weather_coordinates(plan)
+def weather_lookup(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None] | None = None) -> dict[str, Any]:
+    location, shared = _weather_coordinates(plan, progress)
     imperial = location.get("country_code") == "US"
     params = {
         "latitude": location["latitude"],
@@ -305,7 +345,7 @@ def weather_lookup(plan: dict[str, Any]) -> dict[str, Any]:
             "wind_speed_unit": "mph",
             "precipitation_unit": "inch",
         })
-    payload = _json_get(FORECAST_ENDPOINT + "?" + urllib.parse.urlencode(params))
+    payload = _json_get(FORECAST_ENDPOINT + "?" + urllib.parse.urlencode(params), progress, phase="WEATHER_FORECAST_VISIT", activity="Fetching current weather and forecast")
     current = payload.get("current") if isinstance(payload.get("current"), dict) else {}
     current_units = payload.get("current_units") if isinstance(payload.get("current_units"), dict) else {}
     daily = payload.get("daily") if isinstance(payload.get("daily"), dict) else {}
@@ -388,7 +428,7 @@ def weather_lookup(plan: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _search_bundle(plan: dict[str, Any]) -> dict[str, Any]:
+def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None] | None = None) -> dict[str, Any]:
     query = _clean(plan.get("query"), 500)
     payload = {
         "requestId": _clean(plan.get("requestId"), 160),
@@ -403,7 +443,11 @@ def _search_bundle(plan: dict[str, Any]) -> dict[str, Any]:
         },
         "researchQueries": [query],
     }
-    bundle = run_online_research(payload)
+    canonical_online_research.set_trace_sink(progress)
+    try:
+        bundle = run_online_research(payload)
+    finally:
+        canonical_online_research.clear_trace_sink()
     evidence = []
     for item in (bundle.get("evidence") or [])[:8]:
         if not isinstance(item, dict):
@@ -466,6 +510,7 @@ def execute_online_request(
     payload: dict[str, Any],
     programming: dict[str, Any] | None = None,
     capabilities: dict[str, Callable[..., dict[str, Any]]] | None = None,
+    progress: Callable[[dict[str, Any]], None] | None = None,
 ) -> dict[str, Any] | None:
     plan = classify_online_request(
         str(payload.get("prompt") or ""),
@@ -499,9 +544,9 @@ def execute_online_request(
         if capabilities and plan["kind"] in capabilities:
             result = capabilities[plan["kind"]](plan)
         elif plan["kind"] == "weather":
-            result = weather_lookup(plan)
+            result = weather_lookup(plan, progress)
         else:
-            result = _search_bundle(plan)
+            result = _search_bundle(plan, progress)
     except Exception as exc:
         result = {
             "contract": ONLINE_CONTRACT,
@@ -543,3 +588,36 @@ def online_camera(result: dict[str, Any] | None) -> dict[str, Any] | None:
         "elapsedMs": result.get("elapsedMs"),
         "rawPromptStored": False,
     }
+
+
+
+def stream_online_request(
+    payload: dict[str, Any],
+    programming: dict[str, Any] | None = None,
+    capabilities: dict[str, Callable[..., dict[str, Any]]] | None = None,
+) -> Iterator[dict[str, Any]]:
+    """Run retrieval off-thread so provider/site progress can reach Station live."""
+    events: queue.Queue[tuple[str, Any]] = queue.Queue()
+
+    def progress(event: dict[str, Any]) -> None:
+        if isinstance(event, dict):
+            events.put(("progress", event))
+
+    def worker() -> None:
+        try:
+            result = execute_online_request(payload, programming, capabilities, progress)
+            events.put(("result", result))
+        except Exception as exc:
+            events.put(("error", exc))
+
+    thread = threading.Thread(target=worker, daemon=True, name="online-research-" + _clean(payload.get("requestId"), 12))
+    thread.start()
+    while True:
+        kind, value = events.get()
+        if kind == "progress":
+            yield {"type": "progress", "event": value}
+            continue
+        if kind == "error":
+            raise value
+        yield {"type": "result", "result": value}
+        return
