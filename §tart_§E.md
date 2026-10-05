@@ -87,6 +87,33 @@ The previous v4 checkpoint remains:
 
 This is historical lineage after v4.1 becomes current.
 
+## Verified v4.1 deployment checkpoint
+
+```text
+GitHub source commit:
+5d22b9411597a872900a3e9efe457f04c7b74120
+
+Final source SHA-256:
+647a80a6a1062e8e4068c63593cca3c5566fe8ee9da5dcdcbc1810d42673132f
+
+Hugging Face Space revision:
+5c4bae00017273ab8d8de5aa512b329394a90de9
+
+Actual static host:
+https://kamiloki-swrlz-forge-moba.static.hf.space/
+
+Space stage:
+RUNNING
+
+Live marker:
+V4_1_GROUND_ADHESION_RUNTIME_CLEANUP
+
+Live verification:
+PASS on attempt 1
+```
+
+This v4.1 checkpoint is now the current observed deployment state until a later §tart §E traversal proves otherwise.
+
 ## Bottom line
 
 **`§tart §E` = load Forge from GitHub, preserve its separate deployment lane, reconstruct/patch/verify the exact engine source, deploy only to `kamiloki/swrlz-forge-moba`, verify the actual static host serves the current marker, then continue from observed truth.**
