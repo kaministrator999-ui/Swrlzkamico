@@ -131,3 +131,37 @@ v5.2:
 - SHA-256: `e3ea58f80f83a2b001f087f5852b6ce7fa5a4dbf4af2f5d67c414eb46c196ad8`
 
 A later verified v5.3 checkpoint must supersede this after deployment.
+
+
+## Verified v5.3 deployment checkpoint
+
+```text
+Engine:
+§wyrl§ Engine v5.3
+
+GitHub source/deploy commit:
+659e9b46f804ad69f2a8f4ea04dd58fc6760323e
+
+Final source:
+146986 bytes
+
+SHA-256:
+ef68a0906430de83a5da464efe864eed26e757f03d6fdce5e81df6411c75f995
+
+Hugging Face revision:
+33b1405f2628d67e81b70021e03d5c947b8d831c
+
+Static host:
+https://kamiloki-swrlz-forge-moba.static.hf.space/
+
+Stage:
+RUNNING
+
+Live marker:
+SWYRL_ENGINE_DEPLOY_MARKER: V5_3_GROUPS_IMMERSIVE_DEN
+
+Live verification:
+PASS on attempt 1
+```
+
+v5.3 is the current observed engine state at this checkpoint. The default Den uses hierarchical architectural groups and the improved cave-floor / vaulted-roof layout.
