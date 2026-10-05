@@ -46,6 +46,13 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     payload=dict(payload)
     payload["programmingIntent"]=intent
     yield {"type":"PROGRAMMING_INTENT","intent":intent}
+    requested_model_id=model_id
+    if intent.get("codingTask") and model_id in ("700m","stock","r39","coder"):
+        model_id="coder"
+        if model_id!=requested_model_id:
+            yield {"type":"ROUTE","phase":"CODER_AUTO_ROUTE","requestedModelId":requested_model_id,"selectedModelId":"coder","reason":"programming-intent"}
+    payload["requestedModelId"]=requested_model_id
+    payload["selectedModelId"]=model_id
     online_plan=classify_online_request(str(payload.get("prompt") or ""),history,intent,payload.get("clientLocation"))
     if online_plan.get("requested"):
         phase="WEATHER_FETCH_STARTED" if online_plan.get("kind")=="weather" else "SEARCH_STARTED"
@@ -61,17 +68,13 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
         if online_result:
             payload["onlineContext"]=online_result.get("modelContext") if isinstance(online_result.get("modelContext"),dict) else {}
             payload["onlineEvidence"]=payload["onlineContext"]
-            yield {"type":"ONLINE_RESEARCH","result":online_camera(online_result),"sources":online_result.get("sources") or []}
+            yield {"type":"ONLINE_RESEARCH","result":online_camera(online_result),"sources":online_result.get("sources") or [],"requestedModelId":requested_model_id,"selectedModelId":model_id}
             for widget in online_result.get("widgets") or []:
                 if isinstance(widget,dict):
                     yield {"type":"WIDGET","widget":widget}
             done_phase="WEATHER_FETCH_COMPLETE" if online_result.get("kind")=="weather" else "SEARCH_COMPLETE"
             yield {"type":"STATUS","phase":done_phase,"reason":"Online retrieval "+str(online_result.get("status") or "complete").lower()+".","categories":["ONLINE_RESEARCH",str(online_result.get("kind") or "search").upper()]}
-    # Programming questions/examples/reasoning are automatically routed to the dedicated coder.
-    requested_model_id=model_id
-    if intent.get("codingTask") and model_id in ("700m","stock","r39","coder"):
-        model_id="coder"
-        yield {"type":"ROUTE","phase":"CODER_AUTO_ROUTE","requestedModelId":requested_model_id,"selectedModelId":"coder","reason":"programming-intent"}
+    # Programming questions/examples/reasoning were routed before retrieval so online logs bind the selected model.
     if model_id=="r39":
         yield from r39_generate(_r39_online_payload(payload))
         return
