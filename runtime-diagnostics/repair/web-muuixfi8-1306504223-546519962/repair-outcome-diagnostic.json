@@ -1,0 +1,28 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muuixfi8-1306504223-546519962",
+  "modelId": "700m",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "9faa59d8d8109680fb01f20b6606bb1f09249012",
+  "persistedAtUnixMs": 1791160866472,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "6c11948a6ebe6cf8",
+    "newCandidateFingerprint": "3daa0be3a679c3c6",
+    "candidateChanged": true,
+    "stalledRepairInput": true,
+    "regenerationAttempted": true,
+    "regenerationReason": "unchanged-executable-candidate",
+    "candidateValidationStatus": "PASS",
+    "candidateValidationReasons": [],
+    "receiptCategories": [
+      "runtime",
+      "dependency"
+    ],
+    "repairActions": [
+      "trace the exception to its first relevant application frame and repair the causing state/operation",
+      "repair the import/module/dependency boundary using only dependencies supported by project evidence"
+    ],
+    "executionVerified": false
+  }
+}
