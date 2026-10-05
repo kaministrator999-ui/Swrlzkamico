@@ -879,6 +879,10 @@
           const phase=String(status.phase||status.type||"ACTION").replaceAll("_"," ");
           const categories=Array.isArray(status.categories)?status.categories.map(String):[];
           const card=makeAgentCard("action",phase,"action",String(status.reason||""),[
+            status.site?("site "+status.site):"",
+            status.provider?("provider "+status.provider):"",
+            status.httpStatus?("HTTP "+status.httpStatus):"",
+            status.resultCount!==undefined&&status.resultCount!==null?("results "+status.resultCount):"",
             status.seq?("event "+status.seq):"",
             ...categories.slice(0,4)
           ]);
@@ -1378,9 +1382,12 @@
           }
         }
         const rawPhase=String(last.phase||g.phase||last.type||"QUEUED").toUpperCase();
-        const phaseLabels={CONNECTING:"Connecting",QUEUED:"Queued",LOADING:"Loading model",BUDGETED:"Preparing context",CONTEXT:"Preparing context",DIAGNOSTIC_READY:"Preparing response",PROGRAMMING_INTENT:"Planning code change",MEMORY_CANDIDATE:"Preparing context",GENERATING:"Generating response",COMPLETE:"Complete",COMPLETED:"Complete",FAILED:"Failed"};
+        const phaseLabels={CONNECTING:"Connecting",QUEUED:"Queued",LOADING:"Loading model",BUDGETED:"Preparing context",CONTEXT:"Preparing context",DIAGNOSTIC_READY:"Preparing response",PROGRAMMING_INTENT:"Planning code change",MEMORY_CANDIDATE:"Preparing context",SEARCH_STARTED:"Starting web search",SEARCH_PROVIDER_VISIT:"Searching website",SEARCH_PROVIDER_RESULT:"Search provider complete",SEARCH_PROVIDER_ERROR:"Search provider failed",PAGE_VISIT:"Visiting website",PAGE_FETCH_COMPLETE:"Website fetched",PAGE_FETCH_ERROR:"Website fetch failed",WEATHER_FETCH_STARTED:"Starting weather lookup",WEATHER_GEOCODE_VISIT:"Finding weather location",WEATHER_GEOCODE_COMPLETE:"Location resolved",WEATHER_FORECAST_VISIT:"Fetching weather",WEATHER_FORECAST_COMPLETE:"Weather received",WEATHER_FETCH_COMPLETE:"Weather lookup complete",ONLINE_RESEARCH:"Online research complete",GENERATING:"Generating response",COMPLETE:"Complete",COMPLETED:"Complete",FAILED:"Failed"};
         const phase=phaseLabels[rawPhase]||rawPhase.replace(/_/g," ").toLowerCase().replace(/^./,c=>c.toUpperCase());
         const label=g.terminal?(g.terminalType||phase):(String(g.text||"").length?"Streaming response":phase);
+        const activitySite=String(last.site||"").trim();
+        const activityProvider=String(last.provider||"").trim();
+        const activityDetail=activitySite||activityProvider;
         const terminalKind=String(g.terminalType||label||"").toUpperCase();
         const visualState=phaseToCompanionState(last,g);
         setCompanionState(visualState,"station:"+String(last.phase||g.phase||last.type||"unknown").toLowerCase());
@@ -1399,7 +1406,7 @@
           node.querySelector(".assistant-body").before(status);
         }
         const seq=Number(g.lastSeq||0);
-        const nextLabel="§wyrlz · "+label;
+        const nextLabel="§wyrlz · "+label+(activityDetail?(" · "+activityDetail):"");
         if(status.textContent!==nextLabel)status.textContent=nextLabel;
         const body=node.querySelector(".assistant-body");
         const nextText=String(g.text||"");
@@ -1492,7 +1499,7 @@
             stationGeneration.lastSeq=Number(event.seq||stationGeneration.lastSeq||0);
             if(event.type==="DELTA")stationGeneration.text=(stationGeneration.text||"")+String(event.text||"");
             else if(event.type==="WIDGET"&&event.widget&&typeof event.widget==="object")stationGeneration.widgets=[...(stationGeneration.widgets||[]),event.widget].slice(0,8);
-            else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||"",categories:Array.isArray(event.categories)?event.categories.slice(0,16):[],proposalReceipt:event.proposalReceipt&&typeof event.proposalReceipt==="object"?event.proposalReceipt:null}].slice(-256);
+            else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||"",categories:Array.isArray(event.categories)?event.categories.slice(0,16):[],site:String(event.site||"").slice(0,180),url:String(event.url||"").slice(0,1000),provider:String(event.provider||"").slice(0,120),httpStatus:event.httpStatus??null,resultCount:event.resultCount??null,proposalReceipt:event.proposalReceipt&&typeof event.proposalReceipt==="object"?event.proposalReceipt:null}].slice(-256);
             if(event.terminal){stationGeneration.terminal=true;stationGeneration.terminalType=event.type||""}
             renderStationGeneration();
           }
