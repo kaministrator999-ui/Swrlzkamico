@@ -182,16 +182,16 @@ def _parse_bing_html(query:str,text:str)->tuple[list[dict[str,Any]],int]:
     return results,len(blocks)
 
 def _provider_attempt(provider:str,url:str,parser,query:str)->list[dict[str,Any]]:
-    _emit_trace("SEARCH_PROVIDER_VISIT",provider=provider,url=url,activity="Searching provider")
+    _emit_trace("SEARCH_PROVIDER_VISIT",provider=provider,url=url,reason="Searching provider")
     try:
         status,text,response_bytes=_search_html(url)
         results,anchors=parser(query,text)
         print("SWRLZ_SEARCH_PROVIDER_CAMERA "+json.dumps({"contract":"swrlz-search-provider-camera-v2","provider":provider,"httpStatus":status,"responseBytes":response_bytes,"resultAnchors":anchors,"acceptedResults":len(results)},separators=(",",":")),flush=True)
-        _emit_trace("SEARCH_PROVIDER_RESULT",provider=provider,url=url,httpStatus=status,resultCount=len(results),activity="Provider returned results")
+        _emit_trace("SEARCH_PROVIDER_RESULT",provider=provider,url=url,status=status,result_count=len(results),reason="Provider returned results")
         return results
     except Exception as exc:
         print("SWRLZ_SEARCH_PROVIDER_CAMERA "+json.dumps({"contract":"swrlz-search-provider-camera-v2","provider":provider,"errorType":type(exc).__name__,"acceptedResults":0},separators=(",",":")),flush=True)
-        _emit_trace("SEARCH_PROVIDER_ERROR",provider=provider,url=url,errorType=type(exc).__name__,activity="Provider failed")
+        _emit_trace("SEARCH_PROVIDER_ERROR",provider=provider,url=url,error_type=type(exc).__name__,reason="Provider failed")
         return []
 
 def _ddg_search(query:str)->list[dict[str,Any]]:
@@ -211,7 +211,7 @@ def _ddg_search(query:str)->list[dict[str,Any]]:
 
 def _page_fetch(url:str)->dict[str,Any]:
     safe=_validate_public_url(url)
-    _emit_trace("PAGE_VISIT",provider="web-page",url=safe,activity="Visiting result page")
+    _emit_trace("PAGE_VISIT",provider="web-page",url=safe,reason="Visiting result page")
     try:
         req=urllib.request.Request(safe,headers={"User-Agent":USER_AGENT,"Accept":"text/html,text/plain;q=0.9,*/*;q=0.1"})
         with _opener().open(req,timeout=PAGE_TIMEOUT_SECONDS) as response:
@@ -220,10 +220,10 @@ def _page_fetch(url:str)->dict[str,Any]:
         if not ("text/" in ctype or "html" in ctype or "json" in ctype):raise ValueError("PAGE_CONTENT_TYPE_BLOCKED")
         text=raw.decode("utf-8","replace");tm=re.search(r"<title[^>]*>([\s\S]*?)</title>",text,re.I);title=html.unescape(re.sub(r"<[^>]+>"," ",tm.group(1))).strip()[:300] if tm else ""
         cleaned=re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>"," ",text);cleaned=html.unescape(re.sub(r"<[^>]+>"," ",cleaned));extract=re.sub(r"\s+"," ",cleaned).strip()[:6000]
-        _emit_trace("PAGE_FETCH_COMPLETE",provider="web-page",url=final,httpStatus=int(status),responseBytes=len(raw),activity="Page fetched")
+        _emit_trace("PAGE_FETCH_COMPLETE",provider="web-page",url=final,status=int(status),response_bytes=len(raw),reason="Page fetched")
         return {"finalUrl":final,"status":int(status),"title":title,"extract":extract,"fetchedAt":int(time.time()*1000)}
     except Exception as exc:
-        _emit_trace("PAGE_FETCH_ERROR",provider="web-page",url=safe,errorType=type(exc).__name__,activity="Page fetch failed")
+        _emit_trace("PAGE_FETCH_ERROR",provider="web-page",url=safe,errorType=type(exc).__name__,reason="Page fetch failed")
         raise
 
 def _refresh_hot(force:bool=False)->None:
