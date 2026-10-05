@@ -58,6 +58,7 @@ def persist_runtime_diagnostic(request_id,model_id,event_type,diagnostic):
         "REPAIR_DIAGNOSTIC":("repair","repair-diagnostic.json","swrlz-github-repair-log-v1"),
         "REPAIR_OUTCOME_DIAGNOSTIC":("repair","repair-outcome-diagnostic.json","swrlz-github-repair-log-v1"),
         "PROGRAMMING_GENERATION_TELEMETRY":("programming","candidate-attempt-telemetry.json","swrlz-github-programming-attempt-log-v1"),
+        "ONLINE_RESEARCH_TRACE":("online","search-trace.json","swrlz-github-online-research-log-v1"),
     }
     spec=allowed.get(str(event_type or ""))
     if spec is None or not isinstance(diagnostic,dict):
@@ -287,7 +288,7 @@ async def stream_generation(request:Request, requestId:str):
             while sent_status<len(statuses):
                 item=statuses[sent_status] if isinstance(statuses[sent_status],dict) else {}
                 sent_status+=1
-                yield json.dumps({"type":"STATUS","phase":str(item.get("phase") or "STATUS"),"reason":str(item.get("reason") or ""),"categories":copy.deepcopy(item.get("categories") or []),"seq":sent_status,"requestId":rid},ensure_ascii=False)+"\n"
+                yield json.dumps({"type":"STATUS","phase":str(item.get("phase") or "STATUS"),"reason":str(item.get("reason") or ""),"categories":copy.deepcopy(item.get("categories") or []),"site":str(item.get("site") or "")[:180],"url":str(item.get("url") or "")[:1000],"provider":str(item.get("provider") or "")[:120],"httpStatus":item.get("httpStatus"),"resultCount":item.get("resultCount"),"seq":sent_status,"requestId":rid},ensure_ascii=False)+"\n"
             widgets=g.get("widgets") if isinstance(g.get("widgets"),list) else []
             while sent_widgets<len(widgets):
                 widget=widgets[sent_widgets] if isinstance(widgets[sent_widgets],dict) else {}
@@ -587,12 +588,48 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     state=event.get("state")
                     if isinstance(state,dict):g["responseCognition"]=copy.deepcopy(state)
                     g["status"].append({"seq":g["lastSeq"],"phase":"RESPONSE_COGNITION","reason":""})
+                elif kind=="ONLINE_TRACE":
+                    trace=event.get("trace") if isinstance(event.get("trace"),dict) else {}
+                    if trace:
+                        trace={str(k)[:64]:copy.deepcopy(v) for k,v in trace.items() if k in {"contract","phase","provider","site","url","activity","atUnixMs","httpStatus","resultCount","responseBytes","errorType"}}
+                        g.setdefault("onlineTrace",[]).append(trace)
+                        g["onlineTrace"]=g["onlineTrace"][-64:]
+                        g["status"].append({
+                            "seq":g["lastSeq"],
+                            "phase":str(trace.get("phase") or "ONLINE_VISIT"),
+                            "reason":str(trace.get("activity") or "")[:200],
+                            "categories":["ONLINE_RESEARCH","SEARCH","FETCH"],
+                            "site":str(trace.get("site") or "")[:180],
+                            "url":str(trace.get("url") or "")[:1000],
+                            "provider":str(trace.get("provider") or "")[:120],
+                            "httpStatus":trace.get("httpStatus"),
+                            "resultCount":trace.get("resultCount"),
+                        })
                 elif kind=="ONLINE_RESEARCH":
                     result=event.get("result") if isinstance(event.get("result"),dict) else {}
                     sources=event.get("sources") if isinstance(event.get("sources"),list) else []
                     g["onlineResearch"]=copy.deepcopy(result)
                     g["sources"]=[copy.deepcopy(item) for item in sources if isinstance(item,dict)][:24]
                     g["status"].append({"seq":g["lastSeq"],"phase":"ONLINE_RESEARCH","reason":str(result.get("status") or ""),"categories":["ONLINE_RESEARCH",str(result.get("kind") or "").upper()]})
+                    source_sites=[]
+                    for item in g["sources"]:
+                        try:
+                            host=str(urllib.parse.urlsplit(str(item.get("url") or "")).hostname or "").lower()
+                        except Exception:
+                            host=""
+                        if host and host not in source_sites:source_sites.append(host)
+                    trace=copy.deepcopy((g.get("onlineTrace") or [])[-64:])
+                    online_log={
+                        "schema":"swrlz-online-research-log-v1",
+                        "research":copy.deepcopy(result),
+                        "trace":trace,
+                        "sourceSites":source_sites[:24],
+                        "widgetKinds":[str(item.get("kind") or "")[:80] for item in (g.get("widgets") or []) if isinstance(item,dict)][:8],
+                        "rawPromptStored":False,
+                        "preciseLocationStored":False,
+                    }
+                    g["onlineLogPersistence"]={"state":"QUEUED","path":"runtime-diagnostics/online/"+request_id+"/search-trace.json","branch":"runtime"}
+                    persist_event=("ONLINE_RESEARCH_TRACE",online_log)
                 elif kind=="WIDGET":
                     widget=event.get("widget") if isinstance(event.get("widget"),dict) else {}
                     if widget:g.setdefault("widgets",[]).append(copy.deepcopy(widget))
@@ -663,12 +700,27 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 else:g["status"].append({"seq":g["lastSeq"],"phase":str(event.get("phase") or kind),"reason":str(event.get("reason") or "")[:200],"categories":[str(x)[:80] for x in (event.get("categories") or [])[:16]] if isinstance(event.get("categories"),list) else []})
             if persist_event is not None:
                 persist_kind,persist_payload=persist_event
-                threading.Thread(
-                    target=persist_runtime_diagnostic,
-                    args=(request_id,model_id,persist_kind,persist_payload),
-                    daemon=True,
-                    name="runtime-diagnostic-"+request_id[:8],
-                ).start()
+                if persist_kind=="ONLINE_RESEARCH_TRACE":
+                    def persist_online_log(kind=persist_kind,document=persist_payload):
+                        result=persist_runtime_diagnostic(request_id,model_id,kind,document)
+                        with _lock:
+                            current=s.get("activeGeneration")
+                            if current and current.get("requestId")==request_id:
+                                current["onlineLogPersistence"]=copy.deepcopy(result)
+                            target_thread=next((t for t in s.get("threads",[]) if t.get("id")==payload.get("threadId")),None)
+                            if target_thread:
+                                target_message=next((m for m in reversed(target_thread.get("messages",[])) if str(m.get("id") or "")==str(assistant_id)),None)
+                                if target_message is not None:
+                                    target_message.setdefault("meta",{})["onlineLogPersistence"]=copy.deepcopy(result)
+                            s["revision"]+=1
+                    threading.Thread(target=persist_online_log,daemon=True,name="online-log-"+request_id[:8]).start()
+                else:
+                    threading.Thread(
+                        target=persist_runtime_diagnostic,
+                        args=(request_id,model_id,persist_kind,persist_payload),
+                        daemon=True,
+                        name="runtime-diagnostic-"+request_id[:8],
+                    ).start()
             if kind=="FAILED":raise RuntimeError(str(event.get("reason") or "Generation failed"))
             if kind in ("COMPLETE","COMPLETED"):completed=True
         if cancelled:
@@ -730,9 +782,13 @@ def _run(key,request_id,model_id,payload,assistant_id):
             online_research=copy.deepcopy(g.get("onlineResearch") or {})
             online_sources=copy.deepcopy((g.get("sources") or [])[:24])
             online_widgets=copy.deepcopy((g.get("widgets") or [])[:8])
+            online_trace=copy.deepcopy((g.get("onlineTrace") or [])[-64:])
+            online_log_persistence=copy.deepcopy(g.get("onlineLogPersistence") or {})
             if online_research: telemetry_meta["onlineResearch"]=online_research
             if online_sources: telemetry_meta["sources"]=online_sources
             if online_widgets: telemetry_meta["widgets"]=online_widgets
+            if online_trace: telemetry_meta["onlineTrace"]=online_trace
+            if online_log_persistence: telemetry_meta["onlineLogPersistence"]=online_log_persistence
             if programming_telemetry: telemetry_meta["programmingTelemetry"]=programming_telemetry
             artifact_id=str(intent.get("artifactTargetId") or "")
             artifact=_find_artifact(thread,artifact_id) if artifact_id and intent.get("artifactMutationRequested") and not rejected else None
@@ -949,7 +1005,7 @@ async def send(request:Request):
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
