@@ -1,3 +1,31 @@
+## UPDATE STARTED — 2026-10-05 — Behavioral invariant ledger + best-known repair base v122
+
+**Goal:** use the new v121 cameras to close the remaining semantic convergence defect: externally proven passing behaviors must remain durable repair obligations, regressions must be detected across receipts, and a regressed candidate must not automatically become the only source base for the next repair.
+
+**Camera evidence from the fresh review (20) rerun on v121 source `9faa59d8d8109680fb01f20b6606bb1f09249012`:**
+- The unresolved slug sequence is no longer a routing, receipt, dependency-state, context, artifact-lineage or persistence failure.
+- `web-muuj28io-3264621183-1784570679` records a 5/9 behavior receipt with failures `test_00`, `test_01`, `test_02`, `test_05`; passing signals include `test_03`, `test_04`, `test_06`, `test_07`, `test_api_signature`. Expected/actual evidence shows lowercase/separator/ASCII defects.
+- `web-muuj5iv5-3760206537-865962669` again records 5/9 but with a changed failure set: `test_04` fails while `test_05` now passes. This is a measurable case-level regression + resolution across externally tested artifacts.
+- `web-muuj5tnh-3671778053-717508724` drops to 4/9; `test_05` regresses while the previously fixed dependency constraint remains correctly carried. The candidate changed fingerprint and structurally passed, but external behavior worsened.
+- Programming cameras show that changed executable fingerprints are therefore insufficient as a convergence objective. The remaining issue is preservation-aware behavioral repair.
+
+**Architecture reconciliation:**
+- Brain remains the owner of repair/evidence state. Add a bounded `behaviorLedger` derived only from external receipt semantics; model claims never mark a case passing.
+- Distinguish newest receipt source from `bestKnownRepairBase`. The newest receipt remains canonical failure evidence. If its externally measured score is worse than a prior tested artifact, the next model-facing repair source may rebase onto the best tested artifact while retaining the newest receipt's failures/regressions as obligations.
+- Ledger fields should include current passing/failing case IDs, previous passing/failing IDs, resolved cases, regressed cases, preserved passing cases, current/best score, best tested artifact ID/revision/source hash, and bounded case expectations when available.
+- A regression is a previously passing named external case that is failing in the newest receipt. It becomes an explicit repair obligation. Previously passing cases remain preservation obligations until newer external evidence shows otherwise.
+- Candidate structural validation must not claim those behavioral obligations are satisfied before execution. The gate may enforce source/constraint invariants, but behavior remains `AWAITING_EXTERNAL_RECEIPT` until tests run.
+- Compact repair context and retry strategy consume the ledger. When a best-known artifact is better than the newest tested artifact and its exact snapshot is available in history, the worker receives that best-known source as the repair base plus the latest receipt delta.
+
+**Camera additions:**
+- Persist/export bounded behavior-ledger summaries in repair diagnostics, candidate validation, Station programming telemetry and durable programming logs.
+- Include `currentScore`, `bestKnownScore`, `regressedCases`, `resolvedCases`, `preservePassingCases`, and best-known artifact revision/hash; do not persist source bodies in repository diagnostics.
+- Expose whether model-facing repair used `latest-failing-source` or `best-known-tested-source` as its base so later review can prove rebase behavior.
+
+**Expected module impact:** LALM Engine + Repository Work. Deployment Control and Server Runtime unchanged unless those owners actually change.
+
+**Deployment expectation:** runtime-affecting HF source mutation; full v117→v121 regression plus new v122 deterministic behavioral-ledger tests, then one guarded HF deployment and live multi-receipt regression acceptance.
+
 ## UPDATE FINISHED — 2026-10-04 — Persistent repair constraints + structured JSON receipts v121
 
 **Outcome:** LIVE RUNTIME VERIFIED for the targeted state/parser boundaries.
