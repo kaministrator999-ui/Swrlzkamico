@@ -116,6 +116,13 @@ jobs:
           assert (root / "accepted_runtime" / "lalm" / "r39_engine.py").is_file(), "R39 engine is not staged"
           assert (root / "chat" / "§wyrlz" / "index.html").is_file(), "Clean-room Chat is not staged"
           assert (root / "MODEL_PROVENANCE.json").is_file(), "Model identity/provenance not staged"
+          assert (root / "api" / "online_research.py").is_file(), "Online Research stable network owner is not staged"
+          assert (root / "swrzl_prepared_runtime" / "research" / "online_research_reasoner.py").is_file(), "Prepared Online Research reasoner is not staged"
+          assert (root / "online_tools.py").is_file(), "HF online research adapter is missing"
+          for source in ("online_tools.py","model_router.py","station.py"):
+              ast.parse((root / source).read_text(encoding="utf-8"))
+          chat=(root / "chat" / "§wyrlz" / "index.html").read_text(encoding="utf-8")
+          assert "swrlz-widget-v1" in chat and "renderWidgetStack" in chat and "navigator.geolocation" in chat, "Widget/geolocation presentation contract missing"
           print("Static package shape accepted; runtime inference still requires separate verification.")
           PY
       - name: Install candidate runtime dependencies
