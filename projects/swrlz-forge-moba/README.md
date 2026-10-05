@@ -53,6 +53,8 @@ The editor still deploys as one browser-native HTML project. Its exact bytes are
 
 Target Space: `kamiloki/swrlz-forge-moba`
 
+Live static host: `https://kamiloki-swrlz-forge-moba.static.hf.space/`
+
 Workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`
 
 v4 adds a live acceptance gate after upload: GitHub Actions requests the actual `hf.space` page with a cache-busting build query and requires the v4 deploy marker before declaring the deployment successful. Upload success alone is no longer treated as proof that users are receiving the new build.
