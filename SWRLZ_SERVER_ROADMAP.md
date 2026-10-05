@@ -1,3 +1,22 @@
+## UPDATE CHECKPOINT — 2026-10-05 — Behavioral invariant ledger + best-known repair base v122
+
+**Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
+
+- Verified feature head: `005267858ae6a187acc86e064b6651409d7380fd`.
+- Static verifier #17 / `37253009612`: SUCCESS.
+- Regression stack: `programming-contract-v117 PASS`, `programming-telemetry-v118 PASS`, `programming-receipts-v119 PASS`, `programming-repair-v120 PASS`, `programming-repair-state-v121 PASS`, `programming-behavior-ledger-v122 PASS`.
+- Structured JSON semantics now retain bounded named case records with pass/fail state and expected/actual/message evidence.
+- Brain now owns `swrlz-behavior-ledger-v1`: current/previous pass/fail sets, known/preserve passing cases, resolved/regressed cases, scores, tested-artifact lineage and bounded per-case repair obligations.
+- For comparable suites, a lower externally measured pass count keeps the prior best tested artifact as `bestKnownArtifact` and sets `rebaseRecommended=true`.
+- Brain resolves the exact historical artifact revision snapshot from Station history and exposes a model-facing `behaviorRepairBase` distinct from the newest receipt source. Latest receipt remains canonical evidence; source rebase does not rewrite receipt ownership.
+- Candidate gate rejects returning the best-tested base unchanged when the latest external receipt still establishes unresolved failures, but does not pretend behavioral success before re-execution.
+- Compact repair context and retry directives now carry preserve-passing cases, regression cases, current failures, score delta and repair-base mode. A regressed run can therefore repair from the best tested source instead of compounding changes on the worse candidate.
+- Qwen/700M repair diagnostics, candidate validation, Station session telemetry and durable programming logs expose bounded behavior-ledger + repair-base summaries without storing the source body in repository diagnostics.
+
+**Versions before assignment:** LALM Engine `2.1.146`; Repository Work `1.0.75`; Deployment Control `1.0.17`; Server Runtime `2.3.309`.
+
+**Next governed state:** advance LALM Engine + Repository Work, extend the live verifier with a 5/9 → 4/9 external-receipt sequence that proves best-known-source rebase and camera persistence, then one guarded HF deployment.
+
 ## UPDATE STARTED — 2026-10-05 — Behavioral invariant ledger + best-known repair base v122
 
 **Goal:** use the new v121 cameras to close the remaining semantic convergence defect: externally proven passing behaviors must remain durable repair obligations, regressions must be detected across receipts, and a regressed candidate must not automatically become the only source base for the next repair.
