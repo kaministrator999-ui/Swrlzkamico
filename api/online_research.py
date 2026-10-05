@@ -16,7 +16,7 @@ import urllib.request
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from types import ModuleType
-from typing import Any
+from typing import Any, Callable
 
 MAX_QUERIES=6
 MAX_RESULTS_PER_QUERY=8
@@ -31,6 +31,38 @@ HOT_REASONER_PATH=Path("/tmp/swrlz-admin/runtime/hot/research/online_research_re
 PREPARED_REASONER_PATH=Path(__file__).resolve().parents[1]/"swrzl_prepared_runtime"/"research"/"online_research_reasoner.py"
 HOT_REFRESH_SECONDS=15.0
 _hot_lock=threading.RLock();_hot_module:ModuleType|None=None;_hot_sig:tuple[int,int]|None=None;_last_hot_refresh=0.0
+_trace_local=threading.local()
+
+def set_trace_sink(sink:Callable[[dict[str,Any]],None]|None)->None:
+    _trace_local.sink=sink if callable(sink) else None
+
+def clear_trace_sink()->None:
+    _trace_local.sink=None
+
+def _trace_url(url:str)->tuple[str,str]:
+    try:
+        parsed=urllib.parse.urlsplit(str(url or ""))
+        site=str(parsed.hostname or "")[:180].lower()
+        safe=urllib.parse.urlunsplit((parsed.scheme,parsed.netloc,parsed.path,"",""))[:1000]
+        return site,safe
+    except Exception:
+        return "",""
+
+def _emit_trace(phase:str,**fields)->None:
+    record={"contract":"swrlz-online-trace-v1","phase":str(phase or "")[:80],"atUnixMs":int(time.time()*1000)}
+    for key,value in fields.items():
+        if value is None:continue
+        if key=="url":
+            site,safe=_trace_url(str(value))
+            if site:record["site"]=site
+            if safe:record["url"]=safe
+        elif isinstance(value,(str,int,float,bool)):
+            record[str(key)[:64]]=str(value)[:1000] if isinstance(value,str) else value
+    print("SWRLZ_ONLINE_TRACE "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
+    sink=getattr(_trace_local,"sink",None)
+    if callable(sink):
+        try:sink(dict(record))
+        except Exception:pass
 
 @dataclass
 class Evidence:
@@ -138,13 +170,16 @@ def _parse_bing_html(query:str,text:str)->tuple[list[dict[str,Any]],int]:
     return results,len(blocks)
 
 def _provider_attempt(provider:str,url:str,parser,query:str)->list[dict[str,Any]]:
+    _emit_trace("SEARCH_PROVIDER_VISIT",provider=provider,url=url,activity="Searching provider")
     try:
         status,text,response_bytes=_search_html(url)
         results,anchors=parser(query,text)
         print("SWRLZ_SEARCH_PROVIDER_CAMERA "+json.dumps({"contract":"swrlz-search-provider-camera-v2","provider":provider,"httpStatus":status,"responseBytes":response_bytes,"resultAnchors":anchors,"acceptedResults":len(results)},separators=(",",":")),flush=True)
+        _emit_trace("SEARCH_PROVIDER_RESULT",provider=provider,url=url,httpStatus=status,resultCount=len(results),activity="Provider returned results")
         return results
     except Exception as exc:
         print("SWRLZ_SEARCH_PROVIDER_CAMERA "+json.dumps({"contract":"swrlz-search-provider-camera-v2","provider":provider,"errorType":type(exc).__name__,"acceptedResults":0},separators=(",",":")),flush=True)
+        _emit_trace("SEARCH_PROVIDER_ERROR",provider=provider,url=url,errorType=type(exc).__name__,activity="Provider failed")
         return []
 
 def _ddg_search(query:str)->list[dict[str,Any]]:
@@ -162,14 +197,21 @@ def _ddg_search(query:str)->list[dict[str,Any]]:
     return []
 
 def _page_fetch(url:str)->dict[str,Any]:
-    safe=_validate_public_url(url);req=urllib.request.Request(safe,headers={"User-Agent":USER_AGENT,"Accept":"text/html,text/plain;q=0.9,*/*;q=0.1"})
-    with _opener().open(req,timeout=PAGE_TIMEOUT_SECONDS) as response:
-        final=_validate_public_url(response.geturl());status=getattr(response,"status",200);ctype=str(response.headers.get("Content-Type","")).lower();raw=response.read(MAX_PAGE_BYTES+1)
-    if len(raw)>MAX_PAGE_BYTES:raise ValueError("PAGE_RESPONSE_TOO_LARGE")
-    if not ("text/" in ctype or "html" in ctype or "json" in ctype):raise ValueError("PAGE_CONTENT_TYPE_BLOCKED")
-    text=raw.decode("utf-8","replace");tm=re.search(r"<title[^>]*>([\s\S]*?)</title>",text,re.I);title=html.unescape(re.sub(r"<[^>]+>"," ",tm.group(1))).strip()[:300] if tm else ""
-    cleaned=re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>"," ",text);cleaned=html.unescape(re.sub(r"<[^>]+>"," ",cleaned));extract=re.sub(r"\s+"," ",cleaned).strip()[:6000]
-    return {"finalUrl":final,"status":int(status),"title":title,"extract":extract,"fetchedAt":int(time.time()*1000)}
+    safe=_validate_public_url(url)
+    _emit_trace("PAGE_VISIT",provider="web-page",url=safe,activity="Visiting result page")
+    try:
+        req=urllib.request.Request(safe,headers={"User-Agent":USER_AGENT,"Accept":"text/html,text/plain;q=0.9,*/*;q=0.1"})
+        with _opener().open(req,timeout=PAGE_TIMEOUT_SECONDS) as response:
+            final=_validate_public_url(response.geturl());status=getattr(response,"status",200);ctype=str(response.headers.get("Content-Type","")).lower();raw=response.read(MAX_PAGE_BYTES+1)
+        if len(raw)>MAX_PAGE_BYTES:raise ValueError("PAGE_RESPONSE_TOO_LARGE")
+        if not ("text/" in ctype or "html" in ctype or "json" in ctype):raise ValueError("PAGE_CONTENT_TYPE_BLOCKED")
+        text=raw.decode("utf-8","replace");tm=re.search(r"<title[^>]*>([\s\S]*?)</title>",text,re.I);title=html.unescape(re.sub(r"<[^>]+>"," ",tm.group(1))).strip()[:300] if tm else ""
+        cleaned=re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>"," ",text);cleaned=html.unescape(re.sub(r"<[^>]+>"," ",cleaned));extract=re.sub(r"\s+"," ",cleaned).strip()[:6000]
+        _emit_trace("PAGE_FETCH_COMPLETE",provider="web-page",url=final,httpStatus=int(status),responseBytes=len(raw),activity="Page fetched")
+        return {"finalUrl":final,"status":int(status),"title":title,"extract":extract,"fetchedAt":int(time.time()*1000)}
+    except Exception as exc:
+        _emit_trace("PAGE_FETCH_ERROR",provider="web-page",url=safe,errorType=type(exc).__name__,activity="Page fetch failed")
+        raise
 
 def _refresh_hot(force:bool=False)->None:
     # Runtime reasoner activation is explicit. Audience research requests must
