@@ -1,0 +1,99 @@
+name: Deploy SWRLZ Forge MOBA to Hugging Face
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-forge-moba-hf
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact GitHub source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Rebuild and integrity-check the exact Forge HTML
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
+          test -s dist/swrlz-forge-moba/index.html
+          test -s dist/swrlz-forge-moba/README.md
+          grep -q "SWRLZ Forge MOBA Lab v2" dist/swrlz-forge-moba/index.html
+          grep -q "sdk: static" dist/swrlz-forge-moba/README.md
+          grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
+
+      - name: Install Hugging Face Hub client
+        run: python -m pip install "huggingface_hub>=0.34,<2"
+
+      - name: Create/update dedicated static Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test -n "$HF_TOKEN" || { echo "::error::HF_TOKEN repository secret is missing."; exit 1; }
+          python - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from huggingface_hub import HfApi
+
+          token = os.environ["HF_TOKEN"]
+          target = "kamiloki/swrlz-forge-moba"
+          source_sha = os.environ["SOURCE_SHA"]
+          folder = Path("dist/swrlz-forge-moba")
+
+          api = HfApi(token=token)
+          api.create_repo(
+              repo_id=target,
+              repo_type="space",
+              space_sdk="static",
+              private=False,
+              exist_ok=True,
+          )
+
+          commit = api.upload_folder(
+              folder_path=str(folder),
+              repo_id=target,
+              repo_type="space",
+              commit_message=f"Deploy SWRLZ Forge MOBA from GitHub {source_sha[:12]}",
+          )
+
+          info = api.repo_info(target, repo_type="space")
+          receipt = {
+              "schema": "swrlz-forge-hf-deploy-v1",
+              "deployedAt": datetime.now(timezone.utc).isoformat(),
+              "sourceRepository": "kaministrator999-ui/Swrlzkamico",
+              "sourceCommit": source_sha,
+              "sourcePath": "projects/swrlz-forge-moba",
+              "spaceRepository": target,
+              "spaceRevision": info.sha,
+              "spacePage": "https://huggingface.co/spaces/kamiloki/swrlz-forge-moba",
+              "appUrl": "https://kamiloki-swrlz-forge-moba.hf.space/",
+              "uploadCommit": getattr(commit, "oid", None) or getattr(commit, "commit_id", None),
+          }
+          Path("swrlz-forge-deploy-receipt.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+          print(json.dumps(receipt, indent=2))
+          PY
+
+      - name: Preserve deploy receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-forge-hf-deploy-receipt
+          path: swrlz-forge-deploy-receipt.json
+          retention-days: 30
