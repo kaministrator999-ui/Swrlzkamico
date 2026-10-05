@@ -204,6 +204,41 @@ def _weather_location_from_prompt(prompt: str) -> str:
     return ""
 
 
+def _weather_negated(text: str) -> bool:
+    value=_clean(text,1200).casefold()
+    return bool(re.search(
+        r"\b(?:didn['’]?t|did\s+not|don['’]?t|do\s+not|not)\s+(?:mean\s+)?(?:to\s+)?(?:look\s+up\s+|search\s+(?:for\s+)?)?(?:the\s+)?weather\b",
+        value,
+        re.I,
+    ))
+
+
+def _weather_continuation_request(text: str) -> bool:
+    value=_clean(text,300).casefold().strip(" .!?")
+    if not value or len(value.split())>10:
+        return False
+    return bool(re.fullmatch(
+        r"(?:yes|yeah|yep|sure|okay|ok)?(?:\s+(?:just|only))?(?:\s+for)?\s*(?:today|tomorrow|tonight|now|right now|this morning|this afternoon|this evening|this weekend)"
+        r"|(?:yes|yeah|yep|sure|okay|ok)"
+        r"|(?:just|only)\s+(?:today|tomorrow|tonight|now)",
+        value,
+        re.I,
+    ))
+
+
+def _prior_weather_context(history: list[dict[str, Any]] | None) -> dict[str, str] | None:
+    for item in reversed(list(history or [])):
+        if not isinstance(item,dict) or str(item.get("role") or "").casefold()!="user":
+            continue
+        text=_clean(item.get("content") or item.get("text"),1200)
+        if not text or _weather_negated(text) or not _WEATHER_TERMS.search(text):
+            continue
+        location=_weather_location_from_prompt(text)
+        if location:
+            return {"locationText":location,"sourceText":text[:500]}
+    return None
+
+
 def _split_us_city_state(location: str) -> tuple[str, str, str] | None:
     raw=_clean(location,180).strip(" ,")
     low=raw.casefold()
@@ -240,6 +275,20 @@ def _select_us_state_result(results: list[dict[str,Any]], city: str, state_name:
 
 def _search_query_from_prompt(prompt: str) -> str:
     text = _clean(prompt, 1200)
+    correction=re.search(
+        r"\b(?:i\s+want\s+you\s+to|please)\s+(?:search\s+(?:online\s+)?(?:for\s+)?|look\s+(?:it\s+)?up(?:\s+online)?\s*)(?:the\s+word\s+)?(.+)$",
+        text,
+        re.I,
+    )
+    if correction:
+        candidate=_clean(correction.group(1),500).strip(" .!?")
+        if candidate:
+            return candidate
+    lookup=re.search(r"\blook\s+(?:it\s+)?up(?:\s+online)?\s+(?:the\s+word\s+)?(.+)$",text,re.I)
+    if lookup:
+        candidate=_clean(lookup.group(1),500).strip(" .!?")
+        if candidate:
+            return candidate
     text = re.sub(
         r"^(?:please\s+)?(?:search\s+(?:online|the\s+web|the\s+internet)\s+(?:for\s+)?|"
         r"look\s+(?:it\s+)?up(?:\s+online)?\s*(?:for\s+)?|web\s+search\s*(?:for\s+)?|"
@@ -258,9 +307,11 @@ def classify_online_request(
     client_location: Any = None,
 ) -> dict[str, Any]:
     text = _clean(prompt, 2000)
+    history = list(history or [])
     programming = programming if isinstance(programming, dict) else {}
     explicit_web = bool(_EXPLICIT_WEB.search(text))
-    if _WEATHER_TERMS.search(text) and not programming.get("codingTask"):
+    weather_negated=_weather_negated(text)
+    if _WEATHER_TERMS.search(text) and not weather_negated and not programming.get("codingTask"):
         shared = _normalize_client_location(client_location)
         location_text = _weather_location_from_prompt(text)
         use_shared = bool(shared and (_LOCATION_REQUIRED.search(text) or not location_text))
@@ -273,8 +324,25 @@ def classify_online_request(
             "locationText": "" if use_shared else location_text,
             "clientLocation": shared if use_shared else None,
             "locationRequired": not bool(use_shared or location_text),
-            "programming": bool(programming.get("codingTask")),
+            "programming": False,
         }
+    if not programming.get("codingTask") and _weather_continuation_request(text):
+        prior_weather=_prior_weather_context(history)
+        if prior_weather:
+            shared=_normalize_client_location(client_location)
+            location_text=_clean(prior_weather.get("locationText"),180)
+            return {
+                "contract": ONLINE_CONTRACT,
+                "requested": True,
+                "kind": "weather",
+                "reason": "weather-continuation",
+                "query": (str(prior_weather.get("sourceText") or "")+" | "+text)[:500],
+                "locationText": location_text,
+                "clientLocation": None,
+                "locationRequired": not bool(location_text),
+                "timeScope": text[:120],
+                "programming": False,
+            }
     freshness = bool(_FRESHNESS.search(text))
     requested = explicit_web or freshness
     return {
