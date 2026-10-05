@@ -1,3 +1,31 @@
+## UPDATE CHECKPOINT — 2026-10-05 — Search continuation, coder-route isolation + composer recovery v127
+
+**Exact source/static state:** feature source `5e6dc7d95a8276a3fe7229dd6c2c64dfba3c0ce3` (0 ahead / 0 behind) passed static verifier #47 / `37337217200` SUCCESS.
+
+**User-production receipts reconciled:**
+- `web-muveeho0-4089855604-2149704164` — prompt `Yes for today` was requested on 700M but falsely selected Coder; Online Research searched the literal words `Yes for today`; programming candidate validation then rejected the non-code answer with `no-code-candidate`.
+- `web-muvegg9v-1151715297-2036198609` — explicit lookup correction for the word `hey` was also requested on 700M but falsely selected Coder; Cambridge Dictionary and Dictionary.com were fetched successfully, then programming validation rejected the non-code answer with `no-code-candidate`.
+- Both logs therefore prove the fault was **pre-inference programming auto-route classification**, not lack of search connectivity.
+
+**v127 repairs:**
+- programming auto-route no longer inherits coding merely because unrelated recent prose contains weak words such as website/API/server/UI;
+- weak software-adjacent nouns require a real programming action, while genuine code artifacts/active coding contracts still support terse coding continuations such as `keep going`;
+- whole-phrase matching replaces unsafe substring continuation matching, preventing tokens like `it` from matching inside unrelated words;
+- ordinary search/weather turns remain on the user's selected conversational model; Coder auto-route is reserved for genuine current-turn coding/programming work;
+- `Yes for today` now carries the nearest prior weather location and remains weather intent;
+- explicit weather corrections override weather lineage; `I didn't mean ... weather ... look up the word hey` becomes ordinary search with query `hey`;
+- successful online evidence is guarded against contradictory model refusals such as `I can't access` / `I can't assist`; the router substitutes a bounded evidence-derived answer if necessary;
+- composer collapse control regains a top-layer mobile hit target, touch-action handling, explicit toggle function, viewport inset recalculation, and UI-camera receipt;
+- clean-room Chat version metadata + internal UI-camera version are aligned at `1.0.91`.
+
+**Regression receipts:** full v117-v126 stack PASS plus `programming-routing-negative-regressions-v126 PASS` and `weather-continuation-real-user-v126 PASS`. Existing v126 exact Leavenworth city/state fallback remains green.
+
+**Versions:** LALM Engine `2.1.154` / `2.1.154-continuation-coder-grounding-v127`; Online Research `1.0.8` / `1.0.8-weather-continuation-correction-v127`; Web Chat `1.5.90`; clean-room Chat `1.0.91`; Repository Work `1.0.85`.
+
+**Next state:** guarded HF deployment from exact source `5e6dc7d95a8276a3fe7229dd6c2c64dfba3c0ce3`, then live acceptance using the exact screenshot continuation/correction prompts and deployed Chat composer contract.
+
+**Status:** SOURCE COMPLETE / STATIC VERIFIED / DEPLOYMENT READY.
+
 ## UPDATE STARTED — 2026-10-05 — Search continuation, coder-route isolation + composer recovery v127
 
 **Trigger:** user screenshots after live v126 showed three additional production failures:
