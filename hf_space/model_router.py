@@ -125,6 +125,11 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     payload["selectedModelId"]=model_id
     online_result=None
     online_plan=classify_online_request(str(payload.get("prompt") or ""),history,intent,payload.get("clientLocation"))
+    if model_id=="coder" and online_plan.get("requested") and not intent.get("codingTask"):
+        yield {"type":"STATUS","phase":"ONLINE_RESEARCH_SKIPPED","reason":"Coder online retrieval is reserved for programming/coding work.","categories":["ONLINE_RESEARCH","CODER","SKIPPED"]}
+        online_plan=dict(online_plan)
+        online_plan["requested"]=False
+        online_plan["reason"]="coder-non-programming-search-disabled"
     if online_plan.get("requested"):
         phase="WEATHER_FETCH_STARTED" if online_plan.get("kind")=="weather" else "SEARCH_STARTED"
         yield {"type":"STATUS","phase":phase,"reason":"Retrieving bounded online evidence.","categories":["ONLINE_RESEARCH",str(online_plan.get("kind") or "search").upper()]}
