@@ -615,6 +615,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 elif kind=="ONLINE_RESEARCH":
                     result=event.get("result") if isinstance(event.get("result"),dict) else {}
                     sources=event.get("sources") if isinstance(event.get("sources"),list) else []
+                    if event.get("requestedModelId"):g["requestedModelId"]=str(event.get("requestedModelId"))[:80]
+                    if event.get("selectedModelId"):g["selectedModelId"]=str(event.get("selectedModelId"))[:80]
                     g["onlineResearch"]=copy.deepcopy(result)
                     g["sources"]=[copy.deepcopy(item) for item in sources if isinstance(item,dict)][:24]
                     g["status"].append({"seq":g["lastSeq"],"phase":"ONLINE_RESEARCH","reason":str(result.get("status") or ""),"categories":["ONLINE_RESEARCH",str(result.get("kind") or "").upper()]})
@@ -712,7 +714,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 persist_kind,persist_payload=persist_event
                 if persist_kind=="ONLINE_RESEARCH_TRACE":
                     def persist_online_log(kind=persist_kind,document=persist_payload):
-                        result=persist_runtime_diagnostic(request_id,model_id,kind,document)
+                        result=persist_runtime_diagnostic(request_id,str(document.get("selectedModelId") or model_id),kind,document)
                         with _lock:
                             current=s.get("activeGeneration")
                             if current and current.get("requestId")==request_id:
