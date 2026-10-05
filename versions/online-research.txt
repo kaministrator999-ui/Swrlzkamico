@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.3
-REVISION=1.0.3-hf-search-weather-widgets-v124
+VERSION=1.0.4
+REVISION=1.0.4-bounded-provider-fallback-v124
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
