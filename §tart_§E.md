@@ -1,16 +1,17 @@
-# §tart §E — SWRLZ Forge Engine Build & Deploy Router
+# §tart §E — §wyrl§ Engine Build & Deploy Router
 
-**Role:** canonical entrypoint for SWRLZ Forge / browser-engine work.
+**Role:** canonical entrypoint for §wyrl§ Engine / browser world-engine work.
 
-**Invocation:** `§tart §E` or `@GitHub §tart §E` means enter the dedicated Forge engine lane, reconstruct current source/deployment truth, and continue independently from the §wyrlz AI Chat/LALM application.
+**Invocation:** `§tart §E` or `@GitHub §tart §E` means enter the dedicated §wyrl§ Engine lane, reconstruct current GitHub/Hugging Face truth, and continue independently from the §wyrlz AI Chat/LALM application.
 
 ## Canonical lane
 
 ```text
+§wyrl§ Engine
 GitHub: kaministrator999-ui/Swrlzkamico
-  -> projects/swrlz-forge-moba/   (legacy folder name; engine is generic in v5)
+  -> projects/swrlz-forge-moba/    (legacy path retained for lineage)
   -> .github/workflows/deploy-swrlz-forge-moba.yml
-  -> Hugging Face: kamiloki/swrlz-forge-moba
+  -> HF Space: kamiloki/swrlz-forge-moba
   -> https://kamiloki-swrlz-forge-moba.static.hf.space/
 ```
 
@@ -18,17 +19,18 @@ GitHub: kaministrator999-ui/Swrlzkamico
 
 On `§tart §E`:
 
-1. Read this router and the Forge README.
-2. Read `source-manifest.json`, `build_space.py`, all listed patch modules, and `SPACE_README.md`.
-3. Inspect current GitHub main, last Forge workflow, and Hugging Face Space state.
-4. Preserve the hard boundary from `kamiloki/Swyrlz`.
-5. Preserve project/template separation: engine core ≠ MOBA example.
-6. Preserve base and final source integrity.
-7. Merge validated runtime changes to `main`.
-8. Follow the dedicated Forge deploy workflow to terminal state.
-9. Require the live static host to serve the current build marker before calling the release live.
+1. Read this router and the engine README.
+2. Read `source-manifest.json`, `build_space.py`, every listed patch module, and `SPACE_README.md`.
+3. Inspect current GitHub main, the latest §wyrl§ Engine deployment workflow, and current Hugging Face Space state.
+4. Preserve the hard deployment boundary from the main §wyrlz AI Chat/LALM Space.
+5. Preserve project separation: §wyrl§ Engine core ≠ MOBA example ≠ Dragon's Den project data.
+6. Preserve source integrity and compatibility aliases.
+7. For runtime changes, validate the final generated HTML and JavaScript before merge.
+8. Merge validated changes to `main`.
+9. Follow the dedicated engine deployment to terminal state.
+10. Require the actual served static host to contain the current deploy marker before calling the release live.
 
-## Current v5 source authority
+## Current v5.1 source authority
 
 ```text
 base:
@@ -36,107 +38,82 @@ base:
   bytes 99591
   sha256 a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856
 
-patch chain:
+patches:
   patches/v4_1.py
   patches/v5_projects.py
+  patches/v5_1_swyl_engine_seed_den.py
 
 final:
-  swrlz_forge_v5.html
-  bytes 120501
-  sha256 c5b44363460fc29ec3a119967c082c1fd95b035d781c50a4affa9d8ecd686593
+  swyl_engine_v5_1.html
+  bytes 129398
+  sha256 a653064ce2be625d67d561a1db249a1bb4fa0637dc69377480cf6311e43fdf51
 
 marker:
-  V5_PROJECT_TEMPLATES_DRAGONS_DEN
+  SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN
 ```
 
-## v5 project model
+## Current project model
 
-Forge starts in **Starter World**, not the MOBA.
+Default boot project:
 
-Built-in templates:
+**Dragon's Den — Seed Chamber**
 
-- `default` / `sandbox` → Starter World
-- `moba` → MOBA Arena Example
-- `dragons-den` → Dragon's Den
+Other built-ins:
 
-Project state is serialized into normal `.forge.json` saves and can be loaded later. The project record owns `name`, `template`, `kind`, and `environment`.
+- Blank Starter World
+- MOBA Arena example
 
-MOBA runtime systems are explicitly gated by `currentProject.kind === 'moba'`.
-
-Dragon's Den provides embodied-agent anchors and decorative actors but does **not** claim that spatial voice transport is implemented. Roles/tags exist so the later LALM/voice bridge has explicit semantic locations.
-
-## Dragon's Den canonical v5 content
+The Dragon's Den starter must remain an **immersive enclosed environment**, not a MOBA/open-world field. Its current architectural zones are:
 
 ```text
-Council Rune Dais
-├── Memory Crystal
-├── §wyrlz Dragon
-├── Forge Dragon
-├── Coder Dragon
-├── Kamilion Throne
-├── Code Portal
-├── World Portal
-├── Spatial Voice Anchor
-├── Inference Core
-├── Arcane rune crystals
-├── cavern perimeter
-├── Visitor Pawn
-└── Ascension Pad
+Wake Nook
+    ↓
+Main Council Chamber
+├── Creator Alcove
+├── Throne Side
+├── Dragon Perch Side
+├── Portal Hall Exit
+├── Memory Vault Exit
+└── Inference Core Exit
 ```
 
-The Den is an example project: users can edit it, save variants, reload them, export them, or delete/rebuild actors without mutating Forge's default template.
+The Den currently includes dormant expansion exits and semantic hooks. Do not add launch pads or arbitrary game mechanics to the default starter unless explicitly requested.
+
+## Engine naming and compatibility
+
+User-facing name: **§wyrl§ Engine**.
+
+Preferred new APIs:
+
+- `window.SWYRL_ENGINE_BUILD`
+- `window.SWYRL_ENGINE_AGENT`
+
+Legacy `SWRLZ_FORGE_*` aliases remain armed so existing integrations do not break.
 
 ## Deployment truth contract
 
 ```text
 reconstruct base
-→ verify base
-→ apply governed patches
-→ verify final v5 bytes/SHA
+→ apply governed patch chain
+→ verify final bytes/SHA
+→ syntax-check generated module
 → upload dedicated static Space
-→ obtain actual host from Hugging Face
+→ obtain actual HF host/subdomain
 → fetch served page
-→ require V5_PROJECT_TEMPLATES_DRAGONS_DEN
+→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN
 → SUCCESS
 ```
 
-Never infer that upload success means the browser is serving the new engine.
+Never equate upload success with live serving success.
 
-## Historical checkpoints
+## Historical lineage
+
+v5:
+- GitHub engine release: `e3dcc4b24aa3737ef1fdfe1690421e8bf384b58b`
+- HF revision: `16d49cbe240800baf138a33f23e86c21015ace57`
 
 v4.1:
 - GitHub: `5d22b9411597a872900a3e9efe457f04c7b74120`
 - HF: `5c4bae00017273ab8d8de5aa512b329394a90de9`
 
-Future `§tart §E` runs must replace history with observed current truth rather than assuming this or any v5 revision remains latest.
-
-
-## Verified v5 deployment checkpoint
-
-```text
-GitHub source commit:
-e3dcc4b24aa3737ef1fdfe1690421e8bf384b58b
-
-Final source bytes:
-120501
-
-Final source SHA-256:
-c5b44363460fc29ec3a119967c082c1fd95b035d781c50a4affa9d8ecd686593
-
-Hugging Face Space revision:
-16d49cbe240800baf138a33f23e86c21015ace57
-
-Actual static host:
-https://kamiloki-swrlz-forge-moba.static.hf.space/
-
-Space stage:
-RUNNING
-
-Live marker:
-V5_PROJECT_TEMPLATES_DRAGONS_DEN
-
-Live verification:
-PASS on attempt 1
-```
-
-v5 is the current observed Forge state at this checkpoint. The live page now starts in Starter World, with MOBA Arena and Dragon's Den available as independent project templates.
+These are checkpoints, not assumed current truth after later releases.
