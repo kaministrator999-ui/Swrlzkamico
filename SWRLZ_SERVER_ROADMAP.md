@@ -1,3 +1,27 @@
+## UPDATE STARTED — 2026-10-05 — General response cognition + continuation coherence v123
+
+**Goal:** improve overall answer quality across the broadest practical range of ordinary user inputs and continuation inputs without replacing the existing programming repair system with prompt-specific special cases.
+
+**Observed baseline:** LALM Engine `2.1.147` / `2.1.147-hf-behavior-ledger-best-base-v122`; Repository Work `1.0.77`; Deployment Control `1.0.17`; Server Runtime `2.3.309`; HF feature source `005267858ae6a187acc86e064b6651409d7380fd`, identical to current `feature/hf-space-manual-deploy`.
+
+**Architecture reconciliation:**
+- Brain/LALM remains the semantic owner of conversational interpretation and response planning. Workstation/Station continues to own transport, persistence, timing, artifacts, and operational receipts.
+- Add one bounded response-cognition compiler rather than scattering phrase-specific branches through Chat/Station. It classifies the current turn relationship to supplied history (standalone, continuation, correction, expansion, selection, confirmation, creative delegation, or return-to-prior-subject) and exposes only compact evidence-backed state.
+- Resolve current-turn grammar and explicit scope first. History supplies the nearest relevant subject/constraints; it must not override a newer correction or drag unrelated old context forward.
+- Preserve existing programming intent/repair ownership. Coding turns consume the same response-cognition state for conversational continuity, but v117-v122 receipt/source/constraint/behavior-ledger gates remain authoritative.
+- Response shaping should be operation-aware: answer/explain/compare/rewrite/create/continue/correct/choose/confirm/decline and explicit output/count/format constraints should influence delivery without inventing actions.
+- Add bounded cameras/tests for classification and response-policy injection; no raw private reasoning is persisted.
+
+**Expected module impact:** LALM Engine + Repository Work only. Web Chat, Runtime Manifest, Deployment Control, and Server Runtime remain unchanged unless implementation evidence proves otherwise.
+
+**Verification plan:** deterministic response-cognition tests spanning standalone questions, pronoun/subject flips, terse continuations, corrections, expansions, option selection, creative delegation, topic changes, and coding continuations; full v117-v122 programming regression stack; then one guarded HF deployment and bounded live acceptance if static verification passes.
+
+**Deployment expectation:** runtime-affecting HF source mutation; use the canonical HF request path exactly once after source/version/Roadmap reconciliation and static verification.
+
+**Primary Focus:** LALM Engine.
+**Focus Group:** LALM Engine + HF 700M general-response path + coder response path.
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-05 — Behavioral invariant ledger + best-known repair base v122
 
 **Outcome:** LIVE RUNTIME VERIFIED for preservation-aware repair-state and best-known tested-source rebasing.
