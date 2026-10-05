@@ -1,3 +1,25 @@
+## UPDATE CHECKPOINT — 2026-10-05 — v124 prioritized 700M / coder warmup repair
+
+**Exact source:** `a39619e8b880a842c3e6922a99941c404fad9d4b` on `feature/hf-space-manual-deploy` (0 ahead / 0 behind).
+
+**Trigger:** live verifier #17 bound Space revision `f592bce57a1e6cd356ba2afab1923af19362d47d` to source `3dd95708c5d9cf8c7bc618faa3290a90539b08aa`, proved the v123 response-cognition count repair was present, then timed out on the first 700M generation while Station remained at `phase=LOADING`. No online-search or widget assertion had failed.
+
+**Root cause:** HF startup warmup loaded stock, coder, and R39 but omitted the default 700M route. A fresh Space therefore deferred the 700M GGUF download/model initialization to the first live request.
+
+**Repair:**
+- import and prewarm `lfm2_700m_engine.load`;
+- startup warmup priority is now **700M → Qwen2.5-Coder-1.5B → stock 350M → R39**;
+- live verifier keeps a bounded larger cold-start polling window so model initialization latency is not mislabeled as semantic failure;
+- deterministic v124 tests assert both the all-model online-context contract and the startup warmup order.
+
+**Static verification:** #27 / `37265765663` SUCCESS; full v117–v124 stack green.
+
+**Versions:** LALM Engine `2.1.151` / `2.1.151-prioritized-model-warmup-v124`; Repository Work `1.0.82`; Online Research remains `1.0.5`; Web Chat remains `1.5.88`; clean-room Chat remains `1.0.89`.
+
+**Next state:** guarded HF deployment of exact source `a39619e8b880a842c3e6922a99941c404fad9d4b`, then live acceptance requiring 700M weather/search and explicit Qwen Coder search.
+
+**Status:** SOURCE COMPLETE / STATIC VERIFIED / DEPLOYMENT READY.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — v124 all-model online evidence integration
 
 **Exact source:** `3dd95708c5d9cf8c7bc618faa3290a90539b08aa` on `feature/hf-space-manual-deploy` (0 ahead / 0 behind at checkpoint).
