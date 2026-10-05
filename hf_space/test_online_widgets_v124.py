@@ -439,6 +439,16 @@ correction=classify_online_request(
 assert correction["kind"]=="search",correction
 assert correction["query"].casefold()=="hey",correction
 
+weather_docs_search=classify_online_request(
+    "Search online for Open-Meteo weather API documentation",
+    real_weather_history,
+    {},
+    None,
+)
+assert weather_docs_search["kind"]=="search",weather_docs_search
+assert weather_docs_search["reason"]=="explicit-web-intent",weather_docs_search
+assert "Open-Meteo weather API documentation".casefold() in weather_docs_search["query"].casefold(),weather_docs_search
+
 # Open-Meteo city+state fallback: combined free text may return zero results.
 orig_json_get=online_tools._json_get
 geo_calls=[]
