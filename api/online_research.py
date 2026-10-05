@@ -39,31 +39,6 @@ def set_trace_sink(sink:Callable[[dict[str,Any]],None]|None)->None:
 def clear_trace_sink()->None:
     _trace_local.sink=None
 
-def _trace_url(url:str)->tuple[str,str]:
-    try:
-        parsed=urllib.parse.urlsplit(str(url or ""))
-        site=str(parsed.hostname or "")[:180].lower()
-        safe=urllib.parse.urlunsplit((parsed.scheme,parsed.netloc,parsed.path,"",""))[:1000]
-        return site,safe
-    except Exception:
-        return "",""
-
-def _emit_trace(phase:str,**fields)->None:
-    record={"contract":"swrlz-online-trace-v1","phase":str(phase or "")[:80],"atUnixMs":int(time.time()*1000)}
-    for key,value in fields.items():
-        if value is None:continue
-        if key=="url":
-            site,safe=_trace_url(str(value))
-            if site:record["site"]=site
-            if safe:record["url"]=safe
-        elif isinstance(value,(str,int,float,bool)):
-            record[str(key)[:64]]=str(value)[:1000] if isinstance(value,str) else value
-    print("SWRLZ_ONLINE_TRACE "+json.dumps(record,ensure_ascii=False,separators=(",",":")),flush=True)
-    sink=getattr(_trace_local,"sink",None)
-    if callable(sink):
-        try:sink(dict(record))
-        except Exception:pass
-
 @dataclass
 class Evidence:
     title:str;url:str;snippet:str;source:str;query:str;rank:int;fetched_at:int
@@ -84,24 +59,25 @@ def _trace_public_url(url:Any)->tuple[str,str]:
     except Exception:
         return "",""
 
-def _emit_trace(phase:str,reason:str="",provider:str="",url:Any="",status:Any=None,result_count:Any=None,response_bytes:Any=None)->dict[str,Any]:
+def _emit_trace(phase:str,reason:str="",provider:str="",url:Any="",status:Any=None,result_count:Any=None,response_bytes:Any=None,error_type:str="")->dict[str,Any]:
     host,safe_url=_trace_public_url(url)
     event={
-        "contract":"swrlz-online-trace-event-v1",
+        "contract":"swrlz-online-trace-v1",
         "atUnixMs":int(time.time()*1000),
         "phase":str(phase or "ONLINE_TRACE")[:80],
-        "reason":str(reason or "")[:240],
+        "activity":str(reason or "")[:240],
         "provider":str(provider or "")[:120],
         "site":host,
         "url":safe_url,
     }
-    if status is not None:event["status"]=status if isinstance(status,(str,int,float,bool)) else str(status)[:80]
+    if status is not None:event["httpStatus"]=status if isinstance(status,(str,int,float,bool)) else str(status)[:80]
     if result_count is not None:
         try:event["resultCount"]=int(result_count)
         except Exception:pass
     if response_bytes is not None:
         try:event["responseBytes"]=int(response_bytes)
         except Exception:pass
+    if error_type:event["errorType"]=str(error_type)[:120]
     sink=getattr(_trace_local,"sink",None)
     if callable(sink):
         try:sink(dict(event))
@@ -298,10 +274,11 @@ def _legacy_research(payload:dict[str,Any])->dict[str,Any]:
     return {"contractId":"swrlz_online_evidence_v1","requested":True,"provider":_provider(),"queries":queries,"resultCount":len(evidence),"evidence":evidence,"errors":errors,"elapsedMs":round((time.perf_counter()-started)*1000),"epistemicPolicy":"retrieval-is-evidence-not-truth","hotReasonerFallback":True}
 
 def research(payload:dict[str,Any])->dict[str,Any]:
-    sink=payload.get("_eventSink") if isinstance(payload,dict) else None
+    requested_sink=payload.get("_eventSink") if isinstance(payload,dict) else None
     clean_payload=dict(payload or {})
     clean_payload.pop("_eventSink",None)
     previous_sink=getattr(_trace_local,"sink",None)
+    sink=requested_sink if callable(requested_sink) else previous_sink
     _trace_local.sink=sink if callable(sink) else None
     _emit_trace("RESEARCH_STARTED",reason="Online research started",provider=_provider())
     try:
@@ -316,7 +293,7 @@ def research(payload:dict[str,Any])->dict[str,Any]:
                 _emit_trace("RESEARCH_COMPLETE",reason="Online research complete",provider=str(bundle.get("provider") or _provider()),result_count=len(bundle.get("evidence") or []))
                 return bundle
             except Exception as exc:
-                _emit_trace("RESEARCH_REASONER_ERROR",reason=type(exc).__name__,provider=_provider(),status="ERROR")
+                _emit_trace("RESEARCH_REASONER_ERROR",reason="Online research reasoner failed",provider=_provider(),status="ERROR",error_type=type(exc).__name__)
                 print("SWRLZ_RESEARCH_HOT_FAILURE "+json.dumps({"at":int(time.time()*1000),"requestId":str(clean_payload.get("requestId") or "")[:200],"error":type(exc).__name__},separators=(",",":")),flush=True)
         bundle=_legacy_research(clean_payload)
         _emit_trace("RESEARCH_COMPLETE",reason="Online research complete",provider=str(bundle.get("provider") or _provider()),result_count=len(bundle.get("evidence") or []))
