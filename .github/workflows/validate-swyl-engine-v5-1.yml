@@ -47,18 +47,26 @@ jobs:
       - name: Verify v5.1 semantics
         run: |
           set -euo pipefail
-          FILE=/tmp/swyl-engine-v5-1.html
-          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN" "$FILE"
-          grep -q "§wyrl§ ENGINE · MAKER v5.1" "$FILE"
-          grep -q "Dragon's Den — Seed Chamber" "$FILE"
-          grep -q "function makeDenStructure" "$FILE"
-          grep -q "Wake Nook" "$FILE"
-          grep -q "Creator Alcove" "$FILE"
-          grep -q "Portal Hall Exit" "$FILE"
-          grep -q "Memory Vault Exit" "$FILE"
-          grep -q "Inference Core Exit" "$FILE"
-          grep -q "window.SWYRL_ENGINE_AGENT" "$FILE"
-          ! grep -q "Ascension Pad" "$FILE"
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("/tmp/swyl-engine-v5-1.html").read_text(encoding="utf-8")
+          required=[
+            "SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN",
+            "§wyrl§ ENGINE · MAKER v5.1",
+            "Dragon's Den — Seed Chamber",
+            "function makeDenStructure",
+            "Wake Nook",
+            "Creator Alcove",
+            "Portal Hall Exit",
+            "Memory Vault Exit",
+            "Inference Core Exit",
+            "window.SWYRL_ENGINE_AGENT",
+          ]
+          missing=[x for x in required if x not in s]
+          print("MISSING=",missing)
+          print("ASCENSION_PAD_COUNT=",s.count("Ascension Pad"))
+          if missing: raise SystemExit(1)
+          PY
       - name: Syntax-check editor module
         run: |
           set -euo pipefail
