@@ -1,3 +1,25 @@
+## UPDATE STARTED — 2026-10-05 — Online Research trace logs + live Chat site status v125
+
+**Goal:** make online retrieval observable end-to-end while preserving the v124 search/weather/widget/model-routing architecture.
+
+**User requirement:** every search/research/weather request must leave useful bounded logs, and Chat must visibly show retrieval progress including which public website/provider is being visited while the search is in progress.
+
+**Architecture reconciliation:**
+- Online Research remains the network/evidence owner. Add one structured trace contract at that owner; do not invent separate UI-only progress.
+- Provider attempts, provider selection, page fetch start/complete/error, weather geocoding/forecast calls, widget preparation, and model-evidence handoff emit bounded `swrlz-online-trace-event-v1` events.
+- Trace URLs shown/persisted are presentation-safe: public host + path only; credentials, query strings, fragments, exact geolocation coordinates, raw provider HTML, raw prompt text, and hidden reasoning are excluded.
+- HF router executes retrieval in a bounded worker and streams trace events through Station as they occur. Retrieval still completes before inference so every selected model receives the final evidence context.
+- Station retains the trace on the active generation, streams site/provider fields to Chat, commits bounded online-research metadata to the assistant message, and persists an Online Research diagnostic document under `runtime-diagnostics/online-research/<requestId>/online-research-trace.json` when the runtime GitHub diagnostic token is available.
+- Durable log records include requested model, selected model/auto-route, provider/site/path trace, status/result/source/widget counts, timing, and persistence receipt. They exclude raw prompt/history and precise shared coordinates.
+- Chat shows the current retrieval reason/site in the in-message progress row and a short live retrieval trail beneath it. Existing Work/agent action surface continues to receive the same structured SEARCH/FETCH events.
+- 700M, Qwen2.5-Coder-1.5B, stock 350M, and R39 continue to consume the same router-level `onlineContext`; this observability tier must not move search semantics into model-specific code.
+
+**Expected module impact:** Online Research + LALM Engine/Station + Web Chat + Repository Work. Search/widget semantics and provider safety stay intact.
+
+**Verification:** deterministic trace-redaction/event-order tests, durable-log shape tests, Chat source assertions for visible site/status trail, full v117-v124 regressions, then guarded HF deployment/live search verification.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — v124 prioritized 700M / coder warmup repair
 
 **Exact source:** `a39619e8b880a842c3e6922a99941c404fad9d4b` on `feature/hf-space-manual-deploy` (0 ahead / 0 behind).
