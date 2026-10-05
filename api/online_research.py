@@ -187,7 +187,7 @@ def _provider_attempt(provider:str,url:str,parser,query:str)->list[dict[str,Any]
         status,text,response_bytes=_search_html(url)
         results,anchors=parser(query,text)
         print("SWRLZ_SEARCH_PROVIDER_CAMERA "+json.dumps({"contract":"swrlz-search-provider-camera-v2","provider":provider,"httpStatus":status,"responseBytes":response_bytes,"resultAnchors":anchors,"acceptedResults":len(results)},separators=(",",":")),flush=True)
-        _emit_trace("SEARCH_PROVIDER_RESULT",provider=provider,url=url,status=status,result_count=len(results),reason="Provider returned results")
+        _emit_trace("SEARCH_PROVIDER_RESULTS" if results else "SEARCH_PROVIDER_EMPTY",provider=provider,url=url,status=status,result_count=len(results),reason=("Search results found" if results else "No usable results from provider"))
         return results
     except Exception as exc:
         print("SWRLZ_SEARCH_PROVIDER_CAMERA "+json.dumps({"contract":"swrlz-search-provider-camera-v2","provider":provider,"errorType":type(exc).__name__,"acceptedResults":0},separators=(",",":")),flush=True)
@@ -211,7 +211,7 @@ def _ddg_search(query:str)->list[dict[str,Any]]:
 
 def _page_fetch(url:str)->dict[str,Any]:
     safe=_validate_public_url(url)
-    _emit_trace("PAGE_VISIT",provider="web-page",url=safe,reason="Visiting result page")
+    _emit_trace("PAGE_FETCH_STARTED",provider="web-page",url=safe,reason="Visiting result page")
     try:
         req=urllib.request.Request(safe,headers={"User-Agent":USER_AGENT,"Accept":"text/html,text/plain;q=0.9,*/*;q=0.1"})
         with _opener().open(req,timeout=PAGE_TIMEOUT_SECONDS) as response:
