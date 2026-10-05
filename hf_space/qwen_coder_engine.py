@@ -6,6 +6,7 @@ from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive
+from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 
 MODEL_REPO=os.environ.get("SWRLZ_CODER_MODEL_REPO","Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF")
 MODEL_FILE=os.environ.get("SWRLZ_CODER_MODEL_FILE","qwen2.5-coder-1.5b-instruct-q4_k_m.gguf")
@@ -495,6 +496,8 @@ def generate_events(payload):
     if convergence:
         yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
     programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [],payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
+    response_cognition=classify_response_cognition(prompt,history,programming)
+    yield {"type":"RESPONSE_COGNITION","state":response_cognition_camera(response_cognition)}
     if programming.get("needsFailureEvidence"):
         yield {"type":"PROGRAMMING_INTENT","intent":programming}
         answer=str(programming.get("evidenceRequest") or "Paste the compiler, test, runtime, browser-console, linter, or type-checker error output so I can ground the repair in the actual failure.")
@@ -540,6 +543,7 @@ def generate_events(payload):
                 "Prefer the smallest executable repair that satisfies the original contract and newest evidence. "
                 "A repeated failing executable candidate is not a repair; change strategy when the candidate or failure set stalls.")
     system+="\n"+_response_mode(prompt,programming)
+    system+="\n"+response_cognition_policy(response_cognition)
     temporal=payload.get("temporalContext") if isinstance(payload.get("temporalContext"),dict) else {}
     if temporal:
         system+=("\nCONVERSATIONAL TIME CONTEXT (server-derived from canonical UTC message timestamps plus the user's reported browser timezone; use only when it genuinely helps):\n"
