@@ -151,7 +151,7 @@ router=(root/"hf_space/model_router.py").read_text(encoding="utf-8")
 station=(root/"hf_space/station.py").read_text(encoding="utf-8")
 chat=(root/"chat/§wyrlz/index.html").read_text(encoding="utf-8")
 prepare=(root/"scripts/prepare_hf_space.py").read_text(encoding="utf-8")
-assert "execute_online_request" in router and '"type":"WIDGET"' in router,router[:500]
+assert "stream_online_request" in router and '"type":"WIDGET"' in router,router[:500]
 assert 'kind=="ONLINE_RESEARCH"' in station and 'kind=="WIDGET"' in station,station[:500]
 assert '"widgets":[]' in station and 'clientLocation' in station,station[:500]
 assert "renderWidgetStack" in chat and "weather-stats" in chat and "search-widget-list" in chat,chat[:500]
