@@ -20,7 +20,7 @@ except Exception as _native_exc:
 from station import app as station_app, set_generator, persist_runtime_diagnostic
 from model_router import dispatch, routes, ModelUnavailable
 from original_engine import generate_events as original_generate, load as original_load
-from lfm2_700m_engine import generate_events as large_generate
+from lfm2_700m_engine import generate_events as large_generate, load as large_load
 from qwen_coder_engine import generate_events as coder_generate, load as coder_load
 
 ROOT=Path(__file__).resolve().parent
@@ -263,7 +263,7 @@ app=gr.mount_gradio_app(app,legacy["demo"],path="/legacy",ssr_mode=False)
 
 def _warm_backends():
     """Move one-time model setup off the first interactive request."""
-    for name,loader in (("stock",original_load),("coder",coder_load),("r39",engine)):
+    for name,loader in (("700m",large_load),("coder",coder_load),("stock",original_load),("r39",engine)):
         start=time.perf_counter()
         try:
             loader()
