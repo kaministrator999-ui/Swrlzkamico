@@ -58,7 +58,8 @@ def persist_runtime_diagnostic(request_id,model_id,event_type,diagnostic):
         "REPAIR_DIAGNOSTIC":("repair","repair-diagnostic.json","swrlz-github-repair-log-v1"),
         "REPAIR_OUTCOME_DIAGNOSTIC":("repair","repair-outcome-diagnostic.json","swrlz-github-repair-log-v1"),
         "PROGRAMMING_GENERATION_TELEMETRY":("programming","candidate-attempt-telemetry.json","swrlz-github-programming-attempt-log-v1"),
-        "ONLINE_RESEARCH_TRACE":("online","search-trace.json","swrlz-github-online-research-log-v1"),
+        "ONLINE_RESEARCH_TRACE":("online-research","online-research-trace.json","swrlz-github-online-research-trace-v1"),
+        "ONLINE_RESEARCH_OUTCOME":("online-research","online-research-outcome.json","swrlz-github-online-research-outcome-v1"),
     }
     spec=allowed.get(str(event_type or ""))
     if spec is None or not isinstance(diagnostic,dict):
@@ -588,6 +589,12 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     state=event.get("state")
                     if isinstance(state,dict):g["responseCognition"]=copy.deepcopy(state)
                     g["status"].append({"seq":g["lastSeq"],"phase":"RESPONSE_COGNITION","reason":""})
+                elif kind=="ROUTE":
+                    selected=str(event.get("selectedModelId") or g.get("selectedModelId") or model_id)[:80]
+                    requested=str(event.get("requestedModelId") or g.get("requestedModelId") or model_id)[:80]
+                    g["requestedModelId"]=requested
+                    g["selectedModelId"]=selected
+                    g["status"].append({"seq":g["lastSeq"],"phase":str(event.get("phase") or "MODEL_ROUTE"),"reason":str(event.get("reason") or "")[:200],"categories":["MODEL_ROUTE"],"provider":selected})
                 elif kind=="ONLINE_TRACE":
                     trace=event.get("trace") if isinstance(event.get("trace"),dict) else {}
                     if trace:
@@ -624,11 +631,14 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         "research":copy.deepcopy(result),
                         "trace":trace,
                         "sourceSites":source_sites[:24],
-                        "widgetKinds":[str(item.get("kind") or "")[:80] for item in (g.get("widgets") or []) if isinstance(item,dict)][:8],
+                        "widgetKinds":copy.deepcopy(result.get("widgetKinds") or []),
+                        "requestedModelId":str(g.get("requestedModelId") or model_id)[:80],
+                        "selectedModelId":str(g.get("selectedModelId") or model_id)[:80],
                         "rawPromptStored":False,
+                        "historyStored":False,
                         "preciseLocationStored":False,
                     }
-                    g["onlineLogPersistence"]={"state":"QUEUED","path":"runtime-diagnostics/online/"+request_id+"/search-trace.json","branch":"runtime"}
+                    g["onlineLogPersistence"]={"state":"QUEUED","tracePath":"runtime-diagnostics/online-research/"+request_id+"/online-research-trace.json","outcomePath":"runtime-diagnostics/online-research/"+request_id+"/online-research-outcome.json","branch":"runtime"}
                     persist_event=("ONLINE_RESEARCH_TRACE",online_log)
                 elif kind=="WIDGET":
                     widget=event.get("widget") if isinstance(event.get("widget"),dict) else {}
@@ -706,7 +716,9 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         with _lock:
                             current=s.get("activeGeneration")
                             if current and current.get("requestId")==request_id:
-                                current["onlineLogPersistence"]=copy.deepcopy(result)
+                                persistence=copy.deepcopy(current.get("onlineLogPersistence") or {})
+                                persistence["trace"]=copy.deepcopy(result)
+                                current["onlineLogPersistence"]=persistence
                             target_thread=next((t for t in s.get("threads",[]) if t.get("id")==payload.get("threadId")),None)
                             if target_thread:
                                 target_message=next((m for m in reversed(target_thread.get("messages",[])) if str(m.get("id") or "")==str(assistant_id)),None)
@@ -732,6 +744,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
             return
         if not text:raise RuntimeError("R39 emitted no DELTA")
         github_telemetry=None
+        online_outcome=None
         with _lock:
             g=s["activeGeneration"]
             completed_ms=int(time.time()*1000)
@@ -787,6 +800,11 @@ def _run(key,request_id,model_id,payload,assistant_id):
             if online_research: telemetry_meta["onlineResearch"]=online_research
             if online_sources: telemetry_meta["sources"]=online_sources
             if online_widgets: telemetry_meta["widgets"]=online_widgets
+            if online_research:
+                telemetry_meta["onlineModelRoute"]={
+                    "requestedModelId":str(g.get("requestedModelId") or model_id)[:80],
+                    "selectedModelId":str(g.get("selectedModelId") or model_id)[:80],
+                }
             if online_trace: telemetry_meta["onlineTrace"]=online_trace
             if online_log_persistence: telemetry_meta["onlineLogPersistence"]=online_log_persistence
             if programming_telemetry: telemetry_meta["programmingTelemetry"]=programming_telemetry
@@ -851,6 +869,21 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     artifact=_create_code_artifact(thread,message,request_id,text)
                     if artifact is not None:
                         g["artifactReceipt"]={"action":"ARTIFACT_CREATED","artifactId":artifact["id"],"revision":1,"sourceHash":artifact.get("currentSourceHash")}
+            if online_research:
+                online_outcome={
+                    "schema":"swrlz-online-research-outcome-v1",
+                    "terminalState":str(g.get("terminalType") or "COMPLETE")[:80],
+                    "research":online_research,
+                    "trace":copy.deepcopy((g.get("onlineTrace") or [])[-64:]),
+                    "sourceSites":sorted({str(urllib.parse.urlsplit(str(item.get("url") or "")).hostname or "").lower() for item in online_sources if item.get("url")})[:24],
+                    "widgetKinds":[str(item.get("kind") or "")[:80] for item in online_widgets if isinstance(item,dict)][:8],
+                    "requestedModelId":str(g.get("requestedModelId") or model_id)[:80],
+                    "selectedModelId":str(g.get("selectedModelId") or model_id)[:80],
+                    "stationTiming":station_timing,
+                    "rawPromptStored":False,
+                    "historyStored":False,
+                    "preciseLocationStored":False,
+                }
             if intent.get("codingTask") and generation_telemetry:
                 github_telemetry={
                     "schema":"swrlz-station-programming-log-v1",
@@ -879,6 +912,22 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 }
                 g["githubTelemetryPersistence"]={"state":"QUEUED","path":"runtime-diagnostics/programming/"+request_id+"/candidate-attempt-telemetry.json","branch":"runtime"}
             s["revision"]+=1
+        if online_outcome is not None:
+            def persist_online_outcome():
+                result=persist_runtime_diagnostic(request_id,str(online_outcome.get("selectedModelId") or model_id),"ONLINE_RESEARCH_OUTCOME",online_outcome)
+                with _lock:
+                    current=s.get("activeGeneration")
+                    if current and current.get("requestId")==request_id:
+                        persistence=copy.deepcopy(current.get("onlineLogPersistence") or {})
+                        persistence["outcome"]=copy.deepcopy(result)
+                        current["onlineLogPersistence"]=persistence
+                    target_thread=next((t for t in s.get("threads",[]) if t.get("id")==payload.get("threadId")),None)
+                    if target_thread:
+                        target_message=next((m for m in reversed(target_thread.get("messages",[])) if str(m.get("id") or "")==str(assistant_id)),None)
+                        if target_message is not None:
+                            target_message.setdefault("meta",{})["onlineLogPersistence"]=copy.deepcopy((s.get("activeGeneration") or {}).get("onlineLogPersistence") or {})
+                    s["revision"]+=1
+            threading.Thread(target=persist_online_outcome,daemon=True,name="online-outcome-"+request_id[:8]).start()
         if github_telemetry is not None:
             def persist_programming_log():
                 result=persist_runtime_diagnostic(request_id,model_id,"PROGRAMMING_GENERATION_TELEMETRY",github_telemetry)
@@ -894,15 +943,31 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     s["revision"]+=1
             threading.Thread(target=persist_programming_log,daemon=True,name="programming-log-"+request_id[:8]).start()
     except Exception as exc:
+        failed_online_outcome=None
         with _lock:
             g=s["activeGeneration"]
             if g and g["requestId"]==request_id:
                 g.update(terminal=True,terminalType="FAILED",phase="FAILED")
                 g["status"].append({"phase":"FAILED","reason":str(exc)[:240]})
+                if isinstance(g.get("onlineResearch"),dict) and g.get("onlineResearch"):
+                    failed_online_outcome={
+                        "schema":"swrlz-online-research-outcome-v1",
+                        "terminalState":"FAILED",
+                        "errorType":type(exc).__name__,
+                        "research":copy.deepcopy(g.get("onlineResearch") or {}),
+                        "trace":copy.deepcopy((g.get("onlineTrace") or [])[-64:]),
+                        "requestedModelId":str(g.get("requestedModelId") or model_id)[:80],
+                        "selectedModelId":str(g.get("selectedModelId") or model_id)[:80],
+                        "rawPromptStored":False,
+                        "historyStored":False,
+                        "preciseLocationStored":False,
+                    }
                 thread=next((t for t in s["threads"] if t["id"]==payload["threadId"]),None)
                 if thread:
-                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":"Generation failed: "+str(exc)[:240],"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED"}})
+                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":"Generation failed: "+str(exc)[:240],"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED","onlineResearch":copy.deepcopy(g.get("onlineResearch") or {}),"onlineTrace":copy.deepcopy((g.get("onlineTrace") or [])[-64:])}})
                     s["revision"]+=1
+        if failed_online_outcome is not None:
+            threading.Thread(target=persist_runtime_diagnostic,args=(request_id,str(failed_online_outcome.get("selectedModelId") or model_id),"ONLINE_RESEARCH_OUTCOME",failed_online_outcome),daemon=True,name="online-failed-"+request_id[:8]).start()
 
 def _container_content_tag(text):
     source=str(text or "")
@@ -1005,7 +1070,7 @@ async def send(request:Request):
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
