@@ -1,3 +1,27 @@
+## UPDATE STARTED — 2026-10-05 — Search continuation, coder-route isolation + composer recovery v127
+
+**Trigger:** user screenshots after live v126 showed three additional production failures:
+1. terse continuation `Yes for today` was searched literally as a fresh web query instead of continuing the active Leavenworth weather task;
+2. explicit search correction `I didn't mean look up weather I want you to look up the word hey` retrieved valid dictionary evidence but the assistant replied `I apologize, but I can't assist with that.`;
+3. the clean-room Chat composer collapse chevron no longer responded reliably on mobile.
+
+**Runtime evidence:** durable diagnostics for request ids `web-muveeho0-4089855604-2149704164` and `web-muvegg9v-1151715297-2036198609` show both ordinary turns were requested on 700M but falsely auto-routed to `coder`. Programming telemetry independently rejected both with `validationReasons=["no-code-candidate"]`, proving the coder route itself was the wrong owner. The first turn searched the literal query `Yes for today`; the second successfully fetched Cambridge Dictionary/Dictionary.com evidence for `hey` before downstream coder validation rejected the non-code answer.
+
+**Architecture reconciliation:**
+- Coder auto-route must be current-turn programming evidence, not generic software-adjacent words inherited from unrelated history. Weak terms such as website/API/server/UI require an actual programming action; coding continuation inheritance requires an explicit continuation reference plus an existing code artifact/intent.
+- Ordinary web/weather/search remains on the selected conversational model. Qwen Coder may use Online Research only when the underlying turn is genuinely programming/coding work (or when explicitly selected for a programming request).
+- Online Research carries terse weather confirmations/time qualifiers to the nearest prior weather user turn and retains its location. Explicit corrections that negate weather override that lineage and may become ordinary web search.
+- Search query extraction follows the newest correction clause (for example, `look up the word hey` → `hey`).
+- Successful Online Research receives a router-level grounding guard: model prose that falsely claims it cannot access/browse/assist is replaced by a bounded evidence-derived answer so prose cannot contradict a successful widget/evidence result.
+- Composer collapse remains Chat-owned presentation state. Restore a top-layer mobile hit target, explicit toggle handler, viewport inset recalculation, and UI camera event.
+- Preserve v126 city/state weather fallback + weather no-fabrication stop unchanged.
+
+**Regression evidence added:** exact screenshot prompts; negative coder-routing history case; genuine coding continuation preservation; Leavenworth weather continuation; weather-negation correction; successful-search refusal guard; mobile composer collapse source contract.
+
+**Expected module impact:** LALM Engine + Online Research + Web Chat + Repository Work. Server Runtime/Deployment Control/Runtime Manifest unchanged.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-05 — User-reported weather location resolution + no-fabrication gate v126
 
 **Outcome:** LIVE RUNTIME VERIFIED.
