@@ -1,0 +1,89 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v122-4d73ea2d507c",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "d8710d6401cf5080649274e66064d061ae6f05c5",
+  "persistedAtUnixMs": 1791210891333,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "3ac906c7cf4e16dc",
+    "candidateFingerprint": "3ac906c7cf4e16dc",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "src/label.ts(2,12): error TS18047: 'value' is possibly 'null'."
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "type",
+        "typecheck"
+      ],
+      "exceptionTypes": [],
+      "exitCodes": [],
+      "failingSignals": [
+        "src/label.ts(2,12): error TS18047: 'value' is possibly 'null'."
+      ],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [
+        "src/label.ts:2:12"
+      ],
+      "failingTests": [],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [],
+        "jsonObjectCount": 0,
+        "caseCount": 0,
+        "failedCaseCount": 0
+      },
+      "behaviorCases": []
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": null,
+      "bestKnownScore": null,
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": null
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": "3ac906c7cf4e16dc",
+      "artifactId": "",
+      "revision": 0,
+      "sourceHash": ""
+    },
+    "structuredReceipt": {
+      "formats": [],
+      "jsonObjectCount": 0,
+      "caseCount": 0,
+      "failedCaseCount": 0
+    },
+    "repairActions": [
+      "trace concrete runtime types through the failing operation and change the operation or validation causing the mismatch",
+      "repair the static type mismatch at the producer/consumer boundary while preserving runtime semantics"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
