@@ -1,3 +1,30 @@
+## UPDATE FINISHED — 2026-10-06 — Server-complete online cameras + widget-first response ordering v128
+
+**Outcome:** SOURCE COMPLETE / SOURCE CONTRACT RE-READ PASS / DEPLOYMENT NOT YET RUN.
+
+### Durable server camera repair
+- `ONLINE_RESEARCH_OUTCOME` advances to the v2 durable camera shape.
+- GitHub outcome diagnostics now retain the bounded server facts that previously existed only in the richer Chat/session export: structured sources/evidence, widget envelopes, Station status trail, response cognition, programming routing, candidate validation/attempts, generation + engine telemetry, context/resource budgets, Station timing, final generated response, and response SHA-256.
+- Existing trace still records provider/site visits, retries, HTTP outcomes, result counts, response bytes, and retrieval timing.
+- Privacy boundary remains explicit: raw prompt/history, precise coordinates, provider HTML, credentials, and private reasoning are not persisted; query strings remain removed from trace URLs.
+
+### Widget-first Chat chronology
+- Added the bounded HF Chat presentation adapter `widget-analysis-v128.js` and loaded it from the Station-served canonical Chat document.
+- Once a widget arrives, its visual position becomes permanent above the slower LALM prose.
+- Before first prose token, status sits below the widget and becomes semantic: `Analyzing weather information…`, `Analyzing search results…`, `Analyzing time information…`, or the generic retrieved-information fallback.
+- Once prose begins, the interim status/trail yields to the streamed response below the widget. Existing content no longer jumps because a late model response is inserted above a widget already being read.
+
+### Verification
+- Re-read the mutated branch and confirmed v2 camera fields, privacy flags, Station adapter load, widget-before-status ordering contract, semantic analysis labels, response-start status handoff, regression fixture, and Chat version `1.0.92` are present.
+- Added `hf_space/test_server_complete_online_camera_widget_order_v128.py` as the deterministic regression fixture.
+- No workflow run has executed for the new head yet, so this is not claimed as static-workflow, runtime, or live verified.
+
+**Versions:** clean-room Chat `1.0.92`; Online Research diagnostic contract `1.0.9 / v128 server-complete outcome camera`; Repository Work `1.0.86`. LALM Engine remains `2.1.154`. Server Runtime unchanged.
+
+**Deployment:** pending explicit workflow execution; no production activation claimed.
+
+**Status:** FINISHED AT SOURCE / DEPLOYMENT + LIVE WEATHER/SEARCH ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-06 — Server-complete online cameras + widget-first response ordering v128
 
 **Trigger:** live weather request `web-muvstykj-2120212379-1100634544` proved the Chat/session export retained substantially richer server execution state than the durable GitHub Online Research logs. The same request also rendered the fast weather widget before inference completed, then inserted the generated prose above the already-visible widget with no persistent semantic analysis state below it.
