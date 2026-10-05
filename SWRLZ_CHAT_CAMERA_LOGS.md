@@ -406,6 +406,29 @@ Why did it happen?      → diagnosis after correlating the evidence.
 **When fixing issues anywhere in §wyrlz, automatically inspect the relevant repository-side diagnostic evidence and the available live/runtime/workflow logs. If existing observability cannot distinguish the cause, add the smallest bounded camera at the architecture boundary that can. Use structured, correlated, privacy-safe diagnostics; fix the canonical owner; then inspect the same evidence again for acceptance. Keep repository engineering history, live runtime evidence, and user-visible evidence distinct so source completion is never mistaken for a verified live fix.**
 
 
+## v122 behavioral invariant / best-known repair-base cameras
+
+Programming repair state may now expose a bounded `behaviorLedger` derived only from external receipt cases. This is evidence bookkeeping, not model self-grading.
+
+Key fields:
+- `currentScore` / `bestKnownScore` — named-case pass/total/fail counts for comparable external test suites.
+- `currentPassingCases` / `currentFailingCases` — newest externally observed named case state.
+- `preservePassingCases` — union of cases already proven passing within the comparable repair lineage; these become preservation obligations.
+- `resolvedCases` — cases that failed in the previous comparable receipt and now pass.
+- `regressedCases` — cases proven passing earlier that fail in the newest receipt.
+- `bestKnownArtifact` — artifact ID, exact revision, source hash and bounded source fingerprint of the best externally tested artifact for that suite.
+- `rebaseRecommended` — true only when the newest comparable tested artifact scores below the retained best-known artifact.
+
+`behaviorRepairBase` records which source lineage the worker actually receives:
+- `latest-failing-source` — normal repair from the newest receipt source.
+- `best-known-tested-source` — repair is intentionally rebased onto the better historical artifact while the newest receipt remains the authoritative failure delta.
+
+When `best-known-tested-source` is selected, the repository camera stores only artifact identity/hash/fingerprint and mode, never the source body. The source snapshot remains process-local/session evidence. Candidate validation may emit `behavior-repair-base-unchanged` when the model merely returns the better historical base unchanged even though the latest external receipt still establishes unresolved behavior failures.
+
+Compact repair-budget telemetry may expose `behaviorRepairBaseMode`, current/best scores, regression count and preserve count. Durable repair/programming diagnostics should expose the same bounded ledger summary so reviews can distinguish: evidence parsing, regression detection, rebase selection, model repetition, and post-rebase candidate change.
+
+Behavior ledger state does not mark a newly generated candidate correct. Even after rebasing and structural PASS, `executionVerified=false` / `AWAITING_EXTERNAL_RECEIPT` remains authoritative until fresh external compiler/test/runtime evidence arrives.
+
 ## v121 persistent repair-state camera additions
 
 Programming repair intent may now expose a bounded `repairConstraints` snapshot. Its dependency fields are stateful evidence, not a copy of only the newest receipt:
