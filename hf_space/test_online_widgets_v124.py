@@ -7,6 +7,7 @@ import api.online_research as canonical_search
 import model_router
 from online_tools import classify_online_request, execute_online_request, weather_lookup, WIDGET_CONTRACT
 from response_cognition import classify_response_cognition
+from brain_programming import programming_intent
 
 HISTORY=[
     {"role":"user","content":"Tell me about Mars."},
@@ -496,3 +497,37 @@ assert 'composerCollapse.addEventListener("click",toggleComposerCollapsed)' in c
 assert 'uiCamera("composer-collapse-toggle"' in chat
 
 print("weather-continuation-real-user-v126 PASS")
+
+# Real user logs proved these ordinary turns were falsely routed through the
+# programming validator because old history contained broad technical words.
+noncode_history=[
+    {"role":"user","text":"Can you check the weather in Leavenworth kansas","meta":{}},
+    {"role":"assistant","text":"You can use a weather website or API.","meta":{}},
+]
+noncode_today=programming_intent("Yes for today",noncode_history,[],{})
+assert noncode_today["codingTask"] is False,noncode_today
+noncode_lookup=programming_intent(
+    "I didn't mean look up weather I want you to look up the word hey",
+    noncode_history,
+    [],
+    {},
+)
+assert noncode_lookup["codingTask"] is False,noncode_lookup
+
+# Genuine code continuation still inherits programming context.
+prior_programming={
+    "intentContract":{
+        "schema":"swrlz-programming-intent-contract-v3",
+        "originalRequest":"Write a Python function that returns JSON.",
+    }
+}
+code_continue=programming_intent("keep going",[],[],prior_programming)
+assert code_continue["codingTask"] is True,code_continue
+
+# Composer collapse must actually move the shell on mobile; a later usability
+# rule must not neutralize the base collapse transform.
+assert ".composer-shell.collapsed{transform:none}" not in chat
+assert ".composer-shell.collapsed{transform:translateY(calc(100% - 26px))}" in chat
+
+print("non-programming-history-carry-v126 PASS")
+
