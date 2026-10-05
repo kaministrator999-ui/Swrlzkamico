@@ -116,6 +116,8 @@ jobs:
           coder = next((item for item in models if item.get("model_id") == "coder" or item.get("modelId") == "coder"), None)
           assert coder and "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF" in str(coder.get("checkpoint") or ""), coder
 
+          receipts = []
+
           # v123 general-response cognition: prove current-turn relationship state survives live Station routing.
           rc = Client()
           rc_thread = "response-cognition-" + uuid.uuid4().hex[:10]
@@ -263,8 +265,6 @@ jobs:
                       latest_error = repr(exc)
                       time.sleep(1)
               raise AssertionError(("github-runtime-log-unavailable", path, latest_error))
-
-          receipts = []
 
           c1 = Client()
           g1, s1 = c1.send_and_wait("language-" + uuid.uuid4().hex[:10], "Can you write me an example html page")
