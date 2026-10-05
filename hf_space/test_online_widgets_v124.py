@@ -191,11 +191,13 @@ assert canonical_search._provider()=="bounded-web-search-chain-v1"
 print("online-search-provider-fallback-v124 PASS")
 
 
-# Retrieval is model-agnostic: every selectable inference route receives the same
-# bounded online evidence after one router-level retrieval.
+# Online retrieval is model-agnostic for conversational routes, while Coder
+# may browse only when the current turn is genuinely programming work.
 captures={}
+online_calls=[]
 orig_stream=model_router.stream_online_request
 def fake_online_stream(payload,intent):
+    online_calls.append({"prompt":str(payload.get("prompt") or ""),"codingTask":bool((intent or {}).get("codingTask"))})
     yield {"type":"progress","event":{"contract":"swrlz-online-trace-event-v1","phase":"SEARCH_PROVIDER_VISIT","provider":"test-provider","site":"example.com","url":"https://example.com/","activity":"Searching provider"}}
     yield {"type":"result","result":{
         "contract":"swrlz-hf-online-capability-v1",
@@ -216,7 +218,7 @@ def capture(name):
 try:
     model_router.stream_online_request=fake_online_stream
     generators={name:capture(name) for name in ("r39","stock","700m","coder")}
-    for model_id in ("r39","stock","700m","coder"):
+    for model_id in ("r39","stock","700m"):
         list(model_router.dispatch(
             model_id,
             {"requestId":"route-"+model_id,"prompt":"Search online for example documentation","history":[]},
@@ -225,6 +227,26 @@ try:
             generators["700m"],
             generators["coder"],
         ))
+    # Programming Coder request: online retrieval is allowed.
+    list(model_router.dispatch(
+        "coder",
+        {"requestId":"route-coder-code","prompt":"Search online for current Python FastAPI docs and write Python code that uses the latest API.","history":[]},
+        generators["r39"],
+        generators["stock"],
+        generators["700m"],
+        generators["coder"],
+    ))
+    before_noncode=len(online_calls)
+    noncode_events=list(model_router.dispatch(
+        "coder",
+        {"requestId":"route-coder-general","prompt":"Look up the word hey online","history":[]},
+        generators["r39"],
+        generators["stock"],
+        generators["700m"],
+        generators["coder"],
+    ))
+    assert len(online_calls)==before_noncode,online_calls
+    assert any(item.get("phase")=="ONLINE_RESEARCH_SKIPPED" for item in noncode_events),noncode_events
 finally:
     model_router.stream_online_request=orig_stream
 
@@ -232,6 +254,7 @@ for model_id in ("stock","700m","coder"):
     assert (captures[model_id].get("onlineContext") or {}).get("contractId")=="test-online-context",(model_id,captures[model_id])
 assert captures["r39"].get("onlineContextEmbeddedForR39") is True,captures["r39"]
 assert "§WYRLZ ONLINE EXTERNAL EVIDENCE" in captures["r39"].get("prompt",""),captures["r39"]
+assert any(call["codingTask"] is True and "FastAPI" in call["prompt"] for call in online_calls),online_calls
 
 stock_source=(root/"hf_space/original_engine.py").read_text(encoding="utf-8")
 large_source=(root/"hf_space/lfm2_700m_engine.py").read_text(encoding="utf-8")
@@ -244,7 +267,7 @@ assert "_r39_online_payload" in router and "onlineContextEmbeddedForR39" in rout
 assert "load as large_load" in app_source
 assert '(("700m",large_load),("coder",coder_load),("stock",original_load),("r39",engine))' in app_source
 
-print("all-model-online-context-v124 PASS")
+print("all-model-online-context-v127 PASS")
 
 
 # Real-time observability contract: provider/site events are emitted without query strings,
