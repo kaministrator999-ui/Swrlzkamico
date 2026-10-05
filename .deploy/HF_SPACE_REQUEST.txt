@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-05-v127-final-explicit-web-priority-001
+REQUEST_NONCE=2026-10-05-v128-server-cameras-widget-order-001
