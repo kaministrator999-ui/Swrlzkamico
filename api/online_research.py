@@ -73,6 +73,42 @@ def _clean_query(value:Any)->str:return re.sub(r"\s+"," ",str(value or "")).stri
 def _provider()->str:
     return "bounded-web-search-chain-v1"
 
+def _trace_public_url(url:Any)->tuple[str,str]:
+    try:
+        parsed=urllib.parse.urlsplit(str(url or ""))
+        host=str(parsed.hostname or "").lower()[:240]
+        if parsed.scheme not in {"http","https"} or not host:return host,""
+        path=parsed.path or "/"
+        safe=urllib.parse.urlunsplit((parsed.scheme,parsed.netloc,path,"",""))
+        return host,safe[:1200]
+    except Exception:
+        return "",""
+
+def _emit_trace(phase:str,reason:str="",provider:str="",url:Any="",status:Any=None,result_count:Any=None,response_bytes:Any=None)->dict[str,Any]:
+    host,safe_url=_trace_public_url(url)
+    event={
+        "contract":"swrlz-online-trace-event-v1",
+        "atUnixMs":int(time.time()*1000),
+        "phase":str(phase or "ONLINE_TRACE")[:80],
+        "reason":str(reason or "")[:240],
+        "provider":str(provider or "")[:120],
+        "site":host,
+        "url":safe_url,
+    }
+    if status is not None:event["status"]=status if isinstance(status,(str,int,float,bool)) else str(status)[:80]
+    if result_count is not None:
+        try:event["resultCount"]=int(result_count)
+        except Exception:pass
+    if response_bytes is not None:
+        try:event["responseBytes"]=int(response_bytes)
+        except Exception:pass
+    sink=getattr(_trace_local,"sink",None)
+    if callable(sink):
+        try:sink(dict(event))
+        except Exception:pass
+    print("SWRLZ_ONLINE_TRACE "+json.dumps(event,ensure_ascii=False,separators=(",",":")),flush=True)
+    return event
+
 def _safe_public_host(hostname:str)->None:
     if not hostname:raise ValueError("URL_HOST_REQUIRED")
     try:infos=socket.getaddrinfo(hostname,None,type=socket.SOCK_STREAM)
@@ -192,6 +228,7 @@ def _ddg_search(query:str)->list[dict[str,Any]]:
     for provider,url,parser in attempts:
         results=_provider_attempt(provider,url,parser,query)
         if results:
+            _emit_trace("SEARCH_PROVIDER_SELECTED",reason="Using "+provider,provider=provider,url=url,result_count=len(results))
             print("SWRLZ_SEARCH_PROVIDER_SELECTED "+json.dumps({"contract":"swrlz-search-provider-selected-v1","provider":provider,"resultCount":len(results)},separators=(",",":")),flush=True)
             return results
     return []
@@ -261,15 +298,28 @@ def _legacy_research(payload:dict[str,Any])->dict[str,Any]:
     return {"contractId":"swrlz_online_evidence_v1","requested":True,"provider":_provider(),"queries":queries,"resultCount":len(evidence),"evidence":evidence,"errors":errors,"elapsedMs":round((time.perf_counter()-started)*1000),"epistemicPolicy":"retrieval-is-evidence-not-truth","hotReasonerFallback":True}
 
 def research(payload:dict[str,Any])->dict[str,Any]:
-    module=_load_hot()
-    if module:
-        try:
-            bundle=module.research(payload,{"search":_ddg_search,"fetch":_page_fetch,"provider":_provider()})
-            encoded=json.dumps(bundle,ensure_ascii=False,separators=(",",":"))
-            if len(encoded)>MAX_EVIDENCE_CHARS:
-                while bundle.get("evidence") and len(json.dumps(bundle,ensure_ascii=False,separators=(",",":")))>MAX_EVIDENCE_CHARS:bundle["evidence"].pop()
-                bundle["resultCount"]=len(bundle.get("evidence",[]));bundle["truncated"]=True
-            return bundle
-        except Exception as exc:
-            print("SWRLZ_RESEARCH_HOT_FAILURE "+json.dumps({"at":int(time.time()*1000),"requestId":str(payload.get("requestId") or "")[:200],"error":type(exc).__name__},separators=(",",":")),flush=True)
-    return _legacy_research(payload)
+    sink=payload.get("_eventSink") if isinstance(payload,dict) else None
+    clean_payload=dict(payload or {})
+    clean_payload.pop("_eventSink",None)
+    previous_sink=getattr(_trace_local,"sink",None)
+    _trace_local.sink=sink if callable(sink) else None
+    _emit_trace("RESEARCH_STARTED",reason="Online research started",provider=_provider())
+    try:
+        module=_load_hot()
+        if module:
+            try:
+                bundle=module.research(clean_payload,{"search":_ddg_search,"fetch":_page_fetch,"provider":_provider()})
+                encoded=json.dumps(bundle,ensure_ascii=False,separators=(",",":"))
+                if len(encoded)>MAX_EVIDENCE_CHARS:
+                    while bundle.get("evidence") and len(json.dumps(bundle,ensure_ascii=False,separators=(",",":")))>MAX_EVIDENCE_CHARS:bundle["evidence"].pop()
+                    bundle["resultCount"]=len(bundle.get("evidence",[]));bundle["truncated"]=True
+                _emit_trace("RESEARCH_COMPLETE",reason="Online research complete",provider=str(bundle.get("provider") or _provider()),result_count=len(bundle.get("evidence") or []))
+                return bundle
+            except Exception as exc:
+                _emit_trace("RESEARCH_REASONER_ERROR",reason=type(exc).__name__,provider=_provider(),status="ERROR")
+                print("SWRLZ_RESEARCH_HOT_FAILURE "+json.dumps({"at":int(time.time()*1000),"requestId":str(clean_payload.get("requestId") or "")[:200],"error":type(exc).__name__},separators=(",",":")),flush=True)
+        bundle=_legacy_research(clean_payload)
+        _emit_trace("RESEARCH_COMPLETE",reason="Online research complete",provider=str(bundle.get("provider") or _provider()),result_count=len(bundle.get("evidence") or []))
+        return bundle
+    finally:
+        _trace_local.sink=previous_sink
