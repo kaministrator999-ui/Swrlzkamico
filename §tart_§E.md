@@ -30,7 +30,7 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before calling the release live.
 
-## Current v5.1 source authority
+## Current v5.2 source authority
 
 ```text
 base:
@@ -49,7 +49,7 @@ final:
   sha256 a653064ce2be625d67d561a1db249a1bb4fa0637dc69377480cf6311e43fdf51
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN
+  SWYRL_ENGINE_DEPLOY_MARKER: V5_2_FIRST_PERSON_TWIN_STICK
 ```
 
 ## Current project model
@@ -100,7 +100,7 @@ reconstruct base
 → upload dedicated static Space
 → obtain actual HF host/subdomain
 → fetch served page
-→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN
+→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_2_FIRST_PERSON_TWIN_STICK
 → SUCCESS
 ```
 
@@ -161,3 +161,18 @@ Preserve these failure receipts rather than rewriting them away:
 3. The next upload was correctly rejected by Hugging Face because `short_description` exceeded the 60-character metadata limit.
 4. Space metadata was shortened without changing engine source.
 5. The final deployment passed reconstruction, SHA/byte integrity, JavaScript syntax, Hugging Face upload, Space runtime status, and live marker verification on attempt 1.
+
+
+## v5.2 first-person PIE contract
+
+The current player test mode is **first-person**:
+
+- left touch stick = move
+- right touch stick = look
+- WASD/arrows = camera-relative move on desktop
+- pointer-lock mouse = look on desktop
+- player body is hidden from its own first-person camera during PIE and restored on Stop
+- first-person camera is anchored at approximately 1.62 world units above the pawn origin
+- terrain adhesion and collision remain the movement authority
+
+This is the bridge toward later VR immersive mode; do not conflate it with Creator Mode or claim headset tracking is implemented.
