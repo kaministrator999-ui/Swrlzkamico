@@ -1,0 +1,84 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muuizxg8-3660665800-2557764999",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "9faa59d8d8109680fb01f20b6606bb1f09249012",
+  "persistedAtUnixMs": 1791160974947,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "assistant-muuizr5r-2839458236-2452197382",
+    "repairSourceMessageId": "assistant-muuizr5r-2839458236-2452197382",
+    "repairSourceFingerprint": "af467dcf11a935b8",
+    "candidateFingerprint": "af467dcf11a935b8",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 2,
+    "failureSignals": [
+      "\"passed\": false,",
+      "\"error\": \"user.name.trim is not a function\""
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "lint",
+        "assertion"
+      ],
+      "exceptionTypes": [],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [
+        "\"passed\": false,",
+        "\"error\": \"user.name.trim is not a function\"",
+        "numeric name fallback: user.name.trim is not a function"
+      ],
+      "passingSignals": [
+        "\"passed\": 8,",
+        "\"passed\": true"
+      ],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [
+        "numeric name fallback"
+      ],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 9,
+        "failedCaseCount": 1
+      }
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 9,
+      "failedCaseCount": 1
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "repair the reported lint rule at the implicated source without changing unrelated behavior"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
