@@ -33,6 +33,8 @@ fresh=classify_online_request("What is the latest stable Python release?",HISTOR
 assert fresh["requested"] is True,fresh
 coding=classify_online_request("Update the current function to return JSON",HISTORY,{"codingTask":True},None)
 assert coding["requested"] is False,coding
+coding_weather=classify_online_request("Write JavaScript for a weather forecast card",HISTORY,{"codingTask":True},None)
+assert coding_weather["requested"] is False,coding_weather
 coding_web=classify_online_request("Search the web for the current FastAPI lifespan docs",HISTORY,{"codingTask":True},None)
 assert coding_web["requested"] is True,coding_web
 
