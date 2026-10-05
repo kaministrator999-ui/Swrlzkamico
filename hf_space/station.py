@@ -59,7 +59,7 @@ def persist_runtime_diagnostic(request_id,model_id,event_type,diagnostic):
         "REPAIR_OUTCOME_DIAGNOSTIC":("repair","repair-outcome-diagnostic.json","swrlz-github-repair-log-v1"),
         "PROGRAMMING_GENERATION_TELEMETRY":("programming","candidate-attempt-telemetry.json","swrlz-github-programming-attempt-log-v1"),
         "ONLINE_RESEARCH_TRACE":("online-research","online-research-trace.json","swrlz-github-online-research-trace-v1"),
-        "ONLINE_RESEARCH_OUTCOME":("online-research","online-research-outcome.json","swrlz-github-online-research-outcome-v1"),
+        "ONLINE_RESEARCH_OUTCOME":("online-research","online-research-outcome.json","swrlz-github-online-research-outcome-v2"),
     }
     spec=allowed.get(str(event_type or ""))
     if spec is None or not isinstance(diagnostic,dict):
