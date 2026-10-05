@@ -1407,7 +1407,7 @@
           node.querySelector(".assistant-body").before(status);
         }
         const seq=Number(g.lastSeq||0);
-        const nextLabel="§wyrlz · "+label+(activityDetail?(" · "+activityDetail):"")+(activityReason&&!activityReason.toLowerCase().includes(activityDetail.toLowerCase())?(" · "+activityReason):"");
+        const nextLabel="§wyrlz · "+label+(activityDetail?(" · "+activityDetail):"")+(activityReason&&(!activityDetail||!activityReason.toLowerCase().includes(activityDetail.toLowerCase()))?(" · "+activityReason):"");
         if(status.textContent!==nextLabel)status.textContent=nextLabel;
         let onlineTrail=node.querySelector(".station-online-trail");
         const onlineEvents=(Array.isArray(g.status)?g.status:[]).filter(item=>{
