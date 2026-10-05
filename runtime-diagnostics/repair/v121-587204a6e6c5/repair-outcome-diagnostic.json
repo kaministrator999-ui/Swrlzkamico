@@ -1,0 +1,26 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v121-587204a6e6c5",
+  "modelId": "700m",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "9faa59d8d8109680fb01f20b6606bb1f09249012",
+  "persistedAtUnixMs": 1791160350140,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "5f5d1ac33e82bf1a",
+    "newCandidateFingerprint": "8496326897fa59a3",
+    "candidateChanged": true,
+    "stalledRepairInput": false,
+    "regenerationAttempted": true,
+    "regenerationReason": "unchanged-executable-candidate",
+    "candidateValidationStatus": "PASS",
+    "candidateValidationReasons": [],
+    "receiptCategories": [
+      "dependency"
+    ],
+    "repairActions": [
+      "repair the import/module/dependency boundary using only dependencies supported by project evidence"
+    ],
+    "executionVerified": false
+  }
+}
