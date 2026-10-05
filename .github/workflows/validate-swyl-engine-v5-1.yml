@@ -47,7 +47,7 @@ jobs:
           s=Path("/tmp/swyrl-engine/index.html").read_text(encoding="utf-8")
           required=[
             "SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN",
-            "§wyrl§ ENGINE · MAKER v5.1",
+            "<title>§wyrl§ Engine · Maker v5.1</title>",
             "Dragon's Den — Seed Chamber",
             "function makeDenStructure",
             "Wake Nook",
