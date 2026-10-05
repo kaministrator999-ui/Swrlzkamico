@@ -135,15 +135,28 @@ jobs:
           coder = next((item for item in models if item.get("model_id") == "coder" or item.get("modelId") == "coder"), None)
           assert coder and "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF" in str(coder.get("checkpoint") or ""), coder
 
-          with urllib.request.urlopen(base + "/", timeout=45) as response:
-              chat_html = response.read().decode("utf-8", "replace")
+          chat_html = ""
+          chat_ready = False
+          for _ in range(120):
+              try:
+                  with urllib.request.urlopen(base + "/", timeout=45) as response:
+                      chat_html = response.read().decode("utf-8", "replace")
+                  chat_ready = (
+                      'content="1.0.91"' in chat_html
+                      and ".composer-shell.collapsed{transform:translateY(calc(100% - 26px))}" in chat_html
+                      and ".composer-shell.collapsed{transform:none}" not in chat_html
+                      and 'composerCollapse.addEventListener("click",toggleComposerCollapsed)' in chat_html
+                  )
+                  if chat_ready:
+                      break
+              except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError):
+                  pass
+              time.sleep(2)
+          assert chat_ready, "Space revision advanced but rebuilt v127 Chat bundle did not become ready"
           assert "station-online-trail" in chat_html, "deployed Chat missing live online trail"
           assert "SEARCH_PROVIDER_VISIT" in chat_html and "WEATHER_FORECAST_VISIT" in chat_html, "deployed Chat missing online phase labels"
           assert "site:String(event.site||\"\")" in chat_html, "deployed Chat does not retain streamed site field"
-          assert ".composer-shell.collapsed{transform:translateY(calc(100% - 26px))}" in chat_html, "deployed Chat missing composer collapse transform"
-          assert ".composer-shell.collapsed{transform:none}" not in chat_html, "deployed Chat still cancels composer collapse on mobile"
-          assert 'composerCollapse.addEventListener("click",toggleComposerCollapsed)' in chat_html, "deployed Chat missing composer collapse handler"
-          print(json.dumps({"checkpoint":"chat-online-status-ui","composerCollapse":"PASS","status":"PASS"}))
+          print(json.dumps({"checkpoint":"chat-online-status-ui","composerCollapse":"PASS","chatVersion":"1.0.91","status":"PASS"}))
 
           receipts = []
 
