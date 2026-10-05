@@ -6,6 +6,24 @@
 
 This file deliberately does **not** duplicate every architecture, versioning, diagnostic, deployment, or reporting rule. Those rules live in their dedicated owners below.
 
+
+### Specialized Forge engine entrypoint — `§tart §E`
+
+When the user's complete project invocation is `§tart §E` or `@GitHub §tart §E`, **route to `§tart_§E.md` instead of running the normal AI Chat/LALM startup chain**.
+
+That specialized router owns SWRLZ Forge/browser-engine work and its independent deployment lane:
+
+```text
+GitHub: kaministrator999-ui/Swrlzkamico
+  -> projects/swrlz-forge-moba/
+  -> .github/workflows/deploy-swrlz-forge-moba.yml
+  -> Hugging Face Space: kamiloki/swrlz-forge-moba
+  -> https://kamiloki-swrlz-forge-moba.hf.space/
+```
+
+The Forge engine is intentionally separate from the main §wyrlz AI Chat/LALM Space `kamiloki/Swyrlz`. Do not mix the two deployment paths unless the user explicitly requests an integration change.
+
+
 ---
 
 ## Current Hugging Face deployment method — mandatory
