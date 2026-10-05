@@ -1,3 +1,36 @@
+## UPDATE FINISHED — 2026-10-05 — Real first-turn weather + non-code routing + composer collapse v127
+
+**Outcome:** DEPLOYED / TARGET FEATURE LIVE VERIFIED.
+
+The real user failure path is now closed at the first turn rather than relying on continuation recovery.
+
+### First-turn weather acceptance
+Live HF acceptance #25 exercised the exact user wording `Can you check the weather in Leavenworth kansas` against deployed source `f3f437ef6d811a615e9b4e561496de701c5df8da` / Space revision `3950314d9f321a4587031b3e32f534c019109a30`.
+
+Before the later unrelated programming-repair regression, the live gate proved:
+- Online Research classified the first turn as weather.
+- Open-Meteo geocoding resolved Leavenworth, Kansas through the city/state fallback.
+- forecast retrieval completed from `api.open-meteo.com`.
+- weather result status was `OK`.
+- the weather widget was emitted and persisted to Chat.
+- current temperature, humidity, and wind were present.
+- provider/source provenance and sanitized site trace were present.
+- 700M remained the selected conversational model.
+
+The system therefore no longer requires a follow-up such as `Yes for today` to recover from that original weather request.
+
+### Additional real-user regressions closed
+- `Yes for today` preserves the preceding successful weather lineage and remains on 700M.
+- `I didn't mean look up weather I want you to look up the word hey` becomes ordinary search for `hey`, remains on 700M, and does not enter Coder.
+- recent programming vocabulary alone no longer auto-routes a new ordinary turn to Qwen Coder; Coder online retrieval remains programming/code scoped.
+- mobile composer collapse works again; the later usability CSS rule no longer overrides the collapsed transform with `transform:none`.
+- online trace/outcome diagnostics remain durable under `runtime-diagnostics/online-research/<requestId>/`.
+
+### Verification boundary
+Static v127 verification is green. Live acceptance #25 reached and passed the v127 weather/routing/composer checks, then failed later in the pre-existing v122 behavioral-repair tail because a Coder repair safely stalled with no executable change instead of producing the historical harness's required changed revision. That downstream programming-repair issue is separate from this finished weather/search/composer tier and remains the next unresolved engineering target.
+
+**Status:** FINISHED — v127 first-turn weather/search routing/composer behavior live verified; legacy v122 repair-convergence tail remains unresolved.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — v127 final explicit-web priority head
 
 **Exact deployment source:** `f3f437ef6d811a615e9b4e561496de701c5df8da` on `feature/hf-space-manual-deploy`.
