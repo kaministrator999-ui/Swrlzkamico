@@ -101,6 +101,25 @@ jobs:
                       time.sleep(2)
                   raise AssertionError(("generation-timeout", rid, latest))
 
+          def wait_for_online_persistence(client, request_id):
+              latest = None
+              for _ in range(90):
+                  status, snapshot = client.get("/api/lalm_station/sync")
+                  assert status == 200, status
+                  generation = snapshot.get("activeGeneration") or {}
+                  if generation.get("requestId") == request_id:
+                      latest = (generation, snapshot)
+                      persisted = generation.get("onlineLogPersistence") if isinstance(generation.get("onlineLogPersistence"), dict) else {}
+                      trace = persisted.get("trace") if isinstance(persisted.get("trace"), dict) else {}
+                      outcome = persisted.get("outcome") if isinstance(persisted.get("outcome"), dict) else {}
+                      for label, receipt in (("trace", trace), ("outcome", outcome)):
+                          if receipt.get("ok") is False:
+                              raise AssertionError(("online-log-persistence-failed", label, receipt))
+                      if trace.get("ok") is True and outcome.get("ok") is True:
+                          return generation, snapshot, persisted
+                  time.sleep(1)
+              raise AssertionError(("online-log-persistence-timeout", request_id, latest))
+
           warm = Client()
           models = None
           for attempt in range(80):
@@ -115,6 +134,13 @@ jobs:
           assert models is not None, "Space did not become ready"
           coder = next((item for item in models if item.get("model_id") == "coder" or item.get("modelId") == "coder"), None)
           assert coder and "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF" in str(coder.get("checkpoint") or ""), coder
+
+          with urllib.request.urlopen(base + "/", timeout=45) as response:
+              chat_html = response.read().decode("utf-8", "replace")
+          assert "station-online-trail" in chat_html, "deployed Chat missing live online trail"
+          assert "SEARCH_PROVIDER_VISIT" in chat_html and "WEATHER_FORECAST_VISIT" in chat_html, "deployed Chat missing online phase labels"
+          assert "site:String(event.site||\"\")" in chat_html, "deployed Chat does not retain streamed site field"
+          print(json.dumps({"checkpoint":"chat-online-status-ui","status":"PASS"}))
 
           receipts = []
 
@@ -174,9 +200,13 @@ jobs:
           assert any(item.get("phase") == "WEATHER_GEOCODE_VISIT" and item.get("site") == "geocoding-api.open-meteo.com" for item in weather_trace), weather_trace
           assert any(item.get("phase") == "WEATHER_FORECAST_VISIT" and item.get("site") == "api.open-meteo.com" for item in weather_trace), weather_trace
           assert all("?" not in str(item.get("url") or "") for item in weather_trace), weather_trace
-          weather_log_path = "runtime-diagnostics/online/" + wg.get("requestId") + "/search-trace.json"
+          wg_persisted, ws_persisted, weather_logs = wait_for_online_persistence(weather_client, wg.get("requestId"))
+          assert weather_logs.get("tracePath") == "runtime-diagnostics/online-research/" + wg.get("requestId") + "/online-research-trace.json", weather_logs
+          assert weather_logs.get("outcomePath") == "runtime-diagnostics/online-research/" + wg.get("requestId") + "/online-research-outcome.json", weather_logs
+          assert (weather_logs.get("trace") or {}).get("ok") is True, weather_logs
+          assert (weather_logs.get("outcome") or {}).get("ok") is True, weather_logs
           receipts.append({
-              "case":"v124-weather-widget-live",
+              "case":"v125-weather-widget-observability-live",
               "provider":weather_research.get("provider"),
               "condition":weather_current.get("condition"),
               "temperature":weather_current.get("temperature"),
@@ -208,9 +238,13 @@ jobs:
           assert any(item.get("phase") == "SEARCH_PROVIDER_VISIT" and item.get("site") for item in search_trace), search_trace
           assert all("?" not in str(item.get("url") or "") for item in search_trace), search_trace
           assert ((search_assistant.get("meta") or {}).get("onlineTrace") or []), search_assistant
-          search_log_path = "runtime-diagnostics/online/" + sg.get("requestId") + "/search-trace.json"
+          sg_persisted, ss_persisted, search_logs = wait_for_online_persistence(search_client, sg.get("requestId"))
+          assert search_logs.get("tracePath") == "runtime-diagnostics/online-research/" + sg.get("requestId") + "/online-research-trace.json", search_logs
+          assert search_logs.get("outcomePath") == "runtime-diagnostics/online-research/" + sg.get("requestId") + "/online-research-outcome.json", search_logs
+          assert (search_logs.get("trace") or {}).get("ok") is True, search_logs
+          assert (search_logs.get("outcome") or {}).get("ok") is True, search_logs
           receipts.append({
-              "case":"v124-online-search-widget-live",
+              "case":"v125-online-search-observability-live",
               "provider":search_research.get("provider"),
               "resultCount":search_research.get("resultCount"),
               "widgetKind":search_widgets[0].get("kind"),
@@ -240,11 +274,17 @@ jobs:
           coder_assistant = next((msg for msg in reversed(coder_thread_state.get("messages") or []) if (msg.get("meta") or {}).get("requestId") == cg.get("requestId") and msg.get("role") == "assistant"), None)
           assert coder_assistant and (coder_assistant.get("meta") or {}).get("modelId") == "coder", coder_assistant
           assert ((coder_assistant.get("meta") or {}).get("widgets") or [])[0].get("kind") == "search-results", coder_assistant
+          assert cg.get("selectedModelId") == "coder", cg
+          assert (((coder_assistant.get("meta") or {}).get("onlineModelRoute") or {}).get("selectedModelId")) == "coder", coder_assistant
           coder_trace = cg.get("onlineTrace") if isinstance(cg.get("onlineTrace"), list) else []
           assert any(item.get("phase") == "SEARCH_PROVIDER_VISIT" and item.get("site") for item in coder_trace), coder_trace
-          coder_log_path = "runtime-diagnostics/online/" + cg.get("requestId") + "/search-trace.json"
+          cg_persisted, cs_persisted, coder_logs = wait_for_online_persistence(coder_client, cg.get("requestId"))
+          assert coder_logs.get("tracePath") == "runtime-diagnostics/online-research/" + cg.get("requestId") + "/online-research-trace.json", coder_logs
+          assert coder_logs.get("outcomePath") == "runtime-diagnostics/online-research/" + cg.get("requestId") + "/online-research-outcome.json", coder_logs
+          assert (coder_logs.get("trace") or {}).get("ok") is True, coder_logs
+          assert (coder_logs.get("outcome") or {}).get("ok") is True, coder_logs
           receipts.append({
-              "case":"v124-coder-online-search-live",
+              "case":"v125-coder-online-search-observability-live",
               "modelId":"coder",
               "checkpoint":coder.get("checkpoint"),
               "provider":coder_research.get("provider"),
