@@ -413,7 +413,7 @@ def _candidate_structure_check(text, programming, history):
         if reason not in reasons:
             reasons.append(reason)
     result={"status":"REJECT" if reasons else "PASS","reasons":reasons}
-    for key in ("languageContract","detectedLanguages","diagnosticGrounded","receiptCategories","executionVerified","verificationState"):
+    for key in ("languageContract","detectedLanguages","diagnosticGrounded","receiptCategories","activeRepairConstraints","structuredReceipt","executionVerified","verificationState"):
         if key in shared:
             result[key]=shared[key]
     return result
@@ -459,6 +459,8 @@ def _repair_diagnostic(programming,history):
         "failureSignalCount":len(signals),
         "failureSignals":[str(x)[:300] for x in signals[:8]],
         "receiptSemantics":evidence.get("receiptSemantics") if isinstance(evidence.get("receiptSemantics"),dict) else {},
+        "repairConstraints":programming.get("repairConstraints") if isinstance(programming.get("repairConstraints"),dict) else {},
+        "structuredReceipt":dict((evidence.get("receiptSemantics") or {}).get("structuredReceipt") or {}),
         "repairActions":[str(x)[:500] for x in (evidence.get("repairActions") or [])[:6]],
         "contractBound":bool(programming.get("intentContract")),
         "canonicalCarry":bool(programming.get("canonicalCarry")),
