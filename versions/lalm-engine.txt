@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.145
-REVISION=2.1.145-hf-downstream-repair-hardening-v120
+VERSION=2.1.146
+REVISION=2.1.146-hf-persistent-repair-state-json-v121
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
