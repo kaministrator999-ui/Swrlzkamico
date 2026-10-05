@@ -1,3 +1,24 @@
+## UPDATE CHECKPOINT — 2026-10-05 — User-reported Leavenworth weather repair v126
+
+**Exact source/static state:** feature source `60555e2712fa7a0dcc67d46922e727eff40d5b40` (0 ahead / 0 behind) passed static verifier #45 / `37332162466` SUCCESS.
+
+**Real user failure receipt:** deployed v125 request `web-muvdw9xq-3280641475-3767189158` was correctly classified as weather on 700M, reached `geocoding-api.open-meteo.com` with HTTP 200, but the combined free-text lookup `Leavenworth kansas` returned no candidates. Weather outcome became `ERROR`; no widget was emitted; 700M then improvised stale weather guidance.
+
+**v126 repair:**
+- natural US city+state phrases are recognized with full state names or abbreviations;
+- Open-Meteo keeps the original bounded lookup first;
+- if that lookup is empty and a US state qualifier is present, Online Research retries the city-only name with up to 10 candidates and selects the candidate matching US + requested state;
+- trace emits `WEATHER_GEOCODE_RETRY` and `WEATHER_LOCATION_NOT_FOUND` without persisting raw prompt or query-string coordinates;
+- if weather still ends in `LOCATION_REQUIRED` or `ERROR`, router emits a deterministic failure/location response and terminates before any model inference, preventing stale/current-weather fabrication.
+
+**Exact regression:** `Can you check the weather in Leavenworth kansas` now passes a forced first-look-up miss, retries `Leavenworth`, selects **Leavenworth, Kansas, United States** over Washington, and builds the weather result. A second deterministic test proves failed weather retrieval never calls 700M (or any other model).
+
+**Versions:** LALM Engine `2.1.153` / `2.1.153-weather-no-fabrication-v126`; Online Research `1.0.7` / `1.0.7-city-state-weather-fallback-v126`; Repository Work `1.0.84`. Web Chat remains `1.5.89`; clean-room Chat remains `1.0.90`.
+
+**Next state:** one guarded HF deployment from exact source `60555e2712fa7a0dcc67d46922e727eff40d5b40`, then live acceptance using the same Leavenworth-Kansas wording and requiring Open-Meteo forecast data + weather widget.
+
+**Status:** SOURCE COMPLETE / STATIC VERIFIED / DEPLOYMENT READY.
+
 ## UPDATE STARTED — 2026-10-05 — User-reported weather location resolution + no-fabrication gate v126
 
 **Trigger:** real user request `Can you check the weather in Leavenworth kansas` on deployed v125 source `d8710d6401cf5080649274e66064d061ae6f05c5` produced a generic model fallback instead of a weather widget.
