@@ -1,3 +1,3 @@
 SOURCE_REF=feature/hf-space-manual-deploy
-SUITE=programming-contract-v125
-REQUEST_NONCE=2026-10-05-v125-online-trace-chat-status-static-002
+SUITE=programming-contract-v124
+REQUEST_NONCE=2026-10-05-v124-online-observability-static-011
