@@ -1,0 +1,132 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v122-0f932a89a428",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "d8710d6401cf5080649274e66064d061ae6f05c5",
+  "persistedAtUnixMs": 1791210936637,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "a-845ef9086660",
+    "repairSourceMessageId": "a-845ef9086660",
+    "repairSourceFingerprint": "e4ae0153adbd86b5",
+    "candidateFingerprint": "e4ae0153adbd86b5",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "{\"passed\": 5, \"total\": 9, \"cases\": [{\"test\": \"lowercase\", \"passed\": false, \"expected\": \"hello-web-42\", \"actual\": \"H-e-l-l-o-W-e-b-4-2\"}, {\"test\": \"ascii\", \"passed\": false, \"expected\": \"caf\", \"actual\": \"C-a-f-\\u00e9\"}]}"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "behavior-mismatch",
+        "assertion"
+      ],
+      "exceptionTypes": [],
+      "exitCodes": [],
+      "failingSignals": [
+        "{\"passed\": 5, \"total\": 9, \"cases\": [{\"test\": \"lowercase\", \"passed\": false, \"expected\": \"hello-web-42\", \"actual\": \"H-e-l-l-o-W-e-b-4-2\"}, {\"test\": \"ascii\", \"passed\": false, \"expected\": \"caf\", \"actual\": \"C-a-f-\\u00e9\"}]}"
+      ],
+      "passingSignals": [],
+      "expectedActual": [
+        "{\"passed\": 5, \"total\": 9, \"cases\": [{\"test\": \"lowercase\", \"passed\": false, \"expected\": \"hello-web-42\", \"actual\": \"H-e-l-l-o-W-e-b-4-2\"}, {\"test\": \"ascii\", \"passed\": false, \"expected\": \"caf\", \"actual\": \"C-a-f-\\u00e9\"}]}",
+        "lowercase: expected='hello-web-42'; actual='H-e-l-l-o-W-e-b-4-2'",
+        "ascii: expected='caf'; actual='C-a-f-é'"
+      ],
+      "sourceLocations": [],
+      "failingTests": [
+        "lowercase",
+        "ascii"
+      ],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 2,
+        "failedCaseCount": 2
+      },
+      "behaviorCases": [
+        {
+          "id": "lowercase",
+          "status": "failed",
+          "expected": "'hello-web-42'",
+          "actual": "'H-e-l-l-o-W-e-b-4-2'",
+          "message": null
+        },
+        {
+          "id": "ascii",
+          "status": "failed",
+          "expected": "'caf'",
+          "actual": "'C-a-f-é'",
+          "message": null
+        }
+      ]
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "standard-library-only",
+      "unavailableDependencies": [
+        "slugify"
+      ],
+      "forbiddenDependencies": [
+        "slugify"
+      ],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [
+        "slugify"
+      ],
+      "releasedDependencies": [],
+      "constraintCount": 1
+    },
+    "behaviorLedger": {
+      "currentScore": {
+        "passed": 0,
+        "total": 2,
+        "failed": 2
+      },
+      "bestKnownScore": {
+        "passed": 0,
+        "total": 2,
+        "failed": 2
+      },
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": {
+        "artifactId": "artifact-2b4491da7cad438ab3ebe3a240f6f051",
+        "revision": 1,
+        "sourceHash": "43f334b4d344447963f8420ae76bce1dda38d79bfd7ac07ba03b42cf1b7f9156",
+        "sourceFingerprint": "e4ae0153adbd86b5"
+      }
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": "e4ae0153adbd86b5",
+      "artifactId": "artifact-2b4491da7cad438ab3ebe3a240f6f051",
+      "revision": 1,
+      "sourceHash": "43f334b4d344447963f8420ae76bce1dda38d79bfd7ac07ba03b42cf1b7f9156"
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 2,
+      "failedCaseCount": 2
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
