@@ -1,3 +1,3 @@
 SOURCE_REF=feature/hf-space-manual-deploy
 SUITE=programming-contract-v124
-REQUEST_NONCE=2026-10-05-v124-online-widgets-static-003
+REQUEST_NONCE=2026-10-05-v124-search-fallback-static-004
