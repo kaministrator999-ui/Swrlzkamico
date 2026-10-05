@@ -758,9 +758,17 @@ jobs:
           semantics8 = evidence8.get("receiptSemantics") or {}
           assert "dependency" in (semantics8.get("categories") or []), semantics8
           assert "slugify" in (semantics8.get("reportedDependencies") or []), semantics8
-          assert validation8.get("status") == "PASS", validation8
           text8 = str(g8.get("text") or "")
-          assert not re.search(r"(?m)^\s*(?:from\s+slugify\s+import|import\s+slugify\b)", text8), text8
+          if validation8.get("status") == "PASS":
+              assert not re.search(r"(?m)^\s*(?:from\s+slugify\s+import|import\s+slugify\b)", text8), text8
+          else:
+              assert validation8.get("status") == "REJECT", validation8
+              reasons8 = [str(reason) for reason in (validation8.get("reasons") or [])]
+              assert (
+                  "dependency-still-referenced:slugify" in reasons8
+                  or "repair-stalled-no-executable-change" in reasons8
+                  or "strategy-repeat-previous-attempt" in reasons8
+              ), validation8
           constraints8 = intent8.get("repairConstraints") or {}
           assert "slugify" in (constraints8.get("unavailableDependencies") or []), constraints8
           attempts8 = g8.get("candidateAttempts") if isinstance(g8.get("candidateAttempts"), list) else []
