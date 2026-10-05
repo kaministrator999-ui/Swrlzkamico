@@ -5,6 +5,7 @@ threads, pins, artifacts, files, tools, deployments, or other operational state.
 """
 from __future__ import annotations
 import hashlib
+import json
 from typing import Any
 import re
 
@@ -329,7 +330,12 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
     for symbol in semantics.get("reportedSymbols") or []:
         if not _symbol_is_resolved_or_removed(candidate_code,str(symbol)):
             reasons.append("diagnostic-symbol-resolution-unproven:"+str(symbol)[:80])
-    for dependency in semantics.get("reportedDependencies") or []:
+    constraints=programming.get("repairConstraints") if isinstance(programming.get("repairConstraints"),dict) else {}
+    active_dependencies=_unique(
+        [str(x) for x in (constraints.get("forbiddenDependencies") or []) if str(x).strip()]
+        +[str(x) for x in (semantics.get("reportedDependencies") or []) if str(x).strip()]
+    )
+    for dependency in active_dependencies:
         if _candidate_dependency_referenced(candidate_code,str(dependency)):
             reasons.append("dependency-still-referenced:"+str(dependency)[:100])
     verification="AWAITING_EXTERNAL_RECEIPT" if evidence else "NOT_EXECUTION_VERIFIED"
@@ -340,6 +346,12 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
         "detectedLanguages":detected,
         "diagnosticGrounded":bool(evidence) and not any(x.startswith("diagnostic-") for x in reasons),
         "receiptCategories":list(semantics.get("categories") or [])[:12],
+        "activeRepairConstraints":{
+            "dependencyPolicy":constraints.get("dependencyPolicy"),
+            "unavailableDependencies":list(constraints.get("unavailableDependencies") or [])[:16],
+            "carriedUnavailableDependencies":list(constraints.get("carriedUnavailableDependencies") or [])[:16],
+        },
+        "structuredReceipt":dict(semantics.get("structuredReceipt") or {}),
         "executionVerified":False,
         "verificationState":verification,
     }
@@ -501,6 +513,145 @@ def _latest_user_source(history: list[dict[str, Any]]) -> tuple[str, str]:
     return "",""
 
 
+def _json_receipt_values(text: str) -> list[Any]:
+    """Decode bounded JSON values embedded in otherwise textual receipt output."""
+    raw=str(text or "")
+    decoder=json.JSONDecoder()
+    values=[]
+    cursor=0
+    while cursor < len(raw) and len(values) < 8:
+        match=re.search(r"[\[{]",raw[cursor:])
+        if not match:
+            break
+        start=cursor+match.start()
+        try:
+            value,end=decoder.raw_decode(raw[start:])
+        except (json.JSONDecodeError,TypeError,ValueError):
+            cursor=start+1
+            continue
+        if isinstance(value,(dict,list)):
+            values.append(value)
+        cursor=start+max(1,end)
+    return values
+
+
+def _structured_json_receipt_semantics(text: str) -> dict[str, Any]:
+    values=_json_receipt_values(text)
+    failing_tests=[]
+    mismatches=[]
+    failure_signals=[]
+    locations=[]
+    categories=[]
+    case_count=0
+    failed_count=0
+    visited=0
+
+    def add(target,value,limit=12,chars=360):
+        value=str(value or "").strip()
+        if value and value not in target and len(target)<limit:
+            target.append(value[:chars])
+
+    def scalar(value):
+        if isinstance(value,(str,int,float,bool)) or value is None:
+            return value
+        return None
+
+    def walk(node,depth=0):
+        nonlocal case_count,failed_count,visited
+        if depth>8 or visited>=160:
+            return
+        visited+=1
+        if isinstance(node,list):
+            for item in node[:80]:
+                walk(item,depth+1)
+            return
+        if not isinstance(node,dict):
+            return
+
+        status_keys=("passed","success","ok")
+        bool_status=next((node.get(key) for key in status_keys if isinstance(node.get(key),bool)),None)
+        status_text=str(node.get("status") or node.get("result") or node.get("outcome") or "").strip().lower()
+        explicit_case=bool_status is not None or status_text in {"pass","passed","ok","success","failed","fail","error"}
+        failed=(bool_status is False) or status_text in {"failed","fail","error"}
+        if explicit_case:
+            case_count+=1
+        if failed:
+            failed_count+=1
+
+        name=""
+        for key in ("test","testName","name","id","case","title"):
+            value=node.get(key)
+            if isinstance(value,(str,int)) and str(value).strip():
+                name=str(value).strip()
+                break
+
+        expected=scalar(node.get("expected"))
+        actual=None
+        for key in ("actual","received","got","observed"):
+            if key in node:
+                actual=scalar(node.get(key))
+                break
+        message=""
+        for key in ("error","message","reason","failure"):
+            value=node.get(key)
+            if isinstance(value,str) and value.strip():
+                message=value.strip()
+                break
+
+        if failed:
+            if name:
+                add(failing_tests,name)
+            if expected is not None and actual is not None:
+                prefix=(name+": ") if name else ""
+                add(mismatches,prefix+"expected="+repr(expected)+"; actual="+repr(actual))
+                if "behavior-mismatch" not in categories:
+                    categories.append("behavior-mismatch")
+            if message:
+                add(failure_signals,((name+": ") if name else "")+message)
+                neq=re.search(r"(?s)([^\n]{0,140}?)\s*!==\s*([^\n]{0,140})",message)
+                if neq:
+                    left=neq.group(1).strip()
+                    right=neq.group(2).strip()
+                    add(mismatches,((name+": ") if name else "")+"actual="+left+"; expected="+right)
+                    if "behavior-mismatch" not in categories:
+                        categories.append("behavior-mismatch")
+            if "assertion" not in categories:
+                categories.append("assertion")
+
+        file_value=""
+        for key in ("file","fileName","filename","path"):
+            value=node.get(key)
+            if isinstance(value,str) and value.strip():
+                file_value=value.strip()
+                break
+        line_value=node.get("line")
+        column_value=node.get("column")
+        if file_value and isinstance(line_value,int):
+            loc=file_value+":"+str(line_value)
+            if isinstance(column_value,int):
+                loc+=":"+str(column_value)
+            add(locations,loc)
+
+        for key,value in list(node.items())[:80]:
+            if isinstance(value,(dict,list)):
+                walk(value,depth+1)
+
+    for value in values:
+        walk(value)
+
+    return {
+        "formats":["json"] if values else [],
+        "jsonObjectCount":len(values),
+        "caseCount":case_count,
+        "failedCaseCount":failed_count,
+        "failingTests":failing_tests[:12],
+        "expectedActual":mismatches[:12],
+        "failureSignals":failure_signals[:12],
+        "sourceLocations":locations[:12],
+        "categories":categories[:8],
+    }
+
+
 def _receipt_semantics(raw: str) -> dict[str, Any]:
     """Extract bounded repair facts from receipt-shaped output only."""
     text=_receipt_evidence_text(raw)
@@ -603,6 +754,22 @@ def _receipt_semantics(raw: str) -> dict[str, Any]:
             if name and name not in test_names:
                 test_names.append(name)
 
+    structured=_structured_json_receipt_semantics(text)
+    for value in structured.get("categories") or []:
+        if value not in categories:
+            categories.append(value)
+    for value in structured.get("failingTests") or []:
+        if value not in test_names:
+            test_names.append(value)
+    for value in structured.get("expectedActual") or []:
+        if value not in mismatches:
+            mismatches.append(value)
+    for value in structured.get("failureSignals") or []:
+        if value not in failing:
+            failing.append(value)
+    for value in structured.get("sourceLocations") or []:
+        add_location(value)
+
     return {
         "categories":categories[:12],
         "exceptionTypes":exceptions[:8],
@@ -614,6 +781,12 @@ def _receipt_semantics(raw: str) -> dict[str, Any]:
         "failingTests":test_names[:12],
         "reportedSymbols":_reported_symbols(text),
         "reportedDependencies":_reported_dependencies(text),
+        "structuredReceipt":{
+            "formats":structured.get("formats") or [],
+            "jsonObjectCount":int(structured.get("jsonObjectCount") or 0),
+            "caseCount":int(structured.get("caseCount") or 0),
+            "failedCaseCount":int(structured.get("failedCaseCount") or 0),
+        },
     }
 
 
@@ -756,6 +929,74 @@ def _original_programming_request(history: list[dict[str, Any]]) -> str:
             return text[:4000]
     return ""
 
+def _dependency_policy(original_request: str) -> str:
+    prose=_norm(_strip_fenced_code(original_request))
+    if re.search(r"\b(?:standard library|stdlib|built[- ]?ins? only|built in only)\b",prose,re.I):
+        return "standard-library-only"
+    if re.search(r"\b(?:do not|don't|without|no)\s+(?:install|installation|external dependenc|third[- ]party|package)\b",prose,re.I):
+        return "no-install"
+    return "evidence-bounded"
+
+
+def _explicit_dependency_release(text: str, dependency: str) -> bool:
+    raw=str(text or "")
+    dep=re.escape(str(dependency or ""))
+    if not dep:
+        return False
+    patterns=(
+        r"(?i)\b"+dep+r"\b.{0,80}\b(?:is|was)\s+(?:now\s+)?(?:installed|available|present)\b",
+        r"(?i)\b(?:installed|available|present)\b.{0,80}\b"+dep+r"\b",
+    )
+    return any(re.search(pattern,raw) for pattern in patterns)
+
+
+def _repair_constraints(
+    prior_state: dict[str, Any],
+    new_failure_evidence: dict[str, Any] | None,
+    active_contract: dict[str, Any],
+    current_text: str,
+) -> dict[str, Any]:
+    prior=prior_state.get("repairConstraints") if isinstance(prior_state.get("repairConstraints"),dict) else {}
+    unavailable=_unique([str(x) for x in (prior.get("unavailableDependencies") or []) if str(x).strip()])
+    previous_unavailable=list(unavailable)
+
+    prior_evidence=prior_state.get("failureEvidence") if isinstance(prior_state.get("failureEvidence"),dict) else {}
+    prior_semantics=prior_evidence.get("receiptSemantics") if isinstance(prior_evidence.get("receiptSemantics"),dict) else {}
+    for dep in prior_semantics.get("reportedDependencies") or []:
+        value=str(dep or "").strip()
+        if value and value not in unavailable:
+            unavailable.append(value)
+
+    current_semantics=(new_failure_evidence or {}).get("receiptSemantics") if isinstance((new_failure_evidence or {}).get("receiptSemantics"),dict) else {}
+    current_dependencies=_unique([str(x) for x in (current_semantics.get("reportedDependencies") or []) if str(x).strip()])
+    added=[]
+    for dep in current_dependencies:
+        if dep not in unavailable:
+            unavailable.append(dep)
+            added.append(dep)
+
+    released=[]
+    for dep in list(unavailable):
+        if _explicit_dependency_release(current_text,dep):
+            unavailable.remove(dep)
+            released.append(dep)
+
+    original_request=str(active_contract.get("originalRequest") or "")
+    policy=_dependency_policy(original_request)
+    carried=[dep for dep in unavailable if dep in previous_unavailable and dep not in current_dependencies]
+    return {
+        "schema":"swrlz-repair-constraints-v1",
+        "dependencyPolicy":policy,
+        "unavailableDependencies":unavailable[:16],
+        "forbiddenDependencies":unavailable[:16],
+        "currentReceiptDependencies":current_dependencies[:16],
+        "addedDependencies":added[:16],
+        "carriedUnavailableDependencies":carried[:16],
+        "releasedDependencies":released[:16],
+        "constraintCount":len(unavailable),
+    }
+
+
 def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_context: list[dict[str, Any]], prior_state: dict[str, Any] | None = None) -> dict[str, Any]:
     """Return bounded semantic routing metadata consumed by the Workstation."""
     text=str(prompt or "").strip()
@@ -776,6 +1017,8 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
             "failureSignals":list(failure_evidence.get("failureSignals") or [])[:8],
             "candidateFingerprint":failure_evidence.get("candidateFingerprint"),
             "repairActions":list(failure_evidence.get("repairActions") or [])[:6],
+            "reportedDependencies":list((failure_evidence.get("receiptSemantics") or {}).get("reportedDependencies") or [])[:12],
+            "structuredReceipt":dict((failure_evidence.get("receiptSemantics") or {}).get("structuredReceipt") or {}),
         })
         failure_history=failure_history[-4:]
     correction_direction=bool(prior_contract) and any(x in p for x in ("still","instead","required","requirement","must","should","keep","preserve","do not","don't","wrong","incorrect","guidance","fix","repair","change only","return only"))
@@ -847,6 +1090,13 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     else:
         active_contract=_programming_intent_contract(original_request or text,change)
 
+    repair_constraints=_repair_constraints(
+        prior_state,
+        new_failure_evidence,
+        active_contract,
+        text,
+    )
+
     evidence_request=(
         "I can repair it, but I need the failure evidence first. Paste the compiler, test, runtime, browser-console, linter, or type-checker error output you get. "
         "Include the file/line it points to if that is shown."
@@ -870,6 +1120,7 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         "canonicalCarry":canonical_carry,
         "failureEvidence":failure_evidence,
         "failureHistory":failure_history,
+        "repairConstraints":repair_constraints,
         "needsFailureEvidence":vague_failure,
         "evidenceRequest":evidence_request,
         "repairLifecycleState":"EVIDENCE_REQUIRED" if vague_failure else ("REPAIR_CANDIDATE" if failure_evidence else "CANDIDATE_GENERATION"),
