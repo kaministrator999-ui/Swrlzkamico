@@ -7,7 +7,7 @@ sdk: static
 app_file: index.html
 fullWidth: true
 header: mini
-short_description: Browser-native world and game engine maker with project templates and agent tools.
+short_description: Browser-native world engine maker with project templates.
 ---
 
 # §wyrl§ Engine · Maker v5.1
