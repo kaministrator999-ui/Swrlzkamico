@@ -1,0 +1,81 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "v122-9686780eac48",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "d8710d6401cf5080649274e66064d061ae6f05c5",
+  "persistedAtUnixMs": 1791210327222,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v125-trace-chat-status",
+      "kind": "weather",
+      "status": "OK",
+      "reason": "weather-intent",
+      "provider": "Open-Meteo",
+      "resultCount": 1,
+      "widgetKinds": [
+        "weather"
+      ],
+      "sourceCount": 2,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1161,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving weather location",
+        "atUnixMs": 1791210326061
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1791210326564,
+        "httpStatus": 200,
+        "responseBytes": 805
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_FORECAST_VISIT",
+        "provider": "Open-Meteo",
+        "site": "api.open-meteo.com",
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "activity": "Fetching current weather and forecast",
+        "atUnixMs": 1791210326564
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_FORECAST_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "api.open-meteo.com",
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1791210327222,
+        "httpStatus": 200,
+        "responseBytes": 1709
+      }
+    ],
+    "sourceSites": [
+      "open-meteo.com"
+    ],
+    "widgetKinds": [
+      "weather"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
