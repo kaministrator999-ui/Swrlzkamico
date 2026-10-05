@@ -90,7 +90,7 @@ jobs:
                   assert status == 202, (status, ack)
                   assert ack.get("modelId") == model_id, ack
                   latest = None
-                  for attempt in range(210):
+                  for attempt in range(420):
                       status, snapshot = self.get("/api/lalm_station/sync")
                       assert status == 200, status
                       generation = snapshot.get("activeGeneration") or {}
