@@ -17,7 +17,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 24
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -75,7 +75,7 @@ jobs:
                       return response.status, json.loads(response.read().decode("utf-8"))
 
               def send_and_wait(self, thread_id, prompt):
-                  rid = "v120-" + uuid.uuid4().hex[:12]
+                  rid = "v121-" + uuid.uuid4().hex[:12]
                   status, ack = self.post("/api/lalm_station/send", {
                       "modelId":"700m",
                       "threadId":thread_id,
@@ -418,6 +418,55 @@ jobs:
               "status":"PASS",
           })
 
+          # v121: the next receipt is structured JSON behavior evidence. It must
+          # normalize failed cases instead of degrading to unstructured signals.
+          ts_json_receipt = json.dumps({
+              "passed": 6,
+              "total": 9,
+              "cases": [
+                  {"test":"null","passed":True},
+                  {"test":"empty","passed":True},
+                  {"test":"whitespace_spaces","passed":False,"error":"Expected values to be strictly equal: '' !== '(untitled)'"},
+                  {"name":"whitespace_tabs","passed":False,"expected":"(untitled)","received":""},
+                  {"id":"whitespace_newline","success":False,"expected":"(untitled)","actual":""},
+              ],
+          })
+          g5b, _ = c5.send_and_wait(g5.get("threadId"), ts_json_receipt)
+          _, intent5b, validation5b = route_state(g5b)
+          evidence5b = intent5b.get("failureEvidence") or {}
+          semantics5b = evidence5b.get("receiptSemantics") or {}
+          structured5b = semantics5b.get("structuredReceipt") or {}
+          assert "assertion" in (semantics5b.get("categories") or []), semantics5b
+          assert "behavior-mismatch" in (semantics5b.get("categories") or []), semantics5b
+          for expected_test in ("whitespace_spaces","whitespace_tabs","whitespace_newline"):
+              assert expected_test in (semantics5b.get("failingTests") or []), semantics5b
+          assert len(semantics5b.get("expectedActual") or []) >= 3, semantics5b
+          assert structured5b.get("formats") == ["json"], structured5b
+          assert structured5b.get("failedCaseCount") == 3, structured5b
+          assert (validation5b.get("structuredReceipt") or {}).get("failedCaseCount") == 3, validation5b
+
+          g5b, _, persistence5b = wait_for_github_persistence(c5, g5b.get("requestId"))
+          path5b, repo5b = fetch_runtime_programming_log(g5b.get("requestId"))
+          diag5b = repo5b.get("diagnostic") or {}
+          assert repo5b.get("sourceRef") == expected_source, repo5b
+          assert (diag5b.get("structuredReceipt") or {}).get("failedCaseCount") == 3, diag5b
+          assert ((diag5b.get("candidateValidation") or {}).get("structuredReceipt") or {}).get("failedCaseCount") == 3, diag5b
+          repair_path5b = "runtime-diagnostics/repair/" + g5b.get("requestId") + "/repair-diagnostic.json"
+          repair_log5b = fetch_runtime_log_path(repair_path5b)
+          repair_diag5b = repair_log5b.get("diagnostic") or {}
+          assert (repair_diag5b.get("structuredReceipt") or {}).get("failedCaseCount") == 3, repair_diag5b
+
+          receipts.append({
+              "case":"v121-typescript-json-receipt-normalization",
+              "categories":semantics5b.get("categories"),
+              "failingTests":semantics5b.get("failingTests"),
+              "expectedActualCount":len(semantics5b.get("expectedActual") or []),
+              "structuredReceipt":structured5b,
+              "githubLogPath":path5b,
+              "githubPersisted":bool(persistence5b.get("ok")),
+              "status":"PASS",
+          })
+
           # v119 case 6: native ESLint receipt with file/line/column.
           c6 = Client()
           eslint_prompt = "\n".join([
@@ -509,6 +558,8 @@ jobs:
           assert validation8.get("status") == "PASS", validation8
           text8 = str(g8.get("text") or "")
           assert not re.search(r"(?m)^\s*(?:from\s+slugify\s+import|import\s+slugify\b)", text8), text8
+          constraints8 = intent8.get("repairConstraints") or {}
+          assert "slugify" in (constraints8.get("unavailableDependencies") or []), constraints8
           attempts8 = g8.get("candidateAttempts") if isinstance(g8.get("candidateAttempts"), list) else []
           for attempt8 in attempts8:
               if attempt8.get("validationStatus") == "REJECT":
@@ -526,8 +577,59 @@ jobs:
               "status":"PASS",
           })
 
+          behavior8 = json.dumps({
+              "passed":5,
+              "total":9,
+              "cases":[
+                  {"test":"lowercase","passed":False,"expected":"hello-web-42","actual":"H-e-l-l-o-W-e-b-4-2"},
+                  {"test":"ascii","passed":False,"expected":"caf","actual":"C-a-f-é"},
+              ],
+          })
+          g8b, _ = c8.send_and_wait(g8.get("threadId"), behavior8)
+          _, intent8b, validation8b = route_state(g8b)
+          evidence8b = intent8b.get("failureEvidence") or {}
+          semantics8b = evidence8b.get("receiptSemantics") or {}
+          constraints8b = intent8b.get("repairConstraints") or {}
+          assert (semantics8b.get("reportedDependencies") or []) == [], semantics8b
+          assert "slugify" in (constraints8b.get("unavailableDependencies") or []), constraints8b
+          assert "slugify" in (constraints8b.get("carriedUnavailableDependencies") or []), constraints8b
+          active8b = validation8b.get("activeRepairConstraints") or {}
+          assert "slugify" in (active8b.get("unavailableDependencies") or []), (validation8b, active8b)
+
+          text8b = str(g8b.get("text") or "")
+          if validation8b.get("status") == "PASS":
+              assert not re.search(r"(?m)^\s*(?:from\s+slugify\s+import|import\s+slugify\b)", text8b), text8b
+          else:
+              assert any(
+                  str(reason) == "dependency-still-referenced:slugify"
+                  for reason in (validation8b.get("reasons") or [])
+              ) or not re.search(r"(?m)^\s*(?:from\s+slugify\s+import|import\s+slugify\b)", text8b), validation8b
+
+          g8b, _, persistence8b = wait_for_github_persistence(c8, g8b.get("requestId"))
+          path8b, repo8b = fetch_runtime_programming_log(g8b.get("requestId"))
+          diag8b = repo8b.get("diagnostic") or {}
+          assert repo8b.get("sourceRef") == expected_source, repo8b
+          persisted_constraints8b = diag8b.get("repairConstraints") or {}
+          assert "slugify" in (persisted_constraints8b.get("unavailableDependencies") or []), diag8b
+          assert "slugify" in (persisted_constraints8b.get("carriedUnavailableDependencies") or []), diag8b
+          repair_path8b = "runtime-diagnostics/repair/" + g8b.get("requestId") + "/repair-diagnostic.json"
+          repair_log8b = fetch_runtime_log_path(repair_path8b)
+          repair_diag8b = repair_log8b.get("diagnostic") or {}
+          assert "slugify" in ((repair_diag8b.get("repairConstraints") or {}).get("unavailableDependencies") or []), repair_diag8b
+          assert "slugify" in ((repair_diag8b.get("repairConstraints") or {}).get("carriedUnavailableDependencies") or []), repair_diag8b
+
+          receipts.append({
+              "case":"v121-dependency-constraint-survives-behavior-receipt",
+              "currentReceiptDependencies":semantics8b.get("reportedDependencies"),
+              "repairConstraints":constraints8b,
+              "validationStatus":validation8b.get("status"),
+              "githubLogPath":path8b,
+              "githubPersisted":bool(persistence8b.get("ok")),
+              "status":"PASS",
+          })
+
           receipt = {
-              "checkpoint":"live-programming-contract-v120",
+              "checkpoint":"live-programming-contract-v121",
               "spaceRevision":live_revision,
               "expectedSource":expected_source,
               "coderCheckpoint":coder.get("checkpoint"),
