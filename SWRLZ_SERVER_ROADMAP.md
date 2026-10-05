@@ -1,3 +1,22 @@
+## UPDATE STARTED — 2026-10-05 — User-reported weather location resolution + no-fabrication gate v126
+
+**Trigger:** real user request `Can you check the weather in Leavenworth kansas` on deployed v125 source `d8710d6401cf5080649274e66064d061ae6f05c5` produced a generic model fallback instead of a weather widget.
+
+**Exact runtime evidence:** `runtime-diagnostics/online-research/web-muvdw9xq-3280641475-3767189158/` proves the request did route through 700M Online Research. Open-Meteo geocoding returned HTTP 200 with an empty result payload for the combined free-text location `Leavenworth kansas`; weather outcome became `ERROR`, no widget/source was produced, then 700M ignored the error evidence and improvised stale weather guidance.
+
+**Goal:** make natural city+state weather phrasing resolve robustly and prevent any model from fabricating/current-weather fallback when live weather retrieval fails.
+
+**Architecture reconciliation:**
+- Weather remains the fixed Open-Meteo vertical.
+- Geocoding becomes two-stage: try the user's bounded location phrase first; when it encodes a recognized US state/abbreviation and returns no result, retry the city-only name with a bounded candidate set and select the result whose region/country matches the state qualifier.
+- Emit trace events for retry/no-match so Chat and durable logs show what happened without storing the raw prompt.
+- If weather retrieval still ends in `LOCATION_REQUIRED` or `ERROR`, router returns a deterministic failure/location message and terminates the turn instead of letting any model hallucinate current conditions.
+- Successful weather remains model-agnostic and continues through widget + evidence context to 700M/stock/R39; coding intents remain coder-owned.
+
+**Verification:** exact user phrase regression, ambiguous-city/state selection, no-result deterministic failure gate, existing v117-v125 stack, guarded HF deployment, then live Leavenworth-Kansas weather request requiring Open-Meteo forecast + weather widget.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — v125 current-head verification + live observability gate
 
 **Exact deployment source:** `d8710d6401cf5080649274e66064d061ae6f05c5` on `feature/hf-space-manual-deploy`.
