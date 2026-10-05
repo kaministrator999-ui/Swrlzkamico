@@ -17,6 +17,10 @@ _FEATURE=("add","implement","feature","support","extend","include")
 _REVIEW=("review","audit","inspect","check this","find the error","find the bug","what is wrong","validate","verify")
 _EXPLAIN=("explain","what does","how does","walk me through")
 _CONTINUATION=("this","that","it","same","previous","pinned","code","file","project","continue","keep going","update","change","modify")
+_PROGRAMMING_STRONG_TERMS=("coding","programming","compiler","compile","debug","debugging","syntax","source code","frontend","backend","dom","repository","repo","github actions","ci pipeline","unit test","integration test")
+_PROGRAMMING_WEAK_TERMS=("website","webpage","web page","api","server","ui","interface","layout","component","file","project","app","application")
+_PROGRAMMING_ACTIONS=("write","create","build","implement","code","develop","fix","repair","debug","refactor","update","modify","change","add","remove","hook","integrate","deploy","test","lint","review","audit")
+_NON_PROGRAMMING_CODE_PHRASES=("zip code","area code","dress code","country code","promo code","coupon code","qr code")
 
 _LANGUAGE_PATTERNS=(
     ("html",(r"\bhtml5?\b",)),
@@ -68,6 +72,36 @@ Return the complete required candidate, never a fragment/TODO/ellipsis/prose sub
 
 def _norm(value: Any) -> str:
     return " ".join(str(value or "").lower().split())
+
+
+def _phrase_present(text: str, phrase: str) -> bool:
+    body=str(text or "")
+    token=re.escape(str(phrase or "")).replace(r"\ ",r"\s+")
+    return bool(re.search(r"(?<!\w)"+token+r"(?!\w)",body,re.I))
+
+
+def _has_phrase(text: str, phrases: tuple[str, ...]) -> bool:
+    return any(_phrase_present(text,phrase) for phrase in phrases)
+
+
+def _current_programming_signal(text: str) -> bool:
+    raw=str(text or "")
+    prose=_norm(_strip_fenced_code(raw))
+    fence=chr(96)*3
+    if not prose and fence not in raw:
+        return False
+    if fence in raw or bool(_explicit_languages(raw)):
+        return True
+    code_word=_phrase_present(prose,"code") and not _has_phrase(prose,_NON_PROGRAMMING_CODE_PHRASES)
+    strong=code_word or _has_phrase(prose,_PROGRAMMING_STRONG_TERMS)
+    weak_with_action=_has_phrase(prose,_PROGRAMMING_WEAK_TERMS) and _has_phrase(prose,_PROGRAMMING_ACTIONS)
+    source_shape=bool(re.search(r"(?m)^\s*(?:def\s+\w+\s*\(|class\s+\w+|(?:const|let|var)\s+\w+|function\s+\w+\s*\(|SELECT\s+.+\s+FROM\s+)",raw))
+    return bool(strong or weak_with_action or source_shape)
+
+
+def _programming_continuation_signal(text: str) -> bool:
+    prose=_norm(_strip_fenced_code(text))
+    return _has_phrase(prose,_CONTINUATION)
 
 
 def _code_pins(pinned_context: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -954,7 +988,7 @@ def _original_programming_request(history: list[dict[str, Any]]) -> str:
         text=str(item.get("content") or item.get("text") or "").strip()
         if not text or _looks_like_failure_receipt(text):
             continue
-        if any(term in _norm(text) for term in _CODE_TERMS) or bool(_explicit_languages(text)):
+        if _current_programming_signal(text):
             return text[:4000]
     return ""
 
@@ -1231,9 +1265,9 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         failure_evidence["source"]="prior-repair-lineage"
         failure_evidence["continuedByGuidance"]=True
     original_request=_original_programming_request(history or []) if new_failure_evidence else ""
-    recent=" ".join(_norm(m.get("content") or m.get("text")) for m in (history or [])[-4:] if isinstance(m,dict))
-    inherited=bool(pins) or bool(prior_contract) or any(term in recent for term in _CODE_TERMS)
-    coding=any(term in p for term in _CODE_TERMS) or bool(_explicit_languages(text)) or inherited or bool(failure_evidence) or vague_failure
+    continuation_reference=_programming_continuation_signal(text)
+    inherited=continuation_reference and (bool(pins) or bool(prior_contract) or bool(last_artifact))
+    coding=_current_programming_signal(text) or inherited or bool(failure_evidence) or vague_failure
     if not coding:
         return {
             "schema":"swrlz-programming-intent-v1",
@@ -1261,7 +1295,7 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     else:
         change="create" if not pins else "feature"
 
-    explicit_reference=any(x in p for x in _CONTINUATION) or any(
+    explicit_reference=_programming_continuation_signal(text) or any(
         _norm((value.get("path") or value.get("file") or "") if isinstance(value,dict) else value) in p
         for item in pins for value in (item.get("files") or [])
         if _norm((value.get("path") or value.get("file") or "") if isinstance(value,dict) else value)
