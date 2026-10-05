@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.6
-REVISION=1.0.6-live-provider-trace-v125
+VERSION=1.0.7
+REVISION=1.0.7-city-state-weather-fallback-v126
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
