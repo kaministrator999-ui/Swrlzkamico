@@ -274,6 +274,7 @@ async def stream_generation(request:Request, requestId:str):
     async def events():
         sent_text=""
         sent_status=0
+        sent_widgets=0
         terminal_sent=False
         while True:
             if await request.is_disconnected():return
@@ -286,7 +287,13 @@ async def stream_generation(request:Request, requestId:str):
             while sent_status<len(statuses):
                 item=statuses[sent_status] if isinstance(statuses[sent_status],dict) else {}
                 sent_status+=1
-                yield json.dumps({"type":"STATUS","phase":str(item.get("phase") or "STATUS"),"reason":str(item.get("reason") or ""), "seq":sent_status,"requestId":rid},ensure_ascii=False)+"\n"
+                yield json.dumps({"type":"STATUS","phase":str(item.get("phase") or "STATUS"),"reason":str(item.get("reason") or ""),"categories":copy.deepcopy(item.get("categories") or []),"seq":sent_status,"requestId":rid},ensure_ascii=False)+"\n"
+            widgets=g.get("widgets") if isinstance(g.get("widgets"),list) else []
+            while sent_widgets<len(widgets):
+                widget=widgets[sent_widgets] if isinstance(widgets[sent_widgets],dict) else {}
+                sent_widgets+=1
+                if widget:
+                    yield json.dumps({"type":"WIDGET","widget":widget,"seq":int(g.get("lastSeq") or 0),"requestId":rid},ensure_ascii=False)+"\n"
             text_now=str(g.get("text") or "")
             if len(text_now)>len(sent_text):
                 delta=text_now[len(sent_text):]
@@ -580,6 +587,16 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     state=event.get("state")
                     if isinstance(state,dict):g["responseCognition"]=copy.deepcopy(state)
                     g["status"].append({"seq":g["lastSeq"],"phase":"RESPONSE_COGNITION","reason":""})
+                elif kind=="ONLINE_RESEARCH":
+                    result=event.get("result") if isinstance(event.get("result"),dict) else {}
+                    sources=event.get("sources") if isinstance(event.get("sources"),list) else []
+                    g["onlineResearch"]=copy.deepcopy(result)
+                    g["sources"]=[copy.deepcopy(item) for item in sources if isinstance(item,dict)][:24]
+                    g["status"].append({"seq":g["lastSeq"],"phase":"ONLINE_RESEARCH","reason":str(result.get("status") or ""),"categories":["ONLINE_RESEARCH",str(result.get("kind") or "").upper()]})
+                elif kind=="WIDGET":
+                    widget=event.get("widget") if isinstance(event.get("widget"),dict) else {}
+                    if widget:g.setdefault("widgets",[]).append(copy.deepcopy(widget))
+                    g["status"].append({"seq":g["lastSeq"],"phase":"WIDGET_READY","reason":str(widget.get("kind") or ""),"categories":["WIDGET"]})
                 elif kind=="PROGRAMMING_INTENT":
                     intent=event.get("intent")
                     if isinstance(intent,dict):
@@ -643,7 +660,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         "firstDeltaLatencyMs":event.get("firstDeltaLatencyMs"),
                     }
                     g["status"].append({"seq":g["lastSeq"],"phase":"COMPLETE","reason":""})
-                else:g["status"].append({"seq":g["lastSeq"],"phase":str(event.get("phase") or kind),"reason":str(event.get("reason") or "")[:200]})
+                else:g["status"].append({"seq":g["lastSeq"],"phase":str(event.get("phase") or kind),"reason":str(event.get("reason") or "")[:200],"categories":[str(x)[:80] for x in (event.get("categories") or [])[:16]] if isinstance(event.get("categories"),list) else []})
             if persist_event is not None:
                 persist_kind,persist_payload=persist_event
                 threading.Thread(
@@ -710,6 +727,12 @@ def _run(key,request_id,model_id,payload,assistant_id):
             } if intent.get("codingTask") else None
             telemetry_meta={}
             if response_cognition: telemetry_meta["responseCognition"]=response_cognition
+            online_research=copy.deepcopy(g.get("onlineResearch") or {})
+            online_sources=copy.deepcopy((g.get("sources") or [])[:24])
+            online_widgets=copy.deepcopy((g.get("widgets") or [])[:8])
+            if online_research: telemetry_meta["onlineResearch"]=online_research
+            if online_sources: telemetry_meta["sources"]=online_sources
+            if online_widgets: telemetry_meta["widgets"]=online_widgets
             if programming_telemetry: telemetry_meta["programmingTelemetry"]=programming_telemetry
             artifact_id=str(intent.get("artifactTargetId") or "")
             artifact=_find_artifact(thread,artifact_id) if artifact_id and intent.get("artifactMutationRequested") and not rejected else None
@@ -898,6 +921,14 @@ async def send(request:Request):
     profile=body.get("profile","")
     user_profile=body.get("userProfile","")
     client_timezone=body.get("timeZone","UTC")
+    client_location=body.get("clientLocation")
+    if client_location is not None:
+        if not isinstance(client_location,dict) or client_location.get("authorized") is not True:raise HTTPException(400,"Invalid client location")
+        try:
+            latitude=float(client_location.get("latitude"));longitude=float(client_location.get("longitude"))
+        except (TypeError,ValueError):raise HTTPException(400,"Invalid client location")
+        if not (-90.0<=latitude<=90.0 and -180.0<=longitude<=180.0):raise HTTPException(400,"Invalid client location")
+        client_location={"authorized":True,"latitude":latitude,"longitude":longitude,"label":str(client_location.get("label") or "Your shared location")[:120]}
     content_tag=body.get("contentTag","")
     if content_tag not in ("","container:code","container:lyrics"):raise HTTPException(400,"Invalid content tag")
     if not isinstance(client_timezone,str) or len(client_timezone)>80:raise HTTPException(400,"Invalid timezone")
@@ -918,8 +949,8 @@ async def send(request:Request):
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
-    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
+    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400,path="/")
