@@ -353,22 +353,31 @@ jobs:
               raise AssertionError(("github-runtime-log-unavailable", path, latest_error))
 
           online_logs = []
-          for label, path in (("weather", weather_log_path), ("search", search_log_path), ("coder", coder_log_path)):
-              online_log = fetch_runtime_log_path(path)
-              assert online_log.get("schema") == "swrlz-github-online-research-log-v1", online_log
-              assert online_log.get("sourceRef") == expected_source, online_log
-              diagnostic = online_log.get("diagnostic") or {}
-              assert diagnostic.get("rawPromptStored") is False, diagnostic
-              assert diagnostic.get("preciseLocationStored") is False, diagnostic
-              trace = diagnostic.get("trace") if isinstance(diagnostic.get("trace"), list) else []
-              assert trace, diagnostic
-              assert all("?" not in str(item.get("url") or "") for item in trace if isinstance(item, dict)), trace
-              assert any(str(item.get("site") or "") for item in trace if isinstance(item, dict)), trace
-              serialized = json.dumps(online_log, ensure_ascii=False).lower()
-              assert "search online for open-meteo weather api documentation" not in serialized, serialized
-              assert "search online for the latest fastapi release documentation" not in serialized, serialized
-              online_logs.append({"label":label,"path":path,"traceCount":len(trace),"sourceSites":diagnostic.get("sourceSites") or []})
-          receipts.append({"case":"v124-online-durable-trace-logs","logs":online_logs,"status":"PASS"})
+          for label, persisted in (("weather", weather_logs), ("search", search_logs), ("coder", coder_logs)):
+              for log_kind, path_key, expected_schema in (
+                  ("trace", "tracePath", "swrlz-github-online-research-trace-v1"),
+                  ("outcome", "outcomePath", "swrlz-github-online-research-outcome-v1"),
+              ):
+                  path = str(persisted.get(path_key) or "")
+                  assert path.startswith("runtime-diagnostics/online-research/"), (label, log_kind, persisted)
+                  online_log = fetch_runtime_log_path(path)
+                  assert online_log.get("schema") == expected_schema, online_log
+                  assert online_log.get("sourceRef") == expected_source, online_log
+                  diagnostic = online_log.get("diagnostic") or {}
+                  assert diagnostic.get("rawPromptStored") is False, diagnostic
+                  assert diagnostic.get("historyStored") is False, diagnostic
+                  assert diagnostic.get("preciseLocationStored") is False, diagnostic
+                  trace = diagnostic.get("trace") if isinstance(diagnostic.get("trace"), list) else []
+                  assert trace, diagnostic
+                  assert all("?" not in str(item.get("url") or "") for item in trace if isinstance(item, dict)), trace
+                  assert any(str(item.get("site") or "") for item in trace if isinstance(item, dict)), trace
+                  if label == "coder":
+                      assert diagnostic.get("selectedModelId") == "coder", diagnostic
+                  serialized = json.dumps(online_log, ensure_ascii=False).lower()
+                  assert "search online for open-meteo weather api documentation" not in serialized, serialized
+                  assert "search online for the latest fastapi release documentation" not in serialized, serialized
+                  online_logs.append({"label":label,"kind":log_kind,"path":path,"traceCount":len(trace),"sourceSites":diagnostic.get("sourceSites") or []})
+          receipts.append({"case":"v125-online-durable-trace-and-outcome-logs","logs":online_logs,"status":"PASS"})
 
           c1 = Client()
           g1, s1 = c1.send_and_wait("language-" + uuid.uuid4().hex[:10], "Can you write me an example html page")
