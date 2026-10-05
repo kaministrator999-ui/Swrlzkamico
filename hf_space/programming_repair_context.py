@@ -57,10 +57,12 @@ def build_compact_repair_context(
             "categories":_bounded(item.get("categories"),6,60),
             "candidateFingerprint":str(item.get("candidateFingerprint") or "")[:40] or None,
             "failureSignals":_bounded(item.get("failureSignals"),3,220),
+            "reportedDependencies":_bounded(item.get("reportedDependencies"),8,120),
         })
 
+    constraints=programming.get("repairConstraints") if isinstance(programming.get("repairConstraints"),dict) else {}
     state={
-        "schema":"swrlz-compact-repair-context-v1",
+        "schema":"swrlz-compact-repair-context-v2",
         "changeClass":str(programming.get("changeClass") or "fix"),
         "originalRequest":str(contract.get("originalRequest") or "")[:2200],
         "must":_bounded(contract.get("must"),10,320),
@@ -72,6 +74,12 @@ def build_compact_repair_context(
             "allowedLanguages":list(language.get("allowedLanguages") or [])[:10],
             "artifactType":language.get("artifactType"),
             "substitutionAllowed":language.get("substitutionAllowed"),
+        },
+        "repairConstraints":{
+            "dependencyPolicy":constraints.get("dependencyPolicy"),
+            "unavailableDependencies":list(constraints.get("unavailableDependencies") or [])[:16],
+            "carriedUnavailableDependencies":list(constraints.get("carriedUnavailableDependencies") or [])[:16],
+            "currentReceiptDependencies":list(constraints.get("currentReceiptDependencies") or [])[:16],
         },
         "receipt":{
             "ownership":evidence.get("receiptSourceOwnership"),
@@ -112,6 +120,8 @@ def build_compact_repair_context(
         "directionChars":len(fitted_prompt),
         "priorFailureCount":len(prior),
         "receiptCategoryCount":len(state["receipt"]["categories"]),
+        "activeUnavailableDependencyCount":len(state["repairConstraints"]["unavailableDependencies"]),
+        "carriedUnavailableDependencyCount":len(state["repairConstraints"]["carriedUnavailableDependencies"]),
     }
     return system,fitted_prompt,telemetry
 
@@ -138,9 +148,14 @@ def enforce_strategy_change(
 def strategy_change_directive(programming: dict[str, Any], validation: dict[str, Any], attempt: int) -> str:
     evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
     semantics=evidence.get("receiptSemantics") if isinstance(evidence.get("receiptSemantics"),dict) else {}
+    constraints=programming.get("repairConstraints") if isinstance(programming.get("repairConstraints"),dict) else {}
     reasons=[str(x) for x in ((validation or {}).get("reasons") or [])]
     categories=set(str(x) for x in (semantics.get("categories") or []))
-    dependencies=[str(x) for x in (semantics.get("reportedDependencies") or []) if str(x)]
+    dependencies=[]
+    for value in list(constraints.get("forbiddenDependencies") or [])+list(semantics.get("reportedDependencies") or []):
+        value=str(value or "").strip()
+        if value and value not in dependencies:
+            dependencies.append(value)
     contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
     original=_strip_fences(str(contract.get("originalRequest") or ""))
     direction=(" ".join((_compact_user_direction(programming,""),original))).lower()
