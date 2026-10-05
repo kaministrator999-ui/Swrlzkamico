@@ -387,3 +387,87 @@ assert any(event.get("phase")=="WEATHER_RETRIEVAL_BLOCKED" for event in events),
 assert events[-1].get("type")=="COMPLETED",events
 
 print("real-user-weather-v126 PASS")
+
+
+# v126: exact real-user weather phrase and terse continuation must stay weather,
+# not become a freshness search for the literal words "Yes for today".
+real_weather_history=[
+    {"role":"user","text":"Can you check the weather in Leavenworth kansas","meta":{}},
+    {"role":"assistant","text":"Prior weather response","meta":{"onlineResearch":{"kind":"weather","status":"ERROR"}}},
+]
+real_first=classify_online_request("Can you check the weather in Leavenworth kansas",[],{},None)
+assert real_first["kind"]=="weather" and real_first["locationText"].casefold()=="leavenworth kansas",real_first
+real_follow=classify_online_request("Yes for today",real_weather_history,{},None)
+assert real_follow["kind"]=="weather",real_follow
+assert real_follow["reason"]=="weather-continuation",real_follow
+assert real_follow["locationText"].casefold()=="leavenworth kansas",real_follow
+
+# A correction that explicitly rejects weather must become ordinary web search,
+# and search-query extraction should follow the newest user intent.
+correction=classify_online_request(
+    "I didn't mean look up weather I want you to look up the word hey",
+    real_weather_history,
+    {},
+    None,
+)
+assert correction["kind"]=="search",correction
+assert correction["query"].casefold()=="hey",correction
+
+# Open-Meteo city+state fallback: combined free text may return zero results.
+orig_json_get=online_tools._json_get
+geo_calls=[]
+def fake_state_geocode(url,progress=None,phase="WEATHER_PROVIDER_VISIT",activity="Fetching weather data"):
+    geo_calls.append(url)
+    if "geocoding-api.open-meteo.com" in url:
+        query=urllib.parse.parse_qs(urllib.parse.urlsplit(url).query)
+        name=(query.get("name") or [""])[0]
+        if name.casefold()=="leavenworth kansas":
+            return {"results":[]}
+        if name.casefold()=="leavenworth":
+            return {"results":[
+                {"name":"Leavenworth","admin1":"Washington","country":"United States","country_code":"US","admin1_code":"US-WA","timezone":"America/Los_Angeles","latitude":47.596,"longitude":-120.661},
+                {"name":"Leavenworth","admin1":"Kansas","country":"United States","country_code":"US","admin1_code":"US-KS","timezone":"America/Chicago","latitude":39.3111,"longitude":-94.9225},
+            ]}
+    return {
+        "timezone":"America/Chicago",
+        "current":{"time":"2026-10-05T10:00","temperature_2m":70.0,"relative_humidity_2m":55,"apparent_temperature":69.0,"precipitation":0.0,"rain":0.0,"snowfall":0.0,"weather_code":0,"cloud_cover":10,"surface_pressure":1009.0,"wind_speed_10m":5.0,"wind_direction_10m":180,"wind_gusts_10m":9.0},
+        "current_units":{"temperature_2m":"°F","relative_humidity_2m":"%","apparent_temperature":"°F","precipitation":"inch","surface_pressure":"hPa","wind_speed_10m":"mp/h","wind_gusts_10m":"mp/h"},
+        "daily":{"time":[]},
+        "daily_units":{},
+    }
+try:
+    online_tools._json_get=fake_state_geocode
+    state_result=online_tools.weather_lookup({"locationText":"Leavenworth kansas","query":"weather"},None)
+finally:
+    online_tools._json_get=orig_json_get
+assert len(geo_calls)==3,geo_calls
+assert state_result["status"]=="OK",state_result
+assert "Leavenworth, Kansas" in state_result["widgets"][0]["data"]["location"]["label"],state_result
+
+# Successful external evidence cannot end as a generic "can't access/can't assist" refusal.
+def refusal_events():
+    yield {"type":"DELTA","text":"I apologize, but I can't assist with that."}
+    yield {"type":"COMPLETED","phase":"COMPLETE"}
+guarded=list(model_router._guard_successful_online_answer(
+    refusal_events(),
+    {
+        "kind":"search",
+        "status":"OK",
+        "query":"hey",
+        "modelContext":{"query":"hey","evidence":[{"title":"HEY | Cambridge Dictionary","snippet":"used as a way of attracting someone's attention","url":"https://dictionary.cambridge.org/dictionary/english/hey"}]},
+    },
+))
+guard_text="".join(str(item.get("text") or "") for item in guarded if item.get("type")=="DELTA")
+assert "can't assist" not in guard_text.casefold(),guarded
+assert "cambridge" in guard_text.casefold(),guarded
+assert any(item.get("phase")=="ONLINE_ANSWER_GUARD" for item in guarded),guarded
+
+# Composer collapse must remain a top-layer, mobile-tappable control with a live toggle handler.
+chat=(root/"chat/§wyrlz/index.html").read_text(encoding="utf-8")
+assert "composer-collapse{position:relative;z-index:8" in chat
+assert "touch-action:manipulation" in chat
+assert "const toggleComposerCollapsed" in chat
+assert 'composerCollapse.addEventListener("click",toggleComposerCollapsed)' in chat
+assert 'uiCamera("composer-collapse-toggle"' in chat
+
+print("weather-continuation-real-user-v126 PASS")
