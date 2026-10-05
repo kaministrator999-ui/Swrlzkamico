@@ -5,6 +5,7 @@ on:
     branches: [forge-v5-materialize]
     paths:
       - ".github/workflows/validate-forge-v5-materialized.yml"
+      - "projects/swrlz-forge-moba/patches/v5_projects.py"
 
 permissions:
   contents: write
