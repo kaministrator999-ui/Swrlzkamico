@@ -1,5 +1,9 @@
 # SWRLZ Forge · MOBA Lab
 
+## Project entry command
+
+Use `§tart §E` or `@GitHub §tart §E` to enter the Forge engine workflow. The canonical router is [`/§tart_§E.md`](../../§tart_§E.md). It reconstructs the current engine source/deployment state and keeps Forge development separate from the main §wyrlz AI Chat/LALM deployment lane.
+
 Browser-native 3D MOBA editor/runtime prototype.
 
 ## Source of truth
