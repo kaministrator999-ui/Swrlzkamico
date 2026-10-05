@@ -116,6 +116,34 @@ jobs:
           coder = next((item for item in models if item.get("model_id") == "coder" or item.get("modelId") == "coder"), None)
           assert coder and "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF" in str(coder.get("checkpoint") or ""), coder
 
+          # v123 general-response cognition: prove current-turn relationship state survives live Station routing.
+          rc = Client()
+          rc_thread = "response-cognition-" + uuid.uuid4().hex[:10]
+          rg1, _ = rc.send_and_wait(rc_thread, "Create 2 short names for a moon base.")
+          assert rg1.get("terminalType") == "COMPLETE", rg1
+          rc1 = rg1.get("responseCognition") if isinstance(rg1.get("responseCognition"), dict) else {}
+          assert rc1.get("relation") == "standalone", rc1
+          assert rc1.get("operation") == "create", rc1
+          assert rc1.get("requestedCount") == 2, rc1
+
+          rg2, _ = rc.send_and_wait(rc_thread, "keep going")
+          assert rg2.get("terminalType") == "COMPLETE", rg2
+          rc2 = rg2.get("responseCognition") if isinstance(rg2.get("responseCognition"), dict) else {}
+          assert rc2.get("relation") == "continuation", rc2
+          assert rc2.get("operation") == "continue", rc2
+          assert int(rc2.get("historyTurns") or 0) >= 2, rc2
+
+          rg3, rs3 = rc.send_and_wait(rc_thread, "No, I meant names for an underwater lab.")
+          assert rg3.get("terminalType") == "COMPLETE", rg3
+          rc3 = rg3.get("responseCognition") if isinstance(rg3.get("responseCognition"), dict) else {}
+          assert rc3.get("relation") == "correction", rc3
+          assert rc3.get("operation") == "correct", rc3
+          rc_thread_state = next((thread for thread in (rs3.get("threads") or []) if thread.get("id") == rc_thread), None)
+          assert rc_thread_state, rs3
+          rc_assistant = next((msg for msg in reversed(rc_thread_state.get("messages") or []) if (msg.get("meta") or {}).get("requestId") == rg3.get("requestId") and msg.get("role") == "assistant"), None)
+          assert rc_assistant, rc_thread_state
+          assert ((rc_assistant.get("meta") or {}).get("responseCognition") or {}).get("relation") == "correction", rc_assistant
+
           def route_state(generation):
               statuses = generation.get("status") if isinstance(generation.get("status"), list) else []
               phases = [str(item.get("phase") or "") for item in statuses if isinstance(item, dict)]
