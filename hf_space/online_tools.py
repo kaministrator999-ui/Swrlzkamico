@@ -171,7 +171,7 @@ def classify_online_request(
     text = _clean(prompt, 2000)
     programming = programming if isinstance(programming, dict) else {}
     explicit_web = bool(_EXPLICIT_WEB.search(text))
-    if _WEATHER_TERMS.search(text):
+    if _WEATHER_TERMS.search(text) and not programming.get("codingTask"):
         shared = _normalize_client_location(client_location)
         location_text = _weather_location_from_prompt(text)
         use_shared = bool(shared and (_LOCATION_REQUIRED.search(text) or not location_text))
