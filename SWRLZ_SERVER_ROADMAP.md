@@ -1,3 +1,16 @@
+## UPDATE CHECKPOINT — 2026-10-05 — v123 guarded deployment watch bounded while in progress
+
+**Deployment watch state:** IN PROGRESS at the one-minute active-watch boundary; no failure is inferred.
+
+- Guarded HF deployment #72 / `37256572149` accepted the explicit request and entered the canonical `manual-hf-space.yml` prepare path.
+- Completed successfully before the watch bound: request validation, source checkout/selection, canonical R39 staging/provenance, pinned original Test Bench preservation, isolated Space package validation, candidate dependency installation, native R39 kernel build/verification, real R39 reconstruction/verification, pinned-stock compatibility inspection, and compatibility artifact upload.
+- Current active step when polling stopped: **Smoke test 700M assembled profile budget before publication**.
+- No upload/publish success is claimed yet. The workflow had not reached the snapshot/upload/revision-capture terminal stages at the bounded stop point.
+- Source/static truth remains: feature source `a67077a46080674c09e0fbd0a379d625bee320a3`; LALM Engine `2.1.148` / v123; Repository Work `1.0.78`; full v117-v123 static regression stack PASS.
+- Live v123 continuation/correction acceptance remains pending the deployment terminal result and subsequent live verifier run.
+
+**Status:** DEPLOYMENT IN PROGRESS / PRE-PUBLICATION SMOKE ACTIVE / LIVE ACCEPTANCE PENDING.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — General response cognition + continuation coherence v123
 
 **Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
