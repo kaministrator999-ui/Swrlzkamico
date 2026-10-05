@@ -524,7 +524,7 @@ Online retrieval now exposes one bounded live trace from the network owner throu
 
 ### Live trace contract
 
-`swrlz-online-trace-v1` events may contain:
+`swrlz-online-trace-event-v1` events may contain:
 - phase;
 - provider;
 - public site hostname;
