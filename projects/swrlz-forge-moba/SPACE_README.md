@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v5.2
+title: §wyrl§ Engine v5.3
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -7,25 +7,31 @@ sdk: static
 app_file: index.html
 fullWidth: true
 header: mini
-short_description: Browser-native world engine maker with project templates.
+short_description: Browser world engine maker with grouping and first-person.
 ---
 
-# §wyrl§ Engine · Maker v5.2
+# §wyrl§ Engine · Maker v5.3
 
-A browser-native 3D world/game engine maker built around editable projects, runtime simulation, ghost → Bake authoring, and a structured LALM/agent control surface.
+A browser-native 3D world/game engine maker built around editable projects, first-person play, ghost → Bake authoring, hierarchical object groups, and a structured LALM/agent control surface.
 
 ## Default starter: Dragon's Den — Seed Chamber
 
-v5.2 boots directly into the **Dragon's Den Seed Chamber** rather than a neutral field. The starter is designed as an immersive place a person appears *inside*, not a game map viewed from above.
+v5.3 improves the Den as an immersive cavern rather than a miniature open map:
 
-The seed chamber includes a wake nook, main council chamber, creator alcove, throne side, elevated dragon perch, Memory Vault exit, Portal Hall exit, Inference Core exit, crystals, lanterns, a cavern shell, and semantic LALM/voice/workspace anchors.
+- rocky cavern floor instead of grass/river presentation
+- grouped stone floor assemblies
+- grouped cavern shell
+- grouped vaulted roof that stays out of the editor view and appears in runtime
+- larger structural pillars and clearer room zoning
+- Wake Nook, Council Chamber, Creator Alcove, Throne Side, Dragon Perch
+- Portal Hall, Memory Vault, and Inference Core expansion exits
+- first-person twin-stick mobile play from v5.2
 
-The MOBA remains available as an independent example project. A blank Starter World remains available as a general sandbox.
+## Hierarchical object grouping
+
+Static/editor objects can be multi-selected and turned into one transformable group. Groups can be nested, saved, loaded, duplicated, moved, rotated, scaled, and ungrouped while preserving child transforms.
+
+Dynamic gameplay/physics actors remain independent for runtime correctness.
 
 Source repository: `kaministrator999-ui/Swrlzkamico`  
 Legacy source path: `projects/swrlz-forge-moba/`
-
-
-## v5.2 movement / view
-
-Play In Editor is now **first-person**. On touch/mobile, the left virtual joystick moves relative to the current view and the right virtual joystick controls yaw/pitch look. On desktop, WASD/arrow movement is camera-relative and mouse-look uses pointer lock. The player mesh is hidden during first-person PIE and restored when returning to the editor.
