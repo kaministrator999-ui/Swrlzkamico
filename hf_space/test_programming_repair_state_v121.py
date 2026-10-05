@@ -104,4 +104,18 @@ released_constraints=released.get("repairConstraints") or {}
 check("slugify" not in (released_constraints.get("unavailableDependencies") or []),released_constraints)
 check("slugify" in (released_constraints.get("releasedDependencies") or []),released_constraints)
 
+from pathlib import Path
+root=Path(__file__).resolve().parent
+station=(root/"station.py").read_text(encoding="utf-8")
+qwen=(root/"qwen_coder_engine.py").read_text(encoding="utf-8")
+large=(root/"lfm2_700m_engine.py").read_text(encoding="utf-8")
+for owner in (qwen,large):
+    check('"repairConstraints":programming.get("repairConstraints")' in owner,owner[:80])
+    check('"structuredReceipt":dict((evidence.get("receiptSemantics")' in owner,owner[:80])
+    check('"activeRepairConstraints","structuredReceipt"' in owner,owner[:80])
+check('g["repairConstraints"]=copy.deepcopy(constraints)' in station,"station repair constraints camera")
+check('"repairConstraints":copy.deepcopy(intent.get("repairConstraints") or {})' in station,"durable repair constraints camera")
+check('"structuredReceipt":copy.deepcopy' in station,"durable structured receipt camera")
+check('"repairConstraints":None' in station,"active generation repair constraints camera")
+
 print("programming-repair-state-v121 PASS")
