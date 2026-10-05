@@ -1,0 +1,36 @@
+name: Materialize Forge source for v5 work
+
+on:
+  push:
+    branches: [forge-v5-materialize]
+    paths:
+      - ".github/workflows/materialize-forge-v5.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: forge-v5-materialize
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Rebuild current Forge source
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge-current
+          mkdir -p projects/swrlz-forge-moba/generated
+          cp /tmp/forge-current/index.html projects/swrlz-forge-moba/generated/current-v4-1.html
+      - name: Commit generated source to materialize branch
+        run: |
+          set -euo pipefail
+          git config user.name "swrlz-forge-materializer"
+          git config user.email "actions@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/generated/current-v4-1.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Materialize current Forge v4.1 HTML for v5 engineering"
+          git push origin HEAD:forge-v5-materialize
