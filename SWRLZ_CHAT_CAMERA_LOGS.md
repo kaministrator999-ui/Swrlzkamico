@@ -390,3 +390,14 @@ Why did it happen?      → diagnosis after correlating the evidence.
 ## Bottom line
 
 **When fixing issues anywhere in §wyrlz, automatically inspect the relevant repository-side diagnostic evidence and the available live/runtime/workflow logs. If existing observability cannot distinguish the cause, add the smallest bounded camera at the architecture boundary that can. Use structured, correlated, privacy-safe diagnostics; fix the canonical owner; then inspect the same evidence again for acceptance. Keep repository engineering history, live runtime evidence, and user-visible evidence distinct so source completion is never mistaken for a verified live fix.**
+
+
+## v128 server-complete Online Research outcome camera
+
+The durable Online Research outcome is upgraded so the browser/session export is no longer the richest authority for a server-owned online turn. The Station persists the same bounded execution facts it already projects to Chat, while preserving the existing privacy boundary.
+
+For successful online turns, `online-research-outcome.json` may additionally retain bounded structured sources (title/source/public URL/snippet/rank), complete widget envelopes, the bounded Station status trail, response-cognition classification, programming-routing classification, candidate validation/attempt telemetry, generation/engine timing, context/resource budgets, and the final generated response plus SHA-256 identity. This allows a repository-only investigation to reconstruct retrieval → evidence/widget → inference → validation → completion without requiring a manually downloaded client session export.
+
+The camera still must not persist raw user prompt/history, precise shared coordinates, credentials, provider HTML, or private reasoning. Search query strings remain excluded from sanitized trace URLs; source evidence is bounded and presentation-safe.
+
+Chat presentation consumes the same Station state. A structured widget may render as soon as retrieval completes. Once present, it keeps a permanent position above the slower conversational response; while inference is still pending, a semantic analysis status appears below the widget (for example, weather/search/time), and the eventual streamed response occupies that lower position without reordering the widget.
