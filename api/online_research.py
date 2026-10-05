@@ -223,7 +223,7 @@ def _page_fetch(url:str)->dict[str,Any]:
         _emit_trace("PAGE_FETCH_COMPLETE",provider="web-page",url=final,status=int(status),response_bytes=len(raw),reason="Page fetched")
         return {"finalUrl":final,"status":int(status),"title":title,"extract":extract,"fetchedAt":int(time.time()*1000)}
     except Exception as exc:
-        _emit_trace("PAGE_FETCH_ERROR",provider="web-page",url=safe,errorType=type(exc).__name__,reason="Page fetch failed")
+        _emit_trace("PAGE_FETCH_ERROR",provider="web-page",url=safe,error_type=type(exc).__name__,reason="Page fetch failed")
         raise
 
 def _refresh_hot(force:bool=False)->None:
