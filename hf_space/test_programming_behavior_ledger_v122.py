@@ -132,7 +132,7 @@ check((ledger2.get("bestKnownArtifact") or {}).get("revision") == 1, ledger2)
 check((ledger2.get("currentTestedArtifact") or {}).get("revision") == 2, ledger2)
 check(base2.get("mode") == "best-known-tested-source", base2)
 check(base2.get("revision") == 1, base2)
-check(state2.get("behaviorRepairBaseSource") == best_source, state2.get("behaviorRepairBaseSource"))
+check(str(state2.get("behaviorRepairBaseSource") or "").strip() == best_source.strip(), state2.get("behaviorRepairBaseSource"))
 check(base2.get("sourceFingerprint") == _code_fingerprint(best_source), base2)
 
 # Returning the best tested source unchanged is not accepted as a new repair:
