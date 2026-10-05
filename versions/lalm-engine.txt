@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.146
-REVISION=2.1.146-hf-persistent-repair-state-json-v121
+VERSION=2.1.147
+REVISION=2.1.147-hf-behavior-ledger-best-base-v122
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
