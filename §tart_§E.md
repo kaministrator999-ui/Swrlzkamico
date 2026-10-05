@@ -176,3 +176,37 @@ The current player test mode is **first-person**:
 - terrain adhesion and collision remain the movement authority
 
 This is the bridge toward later VR immersive mode; do not conflate it with Creator Mode or claim headset tracking is implemented.
+
+
+## Verified v5.2 deployment checkpoint
+
+```text
+Engine:
+§wyrl§ Engine v5.2
+
+GitHub source/deploy commit:
+c9c9e03d37ab31cac71342390a27eb0c403cadb3
+
+Final source:
+135148 bytes
+
+SHA-256:
+e3ea58f80f83a2b001f087f5852b6ce7fa5a4dbf4af2f5d67c414eb46c196ad8
+
+Hugging Face revision:
+df0b0f58e31e7b66185b615d6bf489d470d6c924
+
+Static host:
+https://kamiloki-swrlz-forge-moba.static.hf.space/
+
+Stage:
+RUNNING
+
+Live marker:
+SWYRL_ENGINE_DEPLOY_MARKER: V5_2_FIRST_PERSON_TWIN_STICK
+
+Live verification:
+PASS on attempt 1
+```
+
+Current PIE movement/view contract: first-person camera, left mobile stick for movement, right mobile stick for look, camera-relative keyboard movement, pointer-lock mouse look, terrain adhesion/collision preserved.
