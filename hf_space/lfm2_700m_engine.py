@@ -413,7 +413,7 @@ def _candidate_structure_check(text, programming, history):
         if reason not in reasons:
             reasons.append(reason)
     result={"status":"REJECT" if reasons else "PASS","reasons":reasons}
-    for key in ("languageContract","detectedLanguages","diagnosticGrounded","receiptCategories","activeRepairConstraints","structuredReceipt","executionVerified","verificationState"):
+    for key in ("languageContract","detectedLanguages","diagnosticGrounded","receiptCategories","activeRepairConstraints","behaviorLedger","structuredReceipt","executionVerified","verificationState"):
         if key in shared:
             result[key]=shared[key]
     return result
@@ -460,6 +460,16 @@ def _repair_diagnostic(programming,history):
         "failureSignals":[str(x)[:300] for x in signals[:8]],
         "receiptSemantics":evidence.get("receiptSemantics") if isinstance(evidence.get("receiptSemantics"),dict) else {},
         "repairConstraints":programming.get("repairConstraints") if isinstance(programming.get("repairConstraints"),dict) else {},
+        "behaviorLedger":{
+            "currentScore":dict((programming.get("behaviorLedger") or {}).get("currentScore") or {}) if isinstance((programming.get("behaviorLedger") or {}).get("currentScore"),dict) else None,
+            "bestKnownScore":dict((programming.get("behaviorLedger") or {}).get("bestKnownScore") or {}) if isinstance((programming.get("behaviorLedger") or {}).get("bestKnownScore"),dict) else None,
+            "regressedCases":list((programming.get("behaviorLedger") or {}).get("regressedCases") or [])[:20],
+            "resolvedCases":list((programming.get("behaviorLedger") or {}).get("resolvedCases") or [])[:20],
+            "preservePassingCases":list((programming.get("behaviorLedger") or {}).get("preservePassingCases") or [])[:30],
+            "rebaseRecommended":bool((programming.get("behaviorLedger") or {}).get("rebaseRecommended")),
+            "bestKnownArtifact":dict((programming.get("behaviorLedger") or {}).get("bestKnownArtifact") or {}) if isinstance((programming.get("behaviorLedger") or {}).get("bestKnownArtifact"),dict) else None,
+        },
+        "behaviorRepairBase":dict(programming.get("behaviorRepairBase") or {}) if isinstance(programming.get("behaviorRepairBase"),dict) else {},
         "structuredReceipt":dict((evidence.get("receiptSemantics") or {}).get("structuredReceipt") or {}),
         "repairActions":[str(x)[:500] for x in (evidence.get("repairActions") or [])[:6]],
         "contractBound":bool(programming.get("intentContract")),
