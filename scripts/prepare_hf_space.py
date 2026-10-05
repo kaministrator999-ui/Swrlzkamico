@@ -5,7 +5,7 @@ import argparse, hashlib, json, os, re, shutil, subprocess
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"hf_space"
-SOURCES=["accepted_runtime/lalm/r39_engine.py","accepted_runtime/accepted.json","swyrlz/backend.py","swyrlz/r39_inference.py","swyrlz/r39_native.py","native/r39_native.c","native/r39_batch.c","scripts/build_r39_native.py","swyrlz/r39_matvec_patch.py","swyrlz/r39_tokenizer_patch.py","swyrlz/__init__.py","lalm§wyrlz.transport.json","chat/§wyrlz/index.html","chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png","chat/§wyrlz/assets/kompanion.png"]
+SOURCES=["accepted_runtime/lalm/r39_engine.py","accepted_runtime/accepted.json","swyrlz/backend.py","swyrlz/r39_inference.py","swyrlz/r39_native.py","native/r39_native.c","native/r39_batch.c","scripts/build_r39_native.py","swyrlz/r39_matvec_patch.py","swyrlz/r39_tokenizer_patch.py","swyrlz/__init__.py","lalm§wyrlz.transport.json","chat/§wyrlz/index.html","chat/§wyrlz/assets/ice-dragon-adult-wallpaper.png","chat/§wyrlz/assets/kompanion.png","api/online_research.py","accepted_runtime/research/online_research_reasoner.py"]
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--check",action="store_true")
@@ -25,6 +25,13 @@ def main():
             shutil.copy2(source,target)
         else:
             assert target.is_file() and (rel=="chat/§wyrlz/index.html" or hashlib.sha256(target.read_bytes()).digest()==hashlib.sha256(source.read_bytes()).digest()), f"Staged source drift: {rel}"
+    prepared_research=OUT/"swrzl_prepared_runtime/research/online_research_reasoner.py"
+    research_source=ROOT/"accepted_runtime/research/online_research_reasoner.py"
+    if args.check:
+        assert prepared_research.is_file() and hashlib.sha256(prepared_research.read_bytes()).digest()==hashlib.sha256(research_source.read_bytes()).digest(), "Prepared Online Research reasoner drift"
+    else:
+        prepared_research.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(research_source,prepared_research)
     provenance={"sourceRepository":"kaministrator999-ui/Swrlzkamico","sourceCommit":revision,"modelFormat":"SWRLZX","rawSha256":"65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee","rawSizeBytes":233637480,"transportSha256":manifest["sha256"],"transportChunks":len(manifest["chunks"]),"modelDelivery":"verified chunk download on startup; no model uploaded by workflow"}
     path=OUT/"MODEL_PROVENANCE.json"
     if args.check: assert json.loads(path.read_text(encoding="utf-8"))==provenance, "Provenance drift"
