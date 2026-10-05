@@ -140,7 +140,10 @@ jobs:
           assert "station-online-trail" in chat_html, "deployed Chat missing live online trail"
           assert "SEARCH_PROVIDER_VISIT" in chat_html and "WEATHER_FORECAST_VISIT" in chat_html, "deployed Chat missing online phase labels"
           assert "site:String(event.site||\"\")" in chat_html, "deployed Chat does not retain streamed site field"
-          print(json.dumps({"checkpoint":"chat-online-status-ui","status":"PASS"}))
+          assert ".composer-shell.collapsed{transform:translateY(calc(100% - 26px))}" in chat_html, "deployed Chat missing composer collapse transform"
+          assert ".composer-shell.collapsed{transform:none}" not in chat_html, "deployed Chat still cancels composer collapse on mobile"
+          assert 'composerCollapse.addEventListener("click",toggleComposerCollapsed)' in chat_html, "deployed Chat missing composer collapse handler"
+          print(json.dumps({"checkpoint":"chat-online-status-ui","composerCollapse":"PASS","status":"PASS"}))
 
           receipts = []
 
