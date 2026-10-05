@@ -1,3 +1,24 @@
+## UPDATE CHECKPOINT — 2026-10-05 — Online Research + weather/search widgets v124
+
+**Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
+
+- Exact feature/deployment source: `91ced20521c539bdbe87ad0d0ce3b365e5fedaef`; direct comparison with `feature/hf-space-manual-deploy` is identical (0 ahead / 0 behind).
+- Static verifier #23 / `37258488085`: SUCCESS.
+- Full regression stack: `programming-contract-v117 PASS`, `programming-telemetry-v118 PASS`, `programming-receipts-v119 PASS`, `programming-repair-v120 PASS`, `programming-repair-state-v121 PASS`, `programming-behavior-ledger-v122 PASS`, `response-cognition-v123 PASS`, `online-widgets-v124 PASS`.
+- Carried v123 live receipt is closed in source: numeric output-count parsing now includes names/titles/suggestions/choices/points/bullets/results/recommendations, so `Create 2 short names...` resolves `requestedCount=2`.
+- HF Station now consumes canonical Online Research rather than creating a parallel search subsystem. The staged HF package includes the stable public-network/SSRF owner plus the prepared Online Research reasoner.
+- General explicit web/freshness intent executes bounded search and produces provenance-bearing evidence plus `search-results` widgets. Programming requests remain coder-owned unless they explicitly request current/external web material.
+- Weather uses fixed Open-Meteo geocoding + forecast providers and emits a `weather` widget with current temperature/apparent temperature, humidity, precipitation, rain/snow, cloud cover, pressure, wind/direction/gusts and a bounded five-day forecast.
+- Named weather locations are geocoded server-side. Location-relative weather may use browser geolocation only after browser permission; exact coordinates are request-scoped and omitted from committed widget/source/camera metadata. Timezone is never location evidence.
+- `swrlz-widget-v1` is presentation-only. Station owns structured result transport/commit; Chat renders weather/search widgets through DOM/text nodes and validated HTTP(S) links, never provider HTML.
+- The clean-room Chat source/version mismatch inherited before this tier is reconciled: source meta + `chat/§wyrlz/VERSION.txt` are now both **1.0.89**.
+
+**Versions:** LALM Engine `2.1.149` / `2.1.149-hf-online-evidence-widgets-v124`; Online Research `1.0.3` / `1.0.3-hf-search-weather-widgets-v124`; Web Chat `1.5.88`; clean-room Chat `1.0.89`; Repository Work `1.0.79`; Deployment Control unchanged `1.0.17`; Server Runtime unchanged `2.3.309`; Runtime Manifest unchanged.
+
+**Next governed state:** one guarded HF deployment from exact source `91ced20521c539bdbe87ad0d0ce3b365e5fedaef`, then live acceptance requiring real Open-Meteo weather data, a real provenance-bearing bounded web search, persisted widget metadata, the carried v123 continuation/count sequence, and existing programming repair receipts.
+
+**Status:** SOURCE COMPLETE / STATIC VERIFIED / DEPLOYMENT READY.
+
 ## SUPERSEDED — 2026-10-05 — General response cognition + continuation coherence v123 live acceptance
 
 **Deployed source:** `a67077a46080674c09e0fbd0a379d625bee320a3` to HF Space revision `882d1c8f57d2c28dacb7dea04c02d8f82c70ce53` through guarded deployment #72 / `37256572149` (SUCCESS). Rollback revision `94d9d28c7ea3356a90f1d7acd3f4b1c0c3d368dd` was preserved.
