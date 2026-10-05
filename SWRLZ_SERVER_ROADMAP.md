@@ -1,3 +1,60 @@
+## UPDATE FINISHED — 2026-10-05 — Behavioral invariant ledger + best-known repair base v122
+
+**Outcome:** LIVE RUNTIME VERIFIED for preservation-aware repair-state and best-known tested-source rebasing.
+
+### Camera-derived diagnosis
+- Fresh v121 runtime logs were inspected before mutation rather than relying only on review (20).
+- The unresolved slug sequence showed externally measured behavior changing across artifacts: one receipt recorded 5/9 with `test_03`, `test_04`, `test_06`, `test_07`, and `test_api_signature` passing; later receipts changed which tests passed; the final observed sequence dropped to 4/9 and re-failed a previously passing behavior.
+- Dependency persistence was already correct: `slugify` remained carried/forbidden across later behavior receipts. The remaining defect was therefore loss of behavioral wins across code changes, not loss of environment constraints.
+- Programming cameras showed changed executable fingerprints could structurally PASS while external behavior regressed, proving that fingerprint change alone was not an adequate convergence objective.
+
+### Implemented
+- Structured JSON receipt normalization now retains bounded named `behaviorCases` with pass/fail state and expected/actual/message evidence for Brain-owned repair bookkeeping.
+- Brain owns `swrlz-behavior-ledger-v1` for one repair lineage. It records current/previous pass/fail case sets, known/preserve passing cases, newly passing cases, resolved cases, regressed cases, current/best score, current tested artifact, best-known tested artifact and bounded per-case repair obligations.
+- Comparable suites are keyed from the named case set. A previously passing case that fails in a newer comparable receipt becomes `regressedCases`; proven passing cases remain in `preservePassingCases`.
+- Best-known score/artifact is retained from external receipts only. Model claims or structural validation cannot improve the behavior ledger.
+- Newest receipt source and repair source base are now separate concepts. The newest receipt remains canonical failure evidence. When the newest comparable tested artifact scores below the retained best artifact, `rebaseRecommended=true` and Brain resolves the exact historical artifact revision snapshot as `best-known-tested-source` for model-facing repair.
+- `behaviorRepairBase` exposes only bounded identity metadata (mode, artifact ID, revision, source hash, semantic fingerprint) to cameras; repository diagnostics never persist the source body.
+- Candidate gate rejects an unchanged best-known base as `behavior-repair-base-unchanged` when the latest external receipt still establishes unresolved failures. It does not claim a changed candidate satisfies behavioral obligations before re-execution.
+- Compact repair context now carries current/best score, preserve-passing cases, regressions, current failures, bounded repair obligations and repair-base mode. Retry directives explicitly restore regressions and preserve prior wins.
+- Qwen coder and 700M diagnostics, candidate validation, Station session telemetry and durable programming logs expose bounded behavior-ledger / repair-base summaries.
+- `SWRLZ_CHAT_CAMERA_LOGS.md` documents the v122 behavior-ledger and best-known repair-base camera contract.
+
+### Static verification
+- Static #15 / `37252828823`: compilation and v117-v120 passed; v121 source-level camera test failed only because it assumed `activeRepairConstraints` and `structuredReceipt` were adjacent literal fields. v122 inserted `behaviorLedger` between them; the old assertion was corrected to validate fields independently.
+- Static #16 / `37252920053`: v117-v121 passed; the new v122 test reached best-known rebase but failed a fixture-only exact-string comparison because artifact snapshot normalization strips trailing whitespace. The assertion was normalized rather than changing runtime semantics.
+- Static #17 / `37253009612`: SUCCESS.
+- Final regression stack: `programming-contract-v117 PASS`, `programming-telemetry-v118 PASS`, `programming-receipts-v119 PASS`, `programming-repair-v120 PASS`, `programming-repair-state-v121 PASS`, `programming-behavior-ledger-v122 PASS`.
+- Exact verified/deployed runtime source: `005267858ae6a187acc86e064b6651409d7380fd`.
+
+### Deployment
+- Guarded HF deployment #71 / `37253280818`: SUCCESS.
+- Selected source SHA: `005267858ae6a187acc86e064b6651409d7380fd`.
+- Prior v121 Space revision `250a73ee0e31bcfbbabf0ff73cb31be46253d742` preserved as rollback.
+- Published v122 Space revision: `94d9d28c7ea3356a90f1d7acd3f4b1c0c3d368dd`.
+
+### Live acceptance
+- Live #13 / `37253479404`: SUCCESS on the first bound v122 run against source `005267858ae6a187acc86e064b6651409d7380fd` and Space revision `94d9d28c7ea3356a90f1d7acd3f4b1c0c3d368dd`.
+- Existing v117-v121 language fidelity, log grounding, repair-source ownership, compact context, dependency-state, structured JSON, artifact lineage and durable-camera cases remained green.
+- The v122 live sequence created artifact revision 1, supplied an external 5/9 named-case receipt, committed revision 2, then supplied a comparable 4/9 receipt.
+- Brain derived `currentScore={passed:4,total:9,failed:5}` and retained `bestKnownScore={passed:5,total:9,failed:4}`.
+- `test_05` was detected as a regression and remained present in `preservePassingCases` alongside `test_03`, `test_04`, `test_06`, and `test_api_signature`.
+- Current tested artifact was revision 2; retained best-known artifact was revision 1 with source hash `789421f8bb27f4ee5634ccc8aba7f6d0ecf616bc219bb9af1cdd0f3f00996c2e`.
+- Brain selected `behaviorRepairBase.mode=best-known-tested-source` and the compact repair camera reported the same mode with 4/9 current versus 5/9 best.
+- The first internal proposal exactly matched the best-known source fingerprint `06c0e2b27e466606` and was correctly rejected as `behavior-repair-base-unchanged`; the second proposal changed fingerprint to `4650ec479adfdc05` and structurally passed.
+- Durable programming camera `runtime-diagnostics/programming/v122-72ba6f00d5e5/candidate-attempt-telemetry.json` and repair camera `runtime-diagnostics/repair/v122-72ba6f00d5e5/repair-diagnostic.json` independently read back the same current/best scores, regression, preserve set, best artifact identity and repair-base decision with exact deployed source provenance.
+- Candidate validation remained `executionVerified=false` / `AWAITING_EXTERNAL_RECEIPT`; the new second candidate was not falsely promoted to behavioral success without a fresh external test receipt.
+
+### Versions
+- LALM Engine: `2.1.147` / `2.1.147-hf-behavior-ledger-best-base-v122`.
+- Repository Work: `1.0.77`.
+- Deployment Control: unchanged `1.0.17`.
+- Server Runtime: unchanged `2.3.309`.
+
+**Deployment state:** v122 is active at HF Space revision `94d9d28c7ea3356a90f1d7acd3f4b1c0c3d368dd`. No further deployment is pending.
+
+**Truth:** `LIVE RUNTIME VERIFIED — EXTERNAL BEHAVIOR LEDGER + REGRESSION DETECTION + PRESERVE-PASSING OBLIGATIONS + BEST-KNOWN TESTED-SOURCE REBASE PASS.` A changed candidate still requires fresh external compiler/test/runtime evidence before behavioral success is claimed.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — Behavioral invariant ledger + best-known repair base v122
 
 **Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
