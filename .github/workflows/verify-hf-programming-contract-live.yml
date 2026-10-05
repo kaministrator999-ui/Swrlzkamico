@@ -170,6 +170,11 @@ jobs:
           assert weather_assistant, weather_thread_state
           persisted_weather_widgets = (weather_assistant.get("meta") or {}).get("widgets") or []
           assert persisted_weather_widgets and persisted_weather_widgets[0].get("kind") == "weather", weather_assistant
+          weather_trace = wg.get("onlineTrace") if isinstance(wg.get("onlineTrace"), list) else []
+          assert any(item.get("phase") == "WEATHER_GEOCODE_VISIT" and item.get("site") == "geocoding-api.open-meteo.com" for item in weather_trace), weather_trace
+          assert any(item.get("phase") == "WEATHER_FORECAST_VISIT" and item.get("site") == "api.open-meteo.com" for item in weather_trace), weather_trace
+          assert all("?" not in str(item.get("url") or "") for item in weather_trace), weather_trace
+          weather_log_path = "runtime-diagnostics/online/" + wg.get("requestId") + "/search-trace.json"
           receipts.append({
               "case":"v124-weather-widget-live",
               "provider":weather_research.get("provider"),
@@ -199,6 +204,11 @@ jobs:
           search_assistant = next((msg for msg in reversed(search_thread_state.get("messages") or []) if (msg.get("meta") or {}).get("requestId") == sg.get("requestId") and msg.get("role") == "assistant"), None)
           assert search_assistant, search_thread_state
           assert ((search_assistant.get("meta") or {}).get("widgets") or [])[0].get("kind") == "search-results", search_assistant
+          search_trace = sg.get("onlineTrace") if isinstance(sg.get("onlineTrace"), list) else []
+          assert any(item.get("phase") == "SEARCH_PROVIDER_VISIT" and item.get("site") for item in search_trace), search_trace
+          assert all("?" not in str(item.get("url") or "") for item in search_trace), search_trace
+          assert ((search_assistant.get("meta") or {}).get("onlineTrace") or []), search_assistant
+          search_log_path = "runtime-diagnostics/online/" + sg.get("requestId") + "/search-trace.json"
           receipts.append({
               "case":"v124-online-search-widget-live",
               "provider":search_research.get("provider"),
@@ -230,6 +240,9 @@ jobs:
           coder_assistant = next((msg for msg in reversed(coder_thread_state.get("messages") or []) if (msg.get("meta") or {}).get("requestId") == cg.get("requestId") and msg.get("role") == "assistant"), None)
           assert coder_assistant and (coder_assistant.get("meta") or {}).get("modelId") == "coder", coder_assistant
           assert ((coder_assistant.get("meta") or {}).get("widgets") or [])[0].get("kind") == "search-results", coder_assistant
+          coder_trace = cg.get("onlineTrace") if isinstance(cg.get("onlineTrace"), list) else []
+          assert any(item.get("phase") == "SEARCH_PROVIDER_VISIT" and item.get("site") for item in coder_trace), coder_trace
+          coder_log_path = "runtime-diagnostics/online/" + cg.get("requestId") + "/search-trace.json"
           receipts.append({
               "case":"v124-coder-online-search-live",
               "modelId":"coder",
@@ -298,6 +311,24 @@ jobs:
                       latest_error = repr(exc)
                       time.sleep(1)
               raise AssertionError(("github-runtime-log-unavailable", path, latest_error))
+
+          online_logs = []
+          for label, path in (("weather", weather_log_path), ("search", search_log_path), ("coder", coder_log_path)):
+              online_log = fetch_runtime_log_path(path)
+              assert online_log.get("schema") == "swrlz-github-online-research-log-v1", online_log
+              assert online_log.get("sourceRef") == expected_source, online_log
+              diagnostic = online_log.get("diagnostic") or {}
+              assert diagnostic.get("rawPromptStored") is False, diagnostic
+              assert diagnostic.get("preciseLocationStored") is False, diagnostic
+              trace = diagnostic.get("trace") if isinstance(diagnostic.get("trace"), list) else []
+              assert trace, diagnostic
+              assert all("?" not in str(item.get("url") or "") for item in trace if isinstance(item, dict)), trace
+              assert any(str(item.get("site") or "") for item in trace if isinstance(item, dict)), trace
+              serialized = json.dumps(online_log, ensure_ascii=False).lower()
+              assert "search online for open-meteo weather api documentation" not in serialized, serialized
+              assert "search online for the latest fastapi release documentation" not in serialized, serialized
+              online_logs.append({"label":label,"path":path,"traceCount":len(trace),"sourceSites":diagnostic.get("sourceSites") or []})
+          receipts.append({"case":"v124-online-durable-trace-logs","logs":online_logs,"status":"PASS"})
 
           c1 = Client()
           g1, s1 = c1.send_and_wait("language-" + uuid.uuid4().hex[:10], "Can you write me an example html page")
