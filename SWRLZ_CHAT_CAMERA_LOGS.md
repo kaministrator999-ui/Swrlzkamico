@@ -463,3 +463,19 @@ Repository diagnostic persistence remains asynchronous and best-effort, but the 
 
 Code-artifact lineage now carries `artifactRevision` plus `artifactSourceHash`. Repair intent may expose `baseRevision` / `baseSourceHash`, and mutation receipts may expose requested/current revision/hash on rejection. Exact revision/hash identity is stronger than originating-message identity and is the authority for stale-edit protection.
 
+
+
+## v123 response cognition cameras
+
+General and programming response generation may emit a bounded `RESPONSE_COGNITION` event from the Brain-owned `swrlz-response-cognition-v1` classifier.
+
+The camera stores classification only, never prompt/history text or hidden reasoning. Bounded fields include:
+- `relation` — standalone, topic-reset, continuation, correction, expansion, selection, confirmation, decline, creative-delegation, or return-to-prior;
+- `operation` — answer/explain/compare/rewrite/create/continue/correct/select/confirm/decline/code/etc.;
+- history availability/count and nearest user/assistant anchor indices;
+- explicit-reference/question flags;
+- detail mode, requested item count, output-only constraint, preserve/do-not-change constraint, and whether programming mode is active.
+
+Station may retain this bounded event in the active generation and final assistant-message metadata so a response-quality review can prove which conversational relationship reached the engine without storing another copy of the conversation.
+
+The classifier is advisory response cognition, not operational authority. The current user turn always outranks history, programming intent/repair gates retain ownership of coding correctness, and a response-cognition classification never proves semantic answer quality by itself.
