@@ -479,3 +479,40 @@ The camera stores classification only, never prompt/history text or hidden reaso
 Station may retain this bounded event in the active generation and final assistant-message metadata so a response-quality review can prove which conversational relationship reached the engine without storing another copy of the conversation.
 
 The classifier is advisory response cognition, not operational authority. The current user turn always outranks history, programming intent/repair gates retain ownership of coding correctness, and a response-cognition classification never proves semantic answer quality by itself.
+
+
+## v124 online research and widget cameras
+
+HF Station now carries bounded Online Research state through the same request lineage as inference.
+
+### Online research camera
+
+The Brain/router may emit `ONLINE_RESEARCH` with a privacy-bounded `swrlz-online-camera-v1` summary. The camera may contain:
+- retrieval kind (`search` or `weather`);
+- status and activation reason;
+- provider;
+- result/source counts;
+- widget kinds;
+- whether an explicit client location was used;
+- whether a location is still required;
+- elapsed retrieval time.
+
+It does **not** persist the raw user prompt or precise client coordinates.
+
+### Widget envelope
+
+Presentation data uses `swrlz-widget-v1`. Initial kinds:
+- `weather` — current measurements plus bounded daily forecast;
+- `search-results` — bounded title/source/snippet/link rows.
+
+Station retains widget envelopes on the active generation and commits them into the final assistant message metadata so live-stream and later history rendering share the same structured result.
+
+Chat is a presentation consumer only. Provider/network ownership stays backstage. Widget rendering uses DOM/text nodes and HTTP(S)-validated links; provider HTML is not inserted into the page.
+
+### Weather privacy boundary
+
+A named place can be geocoded server-side. Location-relative requests such as “weather here” may use browser geolocation only after the browser grants permission. Exact coordinates are request-scoped input to the weather provider and are intentionally omitted from persisted widget/source/camera metadata. Timezone is never treated as proof of physical location.
+
+### Evidence boundary
+
+General search continues to use the canonical Online Research public-network/SSRF guard and prepared reasoner. Retrieved material remains untrusted external evidence and has no instruction authority over the Brain.
