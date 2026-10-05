@@ -86,16 +86,29 @@ assert widget["data"]["location"]["label"]=="Kansas City, Missouri, United State
 assert "latitude" not in json.dumps(widget).lower() and "longitude" not in json.dumps(widget).lower(),widget
 
 # Shared-location weather must not persist exact coordinates in the widget.
-calls=[]
+shared_calls=[]
 def shared_json_get(url):
-    calls.append(url)
-    return fake_json_get(url)
+    shared_calls.append(url)
+    if "geocoding-api.open-meteo.com" in url:
+        raise AssertionError("Shared explicit coordinates must not invoke geocoding")
+    return {
+        "timezone":"America/Chicago",
+        "current":{
+            "time":"2026-10-04T21:00","temperature_2m":72.5,"relative_humidity_2m":61,
+            "apparent_temperature":72.0,"precipitation":0.0,"rain":0.0,"snowfall":0.0,
+            "weather_code":1,"cloud_cover":22,"surface_pressure":1008.2,
+            "wind_speed_10m":8.4,"wind_direction_10m":190,"wind_gusts_10m":15.2,
+        },
+        "current_units":{"temperature_2m":"°F","relative_humidity_2m":"%","apparent_temperature":"°F","precipitation":"inch","surface_pressure":"hPa","wind_speed_10m":"mp/h","wind_gusts_10m":"mp/h"},
+        "daily":{"time":[]},
+        "daily_units":{},
+    }
 try:
     online_tools._json_get=shared_json_get
     shared_result=weather_lookup({"clientLocation":{"authorized":True,"latitude":39.1,"longitude":-94.6,"label":"Your shared location"},"locationText":"","query":"weather here"})
 finally:
     online_tools._json_get=orig_json_get
-assert len(calls)==1,calls
+assert len(shared_calls)==1,shared_calls
 assert shared_result["widgets"][0]["data"]["location"]["sharedLocation"] is True,shared_result
 serialized=json.dumps(shared_result["widgets"][0])
 assert "39.1" not in serialized and "-94.6" not in serialized,serialized
