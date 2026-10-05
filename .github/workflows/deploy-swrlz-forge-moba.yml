@@ -125,9 +125,12 @@ jobs:
           URL="${APP_URL}?build=$SOURCE_SHA"
           for attempt in 1 2 3 4 5 6; do
             echo "Live verification attempt $attempt"
-            if curl -fsSL --max-time 30 "$URL&attempt=$attempt" | grep -q "SWRLZ_FORGE_DEPLOY_MARKER: V4_SOLID_TERRAIN_LOCKED_VIEWS"; then
-              echo "Verified: live HF Space is serving Forge v4."
-              exit 0
+            if curl -fsSL --max-time 30 "$URL&attempt=$attempt" -o /tmp/forge-live.html; then
+              if grep -q "SWRLZ_FORGE_DEPLOY_MARKER: V4_SOLID_TERRAIN_LOCKED_VIEWS" /tmp/forge-live.html; then
+                echo "Verified: live HF Space is serving Forge v4."
+                exit 0
+              fi
+              echo "Live page responded, but v4 marker was not present yet."
             fi
             sleep 10
           done
