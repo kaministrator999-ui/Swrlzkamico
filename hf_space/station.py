@@ -584,6 +584,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         if isinstance(contract,dict):g["intentContract"]=copy.deepcopy(contract)
                         evidence=intent.get("failureEvidence")
                         if isinstance(evidence,dict):g["failureEvidence"]=copy.deepcopy(evidence)
+                        constraints=intent.get("repairConstraints")
+                        if isinstance(constraints,dict):g["repairConstraints"]=copy.deepcopy(constraints)
                     g["status"].append({"seq":g["lastSeq"],"phase":"PROGRAMMING_INTENT","reason":""})
                 elif kind in ("REPAIR_DIAGNOSTIC","REPAIR_OUTCOME_DIAGNOSTIC"):
                     diagnostic=event.get("diagnostic") if isinstance(event.get("diagnostic"),dict) else {}
@@ -678,9 +680,11 @@ def _run(key,request_id,model_id,payload,assistant_id):
             generation_telemetry=copy.deepcopy(g.get("generationTelemetry") or {})
             station_timing=copy.deepcopy(g.get("stationTiming") or {})
             programming_telemetry={
-                "schema":"swrlz-station-programming-telemetry-v1",
+                "schema":"swrlz-station-programming-telemetry-v2",
                 "generation":generation_telemetry,
                 "station":station_timing,
+                "repairConstraints":copy.deepcopy(intent.get("repairConstraints") or {}),
+                "structuredReceipt":copy.deepcopy(((intent.get("failureEvidence") or {}).get("receiptSemantics") or {}).get("structuredReceipt") or {}),
             } if intent.get("codingTask") else None
             telemetry_meta={"programmingTelemetry":programming_telemetry} if programming_telemetry else {}
             artifact_id=str(intent.get("artifactTargetId") or "")
@@ -753,9 +757,13 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         "status":validation.get("status"),
                         "reasons":[str(x)[:160] for x in (validation.get("reasons") or [])[:8]],
                         "detectedLanguages":copy.deepcopy(validation.get("detectedLanguages") or []),
+                        "activeRepairConstraints":copy.deepcopy(validation.get("activeRepairConstraints") or {}),
+                        "structuredReceipt":copy.deepcopy(validation.get("structuredReceipt") or {}),
                         "executionVerified":validation.get("executionVerified"),
                         "verificationState":validation.get("verificationState"),
                     },
+                    "repairConstraints":copy.deepcopy(intent.get("repairConstraints") or {}),
+                    "structuredReceipt":copy.deepcopy(((intent.get("failureEvidence") or {}).get("receiptSemantics") or {}).get("structuredReceipt") or {}),
                     "artifactReceipt":{
                         "action":(g.get("artifactReceipt") or {}).get("action"),
                         "revision":(g.get("artifactReceipt") or {}).get("revision"),
@@ -883,7 +891,7 @@ async def send(request:Request):
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
