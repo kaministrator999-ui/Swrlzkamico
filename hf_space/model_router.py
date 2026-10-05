@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable, Iterator, Any
 from brain_programming import programming_intent
+from online_tools import classify_online_request, execute_online_request, online_camera
 
 class ModelUnavailable(RuntimeError):
     def __init__(self, model_id: str, reason: str):
@@ -33,6 +34,20 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     payload=dict(payload)
     payload["programmingIntent"]=intent
     yield {"type":"PROGRAMMING_INTENT","intent":intent}
+    online_plan=classify_online_request(str(payload.get("prompt") or ""),history,intent,payload.get("clientLocation"))
+    if online_plan.get("requested"):
+        phase="WEATHER_FETCH_STARTED" if online_plan.get("kind")=="weather" else "SEARCH_STARTED"
+        yield {"type":"STATUS","phase":phase,"reason":"Retrieving bounded online evidence.","categories":["ONLINE_RESEARCH",str(online_plan.get("kind") or "search").upper()]}
+        online_result=execute_online_request(payload,intent)
+        if online_result:
+            payload["onlineContext"]=online_result.get("modelContext") if isinstance(online_result.get("modelContext"),dict) else {}
+            payload["onlineEvidence"]=payload["onlineContext"]
+            yield {"type":"ONLINE_RESEARCH","result":online_camera(online_result),"sources":online_result.get("sources") or []}
+            for widget in online_result.get("widgets") or []:
+                if isinstance(widget,dict):
+                    yield {"type":"WIDGET","widget":widget}
+            done_phase="WEATHER_FETCH_COMPLETE" if online_result.get("kind")=="weather" else "SEARCH_COMPLETE"
+            yield {"type":"STATUS","phase":done_phase,"reason":"Online retrieval "+str(online_result.get("status") or "complete").lower()+".","categories":["ONLINE_RESEARCH",str(online_result.get("kind") or "search").upper()]}
     # Programming questions/examples/reasoning are automatically routed to the dedicated coder.
     requested_model_id=model_id
     if intent.get("codingTask") and model_id in ("700m","stock","r39","coder"):
