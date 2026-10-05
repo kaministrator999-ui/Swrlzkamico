@@ -1,0 +1,36 @@
+name: Materialize §wyrl§ Engine v5.3 for v5.4 work
+
+on:
+  push:
+    branches: [swyrl-engine-v5-4-wisp]
+    paths:
+      - ".github/workflows/materialize-swyrl-v5-4.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: swyrl-engine-v5-4-wisp
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build current exact engine
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/swyrl-current
+          mkdir -p projects/swrlz-forge-moba/generated
+          cp /tmp/swyrl-current/index.html projects/swrlz-forge-moba/generated/current-v5-3.html
+      - name: Commit generated source
+        run: |
+          set -euo pipefail
+          git config user.name "swyrl-engine-materializer"
+          git config user.email "actions@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/generated/current-v5-3.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Materialize §wyrl§ Engine v5.3 for v5.4 engineering"
+          git push origin HEAD:swyrl-engine-v5-4-wisp
