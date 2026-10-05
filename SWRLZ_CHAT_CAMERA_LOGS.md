@@ -406,6 +406,30 @@ Why did it happen?      → diagnosis after correlating the evidence.
 **When fixing issues anywhere in §wyrlz, automatically inspect the relevant repository-side diagnostic evidence and the available live/runtime/workflow logs. If existing observability cannot distinguish the cause, add the smallest bounded camera at the architecture boundary that can. Use structured, correlated, privacy-safe diagnostics; fix the canonical owner; then inspect the same evidence again for acceptance. Keep repository engineering history, live runtime evidence, and user-visible evidence distinct so source completion is never mistaken for a verified live fix.**
 
 
+## v121 persistent repair-state camera additions
+
+Programming repair intent may now expose a bounded `repairConstraints` snapshot. Its dependency fields are stateful evidence, not a copy of only the newest receipt:
+
+- `dependencyPolicy` — e.g. `standard-library-only`, `no-install`, or `evidence-bounded`.
+- `unavailableDependencies` / `forbiddenDependencies` — active dependency identifiers proven unavailable in the current repair lineage.
+- `currentReceiptDependencies` — dependency identifiers proved by the newest receipt only.
+- `addedDependencies` — identifiers newly added by the current receipt.
+- `carriedUnavailableDependencies` — active identifiers inherited from earlier receipts because the newer receipt did not invalidate them.
+- `releasedDependencies` — identifiers explicitly released only when current evidence says they are now installed/available.
+
+This distinction is intentional: a later assertion/type/behavior receipt may add new failure evidence without erasing an earlier environment fact such as `ModuleNotFoundError` for the same repair lineage. Candidate-validation telemetry may expose an `activeRepairConstraints` subset so cameras can prove the gate consumed the same state Brain produced.
+
+Structured test receipts may also expose bounded `structuredReceipt` normalization metadata:
+
+- `formats` — currently includes `json` when bounded JSON receipt objects were decoded.
+- `jsonObjectCount` — decoded top-level embedded JSON values.
+- `caseCount` — bounded test/result objects with explicit status.
+- `failedCaseCount` — those normalized as failures.
+
+The detailed normalized facts continue to live in the existing receipt semantics (`categories`, `failingTests`, `expectedActual`, `failureSignals`, `sourceLocations`, etc.). The structured camera counts prove parser coverage without adding source code, prompt text, or private reasoning to repository diagnostics.
+
+Durable `runtime-diagnostics/repair/...` and `runtime-diagnostics/programming/...` records should carry the same bounded repair-constraint / structured-receipt summaries when applicable, allowing a review to distinguish: receipt parser loss, accumulated-state loss, candidate-gate loss, and model strategy failure.
+
 ## v120 programming repair camera additions
 
 For programming repair turns, the Station/session camera may now include bounded `contextBudget.repairContext` metadata. This reports the compaction mode and size/count summaries needed to prove that original intent, canonical source, receipt semantics and repair direction were retained while oversized generic/history context was dropped. It is budgeting telemetry, not model reasoning.
