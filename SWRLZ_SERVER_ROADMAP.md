@@ -1,3 +1,20 @@
+## UPDATE CHECKPOINT — 2026-10-04 — Persistent repair constraints + structured JSON receipts v121
+
+**Camera-first/static state:** SOURCE COMPLETE + STATIC VERIFIED.
+
+- Existing production cameras were inspected before source mutation. Runtime repair logs reproduced both review (19) defects on v120: `slugify` was present in an initial dependency receipt then absent from the later behavior receipt's `reportedDependencies`; the TypeScript JSON receipt carried false-case/error text but normalized to empty categories/tests/expectedActual.
+- Verified feature source head: `9faa59d8d8109680fb01f20b6606bb1f09249012`.
+- Static verifier run #14 / `37247278474`: SUCCESS.
+- Full stack: `programming-contract-v117 PASS`, `programming-telemetry-v118 PASS`, `programming-receipts-v119 PASS`, `programming-repair-v120 PASS`, `programming-repair-state-v121 PASS`.
+- Brain now accumulates bounded `repairConstraints`. Proven unavailable dependency identifiers survive later receipts and become active forbidden dependencies until explicitly released by evidence that the dependency is now installed/available.
+- Candidate validation checks accumulated dependency constraints, not only the newest receipt; retry strategy and compact repair context consume the same accumulated set.
+- Structured JSON receipt normalization recursively extracts failed case IDs, false status, expected/actual/received values, assertion/error text and bounded source location fields into the existing receipt contract.
+- Repair diagnostics, Station state, assistant telemetry and durable programming diagnostics now expose bounded repair-constraint snapshots plus structured-receipt counts/formats.
+
+**Versions before assignment:** LALM Engine `2.1.145`; Repository Work `1.0.73`; Deployment Control `1.0.17`; Server Runtime `2.3.309`.
+
+**Next governed state:** advance LALM Engine + Repository Work, extend live verifier with multi-receipt dependency persistence and TypeScript JSON-normalization sequences, then one guarded HF deployment from the exact verified source.
+
 ## UPDATE STARTED — 2026-10-04 — Persistent repair constraints + structured JSON receipts v121
 
 **Goal:** close review (19)'s two remaining camera-proven repair-state defects: preserve proven dependency restrictions across later receipts that report a different failure, and normalize structured JSON test reports into the same failing-test / expected-vs-actual / category contract used by text test runners.
