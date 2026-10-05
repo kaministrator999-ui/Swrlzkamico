@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import online_tools
+import api.online_research as canonical_search
 from online_tools import classify_online_request, execute_online_request, weather_lookup, WIDGET_CONTRACT
 from response_cognition import classify_response_cognition
 
@@ -155,3 +156,32 @@ assert "navigator.geolocation" in chat and "maybeSharedWeatherLocation" in chat,
 assert "api/online_research.py" in prepare and "swrzl_prepared_runtime/research/online_research_reasoner.py" in prepare,prepare[:500]
 
 print("online-widgets-v124 PASS")
+
+
+# Canonical bounded provider chain: an empty DDG HTML response must fall through
+# to DDG Lite and accept only validated public result links.
+provider_calls=[]
+orig_search_html=canonical_search._search_html
+def fake_search_html(url):
+    provider_calls.append(url)
+    if "html.duckduckgo.com" in url:
+        return 200,"<html><body>No classed results</body></html>",42
+    if "lite.duckduckgo.com" in url:
+        return 200,(
+            "<html><body>"
+            "<a class='result-link' href='https://example.com/docs'>Example Docs</a>"
+            "<td class='result-snippet'>Useful current documentation.</td>"
+            "</body></html>"
+        ),180
+    raise AssertionError("Bing fallback should not run after DDG Lite succeeds")
+try:
+    canonical_search._search_html=fake_search_html
+    fallback_results=canonical_search._ddg_search("example docs")
+finally:
+    canonical_search._search_html=orig_search_html
+assert len(provider_calls)==2,provider_calls
+assert fallback_results and fallback_results[0]["url"]=="https://example.com/docs",fallback_results
+assert fallback_results[0]["title"]=="Example Docs",fallback_results
+assert canonical_search._provider()=="bounded-web-search-chain-v1"
+
+print("online-search-provider-fallback-v124 PASS")
