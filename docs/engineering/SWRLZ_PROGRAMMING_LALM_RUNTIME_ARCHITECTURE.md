@@ -27,9 +27,25 @@ The runtime should prefer compact structured state over repeated policy prose. W
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **LALM `2.1.137` / v113 source generalizes log-driven repair across compiler/test/runtime/build scenarios. It preserves canonical intent and receipt ownership, extracts bounded receipt semantics, compares primary executable candidates, carries repair diagnostics, and performs one bounded pre-commit strategy-change regeneration when a repair repeats the failing executable candidate or fails structural validation. Structural checks remain envelope checks rather than semantic proof; independent execution evidence remains the authority for behavioral acceptance and validated-learning promotion. Live v113 acceptance requires deployment + multi-scenario receipt testing.**
+**Current implementation state:** **LALM `2.1.148` / v123 extends the live-verified v122 programming-repair lineage with a shared bounded response-cognition layer for ordinary and coding turns. Current-turn scope/grammar remains authoritative; deterministic metadata classifies standalone/topic-reset/continuation/correction/expansion/selection/confirmation/decline/creative-delegation/return-to-prior relationships plus response operation/detail/count/preserve constraints. v117-v122 programming repair, external-receipt, behavior-ledger, and execution-truth gates remain unchanged and authoritative. Static v123 verification covers broad conversational continuations plus the complete v117-v122 regression stack; live v123 activation is established only after guarded HF deployment and runtime acceptance. Historical lineage sections below remain useful archaeology and do not override the current module authority.**
 
 ---
+
+### Response cognition — v123
+
+v123 adds one shared Brain-owned response relationship compiler consumed by the HF 700M general-response engine and the Qwen coder response engine. It does not create a second semantic authority.
+
+The classifier converts the current prompt + bounded canonical history into compact state describing:
+- turn relationship (standalone/topic reset/continuation/correction/expansion/selection/confirmation/decline/creative delegation/return);
+- requested operation;
+- explicit-reference and nearest-turn anchor indices;
+- compact/normal/expanded detail request;
+- exact requested item count when stated numerically;
+- output-only and preserve/do-not-change constraints.
+
+Model-facing policy then applies relation-specific behavior: continue without restarting, correct by delta, expand without repeating, bind selections to the newest compatible option set, respect declines, choose delegated creative details, return to explicitly named prior subjects, and drop old constraints on explicit topic reset.
+
+This layer improves conversational coherence while preserving the existing truth boundary: history supports the present request but never outranks it; programming intent remains the coding owner; external compiler/test/runtime receipts remain the behavioral authority for repairs.
 
 ## 1. Core design decision
 
