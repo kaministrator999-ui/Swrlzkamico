@@ -76,7 +76,7 @@ Do not stop at “file found” or “ready.” The startup result should tell t
 
 ## 3. Current source-of-truth layout
 
-The current Forge v2 editor originated as one HTML project. The exact source bytes are preserved losslessly in the repository as gzip + base64 chunks:
+The current Forge v3 editor still ships as one HTML project, with source bytes preserved losslessly for deterministic deployment. The exact source bytes are preserved losslessly in the repository as gzip + base64 chunks:
 
 ```text
 projects/swrlz-forge-moba/
@@ -288,6 +288,27 @@ a22686c4b1326c10fd8884965b18cdad8e50224e
 ```
 
 This is historical lineage, not a permanent claim that the same revision is current. On every `§tart §E` invocation, inspect the current GitHub and Hugging Face state rather than assuming this initial deployment is still latest.
+
+### Latest verified v3 deployment at this checkpoint
+
+```text
+Forge version:
+Unreal-Inspired Editor Pass v3
+
+GitHub source commit:
+018b7351c5d473018ac5ca5a0ff4a0079c98fb8f
+
+Hugging Face Space:
+kamiloki/swrlz-forge-moba
+
+HF Space revision:
+650c0defa60d0db3f68e9a93b3f39384a23c8da8
+
+Deployment result:
+SUCCESS
+```
+
+The GitHub workflow rebuilt and integrity-checked the v3 source before publication. Treat this as a durable checkpoint; future `§tart §E` runs must still inspect current state rather than assuming it remains latest.
 
 ---
 
