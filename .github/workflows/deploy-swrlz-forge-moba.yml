@@ -45,6 +45,7 @@ jobs:
         run: python -m pip install "huggingface_hub>=0.34,<2"
 
       - name: Create/update dedicated static Space
+        id: deploy_space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SOURCE_SHA: ${{ github.sha }}
@@ -79,7 +80,17 @@ jobs:
               commit_message=f"Deploy SWRLZ Forge from GitHub {source_sha[:12]}",
           )
 
-          info = api.repo_info(target, repo_type="space")
+          info = api.space_info(target)
+          host = getattr(info, "host", None)
+          subdomain = getattr(info, "subdomain", None)
+          if host:
+              app_url = host if str(host).startswith("http") else f"https://{host}"
+          elif subdomain:
+              app_url = f"https://{subdomain}.hf.space"
+          else:
+              raise RuntimeError("Hugging Face SpaceInfo did not expose host or subdomain")
+          app_url = app_url.rstrip("/") + "/"
+
           receipt = {
               "schema": "swrlz-forge-hf-deploy-v1",
               "deployedAt": datetime.now(timezone.utc).isoformat(),
@@ -91,19 +102,27 @@ jobs:
               "spaceRepository": target,
               "spaceRevision": info.sha,
               "spacePage": "https://huggingface.co/spaces/kamiloki/swrlz-forge-moba",
-              "appUrl": "https://kamiloki-swrlz-forge-moba.hf.space/",
+              "appUrl": app_url,
+              "spaceHost": host,
+              "spaceSubdomain": subdomain,
+              "spaceStage": str(getattr(getattr(info, "runtime", None), "stage", None)),
+              "spacePrivate": getattr(info, "private", None),
               "uploadCommit": getattr(commit, "oid", None) or getattr(commit, "commit_id", None),
           }
           Path("swrlz-forge-deploy-receipt.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"app_url={app_url}\n")
           print(json.dumps(receipt, indent=2))
           PY
 
       - name: Verify live Space serves v4
         env:
           SOURCE_SHA: ${{ github.sha }}
+          APP_URL: ${{ steps.deploy_space.outputs.app_url }}
         run: |
           set -euo pipefail
-          URL="https://kamiloki-swrlz-forge-moba.hf.space/?build=$SOURCE_SHA"
+          test -n "$APP_URL" || { echo "::error::Hugging Face did not return a live app URL."; exit 1; }
+          URL="${APP_URL}?build=$SOURCE_SHA"
           for attempt in 1 2 3 4 5 6; do
             echo "Live verification attempt $attempt"
             if curl -fsSL --max-time 30 "$URL&attempt=$attempt" | grep -q "SWRLZ_FORGE_DEPLOY_MARKER: V4_SOLID_TERRAIN_LOCKED_VIEWS"; then
