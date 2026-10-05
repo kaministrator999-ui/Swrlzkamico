@@ -316,13 +316,14 @@ def _weather_coordinates(plan: dict[str, Any], progress: Callable[[dict[str, Any
         city=state_name=state_abbr=""
 
     for mode,query,count in attempts:
-        if progress and mode!="exact":
-            progress(_trace_event(
+        if mode!="exact":
+            _progress(
+                progress,
                 "WEATHER_GEOCODE_RETRY",
                 provider=WEATHER_PROVIDER,
                 url=GEOCODING_ENDPOINT,
                 activity="Retrying city lookup with state-qualified candidate matching",
-            ))
+            )
         url = GEOCODING_ENDPOINT + "?" + urllib.parse.urlencode(
             {"name": query, "count": count, "language": "en", "format": "json"}
         )
@@ -347,13 +348,13 @@ def _weather_coordinates(plan: dict[str, Any], progress: Callable[[dict[str, Any
             "shared": False,
         }, False
 
-    if progress:
-        progress(_trace_event(
-            "WEATHER_LOCATION_NOT_FOUND",
-            provider=WEATHER_PROVIDER,
-            url=GEOCODING_ENDPOINT,
-            activity="Weather location could not be resolved",
-        ))
+    _progress(
+        progress,
+        "WEATHER_LOCATION_NOT_FOUND",
+        provider=WEATHER_PROVIDER,
+        url=GEOCODING_ENDPOINT,
+        activity="Weather location could not be resolved",
+    )
     raise ValueError("WEATHER_LOCATION_NOT_FOUND")
 
 
@@ -645,7 +646,6 @@ def execute_online_request(
                 "errorCode": _clean(str(exc), 120),
             },
             "errorType": type(exc).__name__,
-            "errorCode": _clean(str(exc), 120),
             "errorCode": _clean(str(exc), 120),
         }
     result["plan"] = plan
