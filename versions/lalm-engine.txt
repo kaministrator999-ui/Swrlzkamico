@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.151
-REVISION=2.1.151-prioritized-model-warmup-v124
+VERSION=2.1.152
+REVISION=2.1.152-online-trace-station-v125
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
