@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v5.1
+title: §wyrl§ Engine v5.2
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,13 +10,13 @@ header: mini
 short_description: Browser-native world engine maker with project templates.
 ---
 
-# §wyrl§ Engine · Maker v5.1
+# §wyrl§ Engine · Maker v5.2
 
 A browser-native 3D world/game engine maker built around editable projects, runtime simulation, ghost → Bake authoring, and a structured LALM/agent control surface.
 
 ## Default starter: Dragon's Den — Seed Chamber
 
-v5.1 now boots directly into the **Dragon's Den Seed Chamber** rather than a neutral field. The starter is designed as an immersive place a person appears *inside*, not a game map viewed from above.
+v5.2 boots directly into the **Dragon's Den Seed Chamber** rather than a neutral field. The starter is designed as an immersive place a person appears *inside*, not a game map viewed from above.
 
 The seed chamber includes a wake nook, main council chamber, creator alcove, throne side, elevated dragon perch, Memory Vault exit, Portal Hall exit, Inference Core exit, crystals, lanterns, a cavern shell, and semantic LALM/voice/workspace anchors.
 
@@ -24,3 +24,8 @@ The MOBA remains available as an independent example project. A blank Starter Wo
 
 Source repository: `kaministrator999-ui/Swrlzkamico`  
 Legacy source path: `projects/swrlz-forge-moba/`
+
+
+## v5.2 movement / view
+
+Play In Editor is now **first-person**. On touch/mobile, the left virtual joystick moves relative to the current view and the right virtual joystick controls yaw/pitch look. On desktop, WASD/arrow movement is camera-relative and mouse-look uses pointer lock. The player mesh is hidden during first-person PIE and restored when returning to the editor.
