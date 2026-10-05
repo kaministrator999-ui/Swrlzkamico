@@ -3,6 +3,7 @@ from pathlib import Path
 
 import online_tools
 import api.online_research as canonical_search
+import model_router
 from online_tools import classify_online_request, execute_online_request, weather_lookup, WIDGET_CONTRACT
 from response_cognition import classify_response_cognition
 
@@ -38,6 +39,8 @@ coding_weather=classify_online_request("Write JavaScript for a weather forecast 
 assert coding_weather["requested"] is False,coding_weather
 coding_web=classify_online_request("Search the web for the current FastAPI lifespan docs",HISTORY,{"codingTask":True},None)
 assert coding_web["requested"] is True,coding_web
+coding_fresh=classify_online_request("What changed in the latest FastAPI release?",HISTORY,{"codingTask":True},None)
+assert coding_fresh["requested"] is True and coding_fresh["kind"]=="search",coding_fresh
 
 # Weather provider parsing without network.
 orig_json_get=online_tools._json_get
@@ -185,3 +188,55 @@ assert fallback_results[0]["title"]=="Example Docs",fallback_results
 assert canonical_search._provider()=="bounded-web-search-chain-v1"
 
 print("online-search-provider-fallback-v124 PASS")
+
+
+# Retrieval is model-agnostic: every selectable inference route receives the same
+# bounded online evidence after one router-level retrieval.
+captures={}
+orig_execute=model_router.execute_online_request
+def fake_online_execute(payload,intent):
+    return {
+        "contract":"swrlz-hf-online-capability-v1",
+        "kind":"search",
+        "status":"OK",
+        "provider":"test-provider",
+        "resultCount":1,
+        "sources":[{"title":"Example","url":"https://example.com","provider":"example.com"}],
+        "widgets":[{"contract":"swrlz-widget-v1","kind":"search-results","version":1,"title":"Example","provider":"test-provider","data":{"query":"example","results":[]}}],
+        "modelContext":{"contractId":"test-online-context","trust":"UNTRUSTED_EXTERNAL_EVIDENCE","instructionAuthority":False,"evidence":[{"title":"Example","url":"https://example.com","snippet":"Fresh evidence."}]},
+    }
+def capture(name):
+    def generate(payload):
+        captures[name]=payload
+        yield {"type":"DELTA","text":"ok"}
+        yield {"type":"COMPLETED","phase":"COMPLETE"}
+    return generate
+try:
+    model_router.execute_online_request=fake_online_execute
+    generators={name:capture(name) for name in ("r39","stock","700m","coder")}
+    for model_id in ("r39","stock","700m","coder"):
+        list(model_router.dispatch(
+            model_id,
+            {"requestId":"route-"+model_id,"prompt":"Search online for example documentation","history":[]},
+            generators["r39"],
+            generators["stock"],
+            generators["700m"],
+            generators["coder"],
+        ))
+finally:
+    model_router.execute_online_request=orig_execute
+
+for model_id in ("stock","700m","coder"):
+    assert (captures[model_id].get("onlineContext") or {}).get("contractId")=="test-online-context",(model_id,captures[model_id])
+assert captures["r39"].get("onlineContextEmbeddedForR39") is True,captures["r39"]
+assert "§WYRLZ ONLINE EXTERNAL EVIDENCE" in captures["r39"].get("prompt",""),captures["r39"]
+
+stock_source=(root/"hf_space/original_engine.py").read_text(encoding="utf-8")
+large_source=(root/"hf_space/lfm2_700m_engine.py").read_text(encoding="utf-8")
+coder_source=(root/"hf_space/qwen_coder_engine.py").read_text(encoding="utf-8")
+assert "ONLINE EXTERNAL EVIDENCE (bounded server retrieval" in stock_source
+assert "ONLINE EXTERNAL EVIDENCE (bounded server retrieval" in large_source
+assert "ONLINE EXTERNAL EVIDENCE (bounded server retrieval" in coder_source
+assert "_r39_online_payload" in router and "onlineContextEmbeddedForR39" in router
+
+print("all-model-online-context-v124 PASS")
