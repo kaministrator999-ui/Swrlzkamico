@@ -1,0 +1,87 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v122-2328aee56488",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "f3f437ef6d811a615e9b4e561496de701c5df8da",
+  "persistedAtUnixMs": 1791236361548,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "f10ca213f9c28b31",
+    "candidateFingerprint": "f10ca213f9c28b31",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 0,
+    "failureSignals": [],
+    "receiptSemantics": {
+      "categories": [
+        "name-or-symbol",
+        "runtime"
+      ],
+      "exceptionTypes": [
+        "NameError"
+      ],
+      "exitCodes": [],
+      "failingSignals": [],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": [
+        "hashlib"
+      ],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [],
+        "jsonObjectCount": 0,
+        "caseCount": 0,
+        "failedCaseCount": 0
+      },
+      "behaviorCases": []
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": null,
+      "bestKnownScore": null,
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": null
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": "f10ca213f9c28b31",
+      "artifactId": "",
+      "revision": 0,
+      "sourceHash": ""
+    },
+    "structuredReceipt": {
+      "formats": [],
+      "jsonObjectCount": 0,
+      "caseCount": 0,
+      "failedCaseCount": 0
+    },
+    "repairActions": [
+      "restore or correctly resolve the reported identifier/module/symbol without renaming required public APIs",
+      "trace the exception to its first relevant application frame and repair the causing state/operation"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
