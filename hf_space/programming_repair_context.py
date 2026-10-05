@@ -47,7 +47,9 @@ def build_compact_repair_context(
     evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
     semantics=evidence.get("receiptSemantics") if isinstance(evidence.get("receiptSemantics"),dict) else {}
     language=contract.get("languageContract") if isinstance(contract.get("languageContract"),dict) else {}
-    source=str(evidence.get("repairSource") or "")[:9000]
+    behavior=programming.get("behaviorLedger") if isinstance(programming.get("behaviorLedger"),dict) else {}
+    repair_base=programming.get("behaviorRepairBase") if isinstance(programming.get("behaviorRepairBase"),dict) else {}
+    source=str(programming.get("behaviorRepairBaseSource") or evidence.get("repairSource") or "")[:9000]
     direction=_compact_user_direction(programming,prompt)
     prior=[]
     for item in (programming.get("failureHistory") or [])[-2:]:
@@ -81,6 +83,18 @@ def build_compact_repair_context(
             "carriedUnavailableDependencies":list(constraints.get("carriedUnavailableDependencies") or [])[:16],
             "currentReceiptDependencies":list(constraints.get("currentReceiptDependencies") or [])[:16],
         },
+        "behaviorLedger":{
+            "currentScore":behavior.get("currentScore"),
+            "bestKnownScore":behavior.get("bestKnownScore"),
+            "currentPassingCases":list(behavior.get("currentPassingCases") or [])[:30],
+            "currentFailingCases":list(behavior.get("currentFailingCases") or [])[:30],
+            "preservePassingCases":list(behavior.get("preservePassingCases") or [])[:30],
+            "resolvedCases":list(behavior.get("resolvedCases") or [])[:20],
+            "regressedCases":list(behavior.get("regressedCases") or [])[:20],
+            "repairObligations":[dict(x) for x in (behavior.get("repairObligations") or [])[:16] if isinstance(x,dict)],
+            "repairBaseMode":repair_base.get("mode"),
+            "bestKnownArtifact":behavior.get("bestKnownArtifact"),
+        },
         "receipt":{
             "ownership":evidence.get("receiptSourceOwnership"),
             "repairSourceFingerprint":evidence.get("repairSourceFingerprint"),
@@ -105,12 +119,15 @@ def build_compact_repair_context(
         "The ORIGINAL REQUEST and MUST/MUST-NOT/PRESERVE fields are authoritative. The receipt is execution evidence, not a replacement request. "
         "Return one COMPLETE usable candidate in the required language/artifact form; preserve required API/signature and unrelated behavior. "
         "Fix the source operation that causes the observed failure. Do not merely paraphrase the log, change comments, weaken tests, install an unavailable dependency, "
-        "or repeat a rejected executable candidate. Preserve passing signals. A structural candidate pass is not execution proof; never claim compile/test/runtime success without a new external receipt. "
-        "If a prior strategy stalled, materially change the relevant algorithm/dependency/control/data-flow strategy while preserving the contract."
+        "or repeat a rejected executable candidate. The BEHAVIOR LEDGER is external evidence: every preservePassingCases item is a behavior already proven at least once and every regressedCases item must be restored. "
+        "Do not trade one proven passing case for another fix. When repairBaseMode is best-known-tested-source, treat that source as the safer implementation base while using the newest receipt as the failure delta to repair. "
+        "A structural candidate pass is not execution proof; never claim compile/test/runtime success without a new external receipt. "
+        "If a prior strategy stalled, materially change the relevant algorithm/dependency/control/data-flow strategy while preserving the contract and behavior ledger."
     )
     system=rules+"\n"+str(response_mode or "")+"\nREPAIR STATE:\n"+json.dumps(state,ensure_ascii=False,separators=(",",":"))
     if source:
-        system+="\nCANONICAL SOURCE UNDER REPAIR:\n"+source
+        source_label="BEST KNOWN TESTED REPAIR BASE" if repair_base.get("mode")=="best-known-tested-source" else "CANONICAL SOURCE UNDER REPAIR"
+        system+="\n"+source_label+":\n"+source
     fitted_prompt=direction or "Repair the canonical source against the receipt and original contract. Return the complete corrected candidate."
     telemetry={
         "schema":"swrlz-repair-context-budget-v1",
@@ -122,6 +139,11 @@ def build_compact_repair_context(
         "receiptCategoryCount":len(state["receipt"]["categories"]),
         "activeUnavailableDependencyCount":len(state["repairConstraints"]["unavailableDependencies"]),
         "carriedUnavailableDependencyCount":len(state["repairConstraints"]["carriedUnavailableDependencies"]),
+        "behaviorRepairBaseMode":repair_base.get("mode"),
+        "behaviorCurrentScore":behavior.get("currentScore"),
+        "behaviorBestKnownScore":behavior.get("bestKnownScore"),
+        "behaviorRegressionCount":len(behavior.get("regressedCases") or []),
+        "behaviorPreserveCount":len(behavior.get("preservePassingCases") or []),
     }
     return system,fitted_prompt,telemetry
 
@@ -149,6 +171,8 @@ def strategy_change_directive(programming: dict[str, Any], validation: dict[str,
     evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
     semantics=evidence.get("receiptSemantics") if isinstance(evidence.get("receiptSemantics"),dict) else {}
     constraints=programming.get("repairConstraints") if isinstance(programming.get("repairConstraints"),dict) else {}
+    behavior=programming.get("behaviorLedger") if isinstance(programming.get("behaviorLedger"),dict) else {}
+    repair_base=programming.get("behaviorRepairBase") if isinstance(programming.get("behaviorRepairBase"),dict) else {}
     reasons=[str(x) for x in ((validation or {}).get("reasons") or [])]
     categories=set(str(x) for x in (semantics.get("categories") or []))
     dependencies=[]
@@ -171,8 +195,19 @@ def strategy_change_directive(programming: dict[str, Any], validation: dict[str,
             directives.append("Replace the unavailable dependency boundary rather than repeating the same import/call.")
         if any(x in direction for x in ("standard library","stdlib","do not install","don't install","without install","no install")):
             directives.append("The user explicitly forbids installation/external dependency use; implement the behavior with supported built-ins/standard library.")
-    if "repair-stalled-no-executable-change" in reasons or "strategy-repeat-previous-attempt" in reasons:
-        directives.append("Do not reuse the same executable fingerprint, algorithmic operation, import path, or wrapper-only edit; change the causal implementation strategy.")
+    preserve=[str(x) for x in (behavior.get("preservePassingCases") or []) if str(x)]
+    regressions=[str(x) for x in (behavior.get("regressedCases") or []) if str(x)]
+    current_failures=[str(x) for x in (behavior.get("currentFailingCases") or []) if str(x)]
+    if preserve:
+        directives.append("Preserve externally proven passing cases: "+", ".join(preserve[:20])+".")
+    if regressions:
+        directives.append("REGRESSION DETECTED: restore previously passing cases now failing: "+", ".join(regressions[:16])+".")
+    if current_failures:
+        directives.append("Current external failing cases to repair: "+", ".join(current_failures[:20])+".")
+    if repair_base.get("mode")=="best-known-tested-source":
+        directives.append("Start from the supplied best-known tested source, not the newer regressed implementation; incorporate the latest receipt delta without losing its proven wins.")
+    if "repair-stalled-no-executable-change" in reasons or "strategy-repeat-previous-attempt" in reasons or "behavior-repair-base-unchanged" in reasons:
+        directives.append("Do not reuse the same executable fingerprint, algorithmic operation, import path, or wrapper-only edit; change the causal implementation strategy while preserving the behavior ledger.")
     if any(x.startswith("diagnostic-symbol-resolution-unproven:") for x in reasons):
         directives.append("Resolve or remove the reported unresolved symbol in executable source.")
     if any(x.startswith("missing-required-language:") or x.startswith("language-contract-mismatch:") for x in reasons):
