@@ -15,7 +15,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
@@ -198,13 +198,20 @@ def _snapshot(s):
             "state":{"currentId":s["currentId"],"threads":copy.deepcopy(s["threads"])},
             "activeGeneration":copy.deepcopy(s["activeGeneration"])}
 
+def _chat_document():
+    """Serve the canonical Chat document plus the bounded HF presentation adapter."""
+    source=(ROOT/"chat/§wyrlz/index.html").read_text(encoding="utf-8")
+    marker='</body>'
+    adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script>'
+    return source.replace(marker,adapter+marker,1) if marker in source else source+adapter
+
 @app.get("/")
 def home():
-    return FileResponse(ROOT/"chat/§wyrlz/index.html")
+    return HTMLResponse(_chat_document(),headers={"Cache-Control":"no-store"})
 
 @app.get("/chat/§wyrlz")
 def chat():
-    return FileResponse(ROOT/"chat/§wyrlz/index.html")
+    return HTMLResponse(_chat_document(),headers={"Cache-Control":"no-store"})
 
 @app.get("/api/hf/models")
 def models():
