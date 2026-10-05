@@ -28,6 +28,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
+ONLINE_OBSERVABILITY_REVISION = "v125-trace-chat-status"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -576,6 +577,7 @@ def online_camera(result: dict[str, Any] | None) -> dict[str, Any] | None:
     plan = result.get("plan") if isinstance(result.get("plan"), dict) else {}
     return {
         "contract": "swrlz-online-camera-v1",
+        "observabilityRevision": ONLINE_OBSERVABILITY_REVISION,
         "kind": result.get("kind"),
         "status": result.get("status"),
         "reason": plan.get("reason"),
