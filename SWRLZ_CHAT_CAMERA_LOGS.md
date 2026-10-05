@@ -516,3 +516,48 @@ A named place can be geocoded server-side. Location-relative requests such as â€
 ### Evidence boundary
 
 General search continues to use the canonical Online Research public-network/SSRF guard and prepared reasoner. Retrieved material remains untrusted external evidence and has no instruction authority over the Brain.
+
+
+## v125 online research trace + durable log cameras
+
+Online retrieval now exposes one bounded live trace from the network owner through Station to Chat and to durable runtime diagnostics.
+
+### Live trace contract
+
+`swrlz-online-trace-v1` events may contain:
+- phase;
+- provider;
+- public site hostname;
+- presentation-safe public URL containing scheme + host + path only;
+- bounded activity text;
+- timestamp;
+- HTTP status, response bytes, result count, or bounded error type where applicable.
+
+The trace intentionally excludes:
+- raw user prompt/history;
+- search-provider query strings;
+- URL fragments/credentials;
+- provider HTML;
+- exact shared geolocation coordinates;
+- private reasoning.
+
+Representative phases include provider visit/results/empty/error/selected, page fetch start/complete/error, weather geocode/forecast visit/complete, and research lifecycle events.
+
+### Durable runtime logs
+
+When `SWRLZ_DIAGNOSTIC_GITHUB_TOKEN` is configured, each online request may persist:
+
+- `runtime-diagnostics/online-research/<requestId>/online-research-trace.json`
+- `runtime-diagnostics/online-research/<requestId>/online-research-outcome.json`
+
+The trace log captures the bounded retrieval camera, public source sites, requested/selected model lineage, and retrieval result metadata. The outcome log adds terminal generation state, widgets, timing, final selected model, and completion/failure state. A generation failure after successful retrieval does not erase the online receipt.
+
+### Chat presentation
+
+During a live Station generation, Chat consumes the same SEARCH/FETCH/WEATHER trace:
+- the primary progress row shows the current retrieval phase and site/provider;
+- a compact six-event trail shows recently visited providers/sites and activity;
+- sanitized URLs may be opened from the trail;
+- the Work/agent action surface continues to show the same structured action events.
+
+Chat does not invent percentage progress or a site name. If Station did not emit a network trace event, Chat must not display one.
