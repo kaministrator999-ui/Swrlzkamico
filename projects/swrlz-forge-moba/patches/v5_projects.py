@@ -482,7 +482,7 @@ $('hubLoadBtn').onclick=()=>{$('loadBtn').click();};
 
     s = _once(
         s,
-        "if(t-lastWave>(P.scene.waveInterval||7)){lastWave=t; Object.keys(paths).forEach(l=>{spawn('blue',l); spawn('red',l)}) } moveHero(dt,t); updateComponents(dt,t); updateUnits(dt,t); updateTowers(t); R.render(S,C)",
+        "if(P.project?.kind==='moba'&&t-lastWave>(P.scene.waveInterval||7)){lastWave=t; Object.keys(paths).forEach(l=>{spawn('blue',l); spawn('red',l)}) } updateComponents(dt,t); moveHero(dt,t); if(P.project?.kind==='moba'){updateUnits(dt,t); updateTowers(t)} R.render(S,C)",
         "if(P.project?.kind==='moba'&&t-lastWave>(P.scene.waveInterval||7)){lastWave=t; Object.keys(paths).forEach(l=>{spawn('blue',l); spawn('red',l)}) } moveHero(dt,t); updateComponents(dt,t); if(P.project?.kind==='moba'){updateUnits(dt,t); updateTowers(t)} R.render(S,C)"
     )
 
