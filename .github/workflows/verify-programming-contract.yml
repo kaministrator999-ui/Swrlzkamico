@@ -27,9 +27,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          source_ref="$(grep '^SOURCE_REF=' .acceptance/PROGRAMMING_CONTRACT_VERIFY_REQUEST.txt | tail -n1 | cut -d= -f2-)"
-          if [ "$source_ref" != "feature/hf-space-manual-deploy" ] && ! printf '%s' "$source_ref" | grep -Eq '^[0-9a-fA-F]{40}
-      - name: Checkout programming source
+          source_ref="$(grep '^SOURCE_REF=' .acceptance/PROGRAMMING_CONTRACT_VERIFY_REQUEST.txt | tail -n1 | cut -d= -f2-)"\n          if [ "$source_ref" != "feature/hf-space-manual-deploy" ]; then\n            test -n "$source_ref" || { echo "::error::SOURCE_REF is required."; exit 1; }\n            test "$(printf '%s' "$source_ref" | wc -c | tr -d ' ')" = "40" || { echo "::error::Commit SOURCE_REF must be exactly 40 hex characters."; exit 1; }\n            printf '%s' "$source_ref" | grep -Eq '^[0-9a-fA-F]+$' || { echo "::error::Commit SOURCE_REF must contain only hex characters."; exit 1; }\n          fi\n          echo "source_ref=$source_ref" >> "$GITHUB_OUTPUT"\n      - name: Checkout programming source
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.request.outputs.source_ref }}
