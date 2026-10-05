@@ -45,7 +45,7 @@ assert coding_fresh["requested"] is True and coding_fresh["kind"]=="search",codi
 # Weather provider parsing without network.
 orig_json_get=online_tools._json_get
 calls=[]
-def fake_json_get(url):
+def fake_json_get(url,*args,**kwargs):
     calls.append(url)
     if "geocoding-api.open-meteo.com" in url:
         return {"results":[{"name":"Kansas City","admin1":"Missouri","country":"United States","country_code":"US","timezone":"America/Chicago","latitude":39.0997,"longitude":-94.5786}]}
@@ -91,7 +91,7 @@ assert "latitude" not in json.dumps(widget).lower() and "longitude" not in json.
 
 # Shared-location weather must not persist exact coordinates in the widget.
 shared_calls=[]
-def shared_json_get(url):
+def shared_json_get(url,*args,**kwargs):
     shared_calls.append(url)
     if "geocoding-api.open-meteo.com" in url:
         raise AssertionError("Shared explicit coordinates must not invoke geocoding")
@@ -243,3 +243,72 @@ assert "load as large_load" in app_source
 assert '(("700m",large_load),("coder",coder_load),("stock",original_load),("r39",engine))' in app_source
 
 print("all-model-online-context-v124 PASS")
+
+
+# Real-time observability contract: provider/site events are emitted without query strings,
+# then Station/Chat have source hooks to persist and render them.
+trace_events=[]
+canonical_search.set_trace_sink(trace_events.append)
+provider_calls=[]
+orig_search_html=canonical_search._search_html
+def traced_search_html(url):
+    provider_calls.append(url)
+    if "html.duckduckgo.com" in url:
+        return 200,"<html><body>No classed results</body></html>",42
+    return 200,(
+        "<html><body>"
+        "<a class='result-link' href='https://example.com/docs?secret=query'>Example Docs</a>"
+        "<td class='result-snippet'>Useful current documentation.</td>"
+        "</body></html>"
+    ),180
+try:
+    canonical_search._search_html=traced_search_html
+    traced_results=canonical_search._ddg_search("sensitive user query")
+finally:
+    canonical_search._search_html=orig_search_html
+    canonical_search.clear_trace_sink()
+assert traced_results,traced_results
+assert any(item.get("phase")=="SEARCH_PROVIDER_VISIT" and item.get("site")=="html.duckduckgo.com" for item in trace_events),trace_events
+assert any(item.get("phase")=="SEARCH_PROVIDER_VISIT" and item.get("site")=="lite.duckduckgo.com" for item in trace_events),trace_events
+for item in trace_events:
+    assert "sensitive user query" not in json.dumps(item),item
+    if item.get("url"):
+        assert "?" not in item["url"],item
+
+weather_trace=[]
+def traced_weather_json(url,*args,**kwargs):
+    progress=args[0] if args and callable(args[0]) else kwargs.get("progress")
+    phase=kwargs.get("phase","WEATHER_PROVIDER_VISIT")
+    activity=kwargs.get("activity","Fetching weather data")
+    online_tools._progress(progress,phase,provider=online_tools.WEATHER_PROVIDER,url=url,activity=activity)
+    if "geocoding-api.open-meteo.com" in url:
+        online_tools._progress(progress,phase.replace("_VISIT","_COMPLETE"),provider=online_tools.WEATHER_PROVIDER,url=url,activity="Weather provider response received",httpStatus=200)
+        return {"results":[{"name":"Kansas City","admin1":"Missouri","country":"United States","country_code":"US","timezone":"America/Chicago","latitude":39.0997,"longitude":-94.5786}]}
+    online_tools._progress(progress,phase.replace("_VISIT","_COMPLETE"),provider=online_tools.WEATHER_PROVIDER,url=url,activity="Weather provider response received",httpStatus=200)
+    return {
+        "timezone":"America/Chicago",
+        "current":{"time":"2026-10-04T21:00","temperature_2m":72.5,"relative_humidity_2m":61,"apparent_temperature":72.0,"precipitation":0.0,"rain":0.0,"snowfall":0.0,"weather_code":1,"cloud_cover":22,"surface_pressure":1008.2,"wind_speed_10m":8.4,"wind_direction_10m":190,"wind_gusts_10m":15.2},
+        "current_units":{"temperature_2m":"°F","relative_humidity_2m":"%","apparent_temperature":"°F","precipitation":"inch","surface_pressure":"hPa","wind_speed_10m":"mp/h","wind_gusts_10m":"mp/h"},
+        "daily":{"time":[]},"daily_units":{},
+    }
+orig_json_get=online_tools._json_get
+try:
+    online_tools._json_get=traced_weather_json
+    weather_lookup({"locationText":"Kansas City, MO","query":"weather"},weather_trace.append)
+finally:
+    online_tools._json_get=orig_json_get
+assert any(item.get("phase")=="WEATHER_GEOCODE_VISIT" and item.get("site")=="geocoding-api.open-meteo.com" for item in weather_trace),weather_trace
+assert any(item.get("phase")=="WEATHER_FORECAST_VISIT" and item.get("site")=="api.open-meteo.com" for item in weather_trace),weather_trace
+assert all("?" not in str(item.get("url") or "") for item in weather_trace),weather_trace
+
+station_source=(root/"hf_space/station.py").read_text(encoding="utf-8")
+assert '"ONLINE_RESEARCH_TRACE":("online","search-trace.json"' in station_source
+assert 'kind=="ONLINE_TRACE"' in station_source
+assert '"onlineTrace":[]' in station_source
+assert '"site":str(item.get("site") or "")' in station_source
+assert "runtime-diagnostics/online/" in station_source
+assert "SEARCH_PROVIDER_VISIT" in chat and "PAGE_VISIT" in chat and "WEATHER_FORECAST_VISIT" in chat
+assert 'site:String(event.site||"")' in chat
+assert 'activityDetail=activitySite||activityProvider' in chat
+
+print("online-trace-observability-v124 PASS")
