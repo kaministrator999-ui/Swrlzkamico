@@ -74,10 +74,10 @@ jobs:
                   with self.opener.open(req, timeout=45) as response:
                       return response.status, json.loads(response.read().decode("utf-8"))
 
-              def send_and_wait(self, thread_id, prompt):
+              def send_and_wait(self, thread_id, prompt, model_id="700m"):
                   rid = "v122-" + uuid.uuid4().hex[:12]
                   status, ack = self.post("/api/lalm_station/send", {
-                      "modelId":"700m",
+                      "modelId":model_id,
                       "threadId":thread_id,
                       "requestId":rid,
                       "messageId":"u-" + uuid.uuid4().hex[:12],
@@ -88,7 +88,7 @@ jobs:
                       "timeZone":"America/Chicago",
                   })
                   assert status == 202, (status, ack)
-                  assert ack.get("modelId") == "700m", ack
+                  assert ack.get("modelId") == model_id, ack
                   latest = None
                   for attempt in range(210):
                       status, snapshot = self.get("/api/lalm_station/sync")
@@ -205,6 +205,39 @@ jobs:
               "resultCount":search_research.get("resultCount"),
               "widgetKind":search_widgets[0].get("kind"),
               "sourceCount":len(search_sources),
+              "status":"PASS",
+          })
+
+          # Explicitly prove the newest coding route receives the same online layer.
+          coder_client = Client()
+          coder_thread = "coder-search-" + uuid.uuid4().hex[:10]
+          cg, cs = coder_client.send_and_wait(
+              coder_thread,
+              "Search online for the latest FastAPI release documentation and summarize what changed.",
+              model_id="coder",
+          )
+          assert cg.get("terminalType") == "COMPLETE", cg
+          assert cg.get("modelId") == "coder", cg
+          coder_research = cg.get("onlineResearch") if isinstance(cg.get("onlineResearch"), dict) else {}
+          coder_widgets = cg.get("widgets") if isinstance(cg.get("widgets"), list) else []
+          coder_sources = cg.get("sources") if isinstance(cg.get("sources"), list) else []
+          assert coder_research.get("kind") == "search" and coder_research.get("status") == "OK", coder_research
+          assert int(coder_research.get("resultCount") or 0) > 0, coder_research
+          assert coder_widgets and coder_widgets[0].get("kind") == "search-results", coder_widgets
+          assert coder_sources, coder_sources
+          coder_thread_state = next((thread for thread in (cs.get("threads") or []) if thread.get("id") == coder_thread), None)
+          assert coder_thread_state, cs
+          coder_assistant = next((msg for msg in reversed(coder_thread_state.get("messages") or []) if (msg.get("meta") or {}).get("requestId") == cg.get("requestId") and msg.get("role") == "assistant"), None)
+          assert coder_assistant and (coder_assistant.get("meta") or {}).get("modelId") == "coder", coder_assistant
+          assert ((coder_assistant.get("meta") or {}).get("widgets") or [])[0].get("kind") == "search-results", coder_assistant
+          receipts.append({
+              "case":"v124-coder-online-search-live",
+              "modelId":"coder",
+              "checkpoint":coder.get("checkpoint"),
+              "provider":coder_research.get("provider"),
+              "resultCount":coder_research.get("resultCount"),
+              "widgetKind":coder_widgets[0].get("kind"),
+              "sourceCount":len(coder_sources),
               "status":"PASS",
           })
 
