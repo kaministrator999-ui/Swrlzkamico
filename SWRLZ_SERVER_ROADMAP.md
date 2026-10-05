@@ -1,3 +1,29 @@
+## UPDATE FINISHED — 2026-10-05 — User-reported weather location resolution + no-fabrication gate v126
+
+**Outcome:** LIVE RUNTIME VERIFIED.
+
+- User screenshot exposed a real live failure for `Can you check the weather in Leavenworth kansas`.
+- Exact v125 diagnostic `runtime-diagnostics/online-research/web-muvdw9xq-3280641475-3767189158/` proved routing/logging were active but combined free-text Open-Meteo geocoding returned HTTP 200 with no candidates; 700M then improvised stale weather guidance.
+- v126 source `60555e2712fa7a0dcc67d46922e727eff40d5b40` adds recognized US state/full-name/abbreviation parsing, city-only bounded geocode retry, state-qualified candidate selection, retry/no-match trace events, and a deterministic router stop that prevents model inference whenever live weather retrieval remains `ERROR` or `LOCATION_REQUIRED`.
+- Static verifier #45 / `37332162466`: SUCCESS, including the exact user phrase regression and no-model-on-weather-error contract.
+- Guarded HF deployment #79 / `37332586831`: SUCCESS.
+  - published Space revision: `73759d5c6a2e6e8158858c8a6cd3a494abb1dbf2`
+  - rollback revision preserved: `6efbf769e7158c3761657d529c909ca452a98e74`
+- Live verifier #22 / `37333112790`: SUCCESS.
+  - exact live phrase: `Can you check the weather in Leavenworth kansas`
+  - first geocode miss was followed by `WEATHER_GEOCODE_RETRY`
+  - Kansas candidate was resolved
+  - Open-Meteo forecast completed
+  - weather widget persisted
+  - live condition receipt: **Clear sky**, **59.3°F**
+  - durable weather trace/outcome logs persisted successfully
+  - general online search, explicit Qwen Coder online search, and prior programming-repair regression cases all remained PASS.
+
+**Versions:** LALM Engine `2.1.153` / `2.1.153-weather-no-fabrication-v126`; Online Research `1.0.7` / `1.0.7-city-state-weather-fallback-v126`; Repository Work `1.0.84`. Web Chat remains `1.5.89`; clean-room Chat remains `1.0.90`.
+
+**Current Focus:** LALM Engine + Online Research weather/search path.
+**Status:** LIVE VERIFIED / NO DEPLOYMENT PENDING.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — User-reported Leavenworth weather repair v126
 
 **Exact source/static state:** feature source `60555e2712fa7a0dcc67d46922e727eff40d5b40` (0 ahead / 0 behind) passed static verifier #45 / `37332162466` SUCCESS.
