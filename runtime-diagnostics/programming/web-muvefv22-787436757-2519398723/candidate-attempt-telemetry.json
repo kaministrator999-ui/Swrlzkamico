@@ -1,0 +1,112 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "web-muvefv22-787436757-2519398723",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "d8710d6401cf5080649274e66064d061ae6f05c5",
+  "persistedAtUnixMs": 1791213800889,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": true,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "REJECT",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 23.319,
+      "visibleFirstDeltaLatencyMs": 6112.567,
+      "engineTotalLatencyMs": 13665.01,
+      "totalCandidateGenerationMs": 13640.787,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 13640.787,
+          "firstTokenLatencyMs": 6089.184,
+          "deltaChunks": 267,
+          "candidateFingerprint": "a90cf1a60f4871f8",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "REJECT",
+          "validationReasons": [
+            "no-code-candidate"
+          ],
+          "accepted": false
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791213787222,
+      "startedAtUnixMs": 1791213787223,
+      "completedAtUnixMs": 1791213800889,
+      "queueWaitMs": 1,
+      "stationRunMs": 13666,
+      "endToEndMs": 13667
+    },
+    "candidateValidation": {
+      "status": "REJECT",
+      "reasons": [
+        "no-code-candidate"
+      ],
+      "detectedLanguages": [],
+      "activeRepairConstraints": {
+        "dependencyPolicy": "evidence-bounded",
+        "unavailableDependencies": [],
+        "carriedUnavailableDependencies": []
+      },
+      "behaviorLedger": {
+        "currentScore": null,
+        "bestKnownScore": null,
+        "regressedCases": [],
+        "resolvedCases": [],
+        "preservePassingCases": [],
+        "rebaseRecommended": false,
+        "bestKnownArtifact": null,
+        "repairBaseMode": "latest-failing-source"
+      },
+      "structuredReceipt": {},
+      "executionVerified": false,
+      "verificationState": "NOT_EXECUTION_VERIFIED"
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": null,
+      "bestKnownScore": null,
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": null,
+      "repairBaseMode": "latest-failing-source"
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": null,
+      "artifactId": "",
+      "revision": 0,
+      "sourceHash": ""
+    },
+    "structuredReceipt": {},
+    "artifactReceipt": {
+      "action": "CANDIDATE_REJECTED",
+      "revision": null,
+      "sourceHash": null,
+      "reason": null
+    }
+  }
+}
