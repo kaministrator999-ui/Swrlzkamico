@@ -1,0 +1,16 @@
+{
+  "schema": "swrlz-forge-source-v1",
+  "name": "SWRLZ Forge MOBA Lab v2",
+  "bytes": 59285,
+  "sha256": "4d56013b8d1301b95e385789744f3a90735bcc8b9c9fcabd13f4806b93ccf39a",
+  "encoding": "gzip+base64-chunks",
+  "chunks": [
+    "payload/part-01.txt",
+    "payload/part-02.txt",
+    "payload/part-03.txt",
+    "payload/part-04.txt",
+    "payload/part-05.txt",
+    "payload/part-06.txt"
+  ],
+  "sourceArtifact": "swrlz_forge_moba_lab_v2.html"
+}
