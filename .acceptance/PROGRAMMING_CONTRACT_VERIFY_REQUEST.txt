@@ -1,3 +1,3 @@
-SOURCE_REF=d8710d6401cf5080649274e66064d061ae6f05c5
+SOURCE_REF=feature/hf-space-manual-deploy
 SUITE=programming-contract-v125
-REQUEST_NONCE=2026-10-05-v125-exact-sha-static-007
+REQUEST_NONCE=2026-10-05-v125-final-observability-static-002
