@@ -1,3 +1,32 @@
+## UPDATE CHECKPOINT — 2026-10-05 — v124 all-model online evidence integration
+
+**Exact source:** `3dd95708c5d9cf8c7bc618faa3290a90539b08aa` on `feature/hf-space-manual-deploy` (0 ahead / 0 behind at checkpoint).
+
+**Static verifier:** #26 / `37264620853` SUCCESS.
+
+**Receipts:**
+- `online-widgets-v124 PASS`
+- `online-search-provider-fallback-v124 PASS`
+- `all-model-online-context-v124 PASS`
+- Full v117–v123 programming/repair/response-cognition regression stack remains green.
+
+**All-model routing rule:** online retrieval executes once above model dispatch. The resulting bounded `onlineContext`, source metadata, and widgets follow the request regardless of selected inference model.
+- **LFM2-700M:** consumes bounded external evidence in its system prompt.
+- **Qwen2.5-Coder-1.5B:** consumes the same bounded evidence in its coding/system prompt; explicit web requests and freshness-sensitive coding questions may invoke Online Research before coder inference.
+- **Original LFM2-350M:** now consumes bounded online evidence through a compact system context.
+- **R39:** receives a bounded evidence block through the R39 prompt adapter without changing the persisted user message.
+- Programming auto-route remains intact: coding intent can select Qwen Coder after retrieval intent is resolved. Weather words inside ordinary code-generation requests do not trigger weather retrieval.
+
+**Search reliability:** canonical Online Research now uses a bounded provider chain (DuckDuckGo HTML → DuckDuckGo Lite → Bing HTML) behind the same public HTTP(S), redirect, DNS/private-address, port, byte, and timeout guards. The chain stops at the first provider producing validated public results.
+
+**Live acceptance extension:** the live verifier now accepts an explicit model id. Existing search/weather cases prove 700M. A new coder-specific live case requires `modelId=coder`, the Qwen2.5-Coder checkpoint, live search evidence, sources, a `search-results` widget, and persisted coder assistant metadata.
+
+**Versions:** LALM Engine `2.1.150` / `2.1.150-all-model-online-context-v124`; Online Research `1.0.5` / `1.0.5-all-model-freshness-routing-v124`; Repository Work `1.0.81`; Web Chat remains `1.5.88`; clean-room Chat remains `1.0.89`.
+
+**Next state:** guarded HF deployment of exact source `3dd95708c5d9cf8c7bc618faa3290a90539b08aa`, followed by live acceptance proving 700M search/weather and explicit Qwen Coder online search on the deployed revision.
+
+**Status:** SOURCE COMPLETE / STATIC VERIFIED / DEPLOYMENT READY.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — v124 live search-provider repair + redeploy ready
 
 **Live evidence from first v124 deployment:**
