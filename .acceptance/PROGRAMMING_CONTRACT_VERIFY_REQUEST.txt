@@ -1,3 +1,3 @@
 SOURCE_REF=feature/hf-space-manual-deploy
-SUITE=programming-contract-v127
-REQUEST_NONCE=2026-10-05-v127-explicit-web-priority-static-002
+SUITE=programming-contract-v126
+REQUEST_NONCE=2026-10-05-v126-real-user-routing-composer-001
