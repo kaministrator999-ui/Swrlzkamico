@@ -1,0 +1,77 @@
+name: Validate §wyrl§ Engine v5.4 candidate
+
+on:
+  push:
+    branches: [swyrl-engine-v5-4-wisp]
+    paths:
+      - ".github/workflows/validate-swyrl-v5-4.yml"
+      - "projects/swrlz-forge-moba/patches/v5_4_wisp_avatar.py"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: swyrl-engine-v5-4-wisp
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build exact v5.3 source
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/v53
+      - name: Apply v5.4 patch
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, importlib.util, json
+          from pathlib import Path
+          source=Path("/tmp/v53/index.html").read_text(encoding="utf-8")
+          path=Path("projects/swrlz-forge-moba/patches/v5_4_wisp_avatar.py")
+          spec=importlib.util.spec_from_file_location("v54",path)
+          mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+          out=mod.apply(source)
+          data=out.encode("utf-8")
+          print("SWYRL_V5_4_INTEGRITY="+json.dumps({"bytes":len(data),"sha256":hashlib.sha256(data).hexdigest()},sort_keys=True))
+          Path("/tmp/swyrl-v5-4.html").write_text(out,encoding="utf-8")
+          PY
+      - name: Verify Wisp semantics
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("/tmp/swyrl-v5-4.html").read_text(encoding="utf-8")
+          required=[
+            "SWYRL_ENGINE_DEPLOY_MARKER: V5_4_WISP_AVATAR",
+            "function makeWispHero(",
+            "function updateWispVisuals(",
+            "BP_WispVisitor",
+            "Wisp Visitor / Creator",
+            "avatarStyle:'wisp'",
+            "defaultDenAvatar:'wisp'",
+            "wispGlowTexture",
+            "THREE.AdditiveBlending",
+            "o.isSprite",
+          ]
+          missing=[x for x in required if x not in s]
+          print("MISSING=",missing)
+          if missing: raise SystemExit(1)
+          PY
+      - name: Syntax-check generated module
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          s=Path("/tmp/swyrl-v5-4.html").read_text(encoding="utf-8")
+          start=s.index('<script type="module">')+len('<script type="module">')
+          end=s.rindex('</script>')
+          Path("/tmp/swyrl-v5-4.mjs").write_text(s[start:end],encoding="utf-8")
+          PY
+          node --check /tmp/swyrl-v5-4.mjs
