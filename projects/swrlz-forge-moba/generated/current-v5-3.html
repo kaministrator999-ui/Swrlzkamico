@@ -1,0 +1,1873 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+<meta http-equiv="Cache-Control" content="no-store, max-age=0" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>§wyrl§ Engine · Maker v5.3</title>
+<style>
+:root{
+  --bg:#091019;--panel:#121923;--line:#273244;--text:#eef3fb;--muted:#94a5bb;
+  --accent:#8b7dff;--good:#44d4a2;--red:#ff6b7a;--blue:#62a9ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:13px/1.35 Inter,system-ui,Segoe UI,Arial,sans-serif}
+button,input,select{font:inherit}
+button{border:1px solid var(--line);background:#1b2432;color:var(--text);border-radius:8px;padding:8px 10px;cursor:pointer}
+button:hover{background:#243043}
+button.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+button.primary{background:var(--accent);border-color:var(--accent)}
+button.good{border-color:#2c7a60;color:#cbffec}
+button.danger{border-color:#72343d;color:#ffd4da}
+input,select{width:100%;background:#0e141c;color:var(--text);border:1px solid var(--line);border-radius:6px;padding:6px 7px}
+input[type=color]{height:32px;padding:3px}
+.app{height:100%;display:grid;grid-template-rows:48px 1fr 32px}
+.topbar{display:flex;gap:7px;align-items:center;padding:6px 8px;border-bottom:1px solid var(--line);background:#0d131b;overflow-x:auto}
+.brand{font-weight:900;letter-spacing:.04em;white-space:nowrap}
+.brand b{color:var(--accent)}
+.sep{width:1px;height:24px;background:var(--line);flex:0 0 auto}
+.spacer{flex:1}
+.workspace{display:grid;grid-template-columns:235px minmax(240px,1fr) 300px;min-height:0}
+.panel{background:var(--panel);overflow:auto}
+.left{border-right:1px solid var(--line)}
+.right{border-left:1px solid var(--line)}
+.section{border-bottom:1px solid var(--line)}
+.section h3{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0;padding:10px 10px 7px}
+.section-body{padding:0 9px 10px}
+.hierarchy{padding:4px 6px 10px}
+.tree-item{display:flex;align-items:center;gap:7px;padding:6px 7px;border-radius:6px;cursor:pointer;user-select:none}
+.tree-item:hover{background:#1c2634}
+.tree-item.selected{background:#2a2a4d;outline:1px solid #5b54b8}
+.tree-item.ghost{opacity:.68;font-style:italic}
+.tree-icon{width:18px;text-align:center}
+.tree-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asset-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.asset{text-align:left}
+.asset small{display:block;color:var(--muted)}
+.viewport-wrap{position:relative;min-width:0;min-height:0}
+#viewport{display:block;width:100%;height:100%;touch-action:none;outline:none;background:#071018}
+.badgeBox{position:absolute;top:10px;left:10px;background:#071018d6;border:1px solid #ffffff16;border-radius:8px;padding:7px 9px;pointer-events:none}
+.banner{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:none;background:#183b32e8;border:1px solid #3ca07f;color:#d8fff1;border-radius:999px;padding:7px 12px;font-weight:800}
+.banner.show{display:block}
+.help{position:absolute;left:10px;right:10px;bottom:10px;display:flex;gap:8px;justify-content:space-between;pointer-events:none}
+.help span{background:#071018d6;border:1px solid #ffffff16;border-radius:8px;padding:6px 8px;color:#c5cfdb}
+.kbd{display:inline-block;border:1px solid #415069;border-bottom-width:2px;border-radius:4px;background:#1b2532;padding:1px 5px}
+.field{margin:7px 0}
+.field>label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+.grid3{display:grid;grid-template-columns:32px 1fr 1fr 1fr;gap:5px;align-items:center}
+.grid3 label{color:var(--muted)}
+.row{display:flex;gap:6px;flex-wrap:wrap}
+.hint{font-size:11px;color:var(--muted)}
+.empty{padding:14px 10px;color:var(--muted);text-align:center}
+.status{display:flex;align-items:center;gap:14px;padding:0 9px;border-top:1px solid var(--line);background:#0d131b;color:var(--muted);white-space:nowrap;overflow:hidden}
+.ok{color:var(--good)}
+.badge{display:inline-block;padding:2px 7px;border:1px solid var(--line);border-radius:999px;font-size:10px}
+.toast{position:absolute;right:12px;bottom:52px;background:#131b26e8;border:1px solid var(--line);border-radius:9px;padding:9px 11px;max-width:300px;opacity:0;transform:translateY(8px);transition:.18s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.hidden{display:none!important}
+.mobile-tabs,.mobile-drawer{display:none}
+
+.outliner-tools{padding:7px 7px 2px;display:flex;gap:6px}.outliner-tools input{height:31px}
+.folder-row{display:flex;align-items:center;gap:6px;padding:7px 7px 4px;color:#aebbd0;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.folder-row .count{margin-left:auto;color:#65758e;font-weight:600}
+.eye-btn{border:0;background:transparent;padding:0 2px;color:#93a2b7;min-width:20px}.eye-btn:hover{background:transparent;color:#fff}
+.viewport-toolbar{position:absolute;z-index:5;left:50%;top:10px;transform:translateX(-50%);display:flex;align-items:center;gap:5px;padding:5px;background:#0c121bdc;border:1px solid #ffffff16;border-radius:9px;max-width:70%;overflow-x:auto;white-space:nowrap}
+.viewport-toolbar button,.viewport-toolbar select{width:auto;height:31px;padding:5px 8px}.viewport-toolbar select{min-width:64px}
+.detail-box{border:1px solid #253144;border-radius:8px;margin:8px 0;background:#0f151e}.detail-box summary{cursor:pointer;padding:8px 9px;color:#bdc8d7;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.detail-box>div{padding:0 9px 9px}
+.component-list{display:flex;flex-direction:column;gap:5px;margin:6px 0}.component-row{display:flex;align-items:center;gap:6px;padding:7px 8px;background:#161f2b;border:1px solid #273447;border-radius:7px}.component-row b{font-size:12px}.component-row small{margin-left:auto;color:#788ba4}.component-toggle{width:auto}
+.content-drawer{position:absolute;z-index:6;left:8px;right:8px;bottom:8px;height:0;overflow:hidden;background:#101720f3;border:1px solid transparent;border-radius:10px;transition:height .18s ease,border-color .18s ease;display:flex;flex-direction:column}.content-drawer.show{height:min(44vh,330px);border-color:#2c394d}.drawer-head{display:flex;gap:6px;align-items:center;padding:8px;border-bottom:1px solid #283447}.drawer-head b{margin-right:auto}.drawer-body{display:grid;grid-template-columns:170px 1fr;min-height:0;flex:1}.drawer-sources{padding:8px;border-right:1px solid #283447;overflow:auto}.drawer-assets{padding:8px;overflow:auto}.asset-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:7px}.asset-card{min-height:70px;text-align:left}.asset-card strong{display:block}.asset-card small{display:block;color:#8192a8;margin-top:3px}
+.log-list{font:12px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace}.log-line{padding:4px 6px;border-bottom:1px solid #1f2a39}.log-line.warn{color:#ffd27f}.log-line.error{color:#ff9aa8}.log-line.ok{color:#83e3bd}
+.selection-outline{pointer-events:none}.toolbar-value{color:#aebbd0;font-size:11px;padding:0 2px}.status-pill{padding:2px 6px;border-radius:999px;border:1px solid #2b394d;font-size:10px}.status-pill.dirty{color:#ffd27f;border-color:#755d2d}
+.actor-class{font-size:10px;color:#8ea0b6;margin-top:2px}.inspector-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+
+#mobileToolsBtn{display:none}.mobile-tools-panel{display:none}.build-stamp{position:absolute;left:10px;top:61px;z-index:4;padding:4px 7px;border:1px solid #35516c;border-radius:999px;background:#0b1722dd;color:#8bd6ff;font-size:10px;font-weight:800;pointer-events:none}.terrain-snap.active{border-color:#4a9f7d;color:#caffea}.mobile-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.mobile-tool-grid button,.mobile-tool-grid select{width:100%}.mobile-tools-panel{position:absolute;z-index:10;top:8px;left:8px;right:8px;max-height:70vh;overflow:auto;background:#111a25f7;border:1px solid #34445c;border-radius:11px;padding:9px;box-shadow:0 12px 35px #0009}.mobile-tools-panel.show{display:block}.mobile-tools-title{display:flex;align-items:center;gap:8px;margin-bottom:8px}.mobile-tools-title b{margin-right:auto}.terrain-shell-note{color:#7fb2d2}
+@media (max-width: 900px){
+  .workspace{grid-template-columns:180px minmax(220px,1fr)}
+  .right{display:none}
+}
+@media (max-width: 620px){
+  .app{grid-template-rows:48px 1fr 42px}
+  .workspace{display:block;position:relative}
+  .left,.right{display:none}
+  .viewport-wrap{position:absolute;inset:0}
+  .topbar{overflow:hidden;gap:5px}.topbar .brand{font-size:11px;max-width:145px;overflow:hidden;text-overflow:ellipsis}.topbar .sep,.topbar .spacer{display:none}
+  .topbar button:not(#bakeBtn):not(#playBtn):not(#pauseBtn):not(#stopBtn):not(#mobileToolsBtn){display:none}
+  #mobileToolsBtn{display:block}
+  .mobile-tabs{display:flex;position:absolute;right:8px;top:8px;gap:6px;z-index:7}
+  .mobile-drawer{display:none;position:absolute;right:8px;top:52px;bottom:8px;width:min(86vw,320px);overflow:auto;background:#121923f1;border:1px solid var(--line);border-radius:10px;z-index:8}
+  .mobile-drawer.show{display:block}
+  .help span:last-child{display:none}.viewport-toolbar{display:none}.badgeBox{top:8px;max-width:52vw}.build-stamp{top:64px}.content-drawer.show{height:min(48vh,360px)}
+  .banner{top:auto;bottom:10px;left:10px;right:10px;transform:none;border-radius:9px;text-align:center;font-size:10px;padding:6px 8px}
+  .app.runtime-play .mobile-tabs,.app.runtime-play .help{display:none!important}
+  .app.runtime-play #mobileToolsBtn,.app.runtime-play #bakeBtn,.app.runtime-play #playBtn{display:none!important}
+}
+
+.project-hub{position:absolute;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:18px;background:#05080dbb;backdrop-filter:blur(8px)}
+.project-hub.show{display:flex}
+.project-window{width:min(900px,96vw);max-height:min(720px,92vh);overflow:auto;background:#101823;border:1px solid #34435b;border-radius:16px;box-shadow:0 24px 80px #000c}
+.project-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #28364a}.project-head b{font-size:16px;margin-right:auto}.project-head small{color:var(--muted)}
+.project-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:14px}
+.project-card{position:relative;text-align:left;min-height:190px;padding:14px;border:1px solid #33425a;border-radius:13px;background:linear-gradient(155deg,#172130,#0e151f);overflow:hidden}
+.project-card:hover{border-color:#7167d7;transform:translateY(-1px)}.project-card strong{display:block;font-size:16px;margin:6px 0}.project-card p{color:#9eafc5;min-height:55px}.project-card .project-icon{font-size:35px}.project-card .template-tag{display:inline-block;font-size:10px;padding:3px 7px;border:1px solid #3a4b66;border-radius:999px;color:#aebed2}
+.project-card.den{background:radial-gradient(circle at 70% 18%,#59337c55,transparent 36%),linear-gradient(155deg,#1e1730,#0c0a15)}.project-card.moba{background:radial-gradient(circle at 70% 18%,#245f7b55,transparent 36%),linear-gradient(155deg,#122331,#0b1118)}
+.project-actions{display:flex;gap:7px;flex-wrap:wrap;padding:0 14px 14px}.project-note{padding:0 14px 14px;color:#8495ac;font-size:11px}
+.project-nameplate{padding:7px 8px;border:1px solid #28374b;border-radius:7px;background:#0e151e;color:#c9d4e3;font-weight:700}
+.moba-setting.hidden-project-setting{display:none}
+.den-glow{color:#c89cff}
+@media(max-width:620px){.project-hub{padding:7px}.project-window{max-height:96vh}.project-grid{grid-template-columns:1fr}.project-card{min-height:130px}.project-card p{min-height:0}.project-head small{display:none}}
+
+
+.first-person-hud{position:absolute;inset:0;z-index:12;display:none;pointer-events:none}
+.app.runtime-play .first-person-hud{display:block}
+.fp-reticle{position:absolute;left:50%;top:50%;width:8px;height:8px;border:1px solid #ffffffc9;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 8px #7ee7ff88}
+.fp-reticle:before,.fp-reticle:after{content:"";position:absolute;background:#ffffffaa}
+.fp-reticle:before{width:16px;height:1px;left:-5px;top:3px}.fp-reticle:after{width:1px;height:16px;left:3px;top:-5px}
+.touch-controls{position:absolute;inset:0;display:none;pointer-events:none}
+.joy{position:absolute;bottom:20px;width:116px;height:116px;border-radius:50%;border:1px solid #b7eaff70;background:radial-gradient(circle,#18314a77 0 24%,#0b172777 25% 63%,#8adfff22 64% 100%);box-shadow:inset 0 0 30px #0008,0 0 18px #43cfff22;pointer-events:auto;touch-action:none;user-select:none}
+.joy-left{left:18px}.joy-right{right:18px}
+.joy-knob{position:absolute;left:50%;top:50%;width:52px;height:52px;border-radius:50%;transform:translate(-50%,-50%);background:#8fdfff48;border:1px solid #d9f6ff99;box-shadow:0 0 14px #64d8ff44;pointer-events:none}
+.joy-label{position:absolute;left:0;right:0;bottom:-19px;text-align:center;font:700 10px system-ui;color:#b9d7e8;letter-spacing:.12em;text-shadow:0 1px 3px #000}
+@media (pointer:coarse),(max-width:900px){.app.runtime-play .touch-controls{display:block}}
+@media (max-width:620px){
+  .app.runtime-play .badgeBox,.app.runtime-play .build-stamp{display:none}
+  .app.runtime-play .banner{top:10px;bottom:auto;left:50%;right:auto;transform:translateX(-50%);width:auto;max-width:74vw;white-space:nowrap}
+  .joy{width:104px;height:104px;bottom:18px}.joy-knob{width:46px;height:46px}.joy-left{left:14px}.joy-right{right:14px}
+}
+
+
+.tree-item.multi-selected{background:#55478866;outline:1px solid #9a8cff55}.tree-item.group-root .tree-name{font-weight:800}.tree-item.group-root:after{content:attr(data-parts);margin-left:auto;font-size:10px;color:#b9a8ff}
+#multiSelectBtn.active,#outlinerMultiBtn.active{border-color:#a884ff;background:#352b59;color:#e8ddff}
+.outliner-tools{display:flex;gap:6px}.outliner-tools input{min-width:0;flex:1}.outliner-tools button{padding:6px 9px}
+.group-help{color:#9aacc2;font-size:10px;margin:6px 0 0}
+
+</style>
+</head>
+<body>
+<!-- SWYRL_ENGINE_DEPLOY_MARKER: V5_3_GROUPS_IMMERSIVE_DEN -->
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand"><b>§wyrl§</b> ENGINE · MAKER v5.3</div>
+    <div class="sep"></div>
+    <button id="undoBtn" title="Undo (Ctrl+Z)">↶ Undo</button>
+    <button id="redoBtn" title="Redo (Ctrl+Y)">↷ Redo</button>
+    <div class="sep"></div>
+    <button id="moveBtn" class="active">Move</button>
+    <button id="rotateBtn">Rotate</button>
+    <button id="scaleBtn">Scale</button>
+    <button id="spaceBtn">World</button>
+    <button id="multiSelectBtn" title="Toggle multi-select">Multi</button>
+    <button id="groupBtn" title="Group selected objects (Ctrl+G)">Group</button>
+    <button id="ungroupBtn" title="Ungroup selected group (Ctrl+Shift+G)">Ungroup</button>
+    <div class="spacer"></div>
+    <button id="mobileToolsBtn">☰ Tools</button>
+    <button id="projectBtn">◫ Projects</button>
+    <button id="buildBtn">🔨 Build</button>
+    <button id="bakeBtn" class="good">🔥 Bake Ghosts</button>
+    <button id="simulateBtn">◉ Simulate</button>
+    <button id="playBtn" class="primary">▶ Play</button>
+    <button id="pauseBtn" class="hidden">Ⅱ Pause</button>
+    <button id="stopBtn" class="hidden">■ Stop</button>
+    <button id="keepBtn" class="hidden">Keep Changes</button>
+    <button id="drawerBtn">Content Drawer</button>
+    <button id="saveBtn">Save</button>
+    <button id="loadBtn">Load</button>
+    <button id="exportBtn">Export Game</button>
+    <input id="fileInput" type="file" accept=".json,application/json" class="hidden">
+  </header>
+
+  <div class="workspace">
+    <aside class="panel left">
+      <section class="section">
+        <h3>World Outliner</h3>
+        <div class="outliner-tools"><input id="outlinerSearch" placeholder="Search actors…"><button id="outlinerMultiBtn" title="Multi-select">＋</button></div>
+        <div id="hierarchy" class="hierarchy"></div>
+      </section>
+      <section class="section">
+        <h3>Core Prefabs</h3>
+        <div class="section-body asset-grid">
+          <button class="asset" data-prefab="hero">🦸 Pawn<small>Playable</small></button>
+          <button class="asset" data-prefab="bush">🌿 Bush<small>Environment</small></button>
+          <button class="asset" data-prefab="wall">🧱 Wall<small>Blocker</small></button>
+          <button class="asset" data-prefab="rock">🪨 Rock<small>Blocker</small></button>
+          <button class="asset" data-prefab="physicsRock">📦 Physics Rock<small>Rigid body</small></button>
+          <button class="asset" data-prefab="jumpPad">🟦 Jump Pad<small>Component actor</small></button>
+          <button class="asset" data-prefab="rotator">🔄 Rotator<small>Component actor</small></button>
+          <button class="asset" data-prefab="crystal">🔮 Crystal<small>Animated prop</small></button>
+        </div>
+        <div class="section-body hint">MOBA actors moved to the example project/content library. New actors still use ghost → Bake.</div>
+      </section>
+      <section class="section">
+        <h3>Project / Scene</h3>
+        <div class="section-body">
+          <div class="field"><label>Current Project</label><div id="currentProjectName" class="project-nameplate">Dragon's Den — Seed Chamber</div></div>
+          <div class="field"><label>Background</label><input id="bgColor" type="color" value="#0a1420"></div>
+          <div id="mobaSettings" class="field moba-setting hidden-project-setting"><label>MOBA Wave Interval (sec)</label><input id="waveInterval" type="number" min="2" max="30" step="1" value="7"></div>
+          <div class="row">
+            <button id="resetBtn" class="danger">Reset Current Project</button>
+            <button id="openProjectsBtn">Project Templates</button>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="viewport-wrap">
+      <canvas id="viewport" tabindex="0"></canvas>
+      <div class="badgeBox"><b id="viewLabel">Perspective</b><br><span style="color:#94a5bb">Level Editor · Lit · Realtime</span></div>
+      <div class="build-stamp" id="buildStamp">§wyrl§ ENGINE · v5.3 · GROUPS + DEN</div>
+      <div class="viewport-toolbar">
+        <button id="snapToggle" class="active">Snap</button><button id="terrainSnapBtn" class="terrain-snap active">Terrain Snap</button>
+        <span class="toolbar-value">Move</span><select id="gridSnap"><option>.25</option><option selected>.5</option><option>1</option><option>2</option><option>5</option></select>
+        <span class="toolbar-value">Rot</span><select id="rotSnap"><option>5</option><option selected>15</option><option>30</option><option>45</option><option>90</option></select>
+        <span class="toolbar-value">Scale</span><select id="scaleSnap"><option>.05</option><option selected>.1</option><option>.25</option><option>.5</option></select>
+        <select id="viewMode"><option value="lit">Lit</option><option value="unlit">Unlit</option><option value="wire">Wireframe</option></select>
+        <select id="cameraView"><option value="perspective">Perspective</option><option value="top">Top</option><option value="front">Front</option><option value="right">Right</option></select>
+        <select id="cameraSpeed"><option value="0.6">Cam 1</option><option value="1" selected>Cam 2</option><option value="1.6">Cam 3</option><option value="2.4">Cam 4</option></select>
+      </div>
+      <div id="playBanner" class="banner">PIE · FIRST PERSON · left stick move · right stick look</div>
+      <div id="firstPersonHud" class="first-person-hud">
+        <div class="fp-reticle"></div>
+        <div class="touch-controls">
+          <div id="moveStick" class="joy joy-left"><div class="joy-knob"></div><div class="joy-label">MOVE</div></div>
+          <div id="lookStick" class="joy joy-right"><div class="joy-knob"></div><div class="joy-label">LOOK</div></div>
+        </div>
+      </div>
+
+      <div class="mobile-tabs">
+        <button id="mobileWorldBtn">World</button>
+        <button id="mobileInspectorBtn">Inspector</button>
+      </div>
+      <div id="mobileDrawer" class="mobile-drawer"></div>
+      <div id="mobileToolsPanel" class="mobile-tools-panel"></div>
+      <div class="help" id="editorHelp">
+        <span><span class="kbd">W</span> move · <span class="kbd">E</span> rotate · <span class="kbd">R</span> scale · <span class="kbd">Del</span> delete</span>
+        <span>Perspective = free orbit under map · Top/Front/Right = locked authoring views · solid terrain shell</span>
+      </div>
+      <div id="contentDrawer" class="content-drawer">
+        <div class="drawer-head">
+          <b id="drawerTitle">Content Drawer</b>
+          <button id="assetsTab" class="active">Assets</button>
+          <button id="logTab">Output Log</button>
+          <button id="drawerClose">×</button>
+        </div>
+        <div id="assetsPane" class="drawer-body">
+          <div class="drawer-sources">
+            <b>Content</b>
+            <div class="hint" style="margin-top:7px">/Engine<br>/Engine/Environment<br>/Engine/Physics<br>/Examples/MOBA<br>/Examples/DragonsDen</div>
+            <div class="field"><label>Search Assets</label><input id="assetSearch" placeholder="tower, rock, BP…"></div>
+          </div>
+          <div class="drawer-assets"><div id="assetList" class="asset-list"></div></div>
+        </div>
+        <div id="logPane" class="drawer-assets hidden"><div id="logList" class="log-list"></div></div>
+      </div>
+      <div id="projectHub" class="project-hub">
+        <div class="project-window">
+          <div class="project-head"><b>◫ §wyrl§ Engine Projects</b><small>Create, edit, save, load, inhabit.</small><button id="projectClose">×</button></div>
+          <div class="project-grid">
+            <button class="project-card den" data-project-template="dragons-den"><span class="project-icon">🐉</span><strong>Dragon's Den — Seed Chamber</strong><span class="template-tag">DEFAULT STARTER</span><p>Immersive under-realm seed chamber: wake nook, council floor, throne side, dragon perch, creator alcove, and exits to future deeper systems.</p><span class="hint den-glow">Wake up in the Den</span></button>
+            <button class="project-card" data-project-template="default"><span class="project-icon">🧰</span><strong>Blank Starter World</strong><span class="template-tag">TEMPLATE</span><p>Neutral §wyrl§ Engine sandbox with terrain, pawn, physics and component examples.</p><span class="hint">Create blank project</span></button>
+            <button class="project-card moba" data-project-template="moba"><span class="project-icon">⚔️</span><strong>MOBA Arena</strong><span class="template-tag">EXAMPLE PROJECT</span><p>The original three-lane MOBA remains a loadable example project, separate from the engine and the Den.</p><span class="hint">Create MOBA example</span></button>
+          </div>
+          <div class="project-actions"><button id="hubSaveBtn">Save Current Project</button><button id="hubLoadBtn">Load Project File</button></div>
+          <div class="project-note">Project JSON stores project identity, scene actors, paths and editor state. Templates are starting points; Save/Load produces independent projects.</div>
+        </div>
+      </div>
+      <div id="toast" class="toast"></div>
+    </main>
+
+    <aside class="panel right">
+      <section class="section">
+        <h3>Details</h3>
+        <div id="inspectorEmpty" class="empty">Select an actor.</div>
+        <div id="inspector" class="section-body hidden">
+          <div class="row"><span id="stateBadge" class="badge">BAKED</span><span id="teamBadge" class="badge">Neutral</span><span id="classBadge" class="badge">Actor</span></div>
+          <div class="field"><label>Name</label><input id="objName"></div>
+          <div class="field"><label>Actor Type</label><input id="objType" disabled></div>
+          <div class="field"><label>Folder</label><input id="folderInput"></div>
+
+          <details class="detail-box" open><summary>Transform</summary><div>
+            <div class="field"><label>Location</label><div class="grid3"><label>XYZ</label><input id="px" type="number" step=".1"><input id="py" type="number" step=".1"><input id="pz" type="number" step=".1"></div></div>
+            <div class="field"><label>Rotation °</label><div class="grid3"><label>XYZ</label><input id="rx" type="number" step="1"><input id="ry" type="number" step="1"><input id="rz" type="number" step="1"></div></div>
+            <div class="field"><label>Scale</label><div class="grid3"><label>XYZ</label><input id="sx" type="number" step=".1"><input id="sy" type="number" step=".1"><input id="sz" type="number" step=".1"></div></div>
+          </div></details>
+
+          <details class="detail-box" open><summary>Components</summary><div>
+            <div id="componentList" class="component-list"></div>
+            <div class="row"><select id="addComponentSelect"><option value="RotatingMovement">Rotating Movement</option><option value="BobMovement">Bob Movement</option><option value="PhysicsBody">Physics Body</option><option value="LaunchPad">Launch Pad</option></select><button id="addComponentBtn">+ Add</button></div>
+          </div></details>
+
+          <details class="detail-box"><summary>Gameplay</summary><div>
+            <div class="field"><label>Team</label><select id="teamSelect"><option value="neutral">Neutral</option><option value="blue">Blue</option><option value="red">Red</option></select></div>
+            <div class="field"><label>Max HP</label><input id="maxHp" type="number" min="0" step="10"></div>
+            <div class="field"><label>Attack Range</label><input id="attackRange" type="number" min="0" step=".5"></div>
+            <div class="field"><label>Attack Damage</label><input id="attackDamage" type="number" min="0" step="5"></div>
+          </div></details>
+
+          <details class="detail-box"><summary>Physics</summary><div>
+            <div class="field"><label>Collider Radius</label><input id="colliderRadius" type="number" min="0" step=".1"></div>
+            <div class="field"><label>Mass</label><input id="mass" type="number" min=".01" step=".1"></div>
+            <div class="field"><label>Restitution</label><input id="restitution" type="number" min="0" max="1" step=".05"></div>
+          </div></details>
+
+          <div class="inspector-actions"><button id="focusBtn">Focus</button><button id="snapGroundBtn">Snap Ground</button><button id="groupInspectorBtn">Group Selection</button><button id="ungroupInspectorBtn">Ungroup</button><button id="duplicateBtn">Duplicate Ghost</button><button id="deleteBtn" class="danger">Delete</button><button id="playFromHereBtn">Play From Here</button></div>
+        </div>
+      </section>
+      <section class="section">
+        <h3>World Settings</h3>
+        <div class="section-body">
+          <div class="field"><label>Debug Mode</label><select id="debugMode"><option value="none">None</option><option value="paths">Lane Paths</option><option value="ranges">Tower Ranges</option><option value="colliders">Colliders</option></select></div>
+          <div class="hint">v4.1: grounded slope adhesion, clean PIE selection/UI, relocated jungle blockers, solid terrain shell, physics collisions, transactions, PIE/SIE, components, content drawer, validation, and agent API.</div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <footer class="status">
+    <span class="ok">● Engine ready</span>
+    <span id="actorCount">0 actors</span>
+    <span id="ghostCount">0 ghosts</span>
+    <span id="selectionStatus">Nothing selected</span>
+    <span id="revisionStatus" class="status-pill">Revision 0</span>
+    <span id="dirtyStatus" class="status-pill">Saved</span>
+    <span id="projectStatus" class="status-pill">Dragon's Den — Seed Chamber</span>
+    <span>Transactions · Components · PIE/SIE · Agent API</span>
+  </footer>
+</div>
+
+<script type="module">
+(async()=>{
+const app=document.getElementById('app'); if(app.dataset.ready) return; app.dataset.ready='1';
+const $=id=>document.getElementById(id);
+let THREE, OrbitControls, TransformControls;
+try{
+  THREE = await import('https://cdn.jsdelivr.net/npm/three@0.169.0/+esm');
+  ({OrbitControls} = await import('https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js/+esm'));
+  ({TransformControls} = await import('https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/TransformControls.js/+esm'));
+}catch(err){
+  document.querySelector('.badgeBox').innerHTML = '<b>Renderer unavailable</b><br><span style="color:#ff9ca7">Internet required for Three.js CDN.</span>';
+  console.error(err);
+  return;
+}
+
+const renderer = new THREE.WebGLRenderer({canvas:$('viewport'), antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#0a1420');
+scene.fog = new THREE.Fog(0x101a27, 58, 130);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.18;
+
+const perspectiveCamera = new THREE.PerspectiveCamera(55,1,0.05,300);
+perspectiveCamera.position.set(23,18,26);
+const orthoCamera = new THREE.OrthographicCamera(-24,24,24,-24,0.05,500);
+orthoCamera.position.set(0,32,0.01);
+let camera = perspectiveCamera;
+let editorCameraView = 'perspective';
+let preSessionCameraView = 'perspective';
+const ORTHO_SIZE = 20;
+
+const orbit = new OrbitControls(camera, $('viewport'));
+orbit.enableDamping = true;
+orbit.target.set(0,0,0);
+orbit.maxPolarAngle = Math.PI * 0.995;
+orbit.minDistance = 1.25;
+orbit.maxDistance = 120;
+orbit.screenSpacePanning = true;
+
+const transform = new TransformControls(camera, $('viewport'));
+scene.add(transform.getHelper());
+transform.addEventListener('dragging-changed', e => orbit.enabled = !e.value && !playing);
+transform.addEventListener('mouseDown', ()=>beginTransaction('Transform '+(selected?.name||'Actor')));
+transform.addEventListener('mouseUp', ()=>commitTransaction('Transform '+(selected?.name||'Actor')));
+transform.addEventListener('objectChange', ()=>{ if(selected){ if(terrainSnapEnabled && transform.getMode()==='translate') snapActorToTerrain(selected); syncInspector(); selected.userData.spawnPos = selected.position.toArray(); markDirty(); } });
+
+scene.add(new THREE.HemisphereLight(0xd7e8ff,0x263521,1.65));
+scene.add(new THREE.AmbientLight(0xffffff,0.26));
+const sun = new THREE.DirectionalLight(0xfff4dc, 1.75);
+sun.position.set(20,30,16);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left = -40; sun.shadow.camera.right = 40;
+sun.shadow.camera.top = 40; sun.shadow.camera.bottom = -40;
+scene.add(sun);
+
+const waterGroup = new THREE.Group(); scene.add(waterGroup);
+const terrainShellGroup = new THREE.Group(); scene.add(terrainShellGroup);
+const helperGroup = new THREE.Group(); scene.add(helperGroup);
+const debugGroup = new THREE.Group(); scene.add(debugGroup);
+
+const actors = [];
+const paths = {};
+const liveUnits = [];
+let terrainMesh = null;
+let selected = null;
+let multiSelected=[];let multiSelectMode=false;
+let playing = false;
+let freeCam = true;
+let heroClickTarget = null;
+let lastWave = -999;
+let playSnapshot = null;
+let heroVel = new THREE.Vector3();
+let heroGrounded = false;
+let heroJumpQueued = false;
+let fpYaw=0,fpPitch=0;const fpMove={x:0,y:0},fpLook={x:0,y:0};const FP_EYE_HEIGHT=1.62,FP_LOOK_SPEED=2.35,FP_MOUSE_SENS=.0022;
+const HERO_GROUND_OFFSET = 0.03;
+const HERO_STEP_DOWN = 1.25;
+let currentProject={name:"Dragon's Den — Seed Chamber",template:'dragons-den',kind:'dragons-den',environment:'dragon-den'};
+let simulating = false;
+let paused = false;
+let keepSimulationChanges = false;
+let sessionStartPoint = null;
+let snapEnabled = true;
+let terrainSnapEnabled = true;
+let transformSpace = 'world';
+let viewMode = 'lit';
+let revision = 0;
+let dirty = false;
+let history = [];
+let historyIndex = -1;
+let transactionBefore = null;
+let historyLock = false;
+let selectionBox = null;
+const logEntries = [];
+const AUTOSAVE_KEY = 'swrlz-forge-v5-autosave';
+
+const keys = new Set();
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+const clock = new THREE.Clock();
+
+const COLORS = {
+  blue:'#5eaaff', red:'#ff637d', neutral:'#9eacbc', stone:'#566173', wall:'#646f82',
+  grass:'#3d6747', dirt:'#8b8063', river:'#2b5f82', bush:'#2b7f4e', leaf:'#4f945b',
+  trunk:'#75553c', gold:'#ffd166', base:'#394354'
+};
+
+
+function defaultFolder(type, team='neutral'){
+  if(type==='hero') return 'Gameplay/Heroes';
+  if(type==='tower'||type==='base'||type==='spawner') return 'Gameplay/'+(team==='blue'?'Blue Team':team==='red'?'Red Team':'Neutral');
+  if(type==='camp') return 'Gameplay/Neutral Camps';
+  if(type==='bush'||type==='tree'||type==='rock'||type==='wall') return 'Environment/Jungle';
+  if(type==='ground') return 'Environment/Terrain';
+  if(type==='group') return 'World/Groups';
+  return 'World';
+}
+function defaultComponents(type){
+  const c=['Transform'];
+  if(type!=='ground') c.push('Scene');
+  if(['tower','base','spawner','camp','bush','wall','rock','hero','tree'].includes(type)) c.push('StaticMesh');
+  if(['tower','base','camp','wall','rock','tree','hero'].includes(type)) c.push('Collider');
+  if(['tower','base','camp','hero'].includes(type)) c.push('Combat');
+  if(type==='hero') c.push('CharacterMovement');
+  if(type==='group') c.push('Group');
+  return c;
+}
+function hasComponent(actor, name){ return !!actor?.userData?.components?.includes(name); }
+function addComponent(actor, name){
+  if(!actor || hasComponent(actor,name)) return false;
+  actor.userData.components = [...(actor.userData.components||[]), name];
+  if(name==='PhysicsBody'){ actor.userData.mass = actor.userData.mass||1; actor.userData.restitution = actor.userData.restitution??0.25; }
+  if(name==='RotatingMovement') actor.userData.componentSpeed = actor.userData.componentSpeed||1;
+  if(name==='BobMovement'){ actor.userData.componentSpeed=actor.userData.componentSpeed||1; actor.userData.bobAmplitude=actor.userData.bobAmplitude||0.5; }
+  if(name==='LaunchPad') actor.userData.launchStrength = actor.userData.launchStrength||8;
+  return true;
+}
+function removeComponent(actor, name){
+  if(!actor || ['Transform','Scene'].includes(name)) return false;
+  actor.userData.components = (actor.userData.components||[]).filter(x=>x!==name);
+  return true;
+}
+function markDirty(){ dirty=true; $('dirtyStatus').textContent='Unsaved'; $('dirtyStatus').classList.add('dirty'); }
+function markSaved(){ dirty=false; $('dirtyStatus').textContent='Saved'; $('dirtyStatus').classList.remove('dirty'); }
+function editorLog(message, level='info'){
+  logEntries.push({time:new Date().toLocaleTimeString(),message,level});
+  if(logEntries.length>120) logEntries.shift();
+  renderLog();
+}
+function renderLog(){
+  const el=$('logList'); if(!el) return;
+  el.innerHTML='';
+  for(const l of [...logEntries].reverse()){
+    const row=document.createElement('div'); row.className='log-line '+(l.level||''); row.textContent=`[${l.time}] ${l.message}`; el.appendChild(row);
+  }
+}
+function captureProject(){ return JSON.stringify(projectData()); }
+function updateHistoryUI(){
+  $('undoBtn').disabled = historyIndex<=0;
+  $('redoBtn').disabled = historyIndex<0 || historyIndex>=history.length-1;
+  $('revisionStatus').textContent = 'Revision '+revision;
+}
+function initializeHistory(label='Initial scene'){
+  history=[{label,snapshot:captureProject()}]; historyIndex=0; revision=0; updateHistoryUI(); markSaved();
+}
+function beginTransaction(label){ if(historyLock || transactionBefore) return; transactionBefore={label,snapshot:captureProject()}; }
+function commitTransaction(label){
+  if(historyLock) return;
+  const snap=captureProject();
+  const prev=history[historyIndex]?.snapshot;
+  transactionBefore=null;
+  if(snap===prev) return;
+  history.splice(historyIndex+1);
+  history.push({label,snapshot:snap});
+  if(history.length>50) history.shift(); else historyIndex++;
+  historyIndex=history.length-1; revision++; markDirty(); updateHistoryUI();
+  try{ localStorage.setItem(AUTOSAVE_KEY,snap); }catch{}
+  editorLog(label,'ok');
+}
+function restoreHistory(index){
+  if(index<0 || index>=history.length) return;
+  historyLock=true;
+  try{ loadProject(JSON.parse(history[index].snapshot), {preserveHistory:true}); historyIndex=index; revision++; markDirty(); updateHistoryUI(); editorLog('Restored: '+history[index].label); }
+  finally{ historyLock=false; }
+}
+function openDrawer(tab='assets'){
+  $('contentDrawer').classList.add('show');
+  if(tab==='log') showDrawerTab('log'); else showDrawerTab('assets');
+}
+function showDrawerTab(tab){
+  const assets=tab==='assets'; $('assetsPane').classList.toggle('hidden',!assets); $('logPane').classList.toggle('hidden',assets); $('assetsTab').classList.toggle('active',assets); $('logTab').classList.toggle('active',!assets); $('drawerTitle').textContent=assets?'Content Drawer':'Output Log';
+}
+function uid(){ return 'a_'+Math.random().toString(36).slice(2,10); }
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+function teamColor(team){ return COLORS[team] || COLORS.neutral; }
+function mat(color, ghost=false){
+  const m = new THREE.MeshStandardMaterial({color, roughness:0.78, metalness:0.04, flatShading:true});
+  if(ghost){ m.transparent = true; m.opacity = 0.42; m.depthWrite = false; }
+  return m;
+}
+
+function riverDistance(x,z){
+  const d = z - 0.55*x;
+  return Math.abs(d);
+}
+function terrainHeight(x,z){
+  if(currentProject?.environment==='dragon-den'){
+    const bowl=Math.max(0,1-Math.hypot(x,z)/23);
+    return -0.08 + 0.09*Math.sin(x*.18)*Math.cos(z*.15) - bowl*.10;
+  }
+  let y = 0.18*Math.sin(x*0.18) + 0.14*Math.cos(z*0.16);
+  const ridgeA = Math.max(0, 1 - Math.hypot(x+8,z+8)/12) * 0.9;
+  const ridgeB = Math.max(0, 1 - Math.hypot(x-8,z-8)/12) * 0.9;
+  y += ridgeA + ridgeB;
+  const riverBand = Math.max(0, 1 - riverDistance(x,z)/2.6);
+  y -= riverBand * 0.95;
+  return y;
+}
+function placeOnTerrain(obj, yOffset=0){
+  obj.position.y = terrainHeight(obj.position.x, obj.position.z) + yOffset;
+}
+
+function clearGroup(g){
+  while(g.children.length){
+    const c = g.children.pop();
+    c.geometry?.dispose?.();
+    if(Array.isArray(c.material)) c.material.forEach(m=>m.dispose?.());
+    else c.material?.dispose?.();
+  }
+}
+
+function groundOffsetForActor(a){
+  if(!a) return 0;
+  if(a.userData.actorType==='rock') return 0.45*a.scale.y;
+  if(a.userData.actorType==='wall') return 0.55*a.scale.y;
+  return 0;
+}
+function snapActorToTerrain(a){
+  if(!a || a.userData.actorType==='ground') return;
+  a.position.y = terrainHeight(a.position.x,a.position.z) + groundOffsetForActor(a);
+}
+function buildTerrainShell(){
+  clearGroup(terrainShellGroup);
+  const bottomY=-4.2;
+  const shellMat=new THREE.MeshStandardMaterial({color:0x26313d,roughness:1,metalness:0,flatShading:true,side:THREE.DoubleSide});
+  const bottom=new THREE.Mesh(new THREE.PlaneGeometry(42,34),shellMat.clone()); bottom.rotation.x=-Math.PI/2; bottom.position.y=bottomY; bottom.receiveShadow=true; terrainShellGroup.add(bottom);
+  if(terrainMesh){const under=new THREE.Mesh(terrainMesh.geometry.clone(),new THREE.MeshStandardMaterial({color:0x293743,roughness:1,metalness:0,side:THREE.BackSide,flatShading:true}));under.receiveShadow=true;terrainShellGroup.add(under);}
+  function edge(points){
+    const verts=[];
+    for(let i=0;i<points.length-1;i++){const a=points[i],b=points[i+1]; verts.push(a[0],a[1],a[2], b[0],b[1],b[2], b[0],bottomY,b[2], a[0],a[1],a[2], b[0],bottomY,b[2], a[0],bottomY,a[2]);}
+    const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3)); geo.computeVertexNormals(); const m=new THREE.Mesh(geo,shellMat.clone()); m.castShadow=m.receiveShadow=true; terrainShellGroup.add(m);
+  }
+  const north=[],south=[],west=[],east=[];
+  for(let i=0;i<=42;i++){const x=-21+i; north.push([x,terrainHeight(x,-17),-17]); south.push([x,terrainHeight(x,17),17]);}
+  for(let i=0;i<=34;i++){const z=-17+i; west.push([-21,terrainHeight(-21,z),z]); east.push([21,terrainHeight(21,z),z]);}
+  edge(north);edge(south);edge(west);edge(east);
+}
+function rebuildTerrain(){
+  if(terrainMesh) scene.remove(terrainMesh);
+  const geo = new THREE.PlaneGeometry(42,34,84,68);
+  geo.rotateX(-Math.PI/2);
+  const pos = geo.attributes.position;
+  const colors = [];
+  for(let i=0;i<pos.count;i++){
+    const x = pos.getX(i), z = pos.getZ(i);
+    const y = terrainHeight(x,z);
+    pos.setY(i, y);
+    let c;
+    if(currentProject?.environment==='dragon-den'){
+      const caveA=new THREE.Color('#292631'),caveB=new THREE.Color('#3c3444'),rune=new THREE.Color('#4b3d61');
+      const radial=Math.max(0,1-Math.hypot(x,z)/24);
+      c=caveA.clone().lerp(caveB,.28+.18*Math.sin((x+z)*.16)).lerp(rune,radial*.10);
+    }else{
+      const riverBand = Math.max(0, 1 - riverDistance(x,z)/3.0);
+      const grass = new THREE.Color(COLORS.grass);
+      const dirt = new THREE.Color(COLORS.dirt);
+      const river = new THREE.Color(COLORS.river);
+      c = grass.clone().lerp(dirt, 0.25 + Math.max(0, y)*0.15);
+      c = c.lerp(river, riverBand*0.7);
+    }
+    colors.push(c.r, c.g, c.b);
+  }
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(colors,3));
+  geo.computeVertexNormals();
+  terrainMesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({vertexColors:true, roughness:1, flatShading:true}));
+  terrainMesh.receiveShadow = true;
+  scene.add(terrainMesh);
+  terrainMesh.userData.isTerrain = true;
+  buildTerrainShell();
+}
+
+function actorIcon(type){
+  return {ground:'▱', tower:'🏰', base:'💎', spawner:'⚔', camp:'👹', bush:'🌿', wall:'🧱', rock:'🪨', hero:'🦸', tree:'🌲', dragon:'🐉', crystal:'🔮', portal:'🌀', throne:'♛', pedestal:'◉', denStructure:'▰', group:'▣'}[type] || '◆';
+}
+function markActor(obj, type, opts={}){
+  obj.name = opts.name || type;
+  obj.userData = {
+    id:uid(), actorType:type, team:opts.team||'neutral', baked:opts.baked!==false,
+    maxHp:opts.maxHp??0, hp:opts.maxHp??0, attackRange:opts.attackRange??0, attackDamage:opts.attackDamage??0,
+    attackCooldown:opts.attackCooldown??1, lastAttack:-999, lane:opts.lane||null, moveSpeed:opts.moveSpeed??0,
+    colliderRadius:opts.colliderRadius??0.8, spawnPos:null,
+    folder:opts.folder||defaultFolder(type, opts.team||'neutral'), components:[...(opts.components||defaultComponents(type))],
+    blueprintClass:opts.blueprintClass||'', mass:opts.mass??1, restitution:opts.restitution??0.25,
+    componentSpeed:opts.componentSpeed??1, bobAmplitude:opts.bobAmplitude??0.5, launchStrength:opts.launchStrength??8,
+    runtimeVelocity:[0,0,0], runtimeBaseY:null, role:opts.role||'', tags:[...(opts.tags||[])], visualColor:opts.visualColor||'', groupParentId:opts.groupParentId||null, groupChildIds:[...(opts.groupChildIds||[])]
+  };
+  scene.add(obj);
+  actors.push(obj);
+  obj.userData.spawnPos = obj.position.toArray();
+  applyGhostVisual(obj);
+  return obj;
+}
+function applyGhostVisual(obj){
+  const ghost = !obj.userData.baked;
+  obj.traverse(c=>{
+    if(c.material && !Array.isArray(c.material)){
+      c.material = c.material.clone();
+      c.material.transparent = ghost;
+      c.material.opacity = ghost ? 0.42 : 1;
+      c.material.depthWrite = !ghost;
+    }
+  });
+}
+
+
+function rootGroupFor(a){
+  if(!a)return null;
+  let cur=a,guard=0;
+  while(cur?.userData?.groupParentId&&guard++<24){
+    const p=actors.find(x=>x.userData.id===cur.userData.groupParentId);
+    if(!p)break;cur=p;
+  }
+  return cur;
+}
+function groupChildren(g){return actors.filter(a=>a.userData.groupParentId===g?.userData?.id);}
+function isGroupableActor(a){
+  if(!a||a.userData.actorType==='ground')return false;
+  if(a.userData.actorType==='group')return true;
+  const dynamic=['CharacterMovement','PhysicsBody','LaunchPad','Combat'];
+  return !dynamic.some(name=>hasComponent(a,name));
+}
+function groupDescendants(g){
+  const out=[];const visit=x=>{for(const c of groupChildren(x)){out.push(c);if(c.userData.actorType==='group')visit(c);}};visit(g);return out;
+}
+function makeGroupActor(name='Group',baked=true){
+  const g=new THREE.Group();
+  return markActor(g,'group',{name,baked,colliderRadius:0,folder:'World/Groups',components:['Transform','Scene','Group'],tags:['editor-group']});
+}
+function groupActors(members,name='Group',options={}){
+  const record=options.record!==false,select=options.select!==false;
+  const requested=[...new Set((members||[]).map(rootGroupFor).filter(Boolean))],roots=requested.filter(isGroupableActor);
+  if(roots.length<2){if(record)toast(requested.some(a=>!isGroupableActor(a))?'Need 2 static/editor objects · gameplay/physics actors stay independent':'Select at least two objects to group');return null;}
+  if(record&&roots.length!==requested.length)toast((requested.length-roots.length)+' dynamic actor(s) skipped');
+  if(record)beginTransaction('Group '+roots.length+' objects');
+  const center=new THREE.Vector3();
+  for(const a of roots){const p=new THREE.Vector3();a.getWorldPosition(p);center.add(p);}
+  center.multiplyScalar(1/roots.length);
+  const g=makeGroupActor(name,roots.every(a=>a.userData.baked));
+  g.position.copy(center);g.userData.folder=options.folder||'World/Groups';g.userData.role=options.role||'';g.userData.tags=[...(g.userData.tags||[]),...(options.tags||[])];
+  for(const a of roots){g.attach(a);a.userData.groupParentId=g.userData.id;}
+  g.userData.groupChildIds=roots.map(a=>a.userData.id);
+  if(select){multiSelected=[g];selectActor(g);}
+  if(record){commitTransaction('Grouped '+roots.length+' objects');toast(roots.length+' objects grouped');}
+  else rebuildHierarchy();
+  return g;
+}
+function ungroupActor(g,options={}){
+  g=rootGroupFor(g);if(!g||g.userData.actorType!=='group'){if(options.record!==false)toast('Select a group to ungroup');return [];}
+  const record=options.record!==false;if(record)beginTransaction('Ungroup '+g.name);
+  const children=groupChildren(g);
+  for(const c of children){scene.attach(c);c.userData.groupParentId=null;}
+  g.parent?.remove(g);const i=actors.indexOf(g);if(i>=0)actors.splice(i,1);
+  multiSelected=[...children];selected=children[0]||null;
+  if(record){commitTransaction('Ungrouped '+g.name);toast('Ungrouped '+g.name);}
+  selectActor(selected,{preserveMulti:true});rebuildHierarchy();return children;
+}
+function restoreActorGroups(){
+  const byId=new Map(actors.map(a=>[a.userData.id,a]));
+  for(const g of actors.filter(a=>a.userData.actorType==='group')){
+    for(const id of g.userData.groupChildIds||[]){
+      const child=byId.get(id);if(!child||child===g)continue;
+      g.add(child);child.userData.groupParentId=g.userData.id;
+    }
+  }
+}
+function removeActorRecursive(a){
+  if(!a)return;
+  if(a.userData.actorType==='group')for(const c of [...groupChildren(a)])removeActorRecursive(c);
+  a.parent?.remove(a);const i=actors.indexOf(a);if(i>=0)actors.splice(i,1);
+}
+function groupSelection(){
+  const list=multiSelected.length>1?multiSelected:(selected?[selected]:[]);
+  return groupActors(list,'Group '+Math.max(1,actors.filter(a=>a.userData.actorType==='group').length+1));
+}
+function setMultiSelectMode(on){
+  multiSelectMode=on===undefined?!multiSelectMode:!!on;
+  $('multiSelectBtn')?.classList.toggle('active',multiSelectMode);$('outlinerMultiBtn')?.classList.toggle('active',multiSelectMode);
+  toast('Multi-select '+(multiSelectMode?'ON':'OFF'));
+}
+function worldPos(a,target=new THREE.Vector3()){return a.getWorldPosition(target);}
+function worldColliderRadius(a){
+  const ws=new THREE.Vector3();a.getWorldScale(ws);return (a.userData.colliderRadius||0.8)*Math.max(Math.abs(ws.x),Math.abs(ws.z));
+}
+function setRuntimeShellVisibility(runtime){
+  for(const a of actors.filter(x=>(x.userData.tags||[]).includes('runtime-shell')))a.visible=!!runtime;
+}
+function makeTree(pos, scale=[1,1,1], baked=true, name='Tree'){
+  const g = new THREE.Group();
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.22,1.2,6), mat(COLORS.trunk));
+  trunk.position.y = 0.7;
+  trunk.castShadow = true;
+  g.add(trunk);
+  for(const p of [[0,1.55,0],[0.35,1.3,0.2],[-0.3,1.25,-0.2]]){
+    const c = new THREE.Mesh(new THREE.SphereGeometry(0.6,10,8), mat(COLORS.leaf));
+    c.position.set(...p); c.scale.y = 0.8; c.castShadow = true; g.add(c);
+  }
+  g.position.set(pos[0], terrainHeight(pos[0], pos[2]), pos[2]);
+  g.scale.fromArray(scale);
+  return markActor(g,'tree',{name,baked, colliderRadius:0.65});
+}
+function makeBush(pos, scale=[1,1,1], baked=true, name='Bush'){
+  const g = new THREE.Group();
+  for(let i=0;i<5;i++){
+    const c = new THREE.Mesh(new THREE.SphereGeometry(0.52 + Math.random()*0.18,10,8), mat(COLORS.bush));
+    c.position.set((Math.random()-0.5)*0.95, 0.3+Math.random()*0.16, (Math.random()-0.5)*0.9);
+    c.scale.y = 0.7; c.castShadow = true; g.add(c);
+  }
+  g.position.set(pos[0], terrainHeight(pos[0], pos[2]), pos[2]);
+  g.scale.fromArray(scale);
+  return markActor(g,'bush',{name,baked, colliderRadius:0.8});
+}
+function makeRock(pos, scale=[1,1,1], baked=true, name='Rock'){
+  const m = new THREE.Mesh(new THREE.DodecahedronGeometry(0.7), mat(COLORS.stone));
+  m.position.set(pos[0], terrainHeight(pos[0], pos[2])+0.45, pos[2]);
+  m.scale.fromArray(scale);
+  m.castShadow = m.receiveShadow = true;
+  return markActor(m,'rock',{name,baked, colliderRadius:0.7*Math.max(scale[0],scale[2])});
+}
+function makeWall(pos, scale=[2,1,1], baked=true, name='Wall'){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), mat(COLORS.wall));
+  m.position.set(pos[0], terrainHeight(pos[0], pos[2])+0.55*scale[1], pos[2]);
+  m.scale.fromArray(scale);
+  m.castShadow = m.receiveShadow = true;
+  return markActor(m,'wall',{name,baked, colliderRadius:0.6*Math.max(scale[0], scale[2])});
+}
+function makeCamp(pos, baked=true, name='Camp'){
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.DodecahedronGeometry(0.7), mat('#9e724c'));
+  body.position.y = 0.72; body.castShadow = true; g.add(body);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.0,0.08,8,28), mat('#c9975c'));
+  ring.rotation.x = Math.PI/2; ring.position.y = 0.1; g.add(ring);
+  g.position.set(pos[0], terrainHeight(pos[0], pos[2]), pos[2]);
+  return markActor(g,'camp',{name,baked,maxHp:650,attackRange:2.3,attackDamage:22,attackCooldown:1.2, colliderRadius:0.85});
+}
+function makeTower(team, pos, baked=true, name='Tower'){
+  const g = new THREE.Group();
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.95, 2.2, 8), mat('#445167'));
+  base.position.y = 1.1; base.castShadow = base.receiveShadow = true; g.add(base);
+  const top = new THREE.Mesh(new THREE.CylinderGeometry(0.62,0.62,0.55,8), mat(teamColor(team)));
+  top.position.y = 2.4; top.castShadow = true; g.add(top);
+  const gem = new THREE.Mesh(new THREE.SphereGeometry(0.18,12,10), mat('#f4f7ff'));
+  gem.position.y = 2.78; g.add(gem);
+  g.position.set(pos[0], terrainHeight(pos[0], pos[2]), pos[2]);
+  return markActor(g,'tower',{name,team,baked,maxHp:900,attackRange:6.4,attackDamage:56,attackCooldown:0.9, colliderRadius:0.9});
+}
+function makeBase(team, pos, baked=true, name='Core'){
+  const g = new THREE.Group();
+  const p = new THREE.Mesh(new THREE.CylinderGeometry(2.45, 2.7, 0.7, 8), mat(COLORS.base));
+  p.position.y = 0.35; p.castShadow = p.receiveShadow = true; g.add(p);
+  const coreMat=mat(teamColor(team)); coreMat.emissive=new THREE.Color(teamColor(team)); coreMat.emissiveIntensity=.3;
+  const core = new THREE.Mesh(new THREE.OctahedronGeometry(1.12), coreMat);
+  core.position.y = 1.7; core.castShadow = true; g.add(core);
+  const aura=new THREE.Mesh(new THREE.TorusGeometry(2.0,.08,10,48),new THREE.MeshBasicMaterial({color:teamColor(team),transparent:true,opacity:.55}));aura.rotation.x=Math.PI/2;aura.position.y=.12;g.add(aura);
+  const glow=new THREE.PointLight(teamColor(team),1.0,8,2);glow.position.y=2;g.add(glow);
+  g.position.set(pos[0], terrainHeight(pos[0], pos[2]), pos[2]);
+  return markActor(g,'base',{name,team,baked,maxHp:2200, colliderRadius:2.1});
+}
+function makeSpawner(team, pos, lane='mid', baked=true, name='Spawner'){
+  const g = new THREE.Group();
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.75,0.13,10,30), mat(teamColor(team)));
+  ring.rotation.x = Math.PI/2; ring.position.y = 0.12; g.add(ring);
+  g.position.set(pos[0], terrainHeight(pos[0], pos[2]), pos[2]);
+  return markActor(g,'spawner',{name,team,baked,lane,maxHp:1, colliderRadius:0.6});
+}
+function makeHero(team, pos, baked=true, name='Player Hero'){
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.45,0.8,6,12), mat(teamColor(team)));
+  body.position.y = 0.85; body.castShadow = true; g.add(body);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.72,0.06,8,26), mat('#f4f7ff'));
+  ring.rotation.x = Math.PI/2; ring.position.y = 0.05; g.add(ring);
+  g.position.set(pos[0], terrainHeight(pos[0], pos[2]), pos[2]);
+  return markActor(g,'hero',{name,team,baked,maxHp:1000,attackRange:2.8,attackDamage:65,attackCooldown:0.55,moveSpeed:6.0, colliderRadius:0.55});
+}
+function makeGroundActor(){
+  const o = new THREE.Object3D();
+  o.position.set(0,0,0);
+  return markActor(o,'ground',{name:'World Ground',baked:true, colliderRadius:0});
+}
+
+
+function glowMat(color,intensity=1){
+  return new THREE.MeshStandardMaterial({color,emissive:new THREE.Color(color),emissiveIntensity:intensity,roughness:.28,metalness:.3,flatShading:true});
+}
+function makeCrystal(pos,color='#9d72ff',baked=true,name='Arcane Crystal',scale=1){
+  const g=new THREE.Group();
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(.62,.82,.35,8),mat('#343040'));base.position.y=.18;base.castShadow=base.receiveShadow=true;g.add(base);
+  const gem=new THREE.Mesh(new THREE.OctahedronGeometry(.72),glowMat(color,1.4));gem.position.y=1.12;gem.castShadow=true;g.add(gem);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.95,.055,8,40),glowMat(color,.9));ring.rotation.x=Math.PI/2;ring.position.y=.78;g.add(ring);
+  g.position.set(pos[0],terrainHeight(pos[0],pos[2]),pos[2]);g.scale.setScalar(scale);
+  const o=markActor(g,'crystal',{name,baked,colliderRadius:.55*scale,folder:'Dragon Den/Crystals',components:['Transform','Scene','StaticMesh','Collider','RotatingMovement'],blueprintClass:'BP_ArcaneCrystal',componentSpeed:.28,visualColor:color,tags:['dragon-den','arcane']});
+  return o;
+}
+function makePortal(pos,color='#6ecbff',baked=true,name='Portal'){
+  const g=new THREE.Group();
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(1.25,1.55,.35,10),mat('#2a3040'));base.position.y=.18;base.castShadow=base.receiveShadow=true;g.add(base);
+  const outer=new THREE.Mesh(new THREE.TorusGeometry(1.55,.16,10,48),glowMat(color,1.05));outer.position.y=1.9;g.add(outer);
+  const inner=new THREE.Mesh(new THREE.TorusGeometry(1.18,.045,8,48),glowMat('#f1dcff',1.2));inner.position.y=1.9;inner.rotation.y=.35;g.add(inner);
+  const core=new THREE.Mesh(new THREE.CircleGeometry(1.12,40),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.12,side:THREE.DoubleSide}));core.position.y=1.9;g.add(core);
+  g.position.set(pos[0],terrainHeight(pos[0],pos[2]),pos[2]);
+  return markActor(g,'portal',{name,baked,colliderRadius:1.2,folder:'Dragon Den/Portals',components:['Transform','Scene','StaticMesh','Collider','RotatingMovement'],blueprintClass:'BP_ArcanePortal',componentSpeed:.12,visualColor:color,tags:['dragon-den','portal']});
+}
+function makePedestal(pos,color='#7555aa',baked=true,name='Pedestal',radius=2.3){
+  const g=new THREE.Group();
+  const low=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius+.35,.35,16),mat('#292534'));low.position.y=.18;low.castShadow=low.receiveShadow=true;g.add(low);
+  const top=new THREE.Mesh(new THREE.CylinderGeometry(radius-.25,radius,.22,16),glowMat(color,.18));top.position.y=.46;top.castShadow=top.receiveShadow=true;g.add(top);
+  const rune=new THREE.Mesh(new THREE.TorusGeometry(radius-.48,.045,8,64),glowMat(color,.9));rune.rotation.x=Math.PI/2;rune.position.y=.59;g.add(rune);
+  g.position.set(pos[0],terrainHeight(pos[0],pos[2]),pos[2]);
+  return markActor(g,'pedestal',{name,baked,colliderRadius:0,folder:'Dragon Den/Architecture',components:['Transform','Scene','StaticMesh'],blueprintClass:'BP_RuneDais',visualColor:color,tags:['dragon-den','architecture']});
+}
+function makeThrone(pos,color='#d49bff',baked=true,name='Kamilion Throne'){
+  const g=new THREE.Group();
+  const seatMat=mat('#32283f');
+  const seat=new THREE.Mesh(new THREE.BoxGeometry(2.2,.55,1.8),seatMat);seat.position.y=.65;seat.castShadow=seat.receiveShadow=true;g.add(seat);
+  const back=new THREE.Mesh(new THREE.BoxGeometry(2.35,3.2,.45),seatMat.clone());back.position.set(0,2.05,.62);back.castShadow=true;g.add(back);
+  const crown=new THREE.Mesh(new THREE.ConeGeometry(1.35,1.4,5),glowMat(color,.45));crown.position.set(0,4.15,.62);crown.rotation.z=Math.PI;g.add(crown);
+  for(const x of [-1.28,1.28]){const arm=new THREE.Mesh(new THREE.CylinderGeometry(.18,.24,1.3,6),glowMat(color,.3));arm.position.set(x,1.3,0);arm.castShadow=true;g.add(arm);}
+  g.position.set(pos[0],terrainHeight(pos[0],pos[2]),pos[2]);
+  return markActor(g,'throne',{name,baked,colliderRadius:1.3,folder:'Dragon Den/Architecture',components:['Transform','Scene','StaticMesh','Collider'],blueprintClass:'BP_DragonThrone',visualColor:color,tags:['dragon-den','throne']});
+}
+
+function makeDenStructure(kind,pos=[0,0,0],baked=true,name='Den Structure',color='#6f5b82'){
+  const g=new THREE.Group();
+  const stone=mat('#2d2a33'),concrete=mat('#4a4851'),wood=mat('#5b3f2f'),cloth=mat('#5b244f'),warm=glowMat('#ffb45f',1.25),arcane=glowMat(color,.7);
+  const box=(w,h,d,m,x=0,y=0,z=0)=>{const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);q.position.set(x,y,z);q.castShadow=q.receiveShadow=true;g.add(q);return q;};
+  if(kind==='ceiling'){
+    const ceiling=new THREE.Mesh(new THREE.PlaneGeometry(40,31),new THREE.MeshStandardMaterial({color:0x24242b,roughness:1,metalness:0,side:THREE.BackSide}));
+    ceiling.rotation.x=-Math.PI/2;ceiling.position.y=10.8;ceiling.receiveShadow=true;g.add(ceiling);
+    for(const x of [-14,-7,0,7,14])box(2.0,.65,30,concrete,x,10.35,0);
+  }else if(kind==='arch'){
+    box(1.2,5.4,1.4,stone,-2.5,2.7,0);box(1.2,5.4,1.4,stone,2.5,2.7,0);box(6.2,1.1,1.5,stone,0,5.15,0);
+    const rune=new THREE.Mesh(new THREE.TorusGeometry(1.25,.08,8,36),arcane);rune.position.set(0,3.2,-.76);g.add(rune);
+  }else if(kind==='perch'){
+    box(7.6,1.0,5.8,stone,0,.5,0);box(6.4,.7,4.6,concrete,0,1.28,0);
+    for(const x of [-2.6,2.6]){const r=new THREE.Mesh(new THREE.DodecahedronGeometry(1.35),stone.clone());r.position.set(x,2.15,.6);r.scale.set(1.5,1.15,1.3);r.castShadow=true;g.add(r);}
+  }else if(kind==='throneTerrace'){
+    box(8.2,.65,6.5,stone,0,.33,0);box(6.8,.55,5.2,concrete,0,.92,0);box(5.2,.5,3.9,stone,0,1.44,0);
+    for(const x of [-3.2,3.2]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.28,.38,3.2,7),arcane.clone());c.position.set(x,2.25,1.6);g.add(c);}
+  }else if(kind==='wakeNook'){
+    box(9,.32,6.4,stone,0,.16,0);box(6.3,.12,4.5,cloth,0,.38,.25);box(3.9,.42,2.2,wood,-1.2,.68,.55);box(3.45,.22,1.85,mat('#82706e'),-1.2,1.0,.55);
+    box(1.0,1.1,1.0,wood,3.15,.72,.9);box(1.35,.9,1.05,wood,2.85,.58,-1.1);
+    for(const x of [-3.7,3.7]){const orb=new THREE.Mesh(new THREE.SphereGeometry(.16,8,6),warm.clone());orb.position.set(x,1.25,-1.8);g.add(orb);const l=new THREE.PointLight(0xffad5f,.8,8,2);l.position.copy(orb.position);g.add(l);}
+  }else if(kind==='creatorAlcove'){
+    box(8,.35,6,stone,0,.18,0);box(5.4,.25,1.55,wood,0,1.15,-1.45);box(.25,1.15,1.4,wood,-2.1,.62,-1.45);box(.25,1.15,1.4,wood,2.1,.62,-1.45);
+    for(const x of [-1.55,0,1.55]){const screen=box(1.25,.8,.08,glowMat(x===0?'#68d9ff':'#a875ff',.75),x,2.05,-1.78);screen.rotation.x=-.08;}
+    const lamp=new THREE.PointLight(0x66cfff,.75,8,2);lamp.position.set(0,2.5,-.6);g.add(lamp);
+    box(5.2,.08,3.7,mat('#4a244c'),0,.39,.6);
+  }else if(kind==='slab'){
+    box(1,1,1,stone,0,.5,0);
+  }else if(kind==='floorPlate'){
+    box(1,.18,1,stone,0,.09,0);const inset=box(.86,.025,.86,arcane,0,.195,0);
+  }else if(kind==='pillar'){
+    const p=new THREE.Mesh(new THREE.CylinderGeometry(.62,.82,1,8),stone);p.position.y=.5;p.castShadow=p.receiveShadow=true;g.add(p);
+  }else if(kind==='walkway'){
+    box(7.5,.25,2.5,concrete,0,.12,0);const stripe=box(6.8,.035,.16,arcane,0,.27,0);
+  }else if(kind==='lantern'){
+    const post=new THREE.Mesh(new THREE.CylinderGeometry(.09,.14,1.5,7),stone);post.position.y=.75;g.add(post);
+    const orb=new THREE.Mesh(new THREE.SphereGeometry(.18,10,8),warm);orb.position.y=1.6;g.add(orb);const l=new THREE.PointLight(0xffa95b,.9,7,2);l.position.y=1.6;g.add(l);
+  }
+  g.position.set(pos[0],terrainHeight(pos[0],pos[2]),pos[2]);
+  const collider=kind==='perch'?3.2:kind==='throneTerrace'?3.0:kind==='arch'?2.0:0;
+  return markActor(g,'denStructure',{name,baked,colliderRadius:collider,folder:"Dragon Den/Architecture",components:['Transform','Scene','StaticMesh'].concat(collider?['Collider']:[]),blueprintClass:'DEN_'+kind,visualColor:color,tags:['dragon-den','architecture',kind]});
+}
+function makeDragon(pos,color='#9b6cff',baked=true,name='Dragon Avatar',scale=1){
+  const g=new THREE.Group(),skin=mat(color),dark=mat('#211929'),glow=glowMat(color,.9);
+  const body=new THREE.Mesh(new THREE.CapsuleGeometry(.72,2.35,7,12),skin);body.position.set(0,2.25,.35);body.rotation.x=-.22;body.castShadow=true;g.add(body);
+  const chest=new THREE.Mesh(new THREE.SphereGeometry(.86,12,9),dark);chest.position.set(0,2.25,-.4);chest.scale.set(1,1.1,.8);g.add(chest);
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(.34,.58,2.25,9),skin.clone());neck.position.set(0,3.65,-.72);neck.rotation.x=-.34;neck.castShadow=true;g.add(neck);
+  const head=new THREE.Mesh(new THREE.DodecahedronGeometry(.7),skin.clone());head.position.set(0,4.62,-1.25);head.scale.set(1.05,.82,1.28);head.castShadow=true;g.add(head);
+  const snout=new THREE.Mesh(new THREE.BoxGeometry(.72,.38,1.0),dark.clone());snout.position.set(0,4.42,-2.0);snout.rotation.x=-.08;g.add(snout);
+  const jaw=new THREE.Mesh(new THREE.BoxGeometry(.62,.16,.82),dark.clone());jaw.position.set(0,4.18,-1.94);jaw.rotation.x=.10;g.add(jaw);
+  const wingShape=new THREE.Shape();wingShape.moveTo(0,0);wingShape.lineTo(2.1,1.75);wingShape.lineTo(4.15,1.15);wingShape.lineTo(3.15,.1);wingShape.lineTo(4.4,-1.15);wingShape.lineTo(1.7,-.72);wingShape.lineTo(0,0);
+  const wingGeo=new THREE.ShapeGeometry(wingShape),wingMat=new THREE.MeshStandardMaterial({color:new THREE.Color(color),roughness:.72,metalness:.05,side:THREE.DoubleSide,flatShading:true});
+  for(const side of [-1,1]){const w=new THREE.Mesh(wingGeo,wingMat.clone());w.position.set(side*.62,3.2,.15);w.scale.x=side;w.rotation.set(-.12,side*.22,side*.10);w.castShadow=true;g.add(w);const bone=new THREE.Mesh(new THREE.CylinderGeometry(.07,.11,4.0,6),dark.clone());bone.position.set(side*1.72,3.5,.18);bone.rotation.z=side*1.05;g.add(bone);}
+  for(const side of [-1,1])for(const front of [-.6,.75]){const leg=new THREE.Mesh(new THREE.CylinderGeometry(.18,.25,1.45,7),skin.clone());leg.position.set(side*.62,1.15,front);leg.rotation.z=side*.16;leg.castShadow=true;g.add(leg);const foot=new THREE.Mesh(new THREE.BoxGeometry(.42,.2,.72),dark.clone());foot.position.set(side*.66,.38,front-.24);g.add(foot);}
+  const tail1=new THREE.Mesh(new THREE.ConeGeometry(.43,3.7,8),skin.clone());tail1.position.set(0,1.95,2.45);tail1.rotation.x=Math.PI/2;g.add(tail1);
+  const tail2=new THREE.Mesh(new THREE.ConeGeometry(.22,2.7,7),dark.clone());tail2.position.set(.35,1.45,4.95);tail2.rotation.set(Math.PI/2,0,-.18);g.add(tail2);
+  for(let i=0;i<5;i++){const spine=new THREE.Mesh(new THREE.ConeGeometry(.14,.72,5),glow.clone());spine.position.set(0,4.7-i*.55,-.45+i*.55);spine.rotation.x=.18;g.add(spine);}
+  for(const x of [-.34,.34]){const horn=new THREE.Mesh(new THREE.ConeGeometry(.15,1.05,6),glow.clone());horn.position.set(x,5.28,-1.05);horn.rotation.x=-.32;horn.rotation.z=x<0?-.18:.18;g.add(horn);const eye=new THREE.Mesh(new THREE.SphereGeometry(.09,8,6),glow.clone());eye.position.set(x*.68,4.7,-1.9);g.add(eye);}
+  g.position.set(pos[0],terrainHeight(pos[0],pos[2]),pos[2]);g.scale.setScalar(scale);
+  return markActor(g,'dragon',{name,baked,colliderRadius:1.25*scale,folder:'Dragon Den/Dragons',components:['Transform','Scene','StaticMesh','Collider','BobMovement','AgentAvatar'],blueprintClass:'BP_DragonAvatar',componentSpeed:.55,bobAmplitude:.035,visualColor:color,role:'lalm-agent-avatar',tags:['dragon-den','agent-avatar','voice-anchor-hook']});
+}
+
+function addPath(name, points){
+  paths[name] = points.map(p=>new THREE.Vector3(...p));
+}
+function addLaneHelpers(points){
+  for(let i=0;i<points.length-1;i++){
+    const a = new THREE.Vector3(...points[i]), b = new THREE.Vector3(...points[i+1]);
+    const mid = a.clone().add(b).multiplyScalar(0.5);
+    const len = a.distanceTo(b);
+    const y = terrainHeight(mid.x, mid.z) + 0.06;
+    const m = new THREE.Mesh(new THREE.BoxGeometry(3.0,0.08,len), mat(COLORS.dirt));
+    m.position.set(mid.x, y, mid.z);
+    m.lookAt(b.x, y, b.z);
+    m.receiveShadow = true;
+    m.userData.helper = true;
+    helperGroup.add(m);
+  }
+}
+function buildSceneryExtras(){
+  clearGroup(waterGroup);
+  const water = new THREE.Mesh(new THREE.BoxGeometry(4.8,0.08,30), new THREE.MeshStandardMaterial({color:COLORS.river, transparent:true, opacity:0.78, roughness:0.25, metalness:0.05}));
+  water.position.set(0, terrainHeight(0,0)-0.42, 0);
+  water.rotation.y = Math.atan2(1,0.55);
+  waterGroup.add(water);
+
+  const cliffMat = mat('#3c4858');
+  for(const p of [[-18,-13],[18,13],[-18,13],[18,-13],[0,-15],[0,15],[-18,0],[18,0],[-10,-15],[10,15],[-10,15],[10,-15]]){
+    const c = new THREE.Mesh(new THREE.DodecahedronGeometry(1.65+(Math.abs(p[0])%3)*.15), cliffMat.clone());
+    c.position.set(p[0], terrainHeight(p[0], p[1])+1.0, p[1]); c.scale.y=1.25;c.castShadow = true; waterGroup.add(c);
+  }
+  const bridgeMat=mat('#7d7264');
+  for(const z of [-6,0,6]){const b=new THREE.Mesh(new THREE.BoxGeometry(4.6,.22,2.7),bridgeMat.clone());b.position.set(0,terrainHeight(0,z)+.18,z);b.rotation.y=Math.atan2(1,.55);b.castShadow=b.receiveShadow=true;waterGroup.add(b);}
+}
+function clearAll(){
+  transform.detach(); selected=null;
+  if(selectionBox){scene.remove(selectionBox);selectionBox.geometry?.dispose?.();selectionBox.material?.dispose?.();selectionBox=null;}
+  for(const a of [...actors]) scene.remove(a);
+  actors.length = 0;
+  while(liveUnits.length) scene.remove(liveUnits.pop());
+  Object.keys(paths).forEach(k=>delete paths[k]);
+  clearGroup(helperGroup); clearGroup(debugGroup); clearGroup(waterGroup);
+  heroClickTarget = null;
+}
+
+function applyProjectMeta(meta={}){
+  currentProject={
+    name:meta.name||'Untitled Project',
+    template:meta.template||'custom',
+    kind:meta.kind||'sandbox',
+    environment:meta.environment||'starter'
+  };
+  const nameEl=$('currentProjectName');if(nameEl)nameEl.textContent=currentProject.name;
+  const status=$('projectStatus');if(status)status.textContent=currentProject.name;
+  const moba=$('mobaSettings');if(moba)moba.classList.toggle('hidden-project-setting',currentProject.kind!=='moba');
+  document.body.dataset.projectKind=currentProject.kind;
+}
+function setProjectBackground(hex){
+  scene.background.set(hex);scene.fog.color.set(hex);$('bgColor').value=hex;
+}
+function finishTemplate(selectType='hero'){
+  rebuildHierarchy();refreshDebug();selectActor(actors.find(a=>a.userData.actorType===selectType)||actors.find(a=>a.userData.actorType==='hero')||null);refreshAssetList();
+}
+function buildDefaultProject(){
+  clearAll();applyProjectMeta({name:'Starter World',template:'default',kind:'sandbox',environment:'starter'});setProjectBackground('#0d1722');rebuildTerrain();makeGroundActor();buildSceneryExtras();
+  makeHero('blue',[0,0,7],true,'Player Pawn').userData.folder='Gameplay';
+  makeTree([-9,0,-8],[1.2,1.35,1.2],true,'Starter Tree A');makeTree([10,0,8],[1.25,1.35,1.25],true,'Starter Tree B');
+  makeBush([-5,0,4],[1.6,1,1.2],true,'Starter Bush');makeRock([6,0,-5],[1.3,1.1,1.2],true,'Starter Rock');
+  const p=makeRock([-2,0,2],[.85,.85,.85],true,'Physics Prop');addComponent(p,'PhysicsBody');p.userData.folder='Examples/Physics';
+  const j=makeWall([4,0,4],[1.6,.22,1.6],true,'BP_JumpPad');j.userData.blueprintClass='BP_JumpPad';j.userData.folder='Examples/Blueprints';addComponent(j,'LaunchPad');
+  finishTemplate('hero');toast('Created Starter World project.');
+}
+function buildDragonsDenProject(){
+  clearAll();applyProjectMeta({name:"Dragon's Den — Seed Chamber",template:'dragons-den',kind:'dragons-den',environment:'dragon-den'});setProjectBackground('#030208');scene.fog.near=16;scene.fog.far=62;renderer.toneMappingExposure=1.08;rebuildTerrain();makeGroundActor();clearGroup(waterGroup);
+
+  const floorParts=[];
+  for(const cfg of [
+    [0,0.03,1.0,16,1,12,0,'Council Floor'],
+    [0,0.02,11.3,9,1,7,0,'Wake Floor'],
+    [-11.2,0.05,5.5,8,1,8,-.12,'Creator Floor'],
+    [10.4,0.08,-6.5,9,1,8,.10,'Throne Floor'],
+    [11.4,0.12,3.8,7,1,6,-.18,'Perch Floor'],
+    [-9.8,0.04,-8.4,7,1,6,.15,'Portal Floor'],
+    [0,0.04,-10.2,7,1,5,0,'Memory Floor']
+  ]){
+    const p=makeDenStructure('floorPlate',[cfg[0],0,cfg[2]],true,cfg[7],'#5e477d');p.position.y=cfg[1];p.scale.set(cfg[3],.7,cfg[5]);p.rotation.y=cfg[6];p.userData.colliderRadius=0;floorParts.push(p);
+  }
+  const floorGroup=groupActors(floorParts,'Seed Chamber Stone Floor',{record:false,select:false,folder:'Dragon Den/Main Chamber',role:'den-floor',tags:['dragon-den','architecture']});
+
+  const shellParts=[];
+  const wallPoints=[
+    [-20,-14],[-15.5,-16],[-10.5,-16.5],[-5,-16.4],[5,-16.4],[10.5,-16.5],[15.5,-16],[20,-14],
+    [21,-9],[21,-4],[21,2],[21,8],[19,13],[15,16],[10,17],[5,17],[-5,17],[-10,17],[-15,16],[-19,13],
+    [-21,8],[-21,2],[-21,-4],[-21,-9]
+  ];
+  wallPoints.forEach((p,i)=>{const rock=makeRock([p[0],0,p[1]],[2.8+(i%3)*.32,5.8+(i%4)*.65,2.6+(i%2)*.38],true,'Cavern Wall '+String(i+1));rock.userData.folder='Dragon Den/Cavern Shell';rock.userData.tags=['dragon-den','cavern-shell'];shellParts.push(rock);});
+  const shell=groupActors(shellParts,'Cavern Shell',{record:false,select:false,folder:'Dragon Den/Cavern Shell',role:'cavern-shell',tags:['dragon-den','cavern-shell']});
+
+  // Roof is built from many editable pieces, then grouped into one selectable object.
+  const roofParts=[];
+  for(const side of [-1,1])for(const z of [-10,-3,4,11]){
+    const slab=makeDenStructure('slab',[side*10.5,0,z],true,'Vault Slab','#34303c');
+    slab.position.y=11.8;slab.scale.set(11.5,.55,4.1);slab.rotation.z=side*-.36;slab.userData.colliderRadius=0;roofParts.push(slab);
+  }
+  for(const z of [-12,-5,2,9]){
+    const rib=makeDenStructure('slab',[0,0,z],true,'Vault Rib','#514b59');rib.position.y=12.7;rib.scale.set(1.0,.7,5.1);rib.rotation.y=Math.PI/2;rib.userData.colliderRadius=0;roofParts.push(rib);
+  }
+  const roof=groupActors(roofParts,'Vaulted Cavern Roof',{record:false,select:false,folder:'Dragon Den/Cavern Shell',role:'den-roof',tags:['dragon-den','runtime-shell']});roof.visible=false;
+
+  // Structural pillars imply a huge chamber without filling the room with blockers.
+  const pillarParts=[];
+  for(const p of [[-15,-9],[15,-9],[-16,8],[16,8]]){const q=makeDenStructure('pillar',[p[0],0,p[1]],true,'Cavern Pillar','#403948');q.scale.set(2.1,8.5,2.1);q.userData.colliderRadius=1.2;pillarParts.push(q);}
+  groupActors(pillarParts,'Cavern Pillars',{record:false,select:false,folder:'Dragon Den/Cavern Shell',role:'den-pillars',tags:['dragon-den','architecture']});
+
+  const wake=makeDenStructure('wakeNook',[0,0,13.0],true,'Wake Nook','#ff9d66');wake.userData.role='wake-nook';
+  const visitor=makeHero('blue',[0,0,9.1],true,'Visitor / Creator');visitor.userData.folder='Dragon Den/Visitors';visitor.userData.role='human-presence';visitor.rotation.y=Math.PI;
+
+  const dais=makePedestal([0,0,.6],'#9d72ff',true,'Council Rune Dais',5.3);dais.userData.role='council-center';dais.userData.folder='Dragon Den/Main Chamber';
+  const memory=makeCrystal([0,0,.6],'#d49bff',true,'Memory Crystal',1.75);memory.userData.role='memory-anchor';memory.userData.tags.push('memory-hook','council-center');
+
+  const creator=makeDenStructure('creatorAlcove',[-11.0,0,5.8],true,'Creator Alcove','#61cfff');creator.rotation.y=.12;creator.userData.role='creator-workspace';
+  const forgeCore=makeCrystal([-11.0,0,2.8],'#56d7ff',true,'Forge Workspace Core',.95);forgeCore.userData.role='world-builder-interface';
+
+  const terrace=makeDenStructure('throneTerrace',[9.5,0,-7.0],true,'Throne Terrace','#d49bff');terrace.rotation.y=-.14;terrace.userData.role='throne-side';
+  const throne=makeThrone([9.5,0,-7.8],'#d49bff',true,'Kamilion Throne');throne.position.y+=1.75;throne.rotation.y=Math.PI;throne.userData.role='human-author-seat';throne.userData.folder='Dragon Den/Throne Side';
+
+  const perch=makeDenStructure('perch',[11.2,0,3.5],true,'Primary Dragon Perch','#9e70ff');perch.rotation.y=-.35;perch.userData.role='dragon-perch';
+  const sw=makeDragon([11.0,0,3.1],'#9e70ff',true,'§wyrl§ Dragon',2.15);sw.position.y+=2.25;sw.rotation.y=-1.58;sw.userData.role='primary-lalm-avatar';
+  const forge=makeDragon([-14.0,0,-3.0],'#56d7ff',true,'Forge Dragon',1.45);forge.position.y+=1.0;forge.rotation.y=1.25;forge.userData.role='world-builder-agent';
+  const coder=makeDragon([-10.9,0,6.0],'#ff8b55',true,'Coder Dragon',1.15);coder.position.y+=.55;coder.rotation.y=.42;coder.userData.role='coding-reasoner-agent';
+
+  const portalHall=makeDenStructure('arch',[-10.6,0,-10.0],true,'Portal Hall Exit','#a86cff');portalHall.rotation.y=.35;portalHall.userData.role='portal-hall-exit';portalHall.userData.tags.push('dormant-exit');
+  const memoryExit=makeDenStructure('arch',[0,0,-13.1],true,'Memory Vault Exit','#6fb7ff');memoryExit.userData.role='memory-vault-exit';memoryExit.userData.tags.push('dormant-exit');
+  const inferenceExit=makeDenStructure('arch',[14.0,0,9.1],true,'Inference Core Exit','#59f0c0');inferenceExit.rotation.y=-.72;inferenceExit.userData.role='inference-core-exit';inferenceExit.userData.tags.push('dormant-exit');
+
+  const voice=makeCrystal([-5.0,0,-5.3],'#ff75cf',true,'Spatial Voice Anchor',.75);voice.userData.role='spatial-voice-hook';
+  const inference=makeCrystal([7.2,0,7.0],'#65f6c1',true,'Inference Core',.95);inference.userData.role='lalm-inference-hook';
+
+  const lamps=[];
+  for(const p of [[-5,9],[5,9],[-6,3],[6,3],[-8,-6],[5,-7],[-14,1],[14,1]]){const l=makeDenStructure('lantern',[p[0],0,p[1]],true,'Den Lantern','#ffb45f');l.userData.folder='Dragon Den/Lighting';lamps.push(l);}
+  groupActors(lamps,'Den Lanterns',{record:false,select:false,folder:'Dragon Den/Lighting',role:'den-lighting',tags:['dragon-den','lighting']});
+
+  const crystals=[];
+  for(const cfg of [[-16,5,'#5ccfff'],[16,4,'#b36cff'],[-14,-9,'#ff5fc9'],[14,-10,'#62ffc6'],[-4,-12,'#6fb7ff'],[5,13,'#d49bff']]){const c=makeCrystal([cfg[0],0,cfg[1]],cfg[2],true,'Cavern Crystal',.72);c.userData.folder='Dragon Den/Crystals';crystals.push(c);}
+  groupActors(crystals,'Cavern Rune Crystals',{record:false,select:false,folder:'Dragon Den/Crystals',role:'den-runes',tags:['dragon-den','crystals']});
+
+  finishTemplate('hero');setRuntimeShellVisibility(false);
+  orbit.target.set(0,2,1);perspectiveCamera.position.set(20,13,26);orbit.update();
+  toast("Dragon's Den v5.3 · grouped architecture + immersive cavern");
+}
+function inferProjectMeta(p){
+  const a=p?.scene?.actors||[];
+  if(a.some(x=>x.type==='dragon'))return {name:"Dragon's Den Project",template:'custom',kind:'dragons-den',environment:'dragon-den'};
+  if((p?.scene?.paths&&Object.keys(p.scene.paths).length)||a.some(x=>x.type==='base'||x.type==='tower'))return {name:'MOBA Project',template:'custom',kind:'moba',environment:'moba'};
+  return {name:'Imported Forge Project',template:'custom',kind:'sandbox',environment:'starter'};
+}
+function createProjectFromTemplate(template,force=false){
+  if(dirty&&!force&&!confirm('Create a new project and discard unsaved scene changes?'))return;
+  if(template==='moba')buildMobaProject();else if(template==='dragons-den')buildDragonsDenProject();else buildDefaultProject();
+  initializeHistory('Created '+currentProject.name);markSaved();$('projectHub').classList.remove('show');editorLog('Created project template: '+currentProject.name,'ok');
+}
+function resetCurrentProject(){
+  const t=currentProject.template==='custom'?(currentProject.kind==='moba'?'moba':currentProject.kind==='dragons-den'?'dragons-den':'default'):currentProject.template;
+  if(!confirm('Reset '+currentProject.name+' to its template?'))return;
+  createProjectFromTemplate(t,true);
+}
+function showProjectHub(){ $('projectHub').classList.add('show'); }
+function safeProjectName(){return (currentProject.name||'swyrl-engine-project').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'swyrl-engine-project';}
+
+function buildMobaProject(){
+  clearAll();applyProjectMeta({name:'MOBA Arena Example',template:'moba',kind:'moba',environment:'moba'});setProjectBackground('#0a1420');
+  rebuildTerrain();
+  makeGroundActor();
+  addPath('top', [[-15,0,-10],[-10,0,-10],[-4,0,-9],[0,0,-6],[4,0,-9],[10,0,-10],[15,0,-10]]);
+  addPath('mid', [[-15,0,0],[-9,0,0],[-4,0,0],[0,0,0],[4,0,0],[9,0,0],[15,0,0]]);
+  addPath('bot', [[-15,0,10],[-10,0,10],[-4,0,9],[0,0,6],[4,0,9],[10,0,10],[15,0,10]]);
+  addLaneHelpers(paths.top.map(v=>v.toArray()));
+  addLaneHelpers(paths.mid.map(v=>v.toArray()));
+  addLaneHelpers(paths.bot.map(v=>v.toArray()));
+  buildSceneryExtras();
+
+  makeBase('blue', [-16,0,0], true, 'Blue Nexus');
+  makeBase('red', [16,0,0], true, 'Red Nexus');
+
+  for(const lane of ['top','mid','bot']){
+    const z = lane==='top' ? -10 : lane==='bot' ? 10 : 0;
+    makeSpawner('blue', [-14.2,0,z], lane, true, 'Blue '+lane+' Spawn');
+    makeSpawner('red', [14.2,0,z], lane, true, 'Red '+lane+' Spawn');
+  }
+
+  makeTower('blue', [-10,0,-10], true, 'Blue Top Tower');
+  makeTower('red', [10,0,-10], true, 'Red Top Tower');
+  makeTower('blue', [-9,0,0], true, 'Blue Mid Tower');
+  makeTower('red', [9,0,0], true, 'Red Mid Tower');
+  makeTower('blue', [-10,0,10], true, 'Blue Bot Tower');
+  makeTower('red', [10,0,10], true, 'Red Bot Tower');
+
+  makeCamp([-5,0,-5], true, 'Blue Wolf Camp');
+  makeCamp([-5,0,5], true, 'Blue Golem Camp');
+  makeCamp([5,0,-5], true, 'Red Wolf Camp');
+  makeCamp([5,0,5], true, 'Red Golem Camp');
+  makeCamp([0,0,-12], true, 'Top River Boss');
+  makeCamp([0,0,12], true, 'Bottom River Boss');
+
+  makeBush([-3,0,-3],[1.5,1,1], true, 'Mid Bush A');
+  makeBush([3,0,3],[1.5,1,1], true, 'Mid Bush B');
+  makeBush([-6,0,-8],[1.9,1.1,1.2], true, 'Top Blue Bush');
+  makeBush([6,0,-8],[1.9,1.1,1.2], true, 'Top Red Bush');
+  makeBush([-6,0,8],[1.9,1.1,1.2], true, 'Bot Blue Bush');
+  makeBush([6,0,8],[1.9,1.1,1.2], true, 'Bot Red Bush');
+
+  makeTree([-12,0,-6],[1.3,1.3,1.3], true, 'Blue Grove Tree');
+  makeTree([12,0,6],[1.3,1.3,1.3], true, 'Red Grove Tree');
+  makeTree([-11,0,7],[1.1,1.1,1.1], true, 'Bot Tree');
+  makeTree([11,0,-7],[1.1,1.1,1.1], true, 'Top Tree');
+  makeTree([-15,0,-13],[1.15,1.3,1.15],true,'Northwest Tree');makeTree([-15,0,13],[1.2,1.35,1.2],true,'Southwest Tree');makeTree([15,0,-13],[1.2,1.35,1.2],true,'Northeast Tree');makeTree([15,0,13],[1.15,1.3,1.15],true,'Southeast Tree');
+
+  const northWall=makeWall([-12.0,0,-5.5],[2.35,0.9,0.55], true, 'North Jungle Wall'); northWall.rotation.y=0.42;
+  const southWall=makeWall([12.0,0,5.5],[2.35,0.9,0.55], true, 'South Jungle Wall'); southWall.rotation.y=0.42;
+  makeRock([-8,0,-5],[1.4,1.2,1.5], true, 'Blue Rock');
+  makeRock([8,0,5],[1.4,1.2,1.5], true, 'Red Rock');
+  makeRock([-1,0,11],[1.1,1.0,1.2], true, 'Bottom Cliff Rock');
+  makeRock([1,0,-11],[1.1,1.0,1.2], true, 'Top Cliff Rock');
+
+  makeHero('blue', [-12,0,2], true, 'Player Hero');
+  // Blueprint/physics examples remain available in the Content Drawer instead of cluttering the gameplay map.
+
+  rebuildHierarchy();
+  selectActor(actors.find(a=>a.userData.actorType==='hero'));
+  refreshDebug();
+  toast('Created MOBA Arena example project.');
+}
+function createPrefab(type){
+  let o = null;
+  if(type==='tower') o = makeTower('blue',[0,0,0], false, 'Ghost Tower');
+  if(type==='base') o = makeBase('blue',[0,0,0], false, 'Ghost Core');
+  if(type==='spawner') o = makeSpawner('blue',[0,0,0], 'mid', false, 'Ghost Spawn');
+  if(type==='camp') o = makeCamp([0,0,0], false, 'Ghost Camp');
+  if(type==='bush') o = makeBush([0,0,0],[1,1,1], false, 'Ghost Bush');
+  if(type==='wall') o = makeWall([0,0,0],[2,1,1], false, 'Ghost Wall');
+  if(type==='rock') o = makeRock([0,0,0],[1,1,1], false, 'Ghost Rock');
+  if(type==='hero') o = makeHero('blue',[0,0,0], false, 'Ghost Hero');
+  if(type==='physicsRock'){ o = makeRock([0,0,0],[1,1,1],false,'Physics Rock'); addComponent(o,'PhysicsBody'); o.userData.folder='Physics'; }
+  if(type==='jumpPad'){ o = makeWall([0,0,0],[1.7,.25,1.7],false,'BP_JumpPad'); o.userData.blueprintClass='BP_JumpPad'; o.userData.folder='Blueprints'; addComponent(o,'LaunchPad'); }
+  if(type==='rotator'){ o = makeWall([0,0,0],[1.2,.35,1.2],false,'BP_Rotator'); o.userData.blueprintClass='BP_Rotator'; o.userData.folder='Blueprints'; addComponent(o,'RotatingMovement'); }
+  if(type==='crystal') o = makeCrystal([0,0,0],'#9d72ff',false,'Ghost Arcane Crystal',1);
+  if(type==='portal') o = makePortal([0,0,0],'#6ecbff',false,'Ghost Portal');
+  if(type==='dragon') o = makeDragon([0,0,0],'#9e70ff',false,'Ghost Dragon',1);
+  if(type==='throne') o = makeThrone([0,0,0],'#d49bff',false,'Ghost Throne');
+  if(type==='pedestal') o = makePedestal([0,0,0],'#a76dff',false,'Ghost Pedestal',2.3);
+  if(type==='denArch') o = makeDenStructure('arch',[0,0,0],false,'Ghost Den Arch','#9d72ff');
+  if(type==='denPerch') o = makeDenStructure('perch',[0,0,0],false,'Ghost Dragon Perch','#9d72ff');
+  if(type==='denNook') o = makeDenStructure('wakeNook',[0,0,0],false,'Ghost Wake Nook','#ff9d66');
+  if(type==='denWorkbench') o = makeDenStructure('creatorAlcove',[0,0,0],false,'Ghost Creator Alcove','#61cfff');
+  if(o){
+    o.position.x = 0; o.position.z = 0;
+    placeOnTerrain(o, o.userData.actorType==='wall'?0.55*o.scale.y : o.userData.actorType==='rock'?0.45:0);
+    o.userData.spawnPos = o.position.toArray();
+    rebuildHierarchy(); selectActor(o); toast(type+' added to ghost layer');
+  }
+}
+
+function rebuildHierarchy(){
+  const h=$('hierarchy');h.innerHTML='';const q=($('outlinerSearch')?.value||'').trim().toLowerCase();
+  const roots=actors.filter(a=>!a.userData.groupParentId),folders=new Map();
+  const matches=(a)=>{
+    const self=(a.name+' '+a.userData.actorType+' '+(a.userData.folder||'')).toLowerCase();
+    if(!q||self.includes(q))return true;
+    return a.userData.actorType==='group'&&groupDescendants(a).some(c=>(c.name+' '+c.userData.actorType+' '+(c.userData.folder||'')).toLowerCase().includes(q));
+  };
+  for(const a of roots){if(!matches(a))continue;const folder=a.userData.folder||'World';if(!folders.has(folder))folders.set(folder,[]);folders.get(folder).push(a);}
+  for(const folder of [...folders.keys()].sort()){
+    const list=folders.get(folder);const head=document.createElement('div');head.className='folder-row';head.innerHTML='<span>▾</span><span></span><span class="count"></span>';head.children[1].textContent=folder;head.querySelector('.count').textContent=list.length;h.appendChild(head);
+    for(const a of list){
+      const isMulti=multiSelected.includes(a),parts=a.userData.actorType==='group'?groupDescendants(a).length:0;
+      const row=document.createElement('div');row.className='tree-item'+(a===selected?' selected':'')+(isMulti?' multi-selected':'')+(!a.userData.baked?' ghost':'')+(a.userData.actorType==='group'?' group-root':'');if(parts)row.dataset.parts=parts+' parts';
+      row.innerHTML='<button class="eye-btn" title="Toggle visibility">'+(a.visible===false?'○':'◉')+'</button><span class="tree-icon">'+actorIcon(a.userData.actorType)+'</span><span class="tree-name"></span>';row.querySelector('.tree-name').textContent=a.name;
+      row.querySelector('.eye-btn').onclick=(e)=>{e.stopPropagation();a.visible=a.visible===false?true:false;commitTransaction('Toggle visibility '+a.name);rebuildHierarchy();};
+      row.onclick=(e)=>selectActor(a,{additive:multiSelectMode||e.shiftKey||e.ctrlKey||e.metaKey});h.appendChild(row);
+    }
+  }
+  const rootsCount=roots.length;$('actorCount').textContent=rootsCount+' objects · '+actors.length+' parts';$('ghostCount').textContent=roots.filter(a=>!a.userData.baked).length+' ghosts';
+}
+function selectActor(o,options={}){
+  o=rootGroupFor(o);const additive=!!options.additive;
+  if(options.preserveMulti){selected=o||null;}
+  else if(additive&&o){
+    if(multiSelected.includes(o)){multiSelected=multiSelected.filter(x=>x!==o);if(selected===o)selected=multiSelected.at(-1)||null;}
+    else{multiSelected=[...multiSelected,o];selected=o;}
+  }else{selected=o||null;multiSelected=selected?[selected]:[];}
+  transform.detach();
+  if(selectionBox){scene.remove(selectionBox);selectionBox.geometry?.dispose?.();selectionBox.material?.dispose?.();selectionBox=null;}
+  if(selected&&!playing){transform.attach(selected);if(selected.userData.actorType!=='ground'){selectionBox=new THREE.BoxHelper(selected,0x9a8cff);selectionBox.userData.editorOnly=true;scene.add(selectionBox);}}
+  rebuildHierarchy();
+  if(!selected){$('inspector').classList.add('hidden');$('inspectorEmpty').classList.remove('hidden');$('selectionStatus').textContent='Nothing selected';if(window.innerWidth<=620&&$('mobileDrawer').dataset.mode==='inspector')fillMobileInspector();return;}
+  $('inspector').classList.remove('hidden');$('inspectorEmpty').classList.add('hidden');$('selectionStatus').textContent=multiSelected.length>1?multiSelected.length+' objects selected':'Selected: '+selected.name;syncInspector();if(window.innerWidth<=620&&$('mobileDrawer').dataset.mode==='inspector')fillMobileInspector();
+}
+function renderComponents(){
+  const list=$('componentList'); if(!list) return; list.innerHTML=''; if(!selected) return;
+  for(const name of selected.userData.components||[]){
+    const row=document.createElement('div'); row.className='component-row'; row.innerHTML='<b></b><small></small>'; row.querySelector('b').textContent=name; row.querySelector('small').textContent=['Transform','Scene'].includes(name)?'required':'component';
+    if(!['Transform','Scene'].includes(name)){ const x=document.createElement('button'); x.textContent='×'; x.title='Remove component'; x.onclick=()=>{beginTransaction('Remove '+name); if(removeComponent(selected,name)){commitTransaction('Remove '+name);renderComponents();} }; row.appendChild(x); }
+    list.appendChild(row);
+  }
+}
+function syncInspector(){
+  if(!selected) return;
+  $('objName').value=selected.name; $('objType').value=selected.userData.actorType; $('teamSelect').value=selected.userData.team; $('folderInput').value=selected.userData.folder||'World';
+  $('px').value=selected.position.x.toFixed(2); $('py').value=selected.position.y.toFixed(2); $('pz').value=selected.position.z.toFixed(2);
+  $('rx').value=THREE.MathUtils.radToDeg(selected.rotation.x).toFixed(1); $('ry').value=THREE.MathUtils.radToDeg(selected.rotation.y).toFixed(1); $('rz').value=THREE.MathUtils.radToDeg(selected.rotation.z).toFixed(1);
+  $('sx').value=selected.scale.x.toFixed(2); $('sy').value=selected.scale.y.toFixed(2); $('sz').value=selected.scale.z.toFixed(2);
+  $('maxHp').value=selected.userData.maxHp||0; $('attackRange').value=selected.userData.attackRange||0; $('attackDamage').value=selected.userData.attackDamage||0;
+  $('colliderRadius').value=selected.userData.colliderRadius??0; $('mass').value=selected.userData.mass??1; $('restitution').value=selected.userData.restitution??0.25;
+  $('stateBadge').textContent=selected.userData.baked?'BAKED':'GHOST'; $('teamBadge').textContent=selected.userData.team[0].toUpperCase()+selected.userData.team.slice(1); $('classBadge').textContent=selected.userData.blueprintClass||'Actor'; renderComponents();
+}
+function applyInspectorTransform(){
+  if(!selected) return;
+  const n = id => Number($(id).value);
+  const v = ['px','py','pz','rx','ry','rz','sx','sy','sz'].map(n);
+  if(v.some(x=>!Number.isFinite(x))) return;
+  selected.position.set(v[0],v[1],v[2]);
+  selected.rotation.set(THREE.MathUtils.degToRad(v[3]), THREE.MathUtils.degToRad(v[4]), THREE.MathUtils.degToRad(v[5]));
+  selected.scale.set(Math.max(0.05,v[6]), Math.max(0.05,v[7]), Math.max(0.05,v[8]));
+  selected.userData.spawnPos = selected.position.toArray();
+}
+['px','py','pz','rx','ry','rz','sx','sy','sz'].forEach(id=>{
+  $(id).addEventListener('focus',()=>beginTransaction('Edit Transform'));
+  $(id).addEventListener('input',()=>{applyInspectorTransform();markDirty();});
+  $(id).addEventListener('change',()=>commitTransaction('Edit Transform'));
+});
+$('objName').onfocus=()=>beginTransaction('Rename Actor');
+$('objName').oninput=()=>{ if(selected){selected.name=$('objName').value||'Actor';rebuildHierarchy();markDirty();} };
+$('objName').onchange=()=>commitTransaction('Rename Actor');
+$('folderInput').onfocus=()=>beginTransaction('Move Actor Folder'); $('folderInput').onchange=()=>{if(selected){selected.userData.folder=$('folderInput').value||'World';commitTransaction('Move Actor Folder');rebuildHierarchy();}};
+$('teamSelect').onfocus=()=>beginTransaction('Change Team');
+$('teamSelect').onchange = ()=>{
+  if(!selected) return;
+  selected.userData.team = $('teamSelect').value;
+  selected.traverse(c=>{
+    if(c.material && ['tower','base','hero','spawner'].includes(selected.userData.actorType)) c.material.color.set(teamColor(selected.userData.team));
+  });
+  syncInspector(); commitTransaction('Change Team');
+};
+for(const [id,key] of [['maxHp','maxHp'],['attackRange','attackRange'],['attackDamage','attackDamage'],['colliderRadius','colliderRadius'],['mass','mass'],['restitution','restitution']]){
+  $(id).onfocus=()=>beginTransaction('Edit '+key);
+  $(id).oninput=()=>{if(selected){selected.userData[key]=Number($(id).value)||0;if(key==='maxHp')selected.userData.hp=selected.userData.maxHp;markDirty();}};
+  $(id).onchange=()=>commitTransaction('Edit '+key);
+}
+$('addComponentBtn').onclick=()=>{if(!selected)return;beginTransaction('Add Component');const name=$('addComponentSelect').value;if(addComponent(selected,name)){commitTransaction('Add '+name);renderComponents();toast(name+' added');}else transactionBefore=null;};
+
+function deleteSelected(){
+  const roots=[...new Set((multiSelected.length?multiSelected:(selected?[selected]:[])).map(rootGroupFor).filter(Boolean))];
+  if(!roots.length)return;beginTransaction('Delete '+roots.length+' object(s)');
+  for(const a of roots)removeActorRecursive(a);
+  selected=null;multiSelected=[];rebuildHierarchy();selectActor(null);refreshDebug();commitTransaction('Delete '+roots.length+' object(s)');
+}
+$('deleteBtn').onclick = deleteSelected;
+$('duplicateBtn').onclick=()=>{
+  if(!selected)return;beginTransaction('Duplicate '+selected.name);
+  if(selected.userData.actorType==='group'){
+    const tree=[selected,...groupDescendants(selected)],idMap=new Map(tree.map(a=>[a.userData.id,uid()])),datas=tree.map(actorData);
+    for(const d of datas){d.id=idMap.get(d.id);if(d.groupParentId)d.groupParentId=idMap.get(d.groupParentId)||null;d.groupChildIds=(d.groupChildIds||[]).map(id=>idMap.get(id)||id);d.baked=false;if(d.type==='group'&&!d.groupParentId){d.position=[d.position[0]+1,d.position[1],d.position[2]+1];d.name+=' Copy';}}
+    const created=datas.map(fromData).filter(Boolean);restoreActorGroups();const root=created.find(a=>a.userData.actorType==='group'&&!a.userData.groupParentId);if(root){selectActor(root);commitTransaction('Duplicate '+selected.name);toast('Grouped copy created as ghost');}
+  }else{
+    const d=actorData(selected);d.id=uid();d.groupParentId=null;d.baked=false;d.position=[selected.position.x+1,selected.position.y,selected.position.z+1];d.name=selected.name+' Copy';const o=fromData(d);if(o){selectActor(o);commitTransaction('Duplicate '+selected.name);toast('Duplicate created as ghost');}
+  }
+};
+
+function actorData(a){
+  return {
+    id:a.userData.id, name:a.name, type:a.userData.actorType, team:a.userData.team, baked:a.userData.baked, role:a.userData.role||'', tags:[...(a.userData.tags||[])], visualColor:a.userData.visualColor||'', groupParentId:a.userData.groupParentId||null, groupChildIds:[...(a.userData.groupChildIds||[])],
+    position:a.position.toArray(), rotation:[a.rotation.x,a.rotation.y,a.rotation.z], scale:a.scale.toArray(),
+    maxHp:a.userData.maxHp, attackRange:a.userData.attackRange, attackDamage:a.userData.attackDamage,
+    attackCooldown:a.userData.attackCooldown, lane:a.userData.lane, moveSpeed:a.userData.moveSpeed,
+    folder:a.userData.folder, components:[...(a.userData.components||[])], blueprintClass:a.userData.blueprintClass||'',
+    colliderRadius:a.userData.colliderRadius, mass:a.userData.mass, restitution:a.userData.restitution, componentSpeed:a.userData.componentSpeed, bobAmplitude:a.userData.bobAmplitude, launchStrength:a.userData.launchStrength, visible:(a.userData.tags||[]).includes('runtime-shell')?true:a.visible!==false
+  };
+}
+function fromData(d){
+  let o = null;
+  if(d.type==='ground') o = makeGroundActor();
+  if(d.type==='tower') o = makeTower(d.team||'blue',[d.position[0],0,d.position[2]], d.baked!==false, d.name);
+  if(d.type==='base') o = makeBase(d.team||'blue',[d.position[0],0,d.position[2]], d.baked!==false, d.name);
+  if(d.type==='spawner') o = makeSpawner(d.team||'blue',[d.position[0],0,d.position[2]], d.lane||'mid', d.baked!==false, d.name);
+  if(d.type==='camp') o = makeCamp([d.position[0],0,d.position[2]], d.baked!==false, d.name);
+  if(d.type==='bush') o = makeBush([d.position[0],0,d.position[2]], d.scale||[1,1,1], d.baked!==false, d.name);
+  if(d.type==='wall') o = makeWall([d.position[0],0,d.position[2]], d.scale||[1,1,1], d.baked!==false, d.name);
+  if(d.type==='rock') o = makeRock([d.position[0],0,d.position[2]], d.scale||[1,1,1], d.baked!==false, d.name);
+  if(d.type==='hero') o = makeHero(d.team||'blue',[d.position[0],0,d.position[2]], d.baked!==false, d.name);
+  if(d.type==='tree') o = makeTree([d.position[0],0,d.position[2]], d.scale||[1,1,1], d.baked!==false, d.name);
+  if(d.type==='crystal') o = makeCrystal([d.position[0],0,d.position[2]],d.visualColor||'#9d72ff',d.baked!==false,d.name,1);
+  if(d.type==='portal') o = makePortal([d.position[0],0,d.position[2]],d.visualColor||'#6ecbff',d.baked!==false,d.name);
+  if(d.type==='dragon') o = makeDragon([d.position[0],0,d.position[2]],d.visualColor||'#9e70ff',d.baked!==false,d.name,1);
+  if(d.type==='throne') o = makeThrone([d.position[0],0,d.position[2]],d.visualColor||'#d49bff',d.baked!==false,d.name);
+  if(d.type==='pedestal') o = makePedestal([d.position[0],0,d.position[2]],d.visualColor||'#a76dff',d.baked!==false,d.name,2.3);
+  if(d.type==='denStructure') o = makeDenStructure((d.blueprintClass||'DEN_walkway').replace(/^DEN_/,''),[d.position[0],0,d.position[2]],d.baked!==false,d.name,d.visualColor||'#6f5b82');
+  if(d.type==='group') o=makeGroupActor(d.name||'Group',d.baked!==false);
+  if(!o) return null;
+  o.position.set(d.position[0], d.position[1], d.position[2]);
+  o.rotation.set(...(d.rotation||[0,0,0]));
+  o.scale.set(...(d.scale||[1,1,1]));
+  if(d.id)o.userData.id=d.id;o.userData.groupParentId=d.groupParentId||null;o.userData.groupChildIds=[...(d.groupChildIds||[])];
+  o.userData.maxHp = d.maxHp ?? o.userData.maxHp;
+  o.userData.hp = o.userData.maxHp;
+  o.userData.attackRange = d.attackRange ?? o.userData.attackRange;
+  o.userData.attackDamage = d.attackDamage ?? o.userData.attackDamage;
+  o.userData.attackCooldown = d.attackCooldown ?? o.userData.attackCooldown;
+  o.userData.moveSpeed = d.moveSpeed ?? o.userData.moveSpeed;
+  o.userData.folder=d.folder||defaultFolder(d.type,d.team||'neutral'); o.userData.components=[...(d.components||defaultComponents(d.type))]; o.userData.blueprintClass=d.blueprintClass||'';
+  o.userData.colliderRadius=d.colliderRadius??o.userData.colliderRadius; o.userData.mass=d.mass??1; o.userData.restitution=d.restitution??0.25; o.userData.componentSpeed=d.componentSpeed??1; o.userData.bobAmplitude=d.bobAmplitude??0.5; o.userData.launchStrength=d.launchStrength??8; o.userData.role=d.role||o.userData.role||''; o.userData.tags=[...(d.tags||o.userData.tags||[])]; o.userData.visualColor=d.visualColor||o.userData.visualColor||''; o.visible=d.visible!==false;
+  o.userData.spawnPos = o.position.toArray();
+  applyGhostVisual(o);
+  return o;
+}
+function projectData(){
+  return {
+    engine:'§wyrl§ Engine · Maker v5.3',
+    version:5.3,
+    project:{...currentProject},
+    editor:{transformSpace,snapEnabled,terrainSnapEnabled,viewMode,cameraView:editorCameraView,revision},
+    scene:{
+      background:'#'+scene.background.getHexString(),
+      waveInterval:Number($('waveInterval').value)||7,
+      paths:Object.fromEntries(Object.entries(paths).map(([k,v])=>[k,v.map(p=>p.toArray())])),
+      actors:actors.map(actorData)
+    }
+  };
+}
+function loadProject(p, options={}){
+  if(!p?.scene?.actors) throw new Error('Invalid project JSON.');
+  clearAll();applyProjectMeta(p.project||inferProjectMeta(p));
+  scene.background.set(p.scene.background || '#0a1420');scene.fog.color.set(scene.background);
+  $('bgColor').value = '#'+scene.background.getHexString();
+  $('waveInterval').value = p.scene.waveInterval || 7;
+  rebuildTerrain();
+  for(const [k,pts] of Object.entries(p.scene.paths||{})) addPath(k,pts);
+  Object.values(paths).forEach(v=>addLaneHelpers(v.map(p=>p.toArray())));
+  if(currentProject.environment!=='dragon-den')buildSceneryExtras();else clearGroup(waterGroup);
+  for(const d of p.scene.actors) fromData(d);
+  restoreActorGroups();setRuntimeShellVisibility(playing);
+  rebuildHierarchy();refreshDebug();selectActor(actors.find(a=>a.userData.actorType==='hero')||actors.find(a=>a.userData.actorType==='dragon')||null);
+  transformSpace=p.editor?.transformSpace||transformSpace;transform.setSpace(transformSpace);$('spaceBtn').textContent=transformSpace[0].toUpperCase()+transformSpace.slice(1);
+  terrainSnapEnabled=p.editor?.terrainSnapEnabled??terrainSnapEnabled;$('terrainSnapBtn').classList.toggle('active',terrainSnapEnabled);
+  if(p.editor?.cameraView){$('cameraView').value=p.editor.cameraView;setCameraView(p.editor.cameraView);}
+  if(!options.preserveHistory)initializeHistory('Loaded '+currentProject.name);refreshAssetList();
+}
+function setMode(m){
+  transform.setMode(m);
+  $('moveBtn').classList.toggle('active', m==='translate');
+  $('rotateBtn').classList.toggle('active', m==='rotate');
+  $('scaleBtn').classList.toggle('active', m==='scale');
+}
+
+$('multiSelectBtn').onclick=()=>setMultiSelectMode();
+$('outlinerMultiBtn').onclick=()=>setMultiSelectMode();
+$('groupBtn').onclick=groupSelection;
+$('groupInspectorBtn').onclick=groupSelection;
+$('ungroupBtn').onclick=()=>ungroupActor(selected);
+$('ungroupInspectorBtn').onclick=()=>ungroupActor(selected);
+$('moveBtn').onclick = ()=>setMode('translate');
+$('rotateBtn').onclick = ()=>setMode('rotate');
+$('scaleBtn').onclick = ()=>setMode('scale');
+$('spaceBtn').onclick=()=>{transformSpace=transformSpace==='world'?'local':'world';transform.setSpace(transformSpace);$('spaceBtn').textContent=transformSpace[0].toUpperCase()+transformSpace.slice(1);toast('Transform space: '+transformSpace);};
+function applySnap(){ transform.setTranslationSnap(snapEnabled?Number($('gridSnap').value):null); transform.setRotationSnap(snapEnabled?THREE.MathUtils.degToRad(Number($('rotSnap').value)):null); transform.setScaleSnap(snapEnabled?Number($('scaleSnap').value):null); }
+$('snapToggle').onclick=()=>{snapEnabled=!snapEnabled;$('snapToggle').classList.toggle('active',snapEnabled);applySnap();}; ['gridSnap','rotSnap','scaleSnap'].forEach(id=>$(id).onchange=applySnap); applySnap();
+$('terrainSnapBtn').onclick=()=>{terrainSnapEnabled=!terrainSnapEnabled;$('terrainSnapBtn').classList.toggle('active',terrainSnapEnabled);toast('Terrain Snap '+(terrainSnapEnabled?'ON':'OFF'));};
+$('snapGroundBtn').onclick=()=>{if(!selected)return;beginTransaction('Snap '+selected.name+' to terrain');snapActorToTerrain(selected);selected.userData.spawnPos=selected.position.toArray();syncInspector();commitTransaction('Snap '+selected.name+' to terrain');};
+function updateViewLabel(){const mode=$('viewMode').value;const view=editorCameraView[0].toUpperCase()+editorCameraView.slice(1);$('viewLabel').textContent=view+' · '+(mode==='wire'?'Wireframe':mode==='unlit'?'Unlit':'Lit');}
+function setViewMode(mode){ viewMode=mode; scene.overrideMaterial=null; if(mode==='wire')scene.overrideMaterial=new THREE.MeshBasicMaterial({color:0xb9c7da,wireframe:true}); if(mode==='unlit')scene.overrideMaterial=new THREE.MeshBasicMaterial({color:0xb7c3d1}); updateViewLabel(); }
+$('viewMode').onchange=()=>setViewMode($('viewMode').value);
+function setActiveCamera(next){camera=next;orbit.object=camera;transform.camera=camera;}
+function setCameraView(v){
+  editorCameraView=v; const t=orbit.target.clone(),d=32;
+  if(v==='perspective'){setActiveCamera(perspectiveCamera);orbit.enableRotate=true;perspectiveCamera.up.set(0,1,0);perspectiveCamera.position.copy(t.clone().add(new THREE.Vector3(23,18,26)));}
+  else{setActiveCamera(orthoCamera);orbit.enableRotate=false;if(v==='top'){orthoCamera.up.set(0,0,-1);orthoCamera.position.set(t.x,t.y+d,t.z);}else if(v==='front'){orthoCamera.up.set(0,1,0);orthoCamera.position.set(t.x,t.y,t.z+d);}else{orthoCamera.up.set(0,1,0);orthoCamera.position.set(t.x+d,t.y,t.z);}}
+  orbit.enabled=!playing;camera.lookAt(t);orbit.update();updateViewLabel();
+}
+$('cameraView').onchange=()=>setCameraView($('cameraView').value); $('cameraSpeed').onchange=()=>{const v=Number($('cameraSpeed').value)||1;orbit.rotateSpeed=v;orbit.panSpeed=v;orbit.zoomSpeed=v;};
+$('undoBtn').onclick=()=>restoreHistory(historyIndex-1); $('redoBtn').onclick=()=>restoreHistory(historyIndex+1);
+$('outlinerSearch').oninput=rebuildHierarchy;
+
+
+$('focusBtn').onclick=()=>{if(!selected)return;const delta=camera.position.clone().sub(orbit.target);orbit.target.copy(selected.position);if(editorCameraView==='perspective')camera.position.copy(selected.position.clone().add(delta.lengthSq()?delta:new THREE.Vector3(7,7,9)));else camera.position.copy(selected.position.clone().add(delta));camera.lookAt(orbit.target);orbit.update();};
+
+
+document.querySelectorAll('[data-prefab]').forEach(b=>b.onclick = ()=>{beginTransaction('Place '+b.dataset.prefab);createPrefab(b.dataset.prefab);commitTransaction('Place '+b.dataset.prefab);});
+$('bakeBtn').onclick = ()=>{
+  beginTransaction('Bake Ghosts'); let count = 0;
+  for(const a of actors){
+    if(!a.userData.baked){ a.userData.baked = true; applyGhostVisual(a); count++; }
+  }
+  rebuildHierarchy();
+  refreshDebug();
+  if(selected) syncInspector();
+  if(count) commitTransaction('Bake '+count+' ghost actors'); else transactionBefore=null;
+  toast(count ? `Baked ${count} ghost actor${count===1?'':'s'}.` : 'No ghost actors to bake.');
+};
+$('resetBtn').onclick = resetCurrentProject; $('openProjectsBtn').onclick=showProjectHub;
+
+$('projectBtn').onclick=showProjectHub;$('projectClose').onclick=()=>$('projectHub').classList.remove('show');
+$('projectHub').addEventListener('pointerdown',e=>{if(e.target===$('projectHub'))$('projectHub').classList.remove('show');});
+document.querySelectorAll('[data-project-template]').forEach(b=>b.onclick=()=>createProjectFromTemplate(b.dataset.projectTemplate));
+$('hubSaveBtn').onclick=()=>{$('saveBtn').click();$('projectHub').classList.remove('show');};
+$('hubLoadBtn').onclick=()=>{$('loadBtn').click();};
+$('bgColor').oninput = ()=>{ scene.background.set($('bgColor').value); scene.fog.color.set($('bgColor').value); };
+
+
+const ASSET_LIBRARY=[
+  {id:'hero',name:'Player Pawn',path:'/Engine/Gameplay',desc:'Playable CharacterMovement pawn'},
+  {id:'bush',name:'Bush Cluster',path:'/Engine/Environment',desc:'Foliage / cover prop'}, {id:'wall',name:'Stone Wall',path:'/Engine/Environment',desc:'Static blocker'}, {id:'rock',name:'Rock',path:'/Engine/Environment',desc:'Scenery / blocker'},
+  {id:'physicsRock',name:'Physics Rock',path:'/Engine/Physics',desc:'Rigid body component demo'}, {id:'jumpPad',name:'BP_JumpPad',path:'/Engine/Components',desc:'LaunchPad component actor'}, {id:'rotator',name:'BP_Rotator',path:'/Engine/Components',desc:'RotatingMovement actor'},
+  {id:'tower',name:'MOBA Tower',path:'/Examples/MOBA',desc:'Example defensive structure'}, {id:'base',name:'MOBA Core / Nexus',path:'/Examples/MOBA',desc:'Example primary objective'}, {id:'spawner',name:'MOBA Minion Spawner',path:'/Examples/MOBA',desc:'Example lane wave origin'}, {id:'camp',name:'MOBA Neutral Camp',path:'/Examples/MOBA',desc:'Example jungle encounter'},
+  {id:'dragon',name:'BP_DragonAvatar',path:'/Examples/DragonsDen',desc:'Embodied LALM dragon avatar'}, {id:'crystal',name:'Arcane Crystal',path:'/Examples/DragonsDen',desc:'Memory/inference anchor'}, {id:'throne',name:'Dragon Throne',path:'/Examples/DragonsDen',desc:'Den architecture'}, {id:'pedestal',name:'Rune Pedestal',path:'/Examples/DragonsDen',desc:'Council dais'}, {id:'denArch',name:'Den Exit Arch',path:'/Examples/DragonsDen/Architecture',desc:'Dormant deeper-room exit'}, {id:'denPerch',name:'Dragon Perch',path:'/Examples/DragonsDen/Architecture',desc:'Elevated dragon resting platform'}, {id:'denNook',name:'Wake Nook',path:'/Examples/DragonsDen/Architecture',desc:'Cozy human-scale den nook'}, {id:'denWorkbench',name:'Creator Alcove',path:'/Examples/DragonsDen/Architecture',desc:'Spatial coding/build workspace'}
+];
+function refreshAssetList(){
+  const list=$('assetList'); if(!list)return; const q=($('assetSearch')?.value||'').toLowerCase(); list.innerHTML='';
+  for(const a of ASSET_LIBRARY.filter(x=>!q||(`${x.name} ${x.path} ${x.desc}`).toLowerCase().includes(q))){const b=document.createElement('button');b.className='asset-card';b.innerHTML='<strong></strong><small></small><small></small>';b.children[0].textContent=a.name;b.children[1].textContent=a.path;b.children[2].textContent=a.desc;b.onclick=()=>{beginTransaction('Place '+a.name);createPrefab(a.id);commitTransaction('Place '+a.name);};list.appendChild(b);}
+}
+$('assetSearch').oninput=refreshAssetList; $('drawerBtn').onclick=()=>{$('contentDrawer').classList.toggle('show');refreshAssetList();}; $('drawerClose').onclick=()=>$('contentDrawer').classList.remove('show'); $('assetsTab').onclick=()=>showDrawerTab('assets'); $('logTab').onclick=()=>showDrawerTab('log');
+function validateProject(){
+  const issues=[];const warns=[];const names=new Map();
+  for(const a of actors){names.set(a.name,(names.get(a.name)||0)+1);if(Math.abs(a.position.x)>24||Math.abs(a.position.z)>20)warns.push(a.name+' is outside the nominal world bounds');}
+  for(const [name,count] of names)if(count>1)warns.push('Duplicate actor name: '+name+' ×'+count);
+  if(currentProject.kind==='moba'){
+    const blueBases=actors.filter(a=>a.userData.actorType==='base'&&a.userData.team==='blue').length,redBases=actors.filter(a=>a.userData.actorType==='base'&&a.userData.team==='red').length;
+    if(!blueBases)issues.push('MOBA project: Blue team has no Core/Base');if(!redBases)issues.push('MOBA project: Red team has no Core/Base');if(!actors.some(a=>a.userData.actorType==='hero'))issues.push('MOBA project: no Hero actor exists');if(!Object.keys(paths).length)issues.push('MOBA project: no lane paths are defined');
+  }else if(currentProject.kind==='dragons-den'){
+    if(!actors.some(a=>a.userData.actorType==='hero'))issues.push("Dragon's Den: no visitor/player pawn exists");
+    if(!actors.some(a=>a.userData.actorType==='dragon'))issues.push("Dragon's Den: no dragon avatar exists");
+    if(!actors.some(a=>a.userData.role==='memory-anchor'))warns.push("Dragon's Den: Memory Crystal anchor is missing");
+    if(!actors.some(a=>a.userData.actorType==='portal'))warns.push("Dragon's Den: no portal actors exist");
+  }
+  const ghosts=actors.filter(a=>!a.userData.baked).length;if(ghosts)warns.push(ghosts+' ghost actor(s) are not baked');
+  editorLog('Build validation ['+currentProject.name+']: '+issues.length+' error(s), '+warns.length+' warning(s)',issues.length?'error':warns.length?'warn':'ok');issues.forEach(x=>editorLog(x,'error'));warns.forEach(x=>editorLog(x,'warn'));return {issues,warns};
+}
+$('buildBtn').onclick=()=>{const r=validateProject();openDrawer('log');toast(r.issues.length?'Build found errors':r.warns.length?'Build completed with warnings':'Build succeeded');};
+function blockerActors(){
+  return actors.filter(a => a.userData.baked && ['tower','base','camp','rock','wall','tree','denStructure'].includes(a.userData.actorType) && (a.userData.colliderRadius||0)>0 && a.visible !== false);
+}
+function refreshDebug(){
+  clearGroup(debugGroup);
+  const mode = $('debugMode').value;
+  if(mode==='paths'){
+    for(const pts of Object.values(paths)){
+      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts.map(p=>p.clone().setY(terrainHeight(p.x,p.z)+0.16))), new THREE.LineBasicMaterial({color:0xffe08a}));
+      debugGroup.add(line);
+    }
+  }
+  if(mode==='ranges'){
+    for(const a of actors.filter(a=>a.userData.actorType==='tower' && a.visible!==false)){
+      const r = new THREE.Mesh(new THREE.RingGeometry(a.userData.attackRange-0.04,a.userData.attackRange,64), new THREE.MeshBasicMaterial({color:teamColor(a.userData.team), side:THREE.DoubleSide, transparent:true, opacity:0.58}));
+      r.rotation.x = -Math.PI/2;
+      r.position.set(a.position.x, terrainHeight(a.position.x,a.position.z)+0.08, a.position.z);
+      debugGroup.add(r);
+    }
+  }
+  if(mode==='colliders'){
+    for(const a of blockerActors()){
+      const c = new THREE.Mesh(new THREE.CylinderGeometry(a.userData.colliderRadius, a.userData.colliderRadius, 0.1, 18), new THREE.MeshBasicMaterial({color:0x90c8ff, transparent:true, opacity:0.35}));
+      const wp=worldPos(a,new THREE.Vector3());c.position.set(wp.x,terrainHeight(wp.x,wp.z)+0.1,wp.z);c.scale.setScalar(worldColliderRadius(a)/(a.userData.colliderRadius||1));
+      debugGroup.add(c);
+    }
+  }
+}
+$('debugMode').onchange = refreshDebug;
+
+function saveBlob(name, text, type){
+  const blob = new Blob([text], {type});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+$('saveBtn').onclick = ()=>{saveBlob(safeProjectName()+'.swyrl.json', JSON.stringify(projectData(),null,2), 'application/json');markSaved();editorLog('Project saved: '+currentProject.name,'ok');};
+$('loadBtn').onclick = ()=>$('fileInput').click();
+$('fileInput').onchange = async()=>{
+  const f = $('fileInput').files?.[0]; if(!f) return;
+  try{ loadProject(JSON.parse(await f.text())); markSaved(); toast('Project loaded.'); editorLog('Project loaded','ok'); }catch(err){ alert(err.message); editorLog('Load failed: '+err.message,'error'); }
+  $('fileInput').value = '';
+};
+
+function exportHTML(){
+  const payload = JSON.stringify(projectData()).replace(/</g,'\\u003c');
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>§wyrl§ Engine v5.1 Playable</title><style>html,body{margin:0;height:100%;overflow:hidden;background:#091019}canvas{display:block;width:100%;height:100%}.hud{position:fixed;left:10px;top:10px;background:#071018cc;color:#fff;border:1px solid #ffffff18;border-radius:8px;padding:8px 10px;font:13px system-ui}.hud small{display:block;color:#b7c4d3}</style></head><body><div class="hud"><b>§wyrl§ Engine v5.1 Playable</b><small>WASD/Arrows move · Space jump · Click terrain to move</small></div><script type="module">
+const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.169.0/+esm');
+const P = ${payload};
+const R = new THREE.WebGLRenderer({antialias:true}); R.setPixelRatio(Math.min(devicePixelRatio,2)); R.shadowMap.enabled=true; document.body.appendChild(R.domElement);
+const S = new THREE.Scene(); S.background = new THREE.Color(P.scene.background||'#0a1420'); S.fog = new THREE.Fog(0x101a27,58,130);R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.18;
+const C = new THREE.PerspectiveCamera(55,1,0.05,300);
+S.add(new THREE.HemisphereLight(0xd7e8ff,0x263521,1.55));S.add(new THREE.AmbientLight(0xffffff,.24)); const sun = new THREE.DirectionalLight(0xfff4dc,1.65); sun.position.set(20,30,16); S.add(sun);
+const COLORS={blue:'#5eaaff',red:'#ff637d',neutral:'#9eacbc',stone:'#566173',wall:'#646f82',grass:'#3d6747',dirt:'#8b8063',river:'#2b5f82',bush:'#2b7f4e',leaf:'#4f945b',trunk:'#75553c',base:'#394354'};
+function riverDistance(x,z){const d=z-0.55*x; return Math.abs(d)} function terrainHeight(x,z){let y=0.18*Math.sin(x*0.18)+0.14*Math.cos(z*0.16); y+=Math.max(0,1-Math.hypot(x+8,z+8)/12)*0.9; y+=Math.max(0,1-Math.hypot(x-8,z-8)/12)*0.9; y-=Math.max(0,1-riverDistance(x,z)/2.6)*0.95; return y}
+function M(c){return new THREE.MeshStandardMaterial({color:c,roughness:0.78,metalness:0.04,flatShading:true})}
+let G=new THREE.PlaneGeometry(42,34,84,68);G.rotateX(-Math.PI/2);let pos=G.attributes.position, cols=[];for(let i=0;i<pos.count;i++){let x=pos.getX(i),z=pos.getZ(i),y=terrainHeight(x,z);pos.setY(i,y);let river=Math.max(0,1-riverDistance(x,z)/3), g=new THREE.Color(COLORS.grass), d=new THREE.Color(COLORS.dirt), rv=new THREE.Color(COLORS.river), c=g.clone().lerp(d,0.25+Math.max(0,y)*0.15).lerp(rv,river*0.7); cols.push(c.r,c.g,c.b)} G.setAttribute('color', new THREE.Float32BufferAttribute(cols,3)); G.computeVertexNormals(); let ground=new THREE.Mesh(G,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,flatShading:true})); S.add(ground);
+let terrainBottom=new THREE.Mesh(new THREE.BoxGeometry(42,3.0,34),M('#26313d'));terrainBottom.position.y=-5.7;S.add(terrainBottom);
+let water=new THREE.Mesh(new THREE.BoxGeometry(4.8,0.08,30),new THREE.MeshStandardMaterial({color:COLORS.river,transparent:true,opacity:.78,roughness:.25})); water.position.set(0,terrainHeight(0,0)-0.42,0); water.rotation.y=Math.atan2(1,0.55); S.add(water);
+const actors=[], units=[], paths=Object.fromEntries(Object.entries(P.scene.paths||{}).map(([k,v])=>[k,v.map(p=>new THREE.Vector3(...p))]));
+function addLane(points){for(let i=0;i<points.length-1;i++){let a=new THREE.Vector3(...points[i]),b=new THREE.Vector3(...points[i+1]),mid=a.clone().add(b).multiplyScalar(.5),len=a.distanceTo(b),y=terrainHeight(mid.x,mid.z)+0.06,m=new THREE.Mesh(new THREE.BoxGeometry(3.0,0.08,len),M(COLORS.dirt));m.position.set(mid.x,y,mid.z);m.lookAt(b.x,y,b.z);S.add(m)}}
+Object.values(P.scene.paths||{}).forEach(addLane);
+function add(d){let o=null; if(d.type==='tower'){o=new THREE.Group();let a=new THREE.Mesh(new THREE.CylinderGeometry(.72,.95,2.2,8),M('#445167'));a.position.y=1.1;o.add(a);let t=new THREE.Mesh(new THREE.CylinderGeometry(.62,.62,.55,8),M(COLORS[d.team]||COLORS.neutral));t.position.y=2.4;o.add(t)}
+if(d.type==='base'){o=new THREE.Group();let a=new THREE.Mesh(new THREE.CylinderGeometry(2.45,2.7,.7,8),M(COLORS.base));a.position.y=.35;o.add(a);let t=new THREE.Mesh(new THREE.OctahedronGeometry(1.12),M(COLORS[d.team]||COLORS.neutral));t.position.y=1.7;o.add(t)}
+if(d.type==='spawner'){o=new THREE.Mesh(new THREE.TorusGeometry(.75,.13,10,30),M(COLORS[d.team]||COLORS.neutral));o.rotation.x=Math.PI/2;o.position.y=.12}
+if(d.type==='camp'){o=new THREE.Group();let a=new THREE.Mesh(new THREE.DodecahedronGeometry(.7),M('#9e724c'));a.position.y=.72;o.add(a);let t=new THREE.Mesh(new THREE.TorusGeometry(1,.08,8,28),M('#c9975c'));t.rotation.x=Math.PI/2;t.position.y=.1;o.add(t)}
+if(d.type==='bush'){o=new THREE.Mesh(new THREE.SphereGeometry(.75,10,8),M(COLORS.bush));o.scale.y=.6;o.position.y=.35}
+if(d.type==='rock'){o=new THREE.Mesh(new THREE.DodecahedronGeometry(.7),M(COLORS.stone));o.position.y=.45}
+if(d.type==='wall'){o=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),M(COLORS.wall))}
+if(d.type==='hero'){o=new THREE.Group();let a=new THREE.Mesh(new THREE.CapsuleGeometry(.45,.8,6,12),M(COLORS[d.team]||COLORS.neutral));a.position.y=.85;o.add(a)}
+if(d.type==='tree'){o=new THREE.Group();let tr=new THREE.Mesh(new THREE.CylinderGeometry(.16,.22,1.2,6),M(COLORS.trunk));tr.position.y=.7;o.add(tr);[[0,1.55,0],[0.35,1.3,0.2],[-0.3,1.25,-0.2]].forEach(p=>{let c=new THREE.Mesh(new THREE.SphereGeometry(.6,10,8),M(COLORS.leaf));c.position.set(...p);c.scale.y=.8;o.add(c)})}
+if(!o)return; o.name=d.name; o.position.set(d.position[0],d.position[1],d.position[2]); o.rotation.set(...(d.rotation||[0,0,0])); o.scale.set(...(d.scale||[1,1,1])); o.userData={...d,hp:d.maxHp||0,lastAttack:-999,dead:false,colliderRadius:d.type==='base'?2.1:d.type==='tower'?.9:d.type==='camp'?.85:d.type==='tree'?.65:d.type==='rock'?.7*Math.max(d.scale?.[0]||1,d.scale?.[2]||1):d.type==='wall'?.6*Math.max(d.scale?.[0]||1,d.scale?.[2]||1):.8}; S.add(o); actors.push(o) }
+(P.scene.actors||[]).filter(a=>a.baked!==false && a.type!=='ground').forEach(add);
+let blockers=()=>actors.filter(a=>['tower','base','camp','rock','wall','tree'].includes(a.userData.type||a.userData.actorType) && !a.userData.dead);
+const HERO_GROUND_OFFSET=.03,HERO_STEP_DOWN=1.25; let keys=new Set(), clickTarget=null, heroVel=new THREE.Vector3(), heroGrounded=true, jumpQueued=false; addEventListener('keydown',e=>{keys.add(e.key.toLowerCase()); if(e.key===' ') jumpQueued=true}); addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
+let ray=new THREE.Raycaster(), ptr=new THREE.Vector2(); R.domElement.addEventListener('pointerdown',e=>{let r=R.domElement.getBoundingClientRect(); ptr.x=((e.clientX-r.left)/r.width)*2-1; ptr.y=-((e.clientY-r.top)/r.height)*2+1; ray.setFromCamera(ptr,C); let hit=ray.intersectObject(ground,false)[0]; if(hit) clickTarget=hit.point.clone() });
+function hero(){return actors.find(a=>(a.userData.type||a.userData.actorType)==='hero' && a.userData.team==='blue' && !a.userData.dead)}
+function enemies(o){return [...units,...actors].filter(e=>e!==o && !e.userData.dead && (e.userData.team&&e.userData.team!=='neutral'&&e.userData.team!==o.userData.team) && (e.userData.hp||0)>0)}
+function attack(o,t){if(!o.userData.attackRange || !o.userData.attackDamage) return false; let best=null,bd=1e9; for(const e of enemies(o)){let d=o.position.distanceTo(e.position); if(d<o.userData.attackRange && d<bd){best=e;bd=d}} if(best && t-(o.userData.lastAttack||-999)>=(o.userData.attackCooldown||1)){o.userData.lastAttack=t; best.userData.hp-=o.userData.attackDamage; if(best.userData.hp<=0){best.userData.dead=true; S.remove(best); let i=units.indexOf(best); if(i>=0) units.splice(i,1)} return true} return !!best}
+function spawn(team,lane){let pts=paths[lane]; if(!pts) return; let idx=team==='blue'?0:pts.length-1,dir=team==='blue'?1:-1; let g=new THREE.Mesh(new THREE.CapsuleGeometry(.25,.35,4,8),M(COLORS[team])); g.position.copy(pts[idx]); g.position.y=terrainHeight(g.position.x,g.position.z)+0.45; g.userData={runtimeUnit:true,team,lane,pathIndex:idx,pathDir:dir,hp:140,maxHp:140,attackDamage:18,attackRange:1.1,attackCooldown:.7,lastAttack:-999,moveSpeed:2.2,dead:false}; S.add(g); units.push(g)}
+function resolveCollision(pos, radius){ for(const b of blockers()){let dx=pos.x-b.position.x,dz=pos.z-b.position.z,dist=Math.hypot(dx,dz),min=radius+(b.userData.colliderRadius||.8); if(dist<min && dist>0.0001){let push=(min-dist); pos.x += dx/dist*push; pos.z += dz/dist*push}}}
+function hasC(o,n){return Array.isArray(o.userData.components)&&o.userData.components.includes(n)}
+function updateComponents(dt,t){let h=hero();for(const a of actors){if(a.userData.dead)continue;if(a.userData.runtimeBaseY==null)a.userData.runtimeBaseY=a.position.y;if(!a.userData.runtimeVelocity)a.userData.runtimeVelocity=[0,0,0];if(hasC(a,'RotatingMovement'))a.rotation.y+=dt*(a.userData.componentSpeed||1);if(hasC(a,'BobMovement')&&!hasC(a,'PhysicsBody'))a.position.y=a.userData.runtimeBaseY+Math.sin(t*(a.userData.componentSpeed||1))*(a.userData.bobAmplitude||.5);if(hasC(a,'PhysicsBody')&&(a.userData.type||a.userData.actorType)!=='hero'){let v=new THREE.Vector3(...a.userData.runtimeVelocity);v.y-=14*dt;a.position.addScaledVector(v,dt);let gy=terrainHeight(a.position.x,a.position.z)+Math.max(.3,(a.userData.colliderRadius||.8)*.55);if(a.position.y<gy){a.position.y=gy;v.y=Math.abs(v.y)>.4?-v.y*(a.userData.restitution??.25):0}a.userData.runtimeVelocity=v.toArray()}if(h&&hasC(a,'LaunchPad')){a.userData._launchCooldown=Math.max(0,(a.userData._launchCooldown||0)-dt);let d=Math.hypot(h.position.x-a.position.x,h.position.z-a.position.z);if(d<Math.max(1.2,(a.userData.colliderRadius||.8)+.8)&&a.userData._launchCooldown<=0&&h.position.y<=terrainHeight(h.position.x,h.position.z)+1.3){heroVel.y=a.userData.launchStrength||8;heroGrounded=false;a.userData._launchCooldown=.8}}}}
+let fpYaw=0,fpPitch=0;const FP_EYE_HEIGHT=1.62;
+addEventListener('mousemove',e=>{if(document.pointerLockElement!==R.domElement)return;fpYaw-=e.movementX*.0022;fpPitch=Math.max(-1.38,Math.min(1.38,fpPitch-e.movementY*.0022))});
+R.domElement.addEventListener('pointerdown',()=>R.domElement.requestPointerLock?.());
+function moveHero(dt,t){let h=hero();if(!h)return;let r=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0),f=(keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0),forward=new THREE.Vector3(Math.sin(fpYaw),0,-Math.cos(fpYaw)),right=new THREE.Vector3(Math.cos(fpYaw),0,Math.sin(fpYaw)),move=new THREE.Vector3().addScaledVector(forward,f).addScaledVector(right,r);if(move.lengthSq()>1)move.normalize();let speed=h.userData.moveSpeed||6,next=h.position.clone().add(move.multiplyScalar(speed*dt));resolveCollision(next,.55);h.position.x=next.x;h.position.z=next.z;let groundY=terrainHeight(h.position.x,h.position.z)+HERO_GROUND_OFFSET;if(jumpQueued&&heroGrounded){heroVel.y=6.5;heroGrounded=false}jumpQueued=false;if(heroGrounded&&heroVel.y<=0&&(h.position.y-groundY)<=HERO_STEP_DOWN){h.position.y=groundY;heroVel.y=0}else{heroVel.y-=14*dt;h.position.y+=heroVel.y*dt;if(h.position.y<=groundY){h.position.y=groundY;heroVel.y=0;heroGrounded=true}else heroGrounded=false}h.rotation.y=fpYaw;attack(h,t);let eye=new THREE.Vector3(h.position.x,h.position.y+FP_EYE_HEIGHT,h.position.z),cp=Math.cos(fpPitch),look=new THREE.Vector3(Math.sin(fpYaw)*cp,Math.sin(fpPitch),-Math.cos(fpYaw)*cp);C.position.copy(eye);C.lookAt(eye.clone().add(look))}
+function updateUnits(dt,t){ for(const u of [...units]){ if(u.userData.dead) continue; if(attack(u,t)) continue; let pts=paths[u.userData.lane],n=u.userData.pathIndex+u.userData.pathDir; if(n>=0 && n<pts.length){let target=pts[n].clone(); target.y=terrainHeight(target.x,target.z)+0.45; let v=target.clone().sub(u.position); v.y=0; if(v.length()<.2) u.userData.pathIndex=n; else {v.normalize(); u.position.add(v.multiplyScalar(u.userData.moveSpeed*dt)); u.position.y=terrainHeight(u.position.x,u.position.z)+0.45}} } }
+function updateTowers(t){ for(const a of actors.filter(a=>(a.userData.type||a.userData.actorType)==='tower'&&!a.userData.dead)) attack(a,t) }
+let lastWave=-999, clock=new THREE.Clock(); function resize(){R.setSize(innerWidth,innerHeight,false); C.aspect=innerWidth/innerHeight; C.updateProjectionMatrix()} addEventListener('resize',resize); resize(); function loop(){ requestAnimationFrame(loop); let dt=Math.min(clock.getDelta(),.05), t=performance.now()/1000; if(P.project?.kind==='moba'&&t-lastWave>(P.scene.waveInterval||7)){lastWave=t; Object.keys(paths).forEach(l=>{spawn('blue',l); spawn('red',l)}) } updateComponents(dt,t); moveHero(dt,t); if(P.project?.kind==='moba'){updateUnits(dt,t); updateTowers(t)} R.render(S,C) } loop();
+<\/script></body></html>`;
+}
+$('exportBtn').onclick = ()=>saveBlob('swyrl-engine-playable-v5-1.html', exportHTML(), 'text/html');
+
+function fillMobileTools(){
+  const p=$('mobileToolsPanel');p.innerHTML='<div class="mobile-tools-title"><b>Forge v5 Tools</b><button id="mtClose">×</button></div><div class="mobile-tool-grid"><button data-click="projectBtn">◫ Projects</button><button data-click="undoBtn">↶ Undo</button><button data-click="redoBtn">↷ Redo</button><button data-click="moveBtn">Move</button><button data-click="rotateBtn">Rotate</button><button data-click="scaleBtn">Scale</button><button data-click="spaceBtn">World/Local</button><button data-click="multiSelectBtn">Multi Select</button><button data-click="groupBtn">Group</button><button data-click="ungroupBtn">Ungroup</button><button data-click="terrainSnapBtn">Terrain Snap</button><button data-click="buildBtn">🔨 Build</button><button data-click="simulateBtn">◉ Simulate</button><button data-click="drawerBtn">Content</button><button data-click="saveBtn">Save</button><button data-click="loadBtn">Load</button><button data-click="exportBtn">Export</button><select id="mtCamera"><option value="perspective">Perspective</option><option value="top">Top Locked</option><option value="front">Front Locked</option><option value="right">Right Locked</option></select><select id="mtView"><option value="lit">Lit</option><option value="unlit">Unlit</option><option value="wire">Wireframe</option></select></div><div class="hint" style="margin-top:8px">Perspective can orbit under the terrain. Orthographic views are rotation-locked.</div>';
+  p.querySelectorAll('[data-click]').forEach(b=>b.onclick=()=>{$(b.dataset.click)?.click();if(!['drawerBtn'].includes(b.dataset.click))p.classList.remove('show');});
+  p.querySelector('#mtClose').onclick=()=>p.classList.remove('show');p.querySelector('#mtCamera').value=editorCameraView;p.querySelector('#mtCamera').onchange=e=>{ $('cameraView').value=e.target.value;setCameraView(e.target.value);p.classList.remove('show');};p.querySelector('#mtView').value=$('viewMode').value;p.querySelector('#mtView').onchange=e=>{$('viewMode').value=e.target.value;setViewMode(e.target.value);};
+}
+$('mobileToolsBtn').onclick=()=>{fillMobileTools();$('mobileToolsPanel').classList.toggle('show');};
+function fillMobileWorld(){
+  const d = $('mobileDrawer');
+  d.innerHTML = '<div class="section-body"><h3 style="color:#94a5bb">Mobile World</h3><div class="asset-grid" id="mobileGrid"></div><div class="row" style="margin-top:10px"><button id="mobileBake" class="good">🔥 Bake Ghosts</button><button id="mobileReset" class="danger">Reset Map</button></div><div class="hint" style="margin-top:8px">Use the gizmo directly in the viewport for editing.</div></div>';
+  const grid = d.querySelector('#mobileGrid');
+  ['hero','bush','wall','rock','physicsRock','jumpPad','rotator','crystal','portal','dragon'].forEach(type=>{
+    const b = document.createElement('button'); b.textContent = type; b.onclick = ()=>createPrefab(type); grid.appendChild(b);
+  });
+  d.querySelector('#mobileBake').onclick = ()=>$('bakeBtn').click();
+  d.querySelector('#mobileReset').onclick = ()=>$('resetBtn').click();
+}
+function fillMobileInspector(){
+  const d = $('mobileDrawer');
+  if(!selected){ d.innerHTML = '<div class="empty">Select an actor in the viewport.</div>'; return; }
+  d.innerHTML='<div class="section-body"><h3 style="color:#94a5bb">Mobile Inspector</h3><div><b>'+selected.name+'</b></div><div class="hint">'+selected.userData.actorType+' · '+(selected.userData.baked?'Baked':'Ghost')+' · '+selected.userData.team+'</div><div class="row" style="margin-top:10px"><button id="miMulti">Multi</button><button id="miGroup">Group</button><button id="miUngroup">Ungroup</button></div><div class="hint" style="margin-top:10px">Multi lets you tap several objects, then Group turns them into one transformable object.</div></div>';d.querySelector('#miMulti').onclick=()=>setMultiSelectMode();d.querySelector('#miGroup').onclick=groupSelection;d.querySelector('#miUngroup').onclick=()=>ungroupActor(selected);
+}
+$('mobileWorldBtn').onclick = ()=>{
+  const d = $('mobileDrawer');
+  if(d.classList.contains('show') && d.dataset.mode==='world'){ d.classList.remove('show'); return; }
+  d.dataset.mode='world'; d.classList.add('show'); fillMobileWorld();
+};
+$('mobileInspectorBtn').onclick = ()=>{
+  const d = $('mobileDrawer');
+  if(d.classList.contains('show') && d.dataset.mode==='inspector'){ d.classList.remove('show'); return; }
+  d.dataset.mode='inspector'; d.classList.add('show'); fillMobileInspector();
+};
+
+
+function beginRuntimeComponents(){
+  for(const a of actors){a.userData.runtimeBaseY=a.position.y;a.userData.runtimeVelocity=[0,0,0];a.userData._launchCooldown=0;}
+}
+function updateRuntimeComponents(dt,t){
+  setRuntimeShellVisibility(true);
+  const h=heroActor();
+  for(const a of actors){
+    if(!a.userData.baked||a.visible===false)continue;
+    if(hasComponent(a,'RotatingMovement'))a.rotation.y+=dt*(a.userData.componentSpeed||1);
+    if(hasComponent(a,'BobMovement')&&!hasComponent(a,'PhysicsBody'))a.position.y=(a.userData.runtimeBaseY??a.position.y)+Math.sin(t*(a.userData.componentSpeed||1))*(a.userData.bobAmplitude||.5);
+    if(hasComponent(a,'PhysicsBody')&&a.userData.actorType!=='hero'){
+      const v=new THREE.Vector3(...(a.userData.runtimeVelocity||[0,0,0]));v.y-=14*dt;const next=a.position.clone().addScaledVector(v,dt);resolveCircleCollision(next,Math.max(.25,a.userData.colliderRadius*.7),a);a.position.copy(next);const groundY=terrainHeight(a.position.x,a.position.z)+Math.max(.3,a.userData.colliderRadius*.55);if(a.position.y<groundY){a.position.y=groundY;if(Math.abs(v.y)>.4)v.y=-v.y*(a.userData.restitution??.25);else v.y=0;const drag=Math.pow(.18,dt);v.x*=drag;v.z*=drag;}a.userData.runtimeVelocity=v.toArray();
+    }
+    if(h&&hasComponent(a,'LaunchPad')){const d=Math.hypot(h.position.x-a.position.x,h.position.z-a.position.z);a.userData._launchCooldown=Math.max(0,(a.userData._launchCooldown||0)-dt);if(d<Math.max(1.2,a.userData.colliderRadius+0.8)&&a.userData._launchCooldown<=0&&h.position.y<=terrainHeight(h.position.x,h.position.z)+1.3){heroVel.y=a.userData.launchStrength||8;heroGrounded=false;a.userData._launchCooldown=.8;editorLog(`${a.name} launched hero`,'ok');}}
+  }
+  if(selectionBox&&selected)selectionBox.update();
+}
+function savePlaySnapshot(){
+  playSnapshot = actors.map(a=>({a, pos:a.position.clone(), rot:a.rotation.clone(), visible:a.visible, hp:a.userData.hp, dead:a.userData.dead||false}));
+}
+function restorePlaySnapshot(){
+  for(const s of playSnapshot||[]){
+    s.a.position.copy(s.pos); s.a.rotation.copy(s.rot); s.a.visible = s.visible; s.a.userData.hp = s.hp; s.a.userData.dead = s.dead;
+  }
+  while(liveUnits.length){ scene.remove(liveUnits.pop()); }
+}
+
+function clampPitch(){fpPitch=THREE.MathUtils.clamp(fpPitch,-1.38,1.38);}
+function setHeroBodyVisible(h,visible){
+  if(!h)return;
+  h.traverse(o=>{
+    if(!o.isMesh)return;
+    if(!visible){if(o.userData._fpPrevVisible===undefined)o.userData._fpPrevVisible=o.visible;o.visible=false;}
+    else if(o.userData._fpPrevVisible!==undefined){o.visible=o.userData._fpPrevVisible;delete o.userData._fpPrevVisible;}
+  });
+}
+function resetStick(el,state){state.x=0;state.y=0;const k=el?.querySelector('.joy-knob');if(k)k.style.transform='translate(-50%,-50%)';}
+function bindVirtualStick(id,state){
+  const el=$(id);if(!el)return;let active=null;
+  const update=e=>{const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,limit=r.width*.34;let dx=e.clientX-cx,dy=e.clientY-cy,d=Math.hypot(dx,dy);if(d>limit){dx*=limit/d;dy*=limit/d;}state.x=dx/limit;state.y=dy/limit;const k=el.querySelector('.joy-knob');k.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;};
+  el.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();active=e.pointerId;el.setPointerCapture?.(active);update(e);});
+  el.addEventListener('pointermove',e=>{if(e.pointerId!==active)return;e.preventDefault();e.stopPropagation();update(e);});
+  const end=e=>{if(active!==null&&e.pointerId!==undefined&&e.pointerId!==active)return;active=null;resetStick(el,state);};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);el.addEventListener('lostpointercapture',end);
+}
+bindVirtualStick('moveStick',fpMove);bindVirtualStick('lookStick',fpLook);
+document.addEventListener('mousemove',e=>{
+  if(!playing||document.pointerLockElement!==$('viewport'))return;
+  fpYaw-=e.movementX*FP_MOUSE_SENS;fpPitch-=e.movementY*FP_MOUSE_SENS;clampPitch();
+});
+document.addEventListener('pointerlockchange',()=>{if(!playing)return;});
+function heroActor(){
+  return actors.find(a=>a.userData.actorType==='hero' && a.userData.team==='blue' && a.visible!==false);
+}
+function setSessionButtons(){
+  const active=playing||simulating; app.classList.toggle('runtime-play',playing); app.classList.toggle('runtime-sim',simulating); $('playBtn').disabled=active; $('simulateBtn').disabled=active; $('pauseBtn').classList.toggle('hidden',!active); $('stopBtn').classList.toggle('hidden',!active); $('keepBtn').classList.toggle('hidden',!simulating); $('pauseBtn').textContent=paused?'▶ Resume':'Ⅱ Pause';
+}
+function beginPlay(fromHere=null){
+  preSessionCameraView=editorCameraView;setActiveCamera(perspectiveCamera);orbit.enableRotate=true;
+  playing=true;simulating=false;paused=false;keepSimulationChanges=false;savePlaySnapshot();transform.detach();if(selectionBox)selectionBox.visible=false;orbit.enabled=false;heroClickTarget=null;heroVel.set(0,0,0);heroGrounded=true;lastWave=-999;beginRuntimeComponents();
+  $('mobileDrawer').classList.remove('show');$('mobileToolsPanel').classList.remove('show');$('contentDrawer').classList.remove('show');
+  resetStick($('moveStick'),fpMove);resetStick($('lookStick'),fpLook);
+  const h=heroActor();
+  if(h){
+    if(fromHere){h.position.x=fromHere.x;h.position.z=fromHere.z;}
+    h.position.y=terrainHeight(h.position.x,h.position.z)+HERO_GROUND_OFFSET;
+    const focus=currentProject.kind==='dragons-den'?new THREE.Vector3(0,h.position.y+FP_EYE_HEIGHT,1.5):new THREE.Vector3(0,h.position.y+FP_EYE_HEIGHT,0);
+    fpYaw=Math.atan2(focus.x-h.position.x,-(focus.z-h.position.z));fpPitch=0;
+    setHeroBodyVisible(h,false);
+    perspectiveCamera.fov=72;perspectiveCamera.updateProjectionMatrix();
+    perspectiveCamera.position.set(h.position.x,h.position.y+FP_EYE_HEIGHT,h.position.z);
+  }
+  $('playBanner').classList.add('show');$('playBanner').textContent='FIRST PERSON · left stick move · right stick look';$('viewLabel').textContent='First Person PIE';setSessionButtons();editorLog('First-person Play In Editor started','ok');toast('First-person mode · twin sticks active');
+  setTimeout(()=>{if(playing)$('playBanner').classList.remove('show');},2600);
+  if(matchMedia('(pointer:fine)').matches)$('viewport').requestPointerLock?.();
+}
+function beginSimulate(){
+  simulating=true;playing=false;paused=false;keepSimulationChanges=false;savePlaySnapshot();orbit.enabled=true;lastWave=-999;beginRuntimeComponents();$('playBanner').classList.add('show');$('playBanner').textContent='SIMULATE IN EDITOR · editor camera and selection remain active';$('viewLabel').textContent='Simulate In Editor';setSessionButtons();editorLog('Simulate In Editor started','ok');toast('Simulate mode started.');
+}
+function stopSession(){
+  const restoreView=preSessionCameraView||editorCameraView;
+  const kept=keepSimulationChanges?actors.map(a=>({a,pos:a.position.clone(),rot:a.rotation.clone(),scale:a.scale.clone()})):null;
+  const h=heroActor();setHeroBodyVisible(h,true);setRuntimeShellVisibility(false);resetStick($('moveStick'),fpMove);resetStick($('lookStick'),fpLook);if(document.pointerLockElement)document.exitPointerLock?.();
+  perspectiveCamera.fov=55;perspectiveCamera.updateProjectionMatrix();
+  playing=false;simulating=false;paused=false;restorePlaySnapshot();
+  if(kept){for(const k of kept){k.a.position.copy(k.pos);k.a.rotation.copy(k.rot);k.a.scale.copy(k.scale);k.a.userData.spawnPos=k.a.position.toArray();}commitTransaction('Keep Simulation Changes');}
+  setCameraView(restoreView);orbit.enabled=true;if(selectionBox)selectionBox.visible=true;if(selected)transform.attach(selected);$('playBanner').classList.remove('show');updateViewLabel();setSessionButtons();editorLog('Editor session stopped','ok');toast('Returned to editor.');
+}
+$('playBtn').onclick=()=>beginPlay(); $('simulateBtn').onclick=beginSimulate; $('stopBtn').onclick=stopSession; $('pauseBtn').onclick=()=>{paused=!paused;setSessionButtons();editorLog(paused?'Simulation paused':'Simulation resumed');}; $('keepBtn').onclick=()=>{keepSimulationChanges=true;toast('Simulation changes will be kept on Stop.');editorLog('Keep Simulation Changes armed','warn');};
+$('playFromHereBtn').onclick=()=>{if(!selected)return;beginPlay(selected.position.clone());};
+function enemiesFor(obj){
+  const team = obj.userData.team;
+  return [...liveUnits, ...actors.filter(a=>a.userData.baked && ['tower','base','hero'].includes(a.userData.actorType) && a.visible!==false)]
+    .filter(x=>x!==obj && !x.userData.dead && x.userData.team && x.userData.team!=='neutral' && x.userData.team!==team && (x.userData.hp||0)>0);
+}
+function attackLogic(obj, t){
+  if(!(obj.userData.attackRange && obj.userData.attackDamage)) return false;
+  let best = null, bestDist = 1e9;
+  for(const e of enemiesFor(obj)){
+    const d = obj.position.distanceTo(e.position);
+    if(d < obj.userData.attackRange && d < bestDist){ best = e; bestDist = d; }
+  }
+  if(best && t - (obj.userData.lastAttack||-999) >= (obj.userData.attackCooldown||1)){
+    obj.userData.lastAttack = t;
+    best.userData.hp -= obj.userData.attackDamage;
+    if(best.userData.hp <= 0){
+      best.userData.dead = true;
+      if(best.userData.runtimeUnit){
+        scene.remove(best);
+        const i = liveUnits.indexOf(best);
+        if(i>=0) liveUnits.splice(i,1);
+      }else{
+        best.visible = false;
+      }
+    }
+    return true;
+  }
+  return !!best;
+}
+function spawnRuntimeMinion(team, lane){
+  const pts = paths[lane]; if(!pts) return;
+  const idx = team==='blue' ? 0 : pts.length-1;
+  const dir = team==='blue' ? 1 : -1;
+  const m = new THREE.Mesh(new THREE.CapsuleGeometry(0.25,0.35,4,8), mat(teamColor(team)));
+  m.castShadow = true;
+  m.position.copy(pts[idx]);
+  m.position.y = terrainHeight(m.position.x,m.position.z)+0.45;
+  m.userData = {runtimeUnit:true, team, lane, pathIndex:idx, pathDir:dir, hp:140, maxHp:140, attackDamage:18, attackRange:1.1, attackCooldown:0.7, lastAttack:-999, moveSpeed:2.2, dead:false};
+  scene.add(m);
+  liveUnits.push(m);
+}
+function updateMinion(u, dt, t){
+  if(u.userData.dead) return;
+  if(attackLogic(u,t)) return;
+  const pts = paths[u.userData.lane];
+  const next = u.userData.pathIndex + u.userData.pathDir;
+  if(next >= 0 && next < pts.length){
+    const target = pts[next].clone();
+    target.y = terrainHeight(target.x,target.z)+0.45;
+    const v = target.clone().sub(u.position); v.y = 0;
+    if(v.length() < 0.2) u.userData.pathIndex = next;
+    else{
+      v.normalize();
+      u.position.add(v.multiplyScalar(u.userData.moveSpeed*dt));
+      u.position.y = terrainHeight(u.position.x,u.position.z)+0.45;
+    }
+  }
+}
+function resolveCircleCollision(pos,radius,ignore=null){
+  const wp=new THREE.Vector3();
+  for(const b of blockerActors()){if(b===ignore)continue;worldPos(b,wp);const dx=pos.x-wp.x,dz=pos.z-wp.z,dist=Math.hypot(dx,dz),min=radius+worldColliderRadius(b);if(dist<min&&dist>0.0001){const push=min-dist;pos.x+=dx/dist*push;pos.z+=dz/dist*push;}}
+}
+function resolveHeroCollision(pos,radius){resolveCircleCollision(pos,radius,heroActor());}
+function updateHero(dt, t){
+  const h=heroActor();if(!h||h.visible===false)return;
+
+  fpYaw-=fpLook.x*FP_LOOK_SPEED*dt;fpPitch-=fpLook.y*FP_LOOK_SPEED*dt;clampPitch();
+
+  const keyRight=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0);
+  const keyForward=(keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0);
+  const rightInput=THREE.MathUtils.clamp(keyRight+fpMove.x,-1,1);
+  const forwardInput=THREE.MathUtils.clamp(keyForward-fpMove.y,-1,1);
+  const forward=new THREE.Vector3(Math.sin(fpYaw),0,-Math.cos(fpYaw));
+  const right=new THREE.Vector3(Math.cos(fpYaw),0,Math.sin(fpYaw));
+  const move=new THREE.Vector3().addScaledVector(forward,forwardInput).addScaledVector(right,rightInput);
+  if(move.lengthSq()>1)move.normalize();
+  if(move.lengthSq()>0.0001)heroClickTarget=null;
+
+  const speed=h.userData.moveSpeed||6;
+  const next=h.position.clone().add(move.multiplyScalar(speed*dt));
+  resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;
+
+  const groundY=terrainHeight(h.position.x,h.position.z)+HERO_GROUND_OFFSET;
+  if(heroJumpQueued&&heroGrounded){heroVel.y=6.5;heroGrounded=false;}
+  heroJumpQueued=false;
+  if(heroGrounded&&heroVel.y<=0&&(h.position.y-groundY)<=HERO_STEP_DOWN){h.position.y=groundY;heroVel.y=0;}
+  else{heroVel.y-=14*dt;h.position.y+=heroVel.y*dt;if(h.position.y<=groundY){h.position.y=groundY;heroVel.y=0;heroGrounded=true;}else heroGrounded=false;}
+
+  h.rotation.y=fpYaw;
+  attackLogic(h,t);
+
+  const eye=new THREE.Vector3(h.position.x,h.position.y+FP_EYE_HEIGHT,h.position.z);
+  const cp=Math.cos(fpPitch),look=new THREE.Vector3(Math.sin(fpYaw)*cp,Math.sin(fpPitch),-Math.cos(fpYaw)*cp);
+  perspectiveCamera.position.copy(eye);perspectiveCamera.lookAt(eye.clone().add(look));
+}
+function updateTowers(t){
+  for(const a of actors.filter(a=>a.userData.actorType==='tower' && a.visible!==false)) attackLogic(a,t);
+}
+
+$('viewport').addEventListener('pointerdown', e=>{
+  if(playing){
+    if(e.pointerType==='mouse'&&document.pointerLockElement!==$('viewport'))$('viewport').requestPointerLock?.();
+    return;
+  }
+  const rect = $('viewport').getBoundingClientRect();
+  pointer.x = ((e.clientX - rect.left)/rect.width)*2 - 1;
+  pointer.y = -((e.clientY - rect.top)/rect.height)*2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  if(transform.dragging) return;
+  const hits = raycaster.intersectObjects(actors, true);
+  if(hits.length){
+    let o=hits[0].object;
+    while(o.parent&&!actors.includes(o))o=o.parent;
+    if(actors.includes(o))selectActor(rootGroupFor(o),{additive:multiSelectMode||e.shiftKey||e.ctrlKey||e.metaKey});
+  }
+});
+
+window.addEventListener('keydown', e=>{
+  const tag = document.activeElement?.tagName;
+  if(['INPUT','SELECT'].includes(tag)) return;
+  keys.add(e.key.toLowerCase());
+  if(e.key===' ') heroJumpQueued = true;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();restoreHistory(historyIndex-1);return;}
+  if((e.ctrlKey||e.metaKey)&&(e.key.toLowerCase()==='y'||(e.shiftKey&&e.key.toLowerCase()==='z'))){e.preventDefault();restoreHistory(historyIndex+1);return;}
+  if(!playing&&(e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='g'){e.preventDefault();if(e.shiftKey)ungroupActor(selected);else groupSelection();return;}
+  if(!playing){
+    if(e.key.toLowerCase()==='w') setMode('translate');
+    if(e.key.toLowerCase()==='e') setMode('rotate');
+    if(e.key.toLowerCase()==='r') setMode('scale');
+    if(e.key==='Delete') deleteSelected();
+  }
+});
+window.addEventListener('keyup', e=>keys.delete(e.key.toLowerCase()));
+
+function resize(){
+  const rect=$('viewport').parentElement.getBoundingClientRect(),aspect=rect.width/Math.max(1,rect.height);renderer.setSize(rect.width,rect.height,false);perspectiveCamera.aspect=aspect;perspectiveCamera.updateProjectionMatrix();orthoCamera.left=-ORTHO_SIZE*aspect;orthoCamera.right=ORTHO_SIZE*aspect;orthoCamera.top=ORTHO_SIZE;orthoCamera.bottom=-ORTHO_SIZE;orthoCamera.updateProjectionMatrix();transform.setSize(window.innerWidth<=620?.62:.82);
+}
+function tick(){
+  requestAnimationFrame(tick);resize();const dt=Math.min(clock.getDelta(),0.05),t=performance.now()/1000;const runtimeActive=playing||simulating;
+  if(runtimeActive&&!paused){
+    if(currentProject.kind==='moba'&&t-lastWave>(Number($('waveInterval').value)||7)){lastWave=t;Object.keys(paths).forEach(lane=>{spawnRuntimeMinion('blue',lane);spawnRuntimeMinion('red',lane);});}
+    if(playing)updateHero(dt,t);updateRuntimeComponents(dt,t);
+    if(currentProject.kind==='moba'){for(const u of [...liveUnits])updateMinion(u,dt,t);updateTowers(t);}
+  }
+  if(!playing)orbit.update();if(selectionBox&&selected)selectionBox.update();renderer.render(scene,camera);
+}
+
+window.SWRLZ_FORGE_BUILD={version:'v5.3',name:'§wyrl§ Engine',stamp:'2026.10.05',source:'GitHub → Hugging Face',projectSystem:'templates',defaultProject:'dragons-den',playMode:'first-person',mobileControls:'twin-stick',grouping:'hierarchical'};window.SWYRL_ENGINE_BUILD=window.SWRLZ_FORGE_BUILD;
+window.SWRLZ_FORGE_AGENT={
+  version:'swyrl-engine-agent-v3.3',
+  inspectScene:()=>projectData(),
+  listActors:()=>actors.map(a=>({id:a.userData.id,name:a.name,type:a.userData.actorType,folder:a.userData.folder,baked:a.userData.baked,position:a.position.toArray(),components:[...(a.userData.components||[])]})),
+  spawn:(type,options={})=>{beginTransaction('Agent spawn '+type);createPrefab(type);const a=selected;if(a&&options.position)a.position.fromArray(options.position);if(a&&options.name)a.name=options.name;if(a&&options.folder)a.userData.folder=options.folder;commitTransaction('Agent spawn '+type);return a?.userData.id||null;},
+  setTransform:(id,tr={})=>{const a=actors.find(x=>x.userData.id===id);if(!a)return false;beginTransaction('Agent transform '+a.name);if(tr.position)a.position.fromArray(tr.position);if(tr.rotation)a.rotation.set(...tr.rotation);if(tr.scale)a.scale.fromArray(tr.scale);a.userData.spawnPos=a.position.toArray();commitTransaction('Agent transform '+a.name);return true;},
+  addComponent:(id,name)=>{const a=actors.find(x=>x.userData.id===id);if(!a)return false;beginTransaction('Agent add '+name);const ok=addComponent(a,name);if(ok)commitTransaction('Agent add '+name);else transactionBefore=null;return ok;},
+  bake:()=>{$('bakeBtn').click();return true;},
+  validate:()=>validateProject(),
+  setCameraView:(view)=>{if(!['perspective','top','front','right'].includes(view))return false;$('cameraView').value=view;setCameraView(view);return true;},
+  snapToTerrain:(id)=>{const a=actors.find(x=>x.userData.id===id);if(!a)return false;snapActorToTerrain(a);return true;},
+  project:()=>({...currentProject}),
+  createProject:(template)=>{createProjectFromTemplate(template,true);return {...currentProject};},
+  openProjects:()=>{showProjectHub();return true;},
+  groupActors:(ids,name='Agent Group')=>{const list=ids.map(id=>actors.find(a=>a.userData.id===id)).filter(Boolean);const g=groupActors(list,name);return g?.userData.id||null;},
+  ungroup:(id)=>{const g=actors.find(a=>a.userData.id===id);return !!ungroupActor(g).length;}
+};
+window.SWYRL_ENGINE_AGENT=window.SWRLZ_FORGE_AGENT;
+buildDragonsDenProject();refreshAssetList();initializeHistory("Initial Dragon's Den — Seed Chamber");setCameraView('perspective');editorLog('§wyrl§ Engine v5.3 initialized · hierarchical groups · immersive Den pass','ok');setSessionButtons();tick();
+})();
+</script>
+</body>
+</html>
