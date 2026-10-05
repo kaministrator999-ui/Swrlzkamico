@@ -41,7 +41,7 @@ def _latest_index(history: list[dict[str, Any]], role: str) -> int | None:
     return None
 
 def _requested_count(text: str) -> int | None:
-    m = re.search(r"\b(\d{1,2})\s+(?:(?:short|brief|detailed|different|distinct|good|best|new)\s+){0,2}(?:steps?|options?|examples?|ideas?|versions?|ways?|reasons?|questions?|items?|attempts?)\b", text, re.I)
+    m = re.search(r"\b(\d{1,2})\s+(?:(?:short|brief|detailed|different|distinct|good|best|new)\s+){0,2}(?:steps?|options?|examples?|ideas?|versions?|ways?|reasons?|questions?|items?|attempts?|names?|titles?|suggestions?|choices?|points?|bullets?|results?|recommendations?)\b", text, re.I)
     if not m:
         return None
     value = int(m.group(1))
