@@ -74,6 +74,19 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
                     yield {"type":"WIDGET","widget":widget}
             done_phase="WEATHER_FETCH_COMPLETE" if online_result.get("kind")=="weather" else "SEARCH_COMPLETE"
             yield {"type":"STATUS","phase":done_phase,"reason":"Online retrieval "+str(online_result.get("status") or "complete").lower()+".","categories":["ONLINE_RESEARCH",str(online_result.get("kind") or "search").upper()]}
+            if online_result.get("kind")=="weather" and str(online_result.get("status") or "").upper()!="OK":
+                status=str(online_result.get("status") or "ERROR").upper()
+                error_code=str(online_result.get("errorCode") or (online_result.get("modelContext") or {}).get("errorCode") or "")
+                if status=="LOCATION_REQUIRED":
+                    message="I need a city/region or an explicitly shared location before I can check live weather."
+                elif error_code=="WEATHER_LOCATION_NOT_FOUND":
+                    message="I reached the live weather service, but I couldn't resolve that place. Try a city with state/province or country, for example “Leavenworth, Kansas”."
+                else:
+                    message="I reached the live weather service, but live weather retrieval failed. I won't guess at current conditions."
+                yield {"type":"STATUS","phase":"WEATHER_RETRIEVAL_BLOCKED","reason":message,"categories":["ONLINE_RESEARCH","WEATHER","ERROR"]}
+                yield {"type":"DELTA","text":message}
+                yield {"type":"COMPLETED","phase":"COMPLETE"}
+                return
     # Programming questions/examples/reasoning were routed before retrieval so online logs bind the selected model.
     if model_id=="r39":
         yield from r39_generate(_r39_online_payload(payload))
