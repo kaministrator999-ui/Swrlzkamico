@@ -1,0 +1,30 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v122-28e6e5a8b050",
+  "modelId": "700m",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "005267858ae6a187acc86e064b6651409d7380fd",
+  "persistedAtUnixMs": 1791165529969,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "d6b11336d66b9e74",
+    "newCandidateFingerprint": "d6b11336d66b9e74",
+    "candidateChanged": false,
+    "stalledRepairInput": true,
+    "regenerationAttempted": true,
+    "regenerationReason": "unchanged-executable-candidate;second-attempt-unchanged",
+    "candidateValidationStatus": "REJECT",
+    "candidateValidationReasons": [
+      "diagnostic-repair-no-executable-change",
+      "repair-stalled-no-executable-change",
+      "strategy-repeat-previous-attempt"
+    ],
+    "receiptCategories": [
+      "runtime"
+    ],
+    "repairActions": [
+      "trace the exception to its first relevant application frame and repair the causing state/operation"
+    ],
+    "executionVerified": false
+  }
+}
