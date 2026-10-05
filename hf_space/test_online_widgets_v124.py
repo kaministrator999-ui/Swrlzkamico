@@ -193,9 +193,10 @@ print("online-search-provider-fallback-v124 PASS")
 # Retrieval is model-agnostic: every selectable inference route receives the same
 # bounded online evidence after one router-level retrieval.
 captures={}
-orig_execute=model_router.execute_online_request
-def fake_online_execute(payload,intent):
-    return {
+orig_stream=model_router.stream_online_request
+def fake_online_stream(payload,intent):
+    yield {"type":"progress","event":{"contract":"swrlz-online-trace-v1","phase":"SEARCH_PROVIDER_VISIT","provider":"test-provider","site":"example.com","url":"https://example.com/","activity":"Searching provider"}}
+    yield {"type":"result","result":{
         "contract":"swrlz-hf-online-capability-v1",
         "kind":"search",
         "status":"OK",
@@ -204,7 +205,7 @@ def fake_online_execute(payload,intent):
         "sources":[{"title":"Example","url":"https://example.com","provider":"example.com"}],
         "widgets":[{"contract":"swrlz-widget-v1","kind":"search-results","version":1,"title":"Example","provider":"test-provider","data":{"query":"example","results":[]}}],
         "modelContext":{"contractId":"test-online-context","trust":"UNTRUSTED_EXTERNAL_EVIDENCE","instructionAuthority":False,"evidence":[{"title":"Example","url":"https://example.com","snippet":"Fresh evidence."}]},
-    }
+    }}
 def capture(name):
     def generate(payload):
         captures[name]=payload
@@ -212,7 +213,7 @@ def capture(name):
         yield {"type":"COMPLETED","phase":"COMPLETE"}
     return generate
 try:
-    model_router.execute_online_request=fake_online_execute
+    model_router.stream_online_request=fake_online_stream
     generators={name:capture(name) for name in ("r39","stock","700m","coder")}
     for model_id in ("r39","stock","700m","coder"):
         list(model_router.dispatch(
@@ -224,7 +225,7 @@ try:
             generators["coder"],
         ))
 finally:
-    model_router.execute_online_request=orig_execute
+    model_router.stream_online_request=orig_stream
 
 for model_id in ("stock","700m","coder"):
     assert (captures[model_id].get("onlineContext") or {}).get("contractId")=="test-online-context",(model_id,captures[model_id])
