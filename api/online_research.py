@@ -62,7 +62,7 @@ def _trace_public_url(url:Any)->tuple[str,str]:
 def _emit_trace(phase:str,reason:str="",provider:str="",url:Any="",status:Any=None,result_count:Any=None,response_bytes:Any=None,error_type:str="")->dict[str,Any]:
     host,safe_url=_trace_public_url(url)
     event={
-        "contract":"swrlz-online-trace-v1",
+        "contract":"swrlz-online-trace-event-v1",
         "atUnixMs":int(time.time()*1000),
         "phase":str(phase or "ONLINE_TRACE")[:80],
         "activity":str(reason or "")[:240],
