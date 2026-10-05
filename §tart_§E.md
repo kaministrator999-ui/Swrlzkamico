@@ -22,116 +22,71 @@ On `§tart §E`:
 
 1. Read this router.
 2. Read `projects/swrlz-forge-moba/README.md`.
-3. Read `source-manifest.json`, `build_space.py`, and `SPACE_README.md`.
+3. Read `source-manifest.json`, `build_space.py`, current patch modules, and `SPACE_README.md`.
 4. Read `.github/workflows/deploy-swrlz-forge-moba.yml`.
-5. Inspect the current GitHub main revision, last Forge workflow result, and current Hugging Face Space state before editing.
-6. Keep edits scoped to the Forge project unless an explicit integration requires another subsystem.
-7. For runtime-affecting changes, update the exact source payload and manifest together.
+5. Inspect current GitHub main, last Forge workflow result, and current Hugging Face Space state before editing.
+6. Keep edits scoped to Forge unless an explicit integration requires another subsystem.
+7. Preserve base and final integrity contracts whenever source patches change.
 8. Merge the validated candidate to `main`.
 9. Observe the dedicated Forge workflow through terminal status.
-10. Require both publication success **and live-page marker verification** before calling the release live.
-11. Report the exact GitHub source commit, HF Space revision, build version/marker, and any failures encountered.
+10. Require publication success **and live-page marker verification** before calling the release live.
+11. Report the exact GitHub source commit, HF Space revision, build version/marker, and failure path if any.
 
-## Current v4 source authority
+## Current v4.1 source authority
 
 ```text
-artifact: swrlz_forge_v4.html
-bytes: 99591
-sha256: a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856
-deploy marker: V4_SOLID_TERRAIN_LOCKED_VIEWS
+base artifact: swrlz_forge_v4.html
+base bytes: 99591
+base sha256: a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856
+
+patch: patches/v4_1.py
+
+final artifact: swrlz_forge_v4_1.html
+final bytes: 100610
+final sha256: 647a80a6a1062e8e4068c63593cca3c5566fe8ee9da5dcdcbc1810d42673132f
+deploy marker: V4_1_GROUND_ADHESION_RUNTIME_CLEANUP
 ```
 
-The source is stored losslessly in six gzip+base64 payload chunks. `build_space.py` reconstructs the exact HTML and verifies its integrity before deployment.
+## v4.1 state
 
-## v4 editor state
+The current bugfix pass addresses real mobile playtest evidence:
 
-Forge v4 includes:
-
-- separate Perspective and Orthographic editor cameras
-- locked Top / Front / Right authoring views
-- unrestricted Perspective/Free camera including underside inspection
-- solid terrain underside + edge skirts
-- brighter lighting/fog and improved scenery
-- smaller mobile gizmos
-- mobile Tools drawer
-- Terrain Snap and Snap Selected to Ground
-- World/Local transform spaces and transform snapping
-- Outliner, Details, Components, Content Drawer, Output Log
-- Undo/Redo and Build Validation
-- Play In Editor / Simulate In Editor / Pause / Play From Here / Keep Simulation Changes
-- PhysicsBody gravity/bounce/drag plus simple blocker collision
-- MOBA lane/minion/tower/runtime systems
-- ghost → Bake authoring
-- `window.SWRLZ_FORGE_AGENT` using `forge-agent-v2`
-- standalone HTML runtime export
+- hero feet align to the terrain surface instead of carrying the old +1.05 group offset
+- grounded step-down adhesion follows slopes and river dips without hovering
+- PIE hides editor BoxHelper selection chrome and restores it on Stop
+- mobile PIE suppresses editor-only World/Inspector/help/tool clutter
+- the default jungle walls are relocated away from awkward combat positions
+- example-only physics/Blueprint actors no longer clutter the default MOBA map
+- exported runtime uses the same grounded movement model
+- agent API: `forge-agent-v2.1`
 
 ## Deployment truth contract
 
-A GitHub/HF upload receipt is not sufficient by itself.
-
-The v4 workflow must:
-
 ```text
-rebuild exact source
-  -> verify SHA/bytes
-  -> upload dedicated static Space
-  -> request the live hf.space page with cache-busting query
-  -> find V4_SOLID_TERRAIN_LOCKED_VIEWS
-  -> only then report deployment SUCCESS
+rebuild base
+→ verify base integrity
+→ apply governed patches
+→ verify final integrity
+→ upload dedicated static Space
+→ obtain actual Space host from Hugging Face
+→ fetch live page
+→ require current build marker
+→ SUCCESS
 ```
 
-If the live marker check fails, treat the release as not-live and debug the serving/cache/build state.
+Do not regress to a guessed Space hostname or treat upload alone as proof of live state.
 
-## Historical lineage
+## Verified v4 deployment lineage
 
-Initial dedicated Forge deployment:
-- GitHub: `3024b4e8d81ec515ab8d08d6d7d2b81547e57f4b`
-- HF: `a22686c4b1326c10fd8884965b18cdad8e50224e`
+The previous v4 checkpoint remains:
 
-v3 deployment checkpoint:
-- GitHub: `018b7351c5d473018ac5ca5a0ff4a0079c98fb8f`
-- HF: `650c0defa60d0db3f68e9a93b3f39384a23c8da8`
+- engine commit: `948489ba3c255c69e78ccb321f9239fba566c437`
+- final verified workflow commit: `b6190a91c27a9f451335d12ea251a9c50ddaf11d`
+- HF revision: `0945cd9417bdcb4331f2d86a2297b67b1895d6b0`
+- actual host: `https://kamiloki-swrlz-forge-moba.static.hf.space/`
 
-These are historical checkpoints only. Never assume they remain current.
-
-## Verified v4 deployment checkpoint
-
-```text
-Forge version:
-v4
-
-GitHub release/workflow commit:
-b6190a91c27a9f451335d12ea251a9c50ddaf11d
-
-v4 engine payload first published from:
-948489ba3c255c69e78ccb321f9239fba566c437
-
-Source SHA-256:
-a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856
-
-Hugging Face Space revision:
-0945cd9417bdcb4331f2d86a2297b67b1895d6b0
-
-Actual HF static host:
-https://kamiloki-swrlz-forge-moba.static.hf.space/
-
-Space stage:
-RUNNING
-
-Live marker verification:
-PASS on first attempt
-```
-
-Deployment debugging lineage is intentionally preserved:
-
-1. v4 upload itself succeeded, but the first live gate used an assumed non-static `.hf.space` host and correctly received HTTP 404.
-2. the next pass asked Hugging Face `SpaceInfo` for the actual host and discovered the required `.static.hf.space` hostname;
-3. that verifier then exposed a shell `pipefail` false-negative: `grep -q` found the marker and closed the pipe, causing curl exit 23;
-4. the verifier was repaired to download the page first and grep the file;
-5. the final run fetched the Hugging Face-reported static host and found `V4_SOLID_TERRAIN_LOCKED_VIEWS` on attempt 1.
-
-Do not regress to a guessed Space hostname. Always use Hugging Face's reported host/subdomain and live-marker validation.
+This is historical lineage after v4.1 becomes current.
 
 ## Bottom line
 
-**`§tart §E` = load Forge from GitHub, preserve the separate engine lane, change the engine, validate exact source, deploy only to `kamiloki/swrlz-forge-moba`, verify the actual live page is serving the new marker, then continue from that observed truth.**
+**`§tart §E` = load Forge from GitHub, preserve its separate deployment lane, reconstruct/patch/verify the exact engine source, deploy only to `kamiloki/swrlz-forge-moba`, verify the actual static host serves the current marker, then continue from observed truth.**
