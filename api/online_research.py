@@ -74,9 +74,9 @@ def _search_html(url:str)->tuple[int,str,int]:
     return status,raw.decode("utf-8","replace"),len(raw)
 
 def _clean_search_text(value:str,limit:int)->str:
-    value=re.sub(r"(?is)<(script|style|svg)[^>]*>.*?</\\1>"," ",str(value or ""))
+    value=re.sub(r"(?is)<(script|style|svg)[^>]*>.*?</\1>"," ",str(value or ""))
     value=html.unescape(re.sub(r"<[^>]+>"," ",value))
-    return re.sub(r"\\s+"," ",value).strip()[:limit]
+    return re.sub(r"\s+"," ",value).strip()[:limit]
 
 def _ddg_target(href:str)->str:
     value=html.unescape(str(href or ""))
@@ -96,19 +96,19 @@ def _evidence_result(query:str,href:str,title:str,snippet:str,rank:int)->dict[st
     return asdict(Evidence(title=clean_title,url=safe,snippet=_clean_search_text(snippet,1200),source=target.netloc.lower(),query=query,rank=rank,fetched_at=int(time.time())))
 
 def _parse_ddg_html(query:str,text:str)->tuple[list[dict[str,Any]],int]:
-    anchors=list(re.finditer(r'<a[^>]+class=["\'][^"\']*\\bresult__a\\b[^"\']*["\'][^>]+href=["\']([^"\']+)["\'][^>]*>([\\s\\S]*?)</a>',text,re.I))
+    anchors=list(re.finditer(r'<a[^>]+class=["\'][^"\']*\bresult__a\b[^"\']*["\'][^>]+href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>',text,re.I))
     results=[]
     for index,anchor in enumerate(anchors):
         region_end=anchors[index+1].start() if index+1<len(anchors) else min(len(text),anchor.end()+5000)
         region=text[anchor.end():region_end]
-        sm=re.search(r'class=["\'][^"\']*\\bresult__snippet\\b[^"\']*["\'][^>]*>([\\s\\S]*?)</(?:a|div)>',region,re.I)
+        sm=re.search(r'class=["\'][^"\']*\bresult__snippet\b[^"\']*["\'][^>]*>([\s\S]*?)</(?:a|div)>',region,re.I)
         item=_evidence_result(query,anchor.group(1),anchor.group(2),sm.group(1) if sm else "",len(results)+1)
         if item:results.append(item)
         if len(results)>=MAX_RESULTS_PER_QUERY:break
     return results,len(anchors)
 
 def _parse_ddg_lite(query:str,text:str)->tuple[list[dict[str,Any]],int]:
-    anchors=list(re.finditer(r'<a[^>]+(?:class=["\'][^"\']*\\bresult-link\\b[^"\']*["\'][^>]*)?href=["\']([^"\']+)["\'][^>]*>([\\s\\S]*?)</a>',text,re.I))
+    anchors=list(re.finditer(r'<a[^>]+(?:class=["\'][^"\']*\bresult-link\b[^"\']*["\'][^>]*)?href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>',text,re.I))
     results=[]
     accepted_anchors=0
     for index,anchor in enumerate(anchors):
@@ -118,20 +118,20 @@ def _parse_ddg_lite(query:str,text:str)->tuple[list[dict[str,Any]],int]:
         accepted_anchors+=1
         region_end=anchors[index+1].start() if index+1<len(anchors) else min(len(text),anchor.end()+2500)
         region=text[anchor.end():region_end]
-        sm=re.search(r'class=["\'][^"\']*\\bresult-snippet\\b[^"\']*["\'][^>]*>([\\s\\S]*?)</(?:td|div|span)>',region,re.I)
+        sm=re.search(r'class=["\'][^"\']*\bresult-snippet\b[^"\']*["\'][^>]*>([\s\S]*?)</(?:td|div|span)>',region,re.I)
         item=_evidence_result(query,href,anchor.group(2),sm.group(1) if sm else "",len(results)+1)
         if item:results.append(item)
         if len(results)>=MAX_RESULTS_PER_QUERY:break
     return results,accepted_anchors
 
 def _parse_bing_html(query:str,text:str)->tuple[list[dict[str,Any]],int]:
-    blocks=list(re.finditer(r'<li[^>]+class=["\'][^"\']*\\bb_algo\\b[^"\']*["\'][^>]*>([\\s\\S]*?)</li>',text,re.I))
+    blocks=list(re.finditer(r'<li[^>]+class=["\'][^"\']*\bb_algo\b[^"\']*["\'][^>]*>([\s\S]*?)</li>',text,re.I))
     results=[]
     for block in blocks:
         body=block.group(1)
-        am=re.search(r'<h2[^>]*>\\s*<a[^>]+href=["\']([^"\']+)["\'][^>]*>([\\s\\S]*?)</a>',body,re.I)
+        am=re.search(r'<h2[^>]*>\s*<a[^>]+href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>',body,re.I)
         if not am:continue
-        sm=re.search(r'<p[^>]*>([\\s\\S]*?)</p>',body,re.I)
+        sm=re.search(r'<p[^>]*>([\s\S]*?)</p>',body,re.I)
         item=_evidence_result(query,am.group(1),am.group(2),sm.group(1) if sm else "",len(results)+1)
         if item:results.append(item)
         if len(results)>=MAX_RESULTS_PER_QUERY:break
