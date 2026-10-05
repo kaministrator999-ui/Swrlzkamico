@@ -1,95 +1,87 @@
-# SWRLZ Forge · Editor v5
+# §wyrl§ Engine · Maker v5.1
 
 ## Project entry command
 
-Use `§tart §E` or `@GitHub §tart §E` to enter the Forge engine workflow. Forge remains deployment-isolated from the main §wyrlz AI Chat/LALM application.
+Use `§tart §E` or `@GitHub §tart §E` to enter the dedicated §wyrl§ Engine lane. This engine remains deployment-isolated from the main §wyrlz AI Chat/LALM application.
 
-## v5 architecture change
+## Naming
 
-The engine is no longer the MOBA.
+The engine maker is now **§wyrl§ Engine**.
 
-Forge now owns a **project system**, and game-specific content is loaded as a project/template:
+Legacy internal names such as `SWRLZ_FORGE_AGENT`, the GitHub folder `projects/swrlz-forge-moba/`, and the Hugging Face Space slug are preserved where changing them would break lineage or integrations. New aliases expose:
+
+- `window.SWYRL_ENGINE_BUILD`
+- `window.SWYRL_ENGINE_AGENT`
+
+## Default starter project
+
+The engine now boots into:
+
+**Dragon's Den — Seed Chamber**
+
+This is deliberately an immersive environment, not an open-field game map.
+
+### Seed Chamber layout
+
+- **Wake Nook** — human-scale entry/rest area inspired by the reclaimed under-bridge den
+- **Main Chamber** — large council floor with Memory Crystal
+- **Creator Alcove** — coding/build workspace
+- **Throne Side** — elevated author/throne terrace
+- **Dragon Perch Side** — elevated perch for the primary §wyrl§ Dragon
+- **Portal Hall Exit** — dormant architectural exit for later travel systems
+- **Memory Vault Exit** — dormant deeper-room exit
+- **Inference Core Exit** — dormant deeper-system exit
+- cavern perimeter, overhead concrete ribs, ceiling, lanterns, and crystal landmarks
+
+There is **no launch/jump pad in the default Den**. Travel mechanics can be introduced later through the intended portal/gauntlet system.
+
+### Scale
+
+The player remains human-scale while the architecture and dragons are deliberately much larger. The chamber uses the full current world footprint, tall cavern wall formations, an overhead ceiling around 10+ world units high, elevated platforms, and dragons scaled well above the visitor pawn.
+
+### Dragon model pass
+
+The old round/flipper silhouette was replaced with a more explicitly draconic low-poly form:
+
+- upright torso/chest
+- longer neck
+- defined head, snout, and jaw
+- large bat-like wings
+- four legs
+- tapered multi-section tail
+- horns, dorsal spines, and glowing eyes
+
+## Project templates
 
 ```text
-SWRLZ Forge engine
-├── Starter World          ← default
-├── MOBA Arena             ← example project
-└── Dragon's Den           ← example project
+§wyrl§ Engine
+├── Dragon's Den — Seed Chamber   ← DEFAULT STARTER
+├── Blank Starter World
+└── MOBA Arena                    ← example project
 ```
 
-The existing folder name `projects/swrlz-forge-moba/` is retained for deployment/source lineage, but MOBA semantics no longer own the editor startup state.
+Each template becomes ordinary editable project state and can be saved/loaded independently.
 
-### Starter World
+Project saves now default to `.swyrl.json`.
 
-The default project is a neutral sandbox with terrain, river/scenery, a playable pawn, a physics prop, and component examples. MOBA waves, bases, paths, and validation rules are inactive.
+## Dragon's Den semantic anchors
 
-### MOBA Arena example
+The starter includes explicit role/tag metadata for later LALM integration:
 
-The original Forge three-lane map is preserved as `MOBA Arena Example`. Creating that project restores lane paths, bases, towers, camps, minion spawning, tower combat, and MOBA-specific build validation.
+- §wyrl§ Dragon → primary LALM avatar
+- Forge Dragon → world-building agent
+- Coder Dragon → coding reasoning agent
+- Memory Crystal → memory anchor
+- Spatial Voice Anchor → future spatial voice hook
+- Forge Workspace Core → creator/world-building interface
+- Kamilion Throne → human-author seat
+- Portal Hall / Memory Vault / Inference Core exits → future expansion boundaries
 
-MOBA prefabs were removed from the always-visible core sidebar and moved to `/Examples/MOBA` in the Content Drawer.
-
-### Dragon's Den example
-
-Dragon's Den is a separate editable project containing:
-
-- §wyrlz Dragon — primary LALM avatar
-- Forge Dragon — world-building agent avatar
-- Coder Dragon — coding-reasoner avatar
-- Kamilion Throne — human-author seat
-- Council Rune Dais
-- Memory Crystal
-- Inference Core
-- Spatial Voice Anchor hook
-- Code Portal
-- World Portal
-- Arcane rune crystals
-- cavern perimeter
-- visitor/player pawn
-- Ascension Pad
-
-New actor types include `dragon`, `crystal`, `portal`, `throne`, and `pedestal`. Project actor metadata now serializes `role`, `tags`, and `visualColor`, giving the later LALM/voice layer explicit world anchors without pretending spatial audio is implemented yet.
-
-## Project workflow
-
-Use **Projects** in the editor to create a template. Each created template becomes normal editable project state.
-
-```text
-Create template
-→ edit actors/components
-→ ghost → Bake
-→ Save .forge.json
-→ Load later
-→ Simulate / PIE
-→ Export standalone HTML
-```
-
-Project JSON now includes:
-
-- project name
-- template
-- project kind
-- environment preset
-- editor state
-- actors/components
-- paths
-- scene settings
-
-Build validation is project-aware. MOBA rules only run for MOBA projects; Dragon's Den has its own checks; sandbox projects use generic checks.
-
-## Runtime separation
-
-MOBA wave/minion/tower runtime systems only execute when `currentProject.kind === 'moba'`. They remain engine capabilities available to the example without leaking into every project.
-
-The exported playable HTML follows the same project-kind gate.
-
-## Agent surface
-
-`window.SWRLZ_FORGE_AGENT` advances to `forge-agent-v3` and exposes project inspection/creation in addition to actor editing, components, validation, camera control, terrain snapping, and Bake.
+These are semantic hooks, not claims that spatial voice or portal travel is already implemented.
 
 ## Source integrity
 
-Base v4 source:
+Base v4:
 
 - bytes: `99591`
 - SHA-256: `a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856`
@@ -99,21 +91,22 @@ Patch chain:
 ```text
 patches/v4_1.py
 patches/v5_projects.py
+patches/v5_1_swyl_engine_seed_den.py
 ```
 
-Final v5 source:
+Final v5.1 candidate:
 
-- artifact: `swrlz_forge_v5.html`
-- bytes: `120501`
-- SHA-256: `c5b44363460fc29ec3a119967c082c1fd95b035d781c50a4affa9d8ecd686593`
-- marker: `V5_PROJECT_TEMPLATES_DRAGONS_DEN`
-
-The v5 candidate was materialized and Node syntax-checked against the exact reconstructed v4.1 source before entering the release branch.
+- artifact: `swyl_engine_v5_1.html`
+- bytes: `129398`
+- SHA-256: `a653064ce2be625d67d561a1db249a1bb4fa0637dc69377480cf6311e43fdf51`
+- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN`
 
 ## Deployment
 
-Target Space remains `kamiloki/swrlz-forge-moba` for continuity.
+Current infrastructure is intentionally preserved for lineage:
 
-Live static host: `https://kamiloki-swrlz-forge-moba.static.hf.space/`
+- Space: `kamiloki/swrlz-forge-moba`
+- live host: `https://kamiloki-swrlz-forge-moba.static.hf.space/`
+- workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`
 
-The deployment workflow must rebuild exact source, verify final integrity, upload the dedicated static Space, then fetch the actual Hugging Face-reported host and prove the v5 marker is live before success is reported.
+The workflow rebuilds exact source, verifies bytes/SHA, syntax-checks the editor module, uploads the static Space, asks Hugging Face for the actual serving host, then requires the current v5.1 marker on the live page before success.

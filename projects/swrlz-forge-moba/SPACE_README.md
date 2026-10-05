@@ -1,28 +1,26 @@
 ---
-title: SWRLZ Forge Editor v5
-emoji: 🌀
+title: §wyrl§ Engine v5.1
+emoji: 🐉
 colorFrom: purple
 colorTo: blue
 sdk: static
 app_file: index.html
 fullWidth: true
 header: mini
-short_description: Browser game editor with project templates and agent tools.
+short_description: Browser-native world and game engine maker with project templates and agent tools.
 ---
 
-# SWRLZ Forge · Editor v5
+# §wyrl§ Engine · Maker v5.1
 
-A browser-native 3D game editor and runtime.
+A browser-native 3D world/game engine maker built around editable projects, runtime simulation, ghost → Bake authoring, and a structured LALM/agent control surface.
 
-v5 separates game examples from the engine itself. Forge now opens into a neutral **Starter World** project, while the original three-lane MOBA and a new **Dragon's Den** world are independent project templates that can be created, edited, saved, loaded, simulated, played, and exported.
+## Default starter: Dragon's Den — Seed Chamber
 
-### Built-in project templates
+v5.1 now boots directly into the **Dragon's Den Seed Chamber** rather than a neutral field. The starter is designed as an immersive place a person appears *inside*, not a game map viewed from above.
 
-- **Starter World** — default general-purpose Forge sandbox.
-- **MOBA Arena** — the original MOBA moved into an example-project lane.
-- **Dragon's Den** — an arcane collaborative LALM world with dragon avatars, portals, council architecture, memory/inference anchors, and agent-role metadata.
+The seed chamber includes a wake nook, main council chamber, creator alcove, throne side, elevated dragon perch, Memory Vault exit, Portal Hall exit, Inference Core exit, crystals, lanterns, a cavern shell, and semantic LALM/voice/workspace anchors.
 
-The project JSON contract carries project identity, scene actors, paths, and editor state. The editor agent bridge is available at `window.SWRLZ_FORGE_AGENT`.
+The MOBA remains available as an independent example project. A blank Starter World remains available as a general sandbox.
 
 Source repository: `kaministrator999-ui/Swrlzkamico`  
-Legacy project path: `projects/swrlz-forge-moba/`
+Legacy source path: `projects/swrlz-forge-moba/`

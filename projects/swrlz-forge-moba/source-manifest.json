@@ -1,12 +1,12 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "SWRLZ Forge Editor v5",
+  "name": "§wyrl§ Engine v5.1",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swrlz_forge_v5.html",
-  "finalBytes": 120501,
-  "finalSha256": "c5b44363460fc29ec3a119967c082c1fd95b035d781c50a4affa9d8ecd686593",
+  "finalArtifact": "swyl_engine_v5_1.html",
+  "finalBytes": 129398,
+  "finalSha256": "a653064ce2be625d67d561a1db249a1bb4fa0637dc69377480cf6311e43fdf51",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -18,6 +18,7 @@
   ],
   "patches": [
     "patches/v4_1.py",
-    "patches/v5_projects.py"
+    "patches/v5_projects.py",
+    "patches/v5_1_swyl_engine_seed_den.py"
   ]
 }
