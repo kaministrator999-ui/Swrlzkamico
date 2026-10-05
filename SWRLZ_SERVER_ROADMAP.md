@@ -1,3 +1,38 @@
+## UPDATE CHECKPOINT — 2026-10-05 — Online Research trace logs + live Chat site status v125
+
+**Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
+
+- Exact feature/deployment source: `f5694a4d5247750d8bd1b267b10085ca65544023`; comparison with `feature/hf-space-manual-deploy` is identical (0 ahead / 0 behind).
+- Static verifier #35 / `37309975019`: SUCCESS.
+- Full regression stack remains green through `online-trace-observability-v125 PASS`.
+
+**Live observability contract:**
+- canonical Online Research emits bounded `swrlz-online-trace-v1` events for provider visits/results/empty/error/selection and source-page fetch start/complete/error;
+- weather emits the same trace shape for Open-Meteo geocoding + forecast calls;
+- trace URLs are sanitized to scheme + host + path: query strings/fragments/credentials are not forwarded;
+- trace contains no raw prompt/history, provider HTML, precise geolocation coordinates, or hidden reasoning;
+- router streams trace events while retrieval is running, before model inference, while final evidence still remains model-agnostic across 700M, Qwen Coder, stock 350M, and R39.
+
+**Station + durable diagnostics:**
+- Station projects trace events into generation status with phase, site, safe URL, provider, HTTP/result metadata;
+- requested and selected model ids are tracked separately through auto-route;
+- when the runtime diagnostic GitHub token is configured, online requests persist:
+  - `runtime-diagnostics/online-research/<requestId>/online-research-trace.json`
+  - `runtime-diagnostics/online-research/<requestId>/online-research-outcome.json`
+- outcome persistence survives downstream generation failure after successful retrieval and records terminal state + selected model while excluding prompt/history/precise location.
+
+**Chat presentation:**
+- current in-message status displays retrieval phase + active site/provider + bounded activity;
+- a compact six-event live trail displays recent search/fetch/weather visits in the conversation;
+- sanitized URLs are clickable through the existing HTTP(S) URL guard;
+- the Work/action surface receives the same SEARCH/FETCH events, so Chat does not fabricate separate progress.
+
+**Versions:** LALM Engine `2.1.152` / `2.1.152-online-trace-station-v125`; Online Research `1.0.6` / `1.0.6-live-provider-trace-v125`; Web Chat `1.5.89`; clean-room Chat `1.0.90`; Repository Work `1.0.83`. Server Runtime and Deployment Control unchanged.
+
+**Next state:** guarded HF deployment of exact source `f5694a4d5247750d8bd1b267b10085ca65544023`, then live acceptance proving real provider/site status events, persisted trace/outcome log receipts, 700M weather/search, and explicit Qwen Coder online search.
+
+**Status:** SOURCE COMPLETE / STATIC VERIFIED / DEPLOYMENT READY.
+
 ## UPDATE STARTED — 2026-10-05 — Online Research trace logs + live Chat site status v125
 
 **Goal:** make online retrieval observable end-to-end while preserving the v124 search/weather/widget/model-routing architecture.
