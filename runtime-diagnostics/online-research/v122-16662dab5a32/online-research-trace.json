@@ -1,0 +1,173 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "v122-16662dab5a32",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "0503dfc4010a0309a88250f49e8a5f3cd642548f",
+  "persistedAtUnixMs": 1791224920559,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v125-trace-chat-status",
+      "kind": "search",
+      "status": "OK",
+      "reason": "explicit-web-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 8,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 8,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1521,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224919037,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224919042,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224919179,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224919180,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224919931,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224919931,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224919933,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.hey.com",
+        "url": "https://www.hey.com/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224920027,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.hey.com",
+        "url": "https://www.hey.com/",
+        "httpStatus": 200,
+        "responseBytes": 50253
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224920030,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.youtube.com",
+        "url": "https://www.youtube.com/watch"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224920336,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.youtube.com",
+        "url": "https://www.youtube.com/watch",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224920339,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.youtube.com",
+        "url": "https://www.youtube.com/watch"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224920557,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.youtube.com",
+        "url": "https://www.youtube.com/watch",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791224920558,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 8
+      }
+    ],
+    "sourceSites": [
+      "www.hey.com",
+      "www.youtube.com",
+      "www.merriam-webster.com",
+      "www.dictionary.com",
+      "dictionary.cambridge.org",
+      "help.hey.com"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
