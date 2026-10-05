@@ -117,3 +117,47 @@ v4.1:
 - HF: `5c4bae00017273ab8d8de5aa512b329394a90de9`
 
 These are checkpoints, not assumed current truth after later releases.
+
+
+## Verified v5.1 deployment checkpoint
+
+```text
+Engine:
+§wyrl§ Engine v5.1
+
+GitHub source/deploy commit:
+214b60c4225642db13e7e0601f45410d6aa0d408
+
+Final source:
+129398 bytes
+
+SHA-256:
+a653064ce2be625d67d561a1db249a1bb4fa0637dc69377480cf6311e43fdf51
+
+Hugging Face revision:
+e741f6541893c218cac9f662976a58ca0645460c
+
+Static host:
+https://kamiloki-swrlz-forge-moba.static.hf.space/
+
+Stage:
+RUNNING
+
+Live marker:
+SWYRL_ENGINE_DEPLOY_MARKER: V5_1_SEED_DEN
+
+Live verification:
+PASS on attempt 1
+```
+
+The current observed default project is **Dragon's Den — Seed Chamber**.
+
+### v5.1 deployment debugging lineage
+
+Preserve these failure receipts rather than rewriting them away:
+
+1. The first v5.1 deployment rebuild passed, but the inline deployment receipt Python contained a literal `\n` sequence inside source and failed before upload.
+2. The workflow was repaired, and generated §wyrl§ Engine JavaScript was explicitly syntax-checked with Node.
+3. The next upload was correctly rejected by Hugging Face because `short_description` exceeded the 60-character metadata limit.
+4. Space metadata was shortened without changing engine source.
+5. The final deployment passed reconstruction, SHA/byte integrity, JavaScript syntax, Hugging Face upload, Space runtime status, and live marker verification on attempt 1.
