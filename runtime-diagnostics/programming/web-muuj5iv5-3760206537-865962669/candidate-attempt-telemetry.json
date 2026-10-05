@@ -1,0 +1,140 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "web-muuj5iv5-3760206537-865962669",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "9faa59d8d8109680fb01f20b6606bb1f09249012",
+  "persistedAtUnixMs": 1791161245682,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 3,
+      "regenerationCount": 2,
+      "firstCandidateRejected": true,
+      "finalAcceptedAttempt": 3,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": true,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 31.161,
+      "visibleFirstDeltaLatencyMs": 9673.099,
+      "engineTotalLatencyMs": 9674.291,
+      "totalCandidateGenerationMs": 9640.098,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 5563.579,
+          "firstTokenLatencyMs": 4344.978,
+          "deltaChunks": 40,
+          "candidateFingerprint": "6c11948a6ebe6cf8",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": true,
+          "validationStatus": "REJECT",
+          "validationReasons": [
+            "dependency-still-referenced:slugify"
+          ],
+          "accepted": false
+        },
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 2,
+          "trigger": "retry:contract-or-structural-rejection",
+          "durationMs": 2020.788,
+          "firstTokenLatencyMs": 406.567,
+          "deltaChunks": 58,
+          "candidateFingerprint": "33b84bd477a0b845",
+          "changedFromPreviousAttempt": true,
+          "changedFromRepairTarget": false,
+          "validationStatus": "REJECT",
+          "validationReasons": [
+            "diagnostic-repair-no-executable-change",
+            "repair-stalled-no-executable-change"
+          ],
+          "accepted": false
+        },
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 3,
+          "trigger": "final-strategy-gate",
+          "durationMs": 2055.731,
+          "firstTokenLatencyMs": 444.393,
+          "deltaChunks": 56,
+          "candidateFingerprint": "9f2273de835be43c",
+          "changedFromPreviousAttempt": true,
+          "changedFromRepairTarget": true,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791161235996,
+      "startedAtUnixMs": 1791161235997,
+      "completedAtUnixMs": 1791161245681,
+      "queueWaitMs": 1,
+      "stationRunMs": 9684,
+      "endToEndMs": 9685
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "python"
+      ],
+      "activeRepairConstraints": {
+        "dependencyPolicy": "standard-library-only",
+        "unavailableDependencies": [
+          "slugify"
+        ],
+        "carriedUnavailableDependencies": [
+          "slugify"
+        ]
+      },
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 9,
+        "failedCaseCount": 4
+      },
+      "executionVerified": false,
+      "verificationState": "AWAITING_EXTERNAL_RECEIPT"
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "standard-library-only",
+      "unavailableDependencies": [
+        "slugify"
+      ],
+      "forbiddenDependencies": [
+        "slugify"
+      ],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [
+        "slugify"
+      ],
+      "releasedDependencies": [],
+      "constraintCount": 1
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 9,
+      "failedCaseCount": 4
+    },
+    "artifactReceipt": {
+      "action": "REVISION_COMMITTED",
+      "revision": 2,
+      "sourceHash": "3664f089baa3c803b6b9b9bb21a9619c9e327cd3a389188a38433f525849d033",
+      "reason": null
+    }
+  }
+}
