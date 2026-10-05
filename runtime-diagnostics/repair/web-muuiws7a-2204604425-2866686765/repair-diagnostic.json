@@ -1,0 +1,108 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "web-muuiws7a-2204604425-2866686765",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "9faa59d8d8109680fb01f20b6606bb1f09249012",
+  "persistedAtUnixMs": 1791160828182,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "assistant-muuiwggo-2076416906-1248628969",
+    "repairSourceMessageId": "assistant-muuiwggo-2076416906-1248628969",
+    "repairSourceFingerprint": "d7826090dcb3e78a",
+    "candidateFingerprint": "d7826090dcb3e78a",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 6,
+    "failureSignals": [
+      "{\"passed\": 11, \"total\": 12, \"executed\": 12, \"cases\": [{\"test\": \"test_00\", \"passed\": true}, {\"test\": \"test_01\", \"passed\": false}, {\"test\": \"test_02\", \"passed\": true}, {\"test\": \"test_03\", \"passed\": true}, {\"test\": \"test_04\", \"passed\": true}, {\"test\": \"test_05\", \"passed\": true}, {\"test\": \"test_06\", \"pa",
+      "test_01 (__main__.Tests.test_01) ... FAIL",
+      "FAIL: test_01 (__main__.Tests.test_01)",
+      "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")",
+      ": Expected: '$0.01'; actual: '$1.00'",
+      "FAILED (failures=1)"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "assertion",
+        "runtime",
+        "behavior-mismatch"
+      ],
+      "exceptionTypes": [
+        "AssertionError"
+      ],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [
+        "{\"passed\": 11, \"total\": 12, \"executed\": 12, \"cases\": [{\"test\": \"test_00\", \"passed\": true}, {\"test\": \"test_01\", \"passed\": false}, {\"test\": \"test_02\", \"passed\": true}, {\"test\": \"test_03\", \"passed\": true}, {\"test\": \"test_04\", \"passed\": true}, {\"test\": \"test_05\", \"passed\": true}, {\"test\": \"test_06\", \"passed\": true}, {\"test\": \"test_07\", \"passed\": true}, {\"test\": \"test_08\", \"passed\": true}, {\"test\": \"test_09\", \"passed\": true}, {\"test\": \"test_10\", \"passed\": true}, {\"test\": \"test_api_signature\", \"passed",
+        "test_01 (__main__.Tests.test_01) ... FAIL",
+        "FAIL: test_01 (__main__.Tests.test_01)",
+        "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")",
+        ": Expected: '$0.01'; actual: '$1.00'",
+        "FAILED (failures=1)"
+      ],
+      "passingSignals": [
+        "test_00 (__main__.Tests.test_00) ... ok",
+        "test_02 (__main__.Tests.test_02) ... ok",
+        "test_03 (__main__.Tests.test_03) ... ok",
+        "test_04 (__main__.Tests.test_04) ... ok",
+        "test_05 (__main__.Tests.test_05) ... ok",
+        "test_06 (__main__.Tests.test_06) ... ok",
+        "test_07 (__main__.Tests.test_07) ... ok",
+        "test_08 (__main__.Tests.test_08) ... ok"
+      ],
+      "expectedActual": [
+        "self.assertEqual(actual, expected, f\"Expected: {expected!r}; actual: {actual!r}\")",
+        ": Expected: '$0.01'; actual: '$1.00'"
+      ],
+      "sourceLocations": [
+        "/workspace/swyrlz-coding-route-retry5-2026-10-05/py-test/test_contract.py:35:test",
+        "line:35"
+      ],
+      "failingTests": [
+        "__main__.Tests.test_01",
+        "test_01"
+      ],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 12,
+        "failedCaseCount": 1
+      }
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "standard-library-only",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 12,
+      "failedCaseCount": 1
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example",
+      "trace the exception to its first relevant application frame and repair the causing state/operation"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
