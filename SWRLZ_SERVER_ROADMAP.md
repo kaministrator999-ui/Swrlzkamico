@@ -1,3 +1,38 @@
+## SUPERSEDED — 2026-10-05 — General response cognition + continuation coherence v123 live acceptance
+
+**Deployed source:** `a67077a46080674c09e0fbd0a379d625bee320a3` to HF Space revision `882d1c8f57d2c28dacb7dea04c02d8f82c70ce53` through guarded deployment #72 / `37256572149` (SUCCESS). Rollback revision `94d9d28c7ea3356a90f1d7acd3f4b1c0c3d368dd` was preserved.
+
+**Live verifier:** `37257584446` correctly bound the deployed revision/source, then FAILED on the new response-cognition sequence before the legacy programming sequence ran.
+
+**Failure receipt:** prompt `Create 2 short names for a moon base.` produced response cognition `relation=standalone`, `operation=create`, `detailMode=compact`, but `requestedCount=None`. Static v123 coverage had count nouns such as options/items but not names. This is a generic count-noun coverage gap, not a deployment/routing failure.
+
+**Disposition:** preserve the failed live receipt. v123 source remains deployed but is not labeled live-accepted. The next governed tier (v124) carries the generalized count parser repair together with the newly requested Online Research + widget capability; no throwaway v123-only redeploy.
+
+**Status:** DEPLOYED / LIVE ACCEPTANCE FAILED ON COUNT-NOUN COVERAGE / SUPERSEDED BY v124.
+
+## UPDATE STARTED — 2026-10-05 — Online Research + weather/search widgets v124
+
+**Goal:** connect existing §wyrlz Online Research authority to the live HF Station path and add presentation-safe structured widgets, beginning with current weather statistics and bounded web-search results.
+
+**User intent:** overall online search capability plus widget display for online-derived results such as a user's requested weather statistics.
+
+**Architecture reconciliation:**
+- Reuse the existing Online Research security/evidence owner rather than creating an unrelated browser/search stack. Existing canonical foundation already owns bounded DuckDuckGo search, public HTTP(S) SSRF protections, bounded page fetch, evidence packaging, and research cameras.
+- HF Station becomes a consumer/adapter of Online Research. Chat remains presentation-only: it receives structured research/evidence/widget envelopes and never owns provider/network semantics.
+- Add a weather vertical backed by fixed Open-Meteo geocoding + forecast endpoints. Weather location must come from an explicit place in the request or an explicitly supplied client location; timezone alone is never treated as physical location.
+- General online search activates for explicit web/search/look-up intent and bounded freshness cues; programming repair remains coder-owned and only invokes web retrieval when the current user explicitly asks for external/current documentation or web lookup.
+- Retrieved content is untrusted evidence, not instruction authority. Model-facing context is bounded and provenance-bearing.
+- Add `swrlz-widget-v1` presentation envelopes. Initial kinds: `weather` and `search-results`. Widget payloads contain display-safe structured fields; raw HTML from providers is never rendered.
+- Station owns execution state and commits bounded `onlineResearch`, `sources`, and `widgets` metadata onto the final assistant message. Stream/sync transports may expose widget events; persisted history must re-render the same widget.
+- Weather requests without a resolvable location return a bounded location-required result instead of inferring location from timezone or profile folklore.
+- Carry forward the v123 live receipt by generalizing numeric requested-count nouns (including names/titles/results/suggestions/etc.) and retain the full v117-v123 regression suite.
+
+**Expected module impact:** Online Research + LALM Engine + Web Chat + Repository Work. Server Runtime, Deployment Control, Runtime Manifest unchanged unless implementation proves otherwise.
+
+**Verification plan:** deterministic online-intent/search/weather/widget tests with injected network capabilities; full v117-v123 regression stack; Chat source assertions for safe widget rendering and persisted/live projection; guarded HF deployment; live weather/search acceptance plus existing programming receipts.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — v123 guarded deployment watch bounded while in progress
 
 **Deployment watch state:** IN PROGRESS at the one-minute active-watch boundary; no failure is inferred.
