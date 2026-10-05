@@ -36,7 +36,7 @@ jobs:
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWRLZ Forge MOBA Lab v2" dist/swrlz-forge-moba/index.html
+          grep -q "SWRLZ Forge · Unreal-Inspired Editor Pass v3" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
