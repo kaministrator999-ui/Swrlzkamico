@@ -172,11 +172,11 @@ jobs:
           assert rc_assistant, rc_thread_state
           assert ((rc_assistant.get("meta") or {}).get("responseCognition") or {}).get("relation") == "correction", rc_assistant
 
-          # v124 weather vertical: real provider data must reach both live generation
-          # and the committed assistant-message widget/source envelope.
+          # v126 real-user weather regression: preserve the exact wording that failed
+          # in the user's live Chat and require city+state geocode fallback.
           weather_client = Client()
           weather_thread = "weather-" + uuid.uuid4().hex[:10]
-          wg, ws = weather_client.send_and_wait(weather_thread, "What's the weather in Kansas City, Missouri right now?")
+          wg, ws = weather_client.send_and_wait(weather_thread, "Can you check the weather in Leavenworth kansas")
           assert wg.get("terminalType") == "COMPLETE", wg
           weather_research = wg.get("onlineResearch") if isinstance(wg.get("onlineResearch"), dict) else {}
           weather_widgets = wg.get("widgets") if isinstance(wg.get("widgets"), list) else []
@@ -185,6 +185,9 @@ jobs:
           assert weather_research.get("provider") == "Open-Meteo", weather_research
           assert weather_widgets and weather_widgets[0].get("contract") == "swrlz-widget-v1", weather_widgets
           assert weather_widgets[0].get("kind") == "weather", weather_widgets[0]
+          weather_location = ((weather_widgets[0].get("data") or {}).get("location") or {})
+          assert "Leavenworth" in str(weather_location.get("label") or ""), weather_location
+          assert "Kansas" in str(weather_location.get("label") or ""), weather_location
           weather_current = ((weather_widgets[0].get("data") or {}).get("current") or {})
           assert weather_current.get("temperature") is not None, weather_current
           assert weather_current.get("humidity") is not None, weather_current
@@ -198,6 +201,7 @@ jobs:
           assert persisted_weather_widgets and persisted_weather_widgets[0].get("kind") == "weather", weather_assistant
           weather_trace = wg.get("onlineTrace") if isinstance(wg.get("onlineTrace"), list) else []
           assert any(item.get("phase") == "WEATHER_GEOCODE_VISIT" and item.get("site") == "geocoding-api.open-meteo.com" for item in weather_trace), weather_trace
+          assert any(item.get("phase") == "WEATHER_GEOCODE_RETRY" for item in weather_trace), weather_trace
           assert any(item.get("phase") == "WEATHER_FORECAST_VISIT" and item.get("site") == "api.open-meteo.com" for item in weather_trace), weather_trace
           assert all("?" not in str(item.get("url") or "") for item in weather_trace), weather_trace
           wg_persisted, ws_persisted, weather_logs = wait_for_online_persistence(weather_client, wg.get("requestId"))
@@ -206,7 +210,7 @@ jobs:
           assert (weather_logs.get("trace") or {}).get("ok") is True, weather_logs
           assert (weather_logs.get("outcome") or {}).get("ok") is True, weather_logs
           receipts.append({
-              "case":"v125-weather-widget-observability-live",
+              "case":"v126-real-user-leavenworth-weather-live",
               "provider":weather_research.get("provider"),
               "condition":weather_current.get("condition"),
               "temperature":weather_current.get("temperature"),
