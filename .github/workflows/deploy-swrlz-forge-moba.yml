@@ -36,7 +36,8 @@ jobs:
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWRLZ Forge · Unreal-Inspired Editor Pass v3" dist/swrlz-forge-moba/index.html
+          grep -q "SWRLZ_FORGE_DEPLOY_MARKER: V4_SOLID_TERRAIN_LOCKED_VIEWS" dist/swrlz-forge-moba/index.html
+          grep -q "FORGE v4" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
@@ -75,7 +76,7 @@ jobs:
               folder_path=str(folder),
               repo_id=target,
               repo_type="space",
-              commit_message=f"Deploy SWRLZ Forge MOBA from GitHub {source_sha[:12]}",
+              commit_message=f"Deploy SWRLZ Forge from GitHub {source_sha[:12]}",
           )
 
           info = api.repo_info(target, repo_type="space")
@@ -85,6 +86,8 @@ jobs:
               "sourceRepository": "kaministrator999-ui/Swrlzkamico",
               "sourceCommit": source_sha,
               "sourcePath": "projects/swrlz-forge-moba",
+              "sourceVersion": "v4",
+              "sourceSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
               "spaceRepository": target,
               "spaceRevision": info.sha,
               "spacePage": "https://huggingface.co/spaces/kamiloki/swrlz-forge-moba",
@@ -95,7 +98,25 @@ jobs:
           print(json.dumps(receipt, indent=2))
           PY
 
+      - name: Verify live Space serves v4
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          URL="https://kamiloki-swrlz-forge-moba.hf.space/?build=$SOURCE_SHA"
+          for attempt in 1 2 3 4 5 6; do
+            echo "Live verification attempt $attempt"
+            if curl -fsSL --max-time 30 "$URL&attempt=$attempt" | grep -q "SWRLZ_FORGE_DEPLOY_MARKER: V4_SOLID_TERRAIN_LOCKED_VIEWS"; then
+              echo "Verified: live HF Space is serving Forge v4."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Hugging Face upload completed, but the live Space did not serve the v4 marker within the verification window."
+          exit 1
+
       - name: Preserve deploy receipt
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: swrlz-forge-hf-deploy-receipt
