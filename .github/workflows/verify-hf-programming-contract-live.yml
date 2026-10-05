@@ -219,6 +219,59 @@ jobs:
               "status":"PASS",
           })
 
+          # v127 exact screenshot continuation: this must inherit weather + Leavenworth,
+          # remain on 700M, and never search the literal words "Yes for today".
+          follow_g, follow_s = weather_client.send_and_wait(weather_thread, "Yes for today", model_id="700m")
+          assert follow_g.get("terminalType") == "COMPLETE", follow_g
+          assert follow_g.get("selectedModelId") == "700m", follow_g
+          follow_intent = follow_g.get("programmingIntent") if isinstance(follow_g.get("programmingIntent"), dict) else {}
+          assert follow_intent.get("codingTask") is False, follow_intent
+          follow_research = follow_g.get("onlineResearch") if isinstance(follow_g.get("onlineResearch"), dict) else {}
+          follow_widgets = follow_g.get("widgets") if isinstance(follow_g.get("widgets"), list) else []
+          assert follow_research.get("kind") == "weather" and follow_research.get("status") == "OK", follow_research
+          assert follow_research.get("reason") == "weather-continuation", follow_research
+          assert follow_widgets and follow_widgets[0].get("kind") == "weather", follow_widgets
+          follow_location = ((follow_widgets[0].get("data") or {}).get("location") or {})
+          assert "Leavenworth" in str(follow_location.get("label") or "") and "Kansas" in str(follow_location.get("label") or ""), follow_location
+          follow_text = str(follow_g.get("text") or "").lower()
+          assert "i can't access" not in follow_text and "i cannot access" not in follow_text, follow_text
+          receipts.append({
+              "case":"v127-weather-continuation-live",
+              "selectedModelId":follow_g.get("selectedModelId"),
+              "reason":follow_research.get("reason"),
+              "widgetKind":follow_widgets[0].get("kind"),
+              "location":follow_location.get("label"),
+              "status":"PASS",
+          })
+
+          # v127 exact screenshot correction: reject weather lineage, search only "hey",
+          # stay on 700M, and never fall into Coder/no-code-candidate validation.
+          correction_prompt = "I didn't mean look up weather I want you to look up the word hey"
+          correction_g, correction_s = weather_client.send_and_wait(weather_thread, correction_prompt, model_id="700m")
+          assert correction_g.get("terminalType") == "COMPLETE", correction_g
+          assert correction_g.get("selectedModelId") == "700m", correction_g
+          correction_intent = correction_g.get("programmingIntent") if isinstance(correction_g.get("programmingIntent"), dict) else {}
+          assert correction_intent.get("codingTask") is False, correction_intent
+          correction_research = correction_g.get("onlineResearch") if isinstance(correction_g.get("onlineResearch"), dict) else {}
+          correction_widgets = correction_g.get("widgets") if isinstance(correction_g.get("widgets"), list) else []
+          assert correction_research.get("kind") == "search" and correction_research.get("status") == "OK", correction_research
+          assert correction_widgets and correction_widgets[0].get("kind") == "search-results", correction_widgets
+          correction_query = str(((correction_widgets[0].get("data") or {}).get("query") or "")).strip().lower()
+          assert correction_query == "hey", (correction_query, correction_widgets[0])
+          correction_text = str(correction_g.get("text") or "").lower()
+          assert "can't assist" not in correction_text and "cannot assist" not in correction_text, correction_text
+          assert "can't access" not in correction_text and "cannot access" not in correction_text, correction_text
+          correction_phases=[str(item.get("phase") or "") for item in (correction_g.get("status") or []) if isinstance(item,dict)]
+          assert "CODER_AUTO_ROUTE" not in correction_phases, correction_phases
+          receipts.append({
+              "case":"v127-search-correction-stays-700m-live",
+              "selectedModelId":correction_g.get("selectedModelId"),
+              "query":correction_query,
+              "widgetKind":correction_widgets[0].get("kind"),
+              "resultCount":correction_research.get("resultCount"),
+              "status":"PASS",
+          })
+
           # v124 general web search: exercise the canonical bounded search owner
           # through Station and require provenance-bearing structured results.
           search_client = Client()
@@ -261,11 +314,12 @@ jobs:
           coder_thread = "coder-search-" + uuid.uuid4().hex[:10]
           cg, cs = coder_client.send_and_wait(
               coder_thread,
-              "Search online for the latest FastAPI release documentation and summarize what changed.",
+              "Search online for the latest FastAPI release documentation and show the Python code changes needed to update an app.",
               model_id="coder",
           )
           assert cg.get("terminalType") == "COMPLETE", cg
           assert cg.get("modelId") == "coder", cg
+          assert (cg.get("programmingIntent") or {}).get("codingTask") is True, cg.get("programmingIntent")
           coder_research = cg.get("onlineResearch") if isinstance(cg.get("onlineResearch"), dict) else {}
           coder_widgets = cg.get("widgets") if isinstance(cg.get("widgets"), list) else []
           coder_sources = cg.get("sources") if isinstance(cg.get("sources"), list) else []
