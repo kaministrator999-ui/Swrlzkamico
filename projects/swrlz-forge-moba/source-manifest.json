@@ -1,8 +1,8 @@
 {
   "schema": "swrlz-forge-source-v1",
-  "name": "SWRLZ Forge MOBA Lab v2",
-  "bytes": 59285,
-  "sha256": "4d56013b8d1301b95e385789744f3a90735bcc8b9c9fcabd13f4806b93ccf39a",
+  "name": "SWRLZ Forge Unreal-Inspired Editor Pass v3",
+  "bytes": 89746,
+  "sha256": "5459e050394a7cbab9bcf0cde16598975611dd0896273f9c04a21e45c309a2a9",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -12,5 +12,5 @@
     "payload/part-05.txt",
     "payload/part-06.txt"
   ],
-  "sourceArtifact": "swrlz_forge_moba_lab_v2.html"
+  "sourceArtifact": "swrlz_forge_unreal_pass_v3.html"
 }
