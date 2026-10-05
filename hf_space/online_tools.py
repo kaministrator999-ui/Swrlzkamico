@@ -106,7 +106,7 @@ def _progress(progress: Callable[[dict[str, Any]], None] | None, phase: str, *, 
         return
     site, safe_url = _safe_trace_url(url)
     event = {
-        "contract": "swrlz-online-trace-v1",
+        "contract": "swrlz-online-trace-event-v1",
         "phase": _clean(phase, 80),
         "provider": _clean(provider, 120),
         "site": site,
