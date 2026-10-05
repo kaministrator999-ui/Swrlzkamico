@@ -1,0 +1,189 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v122-891ddac5e1c0",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "d8710d6401cf5080649274e66064d061ae6f05c5",
+  "persistedAtUnixMs": 1791210970919,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "a-4485a9d05c88",
+    "repairSourceMessageId": "a-4485a9d05c88",
+    "repairSourceFingerprint": "fc424e1708f089bb",
+    "candidateFingerprint": "fc424e1708f089bb",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "{\"passed\": 4, \"total\": 9, \"cases\": [{\"test\": \"test_00\", \"passed\": false, \"expected\": \"hello\", \"actual\": \"HELLO\"}, {\"test\": \"test_01\", \"passed\": false, \"expected\": \"world\", \"actual\": \"WORLD\"}, {\"test\": \"test_02\", \"passed\": false, \"expected\": \"abc\", \"actual\": \"ABC\"}, {\"test\": \"test_03\", \"passed\": true"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "behavior-mismatch",
+        "assertion"
+      ],
+      "exceptionTypes": [],
+      "exitCodes": [],
+      "failingSignals": [
+        "{\"passed\": 4, \"total\": 9, \"cases\": [{\"test\": \"test_00\", \"passed\": false, \"expected\": \"hello\", \"actual\": \"HELLO\"}, {\"test\": \"test_01\", \"passed\": false, \"expected\": \"world\", \"actual\": \"WORLD\"}, {\"test\": \"test_02\", \"passed\": false, \"expected\": \"abc\", \"actual\": \"ABC\"}, {\"test\": \"test_03\", \"passed\": true}, {\"test\": \"test_04\", \"passed\": true}, {\"test\": \"test_05\", \"passed\": false, \"expected\": \"a1b2\", \"actual\": \"A1B2\"}, {\"test\": \"test_06\", \"passed\": true}, {\"test\": \"test_07\", \"passed\": false, \"expected\""
+      ],
+      "passingSignals": [],
+      "expectedActual": [
+        "{\"passed\": 4, \"total\": 9, \"cases\": [{\"test\": \"test_00\", \"passed\": false, \"expected\": \"hello\", \"actual\": \"HELLO\"}, {\"test\": \"test_01\", \"passed\": false, \"expected\": \"world\", \"actual\": \"WORLD\"}, {\"test\": \"test_02\", \"passed\": false, \"expected\": \"abc\", \"actual\": \"ABC\"}, {\"test\": \"test_03\", \"passed\": true}, {\"test\": \"test_04\", \"passed\": true}, {\"test\": \"test_05\", \"passed\": false, \"expected\": \"a1b2\", \"actual\": \"A1B2\"}, {\"test\": \"test_06\", \"passed\": true}, {\"test\": \"test_07\", \"passed\": false, \"expected\"",
+        "test_00: expected='hello'; actual='HELLO'",
+        "test_01: expected='world'; actual='WORLD'",
+        "test_02: expected='abc'; actual='ABC'",
+        "test_05: expected='a1b2'; actual='A1B2'",
+        "test_07: expected='x'; actual='X'"
+      ],
+      "sourceLocations": [],
+      "failingTests": [
+        "test_00",
+        "test_01",
+        "test_02",
+        "test_05",
+        "test_07"
+      ],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 9,
+        "failedCaseCount": 5
+      },
+      "behaviorCases": [
+        {
+          "id": "test_00",
+          "status": "failed",
+          "expected": "'hello'",
+          "actual": "'HELLO'",
+          "message": null
+        },
+        {
+          "id": "test_01",
+          "status": "failed",
+          "expected": "'world'",
+          "actual": "'WORLD'",
+          "message": null
+        },
+        {
+          "id": "test_02",
+          "status": "failed",
+          "expected": "'abc'",
+          "actual": "'ABC'",
+          "message": null
+        },
+        {
+          "id": "test_03",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "test_04",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "test_05",
+          "status": "failed",
+          "expected": "'a1b2'",
+          "actual": "'A1B2'",
+          "message": null
+        },
+        {
+          "id": "test_06",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "test_07",
+          "status": "failed",
+          "expected": "'x'",
+          "actual": "'X'",
+          "message": null
+        },
+        {
+          "id": "test_api_signature",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        }
+      ]
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "standard-library-only",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": {
+        "passed": 4,
+        "total": 9,
+        "failed": 5
+      },
+      "bestKnownScore": {
+        "passed": 5,
+        "total": 9,
+        "failed": 4
+      },
+      "regressedCases": [
+        "test_05"
+      ],
+      "resolvedCases": [],
+      "preservePassingCases": [
+        "test_03",
+        "test_04",
+        "test_05",
+        "test_06",
+        "test_api_signature"
+      ],
+      "rebaseRecommended": true,
+      "bestKnownArtifact": {
+        "artifactId": "artifact-d0d7049817ec45818836e7a68e6bbb21",
+        "revision": 1,
+        "sourceHash": "2e225eb2deddd310fce983b430dad2b60c89fc64cf5ca3d164629c20af7fce40",
+        "sourceFingerprint": "e4c9fc852b96bf09"
+      }
+    },
+    "behaviorRepairBase": {
+      "mode": "best-known-tested-source",
+      "sourceFingerprint": "e4c9fc852b96bf09",
+      "artifactId": "artifact-d0d7049817ec45818836e7a68e6bbb21",
+      "revision": 1,
+      "sourceHash": "2e225eb2deddd310fce983b430dad2b60c89fc64cf5ca3d164629c20af7fce40"
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 9,
+      "failedCaseCount": 5
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
