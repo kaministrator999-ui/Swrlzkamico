@@ -1,0 +1,87 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "v122-092b1f91865c",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "f3f437ef6d811a615e9b4e561496de701c5df8da",
+  "persistedAtUnixMs": 1791236384519,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "a-2b0dba6345d9",
+    "repairSourceMessageId": "a-2b0dba6345d9",
+    "repairSourceFingerprint": "a0d0329b6f64d1ee",
+    "candidateFingerprint": "a0d0329b6f64d1ee",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 1,
+    "failureSignals": [
+      "RuntimeError: simulated external verification failure"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "runtime"
+      ],
+      "exceptionTypes": [
+        "RuntimeError"
+      ],
+      "exitCodes": [],
+      "failingSignals": [
+        "RuntimeError: simulated external verification failure"
+      ],
+      "passingSignals": [],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [],
+        "jsonObjectCount": 0,
+        "caseCount": 0,
+        "failedCaseCount": 0
+      },
+      "behaviorCases": []
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": null,
+      "bestKnownScore": null,
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": null
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": "a0d0329b6f64d1ee",
+      "artifactId": "artifact-62aa52dca38a4c26ac6cce7c4520fefd",
+      "revision": 1,
+      "sourceHash": "e142098dce4df18b01372b0b3648501b3c688401811ef274f8f2b25ae85143f9"
+    },
+    "structuredReceipt": {
+      "formats": [],
+      "jsonObjectCount": 0,
+      "caseCount": 0,
+      "failedCaseCount": 0
+    },
+    "repairActions": [
+      "trace the exception to its first relevant application frame and repair the causing state/operation"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
