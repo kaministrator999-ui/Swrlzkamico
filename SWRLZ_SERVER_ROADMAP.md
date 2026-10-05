@@ -1,3 +1,31 @@
+## UPDATE CHECKPOINT — 2026-10-05 — v124 live search-provider repair + redeploy ready
+
+**Live evidence from first v124 deployment:**
+- Guarded HF deployment #73 / `37258562121`: SUCCESS from source `91ced20521c539bdbe87ad0d0ce3b365e5fedaef` to Space revision `b7ca60e19a450b91b84191b1872eafc65aec2188`, preserving rollback `882d1c8f57d2c28dacb7dea04c02d8f82c70ce53`.
+- Live verifier attempt #1 initially observed the prior container during Space rebuild and therefore repeated the old v123 `requestedCount=None` signature. No source rollback was inferred.
+- Same-revision retry proved the rebuilt v124 container: the carried v123 standalone/continuation/correction/count sequence passed, and real Open-Meteo weather retrieval passed current-stat, source, `swrlz-widget-v1`, and persisted-message widget assertions.
+- The next live boundary failed correctly on general search: canonical `duckduckgo-html` returned `status=NO_RESULTS`, `resultCount=0` in 139 ms. Routing/widget transport was intact; provider coverage was the missing rung.
+- A verifier-only receipt initialization bug was also preserved/fixed; it did not represent runtime failure.
+
+**Search-owner repair:**
+- Canonical `api/online_research.py` now owns a bounded provider chain: DuckDuckGo HTML → DuckDuckGo Lite → Bing HTML.
+- Every provider request still traverses the existing public HTTP(S), DNS/private-address, port, credentials, and redirect validation boundary.
+- Provider cameras now emit bounded per-attempt status/result counts and a selected-provider receipt.
+- Search result parsing normalizes provider HTML into the existing bounded Evidence contract; no provider HTML is exposed to Chat.
+- A generated regex escaping error in the first fallback implementation was caught by static verification and repaired without changing the already-green routing/widget layers.
+
+**Verification:**
+- Static verifier #25 / `37259452114`: SUCCESS.
+- Full v117-v124 regression stack remains green.
+- Deterministic fallback receipt proves empty DDG HTML → valid DDG Lite result → chain stops before Bing.
+- Exact corrected feature source: `f87d9ecca6bb23060a1c633fd1d3970c5d784c23`, identical to current `feature/hf-space-manual-deploy`.
+
+**Versions after live-receipt repair:** Online Research `1.0.4` / `1.0.4-bounded-provider-fallback-v124`; Repository Work `1.0.80`. LALM Engine remains `2.1.149`; Web Chat remains `1.5.88`; clean-room Chat remains `1.0.89`; Server Runtime and Deployment Control unchanged.
+
+**Next governed state:** redeploy exact corrected source `f87d9ecca6bb23060a1c633fd1d3970c5d784c23`, then rerun live weather/search/widget + programming acceptance.
+
+**Status:** LIVE WEATHER VERIFIED / LIVE SEARCH PROVIDER REPAIR STATIC VERIFIED / REDEPLOY READY.
+
 ## UPDATE CHECKPOINT — 2026-10-05 — Online Research + weather/search widgets v124
 
 **Source/static state:** SOURCE COMPLETE + STATIC VERIFIED.
