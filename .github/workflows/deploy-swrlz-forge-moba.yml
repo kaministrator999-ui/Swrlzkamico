@@ -6,6 +6,7 @@ on:
     paths:
       - "projects/swrlz-forge-moba/payload/**"
       - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/**"
       - "projects/swrlz-forge-moba/build_space.py"
       - "projects/swrlz-forge-moba/SPACE_README.md"
       - ".github/workflows/deploy-swrlz-forge-moba.yml"
@@ -36,8 +37,8 @@ jobs:
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWRLZ_FORGE_DEPLOY_MARKER: V4_SOLID_TERRAIN_LOCKED_VIEWS" dist/swrlz-forge-moba/index.html
-          grep -q "FORGE v4" dist/swrlz-forge-moba/index.html
+          grep -q "SWRLZ_FORGE_DEPLOY_MARKER: V4_1_GROUND_ADHESION_RUNTIME_CLEANUP" dist/swrlz-forge-moba/index.html
+          grep -q "FORGE v4.1" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
@@ -97,8 +98,8 @@ jobs:
               "sourceRepository": "kaministrator999-ui/Swrlzkamico",
               "sourceCommit": source_sha,
               "sourcePath": "projects/swrlz-forge-moba",
-              "sourceVersion": "v4",
-              "sourceSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
+              "sourceVersion": "v4.1",
+              "sourceSha256": "647a80a6a1062e8e4068c63593cca3c5566fe8ee9da5dcdcbc1810d42673132f",
               "spaceRepository": target,
               "spaceRevision": info.sha,
               "spacePage": "https://huggingface.co/spaces/kamiloki/swrlz-forge-moba",
@@ -115,7 +116,7 @@ jobs:
           print(json.dumps(receipt, indent=2))
           PY
 
-      - name: Verify live Space serves v4
+      - name: Verify live Space serves v4.1
         env:
           SOURCE_SHA: ${{ github.sha }}
           APP_URL: ${{ steps.deploy_space.outputs.app_url }}
@@ -126,15 +127,15 @@ jobs:
           for attempt in 1 2 3 4 5 6; do
             echo "Live verification attempt $attempt"
             if curl -fsSL --max-time 30 "$URL&attempt=$attempt" -o /tmp/forge-live.html; then
-              if grep -q "SWRLZ_FORGE_DEPLOY_MARKER: V4_SOLID_TERRAIN_LOCKED_VIEWS" /tmp/forge-live.html; then
-                echo "Verified: live HF Space is serving Forge v4."
+              if grep -q "SWRLZ_FORGE_DEPLOY_MARKER: V4_1_GROUND_ADHESION_RUNTIME_CLEANUP" /tmp/forge-live.html; then
+                echo "Verified: live HF Space is serving Forge v4.1."
                 exit 0
               fi
-              echo "Live page responded, but v4 marker was not present yet."
+              echo "Live page responded, but v4.1 marker was not present yet."
             fi
             sleep 10
           done
-          echo "::error::Hugging Face upload completed, but the live Space did not serve the v4 marker within the verification window."
+          echo "::error::Hugging Face upload completed, but the live Space did not serve the v4.1 marker within the verification window."
           exit 1
 
       - name: Preserve deploy receipt
