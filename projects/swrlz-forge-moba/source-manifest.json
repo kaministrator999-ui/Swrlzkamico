@@ -1,12 +1,12 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v5.3",
+  "name": "§wyrl§ Engine v5.4",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v5_3.html",
-  "finalBytes": 146986,
-  "finalSha256": "ef68a0906430de83a5da464efe864eed26e757f03d6fdce5e81df6411c75f995",
+  "finalArtifact": "swyrl_engine_v5_4.html",
+  "finalBytes": 151952,
+  "finalSha256": "add2c872e99097285a4ed68372aae3c6f7a42dff4cac4315771c56e8e9c0aea5",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -21,6 +21,7 @@
     "patches/v5_projects.py",
     "patches/v5_1_swyl_engine_seed_den.py",
     "patches/v5_2_first_person_twin_stick.py",
-    "patches/v5_3_groups_immersive_den.py"
+    "patches/v5_3_groups_immersive_den.py",
+    "patches/v5_4_wisp_avatar.py"
   ]
 }

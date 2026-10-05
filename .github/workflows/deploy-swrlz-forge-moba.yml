@@ -42,8 +42,8 @@ jobs:
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V5_3_GROUPS_IMMERSIVE_DEN" dist/swrlz-forge-moba/index.html
-          grep -q "<title>§wyrl§ Engine · Maker v5.3</title>" dist/swrlz-forge-moba/index.html
+          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V5_4_WISP_AVATAR" dist/swrlz-forge-moba/index.html
+          grep -q "<title>§wyrl§ Engine · Maker v5.4</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
@@ -115,9 +115,9 @@ jobs:
               "sourceRepository": "kaministrator999-ui/Swrlzkamico",
               "sourceCommit": source_sha,
               "sourcePath": "projects/swrlz-forge-moba",
-              "sourceVersion": "v5.3",
+              "sourceVersion": "v5.4",
               "engineName": "§wyrl§ Engine",
-              "sourceSha256": "ef68a0906430de83a5da464efe864eed26e757f03d6fdce5e81df6411c75f995",
+              "sourceSha256": "add2c872e99097285a4ed68372aae3c6f7a42dff4cac4315771c56e8e9c0aea5",
               "spaceRepository": target,
               "spaceRevision": info.sha,
               "spacePage": "https://huggingface.co/spaces/kamiloki/swrlz-forge-moba",
@@ -134,7 +134,7 @@ jobs:
           print(json.dumps(receipt, indent=2))
           PY
 
-      - name: Verify live Space serves §wyrl§ Engine v5.3
+      - name: Verify live Space serves §wyrl§ Engine v5.4
         env:
           SOURCE_SHA: ${{ github.sha }}
           APP_URL: ${{ steps.deploy_space.outputs.app_url }}
@@ -145,15 +145,15 @@ jobs:
           for attempt in 1 2 3 4 5 6; do
             echo "Live verification attempt $attempt"
             if curl -fsSL --max-time 30 "$URL&attempt=$attempt" -o /tmp/forge-live.html; then
-              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V5_3_GROUPS_IMMERSIVE_DEN" /tmp/forge-live.html; then
-                echo "Verified: live HF Space is serving §wyrl§ Engine v5.3."
+              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V5_4_WISP_AVATAR" /tmp/forge-live.html; then
+                echo "Verified: live HF Space is serving §wyrl§ Engine v5.4."
                 exit 0
               fi
-              echo "Live page responded, but v5.3 marker was not present yet."
+              echo "Live page responded, but v5.4 marker was not present yet."
             fi
             sleep 10
           done
-          echo "::error::Hugging Face upload completed, but the live Space did not serve the v5.3 marker within the verification window."
+          echo "::error::Hugging Face upload completed, but the live Space did not serve the v5.4 marker within the verification window."
           exit 1
 
       - name: Preserve deploy receipt

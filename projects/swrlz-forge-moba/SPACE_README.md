@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v5.3
+title: §wyrl§ Engine v5.4
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,11 +10,13 @@ header: mini
 short_description: Browser world engine maker with grouping and first-person.
 ---
 
-# §wyrl§ Engine · Maker v5.3
+# §wyrl§ Engine · Maker v5.4
 
 A browser-native 3D world/game engine maker built around editable projects, first-person play, ghost → Bake authoring, hierarchical object groups, and a structured LALM/agent control surface.
 
 ## Default starter: Dragon's Den — Seed Chamber
+
+The default visitor/player is now a luminous Wisp-style spirit: glowing core, additive aura, orbiting motes, trailing wisps, team glow, and subtle hover animation. It is specific to Dragon's Den; the other project templates retain their existing pawn models.
 
 v5.3 improves the Den as an immersive cavern rather than a miniature open map:
 

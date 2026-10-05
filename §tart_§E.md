@@ -30,7 +30,7 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v5.3 source authority
+## Current v5.4 source authority
 
 ```text
 base:
@@ -44,14 +44,15 @@ patch chain:
   patches/v5_1_swyl_engine_seed_den.py
   patches/v5_2_first_person_twin_stick.py
   patches/v5_3_groups_immersive_den.py
+  patches/v5_4_wisp_avatar.py
 
 final:
-  swyrl_engine_v5_3.html
-  bytes 146986
-  sha256 ef68a0906430de83a5da464efe864eed26e757f03d6fdce5e81df6411c75f995
+  swyrl_engine_v5_4.html
+  bytes 151952
+  sha256 add2c872e99097285a4ed68372aae3c6f7a42dff4cac4315771c56e8e9c0aea5
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V5_3_GROUPS_IMMERSIVE_DEN
+  SWYRL_ENGINE_DEPLOY_MARKER: V5_4_WISP_AVATAR
 ```
 
 ## Grouping contract
@@ -69,7 +70,7 @@ marker:
 
 The default Den must use grouping for architectural assemblies where useful rather than leaving dozens of structural pieces as unrelated root objects.
 
-## Dragon's Den v5.3 contract
+## Dragon's Den v5.4 contract
 
 The default Den is an **immersive cavern**, not an outdoor/MOBA-style map.
 
@@ -93,7 +94,9 @@ Environment requirements:
 - high enclosed cavern shell
 - roof may be multi-piece internally but should be grouped as one editor object
 - runtime roof/shell must not obstruct ordinary editor visibility
-- preserve first-person human-scale immersion
+- preserve first-person immersion
+- default Den visitor/player avatar is the Wisp form, not the old blue capsule
+- Wisp visuals are procedural glow/particle-style geometry; do not depend on copied Warcraft assets
 - keep arbitrary launch-pad mechanics out unless explicitly requested
 
 ## Engine naming and compatibility
@@ -117,7 +120,7 @@ reconstruct base
 → upload dedicated static Space
 → obtain actual HF host
 → fetch served page
-→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_3_GROUPS_IMMERSIVE_DEN
+→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_4_WISP_AVATAR
 → SUCCESS
 ```
 
@@ -165,3 +168,17 @@ PASS on attempt 1
 ```
 
 v5.3 is the current observed engine state at this checkpoint. The default Den uses hierarchical architectural groups and the improved cave-floor / vaulted-roof layout.
+
+
+## v5.4 Wisp avatar contract
+
+Dragon's Den boots with **Wisp Visitor / Creator** as its player avatar.
+
+- visually inspired by the classic glowing Wisp / Sheep Tag readability
+- built from procedural additive sprites, a bright core, orbiting motes, trailing wisps, team glow, and hover/pulse animation
+- no Warcraft model or texture asset is bundled
+- serialized as a normal `hero` actor with `avatarStyle: "wisp"` and blueprint `BP_WispVisitor`
+- saved projects reconstruct the Wisp correctly
+- first-person camera uses the Wisp's lower eye height
+- first-person body hiding includes sprites as well as meshes so the glow does not obstruct the camera
+- Blank Starter World and MOBA retain their existing player pawn styles
