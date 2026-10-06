@@ -327,13 +327,31 @@ def classify_online_request(
     programming = programming if isinstance(programming, dict) else {}
     explicit_web = bool(_EXPLICIT_WEB.search(text))
     weather_negated=_weather_negated(text)
-    # An explicit request to search/browse the web owns the turn even when the
-    # search subject contains weather vocabulary (e.g. weather API docs).
-    # Dedicated weather retrieval remains for direct weather/forecast requests.
-    # Dedicated structured capabilities outrank generic web-search phrasing.
-    # "What time is it..." must never degrade into a search-results answer merely
-    # because natural language contains words that resemble an explicit lookup.
-    if _TIME_TERMS.search(text) and not programming.get("codingTask"):
+    # Structured live-data capabilities outrank generic web search for direct
+    # user questions. This is intentionally phrasing-tolerant: natural variants
+    # should route by requested data, not by one exact sentence template.
+    time_intent=bool(_TIME_TERMS.search(text))
+    weather_intent=bool(_WEATHER_TERMS.search(text) and not weather_negated)
+    if time_intent and weather_intent and not programming.get("codingTask"):
+        # Multi-capability requests are represented explicitly so Station can
+        # execute both capabilities and present both widgets without forcing
+        # either one through generic search/model improvisation.
+        weather_location=_weather_location_from_prompt(text)
+        time_location=_time_location_from_prompt(text)
+        shared_location=weather_location or time_location
+        return {
+            "contract": ONLINE_CONTRACT,
+            "requested": True,
+            "kind": "multi",
+            "capabilities": ["weather","time"],
+            "reason": "weather-time-intent",
+            "query": text[:500],
+            "locationText": shared_location,
+            "clientLocation": None,
+            "locationRequired": not bool(shared_location),
+            "programming": False,
+        }
+    if time_intent and not programming.get("codingTask"):
         location_text=_time_location_from_prompt(text)
         return {
             "contract": ONLINE_CONTRACT,
@@ -344,6 +362,21 @@ def classify_online_request(
             "locationText": location_text,
             "clientLocation": None,
             "locationRequired": not bool(location_text),
+            "programming": False,
+        }
+    if weather_intent and not programming.get("codingTask"):
+        shared = _normalize_client_location(client_location)
+        location_text = _weather_location_from_prompt(text)
+        use_shared = bool(shared and (_LOCATION_REQUIRED.search(text) or not location_text))
+        return {
+            "contract": ONLINE_CONTRACT,
+            "requested": True,
+            "kind": "weather",
+            "reason": "weather-intent",
+            "query": text[:500],
+            "locationText": location_text,
+            "clientLocation": shared if use_shared else None,
+            "locationRequired": not bool(location_text or use_shared),
             "programming": False,
         }
     if explicit_web:
