@@ -3,7 +3,7 @@ on:
   push:
     branches: [swyrl-v6-deploy-finalize]
 permissions:
-  contents: read
+  contents: write
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -31,12 +31,17 @@ jobs:
           print('::warning file=projects/swrlz-forge-moba/source-manifest.json,line=2,title=V60_SHA256::'+sha)
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as q: q.write(f'V60_BYTES={len(b)}\n\nV60_SHA256={sha}\n')
           Path('/tmp/v60.html').write_bytes(b)
+          Path('projects/swrlz-forge-moba/V6_RECEIPT.txt').write_text(f'{len(b)} {sha}\n')
           a=raw.index('<script type="module">')+len('<script type="module">');z=raw.rindex('</script>')
           Path('/tmp/v60.mjs').write_text(raw[a:z])
           assert 'V6_0_GLITCH_DRAGON_DEN' in raw
           assert 'buildGlitchDragonsDenProject' in raw
           PY
           node --check /tmp/v60.mjs
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add projects/swrlz-forge-moba/V6_RECEIPT.txt
+          git diff --cached --quiet || (git commit -m 'Record exact v6 integrity receipt' && git push)
           cp /tmp/v60.html projects/swrlz-forge-moba/v60-candidate.html
       - uses: actions/upload-artifact@v4
         with:
