@@ -30,7 +30,7 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v5.6 source authority
+## Current v5.7 source authority
 
 ```text
 base:
@@ -47,14 +47,15 @@ patch chain:
   patches/v5_4_wisp_avatar.py
   patches/v5_5_dragons_natural_look.py
   patches/v5_6_dragon_ground_contact.py
+  patches/v5_7_precision_contact_camera_speed.py
 
 final:
-  swyrl_engine_v5_6.html
-  bytes 161347
-  sha256 c4c0d88febfdfa2bf1c9b02925c6abd9ddafe05010ec5917dac2cd8eb05886e4
+  swyrl_engine_v5_7.html
+  bytes 163645
+  sha256 62fbe228f4ee412c17be53429239159a400bc02bd1f94b5c1b7760f85645c04a
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V5_6_DRAGON_GROUND_CONTACT
+  SWYRL_ENGINE_DEPLOY_MARKER: V5_7_PRECISION_CONTACT_CAMERA_SPEED
 ```
 
 ## Grouping contract
@@ -72,7 +73,7 @@ marker:
 
 The default Den must use grouping for architectural assemblies where useful rather than leaving dozens of structural pieces as unrelated root objects.
 
-## Dragon's Den v5.6 contract
+## Dragon's Den v5.7 contract
 
 The default Den is an **immersive cavern**, not an outdoor/MOBA-style map.
 
@@ -122,7 +123,7 @@ reconstruct base
 → upload dedicated static Space
 → obtain actual HF host
 → fetch served page
-→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_6_DRAGON_GROUND_CONTACT
+→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_7_PRECISION_CONTACT_CAMERA_SPEED
 → SUCCESS
 ```
 
@@ -332,3 +333,18 @@ PASS on attempt 1
 ```
 
 v5.6 is the current observed engine state at this checkpoint. Dragon wings use the detailed multi-finger membrane pass, all four feet are explicit, and dragons use reusable raycast-based surface foot contact for rocks, pedestals, uneven architecture, and terrain fallback.
+
+
+## v5.7 precision contact + camera-speed contract
+
+- dragon foot grounding uses multiple sole samples, not a single center ray
+- highest valid sampled contact controls vertical planting so rock/pedestal corners do not pass through the paw
+- nearby hit normals are averaged before slope alignment
+- contact sampling is reused across all dragons per frame
+- teeth remain inside the mouth silhouette and must not protrude through the lower jaw
+- the editor top bar exposes a continuous camera speed slider
+- that slider controls orbit rotate, pan, and wheel/scroll zoom together
+- range: 0.35× to 3.00×
+- the chosen camera speed persists locally
+- mobile editor views must keep the slider accessible
+- runtime/PIE look sensitivity remains separate from editor camera speed
