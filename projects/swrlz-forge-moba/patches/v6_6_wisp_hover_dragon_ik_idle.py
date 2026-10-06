@@ -86,9 +86,10 @@ function updateDragonRigs(t){
     if marker not in s: raise RuntimeError("v6.6 rig marker missing")
     s=s.replace(marker,rig+"\n"+marker,1)
 
-    # Seed stable idle phases/base scale on both dragon constructors.
-    s=_once(s,"return markActor(g,'dragon',{name,baked,colliderRadius:1.18*scale,folder:'Dragon Den/Dragons',components:['Transform','Scene','StaticMesh','Collider','BobMovement','AgentAvatar'],blueprintClass:'BP_DragonAvatarV2',componentSpeed:.42,bobAmplitude:.018,visualColor:color,role:'lalm-agent-avatar',tags:['dragon-den','agent-avatar','voice-anchor-hook','dragon-anatomy-v2']});",
-      "const actor=markActor(g,'dragon',{name,baked,colliderRadius:1.18*scale,folder:'Dragon Den/Dragons',components:['Transform','Scene','StaticMesh','Collider','AgentAvatar','ProceduralIdle','FootContact'],blueprintClass:'BP_DragonAvatarV2',componentSpeed:0,bobAmplitude:0,visualColor:color,role:'lalm-agent-avatar',tags:['dragon-den','agent-avatar','voice-anchor-hook','dragon-anatomy-v2','foot-contact','procedural-idle']});actor.userData.dragonIdlePhase=Math.random()*Math.PI*2;actor.userData.dragonChestBaseY=chest.scale.y;return actor;")
+    # Seed procedural-idle metadata on v3 dragons; v3 wraps the current anatomy constructor.
+    needle="  d.userData.blueprintClass='BP_GlitchDragonV3';d.userData.tags.push('dragon-anatomy-v3','crystal-armor','fracture-energy');return d;"
+    repl="  d.userData.blueprintClass='BP_GlitchDragonV3';d.userData.tags.push('dragon-anatomy-v3','crystal-armor','fracture-energy','foot-contact','procedural-idle');d.userData.dragonIdlePhase=Math.random()*Math.PI*2;const chest=d.getObjectByName('DragonChest');d.userData.dragonChestBaseY=chest?chest.scale.y:1;d.userData.bobAmplitude=0;return d;"
+    s=_once(s,needle,repl)
 
     # Run dragon rig after Wisp visual animation every frame.
     s=_once(s,"updateWispVisuals(t);if(!playing)orbit.update();","updateWispVisuals(t);updateDragonRigs(t);if(!playing)orbit.update();")
