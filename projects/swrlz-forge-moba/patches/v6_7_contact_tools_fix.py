@@ -15,14 +15,10 @@ def apply(html):
       "editorLog('§wyrl§ Engine v6.6 initialized · Wisp hover collision · planted dragon idle rig','ok')":"editorLog('§wyrl§ Engine v6.7 initialized · Wisp flight restored · dragon contact root solve · organized tools','ok')"
     }.items(): s=_once(s,a,b)
 
-    # Wisp: keep known horizontal first-person controller, but collision-test candidate position
-    # without allowing collision helpers to strand/overwrite the avatar.
-    # v6.6 already retains the established horizontal controller. Make its collision
-    # radius avatar-aware and keep finite candidate translation.
-    if "resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;" in s:
-      s=s.replace("resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;","resolveHeroCollision(next,h.userData.colliderRadius||.46);if(Number.isFinite(next.x)&&Number.isFinite(next.z)){h.position.x=next.x;h.position.z=next.z;}",1)
-    elif "resolveHeroCollision(next,h.userData.colliderRadius||.46);" not in s:
-      raise RuntimeError("v6.7 current horizontal collision call missing")
+    # The v6.6 hover patch already preserves the known-working first-person X/Z controller.
+    # Do not rewrite it again here; keep hover collision metadata and add explicit mobile altitude input.
+    if "h.userData.hoverFlight" not in s or "resolveHeroCollision(next" not in s:
+      raise RuntimeError("v6.7 expected Wisp hover/controller integration missing")
 
     # Mobile hover controls: move stick remains translation; dedicated altitude buttons avoid
     # stealing the look stick.
