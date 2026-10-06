@@ -1,12 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v6.0",
+  "name": "§wyrl§ Engine v6.1",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v6_0.html",
-  "finalBytes": 170965,
-  "finalSha256": "747076cbbd43b881887392bcf69a7721905564ffc155e3ab946831ed3a640569",
+  "finalArtifact": "swyrl_engine_v6_1.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -28,6 +26,7 @@
     "patches/v5_7_precision_contact_camera_speed.py",
     "patches/v5_8_wisp_alpha_foot_support.py",
     "patches/v5_9_wisp_soft_contact_history.py",
-    "patches/v6_0_researched_glitch_dragon_den.py"
+    "patches/v6_0_researched_glitch_dragon_den.py",
+    "patches/v6_1_glitch_den_project_card.py"
   ]
 }
