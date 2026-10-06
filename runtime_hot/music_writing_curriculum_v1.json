@@ -14,7 +14,9 @@
     "Dynamic line length matters: short impact lines mixed with longer connected runs create cadence instead of uniform walls of text.",
     "Callbacks, double meanings, concrete imagery, punchlines, adlibs and controlled repetition create identity and replay value.",
     "Beat-aware rewrites should change cadence, pauses and line length rather than merely swapping vocabulary.",
-    "The finished lyric should hide its construction mechanics unless annotation is requested."
+    "The finished lyric should hide its construction mechanics unless annotation is requested.",
+    "Developed main verses should usually be long enough to establish, evolve, and pay off an idea; default toward substantial verses unless the user asks for brevity.",
+    "Bridges can use recognizable repetition as structural glue, with later repetitions optionally morphing a line, ending, image, response, or cadence rather than becoming a completely unrelated section."
   ],
   "negative_patterns": [
     "Generic filler used only to complete a rhyme.",
@@ -36,6 +38,13 @@
       "imagery and punchlines",
       "section-to-section progression",
       "human variation in line length and syntax"
-    ]
+    ],
+    "default_song_shape": {
+      "verse_length": "Default to substantial, developed verses rather than short verse stubs. Unless the user asks for short/compact writing or the musical form clearly calls for brevity, aim for roughly 12–20 performance lines per main verse, with enough room for setup, development, rhyme-chain evolution, callbacks, and payoff.",
+      "verse_rule": "Do not confuse dense writing with short writing. A strong verse should develop an idea across multiple bars and vary line length/cadence instead of ending as soon as one rhyme chain lands.",
+      "bridge_behavior": "Bridges are normally shorter than verses and may repeat a memorable phrase or melodic/rhythmic anchor. On later bridge passes, repetition may stay exact or morph slightly—changed ending, added response line, altered image, intensified wording, or cadence shift—while remaining recognizably the same bridge.",
+      "chorus_behavior": "Hooks/choruses may repeat more strongly than verses; purposeful repetition is desirable when it creates catch and identity. Repeated hooks can receive small final-pass variations when useful.",
+      "exceptions": "Follow explicit user length/structure requests over these defaults. Very fast BPM, call-and-response, minimalist genres, intros/outros, or intentionally sparse songs may justify shorter sections."
+    }
   }
 }
