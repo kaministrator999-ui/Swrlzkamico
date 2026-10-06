@@ -33,5 +33,7 @@
     "patches/v6_4_single_glitch_den_dragon_v3.py",
     "patches/v6_5_glitch_den_runtime_default.py",
     "patches/v6_6_wisp_hover_dragon_ik_idle.py"
-  ]
+  ],
+  "finalBytes": 174866,
+  "finalSha256": "602a498245a01e9ddc87c44ca17390d0070b334996fa15c2817cbc5c5a4af72e"
 }
