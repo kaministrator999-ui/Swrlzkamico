@@ -31,27 +31,51 @@ def _r39_online_payload(payload: dict[str,Any]) -> dict[str,Any]:
     out["onlineContextEmbeddedForR39"]=True
     return out
 
+def _weather_grounded_text(result: dict[str,Any]) -> str:
+    """Render weather prose only from the same structured evidence that powers the widget."""
+    context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
+    current=context.get("current") if isinstance(context.get("current"),dict) else {}
+    units=context.get("units") if isinstance(context.get("units"),dict) else {}
+    location=context.get("location") if isinstance(context.get("location"),dict) else {}
+    daily=context.get("daily") if isinstance(context.get("daily"),list) else []
+    label=str(location.get("label") or "the requested location")
+    condition=str(current.get("condition") or "weather data available")
+    temperature=current.get("temperature")
+    apparent=current.get("apparentTemperature")
+    humidity=current.get("humidity")
+    wind=current.get("windSpeed")
+    precipitation=current.get("precipitation")
+    temp_unit=str(units.get("temperature") or "")
+    wind_unit=str(units.get("windSpeed") or "")
+    precip_unit=str(units.get("precipitation") or "")
+    lead=f"It's {condition.lower()} in {label}"
+    if temperature is not None: lead+=f" at {temperature}{temp_unit}"
+    if apparent is not None: lead+=f", feeling like {apparent}{temp_unit}"
+    lead+="."
+    facts=[]
+    if humidity is not None:facts.append(f"Humidity is {humidity}%")
+    if precipitation is not None:facts.append(f"precipitation is {precipitation}{precip_unit}")
+    if wind is not None:facts.append(f"winds are about {wind}{wind_unit}")
+    if facts: lead+=" "+", ".join(facts)+"."
+    forecasts=[]
+    for index,day in enumerate(daily[:2]):
+        if not isinstance(day,dict):continue
+        name="Today" if index==0 else "Tomorrow"
+        high=day.get("high");low=day.get("low");day_condition=str(day.get("condition") or "").lower()
+        detail=name
+        if day_condition:detail+=" is "+day_condition
+        if high is not None and low is not None:detail+=f", with a high of {high}{temp_unit} and a low of {low}{temp_unit}"
+        elif high is not None:detail+=f", with a high of {high}{temp_unit}"
+        elif low is not None:detail+=f", with a low of {low}{temp_unit}"
+        forecasts.append(detail+".")
+    if forecasts:lead+=" "+" ".join(forecasts)
+    return lead
+
 def _online_evidence_fallback_text(result: dict[str,Any]) -> str:
     kind=str(result.get("kind") or "")
     context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
     if kind=="weather":
-        current=context.get("current") if isinstance(context.get("current"),dict) else {}
-        units=context.get("units") if isinstance(context.get("units"),dict) else {}
-        location=context.get("location") if isinstance(context.get("location"),dict) else {}
-        label=str(location.get("label") or "the requested location")
-        condition=str(current.get("condition") or "weather data available")
-        temperature=current.get("temperature")
-        apparent=current.get("apparentTemperature")
-        humidity=current.get("humidity")
-        wind=current.get("windSpeed")
-        temp_unit=str(units.get("temperature") or "")
-        wind_unit=str(units.get("windSpeed") or "")
-        parts=[f"Live weather for {label}: {condition}"]
-        if temperature is not None:parts.append(f"{temperature}{temp_unit}")
-        if apparent is not None:parts.append(f"feels like {apparent}{temp_unit}")
-        if humidity is not None:parts.append(f"humidity {humidity}%")
-        if wind is not None:parts.append(f"wind {wind}{wind_unit}")
-        return ", ".join(parts)+"."
+        return _weather_grounded_text(result)
     evidence=context.get("evidence") if isinstance(context.get("evidence"),list) else []
     query=str(context.get("query") or result.get("query") or "your search")
     useful=[]
@@ -67,31 +91,37 @@ def _online_evidence_fallback_text(result: dict[str,Any]) -> str:
 
 
 def _guard_successful_online_answer(events: Iterator[dict[str,Any]], result: dict[str,Any]) -> Iterator[dict[str,Any]]:
-    """Prevent model-memory refusal prose from contradicting successful live evidence."""
+    """Keep successful online answers bounded to server evidence; weather uses deterministic prose."""
+    kind=str(result.get("kind") or "")
     chunks=[]
     terminal=None
     for event in events:
         if not isinstance(event,dict):
             continue
-        kind=str(event.get("type") or "")
-        if kind=="DELTA":
+        event_kind=str(event.get("type") or "")
+        if event_kind=="DELTA":
             chunks.append(str(event.get("text") or ""))
             continue
-        if kind in ("COMPLETED","FAILED","CANCELLED","CANDIDATE_REJECTED"):
+        if event_kind in ("COMPLETED","FAILED","CANCELLED","CANDIDATE_REJECTED"):
             terminal=event
             continue
         yield event
-    text="".join(chunks).strip()
-    contradiction=bool(re.search(
-        r"\b(?:i\s+(?:can(?:not|'t)|am\s+unable\s+to)\s+(?:access|browse|search|check|assist)|"
-        r"i\s+do\s+not\s+have\s+(?:live|real[- ]?time|internet|web)\s+access|"
-        r"cannot\s+access\s+(?:live|real[- ]?time|current)\s+(?:data|weather|information))\b",
-        text,
-        re.I,
-    ))
-    if contradiction or not text:
-        yield {"type":"STATUS","phase":"ONLINE_ANSWER_GUARD","reason":"Replaced model prose that contradicted successful live evidence.","categories":["ONLINE_RESEARCH","GROUNDING_GUARD"]}
-        text=_online_evidence_fallback_text(result)
+    model_text="".join(chunks).strip()
+    if kind=="weather":
+        text=_weather_grounded_text(result)
+        yield {"type":"STATUS","phase":"ONLINE_ANSWER_GROUNDING","reason":"Weather prose rendered deterministically from structured provider evidence.","categories":["ONLINE_RESEARCH","WEATHER","GROUNDING_GUARD"]}
+    else:
+        contradiction=bool(re.search(
+            r"\b(?:i\s+(?:can(?:not|'t)|am\s+unable\s+to)\s+(?:access|browse|search|check|assist)|"
+            r"i\s+do\s+not\s+have\s+(?:live|real[- ]?time|internet|web)\s+access|"
+            r"cannot\s+access\s+(?:live|real[- ]?time|current)\s+(?:data|weather|information))\b",
+            model_text,
+            re.I,
+        ))
+        text=model_text
+        if contradiction or not text:
+            yield {"type":"STATUS","phase":"ONLINE_ANSWER_GUARD","reason":"Replaced model prose that contradicted successful live evidence.","categories":["ONLINE_RESEARCH","GROUNDING_GUARD"]}
+            text=_online_evidence_fallback_text(result)
     if text:
         yield {"type":"DELTA","text":text}
     if terminal is not None:
