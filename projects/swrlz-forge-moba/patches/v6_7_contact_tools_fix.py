@@ -79,5 +79,5 @@ function organizeMobileTools(){
 }
 organizeMobileTools();
 """
-    s=_once(s,marker,marker+"\\n"+organizer)
+    s=_once(s,marker,marker+"\n"+organizer)
     return s
