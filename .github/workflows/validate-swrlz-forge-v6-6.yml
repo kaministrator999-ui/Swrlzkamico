@@ -24,7 +24,7 @@ jobs:
           for rel in m["patches"]:
               spec=importlib.util.spec_from_file_location("p",root/rel);mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);html=mod.apply(html)
           b=html.encode();print("FINAL_BYTES="+str(len(b)));print("FINAL_SHA256="+hashlib.sha256(b).hexdigest())
-          for x in ["V6_6_HOVER_DRAGON_IK","hoverFlight=true","verticalSpeed=4.2","foot.position.z+.24","function solidContactHeight","function updateDragonRigs","ProceduralIdle","FootContact","updateDragonRigs(t)"]: assert x in html,x
+          for x in ["V6_6_HOVER_DRAGON_IK","hoverFlight=true","verticalSpeed=4.2","foot.position.z+.24","function solidContactHeight","function updateDragonRigs","procedural-idle","foot-contact","updateDragonRigs(t)"]: assert x in html,x
           start=html.index('<script type="module">')+len('<script type="module">');end=html.rindex('</script>');Path("/tmp/e.mjs").write_text(html[start:end])
           PY
           node --check /tmp/e.mjs
@@ -32,3 +32,5 @@ jobs:
 # retry current anatomy anchor
 
 # retry v3 rig anchor
+
+# retry v3 idle metadata
