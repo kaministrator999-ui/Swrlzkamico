@@ -30,7 +30,7 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v5.4 source authority
+## Current v5.5 source authority
 
 ```text
 base:
@@ -45,14 +45,15 @@ patch chain:
   patches/v5_2_first_person_twin_stick.py
   patches/v5_3_groups_immersive_den.py
   patches/v5_4_wisp_avatar.py
+  patches/v5_5_dragons_natural_look.py
 
 final:
-  swyrl_engine_v5_4.html
-  bytes 151952
-  sha256 add2c872e99097285a4ed68372aae3c6f7a42dff4cac4315771c56e8e9c0aea5
+  swyrl_engine_v5_5.html
+  bytes 155355
+  sha256 76410c2340664c0754ad2a50e7be858f7223787e89cb6f10c4360577cc27f4e2
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V5_4_WISP_AVATAR
+  SWYRL_ENGINE_DEPLOY_MARKER: V5_5_DRAGONS_NATURAL_LOOK
 ```
 
 ## Grouping contract
@@ -70,7 +71,7 @@ marker:
 
 The default Den must use grouping for architectural assemblies where useful rather than leaving dozens of structural pieces as unrelated root objects.
 
-## Dragon's Den v5.4 contract
+## Dragon's Den v5.5 contract
 
 The default Den is an **immersive cavern**, not an outdoor/MOBA-style map.
 
@@ -120,7 +121,7 @@ reconstruct base
 → upload dedicated static Space
 → obtain actual HF host
 → fetch served page
-→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_4_WISP_AVATAR
+→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_5_DRAGONS_NATURAL_LOOK
 → SUCCESS
 ```
 
@@ -216,3 +217,36 @@ PASS on attempt 1
 ```
 
 The current default Dragon's Den player is **Wisp Visitor / Creator** using the procedural Wisp visual system.
+
+
+## v5.5 camera-look contract
+
+Default first-person look must be non-inverted horizontally:
+
+```text
+right stick right → camera turns right
+right stick left  → camera turns left
+right stick up    → camera looks up
+right stick down  → camera looks down
+
+pointer-lock mouse right → camera turns right
+pointer-lock mouse left  → camera turns left
+```
+
+Do not silently restore inverted horizontal look as the default.
+
+## v5.5 Dragon anatomy contract
+
+The Dragon's Den procedural dragon model is **BP_DragonAvatarV2**.
+
+Required visual direction:
+
+- recognizable dragon silhouette at both near and far camera distances
+- articulated bat-like wings; avoid giant rectangular/slab wings
+- segmented neck and curved tail
+- distinct chest and haunch forms
+- four articulated legs with feet/claws
+- readable muzzle/jaw/head structure
+- horns, brows, eyes, teeth, ears, and dorsal spines
+- shaded/tinted belly and dark accents; avoid large pure-black blocks that read like missing geometry
+- preserve the deliberately massive scale relative to the Wisp/player
