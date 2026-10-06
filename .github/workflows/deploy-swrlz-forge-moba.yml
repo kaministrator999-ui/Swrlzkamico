@@ -1,15 +1,9 @@
 name: Deploy §wyrl§ Engine to Hugging Face
 
+# Production deployment is intentionally manual-only.
+# §E source mutations must NOT deploy automatically; finish/version/roadmap first,
+# then explicitly dispatch this workflow as the final release step.
 on:
-  push:
-    branches: [main]
-    paths:
-      - "projects/swrlz-forge-moba/payload/**"
-      - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/patches/**"
-      - "projects/swrlz-forge-moba/build_space.py"
-      - "projects/swrlz-forge-moba/SPACE_README.md"
-      - ".github/workflows/deploy-swrlz-forge-moba.yml"
   workflow_dispatch:
 
 permissions:
