@@ -88,6 +88,34 @@ def _online_evidence_fallback_text(result: dict[str,Any]) -> str:
     return "The live search completed successfully, and the structured search-results card contains the retrieved sources."
 
 
+def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | None:
+    """Build a server-owned lyrics response from frozen fetched evidence; never ask the model to recreate lyric facts."""
+    context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
+    verified=context.get("verifiedLyrics") if isinstance(context.get("verifiedLyrics"),dict) else None
+    if not verified:
+        return None
+    source=str(verified.get("sourceTitle") or "the fetched lyrics source").strip()
+    url=str(verified.get("sourceUrl") or "").strip()
+    extract=str(verified.get("pageExtract") or "").strip()
+    scope=str(verified.get("requestedScope") or "lyrics")
+    if not extract or not url:
+        return None
+    # Keep the factual payload byte-derived from the fetched page. For first-verse requests,
+    # select the first non-empty stanza when the page extract preserves stanza boundaries.
+    payload=extract
+    if scope=="first-verse":
+        chunks=[x.strip() for x in re.split(r"\n\s*\n+",extract) if x.strip()]
+        if chunks:
+            payload=chunks[0]
+    # Bound output to retrieved text; never continue beyond evidence.
+    payload=payload[:2400].strip()
+    if not payload:
+        return None
+    song_query=str(context.get("query") or result.get("query") or "the song").strip()
+    label="the first verse" if scope=="first-verse" else "the lyrics"
+    return f"Okay — here's {label} I could verify for **{song_query}**:\n\n{payload}\n\n**Source:** {source} — {url}"
+
+
 def _lyrics_verified_answer(result: dict[str,Any], model_text: str) -> tuple[str,bool]:
     """Fail closed unless model citation and quote are bound to successfully fetched lyric evidence."""
     context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
@@ -228,6 +256,13 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
             yield {"type":"COMPLETED","phase":"COMPLETE"}
             return
         # Programming questions/examples/reasoning were routed before retrieval so online logs bind the selected model.
+    if online_result and str(intent.get("contentMode") or "")=="lyrics-verification":
+        lyrics_text=_lyrics_retrieval_payload(online_result,str(payload.get("prompt") or ""))
+        if lyrics_text:
+            yield {"type":"STATUS","phase":"LYRICS_VERIFIED_PAYLOAD","reason":"Serving frozen lyrics payload from successfully fetched evidence.","categories":["ONLINE_RESEARCH","LYRICS","GROUNDING"]}
+            yield {"type":"DELTA","text":lyrics_text}
+            yield {"type":"COMPLETED","phase":"COMPLETE"}
+            return
     if model_id=="r39":
         events=r39_generate(_r39_online_payload(payload))
     elif model_id=="stock":
