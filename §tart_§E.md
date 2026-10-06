@@ -4,6 +4,10 @@
 
 **Invocation:** `§tart §E` or `@GitHub §tart §E` means enter the dedicated §wyrl§ Engine lane, reconstruct current GitHub/Hugging Face truth, and continue independently from the §wyrlz AI Chat/LALM application.
 
+## Roadmap
+
+Canonical chronological update ledger: [`projects/swrlz-forge-moba/ROADMAP.md`](projects/swrlz-forge-moba/ROADMAP.md). Read it on every `§tart §E` startup so shipped features, hotfixes, and release lineage are reconstructed before new work.
+
 ## Canonical lane
 
 ```text
@@ -19,7 +23,7 @@ GitHub: kaministrator999-ui/Swrlzkamico
 
 On `§tart §E`:
 
-1. Read this router and the engine README.
+1. Read this router, `projects/swrlz-forge-moba/ROADMAP.md`, and the engine README.
 2. Read `source-manifest.json`, `build_space.py`, every listed patch module, and `SPACE_README.md`.
 3. Inspect current GitHub main, latest §wyrl§ Engine deployment workflow, and Hugging Face Space state.
 4. Preserve the hard deployment boundary from the main §wyrlz AI Chat/LALM Space.
@@ -30,7 +34,7 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v5.7 source authority
+## Current source authority (v6.x)
 
 ```text
 base:
