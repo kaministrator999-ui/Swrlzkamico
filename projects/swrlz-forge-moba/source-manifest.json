@@ -35,5 +35,7 @@
     "patches/v6_6_wisp_hover_dragon_ik_idle.py",
     "patches/v6_7_contact_tools_fix.py",
     "patches/v6_8_den2_ground_snap.py"
-  ]
+  ],
+  "finalBytes": 178783,
+  "finalSha256": "98e383e3795926c5375eace3b5db22dca92b498caeaa1935e51fc2bafd489613"
 }
