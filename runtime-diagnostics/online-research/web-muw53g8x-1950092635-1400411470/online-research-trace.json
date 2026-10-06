@@ -1,0 +1,64 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-muw53g8x-1950092635-1400411470",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "7f9cb4b43e6471cdcc3b52f656e9f80a904d06fd",
+  "persistedAtUnixMs": 1791258557959,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v125-trace-chat-status",
+      "kind": "time",
+      "status": "ERROR",
+      "reason": "time-intent",
+      "provider": null,
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 511,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "TIME_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving location time zone",
+        "atUnixMs": 1791258557448
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "TIME_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving location time zone",
+        "atUnixMs": 1791258557448
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "TIME_GEOCODE_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1791258557958,
+        "httpStatus": 200,
+        "responseBytes": 32
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
