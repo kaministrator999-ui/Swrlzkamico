@@ -60,23 +60,24 @@ def apply(html):
     }"""
     s=_once(s,old,new)
 
-    # Organize existing mobile Tools without changing button IDs/handlers: headings are
-    # injected around logical runs, preserving all established controls.
-    if 'id="mobileToolsPanel"' not in s: raise RuntimeError("v6.7 mobile tools panel missing")
-    replacements=[
-      ("<button id=\"projectsBtn\"","<div class=\"tool-section\"><div class=\"tool-section-title\">Project & History</div><div class=\"tool-section-grid\"><button id=\"projectsBtn\""),
-      ("<button id=\"moveBtn\"","</div></div><div class=\"tool-section\"><div class=\"tool-section-title\">Transform</div><div class=\"tool-section-grid\"><button id=\"moveBtn\""),
-      ("<button id=\"terrainSnapBtn\"","</div></div><div class=\"tool-section\"><div class=\"tool-section-title\">World & Build</div><div class=\"tool-section-grid\"><button id=\"terrainSnapBtn\""),
-      ("<button id=\"simulateBtn\"","</div></div><div class=\"tool-section\"><div class=\"tool-section-title\">Play & Content</div><div class=\"tool-section-grid\"><button id=\"simulateBtn\""),
-      ("<button id=\"saveBtn\"","</div></div><div class=\"tool-section\"><div class=\"tool-section-title\">File & View</div><div class=\"tool-section-grid\"><button id=\"saveBtn\"")
-    ]
-    for old,new in replacements:
-      if old in s:s=s.replace(old,new,1)
-    # close last injected section immediately before tools-body close near the view help.
-    helptext="Perspective can orbit under the terrain. Orthographic views are rotation-locked."
-    i=s.find(helptext)
-    if i<0: raise RuntimeError("v6.7 tools help marker missing")
-    close=s.rfind("</div>",0,i)
-    if close<0: raise RuntimeError("v6.7 tools close marker missing")
-    s=s[:close]+"</div></div>"+s[close:]
+    # Organize the current Tools modal non-destructively by grouping its existing controls
+    # after DOM creation. Existing IDs and handlers remain untouched.
+    marker="bindVirtualStick('moveStick',fpMove);bindVirtualStick('lookStick',fpLook);"
+    organizer=r"""
+function organizeMobileTools(){
+  const panel=$('mobileToolsPanel');if(!panel||panel.dataset.organized==='1')return;
+  const groups=[
+    ['Project & History',['projectsBtn','undoBtn','redoBtn']],
+    ['Transform',['moveBtn','rotateBtn','scaleBtn','worldLocalBtn','multiSelectBtn','groupBtn','ungroupBtn']],
+    ['World & Build',['terrainSnapBtn','buildBtn']],
+    ['Play & Content',['simulateBtn','contentBtn']],
+    ['File & View',['saveBtn','loadBtn','exportBtn']]
+  ];
+  const host=panel.querySelector('.sheet-body,.panel-body,.tools-body')||panel;
+  for(const [title,ids] of groups){const nodes=ids.map(id=>$(id)).filter(Boolean);if(!nodes.length)continue;const sec=document.createElement('section');sec.className='tool-section';const h=document.createElement('div');h.className='tool-section-title';h.textContent=title;const grid=document.createElement('div');grid.className='tool-section-grid';sec.append(h,grid);nodes[0].parentNode.insertBefore(sec,nodes[0]);nodes.forEach(n=>grid.appendChild(n));}
+  panel.dataset.organized='1';
+}
+organizeMobileTools();
+"""
+    s=_once(s,marker,marker+"\\n"+organizer)
     return s
