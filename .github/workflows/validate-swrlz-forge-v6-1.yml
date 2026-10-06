@@ -44,7 +44,7 @@ jobs:
             'data-project-template="glitch-dragons-den"',
             "Glitch Dragon Den — Fracture Forge",
             "Seed Chamber · architecture baseline v5.3 · §wyrl§ Engine v6.1",
-            "if(t==='glitch-dragons-den')return buildGlitchDragonsDenProject();"
+            "else if(template==='glitch-dragons-den')buildGlitchDragonsDenProject();"
           ]
           for token in required:
               assert token in html, "missing: "+token
