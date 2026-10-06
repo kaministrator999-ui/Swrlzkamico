@@ -62,8 +62,7 @@ def apply(html):
 
     # Organize existing mobile Tools without changing button IDs/handlers: headings are
     # injected around logical runs, preserving all established controls.
-    panelStart='<div class="mobile-tools-body">'
-    if panelStart not in s: raise RuntimeError("v6.7 mobile tools body missing")
+    if 'id="mobileToolsPanel"' not in s: raise RuntimeError("v6.7 mobile tools panel missing")
     replacements=[
       ("<button id=\"projectsBtn\"","<div class=\"tool-section\"><div class=\"tool-section-title\">Project & History</div><div class=\"tool-section-grid\"><button id=\"projectsBtn\""),
       ("<button id=\"moveBtn\"","</div></div><div class=\"tool-section\"><div class=\"tool-section-title\">Transform</div><div class=\"tool-section-grid\"><button id=\"moveBtn\""),
