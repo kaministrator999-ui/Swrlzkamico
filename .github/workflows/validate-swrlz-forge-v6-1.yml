@@ -1,0 +1,58 @@
+name: Validate §wyrl§ Engine release candidate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/validate-swrlz-forge-v6-1.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Reconstruct candidate and report integrity
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path("projects/swrlz-forge-moba")
+          m=json.loads((root/"source-manifest.json").read_text())
+          encoded="".join((root/p).read_text().strip() for p in m["chunks"])
+          html=gzip.decompress(base64.b64decode(encoded)).decode()
+          for rel in m["patches"]:
+              p=root/rel
+              spec=importlib.util.spec_from_file_location("p",p)
+              mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+              html=mod.apply(html)
+          b=html.encode()
+          print("FINAL_BYTES="+str(len(b)))
+          print("FINAL_SHA256="+hashlib.sha256(b).hexdigest())
+          required=[
+            "SWYRL_ENGINE_DEPLOY_MARKER: V6_1_GLITCH_DEN_STARTER",
+            "<title>§wyrl§ Engine · Maker v6.1</title>",
+            'data-project-template="glitch-dragons-den"',
+            "Glitch Dragon Den — Fracture Forge",
+            "Seed Chamber · architecture baseline v5.3 · §wyrl§ Engine v6.1",
+            "if(t==='glitch-dragons-den')return buildGlitchDragonsDenProject();"
+          ]
+          for token in required:
+              assert token in html, "missing: "+token
+          assert "Dragon's Den v5.3 · grouped architecture + immersive cavern" not in html
+          out=Path("/tmp/swyrl-engine.html"); out.write_text(html)
+          s=html
+          start=s.index('<script type="module">')+len('<script type="module">')
+          end=s.rindex('</script>')
+          Path("/tmp/swyrl-engine.mjs").write_text(s[start:end])
+          PY
+          node --check /tmp/swyrl-engine.mjs
