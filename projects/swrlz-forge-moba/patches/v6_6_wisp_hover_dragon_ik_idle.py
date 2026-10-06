@@ -50,7 +50,7 @@ def apply(html):
     leg.position.copy(top.clone().add(rear).multiplyScalar(.5));leg.scale.y=Math.max(.72,len);leg.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
   }
 }"""
-    s=_once(s,needle,anchor+"\\n  "+needle)
+    s=_once(s,needle,anchor+"\n  "+needle)
 
     # Rig metadata and procedural idle/contact solver.
     marker="function addPath(name, points){"
