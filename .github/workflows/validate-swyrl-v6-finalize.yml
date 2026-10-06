@@ -1,0 +1,37 @@
+name: Validate Swyrl v6 candidate
+on:
+  push:
+    branches: [swyrl-v6-deploy-finalize]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Generate candidate ignoring stale final receipt
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks']))).decode()
+          for rel in m['patches']:
+              p=root/rel
+              spec=importlib.util.spec_from_file_location('p'+str(abs(hash(rel))),p)
+              mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+              raw=mod.apply(raw)
+          b=raw.encode()
+          print('V60_BYTES='+str(len(b)))
+          print('V60_SHA256='+hashlib.sha256(b).hexdigest())
+          Path('/tmp/v60.html').write_bytes(b)
+          a=raw.index('<script type="module">')+len('<script type="module">');z=raw.rindex('</script>')
+          Path('/tmp/v60.mjs').write_text(raw[a:z])
+          assert 'V6_0_GLITCH_DRAGON_DEN' in raw
+          assert 'buildGlitchDragonsDenProject' in raw
+          PY
+          node --check /tmp/v60.mjs
