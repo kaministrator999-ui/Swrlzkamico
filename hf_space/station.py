@@ -61,6 +61,7 @@ def persist_runtime_diagnostic(request_id,model_id,event_type,diagnostic):
         "ONLINE_RESEARCH_TRACE":("online-research","online-research-trace.json","swrlz-github-online-research-trace-v1"),
         "ONLINE_RESEARCH_OUTCOME":("online-research","online-research-outcome.json","swrlz-github-online-research-outcome-v2"),
         "KNOWLEDGE_ACQUISITION_SNAPSHOT":("knowledge-snapshots","knowledge-snapshot.json","swrlz-knowledge-acquisition-snapshot-v1"),
+        "KNOWLEDGE_ACQUISITION_FOLLOWUP":("knowledge-snapshots","followup-latest.json","swrlz-knowledge-followup-v1"),
     }
     spec=allowed.get(str(event_type or ""))
     if spec is None or not isinstance(diagnostic,dict):
@@ -1156,6 +1157,15 @@ async def send(request:Request):
             s["threads"].append(t)
         now_ms=int(time.time()*1000)
         temporal_context=_temporal_context(t["messages"],client_timezone,now_ms)
+        # Attach up to three subsequent user turns to the most recent online
+        # knowledge snapshot. This is feedback/context for later review, not an
+        # automatic promotion signal and not part of runtime diagnostic logs.
+        prior_online=next((m for m in reversed(t["messages"]) if m.get("role")=="assistant" and isinstance((m.get("meta") or {}).get("onlineResearch"),dict)),None)
+        if prior_online:
+            prior_request=str((prior_online.get("meta") or {}).get("requestId") or "")
+            if prior_request and prior_request!=str(rid):
+                feedback={"schema":"swrlz-knowledge-followup-v1","parentRequestId":prior_request,"userText":str(prompt)[:4000],"capturedAtUnixMs":now_ms}
+                threading.Thread(target=persist_runtime_diagnostic,args=(prior_request,model_id,"KNOWLEDGE_ACQUISITION_FOLLOWUP",feedback),daemon=True,name="knowledge-followup-"+prior_request[:8]).start()
         history=_history_projection(t)
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
