@@ -76,6 +76,13 @@ def _online_evidence_fallback_text(result: dict[str,Any]) -> str:
     context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
     if kind=="weather":
         return _weather_grounded_text(result)
+    if kind=="time":
+        context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
+        location=context.get("location") if isinstance(context.get("location"),dict) else {}
+        label=str(location.get("label") or "the requested location")
+        clock=str(context.get("time") or "time unavailable")
+        date=str(context.get("date") or "")
+        return f"It's **{clock}** in **{label}**"+(f" on *{date}*." if date else ".")
     evidence=context.get("evidence") if isinstance(context.get("evidence"),list) else []
     query=str(context.get("query") or result.get("query") or "your search")
     useful=[]
@@ -107,8 +114,8 @@ def _guard_successful_online_answer(events: Iterator[dict[str,Any]], result: dic
             continue
         yield event
     model_text="".join(chunks).strip()
-    if kind=="weather":
-        text=_weather_grounded_text(result)
+    if kind in ("weather","time"):
+        text=_online_evidence_fallback_text(result)
         yield {"type":"STATUS","phase":"ONLINE_ANSWER_GROUNDING","reason":"Weather prose rendered deterministically from structured provider evidence.","categories":["ONLINE_RESEARCH","WEATHER","GROUNDING_GUARD"]}
     else:
         contradiction=bool(re.search(
