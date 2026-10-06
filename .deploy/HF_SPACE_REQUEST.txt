@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-06-v133-music-curriculum-response-border-001
+REQUEST_NONCE=2026-10-05-v134-all-current-updates-music-verse-bridge-001
