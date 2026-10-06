@@ -39,9 +39,18 @@ def apply(html):
   h.rotation.y=fpYaw;"""
     s=_once(s,old,new)
 
-    # Correct lower-leg endpoint to rear ankle; register feet for contact solving.
-    s=_once(s,"segment([kx,kneeY,kneeZ],[ax,ankleY,ankleZ],.20,.13,shade.clone(),'DragonLowerLeg');\n    const foot=mesh(new THREE.BoxGeometry(.46,.18,.64),shade.clone(),'DragonFoot');foot.position.set(ax,.47,footZ);",
-      "const ankleRearZ=footZ+.24;segment([kx,kneeY,kneeZ],[ax,ankleY,ankleRearZ],.20,.13,shade.clone(),'DragonLowerLeg');\n    const foot=mesh(new THREE.BoxGeometry(.46,.18,.64),shade.clone(),'DragonFoot');foot.position.set(ax,.47,footZ);foot.userData.dragonFoot={localX:ax,localZ:footZ,restY:.47,ankleZ:ankleRearZ};")
+    # Re-anchor current v3 lower legs toward the rear/ankle of each paw and register contacts.
+    needle="  d.userData.blueprintClass='BP_GlitchDragonV3';d.userData.tags.push('dragon-anatomy-v3','crystal-armor','fracture-energy');return d;"
+    anchor=r"""{
+  const lower=[],feet=[];d.traverse(o=>{if(o.name==='DragonLowerLeg')lower.push(o);if(o.name==='DragonFoot')feet.push(o);});
+  for(let i=0;i<Math.min(lower.length,feet.length);i++){
+    const leg=lower[i],foot=feet[i];foot.userData.dragonFoot={restY:foot.position.y};
+    const rear=new THREE.Vector3(foot.position.x,foot.position.y+.10,foot.position.z+.24);
+    const top=leg.position.clone().multiplyScalar(2).sub(rear),dir=rear.clone().sub(top),len=dir.length();
+    leg.position.copy(top.clone().add(rear).multiplyScalar(.5));leg.scale.y=Math.max(.72,len);leg.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
+  }
+}"""
+    s=_once(s,needle,anchor+"\\n  "+needle)
 
     # Rig metadata and procedural idle/contact solver.
     marker="function addPath(name, points){"
