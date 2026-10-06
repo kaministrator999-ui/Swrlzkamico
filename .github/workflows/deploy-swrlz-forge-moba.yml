@@ -113,7 +113,7 @@ jobs:
               "sourcePath": "projects/swrlz-forge-moba",
               "sourceVersion": "v6.1",
               "engineName": "§wyrl§ Engine",
-              "sourceSha256": "BUILD_MANIFEST_SHA256",
+              "sourceSha256": "2cf327bebbe857e91ca1a82045427018737eaf5ccac0bbae785ddd82d486f15e",
               "spaceRepository": target,
               "spaceRevision": info.sha,
               "spacePage": "https://huggingface.co/spaces/kamiloki/swrlz-forge-moba",
