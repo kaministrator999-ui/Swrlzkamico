@@ -597,6 +597,21 @@ def weather_lookup(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
     display_location = ", ".join(bit for bit in display_bits if bit)
     if shared:
         display_location = location["name"]
+    # Lyrics are a deterministic retrieval product: freeze successfully fetched evidence
+    # before generation so the model can wrap it conversationally instead of recreating facts.
+    verified_lyrics = None
+    if plan.get("contentMode")=="lyrics-verification":
+        fetched = [x for x in evidence if x.get("pageFetched") is True and str(x.get("pageExtract") or "").strip()]
+        if fetched:
+            selected = fetched[0]
+            requested_scope = "first-verse" if re.search(r"\b(?:first|opening)\s+verse\b", query, re.I) else "lyrics"
+            verified_lyrics = {
+                "sourceTitle": selected.get("title") or selected.get("source") or "Fetched lyrics source",
+                "sourceUrl": selected.get("url"),
+                "requestedScope": requested_scope,
+                "pageExtract": selected.get("pageExtract"),
+                "fetchedAt": selected.get("fetchedAt"),
+            }
     widget = {
         "contract": WIDGET_CONTRACT,
         "kind": "weather",
@@ -761,6 +776,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "query": query,
         "evidence": evidence[:6],
         "errors": (bundle.get("errors") or [])[:4],
+        "verifiedLyrics": verified_lyrics,
         "epistemicPolicy": (
             "LYRICS VERIFICATION: Quote only lyric text explicitly present in evidence with pageFetched=true. "
             "Search snippets are discovery metadata and never prove a direct extraction. Never reconstruct, "
