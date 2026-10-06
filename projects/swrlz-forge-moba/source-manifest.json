@@ -28,5 +28,7 @@
     "patches/v5_9_wisp_soft_contact_history.py",
     "patches/v6_0_researched_glitch_dragon_den.py",
     "patches/v6_1_glitch_den_project_card.py"
-  ]
+  ],
+  "finalBytes": 171506,
+  "finalSha256": "2cf327bebbe857e91ca1a82045427018737eaf5ccac0bbae785ddd82d486f15e"
 }
