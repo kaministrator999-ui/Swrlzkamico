@@ -1,12 +1,12 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v5.7",
+  "name": "§wyrl§ Engine v5.8",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v5_7.html",
-  "finalBytes": 163645,
-  "finalSha256": "62fbe228f4ee412c17be53429239159a400bc02bd1f94b5c1b7760f85645c04a",
+  "finalArtifact": "swyrl_engine_v5_8.html",
+  "finalBytes": 164651,
+  "finalSha256": "0fc3981d582c4ad5ddf07bd01c514463852a4774b3f81e1ff0518c3cb3456a7a",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -25,6 +25,7 @@
     "patches/v5_4_wisp_avatar.py",
     "patches/v5_5_dragons_natural_look.py",
     "patches/v5_6_dragon_ground_contact.py",
-    "patches/v5_7_precision_contact_camera_speed.py"
+    "patches/v5_7_precision_contact_camera_speed.py",
+    "patches/v5_8_wisp_alpha_foot_support.py"
   ]
 }
