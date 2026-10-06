@@ -1,16 +1,16 @@
 name: Validate §wyrl§ Engine v5.9 candidate
 on:\n  push:\n    branches: [swyrl-engine-v5-9-wisp-undo-contact]
-permissions: {contents: read}
+permissions:\n  contents: read
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with: {ref: swyrl-engine-v5-9-wisp-undo-contact}
+        with:\n          ref: swyrl-engine-v5-9-wisp-undo-contact
       - uses: actions/setup-python@v5
-        with: {python-version: "3.11"}
+        with:\n          python-version: "3.11"
       - uses: actions/setup-node@v4
-        with: {node-version: "22"}
+        with:\n          node-version: "22"
       - run: |
           python projects/swrlz-forge-moba/build_space.py --output /tmp/v58
           python - <<'PY'
