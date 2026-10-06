@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v6.6",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V6_6_HOVER_DRAGON_IK",
-  "reason": "Deploy collision-aware Wisp hover, rear-ankle dragon leg rig, per-foot ground/object contact and procedural dragon idle animation",
-  "sourceIntegritySha256": "602a498245a01e9ddc87c44ca17390d0070b334996fa15c2817cbc5c5a4af72e"
+  "releaseVersion": "v6.7",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V6_7_CONTACT_TOOLS",
+  "reason": "Correct live Wisp mobile hover controls, dragon ground/object paw contact, rear-ankle articulation and mobile Tools organization",
+  "sourceIntegritySha256": "d71cc0f3c57692b1c78830d76ea73069804a9306838b29ae89ae0bafd91222d2"
 }
