@@ -1,0 +1,41 @@
+{
+  "schema": "swrlz-music-writing-curriculum-v1",
+  "version": "1.0",
+  "source": "SWRLZ_GPT_CONVERSATIONS_ONLY_2026-08-30",
+  "analysis": {
+    "matching_music_conversations": 1416,
+    "candidate_assistant_music_responses": 10070,
+    "method": "Archive-wide keyword retrieval followed by inspection of high-signal assistant music outputs and immediate user reactions/corrections."
+  },
+  "positive_patterns": [
+    "Strong section architecture: intro, verse, hook, bridge or release when the song benefits from it.",
+    "Hooks work best as catch zones supported by setup/anchor lines and followed by a release or continuation.",
+    "Dense passages benefit from internal and multisyllabic rhyme while remaining one coherent human-flowing thought.",
+    "Dynamic line length matters: short impact lines mixed with longer connected runs create cadence instead of uniform walls of text.",
+    "Callbacks, double meanings, concrete imagery, punchlines, adlibs and controlled repetition create identity and replay value.",
+    "Beat-aware rewrites should change cadence, pauses and line length rather than merely swapping vocabulary.",
+    "The finished lyric should hide its construction mechanics unless annotation is requested."
+  ],
+  "negative_patterns": [
+    "Generic filler used only to complete a rhyme.",
+    "Overusing the same motif or adjective until the track sounds templated.",
+    "Excessive section labels or production commentary inside the lyric.",
+    "Uniform four-line symmetry across every section.",
+    "Confusing retrieval of an existing song with permission to invent source lyrics.",
+    "Searching literal deictic placeholders such as 'that song' instead of resolving the prior song entity."
+  ],
+  "generation_contract": {
+    "creative_mode": "Original writing is allowed only when the user is asking to create, rewrite, remix, freestyle, extend, or transform original material.",
+    "retrieval_mode": "When the user asks for existing lyrics or source text, resolve the song title and artist from recent context and retrieve/verify rather than creatively completing missing material.",
+    "composition_priorities": [
+      "topic and emotional arc",
+      "hook anchor and catch",
+      "cadence and breathability",
+      "internal/multisyllabic rhyme",
+      "callbacks and motif control",
+      "imagery and punchlines",
+      "section-to-section progression",
+      "human variation in line length and syntax"
+    ]
+  }
+}
