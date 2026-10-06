@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v6.0
+title: §wyrl§ Engine v6.1
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,11 +10,11 @@ header: mini
 short_description: Browser world engine maker with grouping and first-person.
 ---
 
-# §wyrl§ Engine · Maker v6.0
+# §wyrl§ Engine · Maker v6.1
 
 A browser-native 3D world/game engine maker built around editable projects, first-person play, ghost → Bake authoring, hierarchical object groups, and a structured LALM/agent control surface.
 
-v6.0 adds **Glitch Dragon Den — Fracture Forge** as a separate project alongside the original Seed Chamber: an oversized enclosed fracture cavern with human-scale forge/traversal spaces, chromatic crystal veins, grouped architecture, and §wyrl§ / Frost / Ember procedural dragons.
+v6.1 exposes **Glitch Dragon Den — Fracture Forge** as a selectable Projects-hub starter alongside the original Seed Chamber, with an oversized enclosed fracture cavern, human-scale forge/traversal spaces, chromatic crystal veins, grouped architecture, and §wyrl§ / Frost / Ember procedural dragons.
 
 v5.5 fixes look-stick horizontal direction so right means right by default and introduces Dragon anatomy v2: articulated low-poly wings, segmented neck/tail, four-joint legs, claws, horns, teeth, improved head silhouette, and less blocky shading.
 
