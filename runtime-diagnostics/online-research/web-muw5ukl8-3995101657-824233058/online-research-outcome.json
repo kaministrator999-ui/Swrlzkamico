@@ -1,0 +1,571 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-muw5ukl8-3995101657-824233058",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "12e4ba10875a3d50cc683f63d9f817487fa1c0e5",
+  "persistedAtUnixMs": 1791259840181,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v125-trace-chat-status",
+      "kind": "weather",
+      "status": "OK",
+      "reason": "weather-intent",
+      "provider": "Open-Meteo",
+      "resultCount": 1,
+      "widgetKinds": [
+        "weather"
+      ],
+      "sourceCount": 2,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1491,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving weather location",
+        "atUnixMs": 1791259822789
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1791259823290,
+        "httpStatus": 200,
+        "responseBytes": 32
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_RETRY",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Retrying city lookup with state-qualified candidate matching",
+        "atUnixMs": 1791259823290
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving weather location",
+        "atUnixMs": 1791259823290
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1791259823800,
+        "httpStatus": 200,
+        "responseBytes": 3398
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_FORECAST_VISIT",
+        "provider": "Open-Meteo",
+        "site": "api.open-meteo.com",
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "activity": "Fetching current weather and forecast",
+        "atUnixMs": 1791259823800
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_FORECAST_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "api.open-meteo.com",
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1791259824280,
+        "httpStatus": 200,
+        "responseBytes": 1707
+      }
+    ],
+    "sources": [
+      {
+        "title": "Open-Meteo Weather Forecast API",
+        "source": "Open-Meteo",
+        "url": "https://open-meteo.com/en/docs",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Open-Meteo Geocoding API",
+        "source": "Open-Meteo",
+        "url": "https://open-meteo.com/en/docs/geocoding-api",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "open-meteo.com"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "weather",
+        "version": 1,
+        "title": "Weather · Leavenworth, Kansas, United States",
+        "provider": "Open-Meteo",
+        "observedAt": "2026-10-05T23:00",
+        "data": {
+          "location": {
+            "label": "Leavenworth, Kansas, United States",
+            "timezone": "America/Chicago",
+            "sharedLocation": false
+          },
+          "current": {
+            "condition": "Clear sky",
+            "weatherCode": 0,
+            "temperature": 56.9,
+            "apparentTemperature": 56.3,
+            "humidity": 90,
+            "precipitation": 0.0,
+            "rain": 0.0,
+            "snowfall": 0.0,
+            "cloudCover": 3,
+            "pressure": 987.9,
+            "windSpeed": 4.2,
+            "windDirection": 163,
+            "windGusts": 7.4
+          },
+          "units": {
+            "temperature": "°F",
+            "humidity": "%",
+            "precipitation": "inch",
+            "pressure": "hPa",
+            "windSpeed": "mp/h",
+            "dailyTemperature": "°F",
+            "dailyPrecipitation": "inch"
+          },
+          "daily": [
+            {
+              "date": "2026-10-05",
+              "condition": "Mainly clear",
+              "weatherCode": 1,
+              "high": 73.7,
+              "low": 48.2,
+              "precipitation": 0.0,
+              "precipitationProbability": 0,
+              "windMax": 5.3,
+              "gustMax": 10.1,
+              "sunrise": "2026-10-05T07:19",
+              "sunset": "2026-10-05T18:55"
+            },
+            {
+              "date": "2026-10-06",
+              "condition": "Clear sky",
+              "weatherCode": 0,
+              "high": 80.1,
+              "low": 50.8,
+              "precipitation": 0.0,
+              "precipitationProbability": 1,
+              "windMax": 9.5,
+              "gustMax": 20.6,
+              "sunrise": "2026-10-06T07:20",
+              "sunset": "2026-10-06T18:54"
+            },
+            {
+              "date": "2026-10-07",
+              "condition": "Clear sky",
+              "weatherCode": 0,
+              "high": 82.5,
+              "low": 58.2,
+              "precipitation": 0.0,
+              "precipitationProbability": 1,
+              "windMax": 7.7,
+              "gustMax": 16.6,
+              "sunrise": "2026-10-07T07:21",
+              "sunset": "2026-10-07T18:52"
+            },
+            {
+              "date": "2026-10-08",
+              "condition": "Partly cloudy",
+              "weatherCode": 2,
+              "high": 77.5,
+              "low": 57.0,
+              "precipitation": 0.0,
+              "precipitationProbability": 2,
+              "windMax": 11.0,
+              "gustMax": 23.0,
+              "sunrise": "2026-10-08T07:22",
+              "sunset": "2026-10-08T18:51"
+            },
+            {
+              "date": "2026-10-09",
+              "condition": "Partly cloudy",
+              "weatherCode": 2,
+              "high": 83.6,
+              "low": 59.7,
+              "precipitation": 0.0,
+              "precipitationProbability": 1,
+              "windMax": 10.1,
+              "gustMax": 19.9,
+              "sunrise": "2026-10-09T07:23",
+              "sunset": "2026-10-09T18:49"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "weather"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "seq": 2,
+        "phase": "WEATHER_FETCH_STARTED",
+        "reason": "Retrieving bounded online evidence.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER"
+        ]
+      },
+      {
+        "seq": 3,
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "reason": "Resolving weather location",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 4,
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "reason": "Weather provider response received",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 5,
+        "phase": "WEATHER_GEOCODE_RETRY",
+        "reason": "Retrying city lookup with state-qualified candidate matching",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 6,
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "reason": "Resolving weather location",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 7,
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "reason": "Weather provider response received",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 8,
+        "phase": "WEATHER_FORECAST_VISIT",
+        "reason": "Fetching current weather and forecast",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "api.open-meteo.com",
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "provider": "Open-Meteo",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 9,
+        "phase": "WEATHER_FORECAST_COMPLETE",
+        "reason": "Weather provider response received",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "api.open-meteo.com",
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "provider": "Open-Meteo",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 10,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER"
+        ]
+      },
+      {
+        "seq": 11,
+        "phase": "WIDGET_READY",
+        "reason": "weather",
+        "categories": [
+          "WIDGET"
+        ]
+      },
+      {
+        "seq": 12,
+        "phase": "WEATHER_FETCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER"
+        ]
+      },
+      {
+        "seq": 13,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": ""
+      },
+      {
+        "seq": 14,
+        "phase": "RESPONSE_COGNITION",
+        "reason": ""
+      },
+      {
+        "seq": 15,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": []
+      },
+      {
+        "seq": 16,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": ""
+      },
+      {
+        "seq": 17,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": []
+      },
+      {
+        "seq": 18,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active"
+      },
+      {
+        "seq": 19,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1"
+      },
+      {
+        "seq": 20,
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": ""
+      },
+      {
+        "seq": 21,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": ""
+      },
+      {
+        "seq": 22,
+        "phase": "ONLINE_ANSWER_GROUNDING",
+        "reason": "Weather prose rendered deterministically from structured provider evidence.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER",
+          "GROUNDING_GUARD"
+        ]
+      },
+      {
+        "seq": 24,
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "answer",
+      "historyAvailable": true,
+      "historyTurns": 4,
+      "anchorUserIndex": 2,
+      "anchorAssistantIndex": 3,
+      "explicitReference": false,
+      "questionLike": true,
+      "detailMode": "normal",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": false,
+      "programming": false
+    },
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": []
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial-streaming",
+        "durationMs": 15861.357,
+        "firstTokenLatencyMs": 10927.613,
+        "deltaChunks": 328,
+        "candidateFingerprint": "9bf9a378fa18d091",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "NOT_APPLICABLE",
+        "validationReasons": [],
+        "accepted": false
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "NOT_APPLICABLE",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 34.69,
+      "visibleFirstDeltaLatencyMs": 10962.391,
+      "engineTotalLatencyMs": 15896.417,
+      "totalCandidateGenerationMs": 15861.357,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 15861.357,
+          "firstTokenLatencyMs": 10927.613,
+          "deltaChunks": 328,
+          "candidateFingerprint": "9bf9a378fa18d091",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "NOT_APPLICABLE",
+          "validationReasons": [],
+          "accepted": false
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 15896.417,
+      "loadLatencyMs": 34.69,
+      "firstDeltaLatencyMs": 10962.391
+    },
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 5908,
+      "reservedOutputTokens": 2048,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 4,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 5781,
+        "history": 110,
+        "currentPrompt": 17,
+        "total": 5908
+      }
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 8,
+      "batchThreads": 16,
+      "maxResponseTokens": 768
+    },
+    "finalResponse": "## [color=#7EE6FF]Clear sky[/color] · **56.9°F**\n\n*Leavenworth, Kansas, United States*\n\n**Feels like:** 56.3°F\n\n**Humidity:** 90% · **Precipitation:** 0.0 inch · **Wind:** 4.2 mp/h\n\n**Today:** Mainly clear · **73.7°F high** / **48.2°F low**\n\n**Tomorrow:** Clear sky · **80.1°F high** / **50.8°F low**",
+    "finalResponseSha256": "15695124ad61c624277823baf37eb56f80d542c952216f36ece43d0b4e0dfb6e",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791259822786,
+      "startedAtUnixMs": 1791259822787,
+      "completedAtUnixMs": 1791259840180,
+      "queueWaitMs": 1,
+      "stationRunMs": 17393,
+      "endToEndMs": 17394
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
