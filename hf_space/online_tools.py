@@ -11,6 +11,8 @@ import re
 import sys
 import threading
 import time
+from datetime import datetime
+from zoneinfo import ZoneInfo
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -55,6 +57,7 @@ _FRESHNESS = re.compile(
     re.I,
 )
 _LOCATION_REQUIRED = re.compile(r"\b(?:my|here|near\s+me|current\s+location|where\s+i\s+am)\b", re.I)
+_TIME_TERMS = re.compile(r"\b(?:what(?:'s|\s+is)\s+the\s+time|current\s+time|time\s+(?:is\s+it|in|at|for)|local\s+time)\b", re.I)
 
 _US_STATE_ALIASES = {
     "alabama":"AL","alaska":"AK","arizona":"AZ","arkansas":"AR","california":"CA","colorado":"CO",
@@ -204,6 +207,19 @@ def _weather_location_from_prompt(prompt: str) -> str:
     return ""
 
 
+def _time_location_from_prompt(prompt: str) -> str:
+    text=_clean(prompt,1200)
+    patterns=[
+        r"\b(?:what(?:'s|\s+is)\s+the\s+time|current\s+time|time)\s+(?:in|at|for)\s+(.+)$",
+        r"\bwhat\s+time\s+is\s+it\s+(?:in|at)\s+(.+)$",
+    ]
+    for pattern in patterns:
+        match=re.search(pattern,text,re.I)
+        if match:
+            value=match.group(1).strip(" ,.!?;:")
+            if value:return value[:180]
+    return ""
+
 def _weather_negated(text: str) -> bool:
     value=_clean(text,1200).casefold()
     return bool(re.search(
@@ -325,6 +341,19 @@ def classify_online_request(
             "clientLocation": None,
             "locationRequired": False,
             "programming": bool(programming.get("codingTask")),
+        }
+    if _TIME_TERMS.search(text) and not programming.get("codingTask"):
+        location_text=_time_location_from_prompt(text)
+        return {
+            "contract": ONLINE_CONTRACT,
+            "requested": True,
+            "kind": "time",
+            "reason": "time-intent",
+            "query": text[:500],
+            "locationText": location_text,
+            "clientLocation": None,
+            "locationRequired": not bool(location_text),
+            "programming": False,
         }
     if _WEATHER_TERMS.search(text) and not weather_negated and not programming.get("codingTask"):
         shared = _normalize_client_location(client_location)
@@ -592,6 +621,34 @@ def weather_lookup(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
     }
 
 
+def time_lookup(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None] | None = None) -> dict[str, Any]:
+    location_text=_clean(plan.get("locationText"),180)
+    if not location_text:
+        raise ValueError("TIME_LOCATION_REQUIRED")
+    _progress(progress,"TIME_GEOCODE_VISIT",provider=WEATHER_PROVIDER,url=GEOCODING_ENDPOINT,activity="Resolving location time zone")
+    payload=_json_get(GEOCODING_ENDPOINT+"?"+urllib.parse.urlencode({"name":location_text,"count":10,"language":"en","format":"json"}),progress,phase="TIME_GEOCODE_VISIT",activity="Resolving location time zone")
+    results=payload.get("results") if isinstance(payload.get("results"),list) else []
+    location=results[0] if results else None
+    split=_split_us_city_state(location_text)
+    if split and results:
+        location=_select_us_state_result(results,*split) or location
+    if not isinstance(location,dict):
+        raise ValueError("TIME_LOCATION_NOT_FOUND")
+    tz_name=_clean(location.get("timezone"),120)
+    if not tz_name:
+        raise ValueError("TIMEZONE_NOT_FOUND")
+    now=datetime.now(ZoneInfo(tz_name))
+    display_location=", ".join(bit for bit in [location.get("name"),location.get("admin1"),location.get("country")] if bit)
+    offset=now.strftime("%z")
+    offset_label=(offset[:3]+":"+offset[3:]) if len(offset)==5 else offset
+    widget={
+        "contract":WIDGET_CONTRACT,"kind":"time","version":1,
+        "title":f"Local time · {display_location}","provider":"IANA time zone",
+        "observedAt":now.isoformat(),
+        "data":{"location":{"label":display_location,"timezone":tz_name},"time":now.strftime("%-I:%M %p"),"seconds":now.strftime("%S"),"date":now.strftime("%A, %B %-d, %Y"),"utcOffset":offset_label},
+    }
+    return {"contract":ONLINE_CONTRACT,"requested":True,"kind":"time","status":"OK","provider":"IANA time zone","query":plan.get("query"),"widgets":[widget],"sources":[],"modelContext":{"contractId":"swrlz-online-time-evidence-v1","trust":"SYSTEM_TIMEZONE_DATA","instructionAuthority":False,"location":widget["data"]["location"],"observedAt":widget["observedAt"],"time":widget["data"]["time"],"date":widget["data"]["date"],"utcOffset":offset_label,"epistemicPolicy":"Use only the resolved time-zone clock data; do not invent a different time or location."},"resultCount":1}
+
 def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None] | None = None) -> dict[str, Any]:
     query = _clean(plan.get("query"), 500)
     payload = {
@@ -709,6 +766,8 @@ def execute_online_request(
             result = capabilities[plan["kind"]](plan)
         elif plan["kind"] == "weather":
             result = weather_lookup(plan, progress)
+        elif plan["kind"] == "time":
+            result = time_lookup(plan, progress)
         else:
             result = _search_bundle(plan, progress)
     except Exception as exc:
