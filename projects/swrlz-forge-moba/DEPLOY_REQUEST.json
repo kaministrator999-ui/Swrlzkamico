@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v6.5",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V6_5_GLITCH_DEN_RUNTIME",
-  "reason": "Restore Wisp player and first-person runtime parity to Fracture Forge and make Glitch Dragon Den the engine default",
-  "sourceIntegritySha256": "f0c3a048c2189a4b761c091971ee6737bcac06c12fb52125a5c2f31045e23a1f"
+  "releaseVersion": "v6.6",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V6_6_HOVER_DRAGON_IK",
+  "reason": "Deploy collision-aware Wisp hover, rear-ankle dragon leg rig, per-foot ground/object contact and procedural dragon idle animation",
+  "sourceIntegritySha256": "602a498245a01e9ddc87c44ca17390d0070b334996fa15c2817cbc5c5a4af72e"
 }
