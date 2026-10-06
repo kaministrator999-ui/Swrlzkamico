@@ -30,7 +30,7 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v5.7 source authority
+## Current v6.0 source authority
 
 ```text
 base:
@@ -48,14 +48,17 @@ patch chain:
   patches/v5_5_dragons_natural_look.py
   patches/v5_6_dragon_ground_contact.py
   patches/v5_7_precision_contact_camera_speed.py
+  patches/v5_8_wisp_alpha_foot_support.py
+  patches/v5_9_wisp_soft_contact_history.py
+  patches/v6_0_researched_glitch_dragon_den.py
 
 final:
-  swyrl_engine_v5_7.html
-  bytes 163645
-  sha256 62fbe228f4ee412c17be53429239159a400bc02bd1f94b5c1b7760f85645c04a
+  swyrl_engine_v6_0.html
+  bytes 170965
+  sha256 747076cbbd43b881887392bcf69a7721905564ffc155e3ab946831ed3a640569
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V5_7_PRECISION_CONTACT_CAMERA_SPEED
+  SWYRL_ENGINE_DEPLOY_MARKER: V6_0_GLITCH_DRAGON_DEN
 ```
 
 ## Grouping contract
@@ -382,3 +385,24 @@ PASS on attempt 1
 ```
 
 v5.7 is the current observed engine state at this checkpoint. Dragon feet use multi-sample sole contact to reduce rock/pedestal penetration, dragon teeth are tucked inside the jaw, and the editor top bar includes a persistent 0.35×–3.00× camera speed slider for rotate/pan/scroll zoom.
+
+
+## v6.0 + mandatory §E update protocol
+
+v6.0 preserves Dragon's Den — Seed Chamber and adds Glitch Dragon Den — Fracture Forge as a separate project: an oversized fractured megacavern with human-scale forge/traversal areas, chromatic crystal veins, grouped architecture, and §wyrl§ / Frost / Ember procedural dragons.
+
+Every intentional GitHub mutation involving §wyrl§ Engine (§E), its source/build/deploy files, or its §E documentation is a governed §E update. For EVERY such update:
+
+1. Reconstruct current main and live Hugging Face truth before editing.
+2. Apply the §E change while preserving the Engine / MOBA example / Dragon's Den project-data boundaries and the separate §wyrlz AI Chat/LALM lane.
+3. Synchronize the engine version everywhere the shipped/versioned state changes. Manifest, generated artifact, README, Space README, deploy marker, workflow verification, §tart §E router, and roadmap must not disagree.
+4. Update projects/swrlz-forge-moba/ROADMAP.md in the same update. Record what changed, version/marker, source/deploy commit, deployment status, and live verification. Governance-only updates may retain the current engine binary version but still require a roadmap entry.
+5. Validate reconstruction, bytes/SHA, generated JavaScript, and compatibility aliases.
+6. Commit/merge the governed §E update to main.
+7. EVERY §E update MUST use the dedicated manual deployment method for this project: .github/workflows/deploy-swrlz-forge-moba.yml via its workflow_dispatch entrypoint, deploying to kamiloki/swrlz-forge-moba. A GitHub mutation by itself is never completion.
+8. Follow the deployment workflow run to terminal state.
+9. Require the actual served static host to contain the expected current SWYRL_ENGINE_DEPLOY_MARKER. Upload success alone is not live success.
+10. In the user-facing completion response, ALWAYS provide both (a) the exact GitHub Actions workflow-run link started for that update and (b) the live §wyrl§ Engine page link: https://kamiloki-swrlz-forge-moba.static.hf.space/ .
+11. Do not report the §E update complete until both workflow terminal state and served-page marker verification have been checked.
+
+Canonical roadmap: projects/swrlz-forge-moba/ROADMAP.md
