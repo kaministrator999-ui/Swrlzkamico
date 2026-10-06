@@ -1,0 +1,692 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-muw0u14q-559902035-2910419054",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "76a9ecfbc311684a0bf89ccde198163144c6d34c",
+  "persistedAtUnixMs": 1791251413357,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v125-trace-chat-status",
+      "kind": "search",
+      "status": "OK",
+      "reason": "explicit-web-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 8,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 8,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1194,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251399489,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251399493,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251399569,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "activity": "Provider failed",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "errorType": "URLError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251399570,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251400314,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251400315,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251400317,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.hey.com",
+        "url": "https://www.hey.com/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251400419,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.hey.com",
+        "url": "https://www.hey.com/",
+        "httpStatus": 200,
+        "responseBytes": 50253
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251400420,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.youtube.com",
+        "url": "https://www.youtube.com/watch"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251400625,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.youtube.com",
+        "url": "https://www.youtube.com/watch",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251400627,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/hey"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251400682,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/hey",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791251400683,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 8
+      }
+    ],
+    "sources": [
+      {
+        "title": "HEY — A delightfully fresh take on email + calendar, from 37signals",
+        "source": "www.hey.com",
+        "url": "https://www.hey.com/",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Hey - Red Hot Chili Peppers (lyrics on screen) - YouTube",
+        "source": "www.youtube.com",
+        "url": "https://www.youtube.com/watch?v=m1xN7w07EWM",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "HEY Definition & Meaning - Merriam-Webster",
+        "source": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/hey",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "HEY — A delightfully fresh take on email + calendar, from 37signals",
+        "source": "www.hey.com",
+        "url": "https://www.hey.com/features/",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "HEY | English meaning - Cambridge Dictionary",
+        "source": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/hey",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "HEY Definition & Meaning | Dictionary.com",
+        "source": "www.dictionary.com",
+        "url": "https://www.dictionary.com/browse/hey",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "hey - Wiktionary, the free dictionary",
+        "source": "en.wiktionary.org",
+        "url": "https://en.wiktionary.org/wiki/hey",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "hey - WordReference.com Dictionary of English",
+        "source": "www.wordreference.com",
+        "url": "https://www.wordreference.com/definition/hey",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "dictionary.cambridge.org",
+      "en.wiktionary.org",
+      "www.dictionary.com",
+      "www.hey.com",
+      "www.merriam-webster.com",
+      "www.wordreference.com",
+      "www.youtube.com"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "search-results",
+        "version": 1,
+        "title": "Online search · \"hey\"",
+        "provider": "bounded-web-search-chain-v1",
+        "data": {
+          "query": "\"hey\"",
+          "results": [
+            {
+              "title": "HEY — A delightfully fresh take on email + calendar, from 37signals",
+              "url": "https://www.hey.com/",
+              "snippet": "HEY is a game changer for email and owning your time. A big part of my work is diving into new teams and email gets flooded quickly. @jasonfried, @dhh and their team are changing the foundation for my work and it's amazing.",
+              "source": "www.hey.com"
+            },
+            {
+              "title": "Hey - Red Hot Chili Peppers (lyrics on screen) - YouTube",
+              "url": "https://www.youtube.com/watch?v=m1xN7w07EWM",
+              "snippet": "hey by the red hot chili peppers. all of this is owned by the red hot chili peppers and warner brothers. no copyright infringement intended.enjoy (:",
+              "source": "www.youtube.com"
+            },
+            {
+              "title": "HEY Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/hey",
+              "snippet": "The meaning of HEY is —used especially to call attention or to express interrogation, surprise, or exultation. How to use hey in a sentence.",
+              "source": "www.merriam-webster.com"
+            },
+            {
+              "title": "HEY — A delightfully fresh take on email + calendar, from 37signals",
+              "url": "https://www.hey.com/features/",
+              "snippet": "The HEY Calendar The HEY Calendar is a full-featured calendar with many original twists on common — and not so common — conventions. Soon you'll wonder why all calendars don't work like this. A dedicated spot for daily notes The HEY Calendar gets even more personal with the addition of Journal.",
+              "source": "www.hey.com"
+            },
+            {
+              "title": "HEY | English meaning - Cambridge Dictionary",
+              "url": "https://dictionary.cambridge.org/dictionary/english/hey",
+              "snippet": "HEY definition: 1. used as a way of attracting someone's attention, sometimes in a way that is not very polite: 2…. Learn more.",
+              "source": "dictionary.cambridge.org"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "Retrieving bounded online evidence.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Provider failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 9,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.hey.com",
+        "url": "https://www.hey.com/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 10,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.hey.com",
+        "url": "https://www.hey.com/",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 11,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.youtube.com",
+        "url": "https://www.youtube.com/watch",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 12,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.youtube.com",
+        "url": "https://www.youtube.com/watch",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 13,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/hey",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 14,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/hey",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 15,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 16,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 17,
+        "phase": "WIDGET_READY",
+        "reason": "search-results",
+        "categories": [
+          "WIDGET"
+        ]
+      },
+      {
+        "seq": 18,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 19,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": ""
+      },
+      {
+        "seq": 20,
+        "phase": "RESPONSE_COGNITION",
+        "reason": ""
+      },
+      {
+        "seq": 21,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": []
+      },
+      {
+        "seq": 22,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": ""
+      },
+      {
+        "seq": 23,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": []
+      },
+      {
+        "seq": 24,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active"
+      },
+      {
+        "seq": 25,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1"
+      },
+      {
+        "seq": 26,
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": ""
+      },
+      {
+        "seq": 27,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": ""
+      },
+      {
+        "seq": 29,
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "answer",
+      "historyAvailable": true,
+      "historyTurns": 2,
+      "anchorUserIndex": 0,
+      "anchorAssistantIndex": 1,
+      "explicitReference": false,
+      "questionLike": true,
+      "detailMode": "normal",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": false,
+      "programming": false
+    },
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": []
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial-streaming",
+        "durationMs": 12642.796,
+        "firstTokenLatencyMs": 9939.099,
+        "deltaChunks": 192,
+        "candidateFingerprint": "630ae3bafeda1adf",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "NOT_APPLICABLE",
+        "validationReasons": [],
+        "accepted": false
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "NOT_APPLICABLE",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 27.664,
+      "visibleFirstDeltaLatencyMs": 9966.831,
+      "engineTotalLatencyMs": 12670.692,
+      "totalCandidateGenerationMs": 12642.796,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 12642.796,
+          "firstTokenLatencyMs": 9939.099,
+          "deltaChunks": 192,
+          "candidateFingerprint": "630ae3bafeda1adf",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "NOT_APPLICABLE",
+          "validationReasons": [],
+          "accepted": false
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 12670.692,
+      "loadLatencyMs": 27.664,
+      "firstDeltaLatencyMs": 9966.831
+    },
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 5995,
+      "reservedOutputTokens": 2048,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 2,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 5839,
+        "history": 141,
+        "currentPrompt": 15,
+        "total": 5995
+      }
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 8,
+      "batchThreads": 16,
+      "maxResponseTokens": 768
+    },
+    "finalResponse": "Certainly! The word \"hey\" is an exclamation used to express surprise, interest, or to call attention. Here are a few examples of how it might be used:\n\n1. **Surprise**: \"Hey, did you hear about the new restaurant?\"\n2. **Interest**: \"Hey, that's interesting! What do you think about it?\"\n3. **Calling attention**: \"Hey there, anyone else feeling down?\"\n4. **Friendly greeting**: \"Hey, how's it going?\"\n5. **Casual greeting**: \"Hey, what's up?\"\n\nIf you're looking for its etymology or linguistic history, \"hey\" is a shortened form of \"hey, hello,\" which has been used in English for centuries. It's also related to other exclamations like \"hey ho\" or \"hey ho there.\" Would you like to know more about its usage or history?",
+    "finalResponseSha256": "aa25b8525284ba4bf1252c346ffdb4883788a73a34fa75ed8ab189fd8d1a4336",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791251399486,
+      "startedAtUnixMs": 1791251399487,
+      "completedAtUnixMs": 1791251413356,
+      "queueWaitMs": 1,
+      "stationRunMs": 13869,
+      "endToEndMs": 13870
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
