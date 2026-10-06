@@ -29,5 +29,7 @@
     "patches/v6_0_researched_glitch_dragon_den.py",
     "patches/v6_1_glitch_den_project_card.py",
     "patches/v6_2_glitch_den_parity.py"
-  ]
+  ],
+  "finalBytes": 168023,
+  "finalSha256": "30504d0b7abeb6eefb7751f3a870d8006ed11966a5ee4f201208a70c0a72c8cd"
 }
