@@ -1414,7 +1414,7 @@
           }
         }
         const rawPhase=String(last.phase||g.phase||last.type||"QUEUED").toUpperCase();
-        const phaseLabels={CONNECTING:"Connecting",QUEUED:"Queued",LOADING:"Loading model",BUDGETED:"Preparing context",CONTEXT:"Preparing context",DIAGNOSTIC_READY:"Preparing response",PROGRAMMING_INTENT:"Planning code change",MEMORY_CANDIDATE:"Preparing context",SEARCH_STARTED:"Starting web search",SEARCH_PROVIDER_VISIT:"Searching website",SEARCH_PROVIDER_RESULTS:"Search results found",SEARCH_PROVIDER_EMPTY:"No results from provider",SEARCH_PROVIDER_SELECTED:"Search provider selected",SEARCH_PROVIDER_ERROR:"Search provider failed",PAGE_FETCH_STARTED:"Visiting website",PAGE_FETCH_COMPLETE:"Website fetched",PAGE_FETCH_ERROR:"Website fetch failed",RESEARCH_STARTED:"Starting online research",RESEARCH_COMPLETE:"Online research complete",RESEARCH_REASONER_ERROR:"Research fallback engaged",WEATHER_FETCH_STARTED:"Starting weather lookup",WEATHER_GEOCODE_VISIT:"Finding weather location",WEATHER_GEOCODE_COMPLETE:"Location resolved",WEATHER_FORECAST_VISIT:"Fetching weather",WEATHER_FORECAST_COMPLETE:"Weather received",WEATHER_FETCH_COMPLETE:"Weather lookup complete",ONLINE_RESEARCH:"Online research complete",GENERATING:"Generating response",COMPLETE:"Complete",COMPLETED:"Complete",FAILED:"Failed"};
+        const phaseLabels={CONNECTING:"Connecting",QUEUED:"Queued",LOADING:"Loading model",BUDGETED:"Preparing context",CONTEXT:"Preparing context",DIAGNOSTIC_READY:"Preparing response",PROGRAMMING_INTENT:"Planning code change",MEMORY_CANDIDATE:"Preparing context",SEARCH_STARTED:"Starting web search",SEARCH_PROVIDER_VISIT:"Searching website",SEARCH_PROVIDER_RESULTS:"Search results found",SEARCH_PROVIDER_EMPTY:"No results from provider",SEARCH_PROVIDER_SELECTED:"Search provider selected",SEARCH_PROVIDER_ERROR:"Search provider failed",PAGE_FETCH_STARTED:"Visiting website",PAGE_FETCH_COMPLETE:"Website fetched",PAGE_FETCH_ERROR:"Website fetch failed",RESEARCH_STARTED:"Starting online research",RESEARCH_COMPLETE:"Online research complete",RESEARCH_REASONER_ERROR:"Research fallback engaged",WEATHER_FETCH_STARTED:"Starting weather lookup",WEATHER_GEOCODE_VISIT:"Finding weather location",WEATHER_GEOCODE_COMPLETE:"Location resolved",WEATHER_FORECAST_VISIT:"Fetching weather",WEATHER_FORECAST_COMPLETE:"Weather received",WEATHER_FETCH_COMPLETE:"Weather lookup complete",TIME_GEOCODE_VISIT:"Finding time location",TIME_GEOCODE_COMPLETE:"Time location resolved",TIME_FETCH_COMPLETE:"Time lookup complete",ONLINE_RESEARCH:"Online research complete",GENERATING:"Starting inference",COMPLETE:"Complete",COMPLETED:"Complete",FAILED:"Failed"};
         const phase=phaseLabels[rawPhase]||rawPhase.replace(/_/g," ").toLowerCase().replace(/^./,c=>c.toUpperCase());
         const label=g.terminal?(g.terminalType||phase):(String(g.text||"").length?"Streaming response":phase);
         const activitySite=String(last.site||"").trim();
@@ -1487,7 +1487,19 @@
           body.dataset.renderedSource=nextText;
         }
         body.hidden=!nextText;
-        renderWidgetStack(node,Array.isArray(g.widgets)?g.widgets:[]);
+        const liveWidgets=Array.isArray(g.widgets)?g.widgets:[];
+        renderWidgetStack(node,liveWidgets);
+        // Once structured evidence has produced a widget, the retrieval phase is
+        // visibly complete. Keep the widget on screen and make the next stage
+        // explicit while the model begins its response.
+        if(!g.terminal&&liveWidgets.length&&status){
+          const responseStarted=nextText.trim().length>0;
+          status.textContent=responseStarted?"§wyrlz · Streaming response":"§wyrlz · Starting inference…";
+          if(onlineTrail){onlineTrail.remove();onlineTrail=null;}
+          status.hidden=responseStarted;
+        }else if(status){
+          status.hidden=!!nextText;
+        }
         stopButton.hidden=!!g.terminal;sendButton.hidden=!g.terminal;
         renderWorkSurface();followLatestIfNeeded();
       };
