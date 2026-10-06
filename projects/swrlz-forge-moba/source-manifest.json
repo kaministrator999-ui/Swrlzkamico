@@ -1,12 +1,12 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v5.5",
+  "name": "§wyrl§ Engine v5.6",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v5_5.html",
-  "finalBytes": 155355,
-  "finalSha256": "76410c2340664c0754ad2a50e7be858f7223787e89cb6f10c4360577cc27f4e2",
+  "finalArtifact": "swyrl_engine_v5_6.html",
+  "finalBytes": 161347,
+  "finalSha256": "c4c0d88febfdfa2bf1c9b02925c6abd9ddafe05010ec5917dac2cd8eb05886e4",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -23,6 +23,7 @@
     "patches/v5_2_first_person_twin_stick.py",
     "patches/v5_3_groups_immersive_den.py",
     "patches/v5_4_wisp_avatar.py",
-    "patches/v5_5_dragons_natural_look.py"
+    "patches/v5_5_dragons_natural_look.py",
+    "patches/v5_6_dragon_ground_contact.py"
   ]
 }
