@@ -17,15 +17,12 @@ def apply(html):
 
     # Wisp: keep known horizontal first-person controller, but collision-test candidate position
     # without allowing collision helpers to strand/overwrite the avatar.
-    old="""  const speed=h.userData.moveSpeed||6;
-  const next=h.position.clone().add(move.multiplyScalar(speed*dt));
-  resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;"""
-    new="""  const speed=h.userData.moveSpeed||6;
-  const delta=move.multiplyScalar(speed*dt),start=h.position.clone(),next=start.clone().add(delta);
-  resolveHeroCollision(next,h.userData.colliderRadius||.46);
-  if(Number.isFinite(next.x)&&Number.isFinite(next.z)){h.position.x=next.x;h.position.z=next.z;}
-  else h.position.copy(start);"""
-    s=_once(s,old,new)
+    # v6.6 already retains the established horizontal controller. Make its collision
+    # radius avatar-aware and keep finite candidate translation.
+    if "resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;" in s:
+      s=s.replace("resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;","resolveHeroCollision(next,h.userData.colliderRadius||.46);if(Number.isFinite(next.x)&&Number.isFinite(next.z)){h.position.x=next.x;h.position.z=next.z;}",1)
+    elif "resolveHeroCollision(next,h.userData.colliderRadius||.46);" not in s:
+      raise RuntimeError("v6.7 current horizontal collision call missing")
 
     # Mobile hover controls: move stick remains translation; dedicated altitude buttons avoid
     # stealing the look stick.
