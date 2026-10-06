@@ -34,4 +34,4 @@ jobs:
           assert 'V6_0_GLITCH_DRAGON_DEN' in raw
           assert 'buildGlitchDragonsDenProject' in raw
           PY
-          node --check /tmp/v60.mjs
+          node --check /tmp/v60.mjs\n      - uses: actions/upload-artifact@v4\n        with:\n          name: v6-receipt\n          path: projects/swrlz-forge-moba/V6_RECEIPT.txt
