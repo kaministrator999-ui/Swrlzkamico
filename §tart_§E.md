@@ -30,7 +30,7 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v6.0 source authority
+## Current v6.1 source authority
 
 ```text
 base:
@@ -51,14 +51,15 @@ patch chain:
   patches/v5_8_wisp_alpha_foot_support.py
   patches/v5_9_wisp_soft_contact_history.py
   patches/v6_0_researched_glitch_dragon_den.py
+  patches/v6_1_glitch_den_project_card.py
 
 final:
-  swyrl_engine_v6_0.html
-  bytes 170965
-  sha256 747076cbbd43b881887392bcf69a7721905564ffc155e3ab946831ed3a640569
+  swyrl_engine_v6_1.html
+  bytes 171506
+  sha256 2cf327bebbe857e91ca1a82045427018737eaf5ccac0bbae785ddd82d486f15e
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V6_0_GLITCH_DRAGON_DEN
+  SWYRL_ENGINE_DEPLOY_MARKER: V6_1_GLITCH_DEN_STARTER
 ```
 
 ## Grouping contract
@@ -126,7 +127,7 @@ reconstruct base
 → upload dedicated static Space
 → obtain actual HF host
 → fetch served page
-→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_7_PRECISION_CONTACT_CAMERA_SPEED
+→ require the current manifest/release SWYRL_ENGINE_DEPLOY_MARKER
 → SUCCESS
 ```
 
@@ -389,7 +390,7 @@ v5.7 is the current observed engine state at this checkpoint. Dragon feet use mu
 
 ## v6.x + mandatory §E update protocol
 
-v6.0 preserves Dragon's Den — Seed Chamber and adds Glitch Dragon Den — Fracture Forge as a separate project: an oversized fractured megacavern with human-scale forge/traversal areas, chromatic crystal veins, grouped architecture, and §wyrl§ / Frost / Ember procedural dragons.
+v6.1 preserves Dragon's Den — Seed Chamber and exposes Glitch Dragon Den — Fracture Forge as a separate selectable starter. The v6.1 repair adds the missing Projects-hub card, wires the template into project creation, and clarifies the Seed Chamber architecture-baseline label.
 
 Every intentional GitHub mutation involving §wyrl§ Engine (§E), its source/build/deploy files, or its §E documentation is a governed §E update. For EVERY such update:
 
