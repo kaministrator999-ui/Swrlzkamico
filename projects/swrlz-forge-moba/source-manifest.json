@@ -5,8 +5,8 @@
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
   "finalArtifact": "swyrl_engine_v6_0.html",
-  "finalBytes": 165545,
-  "finalSha256": "aafba38d59b520147aa0c625609db0c2e215e31c1f0a6cebaccc1c5faba51eef",
+  "finalBytes": 173045,
+  "finalSha256": "PENDING-V6-EXACT",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
