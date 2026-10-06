@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v6.3
+title: §wyrl§ Engine v6.4
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,11 +10,11 @@ header: mini
 short_description: Browser world engine maker with grouping and first-person.
 ---
 
-# §wyrl§ Engine · Maker v6.3
+# §wyrl§ Engine · Maker v6.4
 
 A browser-native 3D world/game engine maker built around editable projects, first-person play, ghost → Bake authoring, hierarchical object groups, and a structured LALM/agent control surface.
 
-v6.3 makes **Glitch Dragon Den — Fracture Forge** structurally identical to the regular Dragon Den by building the regular Den first and applying the glitch identity in-place.
+v6.4 makes **Glitch Dragon Den — Fracture Forge** structurally identical to the regular Dragon Den by building the regular Den first and applying the glitch identity in-place.
 
 v5.5 fixes look-stick horizontal direction so right means right by default and introduces Dragon anatomy v2: articulated low-poly wings, segmented neck/tail, four-joint legs, claws, horns, teeth, improved head silhouette, and less blocky shading.
 
