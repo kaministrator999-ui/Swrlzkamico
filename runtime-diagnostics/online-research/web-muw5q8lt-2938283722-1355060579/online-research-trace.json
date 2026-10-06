@@ -1,0 +1,68 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-muw5q8lt-2938283722-1355060579",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "12e4ba10875a3d50cc683f63d9f817487fa1c0e5",
+  "persistedAtUnixMs": 1791259621155,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v125-trace-chat-status",
+      "kind": "time",
+      "status": "OK",
+      "reason": "time-intent",
+      "provider": "IANA time zone",
+      "resultCount": 1,
+      "widgetKinds": [
+        "time"
+      ],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 522,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "TIME_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving location time zone",
+        "atUnixMs": 1791259620632
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "TIME_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving location time zone",
+        "atUnixMs": 1791259620632
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "TIME_GEOCODE_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1791259621154,
+        "httpStatus": 200,
+        "responseBytes": 3397
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [
+      "time"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
