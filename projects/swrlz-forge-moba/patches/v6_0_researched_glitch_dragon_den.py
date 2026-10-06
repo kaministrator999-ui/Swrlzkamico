@@ -85,6 +85,10 @@ function buildGlitchDragonsDenProject(){
         if agent not in s: raise RuntimeError("v6.0 project router token missing")
         s=s.replace(agent,"buildGlitchDragonsDen:()=>{buildGlitchDragonsDenProject();return true;},\n  "+agent,1)
 
-    # Expose a direct toolbar/project-hub launch button by cloning the existing Dragon Den project card label when present.
-    s=s.replace("Dragon's Den — Seed Chamber","Dragon's Den — Seed Chamber",1)
+    # Expose the second den in the Projects hub while preserving the original Dragon's Den card.
+    card='<button class="project-card den" data-project-template="dragons-den"><span class="project-icon">🐉</span><strong>Dragon\'s Den</strong><span class="template-tag">EXAMPLE PROJECT</span><p>Arcane collaborative LALM world with dragon avatars, council dais, memory crystal, portals, runes and agent anchor roles.</p><span class="hint den-glow">Enter the Den</span></button>'
+    if card not in s: raise RuntimeError("v6.0 Dragon Den project card token missing")
+    glitch='<button class="project-card den" data-project-template="glitch-dragons-den"><span class="project-icon">🐉⚡</span><strong>Glitch Dragon Den</strong><span class="template-tag">V6 FRACTURE FORGE</span><p>Fractured megacavern, chromatic crystal veins, rune pylons, forge core and three procedural glitch dragons.</p><span class="hint den-glow">Enter the Fracture Forge</span></button>'
+    s=s.replace(card,card+"\\n            "+glitch,1)
+    s=s.replace("Dragon's Den v5.3 · grouped architecture + immersive cavern","Dragon's Den · Seed Chamber",1)
     return s
