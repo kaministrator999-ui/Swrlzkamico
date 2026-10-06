@@ -1,0 +1,366 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-muw5q8lt-2938283722-1355060579",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "12e4ba10875a3d50cc683f63d9f817487fa1c0e5",
+  "persistedAtUnixMs": 1791259633038,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v125-trace-chat-status",
+      "kind": "time",
+      "status": "OK",
+      "reason": "time-intent",
+      "provider": "IANA time zone",
+      "resultCount": 1,
+      "widgetKinds": [
+        "time"
+      ],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 522,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "TIME_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving location time zone",
+        "atUnixMs": 1791259620632
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "TIME_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving location time zone",
+        "atUnixMs": 1791259620632
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "TIME_GEOCODE_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1791259621154,
+        "httpStatus": 200,
+        "responseBytes": 3397
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "time",
+        "version": 1,
+        "title": "Local time · Leavenworth, Kansas, United States",
+        "provider": "IANA time zone",
+        "observedAt": "2026-10-05T23:07:01.154955-05:00",
+        "data": {
+          "location": {
+            "label": "Leavenworth, Kansas, United States",
+            "timezone": "America/Chicago"
+          },
+          "time": "11:07 PM",
+          "seconds": "01",
+          "date": "Monday, October 5, 2026",
+          "utcOffset": "-05:00"
+        }
+      }
+    ],
+    "widgetKinds": [
+      "time"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "Retrieving bounded online evidence.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "TIME"
+        ]
+      },
+      {
+        "seq": 3,
+        "phase": "TIME_GEOCODE_VISIT",
+        "reason": "Resolving location time zone",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 4,
+        "phase": "TIME_GEOCODE_VISIT",
+        "reason": "Resolving location time zone",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 5,
+        "phase": "TIME_GEOCODE_COMPLETE",
+        "reason": "Weather provider response received",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 6,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "TIME"
+        ]
+      },
+      {
+        "seq": 7,
+        "phase": "WIDGET_READY",
+        "reason": "time",
+        "categories": [
+          "WIDGET"
+        ]
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "TIME"
+        ]
+      },
+      {
+        "seq": 9,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": ""
+      },
+      {
+        "seq": 10,
+        "phase": "RESPONSE_COGNITION",
+        "reason": ""
+      },
+      {
+        "seq": 11,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": []
+      },
+      {
+        "seq": 12,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": ""
+      },
+      {
+        "seq": 13,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": []
+      },
+      {
+        "seq": 14,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active"
+      },
+      {
+        "seq": 15,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1"
+      },
+      {
+        "seq": 16,
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": ""
+      },
+      {
+        "seq": 17,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": ""
+      },
+      {
+        "seq": 18,
+        "phase": "ONLINE_ANSWER_GROUNDING",
+        "reason": "Weather prose rendered deterministically from structured provider evidence.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER",
+          "GROUNDING_GUARD"
+        ]
+      },
+      {
+        "seq": 20,
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "answer",
+      "historyAvailable": false,
+      "historyTurns": 0,
+      "anchorUserIndex": null,
+      "anchorAssistantIndex": null,
+      "explicitReference": true,
+      "questionLike": true,
+      "detailMode": "normal",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": false,
+      "programming": false
+    },
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": []
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial-streaming",
+        "durationMs": 11850.601,
+        "firstTokenLatencyMs": 9989.635,
+        "deltaChunks": 131,
+        "candidateFingerprint": "d341f5d1d301c9f1",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "NOT_APPLICABLE",
+        "validationReasons": [],
+        "accepted": false
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "NOT_APPLICABLE",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 25.746,
+      "visibleFirstDeltaLatencyMs": 10015.463,
+      "engineTotalLatencyMs": 11876.816,
+      "totalCandidateGenerationMs": 11850.601,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 11850.601,
+          "firstTokenLatencyMs": 9989.635,
+          "deltaChunks": 131,
+          "candidateFingerprint": "d341f5d1d301c9f1",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "NOT_APPLICABLE",
+          "validationReasons": [],
+          "accepted": false
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 11876.816,
+      "loadLatencyMs": 25.746,
+      "firstDeltaLatencyMs": 10015.463
+    },
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 5066,
+      "reservedOutputTokens": 2048,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 5051,
+        "history": 0,
+        "currentPrompt": 15,
+        "total": 5066
+      }
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 8,
+      "batchThreads": 16,
+      "maxResponseTokens": 768
+    },
+    "finalResponse": "It's **11:07 PM** in **Leavenworth, Kansas, United States** on *Monday, October 5, 2026*.",
+    "finalResponseSha256": "cc376a94b6a0372b5f3a0ef0deef266f6132a211c8faad797c514ffcd10a2879",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791259620622,
+      "startedAtUnixMs": 1791259620624,
+      "completedAtUnixMs": 1791259633037,
+      "queueWaitMs": 2,
+      "stationRunMs": 12413,
+      "endToEndMs": 12415
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
