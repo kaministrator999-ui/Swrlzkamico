@@ -97,18 +97,15 @@ def _lyrics_verified_answer(result: dict[str,Any], model_text: str) -> tuple[str
     evidence=[x for x in (context.get("evidence") or []) if isinstance(x,dict)]
     fetched=[x for x in evidence if x.get("pageFetched") is True and str(x.get("pageExtract") or "").strip()]
     fetched_urls={str(x.get("url") or "").rstrip("/") for x in fetched if x.get("url")}
-    cited_urls={u.rstrip(").,;]").rstrip("/") for u in re.findall(r"https?://[^\\s<]+",model_text)}
+    cited_urls={u.rstrip(").,;]").rstrip("/") for u in re.findall(r"https?://[^\s<]+",model_text)}
     if cited_urls and not cited_urls.issubset(fetched_urls):
         return "I found lyric results, but the generated citation was not one of the successfully fetched sources, so I won't present the quotation as verified.",False
-    # Direct-extraction language requires a fetched source citation in the answer.
-    if re.search(r"\\b(?:direct(?:ly)?\\s+(?:extracted|quoted)|verbatim|from\\s+the\\s+source)\\b",model_text,re.I) and not cited_urls:
+    if re.search(r"\b(?:direct(?:ly)?\s+(?:extracted|quoted)|verbatim|from\s+the\s+source)\b",model_text,re.I) and not cited_urls:
         return "I found lyric results, but I can't bind the generated quotation to a successfully fetched cited source, so I won't call it a direct extraction.",False
-    # Scope guard: a first-verse-only request must not be presented with later verses.
     query=str(context.get("query") or result.get("query") or "")
-    if re.search(r"\\b(?:first|opening)\\s+verse\\b",query,re.I):
-        # Require one bounded quote block/section; multiple verse markers or long lyric-like output fails closed.
-        verse_markers=len(re.findall(r"(?im)^\\s*(?:verse\\s*)?[12][:.\\-)]",model_text))
-        lyric_lines=[ln for ln in model_text.splitlines() if ln.strip() and not re.match(r"^\\s*(?:#|\\*\\*|source|link|https?://)",ln,re.I)]
+    if re.search(r"\b(?:first|opening)\s+verse\b",query,re.I):
+        verse_markers=len(re.findall(r"(?im)^\s*(?:verse\s*)?[12][:.\-)]",model_text))
+        lyric_lines=[ln for ln in model_text.splitlines() if ln.strip() and not re.match(r"^\s*(?:#|\*\*|source|link|https?://)",ln,re.I)]
         if verse_markers>1 or len(lyric_lines)>8:
             return "I verified lyric evidence, but the generated quotation exceeded the requested first-verse-only scope, so I won't present the oversized quote as verified.",False
     return model_text,True
