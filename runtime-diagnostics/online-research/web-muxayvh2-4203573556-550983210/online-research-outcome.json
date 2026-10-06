@@ -1,0 +1,575 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-muxayvh2-4203573556-550983210",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "b384429066886555d54f803a67fb3dfba568f9a0",
+  "persistedAtUnixMs": 1791328899423,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v125-trace-chat-status",
+      "kind": "search",
+      "status": "OK",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 8,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 8,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 12038,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328887381,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328887385,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328887672,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328887672,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328889006,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328889006,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328889008,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "library.timelesstruths.org",
+        "url": "https://library.timelesstruths.org/music/Amazing_Grace/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328899042,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "library.timelesstruths.org",
+        "url": "https://library.timelesstruths.org/music/Amazing_Grace/",
+        "errorType": "URLError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328899049,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "gospelslides.com",
+        "url": "https://gospelslides.com/hymns/amazing-grace"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328899316,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "gospelslides.com",
+        "url": "https://gospelslides.com/hymns/amazing-grace",
+        "httpStatus": 200,
+        "responseBytes": 11257
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328899321,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "getlines.app",
+        "url": "https://getlines.app/hymns/amazing-grace-lyrics"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328899419,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "getlines.app",
+        "url": "https://getlines.app/hymns/amazing-grace-lyrics",
+        "httpStatus": 200,
+        "responseBytes": 68855
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791328899419,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 8
+      }
+    ],
+    "sources": [
+      {
+        "title": "Amazing Grace > Lyrics | John Newton - Timeless Truths",
+        "source": "library.timelesstruths.org",
+        "url": "https://library.timelesstruths.org/music/Amazing_Grace/",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Amazing Grace lyrics — John Newton | GospelSlides",
+        "source": "gospelslides.com",
+        "url": "https://gospelslides.com/hymns/amazing-grace",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Amazing Grace Lyrics - All Verses by John Newton",
+        "source": "getlines.app",
+        "url": "https://getlines.app/hymns/amazing-grace-lyrics",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Amazing Grace Lyrics: Hymn by John Newton - Learn Religions",
+        "source": "www.learnreligions.com",
+        "url": "https://www.learnreligions.com/amazing-grace-701274",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Amazing Grace - Wikipedia",
+        "source": "en.wikipedia.org",
+        "url": "https://en.wikipedia.org/wiki/Amazing_Grace",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Amazing Grace Lyrics - Christian Hymn - Christian Songz",
+        "source": "christiansongz.com",
+        "url": "https://christiansongz.com/amazing-grace-lyrics-christian-hymn/",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Amazing Grace - Worship Lyrics",
+        "source": "worshiplyrics.net",
+        "url": "https://worshiplyrics.net/songs/amazing-grace",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Psalter Hymnal (Gray) 462. Amazing grace - how sweet the sound ...",
+        "source": "hymnary.org",
+        "url": "https://hymnary.org/hymn/PsH/462",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "christiansongz.com",
+      "en.wikipedia.org",
+      "getlines.app",
+      "gospelslides.com",
+      "hymnary.org",
+      "library.timelesstruths.org",
+      "worshiplyrics.net",
+      "www.learnreligions.com"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "search-results",
+        "version": 1,
+        "title": "Online search · the lyrics of \"Amazing Grace\" by John Newton. Tell me where you found them, give me the li",
+        "provider": "bounded-web-search-chain-v1",
+        "data": {
+          "query": "the lyrics of \"Amazing Grace\" by John Newton. Tell me where you found them, give me the link, and quote the first verse. Please use a real web search rather than answering from memory.",
+          "results": [
+            {
+              "title": "Amazing Grace > Lyrics | John Newton - Timeless Truths",
+              "url": "https://library.timelesstruths.org/music/Amazing_Grace/",
+              "snippet": "Lyrics : John Newton Amazing grace ! How sweet the sound That saved a wretch like me ! I once was lost, but now am found ; Was blind, but now I see. 'Twas grace that taught my heart to fear, And grace my fears relieved; How precious did that grace appear The hour I first believed. Through many dangers, toils, and snares, I have already come; 'Tis grace hath brought me safe thus far, And grace ...",
+              "source": "library.timelesstruths.org"
+            },
+            {
+              "title": "Amazing Grace lyrics — John Newton | GospelSlides",
+              "url": "https://gospelslides.com/hymns/amazing-grace",
+              "snippet": "Amazing Grace lyrics ( John Newton , 1779). Amazing grace ! how sweet the sound that saved a wretch like me . Public-domain hymn lyrics you can project with GospelSlides, free church presentation software.",
+              "source": "gospelslides.com"
+            },
+            {
+              "title": "Amazing Grace Lyrics - All Verses by John Newton",
+              "url": "https://getlines.app/hymns/amazing-grace-lyrics",
+              "snippet": "Find the complete words to Amazing Grace , John Newton's 1779 hymn of redemption. All verses included with history and memorization tips.",
+              "source": "getlines.app"
+            },
+            {
+              "title": "Amazing Grace Lyrics: Hymn by John Newton - Learn Religions",
+              "url": "https://www.learnreligions.com/amazing-grace-701274",
+              "snippet": "Learn the history and lyrics to Amazing Grace , the enduring Christian hymn and beloved spiritual song penned by Englishman John Newton (1725-1807).",
+              "source": "www.learnreligions.com"
+            },
+            {
+              "title": "Amazing Grace - Wikipedia",
+              "url": "https://en.wikipedia.org/wiki/Amazing_Grace",
+              "snippet": "\" Amazing Grace \" is a Christian hymn published in 1779 by the English clergyman John Newton. With a message that forgiveness and redemption are possible regardless of the sins people commit and that the soul can be delivered from despair through the mercy of God, it is among the most sung and recorded hymns in the world and is especially popular in the United States, where it is used for both ...",
+              "source": "en.wikipedia.org"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "Retrieving bounded online evidence.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 9,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "library.timelesstruths.org",
+        "url": "https://library.timelesstruths.org/music/Amazing_Grace/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 10,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "library.timelesstruths.org",
+        "url": "https://library.timelesstruths.org/music/Amazing_Grace/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 11,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "gospelslides.com",
+        "url": "https://gospelslides.com/hymns/amazing-grace",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 12,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "gospelslides.com",
+        "url": "https://gospelslides.com/hymns/amazing-grace",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 13,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "getlines.app",
+        "url": "https://getlines.app/hymns/amazing-grace-lyrics",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 14,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "getlines.app",
+        "url": "https://getlines.app/hymns/amazing-grace-lyrics",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 15,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 16,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 17,
+        "phase": "WIDGET_READY",
+        "reason": "search-results",
+        "categories": [
+          "WIDGET"
+        ]
+      },
+      {
+        "seq": 18,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 19,
+        "phase": "LYRICS_VERIFIED_PAYLOAD",
+        "reason": "Serving frozen lyrics payload from successfully fetched evidence.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ]
+      },
+      {
+        "seq": 21,
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "finalResponse": "Okay — here's the first verse I could verify for **the lyrics of \"Amazing Grace\" by John Newton. Tell me where you found them, give me the link, and quote the first verse. Please use a real web search rather than answering from memory.**:\n\nAmazing Grace lyrics — John Newton | GospelSlides GospelSlides Home About Songs Manage Live Projector Support Sign In Create Account Public domain hymn Amazing Grace John Newton , 1779 · Public domain “Amazing grace! how sweet the sound that saved a wretch like me” Verse 1 Amazing grace! how sweet the sound That saved a wretch like me! I once was lost, but now am found, Was blind, but now I see. Verse 2 ’Twas grace that taught my heart to fear, And grace my fears relieved; How precious did that grace appear The hour I first believed! Verse 3 Through many dangers, toils, and snares, I have already come; ’Tis grace hath brought me safe thus far, And grace will lead me home. Verse 4 When we’ve been there ten thousand years, Bright shining as the sun, We’ve no less days to sing God’s praise Than when we first begun. Project these lyrics in GospelSlides — free church presentation software for hymns, worship songs, and Scripture. Project this hymn Find in song library People often search: amazing grace lyrics · how sweet the sound · saved a wretch like me · was blind but now I see Website Developed by GNC Web Solutions Are you sure? Cancel Confirm\n\n**Source:** Amazing Grace lyrics — John Newton | GospelSlides — https://gospelslides.com/hymns/amazing-grace",
+    "finalResponseSha256": "91d0234a006ccc6638fec00922414da45ac62a545f266803176a1907aed94a42",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791328887369,
+      "startedAtUnixMs": 1791328887369,
+      "completedAtUnixMs": 1791328899421,
+      "queueWaitMs": 0,
+      "stationRunMs": 12052,
+      "endToEndMs": 12052
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
