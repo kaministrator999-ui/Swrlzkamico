@@ -1,4 +1,4 @@
-# §wyrl§ Engine · Maker v5.4
+# §wyrl§ Engine · Maker v5.5
 
 ## Project entry command
 
@@ -25,6 +25,24 @@ v5.3 changes the Den from a field-like prototype into a more convincing enclosed
 - dormant exits to Portal Hall, Memory Vault, and Inference Core
 
 The vaulted roof is tagged as a runtime shell: it is hidden while editing so it does not block the viewport, then becomes visible in Play/Simulate.
+
+## v5.5 natural look + Dragon anatomy v2
+
+The right look stick now uses **natural horizontal look** by default: push right → turn right, push left → turn left. Vertical look remains natural: push up → look up, push down → look down. Desktop pointer-lock mouse X now matches that same direction.
+
+The Dragon's Den dragons were rebuilt from the previous slab-wing / dark-box silhouette into a more anatomical low-poly form:
+
+- chest + haunch body volumes instead of one capsule
+- segmented curved neck
+- readable head, muzzle, nose, lower jaw, brows, eyes, horns, ears and teeth
+- four articulated legs with knees, feet and claws
+- segmented curved tail
+- articulated bat-like wing bones with triangular membrane panels
+- dorsal spines from crown through the back
+- tinted belly/shadow materials instead of large pure-black blocks
+- subtler idle bob
+
+This remains procedural Three.js geometry, so no external dragon model asset is required.
 
 ## Hierarchical grouping
 
@@ -91,7 +109,7 @@ The roof is therefore no longer a pile of unrelated objects in normal editing—
 - standalone export
 - structured agent API
 
-Agent version: `swyrl-engine-agent-v3.4`
+Agent version: `swyrl-engine-agent-v3.5`
 
 New agent operations:
 
@@ -114,14 +132,15 @@ patches/v5_1_swyl_engine_seed_den.py
 patches/v5_2_first_person_twin_stick.py
 patches/v5_3_groups_immersive_den.py
 patches/v5_4_wisp_avatar.py
+patches/v5_5_dragons_natural_look.py
 ```
 
-Final v5.4:
+Final v5.5:
 
-- artifact: `swyrl_engine_v5_4.html`
-- bytes: `151952`
-- SHA-256: `add2c872e99097285a4ed68372aae3c6f7a42dff4cac4315771c56e8e9c0aea5`
-- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_4_WISP_AVATAR`
+- artifact: `swyrl_engine_v5_5.html`
+- bytes: `155355`
+- SHA-256: `76410c2340664c0754ad2a50e7be858f7223787e89cb6f10c4360577cc27f4e2`
+- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_5_DRAGONS_NATURAL_LOOK`
 
 ## Deployment
 
