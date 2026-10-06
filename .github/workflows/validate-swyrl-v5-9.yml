@@ -1,5 +1,5 @@
 name: Validate §wyrl§ Engine v5.9 candidate
-on: {workflow_dispatch: {}}
+on:\n  push:\n    branches: [swyrl-engine-v5-9-wisp-undo-contact]
 permissions: {contents: read}
 jobs:
   validate:
