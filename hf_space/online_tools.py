@@ -330,18 +330,9 @@ def classify_online_request(
     # An explicit request to search/browse the web owns the turn even when the
     # search subject contains weather vocabulary (e.g. weather API docs).
     # Dedicated weather retrieval remains for direct weather/forecast requests.
-    if explicit_web:
-        return {
-            "contract": ONLINE_CONTRACT,
-            "requested": True,
-            "kind": "search",
-            "reason": "explicit-web-intent",
-            "query": _search_query_from_prompt(text),
-            "locationText": "",
-            "clientLocation": None,
-            "locationRequired": False,
-            "programming": bool(programming.get("codingTask")),
-        }
+    # Dedicated structured capabilities outrank generic web-search phrasing.
+    # "What time is it..." must never degrade into a search-results answer merely
+    # because natural language contains words that resemble an explicit lookup.
     if _TIME_TERMS.search(text) and not programming.get("codingTask"):
         location_text=_time_location_from_prompt(text)
         return {
@@ -354,6 +345,18 @@ def classify_online_request(
             "clientLocation": None,
             "locationRequired": not bool(location_text),
             "programming": False,
+        }
+    if explicit_web:
+        return {
+            "contract": ONLINE_CONTRACT,
+            "requested": True,
+            "kind": "search",
+            "reason": "explicit-web-intent",
+            "query": _search_query_from_prompt(text),
+            "locationText": "",
+            "clientLocation": None,
+            "locationRequired": False,
+            "programming": bool(programming.get("codingTask")),
         }
     if _WEATHER_TERMS.search(text) and not weather_negated and not programming.get("codingTask"):
         shared = _normalize_client_location(client_location)
@@ -626,10 +629,11 @@ def time_lookup(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None]
     if not location_text:
         raise ValueError("TIME_LOCATION_REQUIRED")
     _progress(progress,"TIME_GEOCODE_VISIT",provider=WEATHER_PROVIDER,url=GEOCODING_ENDPOINT,activity="Resolving location time zone")
-    payload=_json_get(GEOCODING_ENDPOINT+"?"+urllib.parse.urlencode({"name":location_text,"count":10,"language":"en","format":"json"}),progress,phase="TIME_GEOCODE_VISIT",activity="Resolving location time zone")
+    split=_split_us_city_state(location_text)
+    query_name=split[0] if split else location_text
+    payload=_json_get(GEOCODING_ENDPOINT+"?"+urllib.parse.urlencode({"name":query_name,"count":10,"language":"en","format":"json"}),progress,phase="TIME_GEOCODE_VISIT",activity="Resolving location time zone")
     results=payload.get("results") if isinstance(payload.get("results"),list) else []
     location=results[0] if results else None
-    split=_split_us_city_state(location_text)
     if split and results:
         location=_select_us_state_result(results,*split) or location
     if not isinstance(location,dict):
