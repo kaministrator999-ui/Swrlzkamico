@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v6.2",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V6_2_GLITCH_DEN_PARITY",
-  "reason": "Make Glitch Dragon Den exactly match regular Dragon Den structure and layout, with glitch identity layered in-place",
-  "sourceIntegritySha256": "30504d0b7abeb6eefb7751f3a870d8006ed11966a5ee4f201208a70c0a72c8cd"
+  "releaseVersion": "v6.3",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V6_3_GLITCH_DEN_APEX",
+  "reason": "Deploy Glitch Dragon Den II — Apex Nexus with researched cavern composition and upgraded dragons",
+  "sourceIntegritySha256": "595552ab6f711d333866db9ffeea854f25799393a33463a346b67396774c2c8a"
 }
