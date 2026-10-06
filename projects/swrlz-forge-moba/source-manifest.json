@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v6.6",
+  "name": "§wyrl§ Engine v6.7",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v6_6.html",
+  "finalArtifact": "swyrl_engine_v6_7.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -32,8 +32,7 @@
     "patches/v6_3_glitch_den_apex.py",
     "patches/v6_4_single_glitch_den_dragon_v3.py",
     "patches/v6_5_glitch_den_runtime_default.py",
-    "patches/v6_6_wisp_hover_dragon_ik_idle.py"
-  ],
-  "finalBytes": 174866,
-  "finalSha256": "602a498245a01e9ddc87c44ca17390d0070b334996fa15c2817cbc5c5a4af72e"
+    "patches/v6_6_wisp_hover_dragon_ik_idle.py",
+    "patches/v6_7_contact_tools_fix.py"
+  ]
 }
