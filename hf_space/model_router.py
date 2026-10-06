@@ -194,7 +194,7 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     if online_result and (online_result.get("modelContext") or {}).get("epistemicPolicy","").startswith("LYRICS VERIFICATION:"):
         ctx=online_result.get("modelContext") or {}
         evidence=[x for x in (ctx.get("evidence") or []) if isinstance(x,dict)]
-        fetched=[x for x in evidence if x.get("snippet")]
+        fetched=[x for x in evidence if x.get("pageFetched") is True and str(x.get("pageExtract") or "").strip()]
         if not fetched:
             message="I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory."
             yield {"type":"STATUS","phase":"LYRICS_VERIFICATION_BLOCKED","reason":message,"categories":["ONLINE_RESEARCH","LYRICS","GROUNDING"]}
