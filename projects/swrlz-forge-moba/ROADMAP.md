@@ -15,6 +15,7 @@ This roadmap is mandatory release lineage for every governed §E GitHub update. 
 - v5.8 — Wisp alpha / foot-support iteration; patch retained in canonical chain.
 - v5.9 — soft Wisp, planted feet, visible Undo/Redo/history; marker V5_9_WISP_SOFT_CONTACT_HISTORY.
 - v6.0 — researched Glitch Dragon Den — Fracture Forge; marker V6_0_GLITCH_DRAGON_DEN.
+- v6.1 — exposes Fracture Forge in Projects hub, fixes project routing, clarifies Seed Chamber version presentation; marker V6_1_GLITCH_DEN_STARTER.
 
 ## v6.0 — Glitch Dragon Den / Fracture Forge
 
@@ -28,9 +29,23 @@ Source authority:
 - verified v6.0 deployment source commit before governance sync: f02752e742d6a1656e5b7a81f6185a99a7d637bc
 - deployment run #23: success
 
+
+## v6.1 — Glitch Den starter exposure
+
+v6.1 repairs the v6.0 reachability defect: the researched Fracture Forge existed in generated code but the Projects hub did not expose it and the project-creation router did not select it. The release adds the dedicated Glitch Dragon Den — Fracture Forge starter card, routes `glitch-dragons-den` through `buildGlitchDragonsDenProject()`, and changes the old Seed Chamber toast to distinguish its v5.3 architecture baseline from the current v6.1 engine.
+
+Source authority:
+- artifact: swyrl_engine_v6_1.html
+- bytes: 171506
+- SHA-256: 2cf327bebbe857e91ca1a82045427018737eaf5ccac0bbae785ddd82d486f15e
+- marker: SWYRL_ENGINE_DEPLOY_MARKER: V6_1_GLITCH_DEN_STARTER
+- validation: release-candidate reconstruction + JavaScript syntax + starter/card/router/label assertions PASS
+- production deployment: pending final DEPLOY_REQUEST.json button press
+- live verification: pending production deployment
+
 ## Mandatory update protocol
 
-Every §E GitHub mutation is a governed update. Each update must synchronize version surfaces when applicable, update this roadmap, use the dedicated manual §E deployment workflow, follow its resulting Actions run to terminal state, verify the live Hugging Face marker, and return both the deployment-run URL and live §wyrl§ Engine URL to the user. Documentation/governance-only changes may retain the current engine binary version, but still require a roadmap entry and deployment verification.
+Every §E GitHub mutation is a governed update. Each update must synchronize version surfaces when applicable, update this roadmap, use the dedicated DEPLOY_REQUEST.json final deploy-button mechanism, follow its resulting Actions run to terminal state, verify the live Hugging Face marker, and return both the deployment-run URL and live §wyrl§ Engine URL to the user. Documentation/governance-only changes may retain the current engine binary version, but still require a roadmap entry and deployment verification.
 
 ## Governance sync — 2026-10-06
 
