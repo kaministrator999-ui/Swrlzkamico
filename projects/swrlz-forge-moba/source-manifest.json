@@ -30,5 +30,7 @@
     "patches/v6_1_glitch_den_project_card.py",
     "patches/v6_2_glitch_den_parity.py",
     "patches/v6_3_glitch_den_apex.py"
-  ]
+  ],
+  "finalBytes": 172048,
+  "finalSha256": "595552ab6f711d333866db9ffeea854f25799393a33463a346b67396774c2c8a"
 }
