@@ -1,0 +1,694 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-muw54259-1021497075-1550303880",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "7f9cb4b43e6471cdcc3b52f656e9f80a904d06fd",
+  "persistedAtUnixMs": 1791258597459,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v125-trace-chat-status",
+      "kind": "search",
+      "status": "OK",
+      "reason": "explicit-web-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 8,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 8,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1458,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258585881,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258585885,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258586015,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258586016,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258586996,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258586996,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258587002,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.timeanddate.com",
+        "url": "https://www.timeanddate.com/worldclock/@4274305"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258587044,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.timeanddate.com",
+        "url": "https://www.timeanddate.com/worldclock/@4274305",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258587046,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "24timezones.com",
+        "url": "https://24timezones.com/usa_time/ks_leavenworth/leavenworth.php"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258587215,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "24timezones.com",
+        "url": "https://24timezones.com/usa_time/ks_leavenworth/leavenworth.php",
+        "httpStatus": 200,
+        "responseBytes": 110265
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258587218,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "time.is",
+        "url": "https://time.is/Leavenworth"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258587338,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "time.is",
+        "url": "https://time.is/Leavenworth",
+        "httpStatus": 200,
+        "responseBytes": 100366
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791258587339,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 8
+      }
+    ],
+    "sources": [
+      {
+        "title": "Current Local Time in Leavenworth, Kansas, USA",
+        "source": "www.timeanddate.com",
+        "url": "https://www.timeanddate.com/worldclock/@4274305",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Current local time in Leavenworth, Kansas",
+        "source": "24timezones.com",
+        "url": "https://24timezones.com/usa_time/ks_leavenworth/leavenworth.php",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Time in Leavenworth, Kansas, United States now",
+        "source": "time.is",
+        "url": "https://time.is/Leavenworth",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Time in Leavenworth, Kansas, USA (LIVE) - Worldometer",
+        "source": "www.worldometers.info",
+        "url": "https://www.worldometers.info/time/leavenworth-ks-usa/",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Current Local Time in Leavenworth County, Kansas, USA",
+        "source": "www.timeanddate.com",
+        "url": "https://www.timeanddate.com/worldclock/@4274307",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Current Time in Leavenworth, Kansas, USA | Savvy Time",
+        "source": "savvytime.com",
+        "url": "https://savvytime.com/local/ks-leavenworth",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Current Time in Fort Leavenworth, KS - CheckTimes.com",
+        "source": "www.checktimes.com",
+        "url": "https://www.checktimes.com/world/north_america/us/kansas/fort_leavenworth/",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Time in Leavenworth KS, United States - GMT",
+        "source": "greenwichmeantime.com",
+        "url": "https://greenwichmeantime.com/time/united-states/leavenworth/",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "24timezones.com",
+      "greenwichmeantime.com",
+      "savvytime.com",
+      "time.is",
+      "www.checktimes.com",
+      "www.timeanddate.com",
+      "www.worldometers.info"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "search-results",
+        "version": 1,
+        "title": "Online search · the time in Leavenworth kansas",
+        "provider": "bounded-web-search-chain-v1",
+        "data": {
+          "query": "the time in Leavenworth kansas",
+          "results": [
+            {
+              "title": "Current Local Time in Leavenworth, Kansas, USA",
+              "url": "https://www.timeanddate.com/worldclock/@4274305",
+              "snippet": "Current local time in USA - Kansas - Leavenworth . Get Leavenworth's weather and area codes, time zone and DST. Explore Leavenworth's sunrise and sunset, moonrise and moonset.",
+              "source": "www.timeanddate.com"
+            },
+            {
+              "title": "Current local time in Leavenworth, Kansas",
+              "url": "https://24timezones.com/usa_time/ks_leavenworth/leavenworth.php",
+              "snippet": "Time in Leavenworth , Kansas - current local time , timezone, daylight savings time 2026 - Leavenworth , Leavenworth County, KS, USA.",
+              "source": "24timezones.com"
+            },
+            {
+              "title": "Time in Leavenworth, Kansas, United States now",
+              "url": "https://time.is/Leavenworth",
+              "snippet": "Exact time now, time zone, time difference, sunrise/sunset time and key facts for Leavenworth , Kansas , United States.",
+              "source": "time.is"
+            },
+            {
+              "title": "Time in Leavenworth, Kansas, USA (LIVE) - Worldometer",
+              "url": "https://www.worldometers.info/time/leavenworth-ks-usa/",
+              "snippet": "Exact local time now in Leavenworth , Kansas , United States. Time Zone, UTC offset, and DST. Clock with seconds, 12/24h formats, sunrise/sunset, and more.",
+              "source": "www.worldometers.info"
+            },
+            {
+              "title": "Current Local Time in Leavenworth County, Kansas, USA",
+              "url": "https://www.timeanddate.com/worldclock/@4274307",
+              "snippet": "Current local time in USA - Kansas - Leavenworth County. Get Leavenworth County's weather and area codes, time zone and DST. Explore Leavenworth County's sunrise and sunset, moonrise and moonset.",
+              "source": "www.timeanddate.com"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "Retrieving bounded online evidence.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 9,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.timeanddate.com",
+        "url": "https://www.timeanddate.com/worldclock/@4274305",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 10,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.timeanddate.com",
+        "url": "https://www.timeanddate.com/worldclock/@4274305",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 11,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "24timezones.com",
+        "url": "https://24timezones.com/usa_time/ks_leavenworth/leavenworth.php",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 12,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "24timezones.com",
+        "url": "https://24timezones.com/usa_time/ks_leavenworth/leavenworth.php",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 13,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "time.is",
+        "url": "https://time.is/Leavenworth",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 14,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "time.is",
+        "url": "https://time.is/Leavenworth",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 15,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 16,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 17,
+        "phase": "WIDGET_READY",
+        "reason": "search-results",
+        "categories": [
+          "WIDGET"
+        ]
+      },
+      {
+        "seq": 18,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 19,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": ""
+      },
+      {
+        "seq": 20,
+        "phase": "RESPONSE_COGNITION",
+        "reason": ""
+      },
+      {
+        "seq": 21,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": []
+      },
+      {
+        "seq": 22,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": ""
+      },
+      {
+        "seq": 23,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": []
+      },
+      {
+        "seq": 24,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active"
+      },
+      {
+        "seq": 25,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1"
+      },
+      {
+        "seq": 26,
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": ""
+      },
+      {
+        "seq": 27,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": ""
+      },
+      {
+        "seq": 29,
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "answer",
+      "historyAvailable": true,
+      "historyTurns": 4,
+      "anchorUserIndex": 2,
+      "anchorAssistantIndex": 3,
+      "explicitReference": false,
+      "questionLike": true,
+      "detailMode": "normal",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": false,
+      "programming": false
+    },
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": []
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial-streaming",
+        "durationMs": 10085.367,
+        "firstTokenLatencyMs": 9880.581,
+        "deltaChunks": 16,
+        "candidateFingerprint": "50a0227a77c0d053",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "NOT_APPLICABLE",
+        "validationReasons": [],
+        "accepted": false
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "NOT_APPLICABLE",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 31.126,
+      "visibleFirstDeltaLatencyMs": 9911.78,
+      "engineTotalLatencyMs": 10116.718,
+      "totalCandidateGenerationMs": 10085.367,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 10085.367,
+          "firstTokenLatencyMs": 9880.581,
+          "deltaChunks": 16,
+          "candidateFingerprint": "50a0227a77c0d053",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "NOT_APPLICABLE",
+          "validationReasons": [],
+          "accepted": false
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 10116.718,
+      "loadLatencyMs": 31.126,
+      "firstDeltaLatencyMs": 9911.78
+    },
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 6053,
+      "reservedOutputTokens": 2011,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 4,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 5874,
+        "history": 161,
+        "currentPrompt": 18,
+        "total": 6053
+      }
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 8,
+      "batchThreads": 16,
+      "maxResponseTokens": 768
+    },
+    "finalResponse": "The time in Leavenworth, Kansas, is 10:34 AM.",
+    "finalResponseSha256": "50a0227a77c0d0535c515d167c217f2a70e008f0dd911a9b6379c0246368a977",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791258585878,
+      "startedAtUnixMs": 1791258585879,
+      "completedAtUnixMs": 1791258597458,
+      "queueWaitMs": 1,
+      "stationRunMs": 11579,
+      "endToEndMs": 11580
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
