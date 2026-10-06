@@ -1,12 +1,12 @@
-# §wyrl§ Engine · Maker v6.6
+# §wyrl§ Engine · Maker v6.7
 
 ## Project entry command
 
 Use `§tart §E` or `@GitHub §tart §E` to enter the dedicated §wyrl§ Engine lane. This engine remains deployment-isolated from the main §wyrlz AI Chat/LALM application.
 
-## Current engine: v6.6
+## Current engine: v6.7
 
-v6.6 makes Glitch Dragon Den — Fracture Forge an exact structural variant of the regular Dragon Den: same architecture, layout, rooms, placements, exits, collision structure and camera framing, with the glitch identity layered on top.
+v6.7 makes Glitch Dragon Den — Fracture Forge an exact structural variant of the regular Dragon Den: same architecture, layout, rooms, placements, exits, collision structure and camera framing, with the glitch identity layered on top.
 
 ## Current default
 
@@ -180,14 +180,15 @@ patches/v6_3_glitch_den_apex.py
 patches/v6_4_single_glitch_den_dragon_v3.py
 patches/v6_5_glitch_den_runtime_default.py
 patches/v6_6_wisp_hover_dragon_ik_idle.py
+patches/v6_7_contact_tools_fix.py
 ```
 
-Final v6.6:
+Final v6.7:
 
-- artifact: `swyrl_engine_v6_6.html`
-- bytes: `174866`
-- SHA-256: `602a498245a01e9ddc87c44ca17390d0070b334996fa15c2817cbc5c5a4af72e`
-- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V6_6_HOVER_DRAGON_IK`
+- artifact: `swyrl_engine_v6_7.html`
+- bytes: `178252`
+- SHA-256: `d71cc0f3c57692b1c78830d76ea73069804a9306838b29ae89ae0bafd91222d2`
+- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V6_7_CONTACT_TOOLS`
 
 ## Deployment
 
