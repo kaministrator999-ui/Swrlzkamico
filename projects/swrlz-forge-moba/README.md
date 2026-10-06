@@ -1,12 +1,12 @@
-# §wyrl§ Engine · Maker v6.0
+# §wyrl§ Engine · Maker v6.1
 
 ## Project entry command
 
 Use `§tart §E` or `@GitHub §tart §E` to enter the dedicated §wyrl§ Engine lane. This engine remains deployment-isolated from the main §wyrlz AI Chat/LALM application.
 
-## Current engine: v6.0
+## Current engine: v6.1
 
-v6.0 preserves the original Dragon's Den — Seed Chamber and adds Glitch Dragon Den — Fracture Forge as a separate project: an oversized enclosed fracture cavern with human-scale forge/traversal spaces, chromatic fracture veins, grouped architecture, and three procedural dragons.
+v6.1 exposes Glitch Dragon Den — Fracture Forge as an actual Projects-hub starter, wires its card into project creation, and clarifies the Seed Chamber's historical architecture label while preserving the separate original Seed Chamber.
 
 ## Current default
 
@@ -174,14 +174,15 @@ patches/v5_7_precision_contact_camera_speed.py
 patches/v5_8_wisp_alpha_foot_support.py
 patches/v5_9_wisp_soft_contact_history.py
 patches/v6_0_researched_glitch_dragon_den.py
+patches/v6_1_glitch_den_project_card.py
 ```
 
-Final v6.0:
+Final v6.1:
 
-- artifact: `swyrl_engine_v6_0.html`
-- bytes: `170965`
-- SHA-256: `747076cbbd43b881887392bcf69a7721905564ffc155e3ab946831ed3a640569`
-- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V6_0_GLITCH_DRAGON_DEN`
+- artifact: `swyrl_engine_v6_1.html`
+- bytes: `171506`
+- SHA-256: `2cf327bebbe857e91ca1a82045427018737eaf5ccac0bbae785ddd82d486f15e`
+- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V6_1_GLITCH_DEN_STARTER`
 
 ## Deployment
 
@@ -196,4 +197,4 @@ Deployment only succeeds after exact reconstruction, final byte/SHA verification
 
 ## Release governance
 
-Every §E GitHub update must synchronize version surfaces when applicable, update ROADMAP.md, use the dedicated manual §E deployment workflow, follow that run to terminal state, verify the served Hugging Face marker, and return both the Actions run link and live §wyrl§ Engine page link. Root §tart_§E.md is authoritative.
+Every §E GitHub update must synchronize version surfaces when applicable, update ROADMAP.md, press the dedicated DEPLOY_REQUEST.json final deploy button, follow that run to terminal state, verify the served Hugging Face marker, and return both the Actions run link and live §wyrl§ Engine page link. Root §tart_§E.md is authoritative.
