@@ -20,7 +20,7 @@ def apply(html):
     card2=card+'''\n            <button class="project-card den" data-project-template="glitch-dragons-den-apex"><span class="project-icon">🐉</span><strong>Glitch Dragon Den II — Apex Nexus</strong><span class="template-tag">v6.3 RESEARCHED</span><p>Dragon-scale crystal sanctuary with layered cavern masses, forge nexus, throne vault, suspended glitch shards and upgraded apex dragons.</p><span class="hint den-glow">Enter the Apex Nexus</span></button>'''
     s=_once(s,card,card2)
     s=_once(s,"if(template==='moba')buildMobaProject();else if(template==='glitch-dragons-den')buildGlitchDragonsDenProject();","if(template==='moba')buildMobaProject();else if(template==='glitch-dragons-den-apex')buildGlitchDragonsDenApexProject();else if(template==='glitch-dragons-den')buildGlitchDragonsDenProject();")
-    s=_once(s,"if(t==='glitch-dragons-den')return buildGlitchDragonsDenProject();","if(t==='glitch-dragons-den-apex')return buildGlitchDragonsDenApexProject();\n  if(t==='glitch-dragons-den')return buildGlitchDragonsDenProject();")
+    # Project-card creation is routed above; saved-project inference retains dragons-den kind compatibility.
     marker="function inferProjectMeta(p){"
     block=r"""
 function buildGlitchDragonsDenApexProject(){
