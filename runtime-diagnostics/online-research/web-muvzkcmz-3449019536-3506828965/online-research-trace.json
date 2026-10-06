@@ -1,0 +1,110 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-muvzkcmz-3449019536-3506828965",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "98cc597147e494a32981bff7e6908ab394142e59",
+  "persistedAtUnixMs": 1791249270065,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v125-trace-chat-status",
+      "kind": "weather",
+      "status": "OK",
+      "reason": "weather-intent",
+      "provider": "Open-Meteo",
+      "resultCount": 1,
+      "widgetKinds": [
+        "weather"
+      ],
+      "sourceCount": 2,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1530,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving weather location",
+        "atUnixMs": 1791249268534
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1791249269086,
+        "httpStatus": 200,
+        "responseBytes": 31
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_RETRY",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Retrying city lookup with state-qualified candidate matching",
+        "atUnixMs": 1791249269087
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving weather location",
+        "atUnixMs": 1791249269087
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1791249269605,
+        "httpStatus": 200,
+        "responseBytes": 3397
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_FORECAST_VISIT",
+        "provider": "Open-Meteo",
+        "site": "api.open-meteo.com",
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "activity": "Fetching current weather and forecast",
+        "atUnixMs": 1791249269606
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_FORECAST_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "api.open-meteo.com",
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1791249270064,
+        "httpStatus": 200,
+        "responseBytes": 1709
+      }
+    ],
+    "sourceSites": [
+      "open-meteo.com"
+    ],
+    "widgetKinds": [
+      "weather"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
