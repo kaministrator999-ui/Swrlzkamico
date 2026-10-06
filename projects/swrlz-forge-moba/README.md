@@ -1,4 +1,4 @@
-# §wyrl§ Engine · Maker v5.5
+# §wyrl§ Engine · Maker v5.6
 
 ## Project entry command
 
@@ -25,6 +25,22 @@ v5.3 changes the Den from a field-like prototype into a more convincing enclosed
 - dormant exits to Portal Hall, Memory Vault, and Inference Core
 
 The vaulted roof is tagged as a runtime shell: it is hidden while editing so it does not block the viewport, then becomes visible in Play/Simulate.
+
+## v5.6 wing detail + surface foot contact
+
+v5.6 keeps the v5.5 anatomy pass and adds the missing contact details:
+
+- rear feet are explicit, larger, and positioned behind the haunches so all four paws read clearly
+- rear paws include heel geometry and claws
+- wings gain four articulated finger bones, four membrane panels, inner membrane variation, and vein struts
+- dragons now carry a reusable `SurfaceFootContact` component
+- each foot raycasts downward against baked scene meshes and terrain
+- planted feet can settle onto rocks, pedestals, and uneven Den architecture
+- lower shins re-aim toward planted paws for a simple two-bone IK effect
+- foot tilt follows sloped contact normals within a safe clamp
+- failed/invalid rays fall back to terrain and leg stretch is clamped
+
+This grounding system is written as reusable engine logic rather than a one-off perch offset.
 
 ## v5.5 natural look + Dragon anatomy v2
 
@@ -109,7 +125,7 @@ The roof is therefore no longer a pile of unrelated objects in normal editing—
 - standalone export
 - structured agent API
 
-Agent version: `swyrl-engine-agent-v3.5`
+Agent version: `swyrl-engine-agent-v3.6`
 
 New agent operations:
 
@@ -133,14 +149,15 @@ patches/v5_2_first_person_twin_stick.py
 patches/v5_3_groups_immersive_den.py
 patches/v5_4_wisp_avatar.py
 patches/v5_5_dragons_natural_look.py
+patches/v5_6_dragon_ground_contact.py
 ```
 
-Final v5.5:
+Final v5.6:
 
-- artifact: `swyrl_engine_v5_5.html`
-- bytes: `155355`
-- SHA-256: `76410c2340664c0754ad2a50e7be858f7223787e89cb6f10c4360577cc27f4e2`
-- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_5_DRAGONS_NATURAL_LOOK`
+- artifact: `swyrl_engine_v5_6.html`
+- bytes: `161347`
+- SHA-256: `c4c0d88febfdfa2bf1c9b02925c6abd9ddafe05010ec5917dac2cd8eb05886e4`
+- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_6_DRAGON_GROUND_CONTACT`
 
 ## Deployment
 

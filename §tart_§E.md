@@ -30,7 +30,7 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v5.5 source authority
+## Current v5.6 source authority
 
 ```text
 base:
@@ -46,14 +46,15 @@ patch chain:
   patches/v5_3_groups_immersive_den.py
   patches/v5_4_wisp_avatar.py
   patches/v5_5_dragons_natural_look.py
+  patches/v5_6_dragon_ground_contact.py
 
 final:
-  swyrl_engine_v5_5.html
-  bytes 155355
-  sha256 76410c2340664c0754ad2a50e7be858f7223787e89cb6f10c4360577cc27f4e2
+  swyrl_engine_v5_6.html
+  bytes 161347
+  sha256 c4c0d88febfdfa2bf1c9b02925c6abd9ddafe05010ec5917dac2cd8eb05886e4
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V5_5_DRAGONS_NATURAL_LOOK
+  SWYRL_ENGINE_DEPLOY_MARKER: V5_6_DRAGON_GROUND_CONTACT
 ```
 
 ## Grouping contract
@@ -71,7 +72,7 @@ marker:
 
 The default Den must use grouping for architectural assemblies where useful rather than leaving dozens of structural pieces as unrelated root objects.
 
-## Dragon's Den v5.5 contract
+## Dragon's Den v5.6 contract
 
 The default Den is an **immersive cavern**, not an outdoor/MOBA-style map.
 
@@ -121,7 +122,7 @@ reconstruct base
 → upload dedicated static Space
 → obtain actual HF host
 → fetch served page
-→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_5_DRAGONS_NATURAL_LOOK
+→ require SWYRL_ENGINE_DEPLOY_MARKER: V5_6_DRAGON_GROUND_CONTACT
 → SUCCESS
 ```
 
@@ -284,3 +285,16 @@ PASS on attempt 1
 ```
 
 v5.5 is the current observed engine state at this checkpoint. The default Den keeps the Wisp player, uses natural horizontal look input, and uses the procedural Dragon anatomy v2 model.
+
+
+## v5.6 dragon contact contract
+
+- all four dragon feet must be explicit and readable, including rear paws
+- wings should use articulated finger bones and segmented membrane panels rather than flat slabs
+- `SurfaceFootContact` raycasts each dragon foot downward against baked scene meshes and terrain
+- feet may settle onto rocks, pedestals, and uneven architecture
+- lower shin orientation follows the planted paw
+- slope tilt is clamped to prevent broken poses
+- contact range / leg stretch is clamped
+- terrain fallback remains armed when no mesh is hit
+- this system stays in §wyrl§ Engine only; no chat UI work belongs in this lane
