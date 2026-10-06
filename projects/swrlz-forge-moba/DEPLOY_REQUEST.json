@@ -2,6 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "reason": "Initial dedicated SWRLZ Forge MOBA web deployment",
-  "sourceIntegritySha256": "4d56013b8d1301b95e385789744f3a90735bcc8b9c9fcabd13f4806b93ccf39a"
+  "releaseVersion": "v6.1",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V6_1_GLITCH_DEN_STARTER",
+  "reason": "Deploy completed §wyrl§ Engine v6.1 Glitch Dragon Den starter exposure and release-governance repair",
+  "sourceIntegritySha256": "2cf327bebbe857e91ca1a82045427018737eaf5ccac0bbae785ddd82d486f15e"
 }
