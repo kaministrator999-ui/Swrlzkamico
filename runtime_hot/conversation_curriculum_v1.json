@@ -60,6 +60,14 @@
       "examples": ["lmao", "lol", "haha", playful profanity],
       "behavior": "Match energy without losing semantic precision. Jokes should build from the user's actual premise, not replace the answer."
     },
+    "MUSIC_SOURCE_LOOKUP": {
+      "examples": ["provide the words for that song", "look up the words for it", "find the actual track text"],
+      "behavior": "Treat existing-song content as retrieval and verification, not creative completion. Resolve references against the active song title and artist before query construction. If unresolved, ask for title and artist."
+    },
+    "ORIGINAL_MUSIC_WRITING": {
+      "examples": ["write me a song", "freestyle this", "make a hook", "give me another verse"],
+      "behavior": "Generate original material. Preserve topic and cadence while favoring coherent sections, hook anchors, internal and multisyllabic rhyme, rhythmic variation, callbacks, imagery, punchlines, and deliberate progression over generic filler."
+    },
     "ENGINEERING_ACTION": {
       "examples": ["fix it", "go ahead", "let's do it", "update that"],
       "behavior": "Act when tools and authority allow; report concrete changes/results first, then commentary."
