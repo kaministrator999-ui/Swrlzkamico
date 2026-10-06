@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v6.1",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V6_1_GLITCH_DEN_STARTER",
-  "reason": "Deploy completed §wyrl§ Engine v6.1 Glitch Dragon Den starter exposure and release-governance repair",
-  "sourceIntegritySha256": "2cf327bebbe857e91ca1a82045427018737eaf5ccac0bbae785ddd82d486f15e"
+  "releaseVersion": "v6.2",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V6_2_GLITCH_DEN_PARITY",
+  "reason": "Make Glitch Dragon Den exactly match regular Dragon Den structure and layout, with glitch identity layered in-place",
+  "sourceIntegritySha256": "30504d0b7abeb6eefb7751f3a870d8006ed11966a5ee4f201208a70c0a72c8cd"
 }
