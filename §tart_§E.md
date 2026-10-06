@@ -387,7 +387,7 @@ PASS on attempt 1
 v5.7 is the current observed engine state at this checkpoint. Dragon feet use multi-sample sole contact to reduce rock/pedestal penetration, dragon teeth are tucked inside the jaw, and the editor top bar includes a persistent 0.35×–3.00× camera speed slider for rotate/pan/scroll zoom.
 
 
-## v6.0 + mandatory §E update protocol
+## v6.x + mandatory §E update protocol
 
 v6.0 preserves Dragon's Den — Seed Chamber and adds Glitch Dragon Den — Fracture Forge as a separate project: an oversized fractured megacavern with human-scale forge/traversal areas, chromatic crystal veins, grouped architecture, and §wyrl§ / Frost / Ember procedural dragons.
 
@@ -399,29 +399,30 @@ Every intentional GitHub mutation involving §wyrl§ Engine (§E), its source/bu
 4. Update projects/swrlz-forge-moba/ROADMAP.md in the same update. Record what changed, version/marker, source/deploy commit, deployment status, and live verification. Governance-only updates may retain the current engine binary version but still require a roadmap entry.
 5. Validate reconstruction, bytes/SHA, generated JavaScript, and compatibility aliases.
 6. Commit/merge the governed §E update to main.
-7. EVERY §E update MUST use the dedicated manual deployment method for this project: .github/workflows/deploy-swrlz-forge-moba.yml via its workflow_dispatch entrypoint, deploying to kamiloki/swrlz-forge-moba. A GitHub mutation by itself is never completion.
-8. Follow the deployment workflow run to terminal state.
-9. Require the actual served static host to contain the expected current SWYRL_ENGINE_DEPLOY_MARKER. Upload success alone is not live success.
-10. In the user-facing completion response, ALWAYS provide both (a) the exact GitHub Actions workflow-run link started for that update and (b) the live §wyrl§ Engine page link: https://kamiloki-swrlz-forge-moba.static.hf.space/ .
-11. Do not report the §E update complete until both workflow terminal state and served-page marker verification have been checked.
+7. After every intended §E source/code/UI/docs/version/roadmap change is finished and validated, the **LAST repository mutation** is the deliberate deployment-button update to `projects/swrlz-forge-moba/DEPLOY_REQUEST.json`. Updating this dedicated trigger file is how ChatGPT manually presses deploy. Do not use ordinary §E files as deployment triggers.
+8. That final trigger-file commit starts the dedicated production deployment workflow. No §E release content may be changed after pressing it; any required fix starts a new update cycle.
+9. Follow the deployment workflow run to terminal state and require that its source/head commit is the final trigger commit.
+10. Require the actual served static host to contain the expected current SWYRL_ENGINE_DEPLOY_MARKER. Upload success alone is not live success.
+11. In the user-facing completion response, ALWAYS provide both the exact GitHub Actions workflow-run link started by the trigger-file commit and the live §wyrl§ Engine page link: https://kamiloki-swrlz-forge-moba.static.hf.space/ . Do not report completion before both checks pass.
 
 Canonical roadmap: projects/swrlz-forge-moba/ROADMAP.md
 
-### Manual deployment procedure
+### Final deploy button procedure
 
-Production deployment is a **final release action**, not a file-triggered side effect. Repository mutations must never be used as a substitute deployment trigger.
+The production workflow watches **only** `projects/swrlz-forge-moba/DEPLOY_REQUEST.json`. This file is the intentional final deploy button; it is not ordinary release content.
 
-When the §E update is fully ready — all intended source/code/UI changes are finished, version surfaces and roadmap are synchronized, integrity/build validation is complete, and the final intended state is committed to `main` — explicitly start the project's existing manual production deployment workflow.
+When the §E update is completely ready — source/code/UI work finished, version surfaces synchronized, roadmap updated, exact build/integrity validation passed, and all normal release commits already on `main` — **press deploy exactly once by updating `DEPLOY_REQUEST.json` as the final repository mutation**. Record the release version/marker, current source integrity SHA-256, and a reason identifying the completed release. Commit that trigger update to `main`.
 
-The router does **not** depend on a hard-coded workflow display name or on touching a particular file. Discover/use the repository's existing manual §E production deployment workflow by its purpose and `workflow_dispatch` capability. Keep production deployment manual-only; do not add `push`/path triggers merely to make deployment happen.
+The workflow must not watch patches, manifest, README, router, workflow definition, or other normal §E files. Those can be edited freely during development without deploying live. Do not add broad push paths back to the production workflow.
 
-After starting it:
+After pressing the deploy button:
 
-1. Identify the newly created run and require event `workflow_dispatch`.
-2. Require its `head_sha` to equal the final intended §E `main` commit.
-3. Follow that exact run through terminal success.
-4. Inspect its deployment receipt/state and verify the served static page contains the expected current deploy marker and engine version.
-5. Only then record deployment/live verification in the roadmap and report completion.
-6. Return the exact deployment-run URL and the live §wyrl§ Engine page URL.
+1. Make no further §E release mutations while treating that deployment as current. If something is wrong, begin a new update cycle.
+2. Find the Actions run created by the `DEPLOY_REQUEST.json` trigger commit and verify its head/source commit matches that final trigger commit.
+3. Follow the exact run to terminal success.
+4. Inspect deployment receipt/state and verify the served static page contains the expected current marker/version.
+5. Return the exact Actions run URL and live §wyrl§ Engine URL to the user.
 
-If the available authenticated GitHub tooling cannot issue a manual workflow dispatch, state that limitation explicitly; never manufacture a deployment by editing/touching a watched file and never count an automatic push run as the required manual release.
+**Mental model:** BUILD/EDIT → VERSION → ROADMAP → VALIDATE → FINAL NORMAL COMMIT → update `DEPLOY_REQUEST.json` (PRESS DEPLOY) → WORKFLOW → VERIFY LIVE → COMPLETE.
+
+Never substitute `workflow_dispatch`, an arbitrary watched source file, or an intermediate commit for this repo's dedicated final deploy-button mechanism.
