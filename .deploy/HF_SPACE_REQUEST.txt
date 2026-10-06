@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-05-v134-all-current-updates-music-verse-bridge-001
+REQUEST_NONCE=2026-10-05-v135-time-intent-widget-styled-weather-001
