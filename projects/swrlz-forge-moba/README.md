@@ -1,8 +1,12 @@
-# §wyrl§ Engine · Maker v5.7
+# §wyrl§ Engine · Maker v6.0
 
 ## Project entry command
 
 Use `§tart §E` or `@GitHub §tart §E` to enter the dedicated §wyrl§ Engine lane. This engine remains deployment-isolated from the main §wyrlz AI Chat/LALM application.
+
+## Current engine: v6.0
+
+v6.0 preserves the original Dragon's Den — Seed Chamber and adds Glitch Dragon Den — Fracture Forge as a separate project: an oversized enclosed fracture cavern with human-scale forge/traversal spaces, chromatic fracture veins, grouped architecture, and three procedural dragons.
 
 ## Current default
 
@@ -167,14 +171,17 @@ patches/v5_4_wisp_avatar.py
 patches/v5_5_dragons_natural_look.py
 patches/v5_6_dragon_ground_contact.py
 patches/v5_7_precision_contact_camera_speed.py
+patches/v5_8_wisp_alpha_foot_support.py
+patches/v5_9_wisp_soft_contact_history.py
+patches/v6_0_researched_glitch_dragon_den.py
 ```
 
-Final v5.7:
+Final v6.0:
 
-- artifact: `swyrl_engine_v5_7.html`
-- bytes: `163645`
-- SHA-256: `62fbe228f4ee412c17be53429239159a400bc02bd1f94b5c1b7760f85645c04a`
-- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_7_PRECISION_CONTACT_CAMERA_SPEED`
+- artifact: `swyrl_engine_v6_0.html`
+- bytes: `170965`
+- SHA-256: `747076cbbd43b881887392bcf69a7721905564ffc155e3ab946831ed3a640569`
+- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V6_0_GLITCH_DRAGON_DEN`
 
 ## Deployment
 
@@ -185,3 +192,8 @@ Infrastructure remains:
 - workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`
 
 Deployment only succeeds after exact reconstruction, final byte/SHA verification, JavaScript syntax validation, Hugging Face upload, and live-page marker verification.
+
+
+## Release governance
+
+Every §E GitHub update must synchronize version surfaces when applicable, update ROADMAP.md, use the dedicated manual §E deployment workflow, follow that run to terminal state, verify the served Hugging Face marker, and return both the Actions run link and live §wyrl§ Engine page link. Root §tart_§E.md is authoritative.
