@@ -256,7 +256,7 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
             yield {"type":"COMPLETED","phase":"COMPLETE"}
             return
         # Programming questions/examples/reasoning were routed before retrieval so online logs bind the selected model.
-    if online_result and str(intent.get("contentMode") or "")=="lyrics-verification":
+    if online_result and isinstance(online_result.get("modelContext"),dict) and str(online_result["modelContext"].get("epistemicPolicy") or "").startswith("LYRICS VERIFICATION:"):
         lyrics_text=_lyrics_retrieval_payload(online_result,str(payload.get("prompt") or ""))
         if lyrics_text:
             yield {"type":"STATUS","phase":"LYRICS_VERIFIED_PAYLOAD","reason":"Serving frozen lyrics payload from successfully fetched evidence.","categories":["ONLINE_RESEARCH","LYRICS","GROUNDING"]}
