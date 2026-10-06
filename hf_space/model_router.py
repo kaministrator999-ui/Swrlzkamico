@@ -32,44 +32,35 @@ def _r39_online_payload(payload: dict[str,Any]) -> dict[str,Any]:
     return out
 
 def _weather_grounded_text(result: dict[str,Any]) -> str:
-    """Render weather prose only from the same structured evidence that powers the widget."""
+    """Render compact styled weather prose only from structured widget evidence."""
     context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
     current=context.get("current") if isinstance(context.get("current"),dict) else {}
     units=context.get("units") if isinstance(context.get("units"),dict) else {}
     location=context.get("location") if isinstance(context.get("location"),dict) else {}
     daily=context.get("daily") if isinstance(context.get("daily"),list) else []
     label=str(location.get("label") or "the requested location")
-    condition=str(current.get("condition") or "weather data available")
-    temperature=current.get("temperature")
-    apparent=current.get("apparentTemperature")
-    humidity=current.get("humidity")
-    wind=current.get("windSpeed")
-    precipitation=current.get("precipitation")
-    temp_unit=str(units.get("temperature") or "")
-    wind_unit=str(units.get("windSpeed") or "")
+    condition=str(current.get("condition") or "Weather")
+    temperature=current.get("temperature"); apparent=current.get("apparentTemperature")
+    humidity=current.get("humidity"); wind=current.get("windSpeed"); precipitation=current.get("precipitation")
+    temp_unit=str(units.get("temperature") or ""); wind_unit=str(units.get("windSpeed") or "")
     precip_unit=str(units.get("precipitation") or "")
-    lead=f"It's {condition.lower()} in {label}"
-    if temperature is not None: lead+=f" at {temperature}{temp_unit}"
-    if apparent is not None: lead+=f", feeling like {apparent}{temp_unit}"
-    lead+="."
-    facts=[]
-    if humidity is not None:facts.append(f"Humidity is {humidity}%")
-    if precipitation is not None:facts.append(f"precipitation is {precipitation}{precip_unit}")
-    if wind is not None:facts.append(f"winds are about {wind}{wind_unit}")
-    if facts: lead+=" "+", ".join(facts)+"."
-    forecasts=[]
+    lines=[f"## [color=#7EE6FF]{condition}[/color] · **{temperature}{temp_unit}**" if temperature is not None else f"## [color=#7EE6FF]{condition}[/color]",
+           f"*{label}*"]
+    if apparent is not None: lines.append(f"**Feels like:** {apparent}{temp_unit}")
+    metrics=[]
+    if humidity is not None: metrics.append(f"**Humidity:** {humidity}%")
+    if precipitation is not None: metrics.append(f"**Precipitation:** {precipitation} {precip_unit}".rstrip())
+    if wind is not None: metrics.append(f"**Wind:** {wind} {wind_unit}".rstrip())
+    if metrics: lines.append(" · ".join(metrics))
     for index,day in enumerate(daily[:2]):
-        if not isinstance(day,dict):continue
-        name="Today" if index==0 else "Tomorrow"
-        high=day.get("high");low=day.get("low");day_condition=str(day.get("condition") or "").lower()
-        detail=name
-        if day_condition:detail+=" is "+day_condition
-        if high is not None and low is not None:detail+=f", with a high of {high}{temp_unit} and a low of {low}{temp_unit}"
-        elif high is not None:detail+=f", with a high of {high}{temp_unit}"
-        elif low is not None:detail+=f", with a low of {low}{temp_unit}"
-        forecasts.append(detail+".")
-    if forecasts:lead+=" "+" ".join(forecasts)
-    return lead
+        if not isinstance(day,dict): continue
+        name="Today" if index==0 else "Tomorrow"; high=day.get("high"); low=day.get("low")
+        dc=str(day.get("condition") or "").strip()
+        values=[]
+        if high is not None: values.append(f"**{high}{temp_unit} high**")
+        if low is not None: values.append(f"**{low}{temp_unit} low**")
+        lines.append(f"**{name}:** {dc}"+((" · "+ " / ".join(values)) if values else ""))
+    return "\n\n".join(lines)
 
 def _online_evidence_fallback_text(result: dict[str,Any]) -> str:
     kind=str(result.get("kind") or "")
