@@ -165,7 +165,7 @@ function updateDragonSurfaceContacts(dt){
   }
 }
 """
-    s=_replace_block(s,"function groundDragonFeet(dragon,dt=.016){","function makeDragon(pos",contact+"function makeDragon(pos")
+    s=_replace_block(s,"function groundDragonFeet(dragon,dt=.016){","function makeDragon(pos",contact)
 
     # Teeth no longer pierce through the lower jaw.
     s=_once(
