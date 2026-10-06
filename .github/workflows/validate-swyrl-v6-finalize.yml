@@ -38,3 +38,7 @@ jobs:
           PY
           node --check /tmp/v60.mjs
           cp /tmp/v60.html projects/swrlz-forge-moba/v60-candidate.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v6-candidate
+          path: projects/swrlz-forge-moba/v60-candidate.html
