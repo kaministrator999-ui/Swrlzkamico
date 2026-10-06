@@ -406,3 +406,20 @@ Every intentional GitHub mutation involving §wyrl§ Engine (§E), its source/bu
 11. Do not report the §E update complete until both workflow terminal state and served-page marker verification have been checked.
 
 Canonical roadmap: projects/swrlz-forge-moba/ROADMAP.md
+
+### Exact manual deployment procedure
+
+The dedicated deployment workflow is intentionally `workflow_dispatch`-only. Do NOT restore a `push` trigger and do NOT deploy intermediate §E mutations.
+
+After ALL source, version, manifest, README/Space metadata, router, roadmap, integrity values, and workflow verification changes for the update are committed to `main`:
+
+1. Confirm `.github/workflows/deploy-swrlz-forge-moba.yml` contains only the manual `workflow_dispatch` production trigger.
+2. Manually dispatch **Deploy §wyrl§ Engine to Hugging Face** from the `main` branch using GitHub Actions **Run workflow**, which invokes the workflow's `workflow_dispatch` event. If an authenticated GitHub action/tool capable of workflow dispatch is available, use it directly against `deploy-swrlz-forge-moba.yml` with ref `main`; otherwise use the GitHub Actions UI Run workflow control. Never substitute a source-file commit/push as a deployment trigger.
+3. Immediately identify the newly created run and verify its event is `workflow_dispatch` and its `head_sha` equals the final intended §E `main` commit. If either differs, do not accept the run as the release.
+4. Follow that exact run through all jobs to terminal `success`.
+5. Inspect the deployment receipt for the source commit, source version/SHA, HF revision, app URL, and RUNNING stage.
+6. Verify the served static page contains the expected current `SWYRL_ENGINE_DEPLOY_MARKER` and current engine title/version.
+7. Only then mark the roadmap deployment/live-verification fields complete and report success.
+8. Return the exact GitHub Actions run URL plus `https://kamiloki-swrlz-forge-moba.static.hf.space/` to the user.
+
+If this chat/tool environment cannot actually issue a `workflow_dispatch` request, state that limitation explicitly rather than pretending an automatic/push run was manually dispatched.
