@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v6.4",
+  "name": "§wyrl§ Engine v6.5",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v6_4.html",
+  "finalArtifact": "swyrl_engine_v6_5.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -30,8 +30,7 @@
     "patches/v6_1_glitch_den_project_card.py",
     "patches/v6_2_glitch_den_parity.py",
     "patches/v6_3_glitch_den_apex.py",
-    "patches/v6_4_single_glitch_den_dragon_v3.py"
-  ],
-  "finalBytes": 171486,
-  "finalSha256": "98cd0c5a8d376a18ccbe2b958556b98cdc546bb6dc7f6930c4d4916b6d25704d"
+    "patches/v6_4_single_glitch_den_dragon_v3.py",
+    "patches/v6_5_glitch_den_runtime_default.py"
+  ]
 }
