@@ -348,3 +348,37 @@ v5.6 is the current observed engine state at this checkpoint. Dragon wings use t
 - the chosen camera speed persists locally
 - mobile editor views must keep the slider accessible
 - runtime/PIE look sensitivity remains separate from editor camera speed
+
+
+## Verified v5.7 deployment checkpoint
+
+```text
+Engine:
+§wyrl§ Engine v5.7
+
+GitHub source/deploy commit:
+a68a7f363897c1bb4dbdc092eb051e2d176126b5
+
+Final source:
+163645 bytes
+
+SHA-256:
+62fbe228f4ee412c17be53429239159a400bc02bd1f94b5c1b7760f85645c04a
+
+Hugging Face revision:
+12e481b45ffd5b808047ee183ea9b6a9bd79fcca
+
+Static host:
+https://kamiloki-swrlz-forge-moba.static.hf.space/
+
+Stage:
+RUNNING
+
+Live marker:
+SWYRL_ENGINE_DEPLOY_MARKER: V5_7_PRECISION_CONTACT_CAMERA_SPEED
+
+Live verification:
+PASS on attempt 1
+```
+
+v5.7 is the current observed engine state at this checkpoint. Dragon feet use multi-sample sole contact to reduce rock/pedestal penetration, dragon teeth are tucked inside the jaw, and the editor top bar includes a persistent 0.35×–3.00× camera speed slider for rotate/pan/scroll zoom.
