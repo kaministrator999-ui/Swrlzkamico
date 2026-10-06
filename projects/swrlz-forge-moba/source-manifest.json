@@ -31,5 +31,7 @@
     "patches/v6_2_glitch_den_parity.py",
     "patches/v6_3_glitch_den_apex.py",
     "patches/v6_4_single_glitch_den_dragon_v3.py"
-  ]
+  ],
+  "finalBytes": 171486,
+  "finalSha256": "98cd0c5a8d376a18ccbe2b958556b98cdc546bb6dc7f6930c4d4916b6d25704d"
 }
