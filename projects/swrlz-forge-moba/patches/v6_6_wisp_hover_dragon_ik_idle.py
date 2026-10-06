@@ -91,6 +91,7 @@ function updateDragonRigs(t){
     repl="  d.userData.blueprintClass='BP_GlitchDragonV3';d.userData.tags.push('dragon-anatomy-v3','crystal-armor','fracture-energy','foot-contact','procedural-idle');d.userData.dragonIdlePhase=Math.random()*Math.PI*2;const chest=d.getObjectByName('DragonChest');d.userData.dragonChestBaseY=chest?chest.scale.y:1;d.userData.bobAmplitude=0;return d;"
     s=_once(s,needle,repl)
 
-    # Run dragon rig after Wisp visual animation every frame.
-    s=_once(s,"updateWispVisuals(t);if(!playing)orbit.update();","updateWispVisuals(t);updateDragonRigs(t);if(!playing)orbit.update();")
+    # Run dragon rig once per animation frame beside the established Wisp visual update.
+    if "updateWispVisuals(t);" not in s: raise RuntimeError("v6.6 Wisp animation call missing")
+    s=s.replace("updateWispVisuals(t);","updateWispVisuals(t);updateDragonRigs(t);",1)
     return s
