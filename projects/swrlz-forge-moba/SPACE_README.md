@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v5.6
+title: §wyrl§ Engine v5.7
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,13 +10,15 @@ header: mini
 short_description: Browser world engine maker with grouping and first-person.
 ---
 
-# §wyrl§ Engine · Maker v5.6
+# §wyrl§ Engine · Maker v5.7
 
 A browser-native 3D world/game engine maker built around editable projects, first-person play, ghost → Bake authoring, hierarchical object groups, and a structured LALM/agent control surface.
 
 v5.5 fixes look-stick horizontal direction so right means right by default and introduces Dragon anatomy v2: articulated low-poly wings, segmented neck/tail, four-joint legs, claws, horns, teeth, improved head silhouette, and less blocky shading.
 
 v5.6 adds reusable dragon foot grounding, explicit rear paws/heels/claws, and a more detailed multi-finger wing membrane system.
+
+v5.7 replaces single-point dragon foot contact with multi-sample sole raycasts, tucks dragon teeth back inside the mouth, and adds a top-bar camera speed slider for editor rotate/pan/scroll zoom.
 
 ## Default starter: Dragon's Den — Seed Chamber
 

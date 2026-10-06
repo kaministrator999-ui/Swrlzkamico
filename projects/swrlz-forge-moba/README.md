@@ -1,4 +1,4 @@
-# §wyrl§ Engine · Maker v5.6
+# §wyrl§ Engine · Maker v5.7
 
 ## Project entry command
 
@@ -25,6 +25,22 @@ v5.3 changes the Den from a field-like prototype into a more convincing enclosed
 - dormant exits to Portal Hall, Memory Vault, and Inference Core
 
 The vaulted roof is tagged as a runtime shell: it is hidden while editing so it does not block the viewport, then becomes visible in Play/Simulate.
+
+## v5.7 precision contact + camera speed slider
+
+The v5.6 single-ray foot planting was still vulnerable on rock edges. v5.7 replaces it with **multi-sample sole contact**:
+
+- center, four corners, and toe sample rays per paw
+- highest valid contact determines vertical foot placement
+- nearby contact normals are averaged for stable slope tilt
+- foot/rock penetration is reduced on uneven rocks and pedestal edges
+- surface meshes are collected once per frame for all dragons
+- failed rays still fall back to terrain
+- contact height and tilt remain clamped
+
+Dragon teeth were also shortened and moved upward into the mouth so they no longer protrude through the lower jaw.
+
+The editor now has a persistent **CAM speed slider in the top bar**. It continuously controls OrbitControls rotation, pan, and wheel/scroll zoom speed from 0.35× to 3.00× and remains accessible on mobile editor views.
 
 ## v5.6 wing detail + surface foot contact
 
@@ -125,7 +141,7 @@ The roof is therefore no longer a pile of unrelated objects in normal editing—
 - standalone export
 - structured agent API
 
-Agent version: `swyrl-engine-agent-v3.6`
+Agent version: `swyrl-engine-agent-v3.7`
 
 New agent operations:
 
@@ -150,14 +166,15 @@ patches/v5_3_groups_immersive_den.py
 patches/v5_4_wisp_avatar.py
 patches/v5_5_dragons_natural_look.py
 patches/v5_6_dragon_ground_contact.py
+patches/v5_7_precision_contact_camera_speed.py
 ```
 
-Final v5.6:
+Final v5.7:
 
-- artifact: `swyrl_engine_v5_6.html`
-- bytes: `161347`
-- SHA-256: `c4c0d88febfdfa2bf1c9b02925c6abd9ddafe05010ec5917dac2cd8eb05886e4`
-- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_6_DRAGON_GROUND_CONTACT`
+- artifact: `swyrl_engine_v5_7.html`
+- bytes: `163645`
+- SHA-256: `62fbe228f4ee412c17be53429239159a400bc02bd1f94b5c1b7760f85645c04a`
+- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V5_7_PRECISION_CONTACT_CAMERA_SPEED`
 
 ## Deployment
 
