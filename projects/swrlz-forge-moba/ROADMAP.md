@@ -16,6 +16,7 @@ This roadmap is mandatory release lineage for every governed §E GitHub update. 
 - v5.9 — soft Wisp, planted feet, visible Undo/Redo/history; marker V5_9_WISP_SOFT_CONTACT_HISTORY.
 - v6.0 — researched Glitch Dragon Den — Fracture Forge; marker V6_0_GLITCH_DRAGON_DEN.
 - v6.1 — exposes Fracture Forge in Projects hub, fixes project routing, clarifies Seed Chamber version presentation; marker V6_1_GLITCH_DEN_STARTER.
+- v6.2 — Glitch Den now builds directly from the regular Dragon Den source-of-truth layout, then applies its glitch theme in-place; marker V6_2_GLITCH_DEN_PARITY.
 
 ## v6.0 — Glitch Dragon Den / Fracture Forge
 
@@ -40,6 +41,20 @@ Source authority:
 - SHA-256: 2cf327bebbe857e91ca1a82045427018737eaf5ccac0bbae785ddd82d486f15e
 - marker: SWYRL_ENGINE_DEPLOY_MARKER: V6_1_GLITCH_DEN_STARTER
 - validation: release-candidate reconstruction + JavaScript syntax + starter/card/router/label assertions PASS
+- production deployment: pending final DEPLOY_REQUEST.json button press
+- live verification: pending production deployment
+
+
+## v6.2 — exact Dragon Den structural parity
+
+The Glitch Den no longer maintains a separately invented megacavern layout. `buildGlitchDragonsDenProject()` now invokes `buildDragonsDenProject()` as its structural source of truth and rethemes the resulting scene in-place. This makes its architecture, floor plan, rooms, placements, groups, exits, collision layout, and camera framing exactly the regular Dragon Den while retaining a Glitch identity through palette/material treatment and themed names. Future regular-Den structural changes automatically propagate to the Glitch Den.
+
+Source authority:
+- artifact: swyrl_engine_v6_2.html
+- bytes: 168023
+- SHA-256: 30504d0b7abeb6eefb7751f3a870d8006ed11966a5ee4f201208a70c0a72c8cd
+- marker: SWYRL_ENGINE_DEPLOY_MARKER: V6_2_GLITCH_DEN_PARITY
+- validation: exact-base call, legacy megacavern removal, project-card parity description, reconstruction, and JavaScript syntax PASS
 - production deployment: pending final DEPLOY_REQUEST.json button press
 - live verification: pending production deployment
 
