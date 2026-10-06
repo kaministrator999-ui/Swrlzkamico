@@ -15,7 +15,7 @@ jobs:
       - name: Generate candidate ignoring stale final receipt
         run: |
           python - <<'PY'
-          import base64,gzip,hashlib,importlib.util,json
+          import base64,gzip,hashlib,importlib.util,json,os
           from pathlib import Path
           root=Path('projects/swrlz-forge-moba')
           m=json.loads((root/'source-manifest.json').read_text())
@@ -27,7 +27,9 @@ jobs:
               raw=mod.apply(raw)
           b=raw.encode()
           print('::warning file=projects/swrlz-forge-moba/source-manifest.json,line=1,title=V60_BYTES::'+str(len(b)))
-          print('::warning file=projects/swrlz-forge-moba/source-manifest.json,line=2,title=V60_SHA256::'+hashlib.sha256(b).hexdigest())
+          sha=hashlib.sha256(b).hexdigest()
+          print('::warning file=projects/swrlz-forge-moba/source-manifest.json,line=2,title=V60_SHA256::'+sha)
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as q: q.write(f'V60_BYTES={len(b)}\n\nV60_SHA256={sha}\n')
           Path('/tmp/v60.html').write_bytes(b)
           a=raw.index('<script type="module">')+len('<script type="module">');z=raw.rindex('</script>')
           Path('/tmp/v60.mjs').write_text(raw[a:z])
