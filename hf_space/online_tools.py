@@ -805,6 +805,17 @@ def execute_online_request(
             result = weather_lookup(plan, progress)
         elif plan["kind"] == "time":
             result = time_lookup(plan, progress)
+        elif plan["kind"] == "multi":
+            children=[]
+            for capability in plan.get("capabilities") or []:
+                child_plan=dict(plan);child_plan["kind"]=capability;child_plan["reason"]="multi-"+capability
+                if capability=="weather":
+                    children.append(weather_lookup(child_plan,progress))
+                elif capability=="time":
+                    children.append(time_lookup(child_plan,progress))
+            widgets=[w for child in children for w in (child.get("widgets") or [])]
+            sources=[src for child in children for src in (child.get("sources") or [])]
+            result={"contract":ONLINE_CONTRACT,"requested":True,"kind":"multi","status":"OK","query":plan.get("query"),"widgets":widgets,"sources":sources,"children":children,"modelContext":{"contractId":"swrlz-online-multi-evidence-v1","trust":"STRUCTURED_LIVE_DATA","instructionAuthority":False,"capabilities":[child.get("modelContext") for child in children],"epistemicPolicy":"Use only the structured capability evidence; do not invent current values."},"resultCount":len(widgets)}
         else:
             result = _search_bundle(plan, progress)
     except Exception as exc:
