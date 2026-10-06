@@ -30,7 +30,7 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v6.6 source authority
+## Current v6.7 source authority
 
 ```text
 base:
@@ -57,14 +57,15 @@ patches/v6_3_glitch_den_apex.py
 patches/v6_4_single_glitch_den_dragon_v3.py
 patches/v6_5_glitch_den_runtime_default.py
 patches/v6_6_wisp_hover_dragon_ik_idle.py
+patches/v6_7_contact_tools_fix.py
 
 final:
-  swyrl_engine_v6_6.html
-  bytes 174866
-  sha256 602a498245a01e9ddc87c44ca17390d0070b334996fa15c2817cbc5c5a4af72e
+  swyrl_engine_v6_7.html
+  bytes 178252
+  sha256 d71cc0f3c57692b1c78830d76ea73069804a9306838b29ae89ae0bafd91222d2
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V6_6_HOVER_DRAGON_IK
+  SWYRL_ENGINE_DEPLOY_MARKER: V6_7_CONTACT_TOOLS
 ```
 
 ## Grouping contract
@@ -395,7 +396,7 @@ v5.7 is the current observed engine state at this checkpoint. Dragon feet use mu
 
 ## v6.x + mandatory §E update protocol
 
-v6.6 preserves Dragon's Den — Seed Chamber and makes Glitch Dragon Den — Fracture Forge its exact structural variant: same architecture, layout, rooms, placements, exits, collision structure and camera framing, with the glitch identity layered on top.
+v6.7 preserves Dragon's Den — Seed Chamber and makes Glitch Dragon Den — Fracture Forge its exact structural variant: same architecture, layout, rooms, placements, exits, collision structure and camera framing, with the glitch identity layered on top.
 
 Every intentional GitHub mutation involving §wyrl§ Engine (§E), its source/build/deploy files, or its §E documentation is a governed §E update. For EVERY such update:
 
