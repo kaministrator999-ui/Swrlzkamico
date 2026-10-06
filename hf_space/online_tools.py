@@ -59,7 +59,7 @@ _FRESHNESS = re.compile(
 _LOCATION_REQUIRED = re.compile(r"\b(?:my|here|near\s+me|current\s+location|where\s+i\s+am)\b", re.I)
 _TIME_TERMS = re.compile(r"\b(?:what(?:'s|\s+is)\s+the\s+time|current\s+time|time\s+(?:is\s+it|in|at|for)|local\s+time)\b", re.I)
 
-_LYRICS_LOOKUP = re.compile(r"\\b(?:lyrics?|words\\s+to\\s+(?:the\\s+)?song|quote\\s+(?:the\\s+)?(?:first|opening)?\\s*(?:verse|chorus)|find\\s+(?:the\\s+)?lyrics?|look\\s+up\\s+(?:the\\s+)?lyrics?)\\b", re.I)
+_LYRICS_LOOKUP = re.compile(r"\b(?:lyrics?|words\s+to\s+(?:the\s+)?song|quote\s+(?:the\s+)?(?:first|opening)?\s*(?:verse|chorus)|find\s+(?:the\s+)?lyrics?|look\s+up\s+(?:the\s+)?lyrics?)\b", re.I)
 
 _US_STATE_ALIASES = {
     "alabama":"AL","alaska":"AK","arizona":"AZ","arkansas":"AR","california":"CA","colorado":"CO",
