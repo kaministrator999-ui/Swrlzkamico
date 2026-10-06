@@ -25,7 +25,12 @@ def apply(html):
             <button class="project-card den" data-project-template="glitch-dragons-den"><span class="project-icon">🐲</span><strong>Glitch Dragon Den — Fracture Forge</strong><span class="template-tag">v6.1 STARTER</span><p>Oversized fractured megacavern with human-scale forge and traversal spaces, chromatic crystal veins, rune pylons, route gates, and §wyrl§ / Frost / Ember dragons.</p><span class="hint den-glow">Enter the Fracture Forge</span></button>'''
     s = _once(s, seed_card, glitch_card)
 
-    # v6.0 already routes glitch-dragons-den through loadProjectTemplate(t).\n
+    s = _once(
+      s,
+      "if(template==='moba')buildMobaProject();else if(template==='dragons-den')buildDragonsDenProject();else buildDefaultProject();",
+      "if(template==='moba')buildMobaProject();else if(template==='glitch-dragons-den')buildGlitchDragonsDenProject();else if(template==='dragons-den')buildDragonsDenProject();else buildDefaultProject();"
+    )
+
     s = _once(
       s,
       'toast("Dragon\'s Den v5.3 · grouped architecture + immersive cavern");',
