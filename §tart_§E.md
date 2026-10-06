@@ -250,3 +250,37 @@ Required visual direction:
 - horns, brows, eyes, teeth, ears, and dorsal spines
 - shaded/tinted belly and dark accents; avoid large pure-black blocks that read like missing geometry
 - preserve the deliberately massive scale relative to the Wisp/player
+
+
+## Verified v5.5 deployment checkpoint
+
+```text
+Engine:
+§wyrl§ Engine v5.5
+
+GitHub source/deploy commit:
+e08e45fee17b0fb3cd91057771341b679cd6aefc
+
+Final source:
+155355 bytes
+
+SHA-256:
+76410c2340664c0754ad2a50e7be858f7223787e89cb6f10c4360577cc27f4e2
+
+Hugging Face revision:
+2a7706416cd5c9248c41e0d7347f5cb2d0a11b6c
+
+Static host:
+https://kamiloki-swrlz-forge-moba.static.hf.space/
+
+Stage:
+RUNNING
+
+Live marker:
+SWYRL_ENGINE_DEPLOY_MARKER: V5_5_DRAGONS_NATURAL_LOOK
+
+Live verification:
+PASS on attempt 1
+```
+
+v5.5 is the current observed engine state at this checkpoint. The default Den keeps the Wisp player, uses natural horizontal look input, and uses the procedural Dragon anatomy v2 model.
