@@ -407,19 +407,21 @@ Every intentional GitHub mutation involving §wyrl§ Engine (§E), its source/bu
 
 Canonical roadmap: projects/swrlz-forge-moba/ROADMAP.md
 
-### Exact manual deployment procedure
+### Manual deployment procedure
 
-The dedicated deployment workflow is intentionally `workflow_dispatch`-only. Do NOT restore a `push` trigger and do NOT deploy intermediate §E mutations.
+Production deployment is a **final release action**, not a file-triggered side effect. Repository mutations must never be used as a substitute deployment trigger.
 
-After ALL source, version, manifest, README/Space metadata, router, roadmap, integrity values, and workflow verification changes for the update are committed to `main`:
+When the §E update is fully ready — all intended source/code/UI changes are finished, version surfaces and roadmap are synchronized, integrity/build validation is complete, and the final intended state is committed to `main` — explicitly start the project's existing manual production deployment workflow.
 
-1. Confirm `.github/workflows/deploy-swrlz-forge-moba.yml` contains only the manual `workflow_dispatch` production trigger.
-2. Manually dispatch **Deploy §wyrl§ Engine to Hugging Face** from the `main` branch using GitHub Actions **Run workflow**, which invokes the workflow's `workflow_dispatch` event. If an authenticated GitHub action/tool capable of workflow dispatch is available, use it directly against `deploy-swrlz-forge-moba.yml` with ref `main`; otherwise use the GitHub Actions UI Run workflow control. Never substitute a source-file commit/push as a deployment trigger.
-3. Immediately identify the newly created run and verify its event is `workflow_dispatch` and its `head_sha` equals the final intended §E `main` commit. If either differs, do not accept the run as the release.
-4. Follow that exact run through all jobs to terminal `success`.
-5. Inspect the deployment receipt for the source commit, source version/SHA, HF revision, app URL, and RUNNING stage.
-6. Verify the served static page contains the expected current `SWYRL_ENGINE_DEPLOY_MARKER` and current engine title/version.
-7. Only then mark the roadmap deployment/live-verification fields complete and report success.
-8. Return the exact GitHub Actions run URL plus `https://kamiloki-swrlz-forge-moba.static.hf.space/` to the user.
+The router does **not** depend on a hard-coded workflow display name or on touching a particular file. Discover/use the repository's existing manual §E production deployment workflow by its purpose and `workflow_dispatch` capability. Keep production deployment manual-only; do not add `push`/path triggers merely to make deployment happen.
 
-If this chat/tool environment cannot actually issue a `workflow_dispatch` request, state that limitation explicitly rather than pretending an automatic/push run was manually dispatched.
+After starting it:
+
+1. Identify the newly created run and require event `workflow_dispatch`.
+2. Require its `head_sha` to equal the final intended §E `main` commit.
+3. Follow that exact run through terminal success.
+4. Inspect its deployment receipt/state and verify the served static page contains the expected current deploy marker and engine version.
+5. Only then record deployment/live verification in the roadmap and report completion.
+6. Return the exact deployment-run URL and the live §wyrl§ Engine page URL.
+
+If the available authenticated GitHub tooling cannot issue a manual workflow dispatch, state that limitation explicitly; never manufacture a deployment by editing/touching a watched file and never count an automatic push run as the required manual release.
