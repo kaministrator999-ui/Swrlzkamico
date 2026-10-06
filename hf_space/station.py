@@ -60,6 +60,7 @@ def persist_runtime_diagnostic(request_id,model_id,event_type,diagnostic):
         "PROGRAMMING_GENERATION_TELEMETRY":("programming","candidate-attempt-telemetry.json","swrlz-github-programming-attempt-log-v1"),
         "ONLINE_RESEARCH_TRACE":("online-research","online-research-trace.json","swrlz-github-online-research-trace-v1"),
         "ONLINE_RESEARCH_OUTCOME":("online-research","online-research-outcome.json","swrlz-github-online-research-outcome-v2"),
+        "KNOWLEDGE_ACQUISITION_SNAPSHOT":("knowledge-snapshots","knowledge-snapshot.json","swrlz-knowledge-acquisition-snapshot-v1"),
     }
     spec=allowed.get(str(event_type or ""))
     if spec is None or not isinstance(diagnostic,dict):
@@ -182,6 +183,49 @@ def persist_runtime_diagnostic(request_id,model_id,event_type,diagnostic):
     return {
         "ok":False,"reason":"github-write-retry-exhausted","path":path,"branch":"runtime",
         "attempts":max_attempts,"conflictCount":conflicts,"errorPreview":last_error_preview,
+    }
+
+def _bounded_knowledge_snapshot(request_id,prompt,online_research,trace,sources,widgets,final_response,status_trail):
+    """Separate learning snapshot: compact, reviewable, and intentionally not a debug dump."""
+    clean_prompt=str(prompt or "").strip()[:4000]
+    useful_sources=[]
+    for item in (sources or [])[:12]:
+        if not isinstance(item,dict):continue
+        useful_sources.append({
+            "title":str(item.get("title") or item.get("name") or "")[:240],
+            "source":str(item.get("source") or item.get("provider") or "")[:120],
+            "url":str(item.get("url") or "")[:900],
+            "snippet":str(item.get("snippet") or "")[:900],
+            "rank":item.get("rank") if isinstance(item.get("rank"),(int,float)) else None,
+        })
+    research=online_research if isinstance(online_research,dict) else {}
+    return {
+        "schema":"swrlz-knowledge-acquisition-snapshot-v1",
+        "requestId":str(request_id or "")[:160],
+        "trigger":{"userText":clean_prompt,"sha256":hashlib.sha256(clean_prompt.encode("utf-8")).hexdigest()},
+        "research":{
+            "kind":str(research.get("kind") or "")[:80],
+            "status":str(research.get("status") or "")[:80],
+            "provider":str(research.get("provider") or "")[:120],
+            "reason":str(research.get("reason") or "")[:160],
+            "query":str(research.get("query") or "")[:800],
+            "resultCount":research.get("resultCount") if isinstance(research.get("resultCount"),(int,float)) else None,
+            "sources":useful_sources,
+            "sourceSites":sorted({str(urllib.parse.urlsplit(str(x.get("url") or "")).hostname or "").lower() for x in useful_sources if x.get("url")})[:12],
+            "widgetKinds":[str(x.get("kind") or "")[:80] for x in (widgets or []) if isinstance(x,dict)][:8],
+            "trace":[{
+                "phase":str(x.get("phase") or "")[:100],
+                "provider":str(x.get("provider") or "")[:100],
+                "activity":str(x.get("activity") or "")[:240],
+                "status":x.get("status") if isinstance(x.get("status"),(int,float,str)) else None,
+                "elapsedMs":x.get("elapsedMs") if isinstance(x.get("elapsedMs"),(int,float)) else None,
+            } for x in (trace or [])[-32:] if isinstance(x,dict)],
+        },
+        "answer":{"text":str(final_response or "")[:16000],"sha256":hashlib.sha256(str(final_response or "").encode("utf-8")).hexdigest()},
+        "followUpWindow":{"maxUserTurns":3,"captured":[],"state":"OPEN"},
+        "review":{"state":"PENDING","promoteToLocalKnowledge":False,"notes":[]},
+        "privacy":{"preciseLocationStored":False,"privateReasoningStored":False,"fullHistoryStored":False},
+        "statusTrail":[{"phase":str(x.get("phase") or "")[:100],"reason":str(x.get("reason") or "")[:240]} for x in (status_trail or [])[-32:] if isinstance(x,dict)],
     }
 
 def _session(request):
@@ -754,6 +798,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
         if not text:raise RuntimeError("R39 emitted no DELTA")
         github_telemetry=None
         online_outcome=None
+        knowledge_snapshot=None
         with _lock:
             g=s["activeGeneration"]
             completed_ms=int(time.time()*1000)
@@ -921,6 +966,11 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     "preciseLocationStored":False,
                     "privateReasoningStored":False,
                 }
+            if online_research:
+                knowledge_snapshot=_bounded_knowledge_snapshot(
+                    request_id,payload.get("prompt"),online_research,online_trace,
+                    online_sources,online_widgets,text,g.get("status") or []
+                )
             if intent.get("codingTask") and generation_telemetry:
                 github_telemetry={
                     "schema":"swrlz-station-programming-log-v1",
@@ -965,6 +1015,10 @@ def _run(key,request_id,model_id,payload,assistant_id):
                             target_message.setdefault("meta",{})["onlineLogPersistence"]=copy.deepcopy((s.get("activeGeneration") or {}).get("onlineLogPersistence") or {})
                     s["revision"]+=1
             threading.Thread(target=persist_online_outcome,daemon=True,name="online-outcome-"+request_id[:8]).start()
+        if knowledge_snapshot is not None:
+            def persist_knowledge_snapshot():
+                persist_runtime_diagnostic(request_id,str(online_outcome.get("selectedModelId") if isinstance(online_outcome,dict) else model_id),"KNOWLEDGE_ACQUISITION_SNAPSHOT",knowledge_snapshot)
+            threading.Thread(target=persist_knowledge_snapshot,daemon=True,name="knowledge-snapshot-"+request_id[:8]).start()
         if github_telemetry is not None:
             def persist_programming_log():
                 result=persist_runtime_diagnostic(request_id,model_id,"PROGRAMMING_GENERATION_TELEMETRY",github_telemetry)
