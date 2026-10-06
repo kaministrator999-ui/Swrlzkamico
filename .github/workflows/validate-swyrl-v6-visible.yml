@@ -1,0 +1,43 @@
+name: Validate §wyrl§ v6 visibility hotfix
+on:
+  push:
+    branches: [engine-v6-visible-roadmap]
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Reconstruct candidate and record receipt
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks']))).decode()
+          for rel in m['patches']:
+              spec=importlib.util.spec_from_file_location('p'+str(abs(hash(rel))),root/rel)
+              mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);raw=mod.apply(raw)
+          b=raw.encode(); sha=hashlib.sha256(b).hexdigest()
+          assert 'V6_0_GLITCH_DRAGON_DEN' in raw
+          assert 'data-project-template="glitch-dragons-den"' in raw
+          assert 'Glitch Dragon Den' in raw
+          assert "Dragon's Den v5.3 · grouped architecture + immersive cavern" not in raw
+          Path('/tmp/v6.html').write_bytes(b)
+          a=raw.index('<script type="module">')+len('<script type="module">');z=raw.rindex('</script>')
+          Path('/tmp/v6.mjs').write_text(raw[a:z])
+          Path('projects/swrlz-forge-moba/HOTFIX_RECEIPT.txt').write_text(f'{len(b)} {sha}\n')
+          PY
+          node --check /tmp/v6.mjs
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add projects/swrlz-forge-moba/HOTFIX_RECEIPT.txt
+          git diff --cached --quiet || (git commit -m "Record v6 visibility hotfix receipt" && git push)
