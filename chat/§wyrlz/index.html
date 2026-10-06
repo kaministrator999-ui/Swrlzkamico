@@ -996,7 +996,7 @@
           }
           stack.appendChild(card);
         }
-        const body=node.querySelector(".assistant-body");if(body)body.after(stack);else node.appendChild(stack);
+        const body=node.querySelector(".assistant-body");\n        const status=node.querySelector(".station-progress");\n        // Widget-first chronology is canonical for both live and committed messages.\n        // Live: widget -> semantic status -> streamed prose. Committed: widget -> final prose.\n        if(status)status.before(stack);else if(body)body.before(stack);else node.appendChild(stack);
       };
       const addWidgetBlock=(node,msg)=>renderWidgetStack(node,widgetsFromMessage(msg));
 
