@@ -16,7 +16,7 @@ This roadmap is mandatory release lineage for every governed §E GitHub update. 
 - v5.9 — soft Wisp, planted feet, visible Undo/Redo/history; marker V5_9_WISP_SOFT_CONTACT_HISTORY.
 - v6.0 — researched Glitch Dragon Den — Fracture Forge; marker V6_0_GLITCH_DRAGON_DEN.
 - v6.1 — exposes Fracture Forge in Projects hub, fixes project routing, clarifies Seed Chamber version presentation; marker V6_1_GLITCH_DEN_STARTER.
-- v6.4 — Glitch Den now builds directly from the regular Dragon Den source-of-truth layout, then applies its glitch theme in-place; marker V6_4_GLITCH_DEN_DRAGON_V3.
+- v6.5 — Glitch Den now builds directly from the regular Dragon Den source-of-truth layout, then applies its glitch theme in-place; marker V6_5_GLITCH_DEN_RUNTIME.
 
 ## v6.0 — Glitch Dragon Den / Fracture Forge
 
@@ -45,24 +45,24 @@ Source authority:
 - live verification: pending production deployment
 
 
-## v6.4 — exact Dragon Den structural parity
+## v6.5 — exact Dragon Den structural parity
 
 The Glitch Den no longer maintains a separately invented megacavern layout. `buildGlitchDragonsDenProject()` now invokes `buildDragonsDenProject()` as its structural source of truth and rethemes the resulting scene in-place. This makes its architecture, floor plan, rooms, placements, groups, exits, collision layout, and camera framing exactly the regular Dragon Den while retaining a Glitch identity through palette/material treatment and themed names. Future regular-Den structural changes automatically propagate to the Glitch Den.
 
 Source authority:
-- artifact: swyrl_engine_v6_4.html
-- bytes: 171486
-- SHA-256: 98cd0c5a8d376a18ccbe2b958556b98cdc546bb6dc7f6930c4d4916b6d25704d
-- marker: SWYRL_ENGINE_DEPLOY_MARKER: V6_4_GLITCH_DEN_DRAGON_V3
+- artifact: swyrl_engine_v6_5.html
+- bytes: 171694
+- SHA-256: f0c3a048c2189a4b761c091971ee6737bcac06c12fb52125a5c2f31045e23a1f
+- marker: SWYRL_ENGINE_DEPLOY_MARKER: V6_5_GLITCH_DEN_RUNTIME
 - validation: exact-base call, legacy megacavern removal, project-card parity description, reconstruction, and JavaScript syntax PASS
 - production deployment: pending final DEPLOY_REQUEST.json button press
 - live verification: pending production deployment
 
-## v6.4 — Glitch Dragon Den II: Apex Nexus
+## v6.5 — Glitch Dragon Den II: Apex Nexus
 
-Adds a second Glitch Den while preserving the original parity variant. Apex Nexus uses a dragon-scale layered cavern shell, central Nexus forge, crystal-vein clusters, throne vault, route gates, atmospheric point-light field, and three larger anatomy-v2 dragons: §wyrl§ Apex Glitch Dragon, Frost Nexus Dragon, and Ember Fracture Dragon.\n\nSource authority: swyrl_engine_v6_4.html · 171486 bytes · SHA-256 98cd0c5a8d376a18ccbe2b958556b98cdc546bb6dc7f6930c4d4916b6d25704d · marker V6_4_GLITCH_DEN_DRAGON_V3. Candidate reconstruction and JavaScript syntax validation PASS.\n\n## v6.4 — single Glitch Den + Dragon Anatomy v3
+Adds a second Glitch Den while preserving the original parity variant. Apex Nexus uses a dragon-scale layered cavern shell, central Nexus forge, crystal-vein clusters, throne vault, route gates, atmospheric point-light field, and three larger anatomy-v2 dragons: §wyrl§ Apex Glitch Dragon, Frost Nexus Dragon, and Ember Fracture Dragon.\n\nSource authority: swyrl_engine_v6_5.html · 171694 bytes · SHA-256 f0c3a048c2189a4b761c091971ee6737bcac06c12fb52125a5c2f31045e23a1f · marker V6_5_GLITCH_DEN_RUNTIME. Candidate reconstruction and JavaScript syntax validation PASS.\n\n## v6.5 — single Glitch Den + Dragon Anatomy v3
 
-Corrects the v6.3 duplicate-project mistake. There is one Glitch Dragon Den — Fracture Forge. The researched Apex environment ideas are folded into that project, while the extra Apex Nexus card/router/builder are removed. Dragons now use anatomy-v2 as the coherent skeletal base with v3 layered crown horns, overlapping dorsal armor, crystalline cheek/shoulder structures, fracture-energy halo and stronger material contrast. Validation explicitly asserts exactly one Glitch Den project card and absence of the accidental Apex template.\n\nSource authority: swyrl_engine_v6_4.html · 171486 bytes · SHA-256 98cd0c5a8d376a18ccbe2b958556b98cdc546bb6dc7f6930c4d4916b6d25704d · marker V6_4_GLITCH_DEN_DRAGON_V3. Reconstruction + JavaScript syntax PASS.\n\n## Mandatory update protocol
+Corrects the v6.3 duplicate-project mistake. There is one Glitch Dragon Den — Fracture Forge. The researched Apex environment ideas are folded into that project, while the extra Apex Nexus card/router/builder are removed. Dragons now use anatomy-v2 as the coherent skeletal base with v3 layered crown horns, overlapping dorsal armor, crystalline cheek/shoulder structures, fracture-energy halo and stronger material contrast. Validation explicitly asserts exactly one Glitch Den project card and absence of the accidental Apex template.\n\nSource authority: swyrl_engine_v6_5.html · 171694 bytes · SHA-256 f0c3a048c2189a4b761c091971ee6737bcac06c12fb52125a5c2f31045e23a1f · marker V6_5_GLITCH_DEN_RUNTIME. Reconstruction + JavaScript syntax PASS.\n\n## v6.5 — Fracture Forge runtime parity + default\n\nGlitch Dragon Den — Fracture Forge now includes the Wisp Visitor / Creator player avatar used by the regular Dragon Den, therefore the existing first-person PIE/twin-stick runtime resolves a valid player hero in the redesigned den. The engine build default and startup project are now glitch-dragons-den. The v3 dragons and Fracture Forge environment remain unchanged. Validation asserts Wisp, first-person controls, default-project metadata, one Glitch Den card, and absence of the retired duplicate Apex template.\n\nSource authority: swyrl_engine_v6_5.html · 171694 bytes · SHA-256 f0c3a048c2189a4b761c091971ee6737bcac06c12fb52125a5c2f31045e23a1f · marker V6_5_GLITCH_DEN_RUNTIME. Reconstruction + JavaScript syntax PASS.\n\n## Mandatory update protocol
 
 Every §E GitHub mutation is a governed update. Each update must synchronize version surfaces when applicable, update this roadmap, use the dedicated DEPLOY_REQUEST.json final deploy-button mechanism, follow its resulting Actions run to terminal state, verify the live Hugging Face marker, and return both the deployment-run URL and live §wyrl§ Engine URL to the user. Documentation/governance-only changes may retain the current engine binary version, but still require a roadmap entry and deployment verification.
 
