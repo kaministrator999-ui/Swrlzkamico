@@ -5,8 +5,8 @@
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
   "finalArtifact": "swyrl_engine_v6_0.html",
-  "finalBytes": 170965,
-  "finalSha256": "747076cbbd43b881887392bcf69a7721905564ffc155e3ab946831ed3a640569",
+  "finalBytes": 0,
+  "finalSha256": "PENDING-V6-VISIBILITY-HOTFIX",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
