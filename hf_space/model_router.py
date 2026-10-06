@@ -256,6 +256,12 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
             yield {"type":"COMPLETED","phase":"COMPLETE"}
             return
         # Programming questions/examples/reasoning were routed before retrieval so online logs bind the selected model.
+    if str(intent.get("contentMode") or "")=="lyrics-verification" and online_result and str(online_result.get("status") or "").upper()!="OK":
+        message="I searched for the requested lyrics, but the retrieval pipeline did not produce verified fetched evidence, so I won't guess or reconstruct the lyrics."
+        yield {"type":"STATUS","phase":"LYRICS_RETRIEVAL_FAILED","reason":message,"categories":["ONLINE_RESEARCH","LYRICS","GROUNDING"]}
+        yield {"type":"DELTA","text":message}
+        yield {"type":"COMPLETED","phase":"COMPLETE"}
+        return
     if online_result and isinstance(online_result.get("modelContext"),dict) and str(online_result["modelContext"].get("epistemicPolicy") or "").startswith("LYRICS VERIFICATION:"):
         lyrics_text=_lyrics_retrieval_payload(online_result,str(payload.get("prompt") or ""))
         if lyrics_text:
