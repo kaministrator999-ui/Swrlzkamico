@@ -38,8 +38,8 @@ jobs:
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V6_7_CONTACT_TOOLS" dist/swrlz-forge-moba/index.html
-          grep -q "<title>§wyrl§ Engine · Maker v6.7</title>" dist/swrlz-forge-moba/index.html
+          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V6_8_DEN2_GROUND_SNAP" dist/swrlz-forge-moba/index.html
+          grep -q "<title>§wyrl§ Engine · Maker v6.8</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
@@ -111,9 +111,9 @@ jobs:
               "sourceRepository": "kaministrator999-ui/Swrlzkamico",
               "sourceCommit": source_sha,
               "sourcePath": "projects/swrlz-forge-moba",
-              "sourceVersion": "v6.7",
+              "sourceVersion": "v6.8",
               "engineName": "§wyrl§ Engine",
-              "sourceSha256": "d71cc0f3c57692b1c78830d76ea73069804a9306838b29ae89ae0bafd91222d2",
+              "sourceSha256": "98e383e3795926c5375eace3b5db22dca92b498caeaa1935e51fc2bafd489613",
               "spaceRepository": target,
               "spaceRevision": info.sha,
               "spacePage": "https://huggingface.co/spaces/kamiloki/swrlz-forge-moba",
@@ -130,7 +130,7 @@ jobs:
           print(json.dumps(receipt, indent=2))
           PY
 
-      - name: Verify live Space serves §wyrl§ Engine v6.7
+      - name: Verify live Space serves §wyrl§ Engine v6.8
         env:
           SOURCE_SHA: ${{ github.sha }}
           APP_URL: ${{ steps.deploy_space.outputs.app_url }}
@@ -141,15 +141,15 @@ jobs:
           for attempt in 1 2 3 4 5 6; do
             echo "Live verification attempt $attempt"
             if curl -fsSL --max-time 30 "$URL&attempt=$attempt" -o /tmp/forge-live.html; then
-              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V6_7_CONTACT_TOOLS" /tmp/forge-live.html; then
-                echo "Verified: live HF Space is serving §wyrl§ Engine v6.7."
+              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V6_8_DEN2_GROUND_SNAP" /tmp/forge-live.html; then
+                echo "Verified: live HF Space is serving §wyrl§ Engine v6.8."
                 exit 0
               fi
-              echo "Live page responded, but v6.7 marker was not present yet."
+              echo "Live page responded, but v6.8 marker was not present yet."
             fi
             sleep 10
           done
-          echo "::error::Hugging Face upload completed, but the live Space did not serve the v6.7 marker within the verification window."
+          echo "::error::Hugging Face upload completed, but the live Space did not serve the v6.8 marker within the verification window."
           exit 1
 
       - name: Preserve deploy receipt
