@@ -31,3 +31,5 @@ jobs:
           node --check /tmp/e.mjs
 
 # retry current v6.6 controller
+
+# retry preserve horizontal controller
