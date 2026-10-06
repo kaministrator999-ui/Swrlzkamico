@@ -32,5 +32,7 @@
     "patches/v6_3_glitch_den_apex.py",
     "patches/v6_4_single_glitch_den_dragon_v3.py",
     "patches/v6_5_glitch_den_runtime_default.py"
-  ]
+  ],
+  "finalBytes": 171694,
+  "finalSha256": "f0c3a048c2189a4b761c091971ee6737bcac06c12fb52125a5c2f31045e23a1f"
 }
