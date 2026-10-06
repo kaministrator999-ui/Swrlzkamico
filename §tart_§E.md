@@ -298,3 +298,37 @@ v5.5 is the current observed engine state at this checkpoint. The default Den ke
 - contact range / leg stretch is clamped
 - terrain fallback remains armed when no mesh is hit
 - this system stays in §wyrl§ Engine only; no chat UI work belongs in this lane
+
+
+## Verified v5.6 deployment checkpoint
+
+```text
+Engine:
+§wyrl§ Engine v5.6
+
+GitHub source/deploy commit:
+3b2f29aac2460d0d184592651b37699477f8329d
+
+Final source:
+161347 bytes
+
+SHA-256:
+c4c0d88febfdfa2bf1c9b02925c6abd9ddafe05010ec5917dac2cd8eb05886e4
+
+Hugging Face revision:
+0e2ed2bdb98b7450931208be0fefe51b3a579f4d
+
+Static host:
+https://kamiloki-swrlz-forge-moba.static.hf.space/
+
+Stage:
+RUNNING
+
+Live marker:
+SWYRL_ENGINE_DEPLOY_MARKER: V5_6_DRAGON_GROUND_CONTACT
+
+Live verification:
+PASS on attempt 1
+```
+
+v5.6 is the current observed engine state at this checkpoint. Dragon wings use the detailed multi-finger membrane pass, all four feet are explicit, and dragons use reusable raycast-based surface foot contact for rocks, pedestals, uneven architecture, and terrain fallback.
