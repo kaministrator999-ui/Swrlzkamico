@@ -2,9 +2,9 @@
 
 Canonical lane: §E / §wyrl§ Engine  
 History audited through: **2026-10-07**  
-Current governed engine release: **v8.3 — Zones & Starforge (native acceptance, exact reconstruction, and syntax verified)**
+Current governed engine release: **v8.4 — Wayfinding & Zone Preview (native acceptance, exact reconstruction, and syntax verified)**
 
-Previously verified live release: **v8.2 — Bootstrap Repair** ([Actions 37689304845](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37689304845), exact trigger head and served hash confirmed)
+Previously verified live release: **v8.3 — Zones & Starforge** ([Actions 37697374632](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37697374632), trigger `d10953ee23fcefc8e66a6e2ee86b7b2e51421313`; exact served marker, `SOURCE.json`, and normalized artifact hash confirmed)
 
 This roadmap is the mandatory release lineage for governed §E GitHub updates. Root `§tart_§E.md` defines the deployment contract.
 
@@ -48,6 +48,7 @@ This roadmap is the mandatory release lineage for governed §E GitHub updates. R
 | v8.1 | 2026-10-07 | Graphics scalability, Auto quality, persistent render/shadow/frame-cap controls, independent Editor and Play FPS/frame-time overlays, and controller delta-time audit. |
 | v8.2 | 2026-10-07 | Bootstrap-order repair: initialize performance controls after engine state and before canonical project hydration. |
 | v8.3 | 2026-10-07 | Safe named zone travel, refined Embervault wayfinding, independent Starforge Observatory starter, project-owned environments/recovery, and editor authoring fixes. |
+| v8.4 | 2026-10-07 | Parallel native wayfinding refinements in Embervault and Starforge; optional editor-only destination rings/heading arrows and axis-preserving destination framing. |
 
 ## Artifact authority
 
@@ -88,6 +89,7 @@ This roadmap is the mandatory release lineage for governed §E GitHub updates. R
 | v8.0 | swyrl_engine_v8_0.html | 383338 | 92ddfc3770f874b5f8f91fc7fad536b15961c1627146be5995936c4355805a88 |
 | v8.2 | swyrl_engine_v8_2.html | 393393 | d7dc50a0697eb9bf5286131ff6dcaaae4fda7f3db7a3ecede90e8e1b0ef38935 |
 | v8.3 | swyrl_engine_v8_3.html | 528670 | ca4d43e2e560aee39a0fff48b07885d180d96dc64cbeb5c5bd00bdf23490d548 |
+| v8.4 | swyrl_engine_v8_4.html | 533612 | 58252d18ee4fedf3acb9b5ccbb8e19dbc10c421345deb507a016151ab1ceca62 |
 
 ## Git push audit — 2026-10-05 through 2026-10-07
 
@@ -132,7 +134,24 @@ The §E project-path history was re-audited directly from GitHub on 2026-10-07. 
 
 The 2026-10-07 audit repaired roadmap drift rather than rewriting Git history: v3/v4/v4.1/v5/v5.1 were added to the formal lineage; v7.4 and v7.5 were restored as distinct releases instead of being mislabeled v7.6; historical artifact authority was recovered from each release's own Git revision instead of inheriting later global replacements; literal escaped newline artifacts were removed; and the v7.8 artifact was retained as the governing release at that audit checkpoint. Later release entries below supersede that checkpoint.
 
+## v8.4 — Wayfinding & Zone Preview
+
+Both spatial workspaces continue together. The **170-actor Embervault Atelier** retains three editor layers, six stations, eight destinations, and three walkable tiers. Native authoring moves its arrival directory into view beside the approach and clarifies upper/lower directions. **Starforge Observatory** retains 123 actors, three layers, six stations, and seven destinations; its Garden route guide moves to the path perimeter, leaving the central walking route and project pads open. The saved scenes remain independent.
+
+| Patch | Capability |
+|---|---|
+| `v8_4_zone_editor_preview.py` | Optional editor landing rings and heading arrows, destination framing that preserves orthographic axes, transient helper lifecycle, and editor-only preference persistence. |
+| `v8_4_wayfinding_release.py` | Native scene promotion, v8.4 version surfaces, and marker `V8_4_WAYFINDING_ZONE_PREVIEW`. |
+
+**Show destination markers** starts off by default and saves its preference only on this device. The destination previews are noncolliding helpers; they neither add actors nor enter saved project data. Play/Simulate hides them. Travel safety checks and each project's stations, layers, destinations, and environment remain intact.
+
+Native scene acceptance passed: Den has eight actual T-menu journeys, all six E station interactions, the central arrival walk, and Save/Load; Starforge has seven native menu journeys, eight affected walking legs, three affected station interactions, Save/Load, and fall recovery. The governed 43-patch reconstruction, generated JavaScript syntax, and final combined native checks passed with no browser errors. Both scene validators report zero issues/warnings; preview toggling, eight-to-seven marker replacement through Projects, framing, runtime hiding, Arrival travel, Stop restoration, and v8.4/v6.4 preferred/legacy API aliases passed. All 20 native preview lifecycle checks also passed without page errors: device preference/reload, helper and contact exclusion, framing with all three orthographic axes/distance/zoom preserved, no visitor/actor/history/revision/dirty mutation, exact-once resource disposal, Save exclusion, Edit/Delete/Undo/Redo, runtime hiding, Stop restoration, and marker replacement through Den → Starforge → Blank → native Load. The final `DEPLOY_REQUEST.json` commit then selects the exact production run; completion requires successful Actions and matching served marker, `SOURCE.json`, and normalized complete artifact hash. No release content changes follow that final trigger.
+
+Artifact: `swyrl_engine_v8_4.html` · **533612 bytes** · SHA-256 `58252d18ee4fedf3acb9b5ccbb8e19dbc10c421345deb507a016151ab1ceca62` · marker `V8_4_WAYFINDING_ZONE_PREVIEW`.
+
 ## v8.3 — Zones & Starforge
+
+Production deployment **succeeded** in [Actions 37697374632](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37697374632) from final trigger `d10953ee23fcefc8e66a6e2ee86b7b2e51421313`. Its normalized served source is **528,670 bytes**, SHA-256 `ca4d43e2e560aee39a0fff48b07885d180d96dc64cbeb5c5bd00bdf23490d548`, with marker `V8_3_ZONES_STARFORGE`. The validated normal source commit was `9c357e8adac2a1728842405dbb9d4c2fc6b806fd`; live screenshots and both project boots were checked without browser errors before starting v8.4.
 
 Embervault remains the default Dragon Den and gains a native arrival directory, clearer upper/lower wayfinding, station travel guidance, and eight saved destinations. The refined scene has **170 actors, three editor layers, six stations, and three physical tiers**. Its physical ramps and supported walking routes remain available alongside the **T / Zones** menu.
 

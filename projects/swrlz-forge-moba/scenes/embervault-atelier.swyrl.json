@@ -1,6 +1,6 @@
 {
-  "engine": "§wyrl§ Engine · Maker v8.3",
-  "version": 8.3,
+  "engine": "§wyrl§ Engine · Maker v8.4",
+  "version": 8.4,
   "project": {
     "name": "Dragon Den — Embervault Atelier",
     "template": "glitch-dragons-den",
@@ -7686,7 +7686,7 @@
         ],
         "workspace": null,
         "sign": {
-          "text": "WEST PROJECTS\nCode Studio ↑ · World Forge ↓",
+          "text": "WORLD FORGE · LOWER\nWest ramp ↑ Code Studio · upper",
           "accent": "#d6bb84",
           "width": 4.1,
           "height": 1.025
@@ -7748,7 +7748,7 @@
         ],
         "workspace": null,
         "sign": {
-          "text": "EAST PROJECTS\nArchive Garden ↑ · Prototypes ↓",
+          "text": "PROTOTYPE COURT · LOWER\nEast ramp ↑ Archive Garden · upper",
           "accent": "#90d2c8",
           "width": 4.1,
           "height": 1.025
@@ -10182,7 +10182,7 @@
         ],
         "workspace": null,
         "sign": {
-          "text": "STUDY GALLERY · 3.4m\nCode · Archive · Council ↑",
+          "text": "UPPER STUDY · 3.4m\n← Code · Archive → · Council ahead ↑",
           "accent": "#80cbd3",
           "width": 5,
           "height": 1.25
@@ -10244,7 +10244,7 @@
         ],
         "workspace": null,
         "sign": {
-          "text": "↑ WALK TO STUDY\nT · Choose a zone to teleport",
+          "text": "↑ CODE STUDIO · UPPER\nGallery · Council ahead · T travel",
           "accent": "#d4bb8d",
           "width": 2.6,
           "height": 0.65
@@ -10306,7 +10306,7 @@
         ],
         "workspace": null,
         "sign": {
-          "text": "↑ WALK TO STUDY\nT · Choose a zone to teleport",
+          "text": "↑ ARCHIVE GARDEN · UPPER\nGallery · Council ahead · T travel",
           "accent": "#d4bb8d",
           "width": 2.6,
           "height": 0.65
@@ -10380,7 +10380,7 @@
         ],
         "rotation": [
           0,
-          0.17999999999999994,
+          0,
           0
         ],
         "scale": [
@@ -10492,13 +10492,13 @@
         "workspace": null,
         "sign": null,
         "position": [
-          -3.3,
+          -2.9,
           0.905,
-          12.4
+          8.8
         ],
         "rotation": [
           0,
-          0,
+          0.5006677248747361,
           0
         ],
         "scale": [

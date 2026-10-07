@@ -1,6 +1,6 @@
 {
-  "engine": "§wyrl§ Engine · Maker v8.3",
-  "version": 8.3,
+  "engine": "§wyrl§ Engine · Maker v8.4",
+  "version": 8.4,
   "project": {
     "name": "Starforge Observatory",
     "template": "starforge-observatory",
@@ -196,7 +196,7 @@
     "terrainSnapEnabled": false,
     "viewMode": "lit",
     "cameraView": "perspective",
-    "revision": 3,
+    "revision": 2,
     "layers": [
       {
         "id": "layer-a_vd4m9nh2",
@@ -7280,19 +7280,19 @@
         ],
         "workspace": null,
         "sign": {
-          "text": "CODE ←  GARDEN  → PROTOTYPE\nUPPER SKYWALK: reach the landing before turning",
+          "text": "CODE ← · → PROTOTYPE\nUpper: follow ramps to landings",
           "accent": "#9abec7",
-          "width": 5,
-          "height": 0.82
+          "width": 2.6,
+          "height": 0.68
         },
         "position": [
-          0,
-          5.1,
-          7.1
+          3.6,
+          4.45,
+          5.5
         ],
         "rotation": [
           0,
-          0,
+          -0.28,
           0
         ],
         "scale": [

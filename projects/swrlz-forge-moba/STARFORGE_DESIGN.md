@@ -103,3 +103,27 @@ ran throughout. Arrival and menu screenshots used normal rendering.
 
 These are design references for the desktop workspace and future VR work.
 They do not imply implemented headset support or full accessibility compliance.
+
+## v8.4 arrival and wayfinding pass
+
+The Garden route guide now sits beside the eastern planting at [3.6, 4.45, 5.5],
+facing the Arrival approach. Its panel was reduced from 5 × 0.82 to 2.6 × 0.68
+and shortened to lower-island directions plus a reminder to follow the ramps
+to their landings. The normal first-person view now keeps the central
+Observatory, armillary, and both ascents visible. The existing upper guide
+covers the next decision point without another panel.
+
+This pass changed one sign through the native Transform and Sign APIs, then
+used native Save Project and Load. The scene remains at 123 actors, three
+layers, six stations, and seven zones. Rails, pads, all other actor fields,
+station files, destination coordinates, and environment/recovery settings
+were preserved. Eight affected walking legs passed from Arrival through the
+Garden and both lower island bridges; the Garden, Code, and Prototype stations
+opened with E. All seven destinations passed native T-menu travel, pause
+cancellation preserved the paused visit, and Stop restored the authored visitor.
+A background input change survived native Save/Load; restoring the project
+restored its original background and metadata. An unsupported test start
+returned to Arrival, and the authored start was restored before the final save.
+Project validation reported zero issues and zero warnings, with no browser
+page errors. Normal rendered arrival screenshots show the sightline change;
+movement measurements used the existing scratch-only drawing gate.

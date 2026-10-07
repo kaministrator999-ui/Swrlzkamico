@@ -1,4 +1,4 @@
-# Embervault Atelier v8.3: design and authoring contract
+# Embervault Atelier v8.4: design and authoring contract
 
 Build a welcoming dragon sanctuary where a person can arrive, choose a project area, write, prototype, and return to a shared hearth. The current native scene contains 170 actors, three editor layers, six workstations, and eight project-owned travel destinations. The cave should feel inhabited and substantial: stone shelter, brass ribs, restrained crystals, warm lamps, clear paths, and usable empty floors.
 
@@ -93,6 +93,14 @@ Coordinates describe authored feet targets, including existing mesh offsets. Do 
 - [x] Support, footprint, clearance, transformed geometry, hidden-floor, history, cancellation, and recovery checks passed in isolated engine verification.
 - [x] The refined den passed all eight native T-menu journeys; E opened all six stations immediately after arrival at their destinations.
 - [x] The final v8.3 governed artifact reconstructed exactly and passed generated JavaScript syntax and version/marker checks. Production acceptance follows the immutable Actions receipt and served marker/hash after the final trigger.
+
+## v8.4 visitor-height wayfinding pass
+
+The first-person arrival view exposed a clipped directory at the left edge of the camera. Native editor transforms moved its existing assembly from `[-3.3, 0.905, 12.4]` to `[-2.9, 0.905, 8.8]` and turned it toward Arrival Court with a heading of approximately `0.501` radians. The sign remains **2.45 × 0.75**; its inward edge stays outside the central route, and its base sits inside the west ramp rather than across the ramp mouth. A rendered before/after check now shows the whole face, with the hearth and cross-room sightline clear.
+
+The existing west/east decision signs explicitly name **World Forge / Prototype Court as lower** and **Code Studio / Archive Garden as upper**. The ramp signs name their upper destination and offer Gallery, Council, and T travel; the upper gallery sign names Code to the left, Archive to the right, and Council ahead. This pass changes seven existing actors' sign content or transforms while retaining all 170 actors, three layers, six station records, eight destinations, physical tiers, and open project pads.
+
+The native Play pass completed all eight T-menu journeys and opened all six workstations with E. A rendered W walk along the central arrival route passed the relocated directory from `[0, 0.02, 14.1]` to `[0, -0.118, 7.38]` without lateral deflection or a fall. Prior pause and Stop restored correctly; native Save/Load retained identical scene geometry, destinations, six complete station file records, and three layers. The authored directory and signs are scene data; their readability does not depend on the editor's zone marker overlay.
 
 ## Workspace and movement contracts
 
