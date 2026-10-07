@@ -52,6 +52,6 @@
     "patches/v8_0_embervault_project.py",
     "patches/v8_1_performance_graphics.py"
   ],
-  "finalBytes": 0,
+  "finalBytes": 393412,
   "finalSha256": "68d7066049a85681749c320b80ee0727790c02a17c7afb0c09d386dc7449b03f"
 }
