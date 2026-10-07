@@ -1,0 +1,345 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-muykvnbw-2474642587-1179353923",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "519d62eb5426736c1112df1eca5e08b3fdf147f1",
+  "persistedAtUnixMs": 1791406001714,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-muykvnbw-2474642587-1179353923",
+    "trigger": {
+      "userText": "Search the internet for the full lyrics of \"Auld Lang Syne.\". Please provide all the verses, not just the first verse, and give me the source link. Use a real web search rather than answering from memory.",
+      "sha256": "463a1ff9af62830103da65b15304d4f425df64c190c87b1e45e123f338a34026"
+    },
+    "research": {
+      "kind": "search",
+      "status": "OK",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "existing-lyrics-retrieval",
+      "query": "",
+      "resultCount": 3,
+      "sources": [
+        {
+          "title": "Auld Lang Syne Lyrics - New Years Lyrics - Lyrics On Demand",
+          "source": "www.lyricsondemand.com",
+          "url": "https://www.lyricsondemand.com/miscellaneouslyrics/newyearsongslyrics/auldlangsynelyrics.html",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Lyrics for Auld Lang Syne by Traditional - Songfacts",
+          "source": "www.songfacts.com",
+          "url": "https://www.songfacts.com/lyrics/traditional/auld-lang-syne",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Auld Lang Syne Lyrics - Free PDF to Save and Print",
+          "source": "www.singing-bell.com",
+          "url": "https://www.singing-bell.com/auld-lang-syne-lyrics-pdf/",
+          "snippet": "",
+          "rank": null
+        }
+      ],
+      "sourceSites": [
+        "www.lyricsondemand.com",
+        "www.singing-bell.com",
+        "www.songfacts.com"
+      ],
+      "widgetKinds": [
+        "search-results"
+      ],
+      "trace": [
+        {
+          "phase": "RESEARCH_STARTED",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research started",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "duckduckgo-lite",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "duckduckgo-lite",
+          "activity": "Using duckduckgo-lite",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate did not satisfy verification",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate did not satisfy verification",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate did not satisfy verification",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+      "sha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up Auld Lang Syne. lyrics all verses…"
+      },
+      {
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate"
+      },
+      {
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification"
+      },
+      {
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate"
+      },
+      {
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification"
+      },
+      {
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate"
+      },
+      {
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK"
+      },
+      {
+        "phase": "WIDGET_READY",
+        "reason": "search-results"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok."
+      },
+      {
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ]
+  }
+}
