@@ -7,10 +7,11 @@ from __future__ import annotations
 import json
 import time
 import uuid
+import urllib.parse
 from typing import Any, Callable
 
 MODULE_ID="online-research"
-VERSION="1.3.0"
+VERSION="1.4.0"
 CONTRACT_ID="swrlz_online_research_hot_v2"
 
 
@@ -48,6 +49,34 @@ def _score(item:dict[str,Any],terms:list[str])->int:
     title=str(item.get("title") or "").lower()
     hay=(title+" "+str(item.get("snippet") or "")).lower()
     return sum(4 if t in title else 1 for t in terms if t in hay)-max(0,int(item.get("rank") or 1)-1)
+
+def _url_key(url:Any)->str:
+    try:
+        parsed=urllib.parse.urlsplit(str(url or ""))
+        kept=[]
+        for key,value in urllib.parse.parse_qsl(parsed.query,keep_blank_values=True):
+            low=key.casefold()
+            if low.startswith("utm_") or low in {"fbclid","gclid","dclid","mc_cid","mc_eid","ref","referrer","source","tracking","trk"}:
+                continue
+            kept.append((key,value))
+        return urllib.parse.urlunsplit((parsed.scheme.casefold(),parsed.netloc.casefold(),parsed.path,urllib.parse.urlencode(kept,doseq=True),""))
+    except Exception:
+        return str(url or "")
+
+
+def _candidate_allowed(item:dict[str,Any],plan:dict[str,Any],terms:list[str])->bool:
+    requested=(" ".join([str(plan.get("requestedInformation") or ""),str(plan.get("target") or "")," ".join(plan.get("queries") or [])])).lower()
+    if "lyric" not in requested:
+        return True
+    generic={"lyric","lyrics","verse","verses","all","full","complete","song","songs","text","original","stanza","stanzas","history","authorship","published"}
+    core=[term for term in terms if term not in generic]
+    if not core:
+        return True
+    hay=(str(item.get("title") or "")+" "+str(item.get("snippet") or "")).lower()
+    hits=sum(1 for term in core if term in hay)
+    needed=1 if len(core)==1 else 2
+    return hits>=needed
+
 
 def normalize_plan(payload:dict[str,Any])->dict[str,Any]:
     """Normalize a Brain-authored plan; never infer semantics from punctuation alone."""
@@ -171,8 +200,9 @@ def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->di
         for item in found:
             if not isinstance(item,dict):continue
             url=_clean(item.get("url"),2000)
-            if not url or url in seen:continue
-            seen.add(url); rec={**item,"query":query,"relevanceScore":_score(item,terms)}
+            key=_url_key(url)
+            if not url or not key or key in seen or not _candidate_allowed(item,plan,terms):continue
+            seen.add(key); rec={**item,"query":query,"relevanceScore":_score(item,terms)}
             rec["snippet"]=_passage(rec.get("snippet"),terms,700); query_candidates.append(rec)
         query_candidates.sort(key=lambda x:(-int(x.get("relevanceScore") or 0),int(x.get("rank") or 999)))
         candidates.extend(query_candidates)
