@@ -65,15 +65,15 @@ patches/v7_2_wisp_locomotion_repair.py
 patches/v7_3_engine_health.py
 patches/v7_4_editor_workspaces.py
 patches/v7_5_mobile_editor_chrome.py
-patches/v7_6_desktop_editor_polish.py\npatches/v7_7_canonical_glitch_den_project.py
+patches/v7_6_desktop_editor_polish.py\npatches/v7_7_canonical_glitch_den_project.py\npatches/v7_8_layers_desktop_docks.py
 
 final:
   swyrl_engine_v7_6.html
-  bytes 279207
-  sha256 75aef1f830dd7117c5675ac1666bdf70755c7be007c26f986c4acb169293bf25
+  bytes 286002
+  sha256 1bf5d8d65f2e1a7af9c30311c119b2bed3fa5688a5ea6e0ff0995a87f38f38cc
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V7_7_CANONICAL_GLITCH_DEN_PROJECT
+  SWYRL_ENGINE_DEPLOY_MARKER: V7_8_LAYERS_DESKTOP_DOCKS
 ```
 
 ## Grouping contract
