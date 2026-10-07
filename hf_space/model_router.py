@@ -238,7 +238,8 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     if online_plan.get("requested"):
         phase="WEATHER_FETCH_STARTED" if online_plan.get("kind")=="weather" else "SEARCH_STARTED"
         search_target=str(online_plan.get("query") or payload.get("prompt") or "that").strip()
-        yield {"type":"STATUS","phase":phase,"reason":"I’m on it — looking up "+search_target+"…","categories":["ONLINE_RESEARCH",str(online_plan.get("kind") or "search").upper()]}
+        opening=_gegd_retrieval_opening(payload,online_plan) if str(payload.get("profileId") or "").lower()=="gegd" else "I’m on it — looking up "+search_target+"…"
+        yield {"type":"STATUS","phase":phase,"reason":opening,"categories":["ONLINE_RESEARCH",str(online_plan.get("kind") or "search").upper()]}
         online_result=None
         for update in stream_online_request(payload,intent):
             if update.get("type")=="progress":
@@ -300,6 +301,7 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
             yield {"type":"DELTA","text":lyrics_text}
             yield {"type":"COMPLETED","phase":"COMPLETE"}
             return
+    payload=_apply_personality(payload)
     if model_id=="r39":
         events=r39_generate(_r39_online_payload(payload))
     elif model_id=="stock":
