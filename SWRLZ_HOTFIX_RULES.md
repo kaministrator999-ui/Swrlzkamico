@@ -19,66 +19,80 @@ Do not move behavior to the wrong plane merely to avoid deployment.
 
 ---
 
-## 2. Deployment Approval Gate — hard stop
+## 2. Deployment authorization + corrective-retry boundary
 
-No repository action that can actually cause deployment/redeployment is implicitly authorized by a request to fix, implement, test, document, commit, merge, refactor, or architect.
+Deployment remains a privileged action, but this repository carries a bounded project standing authorization defined by Project Start.
 
-Before an explicitly deployment-producing action, establish from the current deployment contract and relevant platform evidence:
+Before any deployment-producing action, establish from current source/evidence:
 
-1. the exact trigger/action;
-2. why it causes deployment;
-3. which production surface it affects;
-4. whether a non-deploying runtime path is architecturally correct instead;
-5. the exact action awaiting approval.
+1. the exact canonical trigger/action;
+2. which production surface it affects;
+3. the exact source ref/candidate being published;
+4. whether the change actually requires stable publication or is deployment-inert/runtime-hot;
+5. whether the action is the terminal deployment for the governed update or a corrective retry of a §wyrlz-caused implementation/packaging failure.
 
-Then **STOP and obtain explicit user approval before performing that deployment-producing action**.
+Authorization rules:
 
-A branch name alone does not prove deployment capability. A `main` commit is not automatically a deployment. A documentation file is not automatically deployment-capable. An explicit deploy action remains deployment-producing even when ordinary Git commits are inert.
+- The user's repository standing approval covers the **terminal canonical Hugging Face deployment required to complete a governed runtime-affecting update**.
+- It also covers **corrective re-deployments within the same governed scope when an earlier attempt failed because of §wyrlz-owned syntax, validation, packaging, wiring, or deployment-handoff defects**, provided the failure was inspected and the candidate was materially repaired before retry.
+- It does **not** authorize a different product decision, a new Space, unrelated feature work, paid infrastructure, destructive rollback to a materially different state, or any action outside the original governed scope.
+- If the user's current message explicitly narrows or revokes deployment authority, honor that narrower instruction.
+- Documentation-only/source-governance commits remain deployment-inert.
 
-Do not manufacture deployment uncertainty for ordinary Git work. Under the current fail-closed contract, commits—including documentation-only `main` commits—are deployment-inert. Re-open deployment capability only when the proposed action is an explicit deploy/redeploy trigger, changes deployment-control configuration/integration, or fresh platform evidence shows the fail-closed contract has failed.
+Do not ask the user to re-authorize a retry whose sole purpose is to repair a defect §wyrlz just introduced inside the already-authorized deployment path. Do ask when the underlying idea/behavior must be remade, authorization/credentials are missing, a provider blocks progress, or safe repair is no longer clear.
+
+A branch name alone does not prove deployment capability. A `main` commit is not automatically a deployment. The canonical request/workflow boundary below determines deployment truth.
+
 
 ---
 
-## 3. Current production deployment-control contract
+## 3. Current production deployment-control contract — Hugging Face
 
-The current production deployment boundary is durable project state, not a per-event suspicion loop. Re-check it when deployment-control files/integration change, when an explicit deployment is proposed, or when platform evidence contradicts the recorded contract.
+The current application hosting/deployment authority is the existing Hugging Face Space `kamiloki/Swyrlz`.
 
-### Automatic Git deployment must remain fail-closed
+**Vercel is deprecated for current §wyrlz application deployment.** Vercel-era workflows/configuration may remain in the repository as historical provenance, rollback/reference material, or migration evidence, but they are not a current production deployment path and must not be selected for new application releases.
 
-`vercel.json` currently carries **both** supported/compatibility Git-disable guards:
+### Canonical HF deployment branch + workflow
 
-```json
-"git": {
-  "deploymentEnabled": false
-},
-"github": {
-  "enabled": false
-}
+For the current HF candidate/release path, the deployment source branch is:
+
+```text
+feature/hf-space-manual-deploy
 ```
 
-The modern `git.deploymentEnabled=false` guard is the primary declaration. The GitHub-specific `github.enabled=false` compatibility guard is retained because production evidence showed that the modern guard by itself did not prevent a native Git deployment of a documentation-only `main` commit.
+The canonical publish workflow on that branch is:
 
-These guards mean an ordinary Git commit must **not** be treated as the canonical production deployment path. After changing either guard or any Vercel Git-integration behavior, verify the result against the Vercel deployment list rather than assuming the config was honored.
+```text
+.github/workflows/manual-hf-space.yml
+```
 
-### Canonical production deployment path
+It supports inspect/benchmark/validate/deploy modes and publishes only to the existing `kamiloki/Swyrlz` Space. Deploy mode requires explicit approval, snapshots the current Space before upload, records rollback/release checkpoints, validates the isolated package, and verifies required model/Chat integration before publication.
 
-The canonical application deployment path is `.github/workflows/manual-vercel-production.yml` (or an explicitly approved equivalent that deliberately replaces it).
+Current HF package/runtime-owned files on that branch include `hf_space/*`, the staged `accepted_runtime/lalm/r39_engine.py`, canonical Chat source staged by `scripts/prepare_hf_space.py`, and related HF validation/build scripts.
 
-That workflow:
+### Deployment gate
 
-- requires explicit approval for `workflow_dispatch`, or an explicitly approved `.deploy/REQUEST.txt` request;
-- checks out the approved source ref;
-- records the exact checked-out source SHA;
-- derives the stable server version from the canonical `VERSION` assignment in `api/index.py` rather than duplicating a stale literal;
-- builds and deploys through the Vercel CLI;
-- verifies that production reports both the expected stable server version **and the exact approved deployment commit SHA**;
-- verifies required runtime/manifest/collector capabilities before acceptance.
+Ordinary source commits to `feature/hf-space-manual-deploy`, `runtime`, or `main` do not themselves publish the Space.
 
-The workflow's source-bound verification is part of deployment correctness. Do not replace it with a remembered Server/runtime version number: the stable deployed server version and the runtime-hot Server lineage are separate authorities.
+The canonical source-controlled production trigger is:
 
-If configuration changes later, re-evaluate immediately.
+```text
+main:.deploy/HF_SPACE_REQUEST.txt
+  -> main:.github/workflows/hf-space-request.yml
+  -> main:.github/workflows/manual-hf-space.yml
+  -> SOURCE_REF=feature/hf-space-manual-deploy
+  -> existing Space kamiloki/Swyrlz
+```
 
----
+An approved request uses `TARGET=kamiloki/Swyrlz`, `APPROVED=1`, the exact `SOURCE_REF`, and a fresh `REQUEST_NONCE`. The guarded workflow validates the package, preserves the predeploy Space revision/rollback lineage, uploads only after the gates pass, and captures the deployed revision.
+
+Validate/inspect/benchmark work does not publish the Space.
+
+If a deployment attempt fails before upload because of §wyrlz-owned candidate defects, fix the candidate, rerun deployment-inert validation, then issue a fresh request nonce and retry the same canonical path under the bounded corrective-retry authorization. Never create a replacement Space to escape a failed run.
+
+### Historical Vercel material
+
+Do not use `.github/workflows/manual-vercel-production.yml`, old Vercel aliases, project IDs, deployment receipts, or Vercel-era guides as current deployment instructions. They are historical unless a later explicit governance change reactivates Vercel.
 
 ## 4. Runtime-hot work
 
@@ -236,9 +250,9 @@ Before closing a governed update, verify as applicable:
 - [ ] issue work inspected existing logs/cameras automatically;
 - [ ] observability gap instrumented only if needed;
 - [ ] deployment capability checked from current configuration **and current platform evidence**;
-- [ ] explicit approval obtained before any deployment-producing action;
-- [ ] Git auto-deploy guards remain fail-closed when that is the intended architecture;
-- [ ] manual deployment verification is bound to approved source SHA + canonical stable server version;
+- [ ] terminal deployment/corrective retry is covered by current explicit or standing authorization;
+- [ ] ordinary Git commits remain deployment-inert and the HF request file is the intentional publish trigger;
+- [ ] HF deployment verification is bound to the exact selected source SHA + captured Space revision/rollback lineage;
 - [ ] only intended owners/files changed;
 - [ ] version authorities re-read at commit boundary;
 - [ ] concurrent advances reconciled;
@@ -247,7 +261,7 @@ Before closing a governed update, verify as applicable:
 - [ ] post-change authorities re-read;
 - [ ] source/static/runtime/live verification classified honestly;
 - [ ] no legacy injector/loader/fallback unexpectedly overrides the intended source;
-- [ ] no unapproved deployment/restart occurred after the repair boundary.
+- [ ] any corrective retry followed a concrete diagnosed §wyrlz-owned failure and a materially repaired candidate.
 
 ---
 
@@ -255,12 +269,18 @@ Before closing a governed update, verify as applicable:
 
 A failed governed attempt is not silently erased.
 
-Record the failure according to the version-evolution contract. A corrective attempt is a new governed event when the contract requires it.
+When validation or deployment fails:
 
-Do not rewrite history to make a failed attempt look like it never happened.
+1. inspect the exact failing boundary/log;
+2. classify ownership of the failure;
+3. if §wyrlz caused it and repair is safely inside the authorized scope, repair it immediately, revalidate, and continue the same work turn through the canonical path;
+4. if the product idea itself must change, authorization/credentials are missing, the external provider is blocking progress, or safe repair is unclear, stop with that concrete blocker and return the decision to the user;
+5. preserve failure/correction lineage according to the version/roadmap contract.
+
+Do not rewrite history to make a failed attempt look like it never happened, and do not substitute a failure report for a repair that §wyrlz can safely complete herself.
 
 ---
 
 ## Bottom line
 
-**Architecture tells you where the change belongs. This document tells you how to mutate that owner safely. Prefer runtime-hot changes for runtime-owned behavior, keep stable infrastructure on main, keep automatic Git deployment fail-closed, use the explicitly approved manual workflow as the canonical production path, bind deployment acceptance to the exact approved source SHA and canonical stable-server authority, preserve durable/version authority, and verify actual platform behavior before declaring the deployment boundary safe.**
+**Architecture tells you where the change belongs. This document tells you how to mutate that owner safely. Prefer runtime-hot changes for runtime-owned behavior, keep stable infrastructure on main, keep ordinary Git commits deployment-inert, use the guarded existing-Space Hugging Face request/workflow path for publication, repair and retry §wyrlz-owned failures inside the authorized scope, preserve durable/version authority, and verify actual platform behavior before declaring the deployment boundary complete.**
