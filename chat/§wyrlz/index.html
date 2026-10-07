@@ -1825,7 +1825,8 @@
       const profileControlIds=["settingDisplayName","settingUserPronouns","settingUserRole","settingCommunicationStyle","settingOutputStyle","settingCompanionName","settingCompanionTitle","settingCompanionForm","settingCompanionPronouns","settingCompanionWarmth","settingCompanionDirectness","settingCompanionHumor","settingCompanionLoreDensity"];
       const proposalPolicyDefaults={USER_PROFILE:"ASK",COMPANION_PROFILE:"ASK",USER_FACT:"ASK",USER_LORE:"ASK",COMPANION_SELF_LORE:"ASK",SHARED_LORE:"ASK",SHARED_RAPPORT:"ASK"};
       const applySettingsPreview = () => {
-        settingsState.general.enterToSend=!!settingEnterSend.checked;\n         settingsState.general.personalityProfile=["default","gegd"].includes(settingPersonalityProfile.value)?settingPersonalityProfile.value:"default";
+        settingsState.general.enterToSend=!!settingEnterSend.checked;
+        settingsState.general.personalityProfile=["default","gegd"].includes(settingPersonalityProfile.value)?settingPersonalityProfile.value:"default";
         settingsState.model.defaultModel=["700m","r39","stock"].includes(settingDefaultModel.value)?settingDefaultModel.value:"700m";
         settingsState.model.effort=settingEffort.value;
         settingsState.model.responseLength=settingResponseLength.value;
@@ -1857,7 +1858,8 @@
         const prefs=accountProfile?.preferences||{}, model=accountProfile?.model_preferences||{}, ui=accountProfile?.ui_preferences||{}, companion=accountProfile?.companion_profile||{};
         const general=prefs.general&&typeof prefs.general==="object"?prefs.general:{};
         const userProfile=prefs.profile&&typeof prefs.profile==="object"?prefs.profile:{};
-        settingPersonalityProfile.value=["default","gegd"].includes(prefs?.general?.personalityProfile)?prefs.general.personalityProfile:"default";\n         settingDisplayName.value=accountProfile?.display_name||chatAccountUser?.displayName||"";
+        settingPersonalityProfile.value=["default","gegd"].includes(general.personalityProfile)?general.personalityProfile:"default";
+        settingDisplayName.value=accountProfile?.display_name||chatAccountUser?.displayName||"";
         settingUserPronouns.value=String(userProfile.pronouns||"");
         settingUserRole.value=String(userProfile.role||"");
         settingCommunicationStyle.value=["adaptive","direct","collaborative","technical","playful"].includes(userProfile.communicationStyle)?userProfile.communicationStyle:"adaptive";
