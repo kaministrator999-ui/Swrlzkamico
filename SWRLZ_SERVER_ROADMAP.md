@@ -1,3 +1,25 @@
+## UPDATE STARTED — 2026-10-07 — verified lyric source vs verified body v161
+
+**Trigger:** live v160 acceptance for the natural prompt `Can you provide lyrics for the song cold piece of work by tech n9ne` now parses correctly and rejects false-positive page chrome, but the terminal response still collapses two different states into one: a correct lyrics destination was found and fetched, while a clean lyric-body extraction was not verified.
+
+**Observed production behavior:**
+- canonical query is now `cold piece of work tech n9ne lyrics`;
+- AZLyrics redirects to an access/request page and is correctly rejected;
+- AllTheLyrics is discovered and fetched successfully but its body extraction is rejected;
+- terminal state still says the requested lyric text could not be verified, even though source identity itself can be established from the fetched destination/title and search evidence.
+
+**Architecture reconciliation:** split source identity verification from body-text verification. Search snippets remain discovery/identity evidence only and never become lyric payload. A verified source may be surfaced even when no lyric body is admitted.
+
+**Planned repair:**
+1. carry fetched `pageTitle` through the HF evidence adapter;
+2. add subject-bound source identity scoring that rejects access/captcha/request/block pages and requires fetched title/URL agreement with the parsed song subject;
+3. persist the strongest `verifiedLyricsSource` separately from `verifiedLyrics`;
+4. add distinct trace/attempt metadata for `SOURCE_IDENTITY_VERIFIED` versus body verification;
+5. when source identity is verified but lyric body is not, return a deterministic source-link response instead of the inaccurate blanket `LYRICS_VERIFICATION_BLOCKED` message;
+6. preserve the three-page budget, v159 24K body window, and v160 false-positive guard.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — subject-bound lyric verification v160
 
 **Outcome:** FALSE-POSITIVE LYRIC VERIFICATION REPAIRED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
