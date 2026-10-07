@@ -11,7 +11,7 @@ import urllib.parse
 from typing import Any, Callable
 
 MODULE_ID="online-research"
-VERSION="1.4.0"
+VERSION="1.4.1"
 CONTRACT_ID="swrlz_online_research_hot_v2"
 
 
@@ -182,6 +182,9 @@ def _sufficient(rec:dict[str,Any],plan:dict[str,Any])->bool:
 def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->dict[str,Any]:
     start=time.perf_counter(); request_id=_clean(payload.get("requestId"),200) or "unknown"; research_id="research:"+uuid.uuid4().hex[:20]
     plan=normalize_plan(payload); terms=_terms(plan)
+    requested_blob=(" ".join([str(plan.get("requestedInformation") or ""),str(plan.get("target") or "")," ".join(plan.get("queries") or [])])).lower()
+    lyrics_mode="lyric" in requested_blob
+    max_evidence_items=3 if lyrics_mode else 8
     _camera(request_id,research_id,"RESEARCH_TARGET_RESOLVED",start,intent=plan["intent"],target=plan["target"],requestedInformation=plan["requestedInformation"],targetConfidence=plan["targetConfidence"],fallbackExactPrompt=plan["fallbackExactPrompt"])
     _camera(request_id,research_id,"QUERY_PLAN_READY",start,queries=plan["queries"],constraints=plan["constraints"],termCount=len(terms))
     search=capabilities["search"]; fetch=capabilities.get("fetch")
@@ -207,7 +210,7 @@ def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->di
         query_candidates.sort(key=lambda x:(-int(x.get("relevanceScore") or 0),int(x.get("rank") or 999)))
         candidates.extend(query_candidates)
         for rec in query_candidates:
-            if len(evidence)>=8:break
+            if len(evidence)>=max_evidence_items:break
             eid=f"e{len(evidence)+1}"; rec={**rec,"evidenceId":eid,"disposition":"selected","retrievedAt":_now_ms()}; url=_clean(rec.get("url"),2000)
             _camera(request_id,research_id,"URL_SELECTED",start,evidenceId=eid,url=url,title=_clean(rec.get("title"),300),query=rec.get("query"),rank=rec.get("rank"),relevanceScore=rec.get("relevanceScore"))
             if fetch:
@@ -224,8 +227,21 @@ def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->di
             if sufficient:break
         if sufficient or len(evidence)>=8:break
     admitted_chars=sum(len(str(x.get("title") or ""))+len(str(x.get("snippet") or ""))+len(str(x.get("extract") or "")) for x in evidence)
-    budget={"queriesExecuted":queries_executed,"searchResultsInspected":inspected,"pagesFetched":fetched,"externalCharsInspected":inspected_chars,"evidenceItemsAdmitted":len(evidence),"evidenceCharsAdmitted":admitted_chars,"maxEvidenceItems":8,"maxPagePassageChars":1400,"maxSnippetChars":700}
-    bundle={"contractId":"swrlz_online_evidence_v3","researchContract":CONTRACT_ID,"researchId":research_id,"requested":True,"provider":capabilities.get("provider","unknown"),"plan":plan,"queries":plan["queries"][:4],"resultCount":len(evidence),"evidence":evidence,"errors":errors,"elapsedMs":_elapsed(start),"budget":budget,"epistemicPolicy":"retrieval-is-evidence-not-truth","cameraContract":"swrlz_research_camera_v1"}
+    candidate_pool=[
+        {
+            "title":_clean(item.get("title"),300),
+            "url":_clean(item.get("url"),2000),
+            "snippet":_clean(item.get("snippet"),700),
+            "source":_clean(item.get("source"),240),
+            "query":_clean(item.get("query"),500),
+            "rank":item.get("rank"),
+            "relevanceScore":item.get("relevanceScore"),
+        }
+        for item in candidates[:8]
+        if isinstance(item,dict) and item.get("url")
+    ]
+    budget={"queriesExecuted":queries_executed,"searchResultsInspected":inspected,"pagesFetched":fetched,"externalCharsInspected":inspected_chars,"evidenceItemsAdmitted":len(evidence),"evidenceCharsAdmitted":admitted_chars,"maxEvidenceItems":max_evidence_items,"maxLyricsPageAttempts":3 if lyrics_mode else None,"maxPagePassageChars":1400,"maxSnippetChars":700}
+    bundle={"contractId":"swrlz_online_evidence_v3","researchContract":CONTRACT_ID,"researchId":research_id,"requested":True,"provider":capabilities.get("provider","unknown"),"plan":plan,"queries":plan["queries"][:4],"resultCount":len(evidence),"evidence":evidence,"candidatePool":candidate_pool,"errors":errors,"elapsedMs":_elapsed(start),"budget":budget,"epistemicPolicy":"retrieval-is-evidence-not-truth","cameraContract":"swrlz_research_camera_v1"}
     _camera(request_id,research_id,"EVIDENCE_BUDGET",start,**budget)
     _camera(request_id,research_id,"RESEARCH_BUNDLE_READY",start,resultCount=len(evidence),errorCount=len(errors),elapsedMs=bundle["elapsedMs"])
     return bundle
