@@ -1,0 +1,333 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-muxklymc-4193137420-1343935503",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "616b6f860aa589bb6aa6c8261a8c52c46f4e4757",
+  "persistedAtUnixMs": 1791345116179,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-muxklymc-4193137420-1343935503",
+    "trigger": {
+      "userText": "Search the internet for the lyrics of \"Amazing Grace\" by John Newton. Tell me where you found them, give me the link, and quote the first verse. Please use a real web search rather than answering from memory.",
+      "sha256": "8a8ea80b46dae96c7e50ddb624dc83754cd1777c6ee8d84cf788b86de63ba89b"
+    },
+    "research": {
+      "kind": "search",
+      "status": "OK",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "existing-lyrics-retrieval",
+      "query": "",
+      "resultCount": 8,
+      "sources": [
+        {
+          "title": "Amazing Grace > Lyrics | John Newton - Timeless Truths",
+          "source": "library.timelesstruths.org",
+          "url": "https://library.timelesstruths.org/music/Amazing_Grace/",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "John Newton - Amazing Grace Lyrics | Genius Lyrics",
+          "source": "genius.com",
+          "url": "https://genius.com/John-newton-amazing-grace-lyrics",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Amazing Grace lyrics — John Newton | GospelSlides",
+          "source": "gospelslides.com",
+          "url": "https://gospelslides.com/hymns/amazing-grace",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Amazing Grace Lyrics - All Verses by John Newton",
+          "source": "getlines.app",
+          "url": "https://getlines.app/hymns/amazing-grace-lyrics",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Amazing Grace Lyrics: Hymn by John Newton - Learn Religions",
+          "source": "www.learnreligions.com",
+          "url": "https://www.learnreligions.com/amazing-grace-701274",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Amazing Grace - Wikipedia",
+          "source": "en.wikipedia.org",
+          "url": "https://en.wikipedia.org/wiki/Amazing_Grace",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Amazing Grace Lyrics - Christian Hymn - Christian Songz",
+          "source": "christiansongz.com",
+          "url": "https://christiansongz.com/amazing-grace-lyrics-christian-hymn/",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Amazing Grace - Worship Lyrics",
+          "source": "worshiplyrics.net",
+          "url": "https://worshiplyrics.net/songs/amazing-grace",
+          "snippet": "",
+          "rank": null
+        }
+      ],
+      "sourceSites": [
+        "christiansongz.com",
+        "en.wikipedia.org",
+        "genius.com",
+        "getlines.app",
+        "gospelslides.com",
+        "library.timelesstruths.org",
+        "worshiplyrics.net",
+        "www.learnreligions.com"
+      ],
+      "widgetKinds": [
+        "search-results"
+      ],
+      "trace": [
+        {
+          "phase": "RESEARCH_STARTED",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research started",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "duckduckgo-lite",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "duckduckgo-lite",
+          "activity": "Using duckduckgo-lite",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "I found lyric results, but the generated citation was not one of the successfully fetched sources, so I won't present the quotation as verified.",
+      "sha256": "86ea284646e1f6547fa8c8f5ef9fd4cf5b0feff4f66440f1be2d93aa31309c9c"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up the lyrics of \"Amazing Grace\" by John Newton. Tell me where you found them, give me the link, and quote the first verse. Please use a real web search rather than answering from "
+      },
+      {
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK"
+      },
+      {
+        "phase": "WIDGET_READY",
+        "reason": "search-results"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok."
+      },
+      {
+        "phase": "DIAGNOSTIC_READY",
+        "reason": ""
+      },
+      {
+        "phase": "RESPONSE_COGNITION",
+        "reason": ""
+      },
+      {
+        "phase": "LOADING",
+        "reason": ""
+      },
+      {
+        "phase": "CONTEXT_BUDGETED",
+        "reason": ""
+      },
+      {
+        "phase": "GENERATING",
+        "reason": ""
+      },
+      {
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active"
+      },
+      {
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1"
+      },
+      {
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": ""
+      },
+      {
+        "phase": "GENERATION_TELEMETRY",
+        "reason": ""
+      },
+      {
+        "phase": "LYRICS_GROUNDING_GUARD",
+        "reason": "I found lyric results, but the generated citation was not one of the successfully fetched sources, so I won't present the quotation as verified."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ]
+  }
+}
