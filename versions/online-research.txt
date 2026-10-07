@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.9
-REVISION=1.0.9-bounded-lyrics-source-fallback-v158
+VERSION=1.0.10
+REVISION=1.0.10-structural-lyrics-extraction-v159
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
