@@ -736,16 +736,28 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         })
     verified_lyrics = None
     if plan.get("contentMode")=="lyrics-verification":
+        requested_scope = "first-verse" if re.search(r"\b(?:first|opening)\s+verse\b", query, re.I) else "lyrics"
         fetched = [x for x in evidence if x.get("pageFetched") is True and str(x.get("pageExtract") or "").strip()]
+        # Do not blindly select the first fetched search result. Rank fetched pages by whether
+        # they actually expose lyric structure/content relevant to the requested scope.
+        def lyric_score(item):
+            text=str(item.get("pageExtract") or "")
+            score=0
+            if re.search(r"(?im)^\s*(?:verse\s*1|verse\s*one)\b",text): score+=12
+            if re.search(r"(?im)^\s*(?:verse\s*2|chorus|refrain|bridge)\b",text): score+=4
+            if len([ln for ln in text.splitlines() if ln.strip()])>=4: score+=2
+            if re.search(r"(?i)lyrics?",str(item.get("title") or "")): score+=2
+            return score
+        fetched.sort(key=lyric_score,reverse=True)
         if fetched:
             selected = fetched[0]
-            requested_scope = "first-verse" if re.search(r"\b(?:first|opening)\s+verse\b", query, re.I) else "lyrics"
             verified_lyrics = {
                 "sourceTitle": selected.get("title") or selected.get("source") or "Fetched lyrics source",
                 "sourceUrl": selected.get("url"),
                 "requestedScope": requested_scope,
                 "pageExtract": selected.get("pageExtract"),
                 "fetchedAt": selected.get("fetchedAt"),
+                "candidateSources": [{"title":x.get("title"),"url":x.get("url"),"pageExtract":x.get("pageExtract"),"fetchedAt":x.get("fetchedAt")} for x in fetched[:6]],
             }
     widget = {
         "contract": WIDGET_CONTRACT,
