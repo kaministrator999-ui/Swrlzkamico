@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v8.0",
+  "name": "§wyrl§ Engine v8.1",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v8_0.html",
+  "finalArtifact": "swyrl_engine_v8_1.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -49,8 +49,9 @@
     "patches/v8_0_layer_integrity.py",
     "patches/v8_0_workspace_tools.py",
     "patches/v8_0_walkable_levels.py",
-    "patches/v8_0_embervault_project.py"
+    "patches/v8_0_embervault_project.py",
+    "patches/v8_1_performance_graphics.py"
   ],
-  "finalBytes": 383338,
-  "finalSha256": "92ddfc3770f874b5f8f91fc7fad536b15961c1627146be5995936c4355805a88"
+  "finalBytes": 0,
+  "finalSha256": "PENDING_VALIDATION"
 }
