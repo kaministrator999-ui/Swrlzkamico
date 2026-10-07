@@ -2,7 +2,7 @@
 
 **Role:** canonical owner of repository mutation mechanics, runtime/main boundaries, deployment approval, and hotfix verification.
 
-**Startup order is owned by `SWRLZ_PROJECT_START.md`.** This document is second in that sequence.
+**Startup order is owned by `§wyrlz_§tart.md`.** This document is second in that sequence.
 
 ---
 
