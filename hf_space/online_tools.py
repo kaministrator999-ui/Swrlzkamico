@@ -616,7 +616,18 @@ def _lyrics_provenance_claim_excerpt(text: str, limit: int = 360) -> str:
         # preserving quotes that actually wrap words inside the evidence sentence.
         candidate=re.sub(r'^[”’»›]+\s*',"",candidate)
         candidate=re.sub(r'^["]\s+',"",candidate)
-        candidate=re.sub(r'\s+[“‘«‹]+
+        candidate=re.sub(r'\s+[“‘«‹]+$',"",candidate)
+        return candidate.strip()
+
+    patterns=[
+        r"([^.!?]{0,180}\b(?:original(?:ly)?|published|stanzas?|verses?)\b[^.!?]{0,180}[.!?])",
+        r"([^.!?]{0,180}\b(?:anonymous|spurious|wandering\s+stanza|later\s+(?:addition|stanza|verse)|added\s+(?:later|stanza|verse)|joined\s+to|not\s+(?:written|authored)\s+by)\b[^.!?]{0,180}[.!?])",
+    ]
+    for pattern in patterns:
+        match=re.search(pattern,value,re.I)
+        if match:
+            return clean_excerpt(match.group(1))
+    return clean_excerpt(value)
 
 def _lyrics_source_display_title(raw_title: str, subject: str, original_count: int | None, stanza_count: int) -> str:
     """Avoid repeating a page title that over-attributes later stanzas to the named author."""
