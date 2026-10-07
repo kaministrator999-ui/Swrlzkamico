@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v7.4",
+  "name": "§wyrl§ Engine v7.5",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v7_4.html",
+  "finalArtifact": "swyrl_engine_v7_5.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -39,8 +39,7 @@
     "patches/v7_1_fracture_forge_breathing_room.py",
     "patches/v7_2_wisp_locomotion_repair.py",
     "patches/v7_3_engine_health.py",
-    "patches/v7_4_editor_workspaces.py"
-  ],
-  "finalBytes": 194122,
-  "finalSha256": "822d4d58aad205a4710401c040cd954337585e6346bb337fe7866de73e02f25e"
+    "patches/v7_4_editor_workspaces.py",
+    "patches/v7_5_mobile_editor_chrome.py"
+  ]
 }
