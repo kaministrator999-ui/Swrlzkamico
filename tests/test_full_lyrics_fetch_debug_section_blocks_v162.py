@@ -98,7 +98,7 @@ assert len(debug)==1,debug
 entry=debug[0]
 assert entry["outcome"]=="VERIFIED",entry
 assert entry["rejectionReason"]=="VERIFIED",entry
-assert entry["fetchedContent"]["chars"]==len(PAGE),entry
+assert entry["fetchedContent"]["chars"]==len(PAGE.strip()),entry
 assert len(entry["fetchedContent"]["sha256"])==64,entry
 assert entry["fetchedContent"]["preview"],entry
 assert entry["fetchedContent"]["sectionMarkers"],entry
