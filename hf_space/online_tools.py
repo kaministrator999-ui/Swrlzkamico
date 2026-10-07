@@ -5,6 +5,7 @@ Weather is a bounded fixed-provider vertical using Open-Meteo geocoding + foreca
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import queue
 import re
@@ -30,7 +31,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v161-source-vs-body-verification"
+ONLINE_OBSERVABILITY_REVISION = "v162-fetch-debug-section-blocks"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -410,7 +411,8 @@ _LYRIC_HARD_BOUNDARY=re.compile(
     r"^(?:related\s+(?:songs?|hymns?|posts?)|more\s+(?:songs?|lyrics?)|about|contact|privacy|terms|"
     r"download(?:\s+the)?\s+app|get\s+the\s+.+?\s+app!?|share|subscribe|references?|sources?|"
     r"karaoke(?:\s+video)?(?:\s+with\s+lyrics)?|did\s+you\s+like\s+this\s+post.*|"
-    r"you\s+might\s+also\s+like.*|leave\s+a\s+reply.*|all\s+.+?\s+lyrics)\s*[:.!-]*$",
+    r"you\s+might\s+also\s+like.*|leave\s+a\s+reply.*|submitted\s+by(?:\s+.+)?|"
+    r"correct(?:\s+report)?|all\s+.+?\s+lyrics)\s*[:.!-]*$",
     re.I,
 )
 _LYRIC_SECTION_MARKER=re.compile(
@@ -550,6 +552,40 @@ def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
     return max(candidates)[1] if candidates else None
 
 
+def _lyrics_debug_preview(text: str, subject: str = "", limit: int = 600) -> dict[str,Any]:
+    """Bounded line-preserving verifier view for exported diagnostics; never a full page dump."""
+    raw=str(text or "").replace("\r\n","\n").replace("\r","\n")
+    lines=raw.splitlines()
+    anchor_index=_lyrics_best_anchor(lines,subject) if lines else None
+    start=max(0,(anchor_index if anchor_index is not None else 0)-1)
+    window=[]
+    for line in lines[start:start+24]:
+        value=line.strip()
+        if value:
+            window.append(value[:220])
+        if sum(len(x)+1 for x in window)>=limit:
+            break
+    preview="\n".join(window)[:limit]
+    markers=[]
+    for line in lines:
+        value=line.strip()
+        if _LYRIC_SECTION_MARKER.search(value):
+            markers.append(value[:120])
+            if len(markers)>=12:
+                break
+    anchor_line=lines[anchor_index].strip()[:220] if anchor_index is not None and anchor_index<len(lines) else ""
+    return {
+        "chars":len(raw),
+        "sha256":hashlib.sha256(raw.encode("utf-8","replace")).hexdigest() if raw else "",
+        "anchorIndex":anchor_index,
+        "anchorLine":anchor_line,
+        "sectionMarkers":markers,
+        "preview":preview,
+        "previewChars":len(preview),
+        "previewLimit":limit,
+    }
+
+
 def _lyrics_extract_candidate(text: str, scope: str, subject: str = "") -> str:
     """Extract a bounded contiguous lyric body while rejecting navigation and post-song chrome."""
     raw=str(text or "").replace("\r\n","\n").replace("\r","\n")
@@ -599,19 +635,39 @@ def _lyrics_extract_candidate(text: str, scope: str, subject: str = "") -> str:
             if 2<=len(lines)<=12:
                 return "\n".join(lines)
 
+    body_lines=[ln.strip() for ln in body.splitlines()]
+    has_section_markers=any(_LYRIC_SECTION_MARKER.search(ln) for ln in body_lines if ln)
     blocks=[]
-    for chunk in re.split(r"\n\s*\n+",body):
-        lines=[ln.strip() for ln in chunk.splitlines() if ln.strip()]
-        if not lines:
-            continue
-        content=[ln for ln in lines if not _LYRIC_SECTION_MARKER.search(ln) and _lyrics_line_is_content(ln)]
-        if len(content)>=2:
-            blocks.append("\n".join(content))
+    if has_section_markers:
+        # Explicit Verse/Chorus/etc markers are stronger structure than HTML blank-line
+        # preservation. Each marker starts a new content block even when the cleaner
+        # emits the entire song as one newline-only run.
+        current=[]
+        for line in body_lines:
+            if not line:
+                continue
+            if _LYRIC_SECTION_MARKER.search(line):
+                if len(current)>=2:
+                    blocks.append("\n".join(current))
+                current=[]
+                continue
+            if _lyrics_line_is_content(line):
+                current.append(line)
+        if len(current)>=2:
+            blocks.append("\n".join(current))
+    else:
+        for chunk in re.split(r"\n\s*\n+",body):
+            lines=[ln.strip() for ln in chunk.splitlines() if ln.strip()]
+            if not lines:
+                continue
+            content=[ln for ln in lines if _lyrics_line_is_content(ln)]
+            if len(content)>=2:
+                blocks.append("\n".join(content))
 
-    if len(blocks)==1:
-        flat=[ln.strip() for ln in blocks[0].splitlines() if ln.strip()]
-        if scope=="full-lyrics" and len(flat)>=8 and len(flat)%4==0:
-            blocks=["\n".join(flat[i:i+4]) for i in range(0,len(flat),4)]
+        if len(blocks)==1:
+            flat=[ln.strip() for ln in blocks[0].splitlines() if ln.strip()]
+            if scope=="full-lyrics" and len(flat)>=8 and len(flat)%4==0:
+                blocks=["\n".join(flat[i:i+4]) for i in range(0,len(flat),4)]
 
     if scope=="first-verse":
         return blocks[0] if blocks else ""
@@ -1285,6 +1341,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
     verified_lyrics_source=None
     selected_lyric_evidence=None
     lyrics_source_attempts=[]
+    lyrics_fetch_debug=[]
     lyrics_fallback_exhausted=False
 
     if plan.get("contentMode")=="lyrics-verification":
@@ -1338,6 +1395,16 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 subject,
             ) if lyric_extract else (False,0,0)
             verified_candidate=bool(lyric_extract and snippet_consistent)
+            if verified_candidate:
+                rejection_reason="VERIFIED"
+            elif not lyric_extract:
+                rejection_reason="NO_STRUCTURED_LYRIC_BODY"
+            else:
+                rejection_reason="SNIPPET_BODY_MISMATCH"
+            page_debug=_lyrics_debug_preview(str(item.get("pageExtract") or ""),subject,600)
+            lyric_debug=_lyrics_debug_preview(lyric_extract,subject,600) if lyric_extract else {
+                "chars":0,"sha256":"","anchorIndex":None,"anchorLine":"","sectionMarkers":[],"preview":"","previewChars":0,"previewLimit":600
+            }
             attempt={
                 "attempt":attempt_number,
                 "url":clean_url,
@@ -1348,8 +1415,26 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 "snippetInformativeTokenCount":snippet_token_count,
                 "sourceIdentityVerified":bool(source_identity.get("verified")),
                 "sourceIdentityScore":int(source_identity.get("score") or 0),
+                "rejectionReason":rejection_reason,
             }
             lyrics_source_attempts.append(attempt)
+            lyrics_fetch_debug.append({
+                "attempt":attempt_number,
+                "origin":origin,
+                "requestedUrl":clean_url,
+                "finalUrl":clean_url,
+                "searchResultTitle":_clean(item.get("title"),300),
+                "fetchedPageTitle":_clean(item.get("pageTitle") or item.get("title"),300),
+                "fetchStatus":item.get("fetchStatus"),
+                "fetchedContent":page_debug,
+                "extractorOutput":lyric_debug,
+                "sourceIdentityVerified":bool(source_identity.get("verified")),
+                "sourceIdentityScore":int(source_identity.get("score") or 0),
+                "snippetOverlapCount":overlap_count,
+                "snippetInformativeTokenCount":snippet_token_count,
+                "outcome":"VERIFIED" if verified_candidate else "REJECTED",
+                "rejectionReason":rejection_reason,
+            })
             if not verified_candidate:
                 _progress(
                     progress,
@@ -1593,6 +1678,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "verifiedLyrics": verified_lyrics,
         "verifiedLyricsSource": verified_lyrics_source,
         "lyricsSourceAttempts": lyrics_source_attempts,
+        "lyricsFetchDebug": lyrics_fetch_debug[:LYRICS_MAX_PAGE_ATTEMPTS],
         "lyricsSourceAttemptCount": len(lyrics_source_attempts),
         "lyricsMaxPageAttempts": LYRICS_MAX_PAGE_ATTEMPTS if plan.get("contentMode")=="lyrics-verification" else 0,
         "lyricsFallbackExhausted": lyrics_fallback_exhausted,
@@ -1621,6 +1707,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "resultCount": len(evidence),
         "researchId": bundle.get("researchId"),
         "lyricsSourceAttempts": lyrics_source_attempts,
+        "lyricsFetchDebug": lyrics_fetch_debug[:LYRICS_MAX_PAGE_ATTEMPTS],
         "lyricsSourceAttemptCount": len(lyrics_source_attempts),
         "lyricsMaxPageAttempts": LYRICS_MAX_PAGE_ATTEMPTS if plan.get("contentMode")=="lyrics-verification" else 0,
         "lyricsFallbackExhausted": lyrics_fallback_exhausted,
@@ -1706,6 +1793,51 @@ def execute_online_request(
     return result
 
 
+def copy_lyrics_debug(value: Any) -> list[dict[str,Any]]:
+    """Project only bounded fetch-debug fields into Chat/export telemetry."""
+    out=[]
+    for item in value if isinstance(value,list) else []:
+        if not isinstance(item,dict):
+            continue
+        fetched=item.get("fetchedContent") if isinstance(item.get("fetchedContent"),dict) else {}
+        extracted=item.get("extractorOutput") if isinstance(item.get("extractorOutput"),dict) else {}
+        out.append({
+            "attempt":int(item.get("attempt") or 0),
+            "origin":_clean(item.get("origin"),80),
+            "requestedUrl":_clean_source_url(str(item.get("requestedUrl") or "")),
+            "finalUrl":_clean_source_url(str(item.get("finalUrl") or "")),
+            "searchResultTitle":_clean(item.get("searchResultTitle"),300),
+            "fetchedPageTitle":_clean(item.get("fetchedPageTitle"),300),
+            "fetchStatus":item.get("fetchStatus") if isinstance(item.get("fetchStatus"),int) else None,
+            "fetchedContent":{
+                "chars":int(fetched.get("chars") or 0),
+                "sha256":_clean(fetched.get("sha256"),80),
+                "anchorIndex":fetched.get("anchorIndex") if isinstance(fetched.get("anchorIndex"),int) else None,
+                "anchorLine":str(fetched.get("anchorLine") or "")[:220],
+                "sectionMarkers":[str(x)[:120] for x in (fetched.get("sectionMarkers") or [])[:12]],
+                "preview":str(fetched.get("preview") or "")[:600],
+                "previewChars":int(fetched.get("previewChars") or 0),
+                "previewLimit":600,
+            },
+            "extractorOutput":{
+                "chars":int(extracted.get("chars") or 0),
+                "sha256":_clean(extracted.get("sha256"),80),
+                "preview":str(extracted.get("preview") or "")[:600],
+                "previewChars":int(extracted.get("previewChars") or 0),
+                "previewLimit":600,
+            },
+            "sourceIdentityVerified":bool(item.get("sourceIdentityVerified")),
+            "sourceIdentityScore":int(item.get("sourceIdentityScore") or 0),
+            "snippetOverlapCount":int(item.get("snippetOverlapCount") or 0),
+            "snippetInformativeTokenCount":int(item.get("snippetInformativeTokenCount") or 0),
+            "outcome":_clean(item.get("outcome"),40),
+            "rejectionReason":_clean(item.get("rejectionReason"),80),
+        })
+        if len(out)>=LYRICS_MAX_PAGE_ATTEMPTS:
+            break
+    return out
+
+
 def online_camera(result: dict[str, Any] | None) -> dict[str, Any] | None:
     if not isinstance(result, dict):
         return None
@@ -1724,6 +1856,7 @@ def online_camera(result: dict[str, Any] | None) -> dict[str, Any] | None:
         "usedExplicitClientLocation": bool(plan.get("clientLocation")),
         "elapsedMs": result.get("elapsedMs"),
         "lyricsSourceAttemptCount": int(result.get("lyricsSourceAttemptCount") or 0),
+        "lyricsFetchDebug": copy_lyrics_debug(result.get("lyricsFetchDebug")),
         "lyricsMaxPageAttempts": int(result.get("lyricsMaxPageAttempts") or 0),
         "lyricsFallbackExhausted": bool(result.get("lyricsFallbackExhausted")),
         "rawPromptStored": False,
