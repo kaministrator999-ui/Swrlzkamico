@@ -17,8 +17,9 @@ def apply(html):
 
     # Patch the current controller around its collision call, independent of the
     # historical whitespace/body form.
-    needle="resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;"
-    if needle not in s: raise RuntimeError("v7.2 current Wisp collision statement missing")
+    candidates=["resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;","resolveHeroCollision(next,h.userData.colliderRadius||.46);if(Number.isFinite(next.x)&&Number.isFinite(next.z)){h.position.x=next.x;h.position.z=next.z;}"]
+    needle=next((q for q in candidates if q in s),None)
+    if not needle: raise RuntimeError("v7.2 current Wisp collision statement missing")
     repl="""if(h.userData.hoverFlight){
     const start=h.position.clone(),desired=next.clone(),moved=p=>Math.hypot(p.x-start.x,p.z-start.z)>.0001;
     resolveHeroCollision(next,h.userData.colliderRadius||.46);
