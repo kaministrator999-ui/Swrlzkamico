@@ -1,3 +1,29 @@
+## UPDATE STARTED — 2026-10-07 — lyric body window + structural extraction v159
+
+**Trigger:** live v158 acceptance still ended in `LYRICS_VERIFICATION_BLOCKED` for both `Cold Piece of Work` and the public-domain `Auld Lang Syne` even though search returned relevant lyric pages and v158 correctly exercised all three bounded source attempts.
+
+**Production evidence:**
+- v158 fallback itself is functioning: each request reports `lyricsSourceAttemptCount=3`, `lyricsMaxPageAttempts=3`, and bounded exhaustion.
+- Auld Lang Syne search results visibly contain verse/chorus text, and all three fetched pages returned HTTP 200, yet strict extraction rejected all three.
+- the stable page fetcher currently truncates cleaned page text at 6,000 characters; the runtime-hot reasoner and HF adapter each repeat the same 6,000-character cap;
+- the lyric extractor recognizes only exact generic anchors such as `Lyrics` / `Copy Lyrics`, not subject-bearing section headings such as `Auld Lang Syne Lyrics`;
+- modern bracketed section markers such as `[Verse 2: Artist]` are not recognized by the current section-marker grammar.
+
+**Architecture reconciliation:** keep Online Research as the single network/evidence owner and the HF lyrics adapter as strict lyric extraction/verification owner. Repair the evidence window and extractor; do not weaken the rule that search snippets alone cannot verify lyric text and do not expand the three-page network budget.
+
+**Planned repair:**
+1. preserve a larger bounded cleaned page extract at the stable fetch boundary;
+2. admit a larger lyrics-only page window through the runtime-hot reasoner and HF adapter while leaving general-search evidence budgets unchanged;
+3. choose a subject-aware lyric-body anchor using following-line structural density instead of starting at arbitrary page chrome;
+4. recognize numbered verses and bracketed Verse/Chorus/Refrain/Bridge markers;
+5. stop at common post-lyrics boundaries such as karaoke/related/share/comment sections;
+6. add exact regression shapes for a menu-heavy Auld Lang Syne page and a modern bracketed-verse page;
+7. keep the v158 three-total-page-attempt ceiling unchanged.
+
+**Expected module impact:** Online Research + Server Runtime + Repository Work. LALM Engine unchanged unless implementation evidence requires a presentation change.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — bounded lyrics source fallback v158
 
 **Outcome:** BOUNDED FALLBACK IMPLEMENTED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE A+ ACCEPTANCE PENDING.
