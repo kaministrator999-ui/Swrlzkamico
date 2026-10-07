@@ -188,15 +188,15 @@ patches/v7_2_wisp_locomotion_repair.py
 patches/v7_3_engine_health.py
 patches/v7_4_editor_workspaces.py
 patches/v7_5_mobile_editor_chrome.py
-patches/v7_6_desktop_editor_polish.py
+patches/v7_6_desktop_editor_polish.py\npatches/v7_7_canonical_glitch_den_project.py
 ```
 
 Final v7.6:
 
 - artifact: `swyrl_engine_v7_6.html`
-- bytes: `197128`
-- SHA-256: `409f42adc579b8da5ade1a55c9d5d09d58ef67539ff6e9f0562b119de9ea7f80`
-- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V7_6_DESKTOP_EDITOR_POLISH`
+- bytes: `279207`
+- SHA-256: `75aef1f830dd7117c5675ac1666bdf70755c7be007c26f986c4acb169293bf25`
+- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V7_7_CANONICAL_GLITCH_DEN_PROJECT`
 
 ## Deployment
 
