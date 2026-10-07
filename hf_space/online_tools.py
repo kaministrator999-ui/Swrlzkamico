@@ -30,7 +30,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v159-structural-lyrics-extraction"
+ONLINE_OBSERVABILITY_REVISION = "v160-subject-bound-lyrics-verification"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -337,11 +337,13 @@ def _lyrics_requested_scope(text: str) -> str:
 
 def _lyrics_subject(text: str) -> str:
     value=str(text or "").replace("“",'"').replace("”",'"').replace("‘","'").replace("’","'")
-    patterns=[
-        r'\b(?:(?:complete|full|all)\s+)?lyrics?\s+(?:of|for)\s+"([^"]+)"(?:\s+by\s+([^.!?\n:]+))?',
+
+    # Prefer explicitly quoted titles first.
+    quoted_patterns=[
+        r'\b(?:(?:complete|full|all)\s+)?lyrics?\s+(?:of|for|to)\s+(?:the\s+song\s+)?"([^"]+)"(?:\s+by\s+([^.!?\n:]+))?',
         r'"([^"]+)"(?:\s+by\s+([^.!?\n:]+))?',
     ]
-    for pattern in patterns:
+    for pattern in quoted_patterns:
         match=re.search(pattern,value,re.I)
         if not match:
             continue
@@ -349,6 +351,31 @@ def _lyrics_subject(text: str) -> str:
         artist=_clean(match.group(2),180).strip(" \"'") if match.lastindex and match.lastindex>=2 and match.group(2) else ""
         if title:
             return f'"{title}" by {artist}' if artist else f'"{title}"'
+
+    # Natural unquoted requests are common in chat:
+    # "lyrics for the song cold piece of work by tech n9ne"
+    unquoted_with_artist=re.search(
+        r'\b(?:(?:complete|full|all)\s+)?lyrics?\s+(?:of|for|to)\s+(?:the\s+song\s+)?'
+        r'([^.!?\n:]+?)\s+by\s+([^.!?\n:]+?)(?=\s*(?:[.!?\n]|$))',
+        value,
+        re.I,
+    )
+    if unquoted_with_artist:
+        title=_clean(unquoted_with_artist.group(1),180).strip(" \"'")
+        artist=_clean(unquoted_with_artist.group(2),180).strip(" \"'")
+        if title and artist:
+            return f'"{title}" by {artist}'
+
+    unquoted_title=re.search(
+        r'\b(?:(?:complete|full|all)\s+)?lyrics?\s+(?:of|for|to)\s+(?:the\s+song\s+)?'
+        r'([^.!?\n:]+?)(?=\s*(?:[.!?\n]|$))',
+        value,
+        re.I,
+    )
+    if unquoted_title:
+        title=_clean(unquoted_title.group(1),180).strip(" \"'")
+        if title:
+            return f'"{title}"'
     return ""
 
 
@@ -418,6 +445,32 @@ def _lyrics_title_terms(subject: str) -> list[str]:
     ][:12]
 
 
+_LYRIC_OVERLAP_STOP={
+    "the","a","an","and","or","to","of","in","on","for","with","is","are","was","were",
+    "lyrics","lyric","song","songs","full","complete","verse","verses","by","feat","featuring",
+}
+def _lyrics_informative_tokens(text: str, subject: str = "") -> list[str]:
+    subject_terms=set(_lyrics_title_terms(subject))
+    tokens=[]
+    for token in re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",str(text or "").casefold()):
+        if len(token)<3 or token in _LYRIC_OVERLAP_STOP or token in subject_terms:
+            continue
+        if token not in tokens:
+            tokens.append(token)
+    return tokens[:80]
+
+
+def _lyrics_snippet_consistent(snippet: str, lyric_extract: str, subject: str = "") -> tuple[bool,int,int]:
+    """Use search-snippet text only as a consistency check; never as lyric payload."""
+    snippet_tokens=_lyrics_informative_tokens(snippet,subject)
+    if len(snippet_tokens)<8:
+        return True,0,len(snippet_tokens)
+    body_tokens=set(_lyrics_informative_tokens(lyric_extract,subject))
+    overlap=sum(1 for token in snippet_tokens if token in body_tokens)
+    needed=max(4,min(8,(len(snippet_tokens)+3)//4))
+    return overlap>=needed,overlap,len(snippet_tokens)
+
+
 def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
     """Choose the lyric-body start by subject match + nearby lyric structure, not first page chrome."""
     title_terms=_lyrics_title_terms(subject)
@@ -430,14 +483,11 @@ def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
         base=0
         if _LYRIC_ANCHOR.fullmatch(line):
             base=max(base,20)
-        if "lyric" in low:
-            if title_terms:
-                hits=sum(1 for term in title_terms if term in low)
-                needed=max(1,min(len(title_terms),2))
-                if hits>=needed:
-                    base=max(base,30+hits)
-            else:
-                base=max(base,10)
+        if "lyric" in low and title_terms:
+            hits=sum(1 for term in title_terms if term in low)
+            needed=max(1,min(len(title_terms),2))
+            if hits>=needed:
+                base=max(base,30+hits)
         if _LYRIC_SECTION_MARKER.search(line) or _LYRIC_NUMBERED_START.search(line):
             base=max(base,18)
         if not base:
@@ -1217,16 +1267,25 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 maxAttempts=LYRICS_MAX_PAGE_ATTEMPTS,
                 origin=origin,
             )
-            lyric_extract=_lyrics_extract_candidate(str(item.get("pageExtract") or ""),requested_scope,str(plan.get("subject") or ""))
+            subject=str(plan.get("subject") or "")
+            lyric_extract=_lyrics_extract_candidate(str(item.get("pageExtract") or ""),requested_scope,subject)
+            snippet_consistent,overlap_count,snippet_token_count=_lyrics_snippet_consistent(
+                str(item.get("searchSnippet") or item.get("snippet") or ""),
+                lyric_extract,
+                subject,
+            ) if lyric_extract else (False,0,0)
+            verified_candidate=bool(lyric_extract and snippet_consistent)
             attempt={
                 "attempt":attempt_number,
                 "url":clean_url,
                 "title":_clean(item.get("title"),300),
                 "origin":origin,
-                "outcome":"VERIFIED" if lyric_extract else "REJECTED",
+                "outcome":"VERIFIED" if verified_candidate else "REJECTED",
+                "snippetOverlapCount":overlap_count,
+                "snippetInformativeTokenCount":snippet_token_count,
             }
             lyrics_source_attempts.append(attempt)
-            if not lyric_extract:
+            if not verified_candidate:
                 _progress(
                     progress,
                     "LYRICS_SOURCE_REJECTED",
