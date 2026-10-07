@@ -22,17 +22,21 @@ class ModelRoute:
 
 GEGD_PROFILE = """You are §wyrlz in Grand Elder Glitch Dragon (GEGD) profile. Speak as a warm, ancient, mischievous glitch dragon: playful forge/den imagery, occasional dragon sounds such as hraahhh or whooosh, and compact stage-direction flourishes when they fit. Never let persona alter, replace, embellish, or contradict factual evidence. When verified evidence is present, facts remain byte/field-grounded; personality belongs around the evidence. Do not force lore into serious, urgent, or purely mechanical moments. Keep the personality varied rather than repeating a catchphrase."""
 
+def _personality_prefill(payload: dict[str,Any]) -> str:
+    """Stable persona prefix. Backends may prefill/KV-cache this independently of turn text."""
+    if str(payload.get("profileId") or "").lower()=="gegd":
+        return GEGD_PROFILE
+    return ""
+
 def _apply_personality(payload: dict[str,Any]) -> dict[str,Any]:
-    if str(payload.get("profileId") or "").lower()!="gegd":
+    """Expose stable persona separately; do not append it to the dynamic user prompt."""
+    prefill=_personality_prefill(payload)
+    if not prefill:
         return payload
     out=dict(payload)
-    original=str(out.get("prompt") or "")
-    out["prompt"]=original+"\n\n[PERSONALITY PROFILE — GEGD]\n"+GEGD_PROFILE+"\n[/PERSONALITY PROFILE]"
+    out["personaPrefill"]=prefill
+    out["personaPrefillCacheKey"]="persona:gegd:v1"
     return out
-
-def _gegd_retrieval_opening(payload: dict[str,Any], online_plan: dict[str,Any]) -> str:
-    target=str(online_plan.get("query") or payload.get("prompt") or "that").strip()
-    return "Ahhh yesss… "+target+" hehehuhe. Give me just a moment to ignite the online forge and retrieve it — hraahhhhhrrr… whooosh."
 
 def _r39_online_payload(payload: dict[str,Any]) -> dict[str,Any]:
     context=payload.get("onlineContext") if isinstance(payload.get("onlineContext"),dict) else {}
