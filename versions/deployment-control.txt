@@ -1,5 +1,5 @@
 ID=deployment-control
-VERSION=1.0.19
+VERSION=1.0.20
 KIND=deployment-control
 SOURCE_BRANCH=main
 STATUS=active
