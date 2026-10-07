@@ -1,3 +1,47 @@
+## UPDATE FINISHED — 2026-10-07 — cross-chat full-station continuity + lyrics response polish v157
+
+**Outcome:** GOVERNANCE/DOCS DURABLE + GUARDED HF DEPLOYMENT SUCCESS / USER-VISIBLE RETRY ACCEPTANCE PENDING.
+
+### Durable cross-chat engineering behavior
+- Canonical `§wyrlz_§tart.md` now defines repository-durable **Cross-chat full-station execution ownership**: the user/product owner owns fundamental idea/behavior decisions; §wyrlz owns implementation/finishing, validation, deployment handoff, and repair of §wyrlz-caused engineering defects.
+- Fresh ChatGPT project sessions must reconstruct that behavior from repository authority rather than relying on prior-chat memory.
+- The automatic project workflow no longer says `NEVER AUTO-RETRY`. A concrete §wyrlz-caused validation/packaging/deployment failure is inspected, repaired, revalidated, and retried within the same authorized governed scope. Retry remains bounded/evidence-driven and stops for a genuine user-owned product decision, missing authorization/credentials, unsafe action, external blocker, or exhausted evidence.
+- `§tart §E` explicitly inherits the same full-station ownership while retaining its separate engine/deployment lane.
+
+### Deployment-contract reconciliation
+- Project Start, Hotfix Rules, Project Work Response Standard, and Clean Production Release Integrity now agree on the existing Hugging Face authority.
+- Current AI Chat/LALM publication is locked to `kamiloki/Swyrlz` through `main:.deploy/HF_SPACE_REQUEST.txt → hf-space-request.yml → manual-hf-space.yml → feature/hf-space-manual-deploy`.
+- Active Vercel deployment/cleanup instructions were removed from the current startup/release procedure and retained only as deprecated historical lineage.
+- Main + HF feature-branch copies of Project Start/Hotfix/response contracts were synchronized. Stale `SWRLZ_PROJECT_START.md` references were corrected to the actual `§wyrlz_§tart.md` router.
+- The Project Start bottom-line contradiction was corrected: ten required startup documents, small/lightweight identity opener.
+
+### Lyrics presentation polish
+- The already-live retry-7 evidence remains the correctness baseline: seven four-line stanzas / 28 lines, Newton's six-stanza original separated from one later stanza, two fetches, two retained sources, direct deterministic server payload with no 700M inference.
+- Deterministic full-lyrics presentation now uses **singular** wording when exactly one additional stanza exists and plural wording when multiple extras exist.
+- Heading wording is now `Original text attributed to <author> (...)` instead of the rougher `Original attributed text`.
+- Attribution prose now reads naturally while preserving the same fetched provenance boundary; no lyric content, source selection, attribution count, or evidence semantics were changed.
+- Added `tests/test_full_lyrics_wording_polish_v157.py` and aligned prior lyric regression expectations.
+
+### Verification + deployment receipts
+- Feature candidate selected for deployment: `e0a25372e7c38303ccfdffa057982e23ec0aa0a9`.
+- Guarded HF run: `37647452048` — terminal **SUCCESS**.
+- Package validation, native R39 verification, real R39 reconstruction, R39-vs-stock compatibility inspection, 700M predeploy smoke, existing fast-HF/Chat preservation guard, authorization gate, snapshot/rollback flow, upload, and deployed-revision capture all completed in the successful workflow.
+- Predeploy Space revision preserved: `a7a23ea7aec7dae20004a2bfbd75c106ef261c1f`.
+- Deployed Space revision captured: `ab4b5a3fdd7aaedcb02a1535b3a7052686288a15`.
+- Release checkpoint remains correctly marked `DEPLOYED_UNVERIFIED`: workflow success proves publication, not the next user-visible lyric wording or a future-new-chat behavioral acceptance by itself.
+
+### Versions
+- Repository Work: **1.0.87**.
+- LALM Engine: **2.1.155 / 2.1.155-verified-lyrics-presentation-v157**.
+- Server Runtime: **2.3.310** after the successful stable HF release event.
+- Online Research: **1.0.8 unchanged** for this tier; this v157 change did not alter retrieval/provenance selection logic.
+
+### Remaining acceptance
+- Retry the same Amazing Grace prompt once to verify the polished singular heading/note in the live Space.
+- In a future/new ChatGPT conversation, invoke project startup (`§§`, `@GitHub §§`, or `§tart §E` for Engine work) and confirm the agent reconstructs the full-station ownership loop from the repository without needing this conversation.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v157 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — cross-chat full-station continuity + lyrics response polish v157
 
 **Trigger:** after retry 7 live-verified the full-song retrieval/provenance path, the user requested two final improvements: preserve §wyrlz's full implementation ownership behavior across future/new ChatGPT project sessions, and polish the remaining lyrics-response wording without regressing retrieval, attribution, evidence, or efficiency.
