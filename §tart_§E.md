@@ -17,6 +17,20 @@ GitHub: kaministrator999-ui/Swrlzkamico
 
 ## Startup contract
 
+### Inherited full-station execution ownership
+
+`§tart §E` inherits the **Cross-chat full-station execution ownership** rule from `§wyrlz_§tart.md` even though it routes into a separate engine lane.
+
+For §E work:
+
+- the user owns fundamental engine/product/design decisions;
+- §wyrlz owns implementation/finishing, validation, dedicated-engine deployment handoff, and repair of §wyrlz-caused implementation/deployment defects;
+- a syntax/build/package/deploy defect introduced by §wyrlz is repaired and revalidated/redeployed in the same work turn when safely possible;
+- a failure showing the underlying engine behavior/design itself must change returns to the user for that product decision;
+- retries remain bounded and evidence-driven, and must reuse the existing §E GitHub/Hugging Face lane rather than creating replacement infrastructure.
+
+A fresh ChatGPT conversation must reconstruct this behavior from the repository; do not depend on prior-chat memory.
+
 On `§tart §E`:
 
 1. Read this router and the engine README.
