@@ -147,6 +147,8 @@ Artifact: `swyrl_engine_v8_0.html` · **383338 bytes** · SHA-256 `92ddfc3770f87
 
 Release status: **staged locally; production deployment and live verification pending**. Native authoring, actual walking between tiers and beneath galleries, all six stations, document transfer, Save Project/reload, and layer/pause/Stop restoration passed. Generated module syntax passes; exact reconstruction is required before the final trigger. Live completion requires the exact Actions receipt and served artifact, as described below.
 
+Deployment repair: the first v8.0 run [37663564970](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37663564970) passed exact reconstruction and JavaScript syntax but Hugging Face rejected the card description for exceeding 60 characters. The description is shortened and its metadata length validated. The engine artifact, authored scene, and integrity remain unchanged; a fresh final trigger deploys this packaging correction.
+
 Source/deploy references use the final deploy-button contract: source is the validated normal release commit immediately before the v8.0 `DEPLOY_REQUEST.json` commit; deploy is that final trigger commit; the exact dedicated Actions run must have a matching `head_sha`. The workflow receipt and live host must confirm the v8.0 marker and source integrity. These references resolve from the final trigger and receipt, so completing deployment requires no mutation of release content after pressing the button. Until those checks pass, v7.9 remains the previously observed live baseline.
 
 ## v7.9 — Sanctuary & Makers Grotto becomes the canonical Dragon Den

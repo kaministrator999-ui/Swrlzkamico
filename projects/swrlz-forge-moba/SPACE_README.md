@@ -7,7 +7,7 @@ sdk: static
 app_file: index.html
 fullWidth: true
 header: mini
-short_description: Three-tier dragon sanctuary with editable project workstations.
+short_description: Three-tier dragon sanctuary and project workstations.
 ---
 
 # §wyrl§ Engine · Maker v8.0
