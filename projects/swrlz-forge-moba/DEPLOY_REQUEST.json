@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v7.2",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_2_WISP_LOCOMOTION_REPAIR",
-  "reason": "Repair flying Wisp horizontal keyboard/twin-stick translation while preserving altitude controls and expanded Fracture Forge",
-  "sourceIntegritySha256": "3d03e66d04f26659f365d43a2da531692474f4bc5122e1ddffbe9dc515277132"
+  "releaseVersion": "v7.3",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_3_ENGINE_HEALTH",
+  "reason": "Whole-engine health audit: unify Wisp flight controller, remove duplicate translation risk, add runtime locomotion diagnostics, and repair release-lineage headings",
+  "sourceIntegritySha256": "4967a5b527223b8c3d5bfd7ea7ef9a413a6c8582351b2c317cf9c4bc9d0f0e3c"
 }
