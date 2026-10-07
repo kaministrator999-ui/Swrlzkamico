@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.315
-REVISION=2.3.315-hf-v162-fetch-debug-section-blocks
+VERSION=2.3.316
+REVISION=2.3.316-hf-v163-search-admission-rescue
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
