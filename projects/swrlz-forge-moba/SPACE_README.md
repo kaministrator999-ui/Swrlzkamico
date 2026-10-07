@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v8.1
+title: §wyrl§ Engine v8.2
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -22,5 +22,5 @@ This release is tested in desktop first-person. Headset VR, controller input, in
 
 Source: https://github.com/kaministrator999-ui/Swrlzkamico/tree/main/projects/swrlz-forge-moba
 
-Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_1_PERFORMANCE_GRAPHICS`
-\n## v8.1 performance controls\n\nGraphics & Performance provides Auto/Low/Medium/High/Custom scalability, render scale, shadow quality, frame cap, and independent FPS/frame-time displays for Editor and Play/Simulate. Preferences persist locally. Auto adjusts render resolution from sustained frame time without changing gameplay simulation timing.\n
+Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_2_BOOTSTRAP_REPAIR`
+\n## v8.2 performance controls\n\nGraphics & Performance provides Auto/Low/Medium/High/Custom scalability, render scale, shadow quality, frame cap, and independent FPS/frame-time displays for Editor and Play/Simulate. Preferences persist locally. Auto adjusts render resolution from sustained frame time without changing gameplay simulation timing.\n
