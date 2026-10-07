@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.313
-REVISION=2.3.313-hf-v160-subject-bound-lyrics-verification
+VERSION=2.3.314
+REVISION=2.3.314-hf-v161-source-vs-body-verification
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
