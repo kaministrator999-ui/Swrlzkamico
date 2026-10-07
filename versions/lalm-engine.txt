@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.154
-REVISION=2.1.154-continuation-coder-grounding-v127
+VERSION=2.1.155
+REVISION=2.1.155-verified-lyrics-presentation-v157
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
