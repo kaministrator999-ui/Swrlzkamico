@@ -424,7 +424,7 @@
           <h3>General</h3><p class="settings-pane-lead">Chat interaction defaults. Previewed immediately; saved only when you choose Save.</p>
           <div class="setting-group">
             <div class="setting-row"><div><div class="setting-label">Enter to send</div><div class="setting-help">When off, Enter inserts a newline. Ctrl/⌘ + Enter still sends.</div></div><label class="setting-toggle"><input id="settingEnterSend" type="checkbox" checked> Enabled</label></div>
-            <div class="setting-row"><div><div class="setting-label">Conversation density</div><div class="setting-help">Changes vertical breathing room without widening the conversation stage.</div></div><div class="setting-control"><select id="settingDensity"><option value="compact">Compact</option><option value="comfortable">Comfortable</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">Personality profile</div><div class="setting-help">Default keeps standard §wyrlz behavior. Grand Elder Glitch Dragon adds mythic glitch-dragon flavor without changing factual evidence.</div></div><div class="setting-control"><select id="settingPersonalityProfile"><option value="default">Default</option><option value="gegd">Grand Elder Glitch Dragon · GEGD</option></select></div></div>\n            <div class="setting-row"><div><div class="setting-label">Conversation density</div><div class="setting-help">Changes vertical breathing room without widening the conversation stage.</div></div><div class="setting-control"><select id="settingDensity"><option value="compact">Compact</option><option value="comfortable">Comfortable</option></select></div></div>
           </div>
         </section>
         <section class="settings-pane" data-settings-pane="model">
@@ -700,7 +700,7 @@
       let accountProfileDurable=false;
       let settingsDirty=false;
       const settingsState={
-        general:{enterToSend:true},
+        general:{enterToSend:true,personalityProfile:"default"},
         model:{defaultModel:"700m",effort:"auto",responseLength:"adaptive"},
         user:{displayName:"",pronouns:"",role:"",communicationStyle:"adaptive",outputStyle:"adaptive"},
         companion:{name:"§wyrlz",title:"Glitch Dragon Kompanion",form:"Glitch Dragon",pronouns:"",warmth:"adaptive",directness:"adaptive",humor:"adaptive",loreDensity:"adaptive"},
@@ -1644,7 +1644,7 @@
           transportCamera("before-fetch");
           let response;
           try{
-            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,contentTag,modelId:String(settingsState.model.defaultModel||"700m"),profileId:"LALM",ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})(),...(clientLocation?{clientLocation}:{})})});
+            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,contentTag,modelId:String(settingsState.model.defaultModel||"700m"),profileId:String(settingsState.general.personalityProfile||"default"),ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})(),...(clientLocation?{clientLocation}:{})})});
             transportCamera("fetch-response",{status:response.status,ok:response.ok});
           }catch(networkError){
             transportCamera("fetch-network-failed",{error:String(networkError?.message||networkError)});
@@ -1820,11 +1820,11 @@
       const settingFontScale = document.getElementById("settingFontScale");
       const settingHighContrast = document.getElementById("settingHighContrast");
       const settingReducedTransparency = document.getElementById("settingReducedTransparency");
-      const settingsControlIds=["settingEnterSend","settingDensity","settingDefaultModel","settingEffort","settingResponseLength","settingGlass","settingMotion","settingFontScale","settingHighContrast","settingReducedTransparency"];
+      const settingsControlIds=["settingEnterSend","settingPersonalityProfile","settingDensity","settingDefaultModel","settingEffort","settingResponseLength","settingGlass","settingMotion","settingFontScale","settingHighContrast","settingReducedTransparency"];
       const profileControlIds=["settingDisplayName","settingUserPronouns","settingUserRole","settingCommunicationStyle","settingOutputStyle","settingCompanionName","settingCompanionTitle","settingCompanionForm","settingCompanionPronouns","settingCompanionWarmth","settingCompanionDirectness","settingCompanionHumor","settingCompanionLoreDensity"];
       const proposalPolicyDefaults={USER_PROFILE:"ASK",COMPANION_PROFILE:"ASK",USER_FACT:"ASK",USER_LORE:"ASK",COMPANION_SELF_LORE:"ASK",SHARED_LORE:"ASK",SHARED_RAPPORT:"ASK"};
       const applySettingsPreview = () => {
-        settingsState.general.enterToSend=!!settingEnterSend.checked;
+        settingsState.general.enterToSend=!!settingEnterSend.checked;\n         settingsState.general.personalityProfile=["default","gegd"].includes(settingPersonalityProfile.value)?settingPersonalityProfile.value:"default";
         settingsState.model.defaultModel=["700m","r39","stock"].includes(settingDefaultModel.value)?settingDefaultModel.value:"700m";
         settingsState.model.effort=settingEffort.value;
         settingsState.model.responseLength=settingResponseLength.value;
@@ -1856,7 +1856,7 @@
         const prefs=accountProfile?.preferences||{}, model=accountProfile?.model_preferences||{}, ui=accountProfile?.ui_preferences||{}, companion=accountProfile?.companion_profile||{};
         const general=prefs.general&&typeof prefs.general==="object"?prefs.general:{};
         const userProfile=prefs.profile&&typeof prefs.profile==="object"?prefs.profile:{};
-        settingDisplayName.value=accountProfile?.display_name||chatAccountUser?.displayName||"";
+        settingPersonalityProfile.value=["default","gegd"].includes(prefs?.general?.personalityProfile)?prefs.general.personalityProfile:"default";\n         settingDisplayName.value=accountProfile?.display_name||chatAccountUser?.displayName||"";
         settingUserPronouns.value=String(userProfile.pronouns||"");
         settingUserRole.value=String(userProfile.role||"");
         settingCommunicationStyle.value=["adaptive","direct","collaborative","technical","playful"].includes(userProfile.communicationStyle)?userProfile.communicationStyle:"adaptive";
@@ -2344,7 +2344,7 @@
         settingsState.user={displayName:settingDisplayName.value.trim(),pronouns:settingUserPronouns.value.trim(),role:settingUserRole.value.trim(),communicationStyle:settingCommunicationStyle.value,outputStyle:settingOutputStyle.value};
         settingsState.companion={name:settingCompanionName.value.trim()||"§wyrlz",title:settingCompanionTitle.value.trim()||"Glitch Dragon Kompanion",form:settingCompanionForm.value.trim()||"Glitch Dragon",pronouns:settingCompanionPronouns.value.trim(),warmth:settingCompanionWarmth.value,directness:settingCompanionDirectness.value,humor:settingCompanionHumor.value,loreDensity:settingCompanionLoreDensity.value};
         const proposalPolicy={...proposalPolicyDefaults};proposalPolicyControls.forEach(control=>proposalPolicy[control.dataset.proposalPolicy]=control.value);
-        const preferences={...existingPrefs,general:{...(existingPrefs.general&&typeof existingPrefs.general==="object"?existingPrefs.general:{}),enterToSend:settingsState.general.enterToSend},profile:{...(existingPrefs.profile&&typeof existingPrefs.profile==="object"?existingPrefs.profile:{}),pronouns:settingsState.user.pronouns,role:settingsState.user.role,communicationStyle:settingsState.user.communicationStyle,outputStyle:settingsState.user.outputStyle},proposalPolicy};
+        const preferences={...existingPrefs,general:{...(existingPrefs.general&&typeof existingPrefs.general==="object"?existingPrefs.general:{}),enterToSend:settingsState.general.enterToSend,personalityProfile:settingsState.general.personalityProfile},profile:{...(existingPrefs.profile&&typeof existingPrefs.profile==="object"?existingPrefs.profile:{}),pronouns:settingsState.user.pronouns,role:settingsState.user.role,communicationStyle:settingsState.user.communicationStyle,outputStyle:settingsState.user.outputStyle},proposalPolicy};
         const modelPreferences={...existingModel,effort:settingsState.model.effort,responseLength:settingsState.model.responseLength};
         const uiPreferences={...existingUi,density:settingsState.ui.density,glass:settingsState.ui.glass,motion:settingsState.ui.motion,fontScale:settingsState.ui.fontScale,highContrast:settingsState.ui.highContrast,reducedTransparency:settingsState.ui.reducedTransparency};
         const companionProfile={...existingCompanion,...settingsState.companion};
