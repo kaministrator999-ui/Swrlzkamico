@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.310
-REVISION=2.3.310-hf-v157-lyrics-polish
+VERSION=2.3.311
+REVISION=2.3.311-hf-v158-bounded-lyrics-fallback
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
