@@ -146,17 +146,25 @@ def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | 
         stanzas=[x.strip() for x in re.split(r"\n\s*\n+",selected) if x.strip()]
         if scope=="full-lyrics" and original_count and 0<original_count<len(stanzas):
             original_text="\n\n".join(stanzas[:original_count])
-            extra_text="\n\n".join(stanzas[original_count:])
+            extras=stanzas[original_count:]
+            extra_text="\n\n".join(extras)
+            extra_count=len(extras)
             author_match=re.search(r"\s+by\s+(.+)$",subject,re.I)
             author=author_match.group(1).strip() if author_match else "the named author"
+            original_label="stanza" if original_count==1 else "stanzas"
+            if extra_count==1:
+                extra_heading="Additional stanza present in the lyrics source"
+                extra_reference="The additional stanza above is kept separate"
+            else:
+                extra_heading="Additional stanzas present in the lyrics source"
+                extra_reference="The additional stanzas above are kept separate"
             body=(
-                f"**Original attributed text ({original_count} stanzas):**\n\n{original_text}"
-                f"\n\n**Additional stanza(s) present in the lyrics source:**\n\n{extra_text}"
+                f"**Original text attributed to {author} ({original_count} {original_label}):**\n\n{original_text}"
+                f"\n\n**{extra_heading}:**\n\n{extra_text}"
             )
             attribution_note=(
-                f"\n\n**Attribution note:** fetched historical evidence identifies the original text attributed "
-                f"to {author} as {original_count} stanzas. The additional stanza(s) above are kept separate "
-                f"instead of being attributed to {author}."
+                f"\n\n**Attribution note:** fetched historical evidence identifies {original_count} {original_label} "
+                f"as the original text attributed to {author}. {extra_reference} rather than being attributed to {author}."
             )
 
         attribution_source=str(verified.get("attributionSourceTitle") or "").strip()
