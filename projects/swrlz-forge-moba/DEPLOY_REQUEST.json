@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v7.4",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_4_EDITOR_WORKSPACES",
-  "reason": "Add professional game-engine menus and mobile-friendly workspace launcher based on Unity/Unreal workflow coverage while routing existing §E capabilities to real handlers",
-  "sourceIntegritySha256": "822d4d58aad205a4710401c040cd954337585e6346bb337fe7866de73e02f25e"
+  "releaseVersion": "v7.5",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_5_MOBILE_EDITOR_CHROME",
+  "reason": "Consolidate mobile editor navigation into one compact §E workspace trigger and remove overlapping desktop menu/Command Deck chrome from the phone viewport",
+  "sourceIntegritySha256": "0de92bd93af0e4a7d7b9ae22270ee964168e23cf049a11f780cd8563c1ce21e6"
 }
