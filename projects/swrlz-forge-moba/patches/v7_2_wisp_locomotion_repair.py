@@ -15,23 +15,20 @@ def apply(html):
       "editorLog('§wyrl§ Engine v7.1 initialized · expanded Fracture Forge · mobile breathing room','ok')":"editorLog('§wyrl§ Engine v7.2 initialized · Wisp horizontal locomotion repaired','ok')"
     }.items(): s=_once(s,a,b)
 
-    # Patch the current controller around its collision call, independent of the
-    # historical whitespace/body form.
-    candidates=["resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;","resolveHeroCollision(next,h.userData.colliderRadius||.46);if(Number.isFinite(next.x)&&Number.isFinite(next.z)){h.position.x=next.x;h.position.z=next.z;}"]
-    needle=next((q for q in candidates if q in s),None)
-    if not needle: raise RuntimeError("v7.2 current Wisp collision statement missing")
-    repl="""if(h.userData.hoverFlight){
-    const start=h.position.clone(),desired=next.clone(),moved=p=>Math.hypot(p.x-start.x,p.z-start.z)>.0001;
-    resolveHeroCollision(next,h.userData.colliderRadius||.46);
-    if(moved(next)){h.position.x=next.x;h.position.z=next.z;}
-    else{
-      const sx=start.clone();sx.x=desired.x;resolveHeroCollision(sx,h.userData.colliderRadius||.46);
-      const sz=start.clone();sz.z=desired.z;resolveHeroCollision(sz,h.userData.colliderRadius||.46);
-      if(moved(sx)||moved(sz)){h.position.x=moved(sx)?sx.x:start.x;h.position.z=moved(sz)?sz.z:start.z;}
-      else{h.position.x=desired.x;h.position.z=desired.z;}
-    }
-  }else{resolveHeroCollision(next,.55);h.position.x=next.x;h.position.z=next.z;}"""
-    s=_once(s,needle,repl)
+    # v6.7 intentionally preserved the historical horizontal controller. The current
+    # symptom is a dense-scene collision deadlock, so bypass horizontal collision only
+    # for the flying Wisp after updateHero has run; vertical hover remains unchanged.
+    marker="  h.rotation.y=fpYaw;"
+    inject="""  if(h.userData.hoverFlight){
+    const keyRight=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0);
+    const keyForward=(keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0);
+    const ri=THREE.MathUtils.clamp(keyRight+fpMove.x,-1,1),fi=THREE.MathUtils.clamp(keyForward-fpMove.y,-1,1);
+    const fwd=new THREE.Vector3(Math.sin(fpYaw),0,-Math.cos(fpYaw)),rgt=new THREE.Vector3(Math.cos(fpYaw),0,Math.sin(fpYaw)),freeMove=new THREE.Vector3().addScaledVector(fwd,fi).addScaledVector(rgt,ri);
+    if(freeMove.lengthSq()>1)freeMove.normalize();
+    if(freeMove.lengthSq()>.0001){const sp=h.userData.moveSpeed||6;h.position.addScaledVector(freeMove,sp*dt);}
+  }
+"""
+    s=_once(s,marker,inject+marker)
 
     # Guard against a stale stick capture when entering Play on mobile.
     marker="resetStick($('moveStick'),fpMove);resetStick($('lookStick'),fpLook);"
