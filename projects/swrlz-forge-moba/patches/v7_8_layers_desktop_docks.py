@@ -41,10 +41,10 @@ def apply(html):
       "runtimeVelocity:[0,0,0], runtimeBaseY:null, role:opts.role||'', tags:[...(opts.tags||[])], visualColor:opts.visualColor||'', groupParentId:opts.groupParentId||null, groupChildIds:[...(opts.groupChildIds||[])]",
       "runtimeVelocity:[0,0,0], runtimeBaseY:null, role:opts.role||'', tags:[...(opts.tags||[])], visualColor:opts.visualColor||'', groupParentId:opts.groupParentId||null, groupChildIds:[...(opts.groupChildIds||[])], editorLayerIds:[...(opts.editorLayerIds||[])]"
     )
-    s=_once(s,
-      "id:a.userData.id, name:a.name, type:a.userData.actorType, team:a.userData.team, baked:a.userData.baked, role:a.userData.role||'', tags:[...(a.userData.tags||[])], visualColor:a.userData.visualColor||'', groupParentId:a.userData.groupParentId||null, groupChildIds:[...(a.userData.groupChildIds||[])],",
-      "id:a.userData.id, name:a.name, type:a.userData.actorType, team:a.userData.team, baked:a.userData.baked, role:a.userData.role||'', tags:[...(a.userData.tags||[])], visualColor:a.userData.visualColor||'', groupParentId:a.userData.groupParentId||null, groupChildIds:[...(a.userData.groupChildIds||[])], editorLayerIds:[...(a.userData.editorLayerIds||[])],"
-    )
+    # v7.7 canonical-project promotion can shift serializer field ordering; patch the stable groupChildIds field instead.
+    serializer="groupChildIds:[...(a.userData.groupChildIds||[])],"
+    if serializer not in s: raise RuntimeError("v7.8 serializer anchor missing")
+    s=s.replace(serializer,serializer+" editorLayerIds:[...(a.userData.editorLayerIds||[])],",1)
     s=_once(s,
       "if(d.id)o.userData.id=d.id;o.userData.groupParentId=d.groupParentId||null;o.userData.groupChildIds=[...(d.groupChildIds||[])];",
       "if(d.id)o.userData.id=d.id;o.userData.groupParentId=d.groupParentId||null;o.userData.groupChildIds=[...(d.groupChildIds||[])];o.userData.editorLayerIds=[...(d.editorLayerIds||[])];"
