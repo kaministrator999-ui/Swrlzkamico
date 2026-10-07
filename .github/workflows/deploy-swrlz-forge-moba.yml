@@ -38,7 +38,7 @@ jobs:
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V7_6_DESKTOP_EDITOR_POLISH" dist/swrlz-forge-moba/index.html
+          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V7_7_CANONICAL_GLITCH_DEN_PROJECT" dist/swrlz-forge-moba/index.html
           grep -q "<title>§wyrl§ Engine · Maker v7.6</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
@@ -113,7 +113,7 @@ jobs:
               "sourcePath": "projects/swrlz-forge-moba",
               "sourceVersion": "v7.6",
               "engineName": "§wyrl§ Engine",
-              "sourceSha256": "409f42adc579b8da5ade1a55c9d5d09d58ef67539ff6e9f0562b119de9ea7f80",
+              "sourceSha256": "75aef1f830dd7117c5675ac1666bdf70755c7be007c26f986c4acb169293bf25",
               "spaceRepository": target,
               "spaceRevision": info.sha,
               "spacePage": "https://huggingface.co/spaces/kamiloki/swrlz-forge-moba",
@@ -141,7 +141,7 @@ jobs:
           for attempt in 1 2 3 4 5 6; do
             echo "Live verification attempt $attempt"
             if curl -fsSL --max-time 30 "$URL&attempt=$attempt" -o /tmp/forge-live.html; then
-              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V7_6_DESKTOP_EDITOR_POLISH" /tmp/forge-live.html; then
+              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V7_7_CANONICAL_GLITCH_DEN_PROJECT" /tmp/forge-live.html; then
                 echo "Verified: live HF Space is serving §wyrl§ Engine v7.6."
                 exit 0
               fi
