@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v8.1",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_1_PERFORMANCE_GRAPHICS",
-  "reason": "Add graphics scalability, Auto quality, persistent render/shadow/frame-cap settings, independent Editor and Play FPS/frame-time displays, and controller delta-time hardening",
-  "sourceIntegritySha256": "68d7066049a85681749c320b80ee0727790c02a17c7afb0c09d386dc7449b03f"
+  "releaseVersion": "v8.2",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_2_BOOTSTRAP_REPAIR",
+  "reason": "Repair v8.1 startup regression that aborted canonical level hydration before actors loaded; preserve performance controls and restore playable Embervault level",
+  "sourceIntegritySha256": "d7dc50a0697eb9bf5286131ff6dcaaae4fda7f3db7a3ecede90e8e1b0ef38935"
 }
