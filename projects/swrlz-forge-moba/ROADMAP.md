@@ -149,6 +149,8 @@ Release status: **staged locally; production deployment and live verification pe
 
 Deployment repair: the first v8.0 run [37663564970](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37663564970) passed exact reconstruction and JavaScript syntax but Hugging Face rejected the card description for exceeding 60 characters. The description is shortened and its metadata length validated. The engine artifact, authored scene, and integrity remain unchanged; a fresh final trigger deploys this packaging correction.
 
+Live verification adaptation: run [37663777249](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37663777249) uploaded v8.0 successfully but its raw served hash guard failed. Static Spaces prepend a creator-metadata script after `<head>`. The raw served page therefore differs from the uploaded HTML by that provider wrapper. Verification removes only the recognized Hugging Face metadata prefix, then checks the full source hash plus release marker. This keeps exact artifact verification while accounting for the hosting service; the v8.0 engine bytes remain unchanged.
+
 Source/deploy references use the final deploy-button contract: source is the validated normal release commit immediately before the v8.0 `DEPLOY_REQUEST.json` commit; deploy is that final trigger commit; the exact dedicated Actions run must have a matching `head_sha`. The workflow receipt and live host must confirm the v8.0 marker and source integrity. These references resolve from the final trigger and receipt, so completing deployment requires no mutation of release content after pressing the button. Until those checks pass, v7.9 remains the previously observed live baseline.
 
 ## v7.9 — Sanctuary & Makers Grotto becomes the canonical Dragon Den

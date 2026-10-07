@@ -144,7 +144,16 @@ jobs:
           for attempt in 1 2 3 4 5 6; do
             echo "Live verification attempt $attempt"
             if curl -fsSL --max-time 30 "$URL&attempt=$attempt" -o /tmp/forge-live.html; then
-              LIVE_HTML_SHA="$(sha256sum /tmp/forge-live.html | cut -d ' ' -f1)"
+              # Static Spaces inject only their creator metadata script after <head>.
+              # Strip that recognized provider wrapper before comparing source bytes.
+              python - <<'PYCODE'
+          import re
+          from pathlib import Path
+          served = Path("/tmp/forge-live.html").read_bytes()
+          source = re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>', b'', served, count=1)
+          Path("/tmp/forge-live-source.html").write_bytes(source)
+          PYCODE
+              LIVE_HTML_SHA="$(sha256sum /tmp/forge-live-source.html | cut -d ' ' -f1)"
               if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V8_0_EMBERVAULT_WORKSPACE" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ]; then
                 echo "Verified: live HF Space is serving the exact §wyrl§ Engine v8.0 artifact."
                 exit 0
