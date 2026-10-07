@@ -1,0 +1,247 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-muykvnbw-2474642587-1179353923",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "519d62eb5426736c1112df1eca5e08b3fdf147f1",
+  "persistedAtUnixMs": 1791406001712,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v158-bounded-lyrics-fallback",
+      "kind": "search",
+      "status": "OK",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 3,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 3,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1609,
+      "lyricsSourceAttemptCount": 3,
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406000102,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406000103,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406000246,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406000246,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406001183,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406001183,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406001186,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.lyricsondemand.com",
+        "url": "https://www.lyricsondemand.com/miscellaneouslyrics/newyearsongslyrics/auldlangsynelyrics.html"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406001396,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.lyricsondemand.com",
+        "url": "https://www.lyricsondemand.com/miscellaneouslyrics/newyearsongslyrics/auldlangsynelyrics.html",
+        "httpStatus": 200,
+        "responseBytes": 10005
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406001397,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "www.lyricsondemand.com",
+        "url": "https://www.lyricsondemand.com/miscellaneouslyrics/newyearsongslyrics/auldlangsynelyrics.html",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791406001398
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "www.lyricsondemand.com",
+        "url": "https://www.lyricsondemand.com/miscellaneouslyrics/newyearsongslyrics/auldlangsynelyrics.html",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1791406001399
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "www.songfacts.com",
+        "url": "https://www.songfacts.com/lyrics/traditional/auld-lang-syne",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1791406001399
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406001401,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.songfacts.com",
+        "url": "https://www.songfacts.com/lyrics/traditional/auld-lang-syne"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406001532,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.songfacts.com",
+        "url": "https://www.songfacts.com/lyrics/traditional/auld-lang-syne",
+        "httpStatus": 200,
+        "responseBytes": 160323
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "www.songfacts.com",
+        "url": "https://www.songfacts.com/lyrics/traditional/auld-lang-syne",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791406001532
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "www.songfacts.com",
+        "url": "https://www.songfacts.com/lyrics/traditional/auld-lang-syne",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1791406001533
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "www.singing-bell.com",
+        "url": "https://www.singing-bell.com/auld-lang-syne-lyrics-pdf/",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1791406001533
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406001536,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.singing-bell.com",
+        "url": "https://www.singing-bell.com/auld-lang-syne-lyrics-pdf/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791406001710,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.singing-bell.com",
+        "url": "https://www.singing-bell.com/auld-lang-syne-lyrics-pdf/",
+        "httpStatus": 200,
+        "responseBytes": 267377
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "www.singing-bell.com",
+        "url": "https://www.singing-bell.com/auld-lang-syne-lyrics-pdf/",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791406001710
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "www.singing-bell.com",
+        "url": "https://www.singing-bell.com/auld-lang-syne-lyrics-pdf/",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1791406001711
+      }
+    ],
+    "sourceSites": [
+      "www.lyricsondemand.com",
+      "www.songfacts.com",
+      "www.singing-bell.com"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
