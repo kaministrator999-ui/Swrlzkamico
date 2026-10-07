@@ -31,3 +31,5 @@ jobs:
           start=html.index('<script type="module">')+len('<script type="module">');end=html.rindex('</script>');Path("/tmp/e.mjs").write_text(html[start:end])
           PY
           node --check /tmp/e.mjs
+
+# retry stable movement slice
