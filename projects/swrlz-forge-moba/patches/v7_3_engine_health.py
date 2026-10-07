@@ -28,21 +28,21 @@ def apply(html):
 """
     s=_once(s,emergency,"")
 
-    # Replace the horizontal collision statement after reconstruction, tolerating the
-    # finite-guard form introduced by prior corrective patches.
-    candidates=[
-      "resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;",
-      "resolveHeroCollision(next,h.userData.colliderRadius||.46);if(Number.isFinite(next.x)&&Number.isFinite(next.z)){h.position.x=next.x;h.position.z=next.z;}"
-    ]
-    needle=next((q for q in candidates if q in s),None)
-    if not needle: raise RuntimeError("v7.3 horizontal movement statement missing")
-    unified="""if(h.userData.hoverFlight){
-    // Flight uses the requested X/Z directly. Dense editor collision proxies cannot pin the Wisp.
+    # The historical controller's exact collision expression has changed across
+    # contact patches. Replace the whole horizontal movement slice by stable anchors.
+    start="  const speed=h.userData.moveSpeed||6;"
+    end="\n\n  const groundY=terrainHeight(h.position.x,h.position.z)+HERO_GROUND_OFFSET;"
+    i=s.find(start);j=s.find(end,i)
+    if i<0 or j<0: raise RuntimeError("v7.3 updateHero movement slice missing")
+    unified="""  const speed=h.userData.moveSpeed||6;
+  const next=h.position.clone().add(move.multiplyScalar(speed*dt));
+  if(h.userData.hoverFlight){
+    // Flying Wisp uses one authoritative X/Z translation path.
     if(Number.isFinite(next.x)&&Number.isFinite(next.z)){h.position.x=next.x;h.position.z=next.z;}
   }else{
     resolveHeroCollision(next,.55);h.position.x=next.x;h.position.z=next.z;
   }"""
-    s=_once(s,needle,unified)
+    s=s[:i]+unified+s[j:]
 
     css=r"""
 .runtime-diag{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:31;display:none;pointer-events:none;padding:6px 10px;border:1px solid #31516a;border-radius:999px;background:#07111dcc;color:#9ee8ff;font:700 10px/1.2 ui-monospace,monospace;white-space:nowrap}
