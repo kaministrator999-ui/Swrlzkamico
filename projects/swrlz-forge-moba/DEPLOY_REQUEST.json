@@ -4,6 +4,6 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v7.7",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_7_CANONICAL_GLITCH_DEN_PROJECT",
-  "reason": "Promote the authored revision-142 120-actor Glitch Dragon Den as the default opened project and sole shipped project starter",
+  "reason": "Promote the authored revision-142 120-actor Glitch Dragon Den as the default opened project and sole shipped project starter; retry after correcting v7.7 title guard",
   "sourceIntegritySha256": "75aef1f830dd7117c5675ac1666bdf70755c7be007c26f986c4acb169293bf25"
 }
