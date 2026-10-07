@@ -10,7 +10,7 @@ import uuid
 from typing import Any, Callable
 
 MODULE_ID="online-research"
-VERSION="1.1.0"
+VERSION="1.2.0"
 CONTRACT_ID="swrlz_online_research_hot_v2"
 
 
@@ -79,16 +79,72 @@ def normalize_plan(payload:dict[str,Any])->dict[str,Any]:
     return {"intent":intent,"target":target,"requestedInformation":requested,"targetConfidence":confidence,"queries":queries,"constraints":raw.get("constraints",[])[:16] if isinstance(raw.get("constraints"),list) else [],"fallbackExactPrompt":not bool(raw.get("queries"))}
 
 def _sufficient(rec:dict[str,Any],plan:dict[str,Any])->bool:
-    """Stop research once fetched evidence satisfies the requested information."""
+    """Stop only when fetched evidence actually satisfies the requested information."""
+    re=__import__("re")
     text=str(rec.get("extract") or "")
     if not text:return False
     requested=(" ".join([str(plan.get("requestedInformation") or ""),str(plan.get("target") or "")," ".join(plan.get("queries") or [])])).lower()
     if "lyric" in requested:
-        if "first verse" in requested or "opening verse" in requested:
-            if __import__("re").search(r"(?im)^\s*(?:verse\s*1|verse\s*one)\b",text):return True
-            chunks=[x.strip() for x in __import__("re").split(r"\n\s*\n+",text) if x.strip()]
-            return any(2<=len([ln for ln in x.splitlines() if ln.strip()])<=8 and len(x)<=900 for x in chunks)
-        return len(text)>=120
+        first_scope=bool(re.search(r"\b(?:first|opening)\s+verse\b",requested,re.I))
+        full_scope=bool(re.search(
+            r"\b(?:complete|full)\s+lyrics?\b|\ball\s+(?:the\s+)?(?:lyrics?|verses?)\b|"
+            r"\bevery\s+verse\b|\bnot\s+just\s+the\s+first\s+verse\b|"
+            r"\bdo\s+not\s+(?:summarize|shorten|omit)\b",
+            requested,
+            re.I,
+        ))
+        noise=re.compile(
+            r"\b(?:home|blog|download|menu|sign\s*in|log\s*in|privacy|cookies?|terms|contact|"
+            r"about|share|follow|subscribe|navigation|search|app\s*store|google\s*play)\b",
+            re.I,
+        )
+        marker=re.compile(r"^(?:verse\s*(?:\d+|one|two|three|four|five|six)|chorus|refrain|bridge)\b",re.I)
+        raw_lines=[ln.strip() for ln in text.splitlines()]
+        lyricish=[]
+        longest=0
+        run=0
+        marker_count=0
+        for line in raw_lines:
+            if not line:
+                run=0
+                continue
+            if marker.search(line):
+                marker_count+=1
+                run=0
+                continue
+            words=re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",line)
+            ok=(
+                2<=len(words)<=24
+                and len(line)<=180
+                and not line.lower().startswith(("http://","https://"))
+                and not noise.search(line)
+            )
+            if ok:
+                lyricish.append(line)
+                run+=1
+                longest=max(longest,run)
+            else:
+                run=0
+        chunks=[x.strip() for x in re.split(r"\n\s*\n+",text) if x.strip()]
+        stanza_blocks=0
+        for chunk in chunks:
+            lines=[ln.strip() for ln in chunk.splitlines() if ln.strip()]
+            body=[]
+            for line in lines:
+                if marker.search(line):
+                    continue
+                words=re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",line)
+                if 2<=len(words)<=24 and len(line)<=180 and not noise.search(line):
+                    body.append(line)
+            if 2<=len(body)<=10 and len(body)>=max(2,(len(lines)+1)//2):
+                stanza_blocks+=1
+        if first_scope:
+            return marker_count>=1 or longest>=4 or stanza_blocks>=1
+        if full_scope:
+            # A title/snippet/menu can be long, but it is not a complete song.
+            # Require actual repeated lyric structure before stopping the search.
+            return (marker_count>=2 and len(lyricish)>=6) or (stanza_blocks>=2 and len(lyricish)>=8) or longest>=8
+        return marker_count>=1 or stanza_blocks>=1 or longest>=4
     terms=_terms(plan)
     low=text.lower()
     hits=sum(1 for t in terms if t in low)
