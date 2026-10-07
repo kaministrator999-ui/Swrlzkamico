@@ -255,7 +255,7 @@ This document owns **how results are communicated to the user**.
 
 It does not replace:
 
-- `SWRLZ_PROJECT_START.md` — project-work router/orchestrator;
+- `§wyrlz_§tart.md` — project-work router/orchestrator;
 - `SWRLZ_HOTFIX_RULES.md` — mutation/deployment/version mechanics;
 - `SWRLZ_VERSION_MODULE_EVOLUTION.md` — Server/module lineage;
 - `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md` — architecture discovery/integration method;
