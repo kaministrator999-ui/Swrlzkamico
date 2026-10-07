@@ -27,13 +27,13 @@ The scene belongs to `scenes/embervault-atelier.swyrl.json`; geometry and intera
 
 - Source manifest: `source-manifest.json`.
 - Base: 99,591 bytes, SHA-256 `a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856`.
-- Generated artifact: `swyrl_engine_v8_1.html`.
+- Generated artifact: `swyrl_engine_v8_2.html`.
 - Final size/hash: recorded in the manifest and generated `SOURCE.json`.
-- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_1_PERFORMANCE_GRAPHICS`.
+- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_2_BOOTSTRAP_REPAIR`.
 - Rebuild: `python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba`.
 - Dedicated Space: `kamiloki/swrlz-forge-moba`.
 - Live page: https://kamiloki-swrlz-forge-moba.static.hf.space/ .
 - Production workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`.
 
 The exact governed patch chain is in the manifest. Historical releases and receipts remain in [ROADMAP.md](ROADMAP.md). Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Deployment completion requires the exact Actions run to succeed and the live host to serve the current marker; root `§tart_§E.md` defines that contract.
-\n## v8.1 performance controls\n\nGraphics & Performance provides Auto/Low/Medium/High/Custom scalability, render scale, shadow quality, frame cap, and independent FPS/frame-time displays for Editor and Play/Simulate. Preferences persist locally. Auto adjusts render resolution from sustained frame time without changing gameplay simulation timing.\n
+\n## v8.2 performance controls\n\nGraphics & Performance provides Auto/Low/Medium/High/Custom scalability, render scale, shadow quality, frame cap, and independent FPS/frame-time displays for Editor and Play/Simulate. Preferences persist locally. Auto adjusts render resolution from sustained frame time without changing gameplay simulation timing.\n
