@@ -1,3 +1,62 @@
+## UPDATE FINISHED — 2026-10-07 — bounded lyrics source fallback v158
+
+**Outcome:** BOUNDED FALLBACK IMPLEMENTED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE A+ ACCEPTANCE PENDING.
+
+### Production failure captured
+- Live session export `swrlz-dragon-chat (9).json` showed the requested Tech N9ne lyrics lookup reached a real search result, fetched the selected page with HTTP 200, then terminated at `LYRICS_VERIFICATION_BLOCKED`.
+- The search provider had returned additional candidates, but the lyrics adapter only received the already-fetched evidence selected by the generic research reasoner. One extraction failure therefore ended the lyrics verification path even though alternate sources remained available.
+- Search connectivity/provider fallback was not the root cause; the missing behavior was bounded cross-source lyric verification fallback after a fetched page proved unusable.
+
+### v158 architecture + behavior
+- Online Research remains the sole search/fetch/evidence owner. No new provider or parallel subsystem was introduced.
+- The runtime-hot research reasoner advances internally to `1.4.1`, detects lyrics retrieval, caps lyrics evidence work to three pages, and exposes a ranked metadata-only `candidatePool` from the already-executed search.
+- The HF lyrics adapter adds `LYRICS_MAX_PAGE_ATTEMPTS=3`.
+- The first page already fetched by research counts as **attempt 1**. Only if its strict lyric extraction/verification fails may the adapter fetch the next ranked unique candidate.
+- The loop stops immediately on verified evidence and never retries the same normalized URL.
+- Failed page fetches consume an attempt. If all three total attempts fail, the result terminates cleanly with exhaustion state rather than searching indefinitely.
+- The outer research-query loop uses the same lyrics evidence ceiling, preventing extra search queries once the three-page budget has been consumed.
+
+### Observability
+- Online observability revision advances to `v158-bounded-lyrics-fallback`.
+- New bounded phases: `LYRICS_SOURCE_VERIFICATION`, `LYRICS_SOURCE_REJECTED`, `LYRICS_FALLBACK_FETCH`, and `LYRICS_SOURCE_VERIFIED`.
+- Result/model context and Online Camera now expose `lyricsSourceAttempts`, `lyricsSourceAttemptCount`, `lyricsMaxPageAttempts`, and `lyricsFallbackExhausted`.
+- This makes the exact page-attempt count and terminal reason inspectable without storing the raw user prompt.
+
+### Deterministic regression + release gate
+- Added `tests/test_full_lyrics_bounded_fallback_v158.py`.
+- Regression proves both required paths:
+  1. first source rejected + second source rejected + third source verified => success on exactly three total attempts, fourth candidate never fetched;
+  2. all first three sources rejected => bounded exhaustion after exactly three total attempts, fourth candidate never fetched.
+- The canonical HF deployment workflow now runs the v151, v155, v157, and new v158 lyric regressions before model reconstruction or publication.
+- The old v151 test was repaired to match the v157 presentation wording and restored to its declared no-network contract by stubbing provenance lookup.
+
+### Self-repair deployment history
+- Guarded run `37658810491` stopped before publication because the new regression gate exposed a stale v151 wording assertion. No candidate was uploaded.
+- Guarded run `37659014484` selected corrected fallback source `36807d2013dbd48ee324520f23a409274cf8e511` but had checked out before the later v151 fixture repair; it therefore stopped at the same pre-publication assertion. No candidate was uploaded.
+- The fixture was then made deterministic/no-network and the final source advanced to `519d62eb5426736c1112df1eca5e08b3fdf147f1`.
+
+### Final deployment receipts
+- Final guarded HF run: `37659240792` — terminal **SUCCESS**.
+- Exact selected source: `519d62eb5426736c1112df1eca5e08b3fdf147f1`.
+- Lyrics regression gate: **PASS** for v151, v155, v157, and `full-lyrics-bounded-fallback-v158 PASS`.
+- Native R39 verification, real R39 reconstruction, R39-vs-stock inspection, 700M smoke, fast-HF/Chat preservation guard, authorization gate, snapshot, rollback checkpoint, upload, and deployed-revision capture all completed successfully.
+- Pre-deploy/rollback Space revision: `ab4b5a3fdd7aaedcb02a1535b3a7052686288a15`.
+- Deployed Space revision: `98cd238c78c6e2a9821fc77b4263605266e9ed4c`.
+- Publication is verified. User-visible behavior on the next real lyrics request remains a separate acceptance gate.
+
+### Versions
+- Repository Work: **1.0.88**.
+- Server Runtime: **2.3.311 / 2.3.311-hf-v158-bounded-lyrics-fallback**.
+- Online Research: **1.0.9 / 1.0.9-bounded-lyrics-source-fallback-v158**.
+- Deployment Control: **1.0.18** because the canonical HF deployment gate now executes the lyrics regression stack.
+- LALM Engine remains **2.1.155 / 2.1.155-verified-lyrics-presentation-v157**; v158 changes retrieval/evidence fallback, not LALM cognition/presentation ownership.
+
+### Remaining acceptance
+- Run a fresh live lyrics lookup whose first source is unusable or structurally different and confirm the deployed trace either verifies a later source within the three-page ceiling or cleanly reports bounded exhaustion.
+- The next live song response is the user-visible **A+ acceptance test**; deployment success alone does not award that acceptance.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v158 A+ ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — bounded lyrics source fallback v158
 
 **Trigger:** a live `Cold Piece of Work` lyrics test searched successfully, fetched the selected lyrics page with HTTP 200, then terminated at `LYRICS_VERIFICATION_BLOCKED` because the fetched body could not be promoted into verified lyric evidence. The user requested bounded alternate-source attempts rather than stopping after the first unusable page or searching indefinitely.
