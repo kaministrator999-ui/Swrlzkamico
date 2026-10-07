@@ -6,11 +6,25 @@
 
 This file deliberately does **not** duplicate every architecture, versioning, diagnostic, deployment, or reporting rule. Those rules live in their dedicated owners below.
 
+
+### Specialized Forge engine entrypoint — `§tart §E`
+
+When the user's complete project invocation is `§tart §E` or `@GitHub §tart §E`, **route to `§tart_§E.md` instead of running the normal AI Chat/LALM startup chain**.
+
+That specialized router owns SWRLZ Forge/browser-engine work and its independent deployment lane:
+
+```text
+GitHub: kaministrator999-ui/Swrlzkamico
+  -> projects/swrlz-forge-moba/
+  -> .github/workflows/deploy-swrlz-forge-moba.yml
+  -> Hugging Face Space: kamiloki/swrlz-forge-moba
+  -> https://kamiloki-swrlz-forge-moba.hf.space/
+```
+
+The Forge engine is intentionally separate from the main §wyrlz AI Chat/LALM Space `kamiloki/Swyrlz`. Do not mix the two deployment paths unless the user explicitly requests an integration change.
+
+
 ---
-
-### Active Hugging Face continuation (2026-09-27)
-
-For current server/LALM development, read `docs/engineering/SWRLZ_HF_MIGRATION_AND_BASELINE.md` immediately after this router and before planning changes. Treat its **HF model knowledge retrieval index** as the compact feature map for stock/R39/700M routing, profile layers, role ownership, diagnostics, memory candidates, and project-knowledge retrieval; correlate it with the newest HF Roadmap continuation before mutation. The existing `kamiloki/Swyrlz` Space is the active candidate server/inference proving surface; the original pinned LFM2 GGUF/llama.cpp path is the speed-control model and §wyrlz R39 remains its own cognitive/inference engine. Preserve both model choices, the legacy Test Bench, the Chat/Station candidate and the Space revision. The active engineering objective is measured R39 native prefill/decode speed parity with the original on matched HF hardware, including longer 2k-token output trials. Do not claim parity from a short single probe or from UI streaming alone. Use the feature-branch manual HF workflow's validate/inspect gates before any approved publish; never dispatch the main registration-only workflow as a deploy. HF publish rebuilds/restarts the existing Space and requires explicit approval. **Vercel is deprecated for current §wyrlz application deployment and must not be used as a current hosting/deployment target.** Historical Vercel files remain provenance only unless a later explicit governance event reactivates them. Record progress and unresolved acceptance in the Roadmap; reconcile version authorities at governed closure.
 
 ## Current Hugging Face deployment method — mandatory
 
@@ -27,9 +41,27 @@ main:.deploy/HF_SPACE_REQUEST.txt
 
 For an explicitly user-approved deployment, update `main:.deploy/HF_SPACE_REQUEST.txt` with `TARGET=kamiloki/Swyrlz`, `APPROVED=1`, `SOURCE_REF=feature/hf-space-manual-deploy`, and a fresh unique `REQUEST_NONCE`. The push to that request file is the deployment trigger. The request workflow must call the guarded manual HF workflow; preserve its validation, snapshot, rollback, target, and approval gates.
 
-Do not require the user to manually press **Run workflow** when the current request already explicitly authorizes deployment and the request-file trigger is available. Conversely, ordinary repository edits without current deployment authorization remain deployment-inert.
+Do not require the user to manually press **Run workflow** when the current request already explicitly authorizes deployment and the request-file trigger is available.
 
-**Deployment response receipt — mandatory:** whenever a deployment is triggered, the same-turn user-facing update must include a directly usable link to the specific GitHub Actions workflow run that was triggered. Resolve the actual run created by the deployment request and provide its `html_url`; do not provide only a run number, generic Actions page, workflow file, or repository link. If the run has not appeared yet, state that explicitly and resolve/provide the specific run link as soon as it is available before treating the deployment handoff as complete.
+### Runtime-affecting source mutation → terminal deployment — mandatory
+
+For governed work, a completed update that mutates source used by the running application is **not finished at commit/source-complete state**. The same work turn must continue through the canonical guarded deployment path when the repository's standing deployment approval applies.
+
+Canonical completion sequence:
+
+```text
+runtime-affecting source mutation
+  -> architecture/version/roadmap reconciliation
+  -> deployment-inert verification
+  -> one guarded terminal deployment trigger
+  -> observe terminal deployment result
+  -> report activation truth
+  -> live/behavioral acceptance when applicable
+```
+
+Do **not** stop after source mutation and wait for the user to separately say “deploy.” The standing approval defined later in this document authorizes the single terminal production trigger for a completed governed update that actually requires deployment. Deployment success proves publication/activation only to the level observed; it does **not** by itself prove behavioral acceptance.
+
+Explicit deployment-inert exceptions remain deployment-inert: documentation-only work, training/corpus preparation that does not change the active runtime/model reference, runtime-hot work whose owning contract activates without stable production deployment, bookkeeping-only changes, and any other change the owning architecture explicitly classifies as non-deploying. If applicability is genuinely ambiguous, reconcile it against the owning deployment/hotfix contract rather than silently skipping deployment.
 
 **Vercel is retired/deprecated for current §wyrlz application hosting and deployment.** Do not create, deploy, clean up, or select Vercel projects as current application infrastructure. Remaining Vercel repository material is removal/migration debt or historical provenance only and must not outrank this HF contract.
 
@@ -38,6 +70,51 @@ Do not require the user to manually press **Run workflow** when the current requ
 During governed project work, any concrete action the engineering agent declares it will perform in the current turn becomes an open obligation. Before presenting a terminal/completion response, reconcile every such obligation as **executed with evidence**, **blocked with the concrete blocker**, or **legitimately deferred**. Do not silently omit a declared step, substitute narration for execution, or claim completion while a promised in-scope action remains open.
 
 This applies to inspection, repository edits, tests, cleanup, versioning, documentation, deployment triggers, verification, and other actionable project steps. Scope corrections may explicitly remove or replace obligations. Otherwise, saying “I’ll do X” means X belongs to the current work ledger until reconciled.
+
+
+### Cross-chat full-station execution ownership — mandatory
+
+This rule is **repository-durable** and therefore applies in a fresh ChatGPT conversation after the startup contract is loaded. Do not depend on remembered behavior from a prior chat.
+
+Ownership boundary:
+
+- **User / product owner:** originates or remakes the fundamental idea, desired behavior, product decision, or other concept-level requirement.
+- **§wyrlz / engineering agent:** owns implementation/finishing after that decision is supplied: architecture placement, source mutation, tests, validation, packaging, deployment handoff, inspection of failures caused by that implementation, repair, revalidation, and evidence-backed reporting.
+- **GitHub / CI / deployment machinery:** validates and transports the prepared implementation through the canonical workflow.
+- **Hosting/runtime provider:** serves the published result and supplies runtime evidence.
+
+A failure returns to the owner that caused or must decide it:
+
+- syntax errors, malformed wiring, bad packaging, regression failures, validation failures, deployment-handoff defects, or other engineering defects introduced by §wyrlz remain **§wyrlz-owned**; diagnose and repair them without asking the user to repeat the task;
+- a failure proving the requested product idea/behavior itself must fundamentally change returns to the **user/product owner** for that decision;
+- missing permission/credential/authorization, an unsafe action, an external service blocker, or genuinely ambiguous product intent may also require the user.
+
+For authorized in-scope project work, the default execution loop is:
+
+```text
+reconstruct current authority
+→ inspect evidence
+→ implement smallest coherent change
+→ run applicable validation/tests
+→ validation failure caused by this implementation?
+   → inspect exact failure
+   → repair
+   → rerun validation
+→ deployment required + authorized?
+   → trigger canonical deployment
+   → observe terminal result
+   → deployment/packaging failure caused by this implementation?
+      → inspect exact failure
+      → repair
+      → revalidate
+      → redeploy through the same canonical path
+→ verify activation/behavior to the available evidence level
+→ report receipts + any genuine remaining blocker
+```
+
+Do **not** stop at “the deploy failed,” “the test failed,” or “I found the error” when the failure is safely repairable inside §wyrlz's implementation scope. Continue the loop in the same turn when tools/time permit. This is not permission for an unbounded retry storm: each retry must follow a concrete diagnosed cause and a materially corrected candidate. If repeated attempts no longer produce new evidence or safe repair is no longer clear, stop with the exact blocker.
+
+This rule applies equally when project work resumes in a **new chat**. Fresh-session startup reconstructs the contract from the repository, then continues with this same ownership behavior rather than reverting to explanation-only or half-completed handoff behavior.
 
 ## 1. Start command
 
@@ -167,6 +244,7 @@ Read these when relevant:
 - `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` — Google sign-in, OAuth, account/session, or related Chat-auth work.
 - `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md` — when helping a user start/grow their own project, teaching architecture, explaining tradeoffs, or simplifying/removing optional architecture at the user's request.
 - `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md` — whenever work changes or evaluates programming/coding behavior in the LALM, coding-task routing, architecture-aware coding state, code-tool planning, coding evaluation, or a future dedicated coder model. This document owns the target runtime architecture and the truth boundary between documented curriculum, executable runtime behavior, and trained model capability.
+- `docs/engineering/SWRLZ_700M_WEIGHT_LEARNING_PIPELINE.md` — mandatory when harvesting validated 700M successes/failures, building training corpora, configuring LoRA/fine-tuning, evaluating trained checkpoints/adapters, changing model weights, or promoting a trained 700M artifact into runtime. This guide links training evidence back to this Start router and preserves the boundary between runtime prompting and actual learned weights.
 - feature-specific runbooks/contracts — when the affected subsystem has one.
 
 **Order authority:** this Project Start file owns the startup/read order. If an older subordinate document contains a legacy “READ THIS FIRST” label or old ordering, this file wins unless the repository has explicitly replaced this router with a newer authority.
@@ -237,6 +315,37 @@ Untouched component                     → stays exactly where it is
 
 A repository commit is not a Server deployment. A runtime-hot activation is not automatically a Server release. A component may advance across many Repository Work tiers while Server Runtime remains unchanged.
 
+## 1A. Current hosting + deployment authority — Hugging Face is canonical
+
+The current application hosting/deployment target for this project is the existing Hugging Face Space `kamiloki/Swyrlz`.
+
+**Vercel is deprecated for current §wyrlz application deployment.** Historical Vercel workflows, guides, deployment records, project IDs, aliases, and cleanup contracts may remain in the repository as lineage/reference, but they are **not the current deployment path** and must not be selected merely because an older project document names them.
+
+Current deployment-control rules:
+
+- ordinary source commits remain deployment-inert;
+- source work may continue on its architecturally correct branch without implying deployment approval;
+- the canonical HF package/publish workflow is `.github/workflows/manual-hf-space.yml`;
+- Chat/HF candidate work currently deploys from the explicitly selected `SOURCE_REF` (normally `feature/hf-space-manual-deploy` while that branch remains the accepted candidate authority);
+- after the user explicitly approves deployment, an engineering agent with GitHub write access may start it by changing **only** `.deploy/HF_SPACE_REQUEST.txt` on `main` to a fresh approved request;
+- the request must target `kamiloki/Swyrlz`, set `APPROVED=1`, name the exact `SOURCE_REF`, and use a fresh `REQUEST_NONCE`;
+- `.github/workflows/hf-space-request.yml` validates that request and calls the canonical HF workflow;
+- the checked-out source SHA, pre-deploy HF snapshot/rollback checkpoint, package validation, publish result, and post-deploy evidence remain part of deployment truth;
+- changing unrelated files on `main` must **not** deploy the Space;
+- never set `APPROVED=1` or rotate the request nonce without explicit deployment approval.
+
+An inert request is intentionally represented by `APPROVED=0`. A commit to the request file with `APPROVED=0` may start the request-check workflow, but the deploy job must remain skipped.
+
+### Deprecated Vercel documentation rule
+
+Where older canonical/subordinate documents describe Vercel as the current production host or `.deploy/REQUEST.txt` / `manual-vercel-production.yml` as the current application deployment trigger, treat those statements as **historical/deprecated deployment lineage** unless a later governed migration explicitly restores Vercel.
+
+Do not delete historical Vercel evidence solely because it is deprecated. Preserve it for archaeology/rollback history, but do not let it override this hosting authority during startup, implementation, deployment planning, or readiness reporting.
+
+For deployment work, startup must inspect the current HF request gate and HF workflow before acting. If their source contradicts this section, stop and reconcile deployment control rather than falling back to Vercel.
+
+---
+
 ## 2. Document ownership map
 
 Each rule family has one primary owner.
@@ -269,39 +378,42 @@ Before any production request for a stable Server candidate, execute `docs/engin
 
 The standalone `Purge Stale Vercel Deployments` workflow is maintenance-only: it preserves the deployment serving the production alias while deleting other stale deployments. Its green status must never be interpreted as “current production cleared.” Destructive clear-current cleanup belongs inside the canonical production workflow after the replacement artifact is prepared and immediately before deployment.
 
-### Mandatory mutation → version → roadmap → clear current server → deploy latest → verify sequence
+### Mandatory mutation → version → roadmap → guarded Hugging Face deploy → verify sequence
 
-For **every governed GitHub/server production update**, use this exact release order consistently. A source mutation is not terminal by itself.
+For **every governed §wyrlz AI Chat/LALM production update** that requires stable publication, use the current Hugging Face release path. A source mutation is not terminal by itself.
 
 Mandatory sequence:
 
-1. **Update source first.** Complete the requested implementation in the canonical GitHub owners. Update the affected canonical version authority/authorities according to `SWRLZ_VERSION_MODULE_EVOLUTION.md`, and journal the governed event in `SWRLZ_SERVER_ROADMAP.md`.
-2. **Prepare and verify the replacement before destructive cleanup.** The canonical GitHub deployment workflow must check out the exact intended source SHA, build/inject/verify the production artifact, and stop on any preparation failure. Do not clear the currently deployed server while the replacement is still unprepared.
-3. **Clear the current Vercel server deployments immediately before deploy.** After the replacement artifact is ready, enumerate deployments belonging to the existing canonical Vercel project and remove the previous/current project deployments. Wait for cleanup to reach a terminal successful state. Never create a new Vercel project as a cleanup shortcut.
-4. **Deploy the latest updated server through GitHub.** Immediately after successful cleanup, the same canonical GitHub workflow deploys the already-prepared artifact/source lineage to the one existing Vercel project. Do not deploy an older SHA, a runtime scratch copy, or an independently reconstructed artifact.
-5. **Watch GitHub to terminal.** Stay on the GitHub Actions run until it succeeds or fails. Do not report `queued`, `building`, or `triggered` as completion.
-6. **Watch Vercel to terminal and prove lineage.** On GitHub deployment success, inspect the connected Vercel project until the new production deployment is `READY` (or terminal failure), confirm the production alias points to it, and confirm the deployed source SHA matches the intended latest GitHub source SHA.
-7. **Only then report deployment completion.** The release is complete only when source/version/Roadmap state is coherent, previous deployments were cleared in the prescribed pre-deploy window, GitHub reached terminal success, Vercel reached `READY`, the production alias is on the replacement, and source lineage is verified.
+1. **Update source first.** Complete the requested implementation in the canonical owner(s), reconcile affected version authority/authorities as applicable, and journal the governed event in `SWRLZ_SERVER_ROADMAP.md`.
+2. **Validate the exact candidate before publication.** Use the existing HF package/source checks and regression suite; do not use production as the first syntax/test probe.
+3. **Snapshot the existing Space before upload.** Preserve the current `kamiloki/Swyrlz` revision/rollback checkpoint through the guarded workflow.
+4. **Deploy through the canonical GitHub request chain.** Update `main:.deploy/HF_SPACE_REQUEST.txt` with the exact target/source ref and a fresh nonce, allowing `.github/workflows/hf-space-request.yml` to invoke `.github/workflows/manual-hf-space.yml`.
+5. **Watch GitHub to a terminal result.** Do not report queued/building/triggered as completion.
+6. **If validation/deployment fails because of §wyrlz-owned implementation/packaging work, inspect the exact failure, repair it, revalidate, and rerun the same guarded HF path within the authorized scope.**
+7. **Capture deployed revision and verify activation/behavior to the available evidence level.** Deployment success proves publication; user-visible behavior still requires its own acceptance evidence when applicable.
+8. **Only then report completion.**
 
 Canonical shorthand:
 
 ```text
-UPDATE GITHUB SOURCE + VERSION + ROADMAP
+UPDATE SOURCE + GOVERNANCE/ROADMAP
         ↓
-BUILD / VERIFY LATEST REPLACEMENT ARTIFACT
+VALIDATE EXACT CANDIDATE
         ↓
-CLEAR CURRENT/PREVIOUS DEPLOYMENTS ON THE EXISTING VERCEL PROJECT
+SNAPSHOT EXISTING HF SPACE / ROLLBACK LINEAGE
         ↓
-DEPLOY THE LATEST UPDATED SERVER THROUGH THE CANONICAL GITHUB WORKFLOW
+GUARDED HF REQUEST → MANUAL HF DEPLOY WORKFLOW
         ↓
-WATCH GITHUB TO TERMINAL
+WATCH TO TERMINAL
         ↓
-WATCH VERCEL TO READY + VERIFY ALIAS + SOURCE SHA
+SELF-CAUSED FAILURE? DIAGNOSE → REPAIR → REVALIDATE → REDEPLOY
+        ↓
+CAPTURE DEPLOYED REVISION + VERIFY AVAILABLE LIVE BEHAVIOR
         ↓
 REPORT COMPLETE
 ```
 
-**Consistency rule:** use this order for every production server deployment unless the user explicitly changes the release policy in a later governed update. Do not silently reorder cleanup after deployment, skip cleanup, create a replacement Vercel project, or finish before terminal verification.
+**Vercel release/cleanup sequences in older sections or subordinate historical documents are deprecated lineage, not current application instructions.** Do not clear or deploy a Vercel project for current §wyrlz AI Chat/LALM work unless a later governed migration explicitly reactivates Vercel.
 
 
 ---
@@ -344,8 +456,10 @@ VERIFY BEHAVIOR + OBSERVED RUNTIME HEALTH + OWNERSHIP + ACTIVATION AS RELEVANT
 WRITE ROADMAP UPDATE FINISHED RECORD
       ↓
 PRODUCTION DEPLOY REQUIRED?
-      ├─ YES → USE STANDING APPROVAL FOR ONE TERMINAL CANONICAL TRIGGER
-      │         → OBSERVE + VERIFY; NEVER AUTO-RETRY
+      ├─ YES → USE CURRENT AUTHORIZATION / STANDING TERMINAL DEPLOY CONTRACT
+      │         → OBSERVE TERMINAL RESULT
+      │         → SELF-CAUSED FAILURE? DIAGNOSE → REPAIR → REVALIDATE → RETRY
+      │         → STOP ONLY ON SUCCESS OR GENUINE BLOCKER/USER-OWNED DECISION
       └─ NO  → DO NOT DEPLOY
       ↓
 REPORT RESULT USING RESPONSE STANDARD
@@ -513,53 +627,44 @@ remaining deployment ID = current production deployment ID
 
 Do not create a new Vercel project, silently switch project IDs, or infer deployment from a Git commit. Do not claim deployment success while Vercel is BUILDING or the workflow is still in progress.
 
-### Deployment watch, failure recovery, and one-minute bound — mandatory
+### Deployment watch + failure recovery — mandatory
 
-A deployment/watch operation must never become an indefinite polling loop.
+A deployment/watch operation must be bounded and evidence-driven.
 
-1. For each stage — stale-deployment cleanup, GitHub production workflow, and resulting Vercel deployment — watch only until that stage reaches a terminal state or approximately **one minute** of active waiting has elapsed.
-2. **Terminal success:** stop polling that stage immediately and advance to the next required stage. Never continue polling a workflow or deployment that is already terminal-success.
-3. **Terminal failure:** stop polling immediately and inspect the failure evidence/logs. When the failure is safely repairable within the authorized project scope, repair the actual cause, perform all required mutation bookkeeping (affected versions + Roadmap), then restart the required sequence from the appropriate predeploy gate and rerun deployment on the same canonical project.
-4. If the failure cannot be safely repaired, requires missing information/authorization, or remains unresolved, finish the response with the exact failed stage, terminal failure evidence, and current blocker. Never imply deployment succeeded.
-5. **One-minute unresolved bound:** if a stage remains queued/in-progress/building after approximately one minute, stop active polling and finish the response with its exact current state. Do not call an in-progress stage failed merely because the watch bound elapsed.
-6. A GitHub production workflow that fails before its Vercel deployment step means **no new Vercel deployment was produced**; do not wait for or claim a Vercel deployment in that case.
-7. A successful GitHub stage should be followed only by the next required stage; success is a transition signal, not a reason to keep watching the completed stage.
-8. Failure recovery must never create a replacement Server/Vercel project. Always reuse `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`.
+1. Watch the actual GitHub HF request/deploy run until terminal when practical; do not keep polling a stage that is already terminal.
+2. On **terminal success**, advance to deployed-revision/activation verification and behavioral acceptance when applicable.
+3. On **terminal failure**, inspect the exact failing step/logs immediately.
+4. When the failure is safely repairable inside §wyrlz's implementation scope, repair the cause, re-run deployment-inert validation, then trigger the same canonical HF deployment path again. Do not return an agent-caused syntax/packaging/wiring failure to the user as unfinished engineering work.
+5. Do not retry blindly. Every retry must be tied to a diagnosed cause and a materially changed candidate; stop if further repair is unsafe, authorization/credentials are missing, the provider is externally blocked, or a product-level decision belongs to the user.
+6. Never create a replacement Hugging Face Space as a recovery shortcut. Preserve `kamiloki/Swyrlz`, its predeploy snapshot, and rollback lineage.
+7. A failed GitHub validation/deploy run that never reached the upload step did **not** publish a new Space revision; report that distinction precisely.
 
----
+### Canonical Hugging Face target lock — mandatory
 
-### Canonical Vercel project lock — mandatory
+All current §wyrlz AI Chat/LALM deployment, inspection, repair, retry, rollback, and release operations target the already-existing Hugging Face Space `kamiloki/Swyrlz`.
 
-All Server deployment, cleanup, inspection, repair, retry, rollback, and release operations MUST target the already-existing canonical Vercel project `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`.
+- Never create, bootstrap, clone, or substitute a second Space merely to recover from a failed deployment.
+- Preserve the canonical request chain and exact `SOURCE_REF`.
+- Preserve snapshot/rollback/release checkpoints.
+- Verify the actual workflow run and resulting Space revision; a trigger commit alone is not deployment success.
+- Vercel remains historical/deprecated for this application path.
 
-- **Never create, bootstrap, clone, import, or substitute a new Vercel project for Server work.**
-- If a deployment command/workflow would create a project because linking/project resolution is missing, ambiguous, or broken, **stop and repair the link/configuration instead of proceeding**.
-- A failed deployment or failed cleanup does not authorize project creation.
-- Retries must reuse the same canonical project ID and production lineage.
-- Before reporting a GitHub → Vercel deployment as started, verify that a deployment-producing GitHub workflow actually ran and that Vercel received a deployment for this canonical project. A GitHub commit, queued cleanup job, or documentation mutation is not a Vercel deployment.
+### Project standing approval — terminal deployment and §wyrlz-owned corrective retries
 
-The standalone stale-purge workflow/trigger may remain available as a repair/maintenance tool, but it is **not** the normal release path and must not replace the automatic post-deploy cleanup owned by the canonical Server Plane workflow.
+For this repository, the user grants standing approval for the **terminal canonical deployment needed to complete a governed runtime-affecting update**, plus **corrective re-deployments that are necessary solely because §wyrlz's own implementation/packaging/deployment handoff failed**.
 
-### Project standing approval — single terminal production trigger
+This standing approval is deliberately bounded:
 
-For this repository, the user grants standing approval for **one production deployment trigger at the end of a governed update when that update actually requires production deployment**. This standing approval is deliberately narrow:
+- finish source implementation, reconciliation, versioning/governance, and deployment-inert verification first;
+- use only the canonical existing-Space Hugging Face request/workflow path;
+- a corrective retry must follow an inspected concrete failure and a materially repaired candidate;
+- corrective retries do **not** authorize unrelated feature changes, a redesigned product decision, a different deployment target, a new Space, a rollback to a materially different product state, paid infrastructure, or actions outside the original governed scope;
+- if the underlying **idea/behavior itself** must be remade, return that decision to the user/product owner instead of silently changing product intent;
+- documentation-only/deployment-inert changes remain non-deploying;
+- after each deployment attempt, observe the actual terminal result and preserve the exact truth state.
 
-- finish source implementation, reconciliation, versioning, and all deployment-inert verification first;
-- deployment is the **last step** of the update, never an exploratory/intermediate step;
-- trigger production **once only** for that completed candidate;
-- use the canonical repository deployment authority. As of 2026-09-19, that authority is the `main`-branch `.deploy/REQUEST.txt` request consumed by `.github/workflows/manual-vercel-production.yml`, which performs the Vercel CLI production build/deploy and source-bound verification;
-- do not repeatedly rewrite/retrigger the request to chase a failure. A failed, cancelled, ambiguous, or materially changed candidate requires diagnosis and a new explicit user approval before another production trigger;
-- do not deploy updates that are runtime-hot/deployment-inert or otherwise do not require stable production activation;
-- do not treat ordinary commits, documentation writes, version bumps, or roadmap bookkeeping as deployment triggers;
-- after the single trigger, observe the workflow/deployment result and report the exact activation/verification truth state. Never claim live success merely because the trigger fired.
+This contract exists specifically so a fresh §wyrlz project session does not regress to: “deployment failed; ask the user what to do” for a syntax error or other defect §wyrlz just introduced. The engineering station owns its own finishing errors.
 
-This standing approval supersedes the older per-update requirement to stop and ask immediately before the **first and only terminal deployment trigger**, but it does not authorize a second attempt, rollback, unrelated deployment, workflow redesign, release, or deployment earlier in the update.
-
-A request to fix, implement, document, commit, merge, or architect does not by itself create broader deployment authorization beyond this standing single-terminal-trigger contract; it also must not cause ordinary deployment-inert Git work to be mislabeled as deployment-capable.
-
-Documentation-only changes are engineering-contract maintenance and must be deployment-inert. They do not require deployment approval. If repository/deployment configuration causes documentation-only commits to deploy application code, treat that configuration as a defect and correct the deployment filtering rather than treating documentation as deployment-sensitive.
-
-Prefer runtime-hot work when it is the correct architectural owner; do not move behavior to the wrong layer merely to avoid deployment.
 
 ---
 
@@ -775,4 +880,4 @@ A governed project event is not complete until the applicable parts are true:
 
 ## Bottom line
 
-**Project Start is the router. Read the seven required project-work documents, then follow their ownership instead of duplicating their rules. Begin governed project-work responses with the required large centered `𓆩𓆩⁽§⁾𓆪wyrlz𓆪` identity opener. Reconcile architecture before implementing. During issue work, automatically inspect repository/live logs and add bounded cameras only where evidence is missing. Resolve module VERSION and declared STATUS through `VERSION.txt` and the module-owned authority; reconcile that declared state with observed runtime health before a consumer chooses behavior or UI. Version from current authority, preserve concurrency and roadmap lineage, never trigger deployment without explicit approval, and report the result in a structured readable way. When helping users build their own projects, teach these architecture principles proportionally and respect their informed choice to simplify optional structure. When changing programming-LALM/coder capability, read the Programming LALM Runtime Architecture spec and never confuse documented curriculum with executable or trained capability.**
+**Project Start is the router. Read the ten required project-work documents, then follow their ownership instead of duplicating their rules. Begin governed project-work responses with the required small, lightweight `𓆩𓆩⁽§⁾𓆪wyrlz𓆪` identity opener. Reconcile architecture before implementing. During issue work, automatically inspect repository/live logs and add bounded cameras only where evidence is missing. Resolve module VERSION and declared STATUS through `VERSION.txt` and the module-owned authority; reconcile that declared state with observed runtime health before a consumer chooses behavior or UI. Version from current authority, preserve concurrency and roadmap lineage, use the repository's standing single-terminal deployment approval for runtime-affecting stable source mutations, never trigger deployment outside that approval/authorization contract, and report the result in a structured readable way. When helping users build their own projects, teach these architecture principles proportionally and respect their informed choice to simplify optional structure. When changing programming-LALM/coder capability, read the Programming LALM Runtime Architecture spec and never confuse documented curriculum with executable or trained capability.**
