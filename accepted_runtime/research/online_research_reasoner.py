@@ -10,7 +10,7 @@ import uuid
 from typing import Any, Callable
 
 MODULE_ID="online-research"
-VERSION="1.2.0"
+VERSION="1.3.0"
 CONTRACT_ID="swrlz_online_research_hot_v2"
 
 
@@ -94,8 +94,8 @@ def _sufficient(rec:dict[str,Any],plan:dict[str,Any])->bool:
         ))
         first_scope=bool(re.search(r"\b(?:first|opening)\s+verse\b",requested,re.I)) and not full_scope
         noise=re.compile(
-            r"\b(?:home|blog|download|menu|sign\s*in|log\s*in|privacy|cookies?|terms|contact|"
-            r"about|share|follow|subscribe|navigation|search|app\s*store|google\s*play)\b",
+            r"\b(?:blog|download|menu|sign\s*in|log\s*in|privacy|cookies?|terms|contact|"
+            r"share|follow|subscribe|navigation|search|app\s*store|google\s*play|related\s+(?:songs?|hymns?))\b",
             re.I,
         )
         marker=re.compile(r"^(?:verse\s*(?:\d+|one|two|three|four|five|six)|chorus|refrain|bridge)\b",re.I)
