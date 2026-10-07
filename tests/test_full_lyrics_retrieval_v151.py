@@ -53,6 +53,7 @@ lyrics=(
 assert reasoner._sufficient({"extract":lyrics},reasoner_plan) is True
 
 original=online_tools.run_online_research
+original_provenance=online_tools._lyrics_provenance_lookup
 def fake_research(_payload):
     return {
         "provider":"test-search",
@@ -73,13 +74,28 @@ def fake_research(_payload):
             },
         ],
     }
+def fake_provenance(_subject,_lyrics,_progress=None):
+    return {
+        "originalStanzaCount":None,
+        "sourceTitle":"",
+        "sourceUrl":"",
+        "evidence":[],
+        "queries":[],
+        "fetchCount":0,
+        "claimExcerpt":"",
+        "httpStatus":None,
+        "fetchedAt":None,
+    }
+
 try:
     online_tools.run_online_research=fake_research
+    online_tools._lyrics_provenance_lookup=fake_provenance
     plan_with_id=dict(plan)
     plan_with_id["requestId"]="lyrics-v151"
     result=online_tools._search_bundle(plan_with_id)
 finally:
     online_tools.run_online_research=original
+    online_tools._lyrics_provenance_lookup=original_provenance
 
 verified=result["modelContext"]["verifiedLyrics"]
 assert verified, result
