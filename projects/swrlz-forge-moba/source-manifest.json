@@ -40,5 +40,7 @@
     "patches/v7_2_wisp_locomotion_repair.py",
     "patches/v7_3_engine_health.py",
     "patches/v7_4_editor_workspaces.py"
-  ]
+  ],
+  "finalBytes": 194122,
+  "finalSha256": "822d4d58aad205a4710401c040cd954337585e6346bb337fe7866de73e02f25e"
 }
