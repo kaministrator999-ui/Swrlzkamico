@@ -223,7 +223,7 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
         online_plan["reason"]="coder-non-programming-search-disabled"
     if online_plan.get("requested"):
         phase="WEATHER_FETCH_STARTED" if online_plan.get("kind")=="weather" else "SEARCH_STARTED"
-        yield {"type":"STATUS","phase":phase,"reason":"Retrieving bounded online evidence.","categories":["ONLINE_RESEARCH",str(online_plan.get("kind") or "search").upper()]}
+        search_target=str(online_plan.get("query") or payload.get("prompt") or "that").strip()\n        yield {"type":"STATUS","phase":phase,"reason":"I’m on it — looking up "+search_target+"…","categories":["ONLINE_RESEARCH",str(online_plan.get("kind") or "search").upper()]}
         online_result=None
         for update in stream_online_request(payload,intent):
             if update.get("type")=="progress":
@@ -274,6 +274,13 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     if online_result and isinstance(online_result.get("modelContext"),dict) and str(online_result["modelContext"].get("epistemicPolicy") or "").startswith("LYRICS VERIFICATION:"):
         lyrics_text=_lyrics_retrieval_payload(online_result,str(payload.get("prompt") or ""))
         if lyrics_text:
+            ctx=online_result.get("modelContext") or {}
+            verified=ctx.get("verifiedLyrics") if isinstance(ctx.get("verifiedLyrics"),dict) else {}
+            source=str(verified.get("sourceTitle") or "a fetched source")
+            yield {"type":"STATUS","phase":"SOURCE_FOUND","reason":"There we go — I found relevant verified material on "+source+".","categories":["ONLINE_RESEARCH","EVIDENCE","FOUND"]}
+            yield {"type":"STATUS","phase":"EVIDENCE_SCOPING","reason":"Give me one second — preparing the requested material.","categories":["ONLINE_RESEARCH","EVIDENCE","SCOPING"]}
+            # The verified payload is immutable factual content. Personality/reasoning may frame it,
+            # but factual text comes from retrieval/scoping rather than model reconstruction.
             yield {"type":"STATUS","phase":"LYRICS_VERIFIED_PAYLOAD","reason":"Serving frozen lyrics payload from successfully fetched evidence.","categories":["ONLINE_RESEARCH","LYRICS","GROUNDING"]}
             yield {"type":"DELTA","text":lyrics_text}
             yield {"type":"COMPLETED","phase":"COMPLETE"}
