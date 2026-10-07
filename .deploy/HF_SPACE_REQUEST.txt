@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-06-v148-side-menu-settings-js-fix-001
+REQUEST_NONCE=2026-10-06-v149-lyrics-source-selection-menu-clean-001
