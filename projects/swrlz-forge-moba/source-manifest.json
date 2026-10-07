@@ -42,5 +42,7 @@
     "patches/v7_4_editor_workspaces.py",
     "patches/v7_5_mobile_editor_chrome.py",
     "patches/v7_6_desktop_editor_polish.py"
-  ]
+  ],
+  "finalBytes": 197128,
+  "finalSha256": "409f42adc579b8da5ade1a55c9d5d09d58ef67539ff6e9f0562b119de9ea7f80"
 }
