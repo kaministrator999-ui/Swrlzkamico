@@ -1,3 +1,82 @@
+## UPDATE FINISHED — 2026-10-07 — search admission diagnostics + bounded lyrics rescue v163
+
+**Outcome:** SEARCH ADMISSION COLLAPSE IS NOW EXPLICIT + BOUNDED EXACT-TITLE RESCUE IMPLEMENTED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### Live v162 acceptance evidence
+The uploaded `swrlz-dragon-chat (13).json` showed:
+- correct prompt normalization to `cold piece of work tech n9ne lyrics`;
+- DuckDuckGo HTML returned HTTP 202 / 0 results;
+- DuckDuckGo Lite returned HTTP 202 / 0 results;
+- Bing HTML returned HTTP 200 / **8** provider-level results;
+- the hot reasoner then admitted **0** candidates/evidence;
+- therefore no page fetch occurred, `lyricsSourceAttemptCount=0`, and `lyricsFetchDebug=[]`;
+- terminal behavior correctly failed closed rather than inventing text.
+
+### Root cause boundary
+- provider parsing and semantic candidate admission were separate layers;
+- the provider chain could report results while the reasoner rejected all of them;
+- previously that 8→0 collapse was opaque because only provider resultCount and final evidence resultCount were exported;
+- an empty candidate pool caused the lyrics fallback stage to terminate without ever trying an exact-title rescue query.
+
+### v163 diagnostics
+- Online Research hot reasoner advanced to version 1.4.3.
+- new bounded `candidateAdmissionDebug` records, per search result:
+  - query;
+  - title / URL / source / rank;
+  - allowed flag;
+  - explicit reason such as `INSUFFICIENT_SUBJECT_TERM_MATCH`, `DUPLICATE_URL`, or `MISSING_URL`;
+  - required subject-term hits;
+  - matched terms and core terms;
+  - bounded snippet preview.
+- reasoner budget now records `searchCandidatesAdmitted` and `searchCandidatesRejected`.
+- these fields are projected through Online Camera into Dragon Chat JSON and durable Online Research diagnostics.
+
+### v163 bounded rescue
+- when lyrics mode has no reasoner candidate pool, §wyrlz now runs at most **2** exact-title/artist rescue searches using the existing canonical public search capability;
+- rescue queries are derived from the already parsed lyrics subject rather than model improvisation;
+- pre-fetch rescue candidates must satisfy subject-bound title/artist identity scoring;
+- rescue search diagnostics expose query, result count, admitted count, and bounded candidate identity scores;
+- page fetching still obeys the existing **3 total page-attempt** ceiling;
+- source/body verification remains unchanged and fail-closed; rescue does not reconstruct missing lyrics from memory.
+
+### Regression
+- added `tests/test_full_lyrics_search_admission_rescue_v163.py`;
+- proves 8 provider results can all be rejected with explicit admission reasons;
+- proves rejected candidates are not fetched;
+- proves at most two exact-title rescue searches;
+- proves an unrelated first rescue result is rejected and a matching second result is admitted;
+- proves only the matching source is fetched;
+- proves `candidateAdmissionDebug`, `lyricsRescueSearchDebug`, and `lyricsFetchDebug` survive the Online Camera projection into Dragon Chat diagnostics.
+
+### Self-repair
+- first guarded run `37704478411` stopped before publication because the v162 regression still pinned the observability revision string to `v162-fetch-debug-section-blocks`;
+- all prior behavior through v161 passed; the failure was a stale test assertion, not an implementation defect;
+- v162 regression was corrected to verify its behavioral contract rather than freezing future camera revision labels.
+
+### Final deployment receipts
+- final guarded HF run: `37704633299` — terminal **SUCCESS**;
+- exact selected source: `ce22c37ad2e081af2adf5102a9eb4241862c3f1d`;
+- lyric gate: v151 PASS, v155 PASS, v157 PASS, v158 PASS, v159 PASS, v160 PASS, v161 PASS, v162 PASS, **v163 PASS**;
+- prior/rollback Space revision: `af8e4aec1abeca49c2cccf7bf90da88c4e5eb52d`;
+- deployed Space revision: `1dee957b057d3c8aa2112789564e6dcdee414fea`;
+- R39/native verification, R39 reconstruction, compatibility inspection, 700M smoke, fast-HF/Chat guard, authorization, production snapshot, rollback checkpoint, upload, and deployed-revision capture all succeeded.
+
+### Versions
+- Repository Work: **1.0.93**.
+- Server Runtime: **2.3.316 / 2.3.316-hf-v163-search-admission-rescue**.
+- Online Research: **1.0.14 / 1.0.14-search-admission-rescue-v163**.
+- Deployment Control: **1.0.23**.
+- LALM Engine remains **2.1.156 / 2.1.156-verified-source-only-presentation-v161**.
+
+### Next live acceptance
+Rerun the same natural prompt and export Dragon Chat JSON. Expected new evidence:
+1. if the first search provider gives relevant results, `candidateAdmissionDebug` shows which were admitted and normal fetching proceeds;
+2. if provider results collapse to zero admitted candidates, `candidateAdmissionDebug` explains every rejection and `lyricsRescueSearchDebug` shows up to two exact-title rescue searches;
+3. any page actually fetched appears in `lyricsFetchDebug` with the v162 bounded fetched-content/extractor diagnostics;
+4. if no matching source survives, the request still fails closed.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v163 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — search admission diagnostics + bounded lyrics rescue v163
 
 **Trigger:** v162 live acceptance export `swrlz-dragon-chat (13).json` shows provider-level Bing search returned 8 results but the hot reasoner admitted 0 candidates, causing no page fetches, `lyricsSourceAttemptCount=0`, and an empty `lyricsFetchDebug`.
