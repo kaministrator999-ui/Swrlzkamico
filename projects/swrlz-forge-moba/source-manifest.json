@@ -44,6 +44,6 @@
     "patches/v7_6_desktop_editor_polish.py",
     "patches/v7_7_canonical_glitch_den_project.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "PENDING_VALIDATION"
+  "finalBytes": 197128,
+  "finalSha256": "75aef1f830dd7117c5675ac1666bdf70755c7be007c26f986c4acb169293bf25"
 }
