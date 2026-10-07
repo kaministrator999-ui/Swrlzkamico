@@ -1,3 +1,31 @@
+## UPDATE STARTED — 2026-10-07 — cross-chat full-station continuity + lyrics response polish v157
+
+**Trigger:** after retry 7 live-verified the full-song retrieval/provenance path, the user requested two final improvements: preserve §wyrlz's full implementation ownership behavior across future/new ChatGPT project sessions, and polish the remaining lyrics-response wording without regressing retrieval, attribution, evidence, or efficiency.
+
+**Observed baseline:**
+- retry 7 preserves all 28 lyric lines, separates Newton's six original stanzas from the one later stanza, presents a clean fetched attribution excerpt, uses two page-fetch attempts/two retained sources, and bypasses 700M inference for the deterministic verified payload;
+- canonical project startup on `main:§wyrlz_§tart.md` already requires substantial startup reconstruction and same-turn terminal deployment for runtime-affecting work, but its automatic-workflow/standing-approval sections still contain an old `NEVER AUTO-RETRY` rule and residual Vercel-era release text that can teach a fresh session to stop instead of repairing its own implementation/deployment failure;
+- `feature/hf-space-manual-deploy:§wyrlz_§tart.md` is older than `main` and lacks current §E/same-turn project-entry refinements;
+- the canonical Hotfix rules still conflict with the active Hugging Face deployment authority/desired self-repair behavior.
+
+**Architecture reconciliation:**
+- Project Start remains the durable cross-chat router and owns startup/execution continuation semantics.
+- Hotfix Rules remain the mutation/deployment-mechanics owner and must agree with Project Start.
+- Project Work Response Standard remains the reporting owner and should require execution ownership to be reflected in terminal reporting.
+- Lyrics retrieval/provenance remains Online Research-owned; deterministic answer presentation remains in the existing HF model-router fast path. No new subsystem is introduced.
+
+**Planned change:**
+1. make cross-chat execution ownership explicit: user owns fundamental product/idea decisions; §wyrlz owns implementation/finishing, validation, and repair of §wyrlz-caused defects;
+2. require same-turn `inspect → implement → validate → repair → revalidate → deploy when authorized/required → inspect failure → repair/redeploy → verify → report` behavior, bounded against infinite retry and stopping only for a genuine user-owned decision, missing authorization/credential, unsafe action, or external blocker;
+3. reconcile current deployment guidance to the existing Hugging Face request/workflow/Space path and retire active Vercel instructions from the startup/hotfix contract;
+4. synchronize the active feature branch copy of Project Start/Hotfix with the repaired canonical rules;
+5. polish the verified-lyrics renderer so one extra stanza uses singular wording and attribution prose reads naturally while preserving exact fetched evidence/source boundaries;
+6. add/update deterministic regressions before any publish.
+
+**Deployment expectation:** documentation/governance mutations are deployment-inert. The lyrics renderer change affects the active HF runtime candidate and should proceed through the guarded existing-Space deployment path after source/static validation under the project's standing terminal-deployment authorization. Agent-caused validation/deployment failures are to be repaired and retried in the same work turn rather than returned to the user as terminal work.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-05 — Real first-turn weather + non-code routing + composer collapse v127
 
 **Outcome:** DEPLOYED / TARGET FEATURE LIVE VERIFIED.
