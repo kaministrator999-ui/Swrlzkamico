@@ -4,6 +4,6 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v7.9",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_9_SANCTUARY_CANONICAL_PROJECT",
-  "reason": "Promote the editor-authored Sanctuary & Makers Grotto as the default/original canonical Dragon Den and establish project-local script ownership metadata",
+  "reason": "Promote the editor-authored Sanctuary & Makers Grotto as the default/original canonical Dragon Den and establish project-local script ownership metadata; retry after correcting v7.9 title guard",
   "sourceIntegritySha256": "220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251"
 }
