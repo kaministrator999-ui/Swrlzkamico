@@ -1,12 +1,12 @@
-# §wyrl§ Engine · Maker v7.5
+# §wyrl§ Engine · Maker v7.6
 
 ## Project entry command
 
 Use `§tart §E` or `@GitHub §tart §E` to enter the dedicated §wyrl§ Engine lane. This engine remains deployment-isolated from the main §wyrlz AI Chat/LALM application.
 
-## Current engine: v7.5
+## Current engine: v7.6
 
-v7.5 adds a professional editor navigation shell: File, Edit, Create, View, Play, Tools, Window and Help menus plus a mobile-friendly workspace launcher for Level Design, Content, Gameplay, World, Play & Debug, Console, Project and Build workflows.
+v7.6 adds a professional editor navigation shell: File, Edit, Create, View, Play, Tools, Window and Help menus plus a mobile-friendly workspace launcher for Level Design, Content, Gameplay, World, Play & Debug, Console, Project and Build workflows.
 
 ## Current default
 
@@ -188,14 +188,15 @@ patches/v7_2_wisp_locomotion_repair.py
 patches/v7_3_engine_health.py
 patches/v7_4_editor_workspaces.py
 patches/v7_5_mobile_editor_chrome.py
+patches/v7_6_desktop_editor_polish.py
 ```
 
-Final v7.5:
+Final v7.6:
 
-- artifact: `swyrl_engine_v7_5.html`
-- bytes: `195495`
-- SHA-256: `0de92bd93af0e4a7d7b9ae22270ee964168e23cf049a11f780cd8563c1ce21e6`
-- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V7_5_MOBILE_EDITOR_CHROME`
+- artifact: `swyrl_engine_v7_6.html`
+- bytes: `197128`
+- SHA-256: `409f42adc579b8da5ade1a55c9d5d09d58ef67539ff6e9f0562b119de9ea7f80`
+- marker: `SWYRL_ENGINE_DEPLOY_MARKER: V7_6_DESKTOP_EDITOR_POLISH`
 
 ## Deployment
 
