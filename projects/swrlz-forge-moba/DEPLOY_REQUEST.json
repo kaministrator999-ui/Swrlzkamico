@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v7.1",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_1_FRACTURE_FORGE_BREATHING_ROOM",
-  "reason": "Expand Fracture Forge dragon territories and landmark spacing; declutter the mobile Command Deck and stats HUD",
-  "sourceIntegritySha256": "35fedcc5decf0f00e4682315311470d9cc05f8c072d2c085daa40c4cacf1d053"
+  "releaseVersion": "v7.2",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_2_WISP_LOCOMOTION_REPAIR",
+  "reason": "Repair flying Wisp horizontal keyboard/twin-stick translation while preserving altitude controls and expanded Fracture Forge",
+  "sourceIntegritySha256": "3d03e66d04f26659f365d43a2da531692474f4bc5122e1ddffbe9dc515277132"
 }
