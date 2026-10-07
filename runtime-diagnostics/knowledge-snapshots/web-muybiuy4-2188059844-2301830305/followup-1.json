@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-muybiuy4-2188059844-2301830305",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "e0a25372e7c38303ccfdffa057982e23ec0aa0a9",
+  "persistedAtUnixMs": 1791393174759,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-muybiuy4-2188059844-2301830305",
+    "turnIndex": 1,
+    "userText": "Search the internet for the full lyrics of \"cold piece of work\" by tech n9ne. Please provide all the verses, not just the first verse, and give me the source link. Use a real web search rather than answering from memory.",
+    "capturedAtUnixMs": 1791393174758
+  }
+}
