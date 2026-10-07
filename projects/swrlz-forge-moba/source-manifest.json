@@ -45,6 +45,6 @@
     "patches/v7_7_canonical_glitch_den_project.py",
     "patches/v7_8_layers_desktop_docks.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "PENDING_VALIDATION"
+  "finalBytes": 286002,
+  "finalSha256": "1bf5d8d65f2e1a7af9c30311c119b2bed3fa5688a5ea6e0ff0995a87f38f38cc"
 }
