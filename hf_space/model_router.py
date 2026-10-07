@@ -104,9 +104,18 @@ def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | 
     # select the first non-empty stanza when the page extract preserves stanza boundaries.
     payload=extract
     if scope=="first-verse":
-        chunks=[x.strip() for x in re.split(r"\n\s*\n+",extract) if x.strip()]
-        if chunks:
-            payload=chunks[0]
+        # Prefer explicit Verse 1 boundaries from the fetched page. Fall back to the first
+        # lyric-sized stanza only when structural paragraph breaks survived retrieval.
+        explicit=re.search(r"(?is)(?:^|\n)\s*(?:verse\s*1|verse\s*one)\s*[:.\-]?\s*\n?(.*?)(?=\n\s*(?:verse\s*2|verse\s*two|chorus|refrain|bridge)\b|\Z)",extract)
+        if explicit:
+            payload=explicit.group(1).strip()
+        else:
+            chunks=[x.strip() for x in re.split(r"\n\s*\n+",extract) if x.strip()]
+            candidates=[x for x in chunks if 2 <= len([ln for ln in x.splitlines() if ln.strip()]) <= 8 and len(x) <= 900]
+            if candidates:
+                payload=candidates[0]
+            else:
+                return None
     # Bound output to retrieved text; never continue beyond evidence.
     payload=payload[:2400].strip()
     if not payload:
