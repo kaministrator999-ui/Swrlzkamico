@@ -76,7 +76,7 @@ This roadmap is the mandatory release lineage for governed §E GitHub updates. R
 | v7.5 | swyrl_engine_v7_5.html | 195495 | 0de92bd93af0e4a7d7b9ae22270ee964168e23cf049a11f780cd8563c1ce21e6 |
 | v7.6 | swyrl_engine_v7_6.html | 197128 | 409f42adc579b8da5ade1a55c9d5d09d58ef67539ff6e9f0562b119de9ea7f80 |
 | v7.7 | swyrl_engine_v7_7.html | 279207 | 75aef1f830dd7117c5675ac1666bdf70755c7be007c26f986c4acb169293bf25 |
-| v7.8 | swyrl_engine_v7_8.html | 286002 | 1bf5d8d65f2e1a7af9c30311c119b2bed3fa5688a5ea6e0ff0995a87f38f38cc |
+| v7.8 | swyrl_engine_v7_8.html | 285613 | 220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251 |
 
 ## Git push audit — 2026-10-05 through 2026-10-07
 
@@ -125,11 +125,11 @@ The 2026-10-07 audit repaired roadmap drift rather than rewriting Git history: v
 
 v7.8 preserves the canonical v7.7 Moonfire Sanctum starter and adds persistent editor layers plus retractable desktop docks. Layer membership is serialized with project state; layers can independently hide/show sets of objects without destroying hierarchy or transform groups. Outliner and Details can collapse to reclaim viewport space, especially useful on narrow desktop-mode displays.
 
-Current artifact authority: `swyrl_engine_v7_8.html` · **286002 bytes** · SHA-256 `1bf5d8d65f2e1a7af9c30311c119b2bed3fa5688a5ea6e0ff0995a87f38f38cc` · marker `V7_8_LAYERS_DESKTOP_DOCKS`.
+Current artifact authority: `swyrl_engine_v7_8.html` · **285613 bytes** · SHA-256 `220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251` · marker `V7_9_SANCTUARY_CANONICAL_PROJECT`.
 
 Current deployment trigger: `9a529d945f2e35e2427ebef18c6de6b31810eed6` · deployment run #45 succeeded.
 
-## Mandatory update protocol
+## v7.9 — Sanctuary & Makers Grotto becomes the canonical Dragon Den\n\nThe 120-actor editor-authored **§wyrl§ · Sanctuary & Makers Grotto** save is promoted directly into the canonical `dragon-den` project identity. It replaces Moonfire Sanctum as the default/original Dragon Den rather than becoming a second starter. The saved Code Studio, Archive Garden, World Forge, Prototype Court, Arrival and Guardian Alcove layout now opens through the normal project loader. A project-owned scripting namespace (`swyrl-project-scripts-v1`) is established on the project metadata so future §wyrlz§cript/§form§cript assets remain project-local instead of becoming engine-global.\n\nArtifact: swyrl_engine_v7_9.html · 285613 bytes · SHA-256 220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251 · marker V7_9_SANCTUARY_CANONICAL_PROJECT. Reconstruction, canonical-starter assertions, project-zone assertions, project-script-namespace assertion, and JavaScript syntax PASS.\n\n## Mandatory update protocol
 
 Every §E GitHub mutation is a governed update. Each versioned engine update must synchronize applicable version surfaces, update this roadmap, validate/reconstruct the exact artifact, and use the dedicated `DEPLOY_REQUEST.json` final deploy-button mechanism. The resulting Actions run must be followed to terminal state and the live Hugging Face marker verified before the release is reported complete.
 
