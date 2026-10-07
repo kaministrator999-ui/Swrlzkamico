@@ -1,3 +1,57 @@
+## UPDATE FINISHED — 2026-10-07 — subject-bound lyric verification v160
+
+**Outcome:** FALSE-POSITIVE LYRIC VERIFICATION REPAIRED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### Production failure captured
+- live request `web-muym6208-1940923376-711415812` asked naturally: `Can you provide lyrics for the song cold piece of work by tech n9ne`;
+- v159 fetched SongLyrics successfully with HTTP 200 and emitted `LYRICS_SOURCE_VERIFIED`, but the frozen payload consisted of unrelated song titles/artists, chart/news headings, and dates;
+- the search result snippet itself contained target-song lyric fragments, proving the selected body region was inconsistent with the result that led to the page.
+
+### Root cause
+- the lyrics subject parser was effectively quoted-title-first and did not resolve the natural unquoted `lyrics for the song [title] by [artist]` form;
+- because `subject` was empty, the search query fell back to the whole user sentence instead of canonical `title artist lyrics`;
+- subjectless extraction allowed arbitrary headings containing `Lyrics` to become candidate anchors;
+- structural density alone was insufficient to distinguish a dense navigation/news block from a lyric body.
+
+### v160 repair
+- natural unquoted `lyrics for/of/to [song] by [artist]` requests now produce a canonical subject and compact search query;
+- arbitrary `... Lyrics` headings are no longer anchor candidates when no title terms are resolved; only explicit generic lyric controls or structural verse markers remain eligible in that case;
+- added fetched-body/search-discovery consistency verification:
+  - informative tokens are derived from the search snippet after removing title/generic lyric vocabulary;
+  - when the snippet has enough informative evidence, the fetched extraction must overlap it before `LYRICS_SOURCE_VERIFIED` is allowed;
+  - search snippet text remains verification-only and is never copied into the lyric payload;
+- failed consistency consumes the current bounded page attempt and continues through the existing v158 fallback budget;
+- v158 three-total-page ceiling and v159 24K page window remain unchanged.
+
+### Regression coverage
+- added `tests/test_full_lyrics_subject_bound_verification_v160.py`;
+- exact natural prompt resolves to subject `"cold piece of work" by tech n9ne` and search query `cold piece of work tech n9ne lyrics`;
+- a SongLyrics-style false-positive chrome body is required to fail consistency against a target-line search snippet;
+- fallback synthetic lyric body is required to pass and become the verified source on attempt 2;
+- unresolved-subject regression proves `Popular Tech N9ne Collabos Lyrics`-style navigation labels cannot become anchors by themselves;
+- canonical HF deploy gate now runs v151, v155, v157, v158, v159, and v160 lyric regressions.
+
+### Deployment receipts
+- guarded HF run `37689397117`: terminal **SUCCESS**;
+- exact selected source: `46420c5fdbd82e8f9d6ccd6ce5a25ec50971cd6b`;
+- lyric regression gate: v151 PASS, v155 PASS, v157 PASS, v158 PASS, v159 PASS, **v160 PASS**;
+- native R39 verification, real R39 reconstruction, R39-vs-stock inspection, 700M smoke, fast-HF/Chat preservation guard, authorization gate, snapshot, rollback checkpoint, upload, and release capture all succeeded;
+- prior/rollback Space revision: `26da50836e05dac45c6299f78782bc53ec175dd5`;
+- deployed Space revision: `b855609f38b0d37f2e0f5def7afb90ac4c81c6be`.
+
+### Versions
+- Repository Work: **1.0.90**.
+- Server Runtime: **2.3.313 / 2.3.313-hf-v160-subject-bound-lyrics-verification**.
+- Online Research: **1.0.11 / 1.0.11-subject-bound-lyrics-verification-v160**.
+- Deployment Control: **1.0.20**.
+- LALM Engine remains **2.1.155 / 2.1.155-verified-lyrics-presentation-v157**.
+
+### Remaining acceptance
+- rerun the same natural-language Cold Piece of Work request;
+- acceptance requires either a genuinely matching `LYRICS_SOURCE_VERIFIED` payload or bounded rejection/fallback, but never unrelated page chrome marked verified.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v160 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — subject-bound lyric verification v160
 
 **Trigger:** live v159 acceptance reached `LYRICS_SOURCE_VERIFIED` on the first SongLyrics page but returned unrelated song titles, artist names, chart/news headings, and dates as the frozen lyric payload. Retrieval succeeded; verification produced a false positive.
