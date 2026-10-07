@@ -313,8 +313,20 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
         verified=ctx.get("verifiedLyrics") if isinstance(ctx.get("verifiedLyrics"),dict) else {}
         verified_extract=str(verified.get("lyricExtract") or "").strip()
         if not verified_extract:
-            message="I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory."
-            yield {"type":"STATUS","phase":"LYRICS_VERIFICATION_BLOCKED","reason":message,"categories":["ONLINE_RESEARCH","LYRICS","GROUNDING"]}
+            verified_source=ctx.get("verifiedLyricsSource") if isinstance(ctx.get("verifiedLyricsSource"),dict) else {}
+            source_url=str(verified_source.get("url") or "").strip()
+            source_title=str(verified_source.get("title") or "Verified lyrics source").strip()
+            subject=str(verified_source.get("subject") or "").strip() or "the requested song"
+            if source_url:
+                message=(
+                    f"I found and verified a lyrics source for **{subject}**, but I couldn't verify a clean lyric-text "
+                    f"extraction from the fetched page, so I won't reconstruct the lyrics from memory.\n\n"
+                    f"**Lyrics source:** {source_title} — {source_url}"
+                )
+                yield {"type":"STATUS","phase":"LYRICS_SOURCE_ONLY","reason":"Verified source identity; lyric body extraction not verified.","categories":["ONLINE_RESEARCH","LYRICS","SOURCE","GROUNDING"]}
+            else:
+                message="I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory."
+                yield {"type":"STATUS","phase":"LYRICS_VERIFICATION_BLOCKED","reason":message,"categories":["ONLINE_RESEARCH","LYRICS","GROUNDING"]}
             yield {"type":"DELTA","text":message}
             yield {"type":"COMPLETED","phase":"COMPLETE"}
             return
