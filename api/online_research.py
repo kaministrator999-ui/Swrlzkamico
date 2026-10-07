@@ -194,6 +194,22 @@ def _provider_attempt(provider:str,url:str,parser,query:str)->list[dict[str,Any]
         _emit_trace("SEARCH_PROVIDER_ERROR",provider=provider,url=url,error_type=type(exc).__name__,reason="Provider failed")
         return []
 
+def search_public(query:Any)->list[dict[str,Any]]:
+    """Public bounded search capability for specialized adapters.
+
+    Uses the same provider chain and URL safety boundary as research(); it only
+    skips the generic research reasoner when a caller already owns the domain-
+    specific evidence-selection logic.
+    """
+    clean=_clean_query(query)
+    return _ddg_search(clean) if clean else []
+
+
+def fetch_public(url:str)->dict[str,Any]:
+    """Public bounded page fetch using the canonical SSRF-safe fetch boundary."""
+    return _page_fetch(url)
+
+
 def _ddg_search(query:str)->list[dict[str,Any]]:
     encoded=urllib.parse.urlencode({"q":query})
     attempts=[
