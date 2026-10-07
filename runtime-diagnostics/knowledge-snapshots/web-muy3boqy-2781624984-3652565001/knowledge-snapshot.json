@@ -1,0 +1,205 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-muy3boqy-2781624984-3652565001",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "02dd06e58c2606cced221586ddd52eb3c0eba1e7",
+  "persistedAtUnixMs": 1791376515708,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-muy3boqy-2781624984-3652565001",
+    "trigger": {
+      "userText": "Search the internet for the full lyrics of \"Amazing Grace\" by John Newton. Please provide all the verses, not just the first verse, and give me the source link. Use a real web search rather than answering from memory.",
+      "sha256": "dfa44dddd49ac0f4cf37fd70c802eb8adb10c0ba9de166b7831b0e5247653809"
+    },
+    "research": {
+      "kind": "search",
+      "status": "OK",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "existing-lyrics-retrieval",
+      "query": "",
+      "resultCount": 1,
+      "sources": [
+        {
+          "title": "Amazing Grace Lyrics - All Verses by John Newton",
+          "source": "getlines.app",
+          "url": "https://getlines.app/hymns/amazing-grace-lyrics",
+          "snippet": "",
+          "rank": null
+        }
+      ],
+      "sourceSites": [
+        "getlines.app"
+      ],
+      "widgetKinds": [
+        "search-results"
+      ],
+      "trace": [
+        {
+          "phase": "RESEARCH_STARTED",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research started",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "duckduckgo-lite",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "duckduckgo-lite",
+          "activity": "Using duckduckgo-lite",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "Okay — here's the complete lyrics I could verify for **\"Amazing Grace\" by John Newton**:\n\nRelated Hymns\nHoly, Holy, Holy\nCome Thou Fount of Every Blessing\nIt Is Well With My Soul\n\nBest Memory Techniques for Singers and Performers\nHow to Memorize a Long Song: A Step-by-Step Method That Sticks\nThe Science of Musical Memory: Why Songs Stick\n\nGet the Lines app!\nPractice and memorize your favorite songs with our iOS app.\n\nCopy Lyrics\nAmazing grace! How sweet the sound\nThat saved a wretch like me!\nI once was lost, but now am found;\nWas blind, but now I see.\n\n'Twas grace that taught my heart to fear,\nAnd grace my fears relieved;\nHow precious did that grace appear\nThe hour I first believed.\n\nThrough many dangers, toils, and snares,\nI have already come;\n'Tis grace hath brought me safe thus far,\n\nThe Lord has promised good to me,\nHis Word my hope secures;\nHe will my Shield and Portion be,\nAs long as life endures.\n\nYea, when this flesh and heart shall fail,\nAnd mortal life shall cease,\nI shall possess, within the veil,\nA life of joy and peace.\n\nThe earth shall soon dissolve like snow,\nThe sun forbear to shine;\nBut God, who called me here below,\nWill be forever mine.\n\nWhen we've been there ten thousand years,\nBright shining as the sun,\nWe've no less days to sing God's praise\nThan when we'd first begun.\n\n**Source:** Amazing Grace Lyrics - All Verses by John Newton — https://getlines.app/hymns/amazing-grace-lyrics",
+      "sha256": "fc59c76aef1be47d8197a306fe6199208e0adab0da3b30dca2c923a895f6f584"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up Amazing Grace John Newton lyrics all verses…"
+      },
+      {
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK"
+      },
+      {
+        "phase": "WIDGET_READY",
+        "reason": "search-results"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok."
+      },
+      {
+        "phase": "SOURCE_FOUND",
+        "reason": "There we go — I found relevant verified material on Amazing Grace Lyrics - All Verses by John Newton."
+      },
+      {
+        "phase": "EVIDENCE_SCOPING",
+        "reason": "Give me one second — preparing the requested material."
+      },
+      {
+        "phase": "LYRICS_VERIFIED_PAYLOAD",
+        "reason": "Serving frozen lyrics payload from successfully fetched evidence."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ]
+  }
+}
