@@ -1,12 +1,12 @@
 # §wyrlz Architecture Reconciliation Protocol — Programming-LALM Curriculum
 
-**Purpose:** teach the programming-side §wyrlz LALM how to execute the mandatory Pre-Feature Architecture Reconciliation required by `SWRLZ_PROJECT_START.md`.
+**Purpose:** teach the programming-side §wyrlz LALM how to execute the mandatory Pre-Feature Architecture Reconciliation required by `§wyrlz_§tart.md`.
 
 This document is the **execution method** for that rule. Project Start defines that architecture reconciliation MUST happen before implementation; this protocol defines how an engineering LALM discovers the affected architecture, finds the current authority, traces interacting work, detects duplicate or competing implementations, chooses an integration path, and records the result.
 
 This protocol is not a replacement for:
 
-- `SWRLZ_PROJECT_START.md`;
+- `§wyrlz_§tart.md`;
 - `SWRLZ_HOTFIX_RULES.md`;
 - `SWRLZ_VERSION_MODULE_EVOLUTION.md`;
 - `SWRLZ_SERVER_ROADMAP.md`;
@@ -280,7 +280,7 @@ Used to decide how new code should be integrated.
 
 Evidence includes:
 
-- current `SWRLZ_PROJECT_START.md`;
+- current `§wyrlz_§tart.md`;
 - current `SWRLZ_HOTFIX_RULES.md`;
 - current `SWRLZ_VERSION_MODULE_EVOLUTION.md`;
 - this protocol;
