@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-06-v144-lyrics-search-assembly-fix-001
+REQUEST_NONCE=2026-10-06-v145-lyrics-verse-isolation-001
