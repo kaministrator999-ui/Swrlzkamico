@@ -1,0 +1,494 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-muy60xh4-1282354499-4189475597",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "bc2c74862f47cd892ca7d0f793a79ce96d6e64bd",
+  "persistedAtUnixMs": 1791381058785,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-muy60xh4-1282354499-4189475597",
+    "trigger": {
+      "userText": "Search the internet for the full lyrics of \"Amazing Grace\" by John Newton. Please provide all the verses, not just the first verse, and give me the source link. Use a real web search rather than answering from memory.",
+      "sha256": "dfa44dddd49ac0f4cf37fd70c802eb8adb10c0ba9de166b7831b0e5247653809"
+    },
+    "research": {
+      "kind": "search",
+      "status": "OK",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "existing-lyrics-retrieval",
+      "query": "",
+      "resultCount": 1,
+      "sources": [
+        {
+          "title": "Amazing Grace Lyrics - All Verses by John Newton",
+          "source": "getlines.app",
+          "url": "https://getlines.app/hymns/amazing-grace-lyrics",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Amazing Grace text - John Newton",
+          "source": "www.johnnewton.org",
+          "url": "https://www.johnnewton.org/Publisher/File.aspx?ID=317458",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Amazing Grace: Lyrics, Meaning & John Newton's Story",
+          "source": "bgodinspired.com",
+          "url": "https://bgodinspired.com/index.php/articles/amazing-grace-lyrics-meaning-john-newton/",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "AMAZING Definition & Meaning - Merriam-Webster",
+          "source": "www.bing.com",
+          "url": "https://www.bing.com/ck/a?!&&p=6a01428cc71aba17cb48315047b34baf4fe41593d4ddba0404c5f12c06c421efJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=3975c1cb-cb62-67af-378f-d620cab466f0&u=a1aHR0cHM6Ly93d3cubWVycmlhbS13ZWJzdGVyLmNvbS9kaWN0aW9uYXJ5L2FtYXppbmc&ntb=1",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "AMAZING Synonyms: 140 Similar and Opposite Words - Merriam-Webster",
+          "source": "www.bing.com",
+          "url": "https://www.bing.com/ck/a?!&&p=39b4359adaee0d25f48246cdceec551107b8dc4ae9a54e5109c5adcbd1994e17JmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=3975c1cb-cb62-67af-378f-d620cab466f0&u=a1aHR0cHM6Ly93d3cubWVycmlhbS13ZWJzdGVyLmNvbS90aGVzYXVydXMvYW1hemluZw&ntb=1",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "AMAZING ! | ELEVATION RHYTHM & Josiah Queen - YouTube",
+          "source": "www.bing.com",
+          "url": "https://www.bing.com/ck/a?!&&p=4101c736347a1e7ef5954fbbaec6caac8f1dc243f96c850706eeaa2e5c873d1aJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=3975c1cb-cb62-67af-378f-d620cab466f0&u=a1aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g_dj0zMGxaTUdwN0tRSQ&ntb=1",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "AMAZING | English meaning - Cambridge Dictionary",
+          "source": "www.bing.com",
+          "url": "https://www.bing.com/ck/a?!&&p=51818b282c784c8528add3405080eeb4026448d9f6373404463ad6317b39823eJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=3975c1cb-cb62-67af-378f-d620cab466f0&u=a1aHR0cHM6Ly9kaWN0aW9uYXJ5LmNhbWJyaWRnZS5vcmcvZGljdGlvbmFyeS9lbmdsaXNoL2FtYXppbmc&ntb=1",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Kanye West - Amazing ft. Young Jeezy - YouTube",
+          "source": "www.bing.com",
+          "url": "https://www.bing.com/ck/a?!&&p=f23576abff076ac6fcb3b0370666359a7bf11ea1b1ece6edebd2f8057759c874JmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=3975c1cb-cb62-67af-378f-d620cab466f0&u=a1aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g_dj1QSDRKUGdWRDJTTQ&ntb=1",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "AMAZING Synonyms & Antonyms - 60 words | Thesaurus .com",
+          "source": "www.bing.com",
+          "url": "https://www.bing.com/ck/a?!&&p=8f590b5bb1e4fa746535d1b2ac44e44504314376a8ba5fbe7174336045bfe054JmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=3975c1cb-cb62-67af-378f-d620cab466f0&u=a1aHR0cHM6Ly93d3cudGhlc2F1cnVzLmNvbS9icm93c2UvYW1hemluZw&ntb=1",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "AMAZING Definition & Meaning - Merriam-Webster",
+          "source": "www.bing.com",
+          "url": "https://www.bing.com/ck/a?!&&p=c6453583df08757564dcbada1adb24cb891459fd8df8181804249d9a7e48972eJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=05f19fe2-f99b-612d-2e26-8809f8a860ff&u=a1aHR0cHM6Ly93d3cubWVycmlhbS13ZWJzdGVyLmNvbS9kaWN0aW9uYXJ5L2FtYXppbmc&ntb=1",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "AMAZING Synonyms: 140 Similar and Opposite Words - Merriam-Webster",
+          "source": "www.bing.com",
+          "url": "https://www.bing.com/ck/a?!&&p=f85763ee6d5868132ea20cf89934b1f2236730697fba89573743a4d6364ceac6JmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=05f19fe2-f99b-612d-2e26-8809f8a860ff&u=a1aHR0cHM6Ly93d3cubWVycmlhbS13ZWJzdGVyLmNvbS90aGVzYXVydXMvYW1hemluZw&ntb=1",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "AMAZING ! | ELEVATION RHYTHM & Josiah Queen - YouTube",
+          "source": "www.bing.com",
+          "url": "https://www.bing.com/ck/a?!&&p=6bdd900204c68caf19cbd96638ce04f90e7360fe18a245bf9a32a3a0da1f37e9JmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=05f19fe2-f99b-612d-2e26-8809f8a860ff&u=a1aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g_dj0zMGxaTUdwN0tRSQ&ntb=1",
+          "snippet": "",
+          "rank": null
+        }
+      ],
+      "sourceSites": [
+        "bgodinspired.com",
+        "getlines.app",
+        "www.bing.com",
+        "www.johnnewton.org"
+      ],
+      "widgetKinds": [
+        "search-results"
+      ],
+      "trace": [
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_STARTED",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research started",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-lite",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "bing-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "bing-html",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "bing-html",
+          "activity": "Using bing-html",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "Okay — here's the complete lyric set I could verify for **\"Amazing Grace\" by John Newton**:\n\nAmazing grace! How sweet the sound\nThat saved a wretch like me!\nI once was lost, but now am found;\nWas blind, but now I see.\n\n'Twas grace that taught my heart to fear,\nAnd grace my fears relieved;\nHow precious did that grace appear\nThe hour I first believed.\n\nThrough many dangers, toils, and snares,\nI have already come;\n'Tis grace hath brought me safe thus far,\nAnd grace will lead me home.\n\nThe Lord has promised good to me,\nHis Word my hope secures;\nHe will my Shield and Portion be,\nAs long as life endures.\n\nYea, when this flesh and heart shall fail,\nAnd mortal life shall cease,\nI shall possess, within the veil,\nA life of joy and peace.\n\nThe earth shall soon dissolve like snow,\nThe sun forbear to shine;\nBut God, who called me here below,\nWill be forever mine.\n\nWhen we've been there ten thousand years,\nBright shining as the sun,\nWe've no less days to sing God's praise\nThan when we'd first begun.\n\n**Lyrics source:** Amazing Grace Lyrics - All Verses by John Newton — https://getlines.app/hymns/amazing-grace-lyrics",
+      "sha256": "93bfd89bebb894c359329ccb118d38abe201f298656598a719369b9ee07ba978"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK"
+      },
+      {
+        "phase": "WIDGET_READY",
+        "reason": "search-results"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok."
+      },
+      {
+        "phase": "SOURCE_FOUND",
+        "reason": "There we go — I found relevant verified material on Amazing Grace Lyrics - All Verses by John Newton."
+      },
+      {
+        "phase": "EVIDENCE_SCOPING",
+        "reason": "Give me one second — preparing the requested material."
+      },
+      {
+        "phase": "LYRICS_VERIFIED_PAYLOAD",
+        "reason": "Serving frozen lyrics payload from successfully fetched evidence."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ]
+  }
+}
