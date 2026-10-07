@@ -41,5 +41,7 @@
     "patches/v7_3_engine_health.py",
     "patches/v7_4_editor_workspaces.py",
     "patches/v7_5_mobile_editor_chrome.py"
-  ]
+  ],
+  "finalBytes": 195495,
+  "finalSha256": "0de92bd93af0e4a7d7b9ae22270ee964168e23cf049a11f780cd8563c1ce21e6"
 }
