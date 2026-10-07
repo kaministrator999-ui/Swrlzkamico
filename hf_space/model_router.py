@@ -107,7 +107,7 @@ def _online_evidence_fallback_text(result: dict[str,Any]) -> str:
 
 
 def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | None:
-    """Serve only the frozen lyric text extracted from verified fetched evidence."""
+    """Serve only frozen lyric text, while keeping source text separate from authorship claims."""
     context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
     verified=context.get("verifiedLyrics") if isinstance(context.get("verifiedLyrics"),dict) else None
     if not verified:
@@ -125,20 +125,46 @@ def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | 
         seen.add(key)
         if not selected or not url:
             continue
-        if scope!="full-lyrics":
-            selected=selected[:2400].strip()
-        else:
-            selected=selected[:6000].strip()
+        selected=selected[:6000 if scope=="full-lyrics" else 2400].strip()
         if not selected:
             continue
         subject=str(verified.get("subject") or "").strip() or "the requested song"
         if scope=="first-verse":
             label="the first verse"
         elif scope=="full-lyrics":
-            label="the complete lyrics"
+            label="the complete lyric set"
         else:
             label="the lyrics"
-        return f"Okay — here's {label} I could verify for **{subject}**:\n\n{selected}\n\n**Source:** {source} — {url}"
+
+        body=selected
+        attribution_note=""
+        original_count=verified.get("originalStanzaCount")
+        try:
+            original_count=int(original_count) if original_count is not None else None
+        except (TypeError,ValueError):
+            original_count=None
+        stanzas=[x.strip() for x in re.split(r"\n\s*\n+",selected) if x.strip()]
+        if scope=="full-lyrics" and original_count and 0<original_count<len(stanzas):
+            original_text="\n\n".join(stanzas[:original_count])
+            extra_text="\n\n".join(stanzas[original_count:])
+            author_match=re.search(r"\s+by\s+(.+)$",subject,re.I)
+            author=author_match.group(1).strip() if author_match else "the named author"
+            body=(
+                f"**Original attributed text ({original_count} stanzas):**\n\n{original_text}"
+                f"\n\n**Additional stanza(s) present in the lyrics source:**\n\n{extra_text}"
+            )
+            attribution_note=(
+                f"\n\n**Attribution note:** the historical reference identifies the original text attributed "
+                f"to {author} as {original_count} stanzas. The additional stanza(s) above are kept separate "
+                f"instead of being attributed to {author}."
+            )
+
+        attribution_source=str(verified.get("attributionSourceTitle") or "").strip()
+        attribution_url=str(verified.get("attributionSourceUrl") or "").strip()
+        source_lines=f"**Lyrics source:** {source} — {url}"
+        if attribution_source and attribution_url:
+            source_lines+=f"\n\n**Attribution source:** {attribution_source} — {attribution_url}"
+        return f"Okay — here's {label} I could verify for **{subject}**:\n\n{body}{attribution_note}\n\n{source_lines}"
     return None
 
 def _lyrics_verified_answer(result: dict[str,Any], model_text: str) -> tuple[str,bool]:
