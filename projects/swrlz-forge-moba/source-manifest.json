@@ -36,5 +36,7 @@
     "patches/v6_7_contact_tools_fix.py",
     "patches/v6_8_den2_ground_snap.py",
     "patches/v7_0_fracture_forge_ascendant.py"
-  ]
+  ],
+  "finalBytes": 183813,
+  "finalSha256": "4af05dc4d26819571c9e586703a36c5b5c7300a43611a3d2ec3d1499c917c6b7"
 }
