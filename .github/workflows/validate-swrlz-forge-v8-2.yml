@@ -26,3 +26,4 @@ jobs:
           PY
           node --check /tmp/e.mjs
 # retry stable boot anchor
+# byte lock
