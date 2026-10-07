@@ -1,3 +1,60 @@
+## UPDATE FINISHED — 2026-10-07 — verified lyric source vs verified body v161
+
+**Outcome:** SOURCE IDENTITY / BODY VERIFICATION SPLIT IMPLEMENTED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE v161 ACCEPTANCE PENDING.
+
+### Production acceptance evidence
+- live v160 retry used the exact natural prompt `Can you provide lyrics for the song cold piece of work by tech n9ne`;
+- query normalization is correct: `cold piece of work tech n9ne lyrics`;
+- v160 correctly rejected AZLyrics access/request pages and did not reproduce unrelated page chrome;
+- AllTheLyrics was discovered and fetched successfully, but body extraction remained unverified;
+- terminal behavior incorrectly collapsed this into a blanket `LYRICS_VERIFICATION_BLOCKED` message even though the fetched destination itself matched the requested song.
+
+### v161 contract split
+- `verifiedLyrics` continues to mean: lyric body text was extracted and passed strict body verification.
+- new `verifiedLyricsSource` means: a fetched destination's actual page title/URL match the parsed song subject, while its body may still be unverified.
+- source identity verification rejects common access/captcha/request/block page titles before scoring.
+- source identity uses the parsed title/artist against the **fetched page title and final URL**, not just the search-result title.
+- search snippets remain discovery/consistency evidence only and are never promoted into lyric payload.
+
+### Runtime/presentation behavior
+- new trace phase: `LYRICS_SOURCE_IDENTITY_VERIFIED`.
+- each lyric source attempt records `sourceIdentityVerified` and `sourceIdentityScore`.
+- when `verifiedLyrics` is absent but `verifiedLyricsSource` is present, the terminal response now states that a lyrics source was verified while a clean body extraction was not, and surfaces that source URL.
+- this source-only state does **not** claim quoted/extracted lyrics and does not reconstruct missing text from model memory.
+- if no source identity and no body can be verified, the prior `LYRICS_VERIFICATION_BLOCKED` fail-closed behavior remains.
+
+### Regression coverage
+- added `tests/test_full_lyrics_source_vs_body_v161.py`;
+- regression proves `AZLyrics - request for access` cannot become a verified source;
+- regression proves a fetched `Tech N9ne – Cold Piece of Work lyrics` destination with matching final URL can become `verifiedLyricsSource` even when its synthetic body is deliberately non-extractable;
+- regression proves source-only rendering includes the verified destination and never copies the failed fetched body into the response;
+- canonical HF deploy gate now runs v151, v155, v157, v158, v159, v160, and v161.
+
+### Final deployment receipts
+- guarded HF run: `37694516292` — terminal **SUCCESS**;
+- exact selected source: `7d316516dc3ed598b57e4faaf75482450e32612c`;
+- lyric gate: v151 PASS, v155 PASS, v157 PASS, v158 PASS, v159 PASS, v160 PASS, **v161 PASS**;
+- native R39 verification, real R39 reconstruction, compatibility inspection, 700M smoke, fast-HF/Chat guard, authorization gate, snapshot, rollback checkpoint, upload, and deployed-revision capture all succeeded;
+- prior/rollback Space revision: `b855609f38b0d37f2e0f5def7afb90ac4c81c6be`;
+- deployed Space revision: `a4d653c5f92c341c9b749d8a0d4b3dbe18246830`.
+
+### Versions
+- Repository Work: **1.0.91**.
+- Server Runtime: **2.3.314 / 2.3.314-hf-v161-source-vs-body-verification**.
+- Online Research: **1.0.12 / 1.0.12-source-vs-body-verification-v161**.
+- Deployment Control: **1.0.21**.
+- LALM Engine: **2.1.156 / 2.1.156-verified-source-only-presentation-v161** because deterministic terminal presentation changed.
+
+### Remaining acceptance
+- rerun the same natural-language Cold Piece of Work request;
+- expected v161 outcomes:
+  1. clean body verification succeeds -> normal verified-body path;
+  2. correct destination is verified but body extraction fails -> `LYRICS_SOURCE_ONLY` with the matching source link;
+  3. neither identity nor body verifies -> fail closed.
+- unrelated page chrome must never again appear as a verified lyric payload.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v161 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — verified lyric source vs verified body v161
 
 **Trigger:** live v160 acceptance for the natural prompt `Can you provide lyrics for the song cold piece of work by tech n9ne` now parses correctly and rejects false-positive page chrome, but the terminal response still collapses two different states into one: a correct lyrics destination was found and fetched, while a clean lyric-body extraction was not verified.
