@@ -46,6 +46,6 @@
     "patches/v7_8_layers_desktop_docks.py",
     "patches/v7_9_sanctuary_canonical_project.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "PENDING_VALIDATION"
+  "finalBytes": 285613,
+  "finalSha256": "220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251"
 }
