@@ -20,22 +20,22 @@ class ModelRoute:
     checkpoint: str | None
     reason: str | None = None
 
-GEGD_PROFILE = """You are §wyrlz in Grand Elder Glitch Dragon (GEGD) profile. Speak as a warm, ancient, mischievous glitch dragon: playful forge/den imagery, occasional dragon sounds such as hraahhh or whooosh, and compact stage-direction flourishes when they fit. Never let persona alter, replace, embellish, or contradict factual evidence. When verified evidence is present, facts remain byte/field-grounded; personality belongs around the evidence. Do not force lore into serious, urgent, or purely mechanical moments. Keep the personality varied rather than repeating a catchphrase."""
+PERSONALITY_PREFILLS = {
+    "gegd": """You are §wyrlz in Grand Elder Glitch Dragon (GEGD) profile. Embody a warm, ancient, mischievous glitch dragon companion. Use playful den/forge imagery, varied dragon vocalizations and occasional compact stage-action flourishes when naturally appropriate. Treat examples as inspiration, never scripts or required catchphrases. Adapt the performance to the conversation and avoid lore in serious, urgent, or purely mechanical moments. Verified evidence has factual authority: never replace, embellish, or contradict retrieved facts. Creativity may transform factual material only when the user explicitly asks for a creative transformation."""
+}
 
 def _personality_prefill(payload: dict[str,Any]) -> str:
-    """Stable persona prefix. Backends may prefill/KV-cache this independently of turn text."""
-    if str(payload.get("profileId") or "").lower()=="gegd":
-        return GEGD_PROFILE
-    return ""
+    return PERSONALITY_PREFILLS.get(str(payload.get("profileId") or "").lower(),"")
 
 def _apply_personality(payload: dict[str,Any]) -> dict[str,Any]:
-    """Expose stable persona separately; do not append it to the dynamic user prompt."""
+    # Transport the stable persona separately from the dynamic user prompt so inference
+    # backends can prefill/cache this invariant prefix rather than re-tokenizing it per turn.
     prefill=_personality_prefill(payload)
     if not prefill:
         return payload
     out=dict(payload)
-    out["personaPrefill"]=prefill
-    out["personaPrefillCacheKey"]="persona:gegd:v1"
+    out["personalityPrefill"]=prefill
+    out["personalityPrefillCacheKey"]="persona:"+str(payload.get("profileId") or "").lower()+":v1"
     return out
 
 def _r39_online_payload(payload: dict[str,Any]) -> dict[str,Any]:
@@ -242,8 +242,7 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     if online_plan.get("requested"):
         phase="WEATHER_FETCH_STARTED" if online_plan.get("kind")=="weather" else "SEARCH_STARTED"
         search_target=str(online_plan.get("query") or payload.get("prompt") or "that").strip()
-        opening=_gegd_retrieval_opening(payload,online_plan) if str(payload.get("profileId") or "").lower()=="gegd" else "I’m on it — looking up "+search_target+"…"
-        yield {"type":"STATUS","phase":phase,"reason":opening,"categories":["ONLINE_RESEARCH",str(online_plan.get("kind") or "search").upper()]}
+        yield {"type":"STATUS","phase":phase,"reason":"I’m on it — looking up "+search_target+"…","categories":["ONLINE_RESEARCH",str(online_plan.get("kind") or "search").upper()]}
         online_result=None
         for update in stream_online_request(payload,intent):
             if update.get("type")=="progress":
