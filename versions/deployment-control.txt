@@ -1,5 +1,5 @@
 ID=deployment-control
-VERSION=1.0.22
+VERSION=1.0.23
 KIND=deployment-control
 SOURCE_BRANCH=main
 STATUS=active
