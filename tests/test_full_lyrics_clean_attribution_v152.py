@@ -132,8 +132,8 @@ assert rendered, result
 assert "Related Hymns" not in rendered,rendered
 assert "Get the Lines app" not in rendered,rendered
 assert "And grace will lead me home." in rendered,rendered
-assert "**Original attributed text (6 stanzas):**" in rendered,rendered
-assert "**Additional stanza(s) present in the lyrics source:**" in rendered,rendered
+assert "**Original text attributed to John Newton (6 stanzas):**" in rendered,rendered
+assert "**Additional stanza present in the lyrics source:**" in rendered,rendered
 assert "ten thousand years" in rendered,rendered
 assert "**Attribution source:**" in rendered,rendered
 assert "**Attribution evidence:**" in rendered,rendered
