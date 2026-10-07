@@ -30,7 +30,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v160-subject-bound-lyrics-verification"
+ONLINE_OBSERVABILITY_REVISION = "v161-source-vs-body-verification"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -469,6 +469,45 @@ def _lyrics_snippet_consistent(snippet: str, lyric_extract: str, subject: str = 
     overlap=sum(1 for token in snippet_tokens if token in body_tokens)
     needed=max(4,min(8,(len(snippet_tokens)+3)//4))
     return overlap>=needed,overlap,len(snippet_tokens)
+
+
+_LYRIC_SOURCE_BLOCKED_TITLE=re.compile(
+    r"\b(?:request\s+for\s+access|access\s+denied|captcha|verify\s+you(?:'|’)re\s+human|"
+    r"just\s+a\s+moment|temporarily\s+unavailable|forbidden|blocked)\b",
+    re.I,
+)
+_LYRIC_SUBJECT_STOP={"the","a","an","of","and","or","to","for","feat","featuring"}
+def _lyrics_source_identity(item: dict[str,Any], subject: str) -> dict[str,Any]:
+    """Verify destination identity only; this never proves or returns lyric body text."""
+    title,artist=_lyrics_subject_parts(subject)
+    title_terms=[
+        token.casefold()
+        for token in re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",title)
+        if len(token)>=2 and token.casefold() not in _LYRIC_SUBJECT_STOP
+    ]
+    artist_terms=[
+        token.casefold()
+        for token in re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",artist)
+        if len(token)>=2 and token.casefold() not in _LYRIC_SUBJECT_STOP
+    ]
+    page_title=_clean(item.get("pageTitle") or item.get("title"),300)
+    final_url=_clean_source_url(str(item.get("url") or item.get("finalUrl") or ""))
+    if not title_terms or not final_url or _LYRIC_SOURCE_BLOCKED_TITLE.search(page_title):
+        return {"verified":False,"score":0,"titleHits":0,"artistHits":0,"pageTitle":page_title,"url":final_url}
+    haystack=(page_title+" "+urllib.parse.unquote(final_url)).casefold()
+    title_hits=sum(1 for term in title_terms if term in haystack)
+    artist_hits=sum(1 for term in artist_terms if term in haystack)
+    title_needed=max(1,min(len(title_terms),2))
+    score=(title_hits*3)+(artist_hits*2)
+    verified=title_hits>=title_needed and (not artist_terms or artist_hits>=1)
+    return {
+        "verified":bool(verified),
+        "score":score,
+        "titleHits":title_hits,
+        "artistHits":artist_hits,
+        "pageTitle":page_title,
+        "url":final_url,
+    }
 
 
 def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
@@ -1226,6 +1265,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         evidence.append({
             "evidenceId": _clean(item.get("evidenceId"), 80),
             "title": _clean(item.get("title"), 300),
+            "pageTitle": _clean(item.get("pageTitle") or item.get("title"), 300),
             "url": _clean(item.get("finalUrl") or item.get("url"), 2000),
             "snippet": _clean(item.get("snippet") or item.get("extract"), 1000),
             "searchSnippet": _clean(item.get("snippet"), 1000),
@@ -1242,6 +1282,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
     provenance_queries=[]
     provenance_fetch_count=0
     verified_lyrics = None
+    verified_lyrics_source=None
     selected_lyric_evidence=None
     lyrics_source_attempts=[]
     lyrics_fallback_exhausted=False
@@ -1268,6 +1309,28 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 origin=origin,
             )
             subject=str(plan.get("subject") or "")
+            source_identity=_lyrics_source_identity(item,subject)
+            nonlocal verified_lyrics_source
+            if source_identity.get("verified"):
+                candidate_source={
+                    "subject":subject,
+                    "title":_clean(item.get("pageTitle") or item.get("title"),300),
+                    "url":clean_url,
+                    "provider":_clean(item.get("source") or urllib.parse.urlsplit(clean_url).netloc,240),
+                    "score":int(source_identity.get("score") or 0),
+                    "fetchedAt":item.get("fetchedAt"),
+                }
+                if not verified_lyrics_source or candidate_source["score"]>int(verified_lyrics_source.get("score") or 0):
+                    verified_lyrics_source=candidate_source
+                _progress(
+                    progress,
+                    "LYRICS_SOURCE_IDENTITY_VERIFIED",
+                    provider="lyrics-verifier",
+                    url=clean_url,
+                    activity="Fetched destination matches the requested song identity",
+                    attempt=attempt_number,
+                    maxAttempts=LYRICS_MAX_PAGE_ATTEMPTS,
+                )
             lyric_extract=_lyrics_extract_candidate(str(item.get("pageExtract") or ""),requested_scope,subject)
             snippet_consistent,overlap_count,snippet_token_count=_lyrics_snippet_consistent(
                 str(item.get("searchSnippet") or item.get("snippet") or ""),
@@ -1283,6 +1346,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 "outcome":"VERIFIED" if verified_candidate else "REJECTED",
                 "snippetOverlapCount":overlap_count,
                 "snippetInformativeTokenCount":snippet_token_count,
+                "sourceIdentityVerified":bool(source_identity.get("verified")),
+                "sourceIdentityScore":int(source_identity.get("score") or 0),
             }
             lyrics_source_attempts.append(attempt)
             if not verified_candidate:
@@ -1369,7 +1434,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                         final_url=_clean_source_url(str(page.get("finalUrl") or clean_url))
                         item={
                             "evidenceId":f"lf{attempt_number}",
-                            "title":_clean(page.get("title") or candidate.get("title"),300),
+                            "title":_clean(candidate.get("title") or page.get("title"),300),
+                            "pageTitle":_clean(page.get("title") or candidate.get("title"),300),
                             "url":final_url,
                             "snippet":_clean(candidate.get("snippet"),1000),
                             "searchSnippet":_clean(candidate.get("snippet"),1000),
@@ -1448,18 +1514,25 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 ],
             }
 
-    if plan.get("contentMode")=="lyrics-verification" and verified_lyrics:
+    if plan.get("contentMode")=="lyrics-verification" and (verified_lyrics or verified_lyrics_source):
         visible_results=[]
-        if selected_lyric_evidence:
+        if selected_lyric_evidence and verified_lyrics:
             visible_results.append({
                 "title":verified_lyrics.get("sourceDisplayTitle") or selected_lyric_evidence.get("title") or "Lyrics source",
                 "url":_clean_source_url(str(selected_lyric_evidence.get("url") or "")),
                 "snippet":selected_lyric_evidence.get("snippet") or "",
                 "source":selected_lyric_evidence.get("source") or "",
             })
-        if verified_lyrics.get("attributionSourceUrl"):
+        elif verified_lyrics_source:
             visible_results.append({
-                "title":verified_lyrics.get("attributionSourceTitle") or "Attribution source",
+                "title":verified_lyrics_source.get("title") or "Verified lyrics source",
+                "url":verified_lyrics_source.get("url") or "",
+                "snippet":"",
+                "source":verified_lyrics_source.get("provider") or "",
+            })
+        if verified_lyrics and verified_lyrics.get("attributionSourceUrl"):
+            visible_results.append({
+                "title":(verified_lyrics or {}).get("attributionSourceTitle") or "Attribution source",
                 "url":verified_lyrics.get("attributionSourceUrl"),
                 "snippet":"",
                 "source":urllib.parse.urlsplit(str(verified_lyrics.get("attributionSourceUrl") or "")).netloc,
@@ -1479,16 +1552,16 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "data": {"query":query,"results":visible_results[:5]},
     }
 
-    if plan.get("contentMode")=="lyrics-verification" and verified_lyrics:
+    if plan.get("contentMode")=="lyrics-verification" and (verified_lyrics or verified_lyrics_source):
         sources=[]
-        lyric_url=str(verified_lyrics.get("sourceUrl") or "")
+        lyric_url=str((verified_lyrics or {}).get("sourceUrl") or (verified_lyrics_source or {}).get("url") or "")
         if lyric_url:
             sources.append({
-                "title":verified_lyrics.get("sourceDisplayTitle") or verified_lyrics.get("sourceTitle") or "Lyrics source",
+                "title":(verified_lyrics or {}).get("sourceDisplayTitle") or (verified_lyrics or {}).get("sourceTitle") or (verified_lyrics_source or {}).get("title") or "Lyrics source",
                 "url":lyric_url,
                 "provider":urllib.parse.urlsplit(lyric_url).netloc,
             })
-        attr_url=str(verified_lyrics.get("attributionSourceUrl") or "")
+        attr_url=str((verified_lyrics or {}).get("attributionSourceUrl") or "")
         if attr_url and attr_url!=lyric_url:
             sources.append({
                 "title":verified_lyrics.get("attributionSourceTitle") or "Attribution source",
@@ -1518,6 +1591,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "provenanceQueries": provenance_queries,
         "provenanceFetchCount": provenance_fetch_count,
         "verifiedLyrics": verified_lyrics,
+        "verifiedLyricsSource": verified_lyrics_source,
         "lyricsSourceAttempts": lyrics_source_attempts,
         "lyricsSourceAttemptCount": len(lyrics_source_attempts),
         "lyricsMaxPageAttempts": LYRICS_MAX_PAGE_ATTEMPTS if plan.get("contentMode")=="lyrics-verification" else 0,
