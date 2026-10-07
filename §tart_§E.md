@@ -44,7 +44,9 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v7.6 source authority
+## Current v8.0 source authority
+
+The governed release is **v8.0 — Embervault Atelier**, staged for the dedicated engine Space. The previously observed live baseline is v7.9; staging this source does not establish deployment success. The following current contract supersedes historical default-avatar and Den-layout checkpoints below.
 
 ```text
 base:
@@ -66,29 +68,55 @@ patch chain:
   patches/v5_9_wisp_soft_contact_history.py
   patches/v6_0_researched_glitch_dragon_den.py
   patches/v6_1_glitch_den_project_card.py
-patches/v6_2_glitch_den_parity.py
-patches/v6_3_glitch_den_apex.py
-patches/v6_4_single_glitch_den_dragon_v3.py
-patches/v6_5_glitch_den_runtime_default.py
-patches/v6_6_wisp_hover_dragon_ik_idle.py
-patches/v6_7_contact_tools_fix.py
-patches/v6_8_den2_ground_snap.py
-patches/v7_0_fracture_forge_ascendant.py
-patches/v7_1_fracture_forge_breathing_room.py
-patches/v7_2_wisp_locomotion_repair.py
-patches/v7_3_engine_health.py
-patches/v7_4_editor_workspaces.py
-patches/v7_5_mobile_editor_chrome.py
-patches/v7_6_desktop_editor_polish.py\npatches/v7_7_canonical_glitch_den_project.py\npatches/v7_8_layers_desktop_docks.py\npatches/v7_9_sanctuary_canonical_project.py
+  patches/v6_2_glitch_den_parity.py
+  patches/v6_3_glitch_den_apex.py
+  patches/v6_4_single_glitch_den_dragon_v3.py
+  patches/v6_5_glitch_den_runtime_default.py
+  patches/v6_6_wisp_hover_dragon_ik_idle.py
+  patches/v6_7_contact_tools_fix.py
+  patches/v6_8_den2_ground_snap.py
+  patches/v7_0_fracture_forge_ascendant.py
+  patches/v7_1_fracture_forge_breathing_room.py
+  patches/v7_2_wisp_locomotion_repair.py
+  patches/v7_3_engine_health.py
+  patches/v7_4_editor_workspaces.py
+  patches/v7_5_mobile_editor_chrome.py
+  patches/v7_6_desktop_editor_polish.py
+  patches/v7_7_canonical_glitch_den_project.py
+  patches/v7_8_layers_desktop_docks.py
+  patches/v7_9_sanctuary_canonical_project.py
+  patches/v8_0_sanctuary_primitives.py
+  patches/v8_0_layer_integrity.py
+  patches/v8_0_workspace_tools.py
+  patches/v8_0_walkable_levels.py
+  patches/v8_0_embervault_project.py
 
 final:
-  swyrl_engine_v7_6.html
-  bytes 285613
-  sha256 220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251
+  swyrl_engine_v8_0.html
+  bytes 383338
+  sha256 92ddfc3770f874b5f8f91fc7fad536b15961c1627146be5995936c4355805a88
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V7_9_SANCTUARY_CANONICAL_PROJECT
+  SWYRL_ENGINE_DEPLOY_MARKER: V8_0_EMBERVAULT_WORKSPACE
 ```
+
+### Current Den and editor contract
+
+Embervault Atelier is a spatial workspace for future VR, project work, and conversation. Its canonical scene data lives in `projects/swrlz-forge-moba/scenes/embervault-atelier.swyrl.json`; reusable assets and interaction capabilities belong to the engine. The 167-actor native-editor assembly has three physical tiers: lower workshop at 0m, study gallery at 3.4m, and dragon council at 4.6m. Twin ramps connect the lower workshop and gallery; a short ramp reaches the council.
+
+The six workstations are Code Studio, Archive Garden, World Forge, Prototype Court, AI Hearth, and Dragon Council. Stations store editable text/code files and notes in project-owned workspace data, support individual file download and workspace JSON import/export, and survive Save Project/reload. Local drafts are available on the same device; explicit imported project data remains authoritative. Chat stations open the existing LALM application in a new tab. Headset rendering, VR controller input, executable coding sessions, and in-room inference remain future integrations.
+
+Three editor layers organize Architecture & Wayfinding, Atmosphere & Guardians, and Project Spaces. These organizational layers are distinct from the three physical elevations. Preserve manual visibility independently from layer toggles and runtime shell visibility, including undo/redo and save/load. The default player is the walking Guest visitor; the procedural Wisp remains a separate host and supported flight avatar.
+
+Required editor capabilities are native reusable vault/oculus/end-wall/support assets, walkable ramps and gallery decks, guardrails, editable signs, grouped assemblies, layer membership controls, and workspace components. Walking must use visible approved mesh support tops, respect rail and prop height, and allow passages beneath elevated floors. Desktop Outliner/Details rails must reclaim their actual grid columns, and Play must fill the viewport.
+
+Develop through all three perspectives: inspect or extend engine source, author the scene in the native editor, then walk and use it in Play. When authoring or Play reveals a missing capability, fix the responsible engine/editor code, rebuild, and repeat the affected flow. The complete plan, asset inventory, and editor checklist are in `projects/swrlz-forge-moba/DEN_DESIGN.md`.
+
+### v8.0 release receipt contract
+
+Current documentation records staged release content, not a completed production deployment. Final artifact integrity must match the source manifest, and generated JavaScript, native authoring, walking, workspace use, and Save Project/reload must pass before the final deploy button is pressed.
+
+Source authority resolves to the validated normal release commit immediately preceding the final v8.0 `DEPLOY_REQUEST.json` commit. Deployment authority resolves to that final trigger commit and the dedicated Actions run whose `head_sha` matches it. The workflow receipt and served static host must confirm this release marker and integrity. This reference contract records source/deploy authority without requiring a release-content mutation after the final trigger. Report the exact run URL and live page only after terminal success and live verification.
 
 ## Grouping contract
 
@@ -105,11 +133,11 @@ marker:
 
 The default Den must use grouping for architectural assemblies where useful rather than leaving dozens of structural pieces as unrelated root objects.
 
-## Dragon's Den v5.7 contract
+## Historical Dragon's Den v5.7 contract
 
 The default Den is an **immersive cavern**, not an outdoor/MOBA-style map.
 
-Current organization:
+Organization at this checkpoint:
 
 ```text
 Wake Nook
@@ -250,7 +278,7 @@ Live verification:
 PASS on attempt 1
 ```
 
-The current default Dragon's Den player is **Wisp Visitor / Creator** using the procedural Wisp visual system.
+The default Dragon's Den player at this v5.4 checkpoint was **Wisp Visitor / Creator**, using the procedural Wisp visual system. The current v8.0 default is defined above.
 
 
 ## v5.5 camera-look contract
@@ -418,7 +446,7 @@ v5.7 is the current observed engine state at this checkpoint. Dragon feet use mu
 
 ## v6.x + mandatory §E update protocol
 
-v7.6 preserves Dragon's Den — Seed Chamber and makes Glitch Dragon Den — Fracture Forge its exact structural variant: same architecture, layout, rooms, placements, exits, collision structure and camera framing, with the glitch identity layered on top.
+Historical v7.6 preserved Dragon's Den — Seed Chamber and made Glitch Dragon Den — Fracture Forge its exact structural variant: the same architecture, layout, rooms, placements, exits, collision structure, and camera framing with the glitch identity layered on top. The current v8.0 canonical project is Embervault Atelier, defined above.
 
 Every intentional GitHub mutation involving §wyrl§ Engine (§E), its source/build/deploy files, or its §E documentation is a governed §E update. For EVERY such update:
 

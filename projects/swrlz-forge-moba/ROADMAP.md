@@ -2,7 +2,9 @@
 
 Canonical lane: §E / §wyrl§ Engine  
 History audited through: **2026-10-07**  
-Current governed engine release: **v7.9**
+Current governed engine release: **v8.0 — Embervault Atelier (staged)**
+
+Previously observed live release: **v7.9**
 
 This roadmap is the mandatory release lineage for governed §E GitHub updates. Root `§tart_§E.md` defines the deployment contract.
 
@@ -40,7 +42,9 @@ This roadmap is the mandatory release lineage for governed §E GitHub updates. R
 | v7.5 | 2026-10-07 | Mobile editor chrome consolidated behind one compact §E workspace trigger. |
 | v7.6 | 2026-10-07 | Desktop editor chrome polish: dedicated menubar lane, duplicate Command Deck suppression, docked hints. |
 | v7.7 | 2026-10-07 | Saved revision-142, 120-actor Moonfire Sanctum promoted to the sole canonical Glitch Dragon Den starter. |
-| v7.8 | 2026-10-07 | Retractable desktop Outliner/Details docks plus persistent multi-object editor layers and visibility. |\n| v7.9 | 2026-10-07 | Editor-authored Sanctuary & Makers Grotto promoted to the canonical Dragon Den; project-local scripting namespace established. |
+| v7.8 | 2026-10-07 | Retractable desktop Outliner/Details docks plus persistent multi-object editor layers and visibility. |
+| v7.9 | 2026-10-07 | Editor-authored Sanctuary & Makers Grotto promoted to the canonical Dragon Den; project-local scripting namespace established. |
+| v8.0 | 2026-10-07 | Embervault Atelier: three physical tiers, native structural assets, height-aware walking, six persistent project stations, and editor/layer integrity fixes. |
 
 ## Artifact authority
 
@@ -77,10 +81,12 @@ This roadmap is the mandatory release lineage for governed §E GitHub updates. R
 | v7.6 | swyrl_engine_v7_6.html | 197128 | 409f42adc579b8da5ade1a55c9d5d09d58ef67539ff6e9f0562b119de9ea7f80 |
 | v7.7 | swyrl_engine_v7_7.html | 279207 | 75aef1f830dd7117c5675ac1666bdf70755c7be007c26f986c4acb169293bf25 |
 | v7.8 | swyrl_engine_v7_8.html | 286002 | 1bf5d8d65f2e1a7af9c30311c119b2bed3fa5688a5ea6e0ff0995a87f38f38cc |
+| v7.9 | swyrl_engine_v7_9.html | 285613 | 220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251 |
+| v8.0 | swyrl_engine_v8_0.html | 383338 | 92ddfc3770f874b5f8f91fc7fad536b15961c1627146be5995936c4355805a88 |
 
 ## Git push audit — 2026-10-05 through 2026-10-07
 
-The §E project-path history was re-audited directly from GitHub on 2026-10-07. **174 commits** are accounted for from the initial scaffold (`32657c58`) through the current v7.8 deployment trigger (`9a529d94`). Versioned work is grouped below; counts include implementation, build-chain, validation/integrity, documentation synchronization, corrective and deployment-trigger commits carrying that version label.
+The §E project-path history was re-audited directly from GitHub on 2026-10-07. **174 commits** are accounted for from the initial scaffold (`32657c58`) through the v7.8 deployment trigger (`9a529d94`) at that audit checkpoint. Versioned work is grouped below; counts include implementation, build-chain, validation/integrity, documentation synchronization, corrective and deployment-trigger commits carrying that version label.
 
 | Release bucket | Commits | First versioned push | Last versioned push |
 |---|---:|---|---|
@@ -119,15 +125,45 @@ The §E project-path history was re-audited directly from GitHub on 2026-10-07. 
 
 ### Audit corrections made
 
-The 2026-10-07 audit repaired roadmap drift rather than rewriting Git history: v3/v4/v4.1/v5/v5.1 were added to the formal lineage; v7.4 and v7.5 were restored as distinct releases instead of being mislabeled v7.6; historical artifact authority was recovered from each release's own Git revision instead of inheriting later global replacements; literal escaped newline artifacts were removed; and the current v7.8 artifact remains the governing live release.
+The 2026-10-07 audit repaired roadmap drift rather than rewriting Git history: v3/v4/v4.1/v5/v5.1 were added to the formal lineage; v7.4 and v7.5 were restored as distinct releases instead of being mislabeled v7.6; historical artifact authority was recovered from each release's own Git revision instead of inheriting later global replacements; literal escaped newline artifacts were removed; and the v7.8 artifact was retained as the governing release at that audit checkpoint. Later release entries below supersede that checkpoint.
 
-## v7.9 — Sanctuary & Makers Grotto becomes the canonical Dragon Den\n\nThe 120-actor editor-authored **§wyrl§ · Sanctuary & Makers Grotto** save is promoted directly into the canonical `dragon-den` project identity. It replaces Moonfire Sanctum as the default/original Dragon Den rather than becoming a second starter. The saved Code Studio, Archive Garden, World Forge, Prototype Court, Arrival and Guardian Alcove layout now opens through the normal project loader. A project-owned scripting namespace (`swyrl-project-scripts-v1`) is established on project metadata so future §wyrlz§cript/§form§cript assets remain project-local instead of engine-global.\n\nArtifact: `swyrl_engine_v7_9.html` · **285613 bytes** · SHA-256 `220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251` · marker `V7_9_SANCTUARY_CANONICAL_PROJECT`. Validation PASS.\n\n## Preserved v7.8 state
+## v8.0 — Embervault Atelier
+
+The canonical Dragon Den becomes **Embervault Atelier**, a 167-actor spatial workspace authored through the native editor and intended for future VR project work and conversation. This release adds depth through three connected physical tiers: a lower workshop at 0m, Code Studio and Archive Garden on a 3.4m study gallery, and a 4.6m Dragon Council. World Forge, Prototype Court, and the shared AI Hearth occupy the lower floor. Two full ramps and a short council ramp connect the levels; rails guard the exposed gallery and council edges.
+
+The den plan in `DEN_DESIGN.md` lists the rooms, assets, editor requirements, and author → Play → fix loop. Scene placement and station data remain project-owned in `scenes/embervault-atelier.swyrl.json`; five governed engine patches provide the reusable capabilities:
+
+| Patch | Capability |
+|---|---|
+| `v8_0_sanctuary_primitives.py` | Vault canopy/ribs, oculus, chamber wall, support columns, restrained work-floor trim, desktop grid/Play fixes, and authored transparency preservation. |
+| `v8_0_layer_integrity.py` | Separate manual/layer/runtime visibility, transactional layer membership and controls, and consistent save/load/undo/runtime restoration. |
+| `v8_0_workspace_tools.py` | Native station components and signs; editable text/code files and notes; local drafts, file download, workspace JSON transfer, and project save/reload. |
+| `v8_0_walkable_levels.py` | Reusable ramps, gallery decks, and rails; visible mesh-top support; height-aware collision and passages below elevated floors. |
+| `v8_0_embervault_project.py` | Canonical 167-actor scene embedding, v8.0 version/marker promotion, correct startup routing, and preservation of hydrated station data. |
+
+The three editor layers organize Architecture & Wayfinding, Atmosphere & Guardians, and Project Spaces independently of the physical tiers. The walking Guest visitor is the default player; Wisp flight remains supported. The six station identities are Code Studio, Archive Garden, World Forge, Prototype Court, AI Hearth, and Dragon Council. Chat stations link to the existing LALM application. Headset rendering, VR controller input, executable coding sessions, and in-room inference are future integrations.
+
+Artifact: `swyrl_engine_v8_0.html` · **383338 bytes** · SHA-256 `92ddfc3770f874b5f8f91fc7fad536b15961c1627146be5995936c4355805a88` · marker `V8_0_EMBERVAULT_WORKSPACE`.
+
+Release status: **staged locally; production deployment and live verification pending**. Native authoring, actual walking between tiers and beneath galleries, all six stations, document transfer, Save Project/reload, and layer/pause/Stop restoration passed. Generated module syntax passes; exact reconstruction is required before the final trigger. Live completion requires the exact Actions receipt and served artifact, as described below.
+
+Source/deploy references use the final deploy-button contract: source is the validated normal release commit immediately before the v8.0 `DEPLOY_REQUEST.json` commit; deploy is that final trigger commit; the exact dedicated Actions run must have a matching `head_sha`. The workflow receipt and live host must confirm the v8.0 marker and source integrity. These references resolve from the final trigger and receipt, so completing deployment requires no mutation of release content after pressing the button. Until those checks pass, v7.9 remains the previously observed live baseline.
+
+## v7.9 — Sanctuary & Makers Grotto becomes the canonical Dragon Den
+
+The 120-actor editor-authored **§wyrl§ · Sanctuary & Makers Grotto** save is promoted directly into the canonical `dragon-den` project identity. It replaces Moonfire Sanctum as the default/original Dragon Den rather than becoming a second starter. The saved Code Studio, Archive Garden, World Forge, Prototype Court, Arrival and Guardian Alcove layout now opens through the normal project loader. A project-owned scripting namespace (`swyrl-project-scripts-v1`) is established on project metadata so future §wyrlz§cript/§form§cript assets remain project-local instead of engine-global.
+
+Artifact: `swyrl_engine_v7_9.html` · **285613 bytes** · SHA-256 `220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251` · marker `V7_9_SANCTUARY_CANONICAL_PROJECT`. Validation PASS.
+
+## Preserved v7.8 state
 
 v7.8 preserves the canonical v7.7 Moonfire Sanctum starter and adds persistent editor layers plus retractable desktop docks. Layer membership is serialized with project state; layers can independently hide/show sets of objects without destroying hierarchy or transform groups. Outliner and Details can collapse to reclaim viewport space, especially useful on narrow desktop-mode displays.
 
-v7.8 artifact authority: `swyrl_engine_v7_8.html` · **286002 bytes** · SHA-256 `1bf5d8d65f2e1a7af9c30311c119b2bed3fa5688a5ea6e0ff0995a87f38f38cc` · marker `V7_8_LAYERS_DESKTOP_DOCKS`.\n\nCurrent v7.9 artifact authority: `swyrl_engine_v7_9.html` · **285613 bytes** · SHA-256 `220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251` · marker `V7_9_SANCTUARY_CANONICAL_PROJECT`.
+v7.8 artifact authority: `swyrl_engine_v7_8.html` · **286002 bytes** · SHA-256 `1bf5d8d65f2e1a7af9c30311c119b2bed3fa5688a5ea6e0ff0995a87f38f38cc` · marker `V7_8_LAYERS_DESKTOP_DOCKS`.
 
-Current deployment trigger: `9a529d945f2e35e2427ebef18c6de6b31810eed6` · deployment run #45 succeeded.
+v7.9 artifact authority: `swyrl_engine_v7_9.html` · **285613 bytes** · SHA-256 `220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251` · marker `V7_9_SANCTUARY_CANONICAL_PROJECT`.
+
+Historical v7.8 deployment trigger: `9a529d945f2e35e2427ebef18c6de6b31810eed6` · deployment run #45 succeeded.
 
 ## Mandatory update protocol
 
