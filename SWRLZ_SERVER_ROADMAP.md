@@ -1,3 +1,25 @@
+## UPDATE STARTED — 2026-10-07 — bounded lyrics source fallback v158
+
+**Trigger:** a live `Cold Piece of Work` lyrics test searched successfully, fetched the selected lyrics page with HTTP 200, then terminated at `LYRICS_VERIFICATION_BLOCKED` because the fetched body could not be promoted into verified lyric evidence. The user requested bounded alternate-source attempts rather than stopping after the first unusable page or searching indefinitely.
+
+**Observed baseline:**
+- search-provider fallback is already bounded and working;
+- the generic research reasoner can rank multiple result candidates, but it stops fetching when its broad sufficiency heuristic accepts one page;
+- the lyrics adapter applies a stricter extraction/verification gate after that stop, so a page can be research-sufficient yet lyrics-verification-insufficient;
+- current deployed evidence shows one page fetch followed by `LYRICS_VERIFICATION_BLOCKED` even though the search provider returned additional candidates.
+
+**Architecture reconciliation:**
+- Online Research remains the search/fetch/evidence owner.
+- The runtime-hot research reasoner will expose a bounded, metadata-only candidate pool from the already-executed search so the lyrics adapter can try alternate pages without issuing an uncontrolled search loop.
+- Lyrics verification remains in the HF online adapter. It will count the already-fetched page against a hard maximum of three unique page attempts, fetch ranked alternates only when verification fails, stop immediately when verified evidence is obtained, and expose attempt/exhaustion telemetry.
+- No new subsystem, provider, or deployment route is introduced.
+
+**Planned versions:** Repository Work `1.0.88`; Online Research `1.0.9`; Server Runtime `2.3.311`. LALM Engine remains `2.1.155` unless implementation evidence requires a presentation/cognition change.
+
+**Validation/deployment:** add deterministic no-network regressions for success-on-later-source and three-attempt exhaustion, run the guarded HF candidate validation/deployment path, and distinguish publication success from user-visible A+ acceptance.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — cross-chat full-station continuity + lyrics response polish v157
 
 **Outcome:** GOVERNANCE/DOCS DURABLE + GUARDED HF DEPLOYMENT SUCCESS / USER-VISIBLE RETRY ACCEPTANCE PENDING.
