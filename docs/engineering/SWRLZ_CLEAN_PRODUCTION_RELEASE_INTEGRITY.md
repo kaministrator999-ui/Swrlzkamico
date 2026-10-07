@@ -1,34 +1,31 @@
 # §wyrlz Clean Production Release Integrity Guide
 
-> **DEPRECATED CURRENT-HOSTING PATH — 2026-09-29:** Vercel is no longer the current §wyrlz application deployment target. This guide is retained as historical Vercel release-integrity lineage only. Current deployment authority is the existing Hugging Face Space `kamiloki/Swyrlz`, routed through `.deploy/HF_SPACE_REQUEST.txt` → `.github/workflows/hf-space-request.yml` → `.github/workflows/manual-hf-space.yml` after explicit user approval. See `§wyrlz_§tart.md §1A`. Do not use the Vercel trigger/cleanup sequence below for current application releases unless a later governed migration explicitly restores Vercel.
+**Role:** canonical preflight and release-integrity procedure for governed stable §wyrlz AI Chat/LALM deployments.
 
-**Role:** canonical preflight and release-integrity procedure for governed stable Server deployments.
+**Current production authority:** existing Hugging Face Space `kamiloki/Swyrlz`.
 
-**Purpose:** make cleanup and deployment deterministic by proving the candidate is internally valid *before* destructive/remote release stages begin.
+**Historical note:** Vercel-era cleanup/deployment procedures are retained elsewhere as lineage only. They are not current release instructions unless a later governed migration explicitly reactivates Vercel.
 
-## 1. Mandatory order
+## 1. Mandatory current order
 
-For every stable production candidate:
+For every stable Hugging Face production candidate:
 
 ```text
 SOURCE / ACCEPTED-RUNTIME MUTATION
-→ REGISTER EXACT ACCEPTED BLOBS + LINEAGE
-→ RUN PREPARED-RUNTIME INTEGRITY PREFLIGHT
+→ REGISTER EXACT ACCEPTED BLOBS + LINEAGE WHEN ACCEPTED_RUNTIME CHANGED
+→ PREPARE / VALIDATE THE EXACT HF CANDIDATE
 → VERSION + ROADMAP RECONCILIATION
-→ VERIFY CANONICAL VERCEL PROJECT LOCK
-→ PROVE PRODUCTION WORKFLOW SUCCESS PATH FROM SOURCE + KNOWN-GOOD EVIDENCE
-→ TRIGGER ONE PRODUCTION REQUEST
-→ PRODUCTION WORKFLOW PREPARES REPLACEMENT ARTIFACT
-→ PRODUCTION WORKFLOW CLEARS ALL PREVIOUS CANONICAL-PROJECT DEPLOYMENTS
-→ VERIFY ZERO PREVIOUS DEPLOYMENTS REMAIN
-→ DEPLOY THE ALREADY-PREPARED ARTIFACT
-→ OBSERVE GITHUB ACTIONS
-→ VERIFY VERCEL RECEIVED THE DEPLOYMENT
+→ VERIFY CANONICAL HF TARGET + SOURCE_REF + REQUEST GATE
+→ SNAPSHOT EXISTING SPACE / ROLLBACK REVISION
+→ GUARDED HF DEPLOY REQUEST
+→ WATCH GITHUB WORKFLOW TO TERMINAL
+→ CAPTURE DEPLOYED SPACE REVISION
 → VERIFY RUNTIME / HEALTH / EXPECTED REVISION
+→ LIVE USER-VISIBLE ACCEPTANCE WHEN APPLICABLE
 → CLOSE ROADMAP EVENT
 ```
 
-Do not advance to cleanup or production request while an earlier gate is unverified.
+Do not use production as the first syntax/test probe. Do not create a replacement Space to recover from a failed candidate.
 
 ## 2. Accepted-runtime integrity gate
 
@@ -36,73 +33,118 @@ Any mutation under `accepted_runtime/` must be reconciled against `accepted_runt
 
 For each changed accepted target:
 
-1. fetch/read the final bytes that will exist in the candidate;
+1. fetch/read the final candidate bytes;
 2. compute/use the exact GitHub blob SHA for those bytes;
 3. update the matching `files[].sourceBlobSha` or `overlayChain[].sourceBlobSha`;
-4. update `sourceCommit` when that field records the changed source lineage;
+4. update `sourceCommit` when that field records changed source lineage;
 5. re-read the target and manifest after mutation; and
-6. run the same integrity boundary used by production preparation: `python scripts/prepare_runtime_generation.py --accepted-root accepted_runtime --output-root <temporary-output>` or the repository's current canonical equivalent.
+6. run the repository's current accepted/prepared-runtime integrity boundary before publication.
 
-A commit SHA, source SHA from another path, earlier blob SHA, intended content, or successful source mutation is **not** a substitute for the final accepted target's Git blob identity.
+A commit SHA from another path, earlier blob SHA, intended content, or successful source mutation is **not** a substitute for the final accepted target's Git blob identity.
 
-If preparation reports `accepted source blob mismatch` or `accepted overlay blob mismatch`, STOP. Repair the registration and rerun preflight. Do not trigger cleanup or production deployment.
+If integrity reports a source/overlay mismatch, STOP publication, repair registration, and rerun preflight.
 
-## 3. Cleanup semantics and pre-trigger proof
+## 3. Hugging Face candidate-preparation gate
 
-The standalone `Purge Stale Vercel Deployments` workflow is **maintenance-only**. It intentionally protects the deployment currently serving the production alias and deletes only other stale deployments. A green standalone purge therefore does **not** mean the current production server was cleared, and it is not the release gate.
+The active source package is built from the explicitly selected deployment source (normally `feature/hf-space-manual-deploy`) through the existing preparation/deployment scripts and workflows.
 
-The canonical production workflow owns destructive replacement cleanup. Before triggering it:
+Before publishing:
 
-- confirm the canonical Vercel project is `swrlzkamico-o3nu` / `prj_dGgleDMgkOQ57wULKlDH5fcYj9Yp`;
-- inspect the current production workflow source and a known-good historical run;
-- prove the candidate satisfies every statically/repository-verifiable prerequisite through the last pre-deploy gate;
-- verify that the workflow prepares the replacement artifact **before** destructive cleanup;
-- verify that its destructive cleanup targets only the canonical project and has an explicit post-delete acceptance check requiring zero previous deployments before `vercel deploy`.
+- verify `hf_space/README.md`, `hf_space/app.py`, `hf_space/requirements.txt`, and required staged runtime/model/Chat files exist;
+- parse/compile the Python owners included by the workflow;
+- preserve the pinned original Test Bench contract;
+- verify required native/R39/model provenance gates;
+- run deterministic regressions relevant to the changed behavior;
+- preserve existing Chat/inference integration;
+- ensure the exact source SHA selected for deployment is the one just validated.
 
-**The trigger itself is never the experiment.** Know why the invocation should succeed before invoking it. GitHub Actions executes the proven release path; it is not the first diagnostic probe.
+A failed validation is **not** a deployment failure and must not upload a new Space revision.
 
-Never create or substitute another Vercel project.
+## 4. Canonical Hugging Face request gate
 
-## 4. Production trigger gate
+Current deployment is source-controlled through:
 
-The canonical production trigger is the governed `.deploy/REQUEST.txt` mutation consumed by `.github/workflows/manual-vercel-production.yml`, unless a later canonical contract explicitly replaces it.
+```text
+main:.deploy/HF_SPACE_REQUEST.txt
+  → main:.github/workflows/hf-space-request.yml
+  → main:.github/workflows/manual-hf-space.yml
+  → SOURCE_REF=feature/hf-space-manual-deploy
+  → kamiloki/Swyrlz
+```
 
-Before writing the request, verify:
+An approved production request must name:
 
-- candidate integrity preflight passed;
-- the production success path has been proved from current workflow source, current candidate state, and known-good evidence;
-- the workflow's destructive cleanup includes a post-delete zero-remaining acceptance gate;
-- `TARGET=production`, `APPROVED=1`, and the intended `SOURCE_REF` are correct;
-- `SOURCE_COMMIT` identifies the final candidate intended for deployment;
-- no later source mutation has made that candidate stale.
+```text
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+SOURCE_REF=<exact intended source ref>
+REQUEST_NONCE=<fresh unique nonce>
+```
 
-After the request, inspect the actual GitHub Actions run. A trigger commit is not proof of workflow success, and workflow success before the deploy step is not proof Vercel received a deployment.
+The request file is the intentional publish trigger. Ordinary Git/documentation commits remain deployment-inert.
 
-## 5. Failure localization
+## 5. Snapshot and rollback integrity
+
+Before upload, the guarded workflow must snapshot/record the existing Space revision and rollback checkpoint.
+
+The workflow must preserve enough evidence to answer:
+
+- what Space revision was serving before this deployment;
+- what exact Git source SHA/ref produced the candidate;
+- whether candidate validation passed;
+- whether upload was attempted;
+- what Space revision resulted;
+- which prior revision is the rollback target if a later explicit rollback is needed.
+
+Do not call an upload “known good” merely because the upload step succeeded.
+
+## 6. §wyrlz-owned failure recovery
+
+Failure recovery follows the ownership rule in Project Start and Hotfix Rules.
+
+When a validation/deployment failure is caused by §wyrlz's own syntax, malformed wiring, packaging, missing staged file, regression, or deployment handoff:
+
+1. inspect the exact failing step/log;
+2. repair the actual cause;
+3. re-run all deployment-inert validation required for the corrected candidate;
+4. issue a fresh guarded request nonce when a new deployment attempt is needed;
+5. rerun the same existing-Space HF path;
+6. preserve the failed attempt and corrective attempt in roadmap/release lineage.
+
+Do not return a safely repairable §wyrlz-caused failure to the user as unfinished implementation work.
+
+Corrective retries are bounded: each retry requires a concrete diagnosed cause and materially repaired candidate. Stop for a genuine user-owned product decision, missing authorization/credentials, unsafe action, external provider blocker, or when further retries are no longer evidence-driven.
+
+## 7. Failure localization
 
 Diagnose the earliest failed boundary.
 
-- Cleanup workflow fails → repair cleanup; do not deploy.
-- Prepared-runtime verification fails → repair accepted/source integrity; do not blame Vercel.
-- Production workflow fails before `vercel deploy` → no new Vercel deployment exists.
-- Vercel build/deploy fails → inspect that deployment's build evidence.
-- Deployment succeeds but runtime verification fails → preserve deployment identity and diagnose runtime/activation.
+- Source/static regression fails → repair source; no publication occurred.
+- HF package validation fails → repair packaging/staging; no publication occurred.
+- Snapshot/authorization gate fails → repair that gate before upload.
+- Workflow fails before upload → no new Space revision was published.
+- Upload fails → preserve predeploy revision and inspect provider/workflow evidence.
+- Upload succeeds but revision/runtime verification fails → preserve deployment identity and diagnose activation/runtime.
+- Runtime works but user-visible behavior fails → treat it as behavioral acceptance failure, not deployment failure.
 
-Compare **known-good run → failed run → governing workflow/source contract** before changing trigger machinery. One successful trigger and one failed trigger with the same contract does not by itself prove the trigger is broken.
+## 8. Definition of a clean release
 
-## 6. Definition of a clean release
-
-A release is clean only when all are evidenced:
+A stable HF release is clean only when the applicable gates are evidenced:
 
 ```text
-accepted integrity PASS
-pre-trigger success-path proof PASS
-destructive cleanup inside production workflow PASS with zero previous deployments remaining
-production workflow PASS
-canonical Vercel deployment observed
-expected source/revision observed
-runtime/health verification PASS
+candidate source/integrity PASS
+deployment-inert validation PASS
+exact SOURCE_REF/SHA identified
+predeploy Space snapshot/rollback checkpoint PASS
+guarded HF workflow terminal PASS
+deployed Space revision captured
+runtime/health/revision verification PASS
+user-visible acceptance PASS when required
 roadmap closure recorded
 ```
 
-Never report `deployed` from a commit alone.
+Never report `deployed` from a commit or trigger alone. Never report `live fixed` from source/static validation alone.
+
+## Bottom line
+
+**Prepare the exact candidate, prove it before upload, preserve the current Space, deploy only through the guarded existing-Space Hugging Face path, repair §wyrlz-owned failures inside the authorized scope, capture the resulting revision, and distinguish deployment success from live behavioral acceptance.**
