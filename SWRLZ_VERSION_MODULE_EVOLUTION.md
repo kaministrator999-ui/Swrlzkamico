@@ -2,7 +2,7 @@
 
 **Role:** canonical owner of Server-event lineage, independently evolving module versions, version-source authority, concurrency-safe assignment, failure lineage, and roadmap/release recording.
 
-**Startup/read order is owned by `SWRLZ_PROJECT_START.md`.** This document must not create a competing project-start sequence.
+**Startup/read order is owned by `§wyrlz_§tart.md`.** This document must not create a competing project-start sequence.
 
 Architecture placement is owned by `docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md`. Mutation/deployment mechanics are owned by `SWRLZ_HOTFIX_RULES.md`. Diagnostics are owned by `SWRLZ_CHAT_CAMERA_LOGS.md`. User-facing project reporting is owned by `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md`.
 
