@@ -1,3 +1,83 @@
+## UPDATE FINISHED — 2026-10-07 — fetched-content diagnostics + section-block extraction v162
+
+**Outcome:** FETCHED-CONTENT OBSERVABILITY ADDED + SECTION-BLOCK FALSE REJECTION REPAIRED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### What the v160 Dragon Chat export proved
+- the session export exposed search snippets, URLs, HTTP status, response-byte counts, verifier phases, and the bounded attempt count;
+- it did **not** expose the fetched `pageExtract` seen by the lyrics verifier, so the old export could not establish whether the correct page body was fetched and then rejected;
+- AllTheLyrics was fetched with HTTP 200 and 33,099 response bytes, then rejected, leaving a direct observability gap.
+
+### Independent page check + extractor root cause
+- the current AllTheLyrics target page is the correct `Cold Piece of Work` page and contains explicit Intro / Pre-Chorus / Verse / Chorus / Bridge section markers;
+- v159/v160 correctly recognized section-marker syntax during scanning;
+- however, final full-song assembly still primarily built stanza blocks from blank-line-separated chunks;
+- a cleaned HTML page can preserve newline-separated section markers without preserving blank lines between every section;
+- in that shape a real song collapses to one block; the legacy fallback only split that block when its line count was evenly divisible by four;
+- therefore valid marked lyric content could return an empty full-lyrics extraction and be rejected.
+
+### v162 extraction repair
+- explicit section markers now define content blocks directly, regardless of blank-line preservation;
+- each Verse/Chorus/Pre-Chorus/Bridge/Hook/Intro/Outro marker flushes the preceding section body and starts the next;
+- blank-line stanza parsing remains the fallback for unmarked/public-domain pages;
+- added post-song `Submitted by ...` / `Correct` boundaries so contributor/footer chrome does not enter the final section;
+- v158 three-total-page network limit, v159 24K fetched-body window, v160 snippet/body consistency, and v161 source-vs-body identity separation remain intact.
+
+### Dragon Chat JSON fetched-content diagnostics
+- Online Camera observability advances to `v162-fetch-debug-section-blocks`.
+- every successful lyric fetch evaluation now emits a bounded `lyricsFetchDebug` record into the same server-owned `onlineResearch` object already copied into:
+  - assistant-message metadata in the Dragon Chat session;
+  - `activeGeneration` in `swrlz-dragon-chat.json`;
+  - durable Online Research trace/outcome diagnostics.
+- per attempt the export now includes:
+  - requested/final URL;
+  - search-result title + fetched page title;
+  - HTTP status;
+  - fetched-content character count + SHA-256;
+  - detected lyric anchor index/line;
+  - up to 12 detected section markers;
+  - bounded line-preserving fetched-content preview (600 chars);
+  - extractor-output character count + SHA-256 + bounded preview;
+  - source-identity result/score;
+  - snippet overlap counts;
+  - final outcome and explicit `rejectionReason` such as `NO_STRUCTURED_LYRIC_BODY`, `SNIPPET_BODY_MISMATCH`, or `VERIFIED`.
+- intentionally **no uncontrolled full-page dump** is added; hashes/counts plus bounded previews make the fetched body inspectable without turning the export into raw third-party page storage.
+
+### Regression coverage
+- added `tests/test_full_lyrics_fetch_debug_section_blocks_v162.py`;
+- regression uses a page with explicit lyric section markers and **zero blank-line separators**;
+- requires successful full-lyrics extraction from section markers;
+- requires post-song footer exclusion;
+- requires `lyricsFetchDebug` to contain fetched-content preview/hash/counts and extractor-output preview;
+- requires the same bounded debug record to survive `online_camera()`, which is the projection stored in Dragon Chat JSON.
+
+### Self-repair deployment history
+- first guarded run `37699711285` stopped before publication; implementation and all prior lyric regressions passed, but the new v162 fixture compared the stripped fetched body count to the unstripped source-string length;
+- captured failure record itself demonstrated the new diagnostics working: it exposed anchor `Test Signal Lyrics`, section markers, a 600-char fetched preview, nonempty extractor output, full snippet overlap, and `outcome=VERIFIED`;
+- fixture assertion was corrected from `len(PAGE)` to `len(PAGE.strip())`; implementation was unchanged.
+
+### Final deployment receipts
+- final guarded HF run `37699853611`: terminal **SUCCESS**;
+- exact selected source: `80d7e87cf203cb29cd1024d7b33b91c2809a0dff`;
+- lyric gate: v151 PASS, v155 PASS, v157 PASS, v158 PASS, v159 PASS, v160 PASS, v161 PASS, **v162 PASS**;
+- native R39 verification, real R39 reconstruction, R39-vs-stock inspection, 700M smoke, fast-HF/Chat preservation guard, authorization gate, production snapshot, rollback checkpoint, upload, and deployed-revision capture all succeeded;
+- prior/rollback Space revision: `a4d653c5f92c341c9b749d8a0d4b3dbe18246830`;
+- deployed Space revision: `af8e4aec1abeca49c2cccf7bf90da88c4e5eb52d`.
+
+### Versions
+- Repository Work: **1.0.92**.
+- Server Runtime: **2.3.315 / 2.3.315-hf-v162-fetch-debug-section-blocks**.
+- Online Research: **1.0.13 / 1.0.13-fetch-debug-section-blocks-v162**.
+- Deployment Control: **1.0.22**.
+- LALM Engine remains **2.1.156 / 2.1.156-verified-source-only-presentation-v161**.
+
+### Remaining acceptance
+- rerun the same Cold Piece of Work request and export Dragon Chat JSON;
+- inspect `onlineResearch.lyricsFetchDebug` for each attempt;
+- if AllTheLyrics now verifies, the export must show fetched markers + nonempty extractor output + `rejectionReason=VERIFIED`;
+- if it still rejects, the new export will show the exact fetched preview, extractor preview, overlap counts, and explicit reason needed for the next repair.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v162 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — fetched-content diagnostics + section-block extraction v162
 
 **Trigger:** user requested the actual fetched contents to be visible in the Dragon Chat JSON export so extraction failures can be distinguished from bad upstream pages. Review of the v160 Cold Piece of Work export shows HTTP status/bytes/URLs and rejection phases, but not the fetched `pageExtract` that the verifier actually inspected.
