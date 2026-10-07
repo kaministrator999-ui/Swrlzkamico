@@ -10,7 +10,7 @@ import uuid
 from typing import Any, Callable
 
 MODULE_ID="online-research"
-VERSION="1.0.1"
+VERSION="1.1.0"
 CONTRACT_ID="swrlz_online_research_hot_v2"
 
 
@@ -78,6 +78,22 @@ def normalize_plan(payload:dict[str,Any])->dict[str,Any]:
         queries=[prompt] if prompt else []
     return {"intent":intent,"target":target,"requestedInformation":requested,"targetConfidence":confidence,"queries":queries,"constraints":raw.get("constraints",[])[:16] if isinstance(raw.get("constraints"),list) else [],"fallbackExactPrompt":not bool(raw.get("queries"))}
 
+def _sufficient(rec:dict[str,Any],plan:dict[str,Any])->bool:
+    """Stop research once fetched evidence satisfies the requested information."""
+    text=str(rec.get("extract") or "")
+    if not text:return False
+    requested=(" ".join([str(plan.get("requestedInformation") or ""),str(plan.get("target") or "")," ".join(plan.get("queries") or [])])).lower()
+    if "lyric" in requested:
+        if "first verse" in requested or "opening verse" in requested:
+            if __import__("re").search(r"(?im)^\s*(?:verse\s*1|verse\s*one)\b",text):return True
+            chunks=[x.strip() for x in __import__("re").split(r"\n\s*\n+",text) if x.strip()]
+            return any(2<=len([ln for ln in x.splitlines() if ln.strip()])<=8 and len(x)<=900 for x in chunks)
+        return len(text)>=120
+    terms=_terms(plan)
+    low=text.lower()
+    hits=sum(1 for t in terms if t in low)
+    return bool(terms) and hits>=max(1,min(3,len(terms)))
+
 def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->dict[str,Any]:
     start=time.perf_counter(); request_id=_clean(payload.get("requestId"),200) or "unknown"; research_id="research:"+uuid.uuid4().hex[:20]
     plan=normalize_plan(payload); terms=_terms(plan)
@@ -99,19 +115,23 @@ def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->di
             seen.add(url); rec={**item,"query":query,"relevanceScore":_score(item,terms)}
             rec["snippet"]=_passage(rec.get("snippet"),terms,700); candidates.append(rec)
     candidates.sort(key=lambda x:(-int(x.get("relevanceScore") or 0),int(x.get("rank") or 999)))
-    evidence=[]
+    evidence=[]; sufficient=False
     for rec in candidates[:8]:
         eid=f"e{len(evidence)+1}"; rec={**rec,"evidenceId":eid,"disposition":"selected","retrievedAt":_now_ms()}; url=_clean(rec.get("url"),2000)
         _camera(request_id,research_id,"URL_SELECTED",start,evidenceId=eid,url=url,title=_clean(rec.get("title"),300),query=rec.get("query"),rank=rec.get("rank"),relevanceScore=rec.get("relevanceScore"))
-        if fetch and len(evidence)<3:
+        if fetch:
             fstart=time.perf_counter(); _camera(request_id,research_id,"PAGE_FETCH_STARTED",start,evidenceId=eid,url=url)
             try:
                 page=fetch(url); raw_extract=str(page.get("extract") or ""); inspected_chars+=len(raw_extract); fetched+=1
-                rec.update({"pageTitle":page.get("title",""),"extract":_passage(raw_extract,terms,1400),"finalUrl":page.get("finalUrl",url),"httpStatus":page.get("status"),"fetchedAt":page.get("fetchedAt",_now_ms())})
+                # Preserve structural line/stanza boundaries for downstream scoping.
+                rec.update({"pageTitle":page.get("title",""),"extract":raw_extract[:6000],"finalUrl":page.get("finalUrl",url),"httpStatus":page.get("status"),"fetchedAt":page.get("fetchedAt",_now_ms())})
+                sufficient=_sufficient(rec,plan)
                 _camera(request_id,research_id,"PAGE_FETCH_COMPLETE",start,evidenceId=eid,url=url,finalUrl=rec.get("finalUrl"),httpStatus=rec.get("httpStatus"),durationMs=_elapsed(fstart),inspectedChars=len(raw_extract),admittedChars=len(rec.get("extract","")))
+                if sufficient:_camera(request_id,research_id,"EVIDENCE_SUFFICIENT",start,evidenceId=eid,url=rec.get("finalUrl"),reason="Fetched evidence satisfies requested information")
             except Exception as exc:
                 rec["fetchError"]=f"{type(exc).__name__}:{str(exc)[:160]}"; _camera(request_id,research_id,"PAGE_FETCH_FAILED",start,evidenceId=eid,url=url,durationMs=_elapsed(fstart),errorType=type(exc).__name__)
         evidence.append(rec)
+        if sufficient:break
     admitted_chars=sum(len(str(x.get("title") or ""))+len(str(x.get("snippet") or ""))+len(str(x.get("extract") or "")) for x in evidence)
     budget={"queriesExecuted":min(4,len(plan["queries"])),"searchResultsInspected":inspected,"pagesFetched":fetched,"externalCharsInspected":inspected_chars,"evidenceItemsAdmitted":len(evidence),"evidenceCharsAdmitted":admitted_chars,"maxEvidenceItems":8,"maxPagePassageChars":1400,"maxSnippetChars":700}
     bundle={"contractId":"swrlz_online_evidence_v3","researchContract":CONTRACT_ID,"researchId":research_id,"requested":True,"provider":capabilities.get("provider","unknown"),"plan":plan,"queries":plan["queries"][:4],"resultCount":len(evidence),"evidence":evidence,"errors":errors,"elapsedMs":_elapsed(start),"budget":budget,"epistemicPolicy":"retrieval-is-evidence-not-truth","cameraContract":"swrlz_research_camera_v1"}
