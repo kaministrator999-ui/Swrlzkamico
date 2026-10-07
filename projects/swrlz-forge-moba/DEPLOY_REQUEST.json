@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v8.3",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_3_ZONES_STARFORGE",
-  "reason": "Publish safe named zone travel, refined Embervault Atelier, and native Starforge Observatory after authoring, walking, menu, persistence, and exact artifact validation passed.",
-  "sourceCommit": "9c357e8adac2a1728842405dbb9d4c2fc6b806fd",
-  "sourceIntegritySha256": "ca4d43e2e560aee39a0fff48b07885d180d96dc64cbeb5c5bd00bdf23490d548"
+  "releaseVersion": "v8.4",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_4_WAYFINDING_ZONE_PREVIEW",
+  "reason": "Publish parallel native wayfinding refinements in Embervault and Starforge, plus optional editor destination markers and framing, after scene journeys, persistence, 20 preview lifecycle checks, combined native acceptance, and exact source validation passed.",
+  "sourceCommit": "b832345536f03d57d5bac961cfde08b57bd5da1f",
+  "sourceIntegritySha256": "58252d18ee4fedf3acb9b5ccbb8e19dbc10c421345deb507a016151ab1ceca62"
 }
