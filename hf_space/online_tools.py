@@ -30,7 +30,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v158-bounded-lyrics-fallback"
+ONLINE_OBSERVABILITY_REVISION = "v159-structural-lyrics-extraction"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -380,15 +380,20 @@ _LYRIC_PAGE_NOISE=re.compile(
 )
 _LYRIC_ANCHOR=re.compile(r"^(?:copy\s+lyrics|lyrics(?:\s+text)?)\s*[:.!-]*$",re.I)
 _LYRIC_HARD_BOUNDARY=re.compile(
-    r"^(?:related\s+(?:songs?|hymns?)|more\s+(?:songs?|lyrics?)|about|contact|privacy|terms|"
-    r"download(?:\s+the)?\s+app|get\s+the\s+.+?\s+app!?|share|subscribe|references?|sources?)\s*[:.!-]*$",
+    r"^(?:related\s+(?:songs?|hymns?|posts?)|more\s+(?:songs?|lyrics?)|about|contact|privacy|terms|"
+    r"download(?:\s+the)?\s+app|get\s+the\s+.+?\s+app!?|share|subscribe|references?|sources?|"
+    r"karaoke(?:\s+video)?(?:\s+with\s+lyrics)?|did\s+you\s+like\s+this\s+post.*|"
+    r"you\s+might\s+also\s+like.*|leave\s+a\s+reply.*|all\s+.+?\s+lyrics)\s*[:.!-]*$",
     re.I,
 )
 _LYRIC_SECTION_MARKER=re.compile(
-    r"^(?:verse\s*(?:\d+|one|two|three|four|five|six|seven|eight)|chorus|refrain|bridge)\b",
+    r"^\s*\[?\s*(?:(?:verse)(?:\s*(?:\d+|one|two|three|four|five|six|seven|eight))?|"
+    r"chorus|refrain|bridge|hook|pre[-\s]?chorus|intro|outro)\b[^\]\n]{0,80}\]?\s*:?[\s]*$",
     re.I,
 )
+_LYRIC_NUMBERED_START=re.compile(r"^\s*\d{1,2}[.)]\s+\S")
 LYRICS_MAX_PAGE_ATTEMPTS=3
+LYRICS_PAGE_TEXT_CHARS=24000
 
 
 def _lyrics_line_is_content(line: str) -> bool:
@@ -403,22 +408,71 @@ def _lyrics_line_is_content(line: str) -> bool:
     return 2<=len(words)<=24
 
 
-def _lyrics_extract_candidate(text: str, scope: str) -> str:
-    """Extract the contiguous lyric body and keep page chrome out of the frozen payload."""
+def _lyrics_title_terms(subject: str) -> list[str]:
+    match=re.match(r'^"([^"]+)"',str(subject or "").strip())
+    title=match.group(1) if match else str(subject or "")
+    return [
+        token.casefold()
+        for token in re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",title)
+        if len(token)>=2
+    ][:12]
+
+
+def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
+    """Choose the lyric-body start by subject match + nearby lyric structure, not first page chrome."""
+    title_terms=_lyrics_title_terms(subject)
+    candidates=[]
+    for index,raw_line in enumerate(lines):
+        line=raw_line.strip()
+        if not line:
+            continue
+        low=line.casefold()
+        base=0
+        if _LYRIC_ANCHOR.fullmatch(line):
+            base=max(base,20)
+        if "lyric" in low:
+            if title_terms:
+                hits=sum(1 for term in title_terms if term in low)
+                needed=max(1,min(len(title_terms),2))
+                if hits>=needed:
+                    base=max(base,30+hits)
+            else:
+                base=max(base,10)
+        if _LYRIC_SECTION_MARKER.search(line) or _LYRIC_NUMBERED_START.search(line):
+            base=max(base,18)
+        if not base:
+            continue
+
+        structure=0
+        content=0
+        for offset,following_raw in enumerate(lines[index+1:index+46],1):
+            following=following_raw.strip()
+            if not following:
+                continue
+            if _LYRIC_HARD_BOUNDARY.fullmatch(following):
+                break
+            if _LYRIC_SECTION_MARKER.search(following) or _LYRIC_NUMBERED_START.search(following):
+                structure+=max(1,10-(offset//5))
+                continue
+            if _lyrics_line_is_content(following):
+                content+=1
+        score=base+(structure*3)+min(content,24)
+        candidates.append((score,index))
+    return max(candidates)[1] if candidates else None
+
+
+def _lyrics_extract_candidate(text: str, scope: str, subject: str = "") -> str:
+    """Extract a bounded contiguous lyric body while rejecting navigation and post-song chrome."""
     raw=str(text or "").replace("\r\n","\n").replace("\r","\n")
     if not raw.strip():
         return ""
 
-    # Prefer an explicit page control/heading that marks the beginning of the lyric body.
-    # This prevents nearby article cards, related-hymn links, and app promos from being
-    # mistaken for verses merely because they look like short natural-language lines.
     raw_lines=raw.splitlines()
-    anchor_index=None
-    for index,line in enumerate(raw_lines):
-        if _LYRIC_ANCHOR.fullmatch(line.strip()):
-            anchor_index=index
+    anchor_index=_lyrics_best_anchor(raw_lines,subject)
     if anchor_index is not None:
-        raw_lines=raw_lines[anchor_index+1:]
+        anchor_line=raw_lines[anchor_index].strip()
+        include_anchor=bool(_LYRIC_SECTION_MARKER.search(anchor_line) or _LYRIC_NUMBERED_START.search(anchor_line))
+        raw_lines=raw_lines[anchor_index if include_anchor else anchor_index+1:]
 
     scoped=[]
     started=False
@@ -434,33 +488,28 @@ def _lyrics_extract_candidate(text: str, scope: str) -> str:
             started=True
             scoped.append(line)
             continue
-        if _lyrics_line_is_content(line):
+        if _LYRIC_NUMBERED_START.search(line) or _lyrics_line_is_content(line):
             started=True
             scoped.append(line)
             continue
-        if started:
-            # Once real lyric content has begun, ordinary page chrome ends the region.
-            # A lone rejected line is allowed only when it is blank; non-lyric UI text
-            # should not be copied into the factual payload.
-            if _LYRIC_PAGE_NOISE.search(line):
-                break
+        if started and _LYRIC_PAGE_NOISE.search(line):
+            break
 
     body="\n".join(scoped).strip()
     if not body:
-        body=raw
+        return ""
 
     if scope=="first-verse":
         explicit=re.search(
-            r"(?is)(?:^|\n)\s*(?:verse\s*1|verse\s*one)\s*[:.\-]?\s*\n?(.*?)(?="
-            r"\n\s*(?:verse\s*2|verse\s*two|chorus|refrain|bridge)\b|\Z)",
+            r"(?is)(?:^|\n)\s*\[?\s*(?:verse\s*1|verse\s*one)\b[^\]\n]*\]?\s*:?[\s]*\n?(.*?)(?="
+            r"\n\s*\[?\s*(?:verse\s*2|verse\s*two|chorus|refrain|bridge)\b|\Z)",
             body,
         )
         if explicit:
             lines=[ln.strip() for ln in explicit.group(1).splitlines() if _lyrics_line_is_content(ln)]
-            if 2<=len(lines)<=10:
+            if 2<=len(lines)<=12:
                 return "\n".join(lines)
 
-    # Preserve paragraph/stanza boundaries when the source exposes them.
     blocks=[]
     for chunk in re.split(r"\n\s*\n+",body):
         lines=[ln.strip() for ln in chunk.splitlines() if ln.strip()]
@@ -470,27 +519,20 @@ def _lyrics_extract_candidate(text: str, scope: str) -> str:
         if len(content)>=2:
             blocks.append("\n".join(content))
 
-    # Some lyric pages flatten every verse into one line stream. If so, standard
-    # four-line hymn stanzas are reconstructed only from the fetched sequence itself;
-    # no missing words are invented or normalized.
     if len(blocks)==1:
         flat=[ln.strip() for ln in blocks[0].splitlines() if ln.strip()]
         if scope=="full-lyrics" and len(flat)>=8 and len(flat)%4==0:
             blocks=["\n".join(flat[i:i+4]) for i in range(0,len(flat),4)]
 
     if scope=="first-verse":
-        if blocks:
-            return blocks[0]
-        return ""
+        return blocks[0] if blocks else ""
 
     if scope=="full-lyrics":
         if len(blocks)>=2 and sum(len(block.splitlines()) for block in blocks)>=8:
             return "\n\n".join(blocks)
         return ""
 
-    if blocks:
-        return "\n\n".join(blocks)
-    return ""
+    return "\n\n".join(blocks) if blocks else ""
 
 
 def _lyrics_subject_parts(subject: str) -> tuple[str,str]:
@@ -700,7 +742,7 @@ def _lyrics_provenance_lookup(
                     "title":_clean(page.get("title") or item.get("title"),300),
                     "url":final_url,
                     "snippet":_clean(item.get("snippet"),1200),
-                    "pageExtract":str(page.get("extract") or "").strip()[:6000],
+                    "pageExtract":str(page.get("extract") or "").strip()[:page_extract_limit],
                     "pageFetched":bool(page.get("extract")),
                     "source":_clean(urllib.parse.urlsplit(final_url).netloc,240),
                     "fetchedAt":page.get("fetchedAt"),
@@ -1126,6 +1168,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         bundle = run_online_research(payload)
     finally:
         canonical_online_research.clear_trace_sink()
+    page_extract_limit=LYRICS_PAGE_TEXT_CHARS if plan.get("contentMode")=="lyrics-verification" else 6000
     evidence = []
     for item in (bundle.get("evidence") or [])[:8]:
         if not isinstance(item, dict):
@@ -1136,7 +1179,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             "url": _clean(item.get("finalUrl") or item.get("url"), 2000),
             "snippet": _clean(item.get("snippet") or item.get("extract"), 1000),
             "searchSnippet": _clean(item.get("snippet"), 1000),
-            "pageExtract": str(item.get("extract") or "").strip()[:6000],
+            "pageExtract": str(item.get("extract") or "").strip()[:page_extract_limit],
             "pageFetched": bool(item.get("fetchedAt") and item.get("extract")),
             "fetchStatus": item.get("status") if isinstance(item.get("status"),int) else None,
             "source": _clean(item.get("source"), 240),
@@ -1174,7 +1217,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 maxAttempts=LYRICS_MAX_PAGE_ATTEMPTS,
                 origin=origin,
             )
-            lyric_extract=_lyrics_extract_candidate(str(item.get("pageExtract") or ""),requested_scope)
+            lyric_extract=_lyrics_extract_candidate(str(item.get("pageExtract") or ""),requested_scope,str(plan.get("subject") or ""))
             attempt={
                 "attempt":attempt_number,
                 "url":clean_url,
