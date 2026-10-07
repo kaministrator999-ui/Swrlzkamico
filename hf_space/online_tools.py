@@ -355,7 +355,106 @@ def _lyrics_search_query(text: str) -> str:
     subject=_lyrics_subject(text)
     scope=_lyrics_requested_scope(text)
     if subject:
-        parsed=re.match(r'^"([^"]+)"(?:\s+by\s+(.+))?    prompt: str,
+        parsed=re.match(r'^"([^"]+)"(?:\s+by\s+(.+))?$',subject,re.I)
+        if parsed:
+            title=_clean(parsed.group(1),180)
+            artist=_clean(parsed.group(2),180) if parsed.group(2) else ""
+            bits=[title]
+            if artist:
+                bits.append(artist)
+            bits.append("lyrics")
+            if scope=="first-verse":
+                bits.append("first verse")
+            elif scope=="full-lyrics":
+                bits.append("all verses")
+            return " ".join(bits)[:500]
+    return _search_query_from_prompt(text)
+
+
+_LYRIC_PAGE_NOISE=re.compile(
+    r"\b(?:home|blog|download|menu|sign\s*in|log\s*in|privacy|cookies?|terms|contact|"
+    r"about|share|follow|subscribe|navigation|source|app\s*store|google\s*play|"
+    r"related\s+songs?|more\s+lyrics?|chords?|copyright)\b",
+    re.I,
+)
+_LYRIC_SECTION_MARKER=re.compile(
+    r"^(?:verse\s*(?:\d+|one|two|three|four|five|six|seven|eight)|chorus|refrain|bridge)\b",
+    re.I,
+)
+
+
+def _lyrics_line_is_content(line: str) -> bool:
+    value=line.strip()
+    if not value or len(value)>180:
+        return False
+    if value.lower().startswith(("http://","https://")):
+        return False
+    if _LYRIC_PAGE_NOISE.search(value):
+        return False
+    words=re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",value)
+    return 2<=len(words)<=24
+
+
+def _lyrics_extract_candidate(text: str, scope: str) -> str:
+    """Return only structurally lyric-like page text; reject title/nav/search metadata."""
+    raw=str(text or "").replace("\r\n","\n").replace("\r","\n")
+    if not raw.strip():
+        return ""
+    if scope=="first-verse":
+        explicit=re.search(
+            r"(?is)(?:^|\n)\s*(?:verse\s*1|verse\s*one)\s*[:.\-]?\s*\n?(.*?)(?="
+            r"\n\s*(?:verse\s*2|verse\s*two|chorus|refrain|bridge)\b|\Z)",
+            raw,
+        )
+        if explicit:
+            lines=[ln.strip() for ln in explicit.group(1).splitlines() if _lyrics_line_is_content(ln)]
+            if 2<=len(lines)<=10:
+                return "\n".join(lines)
+
+    blocks=[]
+    for chunk in re.split(r"\n\s*\n+",raw):
+        lines=[ln.strip() for ln in chunk.splitlines() if ln.strip()]
+        if not lines:
+            continue
+        body=[ln for ln in lines if not _LYRIC_SECTION_MARKER.search(ln) and _lyrics_line_is_content(ln)]
+        if 2<=len(body)<=12 and len(body)>=max(2,(len(lines)+1)//2):
+            blocks.append("\n".join(body))
+
+    runs=[]
+    current=[]
+    for raw_line in raw.splitlines():
+        line=raw_line.strip()
+        if not line or _LYRIC_SECTION_MARKER.search(line) or not _lyrics_line_is_content(line):
+            if current:
+                runs.append(current)
+                current=[]
+            continue
+        current.append(line)
+    if current:
+        runs.append(current)
+
+    if scope=="first-verse":
+        if blocks:
+            return blocks[0]
+        run=next((item for item in runs if 2<=len(item)<=10),[])
+        return "\n".join(run)
+
+    if scope=="full-lyrics":
+        if len(blocks)>=2 and sum(len(block.splitlines()) for block in blocks)>=8:
+            return "\n\n".join(blocks)
+        longest=max(runs,key=len,default=[])
+        if len(longest)>=8:
+            return "\n".join(longest)
+        return ""
+
+    if blocks:
+        return "\n\n".join(blocks)
+    longest=max(runs,key=len,default=[])
+    return "\n".join(longest) if len(longest)>=4 else ""
+
+
+def classify_online_request(
+    prompt: str,
     history: list[dict[str, Any]] | None = None,
     programming: dict[str, Any] | None = None,
     client_location: Any = None,
