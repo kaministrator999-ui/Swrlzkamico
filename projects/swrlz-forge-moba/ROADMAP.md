@@ -2,9 +2,9 @@
 
 Canonical lane: §E / §wyrl§ Engine  
 History audited through: **2026-10-07**  
-Current governed engine release: **v8.0 — Embervault Atelier (staged)**
+Current governed engine release: **v8.1 — Performance & Graphics (validated; deployment pending)**
 
-Previously observed live release: **v7.9**
+Previously observed live release: **v8.0 — Embervault Atelier** (deployment #50 succeeded)
 
 This roadmap is the mandatory release lineage for governed §E GitHub updates. Root `§tart_§E.md` defines the deployment contract.
 
@@ -44,7 +44,7 @@ This roadmap is the mandatory release lineage for governed §E GitHub updates. R
 | v7.7 | 2026-10-07 | Saved revision-142, 120-actor Moonfire Sanctum promoted to the sole canonical Glitch Dragon Den starter. |
 | v7.8 | 2026-10-07 | Retractable desktop Outliner/Details docks plus persistent multi-object editor layers and visibility. |
 | v7.9 | 2026-10-07 | Editor-authored Sanctuary & Makers Grotto promoted to the canonical Dragon Den; project-local scripting namespace established. |
-| v8.0 | 2026-10-07 | Embervault Atelier: three physical tiers, native structural assets, height-aware walking, six persistent project stations, and editor/layer integrity fixes. |
+| v8.1 | 2026-10-07 | Graphics scalability, Auto quality, persistent render/shadow/frame-cap controls, independent Editor and Play FPS/frame-time overlays, and controller delta-time audit. |\n| v8.0 | 2026-10-07 | Embervault Atelier: three physical tiers, native structural assets, height-aware walking, six persistent project stations, and editor/layer integrity fixes. |
 
 ## Artifact authority
 
@@ -127,7 +127,7 @@ The §E project-path history was re-audited directly from GitHub on 2026-10-07. 
 
 The 2026-10-07 audit repaired roadmap drift rather than rewriting Git history: v3/v4/v4.1/v5/v5.1 were added to the formal lineage; v7.4 and v7.5 were restored as distinct releases instead of being mislabeled v7.6; historical artifact authority was recovered from each release's own Git revision instead of inheriting later global replacements; literal escaped newline artifacts were removed; and the v7.8 artifact was retained as the governing release at that audit checkpoint. Later release entries below supersede that checkpoint.
 
-## v8.0 — Embervault Atelier
+## v8.1 — Performance & Graphics\n\nAdds an engine-level **Graphics & Performance** panel while preserving the v8.0 Embervault project data. Presets are Auto, Low, Medium, High, and Custom. Manual controls expose 50–100% render scale, dynamic shadows, 512/1024/2048 shadow maps, and Unlimited/30/45/60 render caps. Auto watches sustained frame time and adjusts render resolution without changing gameplay simulation timing.\n\nFPS diagnostics are independently configurable for **Editor** and **Play/Simulate**. The overlay reports FPS, smoothed frame time in milliseconds, effective render scale, and Auto state. Preferences persist in local storage. The Play controller audit confirmed movement and stick-look were already delta-time based; v8.1 explicitly clamps controller delta to the existing 50 ms maximum to prevent pathological long-frame input jumps.\n\nArtifact: `swyrl_engine_v8_1.html` · **393412 bytes** · SHA-256 `68d7066049a85681749c320b80ee0727790c02a17c7afb0c09d386dc7449b03f` · marker `V8_1_PERFORMANCE_GRAPHICS`. Exact reconstruction, feature assertions, and generated JavaScript syntax PASS in validation run `37687066717`. Production deployment pending the final dedicated deploy-button commit.\n\n## v8.0 — Embervault Atelier
 
 The canonical Dragon Den becomes **Embervault Atelier**, a 167-actor spatial workspace authored through the native editor and intended for future VR project work and conversation. This release adds depth through three connected physical tiers: a lower workshop at 0m, Code Studio and Archive Garden on a 3.4m study gallery, and a 4.6m Dragon Council. World Forge, Prototype Court, and the shared AI Hearth occupy the lower floor. Two full ramps and a short council ramp connect the levels; rails guard the exposed gallery and council edges.
 
@@ -145,7 +145,7 @@ The three editor layers organize Architecture & Wayfinding, Atmosphere & Guardia
 
 Artifact: `swyrl_engine_v8_0.html` · **383338 bytes** · SHA-256 `92ddfc3770f874b5f8f91fc7fad536b15961c1627146be5995936c4355805a88` · marker `V8_0_EMBERVAULT_WORKSPACE`.
 
-Release status: **staged locally; production deployment and live verification pending**. Native authoring, actual walking between tiers and beneath galleries, all six stations, document transfer, Save Project/reload, and layer/pause/Stop restoration passed. Generated module syntax passes; exact reconstruction is required before the final trigger. Live completion requires the exact Actions receipt and served artifact, as described below.
+Release status: **verified live**. Deployment run #50 (`37664080075`) completed successfully from trigger commit `e7a294ba92b681494690bc5ac908906be2ec586c`. Native authoring, actual walking between tiers and beneath galleries, all six stations, document transfer, Save Project/reload, and layer/pause/Stop restoration passed. Generated module syntax passes; exact reconstruction is required before the final trigger. Live completion requires the exact Actions receipt and served artifact, as described below.
 
 Deployment repair: the first v8.0 run [37663564970](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37663564970) passed exact reconstruction and JavaScript syntax but Hugging Face rejected the card description for exceeding 60 characters. The description is shortened and its metadata length validated. The engine artifact, authored scene, and integrity remain unchanged; a fresh final trigger deploys this packaging correction.
 
