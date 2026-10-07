@@ -106,6 +106,22 @@ def _online_evidence_fallback_text(result: dict[str,Any]) -> str:
     return "The live search completed successfully, and the structured search-results card contains the retrieved sources."
 
 
+def _lyrics_source_only_payload(result: dict[str,Any]) -> str | None:
+    """Render a verified destination without claiming its lyric body was extracted."""
+    context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
+    source=context.get("verifiedLyricsSource") if isinstance(context.get("verifiedLyricsSource"),dict) else {}
+    url=str(source.get("url") or "").strip()
+    if not url:
+        return None
+    title=str(source.get("title") or "Verified lyrics source").strip()
+    subject=str(source.get("subject") or "").strip() or "the requested song"
+    return (
+        f"I found and verified a lyrics source for **{subject}**, but I couldn't verify a clean lyric-text "
+        f"extraction from the fetched page, so I won't reconstruct the lyrics from memory.\n\n"
+        f"**Lyrics source:** {title} — {url}"
+    )
+
+
 def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | None:
     """Serve only frozen lyric text, while keeping source text separate from authorship claims."""
     context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
@@ -318,10 +334,8 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
             source_title=str(verified_source.get("title") or "Verified lyrics source").strip()
             subject=str(verified_source.get("subject") or "").strip() or "the requested song"
             if source_url:
-                message=(
-                    f"I found and verified a lyrics source for **{subject}**, but I couldn't verify a clean lyric-text "
-                    f"extraction from the fetched page, so I won't reconstruct the lyrics from memory.\n\n"
-                    f"**Lyrics source:** {source_title} — {source_url}"
+                message=_lyrics_source_only_payload(online_result) or (
+                    "I found a verified lyrics source, but I couldn't verify a clean lyric-text extraction from the fetched page."
                 )
                 yield {"type":"STATUS","phase":"LYRICS_SOURCE_ONLY","reason":"Verified source identity; lyric body extraction not verified.","categories":["ONLINE_RESEARCH","LYRICS","SOURCE","GROUNDING"]}
             else:
