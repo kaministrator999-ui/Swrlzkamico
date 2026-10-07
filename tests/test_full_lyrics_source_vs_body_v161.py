@@ -12,19 +12,20 @@ PROMPT="Can you provide lyrics for the song cold piece of work by tech n9ne"
 plan=online_tools.classify_online_request(PROMPT,[],{},None)
 assert plan["subject"]=='"cold piece of work" by tech n9ne',plan
 assert plan["query"]=="cold piece of work tech n9ne lyrics",plan
+SUBJECT=plan["subject"]
 
 blocked=online_tools._lyrics_source_identity({
     "pageTitle":"AZLyrics - request for access",
     "title":"Cold Piece Of Work Lyrics",
     "url":"https://b.azlyrics.com/",
-},"cold piece of work" by tech n9ne")
+},SUBJECT)
 assert blocked["verified"] is False,blocked
 
 source_ok=online_tools._lyrics_source_identity({
     "pageTitle":"Tech N9ne – Cold Piece of Work lyrics",
     "title":"Tech N9ne – Cold Piece of Work | All The Lyrics",
     "url":"https://www.allthelyrics.com/lyrics/tech_n9ne-cold_piece_of_work",
-},"cold piece of work" by tech n9ne")
+},SUBJECT)
 assert source_ok["verified"] is True,source_ok
 
 orig_research=online_tools.run_online_research
