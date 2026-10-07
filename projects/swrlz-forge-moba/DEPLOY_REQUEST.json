@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v7.8",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_8_LAYERS_DESKTOP_DOCKS",
-  "reason": "Add retractable desktop Outliner/Details docks plus persistent multi-object editor layers with hide/show, assignment and project serialization while preserving grouping; retry after v7.8 title guard correction",
-  "sourceIntegritySha256": "1bf5d8d65f2e1a7af9c30311c119b2bed3fa5688a5ea6e0ff0995a87f38f38cc"
+  "releaseVersion": "v7.9",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_9_SANCTUARY_CANONICAL_PROJECT",
+  "reason": "Promote the editor-authored Sanctuary & Makers Grotto as the default/original canonical Dragon Den and establish project-local script ownership metadata",
+  "sourceIntegritySha256": "220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251"
 }
