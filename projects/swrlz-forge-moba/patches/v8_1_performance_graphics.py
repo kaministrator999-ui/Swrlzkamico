@@ -92,7 +92,8 @@ function openPerformanceSettings(){installPerformanceSettings();syncPerformanceU
 
 def apply(html):
     s=html
-    if "</style>" not in s: raise RuntimeError("v8.1 style anchor missing")\n    s=s.replace("</style>",CSS+"</style>",1)
+    if "</style>" not in s: raise RuntimeError("v8.1 style anchor missing")
+    s=s.replace("</style>",CSS+"</style>",1)
     s=_once(s,"const renderer = new THREE.WebGLRenderer({canvas:$('viewport'), antialias:true});\nrenderer.setPixelRatio(Math.min(devicePixelRatio,2));","const renderer = new THREE.WebGLRenderer({canvas:$('viewport'), antialias:true});\n"+JS+"\nloadPerformancePrefs();\nrenderer.setPixelRatio(performancePixelRatio());")
     s=_once(s,"scene.add(sun);","scene.add(sun);\ninstallPerformanceSettings();applyPerformanceSettings();")
     s=_once(s,"View:[['Focus Selection','focus'],['Frame Selection','frame'],['Top View','top'],['World / Local','space'],['Terrain Snap','terrain'],['sep'],['Outliner','outliner'],['Inspector / Details','inspector']],","View:[['Focus Selection','focus'],['Frame Selection','frame'],['Top View','top'],['World / Local','space'],['Terrain Snap','terrain'],['sep'],['Graphics & Performance','performance'],['Outliner','outliner'],['Inspector / Details','inspector']],")
