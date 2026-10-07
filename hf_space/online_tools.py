@@ -510,9 +510,11 @@ _NUMBER_WORDS={"one":1,"two":2,"three":3,"four":4,"five":5,"six":6,"seven":7,"ei
 def _original_stanza_count(text: str) -> int | None:
     value=" ".join(str(text or "").split())
     patterns=[
-        r"\boriginal(?:ly)?\b.{0,90}?\b(?:included|contained|had|in)\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+stanzas?\b",
-        r"\bpublished\b.{0,90}?\bin\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+stanzas?\b",
-        r"\bin\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+stanzas?\b.{0,90}?\b(?:original|Newton|author)\b",
+        r"\boriginal(?:ly)?\b.{0,120}?\b(?:included|contained|had|in|comprised|consisted\s+of)\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:stanzas?|verses?)\b",
+        r"\bpublished\b.{0,120}?\bin\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:stanzas?|verses?)\b",
+        r"\b(?:included|contained|had|comprised|consisted\s+of)\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:original\s+)?(?:stanzas?|verses?)\b",
+        r"\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:original\s+)?(?:stanzas?|verses?)\b.{0,120}?\b(?:original|Newton|author|published)\b",
+        r"\bin\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:stanzas?|verses?)\b.{0,120}?\b(?:original|Newton|author|published)\b",
     ]
     for pattern in patterns:
         match=re.search(pattern,value,re.I)
@@ -526,6 +528,37 @@ def _original_stanza_count(text: str) -> int | None:
         if 1<=count<=20:
             return count
     return None
+
+def _lyrics_provenance_query_variants(subject: str, lyric_extract: str) -> list[str]:
+    title,author=_lyrics_subject_parts(subject)
+    if not title or not author:
+        return []
+    queries=[
+        f'{title} {author} published in stanzas original hymn text',
+        f'{title} {author} original verses stanza history',
+    ]
+    stanzas=[x.strip() for x in re.split(r"\n\s*\n+",str(lyric_extract or "")) if x.strip()]
+    if stanzas:
+        first_line=next((ln.strip() for ln in stanzas[-1].splitlines() if ln.strip()),"")
+        if first_line:
+            queries.append(f'"{first_line[:120]}" {title} {author} authorship stanza history')
+    out=[]
+    for query in queries:
+        q=_clean(query,500)
+        if q and q not in out:
+            out.append(q)
+    return out[:3]
+
+
+def _lyrics_provenance_signal(text: str) -> bool:
+    value=" ".join(str(text or "").split())
+    return bool(re.search(
+        r"\b(?:anonymous|spurious|later\s+(?:addition|stanza|verse)|added\s+(?:later|stanza|verse)|"
+        r"first\s+found|joined\s+to|not\s+(?:written|authored)\s+by)\b",
+        value,
+        re.I,
+    ))
+
 
 
 def classify_online_request(
@@ -1020,6 +1053,65 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         valid.sort(key=lambda row:row[0],reverse=True)
         if valid:
             _,selected,selected_extract = valid[0]
+
+            # If the first generic attribution lookup did not establish the original
+            # stanza count, retry with queries shaped around publication history and,
+            # when available, the final fetched stanza itself. This is still bounded
+            # retrieval: no authorship fact is invented from the lyric page.
+            if requested_scope=="full-lyrics" and original_stanza_count is None:
+                extracted_stanzas=[x.strip() for x in re.split(r"\n\s*\n+",selected_extract) if x.strip()]
+                for fallback_query in _lyrics_provenance_query_variants(str(plan.get("subject") or ""),selected_extract):
+                    fallback_payload={
+                        "requestId":_clean(plan.get("requestId"),160)+":attribution-fallback",
+                        "prompt":fallback_query,
+                        "researchPlan":{
+                            "intent":"web-search",
+                            "target":fallback_query,
+                            "requestedInformation":fallback_query,
+                            "targetConfidence":0.9,
+                            "queries":[fallback_query],
+                            "constraints":["bounded-public-web-evidence","lyrics-author-attribution-check"],
+                        },
+                        "researchQueries":[fallback_query],
+                    }
+                    canonical_online_research.set_trace_sink(progress)
+                    try:
+                        fallback_bundle=run_online_research(fallback_payload)
+                    finally:
+                        canonical_online_research.clear_trace_sink()
+                    signal_seen=False
+                    for item in (fallback_bundle.get("evidence") or [])[:6]:
+                        if not isinstance(item,dict):
+                            continue
+                        record={
+                            "title":_clean(item.get("title"),300),
+                            "url":_clean(item.get("finalUrl") or item.get("url"),2000),
+                            "snippet":_clean(item.get("snippet") or item.get("extract"),1200),
+                            "pageExtract":str(item.get("extract") or "").strip()[:6000],
+                            "pageFetched":bool(item.get("fetchedAt") and item.get("extract")),
+                            "source":_clean(item.get("source"),240),
+                            "fetchedAt":item.get("fetchedAt"),
+                        }
+                        provenance_evidence.append(record)
+                        combined="\n".join([record["title"],record["snippet"],record["pageExtract"]])
+                        count=_original_stanza_count(combined)
+                        if count:
+                            original_stanza_count=count
+                            attribution_source_title=record["title"] or record["source"] or "Historical attribution source"
+                            attribution_source_url=record["url"]
+                            break
+                        if _lyrics_provenance_signal(combined):
+                            signal_seen=True
+                            attribution_source_title=record["title"] or record["source"] or "Historical attribution source"
+                            attribution_source_url=record["url"]
+                    if original_stanza_count is not None:
+                        break
+                    # If a source explicitly identifies the final stanza as later/anonymous
+                    # but omits the original count, separate only that final stanza.
+                    if signal_seen and len(extracted_stanzas)>=2:
+                        original_stanza_count=len(extracted_stanzas)-1
+                        break
+
             verified_lyrics = {
                 "sourceTitle": selected.get("title") or selected.get("source") or "Fetched lyrics source",
                 "sourceUrl": selected.get("url"),
