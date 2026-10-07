@@ -219,7 +219,13 @@ def _page_fetch(url:str)->dict[str,Any]:
         if len(raw)>MAX_PAGE_BYTES:raise ValueError("PAGE_RESPONSE_TOO_LARGE")
         if not ("text/" in ctype or "html" in ctype or "json" in ctype):raise ValueError("PAGE_CONTENT_TYPE_BLOCKED")
         text=raw.decode("utf-8","replace");tm=re.search(r"<title[^>]*>([\s\S]*?)</title>",text,re.I);title=html.unescape(re.sub(r"<[^>]+>"," ",tm.group(1))).strip()[:300] if tm else ""
-        cleaned=re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>"," ",text);cleaned=html.unescape(re.sub(r"<[^>]+>"," ",cleaned));extract=re.sub(r"\s+"," ",cleaned).strip()[:6000]
+        cleaned=re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>"," ",text)
+        cleaned=re.sub(r"(?i)<br\s*/?>","\n",cleaned)
+        cleaned=re.sub(r"(?i)</(?:p|div|li|h[1-6]|section|article|blockquote|tr)>","\n",cleaned)
+        cleaned=html.unescape(re.sub(r"<[^>]+>"," ",cleaned))
+        extract=re.sub(r"[ \t\r\f\v]+"," ",cleaned)
+        extract=re.sub(r" *\n *","\n",extract)
+        extract=re.sub(r"\n{3,}","\n\n",extract).strip()[:6000]
         _emit_trace("PAGE_FETCH_COMPLETE",provider="web-page",url=final,status=int(status),response_bytes=len(raw),reason="Page fetched")
         return {"finalUrl":final,"status":int(status),"title":title,"extract":extract,"fetchedAt":int(time.time()*1000)}
     except Exception as exc:
