@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v7.3",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_3_ENGINE_HEALTH",
-  "reason": "Whole-engine health audit: unify Wisp flight controller, remove duplicate translation risk, add runtime locomotion diagnostics, and repair release-lineage headings",
-  "sourceIntegritySha256": "4967a5b527223b8c3d5bfd7ea7ef9a413a6c8582351b2c317cf9c4bc9d0f0e3c"
+  "releaseVersion": "v7.4",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_4_EDITOR_WORKSPACES",
+  "reason": "Add professional game-engine menus and mobile-friendly workspace launcher based on Unity/Unreal workflow coverage while routing existing §E capabilities to real handlers",
+  "sourceIntegritySha256": "822d4d58aad205a4710401c040cd954337585e6346bb337fe7866de73e02f25e"
 }
