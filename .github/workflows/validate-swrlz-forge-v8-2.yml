@@ -25,3 +25,4 @@ jobs:
           start=s.index('<script type="module">')+len('<script type="module">');end=s.rindex('</script>');Path('/tmp/e.mjs').write_text(s[start:end])
           PY
           node --check /tmp/e.mjs
+# retry stable boot anchor
