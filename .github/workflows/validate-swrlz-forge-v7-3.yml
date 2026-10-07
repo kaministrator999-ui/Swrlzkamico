@@ -24,7 +24,7 @@ jobs:
           for rel in m["patches"]:
               spec=importlib.util.spec_from_file_location("p",root/rel);mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);html=mod.apply(html)
           b=html.encode();print("FINAL_BYTES="+str(len(b)));print("FINAL_SHA256="+hashlib.sha256(b).hexdigest())
-          required=["V7_3_ENGINE_HEALTH","v7.3 · ENGINE HEALTH","runtime-diag","installRuntimeDiagnostics","Dense editor collision proxies cannot pin the Wisp","if(h.userData.hoverFlight)","resolveHeroCollision(next,.55)"]
+          required=["V7_3_ENGINE_HEALTH","v7.3 · ENGINE HEALTH","runtime-diag","installRuntimeDiagnostics","Flying Wisp uses one authoritative X/Z translation path","if(h.userData.hoverFlight)","resolveHeroCollision(next,.55)"]
           for x in required: assert x in html,x
           assert "freeMove.lengthSq()>.0001" not in html,"v7.2 duplicate flight pass survived"
           assert html.count("installRuntimeDiagnostics();")==1
@@ -33,3 +33,5 @@ jobs:
           node --check /tmp/e.mjs
 
 # retry stable movement slice
+
+# align assertion with unified controller
