@@ -30,3 +30,5 @@ jobs:
           node --check /tmp/e.mjs
 
 # retry current collision statement
+
+# retry v6.7 finite collision form
