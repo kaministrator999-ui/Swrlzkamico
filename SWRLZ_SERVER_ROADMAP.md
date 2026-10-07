@@ -1,3 +1,24 @@
+## UPDATE STARTED — 2026-10-07 — fetched-content diagnostics + section-block extraction v162
+
+**Trigger:** user requested the actual fetched contents to be visible in the Dragon Chat JSON export so extraction failures can be distinguished from bad upstream pages. Review of the v160 Cold Piece of Work export shows HTTP status/bytes/URLs and rejection phases, but not the fetched `pageExtract` that the verifier actually inspected.
+
+**Evidence/root cause:**
+- current Dragon Chat export receives the compact `online_camera`, which intentionally omits fetched body text;
+- durable online trace/outcome likewise records URLs/status/response sizes and search snippets, not bounded fetched-body diagnostics;
+- current AllTheLyrics page for the target song is a correct page with explicit `Intro`, `Pre-Chorus`, `Verse`, `Chorus`, and `Bridge` sections;
+- the v159/v160 extractor recognizes those section markers while scanning, but later completeness assembly still depends primarily on blank-line-separated blocks;
+- when the cleaned HTML preserves line breaks but not blank lines between sections, one valid marked song can collapse into one large block; unless its non-marker line count happens to be divisible by four, `full-lyrics` returns an empty extraction and the correct page is rejected.
+
+**Planned repair:**
+1. add bounded per-attempt `lyricsFetchDebug` into the server-owned Online Camera so Dragon Chat JSON exports and durable online outcome diagnostics expose what the verifier saw;
+2. debug record includes final URL, fetched page title, fetched/extracted character counts, SHA-256 hashes, bounded line-preserving previews, detected anchor/section markers, source-identity result, snippet-overlap counts, and explicit rejection reason;
+3. do not store an uncontrolled full page dump; previews remain bounded diagnostic windows while hashes/counts make truncation/identity inspectable;
+4. change full-lyrics assembly so explicit section markers define section blocks even when no blank line separates sections;
+5. preserve blank-line stanza fallback for public-domain/unmarked pages and keep v158 three-page network ceiling unchanged;
+6. add regression proving a no-blank-line marked page verifies and that fetch-debug telemetry appears in the camera/export contract.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — verified lyric source vs verified body v161
 
 **Outcome:** SOURCE IDENTITY / BODY VERIFICATION SPLIT IMPLEMENTED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE v161 ACCEPTANCE PENDING.
