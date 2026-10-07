@@ -1,0 +1,27 @@
+name: Validate §wyrl§ Engine v8.2
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/validate-swrlz-forge-v8-2.yml"]
+permissions: {contents: read}
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/e
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          s=Path('/tmp/e/index.html').read_text();b=s.encode();print('FINAL_BYTES='+str(len(b)));print('FINAL_SHA256='+hashlib.sha256(b).hexdigest())
+          for x in ['V8_2_BOOTSTRAP_REPAIR','installPerformanceSettings();applyPerformanceSettings();loadCanonicalGlitchDen();','three walkable tiers · 167 actors','Graphics & Performance']: assert x in s,x
+          early=s.index('scene.add(sun);');state=s.index('let playing = false;');perf=s.index('installPerformanceSettings();applyPerformanceSettings();');boot=s.index('loadCanonicalGlitchDen();',perf)
+          assert early < state < perf <= boot,(early,state,perf,boot)
+          assert 'scene.add(sun);\\ninstallPerformanceSettings();applyPerformanceSettings();' not in s
+          start=s.index('<script type="module">')+len('<script type="module">');end=s.rindex('</script>');Path('/tmp/e.mjs').write_text(s[start:end])
+          PY
+          node --check /tmp/e.mjs
