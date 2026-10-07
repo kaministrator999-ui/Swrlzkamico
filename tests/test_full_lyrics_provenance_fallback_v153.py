@@ -105,8 +105,8 @@ assert len(searches)>=1,searches
 assert len(fetches)==1,fetches
 
 rendered=model_router._lyrics_retrieval_payload(result,PROMPT)
-assert "**Original attributed text (6 stanzas):**" in rendered,rendered
-assert "**Additional stanza(s) present in the lyrics source:**" in rendered,rendered
+assert "**Original text attributed to John Newton (6 stanzas):**" in rendered,rendered
+assert "**Additional stanza present in the lyrics source:**" in rendered,rendered
 assert "When we've been there ten thousand years" in rendered,rendered
 assert "**Attribution source:**" in rendered,rendered
 
