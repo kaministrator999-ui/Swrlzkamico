@@ -44,9 +44,9 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v8.2 source authority
+## Current v8.3 source authority
 
-The governed release is **v8.2 — Embervault Performance & Graphics**. v8.0 Embervault Atelier was verified live by deployment run #50; v8.2 preserves that project and adds engine-level scalability and diagnostics. The following current contract supersedes historical default-avatar and Den-layout checkpoints below.
+The governed release is **v8.3 — Zone Travel & Starforge Observatory**. Embervault remains the default Dragon Den. Starforge is an independent celestial workshop with its own scene, workspaces, environment, and travel zones. This contract supersedes the historical default-avatar and layout checkpoints below.
 
 ```text
 base:
@@ -89,34 +89,44 @@ patch chain:
   patches/v8_0_layer_integrity.py
   patches/v8_0_workspace_tools.py
   patches/v8_0_walkable_levels.py
-  patches/v8_0_embervault_project.py\n  patches/v8_2_performance_graphics.py
+  patches/v8_0_embervault_project.py
+  patches/v8_1_performance_graphics.py
+  patches/v8_2_bootstrap_repair.py
+  patches/v8_3_zone_teleport.py
+  patches/v8_3_editor_authoring.py
+  patches/v8_3_starforge_assets.py
+  patches/v8_3_projects_release.py
 
 final:
-  swyrl_engine_v8_0.html
-  bytes 383338
-  sha256 92ddfc3770f874b5f8f91fc7fad536b15961c1627146be5995936c4355805a88
+  swyrl_engine_v8_3.html
+  bytes 528670
+  sha256 ca4d43e2e560aee39a0fff48b07885d180d96dc64cbeb5c5bd00bdf23490d548
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V8_2_BOOTSTRAP_REPAIR
+  SWYRL_ENGINE_DEPLOY_MARKER: V8_3_ZONES_STARFORGE
 ```
 
-### Current Den and editor contract
+### Current projects and editor contract
 
-Embervault Atelier is a spatial workspace for future VR, project work, and conversation. Its canonical scene data lives in `projects/swrlz-forge-moba/scenes/embervault-atelier.swyrl.json`; reusable assets and interaction capabilities belong to the engine. The 167-actor native-editor assembly has three physical tiers: lower workshop at 0m, study gallery at 3.4m, and dragon council at 4.6m. Twin ramps connect the lower workshop and gallery; a short ramp reaches the council.
+Embervault Atelier is a spatial workspace for future VR, project work, and conversation. Its native saved scene lives in `projects/swrlz-forge-moba/scenes/embervault-atelier.swyrl.json`. The 170-actor assembly has lower workshops at 0m, a study gallery at 3.4m, and the dragon council at 4.6m, with physical ramps between them. It has six stations and eight teleport destinations. Three organizational editor layers are distinct from these physical elevations.
 
-The six workstations are Code Studio, Archive Garden, World Forge, Prototype Court, AI Hearth, and Dragon Council. Stations store editable text/code files and notes in project-owned workspace data, support individual file download and workspace JSON import/export, and survive Save Project/reload. Local drafts are available on the same device; explicit imported project data remains authoritative. Chat stations open the existing LALM application in a new tab. Headset rendering, VR controller input, executable coding sessions, and in-room inference remain future integrations.
+Starforge Observatory lives in `projects/swrlz-forge-moba/scenes/starforge-observatory.swyrl.json`, with seven floating islands, six stations, seven travel zones, and three organizational layers. Its lower islands, upper archives, companion chamber, and observatory use supported bridges and ramps. Project-owned environment settings control sky, fog, exposure, terrain, and scenery. A project-configured fall threshold returns a walking visitor to the validated Arrival zone.
 
-Three editor layers organize Architecture & Wayfinding, Atmosphere & Guardians, and Project Spaces. These organizational layers are distinct from the three physical elevations. Preserve manual visibility independently from layer toggles and runtime shell visibility, including undo/redo and save/load. The default player is the walking Guest visitor; the procedural Wisp remains a separate host and supported flight avatar.
+Both projects store text/code files and notes at their workstations, support file download and workspace JSON import/export, and preserve work through Save Project/reload. Explicit imported project data is authoritative over local drafts. Chat stations open the existing LALM application. Headset rendering, VR controller input, executable coding sessions, and in-room inference remain future integrations.
 
-Required editor capabilities are native reusable vault/oculus/end-wall/support assets, walkable ramps and gallery decks, guardrails, editable signs, grouped assemblies, layer membership controls, and workspace components. Walking must use visible approved mesh support tops, respect rail and prop height, and allow passages beneath elevated floors. Desktop Outliner/Details rails must reclaim their actual grid columns, and Play must fill the viewport.
+In Play, **T** or **Zones · T** opens a project-specific travel menu. The editor’s Teleport Zones panel authors name, description, world feet position, yaw, and accent without needing an actor selected. Travel requires a visible approved supporting surface with clearance for the walking visitor; invalid, hidden, blocked, edge, or airborne pads are rejected. Travel releases pointer lock, clears movement, uses a short fade, and preserves prior pause state. Zones persist with project history and Save/Load.
 
-Develop through all three perspectives: inspect or extend engine source, author the scene in the native editor, then walk and use it in Play. When authoring or Play reveals a missing capability, fix the responsible engine/editor code, rebuild, and repeat the affected flow. The complete plan, asset inventory, and editor checklist are in `projects/swrlz-forge-moba/DEN_DESIGN.md`.
+Preserve manual actor visibility separately from layer toggles and runtime shell visibility. Dynamic visitors remain world-root actors. Native prefab calls must return null for unknown assets without modifying the previous selection. New templates must reset inherited empty organizational layers. Use engine source, native editor authoring, and actual Play together; fix capabilities when authoring or walkthroughs expose missing behavior. Plans live in `DEN_DESIGN.md` and `STARFORGE_DESIGN.md`.
 
-\n### v8.2 performance contract\n\nGraphics & Performance exposes Auto/Low/Medium/High/Custom presets, 50–100% render scale, dynamic-shadow toggle/quality, 30/45/60/unlimited render cap, and independent Editor FPS and Play/Simulate FPS overlays with frame time. Preferences persist locally. Auto changes render resolution from sustained frame time; it does not alter project data or simulation semantics. The Play controller remains delta-time based and clamps pathological frame deltas to 50 ms.\n\n### v8.2 release receipt contract
+### Performance contract
 
-Current documentation records staged release content, not a completed production deployment. Final artifact integrity must match the source manifest, and generated JavaScript, native authoring, walking, workspace use, and Save Project/reload must pass before the final deploy button is pressed.
+Graphics & Performance retains Auto/Low/Medium/High/Custom presets, render scale, shadows, render caps, and independent FPS/frame-time overlays. Preferences persist locally. Scaling changes rendering, not project data or simulation semantics. Initialization runs only after scene creation at final bootstrap.
 
-Source authority resolves to the validated normal release commit immediately preceding the final v8.0 `DEPLOY_REQUEST.json` commit. Deployment authority resolves to that final trigger commit and the dedicated Actions run whose `head_sha` matches it. The workflow receipt and served static host must confirm this release marker and integrity. This reference contract records source/deploy authority without requiring a release-content mutation after the final trigger. Report the exact run URL and live page only after terminal success and live verification.
+### v8.3 release receipt contract
+
+This documentation stages the release; it does not claim production completion. Source authority resolves to the validated normal release commit immediately preceding the final v8.3 `DEPLOY_REQUEST.json` commit. Deployment authority resolves to that trigger and the dedicated Actions run whose `head_sha` matches it. Require terminal success, marker, and exact served-source integrity after removing only the recognized Hugging Face creator script. Report the exact run and live page after verification, without mutating release content after the trigger.
+
+Previous verified release: v8.2, 393393 bytes, SHA-256 `d7dc50a0697eb9bf5286131ff6dcaaae4fda7f3db7a3ecede90e8e1b0ef38935`, deployment [37689304845](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37689304845), trigger `177ecda58e928f6d9f590069e1bdb1ddb538145e`.
 
 ## Grouping contract
 

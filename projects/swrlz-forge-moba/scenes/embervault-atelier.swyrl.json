@@ -1,6 +1,6 @@
 {
-  "engine": "§wyrl§ Engine · Maker v8.0",
-  "version": 8,
+  "engine": "§wyrl§ Engine · Maker v8.3",
+  "version": 8.3,
   "project": {
     "name": "Dragon Den — Embervault Atelier",
     "template": "glitch-dragons-den",
@@ -29,8 +29,8 @@
               "content": "// Your project begins here.\nexport function greet(name = \"creator\") {\n  return `Welcome to Embervault, ${name}.`;\n}\n"
             }
           ],
-          "notes": "Focused code work. Link opens the connected source repository.",
-          "updatedAt": 0
+          "notes": "Focused code work. Link opens the connected source repository.\n\nTravel: press T to choose a zone. Save Project preserves every station and its files.",
+          "updatedAt": 1791409998492
         },
         "a_w8kmot0y": {
           "files": [
@@ -45,8 +45,8 @@
               "content": "# Project decisions\n\n## Decision\n\n## Reason\n\n## Next step\n"
             }
           ],
-          "notes": "Keep project history, useful links, and decisions together.",
-          "updatedAt": 0
+          "notes": "Keep project history, useful links, and decisions together.\n\nTravel: press T to choose a zone. Save Project preserves every station and its files.",
+          "updatedAt": 1791410027869
         },
         "a_5gey8zls": {
           "files": [
@@ -61,8 +61,8 @@
               "content": "{\n  \"name\": \"My world project\",\n  \"areas\": [],\n  \"nextBuild\": \"\"\n}\n"
             }
           ],
-          "notes": "Plan scene geometry and systems. The nearby pad is available for your build.",
-          "updatedAt": 0
+          "notes": "Plan scene geometry and systems. The nearby pad is available for your build.\n\nTravel: press T to choose a zone. Save Project preserves every station and its files.",
+          "updatedAt": 1791410050382
         },
         "a_p9a647u8": {
           "files": [
@@ -77,8 +77,8 @@
               "content": "# Prototype notebook\n\n## Idea\n\n## Smallest useful experiment\n\n## What I learned\n"
             }
           ],
-          "notes": "Experiment here, then download the file to run it in your own workflow.",
-          "updatedAt": 0
+          "notes": "Experiment here, then download the file to run it in your own workflow.\n\nTravel: press T to choose a zone. Save Project preserves every station and its files.",
+          "updatedAt": 1791410076265
         },
         "a_z8f7nzkx": {
           "files": [
@@ -88,8 +88,8 @@
               "content": "# AI hearth\n\nOpen §wyrlz Chat to talk with your existing LALM.\nKeep questions and useful answers in this notebook.\n\n## Current question\n\n## Ideas to bring back\n"
             }
           ],
-          "notes": "A shared conversation space linked to the existing LALM chat.",
-          "updatedAt": 0
+          "notes": "A shared conversation space linked to the existing LALM chat.\n\nTravel: press T to choose a zone. Save Project preserves every station and its files.",
+          "updatedAt": 1791410010782
         },
         "a_jecq2uiq": {
           "files": [
@@ -99,11 +99,109 @@
               "content": "# Dragon Council\n\nA quieter space above the den for conversations and planning.\n\n## Project question\n\n## Next steps\n"
             }
           ],
-          "notes": "Open the existing §wyrlz chat from this station.",
-          "updatedAt": 0
+          "notes": "Open the existing §wyrlz chat from this station.\n\nTravel: press T to choose a zone. Save Project preserves every station and its files.",
+          "updatedAt": 1791410106196
         }
       }
-    }
+    },
+    "teleportZones": [
+      {
+        "id": "arrival",
+        "name": "Arrival Court",
+        "description": "Orient yourself, choose a project, or return home.",
+        "position": [
+          0,
+          0.02,
+          14.1
+        ],
+        "yaw": 0,
+        "accent": "#d6bb84"
+      },
+      {
+        "id": "hearth",
+        "name": "AI Hearth",
+        "description": "Shared notes and the existing §wyrlz chat portal.",
+        "position": [
+          0,
+          -0.133,
+          3.65
+        ],
+        "yaw": 0,
+        "accent": "#b89ad9"
+      },
+      {
+        "id": "forge",
+        "name": "World Forge",
+        "description": "Lower workshop for scenes, systems, and open builds.",
+        "position": [
+          -11.5,
+          0.043,
+          7.8
+        ],
+        "yaw": 3.141592653589793,
+        "accent": "#d6aa6d"
+      },
+      {
+        "id": "prototype",
+        "name": "Prototype Court",
+        "description": "Lower workshop for experiments and prototypes.",
+        "position": [
+          11.5,
+          0.043,
+          7.8
+        ],
+        "yaw": 3.141592653589793,
+        "accent": "#b89ad9"
+      },
+      {
+        "id": "gallery",
+        "name": "Study Gallery",
+        "description": "Cross-room overlook with access to both upper bays.",
+        "position": [
+          0,
+          3.43,
+          -4.8
+        ],
+        "yaw": 0,
+        "accent": "#80cbd3"
+      },
+      {
+        "id": "code",
+        "name": "Code Studio",
+        "description": "Upper workspace for code, files, and focused work.",
+        "position": [
+          -11.5,
+          3.443,
+          -5.4
+        ],
+        "yaw": 0,
+        "accent": "#68c8e0"
+      },
+      {
+        "id": "archive",
+        "name": "Archive Garden",
+        "description": "Upper workspace for reference files and decisions.",
+        "position": [
+          11.5,
+          3.443,
+          -5.4
+        ],
+        "yaw": 0,
+        "accent": "#67c4ac"
+      },
+      {
+        "id": "council",
+        "name": "Dragon Council",
+        "description": "A quieter raised conversation chamber.",
+        "position": [
+          1.6,
+          4.63,
+          -9
+        ],
+        "yaw": -1.5707963267948966,
+        "accent": "#b9a1e8"
+      }
+    ]
   },
   "editor": {
     "transformSpace": "world",
@@ -7588,7 +7686,7 @@
         ],
         "workspace": null,
         "sign": {
-          "text": "← CODE STUDIO  /  WORLD FORGE\nProject files · scenes · focused work",
+          "text": "WEST PROJECTS\nCode Studio ↑ · World Forge ↓",
           "accent": "#d6bb84",
           "width": 4.1,
           "height": 1.025
@@ -7650,7 +7748,7 @@
         ],
         "workspace": null,
         "sign": {
-          "text": "ARCHIVE GARDEN  /  PROTOTYPES →\nReference · experiments · open build pads",
+          "text": "EAST PROJECTS\nArchive Garden ↑ · Prototypes ↓",
           "accent": "#90d2c8",
           "width": 4.1,
           "height": 1.025
@@ -10084,7 +10182,7 @@
         ],
         "workspace": null,
         "sign": {
-          "text": "UPPER STUDY GALLERY\nCode Studio · Archive Garden",
+          "text": "STUDY GALLERY · 3.4m\nCode · Archive · Council ↑",
           "accent": "#80cbd3",
           "width": 5,
           "height": 1.25
@@ -10146,7 +10244,7 @@
         ],
         "workspace": null,
         "sign": {
-          "text": "↑ STUDY GALLERY\nA quiet level for focused work",
+          "text": "↑ WALK TO STUDY\nT · Choose a zone to teleport",
           "accent": "#d4bb8d",
           "width": 2.6,
           "height": 0.65
@@ -10208,7 +10306,7 @@
         ],
         "workspace": null,
         "sign": {
-          "text": "↑ STUDY GALLERY\nA quiet level for focused work",
+          "text": "↑ WALK TO STUDY\nT · Choose a zone to teleport",
           "accent": "#d4bb8d",
           "width": 2.6,
           "height": 0.65
@@ -10241,6 +10339,186 @@
           "StaticMesh"
         ],
         "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_1gx8jyfi",
+        "name": "Arrival · zone directory",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": "a_arqz2sn4",
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_gzywzla9"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "ZONE TRAVEL\nT · Choose destination",
+          "accent": "#94d9d1",
+          "width": 2.45,
+          "height": 0.75
+        },
+        "position": [
+          0,
+          0.9450000000000001,
+          0
+        ],
+        "rotation": [
+          0,
+          0.17999999999999994,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture/Wayfinding",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_dqekd428",
+        "name": "Arrival · travel plinth",
+        "type": "pedestal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture"
+        ],
+        "visualColor": "#a76dff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": "a_arqz2sn4",
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_gzywzla9"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          -0.9450000000000001,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.26,
+          0.24,
+          0.26
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture/Wayfinding",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_RuneDais",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_arqz2sn4",
+        "name": "Arrival · zone directory assembly",
+        "type": "group",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "editor-group"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [
+          "a_1gx8jyfi",
+          "a_dqekd428"
+        ],
+        "editorLayerIds": [
+          "layer-a_gzywzla9"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -3.3,
+          0.905,
+          12.4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "World/Groups",
+        "components": [
+          "Transform",
+          "Scene",
+          "Group"
+        ],
+        "blueprintClass": "",
         "colliderRadius": 0,
         "mass": 1,
         "restitution": 0.25,

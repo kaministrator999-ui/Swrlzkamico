@@ -1,39 +1,45 @@
-# §wyrl§ Engine · Maker v8.0
+# §wyrl§ Engine · Maker v8.3
 
-Embervault Atelier is the canonical Dragon Den: a three-tier spatial workspace with a lower workshop, upper study gallery, and raised dragon council. The engine is developed through three perspectives: source capabilities, native editor authoring, and first-person Play verification.
+Build and visit two independent spatial workspaces: **Embervault Atelier**, the three-tier Dragon Den, and **Starforge Observatory**, a campus of floating islands beneath a quiet constellation sky. Both are native editor projects with their own layers, destinations, files, and notes. Development moves between engine source, native editor authoring, and first-person Play.
 
-## Use the den
+## Visit a workspace
 
-- Lower floor: World Forge, Prototype Court, quiet arrival nook, and shared AI hearth.
-- Upper study at 3.4m: Code Studio and Archive Garden, connected by two walkable ramps and a cross-room gallery.
-- Dragon council at 4.6m: a quieter conversation station reached by a short ramp.
-- Approach a station and press **E**, or click **Open**. Create, rename, edit, and download text/code files; keep station notes; import/export workspace JSON.
-- **Save Project** stores the scene and every station's work in `.swyrl.json`. Device drafts also persist locally. Imported project files remain authoritative.
-- Chat stations open the existing §wyrlz LALM chat in a new tab. Code files are editable source text. Headset rendering, controller input, executable coding sessions, and in-room inference are future integrations.
+The default Dragon Den has a lower workshop, a study gallery at 3.4m, and a dragon council at 4.6m. World Forge, Prototype Court, Code Studio, Archive Garden, AI Hearth, and Dragon Council provide six persistent stations. Walk between floors using the twin ramps and council connector, or press **T** / **Zones** in Play to choose one of eight destinations. Arrival wayfinding distinguishes the upper and lower project areas.
 
-See [DEN_DESIGN.md](DEN_DESIGN.md) for the complete den plan, asset inventory, editor requirements, and author → Play → fix loop.
+Choose **Starforge Observatory** in Projects, or open [Starforge directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=starforge-observatory). Its seven destinations are Arrival, Constellation Garden, Code Island, Prototype Island, Archive Garden, Companion Chamber, and Observatory. Physical bridges and ramps connect the islands at 2.4m, 5.8m, and 7m. Six stations keep project work separate; the navy, brass, and jade environment travels with the project. Falling below its configured recovery height returns the visitor to Arrival through the same validated travel system.
 
-## Engine capabilities
+Use WASD/arrows and mouse look in Play. Approach a station and press **E**, or click **Open**. Create, rename, edit, and download text/code files; keep station notes; import/export workspace JSON. **Save Project** stores the scene, destinations, environment settings, and every station's work in `.swyrl.json`. Device drafts also persist locally; explicit imported project files remain authoritative.
 
-Native reusable vault, oculus, end wall, support column, ramp, gallery deck, guardrail, and sign assets are in the Content Browser. Static groups preserve world placement, children, and station IDs. Three project-owned editor layers organize architecture/wayfinding, atmosphere/guardians, and project spaces.
+Chat stations open the existing §wyrlz LALM chat in a new tab. Project code is editable and downloadable source text. Headset rendering, VR controller input, executable coding sessions, and in-room inference are future integrations.
 
-Walking uses approved mesh support tops plus terrain, with height-aware rail/prop collision and passages under raised floors. Wisp flight remains available. The editor preserves manual visibility, layer visibility, undo/redo, and runtime roof behavior independently. Desktop docks collapse their actual grid columns, and Play fills the viewport.
+See [DEN_DESIGN.md](DEN_DESIGN.md), [STARFORGE_DESIGN.md](STARFORGE_DESIGN.md), and [VERIFICATION.md](VERIFICATION.md) for the plans, editor requirements, and evidence.
 
-Preferred APIs: `window.SWYRL_ENGINE_AGENT` and `window.SWYRL_ENGINE_BUILD`. Legacy `SWRLZ_FORGE_*` aliases remain active. New operations include `createLayer`, `listLayers`, `setLayerVisibility`, `assignActorsToLayer`, `configureWorkspace`, `openWorkspace`, `createSign`, and `updateSign`.
+## Author in the editor
 
-The scene belongs to `scenes/embervault-atelier.swyrl.json`; geometry and interaction tools remain engine-owned patch modules. Blank Starter and MOBA templates retain separate routes. The main Chat/LALM application is deployment-isolated.
+Reusable vault, oculus, end wall, support column, ramp, gallery deck, guardrail, sign, floating island, constellation sky, astrolabe, visitor, and companion assets are in the Content Browser. Static groups preserve world placement, children, and station IDs. Each starter has three project-owned editor layers; these visibility groups are independent of physical floor height.
+
+The Details dock's **Teleport Zones** panel creates or edits a destination's name, description, world X/Z, feet Y, heading in degrees, and accent. **Use Selected** and **Use Visitor** copy a world position; keep the landing pad supported and clear of edges, rails, and props, then test it in Play. Travel validates floor support, the visitor footprint, and body/head clearance, clears movement, releases pointer lock, and restores the prior pause state. Unsafe or hidden landings produce feedback and leave the visitor in place.
+
+Walking uses visible approved mesh support tops plus terrain, with height-aware rail/prop collision and passages below raised floors. Wisp flight remains available. The editor preserves manual visibility, layer visibility, undo/redo, and runtime roof behavior independently. Desktop docks collapse their actual grid columns, and Play fills the viewport. Unknown prefab requests return `null` without modifying the selected actor; new blank projects start with their own empty layer list. Replacing a project during Play/Simulate first stops the session and clears its runtime state.
+
+Preferred APIs are `window.SWYRL_ENGINE_AGENT` and `window.SWYRL_ENGINE_BUILD`; legacy `SWRLZ_FORGE_*` aliases remain active. Zone operations are `listTeleportZones`, `upsertTeleportZone`, `removeTeleportZone`, `openTeleportMenu`, `closeTeleportMenu`, and `teleportToZone`. `configureProject` edits project metadata, including environment settings. Existing layer, sign, and workstation APIs remain available.
+
+Scene data belongs to `scenes/embervault-atelier.swyrl.json` and `scenes/starforge-observatory.swyrl.json`; reusable tools remain engine-owned patch modules. Blank Starter and MOBA retain separate routes. The main Chat/LALM application is deployment-isolated.
+
+## Graphics and performance
+
+**Graphics & Performance** provides Auto/Low/Medium/High/Custom presets, render scale, shadow quality, frame cap, and independent FPS/frame-time displays for Editor and Play/Simulate. Preferences persist locally. Auto adjusts render resolution from sustained frame time without changing simulation timing. The v8.2 bootstrap-order repair remains in the governed patch chain.
 
 ## Source integrity and deployment
 
 - Source manifest: `source-manifest.json`.
 - Base: 99,591 bytes, SHA-256 `a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856`.
-- Generated artifact: `swyrl_engine_v8_2.html`.
-- Final size/hash: recorded in the manifest and generated `SOURCE.json`.
-- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_2_BOOTSTRAP_REPAIR`.
+- Generated artifact: `swyrl_engine_v8_3.html`.
+- Final artifact: 528,670 bytes, SHA-256 `ca4d43e2e560aee39a0fff48b07885d180d96dc64cbeb5c5bd00bdf23490d548`; the manifest and generated `SOURCE.json` record the same authority.
+- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_3_ZONES_STARFORGE`.
 - Rebuild: `python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba`.
 - Dedicated Space: `kamiloki/swrlz-forge-moba`.
 - Live page: https://kamiloki-swrlz-forge-moba.static.hf.space/ .
 - Production workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`.
 
-The exact governed patch chain is in the manifest. Historical releases and receipts remain in [ROADMAP.md](ROADMAP.md). Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Deployment completion requires the exact Actions run to succeed and the live host to serve the current marker; root `§tart_§E.md` defines that contract.
-\n## v8.2 performance controls\n\nGraphics & Performance provides Auto/Low/Medium/High/Custom scalability, render scale, shadow quality, frame cap, and independent FPS/frame-time displays for Editor and Play/Simulate. Preferences persist locally. Auto adjusts render resolution from sustained frame time without changing gameplay simulation timing.\n
+The manifest defines the exact governed 41-patch chain. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.

@@ -1,6 +1,6 @@
-# Embervault Atelier: design and authoring contract
+# Embervault Atelier v8.3: design and authoring contract
 
-Build a welcoming dragon sanctuary where a person can arrive, choose a project area, write, prototype, and return to a shared hearth. The cave should feel inhabited and substantial: stone shelter, brass ribs, restrained crystals, warm lamps, clear paths, and usable empty floors.
+Build a welcoming dragon sanctuary where a person can arrive, choose a project area, write, prototype, and return to a shared hearth. The current native scene contains 170 actors, three editor layers, six workstations, and eight project-owned travel destinations. The cave should feel inhabited and substantial: stone shelter, brass ribs, restrained crystals, warm lamps, clear paths, and usable empty floors.
 
 ## Three perspectives, three physical tiers, three editor layers
 
@@ -68,9 +68,31 @@ Code implementation and successful isolated checks are separate from integrated 
 - [x] Readable desktop layout: full-width viewport, correctly sized collapsible docks, and clear Play chrome.
 - [x] Walkable surfaces: native ramps/decks and downward support raycasts; actual WASD ascent, descent, landing seams, and the council connector passed.
 - [x] Rail collisions: actual ramp side exits blocked; native transformed-rail and height-filter checks passed. Leave through the open ramp mouths.
-- [x] Canonical boot: the native authored project opens on startup with 167 actors, six station records, signs, levels, and three editor layers.
+- [x] Canonical boot: the refined native project opens by default with 170 actors, six station records, eight destinations, signs, levels, and three editor layers.
 - [x] Visual authoring acceptance: three physical tiers, empty build pads, signs, enclosed vault, and visitor-scale views are present; sign backs now have their own readable face.
 - [x] Integrated Play acceptance: the native route, all six stations, document transfer, Save/Load, layer history, and pause/Stop restoration passed. See VERIFICATION.md.
+
+## v8.3 wayfinding and destinations
+
+An arrival directory and clearer west/east signs distinguish lower workshops from upper study areas. Ramp signs offer both the physical ascent and the **T / Zones** travel menu. Teleport destinations complement the supported walking routes; the scene retains its ramps, landings, and guardrails.
+
+| Destination | Authored feet position `[X, Y, Z]` | Purpose |
+|---|---|---|
+| Arrival Court | `[0, 0.02, 14.1]` | Orientation and return home. |
+| AI Hearth | `[0, -0.133, 3.65]` | Shared notes and the existing chat portal. |
+| World Forge | `[-11.5, 0.043, 7.8]` | Lower workshop for scenes and systems. |
+| Prototype Court | `[11.5, 0.043, 7.8]` | Lower workshop for experiments. |
+| Study Gallery | `[0, 3.43, -4.8]` | Upper cross-room overlook. |
+| Code Studio | `[-11.5, 3.443, -5.4]` | Focused code and files. |
+| Archive Garden | `[11.5, 3.443, -5.4]` | References and decisions. |
+| Dragon Council | `[1.6, 4.63, -9]` | Raised conversation chamber. |
+
+Coordinates describe authored feet targets, including existing mesh offsets. Do not replace their Y values with nominal floor labels without rechecking support. The native Details dock's **Teleport Zones** panel edits destination name, description, world position, heading, and accent; **Use Selected / Use Visitor** helps capture positions. Zones are serialized in `project.teleportZones`, independently of station records.
+
+- [x] Native zone authoring and project-scoped serialization are implemented.
+- [x] Support, footprint, clearance, transformed geometry, hidden-floor, history, cancellation, and recovery checks passed in isolated engine verification.
+- [x] The refined den passed all eight native T-menu journeys; E opened all six stations immediately after arrival at their destinations.
+- [x] The final v8.3 governed artifact reconstructed exactly and passed generated JavaScript syntax and version/marker checks. Production acceptance follows the immutable Actions receipt and served marker/hash after the final trigger.
 
 ## Workspace and movement contracts
 
@@ -92,7 +114,11 @@ The AI hearth opens the existing [§wyrlz chat](https://kamiloki-swyrlz.hf.space
 6. **Persistence test:** Stop, Save/Load, undo/redo a scene change, and reload canonical boot. Confirm geometry, labels, layer visibility, files, and notes survive; return to the editor's original actor state after Play.
 7. **Iteration:** record the failure and trigger, fix the engine rule or authored placement that caused it, and repeat that route/workspace check. Do not count an attractive screenshot as movement or persistence evidence.
 
-**Current status:** the three-tier native scene is authored. Actual WASD walking reaches both upper bays, the council, both lower bays, and the hearth, and passes underneath the gallery. All six stations open with E. Workspace persistence, native Save/Load, layer history, and pause/Stop restoration passed. Release integrity and live verification follow the governed deploy contract. Headset VR and an in-room LALM backend are future work.
+**Current status:** the v8.0 desktop baseline passed actual WASD walking across all tiers, all six E interactions, workspace persistence, native Save/Load, layer history, and pause/Stop restoration. The refined v8.3 170-actor scene and eight travel destinations are native-authored and saved; all eight native T-menu journeys and all six destination-to-station E interactions passed. Prior pause, Stop restoration, and native Save/Load also passed. Final artifact and production verification are tracked in the release receipt. See [VERIFICATION.md](VERIFICATION.md) for the passed source acceptance and production receipt contract. Headset VR and an in-room LALM backend remain future work.
+
+## Separate Starforge starter
+
+[Starforge Observatory](STARFORGE_DESIGN.md) is an independent 123-actor project with three layers, six stations, and seven destinations. Its floating islands, physical bridges/ramps, navy sky, brass instruments, and jade gardens offer a different workspace while preserving the den's grounded sanctuary. Files, notes, zone lists, and environment settings belong to each project. Its configured recovery threshold of Y=1 returns a walking visitor to Arrival through the validated travel API; an unavailable or hidden recovery landing is rejected rather than bypassing support checks.
 
 ## Design references
 

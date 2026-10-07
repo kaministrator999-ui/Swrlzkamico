@@ -2,9 +2,9 @@
 
 Canonical lane: §E / §wyrl§ Engine  
 History audited through: **2026-10-07**  
-Current governed engine release: **v8.2 — Performance & Graphics (validated; deployment pending)**
+Current governed engine release: **v8.3 — Zones & Starforge (native acceptance, exact reconstruction, and syntax verified)**
 
-Previously observed live release: **v8.0 — Embervault Atelier** (deployment #50 succeeded)
+Previously verified live release: **v8.2 — Bootstrap Repair** ([Actions 37689304845](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37689304845), exact trigger head and served hash confirmed)
 
 This roadmap is the mandatory release lineage for governed §E GitHub updates. Root `§tart_§E.md` defines the deployment contract.
 
@@ -44,7 +44,10 @@ This roadmap is the mandatory release lineage for governed §E GitHub updates. R
 | v7.7 | 2026-10-07 | Saved revision-142, 120-actor Moonfire Sanctum promoted to the sole canonical Glitch Dragon Den starter. |
 | v7.8 | 2026-10-07 | Retractable desktop Outliner/Details docks plus persistent multi-object editor layers and visibility. |
 | v7.9 | 2026-10-07 | Editor-authored Sanctuary & Makers Grotto promoted to the canonical Dragon Den; project-local scripting namespace established. |
-| v8.2 | 2026-10-07 | Graphics scalability, Auto quality, persistent render/shadow/frame-cap controls, independent Editor and Play FPS/frame-time overlays, and controller delta-time audit. |\n| v8.0 | 2026-10-07 | Embervault Atelier: three physical tiers, native structural assets, height-aware walking, six persistent project stations, and editor/layer integrity fixes. |
+| v8.0 | 2026-10-07 | Embervault Atelier: three physical tiers, native structural assets, height-aware walking, six persistent project stations, and editor/layer integrity fixes. |
+| v8.1 | 2026-10-07 | Graphics scalability, Auto quality, persistent render/shadow/frame-cap controls, independent Editor and Play FPS/frame-time overlays, and controller delta-time audit. |
+| v8.2 | 2026-10-07 | Bootstrap-order repair: initialize performance controls after engine state and before canonical project hydration. |
+| v8.3 | 2026-10-07 | Safe named zone travel, refined Embervault wayfinding, independent Starforge Observatory starter, project-owned environments/recovery, and editor authoring fixes. |
 
 ## Artifact authority
 
@@ -83,6 +86,8 @@ This roadmap is the mandatory release lineage for governed §E GitHub updates. R
 | v7.8 | swyrl_engine_v7_8.html | 286002 | 1bf5d8d65f2e1a7af9c30311c119b2bed3fa5688a5ea6e0ff0995a87f38f38cc |
 | v7.9 | swyrl_engine_v7_9.html | 285613 | 220a9e5cc7e54fd23e8edc084467101cfcc1c099b5033b1d0150fd2160065251 |
 | v8.0 | swyrl_engine_v8_0.html | 383338 | 92ddfc3770f874b5f8f91fc7fad536b15961c1627146be5995936c4355805a88 |
+| v8.2 | swyrl_engine_v8_2.html | 393393 | d7dc50a0697eb9bf5286131ff6dcaaae4fda7f3db7a3ecede90e8e1b0ef38935 |
+| v8.3 | swyrl_engine_v8_3.html | 528670 | ca4d43e2e560aee39a0fff48b07885d180d96dc64cbeb5c5bd00bdf23490d548 |
 
 ## Git push audit — 2026-10-05 through 2026-10-07
 
@@ -127,7 +132,40 @@ The §E project-path history was re-audited directly from GitHub on 2026-10-07. 
 
 The 2026-10-07 audit repaired roadmap drift rather than rewriting Git history: v3/v4/v4.1/v5/v5.1 were added to the formal lineage; v7.4 and v7.5 were restored as distinct releases instead of being mislabeled v7.6; historical artifact authority was recovered from each release's own Git revision instead of inheriting later global replacements; literal escaped newline artifacts were removed; and the v7.8 artifact was retained as the governing release at that audit checkpoint. Later release entries below supersede that checkpoint.
 
-## v8.2 — Performance & Graphics\n\nAdds an engine-level **Graphics & Performance** panel while preserving the v8.0 Embervault project data. Presets are Auto, Low, Medium, High, and Custom. Manual controls expose 50–100% render scale, dynamic shadows, 512/1024/2048 shadow maps, and Unlimited/30/45/60 render caps. Auto watches sustained frame time and adjusts render resolution without changing gameplay simulation timing.\n\nFPS diagnostics are independently configurable for **Editor** and **Play/Simulate**. The overlay reports FPS, smoothed frame time in milliseconds, effective render scale, and Auto state. Preferences persist in local storage. The Play controller audit confirmed movement and stick-look were already delta-time based; v8.2 explicitly clamps controller delta to the existing 50 ms maximum to prevent pathological long-frame input jumps.\n\nArtifact: `swyrl_engine_v8_2.html` · **393393 bytes** · SHA-256 `d7dc50a0697eb9bf5286131ff6dcaaae4fda7f3db7a3ecede90e8e1b0ef38935` · marker `V8_2_BOOTSTRAP_REPAIR`. Exact reconstruction, feature assertions, and generated JavaScript syntax PASS in validation run `37687066717`. Production deployment pending the final dedicated deploy-button commit.\n\n## v8.0 — Embervault Atelier
+## v8.3 — Zones & Starforge
+
+Embervault remains the default Dragon Den and gains a native arrival directory, clearer upper/lower wayfinding, station travel guidance, and eight saved destinations. The refined scene has **170 actors, three editor layers, six stations, and three physical tiers**. Its physical ramps and supported walking routes remain available alongside the **T / Zones** menu.
+
+**Starforge Observatory** is a separate native-authored **123-actor** starter with three layers, six independent stations, and seven destinations. Seven stone islands, garden paths, protected ramps, and a quiet constellation sky create a celestial workspace at 2.4m, 5.8m, and 7m. The Projects hub and `?project=starforge-observatory` route open it without changing the default den. Its project-owned environment hides the old terrain/scenery, and its configured fall recovery uses the validated Arrival destination.
+
+| Patch | Capability |
+|---|---|
+| `v8_3_zone_teleport.py` | Native zone authoring, saved project-owned destinations, accessible travel menu, supported/clear landing validation, pause/input/cancellation handling, and optional project-owned fall recovery. |
+| `v8_3_editor_authoring.py` | Unknown prefab requests return `null` without editing the previous selection; valid spawn refreshes editor views; new templates clear inherited layers; active sessions stop before project replacement. |
+| `v8_3_starforge_assets.py` | Reusable supported floating islands, constellation sky, brass astrolabe, noncombat visitor/companion assets, and persistent project-owned environment settings. |
+| `v8_3_projects_release.py` | Embed both native saves, retain Embervault as default, add Starforge hub/direct routing, and synchronize v8.3 version/marker surfaces. |
+
+Shared engine verification passed **28 geometry/recovery checks, 14 native authoring/history/persistence checks, and five travel lifecycle/recovery checks**, with no reported browser errors. An independent composite-browser review also passed 14 routing, project replacement, local-draft isolation, background persistence, and runtime-restoration checks with no page errors. Starforge passed 23 actual walking legs in one continuous Play session, all six walk-up E interactions, seven safe API landings, and Stop restoration. Its subsequent seven native T-menu journeys, prior-pause cancellation, environment/station Save/Load, and actual fall recovery to validated Arrival also passed. Native scene journeys, workstation access, final reconstruction, and production acceptance are tracked in [VERIFICATION.md](VERIFICATION.md). Headset VR, in-room inference, executable coding sessions, and spatial voice remain future integrations.
+
+The final governed artifact also passed fresh native boot and validation for both projects, plus a 390 × 844 single-column Play-zone dialog check.
+
+Artifact: `swyrl_engine_v8_3.html` · **528670 bytes** · SHA-256 `ca4d43e2e560aee39a0fff48b07885d180d96dc64cbeb5c5bd00bdf23490d548` · marker `V8_3_ZONES_STARFORGE`. The governed 41-patch reconstruction exactly matches the final composite, and generated JavaScript syntax passes. Title, build API, agent version/aliases, project routing, and absence of the temporary measurement draw gate were verified.
+
+Source/deploy authority follows the final-button contract: the validated normal release commit precedes the final `DEPLOY_REQUEST.json` trigger commit. The exact Actions receipt must match the trigger head SHA and confirm the served marker plus normalized complete artifact hash. This document is committed before the trigger; the receipt and final delivery provide the immutable source/deploy references without a post-trigger content mutation.
+
+## v8.1 / v8.2 — Performance & Graphics, then Bootstrap Repair
+
+Adds an engine-level **Graphics & Performance** panel while preserving the v8.0 Embervault project data. Presets are Auto, Low, Medium, High, and Custom. Manual controls expose 50–100% render scale, dynamic shadows, 512/1024/2048 shadow maps, and Unlimited/30/45/60 render caps. Auto watches sustained frame time and adjusts render resolution without changing gameplay simulation timing.
+
+FPS diagnostics are independently configurable for **Editor** and **Play/Simulate**. The overlay reports FPS, smoothed frame time in milliseconds, effective render scale, and Auto state. Preferences persist in local storage. The Play controller audit confirmed movement and stick-look were already delta-time based; the performance patch explicitly clamps controller delta to the existing 50 ms maximum to prevent pathological long-frame input jumps.
+
+Artifact: `swyrl_engine_v8_2.html` · **393393 bytes** · SHA-256 `d7dc50a0697eb9bf5286131ff6dcaaae4fda7f3db7a3ecede90e8e1b0ef38935` · marker `V8_2_BOOTSTRAP_REPAIR`. Exact reconstruction and generated JavaScript syntax passed during the v8.2 baseline verification. Production deployment **succeeded** in [Actions 37689304845](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37689304845) from trigger `177ecda58e928f6d9f590069e1bdb1ddb538145e`. Its exact normalized live artifact, marker, and 167-actor canonical boot were rechecked before starting v8.3.
+
+### v8.2 bootstrap regression repair
+
+Repairs v8.1 startup ordering: performance settings had been applied before the engine session-state declarations, causing a temporal-dead-zone ReferenceError when the FPS overlay read `playing`. The shell rendered but canonical project hydration never ran, producing 0 actors and an empty viewport. v8.2 defers performance UI/application until immediately before canonical project load, after engine state is initialized. Validator asserts the order `sun → playing declaration → performance init → canonical project load`, the 167-actor canonical payload, and generated module syntax.
+
+## v8.0 — Embervault Atelier
 
 The canonical Dragon Den becomes **Embervault Atelier**, a 167-actor spatial workspace authored through the native editor and intended for future VR project work and conversation. This release adds depth through three connected physical tiers: a lower workshop at 0m, Code Studio and Archive Garden on a 3.4m study gallery, and a 4.6m Dragon Council. World Forge, Prototype Court, and the shared AI Hearth occupy the lower floor. Two full ramps and a short council ramp connect the levels; rails guard the exposed gallery and council edges.
 
@@ -151,7 +189,7 @@ Deployment repair: the first v8.0 run [37663564970](https://github.com/kaministr
 
 Live verification adaptation: run [37663777249](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37663777249) uploaded v8.0 successfully but its raw served hash guard failed. Static Spaces prepend a creator-metadata script after `<head>`. The raw served page therefore differs from the uploaded HTML by that provider wrapper. Verification removes only the recognized Hugging Face metadata prefix, then checks the full source hash plus release marker. This keeps exact artifact verification while accounting for the hosting service; the v8.0 engine bytes remain unchanged.
 
-Source/deploy references use the final deploy-button contract: source is the validated normal release commit immediately before the v8.0 `DEPLOY_REQUEST.json` commit; deploy is that final trigger commit; the exact dedicated Actions run must have a matching `head_sha`. The workflow receipt and live host must confirm the v8.0 marker and source integrity. These references resolve from the final trigger and receipt, so completing deployment requires no mutation of release content after pressing the button. Until those checks pass, v7.9 remains the previously observed live baseline.
+Source/deploy references use the final deploy-button contract: source is the validated normal release commit immediately before the v8.0 `DEPLOY_REQUEST.json` commit; deploy is that final trigger commit; the exact dedicated Actions run must have a matching `head_sha`. The workflow receipt and live host must confirm the v8.0 marker and source integrity. These references resolve from the final trigger and receipt, so completing deployment requires no mutation of release content after pressing the button. These v8.0 checks subsequently passed in deployment run #50; v8.2 is the later independently verified live baseline recorded above.
 
 ## v7.9 — Sanctuary & Makers Grotto becomes the canonical Dragon Den
 
@@ -174,4 +212,3 @@ Historical v7.8 deployment trigger: `9a529d945f2e35e2427ebef18c6de6b31810eed6` �
 Every §E GitHub mutation is a governed update. Each versioned engine update must synchronize applicable version surfaces, update this roadmap, validate/reconstruct the exact artifact, and use the dedicated `DEPLOY_REQUEST.json` final deploy-button mechanism. The resulting Actions run must be followed to terminal state and the live Hugging Face marker verified before the release is reported complete.
 
 Documentation-only historical/audit corrections do **not** create a new engine binary version. They must not silently rewrite historical artifact authority; corrections should identify their audit date and preserve the release SHAs they were recovered from.
-\n### v8.2 bootstrap regression repair\n\nRepairs v8.1 startup ordering: performance settings had been applied before the engine session-state declarations, causing a temporal-dead-zone ReferenceError when the FPS overlay read `playing`. The shell rendered but canonical project hydration never ran, producing 0 actors and an empty viewport. v8.2 defers performance UI/application until immediately before canonical project load, after engine state is initialized. Validator asserts the order `sun → playing declaration → performance init → canonical project load`, the 167-actor canonical payload, and generated module syntax.\n

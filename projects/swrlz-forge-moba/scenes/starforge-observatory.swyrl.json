@@ -1,0 +1,7637 @@
+{
+  "engine": "§wyrl§ Engine · Maker v8.3",
+  "version": 8.3,
+  "project": {
+    "name": "Starforge Observatory",
+    "template": "starforge-observatory",
+    "kind": "spatial-workspace",
+    "environment": "spatial-workspace",
+    "workspaces": {
+      "schema": "swyrl-workspaces-v1",
+      "stations": {
+        "a_ume2iba3": {
+          "files": [
+            {
+              "id": "a_7c50r277",
+              "name": "README.md",
+              "content": "# Code Island\n\nA quiet place to build one focused project.\nThe empty 5 × 5 floor is yours to arrange.\n"
+            },
+            {
+              "id": "a_j67wuw25",
+              "name": "main.js",
+              "content": "export function greet(name = \"builder\") {\n  return `Welcome to Starforge, ${name}.`;\n}\n"
+            }
+          ],
+          "notes": "Keep each project on its own island. Download files to run them in your own workflow.",
+          "updatedAt": 1791410231719
+        },
+        "a_ei44eyey": {
+          "files": [
+            {
+              "id": "a_6rwzis9c",
+              "name": "prototype.md",
+              "content": "# Prototype Island\n\n## Idea\n\n## Smallest useful experiment\n\n## What I learned\n"
+            },
+            {
+              "id": "a_hahd3zag",
+              "name": "index.html",
+              "content": "<!doctype html>\n<title>My Starforge prototype</title>\n<h1>Make something worth sharing.</h1>\n"
+            }
+          ],
+          "notes": "Experiment freely; preserve the clear walking path to the bridge.",
+          "updatedAt": 1791410239463
+        },
+        "a_3mvb9mai": {
+          "files": [
+            {
+              "id": "a_nswn7079",
+              "name": "references.md",
+              "content": "# Archive Garden\n\nCollect research, project decisions, and useful links here.\n\n## Sources\n- \n"
+            },
+            {
+              "id": "a_8g0tlgu2",
+              "name": "decisions.md",
+              "content": "# Decisions\n\n## Decision\n\n## Why\n\n## Next step\n"
+            }
+          ],
+          "notes": "A quieter upper garden for reading and project memory.",
+          "updatedAt": 1791410246992
+        },
+        "a_uuyb9r1a": {
+          "files": [
+            {
+              "id": "a_hsj18ehd",
+              "name": "conversation.md",
+              "content": "# Companion Chamber\n\nOpen the existing §wyrlz chat, then bring useful ideas back to this notebook.\n\n## Current question\n\n## Next action\n"
+            }
+          ],
+          "notes": "The wisp is a visual companion; the chat link opens your existing LALM.",
+          "updatedAt": 1791410248562
+        },
+        "a_mzitjnu3": {
+          "files": [
+            {
+              "id": "a_hkno1ajt",
+              "name": "garden-notebook.md",
+              "content": "# Constellation Garden\n\nA shared place to pause, collect ideas, and choose the next island.\n\n## Today\n\n## An idea to grow\n"
+            }
+          ],
+          "notes": "Take your time; the garden is a shared rest space.",
+          "updatedAt": 1791410250367
+        },
+        "a_adijs1sp": {
+          "files": [
+            {
+              "id": "a_uueao4m9",
+              "name": "sky-journal.md",
+              "content": "# Observatory\n\nStep back from the project and write down what matters next.\n\n## What I noticed\n\n## What I will build\n"
+            }
+          ],
+          "notes": "A quiet viewpoint above the campus.",
+          "updatedAt": 1791410252163
+        }
+      }
+    },
+    "teleportZones": [
+      {
+        "id": "arrival",
+        "name": "Arrival",
+        "description": "Welcome terrace and return point",
+        "position": [
+          0,
+          2.4,
+          12.7
+        ],
+        "yaw": 0,
+        "accent": "#d5c196"
+      },
+      {
+        "id": "garden",
+        "name": "Constellation Garden",
+        "description": "Pause, plan, and choose an island",
+        "position": [
+          0,
+          2.4,
+          5.4
+        ],
+        "yaw": 0,
+        "accent": "#8bc0a9"
+      },
+      {
+        "id": "code",
+        "name": "Code Island",
+        "description": "Focused code and a clear build pad",
+        "position": [
+          -12,
+          2.41,
+          5.3
+        ],
+        "yaw": 0,
+        "accent": "#84c9d8"
+      },
+      {
+        "id": "prototype",
+        "name": "Prototype Island",
+        "description": "Experiments and your own project space",
+        "position": [
+          12,
+          2.41,
+          5.3
+        ],
+        "yaw": 0,
+        "accent": "#c5a6dc"
+      },
+      {
+        "id": "archive",
+        "name": "Archive Garden",
+        "description": "Research, references, and project memory",
+        "position": [
+          -12,
+          5.8,
+          -10.4
+        ],
+        "yaw": 0,
+        "accent": "#8bc0a9"
+      },
+      {
+        "id": "companion",
+        "name": "Companion Chamber",
+        "description": "Notes and the existing §wyrlz chat",
+        "position": [
+          12,
+          5.8,
+          -10
+        ],
+        "yaw": 0,
+        "accent": "#d5c196"
+      },
+      {
+        "id": "observatory",
+        "name": "Observatory",
+        "description": "Quiet sky journal and campus overlook",
+        "position": [
+          0,
+          7,
+          -12.15
+        ],
+        "yaw": 3.141592653589793,
+        "accent": "#d5c196"
+      }
+    ],
+    "canonicalId": "starforge-observatory",
+    "environmentSettings": {
+      "background": "#111d31",
+      "fogNear": 55,
+      "fogFar": 130,
+      "exposure": 1.18,
+      "showTerrain": false,
+      "showScenery": false,
+      "recoveryHeight": 1,
+      "recoveryZone": "arrival"
+    }
+  },
+  "editor": {
+    "transformSpace": "world",
+    "snapEnabled": true,
+    "terrainSnapEnabled": false,
+    "viewMode": "lit",
+    "cameraView": "perspective",
+    "revision": 3,
+    "layers": [
+      {
+        "id": "layer-a_vd4m9nh2",
+        "name": "01 Islands & Wayfinding",
+        "visible": true
+      },
+      {
+        "id": "layer-a_mkixh81f",
+        "name": "02 Sky & Living Gardens",
+        "visible": true
+      },
+      {
+        "id": "layer-a_t5856akl",
+        "name": "03 Project Stations",
+        "visible": true
+      }
+    ],
+    "activeLayerId": "layer-a_vd4m9nh2"
+  },
+  "scene": {
+    "background": "#111d31",
+    "waveInterval": 7,
+    "paths": {},
+    "actors": [
+      {
+        "id": "a_pk4tcmui",
+        "name": "World Ground",
+        "type": "ground",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Environment/Terrain",
+        "components": [
+          "Transform"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_is4i44rz",
+        "name": "Arrival · suspended island",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#9abec7",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          2.4,
+          12
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          6,
+          1,
+          4
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ppjm6igf",
+        "name": "Arrival · edge 1",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          5.54327719506772,
+          2.4,
+          12
+        ],
+        "rotation": [
+          0,
+          -1.5707963267948966,
+          0
+        ],
+        "scale": [
+          3.061467458920717,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_2hj5kt9z",
+        "name": "Arrival · edge 2",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          3.9196888946291297,
+          2.4,
+          14.613125929752753
+        ],
+        "rotation": [
+          0,
+          -2.5535900500422253,
+          0
+        ],
+        "scale": [
+          3.9026205783165153,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_lzs5scyk",
+        "name": "Arrival · edge 3",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          2.220446049250313e-16,
+          2.4,
+          15.695518130045148
+        ],
+        "rotation": [
+          0,
+          -3.141592653589793,
+          0
+        ],
+        "scale": [
+          4.592201188381077,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_n39tb9ae",
+        "name": "Arrival · edge 4",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -3.9196888946291293,
+          2.4,
+          14.613125929752755
+        ],
+        "rotation": [
+          0,
+          2.5535900500422257,
+          0
+        ],
+        "scale": [
+          3.9026205783165144,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_513vci04",
+        "name": "Arrival · edge 5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -5.54327719506772,
+          2.4,
+          12
+        ],
+        "rotation": [
+          0,
+          1.570796326794897,
+          0
+        ],
+        "scale": [
+          3.0614674589207187,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_z0o6k27f",
+        "name": "Arrival · edge 6",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -3.9196888946291315,
+          2.4,
+          9.386874070247249
+        ],
+        "rotation": [
+          0,
+          0.588002603547568,
+          0
+        ],
+        "scale": [
+          3.9026205783165118,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_fflfc2ta",
+        "name": "Arrival · edge 8",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          3.9196888946291297,
+          2.4,
+          9.386874070247245
+        ],
+        "rotation": [
+          0,
+          -0.5880026035475671,
+          0
+        ],
+        "scale": [
+          3.902620578316511,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_sr8jzcql",
+        "name": "Constellation Garden · suspended island",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#9abec7",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          2.4,
+          3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5,
+          1,
+          5
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_788tzp9h",
+        "name": "Constellation Garden · edge 2",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          3.2664074121909414,
+          2.4,
+          6.266407412190942
+        ],
+        "rotation": [
+          0,
+          -2.356194490192345,
+          0
+        ],
+        "scale": [
+          3.826834323650898,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_7k1ozjgz",
+        "name": "Constellation Garden · edge 4",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -3.266407412190941,
+          2.4,
+          6.266407412190942
+        ],
+        "rotation": [
+          0,
+          2.3561944901923453,
+          0
+        ],
+        "scale": [
+          3.8268343236508975,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_9ls367av",
+        "name": "Constellation Garden · edge 6",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -3.2664074121909428,
+          2.4,
+          -0.2664074121909402
+        ],
+        "rotation": [
+          0,
+          0.7853981633974486,
+          0
+        ],
+        "scale": [
+          3.826834323650895,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_aes4oaoc",
+        "name": "Constellation Garden · edge 7",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -7.771561172376096e-16,
+          2.4,
+          -1.6193976625564326
+        ],
+        "rotation": [
+          0,
+          2.3209220587652183e-16,
+          0
+        ],
+        "scale": [
+          3.8268343236509015,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_9z6lbhrj",
+        "name": "Constellation Garden · edge 8",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          3.266407412190941,
+          2.4,
+          -0.26640741219094255
+        ],
+        "rotation": [
+          0,
+          -0.7853981633974481,
+          0
+        ],
+        "scale": [
+          3.826834323650893,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_l3pw96kv",
+        "name": "Code Island · suspended island",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#9abec7",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -12,
+          2.4,
+          4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5,
+          1,
+          5
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_m5cemes2",
+        "name": "Code Island · edge 2",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -8.733592587809058,
+          2.4,
+          7.266407412190942
+        ],
+        "rotation": [
+          0,
+          -2.356194490192345,
+          0
+        ],
+        "scale": [
+          3.8268343236508975,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_qd5qzn9b",
+        "name": "Code Island · edge 3",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -12,
+          2.4,
+          8.619397662556434
+        ],
+        "rotation": [
+          0,
+          -3.141592653589793,
+          0
+        ],
+        "scale": [
+          3.826834323650898,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_cftx1h8x",
+        "name": "Code Island · edge 4",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -15.26640741219094,
+          2.4,
+          7.266407412190942
+        ],
+        "rotation": [
+          0,
+          2.3561944901923453,
+          0
+        ],
+        "scale": [
+          3.826834323650898,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_yj0fd89i",
+        "name": "Code Island · edge 5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -16.619397662556434,
+          2.4,
+          4
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "scale": [
+          3.826834323650898,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_9br5n1i4",
+        "name": "Code Island · edge 6",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -15.266407412190944,
+          2.4,
+          0.7335925878090599
+        ],
+        "rotation": [
+          0,
+          0.7853981633974486,
+          0
+        ],
+        "scale": [
+          3.826834323650895,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_rs2dlaqs",
+        "name": "Code Island · edge 7",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -12,
+          2.4,
+          -0.6193976625564326
+        ],
+        "rotation": [
+          0,
+          2.3209220587652183e-16,
+          0
+        ],
+        "scale": [
+          3.8268343236509015,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_lsqci224",
+        "name": "Code Island · edge 8",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -8.73359258780906,
+          2.4,
+          0.7335925878090572
+        ],
+        "rotation": [
+          0,
+          -0.7853981633974481,
+          0
+        ],
+        "scale": [
+          3.826834323650893,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_qms6paa3",
+        "name": "Prototype Island · suspended island",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#9abec7",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12,
+          2.4,
+          4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5,
+          1,
+          5
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_f3yhyi5h",
+        "name": "Prototype Island · edge 1",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          16.619397662556434,
+          2.4,
+          4
+        ],
+        "rotation": [
+          0,
+          -1.5707963267948966,
+          0
+        ],
+        "scale": [
+          3.826834323650898,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_zxghfma5",
+        "name": "Prototype Island · edge 2",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          15.266407412190942,
+          2.4,
+          7.266407412190942
+        ],
+        "rotation": [
+          0,
+          -2.356194490192345,
+          0
+        ],
+        "scale": [
+          3.8268343236508975,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_75mieigj",
+        "name": "Prototype Island · edge 3",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12,
+          2.4,
+          8.619397662556434
+        ],
+        "rotation": [
+          0,
+          -3.141592653589793,
+          0
+        ],
+        "scale": [
+          3.826834323650898,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_rwcxmzxs",
+        "name": "Prototype Island · edge 4",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          8.73359258780906,
+          2.4,
+          7.266407412190942
+        ],
+        "rotation": [
+          0,
+          2.3561944901923453,
+          0
+        ],
+        "scale": [
+          3.826834323650898,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_itz1rt0l",
+        "name": "Prototype Island · edge 6",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          8.733592587809056,
+          2.4,
+          0.7335925878090599
+        ],
+        "rotation": [
+          0,
+          0.7853981633974486,
+          0
+        ],
+        "scale": [
+          3.826834323650895,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_x843o2ox",
+        "name": "Prototype Island · edge 7",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12,
+          2.4,
+          -0.6193976625564326
+        ],
+        "rotation": [
+          0,
+          2.3209220587652183e-16,
+          0
+        ],
+        "scale": [
+          3.8268343236509015,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_mdfsbz0t",
+        "name": "Prototype Island · edge 8",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          15.26640741219094,
+          2.4,
+          0.7335925878090572
+        ],
+        "rotation": [
+          0,
+          -0.7853981633974484,
+          0
+        ],
+        "scale": [
+          3.8268343236508917,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_b40i3xr2",
+        "name": "Archive Garden · suspended island",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#9abec7",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -12,
+          5.8,
+          -11.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          3.5
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_bma9z3wg",
+        "name": "Archive Garden · edge 1",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -8.304481869954852,
+          5.8,
+          -11.5
+        ],
+        "rotation": [
+          0,
+          -1.5707963267948966,
+          0
+        ],
+        "scale": [
+          2.678784026555629,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_r4u7xqe3",
+        "name": "Archive Garden · edge 2",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -9.386874070247247,
+          5.8,
+          -9.213514811466341
+        ],
+        "rotation": [
+          0,
+          -2.4227626539681695,
+          0
+        ],
+        "scale": [
+          2.8764967289187098,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_roids5fw",
+        "name": "Archive Garden · edge 4",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -14.613125929752753,
+          5.8,
+          -9.213514811466341
+        ],
+        "rotation": [
+          0,
+          2.4227626539681695,
+          0
+        ],
+        "scale": [
+          2.8764967289187098,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ccgrwoxh",
+        "name": "Archive Garden · edge 5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -15.695518130045148,
+          5.8,
+          -11.5
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "scale": [
+          2.678784026555629,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_u9mp0fv6",
+        "name": "Archive Garden · edge 6",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -14.613125929752755,
+          5.8,
+          -13.786485188533659
+        ],
+        "rotation": [
+          0,
+          0.7188299996216247,
+          0
+        ],
+        "scale": [
+          2.8764967289187067,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_bhqbej9t",
+        "name": "Archive Garden · edge 7",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -12,
+          5.8,
+          -14.733578363789503
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          3.0614674589207223,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_730ndnik",
+        "name": "Archive Garden · edge 8",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -9.386874070247247,
+          5.8,
+          -13.78648518853366
+        ],
+        "rotation": [
+          0,
+          -0.7188299996216243,
+          0
+        ],
+        "scale": [
+          2.8764967289187053,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_8hetw0id",
+        "name": "Companion Chamber · suspended island",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#9abec7",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12,
+          5.8,
+          -11.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          3.5
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_p8v1t20f",
+        "name": "Companion Chamber · edge 1",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          15.695518130045148,
+          5.8,
+          -11.5
+        ],
+        "rotation": [
+          0,
+          -1.5707963267948966,
+          0
+        ],
+        "scale": [
+          2.678784026555629,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_wpwyx8xk",
+        "name": "Companion Chamber · edge 2",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          14.613125929752753,
+          5.8,
+          -9.213514811466341
+        ],
+        "rotation": [
+          0,
+          -2.4227626539681695,
+          0
+        ],
+        "scale": [
+          2.8764967289187098,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_1q5427tz",
+        "name": "Companion Chamber · edge 4",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          9.386874070247247,
+          5.8,
+          -9.213514811466341
+        ],
+        "rotation": [
+          0,
+          2.4227626539681695,
+          0
+        ],
+        "scale": [
+          2.8764967289187098,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_wuxv4nzh",
+        "name": "Companion Chamber · edge 5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          8.304481869954852,
+          5.8,
+          -11.5
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "scale": [
+          2.678784026555629,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ug5xlfcx",
+        "name": "Companion Chamber · edge 6",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          9.386874070247245,
+          5.8,
+          -13.786485188533659
+        ],
+        "rotation": [
+          0,
+          0.7188299996216247,
+          0
+        ],
+        "scale": [
+          2.8764967289187067,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_28fxfezm",
+        "name": "Companion Chamber · edge 7",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12,
+          5.8,
+          -14.733578363789503
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          3.0614674589207223,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_qok6crvr",
+        "name": "Companion Chamber · edge 8",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          14.613125929752753,
+          5.8,
+          -13.78648518853366
+        ],
+        "rotation": [
+          0,
+          -0.7188299996216243,
+          0
+        ],
+        "scale": [
+          2.8764967289187053,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_r5ooq7ph",
+        "name": "Observatory · suspended island",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#9abec7",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          7,
+          -13.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          2.5
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_v3hxcnqq",
+        "name": "Observatory · edge 1",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          3.695518130045147,
+          7,
+          -13.5
+        ],
+        "rotation": [
+          0,
+          -1.5707963267948966,
+          0
+        ],
+        "scale": [
+          1.9134171618254499,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_lzxktcu1",
+        "name": "Observatory · edge 2",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          2.613125929752753,
+          7,
+          -11.866796293904528
+        ],
+        "rotation": [
+          0,
+          -2.5829933382462307,
+          0
+        ],
+        "scale": [
+          2.5528168987609186,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_riqae58d",
+        "name": "Observatory · edge 4",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -2.613125929752753,
+          7,
+          -11.866796293904528
+        ],
+        "rotation": [
+          0,
+          2.582993338246231,
+          0
+        ],
+        "scale": [
+          2.5528168987609194,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_jz67vmsv",
+        "name": "Observatory · edge 5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -3.695518130045147,
+          7,
+          -13.5
+        ],
+        "rotation": [
+          0,
+          1.5707963267948968,
+          0
+        ],
+        "scale": [
+          1.9134171618254499,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_rveuli4p",
+        "name": "Observatory · edge 6",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -2.6131259297527545,
+          7,
+          -15.13320370609547
+        ],
+        "rotation": [
+          0,
+          0.5585993153435621,
+          0
+        ],
+        "scale": [
+          2.5528168987609168,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_m8enmr38",
+        "name": "Observatory · edge 7",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -6.661338147750939e-16,
+          7,
+          -15.809698831278215
+        ],
+        "rotation": [
+          0,
+          5.802305146913046e-16,
+          0
+        ],
+        "scale": [
+          3.0614674589207214,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_1rxeona8",
+        "name": "Observatory · edge 8",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          2.613125929752753,
+          7,
+          -15.133203706095472
+        ],
+        "rotation": [
+          0,
+          -0.5585993153435621,
+          0
+        ],
+        "scale": [
+          2.5528168987609168,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_gb3npj8h",
+        "name": "Arrival · garden link",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryDeck",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          2.4,
+          8.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          2.6
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryDeck",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_gppcszzx",
+        "name": "Arrival link · side -2",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -2,
+          2.4,
+          8.3
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "scale": [
+          2.6,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_spc0hzsb",
+        "name": "Arrival link · side 2",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          2,
+          2.4,
+          8.3
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "scale": [
+          2.6,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_170xh3ha",
+        "name": "West · island bridge",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryDeck",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -6,
+          2.4,
+          4.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          3
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryDeck",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_7oppyo4s",
+        "name": "Island bridge -1 · edge 0.5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -7.5,
+          2.4,
+          3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_lszyi8l1",
+        "name": "Island bridge -1 · edge 3.5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -6,
+          2.4,
+          6
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_x9krcg9y",
+        "name": "West · ramp landing",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryDeck",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -5.5,
+          2.4,
+          4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          3.2,
+          1,
+          2
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryDeck",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_h7ir10rp",
+        "name": "West · starlight ascent",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "ramp",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -5.5,
+          2.4,
+          -1.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_ramp",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_rro4vh1v",
+        "name": "Starlight ascent -1 · side -1.5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -7,
+          4.27,
+          -2
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0.3277385067805555
+        ],
+        "scale": [
+          9.505977067087843,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_4iegqm0i",
+        "name": "Starlight ascent -1 · side 1.5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -4,
+          4.27,
+          -2
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0.3277385067805555
+        ],
+        "scale": [
+          9.505977067087843,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_meueb49r",
+        "name": "East · island bridge",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryDeck",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          6,
+          2.4,
+          4.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          3
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryDeck",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_undxmman",
+        "name": "Island bridge 1 · edge 0.5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          7.5,
+          2.4,
+          3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_n5dq36gt",
+        "name": "Island bridge 1 · edge 3.5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          6,
+          2.4,
+          6
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_3sutcyjn",
+        "name": "East · ramp landing",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryDeck",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          5.5,
+          2.4,
+          4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          3.2,
+          1,
+          2
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryDeck",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_05485nqq",
+        "name": "East · starlight ascent",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "ramp",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          5.5,
+          2.4,
+          -1.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_ramp",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_4husl665",
+        "name": "Starlight ascent 1 · side -1.5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          4,
+          4.27,
+          -2
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0.3277385067805555
+        ],
+        "scale": [
+          9.505977067087843,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_fnd8hryp",
+        "name": "Starlight ascent 1 · side 1.5",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          7,
+          4.27,
+          -2
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0.3277385067805555
+        ],
+        "scale": [
+          9.505977067087843,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_562kzpky",
+        "name": "Skywalk · study bridge",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryDeck",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          5.8,
+          -8
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          32,
+          1,
+          3
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryDeck",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_dcnmhcsq",
+        "name": "Skywalk · front edge -11.6",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -11.6,
+          5.8,
+          -6.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          8.8,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ojiumroc",
+        "name": "Skywalk · front edge 0",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          5.8,
+          -6.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          7.7,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_qqz90fa8",
+        "name": "Skywalk · front edge 11.6",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          11.6,
+          5.8,
+          -6.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          8.8,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_a816gcm7",
+        "name": "Skywalk · rear edge -15",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -15,
+          5.8,
+          -9.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          2,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_dg0yjren",
+        "name": "Skywalk · rear edge -6.25",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -6.25,
+          5.8,
+          -9.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          7.8,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_b6cbkb8p",
+        "name": "Skywalk · rear edge 6.25",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          6.25,
+          5.8,
+          -9.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          7.8,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_bmczhgc6",
+        "name": "Skywalk · rear edge 15",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          15,
+          5.8,
+          -9.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          2,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_u409wkvb",
+        "name": "Skywalk · end -16",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -16,
+          5.8,
+          -8
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "scale": [
+          3,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_dt48vexf",
+        "name": "Skywalk · end 16",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          16,
+          5.8,
+          -8
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "scale": [
+          3,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_62bdot1c",
+        "name": "Observatory · final rise",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "ramp",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          5.8,
+          -9
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1.4,
+          0.35294117647058826,
+          0.4
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_ramp",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_isb4xos8",
+        "name": "Observatory · flush landing",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryDeck",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          7,
+          -11.4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4.2,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryDeck",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_s810jtgq",
+        "name": "Observatory rise · side -2.1",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -2.1,
+          6.55,
+          -9.5
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0.2914567944778671
+        ],
+        "scale": [
+          3.132091952673165,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_r5wppxzb",
+        "name": "Observatory rise · side 2.1",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryRail",
+          "guardrail"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          2.1,
+          6.55,
+          -9.5
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0.2914567944778671
+        ],
+        "scale": [
+          3.132091952673165,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryRail",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_3u280aao",
+        "name": "Starforge · quiet constellation sky",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "constellationDome"
+        ],
+        "visualColor": "#9abec7",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_constellationDome",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_owezhcmg",
+        "name": "Observatory · brass armillary",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "astrolabe"
+        ],
+        "visualColor": "#d8bd89",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          7,
+          -14.2
+        ],
+        "rotation": [
+          0,
+          0.3,
+          0
+        ],
+        "scale": [
+          0.8,
+          0.8,
+          0.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_astrolabe",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_qfgajd3q",
+        "name": "Garden · living cloud 0",
+        "type": "bush",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -3.5,
+          2.5,
+          3.4
+        ],
+        "rotation": [
+          0,
+          0.45,
+          0
+        ],
+        "scale": [
+          1.25,
+          0.65,
+          1.1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_mh2adltx",
+        "name": "Garden · moon crystal 1",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#9d72ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -3.05,
+          2.45,
+          3.6999999999999997
+        ],
+        "rotation": [
+          0,
+          0.3,
+          0.1575
+        ],
+        "scale": [
+          0.25,
+          0.35,
+          0.25
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_f1m9cyri",
+        "name": "Garden · living cloud 1",
+        "type": "bush",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          3.5,
+          2.5,
+          5.3
+        ],
+        "rotation": [
+          0,
+          -0.35,
+          0
+        ],
+        "scale": [
+          1.25,
+          0.65,
+          1.1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_maff3573",
+        "name": "Garden · moon crystal 2",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#9d72ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          3.95,
+          2.45,
+          5.6
+        ],
+        "rotation": [
+          0,
+          0.3,
+          -0.12249999999999998
+        ],
+        "scale": [
+          0.25,
+          0.35,
+          0.25
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_tnozsfjz",
+        "name": "Garden · living cloud 2",
+        "type": "bush",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -1.9,
+          2.5,
+          0.3
+        ],
+        "rotation": [
+          0,
+          0.6,
+          0
+        ],
+        "scale": [
+          1.25,
+          0.65,
+          1.1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_mmhxarf4",
+        "name": "Garden · moon crystal 3",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#9d72ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -1.45,
+          2.45,
+          0.6
+        ],
+        "rotation": [
+          0,
+          0.3,
+          0.21
+        ],
+        "scale": [
+          0.25,
+          0.35,
+          0.25
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_l8y9s0zb",
+        "name": "Garden · living cloud 3",
+        "type": "bush",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          2.4,
+          2.5,
+          1
+        ],
+        "rotation": [
+          0,
+          -0.5,
+          0
+        ],
+        "scale": [
+          1.25,
+          0.65,
+          1.1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_byu40q8t",
+        "name": "Garden · moon crystal 4",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#9d72ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          2.85,
+          2.45,
+          1.3
+        ],
+        "rotation": [
+          0,
+          0.3,
+          -0.175
+        ],
+        "scale": [
+          0.25,
+          0.35,
+          0.25
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_3xprpyne",
+        "name": "Code · perimeter garden",
+        "type": "bush",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -15,
+          2.52,
+          4.7
+        ],
+        "rotation": [
+          0,
+          0.5,
+          0
+        ],
+        "scale": [
+          0.9,
+          0.6,
+          0.85
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_h6vssnx4",
+        "name": "Prototype · perimeter garden",
+        "type": "bush",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          15,
+          2.52,
+          4.7
+        ],
+        "rotation": [
+          0,
+          0.5,
+          0
+        ],
+        "scale": [
+          0.9,
+          0.6,
+          0.85
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_0ydjwhy3",
+        "name": "Archive · perimeter garden",
+        "type": "bush",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -14.3,
+          5.92,
+          -12
+        ],
+        "rotation": [
+          0,
+          0.5,
+          0
+        ],
+        "scale": [
+          0.9,
+          0.6,
+          0.85
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_4zew4ojj",
+        "name": "Companion · perimeter garden",
+        "type": "bush",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          14.3,
+          5.92,
+          -12
+        ],
+        "rotation": [
+          0,
+          0.5,
+          0
+        ],
+        "scale": [
+          0.9,
+          0.6,
+          0.85
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_97b8tnpc",
+        "name": "Waylight · 1",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#9d72ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -4,
+          2.4499999999999997,
+          12
+        ],
+        "rotation": [
+          0,
+          0.2,
+          0
+        ],
+        "scale": [
+          0.24,
+          0.5,
+          0.24
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_xl3p2lgu",
+        "name": "Waylight · 2",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#9d72ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          4,
+          2.4499999999999997,
+          12
+        ],
+        "rotation": [
+          0,
+          0.2,
+          0
+        ],
+        "scale": [
+          0.24,
+          0.5,
+          0.24
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_x6oyaw84",
+        "name": "Waylight · 3",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#9d72ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -8,
+          2.4499999999999997,
+          2
+        ],
+        "rotation": [
+          0,
+          0.2,
+          0
+        ],
+        "scale": [
+          0.24,
+          0.5,
+          0.24
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_57vvtxoj",
+        "name": "Waylight · 4",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#9d72ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          8,
+          2.4499999999999997,
+          2
+        ],
+        "rotation": [
+          0,
+          0.2,
+          0
+        ],
+        "scale": [
+          0.24,
+          0.5,
+          0.24
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_bsxws79x",
+        "name": "Waylight · 5",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#9d72ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -8,
+          5.85,
+          -8
+        ],
+        "rotation": [
+          0,
+          0.2,
+          0
+        ],
+        "scale": [
+          0.24,
+          0.5,
+          0.24
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_574witst",
+        "name": "Waylight · 6",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#9d72ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_mkixh81f"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          8,
+          5.85,
+          -8
+        ],
+        "rotation": [
+          0,
+          0.2,
+          0
+        ],
+        "scale": [
+          0.24,
+          0.5,
+          0.24
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "02 Sky & Gardens",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_2s2pwtz8",
+        "name": "Guest · Starforge explorer",
+        "type": "hero",
+        "team": "blue",
+        "baked": true,
+        "role": "",
+        "tags": [],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": 1.62,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          2.4,
+          12.7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 2.8,
+        "attackDamage": 0,
+        "attackCooldown": 0.55,
+        "lane": null,
+        "moveSpeed": 2.8,
+        "folder": "Visitors",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "Combat",
+          "CharacterMovement"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_9jufszrn",
+        "name": "Swyrlz · observatory companion",
+        "type": "hero",
+        "team": "neutral",
+        "baked": true,
+        "role": "agent-avatar",
+        "tags": [
+          "dragon-den",
+          "player-avatar",
+          "wisp-avatar",
+          "spirit-form"
+        ],
+        "visualColor": "#72d7ff",
+        "avatarStyle": "wisp",
+        "eyeHeight": 1.18,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12,
+          6.15,
+          -13.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.68,
+          0.68,
+          0.68
+        ],
+        "maxHp": 1000,
+        "attackRange": 2.8,
+        "attackDamage": 65,
+        "attackCooldown": 0.55,
+        "lane": null,
+        "moveSpeed": 6,
+        "folder": "Visitors",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "Combat",
+          "CharacterMovement",
+          "WispVisual"
+        ],
+        "blueprintClass": "BP_WispVisitor",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ume2iba3",
+        "name": "Code Island · perimeter station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove"
+        ],
+        "visualColor": "#61cfff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_t5856akl"
+        ],
+        "workspace": {
+          "title": "CODE ISLAND",
+          "kind": "code",
+          "accent": "#84c9d8",
+          "url": "https://github.com/kaministrator999-ui/Swrlzkamico",
+          "labelOffset": [
+            0,
+            3.05,
+            -0.25
+          ],
+          "labelWidth": 6,
+          "radius": 3.4
+        },
+        "sign": null,
+        "position": [
+          -12,
+          2.4,
+          1.4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.7,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "03 Project Islands",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ei44eyey",
+        "name": "Prototype Island · perimeter station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove"
+        ],
+        "visualColor": "#61cfff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_t5856akl"
+        ],
+        "workspace": {
+          "title": "PROTOTYPE ISLAND",
+          "kind": "code",
+          "accent": "#c5a6dc",
+          "url": "",
+          "labelOffset": [
+            0,
+            3.05,
+            -0.25
+          ],
+          "labelWidth": 6,
+          "radius": 3.4
+        },
+        "sign": null,
+        "position": [
+          12,
+          2.4,
+          1.4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.7,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "03 Project Islands",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_3mvb9mai",
+        "name": "Archive Garden · perimeter station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove"
+        ],
+        "visualColor": "#61cfff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_t5856akl"
+        ],
+        "workspace": {
+          "title": "ARCHIVE GARDEN",
+          "kind": "archive",
+          "accent": "#8bc0a9",
+          "url": "",
+          "labelOffset": [
+            0,
+            3.05,
+            -0.25
+          ],
+          "labelWidth": 6,
+          "radius": 3.4
+        },
+        "sign": null,
+        "position": [
+          -12,
+          5.8,
+          -12.8
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.7,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "03 Project Islands",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_uuyb9r1a",
+        "name": "Companion Chamber · perimeter station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove"
+        ],
+        "visualColor": "#61cfff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_t5856akl"
+        ],
+        "workspace": {
+          "title": "COMPANION CHAMBER",
+          "kind": "chat",
+          "accent": "#d5c196",
+          "url": "https://kamiloki-swyrlz.hf.space/",
+          "labelOffset": [
+            0,
+            3.05,
+            -0.25
+          ],
+          "labelWidth": 6,
+          "radius": 3.4
+        },
+        "sign": null,
+        "position": [
+          12,
+          5.8,
+          -11.8
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.7,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "03 Project Islands",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_mzitjnu3",
+        "name": "Constellation Garden · project notebook",
+        "type": "pedestal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture"
+        ],
+        "visualColor": "#a76dff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_t5856akl"
+        ],
+        "workspace": {
+          "title": "CONSTELLATION GARDEN",
+          "kind": "notes",
+          "accent": "#8bc0a9",
+          "url": "",
+          "labelOffset": [
+            0,
+            4.7,
+            0
+          ],
+          "labelWidth": 9,
+          "radius": 2.5
+        },
+        "sign": null,
+        "position": [
+          -2.8,
+          2.4,
+          6
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.24,
+          0.36,
+          0.24
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "03 Project Islands",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "BP_RuneDais",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_adijs1sp",
+        "name": "Observatory · sky journal",
+        "type": "pedestal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture"
+        ],
+        "visualColor": "#a76dff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_t5856akl"
+        ],
+        "workspace": {
+          "title": "OBSERVATORY",
+          "kind": "notes",
+          "accent": "#d5c196",
+          "url": "",
+          "labelOffset": [
+            0,
+            5,
+            0
+          ],
+          "labelWidth": 10,
+          "radius": 2.8
+        },
+        "sign": null,
+        "position": [
+          2.2,
+          7,
+          -13.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.18,
+          0.3,
+          0.18
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "03 Project Islands",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "BP_RuneDais",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_10mdzezh",
+        "name": "Code Island · clear 5m build pad",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryDeck",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_t5856akl"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -12,
+          2.405,
+          5.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5,
+          0.08,
+          5
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "03 Project Islands",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryDeck",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_v82jj35d",
+        "name": "Prototype Island · clear 5m build pad",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "galleryDeck",
+          "walkable-surface"
+        ],
+        "visualColor": "#85cfe0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_t5856akl"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12,
+          2.405,
+          5.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5,
+          0.08,
+          5
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "03 Project Islands",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_galleryDeck",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_58niyxda",
+        "name": "Arrival · Starforge welcome",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "STARFORGE OBSERVATORY\nA place to think, build, and look beyond",
+          "accent": "#d5c196",
+          "width": 6,
+          "height": 0.72
+        },
+        "position": [
+          0,
+          5.2,
+          15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture/Wayfinding",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_gyenurqt",
+        "name": "Garden · route guide",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "CODE ←  GARDEN  → PROTOTYPE\nUPPER SKYWALK: reach the landing before turning",
+          "accent": "#9abec7",
+          "width": 5,
+          "height": 0.82
+        },
+        "position": [
+          0,
+          5.1,
+          7.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture/Wayfinding",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_mf64ylfw",
+        "name": "Code Island · identity",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "CODE ISLAND\nYour next focused project",
+          "accent": "#84c9d8",
+          "width": 4,
+          "height": 0.72
+        },
+        "position": [
+          -12,
+          5.6,
+          0.7000000000000002
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture/Wayfinding",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_j6xsho0f",
+        "name": "Prototype Island · identity",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "PROTOTYPE ISLAND\nTry a small, bold idea",
+          "accent": "#c5a6dc",
+          "width": 4,
+          "height": 0.72
+        },
+        "position": [
+          12,
+          5.6,
+          0.7000000000000002
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture/Wayfinding",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_tmvlcrf2",
+        "name": "Skywalk · upper destinations",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "ARCHIVE ←  SKYWALK  → COMPANION\nObservatory straight ahead",
+          "accent": "#d5c196",
+          "width": 6,
+          "height": 0.72
+        },
+        "position": [
+          0,
+          8.1,
+          -7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture/Wayfinding",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_kl7bpq2a",
+        "name": "Archive · identity",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "ARCHIVE GARDEN\nResearch · Decisions · Memory",
+          "accent": "#8bc0a9",
+          "width": 4,
+          "height": 0.72
+        },
+        "position": [
+          -12,
+          8.8,
+          -13.4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture/Wayfinding",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_fot6m45r",
+        "name": "Companion · identity",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_vd4m9nh2"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "COMPANION CHAMBER\nAn open door to §wyrlz",
+          "accent": "#d5c196",
+          "width": 4,
+          "height": 0.72
+        },
+        "position": [
+          12,
+          8.8,
+          -13.4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "01 Architecture/Wayfinding",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      }
+    ]
+  }
+}
