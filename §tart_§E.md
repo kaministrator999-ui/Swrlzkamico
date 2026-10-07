@@ -44,9 +44,9 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v8.0 source authority
+## Current v8.1 source authority
 
-The governed release is **v8.0 — Embervault Atelier**, staged for the dedicated engine Space. The previously observed live baseline is v7.9; staging this source does not establish deployment success. The following current contract supersedes historical default-avatar and Den-layout checkpoints below.
+The governed release is **v8.1 — Embervault Performance & Graphics**. v8.0 Embervault Atelier was verified live by deployment run #50; v8.1 preserves that project and adds engine-level scalability and diagnostics. The following current contract supersedes historical default-avatar and Den-layout checkpoints below.
 
 ```text
 base:
@@ -89,7 +89,7 @@ patch chain:
   patches/v8_0_layer_integrity.py
   patches/v8_0_workspace_tools.py
   patches/v8_0_walkable_levels.py
-  patches/v8_0_embervault_project.py
+  patches/v8_0_embervault_project.py\n  patches/v8_1_performance_graphics.py
 
 final:
   swyrl_engine_v8_0.html
@@ -97,7 +97,7 @@ final:
   sha256 92ddfc3770f874b5f8f91fc7fad536b15961c1627146be5995936c4355805a88
 
 marker:
-  SWYRL_ENGINE_DEPLOY_MARKER: V8_0_EMBERVAULT_WORKSPACE
+  SWYRL_ENGINE_DEPLOY_MARKER: V8_1_PERFORMANCE_GRAPHICS
 ```
 
 ### Current Den and editor contract
@@ -112,7 +112,7 @@ Required editor capabilities are native reusable vault/oculus/end-wall/support a
 
 Develop through all three perspectives: inspect or extend engine source, author the scene in the native editor, then walk and use it in Play. When authoring or Play reveals a missing capability, fix the responsible engine/editor code, rebuild, and repeat the affected flow. The complete plan, asset inventory, and editor checklist are in `projects/swrlz-forge-moba/DEN_DESIGN.md`.
 
-### v8.0 release receipt contract
+\n### v8.1 performance contract\n\nGraphics & Performance exposes Auto/Low/Medium/High/Custom presets, 50–100% render scale, dynamic-shadow toggle/quality, 30/45/60/unlimited render cap, and independent Editor FPS and Play/Simulate FPS overlays with frame time. Preferences persist locally. Auto changes render resolution from sustained frame time; it does not alter project data or simulation semantics. The Play controller remains delta-time based and clamps pathological frame deltas to 50 ms.\n\n### v8.1 release receipt contract
 
 Current documentation records staged release content, not a completed production deployment. Final artifact integrity must match the source manifest, and generated JavaScript, native authoring, walking, workspace use, and Save Project/reload must pass before the final deploy button is pressed.
 
