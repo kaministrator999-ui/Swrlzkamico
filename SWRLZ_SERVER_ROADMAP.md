@@ -1,3 +1,61 @@
+## UPDATE FINISHED — 2026-10-07 — lyric body window + structural extraction v159
+
+**Outcome:** EXTRACTION ROOT CAUSE REPAIRED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### Production evidence
+- v158 correctly exercised its three-total-page source budget, but both the Tech N9ne acceptance attempt and the public-domain Auld Lang Syne control still terminated at `LYRICS_VERIFICATION_BLOCKED`.
+- The Auld Lang Syne run fetched three relevant pages with HTTP 200 and still rejected all three, proving the remaining fault was inside fetched-body extraction/verification rather than search or fallback.
+- Runtime diagnostics identify deployed source `519d62eb5426736c1112df1eca5e08b3fdf147f1` and observability revision `v158-bounded-lyrics-fallback`.
+
+### Root cause
+- stable `api/online_research.py` discarded cleaned page text after 6,000 characters;
+- the runtime-hot reasoner and HF adapter repeated a 6,000-character evidence window;
+- the strict lyric extractor recognized only exact generic headings such as `Lyrics` / `Copy Lyrics`, so subject-bearing headings such as `Auld Lang Syne Lyrics` could be missed;
+- navigation/page chrome could therefore be encountered before the actual lyric section;
+- bracketed modern markers such as `[Verse 2: Artist]` were not part of the section grammar.
+
+### v159 repair
+- stable network fetch now preserves a bounded **24,000-character** cleaned text window (`MAX_PAGE_EXTRACT_CHARS=24000`);
+- runtime-hot Online Research advances internally to `1.4.2` and routes lyrics retrieval through one initial 24K evidence page plus the existing v158 adapter-owned bounded fallback pool; ordinary web-search evidence stays at its prior smaller limit;
+- HF lyric verification uses `LYRICS_PAGE_TEXT_CHARS=24000` for direct and fallback candidates;
+- extraction now scores candidate body anchors using the requested title plus nearby lyric structure, rather than taking arbitrary early page chrome;
+- numbered verse starts and bracketed Verse/Chorus/Refrain/Bridge/Hook/Intro/Outro markers are recognized;
+- common post-song boundaries such as karaoke, related-post, share/comment sections stop extraction cleanly;
+- search snippets remain discovery-only and are **not** promoted into lyric evidence;
+- the three-total-page v158 network ceiling is unchanged.
+
+### Regression coverage
+- added `tests/test_full_lyrics_structural_extraction_v159.py`;
+- the regression puts the lyric body after more than 6,000 characters of navigation text and requires successful subject-aware extraction;
+- it also covers bracketed modern section markers using synthetic lyric text and verifies post-song chrome is excluded;
+- the canonical HF deploy gate now executes v151, v155, v157, v158, and v159 lyric regressions.
+
+### Self-repair deployment history
+- guarded run `37685481693` stopped before publication because the new workflow exposed an implementation-scoping bug: `page_extract_limit` had accidentally been referenced inside the separate provenance helper;
+- that helper was restored to its own 6K provenance excerpt bound while the widened 24K window remained limited to lyric verification;
+- corrected source advanced to `1841c730651531e11c0597c97f400b03127f8d55`.
+
+### Final deployment receipts
+- final guarded HF run `37685754138`: terminal **SUCCESS**;
+- exact selected source: `1841c730651531e11c0597c97f400b03127f8d55`;
+- lyric regression gate: v151 PASS, v155 PASS, v157 PASS, v158 PASS, **v159 PASS**;
+- native R39 verification, real R39 reconstruction, R39-vs-stock inspection, 700M smoke, fast-HF/Chat preservation guard, authorization gate, snapshot, rollback checkpoint, upload, and release capture all succeeded;
+- prior/rollback Space revision: `98cd238c78c6e2a9821fc77b4263605266e9ed4c`;
+- deployed Space revision: `26da50836e05dac45c6299f78782bc53ec175dd5`.
+
+### Versions
+- Repository Work: **1.0.89**.
+- Server Runtime: **2.3.312 / 2.3.312-hf-v159-structural-lyrics-extraction**.
+- Online Research: **1.0.10 / 1.0.10-structural-lyrics-extraction-v159**.
+- Deployment Control: **1.0.19**.
+- LALM Engine remains **2.1.155 / 2.1.155-verified-lyrics-presentation-v157**.
+
+### Remaining acceptance
+- rerun the live Auld Lang Syne control and/or the original Cold Piece of Work request;
+- success requires the live trace to reach `LYRICS_SOURCE_VERIFIED` from a fetched page rather than only proving publication.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v159 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — lyric body window + structural extraction v159
 
 **Trigger:** live v158 acceptance still ended in `LYRICS_VERIFICATION_BLOCKED` for both `Cold Piece of Work` and the public-domain `Auld Lang Syne` even though search returned relevant lyric pages and v158 correctly exercised all three bounded source attempts.
