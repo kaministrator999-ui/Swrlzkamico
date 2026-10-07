@@ -1,0 +1,128 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-muyr9adw-3306297774-1953995549",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "80d7e87cf203cb29cd1024d7b33b91c2809a0dff",
+  "persistedAtUnixMs": 1791416714703,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v162-fetch-debug-section-blocks",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 489,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791416714213,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791416714219,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791416714352,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791416714353,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791416714496,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791416714496,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791416714701,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791416714702,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791416714702,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
