@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v7.0",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_0_FRACTURE_FORGE_ASCENDANT",
-  "reason": "Deploy §E Command Deck/editor productivity upgrade and Fracture Forge Ascendant landmark, traversal, wayfinding and lighting production pass",
-  "sourceIntegritySha256": "4af05dc4d26819571c9e586703a36c5b5c7300a43611a3d2ec3d1499c917c6b7"
+  "releaseVersion": "v7.1",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_1_FRACTURE_FORGE_BREATHING_ROOM",
+  "reason": "Expand Fracture Forge dragon territories and landmark spacing; declutter the mobile Command Deck and stats HUD",
+  "sourceIntegritySha256": "35fedcc5decf0f00e4682315311470d9cc05f8c072d2c085daa40c4cacf1d053"
 }
