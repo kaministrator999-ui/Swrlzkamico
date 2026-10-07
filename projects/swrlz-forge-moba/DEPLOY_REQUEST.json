@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v6.8",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V6_8_DEN2_GROUND_SNAP",
-  "reason": "Remove Fracture Forge dragon levitation offsets and hard-snap each Den 2 dragon root to its lowest-paw support surface",
-  "sourceIntegritySha256": "98e383e3795926c5375eace3b5db22dca92b498caeaa1935e51fc2bafd489613"
+  "releaseVersion": "v7.0",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_0_FRACTURE_FORGE_ASCENDANT",
+  "reason": "Deploy §E Command Deck/editor productivity upgrade and Fracture Forge Ascendant landmark, traversal, wayfinding and lighting production pass",
+  "sourceIntegritySha256": "4af05dc4d26819571c9e586703a36c5b5c7300a43611a3d2ec3d1499c917c6b7"
 }
