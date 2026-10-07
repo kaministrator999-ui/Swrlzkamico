@@ -117,7 +117,7 @@ def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | 
     seen=set()
     for candidate in candidates:
         url=str(candidate.get("sourceUrl") or candidate.get("url") or "").strip()
-        source=str(candidate.get("sourceTitle") or candidate.get("title") or "the fetched lyrics source").strip()
+        source=str(candidate.get("sourceDisplayTitle") or candidate.get("sourceTitle") or candidate.get("title") or "the fetched lyrics source").strip()
         selected=str(candidate.get("lyricExtract") or "").strip()
         key=(url,selected[:120])
         if key in seen:
@@ -132,7 +132,7 @@ def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | 
         if scope=="first-verse":
             label="the first verse"
         elif scope=="full-lyrics":
-            label="the complete lyric set"
+            label="the full lyric text I could verify from the fetched source"
         else:
             label="the lyrics"
 
@@ -154,17 +154,20 @@ def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | 
                 f"\n\n**Additional stanza(s) present in the lyrics source:**\n\n{extra_text}"
             )
             attribution_note=(
-                f"\n\n**Attribution note:** the historical reference identifies the original text attributed "
+                f"\n\n**Attribution note:** fetched historical evidence identifies the original text attributed "
                 f"to {author} as {original_count} stanzas. The additional stanza(s) above are kept separate "
                 f"instead of being attributed to {author}."
             )
 
         attribution_source=str(verified.get("attributionSourceTitle") or "").strip()
         attribution_url=str(verified.get("attributionSourceUrl") or "").strip()
+        attribution_excerpt=str(verified.get("attributionClaimExcerpt") or "").strip()
         source_lines=f"**Lyrics source:** {source} — {url}"
         if attribution_source and attribution_url:
             source_lines+=f"\n\n**Attribution source:** {attribution_source} — {attribution_url}"
-        return f"Okay — here's {label} I could verify for **{subject}**:\n\n{body}{attribution_note}\n\n{source_lines}"
+            if attribution_excerpt:
+                source_lines+=f"\n\n**Attribution evidence:** {attribution_excerpt}"
+        return f"Okay — here's {label} for **{subject}**:\n\n{body}{attribution_note}\n\n{source_lines}"
     return None
 
 def _lyrics_verified_answer(result: dict[str,Any], model_text: str) -> tuple[str,bool]:
