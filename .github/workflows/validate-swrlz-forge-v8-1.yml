@@ -29,3 +29,4 @@ jobs:
 # retry after stylesheet anchor correction
 # retry patch syntax
 # retry normalized source
+# byte-lock pass
