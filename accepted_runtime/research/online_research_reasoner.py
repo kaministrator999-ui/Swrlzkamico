@@ -85,7 +85,6 @@ def _sufficient(rec:dict[str,Any],plan:dict[str,Any])->bool:
     if not text:return False
     requested=(" ".join([str(plan.get("requestedInformation") or ""),str(plan.get("target") or "")," ".join(plan.get("queries") or [])])).lower()
     if "lyric" in requested:
-        first_scope=bool(re.search(r"\b(?:first|opening)\s+verse\b",requested,re.I))
         full_scope=bool(re.search(
             r"\b(?:complete|full)\s+lyrics?\b|\ball\s+(?:the\s+)?(?:lyrics?|verses?)\b|"
             r"\bevery\s+verse\b|\bnot\s+just\s+the\s+first\s+verse\b|"
@@ -93,6 +92,7 @@ def _sufficient(rec:dict[str,Any],plan:dict[str,Any])->bool:
             requested,
             re.I,
         ))
+        first_scope=bool(re.search(r"\b(?:first|opening)\s+verse\b",requested,re.I)) and not full_scope
         noise=re.compile(
             r"\b(?:home|blog|download|menu|sign\s*in|log\s*in|privacy|cookies?|terms|contact|"
             r"about|share|follow|subscribe|navigation|search|app\s*store|google\s*play)\b",
