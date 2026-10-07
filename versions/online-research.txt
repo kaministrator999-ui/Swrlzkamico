@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.8
-REVISION=1.0.8-weather-continuation-correction-v127
+VERSION=1.0.9
+REVISION=1.0.9-bounded-lyrics-source-fallback-v158
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
