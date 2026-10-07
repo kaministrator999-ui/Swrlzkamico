@@ -1,0 +1,27 @@
+name: Validate §wyrl§ Engine v8.1
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/validate-swrlz-forge-v8-1.yml"]
+permissions: {contents: read}
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Rebuild and validate performance release
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/e
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          s=Path('/tmp/e/index.html').read_text();b=s.encode()
+          print('FINAL_BYTES='+str(len(b)));print('FINAL_SHA256='+hashlib.sha256(b).hexdigest())
+          for x in ['V8_1_PERFORMANCE_GRAPHICS','Graphics & Performance','Show FPS in Editor','Show FPS in Play / Simulate','PERFORMANCE_PRESETS','updateAutoPerformance','performancePixelRatio','shouldRenderFrame','dt=Math.min(Math.max(Number(dt)||0,0),0.05)']: assert x in s,x
+          assert 'V8_0_EMBERVAULT_WORKSPACE' not in s
+          start=s.index('<script type="module">')+len('<script type="module">');end=s.rindex('</script>');Path('/tmp/e.mjs').write_text(s[start:end])
+          PY
+          node --check /tmp/e.mjs
