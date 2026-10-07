@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v7.6",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_6_DESKTOP_EDITOR_POLISH",
-  "reason": "Polish desktop authoring layout: dedicated menu lane, remove duplicate Command Deck, and dock viewport shortcut/camera hints while preserving v7.5 mobile layout",
-  "sourceIntegritySha256": "409f42adc579b8da5ade1a55c9d5d09d58ef67539ff6e9f0562b119de9ea7f80"
+  "releaseVersion": "v7.7",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_7_CANONICAL_GLITCH_DEN_PROJECT",
+  "reason": "Promote the authored revision-142 120-actor Glitch Dragon Den as the default opened project and sole shipped project starter",
+  "sourceIntegritySha256": "75aef1f830dd7117c5675ac1666bdf70755c7be007c26f986c4acb169293bf25"
 }
