@@ -23,6 +23,7 @@ MAX_RESULTS_PER_QUERY=8
 MAX_EVIDENCE_CHARS=28000
 MAX_FETCH_BYTES=1_000_000
 MAX_PAGE_BYTES=700_000
+MAX_PAGE_EXTRACT_CHARS=24_000
 SEARCH_TIMEOUT_SECONDS=12.0
 PAGE_TIMEOUT_SECONDS=10.0
 USER_AGENT="SWRLZ-Research/2.0 (+hot-reasoner; stable-network-boundary)"
@@ -241,7 +242,7 @@ def _page_fetch(url:str)->dict[str,Any]:
         cleaned=html.unescape(re.sub(r"<[^>]+>"," ",cleaned))
         extract=re.sub(r"[ \t\r\f\v]+"," ",cleaned)
         extract=re.sub(r" *\n *","\n",extract)
-        extract=re.sub(r"\n{3,}","\n\n",extract).strip()[:6000]
+        extract=re.sub(r"\n{3,}","\n\n",extract).strip()[:MAX_PAGE_EXTRACT_CHARS]
         _emit_trace("PAGE_FETCH_COMPLETE",provider="web-page",url=final,status=int(status),response_bytes=len(raw),reason="Page fetched")
         return {"finalUrl":final,"status":int(status),"title":title,"extract":extract,"fetchedAt":int(time.time()*1000)}
     except Exception as exc:
