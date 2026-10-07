@@ -31,7 +31,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v162-fetch-debug-section-blocks"
+ONLINE_OBSERVABILITY_REVISION = "v163-search-admission-rescue"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -422,6 +422,7 @@ _LYRIC_SECTION_MARKER=re.compile(
 )
 _LYRIC_NUMBERED_START=re.compile(r"^\s*\d{1,2}[.)]\s+\S")
 LYRICS_MAX_PAGE_ATTEMPTS=3
+LYRICS_MAX_RESCUE_SEARCHES=2
 LYRICS_PAGE_TEXT_CHARS=24000
 
 
@@ -479,6 +480,57 @@ _LYRIC_SOURCE_BLOCKED_TITLE=re.compile(
     re.I,
 )
 _LYRIC_SUBJECT_STOP={"the","a","an","of","and","or","to","for","feat","featuring"}
+def _lyrics_search_candidate_identity(item: dict[str,Any], subject: str) -> dict[str,Any]:
+    """Subject-bound pre-fetch scoring for rescue-search results."""
+    title,artist=_lyrics_subject_parts(subject)
+    title_terms=[
+        token.casefold()
+        for token in re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",title)
+        if len(token)>=2 and token.casefold() not in _LYRIC_SUBJECT_STOP
+    ]
+    artist_terms=[
+        token.casefold()
+        for token in re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",artist)
+        if len(token)>=2 and token.casefold() not in _LYRIC_SUBJECT_STOP
+    ]
+    hay=" ".join([
+        str(item.get("title") or ""),
+        str(item.get("snippet") or ""),
+        urllib.parse.unquote(str(item.get("url") or "")),
+    ]).casefold()
+    title_hits=sum(1 for term in title_terms if term in hay)
+    artist_hits=sum(1 for term in artist_terms if term in hay)
+    title_needed=max(1,min(len(title_terms),2)) if title_terms else 0
+    allowed=bool(title_terms and title_hits>=title_needed and (not artist_terms or artist_hits>=1))
+    score=(title_hits*3)+(artist_hits*2)+(2 if "lyric" in hay else 0)
+    return {
+        "allowed":allowed,
+        "score":score,
+        "titleHits":title_hits,
+        "artistHits":artist_hits,
+        "titleNeeded":title_needed,
+    }
+
+
+def _lyrics_rescue_queries(subject: str) -> list[str]:
+    title,artist=_lyrics_subject_parts(subject)
+    if not title:
+        return []
+    queries=[]
+    if artist:
+        queries.append(f'"{title}" "{artist}" lyrics')
+        queries.append(f'"{title}" {artist} song lyrics')
+    else:
+        queries.append(f'"{title}" lyrics')
+        queries.append(f'"{title}" song lyrics')
+    out=[]
+    for query in queries:
+        q=_clean(query,500)
+        if q and q not in out:
+            out.append(q)
+    return out[:LYRICS_MAX_RESCUE_SEARCHES]
+
+
 def _lyrics_source_identity(item: dict[str,Any], subject: str) -> dict[str,Any]:
     """Verify destination identity only; this never proves or returns lyric body text."""
     title,artist=_lyrics_subject_parts(subject)
@@ -1342,6 +1394,11 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
     selected_lyric_evidence=None
     lyrics_source_attempts=[]
     lyrics_fetch_debug=[]
+    candidate_admission_debug=[
+        item for item in (bundle.get("candidateAdmissionDebug") or [])[:24]
+        if isinstance(item,dict)
+    ]
+    lyrics_rescue_search_debug=[]
     lyrics_fallback_exhausted=False
 
     if plan.get("contentMode")=="lyrics-verification":
@@ -1473,7 +1530,70 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
 
         if not valid and len(lyrics_source_attempts)<LYRICS_MAX_PAGE_ATTEMPTS:
             fetch_public=getattr(canonical_online_research,"fetch_public",None)
-            candidate_pool=bundle.get("candidatePool") if isinstance(bundle.get("candidatePool"),list) else []
+            search_public=getattr(canonical_online_research,"search_public",None)
+            candidate_pool=list(bundle.get("candidatePool") if isinstance(bundle.get("candidatePool"),list) else [])
+            if not candidate_pool and callable(search_public):
+                canonical_online_research.set_trace_sink(progress)
+                try:
+                    for rescue_query in _lyrics_rescue_queries(str(plan.get("subject") or "")):
+                        _progress(
+                            progress,
+                            "LYRICS_RESCUE_SEARCH",
+                            provider="bounded-web-search-chain-v1",
+                            activity="Trying exact-title lyrics rescue search",
+                            query=rescue_query,
+                            attempt=len(lyrics_rescue_search_debug)+1,
+                            maxAttempts=LYRICS_MAX_RESCUE_SEARCHES,
+                        )
+                        try:
+                            found=search_public(rescue_query)
+                        except Exception as exc:
+                            lyrics_rescue_search_debug.append({
+                                "query":rescue_query,
+                                "resultCount":0,
+                                "admittedCount":0,
+                                "errorType":type(exc).__name__,
+                                "candidates":[],
+                            })
+                            continue
+                        rescue_candidates=[]
+                        rescue_debug=[]
+                        for item in found[:8] if isinstance(found,list) else []:
+                            if not isinstance(item,dict):
+                                continue
+                            identity=_lyrics_search_candidate_identity(item,str(plan.get("subject") or ""))
+                            clean_url=_clean_source_url(str(item.get("url") or ""))
+                            debug_item={
+                                "title":_clean(item.get("title"),300),
+                                "url":clean_url,
+                                "source":_clean(item.get("source"),240),
+                                "rank":item.get("rank"),
+                                "allowed":bool(identity.get("allowed")),
+                                "score":int(identity.get("score") or 0),
+                                "titleHits":int(identity.get("titleHits") or 0),
+                                "artistHits":int(identity.get("artistHits") or 0),
+                                "titleNeeded":int(identity.get("titleNeeded") or 0),
+                            }
+                            rescue_debug.append(debug_item)
+                            if identity.get("allowed") and clean_url:
+                                rescue_candidates.append({
+                                    **item,
+                                    "url":clean_url,
+                                    "query":rescue_query,
+                                    "relevanceScore":int(identity.get("score") or 0),
+                                })
+                        rescue_candidates.sort(key=lambda item:(-int(item.get("relevanceScore") or 0),int(item.get("rank") or 999)))
+                        lyrics_rescue_search_debug.append({
+                            "query":rescue_query,
+                            "resultCount":len(found) if isinstance(found,list) else 0,
+                            "admittedCount":len(rescue_candidates),
+                            "candidates":rescue_debug[:8],
+                        })
+                        if rescue_candidates:
+                            candidate_pool.extend(rescue_candidates[:8])
+                            break
+                finally:
+                    canonical_online_research.clear_trace_sink()
             if callable(fetch_public):
                 canonical_online_research.set_trace_sink(progress)
                 try:
@@ -1679,6 +1799,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "verifiedLyricsSource": verified_lyrics_source,
         "lyricsSourceAttempts": lyrics_source_attempts,
         "lyricsFetchDebug": lyrics_fetch_debug[:LYRICS_MAX_PAGE_ATTEMPTS],
+        "candidateAdmissionDebug": candidate_admission_debug[:24],
+        "lyricsRescueSearchDebug": lyrics_rescue_search_debug[:LYRICS_MAX_RESCUE_SEARCHES],
         "lyricsSourceAttemptCount": len(lyrics_source_attempts),
         "lyricsMaxPageAttempts": LYRICS_MAX_PAGE_ATTEMPTS if plan.get("contentMode")=="lyrics-verification" else 0,
         "lyricsFallbackExhausted": lyrics_fallback_exhausted,
@@ -1708,6 +1830,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "researchId": bundle.get("researchId"),
         "lyricsSourceAttempts": lyrics_source_attempts,
         "lyricsFetchDebug": lyrics_fetch_debug[:LYRICS_MAX_PAGE_ATTEMPTS],
+        "candidateAdmissionDebug": candidate_admission_debug[:24],
+        "lyricsRescueSearchDebug": lyrics_rescue_search_debug[:LYRICS_MAX_RESCUE_SEARCHES],
         "lyricsSourceAttemptCount": len(lyrics_source_attempts),
         "lyricsMaxPageAttempts": LYRICS_MAX_PAGE_ATTEMPTS if plan.get("contentMode")=="lyrics-verification" else 0,
         "lyricsFallbackExhausted": lyrics_fallback_exhausted,
@@ -1793,6 +1917,61 @@ def execute_online_request(
     return result
 
 
+def copy_candidate_admission_debug(value: Any) -> list[dict[str,Any]]:
+    out=[]
+    for item in value if isinstance(value,list) else []:
+        if not isinstance(item,dict):
+            continue
+        out.append({
+            "query":_clean(item.get("query"),500),
+            "title":_clean(item.get("title"),300),
+            "url":_clean_source_url(str(item.get("url") or "")),
+            "source":_clean(item.get("source"),240),
+            "rank":item.get("rank"),
+            "allowed":bool(item.get("allowed")),
+            "reason":_clean(item.get("reason"),100),
+            "neededHits":int(item.get("neededHits") or 0),
+            "matchedTerms":[_clean(x,80) for x in (item.get("matchedTerms") or [])[:12]],
+            "coreTerms":[_clean(x,80) for x in (item.get("coreTerms") or [])[:12]],
+            "snippetPreview":str(item.get("snippetPreview") or "")[:280],
+        })
+        if len(out)>=24:
+            break
+    return out
+
+
+def copy_lyrics_rescue_search_debug(value: Any) -> list[dict[str,Any]]:
+    out=[]
+    for item in value if isinstance(value,list) else []:
+        if not isinstance(item,dict):
+            continue
+        candidates=[]
+        for candidate in (item.get("candidates") or [])[:8]:
+            if not isinstance(candidate,dict):
+                continue
+            candidates.append({
+                "title":_clean(candidate.get("title"),300),
+                "url":_clean_source_url(str(candidate.get("url") or "")),
+                "source":_clean(candidate.get("source"),240),
+                "rank":candidate.get("rank"),
+                "allowed":bool(candidate.get("allowed")),
+                "score":int(candidate.get("score") or 0),
+                "titleHits":int(candidate.get("titleHits") or 0),
+                "artistHits":int(candidate.get("artistHits") or 0),
+                "titleNeeded":int(candidate.get("titleNeeded") or 0),
+            })
+        out.append({
+            "query":_clean(item.get("query"),500),
+            "resultCount":int(item.get("resultCount") or 0),
+            "admittedCount":int(item.get("admittedCount") or 0),
+            "errorType":_clean(item.get("errorType"),100),
+            "candidates":candidates,
+        })
+        if len(out)>=LYRICS_MAX_RESCUE_SEARCHES:
+            break
+    return out
+
+
 def copy_lyrics_debug(value: Any) -> list[dict[str,Any]]:
     """Project only bounded fetch-debug fields into Chat/export telemetry."""
     out=[]
@@ -1857,6 +2036,8 @@ def online_camera(result: dict[str, Any] | None) -> dict[str, Any] | None:
         "elapsedMs": result.get("elapsedMs"),
         "lyricsSourceAttemptCount": int(result.get("lyricsSourceAttemptCount") or 0),
         "lyricsFetchDebug": copy_lyrics_debug(result.get("lyricsFetchDebug")),
+        "candidateAdmissionDebug": copy_candidate_admission_debug(result.get("candidateAdmissionDebug")),
+        "lyricsRescueSearchDebug": copy_lyrics_rescue_search_debug(result.get("lyricsRescueSearchDebug")),
         "lyricsMaxPageAttempts": int(result.get("lyricsMaxPageAttempts") or 0),
         "lyricsFallbackExhausted": bool(result.get("lyricsFallbackExhausted")),
         "rawPromptStored": False,
