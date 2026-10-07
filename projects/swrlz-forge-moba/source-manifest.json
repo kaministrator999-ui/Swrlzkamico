@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v7.5",
+  "name": "§wyrl§ Engine v7.6",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v7_5.html",
+  "finalArtifact": "swyrl_engine_v7_6.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -40,8 +40,7 @@
     "patches/v7_2_wisp_locomotion_repair.py",
     "patches/v7_3_engine_health.py",
     "patches/v7_4_editor_workspaces.py",
-    "patches/v7_5_mobile_editor_chrome.py"
-  ],
-  "finalBytes": 195495,
-  "finalSha256": "0de92bd93af0e4a7d7b9ae22270ee964168e23cf049a11f780cd8563c1ce21e6"
+    "patches/v7_5_mobile_editor_chrome.py",
+    "patches/v7_6_desktop_editor_polish.py"
+  ]
 }
