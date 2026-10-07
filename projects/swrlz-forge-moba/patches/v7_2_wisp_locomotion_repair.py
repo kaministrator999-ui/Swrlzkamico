@@ -15,29 +15,22 @@ def apply(html):
       "editorLog('§wyrl§ Engine v7.1 initialized · expanded Fracture Forge · mobile breathing room','ok')":"editorLog('§wyrl§ Engine v7.2 initialized · Wisp horizontal locomotion repaired','ok')"
     }.items(): s=_once(s,a,b)
 
-    # The legacy collision resolver can leave the candidate at the starting X/Z in a
-    # dense den. For the flying Wisp, attempt full move, then independent X and Z
-    # slides; if the legacy resolver rejects every candidate, permit the requested
-    # hover translation rather than pinning the avatar forever.
-    old="""  const speed=h.userData.moveSpeed||6;
-  const next=h.position.clone().add(move.multiplyScalar(speed*dt));
-  resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;"""
-    new="""  const speed=h.userData.moveSpeed||6;
-  const delta=move.multiplyScalar(speed*dt),start=h.position.clone(),desired=start.clone().add(delta);
-  if(h.userData.hoverFlight){
-    const moved=(p)=>Math.hypot(p.x-start.x,p.z-start.z)>.0001;
-    const full=desired.clone();resolveHeroCollision(full,h.userData.colliderRadius||.46);
-    if(moved(full)){h.position.x=full.x;h.position.z=full.z;}
+    # Patch the current controller around its collision call, independent of the
+    # historical whitespace/body form.
+    needle="resolveHeroCollision(next,0.55);h.position.x=next.x;h.position.z=next.z;"
+    if needle not in s: raise RuntimeError("v7.2 current Wisp collision statement missing")
+    repl="""if(h.userData.hoverFlight){
+    const start=h.position.clone(),desired=next.clone(),moved=p=>Math.hypot(p.x-start.x,p.z-start.z)>.0001;
+    resolveHeroCollision(next,h.userData.colliderRadius||.46);
+    if(moved(next)){h.position.x=next.x;h.position.z=next.z;}
     else{
       const sx=start.clone();sx.x=desired.x;resolveHeroCollision(sx,h.userData.colliderRadius||.46);
       const sz=start.clone();sz.z=desired.z;resolveHeroCollision(sz,h.userData.colliderRadius||.46);
       if(moved(sx)||moved(sz)){h.position.x=moved(sx)?sx.x:start.x;h.position.z=moved(sz)?sz.z:start.z;}
       else{h.position.x=desired.x;h.position.z=desired.z;}
     }
-  }else{
-    const next=desired.clone();resolveHeroCollision(next,.55);h.position.x=next.x;h.position.z=next.z;
-  }"""
-    s=_once(s,old,new)
+  }else{resolveHeroCollision(next,.55);h.position.x=next.x;h.position.z=next.z;}"""
+    s=_once(s,needle,repl)
 
     # Guard against a stale stick capture when entering Play on mobile.
     marker="resetStick($('moveStick'),fpMove);resetStick($('lookStick'),fpLook);"
