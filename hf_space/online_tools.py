@@ -947,9 +947,60 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             "rank": item.get("rank"),
             "fetchedAt": item.get("fetchedAt"),
         })
+    provenance_evidence=[]
+    attribution_query=""
+    requested_scope = str(plan.get("requestedScope") or _lyrics_requested_scope(query)) if plan.get("contentMode")=="lyrics-verification" else ""
+    if plan.get("contentMode")=="lyrics-verification" and requested_scope=="full-lyrics":
+        attribution_query=_lyrics_attribution_query(str(plan.get("subject") or ""))
+        if attribution_query:
+            attribution_payload={
+                "requestId": _clean(plan.get("requestId"),160)+":attribution",
+                "prompt": attribution_query,
+                "researchPlan": {
+                    "intent":"web-search",
+                    "target":attribution_query,
+                    "requestedInformation":attribution_query,
+                    "targetConfidence":0.9,
+                    "queries":[attribution_query],
+                    "constraints":["bounded-public-web-evidence","lyrics-author-attribution-check"],
+                },
+                "researchQueries":[attribution_query],
+            }
+            canonical_online_research.set_trace_sink(progress)
+            try:
+                attribution_bundle=run_online_research(attribution_payload)
+            finally:
+                canonical_online_research.clear_trace_sink()
+            for item in (attribution_bundle.get("evidence") or [])[:6]:
+                if not isinstance(item,dict):
+                    continue
+                provenance_evidence.append({
+                    "title":_clean(item.get("title"),300),
+                    "url":_clean(item.get("finalUrl") or item.get("url"),2000),
+                    "snippet":_clean(item.get("snippet") or item.get("extract"),1200),
+                    "pageExtract":str(item.get("extract") or "").strip()[:6000],
+                    "pageFetched":bool(item.get("fetchedAt") and item.get("extract")),
+                    "source":_clean(item.get("source"),240),
+                    "fetchedAt":item.get("fetchedAt"),
+                })
+
+    original_stanza_count=None
+    attribution_source_title=""
+    attribution_source_url=""
+    for item in provenance_evidence:
+        count=_original_stanza_count("\n".join([
+            str(item.get("title") or ""),
+            str(item.get("snippet") or ""),
+            str(item.get("pageExtract") or ""),
+        ]))
+        if count:
+            original_stanza_count=count
+            attribution_source_title=str(item.get("title") or item.get("source") or "Historical attribution source")
+            attribution_source_url=str(item.get("url") or "")
+            break
+
     verified_lyrics = None
     if plan.get("contentMode")=="lyrics-verification":
-        requested_scope = str(plan.get("requestedScope") or _lyrics_requested_scope(query))
         fetched = [x for x in evidence if x.get("pageFetched") is True and str(x.get("pageExtract") or "").strip()]
         # A fetched page is not automatically lyric evidence. Search-result titles, menus,
         # and generic page text must fail closed so research can continue to the next page.
@@ -977,6 +1028,9 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 "lyricExtract": selected_extract,
                 "pageExtract": selected.get("pageExtract"),
                 "fetchedAt": selected.get("fetchedAt"),
+                "originalStanzaCount": original_stanza_count,
+                "attributionSourceTitle": attribution_source_title,
+                "attributionSourceUrl": attribution_source_url,
                 "candidateSources": [
                     {
                         "title":item.get("title"),
@@ -1007,6 +1061,10 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         for item in evidence
         if item["url"]
     ]
+    for item in provenance_evidence:
+        url=str(item.get("url") or "")
+        if url and not any(str(source.get("url") or "")==url for source in sources):
+            sources.append({"title":item.get("title") or item.get("source") or "Attribution source","url":url,"provider":item.get("source")})
     context = {
         "contractId": "swrlz-online-evidence-hf-v1",
         "trust": "UNTRUSTED_EXTERNAL_EVIDENCE",
@@ -1015,6 +1073,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "query": query,
         "evidence": evidence[:6],
         "errors": (bundle.get("errors") or [])[:4],
+        "provenanceEvidence": provenance_evidence[:4],
         "verifiedLyrics": verified_lyrics,
         "epistemicPolicy": (
             "LYRICS VERIFICATION: Quote only lyric text explicitly present in evidence with pageFetched=true. "
