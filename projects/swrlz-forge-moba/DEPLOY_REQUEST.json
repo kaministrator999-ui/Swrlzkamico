@@ -2,8 +2,8 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v7.5",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_5_MOBILE_EDITOR_CHROME",
-  "reason": "Consolidate mobile editor navigation into one compact §E workspace trigger and remove overlapping desktop menu/Command Deck chrome from the phone viewport",
-  "sourceIntegritySha256": "0de92bd93af0e4a7d7b9ae22270ee964168e23cf049a11f780cd8563c1ce21e6"
+  "releaseVersion": "v7.6",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V7_6_DESKTOP_EDITOR_POLISH",
+  "reason": "Polish desktop authoring layout: dedicated menu lane, remove duplicate Command Deck, and dock viewport shortcut/camera hints while preserving v7.5 mobile layout",
+  "sourceIntegritySha256": "409f42adc579b8da5ade1a55c9d5d09d58ef67539ff6e9f0562b119de9ea7f80"
 }
