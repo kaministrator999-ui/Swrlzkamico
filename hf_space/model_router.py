@@ -107,40 +107,38 @@ def _online_evidence_fallback_text(result: dict[str,Any]) -> str:
 
 
 def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | None:
-    """Build a server-owned lyrics response from frozen fetched evidence; never ask the model to recreate lyric facts."""
+    """Select requested lyric evidence deterministically; never ask the model to recreate facts."""
     context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
     verified=context.get("verifiedLyrics") if isinstance(context.get("verifiedLyrics"),dict) else None
     if not verified:
         return None
-    source=str(verified.get("sourceTitle") or "the fetched lyrics source").strip()
-    url=str(verified.get("sourceUrl") or "").strip()
-    extract=str(verified.get("pageExtract") or "").strip()
     scope=str(verified.get("requestedScope") or "lyrics")
-    if not extract or not url:
-        return None
-    # Keep the factual payload byte-derived from the fetched page. For first-verse requests,
-    # select the first non-empty stanza when the page extract preserves stanza boundaries.
-    payload=extract
-    if scope=="first-verse":
-        # Prefer explicit Verse 1 boundaries from the fetched page. Fall back to the first
-        # lyric-sized stanza only when structural paragraph breaks survived retrieval.
-        explicit=re.search(r"(?is)(?:^|\n)\s*(?:verse\s*1|verse\s*one)\s*[:.\-]?\s*\n?(.*?)(?=\n\s*(?:verse\s*2|verse\s*two|chorus|refrain|bridge)\b|\Z)",extract)
-        if explicit:
-            payload=explicit.group(1).strip()
-        else:
-            chunks=[x.strip() for x in re.split(r"\n\s*\n+",extract) if x.strip()]
-            candidates=[x for x in chunks if 2 <= len([ln for ln in x.splitlines() if ln.strip()]) <= 8 and len(x) <= 900]
-            if candidates:
-                payload=candidates[0]
+    candidates=[verified]+[x for x in (verified.get("candidateSources") or []) if isinstance(x,dict)]
+    seen=set()
+    for candidate in candidates:
+        url=str(candidate.get("sourceUrl") or candidate.get("url") or "").strip()
+        source=str(candidate.get("sourceTitle") or candidate.get("title") or "the fetched lyrics source").strip()
+        extract=str(candidate.get("pageExtract") or "").strip()
+        key=(url,extract[:120])
+        if key in seen: continue
+        seen.add(key)
+        if not extract or not url: continue
+        selected=extract
+        if scope=="first-verse":
+            explicit=re.search(r"(?is)(?:^|\n)\s*(?:verse\s*1|verse\s*one)\s*[:.\-]?\s*\n?(.*?)(?=\n\s*(?:verse\s*2|verse\s*two|chorus|refrain|bridge)\b|\Z)",extract)
+            if explicit:
+                selected=explicit.group(1).strip()
             else:
-                return None
-    # Bound output to retrieved text; never continue beyond evidence.
-    payload=payload[:2400].strip()
-    if not payload:
-        return None
-    song_query=str(context.get("query") or result.get("query") or "the song").strip()
-    label="the first verse" if scope=="first-verse" else "the lyrics"
-    return f"Okay — here's {label} I could verify for **{song_query}**:\n\n{payload}\n\n**Source:** {source} — {url}"
+                chunks=[x.strip() for x in re.split(r"\n\s*\n+",extract) if x.strip()]
+                lyricish=[x for x in chunks if 2<=len([ln for ln in x.splitlines() if ln.strip()])<=8 and len(x)<=900 and not re.search(r"(?i)privacy|cookie|sign in|navigation|copyright|terms",x)]
+                if not lyricish: continue
+                selected=lyricish[0]
+        selected=selected[:2400].strip()
+        if not selected: continue
+        song_query=str(context.get("query") or result.get("query") or "the song").strip()
+        label="the first verse" if scope=="first-verse" else "the lyrics"
+        return f"Okay — here's {label} I could verify for **{song_query}**:\n\n{selected}\n\n**Source:** {source} — {url}"
+    return None
 
 
 def _lyrics_verified_answer(result: dict[str,Any], model_text: str) -> tuple[str,bool]:
