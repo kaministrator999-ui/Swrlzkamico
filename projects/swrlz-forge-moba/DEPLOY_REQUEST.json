@@ -2,8 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v8.2",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_2_BOOTSTRAP_REPAIR",
-  "reason": "Repair v8.1 startup regression that aborted canonical level hydration before actors loaded; preserve performance controls and restore playable Embervault level",
-  "sourceIntegritySha256": "d7dc50a0697eb9bf5286131ff6dcaaae4fda7f3db7a3ecede90e8e1b0ef38935"
+  "releaseVersion": "v8.3",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_3_ZONES_STARFORGE",
+  "reason": "Publish safe named zone travel, refined Embervault Atelier, and native Starforge Observatory after authoring, walking, menu, persistence, and exact artifact validation passed.",
+  "sourceCommit": "9c357e8adac2a1728842405dbb9d4c2fc6b806fd",
+  "sourceIntegritySha256": "ca4d43e2e560aee39a0fff48b07885d180d96dc64cbeb5c5bd00bdf23490d548"
 }
