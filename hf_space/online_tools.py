@@ -30,7 +30,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v125-trace-chat-status"
+ONLINE_OBSERVABILITY_REVISION = "v158-bounded-lyrics-fallback"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -388,6 +388,7 @@ _LYRIC_SECTION_MARKER=re.compile(
     r"^(?:verse\s*(?:\d+|one|two|three|four|five|six|seven|eight)|chorus|refrain|bridge)\b",
     re.I,
 )
+LYRICS_MAX_PAGE_ATTEMPTS=3
 
 
 def _lyrics_line_is_content(line: str) -> bool:
@@ -1149,14 +1150,50 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
     provenance_fetch_count=0
     verified_lyrics = None
     selected_lyric_evidence=None
+    lyrics_source_attempts=[]
+    lyrics_fallback_exhausted=False
 
     if plan.get("contentMode")=="lyrics-verification":
         fetched = [x for x in evidence if x.get("pageFetched") is True and str(x.get("pageExtract") or "").strip()]
         valid=[]
-        for item in fetched:
+        seen_attempt_urls=set()
+
+        def evaluate_lyrics_candidate(item: dict[str,Any], origin: str) -> bool:
+            clean_url=_clean_source_url(str(item.get("url") or item.get("finalUrl") or ""))
+            if not clean_url or clean_url in seen_attempt_urls or len(lyrics_source_attempts)>=LYRICS_MAX_PAGE_ATTEMPTS:
+                return False
+            seen_attempt_urls.add(clean_url)
+            attempt_number=len(lyrics_source_attempts)+1
+            _progress(
+                progress,
+                "LYRICS_SOURCE_VERIFICATION",
+                provider="lyrics-verifier",
+                url=clean_url,
+                activity="Checking fetched lyrics candidate",
+                attempt=attempt_number,
+                maxAttempts=LYRICS_MAX_PAGE_ATTEMPTS,
+                origin=origin,
+            )
             lyric_extract=_lyrics_extract_candidate(str(item.get("pageExtract") or ""),requested_scope)
+            attempt={
+                "attempt":attempt_number,
+                "url":clean_url,
+                "title":_clean(item.get("title"),300),
+                "origin":origin,
+                "outcome":"VERIFIED" if lyric_extract else "REJECTED",
+            }
+            lyrics_source_attempts.append(attempt)
             if not lyric_extract:
-                continue
+                _progress(
+                    progress,
+                    "LYRICS_SOURCE_REJECTED",
+                    provider="lyrics-verifier",
+                    url=clean_url,
+                    activity="Lyrics candidate did not satisfy verification",
+                    attempt=attempt_number,
+                    maxAttempts=LYRICS_MAX_PAGE_ATTEMPTS,
+                )
+                return False
             line_count=len([ln for ln in lyric_extract.splitlines() if ln.strip()])
             stanza_count=len([x for x in re.split(r"\n\s*\n+",lyric_extract) if x.strip()])
             score=line_count+(stanza_count*4)
@@ -1165,7 +1202,94 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             if requested_scope=="full-lyrics" and re.search(r"(?i)\b(?:all|complete|full)\b",str(item.get("title") or "")):
                 score+=4
             valid.append((score,item,lyric_extract))
+            _progress(
+                progress,
+                "LYRICS_SOURCE_VERIFIED",
+                provider="lyrics-verifier",
+                url=clean_url,
+                activity="Lyrics candidate verified",
+                attempt=attempt_number,
+                maxAttempts=LYRICS_MAX_PAGE_ATTEMPTS,
+            )
+            return True
+
+        for item in fetched:
+            if evaluate_lyrics_candidate(item,"research-evidence"):
+                break
+            if len(lyrics_source_attempts)>=LYRICS_MAX_PAGE_ATTEMPTS:
+                break
+
+        if not valid and len(lyrics_source_attempts)<LYRICS_MAX_PAGE_ATTEMPTS:
+            fetch_public=getattr(canonical_online_research,"fetch_public",None)
+            candidate_pool=bundle.get("candidatePool") if isinstance(bundle.get("candidatePool"),list) else []
+            if callable(fetch_public):
+                canonical_online_research.set_trace_sink(progress)
+                try:
+                    for candidate in candidate_pool:
+                        if not isinstance(candidate,dict) or len(lyrics_source_attempts)>=LYRICS_MAX_PAGE_ATTEMPTS:
+                            break
+                        clean_url=_clean_source_url(str(candidate.get("url") or ""))
+                        if not clean_url or clean_url in seen_attempt_urls:
+                            continue
+                        seen_attempt_urls.add(clean_url)
+                        attempt_number=len(lyrics_source_attempts)+1
+                        _progress(
+                            progress,
+                            "LYRICS_FALLBACK_FETCH",
+                            provider="web-page",
+                            url=clean_url,
+                            activity="Trying alternate lyrics source",
+                            attempt=attempt_number,
+                            maxAttempts=LYRICS_MAX_PAGE_ATTEMPTS,
+                        )
+                        try:
+                            page=fetch_public(clean_url)
+                        except Exception as exc:
+                            lyrics_source_attempts.append({
+                                "attempt":attempt_number,
+                                "url":clean_url,
+                                "title":_clean(candidate.get("title"),300),
+                                "origin":"fallback-candidate",
+                                "outcome":"FETCH_ERROR",
+                                "errorType":type(exc).__name__,
+                            })
+                            _progress(
+                                progress,
+                                "LYRICS_SOURCE_REJECTED",
+                                provider="web-page",
+                                url=clean_url,
+                                activity="Alternate lyrics source fetch failed",
+                                attempt=attempt_number,
+                                maxAttempts=LYRICS_MAX_PAGE_ATTEMPTS,
+                                errorType=type(exc).__name__,
+                            )
+                            continue
+                        final_url=_clean_source_url(str(page.get("finalUrl") or clean_url))
+                        item={
+                            "evidenceId":f"lf{attempt_number}",
+                            "title":_clean(page.get("title") or candidate.get("title"),300),
+                            "url":final_url,
+                            "snippet":_clean(candidate.get("snippet"),1000),
+                            "searchSnippet":_clean(candidate.get("snippet"),1000),
+                            "pageExtract":str(page.get("extract") or "").strip()[:6000],
+                            "pageFetched":bool(page.get("extract")),
+                            "fetchStatus":page.get("status") if isinstance(page.get("status"),int) else None,
+                            "source":_clean(candidate.get("source") or urllib.parse.urlsplit(final_url).netloc,240),
+                            "query":_clean(candidate.get("query") or query,500),
+                            "rank":candidate.get("rank"),
+                            "fetchedAt":page.get("fetchedAt"),
+                        }
+                        evidence.append(item)
+                        # The candidate URL already occupies the dedupe set. Evaluate
+                        # the fetched final URL as this same bounded attempt.
+                        seen_attempt_urls.discard(clean_url)
+                        if evaluate_lyrics_candidate(item,"fallback-candidate"):
+                            break
+                finally:
+                    canonical_online_research.clear_trace_sink()
+
         valid.sort(key=lambda row:row[0],reverse=True)
+        lyrics_fallback_exhausted=not bool(valid)
 
         if valid:
             _,selected,selected_extract=valid[0]
@@ -1292,6 +1416,10 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "provenanceQueries": provenance_queries,
         "provenanceFetchCount": provenance_fetch_count,
         "verifiedLyrics": verified_lyrics,
+        "lyricsSourceAttempts": lyrics_source_attempts,
+        "lyricsSourceAttemptCount": len(lyrics_source_attempts),
+        "lyricsMaxPageAttempts": LYRICS_MAX_PAGE_ATTEMPTS if plan.get("contentMode")=="lyrics-verification" else 0,
+        "lyricsFallbackExhausted": lyrics_fallback_exhausted,
         "epistemicPolicy": (
             "LYRICS VERIFICATION: Quote only lyric text explicitly present in evidence with pageFetched=true. "
             "Search snippets are discovery metadata and never prove a direct extraction. Never reconstruct, "
@@ -1316,6 +1444,10 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "modelContext": context,
         "resultCount": len(evidence),
         "researchId": bundle.get("researchId"),
+        "lyricsSourceAttempts": lyrics_source_attempts,
+        "lyricsSourceAttemptCount": len(lyrics_source_attempts),
+        "lyricsMaxPageAttempts": LYRICS_MAX_PAGE_ATTEMPTS if plan.get("contentMode")=="lyrics-verification" else 0,
+        "lyricsFallbackExhausted": lyrics_fallback_exhausted,
     }
 
 
@@ -1415,6 +1547,9 @@ def online_camera(result: dict[str, Any] | None) -> dict[str, Any] | None:
         "locationRequired": bool(plan.get("locationRequired")),
         "usedExplicitClientLocation": bool(plan.get("clientLocation")),
         "elapsedMs": result.get("elapsedMs"),
+        "lyricsSourceAttemptCount": int(result.get("lyricsSourceAttemptCount") or 0),
+        "lyricsMaxPageAttempts": int(result.get("lyricsMaxPageAttempts") or 0),
+        "lyricsFallbackExhausted": bool(result.get("lyricsFallbackExhausted")),
         "rawPromptStored": False,
     }
 
