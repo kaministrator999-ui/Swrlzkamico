@@ -225,7 +225,7 @@ def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->di
                     rec["fetchError"]=f"{type(exc).__name__}:{str(exc)[:160]}"; _camera(request_id,research_id,"PAGE_FETCH_FAILED",start,evidenceId=eid,url=url,durationMs=_elapsed(fstart),errorType=type(exc).__name__)
             evidence.append(rec)
             if sufficient:break
-        if sufficient or len(evidence)>=8:break
+        if sufficient or len(evidence)>=max_evidence_items:break
     admitted_chars=sum(len(str(x.get("title") or ""))+len(str(x.get("snippet") or ""))+len(str(x.get("extract") or "")) for x in evidence)
     candidate_pool=[
         {
