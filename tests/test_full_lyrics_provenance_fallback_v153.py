@@ -49,55 +49,60 @@ Than when we'd first begun.
 """
 
 calls=[]
+searches=[]
+fetches=[]
 original=online_tools.run_online_research
+original_search=online_tools.canonical_online_research.search_public
+original_fetch=online_tools.canonical_online_research.fetch_public
+
 def fake_research(payload):
     query=str(payload.get("prompt") or "")
     calls.append(query)
-    if query==plan["query"]:
-        return {
-            "provider":"test","researchId":"lyrics","errors":[],
-            "evidence":[{
-                "evidenceId":"e1","title":"Amazing Grace Lyrics - All Verses by John Newton",
-                "url":"https://lyrics.example/amazing-grace","finalUrl":"https://lyrics.example/amazing-grace",
-                "snippet":"All verses","extract":page,"source":"lyrics.example",
-                "query":query,"rank":1,"status":200,"fetchedAt":1,
-            }],
-        }
-    if query.endswith("original text stanza history authorship"):
-        return {
-            "provider":"test","researchId":"attrib-inconclusive","errors":[],
-            "evidence":[{
-                "title":"Amazing Grace history",
-                "url":"https://history.example/general","finalUrl":"https://history.example/general",
-                "snippet":"John Newton wrote Amazing Grace and it appeared in Olney Hymns.",
-                "extract":"A historical overview without a stanza count.",
-                "source":"history.example","query":query,"rank":1,"status":200,"fetchedAt":2,
-            }],
-        }
-    if "published in stanzas original hymn text" in query:
-        return {
-            "provider":"test","researchId":"attrib-fallback","errors":[],
-            "evidence":[{
-                "title":"Amazing grace! (how sweet the sound)",
-                "url":"https://hymnary.example/amazing-grace","finalUrl":"https://hymnary.example/amazing-grace",
-                "snippet":"Amazing Grace was published in six stanzas.",
-                "extract":"Amazing Grace was published in six stanzas. A later anonymous stanza is often joined to Newton's text.",
-                "source":"hymnary.example","query":query,"rank":1,"status":200,"fetchedAt":3,
-            }],
-        }
-    return {"provider":"test","researchId":"empty","errors":[],"evidence":[]}
+    return {
+        "provider":"test","researchId":"lyrics","errors":[],
+        "evidence":[{
+            "evidenceId":"e1","title":"Amazing Grace Lyrics - All Verses by John Newton",
+            "url":"https://lyrics.example/amazing-grace","finalUrl":"https://lyrics.example/amazing-grace",
+            "snippet":"All verses","extract":page,"source":"lyrics.example",
+            "query":query,"rank":1,"status":200,"fetchedAt":1,
+        }],
+    }
+
+def fake_search(query):
+    searches.append(query)
+    return [{
+        "title":"Amazing grace! (how sweet the sound)",
+        "url":"https://history.example/amazing-grace?utm_source=test",
+        "snippet":"John Newton original hymn text, published in six stanzas; later stanza history.",
+        "source":"history.example","query":query,"rank":1,"fetched_at":2,
+    }]
+
+def fake_fetch(url):
+    fetches.append(url)
+    return {
+        "title":"Amazing grace! (how sweet the sound)",
+        "finalUrl":"https://history.example/amazing-grace?utm_source=ignored",
+        "status":200,"fetchedAt":3,
+        "extract":"Amazing Grace was published in six stanzas. The later stanza is not part of Newton's original text.",
+    }
 
 try:
     online_tools.run_online_research=fake_research
+    online_tools.canonical_online_research.search_public=fake_search
+    online_tools.canonical_online_research.fetch_public=fake_fetch
     p=dict(plan);p["requestId"]="v153"
     result=online_tools._search_bundle(p)
 finally:
     online_tools.run_online_research=original
+    online_tools.canonical_online_research.search_public=original_search
+    online_tools.canonical_online_research.fetch_public=original_fetch
 
 verified=result["modelContext"]["verifiedLyrics"]
 assert verified["originalStanzaCount"]==6,verified
-assert verified["attributionSourceUrl"]=="https://hymnary.example/amazing-grace",verified
-assert any("published in stanzas original hymn text" in q for q in calls),calls
+assert verified["attributionSourceUrl"]=="https://history.example/amazing-grace",verified
+assert len(calls)==1,calls
+assert len(searches)>=1,searches
+assert len(fetches)==1,fetches
 
 rendered=model_router._lyrics_retrieval_payload(result,PROMPT)
 assert "**Original attributed text (6 stanzas):**" in rendered,rendered
