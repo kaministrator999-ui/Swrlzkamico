@@ -1,3 +1,24 @@
+## UPDATE STARTED — 2026-10-07 — search admission diagnostics + bounded lyrics rescue v163
+
+**Trigger:** v162 live acceptance export `swrlz-dragon-chat (13).json` shows provider-level Bing search returned 8 results but the hot reasoner admitted 0 candidates, causing no page fetches, `lyricsSourceAttemptCount=0`, and an empty `lyricsFetchDebug`.
+
+**Observed boundary:**
+- DuckDuckGo HTML: HTTP 202, 0 usable results.
+- DuckDuckGo Lite: HTTP 202, 0 usable results.
+- Bing HTML: HTTP 200, 8 provider results.
+- reasoner output: 0 admitted evidence/candidates.
+- no fetch occurred, so v162 fetched-body diagnostics correctly remained empty.
+
+**Repair plan:**
+1. instrument the hot reasoner with bounded per-result candidate-admission diagnostics so an 8→0 collapse records titles/URLs, matched subject terms, required hit count, and explicit rejection reason;
+2. expose those diagnostics through Online Camera and Dragon Chat JSON;
+3. when a lyrics lookup has zero admissible candidates, run at most two exact-title/artist rescue searches using the existing canonical public search capability;
+4. keep page fetching capped at the existing 3 total lyric page attempts;
+5. rescue search may discover/verify a matching source, but it does not weaken body verification or reconstruct missing text;
+6. add regressions for candidate-rejection visibility and bounded exact-query rescue behavior.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — fetched-content diagnostics + section-block extraction v162
 
 **Outcome:** FETCHED-CONTENT OBSERVABILITY ADDED + SECTION-BLOCK FALSE REJECTION REPAIRED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
