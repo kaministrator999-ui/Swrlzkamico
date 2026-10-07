@@ -100,23 +100,28 @@ def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->di
     _camera(request_id,research_id,"RESEARCH_TARGET_RESOLVED",start,intent=plan["intent"],target=plan["target"],requestedInformation=plan["requestedInformation"],targetConfidence=plan["targetConfidence"],fallbackExactPrompt=plan["fallbackExactPrompt"])
     _camera(request_id,research_id,"QUERY_PLAN_READY",start,queries=plan["queries"],constraints=plan["constraints"],termCount=len(terms))
     search=capabilities["search"]; fetch=capabilities.get("fetch")
-    candidates=[]; errors=[]; seen=set(); inspected=0; fetched=0; inspected_chars=0
+    candidates=[]; errors=[]; seen=set(); inspected=0; fetched=0; inspected_chars=0; evidence=[]; sufficient=False; queries_executed=0
+    # Search and consume candidates query-by-query. Once a fetched page satisfies the
+    # requested information, stop before issuing another search query.
     for qi,query in enumerate(plan["queries"][:4]):
+        queries_executed+=1
         qstart=time.perf_counter(); _camera(request_id,research_id,"SEARCH_STARTED",start,query=query,queryIndex=qi,provider=capabilities.get("provider","unknown"))
         try: found=search(query)
         except Exception as exc:
             errors.append({"query":query,"error":f"{type(exc).__name__}:{str(exc)[:160]}"}); _camera(request_id,research_id,"SEARCH_FAILED",start,query=query,durationMs=_elapsed(qstart),errorType=type(exc).__name__); continue
         inspected+=len(found); inspected_chars+=sum(len(str(x.get("title") or ""))+len(str(x.get("snippet") or "")) for x in found if isinstance(x,dict))
         _camera(request_id,research_id,"SEARCH_COMPLETE",start,query=query,durationMs=_elapsed(qstart),resultCount=len(found))
+        query_candidates=[]
         for item in found:
             if not isinstance(item,dict):continue
             url=_clean(item.get("url"),2000)
             if not url or url in seen:continue
             seen.add(url); rec={**item,"query":query,"relevanceScore":_score(item,terms)}
-            rec["snippet"]=_passage(rec.get("snippet"),terms,700); candidates.append(rec)
-    candidates.sort(key=lambda x:(-int(x.get("relevanceScore") or 0),int(x.get("rank") or 999)))
-    evidence=[]; sufficient=False
-    for rec in candidates[:8]:
+            rec["snippet"]=_passage(rec.get("snippet"),terms,700); query_candidates.append(rec)
+        query_candidates.sort(key=lambda x:(-int(x.get("relevanceScore") or 0),int(x.get("rank") or 999)))
+        candidates.extend(query_candidates)
+        for rec in query_candidates:
+            if len(evidence)>=8:break
         eid=f"e{len(evidence)+1}"; rec={**rec,"evidenceId":eid,"disposition":"selected","retrievedAt":_now_ms()}; url=_clean(rec.get("url"),2000)
         _camera(request_id,research_id,"URL_SELECTED",start,evidenceId=eid,url=url,title=_clean(rec.get("title"),300),query=rec.get("query"),rank=rec.get("rank"),relevanceScore=rec.get("relevanceScore"))
         if fetch:
@@ -130,10 +135,11 @@ def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->di
                 if sufficient:_camera(request_id,research_id,"EVIDENCE_SUFFICIENT",start,evidenceId=eid,url=rec.get("finalUrl"),reason="Fetched evidence satisfies requested information")
             except Exception as exc:
                 rec["fetchError"]=f"{type(exc).__name__}:{str(exc)[:160]}"; _camera(request_id,research_id,"PAGE_FETCH_FAILED",start,evidenceId=eid,url=url,durationMs=_elapsed(fstart),errorType=type(exc).__name__)
-        evidence.append(rec)
-        if sufficient:break
+            evidence.append(rec)
+            if sufficient:break
+        if sufficient or len(evidence)>=8:break
     admitted_chars=sum(len(str(x.get("title") or ""))+len(str(x.get("snippet") or ""))+len(str(x.get("extract") or "")) for x in evidence)
-    budget={"queriesExecuted":min(4,len(plan["queries"])),"searchResultsInspected":inspected,"pagesFetched":fetched,"externalCharsInspected":inspected_chars,"evidenceItemsAdmitted":len(evidence),"evidenceCharsAdmitted":admitted_chars,"maxEvidenceItems":8,"maxPagePassageChars":1400,"maxSnippetChars":700}
+    budget={"queriesExecuted":queries_executed,"searchResultsInspected":inspected,"pagesFetched":fetched,"externalCharsInspected":inspected_chars,"evidenceItemsAdmitted":len(evidence),"evidenceCharsAdmitted":admitted_chars,"maxEvidenceItems":8,"maxPagePassageChars":1400,"maxSnippetChars":700}
     bundle={"contractId":"swrlz_online_evidence_v3","researchContract":CONTRACT_ID,"researchId":research_id,"requested":True,"provider":capabilities.get("provider","unknown"),"plan":plan,"queries":plan["queries"][:4],"resultCount":len(evidence),"evidence":evidence,"errors":errors,"elapsedMs":_elapsed(start),"budget":budget,"epistemicPolicy":"retrieval-is-evidence-not-truth","cameraContract":"swrlz_research_camera_v1"}
     _camera(request_id,research_id,"EVIDENCE_BUDGET",start,**budget)
     _camera(request_id,research_id,"RESEARCH_BUNDLE_READY",start,resultCount=len(evidence),errorCount=len(errors),elapsedMs=bundle["elapsedMs"])
