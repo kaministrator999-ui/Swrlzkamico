@@ -373,9 +373,15 @@ def _lyrics_search_query(text: str) -> str:
 
 
 _LYRIC_PAGE_NOISE=re.compile(
-    r"\b(?:home|blog|download|menu|sign\s*in|log\s*in|privacy|cookies?|terms|contact|"
-    r"about|share|follow|subscribe|navigation|source|app\s*store|google\s*play|"
-    r"related\s+songs?|more\s+lyrics?|chords?|copyright)\b",
+    r"\b(?:blog|download|menu|sign\s*in|log\s*in|privacy|cookies?|terms|contact|"
+    r"share|follow|subscribe|navigation|app\s*store|google\s*play|"
+    r"related\s+(?:songs?|hymns?)|more\s+lyrics?|chords?|copyright)\b",
+    re.I,
+)
+_LYRIC_ANCHOR=re.compile(r"^(?:copy\s+lyrics|lyrics(?:\s+text)?)\s*[:.!-]*$",re.I)
+_LYRIC_HARD_BOUNDARY=re.compile(
+    r"^(?:related\s+(?:songs?|hymns?)|more\s+(?:songs?|lyrics?)|about|contact|privacy|terms|"
+    r"download(?:\s+the)?\s+app|get\s+the\s+.+?\s+app!?|share|subscribe|references?|sources?)\s*[:.!-]*$",
     re.I,
 )
 _LYRIC_SECTION_MARKER=re.compile(
@@ -397,61 +403,129 @@ def _lyrics_line_is_content(line: str) -> bool:
 
 
 def _lyrics_extract_candidate(text: str, scope: str) -> str:
-    """Return only structurally lyric-like page text; reject title/nav/search metadata."""
+    """Extract the contiguous lyric body and keep page chrome out of the frozen payload."""
     raw=str(text or "").replace("\r\n","\n").replace("\r","\n")
     if not raw.strip():
         return ""
+
+    # Prefer an explicit page control/heading that marks the beginning of the lyric body.
+    # This prevents nearby article cards, related-hymn links, and app promos from being
+    # mistaken for verses merely because they look like short natural-language lines.
+    raw_lines=raw.splitlines()
+    anchor_index=None
+    for index,line in enumerate(raw_lines):
+        if _LYRIC_ANCHOR.fullmatch(line.strip()):
+            anchor_index=index
+    if anchor_index is not None:
+        raw_lines=raw_lines[anchor_index+1:]
+
+    scoped=[]
+    started=False
+    for raw_line in raw_lines:
+        line=raw_line.strip()
+        if not line:
+            if started and (not scoped or scoped[-1]!=""):
+                scoped.append("")
+            continue
+        if started and _LYRIC_HARD_BOUNDARY.fullmatch(line):
+            break
+        if _LYRIC_SECTION_MARKER.search(line):
+            started=True
+            scoped.append(line)
+            continue
+        if _lyrics_line_is_content(line):
+            started=True
+            scoped.append(line)
+            continue
+        if started:
+            # Once real lyric content has begun, ordinary page chrome ends the region.
+            # A lone rejected line is allowed only when it is blank; non-lyric UI text
+            # should not be copied into the factual payload.
+            if _LYRIC_PAGE_NOISE.search(line):
+                break
+
+    body="\n".join(scoped).strip()
+    if not body:
+        body=raw
+
     if scope=="first-verse":
         explicit=re.search(
             r"(?is)(?:^|\n)\s*(?:verse\s*1|verse\s*one)\s*[:.\-]?\s*\n?(.*?)(?="
             r"\n\s*(?:verse\s*2|verse\s*two|chorus|refrain|bridge)\b|\Z)",
-            raw,
+            body,
         )
         if explicit:
             lines=[ln.strip() for ln in explicit.group(1).splitlines() if _lyrics_line_is_content(ln)]
             if 2<=len(lines)<=10:
                 return "\n".join(lines)
 
+    # Preserve paragraph/stanza boundaries when the source exposes them.
     blocks=[]
-    for chunk in re.split(r"\n\s*\n+",raw):
+    for chunk in re.split(r"\n\s*\n+",body):
         lines=[ln.strip() for ln in chunk.splitlines() if ln.strip()]
         if not lines:
             continue
-        body=[ln for ln in lines if not _LYRIC_SECTION_MARKER.search(ln) and _lyrics_line_is_content(ln)]
-        if 2<=len(body)<=12 and len(body)>=max(2,(len(lines)+1)//2):
-            blocks.append("\n".join(body))
+        content=[ln for ln in lines if not _LYRIC_SECTION_MARKER.search(ln) and _lyrics_line_is_content(ln)]
+        if len(content)>=2:
+            blocks.append("\n".join(content))
 
-    runs=[]
-    current=[]
-    for raw_line in raw.splitlines():
-        line=raw_line.strip()
-        if not line or _LYRIC_SECTION_MARKER.search(line) or not _lyrics_line_is_content(line):
-            if current:
-                runs.append(current)
-                current=[]
-            continue
-        current.append(line)
-    if current:
-        runs.append(current)
+    # Some lyric pages flatten every verse into one line stream. If so, standard
+    # four-line hymn stanzas are reconstructed only from the fetched sequence itself;
+    # no missing words are invented or normalized.
+    if len(blocks)==1:
+        flat=[ln.strip() for ln in blocks[0].splitlines() if ln.strip()]
+        if scope=="full-lyrics" and len(flat)>=8 and len(flat)%4==0:
+            blocks=["\n".join(flat[i:i+4]) for i in range(0,len(flat),4)]
 
     if scope=="first-verse":
         if blocks:
             return blocks[0]
-        run=next((item for item in runs if 2<=len(item)<=10),[])
-        return "\n".join(run)
+        return ""
 
     if scope=="full-lyrics":
         if len(blocks)>=2 and sum(len(block.splitlines()) for block in blocks)>=8:
             return "\n\n".join(blocks)
-        longest=max(runs,key=len,default=[])
-        if len(longest)>=8:
-            return "\n".join(longest)
         return ""
 
     if blocks:
         return "\n\n".join(blocks)
-    longest=max(runs,key=len,default=[])
-    return "\n".join(longest) if len(longest)>=4 else ""
+    return ""
+
+
+def _lyrics_subject_parts(subject: str) -> tuple[str,str]:
+    match=re.match(r'^"([^"]+)"(?:\s+by\s+(.+))?$',str(subject or "").strip(),re.I)
+    if not match:
+        return "",""
+    return _clean(match.group(1),180),_clean(match.group(2),180) if match.group(2) else ""
+
+
+def _lyrics_attribution_query(subject: str) -> str:
+    title,author=_lyrics_subject_parts(subject)
+    if not title or not author:
+        return ""
+    return f'{title} {author} original text stanza history authorship'[:500]
+
+
+_NUMBER_WORDS={"one":1,"two":2,"three":3,"four":4,"five":5,"six":6,"seven":7,"eight":8,"nine":9,"ten":10}
+def _original_stanza_count(text: str) -> int | None:
+    value=" ".join(str(text or "").split())
+    patterns=[
+        r"\boriginal(?:ly)?\b.{0,90}?\b(?:included|contained|had|in)\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+stanzas?\b",
+        r"\bpublished\b.{0,90}?\bin\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+stanzas?\b",
+        r"\bin\s+(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+stanzas?\b.{0,90}?\b(?:original|Newton|author)\b",
+    ]
+    for pattern in patterns:
+        match=re.search(pattern,value,re.I)
+        if not match:
+            continue
+        token=match.group(1).casefold()
+        try:
+            count=int(token)
+        except ValueError:
+            count=_NUMBER_WORDS.get(token,0)
+        if 1<=count<=20:
+            return count
+    return None
 
 
 def classify_online_request(
