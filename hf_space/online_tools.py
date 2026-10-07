@@ -527,8 +527,8 @@ def _lyrics_provenance_signal(text: str) -> bool:
     value=" ".join(str(text or "").split())
     return bool(re.search(
         r"\b(?:anonymous|spurious|wandering\s+stanza|later\s+(?:addition|stanza|verse)|"
-        r"added\s+(?:later|stanza|verse)|first\s+found|joined\s+to|associated\s+with|"
-        r"not\s+(?:written|authored)\s+by|attributed\s+to)\b",
+        r"added\s+(?:later|stanza|verse)|first\s+found|joined\s+to|"
+        r"not\s+(?:written|authored)\s+by)\b",
         value,
         re.I,
     ))
