@@ -39,7 +39,7 @@ jobs:
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
           grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V7_7_CANONICAL_GLITCH_DEN_PROJECT" dist/swrlz-forge-moba/index.html
-          grep -q "<title>§wyrl§ Engine · Maker v7.6</title>" dist/swrlz-forge-moba/index.html
+          grep -q "<title>§wyrl§ Engine · Maker v7.7</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
