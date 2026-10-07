@@ -223,7 +223,8 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
         online_plan["reason"]="coder-non-programming-search-disabled"
     if online_plan.get("requested"):
         phase="WEATHER_FETCH_STARTED" if online_plan.get("kind")=="weather" else "SEARCH_STARTED"
-        search_target=str(online_plan.get("query") or payload.get("prompt") or "that").strip()\n        yield {"type":"STATUS","phase":phase,"reason":"I’m on it — looking up "+search_target+"…","categories":["ONLINE_RESEARCH",str(online_plan.get("kind") or "search").upper()]}
+        search_target=str(online_plan.get("query") or payload.get("prompt") or "that").strip()
+        yield {"type":"STATUS","phase":phase,"reason":"I’m on it — looking up "+search_target+"…","categories":["ONLINE_RESEARCH",str(online_plan.get("kind") or "search").upper()]}
         online_result=None
         for update in stream_online_request(payload,intent):
             if update.get("type")=="progress":
