@@ -321,8 +321,7 @@ def _search_query_from_prompt(prompt: str) -> str:
 
 def _lyrics_requested_scope(text: str) -> str:
     value=_clean(text,2000)
-    if re.search(r"\b(?:first|opening)\s+verse\b",value,re.I):
-        return "first-verse"
+    # Full-document intent outranks incidental mentions such as "not just the first verse".
     if re.search(
         r"\b(?:complete|full)\s+lyrics?\b|\ball\s+(?:the\s+)?(?:lyrics?|verses?)\b|"
         r"\bevery\s+verse\b|\bnot\s+just\s+the\s+first\s+verse\b|"
@@ -331,6 +330,8 @@ def _lyrics_requested_scope(text: str) -> str:
         re.I,
     ):
         return "full-lyrics"
+    if re.search(r"\b(?:first|opening)\s+verse\b",value,re.I):
+        return "first-verse"
     return "lyrics"
 
 
