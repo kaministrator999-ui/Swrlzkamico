@@ -24,7 +24,7 @@ jobs:
           for rel in m["patches"]:
               spec=importlib.util.spec_from_file_location("p",root/rel);mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);html=mod.apply(html)
           b=html.encode();print("FINAL_BYTES="+str(len(b)));print("FINAL_SHA256="+hashlib.sha256(b).hexdigest())
-          for x in ["V7_8_RETRACTABLE_LAYERS","outliner-collapsed","details-collapsed","Layers & Multi-Object","multiObjectSelection","Hide Selected","Group / Layer Selected","toggleLayerManager"]: assert x in html,x
+          for x in ["V7_8_LAYERS_DESKTOP_DOCKS","desktop-collapsed","editorLayerIds","editorLayers","layer-panel","Add "+roots.length+" object(s)","toggleEditorLayer","installDesktopDockTabs"]: assert x in html,x
           start=html.index('<script type="module">')+len('<script type="module">');end=html.rindex('</script>');Path("/tmp/e.mjs").write_text(html[start:end])
           PY
           node --check /tmp/e.mjs
