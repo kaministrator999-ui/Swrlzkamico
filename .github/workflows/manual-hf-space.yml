@@ -132,13 +132,14 @@ jobs:
         if: ${{ inputs.mode != 'inspect' }}
         run: |
           set -euo pipefail
-          python -m py_compile hf_space/online_tools.py accepted_runtime/research/online_research_reasoner.py tests/test_full_lyrics_bounded_fallback_v158.py tests/test_full_lyrics_structural_extraction_v159.py tests/test_full_lyrics_subject_bound_verification_v160.py
+          python -m py_compile hf_space/online_tools.py hf_space/model_router.py accepted_runtime/research/online_research_reasoner.py tests/test_full_lyrics_bounded_fallback_v158.py tests/test_full_lyrics_structural_extraction_v159.py tests/test_full_lyrics_subject_bound_verification_v160.py tests/test_full_lyrics_source_vs_body_v161.py
           python tests/test_full_lyrics_retrieval_v151.py
           python tests/test_full_lyrics_fetched_body_provenance_v155.py
           python tests/test_full_lyrics_wording_polish_v157.py
           python tests/test_full_lyrics_bounded_fallback_v158.py
           python tests/test_full_lyrics_structural_extraction_v159.py
           python tests/test_full_lyrics_subject_bound_verification_v160.py
+          python tests/test_full_lyrics_source_vs_body_v161.py
       - name: Build and verify native R39 kernels in validation environment
         if: ${{ inputs.mode != 'inspect' }}
         run: |
