@@ -107,7 +107,7 @@ def _online_evidence_fallback_text(result: dict[str,Any]) -> str:
 
 
 def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | None:
-    """Select requested lyric evidence deterministically; never ask the model to recreate facts."""
+    """Serve only the frozen lyric text extracted from verified fetched evidence."""
     context=result.get("modelContext") if isinstance(result.get("modelContext"),dict) else {}
     verified=context.get("verifiedLyrics") if isinstance(context.get("verifiedLyrics"),dict) else None
     if not verified:
@@ -118,28 +118,28 @@ def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | 
     for candidate in candidates:
         url=str(candidate.get("sourceUrl") or candidate.get("url") or "").strip()
         source=str(candidate.get("sourceTitle") or candidate.get("title") or "the fetched lyrics source").strip()
-        extract=str(candidate.get("pageExtract") or "").strip()
-        key=(url,extract[:120])
-        if key in seen: continue
+        selected=str(candidate.get("lyricExtract") or "").strip()
+        key=(url,selected[:120])
+        if key in seen:
+            continue
         seen.add(key)
-        if not extract or not url: continue
-        selected=extract
+        if not selected or not url:
+            continue
+        if scope!="full-lyrics":
+            selected=selected[:2400].strip()
+        else:
+            selected=selected[:6000].strip()
+        if not selected:
+            continue
+        subject=str(verified.get("subject") or "").strip() or "the requested song"
         if scope=="first-verse":
-            explicit=re.search(r"(?is)(?:^|\n)\s*(?:verse\s*1|verse\s*one)\s*[:.\-]?\s*\n?(.*?)(?=\n\s*(?:verse\s*2|verse\s*two|chorus|refrain|bridge)\b|\Z)",extract)
-            if explicit:
-                selected=explicit.group(1).strip()
-            else:
-                chunks=[x.strip() for x in re.split(r"\n\s*\n+",extract) if x.strip()]
-                lyricish=[x for x in chunks if 2<=len([ln for ln in x.splitlines() if ln.strip()])<=8 and len(x)<=900 and not re.search(r"(?i)privacy|cookie|sign in|navigation|copyright|terms",x)]
-                if not lyricish: continue
-                selected=lyricish[0]
-        selected=selected[:2400].strip()
-        if not selected: continue
-        song_query=str(context.get("query") or result.get("query") or "the song").strip()
-        label="the first verse" if scope=="first-verse" else "the lyrics"
-        return f"Okay — here's {label} I could verify for **{song_query}**:\n\n{selected}\n\n**Source:** {source} — {url}"
+            label="the first verse"
+        elif scope=="full-lyrics":
+            label="the complete lyrics"
+        else:
+            label="the lyrics"
+        return f"Okay — here's {label} I could verify for **{subject}**:\n\n{selected}\n\n**Source:** {source} — {url}"
     return None
-
 
 def _lyrics_verified_answer(result: dict[str,Any], model_text: str) -> tuple[str,bool]:
     """Fail closed unless model citation and quote are bound to successfully fetched lyric evidence."""
@@ -273,9 +273,9 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
                 return
     if online_result and (online_result.get("modelContext") or {}).get("epistemicPolicy","").startswith("LYRICS VERIFICATION:"):
         ctx=online_result.get("modelContext") or {}
-        evidence=[x for x in (ctx.get("evidence") or []) if isinstance(x,dict)]
-        fetched=[x for x in evidence if x.get("pageFetched") is True and str(x.get("pageExtract") or "").strip()]
-        if not fetched:
+        verified=ctx.get("verifiedLyrics") if isinstance(ctx.get("verifiedLyrics"),dict) else {}
+        verified_extract=str(verified.get("lyricExtract") or "").strip()
+        if not verified_extract:
             message="I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory."
             yield {"type":"STATUS","phase":"LYRICS_VERIFICATION_BLOCKED","reason":message,"categories":["ONLINE_RESEARCH","LYRICS","GROUNDING"]}
             yield {"type":"DELTA","text":message}
