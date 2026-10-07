@@ -91,7 +91,7 @@ assert "Amazing grace!" in verified["lyricExtract"],verified
 
 rendered=model_router._lyrics_retrieval_payload(result,FULL_PROMPT)
 assert rendered, result
-assert "the complete lyrics" in rendered,rendered
+assert "full lyric text I could verify from the fetched source" in rendered,rendered
 assert '**"Amazing Grace" by John Newton**' in rendered,rendered
 assert "Return every verse" not in rendered,rendered
 assert "Do not summarize" not in rendered,rendered
