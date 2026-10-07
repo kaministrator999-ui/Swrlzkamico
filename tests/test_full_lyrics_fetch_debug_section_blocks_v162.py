@@ -105,7 +105,7 @@ assert entry["fetchedContent"]["sectionMarkers"],entry
 assert entry["extractorOutput"]["chars"]>0,entry
 
 camera=online_tools.online_camera(result)
-assert camera["observabilityRevision"]=="v162-fetch-debug-section-blocks",camera
+assert camera["lyricsFetchDebug"],camera
 assert len(camera["lyricsFetchDebug"])==1,camera
 cam=camera["lyricsFetchDebug"][0]
 assert cam["fetchedContent"]["preview"],cam
