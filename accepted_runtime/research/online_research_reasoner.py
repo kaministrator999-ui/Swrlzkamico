@@ -122,19 +122,18 @@ def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->di
         candidates.extend(query_candidates)
         for rec in query_candidates:
             if len(evidence)>=8:break
-        eid=f"e{len(evidence)+1}"; rec={**rec,"evidenceId":eid,"disposition":"selected","retrievedAt":_now_ms()}; url=_clean(rec.get("url"),2000)
-        _camera(request_id,research_id,"URL_SELECTED",start,evidenceId=eid,url=url,title=_clean(rec.get("title"),300),query=rec.get("query"),rank=rec.get("rank"),relevanceScore=rec.get("relevanceScore"))
-        if fetch:
-            fstart=time.perf_counter(); _camera(request_id,research_id,"PAGE_FETCH_STARTED",start,evidenceId=eid,url=url)
-            try:
-                page=fetch(url); raw_extract=str(page.get("extract") or ""); inspected_chars+=len(raw_extract); fetched+=1
-                # Preserve structural line/stanza boundaries for downstream scoping.
-                rec.update({"pageTitle":page.get("title",""),"extract":raw_extract[:6000],"finalUrl":page.get("finalUrl",url),"httpStatus":page.get("status"),"fetchedAt":page.get("fetchedAt",_now_ms())})
-                sufficient=_sufficient(rec,plan)
-                _camera(request_id,research_id,"PAGE_FETCH_COMPLETE",start,evidenceId=eid,url=url,finalUrl=rec.get("finalUrl"),httpStatus=rec.get("httpStatus"),durationMs=_elapsed(fstart),inspectedChars=len(raw_extract),admittedChars=len(rec.get("extract","")))
-                if sufficient:_camera(request_id,research_id,"EVIDENCE_SUFFICIENT",start,evidenceId=eid,url=rec.get("finalUrl"),reason="Fetched evidence satisfies requested information")
-            except Exception as exc:
-                rec["fetchError"]=f"{type(exc).__name__}:{str(exc)[:160]}"; _camera(request_id,research_id,"PAGE_FETCH_FAILED",start,evidenceId=eid,url=url,durationMs=_elapsed(fstart),errorType=type(exc).__name__)
+            eid=f"e{len(evidence)+1}"; rec={**rec,"evidenceId":eid,"disposition":"selected","retrievedAt":_now_ms()}; url=_clean(rec.get("url"),2000)
+            _camera(request_id,research_id,"URL_SELECTED",start,evidenceId=eid,url=url,title=_clean(rec.get("title"),300),query=rec.get("query"),rank=rec.get("rank"),relevanceScore=rec.get("relevanceScore"))
+            if fetch:
+                fstart=time.perf_counter(); _camera(request_id,research_id,"PAGE_FETCH_STARTED",start,evidenceId=eid,url=url)
+                try:
+                    page=fetch(url); raw_extract=str(page.get("extract") or ""); inspected_chars+=len(raw_extract); fetched+=1
+                    rec.update({"pageTitle":page.get("title",""),"extract":raw_extract[:6000],"finalUrl":page.get("finalUrl",url),"httpStatus":page.get("status"),"fetchedAt":page.get("fetchedAt",_now_ms())})
+                    sufficient=_sufficient(rec,plan)
+                    _camera(request_id,research_id,"PAGE_FETCH_COMPLETE",start,evidenceId=eid,url=url,finalUrl=rec.get("finalUrl"),httpStatus=rec.get("httpStatus"),durationMs=_elapsed(fstart),inspectedChars=len(raw_extract),admittedChars=len(rec.get("extract","")))
+                    if sufficient:_camera(request_id,research_id,"EVIDENCE_SUFFICIENT",start,evidenceId=eid,url=rec.get("finalUrl"),reason="Fetched evidence satisfies requested information")
+                except Exception as exc:
+                    rec["fetchError"]=f"{type(exc).__name__}:{str(exc)[:160]}"; _camera(request_id,research_id,"PAGE_FETCH_FAILED",start,evidenceId=eid,url=url,durationMs=_elapsed(fstart),errorType=type(exc).__name__)
             evidence.append(rec)
             if sufficient:break
         if sufficient or len(evidence)>=8:break
