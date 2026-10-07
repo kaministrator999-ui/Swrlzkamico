@@ -726,7 +726,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             "url": _clean(item.get("finalUrl") or item.get("url"), 2000),
             "snippet": _clean(item.get("snippet") or item.get("extract"), 1000),
             "searchSnippet": _clean(item.get("snippet"), 1000),
-            "pageExtract": _clean(item.get("extract"), 6000),
+            "pageExtract": str(item.get("extract") or "").strip()[:6000],
             "pageFetched": bool(item.get("fetchedAt") and item.get("extract")),
             "fetchStatus": item.get("status") if isinstance(item.get("status"),int) else None,
             "source": _clean(item.get("source"), 240),
