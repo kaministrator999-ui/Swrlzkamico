@@ -603,6 +603,32 @@ def _lyrics_provenance_candidate_score(item: dict[str,Any], subject: str, lyric_
     return score
 
 
+def _lyrics_provenance_claim_excerpt(text: str, limit: int = 360) -> str:
+    """Return a compact fetched-body excerpt supporting the provenance decision."""
+    value=" ".join(str(text or "").split())
+    if not value:
+        return ""
+    patterns=[
+        r"([^.!?]{0,180}\b(?:original(?:ly)?|published|stanzas?|verses?)\b[^.!?]{0,180}[.!?])",
+        r"([^.!?]{0,180}\b(?:anonymous|spurious|wandering\s+stanza|later\s+(?:addition|stanza|verse)|added\s+(?:later|stanza|verse)|joined\s+to|not\s+(?:written|authored)\s+by)\b[^.!?]{0,180}[.!?])",
+    ]
+    for pattern in patterns:
+        match=re.search(pattern,value,re.I)
+        if match:
+            return _clean(match.group(1),limit)
+    return _clean(value,limit)
+
+
+def _lyrics_source_display_title(raw_title: str, subject: str, original_count: int | None, stanza_count: int) -> str:
+    """Avoid repeating a page title that over-attributes later stanzas to the named author."""
+    title=_clean(raw_title,300)
+    song,author=_lyrics_subject_parts(subject)
+    if original_count and stanza_count>original_count and author:
+        if re.search(rf"\bby\s+{re.escape(author)}\b",title,re.I):
+            return f'{song} lyrics page' if song else "Fetched lyrics page"
+    return title or (f'{song} lyrics page' if song else "Fetched lyrics page")
+
+
 def _lyrics_provenance_lookup(
     subject: str,
     lyric_extract: str,
@@ -617,6 +643,9 @@ def _lyrics_provenance_lookup(
         "evidence":[],
         "queries":[],
         "fetchCount":0,
+        "claimExcerpt":"",
+        "httpStatus":None,
+        "fetchedAt":None,
     }
     if len(stanzas)<2:
         return result
@@ -666,13 +695,16 @@ def _lyrics_provenance_lookup(
                     "fetchedAt":page.get("fetchedAt"),
                 }
                 result["evidence"].append(record)
-                combined="\n".join([record["title"],record["snippet"],record["pageExtract"]])
-                count=_original_stanza_count(combined)
-                signal=_lyrics_provenance_signal(combined)
+                fetched_body="\n".join([record["title"],record["pageExtract"]])
+                count=_original_stanza_count(fetched_body)
+                signal=_lyrics_provenance_signal(fetched_body)
                 if count or signal:
                     result["originalStanzaCount"]=count if count else len(stanzas)-1
                     result["sourceTitle"]=record["title"] or record["source"] or "Historical attribution source"
                     result["sourceUrl"]=record["url"]
+                    result["claimExcerpt"]=_lyrics_provenance_claim_excerpt(record["pageExtract"])
+                    result["httpStatus"]=page.get("status")
+                    result["fetchedAt"]=page.get("fetchedAt")
                     return result
             if result["fetchCount"]>=4:
                 break
@@ -1135,6 +1167,9 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 "evidence":[],
                 "queries":[],
                 "fetchCount":0,
+                "claimExcerpt":"",
+                "httpStatus":None,
+                "fetchedAt":None,
             }
             if requested_scope=="full-lyrics" and plan.get("subject"):
                 provenance=_lyrics_provenance_lookup(str(plan.get("subject") or ""),selected_extract,progress)
@@ -1142,8 +1177,17 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             provenance_queries=list(provenance.get("queries") or [])[:2]
             provenance_fetch_count=int(provenance.get("fetchCount") or 0)
 
+            selected_stanza_count=len([x for x in re.split(r"\n\s*\n+",selected_extract) if x.strip()])
+            original_count=provenance.get("originalStanzaCount")
+            raw_source_title=selected.get("title") or selected.get("source") or "Fetched lyrics source"
             verified_lyrics = {
-                "sourceTitle": selected.get("title") or selected.get("source") or "Fetched lyrics source",
+                "sourceTitle": raw_source_title,
+                "sourceDisplayTitle": _lyrics_source_display_title(
+                    str(raw_source_title),
+                    str(plan.get("subject") or ""),
+                    int(original_count) if isinstance(original_count,int) else None,
+                    selected_stanza_count,
+                ),
                 "sourceUrl": _clean_source_url(str(selected.get("url") or "")),
                 "subject": str(plan.get("subject") or ""),
                 "requestedScope": requested_scope,
@@ -1153,6 +1197,9 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 "originalStanzaCount": provenance.get("originalStanzaCount"),
                 "attributionSourceTitle": provenance.get("sourceTitle") or "",
                 "attributionSourceUrl": provenance.get("sourceUrl") or "",
+                "attributionClaimExcerpt": provenance.get("claimExcerpt") or "",
+                "attributionHttpStatus": provenance.get("httpStatus"),
+                "attributionFetchedAt": provenance.get("fetchedAt"),
                 "candidateSources": [
                     {
                         "title":item.get("title"),
@@ -1169,7 +1216,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         visible_results=[]
         if selected_lyric_evidence:
             visible_results.append({
-                "title":selected_lyric_evidence.get("title") or "Lyrics source",
+                "title":verified_lyrics.get("sourceDisplayTitle") or selected_lyric_evidence.get("title") or "Lyrics source",
                 "url":_clean_source_url(str(selected_lyric_evidence.get("url") or "")),
                 "snippet":selected_lyric_evidence.get("snippet") or "",
                 "source":selected_lyric_evidence.get("source") or "",
@@ -1201,7 +1248,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         lyric_url=str(verified_lyrics.get("sourceUrl") or "")
         if lyric_url:
             sources.append({
-                "title":verified_lyrics.get("sourceTitle") or "Lyrics source",
+                "title":verified_lyrics.get("sourceDisplayTitle") or verified_lyrics.get("sourceTitle") or "Lyrics source",
                 "url":lyric_url,
                 "provider":urllib.parse.urlsplit(lyric_url).netloc,
             })
