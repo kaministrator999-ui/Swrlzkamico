@@ -1,3 +1,25 @@
+## UPDATE STARTED — 2026-10-07 — subject-bound lyric verification v160
+
+**Trigger:** live v159 acceptance reached `LYRICS_SOURCE_VERIFIED` on the first SongLyrics page but returned unrelated song titles, artist names, chart/news headings, and dates as the frozen lyric payload. Retrieval succeeded; verification produced a false positive.
+
+**Production evidence:** request `web-muym6208-1940923376-711415812` fetched SongLyrics with HTTP 200, emitted `LYRICS_SOURCE_VERIFIED`, and then served unrelated page chrome. The search result snippet itself contained target-song lyric fragments, proving that the selected extraction region did not correspond to the result's own lyric evidence.
+
+**Root-cause hypothesis:**
+- natural unquoted wording such as `lyrics for the song cold piece of work by tech n9ne` is not parsed by the current quoted-title-only subject parser;
+- unresolved subject means the extractor has no title terms and may score arbitrary headings containing `Lyrics`;
+- the structural verifier currently accepts sufficiently long blocks of short natural-language lines even when they do not align with the search result's lyric snippet.
+
+**Planned repair:**
+1. parse natural unquoted `lyrics for/of/to [song] by [artist]` forms into canonical subject + compact search query;
+2. never treat arbitrary `... Lyrics` headings as anchors when no subject title is resolved;
+3. add a discovery-to-fetch consistency gate: when a search snippet contains enough informative tokens, a fetched lyric extraction must overlap that snippet; snippet text remains verification-only and is never promoted into the lyric payload;
+4. add exact false-positive regression coverage using the observed SongLyrics-style chrome payload plus a target-song search snippet;
+5. preserve the v158 three-page ceiling and v159 24K bounded page window.
+
+**Expected module impact:** LALM/online adapter + Server Runtime + Repository Work; Online Research version changes only if its network/evidence contract changes.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — lyric body window + structural extraction v159
 
 **Outcome:** EXTRACTION ROOT CAUSE REPAIRED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
