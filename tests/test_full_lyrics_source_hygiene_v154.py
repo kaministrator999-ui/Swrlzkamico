@@ -130,8 +130,8 @@ assert all("dictionary.example" not in s["url"] and "video.example" not in s["ur
 assert all("utm_" not in s["url"] and "ref=" not in s["url"] for s in result["sources"]),result["sources"]
 
 rendered=model_router._lyrics_retrieval_payload(result,PROMPT)
-assert "**Original attributed text (6 stanzas):**" in rendered,rendered
-assert "**Additional stanza(s) present in the lyrics source:**" in rendered,rendered
+assert "**Original text attributed to John Newton (6 stanzas):**" in rendered,rendered
+assert "**Additional stanza present in the lyrics source:**" in rendered,rendered
 assert "**Attribution source:**" in rendered,rendered
 assert "dictionary.example" not in rendered,rendered
 assert "video.example" not in rendered,rendered
