@@ -24,7 +24,9 @@ def main():
             target.parent.mkdir(parents=True,exist_ok=True)
             shutil.copy2(source,target)
         else:
-            assert target.is_file() and (rel=="chat/§wyrlz/index.html" or hashlib.sha256(target.read_bytes()).digest()==hashlib.sha256(source.read_bytes()).digest()), f"Staged source drift: {rel}"
+            # Chat is transformed below with HF-lab controls; compare all other canonical sources byte-for-byte.
+            if rel!="chat/§wyrlz/index.html":
+                assert target.is_file() and hashlib.sha256(target.read_bytes()).digest()==hashlib.sha256(source.read_bytes()).digest(), f"Staged source drift: {rel}"
     prepared_research=OUT/"swrzl_prepared_runtime/research/online_research_reasoner.py"
     research_source=ROOT/"accepted_runtime/research/online_research_reasoner.py"
     if args.check:
