@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v9.0",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V9_0_AUTHORED_PAPER_THEATRE",
-  "reason": "Deploy v9.0 clean paper theatre default (PR #47): archive/hide three legacy editor layers comprising 60 obsolete floating platforms, signs and FX actors, retain all 62 original prototype actors and eight workstations, preserve the eight authored illustrated book layers and active Kami selection. Six PR CI gates passed, including mobile/desktop full authoring, keyframe, native cinematic and Save/Load acceptance (Actions 37804233386). Sealed generated 49-patch HTML: 746622 bytes, SHA-256 5ca627a1f698bcc5a9e24808e57460a84ccabc3846cb73063fa29de7762c066c.",
-  "sourceCommit": "4aa5094a5bbab1b9ae38439b258d92dc86603182",
-  "sourceIntegritySha256": "5ca627a1f698bcc5a9e24808e57460a84ccabc3846cb73063fa29de7762c066c"
+  "reason": "Publish verified v9.0 native Watch routing fix PR #48: primary Watch 2.5D Episode 01 now launches the authored live camera/cutout paper theatre from zero rather than historical procedural HTML iframe. Historical Watch original 2D episode remains archive-only in Animation Studio. All six PR checks succeeded including desktop/mobile direct Watch, archive open/close, native timeline, full authoring/Save/Load. Sealed HTML 748181 bytes, SHA-256 1499d4fff5b2054de81830e038856b22802f992f93d5d555203df32303aa6c58.",
+  "sourceCommit": "170802ff6bc87a0fbc428edea1c185feb46c80f3",
+  "sourceIntegritySha256": "1499d4fff5b2054de81830e038856b22802f992f93d5d555203df32303aa6c58"
 }
