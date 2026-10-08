@@ -51,6 +51,8 @@ try{
     assert.equal(setPopUp,true,mode.name+' Director cannot edit independent §wyrlz cel');
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.director())).layers.swyrlz.offsetX,-2.7);
     assert.equal(await page.locator('#animeDirectorBtn').isVisible(),true,mode.name+' editor Director control missing');
+    assert.equal(await page.locator('#animeCineHud #animeDirectorBtn').count(),1,
+      mode.name+' Director did not dock inside live cinematic controls');
     await page.locator('#animeDirectorBtn').click();
     assert.equal(await page.locator('#animeDirectorPanel').isVisible(),true,mode.name+' Director missing');
     await page.locator('#animeDirectorLayer').selectOption('kami');
