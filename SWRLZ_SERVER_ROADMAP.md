@@ -1,3 +1,72 @@
+## UPDATE FINISHED — 2026-10-07 — mobile-first lyric dividers v167
+
+**Outcome:** MOBILE-FIRST LYRIC PRESENTATION HIERARCHY IMPLEMENTED / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### Presentation contract
+The pre-chat music presentation compiler now owns a three-level visual hierarchy:
+- **full-width document boundary above the lyric body** using a Markdown horizontal rule;
+- **short internal divider between lyric sections** using a deliberately shorter Unicode rule;
+- **full-width document boundary below the lyric body** before the source/footer metadata.
+
+Blank-line breathing room is mandatory on both sides of every divider.
+
+### Exact compiler behavior
+- outer divider token: `---` (rendered by Chat as a full-width horizontal rule);
+- internal section divider: `────────`;
+- order is:
+  1. concise intro;
+  2. full-width opening divider;
+  3. first structured lyric section;
+  4. short divider;
+  5. next section;
+  6. repeat short dividers between remaining sections;
+  7. full-width closing divider;
+  8. lyrics source/footer.
+- source lines, section ordering, labels, and performers remain unchanged;
+- Chat/Model Router continues to receive and render the already-compiled `presentationText` verbatim.
+
+### Observability
+`musicPresentation.dividerPresentation` and `musicStructureDebug.dividerPresentation` now expose:
+- outer / inner divider tokens;
+- semantic meaning of each divider;
+- `blankLinesAroundDividers=true`;
+- `mobileFirst=true`.
+
+### Regression
+Added `tests/test_mobile_first_lyric_dividers_v167.py`, proving:
+- exactly two full-width document-boundary rules;
+- one short divider per internal section transition;
+- intro is outside the opening boundary;
+- source/footer is outside the closing boundary;
+- verified source lines remain unchanged;
+- presentation metadata reports the mobile-first hierarchy;
+- Model Router returns the compiled payload unchanged.
+
+### Deployment receipts
+- guarded HF run: `37718815232` — terminal **SUCCESS**;
+- exact selected feature source: `fe418594dd6602e7bb2beff2302699394788add9`;
+- regression gate: v151 PASS, v155 PASS, v157 PASS, v158 PASS, v159 PASS, v160 PASS, v161 PASS, v162 PASS, v163 PASS, v164 PASS, v165 PASS, v166 PASS, **v167 PASS**;
+- native R39 verification, real R39 reconstruction, R39-vs-stock compatibility inspection, 700M assembled-profile smoke, fast-HF/Chat preservation guard, authorization gate, production snapshot, rollback checkpoint, upload, and deployed-revision capture all succeeded;
+- prior/rollback Space revision: `754a8e3d8567526826dfef3951cd296322ac2165`;
+- deployed Space revision: `b45058bf6e28409427eb3e788cae2a2b66756d02`.
+
+### Versions
+- Repository Work: **1.0.97**.
+- Server Runtime: **2.3.320 / 2.3.320-hf-v167-mobile-lyric-dividers**.
+- LALM Engine: **2.1.159 / 2.1.159-mobile-lyric-presentation-v167**.
+- Deployment Control: **1.0.27**.
+- Online Research remains **1.0.16 / 1.0.16-bing-redirect-canonicalization-v166** because v167 is a presentation-only change.
+
+### Live acceptance target
+Rerun the same structured-song request on mobile. Expected visual hierarchy:
+- one long horizontal rule between the intro and the first lyric section;
+- short divider between every lyric section;
+- one long horizontal rule between the final lyric section and `Lyrics source:`;
+- source metadata visually separated from the song body;
+- no lyric text mutation or reordering.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v167 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — mobile-first lyric dividers v167
 
 **Trigger:** user accepted mobile-first lyric presentation hierarchy after live v166 screenshots. Current structured lyrics are correct, but long mobile lyric documents need clearer document/section boundaries.
