@@ -1,0 +1,59 @@
+name: Verify §E v8.6 native cinematic candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-swrlz-native-cinematic.yml"
+      - "projects/swrlz-forge-moba/patches/v8_6_native_anime_cinematic.py"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Reconstruct exact cinematic candidate from baseline
+        run: |
+          python - <<'PY'
+          import base64,gzip,json,hashlib
+          from pathlib import Path
+          import runpy
+          root=Path("projects/swrlz-forge-moba")
+          manifest=json.loads((root/"source-manifest.json").read_text(encoding="utf-8"))
+          mod=runpy.run_path(str(root/"build_space.py"))
+          raw=gzip.decompress(base64.b64decode("".join((root/p).read_text(encoding="utf-8").strip() for p in manifest["chunks"])))
+          assert hashlib.sha256(raw).hexdigest()==manifest["baseSha256"]
+          source=raw.decode("utf-8")
+          for rel in manifest["patches"]:
+            source=mod["load_patch"](root/rel)(source)
+          output=source.encode("utf-8")
+          print("CINEMATIC_BYTES="+str(len(output)))
+          print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
+          assert len(manifest["patches"])==45
+          for needle in (
+            'V8_6_NATIVE_ANIME_CINEMATIC','Maker v8.6','animeStartCinematic',
+            'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',
+            'animeCineExplore','animeCineScrub','updateWorkspaceInteraction(t);animeUpdateCinematic(dt);',
+            'if(animeCine?.active)return;',
+            'if(currentProject?.canonicalId===\'ghosts-different-forms-ep01\'',
+          ):
+            assert needle in source,needle
+          assert "V8_5_ANIME_STUDIO_STARTER" not in source
+          i=source.index('<script type="module">')+len('<script type="module">')
+          e=source.rindex("</script>")
+          Path('/tmp/cinematic-engine.mjs').write_text(source[i:e],encoding='utf-8')
+          Path('/tmp/cinematic-engine.html').write_bytes(output)
+          print("CINEMATIC_RECONSTRUCT_OK")
+          PY
+          node --check /tmp/cinematic-engine.mjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v8_6_native_anime_cinematic.py
+          echo "CINEMATIC_NODE_AND_PYTHON_SYNTAX_OK"
