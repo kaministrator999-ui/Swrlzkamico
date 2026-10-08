@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v8.4
+title: §wyrl§ Engine v8.5
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -7,12 +7,14 @@ sdk: static
 app_file: index.html
 fullWidth: true
 header: mini
-short_description: Dragon Den and Starforge spatial workspaces.
+short_description: Dragon Den, Starforge and Anime Studio workspaces.
 ---
 
-# §wyrl§ Engine · Maker v8.4
+# §wyrl§ Engine · Maker v8.5
 
 **Embervault Atelier** is a three-tier Dragon Den with six project stations, walkable ramps, and eight named destinations. **Starforge Observatory** is a separate floating-island workspace with physical bridges and ramps, six stations, and seven destinations beneath a constellation sky.
+
+**Ghosts in Different Forms · Episode 01** is the third selectable Projects starter, with 62 editable stage actors, three layers, eight storyboard destinations, eight editable script/direction stations, and one guardian dragon. Open [Anime Studio directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01) or use Projects. The **Watch Episode 01** button screens an original procedural animation in an editor modal. This is an integrated screening, not a native 3D keyframe animation timeline; the spatial production set stays editable and independently savable.
 
 Use WASD/arrows and mouse look in Play. Press **T** or **Zones** to travel, and approach a station then press **E** / **Open** to edit files and notes. Download files, transfer workspace JSON, or **Save Project** to preserve the scene, destinations, environment, and station work. Chat stations open the existing §wyrlz LALM chat in a new tab.
 
@@ -26,4 +28,4 @@ Desktop first-person verification is recorded with the source. Headset VR, VR co
 
 Source: https://github.com/kaministrator999-ui/Swrlzkamico/tree/main/projects/swrlz-forge-moba
 
-Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_4_WAYFINDING_ZONE_PREVIEW`
+Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_5_ANIME_STUDIO_STARTER`
