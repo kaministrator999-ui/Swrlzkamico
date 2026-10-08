@@ -345,7 +345,8 @@ function animeDirectorInstall(){
 """
 def apply(html):
     s=html
-    s=once(s,'<script type="module">',CSS+'<script type="module">')
+    assert '<script type="module">' in s
+    s=s.replace('<script type="module">',CSS+'<script type="module">',1)
     # Character visibility controls remain independent of the 6 original
     # historical compositor layers. Extend rather than removing aliases.
     s=once(s,"  ['characters','04 · Character cels'],",
