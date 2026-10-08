@@ -1,0 +1,60 @@
+name: Test §wyrl§ native anime Play in browsers
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [verify/native-anime-runtime-v8-6]
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build source candidate with governed patches
+        run: |
+          python - <<'PY'
+          import base64,gzip,json,hashlib
+          from pathlib import Path
+          import runpy
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          helpers=runpy.run_path(str(root/'build_space.py'))
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
+          s=raw.decode()
+          for patch in manifest['patches']:
+              s=helpers['load_patch'](root/patch)(s)
+          assert 'V8_6_NATIVE_ANIME_CINEMATIC' in s
+          output=Path('/tmp/swyrl-anime-web')
+          output.mkdir(parents=True,exist_ok=True)
+          (output/'index.html').write_text(s,encoding='utf-8')
+          print('BROWSER_TEST_SOURCE_BYTES='+str(len(s.encode())))
+          print('BROWSER_TEST_SOURCE_SHA256='+hashlib.sha256(s.encode()).hexdigest())
+          PY
+          node --check <(python - <<'PY'
+          from pathlib import Path
+          s=Path('/tmp/swyrl-anime-web/index.html').read_text()
+          print(s[s.index('<script type="module">')+len('<script type="module">'):s.rindex('</script>')])
+          PY
+          ) || (echo 'Module syntax check failed' && exit 1)
+      - name: Install Chromium and Playwright
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Native Anime Studio Play acceptance · desktop and phone
+        run: |
+          python -m http.server 8765 --directory /tmp/swyrl-anime-web >/tmp/swyrl-http.log 2>&1 &
+          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/native_anime_playwright.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-anime-runtime-viewports
+          path: native-anime-*.png
+          retention-days: 5
