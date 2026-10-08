@@ -1,4 +1,4 @@
-name: Verify §E v8.8 native cinematic candidate
+name: Verify §E v8.9 native cinematic candidate
 on:
   push:
     branches: [main]
@@ -6,6 +6,7 @@ on:
       - ".github/workflows/verify-swrlz-native-cinematic.yml"
       - "projects/swrlz-forge-moba/patches/v8_6_native_anime_cinematic.py"
       - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py"
       - "projects/swrlz-forge-moba/patches/v8_8_popup_storybook.py"
       - "projects/swrlz-forge-moba/patches/v8_7_anime_cel_layers.py"
   pull_request:
@@ -40,9 +41,9 @@ jobs:
           output=source.encode("utf-8")
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
-          assert len(manifest["patches"])==47
+          assert len(manifest["patches"])==48
           for needle in (
-            'V8_8_POPUP_STORYBOOK_DIRECTOR','Maker v8.8','animeStartCinematic',
+            'V8_9_CINEMATIC_STAGING_SAFE','Maker v8.9','animeStartCinematic',
             'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',
             'animeCineExplore','animeCineScrub','updateWorkspaceInteraction(t);animeUpdateCinematic(dt);',
             'if(animeCine?.active)return;',
