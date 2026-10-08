@@ -1,3 +1,39 @@
+## UPDATE STARTED — 2026-10-08 — continuous lyric runs + extraction-stage diagnostics v171
+
+**Trigger:** live v170 Dragon Chat export `swrlz-dragon-chat (20).json`.
+
+**Observed evidence:**
+- LyricsFreak fetch succeeded with HTTP 200 and 97,080 response bytes;
+- cleaned fetched page body contained 2,818 chars;
+- best anchor correctly resolved to `Tyga – Rack City Lyrics` at line index 128;
+- fetched preview immediately contained the requested lyric lines;
+- source identity verified with score 8;
+- extractor nevertheless returned 0 chars and `NO_STRUCTURED_LYRIC_BODY`.
+
+**Root cause:**
+For pages without explicit Verse/Chorus/performer markers, the extractor split on blank-line groups. A single long lyric run only became multiple blocks when its line count happened to be evenly divisible by four. Otherwise `full-lyrics` required >=2 blocks and rejected the valid run. This encoded formatting assumptions from some lyric sites instead of musical/content semantics.
+
+**Repair plan:**
+1. refactor extraction into a diagnostic-capable analysis pass;
+2. accept one anchored contiguous unmarked lyric run when it contains enough lyric-like lines, without requiring an arbitrary mod-4 stanza shape;
+3. preserve source order and do not invent musical labels/bar counts;
+4. retain hard/footer/recommendation boundaries;
+5. export bounded `extractorDiagnostics` per fetched attempt:
+   - raw/scoped/nonempty/content line counts;
+   - anchor index/line;
+   - explicit cue counts;
+   - blank-separated chunk count;
+   - accepted block count and block line counts;
+   - continuous-run eligibility;
+   - terminal boundary kind/line;
+   - requested scope;
+   - result chars/line count;
+   - final extraction decision/reason;
+6. add a regression reproducing the LyricsFreak continuous-run shape and a negative prose/chrome control;
+7. preserve v170 source-family/budget behavior and v164-v168 presentation behavior.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-08 — diverse lyric fetch budget + response-start streaming UX v170
 
 **Outcome:** LYRIC FETCH BUDGET DIVERSIFIED ACROSS SOURCE FAMILIES + NEW RESPONSES ANCHOR AT THEIR TOP DURING STREAMING / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
