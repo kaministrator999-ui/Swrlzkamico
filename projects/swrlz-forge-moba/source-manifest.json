@@ -65,6 +65,6 @@
     "patches/v8_9_cinematic_staging.py",
     "patches/v9_0_animation_studio.py"
   ],
-  "finalBytes": 748181,
-  "finalSha256": "1499d4fff5b2054de81830e038856b22802f992f93d5d555203df32303aa6c58"
+  "finalBytes": 758245,
+  "finalSha256": "20e1ed3d3697d4a199e34ae812e7b30a3bbc7c2503da3223bf54ddb8915e3236"
 }
