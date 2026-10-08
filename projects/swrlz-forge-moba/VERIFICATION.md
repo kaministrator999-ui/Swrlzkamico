@@ -1,3 +1,9 @@
+# §wyrl§ Engine v8.9 · camera-safe scene staging verification
+
+Candidate patch `patches/v8_9_cinematic_staging.py` corrects user-observed v8.8 near-camera book/desk occlusion. The Playwright suite now seeks early and later acts on desktop and phone, verifying the physical book and painted foreground trim stay below Kami and that cathedral scenes stay behind both characters; no default cutout may approach the camera near field. Pending complete runtime/build/hash receipt.
+
+---
+
 # §wyrl§ Engine v8.8 · animated storybook video creator verification
 
 47 governed patches. Candidate HTML **644,951 bytes**, SHA-256 `06c55a0d090bd6ffa9383ff44f914b922a841de7dc03284a50955cb4036478cd`, marker `V8_8_POPUP_STORYBOOK_DIRECTOR`.
