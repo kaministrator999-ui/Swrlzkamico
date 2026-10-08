@@ -1,4 +1,4 @@
-name: Validate §E v8.7 2.5D anime cel layers
+name: Validate §E v8.8 2.5D anime cel layers
 on:
   pull_request:
     branches: [main]
@@ -7,6 +7,7 @@ on:
     paths:
       - "projects/swrlz-forge-moba/patches/v8_7_anime_cel_layers.py"
       - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v8_8_popup_storybook.py"
       - "projects/swrlz-forge-moba/tests/native_anime_playwright.mjs"
       - ".github/workflows/verify-swrlz-anime-cels.yml"
 permissions:
@@ -36,9 +37,9 @@ jobs:
           source=raw.decode('utf-8')
           for patch in manifest['patches']:
             source=mod['load_patch'](root/patch)(source)
-          assert len(manifest['patches'])==46
-          for expected in ['V8_7_ANIME_CEL_PARALLAX','Maker v8.7','animeCreateCelLayers',
-              'animeUpdateCelLayers','animeLayerVisible','animeDisposeGroup','animeCleanLayers',
+          assert len(manifest['patches'])==47
+          for expected in ['V8_8_POPUP_STORYBOOK_DIRECTOR','Maker v8.8','animeCreateCelLayers',
+              'animeUpdateCelLayers','animeLayerVisible','animeDisposeGroup','animeCleanLayers','animeMakePaperBook','animeDirectorInstall','popKamiArt','popSwyrlzArt',
               'ANIME_2D_LAYER_SPECS','animeMakeCast','animeCineLayers']:
             assert expected in source, expected
           dist=Path('/tmp/swyrl-anime-cel-test');dist.mkdir(parents=True,exist_ok=True)
