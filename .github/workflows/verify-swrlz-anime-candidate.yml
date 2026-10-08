@@ -18,6 +18,7 @@ on:
       - ".github/workflows/verify-swrlz-anime-candidate.yml"
 permissions:
   contents: write
+  actions: read
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -88,6 +89,20 @@ jobs:
               assert len(packed)==data['bytes']
               assert hashlib.sha256(packed).hexdigest()==data['sha256']
           print('PACKAGING_44_PATCHES_AND_BOTH_ASSETS_VERIFIED')
+          PY
+      - name: Find production deployment run for exact trigger
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json,os,urllib.request
+          trigger='c1f6193c094a1006bfcbc53e23fbe13843b06999'
+          url='https://api.github.com/repos/kaministrator999-ui/Swrlzkamico/actions/workflows/deploy-swrlz-forge-moba.yml/runs?per_page=20'
+          request=urllib.request.Request(url,headers={'Accept':'application/vnd.github+json','Authorization':'Bearer '+os.environ['GITHUB_TOKEN'],'User-Agent':'swyrl-anime-candidate-check'})
+          data=json.load(urllib.request.urlopen(request,timeout=20))
+          matching=[run for run in data.get('workflow_runs',[]) if run.get('head_sha')==trigger]
+          for run in matching:print('ENGINE_DEPLOY_RUN='+str(run['id'])+' STATUS='+str(run['status'])+' CONCLUSION='+str(run.get('conclusion'))+' URL='+str(run.get('html_url')))
+          if not matching:print('ENGINE_DEPLOY_RUN=NOT_FOUND_FOR_TRIGGER')
           PY
       - name: Seal exact v8.5 artifact manifest after verification
         if: github.event_name == 'push'
