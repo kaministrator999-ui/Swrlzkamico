@@ -2130,6 +2130,7 @@ def copy_lyrics_rescue_search_debug(value: Any) -> list[dict[str,Any]]:
             })
         out.append({
             "query":_clean(item.get("query"),500),
+            "strategy":_clean(item.get("strategy"),80),
             "resultCount":int(item.get("resultCount") or 0),
             "admittedCount":int(item.get("admittedCount") or 0),
             "errorType":_clean(item.get("errorType"),100),
