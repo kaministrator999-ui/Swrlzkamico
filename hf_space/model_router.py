@@ -128,6 +128,11 @@ def _lyrics_retrieval_payload(result: dict[str,Any], user_prompt: str) -> str | 
     verified=context.get("verifiedLyrics") if isinstance(context.get("verifiedLyrics"),dict) else None
     if not verified:
         return None
+    compiled=str(verified.get("presentationText") or "").strip()
+    if compiled:
+        # Presentation was compiled upstream from the frozen verified payload.
+        # Chat renders this text; it does not infer/reorder musical structure.
+        return compiled
     scope=str(verified.get("requestedScope") or "lyrics")
     candidates=[verified]+[x for x in (verified.get("candidateSources") or []) if isinstance(x,dict)]
     seen=set()
