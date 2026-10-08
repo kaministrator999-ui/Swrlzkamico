@@ -37,6 +37,7 @@ jobs:
           for patch in manifest['patches']:
             source=mod['load_patch'](root/patch)(source)
           assert len(manifest['patches'])==46
+          assert manifest['patches'][-1]=='patches/v8_7_anime_cel_layers.py'
           for expected in ['V8_7_ANIME_CEL_PARALLAX','Maker v8.7','animeCreateCelLayers',
               'animeUpdateCelLayers','animeLayerVisible','animeDisposeGroup','animeCleanLayers',
               'ANIME_2D_LAYER_SPECS','animeMakeCast','animeCineLayers']:
