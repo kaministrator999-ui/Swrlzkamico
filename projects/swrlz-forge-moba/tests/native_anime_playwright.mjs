@@ -1,5 +1,6 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 
 const base=process.env.SWYRL_ANIME_TEST_URL||'http://127.0.0.1:8765';
 const browser=await chromium.launch({
@@ -87,6 +88,17 @@ try{
     await page.evaluate(()=>document.getElementById('stopBtn').click());
     const stop=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status());
     assert.equal(stop.playing,false,mode.name+' Stop failed');
+    // Director parameters must survive a real downloadable editor Save Project.
+    const downloadPending=page.waitForEvent('download',{timeout:15000});
+    await page.locator('#saveBtn').click();
+    const download=await downloadPending;
+    const saved=JSON.parse(await readFile(await download.path(),'utf8'));
+    assert.equal(saved.project?.animePopUp?.schema,'anime-popup-v1',
+      mode.name+' director state missing from exported project');
+    assert.equal(saved.project.animePopUp.layers.kami.delay,2.25,
+      mode.name+' Kami cel timing not saved');
+    assert.equal(saved.project.animePopUp.layers.swyrlz.offsetX,-2.7,
+      mode.name+' §wyrlz cel staging not saved');
     assert.equal(errors.length,0,mode.name+' unhandled browser errors: '+errors.join('\n'));
     console.log('NATIVE_ANIME_'+mode.name.toUpperCase()+'_PASS',JSON.stringify({elapsed:after.elapsed,stage,subtitle:subtitle.slice(0,60)}));
     await page.screenshot({path:'native-anime-'+mode.name+'.png',fullPage:false});
