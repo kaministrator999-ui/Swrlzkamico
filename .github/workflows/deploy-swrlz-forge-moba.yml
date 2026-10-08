@@ -38,8 +38,8 @@ jobs:
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V8_6_NATIVE_ANIME_CINEMATIC" dist/swrlz-forge-moba/index.html
-          grep -q "<title>§wyrl§ Engine · Maker v8.6</title>" dist/swrlz-forge-moba/index.html
+          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V8_7_ANIME_CEL_PARALLAX" dist/swrlz-forge-moba/index.html
+          grep -q "<title>§wyrl§ Engine · Maker v8.7</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
@@ -112,7 +112,7 @@ jobs:
               "sourceRepository": "kaministrator999-ui/Swrlzkamico",
               "sourceCommit": source_sha,
               "sourcePath": "projects/swrlz-forge-moba",
-              "sourceVersion": "v8.6",
+              "sourceVersion": "v8.7",
               "engineName": "§wyrl§ Engine",
               "sourceSha256": source["finalSha256"],
               "sourceBytes": source["finalBytes"],
@@ -132,7 +132,7 @@ jobs:
           print(json.dumps(receipt, indent=2))
           PY
 
-      - name: Verify live Space serves §wyrl§ Engine v8.6
+      - name: Verify live Space serves §wyrl§ Engine v8.7
         env:
           SOURCE_SHA: ${{ github.sha }}
           APP_URL: ${{ steps.deploy_space.outputs.app_url }}
@@ -154,7 +154,7 @@ jobs:
           Path("/tmp/forge-live-source.html").write_bytes(source)
           PYCODE
               LIVE_HTML_SHA="$(sha256sum /tmp/forge-live-source.html | cut -d ' ' -f1)"
-              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V8_6_NATIVE_ANIME_CINEMATIC" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ]; then
+              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V8_7_ANIME_CEL_PARALLAX" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ]; then
                 # A release is incomplete if its editor-integrated screening or
                 # importable canonical starter are stale or missing.
                 ASSET_OK=1
@@ -189,17 +189,17 @@ jobs:
           print('LIVE_ANIME_STARTER_AND_EPISODE_HASHES_MATCH')
           PYCODE
                   then
-                    echo "Verified: exact §wyrl§ Engine v8.6 and both anime starter media assets."
+                    echo "Verified: exact §wyrl§ Engine v8.7 and both anime starter media assets."
                     exit 0
                   fi
                 fi
                 echo "Editor HTML arrived but anime assets or SOURCE receipt did not match yet."
               fi
-              echo "Live page responded, but the exact v8.6 artifact was not present yet."
+              echo "Live page responded, but the exact v8.7 artifact was not present yet."
             fi
             sleep 10
           done
-          echo "::error::Hugging Face upload completed, but the live Space did not serve the v8.6 marker within the verification window."
+          echo "::error::Hugging Face upload completed, but the live Space did not serve the v8.7 marker within the verification window."
           exit 1
 
       - name: Preserve deploy receipt
