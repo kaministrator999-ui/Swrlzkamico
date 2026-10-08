@@ -121,28 +121,40 @@ def _normalize_kind(raw: str) -> tuple[str,int|None]:
 
 
 def parse_section_marker(line: str) -> dict[str,Any] | None:
-    """Parse an explicit source marker while preserving its original display text."""
+    """Parse explicit musical markers and performer-only cues without inventing form."""
     raw=str(line or "").strip()
     match=_SECTION_RE.fullmatch(raw)
-    if not match:
-        return None
-    kind_raw=match.group("kind").strip()
-    section_type,number=_normalize_kind(kind_raw)
-    tail=str(match.group("tail") or "").strip()
-    performer=""
-    if tail.startswith(":"):
-        performer=tail[1:].strip()
-    elif ":" in tail:
-        performer=tail.split(":",1)[1].strip()
-    performer=performer.strip(" []:-")
-    return {
-        "rawLabel":raw,
-        "type":section_type,
-        "number":number,
-        "performer":performer or None,
-        "confidence":1.0,
-        "basis":"explicit_source_marker",
-    }
+    if match:
+        kind_raw=match.group("kind").strip()
+        section_type,number=_normalize_kind(kind_raw)
+        tail=str(match.group("tail") or "").strip()
+        performer=""
+        if tail.startswith(":"):
+            performer=tail[1:].strip()
+        elif ":" in tail:
+            performer=tail.split(":",1)[1].strip()
+        performer=performer.strip(" []:-")
+        return {
+            "rawLabel":raw,
+            "type":section_type,
+            "number":number,
+            "performer":performer or None,
+            "confidence":1.0,
+            "basis":"explicit_source_marker",
+        }
+
+    performer_match=re.fullmatch(r"\[\s*([A-Za-z0-9][^\]\n:]{0,70})\s*:\s*\]",raw)
+    if performer_match:
+        performer=performer_match.group(1).strip()
+        return {
+            "rawLabel":raw,
+            "type":"performer_cue",
+            "number":None,
+            "performer":performer or None,
+            "confidence":1.0,
+            "basis":"explicit_source_performer_marker",
+        }
+    return None
 
 
 def _norm_line(value: str) -> str:
@@ -211,9 +223,16 @@ def structure_verified_music(
         })
         sections.append(section)
 
-    explicit=sum(1 for section in sections if section.get("basis")=="explicit_source_marker")
+    explicit_musical=sum(1 for section in sections if section.get("basis")=="explicit_source_marker")
+    explicit_performer=sum(1 for section in sections if section.get("basis")=="explicit_source_performer_marker")
+    explicit=explicit_musical+explicit_performer
     work_type="song" if explicit or requested_scope in ("full-lyrics","first-verse") else "music_text"
-    structure_basis="explicit_source_markers" if explicit else "verified_text_blocks_without_invented_labels"
+    if explicit_musical:
+        structure_basis="explicit_musical_source_markers"
+    elif explicit_performer:
+        structure_basis="explicit_performer_source_markers_without_invented_form"
+    else:
+        structure_basis="verified_text_blocks_without_invented_labels"
     return {
         "schema":MUSIC_STRUCTURE_SCHEMA,
         "subject":subject,
@@ -221,6 +240,8 @@ def structure_verified_music(
         "requestedScope":requested_scope,
         "structureBasis":structure_basis,
         "explicitSectionCount":explicit,
+        "explicitMusicalSectionCount":explicit_musical,
+        "explicitPerformerCueCount":explicit_performer,
         "sectionCount":len(sections),
         "sections":sections,
         "barSemantics":{
@@ -296,6 +317,8 @@ def music_structure_debug(document: dict[str,Any], presentation: dict[str,Any] |
         "structureBasis":str(document.get("structureBasis") or "")[:80],
         "sectionCount":int(document.get("sectionCount") or 0),
         "explicitSectionCount":int(document.get("explicitSectionCount") or 0),
+        "explicitMusicalSectionCount":int(document.get("explicitMusicalSectionCount") or 0),
+        "explicitPerformerCueCount":int(document.get("explicitPerformerCueCount") or 0),
         "sourceOrderPreserved":bool(document.get("sourceOrderPreserved")),
         "newlineEqualsBar":False,
         "sections":sections,
