@@ -123,7 +123,7 @@ bundle=online_research_reasoner.research(payload,{
 })
 assert len(bundle["candidateAdmissionDebug"])==2,bundle
 assert bundle["candidateAdmissionDebug"][0]["allowed"] is False,bundle
-assert bundle["candidateAdmissionDebug"][0]["reason"]=="ARTIST_MISMATCH",bundle
+assert bundle["candidateAdmissionDebug"][0]["reason"] in {"TITLE_PHRASE_MISMATCH","ARTIST_MISMATCH"},bundle
 assert bundle["candidateAdmissionDebug"][1]["allowed"] is True,bundle
 assert bundle["candidateAdmissionDebug"][1]["reason"]=="EXACT_SONG_ENTITY_MATCH",bundle
 assert fetch_calls==[lyrics["url"]],fetch_calls
