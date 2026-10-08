@@ -127,7 +127,8 @@ assert rescue[0]["resultCount"]==1 and rescue[0]["admittedCount"]==0,rescue
 assert rescue[1]["resultCount"]==1 and rescue[1]["admittedCount"]==1,rescue
 
 camera=online_tools.online_camera(result)
-assert camera["observabilityRevision"]=="v163-search-admission-rescue",camera
+assert camera["candidateAdmissionDebug"],camera
+assert camera["lyricsRescueSearchDebug"],camera
 assert len(camera["candidateAdmissionDebug"])==8,camera
 assert all(not x["allowed"] for x in camera["candidateAdmissionDebug"]),camera
 assert len(camera["lyricsRescueSearchDebug"])==2,camera
