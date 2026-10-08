@@ -33,7 +33,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v169-versatile-song-discovery"
+ONLINE_OBSERVABILITY_REVISION = "v170-diverse-fetch-budget"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -2232,6 +2232,7 @@ def online_camera(result: dict[str, Any] | None) -> dict[str, Any] | None:
         "elapsedMs": result.get("elapsedMs"),
         "lyricsSourceAttemptCount": int(result.get("lyricsSourceAttemptCount") or 0),
         "lyricsFetchDebug": copy_lyrics_debug(result.get("lyricsFetchDebug")),
+        "blockedLyricsSourceFamilies":[_clean(x,160) for x in (result.get("blockedLyricsSourceFamilies") or [])[:12]],
         "musicStructureDebug": result.get("musicStructureDebug") if isinstance(result.get("musicStructureDebug"),dict) else None,
         "candidateAdmissionDebug": copy_candidate_admission_debug(result.get("candidateAdmissionDebug")),
         "songIdentity": result.get("songIdentity") if isinstance(result.get("songIdentity"),dict) else None,
