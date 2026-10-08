@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v8.7",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_7_ANIME_CEL_PARALLAX",
-  "reason": "Ship layered 2.5D Anime Studio starter with six independent parallax depth layers, illustrated cel characters and dragon, runtime Layers toggle, temporary hiding/restoration of overlapping 3D signs, and phone-bounded captions. Exact 46-patch source plus desktop/mobile Chromium acceptance verified at Actions 37721928687.",
-  "sourceCommit": "736aa954599a0ca16a59f3725b688fc4c5779033",
-  "sourceIntegritySha256": "6a58245bc1d19e3513ddc3a280a454c2d69e7c6c836ad18c65821f1b0816747b"
+  "releaseVersion": "v8.8",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_8_POPUP_STORYBOOK_DIRECTOR",
+  "reason": "Deploy the existing Anime Studio starter as an animated 3D pop-up storybook video creator with procedural gothic scene cards unfolding from a physical book, separate Kami and §wyrlz illustrated character cels, per-layer saved Director controls, and phone-accessible Save Project. Desktop and phone Chromium end-to-end acceptance passed Actions 37726896000; exact governed 47-patch source SHA256 verified.",
+  "sourceCommit": "3566286aaa1aa5fa5f4e92269d7700b9101135f9",
+  "sourceIntegritySha256": "06c55a0d090bd6ffa9383ff44f914b922a841de7dc03284a50955cb4036478cd"
 }
