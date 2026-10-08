@@ -1,3 +1,17 @@
+## UPDATE STARTED — 2026-10-07 — render full-width lyric boundaries v168
+
+**Trigger:** live v167 mobile screenshots show the compiler emits the intended outer token `---`, but the custom Chat renderer treats it as ordinary paragraph text, so beginning/end lyric boundaries render as three literal dashes instead of full-width rules. Internal short Unicode section dividers render acceptably.
+
+**Repair plan:**
+- add explicit horizontal-rule parsing for standalone `---` in the assistant rich-text renderer;
+- render it as a semantic `<hr class="lyric-document-divider">`;
+- style that rule at 100% of the message-content width with mobile-safe margins;
+- leave the short internal `────────` divider untouched;
+- keep the presentation compiler contract unchanged;
+- add regression coverage for parser recognition and full-width CSS.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — mobile-first lyric dividers v167
 
 **Outcome:** MOBILE-FIRST LYRIC PRESENTATION HIERARCHY IMPLEMENTED / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
