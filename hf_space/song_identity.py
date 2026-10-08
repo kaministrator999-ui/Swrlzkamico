@@ -148,8 +148,13 @@ def query_ladder(identity: dict[str,Any], max_queries: int = 8) -> list[dict[str
     if artist:
         add("exact-title-artist",f'{qtitle} {qartist}{version_bit} lyrics')
         add("artist-title-song",f'{qartist} {qtitle}{version_bit} song lyrics')
+        # For ambiguous titles, a lyric-source family is a stronger third step
+        # than another generic bag-of-words query. Keep the broader structural
+        # query later in the bounded ladder.
+        hosts=("genius.com","azlyrics.com","musixmatch.com","allthelyrics.com","lyricsfreak.com")
+        add("source-family-disambiguation",f'{qtitle} {qartist}{version_bit} lyrics site:{hosts[0]}')
         add("title-artist-verse",f'{qtitle} {qartist}{version_bit} verse chorus lyrics')
-        for host in ("genius.com","azlyrics.com","musixmatch.com","allthelyrics.com","lyricsfreak.com"):
+        for host in hosts[1:]:
             add("source-family-disambiguation",f'{qtitle} {qartist}{version_bit} lyrics site:{host}')
     else:
         add("exact-title",f'{qtitle}{version_bit} lyrics')
