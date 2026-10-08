@@ -167,7 +167,7 @@ jobs:
                 done
                 if [ "$ASSET_OK" -eq 1 ]; then
                   if python - <<'PYCODE'
-          import hashlib,json
+          import hashlib,json,re
           from pathlib import Path
           source=json.loads(Path('/tmp/forge-assets/SOURCE.json').read_text())
           expected=Path('dist/swrlz-forge-moba/SOURCE.json')
@@ -176,7 +176,14 @@ jobs:
           assert source['finalBytes']==official['finalBytes']
           for asset,meta in official['assets'].items():
               live=Path('/tmp/forge-assets')/asset
-              data=live.read_bytes()
+              served=live.read_bytes()
+              # Static HF Space injects creator metadata into every served HTML
+              # file, not only index.html. Remove only this known wrapper.
+              data=(re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',
+                   b'',served,count=1) if asset.endswith('.html') else served)
+              print('SERVING_ASSET='+asset+' LIVE_BYTES='+str(len(served))+
+                    ' NORMALIZED_BYTES='+str(len(data))+
+                    ' EXPECTED_BYTES='+str(meta['bytes']))
               assert len(data)==meta['bytes'],asset
               assert hashlib.sha256(data).hexdigest()==meta['sha256'],asset
           print('LIVE_ANIME_STARTER_AND_EPISODE_HASHES_MATCH')
