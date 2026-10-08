@@ -65,6 +65,27 @@ jobs:
           node --check /tmp/swyrl-anime-engine.mjs
           python -m py_compile projects/swrlz-forge-moba/patches/v8_5_anime_starter.py projects/swrlz-forge-moba/build_space.py
           echo "NODE_SYNTAX_AND_PYTHON_COMPILE_OK"
+      - name: Verify packaged source and both starter assets
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
+          cmp /tmp/swyrl-anime-engine.html dist/swrlz-forge-moba/index.html
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          out=Path('dist/swrlz-forge-moba')
+          receipt=json.loads((out/'SOURCE.json').read_text())
+          assert receipt['finalBytes']==597990
+          assert receipt['finalSha256']=='1d9111211897151c091a313dd0fbfa59bc3819ac744567dfd0465e7208e39f8c'
+          assert len(receipt['patches'])==44
+          for asset,data in receipt['assets'].items():
+              source=(root/asset).read_bytes()
+              packed=(out/asset).read_bytes()
+              assert source==packed
+              assert len(packed)==data['bytes']
+              assert hashlib.sha256(packed).hexdigest()==data['sha256']
+          print('PACKAGING_44_PATCHES_AND_BOTH_ASSETS_VERIFIED')
+          PY
       - name: Seal exact v8.5 artifact manifest after verification
         if: github.event_name == 'push'
         run: |
