@@ -29,6 +29,7 @@ source_ok=online_tools._lyrics_source_identity({
 assert source_ok["verified"] is True,source_ok
 
 orig_research=online_tools.run_online_research
+orig_search=online_tools.canonical_online_research.search_public
 
 def fake_research(_payload):
     return {
@@ -54,10 +55,15 @@ def fake_research(_payload):
 
 try:
     online_tools.run_online_research=fake_research
+    # This regression isolates source-identity-vs-body semantics. Keep the
+    # bounded rescue stage deterministic instead of letting public web results
+    # turn a source-only fixture into a later verified-body success.
+    online_tools.canonical_online_research.search_public=lambda _query: []
     p=dict(plan); p["requestId"]="v161-source-only"
     result=online_tools._search_bundle(p)
 finally:
     online_tools.run_online_research=orig_research
+    online_tools.canonical_online_research.search_public=orig_search
 
 ctx=result["modelContext"]
 assert ctx["verifiedLyrics"] is None,ctx
