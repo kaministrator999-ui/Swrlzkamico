@@ -150,12 +150,12 @@ def query_ladder(identity: dict[str,Any], max_queries: int = 8) -> list[dict[str
         add("artist-title-song",f'{qartist} {qtitle}{version_bit} song lyrics')
         add("title-artist-verse",f'{qtitle} {qartist}{version_bit} verse chorus lyrics')
         for host in ("genius.com","azlyrics.com","musixmatch.com","allthelyrics.com","lyricsfreak.com"):
-            add("lyric-domain",f'{qtitle} {qartist}{version_bit} lyrics site:{host}')
+            add("source-family-disambiguation",f'{qtitle} {qartist}{version_bit} lyrics site:{host}')
     else:
         add("exact-title",f'{qtitle}{version_bit} lyrics')
         add("title-song",f'{qtitle}{version_bit} song lyrics')
         for host in ("genius.com","azlyrics.com","musixmatch.com","allthelyrics.com","lyricsfreak.com"):
-            add("lyric-domain",f'{qtitle}{version_bit} lyrics site:{host}')
+            add("source-family-disambiguation",f'{qtitle}{version_bit} lyrics site:{host}')
     return plans[:max(1,int(max_queries))]
 
 
