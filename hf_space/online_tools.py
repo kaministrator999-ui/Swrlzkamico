@@ -827,6 +827,20 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
             if len(content)>=2:
                 blocks.append("\n".join(content))
 
+        # HTML-to-text cleaners sometimes add a blank after EVERY lyric line.
+        # Do not require two lines per chunk when an anchored run consists
+        # entirely of >=8 one-line lyric chunks. Keep strict boundaries.
+        if not blocks and anchor_index is not None and len(chunks)>=8:
+            single_line_run=[]
+            for chunk in chunks:
+                lines=[ln.strip() for ln in chunk.splitlines() if ln.strip()]
+                if len(lines)!=1 or not _lyrics_line_is_content(lines[0]):
+                    single_line_run=[]
+                    break
+                single_line_run.append(lines[0])
+            if len(single_line_run)>=8:
+                blocks=["\n".join(single_line_run)]
+
         # Many lyric sites emit the whole song as one continuous line-preserving
         # run with no Verse/Chorus markers and no blank stanza separators.
         # A strong subject anchor plus >=8 lyric-like lines is enough to preserve
