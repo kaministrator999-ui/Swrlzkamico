@@ -2127,6 +2127,7 @@ def copy_lyrics_debug(value: Any) -> list[dict[str,Any]]:
                 "anchorIndex":fetched.get("anchorIndex") if isinstance(fetched.get("anchorIndex"),int) else None,
                 "anchorLine":str(fetched.get("anchorLine") or "")[:220],
                 "sectionMarkers":[str(x)[:120] for x in (fetched.get("sectionMarkers") or [])[:12]],
+                "performerMarkers":[str(x)[:120] for x in (fetched.get("performerMarkers") or [])[:12]],
                 "preview":str(fetched.get("preview") or "")[:600],
                 "previewChars":int(fetched.get("previewChars") or 0),
                 "previewLimit":600,
@@ -2142,6 +2143,9 @@ def copy_lyrics_debug(value: Any) -> list[dict[str,Any]]:
             "sourceIdentityScore":int(item.get("sourceIdentityScore") or 0),
             "snippetOverlapCount":int(item.get("snippetOverlapCount") or 0),
             "snippetInformativeTokenCount":int(item.get("snippetInformativeTokenCount") or 0),
+            "snippetSequenceSpan":int(item.get("snippetSequenceSpan") or 0),
+            "musicalSectionCount":int(item.get("musicalSectionCount") or 0),
+            "performerCueCount":int(item.get("performerCueCount") or 0),
             "outcome":_clean(item.get("outcome"),40),
             "rejectionReason":_clean(item.get("rejectionReason"),80),
         })
