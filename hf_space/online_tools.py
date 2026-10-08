@@ -18,6 +18,7 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 from typing import Any, Callable, Iterator
+from music_structure import structure_verified_music, compile_verified_music_presentation, music_structure_debug
 
 try:
     import api.online_research as canonical_online_research
@@ -1687,19 +1688,39 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             selected_stanza_count=len([x for x in re.split(r"\n\s*\n+",selected_extract) if x.strip()])
             original_count=provenance.get("originalStanzaCount")
             raw_source_title=selected.get("title") or selected.get("source") or "Fetched lyrics source"
+            source_display_title=_lyrics_source_display_title(
+                str(raw_source_title),
+                str(plan.get("subject") or ""),
+                int(original_count) if isinstance(original_count,int) else None,
+                selected_stanza_count,
+            )
+            source_url=_clean_source_url(str(selected.get("url") or ""))
+            music_document=structure_verified_music(
+                selected_extract,
+                str(selected.get("pageExtract") or ""),
+                subject=str(plan.get("subject") or ""),
+                requested_scope=requested_scope,
+            )
+            music_presentation=None
+            # Explicit source structure is safe to compile before Chat. Unmarked/historical
+            # texts keep the existing attribution-aware path until their structure is explicit.
+            if int(music_document.get("explicitSectionCount") or 0)>0:
+                music_presentation=compile_verified_music_presentation(
+                    music_document,
+                    source_title=source_display_title,
+                    source_url=source_url,
+                )
             verified_lyrics = {
                 "sourceTitle": raw_source_title,
-                "sourceDisplayTitle": _lyrics_source_display_title(
-                    str(raw_source_title),
-                    str(plan.get("subject") or ""),
-                    int(original_count) if isinstance(original_count,int) else None,
-                    selected_stanza_count,
-                ),
-                "sourceUrl": _clean_source_url(str(selected.get("url") or "")),
+                "sourceDisplayTitle": source_display_title,
+                "sourceUrl": source_url,
                 "subject": str(plan.get("subject") or ""),
                 "requestedScope": requested_scope,
                 "lyricExtract": selected_extract,
                 "pageExtract": selected.get("pageExtract"),
+                "musicDocument": music_document,
+                "musicPresentation": music_presentation,
+                "presentationText": str((music_presentation or {}).get("presentationText") or ""),
                 "fetchedAt": selected.get("fetchedAt"),
                 "originalStanzaCount": provenance.get("originalStanzaCount"),
                 "attributionSourceTitle": provenance.get("sourceTitle") or "",
@@ -1799,6 +1820,10 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "verifiedLyricsSource": verified_lyrics_source,
         "lyricsSourceAttempts": lyrics_source_attempts,
         "lyricsFetchDebug": lyrics_fetch_debug[:LYRICS_MAX_PAGE_ATTEMPTS],
+        "musicStructureDebug": music_structure_debug(
+            (verified_lyrics or {}).get("musicDocument") if isinstance((verified_lyrics or {}).get("musicDocument"),dict) else {},
+            (verified_lyrics or {}).get("musicPresentation") if isinstance((verified_lyrics or {}).get("musicPresentation"),dict) else None,
+        ) if verified_lyrics else None,
         "candidateAdmissionDebug": candidate_admission_debug[:24],
         "lyricsRescueSearchDebug": lyrics_rescue_search_debug[:LYRICS_MAX_RESCUE_SEARCHES],
         "lyricsSourceAttemptCount": len(lyrics_source_attempts),
@@ -1830,6 +1855,10 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "researchId": bundle.get("researchId"),
         "lyricsSourceAttempts": lyrics_source_attempts,
         "lyricsFetchDebug": lyrics_fetch_debug[:LYRICS_MAX_PAGE_ATTEMPTS],
+        "musicStructureDebug": music_structure_debug(
+            (verified_lyrics or {}).get("musicDocument") if isinstance((verified_lyrics or {}).get("musicDocument"),dict) else {},
+            (verified_lyrics or {}).get("musicPresentation") if isinstance((verified_lyrics or {}).get("musicPresentation"),dict) else None,
+        ) if verified_lyrics else None,
         "candidateAdmissionDebug": candidate_admission_debug[:24],
         "lyricsRescueSearchDebug": lyrics_rescue_search_debug[:LYRICS_MAX_RESCUE_SEARCHES],
         "lyricsSourceAttemptCount": len(lyrics_source_attempts),
@@ -2036,6 +2065,7 @@ def online_camera(result: dict[str, Any] | None) -> dict[str, Any] | None:
         "elapsedMs": result.get("elapsedMs"),
         "lyricsSourceAttemptCount": int(result.get("lyricsSourceAttemptCount") or 0),
         "lyricsFetchDebug": copy_lyrics_debug(result.get("lyricsFetchDebug")),
+        "musicStructureDebug": result.get("musicStructureDebug") if isinstance(result.get("musicStructureDebug"),dict) else None,
         "candidateAdmissionDebug": copy_candidate_admission_debug(result.get("candidateAdmissionDebug")),
         "lyricsRescueSearchDebug": copy_lyrics_rescue_search_debug(result.get("lyricsRescueSearchDebug")),
         "lyricsMaxPageAttempts": int(result.get("lyricsMaxPageAttempts") or 0),
