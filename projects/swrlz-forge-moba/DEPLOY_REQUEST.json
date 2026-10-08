@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v8.8",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_8_POPUP_STORYBOOK_DIRECTOR",
-  "reason": "Deploy the existing Anime Studio starter as an animated 3D pop-up storybook video creator with procedural gothic scene cards unfolding from a physical book, separate Kami and §wyrlz illustrated character cels, per-layer saved Director controls, and phone-accessible Save Project. Desktop and phone Chromium end-to-end acceptance passed Actions 37726896000; exact governed 47-patch source SHA256 verified.",
-  "sourceCommit": "3566286aaa1aa5fa5f4e92269d7700b9101135f9",
-  "sourceIntegritySha256": "06c55a0d090bd6ffa9383ff44f914b922a841de7dc03284a50955cb4036478cd"
+  "releaseVersion": "v8.9",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_9_CINEMATIC_STAGING_SAFE",
+  "reason": "Repair Android user screenshots showing v8.8 scenery and physical book rising in front of the cinematic camera. v8.9 lowers the book, replaces opaque foreground desk with thin transparent bottom-edge trim, depth-clamps background scenery behind both wizard cels, and adds first/later scene stage-safety assertions. Exact 48-patch HTML/desktop/mobile Play/Save acceptance passed at Actions 37728474772.",
+  "sourceCommit": "63c94af0b9fae570c864a1fc61e4bdbf29a29a27",
+  "sourceIntegritySha256": "da9f48941543c81062a232417ed8897e8c82e912852474cf2154e209c12ddf37"
 }
