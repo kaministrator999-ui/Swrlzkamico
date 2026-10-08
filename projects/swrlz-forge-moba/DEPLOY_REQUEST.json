@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v9.0",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V9_0_AUTHORED_PAPER_THEATRE",
-  "reason": "Release native Animation Studio and the editor-authored 134-second first episode The Page That Remembered: separate Kami and §wyrlz cutouts, multi-layer illustrated scenery, physical paper hinges, independent book, saved camera/layer keyframes and dialogue, pose capture, Undo/Redo, artwork replacement, and portable Save/Load. Desktop/mobile native and full authoring acceptance passed in Actions 37797022555; all six engine CI gates passed for PR 46. Sealed 49-patch HTML and all eight bundled media assets independently verified before this final deploy request.",
-  "sourceCommit": "f46d65051f8d28db3d8afb05e21098943af3ed4c",
-  "sourceIntegritySha256": "6a0a9d24e2c888991afbe051d2ae5eba65f38a034c590013e447ca129962d157"
+  "reason": "Deploy v9.0 clean paper theatre default (PR #47): archive/hide three legacy editor layers comprising 60 obsolete floating platforms, signs and FX actors, retain all 62 original prototype actors and eight workstations, preserve the eight authored illustrated book layers and active Kami selection. Six PR CI gates passed, including mobile/desktop full authoring, keyframe, native cinematic and Save/Load acceptance (Actions 37804233386). Sealed generated 49-patch HTML: 746622 bytes, SHA-256 5ca627a1f698bcc5a9e24808e57460a84ccabc3846cb73063fa29de7762c066c.",
+  "sourceCommit": "4aa5094a5bbab1b9ae38439b258d92dc86603182",
+  "sourceIntegritySha256": "5ca627a1f698bcc5a9e24808e57460a84ccabc3846cb73063fa29de7762c066c"
 }
