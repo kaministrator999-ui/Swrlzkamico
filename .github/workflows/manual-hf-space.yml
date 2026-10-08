@@ -132,7 +132,7 @@ jobs:
         if: ${{ inputs.mode != 'inspect' }}
         run: |
           set -euo pipefail
-          python -m py_compile api/online_research.py hf_space/music_structure.py hf_space/online_tools.py hf_space/model_router.py hf_space/lfm2_700m_engine.py accepted_runtime/research/online_research_reasoner.py tests/test_full_lyrics_bounded_fallback_v158.py tests/test_full_lyrics_structural_extraction_v159.py tests/test_full_lyrics_subject_bound_verification_v160.py tests/test_full_lyrics_source_vs_body_v161.py tests/test_full_lyrics_fetch_debug_section_blocks_v162.py tests/test_full_lyrics_search_admission_rescue_v163.py tests/test_music_structure_presentation_v164.py tests/test_lyrics_region_integrity_v165.py tests/test_bing_redirect_canonicalization_v166.py tests/test_mobile_first_lyric_dividers_v167.py tests/test_full_width_lyric_boundary_rendering_v168.py
+          python -m py_compile api/online_research.py hf_space/music_structure.py hf_space/online_tools.py hf_space/model_router.py hf_space/lfm2_700m_engine.py accepted_runtime/research/online_research_reasoner.py tests/test_full_lyrics_bounded_fallback_v158.py tests/test_full_lyrics_structural_extraction_v159.py tests/test_full_lyrics_subject_bound_verification_v160.py tests/test_full_lyrics_source_vs_body_v161.py tests/test_full_lyrics_fetch_debug_section_blocks_v162.py tests/test_full_lyrics_search_admission_rescue_v163.py tests/test_music_structure_presentation_v164.py tests/test_lyrics_region_integrity_v165.py tests/test_bing_redirect_canonicalization_v166.py tests/test_mobile_first_lyric_dividers_v167.py tests/test_full_width_lyric_boundary_rendering_v168.py tests/test_versatile_song_discovery_v169.py
           python tests/test_full_lyrics_retrieval_v151.py
           python tests/test_full_lyrics_fetched_body_provenance_v155.py
           python tests/test_full_lyrics_wording_polish_v157.py
@@ -147,6 +147,7 @@ jobs:
           python tests/test_bing_redirect_canonicalization_v166.py
           python tests/test_mobile_first_lyric_dividers_v167.py
           python tests/test_full_width_lyric_boundary_rendering_v168.py
+          python tests/test_versatile_song_discovery_v169.py
       - name: Build and verify native R39 kernels in validation environment
         if: ${{ inputs.mode != 'inspect' }}
         run: |
