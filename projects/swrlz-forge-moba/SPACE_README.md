@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v8.6
+title: §wyrl§ Engine v8.7
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,11 +10,11 @@ header: mini
 short_description: Dragon Den, Starforge and Anime Studio workspaces.
 ---
 
-# §wyrl§ Engine · Maker v8.6
+# §wyrl§ Engine · Maker v8.7
 
 **Embervault Atelier** is a three-tier Dragon Den with six project stations, walkable ramps, and eight named destinations. **Starforge Observatory** is a separate floating-island workspace with physical bridges and ramps, six stations, and seven destinations beneath a constellation sky.
 
-**Ghosts in Different Forms · Episode 01** is the third selectable Projects starter, with 62 editable stage actors, three layers, eight storyboard destinations, eight editable script/direction stations, and one guardian dragon. Open [Anime Studio directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01) or use Projects. The **Watch Episode 01** button screens an original procedural animation in an editor modal. Press **Play** in Anime Studio to run the native 3D episode prototype: moving camera shots, procedural performers, floating particles, guardian animation, editable-script captions, Pause/seek, and **Explore Set**. **Watch Episode 01** remains a separate HTML canvas screening. This is a native runtime cinematic prototype, not yet a general-purpose authorable keyframe timeline; the spatial production set stays editable and savable.
+**Ghosts in Different Forms · Episode 01** is the third selectable Projects starter, with 62 editable stage actors, three layers, eight storyboard destinations, eight editable script/direction stations, and one guardian dragon. Open [Anime Studio directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01) or use Projects. The **Watch Episode 01** button screens an original procedural animation in an editor modal. Press **Play** in Anime Studio to run the native 3D episode prototype: moving camera shots, procedural performers, floating particles, guardian animation, editable-script captions, Pause/seek, and **Explore Set**. **Watch Episode 01** remains a separate HTML canvas screening. Native Play now renders original 2D-style illustrated cels across six camera-depth layers (background, atmosphere, midground, characters, effects, foreground), with a **Layers** toggle, parallax shots, restored editor actors after playback, and phone-safe captions. This is a native runtime cinematic prototype, not yet a general-purpose authorable keyframe timeline; the spatial production set stays editable and savable.
 
 Use WASD/arrows and mouse look in Play. Press **T** or **Zones** to travel, and approach a station then press **E** / **Open** to edit files and notes. Download files, transfer workspace JSON, or **Save Project** to preserve the scene, destinations, environment, and station work. Chat stations open the existing §wyrlz LALM chat in a new tab.
 
@@ -28,4 +28,4 @@ Desktop first-person verification is recorded with the source. Headset VR, VR co
 
 Source: https://github.com/kaministrator999-ui/Swrlzkamico/tree/main/projects/swrlz-forge-moba
 
-Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_6_NATIVE_ANIME_CINEMATIC`
+Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_7_ANIME_CEL_PARALLAX`
