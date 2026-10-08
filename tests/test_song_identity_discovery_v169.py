@@ -22,7 +22,7 @@ rack_plan=query_ladder(rack,8)
 assert rack_plan[0]["strategy"]=="exact-entity",rack_plan
 assert rack_plan[0]["query"]=='"Rack City" "Tyga" lyrics',rack_plan
 assert len(rack_plan)<=8,rack_plan
-assert any(x["strategy"]=="lyric-domain" and "site:genius.com" in x["query"] for x in rack_plan),rack_plan
+assert any(x["strategy"]=="source-family-disambiguation" and "site:genius.com" in x["query"] for x in rack_plan),rack_plan
 
 # Punctuation/version handling should not require special per-song code.
 dna=song_identity('"DNA." by Kendrick Lamar')
