@@ -1,9 +1,9 @@
-name: Validate §E v8.9 pop-up storybook creator
+name: Validate §E v8.9 camera-safe storybook staging
 on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/verify-swrlz-storybook-v8-8.yml"
+      - ".github/workflows/verify-swrlz-v8-9-camera-staging.yml"
       - "projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py"
       - "projects/swrlz-forge-moba/source-manifest.json"
   pull_request:
