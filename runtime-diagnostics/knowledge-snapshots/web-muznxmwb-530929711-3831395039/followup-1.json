@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-muznxmwb-530929711-3831395039",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "40d4dff508b72e50fe699286706572dd0f7f93f4",
+  "persistedAtUnixMs": 1791471630260,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-muznxmwb-530929711-3831395039",
+    "turnIndex": 1,
+    "userText": "Could you provide lyrics for cold piece of work by tech n9ne",
+    "capturedAtUnixMs": 1791471630260
+  }
+}
