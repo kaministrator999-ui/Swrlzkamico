@@ -1,4 +1,4 @@
-# Anime Studio starter · Ghosts in Different Forms · Episode 01
+# Anime Studio starter · Ghosts in Different Forms · Episode 01 · v8.6
 
 ## Starter contract
 
@@ -13,13 +13,13 @@ Project selector key and direct URL: `anime-ghosts-ep01`; `?project=anime-ghosts
 - One guardian dragon; player wisp/visitor
 - Dialogue, stage directions, and per-scene production notes in station files
 - Native `Save Project` / `Load Project` preserves the set, notes, and world metadata
-- Native Play + `T` to navigate between the eight sets and walk around them
+- Native **Play** begins a real-time camera/dialogue 3D cinematic and playback HUD. Use **Explore Set** to enter the ordinary walking Play/T-zone mode and visit the eight sets
 - **Watch Episode 01** in the editor opens the original animated HTML screening; Exit returns to editor
 - The deployed screening file is bundled locally with the app, not fetched from a paid runtime
 
 ## Honest animation boundary
 
-The *screening* is a procedural HTML canvas animation with authored timed scenes, subtitle/caption controls, and playback, distinct from the 3D engine. The **3D stages** are editable and can be explored in Play; they do not currently animate actors along the screening's camera/dialogue keyframes. Do not label the screening as native timeline animation or claim exports to MP4 from §E. This distinction is intentional: the starter pack exposes exactly which native editing capabilities work and which cinematic features still need implementation.
+The **Play** mode runs a project-scoped **native Three.js cinematic**: 134 seconds of camera interpolations, in-scene temporary procedural performers, dragon bob/rotation, light/particle effects, editable-script subtitle cues, scrub/pause/next/previous scene, and Explore Set. Script lines come from the eight stage workstation `script.md` files. The **Watch Episode** player remains a separate procedural HTML canvas animation. Camera/cast motion in native Play is currently scripted by the prototype, not editable through a general-purpose UI keyframe editor; this is the next engineering limitation. Do not label the screening as native timeline animation or claim exports to MP4 from §E. This distinction is intentional: the starter pack exposes exactly which native editing capabilities work and which cinematic features still need implementation.
 
 ## Source files
 
@@ -30,11 +30,11 @@ The *screening* is a procedural HTML canvas animation with authored timed scenes
 
 ## Acceptance tests
 
-1. Projects hub shows Anime Studio alongside Embervault and Starforge.
+1. Projects hub shows Anime Studio alongside Embervault and Starforge; pressing Play starts native cinematic, not an unexplained first-person aerial view.
 2. Opening Anime Studio loads its 62 actors, three layers, eight stations, eight travel zones.
 3. Editing a dialogue station and saving/reloading preserves the changed file.
-4. Play > T offers eight destinations. Teleport must reject unsupported or blocked coordinates.
-5. Watch opens Episode 01 in a modal/iframe without navigating away or overwriting editor data.
+4. Native Play cinematic advances seconds, performs camera/actor motion, reads dialogue cues, accepts Pause/scrub/next, and Explore Set returns to first-person Play > T with eight supported destinations.
+5. The separate Watch button opens the original 2D Episode 01 in a modal without navigating away or overwriting editor data.
 6. Close screening disposes the iframe source and returns focus.
 7. Direct `?project=anime-ghosts-ep01` boots the same starter.
 8. Starting a different project hides the screening control. Returning to Anime Studio restores it.
@@ -50,3 +50,7 @@ The *screening* is a procedural HTML canvas animation with authored timed scenes
 - Exportable video capture and reproducible render settings
 
 Do not silently build features beyond these requirements or confuse an editor-integrated screening iframe with an executable engine animation timeline.
+
+## Native cinematic acceptance · v8.6
+
+The [Chromium browser run](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719407234) passed both 1280×800 desktop and 390×844 phone layouts. It clicks Play, checks continuous clock and moving camera, rendered HUD/dialogue, seeks to the dragon shot, pauses, selects Explore Set, and stops with no uncaught page errors. The [full 45-patch candidate reconstruction](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719407233) passed module/Python syntax checks. Live host receipt remains a separate production gate.
