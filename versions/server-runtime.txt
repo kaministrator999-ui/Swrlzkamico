@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.320
-REVISION=2.3.320-hf-v167-mobile-lyric-dividers
+VERSION=2.3.321
+REVISION=2.3.321-hf-v168-full-width-lyric-boundaries
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
