@@ -2,7 +2,7 @@
 
 Canonical lane: §E / §wyrl§ Engine  
 History audited through: **2026-10-07**  
-Current source candidate: **v8.9 — Camera-safe pop-up staging (48-patch source and browser verification in progress; v8.8 last verified live)**. Historical releases remain preserved.
+Current source candidate: **v8.9 — Camera-safe pop-up staging (48-patch source rebuilt; desktop/mobile Chromium geometry and save tests passed; dedicated production upload pending)**. Historical releases remain preserved.
 
 Previously verified live release: **v8.6 — Native Anime Studio Play** ([Actions 37719877533](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719877533); exact served HTML and both episode/scene assets SHA-256 verified). Earlier v8.3 live receipts remain in historical sections.
 
@@ -24,7 +24,7 @@ Source: `patches/v8_6_native_anime_cinematic.py`; final SHA-256 `1468357c5ce082b
 
 Real Android screenshots of v8.8 showed the large opaque desk/foreground panel and animated book rising *in front of the camera and character cels*. Corrective engine patch `patches/v8_9_cinematic_staging.py` keeps the physical book below the wizard cutouts, replaces the opaque foreground panel with a thin transparent-trim plate that only paints its bottom portion, and clamps cathedral/sky/magic scenery behind both independent wizard cels. The effect still uses actual Three.js depth/perspective and independent hinges. Older saved `animePopUp` Director values remain serialized, but scenery render staging enforces a safe maximum so dangerous near-camera cards cannot obscure the cast. Runtime `popUpStatus().stageSafety` exposes book height, foreground painted boundary, actors and architecture Z values, and camera gap. Desktop and mobile automated regressions check first/later scene layouts against those boundaries.
 
-This release is **not** verified live until exact rebuilt source and hosted assets pass production receipt checks.
+Verified browser acceptance: [Actions 37728474772](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37728474772). Full artifact **647,639 bytes**, SHA-256 `da9f48941543c81062a232417ed8897e8c82e912852474cf2154e209c12ddf37`; production receipt pending.
 
 ## v8.8 candidate · Pop-Up Storybook Video Creator
 
