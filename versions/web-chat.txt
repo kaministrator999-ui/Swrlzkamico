@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.91
-REVISION=1.5.91-full-width-lyric-boundary-renderer-v168
+VERSION=1.5.92
+REVISION=1.5.92-response-start-stream-anchor-v170
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
