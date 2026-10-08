@@ -1,6 +1,6 @@
-# §wyrl§ Engine v9.0 candidate · Native Animation Studio acceptance
+# §wyrl§ Engine v9.0 · Native Animation Studio acceptance
 
-Current candidate: `patches/v9_0_animation_studio.py`, 49 governed patches, artifact `swyrl_engine_v9_0.html`, marker `V9_0_AUTHORED_PAPER_THEATRE`. Sealed HTML: **746,616 bytes**, SHA-256 `6a0a9d24e2c888991afbe051d2ae5eba65f38a034c590013e447ca129962d157`. Remote candidate CI, dedicated deployment, and hosted v9.0 source/artwork receipts remain pending at documentation time.
+Current candidate: `patches/v9_0_animation_studio.py`, 49 governed patches, artifact `swyrl_engine_v9_0.html`, marker `V9_0_AUTHORED_PAPER_THEATRE`. Sealed HTML: **746,616 bytes**, SHA-256 `6a0a9d24e2c888991afbe051d2ae5eba65f38a034c590013e447ca129962d157`. Native desktop and phone authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555). Production authority is recorded in the final `DEPLOY_REQUEST.json`, the dedicated deployment receipt, and the exact hosted-release audit.
 
 The native exported starter contains 70 actors and 11 editor layers, including eight new saved paper actors/layers alongside all original 62 production set actors and three layers. Its 134 second episode has eight story beats and nine independent tracks. Generated individual Kami/§wyrlz artwork and separate scenery PNGs are bundled with the scene.
 
@@ -12,9 +12,9 @@ Local desktop and phone-sized Chromium authoring/Play acceptance has been exerci
 - [x] Capture Actor Pose transfers native Inspector transforms to a keyframe while preserving the companion track.
 - [x] Independent book controls, opaque foreground artwork, low companion-only shots, and null optional visual metadata have regression coverage.
 - [x] Saving from Preview/Play preserves the authored environment; a targeted render check confirms physical character folding.
-- [ ] Obtain remote candidate CI acceptance for the final source.
-- [ ] Follow the dedicated `DEPLOY_REQUEST.json` workflow run to terminal success with the exact trigger/source commit.
-- [ ] Verify the hosted marker and complete normalized engine, scene, episode, and all artwork integrity before calling v9.0 live.
+- [x] Remote [native desktop/mobile and authored acceptance](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555) passed against the sealed 746,616-byte artifact.
+- Production acceptance requires terminal success of the dedicated deployment with the exact final trigger/source commit.
+- Hosted acceptance requires the marker and complete normalized engine, scene, episode, and artwork integrity. See the [deployment workflow](https://github.com/kaministrator999-ui/Swrlzkamico/actions/workflows/deploy-swrlz-forge-moba.yml) and [independent hosted audit](https://github.com/kaministrator999-ui/Swrlzkamico/actions/workflows/verify-swrlz-v8-9-live-receipt.yml) for final production receipts.
 
 The original Watch Episode 01 button remains a separate historical 2D screening. Skeletal posing, lip sync, audio authoring, and MP4 export are not implemented. [Native authoring workflow](ANIMATION_STUDIO.md) · [Direct starter URL](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01).
 

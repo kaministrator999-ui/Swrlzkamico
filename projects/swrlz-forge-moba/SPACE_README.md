@@ -10,13 +10,13 @@ header: mini
 short_description: Dragon Den, Starforge and Anime Studio workspaces.
 ---
 
-# §wyrl§ Engine · Maker v9.0 candidate
+# §wyrl§ Engine · Maker v9.0
 
 **Embervault Atelier** is a three-tier Dragon Den with six project stations, walkable ramps, and eight named destinations. **Starforge Observatory** is a separate floating-island workspace with physical bridges and ramps, six stations, and seven destinations beneath a constellation sky.
 
 **Ghosts in Different Forms · The Page That Remembered** is the third selectable Projects starter: a 134 second, eight beat anime pop-up book episode with 70 actors, 11 editor layers, and nine independent saved animation tracks. Eight new paper actors/layers join the preserved original 62 production set actors, three layers, eight destinations, and eight workstations. Generated transparent artwork depicts **Kami**, the larger horn-hooded mage, and **§wyrlz**, the smaller hovering skull mage, with separate layered gothic scenery.
 
-Open [Anime Studio directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01) or use Projects. **Animation Studio** edits camera position/target/FOV, character/scenery/book keyframes, easing, opacity, visibility, unfolding, titles, and timed dialogue. Scrub, **Preview Frame**, and the editor **Play** button use the same native renderer. PNG/WebP/JPEG imports replace individual artwork; native Undo/Redo and Save/Load preserve edits. The candidate's **Capture Actor Pose** workflow copies native Inspector transforms to the selected track keyframe.
+Open [Anime Studio directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01) or use Projects. **Animation Studio** edits camera position/target/FOV, character/scenery/book keyframes, easing, opacity, visibility, unfolding, titles, and timed dialogue. Scrub, **Preview Frame**, and the editor **Play** button use the same native renderer. PNG/WebP/JPEG imports replace individual artwork; native Undo/Redo and Save/Load preserve edits. **Capture Actor Pose** workflow copies native Inspector transforms to the selected track keyframe.
 
 Physical mesh scenery folds around hinges, and protective background depth, a low foreground/book, and adaptive portrait framing keep the mages clear. Pause, seek, Stop, and **Explore Set** remain available. **Watch Episode 01** opens the historical procedural 2D screening. Skeletal posing, lip sync, audio authoring, and MP4 export are future work; playback uses bundled art without a paid generation service.
 
@@ -35,6 +35,6 @@ Source: https://github.com/kaministrator999-ui/Swrlzkamico/tree/main/projects/sw
 Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V9_0_AUTHORED_PAPER_THEATRE`
 
 
-### Candidate release status
+### Release verification
 
-Local desktop and phone-sized Chromium authoring/Play acceptance has been exercised. Final source sealing, remote CI, dedicated deployment, and exact hosted v9.0 source/artwork verification are pending at documentation time. Earlier releases and their receipts remain in the source roadmap and verification document.
+Native desktop and phone authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555). Production authority is recorded in the final `DEPLOY_REQUEST.json`, the dedicated deployment receipt, and the exact hosted-release audit. Earlier releases and their receipts remain in the source roadmap and verification document.

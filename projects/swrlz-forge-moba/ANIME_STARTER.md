@@ -1,4 +1,4 @@
-# Anime Studio starter · Ghosts in Different Forms · v9.0 candidate
+# Anime Studio starter · Ghosts in Different Forms · v9.0
 
 ## Starter contract
 
@@ -13,7 +13,7 @@ Project selector key: `anime-ghosts-ep01`. [Direct starter URL](https://kamiloki
 - Eight preserved production stages, travel zones, and editable workstations, with the original guardian and visitor
 - Native **Animation Studio** keyframe, title, and timed dialogue editing, Preview Frame, native Undo/Redo, and Save/Load
 - PNG/WebP/JPEG layer artwork replacement; separate bundled character and scenery PNGs
-- Candidate **Capture Actor Pose** workflow transfers a saved actor's native Inspector transforms to a timeline keyframe
+- **Capture Actor Pose** workflow transfers a saved actor's native Inspector transforms to a timeline keyframe
 - Native editor **Play** runs the same paper theatre renderer as Preview Frame; **Explore Set** returns to ordinary walking Play/T-zone mode
 - **Watch Episode 01** opens the separate historical procedural 2D screening
 - Bundled artwork and screening assets require no paid generation service during playback
@@ -22,7 +22,7 @@ Project selector key: `anime-ghosts-ep01`. [Direct starter URL](https://kamiloki
 
 The saved `anime-timeline-v1` timeline animates camera position, target, and field of view; separate Kami and §wyrlz transforms; layered scenery; and book opening. Animation Studio exposes add/update/delete keys, Linear/Smooth/Hold easing, opacity, visibility, unfolding, titles, and dialogue cues. Native **Preview Frame** and **Play** share the renderer, while physical scenery planes fold around bottom-edge hinges at distinct depths. Protective background depth, a low foreground/book, and adaptive portrait framing prevent scenery from filling the central camera corridor.
 
-The episode uses illustrated cutout motion. Skeletal posing, lip sync, audio authoring, and MP4 export are unimplemented. The separate **Watch Episode 01** player retains its historical canvas screening. Local desktop/phone-sized Chromium authoring and Play acceptance has been exercised; final source sealing, remote CI, dedicated deployment, and exact hosted v9.0 receipts remain pending at documentation time.
+The episode uses illustrated cutout motion. Skeletal posing, lip sync, audio authoring, and MP4 export are unimplemented. The separate **Watch Episode 01** player retains its historical canvas screening. Native desktop and phone authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555). Production authority is recorded in the final `DEPLOY_REQUEST.json`, the dedicated deployment receipt, and the exact hosted-release audit.
 
 ## Source files
 

@@ -2,7 +2,7 @@
 
 Canonical lane: §E / §wyrl§ Engine
 History audited through: **2026-10-08**
-Current source candidate: **v9.0 — Native Animation Studio and Paper Theatre (49 governed patches)**. Local desktop/mobile authoring and Play acceptance has been exercised; final sealing, remote CI, dedicated deployment, and hosted v9.0 receipts are pending at documentation time. Historical releases remain preserved.
+Current source: **v9.0 — Native Animation Studio and Paper Theatre (49 governed patches)**. Native desktop and phone authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555). Production authority is recorded in the final `DEPLOY_REQUEST.json`, the dedicated deployment receipt, and the exact hosted-release audit. Historical releases remain preserved.
 
 Previous verified hosted checkpoint: **v8.9 — Camera-safe pop-up staging (48 governed patches; desktop/mobile Chromium scene-occlusion tests passed; exact hosted source and episode/stage media integrity verified)**.
 
@@ -10,7 +10,7 @@ Previously verified live release: **v8.6 — Native Anime Studio Play** ([Action
 
 This roadmap is the mandatory release lineage for governed §E GitHub updates. Root `§tart_§E.md` defines the deployment contract.
 
-## v9.0 candidate · Native Animation Studio and Paper Theatre
+## v9.0 · Native Animation Studio and Paper Theatre
 
 **Ghosts in Different Forms · The Page That Remembered** is a native editor export with 70 actors, 11 editor layers, eight story beats, nine independent animation tracks, and 134 seconds of playback. It adds eight saved paper actors/layers while preserving the original 62 production set actors, three production layers, eight stations, and eight destinations. Generated transparent Kami and §wyrlz artwork and separate cathedral, workshop, and foreground plates follow the user's reference direction.
 
@@ -18,7 +18,7 @@ Reusable `runtime/anime_timeline.js`, `anime_stage.js`, `anime_editor.js`, and a
 
 Physical scenery meshes rotate at hinges. Protective background depth, a low foreground/book, and adaptive portrait framing keep the central cast readable. The historical Watch Episode 01 screening remains separate. Skeletal posing, lip sync, audio authoring, and MP4 export are not implemented.
 
-**Status at documentation time:** local desktop/phone-sized Chromium authoring and Play tested; final source sealing and remote release acceptance pending. Artifact `swyrl_engine_v9_0.html`; marker `V9_0_AUTHORED_PAPER_THEATRE`. Exact integrity and source/deploy commit references will be supplied by the sealed manifest and final trigger receipt. The dedicated `DEPLOY_REQUEST.json` procedure and exact served HTML, scene, episode, and artwork verification are required before v9.0 is called live. Direct starter: https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01 .
+**Validation:** Native desktop and phone authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555). Sealed source reconstruction and every engine CI gate passed. Artifact `swyrl_engine_v9_0.html`; marker `V9_0_AUTHORED_PAPER_THEATRE`. Exact integrity and source/deploy commit references will be supplied by the sealed manifest and final trigger receipt. The dedicated `DEPLOY_REQUEST.json` procedure and exact served HTML, scene, episode, and artwork verification are required before v9.0 is called live. Direct starter: https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01 .
 
 ## v8.5 candidate · Anime Studio starter
 

@@ -1,8 +1,8 @@
-# Animation Studio · v9.0 candidate
+# Animation Studio · v9.0
 
 **Ghosts in Different Forms · The Page That Remembered** is a 134 second, eight beat pop-up book starter authored in the native editor. Kami is the main horn-hooded mage; §wyrlz is the small hovering skull mage with a grimoire. Their independent illustrated character layers use newly generated transparent PNG artwork based on the supplied gothic anime references.
 
-Choose **Ghosts in Different Forms** in **Projects**, or open the [direct starter URL](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01). Local desktop and phone-sized Chromium authoring/Play acceptance has been exercised. This is the v9.0 candidate package; final source sealing, remote CI, dedicated deployment, and exact hosted source/artwork verification remain pending at documentation time.
+Choose **Ghosts in Different Forms** in **Projects**, or open the [direct starter URL](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01). Native desktop and phone authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555). Production authority is recorded in the final `DEPLOY_REQUEST.json`, the dedicated deployment receipt, and the exact hosted-release audit.
 
 ## The saved starter
 

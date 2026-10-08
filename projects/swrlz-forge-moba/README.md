@@ -1,4 +1,4 @@
-# §wyrl§ Engine · Maker v9.0 candidate
+# §wyrl§ Engine · Maker v9.0
 
 Build and visit three independent starter workspaces: **Embervault Atelier**, the three-tier Dragon Den; **Starforge Observatory**, a campus of floating islands beneath a constellation sky; and **Ghosts in Different Forms**, the Anime Studio paper theatre. Each is a native editor project with its own layers, destinations, files, and notes. Development moves between engine source, native editor authoring, and Play.
 
@@ -18,11 +18,11 @@ See [DEN_DESIGN.md](DEN_DESIGN.md), [STARFORGE_DESIGN.md](STARFORGE_DESIGN.md), 
 
 **Ghosts in Different Forms · The Page That Remembered** is a 134 second, eight beat pop-up book episode authored in the native editor. Generated transparent PNGs depict Kami as the larger horn-hooded mage and §wyrlz as the small hovering skull mage; independent scenery plates match the supplied gothic amber/gold reference direction.
 
-Choose **Ghosts in Different Forms** from **Projects** or [open the anime starter directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01). The v9.0 candidate contains **70 actors and 11 editor layers**: eight new independently saved paper actors/layers alongside the preserved original 62 production set actors and three layers. Eight workstations and eight destinations remain available. The native export is [ghosts-in-different-forms-ep01-storybook.swyrl.json](scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json).
+Choose **Ghosts in Different Forms** from **Projects** or [open the anime starter directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01). The v9.0 contains **70 actors and 11 editor layers**: eight new independently saved paper actors/layers alongside the preserved original 62 production set actors and three layers. Eight workstations and eight destinations remain available. The native export is [ghosts-in-different-forms-ep01-storybook.swyrl.json](scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json).
 
 Open **Animation Studio** to edit nine independent tracks: Camera, Kami, §wyrlz, Background, Atmosphere, Midground, Effects, Foreground, and Book. Scrub and preview, add/update/delete keys, edit easing and numeric values, change visibility/opacity/unfolding, and write timed dialogue or episode/beat titles. Camera position, target, and field of view follow saved keys. Native Undo/Redo and Save/Load preserve edits; PNG, WebP, and JPEG imports can replace individual layer artwork. **Capture Actor Pose** connects a saved paper actor's native Inspector transforms to its timeline keyframe.
 
-**Preview Frame** and the editor's **Play** button use the same native Three.js renderer. Physical scenery meshes fold around hinges at separate depths; background limits, a low foreground/book, and adaptive portrait framing protect both mages. Pause, seek, scene controls, Stop, and **Explore Set** remain available. **Watch Episode 01** separately screens the historical procedural 2D animation. Skeletal posing, lip sync, audio authoring, and MP4 rendering remain unimplemented. Local desktop and phone-sized Chromium authoring/Play acceptance has been exercised; remote CI, deployment, and exact hosted v9.0 receipts are pending at documentation time.
+**Preview Frame** and the editor's **Play** button use the same native Three.js renderer. Physical scenery meshes fold around hinges at separate depths; background limits, a low foreground/book, and adaptive portrait framing protect both mages. Pause, seek, scene controls, Stop, and **Explore Set** remain available. **Watch Episode 01** separately screens the historical procedural 2D animation. Skeletal posing, lip sync, audio authoring, and MP4 rendering remain unimplemented. Native desktop and phone authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555). Production authority is recorded in the final `DEPLOY_REQUEST.json`, the dedicated deployment receipt, and the exact hosted-release audit.
 
 See [ANIMATION_STUDIO.md](ANIMATION_STUDIO.md), [ANIME_STARTER.md](ANIME_STARTER.md), and [POPUP_VIDEO_CREATOR.md](POPUP_VIDEO_CREATOR.md) for the authoring workflow, starter contract, and depth staging.
 
@@ -46,7 +46,7 @@ Scene data belongs to `scenes/embervault-atelier.swyrl.json` and `scenes/starfor
 
 - Source manifest: `source-manifest.json`.
 - Governed base: `swrlz_forge_v4.html`.
-- Generated candidate artifact: `swyrl_engine_v9_0.html`.
+- Generated artifact: `swyrl_engine_v9_0.html`.
 - Final integrity values belong to the sealed `source-manifest.json` and generated `SOURCE.json`, including bundled scene, episode, and artwork assets.
 - Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V9_0_AUTHORED_PAPER_THEATRE`.
 - Rebuild: `python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba`.
@@ -54,4 +54,4 @@ Scene data belongs to `scenes/embervault-atelier.swyrl.json` and `scenes/starfor
 - Hosted page: https://kamiloki-swrlz-forge-moba.static.hf.space/ .
 - Production workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`.
 
-The candidate manifest defines the governed 49-patch chain, including the reusable v9.0 Animation Studio integration. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Candidate deployment is pending at documentation time. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.
+The manifest defines the governed 49-patch chain, including the reusable v9.0 Animation Studio integration. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Production authority is recorded in the final `DEPLOY_REQUEST.json`, the dedicated deployment receipt, and the exact hosted-release audit. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.
