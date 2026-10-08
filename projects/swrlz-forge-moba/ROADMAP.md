@@ -2,7 +2,7 @@
 
 Canonical lane: §E / §wyrl§ Engine  
 History audited through: **2026-10-07**  
-Current governed engine release: **v8.4 — Wayfinding & Zone Preview (native acceptance, exact reconstruction, and syntax verified)**
+Current source candidate: **v8.6 — Native Anime Cinematic (exact reconstruction, syntax, desktop and mobile browser Play acceptance verified; production deploy receipt separate)**. v8.4 and v8.5 history remain preserved.
 
 Previously verified live release: **v8.3 — Zones & Starforge** ([Actions 37697374632](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37697374632), trigger `d10953ee23fcefc8e66a6e2ee86b7b2e51421313`; exact served marker, `SOURCE.json`, and normalized artifact hash confirmed)
 
@@ -13,6 +13,12 @@ This roadmap is the mandatory release lineage for governed §E GitHub updates. R
 Source integration introduces a third independently selectable project, `Ghosts in Different Forms · Episode 01`, using `patches/v8_5_anime_starter.py`. The original 62-actor native scene, eight act zones, three layers, and eight per-scene production workstations are embedded in the governed composite. The animated HTML episode is also distributed as a static asset, screened inside the editor rather than in the 3D runtime. A separate candidate workflow verifies the reconstructed hash and JavaScript syntax before the deploy request.
 
 **Status:** Source candidate; exact artifact, deployment, and live runtime verification are tracked independently. This entry does not redefine or erase the v8.4 checkpoint.
+
+## v8.6 native Anime Studio Play
+
+The Anime Studio starter now begins a real-time native Three.js cinematic when Play is pressed. Eight scripted camera shots, temporary procedural performers, guardian-dragon animation, motes/lighting, and captions driven by each stage's editable `script.md` form an approximately 134-second episode preview. A transport HUD provides Pause/Resume, seek, previous/next shot, Stop, and **Explore Set** to switch to the prior first-person world mode. Other §E starter projects keep their original Play behavior.
+
+Source: `patches/v8_6_native_anime_cinematic.py`; final SHA-256 `1468357c5ce082b71548de983fd11f818cf4eeccb34eca3df92a0f15e3e94dc0`, 611,675 bytes, 45 patches. [Headless Chromium desktop/mobile test run 37719407234](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719407234) and [candidate compiler run 37719407233](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719407233) passed. Native authoring of cinematic keyframes, lip-sync and exportable video remain future capabilities.
 
 ## Audited release lineage
 
@@ -56,6 +62,7 @@ Source integration introduces a third independently selectable project, `Ghosts 
 | v8.3 | 2026-10-07 | Safe named zone travel, refined Embervault wayfinding, independent Starforge Observatory starter, project-owned environments/recovery, and editor authoring fixes. |
 | v8.4 | 2026-10-07 | Parallel native wayfinding refinements in Embervault and Starforge; optional editor-only destination rings/heading arrows and axis-preserving destination framing. |
 | v8.5 (candidate) | 2026-10-07 | Anime Studio starter selectable from Projects; 62 editable actors, eight stages, eight notes stations, integrated canvas screening, source-packaged episode; next-step native cinematic animation gap documented. |
+| v8.6 (candidate) | 2026-10-07 | Project-scoped native 3D cinematic Play with movable camera, performers, dragon, editable-script captions, timeline controls and Explore Set; desktop/mobile Chromium acceptance. |
 
 ## Artifact authority
 
