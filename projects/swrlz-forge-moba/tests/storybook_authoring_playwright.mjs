@@ -158,8 +158,8 @@ try{
     await page.locator('#storyWatchOriginal').click();
     assert.equal(await page.locator('#animeScreening').evaluate(el=>el.classList.contains('open')),true,
       'Original 2D archive is no longer accessible');
-    assert.match(await page.locator('#animeEpisodeFrame').getAttribute('src'),/episodes\\/ghosts-in-different-forms-ep01\\.html/,
-      'Archive loaded an unexpected recording');
+    assert.equal(await page.locator('#animeEpisodeFrame').getAttribute('src'),
+      'episodes/ghosts-in-different-forms-ep01.html','Archive loaded an unexpected recording');
     assert.equal((await status(page)).active,false,'Archive accidentally started the native cinematic');
     await page.locator('#animeScreeningClose').click();await frames(page);
     assert.equal(await page.locator('#animeEpisodeFrame').getAttribute('src'),null,
