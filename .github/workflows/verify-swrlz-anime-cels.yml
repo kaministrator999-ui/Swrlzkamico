@@ -1,0 +1,66 @@
+name: Validate §E v8.7 2.5D anime cel layers
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v8_7_anime_cel_layers.py"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/tests/native_anime_playwright.mjs"
+      - ".github/workflows/verify-swrlz-anime-cels.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Reconstruct candidate and verify native layer contract
+        run: |
+          python - <<'PY'
+          import base64,gzip,json,hashlib
+          from pathlib import Path
+          import runpy
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          mod=runpy.run_path(str(root/'build_space.py'))
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
+          assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
+          source=raw.decode('utf-8')
+          for patch in manifest['patches']:
+            source=mod['load_patch'](root/patch)(source)
+          assert len(manifest['patches'])==46
+          for expected in ['V8_7_ANIME_CEL_PARALLAX','Maker v8.7','animeCreateCelLayers',
+              'animeUpdateCelLayers','animeLayerVisible','animeDisposeGroup','animeCleanLayers',
+              'ANIME_2D_LAYER_SPECS','animeMakeCast','animeCineLayers']:
+            assert expected in source, expected
+          dist=Path('/tmp/swyrl-anime-cel-test');dist.mkdir(parents=True,exist_ok=True)
+          (dist/'index.html').write_text(source,encoding='utf-8')
+          (dist/'module.mjs').write_text(source[source.index('<script type="module">')+len('<script type="module">'):source.rindex('</script>')],encoding='utf-8')
+          print('ANIME_CEL_BYTES='+str(len(source.encode())))
+          print('ANIME_CEL_SHA256='+hashlib.sha256(source.encode()).hexdigest())
+          print('ANIME_CEL_RECONSTRUCT_PASS')
+          PY
+          node --check /tmp/swyrl-anime-cel-test/module.mjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v8_7_anime_cel_layers.py
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Test 2.5D cinematic in desktop and phone browser
+        run: |
+          python -m http.server 8765 --directory /tmp/swyrl-anime-cel-test >/tmp/animelayer_http.log 2>&1 &
+          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/native_anime_playwright.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v8-7-anime-cel-views
+          path: native-anime-*.png
+          retention-days: 5
