@@ -1,3 +1,121 @@
+## UPDATE FINISHED — 2026-10-08 — SongIdentity retrieval generalization v169
+
+**Outcome:** AMBIGUOUS SONG-TITLE RETRIEVAL GENERALIZED INTO ENTITY-AWARE DISCOVERY / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### Why v169 exists
+Live Rack City testing proved ordinary web ranking can interpret common title words as shopping/dictionary/product intent. The failure was not specific to Rack City: titles such as Work, Home, Hello, Monster, Flowers, DNA., and other short/common/punctuated titles can collide with non-music search intent.
+
+### SongIdentity layer
+Added `hf_space/song_identity.py` with deterministic entity parsing and scoring:
+- canonical title;
+- primary artist;
+- featured artists;
+- requested version/modifier;
+- normalized/folded title and artist tokens;
+- ambiguity level/score;
+- common-word collision list;
+- short-title and punctuation signals;
+- quoted-title requirement;
+- artist-required signal.
+
+### Ambiguity-aware discovery
+- high-ambiguity titles enter search as exact quoted song entities instead of loose bags of words;
+- example: `"Rack City" "Tyga" lyrics`;
+- lower-ambiguity titles preserve the compact existing search shape to avoid needless ranking changes;
+- bounded deterministic query ladder can escalate through:
+  - exact title + artist;
+  - artist + title + song/lyrics;
+  - lyric-source-family disambiguation;
+  - title/artist + verse/chorus structural hints;
+- discovery/query budget is separate from the existing hard **3 total page-fetch attempts**.
+
+### Candidate entity scoring
+Before fetch, candidates now receive explicit SongIdentity signals:
+- exact title phrase;
+- title-token hits;
+- exact artist / artist-token hits;
+- lyric-content hint;
+- lyric-domain soft prior;
+- structural lyric snippet hint;
+- negative commerce/dictionary/product/content hints;
+- requested-version match;
+- material version conflicts.
+
+Candidate rejection reasons include:
+- `TITLE_MISMATCH`;
+- `ARTIST_MISMATCH`;
+- `VERSION_MISMATCH`;
+- `NON_LYRIC_RESULT`;
+- `AMBIGUOUS_TITLE_WEAK_MATCH`.
+
+Shopping/dictionary/product domains are penalized/rejected before they consume page-fetch attempts. Lyric-focused domains receive only a soft ranking prior and still must pass normal source/body verification.
+
+### Version semantics
+- materially different unrequested arrangements such as remix/live/acoustic/clean/radio edit/extended/demo/sped/slowed are treated as version conflicts;
+- descriptive `Original` / `Explicit` labels do not automatically invalidate an otherwise-correct song page;
+- requested versions such as `(Remix)` become part of SongIdentity and are required to match.
+
+### Runtime-hot reasoner
+Online Research reasoner version is **1.4.4**.
+For exact quoted title + artist lyric queries, first-boundary admission requires song-title phrase + artist identity before a page can consume the fetch budget. Candidate-admission telemetry remains exported.
+
+### Diagnostics
+Online Camera revision: `v169-versatile-song-discovery`.
+Dragon Chat / online diagnostics now expose:
+- `songIdentity`;
+- `songDiscoveryPlan`;
+- per-query rescue strategy;
+- candidate scores/reasons/signals;
+- existing admission/fetch/body verification diagnostics.
+
+### Regression coverage
+v169 is guarded by three dedicated tests:
+- `test_versatile_song_discovery_v169.py`;
+- `test_song_identity_discovery_v169.py`;
+- `test_song_identity_retrieval_v169.py`.
+
+Coverage includes:
+- Rack City common-word shopping collision;
+- wrong-artist same-title rejection;
+- punctuation normalization (`DNA.`);
+- stylized title (`XO TOUR Llif3`);
+- featured-artist parsing;
+- requested remix handling;
+- unrequested live/remix conflict;
+- soft `Original` label behavior;
+- quoted entity query routing;
+- reasoner rejection of retail candidates before fetch;
+- bounded source-family rescue;
+- continued 3-page fetch ceiling.
+
+### Final deployment receipts
+- guarded HF run: `37793616884` — terminal **SUCCESS**;
+- exact selected feature source: `40d4dff508b72e50fe699286706572dd0f7f93f4`;
+- v169 tests: `versatile-song-discovery-v169 PASS`, `song-identity-discovery-v169 PASS`, `song-identity-retrieval-v169 PASS`;
+- all prior lyric/music/presentation regressions through v168 also passed;
+- native R39 verification, real R39 reconstruction, R39-vs-stock compatibility inspection, 700M smoke, fast-HF/Chat preservation guard, authorization gate, production snapshot, rollback checkpoint, upload, and deployed-revision capture all succeeded;
+- prior/rollback Space revision: `2e69c831c8f3d85c4ddf6cfc9966e9733e6c5309`;
+- deployed Space revision: `442297ab351cc66137b2b728ab93f4d6009e6b79`.
+
+### Versions
+- Repository Work: **1.0.99**.
+- Server Runtime: **2.3.322 / 2.3.322-hf-v169-song-identity-generalization**.
+- Online Research: **1.0.17 / 1.0.17-song-identity-generalization-v169**.
+- Deployment Control: **1.0.29**.
+- LALM Engine remains **2.1.159 / 2.1.159-mobile-lyric-presentation-v167** because v169 changes retrieval/entity discovery rather than 700M cognition.
+- Web Chat remains **1.5.91 / 1.5.91-full-width-lyric-boundary-renderer-v168**.
+
+### Live acceptance target
+Test several unrelated songs, especially ambiguous titles. Expected behavior:
+1. parse the song as an entity before search;
+2. raise ambiguity for common/short titles;
+3. use exact title + artist discovery when needed;
+4. reject commerce/dictionary/wrong-artist/version-mismatch candidates before page fetch;
+5. spend the 3-page fetch budget only on plausible song destinations;
+6. run existing v165 body verification, v164 music structure, and v167/v168 presentation only after a valid body is verified.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v169 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-08 — SongIdentity retrieval generalization v169
 
 **Trigger:** Rack City live acceptance exposed a general search-intent collision: ordinary web ranking interpreted common title words as shopping/dictionary intent instead of a song entity lookup. The next repair must generalize across arbitrary songs rather than special-case individual titles.
