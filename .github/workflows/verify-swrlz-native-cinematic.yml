@@ -39,6 +39,7 @@ jobs:
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
           assert len(manifest["patches"])==45
+          assert manifest["patches"][-1]=="patches/v8_6_native_anime_cinematic.py"
           for needle in (
             'V8_6_NATIVE_ANIME_CINEMATIC','Maker v8.6','animeStartCinematic',
             'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',
