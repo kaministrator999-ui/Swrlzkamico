@@ -61,6 +61,6 @@
     "patches/v8_5_anime_starter.py",
     "patches/v8_6_native_anime_cinematic.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "PENDING_V8_6_CI"
+  "finalBytes": 611675,
+  "finalSha256": "1468357c5ce082b71548de983fd11f818cf4eeccb34eca3df92a0f15e3e94dc0"
 }
