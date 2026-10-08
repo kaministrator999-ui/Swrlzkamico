@@ -439,7 +439,7 @@ _LYRIC_POST_SONG_META=re.compile(
 )
 _LYRIC_NUMBERED_START=re.compile(r"^\s*\d{1,2}[.)]\s+\S")
 LYRICS_MAX_PAGE_ATTEMPTS=3
-LYRICS_MAX_RESCUE_SEARCHES=2
+LYRICS_MAX_RESCUE_SEARCHES=8
 LYRICS_PAGE_TEXT_CHARS=24000
 
 
@@ -560,23 +560,57 @@ def _lyrics_search_candidate_identity(item: dict[str,Any], subject: str) -> dict
     }
 
 
-def _lyrics_rescue_queries(subject: str) -> list[str]:
+_LYRICS_DISCOVERY_SOURCE_HINTS=(
+    "Genius",
+    "AZLyrics",
+    "Musixmatch",
+    "LyricsFreak",
+    "SongLyrics",
+    "Lyrics.com",
+)
+
+def _lyrics_rescue_query_plan(subject: str) -> list[dict[str,str]]:
+    """Bounded, song-agnostic query ladder for ambiguous titles.
+
+    Exact title/artist intent is tried first. If a provider still interprets an
+    ambiguous title as ordinary commerce/dictionary intent, later queries add a
+    generic lyric-source family hint. This changes discovery only; page/body
+    verification remains strict and the page-fetch ceiling remains unchanged.
+    """
     title,artist=_lyrics_subject_parts(subject)
     if not title:
         return []
-    queries=[]
+    plans=[]
     if artist:
-        queries.append(f'"{title}" "{artist}" lyrics')
-        queries.append(f'"{title}" {artist} song lyrics')
+        plans.append({"strategy":"exact-title-artist","query":f'"{title}" "{artist}" lyrics'})
+        plans.append({"strategy":"artist-title-song","query":f'{artist} "{title}" song lyrics'})
+        for source_hint in _LYRICS_DISCOVERY_SOURCE_HINTS:
+            plans.append({
+                "strategy":"source-family-disambiguation",
+                "query":f'"{title}" "{artist}" lyrics {source_hint}',
+            })
     else:
-        queries.append(f'"{title}" lyrics')
-        queries.append(f'"{title}" song lyrics')
+        plans.append({"strategy":"exact-title","query":f'"{title}" lyrics'})
+        plans.append({"strategy":"title-song","query":f'"{title}" song lyrics'})
+        for source_hint in _LYRICS_DISCOVERY_SOURCE_HINTS:
+            plans.append({
+                "strategy":"source-family-disambiguation",
+                "query":f'"{title}" lyrics {source_hint}',
+            })
     out=[]
-    for query in queries:
-        q=_clean(query,500)
-        if q and q not in out:
-            out.append(q)
-    return out[:LYRICS_MAX_RESCUE_SEARCHES]
+    seen=set()
+    for item in plans:
+        q=_clean(item.get("query"),500)
+        if not q or q in seen:
+            continue
+        seen.add(q)
+        out.append({"strategy":str(item.get("strategy") or "rescue"),"query":q})
+        if len(out)>=LYRICS_MAX_RESCUE_SEARCHES:
+            break
+    return out
+
+def _lyrics_rescue_queries(subject: str) -> list[str]:
+    return [item["query"] for item in _lyrics_rescue_query_plan(subject)]
 
 
 def _lyrics_source_identity(item: dict[str,Any], subject: str) -> dict[str,Any]:
@@ -1643,13 +1677,16 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             if not candidate_pool and not valid and callable(search_public):
                 canonical_online_research.set_trace_sink(progress)
                 try:
-                    for rescue_query in _lyrics_rescue_queries(str(plan.get("subject") or "")):
+                    for rescue_plan in _lyrics_rescue_query_plan(str(plan.get("subject") or "")):
+                        rescue_query=str(rescue_plan.get("query") or "")
+                        rescue_strategy=str(rescue_plan.get("strategy") or "rescue")
                         _progress(
                             progress,
                             "LYRICS_RESCUE_SEARCH",
                             provider="bounded-web-search-chain-v1",
-                            activity="Trying exact-title lyrics rescue search",
+                            activity="Trying bounded lyrics discovery search",
                             query=rescue_query,
+                            strategy=rescue_strategy,
                             attempt=len(lyrics_rescue_search_debug)+1,
                             maxAttempts=LYRICS_MAX_RESCUE_SEARCHES,
                         )
@@ -1658,6 +1695,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                         except Exception as exc:
                             lyrics_rescue_search_debug.append({
                                 "query":rescue_query,
+                                "strategy":rescue_strategy,
                                 "resultCount":0,
                                 "admittedCount":0,
                                 "errorType":type(exc).__name__,
@@ -1699,6 +1737,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                         )
                         lyrics_rescue_search_debug.append({
                             "query":rescue_query,
+                            "strategy":rescue_strategy,
                             "resultCount":len(found) if isinstance(found,list) else 0,
                             "admittedCount":len(rescue_candidates),
                             "candidates":rescue_debug[:8],
