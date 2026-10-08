@@ -256,12 +256,46 @@ def candidate_score(item: dict[str,Any], identity: dict[str,Any]) -> dict[str,An
     }
 
 
+def source_family(item: dict[str,Any]) -> str:
+    """Return a stable source-family key so duplicate variants do not monopolize a bounded fetch budget."""
+    url=_clean(item.get("url"),1600)
+    source=_clean(item.get("source"),240)
+    host=str(urllib.parse.urlsplit(url).hostname or source or "").casefold().strip(".")
+    if host.startswith("www."):
+        host=host[4:]
+    for domain in _POSITIVE_LYRIC_DOMAINS:
+        if host==domain or host.endswith("."+domain):
+            return domain
+    parts=[part for part in host.split(".") if part]
+    return ".".join(parts[-2:]) if len(parts)>=2 else host
+
+
 def rank_candidates(items: list[dict[str,Any]], identity: dict[str,Any]) -> list[dict[str,Any]]:
     ranked=[]
     for item in items:
         if not isinstance(item,dict):
             continue
         score=candidate_score(item,identity)
-        ranked.append({**item,"songIdentityScore":score})
+        ranked.append({**item,"songIdentityScore":score,"sourceFamily":source_family(item)})
     ranked.sort(key=lambda x:(-int((x.get("songIdentityScore") or {}).get("score") or 0),int(x.get("rank") or 999)))
     return ranked
+
+
+def diversify_candidates(items: list[dict[str,Any]], identity: dict[str,Any]) -> list[dict[str,Any]]:
+    """Prefer one strong candidate per source family before duplicate variants.
+
+    This preserves global SongIdentity scoring while preventing two URLs from the
+    same provider from consuming consecutive slots in a small page-fetch budget.
+    """
+    ranked=rank_candidates(items,identity)
+    first=[]
+    overflow=[]
+    seen_families=set()
+    for item in ranked:
+        family=str(item.get("sourceFamily") or source_family(item) or "")
+        if family and family not in seen_families:
+            seen_families.add(family)
+            first.append(item)
+        else:
+            overflow.append(item)
+    return first+overflow
