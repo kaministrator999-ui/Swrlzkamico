@@ -397,7 +397,7 @@ def _lyrics_search_query(text: str) -> str:
         ambiguity=((identity.get("ambiguity") or {}).get("level") or "low")
         # Ambiguous/common-word titles should enter discovery as exact entities
         # immediately. Low-ambiguity titles retain the compact legacy query.
-        if ambiguity in {"medium","high"} and ladder:
+        if ambiguity=="high" and ladder:
             query=str(ladder[0].get("query") or "")
             if scope=="first-verse":
                 query+=" first verse"
