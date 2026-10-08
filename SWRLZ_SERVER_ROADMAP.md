@@ -1,3 +1,26 @@
+## UPDATE STARTED — 2026-10-07 — Bing redirect canonicalization v166
+
+**Trigger:** live v165 Dragon Chat export `swrlz-dragon-chat (16).json`.
+
+**Observed failure:**
+- DuckDuckGo HTML/Lite returned no usable results, so the canonical search chain selected Bing HTML.
+- Bing supplied search-result links as `https://www.bing.com/ck/a?...&u=a1<base64url-target>...`.
+- the search parser admitted those wrapper URLs as evidence instead of canonicalizing the encoded destination;
+- attempt 1 fetched the Bing redirect interstitial ("Please click here if the page does not redirect automatically ...") and correctly rejected it as `NO_STRUCTURED_LYRIC_BODY`;
+- attempts 2 and 3 retried different Bing `/ck/a` wrappers and failed with `ValueError`, consuming the entire 3-page lyrics budget;
+- no verified lyric body reached music structure/presentation, so `musicStructureDebug` remained null.
+
+**Repair plan:**
+- canonicalize Bing `/ck/a` search-result wrappers at the stable search-result normalization boundary;
+- decode supported Bing `u=a1<base64url>` destination payloads before public-URL validation/admission;
+- reject unresolved Bing tracking wrappers instead of exposing/fetching them as evidence;
+- keep DuckDuckGo canonicalization unchanged;
+- ensure result `url`, `source`, candidate pool, fetch attempts, trace, widgets, and user-visible source all carry the destination URL rather than the Bing tracker;
+- add deterministic regression reproducing the exact v165 Bing wrapper shape;
+- gate canonical HF deployment on the new regression.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — lyric-region integrity + performer cues + structured-source preference v165
 
 **Outcome:** FALSE-POSITIVE LYRIC BODY ACCEPTANCE REPAIRED + PERFORMER CUES PRESERVED + PRE-CHAT PRESENTATION PATH RESTORED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
