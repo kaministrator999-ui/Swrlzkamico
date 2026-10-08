@@ -1,4 +1,4 @@
-name: Validate §E v9.1 authored pop-up storybook studio
+name: Validate §E v9.2 authored pop-up storybook studio
 
 on:
   push:
@@ -15,6 +15,7 @@ on:
       - "projects/swrlz-forge-moba/tests/*anime*.mjs"
       - "projects/swrlz-forge-moba/tests/storybook_authoring_playwright.mjs"
       - "projects/swrlz-forge-moba/tests/character_rig_playwright.mjs"
+      - "projects/swrlz-forge-moba/tests/depth_theatre_playwright.mjs"
   pull_request:
     branches: [main]
     paths: *anime_paths
@@ -24,7 +25,7 @@ permissions:
 jobs:
   browser:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -33,7 +34,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Independently reconstruct sealed v9.1 source
+      - name: Independently reconstruct sealed v9.2 source
         run: |
           python - <<'PY'
           import base64,gzip,hashlib,json,runpy
@@ -44,17 +45,17 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes']
           assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
-          assert len(manifest['patches'])==50
-          assert manifest['patches'][-1]=='patches/v9_1_character_rigs.py'
+          assert len(manifest['patches'])==51
+          assert manifest['patches'][-1]=='patches/v9_2_depth_theatre.py'
           source=raw.decode('utf-8')
           for patch in manifest['patches']:
               source=mod['load_patch'](root/patch)(source)
           output=source.encode('utf-8')
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
-          for feature in ('V9_1_ARTICULATED_PAPER_RIGS','Maker v9.1',
+          for feature in ('V9_2_LAYERED_SCENERY_FACES','Maker v9.2',
                           'CANONICAL_ANIME_EPISODE_PROJECT','SWYRL_ENGINE_CINEMATIC',
-                          'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG',
+                          'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY',
                           'animeCreateCelLayers','animeDirectorInstall','animeMakePaperBook',
                           'animePopupStageSafety','storyEditorInstall','anime-ghosts-ep01',
                           'openAnimeScreening','animeUpdateCinematic','animeUpdateCelLayers',
@@ -69,11 +70,11 @@ jobs:
           Path('/tmp/swyrl-anime-engine.mjs').write_text(source[begin:source.rindex('</script>')],encoding='utf-8')
           print('ENGINE_EXPECTED_BYTES='+str(len(output)))
           print('ENGINE_EXPECTED_SHA256='+hashlib.sha256(output).hexdigest())
-          print('CANDIDATE_50_PATCH_RECONSTRUCT_OK')
+          print('CANDIDATE_51_PATCH_RECONSTRUCT_OK')
           PY
           node --check /tmp/swyrl-anime-engine.mjs
           python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
-      - name: Verify complete v9.1 package against source and manifest
+      - name: Verify complete v9.2 package against source and manifest
         run: |
           python projects/swrlz-forge-moba/build_space.py --output /tmp/storybook-test
           cmp /tmp/swyrl-anime-engine.html /tmp/storybook-test/index.html
@@ -87,28 +88,30 @@ jobs:
           assert receipt['finalBytes']==manifest['finalBytes']
           assert receipt['finalSha256']==manifest['finalSha256']
           assert receipt['patches']==manifest['patches']
-          assert len(receipt['patches'])==50
-          assert receipt['patches'][-1]=='patches/v9_1_character_rigs.py'
+          assert len(receipt['patches'])==51
+          assert receipt['patches'][-1]=='patches/v9_2_depth_theatre.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
-                    'scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json'}
+                    'scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json',
+                    'scenes/ghosts-in-different-forms-ep01-depth.swyrl.json'}
           expected.update(p.relative_to(root).as_posix() for p in (root/'assets/anime').glob('*.png'))
-          assert {'assets/anime/'+name+'.png' for name in ('kami','swyrlz','cathedral','workshop','foreground','kami-rig','swyrlz-rig')}<=expected
+          assert {'assets/anime/'+name+'.png' for name in ('kami','swyrlz','cathedral','workshop','foreground','kami-rig','swyrlz-rig','scenery-parts')}<=expected
           assert set(receipt['assets'])==expected
-          assert len(receipt['assets'])==11
+          assert len(receipt['assets'])==13
           for asset,data in receipt['assets'].items():
               packed=(out/asset).read_bytes()
               assert (root/asset).read_bytes()==packed, asset
               assert len(packed)==data['bytes'], asset
               assert hashlib.sha256(packed).hexdigest()==data['sha256'], asset
-          print('PACKAGING_50_PATCHES_AND_ALL_ASSETS_VERIFIED')
+          print('PACKAGING_51_PATCHES_AND_ALL_ASSETS_VERIFIED')
           PY
       - name: Check browser acceptance suite syntax
         run: |
           node --check projects/swrlz-forge-moba/tests/native_anime_playwright.mjs
           node --check projects/swrlz-forge-moba/tests/storybook_authoring_playwright.mjs
           node --check projects/swrlz-forge-moba/tests/character_rig_playwright.mjs
+          node --check projects/swrlz-forge-moba/tests/depth_theatre_playwright.mjs
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1
@@ -123,12 +126,16 @@ jobs:
       - name: Test articulated character depth, joints, faces, Play and saved poses
         run: |
           SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/character_rig_playwright.mjs
+      - name: Test fitted faces, independent scenery depth, stars, parallax and saved keys
+        run: |
+          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/depth_theatre_playwright.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: v9-1-authored-storybook-browser-views
+          name: v9-2-authored-storybook-browser-views
           path: |
             native-anime-*.png
             storybook-acceptance/
             character-rig-acceptance/
+            depth-theatre-acceptance/
           retention-days: 5

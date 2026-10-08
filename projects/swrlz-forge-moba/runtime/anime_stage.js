@@ -159,11 +159,13 @@ function storyBindArtwork(layer,source){
   const actor=storyBoundActor(layer),asset=storyAssetSource(source,null);if(!actor||!asset)return false;
   storyExitPreview();beginTransaction('Replace '+layer+' artwork');
   if(typeof rigSetArtworkMode==='function')rigSetArtworkMode(layer,asset);
+  if(typeof scenerySetArtworkMode==='function')scenerySetArtworkMode(layer);
   actor.userData.storyVisual={...actor.userData.storyVisual,asset};
   const replacement=storyPaperVisual(actor.userData.storyVisual);
   for(const old of [...actor.children]){actor.remove(old);old.traverse(o=>{o.geometry?.dispose();o.material?.dispose()})}
   for(const child of [...replacement.children])actor.add(child);
   if(replacement.userData.rig)actor.userData.rig=replacement.userData.rig;else delete actor.userData.rig;
+  if(replacement.userData.storyScenery)actor.userData.storyScenery=replacement.userData.storyScenery;else delete actor.userData.storyScenery;
   commitTransaction('Replace '+layer+' artwork');return true;
 }
 function storyCaptureActorPose(layer,time){
@@ -279,6 +281,18 @@ function storyRender(){
       // toward negative Z, retaining a clear corridor even before fully open.
       card.rotation.x=-(1-key.unfold)*Math.PI*.5;
       storyApplyOpacity(card,key.opacity);
+      if(typeof sceneryAnimateGroup==='function')sceneryAnimateGroup(card,id,t,cam);
+    }
+    if(card?.userData.storyScenery){
+      scene.updateMatrixWorld(true);
+      let nearest=new THREE.Box3().setFromObject(group).max.z;
+      // Every unfolded/folded sub-piece stays behind its parent's hinge plane.
+      // This also protects edited cutouts that extend below their own hinge.
+      if(nearest>group.position.z){
+        card.position.z-=(nearest-group.position.z+.002)/group.scale.z;
+        scene.updateMatrixWorld(true);nearest=new THREE.Box3().setFromObject(group).max.z;
+      }
+      if(nearest>backLimit)group.position.z-=nearest-backLimit;
     }
     if(id==='foreground'){
       // Use the actual cutout bounds; imported opaque art receives the same

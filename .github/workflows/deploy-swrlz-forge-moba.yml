@@ -1,4 +1,4 @@
-name: Deploy §wyrl§ Engine v9.1 to Hugging Face
+name: Deploy §wyrl§ Engine v9.2 to Hugging Face
 
 # Production deploys only when the dedicated release-button file is deliberately changed.
 # Ordinary §E source/docs/manifest edits MUST NOT trigger production.
@@ -38,8 +38,8 @@ jobs:
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V9_1_ARTICULATED_PAPER_RIGS" dist/swrlz-forge-moba/index.html
-          grep -q "<title>§wyrl§ Engine · Maker v9.1</title>" dist/swrlz-forge-moba/index.html
+          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V9_2_LAYERED_SCENERY_FACES" dist/swrlz-forge-moba/index.html
+          grep -q "<title>§wyrl§ Engine · Maker v9.2</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
@@ -112,7 +112,7 @@ jobs:
               "sourceRepository": "kaministrator999-ui/Swrlzkamico",
               "sourceCommit": source_sha,
               "sourcePath": "projects/swrlz-forge-moba",
-              "sourceVersion": "v9.1",
+              "sourceVersion": "v9.2",
               "engineName": "§wyrl§ Engine",
               "sourceSha256": source["finalSha256"],
               "sourceBytes": source["finalBytes"],
@@ -135,7 +135,7 @@ jobs:
           print(json.dumps(receipt, indent=2))
           PY
 
-      - name: Verify live Space serves the complete §wyrl§ Engine v9.1 package
+      - name: Verify live Space serves the complete §wyrl§ Engine v9.2 package
         env:
           SOURCE_SHA: ${{ github.sha }}
           APP_URL: ${{ steps.deploy_space.outputs.app_url }}
@@ -149,11 +149,11 @@ jobs:
           import json
           from pathlib import Path
           official=json.loads(Path('dist/swrlz-forge-moba/SOURCE.json').read_text())
-          assert len(official['patches'])==50
-          assert official['patches'][-1]=='patches/v9_1_character_rigs.py'
-          assert len(official['assets'])==11
-          assert 'scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json' in official['assets']
-          assert {'assets/anime/kami-rig.png','assets/anime/swyrlz-rig.png'}<=set(official['assets'])
+          assert len(official['patches'])==51
+          assert official['patches'][-1]=='patches/v9_2_depth_theatre.py'
+          assert len(official['assets'])==13
+          assert 'scenes/ghosts-in-different-forms-ep01-depth.swyrl.json' in official['assets']
+          assert {'assets/anime/kami-rig.png','assets/anime/swyrlz-rig.png','assets/anime/scenery-parts.png'}<=set(official['assets'])
           # Fetch every bundled media asset, including the authored scene and
           # transparent PNG layers, then verify the complete source receipt.
           Path('/tmp/forge-asset-paths.txt').write_text(
@@ -173,7 +173,7 @@ jobs:
           PYCODE
               LIVE_HTML_SHA="$(sha256sum /tmp/forge-live-source.html | cut -d ' ' -f1)"
               LIVE_HTML_BYTES="$(wc -c < /tmp/forge-live-source.html)"
-              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V9_1_ARTICULATED_PAPER_RIGS" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ] && [ "$LIVE_HTML_BYTES" -eq "$EXPECTED_HTML_BYTES" ]; then
+              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V9_2_LAYERED_SCENERY_FACES" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ] && [ "$LIVE_HTML_BYTES" -eq "$EXPECTED_HTML_BYTES" ]; then
                 ASSET_OK=1
                 while IFS= read -r asset; do
                   mkdir -p "/tmp/forge-assets/$(dirname "$asset")"
@@ -208,20 +208,20 @@ jobs:
               assert len(data)==meta['bytes'],asset
               assert hashlib.sha256(data).hexdigest()==meta['sha256'],asset
               assert data==(Path('dist/swrlz-forge-moba')/asset).read_bytes(),asset
-          print('LIVE_V9_1_ARTWORK_SCENES_SCREENING_AND_SOURCE_RECEIPT_MATCH')
+          print('LIVE_V9_2_ARTWORK_SCENES_SCREENING_AND_SOURCE_RECEIPT_MATCH')
           PYCODE
                   then
-                    echo "Verified: exact §wyrl§ Engine v9.1, all bundled artwork/scenes/screening, and SOURCE receipt."
+                    echo "Verified: exact §wyrl§ Engine v9.2, all bundled artwork/scenes/screening, and SOURCE receipt."
                     exit 0
                   fi
                 fi
                 echo "Editor HTML arrived but bundled anime assets or SOURCE receipt did not match yet."
               fi
-              echo "Live page responded, but the exact v9.1 artifact was not present yet."
+              echo "Live page responded, but the exact v9.2 artifact was not present yet."
             fi
             sleep 10
           done
-          echo "::error::Hugging Face upload completed, but the live Space did not serve the complete v9.1 package within the verification window."
+          echo "::error::Hugging Face upload completed, but the live Space did not serve the complete v9.2 package within the verification window."
           exit 1
 
       - name: Preserve deploy receipt
