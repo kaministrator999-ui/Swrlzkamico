@@ -10,6 +10,12 @@ on:
       - "projects/swrlz-forge-moba/build_space.py"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01.swyrl.json"
       - "projects/swrlz-forge-moba/episodes/ghosts-in-different-forms-ep01.html"
+  pull_request:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v8_5_anime_starter.py"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - ".github/workflows/verify-swrlz-anime-candidate.yml"
 permissions:
   contents: write
 jobs:
@@ -60,6 +66,7 @@ jobs:
           python -m py_compile projects/swrlz-forge-moba/patches/v8_5_anime_starter.py projects/swrlz-forge-moba/build_space.py
           echo "NODE_SYNTAX_AND_PYTHON_COMPILE_OK"
       - name: Seal exact v8.5 artifact manifest after verification
+        if: github.event_name == 'push'
         run: |
           python - <<'PY'
           import json,hashlib
