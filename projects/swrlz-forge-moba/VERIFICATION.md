@@ -1,3 +1,17 @@
+# §wyrl§ Engine v8.8 · animated storybook video creator verification
+
+47 governed patches. Candidate HTML **644,951 bytes**, SHA-256 `06c55a0d090bd6ffa9383ff44f914b922a841de7dc03284a50955cb4036478cd`, marker `V8_8_POPUP_STORYBOOK_DIRECTOR`.
+
+- [x] [Source reconstruction and desktop/mobile Chromium acceptance](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37726896000) passed for Play, physical pop-up book, multiple hinged cutout planes, separate fantasy wizard cels, nine layer controls, moving 3D camera, Director editing, Pause, seek, Explore Set, Stop, and project serialization.
+- [x] Desktop Playwright downloaded and parsed a genuine Save Project JSON, verifying independent Kami and §wyrlz parameters. Phone-sized Chromium clicked the newly added visible **Director → Save Project** and verified serialized project data; simulated OS download events were not asserted on mobile.
+- [x] Fixed phone toolbar collisions: moved Director into Play transport, moved expanded Layers popover above transport, and added a mobile-visible Save Project action in Director.
+- [x] Both browser viewports reported zero uncaught script errors.
+- [ ] Production deployment and served exact HTML plus episode/scene asset hashes must be verified independently before marking this version live.
+
+Earlier v8.7/v8.6 receipts preserved below.
+
+---
+
 # §wyrl§ Engine v8.7 · layered anime cel/parallax acceptance
 
 Candidate source: **46 governed patches**, **624,633 bytes**, SHA-256 `6a58245bc1d19e3513ddc3a280a454c2d69e7c6c836ad18c65821f1b0816747b`, marker `V8_7_ANIME_CEL_PARALLAX`.
