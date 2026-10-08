@@ -2,9 +2,9 @@
 
 Canonical lane: §E / §wyrl§ Engine  
 History audited through: **2026-10-07**  
-Current source candidate: **v8.6 — Native Anime Cinematic (exact reconstruction, syntax, desktop and mobile browser Play acceptance verified; production deploy receipt separate)**. v8.4 and v8.5 history remain preserved.
+Current source candidate: **v8.7 — Anime Cel Parallax (46-patch rebuild, source syntax and desktop/mobile browser acceptance passed; dedicated live deployment pending)**. Historical releases remain preserved.
 
-Previously verified live release: **v8.3 — Zones & Starforge** ([Actions 37697374632](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37697374632), trigger `d10953ee23fcefc8e66a6e2ee86b7b2e51421313`; exact served marker, `SOURCE.json`, and normalized artifact hash confirmed)
+Previously verified live release: **v8.6 — Native Anime Studio Play** ([Actions 37719877533](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719877533); exact served HTML and both episode/scene assets SHA-256 verified). Earlier v8.3 live receipts remain in historical sections.
 
 This roadmap is the mandatory release lineage for governed §E GitHub updates. Root `§tart_§E.md` defines the deployment contract.
 
@@ -24,7 +24,7 @@ Source: `patches/v8_6_native_anime_cinematic.py`; final SHA-256 `1468357c5ce082b
 
 The v8.6 native Play prototype proved a 3D cinematic could run on the phone, but the first screenshots showed 3D geometry and oversized in-world dialogue signs crossing the camera. The v8.7 starter-pack test adds a true **2.5D depth stack** built from original canvas-drawn anime character cels and six independently inspectable Three.js sprite layers (background sky, atmospheric lights, midground city, character cels, effects, foreground framing). The native camera moves through those Z planes for parallax. The original 3D world actors are hidden for cinematic playback **and restored when exiting**. HUD captions wrap inside mobile bounds.
 
-This is a scriptable experimental compositor with runtime layer toggles, **not** yet a drag-and-drop cel/keyframe editor. It is isolated to the Anime Studio starter; older §E projects and level authoring remain intact. Validation: [v8.7 candidate browser run](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37721928687); release and served host still require independent acceptance.
+This is a scriptable experimental compositor with runtime layer toggles, **not** yet a drag-and-drop cel/keyframe editor. It is isolated to the Anime Studio starter; older §E projects and level authoring remain intact. Validation: [v8.7 passed desktop/mobile browser run](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37721928687), exact source 624,633 bytes / SHA-256 `6a58245bc1d19e3513ddc3a280a454c2d69e7c6c836ad18c65821f1b0816747b`; release and served host still require independent acceptance.
 
 ## Audited release lineage
 
