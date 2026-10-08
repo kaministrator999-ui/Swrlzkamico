@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.19
-REVISION=1.0.19-continuous-lyric-extraction-diagnostics-v171
+VERSION=1.0.20
+REVISION=1.0.20-blank-separated-lyric-line-repair-v172
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
