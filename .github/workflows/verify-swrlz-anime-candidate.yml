@@ -11,7 +11,7 @@ on:
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01.swyrl.json"
       - "projects/swrlz-forge-moba/episodes/ghosts-in-different-forms-ep01.html"
 permissions:
-  contents: read
+  contents: write
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -39,6 +39,7 @@ jobs:
           for rel in manifest["patches"]:
               source=mod["load_patch"](root/rel)(source)
           output=source.encode("utf-8")
+          Path("/tmp/swyrl-anime-engine.html").write_bytes(output)
           print("ENGINE_EXPECTED_BYTES="+str(len(output)))
           print("ENGINE_EXPECTED_SHA256="+hashlib.sha256(output).hexdigest())
           for rel in ("episodes/ghosts-in-different-forms-ep01.html","scenes/ghosts-in-different-forms-ep01.swyrl.json"):
@@ -58,3 +59,29 @@ jobs:
           node --check /tmp/swyrl-anime-engine.mjs
           python -m py_compile projects/swrlz-forge-moba/patches/v8_5_anime_starter.py projects/swrlz-forge-moba/build_space.py
           echo "NODE_SYNTAX_AND_PYTHON_COMPILE_OK"
+      - name: Seal exact v8.5 artifact manifest after verification
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          target=Path("projects/swrlz-forge-moba/source-manifest.json")
+          meta=json.loads(target.read_text(encoding="utf-8"))
+          data=Path("/tmp/swyrl-anime-engine.html").read_bytes()
+          meta["finalBytes"]=len(data)
+          meta["finalSha256"]=hashlib.sha256(data).hexdigest()
+          target.write_text(json.dumps(meta,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("SEALED_BYTES="+str(meta["finalBytes"]))
+          print("SEALED_SHA256="+meta["finalSha256"])
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
+          cmp /tmp/swyrl-anime-engine.html dist/swrlz-forge-moba/index.html
+          test -s dist/swrlz-forge-moba/episodes/ghosts-in-different-forms-ep01.html
+          test -s dist/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01.swyrl.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add projects/swrlz-forge-moba/source-manifest.json
+          if ! git diff --staged --quiet; then
+            git commit -m "Seal exact v8.5 anime starter source integrity"
+            git push origin HEAD:main
+          fi
+          echo "CANDIDATE_EXACT_SOURCE_VERIFIED"
