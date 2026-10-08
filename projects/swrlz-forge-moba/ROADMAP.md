@@ -20,6 +20,12 @@ The Anime Studio starter now begins a real-time native Three.js cinematic when P
 
 Source: `patches/v8_6_native_anime_cinematic.py`; final SHA-256 `1468357c5ce082b71548de983fd11f818cf4eeccb34eca3df92a0f15e3e94dc0`, 611,675 bytes, 45 patches. [Headless Chromium desktop/mobile test run 37719407234](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719407234) and [candidate compiler run 37719407233](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719407233) passed. Native authoring of cinematic keyframes, lip-sync and exportable video remain future capabilities.
 
+## v8.7 candidate · Cel-layer anime cinematics
+
+The v8.6 native Play prototype proved a 3D cinematic could run on the phone, but the first screenshots showed 3D geometry and oversized in-world dialogue signs crossing the camera. The v8.7 starter-pack test adds a true **2.5D depth stack** built from original canvas-drawn anime character cels and six independently inspectable Three.js sprite layers (background sky, atmospheric lights, midground city, character cels, effects, foreground framing). The native camera moves through those Z planes for parallax. The original 3D world actors are hidden for cinematic playback **and restored when exiting**. HUD captions wrap inside mobile bounds.
+
+This is a scriptable experimental compositor with runtime layer toggles, **not** yet a drag-and-drop cel/keyframe editor. It is isolated to the Anime Studio starter; older §E projects and level authoring remain intact. Validation: [v8.7 candidate browser run](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37721928687); release and served host still require independent acceptance.
+
 ## Audited release lineage
 
 | Version | Date | What changed |
@@ -63,6 +69,7 @@ Source: `patches/v8_6_native_anime_cinematic.py`; final SHA-256 `1468357c5ce082b
 | v8.4 | 2026-10-07 | Parallel native wayfinding refinements in Embervault and Starforge; optional editor-only destination rings/heading arrows and axis-preserving destination framing. |
 | v8.5 (candidate) | 2026-10-07 | Anime Studio starter selectable from Projects; 62 editable actors, eight stages, eight notes stations, integrated canvas screening, source-packaged episode; next-step native cinematic animation gap documented. |
 | v8.6 (candidate) | 2026-10-07 | Project-scoped native 3D cinematic Play with movable camera, performers, dragon, editable-script captions, timeline controls and Explore Set; desktop/mobile Chromium acceptance. |
+| v8.7 (candidate) | 2026-10-07 | 2.5D layered sprite/cel backgrounds, midground, character, FX, foreground parallax; scene sign occlusion and caption clipping repairs; temporary layer visibility. |
 
 ## Artifact authority
 
