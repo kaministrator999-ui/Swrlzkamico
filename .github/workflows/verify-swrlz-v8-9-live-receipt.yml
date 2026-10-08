@@ -45,7 +45,7 @@ jobs:
           print('V8_9_HOSTED_HTML_BYTES='+str(len(html))+' SHA256='+digest)
           assert digest==expected
           assert len(html)==647639
-          assert b'V8_9_POPUP_STORYBOOK_DIRECTOR' in html
+          assert b'V8_9_CINEMATIC_STAGING_SAFE' in html
           receipt=json.loads(load(root+'SOURCE.json?receipt='+trigger))
           assert receipt['finalSha256']==digest
           assert len(receipt['patches'])==48
