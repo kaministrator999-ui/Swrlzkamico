@@ -32,7 +32,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v164-music-structure-presentation"
+ONLINE_OBSERVABILITY_REVISION = "v165-lyric-region-integrity"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -334,6 +334,8 @@ def _lyrics_requested_scope(text: str) -> str:
         return "full-lyrics"
     if re.search(r"\b(?:first|opening)\s+verse\b",value,re.I):
         return "first-verse"
+    if re.search(r"\blyrics?\b",value,re.I):
+        return "full-lyrics"
     return "lyrics"
 
 
@@ -421,6 +423,16 @@ _LYRIC_SECTION_MARKER=re.compile(
     r"chorus|refrain|bridge|hook|pre[-\s]?chorus|intro|outro)\b[^\]\n]{0,80}\]?\s*:?[\s]*$",
     re.I,
 )
+_LYRIC_PERFORMER_MARKER=re.compile(r"^\s*\[\s*([A-Za-z0-9][^\]\n:]{0,70})\s*:\s*\]\s*$")
+_LYRIC_RECOMMENDATION_LINE=re.compile(
+    r"^\s*[A-Za-z0-9][^\n\"]{0,90}\s+-\s+[\"“][^\"”\n]{2,120}[\"”](?:\s+.*)?$",
+    re.I,
+)
+_LYRIC_POST_SONG_META=re.compile(
+    r"^\s*(?:writers?|writer\(s\)|written\s+by|submit\s+(?:lyrics|corrections?)|"
+    r"add\s+song|album\s+lyrics|azlyrics|you\s+may\s+also\s+like)\b.*$",
+    re.I,
+)
 _LYRIC_NUMBERED_START=re.compile(r"^\s*\d{1,2}[.)]\s+\S")
 LYRICS_MAX_PAGE_ATTEMPTS=3
 LYRICS_MAX_RESCUE_SEARCHES=2
@@ -464,15 +476,46 @@ def _lyrics_informative_tokens(text: str, subject: str = "") -> list[str]:
     return tokens[:80]
 
 
+def _lyrics_token_sequence(text: str, subject: str = "") -> list[str]:
+    subject_terms=set(_lyrics_title_terms(subject))
+    out=[]
+    for token in re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",str(text or "").casefold()):
+        if len(token)<3 or token in _LYRIC_OVERLAP_STOP or token in subject_terms:
+            continue
+        out.append(token)
+        if len(out)>=220:
+            break
+    return out
+
+def _lyrics_sequence_span(snippet: str, lyric_extract: str, subject: str = "") -> int:
+    """Longest contiguous informative-token span shared by snippet and body."""
+    a=_lyrics_token_sequence(snippet,subject)
+    b=_lyrics_token_sequence(lyric_extract,subject)
+    if not a or not b:
+        return 0
+    previous={}
+    best=0
+    for token_a in a:
+        current={}
+        for j,token_b in enumerate(b):
+            if token_a==token_b:
+                span=previous.get(j-1,0)+1
+                current[j]=span
+                if span>best:
+                    best=span
+        previous=current
+    return best
+
 def _lyrics_snippet_consistent(snippet: str, lyric_extract: str, subject: str = "") -> tuple[bool,int,int]:
-    """Use search-snippet text only as a consistency check; never as lyric payload."""
+    """Search snippets corroborate fetched bodies; unordered token overlap alone is insufficient."""
     snippet_tokens=_lyrics_informative_tokens(snippet,subject)
     if len(snippet_tokens)<8:
         return True,0,len(snippet_tokens)
     body_tokens=set(_lyrics_informative_tokens(lyric_extract,subject))
     overlap=sum(1 for token in snippet_tokens if token in body_tokens)
     needed=max(4,min(8,(len(snippet_tokens)+3)//4))
-    return overlap>=needed,overlap,len(snippet_tokens)
+    sequence_span=_lyrics_sequence_span(snippet,lyric_extract,subject)
+    return bool(overlap>=needed and sequence_span>=4),overlap,len(snippet_tokens)
 
 
 _LYRIC_SOURCE_BLOCKED_TITLE=re.compile(
