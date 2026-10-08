@@ -1,3 +1,24 @@
+## UPDATE STARTED — 2026-10-08 — SongIdentity retrieval generalization v169
+
+**Trigger:** Rack City live acceptance exposed a general search-intent collision: ordinary web ranking interpreted common title words as shopping/dictionary intent instead of a song entity lookup. The next repair must generalize across arbitrary songs rather than special-case individual titles.
+
+**Architecture target:**
+`SongIdentity → ambiguity analysis → deterministic query ladder → candidate entity/domain scoring → canonical URL normalization → existing 3-page fetch budget → body verification → music structure → presentation`.
+
+**Planned behavior:**
+- parse canonical song identity: title, primary artist, featured artists, version modifiers;
+- normalize punctuation/aliases for matching without rewriting display text;
+- compute ambiguity signals from common-title words and missing artist evidence;
+- generate bounded deterministic query variants from SongIdentity rather than model improvisation;
+- quoted title + artist identity outranks loose word matches;
+- artist mismatch, unrelated version modifiers, shopping/dictionary/product intent, and non-lyric page types receive explicit penalties/rejection reasons;
+- lyric-focused domains and search snippets with Verse/Chorus/Bridge-style structure receive soft ranking bonuses, never unconditional trust;
+- discovery/query budget remains separate from the hard 3-page fetch ceiling;
+- diagnostics expose SongIdentity, ambiguity profile, query ladder, candidate scores/reasons, and canonical destination;
+- no copyright/presentation behavior is changed by this retrieval generalization.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE STARTED — 2026-10-07 — SongIdentity retrieval generalization v169
 
 **Trigger:** live tests now show the retrieval/presentation chain works for some songs, but ambiguous/common-word titles such as `Rack City` can still be hijacked by ordinary web-search intent (shopping, shelving, dictionary/product pages). User direction: generalize this for arbitrary songs instead of adding per-song patches.
