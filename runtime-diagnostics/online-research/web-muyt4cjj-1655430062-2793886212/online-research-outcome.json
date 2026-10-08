@@ -1,0 +1,997 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-muyt4cjj-1655430062-2793886212",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "3611272466cdb387c50f412116a7db239dd38cea",
+  "persistedAtUnixMs": 1791419845204,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v164-music-structure-presentation",
+      "kind": "search",
+      "status": "OK",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 2,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 2248,
+      "lyricsSourceAttemptCount": 2,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 1,
+          "origin": "research-evidence",
+          "requestedUrl": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+          "finalUrl": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+          "searchResultTitle": "JL, Tech N9ne, Joey Cool & Jay Trilogy - Cold Piece Of Work Lyrics ...",
+          "fetchedPageTitle": "JL, Tech N9ne, Joey Cool & Jay Trilogy - Cold Piece Of Work Lyrics | AZLyrics.com",
+          "fetchStatus": null,
+          "fetchedContent": {
+            "chars": 7784,
+            "sha256": "b7b35ce2f9aa9d69c00f22a99103dc2587ee9f38736292f5af20d74f190a366a",
+            "anchorIndex": 32,
+            "anchorLine": "\"Cold Piece Of Work\" lyrics",
+            "sectionMarkers": [],
+            "preview": "\"Cold Piece Of Work\" lyrics\nJL, Tech N9ne, Joey Cool & Jay Trilogy Lyrics\n\"Cold Piece Of Work\"\n(Album Version)\nStrange Reign 2017...\n[JL:]\nThey treat my bidness like it's soda\nOr my music like a perc\nThey know my flow is the yola\nThat's a cold piece of work\nThat's dope nigga what you call a buzz when you caught a bus\nI make you feel like you was on all the drugs",
+            "previewChars": 364,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 1128,
+            "sha256": "7822493501234b448e7b2db68c9cc8e75c3adc57cdcceba6f1cf11bd067a2f07",
+            "preview": "Prozak - \"Until Then\" You see, every day remains the same for me\nI often wonder what it takes to just set me free\nI stare into this dark abyss that I know is my life\nNo where to run, no where to hide, no way to cope or...\nStevie Stone - \"Get Fucked Up\" Sitting all alone\nTime to hit the liquor store\nNeed some trees that I can blow\nAnd I'd done copped it for the low\nNow I'm ready, put it on ya\nNew York to California\nBring liquor, bring bud\nLet's get...\nKrizz Kaliko - \"Getcha Life Right\" I'm just tryna get my life right\nGet it to go my way (go my way)\nIf ya ain't got pay\nI'm just tryna get my lif",
+            "previewChars": 600,
+            "previewLimit": 600
+          },
+          "sourceIdentityVerified": true,
+          "sourceIdentityScore": 13,
+          "snippetOverlapCount": 1,
+          "snippetInformativeTokenCount": 18,
+          "outcome": "REJECTED",
+          "rejectionReason": "SNIPPET_BODY_MISMATCH"
+        },
+        {
+          "attempt": 2,
+          "origin": "fallback-candidate",
+          "requestedUrl": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+          "finalUrl": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+          "searchResultTitle": "JL, Tech N9ne & Krizz Kaliko - Cold Piece Of Work (Original) Lyrics ...",
+          "fetchedPageTitle": "JL, Tech N9ne & Krizz Kaliko - Cold Piece Of Work (Original) Lyrics | AZLyrics.com",
+          "fetchStatus": 200,
+          "fetchedContent": {
+            "chars": 5204,
+            "sha256": "4c8190257d748ecb757487c2a93e1e795b18373e77d1254e777adb650956f9af",
+            "anchorIndex": 32,
+            "anchorLine": "\"Cold Piece Of Work (Original)\" lyrics",
+            "sectionMarkers": [],
+            "preview": "\"Cold Piece Of Work (Original)\" lyrics\nJL, Tech N9ne & Krizz Kaliko Lyrics\n\"Cold Piece Of Work (Original)\"\n[JL:]\nThey treat my business like it's soda\nOr my music like a Perc\nThey know my flow is the YOLA\nThat's a cold piece of work\nThat's dope nigga what you call a buzz when you caught a bus\nI make you feel like you was on all the drugs\nAll the drugs, drugs, I got all the plugs\nA-A-All this was to satisfy the customers",
+            "previewChars": 423,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 1037,
+            "sha256": "442a2a915aa691e0daf7cf521ca065baffee2a97d804fbc73d03f17ca318b681",
+            "preview": "Krizz Kaliko - \"Schizophrenia\" She's a beast in the morning, freak in the night\nMake her sleep in the morning, freak in the night\nShe's a beast in the morning, freak in the night\nI like it, I like it like this I wanna love you...\nI've got that lightnin' inside me\nSon of a God\nI'm like a titan that's risin'\nOh, just you watch\nI'm steppin' into fate\nThere is no time to waste\nI've got that lightnin'...\nLudacris - \"My Chick Bad\" My chick bad, my chick hood\nMy chick do stuff that your chick wish she could\nMy-my chick bad, my chick hood\nMy chick do stuff that your chick wish she could\nMy-my chick ba",
+            "previewChars": 600,
+            "previewLimit": 600
+          },
+          "sourceIdentityVerified": true,
+          "sourceIdentityScore": 13,
+          "snippetOverlapCount": 8,
+          "snippetInformativeTokenCount": 32,
+          "outcome": "VERIFIED",
+          "rejectionReason": "VERIFIED"
+        }
+      ],
+      "musicStructureDebug": {
+        "schema": "swrlz-music-structure-debug-v1",
+        "workType": "music_text",
+        "requestedScope": "lyrics",
+        "structureBasis": "verified_text_blocks_without_invented_labels",
+        "sectionCount": 7,
+        "explicitSectionCount": 0,
+        "sourceOrderPreserved": true,
+        "newlineEqualsBar": false,
+        "sections": [
+          {
+            "index": 1,
+            "rawLabel": "",
+            "type": "section",
+            "number": null,
+            "performer": "",
+            "confidence": 0.55,
+            "basis": "unlabeled_verified_block",
+            "lineCount": 4,
+            "barCount": null
+          },
+          {
+            "index": 2,
+            "rawLabel": "",
+            "type": "section",
+            "number": null,
+            "performer": "",
+            "confidence": 0.55,
+            "basis": "unlabeled_verified_block",
+            "lineCount": 7,
+            "barCount": null
+          },
+          {
+            "index": 3,
+            "rawLabel": "",
+            "type": "section",
+            "number": null,
+            "performer": "",
+            "confidence": 0.55,
+            "basis": "unlabeled_verified_block",
+            "lineCount": 5,
+            "barCount": null
+          },
+          {
+            "index": 4,
+            "rawLabel": "",
+            "type": "section",
+            "number": null,
+            "performer": "",
+            "confidence": 0.55,
+            "basis": "unlabeled_verified_block",
+            "lineCount": 2,
+            "barCount": null
+          },
+          {
+            "index": 5,
+            "rawLabel": "",
+            "type": "section",
+            "number": null,
+            "performer": "",
+            "confidence": 0.55,
+            "basis": "unlabeled_verified_block",
+            "lineCount": 5,
+            "barCount": null
+          },
+          {
+            "index": 6,
+            "rawLabel": "",
+            "type": "section",
+            "number": null,
+            "performer": "",
+            "confidence": 0.55,
+            "basis": "unlabeled_verified_block",
+            "lineCount": 2,
+            "barCount": null
+          },
+          {
+            "index": 7,
+            "rawLabel": "",
+            "type": "section",
+            "number": null,
+            "performer": "",
+            "confidence": 0.55,
+            "basis": "unlabeled_verified_block",
+            "lineCount": 5,
+            "barCount": null
+          }
+        ],
+        "presentationChars": 0,
+        "presentationSha256": ""
+      },
+      "candidateAdmissionDebug": [
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "JL, Tech N9ne, Joey Cool & Jay Trilogy - Cold Piece Of Work Lyrics ...",
+          "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+          "source": "www.azlyrics.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "JL, Tech N9ne , Joey Cool & Jay Trilogy \" Cold Piece Of Work \": Strange Reign 2017... They treat my bidness like it's soda Or my music like a perc They know my fl..."
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "JL, Tech N9ne & Krizz Kaliko - Cold Piece Of Work (Original) Lyrics ...",
+          "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+          "source": "www.azlyrics.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "JL, Tech N9ne & Krizz Kaliko Lyrics \" Cold Piece Of Work (Original)\" [JL:] They treat my business like it's soda Or my music like a Perc They know my flow is the YOLA That's a cold piece of work That's dope nigga what you call a buzz when you caught a bus I make you feel like you"
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "JL - Cold Piece of Work Lyrics - Genius",
+          "url": "https://genius.com/Jl-cold-piece-of-work-lyrics",
+          "source": "genius.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "That's a cold piece of work [Verse 2: Tech N9ne ] T9X is what they sniffin' when Tech N9na get to spittin' My position is give 'em a hell of an addiction On these scripts and they be itchin'"
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "JL - Cold Piece of Work (Original) Lyrics | Genius Lyrics",
+          "url": "https://genius.com/Jl-cold-piece-of-work-original-lyrics",
+          "source": "genius.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "The finished song, titled \" Cold Piece Of Work (Original),\" by JL featuring Tech N9ne and Krizz Kaliko was released on August 15th, 2017, as the first single from the year's second Collabos ..."
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "Tech N9ne - Cold Piece of Work lyrics - All The Lyrics",
+          "url": "https://www.allthelyrics.com/lyrics/tech_n9ne-cold_piece_of_work",
+          "source": "www.allthelyrics.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "That's a cold piece of work [Verse 2: Tech N9ne ] T9X is what they sniffin' when Tech N9na get to spittin' My position is give 'em a hell of an addiction On these scripts and they be itchin' For the good dope that I be dishin' out for the listenin' That's why I'm constantly cooki"
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "Cold Piece of Work Lyrics — Tech N9ne | Lyricshare",
+          "url": "https://lyricshare.net/en/tech-n9ne/cold-piece-of-work.html",
+          "source": "lyricshare.net",
+          "rank": 6,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Lyrics « Cold Piece of Work » — Tech N9ne T9X is what they sniffin' when Tech Nina get to spittin'My position is givin' 'em a hell of an addictionOn these scripts and they be itchin'For the good dope that I be dishin' out for the listenin'That's why I'm constantly cookin' off in "
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "Tech N9ne - Cold Piece Of Work Lyrics",
+          "url": "https://www.lyricsmania.com/cold_piece_of_work_lyrics_tech_n9ne.html",
+          "source": "www.lyricsmania.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Tech N9ne Cold Piece Of Work Lyrics . Cold Piece Of Work lyrics performed by Tech N9ne : They treat my bidness like it's soda Or my music like a perc They know my flow is the yola That's a cold piece of work"
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "Tech N9ne - Cold Piece of Work (Original) | All The Lyrics",
+          "url": "https://www.allthelyrics.com/lyrics/tech_n9ne-cold_piece_of_work_original",
+          "source": "www.allthelyrics.com",
+          "rank": 8,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Tech N9ne - Cold Piece of Work (Original) lyrics : [Pre-Chorus: JL] They treat my bidness like it's soda Or my music like a perc They know my flow ..."
+        }
+      ],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791419842952,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791419842958,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791419843248,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791419843248,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791419844142,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791419844142,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791419844145,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791419844643,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+        "httpStatus": 200,
+        "responseBytes": 88455
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791419844648,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791419844648
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+        "activity": "Fetched destination matches the requested song identity",
+        "atUnixMs": 1791419844648
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1791419844653
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1791419844653
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791419844654,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791419845196,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "httpStatus": 200,
+        "responseBytes": 85717
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791419845196
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "activity": "Fetched destination matches the requested song identity",
+        "atUnixMs": 1791419845196
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "activity": "Lyrics candidate verified",
+        "atUnixMs": 1791419845200
+      }
+    ],
+    "sources": [
+      {
+        "title": "JL, Tech N9ne & Krizz Kaliko - Cold Piece Of Work (Original) Lyrics ...",
+        "source": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "www.azlyrics.com"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "search-results",
+        "version": 1,
+        "title": "Online search · cold piece of work tech n9ne lyrics",
+        "provider": "bounded-web-search-chain-v1",
+        "data": {
+          "query": "cold piece of work tech n9ne lyrics",
+          "results": [
+            {
+              "title": "JL, Tech N9ne & Krizz Kaliko - Cold Piece Of Work (Original) Lyrics ...",
+              "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+              "snippet": "JL, Tech N9ne & Krizz Kaliko Lyrics \" Cold Piece Of Work (Original)\" [JL:] They treat my business like it's soda Or my music like a Perc They know my flow is the YOLA That's a cold piece of work That's dope nigga what you call a buzz when you caught a bus I make you feel like you was on all the drugs All the drugs, drugs, I got all the plugs",
+              "source": "www.azlyrics.com"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up cold piece of work tech n9ne lyrics…",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 9,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 10,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 11,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 1
+      },
+      {
+        "seq": 12,
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 13,
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "reason": "Fetched destination matches the requested song identity",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 14,
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofwork.html",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 15,
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 16,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 17,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 18,
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 19,
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "reason": "Fetched destination matches the requested song identity",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 20,
+        "phase": "LYRICS_SOURCE_VERIFIED",
+        "reason": "Lyrics candidate verified",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 21,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 22,
+        "phase": "WIDGET_READY",
+        "reason": "search-results",
+        "categories": [
+          "WIDGET"
+        ]
+      },
+      {
+        "seq": 23,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 24,
+        "phase": "SOURCE_FOUND",
+        "reason": "There we go — I found relevant verified material on JL, Tech N9ne & Krizz Kaliko - Cold Piece Of Work (Original) Lyrics ....",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "EVIDENCE",
+          "FOUND"
+        ]
+      },
+      {
+        "seq": 25,
+        "phase": "EVIDENCE_SCOPING",
+        "reason": "Give me one second — preparing the requested material.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "EVIDENCE",
+          "SCOPING"
+        ]
+      },
+      {
+        "seq": 26,
+        "phase": "LYRICS_VERIFIED_PAYLOAD",
+        "reason": "Serving frozen lyrics payload from successfully fetched evidence.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ]
+      },
+      {
+        "seq": 28,
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "finalResponse": "Okay — here's the lyrics for **\"cold piece of work\" by tech n9ne**:\n\nKrizz Kaliko - \"Schizophrenia\" She's a beast in the morning, freak in the night\nMake her sleep in the morning, freak in the night\nShe's a beast in the morning, freak in the night\nI like it, I like it like this I wanna love you...\n\nI've got that lightnin' inside me\nSon of a God\nI'm like a titan that's risin'\nOh, just you watch\nI'm steppin' into fate\nThere is no time to waste\nI've got that lightnin'...\n\nLudacris - \"My Chick Bad\" My chick bad, my chick hood\nMy chick do stuff that your chick wish she could\nMy-my chick bad, my chick hood\nMy chick do stuff that your chick wish she could\nMy-my chick bad, badder-badder than...\n\nDJ Snake - \"Turn Down For What\" Fire up that loud\nAnother round of shots, shots, shots, shots...\n\nTurn down for what?\nTurn down for what?\nTurn down for what?\nTurn down for what?\nTurn down for what?\n\nFire up that loud\nAnother round...\n\nBig Sean - \"Wolves\" Uh\nYeah, uh, that's right (Yeah)\n(Yeah) Uh, yeah, yeah, uh-huh\nI was raised by the wolves (I was raised by—)\nI was raised by the wolves (I was raised by—)\n\n**Lyrics source:** JL, Tech N9ne & Krizz Kaliko - Cold Piece Of Work (Original) Lyrics ... — https://www.azlyrics.com/lyrics/techn9ne/coldpieceofworkoriginal.html",
+    "finalResponseSha256": "dfb63db5b9ba9a2b6a06627663d2880cc9d858a7ac5027c7fdcd3c400795fa87",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791419842939,
+      "startedAtUnixMs": 1791419842943,
+      "completedAtUnixMs": 1791419845203,
+      "queueWaitMs": 4,
+      "stationRunMs": 2260,
+      "endToEndMs": 2264
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
