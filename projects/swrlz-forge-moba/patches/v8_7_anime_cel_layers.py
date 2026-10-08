@@ -59,9 +59,13 @@ function animeCleanLayers(value){
   return Object.fromEntries(ANIME_2D_LAYER_SPECS.map(([id])=>[id,input[id]!==false]));
 }
 function animeDrawSurface(draw,width=768,height=512){
-  const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+  // Mobile GPUs benefit from low-resolution production cels; upscaling is
+  // intentional, like a limited-animation anime background plate.
+  const actualWidth=Math.min(width,512),actualHeight=Math.round(height*actualWidth/width);
+  const canvas=document.createElement('canvas');canvas.width=actualWidth;canvas.height=actualHeight;
   const ctx=canvas.getContext('2d');
   if(!ctx)throw new Error('Anime cel compositor needs 2D canvas support.');
+  ctx.scale(actualWidth/width,actualHeight/height);
   draw(ctx,width,height);
   const texture=new THREE.CanvasTexture(canvas);
   texture.colorSpace=THREE.SRGBColorSpace;
