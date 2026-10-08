@@ -33,7 +33,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v170-diverse-fetch-budget"
+ONLINE_OBSERVABILITY_REVISION = "v171-extraction-stage-diagnostics"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -693,33 +693,63 @@ def _lyrics_candidate_structure_hint(item: dict[str,Any], subject: str) -> int:
     hint+=max(0,8-int(item.get("rank") or 8))
     return hint
 
-def _lyrics_extract_candidate(text: str, scope: str, subject: str = "") -> str:
-    """Extract a bounded contiguous lyric body while rejecting navigation and post-song chrome."""
+def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[str,Any]:
+    """Analyze and extract a bounded lyric body while exposing why each stage accepted/rejected it."""
     raw=str(text or "").replace("\r\n","\n").replace("\r","\n")
-    if not raw.strip():
-        return ""
-
     raw_lines=raw.splitlines()
-    anchor_index=_lyrics_best_anchor(raw_lines,subject)
+    anchor_index=_lyrics_best_anchor(raw_lines,subject) if raw.strip() else None
+    anchor_line=raw_lines[anchor_index].strip() if anchor_index is not None and anchor_index<len(raw_lines) else ""
+    analysis={
+        "requestedScope":scope,
+        "rawChars":len(raw),
+        "rawLineCount":len(raw_lines),
+        "anchorIndex":anchor_index,
+        "anchorLine":anchor_line[:220],
+        "scopedLineCount":0,
+        "scopedNonEmptyLineCount":0,
+        "contentLineCount":0,
+        "musicalSectionCueCount":0,
+        "performerCueCount":0,
+        "blankSeparatedChunkCount":0,
+        "acceptedBlockCount":0,
+        "blockLineCounts":[],
+        "continuousRunEligible":False,
+        "terminalBoundaryKind":"",
+        "terminalBoundaryLine":"",
+        "decision":"REJECTED",
+        "reason":"",
+        "resultChars":0,
+        "resultLineCount":0,
+    }
+    if not raw.strip():
+        analysis["reason"]="EMPTY_FETCHED_BODY"
+        return {"text":"","diagnostics":analysis}
+
+    work_lines=list(raw_lines)
     if anchor_index is not None:
-        anchor_line=raw_lines[anchor_index].strip()
-        include_anchor=bool(_LYRIC_SECTION_MARKER.search(anchor_line) or _LYRIC_NUMBERED_START.search(anchor_line))
-        raw_lines=raw_lines[anchor_index if include_anchor else anchor_index+1:]
+        include_anchor=bool(
+            _LYRIC_SECTION_MARKER.search(anchor_line)
+            or _LYRIC_PERFORMER_MARKER.search(anchor_line)
+            or _LYRIC_NUMBERED_START.search(anchor_line)
+        )
+        work_lines=work_lines[anchor_index if include_anchor else anchor_index+1:]
 
     scoped=[]
     started=False
-    for raw_line in raw_lines:
+    terminal_kind=""
+    terminal_line=""
+    for raw_line in work_lines:
         line=raw_line.strip()
         if not line:
             if started and (not scoped or scoped[-1]!=""):
                 scoped.append("")
             continue
-        if started and (
-            _LYRIC_HARD_BOUNDARY.fullmatch(line)
-            or _LYRIC_RECOMMENDATION_LINE.fullmatch(line)
-            or _LYRIC_POST_SONG_META.fullmatch(line)
-        ):
-            break
+        if started and _LYRIC_HARD_BOUNDARY.fullmatch(line):
+            terminal_kind="HARD_BOUNDARY"; terminal_line=line; break
+        if started and _LYRIC_RECOMMENDATION_LINE.fullmatch(line):
+            terminal_kind="RECOMMENDATION_BOUNDARY"; terminal_line=line; break
+        if started and _LYRIC_POST_SONG_META.fullmatch(line):
+            terminal_kind="POST_SONG_META_BOUNDARY"; terminal_line=line; break
         if _LYRIC_SECTION_MARKER.search(line) or _LYRIC_PERFORMER_MARKER.search(line):
             started=True
             scoped.append(line)
@@ -729,34 +759,48 @@ def _lyrics_extract_candidate(text: str, scope: str, subject: str = "") -> str:
             scoped.append(line)
             continue
         if started and _LYRIC_PAGE_NOISE.search(line):
-            break
+            terminal_kind="PAGE_NOISE_BOUNDARY"; terminal_line=line; break
 
+    analysis["terminalBoundaryKind"]=terminal_kind
+    analysis["terminalBoundaryLine"]=terminal_line[:220]
+    analysis["scopedLineCount"]=len(scoped)
+    analysis["scopedNonEmptyLineCount"]=sum(1 for line in scoped if line.strip())
     body="\n".join(scoped).strip()
     if not body:
-        return ""
+        analysis["reason"]="NO_SCOPED_LYRIC_BODY"
+        return {"text":"","diagnostics":analysis}
 
     if scope=="first-verse":
         explicit=re.search(
-            r"(?is)(?:^|\n)\s*\[?\s*(?:verse\s*1|verse\s*one)\b[^\]\n]*\]?\s*:?[\s]*\n?(.*?)(?="
+            r"(?is)(?:^|\n)\s*\[?\s*(?:verse\s*1|verse\s*one)\b[^\]\n]*\]?\s*:?[s]*\n?(.*?)(?="
             r"\n\s*\[?\s*(?:verse\s*2|verse\s*two|chorus|refrain|bridge)\b|\Z)",
             body,
         )
         if explicit:
             lines=[ln.strip() for ln in explicit.group(1).splitlines() if _lyrics_line_is_content(ln)]
             if 2<=len(lines)<=12:
-                return "\n".join(lines)
+                result="\n".join(lines)
+                analysis.update({
+                    "contentLineCount":len(lines),
+                    "acceptedBlockCount":1,
+                    "blockLineCounts":[len(lines)],
+                    "decision":"ACCEPTED",
+                    "reason":"EXPLICIT_FIRST_VERSE",
+                    "resultChars":len(result),
+                    "resultLineCount":len(lines),
+                })
+                return {"text":result,"diagnostics":analysis}
 
     body_lines=[ln.strip() for ln in body.splitlines()]
-    has_explicit_cues=any(
-        _LYRIC_SECTION_MARKER.search(ln) or _LYRIC_PERFORMER_MARKER.search(ln)
-        for ln in body_lines if ln
-    )
+    musical_cues=sum(1 for ln in body_lines if ln and _LYRIC_SECTION_MARKER.search(ln))
+    performer_cues=sum(1 for ln in body_lines if ln and _LYRIC_PERFORMER_MARKER.search(ln))
+    analysis["musicalSectionCueCount"]=musical_cues
+    analysis["performerCueCount"]=performer_cues
+    has_explicit_cues=bool(musical_cues or performer_cues)
     blocks=[]
+    content_line_count=0
+
     if has_explicit_cues:
-        # Explicit musical/performer cues are stronger than HTML blank-line preservation.
-        # Page title/artist metadata between the anchor and the first cue is not song body.
-        # Once the first cue appears, blank lines may be ignored while preserving the
-        # cue-bounded lyric run.
         current=[]
         seen_cue=False
         for line in body_lines:
@@ -770,32 +814,73 @@ def _lyrics_extract_candidate(text: str, scope: str, subject: str = "") -> str:
                 continue
             if seen_cue and _lyrics_line_is_content(line):
                 current.append(line)
+                content_line_count+=1
         if seen_cue and len(current)>=2:
             blocks.append("\n".join(current))
     else:
-        for chunk in re.split(r"\n\s*\n+",body):
+        chunks=[chunk for chunk in re.split(r"\n\s*\n+",body) if chunk.strip()]
+        analysis["blankSeparatedChunkCount"]=len(chunks)
+        for chunk in chunks:
             lines=[ln.strip() for ln in chunk.splitlines() if ln.strip()]
-            if not lines:
-                continue
             content=[ln for ln in lines if _lyrics_line_is_content(ln)]
+            content_line_count+=len(content)
             if len(content)>=2:
                 blocks.append("\n".join(content))
 
+        # Many lyric sites emit the whole song as one continuous line-preserving
+        # run with no Verse/Chorus markers and no blank stanza separators.
+        # A strong subject anchor plus >=8 lyric-like lines is enough to preserve
+        # that run as one unlabeled block; do not invent artificial 4-line stanzas.
         if len(blocks)==1:
             flat=[ln.strip() for ln in blocks[0].splitlines() if ln.strip()]
-            if scope=="full-lyrics" and len(flat)>=8 and len(flat)%4==0:
-                blocks=["\n".join(flat[i:i+4]) for i in range(0,len(flat),4)]
+            analysis["continuousRunEligible"]=bool(anchor_index is not None and len(flat)>=8)
+            if analysis["continuousRunEligible"]:
+                blocks=["\n".join(flat)]
 
+    if has_explicit_cues:
+        analysis["blankSeparatedChunkCount"]=len([x for x in re.split(r"\n\s*\n+",body) if x.strip()])
+    analysis["contentLineCount"]=content_line_count
+    analysis["acceptedBlockCount"]=len(blocks)
+    analysis["blockLineCounts"]=[len(block.splitlines()) for block in blocks[:24]]
+
+    result=""
+    reason=""
     if scope=="first-verse":
-        return blocks[0] if blocks else ""
+        if blocks:
+            result=blocks[0]
+            reason="FIRST_ACCEPTED_BLOCK"
+        else:
+            reason="NO_FIRST_VERSE_BLOCK"
+    elif scope=="full-lyrics":
+        total_lines=sum(len(block.splitlines()) for block in blocks)
+        if len(blocks)>=2 and total_lines>=8:
+            result="\n\n".join(blocks)
+            reason="MULTI_BLOCK_FULL_LYRICS"
+        elif len(blocks)==1 and total_lines>=8 and anchor_index is not None:
+            result=blocks[0]
+            reason="ANCHORED_CONTINUOUS_FULL_LYRICS"
+        else:
+            reason="INSUFFICIENT_FULL_LYRIC_STRUCTURE"
+    else:
+        if blocks:
+            result="\n\n".join(blocks)
+            reason="LYRIC_BLOCKS_ACCEPTED"
+        else:
+            reason="NO_ACCEPTED_LYRIC_BLOCKS"
 
-    if scope=="full-lyrics":
-        if len(blocks)>=2 and sum(len(block.splitlines()) for block in blocks)>=8:
-            return "\n\n".join(blocks)
-        return ""
+    if result:
+        analysis["decision"]="ACCEPTED"
+        analysis["reason"]=reason
+        analysis["resultChars"]=len(result)
+        analysis["resultLineCount"]=len([ln for ln in result.splitlines() if ln.strip()])
+    else:
+        analysis["reason"]=reason
+    return {"text":result,"diagnostics":analysis}
 
-    return "\n\n".join(blocks) if blocks else ""
 
+def _lyrics_extract_candidate(text: str, scope: str, subject: str = "") -> str:
+    """Compatibility wrapper returning only extracted text."""
+    return str(_lyrics_extract_analysis(text,scope,subject).get("text") or "")
 
 def _lyrics_subject_parts(subject: str) -> tuple[str,str]:
     match=re.match(r'^"([^"]+)"(?:\s+by\s+(.+))?$',str(subject or "").strip(),re.I)
@@ -1546,7 +1631,9 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                     attempt=attempt_number,
                     maxAttempts=LYRICS_MAX_PAGE_ATTEMPTS,
                 )
-            lyric_extract=_lyrics_extract_candidate(str(item.get("pageExtract") or ""),requested_scope,subject)
+            extraction_analysis=_lyrics_extract_analysis(str(item.get("pageExtract") or ""),requested_scope,subject)
+            lyric_extract=str(extraction_analysis.get("text") or "")
+            extractor_diagnostics=extraction_analysis.get("diagnostics") if isinstance(extraction_analysis.get("diagnostics"),dict) else {}
             search_snippet=str(item.get("searchSnippet") or item.get("snippet") or "")
             snippet_consistent,overlap_count,snippet_token_count=_lyrics_snippet_consistent(
                 search_snippet,
@@ -1592,6 +1679,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 "fetchStatus":item.get("fetchStatus"),
                 "fetchedContent":page_debug,
                 "extractorOutput":lyric_debug,
+                "extractorDiagnostics":extractor_diagnostics,
                 "sourceIdentityVerified":bool(source_identity.get("verified")),
                 "sourceIdentityScore":int(source_identity.get("score") or 0),
                 "snippetOverlapCount":overlap_count,
@@ -2172,6 +2260,7 @@ def copy_lyrics_debug(value: Any) -> list[dict[str,Any]]:
             continue
         fetched=item.get("fetchedContent") if isinstance(item.get("fetchedContent"),dict) else {}
         extracted=item.get("extractorOutput") if isinstance(item.get("extractorOutput"),dict) else {}
+        extraction=item.get("extractorDiagnostics") if isinstance(item.get("extractorDiagnostics"),dict) else {}
         out.append({
             "attempt":int(item.get("attempt") or 0),
             "origin":_clean(item.get("origin"),80),
@@ -2197,6 +2286,28 @@ def copy_lyrics_debug(value: Any) -> list[dict[str,Any]]:
                 "preview":str(extracted.get("preview") or "")[:600],
                 "previewChars":int(extracted.get("previewChars") or 0),
                 "previewLimit":600,
+            },
+            "extractorDiagnostics":{
+                "requestedScope":_clean(extraction.get("requestedScope"),40),
+                "rawChars":int(extraction.get("rawChars") or 0),
+                "rawLineCount":int(extraction.get("rawLineCount") or 0),
+                "anchorIndex":extraction.get("anchorIndex") if isinstance(extraction.get("anchorIndex"),int) else None,
+                "anchorLine":str(extraction.get("anchorLine") or "")[:220],
+                "scopedLineCount":int(extraction.get("scopedLineCount") or 0),
+                "scopedNonEmptyLineCount":int(extraction.get("scopedNonEmptyLineCount") or 0),
+                "contentLineCount":int(extraction.get("contentLineCount") or 0),
+                "musicalSectionCueCount":int(extraction.get("musicalSectionCueCount") or 0),
+                "performerCueCount":int(extraction.get("performerCueCount") or 0),
+                "blankSeparatedChunkCount":int(extraction.get("blankSeparatedChunkCount") or 0),
+                "acceptedBlockCount":int(extraction.get("acceptedBlockCount") or 0),
+                "blockLineCounts":[int(x) for x in (extraction.get("blockLineCounts") or [])[:24] if isinstance(x,int)],
+                "continuousRunEligible":bool(extraction.get("continuousRunEligible")),
+                "terminalBoundaryKind":_clean(extraction.get("terminalBoundaryKind"),80),
+                "terminalBoundaryLine":str(extraction.get("terminalBoundaryLine") or "")[:220],
+                "decision":_clean(extraction.get("decision"),40),
+                "reason":_clean(extraction.get("reason"),100),
+                "resultChars":int(extraction.get("resultChars") or 0),
+                "resultLineCount":int(extraction.get("resultLineCount") or 0),
             },
             "sourceIdentityVerified":bool(item.get("sourceIdentityVerified")),
             "sourceIdentityScore":int(item.get("sourceIdentityScore") or 0),
