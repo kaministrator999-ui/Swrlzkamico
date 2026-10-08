@@ -24,7 +24,11 @@ try{
     await page.evaluate(()=>document.getElementById('playBtn').click());
     await page.waitForFunction(()=>window.SWYRL_ENGINE_CINEMATIC.status().active,{timeout:15000});
     const before=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status());
-    await page.waitForTimeout(1500);
+    // First-run WebGL texture uploads may briefly stall software-rendered CI;
+    // require the clock to progress through actual rendered frames, not simply
+    // one arbitrary 1500 ms wall-time window.
+    await page.waitForFunction(baseline=>window.SWYRL_ENGINE_CINEMATIC.status().elapsed>baseline+.5,
+      before.elapsed,{timeout:15000});
     const after=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status());
     assert.ok(after.elapsed>before.elapsed+.5,mode.name+' cinema clock did not advance');
     assert.ok(after.camera&&after.camera.every(Number.isFinite),mode.name+' camera missing');
