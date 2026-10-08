@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.17
-REVISION=1.0.17-song-identity-generalization-v169
+VERSION=1.0.18
+REVISION=1.0.18-diverse-fetch-budget-v170
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
