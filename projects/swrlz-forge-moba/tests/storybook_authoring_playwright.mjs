@@ -144,15 +144,51 @@ try{
     // the historical separate 2D iframe. Exercise a real mobile/desktop tap.
     await page.locator('#animeScreeningBtn').click();
     await page.waitForFunction(()=>window.SWYRL_ENGINE_ANIMATION.status().active,undefined,{timeout:15000});
-    assert.equal(await page.locator('#animeScreening').evaluate(el=>el.classList.contains('open')),false,
-      'Watch Episode unexpectedly opened the stale 2D screening');
+    assert.equal(await page.locator('#animeScreening').evaluate(el=>el.classList.contains('open')),true,
+      'Watch did not reopen the requested pop-up video player');
     assert.equal(await page.locator('#animeEpisodeFrame').getAttribute('src'),null,
-      'The old standalone episode should not load for native Watch');
+      'The old standalone 2D episode should not load for native Watch');
+    assert.equal(await page.locator('#animeScreeningNative').isVisible(),true,
+      'Native cinematic is not visible within the pop-up');
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_SCREENING.status())).source,
+      'authored-native-2.5d','The player was not routed to the live scene');
+    assert.equal(await page.locator('#storyCinemaStage canvas').count(),1,
+      'The original WebGL canvas was not mounted in the pop-up');
+    assert.equal(await page.locator('#storyCinemaStage #animeCineHud').count(),1,
+      'The native episode transport and subtitles were not mounted in the pop-up');
+    assert.equal(await page.locator('#storyCinemaChapters button').count(),8,
+      'The pop-up lost its eight clickable scene selectors');
+    const canvasMetrics=await page.locator('#storyCinemaStage canvas').evaluate(node=>{
+      const b=node.getBoundingClientRect();return {width:b.width,height:b.height,viewportWidth:innerWidth};});
+    assert.ok(canvasMetrics.width>160&&canvasMetrics.height>150&&
+      canvasMetrics.width<=canvasMetrics.viewportWidth+2,
+      'Pop-up WebGL canvas does not fit the phone/desktop viewport: '+JSON.stringify(canvasMetrics));
     assert.equal((await status(page)).playing,true,'Native Watch did not start the episode');
     assert.equal((await stage(page)).occlusionSafe,true,'Native Watch scene is not camera-safe');
     assert.ok((await stage(page)).actorBindings?.length>=8,'Native Watch lacks the illustrated pop-up actors');
+    await page.locator('#storyCinemaChapters button').nth(3).click();
+    assert.ok((await status(page)).elapsed>=40,'Chapter selector did not seek the authored video');
+    assert.match(await page.locator('#animeCineCaption').innerText(),/./,
+      'The native dialogue caption is missing from the pop-up');
+    await page.screenshot({path:resolve(output,'storybook-'+mode.name+'-popup-native.png')});
+    await page.locator('#animeCinePause').click();
+    assert.equal((await status(page)).paused,true,'Pop-up pause did not pause native video');
+    await page.locator('#animeCinePause').click();
+    assert.equal((await status(page)).paused,false,'Pop-up resume did not resume native video');
     await page.locator('#animeCineExit').click();await frames(page);
     assert.equal((await status(page)).active,false,'Native Watch could not Stop');
+    assert.equal(await page.locator('#animeScreening').evaluate(el=>el.classList.contains('open')),false,
+      'Native Stop did not close the pop-up');
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_SCREENING.status())).open,false,
+      'Native Stop left the player mounted');
+    assert.equal(await page.locator('#storyCinemaStage canvas').count(),0,
+      'Native Stop failed to return the live canvas to the editor');
+    await page.locator('#animeScreeningBtn').click();
+    assert.equal(await page.locator('#animeScreeningNative').isVisible(),true,
+      'Native pop-up could not be reopened');
+    await page.locator('#animeScreeningClose').click();
+    assert.equal((await status(page)).active,false,
+      'Closing the pop-up X did not stop playback and restore editing');
     // The original historical film remains opt-in and is explicitly labeled.
     await openStudio(page);
     await page.locator('#storyWatchOriginal').click();

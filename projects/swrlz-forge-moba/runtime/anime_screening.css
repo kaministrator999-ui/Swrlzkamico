@@ -1,0 +1,73 @@
+/* Reuse the legacy in-editor screening modal, but mount the actual v9
+   WebGL output there. The standalone original HTML remains archive-only. */
+.anime-screening.story-native-screening .anime-screening-shell {
+  height:min(93dvh,900px); min-height:360px; width:min(1220px,100%);
+}
+.anime-screening.story-native-screening #animeEpisodeFrame { display:none!important; }
+.anime-screening-native[hidden] { display:none!important; }
+.anime-screening-native {
+  flex:1 1 auto; min-height:0; display:flex; flex-direction:column;
+  overflow:hidden; color:#eaf5ff; background:#070b18;
+}
+.story-cinema-meta {
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  gap:5px 14px; padding:8px 14px; background:#0b1424;
+  border-bottom:1px solid #54749d43;
+}
+.story-cinema-meta span { color:#90deea; font:700 10px system-ui; letter-spacing:.14em; }
+.story-cinema-meta strong { font:700 clamp(14px,2vw,20px) system-ui; }
+.story-cinema-stage {
+  position:relative; flex:1 1 auto; min-height:150px;
+  overflow:hidden; background:radial-gradient(ellipse at 50% 40%,#1a213a,#080a12 70%);
+}
+.story-cinema-stage canvas {
+  display:block!important; position:relative!important; inset:auto!important;
+  width:100%!important; height:100%!important; max-width:none!important;
+}
+.anime-screening.story-native-screening .anime-cine-hud {
+  position:absolute; inset:0; z-index:2; display:block; pointer-events:none;
+}
+.anime-screening.story-native-screening .anime-cine-title { top:5%;max-width:85%; }
+.anime-screening.story-native-screening .anime-cine-bottom {
+  bottom:10px; width:min(840px,96%);
+}
+.anime-screening.story-native-screening .anime-cine-controls {
+  max-width:100%; box-sizing:border-box;
+}
+.story-cinema-chapters {
+  flex:0 0 auto; display:flex; gap:6px; overflow-x:auto; scrollbar-width:thin;
+  padding:9px 12px 12px; background:#0b1424; border-top:1px solid #617b9c45;
+  scroll-snap-type:x proximity;
+}
+.story-cinema-chapter {
+  flex:0 0 118px; min-height:47px; scroll-snap-align:start;
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
+  gap:3px; padding:7px 9px; border-radius:8px;
+  border:1px solid #415579; background:#121c30; color:#c8d7ed;
+  font:600 10px system-ui; text-align:left; cursor:pointer;
+}
+.story-cinema-chapter b { font:800 10px system-ui; color:#79d7e9; }
+.story-cinema-chapter span { max-width:100%; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+.story-cinema-chapter.selected { background:#14354b; border-color:#71d0ea; color:white; }
+.story-cinema-chapter:focus-visible { outline:2px solid #f8d17c; outline-offset:1px; }
+@media(max-width:640px) {
+ .anime-screening.story-native-screening .anime-screening-shell {
+   width:100%;height:100dvh;min-height:0;border-radius:0;
+ }
+ .story-cinema-meta { padding:7px 10px; }
+ .story-cinema-meta span { font-size:8px; }
+ .story-cinema-meta strong { font-size:14px; }
+ .anime-screening.story-native-screening .anime-cine-title { top:5%;font-size:12px;max-width:91%; }
+ .anime-screening.story-native-screening .anime-cine-bottom { bottom:6px; width:98%; }
+ .anime-screening.story-native-screening .anime-cine-subtitle {
+   padding:6px 8px; min-height:36px; margin-bottom:4px;font-size:12px;
+ }
+ .anime-screening.story-native-screening .anime-cine-controls {
+   gap:3px; padding:5px;
+ }
+ .anime-screening.story-native-screening .anime-cine-controls button {
+   font-size:10px;padding:6px;min-width:31px;
+ }
+ .story-cinema-chapters { padding:6px 8px 9px;gap:5px; }
+ .story-cinema-chapter { flex-basis:100px;min-height:42px; }
+}
