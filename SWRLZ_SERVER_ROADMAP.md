@@ -1,3 +1,31 @@
+## UPDATE STARTED — 2026-10-07 — music ontology + pre-chat presentation compiler v164
+
+**Trigger:** live v163 acceptance now retrieves and verifies the requested song body correctly, but the final Chat presentation is structurally flattened/jumbled. User direction: teach the 700M/LALM the musical grammar first (bar, verse, chorus/hook, pre-chorus, bridge, intro/outro, refrain, freestyle, full song) and compile presentation before Chat rather than making Chat infer/repair structure.
+
+**Architecture decision:**
+- Retrieval/verification owns truth and exact source text.
+- Music cognition owns musical structure/semantics.
+- Presentation compiler owns organization/Markdown.
+- Chat owns rendering only.
+- A newline is not automatically a musical bar.
+- A freestyle defaults to one continuous verse unless the request/source explicitly supplies another structure.
+- Explicit source section markers are authoritative and preserved.
+- Inferred structure must never overwrite or fabricate labels when confidence is insufficient.
+
+**Planned repair:**
+1. add a reusable music-structure ontology/policy module;
+2. give the 700M a compact music-cognition prefill only on relevant music/lyric/rap/freestyle turns;
+3. structure verified fetched lyrics into ordered sections with normalized type, number, performer, confidence, and provenance;
+4. preserve explicit section markers from the source while keeping verified line text unchanged;
+5. compile a final presentation payload before Model Router/Chat rendering;
+6. store raw extract + structured music document + compiled presentation separately;
+7. add bounded structure/presentation diagnostics;
+8. add regressions for full-song section order, explicit marker preservation, bar semantics, and freestyle-as-one-continuous-verse behavior.
+
+**Expected module impact:** LALM Engine + Server Runtime + Repository Work + Deployment Control. Online Research retrieval version unchanged unless network/evidence behavior changes.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — search admission diagnostics + bounded lyrics rescue v163
 
 **Outcome:** SEARCH ADMISSION COLLAPSE IS NOW EXPLICIT + BOUNDED EXACT-TITLE RESCUE IMPLEMENTED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
