@@ -38,8 +38,8 @@ jobs:
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V8_4_WAYFINDING_ZONE_PREVIEW" dist/swrlz-forge-moba/index.html
-          grep -q "<title>§wyrl§ Engine · Maker v8.4</title>" dist/swrlz-forge-moba/index.html
+          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V8_5_ANIME_STUDIO_STARTER" dist/swrlz-forge-moba/index.html
+          grep -q "<title>§wyrl§ Engine · Maker v8.5</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
@@ -112,7 +112,7 @@ jobs:
               "sourceRepository": "kaministrator999-ui/Swrlzkamico",
               "sourceCommit": source_sha,
               "sourcePath": "projects/swrlz-forge-moba",
-              "sourceVersion": "v8.4",
+              "sourceVersion": "v8.5",
               "engineName": "§wyrl§ Engine",
               "sourceSha256": source["finalSha256"],
               "sourceBytes": source["finalBytes"],
@@ -132,7 +132,7 @@ jobs:
           print(json.dumps(receipt, indent=2))
           PY
 
-      - name: Verify live Space serves §wyrl§ Engine v8.4
+      - name: Verify live Space serves §wyrl§ Engine v8.5
         env:
           SOURCE_SHA: ${{ github.sha }}
           APP_URL: ${{ steps.deploy_space.outputs.app_url }}
@@ -154,15 +154,45 @@ jobs:
           Path("/tmp/forge-live-source.html").write_bytes(source)
           PYCODE
               LIVE_HTML_SHA="$(sha256sum /tmp/forge-live-source.html | cut -d ' ' -f1)"
-              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V8_4_WAYFINDING_ZONE_PREVIEW" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ]; then
-                echo "Verified: live HF Space is serving the exact §wyrl§ Engine v8.4 artifact."
-                exit 0
+              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V8_5_ANIME_STUDIO_STARTER" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ]; then
+                # A release is incomplete if its editor-integrated screening or
+                # importable canonical starter are stale or missing.
+                ASSET_OK=1
+                for asset in episodes/ghosts-in-different-forms-ep01.html scenes/ghosts-in-different-forms-ep01.swyrl.json SOURCE.json; do
+                  mkdir -p "/tmp/forge-assets/$(dirname "$asset")"
+                  if ! curl -fsSL --max-time 30 "${APP_URL}${asset}?build=$SOURCE_SHA&attempt=$attempt" -o "/tmp/forge-assets/$asset"; then
+                    ASSET_OK=0
+                    break
+                  fi
+                done
+                if [ "$ASSET_OK" -eq 1 ]; then
+                  if python - <<'PYCODE'
+          import hashlib,json
+          from pathlib import Path
+          source=json.loads(Path('/tmp/forge-assets/SOURCE.json').read_text())
+          expected=Path('dist/swrlz-forge-moba/SOURCE.json')
+          official=json.loads(expected.read_text())
+          assert source['finalSha256']==official['finalSha256']
+          assert source['finalBytes']==official['finalBytes']
+          for asset,meta in official['assets'].items():
+              live=Path('/tmp/forge-assets')/asset
+              data=live.read_bytes()
+              assert len(data)==meta['bytes'],asset
+              assert hashlib.sha256(data).hexdigest()==meta['sha256'],asset
+          print('LIVE_ANIME_STARTER_AND_EPISODE_HASHES_MATCH')
+          PYCODE
+                  then
+                    echo "Verified: exact §wyrl§ Engine v8.5 and both anime starter media assets."
+                    exit 0
+                  fi
+                fi
+                echo "Editor HTML arrived but anime assets or SOURCE receipt did not match yet."
               fi
-              echo "Live page responded, but the exact v8.4 artifact was not present yet."
+              echo "Live page responded, but the exact v8.5 artifact was not present yet."
             fi
             sleep 10
           done
-          echo "::error::Hugging Face upload completed, but the live Space did not serve the v8.4 marker within the verification window."
+          echo "::error::Hugging Face upload completed, but the live Space did not serve the v8.5 marker within the verification window."
           exit 1
 
       - name: Preserve deploy receipt
