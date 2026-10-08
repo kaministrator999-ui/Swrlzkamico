@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.158
-REVISION=2.1.158-music-structure-integrity-v165
+VERSION=2.1.159
+REVISION=2.1.159-mobile-lyric-presentation-v167
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
