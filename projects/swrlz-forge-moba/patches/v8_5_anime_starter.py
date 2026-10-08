@@ -104,7 +104,8 @@ def apply(html):
     scene['engine']='§wyrl§ Engine · Maker v8.5'
     scene['version']=8.5
     encoded=json.dumps(scene,separators=(',',':'),ensure_ascii=False).replace('</','<\\/')
-    s=once(html,'<script type="module">',SCREENING_CSS+'<script type="module">')
+    assert '<script type="module">' in html, "The JS module entrypoint changed"
+    s=html.replace('<script type="module">',SCREENING_CSS+'<script type="module">',1)
     anchor='function createProjectFromTemplate(template,force=false){'
     s=once(s,anchor,'const CANONICAL_ANIME_EPISODE_PROJECT='+encoded+';\n'+SCREENING_JS+'\n'+anchor)
     old="if(template==='moba')buildMobaProject();else if(template==='default')buildDefaultProject();else if(template==='starforge-observatory')loadCanonicalStarforge();else loadCanonicalGlitchDen();"
