@@ -1,4 +1,4 @@
-name: Validate §E v8.8 pop-up storybook creator
+name: Validate §E v8.9 pop-up storybook creator
 on:
   push:
     branches: [main]
@@ -6,6 +6,7 @@ on:
       - ".github/workflows/verify-swrlz-storybook-v8-8.yml"
       - "projects/swrlz-forge-moba/patches/v8_8_popup_storybook.py"
       - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py"
   pull_request:
     branches: [main]
 permissions:
@@ -34,10 +35,10 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
-          assert len(manifest['patches'])==47
-          assert manifest['patches'][-1]=='patches/v8_8_popup_storybook.py'
+          assert len(manifest['patches'])==48
+          assert manifest['patches'][-1]=='patches/v8_9_cinematic_staging.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
-          for feature in ('V8_8_POPUP_STORYBOOK_DIRECTOR','animeMakePaperBook','popKamiArt',
+          for feature in ('V8_9_CINEMATIC_STAGING_SAFE','animeMakePaperBook','animePopupStageSafety','popLowStageTrim','popKamiArt',
                           'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
                           'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):
               assert feature in s, feature
