@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v8.5",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_5_ANIME_STUDIO_STARTER",
-  "reason": "Deploy independently selectable Ghosts in Different Forms anime studio starter with eight editable stage stations, bundled original episode screening, 44-patch exact SHA validation, and full package parity verified by GitHub Actions 37717846139.",
-  "sourceCommit": "ffc4b99f3bccf9e703e9a4bbd74dcab66bb5a569",
-  "sourceIntegritySha256": "1d9111211897151c091a313dd0fbfa59bc3819ac744567dfd0465e7208e39f8c"
+  "releaseVersion": "v8.6",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_6_NATIVE_ANIME_CINEMATIC",
+  "reason": "Fix Anime Studio Play appearing stationary: launch project-scoped native 3D cinematic with camera moves, procedural cast, animated dragon, station-authored subtitles, seek, Pause, and Explore Set. Validated by Chromium desktop/mobile 37719407234; exact 45-patch reconstruction 37719407233; complete packaging 37719631749.",
+  "sourceCommit": "227590d8680e3b07757b4ef454f5429eae56c6e2",
+  "sourceIntegritySha256": "1468357c5ce082b71548de983fd11f818cf4eeccb34eca3df92a0f15e3e94dc0"
 }
