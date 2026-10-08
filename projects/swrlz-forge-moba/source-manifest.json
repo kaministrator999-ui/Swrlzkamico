@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v8.5",
+  "name": "§wyrl§ Engine v8.6",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v8_5.html",
+  "finalArtifact": "swyrl_engine_v8_6.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -58,8 +58,9 @@
     "patches/v8_3_projects_release.py",
     "patches/v8_4_zone_editor_preview.py",
     "patches/v8_4_wayfinding_release.py",
-    "patches/v8_5_anime_starter.py"
+    "patches/v8_5_anime_starter.py",
+    "patches/v8_6_native_anime_cinematic.py"
   ],
-  "finalBytes": 597990,
-  "finalSha256": "1d9111211897151c091a313dd0fbfa59bc3819ac744567dfd0465e7208e39f8c"
+  "finalBytes": 0,
+  "finalSha256": "PENDING_V8_6_CI"
 }
