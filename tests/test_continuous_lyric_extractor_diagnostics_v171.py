@@ -89,4 +89,29 @@ assert pd["scopedNonEmptyLineCount"]==diag["scopedNonEmptyLineCount"],pd
 assert pd["acceptedBlockCount"]==1,pd
 assert pd["resultLineCount"]>=10,pd
 
+# v172 live acceptance: every real lyric line may be separated by a blank.
+# No song-specific phrase, stanza count, or site-domain exception is needed.
+SPACED=PAGE.replace("\n","\n\n")
+spaced=online_tools._lyrics_extract_analysis(SPACED,"full-lyrics",SUBJECT)
+sd=spaced["diagnostics"]
+assert spaced["text"],sd
+assert sd["anchorLine"]=="Test Signal Lyrics",sd
+assert sd["blankSeparatedChunkCount"]>=10,sd
+assert sd["acceptedBlockCount"]==1,sd
+assert sd["continuousRunEligible"] is True,sd
+assert sd["reason"]=="ANCHORED_CONTINUOUS_FULL_LYRICS",sd
+assert sd["resultLineCount"]==diag["resultLineCount"],(sd,diag)
+assert spaced["text"]==text,(spaced["text"],text)
+assert "Submit corrections" not in spaced["text"]
+
+# Page chrome and insufficient text must not become accepted lyrics.
+spaced_short=online_tools._lyrics_extract_analysis(SHORT.replace("\n","\n\n"),"full-lyrics",SUBJECT)
+assert spaced_short["text"]=="",spaced_short
+unanchored=online_tools._lyrics_extract_analysis(
+    SPACED.replace("Test Signal Lyrics","Unrelated website"),
+    "full-lyrics",SUBJECT,
+)
+assert unanchored["text"]=="",unanchored
+
 print("continuous-lyric-extractor-diagnostics-v171 PASS")
+print("blank-separated-line-extractor-v172 PASS")
