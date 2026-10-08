@@ -35,15 +35,11 @@ jobs:
           output=Path('/tmp/swyrl-anime-web')
           output.mkdir(parents=True,exist_ok=True)
           (output/'index.html').write_text(s,encoding='utf-8')
+          (output/'module.mjs').write_text(s[s.index('<script type="module">')+len('<script type="module">'):s.rindex('</script>')],encoding='utf-8')
           print('BROWSER_TEST_SOURCE_BYTES='+str(len(s.encode())))
           print('BROWSER_TEST_SOURCE_SHA256='+hashlib.sha256(s.encode()).hexdigest())
           PY
-          node --check <(python - <<'PY'
-          from pathlib import Path
-          s=Path('/tmp/swyrl-anime-web/index.html').read_text()
-          print(s[s.index('<script type="module">')+len('<script type="module">'):s.rindex('</script>')])
-          PY
-          ) || (echo 'Module syntax check failed' && exit 1)
+          node --check /tmp/swyrl-anime-web/module.mjs
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1
