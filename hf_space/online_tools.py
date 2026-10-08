@@ -2102,9 +2102,17 @@ def copy_lyrics_rescue_search_debug(value: Any) -> list[dict[str,Any]]:
                 "rank":candidate.get("rank"),
                 "allowed":bool(candidate.get("allowed")),
                 "score":int(candidate.get("score") or 0),
+                "reason":_clean(candidate.get("reason"),100),
+                "signals":[_clean(x,80) for x in (candidate.get("signals") or [])[:12]],
+                "exactTitle":bool(candidate.get("exactTitle")),
                 "titleHits":int(candidate.get("titleHits") or 0),
                 "artistHits":int(candidate.get("artistHits") or 0),
+                "exactArtist":bool(candidate.get("exactArtist")),
                 "titleNeeded":int(candidate.get("titleNeeded") or 0),
+                "lyricDomain":bool(candidate.get("lyricDomain")),
+                "versionMatch":bool(candidate.get("versionMatch")),
+                "versionMismatch":bool(candidate.get("versionMismatch")),
+                "negativeContentHints":[_clean(x,80) for x in (candidate.get("negativeContentHints") or [])[:6]],
             })
         out.append({
             "query":_clean(item.get("query"),500),
@@ -2188,6 +2196,12 @@ def online_camera(result: dict[str, Any] | None) -> dict[str, Any] | None:
         "lyricsFetchDebug": copy_lyrics_debug(result.get("lyricsFetchDebug")),
         "musicStructureDebug": result.get("musicStructureDebug") if isinstance(result.get("musicStructureDebug"),dict) else None,
         "candidateAdmissionDebug": copy_candidate_admission_debug(result.get("candidateAdmissionDebug")),
+        "songIdentity": result.get("songIdentity") if isinstance(result.get("songIdentity"),dict) else None,
+        "songDiscoveryPlan": [
+            {"strategy":_clean(x.get("strategy"),80),"query":_clean(x.get("query"),500)}
+            for x in (result.get("songDiscoveryPlan") or [])[:LYRICS_MAX_RESCUE_SEARCHES]
+            if isinstance(x,dict)
+        ],
         "lyricsRescueSearchDebug": copy_lyrics_rescue_search_debug(result.get("lyricsRescueSearchDebug")),
         "lyricsMaxPageAttempts": int(result.get("lyricsMaxPageAttempts") or 0),
         "lyricsFallbackExhausted": bool(result.get("lyricsFallbackExhausted")),
