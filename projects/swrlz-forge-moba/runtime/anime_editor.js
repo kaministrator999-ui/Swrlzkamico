@@ -84,6 +84,35 @@ function storyEditorSetTime(value, preview = true) {
   storyEditorSync();
   if (preview) storyEditorPreviewFrame();
 }
+// The primary Watch Episode action must play the saved native paper-theatre
+// timeline. The 2018-style procedural 2D iframe is retained only as an
+// explicitly labeled archival option; it must not silently replace v9 art.
+function storyWatchNativeEpisode() {
+  if (!storyEditorIsProject()) {
+    toast('Open Ghosts in Different Forms from Projects first.'); return false;
+  }
+  if (typeof closeAnimeScreening === 'function') closeAnimeScreening();
+  if (!document.getElementById('storyStudioPanel')?.hidden) storyEditorClose();
+  if (typeof storyExitPreview === 'function') storyExitPreview();
+  if ((playing || simulating) && !animeCine) stopSession();
+  if (!playing) beginPlay();
+  if (!animeCine) { toast('The native episode could not start.'); return false; }
+  storyEditorTime = 0;
+  animeSeek(0);
+  paused = false;
+  animeCine.ended = false;
+  setSessionButtons();
+  animeUpdateCinematic(0);
+  storyEditorSync();
+  return true;
+}
+function storyWatchOriginalEpisode() {
+  if (!storyEditorIsProject()) return false;
+  if (!document.getElementById('storyStudioPanel')?.hidden) storyEditorClose();
+  if (typeof storyExitPreview === 'function') storyExitPreview();
+  if (playing || simulating) stopSession();
+  return openAnimeScreening();
+}
 function storyEditorTogglePlay() {
   const state = storyEditorState();
   if (state.playing && !state.paused) {
@@ -417,6 +446,9 @@ function storyEditorInstall() {
   const transport = storyEditorElement('div', 'story-transport');
   transport.append(storyEditorButton('storyPreview', '◈ Preview Frame', storyEditorPreviewFrame),
     storyEditorButton('storyPlay', '▶ Play', storyEditorTogglePlay), storyEditorButton('storyStop', '■ Stop', storyEditorStopPlayback)); body.append(transport);
+  const archive = storyEditorButton('storyWatchOriginal', 'Watch original 2D episode (archive)', storyWatchOriginalEpisode,
+    'Watch the original procedural 2D episode; the main Watch Episode button plays the current 2.5D scene');
+  archive.classList.add('story-archive-link'); body.append(archive);
   const timeRow = storyEditorElement('label', 'story-time-row'); timeRow.append(storyEditorElement('span', '', 'Playhead'));
   const time = storyEditorElement('input'); time.id = 'storyTime'; time.type = 'number'; time.min = '0'; time.step = 'any'; time.required = true;
   time.setAttribute('aria-label', 'Episode playhead in seconds'); time.addEventListener('change', () => { if (time.checkValidity()) storyEditorSetTime(time.value); else time.reportValidity(); });
