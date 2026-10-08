@@ -224,7 +224,7 @@ function animeMakePaperBook(){
       line.position.set(side*2.08,.14,-.85+j*.32);half.add(line);
     }
   }
-  group.position.set(0,1.85,2.9);scene.add(group);group.userData.animePopupBook=true;
+  group.position.set(0,1.85,2.9);group.userData.animePopupBook=true;
   return group;
 }
 function animeCreateCelLayers(){
@@ -250,7 +250,7 @@ function animeCreateCelLayers(){
   },1,[15,11],4.7);
   plate('foreground',popDeskArt,3.4,[11.5,8],2.8);
   const book=animeMakePaperBook();
-  groups.foreground.add(book);scene.remove(book);
+  groups.foreground.add(book);
   return groups;
 }
 function animeUpdateCelLayers(c,x,t,act){
@@ -276,7 +276,7 @@ function animeUpdateCelLayers(c,x,t,act){
   const book=c.layers.foreground.children.find(z=>z.userData.animePopupBook);
   if(book){
     const t0=animePopEase(local/.85);
-    book.position.set(x+delta*.73,1.9-1.3*(1-t0),3.2);
+    book.position.set(delta*.73,1.9-1.3*(1-t0),3.2);
     book.scale.set(1,.1+.9*t0,1);
     book.visible=c.layerSettings.foreground!==false;
   }
