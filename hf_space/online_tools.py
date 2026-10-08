@@ -395,8 +395,9 @@ def _lyrics_search_query(text: str) -> str:
         identity=song_identity(subject)
         ladder=query_ladder(identity,8)
         ambiguity=((identity.get("ambiguity") or {}).get("level") or "low")
-        # Ambiguous/common-word titles should enter discovery as exact entities
-        # immediately. Low-ambiguity titles retain the compact legacy query.
+        # Ambiguous/common-word titles enter discovery as exact song entities.
+        # Lower-ambiguity titles keep the compact legacy query to avoid needless
+        # ranking changes to already-working cases.
         if ambiguity=="high" and ladder:
             query=str(ladder[0].get("query") or "")
             if scope=="first-verse":
@@ -404,7 +405,20 @@ def _lyrics_search_query(text: str) -> str:
             elif scope=="full-lyrics" and _lyrics_explicit_full_scope(text):
                 query+=" all verses"
             return _clean(query,500)
-        parsed=re.match(r'^"([^"]+)"(?:\s+by\s+(.+))?
+        parsed=re.match(r'^"([^"]+)"(?:\s+by\s+(.+))?$',subject,re.I)
+        if parsed:
+            title=_clean(parsed.group(1),180)
+            artist=_clean(parsed.group(2),180) if parsed.group(2) else ""
+            bits=[title]
+            if artist:
+                bits.append(artist)
+            bits.append("lyrics")
+            if scope=="first-verse":
+                bits.append("first verse")
+            elif scope=="full-lyrics" and _lyrics_explicit_full_scope(text):
+                bits.append("all verses")
+            return " ".join(bits)[:500]
+    return _search_query_from_prompt(text)
 
 _LYRIC_PAGE_NOISE=re.compile(
     r"\b(?:blog|download|menu|sign\s*in|log\s*in|privacy|cookies?|terms|contact|"
