@@ -1,3 +1,17 @@
+# §wyrl§ Engine v8.7 · layered anime cel/parallax acceptance
+
+Candidate source: **46 governed patches**, **624,633 bytes**, SHA-256 `6a58245bc1d19e3513ddc3a280a454c2d69e7c6c836ad18c65821f1b0816747b`, marker `V8_7_ANIME_CEL_PARALLAX`.
+
+- [x] Exact complete source reconstruction, Python compiler, and JavaScript module syntax ([Actions 37721928687](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37721928687)).
+- [x] Desktop Chromium and simulated-phone Chromium acceptance passed: clock, native cinematic camera, six independent depth layers, illustrated cels, Layer toggle, caption bounds, seek, Pause, Explore Set, Stop, and no uncaught JavaScript errors (same run).
+- [x] Scene signage and original actor visibility are hidden temporarily during cinematic, with restoration code on exit. Camera moves through real-depth 2D sprite layers for 2.5D parallax. The original editor project and other starter projects remain intact.
+- [x] Initial [37721768721](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37721768721) caught insufficient first-frames progress under software WebGL. Adjusted texture resolution for mobile and changed the acceptance probe to require an actual half-second of frames after cold texture upload; the next browser run passed.
+- [ ] Dedicated release workflow reaches terminal success and live Space serves exact normalized HTML SHA plus scene and episode asset hashes. Candidate acceptance is not production evidence.
+
+Previous v8.6 verification retained below.
+
+---
+
 # §wyrl§ Engine v8.6 · native cinematic Play verification
 
 Build candidate: 45 governed patches, 611,675 bytes, SHA-256 `1468357c5ce082b71548de983fd11f818cf4eeccb34eca3df92a0f15e3e94dc0`, release marker `V8_6_NATIVE_ANIME_CINEMATIC`.
@@ -8,7 +22,7 @@ Build candidate: 45 governed patches, 611,675 bytes, SHA-256 `1468357c5ce082b715
 - [x] Captions load from saved stage script files, seek jumps to act five, Pause stops time, Explore Set transitions into ordinary first-person and Stop returns to Editor.
 - [x] Both tested viewports report no uncaught JavaScript page errors.
 - [x] First production attempt [37719679170](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719679170) rebuilt/validated/uploaded the correct v8.6 engine; **live index SHA matched**, but asset-check failed because the Hugging Face static HTML wrapper was not stripped from the separately served episode HTML. This is a verification normalization defect, not a failed module or a failed asset upload.
-- [ ] Corrected workflow normalizes only the recognized provider script for every served HTML file and validates original episode JSON/HTML hashes. Production retry and exact host acceptance pending.
+- [x] Corrected workflow and production retry [37719877533](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719877533) succeeded: normalized hosted engine HTML SHA and both original episode HTML / scene JSON assets matched.
 
 Existing v8.5/v8.4 receipts retained below.
 
