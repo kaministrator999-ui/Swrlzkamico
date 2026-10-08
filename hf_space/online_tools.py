@@ -1652,13 +1652,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 candidate for candidate in ranked_pool
                 if bool((candidate.get("songIdentityScore") or {}).get("allowed"))
             ]
-            candidate_pool.sort(
-                key=lambda candidate:(
-                    -int((candidate.get("songIdentityScore") or {}).get("score") or 0),
-                    -_lyrics_candidate_structure_hint(candidate,str(plan.get("subject") or "")),
-                    int(candidate.get("rank") or 999),
-                ) if isinstance(candidate,dict) else (0,0,999)
-            )
+            # preserve diversify_candidates() order: one strong candidate per
+            # source family before duplicate variants from the same provider.
             # If we already have a verified body, do not launch a new search merely
             # for prettier structure. Prefer richer candidates only from the already
             # discovered pool. Rescue search remains for true no-valid-source cases.
@@ -1725,13 +1720,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                                     "relevanceScore":int(identity.get("score") or 0),
                                     "songIdentityScore":identity,
                                 })
-                        rescue_candidates.sort(
-                            key=lambda item:(
-                                -int((item.get("songIdentityScore") or {}).get("score") or 0),
-                                -_lyrics_candidate_structure_hint(item,str(plan.get("subject") or "")),
-                                int(item.get("rank") or 999),
-                            )
-                        )
+                        rescue_candidates=diversify_candidates(rescue_candidates,song_id)
                         lyrics_rescue_search_debug.append({
                             "query":rescue_query,
                             "strategy":rescue_strategy,
