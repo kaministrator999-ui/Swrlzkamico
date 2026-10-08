@@ -1,3 +1,40 @@
+## UPDATE FINISHED — 2026-10-08 — blank-separated single lyric lines v172
+
+**Outcome:** ANCHORED LYRIC BODIES WITH ONE BLANK LINE BETWEEN EACH CONTENT LINE NOW EXTRACT AS ONE UNLABELED BLOCK / GUARDED HUGGING FACE DEPLOYMENT SUCCESS / USER-VISIBLE ACCEPTANCE PENDING.
+
+### Evidence and defect
+Live `swrlz-dragon-chat (21).json` confirmed correct SongIdentity, an HTTP 200 LyricsFreak body, 57 lyric-like lines, 57 blank-separated one-line chunks, a verified source score of 8, and zero accepted lyric blocks. The v171 extractor incorrectly required each stanza chunk to hold at least two lines and could not start its continuous-run fallback without a surviving block.
+
+### Canonical correction
+- `hf_space/online_tools.py::_lyrics_extract_analysis` now supports a *subject-anchored* sequence of >=8 separately blanked lyric-like one-line chunks, provided every chunk passes the existing content gate.
+- The candidate becomes exactly one unlabeled block in source order; no invented stanza labels or 4-line breaks.
+- Hard/page-noise boundary detection, song source verification, source-family fetch diversity, 3-page ceiling, downstream music structure, LALM behavior, and Chat presentation stay unchanged.
+- Source commit `9ff5232295685a24f60c131f775bd8cb3244079b`; mandatory regression gate extension `9dbfcc6ffedb96c71cee4110994612fbdc7c57a1`.
+
+### Validation and release receipts
+- Guarded Hugging Face workflow: [#37816727289](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37816727289), terminal **SUCCESS**.
+- Exact selected source SHA `9dbfcc6ffedb96c71cee4110994612fbdc7c57a1`.
+- `continuous-lyric-extractor-diagnostics-v171 PASS` and `blank-separated-line-extractor-v172 PASS` in the pre-upload regression gate.
+- Existing bounded lyric suites and Python compilation completed within the same pre-upload test stage.
+- Native kernel verification, R39 reconstruction, compatibility inspection, isolated HF package validation, 700M budget smoke, snapshot/rollback, upload, and release revision checkpoint all succeeded.
+- Previous Space revision preserved: `c86fa613b6e72188b4dd94915b570d47a0b3e414`.
+- Published Space revision: `a8f891d268327b89360b1b22f5a948ea44162fd0`.
+- Release checkpoint `verificationState=DEPLOYED_UNVERIFIED`; successful source publication does **not** establish production behavioral acceptance. Independent hosted API revision/health proof was not obtained in this turn.
+
+### Canonical version outcome
+- Repository Work **1.0.102**.
+- Online Research **1.0.20 / 1.0.20-blank-separated-lyric-line-repair-v172**.
+- Server Runtime **2.3.325 / 2.3.325-hf-v172-blank-separated-lyric-lines** (advanced only after terminal successful release).
+- Deployment Control **1.0.32**.
+- LALM Engine remains **2.1.159**.
+- Web Chat remains **1.5.92**.
+- Runtime Manifest remains **152**.
+
+### Live acceptance continuation
+Retry the same Rack City request or a different well-identified unmarked song on the actual hosted Chat. Inspect `extractorDiagnostics` from the fresh Dragon Chat export. Expected anchored page: `blankSeparatedChunkCount≈contentLineCount` may still be high, but `acceptedBlockCount=1`, `continuousRunEligible=true`, `decision=ACCEPTED`, and `resultLineCount>=8`, provided the fetched content satisfies the existing gate. A verified body should proceed to normal music structure/presentation. If not, preserve fresh stage diagnostics rather than guessing at a second fix.
+
+**Status:** FINISHED / SOURCE + REGRESSION VERIFIED / GUARDED HF DEPLOYMENT SUCCESS / SPACE REVISION CAPTURED / LIVE USER-VISIBLE v172 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-08 — blank-separated single lyric lines v172
 
 **Trigger:** user live Dragon Chat export (21) from v171; existing session confirmed `observabilityRevision=v171-extraction-stage-diagnostics` and correct Tyga / Rack City destination identity.
