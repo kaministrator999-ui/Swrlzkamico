@@ -43,7 +43,7 @@
     .first-run-copy{margin:0;color:#cce7f1;font-size:14px;line-height:1.55}
     .first-run-hint{margin-top:11px;color:#89a9b8;font-size:11px;line-height:1.45}
     .message.visible{display:block}.assistant-message{max-width:100%}.assistant-head{gap:8px!important;margin-bottom:5px!important}.assistant-head .kompanion-icon{width:30px!important;height:30px!important;flex-basis:30px!important;border-radius:9px}.assistant-name{font-size:15px!important;letter-spacing:.025em!important;color:#dff8ff!important;text-shadow:0 0 7px rgba(95,220,255,.42)!important}
-    .station-progress{margin:0 0 5px 38px!important;color:#8fd8ed!important;font-size:10px!important;letter-spacing:.055em;text-transform:uppercase}.station-online-trail{margin:0 0 8px 38px;display:flex;flex-direction:column;gap:3px;max-width:min(760px,88vw)}.station-online-event{display:flex;align-items:center;gap:6px;min-width:0;color:#89afbf;font:8px var(--font-telemetry);line-height:1.35}.station-online-event::before{content:"↳";color:#56def4;flex:0 0 auto}.station-online-phase{color:#bcecf8;font-weight:760;flex:0 0 auto}.station-online-site{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#79dff4}.station-online-site[href]{text-decoration:none}.station-online-site[href]:hover{text-decoration:underline;color:#c7f6ff}.station-online-detail{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6f909f}.message-time{margin-left:7px;color:#789caf;font:9px var(--font-telemetry);font-weight:500;letter-spacing:.02em;text-shadow:none}.user-meta .message-time{margin-left:5px;color:#84aabd}
+    .station-progress{margin:0 0 5px 38px!important;color:#8fd8ed!important;font-size:10px!important;letter-spacing:.055em;text-transform:uppercase}.station-live-message{scroll-margin-top:72px;min-height:calc(100dvh - var(--composer-visible-height,70px) - 86px)}.station-online-trail{margin:0 0 8px 38px;display:flex;flex-direction:column;gap:3px;max-width:min(760px,88vw)}.station-online-event{display:flex;align-items:center;gap:6px;min-width:0;color:#89afbf;font:8px var(--font-telemetry);line-height:1.35}.station-online-event::before{content:"↳";color:#56def4;flex:0 0 auto}.station-online-phase{color:#bcecf8;font-weight:760;flex:0 0 auto}.station-online-site{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#79dff4}.station-online-site[href]{text-decoration:none}.station-online-site[href]:hover{text-decoration:underline;color:#c7f6ff}.station-online-detail{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6f909f}.message-time{margin-left:7px;color:#789caf;font:9px var(--font-telemetry);font-weight:500;letter-spacing:.02em;text-shadow:none}.user-meta .message-time{margin-left:5px;color:#84aabd}
     .assistant-body{margin-left:38px!important;padding:10px 12px!important;color:#f4f9fd!important;font-size:15px;line-height:1.5}
     .assistant-body strong{color:#fff;font-weight:850;text-shadow:0 0 10px rgba(89,221,255,.10)}.assistant-body em{color:#b9dce8}.assistant-body h1,.assistant-body h2,.assistant-body h3{color:#eafcff;letter-spacing:-.01em}.assistant-body blockquote{border-left:2px solid rgba(70,226,255,.72);padding-left:10px;color:#c8e8f1}.assistant-body ul,.assistant-body ol{padding-left:1.25em}.assistant-body li::marker{color:#55e4ff}
     .assistant-actions{display:flex;justify-content:flex-end;margin:4px 0 0 38px;padding-right:2px}.copy-response{border:0;border-radius:7px;background:transparent;color:#9fd6e9;padding:4px 6px;font-size:10px;cursor:pointer;opacity:.86}.copy-response:hover{background:rgba(10,38,59,.55);color:#d8f7ff}.copy-response:active{transform:translateY(1px)}
@@ -1343,12 +1343,39 @@
         }
       };
       let stationGeneration=null, stationPoll=0, stationSyncInFlight=false, stationSyncAgain=false, sending=false, stationAwaitingCommit="";
-      let followLatest=true,streamAbortController=null;
+      let followLatest=true,streamAbortController=null,responseStartAnchorRequestId="",stationRenderFrame=0;
       const distanceFromLatest=()=>Math.max(0,chatViewport.scrollHeight-chatViewport.clientHeight-chatViewport.scrollTop);
-      const syncLatestAffordance=()=>{followLatest=distanceFromLatest()<72;jumpLatest.hidden=followLatest;};
-      const scrollToLatest=(behavior="auto")=>{chatViewport.scrollTo({top:chatViewport.scrollHeight,behavior});followLatest=true;jumpLatest.hidden=true;};
-      const followLatestIfNeeded=()=>{if(followLatest)requestAnimationFrame(()=>scrollToLatest("auto"));else syncLatestAffordance();};
-      chatViewport.addEventListener("scroll",syncLatestAffordance,{passive:true});jumpLatest.addEventListener("click",()=>scrollToLatest("smooth"));
+      const responseStartAnchorActive=()=>!!responseStartAnchorRequestId&&String(stationGeneration?.requestId||"")===responseStartAnchorRequestId&&!stationGeneration?.terminal;
+      const syncLatestAffordance=()=>{
+        const nearLatest=distanceFromLatest()<72;
+        if(responseStartAnchorActive()){followLatest=false;jumpLatest.hidden=nearLatest;return;}
+        followLatest=nearLatest;jumpLatest.hidden=followLatest;
+      };
+      const scrollToLatest=(behavior="auto")=>{responseStartAnchorRequestId="";chatViewport.scrollTo({top:chatViewport.scrollHeight,behavior});followLatest=true;jumpLatest.hidden=true;};
+      const scrollResponseStart=(node,requestId)=>{
+        const rid=String(requestId||"");
+        if(!node||!rid||responseStartAnchorRequestId===rid)return;
+        responseStartAnchorRequestId=rid;followLatest=false;
+        requestAnimationFrame(()=>{
+          if(!node.isConnected||String(stationGeneration?.requestId||"")!==rid)return;
+          const viewportRect=chatViewport.getBoundingClientRect(),nodeRect=node.getBoundingClientRect();
+          const topInset=70;
+          const target=Math.max(0,chatViewport.scrollTop+(nodeRect.top-viewportRect.top)-topInset);
+          chatViewport.scrollTo({top:target,behavior:"auto"});
+          syncLatestAffordance();
+          uiCamera("response-start-anchor",{requestId:rid,targetTop:Math.round(target),topInset});
+        });
+      };
+      const followLatestIfNeeded=()=>{if(responseStartAnchorActive()){syncLatestAffordance();return;}if(followLatest)requestAnimationFrame(()=>scrollToLatest("auto"));else syncLatestAffordance();};
+      const scheduleStationGenerationRender=()=>{
+        if(stationRenderFrame)return;
+        stationRenderFrame=requestAnimationFrame(()=>{stationRenderFrame=0;renderStationGeneration();});
+      };
+      chatViewport.addEventListener("scroll",event=>{
+        if(event.isTrusted&&responseStartAnchorActive()&&distanceFromLatest()<72)responseStartAnchorRequestId="";
+        syncLatestAffordance();
+      },{passive:true});
+      jumpLatest.addEventListener("click",()=>scrollToLatest("smooth"));
       const applyChatState = data => {
         chatRevision=Number(data?.revision||0);
         const priorThreads=(pendingDraftThread&&!chatThreads.some(t=>t.id===pendingDraftThread.id))?[...chatThreads,pendingDraftThread]:chatThreads;
@@ -1432,7 +1459,9 @@
         if(!node){
           node=assistantTemplate.cloneNode(true);node.removeAttribute("id");
           node.classList.add("visible","rendered-message","station-live-message");
+          node.dataset.requestId=String(g.requestId||"");
           node.removeAttribute("aria-hidden");messageList.appendChild(node);
+          scrollResponseStart(node,g.requestId);
         }
         let status=node.querySelector(".station-progress");
         if(!status){
@@ -1575,9 +1604,10 @@
             else if(event.type==="WIDGET"&&event.widget&&typeof event.widget==="object")stationGeneration.widgets=[...(stationGeneration.widgets||[]),event.widget].slice(0,8);
             else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||"",categories:Array.isArray(event.categories)?event.categories.slice(0,16):[],site:String(event.site||"").slice(0,180),url:String(event.url||"").slice(0,1000),provider:String(event.provider||"").slice(0,120),httpStatus:event.httpStatus??null,resultCount:event.resultCount??null,proposalReceipt:event.proposalReceipt&&typeof event.proposalReceipt==="object"?event.proposalReceipt:null}].slice(-256);
             if(event.terminal){stationGeneration.terminal=true;stationGeneration.terminalType=event.type||""}
-            renderStationGeneration();
+            scheduleStationGenerationRender();
           }
         }
+        if(stationRenderFrame){cancelAnimationFrame(stationRenderFrame);stationRenderFrame=0;renderStationGeneration();}
       };
       const classifyUserContent=text=>{
         const source=String(text||"").trim();
@@ -1639,7 +1669,7 @@
           }
           localThread.messages=Array.isArray(localThread.messages)?localThread.messages:[];
           if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,createdAt:Date.now(),meta:{requestId,localPending:true,...(contentTag?{contentTag}: {})}});
-          prompt.value=""; resizeComposer(); followLatest=true; renderConversation(localThread); renderThreads(); renderStationGeneration(); scrollToLatest("auto");
+          prompt.value=""; resizeComposer(); followLatest=false; responseStartAnchorRequestId=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
           const sendPath="/api/lalm_station/send";
           const clientLocation=await maybeSharedWeatherLocation(text);
           const transportCamera=(stage,data={})=>{try{fetch("/api/chat?__swrlz_client_debug=1",{method:"POST",credentials:"same-origin",cache:"no-store",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"station-send-transport-v1",url:location.pathname,event:{at:new Date().toISOString(),type:"station-send-transport",message:stage,data:{requestId,sendPath,...data}}})}).catch(()=>{})}catch(_){}};
