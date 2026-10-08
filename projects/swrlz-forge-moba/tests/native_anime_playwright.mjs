@@ -37,7 +37,7 @@ try{
     assert.ok(hud,mode.name+' cinematic HUD missing');
     const visual=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status());
     assert.deepEqual(Object.keys(visual.layers||{}).sort(),
-      ['background','atmosphere','midground','characters','effects','foreground'].sort(),
+      ['background','atmosphere','midground','characters','kami','swyrlz','guardian','effects','foreground'].sort(),
       mode.name+' missing 2.5D layer stack');
     assert.ok(visual.celCount>=3,mode.name+' illustrated anime cels missing');
     assert.equal(await page.locator('#animeCineLayers').isVisible(),true,mode.name+' Layers UI missing');
@@ -46,6 +46,22 @@ try{
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status())).layers.foreground,false);
     await page.locator('input[data-anime-layer="foreground"]').check();
     await page.locator('#animeCineLayers').click();
+    const setPopUp=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.setPopUp('swyrlz','offsetX',-2.7));
+    assert.equal(setPopUp,true,mode.name+' Director cannot edit independent §wyrlz cel');
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.director())).layers.swyrlz.offsetX,-2.7);
+    assert.equal(await page.locator('#animeDirectorBtn').isVisible(),true,mode.name+' editor Director control missing');
+    await page.locator('#animeDirectorBtn').click();
+    assert.equal(await page.locator('#animeDirectorPanel').isVisible(),true,mode.name+' Director missing');
+    await page.locator('#animeDirectorLayer').selectOption('kami');
+    await page.locator('input[data-pop-field="delay"]').fill('2.25');
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.director())).layers.kami.delay,2.25);
+    await page.locator('#animeDirectorDone').click();
+    // Unlike a flat background, each scenery plane unfolds from its own hinge.
+    const pop=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.popUpStatus());
+    assert.ok(pop.bookCount>=1&&pop.hinges>=5,mode.name+' storybook does not have physical pop-up planes');
+    assert.ok(pop.characterCels.kami>=1&&pop.characterCels.swyrlz>=1,mode.name+' distinct character layers missing');
+    assert.ok(pop.sceneZ.background<pop.sceneZ.midground&&pop.sceneZ.midground<pop.sceneZ.foreground,
+      mode.name+' pop-up book lacks depth separation');
     const subtitle=await page.locator('#animeCineCaption').innerText();
     assert.ok(subtitle.length>15,mode.name+' dialogue missing');
     const captionBox=await page.locator('#animeCineCaption').evaluate(el=>{
