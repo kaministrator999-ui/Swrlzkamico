@@ -45,7 +45,7 @@ Scene data belongs to `scenes/embervault-atelier.swyrl.json` and `scenes/starfor
 - Source manifest: `source-manifest.json`.
 - Base: 99,591 bytes, SHA-256 `a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856`.
 - Generated artifact: `swyrl_engine_v8_8.html`.
-- Final artifact: 624,633 bytes, SHA-256 `6a58245bc1d19e3513ddc3a280a454c2d69e7c6c836ad18c65821f1b0816747b`. `SOURCE.json` also records hashes for the episode player and editable stage file.
+- Final artifact: 644,951 bytes, SHA-256 `06c55a0d090bd6ffa9383ff44f914b922a841de7dc03284a50955cb4036478cd`. `SOURCE.json` also records hashes for the episode player and editable stage file.
 - Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_8_POPUP_STORYBOOK_DIRECTOR`.
 - Rebuild: `python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba`.
 - Dedicated Space: `kamiloki/swrlz-forge-moba`.
