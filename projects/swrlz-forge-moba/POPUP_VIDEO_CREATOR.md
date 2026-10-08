@@ -28,6 +28,8 @@ The Pop-Up Director is available while the Anime Studio starter is loaded. Each 
 
 **Kami** and **§wyrlz** are individually adjustable character cels rather than a single flattened character image. The older aggregate Characters layer remains as a compatibility visibility toggle. The six historical background/atmosphere/midground/characters/effects/foreground layers remain, with new individual Kami, §wyrlz and Guardian visibility entries.
 
+On phone-width views, **Pop-Up Director → Save Project** explicitly invokes the normal editor's project export, even if the original Save toolbar item is out of view.
+
 Save Project exports all Director values under `project.animePopUp` with schema `anime-popup-v1`. On Load Project, finite numeric values are sanitized and clamped to safe ranges. Project export does not require localStorage, internet or a paid runtime. This setting applies **only** to the Anime Studio starter. The original §E Dragon Den, Starforge and other starter projects retain their Play behavior.
 
 The in-editor Play HUD still provides seek, Pause, next/previous scene, Layers, Stop and Explore Set. Scene script captions remain in the existing editable act workstations.
