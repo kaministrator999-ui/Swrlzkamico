@@ -103,6 +103,9 @@ function storyWatchNativeEpisode() {
   animeCine.ended = false;
   setSessionButtons();
   animeUpdateCinematic(0);
+  if (!storyCinemaOpen()) {
+    stopSession(); toast('The 2.5D screening player could not open.'); return false;
+  }
   storyEditorSync();
   return true;
 }
