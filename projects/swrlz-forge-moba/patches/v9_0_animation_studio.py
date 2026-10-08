@@ -28,6 +28,14 @@ def apply(html):
         assert data['project']['canonicalId'] == 'ghosts-different-forms-ep01'
         assert data['project']['animeTimeline']['schema'] == 'anime-timeline-v1'
         assert len([a for a in data['scene']['actors'] if a['type'] in ('animeCel','animeBook')]) == 8
+        # Keep the original 62-actor prototype editable, but its three
+        # production layers must be hidden in the authored paper theatre.
+        legacy = {'layer-ep-sets', 'layer-ep-fx', 'layer-ep-cast'}
+        layers = {layer['id']: layer for layer in data['editor']['layers']}
+        assert all(layers[layer]['visible'] is False for layer in legacy)
+        assert all(layers['anime-layer-'+layer]['visible'] is True for layer in
+                   ('background','atmosphere','midground','kami','swyrlz','effects','foreground','book'))
+        assert data['editor']['activeLayerId'] == 'anime-layer-kami'
         encoded = json.dumps(data,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')
         result,count = re.subn(r'const CANONICAL_ANIME_EPISODE_PROJECT=.*?;\n',lambda _: 'const CANONICAL_ANIME_EPISODE_PROJECT='+encoded+';\n',result,count=1)
         assert count == 1
