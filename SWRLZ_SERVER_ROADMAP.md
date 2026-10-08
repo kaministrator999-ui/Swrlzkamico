@@ -1,3 +1,96 @@
+## UPDATE FINISHED — 2026-10-08 — continuous lyric runs + extraction-stage diagnostics v171
+
+**Outcome:** VALID CONTINUOUS UNMARKED LYRIC RUNS NO LONGER FAIL MOD-4/STANZA ASSUMPTIONS + EXTRACTION PIPELINE IS NOW STAGE-BY-STAGE OBSERVABLE IN DRAGON CHAT JSON / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### Live v170 evidence from Dragon Chat (20)
+- LyricsFreak fetch succeeded with HTTP 200 and 97,080 response bytes;
+- cleaned fetched content contained 2,818 chars;
+- best subject anchor was found at line index 128: `Tyga – Rack City Lyrics`;
+- the bounded fetched preview visibly began with the requested lyric body;
+- source identity verified with score 8;
+- extractor output nevertheless returned 0 chars;
+- terminal reason was `NO_STRUCTURED_LYRIC_BODY`;
+- no music structure/presentation document could be built from an empty extractor result.
+
+### Root cause
+The unmarked extractor path used blank-line groups as stanza blocks. If a fetched lyric page exposed the whole work as one continuous line-preserving run:
+- it produced exactly one accepted block;
+- the old fallback only split that block when its line count happened to be evenly divisible by four;
+- `full-lyrics` then required >=2 blocks and rejected the otherwise-valid body.
+
+That was a page-format assumption, not a musical or evidence requirement.
+
+### v171 extraction repair
+- introduced `_lyrics_extract_analysis()` as the authoritative analysis/extraction pass;
+- `_lyrics_extract_candidate()` remains as a compatibility wrapper returning only text;
+- one strongly anchored unmarked continuous lyric run is now valid for full-work extraction when it contains at least 8 lyric-like lines;
+- no artificial four-line stanza splitting is performed;
+- source order is preserved;
+- no Verse/Chorus/Bridge labels or bar counts are invented;
+- hard-boundary, recommendation, footer/meta, and page-noise termination remain active;
+- short/insufficient continuous bodies still fail closed.
+
+### New Dragon Chat extraction diagnostics
+Every evaluated fetched lyric attempt can now export bounded `extractorDiagnostics` inside `lyricsFetchDebug`:
+- `requestedScope`;
+- `rawChars`;
+- `rawLineCount`;
+- `anchorIndex`;
+- `anchorLine`;
+- `scopedLineCount`;
+- `scopedNonEmptyLineCount`;
+- `contentLineCount`;
+- `musicalSectionCueCount`;
+- `performerCueCount`;
+- `blankSeparatedChunkCount`;
+- `acceptedBlockCount`;
+- `blockLineCounts`;
+- `continuousRunEligible`;
+- `terminalBoundaryKind`;
+- `terminalBoundaryLine`;
+- `decision`;
+- `reason`;
+- `resultChars`;
+- `resultLineCount`.
+
+This closes the prior observability gap between “fetched page contains lyrics” and “extractor returned empty.”
+
+### Regression
+Added `tests/test_continuous_lyric_extractor_diagnostics_v171.py`, proving:
+- a LyricsFreak-shaped unmarked continuous run with >=8 lyric-like lines is accepted;
+- the song text survives intact;
+- footer/meta content is excluded;
+- diagnostics report anchored continuous acceptance and block/line counts;
+- too-short material still fails closed;
+- the same diagnostics survive the Online Camera / Dragon Chat projection.
+
+### Deployment receipts
+- guarded HF run: `37804125838` — terminal **SUCCESS**;
+- exact selected feature source: `04cc2af528e46f0732a7475523ad1a30171c7790`;
+- v170 source-family and response-start regressions remained PASS;
+- **continuous-lyric-extractor-diagnostics-v171 PASS**;
+- native R39 verification, real R39 reconstruction, compatibility inspection, 700M smoke, fast-HF/Chat preservation guard, authorization gate, production snapshot, rollback checkpoint, upload, and deployed-revision capture all succeeded;
+- prior/rollback Space revision: `4b3d2c309205bd0da3b54099218618bc7d16dbec`;
+- deployed Space revision: `c86fa613b6e72188b4dd94915b570d47a0b3e414`.
+
+### Versions
+- Repository Work: **1.0.101**.
+- Server Runtime: **2.3.324 / 2.3.324-hf-v171-extraction-stage-diagnostics**.
+- Online Research: **1.0.19 / 1.0.19-continuous-lyric-extraction-diagnostics-v171**.
+- Deployment Control: **1.0.31**.
+- LALM Engine remains **2.1.159 / 2.1.159-mobile-lyric-presentation-v167**.
+- Web Chat remains **1.5.92 / 1.5.92-response-start-stream-anchor-v170**.
+
+### Live acceptance target
+Retry Rack City or another unmarked lyric page and export Dragon Chat JSON. Expected:
+1. a valid anchored continuous body is no longer rejected merely because it lacks explicit section labels or four-line stanza formatting;
+2. `extractorDiagnostics.reason` should identify exactly why the body was accepted or rejected;
+3. `resultChars` and `resultLineCount` show how much text survived extraction;
+4. `terminalBoundaryKind` and `terminalBoundaryLine` show where extraction stopped;
+5. if the body verifies, normal music structure/presentation proceeds; if it fails, the next export contains enough stage evidence to repair the exact boundary without guessing.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v171 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-08 — continuous lyric runs + extraction-stage diagnostics v171
 
 **Trigger:** live v170 Dragon Chat export `swrlz-dragon-chat (20).json`.
