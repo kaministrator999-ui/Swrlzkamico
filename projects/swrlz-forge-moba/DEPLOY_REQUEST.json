@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v8.4",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_4_WAYFINDING_ZONE_PREVIEW",
-  "reason": "Publish parallel native wayfinding refinements in Embervault and Starforge, plus optional editor destination markers and framing, after scene journeys, persistence, 20 preview lifecycle checks, combined native acceptance, and exact source validation passed.",
-  "sourceCommit": "b832345536f03d57d5bac961cfde08b57bd5da1f",
-  "sourceIntegritySha256": "58252d18ee4fedf3acb9b5ccbb8e19dbc10c421345deb507a016151ab1ceca62"
+  "releaseVersion": "v8.5",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_5_ANIME_STUDIO_STARTER",
+  "reason": "Deploy independently selectable Ghosts in Different Forms anime studio starter with eight editable stage stations, bundled original episode screening, 44-patch exact SHA validation, and full package parity verified by GitHub Actions 37717846139.",
+  "sourceCommit": "ffc4b99f3bccf9e703e9a4bbd74dcab66bb5a569",
+  "sourceIntegritySha256": "1d9111211897151c091a313dd0fbfa59bc3819ac744567dfd0465e7208e39f8c"
 }
