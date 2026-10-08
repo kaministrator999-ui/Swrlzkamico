@@ -1,3 +1,18 @@
+# §wyrl§ Engine v8.6 · native cinematic Play verification
+
+Build candidate: 45 governed patches, 611,675 bytes, SHA-256 `1468357c5ce082b71548de983fd11f818cf4eeccb34eca3df92a0f15e3e94dc0`, release marker `V8_6_NATIVE_ANIME_CINEMATIC`.
+
+- [x] Exact patch reconstruction and Node/Python syntax ([Actions run 37719407233](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719407233)).
+- [x] Real Chromium desktop 1280×800 and simulated phone 390×844 ([Actions run 37719407234](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719407234)).
+- [x] Anime Starter **Play** activates cinematic, elapsed time and perspective-camera position advance.
+- [x] Captions load from saved stage script files, seek jumps to act five, Pause stops time, Explore Set transitions into ordinary first-person and Stop returns to Editor.
+- [x] Both tested viewports report no uncaught JavaScript page errors.
+- [ ] Dedicated deployment workflow success and served HTML/asset SHA match. Remains pending until independently verified.
+
+Existing v8.5/v8.4 receipts retained below.
+
+---
+
 # §wyrl§ Engine v8.5 · Anime Studio starter verification
 
 Source candidate: 44 governed patches, **597,990 bytes**, SHA-256 `1d9111211897151c091a313dd0fbfa59bc3819ac744567dfd0465e7208e39f8c`, marker `V8_5_ANIME_STUDIO_STARTER`. The independent PR check [Actions 37717718014](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37717718014) passed source reconstruction, JavaScript syntax, and Python compilation.
