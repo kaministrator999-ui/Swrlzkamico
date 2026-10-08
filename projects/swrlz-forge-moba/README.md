@@ -1,4 +1,4 @@
-# §wyrl§ Engine · Maker v8.4
+# §wyrl§ Engine · Maker v8.5
 
 Build and visit two independent spatial workspaces: **Embervault Atelier**, the three-tier Dragon Den, and **Starforge Observatory**, a campus of floating islands beneath a quiet constellation sky. Both are native editor projects with their own layers, destinations, files, and notes. Development moves between engine source, native editor authoring, and first-person Play.
 
@@ -13,6 +13,14 @@ Use WASD/arrows and mouse look in Play. Approach a station and press **E**, or c
 Chat stations open the existing §wyrlz LALM chat in a new tab. Project code is editable and downloadable source text. Headset rendering, VR controller input, executable coding sessions, and in-room inference are future integrations.
 
 See [DEN_DESIGN.md](DEN_DESIGN.md), [STARFORGE_DESIGN.md](STARFORGE_DESIGN.md), and [VERIFICATION.md](VERIFICATION.md) for the plans, editor requirements, and evidence.
+
+## Anime Studio starter · Episode 01
+
+Choose **Ghosts in Different Forms** from **Projects** or [open the anime starter directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01) **after v8.5 deployment**. This third project is independent of Embervault and Starforge: 62 editable actors, three scene-authoring layers, eight floating episode stages with T-menu destinations, eight workstations with editable script and direction files, and a guardian dragon. Use **Watch Episode 01** to screen the original procedural 2m14s animation *within the editor* and then return to the set.
+
+The in-editor screening is a separate HTML animation player, **not native Three.js timeline or character keyframe animation**. §E saves, loads, places, and visits the 3D production set. The pack is a deliberate animation-capability stress test, not a claim that the engine can already render/capture an entire TV episode in its 3D scene.
+
+See [ANIME_STARTER.md](ANIME_STARTER.md) for the project contract, validation steps, and next feature probes.
 
 ## Author in the editor
 
@@ -34,12 +42,12 @@ Scene data belongs to `scenes/embervault-atelier.swyrl.json` and `scenes/starfor
 
 - Source manifest: `source-manifest.json`.
 - Base: 99,591 bytes, SHA-256 `a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856`.
-- Generated artifact: `swyrl_engine_v8_4.html`.
-- Final artifact: 533,612 bytes, SHA-256 `58252d18ee4fedf3acb9b5ccbb8e19dbc10c421345deb507a016151ab1ceca62`; the manifest and generated `SOURCE.json` record the same authority.
-- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_4_WAYFINDING_ZONE_PREVIEW`.
+- Generated artifact: `swyrl_engine_v8_5.html`.
+- Final artifact: governed v8.5 source SHA-256 and bytes sealed by candidate reconstruction before deployment; `SOURCE.json` additionally records hashes for the episode player and editable stage file.
+- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_5_ANIME_STUDIO_STARTER`.
 - Rebuild: `python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba`.
 - Dedicated Space: `kamiloki/swrlz-forge-moba`.
 - Live page: https://kamiloki-swrlz-forge-moba.static.hf.space/ .
 - Production workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`.
 
-The manifest defines the exact governed 43-patch chain. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.
+The manifest defines the governed 44-patch chain for the v8.5 anime starter. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.
