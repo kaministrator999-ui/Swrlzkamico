@@ -15,7 +15,7 @@ Source candidate: 44 governed patches, **597,990 bytes**, SHA-256 `1d91112118971
 - [x] Source reconstruction and SHA-256 derived from complete v8.5 patched HTML (CI).
 - [x] Generated JavaScript syntax and Python patch compilation (CI).
 - [x] Canonical source validates 62 unique actor IDs, eight stations, eight destinations, three layers, and one guardian dragon (patch assertions).
-- [ ] Packager copies both episode and editable project, with exact bytes/hash parity (separate CI smoke).
+- [x] Packager copies both episode and editable project, with exact bytes/hash parity — [candidate Actions 37717846139](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37717846139) passed complete 44-patch rebuild, HTML byte parity, episode/player SHA-256, and Python/Node syntax.
 - [ ] Dedicated production deploy run reaches success.
 - [ ] Live HF host serves exact source, `SOURCE.json`, player and scene file hashes.
 - [ ] Native browser Projects card, sample asset placement, Save/Load, runtime T-zone travel, Screening open/close, and mobile orientation tested against *served* release.
