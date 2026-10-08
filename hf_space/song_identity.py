@@ -146,7 +146,7 @@ def query_ladder(identity: dict[str,Any], max_queries: int = 8) -> list[dict[str
         if q and all(x["query"]!=q for x in plans):
             plans.append({"strategy":strategy,"query":q})
     if artist:
-        add("exact-entity",f'{qtitle} {qartist}{version_bit} lyrics')
+        add("exact-title-artist",f'{qtitle} {qartist}{version_bit} lyrics')
         add("artist-title-song",f'{qartist} {qtitle}{version_bit} song lyrics')
         add("title-artist-verse",f'{qtitle} {qartist}{version_bit} verse chorus lyrics')
         for host in ("genius.com","azlyrics.com","musixmatch.com","allthelyrics.com","lyricsfreak.com"):
