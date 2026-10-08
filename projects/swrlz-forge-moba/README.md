@@ -1,6 +1,6 @@
-# §wyrl§ Engine · Maker v8.9
+# §wyrl§ Engine · Maker v9.0 candidate
 
-Build and visit three independent starter workspaces: **Embervault Atelier**, the three-tier Dragon Den, and **Starforge Observatory**, a campus of floating islands beneath a quiet constellation sky. All three are native editor projects with their own layers, destinations, files, and notes. Development moves between engine source, native editor authoring, and first-person Play.
+Build and visit three independent starter workspaces: **Embervault Atelier**, the three-tier Dragon Den; **Starforge Observatory**, a campus of floating islands beneath a constellation sky; and **Ghosts in Different Forms**, the Anime Studio paper theatre. Each is a native editor project with its own layers, destinations, files, and notes. Development moves between engine source, native editor authoring, and Play.
 
 ## Visit a workspace
 
@@ -16,17 +16,19 @@ See [DEN_DESIGN.md](DEN_DESIGN.md), [STARFORGE_DESIGN.md](STARFORGE_DESIGN.md), 
 
 ## Anime Studio starter · Episode 01
 
-**v8.9 Camera-Safe Pop-Up Book Video Creator:** Anime Play now unfolds a native Three.js book, independent gothic background/cathedral/workshop/desk scenery hinges, and distinctly separate illustrated Kami and §wyrlz wizard cels. **✦ Pop-Up Director** sets each layer's depth, side offset, parallax and unfold animation timings, stored in Save Project. The storybook style follows the earlier dark-fantasy wizard concept art without requiring a new generated image or external runtime. The v8.9 camera-safe staging patch lowers the physical book, restricts foreground paint to a thin bottom rim, and depth-clamps backdrop planes behind both characters. [Pop-Up Video Creator details](POPUP_VIDEO_CREATOR.md).
+**Ghosts in Different Forms · The Page That Remembered** is a 134 second, eight beat pop-up book episode authored in the native editor. Generated transparent PNGs depict Kami as the larger horn-hooded mage and §wyrlz as the small hovering skull mage; independent scenery plates match the supplied gothic amber/gold reference direction.
 
-Choose **Ghosts in Different Forms** from **Projects** or [open the anime starter directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01) **after v8.5 deployment**. This third project is independent of Embervault and Starforge: 62 editable actors, three scene-authoring layers, eight floating episode stages with T-menu destinations, eight workstations with editable script and direction files, and a guardian dragon. Press **Play** to run the native in-engine layered 2.5D cinematic: moving camera, animated procedural characters, dragon motion, editable-script subtitles, a timeline slider, previous/next scene, Pause, and **Explore Set** to resume the ordinary first-person Play mode. **Watch Episode 01** separately screens the original procedural 2m14s 2D animation in a modal.
+Choose **Ghosts in Different Forms** from **Projects** or [open the anime starter directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01). The v9.0 candidate contains **70 actors and 11 editor layers**: eight new independently saved paper actors/layers alongside the preserved original 62 production set actors and three layers. Eight workstations and eight destinations remain available. The native export is [ghosts-in-different-forms-ep01-storybook.swyrl.json](scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json).
 
-The **Play** cinematic uses native Three.js camera parallax across six illustrated cel layers (background, atmosphere, midground, characters, effects, foreground), with scripted scene-specific transforms. The Layers button toggles these layers; during Play, scene signs and prop actors are temporarily hidden to avoid clipping and restored upon Stop/Explore Set. HUD captions wrap within mobile viewports.  the separate **Watch Episode 01** remains a canvas player. §E does not yet provide general drag-and-drop native keyframe editing, audio-track editing, or MP4 rendering. The episode is a focused engine-capability prototype, not a completed television animation pipeline.
+Open **Animation Studio** to edit nine independent tracks: Camera, Kami, §wyrlz, Background, Atmosphere, Midground, Effects, Foreground, and Book. Scrub and preview, add/update/delete keys, edit easing and numeric values, change visibility/opacity/unfolding, and write timed dialogue or episode/beat titles. Camera position, target, and field of view follow saved keys. Native Undo/Redo and Save/Load preserve edits; PNG, WebP, and JPEG imports can replace individual layer artwork. **Capture Actor Pose** connects a saved paper actor's native Inspector transforms to its timeline keyframe.
 
-See [ANIME_STARTER.md](ANIME_STARTER.md) for the project contract, validation steps, and next feature probes.
+**Preview Frame** and the editor's **Play** button use the same native Three.js renderer. Physical scenery meshes fold around hinges at separate depths; background limits, a low foreground/book, and adaptive portrait framing protect both mages. Pause, seek, scene controls, Stop, and **Explore Set** remain available. **Watch Episode 01** separately screens the historical procedural 2D animation. Skeletal posing, lip sync, audio authoring, and MP4 rendering remain unimplemented. Local desktop and phone-sized Chromium authoring/Play acceptance has been exercised; remote CI, deployment, and exact hosted v9.0 receipts are pending at documentation time.
+
+See [ANIMATION_STUDIO.md](ANIMATION_STUDIO.md), [ANIME_STARTER.md](ANIME_STARTER.md), and [POPUP_VIDEO_CREATOR.md](POPUP_VIDEO_CREATOR.md) for the authoring workflow, starter contract, and depth staging.
 
 ## Author in the editor
 
-Reusable vault, oculus, end wall, support column, ramp, gallery deck, guardrail, sign, floating island, constellation sky, astrolabe, visitor, and companion assets are in the Content Browser. Static groups preserve world placement, children, and station IDs. Each starter has three project-owned editor layers; these visibility groups are independent of physical floor height.
+Reusable vault, oculus, end wall, support column, ramp, gallery deck, guardrail, sign, floating island, constellation sky, astrolabe, visitor, and companion assets are in the Content Browser. Static groups preserve world placement, children, and station IDs. Embervault and Starforge each retain three project-owned editor layers; Anime Studio has 11. These visibility groups are independent of physical floor height.
 
 The Details dock's **Teleport Zones** panel creates or edits a destination's name, description, world X/Z, feet Y, heading in degrees, and accent. Enable **Show destination markers** to display landing rings and heading arrows; markers start off by default and the preference persists on this device. Use **Frame Destination** to inspect a selected landing without losing the current orthographic viewing axis. Previews are optional editor helpers, independent of actors, collision, and project saves, and disappear in Play/Simulate. **Use Selected** and **Use Visitor** copy a world position; keep the landing pad supported and clear of edges, rails, and props, then test it in Play. Travel validates floor support, the visitor footprint, and body/head clearance, clears movement, releases pointer lock, and restores the prior pause state. Unsafe or hidden landings produce feedback and leave the visitor in place.
 
@@ -43,13 +45,13 @@ Scene data belongs to `scenes/embervault-atelier.swyrl.json` and `scenes/starfor
 ## Source integrity and deployment
 
 - Source manifest: `source-manifest.json`.
-- Base: 99,591 bytes, SHA-256 `a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856`.
-- Generated artifact: `swyrl_engine_v8_9.html`.
-- Final artifact: 647,639 bytes, SHA-256 `da9f48941543c81062a232417ed8897e8c82e912852474cf2154e209c12ddf37`. `SOURCE.json` also records hashes for the episode player and editable stage file.
-- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_9_CINEMATIC_STAGING_SAFE`.
+- Governed base: `swrlz_forge_v4.html`.
+- Generated candidate artifact: `swyrl_engine_v9_0.html`.
+- Final integrity values belong to the sealed `source-manifest.json` and generated `SOURCE.json`, including bundled scene, episode, and artwork assets.
+- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V9_0_AUTHORED_PAPER_THEATRE`.
 - Rebuild: `python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba`.
 - Dedicated Space: `kamiloki/swrlz-forge-moba`.
-- Live page: https://kamiloki-swrlz-forge-moba.static.hf.space/ .
+- Hosted page: https://kamiloki-swrlz-forge-moba.static.hf.space/ .
 - Production workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`.
 
-The manifest defines the governed 48-patch chain for the v8.7 anime cel layering. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.
+The candidate manifest defines the governed 49-patch chain, including the reusable v9.0 Animation Studio integration. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Candidate deployment is pending at documentation time. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.

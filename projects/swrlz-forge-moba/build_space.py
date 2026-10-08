@@ -68,8 +68,13 @@ def main():
     (out / "README.md").write_text((ROOT / "SPACE_README.md").read_text(encoding="utf-8"), encoding="utf-8")
     # Native starter source and episode screening travel together with engine.
     assets = {}
-    for rel in ("episodes/ghosts-in-different-forms-ep01.html",
-                "scenes/ghosts-in-different-forms-ep01.swyrl.json"):
+    media_paths = ["episodes/ghosts-in-different-forms-ep01.html",
+                   "scenes/ghosts-in-different-forms-ep01.swyrl.json"]
+    authored = "scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
+    if (ROOT / authored).exists():
+        media_paths.append(authored)
+    media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/anime").glob("*.png")))
+    for rel in media_paths:
         source = ROOT / rel
         data = source.read_bytes()
         target = out / rel

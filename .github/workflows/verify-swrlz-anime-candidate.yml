@@ -1,27 +1,25 @@
-name: Verify §wyrl§ v8.9 native anime candidate
+name: Verify §wyrl§ v9.0 authored anime candidate
 
 on:
   push:
     branches: [main]
-    paths:
+    paths: &anime_paths
       - ".github/workflows/verify-swrlz-anime-candidate.yml"
       - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py"
-      - "projects/swrlz-forge-moba/patches/v8_8_popup_storybook.py"
-      - "projects/swrlz-forge-moba/patches/v8_7_anime_cel_layers.py"
-      - "projects/swrlz-forge-moba/patches/v8_5_anime_starter.py"
-      - "projects/swrlz-forge-moba/patches/v8_6_native_anime_cinematic.py"
+      - "projects/swrlz-forge-moba/patches/**"
+      - "projects/swrlz-forge-moba/runtime/**"
+      - "projects/swrlz-forge-moba/assets/anime/**"
       - "projects/swrlz-forge-moba/build_space.py"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01.swyrl.json"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01*.swyrl.json"
       - "projects/swrlz-forge-moba/episodes/ghosts-in-different-forms-ep01.html"
+      - "projects/swrlz-forge-moba/tests/*anime*.mjs"
+      - "projects/swrlz-forge-moba/tests/storybook_authoring_playwright.mjs"
   pull_request:
     branches: [main]
-    paths:
-      - "projects/swrlz-forge-moba/patches/v8_5_anime_starter.py"
-      - "projects/swrlz-forge-moba/source-manifest.json"
-      - ".github/workflows/verify-swrlz-anime-candidate.yml"
+    paths: *anime_paths
+  workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -33,49 +31,47 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Reconstruct candidate and print exact integrity
+      - name: Independently reconstruct sealed v9.0 source
         run: |
           python - <<'PY'
-          import base64,gzip,hashlib,json
+          import base64,gzip,hashlib,json,runpy
           from pathlib import Path
-          import runpy
-          root=Path("projects/swrlz-forge-moba")
-          manifest=json.loads((root/"source-manifest.json").read_text(encoding="utf-8"))
-          mod=runpy.run_path(str(root/"build_space.py"))
-          raw=gzip.decompress(base64.b64decode("".join((root/p).read_text(encoding="utf-8").strip() for p in manifest["chunks"])))
-          assert hashlib.sha256(raw).hexdigest()==manifest["baseSha256"]
-          assert len(raw)==manifest["baseBytes"]
-          source=raw.decode("utf-8")
-          for rel in manifest["patches"]:
-              source=mod["load_patch"](root/rel)(source)
-          output=source.encode("utf-8")
-          Path("/tmp/swyrl-anime-engine.html").write_bytes(output)
-          print("ENGINE_EXPECTED_BYTES="+str(len(output)))
-          print("ENGINE_EXPECTED_SHA256="+hashlib.sha256(output).hexdigest())
-          for rel in ("episodes/ghosts-in-different-forms-ep01.html","scenes/ghosts-in-different-forms-ep01.swyrl.json"):
-              payload=(root/rel).read_bytes()
-              print("PACK_ASSET="+rel+" BYTES="+str(len(payload))+" SHA256="+hashlib.sha256(payload).hexdigest())
-          assert "V8_9_CINEMATIC_STAGING_SAFE" in source
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text(encoding='utf-8'))
+          mod=runpy.run_path(str(root/'build_space.py'))
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
+          assert len(raw)==manifest['baseBytes']
+          assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
+          assert len(manifest['patches'])==49
+          assert manifest['patches'][-1]=='patches/v9_0_animation_studio.py'
+          source=raw.decode('utf-8')
+          for patch in manifest['patches']:
+              source=mod['load_patch'](root/patch)(source)
+          output=source.encode('utf-8')
+          assert len(output)==manifest['finalBytes']
+          assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
+          for feature in ('V9_0_AUTHORED_PAPER_THEATRE','Maker v9.0',
+                          'CANONICAL_ANIME_EPISODE_PROJECT','SWYRL_ENGINE_CINEMATIC',
+                          'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD',
+                          'animeCreateCelLayers','animeDirectorInstall','animeMakePaperBook',
+                          'animePopupStageSafety','storyEditorInstall','anime-ghosts-ep01',
+                          'openAnimeScreening','animeUpdateCinematic','animeUpdateCelLayers',
+                          'animeLayerVisible','animeDisposeGroup','animeCleanLayers',
+                          'popKamiArt','popSwyrlzArt','ANIME_2D_LAYER_SPECS',
+                          'animeMakeCast','animeCineLayers','popLowStageTrim',
+                          'animePopSanitize','animePopUp','popupHinge','popUpStatus'):
+              assert feature in source, feature
           assert 'data-project-template="anime-ghosts-ep01"' in source
-          assert "CANONICAL_ANIME_EPISODE_PROJECT" in source
-          assert "openAnimeScreening" in source
-          assert "animeUpdateCinematic" in source
-          assert "animeCreateCelLayers" in source
-          assert "animeDirectorInstall" in source
-          assert "animeMakePaperBook" in source
-          assert "animePopupStageSafety" in source
-          assert "SWYRL_ENGINE_CINEMATIC" in source
-          assert "anime-ghosts-ep01" in source
-          assert "Maker v8.9" in source
+          Path('/tmp/swyrl-anime-engine.html').write_bytes(output)
           begin=source.index('<script type="module">')+len('<script type="module">')
-          end=source.rindex("</script>")
-          Path("/tmp/swyrl-anime-engine.mjs").write_text(source[begin:end],encoding="utf-8")
-          print("CANDIDATE_RECONSTRUCT_OK")
+          Path('/tmp/swyrl-anime-engine.mjs').write_text(source[begin:source.rindex('</script>')],encoding='utf-8')
+          print('ENGINE_EXPECTED_BYTES='+str(len(output)))
+          print('ENGINE_EXPECTED_SHA256='+hashlib.sha256(output).hexdigest())
+          print('CANDIDATE_49_PATCH_RECONSTRUCT_OK')
           PY
           node --check /tmp/swyrl-anime-engine.mjs
-          python -m py_compile projects/swrlz-forge-moba/patches/v8_5_anime_starter.py projects/swrlz-forge-moba/patches/v8_6_native_anime_cinematic.py projects/swrlz-forge-moba/build_space.py
-          echo "NODE_SYNTAX_AND_PYTHON_COMPILE_OK"
-      - name: Verify packaged source and both starter assets
+          python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
+      - name: Verify complete v9.0 package against source and manifest
         run: |
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           cmp /tmp/swyrl-anime-engine.html dist/swrlz-forge-moba/index.html
@@ -84,42 +80,23 @@ jobs:
           from pathlib import Path
           root=Path('projects/swrlz-forge-moba')
           out=Path('dist/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text())
           receipt=json.loads((out/'SOURCE.json').read_text())
-          assert receipt['finalBytes']==647639
-          assert receipt['finalSha256']=='da9f48941543c81062a232417ed8897e8c82e912852474cf2154e209c12ddf37'
-          assert len(receipt['patches'])==48
+          assert receipt['finalBytes']==manifest['finalBytes']
+          assert receipt['finalSha256']==manifest['finalSha256']
+          assert receipt['patches']==manifest['patches']
+          assert len(receipt['patches'])==49
+          assert receipt['patches'][-1]=='patches/v9_0_animation_studio.py'
+          expected={'episodes/ghosts-in-different-forms-ep01.html',
+                    'scenes/ghosts-in-different-forms-ep01.swyrl.json',
+                    'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json'}
+          expected.update(p.relative_to(root).as_posix() for p in (root/'assets/anime').glob('*.png'))
+          assert {'assets/anime/'+name+'.png' for name in ('kami','swyrlz','cathedral','workshop','foreground')}<=expected
+          assert set(receipt['assets'])==expected
           for asset,data in receipt['assets'].items():
-              source=(root/asset).read_bytes()
               packed=(out/asset).read_bytes()
-              assert source==packed
-              assert len(packed)==data['bytes']
-              assert hashlib.sha256(packed).hexdigest()==data['sha256']
-          print('PACKAGING_48_PATCHES_AND_BOTH_ASSETS_VERIFIED')
+              assert (root/asset).read_bytes()==packed, asset
+              assert len(packed)==data['bytes'], asset
+              assert hashlib.sha256(packed).hexdigest()==data['sha256'], asset
+          print('PACKAGING_49_PATCHES_AND_ALL_ASSETS_VERIFIED')
           PY
-      - name: Seal exact v8.9 artifact manifest after verification
-        if: github.event_name == 'push'
-        run: |
-          python - <<'PY'
-          import json,hashlib
-          from pathlib import Path
-          target=Path("projects/swrlz-forge-moba/source-manifest.json")
-          meta=json.loads(target.read_text(encoding="utf-8"))
-          data=Path("/tmp/swyrl-anime-engine.html").read_bytes()
-          meta["finalBytes"]=len(data)
-          meta["finalSha256"]=hashlib.sha256(data).hexdigest()
-          target.write_text(json.dumps(meta,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-          print("SEALED_BYTES="+str(meta["finalBytes"]))
-          print("SEALED_SHA256="+meta["finalSha256"])
-          PY
-          python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
-          cmp /tmp/swyrl-anime-engine.html dist/swrlz-forge-moba/index.html
-          test -s dist/swrlz-forge-moba/episodes/ghosts-in-different-forms-ep01.html
-          test -s dist/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01.swyrl.json
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add projects/swrlz-forge-moba/source-manifest.json
-          if ! git diff --staged --quiet; then
-            git commit -m "Seal exact v8.9 anime starter source integrity"
-            git push origin HEAD:main
-          fi
-          echo "CANDIDATE_EXACT_SOURCE_VERIFIED"

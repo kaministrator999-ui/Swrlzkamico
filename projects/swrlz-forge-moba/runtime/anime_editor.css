@@ -1,0 +1,64 @@
+.story-studio-entrybar{position:fixed;right:16px;bottom:59px;z-index:82;display:flex;gap:7px;align-items:center}
+.story-studio-entrybar[hidden],#storyStudioBtn[hidden],.story-studio[hidden],#storyStudioBody[hidden],#storyArtworkRow[hidden],#storyBuildStage[hidden]{display:none!important}
+.story-studio-entrybar .anime-director-button{position:static;right:auto;bottom:auto}
+#storyStudioBtn{border:1px solid #d5af70;border-radius:9px;background:#392d25;color:#fff0cf;padding:10px 12px;font:700 12px system-ui;white-space:nowrap;cursor:pointer}
+#animeCineHud #storyStudioBtn{position:static;padding:7px 9px;min-width:unset;font-size:11px}
+.story-studio{position:fixed;z-index:441;top:70px;right:12px;width:min(410px,calc(100vw - 24px));max-height:calc(100dvh - 148px);display:flex;flex-direction:column;overflow:hidden;border:1px solid #b58d58;border-radius:13px;background:#13151ff7;box-shadow:0 15px 50px #000b;color:#f3e6ce;font:12px/1.45 system-ui,-apple-system,sans-serif;pointer-events:auto}
+.story-studio-head{flex:0 0 auto;display:flex;align-items:center;gap:6px;min-height:44px;padding:8px 11px;border-bottom:1px solid #a37c493d;background:#28212a}
+.story-studio-head strong{flex:1;font-size:14px;white-space:nowrap}
+.story-studio-body{overflow-y:auto;overscroll-behavior:contain;padding:10px 12px 12px;scrollbar-color:#9d7a52 #171824}
+.story-studio button,.story-studio input,.story-studio select,.story-studio textarea{font:inherit;color:#f3e6ce;box-sizing:border-box}
+.story-studio button{border:1px solid #847258;border-radius:7px;background:#292936;padding:7px 9px;min-height:34px;cursor:pointer;touch-action:manipulation}
+.story-studio button:disabled,.story-studio input:disabled,.story-studio select:disabled,.story-studio textarea:disabled{opacity:.5;cursor:default}
+.story-studio input:not([type=range]):not([type=checkbox]),.story-studio select,.story-studio textarea{border:1px solid #6e6254;border-radius:6px;background:#101722;min-height:34px;padding:6px 8px;width:100%;max-width:100%}
+.story-studio input[type=number]{font-variant-numeric:tabular-nums;min-width:0}
+.story-studio textarea{resize:vertical;min-height:95px;line-height:1.45}
+.story-studio button:hover:not(:disabled){background:#3f3742}
+.story-studio button:focus-visible,.story-studio input:focus-visible,.story-studio select:focus-visible,.story-studio textarea:focus-visible,.story-studio summary:focus-visible,#storyStudioBtn:focus-visible{outline:3px solid #e3ba78;outline-offset:2px}
+.story-episode-title{margin:0 0 9px;font-size:12px;font-weight:650;color:#ddbd91}
+.story-transport{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+.story-transport #storyPlay,.story-key-actions #storyAddKey,.story-studio-footer #storySaveProject{background:#4b3a29;border-color:#c09a60;color:#ffedc9}
+.story-time-row{display:flex;align-items:center;gap:8px;font-weight:650}
+.story-time-row #storyTime{width:86px;flex:0 0 86px}
+.story-scrub{display:block;width:100%;height:28px;margin:5px 0 9px;accent-color:#d6a962;cursor:pointer}
+.story-label{display:flex;flex-direction:column;gap:4px;margin:8px 0}
+.story-label>span,.story-section-label{font-weight:650;color:#e8d7be}
+.story-key-fields{display:grid;grid-template-columns:1fr 1fr;gap:7px 11px;margin:7px 0 10px}
+.story-field{display:flex;flex-direction:column;gap:3px;min-width:0;color:#cabcaa}
+.story-check{flex-direction:row;align-items:center;justify-content:space-between;min-height:50px}
+.story-check input{width:19px;height:19px;accent-color:#d6a962}
+.story-key-actions{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px}
+.story-stage-tools{margin:9px 0;border-bottom:1px solid #b58d583d;padding-bottom:5px}
+.story-artwork-row input[type=file]{font-size:11px!important;padding:5px!important;min-height:34px}
+.story-artwork-row input::file-selector-button{border:1px solid #847258;border-radius:5px;background:#292936;color:#f3e6ce;padding:5px 7px;margin-right:7px;font:inherit;cursor:pointer}
+.story-muted{font-size:11px;color:#b5ad9e;margin:5px 0}
+.story-key-list{display:flex;flex-wrap:wrap;gap:5px;margin:5px 0 10px;max-height:100px;overflow-y:auto;overscroll-behavior:contain}
+.story-key-list button{font-variant-numeric:tabular-nums;padding:5px 8px;min-height:31px;font-size:11px}
+.story-key-list button.is-selected{background:#67502f;border-color:#efc077;color:#fff0ca}
+.story-beat-editor{border-top:1px solid #b58d583d;margin-top:10px;padding-top:8px}
+.story-beat-editor summary{font-weight:700;cursor:pointer;min-height:28px;list-style-position:inside;color:#dfbd8c}
+.story-studio-footer{border-top:1px solid #b58d583d;margin-top:13px;padding-top:8px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.story-editor-status{flex:1 1 220px;font-size:11px;color:#bcb2a0;margin:0}
+.story-editor-status.story-error{color:#ffb3a0}
+.story-studio.is-collapsed{max-height:48px}
+.story-studio.is-collapsed .story-studio-head{border-bottom:0}
+@media(max-width:650px){
+ .story-studio-entrybar{right:8px;bottom:61px;gap:5px;max-width:calc(100vw - 16px)}
+ .story-studio-entrybar .anime-director-button,#storyStudioBtn{padding:9px 8px;font-size:11px}
+ .story-studio{top:auto;right:0;bottom:0;width:100%;max-height:45dvh;border-radius:13px 13px 0 0;border-bottom:0;padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
+ .story-studio-head{min-height:41px;padding:5px 9px}
+ .story-studio-head strong{font-size:13px}
+ .story-studio-head button{min-height:32px;padding:5px 8px}
+ .story-studio-body{padding:8px 11px 11px}
+ .story-key-fields{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ .story-field>span{font-size:10px}
+ .story-studio input:not([type=range]):not([type=checkbox]),.story-studio select,.story-studio textarea{font-size:16px}
+ .story-studio textarea{font-size:13px}
+ .story-studio.is-collapsed{max-height:calc(48px + env(safe-area-inset-bottom,0px))}
+ body.story-studio-open:not(.story-studio-collapsed) .anime-cine-bottom{bottom:calc(45dvh + 6px)}
+ body.story-studio-open:not(.story-studio-collapsed) .anime-cine-bottom .anime-cine-controls{display:none}
+ body.story-studio-open.story-studio-collapsed .anime-cine-bottom{bottom:calc(58px + env(safe-area-inset-bottom,0px))}
+ body.story-studio-open:not(.story-studio-collapsed) #storyStudioEntrybar{display:none}
+}
+@media(max-width:360px){.story-key-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.story-studio-head strong{font-size:12px}.story-studio-head{gap:4px}}
+@media(prefers-reduced-motion:reduce){.story-studio *{scroll-behavior:auto}}

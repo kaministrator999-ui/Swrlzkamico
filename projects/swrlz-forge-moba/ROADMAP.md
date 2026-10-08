@@ -1,12 +1,24 @@
 # §wyrl§ Engine Roadmap
 
-Canonical lane: §E / §wyrl§ Engine  
-History audited through: **2026-10-07**  
-Current live release: **v8.9 — Camera-safe pop-up staging (48 governed patches; desktop/mobile Chromium scene-occlusion tests passed; exact hosted source and episode/stage media integrity verified)**. Historical releases remain preserved.
+Canonical lane: §E / §wyrl§ Engine
+History audited through: **2026-10-08**
+Current source candidate: **v9.0 — Native Animation Studio and Paper Theatre (49 governed patches)**. Local desktop/mobile authoring and Play acceptance has been exercised; final sealing, remote CI, dedicated deployment, and hosted v9.0 receipts are pending at documentation time. Historical releases remain preserved.
+
+Previous verified hosted checkpoint: **v8.9 — Camera-safe pop-up staging (48 governed patches; desktop/mobile Chromium scene-occlusion tests passed; exact hosted source and episode/stage media integrity verified)**.
 
 Previously verified live release: **v8.6 — Native Anime Studio Play** ([Actions 37719877533](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719877533); exact served HTML and both episode/scene assets SHA-256 verified). Earlier v8.3 live receipts remain in historical sections.
 
 This roadmap is the mandatory release lineage for governed §E GitHub updates. Root `§tart_§E.md` defines the deployment contract.
+
+## v9.0 candidate · Native Animation Studio and Paper Theatre
+
+**Ghosts in Different Forms · The Page That Remembered** is a native editor export with 70 actors, 11 editor layers, eight story beats, nine independent animation tracks, and 134 seconds of playback. It adds eight saved paper actors/layers while preserving the original 62 production set actors, three production layers, eight stations, and eight destinations. Generated transparent Kami and §wyrlz artwork and separate cathedral, workshop, and foreground plates follow the user's reference direction.
+
+Reusable `runtime/anime_timeline.js`, `anime_stage.js`, `anime_editor.js`, and associated CSS are integrated by `patches/v9_0_animation_studio.py`. Animation Studio edits camera position/target/FOV, character and scenery transforms, easing, visibility, opacity, unfolding, titles, and timed dialogue. Preview Frame and editor Play use the same renderer; native Undo/Redo and Save/Load preserve changes. PNG/WebP/JPEG replacement binds artwork to an individual saved actor. Capture Actor Pose connects native Inspector transforms to the selected timeline keyframe.
+
+Physical scenery meshes rotate at hinges. Protective background depth, a low foreground/book, and adaptive portrait framing keep the central cast readable. The historical Watch Episode 01 screening remains separate. Skeletal posing, lip sync, audio authoring, and MP4 export are not implemented.
+
+**Status at documentation time:** local desktop/phone-sized Chromium authoring and Play tested; final source sealing and remote release acceptance pending. Artifact `swyrl_engine_v9_0.html`; marker `V9_0_AUTHORED_PAPER_THEATRE`. Exact integrity and source/deploy commit references will be supplied by the sealed manifest and final trigger receipt. The dedicated `DEPLOY_REQUEST.json` procedure and exact served HTML, scene, episode, and artwork verification are required before v9.0 is called live. Direct starter: https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01 .
 
 ## v8.5 candidate · Anime Studio starter
 
@@ -80,6 +92,9 @@ This is a scriptable experimental compositor with runtime layer toggles, **not**
 | v8.5 (candidate) | 2026-10-07 | Anime Studio starter selectable from Projects; 62 editable actors, eight stages, eight notes stations, integrated canvas screening, source-packaged episode; next-step native cinematic animation gap documented. |
 | v8.6 (candidate) | 2026-10-07 | Project-scoped native 3D cinematic Play with movable camera, performers, dragon, editable-script captions, timeline controls and Explore Set; desktop/mobile Chromium acceptance. |
 | v8.7 (candidate) | 2026-10-07 | 2.5D layered sprite/cel backgrounds, midground, character, FX, foreground parallax; scene sign occlusion and caption clipping repairs; temporary layer visibility. |
+| v8.8 (historical candidate) | 2026-10-08 | Physical pop-up book, individual hinged scenery, separate wizard cels, and saved Pop-Up Director controls. |
+| v8.9 (verified hosted checkpoint) | 2026-10-08 | Low book/foreground and behind-cast scenery limits repair Android camera occlusion; desktop/mobile and hosted integrity receipts passed. |
+| v9.0 (candidate) | 2026-10-08 | Native Animation Studio, generated separate artwork, saved paper actors, nine authorable tracks, editor Preview/Play, and a native 134 second storybook export with 70 actors/11 layers; deployment pending. |
 
 ## Artifact authority
 

@@ -1,20 +1,29 @@
-name: Validate §E v8.9 pop-up storybook creator
+name: Validate §E v9.0 authored pop-up storybook studio
+
 on:
   push:
     branches: [main]
-    paths:
+    paths: &anime_paths
       - ".github/workflows/verify-swrlz-storybook-v8-8.yml"
-      - "projects/swrlz-forge-moba/patches/v8_8_popup_storybook.py"
       - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py"
+      - "projects/swrlz-forge-moba/patches/**"
+      - "projects/swrlz-forge-moba/runtime/**"
+      - "projects/swrlz-forge-moba/assets/anime/**"
+      - "projects/swrlz-forge-moba/build_space.py"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01*.swyrl.json"
+      - "projects/swrlz-forge-moba/episodes/ghosts-in-different-forms-ep01.html"
+      - "projects/swrlz-forge-moba/tests/*anime*.mjs"
+      - "projects/swrlz-forge-moba/tests/storybook_authoring_playwright.mjs"
   pull_request:
     branches: [main]
+    paths: *anime_paths
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   browser:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,45 +32,95 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Reconstruct independent full-source candidate
+      - name: Independently reconstruct sealed v9.0 source
         run: |
           python - <<'PY'
-          import base64,gzip,json,hashlib
+          import base64,gzip,hashlib,json,runpy
           from pathlib import Path
-          import runpy
           root=Path('projects/swrlz-forge-moba')
-          manifest=json.loads((root/'source-manifest.json').read_text())
+          manifest=json.loads((root/'source-manifest.json').read_text(encoding='utf-8'))
           mod=runpy.run_path(str(root/'build_space.py'))
-          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
-          assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
-          s=raw.decode('utf-8')
-          assert len(manifest['patches'])==48
-          assert manifest['patches'][-1]=='patches/v8_9_cinematic_staging.py'
-          for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
-          for feature in ('V8_9_CINEMATIC_STAGING_SAFE','animeMakePaperBook','animePopupStageSafety','popLowStageTrim','popKamiArt',
-                          'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
-                          'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):
-              assert feature in s, feature
-          out=Path('/tmp/storybook-test');out.mkdir(parents=True,exist_ok=True)
-          (out/'index.html').write_text(s,encoding='utf-8')
-          (out/'module.mjs').write_text(s[s.index('<script type="module">')+len('<script type="module">'):s.rindex('</script>')],encoding='utf-8')
-          print('STORYBOOK_EXPECTED_BYTES='+str(len(s.encode())))
-          print('STORYBOOK_EXPECTED_SHA256='+hashlib.sha256(s.encode()).hexdigest())
-          print('STORYBOOK_RECONSTRUCT_OK')
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
+          assert len(raw)==manifest['baseBytes']
+          assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
+          assert len(manifest['patches'])==49
+          assert manifest['patches'][-1]=='patches/v9_0_animation_studio.py'
+          source=raw.decode('utf-8')
+          for patch in manifest['patches']:
+              source=mod['load_patch'](root/patch)(source)
+          output=source.encode('utf-8')
+          assert len(output)==manifest['finalBytes']
+          assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
+          for feature in ('V9_0_AUTHORED_PAPER_THEATRE','Maker v9.0',
+                          'CANONICAL_ANIME_EPISODE_PROJECT','SWYRL_ENGINE_CINEMATIC',
+                          'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD',
+                          'animeCreateCelLayers','animeDirectorInstall','animeMakePaperBook',
+                          'animePopupStageSafety','storyEditorInstall','anime-ghosts-ep01',
+                          'openAnimeScreening','animeUpdateCinematic','animeUpdateCelLayers',
+                          'animeLayerVisible','animeDisposeGroup','animeCleanLayers',
+                          'popKamiArt','popSwyrlzArt','ANIME_2D_LAYER_SPECS',
+                          'animeMakeCast','animeCineLayers','popLowStageTrim',
+                          'animePopSanitize','animePopUp','popupHinge','popUpStatus'):
+              assert feature in source, feature
+          assert 'data-project-template="anime-ghosts-ep01"' in source
+          Path('/tmp/swyrl-anime-engine.html').write_bytes(output)
+          begin=source.index('<script type="module">')+len('<script type="module">')
+          Path('/tmp/swyrl-anime-engine.mjs').write_text(source[begin:source.rindex('</script>')],encoding='utf-8')
+          print('ENGINE_EXPECTED_BYTES='+str(len(output)))
+          print('ENGINE_EXPECTED_SHA256='+hashlib.sha256(output).hexdigest())
+          print('CANDIDATE_49_PATCH_RECONSTRUCT_OK')
           PY
-          node --check /tmp/storybook-test/module.mjs
-          python -m py_compile projects/swrlz-forge-moba/patches/v8_8_popup_storybook.py
+          node --check /tmp/swyrl-anime-engine.mjs
+          python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
+      - name: Verify complete v9.0 package against source and manifest
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/storybook-test
+          cmp /tmp/swyrl-anime-engine.html /tmp/storybook-test/index.html
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          out=Path('/tmp/storybook-test')
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          receipt=json.loads((out/'SOURCE.json').read_text())
+          assert receipt['finalBytes']==manifest['finalBytes']
+          assert receipt['finalSha256']==manifest['finalSha256']
+          assert receipt['patches']==manifest['patches']
+          assert len(receipt['patches'])==49
+          assert receipt['patches'][-1]=='patches/v9_0_animation_studio.py'
+          expected={'episodes/ghosts-in-different-forms-ep01.html',
+                    'scenes/ghosts-in-different-forms-ep01.swyrl.json',
+                    'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json'}
+          expected.update(p.relative_to(root).as_posix() for p in (root/'assets/anime').glob('*.png'))
+          assert {'assets/anime/'+name+'.png' for name in ('kami','swyrlz','cathedral','workshop','foreground')}<=expected
+          assert set(receipt['assets'])==expected
+          for asset,data in receipt['assets'].items():
+              packed=(out/asset).read_bytes()
+              assert (root/asset).read_bytes()==packed, asset
+              assert len(packed)==data['bytes'], asset
+              assert hashlib.sha256(packed).hexdigest()==data['sha256'], asset
+          print('PACKAGING_49_PATCHES_AND_ALL_ASSETS_VERIFIED')
+          PY
+      - name: Check browser acceptance suite syntax
+        run: |
+          node --check projects/swrlz-forge-moba/tests/native_anime_playwright.mjs
+          node --check projects/swrlz-forge-moba/tests/storybook_authoring_playwright.mjs
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
-      - name: Run actual desktop and mobile director/cel/project export acceptance
+      - name: Test native cinematic, independent cels, Director and project export
         run: |
-          python -m http.server 8765 --directory /tmp/storybook-test >/tmp/storybook-test-server.log 2>&1 &
+          python -m http.server 8765 --directory /tmp/storybook-test >/tmp/browser-storybook-http.log 2>&1 &
           SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/native_anime_playwright.mjs
+      - name: Test actual authored studio, camera tracks, Play and Save/Load
+        run: |
+          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/storybook_authoring_playwright.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: anime-popup-book-browser-debug
-          path: native-anime-*.png
+          name: v9-0-authored-storybook-browser-views
+          path: |
+            native-anime-*.png
+            storybook-acceptance/
           retention-days: 5
