@@ -217,7 +217,8 @@ function animeUpdateCinematic(dt){
 def apply(html):
     s=html
     # Cinematic code is in the same module as engine's scene and Play lifecycle.
-    s=once(s,'<script type="module">',CSS+'<script type="module">')
+    assert '<script type="module">' in s
+    s=s.replace('<script type="module">',CSS+'<script type="module">',1)
     s=once(s,'function beginPlay(fromHere=null){',JS+'\nfunction beginPlay(fromHere=null){')
     # Branch only Anime Studio; existing Play is untouched for every other starter.
     pointer="if(matchMedia('(pointer:fine)').matches)$('viewport').requestPointerLock?.();"
