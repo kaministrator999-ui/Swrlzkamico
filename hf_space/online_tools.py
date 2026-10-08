@@ -1630,7 +1630,10 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                     int(candidate.get("rank") or 999),
                 ) if isinstance(candidate,dict) else (0,999)
             )
-            if not candidate_pool and callable(search_public):
+            # If we already have a verified body, do not launch a new search merely
+            # for prettier structure. Prefer richer candidates only from the already
+            # discovered pool. Rescue search remains for true no-valid-source cases.
+            if not candidate_pool and not valid and callable(search_public):
                 canonical_online_research.set_trace_sink(progress)
                 try:
                     for rescue_query in _lyrics_rescue_queries(str(plan.get("subject") or "")):
