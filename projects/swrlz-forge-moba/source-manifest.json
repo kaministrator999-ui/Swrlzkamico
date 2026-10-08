@@ -63,6 +63,6 @@
     "patches/v8_7_anime_cel_layers.py",
     "patches/v8_8_popup_storybook.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "PENDING_CANDIDATE_VERIFICATION"
+  "finalBytes": 644951,
+  "finalSha256": "06c55a0d090bd6ffa9383ff44f914b922a841de7dc03284a50955cb4036478cd"
 }
