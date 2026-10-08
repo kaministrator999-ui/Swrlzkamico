@@ -57,6 +57,9 @@ jobs:
           assert "openAnimeScreening" in source
           assert "anime-ghosts-ep01" in source
           assert "Maker v8.5" in source
+          assert "closeAnimeScreening" in source
+          assert "installAnimeStarterUI" in source
+          assert "ghosts-different-forms-ep01" in source
           begin=source.index('<script type="module">')+len('<script type="module">')
           end=source.rindex("</script>")
           Path("/tmp/swyrl-anime-engine.mjs").write_text(source[begin:end],encoding="utf-8")
