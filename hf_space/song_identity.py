@@ -193,7 +193,11 @@ def candidate_score(item: dict[str,Any], identity: dict[str,Any]) -> dict[str,An
 
     found_versions=[term for term in _VERSION_TERMS if re.search(rf"\b{re.escape(_fold(term))}\b",hay)]
     version_match=bool(requested_version and requested_version in hay)
-    version_mismatch=bool(found_versions and not requested_version)
+    # "original" and "explicit" are often descriptive labels on otherwise-correct
+    # lyric pages. Hard mismatch is reserved for materially different arrangements.
+    material_versions={"remix","live","acoustic","clean","radio edit","extended","demo","sped up","slowed"}
+    found_material=[term for term in found_versions if term in material_versions]
+    version_mismatch=bool(found_material and not requested_version)
     if requested_version and found_versions:
         version_mismatch=not version_match
 
@@ -246,6 +250,8 @@ def candidate_score(item: dict[str,Any], identity: dict[str,Any]) -> dict[str,An
         "negativeContentHints":negative_terms[:6],
         "versionMatch":version_match,
         "versionMismatch":version_mismatch,
+        "foundVersions":found_versions[:8],
+        "materialVersionConflicts":found_material[:8],
         "host":host,
     }
 
