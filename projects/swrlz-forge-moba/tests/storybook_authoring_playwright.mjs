@@ -139,6 +139,33 @@ try{
     await start(page);
     assert.equal((await status(page)).projectId,'ghosts-different-forms-ep01');
     const initial=await project(page),initialScene=cleanScene(initial);
+
+    // Public Watch must enter the *current saved v9 native 2.5D episode*, not
+    // the historical separate 2D iframe. Exercise a real mobile/desktop tap.
+    await page.locator('#animeScreeningBtn').click();
+    await page.waitForFunction(()=>window.SWYRL_ENGINE_ANIMATION.status().active,undefined,{timeout:15000});
+    assert.equal(await page.locator('#animeScreening').evaluate(el=>el.classList.contains('open')),false,
+      'Watch Episode unexpectedly opened the stale 2D screening');
+    assert.equal(await page.locator('#animeEpisodeFrame').getAttribute('src'),null,
+      'The old standalone episode should not load for native Watch');
+    assert.equal((await status(page)).playing,true,'Native Watch did not start the episode');
+    assert.equal((await stage(page)).occlusionSafe,true,'Native Watch scene is not camera-safe');
+    assert.ok((await stage(page)).actorBindings?.length>=8,'Native Watch lacks the illustrated pop-up actors');
+    await page.locator('#animeCineExit').click();await frames(page);
+    assert.equal((await status(page)).active,false,'Native Watch could not Stop');
+    // The original historical film remains opt-in and is explicitly labeled.
+    await openStudio(page);
+    await page.locator('#storyWatchOriginal').click();
+    assert.equal(await page.locator('#animeScreening').evaluate(el=>el.classList.contains('open')),true,
+      'Original 2D archive is no longer accessible');
+    assert.equal(await page.locator('#animeEpisodeFrame').getAttribute('src'),
+      'episodes/ghosts-in-different-forms-ep01.html','Archive loaded an unexpected recording');
+    assert.equal((await status(page)).active,false,'Archive accidentally started the native cinematic');
+    await page.locator('#animeScreeningClose').click();await frames(page);
+    assert.equal(await page.locator('#animeEpisodeFrame').getAttribute('src'),null,
+      'Closing archive did not unmount playback');
+    assert.deepEqual(cleanScene(await project(page)),initialScene,
+      'Watching either episode changed the authored scene');
     assert.equal(initial.project.animeTimeline?.schema,'anime-timeline-v1','Starter has no saved animation');
     const layerNames=initial.editor.layers.map(layer=>layer.name.toLowerCase());
     assert.ok(layerNames.some(name=>name.includes('kami')),'Kami needs a native editor layer');
