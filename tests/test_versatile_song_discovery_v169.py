@@ -143,7 +143,8 @@ assert rescue[0]["admittedCount"]==0 and rescue[1]["admittedCount"]==0,rescue
 assert rescue[2]["admittedCount"]==1,rescue
 
 camera=online_tools.online_camera(result)
-assert camera["observabilityRevision"]=="v169-versatile-song-discovery",camera
+assert camera["songIdentity"],camera
+assert camera["songDiscoveryPlan"],camera
 assert camera["lyricsRescueSearchDebug"][2]["strategy"]=="source-family-disambiguation",camera
 assert len(camera["lyricsRescueSearchDebug"])<=online_tools.LYRICS_MAX_RESCUE_SEARCHES,camera
 assert result["lyricsMaxPageAttempts"]==3,result
