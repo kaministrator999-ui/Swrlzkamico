@@ -1,3 +1,29 @@
+# §wyrl§ Engine v8.5 · Anime Studio starter verification
+
+Source candidate: 44 governed patches, **597,990 bytes**, SHA-256 `1d9111211897151c091a313dd0fbfa59bc3819ac744567dfd0465e7208e39f8c`, marker `V8_5_ANIME_STUDIO_STARTER`. The independent PR check [Actions 37717718014](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37717718014) passed source reconstruction, JavaScript syntax, and Python compilation.
+
+## New native starter
+
+- Projects selector adds **Ghosts in Different Forms** without replacing Embervault and Starforge.
+- Canonical scene contains 62 uniquely identified actors, eight stage stations each with script + direction documents, three editor layers, eight teleport zones, one dragon and visitor pawn.
+- Separate 24,568-byte original HTML animation is screened in an editor modal and copied into the deployed static Space. This is not a native 3D timeline system.
+- Direct route: `?project=anime-ghosts-ep01`. The normal Save Project and Import/Load Project affordances remain available.
+- Native browser interaction and live deployment acceptance are **pending** until independently checked; do not infer from Python syntax/reconstruction alone.
+
+## Candidate checks
+
+- [x] Source reconstruction and SHA-256 derived from complete v8.5 patched HTML (CI).
+- [x] Generated JavaScript syntax and Python patch compilation (CI).
+- [x] Canonical source validates 62 unique actor IDs, eight stations, eight destinations, three layers, and one guardian dragon (patch assertions).
+- [ ] Packager copies both episode and editable project, with exact bytes/hash parity (separate CI smoke).
+- [ ] Dedicated production deploy run reaches success.
+- [ ] Live HF host serves exact source, `SOURCE.json`, player and scene file hashes.
+- [ ] Native browser Projects card, sample asset placement, Save/Load, runtime T-zone travel, Screening open/close, and mobile orientation tested against *served* release.
+
+Earlier release verification retained below without alteration.
+
+---
+
 # §wyrl§ Engine v8.4 verification
 
 This release continues **Embervault Atelier** and **Starforge Observatory** together through engine source, native editor authoring, and desktop first-person Play. The den retains 170 actors, three editor layers, six stations, and eight destinations. Starforge retains 123 actors, three layers, six stations, and seven destinations. Native **Save Project** exports provide the promoted scene data.
