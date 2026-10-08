@@ -98,9 +98,12 @@ try{
       const download=await downloadPending;
       saved=JSON.parse(await readFile(await download.path(),'utf8'));
     }else{
-      // Mobile Chromium emulation may suppress blob download events; exercise
-      // real Save and assert its serialized content without claiming an OS file.
-      await page.locator('#saveBtn').click();
+      // A phone-width toolbar hides core Save; the video Director provides
+      // a visible, actual user-operable Save Project button instead.
+      await page.locator('#animeDirectorBtn').click();
+      assert.equal(await page.locator('#animeDirectorSave').isVisible(),true,
+        mode.name+' visible Video Creator Save missing');
+      await page.locator('#animeDirectorSave').click();
       saved=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.serializedProject());
     }
     assert.equal(saved.project?.animePopUp?.schema,'anime-popup-v1',
