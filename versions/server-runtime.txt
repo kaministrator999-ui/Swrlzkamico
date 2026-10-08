@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.316
-REVISION=2.3.316-hf-v163-search-admission-rescue
+VERSION=2.3.317
+REVISION=2.3.317-hf-v164-music-structure-presentation
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
