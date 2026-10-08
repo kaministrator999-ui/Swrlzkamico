@@ -28,7 +28,7 @@ CSS=r"""
 .anime-director input[type=range]{width:150px;accent-color:#d5a864}
 .anime-director select{width:100%;padding:9px;background:#1b2634;color:#ffe5c3;border:1px solid #978466}
 .anime-director .readout{min-width:45px;text-align:right;font-variant-numeric:tabular-nums}
-.anime-director footer{display:flex;justify-content:space-between;margin-top:9px;gap:6px}
+.anime-director footer{display:flex;justify-content:space-between;flex-wrap:wrap;margin-top:9px;gap:6px}
 @media(max-width:640px){.anime-director{top:16dvh;right:3vw;max-height:70dvh}.anime-director-button{right:8px;bottom:61px}}
 </style>
 """
@@ -316,7 +316,7 @@ function animeDirectorInstall(){
   panel.innerHTML='<header><strong>✦ Pop-Up Director</strong><button id="animeDirectorClose" type="button">✕</button></header>'+
     '<p>Edit independent fantasy scenery and wizard layers. Settings are stored in this project and included in Save Project.</p>'+
     '<select id="animeDirectorLayer" aria-label="Select a scenery or character layer"></select>'+
-    '<div id="animeDirectorFields"></div><footer><button type="button" id="animeDirectorReset">Reset layer</button><button type="button" id="animeDirectorDone">Done</button></footer>';
+    '<div id="animeDirectorFields"></div><footer><button type="button" id="animeDirectorReset">Reset layer</button><button type="button" id="animeDirectorSave">Save Project</button><button type="button" id="animeDirectorDone">Done</button></footer>';
   document.body.append(button,panel);
   for(const id of ANIME_POP_KEYS){const opt=document.createElement('option');opt.value=id;
     opt.textContent=(id==='swyrlz'?'§wyrlz':id==='kami'?'Kami':id)+' · '+(id==='kami'||id==='swyrlz'?'character cel':'pop-up scenery');panel.querySelector('#animeDirectorLayer').append(opt)}
@@ -345,6 +345,12 @@ function animeDirectorInstall(){
   button.onclick=()=>{panel.hidden=!panel.hidden;if(!panel.hidden)sync()};
   panel.querySelector('#animeDirectorClose').onclick=()=>panel.hidden=true;
   panel.querySelector('#animeDirectorDone').onclick=()=>panel.hidden=true;
+  panel.querySelector('#animeDirectorSave').onclick=()=>{
+    // Save editor project through the same export path as the core Save control.
+    // This stays tappable even when the horizontal toolbar hides Save on phone.
+    document.getElementById('saveBtn')?.click();
+    panel.hidden=true;
+  };
   panel.querySelector('#animeDirectorReset').onclick=()=>{
     const id=panel.querySelector('#animeDirectorLayer').value;
     animePopConfig().layers[id]={...ANIME_POP_DEFAULT[id]};markDirty();sync();
