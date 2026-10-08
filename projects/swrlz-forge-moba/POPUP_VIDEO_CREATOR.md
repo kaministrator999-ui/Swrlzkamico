@@ -12,6 +12,12 @@ The staged episode is a dark-fantasy **book theatre**, following the user's wiza
 - **No extra mascot character** in the cinematic. The original canonical guardian object stays in the editor starter so older dialogue/stations and exploratory project content are not deleted.
 - **No external images, generation service or remote asset provider** required at runtime. The artwork is procedural/vector-style; it is a dark-fantasy interpretation of the reference concept, not a pixel-perfect recreation of the earlier illustration.
 
+## v8.9 candidate · Camera-safe pop-up scenery staging
+
+Real Android screenshots of v8.8 showed the large opaque desk/foreground panel and animated book rising *in front of the camera and character cels*. Corrective engine patch `patches/v8_9_cinematic_staging.py` keeps the physical book below the wizard cutouts, replaces the opaque foreground panel with a thin transparent-trim plate that only paints its bottom portion, and clamps cathedral/sky/magic scenery behind both independent wizard cels. The effect still uses actual Three.js depth/perspective and independent hinges. Older saved `animePopUp` Director values remain serialized, but scenery render staging enforces a safe maximum so dangerous near-camera cards cannot obscure the cast. Runtime `popUpStatus().stageSafety` exposes book height, foreground painted boundary, actors and architecture Z values, and camera gap. Desktop and mobile automated regressions check first/later scene layouts against those boundaries.
+
+This release is **not** verified live until exact rebuilt source and hosted assets pass production receipt checks.
+
 ## Engine behavior
 
 At each of the existing eight episode acts, the physical open book and scenery **unfold from the page** on independent Three.js pivots. Every cutout is an individual depth plane with separate parallax and unfold delay. The perspective camera can travel past those planes without flattening them into a single backdrop.
