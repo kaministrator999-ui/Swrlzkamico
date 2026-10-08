@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-07-v169-versatile-song-discovery-001
+REQUEST_NONCE=2026-10-07-v169-versatile-song-discovery-002
