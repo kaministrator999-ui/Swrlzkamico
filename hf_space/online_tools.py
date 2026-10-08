@@ -1605,11 +1605,18 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             fetch_public=getattr(canonical_online_research,"fetch_public",None)
             search_public=getattr(canonical_online_research,"search_public",None)
             candidate_pool=list(bundle.get("candidatePool") if isinstance(bundle.get("candidatePool"),list) else [])
+            song_id=plan.get("songIdentity") if isinstance(plan.get("songIdentity"),dict) else song_identity(str(plan.get("subject") or ""))
+            ranked_pool=rank_candidates(candidate_pool,song_id)
+            candidate_pool=[
+                candidate for candidate in ranked_pool
+                if bool((candidate.get("songIdentityScore") or {}).get("allowed"))
+            ]
             candidate_pool.sort(
                 key=lambda candidate:(
+                    -int((candidate.get("songIdentityScore") or {}).get("score") or 0),
                     -_lyrics_candidate_structure_hint(candidate,str(plan.get("subject") or "")),
                     int(candidate.get("rank") or 999),
-                ) if isinstance(candidate,dict) else (0,999)
+                ) if isinstance(candidate,dict) else (0,0,999)
             )
             # If we already have a verified body, do not launch a new search merely
             # for prettier structure. Prefer richer candidates only from the already
@@ -1656,9 +1663,17 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                                 "rank":item.get("rank"),
                                 "allowed":bool(identity.get("allowed")),
                                 "score":int(identity.get("score") or 0),
+                                "reason":_clean(identity.get("reason"),100),
+                                "signals":[_clean(x,80) for x in (identity.get("signals") or [])[:12]],
+                                "exactTitle":bool(identity.get("exactTitle")),
                                 "titleHits":int(identity.get("titleHits") or 0),
                                 "artistHits":int(identity.get("artistHits") or 0),
+                                "exactArtist":bool(identity.get("exactArtist")),
                                 "titleNeeded":int(identity.get("titleNeeded") or 0),
+                                "lyricDomain":bool(identity.get("lyricDomain")),
+                                "versionMatch":bool(identity.get("versionMatch")),
+                                "versionMismatch":bool(identity.get("versionMismatch")),
+                                "negativeContentHints":[_clean(x,80) for x in (identity.get("negativeContentHints") or [])[:6]],
                             }
                             rescue_debug.append(debug_item)
                             if identity.get("allowed") and clean_url:
@@ -1667,11 +1682,12 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                                     "url":clean_url,
                                     "query":rescue_query,
                                     "relevanceScore":int(identity.get("score") or 0),
+                                    "songIdentityScore":identity,
                                 })
                         rescue_candidates.sort(
                             key=lambda item:(
+                                -int((item.get("songIdentityScore") or {}).get("score") or 0),
                                 -_lyrics_candidate_structure_hint(item,str(plan.get("subject") or "")),
-                                -int(item.get("relevanceScore") or 0),
                                 int(item.get("rank") or 999),
                             )
                         )
