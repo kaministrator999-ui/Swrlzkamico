@@ -126,3 +126,5 @@ def apply(html):
     s=s.replace('v8.4 · WAYFINDING & ZONE PREVIEW','v8.5 · ANIME STUDIO STARTER')
     s=s.replace('§wyrl§ Engine v8.4 · both project workspaces ready','§wyrl§ Engine v8.5 · anime studio starter ready')
     return s
+
+# CI probe: release deployment observation is PR-only and leaves source unchanged.
