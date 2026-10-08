@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v8.6",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_6_NATIVE_ANIME_CINEMATIC",
-  "reason": "Fix Anime Studio Play appearing stationary: launch project-scoped native 3D cinematic with camera moves, procedural cast, animated dragon, station-authored subtitles, seek, Pause, and Explore Set. Validated by Chromium desktop/mobile 37719407234; exact 45-patch reconstruction 37719407233; complete packaging 37719631749.",
-  "sourceCommit": "227590d8680e3b07757b4ef454f5429eae56c6e2",
+  "reason": "Repeat v8.6 native Anime Studio cinematic after correcting Hugging Face static HTML asset normalization in live verification. Initial run 37719679170 reconstructed and uploaded correct v8.6 but failed the episode HTML check because of provider metadata injection. Full source and Chromium mobile/desktop acceptance remain unchanged and verified.",
+  "sourceCommit": "7994eb40a98472dd13821a5a07a9c400ff58bc56",
   "sourceIntegritySha256": "1468357c5ce082b71548de983fd11f818cf4eeccb34eca3df92a0f15e3e94dc0"
 }
