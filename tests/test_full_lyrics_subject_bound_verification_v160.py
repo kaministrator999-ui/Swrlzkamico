@@ -91,14 +91,14 @@ def fake_research(_payload):
             "fetchedAt":1,
         }],
         "candidatePool":[
-            {"title":"Cold Piece of Work Lyrics","url":FIRST,"snippet":TARGET_SNIPPET,"source":"example.test","query":plan["query"],"rank":1,"relevanceScore":20},
-            {"title":"Cold Piece of Work Lyrics alternate","url":SECOND,"snippet":TARGET_SNIPPET,"source":"example.test","query":plan["query"],"rank":2,"relevanceScore":19},
+            {"title":"Tech N9ne - Cold Piece of Work Lyrics","url":FIRST,"snippet":"Tech N9ne "+TARGET_SNIPPET,"source":"example.test","query":plan["query"],"rank":1,"relevanceScore":20},
+            {"title":"Tech N9ne - Cold Piece of Work Lyrics alternate","url":SECOND,"snippet":"Tech N9ne "+TARGET_SNIPPET,"source":"example.test","query":plan["query"],"rank":2,"relevanceScore":19},
         ],
     }
 
 def fake_fetch(url):
     assert url==SECOND,url
-    return {"title":"Cold Piece of Work Lyrics alternate","finalUrl":url,"status":200,"fetchedAt":2,"extract":GOOD_PAGE}
+    return {"title":"Tech N9ne - Cold Piece of Work Lyrics alternate","finalUrl":url,"status":200,"fetchedAt":2,"extract":GOOD_PAGE}
 
 def fake_provenance(_subject,_lyrics,_progress=None):
     return {"originalStanzaCount":None,"sourceTitle":"","sourceUrl":"","evidence":[],"queries":[],"fetchCount":0,"claimExcerpt":"","httpStatus":None,"fetchedAt":None}
