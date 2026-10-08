@@ -13,6 +13,11 @@ from typing import Any
 MUSIC_STRUCTURE_SCHEMA="swrlz-music-structure-v1"
 MUSIC_PRESENTATION_SCHEMA="swrlz-music-presentation-v1"
 
+# Markdown horizontal rule renders full-width in Chat. Internal lyric section
+# separators stay deliberately shorter to create a mobile-first visual hierarchy.
+LYRIC_OUTER_DIVIDER="---"
+LYRIC_SECTION_DIVIDER="────────"
+
 _SECTION_RE=re.compile(
     r"^\s*\[?\s*(?P<kind>"
     r"intro|outro|interlude|pre[-\s]?chorus|post[-\s]?chorus|chorus|hook|refrain|bridge|"
@@ -276,11 +281,21 @@ def compile_verified_music_presentation(
             rendered.append(f"**{label}**\n" + "\n".join(lines))
         else:
             rendered.append("\n".join(lines))
-    body="\n\n".join(rendered).strip()
+    body=(f"\n\n{LYRIC_SECTION_DIVIDER}\n\n").join(rendered).strip()
     if not intro:
         intro=f"Okay — here’s the verified lyric text for **{subject}**:"
     footer=f"**Lyrics source:** {source_title} — {source_url}".strip()
-    text="\n\n".join(part for part in (intro,body,footer) if part).strip()
+
+    parts=[]
+    if intro:
+        parts.append(intro)
+    if body:
+        parts.append(LYRIC_OUTER_DIVIDER)
+        parts.append(body)
+        parts.append(LYRIC_OUTER_DIVIDER)
+    if footer:
+        parts.append(footer)
+    text="\n\n".join(parts).strip()
     return {
         "schema":MUSIC_PRESENTATION_SCHEMA,
         "subject":subject,
@@ -290,6 +305,14 @@ def compile_verified_music_presentation(
         "sectionCount":len(rendered),
         "sourceOrderPreserved":True,
         "sourceTextRewritten":False,
+        "dividerPresentation":{
+            "outer":LYRIC_OUTER_DIVIDER,
+            "inner":LYRIC_SECTION_DIVIDER,
+            "outerMeaning":"lyric_document_boundary",
+            "innerMeaning":"lyric_section_transition",
+            "blankLinesAroundDividers":True,
+            "mobileFirst":True,
+        },
     }
 
 
@@ -324,4 +347,5 @@ def music_structure_debug(document: dict[str,Any], presentation: dict[str,Any] |
         "sections":sections,
         "presentationChars":int((presentation or {}).get("presentationChars") or 0),
         "presentationSha256":str((presentation or {}).get("presentationSha256") or "")[:80],
+        "dividerPresentation":(presentation or {}).get("dividerPresentation") if isinstance((presentation or {}).get("dividerPresentation"),dict) else None,
     }
