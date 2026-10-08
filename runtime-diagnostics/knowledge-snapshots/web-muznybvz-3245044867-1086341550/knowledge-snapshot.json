@@ -1,0 +1,414 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-muznybvz-3245044867-1086341550",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "40d4dff508b72e50fe699286706572dd0f7f93f4",
+  "persistedAtUnixMs": 1791471635277,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-muznybvz-3245044867-1086341550",
+    "trigger": {
+      "userText": "Could you provide lyrics for cold piece of work by tech n9ne",
+      "sha256": "80b0c9972c02d87e3970b37bd6944416a11d5203116f1a937561173b08e16822"
+    },
+    "research": {
+      "kind": "search",
+      "status": "OK",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "existing-lyrics-retrieval",
+      "query": "",
+      "resultCount": 2,
+      "sources": [
+        {
+          "title": "Tech N9ne - Cold Piece of Work lyrics - All The Lyrics",
+          "source": "www.allthelyrics.com",
+          "url": "https://www.allthelyrics.com/lyrics/tech_n9ne-cold_piece_of_work",
+          "snippet": "",
+          "rank": null
+        }
+      ],
+      "sourceSites": [
+        "www.allthelyrics.com"
+      ],
+      "widgetKinds": [
+        "search-results"
+      ],
+      "trace": [
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate did not satisfy verification",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "web-page",
+          "activity": "Alternate lyrics source fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+          "provider": "lyrics-verifier",
+          "activity": "Fetched destination matches the requested song identity",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFIED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate verified",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "duckduckgo-lite",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "duckduckgo-lite",
+          "activity": "Using duckduckgo-lite",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-lite",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "bing-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "bing-html",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "bing-html",
+          "activity": "Using bing-html",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "Okay — here’s the verified lyric text for **\"cold piece of work\" by tech n9ne**:\n\n---\n\n**[Pre-Chorus: JL]**\nThey treat my bidness like it's soda\nOr my music like a perc\nThey know my flow is the yola\nThat's a cold piece of work\n\n────────\n\n**[Verse 1: JL]**\nThat's dope nigga what you call a buzz once you caught a bus\nI make you feel like you was on all the drugs\nAll the drugs, drugs, I got all the plugs\nA-A-All this was to satisfy the customers\nIt'll hit you different depending on what we pay you\nPop it then the check the purity side effects of it fatal\nNow you know that when you blow niggas wanna know what they pay you\n(Fo sho') N-N-Noses in my bidness like a yayo!\nFlippin' like it's crack and can't relax it's like we drug dealers\nOr sit in psych or SEG, I'm servin' sinking this and sink with nerves\nCook 'em like it's smack is what they slappin' when they get the urge\nKeep 'em coming back we push these packages to listeners\n\n────────\n\n**[Pre-Chorus: JL]**\nThey treat my bidness like it's soda\nOr my music like a perc\nThey know my flow is the yola\nThat's a cold piece of work\n\n────────\n\n**[Chorus: JL]**\nThat's dope nigga\nThat's dope nigga\nThat's dope nigga\nThat's dope nigga\nThat's dope nigga\nThat's dope\nThey know my flow is the yola\nThat's a cold piece of work\n\n────────\n\n**[Verse 2: Tech N9ne]**\nT9X is what they sniffin' when Tech N9na get to spittin'\nMy position is give 'em a hell of an addiction\nOn these scripts and they be itchin'\nFor the good dope that I be dishin' out for the listenin'\nThat's why I'm constantly cookin' off in the kitchen\nNigga I'm Mr. Molly, when N9na shit hits her body\nIt takes her and gets her naughty\nFella mixed it with liquor prolly\nShe'll love you and lick your lolly\nTaking me is her hobby\nShe flipping through my discography, nigga\nThen she swallow me, nigga\nBuss serves on them bitches steady searchin' for the sickness\nIf you want it N9na's on it with the quickness\nShit is real not ficticious all the wishes for the bomb\nYou can get it from the Don P, I daze you like a whippit\nNigga I'm addictive\n\n────────\n\n**[Pre-Chorus: JL]**\nThey treat my bidness like it's soda\nOr my music like a perc\nThey know my flow is the yola\nThat's a cold piece of work\n\n────────\n\n**[Chorus: JL]**\nThat's dope nigga\nThat's dope nigga\nThat's dope nigga\nThat's dope nigga\nThat's dope nigga\nThat's dope!\n\n────────\n\n**[Bridge: Tech N9ne]**\nI'ma let two of my young gunners work this motherfucker\nJay Trilogy and Joey Cool\n\n────────\n\n**[Verse 3: Jay Trilogy]**\nOkay I've been taking my time since 8th grade\nYou niggas been having it easy for the past 6 years\nDon't believe me motherfucker? Wait 'til I release my CD\nI'm a cold piece of work\nThey tryna find a cure for me but I'm pure disease\nI'm infecting the industry first, ain't nobody safe from me\nBitch I'm great\nI'm not the plug but I got that work bitch, don't try to test me\nI got verses that could put everybody in a hearse so I feel I deserve it\nI'm only 19 but be warned\nMy flow so dope a motherfucking fiend would avoid\nHeard about this shit on the street giving niggas instant OD\nOh lord\nSo you just caught a glimpse and you low-key high as a bitch\nDon't trip, I'ma try to fix this shit\nIf I go too hard, you might just flip your shit\nSo take a few deep breaths while I inject infectious rhythm in your system\nHave you bouncing through the roof, catch a groove if you with it\nAsking me if I think I'm the goat\nOkay I admit it, I see the future and that's all that is in it\nI put in the work, so I know I'ma get it\nYou digging a ditch for yourself if you step to the kid, give a fuck about wealth\nGive a fuck about numbers, a fuck about charts, I will eat you alive and that's straight from the heart\nIn a rock and a hard place, help me get it ever?\nBroke as a bitch and I need that cheddar\nMozzarella and the provolone et-cetera\nI don't really know which one is better of the three\nAnd I don't give a fuck just hand it over\nI ain't ever going back to my day job\nWhen I quit, man, I quit for a lifetime\nCalled my old managers over tell 'em, \"Man I told ya\"\nI'm worth more than gold and I know that shit\nTryna put me on a payroll, hold my dick\nI'm doing what most of the world fears everyday\nThat's a cold piece of work, better fix your face when you're mentioning Jay\n\n────────\n\n**[Verse 4: Joey Cool]**\nIf you ain't ever heard of Coolie, you 'bout to get the connection\nI'm narcotic, pharmaceutical, potent antidepressant\nI alleviate what antidotes heal and aging what's stressing\nI'm like Lucy in the sky with the diamonds\nMy effervescence is infectious\nMost definitely, deathly defiant\nI'm a motherfucking giant, a tyrant, a modern pirate\nI might throw a fucking party next Friday, you're all invited\nMr. Molly said he might be attending, bitch get excited!\nLace boots with the rhyme skills\nI don't even need the lights on\nSo dope that I'm like pills\nBurna cut the fucking mic on\nCoolie Baby, I been rocking with the nigga\nHella tatted with the ice on\nGold teeth with the gold chains\nOwn thang, got the hood, I'm home\nPut the swank on a nigga real quick\nYou are at the bottom of the sea-saw\nBank on a nigga being mine\nGoin' back and forth like it's ping-pong\nStay with me get you realigned, this'll be divine, it's a theme song\nGodzilla be up on the punishment\nAnd I might slap the shit up out of King Kong\nSee the team strong\nI been chopping and talking with N9na, he told me I'm ready\nAim at the target, the scope on the lock on this bitch\nAnd I'm holding it steady\nTaking precaution, I'm deadly\nBumping that good Everready\nShit is so down, it's steady\nFuck it, I'm Joey Andretti\n\n────────\n\n**[Pre-Chorus: JL]**\nThey treat my bidness like it's soda\nOr my music like a perc\nThey know my flow is the yola\nThat's a cold piece of work\n\n────────\n\n**[Chorus: JL]**\nThat's dope nigga\nThat's dope nigga\nThat's dope nigga\nThat's dope nigga\nThat's dope nigga\nThat's dope\nThey know my flow is the yola\nThat's a cold piece of work\n\n---\n\n**Lyrics source:** Tech N9ne - Cold Piece of Work lyrics - All The Lyrics — https://www.allthelyrics.com/lyrics/tech_n9ne-cold_piece_of_work",
+      "sha256": "0becfaf02d494b6216be8a9383eb21cef325ba4e71e737e921b5327b8afeb784"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Alternate lyrics source fetch failed"
+      },
+      {
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate"
+      },
+      {
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "reason": "Fetched destination matches the requested song identity"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFIED",
+        "reason": "Lyrics candidate verified"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK"
+      },
+      {
+        "phase": "WIDGET_READY",
+        "reason": "search-results"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok."
+      },
+      {
+        "phase": "SOURCE_FOUND",
+        "reason": "There we go — I found relevant verified material on Tech N9ne - Cold Piece of Work lyrics - All The Lyrics."
+      },
+      {
+        "phase": "EVIDENCE_SCOPING",
+        "reason": "Give me one second — preparing the requested material."
+      },
+      {
+        "phase": "LYRICS_VERIFIED_PAYLOAD",
+        "reason": "Serving frozen lyrics payload from successfully fetched evidence."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ]
+  }
+}
