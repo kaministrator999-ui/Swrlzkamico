@@ -2,7 +2,7 @@
 
 Canonical lane: §E / §wyrl§ Engine  
 History audited through: **2026-10-07**  
-Current source candidate: **v8.7 — Anime Cel Parallax (46-patch rebuild, source syntax and desktop/mobile browser acceptance passed; dedicated live deployment pending)**. Historical releases remain preserved.
+Current source candidate: **v8.8 — Pop-Up Storybook Director (47-patch cinematic stage; browser acceptance in progress and deployment pending)**. Historical releases remain preserved.
 
 Previously verified live release: **v8.6 — Native Anime Studio Play** ([Actions 37719877533](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719877533); exact served HTML and both episode/scene assets SHA-256 verified). Earlier v8.3 live receipts remain in historical sections.
 
@@ -19,6 +19,10 @@ Source integration introduces a third independently selectable project, `Ghosts 
 The Anime Studio starter now begins a real-time native Three.js cinematic when Play is pressed. Eight scripted camera shots, temporary procedural performers, guardian-dragon animation, motes/lighting, and captions driven by each stage's editable `script.md` form an approximately 134-second episode preview. A transport HUD provides Pause/Resume, seek, previous/next shot, Stop, and **Explore Set** to switch to the prior first-person world mode. Other §E starter projects keep their original Play behavior.
 
 Source: `patches/v8_6_native_anime_cinematic.py`; final SHA-256 `1468357c5ce082b71548de983fd11f818cf4eeccb34eca3df92a0f15e3e94dc0`, 611,675 bytes, 45 patches. [Headless Chromium desktop/mobile test run 37719407234](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719407234) and [candidate compiler run 37719407233](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719407233) passed. Native authoring of cinematic keyframes, lip-sync and exportable video remain future capabilities.
+
+## v8.8 candidate · Pop-Up Storybook Video Creator
+
+Upgrade the existing Anime Studio starter rather than creating another image or application. Native Three.js book geometry opens under the scene; independent painted book/card/cathedral/workshop/foreground plates rise on animated hinges with perspective parallax. Kami and §wyrlz become separately rendered dark-fantasy wizard cels, echoing the user's two-wizard artwork direction. **Pop-Up Director** saves per-layer depth, parallax, horizontal offset, unfold delay/duration as part of project JSON. The original eight acts, subtitles, Explore/Stop, and unrelated project templates are preserved. See [POPUP_VIDEO_CREATOR.md](POPUP_VIDEO_CREATOR.md) for explicit feature and remaining limits.
 
 ## v8.7 candidate · Cel-layer anime cinematics
 
