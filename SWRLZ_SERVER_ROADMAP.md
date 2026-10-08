@@ -1,3 +1,109 @@
+## UPDATE FINISHED — 2026-10-07 — music ontology + pre-chat presentation compiler v164
+
+**Outcome:** MUSIC FORM COGNITION + STRUCTURED VERIFIED-MUSIC DOCUMENT + PRE-CHAT PRESENTATION COMPILER IMPLEMENTED / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### Architecture implemented
+The verified-music path is now explicitly separated:
+`search/fetch → verification → frozen lyric text → music structure cognition → presentation compiler → Model Router → Chat render`.
+
+Ownership:
+- retrieval/verification owns truth and exact source text;
+- music cognition owns form/section semantics;
+- presentation compiler owns organization/Markdown;
+- Chat owns rendering only.
+
+### Music ontology
+Added `hf_space/music_structure.py` with bounded music-form semantics:
+- **bar**: technical musical measure; rap slang may mean a line/punchline contextually; **newline is never automatically treated as a bar**;
+- **verse**: main lyrical section; length alone does not create multiple verses;
+- **chorus**: recurring central section;
+- **hook**: memorable recurring phrase/section, potentially shorter than a chorus;
+- **pre-chorus**: transition into chorus;
+- **refrain**: recurring material that may occur within a verse;
+- **bridge**: contrasting section interrupting the normal verse/chorus cycle;
+- **intro/outro/interlude**: opening/closing/transitional sections;
+- **freestyle**: defaults to **one continuous verse**, no invented Verse/Chorus/Bridge/Hook labels or repeated chorus unless explicitly requested;
+- **cypher**: consecutive performer verses where supplied;
+- **full song**: may contain ordered song sections, repeats, and multiple performers.
+
+### 700M teaching path
+- LFM2-700M now imports the music cognition module;
+- the music ontology is injected only on relevant music/rap/song/lyrics/freestyle turns, avoiding permanent context tax on unrelated requests;
+- deterministic `creative_music_request()` supplies a bounded request-shape contract;
+- freestyle requests explicitly resolve to `continuous_verse`, no invented section labels, and no default repeated chorus;
+- song requests resolve to `song_sections` without requiring the model to force every possible section.
+
+### Verified-source structure parsing
+- verified raw text remains unchanged and separately stored;
+- source section markers are aligned back onto the frozen verified blocks;
+- sections carry:
+  - original raw label;
+  - normalized type;
+  - verse number where explicit;
+  - performer where explicit;
+  - confidence;
+  - provenance/basis;
+  - line count;
+  - `barCount=null` with `barCountBasis=not_inferred_from_line_breaks`;
+- explicit source marker order is preserved;
+- insufficiently supported sections remain unlabeled rather than receiving invented labels.
+
+### Pre-chat presentation compiler
+- verified music with explicit source structure is compiled before Model Router/Chat;
+- compiler preserves source line wording and order;
+- explicit source labels become readable Markdown section headings;
+- source footer is appended upstream;
+- verified payload now separately carries:
+  - `lyricExtract` — frozen verified raw text;
+  - `musicDocument` — structured music semantics;
+  - `musicPresentation` — compiled presentation metadata;
+  - `presentationText` — final render-ready Markdown.
+- Model Router now returns `presentationText` verbatim when present; it does not rediscover/reorder song structure.
+- unmarked/historical texts retain the existing attribution-aware fallback path so v157 provenance behavior is not regressed.
+
+### Observability
+- Online Camera revision advances to `v164-music-structure-presentation`;
+- bounded `musicStructureDebug` is exported with work type, structure basis, section count, explicit-section count, labels/types/numbers/performers/confidence/basis, presentation character count/hash, and `newlineEqualsBar=false`;
+- no lyric body is duplicated into this structure-debug object.
+
+### Regression
+Added `tests/test_music_structure_presentation_v164.py` proving:
+- explicit Intro / Verse / Pre-Chorus / Chorus / Verse / Bridge ordering;
+- performer and verse-number preservation;
+- exact verified lines survive the compiler;
+- source order is preserved;
+- compiler reports `sourceTextRewritten=false`;
+- bar count is not inferred from line count/newlines;
+- Model Router returns the compiled presentation verbatim;
+- freestyle resolves to one continuous verse with no default chorus or invented section labels;
+- song request resolves to song-section form;
+- ontology contains the bar / freestyle / bridge semantics.
+
+Older v162 and v163 regressions were kept behavioral instead of freezing obsolete observability revision strings.
+
+### Deployment receipts
+- guarded HF run: `37707624158` — terminal **SUCCESS**;
+- exact selected feature source: `3611272466cdb387c50f412116a7db239dd38cea`;
+- lyric/music gate: v151 PASS, v155 PASS, v157 PASS, v158 PASS, v159 PASS, v160 PASS, v161 PASS, v162 PASS, v163 PASS, **v164 PASS**;
+- native R39 verification, real R39 reconstruction, R39-vs-stock inspection, 700M smoke, fast-HF/Chat preservation guard, authorization gate, production snapshot, rollback checkpoint, upload, and deployed-revision capture all succeeded;
+- prior/rollback Space revision: `1dee957b057d3c8aa2112789564e6dcdee414fea`;
+- deployed Space revision: `52919febec17e3c7cb990088f32484a222f03067`.
+
+### Versions
+- Repository Work: **1.0.94**.
+- Server Runtime: **2.3.317 / 2.3.317-hf-v164-music-structure-presentation**.
+- LALM Engine: **2.1.157 / 2.1.157-music-ontology-presentation-v164**.
+- Deployment Control: **1.0.24**.
+- Online Research remains **1.0.14 / 1.0.14-search-admission-rescue-v163** because v164 changes music cognition/presentation, not the network/evidence retrieval contract.
+
+### Live acceptance target
+- rerun the same structured song retrieval;
+- expected Chat output should preserve explicit section headings and performer labels rather than displaying one flattened/jumbled body;
+- Dragon Chat JSON should expose `musicStructureDebug` with the same source order and `newlineEqualsBar=false`;
+- separately test a creative freestyle: output should remain one continuous verse unless the prompt explicitly requests sections.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v164 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — music ontology + pre-chat presentation compiler v164
 
 **Trigger:** live v163 acceptance now retrieves and verifies the requested song body correctly, but the final Chat presentation is structurally flattened/jumbled. User direction: teach the 700M/LALM the musical grammar first (bar, verse, chorus/hook, pre-chorus, bridge, intro/outro, refrain, freestyle, full song) and compile presentation before Chat rather than making Chat infer/repair structure.
