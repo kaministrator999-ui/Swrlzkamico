@@ -1,0 +1,60 @@
+name: Verify §wyrl§ anime starter candidate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-swrlz-anime-candidate.yml"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v8_5_anime_starter.py"
+      - "projects/swrlz-forge-moba/build_space.py"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01.swyrl.json"
+      - "projects/swrlz-forge-moba/episodes/ghosts-in-different-forms-ep01.html"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Reconstruct candidate and print exact integrity
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json
+          from pathlib import Path
+          import runpy
+          root=Path("projects/swrlz-forge-moba")
+          manifest=json.loads((root/"source-manifest.json").read_text(encoding="utf-8"))
+          mod=runpy.run_path(str(root/"build_space.py"))
+          raw=gzip.decompress(base64.b64decode("".join((root/p).read_text(encoding="utf-8").strip() for p in manifest["chunks"])))
+          assert hashlib.sha256(raw).hexdigest()==manifest["baseSha256"]
+          assert len(raw)==manifest["baseBytes"]
+          source=raw.decode("utf-8")
+          for rel in manifest["patches"]:
+              source=mod["load_patch"](root/rel)(source)
+          output=source.encode("utf-8")
+          print("ENGINE_EXPECTED_BYTES="+str(len(output)))
+          print("ENGINE_EXPECTED_SHA256="+hashlib.sha256(output).hexdigest())
+          for rel in ("episodes/ghosts-in-different-forms-ep01.html","scenes/ghosts-in-different-forms-ep01.swyrl.json"):
+              payload=(root/rel).read_bytes()
+              print("PACK_ASSET="+rel+" BYTES="+str(len(payload))+" SHA256="+hashlib.sha256(payload).hexdigest())
+          assert "V8_5_ANIME_STUDIO_STARTER" in source
+          assert 'data-project-template="anime-ghosts-ep01"' in source
+          assert "CANONICAL_ANIME_EPISODE_PROJECT" in source
+          assert "openAnimeScreening" in source
+          assert "anime-ghosts-ep01" in source
+          assert "Maker v8.5" in source
+          begin=source.index('<script type="module">')+len('<script type="module">')
+          end=source.rindex("</script>")
+          Path("/tmp/swyrl-anime-engine.mjs").write_text(source[begin:end],encoding="utf-8")
+          print("CANDIDATE_RECONSTRUCT_OK")
+          PY
+          node --check /tmp/swyrl-anime-engine.mjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v8_5_anime_starter.py projects/swrlz-forge-moba/build_space.py
+          echo "NODE_SYNTAX_AND_PYTHON_COMPILE_OK"
