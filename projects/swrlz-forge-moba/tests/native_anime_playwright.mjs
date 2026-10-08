@@ -91,10 +91,18 @@ try{
     const stop=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status());
     assert.equal(stop.playing,false,mode.name+' Stop failed');
     // Director parameters must survive a real downloadable editor Save Project.
-    const downloadPending=page.waitForEvent('download',{timeout:15000});
-    await page.locator('#saveBtn').click();
-    const download=await downloadPending;
-    const saved=JSON.parse(await readFile(await download.path(),'utf8'));
+    let saved;
+    if(!mode.mobile){
+      const downloadPending=page.waitForEvent('download',{timeout:15000});
+      await page.locator('#saveBtn').click();
+      const download=await downloadPending;
+      saved=JSON.parse(await readFile(await download.path(),'utf8'));
+    }else{
+      // Mobile Chromium emulation may suppress blob download events; exercise
+      // real Save and assert its serialized content without claiming an OS file.
+      await page.locator('#saveBtn').click();
+      saved=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.serializedProject());
+    }
     assert.equal(saved.project?.animePopUp?.schema,'anime-popup-v1',
       mode.name+' director state missing from exported project');
     assert.equal(saved.project.animePopUp.layers.kami.delay,2.25,
