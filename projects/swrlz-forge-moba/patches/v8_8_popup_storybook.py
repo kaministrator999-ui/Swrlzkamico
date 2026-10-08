@@ -14,6 +14,8 @@ CSS=r"""
 .anime-director-button[hidden]{display:none!important}
 #animeCineHud #animeDirectorBtn{position:static;right:auto;bottom:auto;z-index:auto;
   padding:7px 9px;min-width:unset;font-size:11px;white-space:nowrap}
+#animeCineLayerPanel{bottom:calc(100% + 9px);max-height:min(51dvh,420px);
+ overflow-y:auto;overscroll-behavior:contain;z-index:2}
 .anime-director{position:fixed;z-index:440;top:8vh;right:12px;width:min(360px,94vw);max-height:82dvh;
  overflow:auto;background:#101322f5;color:#f5e6cf;border:1px solid #ad8966;box-shadow:0 15px 55px #000c;
  border-radius:14px;padding:15px;font:13px system-ui}
