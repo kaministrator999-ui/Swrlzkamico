@@ -2,7 +2,7 @@
 
 Canonical lane: §E / §wyrl§ Engine  
 History audited through: **2026-10-07**  
-Current source candidate: **v8.8 — Pop-Up Storybook Director (47-patch cinematic stage; browser acceptance in progress and deployment pending)**. Historical releases remain preserved.
+Current source candidate: **v8.8 — Pop-Up Storybook Director (47-patch full build and desktop/mobile Chromium Play + Save acceptance passed; production deploy pending)**. Historical releases remain preserved.
 
 Previously verified live release: **v8.6 — Native Anime Studio Play** ([Actions 37719877533](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719877533); exact served HTML and both episode/scene assets SHA-256 verified). Earlier v8.3 live receipts remain in historical sections.
 
@@ -22,7 +22,7 @@ Source: `patches/v8_6_native_anime_cinematic.py`; final SHA-256 `1468357c5ce082b
 
 ## v8.8 candidate · Pop-Up Storybook Video Creator
 
-Upgrade the existing Anime Studio starter rather than creating another image or application. Native Three.js book geometry opens under the scene; independent painted book/card/cathedral/workshop/foreground plates rise on animated hinges with perspective parallax. Kami and §wyrlz become separately rendered dark-fantasy wizard cels, echoing the user's two-wizard artwork direction. **Pop-Up Director** saves per-layer depth, parallax, horizontal offset, unfold delay/duration as part of project JSON. The original eight acts, subtitles, Explore/Stop, and unrelated project templates are preserved. See [POPUP_VIDEO_CREATOR.md](POPUP_VIDEO_CREATOR.md) for explicit feature and remaining limits.
+Upgrade the existing Anime Studio starter rather than creating another image or application. Native Three.js book geometry opens under the scene; independent painted book/card/cathedral/workshop/foreground plates rise on animated hinges with perspective parallax. Kami and §wyrlz become separately rendered dark-fantasy wizard cels, echoing the user's two-wizard artwork direction. **Pop-Up Director** saves per-layer depth, parallax, horizontal offset, unfold delay/duration as part of project JSON. The original eight acts, subtitles, Explore/Stop, and unrelated project templates are preserved. Exact 644,951-byte candidate SHA-256 `06c55a0d090bd6ffa9383ff44f914b922a841de7dc03284a50955cb4036478cd` and browser acceptance [Actions 37726896000](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37726896000). See [POPUP_VIDEO_CREATOR.md](POPUP_VIDEO_CREATOR.md) for explicit feature and remaining limits.
 
 ## v8.7 candidate · Cel-layer anime cinematics
 
