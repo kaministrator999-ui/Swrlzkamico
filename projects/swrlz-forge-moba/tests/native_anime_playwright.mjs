@@ -65,6 +65,23 @@ try{
     assert.ok(pop.characterCels.kami>=1&&pop.characterCels.swyrlz>=1,mode.name+' distinct character layers missing');
     assert.ok(pop.sceneZ.background<pop.sceneZ.midground&&pop.sceneZ.midground<pop.sceneZ.foreground,
       mode.name+' pop-up book lacks depth separation');
+    // Regression for actual phone screenshots: cardboard scenery must not
+    // swing up over Kami/§wyrlz or through the cinematic camera.
+    for(const timestamp of [9,72]){
+      await page.evaluate(t=>window.SWYRL_ENGINE_CINEMATIC.seek(t),timestamp);
+      const safe=(await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.popUpStatus())).stageSafety;
+      assert.ok(safe&&Object.values(safe).every(Number.isFinite),
+        mode.name+' missing physical stage metrics');
+      assert.ok(safe.bookTopY<safe.kamiBottomY-.15,
+        mode.name+' '+timestamp+'s book occludes Kami: '+JSON.stringify(safe));
+      assert.ok(safe.foregroundInkTopY<safe.kamiBottomY-.15,
+        mode.name+' '+timestamp+'s stage/desk card cuts across actors: '+JSON.stringify(safe));
+      assert.ok(safe.cathedralZ<Math.min(safe.characterZ,safe.swyrlzZ)-.5,
+        mode.name+' '+timestamp+'s cathedral passed through character layer: '+JSON.stringify(safe));
+      assert.ok(safe.cameraFrontGap>4,
+        mode.name+' '+timestamp+'s scenery entered camera near-field: '+JSON.stringify(safe));
+    }
+    await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.seek(2));
     const subtitle=await page.locator('#animeCineCaption').innerText();
     assert.ok(subtitle.length>15,mode.name+' dialogue missing');
     const captionBox=await page.locator('#animeCineCaption').evaluate(el=>{
