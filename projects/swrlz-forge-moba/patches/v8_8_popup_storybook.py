@@ -12,6 +12,8 @@ CSS=r"""
 .anime-director-button{position:fixed;right:16px;bottom:59px;z-index:81;background:#362442;
  border:1px solid #c8a276;border-radius:9px;padding:10px;color:#fff1d5;font-weight:700;font-size:12px}
 .anime-director-button[hidden]{display:none!important}
+#animeCineHud #animeDirectorBtn{position:static;right:auto;bottom:auto;z-index:auto;
+  padding:7px 9px;min-width:unset;font-size:11px;white-space:nowrap}
 .anime-director{position:fixed;z-index:440;top:8vh;right:12px;width:min(360px,94vw);max-height:82dvh;
  overflow:auto;background:#101322f5;color:#f5e6cf;border:1px solid #ad8966;box-shadow:0 15px 55px #000c;
  border-radius:14px;padding:15px;font:13px system-ui}
@@ -297,6 +299,12 @@ function animeUpdateCelLayers(c,x,t,act){
   c.layers.guardian.visible=c.layerSettings.guardian!==false;
   c.layers.characters.visible=c.layerSettings.characters!==false;
 }
+function animeDirectorPlaceButton(inHud){
+  const button=document.getElementById('animeDirectorBtn');
+  if(!button)return;
+  const target=inHud?animeHud?.querySelector('.anime-cine-controls'):document.body;
+  if(target&&button.parentElement!==target)target.append(button);
+}
 function animeDirectorInstall(){
   if(document.getElementById('animeDirectorBtn'))return;
   const button=document.createElement('button');button.id='animeDirectorBtn';
@@ -371,6 +379,10 @@ def apply(html):
       "else loadCanonicalGlitchDen();installAnimeStarterUI();animeDirectorInstall();")
     s=once(s,"  setLayer:(name,visible)=>animeLayerVisible(name,visible)",
       "  setLayer:(name,visible)=>animeLayerVisible(name,visible),\n  director:()=>animePopConfig(),\n  setPopUp:(layer,field,value)=>{if(!ANIME_POP_KEYS.includes(layer)||!Object.hasOwn(ANIME_POP_LIMITS,field))return false;\n    const n=Number(value),bounds=ANIME_POP_LIMITS[field];if(!Number.isFinite(n))return false;\n    animePopConfig().layers[layer][field]=Math.max(bounds[0],Math.min(bounds[1],n));markDirty();if(animeCine)animeUpdateCinematic(0);return true;},\n  popUpStatus:()=>{const c=animeCine;if(!c)return null;\n    const groups=Object.values(c.layers);\n    return {bookCount:groups.reduce((n,g)=>n+g.children.filter(z=>z.userData.animePopupBook).length,0),\n      hinges:groups.reduce((n,g)=>n+g.children.filter(z=>z.userData.popupHinge).length,0),\n      characterCels:{kami:c.cast.kami.children.length,swyrlz:c.cast.wisp.children.length},\n      sceneZ:{background:animePopConfig().layers.background.depth,midground:animePopConfig().layers.midground.depth,foreground:animePopConfig().layers.foreground.depth}};}")
+    s=once(s,"  animeUpdateCinematic(0);\n  editorLog('Native anime cinematic Play started",
+      "  animeDirectorPlaceButton(true);animeUpdateCinematic(0);\n  editorLog('Native anime cinematic Play started")
+    s=once(s,"  animeHud?.classList.remove('show');",
+      "  animeDirectorPlaceButton(false);animeHud?.classList.remove('show');")
     s=once(s,'V8_7_ANIME_CEL_PARALLAX','V8_8_POPUP_STORYBOOK_DIRECTOR')
     s=s.replace('Maker v8.7','Maker v8.8').replace('MAKER v8.7','MAKER v8.8')
     s=s.replace("version:'v8.7'","version:'v8.8'").replace('version:8.7','version:8.8')
