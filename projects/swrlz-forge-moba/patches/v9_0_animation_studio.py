@@ -13,8 +13,9 @@ def apply(html):
     runtime = root / 'runtime'
     css = (runtime / 'anime_editor.css').read_text(encoding='utf-8')
     css += (runtime / 'anime_stage.css').read_text(encoding='utf-8')
+    css += (runtime / 'anime_screening.css').read_text(encoding='utf-8')
     js = '\n'.join((runtime / name).read_text(encoding='utf-8') for name in
-        ('anime_timeline.js', 'anime_stage.js', 'anime_editor.js'))
+        ('anime_timeline.js', 'anime_stage.js', 'anime_editor.js', 'anime_screening.js'))
     assert '<script type="module">' in html
     result = html.replace('<script type="module">', '<style id="storyStudioStyles">'+css+'</style>\n<script type="module">',1)
     result = once(result, "window.SWRLZ_FORGE_BUILD={version:'v8.9'", js+"\nwindow.SWRLZ_FORGE_BUILD={version:'v8.9'")
