@@ -99,7 +99,7 @@ jobs:
           python - <<'PY'
           import json,os,urllib.request
           from urllib.parse import urlencode
-          trigger='51fec4bdf785e32950cc1d41256e3dba13c46598'
+          trigger='29af90124d0cf469dcf0bc110b481f09cfb0014f'
           url='https://api.github.com/repos/kaministrator999-ui/Swrlzkamico/actions/workflows/deploy-swrlz-forge-moba.yml/runs?per_page=30'
           req=urllib.request.Request(url,headers={
             'Accept':'application/vnd.github+json',
