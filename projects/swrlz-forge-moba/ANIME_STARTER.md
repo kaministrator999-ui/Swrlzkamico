@@ -51,7 +51,13 @@ The **Play** mode runs a project-scoped **native Three.js cinematic**: 134 secon
 
 Do not silently build features beyond these requirements or confuse an editor-integrated screening iframe with an executable engine animation timeline.
 
-## v8.7 · 2D anime cels with 3D parallax (candidate)
+## v8.8 · Animated Storybook Video Creator starter
+
+The native anime project now stages a book-shaped Three.js prop with page thickness, two opening page halves and multiple scenery cards that **unfold from the book** at separately editable times. The illustrated wizard art is redrawn in source code from the dark-fantasy sketch direction: Kami is the larger horn-hooded staff wizard, and §wyrlz is the smaller floating, book-holding skeletal mage. They are **different cels and different toggleable layers** (rather than a shared image).
+
+The in-editor **✦ Pop-Up Director** gives each background, atmosphere, cathedral/workshop, Kami, §wyrlz, effects and foreground layer independently saved Z depth, side position, parallax, unfold delay and duration. Save Project includes `project.animePopUp`. All visuals use CanvasTexture, not paid generative image requests. This is a procedural dark-fantasy rendition, not a pixel-perfect extraction of earlier artwork. See [POPUP_VIDEO_CREATOR.md](POPUP_VIDEO_CREATOR.md).
+
+## v8.7 · 2D anime cels with 3D parallax (historical)
 
 The Anime Studio **Play** cinematic now uses a layered **2.5D cel compositor**, responding to real phone screenshots from v8.6:
 
