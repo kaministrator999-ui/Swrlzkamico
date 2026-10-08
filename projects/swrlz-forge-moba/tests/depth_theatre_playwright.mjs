@@ -90,6 +90,12 @@ function safe(observation,label){
     assert.ok(actor.right>0&&actor.left<1&&actor.bottom>0&&actor.top<1,id+' is outside the shot: '+label);
   }
 }
+function foldedScenerySafe(observation,label){
+  assert.equal(observation.occlusionSafe,true,'Folding scenery obstructs the mages or camera: '+label);
+  assert.ok(observation.safeCameraGap>6,'Folding scenery enters the camera: '+label);
+  for(const plate of observation.scenery)
+    assert.ok(plate.frontZ<=plate.z+.001,'The folded '+plate.id+' crosses its parent hinge plane: '+label);
+}
 function detailedScenery(observation,label){
   assert.equal(observation.active,true,'Scenery renderer is inactive: '+label);
   assert.equal(observation.enabled,true,'Layered scenery is disabled: '+label);
@@ -171,6 +177,9 @@ try{
     assert.equal(original.scene.actors.length,70,'Scenery creation altered existing editor actors');
     assert.equal(original.editor.layers.length,11,'Scenery creation altered existing editor layers');
 
+    // Include intermediate opening frames. Sky geometry below its bottom
+    // hinge or an unprotected thick cutout can otherwise swing toward camera.
+    for(const time of [0,.2,1,2,4,7,9,12])foldedScenerySafe(await seek(page,time),mode.name+' unfolding '+time+'s');
     safe(await seek(page,17.25),mode.name+' initial layered shot');
     const initial=await rendered(page);detailedScenery(initial,mode.name+' initial theatre');
     await facialAlignment(page,mode.name+' authored faces');
