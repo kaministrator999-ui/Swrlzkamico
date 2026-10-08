@@ -20,6 +20,12 @@ def apply(html):
     result = once(result, "window.SWRLZ_FORGE_BUILD={version:'v8.9'", js+"\nwindow.SWRLZ_FORGE_BUILD={version:'v8.9'")
     result = once(result, 'installAnimeStarterUI();animeDirectorInstall();refreshAssetList();',
         'installAnimeStarterUI();animeDirectorInstall();storyEditorInstall();refreshAssetList();')
+    # Replace the historical iframe's default Watch action, not the entire
+    # preserved original screening implementation. Keep the same scoped button.
+    result = once(result, "button.type='button';button.textContent='▶ Watch Episode 01';button.hidden=true;",
+        "button.type='button';button.textContent='▶ Watch 2.5D Episode 01';button.hidden=true;")
+    result = once(result, "button.addEventListener('click',openAnimeScreening);",
+        "button.addEventListener('click',storyWatchNativeEpisode);")
     # Legacy 62-actor studio source remains preserved. The new canonical package
     # is the actual native editor export, with saved visual actors and tracks.
     scene = root / 'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json'
