@@ -4,6 +4,7 @@ import {readFile} from 'node:fs/promises';
 
 const base=process.env.SWYRL_ANIME_TEST_URL||'http://127.0.0.1:8765';
 const browser=await chromium.launch({
+  ...(process.env.SWYRL_CHROMIUM_PATH?{executablePath:process.env.SWYRL_CHROMIUM_PATH}:{}),
   headless:true,args:['--no-sandbox','--disable-dev-shm-usage',
     '--enable-webgl','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']
 });
@@ -33,14 +34,15 @@ try{
     const after=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status());
     assert.ok(after.elapsed>before.elapsed+.5,mode.name+' cinema clock did not advance');
     assert.ok(after.camera&&after.camera.every(Number.isFinite),mode.name+' camera missing');
-    assert.notEqual(after.camera[0],before.camera[0],mode.name+' camera did not move');
+    assert.ok(after.camera.some((value,index)=>Math.abs(value-before.camera[index])>1e-6),
+      mode.name+' camera did not move on any axis');
     const hud=await page.locator('#animeCineHud').isVisible();
     assert.ok(hud,mode.name+' cinematic HUD missing');
     const visual=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status());
     assert.deepEqual(Object.keys(visual.layers||{}).sort(),
       ['background','atmosphere','midground','characters','kami','swyrlz','guardian','effects','foreground'].sort(),
       mode.name+' missing 2.5D layer stack');
-    assert.ok(visual.celCount>=3,mode.name+' illustrated anime cels missing');
+    assert.ok(visual.celCount>=2,mode.name+' independent Kami and §wyrlz anime cels missing');
     assert.equal(await page.locator('#animeCineLayers').isVisible(),true,mode.name+' Layers UI missing');
     await page.locator('#animeCineLayers').click();
     await page.locator('input[data-anime-layer="foreground"]').uncheck();

@@ -1,4 +1,4 @@
-name: Deploy §wyrl§ Engine to Hugging Face
+name: Deploy §wyrl§ Engine v9.0 to Hugging Face
 
 # Production deploys only when the dedicated release-button file is deliberately changed.
 # Ordinary §E source/docs/manifest edits MUST NOT trigger production.
@@ -38,8 +38,8 @@ jobs:
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V8_9_CINEMATIC_STAGING_SAFE" dist/swrlz-forge-moba/index.html
-          grep -q "<title>§wyrl§ Engine · Maker v8.9</title>" dist/swrlz-forge-moba/index.html
+          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V9_0_AUTHORED_PAPER_THEATRE" dist/swrlz-forge-moba/index.html
+          grep -q "<title>§wyrl§ Engine · Maker v9.0</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
@@ -112,10 +112,13 @@ jobs:
               "sourceRepository": "kaministrator999-ui/Swrlzkamico",
               "sourceCommit": source_sha,
               "sourcePath": "projects/swrlz-forge-moba",
-              "sourceVersion": "v8.9",
+              "sourceVersion": "v9.0",
               "engineName": "§wyrl§ Engine",
               "sourceSha256": source["finalSha256"],
               "sourceBytes": source["finalBytes"],
+              "sourceAssets": source["assets"],
+              "sourcePatchCount": len(source["patches"]),
+              "sourceLatestPatch": source["patches"][-1],
               "spaceRepository": target,
               "spaceRevision": info.sha,
               "spacePage": "https://huggingface.co/spaces/kamiloki/swrlz-forge-moba",
@@ -132,7 +135,7 @@ jobs:
           print(json.dumps(receipt, indent=2))
           PY
 
-      - name: Verify live Space serves §wyrl§ Engine v8.9
+      - name: Verify live Space serves the complete §wyrl§ Engine v9.0 package
         env:
           SOURCE_SHA: ${{ github.sha }}
           APP_URL: ${{ steps.deploy_space.outputs.app_url }}
@@ -141,6 +144,18 @@ jobs:
           test -n "$APP_URL" || { echo "::error::Hugging Face did not return a live app URL."; exit 1; }
           URL="${APP_URL}?build=$SOURCE_SHA"
           EXPECTED_HTML_SHA="$(sha256sum dist/swrlz-forge-moba/index.html | cut -d ' ' -f1)"
+          EXPECTED_HTML_BYTES="$(wc -c < dist/swrlz-forge-moba/index.html)"
+          python - <<'PYCODE'
+          import json
+          from pathlib import Path
+          official=json.loads(Path('dist/swrlz-forge-moba/SOURCE.json').read_text())
+          assert len(official['patches'])==49
+          assert official['patches'][-1]=='patches/v9_0_animation_studio.py'
+          # Fetch every bundled media asset, including the authored scene and
+          # transparent PNG layers, then verify the complete source receipt.
+          Path('/tmp/forge-asset-paths.txt').write_text(
+              '\n'.join([*sorted(official['assets']), 'SOURCE.json'])+'\n')
+          PYCODE
           for attempt in 1 2 3 4 5 6; do
             echo "Live verification attempt $attempt"
             if curl -fsSL --max-time 30 "$URL&attempt=$attempt" -o /tmp/forge-live.html; then
@@ -154,26 +169,29 @@ jobs:
           Path("/tmp/forge-live-source.html").write_bytes(source)
           PYCODE
               LIVE_HTML_SHA="$(sha256sum /tmp/forge-live-source.html | cut -d ' ' -f1)"
-              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V8_9_CINEMATIC_STAGING_SAFE" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ]; then
-                # A release is incomplete if its editor-integrated screening or
-                # importable canonical starter are stale or missing.
+              LIVE_HTML_BYTES="$(wc -c < /tmp/forge-live-source.html)"
+              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V9_0_AUTHORED_PAPER_THEATRE" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ] && [ "$LIVE_HTML_BYTES" -eq "$EXPECTED_HTML_BYTES" ]; then
                 ASSET_OK=1
-                for asset in episodes/ghosts-in-different-forms-ep01.html scenes/ghosts-in-different-forms-ep01.swyrl.json SOURCE.json; do
+                while IFS= read -r asset; do
                   mkdir -p "/tmp/forge-assets/$(dirname "$asset")"
                   if ! curl -fsSL --max-time 30 "${APP_URL}${asset}?build=$SOURCE_SHA&attempt=$attempt" -o "/tmp/forge-assets/$asset"; then
                     ASSET_OK=0
                     break
                   fi
-                done
+                done < /tmp/forge-asset-paths.txt
                 if [ "$ASSET_OK" -eq 1 ]; then
                   if python - <<'PYCODE'
           import hashlib,json,re
           from pathlib import Path
-          source=json.loads(Path('/tmp/forge-assets/SOURCE.json').read_text())
           expected=Path('dist/swrlz-forge-moba/SOURCE.json')
+          live_receipt=Path('/tmp/forge-assets/SOURCE.json').read_bytes()
+          assert live_receipt==expected.read_bytes(),'Live SOURCE receipt bytes differ'
+          source=json.loads(live_receipt)
           official=json.loads(expected.read_text())
           assert source['finalSha256']==official['finalSha256']
           assert source['finalBytes']==official['finalBytes']
+          assert source['patches']==official['patches']
+          assert source['assets']==official['assets']
           for asset,meta in official['assets'].items():
               live=Path('/tmp/forge-assets')/asset
               served=live.read_bytes()
@@ -186,20 +204,21 @@ jobs:
                     ' EXPECTED_BYTES='+str(meta['bytes']))
               assert len(data)==meta['bytes'],asset
               assert hashlib.sha256(data).hexdigest()==meta['sha256'],asset
-          print('LIVE_ANIME_STARTER_AND_EPISODE_HASHES_MATCH')
+              assert data==(Path('dist/swrlz-forge-moba')/asset).read_bytes(),asset
+          print('LIVE_V9_0_ARTWORK_SCENES_SCREENING_AND_SOURCE_RECEIPT_MATCH')
           PYCODE
                   then
-                    echo "Verified: exact §wyrl§ Engine v8.9 and both anime starter media assets."
+                    echo "Verified: exact §wyrl§ Engine v9.0, all bundled artwork/scenes/screening, and SOURCE receipt."
                     exit 0
                   fi
                 fi
-                echo "Editor HTML arrived but anime assets or SOURCE receipt did not match yet."
+                echo "Editor HTML arrived but bundled anime assets or SOURCE receipt did not match yet."
               fi
-              echo "Live page responded, but the exact v8.9 artifact was not present yet."
+              echo "Live page responded, but the exact v9.0 artifact was not present yet."
             fi
             sleep 10
           done
-          echo "::error::Hugging Face upload completed, but the live Space did not serve the v8.9 marker within the verification window."
+          echo "::error::Hugging Face upload completed, but the live Space did not serve the complete v9.0 package within the verification window."
           exit 1
 
       - name: Preserve deploy receipt

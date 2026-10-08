@@ -1,6 +1,11 @@
-name: Audit exact §E v8.9 hosted storybook release
+name: Audit exact §E hosted release
 on:
   pull_request:
+    branches: [main]
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Deploy §wyrl§ Engine v9.0 to Hugging Face"]
+    types: [completed]
     branches: [main]
 permissions:
   contents: read
@@ -9,51 +14,80 @@ jobs:
   receipt:
     runs-on: ubuntu-latest
     steps:
-      - name: Check exact deploy run and live storybook source/assets
+      - name: Read the production release authority from main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Check exact deploy run and live source with every bundled asset
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           python - <<'PY'
-          import hashlib,json,os,re,time,urllib.request
-          from urllib.parse import urlencode
-          trigger='a1639c14f2ef5bfe1cf01f6bd3693bfd381ae277'
-          expected='da9f48941543c81062a232417ed8897e8c82e912852474cf2154e209c12ddf37'
+          import hashlib,json,os,re,subprocess,time,urllib.request
+          from pathlib import Path
+          engine='projects/swrlz-forge-moba'
+          request=json.loads(Path(engine+'/DEPLOY_REQUEST.json').read_text())
+          trigger=subprocess.check_output(['git','log','-1','--format=%H','--',engine+'/DEPLOY_REQUEST.json'],text=True).strip()
+          source_commit=request['sourceCommit']
+          def committed(path):
+              return subprocess.check_output(['git','show',source_commit+':'+engine+'/'+path])
+          manifest=json.loads(committed('source-manifest.json'))
+          expected=request['sourceIntegritySha256']
+          assert manifest['finalSha256']==expected
           repo='kaministrator999-ui/Swrlzkamico'
           url=f'https://api.github.com/repos/{repo}/actions/workflows/deploy-swrlz-forge-moba.yml/runs?per_page=40'
-          h={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json',
-             'User-Agent':'swyrl-storybook-live-audit','X-GitHub-Api-Version':'2022-11-28'}
-          def load(url,headers={}):
-            req=urllib.request.Request(url,headers={**headers,'User-Agent':'swyrl-storybook-live-audit'})
-            return urllib.request.urlopen(req,timeout=35).read()
+          headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json',
+                   'X-GitHub-Api-Version':'2022-11-28'}
+          def load(url,extra=None):
+              req=urllib.request.Request(url,headers={**(extra or {}),'User-Agent':'swyrl-engine-live-audit'})
+              return urllib.request.urlopen(req,timeout=35).read()
           final=None
-          for i in range(16):
-            runs=json.loads(load(url,h)).get('workflow_runs',[])
-            match=[r for r in runs if r.get('head_sha')==trigger]
-            if match:
-              final=match[0]
-              print('V8_9_DEPLOY_RUN_ID='+str(final['id'])+' STATUS='+str(final['status'])+
-                ' CONCLUSION='+str(final['conclusion'])+' URL='+str(final['html_url']),flush=True)
-              if final['status']=='completed':break
-            time.sleep(5)
-          assert final and final['status']=='completed' and final['conclusion']=='success', 'exact v8.9 dedicated deployment not successful'
+          for attempt in range(16):
+              runs=json.loads(load(url,headers)).get('workflow_runs',[])
+              matches=[run for run in runs if run.get('head_sha')==trigger]
+              if matches:
+                  final=matches[0]
+                  print('DEPLOY_RUN_ID='+str(final['id'])+' STATUS='+str(final['status'])+
+                        ' CONCLUSION='+str(final['conclusion'])+' URL='+str(final['html_url']),flush=True)
+                  if final['status']=='completed':break
+              time.sleep(5)
+          assert final and final['status']=='completed' and final['conclusion']=='success','Exact dedicated deployment did not succeed'
           root='https://kamiloki-swrlz-forge-moba.static.hf.space/'
           def normalized(payload):
-            return re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',
-              b'',payload,count=1)
+              return re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',b'',payload,count=1)
           html=normalized(load(root+'index.html?receipt='+trigger))
           digest=hashlib.sha256(html).hexdigest()
-          print('V8_9_HOSTED_HTML_BYTES='+str(len(html))+' SHA256='+digest)
           assert digest==expected
-          assert len(html)==647639
-          assert b'V8_9_CINEMATIC_STAGING_SAFE' in html
+          assert len(html)==manifest['finalBytes']
+          assert request['deployMarker'].encode() in html
           receipt=json.loads(load(root+'SOURCE.json?receipt='+trigger))
-          assert receipt['finalSha256']==digest
-          assert len(receipt['patches'])==48
+          assert receipt['finalSha256']==digest and receipt['finalBytes']==len(html)
+          assert receipt['patches']==manifest['patches']
+          paths=subprocess.check_output(['git','ls-tree','-r','--name-only',source_commit,'--',engine],text=True).splitlines()
+          source_paths={path[len(engine)+1:] for path in paths}
+          expected_assets={'episodes/ghosts-in-different-forms-ep01.html','scenes/ghosts-in-different-forms-ep01.swyrl.json'}
+          authored='scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json'
+          if authored in source_paths:expected_assets.add(authored)
+          expected_assets.update(path for path in source_paths if path.startswith('assets/anime/') and path.endswith('.png'))
+          assert set(receipt['assets'])==expected_assets,'Bundled asset set differs from committed source'
           for path,meta in receipt['assets'].items():
-            source=load(root+path+'?receipt='+trigger)
-            data=normalized(source) if path.endswith('.html') else source
-            assert len(data)==meta['bytes'],path
-            assert hashlib.sha256(data).hexdigest()==meta['sha256'],path
-            print('V8_9_LIVE_ASSET_OK='+path,flush=True)
-          print('V8_9_LIVE_SOURCE_AND_ASSETS_VERIFIED')
+              served=load(root+path+'?receipt='+trigger)
+              data=normalized(served) if path.endswith('.html') else served
+              assert len(data)==meta['bytes'],path
+              assert hashlib.sha256(data).hexdigest()==meta['sha256'],path
+              assert data==committed(path),'Hosted asset differs from source: '+path
+              print('LIVE_ASSET_OK='+path,flush=True)
+          audit={'releaseVersion':request['releaseVersion'],'sourceCommit':source_commit,'deployTrigger':trigger,
+                 'deployRun':final['html_url'],'appUrl':root,'sourceBytes':len(html),'sourceSha256':digest,
+                 'assets':receipt['assets'],'result':'exact-source-and-all-assets-match'}
+          Path('swyrl-hosted-audit.json').write_text(json.dumps(audit,indent=2)+'\n')
+          print('HOSTED_HTML_BYTES='+str(len(html))+' SHA256='+digest)
+          print('LIVE_SOURCE_AND_ALL_ASSETS_VERIFIED')
           PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swyrl-hosted-release-audit
+          path: swyrl-hosted-audit.json
+          retention-days: 30

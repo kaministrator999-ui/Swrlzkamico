@@ -1,4 +1,26 @@
-# §wyrl§ Engine v8.9 · camera-safe scene staging verification
+# §wyrl§ Engine v9.0 candidate · Native Animation Studio acceptance
+
+Current candidate: `patches/v9_0_animation_studio.py`, 49 governed patches, artifact `swyrl_engine_v9_0.html`, marker `V9_0_AUTHORED_PAPER_THEATRE`. Sealed HTML: **746,616 bytes**, SHA-256 `6a0a9d24e2c888991afbe051d2ae5eba65f38a034c590013e447ca129962d157`. Remote candidate CI, dedicated deployment, and hosted v9.0 source/artwork receipts remain pending at documentation time.
+
+The native exported starter contains 70 actors and 11 editor layers, including eight new saved paper actors/layers alongside all original 62 production set actors and three layers. Its 134 second episode has eight story beats and nine independent tracks. Generated individual Kami/§wyrlz artwork and separate scenery PNGs are bundled with the scene.
+
+Local desktop and phone-sized Chromium authoring/Play acceptance has been exercised using `tests/storybook_authoring_playwright.mjs`. The suite covers 1440 × 900 desktop and 390 × 844 portrait layouts, native keyframe/title/dialogue controls, deterministic Preview Frame, Undo/Redo, Save/Load, actual editor Play, Pause/scrub, multi-beat camera/depth checks, cast framing, Stop/camera restoration, and separation from Embervault and Starforge. These are local candidate checks, not remote release receipts.
+
+- [x] Native storybook scene export includes separate saved cast/scenery/book actors, owned layers, and the episode timeline.
+- [x] Local desktop/mobile authoring and native Play have been exercised; bundled images and portrait framing are included in the candidate acceptance scope.
+- [x] Reconstruct the sealed artifact, compile the patch chain, and syntax-check the generated JavaScript.
+- [x] Capture Actor Pose transfers native Inspector transforms to a keyframe while preserving the companion track.
+- [x] Independent book controls, opaque foreground artwork, low companion-only shots, and null optional visual metadata have regression coverage.
+- [x] Saving from Preview/Play preserves the authored environment; a targeted render check confirms physical character folding.
+- [ ] Obtain remote candidate CI acceptance for the final source.
+- [ ] Follow the dedicated `DEPLOY_REQUEST.json` workflow run to terminal success with the exact trigger/source commit.
+- [ ] Verify the hosted marker and complete normalized engine, scene, episode, and all artwork integrity before calling v9.0 live.
+
+The original Watch Episode 01 button remains a separate historical 2D screening. Skeletal posing, lip sync, audio authoring, and MP4 export are not implemented. [Native authoring workflow](ANIMATION_STUDIO.md) · [Direct starter URL](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01).
+
+---
+
+# Historical §wyrl§ Engine v8.9 · camera-safe scene staging verification
 
 Candidate patch `patches/v8_9_cinematic_staging.py` corrects user-observed v8.8 near-camera book/desk occlusion. The Playwright suite now seeks early and later acts on desktop and phone, verifying the physical book and painted foreground trim stay below Kami and that cathedral scenes stay behind both characters; no default cutout may approach the camera near field. Desktop and phone-sized Chromium tests **passed** in [Actions 37728474772](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37728474772). Full engine 647,639 bytes SHA-256 `da9f48941543c81062a232417ed8897e8c82e912852474cf2154e209c12ddf37`. Exact production deployment **PASSED** [37728665723](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37728665723); independent fresh live download audit **PASSED** [37728754278](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37728754278): normalized HTML 647,639 bytes matching SHA-256 and both bundled episode and scene assets match.
 

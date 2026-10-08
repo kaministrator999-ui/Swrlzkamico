@@ -44,11 +44,25 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v8.9 candidate · Camera-safe Pop-Up Storybook
+## Current v9.0 candidate · Native Animation Studio and Paper Theatre
+
+The **Ghosts in Different Forms · The Page That Remembered** starter is now authored and saved through the native editor. Its 134 second episode has eight story beats and nine independent tracks: Camera, Kami, §wyrlz, Background, Atmosphere, Midground, Effects, Foreground, and Book. Kami is the larger horn-hooded mage; §wyrlz is the smaller hovering skull mage. Newly generated transparent character artwork and independent scenery plates follow the supplied gothic amber/gold references.
+
+The exported `projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json` contains **70 actors and 11 editor layers**. Eight new saved paper actors each own a layer; the original 62 production set actors, three production layers, eight workstations, and eight destinations are preserved. Native `animeCel` and `animeBook` actors persist through Save/Load, with the timeline under `project.animeTimeline`.
+
+**Animation Studio** edits camera position/target/FOV, individual cast/scenery/book keys, numeric transforms, easing, visibility, opacity, unfolding, episode title, and timed dialogue. Preview Frame and the editor Play button use the same native renderer. Timeline and artwork changes use native Undo/Redo and Save Project; PNG, WebP, and JPEG artwork can replace a saved layer. The **Capture Actor Pose** workflow copies a track's native Inspector pose into a keyframe.
+
+Reusable engine implementation lives in `runtime/anime_timeline.js`, `runtime/anime_stage.js`, `runtime/anime_editor.js`, their CSS, and the 49th governed patch `patches/v9_0_animation_studio.py`. Physical mesh cards unfold around bottom-edge hinges, with protective scenery depth, a low foreground/book, and adaptive portrait framing. Candidate marker: `SWYRL_ENGINE_DEPLOY_MARKER: V9_0_AUTHORED_PAPER_THEATRE`; artifact: `swyrl_engine_v9_0.html`. Final integrity values come from the sealed manifest/build receipt rather than this draft documentation.
+
+Local desktop and phone-sized Chromium authoring/Play acceptance has been exercised. Final source sealing, remote candidate CI, the dedicated deployment run, and exact served source/artwork verification remain **pending at documentation time**. Do not report v9.0 live from local tests. The original **Watch Episode 01** remains the historical 2D screening; native Play runs the saved paper theatre. Skeletal posing, lip sync, audio authoring, and MP4 export remain unimplemented. See `ANIMATION_STUDIO.md` and `VERIFICATION.md` in the engine project.
+
+Direct starter: https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01 .
+
+## Previous verified v8.9 release · Camera-safe Pop-Up Storybook
 
 Android playback revealed the v8.8 set/desk card and book obscuring the actors. Source patch `projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py` lowers the animated book, makes the foreground a thin bottom border with transparent upper pixels, and enforces behind-the-cast architecture and effects. Tests check first/later scene occlusion geometry at phone and desktop sizes. v8.9 source: **48 patches**, `swyrl_engine_v8_9.html`, **647,639 bytes**, SHA-256 `da9f48941543c81062a232417ed8897e8c82e912852474cf2154e209c12ddf37`, marker `SWYRL_ENGINE_DEPLOY_MARKER: V8_9_CINEMATIC_STAGING_SAFE`. [Desktop/mobile Play/Save acceptance passed](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37728474772); [production deployment passed](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37728665723) and [independent hosted source+both media asset audit passed](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37728754278). v8.9 is **live**. Previous v8.8 is retained as historical source; **v8.9 is now the verified live release**.
 
-## Current v8.8 candidate · 3D Pop-Up Storybook Video Creator
+## Historical v8.8 candidate · 3D Pop-Up Storybook Video Creator
 
 The **same Ghosts in Different Forms anime starter** now owns a proper popup-book miniature stage in the §wyrl§ Engine. A physical two-half-book/page model opens below individually hinged scenery planes: moonlit fantasy city, swirling atmosphere, gothic arches, decorated workshop, magic runes and desk props. **Kami** is the taller horned main wizard, **§wyrlz** the smaller book-wielding wizard, each a separate CanvasTexture cel and independently toggleable/animatable layer; the unrequested mascot is absent during the video cinematic.
 
@@ -166,7 +180,7 @@ marker:
 
 ### Current projects and editor contract
 
-The third Anime Studio starter joins Embervault and Starforge as an independent project; it is editable and saveable in the native scene editor. The integrated episode screening is a static HTML media asset, **not** a native in-engine cinematic timeline. See current v8.5 source authority above.
+The Anime Studio starter joins Embervault and Starforge as an independent project. Current v9.0 candidate authoring uses 70 actors, 11 editor layers, nine saved animation tracks, and the native Animation Studio editor. The 134 second paper theatre runs through Preview Frame and Play. The separate Watch Episode screening retains its historical static HTML media asset. See the current v9.0 candidate contract above.
 
 Embervault Atelier is a spatial workspace for future VR, project work, and conversation. Its native saved scene lives in `projects/swrlz-forge-moba/scenes/embervault-atelier.swyrl.json`. The 170-actor assembly has lower workshops at 0m, a study gallery at 3.4m, and the dragon council at 4.6m, with physical ramps between them. It has six stations and eight teleport destinations. Three organizational editor layers are distinct from these physical elevations.
 
@@ -188,7 +202,7 @@ Preserve manual actor visibility separately from layer toggles and runtime shell
 
 Graphics & Performance retains Auto/Low/Medium/High/Custom presets, render scale, shadows, render caps, and independent FPS/frame-time overlays. Preferences persist locally. Scaling changes rendering, not project data or simulation semantics. Initialization runs only after scene creation at final bootstrap.
 
-### v8.4 release receipt contract
+### Historical v8.4 release receipt contract
 
 This documentation stages the release; it does not claim production completion. Source authority resolves to the validated normal release commit immediately preceding the final v8.4 `DEPLOY_REQUEST.json` commit. Deployment authority resolves to that trigger and the dedicated Actions run whose `head_sha` matches it. Require terminal success, marker, and exact served-source integrity after removing only the recognized Hugging Face creator script. Report the exact run and live page after verification, without mutating release content after the trigger.
 
