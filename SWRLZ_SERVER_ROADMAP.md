@@ -1,3 +1,28 @@
+## UPDATE STARTED — 2026-10-07 — lyric-region integrity + performer cues + structured-source preference v165
+
+**Trigger:** live v164 acceptance export `swrlz-dragon-chat (15).json` shows the new presentation layer was present but received a false-positive verified body. The fetched AZLyrics page begins with the requested Cold Piece of Work lyrics, while the extractor output begins with unrelated recommendation snippets. Attempt 2 was incorrectly marked VERIFIED, then `musicStructureDebug` reported zero explicit sections and zero compiled presentation characters.
+
+**Observed defects:**
+1. performer-only source cues such as `[JL:]` are not recognized by the lyric extractor or music-structure parser;
+2. when an HTML cleaner inserts blank lines between individual lyric lines, unmarked extraction discards one-line blocks while later recommendation snippets survive as multi-line blocks;
+3. generic `Artist - "Song"` recommendation snippets are not a hard post-song boundary;
+4. snippet/body consistency uses unordered token overlap, allowing unrelated body text with coincidental vocabulary overlap to pass;
+5. fallback stops on the first verified-but-unstructured source instead of using remaining bounded attempts to prefer a source carrying explicit Verse/Chorus/Bridge structure;
+6. a direct request for “the lyrics” resolves to generic `lyrics` rather than whole-work intent.
+
+**Repair plan:**
+- recognize performer-only markers as explicit performer cues without inventing Verse/Chorus semantics;
+- preserve lyric runs separated by blank lines when bounded by performer/section cues;
+- stop extraction at recommendation/footer rows;
+- require contiguous snippet/body sequence evidence in addition to token overlap;
+- expose sequence-span and structure-profile diagnostics;
+- continue within the existing 3-page ceiling until a verified structurally richer source is found;
+- prefer structured search candidates and penalize unwanted title variants such as “Original” when not requested;
+- interpret an unqualified existing-song “lyrics” request as full-lyrics unless the user explicitly scopes a verse/excerpt;
+- add a regression mirroring the exact v164 AZLyrics false-positive shape.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — music ontology + pre-chat presentation compiler v164
 
 **Outcome:** MUSIC FORM COGNITION + STRUCTURED VERIFIED-MUSIC DOCUMENT + PRE-CHAT PRESENTATION COMPILER IMPLEMENTED / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
