@@ -321,16 +321,20 @@ def _search_query_from_prompt(prompt: str) -> str:
 
 
 
-def _lyrics_requested_scope(text: str) -> str:
+def _lyrics_explicit_full_scope(text: str) -> bool:
     value=_clean(text,2000)
-    # Full-document intent outranks incidental mentions such as "not just the first verse".
-    if re.search(
+    return bool(re.search(
         r"\b(?:complete|full)\s+lyrics?\b|\ball\s+(?:the\s+)?(?:lyrics?|verses?)\b|"
         r"\bevery\s+verse\b|\bnot\s+just\s+the\s+first\s+verse\b|"
         r"\bdo\s+not\s+(?:summarize|shorten|omit)\b",
         value,
         re.I,
-    ):
+    ))
+
+def _lyrics_requested_scope(text: str) -> str:
+    value=_clean(text,2000)
+    # Full-document intent outranks incidental mentions such as "not just the first verse".
+    if _lyrics_explicit_full_scope(value):
         return "full-lyrics"
     if re.search(r"\b(?:first|opening)\s+verse\b",value,re.I):
         return "first-verse"
@@ -397,7 +401,7 @@ def _lyrics_search_query(text: str) -> str:
             bits.append("lyrics")
             if scope=="first-verse":
                 bits.append("first verse")
-            elif scope=="full-lyrics":
+            elif scope=="full-lyrics" and _lyrics_explicit_full_scope(text):
                 bits.append("all verses")
             return " ".join(bits)[:500]
     return _search_query_from_prompt(text)
