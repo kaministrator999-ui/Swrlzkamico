@@ -1,3 +1,53 @@
+## UPDATE FINISHED — 2026-10-07 — render full-width lyric boundaries v168
+
+**Outcome:** OUTER LYRIC BOUNDARIES NOW RENDER AS TRUE FULL-WIDTH CHAT RULES / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### Live v167 acceptance evidence
+Mobile screenshots showed:
+- the short internal `────────` lyric section divider rendered acceptably;
+- the outer `---` tokens before and after the lyric document were displayed literally as three dashes;
+- the presentation compiler was correct, but the custom Web Chat rich-text renderer had no Markdown horizontal-rule branch.
+
+### v168 renderer repair
+- `chat/§wyrlz/index.html` now recognizes a standalone `---` line during assistant rich-text parsing;
+- the parser emits semantic `<hr class="lyric-document-divider">` instead of a paragraph containing three dashes;
+- `.lyric-document-divider` is styled with `width:100%`, no browser-default border, a single top rule, and mobile-safe vertical spacing;
+- the existing short internal Unicode divider remains unchanged;
+- the v167 pre-chat presentation compiler contract remains unchanged;
+- Model Router/Chat still receive the same precompiled `presentationText`; this patch fixes rendering rather than moving presentation cognition into Chat.
+
+### Regression
+Added `tests/test_full_width_lyric_boundary_rendering_v168.py`, proving:
+- standalone `---` recognition exists in the live Chat renderer;
+- the renderer creates an `hr` element with the dedicated lyric-boundary class;
+- the CSS specifies `width:100%`;
+- v167 outer/inner divider compiler tokens remain unchanged.
+
+### Deployment receipts
+- guarded HF run: `37720000097` — terminal **SUCCESS**;
+- exact selected feature source: `ecc1d8f3a7015a899836360103d0202780bf2d99`;
+- regression gate: v151 PASS, v155 PASS, v157 PASS, v158 PASS, v159 PASS, v160 PASS, v161 PASS, v162 PASS, v163 PASS, v164 PASS, v165 PASS, v166 PASS, v167 PASS, **v168 PASS**;
+- native R39 verification, real R39 reconstruction, R39-vs-stock compatibility inspection, 700M assembled-profile smoke, fast-HF/Chat preservation guard, authorization gate, production snapshot, rollback checkpoint, upload, and deployed-revision capture all succeeded;
+- prior/rollback Space revision: `b45058bf6e28409427eb3e788cae2a2b66756d02`;
+- deployed Space revision: `0a414671e1a9f211ab0dd8c24b621e84011d6f4d`.
+
+### Versions
+- Repository Work: **1.0.98**.
+- Server Runtime: **2.3.321 / 2.3.321-hf-v168-full-width-lyric-boundaries**.
+- Web Chat: **1.5.91 / 1.5.91-full-width-lyric-boundary-renderer-v168**.
+- Deployment Control: **1.0.28**.
+- LALM Engine remains **2.1.159 / 2.1.159-mobile-lyric-presentation-v167** because v168 fixes only Chat rendering.
+- Online Research remains **1.0.16 / 1.0.16-bing-redirect-canonicalization-v166**.
+
+### Live acceptance target
+Rerun the same structured lyric request on mobile. Expected:
+- the opening and closing lyric-document separators span the full width of the rendered assistant content area;
+- internal section separators remain short;
+- no literal `---` text appears;
+- source/footer remains outside the closing full-width rule.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v168 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — render full-width lyric boundaries v168
 
 **Trigger:** live v167 mobile screenshots show the compiler emits the intended outer token `---`, but the custom Chat renderer treats it as ordinary paragraph text, so beginning/end lyric boundaries render as three literal dashes instead of full-width rules. Internal short Unicode section dividers render acceptably.
