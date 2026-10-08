@@ -625,7 +625,7 @@ def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
             needed=max(1,min(len(title_terms),2))
             if hits>=needed:
                 base=max(base,30+hits)
-        if _LYRIC_SECTION_MARKER.search(line) or _LYRIC_NUMBERED_START.search(line):
+        if _LYRIC_SECTION_MARKER.search(line) or _LYRIC_PERFORMER_MARKER.search(line) or _LYRIC_NUMBERED_START.search(line):
             base=max(base,18)
         if not base:
             continue
@@ -638,7 +638,7 @@ def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
                 continue
             if _LYRIC_HARD_BOUNDARY.fullmatch(following):
                 break
-            if _LYRIC_SECTION_MARKER.search(following) or _LYRIC_NUMBERED_START.search(following):
+            if _LYRIC_SECTION_MARKER.search(following) or _LYRIC_PERFORMER_MARKER.search(following) or _LYRIC_NUMBERED_START.search(following):
                 structure+=max(1,10-(offset//5))
                 continue
             if _lyrics_line_is_content(following):
@@ -663,12 +663,15 @@ def _lyrics_debug_preview(text: str, subject: str = "", limit: int = 600) -> dic
             break
     preview="\n".join(window)[:limit]
     markers=[]
+    performer_markers=[]
     for line in lines:
         value=line.strip()
-        if _LYRIC_SECTION_MARKER.search(value):
+        if _LYRIC_SECTION_MARKER.search(value) and len(markers)<12:
             markers.append(value[:120])
-            if len(markers)>=12:
-                break
+        elif _LYRIC_PERFORMER_MARKER.search(value) and len(performer_markers)<12:
+            performer_markers.append(value[:120])
+        if len(markers)>=12 and len(performer_markers)>=12:
+            break
     anchor_line=lines[anchor_index].strip()[:220] if anchor_index is not None and anchor_index<len(lines) else ""
     return {
         "chars":len(raw),
@@ -676,11 +679,30 @@ def _lyrics_debug_preview(text: str, subject: str = "", limit: int = 600) -> dic
         "anchorIndex":anchor_index,
         "anchorLine":anchor_line,
         "sectionMarkers":markers,
+        "performerMarkers":performer_markers,
         "preview":preview,
         "previewChars":len(preview),
         "previewLimit":limit,
     }
 
+
+def _lyrics_structure_profile(text: str) -> dict[str,int]:
+    lines=[line.strip() for line in str(text or "").splitlines() if line.strip()]
+    return {
+        "musicalSectionCount":sum(1 for line in lines if _LYRIC_SECTION_MARKER.search(line)),
+        "performerCueCount":sum(1 for line in lines if _LYRIC_PERFORMER_MARKER.search(line)),
+    }
+
+def _lyrics_candidate_structure_hint(item: dict[str,Any], subject: str) -> int:
+    """Prefer search candidates advertising explicit musical structure."""
+    snippet=str(item.get("snippet") or "")
+    title=str(item.get("title") or "")
+    hint=len(re.findall(r"(?i)\[(?:verse|chorus|bridge|hook|pre[-\s]?chorus|intro|outro|refrain)\b",snippet))*12
+    requested_title,_=_lyrics_subject_parts(subject)
+    if requested_title and "original" not in requested_title.casefold() and re.search(r"(?i)\boriginal\b",title):
+        hint-=10
+    hint+=max(0,8-int(item.get("rank") or 8))
+    return hint
 
 def _lyrics_extract_candidate(text: str, scope: str, subject: str = "") -> str:
     """Extract a bounded contiguous lyric body while rejecting navigation and post-song chrome."""
@@ -703,9 +725,13 @@ def _lyrics_extract_candidate(text: str, scope: str, subject: str = "") -> str:
             if started and (not scoped or scoped[-1]!=""):
                 scoped.append("")
             continue
-        if started and _LYRIC_HARD_BOUNDARY.fullmatch(line):
+        if started and (
+            _LYRIC_HARD_BOUNDARY.fullmatch(line)
+            or _LYRIC_RECOMMENDATION_LINE.fullmatch(line)
+            or _LYRIC_POST_SONG_META.fullmatch(line)
+        ):
             break
-        if _LYRIC_SECTION_MARKER.search(line):
+        if _LYRIC_SECTION_MARKER.search(line) or _LYRIC_PERFORMER_MARKER.search(line):
             started=True
             scoped.append(line)
             continue
@@ -732,17 +758,20 @@ def _lyrics_extract_candidate(text: str, scope: str, subject: str = "") -> str:
                 return "\n".join(lines)
 
     body_lines=[ln.strip() for ln in body.splitlines()]
-    has_section_markers=any(_LYRIC_SECTION_MARKER.search(ln) for ln in body_lines if ln)
+    has_explicit_cues=any(
+        _LYRIC_SECTION_MARKER.search(ln) or _LYRIC_PERFORMER_MARKER.search(ln)
+        for ln in body_lines if ln
+    )
     blocks=[]
-    if has_section_markers:
-        # Explicit Verse/Chorus/etc markers are stronger structure than HTML blank-line
-        # preservation. Each marker starts a new content block even when the cleaner
-        # emits the entire song as one newline-only run.
+    if has_explicit_cues:
+        # Explicit musical/performer cues are stronger than HTML blank-line preservation.
+        # This keeps lyric runs intact even when a page cleaner inserts a blank line after
+        # every visually displayed lyric line.
         current=[]
         for line in body_lines:
             if not line:
                 continue
-            if _LYRIC_SECTION_MARKER.search(line):
+            if _LYRIC_SECTION_MARKER.search(line) or _LYRIC_PERFORMER_MARKER.search(line):
                 if len(current)>=2:
                     blocks.append("\n".join(current))
                 current=[]
