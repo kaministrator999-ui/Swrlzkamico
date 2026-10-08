@@ -1,4 +1,4 @@
-name: Verify §wyrl§ v8.7 native anime candidate
+name: Verify §wyrl§ v8.8 native anime candidate
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/verify-swrlz-anime-candidate.yml"
       - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v8_8_popup_storybook.py"
       - "projects/swrlz-forge-moba/patches/v8_7_anime_cel_layers.py"
       - "projects/swrlz-forge-moba/patches/v8_5_anime_starter.py"
       - "projects/swrlz-forge-moba/patches/v8_6_native_anime_cinematic.py"
@@ -53,15 +54,17 @@ jobs:
           for rel in ("episodes/ghosts-in-different-forms-ep01.html","scenes/ghosts-in-different-forms-ep01.swyrl.json"):
               payload=(root/rel).read_bytes()
               print("PACK_ASSET="+rel+" BYTES="+str(len(payload))+" SHA256="+hashlib.sha256(payload).hexdigest())
-          assert "V8_7_ANIME_CEL_PARALLAX" in source
+          assert "V8_8_POPUP_STORYBOOK_DIRECTOR" in source
           assert 'data-project-template="anime-ghosts-ep01"' in source
           assert "CANONICAL_ANIME_EPISODE_PROJECT" in source
           assert "openAnimeScreening" in source
           assert "animeUpdateCinematic" in source
           assert "animeCreateCelLayers" in source
+          assert "animeDirectorInstall" in source
+          assert "animeMakePaperBook" in source
           assert "SWYRL_ENGINE_CINEMATIC" in source
           assert "anime-ghosts-ep01" in source
-          assert "Maker v8.7" in source
+          assert "Maker v8.8" in source
           begin=source.index('<script type="module">')+len('<script type="module">')
           end=source.rindex("</script>")
           Path("/tmp/swyrl-anime-engine.mjs").write_text(source[begin:end],encoding="utf-8")
@@ -80,18 +83,18 @@ jobs:
           root=Path('projects/swrlz-forge-moba')
           out=Path('dist/swrlz-forge-moba')
           receipt=json.loads((out/'SOURCE.json').read_text())
-          assert receipt['finalBytes']==624633
-          assert receipt['finalSha256']=='6a58245bc1d19e3513ddc3a280a454c2d69e7c6c836ad18c65821f1b0816747b'
-          assert len(receipt['patches'])==46
+          assert receipt['finalBytes']==644951
+          assert receipt['finalSha256']=='06c55a0d090bd6ffa9383ff44f914b922a841de7dc03284a50955cb4036478cd'
+          assert len(receipt['patches'])==47
           for asset,data in receipt['assets'].items():
               source=(root/asset).read_bytes()
               packed=(out/asset).read_bytes()
               assert source==packed
               assert len(packed)==data['bytes']
               assert hashlib.sha256(packed).hexdigest()==data['sha256']
-          print('PACKAGING_46_PATCHES_AND_BOTH_ASSETS_VERIFIED')
+          print('PACKAGING_47_PATCHES_AND_BOTH_ASSETS_VERIFIED')
           PY
-      - name: Seal exact v8.7 artifact manifest after verification
+      - name: Seal exact v8.8 artifact manifest after verification
         if: github.event_name == 'push'
         run: |
           python - <<'PY'
@@ -114,7 +117,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add projects/swrlz-forge-moba/source-manifest.json
           if ! git diff --staged --quiet; then
-            git commit -m "Seal exact v8.7 anime starter source integrity"
+            git commit -m "Seal exact v8.8 anime starter source integrity"
             git push origin HEAD:main
           fi
           echo "CANDIDATE_EXACT_SOURCE_VERIFIED"
