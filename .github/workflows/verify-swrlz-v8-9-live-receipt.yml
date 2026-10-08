@@ -49,6 +49,7 @@ jobs:
           receipt=json.loads(load(root+'SOURCE.json?receipt='+trigger))
           assert receipt['finalSha256']==digest
           assert len(receipt['patches'])==48
+          assert receipt['patches'][-1]=='patches/v8_9_cinematic_staging.py'
           for path,meta in receipt['assets'].items():
             source=load(root+path+'?receipt='+trigger)
             data=normalized(source) if path.endswith('.html') else source
