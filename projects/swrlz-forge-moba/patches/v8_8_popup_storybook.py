@@ -257,7 +257,7 @@ function animeUpdateCelLayers(c,x,t,act){
   const local=t-ANIME_ACT_SECONDS[act],cfg=animePopConfig().layers,delta=c.cameraDelta||0;
   const elevation=(id)=>animePopRise(id,local);
   const spec=[
-    ['background',5.8],['atmosphere',5.1],['midground',4.5],['effects',4.2],['foreground',2.0]
+    ['background',1.9],['atmosphere',1.9],['midground',1.9],['effects',1.9],['foreground',1.9]
   ];
   for(const [id,baseY] of spec){
     const group=c.layers[id],setting=cfg[id],rise=elevation(id);
