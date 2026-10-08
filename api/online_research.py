@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import html
 import importlib.util
 import ipaddress
@@ -132,8 +133,42 @@ def _ddg_target(href:str)->str:
         if target:value=urllib.parse.unquote(target)
     return value
 
+def _bing_target(href:str)->str:
+    """Resolve supported Bing search click wrappers to their public destination URL.
+
+    Bing HTML commonly emits /ck/a links whose `u` parameter is "a1" followed
+    by URL-safe base64 of the real destination. Search evidence must carry the
+    destination rather than the tracker so fetch budgets are not spent on Bing
+    redirect/interstitial pages.
+    """
+    value=html.unescape(str(href or ""))
+    if value.startswith("//"):value="https:"+value
+    parsed=urllib.parse.urlsplit(value)
+    host=str(parsed.hostname or "").casefold()
+    if not host.endswith("bing.com") or not parsed.path.startswith("/ck/a"):
+        return value
+    encoded=urllib.parse.parse_qs(parsed.query).get("u",[""])[0]
+    if not encoded:
+        return ""
+    encoded=urllib.parse.unquote(encoded).strip()
+    payload=encoded[2:] if encoded.startswith("a1") else encoded
+    if not payload:
+        return ""
+    try:
+        payload+=("="*((4-(len(payload)%4))%4))
+        decoded=base64.urlsafe_b64decode(payload.encode("ascii")).decode("utf-8","strict").strip()
+    except Exception:
+        return ""
+    target=urllib.parse.urlsplit(decoded)
+    if target.scheme not in {"http","https"} or not target.hostname:
+        return ""
+    return decoded
+
+def _search_target(href:str)->str:
+    return _bing_target(_ddg_target(href))
+
 def _evidence_result(query:str,href:str,title:str,snippet:str,rank:int)->dict[str,Any]|None:
-    try:safe=_validate_public_url(_ddg_target(href))
+    try:safe=_validate_public_url(_search_target(href))
     except ValueError:return None
     target=urllib.parse.urlsplit(safe)
     clean_title=_clean_search_text(title,300)
