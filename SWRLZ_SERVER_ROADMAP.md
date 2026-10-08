@@ -1,3 +1,59 @@
+## UPDATE FINISHED — 2026-10-07 — Bing redirect canonicalization v166
+
+**Outcome:** BING TRACKING WRAPPERS CANONICALIZED BEFORE EVIDENCE ADMISSION / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE v166 ACCEPTANCE PENDING.
+
+### Live v165 acceptance evidence from Dragon Chat (16)
+- v165 was live: Online Camera reported `v165-lyric-region-integrity`.
+- DuckDuckGo HTML and Lite both returned no usable results, so the provider chain selected Bing HTML with eight results.
+- Bing search results carried `https://www.bing.com/ck/a?...&u=a1<base64url-target>...` wrappers.
+- the first wrapper fetch returned only the Bing redirect/interstitial body and was correctly rejected as `NO_STRUCTURED_LYRIC_BODY`.
+- fallback attempts 2 and 3 also targeted Bing `/ck/a` wrappers and failed with `ValueError`, exhausting the three-total-page ceiling.
+- because no destination page reached verification, `musicStructureDebug` remained null and the user received the safe source-only response.
+
+### v166 network-boundary repair
+- added Bing click-wrapper normalization in canonical `api/online_research.py`;
+- supported `/ck/a` `u=a1<base64url>` payloads are decoded to their real public HTTP(S) destination before SSRF-safe URL validation and evidence admission;
+- unresolved/malformed Bing tracking wrappers are rejected instead of being surfaced or fetched;
+- DuckDuckGo `uddg` normalization remains unchanged;
+- all downstream evidence metadata now receives the destination URL/source, so candidate pools, bounded fetch attempts, trace events, widgets, and user-visible source links do not inherit the Bing tracker when decoding succeeds.
+
+### Regression
+Added `tests/test_bing_redirect_canonicalization_v166.py`:
+- reproduces the exact v165 `bing.com/ck/a?...&u=a1...` shape;
+- verifies base64url destination recovery;
+- verifies malformed/unresolved wrappers fail closed;
+- verifies the Bing HTML parser emits the destination URL and destination host rather than `www.bing.com`;
+- contains no live network dependency.
+
+### Deployment gate
+The canonical HF workflow now py-compiles `api/online_research.py` and runs the v166 regression after the complete v151-v165 lyric/music stack.
+
+### Final deployment receipts
+- guarded HF run: `37712581596` — terminal **SUCCESS**;
+- exact selected feature source: `250cc33e956d2c1ec4fb67e20172b867feb522ff`;
+- regression gate: v151 PASS, v155 PASS, v157 PASS, v158 PASS, v159 PASS, v160 PASS, v161 PASS, v162 PASS, v163 PASS, v164 PASS, v165 PASS, **v166 PASS**;
+- native R39 verification, R39 reconstruction, R39-vs-stock inspection, 700M smoke, fast-HF/Chat preservation, authorization, snapshot, rollback checkpoint, upload, and deployed-revision capture all succeeded;
+- prior/rollback Space revision: `421c7d437fa476d019d23a99c2f773ddabe5e1be`;
+- deployed Space revision: `754a8e3d8567526826dfef3951cd296322ac2165`.
+
+### Versions
+- Repository Work: **1.0.96**.
+- Server Runtime: **2.3.319 / 2.3.319-hf-v166-bing-redirect-canonicalization**.
+- Online Research: **1.0.16 / 1.0.16-bing-redirect-canonicalization-v166**.
+- LALM Engine remains **2.1.158 / 2.1.158-music-structure-integrity-v165** because v166 changes the stable network/search boundary rather than LALM cognition/presentation.
+- Deployment Control: **1.0.26**.
+
+### Live acceptance target
+Repeat the Dragon Chat (16) request. When Bing is selected, expected behavior is:
+1. candidate URLs are canonical destination URLs rather than `bing.com/ck/a` wrappers;
+2. page fetch traces name the destination host;
+3. bounded attempts are spent on actual result pages;
+4. v165 lyric-region verification receives the real page body;
+5. if a body verifies, music structure/presentation runs before Chat;
+6. exported diagnostics show no Bing wrapper as the verified/user-visible lyrics source.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v166 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — Bing redirect canonicalization v166
 
 **Trigger:** live v165 Dragon Chat export `swrlz-dragon-chat (16).json`.
