@@ -1,3 +1,25 @@
+## UPDATE STARTED — 2026-10-08 — blank-separated single lyric lines v172
+
+**Trigger:** user live Dragon Chat export (21) from v171; existing session confirmed `observabilityRevision=v171-extraction-stage-diagnostics` and correct Tyga / Rack City destination identity.
+
+**Live failure evidence:**
+- LyricsFreak fetched HTTP 200; destination identity verified with score 8.
+- Extractor diagnostics: `scopedLineCount=114`, `scopedNonEmptyLineCount=57`, `contentLineCount=57`, `blankSeparatedChunkCount=57`, `acceptedBlockCount=0`, `continuousRunEligible=false`.
+- `terminalBoundaryKind=PAGE_NOISE_BOUNDARY` / `Share lyrics` and `reason=INSUFFICIENT_FULL_LYRIC_STRUCTURE`. No lyric extraction reached music structure or presentation.
+- Earlier v171 regression used adjacent one-line-per-row text; real fetch inserts one blank between *each* lyric line. The chunker rejected all 57 single-line chunks because each chunk had fewer than 2 lyric-like lines. The v171 run fallback could only fire after one block survived.
+
+**Canonical owner:** `feature/hf-space-manual-deploy:hf_space/online_tools.py::_lyrics_extract_analysis`; the online retrieval/source identity and music/presentation downstream remain unchanged. No change to 3-page fetch limit, source family diversification, meaning inference, or copyright/presentation policy.
+
+**Bounded repair candidate:** when an anchored unmarked body contains >=8 blank-separated single-line chunks, all individually satisfy the existing content predicate, restore those lines in source order to one unlabeled block. Existing boundary detection and final verification remain authoritative. Keep v171 adjacent-line support and all structural/explicit-cue paths.
+
+**Source candidate:** feature commits `9ff5232295685a24f60c131f775bd8cb3244079b` (extractor) and `9dbfcc6ffedb96c71cee4110994612fbdc7c57a1` (regression). Extended the already-mandatory `tests/test_continuous_lyric_extractor_diagnostics_v171.py` gate with v172 blank-separated positive/negative cases.
+
+**Version baseline/impact:** Repository Work 1.0.101 → **1.0.102**, Online Research 1.0.19 → **1.0.20**, Server Runtime remains 2.3.324 until an actual release succeeds, LALM Engine/Web Chat unchanged.
+
+**Required continuation:** guarded Hugging Face candidate validation → bounded release trigger on existing Space `kamiloki/Swyrlz` → terminal workflow and exact revision receipt → update Server Runtime and FINISHED entry only if release succeeds → user-visible acceptance after deployment.
+
+**Status:** SOURCE CANDIDATE COMMITTED / GATE + PRODUCTION ACTIVATION NOT YET VERIFIED.
+
 ## UPDATE FINISHED — 2026-10-08 — continuous lyric runs + extraction-stage diagnostics v171
 
 **Outcome:** VALID CONTINUOUS UNMARKED LYRIC RUNS NO LONGER FAIL MOD-4/STANZA ASSUMPTIONS + EXTRACTION PIPELINE IS NOW STAGE-BY-STAGE OBSERVABLE IN DRAGON CHAT JSON / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
