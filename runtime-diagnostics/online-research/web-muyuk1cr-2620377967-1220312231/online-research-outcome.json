@@ -1,0 +1,960 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-muyuk1cr-2620377967-1220312231",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "ce7eff4884993bba0791f4cc7f106bffc29596b1",
+  "persistedAtUnixMs": 1791422255379,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v165-lyric-region-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 1,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 781,
+      "lyricsSourceAttemptCount": 3,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 1,
+          "origin": "research-evidence",
+          "requestedUrl": "https://www.bing.com/ck/a?%21=&p=d2ef684631e93b961304591e4bb9d0505c103978d4e5be0435da408bbc54341dJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cuYXpseXJpY3MuY29tL2x5cmljcy90ZWNobjluZS9jb2xkcGllY2VvZndvcmsuaHRtbA&ntb=1",
+          "finalUrl": "https://www.bing.com/ck/a?%21=&p=d2ef684631e93b961304591e4bb9d0505c103978d4e5be0435da408bbc54341dJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cuYXpseXJpY3MuY29tL2x5cmljcy90ZWNobjluZS9jb2xkcGllY2VvZndvcmsuaHRtbA&ntb=1",
+          "searchResultTitle": "JL, Tech N9ne , Joey Cool & Jay Trilogy - Cold Piece Of Work Lyrics ...",
+          "fetchedPageTitle": "JL, Tech N9ne , Joey Cool & Jay Trilogy - Cold Piece Of Work Lyrics ...",
+          "fetchStatus": null,
+          "fetchedContent": {
+            "chars": 65,
+            "sha256": "35f1aee2ad38d19510c5a0d1969f71110ad609073870bd6dfdfd3ac9a3d4f285",
+            "anchorIndex": null,
+            "anchorLine": "",
+            "sectionMarkers": [],
+            "performerMarkers": [],
+            "preview": "Please click here if the page does not redirect automatically ...",
+            "previewChars": 65,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 0,
+            "sha256": "",
+            "preview": "",
+            "previewChars": 0,
+            "previewLimit": 600
+          },
+          "sourceIdentityVerified": true,
+          "sourceIdentityScore": 13,
+          "snippetOverlapCount": 0,
+          "snippetInformativeTokenCount": 0,
+          "snippetSequenceSpan": 0,
+          "musicalSectionCount": 0,
+          "performerCueCount": 0,
+          "outcome": "REJECTED",
+          "rejectionReason": "NO_STRUCTURED_LYRIC_BODY"
+        }
+      ],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "JL, Tech N9ne , Joey Cool & Jay Trilogy - Cold Piece Of Work Lyrics ...",
+          "url": "https://www.bing.com/ck/a?%21=&p=d2ef684631e93b961304591e4bb9d0505c103978d4e5be0435da408bbc54341dJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cuYXpseXJpY3MuY29tL2x5cmljcy90ZWNobjluZS9jb2xkcGllY2VvZndvcmsuaHRtbA&ntb=1",
+          "source": "www.bing.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "JL, Tech N9ne, Joey Cool & Jay Trilogy \"Cold Piece Of Work\": Strange Reign 2017... They treat my bidness like it's soda Or my …"
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "JL, Tech N9ne & Krizz Kaliko - Cold Piece Of Work (Original) Lyrics ...",
+          "url": "https://www.bing.com/ck/a?%21=&p=14428e1398b76d8be034b27cc203e901e5be723bc4b0799d2e95d6738e712e93JmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cuYXpseXJpY3MuY29tL2x5cmljcy90ZWNobjluZS9jb2xkcGllY2VvZndvcmtvcmlnaW5hbC5odG1s&ntb=1",
+          "source": "www.bing.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "JL, Tech N9ne & Krizz Kaliko \"Cold Piece Of Work (Original)\": They treat my business like it's soda Or my music like a Perc They …"
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "Tech N9ne - Cold Piece Of Work Lyrics",
+          "url": "https://www.bing.com/ck/a?%21=&p=6aefc4d5294a5c4050328129e9fc9085934b68a2d5ff205ca4d54c49a62207e0JmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cubHlyaWNzbWFuaWEuY29tL2NvbGRfcGllY2Vfb2Zfd29ya19seXJpY3NfdGVjaF9uOW5lLmh0bWw&ntb=1",
+          "source": "www.bing.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Tech N9ne Dominion Lyrics to Cold Piece Of Work They treat my bidness like it's soda Or my music like a perc They know my flow is …"
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "Cold Piece of Work Lyrics — Tech N9ne | Lyricshare",
+          "url": "https://www.bing.com/ck/a?%21=&p=b2fa26664f0e5df4bb9840766d88feb618543c298f39caf86cd43d0570973f9dJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly9seXJpY3NoYXJlLm5ldC9lbi90ZWNoLW45bmUvY29sZC1waWVjZS1vZi13b3JrLmh0bWw&ntb=1",
+          "source": "www.bing.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Lyrics «Cold Piece of Work» — Tech N9ne T9X is what they sniffin' when Tech Nina get to spittin'My position is givin' 'em a hell of an …"
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "JL – Cold Piece of Work Lyrics - Genius",
+          "url": "https://www.bing.com/ck/a?%21=&p=032c00d7d5a587146a3d0dfd22f2a7f319146fd121fbe558bc5144f710f52f02JmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly9nZW5pdXMuY29tL0psLWNvbGQtcGllY2Utb2Ytd29yay1seXJpY3M&ntb=1",
+          "source": "www.bing.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Sep 8, 2017 · That's a cold piece of work [Verse 2: Tech N9ne] T9X is what they sniffin' when Tech N9na get to spittin' My position is …"
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "Tech N9ne – Cold Piece of Work lyrics - All The Lyrics",
+          "url": "https://www.bing.com/ck/a?%21=&p=69e1da6356cd106e2b41c5f4b23ae37c7f16ef80b5c878936f40d0c340268400JmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cuYWxsdGhlbHlyaWNzLmNvbS9seXJpY3MvdGVjaF9uOW5lLWNvbGRfcGllY2Vfb2Zfd29yaw&ntb=1",
+          "source": "www.bing.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "That's a cold piece of work [Verse 2: Tech N9ne] T9X is what they sniffin' when Tech N9na get to spittin' My position is give 'em a …"
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "Cold Piece Of Work lyrics - TECH N9NE - OldieLyrics.com",
+          "url": "https://www.bing.com/ck/a?%21=&p=4b2acbde461e5c82085bf4f4e8196c1712b4a585c2e9506ea42c1de661d448dcJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cub2xkaWVseXJpY3MuY29tL2x5cmljcy90ZWNoX245bmUvY29sZF9waWVjZV9vZl93b3JrLmh0bWw&ntb=1",
+          "source": "www.bing.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "That's a cold piece of work [Verse 2: Tech N9ne] T [9x] is what they sniffin' when Tech Nina get to spittin' My position is give 'em a …"
+        },
+        {
+          "query": "cold piece of work tech n9ne lyrics",
+          "title": "JL – Cold Piece of Work (Original) Lyrics | Genius Lyrics",
+          "url": "https://www.bing.com/ck/a?%21=&p=42061ca6918b56c65086417d19aaf76ac14ec75d0e4cca03b919261288cd2083JmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly9nZW5pdXMuY29tL0psLWNvbGQtcGllY2Utb2Ytd29yay1vcmlnaW5hbC1seXJpY3M&ntb=1",
+          "source": "www.bing.com",
+          "rank": 8,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "cold",
+            "piece",
+            "work",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Aug 15, 2017 · The finished song, titled “Cold Piece Of Work (Original),” by JL featuring Tech N9ne and Krizz Kaliko was released on …"
+        }
+      ],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422254595,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422254600,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422254765,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422254766,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422254899,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422254899,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422255117,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422255118,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422255120,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422255196,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "httpStatus": 200,
+        "responseBytes": 1919
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422255197,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791422255198
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "activity": "Fetched destination matches the requested song identity",
+        "atUnixMs": 1791422255198
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1791422255198
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1791422255199
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422255200,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422255302,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "web-page",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "activity": "Alternate lyrics source fetch failed",
+        "atUnixMs": 1791422255302,
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1791422255302
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422255304,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791422255376,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "web-page",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "activity": "Alternate lyrics source fetch failed",
+        "atUnixMs": 1791422255376,
+        "errorType": "ValueError"
+      }
+    ],
+    "sources": [
+      {
+        "title": "JL, Tech N9ne , Joey Cool & Jay Trilogy - Cold Piece Of Work Lyrics ...",
+        "source": "www.bing.com",
+        "url": "https://www.bing.com/ck/a?%21=&p=d2ef684631e93b961304591e4bb9d0505c103978d4e5be0435da408bbc54341dJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cuYXpseXJpY3MuY29tL2x5cmljcy90ZWNobjluZS9jb2xkcGllY2VvZndvcmsuaHRtbA&ntb=1",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "www.bing.com"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "search-results",
+        "version": 1,
+        "title": "Online search · cold piece of work tech n9ne lyrics",
+        "provider": "bounded-web-search-chain-v1",
+        "data": {
+          "query": "cold piece of work tech n9ne lyrics",
+          "results": [
+            {
+              "title": "JL, Tech N9ne , Joey Cool & Jay Trilogy - Cold Piece Of Work Lyrics ...",
+              "url": "https://www.bing.com/ck/a?%21=&p=d2ef684631e93b961304591e4bb9d0505c103978d4e5be0435da408bbc54341dJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cuYXpseXJpY3MuY29tL2x5cmljcy90ZWNobjluZS9jb2xkcGllY2VvZndvcmsuaHRtbA&ntb=1",
+              "snippet": "",
+              "source": "www.bing.com"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up cold piece of work tech n9ne lyrics…",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 11,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 12,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 13,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 1
+      },
+      {
+        "seq": 14,
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 15,
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "reason": "Fetched destination matches the requested song identity",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 16,
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 17,
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 18,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 19,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 20,
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Alternate lyrics source fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 21,
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 22,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 23,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 24,
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Alternate lyrics source fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/ck/a",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 25,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 26,
+        "phase": "WIDGET_READY",
+        "reason": "search-results",
+        "categories": [
+          "WIDGET"
+        ]
+      },
+      {
+        "seq": 27,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 28,
+        "phase": "LYRICS_SOURCE_ONLY",
+        "reason": "Verified source identity; lyric body extraction not verified.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "SOURCE",
+          "GROUNDING"
+        ]
+      },
+      {
+        "seq": 30,
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "finalResponse": "I found and verified a lyrics source for **\"cold piece of work\" by tech n9ne**, but I couldn't verify a clean lyric-text extraction from the fetched page, so I won't reconstruct the lyrics from memory.\n\n**Lyrics source:** JL, Tech N9ne , Joey Cool & Jay Trilogy - Cold Piece Of Work Lyrics ... — https://www.bing.com/ck/a?%21=&p=d2ef684631e93b961304591e4bb9d0505c103978d4e5be0435da408bbc54341dJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cuYXpseXJpY3MuY29tL2x5cmljcy90ZWNobjluZS9jb2xkcGllY2VvZndvcmsuaHRtbA&ntb=1",
+    "finalResponseSha256": "14d9f37a3e83ef2be85be4603871ec4de2749c8796c7ff30857475843cda73e5",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791422254584,
+      "startedAtUnixMs": 1791422254585,
+      "completedAtUnixMs": 1791422255378,
+      "queueWaitMs": 1,
+      "stationRunMs": 793,
+      "endToEndMs": 794
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
