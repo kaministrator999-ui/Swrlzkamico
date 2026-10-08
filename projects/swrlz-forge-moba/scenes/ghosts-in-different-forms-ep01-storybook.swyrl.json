@@ -1443,17 +1443,17 @@
       {
         "id": "layer-ep-sets",
         "name": "01 · Episode Sets",
-        "visible": true
+        "visible": false
       },
       {
         "id": "layer-ep-fx",
         "name": "02 · Light & Effects",
-        "visible": true
+        "visible": false
       },
       {
         "id": "layer-ep-cast",
         "name": "03 · Characters & Narrative",
-        "visible": true
+        "visible": false
       },
       {
         "id": "anime-layer-background",
@@ -1496,7 +1496,7 @@
         "visible": true
       }
     ],
-    "activeLayerId": "layer-ep-sets"
+    "activeLayerId": "anime-layer-kami"
   },
   "scene": {
     "background": "#0b122a",
