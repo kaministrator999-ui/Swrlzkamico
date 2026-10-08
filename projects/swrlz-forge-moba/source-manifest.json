@@ -62,6 +62,6 @@
     "patches/v8_6_native_anime_cinematic.py",
     "patches/v8_7_anime_cel_layers.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "PENDING_CANDIDATE_VERIFICATION"
+  "finalBytes": 624633,
+  "finalSha256": "6a58245bc1d19e3513ddc3a280a454c2d69e7c6c836ad18c65821f1b0816747b"
 }
