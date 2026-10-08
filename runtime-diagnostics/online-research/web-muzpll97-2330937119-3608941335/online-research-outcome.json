@@ -1,0 +1,1356 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-muzpll97-2330937119-3608941335",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "22f6f8bb79fc601448dfebc95ab732302cd5c9e2",
+  "persistedAtUnixMs": 1791474398676,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v170-diverse-fetch-budget",
+      "kind": "search",
+      "status": "OK",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 2,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 3548,
+      "lyricsSourceAttemptCount": 2,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 1,
+          "origin": "research-evidence",
+          "requestedUrl": "https://b.azlyrics.com/?u=%2Flyrics%2F50cent%2Fcandyshop.html",
+          "finalUrl": "https://b.azlyrics.com/?u=%2Flyrics%2F50cent%2Fcandyshop.html",
+          "searchResultTitle": "50 Cent - Candy Shop Lyrics | AZLyrics.com",
+          "fetchedPageTitle": "AZLyrics - request for access",
+          "fetchStatus": null,
+          "fetchedContent": {
+            "chars": 459,
+            "sha256": "2d2b0641bc408b86bce01b8c492be5a722295f420b23b95633d29cad9b2a7218",
+            "anchorIndex": null,
+            "anchorLine": "",
+            "sectionMarkers": [],
+            "performerMarkers": [],
+            "preview": "AZLyrics - request for access\n-->\nOur systems have detected unusual activity from your IP address (computer network).\nThis page checks to see if it's really you sending the requests, and not a robot.\nWe're checking your browser, please wait...\nPlease check the box below to regain access to AZLyrics.com.\nType the characters from the picture above:\nInput is case-insensitive\nSubmit\n-->\nAdvertise Here\nPrivacy Policy",
+            "previewChars": 415,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 0,
+            "sha256": "",
+            "preview": "",
+            "previewChars": 0,
+            "previewLimit": 600
+          },
+          "sourceIdentityVerified": false,
+          "sourceIdentityScore": 0,
+          "snippetOverlapCount": 0,
+          "snippetInformativeTokenCount": 0,
+          "snippetSequenceSpan": 0,
+          "musicalSectionCount": 0,
+          "performerCueCount": 0,
+          "outcome": "REJECTED",
+          "rejectionReason": "NO_STRUCTURED_LYRIC_BODY"
+        },
+        {
+          "attempt": 2,
+          "origin": "fallback-candidate",
+          "requestedUrl": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+          "finalUrl": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+          "searchResultTitle": "50 Cent - Candy Shop (Feat. Olivia) lyrics - All The Lyrics",
+          "fetchedPageTitle": "50 Cent – Candy Shop (Feat. Olivia) | All The Lyrics",
+          "fetchStatus": 200,
+          "fetchedContent": {
+            "chars": 3436,
+            "sha256": "e20c7b5ea15187897d430acf533d5c917d6ccdf02dbd1da4d048d513322c81ef",
+            "anchorIndex": 67,
+            "anchorLine": "50 Cent – Candy Shop (Feat. Olivia) lyrics",
+            "sectionMarkers": [
+              "[Intro: 50 Cent]",
+              "[Chorus: 50 Cent & Olivia]",
+              "[Verse 1: 50 Cent]",
+              "[Chorus]",
+              "[Bridge: 50 Cent & Olivia]",
+              "[Verse 2: 50 Cent]",
+              "[Chorus 2x]"
+            ],
+            "performerMarkers": [],
+            "preview": "50 Cent – Candy Shop (Feat. Olivia) lyrics\nAlbum: The Massacre\n[Intro: 50 Cent]\nYeah...\nUh huh\nSo seductive\n[Chorus: 50 Cent & Olivia]\n[50 Cent]\nI'll take you to the candy shop\nI'll let you lick the lollypop\nGo 'head girl, don't you stop\nKeep going 'til you hit the spot (woah)",
+            "previewChars": 277,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 1972,
+            "sha256": "da2662de4b0ead8f36b876f7e5ceff3b5f9655f2028c704374f8ae09fc810a90",
+            "preview": "Uh huh\nSo seductive\n[50 Cent]\nI'll take you to the candy shop\nI'll let you lick the lollypop\nGo 'head girl, don't you stop\nKeep going 'til you hit the spot (woah)\nI'll take you to the candy shop\nBoy one taste of what I got\nI'll have you spending all you got\nKeep going 'til you hit the spot (woah)\nYou can have it your way, how do you want it\nYou gon' back that thing up or should i push up on it\nTemperature rising, okay lets go to the next level\nDance floor jam packed, hot as a teakettle\nI'll break it down for you now, baby it's simple\nIf you be a nympho, I'll be a nympho\nIn the hotel or in the ",
+            "previewChars": 600,
+            "previewLimit": 600
+          },
+          "sourceIdentityVerified": true,
+          "sourceIdentityScore": 10,
+          "snippetOverlapCount": 24,
+          "snippetInformativeTokenCount": 30,
+          "snippetSequenceSpan": 21,
+          "musicalSectionCount": 7,
+          "performerCueCount": 0,
+          "outcome": "VERIFIED",
+          "rejectionReason": "VERIFIED"
+        }
+      ],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": {
+        "schema": "swrlz-music-structure-debug-v1",
+        "workType": "song",
+        "requestedScope": "full-lyrics",
+        "structureBasis": "explicit_musical_source_markers",
+        "sectionCount": 5,
+        "explicitSectionCount": 5,
+        "explicitMusicalSectionCount": 5,
+        "explicitPerformerCueCount": 0,
+        "sourceOrderPreserved": true,
+        "newlineEqualsBar": false,
+        "sections": [
+          {
+            "index": 1,
+            "rawLabel": "[Intro: 50 Cent]",
+            "type": "intro",
+            "number": null,
+            "performer": "50 Cent",
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 2,
+            "barCount": null
+          },
+          {
+            "index": 2,
+            "rawLabel": "[Chorus: 50 Cent & Olivia]",
+            "type": "chorus",
+            "number": null,
+            "performer": "50 Cent & Olivia",
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 9,
+            "barCount": null
+          },
+          {
+            "index": 3,
+            "rawLabel": "[Verse 1: 50 Cent]",
+            "type": "verse",
+            "number": 1,
+            "performer": "50 Cent",
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 16,
+            "barCount": null
+          },
+          {
+            "index": 4,
+            "rawLabel": "[Bridge: 50 Cent & Olivia]",
+            "type": "bridge",
+            "number": null,
+            "performer": "50 Cent & Olivia",
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 4,
+            "barCount": null
+          },
+          {
+            "index": 5,
+            "rawLabel": "[Verse 2: 50 Cent]",
+            "type": "verse",
+            "number": 2,
+            "performer": "50 Cent",
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 16,
+            "barCount": null
+          }
+        ],
+        "presentationChars": 2391,
+        "presentationSha256": "6c0f13c186865b247d63d5b68070813a410dc7b90ec57bfeed28773e320c4377",
+        "dividerPresentation": {
+          "outer": "---",
+          "inner": "────────",
+          "outerMeaning": "lyric_document_boundary",
+          "innerMeaning": "lyric_section_transition",
+          "blankLinesAroundDividers": true,
+          "mobileFirst": true
+        }
+      },
+      "candidateAdmissionDebug": [
+        {
+          "query": "candy shop 50 cent lyrics",
+          "title": "50 Cent - Candy Shop Lyrics | AZLyrics.com",
+          "url": "https://www.azlyrics.com/lyrics/50cent/candyshop.html",
+          "source": "www.azlyrics.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "coreTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "snippetPreview": "50 Cent \" Candy Shop \": Yeah, uh-huh So seductive I'll take you to the candy shop I'll let you lick the lollipop Go ahead,..."
+        },
+        {
+          "query": "candy shop 50 cent lyrics",
+          "title": "50 Cent - Candy Shop (Lyrics) ft. Olivia - YouTube",
+          "url": "https://www.youtube.com/watch?v=AYZIIATwgks",
+          "source": "www.youtube.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "coreTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "snippetPreview": "I'll have you spendin' all you got Keep goin' until you hit the spot, whoa [Chorus: 50 Cent & Olivia] I'll take you to the candy shop I'll let you lick the lollipop Go ahead, girl, don't you stop ..."
+        },
+        {
+          "query": "candy shop 50 cent lyrics",
+          "title": "Candy Shop Lyrics by 50 Cent - Lyrics On Demand",
+          "url": "https://www.lyricsondemand.com/0/50centlyrics/candyshoplyrics.html",
+          "source": "www.lyricsondemand.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "coreTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "snippetPreview": "Find the full lyrics of Candy Shop , a song by 50 Cent featuring Olivia, from his album The Massacre. The song is a seductive and explicit rap about sex and money."
+        },
+        {
+          "query": "candy shop 50 cent lyrics",
+          "title": "50 Cent - Candy Shop Lyrics",
+          "url": "https://www.lyricsmania.com/candy_shop_lyrics_50_cent.html",
+          "source": "www.lyricsmania.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "coreTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "snippetPreview": "50 Cent Candy Shop Lyrics . Candy Shop lyrics performed by 50 Cent : Yeah... Uh huh So seductive I'll take you to the candy shop"
+        },
+        {
+          "query": "candy shop 50 cent lyrics",
+          "title": "50 Cent - Candy Shop (Feat. Olivia) lyrics - All The Lyrics",
+          "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+          "source": "www.allthelyrics.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "coreTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "snippetPreview": "50 Cent - Candy Shop (Feat. Olivia) lyrics Album: The Massacre [Intro: 50 Cent ] Yeah... Uh huh So seductive [Chorus: 50 Cent & Olivia] [ 50 Cent ] I'll take you to the candy shop I'll let you lick the lollypop Go 'head girl, don't you stop Keep going 'til you hit the spot (woah)"
+        },
+        {
+          "query": "candy shop 50 cent lyrics",
+          "title": "Candy Shop Lyrics - 50 Cent feat. Olivia",
+          "url": "https://www.lyricsbox.com/50-cent-feat.-olivia-candy-shop-lyrics-626jgz9.html",
+          "source": "www.lyricsbox.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "coreTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "snippetPreview": "Full and accurate LYRICS for \" Candy Shop \" from \" 50 Cent feat. Olivia\": Olivia, I'll take you to the candy shop , Boy one taste of what I got, I'll have you ..."
+        },
+        {
+          "query": "candy shop 50 cent lyrics",
+          "title": "50 Cent - Candy Shop W/ Lyrics - YouTube",
+          "url": "https://www.youtube.com/watch?v=IZKBa6bvUjo",
+          "source": "www.youtube.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "coreTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "snippetPreview": "50 Cent - Candy Shop W/ Lyrics [ [Didn't chipmunk song, sounded like shit.]] Yeah... Uh huh So seductive [Chorus: 50 Cent & Olivia] [ 50 Cent ] I'll take you to the candy shop I'll let you lick the ..."
+        },
+        {
+          "query": "candy shop 50 cent lyrics",
+          "title": "50 Cent - Candy Shop feat. Olivia Lyrics & Meaning",
+          "url": "https://www.songlyrics.com/50-cent/candy-shop-lyrics/",
+          "source": "www.songlyrics.com",
+          "rank": 8,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "coreTerms": [
+            "candy",
+            "shop",
+            "cent"
+          ],
+          "snippetPreview": "Candy Shop transforms sexual desire into a playful marketplace where pleasure becomes currency and satisfaction is the ultimate transaction. 50 Cent positions himself as both vendor and product in this erotic economy, promising experiences that will leave his partner completely c"
+        }
+      ],
+      "songIdentity": {
+        "schema": "swrlz-song-identity-v1",
+        "rawSubject": "\"candy shop\" by 50 cent",
+        "title": "candy shop",
+        "titleFolded": "candy shop",
+        "titleTokens": [
+          "candy",
+          "shop"
+        ],
+        "primaryArtist": "50 cent",
+        "primaryArtistFolded": "50 cent",
+        "artistTokens": [
+          "50",
+          "cent"
+        ],
+        "featuredArtists": [],
+        "requestedVersion": null,
+        "ambiguity": {
+          "level": "low",
+          "score": 2,
+          "commonWordCollision": [],
+          "shortTitle": true,
+          "punctuationHeavy": false,
+          "quotedTitleRequired": false,
+          "artistRequired": true
+        }
+      },
+      "songDiscoveryPlan": [
+        {
+          "strategy": "exact-title-artist",
+          "query": "\"candy shop\" \"50 cent\" lyrics"
+        },
+        {
+          "strategy": "artist-title-song",
+          "query": "\"50 cent\" \"candy shop\" song lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"candy shop\" \"50 cent\" lyrics site:genius.com"
+        },
+        {
+          "strategy": "title-artist-verse",
+          "query": "\"candy shop\" \"50 cent\" verse chorus lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"candy shop\" \"50 cent\" lyrics site:azlyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"candy shop\" \"50 cent\" lyrics site:musixmatch.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"candy shop\" \"50 cent\" lyrics site:allthelyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"candy shop\" \"50 cent\" lyrics site:lyricsfreak.com"
+        }
+      ],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474395125,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474395125,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474395276,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474395276,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474396085,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474396085,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474396088,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/50cent/candyshop.html"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474396768,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "httpStatus": 200,
+        "responseBytes": 6838
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474396769,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791474396769
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1791474396770
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1791474396771
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474396773,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474397058,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "httpStatus": 200,
+        "responseBytes": 29512
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791474397059
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "activity": "Fetched destination matches the requested song identity",
+        "atUnixMs": 1791474397059
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "activity": "Lyrics candidate verified",
+        "atUnixMs": 1791474397065
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474397065,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474397188,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474397188,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474397904,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474397904,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474397909,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "getyarn.io",
+        "url": "https://getyarn.io/yarn-clip/408168d4-c8dd-44fe-bc62-a2bb6d76c7f1"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474397947,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "getyarn.io",
+        "url": "https://getyarn.io/yarn-clip/408168d4-c8dd-44fe-bc62-a2bb6d76c7f1",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474397948,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474398078,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474398078,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474398205,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474398206,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474398671,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791474398671,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      }
+    ],
+    "sources": [
+      {
+        "title": "50 Cent - Candy Shop (Feat. Olivia) lyrics - All The Lyrics",
+        "source": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "www.allthelyrics.com"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "search-results",
+        "version": 1,
+        "title": "Online search · candy shop 50 cent lyrics",
+        "provider": "bounded-web-search-chain-v1",
+        "data": {
+          "query": "candy shop 50 cent lyrics",
+          "results": [
+            {
+              "title": "50 Cent - Candy Shop (Feat. Olivia) lyrics - All The Lyrics",
+              "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+              "snippet": "50 Cent - Candy Shop (Feat. Olivia) lyrics Album: The Massacre [Intro: 50 Cent ] Yeah... Uh huh So seductive [Chorus: 50 Cent & Olivia] [ 50 Cent ] I'll take you to the candy shop I'll let you lick the lollypop Go 'head girl, don't you stop Keep going 'til you hit the spot (woah) [Olivia] I'll take you to the candy shop Boy one taste of what I got",
+              "source": "www.allthelyrics.com"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up candy shop 50 cent lyrics…",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 9,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/50cent/candyshop.html",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 10,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 11,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 1
+      },
+      {
+        "seq": 12,
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 13,
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 14,
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 15,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 16,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 17,
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 18,
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "reason": "Fetched destination matches the requested song identity",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 19,
+        "phase": "LYRICS_SOURCE_VERIFIED",
+        "reason": "Lyrics candidate verified",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.allthelyrics.com",
+        "url": "https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 20,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 21,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 22,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 23,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 200,
+        "resultCount": 1
+      },
+      {
+        "seq": 24,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": 1
+      },
+      {
+        "seq": 25,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "getyarn.io",
+        "url": "https://getyarn.io/yarn-clip/408168d4-c8dd-44fe-bc62-a2bb6d76c7f1",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 26,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "getyarn.io",
+        "url": "https://getyarn.io/yarn-clip/408168d4-c8dd-44fe-bc62-a2bb6d76c7f1",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 27,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 28,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 29,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 30,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 31,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 32,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "seq": 33,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 34,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 35,
+        "phase": "WIDGET_READY",
+        "reason": "search-results",
+        "categories": [
+          "WIDGET"
+        ]
+      },
+      {
+        "seq": 36,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 37,
+        "phase": "SOURCE_FOUND",
+        "reason": "There we go — I found relevant verified material on 50 Cent - Candy Shop (Feat. Olivia) lyrics - All The Lyrics.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "EVIDENCE",
+          "FOUND"
+        ]
+      },
+      {
+        "seq": 38,
+        "phase": "EVIDENCE_SCOPING",
+        "reason": "Give me one second — preparing the requested material.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "EVIDENCE",
+          "SCOPING"
+        ]
+      },
+      {
+        "seq": 39,
+        "phase": "LYRICS_VERIFIED_PAYLOAD",
+        "reason": "Serving frozen lyrics payload from successfully fetched evidence.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ]
+      },
+      {
+        "seq": 41,
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "finalResponse": "Okay — here’s the verified lyric text for **\"candy shop\" by 50 cent**:\n\n---\n\n**[Intro: 50 Cent]**\nUh huh\nSo seductive\n\n────────\n\n**[Chorus: 50 Cent & Olivia]**\n[50 Cent]\nI'll take you to the candy shop\nI'll let you lick the lollypop\nGo 'head girl, don't you stop\nKeep going 'til you hit the spot (woah)\nI'll take you to the candy shop\nBoy one taste of what I got\nI'll have you spending all you got\nKeep going 'til you hit the spot (woah)\n\n────────\n\n**[Verse 1: 50 Cent]**\nYou can have it your way, how do you want it\nYou gon' back that thing up or should i push up on it\nTemperature rising, okay lets go to the next level\nDance floor jam packed, hot as a teakettle\nI'll break it down for you now, baby it's simple\nIf you be a nympho, I'll be a nympho\nIn the hotel or in the back of the rental\nOn the beach or in the park, it's whatever you into\nGot the magic stick, I'm the love doctor\nHave your friends teasin you 'bout how sprung I gotcha\nWanna show me how you work it baby, no problem\nGet on top then get to bouncing round like a low rider\nI'm a seasons vet when it come to this shit\nAfter you work up a sweat you can play with the stick\nI'm tryin to explain baby the best way I can\nI melt in your mouth girl, not in your hands (ha ha)\n\n────────\n\n**[Bridge: 50 Cent & Olivia]**\nGirl what we do (what we do)\nAnd where we do (and where we do)\nThe things we do (things we do)\nAre just between me and you (oh yeah)\n\n────────\n\n**[Verse 2: 50 Cent]**\nGive it to me baby, nice and slow\nClimb on top, ride like you in the rodeo\nYou ain't never heard a sound like this before\nCause I ain't never put it down like this\nSoon as I come through the door she get to pullin on my zipper\nIt's like it's a race who can get undressed quicker\nIsn't it ironic how erotic it is to watch em in thongs\nHad me thinking 'bout that ass after I'm gone\nI touch the right spot at the right time\nLights on or lights off, she like it from behind\nSo seductive, you should see the way she wind\nHer hips in slow-mo on the floor when we grind\nAs Long as she ain't stoppin, homie I aint stoppin\nDrippin wet with sweat man its on and popping\nAll my champagne campaign, bottle after bottle its on\nAnd we gon' sip til every bubble in every bottle is gone\n\n---\n\n**Lyrics source:** 50 Cent - Candy Shop (Feat. Olivia) lyrics - All The Lyrics — https://www.allthelyrics.com/lyrics/50_cent/candy_shop_feat_olivia-lyrics-221387.html",
+    "finalResponseSha256": "6c0f13c186865b247d63d5b68070813a410dc7b90ec57bfeed28773e320c4377",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791474395120,
+      "startedAtUnixMs": 1791474395123,
+      "completedAtUnixMs": 1791474398675,
+      "queueWaitMs": 3,
+      "stationRunMs": 3552,
+      "endToEndMs": 3555
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
