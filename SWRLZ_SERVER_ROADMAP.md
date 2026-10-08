@@ -1,3 +1,90 @@
+## UPDATE FINISHED — 2026-10-08 — diverse lyric fetch budget + response-start streaming UX v170
+
+**Outcome:** LYRIC FETCH BUDGET DIVERSIFIED ACROSS SOURCE FAMILIES + NEW RESPONSES ANCHOR AT THEIR TOP DURING STREAMING / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### Live v169 evidence from Dragon Chat (19)
+- SongIdentity/general discovery is working: Rack City is classified as high ambiguity, exact quoted title+artist discovery is used, and the result set contains multiple correct lyric destinations across Genius, AZLyrics, Musixmatch, LyricsFreak, SongLyrics, and others.
+- the remaining failure was fetch-budget allocation rather than song discovery:
+  - the canonical reasoner tried Genius and received an HTTP fetch error;
+  - the HF adapter then retried Genius instead of accounting for that already-spent fetch;
+  - subsequent attempts consumed budget on two AZLyrics variants from the same source family, both resolving to the same access-check page;
+  - other already-admitted source families were never reached.
+
+### v170 diverse fetch-budget repair
+- Online Research reasoner advances to **1.4.5** and exports bounded `fetchFailures` from its initial page-fetch stage.
+- HF lyrics adapter imports those failures into `lyricsSourceAttempts`, so the reasoner and fallback adapter share one real **3-total-page-attempt** budget.
+- failed reasoner URLs are added to the same dedupe set and are not retried.
+- `song_identity.py` now defines stable `sourceFamily` keys.
+- candidate ranking now uses `diversify_candidates()`: globally score candidates, then try one strongest candidate from each source family before duplicate variants.
+- rescue-search candidate sets use the same source-family diversification.
+- access/captcha/request-for-access/unusual-activity responses quarantine that source family for the remainder of the current request.
+- duplicate variants from a quarantined family cannot consume later attempts.
+- Online Camera advances to `v170-diverse-fetch-budget` and exports `blockedLyricsSourceFamilies`.
+
+### Exact bounded behavior
+For the Rack City-shaped v170 regression:
+1. attempt 1 = already-spent Genius reasoner fetch failure;
+2. attempt 2 = first AZLyrics candidate, access page → AZLyrics family quarantined;
+3. attempt 3 = Musixmatch candidate from another family;
+4. duplicate AZLyrics variant is never fetched.
+The hard 3-page ceiling is unchanged.
+
+### Response-start streaming UX
+The Web Chat streaming policy is now response-centric instead of bottom-centric:
+- each newly created live assistant message receives a one-time **response-start anchor**;
+- the viewport snaps to the top of that new response with a mobile-safe top inset;
+- while the response-start anchor is active, automatic `followLatest` does not drag the viewport down as more text arrives;
+- user scrolling remains stable while the response grows underneath;
+- manually scrolling to the bottom or tapping **Jump Latest** releases the response-start anchor and resumes normal latest-follow behavior;
+- the live response reserves enough viewport height to make top anchoring useful even before a long answer has fully formed;
+- NDJSON token/status bursts are coalesced to at most one `requestAnimationFrame` render instead of reparsing/rerendering the entire rich response on every individual event;
+- final stream completion flushes any pending render.
+
+### Regression coverage
+Added:
+- `tests/test_diverse_lyric_fetch_budget_v170.py`
+  - proves source-family diversity ordering;
+  - proves reasoner fetch failures consume the same 3-attempt budget;
+  - proves blocked AZLyrics family variants are skipped;
+  - proves the remaining bounded attempt can reach a different source family and verify it.
+- `tests/test_response_start_stream_anchor_v170.py`
+  - proves response-start anchoring exists;
+  - proves send no longer force-scrolls to bottom;
+  - proves trusted bottom scroll / Jump Latest releases the anchor;
+  - proves streaming renders are animation-frame coalesced;
+  - proves live-response viewport-height reservation.
+
+### Guarded self-repair
+- first guarded run `37798751423` stopped before publication because the v169 regression pinned the Online Camera revision string to `v169-versatile-song-discovery`;
+- all prior regressions through v168 passed in that run;
+- v169 regression was reconciled to test its SongIdentity/discovery behavior rather than freezing future observability revision labels;
+- no source from the failed run was published.
+
+### Final deployment receipts
+- final guarded HF run: `37798995112` — terminal **SUCCESS**;
+- exact selected feature source: `22f6f8bb79fc601448dfebc95ab732302cd5c9e2`;
+- lyric/search/presentation/UX gate: v151 PASS, v155 PASS, v157 PASS, v158 PASS, v159 PASS, v160 PASS, v161 PASS, v162 PASS, v163 PASS, v164 PASS, v165 PASS, v166 PASS, v167 PASS, v168 PASS, all v169 SongIdentity tests PASS, **diverse-lyric-fetch-budget-v170 PASS**, **response-start-stream-anchor-v170 PASS**;
+- native R39 verification, real R39 reconstruction, R39-vs-stock compatibility inspection, 700M assembled-profile smoke, fast-HF/Chat preservation guard, authorization gate, production snapshot, rollback checkpoint, upload, and deployed-revision capture all succeeded;
+- prior/rollback Space revision: `442297ab351cc66137b2b728ab93f4d6009e6b79`;
+- deployed Space revision: `4b3d2c309205bd0da3b54099218618bc7d16dbec`.
+
+### Versions
+- Repository Work: **1.0.100**.
+- Server Runtime: **2.3.323 / 2.3.323-hf-v170-diverse-fetch-response-anchor**.
+- Online Research: **1.0.18 / 1.0.18-diverse-fetch-budget-v170**.
+- Web Chat: **1.5.92 / 1.5.92-response-start-stream-anchor-v170**.
+- Deployment Control: **1.0.30**.
+- LALM Engine remains **2.1.159 / 2.1.159-mobile-lyric-presentation-v167** because v170 changes retrieval-budget accounting and Chat streaming UX, not 700M cognition.
+
+### Live acceptance target
+1. retry Rack City or another ambiguous song and confirm the three page attempts span source families rather than duplicate variants from one blocked site;
+2. start a long response on mobile and confirm the viewport snaps once to the response top;
+3. while generation continues, scroll/read near the beginning and confirm new DELTAs do not pull the viewport downward;
+4. scroll to the bottom or tap Jump Latest and confirm normal latest-follow resumes;
+5. inspect Dragon Chat JSON for `v170-diverse-fetch-budget`, shared attempt accounting, and `blockedLyricsSourceFamilies`.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v170 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-08 — diverse lyric fetch budget + response-start streaming UX v170
 
 **Trigger:** live v169 Rack City acceptance plus user mobile streaming feedback.
