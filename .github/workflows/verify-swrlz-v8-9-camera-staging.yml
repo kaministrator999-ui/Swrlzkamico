@@ -1,4 +1,4 @@
-name: Validate §E v8.9 camera-safe storybook staging
+name: Validate §E v9.0 camera-safe storybook staging
 on:
   push:
     branches: [main]
@@ -6,6 +6,11 @@ on:
       - ".github/workflows/verify-swrlz-v8-9-camera-staging.yml"
       - "projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py"
       - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v9_0_animation_studio.py"
+      - "projects/swrlz-forge-moba/runtime/**"
+      - "projects/swrlz-forge-moba/assets/anime/**"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
+      - "projects/swrlz-forge-moba/build_space.py"
   pull_request:
     branches: [main]
 permissions:
@@ -34,10 +39,12 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
-          assert len(manifest['patches'])==48
-          assert manifest['patches'][-1]=='patches/v8_9_cinematic_staging.py'
+          assert len(manifest['patches'])==49
+          assert manifest['patches'][-1]=='patches/v9_0_animation_studio.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
-          for feature in ('V8_9_CINEMATIC_STAGING_SAFE','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
+          assert len(s.encode())==manifest['finalBytes']
+          assert hashlib.sha256(s.encode()).hexdigest()==manifest['finalSha256']
+          for feature in ('V9_0_AUTHORED_PAPER_THEATRE','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
                           'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
                           'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):
               assert feature in s, feature
@@ -50,13 +57,15 @@ jobs:
           PY
           node --check /tmp/storybook-test/module.mjs
           python -m py_compile projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/storybook-package
+          cmp /tmp/storybook-test/index.html /tmp/storybook-package/index.html
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
       - name: Run actual desktop and mobile director/cel/project export acceptance
         run: |
-          python -m http.server 8765 --directory /tmp/storybook-test >/tmp/storybook-test-server.log 2>&1 &
+          python -m http.server 8765 --directory /tmp/storybook-package >/tmp/storybook-test-server.log 2>&1 &
           SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/native_anime_playwright.mjs
       - uses: actions/upload-artifact@v4
         if: always()

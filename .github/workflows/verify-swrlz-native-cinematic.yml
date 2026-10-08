@@ -1,4 +1,4 @@
-name: Verify §E v8.9 native cinematic candidate
+name: Verify §E v9.0 native cinematic candidate
 on:
   push:
     branches: [main]
@@ -9,6 +9,9 @@ on:
       - "projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py"
       - "projects/swrlz-forge-moba/patches/v8_8_popup_storybook.py"
       - "projects/swrlz-forge-moba/patches/v8_7_anime_cel_layers.py"
+      - "projects/swrlz-forge-moba/patches/v9_0_animation_studio.py"
+      - "projects/swrlz-forge-moba/runtime/**"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
   pull_request:
     branches: [main]
 permissions:
@@ -35,15 +38,20 @@ jobs:
           mod=runpy.run_path(str(root/"build_space.py"))
           raw=gzip.decompress(base64.b64decode("".join((root/p).read_text(encoding="utf-8").strip() for p in manifest["chunks"])))
           assert hashlib.sha256(raw).hexdigest()==manifest["baseSha256"]
+          assert len(raw)==manifest["baseBytes"]
           source=raw.decode("utf-8")
           for rel in manifest["patches"]:
             source=mod["load_patch"](root/rel)(source)
           output=source.encode("utf-8")
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
-          assert len(manifest["patches"])==48
+          assert len(manifest["patches"])==49
+          assert manifest['patches'][-1]=='patches/v9_0_animation_studio.py'
+          assert len(output)==manifest['finalBytes']
+          assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
           for needle in (
-            'V8_9_CINEMATIC_STAGING_SAFE','Maker v8.9','animeStartCinematic',
+            'V9_0_AUTHORED_PAPER_THEATRE','Maker v9.0','animeStartCinematic',
+            'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','storyEditorInstall',
             'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',
             'animeCineExplore','animeCineScrub','updateWorkspaceInteraction(t);animeUpdateCinematic(dt);',
             'if(animeCine?.active)return;',
