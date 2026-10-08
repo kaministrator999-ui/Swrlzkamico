@@ -64,6 +64,6 @@
     "patches/v8_8_popup_storybook.py",
     "patches/v8_9_cinematic_staging.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "PENDING_BROWSER_VERIFICATION"
+  "finalBytes": 647639,
+  "finalSha256": "da9f48941543c81062a232417ed8897e8c82e912852474cf2154e209c12ddf37"
 }
