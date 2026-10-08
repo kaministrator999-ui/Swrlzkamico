@@ -1452,6 +1452,10 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         item for item in (bundle.get("candidateAdmissionDebug") or [])[:24]
         if isinstance(item,dict)
     ]
+    song_identity_debug=plan.get("songIdentity") if isinstance(plan.get("songIdentity"),dict) else (
+        song_identity(str(plan.get("subject") or "")) if plan.get("contentMode")=="lyrics-verification" else {}
+    )
+    song_discovery_plan=query_ladder(song_identity_debug,LYRICS_MAX_RESCUE_SEARCHES) if song_identity_debug else []
     lyrics_rescue_search_debug=[]
     lyrics_fallback_exhausted=False
 
@@ -1934,6 +1938,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             (verified_lyrics or {}).get("musicPresentation") if isinstance((verified_lyrics or {}).get("musicPresentation"),dict) else None,
         ) if verified_lyrics else None,
         "candidateAdmissionDebug": candidate_admission_debug[:24],
+        "songIdentity": song_identity_debug,
+        "songDiscoveryPlan": song_discovery_plan,
         "lyricsRescueSearchDebug": lyrics_rescue_search_debug[:LYRICS_MAX_RESCUE_SEARCHES],
         "lyricsSourceAttemptCount": len(lyrics_source_attempts),
         "lyricsMaxPageAttempts": LYRICS_MAX_PAGE_ATTEMPTS if plan.get("contentMode")=="lyrics-verification" else 0,
@@ -1969,6 +1975,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             (verified_lyrics or {}).get("musicPresentation") if isinstance((verified_lyrics or {}).get("musicPresentation"),dict) else None,
         ) if verified_lyrics else None,
         "candidateAdmissionDebug": candidate_admission_debug[:24],
+        "songIdentity": song_identity_debug,
+        "songDiscoveryPlan": song_discovery_plan,
         "lyricsRescueSearchDebug": lyrics_rescue_search_debug[:LYRICS_MAX_RESCUE_SEARCHES],
         "lyricsSourceAttemptCount": len(lyrics_source_attempts),
         "lyricsMaxPageAttempts": LYRICS_MAX_PAGE_ATTEMPTS if plan.get("contentMode")=="lyrics-verification" else 0,
@@ -3805,6 +3813,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             (verified_lyrics or {}).get("musicPresentation") if isinstance((verified_lyrics or {}).get("musicPresentation"),dict) else None,
         ) if verified_lyrics else None,
         "candidateAdmissionDebug": candidate_admission_debug[:24],
+        "songIdentity": song_identity_debug,
+        "songDiscoveryPlan": song_discovery_plan,
         "lyricsRescueSearchDebug": lyrics_rescue_search_debug[:LYRICS_MAX_RESCUE_SEARCHES],
         "lyricsSourceAttemptCount": len(lyrics_source_attempts),
         "lyricsMaxPageAttempts": LYRICS_MAX_PAGE_ATTEMPTS if plan.get("contentMode")=="lyrics-verification" else 0,
@@ -3840,6 +3850,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             (verified_lyrics or {}).get("musicPresentation") if isinstance((verified_lyrics or {}).get("musicPresentation"),dict) else None,
         ) if verified_lyrics else None,
         "candidateAdmissionDebug": candidate_admission_debug[:24],
+        "songIdentity": song_identity_debug,
+        "songDiscoveryPlan": song_discovery_plan,
         "lyricsRescueSearchDebug": lyrics_rescue_search_debug[:LYRICS_MAX_RESCUE_SEARCHES],
         "lyricsSourceAttemptCount": len(lyrics_source_attempts),
         "lyricsMaxPageAttempts": LYRICS_MAX_PAGE_ATTEMPTS if plan.get("contentMode")=="lyrics-verification" else 0,
