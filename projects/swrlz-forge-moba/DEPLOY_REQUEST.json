@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v8.9",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_9_CINEMATIC_STAGING_SAFE",
-  "reason": "Repair Android user screenshots showing v8.8 scenery and physical book rising in front of the cinematic camera. v8.9 lowers the book, replaces opaque foreground desk with thin transparent bottom-edge trim, depth-clamps background scenery behind both wizard cels, and adds first/later scene stage-safety assertions. Exact 48-patch HTML/desktop/mobile Play/Save acceptance passed at Actions 37728474772.",
-  "sourceCommit": "63c94af0b9fae570c864a1fc61e4bdbf29a29a27",
-  "sourceIntegritySha256": "da9f48941543c81062a232417ed8897e8c82e912852474cf2154e209c12ddf37"
+  "releaseVersion": "v9.0",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V9_0_AUTHORED_PAPER_THEATRE",
+  "reason": "Release native Animation Studio and the editor-authored 134-second first episode The Page That Remembered: separate Kami and §wyrlz cutouts, multi-layer illustrated scenery, physical paper hinges, independent book, saved camera/layer keyframes and dialogue, pose capture, Undo/Redo, artwork replacement, and portable Save/Load. Desktop/mobile native and full authoring acceptance passed in Actions 37797022555; all six engine CI gates passed for PR 46. Sealed 49-patch HTML and all eight bundled media assets independently verified before this final deploy request.",
+  "sourceCommit": "f46d65051f8d28db3d8afb05e21098943af3ed4c",
+  "sourceIntegritySha256": "6a0a9d24e2c888991afbe051d2ae5eba65f38a034c590013e447ca129962d157"
 }
