@@ -35,6 +35,7 @@ jobs:
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
           assert len(manifest['patches'])==47
+          assert 'Pop-Up Director' in (root/'patches/v8_8_popup_storybook.py').read_text()
           assert manifest['patches'][-1]=='patches/v8_8_popup_storybook.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
           for feature in ('V8_8_POPUP_STORYBOOK_DIRECTOR','animeMakePaperBook','popKamiArt',
