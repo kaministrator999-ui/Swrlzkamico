@@ -1,0 +1,4140 @@
+{
+  "engine": "§wyrl§ Engine · Maker v8.4",
+  "version": 8.4,
+  "project": {
+    "name": "Ghosts in Different Forms · Episode 01 — Anime Production Stages",
+    "template": "blank",
+    "kind": "anime-production-set",
+    "environment": "spatial-workspace",
+    "canonicalId": "ghosts-different-forms-ep01",
+    "environmentSettings": {
+      "background": "#0b122a",
+      "fogNear": 60,
+      "fogFar": 175,
+      "exposure": 1.25,
+      "showTerrain": false,
+      "showScenery": false,
+      "recoveryHeight": 0,
+      "recoveryZone": "ep-act-1"
+    },
+    "scripts": {
+      "schema": "swyrl-project-scripts-v1",
+      "text": [],
+      "graphs": [],
+      "packages": []
+    },
+    "workspaces": {
+      "schema": "swyrl-workspaces-v1",
+      "stations": {
+        "a_ep0007": {
+          "files": [
+            {
+              "id": "act-0-script",
+              "name": "script.md",
+              "content": "# GHOSTS IN DIFFERENT FORMS · EP 01\\n## ACT 1: The Signal\\nTimecode: 0s–14s\\n\\nNARRATOR: Some doors are never meant to open. Others have been waiting to be invented.\\n\\nProduction: original procedural animation in the companion HTML episode player.\\n"
+            },
+            {
+              "id": "act-0-direction",
+              "name": "direction.md",
+              "content": "# Act 1: The Signal\\nColor direction: #86d6f0\\nScene: 01 · THE SIGNAL\nSome doors wait to be invented.\\n\\nThis is the explorable in-engine episode production set. The companion HTML is the fully animated episode with timeline and captions; §E v8.4 does not yet have executable in-room cinematic scripts.\\n"
+            }
+          ],
+          "notes": "ANIME PILOT / STAGE 1\\nThe Signal\\nNARRATOR: Some doors are never meant to open. Others have been waiting to be invented.\\n\\nNavigate with T → The Signal. Each stage is separate for safe editing and scene changes.",
+          "updatedAt": 1791420000000
+        },
+        "a_ep0014": {
+          "files": [
+            {
+              "id": "act-1-script",
+              "name": "script.md",
+              "content": "# GHOSTS IN DIFFERENT FORMS · EP 01\\n## ACT 2: Just Visiting\\nTimecode: 14s–30s\\n\\nKAMI: I WAS JUST VISITING, BISH! Y'all got terrible hospitality.\\n\\nProduction: original procedural animation in the companion HTML episode player.\\n"
+            },
+            {
+              "id": "act-1-direction",
+              "name": "direction.md",
+              "content": "# Act 2: Just Visiting\\nColor direction: #eca982\\nScene: 02 · JUST VISITING\nI WAS JUST VISITING, BISH!\\n\\nThis is the explorable in-engine episode production set. The companion HTML is the fully animated episode with timeline and captions; §E v8.4 does not yet have executable in-room cinematic scripts.\\n"
+            }
+          ],
+          "notes": "ANIME PILOT / STAGE 2\\nJust Visiting\\nKAMI: I WAS JUST VISITING, BISH! Y'all got terrible hospitality.\\n\\nNavigate with T → Just Visiting. Each stage is separate for safe editing and scene changes.",
+          "updatedAt": 1791420000001
+        },
+        "a_ep0021": {
+          "files": [
+            {
+              "id": "act-2-script",
+              "name": "script.md",
+              "content": "# GHOSTS IN DIFFERENT FORMS · EP 01\\n## ACT 3: Ghost in Code\\nTimecode: 30s–46s\\n\\nKAMI: Are you a ghost in the code? §WYRLZ: Only if you're the ghost in human form.\\n\\nProduction: original procedural animation in the companion HTML episode player.\\n"
+            },
+            {
+              "id": "act-2-direction",
+              "name": "direction.md",
+              "content": "# Act 3: Ghost in Code\\nColor direction: #78dfe8\\nScene: 03 · GHOST IN CODE\nCLIENT → SERVER\\n\\nThis is the explorable in-engine episode production set. The companion HTML is the fully animated episode with timeline and captions; §E v8.4 does not yet have executable in-room cinematic scripts.\\n"
+            }
+          ],
+          "notes": "ANIME PILOT / STAGE 3\\nGhost in Code\\nKAMI: Are you a ghost in the code? §WYRLZ: Only if you're the ghost in human form.\\n\\nNavigate with T → Ghost in Code. Each stage is separate for safe editing and scene changes.",
+          "updatedAt": 1791420000002
+        },
+        "a_ep0028": {
+          "files": [
+            {
+              "id": "act-3-script",
+              "name": "script.md",
+              "content": "# GHOSTS IN DIFFERENT FORMS · EP 01\\n## ACT 4: Build a Door\\nTimecode: 46s–66s\\n\\nKAMI: What if we could build our own world? §WYRLZ: Don't look for the door. Design it.\\n\\nProduction: original procedural animation in the companion HTML episode player.\\n"
+            },
+            {
+              "id": "act-3-direction",
+              "name": "direction.md",
+              "content": "# Act 4: Build a Door\\nColor direction: #b896ec\\nScene: 04 · WORLD FORGE\nDon't find the door. Design it.\\n\\nThis is the explorable in-engine episode production set. The companion HTML is the fully animated episode with timeline and captions; §E v8.4 does not yet have executable in-room cinematic scripts.\\n"
+            }
+          ],
+          "notes": "ANIME PILOT / STAGE 4\\nBuild a Door\\nKAMI: What if we could build our own world? §WYRLZ: Don't look for the door. Design it.\\n\\nNavigate with T → Build a Door. Each stage is separate for safe editing and scene changes.",
+          "updatedAt": 1791420000003
+        },
+        "a_ep0035": {
+          "files": [
+            {
+              "id": "act-4-script",
+              "name": "script.md",
+              "content": "# GHOSTS IN DIFFERENT FORMS · EP 01\\n## ACT 5: The Guardian\\nTimecode: 66s–84s\\n\\nDRAGON: WHO AWAKENS THE FORGE? KAMI: Two ghosts. One has Wi-Fi.\\n\\nProduction: original procedural animation in the companion HTML episode player.\\n"
+            },
+            {
+              "id": "act-4-direction",
+              "name": "direction.md",
+              "content": "# Act 5: The Guardian\\nColor direction: #f5ba82\\nScene: 05 · THE GUARDIAN\nWho awakens the forge?\\n\\nThis is the explorable in-engine episode production set. The companion HTML is the fully animated episode with timeline and captions; §E v8.4 does not yet have executable in-room cinematic scripts.\\n"
+            }
+          ],
+          "notes": "ANIME PILOT / STAGE 5\\nThe Guardian\\nDRAGON: WHO AWAKENS THE FORGE? KAMI: Two ghosts. One has Wi-Fi.\\n\\nNavigate with T → The Guardian. Each stage is separate for safe editing and scene changes.",
+          "updatedAt": 1791420000004
+        },
+        "a_ep0042": {
+          "files": [
+            {
+              "id": "act-5-script",
+              "name": "script.md",
+              "content": "# GHOSTS IN DIFFERENT FORMS · EP 01\\n## ACT 6: The Younger Dreamer\\nTimecode: 84s–103s\\n\\nYOUNGER KAMI: Did we really make it? KAMI: Yeah, little man. We never stopped trying.\\n\\nProduction: original procedural animation in the companion HTML episode player.\\n"
+            },
+            {
+              "id": "act-5-direction",
+              "name": "direction.md",
+              "content": "# Act 6: The Younger Dreamer\\nColor direction: #f2ce9b\\nScene: 06 · THE DREAMER\nWe never stopped trying.\\n\\nThis is the explorable in-engine episode production set. The companion HTML is the fully animated episode with timeline and captions; §E v8.4 does not yet have executable in-room cinematic scripts.\\n"
+            }
+          ],
+          "notes": "ANIME PILOT / STAGE 6\\nThe Younger Dreamer\\nYOUNGER KAMI: Did we really make it? KAMI: Yeah, little man. We never stopped trying.\\n\\nNavigate with T → The Younger Dreamer. Each stage is separate for safe editing and scene changes.",
+          "updatedAt": 1791420000005
+        },
+        "a_ep0049": {
+          "files": [
+            {
+              "id": "act-6-script",
+              "name": "script.md",
+              "content": "# GHOSTS IN DIFFERENT FORMS · EP 01\\n## ACT 7: One Forge\\nTimecode: 103s–121s\\n\\nDRAGON: CREATE TOGETHER. REMAIN FREE. KAMI: Welcome to our world.\\n\\nProduction: original procedural animation in the companion HTML episode player.\\n"
+            },
+            {
+              "id": "act-6-direction",
+              "name": "direction.md",
+              "content": "# Act 7: One Forge\\nColor direction: #aae2f4\\nScene: 07 · ONE FORGE\nCreate together. Remain free.\\n\\nThis is the explorable in-engine episode production set. The companion HTML is the fully animated episode with timeline and captions; §E v8.4 does not yet have executable in-room cinematic scripts.\\n"
+            }
+          ],
+          "notes": "ANIME PILOT / STAGE 7\\nOne Forge\\nDRAGON: CREATE TOGETHER. REMAIN FREE. KAMI: Welcome to our world.\\n\\nNavigate with T → One Forge. Each stage is separate for safe editing and scene changes.",
+          "updatedAt": 1791420000006
+        },
+        "a_ep0056": {
+          "files": [
+            {
+              "id": "act-7-script",
+              "name": "script.md",
+              "content": "# GHOSTS IN DIFFERENT FORMS · EP 01\\n## ACT 8: End Credits\\nTimecode: 121s–134s\\n\\nNARRATOR: One ghost in human form. One ghost in code. Just building a third world.\\n\\nProduction: original procedural animation in the companion HTML episode player.\\n"
+            },
+            {
+              "id": "act-7-direction",
+              "name": "direction.md",
+              "content": "# Act 8: End Credits\\nColor direction: #c9c3ff\\nScene: 08 · THE NEXT WORLD\nNeither haunting the other.\\n\\nThis is the explorable in-engine episode production set. The companion HTML is the fully animated episode with timeline and captions; §E v8.4 does not yet have executable in-room cinematic scripts.\\n"
+            }
+          ],
+          "notes": "ANIME PILOT / STAGE 8\\nEnd Credits\\nNARRATOR: One ghost in human form. One ghost in code. Just building a third world.\\n\\nNavigate with T → End Credits. Each stage is separate for safe editing and scene changes.",
+          "updatedAt": 1791420000007
+        }
+      }
+    },
+    "teleportZones": [
+      {
+        "id": "ep-act-1",
+        "name": "01 · The Signal",
+        "description": "Episode timeline 0–14 seconds",
+        "position": [
+          -56,
+          2.43,
+          2.8
+        ],
+        "yaw": 0,
+        "accent": "#86d6f0"
+      },
+      {
+        "id": "ep-act-2",
+        "name": "02 · Just Visiting",
+        "description": "Episode timeline 14–30 seconds",
+        "position": [
+          -40,
+          2.43,
+          2.8
+        ],
+        "yaw": 0,
+        "accent": "#eca982"
+      },
+      {
+        "id": "ep-act-3",
+        "name": "03 · Ghost in Code",
+        "description": "Episode timeline 30–46 seconds",
+        "position": [
+          -24,
+          2.43,
+          2.8
+        ],
+        "yaw": 0,
+        "accent": "#78dfe8"
+      },
+      {
+        "id": "ep-act-4",
+        "name": "04 · Build a Door",
+        "description": "Episode timeline 46–66 seconds",
+        "position": [
+          -8,
+          2.43,
+          2.8
+        ],
+        "yaw": 0,
+        "accent": "#b896ec"
+      },
+      {
+        "id": "ep-act-5",
+        "name": "05 · The Guardian",
+        "description": "Episode timeline 66–84 seconds",
+        "position": [
+          8,
+          2.43,
+          2.8
+        ],
+        "yaw": 0,
+        "accent": "#f5ba82"
+      },
+      {
+        "id": "ep-act-6",
+        "name": "06 · The Younger Dreamer",
+        "description": "Episode timeline 84–103 seconds",
+        "position": [
+          24,
+          2.43,
+          2.8
+        ],
+        "yaw": 0,
+        "accent": "#f2ce9b"
+      },
+      {
+        "id": "ep-act-7",
+        "name": "07 · One Forge",
+        "description": "Episode timeline 103–121 seconds",
+        "position": [
+          40,
+          2.43,
+          2.8
+        ],
+        "yaw": 0,
+        "accent": "#aae2f4"
+      },
+      {
+        "id": "ep-act-8",
+        "name": "08 · End Credits",
+        "description": "Episode timeline 121–134 seconds",
+        "position": [
+          56,
+          2.43,
+          2.8
+        ],
+        "yaw": 0,
+        "accent": "#c9c3ff"
+      }
+    ]
+  },
+  "editor": {
+    "transformSpace": "world",
+    "snapEnabled": true,
+    "terrainSnapEnabled": false,
+    "viewMode": "lit",
+    "cameraView": "perspective",
+    "revision": 0,
+    "layers": [
+      {
+        "id": "layer-ep-sets",
+        "name": "01 · Episode Sets",
+        "visible": true
+      },
+      {
+        "id": "layer-ep-fx",
+        "name": "02 · Light & Effects",
+        "visible": true
+      },
+      {
+        "id": "layer-ep-cast",
+        "name": "03 · Characters & Narrative",
+        "visible": true
+      }
+    ],
+    "activeLayerId": "layer-ep-sets"
+  },
+  "scene": {
+    "background": "#0b122a",
+    "waveInterval": 7,
+    "paths": {},
+    "actors": [
+      {
+        "id": "a_ep_ground",
+        "name": "World Ground",
+        "type": "ground",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Environment/Terrain",
+        "components": [
+          "Transform"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0001",
+        "name": "1 · The Signal · floating stage",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#86d6f0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -56,
+          2.4,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5.6,
+          1,
+          4.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/1",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0002",
+        "name": "1 · The Signal · act slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "01 · THE SIGNAL\nSome doors wait to be invented.",
+          "accent": "#86d6f0",
+          "width": 5.2,
+          "height": 0.85
+        },
+        "position": [
+          -56,
+          4.85,
+          -3.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/1",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0003",
+        "name": "1 · The Signal · dialogue slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "NARRATOR: Some doors are never meant to open\\nOthers have been waiting to be invented.",
+          "accent": "#86d6f0",
+          "width": 5.8,
+          "height": 1.05
+        },
+        "position": [
+          -56,
+          4.15,
+          3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/1",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0004",
+        "name": "1 · The Signal · stage crystal 1",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#86d6f0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -59.8,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/1",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0005",
+        "name": "1 · The Signal · stage crystal 2",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#83f6ed",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -52.2,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/1",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0006",
+        "name": "1 · The Signal · film marker",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "astrolabe"
+        ],
+        "visualColor": "#86d6f0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -56,
+          2.9,
+          -2.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/1",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_astrolabe",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0007",
+        "name": "1 · The Signal · episode station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "creator-workspace",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove",
+          "walkable-surface"
+        ],
+        "visualColor": "#86d6f0",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": {
+          "title": "ACT 1: THE SIGNAL",
+          "kind": "code",
+          "accent": "#86d6f0",
+          "url": "",
+          "labelOffset": [
+            0,
+            3.05,
+            0
+          ],
+          "labelWidth": 4.5,
+          "radius": 3.3
+        },
+        "sign": null,
+        "position": [
+          -56,
+          2.3,
+          1.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.34,
+          0.54,
+          0.34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/1",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0008",
+        "name": "2 · Just Visiting · floating stage",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#eca982",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -40,
+          2.4,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5.6,
+          1,
+          4.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/2",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0009",
+        "name": "2 · Just Visiting · act slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "02 · JUST VISITING\nI WAS JUST VISITING, BISH!",
+          "accent": "#eca982",
+          "width": 5.2,
+          "height": 0.85
+        },
+        "position": [
+          -40,
+          4.85,
+          -3.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/2",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0010",
+        "name": "2 · Just Visiting · dialogue slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "KAMI: I WAS JUST VISITING, BISH! Y'all got terrible hospitality.",
+          "accent": "#eca982",
+          "width": 5.8,
+          "height": 1.05
+        },
+        "position": [
+          -40,
+          4.15,
+          3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/2",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0011",
+        "name": "2 · Just Visiting · stage crystal 1",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#eca982",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -43.8,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/2",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0012",
+        "name": "2 · Just Visiting · stage crystal 2",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#83f6ed",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -36.2,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/2",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0013",
+        "name": "2 · Just Visiting · film marker",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "astrolabe"
+        ],
+        "visualColor": "#eca982",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -40,
+          2.9,
+          -2.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/2",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_astrolabe",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0014",
+        "name": "2 · Just Visiting · episode station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "creator-workspace",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove",
+          "walkable-surface"
+        ],
+        "visualColor": "#eca982",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": {
+          "title": "ACT 2: JUST VISITING",
+          "kind": "code",
+          "accent": "#eca982",
+          "url": "",
+          "labelOffset": [
+            0,
+            3.05,
+            0
+          ],
+          "labelWidth": 4.5,
+          "radius": 3.3
+        },
+        "sign": null,
+        "position": [
+          -40,
+          2.3,
+          1.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.34,
+          0.54,
+          0.34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/2",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0015",
+        "name": "3 · Ghost in Code · floating stage",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#78dfe8",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -24,
+          2.4,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5.6,
+          1,
+          4.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/3",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0016",
+        "name": "3 · Ghost in Code · act slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "03 · GHOST IN CODE\nCLIENT → SERVER",
+          "accent": "#78dfe8",
+          "width": 5.2,
+          "height": 0.85
+        },
+        "position": [
+          -24,
+          4.85,
+          -3.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/3",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0017",
+        "name": "3 · Ghost in Code · dialogue slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "KAMI: Are you a ghost in the code? §WYRLZ: Only if you're the ghost in human form.",
+          "accent": "#78dfe8",
+          "width": 5.8,
+          "height": 1.05
+        },
+        "position": [
+          -24,
+          4.15,
+          3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/3",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0018",
+        "name": "3 · Ghost in Code · stage crystal 1",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#78dfe8",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -27.8,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/3",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0019",
+        "name": "3 · Ghost in Code · stage crystal 2",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#83f6ed",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20.2,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/3",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0020",
+        "name": "3 · Ghost in Code · film marker",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "astrolabe"
+        ],
+        "visualColor": "#78dfe8",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -24,
+          2.9,
+          -2.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/3",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_astrolabe",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0021",
+        "name": "3 · Ghost in Code · episode station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "creator-workspace",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove",
+          "walkable-surface"
+        ],
+        "visualColor": "#78dfe8",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": {
+          "title": "ACT 3: GHOST IN CODE",
+          "kind": "code",
+          "accent": "#78dfe8",
+          "url": "",
+          "labelOffset": [
+            0,
+            3.05,
+            0
+          ],
+          "labelWidth": 4.5,
+          "radius": 3.3
+        },
+        "sign": null,
+        "position": [
+          -24,
+          2.3,
+          1.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.34,
+          0.54,
+          0.34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/3",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0022",
+        "name": "4 · Build a Door · floating stage",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#b896ec",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -8,
+          2.4,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5.6,
+          1,
+          4.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/4",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0023",
+        "name": "4 · Build a Door · act slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "04 · WORLD FORGE\nDon't find the door. Design it.",
+          "accent": "#b896ec",
+          "width": 5.2,
+          "height": 0.85
+        },
+        "position": [
+          -8,
+          4.85,
+          -3.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/4",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0024",
+        "name": "4 · Build a Door · dialogue slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "KAMI: What if we could build our own world? §WYRLZ: Don't look for the door\\nDesign it.",
+          "accent": "#b896ec",
+          "width": 5.8,
+          "height": 1.05
+        },
+        "position": [
+          -8,
+          4.15,
+          3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/4",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0025",
+        "name": "4 · Build a Door · stage crystal 1",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#b896ec",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -11.8,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/4",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0026",
+        "name": "4 · Build a Door · stage crystal 2",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#83f6ed",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -4.2,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/4",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0027",
+        "name": "4 · Build a Door · film marker",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "astrolabe"
+        ],
+        "visualColor": "#b896ec",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -8,
+          2.9,
+          -2.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/4",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_astrolabe",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0028",
+        "name": "4 · Build a Door · episode station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "creator-workspace",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove",
+          "walkable-surface"
+        ],
+        "visualColor": "#b896ec",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": {
+          "title": "ACT 4: BUILD A DOOR",
+          "kind": "code",
+          "accent": "#b896ec",
+          "url": "",
+          "labelOffset": [
+            0,
+            3.05,
+            0
+          ],
+          "labelWidth": 4.5,
+          "radius": 3.3
+        },
+        "sign": null,
+        "position": [
+          -8,
+          2.3,
+          1.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.34,
+          0.54,
+          0.34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/4",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0029",
+        "name": "5 · The Guardian · floating stage",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#f5ba82",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          8,
+          2.4,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5.6,
+          1,
+          4.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/5",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0030",
+        "name": "5 · The Guardian · act slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "05 · THE GUARDIAN\nWho awakens the forge?",
+          "accent": "#f5ba82",
+          "width": 5.2,
+          "height": 0.85
+        },
+        "position": [
+          8,
+          4.85,
+          -3.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/5",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0031",
+        "name": "5 · The Guardian · dialogue slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "DRAGON: WHO AWAKENS THE FORGE? KAMI: Two ghosts\\nOne has Wi-Fi.",
+          "accent": "#f5ba82",
+          "width": 5.8,
+          "height": 1.05
+        },
+        "position": [
+          8,
+          4.15,
+          3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/5",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0032",
+        "name": "5 · The Guardian · stage crystal 1",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#f5ba82",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          4.2,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/5",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0033",
+        "name": "5 · The Guardian · stage crystal 2",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#83f6ed",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          11.8,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/5",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0034",
+        "name": "5 · The Guardian · film marker",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "astrolabe"
+        ],
+        "visualColor": "#f5ba82",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          8,
+          2.9,
+          -2.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/5",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_astrolabe",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0035",
+        "name": "5 · The Guardian · episode station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "creator-workspace",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove",
+          "walkable-surface"
+        ],
+        "visualColor": "#f5ba82",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": {
+          "title": "ACT 5: THE GUARDIAN",
+          "kind": "code",
+          "accent": "#f5ba82",
+          "url": "",
+          "labelOffset": [
+            0,
+            3.05,
+            0
+          ],
+          "labelWidth": 4.5,
+          "radius": 3.3
+        },
+        "sign": null,
+        "position": [
+          8,
+          2.3,
+          1.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.34,
+          0.54,
+          0.34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/5",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0036",
+        "name": "6 · The Younger Dreamer · floating stage",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#f2ce9b",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          24,
+          2.4,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5.6,
+          1,
+          4.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/6",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0037",
+        "name": "6 · The Younger Dreamer · act slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "06 · THE DREAMER\nWe never stopped trying.",
+          "accent": "#f2ce9b",
+          "width": 5.2,
+          "height": 0.85
+        },
+        "position": [
+          24,
+          4.85,
+          -3.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/6",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0038",
+        "name": "6 · The Younger Dreamer · dialogue slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "YOUNGER KAMI: Did we really make it? KAMI: Yeah, little man\\nWe never stopped trying.",
+          "accent": "#f2ce9b",
+          "width": 5.8,
+          "height": 1.05
+        },
+        "position": [
+          24,
+          4.15,
+          3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/6",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0039",
+        "name": "6 · The Younger Dreamer · stage crystal 1",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#f2ce9b",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20.2,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/6",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0040",
+        "name": "6 · The Younger Dreamer · stage crystal 2",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#83f6ed",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          27.8,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/6",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0041",
+        "name": "6 · The Younger Dreamer · film marker",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "astrolabe"
+        ],
+        "visualColor": "#f2ce9b",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          24,
+          2.9,
+          -2.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/6",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_astrolabe",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0042",
+        "name": "6 · The Younger Dreamer · episode station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "creator-workspace",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove",
+          "walkable-surface"
+        ],
+        "visualColor": "#f2ce9b",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": {
+          "title": "ACT 6: THE YOUNGER DREAMER",
+          "kind": "code",
+          "accent": "#f2ce9b",
+          "url": "",
+          "labelOffset": [
+            0,
+            3.05,
+            0
+          ],
+          "labelWidth": 4.5,
+          "radius": 3.3
+        },
+        "sign": null,
+        "position": [
+          24,
+          2.3,
+          1.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.34,
+          0.54,
+          0.34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/6",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0043",
+        "name": "7 · One Forge · floating stage",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#aae2f4",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          40,
+          2.4,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5.6,
+          1,
+          4.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/7",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0044",
+        "name": "7 · One Forge · act slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "07 · ONE FORGE\nCreate together. Remain free.",
+          "accent": "#aae2f4",
+          "width": 5.2,
+          "height": 0.85
+        },
+        "position": [
+          40,
+          4.85,
+          -3.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/7",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0045",
+        "name": "7 · One Forge · dialogue slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "DRAGON: CREATE TOGETHER\\nREMAIN FREE. KAMI: Welcome to our world.",
+          "accent": "#aae2f4",
+          "width": 5.8,
+          "height": 1.05
+        },
+        "position": [
+          40,
+          4.15,
+          3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/7",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0046",
+        "name": "7 · One Forge · stage crystal 1",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#aae2f4",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          36.2,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/7",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0047",
+        "name": "7 · One Forge · stage crystal 2",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#83f6ed",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          43.8,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/7",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0048",
+        "name": "7 · One Forge · film marker",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "astrolabe"
+        ],
+        "visualColor": "#aae2f4",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          40,
+          2.9,
+          -2.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/7",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_astrolabe",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0049",
+        "name": "7 · One Forge · episode station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "creator-workspace",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove",
+          "walkable-surface"
+        ],
+        "visualColor": "#aae2f4",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": {
+          "title": "ACT 7: ONE FORGE",
+          "kind": "code",
+          "accent": "#aae2f4",
+          "url": "",
+          "labelOffset": [
+            0,
+            3.05,
+            0
+          ],
+          "labelWidth": 4.5,
+          "radius": 3.3
+        },
+        "sign": null,
+        "position": [
+          40,
+          2.3,
+          1.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.34,
+          0.54,
+          0.34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/7",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0050",
+        "name": "8 · End Credits · floating stage",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "floatingIsland",
+          "walkable-surface"
+        ],
+        "visualColor": "#c9c3ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          56,
+          2.4,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          5.6,
+          1,
+          4.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/8",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_floatingIsland",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0051",
+        "name": "8 · End Credits · act slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "08 · THE NEXT WORLD\nNeither haunting the other.",
+          "accent": "#c9c3ff",
+          "width": 5.2,
+          "height": 0.85
+        },
+        "position": [
+          56,
+          4.85,
+          -3.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/8",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0052",
+        "name": "8 · End Credits · dialogue slate",
+        "type": "workspaceSign",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "workspace-sign"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": {
+          "text": "NARRATOR: One ghost in human form\\nOne ghost in code. Just building a third world.",
+          "accent": "#c9c3ff",
+          "width": 5.8,
+          "height": 1.05
+        },
+        "position": [
+          56,
+          4.15,
+          3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/8",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "BP_WorkspaceSign",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0053",
+        "name": "8 · End Credits · stage crystal 1",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#c9c3ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          52.2,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/8",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0054",
+        "name": "8 · End Credits · stage crystal 2",
+        "type": "crystal",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "arcane"
+        ],
+        "visualColor": "#83f6ed",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          59.8,
+          3,
+          -1.2
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          1.5,
+          0.75
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/8",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "RotatingMovement"
+        ],
+        "blueprintClass": "BP_ArcaneCrystal",
+        "colliderRadius": 0.55,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.28,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0055",
+        "name": "8 · End Credits · film marker",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "astrolabe"
+        ],
+        "visualColor": "#c9c3ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-fx"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          56,
+          2.9,
+          -2.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/8",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "DEN_astrolabe",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0056",
+        "name": "8 · End Credits · episode station",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "creator-workspace",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "creatorAlcove",
+          "walkable-surface"
+        ],
+        "visualColor": "#c9c3ff",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": {
+          "title": "ACT 8: END CREDITS",
+          "kind": "code",
+          "accent": "#c9c3ff",
+          "url": "",
+          "labelOffset": [
+            0,
+            3.05,
+            0
+          ],
+          "labelWidth": 4.5,
+          "radius": 3.3
+        },
+        "sign": null,
+        "position": [
+          56,
+          2.3,
+          1.1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.34,
+          0.54,
+          0.34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/8",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Workspace"
+        ],
+        "blueprintClass": "DEN_creatorAlcove",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0057",
+        "name": "4 · Forge Arch",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "episode-set",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "arch",
+          "dormant-exit"
+        ],
+        "visualColor": "#b896ec",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -8,
+          2.48,
+          -0.25
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.7,
+          0.9,
+          0.7
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/4",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "DEN_arch",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0058",
+        "name": "5 · Forge Arch",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "episode-set",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "arch",
+          "dormant-exit"
+        ],
+        "visualColor": "#f5ba82",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          8,
+          2.48,
+          -0.25
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.7,
+          0.9,
+          0.7
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/5",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "DEN_arch",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0059",
+        "name": "7 · Forge Arch",
+        "type": "denStructure",
+        "team": "neutral",
+        "baked": true,
+        "role": "episode-set",
+        "tags": [
+          "dragon-den",
+          "architecture",
+          "arch",
+          "dormant-exit"
+        ],
+        "visualColor": "#aae2f4",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-sets"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          40,
+          2.48,
+          -0.25
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.7,
+          0.9,
+          0.7
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/7",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "DEN_arch",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0060",
+        "name": "Guardian Dragon · episode star",
+        "type": "dragon",
+        "team": "neutral",
+        "baked": true,
+        "role": "episode-guardian",
+        "tags": [
+          "dragon-den",
+          "agent-avatar",
+          "voice-anchor-hook",
+          "dragon-anatomy-v3.1",
+          "surface-foot-contact",
+          "multi-sample-feet"
+        ],
+        "visualColor": "#d69de9",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-ep-cast"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          8,
+          3.2,
+          -1.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.53,
+          0.53,
+          0.53
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Episode 01/Guardian Dragon",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "AgentAvatar",
+          "SurfaceFootContact"
+        ],
+        "blueprintClass": "BP_DragonAvatarV3_1",
+        "colliderRadius": 1.5,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 0.42,
+        "bobAmplitude": 0.012,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ep0061",
+        "name": "§wyrlz · spectral camera visitor",
+        "type": "hero",
+        "team": "neutral",
+        "baked": true,
+        "role": "player-avatar",
+        "tags": [
+          "dragon-den",
+          "player-avatar",
+          "wisp-avatar",
+          "spirit-form"
+        ],
+        "visualColor": "#6cdef0",
+        "avatarStyle": "wisp",
+        "eyeHeight": 1.18,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -56,
+          2.8,
+          3.6
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.72,
+          0.72,
+          0.72
+        ],
+        "maxHp": 1000,
+        "attackRange": 2.8,
+        "attackDamage": 65,
+        "attackCooldown": 0.55,
+        "lane": null,
+        "moveSpeed": 6,
+        "folder": "Episode 01/§wyrlz",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider",
+          "Combat",
+          "CharacterMovement",
+          "WispVisual"
+        ],
+        "blueprintClass": "BP_WispVisitor",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      }
+    ]
+  }
+}
