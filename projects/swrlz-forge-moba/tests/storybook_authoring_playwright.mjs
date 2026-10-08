@@ -145,6 +145,23 @@ try{
     assert.ok(layerNames.some(name=>/swyrl|§wyrl|wyrl/.test(name)),'§wyrlz needs a separate native editor layer');
     assert.ok(layerNames.filter(name=>/background|atmosphere|midground|foreground|scenery/.test(name)).length>=3,
       'Scenery needs several native editor layers');
+
+    // v9 clean-room default: preserve all 62 historical actors, but keep the
+    // obsolete signs, stages, crystals and guardian off the active book set.
+    const legacyIds=['layer-ep-sets','layer-ep-fx','layer-ep-cast'];
+    const legacyLayers=initial.editor.layers.filter(layer=>legacyIds.includes(layer.id));
+    assert.equal(legacyLayers.length,3,'Historical editor layers were discarded');
+    assert.ok(legacyLayers.every(layer=>layer.visible===false),
+      'Historical platforms, signs and kiosks must be hidden by default');
+    const paperLayers=initial.editor.layers.filter(layer=>layer.id.startsWith('anime-layer-'));
+    assert.equal(paperLayers.length,8,'Missing paper-theatre layers');
+    assert.ok(paperLayers.every(layer=>layer.visible===true),'Paper stage should open visible');
+    assert.equal(initial.editor.activeLayerId,'anime-layer-kami','New objects would be assigned to archived scenery');
+    assert.equal(initial.scene.actors.length,70,'The original episode assets must remain editable');
+    const legacyActors=initial.scene.actors.filter(actor=>(actor.editorLayerIds||[]).some(id=>legacyIds.includes(id)));
+    assert.equal(legacyActors.length,60,'Historical layered set assets should remain recoverable');
+    assert.ok(legacyActors.every(actor=>actor.visible===false),
+      'One or more legacy scene actors are still visible around the paper theatre');
     assertSafeScene(await seek(page,8),mode.name+' initial rendered editor preview');
     await page.evaluate(()=>window.SWYRL_ENGINE_STORYBOARD.exitPreview());await frames(page);
 
