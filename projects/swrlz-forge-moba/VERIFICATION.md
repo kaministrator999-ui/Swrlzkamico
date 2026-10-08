@@ -7,7 +7,8 @@ Build candidate: 45 governed patches, 611,675 bytes, SHA-256 `1468357c5ce082b715
 - [x] Anime Starter **Play** activates cinematic, elapsed time and perspective-camera position advance.
 - [x] Captions load from saved stage script files, seek jumps to act five, Pause stops time, Explore Set transitions into ordinary first-person and Stop returns to Editor.
 - [x] Both tested viewports report no uncaught JavaScript page errors.
-- [ ] Dedicated deployment workflow success and served HTML/asset SHA match. Remains pending until independently verified.
+- [x] First production attempt [37719679170](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719679170) rebuilt/validated/uploaded the correct v8.6 engine; **live index SHA matched**, but asset-check failed because the Hugging Face static HTML wrapper was not stripped from the separately served episode HTML. This is a verification normalization defect, not a failed module or a failed asset upload.
+- [ ] Corrected workflow normalizes only the recognized provider script for every served HTML file and validates original episode JSON/HTML hashes. Production retry and exact host acceptance pending.
 
 Existing v8.5/v8.4 receipts retained below.
 
