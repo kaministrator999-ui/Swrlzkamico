@@ -1,3 +1,25 @@
+## UPDATE STARTED — 2026-10-07 — versatile song discovery v169
+
+**Trigger:** live Dragon Chat export `swrlz-dragon-chat (18).json`. "Cold Piece of Work" succeeds, but "Rack City" by Tyga fails before page fetch because the selected search provider interprets the ambiguous title as retail/storage "rack" results.
+
+**Observed failure:**
+- primary query `rack city tyga lyrics` returned eight unrelated Nordstrom Rack / dictionary / shelving results;
+- subject-bound admission correctly rejected all eight because they lacked enough title/artist identity;
+- exact-title rescue query `"rack city" "tyga" lyrics` and the second exact variant returned the same irrelevant result family;
+- `lyricsSourceAttemptCount=0`: no lyric page was ever fetched, so this is candidate discovery/search ambiguity rather than extraction or presentation failure.
+
+**Repair plan:**
+- keep strict subject-bound admission and 3-page fetch ceiling;
+- expand the bounded lyric rescue ladder beyond two equivalent generic queries;
+- after exact title/artist searches, issue generic source-family-disambiguated lyric searches (not song-specific rules);
+- stop as soon as any admissible candidate set is found;
+- de-duplicate rescue queries and candidate URLs;
+- expose rescue query strategy labels in diagnostics;
+- add a deterministic regression where exact queries return retail ambiguity and a later generic lyric-source query returns the correct song;
+- preserve all v151-v168 lyric/search/presentation regressions.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — render full-width lyric boundaries v168
 
 **Outcome:** OUTER LYRIC BOUNDARIES NOW RENDER AS TRUE FULL-WIDTH CHAT RULES / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
