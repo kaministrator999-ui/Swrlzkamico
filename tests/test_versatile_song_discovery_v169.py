@@ -128,7 +128,7 @@ finally:
     online_tools._lyrics_provenance_lookup=orig_prov
 
 assert len(search_calls)==3,search_calls
-assert "Genius" in search_calls[2] or "AZLyrics" in search_calls[2] or "Musixmatch" in search_calls[2],search_calls
+assert any(token in search_calls[2].lower() for token in ("site:genius.com","site:azlyrics.com","site:musixmatch.com")),search_calls
 assert fetch_calls==["https://lyrics.example/tyga/rack-city"],fetch_calls
 assert result["lyricsSourceAttemptCount"]==1,result
 assert result["modelContext"]["verifiedLyrics"],result
