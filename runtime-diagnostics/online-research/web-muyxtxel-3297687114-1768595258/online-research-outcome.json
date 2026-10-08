@@ -1,0 +1,1104 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-muyxtxel-3297687114-1768595258",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "fe418594dd6602e7bb2beff2302699394788add9",
+  "persistedAtUnixMs": 1791427756373,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v165-lyric-region-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1502,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Nordstrom Rack : Shop Clothes, Shoes, Jewelry, Beauty and Home",
+          "url": "https://www.nordstromrack.com/?msockid=3f8a3e277c826178073629cb7d1e60e2",
+          "source": "www.nordstromrack.com",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Rack ’Em Up. Nordstrom turns 125, and we’re celebrating with 125 of the best deals from brands like Vince & AllSaints up to 65% …"
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Shop NORDSTROM RACK Online | Nordstrom Rack",
+          "url": "https://www.nordstromrack.com/brands/nordstrom-rack?msockid=3f8a3e277c826178073629cb7d1e60e2",
+          "source": "www.nordstromrack.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Find the latest selection of NORDSTROM RACK in-store or online at Nordstrom. Shipping is always free and returns are accepted at …"
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "| Nordstrom",
+          "url": "https://www.nordstrom.com/browse/about/nordstrom-rack?msockid=3f8a3e277c826178073629cb7d1e60e2",
+          "source": "www.nordstrom.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Get $40 Off Your Next Purchase! When you get approved for a new Nordstrom credit card. Plus, get an extra 5% off at Nordstrom …"
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "RACK Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/rack",
+          "source": "www.merriam-webster.com",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "2 days ago · Rack has its likely origin in Middle Dutch rec meaning \"framework\" (think of the \"an instrument of torture on which a …"
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Amazon.com: Racks And Shelving",
+          "url": "https://www.amazon.com/Racks-Shelving/s?k=Racks+and+Shelving",
+          "source": "www.amazon.com",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Amazon Basics 4-Shelf Adjustable Heavy Duty Steel Wire Rack Storage Shelving Unit for Kitchen, Garage, Easy Assembly, 350 lbs …"
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Find the Nearest Nordstrom Department Store or Nordstrom Rack",
+          "url": "https://www.nordstrom.com/stores?msockid=3f8a3e277c826178073629cb7d1e60e2",
+          "source": "www.nordstrom.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "New Store Openings Is a brand-new Nordstrom or Nordstrom Rack coming to a shopping mall near you? Check our list of all stores …"
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Roof Racks, Truck Racks, Trailer Hitches & More | Rack Warehouse",
+          "url": "https://www.rackwarehouse.com/",
+          "source": "www.rackwarehouse.com",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "\" I wanted to confirm that the rack and other equipment I was considering ordering were right for my vehicle and purposes, so I called …"
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Amazon.com: Rack",
+          "url": "https://www.amazon.com/rack/s?k=rack",
+          "source": "www.amazon.com",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Sakugi Clothes Rack - Clothing Rack with Storage Mesh Shelf & Casters, Heavy-Duty Metal Clothing Rack for Hanging Clothes, …"
+        }
+      ],
+      "lyricsRescueSearchDebug": [
+        {
+          "query": "\"rack city\" \"tyga\" lyrics",
+          "resultCount": 8,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "Nordstrom Rack : Shop Clothes, Shoes, Jewelry, Beauty and Home",
+              "url": "https://www.nordstromrack.com/?msockid=1d04a966687f6e151fd9be8a69666f82",
+              "source": "www.nordstromrack.com",
+              "rank": 1,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "Shop NORDSTROM RACK Online | Nordstrom Rack",
+              "url": "https://www.nordstromrack.com/brands/nordstrom-rack?msockid=1d04a966687f6e151fd9be8a69666f82",
+              "source": "www.nordstromrack.com",
+              "rank": 2,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "| Nordstrom",
+              "url": "https://www.nordstrom.com/browse/about/nordstrom-rack?msockid=1d04a966687f6e151fd9be8a69666f82",
+              "source": "www.nordstrom.com",
+              "rank": 3,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "RACK Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/rack",
+              "source": "www.merriam-webster.com",
+              "rank": 4,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "Amazon.com: Racks And Shelving",
+              "url": "https://www.amazon.com/Racks-Shelving/s?k=Racks+and+Shelving",
+              "source": "www.amazon.com",
+              "rank": 5,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "Find the Nearest Nordstrom Department Store or Nordstrom Rack",
+              "url": "https://www.nordstrom.com/stores?msockid=1d04a966687f6e151fd9be8a69666f82",
+              "source": "www.nordstrom.com",
+              "rank": 6,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "Roof Racks, Truck Racks, Trailer Hitches & More | Rack Warehouse",
+              "url": "https://www.rackwarehouse.com/",
+              "source": "www.rackwarehouse.com",
+              "rank": 7,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "Amazon.com: Rack",
+              "url": "https://www.amazon.com/rack/s?k=rack",
+              "source": "www.amazon.com",
+              "rank": 8,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            }
+          ]
+        },
+        {
+          "query": "\"rack city\" tyga song lyrics",
+          "resultCount": 8,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "Nordstrom Rack : Shop Clothes, Shoes, Jewelry, Beauty and Home",
+              "url": "https://www.nordstromrack.com/?msockid=1aea7b3efd436063237f6cd2fc6961de",
+              "source": "www.nordstromrack.com",
+              "rank": 1,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "Shop NORDSTROM RACK Online | Nordstrom Rack",
+              "url": "https://www.nordstromrack.com/brands/nordstrom-rack?msockid=1aea7b3efd436063237f6cd2fc6961de",
+              "source": "www.nordstromrack.com",
+              "rank": 2,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "| Nordstrom",
+              "url": "https://www.nordstrom.com/browse/about/nordstrom-rack?msockid=1aea7b3efd436063237f6cd2fc6961de",
+              "source": "www.nordstrom.com",
+              "rank": 3,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "RACK Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/rack",
+              "source": "www.merriam-webster.com",
+              "rank": 4,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "Amazon.com: Racks And Shelving",
+              "url": "https://www.amazon.com/Racks-Shelving/s?k=Racks+and+Shelving",
+              "source": "www.amazon.com",
+              "rank": 5,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "Find the Nearest Nordstrom Department Store or Nordstrom Rack",
+              "url": "https://www.nordstrom.com/stores?msockid=1aea7b3efd436063237f6cd2fc6961de",
+              "source": "www.nordstrom.com",
+              "rank": 6,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "Roof Racks, Truck Racks, Trailer Hitches & More | Rack Warehouse",
+              "url": "https://www.rackwarehouse.com/",
+              "source": "www.rackwarehouse.com",
+              "rank": 7,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            },
+            {
+              "title": "Amazon.com: Rack",
+              "url": "https://www.amazon.com/rack/s?k=rack",
+              "source": "www.amazon.com",
+              "rank": 8,
+              "allowed": false,
+              "score": 3,
+              "titleHits": 1,
+              "artistHits": 0,
+              "titleNeeded": 2
+            }
+          ]
+        }
+      ],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427754868,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427754868,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755013,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755013,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755141,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755141,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755447,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755447,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755447,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying exact-title lyrics rescue search",
+        "atUnixMs": 1791427755448
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755448,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755571,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755571,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755704,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755704,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755899,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755899,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying exact-title lyrics rescue search",
+        "atUnixMs": 1791427755900
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427755900,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427756029,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427756029,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427756166,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427756166,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427756369,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791427756369,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up rack city tyga lyrics…",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 11,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 0
+      },
+      {
+        "seq": 12,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying exact-title lyrics rescue search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 13,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 14,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 15,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 16,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 17,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 18,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "seq": 19,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 20,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying exact-title lyrics rescue search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 21,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 22,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 23,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 24,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 25,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 26,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "seq": 27,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 28,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "NO_RESULTS",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 29,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval no_results.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 30,
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ]
+      },
+      {
+        "seq": 32,
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "finalResponse": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+    "finalResponseSha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791427754863,
+      "startedAtUnixMs": 1791427754866,
+      "completedAtUnixMs": 1791427756372,
+      "queueWaitMs": 3,
+      "stationRunMs": 1506,
+      "endToEndMs": 1509
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
