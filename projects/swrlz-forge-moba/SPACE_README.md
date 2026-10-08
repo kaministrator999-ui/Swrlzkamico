@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v8.8
+title: §wyrl§ Engine v8.9
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,7 +10,7 @@ header: mini
 short_description: Dragon Den, Starforge and Anime Studio workspaces.
 ---
 
-# §wyrl§ Engine · Maker v8.8
+# §wyrl§ Engine · Maker v8.9
 
 **Embervault Atelier** is a three-tier Dragon Den with six project stations, walkable ramps, and eight named destinations. **Starforge Observatory** is a separate floating-island workspace with physical bridges and ramps, six stations, and seven destinations beneath a constellation sky.
 
@@ -28,4 +28,8 @@ Desktop first-person verification is recorded with the source. Headset VR, VR co
 
 Source: https://github.com/kaministrator999-ui/Swrlzkamico/tree/main/projects/swrlz-forge-moba
 
-Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_8_POPUP_STORYBOOK_DIRECTOR`
+Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_9_CINEMATIC_STAGING_SAFE`
+
+
+### Camera-safe v8.9 staging
+The live pop-up book stays low, the foreground paints only a narrow lower rim and skyline/workshop cards are depth-clamped behind both wizards. This repairs the near-camera occlusion seen on Android v8.8.
