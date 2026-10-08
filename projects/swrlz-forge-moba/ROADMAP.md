@@ -8,6 +8,12 @@ Previously verified live release: **v8.3 — Zones & Starforge** ([Actions 37697
 
 This roadmap is the mandatory release lineage for governed §E GitHub updates. Root `§tart_§E.md` defines the deployment contract.
 
+## v8.5 candidate · Anime Studio starter
+
+Source integration introduces a third independently selectable project, `Ghosts in Different Forms · Episode 01`, using `patches/v8_5_anime_starter.py`. The original 62-actor native scene, eight act zones, three layers, and eight per-scene production workstations are embedded in the governed composite. The animated HTML episode is also distributed as a static asset, screened inside the editor rather than in the 3D runtime. A separate candidate workflow verifies the reconstructed hash and JavaScript syntax before the deploy request.
+
+**Status:** Source candidate; exact artifact, deployment, and live runtime verification are tracked independently. This entry does not redefine or erase the v8.4 checkpoint.
+
 ## Audited release lineage
 
 | Version | Date | What changed |
@@ -49,6 +55,7 @@ This roadmap is the mandatory release lineage for governed §E GitHub updates. R
 | v8.2 | 2026-10-07 | Bootstrap-order repair: initialize performance controls after engine state and before canonical project hydration. |
 | v8.3 | 2026-10-07 | Safe named zone travel, refined Embervault wayfinding, independent Starforge Observatory starter, project-owned environments/recovery, and editor authoring fixes. |
 | v8.4 | 2026-10-07 | Parallel native wayfinding refinements in Embervault and Starforge; optional editor-only destination rings/heading arrows and axis-preserving destination framing. |
+| v8.5 (candidate) | 2026-10-07 | Anime Studio starter selectable from Projects; 62 editable actors, eight stages, eight notes stations, integrated canvas screening, source-packaged episode; next-step native cinematic animation gap documented. |
 
 ## Artifact authority
 
