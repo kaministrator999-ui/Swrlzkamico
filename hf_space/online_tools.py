@@ -19,7 +19,7 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Callable, Iterator
 from music_structure import structure_verified_music, compile_verified_music_presentation, music_structure_debug
-from song_identity import song_identity, query_ladder, candidate_score, rank_candidates
+from song_identity import song_identity, query_ladder, candidate_score, rank_candidates, diversify_candidates, source_family
 
 try:
     import api.online_research as canonical_online_research
@@ -1462,6 +1462,11 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
     selected_lyric_evidence=None
     lyrics_source_attempts=[]
     lyrics_fetch_debug=[]
+    blocked_source_families=set()
+    reasoner_fetch_failures=[
+        item for item in (bundle.get("fetchFailures") or [])[:LYRICS_MAX_PAGE_ATTEMPTS]
+        if isinstance(item,dict)
+    ]
     candidate_admission_debug=[
         item for item in (bundle.get("candidateAdmissionDebug") or [])[:24]
         if isinstance(item,dict)
@@ -1477,6 +1482,24 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         fetched = [x for x in evidence if x.get("pageFetched") is True and str(x.get("pageExtract") or "").strip()]
         valid=[]
         seen_attempt_urls=set()
+        # The canonical reasoner may already have spent one or more page fetches
+        # before handing control to the lyrics adapter. Count those failures toward
+        # the same three-total-page budget and never retry the same URL here.
+        for failure in reasoner_fetch_failures:
+            failed_url=_clean_source_url(str(failure.get("url") or ""))
+            if not failed_url or failed_url in seen_attempt_urls or len(lyrics_source_attempts)>=LYRICS_MAX_PAGE_ATTEMPTS:
+                continue
+            seen_attempt_urls.add(failed_url)
+            family=source_family({"url":failed_url,"source":failure.get("source")})
+            lyrics_source_attempts.append({
+                "attempt":len(lyrics_source_attempts)+1,
+                "url":failed_url,
+                "title":_clean(failure.get("title"),300),
+                "origin":"reasoner-fetch",
+                "outcome":"FETCH_ERROR",
+                "errorType":_clean(failure.get("errorType"),100),
+                "sourceFamily":family,
+            })
 
         def presentation_ready() -> bool:
             return any(
@@ -1624,7 +1647,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             search_public=getattr(canonical_online_research,"search_public",None)
             candidate_pool=list(bundle.get("candidatePool") if isinstance(bundle.get("candidatePool"),list) else [])
             song_id=plan.get("songIdentity") if isinstance(plan.get("songIdentity"),dict) else song_identity(str(plan.get("subject") or ""))
-            ranked_pool=rank_candidates(candidate_pool,song_id)
+            ranked_pool=diversify_candidates(candidate_pool,song_id)
             candidate_pool=[
                 candidate for candidate in ranked_pool
                 if bool((candidate.get("songIdentityScore") or {}).get("allowed"))
@@ -1728,7 +1751,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                         if not isinstance(candidate,dict) or len(lyrics_source_attempts)>=LYRICS_MAX_PAGE_ATTEMPTS:
                             break
                         clean_url=_clean_source_url(str(candidate.get("url") or ""))
-                        if not clean_url or clean_url in seen_attempt_urls:
+                        family=str(candidate.get("sourceFamily") or source_family(candidate) or "")
+                        if not clean_url or clean_url in seen_attempt_urls or (family and family in blocked_source_families):
                             continue
                         seen_attempt_urls.add(clean_url)
                         attempt_number=len(lyrics_source_attempts)+1
@@ -1751,6 +1775,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                                 "origin":"fallback-candidate",
                                 "outcome":"FETCH_ERROR",
                                 "errorType":type(exc).__name__,
+                                "sourceFamily":family,
                             })
                             _progress(
                                 progress,
@@ -1784,6 +1809,13 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                         # the fetched final URL as this same bounded attempt.
                         seen_attempt_urls.discard(clean_url)
                         evaluate_lyrics_candidate(item,"fallback-candidate")
+                        fetched_title=_clean(item.get("pageTitle"),300)
+                        fetched_extract=str(item.get("pageExtract") or "")
+                        if family and (
+                            _LYRIC_SOURCE_BLOCKED_TITLE.search(fetched_title)
+                            or re.search(r"(?i)\b(?:captcha|request\s+for\s+access|unusual\s+activity|verify\s+you(?:'|’)re\s+human|access\s+denied)\b",fetched_extract[:1200])
+                        ):
+                            blocked_source_families.add(family)
                         if presentation_ready() or len(lyrics_source_attempts)>=LYRICS_MAX_PAGE_ATTEMPTS:
                             break
                 finally:
@@ -1947,6 +1979,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "verifiedLyricsSource": verified_lyrics_source,
         "lyricsSourceAttempts": lyrics_source_attempts,
         "lyricsFetchDebug": lyrics_fetch_debug[:LYRICS_MAX_PAGE_ATTEMPTS],
+        "blockedLyricsSourceFamilies": sorted(blocked_source_families),
         "musicStructureDebug": music_structure_debug(
             (verified_lyrics or {}).get("musicDocument") if isinstance((verified_lyrics or {}).get("musicDocument"),dict) else {},
             (verified_lyrics or {}).get("musicPresentation") if isinstance((verified_lyrics or {}).get("musicPresentation"),dict) else None,
@@ -1984,6 +2017,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "researchId": bundle.get("researchId"),
         "lyricsSourceAttempts": lyrics_source_attempts,
         "lyricsFetchDebug": lyrics_fetch_debug[:LYRICS_MAX_PAGE_ATTEMPTS],
+        "blockedLyricsSourceFamilies": sorted(blocked_source_families),
         "musicStructureDebug": music_structure_debug(
             (verified_lyrics or {}).get("musicDocument") if isinstance((verified_lyrics or {}).get("musicDocument"),dict) else {},
             (verified_lyrics or {}).get("musicPresentation") if isinstance((verified_lyrics or {}).get("musicPresentation"),dict) else None,
