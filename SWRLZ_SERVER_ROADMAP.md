@@ -1,3 +1,19 @@
+## UPDATE STARTED — 2026-10-07 — mobile-first lyric dividers v167
+
+**Trigger:** user accepted mobile-first lyric presentation hierarchy after live v166 screenshots. Current structured lyrics are correct, but long mobile lyric documents need clearer document/section boundaries.
+
+**Presentation rule:**
+- full-width divider before the entire lyric document;
+- short divider between internal lyric sections;
+- full-width divider after the final lyric section;
+- source/footer begins after the closing divider;
+- keep blank-line breathing room on both sides of every divider;
+- Chat remains render-only; divider insertion belongs in the pre-chat presentation compiler.
+
+**Implementation target:** deterministic compiler behavior in `hf_space/music_structure.py`; no lyric text rewriting and no inference-layer dependency.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-07 — Bing redirect canonicalization v166
 
 **Outcome:** BING TRACKING WRAPPERS CANONICALIZED BEFORE EVIDENCE ADMISSION / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE v166 ACCEPTANCE PENDING.
