@@ -66,6 +66,16 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     (out / "index.html").write_bytes(html)
     (out / "README.md").write_text((ROOT / "SPACE_README.md").read_text(encoding="utf-8"), encoding="utf-8")
+    # Native starter source and episode screening travel together with engine.
+    assets = {}
+    for rel in ("episodes/ghosts-in-different-forms-ep01.html",
+                "scenes/ghosts-in-different-forms-ep01.swyrl.json"):
+        source = ROOT / rel
+        data = source.read_bytes()
+        target = out / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+        assets[rel] = {"sha256": sha256(data), "bytes": len(data)}
     (out / "SOURCE.json").write_text(json.dumps({
         "schema": "swrlz-forge-source-v2",
         "sourceVersion": manifest.get("name"),
@@ -75,6 +85,7 @@ def main():
         "finalBytes": len(html),
         "payloadParts": [p.relative_to(ROOT).as_posix() for p in parts],
         "patches": applied_patches,
+        "assets": assets,
         "projectPath": "projects/swrlz-forge-moba",
     }, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({
