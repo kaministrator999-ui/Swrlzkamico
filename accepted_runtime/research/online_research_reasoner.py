@@ -12,7 +12,7 @@ import urllib.parse
 from typing import Any, Callable
 
 MODULE_ID="online-research"
-VERSION="1.4.4"
+VERSION="1.4.5"
 CONTRACT_ID="swrlz_online_research_hot_v2"
 
 
@@ -229,6 +229,7 @@ def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->di
     search=capabilities["search"]; fetch=capabilities.get("fetch")
     candidates=[]; errors=[]; seen=set(); inspected=0; fetched=0; inspected_chars=0; evidence=[]; sufficient=False; queries_executed=0
     candidate_admission_debug=[]
+    fetch_failures=[]
     # Search and consume candidates query-by-query. Once a fetched page satisfies the
     # requested information, stop before issuing another search query.
     for qi,query in enumerate(plan["queries"][:4]):
@@ -286,7 +287,16 @@ def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->di
                     _camera(request_id,research_id,"PAGE_FETCH_COMPLETE",start,evidenceId=eid,url=url,finalUrl=rec.get("finalUrl"),httpStatus=rec.get("httpStatus"),durationMs=_elapsed(fstart),inspectedChars=len(raw_extract),admittedChars=len(rec.get("extract","")))
                     if sufficient:_camera(request_id,research_id,"EVIDENCE_SUFFICIENT",start,evidenceId=eid,url=rec.get("finalUrl"),reason="Fetched evidence satisfies requested information")
                 except Exception as exc:
-                    rec["fetchError"]=f"{type(exc).__name__}:{str(exc)[:160]}"; _camera(request_id,research_id,"PAGE_FETCH_FAILED",start,evidenceId=eid,url=url,durationMs=_elapsed(fstart),errorType=type(exc).__name__)
+                    rec["fetchError"]=f"{type(exc).__name__}:{str(exc)[:160]}"
+                    fetch_failures.append({
+                        "url":url,
+                        "title":_clean(rec.get("title"),300),
+                        "source":_clean(rec.get("source"),240),
+                        "query":_clean(rec.get("query"),500),
+                        "rank":rec.get("rank"),
+                        "errorType":type(exc).__name__,
+                    })
+                    _camera(request_id,research_id,"PAGE_FETCH_FAILED",start,evidenceId=eid,url=url,durationMs=_elapsed(fstart),errorType=type(exc).__name__)
             evidence.append(rec)
             if sufficient:break
         if sufficient or len(evidence)>=max_evidence_items:break
@@ -307,7 +317,7 @@ def research(payload:dict[str,Any],capabilities:dict[str,Callable[...,Any]])->di
     admitted_candidates=sum(1 for item in candidate_admission_debug if item.get("allowed"))
     rejected_candidates=sum(1 for item in candidate_admission_debug if not item.get("allowed"))
     budget={"queriesExecuted":queries_executed,"searchResultsInspected":inspected,"pagesFetched":fetched,"externalCharsInspected":inspected_chars,"evidenceItemsAdmitted":len(evidence),"evidenceCharsAdmitted":admitted_chars,"searchCandidatesAdmitted":admitted_candidates,"searchCandidatesRejected":rejected_candidates,"maxEvidenceItems":max_evidence_items,"maxLyricsPageAttempts":3 if lyrics_mode else None,"maxLyricsPageExtractChars":24000 if lyrics_mode else None,"maxPagePassageChars":1400,"maxSnippetChars":700}
-    bundle={"contractId":"swrlz_online_evidence_v3","researchContract":CONTRACT_ID,"researchId":research_id,"requested":True,"provider":capabilities.get("provider","unknown"),"plan":plan,"queries":plan["queries"][:4],"resultCount":len(evidence),"evidence":evidence,"candidatePool":candidate_pool,"candidateAdmissionDebug":candidate_admission_debug,"errors":errors,"elapsedMs":_elapsed(start),"budget":budget,"epistemicPolicy":"retrieval-is-evidence-not-truth","cameraContract":"swrlz_research_camera_v1"}
+    bundle={"contractId":"swrlz_online_evidence_v3","researchContract":CONTRACT_ID,"researchId":research_id,"requested":True,"provider":capabilities.get("provider","unknown"),"plan":plan,"queries":plan["queries"][:4],"resultCount":len(evidence),"evidence":evidence,"candidatePool":candidate_pool,"candidateAdmissionDebug":candidate_admission_debug,"fetchFailures":fetch_failures[:8],"errors":errors,"elapsedMs":_elapsed(start),"budget":budget,"epistemicPolicy":"retrieval-is-evidence-not-truth","cameraContract":"swrlz_research_camera_v1"}
     _camera(request_id,research_id,"EVIDENCE_BUDGET",start,**budget)
     _camera(request_id,research_id,"RESEARCH_BUNDLE_READY",start,resultCount=len(evidence),errorCount=len(errors),elapsedMs=bundle["elapsedMs"])
     return bundle
