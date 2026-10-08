@@ -60,6 +60,6 @@
     "patches/v8_4_wayfinding_release.py",
     "patches/v8_5_anime_starter.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "PENDING_CANDIDATE_VERIFICATION"
+  "finalBytes": 597990,
+  "finalSha256": "1d9111211897151c091a313dd0fbfa59bc3819ac744567dfd0465e7208e39f8c"
 }
