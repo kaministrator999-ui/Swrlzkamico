@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-muzpji31-4266882841-4113286245",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "22f6f8bb79fc601448dfebc95ab732302cd5c9e2",
+  "persistedAtUnixMs": 1791474395121,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-muzpji31-4266882841-4113286245",
+    "turnIndex": 1,
+    "userText": "Could you provide lyrics for candy shop by 50 cent",
+    "capturedAtUnixMs": 1791474395120
+  }
+}
