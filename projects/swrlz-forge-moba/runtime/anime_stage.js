@@ -60,6 +60,7 @@ function storyTexture(source){
         loaded.userData.storyInkHeight=(canvas.height-first)/canvas.height;
       }catch(error){/* Full-height fallback also protects cross-origin art. */}
       storyAssetPending.delete(source);storyAssetErrors.delete(source);
+      if(typeof rigTextureLoaded==='function')rigTextureLoaded(loaded,source);
     },undefined,()=>{storyAssetPending.delete(source);storyAssetErrors.add(source);editorLog('Artwork failed to load: '+source.slice(0,100),'error');});
   }
   texture.userData.storyInkHeight??=1;
@@ -157,10 +158,12 @@ function storyBindArtwork(layer,source){
   if(!storyEditable()||!Object.hasOwn(STORY_VISUALS,layer))return false;
   const actor=storyBoundActor(layer),asset=storyAssetSource(source,null);if(!actor||!asset)return false;
   storyExitPreview();beginTransaction('Replace '+layer+' artwork');
+  if(typeof rigSetArtworkMode==='function')rigSetArtworkMode(layer,asset);
   actor.userData.storyVisual={...actor.userData.storyVisual,asset};
   const replacement=storyPaperVisual(actor.userData.storyVisual);
   for(const old of [...actor.children]){actor.remove(old);old.traverse(o=>{o.geometry?.dispose();o.material?.dispose()})}
   for(const child of [...replacement.children])actor.add(child);
+  if(replacement.userData.rig)actor.userData.rig=replacement.userData.rig;else delete actor.userData.rig;
   commitTransaction('Replace '+layer+' artwork');return true;
 }
 function storyCaptureActorPose(layer,time){
@@ -247,7 +250,8 @@ function storyRender(){
   const mobileFit=minimumWidth/(2*Math.tan(THREE.MathUtils.degToRad(cam.fov)*.5)*aspect);
   perspectiveCamera.fov=cam.fov;perspectiveCamera.position.set(cam.x,cam.y,Math.max(cam.z,mobileFit));
   perspectiveCamera.lookAt(cam.tx,cam.ty,cam.tz);perspectiveCamera.updateProjectionMatrix();perspectiveCamera.updateMatrixWorld(true);
-  const kami=storySample('kami',t),swyrlz=storySample('swyrlz',t),backLimit=Math.min(kami.z,swyrlz.z)-1.6;
+  const kami=storySample('kami',t),swyrlz=storySample('swyrlz',t);
+  let backLimit=Math.min(kami.z,swyrlz.z)-1.6;
   for(const [id,group] of [['kami',c.cast.kami],['swyrlz',c.cast.wisp]]){
     const key=id==='kami'?kami:swyrlz;
     const cfg=animePopConfig().layers[id];
@@ -257,7 +261,11 @@ function storyRender(){
     if(pivot)pivot.rotation.x=-(1-key.unfold)*Math.PI*.5;
     group.visible=key.visible&&key.opacity>.01&&storyAuthoredVisible(id)&&c.layerSettings[id]!==false&&c.layerSettings.characters!==false;
     storyApplyOpacity(group,key.opacity);
+    if(typeof rigAnimateCharacter==='function')rigAnimateCharacter(group,id,t);
   }
+  if(typeof rigFitCamera==='function')rigFitCamera(c);
+  scene.updateMatrixWorld(true);
+  backLimit=Math.min(...[c.cast.kami,c.cast.wisp].map(g=>new THREE.Box3().setFromObject(g).min.z))-1.6;
   const castFloor=storyCastFloor(c);
   for(const id of ['background','atmosphere','midground','effects','foreground']){
     const key=storySample(id,t),group=c.layers[id],card=group.children[0],cfg=animePopConfig().layers[id];
@@ -363,12 +371,13 @@ function storyStageStatus(){
     actorBindings:actors.filter(a=>a.userData.tags.includes('anime-stage')).map(a=>({id:a.userData.id,layer:a.userData.storyVisual?.layer||'book',layerIds:a.userData.editorLayerIds})),editorCamera};
   scene.updateMatrixWorld(true);perspectiveCamera.updateMatrixWorld(true);
   const castBounds=[['kami',c.cast.kami],['swyrlz',c.cast.wisp]].map(([id,group])=>({id,visible:group.visible,...storyScreenRect(group)}));
-  const castZ=Math.min(c.cast.kami.position.z,c.cast.wisp.position.z),scenery=[];
+  const castBoxes=[c.cast.kami,c.cast.wisp].map(g=>new THREE.Box3().setFromObject(g));
+  const castZ=Math.min(...castBoxes.map(b=>b.min.z)),scenery=[];
   for(const id of ['background','atmosphere','midground','effects','foreground']){
     const group=c.layers[id];scenery.push({id,z:group.position.z,frontZ:new THREE.Box3().setFromObject(group).max.z,inkTopY:id==='foreground'?group.position.y+storyForegroundInkHeight(group):undefined});
   }
   const front=c.layers.foreground,book=c.layers.book.children[0],bookBox=new THREE.Box3().setFromObject(book),foregroundInkTopY=scenery.at(-1).inkTopY;
-  const safeCameraGap=perspectiveCamera.position.z-Math.max(front.position.z,c.cast.kami.position.z,c.cast.wisp.position.z);
+  const safeCameraGap=perspectiveCamera.position.z-Math.max(front.position.z,...castBoxes.map(b=>b.max.z));
   const castFloor=storyCastFloor(c);
   const castProtected=(!front.visible||foregroundInkTopY<castFloor-.25)&&(!book.visible||bookBox.max.y<castFloor-.25);
   const occlusionSafe=scenery.slice(0,4).every(s=>s.frontZ<castZ-1)&&safeCameraGap>6&&castProtected;

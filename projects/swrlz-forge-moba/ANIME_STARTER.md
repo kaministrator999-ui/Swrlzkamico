@@ -1,4 +1,4 @@
-# Anime Studio starter · Ghosts in Different Forms · v9.0
+# Anime Studio starter · Ghosts in Different Forms · v9.1 candidate
 
 ## Starter contract
 
@@ -11,37 +11,45 @@ Project selector key: `anime-ghosts-ep01`. [Direct starter URL](https://kamiloki
 - Eight new saved paper actors, each owning a layer, alongside the original 62 production set actors and three layers
 - Eight story beats and nine independent camera/cast/scenery/book tracks spanning 134 seconds
 - Eight preserved production stages, travel zones, and editable workstations, with the original guardian and visitor
+- Independent jointed Kami/§wyrlz paper rigs with thickness, pop-out depth, body-part X/Y/Z rotation/depth keys, and facial expression/blink/mouth/gaze keys saved under `project.animeRigs`
 - Native **Animation Studio** keyframe, title, and timed dialogue editing, Preview Frame, native Undo/Redo, and Save/Load
 - PNG/WebP/JPEG layer artwork replacement; separate bundled character and scenery PNGs
 - **Capture Actor Pose** workflow transfers a saved actor's native Inspector transforms to a timeline keyframe
 - Native editor **Play** runs the same paper theatre renderer as Preview Frame; **Explore Set** returns to ordinary walking Play/T-zone mode
-- **Watch Episode 01** opens the separate historical procedural 2D screening
+- **Watch Episode 01** opens a pop-up cinema with the same native 2.5D scene and chapter controls; the original procedural episode HTML remains bundled
 - Bundled artwork and screening assets require no paid generation service during playback
 
 ## Animation behavior and boundaries
 
 The saved `anime-timeline-v1` timeline animates camera position, target, and field of view; separate Kami and §wyrlz transforms; layered scenery; and book opening. Animation Studio exposes add/update/delete keys, Linear/Smooth/Hold easing, opacity, visibility, unfolding, titles, and dialogue cues. Native **Preview Frame** and **Play** share the renderer, while physical scenery planes fold around bottom-edge hinges at distinct depths. Protective background depth, a low foreground/book, and adaptive portrait framing prevent scenery from filling the central camera corridor.
 
-The episode uses illustrated cutout motion. Skeletal posing, lip sync, audio authoring, and MP4 export are unimplemented. The separate **Watch Episode 01** player retains its historical canvas screening. Native desktop and phone authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555). Production authority is recorded in the final `DEPLOY_REQUEST.json`, the dedicated deployment receipt, and the exact hosted-release audit.
+Kami and §wyrlz now use separate articulated paper rigs. Each mage has independently jointed torso, pelvis, head, cape, upper/lower arms, hands, upper/lower legs, and feet, plus character-specific staff/quill or grimoire props. Joint keys save real X/Y/Z rotations and part depth; per-character paper thickness and pop-out depth give the limbs room in front of the scenery. Faces save Neutral, Happy, Determined, Surprised, or Sad expressions together with blink, mouth openness, smile, brow, gaze, and optional mouth motion driven by saved dialogue cues.
+
+Open **Animation Studio**, select **Kami** or **§wyrlz**, then expand **Character Rig · limbs and face**. Use **Apply Character Depth** to save thickness/pop-out settings. Choose a body part and edit **Lean X**, **Turn Y**, **Bend Z**, or **Part depth**, then **Add Pose Key** / **Update Pose Key** at the shared playhead. **Face & Expression** exposes expression, blink and mouth; **Gaze, smile and dialogue motion** adds smile, brow, gaze and saved-dialogue mouth movement. Pose and face keys use Linear/Smooth/Hold easing, Preview Frame, native Play/Pause, Undo/Redo, and Save/Load.
+
+These are jointed 2.5D paper characters with rigid overlapping cutouts, silhouette side walls, and separated depth. Full sculpted/skinned 3D characters, audio-driven lip synchronization, audio authoring, and MP4 export remain future work. **Watch Episode 01** preserves the pop-up cinema experience and plays the same native authored 2.5D scene, with chapter buttons and transport controls. The original procedural episode HTML remains bundled for history. v9.1 is a source candidate. Rig-specific desktop/phone authoring and Play checks, the sealed build, and production deployment receipts must be completed before this revision is called verified live. The previous v9.0 native authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555); its proof remains historical. Production authority is recorded in the final `DEPLOY_REQUEST.json`, dedicated deployment receipt, and exact hosted-release audit.
 
 ## Source files
 
-- Current native Save Project export: `scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json`
+- Current native Save Project export: `scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json`
+- Preserved v9.0 native export: `scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json`
 - Preserved original production scene: `scenes/ghosts-in-different-forms-ep01.swyrl.json`
-- Independent artwork: `assets/anime/`
-- Screened episode: `episodes/ghosts-in-different-forms-ep01.html`
+- Independent artwork: `assets/anime/`, including separate `kami-rig.png` and `swyrlz-rig.png` part/expression atlases
+- Historical episode media: `episodes/ghosts-in-different-forms-ep01.html`
+- Native pop-up cinema: `runtime/anime_screening.js` and `runtime/anime_screening.css`
 - Reusable timeline, stage, and UI: `runtime/anime_timeline.js`, `runtime/anime_stage.js`, `runtime/anime_editor.js`, and their CSS
-- Current integration: `patches/v9_0_animation_studio.py`; historical starter integration remains in the governed chain
+- Saved character poses, cutout renderer, and rig UI: `runtime/anime_rig_model.js`, `runtime/anime_rig_renderer.js`, `runtime/anime_rig_editor.js`, and `runtime/anime_rig_editor.css`
+- Current integration: `patches/v9_1_character_rigs.py`; the v9.0 Studio and historical starter integrations remain in the governed chain
 - Governed build packaging: `build_space.py`
 
 ## Acceptance tests
 
 1. Projects hub shows Anime Studio alongside Embervault and Starforge; pressing Play starts native cinematic, not an unexplained first-person aerial view.
 2. Opening Anime Studio loads 70 actors, 11 layers, eight stations, eight destinations, and the saved 134 second/nine track/eight beat episode.
-3. Native keyframe/title/dialogue edits, Undo/Redo, artwork replacement, and Save/Load preserve independent project data. Capture Actor Pose must preserve the selected native Inspector pose in the intended track keyframe.
+3. Native keyframe/title/dialogue and limb/face/depth edits, Undo/Redo, artwork replacement, and Save/Load preserve independent project data. Joint rotation must visibly move the selected body part in depth while leaving the companion's tracks unchanged; expression/blink/mouth keys must render in Preview and Play. Capture Actor Pose must preserve the selected native Inspector pose in the intended stage track keyframe.
 4. Preview and editor Play use the saved camera/cast/scenery/book keys, advance time, display dialogue, and accept Pause/scrub/next. Desktop and portrait shots retain both mages with safe scenery depths; Stop restores the editor camera. Explore Set returns to first-person Play > T with eight destinations.
-5. The separate Watch button opens the original 2D Episode 01 in a modal without navigating away or overwriting editor data.
-6. Close screening disposes the iframe source and returns focus.
+5. Watch Episode opens the pop-up cinema using the same authored native scene, canvas, chapter navigation, and transport HUD without navigating away or overwriting editor data.
+6. Closing the cinema stops its runtime, restores the canvas and editor camera to the workspace, and returns focus.
 7. Direct `?project=anime-ghosts-ep01` boots the same starter.
 8. Starting a different project hides the screening control. Returning to Anime Studio restores it.
 9. Existing Embervault and Starforge remain unchanged.
@@ -49,11 +57,15 @@ The episode uses illustrated cutout motion. Skeletal posing, lip sync, audio aut
 
 ## Future capability probes
 
-- Skeletal character posing and reusable pose clips
+- Reusable pose clips and full sculpted/skinned character rigs
 - Lip sync and audio recording/import
 - Exportable video capture and reproducible render settings
 
 See [ANIMATION_STUDIO.md](ANIMATION_STUDIO.md) for the authoring workflow and [VERIFICATION.md](VERIFICATION.md) for current and historical evidence.
+
+## Historical v9.0 authoring checkpoint
+
+The previous native storybook export is [ghosts-in-different-forms-ep01-storybook.swyrl.json](scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json). Its separate whole-character/scenery/camera timeline authoring and desktop/phone Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555), before joint and face tracks were introduced. The source and older release receipts remain preserved.
 
 ## Historical v8.8 · Animated Storybook Video Creator starter
 

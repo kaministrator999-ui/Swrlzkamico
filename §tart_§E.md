@@ -44,7 +44,21 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v9.0 · Native Animation Studio and Paper Theatre
+## Current v9.1 candidate · Articulated Paper Rigs
+
+Kami and §wyrlz now use separate articulated paper rigs. Each mage has independently jointed torso, pelvis, head, cape, upper/lower arms, hands, upper/lower legs, and feet, plus character-specific staff/quill or grimoire props. Joint keys save real X/Y/Z rotations and part depth; per-character paper thickness and pop-out depth give the limbs room in front of the scenery. Faces save Neutral, Happy, Determined, Surprised, or Sad expressions together with blink, mouth openness, smile, brow, gaze, and optional mouth motion driven by saved dialogue cues.
+
+The project keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. Limb and face tracks live separately under `project.animeRigs` (`anime-character-rigs-v1`), so posing one mage does not overwrite the other mage or the existing shot timeline. The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json`; the v9.0 storybook export and original 62-actor production scene remain bundled.
+
+Open **Animation Studio**, select **Kami** or **§wyrlz**, then expand **Character Rig · limbs and face**. Use **Apply Character Depth** to save thickness/pop-out settings. Choose a body part and edit **Lean X**, **Turn Y**, **Bend Z**, or **Part depth**, then **Add Pose Key** / **Update Pose Key** at the shared playhead. **Face & Expression** exposes expression, blink and mouth; **Gaze, smile and dialogue motion** adds smile, brow, gaze and saved-dialogue mouth movement. Pose and face keys use Linear/Smooth/Hold easing, Preview Frame, native Play/Pause, Undo/Redo, and Save/Load.
+
+The 50th governed patch is `patches/v9_1_character_rigs.py`; artifact `swyrl_engine_v9_1.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_1_ARTICULATED_PAPER_RIGS`. Exact bytes and SHA-256 come from the final sealed manifest and generated receipt. The package includes the new rigged scene and `assets/anime/kami-rig.png` / `swyrlz-rig.png`, while preserving all previous artwork, scenes, and screening assets.
+
+v9.1 is a source candidate. Rig-specific desktop/phone authoring and Play checks, the sealed build, and production deployment receipts must be completed before this revision is called verified live. The previous v9.0 native authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555); its proof remains historical.
+
+These are jointed 2.5D paper characters with rigid overlapping cutouts, silhouette side walls, and separated depth. Full sculpted/skinned 3D characters, audio-driven lip synchronization, audio authoring, and MP4 export remain future work. **Watch Episode 01** preserves the pop-up cinema experience and plays the same native authored 2.5D scene, with chapter buttons and transport controls. The original procedural episode HTML remains bundled for history.
+
+## Historical v9.0 · Native Animation Studio and Paper Theatre
 
 The **Ghosts in Different Forms · The Page That Remembered** starter is now authored and saved through the native editor. Its 134 second episode has eight story beats and nine independent tracks: Camera, Kami, §wyrlz, Background, Atmosphere, Midground, Effects, Foreground, and Book. Kami is the larger horn-hooded mage; §wyrlz is the smaller hovering skull mage. Newly generated transparent character artwork and independent scenery plates follow the supplied gothic amber/gold references.
 
@@ -180,7 +194,7 @@ marker:
 
 ### Current projects and editor contract
 
-The Anime Studio starter joins Embervault and Starforge as an independent project. Current v9.0 authoring uses 70 actors, 11 editor layers, nine saved animation tracks, and the native Animation Studio editor. The 134 second paper theatre runs through Preview Frame and Play. The separate Watch Episode screening retains its historical static HTML media asset. See the current v9.0 contract above.
+The Anime Studio starter joins Embervault and Starforge as an independent project. Current v9.1 authoring uses 70 actors, 11 editor layers, nine stage animation tracks, saved independent limb/face pose tracks, and the native Animation Studio editor. The 134 second paper theatre runs through Preview Frame and Play. Watch Episode opens the pop-up cinema using the same native scene and chapter controls; its original static HTML media asset remains bundled. See the current v9.1 contract above.
 
 Embervault Atelier is a spatial workspace for future VR, project work, and conversation. Its native saved scene lives in `projects/swrlz-forge-moba/scenes/embervault-atelier.swyrl.json`. The 170-actor assembly has lower workshops at 0m, a study gallery at 3.4m, and the dragon council at 4.6m, with physical ramps between them. It has six stations and eight teleport destinations. Three organizational editor layers are distinct from these physical elevations.
 

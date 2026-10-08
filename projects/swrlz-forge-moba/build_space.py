@@ -70,9 +70,10 @@ def main():
     assets = {}
     media_paths = ["episodes/ghosts-in-different-forms-ep01.html",
                    "scenes/ghosts-in-different-forms-ep01.swyrl.json"]
-    authored = "scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
-    if (ROOT / authored).exists():
-        media_paths.append(authored)
+    for authored in ("scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json",
+                     "scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json"):
+        if (ROOT / authored).exists():
+            media_paths.append(authored)
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/anime").glob("*.png")))
     for rel in media_paths:
         source = ROOT / rel
