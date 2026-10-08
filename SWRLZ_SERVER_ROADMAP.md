@@ -1,3 +1,27 @@
+## UPDATE STARTED — 2026-10-07 — SongIdentity retrieval generalization v169
+
+**Trigger:** live tests now show the retrieval/presentation chain works for some songs, but ambiguous/common-word titles such as `Rack City` can still be hijacked by ordinary web-search intent (shopping, shelving, dictionary/product pages). User direction: generalize this for arbitrary songs instead of adding per-song patches.
+
+**Architecture decision:**
+- parse a deterministic `SongIdentity` before discovery;
+- score title ambiguity explicitly;
+- derive a bounded music-aware query ladder from the identity;
+- rank/admit search candidates using exact-title phrase, artist identity, version modifiers, content type, domain prior, and negative evidence;
+- preserve the existing strict page/body verification and 3-page fetch ceiling;
+- separate discovery/search budget from fetch budget.
+
+**v169 targets:**
+1. new reusable `song_identity.py` module;
+2. normalized title / primary artist / featured artists / requested version;
+3. ambiguity metadata including common-word collision and exact-title requirement;
+4. deterministic query variants for exact entity lookup and lyric-source discovery;
+5. candidate scores for title phrase, artist identity, lyric-focused domains, music/lyrics structural hints, wrong-version penalties, and commerce/dictionary/non-lyric penalties;
+6. high-ambiguity titles must require stronger title+artist evidence before fetch;
+7. diagnostics expose identity, ambiguity, query strategy, candidate score/reasons, and rejection taxonomy;
+8. test corpus includes ambiguous and punctuation-heavy song titles, not just the current Tech N9ne case.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE STARTED — 2026-10-07 — versatile song discovery v169
 
 **Trigger:** live Dragon Chat export `swrlz-dragon-chat (18).json`. "Cold Piece of Work" succeeds, but "Rack City" by Tyga fails before page fetch because the selected search provider interprets the ambiguous title as retail/storage "rack" results.
