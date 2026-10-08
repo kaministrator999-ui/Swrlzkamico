@@ -769,20 +769,23 @@ def _lyrics_extract_candidate(text: str, scope: str, subject: str = "") -> str:
     blocks=[]
     if has_explicit_cues:
         # Explicit musical/performer cues are stronger than HTML blank-line preservation.
-        # This keeps lyric runs intact even when a page cleaner inserts a blank line after
-        # every visually displayed lyric line.
+        # Page title/artist metadata between the anchor and the first cue is not song body.
+        # Once the first cue appears, blank lines may be ignored while preserving the
+        # cue-bounded lyric run.
         current=[]
+        seen_cue=False
         for line in body_lines:
             if not line:
                 continue
             if _LYRIC_SECTION_MARKER.search(line) or _LYRIC_PERFORMER_MARKER.search(line):
-                if len(current)>=2:
+                if seen_cue and len(current)>=2:
                     blocks.append("\n".join(current))
                 current=[]
+                seen_cue=True
                 continue
-            if _lyrics_line_is_content(line):
+            if seen_cue and _lyrics_line_is_content(line):
                 current.append(line)
-        if len(current)>=2:
+        if seen_cue and len(current)>=2:
             blocks.append("\n".join(current))
     else:
         for chunk in re.split(r"\n\s*\n+",body):
