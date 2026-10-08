@@ -213,6 +213,15 @@ function animeUpdateCinematic(dt){
   if(t>=134&&!c.ended){c.ended=true;paused=true;setSessionButtons();animeHud.querySelector('#animeCineCaption').textContent='TO BE CONTINUED · The next world is ours to build.'}
   animeUpdateControls();
 }
+// A narrow public diagnostics surface for native acceptance and future director tools.
+window.SWYRL_ENGINE_CINEMATIC=Object.freeze({
+  status:()=>({active:!!animeCine,playing,paused,elapsed:animeCine?.elapsed||0,
+    stage:animeCine?.stage??-1,ended:animeCine?.ended||false,
+    camera:animeCine?perspectiveCamera.position.toArray():null,
+    projectId:currentProject?.canonicalId||null}),
+  seek:seconds=>animeSeek(seconds),
+  explore:()=>document.getElementById('animeCineExplore')?.click()
+});
 """
 def apply(html):
     s=html
