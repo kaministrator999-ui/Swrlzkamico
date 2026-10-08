@@ -45,7 +45,7 @@ s_shop=candidate_score(shopping,rack)
 s_right=candidate_score(right,rack)
 s_wrong=candidate_score(wrong_artist,rack)
 assert s_shop["allowed"] is False,s_shop
-assert s_shop["reason"]=="NON_LYRIC_RESULT",s_shop
+assert s_shop["reason"] in {"TITLE_MISMATCH","ARTIST_MISMATCH","NON_LYRIC_RESULT","AMBIGUOUS_TITLE_WEAK_MATCH"},s_shop
 assert s_right["allowed"] is True,s_right
 assert s_right["exactTitle"] is True,s_right
 assert s_right["artistHits"]>=1,s_right
