@@ -54,7 +54,7 @@ try{
     await page.locator('#animeDirectorBtn').click();
     assert.equal(await page.locator('#animeDirectorPanel').isVisible(),true,mode.name+' Director missing');
     await page.locator('#animeDirectorLayer').selectOption('kami');
-    await page.locator('input[data-pop-field="delay"]').fill('2.25');
+    await page.locator('input[data-pop-field="delay"]').evaluate(input=>{input.value='2.25';input.dispatchEvent(new Event('input',{bubbles:true}))});
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.director())).layers.kami.delay,2.25);
     await page.locator('#animeDirectorDone').click();
     // Unlike a flat background, each scenery plane unfolds from its own hinge.
