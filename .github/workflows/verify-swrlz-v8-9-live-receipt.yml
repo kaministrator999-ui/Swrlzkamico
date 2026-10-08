@@ -1,0 +1,59 @@
+name: Audit exact §E v8.9 hosted storybook release
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check exact deploy run and live storybook source/assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,re,time,urllib.request
+          from urllib.parse import urlencode
+          trigger='a1639c14f2ef5bfe1cf01f6bd3693bfd381ae277'
+          expected='da9f48941543c81062a232417ed8897e8c82e912852474cf2154e209c12ddf37'
+          repo='kaministrator999-ui/Swrlzkamico'
+          url=f'https://api.github.com/repos/{repo}/actions/workflows/deploy-swrlz-forge-moba.yml/runs?per_page=40'
+          h={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json',
+             'User-Agent':'swyrl-storybook-live-audit','X-GitHub-Api-Version':'2022-11-28'}
+          def load(url,headers={}):
+            req=urllib.request.Request(url,headers={**headers,'User-Agent':'swyrl-storybook-live-audit'})
+            return urllib.request.urlopen(req,timeout=35).read()
+          final=None
+          for i in range(16):
+            runs=json.loads(load(url,h)).get('workflow_runs',[])
+            match=[r for r in runs if r.get('head_sha')==trigger]
+            if match:
+              final=match[0]
+              print('V8_9_DEPLOY_RUN_ID='+str(final['id'])+' STATUS='+str(final['status'])+
+                ' CONCLUSION='+str(final['conclusion'])+' URL='+str(final['html_url']),flush=True)
+              if final['status']=='completed':break
+            time.sleep(5)
+          assert final and final['status']=='completed' and final['conclusion']=='success', 'exact v8.9 dedicated deployment not successful'
+          root='https://kamiloki-swrlz-forge-moba.static.hf.space/'
+          def normalized(payload):
+            return re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',
+              b'',payload,count=1)
+          html=normalized(load(root+'index.html?receipt='+trigger))
+          digest=hashlib.sha256(html).hexdigest()
+          print('V8_9_HOSTED_HTML_BYTES='+str(len(html))+' SHA256='+digest)
+          assert digest==expected
+          assert len(html)==647639
+          assert b'V8_9_POPUP_STORYBOOK_DIRECTOR' in html
+          receipt=json.loads(load(root+'SOURCE.json?receipt='+trigger))
+          assert receipt['finalSha256']==digest
+          assert len(receipt['patches'])==48
+          for path,meta in receipt['assets'].items():
+            source=load(root+path+'?receipt='+trigger)
+            data=normalized(source) if path.endswith('.html') else source
+            assert len(data)==meta['bytes'],path
+            assert hashlib.sha256(data).hexdigest()==meta['sha256'],path
+            print('V8_9_LIVE_ASSET_OK='+path,flush=True)
+          print('V8_9_LIVE_SOURCE_AND_ASSETS_VERIFIED')
+          PY
