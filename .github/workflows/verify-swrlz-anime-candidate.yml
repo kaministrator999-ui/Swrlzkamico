@@ -57,6 +57,8 @@ jobs:
           assert "CANONICAL_ANIME_EPISODE_PROJECT" in source
           assert "openAnimeScreening" in source
           assert "animeUpdateCinematic" in source
+          assert "animeEndCinematic" in source
+          assert "animeCineExplore" in source
           assert "SWYRL_ENGINE_CINEMATIC" in source
           assert "anime-ghosts-ep01" in source
           assert "Maker v8.6" in source
