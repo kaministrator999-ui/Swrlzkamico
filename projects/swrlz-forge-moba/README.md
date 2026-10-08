@@ -1,4 +1,4 @@
-# §wyrl§ Engine · Maker v8.5
+# §wyrl§ Engine · Maker v8.6
 
 Build and visit two independent spatial workspaces: **Embervault Atelier**, the three-tier Dragon Den, and **Starforge Observatory**, a campus of floating islands beneath a quiet constellation sky. Both are native editor projects with their own layers, destinations, files, and notes. Development moves between engine source, native editor authoring, and first-person Play.
 
@@ -16,9 +16,9 @@ See [DEN_DESIGN.md](DEN_DESIGN.md), [STARFORGE_DESIGN.md](STARFORGE_DESIGN.md), 
 
 ## Anime Studio starter · Episode 01
 
-Choose **Ghosts in Different Forms** from **Projects** or [open the anime starter directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01) **after v8.5 deployment**. This third project is independent of Embervault and Starforge: 62 editable actors, three scene-authoring layers, eight floating episode stages with T-menu destinations, eight workstations with editable script and direction files, and a guardian dragon. Use **Watch Episode 01** to screen the original procedural 2m14s animation *within the editor* and then return to the set.
+Choose **Ghosts in Different Forms** from **Projects** or [open the anime starter directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01) **after v8.5 deployment**. This third project is independent of Embervault and Starforge: 62 editable actors, three scene-authoring layers, eight floating episode stages with T-menu destinations, eight workstations with editable script and direction files, and a guardian dragon. Press **Play** to run the native in-engine cinematic: moving camera, animated procedural characters, dragon motion, editable-script subtitles, a timeline slider, previous/next scene, Pause, and **Explore Set** to resume the ordinary first-person Play mode. **Watch Episode 01** separately screens the original procedural 2m14s 2D animation in a modal.
 
-The in-editor screening is a separate HTML animation player, **not native Three.js timeline or character keyframe animation**. §E saves, loads, places, and visits the 3D production set. The pack is a deliberate animation-capability stress test, not a claim that the engine can already render/capture an entire TV episode in its 3D scene.
+The **Play** cinematic uses the native Three.js scene and renderer, with scripted scene-specific camera and character transforms; the separate **Watch Episode 01** remains a canvas player. §E does not yet provide general drag-and-drop native keyframe editing, audio-track editing, or MP4 rendering. The episode is a focused engine-capability prototype, not a completed television animation pipeline.
 
 See [ANIME_STARTER.md](ANIME_STARTER.md) for the project contract, validation steps, and next feature probes.
 
@@ -42,12 +42,12 @@ Scene data belongs to `scenes/embervault-atelier.swyrl.json` and `scenes/starfor
 
 - Source manifest: `source-manifest.json`.
 - Base: 99,591 bytes, SHA-256 `a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856`.
-- Generated artifact: `swyrl_engine_v8_5.html`.
-- Final artifact: governed v8.5 source SHA-256 and bytes sealed by candidate reconstruction before deployment; `SOURCE.json` additionally records hashes for the episode player and editable stage file.
-- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_5_ANIME_STUDIO_STARTER`.
+- Generated artifact: `swyrl_engine_v8_6.html`.
+- Final artifact: 611,675 bytes, SHA-256 `1468357c5ce082b71548de983fd11f818cf4eeccb34eca3df92a0f15e3e94dc0`. `SOURCE.json` also records hashes for the episode player and editable stage file.
+- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_6_NATIVE_ANIME_CINEMATIC`.
 - Rebuild: `python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba`.
 - Dedicated Space: `kamiloki/swrlz-forge-moba`.
 - Live page: https://kamiloki-swrlz-forge-moba.static.hf.space/ .
 - Production workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`.
 
-The manifest defines the governed 44-patch chain for the v8.5 anime starter. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.
+The manifest defines the governed 45-patch chain for the v8.5 anime starter. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.
