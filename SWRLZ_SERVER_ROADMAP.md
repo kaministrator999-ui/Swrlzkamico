@@ -1,3 +1,31 @@
+## UPDATE STARTED — 2026-10-08 — diverse lyric fetch budget + response-start streaming UX v170
+
+**Trigger:** live v169 Rack City acceptance plus user mobile streaming feedback.
+
+**Retrieval evidence from Dragon Chat (19):**
+- SongIdentity/general discovery is working: Rack City is classified high-ambiguity, exact quoted title+artist query is used, and eight correct song candidates are admitted.
+- the 3-page body budget is still spent poorly: Genius fails first, then two variants from the same AZLyrics source family both redirect to the same access-check page.
+- Musixmatch/LyricsFreak/other admitted sources are never reached despite already being present in the candidate pool.
+
+**Streaming UX evidence:**
+- live assistant text is reparsed on every incoming DELTA;
+- the current `followLatest` policy repeatedly favors the bottom while generation grows;
+- sending explicitly calls `scrollToLatest()` after creating the live response;
+- long lyric responses therefore form below/around the user's viewport while the user is trying to scroll back to the beginning.
+
+**v170 repair:**
+1. carry reasoner page-fetch failures into the HF adapter so failed URLs count against the same 3-total-page lyric budget and are not retried;
+2. diversify ranked candidates by source family before fetch so duplicate variants from one site do not consume consecutive bounded attempts;
+3. quarantine a source family for the remainder of the current request after an explicit access/captcha/block response;
+4. preserve SongIdentity/entity scoring and body verification unchanged;
+5. snap each newly generated assistant response to its top exactly once when generation begins;
+6. suppress automatic bottom-follow while that response-start anchor is active; user can resume bottom-follow by scrolling to the bottom or using Jump Latest;
+7. coalesce streaming rerenders to one animation frame to reduce long-response/mobile jank;
+8. keep user scroll position stable while the response grows beneath the viewport;
+9. add guarded regressions for source-family diversity, total page-attempt accounting, response-start anchoring, and render coalescing.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-08 — SongIdentity retrieval generalization v169
 
 **Outcome:** AMBIGUOUS SONG-TITLE RETRIEVAL GENERALIZED INTO ENTITY-AWARE DISCOVERY / GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
