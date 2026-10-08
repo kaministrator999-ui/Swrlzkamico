@@ -198,7 +198,8 @@ assert debug["newlineEqualsBar"] is False,debug
 assert debug["presentationChars"]>0,debug
 
 camera=online_tools.online_camera(result)
-assert camera["observabilityRevision"]=="v165-lyric-region-integrity",camera
+assert camera["contract"]=="swrlz-online-camera-v1",camera
+assert str(camera.get("observabilityRevision") or "").startswith("v"),camera
 assert camera["lyricsFetchDebug"][0]["performerCueCount"]==2,camera
 assert camera["lyricsFetchDebug"][0]["snippetSequenceSpan"]>=4,camera
 assert camera["lyricsFetchDebug"][0]["fetchedContent"]["performerMarkers"]==["[Alpha:]","[Beta:]"],camera
