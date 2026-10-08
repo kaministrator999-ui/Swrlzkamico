@@ -1,3 +1,92 @@
+## UPDATE FINISHED — 2026-10-07 — lyric-region integrity + performer cues + structured-source preference v165
+
+**Outcome:** FALSE-POSITIVE LYRIC BODY ACCEPTANCE REPAIRED + PERFORMER CUES PRESERVED + PRE-CHAT PRESENTATION PATH RESTORED + GUARDED HF DEPLOYMENT SUCCESS / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### Live v164 acceptance evidence from Dragon Chat (15)
+- v164 was live and Online Camera reported `v164-music-structure-presentation`.
+- the fetched AZLyrics pages visibly contained the requested song body, including performer cues such as `[JL:]`;
+- however, the extractor output selected unrelated post-song recommendation material;
+- attempt 1 correctly rejected that mismatch;
+- attempt 2 falsely passed because unordered token overlap was high enough even though the extracted body was not the requested song;
+- the resulting `musicStructureDebug` had zero explicit sections and zero compiled presentation characters, so Chat fell back to the bad raw extraction.
+
+### v165 lyric-region integrity
+- added performer-only cue recognition for `[Name:]`;
+- performer cues are explicit source boundaries but are **not** automatically interpreted as verse/chorus labels;
+- when explicit section/performer cues exist, page title/artist metadata before the first cue is discarded as non-song metadata;
+- cue-bounded lyric runs remain intact even when the HTML cleaner inserts blank lines between every displayed line;
+- post-song recommendation rows and footer/meta lines terminate extraction instead of entering the lyric body;
+- added contiguous informative-token sequence corroboration via `snippetSequenceSpan`; bag-of-words token overlap alone can no longer verify a fetched body;
+- new diagnostics expose performer markers, contiguous sequence span, musical section count, and performer cue count.
+
+### Whole-work request semantics
+- an unqualified existing-song request for “lyrics” now resolves internally to `full-lyrics`;
+- this does **not** mutate the public search query to “all verses” unless the user explicitly requested full/all/every verse;
+- first/opening-verse requests remain scoped to `first-verse`.
+
+### Structured-source preference
+- within the existing 3-total-page-attempt ceiling, a merely verified but structurally weak source no longer necessarily ends the search;
+- already-discovered candidate-pool items advertising explicit Verse/Chorus/Bridge/etc structure are preferred;
+- unrequested “Original” variants are de-prioritized when the requested title does not say Original;
+- no new rescue search is launched solely for prettier structure once a verified body already exists and the discovered candidate pool is empty;
+- source/body verification remains fail-closed and no missing text is reconstructed from memory.
+
+### Music structure integration
+- `music_structure.py` now recognizes performer-only cues with:
+  - `type=performer_cue`;
+  - explicit performer name;
+  - confidence 1.0;
+  - `basis=explicit_source_performer_marker`;
+- it records `explicitMusicalSectionCount` separately from `explicitPerformerCueCount`;
+- performer-only structure is presented without inventing Verse/Chorus semantics;
+- newline-to-bar inference remains forbidden.
+
+### Regression
+Added `tests/test_lyrics_region_integrity_v165.py`, covering:
+- bare lyrics request → full-work internal scope;
+- performer-only page with blank-line-separated displayed lines;
+- recommendation/footer exclusion;
+- false-positive unordered token overlap rejection via contiguous sequence requirement;
+- performer cue parsing without invented musical labels;
+- source text remains structured before Chat;
+- richer structured candidate preference inside the already-discovered pool;
+- compiled presentation with explicit source section labels;
+- exported v165 camera diagnostics.
+
+### Guarded self-repair history
+All failed attempts stopped before publication.
+1. run `37709758067`: v159 fixture exposed that structure-enrichment was launching a new live rescue search even after a valid fixture source; repair constrained richer-source preference to the already-discovered pool once a valid source exists.
+2. run `37709928469`: v160 exposed an unnecessary `all verses` query mutation from the new full-work semantics; repair separated internal scope from explicit query expansion.
+3. run `37710067761`: v165 fixture exposed pre-cue page-title/artist metadata becoming a fake first section; repair starts cue-structured song body at the first explicit cue.
+4. run `37710219749`: v161 source-vs-body fixture leaked public fallback networking and legitimately found a later valid body; repair restored that regression to deterministic/no-network source-vs-body isolation.
+5. final run `37710423543`: all gates passed and publication completed.
+
+### Final deployment receipts
+- final guarded HF run: `37710423543` — terminal **SUCCESS**;
+- exact selected feature source: `ce7eff4884993bba0791f4cc7f106bffc29596b1`;
+- regression gate: v151 PASS, v155 PASS, v157 PASS, v158 PASS, v159 PASS, v160 PASS, v161 PASS, v162 PASS, v163 PASS, v164 PASS, **v165 PASS**;
+- native R39 verification, R39 reconstruction, R39-vs-stock compatibility inspection, 700M assembled-profile smoke, fast-HF/Chat preservation guard, authorization gate, production snapshot, rollback checkpoint, upload, and deployed-revision capture all succeeded;
+- prior/rollback Space revision: `52919febec17e3c7cb990088f32484a222f03067`;
+- deployed Space revision: `421c7d437fa476d019d23a99c2f773ddabe5e1be`.
+
+### Versions
+- Repository Work: **1.0.95**.
+- Server Runtime: **2.3.318 / 2.3.318-hf-v165-lyric-region-integrity**.
+- Online Research: **1.0.15 / 1.0.15-lyric-region-integrity-v165**.
+- LALM Engine: **2.1.158 / 2.1.158-music-structure-integrity-v165**.
+- Deployment Control: **1.0.25**.
+
+### Live acceptance target
+Rerun the exact natural request from Dragon Chat (15). Expected behavior:
+1. fetched lyric body begins at the first real performer/section cue, not page header metadata;
+2. recommendation/footer material is excluded;
+3. verification requires contiguous snippet/body evidence, not loose token overlap;
+4. if a source with explicit musical sections is available inside the remaining bounded candidate pool, it is preferred for presentation;
+5. performer-only sources can still be rendered cleanly without inventing Verse/Chorus labels;
+6. Dragon Chat JSON exposes performer markers, sequence span, structure counts, and nonzero compiled presentation when a structured source is selected.
+
+**Status:** FINISHED / DEPLOYED / RELEASE REVISION CAPTURED / LIVE USER-VISIBLE v165 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-07 — lyric-region integrity + performer cues + structured-source preference v165
 
 **Trigger:** live v164 acceptance export `swrlz-dragon-chat (15).json` shows the new presentation layer was present but received a false-positive verified body. The fetched AZLyrics page begins with the requested Cold Piece of Work lyrics, while the extractor output begins with unrelated recommendation snippets. Attempt 2 was incorrectly marked VERIFIED, then `musicStructureDebug` reported zero explicit sections and zero compiled presentation characters.
