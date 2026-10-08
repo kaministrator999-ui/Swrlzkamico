@@ -1,4 +1,24 @@
-# §wyrl§ Engine v9.0 · Native Animation Studio acceptance
+# §wyrl§ Engine v9.1 candidate · Articulated Paper Rig acceptance
+
+The 50th governed patch is `patches/v9_1_character_rigs.py`; artifact `swyrl_engine_v9_1.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_1_ARTICULATED_PAPER_RIGS`. Exact bytes and SHA-256 come from the final sealed manifest and generated receipt. The package includes the new rigged scene and `assets/anime/kami-rig.png` / `swyrlz-rig.png`, while preserving all previous artwork, scenes, and screening assets.
+
+The project keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. Limb and face tracks live separately under `project.animeRigs` (`anime-character-rigs-v1`), so posing one mage does not overwrite the other mage or the existing shot timeline. The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json`; the v9.0 storybook export and original 62-actor production scene remain bundled.
+
+The existing native cinematic and storybook authoring suites remain required. `tests/character_rig_playwright.mjs` adds actual desktop/phone controls and native Play checks for independent limb rotation/depth, visible face changes, pose interpolation, shared playhead behavior, project save/reload, and Undo/Redo. Source reconstruction checks the complete 50-patch chain; packaging compares all eleven media assets with committed source bytes and SHA-256, including both character atlases and all three episode scene exports.
+
+- [x] Local desktop and portrait Character Rig authoring/Play acceptance passed with no uncaught browser errors; both mages have eighteen rendered pieces. High-quality visual inspection confirms visible eyes and mouths on the blank facial surfaces.
+- [ ] Complete the native cinematic and storybook authoring regression suites.
+- [ ] Reconstruct and seal the exact generated artifact, then pass Node/Python and remote engine CI checks.
+- [ ] Follow the dedicated deployment for the final source/trigger commit to terminal success.
+- [ ] Verify the current marker, normalized served HTML, SOURCE receipt, every scene/screening asset, and all seven artwork PNGs against the committed source.
+
+v9.1 is a source candidate. Rig-specific desktop/phone authoring and Play checks, the sealed build, and production deployment receipts must be completed before this revision is called verified live. The previous v9.0 native authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555); its proof remains historical.
+
+These are jointed 2.5D paper characters with rigid overlapping cutouts, silhouette side walls, and separated depth. Full sculpted/skinned 3D characters, audio-driven lip synchronization, audio authoring, and MP4 export remain future work. **Watch Episode 01** preserves the pop-up cinema experience and plays the same native authored 2.5D scene, with chapter buttons and transport controls. The original procedural episode HTML remains bundled for history.
+
+---
+
+# Historical §wyrl§ Engine v9.0 · Native Animation Studio acceptance
 
 Current candidate: `patches/v9_0_animation_studio.py`, 49 governed patches, artifact `swyrl_engine_v9_0.html`, marker `V9_0_AUTHORED_PAPER_THEATRE`. Sealed HTML: **746,616 bytes**, SHA-256 `6a0a9d24e2c888991afbe051d2ae5eba65f38a034c590013e447ca129962d157`. Native desktop and phone authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555). Production authority is recorded in the final `DEPLOY_REQUEST.json`, the dedicated deployment receipt, and the exact hosted-release audit.
 

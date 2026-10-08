@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_run:
-    workflows: ["Deploy §wyrl§ Engine v9.0 to Hugging Face"]
+    workflows: ["Deploy §wyrl§ Engine v9.1 to Hugging Face"]
     types: [completed]
     branches: [main]
 permissions:
@@ -67,8 +67,9 @@ jobs:
           paths=subprocess.check_output(['git','ls-tree','-r','--name-only',source_commit,'--',engine],text=True).splitlines()
           source_paths={path[len(engine)+1:] for path in paths}
           expected_assets={'episodes/ghosts-in-different-forms-ep01.html','scenes/ghosts-in-different-forms-ep01.swyrl.json'}
-          authored='scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json'
-          if authored in source_paths:expected_assets.add(authored)
+          for authored in ('scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
+                           'scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json'):
+              if authored in source_paths:expected_assets.add(authored)
           expected_assets.update(path for path in source_paths if path.startswith('assets/anime/') and path.endswith('.png'))
           assert set(receipt['assets'])==expected_assets,'Bundled asset set differs from committed source'
           for path,meta in receipt['assets'].items():

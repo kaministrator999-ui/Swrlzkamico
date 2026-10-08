@@ -1,4 +1,4 @@
-name: Verify §E v9.0 native cinematic candidate
+name: Verify §E v9.1 native cinematic candidate
 on:
   push:
     branches: [main]
@@ -10,8 +10,10 @@ on:
       - "projects/swrlz-forge-moba/patches/v8_8_popup_storybook.py"
       - "projects/swrlz-forge-moba/patches/v8_7_anime_cel_layers.py"
       - "projects/swrlz-forge-moba/patches/v9_0_animation_studio.py"
+      - "projects/swrlz-forge-moba/patches/v9_1_character_rigs.py"
       - "projects/swrlz-forge-moba/runtime/**"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json"
   pull_request:
     branches: [main]
 permissions:
@@ -45,13 +47,13 @@ jobs:
           output=source.encode("utf-8")
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
-          assert len(manifest["patches"])==49
-          assert manifest['patches'][-1]=='patches/v9_0_animation_studio.py'
+          assert len(manifest["patches"])==50
+          assert manifest['patches'][-1]=='patches/v9_1_character_rigs.py'
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
           for needle in (
-            'V9_0_AUTHORED_PAPER_THEATRE','Maker v9.0','animeStartCinematic',
-            'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','storyEditorInstall',
+            'V9_1_ARTICULATED_PAPER_RIGS','Maker v9.1','animeStartCinematic',
+            'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','storyEditorInstall',
             'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',
             'animeCineExplore','animeCineScrub','updateWorkspaceInteraction(t);animeUpdateCinematic(dt);',
             'if(animeCine?.active)return;',
