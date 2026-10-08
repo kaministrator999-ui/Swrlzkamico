@@ -31,8 +31,24 @@ try{
     assert.notEqual(after.camera[0],before.camera[0],mode.name+' camera did not move');
     const hud=await page.locator('#animeCineHud').isVisible();
     assert.ok(hud,mode.name+' cinematic HUD missing');
+    const visual=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status());
+    assert.deepEqual(Object.keys(visual.layers||{}).sort(),
+      ['background','atmosphere','midground','characters','effects','foreground'].sort(),
+      mode.name+' missing 2.5D layer stack');
+    assert.ok(visual.celCount>=3,mode.name+' illustrated anime cels missing');
+    assert.equal(await page.locator('#animeCineLayers').isVisible(),true,mode.name+' Layers UI missing');
+    await page.locator('#animeCineLayers').click();
+    await page.locator('input[data-anime-layer="foreground"]').uncheck();
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status())).layers.foreground,false);
+    await page.locator('input[data-anime-layer="foreground"]').check();
+    await page.locator('#animeCineLayers').click();
     const subtitle=await page.locator('#animeCineCaption').innerText();
     assert.ok(subtitle.length>15,mode.name+' dialogue missing');
+    const captionBox=await page.locator('#animeCineCaption').evaluate(el=>{
+      const b=el.getBoundingClientRect();return {left:b.left,right:b.right,width:innerWidth};
+    });
+    assert.ok(captionBox.left>=-2&&captionBox.right<=captionBox.width+2,
+      mode.name+' caption overflows horizontally');
     const seek=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.seek(72));
     assert.equal(seek,true);
     const stage=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status().stage);
