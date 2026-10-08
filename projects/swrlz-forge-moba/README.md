@@ -1,4 +1,4 @@
-# §wyrl§ Engine · Maker v8.8
+# §wyrl§ Engine · Maker v8.9
 
 Build and visit three independent starter workspaces: **Embervault Atelier**, the three-tier Dragon Den, and **Starforge Observatory**, a campus of floating islands beneath a quiet constellation sky. All three are native editor projects with their own layers, destinations, files, and notes. Development moves between engine source, native editor authoring, and first-person Play.
 
@@ -16,7 +16,7 @@ See [DEN_DESIGN.md](DEN_DESIGN.md), [STARFORGE_DESIGN.md](STARFORGE_DESIGN.md), 
 
 ## Anime Studio starter · Episode 01
 
-**v8.8 Pop-Up Book Video Creator:** Anime Play now unfolds a native Three.js book, independent gothic background/cathedral/workshop/desk scenery hinges, and distinctly separate illustrated Kami and §wyrlz wizard cels. **✦ Pop-Up Director** sets each layer's depth, side offset, parallax and unfold animation timings, stored in Save Project. The storybook style follows the earlier dark-fantasy wizard concept art without requiring a new generated image or external runtime. [Pop-Up Video Creator details](POPUP_VIDEO_CREATOR.md).
+**v8.9 Camera-Safe Pop-Up Book Video Creator:** Anime Play now unfolds a native Three.js book, independent gothic background/cathedral/workshop/desk scenery hinges, and distinctly separate illustrated Kami and §wyrlz wizard cels. **✦ Pop-Up Director** sets each layer's depth, side offset, parallax and unfold animation timings, stored in Save Project. The storybook style follows the earlier dark-fantasy wizard concept art without requiring a new generated image or external runtime. The v8.9 camera-safe staging patch lowers the physical book, restricts foreground paint to a thin bottom rim, and depth-clamps backdrop planes behind both characters. [Pop-Up Video Creator details](POPUP_VIDEO_CREATOR.md).
 
 Choose **Ghosts in Different Forms** from **Projects** or [open the anime starter directly](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=anime-ghosts-ep01) **after v8.5 deployment**. This third project is independent of Embervault and Starforge: 62 editable actors, three scene-authoring layers, eight floating episode stages with T-menu destinations, eight workstations with editable script and direction files, and a guardian dragon. Press **Play** to run the native in-engine layered 2.5D cinematic: moving camera, animated procedural characters, dragon motion, editable-script subtitles, a timeline slider, previous/next scene, Pause, and **Explore Set** to resume the ordinary first-person Play mode. **Watch Episode 01** separately screens the original procedural 2m14s 2D animation in a modal.
 
@@ -44,12 +44,12 @@ Scene data belongs to `scenes/embervault-atelier.swyrl.json` and `scenes/starfor
 
 - Source manifest: `source-manifest.json`.
 - Base: 99,591 bytes, SHA-256 `a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856`.
-- Generated artifact: `swyrl_engine_v8_8.html`.
-- Final artifact: 644,951 bytes, SHA-256 `06c55a0d090bd6ffa9383ff44f914b922a841de7dc03284a50955cb4036478cd`. `SOURCE.json` also records hashes for the episode player and editable stage file.
-- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_8_POPUP_STORYBOOK_DIRECTOR`.
+- Generated artifact: `swyrl_engine_v8_9.html`.
+- Final artifact: 647,639 bytes, SHA-256 `da9f48941543c81062a232417ed8897e8c82e912852474cf2154e209c12ddf37`. `SOURCE.json` also records hashes for the episode player and editable stage file.
+- Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V8_9_CINEMATIC_STAGING_SAFE`.
 - Rebuild: `python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba`.
 - Dedicated Space: `kamiloki/swrlz-forge-moba`.
 - Live page: https://kamiloki-swrlz-forge-moba.static.hf.space/ .
 - Production workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`.
 
-The manifest defines the governed 47-patch chain for the v8.7 anime cel layering. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.
+The manifest defines the governed 48-patch chain for the v8.7 anime cel layering. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.
