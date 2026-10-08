@@ -1479,6 +1479,12 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         valid=[]
         seen_attempt_urls=set()
 
+        def presentation_ready() -> bool:
+            return any(
+                isinstance(row,tuple) and len(row)>=4 and int((row[3] or {}).get("musicalSectionCount") or 0)>=2
+                for row in valid
+            )
+
         def evaluate_lyrics_candidate(item: dict[str,Any], origin: str) -> bool:
             clean_url=_clean_source_url(str(item.get("url") or item.get("finalUrl") or ""))
             if not clean_url or clean_url in seen_attempt_urls or len(lyrics_source_attempts)>=LYRICS_MAX_PAGE_ATTEMPTS:
@@ -1519,11 +1525,14 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                     maxAttempts=LYRICS_MAX_PAGE_ATTEMPTS,
                 )
             lyric_extract=_lyrics_extract_candidate(str(item.get("pageExtract") or ""),requested_scope,subject)
+            search_snippet=str(item.get("searchSnippet") or item.get("snippet") or "")
             snippet_consistent,overlap_count,snippet_token_count=_lyrics_snippet_consistent(
-                str(item.get("searchSnippet") or item.get("snippet") or ""),
+                search_snippet,
                 lyric_extract,
                 subject,
             ) if lyric_extract else (False,0,0)
+            snippet_sequence_span=_lyrics_sequence_span(search_snippet,lyric_extract,subject) if lyric_extract else 0
+            structure_profile=_lyrics_structure_profile(str(item.get("pageExtract") or ""))
             verified_candidate=bool(lyric_extract and snippet_consistent)
             if verified_candidate:
                 rejection_reason="VERIFIED"
@@ -1543,6 +1552,9 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 "outcome":"VERIFIED" if verified_candidate else "REJECTED",
                 "snippetOverlapCount":overlap_count,
                 "snippetInformativeTokenCount":snippet_token_count,
+                "snippetSequenceSpan":snippet_sequence_span,
+                "musicalSectionCount":int(structure_profile.get("musicalSectionCount") or 0),
+                "performerCueCount":int(structure_profile.get("performerCueCount") or 0),
                 "sourceIdentityVerified":bool(source_identity.get("verified")),
                 "sourceIdentityScore":int(source_identity.get("score") or 0),
                 "rejectionReason":rejection_reason,
@@ -1562,6 +1574,9 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 "sourceIdentityScore":int(source_identity.get("score") or 0),
                 "snippetOverlapCount":overlap_count,
                 "snippetInformativeTokenCount":snippet_token_count,
+                "snippetSequenceSpan":snippet_sequence_span,
+                "musicalSectionCount":int(structure_profile.get("musicalSectionCount") or 0),
+                "performerCueCount":int(structure_profile.get("performerCueCount") or 0),
                 "outcome":"VERIFIED" if verified_candidate else "REJECTED",
                 "rejectionReason":rejection_reason,
             })
@@ -1579,11 +1594,16 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             line_count=len([ln for ln in lyric_extract.splitlines() if ln.strip()])
             stanza_count=len([x for x in re.split(r"\n\s*\n+",lyric_extract) if x.strip()])
             score=line_count+(stanza_count*4)
+            score+=(int(structure_profile.get("musicalSectionCount") or 0)*12)
+            score+=(int(structure_profile.get("performerCueCount") or 0)*2)
             if re.search(r"(?i)lyrics?",str(item.get("title") or "")):
                 score+=2
             if requested_scope=="full-lyrics" and re.search(r"(?i)\b(?:all|complete|full)\b",str(item.get("title") or "")):
                 score+=4
-            valid.append((score,item,lyric_extract))
+            requested_title,_=_lyrics_subject_parts(subject)
+            if requested_title and "original" not in requested_title.casefold() and re.search(r"(?i)\boriginal\b",str(item.get("title") or "")):
+                score-=12
+            valid.append((score,item,lyric_extract,structure_profile))
             _progress(
                 progress,
                 "LYRICS_SOURCE_VERIFIED",
@@ -1596,15 +1616,20 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             return True
 
         for item in fetched:
-            if evaluate_lyrics_candidate(item,"research-evidence"):
-                break
-            if len(lyrics_source_attempts)>=LYRICS_MAX_PAGE_ATTEMPTS:
+            evaluate_lyrics_candidate(item,"research-evidence")
+            if presentation_ready() or len(lyrics_source_attempts)>=LYRICS_MAX_PAGE_ATTEMPTS:
                 break
 
-        if not valid and len(lyrics_source_attempts)<LYRICS_MAX_PAGE_ATTEMPTS:
+        if not presentation_ready() and len(lyrics_source_attempts)<LYRICS_MAX_PAGE_ATTEMPTS:
             fetch_public=getattr(canonical_online_research,"fetch_public",None)
             search_public=getattr(canonical_online_research,"search_public",None)
             candidate_pool=list(bundle.get("candidatePool") if isinstance(bundle.get("candidatePool"),list) else [])
+            candidate_pool.sort(
+                key=lambda candidate:(
+                    -_lyrics_candidate_structure_hint(candidate,str(plan.get("subject") or "")),
+                    int(candidate.get("rank") or 999),
+                ) if isinstance(candidate,dict) else (0,999)
+            )
             if not candidate_pool and callable(search_public):
                 canonical_online_research.set_trace_sink(progress)
                 try:
@@ -1655,7 +1680,13 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                                     "query":rescue_query,
                                     "relevanceScore":int(identity.get("score") or 0),
                                 })
-                        rescue_candidates.sort(key=lambda item:(-int(item.get("relevanceScore") or 0),int(item.get("rank") or 999)))
+                        rescue_candidates.sort(
+                            key=lambda item:(
+                                -_lyrics_candidate_structure_hint(item,str(plan.get("subject") or "")),
+                                -int(item.get("relevanceScore") or 0),
+                                int(item.get("rank") or 999),
+                            )
+                        )
                         lyrics_rescue_search_debug.append({
                             "query":rescue_query,
                             "resultCount":len(found) if isinstance(found,list) else 0,
@@ -1729,7 +1760,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                         # The candidate URL already occupies the dedupe set. Evaluate
                         # the fetched final URL as this same bounded attempt.
                         seen_attempt_urls.discard(clean_url)
-                        if evaluate_lyrics_candidate(item,"fallback-candidate"):
+                        evaluate_lyrics_candidate(item,"fallback-candidate")
+                        if presentation_ready() or len(lyrics_source_attempts)>=LYRICS_MAX_PAGE_ATTEMPTS:
                             break
                 finally:
                     canonical_online_research.clear_trace_sink()
@@ -1738,7 +1770,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         lyrics_fallback_exhausted=not bool(valid)
 
         if valid:
-            _,selected,selected_extract=valid[0]
+            _,selected,selected_extract,selected_structure_profile=valid[0]
             selected_lyric_evidence=selected
             provenance={
                 "originalStanzaCount":None,
@@ -1808,7 +1840,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                         "pageExtract":item.get("pageExtract"),
                         "fetchedAt":item.get("fetchedAt"),
                     }
-                    for _,item,lyric_extract in valid[:3]
+                    for _,item,lyric_extract,_structure_profile in valid[:3]
                 ],
             }
 
