@@ -11,7 +11,7 @@ import urllib.parse
 from typing import Any, Callable
 
 MODULE_ID="online-research"
-VERSION="1.4.3"
+VERSION="1.4.4"
 CONTRACT_ID="swrlz_online_research_hot_v2"
 
 
@@ -68,6 +68,33 @@ def _candidate_admission(item:dict[str,Any],plan:dict[str,Any],terms:list[str])-
     requested=(" ".join([str(plan.get("requestedInformation") or ""),str(plan.get("target") or "")," ".join(plan.get("queries") or [])])).lower()
     if "lyric" not in requested:
         return True,{"reason":"NON_LYRICS_PASS","neededHits":0,"matchedTerms":[],"coreTerms":[]}
+
+    # SongIdentity-aware exact queries arrive as quoted title + quoted artist.
+    # When both are available, require the title phrase and artist identity at
+    # this first admission boundary so ambiguous commerce/dictionary matches do
+    # not consume a page-fetch attempt before the specialized verifier runs.
+    query_text=" ".join(str(q or "") for q in (plan.get("queries") or []))
+    quoted=re.findall(r'"([^"]+)"',query_text)
+    if len(quoted)>=2:
+        song_title=" ".join(quoted[0].casefold().split())
+        artist=" ".join(quoted[1].casefold().split())
+        hay=" ".join([
+            str(item.get("title") or ""),
+            str(item.get("snippet") or ""),
+            urllib.parse.unquote(str(item.get("url") or "")),
+        ]).casefold()
+        title_match=bool(song_title and song_title in " ".join(hay.split()))
+        artist_tokens=[x for x in re.findall(r"[a-z0-9][a-z0-9'’-]*",artist) if len(x)>=2]
+        artist_hits=sum(1 for token in artist_tokens if token in hay)
+        allowed=title_match and (not artist_tokens or artist_hits>=1)
+        return allowed,{
+            "reason":"EXACT_SONG_ENTITY_MATCH" if allowed else ("TITLE_PHRASE_MISMATCH" if not title_match else "ARTIST_MISMATCH"),
+            "neededHits":1,
+            "matchedTerms":[song_title] + ([artist_tokens[0]] if artist_hits and artist_tokens else []),
+            "coreTerms":[song_title,artist][:12],
+            "exactTitleRequired":True,
+            "artistRequired":bool(artist_tokens),
+        }
     generic={"lyric","lyrics","verse","verses","all","full","complete","song","songs","text","original","stanza","stanzas","history","authorship","published"}
     core=[term for term in terms if term not in generic]
     if not core:
