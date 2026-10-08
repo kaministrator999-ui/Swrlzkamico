@@ -1,0 +1,340 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-muyuk1cr-2620377967-1220312231",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "ce7eff4884993bba0791f4cc7f106bffc29596b1",
+  "persistedAtUnixMs": 1791422255380,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-muyuk1cr-2620377967-1220312231",
+    "trigger": {
+      "userText": "Can you provide lyrics to cold piece of work by tech n9ne",
+      "sha256": "6adb8c41ef7e08d92043f474c72f8469fa42ff0cab226bd1a87cddd933b3f29b"
+    },
+    "research": {
+      "kind": "search",
+      "status": "OK",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "existing-lyrics-retrieval",
+      "query": "",
+      "resultCount": 1,
+      "sources": [
+        {
+          "title": "JL, Tech N9ne , Joey Cool & Jay Trilogy - Cold Piece Of Work Lyrics ...",
+          "source": "www.bing.com",
+          "url": "https://www.bing.com/ck/a?%21=&p=d2ef684631e93b961304591e4bb9d0505c103978d4e5be0435da408bbc54341dJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cuYXpseXJpY3MuY29tL2x5cmljcy90ZWNobjluZS9jb2xkcGllY2VvZndvcmsuaHRtbA&ntb=1",
+          "snippet": "",
+          "rank": null
+        }
+      ],
+      "sourceSites": [
+        "www.bing.com"
+      ],
+      "widgetKinds": [
+        "search-results"
+      ],
+      "trace": [
+        {
+          "phase": "RESEARCH_STARTED",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research started",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-lite",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "bing-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "bing-html",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "bing-html",
+          "activity": "Using bing-html",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+          "provider": "lyrics-verifier",
+          "activity": "Fetched destination matches the requested song identity",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate did not satisfy verification",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "web-page",
+          "activity": "Alternate lyrics source fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "web-page",
+          "activity": "Alternate lyrics source fetch failed",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "I found and verified a lyrics source for **\"cold piece of work\" by tech n9ne**, but I couldn't verify a clean lyric-text extraction from the fetched page, so I won't reconstruct the lyrics from memory.\n\n**Lyrics source:** JL, Tech N9ne , Joey Cool & Jay Trilogy - Cold Piece Of Work Lyrics ... — https://www.bing.com/ck/a?%21=&p=d2ef684631e93b961304591e4bb9d0505c103978d4e5be0435da408bbc54341dJmltdHM9MTc5MTMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=2509d258-fb04-6f28-2c2c-c5b4fa4d6e42&u=a1aHR0cHM6Ly93d3cuYXpseXJpY3MuY29tL2x5cmljcy90ZWNobjluZS9jb2xkcGllY2VvZndvcmsuaHRtbA&ntb=1",
+      "sha256": "14d9f37a3e83ef2be85be4603871ec4de2749c8796c7ff30857475843cda73e5"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up cold piece of work tech n9ne lyrics…"
+      },
+      {
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate"
+      },
+      {
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "reason": "Fetched destination matches the requested song identity"
+      },
+      {
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification"
+      },
+      {
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed"
+      },
+      {
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Alternate lyrics source fetch failed"
+      },
+      {
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed"
+      },
+      {
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Alternate lyrics source fetch failed"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK"
+      },
+      {
+        "phase": "WIDGET_READY",
+        "reason": "search-results"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok."
+      },
+      {
+        "phase": "LYRICS_SOURCE_ONLY",
+        "reason": "Verified source identity; lyric body extraction not verified."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ]
+  }
+}
