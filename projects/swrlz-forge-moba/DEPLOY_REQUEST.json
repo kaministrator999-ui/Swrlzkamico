@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v8.6",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_6_NATIVE_ANIME_CINEMATIC",
-  "reason": "Repeat v8.6 native Anime Studio cinematic after correcting Hugging Face static HTML asset normalization in live verification. Initial run 37719679170 reconstructed and uploaded correct v8.6 but failed the episode HTML check because of provider metadata injection. Full source and Chromium mobile/desktop acceptance remain unchanged and verified.",
-  "sourceCommit": "7994eb40a98472dd13821a5a07a9c400ff58bc56",
-  "sourceIntegritySha256": "1468357c5ce082b71548de983fd11f818cf4eeccb34eca3df92a0f15e3e94dc0"
+  "releaseVersion": "v8.7",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V8_7_ANIME_CEL_PARALLAX",
+  "reason": "Ship layered 2.5D Anime Studio starter with six independent parallax depth layers, illustrated cel characters and dragon, runtime Layers toggle, temporary hiding/restoration of overlapping 3D signs, and phone-bounded captions. Exact 46-patch source plus desktop/mobile Chromium acceptance verified at Actions 37721928687.",
+  "sourceCommit": "736aa954599a0ca16a59f3725b688fc4c5779033",
+  "sourceIntegritySha256": "6a58245bc1d19e3513ddc3a280a454c2d69e7c6c836ad18c65821f1b0816747b"
 }
