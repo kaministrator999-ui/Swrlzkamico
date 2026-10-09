@@ -475,10 +475,10 @@ def preview_project_plan(request: Request, threadId: str, messageId: str):
     with _lock:
         _,thread=_workspace_session_thread(request,threadId)
         plan,message_sha=_reviewed_manifest(thread,messageId)
-    return {"schema":"swrlz-project-manifest-preview-v1",
+    return JSONResponse({"schema":"swrlz-project-manifest-preview-v1",
             "approvalRequired":True,
             "plan":plan,"sourceMessageId":messageId,
-            "messageSha256":message_sha}
+            "messageSha256":message_sha},headers={"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"})
 
 
 @app.post("/api/lalm_station/workspaces/plan/approve")
@@ -489,12 +489,20 @@ async def approve_project_plan(request: Request):
     with _lock:
         session,thread=_workspace_session_thread(request,body.get("threadId"))
         plans=thread.setdefault("projectWorkspaces",[])
-        if len(plans)>=MAX_WORKSPACES_PER_THREAD:
-            raise HTTPException(422,"Workspace capacity reached for this thread")
         plan,message_sha=_reviewed_manifest(thread,body.get("messageId"))
         if (body.get("expectedMessageSha256")!=message_sha or
             body.get("expectedPlanSha256")!=plan["planSha256"]):
             raise HTTPException(409,"Plan source changed; preview it again")
+        previous=next((item for item in plans
+                       if item.get("sourcePlanMessageId")==body["messageId"]),None)
+        if previous is not None:
+            if (previous.get("sourcePlanMessageSha256")!=message_sha or
+                (previous.get("projectPlan") or {}).get("planSha256")!=plan["planSha256"]):
+                raise HTTPException(409,"Previously approved plan source has changed")
+            return {"ok":True,"alreadyApproved":True,
+                    "workspace":workspace_progress(previous),"plan":plan}
+        if len(plans)>=MAX_WORKSPACES_PER_THREAD:
+            raise HTTPException(422,"Workspace capacity reached for this thread")
         try:
             workspace=create_workspace("workspace-"+uuid.uuid4().hex,
                                        plan["title"],plan["generationOrder"])
