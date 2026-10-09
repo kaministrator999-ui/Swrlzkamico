@@ -20,7 +20,11 @@ const reliefOriginalMakePart=rigMakePart,reliefOriginalVisualSignature=rigVisual
 rigMakePart=function(texture,cell,width,height,thickness,id){
   const part=reliefOriginalMakePart(texture,cell,width,height,thickness,id);
   part.userData.reliefBaseThickness=thickness;
-  for(const mesh of part.children.filter(child=>child.userData.rigRestVertices))reliefPartitionMesh(mesh,width);
+  for(const mesh of part.children.filter(child=>child.userData.rigRestVertices)){
+    // BufferGeometry.clone() initially shares the front/back userData object.
+    // Their independent partitions and grid centres belong to each surface.
+    mesh.geometry.userData={...mesh.geometry.userData};reliefPartitionMesh(mesh,width);
+  }
   return part;
 };
 rigVisualSignature=function(config,character){
@@ -28,6 +32,9 @@ rigVisualSignature=function(config,character){
 };
 const reliefOriginalFaceSurface=rigFaceSurface;
 rigFaceSurface=function(character,layout,headPart){
+  // Isolate every existing head surface before cloning the facial grid. In
+  // particular, the back must retain its own unshifted sampling centre.
+  for(const mesh of headPart.children.filter(child=>child.userData.rigRestVertices))mesh.geometry.userData={...mesh.geometry.userData};
   const headGeometry=headPart.children[0].geometry,center=headGeometry.userData.rigPlaneCenter;
   const face=reliefOriginalFaceSurface(character,layout,headPart);
   // BufferGeometry.clone() shares userData. The cropped facial grid's centre

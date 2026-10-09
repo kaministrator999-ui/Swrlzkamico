@@ -1,6 +1,6 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
-import {mkdir,readFile} from 'node:fs/promises';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {inflateSync} from 'node:zlib';
 
@@ -221,16 +221,31 @@ function handWrapsRight(render,label){
 async function paintedHandOnScreen(page,render,label){
   // Sample projected high-alpha glove pixels in the genuine rendered canvas.
   // This catches a correctly labelled hand that is still hidden by the torso.
-  const canvas=page.locator('canvas:visible').first(),image=pngPixels(await canvas.screenshot());
+  const canvas=page.locator('canvas:visible').first(),buffer=await canvas.screenshot(),image=pngPixels(buffer);
   let matches=0;
   for(const sample of render.staffGrip.handFrontSamples){
     const cx=Math.round(sample.screen[0]*image.width),cy=Math.round(sample.screen[1]*image.height);let error=Infinity;
-    // The rotated fingertips may cover less than one native render pixel.
-    // Include their two-pixel interpolation footprint without relaxing the
-    // required painted colors or replacing this genuine GPU image check.
+    // Rotated fingertips can cover less than one native render pixel. Include
+    // their two-pixel interpolation footprint at the same painted-color and
+    // minimum matched-sample requirements in canonical Play and Watch.
     for(let y=Math.max(0,cy-2);y<=Math.min(image.height-1,cy+2);y++)for(let x=Math.max(0,cx-2);x<=Math.min(image.width-1,cx+2);x++)
       error=Math.min(error,distance(image.rgb(x,y),sample.rgb)/Math.sqrt(3));
     if(error<43)matches++;
+  }
+  if(matches<3){
+    const sampleErrors=render.staffGrip.handFrontSamples.map(sample=>{
+      const cx=Math.round(sample.screen[0]*image.width),cy=Math.round(sample.screen[1]*image.height),radii={};
+      for(const radius of [1,2,3,4,6]){
+        let error=Infinity;
+        for(let y=Math.max(0,cy-radius);y<=Math.min(image.height-1,cy+radius);y++)for(let x=Math.max(0,cx-radius);x<=Math.min(image.width-1,cx+radius);x++)
+          error=Math.min(error,distance(image.rgb(x,y),sample.rgb)/Math.sqrt(3));
+        radii[radius]=error;
+      }
+      return {rgb:sample.rgb,screen:sample.screen,radii};
+    });
+    const name=label.replace(/[^a-z0-9]+/gi,'-');
+    await writeFile(resolve(output,name+'-painted-hand-failure.png'),buffer);
+    await writeFile(resolve(output,name+'-painted-hand-failure.json'),JSON.stringify({width:image.width,height:image.height,grip:render.staffGrip,sampleErrors},null,2));
   }
   assert.ok(matches>=3,'The actual WebGL image does not show the painted staff hand: '+label+' matched samples '+matches);
 }
@@ -312,6 +327,23 @@ try{
     assert.equal(stars.reduce((sum,item)=>sum+item.pointCount,0),210,'Book emergence loses the real layered stars');
     await page.locator('#animeCineExit').click();await frames(page);
     originalContent(await project(page),original,mode.name+' Play/Stop');
+
+    // Verify the authored hand direction and painted staff join in stock Watch
+    // before adding adversarial socket/XYZ poses for the editor checks below.
+    await page.locator('#animeScreeningBtn').click();
+    await page.waitForFunction(()=>window.SWYRL_ENGINE_ANIMATION.status().active,undefined,{timeout:15000});
+    assert.equal(await page.locator('#storyCinemaStage canvas').count(),1,'Canonical Watch has no genuine WebGL canvas');
+    await page.locator('#animeCinePause').click();
+    for(const time of [19,72,110]){
+      safe(await seek(page,time),mode.name+' canonical Watch '+time+'s',true);
+      const held=await rig(page,'kami');connected(held,mode.name+' canonical Watch '+time+'s');
+      staffAttached(held,mode.name+' canonical Watch '+time+'s');handWrapsRight(held,mode.name+' canonical Watch '+time+'s');
+      await paintedHandOnScreen(page,held,mode.name+' canonical Watch '+time+'s');
+      await paintedStemOnScreen(page,held,mode.name+' canonical Watch '+time+'s');
+      if(time===19)await page.screenshot({path:resolve(output,'socket-emergence-'+mode.name+'-canonical-watch.png')});
+    }
+    await page.locator('#animeScreeningClose').click();await frames(page);
+    originalContent(await project(page),original,mode.name+' canonical Watch/Close');
 
     // Author a staggered entrance using the actual opening panel. The saved
     // timing must change the transformed puppet, and one Undo restores it.
@@ -507,6 +539,7 @@ try{
     await page.screenshot({path:resolve(output,'socket-emergence-'+mode.name+'-sockets-editor.png')});
     const downloadPending=page.waitForEvent('download',{timeout:15000});await page.locator('#storySaveProject').click();
     const download=await downloadPending,exported=JSON.parse(await readFile(await download.path(),'utf8'));
+    await writeFile(resolve(output,'socket-emergence-'+mode.name+'-export.swyrl.json'),JSON.stringify(exported,null,2));
     assert.deepEqual(exported.project.animeSockets,(await project(page)).project.animeSockets,'Native Save Project loses the socket graph');
     assert.deepEqual(exported.project.animeEmergence,(await project(page)).project.animeEmergence,'Native Save Project loses physical book emergence');
     originalContent(exported,original,mode.name+' saved socket project');
@@ -527,7 +560,11 @@ try{
       if(time>=14)staffAttached(await rig(page,'kami'),mode.name+' Watch staff '+time+'s');
       if([19,72,110].includes(time)){
         const held=await rig(page,'kami');
-        await paintedHandOnScreen(page,held,mode.name+' Watch staff '+time+'s');
+        // The adversarial forearm/hand XYZ keys at 17.25s put opaque forearm
+        // ink in front of this grip. Stock Play AND stock Watch above prove
+        // the requested visible hand; this posed Watch checks actual socket,
+        // shaft/stem and facial geometry without demanding visibility through
+        // the deliberately placed forearm occluder.
         await paintedStemOnScreen(page,held,mode.name+' Watch staff '+time+'s');
       }
       if(time===17.25)for(const character of ['kami','swyrlz'])faceFront(await rig(page,character),mode.name+' Watch '+character+' max face depth');
