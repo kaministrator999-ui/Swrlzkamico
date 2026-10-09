@@ -72,11 +72,12 @@ def verify_original_lyrics(raw: str, request: dict[str,Any]) -> dict[str,Any]:
         for x in lines if _SECTION.fullmatch(x)
     ):
         faults.append("unrequested-chorus")
+    lyric_content=[line for line in content if not _REFUSAL.search(line) and not _META.search(line)]
     wanted=request.get("requestedLines")
-    if wanted is not None and len(content)!=wanted:
+    if wanted is not None and len(lyric_content)!=wanted:
         faults.append("wrong-explicit-lyric-line-count")
     return {"status":"REJECT" if faults else "PASS","reasons":list(dict.fromkeys(faults)),
-            "requestedLyricLines":wanted,"observedLyricLines":len(content),
+            "requestedLyricLines":wanted,"observedLyricLines":len(lyric_content),
             "formalOnly":True,"semanticQualityVerified":False}
 
 def clean_lyric_container(raw: str) -> str:
