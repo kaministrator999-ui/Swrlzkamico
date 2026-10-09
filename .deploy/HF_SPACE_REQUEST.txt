@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-09-v178-last-slot-lyrics-structured-rescue-retry-002
+REQUEST_NONCE=2026-10-09-v179-identity-verified-lyric-rescue-001
