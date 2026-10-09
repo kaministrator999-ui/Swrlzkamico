@@ -214,9 +214,11 @@ finally:
 
 assert result["modelContext"]["songIdentity"]["title"]=="rack city",result["modelContext"]["songIdentity"]
 assert result["modelContext"]["songIdentity"]["primaryArtist"]=="tyga",result["modelContext"]["songIdentity"]
-assert result["lyricsSourceAttemptCount"]==3,result
+# v176: a discovered source advertising real [Intro]/[Verse] markers
+# should consume the second slot ahead of an unstructured provider; the
+# verified result requires fewer page fetches than the historical v173 path.
+assert result["lyricsSourceAttemptCount"]==2,result
 assert retrieved==[
-    "https://www.azlyrics.com/lyrics/tyga/rackcity.html",
     "https://www.lyricsondemand.com/t/tygalyrics/rackcity242457lyrics.html",
 ],retrieved
 assert result["modelContext"]["verifiedLyrics"],result["modelContext"]
@@ -290,5 +292,72 @@ assert any(x.get("phase")=="CREATIVE_MUSIC_STARTED" for x in events),events
 assert any(x.get("type")=="DELTA" and "Original verse" in x.get("text","") for x in events),events
 
 print("contextual-original-rap-routing-v175 PASS")
+
+# v176 live Dragon Chat (25) reproduced: SongIdentity is correct, but a
+# source with a commentary/meaning snippet and no section markers exhausted
+# the final page slot while a result with multiple [Intro]/[Verse] cues was
+# available in the same discovery pool. Selection must be structural but
+# actual BODY acceptance stays evidence-verified and fail-closed.
+v176_pool=[
+    {**natural_pool[0]},
+    {**natural_pool[1]},
+    {"title":"Tyga - Rack City Lyrics & Meaning",
+     "url":"https://www.songlyrics.com/tyga/rack-city-lyrics/",
+     "source":"www.songlyrics.com","rank":8,
+     "snippet":"Rack City by Tyga was released in 2012 and discusses wealth and nightlife."},
+    {**natural_pool[3],"rank":6},
+    {**natural_pool[2]},
+]
+v176_fetch=[]
+def v176_research(_payload):
+    return {
+        "provider":"test-search","researchId":"v176-real-25","errors":[],
+        "candidateAdmissionDebug":[],"evidence":[],
+        "fetchFailures":[{
+            "url":natural_pool[0]["url"],
+            "title":natural_pool[0]["title"],
+            "source":"genius.com","rank":1,"errorType":"HTTPError",
+        }],
+        "candidatePool":v176_pool,
+    }
+
+def v176_fetch_public(url):
+    v176_fetch.append(url)
+    if "lyricsondemand.com" in url:
+        return {
+            "finalUrl":url,"status":200,
+            "title":"Rack City Lyrics by Tyga - Lyrics On Demand",
+            "extract":GOOD_PAGE,"fetchedAt":3,
+        }
+    if "songlyrics.com" in url:
+        raise AssertionError("Unstructured commentary consumed the final lyrics slot")
+    if "azlyrics.com" in url:
+        return {
+            "finalUrl":"https://b.azlyrics.com/?u=%2Flyrics%2Ftyga%2Frackcity.html",
+            "status":200,"title":"AZLyrics - request for access",
+            "extract":"Our systems have detected unusual activity. Please complete CAPTCHA.",
+            "fetchedAt":2,
+        }
+    raise AssertionError("Wrong direct lyric fetch: "+url)
+
+try:
+    online_tools.run_online_research=v176_research
+    online_tools.canonical_online_research.fetch_public=v176_fetch_public
+    online_tools._lyrics_provenance_lookup=fake_prov
+    plan_v176=dict(natural_plan)
+    plan_v176["requestId"]="v176-real-25-structured-source-priority"
+    accepted=online_tools._search_bundle(plan_v176)
+finally:
+    online_tools.run_online_research=orig_research
+    online_tools.canonical_online_research.fetch_public=orig_fetch
+    online_tools._lyrics_provenance_lookup=orig_prov
+
+assert accepted["lyricsSourceAttemptCount"]<=3,accepted
+assert v176_fetch==["https://www.lyricsondemand.com/t/tygalyrics/rackcity242457lyrics.html"],v176_fetch
+assert accepted["modelContext"]["verifiedLyrics"]["sourceUrl"]==v176_fetch[0],accepted
+assert accepted["musicStructureDebug"]["explicitMusicalSectionCount"]>=2,accepted["musicStructureDebug"]
+assert online_tools.ONLINE_OBSERVABILITY_REVISION=="v176-structured-source-fetch-priority"
+print("live-25-structured-lyrics-priority-v176 PASS")
+
 
 
