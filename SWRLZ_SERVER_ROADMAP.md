@@ -14,6 +14,8 @@
 
 **Source branch:** `feature/hf-space-manual-deploy`; protected release to existing `kamiloki/Swyrlz` only after guarded regression and R39/700M checks. **Version intent:** Repository Work 1.0.107; Online Research 1.0.25; LALM Engine 2.1.162; Deployment Control 1.0.37; Server Runtime 2.3.330 *only after successful publication*. No UI or standalone game-engine changes.
 
+**Initial protected workflow failed prepublication:** [#37950774585](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37950774585) stopped on an outdated **exact v176 observability label** assertion in the otherwise-passing v176 behavioral source-priority regression. No HF publication occurred. Updated this predecessor assertion to minimum monotonic `>=176` without skipping any source-selection test, commit `70f74b33f7933767eafebf3bbfd1ecf9a4a60acc`. Retry deployment is required; do not report v177 live before successful guarded receipt.
+
 **Gate status:** SOURCE CANDIDATE AND TESTS COMMITTED; guarded CI / HF receipt pending; real-world v177 output acceptance pending.
 
 ## UPDATE FINISHED — 2026-10-09 — structurally marked lyric-source priority v176
