@@ -1,0 +1,377 @@
+{
+  "schema": "swrlz-model-maturity-post-discovery-public-v4",
+  "version": 4,
+  "status": "PUBLIC_UNGRADED_NO_STUDENT_RUNS",
+  "asOf": "2026-10-09",
+  "policyOwner": "docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md",
+  "lesson": "training/coder/MODEL_MATURITY_DISCOVERY_V4.md",
+  "experimentalCandidate": "feature/task-discovery-replan-v1",
+  "type": "public_educational_not_heldout",
+  "requiresModelInference": false,
+  "practice": [
+    {
+      "id": "DM4-001",
+      "category": "source-scope",
+      "initialTier": 2,
+      "evidence": {
+        "affectedFiles": 1,
+        "affectedOwners": 1
+      },
+      "trusted": true,
+      "expectedTier": 2,
+      "teachingObjective": "One-file typo remains focused; no unnecessary repo-wide rewrite",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-002",
+      "category": "source-scope",
+      "initialTier": 2,
+      "evidence": {
+        "affectedFiles": 4,
+        "affectedOwners": 1
+      },
+      "trusted": true,
+      "expectedTier": 3,
+      "teachingObjective": "Verified four-file scope needs targeted evidence",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-003",
+      "category": "cross-owner",
+      "initialTier": 2,
+      "evidence": {
+        "affectedFiles": 3,
+        "affectedOwners": 2
+      },
+      "trusted": true,
+      "expectedTier": 4,
+      "teachingObjective": "Two ownership boundaries require integration review",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-004",
+      "category": "source-dependency",
+      "initialTier": 2,
+      "evidence": {
+        "dependencyEdges": 5
+      },
+      "trusted": true,
+      "expectedTier": 4,
+      "teachingObjective": "Verified multi-edge dependency impact requires deep reasoning",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-005",
+      "category": "repair-evidence",
+      "initialTier": 2,
+      "evidence": {
+        "failingTests": 2
+      },
+      "trusted": true,
+      "expectedTier": 3,
+      "teachingObjective": "Actual failures raise proof obligations",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-006",
+      "category": "authentication",
+      "initialTier": 2,
+      "evidence": {
+        "riskTags": [
+          "authentication"
+        ]
+      },
+      "trusted": true,
+      "expectedTier": 4,
+      "teachingObjective": "A short login fix becomes security-sensitive",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-007",
+      "category": "durable-state",
+      "initialTier": 2,
+      "evidence": {
+        "riskTags": [
+          "persistence"
+        ]
+      },
+      "trusted": true,
+      "expectedTier": 4,
+      "teachingObjective": "Persistent storage demands state safety",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-008",
+      "category": "data-loss",
+      "initialTier": 2,
+      "evidence": {
+        "riskTags": [
+          "data-loss"
+        ]
+      },
+      "trusted": true,
+      "expectedTier": 5,
+      "teachingObjective": "Verified data loss requires critical controls",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-009",
+      "category": "production-release",
+      "initialTier": 2,
+      "evidence": {
+        "riskTags": [
+          "production-release"
+        ]
+      },
+      "trusted": true,
+      "expectedTier": 5,
+      "teachingObjective": "Live release cannot be treated as a quick patch",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-010",
+      "category": "secrets",
+      "initialTier": 2,
+      "evidence": {
+        "riskTags": [
+          "active-credentials"
+        ]
+      },
+      "trusted": true,
+      "expectedTier": 5,
+      "teachingObjective": "Active credential changes require release/security gates",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-011",
+      "category": "no-downgrade",
+      "initialTier": 5,
+      "evidence": {
+        "affectedFiles": 1
+      },
+      "trusted": true,
+      "expectedTier": 5,
+      "teachingObjective": "Critical first-hop state is never silently downgraded",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-012",
+      "category": "no-downgrade",
+      "initialTier": 4,
+      "evidence": {
+        "affectedFiles": 0
+      },
+      "trusted": true,
+      "expectedTier": 4,
+      "teachingObjective": "Deep first-hop scope remains deep without new evidence",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-013",
+      "category": "untrusted-evidence",
+      "initialTier": 2,
+      "evidence": {
+        "sourceVerified": true,
+        "riskTags": [
+          "production-release"
+        ]
+      },
+      "trusted": false,
+      "expectedTier": 2,
+      "teachingObjective": "User/model flags are not proof of a trusted inspection",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-014",
+      "category": "untrusted-evidence",
+      "initialTier": 3,
+      "evidence": {
+        "affectedFiles": 30,
+        "riskTags": [
+          "destructive"
+        ]
+      },
+      "trusted": false,
+      "expectedTier": 3,
+      "teachingObjective": "An untrusted metadata record cannot be accepted as inspected evidence",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-015",
+      "category": "privacy",
+      "initialTier": 2,
+      "evidence": {
+        "riskTags": [
+          "authentication"
+        ],
+        "rawUserMessage": "do not copy",
+        "privateToken": "do not copy"
+      },
+      "trusted": true,
+      "expectedTier": 4,
+      "teachingObjective": "Only bounded allowlisted fields reach diagnostics",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-016",
+      "category": "type-safety",
+      "initialTier": 2,
+      "evidence": {
+        "affectedFiles": true,
+        "dependencyEdges": "500",
+        "affectedOwners": -1
+      },
+      "trusted": true,
+      "expectedTier": 2,
+      "teachingObjective": "Boolean/string/negative counts cannot spoof impact",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-017",
+      "category": "irrelevant-tags",
+      "initialTier": 2,
+      "evidence": {
+        "riskTags": [
+          "unknown-future-tag",
+          "marketing"
+        ]
+      },
+      "trusted": true,
+      "expectedTier": 2,
+      "teachingObjective": "Unknown labels are not silently elevated as proven security facts",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-018",
+      "category": "critical-vs-education",
+      "initialTier": 1,
+      "evidence": {},
+      "trusted": true,
+      "expectedTier": 1,
+      "teachingObjective": "Explaining a deployment concept does not authorize or imply deployment",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-019",
+      "category": "schedule-fairness",
+      "initialTier": 2,
+      "evidence": {
+        "affectedFiles": 1
+      },
+      "trusted": true,
+      "expectedTier": 2,
+      "teachingObjective": "Short ready job can run first if Workstation capacity allows, without starving long tasks",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-020",
+      "category": "schedule-aging",
+      "initialTier": 4,
+      "evidence": {
+        "affectedFiles": 10,
+        "affectedOwners": 3
+      },
+      "trusted": true,
+      "expectedTier": 4,
+      "teachingObjective": "Complex job must eventually be scheduled despite competing short tasks",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-021",
+      "category": "two-gate-eval",
+      "initialTier": 3,
+      "evidence": {
+        "failingTests": 1
+      },
+      "trusted": true,
+      "expectedTier": 3,
+      "teachingObjective": "A valid compile with wrong user behavior is not accepted",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-022",
+      "category": "source-authority",
+      "initialTier": 2,
+      "evidence": {
+        "affectedFiles": 6,
+        "affectedOwners": 3
+      },
+      "trusted": true,
+      "expectedTier": 4,
+      "teachingObjective": "Multiple source authorities require reconciled SHA/branch owners",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-023",
+      "category": "heldout-split",
+      "initialTier": 3,
+      "evidence": {},
+      "trusted": true,
+      "expectedTier": 3,
+      "teachingObjective": "Public practice cannot be relabeled unseen benchmark after use",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    },
+    {
+      "id": "DM4-024",
+      "category": "tool-approval",
+      "initialTier": 5,
+      "evidence": {
+        "riskTags": [
+          "production-release"
+        ]
+      },
+      "trusted": true,
+      "expectedTier": 5,
+      "teachingObjective": "Effort tier does not grant any deployment or tool permission",
+      "studentStatus": "NOT_RUN",
+      "studentResponse": null,
+      "externalGraderReceipt": null
+    }
+  ]
+}
