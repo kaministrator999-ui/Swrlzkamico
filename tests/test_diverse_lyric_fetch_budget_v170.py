@@ -221,7 +221,9 @@ assert retrieved==[
 ],retrieved
 assert result["modelContext"]["verifiedLyrics"],result["modelContext"]
 assert "lyricsondemand.com" in result["modelContext"]["verifiedLyrics"]["sourceUrl"],result
-assert online_tools.ONLINE_OBSERVABILITY_REVISION=="v173-cross-source-identity-and-text-fetch-priority"
+# This v173 behavior test should not pin an old camera label forever.
+# A newer release may advance the diagnostic revision independently.
+assert int(online_tools.ONLINE_OBSERVABILITY_REVISION.split("-",1)[0].lstrip("v"))>=173
 
 print("unseparated-song-identity-text-fetch-v173 PASS")
 
