@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.165
-REVISION=2.1.165-lyric-ocean-craft-form-selector-v186
+VERSION=2.1.166
+REVISION=2.1.166-direct-lyric-output-validator-v187
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
