@@ -7,6 +7,7 @@ on:
     paths:
       - "hf_space/code_packages.py"
       - "hf_space/station.py"
+      - "hf_space/qwen_coder_engine.py"
       - "hf_space/test_code_packages_v184.py"
       - "hf_space/test_code_packages_http_v184.py"
       - "chat/§wyrlz/index.html"
@@ -34,7 +35,7 @@ jobs:
       - name: Dependency-light Python syntax and package-unit tests
         run: |
           set -euo pipefail
-          python -m py_compile hf_space/station.py hf_space/code_packages.py hf_space/test_code_packages_v184.py hf_space/test_code_packages_http_v184.py
+          python -m py_compile hf_space/station.py hf_space/qwen_coder_engine.py hf_space/code_packages.py hf_space/test_code_packages_v184.py hf_space/test_code_packages_http_v184.py
           PYTHONPATH=hf_space python hf_space/test_code_packages_v184.py
       - name: Frontend inline-script syntax + delivery-contract check
         run: |
