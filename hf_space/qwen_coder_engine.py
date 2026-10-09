@@ -330,6 +330,20 @@ def _response_mode(prompt, programming=None):
             "Put the complete lyric work in a fenced Markdown code block so the chat UI presents a copyable code container; preserve "
             "real line breaks and keep any genuine section labels inside the container. Do not append a customer-service question."
         )
+    # A user-requested structured project plan is not a source file or
+    # permission to run a model-powered multi-call generation loop.
+    if "swrlz-project-manifest" in p and re.search(r"\b(?:plan|project|manifest)\b",p):
+        return (
+            "RESPONSE MODE: PROJECT-MANIFEST-ONLY. Before writing source code, propose a concise dependency-aware project file plan. "
+            "Return exactly ONE fenced block with the language swrlz-project-manifest. Inside it return strict JSON "
+            'with schema "swrlz-project-manifest-v1", title, goal, and files array. '
+            "Each file entry must include safe relative path, language, purpose and dependsOn array listing OTHER file paths. "
+            "Use at most 32 files, without duplicate paths, absolute paths, parent traversal, unresolved dependencies or cycles. "
+            "Order the graph so prerequisite files can be written first. Include only files needed for this user's exact original task; "
+            "do not invent installed dependencies or treat a proposed manifest as completed source. "
+            "The human reviews and approves the plan; then workspaces separately track source files over multiple completed messages. "
+            "Do not include any actual source code, fabricated download links, or generic commentary outside the fenced plan."
+        )
     coding=structured_coding or bool(re.search(r"\b(?:html|css|javascript|typescript|python|kotlin|java|code|webpage|file)\b",p))
     if coding:
         return (
