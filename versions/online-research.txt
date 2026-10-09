@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.24
-REVISION=1.0.24-structured-source-fetch-priority-v176
+VERSION=1.0.25
+REVISION=1.0.25-lyrics-credit-boundary-v177
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
