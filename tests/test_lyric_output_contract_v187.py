@@ -64,6 +64,7 @@ def test_engine_route_has_a_bounded_single_retry_and_structural_only_truth():
     assert 'candidate_check=check' in source
     assert "clean_lyric_container(candidate_raw)" in source
     assert "2048 if requested and requested>=64" in source
+    assert "MYSTERY ARC: Establish a specific anomaly" in source
 
 if __name__=="__main__":
     for value in tuple(globals().values()):
