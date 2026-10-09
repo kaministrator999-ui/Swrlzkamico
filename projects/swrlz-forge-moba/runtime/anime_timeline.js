@@ -2,7 +2,8 @@
 const STORY_SCHEMA = 'anime-timeline-v1';
 const STORY_TRACK_NAMES = Object.freeze(['camera','kami','swyrlz','background','atmosphere','midground','effects','foreground','book']);
 const STORY_EASES = new Set(['linear','smooth','hold']);
-const STORY_CAMERA_BOUNDS = Object.freeze({x:[-4,4],y:[2,9],z:[9,24],tx:[-2,2],ty:[2,6],tz:[-4,1],fov:[35,65]});
+// A story camera may aim at the low book pages as well as the standing cast.
+const STORY_CAMERA_BOUNDS = Object.freeze({x:[-4,4],y:[2,9],z:[9,24],tx:[-4,4],ty:[-3,6],tz:[-4,1],fov:[35,65]});
 const STORY_LAYER_BOUNDS = Object.freeze({x:[-12,12],y:[-3,12],z:[-28,6],scale:[.1,2],rotation:[-Math.PI/2,Math.PI/2],opacity:[0,1],unfold:[0,1]});
 const STORY_CAST_BOUNDS = Object.freeze({...STORY_LAYER_BOUNDS,x:[-4,4],y:[1,7],z:[-3,1],scale:[.25,1.4],rotation:[-.4,.4]});
 const STORY_DEFAULT_VALUES = Object.freeze({

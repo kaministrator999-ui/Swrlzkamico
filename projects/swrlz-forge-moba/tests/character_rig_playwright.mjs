@@ -46,11 +46,12 @@ function noFailures(failures,label){
   assert.deepEqual(failures.artwork,[],'Character artwork failed: '+label);
 }
 async function start(page){
+  await page.bringToFront();
   await page.goto(base+'/index.html?project=anime-ghosts-ep01',{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_RIG&&window.SWYRL_ENGINE_ANIMATION&&window.SWYRL_ENGINE_STORYBOARD,
-    undefined,{timeout:60000});
+    undefined,{timeout:60000,polling:100});
   await page.waitForFunction(()=>{const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
-    return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000});
+    return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000,polling:100});
   await frames(page);
 }
 async function input(page,selector,value){
@@ -184,14 +185,17 @@ try{
     assert.equal((await rendered(page,'kami')).face.expression,face.expression,'The companion replaced Kami’s expression');
 
     // Configuration builds actual thickness/depth, and is saved with the rig.
+    const beforeDepthConfig=await rendered(page,'kami');
     await choosePart(page,'kami','head',17.25);
     await input(page,'#rigEnabled',true);await input(page,'#rigThickness',.12);await input(page,'#rigDepthAmount',.4);
     await page.locator('#rigApplyConfig').click();await seek(page,17.25);
     const configured=await rendered(page,'kami');hasDepth(configured,mode.name+' configured depth');
     close(configured.thickness,.12,'Thickness control does not rebuild the character geometry',.003);
     assert.ok(['head','cape','torso','staff'].some(part=>
-      Math.abs(configured.joints[part].position[2]-initialKami.joints[part].position[2])>.02),
-    'Pop-out depth changed only saved settings, not actual part positions');
+      distance(configured.joints[part].surfaceWorldPosition,beforeDepthConfig.joints[part].surfaceWorldPosition)>.02),
+    'Pop-out depth changed only saved settings, not actual painted surface geometry');
+    for(const connection of configured.connections)
+      assert.ok(connection.error<1e-5,'Changing paper depth separates a snapped socket: '+connection.child);
     safe(await stage(page),mode.name+' configured depth safety');
     await page.screenshot({path:resolve(output,'character-rig-'+mode.name+'-editor.png')});
     const downloadPending=page.waitForEvent('download',{timeout:15000});
@@ -225,6 +229,9 @@ try{
 
     // Import into a clean browser: no previous rig nodes, texture cache, or UI
     // state may rescue a broken portable Save/Load implementation.
+    // All primary checks and snapshots are complete. The portable import uses
+    // a fresh context with no still-rendering primary scene to rescue its data.
+    await context.close();
     const freshContext=await browser.newContext(options),fresh=await freshContext.newPage(),freshFailures=watch(fresh);
     await start(fresh);await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),exported);await frames(fresh);
     assert.deepEqual((await project(fresh)).project.animeRigs,exported.project.animeRigs,'Fresh import changed the saved rigs');
@@ -288,7 +295,6 @@ try{
     noFailures(failures,mode.name+' native rig authoring/Play');
     console.log('CHARACTER_RIG_'+mode.name.toUpperCase()+'_PASS',JSON.stringify({parts:{kami:initialKami.partCount,swyrlz:initialCompanion.partCount},
       meshes:{kami:initialKami.meshCount,swyrlz:initialCompanion.meshCount},screenshots:output}));
-    await context.close();
   }
   allPassed=true;
 }finally{await browser.close();}

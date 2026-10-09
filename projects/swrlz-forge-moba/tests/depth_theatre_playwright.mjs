@@ -45,11 +45,12 @@ function noFailures(failures,label){
   assert.deepEqual(failures.artwork,[],'Layered scenery artwork failed: '+label);
 }
 async function start(page){
+  await page.bringToFront();
   await page.goto(base+'/index.html?project=anime-ghosts-ep01',{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_SCENERY&&window.SWYRL_ENGINE_RIG&&window.SWYRL_ENGINE_ANIMATION&&window.SWYRL_ENGINE_STORYBOARD,
-    undefined,{timeout:60000});
+    undefined,{timeout:60000,polling:100});
   await page.waitForFunction(()=>{const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
-    return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000});
+    return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000,polling:100});
   await frames(page);
 }
 async function input(page,selector,value){
@@ -308,6 +309,9 @@ try{
 
     // A clean browser cannot rescue missing scenery using an existing mesh
     // cache. The downloaded native project must reproduce the same poses.
+    // All primary checks and snapshots are complete. The portable import uses
+    // a fresh context with no still-rendering primary scene to rescue its data.
+    await context.close();
     const freshContext=await browser.newContext(options),fresh=await freshContext.newPage(),freshFailures=watch(fresh);
     await start(fresh);await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),exported);await frames(fresh);
     assert.deepEqual((await project(fresh)).project.animeScenery,exported.project.animeScenery,'Fresh import changed portable scenery');
@@ -321,7 +325,6 @@ try{
     noFailures(freshFailures,mode.name+' portable depth import');await freshContext.close();
 
     noFailures(failures,mode.name+' native scenery authoring/Play');
-    await context.close();
     console.log('DEPTH_THEATRE_'+mode.name.toUpperCase()+'_PASS',JSON.stringify({screenshots:output}));
   }
   allPassed=true;

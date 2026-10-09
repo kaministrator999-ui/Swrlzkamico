@@ -1,4 +1,4 @@
-name: Verify §wyrl§ v9.3 authored anime candidate
+name: Verify §wyrl§ v9.4 authored anime candidate
 
 on:
   push:
@@ -17,6 +17,7 @@ on:
       - "projects/swrlz-forge-moba/tests/character_rig_playwright.mjs"
       - "projects/swrlz-forge-moba/tests/depth_theatre_playwright.mjs"
       - "projects/swrlz-forge-moba/tests/character_alignment_playwright.mjs"
+      - "projects/swrlz-forge-moba/tests/socket_emergence_playwright.mjs"
   pull_request:
     branches: [main]
     paths: *anime_paths
@@ -34,7 +35,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Independently reconstruct sealed v9.3 source
+      - name: Independently reconstruct sealed v9.4 source
         run: |
           python - <<'PY'
           import base64,gzip,hashlib,json,runpy
@@ -45,17 +46,18 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes']
           assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
-          assert len(manifest['patches'])==52
-          assert manifest['patches'][-1]=='patches/v9_3_character_alignment.py'
+          assert len(manifest['patches'])==53
+          assert manifest['patches'][-1]=='patches/v9_4_socket_book_emergence.py'
           source=raw.decode('utf-8')
           for patch in manifest['patches']:
               source=mod['load_patch'](root/patch)(source)
           output=source.encode('utf-8')
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
-          for feature in ('V9_3_CONNECTED_CHARACTER_PIECES','Maker v9.3',
+          for feature in ('V9_4_SOCKET_PUPPETS_BOOK_EMERGENCE','Maker v9.4',
                           'CANONICAL_ANIME_EPISODE_PROJECT','SWYRL_ENGINE_CINEMATIC',
-                          'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY',
+                          'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE',
+                          'anime-rig-sockets-v1','anime-book-emergence-v1',
                           'animeCreateCelLayers','animeDirectorInstall','animeMakePaperBook',
                           'animePopupStageSafety','storyEditorInstall','anime-ghosts-ep01',
                           'openAnimeScreening','animeUpdateCinematic','animeUpdateCelLayers',
@@ -70,11 +72,11 @@ jobs:
           Path('/tmp/swyrl-anime-engine.mjs').write_text(source[begin:source.rindex('</script>')],encoding='utf-8')
           print('ENGINE_EXPECTED_BYTES='+str(len(output)))
           print('ENGINE_EXPECTED_SHA256='+hashlib.sha256(output).hexdigest())
-          print('CANDIDATE_52_PATCH_RECONSTRUCT_OK')
+          print('CANDIDATE_53_PATCH_RECONSTRUCT_OK')
           PY
           node --check /tmp/swyrl-anime-engine.mjs
           python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
-      - name: Verify complete v9.3 package against source and manifest
+      - name: Verify complete v9.4 package against source and manifest
         run: |
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           cmp /tmp/swyrl-anime-engine.html dist/swrlz-forge-moba/index.html
@@ -88,19 +90,20 @@ jobs:
           assert receipt['finalBytes']==manifest['finalBytes']
           assert receipt['finalSha256']==manifest['finalSha256']
           assert receipt['patches']==manifest['patches']
-          assert len(receipt['patches'])==52
-          assert receipt['patches'][-1]=='patches/v9_3_character_alignment.py'
+          assert len(receipt['patches'])==53
+          assert receipt['patches'][-1]=='patches/v9_4_socket_book_emergence.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-depth.swyrl.json',
-                    'scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json'}
+                    'scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json',
+                    'scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json'}
           expected.update(p.relative_to(root).as_posix() for p in (root/'assets/anime').glob('*.png'))
           assert {'assets/anime/'+name+'.png' for name in ('kami','swyrlz','cathedral','workshop','foreground','kami-rig','swyrlz-rig','scenery-parts')}<=expected
           assert set(receipt['assets'])==expected
-          assert len(receipt['assets'])==14
-          saved=json.loads((out/'scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json').read_text())
+          assert len(receipt['assets'])==15
+          saved=json.loads((out/'scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json').read_text())
           assert len(saved['scene']['actors'])==70
           assert len(saved['editor']['layers'])==11
           assert len(saved['project']['animeTimeline']['tracks'])==9
@@ -132,10 +135,40 @@ jobs:
               assert obj['keys'][0]['time']==0 and obj['keys'][-1]['time']==duration,name
               assert 2<=len(obj['keys'])<=128,name
           assert 'SWYRL_ENGINE_SCENERY' in (out/'index.html').read_text()
+          sockets=saved['project']['animeSockets']
+          assert sockets['schema']=='anime-rig-sockets-v1'
+          assert set(sockets['characters'])=={'kami','swyrlz'}
+          for character,model in sockets['characters'].items():
+              parts=model['parts'];connections=model['connections']
+              assert set(parts)==set(rigs['characters'][character]['joints'])
+              assert set(connections)==set(parts)-{'torso'}
+              for part,entry in parts.items():
+                  assert 'attach' in entry and 'sockets' in entry
+                  for point in [entry['attach'],*entry['sockets'].values()]:
+                      assert set(point)=={'x','y','z'}
+                      assert all(math.isfinite(v) for v in point.values())
+                      assert -6<=point['x']<=6 and -6<=point['y']<=6 and -1<=point['z']<=1
+              for child,connection in connections.items():
+                  assert connection['connected'] is True
+                  assert connection['parent'] in parts and connection['parent']!=child
+                  assert connection['socket'] in parts[connection['parent']]['sockets']
+                  seen={child};parent=connection['parent']
+                  while parent!='torso':
+                      assert parent not in seen,(character,child,'cycle')
+                      seen.add(parent);parent=connections[parent]['parent']
+          emergence=saved['project']['animeEmergence']
+          assert emergence['schema']=='anime-book-emergence-v1' and emergence['enabled'] is True
+          assert math.isfinite(emergence['duration']) and 4<=emergence['duration']<=min(30,duration)
+          assert set(emergence['layers'])=={'book','background','midground','atmosphere','effects','kami','swyrlz','foreground'}
+          for layer,timing in emergence['layers'].items():
+              assert set(timing)=={'delay','duration'}
+              assert all(math.isfinite(v) for v in timing.values())
+              assert timing['delay']>=0 and timing['duration']>0
+              assert timing['delay']+timing['duration']<=emergence['duration']+1e-9,layer
           for asset,data in receipt['assets'].items():
               packed=(out/asset).read_bytes()
               assert (root/asset).read_bytes()==packed, asset
               assert len(packed)==data['bytes'], asset
               assert hashlib.sha256(packed).hexdigest()==data['sha256'], asset
-          print('PACKAGING_52_PATCHES_AND_ALL_ASSETS_VERIFIED')
+          print('PACKAGING_53_PATCHES_AND_ALL_ASSETS_VERIFIED')
           PY

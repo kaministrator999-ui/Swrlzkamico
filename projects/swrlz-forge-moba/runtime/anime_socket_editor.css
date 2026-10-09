@@ -1,0 +1,6 @@
+.story-socket-section {margin:12px 0;padding:10px;border:1px solid #567e8b;border-radius:8px;background:rgba(12,33,40,.62)}
+.story-socket-section>summary {cursor:pointer;color:#b4e3eb;font-weight:700}
+.story-socket-section .story-socket-connection {color:#ebce92;font-size:12px;line-height:1.5;margin:8px 0}
+.story-socket-section select {max-width:100%;min-width:0}
+.story-socket-section .story-key-actions {flex-wrap:wrap}
+.story-socket-section[hidden] {display:none!important}

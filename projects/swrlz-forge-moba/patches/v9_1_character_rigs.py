@@ -7,11 +7,11 @@ def apply(html):
     root = Path(__file__).resolve().parent.parent
     runtime = root / 'runtime'
     js = '\n'.join((runtime / name).read_text(encoding='utf-8') for name in
-                   ('anime_rig_model.js', 'anime_rig_renderer.js', 'anime_rig_editor.js'))
+                   ('anime_rig_model.js', 'anime_socket_model.js', 'anime_rig_renderer.js', 'anime_rig_editor.js', 'anime_socket_editor.js'))
     anchor = "window.SWRLZ_FORGE_BUILD={version:'v9.0'"
     assert html.count(anchor) == 1
     html = html.replace(anchor, js + '\n' + anchor, 1)
-    css = (runtime / 'anime_rig_editor.css').read_text(encoding='utf-8')
+    css = '\n'.join((runtime / name).read_text(encoding='utf-8') for name in ('anime_rig_editor.css', 'anime_socket_editor.css'))
     html = html.replace('<script type="module">', '<style id="characterRigStyles">'+css+'</style>\n<script type="module">', 1)
     scene = root / 'scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json'
     if scene.exists():
