@@ -468,6 +468,92 @@ def creative_music_reference_projection(
     return projected,structure
 
 
+
+def original_rap_delivery(text: str) -> str:
+    """Present lyrics alone in one fenced block, removing prose/stage hints.
+
+    Do not rewrite genuine lyric lines or try to invent missing material.
+    """
+    source=str(text or "").strip()
+    fence=chr(96)*3
+    match=re.search(re.escape(fence)+r"(?:[a-zA-Z_-]+)?\s*\n(.*?)\n"+re.escape(fence),source,re.S)
+    if match:
+        source=match.group(1).strip()
+    lines=source.splitlines()
+    selected=[]
+    started=False
+    for raw in lines:
+        line=raw.strip()
+        label=re.sub(r"[*_]+","",line).strip()
+        if not started:
+            if re.match(r"(?i)^(?:title\s*:|\[?(?:intro|verse|chorus|hook|bridge|outro|refrain|pre[- ]?chorus)\b)",label):
+                started=True
+            elif re.match(r"^#{1,3}\s+\S+",line):
+                started=True
+            else:
+                continue
+        if re.match(r"(?i)^(?:flow\s*&\s*feel|song\s+analysis|structure\s+notes|explanation)\s*:",label):
+            break
+        if re.match(r"(?i)^(?:this\s+(?:rap|song|structure)|the\s+(?:lyrics|song)\s+(?:aim|focus)|feel\s+free\s+to|you\s+can\s+)",label):
+            break
+        if re.search(r"(?i)(?:section\s+(?:starts?|ends?)\s+here|focusing\s+on\s+the\s+chorus|building\s+on\s+the\s+pre[- ]?chorus)",label):
+            continue
+        if line.startswith(fence):
+            continue
+        if line.startswith("**") and line.endswith("**"):
+            line=line[2:-2].strip()
+        if re.match(r"(?i)^(?:verse|chorus|hook|bridge|outro|intro|refrain|pre[- ]?chorus)\b[^:]{0,30}:$",line):
+            line="["+line[:-1]+"]"
+        if line:
+            selected.append(line)
+        elif selected and selected[-1]!="":
+            selected.append("")
+    while selected and not selected[-1]:
+        selected.pop()
+    return fence+"\n"+"\n".join(selected)+"\n"+fence if selected else ""
+
+
+def original_rap_violations(
+    candidate: str, delivered: str, history: list[dict[str,Any]],
+    reference: dict[str,Any],
+) -> list[str]:
+    """Return only fault codes; never send copyrighted reference text to model."""
+    fence=chr(96)*3
+    if not delivered.startswith(fence+"\n"):
+        return ["missing-lyric-container"]
+    song=delivered[len(fence)+1:-len(fence)-1]
+    lyric_lines=[
+        line for line in song.splitlines() if line.strip()
+        and not re.match(r"(?i)^(?:title\s*:|\[?(?:intro|verse|chorus|bridge|hook|outro|refrain|pre[- ]?chorus)\b)",line.strip())
+    ]
+    approx=int(reference.get("approxTotalLyricLines") or 0)
+    minimum=min(36,max(12,round(approx*0.55))) if approx else 12
+    faults=[]
+    if len(lyric_lines)<minimum:
+        faults.append("too-short-for-abstract-form")
+    source=""
+    for item in reversed(history or []):
+        if isinstance(item,dict) and item.get("role")=="assistant":
+            body=str(item.get("content") or item.get("text") or "")
+            if _CREATIVE_SOURCE_FOOTER.search(body):
+                source=_CREATIVE_SOURCE_FOOTER.split(body,1)[0]
+                break
+    if source:
+        from collections import Counter
+        old=[x.casefold() for x in _CREATIVE_FORM_WORDS.findall(source)]
+        fresh=[x.casefold() for x in _CREATIVE_FORM_WORDS.findall(song)]
+        oldfreq=Counter(x for x in old if len(x)>=4 and x not in _REFERENCE_COMMON_WORDS)
+        newfreq=Counter(fresh)
+        if any(count>=8 and newfreq[x]>=2 for x,count in oldfreq.items()):
+            faults.append("reference-anchor-vocabulary-reused")
+        overlaps=set(tuple(old[i:i+4]) for i in range(max(0,len(old)-3)))
+        if any(tuple(fresh[i:i+4]) in overlaps for i in range(max(0,len(fresh)-3))):
+            faults.append("reference-four-word-phrase-reused")
+    if re.search(r"(?im)^\s*(?:\*\s*)?(?:\(?section\s+(?:starts|ends)\s+here|flow\s*&\s*feel\s*:)",song):
+        faults.append("stage-notes-in-lyrics")
+    return faults
+
+
 def _norm_line(value: str) -> str:
     return re.sub(r"\s+"," ",str(value or "").strip()).casefold()
 
