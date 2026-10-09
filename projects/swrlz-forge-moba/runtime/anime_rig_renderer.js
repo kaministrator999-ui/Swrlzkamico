@@ -2,7 +2,7 @@
 // share the native story clock; the original atlas pixels remain immutable.
 const RIG_SLOTS={torso:0,pelvis:1,head:2,cape:3,leftUpperArm:4,leftForearm:5,leftHand:6,staff:7,rightUpperArm:8,rightForearm:9,rightHand:10,quill:11,leftUpperLeg:12,leftLowerLeg:13,leftFoot:14,rightUpperLeg:15,rightLowerLeg:16,rightFoot:17,grimoire:18,magic:19};
 // Character-specific artwork anchors: a skull cuff and a human glove do not share a grip.
-const RIG_REST_ROWS={"kami":[["torso",null,0,0.35,0.02,1.8,2.02,0,-0.51,0],["pelvis","torso",0,-0.88,0.07,2,2.18,0,-0.79,0],["head","torso",0,0.52,0.21,1.8,1.75,0,0.7,0],["cape","torso",0,0.45,-0.2,2.55,3.08,0,-1.23,0],["leftUpperArm","torso",-0.54,0.16,0.09,0.86,1.16,0.075,-0.418,-0.16],["leftForearm","leftUpperArm",0.282,-0.764,0.035,0.73,1.03,0.108,-0.353,-1.3],["leftHand","leftForearm",0.245,-0.725,0.065,0.70,0.68,0.197,0.18,3.0307963267948965],["rightUpperArm","torso",0.69,0.25,0.1,0.82,1.17,0.014,-0.435,0.18],["rightForearm","rightUpperArm",-0.048,-0.878,0.035,0.6,1.03,-0.082,-0.35,0.7],["rightHand","rightForearm",-0.03,-0.713,0.075,0.72,0.62,0.237,0.166,-1.9],["leftUpperLeg","pelvis",-0.37,-0.16,-0.04,0.92,1.05,0,-0.43,0],["leftLowerLeg","leftUpperLeg",0,-0.83,0.025,0.51,0.98,0,-0.4,0],["leftFoot","leftLowerLeg",0,-0.81,0.035,0.54,0.416,-0.1,-0.12,0],["rightUpperLeg","pelvis",0.37,-0.16,-0.04,0.88,1.03,0,-0.42,0],["rightLowerLeg","rightUpperLeg",0,-0.82,0.025,0.53,0.98,0,-0.4,0],["rightFoot","rightLowerLeg",0,-0.81,0.035,0.48,0.403,0.08,-0.12,0],["staff","leftHand",0.291,0.264,-0.055,1.10,1.50,0,1.65,-1.5707963267948966],["quill","rightHand",0.419,0.263,0.08,0.46,1.2,0.16,0.5,0.82],["grimoire","leftHand",-0.25,0.25,0.06,2.05,1.65,-0.4,0.2,0.77]],"swyrlz":[["torso",null,0,0.35,0.02,1.75,1.99,0,-0.5,0],["pelvis","torso",0,-0.86,0.06,1.91,2.16,0,-0.77,0],["head","torso",0,0.32,0.2,2.5,2.35,0,0.7,0],["cape","torso",0,0.3,-0.18,2.37,2.85,0,-1.11,0],["leftUpperArm","torso",-0.65,0.2,0.075,0.78,1.06,0.234,-0.327,-0.62],["leftForearm","leftUpperArm",0.414,-0.648,0.03,0.79,0.98,-0.27,-0.333,0.8],["leftHand","leftForearm",-0.383,-0.635,0.06,0.76,0.56,-0.182,0.034,0.9],["rightUpperArm","torso",0.65,0.2,0.075,0.8,1.07,-0.022,-0.39,0.35],["rightForearm","rightUpperArm",-0.076,-0.724,0.03,0.78,1,0.261,-0.306,-0.35],["rightHand","rightForearm",0.387,-0.618,0.075,0.68,0.66,0.167,0.152,-1.7],["leftUpperLeg","pelvis",-0.34,-0.15,-0.035,0.89,1.01,0,-0.4,0],["leftLowerLeg","leftUpperLeg",0,-0.79,0.025,0.46,1,0,-0.41,0],["leftFoot","leftLowerLeg",0,-0.82,0.035,0.57,0.413,-0.13,-0.12,0],["rightUpperLeg","pelvis",0.34,-0.15,-0.035,0.84,1.01,0,-0.4,0],["rightLowerLeg","rightUpperLeg",0,-0.79,0.025,0.49,1,0,-0.41,0],["rightFoot","rightLowerLeg",0,-0.82,0.035,0.64,0.45,0.13,-0.12,0],["staff","leftHand",0.291,0.264,0.08,1.24,1.73,0,2.05,2.9],["quill","rightHand",0.419,0.263,0.08,0.46,1.2,0.04,0.5,0.82],["grimoire","leftHand",-0.306,0.084,0.06,1.73,1.67,-0.45,0.4,-1.23]]};
+const RIG_REST_ROWS={"kami":[["torso",null,0,0.35,0.02,1.8,2.02,0,-0.51,0],["pelvis","torso",0,-0.88,0.07,2,2.18,0,-0.79,0],["head","torso",0,0.52,0.21,1.8,1.75,0,0.7,0],["cape","torso",0,0.45,-0.2,2.55,3.08,0,-1.23,0],["leftUpperArm","torso",-0.54,0.16,0.09,0.86,1.16,0.075,-0.418,-1.0],["leftForearm","leftUpperArm",0.282,-0.764,0.035,0.73,1.03,0.108,-0.353,-0.46],["leftHand","leftForearm",0.245,-0.725,0.065,0.70,0.68,0.197,0.18,0.7232121608844373],["rightUpperArm","torso",0.69,0.25,0.1,0.82,1.17,0.014,-0.435,0.18],["rightForearm","rightUpperArm",-0.048,-0.878,0.035,0.6,1.03,-0.082,-0.35,0.7],["rightHand","rightForearm",-0.03,-0.713,0.075,0.72,0.62,0.237,0.166,-1.9],["leftUpperLeg","pelvis",-0.37,-0.16,-0.04,0.92,1.05,0,-0.43,0],["leftLowerLeg","leftUpperLeg",0,-0.83,0.025,0.51,0.98,0,-0.4,0],["leftFoot","leftLowerLeg",0,-0.81,0.035,0.54,0.416,-0.1,-0.12,0],["rightUpperLeg","pelvis",0.37,-0.16,-0.04,0.88,1.03,0,-0.42,0],["rightLowerLeg","rightUpperLeg",0,-0.82,0.025,0.53,0.98,0,-0.4,0],["rightFoot","rightLowerLeg",0,-0.81,0.035,0.48,0.403,0.08,-0.12,0],["staff","leftHand",0.291,0.264,-0.055,1.10,1.50,0.01982,1.65,0.7367878391155628],["quill","rightHand",0.419,0.263,0.08,0.46,1.2,0.16,0.5,0.82],["grimoire","leftHand",-0.25,0.25,0.06,2.05,1.65,-0.4,0.2,0.77]],"swyrlz":[["torso",null,0,0.35,0.02,1.75,1.99,0,-0.5,0],["pelvis","torso",0,-0.86,0.06,1.91,2.16,0,-0.77,0],["head","torso",0,0.32,0.2,2.5,2.35,0,0.7,0],["cape","torso",0,0.3,-0.18,2.37,2.85,0,-1.11,0],["leftUpperArm","torso",-0.65,0.2,0.075,0.78,1.06,0.234,-0.327,-0.62],["leftForearm","leftUpperArm",0.414,-0.648,0.03,0.79,0.98,-0.27,-0.333,0.8],["leftHand","leftForearm",-0.383,-0.635,0.06,0.76,0.56,-0.182,0.034,0.9],["rightUpperArm","torso",0.65,0.2,0.075,0.8,1.07,-0.022,-0.39,0.35],["rightForearm","rightUpperArm",-0.076,-0.724,0.03,0.78,1,0.261,-0.306,-0.35],["rightHand","rightForearm",0.387,-0.618,0.075,0.68,0.66,0.167,0.152,-1.7],["leftUpperLeg","pelvis",-0.34,-0.15,-0.035,0.89,1.01,0,-0.4,0],["leftLowerLeg","leftUpperLeg",0,-0.79,0.025,0.46,1,0,-0.41,0],["leftFoot","leftLowerLeg",0,-0.82,0.035,0.57,0.413,-0.13,-0.12,0],["rightUpperLeg","pelvis",0.34,-0.15,-0.035,0.84,1.01,0,-0.4,0],["rightLowerLeg","rightUpperLeg",0,-0.79,0.025,0.49,1,0,-0.41,0],["rightFoot","rightLowerLeg",0,-0.82,0.035,0.64,0.45,0.13,-0.12,0],["staff","leftHand",0.291,0.264,0.08,1.24,1.73,0,2.05,2.9],["quill","rightHand",0.419,0.263,0.08,0.46,1.2,0.04,0.5,0.82],["grimoire","leftHand",-0.306,0.084,0.06,1.73,1.67,-0.45,0.4,-1.23]]};
 const RIG_REST_LAYOUTS=Object.freeze(Object.fromEntries(Object.entries(RIG_REST_ROWS).map(([c,rows])=>[c,Object.freeze(Object.fromEntries(rows.map(([id,parent,x,y,z,width,height,artX,artY,rotationZ])=>[id,Object.freeze({x,y,width,height,artX,artY,rotationZ})])))])));
 function rigVisualSignature(cfg,character){return JSON.stringify([cfg.enabled,cfg.asset,cfg.thickness,cfg.depth,cfg.layout,character?socketModel().characters[character]:null]);}
 function rigAtlasCells(texture,character){
@@ -206,6 +206,19 @@ function rigPaintFace(face,character,sample,time){
   }
   face.texture.needsUpdate=true;
 }
+function rigBuildStaffShaft(pivot,config){
+  const socket=pivot.userData.rigSocketPart,point=socket.sockets.shaft,attach=socket.attach;
+  const mount=new THREE.Vector3(point.x-attach.x,point.y-attach.y,(point.z-attach.z)*config.depth);
+  const distance=mount.length(),axis=distance>.0001?mount.clone().divideScalar(distance):new THREE.Vector3(0,1,0);
+  const reach=2.25,insert=.06,top=distance+insert,height=reach+top,centre=(top-reach)/2,radius=.04;
+  const shaft=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,height,12),new THREE.MeshBasicMaterial({color:'#74502b',transparent:true,toneMapped:false}));
+  shaft.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),axis);shaft.position.copy(axis).multiplyScalar(centre);
+  shaft.name='Kami · socketed wooden staff shaft';shaft.userData.rigShaft={radius,height,gripY:-centre,mountY:distance-centre,lowerReach:reach,insert,axis:axis.toArray(),mount:mount.toArray()};
+  pivot.add(shaft);pivot.userData.gripShaft=shaft;
+  const ferrule=new THREE.Mesh(new THREE.CylinderGeometry(.05,.045,.14,12),new THREE.MeshBasicMaterial({color:'#cb9a42',transparent:true,toneMapped:false}));
+  ferrule.quaternion.copy(shaft.quaternion);ferrule.position.copy(mount);ferrule.position.z-=.03;
+  ferrule.name='Kami · painted-stem shaft ferrule';pivot.add(ferrule);pivot.userData.gripFerrule=ferrule;
+}
 function rigBuildVisual(visual,character){
   const cfg=rigModel().characters[character],sockets=socketModel().characters[character],texture=storyTexture(cfg.asset),cells=rigAtlasCells(texture,character);
   const group=new THREE.Group();group.userData.storyVisual=visual;group.userData.popupHinge=true;
@@ -226,10 +239,7 @@ function rigBuildVisual(visual,character){
     if(!omit){const part=rigMakePart(texture,cells?.[RIG_SLOTS[id]],w,h,cfg.thickness,id);part.position.set(-attach.x,-attach.y,-attach.z*cfg.depth);pose.add(part);pose.userData.part=part;parts.push(part);}
   }
   if(character==='kami'){
-    const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,3.25,12),new THREE.MeshBasicMaterial({color:'#74502b',transparent:true,toneMapped:false}));
-    shaft.position.set(0,-.625,0);shaft.name='Kami · socketed wooden staff shaft';joints.staff.add(shaft);joints.staff.userData.gripShaft=shaft;
-    const ferrule=new THREE.Mesh(new THREE.CylinderGeometry(.067,.052,.15,12),new THREE.MeshBasicMaterial({color:'#cb9a42',transparent:true,toneMapped:false}));
-    ferrule.position.set(0,.96,0);ferrule.name='Kami · staff head ferrule';joints.staff.add(ferrule);joints.staff.userData.gripFerrule=ferrule;
+    rigBuildStaffShaft(joints.staff,cfg);
   }else{const magic=rigMakePart(texture,cells?.[19],.8,1.1,cfg.thickness,'magic');magic.position.set(-.4,1.05,.06);joints.grimoire.add(magic);parts.push(magic);}
   // Pin the neutral soles to the book hinge after fitting either body. Pose keys
   // can still lift a foot; changing one piece does not rescale the whole puppet.
@@ -252,7 +262,6 @@ function rigAnimateCharacter(group,character,time){
   for(const [id,pivot] of Object.entries(rig.joints)){
     const key=rigSample(character,id,time);pivot.rotation.set(key.rotationX,key.rotationY,key.rotationZ);pivot.position.set(0,0,0);
     const pins=[pivot.userData.rigSocketPart.attach,...Object.values(pivot.userData.rigSocketPart.sockets)];
-    if(id==='staff')pins.push({x:0,y:-cfg.layout.staff.height/2,z:0});
     rigPartRelief(pivot.userData.part,key.depth*cfg.depth,pins);
     if(id==='head')rigFaceRelief(rig.face,key.depth*cfg.depth,pins,pivot.userData.part);
   }
@@ -334,7 +343,10 @@ function rigAttachmentStatus(actor,rig){
   }
   // The staff's painted skull is above the hand. Sample its actual cylinder,
   // whose wooden side surface passes through the glove's grip.
-  const shaft=rig.joints.staff.userData.gripShaft;if(shaft){const matrix=new THREE.Matrix4().copy(frame.matrixWorld).invert().multiply(shaft.matrixWorld);for(let y=-1.625;y<=1.625;y+=.04)for(const x of [-.045,0,.045]){const v=new THREE.Vector3(x,y,0).applyMatrix4(matrix);ink.staff.push([v.x/factor,v.y/factor]);}}
+  const shaft=rig.joints.staff.userData.gripShaft;if(shaft){
+    const matrix=new THREE.Matrix4().copy(frame.matrixWorld).invert().multiply(shaft.matrixWorld),{height,radius}=shaft.userData.rigShaft,steps=Math.ceil(height/.04);
+    for(let i=0;i<=steps;i++)for(const x of [-radius,0,radius]){const v=new THREE.Vector3(x,-height/2+height*i/steps,0).applyMatrix4(matrix);ink.staff.push([v.x/factor,v.y/factor]);}
+  }
   const attachments=[];
   for(const [id,pivot] of Object.entries(rig.joints)){
     const parent=pivot.userData.rigParent;if(!parent||!ink[id]||!ink[parent])continue;
@@ -358,6 +370,23 @@ function rigSocketStatus(actor,rig){
   }
   return {schema:SOCKET_SCHEMA,sockets,connections,guidesVisible:rig.guides.some(guide=>!!guide.marker.parent),staffGrip:rig.character==='kami'?rigStaffGripStatus(actor,rig):null};
 }
+function rigPartInkSample(part,pixels,x,y){
+  const cell=part.userData.rigCell,{width,height}=part.userData.rigSize,u=x/width+.5,v=.5-y/height;
+  if(!cell||!pixels||u<0||u>1||v<0||v>1)return {pixel:null,alpha:0,rgb:[0,0,0]};
+  const px=Math.min(cell.x1-1,Math.floor(cell.x0+u*(cell.x1-cell.x0))),py=Math.min(cell.y1-1,Math.floor(cell.y0+v*(cell.y1-cell.y0))),index=(py*cell.width+px)*4;
+  return {pixel:[px,py],alpha:pixels[index+3]/255,rgb:[pixels[index],pixels[index+1],pixels[index+2]]};
+}
+function rigStaffFrontClearances(staff,shaft,ferrule,point){
+  const surface=rigSurfacePoint(staff,point.x,point.y),stemLocal=staff.position.clone().add(surface);
+  let ferruleFront=-Infinity,shaftFront=-Infinity;ferrule.updateMatrix();shaft.updateMatrix();
+  const positions=ferrule.geometry.getAttribute('position');
+  for(let i=0;i<positions.count;i++)ferruleFront=Math.max(ferruleFront,new THREE.Vector3().fromBufferAttribute(positions,i).applyMatrix4(ferrule.matrix).z);
+  const {radius,mountY}=shaft.userData.rigShaft;
+  for(let i=0;i<24;i++){const angle=i*Math.PI/12;shaftFront=Math.max(shaftFront,new THREE.Vector3(radius*Math.cos(angle),mountY,radius*Math.sin(angle)).applyMatrix4(shaft.matrix).z);}
+  const frontNormal=new THREE.Vector3(0,0,1).transformDirection(staff.matrixWorld),pivot=staff.parent;
+  const stemWorld=pivot.localToWorld(stemLocal.clone()),ferruleWorld=pivot.localToWorld(new THREE.Vector3(stemLocal.x,stemLocal.y,ferruleFront));
+  return {ferrule:stemLocal.z-ferruleFront,shaft:stemLocal.z-shaftFront,world:stemWorld.clone().sub(ferruleWorld).dot(frontNormal)};
+}
 function rigStaffGripStatus(actor,rig){
   const hand=rig.joints.leftHand.userData.part,staff=rig.joints.staff.userData.part,shaft=rig.joints.staff.userData.gripShaft;
   if(!hand||!staff||!shaft)return null;
@@ -373,18 +402,26 @@ function rigStaffGripStatus(actor,rig){
     handSamples.push({local:surface.toArray(),world:world.toArray(),screen:rigProjectedWorld(world),alpha:pixels[i+3]/255,rgb:[pixels[i],pixels[i+1],pixels[i+2]],gripDistance:distance});
   }
   handSamples.sort((a,b)=>a.gripDistance-b.gripDistance);
-  const shaftBase=shaft.localToWorld(new THREE.Vector3(0,-1.625,0)),shaftTop=shaft.localToWorld(new THREE.Vector3(0,1.625,0));
-  const shaftGrip=shaft.localToWorld(new THREE.Vector3(0,.625,0)),grip=rigSocketWorld(rig,'leftHand',point);
-  const headBox=new THREE.Box3().setFromObject(staff),hsize=staff.userData.rigSize,stem=staff.localToWorld(rigSurfacePoint(staff,0,-hsize.height/2));
+  const shaftData=shaft.userData.rigShaft,shaftBase=shaft.localToWorld(new THREE.Vector3(0,-shaftData.height/2,0)),shaftTop=shaft.localToWorld(new THREE.Vector3(0,shaftData.height/2,0));
+  const shaftGrip=shaft.localToWorld(new THREE.Vector3(0,shaftData.gripY,0)),grip=rigSocketWorld(rig,'leftHand',point);
+  const stemPoint=rig.joints.staff.userData.rigSocketPart.sockets.shaft,stem=staff.localToWorld(rigSurfacePoint(staff,stemPoint.x,stemPoint.y)),stemAnchor=rigSocketWorld(rig,'staff',stemPoint);
+  const shaftMount=shaft.localToWorld(new THREE.Vector3(0,shaftData.mountY,0)),axis=shaftTop.clone().sub(shaftBase).normalize(),stemAlong=stemAnchor.clone().sub(shaftGrip).dot(axis);
+  const stemAxisPoint=shaftGrip.clone().addScaledVector(axis,stemAlong),headBox=new THREE.Box3().setFromObject(staff),stemInk=rigPartInkSample(staff,pixels,stemPoint.x,stemPoint.y);
   const ferrule=rig.joints.staff.userData.gripFerrule,ferruleBox=new THREE.Box3().setFromObject(ferrule),scale=shaft.getWorldScale(new THREE.Vector3());
-  const screen=rigProjectedWorld(grip),handFront=hand.localToWorld(rigSurfacePoint(hand,point.x,point.y));
+  const screen=rigProjectedWorld(grip),handFront=hand.localToWorld(rigSurfacePoint(hand,point.x,point.y)),wrist=rigSocketWorld(rig,'leftHand',rig.joints.leftHand.userData.rigSocketPart.attach),wristScreen=rigProjectedWorld(wrist);
+  const direction=[screen[0]-wristScreen[0],screen[1]-wristScreen[1]],clearance=rigStaffFrontClearances(staff,shaft,ferrule,stemPoint);
   const cameraPosition=perspectiveCamera.getWorldPosition(new THREE.Vector3());
   return {paintedHand:hand.name||'leftHand',visible:actor.visible&&hand.visible,handSampleCount:handSamples.length,handFrontSamples:handSamples.slice(0,12),
     gripWorld:grip.toArray(),gripScreen:screen,shaftGripWorld:shaftGrip.toArray(),gripError:grip.distanceTo(shaftGrip),
-    shaftBaseWorld:shaftBase.toArray(),shaftTopWorld:shaftTop.toArray(),shaftRadius:.045*Math.max(scale.x,scale.z),
-    handFrontWorld:handFront.toArray(),fingerFrontClearance:cameraPosition.distanceTo(shaftGrip)-cameraPosition.distanceTo(handFront)-.045*Math.max(scale.x,scale.z),
+    shaftBaseWorld:shaftBase.toArray(),shaftTopWorld:shaftTop.toArray(),shaftRadius:shaftData.radius*Math.max(scale.x,scale.z),
+    handFrontWorld:handFront.toArray(),fingerFrontClearance:cameraPosition.distanceTo(shaftGrip)-cameraPosition.distanceTo(handFront)-shaftData.radius*Math.max(scale.x,scale.z),
     headStemWorld:stem.toArray(),headBounds:{min:headBox.min.toArray(),max:headBox.max.toArray()},ferruleBounds:{min:ferruleBox.min.toArray(),max:ferruleBox.max.toArray()},
-    headStemToShaftTop:stem.distanceTo(shaftTop),shaftLength:shaftBase.distanceTo(shaftTop)};
+    headStemToShaftTop:stem.distanceTo(shaftTop),shaftLength:shaftBase.distanceTo(shaftTop),lowerPoleReach:shaftBase.distanceTo(shaftGrip),
+    headStemLocal:{...stemPoint},headStemAlpha:stemInk.alpha,headStemRGB:stemInk.rgb,headStemPixel:stemInk.pixel,headStemScreen:rigProjectedWorld(stem),
+    headStemAnchorWorld:stemAnchor.toArray(),shaftMountWorld:shaftMount.toArray(),shaftMountError:stemAnchor.distanceTo(shaftMount),
+    shaftAxisWorld:axis.toArray(),headStemAxisError:stemAnchor.distanceTo(stemAxisPoint),headStemAxialOverlap:shaftTop.clone().sub(stemAnchor).dot(axis),
+    ferruleFrontClearance:clearance.ferrule,shaftFrontClearance:clearance.shaft,ferruleFrontWorldClearance:clearance.world,
+    wristWorld:wrist.toArray(),wristScreen,gripDirectionScreen:direction,gripFacingRight:direction[0]>0};
 }
 function rigRenderStatus(character){
   if(!rigCharacterId(character))return null;

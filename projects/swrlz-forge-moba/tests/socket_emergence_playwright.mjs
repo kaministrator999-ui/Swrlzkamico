@@ -6,7 +6,7 @@ import {inflateSync} from 'node:zlib';
 
 // Inspect transformed WebGL geometry and measured socket endpoints during real
 // native Play. A fade, an attachment label, or a browser cache cannot pass.
-const base=(process.env.SWYRL_ANIME_TEST_URL||'http://127.0.0.1:8774').replace(/\/$/,'');
+const base=(process.env.SWYRL_ANIME_TEST_URL||'http://127.0.0.1:8775').replace(/\/$/,'');
 const output=resolve(process.env.SWYRL_ANIME_SCREENSHOTS_DIR||'socket-emergence-acceptance');
 await mkdir(output,{recursive:true});
 const browser=await chromium.launch({headless:true,
@@ -199,6 +199,24 @@ function staffAttached(render,label){
   finiteBox(grip.headBounds,label+' staff ornament');finiteBox(grip.ferruleBounds,label+' head ferrule');
   close(grip.headStemToShaftTop,distance(grip.headStemWorld,grip.shaftTopWorld),'Staff head connection ignores actual geometry: '+label,1e-7);
   assert.ok(grip.headStemToShaftTop<grip.shaftRadius*3.5,'Staff head and shaft leave a visible gap: '+label);
+  assert.ok(grip.headStemAlpha>.9&&grip.headStemPixel?.length===2&&grip.headStemRGB?.length===3,
+    'The staff mounts into transparent margin instead of painted stem ink: '+label);
+  close(grip.shaftMountError,distance(grip.headStemAnchorWorld,grip.shaftMountWorld),
+    'Staff shaft mount error ignores the actual outgoing socket: '+label,1e-7);
+  assert.ok(grip.shaftMountError<1e-5&&grip.headStemAxisError<1e-5,
+    'The long pole misses the painted head stem: '+label);
+  assert.ok(grip.headStemAxialOverlap>0,'The pole stops short of its inserted head stem: '+label);
+  assert.ok(grip.ferruleFrontClearance>.001&&grip.shaftFrontClearance>.001&&grip.ferruleFrontWorldClearance>0,
+    'The ferrule or pole covers the painted joining stem: '+label);
+}
+function handWrapsRight(render,label){
+  const grip=render.staffGrip;
+  assert.ok(grip.wristScreen.every(Number.isFinite)&&grip.gripScreen.every(Number.isFinite),
+    'The hand orientation has no actual projected wrist and grip: '+label);
+  assert.ok(grip.wristScreen[0]<grip.gripScreen[0]&&grip.gripFacingRight===true,
+    'The holding hand does not enter from the viewer’s left and wrap right around the staff: '+label);
+  close(grip.gripDirectionScreen[0],grip.gripScreen[0]-grip.wristScreen[0],
+    'The hand direction ignores the actual projected sockets: '+label,1e-7);
 }
 async function paintedHandOnScreen(page,render,label){
   // Sample projected high-alpha glove pixels in the genuine rendered canvas.
@@ -212,6 +230,15 @@ async function paintedHandOnScreen(page,render,label){
     if(error<43)matches++;
   }
   assert.ok(matches>=3,'The actual WebGL image does not show the painted staff hand: '+label+' matched samples '+matches);
+}
+async function paintedStemOnScreen(page,render,label){
+  const grip=render.staffGrip,image=pngPixels(await page.locator('canvas:visible').first().screenshot());
+  const cx=Math.round(grip.headStemScreen[0]*image.width),cy=Math.round(grip.headStemScreen[1]*image.height);
+  assert.ok(cx>=0&&cy>=0&&cx<image.width&&cy<image.height,'The painted joining stem leaves the camera: '+label);
+  let error=Infinity;
+  for(let y=Math.max(0,cy-2);y<=Math.min(image.height-1,cy+2);y++)for(let x=Math.max(0,cx-2);x<=Math.min(image.width-1,cx+2);x++)
+    error=Math.min(error,distance(image.rgb(x,y),grip.headStemRGB)/Math.sqrt(3));
+  assert.ok(error<43,'The actual WebGL image does not show the painted staff joining stem: '+label+' RGB error '+error);
 }
 function originalContent(saved,original,label){
   assert.deepEqual(saved.project.animeTimeline,original.project.animeTimeline,'Socket edit overwrites story/camera keys: '+label);
@@ -247,7 +274,11 @@ try{
       if(time<=14)opening.push({time,view});
       for(const character of ['kami','swyrlz'])connected(await rig(page,character),mode.name+' '+character+' '+time+'s');
       if([14,19,72,110].includes(time))staffAttached(await rig(page,'kami'),mode.name+' authored staff '+time+'s');
-      if([19,72,110].includes(time))await paintedHandOnScreen(page,await rig(page,'kami'),mode.name+' authored staff '+time+'s');
+      if([19,72,110].includes(time)){
+        const held=await rig(page,'kami');handWrapsRight(held,mode.name+' authored staff '+time+'s');
+        await paintedHandOnScreen(page,held,mode.name+' authored staff '+time+'s');
+        await paintedStemOnScreen(page,held,mode.name+' authored staff '+time+'s');
+      }
       if([0,4,8,14,19].includes(time))await page.screenshot({path:resolve(output,'socket-emergence-'+mode.name+'-opening-'+time+'.png')});
     }
     const collapsed=opening[0].view,complete=opening.at(-1).view;
@@ -386,6 +417,48 @@ try{
       'Socket API accepts a non-finite anchor');
     assert.deepEqual(await socketModel(page,'kami'),snapshot,'A rejected socket edit mutates the native assembly');
 
+    // The painted staff head owns its pole mount. Editing that outgoing socket
+    // changes actual cylinder geometry, and resizing follows the same painted
+    // UV point in one native history action rather than adding another Undo.
+    const mountBefore=await socketModel(page,'kami'),mountedBefore=await rig(page,'kami');
+    const originalMount=mountBefore.parts.staff.sockets.shaft,authoredMount={...originalMount,z:originalMount.z-.012};
+    await socketPose(page,'kami','staff','shaft',17.25,authoredMount);
+    const mountedAfter=await rig(page,'kami');staffAttached(mountedAfter,mode.name+' edited staff shaft mount');
+    assert.ok(distance(mountedBefore.staffGrip.shaftMountWorld,mountedAfter.staffGrip.shaftMountWorld)>.003,
+      'Editing the outgoing shaft socket leaves the actual pole mount unchanged');
+    close(distance(mountedBefore.joints.staff.worldPosition,mountedAfter.joints.staff.worldPosition),0,
+      'Editing an outgoing staff mount moves the staff’s incoming hand pivot');
+    await historyAction(page,'undo');await seek(page,17.25);
+    assert.deepEqual(await socketModel(page,'kami'),mountBefore,'One Undo loses the original staff mount');
+    close(distance(mountedBefore.staffGrip.shaftMountWorld,(await rig(page,'kami')).staffGrip.shaftMountWorld),0,
+      'Undo restores a staff socket label without restoring actual pole geometry');
+    await historyAction(page,'redo');await seek(page,17.25);
+    assert.deepEqual((await socketModel(page,'kami')).parts.staff.sockets.shaft,authoredMount,'Redo loses the editable painted staff mount');
+    await openStudio(page);await page.locator('#storyTrack').selectOption('kami');await page.locator('#rigPart').selectOption('staff');
+    const fitBefore=await page.evaluate(()=>window.SWYRL_ENGINE_RIG.model('kami').layout.staff),socketsBeforeResize=await socketModel(page,'kami');
+    const resized={width:fitBefore.width*1.045,height:fitBefore.height*1.035};
+    await input(page,'#rigFitWidth',resized.width);await input(page,'#rigFitHeight',resized.height);
+    await page.locator('#rigApplyFit').click();await seek(page,17.25);
+    const resizedFit=await page.evaluate(()=>window.SWYRL_ENGINE_RIG.model('kami').layout.staff),resizedSockets=await socketModel(page,'kami');
+    close(resizedFit.width,resized.width,'Native staff width was not saved',.000002);
+    close(resizedFit.height,resized.height,'Native staff height was not saved',.000002);
+    close(resizedSockets.parts.staff.sockets.shaft.x,authoredMount.x*resized.width/fitBefore.width,
+      'Resizing the head loses its painted shaft mount X',.000002);
+    close(resizedSockets.parts.staff.sockets.shaft.y,authoredMount.y*resized.height/fitBefore.height,
+      'Resizing the head loses its painted shaft mount Y',.000002);
+    const resizedRender=await rig(page,'kami');staffAttached(resizedRender,mode.name+' resized staff head');
+    assert.ok(distance(mountedAfter.staffGrip.shaftMountWorld,resizedRender.staffGrip.shaftMountWorld)>.005,
+      'Resizing the staff head leaves the pole attached to its obsolete size');
+    await historyAction(page,'undo');await seek(page,17.25);
+    assert.deepEqual(await page.evaluate(()=>window.SWYRL_ENGINE_RIG.model('kami').layout.staff),fitBefore,
+      'One Undo does not restore the staff’s fitted size');
+    assert.deepEqual(await socketModel(page,'kami'),socketsBeforeResize,'Resizing requires a second Undo to restore the mount');
+    close(distance(mountedAfter.staffGrip.shaftMountWorld,(await rig(page,'kami')).staffGrip.shaftMountWorld),0,
+      'Resizing Undo does not restore the actual mounted pole');
+    await historyAction(page,'redo');await seek(page,17.25);
+    assert.deepEqual(await socketModel(page,'kami'),resizedSockets,'Redo loses the head’s scaled painted mount');
+    staffAttached(await rig(page,'kami'),mode.name+' resized staff Redo');
+
     // Exercise all three pose axes and authored paper depth. Geometry can move
     // between paper layers, while every incoming anchor stays at its parent.
     for(const [part,key] of [
@@ -449,7 +522,11 @@ try{
       expandedGeometry(await emergence(page),mode.name+' Watch '+time+'s');
       for(const character of ['kami','swyrlz'])connected(await rig(page,character),mode.name+' Watch '+character+' '+time+'s');
       if(time>=14)staffAttached(await rig(page,'kami'),mode.name+' Watch staff '+time+'s');
-      if([19,72,110].includes(time))await paintedHandOnScreen(page,await rig(page,'kami'),mode.name+' Watch staff '+time+'s');
+      if([19,72,110].includes(time)){
+        const held=await rig(page,'kami');
+        await paintedHandOnScreen(page,held,mode.name+' Watch staff '+time+'s');
+        await paintedStemOnScreen(page,held,mode.name+' Watch staff '+time+'s');
+      }
       if(time===17.25)for(const character of ['kami','swyrlz'])faceFront(await rig(page,character),mode.name+' Watch '+character+' max face depth');
     }
     await seek(page,19);await page.screenshot({path:resolve(output,'socket-emergence-'+mode.name+'-watch.png')});
@@ -465,10 +542,14 @@ try{
     await start(fresh);await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),exported);await frames(fresh);
     assert.deepEqual((await project(fresh)).project.animeSockets,exported.project.animeSockets,'Fresh native Load changes the authored sockets');
     assert.deepEqual((await project(fresh)).project.animeEmergence,exported.project.animeEmergence,'Fresh native Load loses the book opening');
+    assert.deepEqual((await project(fresh)).project.animeRigs,exported.project.animeRigs,'Fresh native Load loses the resized staff fit');
     safe(await seek(fresh,17.25),mode.name+' imported articulated pose',true);
     const imported=await rig(fresh,'kami');connected(imported,mode.name+' fresh imported Kami');
     for(const id of Object.keys(posedRig.joints))close(distance(posedRig.joints[id].worldPosition,imported.joints[id].worldPosition),0,
       'Native Save/Load loses the actual articulated joint '+id,.002);
+    staffAttached(imported,mode.name+' fresh imported staff mount');
+    close(distance(posedRig.staffGrip.shaftMountWorld,imported.staffGrip.shaftMountWorld),0,
+      'Fresh Load changes the actual authored head-to-pole mount',.002);
     for(const time of [0,4,8,14]){await seek(fresh,time);expandedGeometry(await emergence(fresh),mode.name+' imported opening '+time+'s');}
     await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),detachedExport);await frames(fresh);
     assert.equal((await socketModel(fresh,'kami')).connections.leftForearm.connected,false,

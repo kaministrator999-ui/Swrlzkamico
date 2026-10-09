@@ -1,4 +1,4 @@
-name: Verify §E v9.4 native cinematic candidate
+name: Verify §E v9.5 native cinematic candidate
 on:
   push:
     branches: [main]
@@ -14,12 +14,15 @@ on:
       - "projects/swrlz-forge-moba/patches/v9_2_depth_theatre.py"
       - "projects/swrlz-forge-moba/patches/v9_3_character_alignment.py"
       - "projects/swrlz-forge-moba/patches/v9_4_socket_book_emergence.py"
+      - "projects/swrlz-forge-moba/patches/v9_5_staff_grip_fit.py"
+      - "projects/swrlz-forge-moba/patches/v9_5_character_depth_sections.py"
       - "projects/swrlz-forge-moba/runtime/**"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-depth.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json"
   pull_request:
     branches: [main]
 permissions:
@@ -53,14 +56,14 @@ jobs:
           output=source.encode("utf-8")
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
-          assert len(manifest["patches"])==53
-          assert manifest['patches'][-1]=='patches/v9_4_socket_book_emergence.py'
+          assert len(manifest["patches"])==55
+          assert manifest['patches'][-1]=='patches/v9_5_character_depth_sections.py'
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
           for needle in (
-            'V9_4_SOCKET_PUPPETS_BOOK_EMERGENCE','Maker v9.4','animeStartCinematic',
-            'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE',
-                          'anime-rig-sockets-v1','anime-book-emergence-v1','storyEditorInstall',
+            'V9_5_FITTED_STAFF_CHARACTER_RELIEF','Maker v9.5','animeStartCinematic',
+            'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
+                          'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','storyEditorInstall',
             'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',
             'animeCineExplore','animeCineScrub','updateWorkspaceInteraction(t);animeUpdateCinematic(dt);',
             'if(animeCine?.active)return;',

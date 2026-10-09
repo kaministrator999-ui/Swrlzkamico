@@ -74,7 +74,8 @@ def main():
                      "scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json",
                      "scenes/ghosts-in-different-forms-ep01-depth.swyrl.json",
                      "scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json",
-                     "scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json"):
+                     "scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json",
+                     "scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json"):
         if (ROOT / authored).exists():
             media_paths.append(authored)
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/anime").glob("*.png")))

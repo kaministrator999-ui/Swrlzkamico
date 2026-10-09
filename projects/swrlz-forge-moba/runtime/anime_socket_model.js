@@ -15,6 +15,7 @@ let socketValidatedProject=null,socketValidatedModel=null;
 function socketNames(part){
   const result=Object.values(SOCKET_CONNECTIONS).filter(([parent])=>parent===part).map(([,name])=>name);
   if(SOCKET_TERMINALS[part])result.push(SOCKET_TERMINALS[part]);
+  if(part==='staff')result.push('shaft');
   return [...new Set(result)];
 }
 function socketPoint(value,fallback={x:0,y:0,z:0}){
@@ -25,7 +26,9 @@ function socketDefaults(character,config=rigModel().characters[character]){
   const parts={},connections={},rows=RIG_REST_ROWS[character];
   for(const [id] of rows){
     const fit=config.layout[id],sockets={};
-    for(const name of socketNames(id))sockets[name]={x:0,y:name==='toe'?-.1:fit.height*.42,z:0};
+    for(const name of socketNames(id))sockets[name]=name==='shaft'?
+      {x:-2/111*fit.width,y:-87/194*fit.height,z:0}:
+      {x:0,y:name==='toe'?-.1:fit.height*.42,z:0};
     parts[id]={attach:{x:-fit.artX,y:-fit.artY,z:0},sockets};
   }
   for(const [child,[parent,socket]] of Object.entries(SOCKET_CONNECTIONS)){
@@ -119,19 +122,32 @@ function socketPublicModel(character){
 rigMutate=function(label,callback,rebuild=false){
   if(!storyEditable()||typeof callback!=='function')return false;
   const previous=rigModel(),draft=storyCopy(previous),previousSockets=socketModel(),sockets=storyCopy(previousSockets);
+  const previousRelief=window.SWYRL_ENGINE_RELIEF?.model?reliefModel():null,relief=previousRelief?storyCopy(previousRelief):null;
   if(callback(draft)===false)return false;
   const next=rigSanitizeModel(draft);
   if(JSON.stringify(next)===JSON.stringify(previous))return true;
   for(const character of RIG_CHARACTERS)for(const part of RIG_JOINT_IDS){
     const before=previous.characters[character].layout[part],after=next.characters[character].layout[part],own=sockets.characters[character].parts[part];
+    const shaft=part==='staff'?{...own.sockets.shaft}:null;
     const dx=after.artX-before.artX,dy=after.artY-before.artY;
     if(dx||dy){own.attach.x-=dx;own.attach.y-=dy;for(const point of Object.values(own.sockets)){point.x-=dx;point.y-=dy;}}
+    // The shaft mount follows actual painted ink. Artwork-centre shifts move
+    // that ink; resizing scales its editable coordinate in the same Undo.
+    if(shaft)own.sockets.shaft={x:shaft.x*after.width/before.width,y:shaft.y*after.height/before.height,z:shaft.z};
     const connection=SOCKET_CONNECTIONS[part];
     if(connection&&sockets.characters[character].connections[part].connected){const target=sockets.characters[character].parts[connection[0]].sockets[connection[1]];target.x+=after.x-before.x;target.y+=after.y-before.y;}
+  }
+  // The existing character-wide thickness control scales the independently
+  // fitted costume pieces without replacing their relative thicknesses.
+  if(relief)for(const character of RIG_CHARACTERS){
+    const before=previous.characters[character].thickness,after=next.characters[character].thickness;
+    if(before!==after)for(const config of Object.values(relief.characters[character].parts))
+      config.thickness=THREE.MathUtils.clamp(config.thickness*after/before,.02,.18);
   }
   const message=storyText(label,'Edit character pose',100);beginTransaction(message);
   currentProject.animeRigs=next;rigValidatedProject=currentProject;rigValidatedModel=next;
   currentProject.animeSockets=socketSanitizeModel(sockets);socketValidatedProject=currentProject;socketValidatedModel=currentProject.animeSockets;
+  if(relief){currentProject.animeRelief=reliefSanitizeModel(relief);reliefValidatedProject=currentProject;reliefValidatedModel=currentProject.animeRelief;}
   if(rebuild&&typeof rigRefreshNativeActors==='function')rigRefreshNativeActors();
   commitTransaction(message);rigNotify();socketNotify();return true;
 };
