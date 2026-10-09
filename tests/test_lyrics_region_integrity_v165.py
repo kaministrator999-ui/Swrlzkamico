@@ -260,7 +260,9 @@ assert "**[Hook: x2]**" in post_present["presentationText"]
 assert "**[Outro: x2]**" in post_present["presentationText"]
 assert "Back to:" not in post_present["presentationText"],post_present
 
-assert online_tools.ONLINE_OBSERVABILITY_REVISION=="v174-lyric-footer-and-repeat-metadata"
+# v174 behavior remains required, but later releases legitimately advance the
+# online camera revision; do not pin the predecessor string in this regression.
+assert int(online_tools.ONLINE_OBSERVABILITY_REVISION.split("-",1)[0].lstrip("v"))>=174
 
 print("lyrics-page-footer-repeat-metadata-v174 PASS")
 
