@@ -1,3 +1,34 @@
+## UPDATE FINISHED — 2026-10-09 — lyrics source integrity and structure-only creative rap v177
+
+**Status:** REAL DRAGON CHAT 26 LIVE v175+v176 ACCEPTANCE CONFIRMED / USER'S STRUCTURE-ONLY CORRECTION IMPLEMENTED / GUARD REGRESSIONS PASSED / HF PUBLISHED / NEW v177 LIVE CONTENT ACCEPTANCE PENDING.
+
+### User-requested constraint, authoritative
+The verified song is a **STRUCTURAL STUDY only**: evaluate section order, hook/refrain repetition, relative line counts, approximate per-line word-count contour and end-rhyme placement. Produce an entirely **new subject, original words, independent hook, images, vocabulary and punchlines**. Do not use source words, title or concepts, nor artist imitation, as a writing prompt. Earlier assistant framing about using source vocabulary or themes was expressly corrected by the user.
+
+### Changes delivered
+- `hf_space/online_tools.py`: stop sourced lyric extraction at songwriter/publisher/powered-by/meta and top-lyrics/top-artist boilerplate; song source and fetched identity checks preserved. Live camera revision `v177-lyric-credit-boundary-and-creative-completion`.
+- `hf_space/music_structure.py`: parse both `[Hook x2]` and `[Hook: x2]` / `[Outro x2]` into metadata count, without treating repetition as performer. Compile a song-reference **nonlexical form outline** using source section order, line-length/word-count dynamics, repeat annotations and tentative spelling-based rhyme placement; discard original prior-source wording and prior title/artist **only from inference-facing history**, leaving persistent chat messages untouched. Includes unmarked source section-divider fallback. Strong original-writing policy instructs completely independent topic, all-original language and clean completed song output.
+- `hf_space/lfm2_700m_engine.py`: pass the abstract form projection rather than raw source lyrics into model message fitting; give such complete-song turns an output-token allocation of up to 1,408 (instead of generic 768) while respecting available context. No adjustment to other model routes.
+- Behavioral test additions in `tests/test_music_structure_presentation_v164.py` and `tests/test_lyrics_region_integrity_v165.py`: no source words/source title/performer in the model-facing reference; preservation of stored history; unlabeled fallback; source footer stripped; repeat label parsed and presentation protected. Real v175/v176 tests still required.
+
+### Actual release trail and failures preserved
+1. [Guarded workflow #37950774585](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37950774585) **FAILED PREDEPLOY** on v176 regression assertion wrongly frozen to prior exact observability revision. Corrected predecessor test to require >=176 without dropping behavior assertions; `70f74b33f7933767eafebf3bbfd1ecf9a4a60acc`.
+2. [Guarded workflow #37951003596](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37951003596) **FAILED PREDEPLOY** at real 700M smoke due to an accidental function-signature mismatch `NameError: history not defined`: restored `_fit_messages(...,history,...)` signature, sent projected `model_history` at `generate_events` callsite, `478de3173a300cb835cc1900acf0fbcaec1137ae`.
+3. [Guarded workflow #37951409634](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37951409634) **TERMINAL SUCCESS**. Required logs explicitly show `structure-only-reference-no-lexical-borrowing-v177 PASS`, `unlabeled-song-structure-only-projection-v177 PASS`, `songwriter-publisher-boundary-and-noncolon-repeats-v177 PASS`, along with `contextual-original-rap-routing-v175 PASS` and `live-25-structured-lyrics-priority-v176 PASS`. 700M real smoke, R39 reconstruction, stock compatibility, publisher authorization, snapshot and Hugging Face uploaded revision passed.
+- **Deployed source branch SHA:** `478de3173a300cb835cc1900acf0fbcaec1137ae`.
+- **Target:** existing `kamiloki/Swyrlz`.
+- **New HF Space revision:** `df9a4bfab386e6f7b1888a6691ff8ed0941d5346`.
+- **Previous rollback HF revision:** `19e587bc368a5b31f01728bd0a94c7a768b6a747`.
+- Deployment checkpoint `verificationState=DEPLOYED_UNVERIFIED` means real fresh hosted generation content is still to be inspected; CI test does not prove the model will never reproduce a familiar phrase.
+
+### Canonical version closure
+Server Runtime **2.3.330**; LALM Engine **2.1.162**; Online Research **1.0.25**; Repository Work **1.0.107**; Deployment Control **1.0.37**. Web Chat **1.5.92** and independent §E/Forge Moba game engine unchanged.
+
+### Next live acceptance
+In the deployed Space, fetch a verified song as a source, then in the same thread ask: `Study only the song's structure, line-length/cadence, rhyme placement and repeat mechanics. Write a wholly new rap with a completely different topic and words. Don't borrow phrases, imagery or a hook.` Expect the prior-source lyrics **absent** from the inference-level content, creative route `CREATIVE_MUSIC_STARTED`, no new lyrics web search, independent original song without copied source fragments, clean completed ending. Report any remaining truncation or lexical overlap from export for evidence-based followup.
+
+**Release complete / fresh v177 quality check pending.**
+
 ## UPDATE STARTED — 2026-10-09 — clean source footer, section repeats, structure-only original-song study v177
 
 **User acceptance:** Fresh `swrlz-dragon-chat (26).json` confirms hosted v176 with **two** cumulative source attempts, successful song identity and verified text from LyricsMania, five section markers, and **v175 creative handoff live**: follow-up `Now can you use those lyrics as something to study and write me a whole new rap song` emits `CREATIVE_MUSIC_STARTED`, retains 2 previous messages with no second web query, and selects LFM2-700M. That v175/v176 success is preserved. Three residual issues: source credits/site navigation appended to last section; `[Hook x2]`/`[Outro x2]` falsely `repeatCount=null`; 700M ran into its **768** token cap and left an unfinished explanation.
