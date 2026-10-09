@@ -92,8 +92,11 @@ function storyPaperVisual(value){
 }
 function storyBookVisual(){
   const book=animeMakePaperBook();book.position.set(0,0,0);book.userData.storyBook=true;
-  // The leather sits beneath the pages, rather than hiding their illustration.
-  book.children.find(o=>o.isMesh).position.y=-.2;
+  // Covers belong to their page halves. A single full-width slab otherwise
+  // remains open while the pages close, preventing a physical book opening.
+  const oldCover=book.children.find(o=>o.isMesh);book.remove(oldCover);oldCover.geometry.dispose();oldCover.material.dispose();
+  const spine=new THREE.Mesh(new THREE.BoxGeometry(.15,.22,2.72),new THREE.MeshStandardMaterial({color:'#352630',roughness:.8}));
+  spine.position.y=-.2;book.add(spine);
   const ink=animeDrawSurface((c,w,h)=>{
     const gradient=c.createLinearGradient(0,0,w,h);gradient.addColorStop(0,'#f4ddad');gradient.addColorStop(.5,'#c6a46c');gradient.addColorStop(1,'#eed7a4');
     c.fillStyle=gradient;c.fillRect(0,0,w,h);c.strokeStyle='#6b493c';c.lineWidth=4;c.strokeRect(16,16,w-32,h-32);
@@ -101,11 +104,26 @@ function storyBookVisual(){
     popRune(c,w*.5,h*.5,Math.min(w,h)*.3);
     for(const side of [30,w-120])for(let j=0;j<9;j++){c.strokeStyle='#6c4f37aa';c.lineWidth=2;c.beginPath();c.moveTo(side,40+j*21);c.lineTo(side+60+(j%3)*10,40+j*21);c.stroke();}
   },512,320);
+  const coverInk=animeDrawSurface((c,w,h)=>{
+    c.fillStyle='#352630';c.fillRect(0,0,w,h);c.strokeStyle='#bc9553';c.lineWidth=3;
+    c.strokeRect(13,13,w-26,h-26);c.lineWidth=1;c.strokeRect(22,22,w-44,h-44);
+    for(const x of [35,w-35])for(const y of [35,h-35]){
+      c.beginPath();c.moveTo(x,y-8);c.lineTo(x+8,y);c.lineTo(x,y+8);c.lineTo(x-8,y);c.closePath();c.stroke();
+    }
+    c.beginPath();c.arc(w*.5,h*.5,63,0,Math.PI*2);c.stroke();
+    c.fillStyle='#caa35e';c.beginPath();c.arc(w*.5,h*.5,42,0,Math.PI*2);c.fill();
+    c.fillStyle='#352630';c.beginPath();c.arc(w*.5+17,h*.5-9,37,0,Math.PI*2);c.fill();
+    c.fillStyle='#ecd39a';c.beginPath();c.moveTo(w*.5+31,h*.5-17);c.lineTo(w*.5+34,h*.5-8);c.lineTo(w*.5+43,h*.5-5);c.lineTo(w*.5+34,h*.5-2);c.lineTo(w*.5+31,h*.5+7);c.lineTo(w*.5+28,h*.5-2);c.lineTo(w*.5+19,h*.5-5);c.lineTo(w*.5+28,h*.5-8);c.closePath();c.fill();
+  },512,320);
   book.children.forEach(o=>{
     if(o.isGroup){
       o.userData.storyPage=true;
+      const cover=new THREE.Mesh(new THREE.BoxGeometry(4.42,.2,2.72),new THREE.MeshStandardMaterial({color:'#352630',roughness:.8,side:THREE.DoubleSide}));
+      cover.position.set(o.position.x<0?-2.08:2.08,-.2,0);o.add(cover);
+      const outside=new THREE.Mesh(new THREE.PlaneGeometry(4.24,2.56),new THREE.MeshBasicMaterial({map:coverInk,side:THREE.DoubleSide,fog:false,toneMapped:false}));
+      outside.position.set(cover.position.x,-.305,0);outside.rotation.x=Math.PI/2;o.add(outside);
       const page=new THREE.Mesh(new THREE.PlaneGeometry(4.05,2.45),new THREE.MeshBasicMaterial({map:ink,side:THREE.DoubleSide,fog:false,toneMapped:false}));
-      page.position.set(o.position.x<0?-2.08:2.08,.16,0);page.rotation.x=-Math.PI/2;o.add(page);
+      page.userData.storyPageInk=true;page.position.set(o.position.x<0?-2.08:2.08,.16,0);page.rotation.x=-Math.PI/2;o.add(page);
     }
     o.scale.x=1.25;o.scale.z=2.2;
   });return book;
@@ -265,6 +283,32 @@ function storyRender(){
     storyApplyOpacity(group,key.opacity);
     if(typeof rigAnimateCharacter==='function')rigAnimateCharacter(group,id,t);
   }
+  const book=c.layers.book.children[0],bk=storySample('book',t);
+  if(book){
+    const authoredFloor=storyCastFloor(c),opening=typeof emergenceOpening==='function'&&emergenceOpening(t);
+    const coverMoving=opening&&emergenceProgress('book',t)<1;
+    book.position.set(bk.x,bk.y,Math.min(bk.z,-1.8));
+    // The closed book is the first visible object. Its opening cover may rise
+    // before the cast appears; once open it retains the established clearance.
+    if(!coverMoving)book.position.y=Math.min(book.position.y,authoredFloor-.55);
+    book.scale.setScalar(Math.min(1.15,bk.scale));book.rotation.set(0,0,bk.rotation);
+    if(typeof emergencePoseBook==='function')emergencePoseBook(book,bk,t);
+    else for(const page of book.children.filter(o=>o.userData.storyPage)){
+      const side=page.position.x<0?-1:1;page.rotation.z=side*(1-bk.unfold)*1.35;
+    }
+    if(!coverMoving&&Number.isFinite(authoredFloor)){
+      scene.updateMatrixWorld(true);const top=new THREE.Box3().setFromObject(book).max.y,limit=authoredFloor-.3;
+      if(top>limit)book.position.y-=top-limit;
+    }
+    book.visible=bk.visible&&bk.opacity>.01&&storyAuthoredVisible('book');storyApplyOpacity(book,bk.opacity);
+    if(typeof emergencePrepareFrame==='function')emergencePrepareFrame(c,book,t);
+  }
+  for(const [id,group] of [['kami',c.cast.kami],['swyrlz',c.cast.wisp]])if(typeof emergenceApplyLayer==='function'){
+    const progress=emergenceProgress(id,t),key=id==='kami'?kami:swyrlz;
+    const pivot=group.children.find(child=>child.userData.storyCastHinge);
+    if(pivot)pivot.rotation.x=-(1-key.unfold*progress)*Math.PI*.5;
+    emergenceApplyLayer(group,id,t,c);
+  }
   if(typeof rigFitCamera==='function')rigFitCamera(c);
   scene.updateMatrixWorld(true);
   backLimit=Math.min(...[c.cast.kami,c.cast.wisp].map(g=>new THREE.Box3().setFromObject(g).min.z))-1.6;
@@ -282,7 +326,9 @@ function storyRender(){
       card.rotation.x=-(1-key.unfold)*Math.PI*.5;
       storyApplyOpacity(card,key.opacity);
       if(typeof sceneryAnimateGroup==='function')sceneryAnimateGroup(card,id,t,cam);
+      if(typeof emergenceApplyScenery==='function')emergenceApplyScenery(card,id,t);
     }
+    if(typeof emergenceApplyLayer==='function')emergenceApplyLayer(group,id,t,c);
     if(card?.userData.storyScenery){
       scene.updateMatrixWorld(true);
       let nearest=new THREE.Box3().setFromObject(group).max.z;
@@ -297,28 +343,23 @@ function storyRender(){
     if(id==='foreground'){
       // Use the actual cutout bounds; imported opaque art receives the same
       // camera protection as the bundled low strip.
-      group.position.y=Math.min(key.y,castFloor-.35-storyForegroundInkHeight(group));
+      group.position.y=Math.min(group.position.y,castFloor-.35-storyForegroundInkHeight(group));
     }
   }
-  const book=c.layers.book.children[0],bk=storySample('book',t);
   if(book){
-    book.position.set(bk.x,bk.y,Math.min(bk.z,-1.8));
-    book.position.y=Math.min(book.position.y,castFloor-.3-.25);
-    book.scale.setScalar(Math.min(1.15,bk.scale));book.rotation.set(0,0,bk.rotation);
-    for(const page of book.children.filter(o=>o.userData.storyPage)){
-      const side=page.position.x<0?-1:1;page.rotation.z=side*(1-bk.unfold)*1.35;
-    }
-    if(Number.isFinite(castFloor)){
+    const openingCover=typeof emergenceOpening==='function'&&emergenceOpening(t)&&emergenceProgress('book',t)<1;
+    if(!openingCover&&Number.isFinite(castFloor)){
       scene.updateMatrixWorld(true);
       const top=new THREE.Box3().setFromObject(book).max.y,limit=castFloor-.3;
       if(top>limit)book.position.y-=top-limit;
     }
-    book.visible=bk.visible&&bk.opacity>.01&&storyAuthoredVisible('book');storyApplyOpacity(book,bk.opacity);
+    if(typeof emergencePrepareFrame==='function')emergencePrepareFrame(c,book,t);
   }
   c.cast.dragon.visible=false;c.stage=beat.index;c.cameraDelta=cam.x;
   c.particlesMaterial.color.set('#f4bd65');c.particlesMaterial.opacity=.32;
   const particles=c.particlesGeometry.getAttribute('position');
   for(let i=0;i<particles.count;i++)particles.setXYZ(i,Math.sin(t*.18+i*2.12)*4,1+((i*.577+t*.14)%6),-2-Math.abs(Math.cos(i*3.1+t*.12))*4);
+  if(typeof emergenceApplyParticles==='function')emergenceApplyParticles(c,t);
   particles.needsUpdate=true;c.lamp.position.set(0,6,1);
   // Runtime visibility updates are allowed to recompute native editor actors;
   // cinematic clones remain the only authored stage visible in this pass.

@@ -269,6 +269,8 @@ try{
     // acquire the improved default assembly without losing a single key.
     const legacy=structuredClone(original);
     for(const config of Object.values(legacy.project.animeRigs.characters))delete config.layout;
+    delete legacy.project.animeSockets;
+    delete legacy.project.animeEmergence;
     await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),legacy);await frames(fresh);
     independent(await project(fresh),original,mode.name+' older project default fits');
     await seek(fresh,19);

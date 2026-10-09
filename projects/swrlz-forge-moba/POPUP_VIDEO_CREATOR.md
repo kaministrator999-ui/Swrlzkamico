@@ -1,14 +1,22 @@
-# Video Creator Starter · Articulated Pop-Up Book · v9.3 candidate
+# Video Creator Starter · Articulated Pop-Up Book · v9.4 candidate
 
-v9.3 fits each mage’s body pieces to its own painted silhouette: shoulders, elbows, wrists, hips, knees, ankles and the head use corrected attachment placement and overlap. Staff, quill and grimoire placement follows the owning hand. Kami and §wyrlz retain separate eighteen-piece paper rigs, fitted facial controls and independent animation tracks. The engine samples the bundled transparent artwork directly; no flattened replacement character is introduced.
+The v9.4 source candidate gives the episode a coordinated book opening: Kami, §wyrlz, architecture, props, effects and the three star-depth shells emerge from the pages before reaching their saved stage positions. The opening uses the same renderer and saved project data in Preview Frame, Play and Watch. Character limbs have persistent connection sockets; snapped children stay attached while their pose keys rotate around the socket. Kami’s visible staff grip and staff placement are repaired within the articulated paper rig.
+
+In **Animation Studio → Book Opening · unfold from the pages**, enable **Expand from book** and set **Opening duration (s)**. Choose an **Opening layer**, adjust **Start delay (s)** and **Expansion time (s)**, then use **Apply Book Opening**. Preview the first seconds and use Play to inspect the expansion. Changing the overall duration scales the other layers’ timings; every layer must finish within the opening. Native Undo/Redo and Save/Load preserve the opening separately from the stage, limb, face and scenery keys.
+
+To connect and pose a limb, select **Kami** or **§wyrlz** in Animation Studio and expand **Character Rig · limbs and face → Limb Sockets · snap and rotate**. Choose a **Socket body piece** and its incoming attachment or a named outgoing socket. **Socket X/Y/Z** use the painted piece’s centre: incoming **attach** defines the rotation pivot, while an outgoing socket places its attached child. Use **Apply Socket** to place the connection. **Detach Piece** releases the selected child; **Snap to Socket** reconnects it to its anatomical parent. Animate the snapped limb with the existing pose controls. **Show joint sockets** displays editor guides; Running Play and Watch hide those guides. **Reset Piece Sockets** restores the selected connections while preserving pose keys. Snapped pieces stay connected through shoulder, elbow, wrist, hip, knee and ankle motion; each hand has a prop grip.
 
 In **Animation Studio**, select **Kami** or **§wyrlz**, expand **Character Rig · limbs and face**, choose a body part, then use **Fit Body Piece**. **Joint X/Y** place its pivot; **Artwork X/Y** position its painted cutout; **Piece width/height** and **Rest angle (°)** fit the silhouette. Use **Apply Body Piece Fit**, preview the shared playhead, and use Play to inspect the attached chain through motion. **Reset Piece Fit** restores that piece’s default fit. Fitting is saved separately from timed rotation/depth keys; native Undo/Redo and Save/Load preserve it without changing the companion’s rig or scenery keys. Pause running playback before editing.
 
-The starter keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. The native Save Project export is `scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json`. Per-character rest layouts belong to `project.animeRigs.characters[character].layout`, alongside the independent limb/face keys. The saved performance retains 425 limb/face keys and 341 scenery keys. The v9.2 depth, v9.1 rigged, v9.0 storybook and original production scene exports remain bundled, together with all eight artwork PNGs and the historical episode HTML.
+The starter keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json`. Each character has 19 socket-bearing parts and 18 anatomical connections. Connections belong to `project.animeSockets` (`anime-rig-sockets-v1`) and the opening to `project.animeEmergence` (`anime-book-emergence-v1`). Existing per-character rest layouts, 425 limb/face keys and 341 scenery keys remain independent. The v9.3 positioned, v9.2 depth, v9.1 rigged, v9.0 storybook and original production exports remain bundled, together with all eight artwork PNGs and the historical episode HTML.
 
-The 52nd governed patch is `patches/v9_3_character_alignment.py`; artifact `swyrl_engine_v9_3.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_3_CONNECTED_CHARACTER_PIECES`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes five episode scene JSON exports, the historical episode HTML and eight PNGs, for fourteen media assets.
+The 53rd governed patch is `patches/v9_4_socket_book_emergence.py`; artifact `swyrl_engine_v9_4.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_4_SOCKET_PUPPETS_BOOK_EMERGENCE`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes six episode scene JSON exports, the historical episode HTML and eight PNGs, for fifteen media assets.
 
-v9.3 is a source candidate. Desktop/phone connected-part fitting and authoring acceptance, the existing native Play/Studio/rig/depth regressions, exact sealed reconstruction, and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all fourteen media assets.
+v9.4 is a source candidate. Desktop/phone socket connection and book-emergence acceptance, all existing native Play/Studio/rig/depth/body-fit regressions, exact sealed reconstruction, and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all fifteen media assets.
+
+## Historical verified v9.3 · Connected Character Pieces
+
+The previous **v9.3 Connected Character Pieces** release is verified live: [deployment 37893678594](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893678594) and [exact hosted audit 37893722231](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893722231) passed. Source [`84d8966f4240`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/84d8966f4240cef8ebe037dbc03baac43099c06e) seals 52 patches, **980,767 bytes**, SHA-256 `caba518b67524567899d93a74308bc894cf40413fd69b330b8f7f5f7b6c042be`, with all fourteen media assets. These receipts certify v9.3; v9.4 requires its own final deployment and hosted audit.
 
 ## Historical verified v9.2 · Layered Scenery and Fitted Faces
 
@@ -28,7 +36,7 @@ Open **Animation Studio**, select **Kami** or **§wyrlz**, then expand **Charact
 
 Layered scenery, independent book controls, camera tracks, captions, and protective foreground/background staging continue through the same Preview Frame and editor Play renderer. Paper joints add local depth and articulation inside each independent character layer.
 
-The previous **v9.2 Layered Scenery and Fitted Faces** release is verified live: [deployment 37871463769](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37871463769) and [exact hosted audit 37871508796](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37871508796) passed. Source [`7f664a2c967a`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/7f664a2c967a0bff63d6d1a5c0eb1e8acc472a01) seals 51 patches, **965,788 bytes**, SHA-256 `b952e375be6a2cfb88014714cccbe80285e70d4b76821763bc68ada46e2dcbc4`, with all thirteen media assets, 425 rig keys and 341 scenery keys. These receipts certify v9.2; v9.3 needs its own final deployment and hosted audit.
+The previous **v9.2 Layered Scenery and Fitted Faces** release is verified live: [deployment 37871463769](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37871463769) and [exact hosted audit 37871508796](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37871508796) passed. Source [`7f664a2c967a`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/7f664a2c967a0bff63d6d1a5c0eb1e8acc472a01) seals 51 patches, **965,788 bytes**, SHA-256 `b952e375be6a2cfb88014714cccbe80285e70d4b76821763bc68ada46e2dcbc4`, with all thirteen media assets, 425 rig keys and 341 scenery keys. These receipts certify the historical v9.2 release.
 
 The previous **v9.1 Articulated Paper Rigs** release is verified live: [deployment 37838083241](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838083241) and [exact hosted audit 37838137243](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838137243) passed. Source [`d3e7dc4d6a06`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/d3e7dc4d6a0633995210a7217943753d4de28e29) seals 50 patches, **857,746 bytes**, SHA-256 `7b6f3806c666b991a07e0c6bf162286b09dd70862f7de9acc9bf0ea3d214473f`, with all eleven bundled media assets and 425 character pose/face keys. These receipts are historical authority for v9.1; they do not certify v9.2.
 
@@ -52,7 +60,7 @@ Native desktop and phone authoring/Play acceptance [passed in GitHub](https://gi
 
 This is an extension of the existing **Ghosts in Different Forms** Anime Studio starter in §wyrl§ Engine, not a separate game, new app, or image.
 
-## Art direction
+## Historical v8.8 · Art direction
 
 The staged episode is a dark-fantasy **book theatre**, following the user's wizard sketches and the two-character concept-art direction.
 
@@ -68,7 +76,7 @@ Real Android screenshots of v8.8 showed the large opaque desk/foreground panel a
 
 This release is **not** verified live until exact rebuilt source and hosted assets pass production receipt checks.
 
-## Engine behavior
+## Historical v8.8 · Engine behavior
 
 At each of the existing eight episode acts, the physical open book and scenery **unfold from the page** on independent Three.js pivots. Every cutout is an individual depth plane with separate parallax and unfold delay. The perspective camera can travel past those planes without flattening them into a single backdrop.
 
@@ -90,7 +98,7 @@ Save Project exports all Director values under `project.animePopUp` with schema 
 
 The in-editor Play HUD still provides seek, Pause, next/previous scene, Layers, Stop and Explore Set. Scene script captions remain in the existing editable act workstations.
 
-## Boundaries
+## Historical v8.8 · Capability boundaries
 
 The cel artwork is still authored procedurally in the engine source, not yet an SVG/PNG asset-import or skeletal rig/puppet editor. Director supports basic depth/parallax/position/unfold animation parameters, not arbitrary timelines and bone posing. No claim of finished video export, lip sync or full character animation.
 

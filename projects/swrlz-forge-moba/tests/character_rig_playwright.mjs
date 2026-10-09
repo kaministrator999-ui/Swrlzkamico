@@ -184,14 +184,17 @@ try{
     assert.equal((await rendered(page,'kami')).face.expression,face.expression,'The companion replaced Kami’s expression');
 
     // Configuration builds actual thickness/depth, and is saved with the rig.
+    const beforeDepthConfig=await rendered(page,'kami');
     await choosePart(page,'kami','head',17.25);
     await input(page,'#rigEnabled',true);await input(page,'#rigThickness',.12);await input(page,'#rigDepthAmount',.4);
     await page.locator('#rigApplyConfig').click();await seek(page,17.25);
     const configured=await rendered(page,'kami');hasDepth(configured,mode.name+' configured depth');
     close(configured.thickness,.12,'Thickness control does not rebuild the character geometry',.003);
     assert.ok(['head','cape','torso','staff'].some(part=>
-      Math.abs(configured.joints[part].position[2]-initialKami.joints[part].position[2])>.02),
-    'Pop-out depth changed only saved settings, not actual part positions');
+      distance(configured.joints[part].surfaceWorldPosition,beforeDepthConfig.joints[part].surfaceWorldPosition)>.02),
+    'Pop-out depth changed only saved settings, not actual painted surface geometry');
+    for(const connection of configured.connections)
+      assert.ok(connection.error<1e-5,'Changing paper depth separates a snapped socket: '+connection.child);
     safe(await stage(page),mode.name+' configured depth safety');
     await page.screenshot({path:resolve(output,'character-rig-'+mode.name+'-editor.png')});
     const downloadPending=page.waitForEvent('download',{timeout:15000});
