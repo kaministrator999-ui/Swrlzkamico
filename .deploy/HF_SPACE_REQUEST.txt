@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-09-v179-identity-verified-lyric-rescue-001
+REQUEST_NONCE=2026-10-09-v180-source-code-clean-and-creative-carry-001
