@@ -96,8 +96,8 @@ assert done.status_code==200 and done.headers["content-type"].startswith("applic
 assert done.headers["cache-control"]=="private, no-store"
 with zipfile.ZipFile(io.BytesIO(done.content)) as z:
     assert z.namelist()==["README.md","src/main.py","tests/test_main.py"]
-    assert z.read("README.md")==b"# Dragon"
-    assert z.read("src/main.py")==b"print(1)"
+    assert z.read("README.md")==b"# Dragon\n"
+    assert z.read("src/main.py")==b"print(1)\n"
 assert get(revision=3).status_code==404
 
 # Edited file requires user-directed edit intent; update preserves old files.
@@ -113,7 +113,7 @@ assert get(revision=4).status_code==404
 updated=get()
 assert updated.status_code==200
 with zipfile.ZipFile(io.BytesIO(updated.content)) as z:
-    assert z.read("src/main.py")==b"print(2)"
+    assert z.read("src/main.py")==b"print(2)\n"
     assert z.read("README.md")==b"# Dragon"
 
 print("STAGED_STATION_V185_PASS 3-turn commit, incomplete archive refusal, revisions, scoped-cookie ZIP, repair")
