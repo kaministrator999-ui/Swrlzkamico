@@ -113,6 +113,8 @@ rustc --edition=2021 --test frame_reconciler.rs -o frame_tests
 ./frame_tests
 ~~~
 
+A reproducible [offline reference verifier](verify_reference_fixtures.py) checks the repository's **exact** four example sources when their compilers are installed, marks tool absences as skipped rather than passing, and emits a JSON receipt. Run it locally with Python 3; its outputs describe **teacher fixture correctness only**, not Qwen model performance. This verifier was authored but has not yet been executed against a fresh checkout in this session; locally materialized matching Java/Kotlin/TypeScript sample bodies were exercised separately.
+
 **Teacher fixture evidence (2026-10-09):** Java 21 javac/java, TypeScript tsc strict plus Node 22, and Kotlin JVM 1.9 kotlinc/java each printed their corresponding FRAME_PASS marker on locally materialized equivalent source bodies. Rust compiler was not present; Rust example remains unverified until an independent compile/test. None of those executions are **Qwen-generated outputs** or evidence the hosted Chat changed.
 
 [Public practice assignments v2](cross_language_practice_v2.json) remain UNGRADED until the actual Qwen model is asked to solve each independently and original output/test receipts are captured. Distinguish reference docs → model context ingestion → observed answers → independently tested patches → curated exact-source training records → trained checkpoint → guarded activation. Merely committing these files does not cause weight updates or automatic prompt ingestion.
