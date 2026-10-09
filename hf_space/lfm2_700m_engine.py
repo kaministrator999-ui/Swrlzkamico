@@ -9,7 +9,7 @@ from programming_repair_context import build_compact_repair_context, enforce_str
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from music_structure import music_model_policy, creative_music_request, creative_music_reference_projection, MUSIC_CREATIVE_REFERENCE_POLICY, original_rap_delivery, original_rap_violations
 from lyric_craft_school import lyric_craft_policy
-from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container
+from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -825,43 +825,139 @@ def generate_events(payload):
                 first_delta=round((time.perf_counter()-started)*1000,3)
                 yield {"type":"DELTA","text":candidate_text}
         elif strict_lyric_turn:
-            # The exact formal request is checked BEFORE presentation. The verifier
-            # never labels rhyme quality or narrative coherence as objectively PASS.
-            candidate_raw,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
+            # Keep useful model-authored lines and fill only missing lines.
+            # Exact form is a necessary condition, not a grade of musicality.
             shape=direct_creative_lyric_contract
-            check=verify_original_lyrics(candidate_raw,shape)
+            wanted=shape.get("requestedLines")
+
+            def assess_lyric_draft(raw):
+                direct=verify_original_lyrics(raw,shape)
+                preserved=recoverable_continuous_lines(raw,shape)
+                if preserved is None:
+                    return raw,direct,None
+                flattened="\n".join(preserved)
+                checked=verify_original_lyrics(flattened,shape)
+                if flattened!=raw.strip():
+                    checked["presentationNormalizedBlankLines"]=True
+                return flattened,checked,preserved
+
+            candidate_raw,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
+            candidate_raw,check,authored_lines=assess_lyric_draft(candidate_raw)
             previous_fp=_candidate_fingerprint(candidate_raw)
-            candidate_attempts.append(candidate_attempt_receipt(1,"direct-original-lyric-form",timing,check,previous_fp))
+            candidate_attempts.append(candidate_attempt_receipt(
+                1,"direct-original-lyric-form",timing,check,previous_fp,
+            ))
             yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
-            if check["status"]=="REJECT":
+
+            # Preserve a recoverable partial instead of reflexively replacing
+            # it with another entire, often shorter song. Full regeneration
+            # remains a last resort for refusal, metadata or malformed input.
+            if check["status"]=="REJECT" and authored_lines is None:
                 regeneration_attempted=True
-                regeneration_reason="original-lyric-form-rejected"
+                regeneration_reason="original-lyric-format-rejected"
                 retry_instruction=(
-                    "CORRECT THE ORIGINAL SONG, NOT THE REQUEST. Your first draft failed the following observable "
-                    "lyric-shape checks: "+", ".join(check["reasons"])+". "
-                    +(f"Exactly {shape['requestedLines']} nonempty lyric lines are mandatory. " if shape["requestedLines"] else "")
-                    +("No section labels or blank stanza breaks; keep one continuous verse. " if shape["continuous"] else "")
-                    +("No chorus or hook. " if shape["noChorus"] else "")
-                    +"Deliver ONLY the full lyric text in one fenced block. No excuses, notes, commentary, assertions of compliance, or filler. "
-                    "Advance the specified topic toward an actual ending; use new content, not copied draft lines."
+                    "REWRITE THE COMPLETE ORIGINAL SONG. The prior candidate violated: "
+                    +", ".join(check["reasons"])+". "
+                    +(f"Write exactly {wanted} distinct nonempty lyric lines. " if wanted else "")
+                    +("Do not use blank stanza breaks or section labels. " if shape["continuous"] else "")
+                    +("Do not include any chorus or hook. " if shape["noChorus"] else "")
+                    +"No refusal, analysis, commentary or self-grading; compose meaningful original lines about the requested topic. "
+                    "Do not repeat the refused draft or claim compliance without completing the work."
                 )
-                fixed_raw,timing2=buffered_chat_completion(
+                draft,timing2=buffered_chat_completion(
                     model,list(messages)+[{"role":"system","content":retry_instruction}],
                     response_tokens,min(0.48,temperature+0.06),
                 )
-                next_check=verify_original_lyrics(fixed_raw,shape)
+                candidate_raw,check,authored_lines=assess_lyric_draft(draft)
                 candidate_attempts.append(candidate_attempt_receipt(
-                    2,"direct-original-lyric-form-retry",timing2,next_check,
-                    _candidate_fingerprint(fixed_raw),previous_attempt_fingerprint=previous_fp,
+                    2,"direct-original-lyric-clean-rewrite",timing2,check,
+                    _candidate_fingerprint(candidate_raw),
+                    previous_attempt_fingerprint=previous_fp,
                 ))
                 yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
-                candidate_raw,check=fixed_raw,next_check
+
+            # A model can underestimate the requested total even with 1600
+            # tokens. Continue ONLY a clean underlength verse, using small
+            # original increments and preserving the existing lyric content.
+            # Do not invent missing bars in Python or truncate surplus bars.
+            if (check["status"]=="REJECT" and isinstance(wanted,int)
+                    and authored_lines and len(authored_lines)<wanted
+                    and set(check["reasons"])=={"wrong-explicit-lyric-line-count"}):
+                regeneration_attempted=True
+                regeneration_reason="original-lyric-append-only-continuation"
+                for continuation_index in range(2):
+                    missing=wanted-len(authored_lines)
+                    if missing<=0:
+                        break
+                    # The complete model-authored prefix gives the next call
+                    # continuity while avoiding a new open-ended song restart.
+                    continue_instruction=(
+                        f"Continue the SAME ORIGINAL {wanted}-LINE LYRIC VERSE. "
+                        f"There are already {len(authored_lines)} complete lines below. "
+                        f"Add EXACTLY {missing} NEW lyrical lines and NOTHING ELSE. "
+                        "Do not repeat any existing line. Do not restart the verse. "
+                        "No preface, code fence, section labels, blank stanza separators, chorus, note or apology. "
+                        "Continue the specified plot using concrete action, meaningful internal rhymes, "
+                        "and audible contrast between rapid phrases and concise punchlines. "
+                        "On the final added lines resolve the central problem rather than announcing you will solve it."
+                    )
+                    additional_messages=list(messages)+[
+                        {"role":"system","content":(
+                            "CONTINUATION OVERRIDE FOR THIS SEGMENT ONLY: The original "
+                            f"line-total requirement is for the combined finished song. "
+                            f"The previous {len(authored_lines)} lines already exist. "
+                            f"Generate ONLY {missing} additional lyrical lines now, "
+                            "without reprinting any prior words or surrounding explanation."
+                        )},
+                        {"role":"assistant","content":"PREVIOUS AUTHORED LINES (preserve as written):\n"+"\n".join(authored_lines)},
+                        {"role":"user","content":continue_instruction},
+                    ]
+                    segment_max=min(720,max(200,missing*48))
+                    new_segment,segment_timing=buffered_chat_completion(
+                        model,additional_messages,segment_max,min(0.48,temperature+0.06),
+                    )
+                    merged=extend_continuous_lyrics(authored_lines,new_segment,shape)
+                    if merged is None:
+                        # A failure never corrupts the last valid model text.
+                        segment_check={
+                            "status":"REJECT","reasons":["invalid-or-overlong-lyric-continuation"],
+                            "requestedLyricLines":wanted,"observedLyricLines":len(authored_lines),
+                            "formalOnly":True,"semanticQualityVerified":False,
+                        }
+                        candidate_attempts.append(candidate_attempt_receipt(
+                            len(candidate_attempts)+1,"direct-original-lyric-continuation",
+                            segment_timing,segment_check,_candidate_fingerprint(new_segment),
+                            previous_attempt_fingerprint=_candidate_fingerprint(candidate_raw),
+                        ))
+                        yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
+                        check=dict(check)
+                        check["reasons"]=list(dict.fromkeys(
+                            list(check["reasons"])+["invalid-or-overlong-lyric-continuation"]
+                        ))
+                        continue
+                    authored_lines=merged
+                    candidate_raw="\n".join(authored_lines)
+                    check=verify_original_lyrics(candidate_raw,shape)
+                    check["appendedOriginalLines"]=len(authored_lines)
+                    candidate_attempts.append(candidate_attempt_receipt(
+                        len(candidate_attempts)+1,"direct-original-lyric-continuation",
+                        segment_timing,check,_candidate_fingerprint(candidate_raw),
+                        previous_attempt_fingerprint=previous_fp,
+                    ))
+                    previous_fp=_candidate_fingerprint(candidate_raw)
+                    yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
+                    if check["status"]=="PASS":
+                        break
+
             candidate_check=check
             if check["status"]=="PASS":
                 candidate_text=clean_lyric_container(candidate_raw)
             else:
-                count=f"{shape['requestedLines']}-line " if shape["requestedLines"] else ""
-                candidate_text=f"I couldn\'t complete a {count}lyric response matching the requested form, so I won\'t claim the draft passed."
+                count=f"{wanted}-line " if wanted else ""
+                candidate_text=(
+                    f"I couldn't complete a {count}lyric response matching the requested form, "
+                    "so I won't claim the draft passed."
+                )
             first_delta=round((time.perf_counter()-started)*1000,3)
             yield {"type":"DELTA","text":candidate_text}
         else:
