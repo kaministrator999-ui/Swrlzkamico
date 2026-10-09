@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-09 — Staged project workspace and multi-turn ZIP v185
+
+**User request:** Continue from the previous v184 source-file/ZIP delivery feature with substantial multi-turn software project assembly. Build manifest-backed workspace, completed source-file incorporation from multiple model replies, progress/resume within the existing session, missing-file prompts and READY-only final ZIP. Do not misrepresent source completeness as tested code.
+
+**Isolation/ownership:** new `feature/coder-staged-workspaces-v185` based on v184 feature SHA `00f95d6c600e63aff9ba237b60d55258540b9224`; stacked [draft PR #59](https://github.com/kaministrator999-ui/Swrlzkamico/pull/59) depends on [draft PR #58](https://github.com/kaministrator999-ui/Swrlzkamico/pull/58), not current main or concurrently published lyric source. Extend canonical process-local Station thread, not a new file store; model cannot invent/download an archive it did not generate.
+
+**Scope:** stdlib pure manifest/version state machine; caller-thread-scoped create/list/attach/finalize/cancel/download routes that bind actual committed source revision and hash; Chat project workspace actions and explicit next-file prompt preparation (no background paid model calls); short/source security tests, optimistic lock, cookie isolation, ZIP locked on incomplete manifest; structural validationState NOT_RUN, no compiler or semantic success claim.
+
+**Concurrent main authority:** A separate v186 lyric release advanced main and runtime authorities while v185 was developed. Preserve and never overwrite that Roadmap/version/release. v185 is documentation + draft candidate only, no production request or deployed module bump. Re-read current authoritative version on close.
+
+**Status: IN PROGRESS** until v185 QA/release-gate notes and version record are closed.
+
 ## UPDATE FINISHED — 2026-10-09 — Lyric Ocean 700M creative conditioning v186 published to existing Hugging Face Space
 
 **Result: GUARDED PRODUCTION UPLOAD SUCCEEDED / EXACT SOURCE VERIFIED / LIVE USER LYRICAL ACCEPTANCE PENDING.** The user explicitly requested deployment for hands-on testing. Existing `kamiloki/Swyrlz` was updated through canonical `main:.deploy/HF_SPACE_REQUEST.txt` → `hf-space-request.yml` → main `manual-hf-space.yml`, using `SOURCE_REF=feature/archive-grounded-lyric-craft-v1`. No alternate publishing method, new Space, coder branch integration, §E deployment, user-private archive upload or model-weight fine-tuning.
