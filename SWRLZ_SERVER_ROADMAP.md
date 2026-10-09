@@ -1,3 +1,35 @@
+## UPDATE FINISHED — 2026-10-09 — independently corroborated song identity + text-body fetch priority v173
+
+**Outcome:** NATURAL TITLE/ARTIST PHRASE SUPPORTED AFTER CROSS-SOURCE CORROBORATION / MEDIA PAGES NO LONGER CONSUME LYRICS TEXT FETCH BUDGET / REGRESSION GATE PASSED / GUARDED HF DEPLOYED / LIVE USER-VISIBLE ACCEPTANCE PENDING.
+
+### User evidence and root
+`swrlz-dragon-chat (22).json` submitted as fresh hosted test at 2026-10-09 06:33 UTC. Prompt lacked an explicit `by`, so v172 subject parser stored title `rack city tyga`, artist empty. It discovered eight relevant search results, but used the three permitted fetch attempts on inaccessible Genius, access-challenged AZLyrics, and a malformed/non-text YouTube watch destination. Several text-lyrics sites remained in the search result set. The diagnostic marker still said v171 because v172 didn't increment the observability revision; this marker alone could not establish stale production.
+
+### Source-level correction
+- `hf_space/song_identity.py::resolve_unseparated_artist` accepts a natural contiguous title/artist phrase only when **at least two distinct source families** independently support the same title+artist split in visible result headings. No speculative suffix splitting and no song-specific exception.
+- `hf_space/song_identity.py::supports_direct_lyric_text_fetch` excludes known video/audio-stream hosts from direct lyric-body fetch attempts, retaining them as linkable search results.
+- `hf_space/online_tools.py::_search_bundle` uses corroborated subject for canonical lyric extraction/source identity and candidate ranking, preserves the actual original search and reasoner-fetch provenance, and keeps the three-page hard ceiling.
+- `ONLINE_OBSERVABILITY_REVISION=v173-cross-source-identity-and-text-fetch-priority` allows fresh Dragon Chat exports to establish the new code path.
+- Added integration fixture to the already-enforced `tests/test_diverse_lyric_fetch_budget_v170.py`, with negative uncorroborated identity test and proof that a video link does not exhaust text-body fetch capacity.
+- Source commit `60b88d865f2f05efcb6ef8809ebd6d3be9ff30d4` (contains identity implementation, corrected regex, adapter integration, regression).
+
+### Protected release evidence
+- Guarded workflow [#37894693395](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37894693395): terminal **SUCCESS**.
+- Exact candidate source SHA: `60b88d865f2f05efcb6ef8809ebd6d3be9ff30d4`.
+- Mandatory lyric regression suite including `diverse-lyric-fetch-budget-v170 PASS` and `unseparated-song-identity-text-fetch-v173 PASS`.
+- Isolated HF packaging, compilation, native R39 kernel verification, model reconstruction, model compatibility inspection, fast inference/Chat checks, 700M smoke, snapshot/rollback, upload, and checkpoint: all completed successfully.
+- Published Space revision `50e3030b6637e83d83bf31227520cd25b4c287b1`.
+- Previous revision reserved for rollback `a8f891d268327b89360b1b22f5a948ea44162fd0`.
+- Checkpoint `verificationState=DEPLOYED_UNVERIFIED`: CI/deploy success is **not** proof that new live requests behave correctly. Fresh hosted test and export still required.
+
+### Version outcome
+Repository Work **1.0.103**; Online Research **1.0.21**; Deployment Control **1.0.33**; Server Runtime **2.3.326 / 2.3.326-hf-v173-song-identity-text-fetch**. Web Chat **1.5.92**, LALM Engine **2.1.159**, Runtime Manifest **152** unchanged.
+
+### User acceptance continuation
+Retry the exact natural-language request on fresh hosted Chat and inspect a new Dragon Chat export. Expected: `observabilityRevision=v173-cross-source-identity-and-text-fetch-priority`; `songIdentity.title="rack city"` and `primaryArtist="tyga"` with `resolution=CROSS_SOURCE_HEADING_CONSENSUS` when at least two independent source headings still agree; video/music stream results may be listed but must not be visited as direct lyric-body pages. If a text source is accessible and verifies, expect lyric-body extraction and music-stage output. If not, preserve the new source/fetch-stage logs rather than inventing success.
+
+**Status:** FINISHED / SOURCE AND REGRESSION VERIFIED / GUARDED HUGGING FACE RELEASE SUCCESS / REVISION CAPTURED / LIVE v173 ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-09 — independent heading song-identity reconciliation + text-body source budget v173
 
 **Trigger:** user live `swrlz-dragon-chat (22).json`, exported 2026-10-09 06:33 UTC after the v172 release. Test prompt was "Can you provide lyrics for rack city tyga" (no "by"). Retrieval response remained blocked; unlike v171, no LyricsFreak body was fetched.
