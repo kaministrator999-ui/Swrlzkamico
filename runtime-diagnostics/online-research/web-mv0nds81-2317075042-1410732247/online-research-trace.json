@@ -1,0 +1,343 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-mv0nds81-2317075042-1410732247",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "60b88d865f2f05efcb6ef8809ebd6d3be9ff30d4",
+  "persistedAtUnixMs": 1791531138561,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v173-cross-source-identity-and-text-fetch-priority",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 738,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Now use those lyrics and create an original rap song using that as a guide to word uses",
+          "title": "NOW - Watch TV, Movies & Live Sports online",
+          "url": "https://www.nowtv.com/",
+          "source": "www.nowtv.com",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "now"
+          ],
+          "coreTerms": [
+            "now",
+            "use",
+            "those",
+            "create",
+            "rap",
+            "using",
+            "that",
+            "guide",
+            "word",
+            "uses"
+          ],
+          "snippetPreview": "Choose your NOW Membership and stream the latest movies, TV series, live sports and kids entertainment on demand."
+        },
+        {
+          "query": "Now use those lyrics and create an original rap song using that as a guide to word uses",
+          "title": "NOW Foods | NOW Supplements | NOW Vitamins | NOW Products",
+          "url": "https://www.nowfoods.com/",
+          "source": "www.nowfoods.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "now"
+          ],
+          "coreTerms": [
+            "now",
+            "use",
+            "those",
+            "create",
+            "rap",
+            "using",
+            "that",
+            "guide",
+            "word",
+            "uses"
+          ],
+          "snippetPreview": "Discover high-quality natural products at NOW Foods. Explore our range of supplements, essential oils, and personal care items to …"
+        },
+        {
+          "query": "Now use those lyrics and create an original rap song using that as a guide to word uses",
+          "title": "Play Online Games for Free | now .gg Mobile Cloud",
+          "url": "https://now.gg/",
+          "source": "now.gg",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "now"
+          ],
+          "coreTerms": [
+            "now",
+            "use",
+            "those",
+            "create",
+            "rap",
+            "using",
+            "that",
+            "guide",
+            "word",
+            "uses"
+          ],
+          "snippetPreview": "Play your favorite games online for free. No downloads or installs. Enjoy non-stop gaming on any device at a single click on now.gg."
+        },
+        {
+          "query": "Now use those lyrics and create an original rap song using that as a guide to word uses",
+          "title": "Now TV Home Page | Now TV",
+          "url": "https://www.nowtv.now.com/",
+          "source": "www.nowtv.now.com",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "now"
+          ],
+          "coreTerms": [
+            "now",
+            "use",
+            "those",
+            "create",
+            "rap",
+            "using",
+            "that",
+            "guide",
+            "word",
+            "uses"
+          ],
+          "snippetPreview": "Welcome to Now TV - all your entertainment in one place. Watch the latest movies, tv series, dramas, sports, news and so much more."
+        },
+        {
+          "query": "Now use those lyrics and create an original rap song using that as a guide to word uses",
+          "title": "Now TV Website",
+          "url": "https://nowplayer.now.com/",
+          "source": "nowplayer.now.com",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "now"
+          ],
+          "coreTerms": [
+            "now",
+            "use",
+            "those",
+            "create",
+            "rap",
+            "using",
+            "that",
+            "guide",
+            "word",
+            "uses"
+          ],
+          "snippetPreview": "Enjoy more of your subscribed content, anytime, anywhere without additional cost, and control your set top box with a virtual remote …"
+        },
+        {
+          "query": "Now use those lyrics and create an original rap song using that as a guide to word uses",
+          "title": "Nutritional Supplements | Vitamins and Supplements | NOW Foods",
+          "url": "https://www.nowfoods.com/products/supplements",
+          "source": "www.nowfoods.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "now"
+          ],
+          "coreTerms": [
+            "now",
+            "use",
+            "those",
+            "create",
+            "rap",
+            "using",
+            "that",
+            "guide",
+            "word",
+            "uses"
+          ],
+          "snippetPreview": "Explore nearly 900 nutritional supplements at NOW Foods. Empower your health with our wide selection of vitamins, minerals, and …"
+        },
+        {
+          "query": "Now use those lyrics and create an original rap song using that as a guide to word uses",
+          "title": "National Organization for Women",
+          "url": "https://now.org/",
+          "source": "now.org",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "now"
+          ],
+          "coreTerms": [
+            "now",
+            "use",
+            "those",
+            "create",
+            "rap",
+            "using",
+            "that",
+            "guide",
+            "word",
+            "uses"
+          ],
+          "snippetPreview": "As the grassroots arm of the women’s movement, NOW’s purpose is to promote feminist ideals, lead societal change, eliminate …"
+        },
+        {
+          "query": "Now use those lyrics and create an original rap song using that as a guide to word uses",
+          "title": "ServiceNow, Inc . ( NOW ) Stock Price, News, Quote & History - Yahoo …",
+          "url": "https://finance.yahoo.com/quote/NOW/",
+          "source": "finance.yahoo.com",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "now"
+          ],
+          "coreTerms": [
+            "now",
+            "use",
+            "those",
+            "create",
+            "rap",
+            "using",
+            "that",
+            "guide",
+            "word",
+            "uses"
+          ],
+          "snippetPreview": "Find the latest ServiceNow, Inc. (NOW) stock quote, history, news and other vital information to help you with your stock trading and …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791531137822,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791531137823,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791531137985,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791531137985,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791531138125,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791531138126,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791531138560,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791531138560,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791531138560,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
