@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.161
-REVISION=2.1.161-contextual-rap-creation-v175
+VERSION=2.1.162
+REVISION=2.1.162-structure-only-song-reference-v177
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
