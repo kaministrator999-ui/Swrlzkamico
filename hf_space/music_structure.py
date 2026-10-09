@@ -219,6 +219,7 @@ _CREATIVE_MORE_REQUEST=re.compile(
 )
 _CREATIVE_SOURCE_FOOTER=re.compile(r"(?i)\*\*lyrics source:\*\*")
 _CREATIVE_FORM_WORDS=re.compile(r"[A-Za-z0-9][A-Za-z0-9'’\-]*")
+_CREATIVE_POST_SOURCE_META=re.compile(r"(?i)^\s*(?:songwriters?|publishers?|powered\s+by|top\s+(?:lyrics|artists|songs)|writers?|copyright)\b")
 _CREATIVE_CODE_FRAGMENT=re.compile(
     r"(?i)(?:^\s*[:@]?(?:class|style|id|v-if|v-for)\s*=|"
     r"^\s*[A-Za-z_$][A-Za-z0-9_$.\[\]]*\s*=\s*[^=]|"
@@ -278,12 +279,15 @@ def _creative_display_form(body: str) -> list[dict[str,Any]]:
 
     for raw in region[:500]:
         line=raw.strip()
+        if _CREATIVE_POST_SOURCE_META.match(line):
+            break
         if _CREATIVE_CODE_FRAGMENT.search(line):
             continue
         if not line or line.startswith("──"):
             flush()
             continue
-        parsed=parse_section_marker(line.strip("* \t")) if re.fullmatch(r"\s*\[[^\]\n]+\]\s*",line) else None
+        label=line.strip("* \t")
+        parsed=parse_section_marker(label) if re.fullmatch(r"\[[^\]\n]+\]",label) else None
         if parsed and parsed.get("type")!="performer_cue":
             flush()
             label_type=str(parsed.get("type") or "section")
