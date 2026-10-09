@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/lyric-output-acceptance-v187
-REQUEST_NONCE=2026-10-09-v187-lyric-form-acceptance-live-feedback-001
+SOURCE_REF=feature/lyric-continuation-recovery-v188
+REQUEST_NONCE=2026-10-09-v188-append-only-lyric-completion-001
