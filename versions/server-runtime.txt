@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.336
-REVISION=2.3.336-hf-v187-direct-lyric-acceptance-release
+VERSION=2.3.337
+REVISION=2.3.337-hf-v188-lyric-append-recovery-release
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
