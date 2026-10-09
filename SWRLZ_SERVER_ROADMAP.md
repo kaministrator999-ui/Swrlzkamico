@@ -6,6 +6,8 @@
 
 **Branch source edits:** `hf_space/online_tools.py` candidate loop, new `ONLINE_OBSERVABILITY_REVISION=v178-last-slot-structured-lyrics-rescue`. Test `tests/test_diverse_lyric_fetch_budget_v170.py` now isolates previous mock scenario from live search and adds mocked Dragon Chat 27 failed-Genius/challenged-AZ/newly-discovered-structured-source regression. **Versions staged:** Repository Work 1.0.108, Online Research 1.0.26, Deployment Control 1.0.38; LALM Engine 2.1.162 (unchanged); Server Runtime 2.3.331 only on verified publish.
 
+**Initial protected workflow stopped without HF publication:** [#37955779905](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37955779905) tripped historic v158 bounded fallback fixture. Two **successfully fetched but empty** pages were enough to hit the proposed last-slot search, which in that test was not mocked; public search returned an unrelated structured page and used the final slot. This exposed a real overbroad rescue trigger. Narrowed rescue to cases with an actual previous `FETCH_ERROR` (not merely parsed-page rejection); regression v158 now asserts no extra search for rejection-only paths. Fix source `197192a150d5b93bd262682c5b4f0590440eee35`; regression `ddad6625166bb2f4a9cc3f45a0bce2dff59a8a72`. Retest required.
+
 **State:** Candidate committed; guarded deployment regressions and real hosted v178 behavior not yet confirmed.
 
 ## UPDATE FINISHED — 2026-10-09 — lyrics source integrity and structure-only creative rap v177
