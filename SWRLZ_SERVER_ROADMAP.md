@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-09 — Maturity v4: source-aware effort escalation and offline comparison gate
+
+**User request:** Continue upgrading model engineering capability after v3 source-grounded curricula and opt-in tier estimator. Begin actual source-aware escalation and a reproducible baseline-vs-candidate quality benchmark that cannot convert self-reports into proof. Preserve first-hop quick response for genuinely easy work and escalate after verified source/test/ownership evidence.
+
+**Baseline:** prior Maturity v3 Roadmap event closed; Repository Work `1.0.115`; v182 [draft PR #56](https://github.com/kaministrator999-ui/Swrlzkamico/pull/56) on `feature/coder-adaptive-effort-v1` (SHA `b43ce50d3cea51114d678402c1319a926d13828f`), targeting `feature/hf-space-manual-deploy` (SHA `a44225276161d4af66600e3a7f2499854577ecff`). Candidate CI success [37978675225](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37978675225); production flag OFF/no merge/no weight update. New isolated stacked branch `feature/task-discovery-replan-v1` was created from exact v182 candidate SHA; no production branch changes.
+
+**Implementation boundary:** Add standalone pure **second-stage effort reconciliation** driven by trusted source/affected-owner/dependency/test evidence; untrusted input cannot authorize side effects or be promoted to verified planning; initial effort level must not silently decrease. Add targeted adversarial tests and isolated GitHub Action. Build a paired-evaluation contract/harness that refuses unverified quality scores, preserves pair identity/checkpoint/prompt revision, and reports unknown as unknown. No automatic hosted GGUF inference, no paid compute, no deployment, no new Station queue ownership. Stage 2 is *not live-integrated* without actual trusted Workstation evidence boundary and protected regressions.
+
+**Acceptance:** CI syntax and branch-source tests, provenance-aware benchmark test, source ref/PR verification, canonical policy link and Roadmap closure; repository work version advances, module versions only on actual deployed executable module mutation. Any model capability claims require real exact model candidate and independently verifiable run receipts.
+
+**Status: IN PROGRESS.**
+
 ## UPDATE FINISHED — 2026-10-09 — Model maturity v3: adaptive effort, student benchmark and safe progression
 
 **Outcome:** Source/architecture curriculum, deterministic classifier candidate and basic CI COMPLETE. **No trained weights / no production activation / actual Qwen & 700M quality evaluation not performed.** The requested model-growth initiative now has an implementation branch, repeatable tests, a draft integration review, durable model maturity lessons, and separate public model-behavior exams.
