@@ -1,0 +1,396 @@
+{
+  "schema": "swrlz-lyric-ocean-assistant-editorial-pass-v4",
+  "status": "PROVISIONAL_EDITORIAL_NOT_INDEPENDENT_BLIND_REVIEW",
+  "scoringConflict": "The composing assistant reviewed its own prior synthetic examples. Scores must not be treated as independent model-quality labels.",
+  "method": "Five applicable rubric dimensions per song, each with exact line-level strength and revision issue. A human or separate independent evaluator should review performance and rights before training.",
+  "coverage": {
+    "songs": 14,
+    "dimensions": [
+      "meaning_coherence",
+      "rhyme_architecture",
+      "cadence_performability",
+      "full_form_completion",
+      "scene_and_image"
+    ]
+  },
+  "reviews": [
+    {
+      "id": "ED-01",
+      "song": "Turnstile Calculus",
+      "sourceAsset": "original_full_compositions_v2.json",
+      "sourceLineCount": 32,
+      "positiveEvidence": {
+        "line": 8,
+        "excerpt": "Short step. Hard stop.",
+        "mechanism": "Rests create one of the few audible cadence breaks."
+      },
+      "revisionEvidence": {
+        "line": 32,
+        "excerpt": "Just real progress making.",
+        "defect": "The final clause is unidiomatic; repair the ending without sacrificing the return-to-journey payoff."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 2,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 3,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-02",
+      "song": "Forecast Employees Union",
+      "sourceAsset": "original_full_compositions_v2.json",
+      "sourceLineCount": 34,
+      "positiveEvidence": {
+        "line": 15,
+        "excerpt": "The hail asked for promotion",
+        "mechanism": "Personified weather has a consistent office-union comic frame."
+      },
+      "revisionEvidence": {
+        "line": 32,
+        "excerpt": "Occasional compassion",
+        "defect": "The late moral is spelled out in a bureaucratic slogan; make the seedling's need and rain create the payoff."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 3,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 3,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-03",
+      "song": "Folded Map, Unsent Letter",
+      "sourceAsset": "original_full_compositions_v2.json",
+      "sourceLineCount": 32,
+      "positiveEvidence": {
+        "line": 12,
+        "excerpt": "A map can mark a distance",
+        "mechanism": "A recurring road metaphor supports a meaningful personal choice."
+      },
+      "revisionEvidence": {
+        "line": 24,
+        "excerpt": "I finally understood to plan.",
+        "defect": "Awkward phrasing weakens the action; choose a natural idiom, preserving the postcard decision."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 2,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 3,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-04",
+      "song": "Two Sides of the Bridge",
+      "sourceAsset": "original_full_compositions_v2.json",
+      "sourceLineCount": 34,
+      "positiveEvidence": {
+        "line": 21,
+        "excerpt": "The drawing looks expensive.",
+        "mechanism": "Short exchanges break up the otherwise uniform long couplets and show genuine opposition."
+      },
+      "revisionEvidence": {
+        "line": 34,
+        "excerpt": "two different ways of living act as one.",
+        "defect": "The ending narrates its lesson rather than ending on the newly modified crossing."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 3,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 4,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-05",
+      "song": "Terminal Four",
+      "sourceAsset": "original_full_compositions_v2.json",
+      "sourceLineCount": 32,
+      "positiveEvidence": {
+        "line": 17,
+        "excerpt": "I tie a little knot",
+        "mechanism": "Concrete repaired-bag action earns the emotional subtext."
+      },
+      "revisionEvidence": {
+        "line": 12,
+        "excerpt": "Some things stay home in the things that you hold.",
+        "defect": "The repeated abstract line is less natural than the luggage motif; streamline to improve singability."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 3,
+        "rhyme_architecture": 2,
+        "cadence_performability": 3,
+        "full_form_completion": 3,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-06",
+      "song": "Backroom Workshop",
+      "sourceAsset": "original_full_compositions_v2.json",
+      "sourceLineCount": 32,
+      "positiveEvidence": {
+        "line": 19,
+        "excerpt": "The little crooked metronome",
+        "mechanism": "The off-time workshop becomes a coherent musical metaphor enacted through other instruments."
+      },
+      "revisionEvidence": {
+        "line": 27,
+        "excerpt": "He loosened it a fraction",
+        "defect": "Resolution through restored imperfection is earned, but rhyme density stays simple; revise selected internals."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 3,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 3,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-07",
+      "song": "The Map That Wouldn't Fold",
+      "sourceAsset": "original_complete_songs_v3.json",
+      "sourceLineCount": 32,
+      "positiveEvidence": {
+        "line": 18,
+        "excerpt": "The river changed its course.",
+        "mechanism": "An external event forces the route change, giving the story causality."
+      },
+      "revisionEvidence": {
+        "line": 28,
+        "excerpt": "meaning that it lacked.",
+        "defect": "The closing abstract phrase is semantically unclear and consumes a rhyme slot."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 3,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 3,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-08",
+      "song": "The Mayor of Lost Umbrellas",
+      "sourceAsset": "original_complete_songs_v3.json",
+      "sourceLineCount": 32,
+      "positiveEvidence": {
+        "line": 17,
+        "excerpt": "The child produced a needle",
+        "mechanism": "Specific repair action punctures the mayor's grand solution in a useful comic reversal."
+      },
+      "revisionEvidence": {
+        "line": 24,
+        "excerpt": "nothing spent.",
+        "defect": "The payment line is unidiomatic and the chorus doesn't evolve until the very end."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 2,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 3,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-09",
+      "song": "A Small Blue Frequency",
+      "sourceAsset": "original_complete_songs_v3.json",
+      "sourceLineCount": 32,
+      "positiveEvidence": {
+        "line": 15,
+        "excerpt": "carried extra blankets",
+        "mechanism": "The protagonist acts on information from the radio, rather than merely thinking about a memory."
+      },
+      "revisionEvidence": {
+        "line": 11,
+        "excerpt": "don't promise what you can't",
+        "defect": "An unfinished-sounding lyrical sentence creates ambiguity; make the refrain melodically self-contained."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 3,
+        "rhyme_architecture": 2,
+        "cadence_performability": 3,
+        "full_form_completion": 3,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-10",
+      "song": "Two Apprentices and One Clock",
+      "sourceAsset": "original_complete_songs_v3.json",
+      "sourceLineCount": 30,
+      "positiveEvidence": {
+        "line": 11,
+        "excerpt": "the second hand is catching",
+        "mechanism": "Technical observation provides a specific disagreement that leads to collaboration."
+      },
+      "revisionEvidence": {
+        "line": 24,
+        "excerpt": "the little gear is seen.",
+        "defect": "The verbal payoff is mechanically flat; finish the successful repair with sound/action rather than a generic observation."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 3,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 3,
+        "scene_and_image": 2
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-11",
+      "song": "The Mechanical Orchard",
+      "sourceAsset": "original_complete_songs_v3.json",
+      "sourceLineCount": 32,
+      "positiveEvidence": {
+        "line": 25,
+        "excerpt": "I stop their conveyors.",
+        "mechanism": "The pause demonstrates an actual dramatic rhythm break, not just an instruction to slow down."
+      },
+      "revisionEvidence": {
+        "line": 32,
+        "excerpt": "parts of its section.",
+        "defect": "The final rhyme is semantically forced; internal rhymes often name machinery without moving the plot."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 2,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 3,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-12",
+      "song": "The Last Elevator Operator",
+      "sourceAsset": "original_complete_songs_v3.json",
+      "sourceLineCount": 30,
+      "positiveEvidence": {
+        "line": 14,
+        "excerpt": "A postcard from the suitcase",
+        "mechanism": "The photograph becomes a useful concrete clue for the reveal."
+      },
+      "revisionEvidence": {
+        "line": 16,
+        "excerpt": "a girl who would be later.",
+        "defect": "The central reveal is obscured by strained time/rhyme syntax; rewrite the relationship as a legible event."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 2,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 2,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-13",
+      "song": "The Arguments of Day and Night",
+      "sourceAsset": "original_complete_songs_v3.json",
+      "sourceLineCount": 30,
+      "positiveEvidence": {
+        "line": 14,
+        "excerpt": "By lanterns, stars and kindness",
+        "mechanism": "A point-by-point rebuttal answers Day's specific claim rather than generic insult."
+      },
+      "revisionEvidence": {
+        "line": 30,
+        "excerpt": "evening passes by.",
+        "defect": "The final idea is agreeable but predictable; the voices could negotiate a tangible shared responsibility."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 3,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 3,
+        "scene_and_image": 2
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    },
+    {
+      "id": "ED-14",
+      "song": "The Costume Department Ghost",
+      "sourceAsset": "original_complete_songs_v3.json",
+      "sourceLineCount": 34,
+      "positiveEvidence": {
+        "line": 24,
+        "excerpt": "I've dressed a thousand people",
+        "mechanism": "A backstage worker's unrecognized labor provides an earned emotional motive."
+      },
+      "revisionEvidence": {
+        "line": 16,
+        "excerpt": "revealed what characters mean.",
+        "defect": "A line explains rather than dramatizes the magic; some consonant-heavy couplets don't fit the swing label naturally."
+      },
+      "provisionalScores": {
+        "meaning_coherence": 3,
+        "rhyme_architecture": 2,
+        "cadence_performability": 2,
+        "full_form_completion": 3,
+        "scene_and_image": 3
+      },
+      "scoreScale": "0_to_4",
+      "performanceVerified": false,
+      "editorialIndependence": "SAME_ASSISTANT_REVIEW_NOT_BLIND",
+      "trainingApproval": "REJECT_PENDING_INDEPENDENT_QC"
+    }
+  ]
+}
