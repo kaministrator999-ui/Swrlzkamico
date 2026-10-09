@@ -102,7 +102,7 @@ def _form_cards() -> tuple[dict, ...]:
 def _specific_form_cue(text: str) -> str:
     low = " ".join(str(text or "").casefold().split())
     for card in _form_cards():
-        if any(t and re.search(r"(?<!\\w)" + re.escape(t) + r"(?!\\w)", low) for t in card["triggers"]):
+        if any(t and re.search(r"(?<!\w)" + re.escape(t) + r"(?!\w)", low) for t in card["triggers"]):
             return card["cue"]
     return ""
 
