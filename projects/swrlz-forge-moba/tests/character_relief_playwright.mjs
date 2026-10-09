@@ -183,7 +183,11 @@ function unchangedContent(saved,original,label){
   for(const field of ['animeTimeline','animeScenery','animeSockets','animeEmergence'])
     assert.deepEqual(saved.project[field],original.project[field],'Piece depth edits overwrite '+field+': '+label);
   assert.deepEqual(saved.scene,original.scene,'Piece depth editing overwrites native actors: '+label);
-  assert.deepEqual(saved.editor,original.editor,'Piece depth editing overwrites native layers: '+label);
+  // Native authoring advances the editor history revision; all saved layer
+  // properties and the other editor settings still need to remain identical.
+  const {revision:savedRevision,...savedEditor}=saved.editor;
+  const {revision:originalRevision,...originalEditor}=original.editor;
+  assert.deepEqual(savedEditor,originalEditor,'Piece depth editing overwrites native layers or settings: '+label);
 }
 
 let passed=false;
@@ -232,6 +236,8 @@ try{
     for(const id of Object.keys(beforeRig.joints))close(distance(beforeRig.joints[id].worldPosition,changedRig.joints[id].worldPosition),0,
       'Editing costume relief moves a connected skeletal pivot: '+id,.00002);
     assert.deepEqual((await project(page)).project.animeRigs,original.project.animeRigs,'Section depth replaces the saved body/face keys');
+    assert.ok((await project(page)).editor.revision>original.editor.revision,
+      'Native depth authoring does not advance the editor history revision');
     unchangedContent(await project(page),original,mode.name+' depth authoring');
     await historyAction(page,'undo');await seek(page,19);
     assert.deepEqual((await project(page)).project.animeRelief,original.project.animeRelief,'One Undo does not restore piece depth');
