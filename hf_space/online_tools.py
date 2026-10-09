@@ -33,7 +33,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v179-bounded-source-candidate-recovery"
+ONLINE_OBSERVABILITY_REVISION = "v180-lyric-chrome-and-creative-carry-isolation"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -460,11 +460,26 @@ LYRICS_MAX_RESCUE_SEARCHES=8
 LYRICS_PAGE_TEXT_CHARS=24000
 
 
+_LYRIC_EMBEDDED_CODE=re.compile(
+    r"(?i)(?:^\s*[:@]?(?:class|style|id|v-if|v-for)\s*=|"
+    r"^\s*[A-Za-z_$][A-Za-z0-9_$.\[\]]*\s*=\s*[^=]|"
+    r"^\s*[}{}]\s*(?:else|if|$)|"
+    r"^\s*(?:if|else\s+if|while|function)\s*\(|"
+    r"(?:=>|\b(?:const|let|var)\s+\w+\s*=)|"
+    r"^\s*[^<>]*[{}]\s*$)"
+)
+_LYRIC_BREADCRUMB=re.compile(
+    r"(?i)^\s*(?:artists?|genres?|albums?|lyrics?\s+by)\s*:\s*[^\n]{0,90}(?:/|\b[A-Z]\b)\s*$"
+)
+
+
 def _lyrics_line_is_content(line: str) -> bool:
     value=line.strip()
     if not value or len(value)>180:
         return False
     if value.lower().startswith(("http://","https://")):
+        return False
+    if _LYRIC_EMBEDDED_CODE.search(value) or _LYRIC_BREADCRUMB.fullmatch(value):
         return False
     if _LYRIC_PAGE_NOISE.search(value):
         return False
@@ -740,6 +755,11 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
 
     scoped=[]
     started=False
+    # Site renderers may place JS, artist breadcrumbs and a title before
+    # actual lyrical lines. Never treat that page chrome as source wording.
+    page_breadcrumb=False
+    title_name,_=_lyrics_subject_parts(subject)
+    title_norm=" ".join(str(title_name).casefold().split())
     terminal_kind=""
     terminal_line=""
     for raw_line in work_lines:
@@ -747,6 +767,15 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
         if not line:
             if started and (not scoped or scoped[-1]!=""):
                 scoped.append("")
+            continue
+        if _LYRIC_EMBEDDED_CODE.search(line):
+            continue
+        if _LYRIC_BREADCRUMB.fullmatch(line):
+            if not started:
+                page_breadcrumb=True
+            continue
+        if not started and page_breadcrumb and " ".join(line.casefold().split())==title_norm:
+            page_breadcrumb=False
             continue
         if started and _LYRIC_HARD_BOUNDARY.fullmatch(line):
             terminal_kind="HARD_BOUNDARY"; terminal_line=line; break
