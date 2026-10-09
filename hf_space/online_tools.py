@@ -33,7 +33,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v180-lyric-chrome-and-creative-carry-isolation"
+ONLINE_OBSERVABILITY_REVISION = "v181-song-metadata-clean-form-integrity"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -758,8 +758,11 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
     # Site renderers may place JS, artist breadcrumbs and a title before
     # actual lyrical lines. Never treat that page chrome as source wording.
     page_breadcrumb=False
-    title_name,_=_lyrics_subject_parts(subject)
-    title_norm=" ".join(str(title_name).casefold().split())
+    title_name,artist_name=_lyrics_subject_parts(subject)
+    def header_fold(value):
+        return " ".join(re.findall(r"[a-z0-9]+",str(value or "").casefold()))
+    title_norm=header_fold(title_name)
+    artist_norm=header_fold(artist_name)
     terminal_kind=""
     terminal_line=""
     for raw_line in work_lines:
@@ -774,9 +777,15 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
             if not started:
                 page_breadcrumb=True
             continue
-        if not started and page_breadcrumb and " ".join(line.casefold().split())==title_norm:
-            page_breadcrumb=False
-            continue
+        if not started:
+            # Treat site-specific song-header chrome as metadata ONLY before
+            # the first lyrical line. Actual later refrain repetitions remain.
+            head=header_fold(line)
+            if (head in {title_norm,artist_norm+" lyrics", "by "+artist_norm}
+                and head and (head==title_norm or artist_norm)):
+                continue
+            if re.fullmatch(r"\\s*\\([^()]{1,85}\\s+(?:mixtape\\s+version|album\\s+version|single\\s+version|version)\\s*\\)\\s*",line,re.I):
+                continue
         if started and _LYRIC_HARD_BOUNDARY.fullmatch(line):
             terminal_kind="HARD_BOUNDARY"; terminal_line=line; break
         if started and _LYRIC_RECOMMENDATION_LINE.fullmatch(line):
