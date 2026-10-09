@@ -1,19 +1,21 @@
-"""Static and runtime-gating checks for privacy-safe original-lyric craft guidance.
+"""Fast contract tests: broad original-song pedagogy without lookup hijacks.
 
-These tests verify prompt integration, not actual generation quality or trained weights.
+Test the deterministic selector and wiring, not artistic benchmark quality.
 """
 from __future__ import annotations
 
+import importlib
+import json
 import pathlib
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "hf_space"))
 
-from lyric_craft_school import LYRIC_CRAFT_SCHOOL, lyric_craft_policy
+from lyric_craft_school import LYRIC_CRAFT_SCHOOL, _catalog, lyric_craft_policy
 
 
-def test_creative_requests_get_the_craft_school():
+def test_creative_requests_activate_without_forcing_one_style():
     for prompt in (
         "Write me a complete original rap song about a clock, 800 words.",
         "Freestyle",
@@ -21,11 +23,16 @@ def test_creative_requests_get_the_craft_school():
         "Next song",
         "Craft a catchy hook about the old clock",
         "Write a melancholy verse with internal rhymes",
+        "Make a full song about a botanist on the moon",
+        "Give me another rap",
     ):
-        assert lyric_craft_policy(prompt) == LYRIC_CRAFT_SCHOOL, prompt
+        result = lyric_craft_policy(prompt)
+        assert result.startswith(LYRIC_CRAFT_SCHOOL), prompt
+        assert "FOCUSED ORIGINAL SONGWRITING TOOLS" in result, prompt
+        assert len(result) < 2900, prompt
 
 
-def test_lookup_and_analysis_do_not_get_songwriting_prefill():
+def test_noncreative_requests_never_receive_music_generation_instructions():
     for prompt in (
         "Find lyrics to a song online",
         "Analyze those song lyrics",
@@ -34,26 +41,63 @@ def test_lookup_and_analysis_do_not_get_songwriting_prefill():
         "Search for a rap song by title",
         "What is a chorus?",
         "Please explain songwriting",
+        "Write an analysis of a famous rap song",
+        "Draft a critique of those lyrics",
+        "Compare two verses",
     ):
         assert lyric_craft_policy(prompt) == "", prompt
 
 
-def test_reference_followups_get_craft_without_source_lyrics():
-    assert lyric_craft_policy("Do another one", structural_reference=True)
-    assert "earlier songs' wording" in LYRIC_CRAFT_SCHOOL
-    assert "PRIVATE" not in LYRIC_CRAFT_SCHOOL
+def test_structural_reference_isolation():
+    reply = lyric_craft_policy("Do another one", structural_reference=True)
+    assert reply.startswith(LYRIC_CRAFT_SCHOOL)
+    assert "learn only the abstract musical form" in reply
+    assert "Never recycle earlier songs' wording" in reply
 
 
-def test_700m_route_is_wired_to_the_compact_policy():
+def test_catalog_structure_is_bounded_and_privacy_safe():
+    path = ROOT / "hf_space" / "lyric_craft_catalog_v2.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert data["schema"] == "swrlz-lyric-craft-router-catalog-v2"
+    assert data["count"] == 48
+    cards = _catalog()
+    assert len(cards) == 48
+    assert len({(c["axis"], c["role"]) for c in cards}) == 48
+    assert set(c["role"] for c in cards) == {"build", "perform", "repair"}
+    assert all(c["cue"] and len(c["cue"]) <= 260 for c in cards)
+
+
+def test_teaching_is_prompt_bounded_and_deterministic():
+    p = "Write a fast chopper freestyle about the last train"
+    a = lyric_craft_policy(p)
+    b = lyric_craft_policy(p)
+    assert a == b
+    assert "high-speed:" in a or "freestyle:" in a
+    assert a.count("FOCUSED ORIGINAL SONGWRITING TOOLS") == 1
+    assert "song title" not in a.lower()
+
+
+def test_700m_route_is_wired_at_the_existing_music_owner():
     text = (ROOT / "hf_space" / "lfm2_700m_engine.py").read_text(encoding="utf-8")
-    assert "from lyric_craft_school import lyric_craft_policy" in text
-    assert 'lyric_craft_policy(prompt, structural_reference=bool(reference_structure))' in text
-    assert "if craft_policy:" in text
+    assert text.count("from lyric_craft_school import lyric_craft_policy") == 1
+    assert text.count('lyric_craft_policy(prompt, structural_reference=bool(reference_structure))') == 1
+    assert text.count("if craft_policy:") == 1
+    assert "from music_structure import music_model_policy" in text
+
+
+def test_public_practice_bank_excludes_private_source_and_labels_training_honestly():
+    path = ROOT / "training" / "lyrics" / "lyric_ocean_practice_v2.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert data["caseCount"] == 768
+    assert data["contrastCount"] == 64
+    assert len({c["id"] for c in data["cases"]}) == 768
+    assert all(c["grade"] == "NOT_RUN" for c in data["cases"])
+    assert all(c["source"] == "SYNTHETIC_ORIGINAL_PROMPT_NO_PRIVATE_ARCHIVE_TEXT" for c in data["cases"])
+    assert not any("assistant_response" in c or "conversation_id" in c for c in data["cases"])
 
 
 if __name__ == "__main__":
-    test_creative_requests_get_the_craft_school()
-    test_lookup_and_analysis_do_not_get_songwriting_prefill()
-    test_reference_followups_get_craft_without_source_lyrics()
-    test_700m_route_is_wired_to_the_compact_policy()
-    print("archive-grounded-original-lyrics-v1 PASS")
+    for obj in list(globals().values()):
+        if callable(obj) and getattr(obj, "__name__", "").startswith("test_"):
+            obj()
+    print("archive-grounded-lyric-ocean-v2 PASS")
