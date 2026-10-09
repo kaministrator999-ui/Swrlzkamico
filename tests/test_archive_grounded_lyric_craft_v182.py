@@ -236,6 +236,24 @@ def test_v4_form_specific_teaching_stays_compact_and_CREATIVE_only():
         assert lyric_craft_policy(request) == "", request
 
 
+
+def test_v4_evidence_revisions_reference_exact_public_lines():
+    root = ROOT / "training" / "lyrics"
+    revisions = json.loads((root / "EVIDENCE_LINKED_REVISIONS_V4.json").read_text(encoding="utf-8"))
+    assert revisions["count"] == len(revisions["cards"]) == 14
+    src_a = json.loads((root / "original_full_compositions_v2.json").read_text(encoding="utf-8"))
+    src_b = json.loads((root / "original_complete_songs_v3.json").read_text(encoding="utf-8"))
+    sources = {"original_full_compositions_v2.json": src_a,
+               "original_complete_songs_v3.json": src_b}
+    for item in revisions["cards"]:
+        song = next(s for s in sources[item["sourceAsset"]]["songs"] if s["title"] == item["song"])
+        assert song["lines"][item["sourceLine"] - 1] == item["before"]
+        assert item["after"] != item["before"]
+        assert item["validation"] == "UNREVIEWED_PROPOSED_REPAIR"
+        assert item["trainingAccepted"] is False
+        assert item["sourceIsPublicSynthetic"] is True
+
+
 if __name__ == "__main__":
     for obj in list(globals().values()):
         if callable(obj) and getattr(obj, "__name__", "").startswith("test_"):
