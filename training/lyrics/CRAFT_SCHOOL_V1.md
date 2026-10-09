@@ -34,3 +34,14 @@ An owner-provided conversation archive was reviewed privately for assistant-crea
 5. Actual weight learning is a distinct project: user-authorized clean samples, rights/privacy review, independent evaluator/holdout, compatible 700M fine-tune/adapter, baseline comparison and explicit checkpoint promotion.
 
 **Safety and concurrency:** The source branch targets the existing HF Chat candidate; do not touch the independently deployed §wyrl§ Engine. The new policy intentionally contains no sampled lyrics and does not override either Project Start or Programming/Model architecture.
+
+
+## v2 Ocean expansion — parallel archive breadth before quality benchmarking
+
+The continuation is owned by [`LYRIC_OCEAN_CURRICULUM_V2.md`](./LYRIC_OCEAN_CURRICULUM_V2.md) and its indexed exercises/demonstrations:
+- [`lyric_ocean_practice_v2.json`](./lyric_ocean_practice_v2.json) — 768 original scenarios, 64 contrastive repair drills;
+- [`original_demonstrations_v2.json`](./original_demonstrations_v2.json) — 24 different eight-line treatments;
+- [`original_full_compositions_v2.json`](./original_full_compositions_v2.json) — six longer complete-arc drafts;
+- [`../../hf_space/lyric_craft_catalog_v2.json`](../../hf_space/lyric_craft_catalog_v2.json) — 48 reusable runtime-specific teaching cards, selectively retrieved by the same 700M craft policy.
+
+The 261-case user-private archive review is deliberately **not** copied into this repository. **No actual model fine-tuning, held-out success labeling, new adapter, or production activation is established.** Existing lyric structure/reference isolation remains in `hf_space/music_structure.py`. The next implementation owner should not silently replace the 700M creative hook with a separate music-policy writer.
