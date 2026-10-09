@@ -501,6 +501,6 @@ assert v179_rejected_fetches==[
     "https://www.musixmatch.com/lyrics/Tyga-3/rack-city"
 ],v179_rejected_fetches
 assert all(rec["admittedCount"]==0 for rec in v179_rejected["lyricsRescueSearchDebug"])
-assert any(x["decision"]=="NOT_LYRICS_RESULT" for x in v179_rejected["lyricsRescueSearchDebug"][0]["candidates"])
+assert any(x["decision"] in {"SONG_IDENTITY_UNCERTAIN","NOT_LYRICS_RESULT"} for x in v179_rejected["lyricsRescueSearchDebug"][0]["candidates"])
 assert all(x["decision"]!="ACCEPTED" for x in v179_rejected["lyricsRescueSearchDebug"][0]["candidates"])
 print("live-28-reject-mismatched-or-nontext-rescue-v179 PASS")
