@@ -332,20 +332,14 @@ def _response_mode(prompt, programming=None):
         )
     coding=structured_coding or bool(re.search(r"\b(?:html|css|javascript|typescript|python|kotlin|java|code|webpage|file)\b",p))
     if coding:
-        explicit_chat=any(x in p for x in ("provide the code","show the code","code in chat","paste the code","code block"))
-        explicit_file=any(x in p for x in ("as a file","file format","downloadable file","attach the file","whole file"))
-        if not explicit_chat and not explicit_file and any(x in p for x in ("fix this","update this","change this","modify this","make this")):
-            return (
-                "RESPONSE MODE: CODE-DELIVERY-CLARIFY. The requested implementation format is ambiguous. "
-                "Ask one concise question: whether the user wants the complete fixed file, the complete code in chat, or both. "
-                "Do not give a patch list while waiting for that delivery choice."
-            )
         return (
             "RESPONSE MODE: CODE-COMPLETE. Prefer a complete usable implementation over patch fragments. "
             "When the user asks for code in chat, provide the complete relevant file in a fenced Markdown code block with the correct language tag. "
             "Do not replace omitted sections with ellipses, TODOs, 'rest unchanged', or a list of manual replacements. "
-            "If multiple files are truly required, separate them with clear filenames and complete fenced blocks. "
-            "If the requested delivery form is genuinely unclear, ask whether they want the complete file, complete code in chat, or both. "
+            "For a downloadable code artifact, return one COMPLETE fenced block per source file, tagged like ```python file=src/main.py, using safe relative project paths without ../ or absolute destinations. "
+            "If multiple files are required, include all necessary files with stable relative paths so the Station can package a structured ZIP; do not drop requested files silently or say the project is complete if output was truncated. "
+            "For a single file, the Station provides a direct download; for multiple files or explicit archive requests, the Station provides a ZIP link only AFTER artifact commit. Never fabricate a download URL or claim the archive already exists. "
+            "When the needed source and desired change are supplied, prefer returning the complete code with its downloadable artifact to asking how the user wants the code delivered. "
             "Treat each explicit requirement as a must-pass acceptance condition. Before finalizing, check the returned artifact against each condition and repair any miss. Never state that a condition is satisfied when the artifact still violates it. For repository/workflow work, do not invent dependencies or commands absent from supplied evidence. If the user asks only for code, return code without unsolicited explanation. Finish the requested artifact before adding optional explanation."
         )
     if user_identity:
