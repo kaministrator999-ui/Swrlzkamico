@@ -4,6 +4,8 @@ on:
     paths:
       - 'training/lyrics/**'
       - 'hf_space/lyric_craft_school.py'
+      - 'hf_space/lyric_output_contract.py'
+      - 'tests/test_lyric_output_contract_v187.py'
       - 'hf_space/lyric_craft_catalog_v2.json'
       - 'hf_space/lfm2_700m_engine.py'
       - 'tests/test_archive_grounded_lyric_craft_v182.py'
@@ -19,9 +21,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Compile bounded runtime teaching code
         run: |
-          python -m py_compile hf_space/lyric_craft_school.py hf_space/lfm2_700m_engine.py
+          python -m py_compile hf_space/lyric_craft_school.py hf_space/lyric_output_contract.py hf_space/lfm2_700m_engine.py
       - name: Validate lyric school, revision evidence, and privacy shape
         run: python tests/test_archive_grounded_lyric_craft_v182.py
+      - name: Verify direct original lyric count and unrequested-refusal regression
+        run: python tests/test_lyric_output_contract_v187.py
       - name: Report non-production scope
         run: |
           echo "Validated source-only corpus schemas, counts, teaching selector and evidence anchors."
