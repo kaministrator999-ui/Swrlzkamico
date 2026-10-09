@@ -1,3 +1,23 @@
+## UPDATE STARTED — 2026-10-09 — lyric site-navigation boundary + repetition metadata v174
+
+**Trigger and acceptance:** Live Dragon Chat export `swrlz-dragon-chat (23).json` proves v173 **USER-VISIBLE ACCEPTED** for the previously failing exact "Can you provide lyrics for rack city tyga" request. Hosted export reports `observabilityRevision=v173-cross-source-identity-and-text-fetch-priority`, resolved title=`rack city` and primaryArtist=`tyga` by five corroborating source families, three attempted fetches, verified score 8 for Lyrics On Demand, accepted 54 extracted lyric-like lines across five marked sections, and an authored source link. Avoid reproducing copyrighted fetched lyric content in the roadmap.
+
+**Residual live defects:**
+1. The response includes website directory/navigation lines after the actual last song section; source evidence shows `Back to: ... Lyrics` then category labels. `_lyrics_extract_analysis` treats this as ordinary song text because the site-navigation line lacks any existing hard/post-song boundary predicate.
+2. `[Hook: x2]` and `[Outro: x2]` remain correctly visible as source-authored section headings, but `musicStructureDebug.sections[].performer` incorrectly equals `x2`. This is a repetition marker, **not** a performer credit.
+
+**Bounded source changes (Hugging Face Chat only):**
+- `hf_space/online_tools.py`: generic post-song navigation boundary for the anchored `Back to: <artist> Lyrics` pattern, and camera revision `v174-lyric-footer-and-repeat-metadata`. Source architecture keeps the v172/173 lyric fetch, identity, and bounded 3-page search unchanged.
+- `hf_space/music_structure.py::parse_section_marker`: preserve original raw labels and line order, map explicit `x2`, `2x`, `repeat 2 times` repetition tokens into `repeatCount`; do not treat as performers. Export `repeatCount` in structure debug; genuine `[Verse 1: Alpha]` performers remain supported.
+- `tests/test_lyrics_region_integrity_v165.py`: mandatory predeploy suite synthetic source test covers footer trim, precise terminal reason, retained content, repeated-section metadata, genuine performer and rendered heading preservation, and camera revision.
+- Candidate commits `b7338b152b2310371569fabcb0cadd2ab124e268` (navigation), `15310deb74ec256f288c9411a2683d2f468c9209` (repetition normalization), `bf83e92b6afe840620829eb1907a9b7dba3ebaf6` (camera), `b12c658df439a81d0831a4e728bb194262d22789` (regression), with intermediate corrections preserved in Git history.
+
+**Version impact:** Repository Work 1.0.104; Online Research 1.0.22; LALM Engine 2.1.160; Deployment Control 1.0.34. Server Runtime remains 2.3.326 until a real guarded HF release succeeds.
+
+**Continuation:** guarded existing-space validation, regression gate, rollback snapshot, deploy `kamiloki/Swyrlz`, exact revision evidence, then Server Runtime version and roadmap closure only on success. User-visible v174 acceptance separately pending.
+
+**Status:** SOURCE PATCH + REGRESSION COMMITTED / DEPLOY VALIDATION NOT YET VERIFIED.
+
 ## UPDATE FINISHED — 2026-10-09 — independently corroborated song identity + text-body fetch priority v173
 
 **Outcome:** NATURAL TITLE/ARTIST PHRASE SUPPORTED AFTER CROSS-SOURCE CORROBORATION / MEDIA PAGES NO LONGER CONSUME LYRICS TEXT FETCH BUDGET / REGRESSION GATE PASSED / GUARDED HF DEPLOYED / LIVE USER-VISIBLE ACCEPTANCE PENDING.
