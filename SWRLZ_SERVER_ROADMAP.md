@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-09 — Staged code project workspace v185
+
+**User goal:** Continue from code-delivery v184 (draft PR #58) to **large multi-file coding projects** that span multiple model turns, preserve required-file manifest, track incremental committed code, safely resume/correct per-file state and only offer full project archive after manifest completeness. Preserve quick one-file direct links and non-coding responses.
+
+**Base & ownership:** isolated branch `feature/coder-staged-workspaces-v185` currently exists at exact v184 head `00f95d6c600e63aff9ba237b60d55258540b9224` with no commits. Stack review atop PR #58, not active production. Station retains process-local thread/workspace lifecycle and canonical code artifacts, Brain original intent, Qwen subordinate file proposal, Mask presentation. No new privileged operations or fake model-ability assertions.
+
+**Scope:** Add source-safe, strictly schema-validated project-manifest parsing; bounded per-thread workspace with revisions/required paths/staged file ledger/provenance, atomic apply of finished artifact files and no silent overwrite, no acceptance of unlisted files, resumable successive user turns, restricted download of complete manifests via existing safe ZIP builder, project progress display, and reproducible offline tests. Accept only finalized outputs, preserve original request constraints across followups, and avoid adding tool/model calls, paid loops, or production deployment. Missing required files explicitly keep ZIP disabled; project status cannot imply compiler/test execution.
+
+**Tests & acceptance:** manifest spoof/zip-slip/duplicate/size/scope limits, CAS and ownership/conflicts, missing files no ZIP, two-turn resumed construction, repair preservation, session/cross-thread isolation, old-version rejection, one-file/ZIP compatibility, frontend syntax and source-only GitHub CI. Open stacked draft PR; record blockers and isolated validation, do not claim live experience. Distinguish user-triggered continuation from future autonomous multi-call generation; automatic orchestrated coding work is **not** included unless separately verified.
+
+**Version on completion:** advance Repository Work from confirmed latest, leave Runtime/LALM/Web Chat module versions unchanged until guarded deployment. Status IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-09 — Code artifact single-file and structured ZIP downloads v184
 
 **Result: IMPLEMENTED IN ISOLATED CANDIDATE / SOURCE+CI VERIFIED / UNDEPLOYED / LIVE BROWSER ACCEPTANCE NOT YET PERFORMED.** User-defined rule: a committed Chat-generated single file offers an attached download link, multiple generated files offer **one structure-preserving ZIP**, and an explicit archive request forces ZIP even when one file is generated. Normal explanations, unfinished streaming code and lyrics do not become fake downloadable projects.
