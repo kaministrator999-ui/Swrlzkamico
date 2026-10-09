@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-09 — Dragon Chat (27) last-slot structured lyrics rescue v178
+
+**New user evidence:** `swrlz-dragon-chat (27).json` contains a single hosted v177 `700m` request, exact text `Can you provide lyrics for rack city by tyga`. Correct SongIdentity and discovery (eight candidates) but fail-closed lyrical output: Genie page fetch HTTPError (reasoner first page), AZLyrics redirected into robot/challenge screen and rejected (second), Musixmatch page HTTPError (third); `lyricsSourceAttemptCount=3`, `lyricsFallbackExhausted=true`, `musicStructureDebug=null`, `lyricsRescueSearchDebug=[]`. v177 authored-music behavior was **not** exercised, since verified lyrics were absent. Contrast Dragon Chat (26) successful v176 source LyricsMania from broader search results. This is source availability/selection variability, not evidence that v177 structural abstraction or original-song generation failed.
+
+**Fix scope:** Maintain **3 cumulative fetched-page attempts**, identity/admission/verification, challenge rejection, and no fabricated lyrics. On the third available page slot **only when preceding fetches failed** and remaining original candidates' snippets show no explicit [Verse]/[Hook]/[Chorus] markers, run up to two targeted extra bounded SEARCH queries with song identity + section descriptors. Admit only newly found identity-verified DIRECT TEXT pages whose result snippets visibly advertise section markers, avoid duplicate URLs/blocked families, and insert ahead of weak last-slot candidates. Search alone does not consume the fetched-page cap. Do not hardcode song names or source-host preference in production. If no strong new sources turn up, retain former next-candidate behavior and truthful refusal. Preserve all v175-v177 features.
+
+**Branch source edits:** `hf_space/online_tools.py` candidate loop, new `ONLINE_OBSERVABILITY_REVISION=v178-last-slot-structured-lyrics-rescue`. Test `tests/test_diverse_lyric_fetch_budget_v170.py` now isolates previous mock scenario from live search and adds mocked Dragon Chat 27 failed-Genius/challenged-AZ/newly-discovered-structured-source regression. **Versions staged:** Repository Work 1.0.108, Online Research 1.0.26, Deployment Control 1.0.38; LALM Engine 2.1.162 (unchanged); Server Runtime 2.3.331 only on verified publish.
+
+**State:** Candidate committed; guarded deployment regressions and real hosted v178 behavior not yet confirmed.
+
 ## UPDATE FINISHED — 2026-10-09 — lyrics source integrity and structure-only creative rap v177
 
 **Status:** REAL DRAGON CHAT 26 LIVE v175+v176 ACCEPTANCE CONFIRMED / USER'S STRUCTURE-ONLY CORRECTION IMPLEMENTED / GUARD REGRESSIONS PASSED / HF PUBLISHED / NEW v177 LIVE CONTENT ACCEPTANCE PENDING.
