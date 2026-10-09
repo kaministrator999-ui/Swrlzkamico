@@ -9,6 +9,7 @@ from programming_repair_context import build_compact_repair_context, enforce_str
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from music_structure import music_model_policy, creative_music_request, creative_music_reference_projection, MUSIC_CREATIVE_REFERENCE_POLICY, original_rap_delivery, original_rap_violations
 from lyric_craft_school import lyric_craft_policy
+from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -547,6 +548,7 @@ def generate_events(payload):
                 "A repeated failing executable candidate is not a repair; change strategy when the candidate or failure set stalls.")
     system+="\n"+_response_mode(prompt,programming)
     system+="\n"+response_cognition_policy(response_cognition)
+    direct_creative_lyric_contract=None
     music_policy=music_model_policy(prompt)
     if reference_structure and not music_policy:
         # "Do another one" inherits the earlier structural music request but
@@ -555,8 +557,21 @@ def generate_events(payload):
     if music_policy and not programming.get("codingTask"):
         music_request=creative_music_request("write a complete original rap song" if reference_structure else prompt)
         craft_policy=lyric_craft_policy(prompt, structural_reference=bool(reference_structure))
+        if craft_policy and not reference_structure:
+            direct_creative_lyric_contract=lyric_shape_request(prompt)
         if craft_policy:
             system+="\n"+craft_policy
+        if direct_creative_lyric_contract and (direct_creative_lyric_contract["requestedLines"] or direct_creative_lyric_contract["continuous"] or direct_creative_lyric_contract["noChorus"]):
+            shape=direct_creative_lyric_contract
+            system+=(
+                "\nDIRECT ORIGINAL LYRIC CONTRACT: The request is safe creative writing; do not apologize or claim inability. "
+                "Write only the requested lyrics, without a preface, footnote, explanation, or self-grade. "
+                "Finish the topic with meaningful progression and an actual ending. "
+                +(f"Write exactly {shape['requestedLines']} nonempty lyrical lines, not approximately that many. " if shape["requestedLines"] else "")
+                +("One uninterrupted verse, no blank stanza breaks or added verse/bridge/chorus labels. " if shape["continuous"] else "")
+                +("Do not include a chorus, hook, or refrain section. " if shape["noChorus"] else "")
+                +"Use one copyable lyric block; no text before or after the block."
+            )
         system+=("\n"+music_policy+"\nMUSIC REQUEST SHAPE: "+json.dumps(music_request,ensure_ascii=False,separators=(",",":")))
         if reference_structure:
             system+="\n"+MUSIC_CREATIVE_REFERENCE_POLICY+"\nSTRUCTURE-ONLY REFERENCE (source and earlier draft words removed): "+json.dumps(reference_structure,ensure_ascii=False,separators=(",",":"))
@@ -649,6 +664,10 @@ def generate_events(payload):
     language_contract=intent_contract.get("languageContract") if isinstance(intent_contract.get("languageContract"),dict) else {}
     strict_language=bool(language_contract.get("explicit"))
     guarded_turn=bool(repair_turn or strict_language)
+    strict_lyric_turn=bool(direct_creative_lyric_contract and (
+        direct_creative_lyric_contract["requestedLines"] or
+        direct_creative_lyric_contract["continuous"] or direct_creative_lyric_contract["noChorus"]
+    )) and not guarded_turn and not bool(reference_structure)
     candidate_text=""
     candidate_check=None
     candidate_attempts=[]
@@ -660,6 +679,10 @@ def generate_events(payload):
             response_tokens=min(1536 if repair_turn else 1024,available_output_tokens);temperature=0.25 if repair_turn else 0.30
         elif mode.startswith("RESPONSE MODE: EXACT-NUMBERED-STEPS"):
             response_tokens=min(512,available_output_tokens);temperature=0.35
+        elif strict_lyric_turn:
+            requested=direct_creative_lyric_contract["requestedLines"]
+            response_tokens=min(2048 if requested and requested>=64 else 1600 if requested and requested>=32 else 1120,available_output_tokens)
+            temperature=0.40
         elif reference_structure and not programming.get("codingTask"):
             # Complete-song work used the generic 768 token cap and truncated in
             # Dragon Chat (26) despite plenty of context/output headroom.
@@ -797,6 +820,46 @@ def generate_events(payload):
             if candidate_text:
                 first_delta=round((time.perf_counter()-started)*1000,3)
                 yield {"type":"DELTA","text":candidate_text}
+        elif strict_lyric_turn:
+            # The exact formal request is checked BEFORE presentation. The verifier
+            # never labels rhyme quality or narrative coherence as objectively PASS.
+            candidate_raw,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
+            shape=direct_creative_lyric_contract
+            check=verify_original_lyrics(candidate_raw,shape)
+            previous_fp=_candidate_fingerprint(candidate_raw)
+            candidate_attempts.append(candidate_attempt_receipt(1,"direct-original-lyric-form",timing,check,previous_fp))
+            yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
+            if check["status"]=="REJECT":
+                regeneration_attempted=True
+                regeneration_reason="original-lyric-form-rejected"
+                retry_instruction=(
+                    "CORRECT THE ORIGINAL SONG, NOT THE REQUEST. Your first draft failed the following observable "
+                    "lyric-shape checks: "+", ".join(check["reasons"])+". "
+                    +(f"Exactly {shape['requestedLines']} nonempty lyric lines are mandatory. " if shape["requestedLines"] else "")
+                    +("No section labels or blank stanza breaks; keep one continuous verse. " if shape["continuous"] else "")
+                    +("No chorus or hook. " if shape["noChorus"] else "")
+                    +"Deliver ONLY the full lyric text in one fenced block. No excuses, notes, commentary, assertions of compliance, or filler. "
+                    "Advance the specified topic toward an actual ending; use new content, not copied draft lines."
+                )
+                fixed_raw,timing2=buffered_chat_completion(
+                    model,list(messages)+[{"role":"system","content":retry_instruction}],
+                    response_tokens,min(0.48,temperature+0.06),
+                )
+                next_check=verify_original_lyrics(fixed_raw,shape)
+                candidate_attempts.append(candidate_attempt_receipt(
+                    2,"direct-original-lyric-form-retry",timing2,next_check,
+                    _candidate_fingerprint(fixed_raw),previous_attempt_fingerprint=previous_fp,
+                ))
+                yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
+                candidate_raw,check=fixed_raw,next_check
+            candidate_check=check
+            if check["status"]=="PASS":
+                candidate_text=clean_lyric_container(candidate_raw)
+            else:
+                count=f"{shape['requestedLines']}-line " if shape["requestedLines"] else ""
+                candidate_text=f"I couldn\'t complete a {count}lyric response matching the requested form, so I won\'t claim the draft passed."
+            first_delta=round((time.perf_counter()-started)*1000,3)
+            yield {"type":"DELTA","text":candidate_text}
         else:
             generated_parts=[]
             attempt_started=time.perf_counter()
