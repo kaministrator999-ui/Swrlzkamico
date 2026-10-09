@@ -220,3 +220,27 @@ assert creative_music_reference_projection("What do those lyrics mean?",FORM_HIS
 assert creative_music_reference_projection("Write an unrelated new song",FORM_HISTORY)[1] is None
 print("structure-only-reference-no-lexical-borrowing-v177 PASS")
 
+UNLABELED_HISTORY=[
+    {"role":"user","content":"Provide lyrics for a reference song"},
+    {"role":"assistant","content":"""Here are verified lyrics:
+---
+Purple lanterns drift past the doorway
+Each silver comet falls through the rain
+
+────────
+
+The copper river glows in the darkness
+Our hidden compass points into dawn
+---
+**Lyrics source:** Source — https://example.test/lyric
+"""},
+]
+unlabeled_projection,unlabeled_plan=creative_music_reference_projection(CREATIVE_FOLLOWUP,UNLABELED_HISTORY)
+assert unlabeled_plan and unlabeled_plan["sourceContentExcluded"],unlabeled_plan
+assert [section["type"] for section in unlabeled_plan["sections"]]==["section","section"],unlabeled_plan
+assert [section["approxLineCount"] for section in unlabeled_plan["sections"]]==[2,2],unlabeled_plan
+assert "Purple lanterns" not in str(unlabeled_projection),unlabeled_projection
+assert "copper river" not in str(unlabeled_projection).lower(),unlabeled_projection
+print("unlabeled-song-structure-only-projection-v177 PASS")
+
+
