@@ -1,3 +1,22 @@
+## UPDATE STARTED — 2026-10-09 — contextual lyric reference → original music generation v175
+
+**Trigger:** User submitted `swrlz-dragon-chat (24).json`, explicitly noting it was recorded **while v174 was being developed**; therefore its `v173-cross-source-identity-and-text-fetch-priority` observability marker is expected historical evidence, not a v174 regression. Same thread has four messages: a successfully verified song-lyric retrieval, then the follow-up `Now use those lyrics and create an original rap song using that as a guide to word uses`. v173 classified this creative request as `existing-lyrics-retrieval`, sent the entire sentence to public search, received results unrelated to music, and blocked with `LYRICS_VERIFICATION_BLOCKED` after **zero lyric page fetches**. No original rap was generated.
+
+**Root:** `hf_space/online_tools.py::classify_online_request` treated every occurrence of the lexical token `lyrics` as a lyric-fetch request; a clear create/write original rap imperative should outrank mere reference to earlier lyrics. `hf_space/model_router.py::dispatch` then treated the bad result as a grounded-source failure and terminated before 700M generation. This is **intent routing**, not extraction quality, source identity, or missing lyrics availability.
+
+**Bounded v175 changes:**
+- `hf_space/music_structure.py::creative_music_transform_request` detects affirmative creation/transform verbs with musical output target, without interpreting mere song title/artist or generic lyric mention as a new search instruction.
+- `hf_space/online_tools.py::classify_online_request` bypasses lyric retrieval when the current request is clearly a creative composition and does not explicitly request web research; leaves ordinary lyric lookups and explicit web-research intents on original bounded retrieval route. `ONLINE_OBSERVABILITY_REVISION=v175-lyrics-context-creative-intent-routing` for new research camera outputs; **successful creative-only turns intentionally have no online camera**.
+- `hf_space/model_router.py::dispatch` emits `CREATIVE_MUSIC_STARTED` when creative context route is selected, then sends the original request **and unchanged conversation history** to the selected generative model.
+- Mandatory `tests/test_diverse_lyric_fetch_budget_v170.py` adds the exact Dragon Chat (24) text and other natural examples, negative control on existing song-lyric lookups, and a mock 700M model integration that fails if any research is attempted and asserts conversation context and original generation are preserved.
+- Source candidate commits: `bfe7becba716747ae388c3b2722c07b5591ae7fd` music intent, `f586f7c3a9d40cfd1e1c53f06a9e6c0318e0d4bd` online route, `fc2a1d440e3fa0a3d336a4c901b2c323e82d6e72` model dispatch, `0ee1e503d230a6e6618e46a603d0443b6f21c687` regression.
+
+**Version intent:** Repository Work 1.0.105; Online Research 1.0.23; LALM Engine 2.1.161; Deployment Control 1.0.35. Server Runtime stays 2.3.327 until guarded HF deploy succeeds; Web Chat 1.5.92 unchanged.
+
+**Gate:** use existing production Space `kamiloki/Swyrlz`, guarded 3-page retrieval/creative routing regression suite, real R39 + 700M preservation, immutable previous revision/rollback snapshot, exact new release receipt. No modification of independent §E/Forge game-engine lane.
+
+**Status:** SOURCE CANDIDATE COMMITTED / GUARDED DEPLOY VALIDATION PENDING / v175 LIVE USER ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-09 — lyric navigation footer + repeat-marker metadata v174
 
 **Outcome:** v173 LIVE USER ACCEPTANCE CONFIRMED / NAVIGATION TEXT TRUNCATED AT POST-SONG BOUNDARY / REPEAT COUNTS NO LONGER MISLABELED AS PERFORMERS / GUARDED HUGGING FACE RELEASE SUCCESS / FRESH v174 LIVE ACCEPTANCE PENDING.
