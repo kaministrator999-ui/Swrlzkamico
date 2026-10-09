@@ -18,7 +18,7 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 from typing import Any, Callable, Iterator
-from music_structure import structure_verified_music, compile_verified_music_presentation, music_structure_debug
+from music_structure import structure_verified_music, compile_verified_music_presentation, music_structure_debug, creative_music_transform_request
 from song_identity import song_identity, query_ladder, candidate_score, rank_candidates, diversify_candidates, source_family, resolve_unseparated_artist, supports_direct_lyric_text_fetch
 
 try:
@@ -33,7 +33,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v174-lyric-footer-and-repeat-metadata"
+ONLINE_OBSERVABILITY_REVISION = "v175-lyrics-context-creative-intent-routing"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -1139,7 +1139,11 @@ def classify_online_request(
     history = list(history or [])
     programming = programming if isinstance(programming, dict) else {}
     explicit_web = bool(_EXPLICIT_WEB.search(text))
-    lyrics_lookup=bool(_LYRICS_LOOKUP.search(text))
+    lyrics_creative=creative_music_transform_request(text)
+    # Mentioning existing lyrics as a guide to a new composition is NOT a
+    # request to fetch the source again. Explicit web-search instructions
+    # retain their normal retrieval route.
+    lyrics_lookup=bool(_LYRICS_LOOKUP.search(text)) and not (lyrics_creative and not explicit_web)
     weather_negated=_weather_negated(text)
     # Existing authored lyrics are retrieval/verification work, never creative completion.
     if lyrics_lookup and not programming.get("codingTask"):
@@ -1256,7 +1260,7 @@ def classify_online_request(
         "contract": ONLINE_CONTRACT,
         "requested": requested,
         "kind": "search" if requested else "none",
-        "reason": "explicit-web-intent" if explicit_web else ("freshness-intent" if requested else "none"),
+        "reason": "explicit-web-intent" if explicit_web else ("freshness-intent" if requested else ("creative-music-transform" if lyrics_creative else "none")),
         "query": _search_query_from_prompt(text) if requested else "",
         "locationText": "",
         "clientLocation": None,
