@@ -121,8 +121,55 @@ def test_ocean_covers_distinct_skills_scenarios_and_contrasts():
     assert all(c["grade"] == "NOT_RUN" for c in raw["contrastiveRepairs"])
 
 
+
+def test_lyric_ocean_v3_complete_songs_are_distinct_and_complete():
+    root = ROOT / "training" / "lyrics"
+    long_v2 = json.loads((root / "original_full_compositions_v2.json").read_text(encoding="utf-8"))
+    long_v3 = json.loads((root / "original_complete_songs_v3.json").read_text(encoding="utf-8"))
+    assert long_v3["schema"] == "swrlz-lyric-ocean-original-complete-songs-v3"
+    assert long_v3["songCount"] == len(long_v3["songs"]) == 8
+    assert long_v3["totalLines"] == sum(s["lineCount"] for s in long_v3["songs"]) == 252
+    assert len({s["title"] for s in long_v3["songs"]}) == 8
+    assert len({s["form"] for s in long_v3["songs"]}) == 8
+    assert all(s["lineCount"] == len(s["lines"]) and s["lineCount"] >= 24 for s in long_v3["songs"])
+    assert all(s["noArchiveLyrics"] and s["qualityReview"].startswith("PENDING") for s in long_v3["songs"])
+    assert sum(s["lineCount"] for s in long_v2["songs"]) + long_v3["totalLines"] == 448
+
+
+def test_lyric_ocean_v3_real_rewrite_pairs_preserve_truthful_status():
+    src = ROOT / "training" / "lyrics" / "original_revision_pairs_v3.json"
+    data = json.loads(src.read_text(encoding="utf-8"))
+    assert data["count"] == len(data["cases"]) == 24
+    assert len({p["id"] for p in data["cases"]}) == 24
+    assert len({p["failure"] for p in data["cases"]}) == 24
+    assert all(len(p["before"]) == len(p["after"]) == 2 for p in data["cases"])
+    assert all(p["before"] != p["after"] for p in data["cases"])
+    assert all(p["assessment"] == "PENDING_INDEPENDENT_REVIEW" for p in data["cases"])
+
+
+def test_lyric_ocean_v3_rubric_is_not_a_self_awarded_grade():
+    path = ROOT / "training" / "lyrics" / "editorial_rubric_v3.json"
+    rubric = json.loads(path.read_text(encoding="utf-8"))
+    assert rubric["status"] == "UNSCORED_INSTRUCTOR_RUBRIC_ONLY"
+    assert len(rubric["dimensions"]) == 12
+    assert len({item["id"] for item in rubric["dimensions"]}) == 12
+    assert all(item["score"] is None for item in rubric["dimensions"])
+    assert all(set(item["levels"]) == {"0", "1", "2", "3", "4"} for item in rubric["dimensions"])
+
+
+def test_private_feedback_case_text_never_enters_public_v3_structures():
+    root = ROOT / "training" / "lyrics"
+    names = ("original_complete_songs_v3.json", "original_revision_pairs_v3.json",
+             "editorial_rubric_v3.json")
+    for name in names:
+        text = (root / name).read_text(encoding="utf-8").lower()
+        for marker in ('thread_id', 'conversation_id', 'private_feedback', 'private_song_text',
+                       'source_assistant_turn_index', 'raw_assistant_output_for_manual_cleaning'):
+            assert marker not in text, (name, marker)
+
+
 if __name__ == "__main__":
     for obj in list(globals().values()):
         if callable(obj) and getattr(obj, "__name__", "").startswith("test_"):
             obj()
-    print("archive-grounded-lyric-ocean-v2 PASS")
+    print("archive-grounded-lyric-ocean-v3 structural checks PASS")
