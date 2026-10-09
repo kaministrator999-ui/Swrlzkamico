@@ -15,8 +15,9 @@ The public seed now supplies:
 - **64** synthetic failure/repair drills = 16 failure classes × four editing phases;
 - **48** concise, source-independent runtime technique cards = 16 skills × build/perform/repair;
 - **24** original eight-line illustrative demonstrations across 24 genre/form treatments = 192 illustrative lines.
+- **6** longer independent complete-arc song demonstrations, spanning technical freestyle, comedy, narrative/emotional, two-voice cypher, melodic ballad and boom-bap. These add 196 newly authored lines and remain ungraded.
 
-These are **exposure assets and instructor rubrics**, not model-graded correctness claims, ready-to-train successful responses, or proof of learned weights. Full-song production training will require separately verified complete high-quality targets.
+These are **exposure assets and instructor rubrics**, not model-graded correctness claims, ready-to-train successful responses, or proof of learned weights. The six complete-arc examples are preliminary drafts, not accepted targets; broad high-quality, independently evaluated complete-song targets are still needed for production training.
 
 ## 2. Sixteen interlocking technique axes
 
