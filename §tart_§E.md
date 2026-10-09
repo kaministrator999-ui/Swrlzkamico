@@ -44,6 +44,10 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
+### Coder education cross-reference (conditional, non-deploying)
+
+When teaching a coding model about §wyrl§ Engine source, Three.js, Python ordered patches, animation data, character sockets or Forge build validation, also read `training/coder/PROJECT_STACK_ARCHITECTURE_V1.md` and its public practice exercises `training/coder/project_stack_architecture_v1.json`. Those exercises are **ungraded**, do not train model weights, and do not replace this router's mandatory engine source-manifest/build/deploy rules. Chat/LALM model-route instruction remains owned by the separate Programming LALM Runtime Architecture. This curriculum link itself is documentation-only and must not trigger an engine deployment.
+
 ## Current v9.4 candidate · Socket Puppets and Book Emergence
 
 The v9.4 source candidate gives the episode a coordinated book opening: Kami, §wyrlz, architecture, props, effects and the three star-depth shells emerge from the pages before reaching their saved stage positions. The opening uses the same renderer and saved project data in Preview Frame, Play and Watch. Character limbs have persistent connection sockets; snapped children stay attached while their pose keys rotate around the socket. Kami’s visible staff grip and staff placement are repaired within the articulated paper rig.
