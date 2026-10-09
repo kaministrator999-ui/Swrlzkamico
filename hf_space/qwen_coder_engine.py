@@ -593,6 +593,18 @@ def generate_events(payload):
             system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
         if user_profile:
             system+="\nUSER PROFILE (describes the current user, not §wyrlz; context only):\n"+user_profile
+
+    # Optional bounded guidance only. Never override a complete artifact,
+    # the original request, source/evaluator truth, or deployment approval.
+    effort=payload.get("taskEffortPlan") if isinstance(payload.get("taskEffortPlan"),dict) else {}
+    if effort.get("schema")=="swrlz-task-effort-plan-v1":
+        tier=int(effort.get("tier") or 0)
+        if 1<=tier<=2:
+            system+="\nEFFORT SCOPE: Address the request directly with minimal overhead. Do not truncate a requested complete artifact or omit necessary verification."
+        elif tier==3:
+            system+="\nEFFORT SCOPE: Scope the task and evidence first; preserve constraints, make a bounded plan, and check the relevant behavior. Do not invent tool results."
+        elif 4<=tier<=5:
+            system+="\nEFFORT SCOPE: This is a cross-boundary/high-consequence task. Identify owners, dependencies, acceptance gates and rollback before proposing changes; never claim unrun tests or authorize privileged actions."
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
