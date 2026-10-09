@@ -356,7 +356,8 @@ assert accepted["lyricsSourceAttemptCount"]<=3,accepted
 assert v176_fetch==["https://www.lyricsondemand.com/t/tygalyrics/rackcity242457lyrics.html"],v176_fetch
 assert accepted["modelContext"]["verifiedLyrics"]["sourceUrl"]==v176_fetch[0],accepted
 assert accepted["musicStructureDebug"]["explicitMusicalSectionCount"]>=2,accepted["musicStructureDebug"]
-assert online_tools.ONLINE_OBSERVABILITY_REVISION=="v176-structured-source-fetch-priority"
+# v176 behavior remains mandatory, while later camera labels may advance.
+assert int(online_tools.ONLINE_OBSERVABILITY_REVISION.split("-",1)[0].lstrip("v"))>=176
 print("live-25-structured-lyrics-priority-v176 PASS")
 
 
