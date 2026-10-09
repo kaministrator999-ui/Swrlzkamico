@@ -392,7 +392,7 @@ v178_rescued={
     "title":"Tyga - Rack City Lyrics",
     "url":"https://www.lyricsmania.com/rack_city_lyrics_tyga.html",
     "source":"www.lyricsmania.com","rank":2,
-    "snippet":"Tyga Rack City full lyrics [Verse 1] first verse lyrics [Hook x2] repeated hook",
+    "snippet":"Full original lyrics for Rack City by Tyga; the song text is shown below.",
 }
 v178_calls=[]
 v178_queries=[]
@@ -443,11 +443,64 @@ assert v178_calls==[
     "https://www.azlyrics.com/lyrics/tyga/rackcity.html",
     v178_rescued["url"],
 ],v178_calls
-assert v178_queries and "[Verse 1]" in v178_queries[0],v178_queries
+assert v178_queries and "complete lyrics text" in v178_queries[0],v178_queries
 assert v178_accepted["lyricsSourceAttemptCount"]==3,v178_accepted
 assert v178_accepted["lyricsFallbackExhausted"] is False,v178_accepted
 assert v178_accepted["modelContext"]["verifiedLyrics"]["sourceUrl"]==v178_rescued["url"],v178_accepted
 assert v178_accepted["musicStructureDebug"]["explicitMusicalSectionCount"]>=2,v178_accepted
 assert v178_accepted["lyricsRescueSearchDebug"][0]["admittedCount"]>=1,v178_accepted
+assert v178_accepted["lyricsRescueSearchDebug"][0]["candidates"][0]["decision"]=="ACCEPTED",v178_accepted
 assert int(online_tools.ONLINE_OBSERVABILITY_REVISION.split("-",1)[0].lstrip("v"))>=178
 print("live-27-last-slot-structured-rescue-v178 PASS")
+print("live-28-unmarked-snippet-identity-rescue-v179 PASS")
+
+
+# v179 must reject non-lyrics or identity-uncertain results even when the
+# search snippet contains a section marker, and leave the last page attempt
+# for the existing candidate when no verified alternative is discovered.
+v179_bad=[
+    {"title":"Rack City - Song Meaning Review","url":"https://example.net/reviews/rack-city",
+     "snippet":"Tyga Rack City song meaning [Verse 1] explained by reviewers","source":"example.net"},
+    {"title":"Another Song Lyrics","url":"https://example.org/another-song-lyrics",
+     "snippet":"Different Artist [Verse 1] wrong text","source":"example.org"},
+    {"title":"Tyga - Rack City (Lyrics) - YouTube","url":"https://www.youtube.com/watch?v=0VXTa45tDmM",
+     "snippet":"Tyga Rack City lyrics [Verse 1]","source":"www.youtube.com"},
+]
+v179_rejected_queries=[]
+v179_rejected_fetches=[]
+def v179_bad_search(q):
+    v179_rejected_queries.append(q)
+    return v179_bad
+def v179_bad_fetch(url):
+    v179_rejected_fetches.append(url)
+    if "azlyrics.com" in url:
+        return {"finalUrl":"https://b.azlyrics.com/","status":200,"title":"AZLyrics - request for access",
+                "extract":"Our systems have detected unusual activity. CAPTCHA", "fetchedAt":2}
+    if "musixmatch.com" in url:
+        raise OSError("upstream HTTP error")
+    raise AssertionError("Unverified or non-text candidate fetched: "+url)
+try:
+    online_tools.run_online_research=v178_research
+    online_tools.canonical_online_research.fetch_public=v179_bad_fetch
+    online_tools.canonical_online_research.search_public=v179_bad_search
+    online_tools._lyrics_provenance_lookup=fake_prov
+    v179_plan=dict(plan)
+    v179_plan["requestId"]="live-28-weak-results-must-reject-v179"
+    v179_rejected=online_tools._search_bundle(v179_plan)
+finally:
+    online_tools.run_online_research=orig_research
+    online_tools.canonical_online_research.fetch_public=orig_fetch
+    online_tools.canonical_online_research.search_public=orig_search
+    online_tools._lyrics_provenance_lookup=orig_prov
+assert v179_rejected["lyricsSourceAttemptCount"]==3,v179_rejected
+assert v179_rejected["modelContext"]["verifiedLyrics"] is None,v179_rejected
+assert v179_rejected["lyricsFallbackExhausted"] is True,v179_rejected
+assert len(v179_rejected_queries)==2,v179_rejected_queries
+assert v179_rejected_fetches==[
+    "https://www.azlyrics.com/lyrics/tyga/rackcity.html",
+    "https://www.musixmatch.com/lyrics/Tyga-3/rack-city"
+],v179_rejected_fetches
+assert all(rec["admittedCount"]==0 for rec in v179_rejected["lyricsRescueSearchDebug"])
+assert any(x["decision"]=="NOT_LYRICS_RESULT" for x in v179_rejected["lyricsRescueSearchDebug"][0]["candidates"])
+assert all(x["decision"]!="ACCEPTED" for x in v179_rejected["lyricsRescueSearchDebug"][0]["candidates"])
+print("live-28-reject-mismatched-or-nontext-rescue-v179 PASS")
