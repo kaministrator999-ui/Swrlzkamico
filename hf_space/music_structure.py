@@ -233,7 +233,7 @@ def creative_music_reference_projection(
         current=None
         for raw_line in body.splitlines()[:500]:
             line=raw_line.strip()
-            if re.match(r"(?i)^\*{0,2}(?:lyrics source:|songwriters?\s*:|publisher\s*:|powered by|top lyrics|top artists)\b",line):
+            if re.match(r"(?i)^\*{0,2}(?:lyrics source|songwriters?|publisher|powered by|top lyrics|top artists)\b",line):
                 break
             label=line.strip("* \t")
             parsed=parse_section_marker(label) if label.startswith("[") and label.endswith("]") else None
