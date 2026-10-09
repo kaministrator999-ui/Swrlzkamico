@@ -2430,6 +2430,13 @@ def copy_lyrics_rescue_search_debug(value: Any) -> list[dict[str,Any]]:
                 "versionMatch":bool(candidate.get("versionMatch")),
                 "versionMismatch":bool(candidate.get("versionMismatch")),
                 "negativeContentHints":[_clean(x,80) for x in (candidate.get("negativeContentHints") or [])[:6]],
+                # Keep explicit last-slot decisions in exported cameras so a
+                # failed real search is diagnosable without repeating it.
+                "decision":_clean(candidate.get("decision"),80),
+                "sourceFamily":_clean(candidate.get("sourceFamily"),100),
+                "identityScore":int(candidate.get("identityScore") or 0),
+                "sectionMarkersInSnippet":bool(candidate.get("sectionMarkersInSnippet")),
+                "lyricTitleCue":bool(candidate.get("lyricTitleCue")),
             })
         out.append({
             "query":_clean(item.get("query"),500),
