@@ -239,7 +239,7 @@ def creative_music_reference_projection(
             parsed=parse_section_marker(label) if label.startswith("[") and label.endswith("]") else None
             if parsed and parsed.get("type")!="performer_cue":
                 current={"type":parsed.get("type"),"number":parsed.get("number"),
-                         "repeatCount":parsed.get("repeatCount"),"lengths":[]}
+                         "repeatCount":parsed.get("repeatCount"),"lengths":[],"endings":[]}
                 sections.append(current)
                 continue
             if current is None or not line or line.startswith(("---","──","**Lyrics source:")):
@@ -247,6 +247,11 @@ def creative_music_reference_projection(
             words=re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",line)
             if 1<=len(words)<=30 and len(line)<=210:
                 current["lengths"].append(len(words))
+                # Rough orthographic ending groups, NOT a phonetic claim.
+                # Emit only abstract pattern labels, never the rhyme words.
+                terminal=words[-1].casefold()
+                ending_match=re.search(r"[aeiouy][a-z]{0,3}$",terminal)
+                current["endings"].append(ending_match.group(0) if ending_match else "")
         if not sections:
             continue
         abstract=[]
@@ -255,12 +260,20 @@ def creative_music_reference_projection(
             if not lengths:
                 continue
             ordered=sorted(lengths)
+            endings=section["endings"]
+            repeated={ending for ending in endings if ending and endings.count(ending)>=2}
+            group_labels={}
+            for ending in endings:
+                if ending in repeated and ending not in group_labels:
+                    group_labels[ending]=chr(65+(len(group_labels)%26))
             abstract.append({
                 "type":section["type"],"number":section["number"],
                 "repeatCount":section["repeatCount"],
                 "approxLineCount":len(lengths),
                 "medianWordsPerLine":ordered[len(ordered)//2],
                 "shortestWords":ordered[0],"longestWords":ordered[-1],
+                "lineLengthContourWords":lengths[:24],
+                "endRhymePlacementHint":["-" if ending not in repeated else group_labels[ending] for ending in endings[:24]],
             })
         if not abstract:
             continue
