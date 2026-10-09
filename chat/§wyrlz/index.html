@@ -1334,7 +1334,7 @@
         return files.map(file=>"```"+String(file?.language||"text")+" file="+String(file?.path||"code.txt")+"\n"+String(file?.content||"")+"```").join("\n\n");
       };
       const renderStagedProjects=thread=>{
-        const workspaces=Array.isArray(thread?.projectWorkspaces)?thread.projectWorkspaces:[];
+        const workspaces=Array.isArray(thread?.autoProjectWorkspaces)?thread.projectWorkspaces:[];
         for(const project of workspaces.slice(-2)){
           if(project?.schema!=="swrlz-staged-project-v1")continue;
           const card=document.createElement("section");card.className="staged-project-card";card.dataset.workspaceId=String(project.id||"");
@@ -1420,8 +1420,9 @@
           String(a?.id||""),Number(a?.currentRevision||0),String(a?.title||""),
           (a?.files||[]).map(file=>[String(file?.path||""),String(file?.language||""),String(file?.content||"")])
         ]);
-        const projects=(thread.projectWorkspaces||[]).map(w=>[w.id,w.revision,w.fileCount,w.canDownload,w.missingFiles]);
-        return JSON.stringify([String(thread.id||""),messages,artifactState,projects]);
+        const projects=(thread.autoProjectWorkspaces||[]).map(w=>[w.id,w.revision,w.fileCount,w.canDownload,w.missingFiles]);
+        const manual=(thread.projectWorkspaces||[]).map(w=>[w.id,w.revision,w.state,w.completedCount]);
+        return JSON.stringify([String(thread.id||""),messages,artifactState,projects,manual]);
       };
       const renderConversation = (thread,force=false) => {
         const signature=conversationRenderSignature(thread);

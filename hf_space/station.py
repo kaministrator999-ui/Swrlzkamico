@@ -20,7 +20,9 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 from code_packages import PackageError, build_package, wants_archive
-from staged_projects import WorkspaceError, parse_manifest, create_workspace, stage_files, project_view, package_project
+from staged_projects import (WorkspaceError as AutoWorkspaceError, parse_manifest,
+                             create_workspace as create_auto_workspace,
+                             stage_files, project_view, package_project)
 from staged_workspaces import (WorkspaceError, WorkspaceConflict, create_workspace,
                                attach_revision, progress as workspace_progress,
                                finalize as finalize_workspace, cancel as cancel_workspace,
@@ -250,8 +252,10 @@ def _snapshot(s):
     # metadata. This prevents duplicating staged source code in sync responses.
     threads=copy.deepcopy(s["threads"])
     for thread in threads:
+        if isinstance(thread.get("autoProjectWorkspaces"),list):
+            thread["autoProjectWorkspaces"]=[project_view(w) for w in thread["autoProjectWorkspaces"]]
         if isinstance(thread.get("projectWorkspaces"),list):
-            thread["projectWorkspaces"]=[project_view(w) for w in thread["projectWorkspaces"]]
+            thread["projectWorkspaces"]=[workspace_progress(w) for w in thread["projectWorkspaces"]]
     return {"contract":CONTRACT,"revision":s["revision"],"threads":threads,
             "currentThread":next((copy.deepcopy(t) for t in threads if t["id"]==s["currentId"]),None),
             "state":{"currentId":s["currentId"],"threads":copy.deepcopy(threads)},
@@ -597,13 +601,13 @@ def download_staged_project(request: Request, threadId: str, workspaceId: str,
         session=_sessions.get(key) if key else None
         if not session:raise HTTPException(404,"Project unavailable")
         thread=next((t for t in session.get("threads",[]) if t.get("id")==threadId),None)
-        workspace=next((w for w in (thread or {}).get("projectWorkspaces",[])
+        workspace=next((w for w in (thread or {}).get("autoProjectWorkspaces",[])
                         if w.get("id")==workspaceId),None)
         if not workspace or workspace.get("revision")!=revision or workspace.get("manifestSha256")!=manifestSha256:
             raise HTTPException(404,"Project revision unavailable")
         saved=copy.deepcopy(workspace)
     try:package=package_project(saved)
-    except WorkspaceError as exc:raise HTTPException(409,str(exc)) from exc
+    except AutoWorkspaceError as exc:raise HTTPException(409,str(exc)) from exc
     filename=package["filename"].replace('"',"")
     return Response(content=package["body"],media_type="application/zip",
         headers={"Content-Disposition":f'attachment; filename="{filename}"',
@@ -823,7 +827,7 @@ def _commit_code_artifact_revision(artifact,text,request_id,base_revision=0,base
 def _select_staged_workspace(thread,prompt):
     """Explicit user follow-up only; unrelated chat cannot alter a project."""
     import re
-    workspaces=thread.get("projectWorkspaces") or []
+    workspaces=thread.get("autoProjectWorkspaces") or []
     if not workspaces:return None
     latest=workspaces[-1]
     p=str(prompt or "").strip().lower()
@@ -838,21 +842,21 @@ def _stage_completed_generation(thread, payload, text, request_id, artifact):
     try:
         manifest=parse_manifest(text)
         selected=payload.get("stagedProject") if isinstance(payload.get("stagedProject"),dict) else {}
-        workspaces=thread.setdefault("projectWorkspaces",[])
+        workspaces=thread.setdefault("autoProjectWorkspaces",[])
         if manifest is not None:
-            if len(workspaces)>=4:raise WorkspaceError("Project workspace limit reached")
-            workspace=create_workspace(manifest,"workspace-"+uuid.uuid4().hex,request_id)
+            if len(workspaces)>=4:raise AutoWorkspaceError("Project workspace limit reached")
+            workspace=create_auto_workspace(manifest,"workspace-"+uuid.uuid4().hex,request_id)
             workspaces.append(workspace)
         elif selected.get("id"):
             workspace=next((w for w in workspaces if w.get("id")==selected.get("id")),None)
             if workspace is None or workspace.get("revision")!=selected.get("revision"):
-                raise WorkspaceError("PROJECT_REVISION_CONFLICT")
+                raise AutoWorkspaceError("PROJECT_REVISION_CONFLICT")
         else:return None
         files=[item for item in _parse_code_files(text)
                if str(item.get("language") or "").lower() not in {"lyrics","lyric","song","music","verse","chorus"}]
         result="MANIFEST_ACCEPTED"
         if files:
-            if artifact is None:raise WorkspaceError("NO_SOURCE_ARTIFACT")
+            if artifact is None:raise AutoWorkspaceError("NO_SOURCE_ARTIFACT")
             previous=workspace
             workspace,result=stage_files(workspace,files,expected_revision=workspace["revision"],
                 request_id=request_id,artifact_id=str(artifact.get("id") or ""),
@@ -861,7 +865,7 @@ def _stage_completed_generation(thread, payload, text, request_id, artifact):
                 allow_replace=bool(selected.get("allowReplace")))
             workspaces[workspaces.index(previous)]=workspace
         return {"status":result,"project":project_view(workspace)}
-    except WorkspaceError as exc:
+    except AutoWorkspaceError as exc:
         return {"status":"REJECTED","error":str(exc)[:160]}
 
 

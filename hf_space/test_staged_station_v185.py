@@ -42,11 +42,12 @@ start=manifest_text+"\n"+source("src/main.py","print(1)")
 receipt,msg,artifact=commit("request-1",start)
 assert receipt["status"]=="COMMITTED",receipt
 assert artifact and [x["path"] for x in artifact["files"]]==["src/main.py"], artifact
-project=thread["projectWorkspaces"][0]
+project=thread["autoProjectWorkspaces"][0]
 assert project["fileCount"]==1 and not project["canDownload"]
+assert thread["projectWorkspaces"]==[], "Auto workspace touched the manual owner"
 assert project["missingFiles"]==["tests/test_main.py","README.md"]
 snapshot=station._snapshot(station._sessions["alpha"])
-view=snapshot["currentThread"]["projectWorkspaces"][0]
+view=snapshot["currentThread"]["autoProjectWorkspaces"][0]
 assert "entries" not in view and view["revision"]==2
 assert "print(1)" not in json.dumps(view)
 assert station._select_staged_workspace(thread,"What's a turtle?") is None
@@ -70,7 +71,7 @@ old=station.project_view(project)
 receipt,msg2,a2=commit("request-2",source("tests/test_main.py","assert True"),
                       {**old,"allowReplace":False})
 assert receipt["status"]=="COMMITTED"
-project=thread["projectWorkspaces"][0]
+project=thread["autoProjectWorkspaces"][0]
 assert project["revision"]==3 and not project["canDownload"]
 assert get(revision=2).status_code==404
 
@@ -88,15 +89,15 @@ assert json.dumps(project,sort_keys=True)==prior
 r,_,_=commit("request-3",fence("markdown file=README.md","# Dragon"),
              {**station.project_view(project),"allowReplace":False})
 assert r["status"]=="COMMITTED"
-project=thread["projectWorkspaces"][0]
+project=thread["autoProjectWorkspaces"][0]
 assert project["revision"]==4 and project["canDownload"]
 done=get()
 assert done.status_code==200 and done.headers["content-type"].startswith("application/zip")
 assert done.headers["cache-control"]=="private, no-store"
 with zipfile.ZipFile(io.BytesIO(done.content)) as z:
     assert z.namelist()==["README.md","src/main.py","tests/test_main.py"]
-    assert z.read("README.md")==b"# Dragon"
-    assert z.read("src/main.py")==b"print(1)"
+    assert z.read("README.md")==b"# Dragon\n"
+    assert z.read("src/main.py")==b"print(1)\n"
 assert get(revision=3).status_code==404
 
 # Edited file requires user-directed edit intent; update preserves old files.
@@ -106,13 +107,31 @@ assert receipt["status"]=="REJECTED"
 receipt,_,_=commit("request-5",source("src/main.py","print(2)"),
                    {**station.project_view(project),"allowReplace":True})
 assert receipt["status"]=="COMMITTED"
-project=thread["projectWorkspaces"][0]
+project=thread["autoProjectWorkspaces"][0]
 assert project["revision"]==5
 assert get(revision=4).status_code==404
 updated=get()
 assert updated.status_code==200
 with zipfile.ZipFile(io.BytesIO(updated.content)) as z:
-    assert z.read("src/main.py")==b"print(2)"
-    assert z.read("README.md")==b"# Dragon"
+    assert z.read("src/main.py")==b"print(2)\n"
+    assert z.read("README.md")==b"# Dragon\n"
+
+
+# Two distinct workflows can coexist on one thread with no shared mutable
+# workspace record. The underlying completed codeArtifact revisions remain
+# the only source-file authority for both.
+manual=station.create_workspace("workspace-"+uuid.uuid4().hex,
+                                "User curated sources",["manual-only.py"])
+thread["projectWorkspaces"].append(manual)
+snapshot=station._snapshot(station._sessions["alpha"])
+manual_view=snapshot["currentThread"]["projectWorkspaces"][0]
+auto_view=snapshot["currentThread"]["autoProjectWorkspaces"][0]
+assert manual_view["state"]=="IN_PROGRESS"
+assert manual_view["requiredCount"]==1 and manual_view["completedCount"]==0
+assert "files" not in manual_view, "Manual source bytes leaked into sync metadata"
+assert auto_view["state"]=="FILES_PRESENT" and auto_view["fileCount"]==3
+assert len(thread["projectWorkspaces"])==1
+assert len(thread["autoProjectWorkspaces"])==1
+assert station._select_staged_workspace(thread,"Continue project")["id"]==project["id"]
 
 print("STAGED_STATION_V185_PASS 3-turn commit, incomplete archive refusal, revisions, scoped-cookie ZIP, repair")

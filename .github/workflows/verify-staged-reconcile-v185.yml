@@ -1,0 +1,58 @@
+name: Staged Workspace Reconciliation v185
+on:
+  push:
+    branches: ["feature/staged-workspaces-v185-reconcile"]
+    paths:
+      - "hf_space/staged_projects.py"
+      - "hf_space/staged_workspaces.py"
+      - "hf_space/station.py"
+      - "hf_space/test_staged_projects_v185.py"
+      - "hf_space/test_staged_station_v185.py"
+      - "chat/§wyrlz/index.html"
+      - ".github/workflows/verify-staged-reconcile-v185.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Compile and test both workspace planners
+        run: |
+          set -euo pipefail
+          python -m py_compile hf_space/code_packages.py hf_space/staged_projects.py hf_space/staged_workspaces.py hf_space/station.py hf_space/qwen_coder_engine.py hf_space/test_staged_projects_v185.py hf_space/test_staged_station_v185.py
+          PYTHONPATH=hf_space python hf_space/test_code_packages_v184.py
+          PYTHONPATH=hf_space python hf_space/test_staged_projects_v185.py
+          PYTHONPATH=hf_space python hf_space/test_staged_workspaces_v185.py
+      - name: Verify manual + model proposed Station routes
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check 'fastapi>=0.115,<1' 'httpx>=0.27,<1'
+          PYTHONPATH=hf_space python hf_space/test_code_packages_http_v184.py
+          PYTHONPATH=hf_space python hf_space/test_staged_station_v185.py
+          PYTHONPATH=hf_space python hf_space/test_staged_workspaces_http_v185.py
+      - name: Verify browser JavaScript and isolated visual controls
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          src=Path("chat/§wyrlz/index.html").read_text(encoding="utf-8")
+          assert "renderStagedProjects(thread)" in src
+          assert "Download project ZIP" in src
+          assert "thread?.autoProjectWorkspaces" in src
+          assert "manageSourceWorkspace=" in src
+          assert "Download assembled ZIP" in src
+          scripts=re.findall(r'<script\b[^>]*>([\s\S]*?)</script\s*>',src,re.I)
+          assert scripts
+          for n,body in enumerate(scripts):
+              if body.strip():Path(f"/tmp/swrlz-project-{n}.js").write_text(body,encoding="utf-8")
+          PY
+          for file in /tmp/swrlz-project-*.js; do node --check "$file"; done
