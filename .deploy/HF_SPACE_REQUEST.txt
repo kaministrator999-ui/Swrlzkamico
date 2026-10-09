@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-09-v181-original-song-form-and-lyrics-only-001
+SOURCE_REF=feature/archive-grounded-lyric-craft-v1
+REQUEST_NONCE=2026-10-09-v186-lyric-ocean-craft-test-001
