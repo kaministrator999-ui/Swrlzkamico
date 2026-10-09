@@ -1172,11 +1172,41 @@
         const actions=document.createElement("div");actions.className="code-package-actions";
         const button=document.createElement("button");button.type="button";button.className="code-package-link";
         button.textContent="Review project plan";
+        const renderContinuation=(project,plan)=>{
+          button.textContent=project.title+" · "+project.completedCount+"/"+project.requiredCount+" files";
+          actions.querySelectorAll(".planned-next-control").forEach(item=>item.remove());
+          if(project.state==="READY"){
+            const link=document.createElement("a");link.className="code-package-link planned-next-control";
+            link.textContent="Download assembled ZIP";link.href=projectZipLink(project,thread.id);actions.appendChild(link);
+            return;
+          }
+          if(project.state!=="IN_PROGRESS")return;
+          const next=document.createElement("button");next.type="button";
+          next.className="code-package-link planned-next-control";next.textContent="Generate next planned file · 1 request";
+          next.onclick=async()=>{
+            try{
+              const all=(await workspaceApi("?"+new URLSearchParams({threadId:thread.id}))).workspaces||[];
+              const current=all.find(item=>item.id===project.id);
+              if(!current||current.state!=="IN_PROGRESS")throw new Error("Workspace is no longer active");
+              if(!current.nextReadyPaths?.length)throw new Error("No dependency-ready missing file; check project progress");
+              if(activeThreadId!==thread.id||sending)throw new Error("Open this conversation after the current response finishes");
+              fillNextPlannedFile(thread,current,plan);
+              // At most ONE existing Chat send for each explicit user click,
+              // with a readable prompt and a separate confirmation.
+              const confirmSend=window.confirm("Send the prepared prompt to generate "+current.nextReadyPaths[0]+" now? One model request, no automatic multi-step loop.");
+              if(confirmSend)await commitDraftFromPrompt();
+            }catch(error){window.alert(String(error?.message||"Cannot generate next project file"));}
+          };
+          actions.appendChild(next);
+        };
         button.onclick=async()=>{
           button.disabled=true;
           try{
             const preview=await workspaceApi("/plan?"+new URLSearchParams({threadId:thread.id,messageId:msg.id}));
             const plan=preview.plan||{};
+            const existing=(await workspaceApi("?"+new URLSearchParams({threadId:thread.id}))).workspaces||[];
+            const resumed=existing.find(item=>item.hasApprovedPlan&&item.sourcePlanMessageId===msg.id);
+            if(resumed){renderContinuation(resumed,plan);return;}
             const fileLines=(plan.generationOrder||[]).map((path,i)=>{
               const file=(plan.files||[]).find(item=>item.path===path)||{};
               return (i+1)+". "+path+" · "+(file.language||"code")+
@@ -1191,15 +1221,9 @@
               body:JSON.stringify({threadId:thread.id,messageId:msg.id,
                 expectedMessageSha256:preview.messageSha256,expectedPlanSha256:plan.planSha256}),
             });
-            button.textContent="Project plan approved · "+adopted.workspace.requiredCount+" files";
-            button.disabled=true;
-            const next=document.createElement("button");next.type="button";next.className="code-package-link";
-            next.textContent="Prepare first source file";
-            next.onclick=()=>fillNextPlannedFile(thread,adopted.workspace,adopted.plan);
-            actions.appendChild(next);
-          }catch(error){
-            window.alert(String(error?.message||"Project planning failed"));
-          }finally{if(button.textContent==="Review project plan")button.disabled=false;}
+            renderContinuation(adopted.workspace,adopted.plan);
+          }catch(error){window.alert(String(error?.message||"Project planning failed"));}
+          finally{button.disabled=false;}
         };
         actions.appendChild(button);
         node.querySelector(".assistant-body")?.appendChild(actions);
