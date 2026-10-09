@@ -71,6 +71,6 @@
     "patches/v9_5_staff_grip_fit.py",
     "patches/v9_5_character_depth_sections.py"
   ],
-  "finalBytes": 1075117,
-  "finalSha256": "6c456b93a2a6b0e04bc95d398879fd320c9437348bae068ec7ef89c47ff84f0f"
+  "finalBytes": 1075201,
+  "finalSha256": "bbfee8886ae48164b8bda7864a6d5ae773994a91cd953bea0f1d7820a44ccedb"
 }

@@ -300,6 +300,11 @@ try{
     await page.locator('#playBtn').click();
     await page.waitForFunction(()=>window.SWYRL_ENGINE_ANIMATION.status().active,undefined,{timeout:15000});
     await openStudio(page);await page.locator('#storyTrack').selectOption('kami');
+    // Opening the native studio pauses Play so that poses can be inspected.
+    // Resume through its existing transport before checking running locks.
+    await page.locator('#animeCinePause').evaluate(button=>button.click());
+    await page.waitForFunction(()=>{const state=window.SWYRL_ENGINE_ANIMATION.status();return state.playing&&!state.paused;},
+      undefined,{timeout:15000});
     await page.waitForFunction(()=>document.getElementById('reliefApply').disabled&&document.getElementById('reliefReset').disabled,
       undefined,{timeout:15000,polling:100});
     assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_RELIEF.configure('kami','cape',{left:.01})),false,
