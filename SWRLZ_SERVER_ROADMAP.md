@@ -1,3 +1,17 @@
+## UPDATE STARTED — 2026-10-09 — Coder model-guided project manifest and dependency planning
+
+**User continuation:** Build beyond manual staged-file ZIP assembly toward the coder itself proposing a bounded file graph, with an explicit human review and one-at-a-time generation requests. Keep source/output/evaluation truth boundaries intact, minimize model calls and retain independent release ownership.
+
+**Isolated branch & dependencies:** `feature/coder-manifest-planner-v1` based on `feature/coder-staged-workspaces-v185` `768401a5d8c20727492b70024d9e70e483ee13bd`; [draft PR #64](https://github.com/kaministrator999-ui/Swrlzkamico/pull/64) targets v185 PR #59, itself dependent on v184 PR #58. No merge or guarded HF/Forge deployment, no trainable weight modifications.
+
+**Implemented source candidate:** strict `hf_space/project_manifest.py` JSON fence/graph/path validator, SHA provenance, deterministic topological order and next-ready file selector; Station same-cookie completed-assistant-message preview/explicit idempotent approval; approved plan and generation hints in existing thread-owned staged workspace; Qwen optional response-mode for explicit project planning; Chat Plan composer and reviewed-plan UI, same-session resume and one confirmed inference request per next file. Tests enforce path/cycle/duplicate/schema/source-binding, cookie/session and code-artifact separation. Compiler/test PASS is not implied by an assembled ZIP.
+
+**Evidence so far:** isolated [Model-Guided Project Manifest CI #38002849427](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38002849427) terminal PASS on executable SHA `4f1369f0ab3bc50d2a5ea7d70e92760cecf5cb15`; later candidate commit is explanatory docs only. Separate generic [HF Candidate Offline Validation #38002976973](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38002976973) FAILED with pre-existing assertions mismatched to current coder model route and app source contract, including artifact routing assertion; do **not** claim broad regression acceptance or deploy. New material contract in `hf_space/CODER_PROJECT_PLANNING_V1.md` linked from existing programming owner and AI Chat start router.
+
+**Version baseline after concurrent lyric-model releases:** current Repository Work `runtime:versions/repository-work.txt` **1.0.123** at this event; all current component/module/deploy versions must be re-read at close and kept unchanged for a non-deployed source candidate. A different session delivered recent v189 lyric work; do not overwrite its Roadmap or release request.
+
+**State:** IN PROGRESS until verification reconciled and Roadmap/version event closed. Real hosted Qwen plan generation, browser acceptance, durable state across restarts, independent code compilation and multi-step automatic generation are NOT claimed.
+
 ## UPDATE FINISHED — 2026-10-09 — Lyric Ocean lightweight continuation and partial recovery v189
 
 **Outcome: GOVERNED SOURCE RELEASE PUBLISHED; LIVE USER ARTISTRY NOT YET VERIFIED.** Third 700M Dragon Chat export demonstrated the v188 attempt exhausted four calls over **72.751 seconds**, retained only **24 of 40** model-written lyric lines, rejected two additional suffixes with ambiguous `invalid-or-overlong-lyric-continuation`, and showed no usable draft. User-private export contains only count/timing/fingerprint, not the raw rejected candidates, so the specific cause of each continuation rejection could not be proven. Summary falsely counted 3 of 4 candidate calls.
