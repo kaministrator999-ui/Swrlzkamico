@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.166
-REVISION=2.1.166-direct-lyric-output-validator-v187
+VERSION=2.1.167
+REVISION=2.1.167-append-only-lyric-completion-v188
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
