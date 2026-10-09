@@ -132,3 +132,96 @@ assert result["modelContext"]["blockedLyricsSourceFamilies"]==["azlyrics.com"],r
 assert result["lyricsFallbackExhausted"] is False,result
 
 print("diverse-lyric-fetch-budget-v170 PASS")
+
+# v173 real Dragon Chat (22) failure shape: without 'by', the request
+# initially treats the artist as part of the title. Resolve only when two
+# independent search-result headings prove the same performer/title split.
+from song_identity import resolve_unseparated_artist, supports_direct_lyric_text_fetch
+
+NO_BY="Can you provide lyrics for rack city tyga"
+natural_plan=online_tools.classify_online_request(NO_BY,[],{},None)
+assert natural_plan["songIdentity"]["primaryArtist"]=="",natural_plan
+natural_pool=[
+    {"title":"Tyga - Rack City Lyrics - Genius",
+     "url":"https://genius.com/Tyga-rack-city-lyrics","source":"genius.com",
+     "snippet":"Tyga Rack City lyrics","rank":1},
+    {"title":"Tyga - Rack City Lyrics | AZLyrics.com",
+     "url":"https://www.azlyrics.com/lyrics/tyga/rackcity.html","source":"www.azlyrics.com",
+     "snippet":"Tyga Rack City lyrics","rank":2},
+    {"title":"Tyga - Rack City (Lyrics) - YouTube",
+     "url":"https://www.youtube.com/watch?v=0VXTa45tDmM","source":"www.youtube.com",
+     "snippet":"Tyga Rack City lyrics","rank":4},
+    {"title":"Rack City Lyrics by Tyga - Lyrics On Demand",
+     "url":"https://www.lyricsondemand.com/t/tygalyrics/rackcity242457lyrics.html",
+     "source":"www.lyricsondemand.com",
+     "snippet":GOOD_SNIPPET+" [Intro:] [Verse 1:]","rank":7},
+]
+split=resolve_unseparated_artist(natural_plan["songIdentity"],natural_pool)
+assert split["title"]=="rack city",split
+assert split["primaryArtist"]=="tyga",split
+assert split["resolution"]=="CROSS_SOURCE_HEADING_CONSENSUS",split
+assert {"genius.com","azlyrics.com"}.issubset(set(split["resolutionSourceFamilies"])),split
+assert supports_direct_lyric_text_fetch(natural_pool[2]) is False
+assert supports_direct_lyric_text_fetch(natural_pool[3]) is True
+assert resolve_unseparated_artist(natural_plan["songIdentity"],natural_pool[:1]) is natural_plan["songIdentity"]
+assert resolve_unseparated_artist(song_identity('"rack city" by tyga'),natural_pool)["primaryArtist"]=="tyga"
+
+# Video results remain discoverable, but no longer consume the last bounded
+# lyric-body fetch. The same result set must advance to a text-bearing site.
+retrieved=[]
+def natural_research(_payload):
+    return {
+        "provider":"test-search",
+        "researchId":"v173-real-case",
+        "errors":[],
+        "candidateAdmissionDebug":[],
+        "evidence":[],
+        "fetchFailures":[{
+            "url":natural_pool[0]["url"],"title":natural_pool[0]["title"],
+            "source":"genius.com","rank":1,"errorType":"HTTPError",
+        }],
+        "candidatePool":natural_pool,
+    }
+
+def natural_fetch(url):
+    retrieved.append(url)
+    if "azlyrics.com" in url:
+        return {
+            "finalUrl":"https://b.azlyrics.com/?u=%2Flyrics%2Ftyga%2Frackcity.html",
+            "status":200,"title":"AZLyrics - request for access",
+            "extract":"Our systems have detected unusual activity. Please check the box below to regain access.",
+            "fetchedAt":2,
+        }
+    if "lyricsondemand.com" in url:
+        return {
+            "finalUrl":url,"status":200,
+            "title":"Rack City Lyrics by Tyga - Lyrics On Demand",
+            "extract":GOOD_PAGE,"fetchedAt":3,
+        }
+    raise AssertionError("Unexpected non-lyric or video fetch: "+url)
+
+try:
+    online_tools.run_online_research=natural_research
+    online_tools.canonical_online_research.fetch_public=natural_fetch
+    online_tools._lyrics_provenance_lookup=fake_prov
+    target=dict(natural_plan)
+    target["requestId"]="v173-no-by-video-budget"
+    result=online_tools._search_bundle(target)
+finally:
+    online_tools.run_online_research=orig_research
+    online_tools.canonical_online_research.fetch_public=orig_fetch
+    online_tools._lyrics_provenance_lookup=orig_prov
+
+assert result["modelContext"]["songIdentity"]["title"]=="rack city",result["modelContext"]["songIdentity"]
+assert result["modelContext"]["songIdentity"]["primaryArtist"]=="tyga",result["modelContext"]["songIdentity"]
+assert result["lyricsSourceAttemptCount"]==3,result
+assert retrieved==[
+    "https://www.azlyrics.com/lyrics/tyga/rackcity.html",
+    "https://www.lyricsondemand.com/t/tygalyrics/rackcity242457lyrics.html",
+],retrieved
+assert result["modelContext"]["verifiedLyrics"],result["modelContext"]
+assert "lyricsondemand.com" in result["modelContext"]["verifiedLyrics"]["sourceUrl"],result
+assert online_tools.ONLINE_OBSERVABILITY_REVISION=="v173-cross-source-identity-and-text-fetch-priority"
+
+print("unseparated-song-identity-text-fetch-v173 PASS")
+
