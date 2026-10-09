@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-09 — Coder cross-language curriculum v2 (Kotlin/Java/TypeScript/Rust)
+
+**User request:** Continue teaching the real Qwen coder route and add coverage for important languages **not found in the prior scanned project trees**: Kotlin, Java, TypeScript and Rust. Preserve the distinction between transferable teaching/practice and an installed Kotlin/Java/TS/Rust dependency or weight training.
+
+**Baseline:** prior `training/coder/PROJECT_STACK_ARCHITECTURE_V1.md` + 12 ung raded architecture cases; `main:docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md` owns policy; `§wyrlz_§tart.md` routes startup; `runtime:versions/repository-work.txt` **1.0.113** on entry. HF coder = Qwen2.5-Coder-1.5B GGUF, separate 700M; canonical Chat and Forge source remain unchanged. Current authoritative module/Server versions must be re-read before close.
+
+**Integration scope:** Add **separate opt-in cross-language study material**, runnable reference exercises with deterministic checks where local tools are available, and a public ungraded future-coder assessment. Emphasize Kotlin/Compose/Flow/Room/Hilt/Gradle as hypothetical Android client architecture rather than pretending these files/dependencies are installed; Java JVM interop/records/exceptions; TypeScript typed CLIENT → SERVER transport; Rust ownership/Result/native boundaries. Cite official language/Android references, preserve single-owner architecture and dependency realism. Update existing programmer curriculum index / conditional Start link, not model weights, runtime prompts, or inference/deployment code.
+
+**Checks:** locally compile/exercise Kotlin, Java, TypeScript as tooling permits; Rust compile only if rustc exists (otherwise state unverified), source re-read/JSON validity, source-only paths, lesson index integration, independent version check, no HF/Forge deploy request mutation. Record exact receipts and any limitation. No new product module, Server Runtime bump, or production deployment due solely to curriculum.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-09 — Qwen coder grounded technology/architecture curriculum v1
 
 **Result:** SOURCE COMPLETE / STATIC SOURCE-ANCHOR VERIFIED / MODEL TRAINING NOT RUN / NO PRODUCTION RELEASE. Authored `training/coder/PROJECT_STACK_ARCHITECTURE_V1.md` (source-grounded technology and architecture study packet) and `training/coder/project_stack_architecture_v1.json` (**12 public, ungraded**, explicitly nontrainable open-book practice cases). Linked the curriculum from the existing policy owner `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md`, AI Chat `§wyrlz_§tart.md`, and separate engine `§tart_§E.md`. These are the **only** new lesson/evaluation authorities; no competing architecture or version owner was introduced.
