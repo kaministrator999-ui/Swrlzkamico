@@ -100,6 +100,16 @@ class Candidate(unittest.TestCase):
    artifact=thread["codeArtifacts"][0]
    artifact_id=artifact["id"]
    self.assertEqual(artifact["currentRevision"],1)
+   # Station keeps code generation and user pinning as separate explicit operations.
+   self.assertNotIn("assistant-r1",thread["messagePins"])
+   pinned=client.post("/api/chat_state",json={
+    "contract":"swrlz-chat-account-mutation-v1",
+    "expectedRevision":snap["revision"],
+    "operations":[{"type":"SET_MESSAGE_PINNED","threadId":"artifact-thread","messageId":"assistant-r1","pinned":True}],
+   })
+   self.assertEqual(pinned.status_code,200,pinned.text)
+   snap=client.get("/api/lalm_station/sync").json()
+   thread=snap["threads"][0]
    self.assertTrue(thread["messagePins"]["assistant-r1"])
    original_text=next(m["text"] for m in thread["messages"] if m["id"]=="assistant-r1")
    second={"requestId":"artifact-r2","threadId":"artifact-thread","messageId":"user-r2","assistantMessageId":"assistant-r2","prompt":"fix that code and add error handling","modelId":"stock"}
