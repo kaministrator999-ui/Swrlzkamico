@@ -73,9 +73,11 @@ def generation_summary(
     guarded_turn: bool,
     repair_turn: bool,
     strict_language: bool,
+    max_attempts: int = 3,
 ) -> dict[str, Any]:
-    """Summarize bounded candidate attempts for export/repository persistence."""
-    bounded=[dict(x) for x in attempts[:3] if isinstance(x,dict)]
+    """Summarize bounded candidate attempts, preserving total actual attempt count."""
+    limit=max(1,min(6,int(max_attempts)))
+    bounded=[dict(x) for x in attempts[:limit] if isinstance(x,dict)]
     accepted=[x for x in bounded if x.get("accepted")]
     total_candidate_ms=round(sum(float(x.get("durationMs") or 0.0) for x in bounded),3)
     return {
