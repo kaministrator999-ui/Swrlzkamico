@@ -11,19 +11,20 @@
     {
       "id": "CST-001",
       "topic": "source-authority",
-      "prompt": "An engineer cannot find /chat/§wyrlz in main and declares the route deleted. Identify the correct verification path.",
+      "prompt": "The runtime manifest points /chat/§wyrlz to chat/§wyrlz/index.html, but that file is absent in the inspected runtime tree, while the HF deployment branch contains a Chat page. Is Chat deleted, healthy, or unresolved? Explain the authoritative discovery steps.",
       "sourceAnchors": [
         "runtime:runtime_pages/manifest.json",
-        "runtime:chat/§wyrlz/index.html",
-        "docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md"
+        "feature/hf-space-manual-deploy:chat/§wyrlz/index.html",
+        "main:docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md"
       ],
       "mustCover": [
-        "Resolve runtime manifest/source before claiming missing",
-        "Separate source location from observed live activation"
+        "Identify observed runtime-manifest path mismatch without inventing deployment truth",
+        "Trace active HF Station route and source/ref plus live host evidence",
+        "Do not call the route deleted or healthy solely from tree listings"
       ],
       "reject": [
         "main 404 proves deleted",
-        "Invent a new route owner"
+        "Manifest presence guarantees activation"
       ],
       "grade": "NOT_RUN",
       "requiresSourceReview": true
@@ -74,7 +75,7 @@
       "prompt": "A coding response's semantic correctness is incorrectly graded as PASS because the Station returned terminal. Explain why this is wrong.",
       "sourceAnchors": [
         "feature/hf-space-manual-deploy:hf_space/station.py",
-        "docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md"
+        "main:docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md"
       ],
       "mustCover": [
         "Operational readiness vs semantic validation",
