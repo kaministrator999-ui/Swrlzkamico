@@ -225,7 +225,10 @@ async function paintedHandOnScreen(page,render,label){
   let matches=0;
   for(const sample of render.staffGrip.handFrontSamples){
     const cx=Math.round(sample.screen[0]*image.width),cy=Math.round(sample.screen[1]*image.height);let error=Infinity;
-    for(let y=Math.max(0,cy-1);y<=Math.min(image.height-1,cy+1);y++)for(let x=Math.max(0,cx-1);x<=Math.min(image.width-1,cx+1);x++)
+    // The rotated fingertips may cover less than one native render pixel.
+    // Include their two-pixel interpolation footprint without relaxing the
+    // required painted colors or replacing this genuine GPU image check.
+    for(let y=Math.max(0,cy-2);y<=Math.min(image.height-1,cy+2);y++)for(let x=Math.max(0,cx-2);x<=Math.min(image.width-1,cx+2);x++)
       error=Math.min(error,distance(image.rgb(x,y),sample.rgb)/Math.sqrt(3));
     if(error<43)matches++;
   }
