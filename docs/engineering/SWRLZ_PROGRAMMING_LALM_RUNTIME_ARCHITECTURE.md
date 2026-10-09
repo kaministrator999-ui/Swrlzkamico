@@ -687,6 +687,16 @@ The deterministic programming evaluation suite should include adversarial small 
 
 Acceptance requires the model to identify the concrete symbol mismatch, avoid falsely condemning valid API usage, and avoid proposing a no-op “fix.” This regression class should be represented across multiple languages/frameworks rather than overfitting to one HTML/JavaScript example.
 
+### Repository-grounded coder language/dependency/Chat/Forge curriculum
+
+The first source-verified **Qwen coder project curriculum** lives at [`training/coder/PROJECT_STACK_ARCHITECTURE_V1.md`](../../training/coder/PROJECT_STACK_ARCHITECTURE_V1.md). Its [12 public practice exercises](../../training/coder/project_stack_architecture_v1.json) cover actual Python, JavaScript, HTML/CSS, C/NumPy, Three.js, JSON and build/configuration sources; Hugging Face vs root dependency boundaries; `Mask → Station → Brain/model → Station → Mask`; the separate `§wyrl§ Engine` source-manifest/patch/render/edit/save lifecycle; and GitHub concurrency, version and release isolation.
+
+**Training truth / activation:** these are authored **reference lessons and UNGRADED evaluations**, not a new module authority, successful held-out benchmarks, a runtime prompt injection, a LoRA adapter, or changed Qwen/700M model weights. A GitHub-connected programming session may fetch and study the pack on project work; the hosted Qwen backend does **not automatically load this file**. Any future selective model-context loading must be bounded and architecture-reconciled with `hf_space/brain_programming.py` and `hf_space/qwen_coder_engine.py`, with programming-intent gating and context-budget regression. Weight training requires a separately established **coder-model** training/evaluation/provenance pipeline; the existing `training/700m/train_lora.py` is **not** a Qwen trainer.
+
+**Cross-language v2 (prospective only):** [training/coder/CROSS_LANGUAGE_CURRICULUM_V2.md](../../training/coder/CROSS_LANGUAGE_CURRICULUM_V2.md) adds Kotlin/Android, Java/JVM, TypeScript typed transport and Rust/native concepts absent from the scanned implementation trees. Its four [teacher-authored language fixtures](../../training/coder/examples/) and [12 public questions](../../training/coder/cross_language_practice_v2.json) are teaching/evaluation inputs. Local compiler acceptance exists only for Java, Kotlin and TypeScript *reference* examples; Rust and actual Qwen submissions are not verified. The curriculum is not automatically injected into a model context and does not train or update Qwen/700M weights. A runtime integration requires explicit architecture/branch/CI/deployment validation and prompt-budget checks.
+
+**Source hierarchy:** this architecture document remains policy owner; the curriculum cites branch-specific actual code. The Forge router `§tart_§E.md` remains the release/engine authority, and `§wyrlz_§tart.md` remains the AI Chat/LALM startup router. Never infer live Forge v9.4 or new model competence from a source inventory.
+
 ## 6. When programming architecture activates
 
 ### Lightweight coding
