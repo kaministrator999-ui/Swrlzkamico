@@ -20,6 +20,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 from code_packages import PackageError, build_package, wants_archive
+from staged_projects import WorkspaceError, parse_manifest, create_workspace, stage_files, project_view, package_project
 from staged_workspaces import (WorkspaceError, WorkspaceConflict, create_workspace,
                                attach_revision, progress as workspace_progress,
                                finalize as finalize_workspace, cancel as cancel_workspace,
@@ -245,9 +246,15 @@ def _session(request):
     return key,_sessions[key]
 
 def _snapshot(s):
-    return {"contract":CONTRACT,"revision":s["revision"],"threads":copy.deepcopy(s["threads"]),
-            "currentThread":next((copy.deepcopy(t) for t in s["threads"] if t["id"]==s["currentId"]),None),
-            "state":{"currentId":s["currentId"],"threads":copy.deepcopy(s["threads"])},
+    # The canonical Station holds source bodies; the Mask only receives progress
+    # metadata. This prevents duplicating staged source code in sync responses.
+    threads=copy.deepcopy(s["threads"])
+    for thread in threads:
+        if isinstance(thread.get("projectWorkspaces"),list):
+            thread["projectWorkspaces"]=[project_view(w) for w in thread["projectWorkspaces"]]
+    return {"contract":CONTRACT,"revision":s["revision"],"threads":threads,
+            "currentThread":next((copy.deepcopy(t) for t in threads if t["id"]==s["currentId"]),None),
+            "state":{"currentId":s["currentId"],"threads":copy.deepcopy(threads)},
             "activeGeneration":copy.deepcopy(s["activeGeneration"])}
 
 def _chat_document():
@@ -577,6 +584,35 @@ def download_project_workspace(request: Request, threadId: str,
     })
 
 
+@app.get("/api/lalm_station/projects/download")
+def download_staged_project(request: Request, threadId: str, workspaceId: str,
+                            revision: int, manifestSha256: str):
+    """Only completed manifest-backed projects from the caller's session."""
+    if not all(isinstance(x,str) and 1<=len(x)<=160 for x in (threadId,workspaceId)):
+        raise HTTPException(400,"Invalid workspace locator")
+    if not 1<=revision<=10000 or len(manifestSha256)!=64:
+        raise HTTPException(400,"Invalid workspace revision")
+    key=request.cookies.get("swrlz_hf_sid")
+    with _lock:
+        session=_sessions.get(key) if key else None
+        if not session:raise HTTPException(404,"Project unavailable")
+        thread=next((t for t in session.get("threads",[]) if t.get("id")==threadId),None)
+        workspace=next((w for w in (thread or {}).get("projectWorkspaces",[])
+                        if w.get("id")==workspaceId),None)
+        if not workspace or workspace.get("revision")!=revision or workspace.get("manifestSha256")!=manifestSha256:
+            raise HTTPException(404,"Project revision unavailable")
+        saved=copy.deepcopy(workspace)
+    try:package=package_project(saved)
+    except WorkspaceError as exc:raise HTTPException(409,str(exc)) from exc
+    filename=package["filename"].replace('"',"")
+    return Response(content=package["body"],media_type="application/zip",
+        headers={"Content-Disposition":f'attachment; filename="{filename}"',
+                 "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff",
+                 "Cross-Origin-Resource-Policy":"same-origin",
+                 "X-Code-Package-Sha256":package["sha256"],
+                 "X-Code-Package-Files":str(package["fileCount"])})
+
+
 @app.post("/api/chat_state")
 async def mutate(request:Request):
     key,s=_session(request)
@@ -625,6 +661,7 @@ def _parse_code_files(text):
         header=str(match.group(1) or "").strip()
         parts=header.split()
         language=parts[0] if parts and "=" not in parts[0] else "text"
+        if language.lower()=="project-manifest":continue  # Manifest is metadata, never downloadable source.
         attrs={}
         for part in parts[1:] if parts and "=" not in parts[0] else parts:
             if "=" in part:
@@ -782,6 +819,51 @@ def _commit_code_artifact_revision(artifact,text,request_id,base_revision=0,base
     artifact["updatedAt"]=now
     if files:artifact["title"]=artifact.get("title") or files[0]["path"]
     return True,"COMMITTED"
+
+def _select_staged_workspace(thread,prompt):
+    """Explicit user follow-up only; unrelated chat cannot alter a project."""
+    import re
+    workspaces=thread.get("projectWorkspaces") or []
+    if not workspaces:return None
+    latest=workspaces[-1]
+    p=str(prompt or "").strip().lower()
+    is_continuation=bool(re.search(
+        r"\b(?:continue(?: this| the)? project|keep going|next (?:file|files|part|step)|finish (?:the )?project|resume (?:the )?project|continue)\b",p))
+    refers_to_file=any(str(path).lower() in p for path in latest.get("requiredFiles",[]))
+    return latest if is_continuation or refers_to_file else None
+
+
+def _stage_completed_generation(thread, payload, text, request_id, artifact):
+    """Commit only finalized typed files; source owner remains codeArtifacts."""
+    try:
+        manifest=parse_manifest(text)
+        selected=payload.get("stagedProject") if isinstance(payload.get("stagedProject"),dict) else {}
+        workspaces=thread.setdefault("projectWorkspaces",[])
+        if manifest is not None:
+            if len(workspaces)>=4:raise WorkspaceError("Project workspace limit reached")
+            workspace=create_workspace(manifest,"workspace-"+uuid.uuid4().hex,request_id)
+            workspaces.append(workspace)
+        elif selected.get("id"):
+            workspace=next((w for w in workspaces if w.get("id")==selected.get("id")),None)
+            if workspace is None or workspace.get("revision")!=selected.get("revision"):
+                raise WorkspaceError("PROJECT_REVISION_CONFLICT")
+        else:return None
+        files=[item for item in _parse_code_files(text)
+               if str(item.get("language") or "").lower() not in {"lyrics","lyric","song","music","verse","chorus"}]
+        result="MANIFEST_ACCEPTED"
+        if files:
+            if artifact is None:raise WorkspaceError("NO_SOURCE_ARTIFACT")
+            previous=workspace
+            workspace,result=stage_files(workspace,files,expected_revision=workspace["revision"],
+                request_id=request_id,artifact_id=str(artifact.get("id") or ""),
+                artifact_revision=int(artifact.get("currentRevision") or 0),
+                artifact_source_hash=str(artifact.get("currentSourceHash") or ""),
+                allow_replace=bool(selected.get("allowReplace")))
+            workspaces[workspaces.index(previous)]=workspace
+        return {"status":result,"project":project_view(workspace)}
+    except WorkspaceError as exc:
+        return {"status":"REJECTED","error":str(exc)[:160]}
+
 
 def _response_prose(text):
     prose=str(text or "")
@@ -1143,6 +1225,14 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     artifact=_create_code_artifact(thread,message,request_id,text)
                     if artifact is not None:
                         g["artifactReceipt"]={"action":"ARTIFACT_CREATED","artifactId":artifact["id"],"revision":1,"sourceHash":artifact.get("currentSourceHash")}
+            # Only completed, accepted generations may advance a staged project.
+            if not rejected and message.get("meta",{}).get("state")=="COMPLETE":
+                receipt=_stage_completed_generation(thread,payload,text,request_id,artifact)
+                if receipt:
+                    message.setdefault("meta",{})["projectWorkspaceReceipt"]=copy.deepcopy(receipt)
+                    g["projectWorkspaceReceipt"]=copy.deepcopy(receipt)
+                    g["status"].append({"phase":"PROJECT_FILES_STAGED",
+                        "reason":str(receipt.get("status") or "")[:80]})
             if online_research:
                 # Durable Online Research diagnostics consume the same bounded server
                 # telemetry projected to Chat.  The browser must never be the richest
@@ -1396,10 +1486,16 @@ async def send(request:Request):
         history=_history_projection(t)
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
+        selected_project=_select_staged_workspace(t,prompt)
+        staged_context=None
+        if selected_project is not None:
+            staged_context=project_view(selected_project)
+            staged_context["allowReplace"]=bool(__import__("re").search(
+                r"\b(?:fix|repair|update|modify|change|replace|refactor)\b",prompt,__import__("re").I))
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
         s["currentId"]=tid;s["revision"]+=1
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
-    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {}),"stagedProject":staged_context}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400,path="/")
