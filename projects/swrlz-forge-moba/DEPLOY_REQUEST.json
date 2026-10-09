@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v9.1",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V9_1_ARTICULATED_PAPER_RIGS",
-  "reason": "Deploy verified articulated Kami and §wyrlz paper puppets from PR #50: independent head, arm, hand, leg, cape and prop pivots with silhouette thickness and facial expression/blink/mouth/gaze controls. Native editor Save includes 425 rig pose/face keys in the 134-second starter; existing nine stage/camera tracks, 70 actors, 11 editor layers and native Watch cinema retained. Desktop/phone editor Play, Undo/Redo, Save/Load, artwork import and camera clearance passed. Package has 50 patches and all eleven scene/screening/art assets; sealed HTML 857746 bytes SHA-256 7b6f3806c666b991a07e0c6bf162286b09dd70862f7de9acc9bf0ea3d214473f.",
-  "sourceCommit": "d3e7dc4d6a0633995210a7217943753d4de28e29",
-  "sourceIntegritySha256": "7b6f3806c666b991a07e0c6bf162286b09dd70862f7de9acc9bf0ea3d214473f"
+  "releaseVersion": "v9.2",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V9_2_LAYERED_SCENERY_FACES",
+  "reason": "Deploy verified fitted mage faces and independently layered paper scenery from PR #51. Native editor Save includes 34 scenery objects, three depth shells of 70 actual paper stars, and 341 scenery keys; all 425 character pose/face keys, nine stage/camera tracks, 70 actors, 11 editor layers, the 134-second episode and native Watch cinema are retained. Desktop/phone native editor Play, fitted facial ink, scenery geometry/parallax, opening hinge clearance, Undo/Redo, Save/Load, artwork imports and unrelated-project isolation passed, and all six engine CI gates passed. Exact merged source reconstructs 51 patches and all thirteen scene/screening/art assets; sealed HTML 965788 bytes SHA-256 b952e375be6a2cfb88014714cccbe80285e70d4b76821763bc68ada46e2dcbc4.",
+  "sourceCommit": "7f664a2c967a0bff63d6d1a5c0eb1e8acc472a01",
+  "sourceIntegritySha256": "b952e375be6a2cfb88014714cccbe80285e70d4b76821763bc68ada46e2dcbc4"
 }
