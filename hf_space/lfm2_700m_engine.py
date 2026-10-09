@@ -232,7 +232,7 @@ def _token_count(model,messages):
         total+=len(model.tokenize(str(message.get("content") or "").encode("utf-8"),add_bos=False))+6
     return total
 
-def _fit_messages(model,system,model_history,prompt):
+def _fit_messages(model,system,history,prompt):
     """Fit context deterministically; keep recent repair evidence while reserving enough output for complete code."""
     kept=list(history[-16:])
     messages=[{"role":"system","content":system}]+kept+[{"role":"user","content":prompt}]
@@ -615,7 +615,7 @@ def generate_events(payload):
         fitted=_fit_repair_messages(model,system,history,fitted_prompt)
         messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
     else:
-        fitted=_fit_messages(model,system,history,prompt)
+        fitted=_fit_messages(model,system,model_history,prompt)
         messages,dropped_history,input_tokens,available_output_tokens=fitted
         fitted_prompt=prompt
     system_tokens=_token_count(model,[{"role":"system","content":system}])
