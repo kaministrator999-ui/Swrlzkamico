@@ -39,6 +39,7 @@ client.cookies.set("swrlz_hf_sid","user-one")
 endpoint="/api/lalm_station/workspaces/plan"
 preview=client.get(endpoint,params={"threadId":"thread-x","messageId":"message-plan"})
 assert preview.status_code==200,preview.text
+assert preview.headers["cache-control"]=="private, no-store"
 v=preview.json()
 assert v["approvalRequired"] is True
 assert v["plan"]["generationOrder"]==["src/app.py","tests/test_app.py"]
@@ -60,6 +61,11 @@ assert workspace["revision"]==1 and workspace["hasApprovedPlan"] is True
 assert workspace["remainingPaths"]==["src/app.py","tests/test_app.py"]
 assert workspace["nextReadyPaths"]==["src/app.py"]
 assert workspace["completedCount"]==0 and workspace["validationState"]=="NOT_RUN"
+repeat=client.post(endpoint+"/approve",json=approve)
+assert repeat.status_code==200 and repeat.json()["alreadyApproved"] is True
+assert repeat.json()["workspace"]["id"]==workspace["id"]
+assert len(client.get("/api/lalm_station/workspaces",params={"threadId":"thread-x"}).json()["workspaces"])==1
+
 attach=client.post("/api/lalm_station/workspaces/attach",json={
     "threadId":"thread-x","workspaceId":workspace["id"],"artifactId":"artifact-src",
     "artifactRevision":1,"artifactSourceHash":src_sha,"expectedWorkspaceRevision":1,
