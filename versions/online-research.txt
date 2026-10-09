@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.28
-REVISION=1.0.28-verified-lyrics-page-code-cleanup-v180
+VERSION=1.0.29
+REVISION=1.0.29-song-heading-cleanliness-v181
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
