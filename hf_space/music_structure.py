@@ -139,11 +139,19 @@ def parse_section_marker(line: str) -> dict[str,Any] | None:
         elif ":" in tail:
             performer=tail.split(":",1)[1].strip()
         performer=performer.strip(" []:-")
+        # A source label such as [Hook: x2] is repetition metadata,
+        # not an artist credit. Preserve the authored label unchanged.
+        repeat_match=re.fullmatch(r"(?i)(?:x\\s*(\\d+)|(\\d+)\\s*x|repeat\\s+(\\d+)\\s+times?)",performer)
+        repeat_count=None
+        if repeat_match:
+            repeat_count=int(next(group for group in repeat_match.groups() if group is not None))
+            performer=""
         return {
             "rawLabel":raw,
             "type":section_type,
             "number":number,
             "performer":performer or None,
+            "repeatCount":repeat_count,
             "confidence":1.0,
             "basis":"explicit_source_marker",
         }
@@ -328,6 +336,7 @@ def music_structure_debug(document: dict[str,Any], presentation: dict[str,Any] |
             "type":str(section.get("type") or "section")[:40],
             "number":section.get("number") if isinstance(section.get("number"),int) else None,
             "performer":str(section.get("performer") or "")[:100],
+            "repeatCount":section.get("repeatCount") if isinstance(section.get("repeatCount"),int) else None,
             "confidence":float(section.get("confidence") or 0.0),
             "basis":str(section.get("basis") or "")[:80],
             "lineCount":int(section.get("lineCount") or 0),
