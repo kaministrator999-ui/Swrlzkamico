@@ -11,7 +11,7 @@ CASES = [
     ('Fix the typo in this function', 2),
     ('Write a tiny Python function to add two numbers', 2),
     ('Investigate why this code crashes', 3),
-    ('Find root cause and test this login bug', 3),
+    ('Find root cause and test this login bug', 4),
     ('Fix this function but preserve existing behavior', 3),
     ('Research and compare current references', 3),
     ('Refactor across multiple modules and verify integration', 4),
