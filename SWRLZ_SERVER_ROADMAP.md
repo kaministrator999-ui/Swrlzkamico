@@ -1,3 +1,25 @@
+## UPDATE STARTED — 2026-10-09 — structurally grounded lyric-source fetch priority v176
+
+**Trigger:** User's new actual hosted session `swrlz-dragon-chat (25).json`, `observabilityRevision=v175-lyrics-context-creative-intent-routing`, requests the same `Can you provide lyrics for rack city tyga` first step. **It does not contain the creative second turn**; thus it neither confirms nor refutes live acceptance for v175 creative routing.
+
+### Actual source-side failure and scope
+- Song title `rack city` / artist `tyga` resolved by 5 agreeing search-result families. First Genius page fetch failed; AZLyrics returned an access challenge; SongLyrics returned an identity-verified page (`sourceIdentityScore=8`) that was not accepted as verified full lyrics.
+- SongLyrics fetched extract: 7,527 chars / 508 lines, anchored at `Rack City Lyrics & Meaning`. The scoped section has 82 lyric-like lines in 79 blank-separated chunks, *zero* explicit musical markers, only two qualifying blocks of 3 and 2 lines, and a terminal songwriter-credit boundary. Extractor safely rejected `INSUFFICIENT_FULL_LYRIC_STRUCTURE`; source-search snippet describes the song rather than corroborating its lyric content.
+- The search-result pool **already included** a source with explicit `[Intro:]` and `[Verse 1:]` in its snippet, previously confirmed live-accessible in `swrlz-dragon-chat (23).json`, but candidate priority and three-total-page budget selected unstructured SongLyrics instead. That is a **source-admission ordering bug**, not a reason to loosen full-song verification thresholds.
+- An earlier v175 release fixed the *different* case where "those lyrics ... create an original rap" incorrectly triggered web search. This v176 work retains that correction unmodified.
+
+### v176 bounded source fix
+- `hf_space/online_tools.py::_search_bundle`: within already admitted, direct-text lyric sources, try items whose search snippets explicitly advertise bracketed `Intro/Verse/Chorus/Hook/... ` section labels before wholly unstructured sources. Ties preserve original SongIdentity ranking and source-family diversification. This only reprioritizes page **attempts**, never bypasses evidence verification, page fetch cap, CAPTCHA checks, or false-positive filters.
+- New camera revision: `v176-structured-source-fetch-priority`.
+- Extend mandatory `tests/test_diverse_lyric_fetch_budget_v170.py` with an anonymized Dragon Chat (25) candidate set: reasoner Genius failure, AZLyrics challenge candidate, inaccessible/rejected unstructured SongLyrics, and viable section-marked page. Assert structurally marked page is fetched before commentary, in-budget, and produces real verified text. Adapt previous v173 test's exact fetch-order expectation to recognize this v176 improvement. Original no-section diverse-family test still ensures blocked-site handling.
+- Implementation source commit `3e4ac98e3c9223cb90fdb439d4b9335f3f933792`; regression commit `06caf19b124121cf94c9b4798ae2ea27dd803c5c`. No song name/domain hardcoded into implementation.
+
+**Version intent:** Repository Work 1.0.106, Online Research 1.0.24, Deployment Control 1.0.36. LALM Engine remains 2.1.161; Server Runtime remains 2.3.328 until a successful release, at which point 2.3.329 may be assigned. Web Chat and standalone game engine unchanged.
+
+**Release plan:** Existing guarded `kamiloki/Swyrlz` HF publication route, required lyric/creative regressions and runtime model guards, immutable predeployment rollback snapshot, exact HF revision verification. Fresh **v176** hosted chat acceptance separately pending; live sources can vary, so source prioritization cannot promise any particular provider availability.
+
+**Status:** CODE AND REGRESSION COMMITTED / RELEASE TESTS PENDING.
+
 ## UPDATE FINISHED — 2026-10-09 — lyric-referenced original music generation routing v175
 
 **Outcome:** Creative follow-up no longer treated as a failed lyric lookup / prior chat context preserved for selected 700M / bounded lyric retrieval controls preserved / guard regression passed / HF Space published / user-visible live acceptance still pending.
