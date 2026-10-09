@@ -16,6 +16,8 @@
 
 **Initial protected workflow failed prepublication:** [#37950774585](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37950774585) stopped on an outdated **exact v176 observability label** assertion in the otherwise-passing v176 behavioral source-priority regression. No HF publication occurred. Updated this predecessor assertion to minimum monotonic `>=176` without skipping any source-selection test, commit `70f74b33f7933767eafebf3bbfd1ecf9a4a60acc`. Retry deployment is required; do not report v177 live before successful guarded receipt.
 
+**Second protected workflow stopped at 700M smoke (no publish):** [#37951003596](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37951003596) passed every bounded lyric/music regression and real R39 reconstruction, but `lfm2_700m_engine.py::_fit_messages` raised `NameError: history is not defined`. Cause: a string replacement changed its formal parameter name instead of the generation callsite; corrected to preserve `def _fit_messages(...,history,...)` and pass `model_history` only from `generate_events` caller, commit `478de3173a300cb835cc1900acf0fbcaec1137ae`. Must re-run 700M smoke; this release remains unverified and unpublished.
+
 **Gate status:** SOURCE CANDIDATE AND TESTS COMMITTED; guarded CI / HF receipt pending; real-world v177 output acceptance pending.
 
 ## UPDATE FINISHED — 2026-10-09 — structurally marked lyric-source priority v176
