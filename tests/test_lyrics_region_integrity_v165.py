@@ -317,3 +317,45 @@ assert parse_section_marker("[Verse 1: Alpha]")["performer"]=="Alpha"
 print("songwriter-publisher-boundary-and-noncolon-repeats-v177 PASS")
 
 
+
+# v180 Dragon Chat (29): first successfully fetched v179 page returned
+# HTML-to-text client JS and breadcrumb chrome BEFORE genuine lyric lines.
+# The lyric verifier must accept enough authentic source lines without
+# treating these code snippets as song words or changing original spelling.
+CODE_CHROME_PAGE="""Test Signal Lyrics — Example Artist | Lyricportal
+lastY) {
+peakY = y;
+showHeader = false;
+} else if (y 20) {
+showHeader = true;
+lastY = y;
+:class="showHeader ? 'translate-y-0' : '-translate-y-full md:translate-y-0'"
+
+Artists: E /
+Test Signal
+
+Clockwork petals drift through the harbor
+Velvet satellites shimmer above us
+Copper lanterns echo across the water
+Silver comets whisper into the night
+
+The railway turns beneath the moonlight
+A paper skyline folds into dawn
+The horizon opens under a storm
+Every compass points beyond the stars
+
+Clockwork petals drift through the harbor
+Velvet satellites shimmer above us
+Copper lanterns echo across the water
+Silver comets whisper into the night
+A collection of song lyrics, chords and music. All lyrics belong to their authors.
+"""
+chrome=online_tools._lyrics_extract_analysis(CODE_CHROME_PAGE,"full-lyrics",plan["subject"])
+assert chrome["diagnostics"]["decision"]=="ACCEPTED",chrome
+assert chrome["diagnostics"]["resultLineCount"]==12,chrome
+for forbidden in ("peakY", "showHeader", "lastY", ":class=", "Artists: E /"):
+    assert forbidden not in chrome["text"],(forbidden,chrome)
+assert chrome["text"].splitlines()[0]=="Clockwork petals drift through the harbor",chrome
+assert "Silver comets whisper into the night" in chrome["text"],chrome
+assert "A collection of song lyrics" not in chrome["text"],chrome
+print("live-29-page-code-clean-extraction-v180 PASS")
