@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v9.2",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V9_2_LAYERED_SCENERY_FACES",
-  "reason": "Deploy verified fitted mage faces and independently layered paper scenery from PR #51. Native editor Save includes 34 scenery objects, three depth shells of 70 actual paper stars, and 341 scenery keys; all 425 character pose/face keys, nine stage/camera tracks, 70 actors, 11 editor layers, the 134-second episode and native Watch cinema are retained. Desktop/phone native editor Play, fitted facial ink, scenery geometry/parallax, opening hinge clearance, Undo/Redo, Save/Load, artwork imports and unrelated-project isolation passed, and all six engine CI gates passed. Exact merged source reconstructs 51 patches and all thirteen scene/screening/art assets; sealed HTML 965788 bytes SHA-256 b952e375be6a2cfb88014714cccbe80285e70d4b76821763bc68ada46e2dcbc4.",
-  "sourceCommit": "7f664a2c967a0bff63d6d1a5c0eb1e8acc472a01",
-  "sourceIntegritySha256": "b952e375be6a2cfb88014714cccbe80285e70d4b76821763bc68ada46e2dcbc4"
+  "releaseVersion": "v9.3",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V9_3_CONNECTED_CHARACTER_PIECES",
+  "reason": "Deploy verified body-piece alignment from PR #52. Kami and §wyrlz now have distinct painted collar, shoulder, elbow, wrist, hip and foot anchors; staff, quill and grimoire grips meet the hands, boot UVs separate soles from calf shafts, and opaque soles establish standing height. Native Fit Body Piece controls save 19 static fits per character with position, artwork center, dimensions and rest angle plus Apply/Reset and native history. All 425 pose/face keys, 341 scenery keys, 34 scenery pieces, 210 paper stars, nine stage/camera tracks, 70 actors, 11 layers and the 134-second episode remain. Native positioned Save, actual alpha joint contact, geometry resizing, desktop/phone Play/Watch/editing/history/Save/Load/legacy migration and all existing regressions passed; all six engine CI gates passed. Exact merged source is 52 patches, 14 scene/screening/art assets, sealed HTML 980767 bytes SHA-256 caba518b67524567899d93a74308bc894cf40413fd69b330b8f7f5f7b6c042be.",
+  "sourceCommit": "84d8966f4240cef8ebe037dbc03baac43099c06e",
+  "sourceIntegritySha256": "caba518b67524567899d93a74308bc894cf40413fd69b330b8f7f5f7b6c042be"
 }
