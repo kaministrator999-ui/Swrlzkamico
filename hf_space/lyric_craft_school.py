@@ -45,6 +45,7 @@ LYRIC_CRAFT_SCHOOL = (
 )
 
 _CATALOG_FILE = Path(__file__).with_name("lyric_craft_catalog_v2.json")
+_FORM_FILE = Path(__file__).with_name("lyric_form_cues_v4.json")
 _DEFAULT_AXES = ("narrative", "internal-rhyme", "tempo", "comedy", "emotional", "high-speed", "metaphor", "melodic")
 
 
@@ -76,6 +77,34 @@ def _catalog() -> tuple[dict, ...]:
     except (OSError, ValueError, TypeError):
         # A missing/invalid teaching catalog must not break song generation.
         return ()
+
+
+@lru_cache(maxsize=1)
+def _form_cards() -> tuple[dict, ...]:
+    """Read only short owner-authored form guidance; never load song text."""
+    try:
+        raw = json.loads(_FORM_FILE.read_text(encoding="utf-8"))
+        if raw.get("schema") != "swrlz-lyric-ocean-form-cue-v4":
+            return ()
+        cards = raw.get("cards", [])
+        if not isinstance(cards, list):
+            return ()
+        return tuple(
+            {"id": c["id"], "cue": c["cue"][:300],
+             "triggers": tuple(t.casefold() for t in c.get("triggers", [])[:8] if isinstance(t, str))}
+            for c in cards[:16]
+            if isinstance(c, dict) and isinstance(c.get("id"), str) and isinstance(c.get("cue"), str)
+        )
+    except (OSError, ValueError, TypeError, KeyError):
+        return ()
+
+
+def _specific_form_cue(text: str) -> str:
+    low = " ".join(str(text or "").casefold().split())
+    for card in _form_cards():
+        if any(t and re.search(r"(?<!\\w)" + re.escape(t) + r"(?!\\w)", low) for t in card["triggers"]):
+            return card["cue"]
+    return ""
 
 
 def _focused_teaching(prompt: str, *, structural_reference: bool = False) -> str:
@@ -111,6 +140,9 @@ def _focused_teaching(prompt: str, *, structural_reference: bool = False) -> str
         card = next((c for c in cards if c["axis"] == axis and c["role"] == role), None)
         if card:
             selected.append(card["axis"] + ": " + card["cue"])
+    form_tip = _specific_form_cue(text)
+    if form_tip:
+        selected.append("Form: " + form_tip)
     # Structure-only source references remain abstract; never inject examples.
     if structural_reference and selected:
         selected.append("Reference boundary: learn only the abstract musical form; every new image, title and word must be independent.")
