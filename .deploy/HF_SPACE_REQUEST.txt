@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-09-v176-structured-lyrics-priority-001
+REQUEST_NONCE=2026-10-09-v177-structure-only-creative-and-credit-boundary-001
