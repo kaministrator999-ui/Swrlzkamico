@@ -1,0 +1,358 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-mv19k9po-4160446941-2125609056",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "a12cd03e90c874103800e76c7626456c32cdf5ed",
+  "persistedAtUnixMs": 1791568394288,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-mv19k9po-4160446941-2125609056",
+    "trigger": {
+      "userText": "Can you provide lyrics to rack city by tyga",
+      "sha256": "b1669bfea8102452466a27673cda943cd26ca6c1e4ccf94812ec2543373faa85"
+    },
+    "research": {
+      "kind": "search",
+      "status": "OK",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "existing-lyrics-retrieval",
+      "query": "",
+      "resultCount": 3,
+      "sources": [
+        {
+          "title": "Tyga - Rack City Lyrics | AZLyrics.com",
+          "source": "www.azlyrics.com",
+          "url": "https://www.azlyrics.com/lyrics/tyga/rackcity.html",
+          "snippet": "",
+          "rank": null
+        }
+      ],
+      "sourceSites": [
+        "www.azlyrics.com"
+      ],
+      "widgetKinds": [
+        "search-results"
+      ],
+      "trace": [
+        {
+          "phase": "RESEARCH_STARTED",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research started",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "duckduckgo-lite",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "duckduckgo-lite",
+          "activity": "Using duckduckgo-lite",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+          "provider": "lyrics-verifier",
+          "activity": "Fetched destination matches the requested song identity",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFIED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate verified",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+          "provider": "lyrics-verifier",
+          "activity": "Fetched destination matches the requested song identity",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate did not satisfy verification",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+          "provider": "lyrics-verifier",
+          "activity": "Fetched destination matches the requested song identity",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate did not satisfy verification",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "Okay — here's the full lyric text I could verify from the fetched source for **\"rack city\" by tyga**:\n\nTyga Lyrics\n\"Rack City\"\n(\"Well Done 2\" Mixtape Version)\nRack, rack, city bitch, city bitch\nRack, rack, rack city bitch, city bitch, rack\nRack, rack, rack city bitch, city bitch\nMustard on the beat\nRack city bitch, rack, rack city bitch\nTen ten ten twenties on ya titties bitch\n100 deep V.I.P. no guest list\nT-Raw you don't know who you fucking with?\nGot my other bitch fucking with my other bitch\nFucking all night nigga we ain't celibate\nMake it sound too dope I ain't selling it\nBar fresher than a motherfucking peppermint\nGold Letterman last kings killing shit\nYoung money young money yeah we getting rich\nI got ya grandma on my dick (ha ha)\nGirl you know what it is\nRack city bitch, rack, rack, city bitch\nRack city bitch, rack, rack, city bitch\nRack city bitch, rack, rack, city bitch\nTen, ten, ten, twenties and the fifties bitch\nRack city bitch, rack, rack, city bitch\nRack city bitch, rack, rack, city bitch\nRack city bitch, rack, rack, city bitch\nTen, ten, ten, twenties and the fifties bitch\nI'm a motherfucking star (star)\nLook at the paint on the car (car)\nToo much rim make the ride too hard\nTell that bitch hop out, walk the boulevard\nI need my money pronto\nGet it in the morning like Alonzo\nRondo, Green got cheese like a nacho\nIf you ain't got no ass bitch wear a poncho\nHead hancho got my seat back\nNigga staring at me don't get bapped\nGot my shirt off the club too packed\nIt's too turned going up like gas\nGod damn pull out my racks\nMike Mike Jackson nigga yeah I'm bad\nRat T-T-T-Tatted up on my back\nAll the hoes love me you know what it is\nRack city bitch, rack, rack, city bitch\nRack city bitch, rack, rack, city bitch\nRack city bitch, rack, rack, city bitch\nTen, ten, ten, twenties and the fifties bitch\nRack city bitch, rack, rack, city bitch\nRack city bitch, rack, rack, city bitch\nRack city bitch, rack, rack, city bitch\nTen, ten, ten, twenties and the fifties bitch\nThrowing hunnids, hunnids\nHunnids, hunnids\nThrowing hunnids, hunnids\nRack city bitch, rack, rack city bitch\nHunnids, hunnids\nThrowing hunnids, hunnids\nHunnids, hunnids\nRack city bitch, rack, rack city bitch\n(Hey, hey, hey, hey, hey...)\n\n**Lyrics source:** Tyga - Rack City Lyrics | AZLyrics.com — https://www.azlyrics.com/lyrics/tyga/rackcity.html",
+      "sha256": "dacb9cd6be9addfe39a6a0e5f83c9e88df6f0403046bf363cae275fb29e3887c"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up \"rack city\" \"tyga\" lyrics…"
+      },
+      {
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate"
+      },
+      {
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "reason": "Fetched destination matches the requested song identity"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFIED",
+        "reason": "Lyrics candidate verified"
+      },
+      {
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate"
+      },
+      {
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "reason": "Fetched destination matches the requested song identity"
+      },
+      {
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification"
+      },
+      {
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate"
+      },
+      {
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "reason": "Fetched destination matches the requested song identity"
+      },
+      {
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK"
+      },
+      {
+        "phase": "WIDGET_READY",
+        "reason": "search-results"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok."
+      },
+      {
+        "phase": "SOURCE_FOUND",
+        "reason": "There we go — I found relevant verified material on Tyga - Rack City Lyrics | AZLyrics.com."
+      },
+      {
+        "phase": "EVIDENCE_SCOPING",
+        "reason": "Give me one second — preparing the requested material."
+      },
+      {
+        "phase": "LYRICS_VERIFIED_PAYLOAD",
+        "reason": "Serving frozen lyrics payload from successfully fetched evidence."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ]
+  }
+}
