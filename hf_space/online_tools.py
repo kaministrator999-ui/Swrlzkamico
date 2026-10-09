@@ -1894,6 +1894,9 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                         if (
                             not last_slot_discovery_done
                             and len(lyrics_source_attempts)==LYRICS_MAX_PAGE_ATTEMPTS-1
+                            # This recovery is for provider FETCH failures, not
+                            # ordinary page-body rejections from accessible sites.
+                            and any(x.get("outcome")=="FETCH_ERROR" for x in lyrics_source_attempts)
                             and not presentation_ready()
                             and callable(search_public)
                             and not any(
