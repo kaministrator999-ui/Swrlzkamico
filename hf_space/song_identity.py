@@ -131,6 +131,69 @@ def song_identity(subject: str) -> dict[str,Any]:
     }
 
 
+
+def resolve_unseparated_artist(identity: dict[str,Any], candidates: list[dict[str,Any]]) -> dict[str,Any]:
+    """Resolve 'title artist' only after independent search headings prove a split.
+
+    Never infer an artist from the number of words alone. A match must visibly
+    identify title and performer in the heading of two different source families.
+    """
+    if not isinstance(identity,dict) or identity.get("primaryArtist"):
+        return identity
+    words=_clean(identity.get("title"),180).split()
+    if not 3<=len(words)<=10:
+        return identity
+
+    possible=[]
+    for split in range(1,len(words)):
+        proposed_title=" ".join(words[:split])
+        proposed_artist=" ".join(words[split:])
+        title_fold=_fold(proposed_title)
+        artist_fold=_fold(proposed_artist)
+        families=set()
+        for item in candidates[:24] if isinstance(candidates,list) else []:
+            if not isinstance(item,dict):
+                continue
+            heading=_clean(item.get("title"),320)
+            artist_first=re.match(r"^(.+?)\\s+[-–—]\\s+(.+?)\\s+lyrics?\\b",heading,re.I)
+            title_first=re.match(r"^(.+?)\\s+lyrics?\\s+(?:by|[-–—])\\s+(.+?)(?=\\s+[-–—|]\\s+|$)",heading,re.I)
+            matched=bool(
+                (artist_first and _fold(artist_first.group(1))==artist_fold
+                    and _fold(artist_first.group(2))==title_fold)
+                or (title_first and _fold(title_first.group(1))==title_fold
+                    and _fold(title_first.group(2))==artist_fold)
+            )
+            if matched:
+                family=source_family(item)
+                if family:
+                    families.add(family)
+        if len(families)>=2:
+            possible.append((len(families),split,proposed_title,proposed_artist,sorted(families)))
+
+    if not possible:
+        return identity
+    possible.sort(key=lambda x:(-x[0],-x[1]))
+    strongest=possible[0]
+    if len(possible)>1 and strongest[0]==possible[1][0]:
+        return identity  # conflicting equally corroborated parses; remain uncertain
+    resolved=song_identity(f'"{strongest[2]}" by {strongest[3]}')
+    resolved["resolution"]="CROSS_SOURCE_HEADING_CONSENSUS"
+    resolved["resolutionSourceFamilies"]=strongest[4][:6]
+    resolved["originalRawSubject"]=identity.get("rawSubject")
+    return resolved
+
+
+def supports_direct_lyric_text_fetch(item: dict[str,Any]) -> bool:
+    """A video/music stream result can be linked, but not fetched as lyric body."""
+    url=_clean(item.get("url"),1600)
+    parsed=urllib.parse.urlsplit(url)
+    host=str(parsed.hostname or "").casefold()
+    if parsed.scheme not in {"http","https"} or not host:
+        return False
+    non_text_hosts=("youtube.com","youtu.be","tiktok.com","spotify.com","music.apple.com","soundcloud.com","vimeo.com")
+    return not any(host==domain or host.endswith("."+domain) for domain in non_text_hosts)
+
+
 def query_ladder(identity: dict[str,Any], max_queries: int = 8) -> list[dict[str,Any]]:
     title=_clean(identity.get("title"),180)
     artist=_clean(identity.get("primaryArtist"),180)
