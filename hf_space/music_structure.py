@@ -61,12 +61,14 @@ def music_model_policy(prompt: str) -> str:
 
 # Only for user requests that CREATE a song using earlier lyrics as a guide.
 # A reference can inform high-level craft without reusing copyrighted lines.
-MUSIC_CREATIVE_REFERENCE_POLICY="""STRUCTURE-ONLY SONG STUDY (current user asks for a wholly NEW work):
+MUSIC_CREATIVE_REFERENCE_POLICY="""STRUCTURE-ONLY SONG STUDY (the user asks for a wholly NEW work, including follow-up requests for another one):
 - Study the PROVIDED song only as an abstract structural example: section sequence, section sizes, hook placement/repetition, relative line length, phrasing/cadence, rhyme positioning and variation.
 - Do NOT reuse reference WORDS, catchphrases, hook language, title, plot, subject, images, slang, named people/places, or existing lyric lines. This includes the exact refrain and apparently generic but recognizable fragments.
 - Select your OWN subject, title, vocabulary, hook, and rhyme words independently. Compose all fresh lines. Mirror structural mechanics where useful, not the previous writer's wording or persona.
 - Sections and their line lengths are approximate scaffolding, not a mandate for mechanical copying. Maintain musical progression and natural phrasing.
 - Write the finished requested song from its first section to a clean ending, with NO breakdown, instructional stage directions, or post-song analysis unless requested. Avoid padding with repeated chorus copies.
+- The reference source and any earlier attempts MUST NOT be named, quoted, recalled or alluded to anywhere in the output. Do not write a tribute, homage, vibe description or source comparison.
+- For a repeat request, invent a distinctly different original topic, scenario, rhyme vocabulary, and title instead of continuing or rewriting your last song.
 - Use a fenced Markdown code block for the complete new song; include its heading/sections inside the block."""
 
 def creative_music_transform_request(prompt: str) -> bool:
@@ -206,130 +208,198 @@ def parse_section_marker(line: str) -> dict[str,Any] | None:
 
 
 
+
+_CREATIVE_REFERENCE_POINTER=re.compile(
+    r"(?i)\b(?:those|these|earlier|previous|provided|above|reference|study|from\s+that)\b"
+)
+_CREATIVE_MORE_REQUEST=re.compile(
+    r"(?i)^\s*(?:(?:do|make|write|create|give(?:\s+me)?)\s+)?"
+    r"(?:another|one\s+more)(?:\s+(?:one|song|rap|verse|track|version))?"
+    r"(?:\s+(?:please|for\s+me))?\s*[.!?]*\s*$"
+)
+_CREATIVE_SOURCE_FOOTER=re.compile(r"(?i)\*\*lyrics source:\*\*")
+_CREATIVE_FORM_WORDS=re.compile(r"[A-Za-z0-9][A-Za-z0-9'’\-]*")
+_CREATIVE_CODE_FRAGMENT=re.compile(
+    r"(?i)(?:^\s*[:@]?(?:class|style|id|v-if|v-for)\s*=|"
+    r"^\s*[A-Za-z_$][A-Za-z0-9_$.\[\]]*\s*=\s*[^=]|"
+    r"^\s*[}{}]\s*(?:else|if|$)|"
+    r"^\s*(?:if|else\s+if|while|function)\s*\(|"
+    r"=>|^\s*[^<>]*[{}]\s*$|"
+    r"^\s*(?:artists?|albums?|genres?)\s*:)"
+)
+
+
+def _creative_display_form(body: str) -> list[dict[str,Any]]:
+    """Compute song mechanics from the rendered lyric region; NEVER export words.
+
+    Both formatted section-labelled songs and older plain lyric responses are
+    supported. Page UI code, breadcrumb labels, titles and footer prose cannot
+    become lyric-reference structure.
+    """
+    head=_CREATIVE_SOURCE_FOOTER.split(str(body or ""),1)[0]
+    if not head.strip():
+        return []
+    lines=head.splitlines()
+    region=[]
+    if sum(1 for line in lines if line.strip()=="---")>=2:
+        entered=False
+        for raw in lines:
+            line=raw.strip()
+            if line=="---":
+                if entered:
+                    break
+                entered=True
+                continue
+            if entered:
+                region.append(raw)
+    else:
+        # Legacy v179 message was rendered without outer Markdown dividers.
+        # Its intro precedes a blank line; everything thereafter is candidate
+        # song body, NOT verified lyrics until filtered as an actual line.
+        start=next((i+1 for i,x in enumerate(lines) if not x.strip()),len(lines))
+        region=lines[start:]
+    blocks=[]
+    current=[]
+    label_type="section"
+    label_number=None
+    label_repeat=None
+
+    def flush():
+        nonlocal current,label_type,label_number,label_repeat
+        if len(current)>=2:
+            blocks.append({
+                "type":label_type,"number":label_number,
+                "repeatCount":label_repeat,"lines":current[:64]
+            })
+        current=[]
+        label_type="section"
+        label_number=None
+        label_repeat=None
+
+    for raw in region[:500]:
+        line=raw.strip()
+        if _CREATIVE_CODE_FRAGMENT.search(line):
+            continue
+        if not line or line.startswith("──"):
+            flush()
+            continue
+        parsed=parse_section_marker(line.strip("* \t")) if re.fullmatch(r"\s*\[[^\]\n]+\]\s*",line) else None
+        if parsed and parsed.get("type")!="performer_cue":
+            flush()
+            label_type=str(parsed.get("type") or "section")
+            label_number=parsed.get("number")
+            label_repeat=parsed.get("repeatCount")
+            continue
+        if line.startswith(("**","http://","https://")):
+            continue
+        words=_CREATIVE_FORM_WORDS.findall(line)
+        if 2<=len(words)<=24 and len(line)<=180:
+            current.append(words)
+    flush()
+    return blocks[:16]
+
+
+def _creative_form_sketch(blocks: list[dict[str,Any]]) -> dict[str,Any]:
+    abstract=[]
+    for block in blocks[:16]:
+        word_lines=block["lines"]
+        lengths=[len(words) for words in word_lines]
+        if not lengths:
+            continue
+        endings=[]
+        for words in word_lines:
+            terminal=words[-1].casefold()
+            m=re.search(r"[aeiouy][a-z]{0,3}$",terminal)
+            endings.append(m.group(0) if m else "")
+        repeated={e for e in endings if e and endings.count(e)>=2}
+        labels={}
+        for ending in endings:
+            if ending in repeated and ending not in labels:
+                labels[ending]=chr(65+len(labels)%26)
+        ordered=sorted(lengths)
+        abstract.append({
+            "type":block["type"],"number":block["number"],
+            "repeatCount":block["repeatCount"],
+            "approxLineCount":len(lengths),
+            "medianWordsPerLine":ordered[len(ordered)//2],
+            "shortestWords":ordered[0],"longestWords":ordered[-1],
+            "lineLengthContourWords":lengths[:32],
+            "endRhymePlacementHint":[labels.get(e,"-") for e in endings[:32]],
+        })
+    return {
+        "schema":"swrlz-creative-structural-reference-v2",
+        "sourceContentExcluded":True,
+        "sectionSequence":[x["type"] for x in abstract],
+        "sections":abstract,
+        "usage":"Only abstract section placement, recurrence, approximate line lengths and rhyme positions. Invent all topic, words, titles, settings, hooks and imagery from zero.",
+    }
+
+
 def creative_music_reference_projection(
     prompt: str, history: list[dict[str,Any]]
 ) -> tuple[list[dict[str,Any]], dict[str,Any] | None]:
-    """Replace a previously displayed lyric body with a content-free structure sketch.
+    """Source-free model history for original-song requests AND 'another one'.
 
-    Only the MODEL-facing history is transformed, never the stored chat log.
-    Returning the original history when there is no explicit lyric-reference
-    creation request preserves ordinary conversational continuity.
+    Displayed chat and durable history are untouched. The inference-facing
+    context must never include the referenced song *or earlier imitations*;
+    either can accidentally anchor the 700M to the old hook and topic.
     """
     existing=list(history or [])
-    if not creative_music_transform_request(prompt) or not re.search(
-        r"\b(?:those|these|earlier|previous|provided|above|reference|study)\b",
-        str(prompt or ""),re.I,
-    ):
+    source_idx=None
+    for i in range(len(existing)-1,-1,-1):
+        item=existing[i]
+        if not isinstance(item,dict) or item.get("role")!="assistant":
+            continue
+        body=str(item.get("content") or item.get("text") or "")
+        if _CREATIVE_SOURCE_FOOTER.search(body):
+            source_idx=i
+            break
+    if source_idx is None:
         return existing,None
 
-    for i in range(len(existing)-1,-1,-1):
-        message=existing[i]
-        if not isinstance(message,dict) or message.get("role")!="assistant":
+    explicit=bool(
+        creative_music_transform_request(prompt)
+        and _CREATIVE_REFERENCE_POINTER.search(str(prompt or ""))
+    )
+    continued=bool(
+        _CREATIVE_MORE_REQUEST.fullmatch(str(prompt or ""))
+        and any(
+            isinstance(item,dict) and item.get("role")=="user"
+            and creative_music_transform_request(str(item.get("content") or item.get("text") or ""))
+            for item in existing[source_idx+1:]
+        )
+    )
+    if not (explicit or continued):
+        return existing,None
+
+    source_body=str(existing[source_idx].get("content") or existing[source_idx].get("text") or "")
+    structure=_creative_form_sketch(_creative_display_form(source_body))
+    structure["continuationNewComposition"]=continued
+    structure["sourceHistoryExcluded"]=True
+    structure["previousGeneratedLyricsExcluded"]=continued
+    projected=[]
+    for i,item in enumerate(existing):
+        if not isinstance(item,dict):
             continue
-        body=str(message.get("content") or message.get("text") or "")
-        if not re.search(r"(?i)\*\*lyrics source:\*\*",body):
-            continue
-        sections=[]
-        current=None
-        for raw_line in body.splitlines()[:500]:
-            line=raw_line.strip()
-            if re.match(r"(?i)^\*{0,2}(?:lyrics source|songwriters?|publisher|powered by|top lyrics|top artists)\b",line):
-                break
-            label=line.strip("* \t")
-            parsed=parse_section_marker(label) if label.startswith("[") and label.endswith("]") else None
-            if parsed and parsed.get("type")!="performer_cue":
-                current={"type":parsed.get("type"),"number":parsed.get("number"),
-                         "repeatCount":parsed.get("repeatCount"),"lengths":[],"endings":[]}
-                sections.append(current)
-                continue
-            if current is None or not line or line.startswith(("---","──","**Lyrics source:")):
-                continue
-            words=re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",line)
-            if 1<=len(words)<=30 and len(line)<=210:
-                current["lengths"].append(len(words))
-                # Rough orthographic ending groups, NOT a phonetic claim.
-                # Emit only abstract pattern labels, never the rhyme words.
-                terminal=words[-1].casefold()
-                ending_match=re.search(r"[aeiouy][a-z]{0,3}$",terminal)
-                current["endings"].append(ending_match.group(0) if ending_match else "")
-        if not sections:
-            # Some verified pages have no Verse/Hook tags. Read ONLY the
-            # rendered lyric-document region, not the introduction or credits.
-            # An unlabeled song still must not expose its old words to the
-            # creative model as raw history.
-            in_body=False
-            current={"type":"section","number":None,"repeatCount":None,
-                     "lengths":[],"endings":[]}
-            for raw_line in body.splitlines()[:500]:
-                line=raw_line.strip()
-                if line=="---":
-                    if not in_body:
-                        in_body=True
-                        continue
-                    break
-                if not in_body:
-                    continue
-                if re.match(r"(?i)^\*{0,2}(?:lyrics source|songwriters?|publisher|powered by|top lyrics|top artists)\b",line):
-                    break
-                if line.startswith("──"):
-                    if current["lengths"]:
-                        sections.append(current)
-                    current={"type":"section","number":None,"repeatCount":None,
-                             "lengths":[],"endings":[]}
-                    continue
-                words=re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",line)
-                if 1<=len(words)<=30 and len(line)<=210:
-                    current["lengths"].append(len(words))
-                    term=words[-1].casefold()
-                    ending_match=re.search(r"[aeiouy][a-z]{0,3}$",term)
-                    current["endings"].append(ending_match.group(0) if ending_match else "")
-            if current["lengths"]:
-                sections.append(current)
-        if not sections:
-            continue
-        abstract=[]
-        for section in sections[:16]:
-            lengths=section["lengths"]
-            if not lengths:
-                continue
-            ordered=sorted(lengths)
-            endings=section["endings"]
-            repeated={ending for ending in endings if ending and endings.count(ending)>=2}
-            group_labels={}
-            for ending in endings:
-                if ending in repeated and ending not in group_labels:
-                    group_labels[ending]=chr(65+(len(group_labels)%26))
-            abstract.append({
-                "type":section["type"],"number":section["number"],
-                "repeatCount":section["repeatCount"],
-                "approxLineCount":len(lengths),
-                "medianWordsPerLine":ordered[len(ordered)//2],
-                "shortestWords":ordered[0],"longestWords":ordered[-1],
-                "lineLengthContourWords":lengths[:24],
-                "endRhymePlacementHint":["-" if ending not in repeated else group_labels[ending] for ending in endings[:24]],
-            })
-        if not abstract:
-            continue
-        plan={
-            "schema":"swrlz-creative-structural-reference-v1",
-            "sourceContentExcluded":True,
-            "sectionSequence":[x["type"] for x in abstract],
-            "sections":abstract,
-            "usage":"Study form and line-length dynamics only. New topic, new vocabulary, new title, new refrain. No original lyric lines or distinctive phrases.",
-        }
-        projected=[dict(item) if isinstance(item,dict) else item for item in existing]
-        replacement="Earlier assistant supplied a verified song as a STRUCTURAL reference. The actual words are intentionally excluded from creative-generation context. ABSTRACT FORM: "+str(plan)
-        projected[i]["content"]=replacement
-        if "text" in projected[i]:
-            projected[i]["text"]=replacement
-        if i>0 and isinstance(projected[i-1],dict) and projected[i-1].get("role")=="user":
-            previous=str(projected[i-1].get("content") or projected[i-1].get("text") or "")
-            if re.search(r"(?i)\blyrics?\b",previous):
-                projected[i-1]["content"]="User requested an existing song as a structural study reference; title and artist are not part of the new song."
-                if "text" in projected[i-1]:
-                    projected[i-1]["text"]=projected[i-1]["content"]
-        return projected,plan
-    return existing,None
+        copy=dict(item)
+        role=copy.get("role")
+        if i==source_idx:
+            replacement="Earlier song source was used for ABSTRACT FORM ONLY. All source words and subject are hidden. SONG MECHANICS: "+str(structure)
+        elif i==source_idx-1 and role=="user":
+            replacement="User supplied a previously existing song only as an abstract structural reference. Its identity and text must never be used in a new work."
+        elif i>source_idx and continued and role=="assistant":
+            replacement="An earlier original rap was already composed. Its words, title, subject and refrain are excluded. Compose ANOTHER distinctly new rap, using only the abstract form reference."
+        elif i>source_idx and role=="user" and creative_music_transform_request(str(copy.get("content") or copy.get("text") or "")):
+            replacement="User requested a brand-new rap using only the abstract mechanics of the earlier song, independently creating all words and subject matter."
+        else:
+            replacement=None
+        if replacement is not None:
+            copy["content"]=replacement
+            if "text" in copy:
+                copy["text"]=replacement
+        projected.append(copy)
+    return projected,structure
+
 
 def _norm_line(value: str) -> str:
     return re.sub(r"\s+"," ",str(value or "").strip()).casefold()
