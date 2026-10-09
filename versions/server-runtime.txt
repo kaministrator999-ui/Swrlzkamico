@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.327
-REVISION=2.3.327-hf-v174-footer-repeat-metadata
+VERSION=2.3.328
+REVISION=2.3.328-hf-v175-contextual-creative-music
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
