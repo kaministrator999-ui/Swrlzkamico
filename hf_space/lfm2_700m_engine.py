@@ -903,8 +903,8 @@ def generate_events(payload):
                             "Output ONLY the new lines, no code fence, heading, blank lines, "
                             "repeated lines, explanation, apology or chorus. "
                             "Maintain the original user's story, voice, rhyme intensity "
-                            "and continuity. Give the investigation concrete new action; "
-                            "resolve its mystery on the final lines of the whole song."
+                            "and continuity. Advance the requested subject through fresh action "
+                            "and make the final part feel resolved, not abruptly cut off."
                         )},
                         {"role":"user","content":(
                             "ORIGINAL USER REQUEST:\n"+prompt[:1100]
