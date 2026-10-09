@@ -85,3 +85,50 @@ def clean_lyric_container(raw: str) -> str:
     lines,_=_extract_lines(raw)
     fence=chr(96)*3
     return fence+"\n"+"\n".join(lines)+"\n"+fence if lines else ""
+
+
+_TITLE = re.compile(r"(?i)^\s*(?:title|song\s+title)\s*:")
+
+def recoverable_continuous_lines(raw: str, request: dict[str,Any]) -> list[str] | None:
+    """Keep model-authored lyric WORDS; remove only empty stanza separators.
+
+    Reject summaries, refusals, title/section labels and non-lyrical prose.
+    Empty lines can be removed in an explicitly continuous verse because the
+    user's negative constraint outranks the model's arbitrary stanza spacing.
+    This is presentation normalization, not inventing missing bars.
+    """
+    if not request.get("continuous"):
+        return None
+    all_lines,faults=_extract_lines(raw)
+    if faults:
+        return None
+    words=[line for line in all_lines if line]
+    if not words or len(words)>120:
+        return None
+    if any(_REFUSAL.search(line) or _META.search(line) or _TITLE.search(line)
+           or _SECTION.fullmatch(line) for line in words):
+        return None
+    if request.get("noChorus") and any(
+        _SECTION.fullmatch(line) and re.search(r"(?i)\b(?:chorus|hook|refrain)\b",line)
+        for line in words
+    ):
+        return None
+    # Keep each authored line intact, in its original order.
+    return words
+
+
+def extend_continuous_lyrics(prefix: list[str], new_raw: str,
+                            request: dict[str,Any]) -> list[str] | None:
+    """Accept bounded authored continuation, never auto-pad or silently truncate."""
+    desired=request.get("requestedLines")
+    if not isinstance(desired,int) or desired<=0 or len(prefix)>=desired:
+        return None
+    suffix=recoverable_continuous_lines(new_raw,request)
+    if not suffix or len(suffix)>desired-len(prefix):
+        return None
+    original_set={line.casefold().strip() for line in prefix}
+    if any(line.casefold().strip() in original_set for line in suffix):
+        return None
+    if len({line.casefold().strip() for line in suffix}) != len(suffix):
+        return None
+    return list(prefix)+suffix
