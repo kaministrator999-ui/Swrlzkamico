@@ -97,6 +97,9 @@ assert FOURTH_URL not in fetches,fetches
 phases=[event.get("phase") for event in events]
 assert "LYRICS_FALLBACK_FETCH" in phases,phases
 assert "LYRICS_SOURCE_VERIFIED" in phases,phases
+# Rejection-only source bodies do not need a new provider search; v178
+# last-slot rescue is reserved for actual upstream HTTP/network failures.
+assert "LYRICS_RESCUE_SEARCH" not in phases,phases
 
 # Exhaustion: after three total attempts, a fourth candidate must never be fetched.
 fetches=[]
