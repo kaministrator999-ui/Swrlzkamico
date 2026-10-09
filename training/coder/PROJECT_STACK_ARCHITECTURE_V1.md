@@ -4,6 +4,8 @@
 **Audience:** the deployed Qwen2.5-Coder-1.5B-Instruct GGUF programming route, a repository-enabled coding assistant, and future independently evaluated student models.  
 **Canonical owners:** [Project Start](../../§wyrlz_§tart.md), [Programming LALM Runtime Architecture](../../docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md), [Architecture Reconciliation Protocol](../../docs/engineering/SWRLZ_ARCHITECTURE_RECONCILIATION_PROTOCOL.md), [Version Evolution](../../SWRLZ_VERSION_MODULE_EVOLUTION.md). This is **teaching material**, not a second policy/architecture authority.
 
+**Cross-language continuation:** [Coder Academy v2 — Kotlin, Java, TypeScript and Rust](CROSS_LANGUAGE_CURRICULUM_V2.md) extends this source-backed course to technologies that are not yet current repository implementation dependencies. It includes four stand-alone teacher examples and [12 ungraded cross-language exercises](cross_language_practice_v2.json). Learn relationships before proposing an actual migration. A course file is not a trained model or activated prefill.
+
 ## 0 — Read current source, not the age of a document
 
 A correct student answers **what is implemented and on which branch**, not merely what a contract proposes. Refresh actual files, manifests, SHAs, module authorities, runtime evidence and deployment status before a project patch.
