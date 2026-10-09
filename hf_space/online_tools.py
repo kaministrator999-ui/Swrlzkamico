@@ -19,7 +19,7 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Callable, Iterator
 from music_structure import structure_verified_music, compile_verified_music_presentation, music_structure_debug
-from song_identity import song_identity, query_ladder, candidate_score, rank_candidates, diversify_candidates, source_family
+from song_identity import song_identity, query_ladder, candidate_score, rank_candidates, diversify_candidates, source_family, resolve_unseparated_artist, supports_direct_lyric_text_fetch
 
 try:
     import api.online_research as canonical_online_research
@@ -33,7 +33,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v171-extraction-stage-diagnostics"
+ONLINE_OBSERVABILITY_REVISION = "v173-cross-source-identity-and-text-fetch-priority"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -1532,6 +1532,22 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         bundle = run_online_research(payload)
     finally:
         canonical_online_research.clear_trace_sink()
+    if plan.get("contentMode")=="lyrics-verification":
+        # Search-result headings can disambiguate an unseparated 'title artist'
+        # request; only accept agreement across two independent source families.
+        # Preserve the actual original search query and first fetch history.
+        initial_identity=plan.get("songIdentity") if isinstance(plan.get("songIdentity"),dict) else {}
+        discovered_candidates=[
+            row for row in (bundle.get("candidatePool") or [])
+            if isinstance(row,dict)
+        ]
+        resolved_identity=resolve_unseparated_artist(initial_identity,discovered_candidates)
+        if resolved_identity is not initial_identity:
+            plan={
+                **plan,
+                "subject":resolved_identity["rawSubject"],
+                "songIdentity":resolved_identity,
+            }
     page_extract_limit=LYRICS_PAGE_TEXT_CHARS if plan.get("contentMode")=="lyrics-verification" else 6000
     evidence = []
     for item in (bundle.get("evidence") or [])[:8]:
@@ -1753,6 +1769,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             candidate_pool=[
                 candidate for candidate in ranked_pool
                 if bool((candidate.get("songIdentityScore") or {}).get("allowed"))
+                and supports_direct_lyric_text_fetch(candidate)
             ]
             # preserve diversify_candidates() order: one strong candidate per
             # source family before duplicate variants from the same provider.
@@ -1814,7 +1831,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                                 "negativeContentHints":[_clean(x,80) for x in (identity.get("negativeContentHints") or [])[:6]],
                             }
                             rescue_debug.append(debug_item)
-                            if identity.get("allowed") and clean_url:
+                            if identity.get("allowed") and clean_url and supports_direct_lyric_text_fetch({"url":clean_url}):
                                 rescue_candidates.append({
                                     **item,
                                     "url":clean_url,
