@@ -48,6 +48,11 @@ def manifest(paths: list[str]) -> list[str]:
             raise WorkspaceError("Duplicate file in manifest")
         observed.add(path.casefold())
         normalized.append(path)
+    for child in observed:
+        parts=child.split("/")
+        for n in range(1,len(parts)):
+            if "/".join(parts[:n]) in observed:
+                raise WorkspaceError("File path cannot also be a parent directory")
     return normalized
 
 
@@ -186,7 +191,10 @@ def downloadable_files(workspace: dict, expected_revision: int, expected_sha: st
     if workspace["state"] != "READY" or workspace["revision"] != expected_revision:
         raise WorkspaceConflict("Workspace is not finalized at this revision")
     required = workspace["requiredPaths"]
-    files = [workspace["files"][name] for name in required]
+    try:
+        files = [workspace["files"][name] for name in required]
+    except (KeyError,TypeError) as exc:
+        raise WorkspaceConflict("Workspace is missing required saved file") from exc
     _prepared(files)
     source = _sha(files)
     if source != expected_sha or source != workspace.get("sourceHash"):
