@@ -1,6 +1,10 @@
 // Articulated paper cutouts. Pose pivots, facial ink and silhouette thickness
 // share the native story clock; the original atlas pixels remain immutable.
 const RIG_SLOTS={torso:0,pelvis:1,head:2,cape:3,leftUpperArm:4,leftForearm:5,leftHand:6,staff:7,rightUpperArm:8,rightForearm:9,rightHand:10,quill:11,leftUpperLeg:12,leftLowerLeg:13,leftFoot:14,rightUpperLeg:15,rightLowerLeg:16,rightFoot:17,grimoire:18,magic:19};
+// Character-specific artwork anchors: a skull cuff and a human glove do not share a grip.
+const RIG_REST_ROWS={"kami":[["torso",null,0,0.35,0.02,1.8,2.02,0,-0.51,0],["pelvis","torso",0,-0.88,0.07,2,2.18,0,-0.79,0],["head","torso",0,0.52,0.21,1.8,1.75,0,0.7,0],["cape","torso",0,0.45,-0.2,2.55,3.08,0,-1.23,0],["leftUpperArm","torso",-0.54,0.16,0.09,0.86,1.16,0.075,-0.418,-0.16],["leftForearm","leftUpperArm",0.282,-0.764,0.035,0.73,1.03,0.108,-0.353,-0.76],["leftHand","leftForearm",0.245,-0.725,0.065,0.62,0.63,0.197,0.18,-1.98],["rightUpperArm","torso",0.69,0.25,0.1,0.82,1.17,0.014,-0.435,0.18],["rightForearm","rightUpperArm",-0.048,-0.878,0.035,0.6,1.03,-0.082,-0.35,0.7],["rightHand","rightForearm",-0.03,-0.713,0.075,0.72,0.62,0.237,0.166,-1.9],["leftUpperLeg","pelvis",-0.37,-0.16,-0.04,0.92,1.05,0,-0.43,0],["leftLowerLeg","leftUpperLeg",0,-0.83,0.025,0.51,0.98,0,-0.4,0],["leftFoot","leftLowerLeg",0,-0.81,0.035,0.54,0.416,-0.1,-0.12,0],["rightUpperLeg","pelvis",0.37,-0.16,-0.04,0.88,1.03,0,-0.42,0],["rightLowerLeg","rightUpperLeg",0,-0.82,0.025,0.53,0.98,0,-0.4,0],["rightFoot","rightLowerLeg",0,-0.81,0.035,0.48,0.403,0.08,-0.12,0],["staff","leftHand",0.291,0.264,0.08,1.24,1.73,0,2.05,2.9],["quill","rightHand",0.419,0.263,0.08,0.46,1.2,0.16,0.5,0.82],["grimoire","leftHand",-0.25,0.25,0.06,2.05,1.65,-0.4,0.2,0.77]],"swyrlz":[["torso",null,0,0.35,0.02,1.75,1.99,0,-0.5,0],["pelvis","torso",0,-0.86,0.06,1.91,2.16,0,-0.77,0],["head","torso",0,0.32,0.2,2.5,2.35,0,0.7,0],["cape","torso",0,0.3,-0.18,2.37,2.85,0,-1.11,0],["leftUpperArm","torso",-0.65,0.2,0.075,0.78,1.06,0.234,-0.327,-0.62],["leftForearm","leftUpperArm",0.414,-0.648,0.03,0.79,0.98,-0.27,-0.333,0.8],["leftHand","leftForearm",-0.383,-0.635,0.06,0.76,0.56,-0.182,0.034,0.9],["rightUpperArm","torso",0.65,0.2,0.075,0.8,1.07,-0.022,-0.39,0.35],["rightForearm","rightUpperArm",-0.076,-0.724,0.03,0.78,1,0.261,-0.306,-0.35],["rightHand","rightForearm",0.387,-0.618,0.075,0.68,0.66,0.167,0.152,-1.7],["leftUpperLeg","pelvis",-0.34,-0.15,-0.035,0.89,1.01,0,-0.4,0],["leftLowerLeg","leftUpperLeg",0,-0.79,0.025,0.46,1,0,-0.41,0],["leftFoot","leftLowerLeg",0,-0.82,0.035,0.57,0.413,-0.13,-0.12,0],["rightUpperLeg","pelvis",0.34,-0.15,-0.035,0.84,1.01,0,-0.4,0],["rightLowerLeg","rightUpperLeg",0,-0.79,0.025,0.49,1,0,-0.41,0],["rightFoot","rightLowerLeg",0,-0.82,0.035,0.64,0.45,0.13,-0.12,0],["staff","leftHand",0.291,0.264,0.08,1.24,1.73,0,2.05,2.9],["quill","rightHand",0.419,0.263,0.08,0.46,1.2,0.04,0.5,0.82],["grimoire","leftHand",-0.306,0.084,0.06,1.73,1.67,-0.45,0.4,-1.23]]};
+const RIG_REST_LAYOUTS=Object.freeze(Object.fromEntries(Object.entries(RIG_REST_ROWS).map(([c,rows])=>[c,Object.freeze(Object.fromEntries(rows.map(([id,parent,x,y,z,width,height,artX,artY,rotationZ])=>[id,Object.freeze({x,y,width,height,artX,artY,rotationZ})])))])));
+function rigVisualSignature(cfg){return JSON.stringify([cfg.enabled,cfg.asset,cfg.thickness,cfg.depth,cfg.layout]);}
 function rigAtlasCells(texture,character){
   if(texture.userData.rigCells?.[character])return texture.userData.rigCells[character];
   const image=texture.image;if(!image?.width)return null;
@@ -15,6 +19,8 @@ function rigAtlasCells(texture,character){
     for(let y=t;y<b;y++)for(let x=l;x<r;x++)if(pixels[(y*image.width+x)*4+3]>20){x0=Math.min(x0,x);x1=Math.max(x1,x+1);y1=Math.min(y1,y);y2=Math.max(y2,y+1);}
     if(x1<=x0){x0=l;x1=r;y1=t;y2=b;}
     x0=Math.max(l,x0-2);x1=Math.min(r,x1+2);y1=Math.max(t,y1-2);y2=Math.min(b,y2+2);
+    // Keep the calf on its own cutout; the foot card owns the instep and sole.
+    if((slot===14||slot===17)&&rigModel().characters[character].asset==='assets/anime/'+character+'-rig.png'){const trim=character==='kami'?(slot===14?.35:.38):(slot===14?.45:.40);y1+=Math.round((y2-y1)*trim);}
     const size=48,mask=[];
     for(let j=0;j<size;j++)for(let i=0;i<size;i++){
       const x=Math.min(x1-1,Math.floor(x0+(i+.5)*(x1-x0)/size)),y=Math.min(y2-1,Math.floor(y1+(j+.5)*(y2-y1)/size));
@@ -44,15 +50,16 @@ function rigMakePart(texture,cell,width,height,thickness,id){
   front.position.z=thickness/2;front.name=id+' · painted front';
   const back=new THREE.Mesh(geometry.plane.clone(),front.material.clone());back.position.z=-thickness/2;back.material.color.set('#8a643a');back.name=id+' · paper back';
   const edge=new THREE.Mesh(geometry.edge,new THREE.MeshBasicMaterial({color:'#b68a4f',side:THREE.DoubleSide,transparent:true,fog:false,toneMapped:false}));edge.name=id+' · cut paper edge';
-  group.add(front,back,edge);group.userData.rigPart=id;return group;
+  group.add(front,back,edge);group.userData.rigPart=id;group.userData.rigSize={width,height};group.userData.rigCell=cell;return group;
 }
 // These footprints sit inside the blank skin on the bundled head cards. Kami's
 // old placement crossed the chin into the neck; the skull has its own anatomy.
 const RIG_FACE_FIT={kami:{x:-.10,y:-.165,width:.70,height:.45},swyrlz:{x:.065,y:-.635,width:.78,height:.67}};
-function rigFaceSurface(character){
+function rigFaceSurface(character,layout){
   const canvas=document.createElement('canvas');canvas.width=256;canvas.height=192;
   const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
-  const fit=RIG_FACE_FIT[character];
+  const original=RIG_FACE_FIT[character],sx=layout.width/(character==='kami'?1.8:2.5),sy=layout.height/(character==='kami'?1.75:2.35);
+  const fit={x:original.x*sx,y:original.y*sy,width:original.width*sx,height:original.height*sy};
   const mesh=new THREE.Mesh(new THREE.PlaneGeometry(fit.width,fit.height),new THREE.MeshBasicMaterial({map:texture,transparent:true,alphaTest:.01,depthWrite:true,side:THREE.DoubleSide,fog:false,toneMapped:false}));
   mesh.name=character+' · animated eyes brows and mouth';mesh.userData.rigFace=true;return {mesh,texture,canvas,fit,hash:null,applied:null};
 }
@@ -130,27 +137,23 @@ function rigBuildVisual(visual,character){
   const hinge=new THREE.Group();hinge.userData.storyCastHinge=true;hinge.position.y=-visual.height/2;group.add(hinge);
   const body=new THREE.Group(),factor=character==='swyrlz'?.53:1;body.scale.setScalar(factor);body.position.y=2.95*factor;hinge.add(body);
   const joints={},parts=[];
-  const defs=[
-    ['torso',null,0,.35,.02,1.9,1.95,0,-.5,0],['pelvis','torso',0,-.9,.08,2.2,2.25,0,-.85,0],
-    ['head','torso',0,.7,.24,character==='swyrlz'?2.5:1.8,character==='swyrlz'?2.35:1.75,0,.7,0],
-    ['cape','torso',0,.65,-.2,2.6,3.8,0,-1.3,0],
-    ['leftUpperArm','torso',-.77,.3,.10,.78,1.25,0,-.43,-.16],['leftForearm','leftUpperArm',0,-.93,.05,.62,1.08,0,-.40,-.76],['leftHand','leftForearm',0,-.8,.11,.64,.58,0,-.13,0],
-    ['rightUpperArm','torso',.77,.3,.12,.8,1.20,0,-.43,.18],['rightForearm','rightUpperArm',0,-.9,.06,.64,1.03,0,-.4,.70],['rightHand','rightForearm',0,-.8,.14,.66,.62,0,-.12,0],
-    ['leftUpperLeg','pelvis',-.4,-.18,-.03,.65,1.20,0,-.45,0],['leftLowerLeg','leftUpperLeg',0,-.94,.05,.51,1.05,0,-.4,0],['leftFoot','leftLowerLeg',0,-.81,.1,.78,.52,-.08,-.15,0],
-    ['rightUpperLeg','pelvis',.4,-.18,-.03,.65,1.20,0,-.45,0],['rightLowerLeg','rightUpperLeg',0,-.94,.05,.51,1.05,0,-.4,0],['rightFoot','rightLowerLeg',0,-.81,.1,.78,.52,.08,-.15,0],
-    ['staff','leftHand',-.1,0,.12,1.24,1.73,0,2.1,.92],['quill','rightHand',.12,0,.12,.46,1.2,0,.4,-.48],['grimoire','leftHand',-.25,.25,.20,2.05,1.65,-.4,.2,.77]
-  ];
-  for(const [id,parent,x,y,z,w,h,mx,my,rz] of defs){
+  for(const [id,parent,_x,_y,z] of RIG_REST_ROWS[character]){
+    const fit=cfg.layout[id],{x,y,width:w,height:h,artX:mx,artY:my,rotationZ:rz}=fit;
     const rest=new THREE.Group();rest.position.set(x,y,z*cfg.depth);rest.rotation.z=rz;rest.userData.rigBaseDepth=z;
-    (parent?joints[parent]:body).add(rest);const pose=new THREE.Group();pose.name=character+' · '+id+' pivot';rest.add(pose);joints[id]=pose;
+    (parent?joints[parent]:body).add(rest);const pose=new THREE.Group();pose.name=character+' · '+id+' pivot';rest.add(pose);joints[id]=pose;pose.userData.rigParent=parent;
     const omit=character==='kami'?id==='grimoire':id==='staff'||id==='quill';
     if(!omit){const part=rigMakePart(texture,cells?.[RIG_SLOTS[id]],w,h,cfg.thickness,id);part.position.set(mx,my,0);pose.add(part);pose.userData.part=part;parts.push(part);}
   }
   if(character==='kami'){
-    const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.043,.043,3.55,8),new THREE.MeshBasicMaterial({color:'#6b4728',transparent:true,toneMapped:false}));shaft.position.set(0,-.28,0);joints.staff.add(shaft);
+    const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.043,.043,3.55,8),new THREE.MeshBasicMaterial({color:'#6b4728',transparent:true,toneMapped:false}));shaft.position.set(0,-.28,0);joints.staff.add(shaft);joints.staff.userData.gripShaft=shaft;
   }else{const magic=rigMakePart(texture,cells?.[19],.8,1.1,cfg.thickness,'magic');magic.position.set(-.4,1.05,.06);joints.grimoire.add(magic);parts.push(magic);}
-  const face=rigFaceSurface(character);face.mesh.position.set(face.fit.x,face.fit.y,cfg.thickness/2+.02);joints.head.userData.part.add(face.mesh);
-  group.userData.rig={character,joints,parts,face,texture,signature:JSON.stringify([cfg.enabled,cfg.asset,cfg.thickness,cfg.depth]),cellsReady:!!cells,thickness:cfg.thickness};
+  // Pin the neutral soles to the book hinge after fitting either body. Pose keys
+  // can still lift a foot; changing one piece does not rescale the whole puppet.
+  group.updateWorldMatrix(true,true);let sole=Infinity;
+  for(const id of ['leftFoot','rightFoot']){const part=joints[id].userData.part;for(const p of rigInkPoints(part,body,1))sole=Math.min(sole,p[1]);}
+  if(Number.isFinite(sole))body.position.y=-sole*factor;
+  const face=rigFaceSurface(character,cfg.layout.head);face.mesh.position.set(face.fit.x,face.fit.y,cfg.thickness/2+.02);joints.head.userData.part.add(face.mesh);
+  group.userData.rig={character,joints,parts,face,texture,signature:rigVisualSignature(cfg),cellsReady:!!cells,thickness:cfg.thickness,factor,body};
   rigAnimateCharacter(group,character,0);return group;
 }
 const rigOriginalPaperVisual=storyPaperVisual;
@@ -181,7 +184,7 @@ function rigRefreshNativeActors(){
 function rigRefreshStage(){
   if(!currentProject?.animeRigs)return;
   for(const character of RIG_CHARACTERS){
-    const cfg=rigModel().characters[character],signature=JSON.stringify([cfg.enabled,cfg.asset,cfg.thickness,cfg.depth]);
+    const cfg=rigModel().characters[character],signature=rigVisualSignature(cfg);
     const cast=animeCine?.cast?.[character==='kami'?'kami':'wisp'];
     for(const actor of [storyBoundActor(character),cast].filter(Boolean)){
       if(actor.userData.rig?.signature!==signature&&(cfg.enabled||actor.userData.rig))rigRebuildActor(actor);
@@ -212,12 +215,35 @@ function rigFaceInkStatus(face){
   return {pixelCount,canvasInkBounds:pixelCount?{min:[x0,y0],max:[x1,y1]}:null,
     featureInkBounds:pixelCount?{min:[p.x+(x0/w-.5)*fit.width,p.y+(.5-y1/h)*fit.height,p.z],max:[p.x+(x1/w-.5)*fit.width,p.y+(.5-y0/h)*fit.height,p.z]}:null};
 }
+function rigInkPoints(part,actor,factor){
+  const points=[],cell=part.userData.rigCell,size=cell?.size||1,mask=cell?.mask||[true],{width:w,height:h}=part.userData.rigSize,matrix=new THREE.Matrix4().copy(actor.matrixWorld).invert().multiply(part.matrixWorld);
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++)if(mask[y*size+x]){const v=new THREE.Vector3(((x+.5)/size-.5)*w,(.5-(y+.5)/size)*h,0).applyMatrix4(matrix);points.push([v.x/factor,v.y/factor]);}
+  return points;
+}
+function rigClosestInk(points,anchor){let distance=Infinity,point=null;for(const p of points){const d=Math.hypot(p[0]-anchor[0],p[1]-anchor[1]);if(d<distance){distance=d;point=p;}}return {distance,point};}
+function rigAttachmentStatus(actor,rig){
+  const factor=1,frame=rig.body,pieces={},ink={};
+  for(const [id,pivot] of Object.entries(rig.joints))if(pivot.userData.part){
+    const part=pivot.userData.part,points=rigInkPoints(part,frame,factor);ink[id]=points;
+    const geometry=part.children[0].geometry;geometry.computeBoundingBox();const size=geometry.boundingBox.getSize(new THREE.Vector3());pieces[id]={width:size.x,height:size.y,artCenter:part.position.toArray(),restPosition:pivot.parent.position.toArray(),worldPosition:part.getWorldPosition(new THREE.Vector3()).toArray(),alphaBounds:{min:[Math.min(...points.map(p=>p[0])),Math.min(...points.map(p=>p[1]))],max:[Math.max(...points.map(p=>p[0])),Math.max(...points.map(p=>p[1]))]}};
+  }
+  // The staff's painted skull is above the hand. Sample its actual cylinder,
+  // whose wooden side surface passes through the glove's grip.
+  const shaft=rig.joints.staff.userData.gripShaft;if(shaft){const matrix=new THREE.Matrix4().copy(frame.matrixWorld).invert().multiply(shaft.matrixWorld);for(let y=-1.775;y<=1.775;y+=.04)for(const x of [-.043,0,.043]){const v=new THREE.Vector3(x,y,0).applyMatrix4(matrix);ink.staff.push([v.x/factor,v.y/factor]);}}
+  const attachments=[];
+  for(const [id,pivot] of Object.entries(rig.joints)){
+    const parent=pivot.userData.rigParent;if(!parent||!ink[id]||!ink[parent])continue;
+    const v=frame.worldToLocal(pivot.getWorldPosition(new THREE.Vector3())),anchor=[v.x/factor,v.y/factor],a=rigClosestInk(ink[parent],anchor),b=rigClosestInk(ink[id],anchor);
+    attachments.push({id,parent,child:id,anchor,parentPoint:a.point,childPoint:b.point,parentGap:a.distance,childGap:b.distance,gap:Math.max(a.distance,b.distance),limit:.20,visible:actor.visible});
+  }
+  return {pieces,attachments};
+}
 function rigRenderStatus(character){
   if(!rigCharacterId(character))return null;
   const actor=animeCine?.cast?.[character==='kami'?'kami':'wisp']||storyBoundActor(character),rig=actor?.userData.rig;
   if(!rig)return {active:!!actor,rigged:false,partCount:0};
   actor.updateWorldMatrix(true,true);const box=new THREE.Box3().setFromObject(actor),joints={};let meshCount=0;actor.traverse(o=>{if(o.isMesh)meshCount++;});
   for(const [id,pivot] of Object.entries(rig.joints))joints[id]={rotation:[pivot.rotation.x,pivot.rotation.y,pivot.rotation.z],position:pivot.parent.position.clone().add(pivot.position).toArray(),worldPosition:pivot.getWorldPosition(new THREE.Vector3()).toArray(),partWorldPosition:(pivot.userData.part||pivot).getWorldPosition(new THREE.Vector3()).toArray()};
-  return {active:!!animeCine,rigged:true,partCount:rig.parts.length,meshCount,thickness:rig.thickness,depthSpan:box.max.z-box.min.z,bounds:{min:box.min.toArray(),max:box.max.toArray()},joints,face:{...rig.face.applied,textureVersion:rig.face.texture.version,anchor:rig.face.mesh.position.toArray(),footprint:{width:rig.face.fit.width,height:rig.face.fit.height},...rigFaceInkStatus(rig.face)}};
+  return {active:!!animeCine,rigged:true,partCount:rig.parts.length,meshCount,thickness:rig.thickness,depthSpan:box.max.z-box.min.z,bounds:{min:box.min.toArray(),max:box.max.toArray()},joints,...rigAttachmentStatus(actor,rig),face:{...rig.face.applied,textureVersion:rig.face.texture.version,anchor:rig.face.mesh.position.toArray(),footprint:{width:rig.face.fit.width,height:rig.face.fit.height},...rigFaceInkStatus(rig.face)}};
 }
 window.SWYRL_ENGINE_RIG=Object.freeze({...window.SWYRL_ENGINE_RIG,renderStatus:rigRenderStatus});

@@ -1,4 +1,4 @@
-name: Verify §E v9.2 native cinematic candidate
+name: Verify §E v9.3 native cinematic candidate
 on:
   push:
     branches: [main]
@@ -12,10 +12,12 @@ on:
       - "projects/swrlz-forge-moba/patches/v9_0_animation_studio.py"
       - "projects/swrlz-forge-moba/patches/v9_1_character_rigs.py"
       - "projects/swrlz-forge-moba/patches/v9_2_depth_theatre.py"
+      - "projects/swrlz-forge-moba/patches/v9_3_character_alignment.py"
       - "projects/swrlz-forge-moba/runtime/**"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-depth.swyrl.json"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json"
   pull_request:
     branches: [main]
 permissions:
@@ -49,12 +51,12 @@ jobs:
           output=source.encode("utf-8")
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
-          assert len(manifest["patches"])==51
-          assert manifest['patches'][-1]=='patches/v9_2_depth_theatre.py'
+          assert len(manifest["patches"])==52
+          assert manifest['patches'][-1]=='patches/v9_3_character_alignment.py'
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
           for needle in (
-            'V9_2_LAYERED_SCENERY_FACES','Maker v9.2','animeStartCinematic',
+            'V9_3_CONNECTED_CHARACTER_PIECES','Maker v9.3','animeStartCinematic',
             'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','storyEditorInstall',
             'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',
             'animeCineExplore','animeCineScrub','updateWorkspaceInteraction(t);animeUpdateCinematic(dt);',

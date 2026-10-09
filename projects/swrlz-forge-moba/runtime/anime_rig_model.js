@@ -12,6 +12,7 @@ const RIG_JOINT_LABELS=Object.freeze({
 const RIG_JOINT_IDS=Object.freeze(Object.keys(RIG_JOINT_LABELS));
 const RIG_PART_IDS=new Set([...RIG_JOINT_IDS,'face']);
 const RIG_JOINT_BOUNDS=Object.freeze({rotationX:[-.7,.7],rotationY:[-.8,.8],rotationZ:[-1.3,1.3],depth:[-.3,.65]});
+const RIG_LAYOUT_BOUNDS=Object.freeze({x:[-4,4],y:[-4,4],width:[.2,4],height:[.2,5],artX:[-4,4],artY:[-4,4],rotationZ:[-Math.PI,Math.PI]});
 const RIG_FACE_BOUNDS=Object.freeze({blink:[0,1],mouth:[0,1],smile:[-1,1],brow:[-1,1],gazeX:[-1,1],gazeY:[-1,1]});
 const RIG_EXPRESSIONS=Object.freeze([
   {id:'neutral',label:'Neutral'},{id:'happy',label:'Happy'},{id:'determined',label:'Determined'},
@@ -22,6 +23,18 @@ let rigValidatedProject=null,rigValidatedModel=null;
 function rigObject(value){return value&&typeof value==='object'&&!Array.isArray(value)?value:{};}
 function rigCharacterId(character){return RIG_CHARACTERS.includes(character)?character:null;}
 function rigPartBounds(part){return part==='face'?RIG_FACE_BOUNDS:RIG_JOINT_BOUNDS;}
+function rigDefaultPartLayout(character,part){
+  // The renderer owns the painted rest assembly. Legacy projects acquire its
+  // current defaults when their model is first opened, after module startup.
+  const defaults=typeof RIG_REST_LAYOUTS==='undefined'?{}:rigObject(RIG_REST_LAYOUTS[character]?.[part]);
+  return Object.fromEntries(Object.entries(RIG_LAYOUT_BOUNDS).map(([field,[low,high]])=>
+    [field,storyNumber(defaults[field],field==='width'||field==='height'?1:0,low,high)]));
+}
+function rigCleanPartLayout(character,part,value){
+  const raw=rigObject(value),defaults=rigDefaultPartLayout(character,part);
+  return Object.fromEntries(Object.entries(RIG_LAYOUT_BOUNDS).map(([field,[low,high]])=>
+    [field,storyNumber(raw[field],defaults[field],low,high)]));
+}
 function rigDefaultKey(part,time=0){
   const key={time,ease:'smooth'};
   for(const field of Object.keys(rigPartBounds(part)))key[field]=0;
@@ -56,11 +69,12 @@ function rigCleanKeys(part,value,duration){
 function rigSanitizeModel(value,duration=storyTimeline().duration){
   const raw=rigObject(value),characters=rigObject(raw.characters),result={schema:RIG_SCHEMA,characters:{}};
   for(const character of RIG_CHARACTERS){
-    const input=rigObject(characters[character]),joints=rigObject(input.joints),atlas='assets/anime/'+character+'-rig.png';
+    const input=rigObject(characters[character]),joints=rigObject(input.joints),layout=rigObject(input.layout),atlas='assets/anime/'+character+'-rig.png';
     result.characters[character]={
       enabled:typeof input.enabled==='boolean'?input.enabled:true,
       asset:storyAssetSource(input.asset,atlas),
       thickness:storyNumber(input.thickness,.08,.02,.18),depth:storyNumber(input.depth,1,.3,1.5),
+      layout:Object.fromEntries(RIG_JOINT_IDS.map(part=>[part,rigCleanPartLayout(character,part,layout[part])])),
       joints:Object.fromEntries(RIG_JOINT_IDS.map(part=>[part,rigCleanKeys(part,joints[part],duration)])),
       face:rigCleanKeys('face',input.face,duration)
     };
@@ -138,6 +152,20 @@ function rigConfigure(character,value){
     if(Object.hasOwn(value,'depth'))config.depth=storyNumber(value.depth,config.depth,.3,1.5);
   },true);
 }
+function rigFitPart(character,part,value){
+  if(!rigCharacterId(character)||!RIG_JOINT_IDS.includes(part)||!value||typeof value!=='object'||Array.isArray(value))return false;
+  return rigMutate('Body piece fit · '+character+' · '+part,draft=>{
+    const fit=draft.characters[character].layout[part];
+    for(const [field,[low,high]] of Object.entries(RIG_LAYOUT_BOUNDS))
+      if(Object.hasOwn(value,field))fit[field]=storyNumber(value[field],fit[field],low,high);
+  },true);
+}
+function rigResetPartFit(character,part){
+  if(!rigCharacterId(character)||!RIG_JOINT_IDS.includes(part))return false;
+  return rigMutate('Reset body piece fit · '+character+' · '+part,draft=>{
+    draft.characters[character].layout[part]=rigDefaultPartLayout(character,part);
+  },true);
+}
 function rigSetArtworkMode(character,asset){
   if(!rigCharacterId(character)||!currentProject)return false;
   const model=storyCopy(rigModel()),config=model.characters[character];
@@ -149,6 +177,7 @@ function rigPublicModel(character){
   if(!rigCharacterId(character))return null;
   const config=storyCopy(rigModel().characters[character]);
   return {enabled:config.enabled,asset:config.asset,thickness:config.thickness,depth:config.depth,
+    layout:config.layout,layoutBounds:storyCopy(RIG_LAYOUT_BOUNDS),
     parts:RIG_JOINT_IDS.filter(part=>character==='kami'?part!=='grimoire':part!=='staff'&&part!=='quill')
       .map(id=>({id,label:RIG_JOINT_LABELS[id],bounds:storyCopy(RIG_JOINT_BOUNDS)})),
     expressions:storyCopy(RIG_EXPRESSIONS),tracks:{...config.joints,face:config.face}};
@@ -188,5 +217,7 @@ window.SWYRL_ENGINE_RIG=Object.freeze({
   model:character=>rigPublicModel(character),sample:(character,part,time)=>rigSample(character,part,time),
   upsertKey:(character,part,key)=>rigUpsertKey(character,part,key),
   removeKey:(character,part,time)=>rigRemoveKey(character,part,time),
-  configure:(character,config)=>rigConfigure(character,config)
+  configure:(character,config)=>rigConfigure(character,config),
+  fitPart:(character,part,layout)=>rigFitPart(character,part,layout),
+  resetPartFit:(character,part)=>rigResetPartFit(character,part)
 });

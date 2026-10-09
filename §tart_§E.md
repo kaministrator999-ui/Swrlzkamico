@@ -44,7 +44,19 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
-## Current v9.2 candidate · Layered Scenery and Fitted Faces
+## Current v9.3 candidate · Connected Character Pieces
+
+v9.3 fits each mage’s body pieces to its own painted silhouette: shoulders, elbows, wrists, hips, knees, ankles and the head use corrected attachment placement and overlap. Staff, quill and grimoire placement follows the owning hand. Kami and §wyrlz retain separate eighteen-piece paper rigs, fitted facial controls and independent animation tracks. The engine samples the bundled transparent artwork directly; no flattened replacement character is introduced.
+
+In **Animation Studio**, select **Kami** or **§wyrlz**, expand **Character Rig · limbs and face**, choose a body part, then use **Fit Body Piece**. **Joint X/Y** place its pivot; **Artwork X/Y** position its painted cutout; **Piece width/height** and **Rest angle (°)** fit the silhouette. Use **Apply Body Piece Fit**, preview the shared playhead, and use Play to inspect the attached chain through motion. **Reset Piece Fit** restores that piece’s default fit. Fitting is saved separately from timed rotation/depth keys; native Undo/Redo and Save/Load preserve it without changing the companion’s rig or scenery keys. Pause running playback before editing.
+
+The starter keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. The native Save Project export is `scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json`. Per-character rest layouts belong to `project.animeRigs.characters[character].layout`, alongside the independent limb/face keys. The saved performance retains 425 limb/face keys and 341 scenery keys. The v9.2 depth, v9.1 rigged, v9.0 storybook and original production scene exports remain bundled, together with all eight artwork PNGs and the historical episode HTML.
+
+The 52nd governed patch is `patches/v9_3_character_alignment.py`; artifact `swyrl_engine_v9_3.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_3_CONNECTED_CHARACTER_PIECES`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes five episode scene JSON exports, the historical episode HTML and eight PNGs, for fourteen media assets.
+
+v9.3 is a source candidate. Desktop/phone connected-part fitting and authoring acceptance, the existing native Play/Studio/rig/depth regressions, exact sealed reconstruction, and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all fourteen media assets.
+
+## Historical verified v9.2 · Layered Scenery and Fitted Faces
 
 The screenshot exposed misaligned facial features and a library rendered as broad flat plates. v9.2 fits Kami’s eyes, brows and mouth inside the painted face and keeps §wyrlz’s expressions aligned with the skull. Existing blink, mouth, gaze and expression keys remain editable. The background becomes a paper depth theatre: a distant sky and three star shells sit behind independent windows, arches, shelves, banners, lanterns and props. Each cutout has its own transform/opacity/visibility/unfold keys, so perspective-camera motion produces real parallax between the pieces.
 
@@ -54,7 +66,7 @@ Open **Animation Studio**, select **Background**, **Midground**, **Atmosphere**,
 
 The 51st governed patch is `patches/v9_2_depth_theatre.py`; artifact `swyrl_engine_v9_2.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_2_LAYERED_SCENERY_FACES`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes four episode scene JSON exports, the historical episode HTML, and eight PNGs including the new transparent `assets/anime/scenery-parts.png` atlas.
 
-v9.2 is a source candidate. Desktop/phone depth and face acceptance, native authoring/Play regressions, exact sealed reconstruction, and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all thirteen media assets.
+The previous **v9.2 Layered Scenery and Fitted Faces** release is verified live: [deployment 37871463769](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37871463769) and [exact hosted audit 37871508796](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37871508796) passed. Source [`7f664a2c967a`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/7f664a2c967a0bff63d6d1a5c0eb1e8acc472a01) seals 51 patches, **965,788 bytes**, SHA-256 `b952e375be6a2cfb88014714cccbe80285e70d4b76821763bc68ada46e2dcbc4`, with all thirteen media assets, 425 rig keys and 341 scenery keys. These receipts certify v9.2; v9.3 needs its own final deployment and hosted audit.
 
 ## Historical verified v9.1 · Articulated Paper Rigs
 
@@ -206,7 +218,7 @@ marker:
 
 ### Current projects and editor contract
 
-The Anime Studio starter joins Embervault and Starforge as an independent project. Current v9.1 authoring uses 70 actors, 11 editor layers, nine stage animation tracks, saved independent limb/face pose tracks, and the native Animation Studio editor. The 134 second paper theatre runs through Preview Frame and Play. Watch Episode opens the pop-up cinema using the same native scene and chapter controls; its original static HTML media asset remains bundled. See the current v9.1 contract above.
+The Anime Studio starter joins Embervault and Starforge as an independent project. Current v9.3 authoring uses 70 actors, 11 editor layers, nine stage animation tracks, saved independent limb/face pose tracks, and the native Animation Studio editor. The 134 second paper theatre runs through Preview Frame and Play. Watch Episode opens the pop-up cinema using the same native scene and chapter controls; its original static HTML media asset remains bundled. See the current v9.3 contract above.
 
 Embervault Atelier is a spatial workspace for future VR, project work, and conversation. Its native saved scene lives in `projects/swrlz-forge-moba/scenes/embervault-atelier.swyrl.json`. The 170-actor assembly has lower workshops at 0m, a study gallery at 3.4m, and the dragon council at 4.6m, with physical ramps between them. It has six stations and eight teleport destinations. Three organizational editor layers are distinct from these physical elevations.
 

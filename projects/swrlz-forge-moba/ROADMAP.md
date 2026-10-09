@@ -1,14 +1,26 @@
 # §wyrl§ Engine Roadmap
 
 Canonical lane: §E / §wyrl§ Engine
-History audited through: **2026-10-08**
-Current source candidate: **v9.2 — Layered Scenery and Fitted Faces (51 governed patches)**. The sealed manifest and final `DEPLOY_REQUEST.json` remain authoritative. Historical releases remain preserved.
+History audited through: **2026-10-09**
+Current source candidate: **v9.3 — Connected Character Pieces (52 governed patches)**. The sealed manifest and final `DEPLOY_REQUEST.json` remain authoritative. Historical releases remain preserved.
 
 The previous **v9.1 Articulated Paper Rigs** release is verified live: [deployment 37838083241](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838083241) and [exact hosted audit 37838137243](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838137243) passed. Source [`d3e7dc4d6a06`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/d3e7dc4d6a0633995210a7217943753d4de28e29) seals 50 patches, **857,746 bytes**, SHA-256 `7b6f3806c666b991a07e0c6bf162286b09dd70862f7de9acc9bf0ea3d214473f`, with all eleven bundled media assets and 425 character pose/face keys. These receipts are historical authority for v9.1; they do not certify v9.2.
 
 This roadmap is the mandatory release lineage for governed §E GitHub updates. Root `§tart_§E.md` defines the deployment contract.
 
-## v9.2 candidate · Layered Scenery and Fitted Faces
+## v9.3 candidate · Connected Character Pieces
+
+v9.3 fits each mage’s body pieces to its own painted silhouette: shoulders, elbows, wrists, hips, knees, ankles and the head use corrected attachment placement and overlap. Staff, quill and grimoire placement follows the owning hand. Kami and §wyrlz retain separate eighteen-piece paper rigs, fitted facial controls and independent animation tracks. The engine samples the bundled transparent artwork directly; no flattened replacement character is introduced.
+
+In **Animation Studio**, select **Kami** or **§wyrlz**, expand **Character Rig · limbs and face**, choose a body part, then use **Fit Body Piece**. **Joint X/Y** place its pivot; **Artwork X/Y** position its painted cutout; **Piece width/height** and **Rest angle (°)** fit the silhouette. Use **Apply Body Piece Fit**, preview the shared playhead, and use Play to inspect the attached chain through motion. **Reset Piece Fit** restores that piece’s default fit. Fitting is saved separately from timed rotation/depth keys; native Undo/Redo and Save/Load preserve it without changing the companion’s rig or scenery keys. Pause running playback before editing.
+
+The starter keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. The native Save Project export is `scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json`. Per-character rest layouts belong to `project.animeRigs.characters[character].layout`, alongside the independent limb/face keys. The saved performance retains 425 limb/face keys and 341 scenery keys. The v9.2 depth, v9.1 rigged, v9.0 storybook and original production scene exports remain bundled, together with all eight artwork PNGs and the historical episode HTML.
+
+The 52nd governed patch is `patches/v9_3_character_alignment.py`; artifact `swyrl_engine_v9_3.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_3_CONNECTED_CHARACTER_PIECES`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes five episode scene JSON exports, the historical episode HTML and eight PNGs, for fourteen media assets.
+
+v9.3 is a source candidate. Desktop/phone connected-part fitting and authoring acceptance, the existing native Play/Studio/rig/depth regressions, exact sealed reconstruction, and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all fourteen media assets.
+
+## Historical verified v9.2 · Layered Scenery and Fitted Faces
 
 The screenshot exposed misaligned facial features and a library rendered as broad flat plates. v9.2 fits Kami’s eyes, brows and mouth inside the painted face and keeps §wyrlz’s expressions aligned with the skull. Existing blink, mouth, gaze and expression keys remain editable. The background becomes a paper depth theatre: a distant sky and three star shells sit behind independent windows, arches, shelves, banners, lanterns and props. Each cutout has its own transform/opacity/visibility/unfold keys, so perspective-camera motion produces real parallax between the pieces.
 
@@ -18,7 +30,7 @@ Open **Animation Studio**, select **Background**, **Midground**, **Atmosphere**,
 
 The 51st governed patch is `patches/v9_2_depth_theatre.py`; artifact `swyrl_engine_v9_2.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_2_LAYERED_SCENERY_FACES`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes four episode scene JSON exports, the historical episode HTML, and eight PNGs including the new transparent `assets/anime/scenery-parts.png` atlas.
 
-v9.2 is a source candidate. Desktop/phone depth and face acceptance, native authoring/Play regressions, exact sealed reconstruction, and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all thirteen media assets.
+The previous **v9.2 Layered Scenery and Fitted Faces** release is verified live: [deployment 37871463769](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37871463769) and [exact hosted audit 37871508796](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37871508796) passed. Source [`7f664a2c967a`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/7f664a2c967a0bff63d6d1a5c0eb1e8acc472a01) seals 51 patches, **965,788 bytes**, SHA-256 `b952e375be6a2cfb88014714cccbe80285e70d4b76821763bc68ada46e2dcbc4`, with all thirteen media assets, 425 rig keys and 341 scenery keys. These receipts certify v9.2; v9.3 needs its own final deployment and hosted audit.
 
 ## Historical verified v9.1 · Articulated Paper Rigs
 
@@ -122,7 +134,10 @@ This is a scriptable experimental compositor with runtime layer toggles, **not**
 | v8.7 (candidate) | 2026-10-07 | 2.5D layered sprite/cel backgrounds, midground, character, FX, foreground parallax; scene sign occlusion and caption clipping repairs; temporary layer visibility. |
 | v8.8 (historical candidate) | 2026-10-08 | Physical pop-up book, individual hinged scenery, separate wizard cels, and saved Pop-Up Director controls. |
 | v8.9 (verified hosted checkpoint) | 2026-10-08 | Low book/foreground and behind-cast scenery limits repair Android camera occlusion; desktop/mobile and hosted integrity receipts passed. |
-| v9.0 (candidate) | 2026-10-08 | Native Animation Studio, generated separate artwork, saved paper actors, nine authorable tracks, editor Preview/Play, and a native 134 second storybook export with 70 actors/11 layers; deployment pending. |
+| v9.0 (historical checkpoint) | 2026-10-08 | Native Animation Studio, generated separate artwork, saved paper actors, nine authorable tracks, editor Preview/Play, and a native 134 second storybook export with 70 actors/11 layers; later native Watch cinema deployed. |
+| v9.1 (verified hosted checkpoint) | 2026-10-08 | Independent jointed eighteen-piece paper rigs, saved body/face keys and native pose authoring. |
+| v9.2 (verified hosted checkpoint) | 2026-10-09 | Fitted faces, 34 independently keyed scenery objects, three star-depth shells and camera-safe folds. |
+| v9.3 (candidate) | 2026-10-09 | Connected character pieces, character-specific rest layouts and native part-fitting controls; deployment pending. |
 
 ## Artifact authority
 

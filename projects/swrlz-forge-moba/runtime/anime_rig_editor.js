@@ -7,6 +7,12 @@ const RIG_EDITOR_JOINT_FIELDS = Object.freeze([
   ['rotationX','rigRotationX','Lean X (°)'], ['rotationY','rigRotationY','Turn Y (°)'],
   ['rotationZ','rigRotationZ','Bend Z (°)'], ['depth','rigDepth','Part depth']
 ]);
+const RIG_EDITOR_FIT_FIELDS = Object.freeze([
+  ['x','rigFitX','Joint X'], ['y','rigFitY','Joint Y'],
+  ['width','rigFitWidth','Piece width'], ['height','rigFitHeight','Piece height'],
+  ['artX','rigFitArtX','Artwork X'], ['artY','rigFitArtY','Artwork Y'],
+  ['rotationZ','rigFitRotationZ','Rest angle (°)']
+]);
 const RIG_EDITOR_FACE_FIELDS = Object.freeze([
   ['blink','rigBlink','Blink · 0 open, 1 closed',0,1],
   ['mouth','rigMouth','Mouth openness',0,1],
@@ -81,6 +87,26 @@ function rigEditorApplyConfig(){
   if(typeof configure!=='function'||configure(character,config)===false){rigEditorNotice('Character depth could not be saved.',true);return;}
   rigEditorPreview();rigEditorNotice('Saved '+rigEditorLabel(character)+' character depth and puppet settings.');
 }
+function rigEditorApplyFit(){
+  if(!rigEditorEditable()){rigEditorNotice('Pause playback to fit a body piece.',true);return;}
+  const character=rigEditorCharacter(),part=rigEditorParts[character],model=rigEditorModel();
+  if(!character||!model||part==='face'||!model.parts?.some(item=>item.id===part))return;
+  const fit={};
+  for(const [field,id] of RIG_EDITOR_FIT_FIELDS){
+    const value=rigEditorReadNumber(id);if(value===null)return;
+    fit[field]=field==='rotationZ'?value/RIG_EDITOR_DEGREES:value;
+  }
+  const apply=rigEditorAPI()?.fitPart;
+  if(typeof apply!=='function'||apply(character,part,fit)===false){rigEditorNotice('The body piece fit could not be saved.',true);return;}
+  rigEditorPreview();
+  rigEditorNotice('Saved '+rigEditorLabel(character)+' '+(model.parts.find(item=>item.id===part)?.label||part)+' fit for the whole episode.');
+}
+function rigEditorResetFit(){
+  if(!rigEditorEditable()){rigEditorNotice('Pause playback to reset a body piece fit.',true);return;}
+  const character=rigEditorCharacter(),part=rigEditorParts[character],reset=rigEditorAPI()?.resetPartFit;
+  if(!character||part==='face'||typeof reset!=='function'||reset(character,part)===false){rigEditorNotice('The body piece fit could not be reset.',true);return;}
+  rigEditorPreview();rigEditorNotice('Restored the default body piece fit. Pose keys are preserved.');
+}
 function rigEditorSelect(part){
   const character=rigEditorCharacter();if(!character)return;
   rigEditorParts[character]=part;rigEditorSync();
@@ -115,6 +141,7 @@ function rigEditorSync(){
     for(const item of parts){const option=storyEditorElement('option','',item.label||item.id);option.value=item.id;picker.append(option);}
     const faceOption=storyEditorElement('option','','Face · expression and speech');faceOption.value='face';picker.append(faceOption);picker.value=part;
     document.getElementById('rigJointFields').hidden=part==='face';document.getElementById('rigFaceFields').hidden=part!=='face';
+    document.getElementById('rigFitSection').hidden=part==='face';
     const sample=rigEditorAPI()?.sample?.(character,part,rigEditorTime())||{};
     const keys=model.tracks?.[part]||[],exact=keys.find(key=>Math.abs(Number(key.time)-rigEditorTime())<1e-6);
     if(part==='face'){
@@ -130,6 +157,15 @@ function rigEditorSync(){
       for(const [field,id] of RIG_EDITOR_FACE_FIELDS)document.getElementById(id).value=rigEditorNumber(sample[field]??0);
     }else{
       const definition=parts.find(item=>item.id===part);
+      const fit=model.layout?.[part]||{};
+      for(const [field,id] of RIG_EDITOR_FIT_FIELDS){
+        const input=document.getElementById(id),bounds=model.layoutBounds?.[field]||
+          (field==='width'?[.2,4]:field==='height'?[.2,5]:field==='rotationZ'?[-Math.PI,Math.PI]:[-4,4]);
+        const multiplier=field==='rotationZ'?RIG_EDITOR_DEGREES:1;
+        input.min=String(bounds[0]*multiplier);input.max=String(bounds[1]*multiplier);
+        const value=Number(fit[field]??(field==='width'||field==='height'?1:0))*multiplier;
+        input.value=String(Math.max(Number(input.min),Math.min(Number(input.max),Number(rigEditorNumber(value)))));
+      }
       for(const [field,id] of RIG_EDITOR_JOINT_FIELDS){
         const input=document.getElementById(id),bounds=definition?.bounds?.[field]||
           (field==='depth'?[-.3,.65]:field==='rotationX'?[-.7,.7]:field==='rotationY'?[-.8,.8]:[-1.3,1.3]);
@@ -168,6 +204,17 @@ function rigEditorInstall(){
   const shortcuts=storyEditorElement('div','story-rig-shortcuts');
   shortcuts.append(storyEditorButton('rigEditFace','Face & Expression',()=>rigEditorSelect('face')),
     storyEditorButton('rigEditHead','Head',()=>rigEditorSelect('head')));section.append(shortcuts);
+  const fitSection=storyEditorElement('details','story-rig-fit');fitSection.id='rigFitSection';fitSection.open=true;
+  fitSection.append(storyEditorElement('summary','','Fit Body Piece'));
+  fitSection.append(storyEditorElement('p','story-muted','Fit the joint and painted cutout together. This fit applies throughout the episode; the pose keys below animate the fitted piece.'));
+  const fitFields=storyEditorElement('div','story-key-fields');
+  for(const [field,id,label] of RIG_EDITOR_FIT_FIELDS){const row=rigEditorField(id,label);row.querySelector('input').dataset.rigFitField=field;fitFields.append(row);}
+  fitSection.append(fitFields);
+  const fitActions=storyEditorElement('div','story-key-actions');
+  for(const [id,label,callback] of [['rigApplyFit','Apply Body Piece Fit',rigEditorApplyFit],['rigResetFit','Reset Piece Fit',rigEditorResetFit]]){
+    const button=storyEditorButton(id,label,callback);button.dataset.rigEditable='true';fitActions.append(button);
+  }
+  fitSection.append(fitActions);section.append(fitSection);
   const jointFields=storyEditorElement('div','story-key-fields story-rig-joint-fields');jointFields.id='rigJointFields';
   for(const [field,id,label] of RIG_EDITOR_JOINT_FIELDS){const row=rigEditorField(id,label);row.querySelector('input').dataset.rigField=field;jointFields.append(row);}
   section.append(jointFields);
@@ -191,7 +238,7 @@ function rigEditorInstall(){
   const mode=storyEditorElement('p','story-muted');mode.id='rigFrameMode';section.append(mode);
   section.append(storyEditorElement('span','story-section-label','Character keys · tap to preview'));
   const keyList=storyEditorElement('div','story-key-list');keyList.id='rigKeyList';keyList.setAttribute('aria-label','Keyframes on the selected character body part or face');section.append(keyList);
-  section.append(storyEditorElement('p','story-muted','The playhead above controls this pose. Character keys, depth and expressions stay in Save Project and Undo/Redo.'));
+  section.append(storyEditorElement('p','story-muted','The playhead above controls this pose. Body piece fits, character keys, depth and expressions stay in Save Project and Undo/Redo.'));
   const frameMode=document.getElementById('storyFrameMode');body.insertBefore(section,frameMode);
   rigEditorSync();
 }
