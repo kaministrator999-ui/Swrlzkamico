@@ -447,7 +447,7 @@ _LYRIC_RECOMMENDATION_LINE=re.compile(
 )
 _LYRIC_POST_SONG_META=re.compile(
     r"^\s*(?:writers?|writer\(s\)|written\s+by|songwriters?|"
-    r"publishers?\s*:|powered\s+by\s+\S+|"
+    r"publishers?|powered\s+by\s+\S+|"
     r"top\s+(?:lyrics|artists|songs)(?:\s*:)?|"
     r"submit\s+(?:lyrics|corrections?)|"
     r"add\s+song|album\s+lyrics|azlyrics|you\s+may\s+also\s+like|"
