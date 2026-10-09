@@ -1,0 +1,50 @@
+name: Adaptive Effort Candidate Verification
+
+on:
+  push:
+    branches:
+      - feature/coder-adaptive-effort-v1
+    paths:
+      - "hf_space/task_effort.py"
+      - "hf_space/test_task_effort_v182.py"
+      - "hf_space/test_task_effort_adversarial_v182.py"
+      - "hf_space/test_task_effort_routing_v182.py"
+      - "hf_space/model_router.py"
+      - "hf_space/qwen_coder_engine.py"
+      - "hf_space/lfm2_700m_engine.py"
+      - "hf_space/station.py"
+      - ".github/workflows/verify-task-effort-v182.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-task-effort-v182
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate source syntax (without loading GGUF models)
+        run: |
+          python -m py_compile \
+            hf_space/task_effort.py \
+            hf_space/model_router.py \
+            hf_space/station.py \
+            hf_space/qwen_coder_engine.py \
+            hf_space/lfm2_700m_engine.py \
+            hf_space/test_task_effort_v182.py \
+            hf_space/test_task_effort_adversarial_v182.py \
+            hf_space/test_task_effort_routing_v182.py
+      - name: Deterministic effort tests
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python hf_space/test_task_effort_v182.py
+          PYTHONPATH=hf_space python hf_space/test_task_effort_adversarial_v182.py
+          PYTHONPATH=hf_space python hf_space/test_task_effort_routing_v182.py

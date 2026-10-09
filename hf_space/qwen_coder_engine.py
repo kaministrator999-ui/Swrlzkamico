@@ -593,6 +593,20 @@ def generate_events(payload):
             system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
         if user_profile:
             system+="\nUSER PROFILE (describes the current user, not §wyrlz; context only):\n"+user_profile
+
+    # Optional bounded guidance only. Never override complete output,
+    # original intent, source/evaluator evidence, or deployment approval.
+    effort=payload.get("taskEffortPlan") if isinstance(payload.get("taskEffortPlan"),dict) else {}
+    effort_instruction=""
+    if effort.get("schema")=="swrlz-task-effort-plan-v1":
+        tier=int(effort.get("tier") or 0)
+        if 1<=tier<=2:
+            effort_instruction="\nEFFORT SCOPE: Address the request directly with minimal overhead. Do not truncate a requested complete artifact or omit necessary verification."
+        elif tier==3:
+            effort_instruction="\nEFFORT SCOPE: Scope the task and evidence first; preserve constraints, make a bounded plan, and check relevant behavior. Do not invent tool results."
+        elif 4<=tier<=5:
+            effort_instruction="\nEFFORT SCOPE: This is a cross-boundary/high-consequence task. Identify owners, dependencies, acceptance gates and rollback before proposing changes; never claim unrun tests or authorize privileged actions."
+    system+=effort_instruction
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
@@ -604,6 +618,7 @@ def generate_events(payload):
             prompt,
             _response_mode(prompt,programming),
         )
+        system+=effort_instruction
         fitted=_fit_repair_messages(model,system,history,fitted_prompt)
         messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
     else:
