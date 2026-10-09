@@ -4,7 +4,9 @@ from dataclasses import dataclass
 import json
 import re
 from typing import Callable, Iterator, Any
+import os
 from brain_programming import programming_intent
+from task_effort import task_effort_plan
 from online_tools import classify_online_request, stream_online_request, online_camera
 
 class ModelUnavailable(RuntimeError):
@@ -281,6 +283,13 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     payload=dict(payload)
     payload["programmingIntent"]=intent
     yield {"type":"PROGRAMMING_INTENT","intent":intent}
+    # Experimental effort hints are OBSERVATIONAL by default and require an
+    # explicit opt-in for model-facing guidance. They cannot authorize tools,
+    # override original intent, change the routing decision, or deploy.
+    if os.environ.get("SWRLZ_ADAPTIVE_EFFORT", "0").strip().lower() in {"1", "true", "yes"}:
+        effort=task_effort_plan(str(payload.get("prompt") or ""), intent)
+        payload["taskEffortPlan"]=effort
+        yield {"type":"TASK_EFFORT_PLAN","plan":effort}
     requested_model_id=model_id
     if intent.get("codingTask") and model_id in ("700m","stock","r39","coder"):
         model_id="coder"
