@@ -144,11 +144,22 @@ def progress(workspace: dict) -> dict:
         raise WorkspaceError("Invalid workspace files")
     required = workspace["requiredPaths"]
     remaining = [path for path in required if path not in files]
+    project_plan = workspace.get("projectPlan")
+    if project_plan:
+        # Planned dependency order is advisory, but only already completed
+        # source-file paths count as satisfying dependencies.
+        from project_manifest import next_ready_paths
+        next_paths = next_ready_paths(project_plan, list(files))
+    else:
+        next_paths = remaining[:1]
     return {
         "id": workspace["id"], "title": workspace["title"],
         "state": workspace["state"], "revision": workspace["revision"],
         "requiredCount": len(required), "completedCount": len(required)-len(remaining),
         "remainingPaths": remaining,
+        "nextReadyPaths": next_paths,
+        "hasApprovedPlan": bool(project_plan),
+        "sourcePlanMessageId": str(workspace.get("sourcePlanMessageId") or "")[:160],
         "sourceHash": workspace.get("sourceHash"),
         "validationState":workspace.get("validationState") or "NOT_RUN",
     }

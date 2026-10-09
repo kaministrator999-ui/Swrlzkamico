@@ -21,6 +21,7 @@ from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 from code_packages import PackageError, build_package, wants_archive
 from staged_projects import WorkspaceError, parse_manifest, create_workspace, stage_files, project_view, package_project
+from project_manifest import PlanError, parse_plan, source_sha as plan_source_sha
 from staged_workspaces import (WorkspaceError, WorkspaceConflict, create_workspace,
                                attach_revision, progress as workspace_progress,
                                finalize as finalize_workspace, cancel as cancel_workspace,
@@ -452,6 +453,72 @@ def _workspace_record(thread, workspace_id):
                  if w.get("id")==workspace_id), None)
 
 
+def _reviewed_manifest(thread, message_id):
+    if not isinstance(message_id,str) or not 1 <= len(message_id) <= 160:
+        raise HTTPException(400,"Invalid plan message")
+    message=next((m for m in thread.get("messages", [])
+                  if m.get("id")==message_id),None)
+    if (message is None or message.get("role")!="assistant"
+        or (message.get("meta") or {}).get("state")!="COMPLETE"):
+        raise HTTPException(404,"Completed assistant plan unavailable")
+    body=str(message.get("text") or "")
+    try:
+        parsed=parse_plan(body)
+    except PlanError as exc:
+        raise HTTPException(422,str(exc)) from exc
+    return parsed,plan_source_sha(body)
+
+
+@app.get("/api/lalm_station/workspaces/plan")
+def preview_project_plan(request: Request, threadId: str, messageId: str):
+    """Read-only review of an actual completed assistant manifest."""
+    with _lock:
+        _,thread=_workspace_session_thread(request,threadId)
+        plan,message_sha=_reviewed_manifest(thread,messageId)
+    return JSONResponse({"schema":"swrlz-project-manifest-preview-v1",
+            "approvalRequired":True,
+            "plan":plan,"sourceMessageId":messageId,
+            "messageSha256":message_sha},headers={"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"})
+
+
+@app.post("/api/lalm_station/workspaces/plan/approve")
+async def approve_project_plan(request: Request):
+    """Explicit user approval; re-read the same source bytes under lock."""
+    body=await request.json()
+    if not isinstance(body,dict):raise HTTPException(400,"Invalid plan approval request")
+    with _lock:
+        session,thread=_workspace_session_thread(request,body.get("threadId"))
+        plans=thread.setdefault("projectWorkspaces",[])
+        plan,message_sha=_reviewed_manifest(thread,body.get("messageId"))
+        if (body.get("expectedMessageSha256")!=message_sha or
+            body.get("expectedPlanSha256")!=plan["planSha256"]):
+            raise HTTPException(409,"Plan source changed; preview it again")
+        previous=next((item for item in plans
+                       if item.get("sourcePlanMessageId")==body["messageId"]),None)
+        if previous is not None:
+            if (previous.get("sourcePlanMessageSha256")!=message_sha or
+                (previous.get("projectPlan") or {}).get("planSha256")!=plan["planSha256"]):
+                raise HTTPException(409,"Previously approved plan source has changed")
+            return {"ok":True,"alreadyApproved":True,
+                    "workspace":workspace_progress(previous),"plan":plan}
+        if len(plans)>=MAX_WORKSPACES_PER_THREAD:
+            raise HTTPException(422,"Workspace capacity reached for this thread")
+        try:
+            workspace=create_workspace("workspace-"+uuid.uuid4().hex,
+                                       plan["title"],plan["generationOrder"])
+        except WorkspaceError as exc:
+            raise HTTPException(422,str(exc)) from exc
+        # Keep the accepted model proposal alongside the same Station owner,
+        # not in the model's unverified source archive or a new server store.
+        workspace["projectPlan"]=copy.deepcopy(plan)
+        workspace["sourcePlanMessageId"]=body["messageId"]
+        workspace["sourcePlanMessageSha256"]=message_sha
+        plans.append(workspace)
+        session["revision"]+=1
+        return {"ok":True,"workspace":workspace_progress(workspace),
+                "plan":plan}
+
+
 @app.get("/api/lalm_station/workspaces")
 def list_project_workspaces(request: Request, threadId: str):
     with _lock:
@@ -714,7 +781,7 @@ def _artifact_revision_markdown(artifact,revision):
 
 def _create_code_artifact(thread,message,request_id,text):
     files=[item for item in _parse_code_files(text)
-           if str(item.get("language") or "").lower() not in {"lyrics","lyric","song","music","verse","chorus"}]
+           if str(item.get("language") or "").lower() not in {"lyrics","lyric","song","music","verse","chorus","swrlz-project-manifest"}]
     if not files:return None
     existing=_artifact_for_message(thread,message.get("id"))
     if existing:return existing
@@ -849,7 +916,7 @@ def _stage_completed_generation(thread, payload, text, request_id, artifact):
                 raise WorkspaceError("PROJECT_REVISION_CONFLICT")
         else:return None
         files=[item for item in _parse_code_files(text)
-               if str(item.get("language") or "").lower() not in {"lyrics","lyric","song","music","verse","chorus"}]
+               if str(item.get("language") or "").lower() not in {"lyrics","lyric","song","music","verse","chorus","swrlz-project-manifest"}]
         result="MANIFEST_ACCEPTED"
         if files:
             if artifact is None:raise WorkspaceError("NO_SOURCE_ARTIFACT")
@@ -1375,7 +1442,7 @@ def _container_content_tag(text):
     import re
     fences=re.findall(r"```([^\n`]*)\n?[\s\S]*?```",source)
     if not fences:return ""
-    lyric={"lyrics","lyric","song","music","verse","chorus"}
+    lyric={"lyrics","lyric","song","music","verse","chorus","swrlz-project-manifest"}
     langs=[str(header or "").strip().lower().split()[0] if str(header or "").strip() else "code" for header in fences]
     return "container:lyrics" if langs and all(lang in lyric for lang in langs) else "container:code"
 
