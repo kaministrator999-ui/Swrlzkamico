@@ -205,3 +205,60 @@ assert camera["lyricsFetchDebug"][0]["snippetSequenceSpan"]>=4,camera
 assert camera["lyricsFetchDebug"][0]["fetchedContent"]["performerMarkers"]==["[Alpha:]","[Beta:]"],camera
 
 print("lyrics-region-integrity-v165 PASS")
+
+# v174 Dragon Chat (23) real-shape continuation: the fetched lyric text was
+# verified, but a directory 'Back to: Artist Lyrics' line and subsequent site
+# navigation leaked into the last rendered section. The source section's x2
+# marker is a repeat annotation, never a performer credit.
+from music_structure import parse_section_marker
+
+POST_SONG_PAGE="""Test Signal Lyrics
+[Intro:]
+Signal begins tonight
+Copper waves move along
+[Verse 1:]
+The circuits start to glow
+Our listeners hum along
+The sky turns into light
+The rhythm carries on
+[Hook: x2]
+A bright refrain returns
+Its echo circles home
+[Outro: x2]
+The pattern fades away
+The final notes remain
+Back to: Example Artist Lyrics
+Top Hits /
+One Hit Wonders /
+TV Themes /
+Song Quotes /
+Test Music Site
+"""
+post_analysis=online_tools._lyrics_extract_analysis(POST_SONG_PAGE,"full-lyrics",plan["subject"])
+pd=post_analysis["diagnostics"]
+assert pd["decision"]=="ACCEPTED",pd
+assert pd["terminalBoundaryKind"]=="POST_SONG_META_BOUNDARY",pd
+assert pd["terminalBoundaryLine"]=="Back to: Example Artist Lyrics",pd
+assert "The final notes remain" in post_analysis["text"]
+assert "Back to:" not in post_analysis["text"],post_analysis["text"]
+assert "Top Hits" not in post_analysis["text"],post_analysis["text"]
+post_doc=structure_verified_music(
+    post_analysis["text"],POST_SONG_PAGE,subject=plan["subject"],requested_scope="full-lyrics"
+)
+assert [section["type"] for section in post_doc["sections"]]==["intro","verse","hook","outro"],post_doc
+repeats=[sec for sec in post_doc["sections"] if sec["type"] in {"hook","outro"}]
+assert [sec["repeatCount"] for sec in repeats]==[2,2],repeats
+assert all(sec["performer"] is None for sec in repeats),repeats
+assert parse_section_marker("[Verse 1: Alpha]")["performer"]=="Alpha"
+assert parse_section_marker("[Chorus: x3]")["repeatCount"]==3
+assert parse_section_marker("[Chorus: 2x]")["repeatCount"]==2
+assert parse_section_marker("[Chorus: repeat 2 times]")["repeatCount"]==2
+post_present=compile_verified_music_presentation(
+    post_doc,source_title="Test Signal",source_url="https://example.test/test-signal"
+)
+assert "**[Hook: x2]**" in post_present["presentationText"]
+assert "**[Outro: x2]**" in post_present["presentationText"]
+assert "Back to:" not in post_present["presentationText"],post_present
+
+print("lyrics-page-footer-repeat-metadata-v174 PASS")
+
