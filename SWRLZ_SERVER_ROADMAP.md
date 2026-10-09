@@ -1,3 +1,33 @@
+## UPDATE FINISHED — 2026-10-09 — lyric navigation footer + repeat-marker metadata v174
+
+**Outcome:** v173 LIVE USER ACCEPTANCE CONFIRMED / NAVIGATION TEXT TRUNCATED AT POST-SONG BOUNDARY / REPEAT COUNTS NO LONGER MISLABELED AS PERFORMERS / GUARDED HUGGING FACE RELEASE SUCCESS / FRESH v174 LIVE ACCEPTANCE PENDING.
+
+### v173 user acceptance
+The user's `swrlz-dragon-chat (23).json` exported a real `v173-cross-source-identity-and-text-fetch-priority` hosted conversation. It correctly parsed unseparated natural "rack city tyga" input into the song title and artist, corroborated across five source families, consumed three total permitted page-fetch attempts, verified the accessible Lyrics On Demand text page with source-identity score 8, and accepted 54 lyric-like lines in five source-marked sections. This confirms **v173 live retrieval acceptance**. No copyrighted lyric body is copied into this roadmap entry.
+
+### New bounded v174 defects corrected
+- `hf_space/online_tools.py::_LYRIC_POST_SONG_META`: a generic `Back to: [artist] Lyrics` directory link now ends source-body extraction **before** subsequent directory links such as Top Hits/TV Themes. Existing page-footer, section, source, and 3-page budget protections retained.
+- `hf_space/music_structure.py::parse_section_marker`: `x2`, `2x`, and repeat-count notation are mapped to `repeatCount`, not the `performer` field; original label text preserved for Chat; authentic artist cues remain unchanged. `music_structure_debug` exposes `repeatCount`.
+- `ONLINE_OBSERVABILITY_REVISION=v174-lyric-footer-and-repeat-metadata` so a fresh Dragon Chat export can prove the candidate's activation.
+- Synthetic source regression appended to predeploy-required `tests/test_lyrics_region_integrity_v165.py`: post-song footer boundary, correct label and repeat semantics, source text integrity, presentation, and camera marker.
+
+### Failed attempt preserved, correction, and final guarded release
+- First guarded [workflow #37899694296](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37899694296) FAILED **before any HF publication**: earlier v173 backward-compatibility regression pinned the exact old observability revision, now intentionally updated. This was a test-maintenance issue, not a runtime lyrics processing failure.
+- Corrective test commit `2486802ae6577f3db3c012181d3edbad0e217f2b` changed v173 regression to require a compatible version `>=173`; v174 suite independently requires its own exact marker. All prior failed actions remain recorded.
+- Guarded retry [workflow #37899897249](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37899897249): **terminal SUCCESS**. The selected source was `2486802ae6577f3db3c012181d3edbad0e217f2b`; pre-upload lyric suite logged `lyrics-region-integrity-v165 PASS` and `lyrics-page-footer-repeat-metadata-v174 PASS`.
+- Isolated HF package, native kernels and model reconstruction, compatibility inspection, 700M inference smoke, authorization gate, immutable predeploy rollback, final upload, and revision receipt all completed successfully.
+- Published Space revision `d12fa80e0964f3118496710b55b73885a414dd72`.
+- Previous Space rollback revision `50e3030b6637e83d83bf31227520cd25b4c287b1`.
+- Final checkpoint `verificationState=DEPLOYED_UNVERIFIED`: CI deploy success does not establish new hosted Chat v174 acceptance.
+
+### Canonical versions
+Repository Work **1.0.104**; Online Research **1.0.22**; LALM Engine **2.1.160**; Deployment Control **1.0.34**; Server Runtime **2.3.327 / 2.3.327-hf-v174-footer-repeat-metadata**. Web Chat stays **1.5.92**; Runtime Manifest stays **152**.
+
+### Live acceptance continuation
+Repeat the same prompt on the hosted §wyrlz Chat and export Dragon Chat (24). Expected `observabilityRevision=v174-lyric-footer-and-repeat-metadata`, previously verified song identity and source result, the fetched page `terminalBoundaryKind=POST_SONG_META_BOUNDARY` with `Back to: ... Lyrics`, no website navigation strings in `text` or song section lines, and music-structure `repeatCount=2` / empty `performer` for source-marked repeated hook/outro sections. If other upstream sources are selected, compare their actual provenance and do not assert this specific site boundary.
+
+**Status:** FINISHED / AUTOMATED REGRESSION VERIFIED / GUARDED HUGGING FACE DEPLOYMENT SUCCESS / SPACE REVISION CAPTURED / v174 USER-VISIBLE ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-09 — lyric site-navigation boundary + repetition metadata v174
 
 **Trigger and acceptance:** Live Dragon Chat export `swrlz-dragon-chat (23).json` proves v173 **USER-VISIBLE ACCEPTED** for the previously failing exact "Can you provide lyrics for rack city tyga" request. Hosted export reports `observabilityRevision=v173-cross-source-identity-and-text-fetch-priority`, resolved title=`rack city` and primaryArtist=`tyga` by five corroborating source families, three attempted fetches, verified score 8 for Lyrics On Demand, accepted 54 extracted lyric-like lines across five marked sections, and an authored source link. Avoid reproducing copyrighted fetched lyric content in the roadmap.
