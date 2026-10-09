@@ -367,3 +367,87 @@ print("live-25-structured-lyrics-priority-v176 PASS")
 
 
 
+
+
+# v178: Dragon Chat (27) actually selected Genius (HTTPError), then
+# AZLyrics (human-verification page), then Musixmatch (HTTPError).
+# Bounded search was never attempted because the original pool was not empty.
+# Before consuming the last *page* slot, discover a NEW strong song-identity
+# source with visible musical section markers; fetch only its verified body.
+v178_pool=[
+    {"title":"Tyga - Rack City Lyrics - Genius",
+     "url":"https://genius.com/Tyga-rack-city-lyrics","source":"genius.com",
+     "snippet":"Rack City by Tyga – song history, mixtape information","rank":1},
+    {"title":"Tyga - Rack City Lyrics | AZLyrics.com",
+     "url":"https://www.azlyrics.com/lyrics/tyga/rackcity.html","source":"www.azlyrics.com",
+     "snippet":"Tyga Lyrics Rack City (mixtape version) Rack rack city","rank":2},
+    {"title":"Tyga - Rack City lyrics | Musixmatch",
+     "url":"https://www.musixmatch.com/lyrics/Tyga-3/rack-city","source":"www.musixmatch.com",
+     "snippet":"Lyrics for Rack City by Tyga. The song begins with Rack rack city","rank":4},
+    {"title":"Tyga - Rack City lyrics | LyricsFreak",
+     "url":"https://www.lyricsfreak.com/t/tyga/rack+city_20984331.html","source":"www.lyricsfreak.com",
+     "snippet":"Rack City by Tyga contains repeated lines","rank":5},
+]
+v178_rescued={
+    "title":"Tyga - Rack City Lyrics",
+    "url":"https://www.lyricsmania.com/rack_city_lyrics_tyga.html",
+    "source":"www.lyricsmania.com","rank":2,
+    "snippet":"Tyga Rack City full lyrics [Verse 1] first verse lyrics [Hook x2] repeated hook",
+}
+v178_calls=[]
+v178_queries=[]
+def v178_research(_payload):
+    return {
+        "provider":"test-search","researchId":"v178-real-27","errors":[],
+        "candidateAdmissionDebug":[],"evidence":[],
+        "fetchFailures":[{
+            "url":v178_pool[0]["url"],"title":v178_pool[0]["title"],
+            "source":"genius.com","rank":1,"errorType":"HTTPError",
+        }],
+        "candidatePool":v178_pool,
+    }
+def v178_search(q):
+    v178_queries.append(q)
+    return [v178_rescued]
+def v178_fetch(url):
+    v178_calls.append(url)
+    if "azlyrics.com" in url:
+        return {
+            "finalUrl":"https://b.azlyrics.com/?u=%2Flyrics%2Ftyga%2Frackcity.html",
+            "status":200,"title":"AZLyrics - request for access",
+            "extract":"Our systems have detected unusual activity. Please check the box below to regain access.",
+            "fetchedAt":2,
+        }
+    if url==v178_rescued["url"]:
+        return {
+            "finalUrl":url,"status":200,
+            "title":"Tyga - Rack City Lyrics",
+            "extract":GOOD_PAGE,"fetchedAt":3,
+        }
+    raise AssertionError("Incorrect last slot chosen: "+url)
+
+try:
+    online_tools.run_online_research=v178_research
+    online_tools.canonical_online_research.fetch_public=v178_fetch
+    online_tools.canonical_online_research.search_public=v178_search
+    online_tools._lyrics_provenance_lookup=fake_prov
+    v178_plan=dict(plan)
+    v178_plan["requestId"]="live-27-recover-structured-source-v178"
+    v178_accepted=online_tools._search_bundle(v178_plan)
+finally:
+    online_tools.run_online_research=orig_research
+    online_tools.canonical_online_research.fetch_public=orig_fetch
+    online_tools.canonical_online_research.search_public=orig_search
+    online_tools._lyrics_provenance_lookup=orig_prov
+assert v178_calls==[
+    "https://www.azlyrics.com/lyrics/tyga/rackcity.html",
+    v178_rescued["url"],
+],v178_calls
+assert v178_queries and "[Verse 1]" in v178_queries[0],v178_queries
+assert v178_accepted["lyricsSourceAttemptCount"]==3,v178_accepted
+assert v178_accepted["lyricsFallbackExhausted"] is False,v178_accepted
+assert v178_accepted["modelContext"]["verifiedLyrics"]["sourceUrl"]==v178_rescued["url"],v178_accepted
+assert v178_accepted["musicStructureDebug"]["explicitMusicalSectionCount"]>=2,v178_accepted
+assert v178_accepted["lyricsRescueSearchDebug"][0]["admittedCount"]>=1,v178_accepted
+assert int(online_tools.ONLINE_OBSERVABILITY_REVISION.split("-",1)[0].lstrip("v"))>=178
+print("live-27-last-slot-structured-rescue-v178 PASS")
