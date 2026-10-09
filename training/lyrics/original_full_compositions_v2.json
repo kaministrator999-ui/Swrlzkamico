@@ -60,7 +60,7 @@
       "id": "FULL-002",
       "title": "Forecast Employees Union",
       "genre": "absurd_comedy_song",
-      "form": "verse_chorus_bridge_32_lines",
+      "form": "verse_chorus_bridge_34_lines",
       "lines": [
         "The weather report resigned at exactly five,",
         "Said, \"I've been predicting storms just to feel alive.\"",
@@ -164,7 +164,7 @@
       "id": "FULL-004",
       "title": "Two Sides of the Bridge",
       "genre": "dialogue_cypher",
-      "form": "two_voices_32_lines",
+      "form": "two_voices_34_lines",
       "lines": [
         "BRIDGE: Everybody uses me but nobody knows my name.",
         "RIVER: Everybody blames me when the banks won't look the same.",
