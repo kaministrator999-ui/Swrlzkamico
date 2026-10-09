@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.162
-REVISION=2.1.162-structure-only-song-reference-v177
+VERSION=2.1.163
+REVISION=2.1.163-structure-only-followup-isolation-v180
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
