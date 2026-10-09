@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.25
-REVISION=1.0.25-lyrics-credit-boundary-v177
+VERSION=1.0.26
+REVISION=1.0.26-last-slot-structured-search-v178
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
