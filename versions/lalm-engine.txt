@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.159
-REVISION=2.1.159-mobile-lyric-presentation-v167
+VERSION=2.1.160
+REVISION=2.1.160-repeat-count-music-metadata-v174
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
