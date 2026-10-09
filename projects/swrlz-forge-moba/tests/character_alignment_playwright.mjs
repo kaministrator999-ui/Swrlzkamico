@@ -212,7 +212,9 @@ try{
     assert.deepEqual((await model(page,'kami')).layout[part],authoredFit,'Redo lost the body-piece fit');
     sameJoint(after.joints[part],(await rendered(page,'kami')).joints[part],'Redo did not restore actual forearm geometry');
     await choosePart(page,'kami',part,17.25);await page.locator('#rigResetFit').click();await seek(page,17.25);
-    assert.deepEqual((await model(page,'kami')).layout[part],defaultFit,'Reset Piece Fit did not restore the assembled default');
+    const resetFit=(await model(page,'kami')).layout[part];
+    for(const [field,value] of Object.entries(defaultFit))
+      close(resetFit[field],value,'Reset Piece Fit did not restore the assembled default '+field,1e-6);
     attachments(await rendered(page,'kami'),mode.name+' reset default seams');
     independent(await project(page),original,mode.name+' reset body fit');
     await closeStudio(page);await historyAction(page,'undo');await seek(page,17.25);
@@ -271,7 +273,12 @@ try{
     independent(await project(fresh),original,mode.name+' older project default fits');
     await seek(fresh,19);
     for(const character of ['kami','swyrlz']){
-      assert.deepEqual((await model(fresh,character)).layout,baselineLayouts[character],'Older save did not receive improved default assembly');
+      const migrated=(await model(fresh,character)).layout;
+      assert.deepEqual(Object.keys(migrated),Object.keys(baselineLayouts[character]),'Older save lost default body parts');
+      // Native degree fields round-trip through radians. A few billionths of
+      // a radian do not change geometry or indicate a failed migration.
+      for(const [id,fit] of Object.entries(baselineLayouts[character]))for(const [field,value] of Object.entries(fit))
+        close(migrated[id][field],value,'Older save did not receive improved default assembly '+character+'.'+id+'.'+field,1e-6);
       attachments(await rendered(fresh,character),mode.name+' imported older '+character);
     }
     const beforeInvalid=await project(fresh);

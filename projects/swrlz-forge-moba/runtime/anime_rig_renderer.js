@@ -151,7 +151,7 @@ function rigBuildVisual(visual,character){
   // can still lift a foot; changing one piece does not rescale the whole puppet.
   group.updateWorldMatrix(true,true);let sole=Infinity;
   for(const id of ['leftFoot','rightFoot']){const part=joints[id].userData.part;for(const p of rigInkPoints(part,body,1))sole=Math.min(sole,p[1]);}
-  body.position.y=-sole*factor;
+  if(Number.isFinite(sole))body.position.y=-sole*factor;
   const face=rigFaceSurface(character,cfg.layout.head);face.mesh.position.set(face.fit.x,face.fit.y,cfg.thickness/2+.02);joints.head.userData.part.add(face.mesh);
   group.userData.rig={character,joints,parts,face,texture,signature:rigVisualSignature(cfg),cellsReady:!!cells,thickness:cfg.thickness,factor,body};
   rigAnimateCharacter(group,character,0);return group;

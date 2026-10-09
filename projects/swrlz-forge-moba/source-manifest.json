@@ -68,6 +68,6 @@
     "patches/v9_2_depth_theatre.py",
     "patches/v9_3_character_alignment.py"
   ],
-  "finalBytes": 980742,
-  "finalSha256": "0478b43f60b2ae55e3564fbc5e2bd15989e51ee1f95efd5c9d3edb6508a58aad"
+  "finalBytes": 980767,
+  "finalSha256": "caba518b67524567899d93a74308bc894cf40413fd69b330b8f7f5f7b6c042be"
 }
