@@ -1,0 +1,128 @@
+{
+  "schema": "swrlz-original-lyric-revision-pairs-v3",
+  "status": "INSTRUCTOR_DRAFT_NO_MODEL_WEIGHT_TRAINING",
+  "source": "fresh synthetic examples, no private archive lines",
+  "count": 8,
+  "cases": [
+    {
+      "id": "RP-001",
+      "failure": "forced_rhyme",
+      "before": [
+        "The paper ship is made from a spoon,",
+        "I put it in the window to rhyme with the moon."
+      ],
+      "after": [
+        "The paper ship goes drifting down the drain,",
+        "I watch it catch against the grating in the rain."
+      ],
+      "teaches": "Meaning and physical plausibility outrank end-rhyme perfection.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "study fault and revised mechanics; compose independent output"
+    },
+    {
+      "id": "RP-002",
+      "failure": "plot_stall",
+      "before": [
+        "The lantern is shining across the street,",
+        "It is shining brightly at everyone's feet."
+      ],
+      "after": [
+        "I turn the lantern and uncover a sign,",
+        "Pointing through the alley to the missing mine."
+      ],
+      "teaches": "Something changes in the listener's understanding.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "study fault and revised mechanics; compose independent output"
+    },
+    {
+      "id": "RP-003",
+      "failure": "flat_cadence",
+      "before": [
+        "I walk down the street and I play my song,",
+        "I walk down the street and I sing along."
+      ],
+      "after": [
+        "Stop. Listen. One note on the wire,",
+        "Then a flurry of strings lifts the crowd a little higher."
+      ],
+      "teaches": "Short rhythmic punches contrast with a longer run.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "study fault and revised mechanics; compose independent output"
+    },
+    {
+      "id": "RP-004",
+      "failure": "unearned_resolution",
+      "before": [
+        "My old letter was lost yesterday,",
+        "Now every sadness has gone away."
+      ],
+      "after": [
+        "I found the letter underneath the stair,",
+        "The answer isn't written, but I know somebody cared."
+      ],
+      "teaches": "Earn emotional movement through action; leave honest uncertainty.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "study fault and revised mechanics; compose independent output"
+    },
+    {
+      "id": "RP-005",
+      "failure": "weak_hook",
+      "before": [
+        "I'm here, I'm here, oh yes I'm here,",
+        "I'm here, I'm here, and never fear."
+      ],
+      "after": [
+        "Keep the porch light burning till the train comes through,",
+        "I'll follow every station sign that leads me back to you."
+      ],
+      "teaches": "Make refrains memorable through a vivid idea.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "study fault and revised mechanics; compose independent output"
+    },
+    {
+      "id": "RP-006",
+      "failure": "image_scatter",
+      "before": [
+        "I am a comet, castle, bird and key,",
+        "I am a maze, a river and a tree."
+      ],
+      "after": [
+        "The map is torn exactly at the bend,",
+        "I draw the river back and find the road's end."
+      ],
+      "teaches": "Sustain one coherent image system.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "study fault and revised mechanics; compose independent output"
+    },
+    {
+      "id": "RP-007",
+      "failure": "joke_explained",
+      "before": [
+        "The coffee machine is funny, so we laugh,",
+        "It speaks like a manager on its behalf."
+      ],
+      "after": [
+        "The coffee machine submitted its vacation form,",
+        "Then brewed the office decaf during the thunderstorm."
+      ],
+      "teaches": "Dramatize a funny action rather than describing amusement.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "study fault and revised mechanics; compose independent output"
+    },
+    {
+      "id": "RP-008",
+      "failure": "padded_repetition",
+      "before": [
+        "The garden grows, the garden grows,",
+        "The garden grows, the garden grows."
+      ],
+      "after": [
+        "A green shoot breaks the crust beside the fence,",
+        "The gardener makes a note of where it bends."
+      ],
+      "teaches": "Use new consequences instead of repetitive length padding.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "study fault and revised mechanics; compose independent output"
+    }
+  ]
+}
