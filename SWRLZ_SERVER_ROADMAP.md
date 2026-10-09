@@ -1,3 +1,31 @@
+## UPDATE FINISHED — 2026-10-09 — structurally marked lyric-source priority v176
+
+**Outcome:** DRAGON CHAT 25 SOURCE-SELECTION FAILURE ROOTED / STRUCTURALLY MARKED SOURCES TRIED FIRST WITHIN HARD FETCH LIMIT / V173–V176 REGRESSION GATE PASSED / GUARDED HF DEPLOYED / USER-VISIBLE v176 ACCEPTANCE PENDING.
+
+### User's hosted evidence
+`swrlz-dragon-chat (25).json` shows active runtime `v175-lyrics-context-creative-intent-routing`, a one-question thread requesting Rack City lyrics by Tyga, and **no original-rap follow-up**. The title/artist were independently resolved but the 3-fetch search failed to verify a clean text body: Genius HTTP fetch error; AZLyrics 200 access challenge; SongLyrics exact identity match with `sourceIdentityScore=8` but `INSUFFICIENT_FULL_LYRIC_STRUCTURE`. SongLyrics diagnostic details: 7,527 cleaned page characters, 508 raw lines, 82 scoped candidate lines, 79 chunks, 2 qualifying multi-line chunks of 3 and 2 lines, 0 section/performer markers, and post-song songwriter-credits boundary. The rejected source was a music-meaning/commentary page in the result snippet. In the same eight results, Lyrics On Demand advertised source-authored `[Intro:]` / `[Verse 1:]` and had been fetched successfully in an earlier real v173 session, but it was not selected within the final fetch slot. This is a source PRIORITY/budget problem; it is not a proven v175 creative-routing regression.
+
+### Bounded implementation
+- `hf_space/online_tools.py::_search_bundle`: order already-admitted direct lyric-text candidate sources so their snippets' explicit bracketed musical section markers (`intro`, `verse`, `chorus`, `hook`, `bridge`, etc.) take the constrained fetch budget before candidates with no structure markers. Preserve existing SongIdentity admissibility, media exclusions, source-family diversity as stable tie order, snippet/body cross-verification, CAPTCHA rejection, destination identity checks, and maximum three cumulative page attempts. No source domain or song title was hardcoded in production logic.
+- New live diagnostics label: `ONLINE_OBSERVABILITY_REVISION=v176-structured-source-fetch-priority` for song retrieval.
+- `tests/test_diverse_lyric_fetch_budget_v170.py` updates the v173 source-order test to the improved faster success case and adds `live-25-structured-lyrics-priority-v176`: mocked failed reasoner fetch, blocked AZLyrics candidate, commentary-like SongLyrics, and directly verifiable Lyrics On Demand; asserts the marked source is picked first with a source-grounded verified body within fetch limit.
+- Deployable source SHA `06caf19b124121cf94c9b4798ae2ea27dd803c5c`; fix `3e4ac98e3c9223cb90fdb439d4b9335f3f933792`; regression `06caf19b124121cf94c9b4798ae2ea27dd803c5c`.
+
+### Verified protected release
+- [GitHub Actions #37918085565](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37918085565) **TERMINAL SUCCESS**. Deployment logs confirm `unseparated-song-identity-text-fetch-v173 PASS`, `lyrics-page-footer-repeat-metadata-v174 PASS`, `contextual-original-rap-routing-v175 PASS`, and `live-25-structured-lyrics-priority-v176 PASS`.
+- Guarded HF isolated package, original model provenance, real native R39 compatibility and model reconstruction, 700M smoke, explicit authorization, existing Space snapshot, saved rollback checkpoint, and HF approved upload passed.
+- Published target existing `kamiloki/Swyrlz` HF Space revision `19e587bc368a5b31f01728bd0a94c7a768b6a747`.
+- Previous known-good rollback revision `d543935c468aabf8677968e5c782307de30de835`.
+- Checkpoint `verificationState=DEPLOYED_UNVERIFIED`: successful upload does not prove a newly hosted user test.
+
+### Final module versions
+Repository Work **1.0.106**; Online Research **1.0.24 / 1.0.24-structured-source-fetch-priority-v176**; Deployment Control **1.0.36**; Server Runtime **2.3.329 / 2.3.329-hf-v176-structured-source-priority**; LALM Engine stays **2.1.161**, Web Chat stays **1.5.92**. Unrelated game-engine and UI lanes unchanged.
+
+### Acceptance remaining
+Try the same natural prompt `Can you provide lyrics for rack city tyga` in a **new Chat thread**, and check `observabilityRevision=v176-structured-source-fetch-priority`. If the first lyric lookup succeeds and the user wants to test v175 creative generation, **in the same thread** ask for a new original rap that uses the prior lyrics only as a vocabulary/style guide. Verify `CREATIVE_MUSIC_STARTED` with no further lyrics search, and original generative output. Public search rankings, reachability and access controls can change, so success should be evaluated by actual host logs rather than assumptions.
+
+**Status:** FINISHED / CI GATES PASS / GUARDED HUGGING FACE DEPLOYMENT SUCCESS / FRESH LIVE ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-09 — structurally grounded lyric-source fetch priority v176
 
 **Trigger:** User's new actual hosted session `swrlz-dragon-chat (25).json`, `observabilityRevision=v175-lyrics-context-creative-intent-routing`, requests the same `Can you provide lyrics for rack city tyga` first step. **It does not contain the creative second turn**; thus it neither confirms nor refutes live acceptance for v175 creative routing.
