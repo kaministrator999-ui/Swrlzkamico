@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mv19k9po-4160446941-2125609056",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "a12cd03e90c874103800e76c7626456c32cdf5ed",
+  "persistedAtUnixMs": 1791568420743,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mv19k9po-4160446941-2125609056",
+    "turnIndex": 1,
+    "userText": "Now can you use those lyrics as something to study and write me a whole new rap song",
+    "capturedAtUnixMs": 1791568420743
+  }
+}
