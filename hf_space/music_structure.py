@@ -253,6 +253,39 @@ def creative_music_reference_projection(
                 ending_match=re.search(r"[aeiouy][a-z]{0,3}$",terminal)
                 current["endings"].append(ending_match.group(0) if ending_match else "")
         if not sections:
+            # Some verified pages have no Verse/Hook tags. Read ONLY the
+            # rendered lyric-document region, not the introduction or credits.
+            # An unlabeled song still must not expose its old words to the
+            # creative model as raw history.
+            in_body=False
+            current={"type":"section","number":None,"repeatCount":None,
+                     "lengths":[],"endings":[]}
+            for raw_line in body.splitlines()[:500]:
+                line=raw_line.strip()
+                if line=="---":
+                    if not in_body:
+                        in_body=True
+                        continue
+                    break
+                if not in_body:
+                    continue
+                if re.match(r"(?i)^\\*{0,2}(?:lyrics source|songwriters?|publisher|powered by|top lyrics|top artists)\\b",line):
+                    break
+                if line.startswith("──"):
+                    if current["lengths"]:
+                        sections.append(current)
+                    current={"type":"section","number":None,"repeatCount":None,
+                             "lengths":[],"endings":[]}
+                    continue
+                words=re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\\-]*",line)
+                if 1<=len(words)<=30 and len(line)<=210:
+                    current["lengths"].append(len(words))
+                    term=words[-1].casefold()
+                    ending_match=re.search(r"[aeiouy][a-z]{0,3}$",term)
+                    current["endings"].append(ending_match.group(0) if ending_match else "")
+            if current["lengths"]:
+                sections.append(current)
+        if not sections:
             continue
         abstract=[]
         for section in sections[:16]:
