@@ -69,6 +69,8 @@ MUSIC_CREATIVE_REFERENCE_POLICY="""STRUCTURE-ONLY SONG STUDY (the user asks for 
 - Write the finished requested song from its first section to a clean ending, with NO breakdown, instructional stage directions, or post-song analysis unless requested. Avoid padding with repeated chorus copies.
 - The reference source and any earlier attempts MUST NOT be named, quoted, recalled or alluded to anywhere in the output. Do not write a tribute, homage, vibe description or source comparison.
 - For a repeat request, invent a distinctly different original topic, scenario, rhyme vocabulary, and title instead of continuing or rewriting your last song.
+- Use the independently selected creative premise as a concrete non-reference subject. Avoid generic urban, nightlife, status or wealth tropes unless the user explicitly asks for them.
+- Preserve abstract approximate lyric-line totals, repetition density and phrase contours. Do not replace a long unlabeled song study with the conventional short four-line verse/pre-chorus/bridge template.
 - Use a fenced Markdown code block for the complete new song; include its heading/sections inside the block."""
 
 def creative_music_transform_request(prompt: str) -> bool:
@@ -219,6 +221,45 @@ _CREATIVE_MORE_REQUEST=re.compile(
 )
 _CREATIVE_SOURCE_FOOTER=re.compile(r"(?i)\*\*lyrics source:\*\*")
 _CREATIVE_FORM_WORDS=re.compile(r"[A-Za-z0-9][A-Za-z0-9'’\-]*")
+# Novel, source-independent scenes prevent tiny CPU models from falling back
+# on familiar rap topics. Source text only helps avoid lexical collisions.
+_ORIGINAL_RAP_PREMISES=(
+    "an astronomer rebuilding a remote observatory after an ice storm",
+    "a beekeeper recovering an orchard through changing seasons",
+    "an antique clockmaker restoring a watch stopped during an eclipse",
+    "a marine biologist exploring a silent underwater cave",
+    "a chef learning breadmaking from a village baker on a distant island",
+    "a wildlife photographer tracking a rare bird in a mountain forest",
+    "a ceramic artist mastering the heat of a traditional pottery kiln",
+    "an inventor preparing a solar-powered glider for its maiden flight",
+    "an archivist decoding a forgotten expedition journal",
+    "a gardener reviving a greenhouse after a harsh winter",
+    "a violin maker restoring an instrument found in an attic",
+    "a mathematician solving a puzzle on a long train journey",
+)
+_REFERENCE_COMMON_WORDS={
+    "about","again","also","and","are","been","but","can","for","from",
+    "have","her","here","his","into","just","like","more","not","our",
+    "that","the","their","them","then","there","these","they","this",
+    "those","through","was","were","what","when","where","which","while",
+    "who","will","with","would","you","your","verse","hook","chorus",
+    "lyrics","source","song","title","another","original","write",
+}
+
+
+def _creative_premise(source_text: str, prior_creative: int) -> str:
+    """Pick a wholly new subject with minimal reference-vocabulary overlap."""
+    source={x for x in _CREATIVE_FORM_WORDS.findall(str(source_text).casefold())
+            if len(x)>=4 and x not in _REFERENCE_COMMON_WORDS}
+    ranked=[]
+    for i,premise in enumerate(_ORIGINAL_RAP_PREMISES):
+        words={x for x in _CREATIVE_FORM_WORDS.findall(premise.casefold()) if len(x)>=4}
+        ranked.append((len(source.intersection(words)),i,premise))
+    minimum=min(x[0] for x in ranked)
+    candidates=[x[2] for x in ranked if x[0]==minimum]
+    return candidates[prior_creative % len(candidates)]
+
+
 _CREATIVE_POST_SOURCE_META=re.compile(r"(?i)^\s*(?:songwriters?|publishers?|powered\s+by|top\s+(?:lyrics|artists|songs)|writers?|copyright)\b")
 _CREATIVE_CODE_FRAGMENT=re.compile(
     r"(?i)(?:^\s*[:@]?(?:class|style|id|v-if|v-for)\s*=|"
@@ -378,6 +419,9 @@ def creative_music_reference_projection(
 
     source_body=str(existing[source_idx].get("content") or existing[source_idx].get("text") or "")
     structure=_creative_form_sketch(_creative_display_form(source_body))
+    prior_creative=sum(1 for item in existing[source_idx+1:]
+                       if isinstance(item,dict) and item.get("role")=="assistant")
+    structure["originalCreativePremise"]=_creative_premise(source_body,prior_creative)
     structure["continuationNewComposition"]=continued
     structure["sourceHistoryExcluded"]=True
     structure["previousGeneratedLyricsExcluded"]=continued
