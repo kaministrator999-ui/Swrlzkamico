@@ -143,7 +143,7 @@ def test_engine_route_has_a_bounded_single_retry_and_structural_only_truth():
     assert "segment_messages=[" in source
     assert "partialReturned" in source
     assert "max_attempts=6 if strict_lyric_turn else 3" in source
-    assert "invalid-or-overlong-lyric-continuation" in source
+    assert "continuation_shape_receipt(authored_lines,new_segment,shape)" in source
     assert 'candidate_check=check' in source
     assert "clean_lyric_container(candidate_raw)" in source
     assert "2048 if requested and requested>=64" in source
