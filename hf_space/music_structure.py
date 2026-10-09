@@ -204,6 +204,87 @@ def parse_section_marker(line: str) -> dict[str,Any] | None:
     return None
 
 
+
+
+def creative_music_reference_projection(
+    prompt: str, history: list[dict[str,Any]]
+) -> tuple[list[dict[str,Any]], dict[str,Any] | None]:
+    """Replace a previously displayed lyric body with a content-free structure sketch.
+
+    Only the MODEL-facing history is transformed, never the stored chat log.
+    Returning the original history when there is no explicit lyric-reference
+    creation request preserves ordinary conversational continuity.
+    """
+    existing=list(history or [])
+    if not creative_music_transform_request(prompt) or not re.search(
+        r"\b(?:those|these|earlier|previous|provided|above|reference|study)\b",
+        str(prompt or ""),re.I,
+    ):
+        return existing,None
+
+    for i in range(len(existing)-1,-1,-1):
+        message=existing[i]
+        if not isinstance(message,dict) or message.get("role")!="assistant":
+            continue
+        body=str(message.get("content") or message.get("text") or "")
+        if not re.search(r"(?i)\*\*lyrics source:\*\*",body):
+            continue
+        sections=[]
+        current=None
+        for raw_line in body.splitlines()[:500]:
+            line=raw_line.strip()
+            if re.match(r"(?i)^\*{0,2}(?:lyrics source:|songwriters?\s*:|publisher\s*:|powered by|top lyrics|top artists)\b",line):
+                break
+            label=line.strip("* \t")
+            parsed=parse_section_marker(label) if label.startswith("[") and label.endswith("]") else None
+            if parsed and parsed.get("type")!="performer_cue":
+                current={"type":parsed.get("type"),"number":parsed.get("number"),
+                         "repeatCount":parsed.get("repeatCount"),"lengths":[]}
+                sections.append(current)
+                continue
+            if current is None or not line or line.startswith(("---","──","**Lyrics source:")):
+                continue
+            words=re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",line)
+            if 1<=len(words)<=30 and len(line)<=210:
+                current["lengths"].append(len(words))
+        if not sections:
+            continue
+        abstract=[]
+        for section in sections[:16]:
+            lengths=section["lengths"]
+            if not lengths:
+                continue
+            ordered=sorted(lengths)
+            abstract.append({
+                "type":section["type"],"number":section["number"],
+                "repeatCount":section["repeatCount"],
+                "approxLineCount":len(lengths),
+                "medianWordsPerLine":ordered[len(ordered)//2],
+                "shortestWords":ordered[0],"longestWords":ordered[-1],
+            })
+        if not abstract:
+            continue
+        plan={
+            "schema":"swrlz-creative-structural-reference-v1",
+            "sourceContentExcluded":True,
+            "sectionSequence":[x["type"] for x in abstract],
+            "sections":abstract,
+            "usage":"Study form and line-length dynamics only. New topic, new vocabulary, new title, new refrain. No original lyric lines or distinctive phrases.",
+        }
+        projected=[dict(item) if isinstance(item,dict) else item for item in existing]
+        replacement="Earlier assistant supplied a verified song as a STRUCTURAL reference. The actual words are intentionally excluded from creative-generation context. ABSTRACT FORM: "+str(plan)
+        projected[i]["content"]=replacement
+        if "text" in projected[i]:
+            projected[i]["text"]=replacement
+        if i>0 and isinstance(projected[i-1],dict) and projected[i-1].get("role")=="user":
+            previous=str(projected[i-1].get("content") or projected[i-1].get("text") or "")
+            if re.search(r"(?i)\blyrics?\b",previous):
+                projected[i-1]["content"]="User requested an existing song as a structural study reference; title and artist are not part of the new song."
+                if "text" in projected[i-1]:
+                    projected[i-1]["text"]=projected[i-1]["content"]
+        return projected,plan
+    return existing,None
+
 def _norm_line(value: str) -> str:
     return re.sub(r"\s+"," ",str(value or "").strip()).casefold()
 
