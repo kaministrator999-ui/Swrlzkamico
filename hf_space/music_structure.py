@@ -269,7 +269,7 @@ def creative_music_reference_projection(
                     break
                 if not in_body:
                     continue
-                if re.match(r"(?i)^\\*{0,2}(?:lyrics source|songwriters?|publisher|powered by|top lyrics|top artists)\\b",line):
+                if re.match(r"(?i)^\*{0,2}(?:lyrics source|songwriters?|publisher|powered by|top lyrics|top artists)\b",line):
                     break
                 if line.startswith("──"):
                     if current["lengths"]:
@@ -277,7 +277,7 @@ def creative_music_reference_projection(
                     current={"type":"section","number":None,"repeatCount":None,
                              "lengths":[],"endings":[]}
                     continue
-                words=re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\\-]*",line)
+                words=re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",line)
                 if 1<=len(words)<=30 and len(line)<=210:
                     current["lengths"].append(len(words))
                     term=words[-1].casefold()
