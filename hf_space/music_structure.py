@@ -371,12 +371,31 @@ def _creative_form_sketch(blocks: list[dict[str,Any]]) -> dict[str,Any]:
             "lineLengthContourWords":lengths[:32],
             "endRhymePlacementHint":[labels.get(e,"-") for e in endings[:32]],
         })
+    # Repeated *positions*, never words: unlabeled lyric pages commonly put
+    # the chorus and verse in one 50-60-line block without section markers.
+    # This recurrence profile provides more useful mechanics than guessing a
+    # conventional song template from the "section" placeholder.
+    from collections import Counter
+    all_lines=[tuple(word.casefold() for word in line)
+               for block in blocks for line in block.get("lines",[])]
+    counts=Counter(all_lines)
+    recurrent=[i+1 for i,line in enumerate(all_lines)
+               if len(line)>=2 and counts[line]>=3]
+    runs=[]
+    for pos in recurrent:
+        if runs and pos==runs[-1][-1]+1:
+            runs[-1].append(pos)
+        else:
+            runs.append([pos])
+    bands=[{"fromLine":v[0],"toLine":v[-1],"lines":len(v)} for v in runs[:20]]
     return {
-        "schema":"swrlz-creative-structural-reference-v2",
+        "schema":"swrlz-creative-structural-reference-v3",
         "sourceContentExcluded":True,
         "sectionSequence":[x["type"] for x in abstract],
         "sections":abstract,
-        "usage":"Only abstract section placement, recurrence, approximate line lengths and rhyme positions. Invent all topic, words, titles, settings, hooks and imagery from zero.",
+        "approxTotalLyricLines":len(all_lines),
+        "recurringLineBands":bands,
+        "usage":"Study abstract section placement, approximate lyric-line count, repetition density and rhyme positions. Invent every title, scene, image, hook and word independently. A continuous unlabeled song may contain recurring refrain bands; do not impose arbitrary pop section headings.",
     }
 
 
