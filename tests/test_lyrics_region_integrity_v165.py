@@ -260,5 +260,7 @@ assert "**[Hook: x2]**" in post_present["presentationText"]
 assert "**[Outro: x2]**" in post_present["presentationText"]
 assert "Back to:" not in post_present["presentationText"],post_present
 
+assert online_tools.ONLINE_OBSERVABILITY_REVISION=="v174-lyric-footer-and-repeat-metadata"
+
 print("lyrics-page-footer-repeat-metadata-v174 PASS")
 
