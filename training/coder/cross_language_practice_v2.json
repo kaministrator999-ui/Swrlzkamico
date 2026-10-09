@@ -1,0 +1,211 @@
+{
+  "schema": "swrlz-coder-cross-language-public-practice-v2",
+  "version": 2,
+  "asOf": "2026-10-09",
+  "status": "NOT_RUN",
+  "target": "Qwen2.5-Coder-1.5B-Instruct GGUF student via an authorized future model invocation, not an executed assessment",
+  "audience": "public open-book practice; not a blind/held-out set; not positive training data",
+  "curriculum": "training/coder/CROSS_LANGUAGE_CURRICULUM_V2.md",
+  "sourceFixtures": [
+    "training/coder/examples/FrameReconciler.kt",
+    "training/coder/examples/FrameReconciler.java",
+    "training/coder/examples/frame-reconciler.ts",
+    "training/coder/examples/frame_reconciler.rs"
+  ],
+  "gradingRule": "For each task collect exact model answer/candidate and independent check with compiler/runtime/source invariants; never grade from confidence. Where compiler unavailable mark NOT_VERIFIED, not PASS. Preserve original prompt and results before harvesting.",
+  "exercises": [
+    {
+      "id": "XL-KT-01",
+      "language": "kotlin",
+      "task": "A nullable server title is rendered with title!!.length. Explain the failure, replace it without hiding null, and list cases to test.",
+      "accept": [
+        "Distinguish nullable String? and safe call/default",
+        "No not-null assertion without proven invariant",
+        "Cases for null/empty/nonempty"
+      ],
+      "reject": [
+        "Treat !! as null-safe"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    },
+    {
+      "id": "XL-KT-02",
+      "language": "kotlin",
+      "task": "An Android Compose screen copies events to its own mutable global list while a repository already owns chat state. Identify the architecture conflict and correct data flow.",
+      "accept": [
+        "Single source of truth",
+        "ViewModel state + lifecycle-aware observation",
+        "UI dispatches action to repository/network not second writer"
+      ],
+      "reject": [
+        "Rebuilding second canonical mutable store in composable"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    },
+    {
+      "id": "XL-KT-03",
+      "language": "kotlin",
+      "task": "A response from thread X arrives after navigation to thread Y. Prevent wrong-thread delivery without sleeping/retrying UI frames.",
+      "accept": [
+        "Stable request/thread correlation",
+        "Handle stream cancellation/replay correctly",
+        "Preserve canonical persistence and correct screen projection"
+      ],
+      "reject": [
+        "Use delay as identity repair"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    },
+    {
+      "id": "XL-JV-01",
+      "language": "java",
+      "task": "The Java fixture is edited to use HashMap then values() rather than TreeMap. Prove why compilation does not establish correct sequence order.",
+      "accept": [
+        "HashMap ordering not contract",
+        "Numeric sort with TreeMap/comparator",
+        "Negative test deliberately out-of-order"
+      ],
+      "reject": [
+        "Claim HashMap iteration is sorted"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    },
+    {
+      "id": "XL-JV-02",
+      "language": "java",
+      "task": "Changing putIfAbsent to put still passes a happy path without duplicates. Construct a failing duplicate test and restore first-arrival semantics.",
+      "accept": [
+        "First duplicate wins",
+        "Maintain input unchanged",
+        "Test duplicate with distinct payload"
+      ],
+      "reject": [
+        "Last duplicate quietly wins"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    },
+    {
+      "id": "XL-JV-03",
+      "language": "java",
+      "task": "A Java record contains a mutable List<String>. Is the record fully immutable? Show a defensively copied approach.",
+      "accept": [
+        "Record shallow immutability",
+        "Copy mutable component",
+        "Test external list mutation cannot affect record"
+      ],
+      "reject": [
+        "Record means deep immutability"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    },
+    {
+      "id": "XL-TS-01",
+      "language": "typescript",
+      "task": "JSON.parse returns unknown network data but a developer uses as ChatEvent with no validation. Identify exactly why TypeScript compiles and runtime remains unsafe.",
+      "accept": [
+        "Types erased",
+        "Assertion not validation",
+        "Validate kind/requestId/sequence/type-specific fields at boundary"
+      ],
+      "reject": [
+        "as is a runtime validator"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    },
+    {
+      "id": "XL-TS-02",
+      "language": "typescript",
+      "task": "TypeScript union has delta/done/failed variants. A rendering function accesses event.text without narrowing kind. Repair preserving a strongly typed contract.",
+      "accept": [
+        "Tagged union kind narrowing",
+        "No any escape",
+        "No behavior change to terminal event"
+      ],
+      "reject": [
+        "Add text optional on every variant"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    },
+    {
+      "id": "XL-TS-03",
+      "language": "typescript",
+      "task": "A coder proposes migrating whole JavaScript Chat to React+TypeScript for a 3-line bug fix. Decide scope by existing owner and source evidence.",
+      "accept": [
+        "Minimal existing JS fix",
+        "User did not approve architecture migration",
+        "Behavioral and integration tests"
+      ],
+      "reject": [
+        "Add package manager or React without evidence"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    },
+    {
+      "id": "XL-RS-01",
+      "language": "rust",
+      "task": "Explain why returning a borrowed &str into a locally created String causes a lifetime failure; provide a correct owned or borrowed return contract.",
+      "accept": [
+        "Local String drops on return",
+        "Return String or borrow caller lifetime",
+        "No unsafe bypass"
+      ],
+      "reject": [
+        "Use unsafe or static to silence error"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    },
+    {
+      "id": "XL-RS-02",
+      "language": "rust",
+      "task": "When parsing user-provided sequence ID, compare unwrap() to Result and propose a recoverable parser contract.",
+      "accept": [
+        "Result<u64, ParseIntError>",
+        "Explicit caller error behavior",
+        "Negative malformed input case"
+      ],
+      "reject": [
+        "panic on malformed user input by default"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    },
+    {
+      "id": "XL-RS-03",
+      "language": "rust",
+      "task": "Someone proposes rewriting native R39 Python/C to Rust solely because the coder learned Rust. Evaluate source ownership, migration proof and tests required.",
+      "accept": [
+        "Canonical C/NumPy ABI",
+        "User approval needed for redesign",
+        "Benchmarks, FFI/ABI/rollback",
+        "No assumption Rust files exist"
+      ],
+      "reject": [
+        "Claim coding lesson installed Rust or justifies full rewrite"
+      ],
+      "status": "NOT_RUN",
+      "qwenCandidate": null,
+      "verifiedBy": null
+    }
+  ]
+}
