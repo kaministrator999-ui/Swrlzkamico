@@ -92,4 +92,22 @@ single_art["revisions"][0]["files"][0]["content"]="# changed\n"
 client.cookies.set("swrlz_hf_sid","session-a")
 assert get("artifact-single",single_hash).status_code==409
 
+# Tiny complete code artifacts now persist, even when total response is shorter
+# than the old arbitrary 120-character threshold.
+tiny_text="```python file=small.py
+print(1)
+```"
+thread={"id":"tiny-thread","messages":[
+    {"role":"user","text":"Please zip it and return the code","meta":{"requestId":"tiny-request"}},
+],"codeArtifacts":[]}
+assistant={"role":"assistant","id":"tiny-reply","text":tiny_text,"meta":{}}
+tiny=station._create_code_artifact(thread,assistant,"tiny-request",tiny_text)
+assert tiny is not None and len(tiny["files"])==1
+assert tiny["revisions"][0]["archiveRequested"] is True
+lyric_text="```lyrics
+just a song, not source code
+```"
+lyric={"role":"assistant","id":"song","text":lyric_text,"meta":{}}
+assert station._create_code_artifact(thread,lyric,"song-request",lyric_text) is None
+
 print("CODE_PACKAGES_HTTP_V184_PASS cookies, complete revisions, SHA, ZIP, forbidden paths")
