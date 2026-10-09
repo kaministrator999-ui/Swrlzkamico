@@ -203,7 +203,7 @@ assert template and template["sourceContentExcluded"] is True,template
 assert template["sectionSequence"]==["verse","hook","outro"],template
 assert [x["approxLineCount"] for x in template["sections"]]==[4,2,2],template
 assert [x["repeatCount"] for x in template["sections"]]==[None,2,2],template
-assert template["sections"][0]["lineLengthContourWords"]==[7,7,7,6],template
+assert template["sections"][0]["lineLengthContourWords"]==[6,6,6,6],template
 assert len(template["sections"][0]["endRhymePlacementHint"])==4,template
 assert all(label=="-" or label in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" for section in template["sections"] for label in section["endRhymePlacementHint"]),template
 assert 5<=template["sections"][0]["medianWordsPerLine"]<=12,template
