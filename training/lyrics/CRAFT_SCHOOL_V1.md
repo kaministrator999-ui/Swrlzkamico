@@ -43,5 +43,11 @@ The continuation is owned by [`LYRIC_OCEAN_CURRICULUM_V2.md`](./LYRIC_OCEAN_CURR
 - [`original_demonstrations_v2.json`](./original_demonstrations_v2.json) — 24 different eight-line treatments;
 - [`original_full_compositions_v2.json`](./original_full_compositions_v2.json) — six longer complete-arc drafts;
 - [`../../hf_space/lyric_craft_catalog_v2.json`](../../hf_space/lyric_craft_catalog_v2.json) — 48 reusable runtime-specific teaching cards, selectively retrieved by the same 700M craft policy.
+- [`LYRIC_OCEAN_STAGE_V4.md`](./LYRIC_OCEAN_STAGE_V4.md) — 22 complete-arc works, formal-diversity changes, exact evidence anchors and quality gates.
+- [`CROSS_FORM_COMPLETE_SONGS_V4.json`](./CROSS_FORM_COMPLETE_SONGS_V4.json) — eight new original complete cross-form songs, 249 lines.
+- [`PROVISIONAL_EDITORIAL_PASS_V4.json`](./PROVISIONAL_EDITORIAL_PASS_V4.json) — same-author, evidence-linked, non-independent review of the 14 prior full songs.
+- [`EVIDENCE_LINKED_REVISIONS_V4.json`](./EVIDENCE_LINKED_REVISIONS_V4.json) — 14 traceable public before/after repair proposals.
+- [`../../hf_space/lyric_form_cues_v4.json`](../../hf_space/lyric_form_cues_v4.json) — eight bounded form-specific creativity cues; at most one selected per appropriate prompt.
+
 
 The 261-case user-private archive review is deliberately **not** copied into this repository. **No actual model fine-tuning, held-out success labeling, new adapter, or production activation is established.** Existing lyric structure/reference isolation remains in `hf_space/music_structure.py`. The next implementation owner should not silently replace the 700M creative hook with a separate music-policy writer.
