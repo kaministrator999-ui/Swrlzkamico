@@ -9,7 +9,7 @@ from programming_repair_context import build_compact_repair_context, enforce_str
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from music_structure import music_model_policy, creative_music_request, creative_music_reference_projection, MUSIC_CREATIVE_REFERENCE_POLICY, original_rap_delivery, original_rap_violations
 from lyric_craft_school import lyric_craft_policy
-from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics
+from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics, continuation_shape_receipt
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -891,39 +891,39 @@ def generate_events(payload):
                         break
                     # The complete model-authored prefix gives the next call
                     # continuity while avoiding a new open-ended song restart.
-                    continue_instruction=(
-                        f"Continue the SAME ORIGINAL {wanted}-LINE LYRIC VERSE. "
-                        f"There are already {len(authored_lines)} complete lines below. "
-                        f"Add EXACTLY {missing} NEW lyrical lines and NOTHING ELSE. "
-                        "Do not repeat any existing line. Do not restart the verse. "
-                        "No preface, code fence, section labels, blank stanza separators, chorus, note or apology. "
-                        "Continue the specified plot using concrete action, meaningful internal rhymes, "
-                        "and audible contrast between rapid phrases and concise punchlines. "
-                        "On the final added lines resolve the central problem rather than announcing you will solve it."
-                    )
-                    additional_messages=list(messages)+[
+                    next_lines=min(8,missing)
+                    # Continuations use a compact standalone prompt rather than
+                    # re-prefilling the full ~5.8k-token identity/craft profile.
+                    # We retain the user request, assistant identity and up to
+                    # eight genuine model-authored preceding lyric lines.
+                    segment_messages=[
                         {"role":"system","content":(
-                            "CONTINUATION OVERRIDE FOR THIS SEGMENT ONLY: The original "
-                            f"line-total requirement is for the combined finished song. "
-                            f"The previous {len(authored_lines)} lines already exist. "
-                            f"Generate ONLY {missing} additional lyrical lines now, "
-                            "without reprinting any prior words or surrounding explanation."
+                            "You are §wyrlz, continuing YOUR OWN original lyrical draft. "
+                            f"Write EXACTLY {next_lines} NEW nonempty lyric lines. "
+                            "Output ONLY the new lines, no code fence, heading, blank lines, "
+                            "repeated lines, explanation, apology or chorus. "
+                            "Maintain the original user's story, voice, rhyme intensity "
+                            "and continuity. Give the investigation concrete new action; "
+                            "resolve its mystery on the final lines of the whole song."
                         )},
-                        {"role":"assistant","content":"PREVIOUS AUTHORED LINES (preserve as written):\n"+"\n".join(authored_lines)},
-                        {"role":"user","content":continue_instruction},
+                        {"role":"user","content":(
+                            "ORIGINAL USER REQUEST:\n"+prompt[:1100]
+                            +f"\nTOTAL REQUESTED: {wanted} lines; ALREADY WRITTEN: "
+                            +str(len(authored_lines))
+                            +f"; WRITE ONLY THE NEXT {next_lines} LINES.\n"
+                            +"LATEST AUTHORED LINES (do not repeat or rewrite):\n"
+                            +"\n".join(authored_lines[-8:])
+                            +"\nNEXT ORIGINAL LYRICAL LINES:"
+                        )},
                     ]
-                    segment_max=min(720,max(200,missing*48))
+                    segment_max=min(400,max(180,next_lines*37))
                     new_segment,segment_timing=buffered_chat_completion(
-                        model,additional_messages,segment_max,min(0.48,temperature+0.06),
+                        model,segment_messages,segment_max,min(0.48,temperature+0.06),
                     )
                     merged=extend_continuous_lyrics(authored_lines,new_segment,shape)
                     if merged is None:
                         # A failure never corrupts the last valid model text.
-                        segment_check={
-                            "status":"REJECT","reasons":["invalid-or-overlong-lyric-continuation"],
-                            "requestedLyricLines":wanted,"observedLyricLines":len(authored_lines),
-                            "formalOnly":True,"semanticQualityVerified":False,
-                        }
+                        segment_check=continuation_shape_receipt(authored_lines,new_segment,shape)
                         candidate_attempts.append(candidate_attempt_receipt(
                             len(candidate_attempts)+1,"direct-original-lyric-continuation",
                             segment_timing,segment_check,_candidate_fingerprint(new_segment),
@@ -932,8 +932,10 @@ def generate_events(payload):
                         yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
                         check=dict(check)
                         check["reasons"]=list(dict.fromkeys(
-                            list(check["reasons"])+["invalid-or-overlong-lyric-continuation"]
+                            list(check["reasons"])+segment_check["reasons"]
                         ))
+                        check["latestContinuationFaults"]=segment_check["reasons"]
+                        check["latestContinuationReceivedLines"]=segment_check["observedSuffixNonemptyLines"]
                         continue
                     authored_lines=merged
                     candidate_raw="\n".join(authored_lines)
@@ -953,11 +955,25 @@ def generate_events(payload):
             if check["status"]=="PASS":
                 candidate_text=clean_lyric_container(candidate_raw)
             else:
-                count=f"{wanted}-line " if wanted else ""
-                candidate_text=(
-                    f"I couldn't complete a {count}lyric response matching the requested form, "
-                    "so I won't claim the draft passed."
-                )
+                if authored_lines:
+                    # Never discard safe model-authored work. Explicitly mark
+                    # the partial as NOT satisfying the original 40-line goal.
+                    check=dict(check)
+                    check["partialReturned"]=True
+                    check["partialLyricLines"]=len(authored_lines)
+                    candidate_check=check
+                    candidate_text=(
+                        f"**Incomplete original draft — {len(authored_lines)} of "
+                        f"{wanted or '?'} requested lyric lines. Not accepted as "
+                        "the finished song.**\n\n"
+                        +clean_lyric_container("\n".join(authored_lines))
+                    )
+                else:
+                    count=f"{wanted}-line " if wanted else ""
+                    candidate_text=(
+                        f"I couldn't complete a {count}lyric response matching the requested form, "
+                        "so I won't claim the draft passed."
+                    )
             first_delta=round((time.perf_counter()-started)*1000,3)
             yield {"type":"DELTA","text":candidate_text}
         else:
