@@ -116,4 +116,22 @@ with zipfile.ZipFile(io.BytesIO(updated.content)) as z:
     assert z.read("src/main.py")==b"print(2)\n"
     assert z.read("README.md")==b"# Dragon\n"
 
+
+# Two distinct workflows can coexist on one thread with no shared mutable
+# workspace record. The underlying completed codeArtifact revisions remain
+# the only source-file authority for both.
+manual=station.create_workspace("workspace-"+uuid.uuid4().hex,
+                                "User curated sources",["manual-only.py"])
+thread["projectWorkspaces"].append(manual)
+snapshot=station._snapshot(station._sessions["alpha"])
+manual_view=snapshot["currentThread"]["projectWorkspaces"][0]
+auto_view=snapshot["currentThread"]["autoProjectWorkspaces"][0]
+assert manual_view["state"]=="IN_PROGRESS"
+assert manual_view["requiredCount"]==1 and manual_view["completedCount"]==0
+assert "files" not in manual_view, "Manual source bytes leaked into sync metadata"
+assert auto_view["state"]=="FILES_PRESENT" and auto_view["fileCount"]==3
+assert len(thread["projectWorkspaces"])==1
+assert len(thread["autoProjectWorkspaces"])==1
+assert station._select_staged_workspace(thread,"Continue project")["id"]==project["id"]
+
 print("STAGED_STATION_V185_PASS 3-turn commit, incomplete archive refusal, revisions, scoped-cookie ZIP, repair")
