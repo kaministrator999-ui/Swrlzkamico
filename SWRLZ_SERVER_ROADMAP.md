@@ -1,3 +1,21 @@
+## UPDATE STARTED — 2026-10-09 — clean source footer, section repeats, structure-only original-song study v177
+
+**User acceptance:** Fresh `swrlz-dragon-chat (26).json` confirms hosted v176 with **two** cumulative source attempts, successful song identity and verified text from LyricsMania, five section markers, and **v175 creative handoff live**: follow-up `Now can you use those lyrics as something to study and write me a whole new rap song` emits `CREATIVE_MUSIC_STARTED`, retains 2 previous messages with no second web query, and selects LFM2-700M. That v175/v176 success is preserved. Three residual issues: source credits/site navigation appended to last section; `[Hook x2]`/`[Outro x2]` falsely `repeatCount=null`; 700M ran into its **768** token cap and left an unfinished explanation.
+
+**Authoritative user refinement (during repair):** They do **not** want source words, vocabulary, topic or imagery used as a reference. They want only structural study—musical sections, how lyric lines function, relative lengths/cadence, rhyme positioning and repetitions—followed by a **completely original topic, words and refrain**. This exact correction overrides earlier attempts to describe vocabulary/word register as inspiration.
+
+**Changes in v177 source candidate:**
+- `hf_space/online_tools.py`: hard-stop lyric extraction at source songwriter, publisher, powered-by and chart/navigation footer indicators. Preserve already verified lines before the boundary, with no domain/song hardcoding; new camera revision `v177-lyric-credit-boundary-and-creative-completion`.
+- `hf_space/music_structure.py`: recognize non-colon `[Hook x2]`, `[Outro x2]`, as well as legacy colon repeats. Preserve author label and source order.
+- `hf_space/music_structure.py::creative_music_reference_projection`: for clear lyric-referenced creation requests, compile **word-free** source-form metadata: section order, approximate line count, repeat count, per-line word-count contour, and *orthographic-only* approximate end-rhyme placement. Replace the **model-facing** previous lyric response and song-lookup prompt with that abstract scaffold, without touching durable/stored chat. Support an unlabeled lyric source as sections inferred solely from existing document dividers. No borrowed words or source title/artist in model-facing context. Earlier v175 intent routing remains unchanged.
+- `hf_space/music_structure.py::MUSIC_CREATIVE_REFERENCE_POLICY`: instruct model to choose a wholly different subject, title, wording, phrases, punchlines, images and hook; reference only mechanics, not named-artist personal style, no source lyric fragments.
+- `hf_space/lfm2_700m_engine.py`: use projected history for fitting active model context on these turns, inject compact structural rules, and raise the creative reference song response budget to up to 1,408 tokens (subject to actual available context) from 768, avoiding arbitrary mid-explanation cutoff. Keep all other 700M routes' budgets and model identity unchanged.
+- Required regression extensions: `tests/test_lyrics_region_integrity_v165.py` protects source credits/boilerplate cleanup, repeat metadata, and presentation; `tests/test_music_structure_presentation_v164.py` verifies no reference lyric strings, artist/title, publisher credit or original words in new generation context, retained original stored history, abstract line/repeat/rhyme shapes, and unlabeled source fallback.
+
+**Source branch:** `feature/hf-space-manual-deploy`; protected release to existing `kamiloki/Swyrlz` only after guarded regression and R39/700M checks. **Version intent:** Repository Work 1.0.107; Online Research 1.0.25; LALM Engine 2.1.162; Deployment Control 1.0.37; Server Runtime 2.3.330 *only after successful publication*. No UI or standalone game-engine changes.
+
+**Gate status:** SOURCE CANDIDATE AND TESTS COMMITTED; guarded CI / HF receipt pending; real-world v177 output acceptance pending.
+
 ## UPDATE FINISHED — 2026-10-09 — structurally marked lyric-source priority v176
 
 **Outcome:** DRAGON CHAT 25 SOURCE-SELECTION FAILURE ROOTED / STRUCTURALLY MARKED SOURCES TRIED FIRST WITHIN HARD FETCH LIMIT / V173–V176 REGRESSION GATE PASSED / GUARDED HF DEPLOYED / USER-VISIBLE v176 ACCEPTANCE PENDING.
