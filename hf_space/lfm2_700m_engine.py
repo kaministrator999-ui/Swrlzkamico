@@ -902,6 +902,13 @@ def generate_events(payload):
                         "On the final added lines resolve the central problem rather than announcing you will solve it."
                     )
                     additional_messages=list(messages)+[
+                        {"role":"system","content":(
+                            "CONTINUATION OVERRIDE FOR THIS SEGMENT ONLY: The original "
+                            f"line-total requirement is for the combined finished song. "
+                            f"The previous {len(authored_lines)} lines already exist. "
+                            f"Generate ONLY {missing} additional lyrical lines now, "
+                            "without reprinting any prior words or surrounding explanation."
+                        )},
                         {"role":"assistant","content":"PREVIOUS AUTHORED LINES (preserve as written):\n"+"\n".join(authored_lines)},
                         {"role":"user","content":continue_instruction},
                     ]
@@ -923,7 +930,11 @@ def generate_events(payload):
                             previous_attempt_fingerprint=_candidate_fingerprint(candidate_raw),
                         ))
                         yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
-                        break
+                        check=dict(check)
+                        check["reasons"]=list(dict.fromkeys(
+                            list(check["reasons"])+["invalid-or-overlong-lyric-continuation"]
+                        ))
+                        continue
                     authored_lines=merged
                     candidate_raw="\n".join(authored_lines)
                     check=verify_original_lyrics(candidate_raw,shape)
