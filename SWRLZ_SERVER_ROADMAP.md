@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-09 — Model maturity v3: adaptive effort, student benchmark and safe progression
+
+**User goal:** Extend §wyrlz model training beyond simple language examples so Qwen coder, LFM2-700M and future specialist routes can discriminate cheap/easy vs complex, high-dependency/high-consequence work, handle repairs without silent regressions, use tools proportionally, and eventually become measurably more competent. Do not promise universal perfect performance; distinguish model knowledge, orchestration, held-out evaluation and actual weight adaptation.
+
+**Current implementation boundary:** GitHub [draft PR #56](https://github.com/kaministrator999-ui/Swrlzkamico/pull/56) targets `feature/hf-space-manual-deploy` from isolated `feature/coder-adaptive-effort-v1`. The opt-in `SWRLZ_ADAPTIVE_EFFORT` candidate introduces a five-tier, no-side-effect task effort plan in Brain routing with bounded Station observability and model guidance. Protected CI run [37978675225](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37978675225) terminal SUCCESS for Python syntax, 20 baseline + 37 adversarial classification scenarios and routing smoke; only documentation changed afterward. **NO production activation / model-weight update.**
+
+**Docs/training scope on main:** Create a lasting model maturity curriculum v3 with role/ownership contracts, failure and confidence discipline, task evidence ladder, explicit short-first-with-aging operational concept, actual vs proposed code, and model-specific evaluation thresholds. Create public **multi-turn behavioral exercises**, not fabricated positive training rows. Link from existing programming-policy and §tart router rather than create a competing owner. Avoid changing production source/flags and avoid activating either Hugging Face Chat or §wyrl§ Engine release request.
+
+**Version baseline:** `runtime:versions/repository-work.txt` **1.0.114** at entry; read latest before closing. Only Repository Work expected to advance for this docs/training tier. Relevant Chat/700M/Forge runtime versions unchanged by docs. Status IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-09 — Coder cross-language curriculum v2 (Kotlin/Java/TypeScript/Rust)
 
 **Result: COMPLETE — SOURCE/CURRICULUM VERIFIED; REFERENCE TESTS (3/4) VERIFIED; QWEN STUDENT NOT TESTED; NO WEIGHT UPDATE OR DEPLOYMENT.**
