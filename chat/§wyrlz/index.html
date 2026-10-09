@@ -1205,6 +1205,8 @@
           const copy=document.createElement("button");copy.type="button";copy.className="copy-code";copy.textContent="Copy";
           copy.onclick=async()=>{try{await navigator.clipboard.writeText(raw);copy.textContent="Copied";setTimeout(()=>copy.textContent="Copy",1200);}catch(_){copy.textContent="Copy failed";setTimeout(()=>copy.textContent="Copy",1200);}};
           const dl=document.createElement("button");dl.type="button";dl.className="download-code";dl.textContent="Download";dl.onclick=()=>downloadTextFile(info.file||("code."+({javascript:"js",typescript:"ts",python:"py",cpp:"cpp",c:"c",html:"html",css:"css",json:"json"}[language]||"txt")),raw);
+          dl.disabled=provisional||!!container.closest(".station-live-message");
+          if(dl.disabled)dl.title="Code download is available after the response finishes";
           const pre=document.createElement("pre");pre.dataset.codeKey=key;const code=document.createElement("code");code.textContent=raw;pre.appendChild(code);actions.append(copy,dl);head.append(label,actions);block.append(head,pre);container.appendChild(block);
         };
         while((match=fence.exec(source))){
