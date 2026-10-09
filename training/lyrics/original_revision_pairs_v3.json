@@ -2,7 +2,7 @@
   "schema": "swrlz-original-lyric-revision-pairs-v3",
   "status": "INSTRUCTOR_DRAFT_NO_MODEL_WEIGHT_TRAINING",
   "source": "fresh synthetic examples, no private archive lines",
-  "count": 8,
+  "count": 24,
   "cases": [
     {
       "id": "RP-001",
@@ -123,6 +123,247 @@
       "teaches": "Use new consequences instead of repetitive length padding.",
       "assessment": "PENDING_INDEPENDENT_REVIEW",
       "use": "study fault and revised mechanics; compose independent output"
+    },
+    {
+      "id": "RP-009",
+      "failure": "voice_collision",
+      "before": [
+        "A: The road is mine, I cannot wait.",
+        "B: The road is mine, I cannot wait."
+      ],
+      "after": [
+        "A: My bridge must stand, each rivet has a place.",
+        "B: My river needs some room to turn and change its pace."
+      ],
+      "teaches": "Give different voices incompatible priorities.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-010",
+      "failure": "freestyle_format",
+      "before": [
+        "[CHORUS] I walk along the street.",
+        "[BRIDGE] I step along the beat."
+      ],
+      "after": [
+        "The alley bends; my footsteps find a rhythm in the rain,",
+        "I pivot on a word and let the sentence catch the train."
+      ],
+      "teaches": "A continuous freestyle uses movement, not mandatory pop labels.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-011",
+      "failure": "reference_imitation",
+      "before": [
+        "Same familiar hook with only one word changed,",
+        "Same narrative and rhymes, lightly rearranged."
+      ],
+      "after": [
+        "The glassblower studies how the molten colors bend,",
+        "Then builds a brand-new lantern with a shape that has its end."
+      ],
+      "teaches": "Transfer abstract structure without reference words or story.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-012",
+      "failure": "generic_status",
+      "before": [
+        "The stars obey me; everything is mine.",
+        "The city bows beneath my perfect shine."
+      ],
+      "after": [
+        "She tapes the greenhouse seal before the frost gets in,",
+        "And gives the last warm water to the smallest seedling."
+      ],
+      "teaches": "Replace generic boasting with topic-specific action.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-013",
+      "failure": "battle_without_logic",
+      "before": [
+        "Your move is bad, and mine is best.",
+        "I win because I'm better than the rest."
+      ],
+      "after": [
+        "You called the opening flawless, but your queen is left exposed,",
+        "I move a pawn to close the lane you thought you'd closed."
+      ],
+      "teaches": "Answer a specific premise with an observable counter.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-014",
+      "failure": "comedy_no_payoff",
+      "before": [
+        "The weather's very silly, and the clouds are very strange.",
+        "Everybody laughs because the forecast has to change."
+      ],
+      "after": [
+        "The drizzle sent a resignation letter to the sun,",
+        "The thunder asked for overtime; the raindrops called it fun."
+      ],
+      "teaches": "Specific contrast makes the absurd event legible.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-015",
+      "failure": "emotion_too_abstract",
+      "before": [
+        "My heart is full of sorrow; I feel everything at once.",
+        "The world is all sadness; no good will ever come."
+      ],
+      "after": [
+        "The chair across the kitchen holds the coat you left behind,",
+        "I fold its empty sleeves and put the kettle on this time."
+      ],
+      "teaches": "Ground feeling in an object, gesture and concrete consequence.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-016",
+      "failure": "long_song_truncation",
+      "before": [
+        "The harbor is alive, the ships are sailing free.",
+        "And now this entire song is done; remember me."
+      ],
+      "after": [
+        "The first ship takes the channel as the harbor bell begins,",
+        "I still have twelve more letters to deliver when she comes in."
+      ],
+      "teaches": "Treat the opening as setup and continue full-length sections to the requested ending.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-017",
+      "failure": "monorhyme_trap",
+      "before": [
+        "I look at the light, and it's bright in the night.",
+        "I take a new flight, and the sight is all right."
+      ],
+      "after": [
+        "The station lamp goes dark before the train arrives,",
+        "I follow scattered lanterns down the track to stay alive."
+      ],
+      "teaches": "Switch sounds when the chosen family traps content.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-018",
+      "failure": "meter_overload",
+      "before": [
+        "Clattering, chattering, battering, scattering, rapidly,",
+        "Rattling, prattling, shattering, pattering, happily."
+      ],
+      "after": [
+        "Boots strike the steps as the midnight signal rings.",
+        "Hold. Hear the quiet. Then the whole street sings."
+      ],
+      "teaches": "Use deliberate breath gates and stressed reset lines.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-019",
+      "failure": "hook_without_mutation",
+      "before": [
+        "Hold on forever, keep holding on.",
+        "Hold on forever, keep holding on."
+      ],
+      "after": [
+        "Keep the doorway open while the night train turns.",
+        "Now the door is closing, but the morning still returns."
+      ],
+      "teaches": "Return to a motif with changed meaning.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-020",
+      "failure": "literal_bars_confusion",
+      "before": [
+        "One new line must equal one full musical bar.",
+        "Every line must fit the time of a single guitar."
+      ],
+      "after": [
+        "Some phrases tumble forward and land before the snare.",
+        "Others take their time, with empty beats to spare."
+      ],
+      "teaches": "Written lines need not be exactly one musical measure.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-021",
+      "failure": "scene_not_stakes",
+      "before": [
+        "The lighthouse is tall, the lighthouse is white.",
+        "The lighthouse is standing in the middle of night."
+      ],
+      "after": [
+        "The lamp goes dark as the fishing boat turns east.",
+        "The keeper finds a mirror and aims it through the mist."
+      ],
+      "teaches": "Give the physical scene a specific problem and response.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-022",
+      "failure": "too_many_hooks",
+      "before": [
+        "Back to the chorus, no need for another scene.",
+        "Back to the chorus, repeating what we mean."
+      ],
+      "after": [
+        "A courier counts the doorways as the river waters rise,",
+        "And carries one sealed envelope above his tired eyes."
+      ],
+      "teaches": "Verse progression earns later recurrence; hooks must not replace the story.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-023",
+      "failure": "singability",
+      "before": [
+        "Briskly clipped consonants clatter across the refrain.",
+        "Quickly mixed consonants shatter the strain."
+      ],
+      "after": [
+        "Hold the last blue note over the bay.",
+        "Let the tide come in and carry it away."
+      ],
+      "teaches": "A held melody needs legible vowels and breathing room.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
+    },
+    {
+      "id": "RP-024",
+      "failure": "negative_constraint",
+      "before": [
+        "Here's a new chorus even though you said no hooks.",
+        "Here's another bridge; I know the normal books."
+      ],
+      "after": [
+        "I keep the story running, never naming a refrain.",
+        "Each turn pulls the next one through the rain."
+      ],
+      "teaches": "Explicit no-hook/no-label requests override ordinary genre templates.",
+      "assessment": "PENDING_INDEPENDENT_REVIEW",
+      "use": "Study failure and corrected construction; produce new words independently."
     }
-  ]
+  ],
+  "uniqueDefectCount": 24
 }
