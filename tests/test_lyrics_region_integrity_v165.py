@@ -266,3 +266,54 @@ assert int(online_tools.ONLINE_OBSERVABILITY_REVISION.split("-",1)[0].lstrip("v"
 
 print("lyrics-page-footer-repeat-metadata-v174 PASS")
 
+# v177 Dragon Chat (26): a page with authentic section markers is accepted,
+# but publisher/site footer text MUST NOT become an extended last section.
+SOURCE_CREDITS_PAGE="""Test Signal Lyrics
+[Verse 1]
+Our copper circuits awaken
+Another soft signal rises
+A distant lighthouse keeps shining
+The midnight engines are humming
+[Hook x2]
+The ocean calls us onward
+The distant shore is waiting
+[Verse 2]
+A painted sunset keeps moving
+The quiet wheels are turning
+The distant stars are singing
+The shadow sails are lifting
+[Outro x2]
+The bright horizon grows wider
+Another journey begins now
+Songwriters: Example Writer / Another Writer
+Publisher: Lyrics © Example Publishing
+Powered by LyricFind
+Top Lyrics
+Other Musician - Unrelated Song lyrics
+Top Artists
+Someone Else lyrics
+LyricsMania.com - Copyright © 2026 - All Rights Reserved Privacy Policy
+"""
+source_analysis=online_tools._lyrics_extract_analysis(SOURCE_CREDITS_PAGE,"full-lyrics",plan["subject"])
+sc=source_analysis["diagnostics"]
+assert sc["decision"]=="ACCEPTED",sc
+assert sc["terminalBoundaryKind"]=="POST_SONG_META_BOUNDARY",sc
+assert sc["terminalBoundaryLine"].startswith("Songwriters:"),sc
+assert "The bright horizon grows wider" in source_analysis["text"]
+for marker_text in ["Songwriters:","Publisher:","Powered by","Top Lyrics","Top Artists","Unrelated Song"]:
+    assert marker_text not in source_analysis["text"],(marker_text,source_analysis["text"])
+source_doc=structure_verified_music(
+    source_analysis["text"],SOURCE_CREDITS_PAGE,subject=plan["subject"],requested_scope="full-lyrics"
+)
+assert [x["type"] for x in source_doc["sections"]]==["verse","hook","verse","outro"],source_doc
+assert [x.get("repeatCount") for x in source_doc["sections"]]==[None,2,None,2],source_doc
+source_present=compile_verified_music_presentation(source_doc,source_title="Source",source_url="https://example.test/song")
+for marker_text in ["Songwriters:","Publisher:","Top Lyrics","Top Artists"]:
+    assert marker_text not in source_present["presentationText"],source_present
+assert parse_section_marker("[Hook x2]")["repeatCount"]==2
+assert parse_section_marker("[Outro x2]")["repeatCount"]==2
+assert parse_section_marker("[Hook: x2]")["repeatCount"]==2
+assert parse_section_marker("[Verse 1: Alpha]")["performer"]=="Alpha"
+print("songwriter-publisher-boundary-and-noncolon-repeats-v177 PASS")
+
+
