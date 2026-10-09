@@ -114,6 +114,6 @@ updated=get()
 assert updated.status_code==200
 with zipfile.ZipFile(io.BytesIO(updated.content)) as z:
     assert z.read("src/main.py")==b"print(2)\n"
-    assert z.read("README.md")==b"# Dragon"
+    assert z.read("README.md")==b"# Dragon\n"
 
 print("STAGED_STATION_V185_PASS 3-turn commit, incomplete archive refusal, revisions, scoped-cookie ZIP, repair")
