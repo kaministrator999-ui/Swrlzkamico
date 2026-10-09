@@ -521,8 +521,9 @@ def _artifact_revision_markdown(artifact,revision):
 
 
 def _create_code_artifact(thread,message,request_id,text):
-    files=_parse_code_files(text)
-    if not files or len(str(text or ""))<120:return None
+    files=[item for item in _parse_code_files(text)
+           if str(item.get("language") or "").lower() not in {"lyrics","lyric","song","music","verse","chorus"}]
+    if not files:return None
     existing=_artifact_for_message(thread,message.get("id"))
     if existing:return existing
     artifact_id="artifact-"+uuid.uuid4().hex
@@ -591,7 +592,7 @@ def _artifact_context_item(thread,message):
         "files":[{"path":f.get("path"),"language":f.get("language")} for f in files],
     }
 
-def _commit_code_artifact_revision(artifact,text,request_id,base_revision=0,base_source_hash=""):
+def _commit_code_artifact_revision(artifact,text,request_id,base_revision=0,base_source_hash="",archive_requested=False):
     files=_parse_code_files(text)
     if not files:return False,"NO_CODE"
     current=int(artifact.get("currentRevision") or 0)
@@ -615,6 +616,7 @@ def _commit_code_artifact_revision(artifact,text,request_id,base_revision=0,base
         "requestId":str(request_id or ""),
         "createdAt":now,
         "sourceHash":next_hash,
+        "archiveRequested":bool(archive_requested),
         "parentRevision":current,
         "parentSourceHash":current_hash,
         "files":copy.deepcopy(files),
@@ -930,6 +932,10 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     request_id,
                     int(intent.get("baseRevision") or 0),
                     str(intent.get("baseSourceHash") or ""),
+                    archive_requested=wants_archive(next((
+                        str(entry.get("text") or "") for entry in reversed(thread.get("messages") or [])
+                        if entry.get("role")=="user" and str((entry.get("meta") or {}).get("requestId") or "")==request_id
+                    ), "")),
                 )
                 if committed:
                     current_hash=str(artifact.get("currentSourceHash") or "")
