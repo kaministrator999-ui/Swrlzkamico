@@ -1,12 +1,17 @@
-"""Original songwriting-craft prefill for §wyrlz's 700M route.
+"""Original lyric-craft guidance for the §wyrlz 700M route.
 
-Abstracted from the user's private song-review archive without publishing raw
-lyrics, personal history or borrowed reference lines. Prompt guidance only:
-this module does not modify or train any model weights.
+Learn from source-independent *relationships*, not verbatim favorite songs.
+The larger public curriculum and private archive are never injected wholesale.
+No prompt guidance here changes GGUF model weights.
 """
 from __future__ import annotations
 
+from functools import lru_cache
+from pathlib import Path
+import hashlib
+import json
 import re
+
 
 _CRAFT_REQUEST = re.compile(
     r"\b(?:write|make|create|compose|generate|craft|draft|perform|spit|give\s+me|hit\s+(?:me\s+)?with)\b"
@@ -16,6 +21,11 @@ _CRAFT_REQUEST = re.compile(
 )
 _ANALYSIS_ONLY = re.compile(
     r"^\s*(?:analy[sz]e|review|explain|critique|compare|find|search|fetch|look\s+up|quote|transcribe|retrieve|what\s+(?:are|is)|who\s+(?:made|wrote))\b",
+    re.I,
+)
+_ANALYSIS_WRITING = re.compile(
+    r"^\s*(?:write|draft|create|make|give\s+me)\s+(?:me\s+)?(?:an?\s+)?"
+    r"(?:analysis|review|critique|summary|explanation|report|essay|comparison|breakdown)\b",
     re.I,
 )
 
@@ -34,12 +44,86 @@ LYRIC_CRAFT_SCHOOL = (
     "Deliver complete lyrics directly with intentional line breaks and no preamble or post-song analysis unless requested."
 )
 
+_CATALOG_FILE = Path(__file__).with_name("lyric_craft_catalog_v2.json")
+_DEFAULT_AXES = ("narrative", "internal-rhyme", "tempo", "comedy", "emotional", "high-speed", "metaphor", "melodic")
+
+
+@lru_cache(maxsize=1)
+def _catalog() -> tuple[dict, ...]:
+    """Load bounded public craft cues, not private archive excerpts."""
+    try:
+        raw = json.loads(_CATALOG_FILE.read_text(encoding="utf-8"))
+        if raw.get("schema") != "swrlz-lyric-craft-router-catalog-v2":
+            return ()
+        cards = raw.get("cards")
+        if not isinstance(cards, list):
+            return ()
+        safe = []
+        for card in cards:
+            if not isinstance(card, dict):
+                continue
+            if not isinstance(card.get("compactCue"), str):
+                continue
+            if not isinstance(card.get("axis"), str) or not isinstance(card.get("role"), str):
+                continue
+            safe.append({
+                "axis": card["axis"],
+                "role": card["role"],
+                "cue": card["compactCue"][:260],
+                "triggers": tuple(x for x in (card.get("triggers") or []) if isinstance(x, str))[:10],
+            })
+        return tuple(safe[:96])
+    except (OSError, ValueError, TypeError):
+        # A missing/invalid teaching catalog must not break song generation.
+        return ()
+
+
+def _focused_teaching(prompt: str, *, structural_reference: bool = False) -> str:
+    cards = _catalog()
+    if not cards:
+        return ""
+    text = " ".join(str(prompt or "").casefold().split())
+    axes = {}
+    for card in cards:
+        if card["axis"] in axes:
+            continue
+        count = sum(
+            1 for term in card["triggers"]
+            if term and re.search(r"(?<!\w)" + re.escape(term.casefold()) + r"(?!\w)", text)
+        )
+        if count:
+            axes[card["axis"]] = count
+    if axes:
+        selected_axes = [axis for axis, _ in sorted(axes.items(), key=lambda pair: (-pair[1], pair[0]))[:2]]
+    else:
+        # Rotate source-free *mechanisms* across diverse topics. Stable for a
+        # given request, no random state and no archive words to memorize.
+        seed = int(hashlib.sha256(text.encode("utf-8")).hexdigest()[:8], 16)
+        selected_axes = [
+            _DEFAULT_AXES[seed % len(_DEFAULT_AXES)],
+            _DEFAULT_AXES[(seed // 7 + 3) % len(_DEFAULT_AXES)],
+        ]
+        if selected_axes[0] == selected_axes[1]:
+            selected_axes[1] = _DEFAULT_AXES[(_DEFAULT_AXES.index(selected_axes[0]) + 1) % len(_DEFAULT_AXES)]
+    selected = []
+    for i, axis in enumerate(selected_axes):
+        role = "build" if i == 0 else "perform"
+        card = next((c for c in cards if c["axis"] == axis and c["role"] == role), None)
+        if card:
+            selected.append(card["axis"] + ": " + card["cue"])
+    # Structure-only source references remain abstract; never inject examples.
+    if structural_reference and selected:
+        selected.append("Reference boundary: learn only the abstract musical form; every new image, title and word must be independent.")
+    # Bounded targeted hints; the whole lesson bank never enters 700M prefill.
+    return "\nFOCUSED ORIGINAL SONGWRITING TOOLS: " + " ".join(selected) if selected else ""
+
 
 def lyric_craft_policy(prompt: str, *, structural_reference: bool = False) -> str:
-    """Only original-creation turns receive craft guidance; factual lookups do not."""
+    """Original creation only; lookup, critique and explanation remain inert."""
     text = " ".join(str(prompt or "").split())
-    if structural_reference:
-        return LYRIC_CRAFT_SCHOOL
-    if not text or _ANALYSIS_ONLY.search(text):
-        return ""
-    return LYRIC_CRAFT_SCHOOL if _CRAFT_REQUEST.search(text) else ""
+    if not structural_reference:
+        if not text or _ANALYSIS_ONLY.search(text) or _ANALYSIS_WRITING.search(text):
+            return ""
+        if not _CRAFT_REQUEST.search(text):
+            return ""
+    return LYRIC_CRAFT_SCHOOL + _focused_teaching(text, structural_reference=structural_reference)
