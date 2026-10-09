@@ -96,6 +96,31 @@ def test_public_practice_bank_excludes_private_source_and_labels_training_honest
     assert not any("assistant_response" in c or "conversation_id" in c for c in data["cases"])
 
 
+
+def test_synthetic_examples_are_varied_and_have_true_line_counts():
+    study = ROOT / "training" / "lyrics"
+    demos = json.loads((study / "original_demonstrations_v2.json").read_text(encoding="utf-8"))
+    full = json.loads((study / "original_full_compositions_v2.json").read_text(encoding="utf-8"))
+    assert demos["count"] == 24
+    assert len(set(demos["genres"])) == 24
+    assert sum(s["lineCount"] for s in demos["examples"]) == 192
+    assert full["count"] == 6
+    assert sum(s["lineCount"] for s in full["songs"]) == 196
+    assert len({s["title"] for s in full["songs"]}) == 6
+    assert all(s["lineCount"] == len(s["lines"]) for s in full["songs"])
+    assert all(s["form"].endswith("_" + str(len(s["lines"])) + "_lines") for s in full["songs"])
+    assert all(s["grade"] == "NOT_RUN" and s["weightTrainable"] is False for s in full["songs"])
+
+
+def test_ocean_covers_distinct_skills_scenarios_and_contrasts():
+    raw = json.loads((ROOT / "training" / "lyrics" / "lyric_ocean_practice_v2.json").read_text(encoding="utf-8"))
+    assert len({c["scene"] for c in raw["cases"]}) == 48
+    assert len({c["focus"] for c in raw["cases"]}) == 16
+    assert len(raw["contrastiveRepairs"]) == 64
+    assert len({c["fault"] for c in raw["contrastiveRepairs"]}) == 16
+    assert all(c["grade"] == "NOT_RUN" for c in raw["contrastiveRepairs"])
+
+
 if __name__ == "__main__":
     for obj in list(globals().values()):
         if callable(obj) and getattr(obj, "__name__", "").startswith("test_"):
