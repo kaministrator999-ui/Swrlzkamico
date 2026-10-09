@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mv0n8wuy-829278155-3553039202",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "60b88d865f2f05efcb6ef8809ebd6d3be9ff30d4",
+  "persistedAtUnixMs": 1791531137818,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mv0n8wuy-829278155-3553039202",
+    "turnIndex": 1,
+    "userText": "Now use those lyrics and create an original rap song using that as a guide to word uses",
+    "capturedAtUnixMs": 1791531137817
+  }
+}
