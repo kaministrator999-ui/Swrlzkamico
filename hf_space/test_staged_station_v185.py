@@ -42,11 +42,12 @@ start=manifest_text+"\n"+source("src/main.py","print(1)")
 receipt,msg,artifact=commit("request-1",start)
 assert receipt["status"]=="COMMITTED",receipt
 assert artifact and [x["path"] for x in artifact["files"]]==["src/main.py"], artifact
-project=thread["projectWorkspaces"][0]
+project=thread["autoProjectWorkspaces"][0]
 assert project["fileCount"]==1 and not project["canDownload"]
+assert thread["projectWorkspaces"]==[], "Auto workspace touched the manual owner"
 assert project["missingFiles"]==["tests/test_main.py","README.md"]
 snapshot=station._snapshot(station._sessions["alpha"])
-view=snapshot["currentThread"]["projectWorkspaces"][0]
+view=snapshot["currentThread"]["autoProjectWorkspaces"][0]
 assert "entries" not in view and view["revision"]==2
 assert "print(1)" not in json.dumps(view)
 assert station._select_staged_workspace(thread,"What's a turtle?") is None
@@ -70,7 +71,7 @@ old=station.project_view(project)
 receipt,msg2,a2=commit("request-2",source("tests/test_main.py","assert True"),
                       {**old,"allowReplace":False})
 assert receipt["status"]=="COMMITTED"
-project=thread["projectWorkspaces"][0]
+project=thread["autoProjectWorkspaces"][0]
 assert project["revision"]==3 and not project["canDownload"]
 assert get(revision=2).status_code==404
 
@@ -88,7 +89,7 @@ assert json.dumps(project,sort_keys=True)==prior
 r,_,_=commit("request-3",fence("markdown file=README.md","# Dragon"),
              {**station.project_view(project),"allowReplace":False})
 assert r["status"]=="COMMITTED"
-project=thread["projectWorkspaces"][0]
+project=thread["autoProjectWorkspaces"][0]
 assert project["revision"]==4 and project["canDownload"]
 done=get()
 assert done.status_code==200 and done.headers["content-type"].startswith("application/zip")
@@ -106,7 +107,7 @@ assert receipt["status"]=="REJECTED"
 receipt,_,_=commit("request-5",source("src/main.py","print(2)"),
                    {**station.project_view(project),"allowReplace":True})
 assert receipt["status"]=="COMMITTED"
-project=thread["projectWorkspaces"][0]
+project=thread["autoProjectWorkspaces"][0]
 assert project["revision"]==5
 assert get(revision=4).status_code==404
 updated=get()
