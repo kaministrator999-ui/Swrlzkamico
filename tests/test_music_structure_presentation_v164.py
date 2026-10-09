@@ -244,3 +244,70 @@ assert "copper river" not in str(unlabeled_projection).lower(),unlabeled_project
 print("unlabeled-song-structure-only-projection-v177 PASS")
 
 
+
+# v180 Dragon Chat (29) triple-turn regression: an unlabeled verified source
+# is displayed without "---" separators and has page JS prefix; first rap
+# copies source words; "Do another one" then imitates that previous answer.
+# Model-facing history MUST contain NEITHER the source words NOR generated
+# previous imitations, while preserving durable chat history unchanged.
+UNFORMATTED_SOURCE="""Okay — here is the full source I fetched:
+
+peakY = y;
+showHeader = false;
+} else if (y 20) {
+:class="showHeader ? 'translate-y-0' : '-translate-y-full md:translate-y-0'"
+Artists: E /
+Test Signal
+
+Distant copper ships float to the sunrise
+The midnight lighthouse spins above the shore
+The emerald oceans whisper by the lantern
+Our velvet signals echo through the rain
+
+Hollow winter engines cross the station
+Silver morning railway carries hidden secrets
+Bright mossy planets weave beneath the water
+Cobalt window shadows move into the hills
+
+Distant copper ships float to the sunrise
+The midnight lighthouse spins above the shore
+
+**Lyrics source:** Example Artist — https://example.test/verified-song
+"""
+LIVE_29=[
+    {"role":"user","content":"Can you provide lyrics to Test Signal by Example Artist"},
+    {"role":"assistant","content":UNFORMATTED_SOURCE},
+]
+live_original=[dict(x) for x in LIVE_29]
+fresh_projected,fresh_form=creative_music_reference_projection(CREATIVE_FOLLOWUP,LIVE_29)
+assert fresh_form and fresh_form["sourceContentExcluded"] is True,fresh_form
+assert fresh_form["sectionSequence"]==["section","section","section"],fresh_form
+assert [x["approxLineCount"] for x in fresh_form["sections"]]==[4,4,2],fresh_form
+assert len(fresh_projected)==2
+assert LIVE_29==live_original
+for bad in ["Test Signal","Example Artist","Distant copper","midnight lighthouse","peakY","showHeader","emeralD oceans","lyric source"]:
+    assert bad.lower() not in str(fresh_projected).lower(),(bad,fresh_projected)
+    assert bad.lower() not in str(fresh_form).lower(),(bad,fresh_form)
+
+FIRST_DRAFT="""My new creative work inspired by Test Signal by Example Artist:
+**Title: The Test Signal Awakens**
+The midnight lighthouse spins above the shore
+We found the ocean, copper and more
+**Chorus:** Test Signal never stops.
+**Flow & Feel:** Source-inspired writing."""
+FULL_29=[
+    *LIVE_29,
+    {"role":"user","content":CREATIVE_FOLLOWUP},
+    {"role":"assistant","content":FIRST_DRAFT},
+]
+before=[dict(x) for x in FULL_29]
+second_projected,second_form=creative_music_reference_projection("Do another one",FULL_29)
+assert second_form and second_form["continuationNewComposition"] is True,second_form
+assert second_form["sourceContentExcluded"] and second_form["previousGeneratedLyricsExcluded"],second_form
+assert second_form["sections"]==fresh_form["sections"],(second_form,fresh_form)
+for bad in ["Test Signal","Example Artist","midnight lighthouse","copper","ocean","source-inspired","peakY","Flow & Feel:"]:
+    assert bad.lower() not in str(second_projected).lower(),(bad,second_projected)
+assert len(second_projected)==len(FULL_29)==4,second_projected
+assert FULL_29==before,"Creative projection altered persisted history"
+assert creative_music_reference_projection("What was the old song title?",FULL_29)[1] is None
+print("live-29-first-and-another-one-source-isolation-v180 PASS")
