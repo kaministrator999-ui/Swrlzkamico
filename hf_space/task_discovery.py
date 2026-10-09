@@ -19,7 +19,7 @@ RISK_TAGS = frozenset({
     "persistence", "schema-migration", "data-loss", "financial",
     "secrets", "production-release", "destructive", "active-credentials",
 })
-CRITICAL_TAGS = frozenset({"production-release", "destructive", "active-credentials"})
+CRITICAL_TAGS = frozenset({"production-release", "destructive", "active-credentials", "data-loss"})
 
 
 def _bounded_count(evidence: dict[str, Any], key: str) -> int:
