@@ -33,7 +33,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v178-last-slot-structured-lyrics-rescue"
+ONLINE_OBSERVABILITY_REVISION = "v179-bounded-source-candidate-recovery"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -1911,16 +1911,26 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                             artist=str(identity.get("primaryArtist") or "").strip()
                             if title:
                                 rescue_queries=[
-                                    f'"{title}" "{artist}" "[Verse 1]" lyrics' if artist else f'"{title}" "[Verse 1]" lyrics',
-                                    f'"{title}" "{artist}" verse hook lyrics' if artist else f'"{title}" verse hook lyrics',
+                                    f'"{title}" "{artist}" complete lyrics text' if artist else f'"{title}" complete lyrics text',
+                                    f'"{title}" "{artist}" verse chorus lyrics' if artist else f'"{title}" verse chorus lyrics',
                                 ]
-                                newly_structured=[]
+                                new_sources=[]
+                                seen_rescue_urls=set()
+                                seen_rescue_families=set()
+                                pool_urls={
+                                    _clean_source_url(str(x.get("url") or ""))
+                                    for x in candidate_pool if isinstance(x,dict)
+                                }
+                                attempted_families={
+                                    str(x.get("sourceFamily") or source_family({"url":x.get("url") or ""}))
+                                    for x in lyrics_source_attempts
+                                }
                                 for rescue_query in rescue_queries:
                                     _progress(
                                         progress,"LYRICS_RESCUE_SEARCH",
                                         provider="bounded-web-search-chain-v1",
-                                        activity="Searching for a structured alternative before final page fetch",
-                                        query=rescue_query,strategy="last-slot-structured-discovery",
+                                        activity="Seeking verified song sources before final page fetch",
+                                        query=rescue_query,strategy="last-slot-identity-verified-discovery",
                                         attempt=len(lyrics_rescue_search_debug)+1,
                                         maxAttempts=LYRICS_MAX_RESCUE_SEARCHES,
                                     )
@@ -1928,42 +1938,83 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                                         found=search_public(rescue_query)
                                     except Exception as exc:
                                         lyrics_rescue_search_debug.append({
-                                            "query":rescue_query,"strategy":"last-slot-structured-discovery",
+                                            "query":rescue_query,"strategy":"last-slot-identity-verified-discovery",
                                             "resultCount":0,"admittedCount":0,
                                             "errorType":type(exc).__name__,"candidates":[],
                                         })
                                         continue
-                                    pool_urls={
-                                        _clean_source_url(str(x.get("url") or ""))
-                                        for x in candidate_pool if isinstance(x,dict)
-                                    }
+                                    discovered=[]
+                                    detail=[]
                                     for row in (found[:8] if isinstance(found,list) else []):
                                         if not isinstance(row,dict):
                                             continue
                                         url=_clean_source_url(str(row.get("url") or ""))
                                         family=source_family(row)
-                                        if (not url or url in seen_attempt_urls or url in pool_urls
-                                            or family in blocked_source_families
-                                            or not supports_direct_lyric_text_fetch({"url":url})
-                                            or not lyric_section_hint.search(str(row.get("snippet") or ""))):
-                                            continue
                                         proof=_lyrics_search_candidate_identity(row,str(plan.get("subject") or ""))
-                                        if not proof.get("allowed"):
-                                            continue
-                                        newly_structured.append({
-                                            **row,"url":url,"query":rescue_query,
-                                            "sourceFamily":family,"songIdentityScore":proof,
+                                        snippet=str(row.get("snippet") or "")
+                                        heading=str(row.get("title") or "")
+                                        explicit_marker=bool(lyric_section_hint.search(snippet))
+                                        lyric_heading=bool(re.search(r"(?i)\\blyrics?\\b",heading))
+                                        duplicate=(url in seen_attempt_urls or url in pool_urls or url in seen_rescue_urls)
+                                        blocked=bool(family in blocked_source_families or family in attempted_families)
+                                        directly_fetchable=bool(url and supports_direct_lyric_text_fetch({"url":url}))
+                                        strong_identity=bool(
+                                            proof.get("allowed") and proof.get("exactTitle")
+                                            and not proof.get("negativeContentHints")
+                                            and (not artist or proof.get("exactArtist"))
+                                        )
+                                        # A snippet describing lyric TEXT is enough for
+                                        # discovery. Only the fetched page can establish
+                                        # section structure and lyric text authenticity.
+                                        admitted=bool(
+                                            not duplicate and not blocked and directly_fetchable
+                                            and strong_identity and lyric_heading
+                                        )
+                                        reason=("ACCEPTED" if admitted else
+                                                "ALREADY_CONSIDERED" if duplicate else
+                                                "BLOCKED_OR_FAILED_SOURCE" if blocked else
+                                                "NON_TEXT_URL" if not directly_fetchable else
+                                                "SONG_IDENTITY_UNCERTAIN" if not strong_identity else
+                                                "NOT_LYRICS_RESULT")
+                                        detail.append({
+                                            "title":_clean(heading,180),"url":url,
+                                            "sourceFamily":family,"decision":reason,
+                                            "identityScore":int(proof.get("score") or 0),
+                                            "exactTitle":bool(proof.get("exactTitle")),
+                                            "exactArtist":bool(proof.get("exactArtist")),
+                                            "sectionMarkersInSnippet":explicit_marker,
+                                            "lyricTitleCue":lyric_heading,
                                         })
-                                        pool_urls.add(url)
+                                        if admitted:
+                                            discovered.append({
+                                                **row,"url":url,"query":rescue_query,
+                                                "sourceFamily":family,"songIdentityScore":proof,
+                                                "_rescueSectionHint":explicit_marker,
+                                            })
+                                            seen_rescue_urls.add(url)
+                                    # Prefer independent source families, then stronger
+                                    # identity and explicit markers if available.
+                                    discovered.sort(key=lambda x:(
+                                        -int(bool(x.get("_rescueSectionHint"))),
+                                        -int((x.get("songIdentityScore") or {}).get("score") or 0),
+                                        int(x.get("rank") or 999),
+                                    ))
+                                    for candidate in discovered:
+                                        family=str(candidate.get("sourceFamily") or "")
+                                        if family in seen_rescue_families:
+                                            continue
+                                        seen_rescue_families.add(family)
+                                        new_sources.append(candidate)
                                     lyrics_rescue_search_debug.append({
-                                        "query":rescue_query,"strategy":"last-slot-structured-discovery",
+                                        "query":rescue_query,"strategy":"last-slot-identity-verified-discovery",
                                         "resultCount":len(found) if isinstance(found,list) else 0,
-                                        "admittedCount":len(newly_structured),"candidates":[],
+                                        "admittedCount":len(discovered),
+                                        "errorType":"","candidates":detail[:8],
                                     })
-                                    if newly_structured:
+                                    if new_sources:
                                         break
-                                if newly_structured:
-                                    candidate_pool[candidate_index:candidate_index]=newly_structured[:4]
+                                if new_sources:
+                                    candidate_pool[candidate_index:candidate_index]=new_sources[:4]
                         candidate=candidate_pool[candidate_index]
                         candidate_index+=1
                         if not isinstance(candidate,dict):
