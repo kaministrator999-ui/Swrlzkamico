@@ -1954,7 +1954,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                                         snippet=str(row.get("snippet") or "")
                                         heading=str(row.get("title") or "")
                                         explicit_marker=bool(lyric_section_hint.search(snippet))
-                                        lyric_heading=bool(re.search(r"(?i)\\blyrics?\\b",heading))
+                                        lyric_heading=bool(re.search(r"(?i)\blyrics?\b",heading))
                                         duplicate=(url in seen_attempt_urls or url in pool_urls or url in seen_rescue_urls)
                                         blocked=bool(family in blocked_source_families or family in attempted_families)
                                         directly_fetchable=bool(url and supports_direct_lyric_text_fetch({"url":url}))
