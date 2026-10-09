@@ -159,6 +159,7 @@ def progress(workspace: dict) -> dict:
         "remainingPaths": remaining,
         "nextReadyPaths": next_paths,
         "hasApprovedPlan": bool(project_plan),
+        "sourcePlanMessageId": str(workspace.get("sourcePlanMessageId") or "")[:160],
         "sourceHash": workspace.get("sourceHash"),
         "validationState":workspace.get("validationState") or "NOT_RUN",
     }
