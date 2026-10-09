@@ -212,8 +212,32 @@ def test_v4_distinct_song_forms_and_contiguous_section_counts():
 
 
 
+
+def test_v4_form_specific_teaching_stays_compact_and_CREATIVE_only():
+    root = ROOT / "hf_space"
+    form_file = json.loads((root / "lyric_form_cues_v4.json").read_text(encoding="utf-8"))
+    assert form_file["schema"] == "swrlz-lyric-ocean-form-cue-v4"
+    assert form_file["count"] == len(form_file["cards"]) == 8
+    prompts = (
+        ("Write me an intimate R&B song", "R&B:"),
+        ("Create a percussion cypher", "Cypher:"),
+        ("Write a gentle lullaby", "Lullaby:"),
+        ("Write a 5/4 art rock song", "Uneven meter:"),
+        ("Compose an original spoken word piece", "Spoken word:"),
+        ("Write a funk song", "Funk:"),
+        ("Write a chopper freestyle", "High-speed rap:"),
+        ("Write a folk ballad", "Folk ballad:"),
+    )
+    for prompt, expected in prompts:
+        policy = lyric_craft_policy(prompt)
+        assert expected in policy, (prompt, policy)
+        assert len(policy) < 2900, (prompt, len(policy))
+    for request in ("Find a folk ballad", "Analyze a 5/4 song", "Review R&B lyrics"):
+        assert lyric_craft_policy(request) == "", request
+
+
 if __name__ == "__main__":
     for obj in list(globals().values()):
         if callable(obj) and getattr(obj, "__name__", "").startswith("test_"):
             obj()
-    print("archive-grounded-lyric-ocean-v4 structural checks PASS")
+    print("archive-grounded-lyric-ocean-v4 form and source checks PASS")
