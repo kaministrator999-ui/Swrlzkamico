@@ -19,6 +19,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
+from code_packages import PackageError, build_package, wants_archive
 try:
     from google.auth.transport import requests as google_requests
     from google.oauth2 import id_token as google_id_token
@@ -372,6 +373,55 @@ def export_session(request:Request):
     document={"format":"swrlz-hf-session-export-v1","exportedAtUnixMs":int(time.time()*1000),"storage":"process-local; not durable account history","threads":snapshot["threads"],"activeGeneration":snapshot["activeGeneration"]}
     return Response(content=json.dumps(document,ensure_ascii=False,indent=2),media_type="application/json",headers={"Content-Disposition":"attachment; filename=swrlz-dragon-chat.json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"})
 
+@app.get("/api/lalm_station/artifacts/download")
+def download_code_artifact(
+    request: Request, threadId: str, artifactId: str,
+    revision: int = 0, sourceHash: str = "", asArchive: bool = False,
+):
+    """Download one completed, cookie-scoped code artifact revision.
+
+    Never accept arbitrary caller-provided paths or raw file content. Reuse only
+    canonical in-session artifact snapshots; revision/hash prevent wrong downloads
+    after concurrent edits, and archives are built in memory, never on disk.
+    """
+    if not (1 <= len(threadId) <= 160 and 1 <= len(artifactId) <= 160):
+        raise HTTPException(400, "Invalid code artifact locator")
+    if not (1 <= revision <= 10000 and len(sourceHash) == 64):
+        raise HTTPException(400, "A valid artifact revision and hash are required")
+    key = request.cookies.get("swrlz_hf_sid")
+    with _lock:
+        session = _sessions.get(key) if key else None
+        if session is None:
+            raise HTTPException(404, "Code artifact unavailable")
+        thread = next((item for item in session.get("threads", [])
+                       if item.get("id") == threadId), None)
+        artifact = _find_artifact(thread, artifactId) if thread else None
+        record = _artifact_revision_record(artifact, revision) if artifact else None
+        if record is None or str(record.get("sourceHash") or "") != sourceHash:
+            raise HTTPException(404, "Requested artifact revision unavailable")
+        files = copy.deepcopy(record.get("files") or [])
+        archive_requested = bool(record.get("archiveRequested"))
+    if _artifact_source_hash(files) != sourceHash:
+        raise HTTPException(409, "Artifact source integrity mismatch")
+    try:
+        package = build_package(files, force_archive=bool(asArchive) or archive_requested)
+    except PackageError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    # ASCII filename is guaranteed by the packaging path validator.
+    filename = package["filename"].replace('"', "")
+    return Response(
+        content=package["body"], media_type=package["mediaType"],
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "private, no-store",
+            "X-Content-Type-Options": "nosniff",
+            "Cross-Origin-Resource-Policy": "same-origin",
+            "X-Code-Package-Sha256": package["sha256"],
+            "X-Code-Package-Files": str(package["fileCount"]),
+        },
+    )
+
+
 @app.post("/api/chat_state")
 async def mutate(request:Request):
     key,s=_session(request)
@@ -478,11 +528,17 @@ def _create_code_artifact(thread,message,request_id,text):
     artifact_id="artifact-"+uuid.uuid4().hex
     now=int(time.time()*1000)
     source_hash=_artifact_source_hash(files)
+    requested_text=next((
+        str(item.get("text") or "") for item in reversed(thread.get("messages") or [])
+        if item.get("role")=="user" and str((item.get("meta") or {}).get("requestId") or "")==str(request_id or "")
+    ), "")
+    archive_requested=wants_archive(requested_text)
     revision={
         "revision":1,
         "requestId":str(request_id or ""),
         "createdAt":now,
         "sourceHash":source_hash,
+        "archiveRequested":archive_requested,
         "files":copy.deepcopy(files),
     }
     artifact={
