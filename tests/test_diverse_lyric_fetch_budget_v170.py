@@ -227,3 +227,68 @@ assert int(online_tools.ONLINE_OBSERVABILITY_REVISION.split("-",1)[0].lstrip("v"
 
 print("unseparated-song-identity-text-fetch-v173 PASS")
 
+
+# v175 Dragon Chat (24) consecutive-turn regression:
+# The user has just received verified lyric content, and asks for an ORIGINAL
+# rap as a word-choice guide. A mention of "those lyrics" is a context pointer,
+# not a request to retrieve lyrics again or search the words "Now use those".
+from music_structure import creative_music_transform_request
+import model_router
+
+FOLLOWUP="Now use those lyrics and create an original rap song using that as a guide to word uses"
+prior_history=[
+    {"role":"user","text":"Can you provide lyrics for rack city tyga"},
+    {"role":"assistant","text":"Verified song sections from a public lyric source, available in prior context."},
+]
+assert creative_music_transform_request(FOLLOWUP),FOLLOWUP
+for alternate in [
+    "Write me an original verse inspired by the vocabulary in those lyrics",
+    "Use the earlier lyrics as a reference and compose a fresh rap",
+    "Rewrite those lyrics into a new hook with different wording",
+    "Create brand new lyrics for my rap song",
+]:
+    check=online_tools.classify_online_request(alternate,prior_history,{},None)
+    assert check["requested"] is False and check["reason"]=="creative-music-transform",(alternate,check)
+for actual_lookup in [
+    "Can you provide lyrics for rack city tyga",
+    "Find the full lyrics to Rack City by Tyga",
+    "Look up lyrics for Rack City by Tyga",
+]:
+    check=online_tools.classify_online_request(actual_lookup,prior_history,{},None)
+    assert check["requested"] is True and check["contentMode"]=="lyrics-verification",(actual_lookup,check)
+
+followup_plan=online_tools.classify_online_request(FOLLOWUP,prior_history,{},None)
+assert followup_plan["requested"] is False,followup_plan
+assert followup_plan["kind"]=="none",followup_plan
+assert followup_plan["reason"]=="creative-music-transform",followup_plan
+
+seen_payload=[]
+def fake_700m_generation(p):
+    seen_payload.append(p)
+    yield {"type":"DELTA","text":"[Original verse]\nThe midnight city glows under electric skies"}
+    yield {"type":"COMPLETED","phase":"COMPLETE"}
+
+orig_stream=model_router.stream_online_request
+def must_not_research(*_args,**_kwargs):
+    raise AssertionError("Creative reference must not launch web lyric research")
+
+try:
+    model_router.stream_online_request=must_not_research
+    events=list(model_router.dispatch("700m",{
+        "prompt":FOLLOWUP,
+        "history":prior_history,
+        "pinnedContext":[],
+    },r39_generate=lambda _:(),large_generate=fake_700m_generation))
+finally:
+    model_router.stream_online_request=orig_stream
+
+assert seen_payload and seen_payload[0]["history"]==prior_history,seen_payload
+assert seen_payload[0]["selectedModelId"]=="700m",seen_payload
+assert not any(x.get("type")=="ONLINE_RESEARCH" for x in events),events
+assert not any(x.get("phase") in {"SEARCH_STARTED","LYRICS_VERIFICATION_BLOCKED"} for x in events),events
+assert any(x.get("phase")=="CREATIVE_MUSIC_STARTED" for x in events),events
+assert any(x.get("type")=="DELTA" and "Original verse" in x.get("text","") for x in events),events
+
+print("contextual-original-rap-routing-v175 PASS")
+
+
