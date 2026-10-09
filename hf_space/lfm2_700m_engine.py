@@ -572,6 +572,10 @@ def generate_events(payload):
                 +("Do not include a chorus, hook, or refrain section. " if shape["noChorus"] else "")
                 +"Use one copyable lyric block; no text before or after the block."
             )
+            if re.search(r"\b(?:mystery|investigat\w*|detective|clues?|solve\w*)\b",prompt,re.I):
+                system+=("\nMYSTERY ARC: Establish a specific anomaly, investigate two distinct physical clues, "
+                         "test a misleading explanation, then REVEAL the actual cause and show its consequence. "
+                         "Repeating that you found a clue is NOT a solved mystery.")
         system+=("\n"+music_policy+"\nMUSIC REQUEST SHAPE: "+json.dumps(music_request,ensure_ascii=False,separators=(",",":")))
         if reference_structure:
             system+="\n"+MUSIC_CREATIVE_REFERENCE_POLICY+"\nSTRUCTURE-ONLY REFERENCE (source and earlier draft words removed): "+json.dumps(reference_structure,ensure_ascii=False,separators=(",",":"))
