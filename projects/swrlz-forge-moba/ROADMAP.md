@@ -2,15 +2,25 @@
 
 Canonical lane: §E / §wyrl§ Engine
 History audited through: **2026-10-08**
-Current source candidate: **v9.1 — Articulated Paper Rigs (50 governed patches)**. Rig-specific authoring/Play and release evidence are pending; the sealed manifest and final `DEPLOY_REQUEST.json` remain authoritative. Historical releases remain preserved.
+Current source candidate: **v9.2 — Layered Scenery and Fitted Faces (51 governed patches)**. The sealed manifest and final `DEPLOY_REQUEST.json` remain authoritative. Historical releases remain preserved.
 
-Previous verified hosted checkpoint: **v9.0 — Native Animation Studio and pop-up Watch Episode cinema (49 governed patches)**. The native 2.5D Watch player was deployed from [source `9c19b537f111`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/9c19b537f11144811c9c1509e90430d9adaccf13), as recorded in the existing `DEPLOY_REQUEST.json`. Its served-source authority is 758,245 bytes, SHA-256 `20e1ed3d3697d4a199e34ae812e7b30a3bbc7c2503da3223bf54ddb8915e3236`. v8.9 remains an earlier verified camera-safety checkpoint below.
-
-Previously verified live release: **v8.6 — Native Anime Studio Play** ([Actions 37719877533](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719877533); exact served HTML and both episode/scene assets SHA-256 verified). Earlier v8.3 live receipts remain in historical sections.
+The previous **v9.1 Articulated Paper Rigs** release is verified live: [deployment 37838083241](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838083241) and [exact hosted audit 37838137243](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838137243) passed. Source [`d3e7dc4d6a06`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/d3e7dc4d6a0633995210a7217943753d4de28e29) seals 50 patches, **857,746 bytes**, SHA-256 `7b6f3806c666b991a07e0c6bf162286b09dd70862f7de9acc9bf0ea3d214473f`, with all eleven bundled media assets and 425 character pose/face keys. These receipts are historical authority for v9.1; they do not certify v9.2.
 
 This roadmap is the mandatory release lineage for governed §E GitHub updates. Root `§tart_§E.md` defines the deployment contract.
 
-## v9.1 candidate · Articulated Paper Rigs
+## v9.2 candidate · Layered Scenery and Fitted Faces
+
+The screenshot exposed misaligned facial features and a library rendered as broad flat plates. v9.2 fits Kami’s eyes, brows and mouth inside the painted face and keeps §wyrlz’s expressions aligned with the skull. Existing blink, mouth, gaze and expression keys remain editable. The background becomes a paper depth theatre: a distant sky and three star shells sit behind independent windows, arches, shelves, banners, lanterns and props. Each cutout has its own transform/opacity/visibility/unfold keys, so perspective-camera motion produces real parallax between the pieces.
+
+The episode keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. Independent scenery pieces live beneath the saved scenery actors; their keys belong to `project.animeScenery` (`anime-scenery-v1`), alongside the existing `project.animeRigs` and `project.animeTimeline`. The native Save Project export is `scenes/ghosts-in-different-forms-ep01-depth.swyrl.json`; the v9.1 rigged, v9.0 storybook and original production scene exports remain bundled.
+
+Open **Animation Studio**, select **Background**, **Midground**, **Atmosphere**, or **Effects**, then expand **Scenery Depth · individual cutouts**. Choose a **Scenery piece**, set its depth and pose at the shared playhead, and use **Add/Update Scenery Key**. **Layered scenery**, **Pop-out depth**, and **Apply Scenery Depth** control the depth assembly. Preview Frame, editor Play and the native Watch cinema use the same saved renderer; native Undo/Redo and Save/Load retain each piece’s edits. Pause running Play before authoring. Camera protection keeps the background behind the mages and the foreground/book below their face and body corridor.
+
+The 51st governed patch is `patches/v9_2_depth_theatre.py`; artifact `swyrl_engine_v9_2.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_2_LAYERED_SCENERY_FACES`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes four episode scene JSON exports, the historical episode HTML, and eight PNGs including the new transparent `assets/anime/scenery-parts.png` atlas.
+
+v9.2 is a source candidate. Desktop/phone depth and face acceptance, native authoring/Play regressions, exact sealed reconstruction, and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all thirteen media assets.
+
+## Historical verified v9.1 · Articulated Paper Rigs
 
 Kami and §wyrlz now use separate articulated paper rigs. Each mage has independently jointed torso, pelvis, head, cape, upper/lower arms, hands, upper/lower legs, and feet, plus character-specific staff/quill or grimoire props. Joint keys save real X/Y/Z rotations and part depth; per-character paper thickness and pop-out depth give the limbs room in front of the scenery. Faces save Neutral, Happy, Determined, Surprised, or Sad expressions together with blink, mouth openness, smile, brow, gaze, and optional mouth motion driven by saved dialogue cues.
 
@@ -22,9 +32,11 @@ The 50th governed patch is `patches/v9_1_character_rigs.py`; artifact `swyrl_eng
 
 These are jointed 2.5D paper characters with rigid overlapping cutouts, silhouette side walls, and separated depth. Full sculpted/skinned 3D characters, audio-driven lip synchronization, audio authoring, and MP4 export remain future work. **Watch Episode 01** preserves the pop-up cinema experience and plays the same native authored 2.5D scene, with chapter buttons and transport controls. The original procedural episode HTML remains bundled for history.
 
-**Validation:** v9.1 is a source candidate. Rig-specific desktop/phone authoring and Play checks, the sealed build, and production deployment receipts must be completed before this revision is called verified live. The previous v9.0 native authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555); its proof remains historical.
+**Validation:** The previous **v9.1 Articulated Paper Rigs** release is verified live: [deployment 37838083241](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838083241) and [exact hosted audit 37838137243](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838137243) passed. Source [`d3e7dc4d6a06`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/d3e7dc4d6a0633995210a7217943753d4de28e29) seals 50 patches, **857,746 bytes**, SHA-256 `7b6f3806c666b991a07e0c6bf162286b09dd70862f7de9acc9bf0ea3d214473f`, with all eleven bundled media assets and 425 character pose/face keys. These receipts are historical authority for v9.1; they do not certify v9.2.
 
-## v9.0 · Native Animation Studio and Paper Theatre
+## Historical v9.0 · Native Animation Studio and Paper Theatre
+
+The native 2.5D Watch player was deployed from [source `9c19b537f111`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/9c19b537f11144811c9c1509e90430d9adaccf13). Its served-source authority is 758,245 bytes, SHA-256 `20e1ed3d3697d4a199e34ae812e7b30a3bbc7c2503da3223bf54ddb8915e3236`. This later v9.0 cinema checkpoint preserves the earlier whole-cel authoring acceptance below.
 
 **Ghosts in Different Forms · The Page That Remembered** is a native editor export with 70 actors, 11 editor layers, eight story beats, nine independent animation tracks, and 134 seconds of playback. It adds eight saved paper actors/layers while preserving the original 62 production set actors, three production layers, eight stations, and eight destinations. Generated transparent Kami and §wyrlz artwork and separate cathedral, workshop, and foreground plates follow the user's reference direction.
 
@@ -40,7 +52,9 @@ Source integration introduces a third independently selectable project, `Ghosts 
 
 **Status:** Source candidate; exact artifact, deployment, and live runtime verification are tracked independently. This entry does not redefine or erase the v8.4 checkpoint.
 
-## v8.6 native Anime Studio Play
+## Historical v8.6 native Anime Studio Play
+
+Dedicated [deployment 37719877533](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37719877533) and exact served HTML plus both episode/scene asset SHA-256 verification passed. Earlier v8.3 receipts remain in historical sections.
 
 The Anime Studio starter now begins a real-time native Three.js cinematic when Play is pressed. Eight scripted camera shots, temporary procedural performers, guardian-dragon animation, motes/lighting, and captions driven by each stage's editable `script.md` form an approximately 134-second episode preview. A transport HUD provides Pause/Resume, seek, previous/next shot, Stop, and **Explore Set** to switch to the prior first-person world mode. Other §E starter projects keep their original Play behavior.
 

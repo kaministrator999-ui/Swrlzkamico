@@ -1,0 +1,11 @@
+.story-scenery-section{border-top:1px solid #b58d5859;border-bottom:1px solid #b58d5859;margin:12px 0;padding:8px 0 11px}
+.story-scenery-section[hidden]{display:none!important}
+.story-scenery-section>summary{font-weight:700;cursor:pointer;min-height:28px;color:#efc88c;list-style-position:inside}
+.story-scenery-config{display:grid;grid-template-columns:1fr 1fr;gap:11px;align-items:end;margin:7px 0}
+.story-scenery-config .story-check{min-height:49px;align-items:flex-end;justify-content:flex-start;gap:7px;flex-direction:column}
+#sceneryAddKey,#sceneryApplyConfig{background:#4b3a29;border-color:#c09a60;color:#ffedc9}
+.story-scenery-section .story-key-list{margin-bottom:6px}
+@media(max-width:650px){
+ .story-scenery-section .story-key-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .story-scenery-section{margin-top:10px}
+}

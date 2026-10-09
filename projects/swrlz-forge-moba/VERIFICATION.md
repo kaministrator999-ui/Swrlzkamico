@@ -1,20 +1,26 @@
-# §wyrl§ Engine v9.1 candidate · Articulated Paper Rig acceptance
+# §wyrl§ Engine v9.2 candidate · Layered Scenery and Fitted Face acceptance
 
-The 50th governed patch is `patches/v9_1_character_rigs.py`; artifact `swyrl_engine_v9_1.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_1_ARTICULATED_PAPER_RIGS`. Exact bytes and SHA-256 come from the final sealed manifest and generated receipt. The package includes the new rigged scene and `assets/anime/kami-rig.png` / `swyrlz-rig.png`, while preserving all previous artwork, scenes, and screening assets.
+The 51st governed patch is `patches/v9_2_depth_theatre.py`; artifact `swyrl_engine_v9_2.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_2_LAYERED_SCENERY_FACES`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes four episode scene JSON exports, the historical episode HTML, and eight PNGs including the new transparent `assets/anime/scenery-parts.png` atlas.
 
-The project keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. Limb and face tracks live separately under `project.animeRigs` (`anime-character-rigs-v1`), so posing one mage does not overwrite the other mage or the existing shot timeline. The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json`; the v9.0 storybook export and original 62-actor production scene remain bundled.
+The episode keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. Independent scenery pieces live beneath the saved scenery actors; their keys belong to `project.animeScenery` (`anime-scenery-v1`), alongside the existing `project.animeRigs` and `project.animeTimeline`. The native Save Project export is `scenes/ghosts-in-different-forms-ep01-depth.swyrl.json`; the v9.1 rigged, v9.0 storybook and original production scene exports remain bundled.
 
-The existing native cinematic and storybook authoring suites remain required. `tests/character_rig_playwright.mjs` adds actual desktop/phone controls and native Play checks for independent limb rotation/depth, visible face changes, pose interpolation, shared playhead behavior, project save/reload, and Undo/Redo. Source reconstruction checks the complete 50-patch chain; packaging compares all eleven media assets with committed source bytes and SHA-256, including both character atlases and all three episode scene exports.
+The native cinematic, storybook authoring and character rig suites remain required. `tests/depth_theatre_playwright.mjs` adds desktop/phone acceptance for fitted facial surfaces, individual scenery-key edits, three star-depth shells, actual cutout geometry/parallax, shared playhead behavior, native Play/Watch, Undo/Redo, Save/Load and camera clearance. Source reconstruction checks all 51 governed patches; packaging compares every one of the thirteen media assets against committed source bytes and SHA-256.
 
-- [x] Local desktop and portrait Character Rig authoring/Play acceptance passed with no uncaught browser errors; both mages have eighteen rendered pieces. High-quality visual inspection confirms visible eyes and mouths on the blank facial surfaces.
-- [ ] Complete the native cinematic and storybook authoring regression suites.
+- [ ] Complete local desktop/phone face and depth authoring/Play acceptance and visual inspection.
+- [ ] Complete all native cinematic, storybook authoring and character rig regressions.
 - [ ] Reconstruct and seal the exact generated artifact, then pass Node/Python and remote engine CI checks.
-- [ ] Follow the dedicated deployment for the final source/trigger commit to terminal success.
-- [ ] Verify the current marker, normalized served HTML, SOURCE receipt, every scene/screening asset, and all seven artwork PNGs against the committed source.
+- [ ] Follow the dedicated deployment for the exact final source/trigger commit to terminal success.
+- [ ] Verify the current marker, normalized served HTML, SOURCE receipt, all four scene exports, historical screening HTML, and all eight artwork PNGs against committed source.
 
-v9.1 is a source candidate. Rig-specific desktop/phone authoring and Play checks, the sealed build, and production deployment receipts must be completed before this revision is called verified live. The previous v9.0 native authoring/Play acceptance [passed in GitHub](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37797022555); its proof remains historical.
+v9.2 is a source candidate. Desktop/phone depth and face acceptance, native authoring/Play regressions, exact sealed reconstruction, and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all thirteen media assets.
 
-These are jointed 2.5D paper characters with rigid overlapping cutouts, silhouette side walls, and separated depth. Full sculpted/skinned 3D characters, audio-driven lip synchronization, audio authoring, and MP4 export remain future work. **Watch Episode 01** preserves the pop-up cinema experience and plays the same native authored 2.5D scene, with chapter buttons and transport controls. The original procedural episode HTML remains bundled for history.
+---
+
+# Historical verified §wyrl§ Engine v9.1 · Articulated Paper Rigs
+
+The previous **v9.1 Articulated Paper Rigs** release is verified live: [deployment 37838083241](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838083241) and [exact hosted audit 37838137243](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838137243) passed. Source [`d3e7dc4d6a06`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/d3e7dc4d6a0633995210a7217943753d4de28e29) seals 50 patches, **857,746 bytes**, SHA-256 `7b6f3806c666b991a07e0c6bf162286b09dd70862f7de9acc9bf0ea3d214473f`, with all eleven bundled media assets and 425 character pose/face keys. These receipts are historical authority for v9.1; they do not certify v9.2.
+
+The native editor export preserves 70 actors, 11 layers, nine stage/camera tracks, eight beats and 425 independently saved rig pose/face keys. Each mage has eighteen rigid paper pieces with front/back/silhouette-edge geometry. Existing `tests/character_rig_playwright.mjs` remains required for later releases.
 
 ---
 

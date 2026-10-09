@@ -46,39 +46,82 @@ function rigMakePart(texture,cell,width,height,thickness,id){
   const edge=new THREE.Mesh(geometry.edge,new THREE.MeshBasicMaterial({color:'#b68a4f',side:THREE.DoubleSide,transparent:true,fog:false,toneMapped:false}));edge.name=id+' · cut paper edge';
   group.add(front,back,edge);group.userData.rigPart=id;return group;
 }
+// These footprints sit inside the blank skin on the bundled head cards. Kami's
+// old placement crossed the chin into the neck; the skull has its own anatomy.
+const RIG_FACE_FIT={kami:{x:-.10,y:-.165,width:.70,height:.45},swyrlz:{x:.065,y:-.635,width:.78,height:.67}};
 function rigFaceSurface(character){
   const canvas=document.createElement('canvas');canvas.width=256;canvas.height=192;
   const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
-  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(character==='kami'?.62:.64,character==='kami'?.46:.54),new THREE.MeshBasicMaterial({map:texture,transparent:true,alphaTest:.01,depthWrite:true,side:THREE.DoubleSide,fog:false,toneMapped:false}));
-  mesh.name=character+' · animated eyes brows and mouth';mesh.userData.rigFace=true;return {mesh,texture,canvas,hash:null,applied:null};
+  const fit=RIG_FACE_FIT[character];
+  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(fit.width,fit.height),new THREE.MeshBasicMaterial({map:texture,transparent:true,alphaTest:.01,depthWrite:true,side:THREE.DoubleSide,fog:false,toneMapped:false}));
+  mesh.name=character+' · animated eyes brows and mouth';mesh.userData.rigFace=true;return {mesh,texture,canvas,fit,hash:null,applied:null};
 }
 function rigPaintFace(face,character,sample,time){
   const s={...sample},cue=storyBeat(time)?.cue||'';
   const speaking=s.speech&&(character==='kami'?/^KAMI\b/i:/^[§$]?WYRLZ\b/i).test(cue.trim());
-  if(speaking)s.mouth=Math.max(s.mouth,.14+.48*(.5+.5*Math.sin(time*31)));
+  // Modest jaw motion keeps speech within the painted face and below the nose.
+  if(speaking)s.mouth=Math.max(s.mouth,.12+.38*(.5+.5*Math.sin(time*31)));
   const hash=[s.expression,...Object.keys(RIG_FACE_BOUNDS).map(k=>Math.round(s[k]*50))].join(':');
   face.applied=s;if(face.hash===hash)return;face.hash=hash;
   const c=face.canvas.getContext('2d');c.clearRect(0,0,256,192);
-  const happy=s.expression==='happy',sad=s.expression==='sad',determined=s.expression==='determined',surprised=s.expression==='surprised';
-  const opening=Math.max(.025,(1-s.blink)*(surprised?1.1:determined?.48:happy?.65:.8));
+  const skull=character==='swyrlz',happy=s.expression==='happy',sad=s.expression==='sad',determined=s.expression==='determined',surprised=s.expression==='surprised';
+  const opening=Math.max(0,(1-s.blink)*(surprised?1.05:determined?.53:happy?.72:.86));
   c.lineCap='round';c.lineJoin='round';
   for(const side of [-1,1]){
-    const x=128+side*48,y=65,ew=character==='kami'?32:33,eh=(character==='kami'?16:28)*opening;
-    c.fillStyle=character==='kami'?'#f5dfbf':'#201712';c.strokeStyle='#20150e';c.lineWidth=5;
-    c.beginPath();c.ellipse(x,y,ew,Math.max(1,eh),side*(determined?-.12:.08),0,Math.PI*2);c.fill();c.stroke();
-    if(opening>.09){c.save();c.beginPath();c.ellipse(x,y,ew-2,Math.max(1,eh-2),0,0,Math.PI*2);c.clip();
-      c.fillStyle='#e8ae42';c.beginPath();c.ellipse(x+s.gazeX*12,y+s.gazeY*8,character==='kami'?11:13,Math.max(3,eh*.9),0,0,Math.PI*2);c.fill();
-      c.fillStyle='#27190d';c.beginPath();c.ellipse(x+s.gazeX*12,y+s.gazeY*8,4,Math.max(2,eh*.62),0,0,Math.PI*2);c.fill();
-      c.fillStyle='#fff2c5';c.beginPath();c.arc(x+s.gazeX*12-3,y+s.gazeY*8-5,3,0,Math.PI*2);c.fill();c.restore();}
-    const browY=34-s.brow*8-(surprised?10:0),tilt=(determined?-side*10:sad?side*8:0);
-    c.strokeStyle=character==='kami'?'#65503d':'#5d3b1c';c.lineWidth=5;c.beginPath();c.moveTo(x-ew,browY-tilt);c.quadraticCurveTo(x,browY-5,x+ew,browY+tilt);c.stroke();
+    const x=128+side*44,y=67,ew=skull?29:28,eh=(skull?27:17)*opening;
+    if(opening<.075){
+      c.strokeStyle=skull?'#3b2418':'#583b2d';c.lineWidth=skull?4:3;
+      c.beginPath();c.moveTo(x-ew,y-1);c.quadraticCurveTo(x,y+(happy?8:4),x+ew,y-1);c.stroke();
+    }else if(skull){
+      // Dark hollow sockets and warm embers belong to a skull, rather than
+      // the human sclera and black pupils used on Kami's anime face.
+      c.save();c.translate(x,y);c.rotate(side*(determined?-.10:.06));
+      c.fillStyle='#281b14';c.strokeStyle='#755035';c.lineWidth=2.4;
+      c.beginPath();c.ellipse(0,0,ew,eh,0,0,Math.PI*2);c.fill();c.stroke();
+      c.clip();const gx=s.gazeX*9,gy=s.gazeY*7;
+      const glow=c.createRadialGradient(gx,gy,1,gx,gy,12);glow.addColorStop(0,'#fff3b1');glow.addColorStop(.3,'#ffd66c');glow.addColorStop(.62,'#db8c27');glow.addColorStop(1,'rgba(166,86,18,0)');
+      c.fillStyle=glow;c.beginPath();c.ellipse(gx,gy,12,Math.max(3,Math.min(13,eh*.7)),0,0,Math.PI*2);c.fill();
+      c.restore();
+    }else{
+      // Tapered corners, one dark upper lash and a fine lower lid prevent the
+      // full ellipse outlines from reading as round spectacles.
+      const tilt=side*(determined?-3:sad?2:0),eyePath=()=>{
+        c.beginPath();c.moveTo(x-ew,y+tilt);c.bezierCurveTo(x-ew*.42,y-eh,x+ew*.35,y-eh,x+ew,y-tilt);
+        c.bezierCurveTo(x+ew*.4,y+eh*.55,x-ew*.4,y+eh*.62,x-ew,y+tilt);c.closePath();
+      };
+      eyePath();c.fillStyle='#f4dec8';c.fill();c.save();c.clip();
+      const gx=x+s.gazeX*9,gy=y+s.gazeY*6;
+      const iris=c.createLinearGradient(0,y-eh,0,y+eh);iris.addColorStop(0,'#6e451d');iris.addColorStop(.5,'#b17a31');iris.addColorStop(1,'#e1ad56');
+      c.fillStyle=iris;c.beginPath();c.ellipse(gx,gy,10,Math.max(3,eh*.98),0,0,Math.PI*2);c.fill();
+      c.fillStyle='#342318';c.beginPath();c.ellipse(gx,gy,3.7,Math.max(2,eh*.68),0,0,Math.PI*2);c.fill();
+      c.fillStyle='#fff0ce';c.beginPath();c.ellipse(gx-3,gy-4,2.1,2.8,0,0,Math.PI*2);c.fill();c.restore();
+      c.strokeStyle='#573a2a';c.lineWidth=3.3;c.beginPath();c.moveTo(x-ew,y+tilt);c.bezierCurveTo(x-ew*.42,y-eh,x+ew*.35,y-eh,x+ew,y-tilt);c.stroke();
+      c.strokeStyle='#90684c';c.lineWidth=1.1;c.beginPath();c.moveTo(x-ew*.8,y+eh*.25);c.quadraticCurveTo(x,y+eh*.7,x+ew*.85,y+eh*.2);c.stroke();
+      c.strokeStyle='#694c39';c.lineWidth=1.2;c.beginPath();c.moveTo(x-ew*.78,y-eh-4);c.quadraticCurveTo(x,y-eh-7,x+ew*.6,y-eh-4);c.stroke();
+    }
+    const browY=38-s.brow*6-(surprised?6:0),tilt=determined?-side*6:sad?side*6:0;
+    c.strokeStyle=skull?'#8b633b':'#6f4d37';c.lineWidth=skull?2.2:2.7;c.beginPath();
+    c.moveTo(x-ew*.8,browY-tilt);c.quadraticCurveTo(x,browY-3,x+ew*.76,browY+tilt);c.stroke();
   }
-  c.fillStyle='#5d3d26';c.beginPath();c.moveTo(126,97);c.lineTo(120,111);c.lineTo(134,111);c.closePath();if(character==='swyrlz')c.fill();else{c.lineWidth=2;c.strokeStyle='#b48a63';c.stroke();}
-  const smile=s.smile+(happy?.6:sad?-.4:0),mouthY=139;
-  c.fillStyle='#392017';c.strokeStyle='#5d3422';c.lineWidth=4;c.beginPath();
-  if(s.mouth>.06){c.ellipse(128,mouthY,19+(surprised?3:0),3+s.mouth*18,0,0,Math.PI*2);c.fill();c.stroke();c.fillStyle='#bc8065';c.beginPath();c.ellipse(128,mouthY+7,11,3+s.mouth*4,0,0,Math.PI*2);c.fill();}
-  else{c.moveTo(104,mouthY);c.quadraticCurveTo(128,mouthY+smile*15,152,mouthY);c.stroke();}
-  if(character==='swyrlz'&&s.mouth<.3){c.strokeStyle='#5d3422';c.lineWidth=2;for(let x=112;x<=144;x+=8){c.beginPath();c.moveTo(x,mouthY-3);c.lineTo(x,mouthY+5);c.stroke();}}
+  if(skull){
+    c.fillStyle='#39271b';c.beginPath();c.moveTo(127,102);c.quadraticCurveTo(121,107,119,116);c.quadraticCurveTo(125,115,128,118);c.quadraticCurveTo(131,114,137,115);c.lineTo(130,103);c.closePath();c.fill();
+  }else{
+    c.strokeStyle='#bd8a68';c.lineWidth=1.7;c.beginPath();c.moveTo(127,101);c.quadraticCurveTo(123,109,128,111);c.lineTo(132,110);c.stroke();
+  }
+  const smile=s.smile+(happy?.6:sad?-.4:0),mouthY=143;
+  c.strokeStyle=skull?'#714b2f':'#945a43';c.lineWidth=skull?2.4:1.9;
+  if(s.mouth>.06){
+    const mouthWidth=skull?20:15+(surprised?2:0),mouthHeight=1.5+s.mouth*(skull?12:9);
+    c.fillStyle=skull?'#332219':'#693c2c';c.beginPath();c.ellipse(128,mouthY,mouthWidth,mouthHeight,0,0,Math.PI*2);c.fill();c.stroke();
+    if(skull){
+      c.strokeStyle='#d5b583';c.lineWidth=2;for(let x=116;x<=140;x+=8){c.beginPath();c.moveTo(x,mouthY-mouthHeight+1);c.lineTo(x,mouthY-mouthHeight+4);c.moveTo(x,mouthY+mouthHeight-1);c.lineTo(x,mouthY+mouthHeight-3);c.stroke();}
+    }else if(s.mouth>.24){
+      c.fillStyle='#c59173';c.beginPath();c.ellipse(128,mouthY+mouthHeight*.55,8,Math.max(1,mouthHeight*.23),0,0,Math.PI*2);c.fill();
+    }
+  }else{
+    c.beginPath();c.moveTo(skull?105:111,mouthY);c.quadraticCurveTo(128,mouthY+smile*(skull?10:7),skull?151:145,mouthY);c.stroke();
+    if(skull){c.lineWidth=1.6;for(let x=112;x<=144;x+=8){c.beginPath();c.moveTo(x,mouthY-2);c.lineTo(x,mouthY+4);c.stroke();}}
+  }
   face.texture.needsUpdate=true;
 }
 function rigBuildVisual(visual,character){
@@ -106,7 +149,7 @@ function rigBuildVisual(visual,character){
   if(character==='kami'){
     const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.043,.043,3.55,8),new THREE.MeshBasicMaterial({color:'#6b4728',transparent:true,toneMapped:false}));shaft.position.set(0,-.28,0);joints.staff.add(shaft);
   }else{const magic=rigMakePart(texture,cells?.[19],.8,1.1,cfg.thickness,'magic');magic.position.set(-.4,1.05,.06);joints.grimoire.add(magic);parts.push(magic);}
-  const face=rigFaceSurface(character);face.mesh.position.set(character==='kami'?-.015:.01,character==='kami'?-.36:-.56,cfg.thickness/2+.02);joints.head.userData.part.add(face.mesh);
+  const face=rigFaceSurface(character);face.mesh.position.set(face.fit.x,face.fit.y,cfg.thickness/2+.02);joints.head.userData.part.add(face.mesh);
   group.userData.rig={character,joints,parts,face,texture,signature:JSON.stringify([cfg.enabled,cfg.asset,cfg.thickness,cfg.depth]),cellsReady:!!cells,thickness:cfg.thickness};
   rigAnimateCharacter(group,character,0);return group;
 }
@@ -161,12 +204,20 @@ function rigFitCamera(c){
   const z=Math.max(perspectiveCamera.position.z,box.max.z+halfWidth*1.15/(tangent*aspect),box.max.z+halfHeight*1.12/tangent,box.max.z+6.5);
   perspectiveCamera.position.z=z;perspectiveCamera.lookAt(target.tx,target.ty,target.tz);perspectiveCamera.updateMatrixWorld(true);
 }
+function rigFaceInkStatus(face){
+  const w=face.canvas.width,h=face.canvas.height,pixels=face.canvas.getContext('2d').getImageData(0,0,w,h).data;
+  let x0=w,y0=h,x1=0,y1=0,pixelCount=0;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++)if(pixels[(y*w+x)*4+3]>8){pixelCount++;x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x+1);y1=Math.max(y1,y+1);}
+  const p=face.mesh.position,fit=face.fit;
+  return {pixelCount,canvasInkBounds:pixelCount?{min:[x0,y0],max:[x1,y1]}:null,
+    featureInkBounds:pixelCount?{min:[p.x+(x0/w-.5)*fit.width,p.y+(.5-y1/h)*fit.height,p.z],max:[p.x+(x1/w-.5)*fit.width,p.y+(.5-y0/h)*fit.height,p.z]}:null};
+}
 function rigRenderStatus(character){
   if(!rigCharacterId(character))return null;
   const actor=animeCine?.cast?.[character==='kami'?'kami':'wisp']||storyBoundActor(character),rig=actor?.userData.rig;
   if(!rig)return {active:!!actor,rigged:false,partCount:0};
   actor.updateWorldMatrix(true,true);const box=new THREE.Box3().setFromObject(actor),joints={};let meshCount=0;actor.traverse(o=>{if(o.isMesh)meshCount++;});
   for(const [id,pivot] of Object.entries(rig.joints))joints[id]={rotation:[pivot.rotation.x,pivot.rotation.y,pivot.rotation.z],position:pivot.parent.position.clone().add(pivot.position).toArray(),worldPosition:pivot.getWorldPosition(new THREE.Vector3()).toArray(),partWorldPosition:(pivot.userData.part||pivot).getWorldPosition(new THREE.Vector3()).toArray()};
-  return {active:!!animeCine,rigged:true,partCount:rig.parts.length,meshCount,thickness:rig.thickness,depthSpan:box.max.z-box.min.z,bounds:{min:box.min.toArray(),max:box.max.toArray()},joints,face:{...rig.face.applied,textureVersion:rig.face.texture.version}};
+  return {active:!!animeCine,rigged:true,partCount:rig.parts.length,meshCount,thickness:rig.thickness,depthSpan:box.max.z-box.min.z,bounds:{min:box.min.toArray(),max:box.max.toArray()},joints,face:{...rig.face.applied,textureVersion:rig.face.texture.version,anchor:rig.face.mesh.position.toArray(),footprint:{width:rig.face.fit.width,height:rig.face.fit.height},...rigFaceInkStatus(rig.face)}};
 }
 window.SWYRL_ENGINE_RIG=Object.freeze({...window.SWYRL_ENGINE_RIG,renderStatus:rigRenderStatus});
