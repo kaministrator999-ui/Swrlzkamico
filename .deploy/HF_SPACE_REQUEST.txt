@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-09-v177-structure-only-creative-and-credit-boundary-retry-003
+REQUEST_NONCE=2026-10-09-v178-last-slot-lyrics-structured-rescue-001
