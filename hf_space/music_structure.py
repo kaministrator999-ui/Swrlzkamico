@@ -141,7 +141,7 @@ def parse_section_marker(line: str) -> dict[str,Any] | None:
         performer=performer.strip(" []:-")
         # A source label such as [Hook: x2] is repetition metadata,
         # not an artist credit. Preserve the authored label unchanged.
-        repeat_match=re.fullmatch(r"(?i)(?:x\\s*(\\d+)|(\\d+)\\s*x|repeat\\s+(\\d+)\\s+times?)",performer)
+        repeat_match=re.fullmatch(r"(?i)(?:x\s*(\d+)|(\d+)\s*x|repeat\s+(\d+)\s+times?)",performer)
         repeat_count=None
         if repeat_match:
             repeat_count=int(next(group for group in repeat_match.groups() if group is not None))
