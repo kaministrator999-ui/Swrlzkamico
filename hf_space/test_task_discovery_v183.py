@@ -16,6 +16,7 @@ scenarios = [
     ({"riskTags": ["authentication"]}, 4, "auth boundary"),
     ({"riskTags": ["persistence"]}, 4, "durable-state boundary"),
     ({"riskTags": ["destructive"]}, 5, "dangerous operation"),
+    ({"riskTags": ["data-loss"]}, 5, "verified loss of persistent data"),
     ({"riskTags": ["production-release"]}, 5, "deployment boundary"),
     ({"riskTags": ["schema-migration", "production-release"]}, 5, "live migration"),
 ]
