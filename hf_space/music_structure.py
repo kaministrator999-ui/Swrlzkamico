@@ -61,12 +61,13 @@ def music_model_policy(prompt: str) -> str:
 
 # Only for user requests that CREATE a song using earlier lyrics as a guide.
 # A reference can inform high-level craft without reusing copyrighted lines.
-MUSIC_CREATIVE_REFERENCE_POLICY="""CREATIVE LYRIC REFERENCE (current user asks for a NEW work):
-- Prior lyrics are study material, not a template to copy. Extract only broad craft properties: energy, word register, rhyme density, rhythmic feel, and section pacing.
-- Invent a different core premise, title, punchlines, phrases, refrain, and images. Do not repeat the reference's distinctive title, hook, catchphrases, or individual lines.
-- Do not describe the result as another artist's version or claim their personal style. Preserve the user's requested genre, not an identifiable lyric.
-- Deliver the complete newly authored song. When the request says "whole song", use enough developed sections but keep it concise enough to FINISH; do not fill the budget with repetitive chorus copies.
-- Unless the user asks for analysis, skip introductory commentary, stage directions explaining how the song was written, and after-song explanations. Start with the song and end cleanly."""
+MUSIC_CREATIVE_REFERENCE_POLICY="""STRUCTURE-ONLY SONG STUDY (current user asks for a wholly NEW work):
+- Study the PROVIDED song only as an abstract structural example: section sequence, section sizes, hook placement/repetition, relative line length, phrasing/cadence, rhyme positioning and variation.
+- Do NOT reuse reference WORDS, catchphrases, hook language, title, plot, subject, images, slang, named people/places, or existing lyric lines. This includes the exact refrain and apparently generic but recognizable fragments.
+- Select your OWN subject, title, vocabulary, hook, and rhyme words independently. Compose all fresh lines. Mirror structural mechanics where useful, not the previous writer's wording or persona.
+- Sections and their line lengths are approximate scaffolding, not a mandate for mechanical copying. Maintain musical progression and natural phrasing.
+- Write the finished requested song from its first section to a clean ending, with NO breakdown, instructional stage directions, or post-song analysis unless requested. Avoid padding with repeated chorus copies.
+- Use a fenced Markdown code block for the complete new song; include its heading/sections inside the block."""
 
 def creative_music_transform_request(prompt: str) -> bool:
     """Recognize a creation/transformation request that merely mentions lyrics.
