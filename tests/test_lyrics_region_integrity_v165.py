@@ -359,3 +359,27 @@ assert chrome["text"].splitlines()[0]=="Clockwork petals drift through the harbo
 assert "Silver comets whisper into the night" in chrome["text"],chrome
 assert "A collection of song lyrics" not in chrome["text"],chrome
 print("live-29-page-code-clean-extraction-v180 PASS")
+
+# v181 Dragon Chat (30): the first successful AZLyrics body still began
+# with presenter name, quoted title, and the edition descriptor. These are
+# site headings, not part of the verified song; source lines must survive.
+HEADER_PAGE="""Test Signal lyrics
+Example Artist Lyrics
+"Test Signal"
+("Early Works" Mixtape Version)
+Copper planets rise at the station
+Silver windows lean into the light
+Paper comets pass beyond the shoreline
+Velvet gardens open through the night
+Copper planets rise at the station
+Silver windows lean into the light
+Paper comets pass beyond the shoreline
+Velvet gardens open through the night
+"""
+header=online_tools._lyrics_extract_analysis(HEADER_PAGE,"full-lyrics",plan["subject"])
+assert header["diagnostics"]["decision"]=="ACCEPTED",header
+assert header["diagnostics"]["resultLineCount"]==8,header
+assert header["text"].splitlines()[0]=="Copper planets rise at the station",header
+for debris in ["Example Artist Lyrics",'"Test Signal"',"Mixtape Version"]:
+    assert debris not in header["text"],(debris,header)
+print("live-30-source-heading-separation-v181 PASS")
