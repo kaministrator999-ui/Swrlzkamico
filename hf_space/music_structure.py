@@ -58,6 +58,16 @@ def music_model_policy(prompt: str) -> str:
 
 
 
+
+# Only for user requests that CREATE a song using earlier lyrics as a guide.
+# A reference can inform high-level craft without reusing copyrighted lines.
+MUSIC_CREATIVE_REFERENCE_POLICY="""CREATIVE LYRIC REFERENCE (current user asks for a NEW work):
+- Prior lyrics are study material, not a template to copy. Extract only broad craft properties: energy, word register, rhyme density, rhythmic feel, and section pacing.
+- Invent a different core premise, title, punchlines, phrases, refrain, and images. Do not repeat the reference's distinctive title, hook, catchphrases, or individual lines.
+- Do not describe the result as another artist's version or claim their personal style. Preserve the user's requested genre, not an identifiable lyric.
+- Deliver the complete newly authored song. When the request says "whole song", use enough developed sections but keep it concise enough to FINISH; do not fill the budget with repetitive chorus copies.
+- Unless the user asks for analysis, skip introductory commentary, stage directions explaining how the song was written, and after-song explanations. Start with the song and end cleanly."""
+
 def creative_music_transform_request(prompt: str) -> bool:
     """Recognize a creation/transformation request that merely mentions lyrics.
 
