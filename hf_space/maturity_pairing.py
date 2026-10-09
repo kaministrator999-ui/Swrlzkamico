@@ -101,3 +101,23 @@ def compare_pairs(doc: dict[str, Any]) -> dict[str, Any]:
         "pairs": len(items), "counts": counts, "results": rows,
         "warning": "Reported test receipts must be independently audited against exact model outputs. This tool is not the grader.",
     }
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Read local metadata only; never call a model or print raw conversations."""
+    import argparse
+    import json
+    from pathlib import Path
+
+    parser = argparse.ArgumentParser(description="Inspect reported Qwen/700M A/B receipts; NOT an independent grader")
+    parser.add_argument("--input", required=True, help="Local JSON metadata with the swrlz-model-paired-trial-v1 schema")
+    args = parser.parse_args(argv)
+    with Path(args.input).open(encoding="utf-8") as stream:
+        document = json.load(stream)
+    summary = compare_pairs(document)
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
