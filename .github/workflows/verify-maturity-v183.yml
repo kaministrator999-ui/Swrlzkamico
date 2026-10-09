@@ -1,0 +1,47 @@
+name: Model Maturity v183 - Trusted Discovery and Comparison
+on:
+  push:
+    branches:
+      - feature/task-discovery-replan-v1
+    paths:
+      - "hf_space/task_discovery.py"
+      - "hf_space/maturity_pairing.py"
+      - "hf_space/test_task_discovery_v183.py"
+      - "hf_space/test_maturity_pairing_v183.py"
+      - ".github/workflows/verify-maturity-v183.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-maturity-v183
+  cancel-in-progress: false
+
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Syntax check and privacy-safe pure functions
+        run: |
+          python -m py_compile \
+            hf_space/task_effort.py \
+            hf_space/task_discovery.py \
+            hf_space/maturity_pairing.py \
+            hf_space/test_task_discovery_v183.py \
+            hf_space/test_maturity_pairing_v183.py
+      - name: Baseline effort and source-aware escalation
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python hf_space/test_task_effort_v182.py
+          PYTHONPATH=hf_space python hf_space/test_task_effort_adversarial_v182.py
+          PYTHONPATH=hf_space python hf_space/test_task_effort_routing_v182.py
+          PYTHONPATH=hf_space python hf_space/test_task_discovery_v183.py
+      - name: Offline paired evidence gate
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python hf_space/test_maturity_pairing_v183.py
