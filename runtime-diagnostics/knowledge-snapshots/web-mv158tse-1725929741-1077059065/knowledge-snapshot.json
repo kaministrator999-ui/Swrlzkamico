@@ -1,0 +1,304 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-mv158tse-1725929741-1077059065",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "478de3173a300cb835cc1900acf0fbcaec1137ae",
+  "persistedAtUnixMs": 1791561141294,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-mv158tse-1725929741-1077059065",
+    "trigger": {
+      "userText": "Can you provide lyrics to rack city by tyga",
+      "sha256": "b1669bfea8102452466a27673cda943cd26ca6c1e4ccf94812ec2543373faa85"
+    },
+    "research": {
+      "kind": "search",
+      "status": "OK",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "existing-lyrics-retrieval",
+      "query": "",
+      "resultCount": 2,
+      "sources": [
+        {
+          "title": "Tyga - Rack City Lyrics - Genius",
+          "source": "genius.com",
+          "url": "https://genius.com/Tyga-rack-city-lyrics",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "Tyga - Rack City Lyrics | AZLyrics.com",
+          "source": "www.azlyrics.com",
+          "url": "https://b.azlyrics.com/?u=%2Flyrics%2Ftyga%2Frackcity.html",
+          "snippet": "",
+          "rank": null
+        }
+      ],
+      "sourceSites": [
+        "b.azlyrics.com",
+        "genius.com"
+      ],
+      "widgetKinds": [
+        "search-results"
+      ],
+      "trace": [
+        {
+          "phase": "RESEARCH_STARTED",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research started",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "duckduckgo-lite",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "duckduckgo-lite",
+          "activity": "Using duckduckgo-lite",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate did not satisfy verification",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "web-page",
+          "activity": "Alternate lyrics source fetch failed",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+      "sha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up \"rack city\" \"tyga\" lyrics…"
+      },
+      {
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed"
+      },
+      {
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete"
+      },
+      {
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate"
+      },
+      {
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification"
+      },
+      {
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed"
+      },
+      {
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Alternate lyrics source fetch failed"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK"
+      },
+      {
+        "phase": "WIDGET_READY",
+        "reason": "search-results"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok."
+      },
+      {
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ]
+  }
+}
