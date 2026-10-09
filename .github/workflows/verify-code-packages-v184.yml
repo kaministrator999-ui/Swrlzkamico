@@ -1,0 +1,62 @@
+name: Code Package Download v184 — Isolated Verification
+
+on:
+  push:
+    branches:
+      - feature/coder-download-packages-v184
+    paths:
+      - "hf_space/code_packages.py"
+      - "hf_space/station.py"
+      - "hf_space/test_code_packages_v184.py"
+      - "hf_space/test_code_packages_http_v184.py"
+      - "chat/§wyrlz/index.html"
+      - ".github/workflows/verify-code-packages-v184.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-code-download-v184
+  cancel-in-progress: false
+
+jobs:
+  source-and-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Dependency-light Python syntax and package-unit tests
+        run: |
+          set -euo pipefail
+          python -m py_compile hf_space/station.py hf_space/code_packages.py hf_space/test_code_packages_v184.py hf_space/test_code_packages_http_v184.py
+          PYTHONPATH=hf_space python hf_space/test_code_packages_v184.py
+      - name: Frontend inline-script syntax + delivery-contract check
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path("chat/§wyrlz/index.html").read_text(encoding="utf-8")
+          assert 'const addCodePackageLink=(node,thread,msg)=>' in s
+          assert 'const codePackageLink=(thread,msg,forceArchive=false)=>' in s
+          assert 'Download all";' not in s
+          assert 'addCodePackageLink(node,thread,msg)' in s
+          assert 'asArchive:archive?"true":"false"' in s
+          matches=re.findall(r'<script\b[^>]*>([\s\S]*?)</script\s*>',s,re.I)
+          assert matches, "Expected inline scripts"
+          for i,script in enumerate(matches):
+              if script.strip(): Path(f"/tmp/swrlz-inline-{i}.js").write_text(script,encoding="utf-8")
+          print(f"JS_SCRIPTS_EXTRACTED count={len(matches)}")
+          PY
+          for file in /tmp/swrlz-inline-*.js; do node --check "$file"; done
+      - name: Request/session isolation endpoint integration
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check 'fastapi>=0.115,<1' 'httpx>=0.27,<1'
+          PYTHONPATH=hf_space python hf_space/test_code_packages_http_v184.py
