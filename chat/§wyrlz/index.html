@@ -1075,9 +1075,11 @@
         const record=(artifact.revisions||[]).find(r=>Number(r?.revision||0)===revision);
         const sha=String(msg.meta?.artifactSourceHash||record?.sourceHash||"");
         if(!revision||!/^[0-9a-f]{64}$/.test(sha))return null;
-        const archive=forceArchive||artifact.files.length>1||!!record?.archiveRequested;
+        if(!record||!Array.isArray(record.files)||!record.files.length)return null;
+        const count=record.files.length;
+        const archive=forceArchive||count>1||!!record.archiveRequested;
         const qs=new URLSearchParams({threadId:String(thread.id||""),artifactId:String(artifact.id||""),revision:String(revision),sourceHash:sha,asArchive:archive?"true":"false"});
-        return {url:"/api/lalm_station/artifacts/download?"+qs.toString(),archive,count:artifact.files.length};
+        return {url:"/api/lalm_station/artifacts/download?"+qs.toString(),archive,count};
       };
       const addCodePackageLink=(node,thread,msg)=>{
         const packageInfo=codePackageLink(thread,msg);
