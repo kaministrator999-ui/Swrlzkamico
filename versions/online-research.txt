@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.20
-REVISION=1.0.20-blank-separated-lyric-line-repair-v172
+VERSION=1.0.21
+REVISION=1.0.21-cross-source-identity-and-text-fetch-v173
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
