@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mv157yy1-680703526-296049272",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "478de3173a300cb835cc1900acf0fbcaec1137ae",
+  "persistedAtUnixMs": 1791561139648,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mv157yy1-680703526-296049272",
+    "turnIndex": 1,
+    "userText": "Can you provide lyrics to rack city by tyga",
+    "capturedAtUnixMs": 1791561139647
+  }
+}
