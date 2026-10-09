@@ -450,6 +450,7 @@ assert v178_accepted["modelContext"]["verifiedLyrics"]["sourceUrl"]==v178_rescue
 assert v178_accepted["musicStructureDebug"]["explicitMusicalSectionCount"]>=2,v178_accepted
 assert v178_accepted["lyricsRescueSearchDebug"][0]["admittedCount"]>=1,v178_accepted
 assert v178_accepted["lyricsRescueSearchDebug"][0]["candidates"][0]["decision"]=="ACCEPTED",v178_accepted
+assert online_tools.copy_lyrics_rescue_search_debug(v178_accepted["lyricsRescueSearchDebug"])[0]["candidates"][0]["decision"]=="ACCEPTED"
 assert int(online_tools.ONLINE_OBSERVABILITY_REVISION.split("-",1)[0].lstrip("v"))>=178
 print("live-27-last-slot-structured-rescue-v178 PASS")
 print("live-28-unmarked-snippet-identity-rescue-v179 PASS")
