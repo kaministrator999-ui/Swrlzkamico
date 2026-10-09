@@ -1,3 +1,23 @@
+## UPDATE STARTED — 2026-10-09 — independent heading song-identity reconciliation + text-body source budget v173
+
+**Trigger:** user live `swrlz-dragon-chat (22).json`, exported 2026-10-09 06:33 UTC after the v172 release. Test prompt was "Can you provide lyrics for rack city tyga" (no "by"). Retrieval response remained blocked; unlike v171, no LyricsFreak body was fetched.
+
+**Observed defects:** (1) `songIdentity.title="rack city tyga"`, `primaryArtist=""`; natural unseparated artist/title request treated artist as title token. (2) reasoner Genius fetch error; AZLyrics access challenge; third page visit `www.youtube.com/watch` rejected with `ValueError`, although lyric-oriented candidates `stlyrics.org`, `lyricsondemand.com`, and `lyricshare.net` were present in the same eight search results. The v171 observability marker persisted because v172 did not change `ONLINE_OBSERVABILITY_REVISION`; marker alone was not proof of stale deployment. No new v172 extractor defect has been demonstrated by this session.
+
+**Root ownership:** `hf_space/song_identity.py` + `hf_space/online_tools.py`, not the musical stanza/presentation downstream or UI. The 3-total-page cap remains authoritative.
+
+**Bounded v173 candidate:**
+- Resolve an unseparated title/artist query **only** after two distinct web-result source families independently express the same title+artist split in their headings. Never guess by word-count split alone. Preserve the original query/provenance for the actual search.
+- Exclude video/music-stream destinations from direct lyric-body fetch attempts (keep them eligible for search-result links); preserve two/family diversity and original fetch budget.
+- Emit `ONLINE_OBSERVABILITY_REVISION=v173-cross-source-identity-and-text-fetch-priority` so export makes installed candidate observable.
+- Append Dragon Chat (22)-shaped integration + fail-closed regression to the already mandatory `tests/test_diverse_lyric_fetch_budget_v170.py` validation gate. Keep v172 blank-separated extraction unchanged.
+
+**Source candidate commits:** `def4a6f423e0244324e3b3ce61c76c444c010f5b` / corrected regex `52e9912853141a8cb7e5c84bf57edf0fc7c21c9d` (identity) + `124e8c817d1573e519573de4f3f697de8ec736c6` (adapter) + `60b88d865f2f05efcb6ef8809ebd6d3be9ff30d4` (regression).
+
+**Version intent:** Repository Work 1.0.103, Online Research 1.0.21, Deployment Control 1.0.33. Server Runtime stays 2.3.325 until successful guarded publication.
+
+**Gate:** existing `kamiloki/Swyrlz` gated validation/snapshot/deploy with regression suite. **Status:** SOURCE CANDIDATE COMMITTED / VALIDATION AND RELEASE PENDING.
+
 ## UPDATE FINISHED — 2026-10-08 — blank-separated single lyric lines v172
 
 **Outcome:** ANCHORED LYRIC BODIES WITH ONE BLANK LINE BETWEEN EACH CONTENT LINE NOW EXTRACT AS ONE UNLABELED BLOCK / GUARDED HUGGING FACE DEPLOYMENT SUCCESS / USER-VISIBLE ACCEPTANCE PENDING.
