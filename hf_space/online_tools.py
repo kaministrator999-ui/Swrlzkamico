@@ -784,7 +784,7 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
             if (head in {title_norm,artist_norm+" lyrics", "by "+artist_norm}
                 and head and (head==title_norm or artist_norm)):
                 continue
-            if re.fullmatch(r"\\s*\\([^()]{1,85}\\s+(?:mixtape\\s+version|album\\s+version|single\\s+version|version)\\s*\\)\\s*",line,re.I):
+            if re.fullmatch(r"\s*\([^()]{1,85}\s+(?:mixtape\s+version|album\s+version|single\s+version|version)\s*\)\s*",line,re.I):
                 continue
         if started and _LYRIC_HARD_BOUNDARY.fullmatch(line):
             terminal_kind="HARD_BOUNDARY"; terminal_line=line; break
