@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-09 — Code artifact single-file and structured ZIP downloads v184
+
+**User product decision:** When the Chat coder produces a completed file, provide a direct download link. For a multi-file response, provide ONE structured ZIP archive that preserves relative directory layout. When the user explicitly requests an archive, ZIP even a single generated file. Do not falsely claim to have saved or packaged unfinished streamed code; preserve non-file conversational behavior.
+
+**Inspected existing ownership:** `feature/hf-space-manual-deploy:chat/§wyrlz/index.html` already renders fenced file blocks with per-file Blob download and grouped tabs, but `Download all` fires multiple individual downloads. `hf_space/station.py` already persists versioned `codeArtifacts`, source SHA and full file bodies in an active process-local thread; backend provides session export but no per-artifact ZIP route. Reuse these canonical files/revisions and the user's own session cookie; no second artifact owner, no extra inference model, no external ZIP dependency.
+
+**Implementation boundary:** isolated `feature/coder-download-packages-v184` based on exact HF candidate `a44225276161d4af66600e3a7f2499854577ecff`. Add Python stdlib file/ZIP packaging with normalized safe relative paths, duplicate/cap limits, source hash/revision, content disposition, no-cache, and caller-scoped GET; UI renders real same-origin download links only after a committed code artifact, with single-file direct / multi-file ZIP / user-explicit archive ZIP. Keep CodeArtifact revision ownership, no self-authorized code execution/deployment, preserve existing unrelated Chat route/scroll/replay/lyrics behavior.
+
+**Test/verification:** unit-test ZIP and single-file bytes, zip-slip and zip-bomb boundary, duplicate paths, path-depth and size caps, revision/source hashes, archive-request detection, session isolation, and UI attachment visibility; run branch-only CI without HF deployment; open draft PR, do not merge or trigger protected release as this is a reviewable experimental candidate. Version repository work only on governed documentation completion, not Server Runtime/Chat/LALM unless actually deployed. Preserve live requests.
+
+**Status: IN PROGRESS.**
+
 ## UPDATE FINISHED — 2026-10-09 — Maturity v4: source-aware effort escalation and offline comparison gate
 
 **Result:** DEVELOPMENT CANDIDATE CI VERIFIED / STACKED DRAFT REVIEW OPEN / CURRICULUM COMPLETE / NO PRODUCTION ACTIVATION / NO MODEL-WEIGHT TRAINING. Continued user-requested progression beyond source lessons and first-hop v182 classifier to evidence-aware effort escalation and a provenance-conscious Qwen/700M pairing harness. Source only; no hosted-model output-quality improvement claimed.
