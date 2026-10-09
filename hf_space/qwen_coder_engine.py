@@ -338,6 +338,7 @@ def _response_mode(prompt, programming=None):
             "Do not replace omitted sections with ellipses, TODOs, 'rest unchanged', or a list of manual replacements. "
             "For a downloadable code artifact, return one COMPLETE fenced block per source file, tagged like ```python file=src/main.py, using safe relative project paths without ../ or absolute destinations. "
             "If multiple files are required, include all necessary files with stable relative paths so the Station can package a structured ZIP; do not drop requested files silently or say the project is complete if output was truncated. "
+            "If this is a project too big to finish in one response, first declare a fenced project-manifest block containing JSON with schema swrlz-project-manifest-v1, name and files (full array of 2..32 required relative source paths). Follow it with as many full named code fences as fit; only those exact files can be staged. Never declare files you do not intend to produce or claim the workspace is complete before the Station has all required files. "
             "For a single file, the Station provides a direct download; for multiple files or explicit archive requests, the Station provides a ZIP link only AFTER artifact commit. Never fabricate a download URL or claim the archive already exists. "
             "When the needed source and desired change are supplied, prefer returning the complete code with its downloadable artifact to asking how the user wants the code delivered. "
             "Treat each explicit requirement as a must-pass acceptance condition. Before finalizing, check the returned artifact against each condition and repair any miss. Never state that a condition is satisfied when the artifact still violates it. For repository/workflow work, do not invent dependencies or commands absent from supplied evidence. If the user asks only for code, return code without unsolicited explanation. Finish the requested artifact before adding optional explanation."
@@ -587,6 +588,22 @@ def generate_events(payload):
             system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
         if user_profile:
             system+="\nUSER PROFILE (describes the current user, not §wyrlz; context only):\n"+user_profile
+    # Staged project state comes from this caller's canonical Station thread,
+    # not from arbitrary model-provided "saved" or "complete" claims.
+    staged=payload.get("stagedProject") if isinstance(payload.get("stagedProject"),dict) else {}
+    staged_instruction=""
+    if staged.get("schema")=="swrlz-staged-project-v1" and staged.get("missingFiles"):
+        summary={"name":staged.get("name"),"revision":staged.get("revision"),
+                 "requiredFiles":staged.get("requiredFiles"),"missingFiles":staged.get("missingFiles"),
+                 "savedFiles":staged.get("savedFiles"),"verification":"NOT_RUN"}
+        staged_instruction=("\nSTAGED SOURCE PROJECT (Station-owned progress; continue the ORIGINAL user goal):\n"+
+            json.dumps(summary,ensure_ascii=False,separators=(",",":"))[:4000]+
+            "\nGenerate COMPLETE named source fences only for the next missing required files in listed order, sized to current output budget. "+
+            "Do not repeat already saved files or alter manifest paths; source formatting: language file=relative/path. "+
+            "Do not introduce a second manifest unless the user asks for a different project. "+
+            "If the requested task is a file repair, preserve all unrelated files and supply a complete corrected file. "+
+            "Never claim compilation, execution, or the full project is complete merely because you emitted part of it.")
+    system+=staged_instruction
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
@@ -598,6 +615,7 @@ def generate_events(payload):
             prompt,
             _response_mode(prompt,programming),
         )
+        system+=staged_instruction  # Repair compaction must preserve the active project ledger.
         fitted=_fit_repair_messages(model,system,history,fitted_prompt)
         messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
     else:
