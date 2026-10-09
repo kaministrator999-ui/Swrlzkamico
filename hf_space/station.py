@@ -20,6 +20,10 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 from code_packages import PackageError, build_package, wants_archive
+from staged_workspaces import (WorkspaceError, WorkspaceConflict, create_workspace,
+                               attach_revision, progress as workspace_progress,
+                               finalize as finalize_workspace, cancel as cancel_workspace,
+                               downloadable_files, MAX_WORKSPACES_PER_THREAD)
 try:
     from google.auth.transport import requests as google_requests
     from google.oauth2 import id_token as google_id_token
@@ -420,6 +424,157 @@ def download_code_artifact(
             "X-Code-Package-Files": str(package["fileCount"]),
         },
     )
+
+
+def _workspace_session_thread(request: Request, thread_id: str):
+    """Must be called holding _lock; do not mint a new session for downloads."""
+    if not isinstance(thread_id, str) or not 1 <= len(thread_id) <= 160:
+        raise HTTPException(400, "Invalid thread locator")
+    sid=request.cookies.get("swrlz_hf_sid")
+    session=_sessions.get(sid) if sid else None
+    if session is None:
+        raise HTTPException(404, "Workspace session unavailable")
+    thread=next((x for x in session.get("threads", []) if x.get("id")==thread_id), None)
+    if thread is None:
+        raise HTTPException(404, "Workspace thread unavailable")
+    return session, thread
+
+
+def _workspace_record(thread, workspace_id):
+    return next((w for w in thread.get("projectWorkspaces", [])
+                 if w.get("id")==workspace_id), None)
+
+
+@app.get("/api/lalm_station/workspaces")
+def list_project_workspaces(request: Request, threadId: str):
+    with _lock:
+        _,thread=_workspace_session_thread(request,threadId)
+        return {"schema":"swrlz-staged-workspace-list-v1",
+                "workspaces":[workspace_progress(w) for w in thread.get("projectWorkspaces",[])]}
+
+
+@app.post("/api/lalm_station/workspaces")
+async def create_project_workspace(request: Request):
+    body=await request.json()
+    if not isinstance(body,dict):
+        raise HTTPException(400,"Invalid workspace request")
+    with _lock:
+        session,thread=_workspace_session_thread(request,body.get("threadId"))
+        current=thread.setdefault("projectWorkspaces",[])
+        if len(current)>=MAX_WORKSPACES_PER_THREAD:
+            raise HTTPException(422,"Workspace capacity reached for this thread")
+        try:
+            project=create_workspace("workspace-"+uuid.uuid4().hex,
+                                     body.get("title","Project files"),body.get("requiredPaths"))
+        except WorkspaceError as exc:
+            raise HTTPException(422,str(exc)) from exc
+        current.append(project)
+        session["revision"]+=1
+        return {"ok":True,"workspace":workspace_progress(project)}
+
+
+@app.post("/api/lalm_station/workspaces/attach")
+async def attach_project_source(request: Request):
+    body=await request.json()
+    if not isinstance(body,dict):raise HTTPException(400,"Invalid attach request")
+    with _lock:
+        session,thread=_workspace_session_thread(request,body.get("threadId"))
+        project=_workspace_record(thread,body.get("workspaceId"))
+        if project is None:raise HTTPException(404,"Workspace not found")
+        artifact=_find_artifact(thread,body.get("artifactId"))
+        if artifact is None:raise HTTPException(404,"Code artifact not found")
+        try:
+            source_revision=int(body.get("artifactRevision") or 0)
+            expected=int(body.get("expectedWorkspaceRevision") or 0)
+        except (ValueError,TypeError):
+            raise HTTPException(400,"Invalid revision")
+        source_sha=body.get("artifactSourceHash")
+        revision_record=_artifact_revision_record(artifact,source_revision)
+        if revision_record is None or str(revision_record.get("sourceHash") or "")!=source_sha:
+            raise HTTPException(409,"Artifact revision/source hash changed")
+        source_files=copy.deepcopy(revision_record.get("files") or [])
+        if _artifact_source_hash(source_files)!=source_sha:
+            raise HTTPException(409,"Artifact body fails integrity check")
+        try:
+            updated=attach_revision(
+                project,source_files,artifact_id=artifact["id"],
+                artifact_revision=source_revision,artifact_sha=source_sha,
+                expected_revision=expected,
+            )
+        except WorkspaceConflict as exc:
+            raise HTTPException(409,str(exc)) from exc
+        except WorkspaceError as exc:
+            raise HTTPException(422,str(exc)) from exc
+        project.clear();project.update(updated)
+        session["revision"]+=1
+        return {"ok":True,"workspace":workspace_progress(project)}
+
+
+@app.post("/api/lalm_station/workspaces/finalize")
+async def finalize_project_workspace(request: Request):
+    body=await request.json()
+    if not isinstance(body,dict):raise HTTPException(400,"Invalid finalize request")
+    with _lock:
+        session,thread=_workspace_session_thread(request,body.get("threadId"))
+        project=_workspace_record(thread,body.get("workspaceId"))
+        if project is None:raise HTTPException(404,"Workspace not found")
+        try:
+            result=finalize_workspace(project,int(body.get("expectedWorkspaceRevision") or 0))
+        except WorkspaceConflict as exc:
+            raise HTTPException(409,str(exc)) from exc
+        except (WorkspaceError,TypeError,ValueError) as exc:
+            raise HTTPException(422,str(exc)) from exc
+        project.clear();project.update(result)
+        session["revision"]+=1
+        return {"ok":True,"workspace":workspace_progress(project)}
+
+
+@app.post("/api/lalm_station/workspaces/cancel")
+async def cancel_project_workspace(request: Request):
+    body=await request.json()
+    if not isinstance(body,dict):raise HTTPException(400,"Invalid cancel request")
+    with _lock:
+        session,thread=_workspace_session_thread(request,body.get("threadId"))
+        project=_workspace_record(thread,body.get("workspaceId"))
+        if project is None:raise HTTPException(404,"Workspace not found")
+        try:
+            result=cancel_workspace(project,int(body.get("expectedWorkspaceRevision") or 0))
+        except WorkspaceConflict as exc:
+            raise HTTPException(409,str(exc)) from exc
+        except (WorkspaceError,ValueError,TypeError) as exc:
+            raise HTTPException(422,str(exc)) from exc
+        project.clear();project.update(result)
+        session["revision"]+=1
+        return {"ok":True,"workspace":workspace_progress(project)}
+
+
+@app.get("/api/lalm_station/workspaces/download")
+def download_project_workspace(request: Request, threadId: str,
+                               workspaceId: str, revision: int = 0,
+                               sourceHash: str = ""):
+    with _lock:
+        _,thread=_workspace_session_thread(request,threadId)
+        project=_workspace_record(thread,workspaceId)
+        if project is None:raise HTTPException(404,"Workspace not found")
+        try:
+            files=downloadable_files(project,revision,sourceHash)
+        except WorkspaceConflict as exc:
+            raise HTTPException(409,str(exc)) from exc
+        except WorkspaceError as exc:
+            raise HTTPException(422,str(exc)) from exc
+    try:
+        package=build_package(files,force_archive=True)
+    except PackageError as exc:
+        raise HTTPException(422,str(exc)) from exc
+    filename=package["filename"].replace('"',"")
+    return Response(content=package["body"],media_type="application/zip",headers={
+        "Content-Disposition":f'attachment; filename="{filename}"',
+        "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff",
+        "Cross-Origin-Resource-Policy":"same-origin",
+        "X-Code-Package-Sha256":package["sha256"],
+        "X-Code-Package-Files":str(package["fileCount"]),
+        "X-Workspace-Validation":"not-run",
+    })
 
 
 @app.post("/api/chat_state")
