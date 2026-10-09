@@ -1079,7 +1079,66 @@
         const count=record.files.length;
         const archive=forceArchive||count>1||!!record.archiveRequested;
         const qs=new URLSearchParams({threadId:String(thread.id||""),artifactId:String(artifact.id||""),revision:String(revision),sourceHash:sha,asArchive:archive?"true":"false"});
-        return {url:"/api/lalm_station/artifacts/download?"+qs.toString(),archive,count};
+        return {url:"/api/lalm_station/artifacts/download?"+qs.toString(),archive,count,revision,sourceHash:sha,artifactId:String(artifact.id||""),paths:record.files.map(file=>String(file?.path||""))};
+      };
+      const workspaceApi=async(path,options={})=>{
+        const response=await fetch("/api/lalm_station/workspaces"+path,{credentials:"same-origin",cache:"no-store",...options});
+        let data={};try{data=await response.json();}catch(_){}
+        if(!response.ok)throw new Error(typeof data.detail==="string"?data.detail:"Workspace request failed (HTTP "+response.status+")");
+        return data;
+      };
+      const projectZipLink=project=>{
+        const qs=new URLSearchParams({threadId:activeThreadId,workspaceId:project.id,revision:String(project.revision),sourceHash:String(project.sourceHash||"")});
+        return "/api/lalm_station/workspaces/download?"+qs.toString();
+      };
+      const manageSourceWorkspace=async(thread,packageInfo,actions)=>{
+        let projects=(await workspaceApi("?"+new URLSearchParams({threadId:thread.id}))).workspaces||[];
+        let project=null;
+        if(projects.length){
+          const options=projects.map((item,index)=>(index+1)+": "+item.title+" ["+item.state+" · "+item.completedCount+"/"+item.requiredCount+"]").join("\n");
+          const selected=window.prompt("Select project workspace (number), or 0 for new:\n"+options,projects.length===1?"1":"0");
+          if(selected===null)return;
+          const number=Number(selected.trim());
+          if(!Number.isInteger(number)||number<0||number>projects.length)throw new Error("Select a listed workspace number");
+          if(number)project=projects[number-1];
+        }
+        if(!project){
+          const title=window.prompt("Project workspace name","Generated project");
+          if(title===null)return;
+          const list=window.prompt("List ALL required relative file paths (one per line). The ZIP stays locked until each is included:",packageInfo.paths.join("\n"));
+          if(list===null)return;
+          const requiredPaths=list.split(/\r?\n/).map(item=>item.trim()).filter(Boolean);
+          const created=await workspaceApi("",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({threadId:thread.id,title,requiredPaths})});
+          project=created.workspace;
+        }
+        if(project.state==="READY"){
+          const download=document.createElement("a");download.className="code-package-link";download.href=projectZipLink(project);
+          download.textContent="Download completed project ZIP";actions.appendChild(download);return;
+        }
+        if(project.state!=="IN_PROGRESS")throw new Error("This workspace was cancelled; create another workspace");
+        // Never upload browser-provided file bytes. Refer only to the immutable,
+        // already committed source revision in this same session and thread.
+        const attached=await workspaceApi("/attach",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+          threadId:thread.id,workspaceId:project.id,artifactId:packageInfo.artifactId,
+          artifactRevision:packageInfo.revision,artifactSourceHash:packageInfo.sourceHash,
+          expectedWorkspaceRevision:project.revision,
+        })});
+        project=attached.workspace;
+        const missing=project.remainingPaths||[];
+        if(missing.length){
+          window.alert("Added "+project.completedCount+"/"+project.requiredCount+" required files.\nStill needed:\n"+missing.join("\n")+"\n\nGenerate those files in future Chat replies, then select the same workspace.");
+          return;
+        }
+        // Manifest complete does not mean independently tested code; describe it
+        // as assembled source rather than passing verification.
+        const finished=await workspaceApi("/finalize",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+          threadId:thread.id,workspaceId:project.id,expectedWorkspaceRevision:project.revision,
+        })});
+        const download=document.createElement("a");download.className="code-package-link";
+        download.href=projectZipLink(finished.workspace);
+        download.textContent="Download assembled ZIP · "+finished.workspace.completedCount+" files";
+        download.title="All listed source files are assembled; code correctness is not automatically verified";
+        actions.appendChild(download);
       };
       const addCodePackageLink=(node,thread,msg)=>{
         const packageInfo=codePackageLink(thread,msg);
@@ -1089,7 +1148,18 @@
         link.href=packageInfo.url;
         link.textContent=packageInfo.archive?"Download ZIP · "+packageInfo.count+" file"+(packageInfo.count===1?"":"s"):"Download file";
         link.setAttribute("aria-label",packageInfo.archive?"Download generated project ZIP":"Download generated code file");
-        actions.appendChild(link);node.querySelector(".assistant-body")?.appendChild(actions);
+        actions.appendChild(link);
+        const projectButton=document.createElement("button");projectButton.type="button";
+        projectButton.className="code-package-link";projectButton.textContent="Project workspace";
+        projectButton.title="Assemble a multi-turn source project and unlock its ZIP after all required files are present";
+        projectButton.onclick=async()=>{
+          projectButton.disabled=true;
+          try{await manageSourceWorkspace(thread,packageInfo,actions);}
+          catch(error){window.alert(String(error?.message||"Workspace failed"));}
+          finally{projectButton.disabled=false;}
+        };
+        actions.appendChild(projectButton);
+        node.querySelector(".assistant-body")?.appendChild(actions);
       };
       const parseFenceInfo=info=>{
         const parts=String(info||"").trim().split(/\s+/).filter(Boolean);const language=(parts.shift()||"code").toLowerCase();const attrs={};
