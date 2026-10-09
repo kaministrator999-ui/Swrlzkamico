@@ -14,6 +14,8 @@
 
 **Version impact:** Repository Work 1.0.104; Online Research 1.0.22; LALM Engine 2.1.160; Deployment Control 1.0.34. Server Runtime remains 2.3.326 until a real guarded HF release succeeds.
 
+**Failed initial release gate / corrective follow-up:** GitHub workflow [#37899694296](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37899694296) stopped at mandatory lyrics regression, **before** any HF upload. Source-specific problem was a stale exact `ONLINE_OBSERVABILITY_REVISION=v173-...` assertion in the v170 backward-compatibility test, not a lyric-body logic failure. Corrected v170 test to require monotonic `v>=173` while the v174-specific test independently requires the exact new diagnostic label; candidate correction commit `2486802ae6577f3db3c012181d3edbad0e217f2b`. The failed workflow remains linked as evidence; release re-request required.
+
 **Continuation:** guarded existing-space validation, regression gate, rollback snapshot, deploy `kamiloki/Swyrlz`, exact revision evidence, then Server Runtime version and roadmap closure only on success. User-visible v174 acceptance separately pending.
 
 **Status:** SOURCE PATCH + REGRESSION COMMITTED / DEPLOY VALIDATION NOT YET VERIFIED.
