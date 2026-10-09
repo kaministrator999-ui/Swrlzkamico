@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-09-v174-footer-repeat-metadata-gate-retry-002
+REQUEST_NONCE=2026-10-09-v175-creative-lyrics-context-routing-001
