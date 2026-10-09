@@ -15,7 +15,7 @@ import re
 
 _CRAFT_REQUEST = re.compile(
     r"\b(?:write|make|create|compose|generate|craft|draft|perform|spit|give\s+me|hit\s+(?:me\s+)?with)\b"
-    r".{0,110}\b(?:song|rap|freestyle|lyrics?|verse|bars?|cypher|track|hook|chorus)\b"
+    r".{0,110}\b(?:song|rap|freestyle|lyrics?|verse|bars?|cypher|track|hook|chorus|lullaby|ballad|spoken\s+word)\b"
     r"|\b(?:freestyle|spit\s+(?:some\s+)?bars?|next\s+(?:song|track)|another\s+(?:song|rap|freestyle))\b",
     re.I | re.S,
 )
