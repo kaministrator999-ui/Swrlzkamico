@@ -132,3 +132,50 @@ def extend_continuous_lyrics(prefix: list[str], new_raw: str,
     if len({line.casefold().strip() for line in suffix}) != len(suffix):
         return None
     return list(prefix)+suffix
+
+
+def continuation_shape_receipt(prefix: list[str], raw: str,
+                               request: dict[str,Any]) -> dict[str,Any]:
+    """Privacy-safe diagnostics for an unaccepted model-authored suffix.
+
+    Return reason codes and counts ONLY; never store user lyric words.
+    """
+    total=request.get("requestedLines")
+    missing=max(0,total-len(prefix)) if isinstance(total,int) else None
+    full,syntax_faults=_extract_lines(raw)
+    nonempty=[line for line in full if line]
+    recoverable=recoverable_continuous_lines(raw,request)
+    codes=list(syntax_faults)
+    if not nonempty:
+        codes.append("empty-continuation")
+    if recoverable is None and not syntax_faults and nonempty:
+        if not request.get("continuous"):
+            codes.append("unsupported-noncontinuous-continuation")
+        if any(_REFUSAL.search(line) for line in nonempty):
+            codes.append("refusal-in-continuation")
+        if any(_META.search(line) or _TITLE.search(line) for line in nonempty):
+            codes.append("explanation-or-title-in-continuation")
+        if any(_SECTION.fullmatch(line) for line in nonempty):
+            codes.append("section-label-in-continuation")
+        if not codes:
+            codes.append("unusable-continuation-format")
+    if recoverable is not None:
+        if missing is not None and len(recoverable)>missing:
+            codes.append("too-many-continuation-lines")
+        seen={line.casefold().strip() for line in prefix}
+        if any(line.casefold().strip() in seen for line in recoverable):
+            codes.append("prior-lyric-line-repeated")
+        if len({line.casefold().strip() for line in recoverable})!=len(recoverable):
+            codes.append("duplicate-new-lyric-lines")
+    if not codes:
+        codes.append("continuation-not-accepted")
+    return {
+        "status":"REJECT",
+        "reasons":list(dict.fromkeys(codes)),
+        "requestedLyricLines":total,
+        "observedLyricLines":len(prefix),
+        "observedSuffixNonemptyLines":len(nonempty),
+        "remainingLyricLines":missing,
+        "formalOnly":True,
+        "semanticQualityVerified":False,
+    }
