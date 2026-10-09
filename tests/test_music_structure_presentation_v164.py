@@ -160,3 +160,60 @@ assert "FREESTYLE defaults to one continuous verse" in policy,policy
 assert "BRIDGE is a contrasting section" in policy,policy
 
 print("music-structure-presentation-v164 PASS")
+
+# v177 Dragon Chat (26), refined by user's explicit correction:
+# Previous song = FORM study only. Nothing in the model's messages should
+# contain the reference song's actual vocabulary, hook, artist or title.
+from music_structure import (
+    creative_music_reference_projection, creative_music_transform_request,
+    MUSIC_CREATIVE_REFERENCE_POLICY,
+)
+CREATIVE_FOLLOWUP="Now can you use those lyrics as something to study and write me a whole new rap song"
+FORM_HISTORY=[
+    {"role":"user","content":"Can you provide lyrics to Test Signal by Example Artist"},
+    {"role":"assistant","content":"""Okay — here is verified lyric text:
+
+**[Verse 1]**
+Silver leviathans climb through the evening
+Magnetic lanterns are humming beneath us
+Scarlet compasses spin in the harbor
+Obsidian comets fly over the water
+
+────────
+
+**[Hook x2]**
+Cobalt umbrellas glow under the rainfall
+Tangerine rockets return to the rooftop
+
+────────
+
+**[Outro x2]**
+Paper constellations float over the highway
+Velvet horizons illuminate dawn
+Songwriters: Distinct Writer
+Publisher: Example Publishing
+Powered by LyricFind
+Top Lyrics
+**Lyrics source:** Example Artist — https://example.test/example
+"""},
+]
+snapshot=[dict(x) for x in FORM_HISTORY]
+projection,template=creative_music_reference_projection(CREATIVE_FOLLOWUP,FORM_HISTORY)
+assert template and template["sourceContentExcluded"] is True,template
+assert template["sectionSequence"]==["verse","hook","outro"],template
+assert [x["approxLineCount"] for x in template["sections"]]==[4,2,2],template
+assert [x["repeatCount"] for x in template["sections"]]==[None,2,2],template
+assert 5<=template["sections"][0]["medianWordsPerLine"]<=12,template
+assert len(projection)==len(FORM_HISTORY)==2,projection
+assert "STRUCTURAL reference" in projection[1]["content"],projection
+for forbidden in ["Silver leviathans","Magnetic lanterns","Cobalt umbrellas","Tangerine rockets","Distinct Writer","Test Signal","Example Artist"]:
+    assert forbidden not in str(projection),(forbidden,projection)
+    assert forbidden not in str(template),(forbidden,template)
+assert FORM_HISTORY==snapshot,"Projection modified durable original chat log"
+assert "Do NOT reuse reference WORDS" in MUSIC_CREATIVE_REFERENCE_POLICY
+assert "section sequence" in MUSIC_CREATIVE_REFERENCE_POLICY
+assert creative_music_transform_request(CREATIVE_FOLLOWUP)
+assert creative_music_reference_projection("What do those lyrics mean?",FORM_HISTORY)[1] is None
+assert creative_music_reference_projection("Write an unrelated new song",FORM_HISTORY)[1] is None
+print("structure-only-reference-no-lexical-borrowing-v177 PASS")
+
