@@ -1,0 +1,28 @@
+name: Lyric Ocean Corpus Integrity
+on:
+  pull_request:
+    paths:
+      - 'training/lyrics/**'
+      - 'hf_space/lyric_craft_school.py'
+      - 'hf_space/lyric_craft_catalog_v2.json'
+      - 'hf_space/lfm2_700m_engine.py'
+      - 'tests/test_archive_grounded_lyric_craft_v182.py'
+      - '.github/workflows/lyric-ocean-integrity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  corpus-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate without promotion
+        uses: actions/checkout@v4
+      - name: Compile bounded runtime teaching code
+        run: |
+          python -m py_compile hf_space/lyric_craft_school.py hf_space/lfm2_700m_engine.py
+      - name: Validate lyric school, revision evidence, and privacy shape
+        run: python tests/test_archive_grounded_lyric_craft_v182.py
+      - name: Report non-production scope
+        run: |
+          echo "Validated source-only corpus schemas, counts, teaching selector and evidence anchors."
+          echo "No GGUF weight training, creative-performance benchmark, HF release or deployment occurred."
