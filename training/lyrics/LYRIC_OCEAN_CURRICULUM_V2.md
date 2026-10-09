@@ -10,6 +10,19 @@ A narrow handful of praised songs teaches only a fragile local template. The goa
 
 The private history review has 261 unverified candidate cases from 172 different conversations: 136 with a positive next-turn signal, 90 exploratory responses and 35 correction/negative signals. Those remain **PRIVATE** and **UNAPPROVED FOR WEIGHT TRAINING**. The public source includes none of their text, thread ids, user reactions, prompts or private biographical details. The archive was exported through August 30, 2026; newer songs are outside that snapshot.
 
+## v3 curriculum continuation (source review, complete songs and explicit rewrites)
+
+**Do not interpret v2 approval labels as final.** [Evidence and Editorial Quality Protocol v3](./LYRIC_OCEAN_EDITORIAL_QC_V3.md) records the stricter archive-source verification: 261/261 source responses located, 29 lexical possible endorsements, 9 lexical possible corrections, 223 uncertain/other; all remain ungraded and private. Case-level reviews are not in GitHub.
+
+Newly authored **v3** assets:
+- [Eight longer original complete songs](./original_complete_songs_v3.json): 252 lines; distinct narrative, comedy, musical and multi-voice forms.
+- [24 original before/after lyric revision examples](./original_revision_pairs_v3.json): explicit weak and rewritten lines with named faults, separate from the older 64 metadata repair drills.
+- [Twelve-dimension editorial rubric](./editorial_rubric_v3.json): anchored 0–4 descriptors for eventual independent review. All scores remain unassigned.
+
+Across v2 + v3 there are **14 long-form drafts / 448 lines** and **24 short demonstrations / 192 lines**. This is **640 illustrative lyrical lines** before the separate 24 two-line-before/two-line-after revision pairs. No sample is approved as weight-training gold, and no model has learned updated weights. This staged work remains in draft PR #54. The major creative A/B examination stays deferred until breadth and independent review warrant it.
+
+---
+
 The public seed now supplies:
 - **768** synthetic creative exercises = 48 original situations × 16 technical lenses;
 - **64** synthetic failure/repair drills = 16 failure classes × four editing phases;
