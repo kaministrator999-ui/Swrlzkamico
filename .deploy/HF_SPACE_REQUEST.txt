@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
 SOURCE_REF=feature/hf-space-manual-deploy
-REQUEST_NONCE=2026-10-08-v172-blank-separated-single-lines-001
+REQUEST_NONCE=2026-10-09-v173-natural-song-identity-text-fetch-001
