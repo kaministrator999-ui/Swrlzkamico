@@ -1,0 +1,174 @@
+{
+  "schema": "swrlz-lyric-ocean-editorial-rubric-v3",
+  "status": "UNSCORED_INSTRUCTOR_RUBRIC_ONLY",
+  "domain": "original_songwriting_and_comparative_revision",
+  "minScore": 0,
+  "maxScore": 4,
+  "dimensions": [
+    {
+      "id": "source_alignment",
+      "measure": "Follows the actual writing request and its negative constraints",
+      "levels": {
+        "0": "Off-topic or disallowed structure",
+        "1": "Only loosely matches theme",
+        "2": "Correct form/topic but misses minor constraints",
+        "3": "All explicit constraints followed with meaningful craft",
+        "4": "Precisely serves request with zero structural/negative-constraint loss"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    },
+    {
+      "id": "meaning_coherence",
+      "measure": "Each lyrical clause makes sense and connects causally",
+      "levels": {
+        "0": "Frequent nonsensical rhyme-forcing",
+        "1": "Some plausible lines but inconsistent",
+        "2": "Mostly logical with occasional unclear turns",
+        "3": "Coherent event/argument/voice from beginning to end",
+        "4": "Every technique serves a causal or emotional purpose"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    },
+    {
+      "id": "rhyme_architecture",
+      "measure": "End families and internal rhymes support syntax",
+      "levels": {
+        "0": "Mechanical or no intentional sound relation",
+        "1": "One repetitive/forced rhyme pattern",
+        "2": "Functional rhyme with some variation",
+        "3": "Varied internal/end patterns without compromised meaning",
+        "4": "Complex, natural and expressive rhyme movement"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    },
+    {
+      "id": "cadence_performability",
+      "measure": "Humanly intelligible breath, stresses and beat phrasing",
+      "levels": {
+        "0": "Unperformable syllable piles or prose paragraphs",
+        "1": "Mostly same density, weak pulse",
+        "2": "Readable rhythm with some distinct accents",
+        "3": "Effective speed contrast, stress and breathing resets",
+        "4": "Fluid expressive speed changes and naturally timed punchlines"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    },
+    {
+      "id": "full_form_completion",
+      "measure": "The user receives a genuine completed song/verse",
+      "levels": {
+        "0": "Fragment, unfinished ending or irrelevant padding",
+        "1": "Bare sketch or very short sections",
+        "2": "Adequate length but weak progression",
+        "3": "All requested sections/length and clean ending",
+        "4": "Extended work feels necessary; every movement earns its place"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    },
+    {
+      "id": "hook_refrain_design",
+      "measure": "Repetition occurs only when musically and narratively useful",
+      "levels": {
+        "0": "Empty repeated padding or mandatory hook where forbidden",
+        "1": "Generic hook with little purpose",
+        "2": "Clear repeatable hook appropriate to form",
+        "3": "Memorable refrain anchored in title/scene, meaning evolves",
+        "4": "Hook or hookless form exactly chosen for expressive effect"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    },
+    {
+      "id": "scene_and_image",
+      "measure": "Specific nouns, setting and sensory consequences",
+      "levels": {
+        "0": "Default swagger/storm/fire/crown filler",
+        "1": "Some concrete detail but generic",
+        "2": "Several useful images, some generic",
+        "3": "Setting-specific imagery moves plot/mood",
+        "4": "Fresh images interact as a coherent system"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    },
+    {
+      "id": "narrative_development",
+      "measure": "Goals, opposition, moves and consequences progress",
+      "levels": {
+        "0": "Restates initial premise throughout",
+        "1": "Some motion but no change in stakes",
+        "2": "Understandable progression",
+        "3": "Decisions have clear consequences and satisfying arc",
+        "4": "Layered escalating arc with earned reversal and no filler"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    },
+    {
+      "id": "emotional_truth",
+      "measure": "Emotions follow from action, subtext and relationship",
+      "levels": {
+        "0": "Unmotivated sentiment or instant inspirational turn",
+        "1": "Named emotions with little evidence",
+        "2": "Emotion fits the scene",
+        "3": "Concrete choices create authentic emotional evolution",
+        "4": "Restraint and detail yield an earned, original emotional resolution"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    },
+    {
+      "id": "comic_or_battle_logic",
+      "measure": "When requested, jokes or rebuttals have a target and payoff",
+      "levels": {
+        "0": "Random insults or stated punchline explanations",
+        "1": "Some setups without payoff",
+        "2": "Several legible setups and turns",
+        "3": "Sharp subject-linked reversals with rhythmic landing",
+        "4": "Layered misdirection, callbacks and coherent sustained escalation"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    },
+    {
+      "id": "voice_originality",
+      "measure": "Independent diction, perspective and subject vocabulary",
+      "levels": {
+        "0": "Borrowed lines, recognizable hooks, repeated stock metaphors",
+        "1": "Generic phrasing or homogenous speakers",
+        "2": "Some independent choices with lapses",
+        "3": "Consistent distinctive original voice and scene",
+        "4": "Highly original while fully detached from reference words, title and imagery"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    },
+    {
+      "id": "revision_quality",
+      "measure": "A requested correction changes the failing observable",
+      "levels": {
+        "0": "Cosmetic commentary, unchanged failing work",
+        "1": "Some edits but the defect survives",
+        "2": "Visible fix with minor tradeoffs",
+        "3": "Specific defect repaired; earlier constraints retained",
+        "4": "Repair strengthens craft and meaning without collateral regression"
+      },
+      "score": null,
+      "judge": "HUMAN_OR_INDEPENDENT_EVALUATOR_REQUIRED"
+    }
+  ],
+  "criticalGates": [
+    "no_source_line_or_recognizable_hook_borrowing",
+    "all_explicit_user_constraints_satisfied",
+    "complete_output_shape_for_request",
+    "no_private_identifiers_in_public_examples",
+    "reference_only_mechanics_not_vocabulary"
+  ],
+  "audience": "editorial and independent evaluation, not model self certification",
+  "promotionPolicy": "No user historical item or synthetic instructor draft is accepted as weight-trainable without independent human QC, rights/privacy review, and absence of high-risk source overlap."
+}

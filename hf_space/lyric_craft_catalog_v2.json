@@ -1,0 +1,763 @@
+{
+  "schema": "swrlz-lyric-craft-router-catalog-v2",
+  "version": 2,
+  "status": "SOURCE_TEACHING_CARDS_NOT_WEIGHT_TRAINING",
+  "privacy": "No private source lyrics, prompts or reactions. Cards describe generalized craft mechanics.",
+  "design": "16 skill axes with construction, performance, and repair cues. Runtime selectors choose at most three short cues; 700M never receives the entire library.",
+  "count": 48,
+  "cards": [
+    {
+      "id": "internal-rhyme-build",
+      "axis": "internal-rhyme",
+      "role": "build",
+      "triggers": [
+        "internal rhyme",
+        "multisyllabic",
+        "multis",
+        "wordplay",
+        "rhyme chain",
+        "technical"
+      ],
+      "compactCue": "Keep 2–4 related sounds within a meaningful clause; resolve the clause before launching the next sound-pocket.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "internal-rhyme-perform",
+      "axis": "internal-rhyme",
+      "role": "perform",
+      "triggers": [
+        "internal rhyme",
+        "multisyllabic",
+        "multis",
+        "wordplay",
+        "rhyme chain",
+        "technical"
+      ],
+      "compactCue": "Place rhyme pivots at syntactic turns instead of forcing words at the same syllabic position.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "internal-rhyme-repair",
+      "axis": "internal-rhyme",
+      "role": "repair",
+      "triggers": [
+        "internal rhyme",
+        "multisyllabic",
+        "multis",
+        "wordplay",
+        "rhyme chain",
+        "technical"
+      ],
+      "compactCue": "If the clause becomes gibberish, replace the rhyme family without losing the underlying claim.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "high-speed-build",
+      "axis": "high-speed",
+      "role": "build",
+      "triggers": [
+        "fast",
+        "chopper",
+        "double-time",
+        "speed",
+        "rapid",
+        "triple-time",
+        "spit"
+      ],
+      "compactCue": "Pack a fast run around an intelligible verb-action rather than a random syllable list.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "high-speed-perform",
+      "axis": "high-speed",
+      "role": "perform",
+      "triggers": [
+        "fast",
+        "chopper",
+        "double-time",
+        "speed",
+        "rapid",
+        "triple-time",
+        "spit"
+      ],
+      "compactCue": "Alternate a dense 1–2 line cluster with a slower impact line and optional breath rest.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "high-speed-repair",
+      "axis": "high-speed",
+      "role": "repair",
+      "triggers": [
+        "fast",
+        "chopper",
+        "double-time",
+        "speed",
+        "rapid",
+        "triple-time",
+        "spit"
+      ],
+      "compactCue": "Remove one stressed syllable at a time until a human could plausibly deliver it.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "freestyle-build",
+      "axis": "freestyle",
+      "role": "build",
+      "triggers": [
+        "freestyle",
+        "cypher",
+        "off the top",
+        "spit bars"
+      ],
+      "compactCue": "Treat an unrequested freestyle as one evolving uninterrupted performance.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "freestyle-perform",
+      "axis": "freestyle",
+      "role": "perform",
+      "triggers": [
+        "freestyle",
+        "cypher",
+        "off the top",
+        "spit bars"
+      ],
+      "compactCue": "Build topic pivots through an object, contradiction or returning sound instead of inserted chorus headings.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "freestyle-repair",
+      "axis": "freestyle",
+      "role": "repair",
+      "triggers": [
+        "freestyle",
+        "cypher",
+        "off the top",
+        "spit bars"
+      ],
+      "compactCue": "A freestyle that loops its first boast without progressing should be redirected into a new scene.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "comedy-build",
+      "axis": "comedy",
+      "role": "build",
+      "triggers": [
+        "funny",
+        "joke",
+        "humor",
+        "parody",
+        "roast",
+        "silly",
+        "absurd",
+        "satire"
+      ],
+      "compactCue": "Set a normal expectation; let the next concrete detail expose its absurd consequence.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "comedy-perform",
+      "axis": "comedy",
+      "role": "perform",
+      "triggers": [
+        "funny",
+        "joke",
+        "humor",
+        "parody",
+        "roast",
+        "silly",
+        "absurd",
+        "satire"
+      ],
+      "compactCue": "Place the payoff on a short stress-heavy line after a busier setup.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "comedy-repair",
+      "axis": "comedy",
+      "role": "repair",
+      "triggers": [
+        "funny",
+        "joke",
+        "humor",
+        "parody",
+        "roast",
+        "silly",
+        "absurd",
+        "satire"
+      ],
+      "compactCue": "Do not explain the joke or depend solely on random nouns.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "narrative-build",
+      "axis": "narrative",
+      "role": "build",
+      "triggers": [
+        "story",
+        "narrative",
+        "journey",
+        "plot",
+        "character",
+        "chapter"
+      ],
+      "compactCue": "Give a character a goal, obstacle, attempt, and meaningful change.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "narrative-perform",
+      "axis": "narrative",
+      "role": "perform",
+      "triggers": [
+        "story",
+        "narrative",
+        "journey",
+        "plot",
+        "character",
+        "chapter"
+      ],
+      "compactCue": "Every 4–8 lines must alter a location, choice, relationship or cost.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "narrative-repair",
+      "axis": "narrative",
+      "role": "repair",
+      "triggers": [
+        "story",
+        "narrative",
+        "journey",
+        "plot",
+        "character",
+        "chapter"
+      ],
+      "compactCue": "Delete summary filler that restates the premise without adding an event.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "emotional-build",
+      "axis": "emotional",
+      "role": "build",
+      "triggers": [
+        "sad",
+        "heartbroken",
+        "loss",
+        "lonely",
+        "grief",
+        "emotional",
+        "reflective",
+        "healing"
+      ],
+      "compactCue": "Use a physical observation before naming an abstract emotion.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "emotional-perform",
+      "axis": "emotional",
+      "role": "perform",
+      "triggers": [
+        "sad",
+        "heartbroken",
+        "loss",
+        "lonely",
+        "grief",
+        "emotional",
+        "reflective",
+        "healing"
+      ],
+      "compactCue": "Let a small action, not a giant slogan, carry the emotional turn.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "emotional-repair",
+      "axis": "emotional",
+      "role": "repair",
+      "triggers": [
+        "sad",
+        "heartbroken",
+        "loss",
+        "lonely",
+        "grief",
+        "emotional",
+        "reflective",
+        "healing"
+      ],
+      "compactCue": "Do not leap from grief into triumphant grandiosity without earned causality.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "battle-build",
+      "axis": "battle",
+      "role": "build",
+      "triggers": [
+        "battle",
+        "diss",
+        "punchline",
+        "beef",
+        "roast",
+        "versus",
+        "opponent"
+      ],
+      "compactCue": "Tie each punchline to an actual claim the opponent could make.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "battle-perform",
+      "axis": "battle",
+      "role": "perform",
+      "triggers": [
+        "battle",
+        "diss",
+        "punchline",
+        "beef",
+        "roast",
+        "versus",
+        "opponent"
+      ],
+      "compactCue": "Escalate through premise, contradiction, reversal and crisp payoff.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "battle-repair",
+      "axis": "battle",
+      "role": "repair",
+      "triggers": [
+        "battle",
+        "diss",
+        "punchline",
+        "beef",
+        "roast",
+        "versus",
+        "opponent"
+      ],
+      "compactCue": "A string of unmotivated insults is not a rebuttal.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "melodic-build",
+      "axis": "melodic",
+      "role": "build",
+      "triggers": [
+        "sing",
+        "ballad",
+        "melodic",
+        "r&b",
+        "chorus",
+        "hook",
+        "harmony",
+        "acoustic"
+      ],
+      "compactCue": "Use open singable vowels for sustained notes; let consonants drive the lead-in.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "melodic-perform",
+      "axis": "melodic",
+      "role": "perform",
+      "triggers": [
+        "sing",
+        "ballad",
+        "melodic",
+        "r&b",
+        "chorus",
+        "hook",
+        "harmony",
+        "acoustic"
+      ],
+      "compactCue": "Repeat a compact melodic idea but advance its meaning on each return.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "melodic-repair",
+      "axis": "melodic",
+      "role": "repair",
+      "triggers": [
+        "sing",
+        "ballad",
+        "melodic",
+        "r&b",
+        "chorus",
+        "hook",
+        "harmony",
+        "acoustic"
+      ],
+      "compactCue": "Avoid tongue-twisting alliteration on a held note.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "hook-build",
+      "axis": "hook",
+      "role": "build",
+      "triggers": [
+        "hook",
+        "chorus",
+        "refrain",
+        "catchy",
+        "earworm"
+      ],
+      "compactCue": "Find a clear sentence-sized thesis with natural downbeat stresses.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "hook-perform",
+      "axis": "hook",
+      "role": "perform",
+      "triggers": [
+        "hook",
+        "chorus",
+        "refrain",
+        "catchy",
+        "earworm"
+      ],
+      "compactCue": "Return to it at purposeful structural intervals, changing one idea when the story changes.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "hook-repair",
+      "axis": "hook",
+      "role": "repair",
+      "triggers": [
+        "hook",
+        "chorus",
+        "refrain",
+        "catchy",
+        "earworm"
+      ],
+      "compactCue": "Do not add four chorus repeats merely to pad the line count.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "worldbuilding-build",
+      "axis": "worldbuilding",
+      "role": "build",
+      "triggers": [
+        "fantasy",
+        "dragon",
+        "wizard",
+        "game",
+        "cyberpunk",
+        "science fiction",
+        "quest",
+        "magic"
+      ],
+      "compactCue": "Let the invented world create concrete stakes, tools and verbs.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "worldbuilding-perform",
+      "axis": "worldbuilding",
+      "role": "perform",
+      "triggers": [
+        "fantasy",
+        "dragon",
+        "wizard",
+        "game",
+        "cyberpunk",
+        "science fiction",
+        "quest",
+        "magic"
+      ],
+      "compactCue": "Use environmental details as causes of character choices, not an inventory dump.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "worldbuilding-repair",
+      "axis": "worldbuilding",
+      "role": "repair",
+      "triggers": [
+        "fantasy",
+        "dragon",
+        "wizard",
+        "game",
+        "cyberpunk",
+        "science fiction",
+        "quest",
+        "magic"
+      ],
+      "compactCue": "Retire generic fantasy lore when the scene asks for an ordinary human action.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "metaphor-build",
+      "axis": "metaphor",
+      "role": "build",
+      "triggers": [
+        "metaphor",
+        "analogy",
+        "symbolic",
+        "poetic",
+        "imagery",
+        "surreal"
+      ],
+      "compactCue": "Choose an image system whose objects can interact and change.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "metaphor-perform",
+      "axis": "metaphor",
+      "role": "perform",
+      "triggers": [
+        "metaphor",
+        "analogy",
+        "symbolic",
+        "poetic",
+        "imagery",
+        "surreal"
+      ],
+      "compactCue": "Keep the metaphor legible through one literal anchor each passage.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "metaphor-repair",
+      "axis": "metaphor",
+      "role": "repair",
+      "triggers": [
+        "metaphor",
+        "analogy",
+        "symbolic",
+        "poetic",
+        "imagery",
+        "surreal"
+      ],
+      "compactCue": "Do not switch to three unrelated symbols just to fill rhyme slots.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "dialogue-build",
+      "axis": "dialogue",
+      "role": "build",
+      "triggers": [
+        "duet",
+        "two voices",
+        "dialogue",
+        "call and response",
+        "back and forth"
+      ],
+      "compactCue": "Give each voice a competing objective and different verbal rhythm.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "dialogue-perform",
+      "axis": "dialogue",
+      "role": "perform",
+      "triggers": [
+        "duet",
+        "two voices",
+        "dialogue",
+        "call and response",
+        "back and forth"
+      ],
+      "compactCue": "Use answer lines that change what the other singer must say next.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "dialogue-repair",
+      "axis": "dialogue",
+      "role": "repair",
+      "triggers": [
+        "duet",
+        "two voices",
+        "dialogue",
+        "call and response",
+        "back and forth"
+      ],
+      "compactCue": "Do not label two identical voices and call it character contrast.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "tempo-build",
+      "axis": "tempo",
+      "role": "build",
+      "triggers": [
+        "beat",
+        "bpm",
+        "tempo",
+        "instrumental",
+        "drum",
+        "kick",
+        "snare",
+        "rhythm"
+      ],
+      "compactCue": "Put stressed syllables near strong beat positions; treat written line breaks as phrasing, not fixed musical bars.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "tempo-perform",
+      "axis": "tempo",
+      "role": "perform",
+      "triggers": [
+        "beat",
+        "bpm",
+        "tempo",
+        "instrumental",
+        "drum",
+        "kick",
+        "snare",
+        "rhythm"
+      ],
+      "compactCue": "Create rhythmic contrast with short accent lines and subdivisions.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "tempo-repair",
+      "axis": "tempo",
+      "role": "repair",
+      "triggers": [
+        "beat",
+        "bpm",
+        "tempo",
+        "instrumental",
+        "drum",
+        "kick",
+        "snare",
+        "rhythm"
+      ],
+      "compactCue": "Avoid claiming an exact BPM fit without audio or a defined meter.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "extended-build",
+      "axis": "extended",
+      "role": "build",
+      "triggers": [
+        "long",
+        "full song",
+        "complete",
+        "100 bars",
+        "500 words",
+        "750 words",
+        "1000 words",
+        "extended"
+      ],
+      "compactCue": "Build distinct movements with new information so added length has purpose.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "extended-perform",
+      "axis": "extended",
+      "role": "perform",
+      "triggers": [
+        "long",
+        "full song",
+        "complete",
+        "100 bars",
+        "500 words",
+        "750 words",
+        "1000 words",
+        "extended"
+      ],
+      "compactCue": "Track requested length independently from hook recurrence.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "extended-repair",
+      "axis": "extended",
+      "role": "repair",
+      "triggers": [
+        "long",
+        "full song",
+        "complete",
+        "100 bars",
+        "500 words",
+        "750 words",
+        "1000 words",
+        "extended"
+      ],
+      "compactCue": "Do not satisfy length by duplicating sections or generic filler.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "intimate-build",
+      "axis": "intimate",
+      "role": "build",
+      "triggers": [
+        "romantic",
+        "love song",
+        "relationship",
+        "crush",
+        "affection",
+        "intimate"
+      ],
+      "compactCue": "Show care through distinct remembered actions and choices.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "intimate-perform",
+      "axis": "intimate",
+      "role": "perform",
+      "triggers": [
+        "romantic",
+        "love song",
+        "relationship",
+        "crush",
+        "affection",
+        "intimate"
+      ],
+      "compactCue": "Use an evolving relationship dynamic rather than a list of compliments.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "intimate-repair",
+      "axis": "intimate",
+      "role": "repair",
+      "triggers": [
+        "romantic",
+        "love song",
+        "relationship",
+        "crush",
+        "affection",
+        "intimate"
+      ],
+      "compactCue": "Do not force flirtation or a happy resolution that the user's scene did not request.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "experimental-build",
+      "axis": "experimental",
+      "role": "build",
+      "triggers": [
+        "experimental",
+        "weird",
+        "unusual",
+        "unpredictable",
+        "glitch",
+        "left field",
+        "abstract"
+      ],
+      "compactCue": "Choose one unusual formal rule and follow it consistently enough for the listener to discover.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "experimental-perform",
+      "axis": "experimental",
+      "role": "perform",
+      "triggers": [
+        "experimental",
+        "weird",
+        "unusual",
+        "unpredictable",
+        "glitch",
+        "left field",
+        "abstract"
+      ],
+      "compactCue": "Use rhythmic or perspective reversals as purposeful surprises.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    },
+    {
+      "id": "experimental-repair",
+      "axis": "experimental",
+      "role": "repair",
+      "triggers": [
+        "experimental",
+        "weird",
+        "unusual",
+        "unpredictable",
+        "glitch",
+        "left field",
+        "abstract"
+      ],
+      "compactCue": "Surreal words alone do not constitute musical invention.",
+      "antiCopy": "Teach the relationship; compose new vocabulary, scenery, rhyme words and lines. Never reproduce this cue as lyrics."
+    }
+  ]
+}
