@@ -33,7 +33,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v175-lyrics-context-creative-intent-routing"
+ONLINE_OBSERVABILITY_REVISION = "v176-structured-source-fetch-priority"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -1776,8 +1776,24 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 if bool((candidate.get("songIdentityScore") or {}).get("allowed"))
                 and supports_direct_lyric_text_fetch(candidate)
             ]
-            # preserve diversify_candidates() order: one strong candidate per
-            # source family before duplicate variants from the same provider.
+            # With a three-page hard cap, a candidate whose search snippet
+            # actually advertises section markers should be tried before an
+            # unstructured commentary/meaning page. This changes only fetch
+            # PRIORITY, never admission or verified-body acceptance. It stays
+            # independent of song names and site-specific allowlists.
+            #
+            # Keep the SongIdentity/source-family diversification ordering as a
+            # stable tie-breaker, including when no markers are available.
+            candidate_pool=sorted(
+                candidate_pool,
+                key=lambda item: -min(
+                    36,
+                    len(re.findall(
+                        r"(?i)\[(?:verse|chorus|bridge|hook|pre[-\s]?chorus|intro|outro|refrain)\b",
+                        str(item.get("snippet") or ""),
+                    ))*12,
+                ),
+            )
             # If we already have a verified body, do not launch a new search merely
             # for prettier structure. Prefer richer candidates only from the already
             # discovered pool. Rescue search remains for true no-valid-source cases.
