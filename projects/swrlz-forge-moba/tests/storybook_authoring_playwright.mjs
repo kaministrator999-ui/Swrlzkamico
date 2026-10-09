@@ -294,11 +294,13 @@ try{
     // Visit the whole episode with rendered frames so every shot receives the
     // same occlusion checks, including page turns and the last scene.
     const duration=(await timeline(page)).duration;
+    const opening=await page.evaluate(()=>window.SWYRL_ENGINE_EMERGENCE?.model());
+    const readableAfter=opening?.enabled?opening.duration:8;
     for(let time=0;time<=duration;time+=2){
       const observation=await seek(page,time);
       assertSafeScene(observation,mode.name+' '+time+'s');
       // Opening fold legitimately conceals the paper characters for a moment.
-      if(time>=8)assertCastReadable(observation,mode.name+' '+time+'s');
+      if(time>=readableAfter)assertCastReadable(observation,mode.name+' '+time+'s');
     }
     for(const time of [12,50,98,128].filter(time=>time<duration)){
       assertCastReadable(await seek(page,time),mode.name+' screenshot '+time+'s');

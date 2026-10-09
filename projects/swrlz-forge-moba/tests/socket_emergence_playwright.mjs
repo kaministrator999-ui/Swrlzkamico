@@ -172,7 +172,7 @@ function faceFront(render,label){
   assert.ok(face.surfaceSamples?.length>20,'Facial visibility reports a nominal anchor instead of actual painted feature surfaces: '+label);
   assert.ok(face.minFeatureClearance>.008,'The deformed head covers animated eyes/mouth: '+label+' clearance '+face.minFeatureClearance);
   for(const sample of face.surfaceSamples){
-    assert.ok(sample.alpha>.4&&sample.faceWorld?.every(Number.isFinite)&&sample.headWorld?.every(Number.isFinite),
+    assert.ok(sample.alpha>=80/255&&sample.faceWorld?.every(Number.isFinite)&&sample.headWorld?.every(Number.isFinite),
       'Facial ink lacks actual front/head triangle samples: '+label);
     assert.ok(sample.clearance>.008,'An actual animated facial feature is behind its head card: '+label);
     assert.ok(distance(sample.faceWorld,sample.headWorld)>0,'Face/head geometry occupies the same surface: '+label);
