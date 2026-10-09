@@ -33,7 +33,7 @@ run_online_research = canonical_online_research.research
 
 WIDGET_CONTRACT = "swrlz-widget-v1"
 ONLINE_CONTRACT = "swrlz-hf-online-capability-v1"
-ONLINE_OBSERVABILITY_REVISION = "v176-structured-source-fetch-priority"
+ONLINE_OBSERVABILITY_REVISION = "v177-lyric-credit-boundary-and-creative-completion"
 WEATHER_PROVIDER = "Open-Meteo"
 WEATHER_DOCS = "https://open-meteo.com/en/docs"
 GEOCODING_DOCS = "https://open-meteo.com/en/docs/geocoding-api"
@@ -446,7 +446,10 @@ _LYRIC_RECOMMENDATION_LINE=re.compile(
     re.I,
 )
 _LYRIC_POST_SONG_META=re.compile(
-    r"^\s*(?:writers?|writer\(s\)|written\s+by|submit\s+(?:lyrics|corrections?)|"
+    r"^\s*(?:writers?|writer\(s\)|written\s+by|songwriters?|"
+    r"publishers?\s*:|powered\s+by\s+\S+|"
+    r"top\s+(?:lyrics|artists|songs)(?:\s*:)?|"
+    r"submit\s+(?:lyrics|corrections?)|"
     r"add\s+song|album\s+lyrics|azlyrics|you\s+may\s+also\s+like|"
     r"back\s+to\s*:\s*.+?\s+lyrics)\b.*$",
     re.I,
