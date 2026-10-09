@@ -46,7 +46,7 @@ On `§tart §E`:
 
 ### Coder education cross-reference (conditional, non-deploying)
 
-When teaching a coding model about §wyrl§ Engine source, Three.js, Python ordered patches, animation data, character sockets or Forge build validation, also read `training/coder/PROJECT_STACK_ARCHITECTURE_V1.md` and its public practice exercises `training/coder/project_stack_architecture_v1.json`. Those exercises are **ungraded**, do not train model weights, and do not replace this router's mandatory engine source-manifest/build/deploy rules. Chat/LALM model-route instruction remains owned by the separate Programming LALM Runtime Architecture. This curriculum link itself is documentation-only and must not trigger an engine deployment.
+When teaching a coding model about §wyrl§ Engine source, Three.js, Python ordered patches, animation data, character sockets or Forge build validation, also read `training/coder/PROJECT_STACK_ARCHITECTURE_V1.md` and its public practice exercises `training/coder/project_stack_architecture_v1.json`. If a *new language* or platform integration is specifically being studied (Kotlin/Java/TypeScript/Rust), also inspect `training/coder/CROSS_LANGUAGE_CURRICULUM_V2.md` as **non-executable education**; it does not convert this engine to another toolchain or change the sealed 53-patch build. Those exercises are **ungraded**, do not train model weights, and do not replace this router's mandatory engine source-manifest/build/deploy rules. Chat/LALM model-route instruction remains owned by the separate Programming LALM Runtime Architecture. This curriculum link itself is documentation-only and must not trigger an engine deployment.
 
 ## Current v9.4 candidate · Socket Puppets and Book Emergence
 
