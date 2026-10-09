@@ -57,6 +57,27 @@ def music_model_policy(prompt: str) -> str:
     return MUSIC_ONTOLOGY_PREFILL if _MUSIC_CUES.search(str(prompt or "")) else ""
 
 
+
+def creative_music_transform_request(prompt: str) -> bool:
+    """Recognize a creation/transformation request that merely mentions lyrics.
+
+    A lyric reference is input context, not evidence that the user asked to
+    retrieve a song. This is intentionally limited to clear creative verbs and
+    requested musical outputs; do not turn general lyric lookup into generation.
+    """
+    text=" ".join(str(prompt or "").split())
+    # Explicit analysis of lyrics is not itself a song-writing request.
+    if re.search(r"\b(?:write|create|compose|generate|draft|craft|make|rewrite|rework|adapt|transform|turn)\b"
+                 r".{0,95}\b(?:review|summary|explanation|analysis)\s+(?:of|about)\b",text,re.I):
+        return False
+    return bool(re.search(
+        r"\b(?:write|create|compose|generate|draft|craft|make|rewrite|rework|adapt|transform|turn)\b"
+        r".{0,100}\b(?:original|new|rap|song|verse|chorus|hook|bars?|lyrics?|freestyle|cypher|track)\b"
+        r"|\b(?:freestyle|rap)\s+(?:off|over|using|based\s+on)\b",
+        text,re.I,
+    ))
+
+
 def creative_music_request(prompt: str) -> dict[str,Any]:
     """Classify requested creative form without asking the model to invent structure rules."""
     text=str(prompt or "")
