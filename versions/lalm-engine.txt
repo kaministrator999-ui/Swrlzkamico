@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.167
-REVISION=2.1.167-append-only-lyric-completion-v188
+VERSION=2.1.168
+REVISION=2.1.168-microcontinuation-partial-truth-v189
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
