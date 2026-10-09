@@ -1,3 +1,33 @@
+## UPDATE FINISHED — 2026-10-09 — lyric-referenced original music generation routing v175
+
+**Outcome:** Creative follow-up no longer treated as a failed lyric lookup / prior chat context preserved for selected 700M / bounded lyric retrieval controls preserved / guard regression passed / HF Space published / user-visible live acceptance still pending.
+
+### Evidence: user-reported historical regression
+`swrlz-dragon-chat (24).json` was a v173-era export captured before v174 publication. It contains the same-thread turn `Now use those lyrics and create an original rap song using that as a guide to word uses` following successful verified lyric output. At v173 the message was sent in full as a public search query and treated as `existing-lyrics-retrieval`, producing unrelated "NOW" search hits, `lyricsSourceAttemptCount=0`, `status=NO_RESULTS`, and the false lyric-verification-blocked response. This is lexical intent gate error rather than missing source, stanza extraction, or v174 regression.
+
+### Implemented cross-module correction
+- `hf_space/music_structure.py::creative_music_transform_request`: affirmative musical creation intent distinguished from mere existing-lyric mention, supporting write/create/compose original lyrics and lyric-referenced new rap requests.
+- `hf_space/online_tools.py::classify_online_request`: a creative-music request that references earlier lyrics bypasses the web-lyrics verifier unless explicit web browsing is asked for; old external song-lyric lookups retain their previous evidence and 3-page ceilings. New observability revision `v175-lyrics-context-creative-intent-routing` applies to online-research runs; expected generative turns do not produce an online camera.
+- `hf_space/model_router.py::dispatch`: emits `CREATIVE_MUSIC_STARTED` status to distinguish the new routing decision and hands the current request plus unchanged history to the selected generator. Existing `hf_space/lfm2_700m_engine.py` consumes recent conversation messages through bounded model-token context.
+- Required `tests/test_diverse_lyric_fetch_budget_v170.py` includes exact user follow-up and alternate creative phrases, negative controls for legitimate lyrics retrieval, and a mock 700M generation proof that fails on any web fetch, confirms history preserved, and requires an original delta.
+- Source deploy SHA: `041e66f11f28836c4405183026a79f9c89eefd23`. Original functional commits `bfe7becba716747ae388c3b2722c07b5591ae7fd`, `f586f7c3a9d40cfd1e1c53f06a9e6c0318e0d4bd`, `fc2a1d440e3fa0a3d336a4c901b2c323e82d6e72`, `0ee1e503d230a6e6618e46a603d0443b6f21c687`; final test-compatibility correction `041e66f11f28836c4405183026a79f9c89eefd23`.
+
+### Guarded release trail
+- First [workflow #37901082264](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37901082264) failed **before publication** due to a v174 regression that incorrectly hard-pinned the prior diagnostic revision. Kept existing v174 Space intact.
+- Updated that older behavioral regression to accept `ONLINE_OBSERVABILITY_REVISION>=v174` while continuing to enforce v174 footer and repetition behavior; no disabled tests.
+- Retried through [workflow #37901265245](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37901265245): terminal **SUCCESS**, logs `lyrics-page-footer-repeat-metadata-v174 PASS` and `contextual-original-rap-routing-v175 PASS`, preserved 700M smoke/native R39 reconstruction, isolated HF package, snapshot, approved upload and immutable release receipt.
+- **Published `kamiloki/Swyrlz` Space revision:** `d543935c468aabf8677968e5c782307de30de835`.
+- **Previous rollback revision:** `d12fa80e0964f3118496710b55b73885a414dd72`.
+- **Checkpoint status:** `DEPLOYED_UNVERIFIED`. CI and upload successful; actual new-song creative content remains to be user-tested.
+
+### Version closure
+Repository Work **1.0.105**; Online Research **1.0.23**; LALM Engine **2.1.161**; Deployment Control **1.0.35**; Server Runtime **2.3.328 / 2.3.328-hf-v175-contextual-creative-music**. Independent game-engine lane and web frontend unchanged.
+
+### Live acceptance
+Open a fresh hosted §wyrlz Chat thread, retrieve an evidence-backed lyric source as previously tested, then ask the exact Dragon Chat (24) original-rap follow-up in **the same thread**. Expected `CREATIVE_MUSIC_STARTED` status, selected model `700m`, no second web query/lyrics source attempt, **original** generated rap with contextual reference rather than copied source, no `LYRICS_VERIFICATION_BLOCKED`. Since the successful path involves no online research, the absence of `onlineResearch.observabilityRevision` on that turn is **correct**; check generation status, selected model and output instead.
+
+**Status:** FINISHED / GUARDED TESTS AND RELEASE VERIFIED / v175 USER-VISIBLE ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-09 — contextual lyric reference → original music generation v175
 
 **Trigger:** User submitted `swrlz-dragon-chat (24).json`, explicitly noting it was recorded **while v174 was being developed**; therefore its `v173-cross-source-identity-and-text-fetch-priority` observability marker is expected historical evidence, not a v174 regression. Same thread has four messages: a successfully verified song-lyric retrieval, then the follow-up `Now use those lyrics and create an original rap song using that as a guide to word uses`. v173 classified this creative request as `existing-lyrics-retrieval`, sent the entire sentence to public search, received results unrelated to music, and blocked with `LYRICS_VERIFICATION_BLOCKED` after **zero lyric page fetches**. No original rap was generated.
