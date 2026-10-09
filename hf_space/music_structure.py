@@ -384,7 +384,7 @@ def creative_music_reference_projection(
         copy=dict(item)
         role=copy.get("role")
         if i==source_idx:
-            replacement="Earlier song source was used for ABSTRACT FORM ONLY. All source words and subject are hidden. SONG MECHANICS: "+str(structure)
+            replacement="Earlier assistant supplied a song as a STRUCTURAL reference. The source song's words and subject are hidden. ABSTRACT FORM ONLY: "+str(structure)
         elif i==source_idx-1 and role=="user":
             replacement="User supplied a previously existing song only as an abstract structural reference. Its identity and text must never be used in a new work."
         elif i>source_idx and continued and role=="assistant":
