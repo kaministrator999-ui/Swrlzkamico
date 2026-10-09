@@ -1,4 +1,22 @@
-# §wyrl§ Engine v9.2 candidate · Layered Scenery and Fitted Face acceptance
+# §wyrl§ Engine v9.3 candidate · Connected Character Piece acceptance
+
+The 52nd governed patch is `patches/v9_3_character_alignment.py`; artifact `swyrl_engine_v9_3.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_3_CONNECTED_CHARACTER_PIECES`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes five episode scene JSON exports, the historical episode HTML and eight PNGs, for fourteen media assets.
+
+The starter keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. The native Save Project export is `scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json`. Per-character rest layouts belong to `project.animeRigs.characters[character].layout`, alongside the independent limb/face keys. The saved performance retains 425 limb/face keys and 341 scenery keys. The v9.2 depth, v9.1 rigged, v9.0 storybook and original production scene exports remain bundled, together with all eight artwork PNGs and the historical episode HTML.
+
+`tests/character_alignment_playwright.mjs` adds desktop/phone checks for actual rendered body attachment, hand-held prop placement, native part fitting, independent companion/scenery data, Undo/Redo, Save/Load, Play and Watch. The existing native cinematic, storybook authoring, character rig and depth theatre suites remain required. Reconstruction checks all 52 governed patches and packaging compares all fourteen media assets against committed source bytes and SHA-256.
+
+- [ ] Complete desktop/phone connected-part authoring acceptance and visual inspection across the episode.
+- [ ] Complete the native cinematic, storybook authoring, rig and depth regressions.
+- [ ] Seal the exact generated artifact and pass Node/Python syntax plus remote engine CI.
+- [ ] Follow the exact final source/trigger deployment to terminal success.
+- [ ] Verify the current marker, normalized served HTML, SOURCE receipt, all five scene exports, screening HTML and all eight PNGs against committed source.
+
+v9.3 is a source candidate. Desktop/phone connected-part fitting and authoring acceptance, the existing native Play/Studio/rig/depth regressions, exact sealed reconstruction, and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all fourteen media assets.
+
+---
+
+# Historical verified §wyrl§ Engine v9.2 · Layered Scenery and Fitted Face acceptance
 
 The 51st governed patch is `patches/v9_2_depth_theatre.py`; artifact `swyrl_engine_v9_2.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_2_LAYERED_SCENERY_FACES`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes four episode scene JSON exports, the historical episode HTML, and eight PNGs including the new transparent `assets/anime/scenery-parts.png` atlas.
 
@@ -6,13 +24,8 @@ The episode keeps **70 actors, 11 editor layers, eight story beats, nine stage/c
 
 The native cinematic, storybook authoring and character rig suites remain required. `tests/depth_theatre_playwright.mjs` adds desktop/phone acceptance for fitted facial surfaces, individual scenery-key edits, three star-depth shells, actual cutout geometry/parallax, shared playhead behavior, native Play/Watch, Undo/Redo, Save/Load and camera clearance. Source reconstruction checks all 51 governed patches; packaging compares every one of the thirteen media assets against committed source bytes and SHA-256.
 
-- [ ] Complete local desktop/phone face and depth authoring/Play acceptance and visual inspection.
-- [ ] Complete all native cinematic, storybook authoring and character rig regressions.
-- [ ] Reconstruct and seal the exact generated artifact, then pass Node/Python and remote engine CI checks.
-- [ ] Follow the dedicated deployment for the exact final source/trigger commit to terminal success.
-- [ ] Verify the current marker, normalized served HTML, SOURCE receipt, all four scene exports, historical screening HTML, and all eight artwork PNGs against committed source.
 
-v9.2 is a source candidate. Desktop/phone depth and face acceptance, native authoring/Play regressions, exact sealed reconstruction, and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all thirteen media assets.
+The previous **v9.2 Layered Scenery and Fitted Faces** release is verified live: [deployment 37871463769](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37871463769) and [exact hosted audit 37871508796](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37871508796) passed. Source [`7f664a2c967a`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/7f664a2c967a0bff63d6d1a5c0eb1e8acc472a01) seals 51 patches, **965,788 bytes**, SHA-256 `b952e375be6a2cfb88014714cccbe80285e70d4b76821763bc68ada46e2dcbc4`, with all thirteen media assets, 425 rig keys and 341 scenery keys. These receipts certify v9.2; v9.3 needs its own final deployment and hosted audit.
 
 ---
 

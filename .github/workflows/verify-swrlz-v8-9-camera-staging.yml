@@ -1,4 +1,4 @@
-name: Validate §E v9.2 camera-safe storybook staging
+name: Validate §E v9.3 camera-safe storybook staging
 on:
   push:
     branches: [main]
@@ -9,11 +9,13 @@ on:
       - "projects/swrlz-forge-moba/patches/v9_0_animation_studio.py"
       - "projects/swrlz-forge-moba/patches/v9_1_character_rigs.py"
       - "projects/swrlz-forge-moba/patches/v9_2_depth_theatre.py"
+      - "projects/swrlz-forge-moba/patches/v9_3_character_alignment.py"
       - "projects/swrlz-forge-moba/runtime/**"
       - "projects/swrlz-forge-moba/assets/anime/**"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-depth.swyrl.json"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json"
       - "projects/swrlz-forge-moba/build_space.py"
   pull_request:
     branches: [main]
@@ -43,12 +45,12 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
-          assert len(manifest['patches'])==51
-          assert manifest['patches'][-1]=='patches/v9_2_depth_theatre.py'
+          assert len(manifest['patches'])==52
+          assert manifest['patches'][-1]=='patches/v9_3_character_alignment.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
           assert len(s.encode())==manifest['finalBytes']
           assert hashlib.sha256(s.encode()).hexdigest()==manifest['finalSha256']
-          for feature in ('V9_2_LAYERED_SCENERY_FACES','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
+          for feature in ('V9_3_CONNECTED_CHARACTER_PIECES','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
                           'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
                           'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):
               assert feature in s, feature
