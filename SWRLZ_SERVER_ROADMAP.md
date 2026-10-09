@@ -13,6 +13,8 @@
 
 **Version intent:** Repository Work 1.0.105; Online Research 1.0.23; LALM Engine 2.1.161; Deployment Control 1.0.35. Server Runtime stays 2.3.327 until guarded HF deploy succeeds; Web Chat 1.5.92 unchanged.
 
+**Initial guarded attempt FAILED (not deployed):** [GitHub Actions #37901082264](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37901082264) stopped at mandatory lyrics regression, before R39 model/deployment stage. Failure: earlier v174 behavior test still asserted the **exact prior diagnostic revision**, whereas v175 correctly advances its observability value. Adjusted the test to require `v>=174` while continuing to test v174 footer/repetition functionality; corrective commit `041e66f11f28836c4405183026a79f9c89eefd23`. Preserve first failed attempt; request a new guarded deploy before claiming publication.
+
 **Gate:** use existing production Space `kamiloki/Swyrlz`, guarded 3-page retrieval/creative routing regression suite, real R39 + 700M preservation, immutable previous revision/rollback snapshot, exact new release receipt. No modification of independent §E/Forge game-engine lane.
 
 **Status:** SOURCE CANDIDATE COMMITTED / GUARDED DEPLOY VALIDATION PENDING / v175 LIVE USER ACCEPTANCE PENDING.
