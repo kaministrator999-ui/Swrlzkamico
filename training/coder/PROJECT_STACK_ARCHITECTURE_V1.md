@@ -10,6 +10,7 @@ A correct student answers **what is implemented and on which branch**, not merel
 
 - `main`: project contracts, Forge native engine source and its **separate** release workflow, stable application infrastructure and historical artifacts.
 - `runtime`: `VERSION.txt`, `versions/*.txt`, runtime-hot pages/assets and manifest; do **not** infer missing runtime content from a `main` 404.
+- **Observed route mismatch at inventory:** `runtime:runtime_pages/manifest.json` maps `/chat/§wyrlz` to `chat/§wyrlz/index.html`, but that file was **not present in the inspected `runtime` tree**; `feature/hf-space-manual-deploy:chat/§wyrlz/index.html` is present and the HF Station separately serves that route. This is an authority/activation reconciliation case: inspect current hosting source and live route before declaring either route healthy or deleted.
 - `feature/hf-space-manual-deploy`: current selected Hugging Face Chat/Station/model-route application package. Pin the selected source SHA before engineering its runtime.
 - **Two different Spaces:** Chat/LALM `kamiloki/Swyrlz`; §wyrl§ Engine `kamiloki/swrlz-forge-moba`. They must never share a deployment trigger accidentally.
 - **Historical caution:** the root packaging metadata and old Vercel entrypoints exist for lineage. Current Chat publication is through the guarded Hugging Face request on `main`.
