@@ -72,10 +72,13 @@ function watch(page){
   return errors;
 }
 async function start(page){
+  // Each isolated context opens a new headless window. Explicitly focus it;
+  // a background window can suspend RAF even after its APIs have initialized.
+  await page.bringToFront();
   await page.goto(base+'/index.html?project=anime-ghosts-ep01',{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_SOCKETS?.renderStatus&&window.SWYRL_ENGINE_EMERGENCE?.status&&
     window.SWYRL_ENGINE_RIG&&window.SWYRL_ENGINE_SCENERY&&window.SWYRL_ENGINE_ANIMATION&&window.SWYRL_ENGINE_STORYBOARD,
-    undefined,{timeout:60000});
+    undefined,{timeout:60000,polling:100});
   await page.waitForFunction(()=>{const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
     return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000});
   await frames(page);
@@ -454,6 +457,10 @@ try{
     assert.equal((await status(page)).active,false,'Closing Watch does not restore native editing');
 
     // Fresh context ensures Save/Load cannot rely on an already-built puppet.
+    // Release the completed editor first: two active software-rendered native
+    // engines compete for the same headless GPU process and stall startup.
+    assert.deepEqual(errors,[],'Unhandled errors or missing artwork: '+mode.name);
+    await context.close();
     const freshContext=await browser.newContext(options),fresh=await freshContext.newPage(),freshErrors=watch(fresh);
     await start(fresh);await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),exported);await frames(fresh);
     assert.deepEqual((await project(fresh)).project.animeSockets,exported.project.animeSockets,'Fresh native Load changes the authored sockets');
@@ -487,8 +494,6 @@ try{
     await seek(fresh,19);connected(await rig(fresh,'kami'),mode.name+' malformed import repaired native tree');
     assert.deepEqual(freshErrors,[],'Fresh imported project errors: '+mode.name);await freshContext.close();
 
-    assert.deepEqual(errors,[],'Unhandled errors or missing artwork: '+mode.name);
-    await context.close();
     console.log('SOCKET_EMERGENCE_'+mode.name.toUpperCase()+'_PASS',JSON.stringify({screenshots:output}));
   }
   allPassed=true;

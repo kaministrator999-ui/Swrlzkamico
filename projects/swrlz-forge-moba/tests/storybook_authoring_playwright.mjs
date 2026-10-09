@@ -121,12 +121,13 @@ function assertNoFailures(failures,label){
   assert.deepEqual(failures.images,[],'Local artwork requests failed: '+label);
 }
 async function start(page,projectId='anime-ghosts-ep01'){
+  await page.bringToFront();
   await page.goto(base+'/index.html?project='+projectId,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_ANIMATION&&window.SWYRL_ENGINE_STORYBOARD,
-    undefined,{timeout:60000});
+    undefined,{timeout:60000,polling:100});
   if(projectId==='anime-ghosts-ep01')await page.waitForFunction(()=>{
     const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();return state?.assetsReady||state?.assetErrors?.length;
-  },undefined,{timeout:45000});
+  },undefined,{timeout:45000,polling:100});
   await frames(page);
 }
 
@@ -315,6 +316,29 @@ try{
     if(beforePlay.editorCamera&&afterPlay.editorCamera)assert.deepEqual(afterPlay.editorCamera,beforePlay.editorCamera,
       'Stop did not restore the precise editor camera');
 
+    // Switching projects disposes the episode preview and preserves ordinary
+    // first-person Play and each independent project's authored destinations.
+    for(const other of [
+      {template:'glitch-dragons-den',id:'embervault-atelier',actors:170,zones:8},
+      {template:'starforge-observatory',id:'starforge-observatory',actors:123,zones:7}
+    ]){
+      await page.evaluate(template=>window.SWYRL_ENGINE_AGENT.createProject(template),other.template);await frames(page);
+      const saved=await project(page),observation=await stage(page);
+      assert.equal(saved.project.canonicalId,other.id,'Project chooser loaded wrong project');
+      assert.equal(saved.scene.actors.length,other.actors,'Storybook changed the '+other.id+' set');
+      assert.equal(saved.project.teleportZones.length,other.zones,'Storybook changed the '+other.id+' destinations');
+      assert.equal(observation.preview,false,'Episode preview survived a project switch');
+      const otherScene=cleanScene(saved);
+      await page.locator('#playBtn').click();await frames(page);
+      assert.equal((await status(page)).active,false,'Other project unexpectedly started an anime cinematic');
+      assert.equal((await status(page)).playing,true,'Other project ordinary Play failed');
+      await page.evaluate(()=>document.getElementById('stopBtn').click());await frames(page);
+      assert.deepEqual(cleanScene(await project(page)),otherScene,'Other project actors/layers changed after Play/Stop');
+    }
+    // Close the fully checked primary renderer before creating the clean import
+    // context; parallel SwiftShader editors can otherwise stall fresh frames.
+    await context.close();
+
     // A second browser has no previous timeline state. Importing the downloaded
     // project must rebuild its render bindings and preserve exactly those keys.
     const reloadContext=await browser.newContext(contextOptions);
@@ -437,29 +461,9 @@ try{
     assert.deepEqual(trackKey(await timeline(reloadPage),'kami',19.25),capturedPose,'Redo did not restore the captured pose');
     assertNoFailures(reloadFailures,mode.name+' Save/Load/sanitization');await reloadContext.close();
 
-    // Switching projects disposes the episode preview and preserves ordinary
-    // first-person Play and each independent project's authored destinations.
-    for(const other of [
-      {template:'glitch-dragons-den',id:'embervault-atelier',actors:170,zones:8},
-      {template:'starforge-observatory',id:'starforge-observatory',actors:123,zones:7}
-    ]){
-      await page.evaluate(template=>window.SWYRL_ENGINE_AGENT.createProject(template),other.template);await frames(page);
-      const saved=await project(page),observation=await stage(page);
-      assert.equal(saved.project.canonicalId,other.id,'Project chooser loaded wrong project');
-      assert.equal(saved.scene.actors.length,other.actors,'Storybook changed the '+other.id+' set');
-      assert.equal(saved.project.teleportZones.length,other.zones,'Storybook changed the '+other.id+' destinations');
-      assert.equal(observation.preview,false,'Episode preview survived a project switch');
-      const otherScene=cleanScene(saved);
-      await page.locator('#playBtn').click();await frames(page);
-      assert.equal((await status(page)).active,false,'Other project unexpectedly started an anime cinematic');
-      assert.equal((await status(page)).playing,true,'Other project ordinary Play failed');
-      await page.evaluate(()=>document.getElementById('stopBtn').click());await frames(page);
-      assert.deepEqual(cleanScene(await project(page)),otherScene,'Other project actors/layers changed after Play/Stop');
-    }
     assertNoFailures(failures,mode.name+' authoring/Play');
     console.log('STORYBOOK_AUTHORING_'+mode.name.toUpperCase()+'_PASS',JSON.stringify({duration,
       savedKeys:Object.fromEntries(Object.entries(exported.project.animeTimeline.tracks).map(([name,keys])=>[name,keys.length])),screenshots:output}));
-    await context.close();
   }
   allPassed=true;
 }finally{await browser.close()}

@@ -48,12 +48,13 @@ function noFailures(failures,label){
   assert.deepEqual(failures.artwork,[],'Puppet artwork failed: '+label);
 }
 async function start(page){
+  await page.bringToFront();
   await page.goto(base+'/index.html?project=anime-ghosts-ep01',{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_RIG?.fitPart&&window.SWYRL_ENGINE_RIG?.resetPartFit&&
     window.SWYRL_ENGINE_SCENERY&&window.SWYRL_ENGINE_ANIMATION&&window.SWYRL_ENGINE_STORYBOARD,
-    undefined,{timeout:60000});
+    undefined,{timeout:60000,polling:100});
   await page.waitForFunction(()=>{const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
-    return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000});
+    return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000,polling:100});
   await frames(page);
 }
 async function input(page,selector,value){
@@ -109,17 +110,19 @@ function safe(observation,label,cast=true){
     assert.ok(actor.right>0&&actor.left<1&&actor.bottom>0&&actor.top<1,id+' leaves the shot: '+label);
   }
 }
-function attachments(rig,label){
+function attachments(rig,label,collapsed=false){
   assert.equal(rig.rigged,true,'A single flat cel replaced the articulated puppet: '+label);
   assert.ok(rig.partCount>=18&&rig.meshCount>=rig.partCount*3,'Missing painted front/back/edge body pieces: '+label);
-  assert.ok(rig.depthSpan>.05,'The articulated character has no pop-out depth: '+label);
+  assert.ok(Number.isFinite(rig.thickness)&&rig.thickness>0,'The articulated paper has no intrinsic thickness: '+label);
+  assert.ok(Number.isFinite(rig.depthSpan)&&rig.depthSpan>0,'The rendered paper geometry has no depth: '+label);
+  if(!collapsed)assert.ok(rig.depthSpan>.05,'The expanded character has no pop-out depth: '+label);
   assert.ok(Array.isArray(rig.attachments)&&rig.attachments.length>=15,'Missing measured body-piece seams: '+label);
   for(const seam of rig.attachments){
     assert.ok(seam.anchor?.every(Number.isFinite)&&seam.parentPoint?.every(Number.isFinite)&&seam.childPoint?.every(Number.isFinite),
       'Attachment has no actual alpha-edge points around its joint: '+label+' '+seam.id);
     assert.ok(Number.isFinite(seam.parentGap)&&Number.isFinite(seam.childGap),
       'Attachment does not measure both actual painted edges: '+label+' '+seam.id);
-    assert.ok(Number.isFinite(seam.gap)&&Number.isFinite(seam.limit)&&seam.limit>0&&seam.limit<=.32,
+    assert.ok(Number.isFinite(seam.gap)&&Number.isFinite(seam.limit)&&seam.limit>0&&seam.limit<=.20,
       'Non-finite painted attachment: '+label+' '+seam.id);
     close(Math.max(seam.parentGap,seam.childGap),seam.gap,'Attachment ignores one painted edge: '+label+' '+seam.id,.003);
     close(distance(seam.anchor,seam.parentPoint),seam.parentGap,'Attachment parent distance ignores the painted edge: '+label+' '+seam.id,.003);
@@ -177,10 +180,11 @@ try{
     await page.locator('#playBtn').click();
     await page.waitForFunction(()=>window.SWYRL_ENGINE_ANIMATION.status().active,undefined,{timeout:15000});
     await page.locator('#animeCinePause').click();
+    const openingDuration=await page.evaluate(()=>{const opening=window.SWYRL_ENGINE_EMERGENCE.model();return opening.enabled?opening.duration:0;});
     for(const time of [0,.2,1,2,4,7,9,12,19,72,110,134]){
-      safe(await seek(page,time),mode.name+' authored '+time+'s',time>=12);
+      safe(await seek(page,time),mode.name+' authored '+time+'s',time>=openingDuration);
       for(const character of ['kami','swyrlz']){
-        const rig=await rendered(page,character);attachments(rig,mode.name+' '+character+' '+time+'s');
+        const rig=await rendered(page,character);attachments(rig,mode.name+' '+character+' '+time+'s',time<openingDuration);
         facialAlignment(rig,character,mode.name+' '+time+'s');
       }
       if([19,72,110].includes(time))await page.screenshot({path:resolve(output,'character-alignment-'+mode.name+'-authored-'+time+'.png')});
@@ -258,6 +262,9 @@ try{
     independent(await project(page),original,mode.name+' Play/Stop fit');
 
     // A clean browser cannot rescue Save/Load through an existing rig cache.
+    // All primary checks and snapshots are complete. The portable import uses
+    // a fresh context with no still-rendering primary scene to rescue its data.
+    await context.close();
     const freshContext=await browser.newContext(options),fresh=await freshContext.newPage(),freshFailures=watch(fresh);
     await start(fresh);await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),exported);await frames(fresh);
     assert.deepEqual((await project(fresh)).project.animeRigs,exported.project.animeRigs,'Fresh import changed the saved body-piece fits');
@@ -316,7 +323,6 @@ try{
     noFailures(freshFailures,mode.name+' portable fitted character');await freshContext.close();
     noFailures(failures,mode.name+' native fitted character');
     console.log('CHARACTER_ALIGNMENT_'+mode.name.toUpperCase()+'_PASS',JSON.stringify({parts:19,poseKeys:425,sceneryKeys:341,screenshots:output}));
-    await context.close();
   }
   allPassed=true;
 }finally{await browser.close();}
