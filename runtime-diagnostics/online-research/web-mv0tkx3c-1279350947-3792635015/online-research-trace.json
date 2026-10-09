@@ -1,0 +1,603 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-mv0tkx3c-1279350947-3792635015",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "041e66f11f28836c4405183026a79f9c89eefd23",
+  "persistedAtUnixMs": 1791541550950,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v175-lyrics-context-creative-intent-routing",
+      "kind": "search",
+      "status": "OK",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 3,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 2434,
+      "lyricsSourceAttemptCount": 3,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 2,
+          "origin": "fallback-candidate",
+          "requestedUrl": "https://b.azlyrics.com/?u=%2Flyrics%2Ftyga%2Frackcity.html",
+          "finalUrl": "https://b.azlyrics.com/?u=%2Flyrics%2Ftyga%2Frackcity.html",
+          "searchResultTitle": "Tyga - Rack City Lyrics | AZLyrics.com",
+          "fetchedPageTitle": "AZLyrics - request for access",
+          "fetchStatus": 200,
+          "fetchedContent": {
+            "chars": 459,
+            "sha256": "2d2b0641bc408b86bce01b8c492be5a722295f420b23b95633d29cad9b2a7218",
+            "anchorIndex": null,
+            "anchorLine": "",
+            "sectionMarkers": [],
+            "performerMarkers": [],
+            "preview": "AZLyrics - request for access\n-->\nOur systems have detected unusual activity from your IP address (computer network).\nThis page checks to see if it's really you sending the requests, and not a robot.\nWe're checking your browser, please wait...\nPlease check the box below to regain access to AZLyrics.com.\nType the characters from the picture above:\nInput is case-insensitive\nSubmit\n-->\nAdvertise Here\nPrivacy Policy",
+            "previewChars": 415,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 0,
+            "sha256": "",
+            "preview": "",
+            "previewChars": 0,
+            "previewLimit": 600
+          },
+          "extractorDiagnostics": {
+            "requestedScope": "full-lyrics",
+            "rawChars": 459,
+            "rawLineCount": 29,
+            "anchorIndex": null,
+            "anchorLine": "",
+            "scopedLineCount": 16,
+            "scopedNonEmptyLineCount": 8,
+            "contentLineCount": 8,
+            "musicalSectionCueCount": 0,
+            "performerCueCount": 0,
+            "blankSeparatedChunkCount": 8,
+            "acceptedBlockCount": 0,
+            "blockLineCounts": [],
+            "continuousRunEligible": false,
+            "terminalBoundaryKind": "PAGE_NOISE_BOUNDARY",
+            "terminalBoundaryLine": "Privacy Policy",
+            "decision": "REJECTED",
+            "reason": "INSUFFICIENT_FULL_LYRIC_STRUCTURE",
+            "resultChars": 0,
+            "resultLineCount": 0
+          },
+          "sourceIdentityVerified": false,
+          "sourceIdentityScore": 0,
+          "snippetOverlapCount": 0,
+          "snippetInformativeTokenCount": 0,
+          "snippetSequenceSpan": 0,
+          "musicalSectionCount": 0,
+          "performerCueCount": 0,
+          "outcome": "REJECTED",
+          "rejectionReason": "NO_STRUCTURED_LYRIC_BODY"
+        },
+        {
+          "attempt": 3,
+          "origin": "fallback-candidate",
+          "requestedUrl": "https://www.songlyrics.com/tyga/rack-city-lyrics/",
+          "finalUrl": "https://www.songlyrics.com/tyga/rack-city-lyrics/",
+          "searchResultTitle": "Tyga - Rack City Lyrics & Meaning",
+          "fetchedPageTitle": "Tyga - Rack City Lyrics & Meaning",
+          "fetchStatus": 200,
+          "fetchedContent": {
+            "chars": 7527,
+            "sha256": "699e20e636939b4be922bea3c34dbf53bc96632abb9dca711712fd4f99e8593f",
+            "anchorIndex": 42,
+            "anchorLine": "Rack City Lyrics & Meaning ↓",
+            "sectionMarkers": [],
+            "performerMarkers": [],
+            "preview": "Rack City Lyrics & Meaning ↓\nby Tyga\nfrom Careless World: Rise of the Last King (2012)\nWatch & listen Video\nHip Hop/Rap\n#45 in 2012\nLink copied\nRack rack city, bitch\nRack rack rack city, bitch\nRack, rack rack city, bitch\nMustard on the beat\nRack city bitch, rack rack city, bitch\nTen ten ten twenty on yo titties, bitch",
+            "previewChars": 319,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 0,
+            "sha256": "",
+            "preview": "",
+            "previewChars": 0,
+            "previewLimit": 600
+          },
+          "extractorDiagnostics": {
+            "requestedScope": "full-lyrics",
+            "rawChars": 7527,
+            "rawLineCount": 508,
+            "anchorIndex": 42,
+            "anchorLine": "Rack City Lyrics & Meaning ↓",
+            "scopedLineCount": 161,
+            "scopedNonEmptyLineCount": 82,
+            "contentLineCount": 82,
+            "musicalSectionCueCount": 0,
+            "performerCueCount": 0,
+            "blankSeparatedChunkCount": 79,
+            "acceptedBlockCount": 2,
+            "blockLineCounts": [
+              3,
+              2
+            ],
+            "continuousRunEligible": false,
+            "terminalBoundaryKind": "POST_SONG_META_BOUNDARY",
+            "terminalBoundaryLine": "Written by Dijon Isaiah Mcfarlane, Michael Stevenson",
+            "decision": "REJECTED",
+            "reason": "INSUFFICIENT_FULL_LYRIC_STRUCTURE",
+            "resultChars": 0,
+            "resultLineCount": 0
+          },
+          "sourceIdentityVerified": true,
+          "sourceIdentityScore": 8,
+          "snippetOverlapCount": 0,
+          "snippetInformativeTokenCount": 0,
+          "snippetSequenceSpan": 0,
+          "musicalSectionCount": 0,
+          "performerCueCount": 0,
+          "outcome": "REJECTED",
+          "rejectionReason": "NO_STRUCTURED_LYRIC_BODY"
+        }
+      ],
+      "blockedLyricsSourceFamilies": [
+        "azlyrics.com"
+      ],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Tyga - Rack City Lyrics - Genius",
+          "url": "https://genius.com/Tyga-rack-city-lyrics",
+          "source": "genius.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Rack City is a nickname for Las Vegas, the city of racks ($$$$$$$$$$$$$$$$$). The song originally appeared on Tyga's mixtape, Well Done 2, in 2010. On November 19, 2010, Rap-Up"
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Tyga - Rack City Lyrics | AZLyrics.com",
+          "url": "https://www.azlyrics.com/lyrics/tyga/rackcity.html",
+          "source": "www.azlyrics.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Rack , rack , city bitch, city bitch Rack , rack , rack city bitch, city bitch, rack Rack , rack , rack city bitch, city bitch Mustard on the beat Hah! Rack city bitch, rack , rack city bitch Ten ten ten twenties on ya titties bitch 100 deep V.I.P. no guest list T-Raw you don't k"
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Tyga - Rack City Lyrics | AZLyrics.com",
+          "url": "https://www.azlyrics.com/lyrics/tyga/rackcity242457.html",
+          "source": "www.azlyrics.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Rack rack city , bitch Rack rack rack city , bitch Rack , rack rack rack city , bitch Mustard on the beat Rack city , bitch, rack rack city , bitch Ten, ten, ten, twenty on yo titties, bitch 100 deep VIP, no guest list T-Raw, you don't know who you fuckin' with Got my other bitch"
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Tyga - Rack City (Lyrics) - YouTube",
+          "url": "https://www.youtube.com/watch?v=0VXTa45tDmM",
+          "source": "www.youtube.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Tyga - Rack City (Lyrics)Song: Rack City - TygaGive it a try Tyga - Rack Cityhave a great day!🔔 Follow us to stay in the loopTyga - Rack City lyrics:Rack ra..."
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Rack City Lyrics - Tyga | From Street Dance 2",
+          "url": "https://stlyrics.org/lyrics/streetdance2/rackcity.htm",
+          "source": "stlyrics.org",
+          "rank": 5,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Read the full lyrics for Rack City by Tyga from the Street Dance 2 soundtrack."
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Rack City Lyrics by Tyga - Lyrics On Demand",
+          "url": "https://www.lyricsondemand.com/t/tygalyrics/rackcity242457lyrics.html",
+          "source": "www.lyricsondemand.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Tyga Lyrics Rack City Lyrics [Intro:] Rack , rack , city bitch, city bitch Rack , rack , rack city bitch, city bitch, rack Rack , rack , rack city bitch, city bitch Mutha on the beat Hah! [Verse 1:] Rack city bitch, rack , rack city bitch Ten ten ten twenties on ya titties bitch "
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Rack City - Tyga // Lyrics On Screen [HD] - YouTube",
+          "url": "https://www.youtube.com/watch?v=dbIQaQ89hoU",
+          "source": "www.youtube.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "Rack City - Tyga // Lyrics On Screen [HD] LyricsVids247 49.6K subscribers Subscribe"
+        },
+        {
+          "query": "rack city tyga lyrics",
+          "title": "Tyga - Rack City Lyrics & Meaning",
+          "url": "https://www.songlyrics.com/tyga/rack-city-lyrics/",
+          "source": "www.songlyrics.com",
+          "rank": 8,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "coreTerms": [
+            "rack",
+            "city",
+            "tyga"
+          ],
+          "snippetPreview": "\" Rack City \" by Tyga was released in 2012 on the album \"Careless World: Rise of the Last King\". Rack City centers on Tyga's celebration of wealth, status, and nightlife excess."
+        }
+      ],
+      "songIdentity": {
+        "schema": "swrlz-song-identity-v1",
+        "rawSubject": "\"rack city\" by tyga",
+        "title": "rack city",
+        "titleFolded": "rack city",
+        "titleTokens": [
+          "rack",
+          "city"
+        ],
+        "primaryArtist": "tyga",
+        "primaryArtistFolded": "tyga",
+        "artistTokens": [
+          "tyga"
+        ],
+        "featuredArtists": [],
+        "requestedVersion": null,
+        "ambiguity": {
+          "level": "high",
+          "score": 5,
+          "commonWordCollision": [
+            "rack",
+            "city"
+          ],
+          "shortTitle": true,
+          "punctuationHeavy": false,
+          "quotedTitleRequired": true,
+          "artistRequired": true
+        },
+        "resolution": "CROSS_SOURCE_HEADING_CONSENSUS",
+        "resolutionSourceFamilies": [
+          "azlyrics.com",
+          "genius.com",
+          "lyricsondemand.com",
+          "songlyrics.com",
+          "stlyrics.org"
+        ],
+        "originalRawSubject": "\"rack city tyga\""
+      },
+      "songDiscoveryPlan": [
+        {
+          "strategy": "exact-title-artist",
+          "query": "\"rack city\" \"tyga\" lyrics"
+        },
+        {
+          "strategy": "artist-title-song",
+          "query": "\"tyga\" \"rack city\" song lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"rack city\" \"tyga\" lyrics site:genius.com"
+        },
+        {
+          "strategy": "title-artist-verse",
+          "query": "\"rack city\" \"tyga\" verse chorus lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"rack city\" \"tyga\" lyrics site:azlyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"rack city\" \"tyga\" lyrics site:musixmatch.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"rack city\" \"tyga\" lyrics site:allthelyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"rack city\" \"tyga\" lyrics site:lyricsfreak.com"
+        }
+      ],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541548515,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541548522,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541548658,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541548658,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541549514,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541549514,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541549517,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "genius.com",
+        "url": "https://genius.com/Tyga-rack-city-lyrics"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541549571,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "genius.com",
+        "url": "https://genius.com/Tyga-rack-city-lyrics",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541549572,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/tyga/rackcity.html",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1791541549576
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541549577,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/tyga/rackcity.html"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541550415,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "httpStatus": 200,
+        "responseBytes": 6838
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791541550415
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1791541550416
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "www.songlyrics.com",
+        "url": "https://www.songlyrics.com/tyga/rack-city-lyrics/",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1791541550416
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541550419,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.songlyrics.com",
+        "url": "https://www.songlyrics.com/tyga/rack-city-lyrics/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791541550945,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.songlyrics.com",
+        "url": "https://www.songlyrics.com/tyga/rack-city-lyrics/",
+        "httpStatus": 200,
+        "responseBytes": 308010
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "www.songlyrics.com",
+        "url": "https://www.songlyrics.com/tyga/rack-city-lyrics/",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791541550945
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "www.songlyrics.com",
+        "url": "https://www.songlyrics.com/tyga/rack-city-lyrics/",
+        "activity": "Fetched destination matches the requested song identity",
+        "atUnixMs": 1791541550945
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "www.songlyrics.com",
+        "url": "https://www.songlyrics.com/tyga/rack-city-lyrics/",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1791541550949
+      }
+    ],
+    "sourceSites": [
+      "www.songlyrics.com"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
