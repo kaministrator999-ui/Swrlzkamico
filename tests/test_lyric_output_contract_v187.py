@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"hf_space"))
-from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics
+from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics, continuation_shape_receipt
 from lyric_craft_school import lyric_craft_policy
 
 PROMPT="Write an original 40-line chopper freestyle about an observatory mystery, continuous, with no chorus."
@@ -83,6 +83,50 @@ def test_refuse_unsafe_or_fabricated_append_operations():
     assert recoverable_continuous_lines(lines(4),lyric_shape_request("Write a 40-line song")) is None
 
 
+
+def test_24_of_40_case_reports_malformed_suffix_without_exposing_words():
+    prefix=[f"Original clockmaker clue {i+1}" for i in range(24)]
+    overlong="\n".join(f"Additional unique lyric {i+1}" for i in range(18))
+    receipt=continuation_shape_receipt(prefix,overlong,SHAPE)
+    assert receipt["observedLyricLines"]==24
+    assert receipt["observedSuffixNonemptyLines"]==18
+    assert receipt["remainingLyricLines"]==16
+    assert "too-many-continuation-lines" in receipt["reasons"]
+    assert "Additional unique lyric" not in str(receipt)
+    assert extend_continuous_lyrics(prefix,overlong,SHAPE) is None
+    duplicate=prefix[4]+"\n"+"\n".join(f"New line {i+1}" for i in range(7))
+    assert "prior-lyric-line-repeated" in continuation_shape_receipt(prefix,duplicate,SHAPE)["reasons"]
+    assert "refusal-in-continuation" in continuation_shape_receipt(
+        prefix,"I'm sorry, I cannot write more",SHAPE)["reasons"]
+
+def test_short_continuations_preserve_authored_prefix_and_finish_exactly_40():
+    prefix=[f"Unique clockmaker premise line {i+1}" for i in range(24)]
+    first="\n".join(f"The broken watch gave clue {i+1}" for i in range(8))
+    second="\n".join(f"The clockwork mystery resolved {i+1}" for i in range(8))
+    s1=extend_continuous_lyrics(prefix,first,SHAPE)
+    assert s1 is not None and len(s1)==32
+    s2=extend_continuous_lyrics(s1,second,SHAPE)
+    assert s2 is not None and len(s2)==40
+    assert s2[:24]==prefix
+    assert verify_original_lyrics("\n".join(s2),SHAPE)["status"]=="PASS"
+
+def test_telemetry_counts_all_four_actual_lyric_attempts_without_text():
+    from programming_telemetry import generation_summary
+    receipts=[
+        {"attempt":i+1,"validationStatus":"REJECT","accepted":False,"durationMs":100.0}
+        for i in range(4)
+    ]
+    kwargs={"total_latency_ms":400,"load_latency_ms":0,
+            "visible_first_delta_latency_ms":400,"guarded_turn":False,
+            "repair_turn":False,"strict_language":False}
+    default=generation_summary(receipts,**kwargs)
+    assert default["attemptCount"]==3
+    full=generation_summary(receipts,max_attempts=6,**kwargs)
+    assert full["attemptCount"]==4
+    assert full["totalCandidateGenerationMs"]==400
+    assert [v["attempt"] for v in full["attempts"]]==[1,2,3,4]
+
+
 def test_no_song_lookup_or_code_route_affected():
     for prompt in ("Find the lyrics of a song","Explain that song","Review rap lyrics","Write an analysis of a ballad"):
         assert lyric_craft_policy(prompt)=="",prompt
@@ -95,8 +139,11 @@ def test_engine_route_has_a_bounded_single_retry_and_structural_only_truth():
     assert "verify_original_lyrics(candidate_raw,shape)" in source
     assert "extend_continuous_lyrics(authored_lines,new_segment,shape)" in source
     assert "for continuation_index in range(2):" in source
-    assert "CONTINUATION OVERRIDE FOR THIS SEGMENT ONLY" in source
-    assert "invalid-or-overlong-lyric-continuation" in source
+    assert "next_lines=min(8,missing)" in source
+    assert "segment_messages=[" in source
+    assert "partialReturned" in source
+    assert "max_attempts=6 if strict_lyric_turn else 3" in source
+    assert "continuation_shape_receipt(authored_lines,new_segment,shape)" in source
     assert 'candidate_check=check' in source
     assert "clean_lyric_container(candidate_raw)" in source
     assert "2048 if requested and requested>=64" in source
