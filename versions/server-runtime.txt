@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.332
-REVISION=2.3.332-hf-v179-identity-verified-lyrics-rescue
+VERSION=2.3.333
+REVISION=2.3.333-hf-v180-clean-lyrics-structure-only-continuations
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
