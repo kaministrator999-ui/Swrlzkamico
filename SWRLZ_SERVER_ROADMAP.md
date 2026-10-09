@@ -1,3 +1,24 @@
+## UPDATE FINISHED — 2026-10-09 — Dragon Chat (27) guarded lyric-source rescue v178
+
+**Outcome:** Guarded CI and Hugging Face publication SUCCESS. Real v178 live user test NOT yet supplied; deployment receipt is `DEPLOYED_UNVERIFIED`. The failure in the imported v177 test export came from unavailable lyric sources (Genius HTTP error, AZLyrics challenge, Musixmatch HTTP error), **not** 700M creative songwriting or source-structure projection.
+
+**Release source SHA:** `ddad6625166bb2f4a9cc3f45a0bce2dff59a8a72`. **Successful guarded workflow:** [#37956091784](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37956091784); terminal outcome `success`. **Production target:** [kamiloki/Swyrlz](https://huggingface.co/spaces/kamiloki/Swyrlz). **Published HF Space revision:** `ca49d751e3be4219cd2680131a5e67ae674ea565`. **Rollback target:** prior v177 revision `df9a4bfab386e6f7b1888a6691ff8ed0941d5346`.
+
+**V178 implementation:** `hf_space/online_tools.py` performs up to two extra **search-only** discovery probes when (a) one of the first two total page attempts was an actual `FETCH_ERROR`, (b) the next candidate pool offers no explicit musical-section cues, and (c) one of three total page-fetch slots remains. Strict song identity, direct text source, unique URL, challenged-family exclusion, explicit [Verse]/[Hook] clue, and fetched **full lyric text** verification are mandatory for a new rescue candidate to displace the weak third page option. No bypass of access challenges, no source/artist-specific fetch allowlist, no increased fetched-page budget, and truthful fail-closed response if still no verified body.
+
+**Regression results (required from successful workflow logs):**
+- `full-lyrics-bounded-fallback-v158 PASS` (rejection-only sources do not trigger new rescue; three-page cap).
+- `structure-only-reference-no-lexical-borrowing-v177 PASS` (no source words passed into the 700M creative reference context).
+- `live-25-structured-lyrics-priority-v176 PASS` (existing source prioritization remains).
+- `live-27-last-slot-structured-rescue-v178 PASS` (Genius fetch failure + AZLyrics challenge triggers bounded search and selects newly discovered, section-marked and verified third source).
+- Real R39 reconstruction and GGUF compatibility, model 700M smoke, production rollback snapshot, protected upload, revision capture passed.
+
+**Initial failed guard preserved:** [#37955779905](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37955779905) stopped before upload because new rescue logic also triggered on two **successfully fetched but non-lyrical** v158 fixture pages and consumed a slot on an unrelated search result. Corrected by requiring actual prior fetch error and strengthened v158 regression; the later successful workflow is authoritative. No claim of v178 fresh hosted lyrics acceptance yet.
+
+**Canonical version closure:** Server Runtime **2.3.331**, Online Research **1.0.26**, Repository Work **1.0.108**, Deployment Control **1.0.38**. LALM Engine **2.1.162** remains on verified v177 structure-only original-song rules; UI Web Chat **1.5.92** unchanged.
+
+**Next user validation:** Re-run exact lyric request `Can you provide lyrics for rack city by tyga` on v178 Space, then if source succeeds, continue same thread with original rap request. Inspect `lyricsRescueSearchDebug` and `lyricsSourceAttemptCount<=3`. A website still may not expose an accessible source on every attempt; this is a bounded recovery improvement, not a guarantee of source availability.
+
 ## UPDATE STARTED — 2026-10-09 — Dragon Chat (27) last-slot structured lyrics rescue v178
 
 **New user evidence:** `swrlz-dragon-chat (27).json` contains a single hosted v177 `700m` request, exact text `Can you provide lyrics for rack city by tyga`. Correct SongIdentity and discovery (eight candidates) but fail-closed lyrical output: Genie page fetch HTTPError (reasoner first page), AZLyrics redirected into robot/challenge screen and rejected (second), Musixmatch page HTTPError (third); `lyricsSourceAttemptCount=3`, `lyricsFallbackExhausted=true`, `musicStructureDebug=null`, `lyricsRescueSearchDebug=[]`. v177 authored-music behavior was **not** exercised, since verified lyrics were absent. Contrast Dragon Chat (26) successful v176 source LyricsMania from broader search results. This is source availability/selection variability, not evidence that v177 structural abstraction or original-song generation failed.
