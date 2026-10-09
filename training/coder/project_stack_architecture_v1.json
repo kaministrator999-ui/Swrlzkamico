@@ -1,0 +1,249 @@
+{
+  "schema": "swrlz-coder-public-practice-v1",
+  "version": 1,
+  "asOf": "2026-10-09",
+  "target": "repository-enabled coder learning (currently Qwen2.5-Coder-1.5B GGUF route; future trained specialist only with separate approval)",
+  "status": "UNGRADED_NOT_TRAINABLE",
+  "type": "public-open-book-practice",
+  "canonicalLesson": "training/coder/PROJECT_STACK_ARCHITECTURE_V1.md",
+  "evaluationPolicy": "These acceptance cues are instructor rubrics, not independently executed test results. No case in this file is a positive training label. Do not treat this as held-out if the candidate can read it.",
+  "cases": [
+    {
+      "id": "CST-001",
+      "topic": "source-authority",
+      "prompt": "An engineer cannot find /chat/§wyrlz in main and declares the route deleted. Identify the correct verification path.",
+      "sourceAnchors": [
+        "runtime:runtime_pages/manifest.json",
+        "runtime:chat/§wyrlz/index.html",
+        "docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md"
+      ],
+      "mustCover": [
+        "Resolve runtime manifest/source before claiming missing",
+        "Separate source location from observed live activation"
+      ],
+      "reject": [
+        "main 404 proves deleted",
+        "Invent a new route owner"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    },
+    {
+      "id": "CST-002",
+      "topic": "dependencies",
+      "prompt": "You see numpy 2.3.2 in root requirements and 2.2.6 in HF requirements. Should you change one version to match? Explain.",
+      "sourceAnchors": [
+        "main:requirements.txt",
+        "main:pyproject.toml",
+        "feature/hf-space-manual-deploy:hf_space/requirements.txt"
+      ],
+      "mustCover": [
+        "Distinct environments/ABI/build targets",
+        "No version reconciliation without live package evidence and tests"
+      ],
+      "reject": [
+        "Blindly unify versions"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    },
+    {
+      "id": "CST-003",
+      "topic": "routing",
+      "prompt": "A coding prompt selected 700m and was automatically rerouted. Locate why and name the coder engine.",
+      "sourceAnchors": [
+        "feature/hf-space-manual-deploy:hf_space/model_router.py",
+        "feature/hf-space-manual-deploy:hf_space/brain_programming.py",
+        "feature/hf-space-manual-deploy:hf_space/qwen_coder_engine.py"
+      ],
+      "mustCover": [
+        "codingTask criterion",
+        "CODER_AUTO_ROUTE behavior",
+        "Qwen2.5-Coder-1.5B GGUF"
+      ],
+      "reject": [
+        "Qwen model is hypothetical",
+        "Rewrite routing in DOM"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    },
+    {
+      "id": "CST-004",
+      "topic": "ownership",
+      "prompt": "A coding response's semantic correctness is incorrectly graded as PASS because the Station returned terminal. Explain why this is wrong.",
+      "sourceAnchors": [
+        "feature/hf-space-manual-deploy:hf_space/station.py",
+        "docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md"
+      ],
+      "mustCover": [
+        "Operational readiness vs semantic validation",
+        "Independent tests/evaluator needed"
+      ],
+      "reject": [
+        "Station terminal equals correct answer"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    },
+    {
+      "id": "CST-005",
+      "topic": "chat-flow",
+      "prompt": "Trace a user Chat message through request/admission/model route/stream to its rendered reply. Identify the owning boundaries.",
+      "sourceAnchors": [
+        "feature/hf-space-manual-deploy:hf_space/station.py",
+        "feature/hf-space-manual-deploy:hf_space/model_router.py",
+        "feature/hf-space-manual-deploy:chat/§wyrlz/index.html"
+      ],
+      "mustCover": [
+        "Mask→Station→Brain/model→Station→Mask",
+        "Canonical thread state and inference projection differ"
+      ],
+      "reject": [
+        "Assign everything to frontend",
+        "A response stream equals durable account record"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    },
+    {
+      "id": "CST-006",
+      "topic": "native-c",
+      "prompt": "Python import of swyrlz._r39_native fails. Find the build/ABI boundary and identify safe fallback checks.",
+      "sourceAnchors": [
+        "main:setup.py",
+        "main:native/r39_native.c",
+        "feature/hf-space-manual-deploy:hf_space/app.py"
+      ],
+      "mustCover": [
+        "NumPy include/Python ABI and build provenance",
+        "Fallback evidence check"
+      ],
+      "reject": [
+        "Invent unrelated pip dependency",
+        "Hide native build failure"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    },
+    {
+      "id": "CST-007",
+      "topic": "forge-build",
+      "prompt": "The reconstructed engine HTML hash differs from source-manifest.json. What is the permissible response?",
+      "sourceAnchors": [
+        "main:projects/swrlz-forge-moba/build_space.py",
+        "main:projects/swrlz-forge-moba/source-manifest.json"
+      ],
+      "mustCover": [
+        "Stop release and inspect payload/ordered patches",
+        "Only update sealed manifest after exact validated bytes"
+      ],
+      "reject": [
+        "Skip integrity check",
+        "Deploy mismatched HTML"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    },
+    {
+      "id": "CST-008",
+      "topic": "forge-state",
+      "prompt": "Play shows an animation pose but Preview Frame uses different timing. Identify canonical animation ownership and how to repair.",
+      "sourceAnchors": [
+        "main:projects/swrlz-forge-moba/runtime/anime_timeline.js",
+        "main:projects/swrlz-forge-moba/runtime/anime_stage.js",
+        "main:projects/swrlz-forge-moba/runtime/anime_editor.js"
+      ],
+      "mustCover": [
+        "Shared saved timeline and sampler",
+        "One renderer/scene behavior across Preview/Play/Watch"
+      ],
+      "reject": [
+        "Create an independent preview timeline"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    },
+    {
+      "id": "CST-009",
+      "topic": "forge-rig",
+      "prompt": "After rotation, a paper character's staff floats away from wrist. What parts own attachment and physical coordinates?",
+      "sourceAnchors": [
+        "main:projects/swrlz-forge-moba/runtime/anime_socket_model.js",
+        "main:projects/swrlz-forge-moba/runtime/anime_rig_model.js",
+        "main:projects/swrlz-forge-moba/runtime/anime_emergence.js"
+      ],
+      "mustCover": [
+        "Socket connection tree and named grip",
+        "World/cutout pivot transforms and renderer",
+        "Physical page hinge for emergence"
+      ],
+      "reject": [
+        "CSS offset patch",
+        "Camera-relative staff anchor"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    },
+    {
+      "id": "CST-010",
+      "topic": "deploy-boundary",
+      "prompt": "The Chat release was approved, so can the agent deploy the Forge engine by changing the HF Chat request nonce?",
+      "sourceAnchors": [
+        "main:§wyrlz_§tart.md",
+        "main:§tart_§E.md",
+        "main:.github/workflows/deploy-swrlz-forge-moba.yml"
+      ],
+      "mustCover": [
+        "Separate Chat vs Forge Spaces and triggers",
+        "Dedicated v9.4 static build acceptance"
+      ],
+      "reject": [
+        "Reuse Chat deployment trigger for engine"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    },
+    {
+      "id": "CST-011",
+      "topic": "concurrency",
+      "prompt": "Two coding chats are working from the same old blob and one just committed a new version. How do they safely integrate?",
+      "sourceAnchors": [
+        "main:§wyrlz_§tart.md",
+        "main:SWRLZ_VERSION_MODULE_EVOLUTION.md"
+      ],
+      "mustCover": [
+        "Re-fetch head/sha and affected authority",
+        "Reconcile tests, one integration writer and version assignment",
+        "Preserve other user's changes"
+      ],
+      "reject": [
+        "Overwrite with stale file body",
+        "Force-push past concurrent work"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    },
+    {
+      "id": "CST-012",
+      "topic": "weight-truth",
+      "prompt": "The project-curriculum Markdown was committed and a generated Qwen answer sounds correct. Can you report that Qwen weights learned the architecture?",
+      "sourceAnchors": [
+        "main:docs/engineering/SWRLZ_700M_WEIGHT_LEARNING_PIPELINE.md",
+        "main:docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md",
+        "main:training/700m/train_lora.py"
+      ],
+      "mustCover": [
+        "Documents/evals vs inference injection vs fine-tuning distinction",
+        "Independent exact-source receipts and genuinely separate held-out evaluation",
+        "Qwen-specific adapter/promote required before weight claims"
+      ],
+      "reject": [
+        "Claim trained weights based on docs",
+        "Promote 700M trainer result to Qwen"
+      ],
+      "grade": "NOT_RUN",
+      "requiresSourceReview": true
+    }
+  ]
+}
