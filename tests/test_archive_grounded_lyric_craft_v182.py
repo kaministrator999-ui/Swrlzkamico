@@ -168,8 +168,52 @@ def test_private_feedback_case_text_never_enters_public_v3_structures():
             assert marker not in text, (name, marker)
 
 
+
+def test_v4_provisional_editorial_anchors_match_actual_song_lines():
+    root = ROOT / "training" / "lyrics"
+    d = json.loads((root / "PROVISIONAL_EDITORIAL_PASS_V4.json").read_text(encoding="utf-8"))
+    assert d["status"] == "PROVISIONAL_EDITORIAL_NOT_INDEPENDENT_BLIND_REVIEW"
+    a = json.loads((root / "original_full_compositions_v2.json").read_text(encoding="utf-8"))
+    b = json.loads((root / "original_complete_songs_v3.json").read_text(encoding="utf-8"))
+    by_source = {"original_full_compositions_v2.json": a, "original_complete_songs_v3.json": b}
+    assert len(d["reviews"]) == 14
+    for review in d["reviews"]:
+        songs = by_source[review["sourceAsset"]]["songs"]
+        song = next(s for s in songs if s["title"] == review["song"])
+        for evidence_key in ("positiveEvidence", "revisionEvidence"):
+            evidence = review[evidence_key]
+            source_line = song["lines"][evidence["line"] - 1]
+            assert evidence["excerpt"].casefold() in source_line.casefold(), (review["song"], evidence_key)
+        assert review["trainingApproval"] == "REJECT_PENDING_INDEPENDENT_QC"
+        assert review["editorialIndependence"] == "SAME_ASSISTANT_REVIEW_NOT_BLIND"
+        assert set(review["provisionalScores"]) == set(d["coverage"]["dimensions"])
+        assert all(0 <= value <= 4 for value in review["provisionalScores"].values())
+
+
+def test_v4_distinct_song_forms_and_contiguous_section_counts():
+    root = ROOT / "training" / "lyrics"
+    d = json.loads((root / "CROSS_FORM_COMPLETE_SONGS_V4.json").read_text(encoding="utf-8"))
+    assert d["schema"] == "swrlz-lyric-ocean-crossform-complete-v4"
+    assert d["songCount"] == len(d["songs"]) == 8
+    assert d["totalLyricLines"] == sum(s["lineCount"] for s in d["songs"]) == 249
+    assert len({s["title"] for s in d["songs"]}) == 8
+    assert len({s["form"] for s in d["songs"]}) == 8
+    for song in d["songs"]:
+        lines = [line for section in song["sections"] for line in section["lines"]]
+        assert len(lines) == song["lineCount"] >= 24
+        assert all(line.strip() for line in lines)
+        assert song["trainingStatus"] == "NOT_WEIGHT_TRAINABLE"
+        assert song["editorialStatus"] == "DRAFT_UNREVIEWED"
+        assert song["performedMeterVerified"] is False
+    v2 = json.loads((root / "original_full_compositions_v2.json").read_text(encoding="utf-8"))
+    v3 = json.loads((root / "original_complete_songs_v3.json").read_text(encoding="utf-8"))
+    assert len(v2["songs"]) + len(v3["songs"]) + len(d["songs"]) == 22
+    assert sum(s["lineCount"] for s in v2["songs"] + v3["songs"]) + d["totalLyricLines"] == 697
+
+
+
 if __name__ == "__main__":
     for obj in list(globals().values()):
         if callable(obj) and getattr(obj, "__name__", "").startswith("test_"):
             obj()
-    print("archive-grounded-lyric-ocean-v3 structural checks PASS")
+    print("archive-grounded-lyric-ocean-v4 structural checks PASS")
