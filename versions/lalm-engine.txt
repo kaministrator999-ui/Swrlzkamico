@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.160
-REVISION=2.1.160-repeat-count-music-metadata-v174
+VERSION=2.1.161
+REVISION=2.1.161-contextual-rap-creation-v175
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
