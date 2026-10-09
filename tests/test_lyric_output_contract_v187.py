@@ -95,6 +95,8 @@ def test_engine_route_has_a_bounded_single_retry_and_structural_only_truth():
     assert "verify_original_lyrics(candidate_raw,shape)" in source
     assert "extend_continuous_lyrics(authored_lines,new_segment,shape)" in source
     assert "for continuation_index in range(2):" in source
+    assert "CONTINUATION OVERRIDE FOR THIS SEGMENT ONLY" in source
+    assert "invalid-or-overlong-lyric-continuation" in source
     assert 'candidate_check=check' in source
     assert "clean_lyric_container(candidate_raw)" in source
     assert "2048 if requested and requested>=64" in source
