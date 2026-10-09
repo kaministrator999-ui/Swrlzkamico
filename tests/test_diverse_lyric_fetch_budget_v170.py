@@ -44,6 +44,7 @@ GOOD_SNIPPET="Rack City Tyga lyrics Rack city line one is moving Rack city line 
 
 orig_research=online_tools.run_online_research
 orig_fetch=online_tools.canonical_online_research.fetch_public
+orig_search=online_tools.canonical_online_research.search_public
 orig_prov=online_tools._lyrics_provenance_lookup
 fetch_calls=[]
 
@@ -105,12 +106,14 @@ pool[2]["snippet"]=GOOD_SNIPPET
 try:
     online_tools.run_online_research=fake_research
     online_tools.canonical_online_research.fetch_public=fake_fetch
+    online_tools.canonical_online_research.search_public=lambda _query: []
     online_tools._lyrics_provenance_lookup=fake_prov
     p=dict(plan);p["requestId"]="v170-diverse-budget"
     result=online_tools._search_bundle(p)
 finally:
     online_tools.run_online_research=orig_research
     online_tools.canonical_online_research.fetch_public=orig_fetch
+    online_tools.canonical_online_research.search_public=orig_search
     online_tools._lyrics_provenance_lookup=orig_prov
 
 assert result["lyricsSourceAttemptCount"]==3,result
@@ -210,6 +213,7 @@ try:
 finally:
     online_tools.run_online_research=orig_research
     online_tools.canonical_online_research.fetch_public=orig_fetch
+    online_tools.canonical_online_research.search_public=orig_search
     online_tools._lyrics_provenance_lookup=orig_prov
 
 assert result["modelContext"]["songIdentity"]["title"]=="rack city",result["modelContext"]["songIdentity"]
@@ -350,6 +354,7 @@ try:
 finally:
     online_tools.run_online_research=orig_research
     online_tools.canonical_online_research.fetch_public=orig_fetch
+    online_tools.canonical_online_research.search_public=orig_search
     online_tools._lyrics_provenance_lookup=orig_prov
 
 assert accepted["lyricsSourceAttemptCount"]<=3,accepted
