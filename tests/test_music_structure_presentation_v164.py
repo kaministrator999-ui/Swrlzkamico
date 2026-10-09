@@ -311,3 +311,88 @@ assert len(second_projected)==len(FULL_29)==4,second_projected
 assert FULL_29==before,"Creative projection altered persisted history"
 assert creative_music_reference_projection("What was the old song title?",FULL_29)[1] is None
 print("live-29-first-and-another-one-source-isolation-v180 PASS")
+
+# v181 Dragon Chat (30): live original song has unrelated wording but
+# devolves into a boilerplate urban song and adds bracketed stage notes and
+# post-song explanation. Keep musical mechanics, pick a genuinely independent
+# story premise, and validate song-only rendering before streaming.
+from music_structure import original_rap_delivery, original_rap_violations
+assert template["originalCreativePremise"] and "Test Signal" not in template["originalCreativePremise"]
+assert second_form["originalCreativePremise"] != fresh_form["originalCreativePremise"],(second_form,fresh_form)
+assert template["approxTotalLyricLines"]==8,template
+assert all("title" not in str(v).lower() for v in template["recurringLineBands"]),template
+STAGE_OUTPUT="""This rap uses abstract mechanics but draws on another setting.
+
+**Title:** *"The Glass Orchard"*
+
+**Verse 1:**
+*(Section starts here, with minimal setup)*
+A patient gardener counts the budding leaves
+The glass roof listens as the robin weaves
+An amber seed is waiting in the frost
+One silent winter measures what was lost
+
+**Chorus:**
+The roots remember where the sunlight fell
+Every growing branch has more to tell
+The orchard opens on a clearer day
+The soft green branches find another way
+
+**Verse 2:**
+A clay pot turns beneath the warming sun
+A secret summer has already begun
+The quiet seedlings stir behind the glass
+A living green returns beneath the grass
+
+**Outro:**
+The orchard wakes beneath the early rain
+Each careful hand is learning how to gain
+
+This rap structure aims to capture the provided mechanics.
+"""
+clean=original_rap_delivery(STAGE_OUTPUT)
+assert clean.startswith(chr(96)*3+"\n") and clean.endswith("\n"+chr(96)*3),clean
+assert "Section starts here" not in clean and "This rap structure" not in clean,clean
+assert "patient gardener" in clean and "early rain" in clean,clean
+assert "[Verse 1]" in clean and "[Chorus]" in clean,clean
+assert original_rap_violations(STAGE_OUTPUT,clean,FORM_HISTORY,template)==[],original_rap_violations(STAGE_OUTPUT,clean,FORM_HISTORY,template)
+
+BORROWED_OUTPUT="""Title: Inherited Signal
+[Verse]
+Silver leviathans climb through the evening
+Silver leviathans climb through the evening
+An entirely different letter is written
+An entirely different letter is written
+The body still follows through the page
+Another pen is turning to the stage
+All living creatures dance along the hall
+The season blossoms after autumn fall
+The meadow feels the footsteps of the rain
+A lantern makes a pattern in the grain
+A chapter takes another winding turn
+The artist has a hundred things to learn
+"""
+copy=original_rap_delivery(BORROWED_OUTPUT)
+assert "reference-four-word-phrase-reused" in original_rap_violations(BORROWED_OUTPUT,copy,FORM_HISTORY,template)
+
+# Repeated lines are converted to positions, not reference wording.
+RECURRING_SOURCE="""Here are verified lyrics:
+
+Distant engines wake beneath the garden
+The mountain valley holds a secret dream
+Distant engines wake beneath the garden
+The mountain valley holds a secret dream
+A painted feather falls upon the water
+The long horizon folds beneath the rain
+Distant engines wake beneath the garden
+The mountain valley holds a secret dream
+
+**Lyrics source:** Synthetic Artist — https://example.test/song
+"""
+repeat_history=[{"role":"user","content":"Lyrics of invented reference by Synthetic Artist"},
+                {"role":"assistant","content":RECURRING_SOURCE}]
+repeat_projection,repeat_plan=creative_music_reference_projection(CREATIVE_FOLLOWUP,repeat_history)
+assert repeat_plan["approxTotalLyricLines"]==8,repeat_plan
+assert repeat_plan["recurringLineBands"]==[{"fromLine":1,"toLine":4,"lines":4},{"fromLine":7,"toLine":8,"lines":2}],repeat_plan
+assert "Distant engines" not in str(repeat_projection) and "mountain valley" not in str(repeat_plan),repeat_projection
+print("live-30-original-only-theme-structure-and-delivery-v181 PASS")
