@@ -1030,6 +1030,7 @@ def generate_events(payload):
         guarded_turn=guarded_turn,
         repair_turn=repair_turn,
         strict_language=strict_language,
+        max_attempts=6 if strict_lyric_turn else 3,
     )
     yield {"type":"GENERATION_TELEMETRY","telemetry":telemetry}
     yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":telemetry["engineTotalLatencyMs"],"loadLatencyMs":telemetry["modelLoadLatencyMs"],"firstDeltaLatencyMs":first_delta}
