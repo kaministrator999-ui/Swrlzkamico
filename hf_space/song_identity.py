@@ -155,8 +155,8 @@ def resolve_unseparated_artist(identity: dict[str,Any], candidates: list[dict[st
             if not isinstance(item,dict):
                 continue
             heading=_clean(item.get("title"),320)
-            artist_first=re.match(r"^(.+?)\\s+[-–—]\\s+(.+?)\\s+lyrics?\\b",heading,re.I)
-            title_first=re.match(r"^(.+?)\\s+lyrics?\\s+(?:by|[-–—])\\s+(.+?)(?=\\s+[-–—|]\\s+|$)",heading,re.I)
+            artist_first=re.match(r"^(.+?)\s+[-–—]\s+(.+?)\s+lyrics?\b",heading,re.I)
+            title_first=re.match(r"^(.+?)\s+lyrics?\s+(?:by|[-–—])\s+(.+?)(?=\s+[-–—|]\s+|$)",heading,re.I)
             matched=bool(
                 (artist_first and _fold(artist_first.group(1))==artist_fold
                     and _fold(artist_first.group(2))==title_fold)
