@@ -1087,8 +1087,8 @@
         if(!response.ok)throw new Error(typeof data.detail==="string"?data.detail:"Workspace request failed (HTTP "+response.status+")");
         return data;
       };
-      const projectZipLink=project=>{
-        const qs=new URLSearchParams({threadId:activeThreadId,workspaceId:project.id,revision:String(project.revision),sourceHash:String(project.sourceHash||"")});
+      const projectZipLink=(project,threadId)=>{
+        const qs=new URLSearchParams({threadId:String(threadId||""),workspaceId:project.id,revision:String(project.revision),sourceHash:String(project.sourceHash||"")});
         return "/api/lalm_station/workspaces/download?"+qs.toString();
       };
       const manageSourceWorkspace=async(thread,packageInfo,actions)=>{
@@ -1112,7 +1112,7 @@
           project=created.workspace;
         }
         if(project.state==="READY"){
-          const download=document.createElement("a");download.className="code-package-link";download.href=projectZipLink(project);
+          const download=document.createElement("a");download.className="code-package-link";download.href=projectZipLink(project,thread.id);
           download.textContent="Download completed project ZIP";actions.appendChild(download);return;
         }
         if(project.state!=="IN_PROGRESS")throw new Error("This workspace was cancelled; create another workspace");
@@ -1126,7 +1126,18 @@
         project=attached.workspace;
         const missing=project.remainingPaths||[];
         if(missing.length){
-          window.alert("Added "+project.completedCount+"/"+project.requiredCount+" required files.\nStill needed:\n"+missing.join("\n")+"\n\nGenerate those files in future Chat replies, then select the same workspace.");
+          const status=document.createElement("span");status.className="code-package-progress";
+          status.textContent=project.completedCount+"/"+project.requiredCount+" files assembled; "+missing.length+" missing";
+          actions.appendChild(status);
+          const next=document.createElement("button");next.type="button";next.className="code-package-link";
+          next.textContent="Prepare next file: "+missing[0];
+          next.onclick=()=>{
+            // User reviews/sends this follow-up; no background inference.
+            if(activeThreadId!==thread.id){window.alert("Open the project conversation first.");return;}
+            prompt.value="Continue our existing code project. Write the COMPLETE file "+missing[0]+" only, in a fenced code block with file="+missing[0]+". Keep the previously generated project interfaces and user requirements consistent; no ellipses or TODO placeholders. The remaining required files are: "+missing.join(", ")+".";
+            prompt.dispatchEvent(new Event("input",{bubbles:true}));prompt.focus();
+          };
+          actions.appendChild(next);
           return;
         }
         // Manifest complete does not mean independently tested code; describe it
@@ -1135,7 +1146,7 @@
           threadId:thread.id,workspaceId:project.id,expectedWorkspaceRevision:project.revision,
         })});
         const download=document.createElement("a");download.className="code-package-link";
-        download.href=projectZipLink(finished.workspace);
+        download.href=projectZipLink(finished.workspace,thread.id);
         download.textContent="Download assembled ZIP · "+finished.workspace.completedCount+" files";
         download.title="All listed source files are assembled; code correctness is not automatically verified";
         actions.appendChild(download);
