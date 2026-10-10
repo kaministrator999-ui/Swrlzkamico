@@ -23,7 +23,7 @@ jobs:
         run: |
           node - <<'NODE'
           const fs=require('fs'), vm=require('vm');
-          const html=fs.readFileSync('hf_space/chat/§wyrlz/index.html','utf8');
+          const html=fs.readFileSync('chat/§wyrlz/index.html','utf8');
           const blocks=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]
             .map(x=>x[1]).filter(x=>x.trim());
           if(!blocks.length)throw Error('No inline Chat JS found');
@@ -36,7 +36,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          s=Path('hf_space/chat/§wyrlz/index.html').read_text()
+          s=Path('chat/§wyrlz/index.html').read_text()
           assert 'SWRLZ_GITHUB_OAUTH_CLIENT_SECRET' not in s
           assert 'SWRLZ_GITHUB_ENCRYPTION_KEY' not in s
           assert 'localStorage.setItem("github' not in s
