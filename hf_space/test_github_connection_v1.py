@@ -98,6 +98,22 @@ def test_startup_source_evidence_no_write_and_no_fake_activation():
         try:gh.project_start_report("google:user")
         except AssertionError:pass
         else:raise AssertionError("Expected exact source revision validation")
+    sha="a"*40
+    calls=[]
+    def pinned_api(_, path):
+        calls.append(path)
+        if path=="/repos/test/repo":return {"default_branch":"main"}
+        if path in ("/repos/test/repo/commits/main","/repos/test/repo/commits/runtime"):return {"sha":sha}
+        raise AssertionError(path)
+    def pinned_optional(_, repo, path, ref, max_bytes=100000):
+        assert ref==sha
+        return optional(_,repo,path,ref,max_bytes)
+    with mock.patch.object(gh,"_config",return_value={}),mock.patch.object(gh,"_load",return_value={"token":token,"repo":"test/repo"}),mock.patch.object(gh,"_api",side_effect=pinned_api),mock.patch.object(gh,"_read_optional",side_effect=pinned_optional):
+        report=gh.project_start_report("google:user")
+        assert "test/repo" in report and "1.0.1" in report
+        assert "test project acceptance" in report
+        assert "No deployment" in report and "read" in report.lower()
+        assert "/repos/test/repo/commits/runtime" in calls
     source=Path(__file__).with_name("github_connection.py").read_text()
     assert 'GITHUB_SCOPE = "read:user"' in source
     assert "requests.put(" not in source and "requests.patch(" not in source and "requests.delete(" not in source
