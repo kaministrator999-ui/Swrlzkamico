@@ -355,6 +355,17 @@
     .github-connect select,.github-connect input{width:100%;box-sizing:border-box;background:rgba(1,14,28,.8);border:1px solid rgba(126,214,255,.24);border-radius:7px;padding:7px;color:#efffff;font-size:11px;margin:3px 0}
     .github-connect [hidden]{display:none!important}
 
+    /* Safe Markdown presentation; never let long repo names/URLs escape the card. */
+    .assistant-body,.assistant-body .message-text,.assistant-body .misc-surface{min-width:0;max-width:100%;box-sizing:border-box}
+    .assistant-body .message-text p,.assistant-body .message-text li,.assistant-body .message-text h1,.assistant-body .message-text h2,.assistant-body .message-text h3{overflow-wrap:anywhere;word-break:normal}
+    .assistant-body .message-text .md-link{color:#91eaff;text-decoration:underline;text-underline-offset:.16em;overflow-wrap:anywhere}
+    .assistant-body .message-text .md-inline-code{font:0.86em ui-monospace,SFMono-Regular,Consolas,monospace;background:rgba(34,80,112,.34);padding:.08em .25em;border-radius:4px;overflow-wrap:anywhere}
+    .assistant-body .message-text .md-table-scroll{max-width:100%;width:100%;overflow-x:auto;overscroll-behavior-inline:contain;margin:12px 0;border:1px solid rgba(126,214,255,.22);border-radius:9px}
+    .assistant-body .message-text .md-table{width:100%;min-width:410px;border-collapse:collapse;font-size:.82em;white-space:normal}
+    .assistant-body .message-text .md-table th,.assistant-body .message-text .md-table td{border-bottom:1px solid rgba(126,214,255,.14);padding:7px 9px;text-align:left;vertical-align:top;overflow-wrap:anywhere;min-width:85px}
+    .assistant-body .message-text .md-table th{color:#dcf6ff;background:rgba(16,48,76,.72)}
+    .assistant-body .message-text .md-table tr:last-child td{border-bottom:0}
+
     /* Chat usability pass 1.0.88 */
     .jump-latest{position:fixed;z-index:5;right:16px;bottom:calc(var(--composer-visible-height,70px) + 12px);min-height:38px;padding:0 13px;border:1px solid rgba(56,232,255,.38);border-radius:999px;background:rgba(3,19,34,.94);color:#dffaff;box-shadow:0 8px 24px rgba(0,0,0,.32);cursor:pointer}.jump-latest[hidden]{display:none}
     .stop-button{display:inline-grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,107,122,.42);border-radius:50%;background:rgba(65,18,31,.92);color:#ffdce2;cursor:pointer;font-size:13px}.stop-button[hidden]{display:none}
@@ -1135,7 +1146,7 @@
         const source=String(text||"");
         const fence=/\`\`\`([^\n\`]*)\n?([\s\S]*?)\`\`\`/g;
         let cursor=0,match,codeIndex=0;
-        const appendInlineFormatting=(parent,value)=>{
+        const appendInlineStyles=(parent,value)=>{
           const input=String(value||"");
           const allowedFonts={sans:"system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",serif:"Georgia,'Times New Roman',serif",mono:"ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace",display:"Georgia,'Times New Roman',serif"};
           const clamp=(n,min,max)=>Math.min(max,Math.max(min,n));
@@ -1156,13 +1167,57 @@
           }
           if(cursor<input.length)parent.appendChild(document.createTextNode(input.slice(cursor)));
         };
+        // Inline Markdown is DOM-owned: source text is never assigned to innerHTML.
+        // Keep the existing custom formatting spans and add safe clickable links/code.
+        const appendInlineFormatting=(parent,value)=>{
+          const raw=String(value||"");
+          const token=/\[([^\]\n]{1,220})\]\((https?:\/\/[^\s)]+)\)|`([^`\n]{1,200})`/g;
+          let cursor=0,match;
+          while((match=token.exec(raw))){
+            if(match.index>cursor)appendInlineStyles(parent,raw.slice(cursor,match.index));
+            if(match[3]!==undefined){const code=document.createElement("code");code.className="md-inline-code";code.textContent=match[3];parent.appendChild(code);}
+            else{
+              const url=safeHttpUrl(match[2]);
+              if(url){const a=document.createElement("a");a.className="md-link";a.href=url;a.target="_blank";a.rel="noopener noreferrer";a.textContent=match[1];parent.appendChild(a);}
+              else appendInlineStyles(parent,match[0]);
+            }
+            cursor=token.lastIndex;
+          }
+          if(cursor<raw.length)appendInlineStyles(parent,raw.slice(cursor));
+        };
         const appendText=value=>{
           if(!value)return;
           const root=document.createElement("div");root.className="message-text";
           const lines=String(value).replace(/\r\n?/g,"\n").split("\n");let list=null,listType="";
           const closeList=()=>{list=null;listType="";};
           const addParagraph=text=>{if(!text.trim())return;const p=document.createElement("p");appendInlineFormatting(p,text.trim());root.appendChild(p);};
-          for(const rawLine of lines){
+          const splitCells=line=>String(line||"").trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(x=>x.trim());
+          const tableRule=line=>/^\|(?:\s*:?-{3,}:?\s*\|){2,}$/.test(String(line||"").trim());
+          for(let lineIndex=0;lineIndex<lines.length;lineIndex++){
+            const rawLine=lines[lineIndex];
+            // Render a table only with a Markdown separator row; ordinary lyric
+            // lines containing | remain prose. Scroll stays inside this response.
+            if(/^\s*\|/.test(rawLine)&&tableRule(lines[lineIndex+1])){
+              closeList();
+              const headers=splitCells(rawLine),wrapper=document.createElement("div");
+              wrapper.className="md-table-scroll";wrapper.tabIndex=0;wrapper.setAttribute("role","region");wrapper.setAttribute("aria-label","Response data table");
+              const table=document.createElement("table");table.className="md-table";
+              const thead=document.createElement("thead"),headrow=document.createElement("tr");
+              headers.forEach(h=>{const th=document.createElement("th");th.scope="col";appendInlineFormatting(th,h);headrow.appendChild(th);});
+              thead.appendChild(headrow);table.appendChild(thead);
+              const tbody=document.createElement("tbody");
+              lineIndex+=2;
+              while(lineIndex<lines.length&&/^\s*\|/.test(lines[lineIndex])){
+                const cells=splitCells(lines[lineIndex]);
+                if(cells.length!==headers.length)break;
+                const row=document.createElement("tr");
+                cells.forEach(cell=>{const td=document.createElement("td");appendInlineFormatting(td,cell);row.appendChild(td);});
+                tbody.appendChild(row);lineIndex++;
+              }
+              table.appendChild(tbody);wrapper.appendChild(table);root.appendChild(wrapper);
+              lineIndex--;continue;
+            }
+
             const line=rawLine.trimEnd(),heading=line.match(/^(#{1,6})\s+(.+)$/),ordered=line.match(/^\s*\d+[.)]\s+(.+)$/),unordered=line.match(/^\s*[-*+]\s+(.+)$/);
             if(/^\s*---\s*$/.test(line)){closeList();const hr=document.createElement("hr");hr.className="lyric-document-divider";root.appendChild(hr);continue;}
             if(heading){closeList();const h=document.createElement("h"+Math.min(6,heading[1].length));appendInlineFormatting(h,heading[2]);root.appendChild(h);continue;}
