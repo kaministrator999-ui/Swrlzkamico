@@ -40,28 +40,84 @@ def needs_story_spine(prompt: str, requested_lines: int | None) -> bool:
     )
 
 
-def parse_story_spine(text: str) -> tuple[tuple[str, str], ...] | None:
-    """Accept exactly six brief ordered beats with no control instructions."""
-    lines = [line.strip() for line in str(text or "").strip().splitlines()]
+_LABELS = {
+    "incident": "incident",
+    "clue_one": "clue_one", "clue_1": "clue_one", "clue 1": "clue_one",
+    "first clue": "clue_one", "clue two": "clue_two", "clue 2": "clue_two",
+    "clue_two": "clue_two", "clue_2": "clue_two", "second clue": "clue_two",
+    "false lead": "false_lead", "false_lead": "false_lead",
+    "cause": "cause", "real cause": "cause",
+    "outcome": "outcome", "ending": "outcome", "consequence": "outcome",
+}
+
+
+def inspect_story_spine(text: str) -> tuple[tuple[tuple[str, str], ...] | None, str]:
+    """Parse model-authored beats; return one privacy-safe failure category.
+
+    This is format hygiene, not semantic proof. A small model may use numbered
+    labels, a code fence, or human-readable underscores; none grants prompt
+    instruction authority and no invented story facts are added.
+    """
+    raw = str(text or "").strip()
+    if not raw:
+        return None, "empty"
+    if len(raw) > 1200:
+        return None, "too-long"
+    lines = [line.strip() for line in raw.splitlines() if line.strip()]
+    if lines and lines[0].startswith("```") and lines[-1] == "```":
+        lines = lines[1:-1]
+    if lines and re.fullmatch(r"(?i)(?:story[ -]?plan|outline|plot[ -]?plan)\s*:?", lines[0]):
+        lines = lines[1:]
     if len(lines) != len(FIELDS):
-        return None
+        return None, "line-count"
     found = []
     for line, key in zip(lines, FIELDS):
-        m = re.fullmatch(r"([a-z_]+)\s*:\s*(.+)", line)
-        if not m or m.group(1) != key:
-            return None
-        val = " ".join(m.group(2).split()).strip(" .")
-        if not (8 <= len(val) <= 115) or len(val.split()) > 19:
-            return None
-        if _UNSAFE.search(val) or _GENERIC.fullmatch(val):
-            return None
+        line = re.sub(r"^(?:[-*]\s*|\d+[.)]\s*)", "", line)
+        match = re.fullmatch(r"([A-Za-z_0-9 ]{3,35})\s*:\s*(.+)", line)
+        if not match:
+            return None, "label-format"
+        label = re.sub(r"\s+", " ", match.group(1).strip().casefold())
+        if _LABELS.get(label) != key:
+            return None, "label-order"
+        val = " ".join(match.group(2).split()).strip(" .")
+        if _UNSAFE.search(val):
+            return None, "unsafe"
+        if not (5 <= len(val) <= 145) or len(val.split()) > 23:
+            return None, "field-length"
+        if _GENERIC.fullmatch(val):
+            return None, "generic-field"
         if val.casefold() in {x[1].casefold() for x in found}:
-            return None
+            return None, "duplicate-field"
         found.append((key, val))
-    if found[1][1].casefold() == found[2][1].casefold():
-        return None
-    return tuple(found)
+    return tuple(found), "ok"
 
+
+def parse_story_spine(text: str) -> tuple[tuple[str, str], ...] | None:
+    """Backward-compatible model-derived original beat parser."""
+    beats, _ = inspect_story_spine(text)
+    return beats
+
+
+def narrative_fallback_craft(requested_lines: int) -> str:
+    """Strong structure-first writing route when the micro-plan is unusable.
+
+    No hardcoded characters, incidents, source lyrics or recycled words; the
+    model must invent concrete story facts itself from the actual user request.
+    """
+    if not isinstance(requested_lines, int) or requested_lines < 24:
+        return ""
+    return (
+        "\nUNPLANNED NARRATIVE SONG CRAFT: Invent one specific event and a "
+        "verifiable cause while writing. Give the first fifth a physical "
+        "incident, the second fifth two distinct observable clues, the middle "
+        "a reasonable but false suspicion, the next fifth a cause that explains "
+        "both clues, and the final fifth a real irreversible outcome. "
+        "Do not repeat generic images or empty slogans "
+        "as a replacement for new facts. Make fast internal rhymes carry "
+        "actions and alternate with short earned punchlines. The last line "
+        "must FINISH the event rather than reopen it. "
+        "Respect the user's requested exact number of lines and sections."
+    )
 
 def story_spine_directive(beats: tuple[tuple[str,str], ...], requested_lines: int) -> str:
     """One compact factual anchor; not output text and not an invented chorus."""
@@ -94,11 +150,14 @@ def generate_story_spine(
         "You are planning silently, NOT writing lyrics. "
         "Answer with EXACTLY six simple lowercase-key lines and absolutely "
         "nothing else; use invented physical objects, actions and motives. "
-        "Follow this exact six-line label format, one per line:\\n"
-        "incident: <specific event>\\nclue_one: <physical evidence>\\n"
-        "clue_two: <different physical evidence>\\nfalse_lead: <wrong explanation>\\n"
-        "cause: <the real action explaining the evidence>\\n"
-        "outcome: <concrete irreversible consequence>. "
+        "Return ONLY the following six newlines with short concrete values; "
+        "one field per line and no other text: "
+        "incident: (event)\n"
+        "clue_one: (first physical trace)\n"
+        "clue_two: (second physical trace)\n"
+        "false_lead: (plausible wrong explanation)\n"
+        "cause: (single action explaining both traces)\n"
+        "outcome: (irreversible consequence). "
         "CAUSE must physically explain BOTH clues; outcome is irreversible. "
         "Each value 4 to 14 words, no generic 'secret found' or 'truth revealed'. "
         "No lyric quotations, no stage directions, no names of real artists. "
@@ -114,8 +173,9 @@ def generate_story_spine(
         temperature=0.36,
         max_lines=6,
     )
-    result = parse_story_spine(raw)
+    result, failure_code = inspect_story_spine(raw)
     receipt = {
+        "failureCode": None if result else failure_code,
         "status": "USABLE" if result else "UNUSABLE",
         "durationMs": timing.get("durationMs"),
         "fields": len(result or ()),
