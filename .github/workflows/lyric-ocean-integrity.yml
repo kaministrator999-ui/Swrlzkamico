@@ -4,6 +4,9 @@ on:
     paths:
       - 'training/lyrics/**'
       - 'hf_space/lyric_craft_school.py'
+      - 'hf_space/lyric_structure_school.py'
+      - 'hf_space/lyric_structure_patterns_v1.json'
+      - 'tests/test_crossgenre_song_structure_v190.py'
       - 'hf_space/lyric_output_contract.py'
       - 'tests/test_lyric_output_contract_v187.py'
       - 'hf_space/lyric_craft_catalog_v2.json'
@@ -22,6 +25,10 @@ jobs:
       - name: Compile bounded runtime teaching code
         run: |
           python -m py_compile hf_space/lyric_craft_school.py hf_space/lyric_output_contract.py hf_space/lfm2_700m_engine.py
+      - name: Validate cross-genre structure study bank and bounded model cues
+        run: |
+          python -m py_compile hf_space/lyric_structure_school.py
+          python -m unittest discover -s tests -p test_crossgenre_song_structure_v190.py -v
       - name: Validate lyric school, revision evidence, and privacy shape
         run: python tests/test_archive_grounded_lyric_craft_v182.py
       - name: Verify direct original lyric count and unrequested-refusal regression
