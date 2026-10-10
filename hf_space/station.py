@@ -20,6 +20,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 import github_connection
+import project_thread_memory
 try:
     from google.auth.transport import requests as google_requests
     from google.oauth2 import id_token as google_id_token
@@ -375,8 +376,10 @@ async def stream_generation(request:Request, requestId:str):
 def export_session(request:Request):
     """Download only the caller's process-local conversation and generation diagnostics."""
     key=request.cookies.get("swrlz_hf_sid")
+    _,account=_account_session(request)
+    owner=str((account or {}).get("id") or "anonymous")
     with _lock:
-        if not key or key not in _sessions:raise HTTPException(404,"No active HF session")
+        if not key or key not in _sessions or _sessions[key].get("ownerGoogleId")!=owner:raise HTTPException(404,"No active HF session")
         snapshot=_snapshot(_sessions[key])
     document={"format":"swrlz-hf-session-export-v1","exportedAtUnixMs":int(time.time()*1000),"storage":"process-local; not durable account history","threads":snapshot["threads"],"activeGeneration":snapshot["activeGeneration"]}
     return Response(content=json.dumps(document,ensure_ascii=False,indent=2),media_type="application/json",headers={"Content-Disposition":"attachment; filename=swrlz-dragon-chat.json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"})
@@ -643,6 +646,11 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 g["lastSeq"]+=1
                 if kind=="DELTA":
                     delta=str(event.get("text") or "");text+=delta;g["text"]=text
+                elif kind=="PROJECT_CONTEXT":
+                    candidate=project_thread_memory.normalize(event.get("context"))
+                    if candidate:
+                        g["projectContext"]=candidate
+                        g["status"].append({"seq":g["lastSeq"],"phase":"PROJECT_CONTEXT_READY","reason":"Verified repository facts ready for this thread"})
                 elif kind=="DIAGNOSTIC":
                     trace=event.get("trace")
                     if isinstance(trace,dict):g["diagnosticTrace"]=copy.deepcopy(trace)
@@ -814,6 +822,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
         github_telemetry=None
         online_outcome=None
         knowledge_snapshot=None
+        project_memory_receipt=None
         with _lock:
             g=s["activeGeneration"]
             completed_ms=int(time.time()*1000)
@@ -829,6 +838,12 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 "endToEndMs":max(0,completed_ms-accepted_ms),
             }
             thread=next(t for t in s["threads"] if t["id"]==payload["threadId"])
+            if isinstance(g.get("projectContext"),dict) and isinstance(payload.get("githubStart"),dict):
+                context=project_thread_memory.normalize(g["projectContext"])
+                user_id=str(payload["githubStart"].get("userId") or "")
+                if context and user_id.startswith("google:"):
+                    thread["projectContext"]=context
+                    project_memory_receipt=(user_id,str(thread["id"]),context)
             intent=g.get("programmingIntent") if isinstance(g.get("programmingIntent"),dict) else {}
             if intent.get("codingTask"):
                 thread["programmingState"]=copy.deepcopy(intent)
@@ -1014,6 +1029,17 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 }
                 g["githubTelemetryPersistence"]={"state":"QUEUED","path":"runtime-diagnostics/programming/"+request_id+"/candidate-attempt-telemetry.json","branch":"runtime"}
             s["revision"]+=1
+        if project_memory_receipt is not None:
+            try:
+                persisted=project_thread_memory.save(*project_memory_receipt)
+            except Exception:
+                persisted=False
+            with _lock:
+                active=s.get("activeGeneration")
+                if active and active.get("requestId")==request_id:
+                    active["projectMemoryPersistence"]="PERSISTED" if persisted else "SESSION_ONLY"
+                    active["status"].append({"phase":"PROJECT_MEMORY_SAVED" if persisted else "PROJECT_MEMORY_SESSION_ONLY",
+                                             "reason":"Account/thread-scoped source snapshot retained" if persisted else "Snapshot available in this process only; durable storage unverified"})
         if online_outcome is not None:
             def persist_online_outcome():
                 result=persist_runtime_diagnostic(request_id,str(online_outcome.get("selectedModelId") or model_id),"ONLINE_RESEARCH_OUTCOME",online_outcome)
