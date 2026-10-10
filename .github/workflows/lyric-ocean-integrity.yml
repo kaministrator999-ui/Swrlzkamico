@@ -8,6 +8,7 @@ on:
       - 'hf_space/lyric_bounded_continuation.py'
       - 'hf_space/lyric_story_spine.py'
       - 'tests/test_lyric_story_spine_v193.py'
+      - 'tests/test_lyric_native_reader_fallback_v195.py'
       - 'tests/test_lyric_bounded_continuation_v191.py'
       - 'tests/test_lyric_draft_boundary_v192.py'
       - 'hf_space/lyric_structure_patterns_v1.json'
@@ -44,6 +45,10 @@ jobs:
         run: |
           python -m py_compile hf_space/lyric_story_spine.py hf_space/lfm2_700m_engine.py
           python -m unittest discover -s tests -p test_lyric_story_spine_v193.py -v
+      - name: Validate planner fallback categories and authored scene continuity
+        run: |
+          python -m py_compile hf_space/lyric_story_spine.py hf_space/lfm2_700m_engine.py
+          python -m unittest discover -s tests -p test_lyric_native_reader_fallback_v195.py -v
       - name: Validate lyric school, revision evidence, and privacy shape
         run: python tests/test_archive_grounded_lyric_craft_v182.py
       - name: Verify direct original lyric count and unrequested-refusal regression
