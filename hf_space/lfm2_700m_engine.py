@@ -839,7 +839,9 @@ def generate_events(payload):
             # proof of semantic correctness. Malformed plans are optional.
             story_beats,story_receipt=generate_story_spine(model,prompt,wanted)
             story_directive=(story_spine_directive(story_beats,wanted)
-                             if story_beats else narrative_fallback_craft(wanted))
+                             if story_beats else
+                             (narrative_fallback_craft(wanted)
+                              if story_receipt.get("status")=="UNUSABLE" else ""))
             original_messages=(list(messages)+[{"role":"system","content":story_directive}]
                                if story_directive else messages)
 
