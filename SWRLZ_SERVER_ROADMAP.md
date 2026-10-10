@@ -1,3 +1,17 @@
+## UPDATE FINISHED — 2026-10-09 — v191 line-bounded lyric continuation repair for Dragon Chat (36)
+
+**Result: SOURCE CHANGE VALIDATED / GUARDED HF PRODUCTION PUBLICATION SUCCEEDED / LIVE NEW-SONG ACCEPTANCE UNVERIFIED.** Isolated repair [draft PR #67](https://github.com/kaministrator999-ui/Swrlzkamico/pull/67), source `feature/lyric-line-bounded-continuation-v191` exact SHA `a7f59f082a3edcc8caa096a66299ecd555afe363`. New `hf_space/lyric_bounded_continuation.py` stops decoding upon the requested number of complete nonempty *model-authored* continuation lines. The existing safe structural validator still rejects repeated lines, refuse/metadata and broken forms. `hf_space/lfm2_700m_engine.py` uses the isolated bounded helper for lyric continuations and permits up to four small retries in this exact lyric lane; no generalized/coder generation behavior or model weights changed.
+
+**Diagnostic evidence:** Dragon Chat (36) 28/40 lines, ~40.0s, 4 candidate attempts, latest rejected overlong 24-line continuation with prior-text repeated. Earlier export (34) 24/40 in ~47.6s. Both fail true 40-line request and meaningful chopper/mystery reveal. Source-specific fix addresses overproduction in continuation, not generic poetic quality. Original-vs-continued line integrity preserved.
+
+**CI:** [Lyric Ocean Corpus Integrity #38013052728](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38013052728) SUCCESS, including new synthetic fake-stream v191 tests for 8-line stop, 28→40 assembly, chunk handling, blank lines, incomplete final line and no dedup relaxation; [HF Candidate Offline Validation #38013052695](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38013052695) SUCCESS. Offline/fake-stream acceptance is not real LFM-700M musical inference quality.
+
+**Publication:** Canonical approved `main:.deploy/HF_SPACE_REQUEST.txt` nonce `2026-10-09-v191-line-bounded-continuation-001`; [guarded HF workflow #38013185449](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38013185449) COMPLETED/SUCCESS. Staged prior Space revision `4ac83da282bc3532fbd620a8f371cbf1c06f59b0` with rollback artifact, published existing Space `kamiloki/Swyrlz` revision `f6024df55eaff30d40aa15f783034cfd9589cb60`. No change to deployment path or replacement Space.
+
+**Version reconciliation:** `runtime:VERSION.txt` owner index unchanged. Repository Work `1.0.125 → 1.0.126`, LALM Engine `2.1.169 → 2.1.170`, Server Runtime `2.3.339 → 2.3.340`; other registered module versions unchanged.
+
+**Remaining next acceptance:** Rerun original 40-line chopper clockmaker mystery as a fresh §wyrlz 700M turn after v191 publication and inspect exported status: exact 40-line count, uninterrupted no chorus, physically grounded clue/cause resolution, meaningful internal rhymes, alternating density vs short punches, latency/attempt budget. Do not claim artistic success from workflow success or equate source teaching with GGUF retraining.
+
 ## UPDATE STARTED — 2026-10-09 — Line-bounded lyric continuation recovery v191 from Dragon Chat (36)
 
 **User evidence:** Same 40-line original mystery chopper, 700M, export (36) after v190: 28/40 lyrics, 40.034 seconds, four attempts; initial refusal and line count failure; two continuation attempts overran specified new-line count, second repeated previous lyrics. Formal rejection is correct. Compared with earlier export (34), 24/40 at 47.588 seconds; weak specific mystery resolution and fast multisyllabic phrasing remained.
