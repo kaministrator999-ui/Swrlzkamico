@@ -2486,7 +2486,7 @@
           const r=await fetch("/api/github/status",{credentials:"same-origin",cache:"no-store"});
           if(!r.ok)throw new Error("GitHub account status unavailable");
           const d=await r.json();
-          if(!d.configured){githubConnectStatus.textContent="GitHub connection awaits the server OAuth and encrypted storage configuration.";return;}
+          if(!d.configured){const missing=Array.isArray(d.missingNames)?d.missingNames:[];const invalid=Array.isArray(d.invalidNames)?d.invalidNames:[];githubConnectStatus.textContent=missing.length?("Hugging Face is missing these names: "+missing.join(", ")+". Add each in Space Settings → Variables and secrets, then refresh."):invalid.length?("Invalid Space setting: "+invalid.join(", ")+". Replace that value privately in Hugging Face and refresh."):"GitHub connection awaits the server OAuth and encrypted storage configuration.";return;}
           githubLinked=d.linked===true;
           githubConnectButton.hidden=githubLinked;
           githubDisconnectButton.hidden=!githubLinked;
