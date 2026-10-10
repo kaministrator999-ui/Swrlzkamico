@@ -21,6 +21,7 @@ from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 import github_connection
 import project_thread_memory
+import account_chat_store
 try:
     from google.auth.transport import requests as google_requests
     from google.oauth2 import id_token as google_id_token
@@ -234,16 +235,41 @@ def _bounded_knowledge_snapshot(request_id,prompt,online_research,trace,sources,
     }
 
 def _session(request):
-    # A Station cookie never bridges two different Google identities.
-    _, user = _account_session(request)
-    account_id = str((user or {}).get("id") or "anonymous")
-    key = request.cookies.get("swrlz_hf_sid")
+    # Identity is derived only from the server-verified Google session; no
+    # client-supplied account/username selects a stored conversation.
+    _, user=_account_session(request)
+    owner=str((user or {}).get("id") or "anonymous")
+    if owner.startswith("google:"):
+        key="account:"+hashlib.sha256(owner.encode("utf-8")).hexdigest()
+        with _lock:
+            if key not in _sessions:
+                stored=account_chat_store.load_chat(owner)
+                _sessions[key]=stored or {"revision":0,"currentId":"","threads":[],
+                    "activeGeneration":None,"ownerGoogleId":owner}
+            return key,_sessions[key]
+    key=request.cookies.get("swrlz_hf_sid")
     with _lock:
-        if not key or key not in _sessions or _sessions[key].get("ownerGoogleId") != account_id:
-            key = uuid.uuid4().hex
-            _sessions[key] = {"revision":0,"currentId":"","threads":[],
-                              "activeGeneration":None,"ownerGoogleId":account_id}
-        return key, _sessions[key]
+        if not key or key not in _sessions or _sessions[key].get("ownerGoogleId")!="anonymous":
+            key=uuid.uuid4().hex
+            _sessions[key]={"revision":0,"currentId":"","threads":[],
+                            "activeGeneration":None,"ownerGoogleId":"anonymous"}
+        return key,_sessions[key]
+
+
+def _persist_chat_snapshot(s,expected_revision):
+    # Invoked with _lock held, once per accepted state transition.
+    owner=str(s.get("ownerGoogleId") or "")
+    if not owner.startswith("google:"):return True
+    return account_chat_store.save_chat(owner,s,expected_revision)
+
+def _restore_chat_from_store(s):
+    owner=str(s.get("ownerGoogleId") or "")
+    if owner.startswith("google:"):
+        fresh=account_chat_store.load_chat(owner)
+        if fresh:
+            s.update(fresh)
+        return fresh
+    return None
 
 def _snapshot(s):
     return {"contract":CONTRACT,"revision":s["revision"],"threads":copy.deepcopy(s["threads"]),
@@ -275,17 +301,21 @@ _hf_accounts={}
 
 def _account_session(request:Request):
     sid=request.cookies.get("swrlz_hf_account")
-    return sid,_hf_accounts.get(sid) if sid else None
+    # Rehydrate independently of the Space process: a previously issued opaque
+    # session is verified against encrypted Redis every time, honoring revocation.
+    if not sid:return None,None
+    return sid,account_chat_store.load_login(sid)
 
 @app.get("/api/account/status")
 def account_status():
-    return {"googleClientId":GOOGLE_CLIENT_ID if google_id_token is not None else "","durable":False,"authority":"hf-process-local-google"}
+    return {"googleClientId":GOOGLE_CLIENT_ID if google_id_token is not None else "",
+            "durable":account_chat_store.configured(),"authority":"encrypted-upstash-google-account-chat"}
 
 @app.get("/api/account/me")
 def account_me(request:Request):
     _,user=_account_session(request)
     if not user:return JSONResponse({"ok":False,"code":"ACCOUNT_SESSION_INVALID"},status_code=401)
-    return {"user":user,"profile":{"version":0},"durable":False}
+    return {"user":user,"profile":{"version":0},"durable":True}
 
 @app.post("/api/account/google")
 async def account_google(request:Request):
@@ -301,8 +331,9 @@ async def account_google(request:Request):
     except Exception:
         return JSONResponse({"ok":False,"code":"GOOGLE_CREDENTIAL_INVALID"},status_code=401)
     sid=uuid.uuid4().hex
-    with _lock:_hf_accounts[sid]=user
-    response=JSONResponse({"user":user,"profile":{"version":0},"durable":False})
+    # Save BEFORE issuing a cookie; no false durable-login success on failure.
+    account_chat_store.save_login(sid,user)
+    response=JSONResponse({"user":user,"profile":{"version":0},"durable":True})
     response.set_cookie("swrlz_hf_account",sid,httponly=True,samesite="lax",secure=True,max_age=7*86400)
     return response
 
@@ -310,9 +341,11 @@ async def account_google(request:Request):
 def account_logout(request:Request):
     sid,_=_account_session(request)
     if sid:
+        account_chat_store.revoke_login(sid)
         with _lock:_hf_accounts.pop(sid,None)
     response=JSONResponse({"ok":True})
     response.delete_cookie("swrlz_hf_account")
+    response.delete_cookie("swrlz_hf_sid")
     return response
 
 # Connected GitHub belongs to the verified Google identity, never the anonymous
