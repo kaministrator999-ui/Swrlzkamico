@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/lyric-crossgenre-structures-v190
-REQUEST_NONCE=2026-10-09-v190-crossgenre-song-structures-001
+SOURCE_REF=feature/lyric-line-bounded-continuation-v191
+REQUEST_NONCE=2026-10-09-v191-line-bounded-continuation-001
