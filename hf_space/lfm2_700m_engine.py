@@ -11,7 +11,7 @@ from music_structure import music_model_policy, creative_music_request, creative
 from lyric_craft_school import lyric_craft_policy
 from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics, continuation_shape_receipt
 from lyric_bounded_continuation import buffered_bounded_lyric_continuation, buffered_bounded_original_lyrics
-from lyric_story_spine import generate_story_spine, story_spine_directive
+from lyric_story_spine import generate_story_spine, story_spine_directive, narrative_fallback_craft
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -839,7 +839,7 @@ def generate_events(payload):
             # proof of semantic correctness. Malformed plans are optional.
             story_beats,story_receipt=generate_story_spine(model,prompt,wanted)
             story_directive=(story_spine_directive(story_beats,wanted)
-                             if story_beats else "")
+                             if story_beats else narrative_fallback_craft(wanted))
             original_messages=(list(messages)+[{"role":"system","content":story_directive}]
                                if story_directive else messages)
 
@@ -1016,6 +1016,8 @@ def generate_events(payload):
             candidate_check=dict(candidate_check)
             candidate_check["storySpineStatus"]=story_receipt["status"]
             candidate_check["storySpineFields"]=story_receipt.get("fields",0)
+            candidate_check["storySpineFailureCode"]=story_receipt.get("failureCode")
+            candidate_check["storyFallbackCraftUsed"]=bool(story_directive and not story_beats)
             candidate_check["storySpineLatencyMs"]=story_receipt.get("durationMs",0)
             first_delta=round((time.perf_counter()-started)*1000,3)
             yield {"type":"DELTA","text":candidate_text}
