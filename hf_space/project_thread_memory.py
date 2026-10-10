@@ -159,7 +159,7 @@ def model_context(source,prompt):
 _VERSION_RECALL_FORMS = (
     re.compile(r"^(?:(?:can|could|would)\s+you\s+)?(?:(?:please\s+)?(?:tell|show|give)\s+me\s+)?(?:the\s+|our\s+|those\s+|project\s+|module\s+)?versions?(?:\s+again)?(?:\s+please)?$", re.I),
     re.compile(r"^what\s+(?:were|are)\s+(?:the\s+|our\s+|those\s+|project\s+|module\s+)?versions?(?:\s+again)?$", re.I),
-    re.compile(r"^(?:please\s+)?(?:list|show|repeat|recap)\s+(?:the\s+|our\s+|those\s+|project\s+|module\s+)?versions?(?:\s+again)?(?:\s+please)?$", re.I),
+    re.compile(r"^(?:please\s+)?(?:list|show|repeat|recap)\s+(?:the\s+|our\s+|those\s+)?(?:project\s+|module\s+)?versions?(?:\s+again)?(?:\s+please)?$", re.I),
     re.compile(r"^remind\s+me\s+(?:of\s+)?(?:the\s+|our\s+|those\s+|project\s+|module\s+)?versions?(?:\s+again)?$", re.I),
 )
 
