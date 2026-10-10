@@ -442,6 +442,9 @@ async def mutate(request:Request):
     with _lock:
         if int(body.get("expectedRevision",-1))!=s["revision"]:
             return JSONResponse(_snapshot(s),status_code=409)
+        # Retain a rollback snapshot if the Redis compare-and-swap rejects this.
+        old_threads=copy.deepcopy(s["threads"])
+        old_current=s["currentId"]
         for op in body.get("operations",[]):
             kind=op.get("type"); tid=op.get("threadId")
             if kind=="SET_CURRENT_THREAD" and any(t["id"]==tid for t in s["threads"]):s["currentId"]=tid
@@ -468,7 +471,15 @@ async def mutate(request:Request):
                     if message is not None:_promote_pinned_code_artifact(t,message)
                 else:pins.pop(mid,None)
             else:raise HTTPException(400,"Unsupported state operation")
-        _commit_revision(s)
+        try:
+            _commit_revision(s)
+        except HTTPException as exc:
+            s["threads"]=old_threads
+            s["currentId"]=old_current
+            if exc.status_code==409:
+                _restore_chat_from_store(s)
+                return JSONResponse(_snapshot(s),status_code=409)
+            raise
         result={"ok":True,"revision":s["revision"]}
     if google_owner.startswith("google:"):
         for deleted in deleted_threads:
@@ -1257,6 +1268,8 @@ async def send(request:Request):
         except Exception:recovered_project=None
     with _lock:
         if s["activeGeneration"] and not s["activeGeneration"]["terminal"]:raise HTTPException(409,"Generation already active")
+        old_threads=copy.deepcopy(s["threads"])
+        old_current=s["currentId"]
         t=next((t for t in s["threads"] if t["id"]==tid),None)
         if t is None:
             t={"id":tid,"title":prompt[:48],"pinned":False,"messagePins":{},"codeArtifacts":[],"programmingState":None,"createdAt":time.time()*1000,"messages":[]}
@@ -1287,7 +1300,13 @@ async def send(request:Request):
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
-        s["currentId"]=tid;_commit_revision(s)
+        s["currentId"]=tid
+        try:_commit_revision(s)
+        except HTTPException as exc:
+            s["threads"]=old_threads
+            s["currentId"]=old_current
+            if exc.status_code==409:_restore_chat_from_store(s)
+            raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     # Inject into all model routes as bounded evidence only on relevant follow-ups.
