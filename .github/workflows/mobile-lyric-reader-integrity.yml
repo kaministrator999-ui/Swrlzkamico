@@ -1,0 +1,19 @@
+name: Mobile Lyric Reader Integrity
+on:
+  pull_request:
+    paths:
+      - 'chat/§wyrlz/index.html'
+      - 'tests/test_lyric_mobile_reader_v194.py'
+      - '.github/workflows/mobile-lyric-reader-integrity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reader-integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check mobile lyric surfaces and untouched code viewer
+        run: python -m unittest discover -s tests -p test_lyric_mobile_reader_v194.py -v
+      - name: Declare verification scope
+        run: echo "Static style, exact JS syntax, and isolated prompt routing verified; Android visual acceptance remains unverified."
