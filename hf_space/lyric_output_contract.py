@@ -7,10 +7,19 @@ from __future__ import annotations
 import re
 from typing import Any
 
-_COUNT = re.compile(r"(?<!\w)(\d{1,3})\s*(?:[-–—]\s*)?(?:line|bar)s?\b", re.I)
+_COUNT = re.compile(
+    r"(?<!\w)(\d{1,3})\s*(?:[-–—]\s*)?"
+    r"(?:(?:original|new|fresh|rap|freestyle|chopper|fast|technical|bouncy|"
+    r"funny|lyrical|rhyming|hip[- ]hop|hard[- ]hitting)\s+){0,4}"
+    r"(?:lyric\s+)?(?:line|bar)s?\b", re.I
+)
 _SECTION = re.compile(
-    r"^\s*(?:\[\s*)?(?:verse|chorus|hook|bridge|refrain|intro|outro|interlude|"
-    r"pre[- ]?chorus|post[- ]?chorus|freestyle)\b[^\]]{0,28}(?:\])?\s*:?\s*$",re.I
+    # Match a real musical section label, not a lyric beginning "Chorus ...".
+    r"^\s*(?:\[\s*)?(?:pre[- ]?chorus|post[- ]?chorus|verse|chorus|hook|"
+    r"bridge|refrain|intro|outro|interlude|freestyle)\b"
+    r"(?:\s*(?:\d{1,2}|[IVX]{1,5}|x\d{1,2}|\(\s*(?:repeat|reprise)\s*\)))?"
+    r"(?:\s*[-–—]\s*\d{1,3}\s*bars?)?"
+    r"\s*(?:\])?\s*:?\s*[*_]{0,3}\s*$",re.I
 )
 _REFUSAL = re.compile(
     r"(?i)^\s*(?:i(?:'|’)m\s+sorry\b|i\s+cannot\s+(?:write|create|produce)|"
@@ -24,6 +33,25 @@ _META = re.compile(
     r"\(?here(?:'s| is)\b|\(?i\s+(?:can|will)\s+(?:create|write|compose)\b|"
     r"\(?flow\s*(?:&|and)\s*feel\s*:|\(?writing\s+notes\s*:|\(?lyric\s+analysis\s*:)"
 )
+
+def _normalized_label(line: str) -> str:
+    """Remove superficial Markdown heading/emphasis from validator inspection.
+
+    Never rewrite or remove the user's original lyric text. This only lets
+    structural checks see **Chorus**, **Note:** and ## Chorus like plain labels.
+    """
+    text=str(line or "").strip()
+    text=re.sub(r"^#{1,6}\s+", "", text)
+    return re.sub(r"^(?:\*{1,3}|_{1,3})", "", text).strip()
+
+
+def _is_section_label(line: str) -> bool:
+    return bool(_SECTION.fullmatch(_normalized_label(line)))
+
+
+def _is_meta_label(line: str) -> bool:
+    return bool(_META.search(_normalized_label(line)))
+
 
 def lyric_shape_request(prompt: str) -> dict[str,Any]:
     """Called only after user intent is classified as original songwriting."""
@@ -62,20 +90,20 @@ def _extract_lines(text: str) -> tuple[list[str],list[str]]:
 def verify_original_lyrics(raw: str, request: dict[str,Any]) -> dict[str,Any]:
     """Enforce literal line count, section choices and absence of meta/refusal."""
     lines,faults=_extract_lines(raw)
-    content=[line for line in lines if line and not _SECTION.fullmatch(line)]
+    content=[line for line in lines if line and not _is_section_label(line)]
     if not content: faults.append("no-lyrical-lines")
     if any(_REFUSAL.search(x) for x in content): faults.append("unrequested-refusal")
-    if any(_META.search(x) for x in content): faults.append("instructional-preface-or-self-grading")
-    if request.get("continuous") and any(_SECTION.fullmatch(x) for x in lines if x):
+    if any(_is_meta_label(x) for x in content): faults.append("instructional-preface-or-self-grading")
+    if request.get("continuous") and any(_is_section_label(x) for x in lines if x):
         faults.append("invented-section-labels")
     if request.get("continuous") and "" in lines:
         faults.append("continuous-verse-broken-into-stanzas")
     if request.get("noChorus") and any(
         re.search(r"(?i)\b(?:chorus|hook|refrain)\b",x)
-        for x in lines if _SECTION.fullmatch(x)
+        for x in lines if _is_section_label(x)
     ):
         faults.append("unrequested-chorus")
-    lyric_content=[line for line in content if not _REFUSAL.search(line) and not _META.search(line)]
+    lyric_content=[line for line in content if not _REFUSAL.search(line) and not _is_meta_label(line)]
     wanted=request.get("requestedLines")
     if wanted is not None and len(lyric_content)!=wanted:
         faults.append("wrong-explicit-lyric-line-count")
@@ -108,11 +136,11 @@ def recoverable_continuous_lines(raw: str, request: dict[str,Any]) -> list[str] 
     words=[line for line in all_lines if line]
     if not words or len(words)>120:
         return None
-    if any(_REFUSAL.search(line) or _META.search(line) or _TITLE.search(line)
-           or _SECTION.fullmatch(line) for line in words):
+    if any(_REFUSAL.search(line) or _is_meta_label(line) or _TITLE.search(line)
+           or _is_section_label(line) for line in words):
         return None
     if request.get("noChorus") and any(
-        _SECTION.fullmatch(line) and re.search(r"(?i)\b(?:chorus|hook|refrain)\b",line)
+        _is_section_label(line) and re.search(r"(?i)\b(?:chorus|hook|refrain)\b",line)
         for line in words
     ):
         return None
@@ -156,9 +184,9 @@ def continuation_shape_receipt(prefix: list[str], raw: str,
             codes.append("unsupported-noncontinuous-continuation")
         if any(_REFUSAL.search(line) for line in nonempty):
             codes.append("refusal-in-continuation")
-        if any(_META.search(line) or _TITLE.search(line) for line in nonempty):
+        if any(_is_meta_label(line) or _TITLE.search(line) for line in nonempty):
             codes.append("explanation-or-title-in-continuation")
-        if any(_SECTION.fullmatch(line) for line in nonempty):
+        if any(_is_section_label(line) for line in nonempty):
             codes.append("section-label-in-continuation")
         if not codes:
             codes.append("unusable-continuation-format")

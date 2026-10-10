@@ -21,6 +21,54 @@ def test_explicit_request_extraction():
     assert lyric_shape_request("Write a 12-bar rap")["requestedLines"]==12
     assert lyric_shape_request("Write a 999-line rap")["requestedLines"] is None
 
+def test_natural_eight_original_rap_bars_and_bold_chorus_regression():
+    # Regress the exact user's request rather than telling them to reword it.
+    prompt=("Write 8 original rap bars about a vending machine stealing my last "
+            "dollar. Make the rhythm bouncy, use natural internal rhymes, and "
+            "give me a funny punchline. No chorus.")
+    shape=lyric_shape_request(prompt)
+    assert lyric_craft_policy(prompt)
+    assert shape["requestedLines"]==8,shape
+    assert shape["noChorus"] is True,shape
+    assert shape["continuous"] is False,shape
+    accepted="\n".join(f"Original unique rap bar {i+1}" for i in range(8))
+    assert verify_original_lyrics(accepted,shape)["status"]=="PASS"
+
+    # A Markdown heading is still a chorus heading; **Note:** is still
+    # unsolicited model self-grading, not an extra rap lyric.
+    offending=("**Verse 1**\n" +
+               "\n".join(f"Different rap bar {i+1}" for i in range(4)) +
+               "\n**Chorus**\n" +
+               "\n".join(f"Chorus lyric {i+1}" for i in range(4)) +
+               "\n**Note:** The rhythm and internal rhymes are excellent.")
+    receipt=verify_original_lyrics(offending,shape)
+    assert receipt["status"]=="REJECT",receipt
+    assert receipt["observedLyricLines"]==8,receipt
+    assert "unrequested-chorus" in receipt["reasons"],receipt
+    assert "instructional-preface-or-self-grading" in receipt["reasons"],receipt
+    assert verify_original_lyrics("## Chorus\n"+accepted,shape)["status"]=="REJECT"
+    assert verify_original_lyrics("**Verse 1**\n"+accepted,shape)["status"]=="PASS"
+
+    oversized="\n".join(f"Unrequested lengthy rap line {i+1}" for i in range(37))
+    mismatch=verify_original_lyrics(oversized,shape)
+    assert mismatch["status"]=="REJECT",mismatch
+    assert mismatch["requestedLyricLines"]==8,mismatch
+    assert mismatch["observedLyricLines"]==37,mismatch
+    assert "wrong-explicit-lyric-line-count" in mismatch["reasons"],mismatch
+
+
+def test_modifier_bounded_counts_preserve_existing_numbered_contract():
+    variants=("Write 8 original rap bars", "Write 8 bars",
+              "Write a 12-bar rap", "Create 16 fast chopper rap lines",
+              "Compose 24 fresh funny freestyle bars",
+              "Write a 40-line original song")
+    expected=(8,8,12,16,24,40)
+    counts=[lyric_shape_request(p)["requestedLines"] for p in variants]
+    assert counts==list(expected), list(zip(variants,counts,expected))
+    assert lyric_shape_request("Make 8 minutes of rap")["requestedLines"] is None
+    assert lyric_shape_request("Write a 999-line rap")["requestedLines"] is None
+
+
 def test_good_continuous_form_and_copyable_container():
     body=lines()
     check=verify_original_lyrics(body,SHAPE)
