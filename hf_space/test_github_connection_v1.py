@@ -112,6 +112,16 @@ def test_authenticated_configuration_diagnostics_do_not_expose_values():
         assert "missingNames" not in payload and "invalidNames" not in payload
 
 
+def test_roadmap_result_sanitization_and_version_overlap():
+    # v192 FINISH followed by v192 START is a common documented handoff.
+    # A faulty character-class used to mangle its Result to 'esult / / / - .'.
+    text="REPEATABLE SOURCE DEFECT REPAIRED / COMBINED HF CANDIDATE STATIC VERIFIED / UPLOAD SUCCEEDED."
+    assert gh._safe_fragment(text)==text
+    assert gh._safe_fragment("# §wyrlz §tart").startswith("# §wyrlz §tart")
+    assert gh._safe_fragment("Result: <script>alert(1)</script>")=="Result: script alert 1 /script"
+    assert gh._safe_fragment("ABC\x00DEF")=="ABC DEF"
+
+
 def test_startup_source_evidence_no_write_and_no_fake_activation():
     token="fake-token"
     def fake_api(_, path):
@@ -158,5 +168,6 @@ if __name__=="__main__":
     test_account_isolation_encryption_persistence()
     test_oauth_state_cookie_google_binding_and_one_use()
     test_authenticated_configuration_diagnostics_do_not_expose_values()
+    test_roadmap_result_sanitization_and_version_overlap()
     test_startup_source_evidence_no_write_and_no_fake_activation()
     print("GitHub account/source boundary tests passed")
