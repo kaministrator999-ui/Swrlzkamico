@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/version-literacy-content-layout-v199
+      - feature/grounded-version-recall-v201
   pull_request:
     paths:
       - 'hf_space/**'
