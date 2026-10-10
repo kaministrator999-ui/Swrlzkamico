@@ -72,6 +72,6 @@
     "patches/v9_5_character_depth_sections.py",
     "patches/v9_6_natural_staff_painted_faces.py"
   ],
-  "finalBytes": 1094130,
-  "finalSha256": "a34ac162157d615f9dadb22420e76b0380f9d4730d9253637c69e4798ca732c9"
+  "finalBytes": 1099352,
+  "finalSha256": "c50edc432cd21e3436146cb31acbdd80019ba3f6272febb3d2aaaec1b901eede"
 }

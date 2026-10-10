@@ -2,9 +2,15 @@
 
 ## Current v9.6 candidate · Natural Staff and Painted Faces
 
-The candidate replaces Kami’s stretched staff grip with a compact painted fist. Rear palm/cuff and front curled fingers/thumb sit on opposite sides of one continuous round shaft. The larger skull/flame crest sits above a visible upper shaft; its narrow join follows the saved **Staff → shaft** socket. The grip is part of the articulated hand, so the fingers, cuff and prop follow the same wrist movement.
+The candidate replaces Kami’s stretched staff grip with a compact painted fist. Rear palm/cuff and front curled fingers/thumb sit on opposite sides of one continuous round shaft. The larger skull/flame crest sits above a visible upper shaft; its narrow join follows the saved **Staff → shaft** socket. The grip is part of the articulated hand, so the fingers, cuff and prop follow the same wrist movement. Kami’s fitted native forearm and wrist form a raised, bent casting pose while the existing timed joint keys retain their movement.
 
-Both mages use a shared original painted-feature atlas to improve facial readability and match the amber, sepia and bone tones of their robes, armor and skull. The existing expression, blink, mouth, gaze and saved-dialogue controls remain available. The head’s raised paper surface carries the animated features through pose and relief changes. Native Preview Frame, Play and Watch share the character renderer.
+The natural grip belongs to the v9.6 starter’s saved `gripStyle: "natural-v1"` profile. Older projects keep their original painted glove, saved body fit, wrist rotation and grip/staff sockets. Native Save/Load and Undo/Redo retain the selected profile; sharing the bundled body atlas does not opt an older project into the new hand layout.
+
+Both mages use a shared original painted-feature atlas to improve facial readability and match the amber, sepia and bone tones of their robes, armor and skull. The existing expression, blink, mouth, gaze and saved-dialogue controls remain available. Kami’s larger amber irises sit inside shaped eyelids, and §wyrlz’s round skull sockets retain the painted bone shading around the eyes. The head’s raised paper surface carries the animated features through pose and relief changes. Native Preview Frame, Play and Watch share the character renderer.
+
+Facial rendering uses the exact sampled expression, blink, mouth, smile, brow and gaze values when deciding whether to redraw the face texture. A nearby playback sample cannot keep a stale face after Undo, seeking or a fresh Load at the same story time. Face canvases request the same Canvas2D mode when created, keeping Undo/Load rebuilds consistent with heavily inspected previews.
+
+Small gold motes follow the painted staff head through wrist and staff motion. Their positions and brightness derive from story time, so scrubbing, Preview Frame, Play and Watch reproduce the same effect at the same time. The fixed particle pool stays close to the crest and follows the existing **Effects** layer’s visibility and opacity.
 
 Every body piece retains independent **Depth Left**, **Depth Centre**, **Depth Right**, **Paper thickness** and **Costume Flex** settings in **Animation Studio → Character Rig → Character Piece Depth Sections**. Cloth and armor follow saved body movement while limb sockets stay connected. Native Undo/Redo and Save/Load preserve the piece settings, body fits, pose tracks and scenery separately.
 
@@ -27,7 +33,12 @@ The starter keeps **70 actors, 11 editor layers, eight story beats, nine stage/c
 
 `tests/character_relief_playwright.mjs` adds desktop/phone acceptance for all piece sections, actual front/back/edge depth, pose-driven cloth and armor motion, anchored sockets and facial surfaces, native controls, Undo/Redo and fresh-context Save/Load. `tests/socket_emergence_playwright.mjs` adds desktop/phone acceptance for page-emergence progress, snapped socket contact during rotation, the visible staff hand, native connection authoring, Undo/Redo, Save/Load and shared Play/Watch rendering. The existing native cinematic, storybook authoring, character rig, depth theatre and character alignment suites remain required. Reconstruction checks all 56 governed patches; packaging compares all nineteen media assets against committed source bytes and SHA-256.
 
+Pose, grip and effects references: [PoseMyArt’s male casting-spell pose](https://posemy.art/magic-poses/male-casting-spell-pose/2396/) informs the staff silhouette and bent elbow; [Clip Studio Tips](https://tips.clip-studio.com/en-us/articles/8226) informs the opposing thumb and curled fingers; [Riot’s VFX style guide](https://nexus.leagueoflegends.com/en-us/2017/10/dev-leagues-vfx-style-guide/) informs the clear silhouette and restrained effects. The native fitted rig, painted atlases and particle renderer use original project content.
+
 - [ ] Complete desktop/phone natural-grip, staff-proportion, painted-face and per-piece section-depth acceptance with visual inspection.
+- [ ] Compare actual face pixels at one fixed story time and camera before editing and after Undo; also cover direct seeks, rebuilt rigs and fresh-context Save/Load.
+- [ ] Load the preserved v9.5 staff-grip export and a v9.6 Save Project export; verify each keeps its grip profile, hand artwork, fitted pose and prop socket alignment.
+- [ ] Verify finite, bounded staff-head motes, exact-time seek determinism, shared Play/Watch attachment, and hiding/fading through the Effects layer.
 - [ ] Complete all five existing native cinematic, Studio, rig, scenery and body-fit regressions.
 - [ ] Seal the generated artifact and pass Node/Python syntax plus remote engine CI.
 - [ ] Follow the exact final source/trigger deployment to terminal success.

@@ -2,7 +2,7 @@
 // aligned painted layers so the cylindrical staff passes through a real grip.
 const RIG_NATURAL_GRIP_ASSET='assets/anime/kami-grip-layers.png';
 function rigUsesNaturalGrip(character,config){
-  return character==='kami'&&config.asset==='assets/anime/kami-rig.png';
+  return character==='kami'&&config.gripStyle==='natural-v1'&&config.asset==='assets/anime/kami-rig.png';
 }
 function rigGripCells(texture){
   if(texture.userData.gripCells)return texture.userData.gripCells;

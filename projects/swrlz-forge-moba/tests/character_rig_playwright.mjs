@@ -97,7 +97,8 @@ async function faceKey(page,character,time,values){
   await page.locator('#rigAddKey').click();await frames(page);
   const key=keyAt(await model(page,character),'face',time);
   assert.ok(key,'Native UI did not save '+character+' facial expression');
-  assert.equal(key.expression,values.expression);close(key.blink,values.blink,'Saved blink');close(key.mouth,values.mouth,'Saved mouth');
+  assert.equal(key.expression,values.expression);
+  for(const [field,value] of Object.entries(values))if(typeof value==='number')close(key[field],value,'Saved '+field);
   assert.equal(key.speech,values.speech,'Saved speech switch');return key;
 }
 function safe(observation,label){
@@ -142,15 +143,21 @@ async function paintedFaceControls(page,character,time,label){
   const original=await model(page,character),baseFace={expression:'neutral',blink:0,mouth:0,speech:false,
     gazeX:0,gazeY:0,smile:0,brow:0};
   await faceKey(page,character,time,baseFace);await seek(page,time);
+  const neutralModel=await model(page,character);
   const open=paintedRegions((await rendered(page,character)).face,label+' neutral');
-  const minimumWidths=character==='kami'?{leftEye:62,rightEye:62,mouth:40}:{leftEye:66,rightEye:66,mouth:53};
+  // Round skull sockets trim the atlas corners, while keeping a taller opening.
+  const minimumWidths=character==='kami'?{leftEye:62,rightEye:62,mouth:40}:{leftEye:58,rightEye:58,mouth:53};
   for(const [id,width] of Object.entries(minimumWidths)){
     const bounds=open[id].canvasInkBounds;
     assert.ok(bounds?.min?.length===2&&bounds.max?.length===2&&bounds.max[0]-bounds.min[0]>=width,
-      'Painted '+id+' is still as small as the original facial features: '+label);
+      'Painted '+id+' is too narrow for its fitted face: '+label);
+    if(character==='swyrlz'&&id.endsWith('Eye'))assert.ok(bounds.max[1]-bounds.min[1]>=42,
+      'The painted skull eye socket is too shallow to read as round: '+label+' '+id);
   }
   for(const [field,value,changed,unchanged] of [
     ['blink',1,['leftEye','rightEye'],['nose','mouth']],
+    // This authored change falls inside the old rounded face-cache bucket.
+    ['gazeX',.004,['leftEye','rightEye'],['nose','mouth']],
     ['gazeX',.75,['leftEye','rightEye'],['nose','mouth']],
     ['mouth',.9,['mouth'],['leftEye','rightEye','nose']]
   ]){
@@ -163,9 +170,15 @@ async function paintedFaceControls(page,character,time,label){
     if(field==='blink')for(const id of changed)assert.ok(actual[id].alphaPixels<open[id].alphaPixels,
       'Closing the eyelids does not reduce the actual painted eye aperture: '+label+' '+id);
     await closeStudio(page);await historyAction(page,'undo');await seek(page,time);
-    const restored=paintedRegions((await rendered(page,character)).face,label+' Undo '+field);
+    assert.deepEqual(await model(page,character),neutralModel,'One native Undo did not restore the authored face: '+label+' '+field);
+    const restoredFace=(await rendered(page,character)).face;
+    close(restoredFace.time,time,'Undo face playhead');
+    for(const [name,value] of Object.entries(baseFace))if(typeof value==='number')close(restoredFace[name],value,'Undo rendered '+name);
+    assert.equal(restoredFace.expression,baseFace.expression,'Undo rendered expression');
+    assert.equal(restoredFace.speech,baseFace.speech,'Undo rendered speech');
+    const restored=paintedRegions(restoredFace,label+' Undo '+field);
     for(const id of ['leftEye','rightEye','nose','mouth'])assert.equal(restored[id].inkHash,open[id].inkHash,
-      'One native Undo restores face settings without restoring actual painted '+id+' pixels: '+label);
+      'One native Undo restores face settings without restoring actual painted '+id+' pixels: '+label+' '+field);
   }
   await closeStudio(page);await historyAction(page,'undo');await seek(page,time);
   assert.deepEqual(await model(page,character),original,'Painted facial control checks lose original authored keys: '+label);

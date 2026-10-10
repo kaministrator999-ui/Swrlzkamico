@@ -38,7 +38,7 @@ function paintedFaceDraw(context,atlas,part,x,y,width,height,rotation=0,alpha=1)
 }
 function paintedFaceEyeClip(context,x,y,width,height,skull){
   context.beginPath();
-  if(skull)context.ellipse(x,y,width*.34,height*.29,0,0,Math.PI*2);
+  if(skull)context.ellipse(x,y,width*.42,height*.46,0,0,Math.PI*2);
   else{
     context.moveTo(x-width*.38,y+height*.10);
     context.bezierCurveTo(x-width*.20,y-height*.24,x+width*.20,y-height*.24,x+width*.37,y+height*.04);
@@ -55,12 +55,14 @@ rigPaintFace=function(face,character,sample,time){
   const s={...sample},cue=storyBeat(time)?.cue||'';
   const speaking=s.speech&&(character==='kami'?/^KAMI\b/i:/^[§$]?WYRLZ\b/i).test(cue.trim());
   if(speaking)s.mouth=Math.max(s.mouth,.12+.38*(.5+.5*Math.sin(time*31)));
-  const hash='painted:'+character+':'+[s.expression,...Object.keys(RIG_FACE_BOUNDS).map(key=>Math.round(s[key]*50))].join(':');
+  // Paint uses the exact sampled values, so nearby frames must not share a
+  // rounded cache key. Otherwise seeking or Undo can keep earlier face pixels.
+  const hash='painted:'+character+':'+[s.expression,...Object.keys(RIG_FACE_BOUNDS).map(key=>s[key])].join(':');
   face.applied=s;if(face.hash===hash)return;face.hash=hash;
   const c=face.canvas.getContext('2d');c.clearRect(0,0,face.canvas.width,face.canvas.height);
   const parts=atlas.characters[character],skull=character==='swyrlz',happy=s.expression==='happy',sad=s.expression==='sad',determined=s.expression==='determined',surprised=s.expression==='surprised',components=[];
-  const aperture=Math.max(0,(1-s.blink)*(surprised?1.04:determined?.67:happy?.78:.94));
-  const eyeWidth=skull?72:68,eyeHeight=skull?43:35,eyeY=71;
+  const aperture=Math.max(0,(1-s.blink)*(surprised?1.04:determined?.8:happy?.84:.94));
+  const eyeWidth=skull?72:68,eyeHeight=skull?64:35,eyeY=71;
   c.save();
   // These margins map inside the measured skin and leave all UV borders clear.
   c.beginPath();c.rect(13,20,230,151);c.clip();
@@ -69,14 +71,19 @@ rigPaintFace=function(face,character,sample,time){
     const openAlpha=Math.min(1,aperture/.22),closedAlpha=1-openAlpha;
     if(openAlpha>0){
       const height=eyeHeight*Math.max(.12,aperture);
+      c.save();
+      // The small skull mage has round sockets; trim the atlas's pointed
+      // outer bone corners while retaining its original shaded brushwork.
+      if(skull)paintedFaceEyeClip(c,x,eyeY,eyeWidth,height,true);
       components.push(paintedFaceDraw(c,atlas,parts[prefix+'Eye'],x,eyeY,eyeWidth,height,tilt,openAlpha));
+      c.restore();
       c.save();paintedFaceEyeClip(c,x,eyeY,eyeWidth,height,skull);
       const ix=x+s.gazeX*(skull?8:7),iy=eyeY+s.gazeY*(skull?5:4)+(skull?0:2);
-      components.push(paintedFaceDraw(c,atlas,parts[prefix+'Iris'],ix,iy,skull?18:21,skull?18:23,0,openAlpha));c.restore();
+      components.push(paintedFaceDraw(c,atlas,parts[prefix+'Iris'],ix,iy,skull?26:30,skull?26:31,0,openAlpha));c.restore();
     }
     if(closedAlpha>0)components.push(paintedFaceDraw(c,atlas,parts[prefix+'ClosedEye'],x,eyeY,eyeWidth,skull?18:13,tilt,closedAlpha));
-    const browY=38-s.brow*5-(surprised?5:0),browTilt=side*(determined?.17:sad?-.12:0);
-    components.push(paintedFaceDraw(c,atlas,parts[prefix+'Brow'],x,browY,skull?60:55,skull?10:8,browTilt));
+    const browY=(skull?29:38)-s.brow*5-(surprised?5:0),browTilt=side*(determined?.17:sad?-.12:0);
+    components.push(paintedFaceDraw(c,atlas,parts[prefix+'Brow'],x,browY,skull?50:55,skull?5:8,browTilt,skull?.65:1));
   }
   components.push(paintedFaceDraw(c,atlas,parts.nose,128,skull?110:109,skull?17:13,skull?24:23));
   const smile=s.smile+(happy?.6:sad?-.4:0),mouthY=145;

@@ -2,15 +2,25 @@
 
 ## Current v9.6 candidate · Natural Staff and Painted Faces
 
-The candidate replaces Kami’s stretched staff grip with a compact painted fist. Rear palm/cuff and front curled fingers/thumb sit on opposite sides of one continuous round shaft. The larger skull/flame crest sits above a visible upper shaft; its narrow join follows the saved **Staff → shaft** socket. The grip is part of the articulated hand, so the fingers, cuff and prop follow the same wrist movement.
+The candidate replaces Kami’s stretched staff grip with a compact painted fist. Rear palm/cuff and front curled fingers/thumb sit on opposite sides of one continuous round shaft. The larger skull/flame crest sits above a visible upper shaft; its narrow join follows the saved **Staff → shaft** socket. The grip is part of the articulated hand, so the fingers, cuff and prop follow the same wrist movement. Kami’s fitted native forearm and wrist form a raised, bent casting pose while the existing timed joint keys retain their movement.
 
-Both mages use a shared original painted-feature atlas to improve facial readability and match the amber, sepia and bone tones of their robes, armor and skull. The existing expression, blink, mouth, gaze and saved-dialogue controls remain available. The head’s raised paper surface carries the animated features through pose and relief changes. Native Preview Frame, Play and Watch share the character renderer.
+The natural grip belongs to the v9.6 starter’s saved `gripStyle: "natural-v1"` profile. Older projects keep their original painted glove, saved body fit, wrist rotation and grip/staff sockets. Native Save/Load and Undo/Redo retain the selected profile; sharing the bundled body atlas does not opt an older project into the new hand layout.
+
+Both mages use a shared original painted-feature atlas to improve facial readability and match the amber, sepia and bone tones of their robes, armor and skull. The existing expression, blink, mouth, gaze and saved-dialogue controls remain available. Kami’s larger amber irises sit inside shaped eyelids, and §wyrlz’s round skull sockets retain the painted bone shading around the eyes. The head’s raised paper surface carries the animated features through pose and relief changes. Native Preview Frame, Play and Watch share the character renderer.
+
+Facial rendering uses the exact sampled expression, blink, mouth, smile, brow and gaze values when deciding whether to redraw the face texture. A nearby playback sample cannot keep a stale face after Undo, seeking or a fresh Load at the same story time. Face canvases request the same Canvas2D mode when created, keeping Undo/Load rebuilds consistent with heavily inspected previews.
+
+Small gold motes follow the painted staff head through wrist and staff motion. Their positions and brightness derive from story time, so scrubbing, Preview Frame, Play and Watch reproduce the same effect at the same time. The fixed particle pool stays close to the crest and follows the existing **Effects** layer’s visibility and opacity.
 
 Every body piece retains independent **Depth Left**, **Depth Centre**, **Depth Right**, **Paper thickness** and **Costume Flex** settings in **Animation Studio → Character Rig → Character Piece Depth Sections**. Cloth and armor follow saved body movement while limb sockets stay connected. Native Undo/Redo and Save/Load preserve the piece settings, body fits, pose tracks and scenery separately.
 
 The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json`. The starter retains its 12-second book opening, 70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, 425 limb/face keys and 341 scenery keys. The candidate has **56 governed patches and 19 media assets**: eight scene JSON exports, ten PNGs and the historical episode HTML. The new artwork is `assets/anime/kami-grip-layers.png` and `assets/anime/mage-faces-painted.png`; all eight earlier PNGs and seven earlier scene exports remain bundled. Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V9_6_NATURAL_STAFF_PAINTED_FACES`; artifact: `swyrl_engine_v9_6.html`.
 
 Validation and hosted deployment are pending. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Production authority belongs to the final `DEPLOY_REQUEST.json`, its exact dedicated deployment run and the hosted audit of the normalized HTML, `SOURCE.json` and all nineteen assets.
+
+2026-10-10 finishing revision: preserve older projects with a saved natural-grip profile, make face redraws depend on exact sampled values, and add a bounded gold-mote effect attached to the staff head and controlled by the existing Effects layer. These changes remain inside the unshipped v9.6 integration with 56 governed patches and nineteen bundled assets. Desktop/phone browser acceptance, exact final sealing, remote checks and the dedicated final deployment are pending; final source and trigger commit references will come from the release receipts.
+
+Pose, grip and effects references: [PoseMyArt’s male casting-spell pose](https://posemy.art/magic-poses/male-casting-spell-pose/2396/) informs the staff silhouette and bent elbow; [Clip Studio Tips](https://tips.clip-studio.com/en-us/articles/8226) informs the opposing thumb and curled fingers; [Riot’s VFX style guide](https://nexus.leagueoflegends.com/en-us/2017/10/dev-leagues-vfx-style-guide/) informs the clear silhouette and restrained effects. The native fitted rig, painted atlases and particle renderer use original project content.
 
 ## Historical verified v9.5 · Fitted Staff and Character Relief
 
@@ -169,7 +179,7 @@ This is a scriptable experimental compositor with runtime layer toggles, **not**
 | v9.3 (verified) | 2026-10-09 | Connected character pieces, character-specific rest layouts and native part-fitting controls; exact deployment 37893678594 and audit 37893722231 passed. |
 | v9.4 (verified) | 2026-10-09 | Saved limb sockets, snapped articulation and coordinated page emergence for cast/scenery/stars; deployment 37942614513 and audit 37942679834 passed. |
 | v9.5 (verified) | 2026-10-10 | Saved staff mount and individual character relief sections, paper thickness and costume flex; deployment 38013962412 and audit 38013986565 passed. |
-| v9.6 (candidate) | 2026-10-10 | Compact painted staff grip, continuous round shaft, readable crest proportions and matching painted facial features; validation and deployment pending. |
+| v9.6 (candidate) | 2026-10-10 | Compact painted staff grip with saved legacy-compatible profile, continuous shaft and crest proportions, matching painted facial features with exact-sample redraws, and deterministic gold staff motes governed by Effects; validation and deployment pending. |
 
 ## Artifact authority
 

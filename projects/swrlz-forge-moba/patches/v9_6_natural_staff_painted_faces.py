@@ -10,7 +10,7 @@ def apply(html):
     anchor = "window.SWRLZ_FORGE_BUILD={version:'v9.5'"
     assert html.count(anchor) == 1
     js = '\n'.join((runtime / name).read_text(encoding='utf-8') for name in
-                   ('anime_staff_art.js', 'anime_face_painter.js'))
+                   ('anime_staff_art.js', 'anime_face_painter.js', 'anime_staff_magic.js'))
     html = html.replace(anchor, js + '\n' + anchor, 1)
     scene = root / 'scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json'
     if scene.exists():
