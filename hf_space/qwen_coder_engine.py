@@ -542,6 +542,8 @@ def generate_events(payload):
                 "Do not trade one passing requirement for another. Keep explanations consistent with the literal returned code. "
                 "Prefer the smallest executable repair that satisfies the original contract and newest evidence. "
                 "A repeated failing executable candidate is not a repair; change strategy when the candidate or failure set stalls.")
+    if payload.get("projectThreadEvidence"):
+        system+="\n"+str(payload["projectThreadEvidence"])[:1650]
     system+="\n"+_response_mode(prompt,programming)
     system+="\n"+response_cognition_policy(response_cognition)
     online_context=payload.get("onlineContext") if isinstance(payload.get("onlineContext"),dict) else {}
