@@ -141,7 +141,7 @@ class FullDraftLineBoundaryV192(unittest.TestCase):
         lyric = source.split("        elif strict_lyric_turn:\n            # Keep useful model-authored", 1)[1]
         self.assertIn("def complete_original_draft(draft_messages, draft_temperature):", lyric)
         self.assertIn("buffered_bounded_original_lyrics(", lyric)
-        self.assertIn("candidate_raw,timing=complete_original_draft(messages,temperature)", lyric)
+        self.assertIn("candidate_raw,timing=complete_original_draft(original_messages,temperature)", lyric)
         self.assertIn("draft,timing2=complete_original_draft(", lyric)
         self.assertIn("buffered_bounded_lyric_continuation(", lyric)
         self.assertIn("candidate_check=check", lyric)
