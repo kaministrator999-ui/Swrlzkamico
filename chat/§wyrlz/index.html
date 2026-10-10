@@ -379,6 +379,55 @@
     .assistant-body .message-text h1,.assistant-body .message-text h2,.assistant-body .message-text h3,.assistant-body .message-text h4,.assistant-body .message-text h5,.assistant-body .message-text h6{margin:.85em 0 .35em;line-height:1.25;color:#f4fbff}.assistant-body .message-text h1{font-size:1.35em}.assistant-body .message-text h2{font-size:1.22em}.assistant-body .message-text h3{font-size:1.12em}
     .assistant-body .message-text ul,.assistant-body .message-text ol{margin:.55em 0;padding-left:1.5em}.assistant-body .message-text li{margin:.28em 0}
     @media(max-width:600px){.composer-box{max-height:28dvh}#prompt{max-height:calc(28dvh - 2px)}.composer-shell{padding-left:8px;padding-right:8px}.jump-latest{right:10px}.pin-rail-items{max-height:22vh}}
+
+    /* v194: lyrical prose gets the reading width, not nested dragon frames.
+       The wallpaper / Chat stage remain unchanged; programming code retains
+       its own horizontally scrollable framed viewer. */
+    .assistant-body .code-block.theme-lyrics,
+    .user-bubble.user-container-message .code-block.theme-lyrics{
+      min-width:0;max-width:100%;width:100%;
+      padding:0;overflow:hidden;transform:none;
+      border:1px solid rgba(126,214,255,.16);border-radius:12px;
+      background:rgb(2,15,27);background-image:none;box-shadow:none;
+    }
+    .assistant-body .code-block.theme-lyrics .code-head,
+    .user-bubble.user-container-message .code-block.theme-lyrics .code-head{
+      position:static;min-width:0;margin:0;padding:7px 10px;
+      height:auto;border:0;border-bottom:1px solid rgba(126,214,255,.12);
+      border-radius:0;background:rgb(3,19,34);
+      display:flex;align-items:center;gap:6px;
+    }
+    .assistant-body .code-block.theme-lyrics .code-head>span,
+    .user-bubble.user-container-message .code-block.theme-lyrics .code-head>span{
+      flex:0 0 auto;color:#abdeed;font-size:11px;
+    }
+    .assistant-body .code-block.theme-lyrics pre,
+    .user-bubble.user-container-message .code-block.theme-lyrics pre{
+      display:block;min-width:0;max-width:100%;width:100%;
+      margin:0;padding:11px 12px;
+      white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;
+      overflow-x:hidden;overflow-y:auto;max-height:70dvh;
+      border:0;border-radius:0;background:rgb(2,15,27);
+      color:#eaf8ff;line-height:1.65;
+    }
+    .assistant-body .code-block.theme-lyrics code,
+    .user-bubble.user-container-message .code-block.theme-lyrics code{
+      white-space:inherit;overflow-wrap:inherit;
+    }
+    @media(max-width:600px){
+      .assistant-body .code-block.theme-lyrics,
+      .user-bubble.user-container-message .code-block.theme-lyrics{
+        padding:0;border-radius:10px;
+      }
+      .assistant-body .code-block.theme-lyrics pre,
+      .user-bubble.user-container-message .code-block.theme-lyrics pre{
+        padding:11px 10px;font-size:12px;line-height:1.68;
+      }
+      .assistant-body .code-block.theme-lyrics .code-head,
+      .user-bubble.user-container-message .code-block.theme-lyrics .code-head{
+        padding:7px 8px;
+      }
+    }
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -1144,7 +1193,15 @@
           i=j;
         }
       };
-      const renderAssistantContent=(container,text,messageId="")=>{
+      // Presentation-only: route unlabelled fenced songs to the lyric reader.
+      // No content editing, no source-derived artist words and no code-language
+      // reclassification. Code requested by the user retains its code viewer.
+      const isOriginalSongwritingPrompt=value=>{
+        const t=String(value||"");
+        return /\\b(?:write|create|compose|draft|make|perform|spit)\\b[\\s\\S]{0,140}\\b(?:freestyle|rap|lyrics?|song|verse|bars?|cypher)\\b/i.test(t)
+          && !/\\b(?:python|javascript|typescript|html|css|script|programming|json|sql|regex|source\\s+code)\\b/i.test(t);
+      };
+      const renderAssistantContent=(container,text,messageId="",presentationHint="")=>{
         container.innerHTML="";
         const source=String(text||"");
         const fence=/\`\`\`([^\n\`]*)\n?([\s\S]*?)\`\`\`/g;
@@ -1254,11 +1311,12 @@
           const block=document.createElement("section");
           const lyricLanguages=new Set(["lyrics","lyric","song","music","verse","chorus"]);
           const codeLanguages=new Set(["javascript","js","typescript","ts","python","py","cpp","c++","c","csharp","cs","java","kotlin","kt","swift","go","rust","rs","php","ruby","rb","html","css","scss","json","yaml","yml","xml","sql","bash","sh","shell","powershell","ps1","dart","lua","r","matlab","code"]);
-          const theme=lyricLanguages.has(language)?"lyrics":(codeLanguages.has(language)?"code":"misc");
+          const inferredLyric=language==="code"&&!info.file&&!info.project&&presentationHint==="lyrics";
+          const theme=(lyricLanguages.has(language)||inferredLyric)?"lyrics":(codeLanguages.has(language)?"code":"misc");
           block.className="code-block theme-"+theme+(provisional?" provisional":"");block.dataset.containerTheme=theme;block.dataset.file=info.file;block.dataset.project=info.project;
           const key=(messageId||"stream")+":"+(info.file||codeIndex++);block.dataset.codeKey=key;
           const head=document.createElement("div");head.className="code-head";
-          const label=document.createElement("span");label.textContent=(info.file||language)+(provisional?" · streaming":"");
+          const label=document.createElement("span");label.textContent=(info.file||(theme==="lyrics"?"Lyrics":language))+(provisional?" · streaming":"");
           const actions=document.createElement("div");actions.className="code-head-actions";
           const copy=document.createElement("button");copy.type="button";copy.className="copy-code";copy.textContent="Copy";
           copy.onclick=async()=>{try{await navigator.clipboard.writeText(raw);copy.textContent="Copied";setTimeout(()=>copy.textContent="Copy",1200);}catch(_){copy.textContent="Copy failed";setTimeout(()=>copy.textContent="Copy",1200);}};
@@ -1371,9 +1429,11 @@
         [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
         messageList.querySelector(".pin-rail")?.remove();
         if(!thread){renderedConversationSignature=signature;renderFirstRunWelcome();renderWorkSurface();return true;}
+        let mostRecentUserPrompt="";
         for(const msg of (thread.messages||[])){
+          if(msg.role==="user")mostRecentUserPrompt=String(msg.text||"");
           if(msg.role==="assistant"){
-            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||""); attachAssistantTime(node,msg); addCopyButton(node); addWidgetBlock(node,msg); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||"",isOriginalSongwritingPrompt(mostRecentUserPrompt)?"lyrics":""); attachAssistantTime(node,msg); addCopyButton(node); addWidgetBlock(node,msg); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";node.dataset.messageId=msg.id||"";
             const meta=document.createElement("div");meta.className="user-meta";const who=document.createElement("span");who.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";meta.appendChild(who);const timeText=formatMessageTime(msg.createdAt);if(timeText){const time=document.createElement("span");time.className="message-time";time.textContent=timeText;time.title=new Date(Number(msg.createdAt)).toLocaleString();meta.appendChild(time);}
@@ -1604,7 +1664,9 @@
             if(code&&firstBreak>=0)code.textContent=nextText.slice(firstBreak+1);
           }else{
             captureCodeViewState();
-            renderAssistantContent(body,nextText,renderKey);
+            const responseThread=chatThreads.find(t=>t.id===String(g.threadId||""));
+            const responsePrompt=[...(responseThread?.messages||[])].reverse().find(m=>m.role==="user")?.text||"";
+            renderAssistantContent(body,nextText,renderKey,isOriginalSongwritingPrompt(responsePrompt)?"lyrics":"");
             restoreCodeViewState();
           }
           body.dataset.renderedSource=nextText;
