@@ -13,6 +13,7 @@ from lyric_output_contract import lyric_shape_request, verify_original_lyrics, c
 from lyric_bounded_continuation import buffered_bounded_lyric_continuation, buffered_bounded_original_lyrics
 from lyric_story_spine import generate_story_spine, story_spine_directive, narrative_fallback_craft
 from lyric_research_lab import research_for_creation
+from social_checkin import style_hint as _social_checkin_style_hint
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -552,6 +553,10 @@ def generate_events(payload):
     if payload.get("projectThreadEvidence"):
         system+="\n"+str(payload["projectThreadEvidence"])[:1650]
     system+="\n"+_response_mode(prompt,programming)
+    if not programming.get("codingTask"):
+        social_style=_social_checkin_style_hint(prompt)
+        if social_style:
+            system+="\n"+social_style
     system+="\n"+response_cognition_policy(response_cognition)
     direct_creative_lyric_contract=None
     lyric_research_receipt={"status":"SKIPPED","sourceCount":0,"lessonCount":0,"cache":False}
