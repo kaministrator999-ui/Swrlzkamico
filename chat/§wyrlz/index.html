@@ -444,6 +444,71 @@
     .assistant-body .original-lyric-code-window,
     .user-bubble .original-lyric-code-window{width:100%;max-width:100%;max-height:116px;overflow:auto;white-space:pre;font:12px/1.52 var(--font-telemetry);padding:10px 11px;margin:0;border:1px solid rgba(126,214,255,.18);border-radius:9px;background:rgba(2,15,27,.96);color:#eaf8ff}
     .original-lyric-readable[hidden],.original-lyric-code-window[hidden]{display:none!important}
+
+    /* v199: content-first response presentation. The Dragon Den remains themed,
+       but arbitrary lists, tables, and explanations are NOT forced into image frames. */
+    .assistant-body{
+      border:0!important;
+      background:rgba(2,15,27,.55)!important;
+      box-shadow:none!important;
+      text-shadow:none;
+    }
+    .assistant-body .message-text{max-width:100%;line-height:1.6}
+    .assistant-body .message-text h1,.assistant-body .message-text h2,
+    .assistant-body .message-text h3,.assistant-body .message-text h4{
+      color:#edfaff;
+      text-shadow:none;
+    }
+    .assistant-body .message-text .md-table-scroll{
+      border:1px solid rgba(126,214,255,.16);
+      border-radius:8px;
+      background:rgba(1,16,29,.38);
+      box-shadow:none;
+    }
+    /* Actual code, configuration and unknown fenced languages retain real
+       copy/download and independent scrolling, without large wallpaper gutters. */
+    .assistant-body .code-block.theme-code,
+    .assistant-body .code-block.theme-misc{
+      position:relative;isolation:auto;transform:none;
+      box-sizing:border-box;width:100%;max-width:100%;min-width:0;
+      padding:0!important;overflow:hidden;
+      border:1px solid rgba(126,214,255,.22)!important;
+      border-radius:11px;
+      background:rgba(2,14,26,.91)!important;
+      background-image:none!important;box-shadow:none!important;
+    }
+    .assistant-body .code-block.theme-code .code-head,
+    .assistant-body .code-block.theme-misc .code-head{
+      position:relative;left:auto;right:auto;top:auto;
+      box-sizing:border-box;min-width:0;min-height:37px;height:auto;
+      margin:0;padding:7px 10px;
+      border:0;border-bottom:1px solid rgba(126,214,255,.15);
+      border-radius:0;background:rgba(12,36,54,.72);
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+    }
+    .assistant-body .code-block.theme-code .code-head>span,
+    .assistant-body .code-block.theme-misc .code-head>span{
+      min-height:0;padding:0;border:0;border-radius:0;
+      background:none;min-width:0;overflow-wrap:anywhere;
+    }
+    .assistant-body .code-block.theme-code pre,
+    .assistant-body .code-block.theme-misc pre{
+      position:relative;box-sizing:border-box;max-width:100%;
+      margin:0;padding:12px;overflow:auto;
+      border:0;border-radius:0;
+      background:rgba(1,9,19,.72);
+      font-size:12px;line-height:1.55;
+      white-space:pre;
+    }
+    @media(max-width:600px){
+      .assistant-body .code-block.theme-code,
+      .assistant-body .code-block.theme-misc{padding:0!important}
+      .assistant-body .code-block.theme-code .code-head,
+      .assistant-body .code-block.theme-misc .code-head{left:auto;right:auto;top:auto;padding:7px 8px}
+      .assistant-body .code-block.theme-code pre,
+      .assistant-body .code-block.theme-misc pre{padding:10px 8px}
+      .assistant-body .message-text .md-table{min-width:360px}
+    }
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -1303,25 +1368,7 @@
           }
           if(!root.childNodes.length)appendInlineFormatting(root,String(value));container.appendChild(root);
         };
-        const wrapMiscResponse=()=>{
-          const children=[...container.children];
-          if(!children.length||children.some(node=>node.classList?.contains("code-block")))return;
-          const meaningful=source.trim();
-          // Source-grounded GitHub reports are documents, never code artifacts.
-          // Avoid an oversized nested RESPONSE frame on narrow mobile screens.
-          if(meaningful.includes("## GitHub project startup · evidence-backed")){
-            container.classList.add("github-start-document");
-            return;
-          }
-          const structured=/^(?:#{1,6}\s|[-*]\s|\d+[.)]\s)|\n\s*(?:#{1,6}\s|[-*]\s|\d+[.)]\s)/m.test(meaningful);
-          if(!structured||meaningful.length<180)return;
-          const block=document.createElement("section");block.className="code-block theme-misc prose-container";block.dataset.containerTheme="misc";
-          const head=document.createElement("div");head.className="code-head";
-          const label=document.createElement("span");label.textContent="Response";
-          head.appendChild(label);block.appendChild(head);
-          const surface=document.createElement("div");surface.className="misc-surface";
-          children.forEach(node=>surface.appendChild(node));block.appendChild(surface);container.appendChild(block);
-        };
+        // Structured Markdown remains normal conversational prose; only real source code gets a dedicated viewer.
         // Original compositions use the SAME Markdown lyric prose formatter as
         // retrieved lyrics. A code window is optional rather than the default.
         const appendLyric=(raw,key,file,provisional)=>{
@@ -1404,7 +1451,6 @@
           appendCode(open[1],open[2],true);
         }else appendText(tail);
         if(!container.childNodes.length)appendText(source);
-        wrapMiscResponse();
         enhanceCodeArtifacts(container);bindCodeViewState(container);
       };
       const captureCodeViewState=()=>{
