@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/github-account-project-start-v191-integration
-REQUEST_NONCE=2026-10-10-github-google-link-v191-dde48db5-001
+SOURCE_REF=feature/lyric-v192-github-auth-preserving-integration
+REQUEST_NONCE=2026-10-09-v192-full-draft-boundary-auth-preserved-001
