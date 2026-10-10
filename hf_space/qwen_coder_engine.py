@@ -8,6 +8,7 @@ from programming_telemetry import buffered_chat_completion, candidate_attempt_re
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from social_checkin import style_hint as _social_checkin_style_hint
+from version_literacy import style_hint as _version_literacy_style_hint
 
 MODEL_REPO=os.environ.get("SWRLZ_CODER_MODEL_REPO","Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF")
 MODEL_FILE=os.environ.get("SWRLZ_CODER_MODEL_FILE","qwen2.5-coder-1.5b-instruct-q4_k_m.gguf")
@@ -550,6 +551,9 @@ def generate_events(payload):
         social_style=_social_checkin_style_hint(prompt)
         if social_style:
             system+="\n"+social_style
+    version_lesson=_version_literacy_style_hint(prompt)
+    if version_lesson:
+        system+="\n"+version_lesson
     system+="\n"+response_cognition_policy(response_cognition)
     online_context=payload.get("onlineContext") if isinstance(payload.get("onlineContext"),dict) else {}
     if online_context:
