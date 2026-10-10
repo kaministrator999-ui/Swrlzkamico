@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.179
-REVISION=2.1.179-natural-original-bar-count-bold-chorus-guard-v200
+VERSION=2.1.180
+REVISION=2.1.180-evidence-bound-short-version-recall-v201
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
