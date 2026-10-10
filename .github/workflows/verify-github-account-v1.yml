@@ -11,6 +11,7 @@ on:
       - feature/google-durable-chat-history-v1
       - feature/google-durable-chat-history-v195-integration
       - feature/social-checkin-v197-persistence-restart
+      - feature/grounded-version-recall-v201
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 
@@ -30,7 +31,7 @@ jobs:
           python hf_space/test_github_connection_v1.py
           python hf_space/test_project_thread_memory_v1.py
           python hf_space/test_account_chat_store_v1.py
-          python hf_space/test_social_checkin_v197.py
+          python hf_space/test_social_checkin_v197.py hf_space/test_project_version_recall_v201.py
           python hf_space/test_version_presentation_v199.py
       - name: Verify canonical Chat inline JavaScript parses
         run: |
