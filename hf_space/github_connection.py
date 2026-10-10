@@ -384,7 +384,7 @@ def project_start_report(user_id, repo_name=""):
     header = files[found[0]]["body"].splitlines()[0][:160] if files[found[0]]["body"] else found[0]
     lines = ["𓆩𓆩⁽§⁾𓆪wyrlz𓆪", "", "## GitHub project startup · evidence-backed",
              "**Repository:** [" + repo + "](" + base + ")",
-             "**Source branch:** \`" + branch + "\` at \`" + pinned_sha[:12] + "\`  ",
+             "**Source branch:** `" + branch + "` at `" + pinned_sha[:12] + "`  ",
              "**Startup authority:** [" + found[0] + "](" + base + "/blob/" +
              quote(branch, safe="") + "/" + quote(found[0], safe="/") + ")",
              "", "**Startup document:** " + header.replace("<", "&lt;"),
