@@ -12,6 +12,7 @@ from lyric_craft_school import lyric_craft_policy
 from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics, continuation_shape_receipt
 from lyric_bounded_continuation import buffered_bounded_lyric_continuation, buffered_bounded_original_lyrics
 from lyric_story_spine import generate_story_spine, story_spine_directive, narrative_fallback_craft
+from lyric_research_lab import research_for_creation
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -553,6 +554,7 @@ def generate_events(payload):
     system+="\n"+_response_mode(prompt,programming)
     system+="\n"+response_cognition_policy(response_cognition)
     direct_creative_lyric_contract=None
+    lyric_research_receipt={"status":"SKIPPED","sourceCount":0,"lessonCount":0,"cache":False}
     music_policy=music_model_policy(prompt)
     if reference_structure and not music_policy:
         # "Do another one" inherits the earlier structural music request but
@@ -565,6 +567,14 @@ def generate_events(payload):
             direct_creative_lyric_contract=lyric_shape_request(prompt)
         if craft_policy:
             system+="\n"+craft_policy
+            if not reference_structure:
+                # This is ONLY original songwriting. Public guide/example
+                # searches receive generic genre/form labels, never the user
+                # prompt or personal profile. A four-second wait budget and
+                # static curated technique IDs keep the 700M context bounded.
+                research_hint,lyric_research_receipt=research_for_creation(prompt)
+                if research_hint:
+                    system+=research_hint
         if direct_creative_lyric_contract and (direct_creative_lyric_contract["requestedLines"] or direct_creative_lyric_contract["continuous"] or direct_creative_lyric_contract["noChorus"]):
             shape=direct_creative_lyric_contract
             system+=(
@@ -1016,6 +1026,7 @@ def generate_events(payload):
             # Export only diagnostic status and duration; never leak the
             # model-authored private plan into camera/log receipts.
             candidate_check=dict(candidate_check)
+            candidate_check["lyricResearch"]=lyric_research_receipt
             candidate_check["storySpineStatus"]=story_receipt["status"]
             candidate_check["storySpineFields"]=story_receipt.get("fields",0)
             candidate_check["storySpineFailureCode"]=story_receipt.get("failureCode")
