@@ -5,6 +5,7 @@ on:
       - feature/github-account-project-start-v1
       - feature/github-account-project-start-v191-integration
       - feature/github-oauth-safe-config-diagnostics-v192
+      - feature/github-start-mobile-markdown-and-roadmap-v1
   workflow_dispatch:
 
 jobs:
@@ -32,6 +33,8 @@ jobs:
           for(const script of blocks)new vm.Script(script);
           for(const id of ['githubConnectButton','githubDisconnectButton','githubRepoSelect','githubReadStart'])
             if(!html.includes('id="'+id+'"'))throw Error('Missing '+id);
+          for(const invariant of ['md-table-scroll','const appendInlineFormatting=(parent,value)=>','safeHttpUrl(match[2])','const tableRule=line=>'])
+            if(!html.includes(invariant))throw Error('Missing mobile Markdown contract '+invariant);
           console.log('Chat inline script parsed; GitHub controls present');
           NODE
       - name: Guard no OAuth secrets embedded into Chat
