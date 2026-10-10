@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/github-start-mobile-markdown-and-roadmap-v1
-REQUEST_NONCE=2026-10-10-github-start-mobile-presentation-roadmap-v193-001
+SOURCE_REF=feature/lyric-mobile-reading-surface-v194
+REQUEST_NONCE=2026-10-09-v194-mobile-lyrics-readable-001
