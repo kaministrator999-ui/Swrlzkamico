@@ -4,6 +4,7 @@ on:
     paths:
       - 'chat/§wyrlz/index.html'
       - 'tests/test_lyric_mobile_reader_v194.py'
+      - 'tests/test_lyric_native_reader_fallback_v195.py'
       - '.github/workflows/mobile-lyric-reader-integrity.yml'
   workflow_dispatch:
 permissions:
@@ -15,5 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check mobile lyric surfaces and untouched code viewer
         run: python -m unittest discover -s tests -p test_lyric_mobile_reader_v194.py -v
+      - name: Verify default prose lyrics and opt-in compact code window
+        run: python -m unittest discover -s tests -p test_lyric_native_reader_fallback_v195.py -v
       - name: Declare verification scope
         run: echo "Static style, exact JS syntax, and isolated prompt routing verified; Android visual acceptance remains unverified."
