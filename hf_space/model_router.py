@@ -281,6 +281,15 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     payload=dict(payload)
     payload["programmingIntent"]=intent
     yield {"type":"PROGRAMMING_INTENT","intent":intent}
+    # Source-owned recall is deliberately independent of generative reconstruction.
+    # Station sets this only from a verified Google account's current thread snapshot;
+    # no public prompt, browser data or untrusted repository prose can set it.
+    project_recap=payload.get("projectVersionRecall")
+    if isinstance(project_recap,str) and 0<len(project_recap)<=4200 and not intent.get("codingTask"):
+        yield {"type":"STATUS","phase":"PROJECT_VERSION_RECALL","reason":"Presenting authenticated thread source versions; live release state not inferred.","categories":["GITHUB","SOURCE","VERSION"]}
+        yield {"type":"DELTA","text":project_recap}
+        yield {"type":"COMPLETED","phase":"COMPLETE","fastPath":"verified-project-version-recall"}
+        return
     requested_model_id=model_id
     if intent.get("codingTask") and model_id in ("700m","stock","r39","coder"):
         model_id="coder"
