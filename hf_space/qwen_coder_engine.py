@@ -7,6 +7,7 @@ from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_c
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
+from social_checkin import style_hint as _social_checkin_style_hint
 
 MODEL_REPO=os.environ.get("SWRLZ_CODER_MODEL_REPO","Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF")
 MODEL_FILE=os.environ.get("SWRLZ_CODER_MODEL_FILE","qwen2.5-coder-1.5b-instruct-q4_k_m.gguf")
@@ -283,7 +284,6 @@ def _user_name_from_profile(user_profile):
 
 def _thread_user_name(history,user_profile):
     import re
-from social_checkin import style_hint as _social_checkin_style_hint
     name=_user_name_from_profile(user_profile)
     for message in history or []:
         if str(message.get("role") or "").lower()!="user":continue
