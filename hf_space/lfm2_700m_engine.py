@@ -11,6 +11,7 @@ from music_structure import music_model_policy, creative_music_request, creative
 from lyric_craft_school import lyric_craft_policy
 from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics, continuation_shape_receipt
 from lyric_bounded_continuation import buffered_bounded_lyric_continuation, buffered_bounded_original_lyrics
+from lyric_story_spine import generate_story_spine, story_spine_directive
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -830,6 +831,15 @@ def generate_events(payload):
             # Exact form is a necessary condition, not a grade of musicality.
             shape=direct_creative_lyric_contract
             wanted=shape.get("requestedLines")
+            # A single local micro-planning pass for longer narrative lyrics.
+            # Its authored scene facts are scoped to this response, not saved
+            # as user memory, cached as copyrighted reference, or graded as
+            # proof of semantic correctness. Malformed plans are optional.
+            story_beats,story_receipt=generate_story_spine(model,prompt,wanted)
+            story_directive=(story_spine_directive(story_beats,wanted)
+                             if story_beats else "")
+            original_messages=(list(messages)+[{"role":"system","content":story_directive}]
+                               if story_directive else messages)
 
             def complete_original_draft(draft_messages, draft_temperature):
                 # The v191 fix bounded only the short append calls. Dragon
@@ -856,7 +866,7 @@ def generate_events(payload):
                     checked["presentationNormalizedBlankLines"]=True
                 return flattened,checked,preserved
 
-            candidate_raw,timing=complete_original_draft(messages,temperature)
+            candidate_raw,timing=complete_original_draft(original_messages,temperature)
             candidate_raw,check,authored_lines=assess_lyric_draft(candidate_raw)
             previous_fp=_candidate_fingerprint(candidate_raw)
             candidate_attempts.append(candidate_attempt_receipt(
@@ -880,7 +890,7 @@ def generate_events(payload):
                     "Do not repeat the refused draft or claim compliance without completing the work."
                 )
                 draft,timing2=complete_original_draft(
-                    list(messages)+[{"role":"system","content":retry_instruction}],
+                    list(original_messages)+[{"role":"system","content":retry_instruction}],
                     min(0.48,temperature+0.06),
                 )
                 candidate_raw,check,authored_lines=assess_lyric_draft(draft)
@@ -921,11 +931,17 @@ def generate_events(payload):
                             "Output ONLY the new lines, no code fence, heading, blank lines, "
                             "repeated lines, explanation, apology or chorus. "
                             "Maintain the original user's story, voice, rhyme intensity "
-                            "and continuity. Advance the requested subject through fresh action "
-                            "and make the final part feel resolved, not abruptly cut off."
+                            "and continuity. Advance the requested subject through fresh action. "
+                            +("These are the FINAL lines: name the cause, show its consequence, "
+                              "finish decisively and NEVER introduce a new mystery."
+                              if len(authored_lines)+next_lines>=wanted else
+                              "These are MIDDLE lines: investigate fresh concrete evidence; "
+                              "reserve the causal reveal and closing consequence for the end.")
                         )},
                         {"role":"user","content":(
-                            "ORIGINAL USER REQUEST:\n"+prompt[:1100]
+                            ("PRIVATE STORY PLAN (not lyrics to repeat):\n"
+                             +story_directive[:900]+"\n" if story_directive else "")
+                            +"ORIGINAL USER REQUEST:\n"+prompt[:1100]
                             +f"\nTOTAL REQUESTED: {wanted} lines; ALREADY WRITTEN: "
                             +str(len(authored_lines))
                             +f"; WRITE ONLY THE NEXT {next_lines} LINES.\n"
@@ -993,6 +1009,12 @@ def generate_events(payload):
                         f"I couldn't complete a {count}lyric response matching the requested form, "
                         "so I won't claim the draft passed."
                     )
+            # Export only diagnostic status and duration; never leak the
+            # model-authored private plan into camera/log receipts.
+            candidate_check=dict(candidate_check)
+            candidate_check["storySpineStatus"]=story_receipt["status"]
+            candidate_check["storySpineFields"]=story_receipt.get("fields",0)
+            candidate_check["storySpineLatencyMs"]=story_receipt.get("durationMs",0)
             first_delta=round((time.perf_counter()-started)*1000,3)
             yield {"type":"DELTA","text":candidate_text}
         else:
