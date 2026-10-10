@@ -134,6 +134,9 @@ function facialAlignment(rig,character,label){
   const skin={kami:{min:[-.43,-.40],max:[.24,.065]},swyrlz:{min:[-.4,-.88],max:[.45,-.36]}};
   const face=rig.face;
   assert.ok(face.pixelCount>100&&face.featureInkBounds&&face.canvasInkBounds,'Missing actual facial ink: '+label);
+  assert.ok(face.canvasInkBounds.min[0]>0&&face.canvasInkBounds.min[1]>0&&
+    face.canvasInkBounds.max[0]<256&&face.canvasInkBounds.max[1]<192,
+    'Painted facial features reach a clamped texture edge and smear across the hood: '+label+' '+character);
   for(const axis of [0,1])assert.ok(face.featureInkBounds.min[axis]>=skin[character].min[axis]&&
     face.featureInkBounds.max[axis]<=skin[character].max[axis],
     'Moving body pieces displaces the face into the hair, chin or neck: '+label+' '+character);
