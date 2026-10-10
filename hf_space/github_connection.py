@@ -347,8 +347,8 @@ def is_start_request(prompt):
 
 def _safe_fragment(value, limit=650):
     # Repository prose is untrusted: strip HTML/Markdown markup before render.
-    clean = re.sub(r"[^\w\s.,:;!?/#@%+=-]", " ", str(value or ""))
-    clean = re.sub(r"[\\x00-\\x1f\\x7f|]", " ", clean)
+    clean = re.sub(r"[^\w\s.,:;!?/#@%+=\-§]", " ", str(value or ""))
+    clean = re.sub(r"[\x00-\x1f\x7f|]", " ", clean)
     return " ".join(clean.split())[:limit]
 
 
@@ -410,17 +410,23 @@ def project_start_report(user_id, repo_name=""):
                       if kind in ("FINISHED", "COMPLETED")), None)
     # A STARTED entry whose differently named FINISH references the same tier
     # cannot be conclusively classified from headings alone.
+    completed_versions = {
+        hit.group(0).lower() for kind, _, name in events if kind in ("FINISHED", "COMPLETED")
+        for hit in [re.search(r"\bv[0-9]{2,4}\b", name, re.I)] if hit
+    }
     pending = next(((kind, date, title) for kind, date, title in events
                     if kind == "STARTED" and not any(
                         k in ("FINISHED", "COMPLETED") and t.casefold() == title.casefold()
-                        for k, _, t in events)), None)
+                        for k, _, t in events)
+                    and not any(v in completed_versions for v in
+                                re.findall(r"\bv[0-9]{2,4}\b", title.lower()))), None)
     base = "https://github.com/" + repo
     header = files[found[0]]["body"].splitlines()[0][:160] if files[found[0]]["body"] else found[0]
     lines = ["𓆩𓆩⁽§⁾𓆪wyrlz𓆪", "", "## GitHub project startup · evidence-backed",
              "**Repository:** [" + repo + "](" + base + ")",
              "**Source branch:** `" + branch + "` at `" + pinned_sha[:12] + "`  ",
              "**Startup authority:** [" + found[0] + "](" + base + "/blob/" +
-             quote(branch, safe="") + "/" + quote(found[0], safe="/") + ")",
+             quote(pinned_sha, safe="") + "/" + quote(found[0], safe="/") + ")",
              "", "**Startup document:** " + _safe_fragment(header, 160),
              "", "### Documents read"]
     lines.extend("- [" + p + "](" + base + "/blob/" + quote(branch, safe="") +
@@ -439,16 +445,23 @@ def project_start_report(user_id, repo_name=""):
         heading = next((i for i, line in enumerate(roadmap_lines) if completed[2] in line and "UPDATE FINISHED" in line), None)
         if heading is not None:
             chunk = roadmap_lines[heading + 1: heading + 28]
-            for label, match_words in (("Recorded result", ("**Result:", "**Outcome:", "**Status:")),
-                                       ("Next documented gate", ("**Next acceptance gate:", "**Next gate:", "**Remaining gate:", "**User acceptance needed:"))):
-                line = next((line for line in chunk if line.lstrip().startswith(match_words)), "")
+            for label, match_words in (
+                ("Recorded result", ("**Result:", "**Outcome:", "**Status:")),
+                ("Next documented gate", ("**Next acceptance gate:", "**Next acceptance:", "**Remaining next acceptance:", "**Remaining before closure:", "**Next gate:", "**Remaining gate:", "**User acceptance needed:"))
+            ):
+                line = next((entry for entry in chunk if entry.lstrip().startswith(match_words)), "")
                 if line:
-                    lines.append("**" + label + ":** " + _safe_fragment(line.strip().replace("**", "")))
+                    # Strip the source label and Markdown delimiters before
+                    # display. Keep its factual body; omit empty or malformed
+                    # snippets rather than inventing a successful outcome.
+                    fact = _safe_fragment(line.strip().split(":", 1)[1].replace("**", "").strip())
+                    if len(fact) >= 8 and len(fact.split()) >= 2:
+                        lines.append("**" + label + ":** " + fact)
     else:
         lines.append("No completed Roadmap heading was available from the retrieved content.")
     if pending:
         lines.append("**Potential unresolved STARTED heading:** " + pending[1] + " — " + pending[2] +
-                     " (title matching only; inspect continuation/body before treating as a confirmed blocker).")
+                     " (unmatched by version/title; inspect the Roadmap before classifying as an active blocker).")
     else:
         lines.append("No unmatched STARTED heading was detected in the retrieved Roadmap headings.")
     lines += ["", "### Verification and authority boundary",
