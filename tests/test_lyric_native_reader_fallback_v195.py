@@ -77,7 +77,7 @@ class NativeLyricReaderAndFallbackV195(unittest.TestCase):
         self.assertIn('await navigator.clipboard.writeText(raw)',self.script)
 
     def test_compact_only_opt_in_and_real_programming_untouched(self):
-        css=self.html[self.html.index("/* v195: originals read as normal formatted Chat lyrics"):self.html.index("</style>")]
+        css=self.html[self.html.index("/* v195: originals read as normal formatted Chat lyrics"):self.html.index("/* v199: content-first response presentation")]
         self.assertIn('background:transparent;border:0;padding:0;',css)
         self.assertIn('max-height:116px;overflow:auto;white-space:pre;',css)
         self.assertIn('.original-lyric-readable[hidden],.original-lyric-code-window[hidden]{display:none!important}',css)
