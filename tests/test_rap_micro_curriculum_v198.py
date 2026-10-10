@@ -54,6 +54,11 @@ class RapPracticeV198(unittest.TestCase):
             with self.subTest(prompt=prompt):
                 self.assertEqual(rap_micro_guidance(prompt),("","SKIPPED"))
 
+    def test_per_request_baseline_no_coaching(self):
+        for phrase in ("no rap coaching", "without rap coaching", "rap coaching off"):
+            cue,focus=rap_micro_guidance("Write 8 rap bars with "+phrase)
+            self.assertEqual((cue,focus),("","SKIPPED"))
+
     def test_off_switch_and_non_code_hijack(self):
         with patch.dict(os.environ,{"SWRLZ_RAP_MICROLESSON_ENABLED":"0"}):
             self.assertEqual(rap_micro_guidance("Write rap bars"),("","SKIPPED"))
