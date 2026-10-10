@@ -73,6 +73,9 @@ function rigSanitizeModel(value,duration=storyTimeline().duration){
     result.characters[character]={
       enabled:typeof input.enabled==='boolean'?input.enabled:true,
       asset:storyAssetSource(input.asset,atlas),
+      // Split grip artwork is a saved fitting profile. Historical projects
+      // keep their original glove and sockets when imported into this engine.
+      gripStyle:character==='kami'&&input.gripStyle==='natural-v1'?'natural-v1':'original',
       thickness:storyNumber(input.thickness,.08,.02,.18),depth:storyNumber(input.depth,1,.3,1.5),
       layout:Object.fromEntries(RIG_JOINT_IDS.map(part=>[part,rigCleanPartLayout(character,part,layout[part])])),
       joints:Object.fromEntries(RIG_JOINT_IDS.map(part=>[part,rigCleanKeys(part,joints[part],duration)])),
@@ -176,7 +179,7 @@ function rigSetArtworkMode(character,asset){
 function rigPublicModel(character){
   if(!rigCharacterId(character))return null;
   const config=storyCopy(rigModel().characters[character]);
-  return {enabled:config.enabled,asset:config.asset,thickness:config.thickness,depth:config.depth,
+  return {enabled:config.enabled,asset:config.asset,gripStyle:config.gripStyle,thickness:config.thickness,depth:config.depth,
     layout:config.layout,layoutBounds:storyCopy(RIG_LAYOUT_BOUNDS),
     parts:RIG_JOINT_IDS.filter(part=>character==='kami'?part!=='grimoire':part!=='staff'&&part!=='quill')
       .map(id=>({id,label:RIG_JOINT_LABELS[id],bounds:storyCopy(RIG_JOINT_BOUNDS)})),
