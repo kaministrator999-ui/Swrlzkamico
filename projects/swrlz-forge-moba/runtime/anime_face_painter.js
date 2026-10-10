@@ -93,7 +93,13 @@ rigPaintFace=function(face,character,sample,time){
   }else{
     const alpha=Math.max(0,Math.min(1,smile)),width=skull?57:43;
     components.push(paintedFaceDraw(c,atlas,parts.neutralMouth,128,mouthY,width,skull?15:8,0,1-alpha));
-    if(alpha>0)components.push(paintedFaceDraw(c,atlas,parts.smileMouth,128,mouthY,width+(skull?3:2)*alpha,skull?15:9,0,alpha));
+    if(alpha>0){
+      // Blend weighted premultiplied pixels over the transparent mouth region.
+      // Source-over would fade opaque lips/teeth during an intermediate smile.
+      c.save();c.globalCompositeOperation='lighter';
+      components.push(paintedFaceDraw(c,atlas,parts.smileMouth,128,mouthY,width+(skull?3:2)*alpha,skull?15:9,0,alpha));
+      c.restore();
+    }
     // Negative smiles bend the separate painted mouth without moving its anchor.
     if(smile<0){
       c.save();c.globalAlpha=Math.min(.4,-smile*.4);c.strokeStyle=skull?'#916b3b':'#8b5440';c.lineWidth=1;

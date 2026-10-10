@@ -27,8 +27,20 @@ permissions:
   contents: read
 jobs:
   browser:
+    name: browser (${{ matrix.suite }})
     runs-on: ubuntu-latest
     timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - native_anime
+          - storybook_authoring
+          - character_rig
+          - depth_theatre
+          - character_alignment
+          - socket_emergence
+          - character_relief
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -130,32 +142,25 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
-      - name: Test native cinematic, independent cels, Director and project export
+      - name: Test ${{ matrix.suite }} acceptance in desktop and phone layouts
+        env:
+          SWYRL_ANIME_TEST_URL: http://127.0.0.1:8765
+          SWYRL_ANIME_SUITE: ${{ matrix.suite }}
         run: |
+          set -euo pipefail
           python -m http.server 8765 --directory /tmp/storybook-test >/tmp/browser-storybook-http.log 2>&1 &
-          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/native_anime_playwright.mjs
-      - name: Test actual authored studio, camera tracks, Play and Save/Load
-        run: |
-          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/storybook_authoring_playwright.mjs
-      - name: Test articulated character depth, joints, faces, Play and saved poses
-        run: |
-          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/character_rig_playwright.mjs
-      - name: Test fitted faces, independent scenery depth, stars, parallax and saved keys
-        run: |
-          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/depth_theatre_playwright.mjs
-      - name: Test connected body pieces, fitted layouts, held props, Play and Save/Load
-        run: |
-          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/character_alignment_playwright.mjs
-      - name: Test socket snapping, joint pivots, held staff and book emergence
-        run: |
-          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/socket_emergence_playwright.mjs
-      - name: Test per-piece relief, cloth and armor motion, sockets and saved sections
-        run: |
-          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/character_relief_playwright.mjs
+          SWYRL_TEST_SERVER_PID=$!
+          trap 'kill "$SWYRL_TEST_SERVER_PID" 2>/dev/null || true' EXIT
+          for attempt in {1..10}; do
+            if curl -fsS http://127.0.0.1:8765/SOURCE.json >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8765/SOURCE.json >/dev/null
+          node "projects/swrlz-forge-moba/tests/${SWYRL_ANIME_SUITE}_playwright.mjs"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: v9-5-authored-storybook-browser-views
+          name: v9-6-${{ matrix.suite }}-browser-views
           path: |
             native-anime-*.png
             storybook-acceptance/

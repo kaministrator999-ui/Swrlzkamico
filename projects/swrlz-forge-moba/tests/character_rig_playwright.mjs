@@ -165,6 +165,7 @@ async function paintedFaceControls(page,character,time,label){
     // This authored change falls inside the old rounded face-cache bucket.
     ['gazeX',.004,['leftEye','rightEye'],['nose','mouth']],
     ['gazeX',.75,['leftEye','rightEye'],['nose','mouth']],
+    ['smile',.5,['mouth'],['leftEye','rightEye','nose']],
     ['mouth',.9,['mouth'],['leftEye','rightEye','nose']]
   ]){
     await faceKey(page,character,time,{...baseFace,[field]:value});await seek(page,time);
@@ -175,6 +176,9 @@ async function paintedFaceControls(page,character,time,label){
       'The native '+field+' control repaints unrelated '+id+' pixels: '+label);
     if(field==='blink')for(const id of changed)assert.ok(actual[id].alphaPixels<open[id].alphaPixels,
       'Closing the eyelids does not reduce the actual painted eye aperture: '+label+' '+id);
+    if(field==='smile')assert.ok((await rendered(page,character)).face.paintedFeatures.pixelSamples
+      .filter(sample=>sample.id==='mouth'&&sample.alpha>=248/255).length>=3,
+      'The halfway smile fades its opaque painted mouth instead of blending the artwork: '+label);
     await closeStudio(page);await historyAction(page,'undo');await seek(page,time);
     assert.deepEqual(await model(page,character),neutralModel,'One native Undo did not restore the authored face: '+label+' '+field);
     const restoredFace=(await rendered(page,character)).face;
