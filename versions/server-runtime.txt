@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.349
-REVISION=2.3.349-hf-v198-rap-microcurriculum-release
+VERSION=2.3.350
+REVISION=2.3.350-hf-v199-version-literacy-content-first
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
