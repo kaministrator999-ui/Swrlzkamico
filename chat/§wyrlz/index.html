@@ -2516,8 +2516,7 @@
       githubReadStart.addEventListener("click",async()=>{
         if(!githubLinked)return;
         if(!githubRepoManual.value.trim()){githubConnectStatus.textContent="Choose a repository first.";return;}
-        githubRepoSave.click();
-        // Save selection asynchronously before generating; explicit read button is user intent.
+        // Save selection before preparing the explicit, user-initiated read request.
         const repository=githubRepoManual.value.trim();
         try{
           const r=await fetch("/api/github/default-repo",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({repository})});
