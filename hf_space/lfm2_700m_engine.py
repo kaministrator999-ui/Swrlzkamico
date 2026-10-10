@@ -13,6 +13,7 @@ from lyric_output_contract import lyric_shape_request, verify_original_lyrics, c
 from lyric_bounded_continuation import buffered_bounded_lyric_continuation, buffered_bounded_original_lyrics
 from lyric_story_spine import generate_story_spine, story_spine_directive, narrative_fallback_craft
 from lyric_research_lab import research_for_creation
+from rap_micro_curriculum import rap_micro_guidance
 from social_checkin import style_hint as _social_checkin_style_hint
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
@@ -572,6 +573,11 @@ def generate_events(payload):
             direct_creative_lyric_contract=lyric_shape_request(prompt)
         if craft_policy:
             system+="\n"+craft_policy
+            # Sound-first training is one short focus, never another nested
+            # set of compliance constraints or a canned performance.
+            rap_hint,rap_focus=rap_micro_guidance(prompt)
+            if rap_hint and not reference_structure:
+                system+=rap_hint
             if not reference_structure:
                 # This is ONLY original songwriting. Public guide/example
                 # searches receive generic genre/form labels, never the user
