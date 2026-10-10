@@ -327,17 +327,21 @@ def project_start_report(user_id, repo_name=""):
     token = record["token"]
     details = _api(token, "/repos/" + repo)
     branch = str(details.get("default_branch") or "main")
+    head = _api(token, "/repos/" + repo + "/commits/" + quote(branch, safe=""))
+    pinned_sha = str(head.get("sha") or "")
+    if not re.fullmatch(r"[0-9a-f]{40}", pinned_sha):
+        raise HTTPException(502, "GitHub did not return a pinned commit")
     found = []
     files = {}
     for path in _ROOT_FILES:
-        obj = _read_optional(token, repo, path, branch, 940000 if "ROADMAP" in path else 130000)
+        obj = _read_optional(token, repo, path, pinned_sha, 940000 if "ROADMAP" in path else 130000)
         if obj:
             found.append(path)
             files[path] = obj
     if not files.get("§wyrlz_§tart.md"):
         # Support other users' repositories without pretending they use our contract.
         for fallback in ("§tart.md", "START.md", "README.md"):
-            x = _read_optional(token, repo, fallback, branch)
+            x = _read_optional(token, repo, fallback, pinned_sha)
             if x:
                 found.insert(0, fallback)
                 files[fallback] = x
