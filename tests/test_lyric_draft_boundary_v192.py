@@ -115,7 +115,7 @@ class FullDraftLineBoundaryV192(unittest.TestCase):
         lines = ["I can't do much about the rusty gears"] + [
             f"The inspector discovers unique witness scar {i}" for i in range(2, 41)
         ]
-        _, body, _ = get_bounded([x + "\\n" for x in lines])
+        _, body, _ = get_bounded([x + "\n" for x in lines])
         self.assertEqual(verify_original_lyrics(body, SHAPE)["status"], "PASS")
 
     def test_verse_spacing_is_not_autoaccepted_without_cleaning(self):
