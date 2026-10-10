@@ -14,8 +14,12 @@ _COUNT = re.compile(
     r"(?:lyric\s+)?(?:line|bar)s?\b", re.I
 )
 _SECTION = re.compile(
-    r"^\s*(?:\[\s*)?(?:verse|chorus|hook|bridge|refrain|intro|outro|interlude|"
-    r"pre[- ]?chorus|post[- ]?chorus|freestyle)\b[^\]]{0,28}(?:\])?\s*:?\s*$",re.I
+    # Match a real musical section label, not a lyric beginning "Chorus ...".
+    r"^\s*(?:\[\s*)?(?:pre[- ]?chorus|post[- ]?chorus|verse|chorus|hook|"
+    r"bridge|refrain|intro|outro|interlude|freestyle)\b"
+    r"(?:\s*(?:\d{1,2}|[IVX]{1,5}|x\d{1,2}|\(\s*(?:repeat|reprise)\s*\)))?"
+    r"(?:\s*[-–—]\s*\d{1,3}\s*bars?)?"
+    r"\s*(?:\])?\s*:?\s*[*_]{0,3}\s*$",re.I
 )
 _REFUSAL = re.compile(
     r"(?i)^\s*(?:i(?:'|’)m\s+sorry\b|i\s+cannot\s+(?:write|create|produce)|"
