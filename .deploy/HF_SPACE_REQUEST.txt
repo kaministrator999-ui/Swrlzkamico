@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/lyric-native-reader-planner-fallback-v195
-REQUEST_NONCE=2026-10-10-v195-native-lyrics-quality-fallback-001
+SOURCE_REF=feature/google-durable-chat-history-v195-integration
+REQUEST_NONCE=2026-10-10-google-account-durable-full-conversations-v195-001
