@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.348
-REVISION=2.3.348-hf-v197-natural-social-checkin-persistence-restart
+VERSION=2.3.349
+REVISION=2.3.349-hf-v198-rap-microcurriculum-release
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
