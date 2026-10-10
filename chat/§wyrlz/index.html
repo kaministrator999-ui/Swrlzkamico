@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.0.101">
+  <meta name="swrlz-chat-version" content="1.0.102">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -428,6 +428,22 @@
         padding:7px 8px;
       }
     }
+    /* v195: originals read as normal formatted Chat lyrics, like verified online lyrics.
+       A compact scrollable source/code window is opt-in; no competing frame. */
+    .assistant-body .original-lyric-response,
+    .user-bubble .original-lyric-response{width:100%;min-width:0;max-width:100%;background:transparent;border:0;padding:0;margin:2px 0}
+    .assistant-body .original-lyric-readable .message-text,
+    .user-bubble .original-lyric-readable .message-text{white-space:normal;overflow-wrap:break-word;word-break:normal}
+    .assistant-body .original-lyric-readable .message-text p,
+    .user-bubble .original-lyric-readable .message-text p{margin:0 0 .28em;line-height:1.65}
+    .original-lyric-stanza-gap{height:13px}
+    .assistant-body .original-lyric-tools,
+    .user-bubble .original-lyric-tools{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:7px;margin:0 0 9px}
+    .original-lyric-tools button{border:0;border-radius:7px;background:rgba(11,44,65,.45);color:#b9e5f4;font:11px var(--font-ui);padding:6px 8px;cursor:pointer}
+    .original-lyric-tools button:hover,.original-lyric-tools button:focus-visible{background:rgba(24,85,112,.62);color:#f1ffff}
+    .assistant-body .original-lyric-code-window,
+    .user-bubble .original-lyric-code-window{width:100%;max-width:100%;max-height:116px;overflow:auto;white-space:pre;font:12px/1.52 var(--font-telemetry);padding:10px 11px;margin:0;border:1px solid rgba(126,214,255,.18);border-radius:9px;background:rgba(2,15,27,.96);color:#eaf8ff}
+    .original-lyric-readable[hidden],.original-lyric-code-window[hidden]{display:none!important}
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -1149,6 +1165,7 @@
       };
 
       const codeViewState=new Map();
+      const lyricViewCollapsed=new Map();
       let renderedConversationSignature="";
       const codeArtifactState=new Map();
       const pinItemCollapsed=new Set();
@@ -1305,6 +1322,57 @@
           const surface=document.createElement("div");surface.className="misc-surface";
           children.forEach(node=>surface.appendChild(node));block.appendChild(surface);container.appendChild(block);
         };
+        // Original compositions use the SAME Markdown lyric prose formatter as
+        // retrieved lyrics. A code window is optional rather than the default.
+        const appendLyric=(raw,key,file,provisional)=>{
+          const root=document.createElement("section");
+          root.className="original-lyric-response";
+          root.dataset.lyricKey=key;
+          const tools=document.createElement("div");tools.className="original-lyric-tools";
+          const toggle=document.createElement("button");
+          toggle.type="button";toggle.className="lyric-view-toggle";
+          const copy=document.createElement("button");copy.type="button";
+          copy.className="lyric-copy";copy.textContent="Copy";
+          copy.onclick=async()=>{
+            try{await navigator.clipboard.writeText(raw);copy.textContent="Copied";}
+            catch(_){copy.textContent="Copy failed";}
+            setTimeout(()=>copy.textContent="Copy",1200);
+          };
+          const download=document.createElement("button");download.type="button";
+          download.className="lyric-download";download.textContent="Download";
+          download.onclick=()=>downloadTextFile(file||"lyrics.txt",raw);
+          const readable=document.createElement("div");
+          readable.className="original-lyric-readable";
+          // appendText handles heading, verse cues, dividers and inline formatting
+          // identically to a verified online lyrics response.
+          const stanzas=raw.split(/\n[ \t]*\n+/);
+          stanzas.forEach((stanza,i)=>{
+            if(i){const spacer=document.createElement("div");spacer.className="original-lyric-stanza-gap";readable.appendChild(spacer);}
+            // appendText writes into its closure's container; move the last
+            // added DOM node into this reader without changing its text.
+            const before=container.childNodes.length;
+            appendText(stanza);
+            while(container.childNodes.length>before)readable.appendChild(container.childNodes[before]);
+          });
+          const compact=document.createElement("pre");
+          compact.className="original-lyric-code-window";
+          compact.tabIndex=0;compact.setAttribute("aria-label","Original lyrics as source text");
+          const code=document.createElement("code");code.textContent=raw;
+          compact.appendChild(code);
+          const applyState=()=>{
+            const collapsed=lyricViewCollapsed.get(key)===true;
+            readable.hidden=collapsed;compact.hidden=!collapsed;
+            toggle.textContent=collapsed?"Expand formatted lyrics":"Collapse to code view";
+            toggle.setAttribute("aria-expanded",String(!collapsed));
+          };
+          toggle.onclick=()=>{
+            lyricViewCollapsed.set(key,lyricViewCollapsed.get(key)!==true);
+            applyState();
+          };
+          tools.append(toggle,copy,download);
+          root.append(tools,readable,compact);container.appendChild(root);
+          applyState();
+        };
         const appendCode=(header,body,provisional=false)=>{
           const info=parseFenceInfo(header);const language=info.language;
           const raw=String(body||"").replace(/\n$/,"");
@@ -1315,6 +1383,7 @@
           const theme=(lyricLanguages.has(language)||inferredLyric)?"lyrics":(codeLanguages.has(language)?"code":"misc");
           block.className="code-block theme-"+theme+(provisional?" provisional":"");block.dataset.containerTheme=theme;block.dataset.file=info.file;block.dataset.project=info.project;
           const key=(messageId||"stream")+":"+(info.file||codeIndex++);block.dataset.codeKey=key;
+          if(theme==="lyrics"){appendLyric(raw,key,info.file,provisional);return;}
           const head=document.createElement("div");head.className="code-head";
           const label=document.createElement("span");label.textContent=(info.file||(theme==="lyrics"?"Lyrics":language))+(provisional?" · streaming":"");
           const actions=document.createElement("div");actions.className="code-head-actions";
