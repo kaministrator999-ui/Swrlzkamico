@@ -421,14 +421,13 @@ async def stream_generation(request:Request, requestId:str):
 
 @app.get("/api/lalm_station/export")
 def export_session(request:Request):
-    """Download only the caller's process-local conversation and generation diagnostics."""
-    key=request.cookies.get("swrlz_hf_sid")
-    _,account=_account_session(request)
-    owner=str((account or {}).get("id") or "anonymous")
-    with _lock:
-        if not key or key not in _sessions or _sessions[key].get("ownerGoogleId")!=owner:raise HTTPException(404,"No active HF session")
-        snapshot=_snapshot(_sessions[key])
-    document={"format":"swrlz-hf-session-export-v1","exportedAtUnixMs":int(time.time()*1000),"storage":"process-local; not durable account history","threads":snapshot["threads"],"activeGeneration":snapshot["activeGeneration"]}
+    """Export the verified user's account-owned chat history or anonymous session."""
+    key,s=_session(request)
+    with _lock:snapshot=_snapshot(s)
+    durable=str(s.get("ownerGoogleId") or "").startswith("google:")
+    document={"format":"swrlz-hf-session-export-v1","exportedAtUnixMs":int(time.time()*1000),
+              "storage":"encrypted-google-account-redis" if durable else "anonymous-process-local",
+              "threads":snapshot["threads"],"activeGeneration":snapshot["activeGeneration"]}
     return Response(content=json.dumps(document,ensure_ascii=False,indent=2),media_type="application/json",headers={"Content-Disposition":"attachment; filename=swrlz-dragon-chat.json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"})
 
 @app.post("/api/chat_state")
