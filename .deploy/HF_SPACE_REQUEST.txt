@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/google-durable-chat-history-v195-integration
-REQUEST_NONCE=2026-10-10-google-account-durable-full-conversations-v195-001
+SOURCE_REF=feature/research-assisted-lyrics-v196
+REQUEST_NONCE=2026-10-10-v196-fresh-and-retained-lyric-research-001
