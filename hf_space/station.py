@@ -1,4 +1,4 @@
-"""HF-only in-process Station adapter for the canonical Chat projection.
+"""Station adapter for canonical Chat with encrypted Google-account history.
 
 The Station/Workstation owns operational response orchestration: admission,
 queue/lifecycle state, worker/engine delegation, resource telemetry, cancellation,
@@ -6,8 +6,9 @@ state projection, synchronization, and delivery readiness. It does not grade the
 semantic correctness of response content. Ready/terminal means operationally
 complete for the next routed stage, not independently proven correct.
 
-Candidate limitations: process-local state, anonymous session, no durable account
-storage or external durable queue. Do not claim production parity.
+Authenticated Google chat catalog/messages survive process restarts through
+Upstash Redis; anonymous chat and active generation queues remain process-local.
+External durable inference jobs and live restart recovery are not implemented.
 """
 from __future__ import annotations
 import asyncio, base64, copy, hashlib, json, os, threading, time, uuid, urllib.error, urllib.parse, urllib.request
