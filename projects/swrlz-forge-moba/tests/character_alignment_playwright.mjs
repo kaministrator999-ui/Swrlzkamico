@@ -134,6 +134,9 @@ function facialAlignment(rig,character,label){
   const skin={kami:{min:[-.43,-.40],max:[.24,.065]},swyrlz:{min:[-.4,-.88],max:[.45,-.36]}};
   const face=rig.face;
   assert.ok(face.pixelCount>100&&face.featureInkBounds&&face.canvasInkBounds,'Missing actual facial ink: '+label);
+  assert.ok(face.canvasInkBounds.min[0]>0&&face.canvasInkBounds.min[1]>0&&
+    face.canvasInkBounds.max[0]<256&&face.canvasInkBounds.max[1]<192,
+    'Painted facial features reach a clamped texture edge and smear across the hood: '+label+' '+character);
   for(const axis of [0,1])assert.ok(face.featureInkBounds.min[axis]>=skin[character].min[axis]&&
     face.featureInkBounds.max[axis]<=skin[character].max[axis],
     'Moving body pieces displaces the face into the hair, chin or neck: '+label+' '+character);
@@ -276,7 +279,20 @@ try{
     assert.deepEqual((await project(fresh)).project.animeRigs,exported.project.animeRigs,'Fresh import changed the saved body-piece fits');
     safe(await seek(fresh,17.25),mode.name+' imported fitted puppet');
     sameJoint(after.joints[part],(await rendered(fresh,'kami')).joints[part],'Fresh import did not reproduce fitted geometry');
+    assert.equal((await model(fresh,'kami')).gripStyle,'natural-v1','Fresh import lost the saved grip artwork profile');
     await fresh.screenshot({path:resolve(output,'character-alignment-'+mode.name+'-import.png')});
+
+    // The packaged v9.5 file has a different glove fit and grip/socket values.
+    // Loading it must retain that assembly rather than silently swapping art.
+    const historical=await fresh.evaluate(async()=>await (await fetch('scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json')).json());
+    await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),historical);await frames(fresh);
+    const historicalSaved=await project(fresh);
+    assert.deepEqual(historicalSaved.project.animeRigs.characters.kami.layout,historical.project.animeRigs.characters.kami.layout,
+      'Historical import changed the saved glove fit');
+    assert.deepEqual(historicalSaved.project.animeSockets,historical.project.animeSockets,'Historical import changed the saved staff sockets');
+    assert.equal((await model(fresh,'kami')).gripStyle,'original','Historical project acquired incompatible grip artwork');
+    await seek(fresh,19);
+    assert.equal((await rendered(fresh,'kami')).staffGrip.naturalGrip.layered,false,'Historical project rendered the new split grip');
 
     // v9.2 saves have the same pose data but no static-fit section. They must
     // acquire the improved default assembly without losing a single key.

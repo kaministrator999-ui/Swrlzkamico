@@ -27,7 +27,7 @@ function socketDefaults(character,config=rigModel().characters[character]){
   for(const [id] of rows){
     const fit=config.layout[id],sockets={};
     for(const name of socketNames(id))sockets[name]=name==='shaft'?
-      {x:-2/111*fit.width,y:-87/194*fit.height,z:0}:
+      {x:-2/111*fit.width,y:-87/194*fit.height,z:character==='kami'?-.02:0}:
       {x:0,y:name==='toe'?-.1:fit.height*.42,z:0};
     parts[id]={attach:{x:-fit.artX,y:-fit.artY,z:0},sockets};
   }

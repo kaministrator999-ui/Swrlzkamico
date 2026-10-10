@@ -102,10 +102,31 @@ try{
     await page.waitForTimeout(450);
     const t2=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status().elapsed);
     assert.ok(Math.abs(t2-t1)<.12,mode.name+' paused clock advanced unexpectedly');
+    // Staff-head embers share the story clock and the actual Effects switch.
+    // Seeking away and back must reconstruct the same paused particle frame.
+    await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.seek(19));
+    const magic=await page.evaluate(()=>window.SWYRL_ENGINE_STORYBOARD.stageStatus().staffMagic);
+    assert.ok(magic?.visible&&magic.opacity>0,mode.name+' fitted staff has no visible embers');
+    assert.ok(magic.count>0&&magic.count<=24,mode.name+' unbounded staff particle allocation');
+    await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.seek(72));
+    const laterMagic=await page.evaluate(()=>window.SWYRL_ENGINE_STORYBOARD.stageStatus().staffMagic);
+    assert.notDeepEqual(laterMagic.anchor,magic.anchor,mode.name+' embers failed to follow the animated staff');
+    await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.seek(19));
+    assert.deepEqual(await page.evaluate(()=>window.SWYRL_ENGINE_STORYBOARD.stageStatus().staffMagic),magic,
+      mode.name+' repeated seek changed the paused staff effects');
+    await page.locator('#animeCineLayers').click();
+    await page.locator('input[data-anime-layer="effects"]').uncheck();
+    await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.seek(19));
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_STORYBOARD.stageStatus().staffMagic)).visible,false,
+      mode.name+' staff embers ignored the Effects layer');
+    await page.locator('input[data-anime-layer="effects"]').check();
+    await page.locator('#animeCineLayers').click();
     await page.locator('#animeCineExplore').click();
     const explore=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status());
     assert.equal(explore.active,false,mode.name+' cinematic did not release');
     assert.equal(explore.playing,true,mode.name+' did not enter first-person exploration');
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_STORYBOARD.stageStatus())).staffMagic,null,
+      mode.name+' staff effects survived leaving the cinematic');
     await page.evaluate(()=>document.getElementById('stopBtn').click());
     const stop=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status());
     assert.equal(stop.playing,false,mode.name+' Stop failed');

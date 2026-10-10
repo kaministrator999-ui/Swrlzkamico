@@ -56,7 +56,8 @@ function pngPixels(buffer){
       assert.ok(Number.isFinite(prediction),'Unknown screenshot PNG filter');pixels[index]=(raw[y*(stride+1)+x+1]+prediction)&255;
     }
   }
-  return {width,height,rgb:(x,y)=>Array.from(pixels.subarray((y*width+x)*channels,(y*width+x)*channels+3))};
+  return {width,height,rgb:(x,y)=>Array.from(pixels.subarray((y*width+x)*channels,(y*width+x)*channels+3)),
+    alpha:(x,y)=>channels===4?pixels[(y*width+x)*channels+3]:255};
 }
 function finiteBox(box,label){
   assert.ok(box&&box.min?.length===3&&box.max?.length===3&&box.min.every(Number.isFinite)&&box.max.every(Number.isFinite),
@@ -181,6 +182,60 @@ function faceFront(render,label){
     assert.ok(distance(sample.faceWorld,sample.headWorld)>0,'Face/head geometry occupies the same surface: '+label);
   }
 }
+const paintedSources=new Map();
+async function paintedFaceSource(render,label){
+  const art=render.face.paintedFeatures;
+  assert.ok(art?.asset&&art.components?.length>=6,'The animated face is missing its separately painted feature artwork: '+label);
+  if(!paintedSources.has(art.asset)){
+    const response=await fetch(new URL(art.asset,base+'/'));
+    assert.equal(response.status,200,'Painted facial source was not bundled: '+label);
+    paintedSources.set(art.asset,pngPixels(Buffer.from(await response.arrayBuffer())));
+  }
+  const source=paintedSources.get(art.asset);
+  assert.equal(source.width,art.sourceWidth,'Face painter reports a different source width: '+label);
+  assert.equal(source.height,art.sourceHeight,'Face painter reports a different source height: '+label);
+  assert.ok(source.width>=1024&&source.height>=1024,'Face painter still magnifies tiny low-resolution features: '+label);
+  for(const feature of art.components){
+    const bounds=feature.sourceBounds;
+    assert.ok(bounds?.min?.length===2&&bounds.max?.length===2&&[...bounds.min,...bounds.max].every(Number.isInteger),
+      'Painted feature has no actual source pixel rectangle: '+label+' '+feature.id);
+    assert.ok(bounds.min[0]>=0&&bounds.min[1]>=0&&bounds.max[0]<=source.width&&bounds.max[1]<=source.height,
+      'Painted feature samples beyond its real source image: '+label+' '+feature.id);
+    let ink=0;const colors=new Set();
+    for(let y=bounds.min[1];y<bounds.max[1];y++)for(let x=bounds.min[0];x<bounds.max[0];x++)
+      if(source.alpha(x,y)>(art.sourceAlphaThreshold??8)){ink++;colors.add(source.rgb(x,y).join(','));}
+    assert.equal(ink,feature.sourceInkPixels,'Painted feature ink count disagrees with the independently decoded PNG: '+label+' '+feature.id);
+    assert.ok(ink>20&&colors.size>12,'Painted facial component has no shaded source artwork: '+label+' '+feature.id);
+  }
+}
+async function paintedFaceOnScreen(page,render,label){
+  const art=render.face.paintedFeatures;
+  assert.ok(art?.pixelSamples?.length>=18,'Painted face reports source labels without actual projected feature pixels: '+label);
+  const buffer=await page.locator('canvas:visible').first().screenshot(),image=pngPixels(buffer);
+  for(const id of ['leftEye','rightEye','mouth']){
+    const samples=art.pixelSamples.filter(sample=>sample.id===id);
+    assert.ok(samples.length>=3,'No actual high-alpha '+id+' samples: '+label);
+    let matches=0;const measured=[];
+    for(const sample of samples){
+      assert.ok(sample.alpha>=220/255&&sample.world?.length===3&&sample.world.every(Number.isFinite)&&
+        sample.screen?.length===3&&sample.screen.every(Number.isFinite)&&sample.rgb?.length===3,
+        'Painted face sample lacks actual color, alpha and transformed geometry: '+label+' '+id);
+      const cx=Math.round(sample.screen[0]*image.width),cy=Math.round(sample.screen[1]*image.height);
+      assert.ok(cx>=0&&cx<image.width&&cy>=0&&cy<image.height,'Painted '+id+' leaves the camera: '+label);
+      let error=Infinity;
+      for(let y=Math.max(0,cy-2);y<=Math.min(image.height-1,cy+2);y++)for(let x=Math.max(0,cx-2);x<=Math.min(image.width-1,cx+2);x++)
+        error=Math.min(error,distance(image.rgb(x,y),sample.rgb)/Math.sqrt(3));
+      measured.push({pixel:sample.pixel,screen:sample.screen,rgb:sample.rgb,error});
+      if(error<43)matches++;
+    }
+    if(matches<3){
+      const name=label.replace(/[^a-z0-9]+/gi,'-');
+      await writeFile(resolve(output,name+'-'+id+'-painted-face-failure.png'),buffer);
+      await writeFile(resolve(output,name+'-'+id+'-painted-face-failure.json'),JSON.stringify({width:image.width,height:image.height,face:art,measured},null,2));
+    }
+    assert.ok(matches>=3,'The actual WebGL canvas does not show painted '+id+' pixels: '+label+' matched '+matches);
+  }
+}
 function staffAttached(render,label){
   const grip=render.staffGrip;
   assert.ok(grip&&grip.visible,'Kami is missing the hand that holds the staff: '+label);
@@ -208,6 +263,39 @@ function staffAttached(render,label){
   assert.ok(grip.headStemAxialOverlap>0,'The pole stops short of its inserted head stem: '+label);
   assert.ok(grip.ferruleFrontClearance>.001&&grip.shaftFrontClearance>.001&&grip.ferruleFrontWorldClearance>0,
     'The ferrule or pole covers the painted joining stem: '+label);
+  const cylinder=grip.shaftGeometry;
+  assert.ok(cylinder?.type==='CylinderGeometry'&&cylinder.crossSectionVertexCount>=24&&cylinder.radialSamplesLocal?.length>=24,
+    'The wooden pole has no measured round cylinder cross-section: '+label);
+  const angles=new Set();
+  for(const point of cylinder.radialSamplesLocal){
+    assert.ok(point.length===3&&point.every(Number.isFinite),'A staff cylinder vertex is non-finite: '+label);
+    close(Math.hypot(point[0],point[2]),cylinder.radius,'Staff cross-section vertex is not on the round pole',1e-6);
+    angles.add(Math.round(Math.atan2(point[2],point[0])*1e5));
+  }
+  assert.ok(angles.size>=24,'The staff pole only reports a cylinder label around box geometry: '+label);
+  close(cylinder.diameter,cylinder.radius*2,'Measured staff diameter ignores its cylinder radius',1e-7);
+  assert.ok(cylinder.diameter>=.10&&cylinder.diameter<=.15,'The continuous staff pole is too thin or a broad block: '+label);
+}
+function naturalHandGeometry(render,label){
+  const grip=render.staffGrip,natural=grip.naturalGrip;
+  assert.ok(natural?.layered&&natural.asset&&natural.palmMesh!==natural.fingerMesh,
+    'The holding hand is still one opaque card covering the entire staff: '+label);
+  assert.ok(natural.cameraWorld?.length===3&&natural.cameraWorld.every(Number.isFinite),
+    'Hand interleaving has no actual camera position: '+label);
+  for(const [id,sign] of [['palmSamples',-1],['fingerSamples',1]]){
+    const samples=natural[id];
+    assert.ok(samples?.length>=3,'No actual painted '+id+' geometry at the staff contact: '+label);
+    for(const sample of samples){
+      assert.ok(sample.alpha>.9&&sample.rgb?.length===3&&[sample.local,sample.world,sample.shaftAxisWorld,sample.shaftFrontWorld]
+        .every(point=>point?.length===3&&point.every(Number.isFinite)),
+        'Hand layer reports a nominal point instead of painted mesh/shaft surfaces: '+label+' '+id);
+      const clearance=distance(natural.cameraWorld,sample.shaftFrontWorld)-distance(natural.cameraWorld,sample.world);
+      close(sample.frontClearance,clearance,'Hand layer clearance ignores measured world surfaces: '+label+' '+id,1e-7);
+      assert.ok(clearance*sign>.001,'The shaft is not between the rear palm and front curled fingers: '+label+' '+id);
+      assert.ok(distance(sample.shaftAxisWorld,sample.shaftFrontWorld)>0,
+        'Hand grip tests the shaft axis instead of its physical side surface: '+label+' '+id);
+    }
+  }
 }
 function handWrapsRight(render,label){
   const grip=render.staffGrip;
@@ -217,6 +305,7 @@ function handWrapsRight(render,label){
     'The holding hand does not enter from the viewer’s left and wrap right around the staff: '+label);
   close(grip.gripDirectionScreen[0],grip.gripScreen[0]-grip.wristScreen[0],
     'The hand direction ignores the actual projected sockets: '+label,1e-7);
+  naturalHandGeometry(render,label);
 }
 async function paintedHandOnScreen(page,render,label){
   // Sample projected high-alpha glove pixels in the genuine rendered canvas.
@@ -297,6 +386,11 @@ try{
         await paintedHandOnScreen(page,held,mode.name+' authored staff '+time+'s');
         await paintedStemOnScreen(page,held,mode.name+' authored staff '+time+'s');
       }
+      if(time===19)for(const character of ['kami','swyrlz']){
+        const cast=await rig(page,character);faceFront(cast,mode.name+' authored '+character+' face');
+        await paintedFaceSource(cast,mode.name+' authored '+character+' face');
+        await paintedFaceOnScreen(page,cast,mode.name+' authored '+character+' face');
+      }
       if([0,4,8,14,19].includes(time))await page.screenshot({path:resolve(output,'socket-emergence-'+mode.name+'-opening-'+time+'.png')});
     }
     const collapsed=opening[0].view,complete=opening.at(-1).view;
@@ -340,6 +434,11 @@ try{
       staffAttached(held,mode.name+' canonical Watch '+time+'s');handWrapsRight(held,mode.name+' canonical Watch '+time+'s');
       await paintedHandOnScreen(page,held,mode.name+' canonical Watch '+time+'s');
       await paintedStemOnScreen(page,held,mode.name+' canonical Watch '+time+'s');
+      if(time===19)for(const character of ['kami','swyrlz']){
+        const cast=await rig(page,character);faceFront(cast,mode.name+' Watch '+character+' face');
+        await paintedFaceSource(cast,mode.name+' Watch '+character+' face');
+        await paintedFaceOnScreen(page,cast,mode.name+' Watch '+character+' face');
+      }
       if(time===19)await page.screenshot({path:resolve(output,'socket-emergence-'+mode.name+'-canonical-watch.png')});
     }
     await page.locator('#animeScreeningClose').click();await frames(page);
