@@ -3,6 +3,7 @@ from __future__ import annotations
 import os, threading, time, json
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
+from social_checkin import is_simple_checkin
 
 MODEL_REPO="LiquidAI/LFM2-350M-GGUF"
 MODEL_FILE="LFM2-350M-Q4_K_M.gguf"
@@ -28,6 +29,8 @@ def generate_events(payload):
     history=[{"role":m["role"],"content":m["text"]} for m in payload.get("history",[]) if isinstance(m,dict) and m.get("role") in ("user","assistant") and isinstance(m.get("text"),str)]
     temporal=payload.get("temporalContext") if isinstance(payload.get("temporalContext"),dict) else {}
     messages=[]
+    if is_simple_checkin(prompt):
+        messages.append({"role":"system","content":"You are §wyrlz. For a brief hello/how-are-you check-in, reply directly, warmly and briefly in first person. No AI-purpose explanation or talking about §wyrlz as somebody else. A short reciprocal question is fine."})
     if payload.get("projectThreadEvidence"):
         messages.append({"role":"system","content":str(payload["projectThreadEvidence"])[:620]})
     online_context=payload.get("onlineContext") if isinstance(payload.get("onlineContext"),dict) else {}
