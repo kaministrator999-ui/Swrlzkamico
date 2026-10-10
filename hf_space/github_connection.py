@@ -318,6 +318,13 @@ def is_start_request(prompt):
         and ("read" in s or "follow" in s or "load" in s or "open the" in s))
 
 
+def _safe_fragment(value, limit=650):
+    # Repository prose is untrusted: strip HTML/Markdown markup before render.
+    clean = re.sub(r"[<>&\\[\\]\\x60()*\\\\]", " ", str(value or ""))
+    clean = re.sub(r"[\\x00-\\x1f\\x7f|]", " ", clean)
+    return " ".join(clean.split())[:limit]
+
+
 def project_start_report(user_id, repo_name=""):
     c = _config()
     record = _load(c, user_id)
@@ -387,7 +394,7 @@ def project_start_report(user_id, repo_name=""):
              "**Source branch:** `" + branch + "` at `" + pinned_sha[:12] + "`  ",
              "**Startup authority:** [" + found[0] + "](" + base + "/blob/" +
              quote(branch, safe="") + "/" + quote(found[0], safe="/") + ")",
-             "", "**Startup document:** " + header.replace("<", "&lt;"),
+             "", "**Startup document:** " + _safe_fragment(header, 160),
              "", "### Documents read"]
     lines.extend("- [" + p + "](" + base + "/blob/" + quote(branch, safe="") +
                  "/" + quote(p, safe="/") + ")" for p in found)
@@ -409,7 +416,7 @@ def project_start_report(user_id, repo_name=""):
                                        ("Next documented gate", ("**Next acceptance gate:", "**Next gate:", "**Remaining gate:", "**User acceptance needed:"))):
                 line = next((line for line in chunk if line.lstrip().startswith(match_words)), "")
                 if line:
-                    lines.append("**" + label + ":** " + line.strip().replace("**", "")[:650].replace("<", "&lt;"))
+                    lines.append("**" + label + ":** " + _safe_fragment(line.strip().replace("**", "")))
     else:
         lines.append("No completed Roadmap heading was available from the retrieved content.")
     if pending:
