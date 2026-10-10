@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.92
-REVISION=1.5.92-response-start-stream-anchor-v170
+VERSION=1.5.93
+REVISION=1.5.93-mobile-readable-lyric-blocks-v194
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
