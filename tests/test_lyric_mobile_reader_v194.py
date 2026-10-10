@@ -49,7 +49,7 @@ assert(isOriginalSongwritingPrompt("Write a Kotlin script to make lyrics"),false
 
     def test_lyric_css_removes_decorative_frame_and_wraps_without_touching_code(self):
         marker=HTML.index("/* v194: lyrical prose gets the reading width")
-        css=HTML[marker:HTML.index("  </style>",marker)]
+        css=HTML[marker:HTML.index("/* v199: content-first response presentation",marker)]
         self.assertIn(".code-block.theme-lyrics",css)
         self.assertIn("padding:0;overflow:hidden;transform:none",css)
         self.assertIn("background-image:none",css)
