@@ -4,6 +4,7 @@ on:
     branches:
       - feature/github-account-project-start-v1
       - feature/github-account-project-start-v191-integration
+      - feature/github-oauth-safe-config-diagnostics-v1
   workflow_dispatch:
 
 jobs:
