@@ -15,6 +15,7 @@ from lyric_story_spine import generate_story_spine, story_spine_directive, narra
 from lyric_research_lab import research_for_creation
 from rap_micro_curriculum import rap_micro_guidance
 from social_checkin import style_hint as _social_checkin_style_hint
+from version_literacy import style_hint as _version_literacy_style_hint
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -558,6 +559,9 @@ def generate_events(payload):
         social_style=_social_checkin_style_hint(prompt)
         if social_style:
             system+="\n"+social_style
+    version_lesson=_version_literacy_style_hint(prompt)
+    if version_lesson:
+        system+="\n"+version_lesson
     system+="\n"+response_cognition_policy(response_cognition)
     direct_creative_lyric_contract=None
     lyric_research_receipt={"status":"SKIPPED","sourceCount":0,"lessonCount":0,"cache":False}
