@@ -384,7 +384,7 @@ def project_start_report(user_id, repo_name=""):
     header = files[found[0]]["body"].splitlines()[0][:160] if files[found[0]]["body"] else found[0]
     lines = ["𓆩𓆩⁽§⁾𓆪wyrlz𓆪", "", "## GitHub project startup · evidence-backed",
              "**Repository:** [" + repo + "](" + base + ")",
-             "**Source branch:** \`" + branch + "\`  ",
+             "**Source branch:** \`" + branch + "\` at \`" + pinned_sha[:12] + "\`  ",
              "**Startup authority:** [" + found[0] + "](" + base + "/blob/" +
              quote(branch, safe="") + "/" + quote(found[0], safe="/") + ")",
              "", "**Startup document:** " + header.replace("<", "&lt;"),
@@ -400,6 +400,16 @@ def project_start_report(user_id, repo_name=""):
     lines += ["", "### Where project work was last recorded"]
     if completed:
         lines.append("**Latest completed Roadmap heading:** " + completed[1] + " — " + completed[2])
+        # Report concrete source-recorded outcome and next gate; do not invent status.
+        roadmap_lines = roadmap["body"].splitlines() if roadmap else []
+        heading = next((i for i, line in enumerate(roadmap_lines) if completed[2] in line and "UPDATE FINISHED" in line), None)
+        if heading is not None:
+            chunk = roadmap_lines[heading + 1: heading + 28]
+            for label, match_words in (("Recorded result", ("**Result:", "**Outcome:", "**Status:")),
+                                       ("Next documented gate", ("**Next acceptance gate:", "**Next gate:", "**Remaining gate:", "**User acceptance needed:"))):
+                line = next((line for line in chunk if line.lstrip().startswith(match_words)), "")
+                if line:
+                    lines.append("**" + label + ":** " + line.strip().replace("**", "")[:650].replace("<", "&lt;"))
     else:
         lines.append("No completed Roadmap heading was available from the retrieved content.")
     if pending:
