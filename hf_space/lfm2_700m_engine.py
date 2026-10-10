@@ -10,7 +10,7 @@ from response_cognition import classify_response_cognition, response_cognition_p
 from music_structure import music_model_policy, creative_music_request, creative_music_reference_projection, MUSIC_CREATIVE_REFERENCE_POLICY, original_rap_delivery, original_rap_violations
 from lyric_craft_school import lyric_craft_policy
 from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics, continuation_shape_receipt
-from lyric_bounded_continuation import buffered_bounded_lyric_continuation
+from lyric_bounded_continuation import buffered_bounded_lyric_continuation, buffered_bounded_original_lyrics
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -831,6 +831,20 @@ def generate_events(payload):
             shape=direct_creative_lyric_contract
             wanted=shape.get("requestedLines")
 
+            def complete_original_draft(draft_messages, draft_temperature):
+                # The v191 fix bounded only the short append calls. Dragon
+                # Chat (37) proved a 40-line clean rewrite could emit 139
+                # lines and bypass all append logic. Bound the initial draft
+                # and rewrite as well, only on explicit-count lyric turns.
+                if isinstance(wanted,int) and 1 <= wanted <= 120:
+                    return buffered_bounded_original_lyrics(
+                        model,draft_messages,response_tokens,draft_temperature,
+                        max_lines=wanted,
+                    )
+                return buffered_chat_completion(
+                    model,draft_messages,response_tokens,draft_temperature,
+                )
+
             def assess_lyric_draft(raw):
                 direct=verify_original_lyrics(raw,shape)
                 preserved=recoverable_continuous_lines(raw,shape)
@@ -842,7 +856,7 @@ def generate_events(payload):
                     checked["presentationNormalizedBlankLines"]=True
                 return flattened,checked,preserved
 
-            candidate_raw,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
+            candidate_raw,timing=complete_original_draft(messages,temperature)
             candidate_raw,check,authored_lines=assess_lyric_draft(candidate_raw)
             previous_fp=_candidate_fingerprint(candidate_raw)
             candidate_attempts.append(candidate_attempt_receipt(
@@ -865,9 +879,9 @@ def generate_events(payload):
                     +"No refusal, analysis, commentary or self-grading; compose meaningful original lines about the requested topic. "
                     "Do not repeat the refused draft or claim compliance without completing the work."
                 )
-                draft,timing2=buffered_chat_completion(
-                    model,list(messages)+[{"role":"system","content":retry_instruction}],
-                    response_tokens,min(0.48,temperature+0.06),
+                draft,timing2=complete_original_draft(
+                    list(messages)+[{"role":"system","content":retry_instruction}],
+                    min(0.48,temperature+0.06),
                 )
                 candidate_raw,check,authored_lines=assess_lyric_draft(draft)
                 candidate_attempts.append(candidate_attempt_receipt(
@@ -880,7 +894,8 @@ def generate_events(payload):
             # A model can underestimate the requested total even with 1600
             # tokens. Continue ONLY a clean underlength verse, using small
             # original increments and preserving the existing lyric content.
-            # Do not invent missing bars in Python or truncate surplus bars.
+            # Do not invent missing bars in Python or truncate an already
+            # complete candidate; line stopping happens during generation.
             if (check["status"]=="REJECT" and isinstance(wanted,int)
                     and authored_lines and len(authored_lines)<wanted
                     and set(check["reasons"])=={"wrong-explicit-lyric-line-count"}):

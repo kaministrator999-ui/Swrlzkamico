@@ -14,7 +14,10 @@ _SECTION = re.compile(
 )
 _REFUSAL = re.compile(
     r"(?i)^\s*(?:i(?:'|’)m\s+sorry\b|i\s+cannot\s+(?:write|create|produce)|"
-    r"i\s+can(?:not|'t)\s+(?:produce|write|create)|sorry,?\s+(?:but\s+)?i\s+can(?:not|'t))"
+    r"i\s+can(?:not|'t)\s+(?:produce|write|create)|sorry,?\s+(?:but\s+)?i\s+can(?:not|'t)|"
+    r"i\s+can(?:not|'t)\s+(?:do|deliver|complete)\s+(?:(?:a|the|this|that)\s+)?"
+    r"(?:(?:\d{1,3}|forty)\s*[-–—]?\s*(?:line|bar)s?\s+)?"
+    r"(?:freestyle|rap|song|verse|lyrics?)\b)"
 )
 _META = re.compile(
     r"(?i)^\s*(?:\(?note\s*:|\(?disclaimer\s*:|\(?this\s+(?:version|song|verse|rap)\b|"
