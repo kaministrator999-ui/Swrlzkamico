@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.29
-REVISION=1.0.29-song-heading-cleanliness-v181
+VERSION=1.0.30
+REVISION=1.0.30-original-songwriting-technique-search-v196
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
