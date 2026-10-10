@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.93
-REVISION=1.5.93-mobile-readable-lyric-blocks-v194
+VERSION=1.5.94
+REVISION=1.5.94-native-lyric-renderer-v195
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
