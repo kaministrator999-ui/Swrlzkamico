@@ -233,12 +233,16 @@ def _bounded_knowledge_snapshot(request_id,prompt,online_research,trace,sources,
     }
 
 def _session(request):
-    key=request.cookies.get("swrlz_hf_sid")
-    if not key or key not in _sessions:
-        key=uuid.uuid4().hex
-        with _lock:
-            _sessions.setdefault(key,{"revision":0,"currentId":"","threads":[],"activeGeneration":None})
-    return key,_sessions[key]
+    # A Station cookie never bridges two different Google identities.
+    _, user = _account_session(request)
+    account_id = str((user or {}).get("id") or "anonymous")
+    key = request.cookies.get("swrlz_hf_sid")
+    with _lock:
+        if not key or key not in _sessions or _sessions[key].get("ownerGoogleId") != account_id:
+            key = uuid.uuid4().hex
+            _sessions[key] = {"revision":0,"currentId":"","threads":[],
+                              "activeGeneration":None,"ownerGoogleId":account_id}
+        return key, _sessions[key]
 
 def _snapshot(s):
     return {"contract":CONTRACT,"revision":s["revision"],"threads":copy.deepcopy(s["threads"]),
