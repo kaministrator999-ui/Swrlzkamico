@@ -892,7 +892,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
         with _lock:
             g=s["activeGeneration"]
             completed_ms=int(time.time()*1000)
-            g.update(terminal=True,terminalType="COMPLETE",phase="COMPLETE",completedAtUnixMs=completed_ms)
+            g.update(terminal=False,terminalType="COMPLETE",phase="PERSISTING",completedAtUnixMs=completed_ms)
             started_ms=int(g.get("startedAtUnixMs") or completed_ms)
             accepted_ms=int(g.get("acceptedAtUnixMs") or started_ms)
             g["stationTiming"]={
@@ -1095,6 +1095,9 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 }
                 g["githubTelemetryPersistence"]={"state":"QUEUED","path":"runtime-diagnostics/programming/"+request_id+"/candidate-attempt-telemetry.json","branch":"runtime"}
             _commit_revision(s)
+            # The browser may see a completed generation ONLY after its
+            # assistant message is confirmed in account-owned durable storage.
+            g.update(terminal=True,phase="COMPLETE")
         if project_memory_receipt is not None:
             try:
                 persisted=project_thread_memory.save(*project_memory_receipt)
