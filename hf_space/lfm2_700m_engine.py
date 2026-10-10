@@ -561,6 +561,7 @@ def generate_events(payload):
     system+="\n"+response_cognition_policy(response_cognition)
     direct_creative_lyric_contract=None
     lyric_research_receipt={"status":"SKIPPED","sourceCount":0,"lessonCount":0,"cache":False}
+    rap_focus="SKIPPED"
     music_policy=music_model_policy(prompt)
     if reference_structure and not music_policy:
         # "Do another one" inherits the earlier structural music request but
@@ -1038,6 +1039,7 @@ def generate_events(payload):
             # model-authored private plan into camera/log receipts.
             candidate_check=dict(candidate_check)
             candidate_check["lyricResearch"]=lyric_research_receipt
+            candidate_check["rapMicroFocus"]=rap_focus if not reference_structure else "SKIPPED"
             candidate_check["storySpineStatus"]=story_receipt["status"]
             candidate_check["storySpineFields"]=story_receipt.get("fields",0)
             candidate_check["storySpineFailureCode"]=story_receipt.get("failureCode")
