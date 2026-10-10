@@ -146,7 +146,7 @@ function rigPaintFace(face,character,sample,time){
   const speaking=s.speech&&(character==='kami'?/^KAMI\b/i:/^[§$]?WYRLZ\b/i).test(cue.trim());
   // Modest jaw motion keeps speech within the painted face and below the nose.
   if(speaking)s.mouth=Math.max(s.mouth,.12+.38*(.5+.5*Math.sin(time*31)));
-  const hash=[s.expression,...Object.keys(RIG_FACE_BOUNDS).map(k=>Math.round(s[k]*50))].join(':');
+  const hash=[s.expression,...Object.keys(RIG_FACE_BOUNDS).map(k=>s[k])].join(':');
   face.applied=s;if(face.hash===hash)return;face.hash=hash;
   const c=face.canvas.getContext('2d');c.clearRect(0,0,256,192);
   const skull=character==='swyrlz',happy=s.expression==='happy',sad=s.expression==='sad',determined=s.expression==='determined',surprised=s.expression==='surprised';

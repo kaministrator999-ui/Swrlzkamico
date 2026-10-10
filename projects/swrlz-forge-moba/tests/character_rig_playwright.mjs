@@ -69,8 +69,9 @@ async function closeStudio(page){
 async function historyAction(page,action){
   const quick=page.locator(action==='undo'?'#quickUndoBtn':'#quickRedoBtn');
   if(await quick.isVisible()){await quick.click();return;}
-  await page.locator('#mobileToolsBtn').click();
+  if(!await page.locator('#mobileToolsPanel').isVisible())await page.locator('#mobileToolsBtn').click();
   await page.locator('#mobileToolsPanel [data-click="'+action+'Btn"]').click();
+  if(await page.locator('#mtClose').isVisible())await page.locator('#mtClose').click();
 }
 async function seek(page,time){
   assert.equal(await page.evaluate(time=>window.SWYRL_ENGINE_ANIMATION.seek(time),time),true,'Seek failed at '+time+'s');
