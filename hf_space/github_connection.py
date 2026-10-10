@@ -320,7 +320,7 @@ def is_start_request(prompt):
 
 def _safe_fragment(value, limit=650):
     # Repository prose is untrusted: strip HTML/Markdown markup before render.
-    clean = re.sub(r"[<>&\\[\\]\\x60()*\\\\]", " ", str(value or ""))
+    clean = re.sub(r"[^\w\s.,:;!?/#@%+=-]", " ", str(value or ""))
     clean = re.sub(r"[\\x00-\\x1f\\x7f|]", " ", clean)
     return " ".join(clean.split())[:limit]
 
