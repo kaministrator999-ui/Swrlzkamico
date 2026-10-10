@@ -19,6 +19,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
+import github_connection
 try:
     from google.auth.transport import requests as google_requests
     from google.oauth2 import id_token as google_id_token
@@ -308,6 +309,10 @@ def account_logout(request:Request):
     response=JSONResponse({"ok":True})
     response.delete_cookie("swrlz_hf_account")
     return response
+
+# Connected GitHub belongs to the verified Google identity, never the anonymous
+# Station cookie or a user-supplied profile/name.
+github_connection.install(app, _account_session)
 
 @app.get("/api/lalm_station/sync")
 def sync(request:Request):
@@ -615,7 +620,10 @@ def _run(key,request_id,model_id,payload,assistant_id):
         if model_id=="stock" and _stock_generate is None:raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
-        for event in dispatch(model_id,payload,_generate,_stock_generate,_large_generate,_coder_generate):
+        event_source=(github_connection.start_events(payload["githubStart"])
+                      if isinstance(payload.get("githubStart"),dict)
+                      else dispatch(model_id,payload,_generate,_stock_generate,_large_generate,_coder_generate))
+        for event in event_source:
             with _lock:
                 active=s.get("activeGeneration")
                 if not active or active.get("requestId")!=request_id:return
@@ -1183,6 +1191,12 @@ async def send(request:Request):
         s["currentId"]=tid;s["revision"]+=1
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    # Explicit §tart requests use server-side, read-only GitHub evidence, not a
+    # fabricated model tool call or privileged instructions from repo content.
+    if github_connection.is_start_request(prompt):
+        _, verified_account = _account_session(request)
+        payload["githubStart"]={"userId":str((verified_account or {}).get("id") or "")}
+
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400,path="/")
