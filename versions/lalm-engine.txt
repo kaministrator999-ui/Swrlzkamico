@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.178
-REVISION=2.1.178-contextual-version-literacy-v199
+VERSION=2.1.179
+REVISION=2.1.179-natural-original-bar-count-bold-chorus-guard-v200
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
