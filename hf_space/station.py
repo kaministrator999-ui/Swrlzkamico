@@ -21,6 +21,7 @@ from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 import github_connection
 import project_thread_memory
+import account_chat_store
 try:
     from google.auth.transport import requests as google_requests
     from google.oauth2 import id_token as google_id_token
@@ -234,16 +235,55 @@ def _bounded_knowledge_snapshot(request_id,prompt,online_research,trace,sources,
     }
 
 def _session(request):
-    # A Station cookie never bridges two different Google identities.
-    _, user = _account_session(request)
-    account_id = str((user or {}).get("id") or "anonymous")
-    key = request.cookies.get("swrlz_hf_sid")
+    # Identity is derived only from the server-verified Google session; no
+    # client-supplied account/username selects a stored conversation.
+    _, user=_account_session(request)
+    owner=str((user or {}).get("id") or "anonymous")
+    if owner.startswith("google:"):
+        key="account:"+hashlib.sha256(owner.encode("utf-8")).hexdigest()
+        with _lock:
+            if key not in _sessions:
+                stored=account_chat_store.load_chat(owner)
+                _sessions[key]=stored or {"revision":0,"currentId":"","threads":[],
+                    "activeGeneration":None,"ownerGoogleId":owner}
+            return key,_sessions[key]
+    key=request.cookies.get("swrlz_hf_sid")
     with _lock:
-        if not key or key not in _sessions or _sessions[key].get("ownerGoogleId") != account_id:
-            key = uuid.uuid4().hex
-            _sessions[key] = {"revision":0,"currentId":"","threads":[],
-                              "activeGeneration":None,"ownerGoogleId":account_id}
-        return key, _sessions[key]
+        if not key or key not in _sessions or _sessions[key].get("ownerGoogleId")!="anonymous":
+            key=uuid.uuid4().hex
+            _sessions[key]={"revision":0,"currentId":"","threads":[],
+                            "activeGeneration":None,"ownerGoogleId":"anonymous"}
+        return key,_sessions[key]
+
+
+def _persist_chat_snapshot(s,expected_revision):
+    # Invoked with _lock held, once per accepted state transition.
+    owner=str(s.get("ownerGoogleId") or "")
+    if not owner.startswith("google:"):return True
+    return account_chat_store.save_chat(owner,s,expected_revision)
+
+def _restore_chat_from_store(s):
+    owner=str(s.get("ownerGoogleId") or "")
+    if owner.startswith("google:"):
+        fresh=account_chat_store.load_chat(owner)
+        if fresh:
+            s.update(fresh)
+        return fresh
+    return None
+
+def _commit_revision(s):
+    # Every Station-visible revision is a durable CAS transition when a Google
+    # identity is active. For anonymous sessions, retain existing local behavior.
+    old=int(s["revision"])
+    s["revision"]=old+1
+    try:
+        saved=_persist_chat_snapshot(s,old)
+        if not saved:
+            raise HTTPException(409,"Stored conversation changed in another session; resync required")
+    except Exception:
+        s["revision"]=old
+        raise
+
 
 def _snapshot(s):
     return {"contract":CONTRACT,"revision":s["revision"],"threads":copy.deepcopy(s["threads"]),
@@ -275,17 +315,21 @@ _hf_accounts={}
 
 def _account_session(request:Request):
     sid=request.cookies.get("swrlz_hf_account")
-    return sid,_hf_accounts.get(sid) if sid else None
+    # Rehydrate independently of the Space process: a previously issued opaque
+    # session is verified against encrypted Redis every time, honoring revocation.
+    if not sid:return None,None
+    return sid,account_chat_store.load_login(sid)
 
 @app.get("/api/account/status")
 def account_status():
-    return {"googleClientId":GOOGLE_CLIENT_ID if google_id_token is not None else "","durable":False,"authority":"hf-process-local-google"}
+    return {"googleClientId":GOOGLE_CLIENT_ID if google_id_token is not None else "",
+            "durable":account_chat_store.configured(),"authority":"encrypted-upstash-google-account-chat"}
 
 @app.get("/api/account/me")
 def account_me(request:Request):
     _,user=_account_session(request)
     if not user:return JSONResponse({"ok":False,"code":"ACCOUNT_SESSION_INVALID"},status_code=401)
-    return {"user":user,"profile":{"version":0},"durable":False}
+    return {"user":user,"profile":{"version":0},"durable":True}
 
 @app.post("/api/account/google")
 async def account_google(request:Request):
@@ -301,8 +345,9 @@ async def account_google(request:Request):
     except Exception:
         return JSONResponse({"ok":False,"code":"GOOGLE_CREDENTIAL_INVALID"},status_code=401)
     sid=uuid.uuid4().hex
-    with _lock:_hf_accounts[sid]=user
-    response=JSONResponse({"user":user,"profile":{"version":0},"durable":False})
+    # Save BEFORE issuing a cookie; no false durable-login success on failure.
+    account_chat_store.save_login(sid,user)
+    response=JSONResponse({"user":user,"profile":{"version":0},"durable":True})
     response.set_cookie("swrlz_hf_account",sid,httponly=True,samesite="lax",secure=True,max_age=7*86400)
     return response
 
@@ -310,9 +355,11 @@ async def account_google(request:Request):
 def account_logout(request:Request):
     sid,_=_account_session(request)
     if sid:
+        account_chat_store.revoke_login(sid)
         with _lock:_hf_accounts.pop(sid,None)
     response=JSONResponse({"ok":True})
     response.delete_cookie("swrlz_hf_account")
+    response.delete_cookie("swrlz_hf_sid")
     return response
 
 # Connected GitHub belongs to the verified Google identity, never the anonymous
@@ -374,14 +421,13 @@ async def stream_generation(request:Request, requestId:str):
 
 @app.get("/api/lalm_station/export")
 def export_session(request:Request):
-    """Download only the caller's process-local conversation and generation diagnostics."""
-    key=request.cookies.get("swrlz_hf_sid")
-    _,account=_account_session(request)
-    owner=str((account or {}).get("id") or "anonymous")
-    with _lock:
-        if not key or key not in _sessions or _sessions[key].get("ownerGoogleId")!=owner:raise HTTPException(404,"No active HF session")
-        snapshot=_snapshot(_sessions[key])
-    document={"format":"swrlz-hf-session-export-v1","exportedAtUnixMs":int(time.time()*1000),"storage":"process-local; not durable account history","threads":snapshot["threads"],"activeGeneration":snapshot["activeGeneration"]}
+    """Export the verified user's account-owned chat history or anonymous session."""
+    key,s=_session(request)
+    with _lock:snapshot=_snapshot(s)
+    durable=str(s.get("ownerGoogleId") or "").startswith("google:")
+    document={"format":"swrlz-hf-session-export-v1","exportedAtUnixMs":int(time.time()*1000),
+              "storage":"encrypted-google-account-redis" if durable else "anonymous-process-local",
+              "threads":snapshot["threads"],"activeGeneration":snapshot["activeGeneration"]}
     return Response(content=json.dumps(document,ensure_ascii=False,indent=2),media_type="application/json",headers={"Content-Disposition":"attachment; filename=swrlz-dragon-chat.json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"})
 
 @app.post("/api/chat_state")
@@ -395,6 +441,9 @@ async def mutate(request:Request):
     with _lock:
         if int(body.get("expectedRevision",-1))!=s["revision"]:
             return JSONResponse(_snapshot(s),status_code=409)
+        # Retain a rollback snapshot if the Redis compare-and-swap rejects this.
+        old_threads=copy.deepcopy(s["threads"])
+        old_current=s["currentId"]
         for op in body.get("operations",[]):
             kind=op.get("type"); tid=op.get("threadId")
             if kind=="SET_CURRENT_THREAD" and any(t["id"]==tid for t in s["threads"]):s["currentId"]=tid
@@ -421,7 +470,15 @@ async def mutate(request:Request):
                     if message is not None:_promote_pinned_code_artifact(t,message)
                 else:pins.pop(mid,None)
             else:raise HTTPException(400,"Unsupported state operation")
-        s["revision"]+=1
+        try:
+            _commit_revision(s)
+        except HTTPException as exc:
+            s["threads"]=old_threads
+            s["currentId"]=old_current
+            if exc.status_code==409:
+                _restore_chat_from_store(s)
+                return JSONResponse(_snapshot(s),status_code=409)
+            raise
         result={"ok":True,"revision":s["revision"]}
     if google_owner.startswith("google:"):
         for deleted in deleted_threads:
@@ -809,7 +866,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                                 target_message=next((m for m in reversed(target_thread.get("messages",[])) if str(m.get("id") or "")==str(assistant_id)),None)
                                 if target_message is not None:
                                     target_message.setdefault("meta",{})["onlineLogPersistence"]=copy.deepcopy(result)
-                            s["revision"]+=1
+                            _commit_revision(s)
                     threading.Thread(target=persist_online_log,daemon=True,name="online-log-"+request_id[:8]).start()
                 else:
                     threading.Thread(
@@ -825,7 +882,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 g=s.get("activeGeneration")
                 if g and g.get("requestId")==request_id:
                     g.update(terminal=True,terminalType="CANCELLED",phase="CANCELLED")
-                    g["status"].append({"phase":"CANCELLED","reason":"Stopped by user"});s["revision"]+=1
+                    g["status"].append({"phase":"CANCELLED","reason":"Stopped by user"});_commit_revision(s)
             return
         if not text:raise RuntimeError("R39 emitted no DELTA")
         github_telemetry=None
@@ -1037,7 +1094,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     },
                 }
                 g["githubTelemetryPersistence"]={"state":"QUEUED","path":"runtime-diagnostics/programming/"+request_id+"/candidate-attempt-telemetry.json","branch":"runtime"}
-            s["revision"]+=1
+            _commit_revision(s)
         if project_memory_receipt is not None:
             try:
                 persisted=project_thread_memory.save(*project_memory_receipt)
@@ -1063,7 +1120,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         target_message=next((m for m in reversed(target_thread.get("messages",[])) if str(m.get("id") or "")==str(assistant_id)),None)
                         if target_message is not None:
                             target_message.setdefault("meta",{})["onlineLogPersistence"]=copy.deepcopy((s.get("activeGeneration") or {}).get("onlineLogPersistence") or {})
-                    s["revision"]+=1
+                    _commit_revision(s)
             threading.Thread(target=persist_online_outcome,daemon=True,name="online-outcome-"+request_id[:8]).start()
         if knowledge_snapshot is not None:
             def persist_knowledge_snapshot():
@@ -1081,7 +1138,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         target_message=next((m for m in reversed(target_thread.get("messages",[])) if str(m.get("id") or "")==str(assistant_id)),None)
                         if target_message is not None:
                             target_message.setdefault("meta",{})["githubTelemetryPersistence"]=copy.deepcopy(result)
-                    s["revision"]+=1
+                    _commit_revision(s)
             threading.Thread(target=persist_programming_log,daemon=True,name="programming-log-"+request_id[:8]).start()
     except Exception as exc:
         failed_online_outcome=None
@@ -1106,7 +1163,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 thread=next((t for t in s["threads"] if t["id"]==payload["threadId"]),None)
                 if thread:
                     thread["messages"].append({"id":assistant_id,"role":"assistant","text":"Generation failed: "+str(exc)[:240],"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED","onlineResearch":copy.deepcopy(g.get("onlineResearch") or {}),"onlineTrace":copy.deepcopy((g.get("onlineTrace") or [])[-64:])}})
-                    s["revision"]+=1
+                    _commit_revision(s)
         if failed_online_outcome is not None:
             threading.Thread(target=persist_runtime_diagnostic,args=(request_id,str(failed_online_outcome.get("selectedModelId") or model_id),"ONLINE_RESEARCH_OUTCOME",failed_online_outcome),daemon=True,name="online-failed-"+request_id[:8]).start()
 
@@ -1210,6 +1267,8 @@ async def send(request:Request):
         except Exception:recovered_project=None
     with _lock:
         if s["activeGeneration"] and not s["activeGeneration"]["terminal"]:raise HTTPException(409,"Generation already active")
+        old_threads=copy.deepcopy(s["threads"])
+        old_current=s["currentId"]
         t=next((t for t in s["threads"] if t["id"]==tid),None)
         if t is None:
             t={"id":tid,"title":prompt[:48],"pinned":False,"messagePins":{},"codeArtifacts":[],"programmingState":None,"createdAt":time.time()*1000,"messages":[]}
@@ -1240,7 +1299,13 @@ async def send(request:Request):
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
-        s["currentId"]=tid;s["revision"]+=1
+        s["currentId"]=tid
+        try:_commit_revision(s)
+        except HTTPException as exc:
+            s["threads"]=old_threads
+            s["currentId"]=old_current
+            if exc.status_code==409:_restore_chat_from_store(s)
+            raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     # Inject into all model routes as bounded evidence only on relevant follow-ups.
