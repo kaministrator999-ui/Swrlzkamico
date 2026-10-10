@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.174
-REVISION=2.1.174-story-spine-structured-fallback-v195
+VERSION=2.1.175
+REVISION=2.1.175-retrieval-assisted-lyric-craft-v196
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
