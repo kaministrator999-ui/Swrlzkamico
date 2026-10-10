@@ -283,6 +283,7 @@ def _user_name_from_profile(user_profile):
 
 def _thread_user_name(history,user_profile):
     import re
+from social_checkin import style_hint as _social_checkin_style_hint
     name=_user_name_from_profile(user_profile)
     for message in history or []:
         if str(message.get("role") or "").lower()!="user":continue
@@ -545,6 +546,10 @@ def generate_events(payload):
     if payload.get("projectThreadEvidence"):
         system+="\n"+str(payload["projectThreadEvidence"])[:1650]
     system+="\n"+_response_mode(prompt,programming)
+    if not programming.get("codingTask"):
+        social_style=_social_checkin_style_hint(prompt)
+        if social_style:
+            system+="\n"+social_style
     system+="\n"+response_cognition_policy(response_cognition)
     online_context=payload.get("onlineContext") if isinstance(payload.get("onlineContext"),dict) else {}
     if online_context:
