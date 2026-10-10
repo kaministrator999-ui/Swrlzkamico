@@ -352,7 +352,7 @@ def _safe_fragment(value, limit=650):
     return " ".join(clean.split())[:limit]
 
 
-def project_start_report(user_id, repo_name=""):
+def project_start_report(user_id, repo_name="", include_context=False):
     c = _config()
     record = _load(c, user_id)
     if record is None:
@@ -471,13 +471,30 @@ def project_start_report(user_id, repo_name=""):
               "", "This deterministic report is intentionally bounded. A full project-specific investigation "
               "must inspect any conditional guides, exact commit/action receipts, and outstanding acceptances "
               "before claiming the complete startup contract was fulfilled."]
-    return "\n".join(lines)
+    report="\n".join(lines)
+    if not include_context:
+        return report
+    # Only verified source fields may become durable project-thread evidence.
+    context={
+        "repo":repo,"branch":branch,"sourceSha":pinned_sha,
+        "runtimeSha":runtime_sha,"startupPath":found[0],
+        "docsRead":found,"modules":modules,
+        "latestCompleted":completed[2] if completed else "",
+        "latestCompletedDate":completed[1] if completed else "",
+        "possibleUnresolved":pending[2] if pending else "",
+    }
+    return report,context
 
 
 def start_events(data):
     yield {"type": "STATUS", "phase": "GITHUB_SOURCE", "reason": "Reading user-authorized GitHub startup documents"}
     try:
-        report = project_start_report(data.get("userId", ""), data.get("repo", ""))
+        result = project_start_report(data.get("userId", ""), data.get("repo", ""), include_context=True)
+        if isinstance(result,tuple):
+            report,context=result
+            yield {"type":"PROJECT_CONTEXT","context":context}
+        else:
+            report=result
     except HTTPException as exc:
         report = "GitHub project startup could not be completed: " + str(exc.detail) + ". No repository or live state was inferred."
     except Exception:
