@@ -1,5 +1,8 @@
 name: Lyric Ocean Corpus Integrity
 on:
+  push:
+    branches:
+      - feature/version-literacy-content-layout-v199
   pull_request:
     paths:
       - 'training/lyrics/**'
