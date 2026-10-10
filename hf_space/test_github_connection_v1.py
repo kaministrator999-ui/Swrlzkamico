@@ -130,7 +130,7 @@ def test_startup_source_evidence_no_write_and_no_fake_activation():
     def optional(_, repo, path, ref, max_bytes=100000):
         if path=="§wyrlz_§tart.md":return {"body":"# §wyrlz §tart\nread canonical docs","sha":"a","path":path}
         if path=="SWRLZ_SERVER_ROADMAP.md":
-            return {"body":"## UPDATE FINISHED — 2026-10-09 — test project acceptance\n\nStatus: source complete, live pending\n", "sha":"b","path":path}
+            return {"body":"## UPDATE FINISHED — 2026-10-09 — v192 test project acceptance\n\n**Result: SOURCE DEFECT REPAIRED / STATIC VERIFIED.**\n\n## UPDATE STARTED — 2026-10-09 — v192 repair work\n", "sha":"b","path":path}
         if path=="VERSION.txt":return {"body":"REPOSITORY_WORK=versions/repository-work.txt","sha":"c"}
         if path=="versions/repository-work.txt":return {"body":"VERSION=1.0.1\nSTATUS=active","sha":"d"}
         return None
@@ -153,6 +153,9 @@ def test_startup_source_evidence_no_write_and_no_fake_activation():
         report=gh.project_start_report("google:user")
         assert "test/repo" in report and "1.0.1" in report
         assert "test project acceptance" in report
+        assert "**Recorded result:** SOURCE DEFECT REPAIRED / STATIC VERIFIED." in report
+        assert "Potential unresolved STARTED" not in report
+        assert "/blob/"+sha+"/" in report
         assert "No deployment" in report and "read" in report.lower()
         assert "/repos/test/repo/commits/runtime" in calls
     source=Path(__file__).with_name("github_connection.py").read_text()
