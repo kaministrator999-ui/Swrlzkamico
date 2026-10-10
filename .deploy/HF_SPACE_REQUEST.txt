@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/lyric-mobile-reading-surface-v194
-REQUEST_NONCE=2026-10-09-v194-mobile-lyrics-readable-001
+SOURCE_REF=feature/github-thread-project-continuity-v194-integration
+REQUEST_NONCE=2026-10-10-google-thread-source-memory-v194-001
