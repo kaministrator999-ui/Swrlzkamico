@@ -138,7 +138,8 @@ def test_engine_route_has_a_bounded_single_retry_and_structural_only_truth():
     assert "elif strict_lyric_turn:" in source
     assert "verify_original_lyrics(candidate_raw,shape)" in source
     assert "extend_continuous_lyrics(authored_lines,new_segment,shape)" in source
-    assert "for continuation_index in range(2):" in source
+    assert "for continuation_index in range(4):" in source
+    assert "buffered_bounded_lyric_continuation(" in source
     assert "next_lines=min(8,missing)" in source
     assert "segment_messages=[" in source
     assert "partialReturned" in source

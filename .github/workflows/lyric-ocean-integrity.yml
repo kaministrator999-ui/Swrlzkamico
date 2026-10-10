@@ -5,6 +5,8 @@ on:
       - 'training/lyrics/**'
       - 'hf_space/lyric_craft_school.py'
       - 'hf_space/lyric_structure_school.py'
+      - 'hf_space/lyric_bounded_continuation.py'
+      - 'tests/test_lyric_bounded_continuation_v191.py'
       - 'hf_space/lyric_structure_patterns_v1.json'
       - 'tests/test_crossgenre_song_structure_v190.py'
       - 'hf_space/lyric_output_contract.py'
@@ -29,6 +31,10 @@ jobs:
         run: |
           python -m py_compile hf_space/lyric_structure_school.py
           python -m unittest discover -s tests -p test_crossgenre_song_structure_v190.py -v
+      - name: Validate exact-line continuation on bounded fake model streams
+        run: |
+          python -m py_compile hf_space/lyric_bounded_continuation.py hf_space/lfm2_700m_engine.py
+          python -m unittest discover -s tests -p test_lyric_bounded_continuation_v191.py -v
       - name: Validate lyric school, revision evidence, and privacy shape
         run: python tests/test_archive_grounded_lyric_craft_v182.py
       - name: Verify direct original lyric count and unrequested-refusal regression

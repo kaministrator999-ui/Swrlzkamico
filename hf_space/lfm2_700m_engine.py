@@ -10,6 +10,7 @@ from response_cognition import classify_response_cognition, response_cognition_p
 from music_structure import music_model_policy, creative_music_request, creative_music_reference_projection, MUSIC_CREATIVE_REFERENCE_POLICY, original_rap_delivery, original_rap_violations
 from lyric_craft_school import lyric_craft_policy
 from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics, continuation_shape_receipt
+from lyric_bounded_continuation import buffered_bounded_lyric_continuation
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -885,7 +886,9 @@ def generate_events(payload):
                     and set(check["reasons"])=={"wrong-explicit-lyric-line-count"}):
                 regeneration_attempted=True
                 regeneration_reason="original-lyric-append-only-continuation"
-                for continuation_index in range(2):
+                for continuation_index in range(4):
+                    # Four bounded calls allow recovery after one rejected segment;
+                    # each call stops when its requested authored lines complete.
                     missing=wanted-len(authored_lines)
                     if missing<=0:
                         break
@@ -917,8 +920,9 @@ def generate_events(payload):
                         )},
                     ]
                     segment_max=min(400,max(180,next_lines*37))
-                    new_segment,segment_timing=buffered_chat_completion(
+                    new_segment,segment_timing=buffered_bounded_lyric_continuation(
                         model,segment_messages,segment_max,min(0.48,temperature+0.06),
+                        max_lines=next_lines,
                     )
                     merged=extend_continuous_lyrics(authored_lines,new_segment,shape)
                     if merged is None:
