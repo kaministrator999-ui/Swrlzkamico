@@ -253,11 +253,11 @@ def _study(topic, search):
             "fetchedAt": int(time.time())}
 
 
-def _guidance(record, topic):
+def _guidance(record, topic, *, no_chorus=False):
     if not record:
         return ""
     allow = {c["id"]: c for c in _structure_cards()}
-    no_chorus = topic[2] == "continuous"
+    no_chorus = no_chorus or topic[2] == "continuous"
     selected = []
     for identifier in record.get("lessonIds", []):
         card = allow.get(identifier)
@@ -278,12 +278,13 @@ def research_for_creation(prompt: str, search=None, *, wait_seconds: float = WAI
     caller owns that intent boundary. An offline-only request always skips.
     """
     topic = _topic(prompt)
+    no_chorus = bool(_NO_CHORUS.search(str(prompt or "")))
     empty = {"status": "SKIPPED", "sourceCount": 0, "lessonCount": 0, "cache": False}
     if topic is None:
         return "", empty
     cached = _load(topic)
     if cached and int(time.time()) - cached["fetchedAt"] < FRESH_SECONDS:
-        guidance = _guidance(cached, topic)
+        guidance = _guidance(cached, topic, no_chorus=no_chorus)
         return guidance, {"status": "CACHED", "sourceCount": cached["sourceCount"],
                           "lessonCount": len(cached["lessonIds"]), "cache": True}
     if search is None:
@@ -293,7 +294,7 @@ def research_for_creation(prompt: str, search=None, *, wait_seconds: float = WAI
         except ImportError:
             search = None
     if search is None or not _inflight.acquire(blocking=False):
-        hint = _guidance(cached, topic)
+        hint = _guidance(cached, topic, no_chorus=no_chorus)
         return hint, {"status": "CACHED" if hint else "UNAVAILABLE",
                       "sourceCount": cached["sourceCount"] if cached else 0,
                       "lessonCount": len(cached["lessonIds"]) if cached else 0,
@@ -313,11 +314,11 @@ def research_for_creation(prompt: str, search=None, *, wait_seconds: float = WAI
     finished = done.wait(timeout=max(0.01, min(float(wait_seconds), WAIT_SECONDS)))
     record = response.get("record") if finished else None
     if record:
-        return _guidance(record, topic), {"status": "RESEARCHED",
+        return _guidance(record, topic, no_chorus=no_chorus), {"status": "RESEARCHED",
                                         "sourceCount": record["sourceCount"],
                                         "lessonCount": len(record["lessonIds"]),
                                         "cache": False}
-    hint = _guidance(cached, topic)
+    hint = _guidance(cached, topic, no_chorus=no_chorus)
     return hint, {"status": "CACHED" if hint else ("PENDING" if not finished else "UNAVAILABLE"),
                   "sourceCount": cached["sourceCount"] if cached else 0,
                   "lessonCount": len(cached["lessonIds"]) if cached else 0,
