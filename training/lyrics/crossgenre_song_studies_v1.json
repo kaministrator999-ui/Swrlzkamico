@@ -1,0 +1,238 @@
+{
+  "schema": "swrlz-crossgenre-song-studies-v1",
+  "created": "2026-10-09",
+  "status": "RESEARCH_SOURCE_NOT_WEIGHT_TRAINING",
+  "scope": "Public documented song-production and form analysis transformed into abstract teaching points only.",
+  "provenance": "External producer interviews, artist commentary, educational institution resources and one interpretive narrative discussion. Observations are bounded to what cited pages substantiate; transfer mechanisms are original pedagogical inferences, not artists' claims.",
+  "copyright": "No copied lyrics, melodies, stems, chord charts or audio. Song titles, artists, URLs, source-grounded descriptions and new abstract instruction only.",
+  "privacy": "No private user archive or profile material.",
+  "studyCount": 18,
+  "studies": [
+    {
+      "id": "study-01",
+      "artist": "Tech N9ne and guests",
+      "title": "Worldwide Choppers",
+      "genre": "chopper hip-hop",
+      "sourceUrl": "https://www.strangemusicinc.com/2011/05/03/building-tech-n9nes-choppers",
+      "sourceObservation": "Distinct rapid-flow voices can maintain meaning through rhythmic contrast; not just syllables per second.",
+      "transferMechanism": "Separate density, stress placement, rhyme complexity and semantic clarity; use breath-length contrast.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-02",
+      "artist": "Kendrick Lamar",
+      "title": "DUCKWORTH.",
+      "genre": "narrative hip-hop",
+      "sourceUrl": "https://podscripts.co/podcasts/dissect/s5e19-duckworth-by-kendrick-lamar",
+      "sourceObservation": "An episode-level narrative reading describes intersecting decisions and a consequential late revelation.",
+      "transferMechanism": "Set cause, seemingly unrelated clue threads, consequential convergence and new interpretation of earlier details.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-03",
+      "artist": "Run the Jewels",
+      "title": "JU$T",
+      "genre": "political hip-hop",
+      "sourceUrl": "https://songexploder.net/run-the-jewels",
+      "sourceObservation": "Artists describe shared composition and beat construction around a vocal idea.",
+      "transferMechanism": "Tie the rhythmic central idea to a clear viewpoint; alternate voices only when the request allows it.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-04",
+      "artist": "Queen",
+      "title": "Bohemian Rhapsody",
+      "genre": "progressive rock",
+      "sourceUrl": "https://www.queenonline.com/news/out-today-bohemian-rhapsody-50th-anniversary-vinyl-reissues",
+      "sourceObservation": "Official band account documents ballad, hard-rock and operatic contrasts.",
+      "transferMechanism": "Move between contrasting musical moods intentionally; do not force a repeating chorus onto through-composed requests.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-05",
+      "artist": "Fleetwood Mac",
+      "title": "Go Your Own Way",
+      "genre": "rock",
+      "sourceUrl": "https://songexploder.net/fleetwood-mac",
+      "sourceObservation": "Songwriter explains personal urgency and direct instrumental choice.",
+      "transferMechanism": "Match assertive vocal phrasing, spare arrangement and instrumental emphasis to the emotional claim.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-06",
+      "artist": "Metallica",
+      "title": "Moth Into Flame",
+      "genre": "metal",
+      "sourceUrl": "https://songexploder.net/metallica",
+      "sourceObservation": "Artists break down an aggressive guitar-and-drum-centered composition.",
+      "transferMechanism": "Use riff accents and held breath spaces to separate escalating impact moments.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-07",
+      "artist": "Deftones",
+      "title": "Ohms",
+      "genre": "alternative metal",
+      "sourceUrl": "https://songexploder.net/deftones",
+      "sourceObservation": "Singer's song breakdown foregrounds artistic return and rebuilding.",
+      "transferMechanism": "Reintroduce a core musical motif with changed intensity instead of piling on random sections.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-08",
+      "artist": "Mitski",
+      "title": "Your Best American Girl",
+      "genre": "indie rock",
+      "sourceUrl": "https://songexploder.net/mitski",
+      "sourceObservation": "Artist and collaborator discuss writing and production together.",
+      "transferMechanism": "Let arrangement and vocal register dramatize a lyrical emotional turn.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-09",
+      "artist": "Solange",
+      "title": "Cranes in the Sky",
+      "genre": "R&B / soul",
+      "sourceUrl": "https://songexploder.net/solange",
+      "sourceObservation": "Artist explains recurring harmony and meditation-like repetition supporting emotional weight.",
+      "transferMechanism": "Keep a recurring image or harmony stable while the emotional interpretation advances.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-10",
+      "artist": "PJ Morton featuring JoJo",
+      "title": "Say So",
+      "genre": "R&B duet",
+      "sourceUrl": "https://songexploder.net/pj-morton",
+      "sourceObservation": "Songwriter discusses demos and building/rebuilding a duet recording.",
+      "transferMechanism": "Use complementary perspectives and purposeful vocal conversation, not duplicated statements.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-11",
+      "artist": "Billie Eilish",
+      "title": "Everything I Wanted",
+      "genre": "intimate alternative pop",
+      "sourceUrl": "https://songexploder.net/billie-eilish",
+      "sourceObservation": "Writer/producers discuss voice memos and difficult revision decisions.",
+      "transferMechanism": "Use emotional specificity, a small motif and restrained production instead of generic sad vocabulary.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-12",
+      "artist": "Dua Lipa",
+      "title": "Levitating",
+      "genre": "dance-pop / disco",
+      "sourceUrl": "https://songexploder.net/dua-lipa",
+      "sourceObservation": "Co-writers explain production and genre influences behind groove-centered pop.",
+      "transferMechanism": "Establish a clear rhythmic hook, controlled repetition and contrast across recurring sections.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-13",
+      "artist": "The Postal Service",
+      "title": "The District Sleeps Alone Tonight",
+      "genre": "indietronica",
+      "sourceUrl": "https://songexploder.net/postal-service-deluxe",
+      "sourceObservation": "Creators describe programmed texture, harmonized vocals and an evolving outro.",
+      "transferMechanism": "Introduce, vary and layer motifs; transform earlier material through texture instead of a new lyric every beat.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-14",
+      "artist": "Grimes",
+      "title": "Kill V. Maim",
+      "genre": "electropop",
+      "sourceUrl": "https://songexploder.net/grimes",
+      "sourceObservation": "Artist discusses writing for other artists and adapting processes.",
+      "transferMechanism": "Give sections distinctive voice and energy while preserving the governing character.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-15",
+      "artist": "Jewel",
+      "title": "You Were Meant for Me",
+      "genre": "folk / singer-songwriter",
+      "sourceUrl": "https://songexploder.net/jewel",
+      "sourceObservation": "Singer discusses successive versions of an acoustic narrative song.",
+      "transferMechanism": "Retain relatable observational details; revise arrangement without flattening vocal identity.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-16",
+      "artist": "Yo-Yo Ma performing Bach",
+      "title": "Cello Suite No. 1 Prelude",
+      "genre": "baroque instrumental",
+      "sourceUrl": "https://songexploder.net/yo-yo-ma",
+      "sourceObservation": "Instrumentalist unpacks expressive development within repeated musical figures.",
+      "transferMechanism": "Develop and transform a short motif across phrases rather than requiring lyrics or a chorus.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-17",
+      "artist": "W. C. Handy",
+      "title": "Memphis Blues",
+      "genre": "blues",
+      "sourceUrl": "https://folkways.si.edu/lesson/building-the-blues",
+      "sourceObservation": "Smithsonian lesson examines 12-bar phrasing, blues notes and early blues form.",
+      "transferMechanism": "Use AAB question-repeat-answer shape where appropriate, not as a forced structure for all stories.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    },
+    {
+      "id": "study-18",
+      "artist": "Mamie Smith",
+      "title": "Crazy Blues",
+      "genre": "classic blues",
+      "sourceUrl": "https://folkways.si.edu/lesson/building-the-blues",
+      "sourceObservation": "Smithsonian lesson uses recordings to explore classic blues structure.",
+      "transferMechanism": "Make repeated emotional statements evolve in emphasis before an answering or resolving phrase.",
+      "claimKind": "SOURCE_OBSERVATION_PLUS_PEDAGOGICAL_INFERENCE",
+      "lyricTextStored": false
+    }
+  ],
+  "theorySources": [
+    {
+      "source": "Berklee Online — Lyric Writing: Tools and Strategies",
+      "url": "https://online.berklee.edu/courses/lyric-writing-tools-and-strategies",
+      "contribution": "Rhyme, rhythm, structure, narrative intent and contrast are separately trainable songwriting dimensions."
+    },
+    {
+      "source": "Berklee — Hip-Hop Songwriting",
+      "url": "https://college.berklee.edu/courses/cmsp-571",
+      "contribution": "Rhyming, cadence and flow work across tempos, lyrics and traditions."
+    },
+    {
+      "source": "Smithsonian Folkways — Music in Poetry: Ballad and Blues Stanzas",
+      "url": "https://folkways.si.edu/poetry-ballad-blues-stanzas/music/article/smithsonian",
+      "contribution": "Blues AAB line form and narrative ballad meter; not universal songwriting defaults."
+    },
+    {
+      "source": "Berklee Online — How to Write a Bridge to a Song",
+      "url": "https://online.berklee.edu/takenote/writing-bridges-for-your-songs-can-be-much-easier/",
+      "contribution": "Bridge is an optional contrast function rather than compulsory song section."
+    }
+  ],
+  "applicationRule": "Select mechanisms by user intent and negative constraints. Never expose this study bank wholesale in a prompt, imitate distinctive lyrics, or report weight training or live evaluation.",
+  "evaluations": {
+    "runtimeBenchmark": "NOT_RUN",
+    "weightUpdate": "NONE",
+    "liveCreativeGrade": "NOT_RUN"
+  }
+}
