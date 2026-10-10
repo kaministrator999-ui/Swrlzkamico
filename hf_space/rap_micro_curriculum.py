@@ -25,6 +25,8 @@ def rap_micro_guidance(prompt: str) -> tuple[str, str]:
     if os.getenv("SWRLZ_RAP_MICROLESSON_ENABLED", "1").lower() in {"0","off","false"}:
         return "", "SKIPPED"
     text = " ".join(str(prompt or "").split())[:1600]
+    if re.search(r"\b(?:no|without|skip|disable)\s+(?:rap\s+)?(?:coaching|micro[- ]?lessons?|training\s+cues?)\b|\b(?:rap\s+coaching)\s+off\b", text, re.I):
+        return "", "SKIPPED"
     if not (RAP.search(text) or (SONG.search(text) and FORM.search(text))):
         return "", "SKIPPED"
     focus = next((name for name, pattern in FOCUS if re.search(pattern, text, re.I)), "pocket")
