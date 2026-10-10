@@ -271,6 +271,20 @@ def _restore_chat_from_store(s):
         return fresh
     return None
 
+def _commit_revision(s):
+    # Every Station-visible revision is a durable CAS transition when a Google
+    # identity is active. For anonymous sessions, retain existing local behavior.
+    old=int(s["revision"])
+    s["revision"]=old+1
+    try:
+        saved=_persist_chat_snapshot(s,old)
+        if not saved:
+            raise HTTPException(409,"Stored conversation changed in another session; resync required")
+    except Exception:
+        s["revision"]=old
+        raise
+
+
 def _snapshot(s):
     return {"contract":CONTRACT,"revision":s["revision"],"threads":copy.deepcopy(s["threads"]),
             "currentThread":next((copy.deepcopy(t) for t in s["threads"] if t["id"]==s["currentId"]),None),
@@ -454,7 +468,7 @@ async def mutate(request:Request):
                     if message is not None:_promote_pinned_code_artifact(t,message)
                 else:pins.pop(mid,None)
             else:raise HTTPException(400,"Unsupported state operation")
-        s["revision"]+=1
+        _commit_revision(s)
         result={"ok":True,"revision":s["revision"]}
     if google_owner.startswith("google:"):
         for deleted in deleted_threads:
@@ -842,7 +856,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                                 target_message=next((m for m in reversed(target_thread.get("messages",[])) if str(m.get("id") or "")==str(assistant_id)),None)
                                 if target_message is not None:
                                     target_message.setdefault("meta",{})["onlineLogPersistence"]=copy.deepcopy(result)
-                            s["revision"]+=1
+                            _commit_revision(s)
                     threading.Thread(target=persist_online_log,daemon=True,name="online-log-"+request_id[:8]).start()
                 else:
                     threading.Thread(
@@ -858,7 +872,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 g=s.get("activeGeneration")
                 if g and g.get("requestId")==request_id:
                     g.update(terminal=True,terminalType="CANCELLED",phase="CANCELLED")
-                    g["status"].append({"phase":"CANCELLED","reason":"Stopped by user"});s["revision"]+=1
+                    g["status"].append({"phase":"CANCELLED","reason":"Stopped by user"});_commit_revision(s)
             return
         if not text:raise RuntimeError("R39 emitted no DELTA")
         github_telemetry=None
@@ -1070,7 +1084,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     },
                 }
                 g["githubTelemetryPersistence"]={"state":"QUEUED","path":"runtime-diagnostics/programming/"+request_id+"/candidate-attempt-telemetry.json","branch":"runtime"}
-            s["revision"]+=1
+            _commit_revision(s)
         if project_memory_receipt is not None:
             try:
                 persisted=project_thread_memory.save(*project_memory_receipt)
@@ -1096,7 +1110,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         target_message=next((m for m in reversed(target_thread.get("messages",[])) if str(m.get("id") or "")==str(assistant_id)),None)
                         if target_message is not None:
                             target_message.setdefault("meta",{})["onlineLogPersistence"]=copy.deepcopy((s.get("activeGeneration") or {}).get("onlineLogPersistence") or {})
-                    s["revision"]+=1
+                    _commit_revision(s)
             threading.Thread(target=persist_online_outcome,daemon=True,name="online-outcome-"+request_id[:8]).start()
         if knowledge_snapshot is not None:
             def persist_knowledge_snapshot():
@@ -1114,7 +1128,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                         target_message=next((m for m in reversed(target_thread.get("messages",[])) if str(m.get("id") or "")==str(assistant_id)),None)
                         if target_message is not None:
                             target_message.setdefault("meta",{})["githubTelemetryPersistence"]=copy.deepcopy(result)
-                    s["revision"]+=1
+                    _commit_revision(s)
             threading.Thread(target=persist_programming_log,daemon=True,name="programming-log-"+request_id[:8]).start()
     except Exception as exc:
         failed_online_outcome=None
@@ -1139,7 +1153,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 thread=next((t for t in s["threads"] if t["id"]==payload["threadId"]),None)
                 if thread:
                     thread["messages"].append({"id":assistant_id,"role":"assistant","text":"Generation failed: "+str(exc)[:240],"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED","onlineResearch":copy.deepcopy(g.get("onlineResearch") or {}),"onlineTrace":copy.deepcopy((g.get("onlineTrace") or [])[-64:])}})
-                    s["revision"]+=1
+                    _commit_revision(s)
         if failed_online_outcome is not None:
             threading.Thread(target=persist_runtime_diagnostic,args=(request_id,str(failed_online_outcome.get("selectedModelId") or model_id),"ONLINE_RESEARCH_OUTCOME",failed_online_outcome),daemon=True,name="online-failed-"+request_id[:8]).start()
 
@@ -1273,7 +1287,7 @@ async def send(request:Request):
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
-        s["currentId"]=tid;s["revision"]+=1
+        s["currentId"]=tid;_commit_revision(s)
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     # Inject into all model routes as bounded evidence only on relevant follow-ups.
