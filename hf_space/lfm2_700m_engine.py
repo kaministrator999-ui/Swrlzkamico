@@ -13,6 +13,7 @@ from lyric_output_contract import lyric_shape_request, verify_original_lyrics, c
 from lyric_bounded_continuation import buffered_bounded_lyric_continuation, buffered_bounded_original_lyrics
 from lyric_story_spine import generate_story_spine, story_spine_directive, narrative_fallback_craft
 from lyric_research_lab import research_for_creation
+from rap_micro_curriculum import rap_micro_guidance
 from social_checkin import style_hint as _social_checkin_style_hint
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
@@ -560,6 +561,7 @@ def generate_events(payload):
     system+="\n"+response_cognition_policy(response_cognition)
     direct_creative_lyric_contract=None
     lyric_research_receipt={"status":"SKIPPED","sourceCount":0,"lessonCount":0,"cache":False}
+    rap_focus="SKIPPED"
     music_policy=music_model_policy(prompt)
     if reference_structure and not music_policy:
         # "Do another one" inherits the earlier structural music request but
@@ -572,6 +574,11 @@ def generate_events(payload):
             direct_creative_lyric_contract=lyric_shape_request(prompt)
         if craft_policy:
             system+="\n"+craft_policy
+            # Sound-first training is one short focus, never another nested
+            # set of compliance constraints or a canned performance.
+            rap_hint,rap_focus=rap_micro_guidance(prompt)
+            if rap_hint and not reference_structure:
+                system+=rap_hint
             if not reference_structure:
                 # This is ONLY original songwriting. Public guide/example
                 # searches receive generic genre/form labels, never the user
@@ -1032,6 +1039,7 @@ def generate_events(payload):
             # model-authored private plan into camera/log receipts.
             candidate_check=dict(candidate_check)
             candidate_check["lyricResearch"]=lyric_research_receipt
+            candidate_check["rapMicroFocus"]=rap_focus if not reference_structure else "SKIPPED"
             candidate_check["storySpineStatus"]=story_receipt["status"]
             candidate_check["storySpineFields"]=story_receipt.get("fields",0)
             candidate_check["storySpineFailureCode"]=story_receipt.get("failureCode")

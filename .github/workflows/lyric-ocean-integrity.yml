@@ -4,6 +4,9 @@ on:
     paths:
       - 'training/lyrics/**'
       - 'hf_space/lyric_craft_school.py'
+      - 'hf_space/rap_micro_curriculum.py'
+      - 'tests/test_rap_micro_curriculum_v198.py'
+      - 'reports/RAP_SKILL_LADDER_V198.md'
       - 'hf_space/lyric_structure_school.py'
       - 'hf_space/lyric_bounded_continuation.py'
       - 'hf_space/lyric_story_spine.py'
@@ -55,6 +58,10 @@ jobs:
         run: |
           python -m py_compile hf_space/lyric_research_lab.py hf_space/lfm2_700m_engine.py
           python -m unittest discover -s tests -p test_research_assisted_lyrics_v196.py -v
+      - name: Verify rap beat-pocket micro-lessons and original lyrical constraints
+        run: |
+          python -m py_compile hf_space/rap_micro_curriculum.py hf_space/lfm2_700m_engine.py
+          python -m unittest discover -s tests -p test_rap_micro_curriculum_v198.py -v
       - name: Validate lyric school, revision evidence, and privacy shape
         run: python tests/test_archive_grounded_lyric_craft_v182.py
       - name: Verify direct original lyric count and unrequested-refusal regression
