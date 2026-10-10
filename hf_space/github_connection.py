@@ -349,11 +349,21 @@ def project_start_report(user_id, repo_name=""):
     if not found:
         return ("## GitHub project startup\nRepository [" + repo + "](https://github.com/" + repo +
                 ") was accessible, but no startup document was found. No project-specific instructions were assumed.")
-    version_file = _read_optional(token, repo, "VERSION.txt", "runtime")
+    # The runtime version registry may live on a different branch. Snapshot it independently.
+    runtime_sha = ""
+    try:
+        runtime_head = _api(token, "/repos/" + repo + "/commits/runtime")
+        runtime_sha = str(runtime_head.get("sha") or "")
+    except HTTPException as exc:
+        if exc.status_code not in (403, 404):
+            raise
+    if not re.fullmatch(r"[0-9a-f]{40}", runtime_sha):
+        runtime_sha = ""
+    version_file = _read_optional(token, repo, "VERSION.txt", runtime_sha) if runtime_sha else None
     modules = []
     if version_file:
         for module, authority in _VERSION.findall(version_file["body"])[:25]:
-            v = _read_optional(token, repo, "versions/" + authority, "runtime", 4500)
+            v = _read_optional(token, repo, "versions/" + authority, runtime_sha, 4500)
             if v:
                 text = v["body"]
                 match = re.search(r"^VERSION=(.+)$", text, re.M)
