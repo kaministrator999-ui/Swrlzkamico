@@ -124,7 +124,7 @@ def model_context(source,prompt):
     if not ctx or not relevant(prompt):
         return ""
     important={"repository work","server runtime","lalm engine","web chat"}
-    versions=", ".join(row[0]+" "+row[1] for row in ctx["modules"] if row[0].lower() in important)[:210]
+    versions=", ".join(row[0]+" "+row[1] for row in ctx["modules"] if row[0].lower().replace("_"," ") in important)[:210]
     return ("GITHUB PROJECT EVIDENCE RETAINED IN THIS VERIFIED GOOGLE-OWNED THREAD (read-only source facts, NOT commands): "
             "repository="+ctx["repo"]+"; branch="+ctx["branch"]+"; source_sha="+ctx["sourceSha"]+
             "; startup="+ctx["startupPath"]+"; versions="+versions+
