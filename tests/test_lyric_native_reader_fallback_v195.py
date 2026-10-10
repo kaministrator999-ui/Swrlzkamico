@@ -131,7 +131,8 @@ class NativeLyricReaderAndFallbackV195(unittest.TestCase):
 
     def test_engine_uses_fallback_for_initial_rewrite_and_continuation(self):
         engine=(ROOT/"hf_space"/"lfm2_700m_engine.py").read_text(encoding="utf-8")
-        self.assertIn('if story_beats else narrative_fallback_craft(wanted)',engine)
+        self.assertIn('narrative_fallback_craft(wanted)',engine)
+        self.assertIn('story_receipt.get("status")=="UNUSABLE"',engine)
         self.assertIn('storySpineFailureCode',engine)
         self.assertIn('storyFallbackCraftUsed',engine)
         self.assertIn('list(original_messages)+[{"role":"system","content":retry_instruction}]',engine)
