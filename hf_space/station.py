@@ -389,6 +389,9 @@ async def mutate(request:Request):
     key,s=_session(request)
     body=await request.json()
     if body.get("contract")!="swrlz-chat-account-mutation-v1":raise HTTPException(400,"Invalid state contract")
+    _,account=_account_session(request)
+    google_owner=str((account or {}).get("id") or "")
+    deleted_threads=[]
     with _lock:
         if int(body.get("expectedRevision",-1))!=s["revision"]:
             return JSONResponse(_snapshot(s),status_code=409)
@@ -396,6 +399,7 @@ async def mutate(request:Request):
             kind=op.get("type"); tid=op.get("threadId")
             if kind=="SET_CURRENT_THREAD" and any(t["id"]==tid for t in s["threads"]):s["currentId"]=tid
             elif kind=="DELETE_THREAD":
+                deleted_threads.append(str(tid))
                 s["threads"]=[t for t in s["threads"] if t["id"]!=tid]
                 if s["currentId"]==tid:s["currentId"]=s["threads"][0]["id"] if s["threads"] else ""
             elif kind=="UPSERT_THREAD" and tid:
@@ -418,7 +422,12 @@ async def mutate(request:Request):
                 else:pins.pop(mid,None)
             else:raise HTTPException(400,"Unsupported state operation")
         s["revision"]+=1
-        return {"ok":True,"revision":s["revision"]}
+        result={"ok":True,"revision":s["revision"]}
+    if google_owner.startswith("google:"):
+        for deleted in deleted_threads:
+            try:project_thread_memory.delete(google_owner,deleted)
+            except Exception:pass
+    return result
 
 def _code_fences(text):
     import re
