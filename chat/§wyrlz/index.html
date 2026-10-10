@@ -344,6 +344,17 @@
     @media(prefers-reduced-motion:reduce){body:not(.motion-full) .work-shade,body:not(.motion-full) .work-surface,body:not(.motion-full) .message-evidence summary::before{transition:none!important}}
     @media(max-width:760px){.work-surface{width:100vw}.work-surface-button{padding:4px 6px}.work-surface-button .work-label{display:none}.top-model{display:none}.message-evidence{margin-left:38px}}
 
+    /* User-scoped GitHub connector: no browser token storage and no repo writes. */
+    .github-connect{margin:9px 7px 6px;padding:10px;border:1px solid rgba(126,214,255,.20);border-radius:11px;background:rgba(3,22,39,.62);display:flex;flex-direction:column;gap:7px}
+    .github-connect-title{font:800 10px var(--font-telemetry);color:#d1eaff;letter-spacing:.06em}
+    .github-connect-status{font-size:10px;color:#93b7c8;line-height:1.4;overflow-wrap:anywhere}
+    .github-connect-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .github-connect-actions button{background:rgba(15,43,62,.9);border:1px solid rgba(126,214,255,.32);border-radius:8px;padding:6px 9px;font-size:10px;color:#d4f1ff;cursor:pointer}
+    .github-connect-actions button:disabled{opacity:.45;cursor:default}
+    .github-connect label{font-size:9px;color:#9dccdf}
+    .github-connect select,.github-connect input{width:100%;box-sizing:border-box;background:rgba(1,14,28,.8);border:1px solid rgba(126,214,255,.24);border-radius:7px;padding:7px;color:#efffff;font-size:11px;margin:3px 0}
+    .github-connect [hidden]{display:none!important}
+
     /* Chat usability pass 1.0.88 */
     .jump-latest{position:fixed;z-index:5;right:16px;bottom:calc(var(--composer-visible-height,70px) + 12px);min-height:38px;padding:0 13px;border:1px solid rgba(56,232,255,.38);border-radius:999px;background:rgba(3,19,34,.94);color:#dffaff;box-shadow:0 8px 24px rgba(0,0,0,.32);cursor:pointer}.jump-latest[hidden]{display:none}
     .stop-button{display:inline-grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,107,122,.42);border-radius:50%;background:rgba(65,18,31,.92);color:#ffdce2;cursor:pointer;font-size:13px}.stop-button[hidden]{display:none}
@@ -595,6 +606,23 @@
         <button class="account-action" id="accountAction" type="button" style="display:none">Sign out</button>
       </div>
       <div class="google-slot" id="googleSlot"></div>
+      <div class="github-connect" id="githubConnection" aria-label="Connected GitHub repositories">
+        <div class="github-connect-title">GitHub · connected tools</div>
+        <div class="github-connect-status" id="githubConnectStatus" role="status">Sign in with Google to connect GitHub.</div>
+        <div class="github-connect-actions">
+          <button id="githubConnectButton" type="button" hidden>Connect GitHub</button>
+          <button id="githubDisconnectButton" type="button" hidden>Disconnect</button>
+        </div>
+        <div id="githubRepoTools" hidden>
+          <label for="githubRepoSelect">Repository</label>
+          <select id="githubRepoSelect" aria-label="GitHub repository"><option value="">Choose a repository…</option></select>
+          <input id="githubRepoManual" maxlength="202" placeholder="owner/repository" aria-label="Repository owner and name">
+          <div class="github-connect-actions">
+            <button id="githubRepoSave" type="button">Use repository</button>
+            <button id="githubReadStart" type="button">Read §tart</button>
+          </div>
+        </div>
+      </div>
     </div>
     <section class="thread-panel" aria-label="Chat threads">
       <div class="thread-panel-head"><div class="thread-panel-title">Chats</div><button class="new-thread-button" id="newThreadButton" type="button">+ New chat</button></div>
@@ -2439,7 +2467,71 @@
         accountAction.textContent = "Sign out";
         accountAction.style.display = user ? "inline-block" : "none";
         if(user) googleSlot.innerHTML="";
+        refreshGitHub();
       };
+      const githubConnectStatus=document.getElementById("githubConnectStatus");
+      const githubConnectButton=document.getElementById("githubConnectButton");
+      const githubDisconnectButton=document.getElementById("githubDisconnectButton");
+      const githubRepoTools=document.getElementById("githubRepoTools");
+      const githubRepoSelect=document.getElementById("githubRepoSelect");
+      const githubRepoManual=document.getElementById("githubRepoManual");
+      const githubRepoSave=document.getElementById("githubRepoSave");
+      const githubReadStart=document.getElementById("githubReadStart");
+      let githubLinked=false;
+      const refreshGitHub=async()=>{
+        githubLinked=false;
+        githubConnectButton.hidden=true;githubDisconnectButton.hidden=true;githubRepoTools.hidden=true;
+        if(!accountUser){githubConnectStatus.textContent="Sign in with Google to connect GitHub.";return;}
+        try{
+          const r=await fetch("/api/github/status",{credentials:"same-origin",cache:"no-store"});
+          if(!r.ok)throw new Error("GitHub account status unavailable");
+          const d=await r.json();
+          if(!d.configured){githubConnectStatus.textContent="GitHub connection awaits the server OAuth and encrypted storage configuration.";return;}
+          githubLinked=d.linked===true;
+          githubConnectButton.hidden=githubLinked;
+          githubDisconnectButton.hidden=!githubLinked;
+          githubRepoTools.hidden=!githubLinked;
+          githubConnectStatus.textContent=githubLinked?("Connected as @"+d.login+" · linked to this Google account. Reconnect only if access is revoked."):"Connect GitHub to browse public repositories. Authorization is read-only in §wyrlz; GitHub grants read:user OAuth scope.";
+          if(!githubLinked)return;
+          githubRepoManual.value=String(d.repo||"");
+          githubRepoSelect.replaceChildren(new Option("Choose a repository…",""));
+          const list=await fetch("/api/github/repositories",{credentials:"same-origin",cache:"no-store"}).then(r=>r.ok?r.json():{repositories:[]});
+          for(const item of list.repositories||[])if(item.fullName&&!item.private)githubRepoSelect.add(new Option(item.fullName,item.fullName));
+          githubRepoSelect.value=d.repo||"";
+        }catch(_){githubConnectStatus.textContent="GitHub status could not be verified. No connection assumed.";}
+      };
+      githubConnectButton.addEventListener("click",()=>{if(accountUser)location.assign("/api/github/start");});
+      githubRepoSelect.addEventListener("change",()=>{if(githubRepoSelect.value)githubRepoManual.value=githubRepoSelect.value;});
+      githubRepoSave.addEventListener("click",async()=>{
+        if(!githubLinked)return;
+        const repository=githubRepoManual.value.trim();
+        githubRepoSave.disabled=true;
+        try{
+          const r=await fetch("/api/github/default-repo",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({repository})});
+          const data=await r.json();if(!r.ok)throw new Error(data.detail||"Repository not accessible");
+          githubConnectStatus.textContent="Selected "+data.repo+" for read-only §tart.";githubRepoSelect.value=data.repo;
+        }catch(e){githubConnectStatus.textContent=String(e.message||"Could not select repository");}
+        finally{githubRepoSave.disabled=false;}
+      });
+      githubReadStart.addEventListener("click",async()=>{
+        if(!githubLinked)return;
+        if(!githubRepoManual.value.trim()){githubConnectStatus.textContent="Choose a repository first.";return;}
+        // Save selection before preparing the explicit, user-initiated read request.
+        const repository=githubRepoManual.value.trim();
+        try{
+          const r=await fetch("/api/github/default-repo",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({repository})});
+          if(!r.ok)throw new Error("Repository selection failed");
+          prompt.value="Read the §tart document and follow the project startup contract for my connected GitHub repository.";
+          prompt.dispatchEvent(new Event("input",{bubbles:true}));
+          setMenu(false);prompt.focus();
+          githubConnectStatus.textContent="Project-start request prepared. Press Send to run it.";
+        }catch(_){githubConnectStatus.textContent="Could not verify the repository; no startup request was sent.";}
+      });
+      githubDisconnectButton.addEventListener("click",async()=>{
+        if(!githubLinked||!confirm("Disconnect this GitHub account from your Google profile?"))return;
+        const r=await fetch("/api/github/disconnect",{method:"POST",credentials:"same-origin"});
+        if(r.ok)await refreshGitHub();else githubConnectStatus.textContent="Disconnect failed; link remains until verified removed.";
+      });
       const renderGoogle = async () => {
         const status = await accountFetch("/api/account/status",{credentials:"same-origin",cache:"no-store"}).then(r=>r.json());
         if(!status?.googleClientId || !window.google?.accounts?.id) throw new Error("Google account service unavailable");
