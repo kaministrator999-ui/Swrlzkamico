@@ -1198,8 +1198,8 @@
       // reclassification. Code requested by the user retains its code viewer.
       const isOriginalSongwritingPrompt=value=>{
         const t=String(value||"");
-        return /\\b(?:write|create|compose|draft|make|perform|spit)\\b[\\s\\S]{0,140}\\b(?:freestyle|rap|lyrics?|song|verse|bars?|cypher)\\b/i.test(t)
-          && !/\\b(?:python|javascript|typescript|html|css|script|programming|json|sql|regex|source\\s+code)\\b/i.test(t);
+        return /\b(?:write|create|compose|draft|make|perform|spit)\b[\s\S]{0,140}\b(?:freestyle|rap|lyrics?|song|verse|bars?|cypher)\b/i.test(t)
+          && !/\b(?:python|javascript|typescript|html|css|script|programming|json|sql|regex|source\s+code)\b/i.test(t);
       };
       const renderAssistantContent=(container,text,messageId="",presentationHint="")=>{
         container.innerHTML="";
