@@ -1,0 +1,274 @@
+{
+  "schema": "swrlz-lyric-structure-patterns-v1",
+  "status": "ABSTRACT_PROMPT_ROUTING_NOT_MODEL_WEIGHT_TRAINING",
+  "count": 20,
+  "selection": "Up to three targeted cards selected by user's creation request and explicit negative form constraints; cards are not song quotations.",
+  "copyright": "No copied lyrics, melodies, or track titles in model-visible guidance.",
+  "cards": [
+    {
+      "id": "mystery-reveal",
+      "triggers": [
+        "mystery",
+        "detective",
+        "investigation",
+        "solving",
+        "clue",
+        "clues",
+        "whodunit"
+      ],
+      "cue": "Map anomaly → two different physical clues → false hypothesis tested → causal reveal. The reveal must explain the clues and change the outcome.",
+      "requiresChorus": false
+    },
+    {
+      "id": "chopper-contrast",
+      "triggers": [
+        "chopper",
+        "rapid-fire",
+        "double-time",
+        "triple-time",
+        "fast rap",
+        "punchlines",
+        "speed rap"
+      ],
+      "cue": "Build dense internal-rhyme bursts on clear actions; switch to short, hard-stressed payoff lines. Speed must never replace new information.",
+      "requiresChorus": false
+    },
+    {
+      "id": "continuous-arc",
+      "triggers": [
+        "continuous",
+        "one verse",
+        "no chorus",
+        "without chorus",
+        "no hook",
+        "uninterrupted",
+        "no refrain"
+      ],
+      "cue": "Without chorus or stanza breaks, advance the plot in successive phrases; vary rhythm internally while preserving one uninterrupted verse.",
+      "requiresChorus": false
+    },
+    {
+      "id": "narrative-cause",
+      "triggers": [
+        "story",
+        "storytelling",
+        "narrative",
+        "plot",
+        "chapter",
+        "character",
+        "twist"
+      ],
+      "cue": "Give every four lines a new action or consequence; make earlier facts matter to the ending. Keep chronology or controlled reversal intelligible.",
+      "requiresChorus": false
+    },
+    {
+      "id": "internal-rhyme",
+      "triggers": [
+        "internal rhyme",
+        "internal rhymes",
+        "multisyllabic",
+        "multis",
+        "rhyme schemes",
+        "intricate"
+      ],
+      "cue": "Carry a coherent idea through two or three internal sound pivots; vary stress positions, then land a meaningful end rhyme.",
+      "requiresChorus": false
+    },
+    {
+      "id": "punchline-construction",
+      "triggers": [
+        "punchline",
+        "punchlines",
+        "battle rap",
+        "diss",
+        "wordplay",
+        "roast"
+      ],
+      "cue": "Establish the literal setup first; pivot on a fresh double meaning and end immediately after the impact. Do not explain the joke.",
+      "requiresChorus": false
+    },
+    {
+      "id": "contrastive-bridge",
+      "triggers": [
+        "bridge",
+        "pre-chorus",
+        "build-up",
+        "build up",
+        "switchup",
+        "middle eight"
+      ],
+      "cue": "Change harmony, perspective or rhythmic density only to reveal a new emotional angle; bridge is optional, never mandatory.",
+      "requiresChorus": false
+    },
+    {
+      "id": "verse-chorus",
+      "triggers": [
+        "chorus",
+        "hook",
+        "refrain",
+        "catchy",
+        "anthem",
+        "singalong"
+      ],
+      "cue": "Let verses add information while the repeated hook names the unchanged central feeling; each return should gain meaning from its preceding verse.",
+      "requiresChorus": true
+    },
+    {
+      "id": "intimate-motif",
+      "triggers": [
+        "sad",
+        "grief",
+        "longing",
+        "heartbreak",
+        "vulnerable",
+        "melancholy",
+        "intimate"
+      ],
+      "cue": "Anchor feeling in one observed object and a specific decision; repeat its motif with altered meaning rather than naming the emotion repeatedly.",
+      "requiresChorus": false
+    },
+    {
+      "id": "rnb-dialogue",
+      "triggers": [
+        "r&b",
+        "soul",
+        "duet",
+        "harmony",
+        "harmonies",
+        "gospel",
+        "call and response"
+      ],
+      "cue": "Make voices answer, complicate or affirm one another. Keep harmonic responses purposeful rather than echoing every word.",
+      "requiresChorus": false
+    },
+    {
+      "id": "dance-groove",
+      "triggers": [
+        "dance",
+        "disco",
+        "pop",
+        "funk",
+        "groove",
+        "party",
+        "upbeat"
+      ],
+      "cue": "Place the shortest memorable rhythm first; build verses as variation, and use one rhythmic break to refresh the return.",
+      "requiresChorus": false
+    },
+    {
+      "id": "electronic-layering",
+      "triggers": [
+        "electronic",
+        "edm",
+        "synth",
+        "drop",
+        "house",
+        "techno",
+        "dancefloor"
+      ],
+      "cue": "Evolve a recognizable motif by adding and removing layers; use a drop or silence only when the preceding buildup earns it.",
+      "requiresChorus": false
+    },
+    {
+      "id": "rock-dynamics",
+      "triggers": [
+        "rock",
+        "metal",
+        "hardcore",
+        "riff",
+        "guitar",
+        "alternative rock"
+      ],
+      "cue": "Contrast spare and full passages; put decisive words on riff attacks, then let a held rest amplify the next line.",
+      "requiresChorus": false
+    },
+    {
+      "id": "folk-detail",
+      "triggers": [
+        "folk",
+        "country",
+        "acoustic",
+        "singer-songwriter",
+        "everyday",
+        "diary"
+      ],
+      "cue": "Choose concrete time, place, gesture and object details. Let the ordinary action imply the larger emotional change.",
+      "requiresChorus": false
+    },
+    {
+      "id": "blues-aab",
+      "triggers": [
+        "blues",
+        "12-bar",
+        "twelve-bar",
+        "blue notes",
+        "aab"
+      ],
+      "cue": "Where blues form is requested, establish a thought, rephrase or repeat it with more pressure, then answer or turn it on line three.",
+      "requiresChorus": false
+    },
+    {
+      "id": "jazz-variation",
+      "triggers": [
+        "jazz",
+        "swing",
+        "aaba",
+        "improvisation",
+        "scat"
+      ],
+      "cue": "Repeat a recognizable phrase framework while changing a melodic or rhythmic cell; return to a motif to make variation coherent.",
+      "requiresChorus": false
+    },
+    {
+      "id": "classical-development",
+      "triggers": [
+        "classical",
+        "orchestral",
+        "sonata",
+        "rondo",
+        "instrumental",
+        "cello",
+        "symphony"
+      ],
+      "cue": "Present a short theme, develop it through register, timing or orchestration, and make the final return feel transformed.",
+      "requiresChorus": false
+    },
+    {
+      "id": "indie-contrast",
+      "triggers": [
+        "indie",
+        "indietronica",
+        "alternative",
+        "dream pop",
+        "shoegaze"
+      ],
+      "cue": "Keep lyrical perspective clear while instrumental texture widens or contracts around its emotional turn.",
+      "requiresChorus": false
+    },
+    {
+      "id": "comedy-reversal",
+      "triggers": [
+        "comedy",
+        "funny",
+        "parody",
+        "satire",
+        "humorous",
+        "absurd"
+      ],
+      "cue": "Start with a believable premise, escalate two concrete absurdities and use one reversal as the payoff instead of repeating the gag.",
+      "requiresChorus": false
+    },
+    {
+      "id": "complex-form",
+      "triggers": [
+        "opera",
+        "through-composed",
+        "progressive",
+        "multi-section",
+        "epic"
+      ],
+      "cue": "Treat contrasting scenes as connected dramatic acts; each major sound change needs a new cause, not arbitrary spectacle.",
+      "requiresChorus": false
+    }
+  ]
+}
