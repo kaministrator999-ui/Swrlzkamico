@@ -1316,6 +1316,8 @@ async def send(request:Request):
     if google_owner.startswith("google:"):
         memory_evidence=project_thread_memory.model_context(active_project,prompt)
         if memory_evidence:payload["projectThreadEvidence"]=memory_evidence
+        recap=project_thread_memory.source_version_recap(active_project,prompt)
+        if recap:payload["projectVersionRecall"]=recap
     # Explicit §tart requests use server-side, read-only GitHub evidence, not a
     # fabricated model tool call or privileged instructions from repo content.
     if github_connection.is_start_request(prompt):
