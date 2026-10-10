@@ -315,7 +315,7 @@ def is_start_request(prompt):
     s = str(prompt or "").strip().lower()
     return s in ("§§", "@github §§", "§tart", "@github §tart") or (
         ("§tart" in s or "start doc" in s or "startup doc" in s)
-        and ("read" in s or "follow" in s or "project" in s or "start" in s))
+        and ("read" in s or "follow" in s or "load" in s or "open the" in s))
 
 
 def project_start_report(user_id, repo_name=""):
