@@ -196,13 +196,40 @@ def _read_optional(token, repo, path, ref, max_bytes=100000):
         raise
 
 
+# The authenticated status endpoint may disclose fixed configuration KEY NAMES,
+# but must never return environment values, tokens, lengths or provider errors.
+_CONFIG_KEYS = {
+    "client": "SWRLZ_GITHUB_OAUTH_CLIENT_ID",
+    "secret": "SWRLZ_GITHUB_OAUTH_CLIENT_SECRET",
+    "callback": "SWRLZ_GITHUB_OAUTH_CALLBACK_URL",
+    "fernet": "SWRLZ_GITHUB_ENCRYPTION_KEY",
+    "redis": "UPSTASH_REDIS_REST_URL",
+    "redis_token": "UPSTASH_REDIS_REST_TOKEN",
+}
+
+
 @router.get("/api/github/status")
 def status(request: Request):
     user_id = _google(request)
-    c = _settings()
-    if not all(c.values()):
-        return {"configured": False, "linked": False, "durable": False, "scope": GITHUB_SCOPE}
-    c = _config()
+    settings = _settings()
+    missing = [name for field, name in _CONFIG_KEYS.items() if not settings[field]]
+    if missing:
+        return {"configured": False, "linked": False, "durable": False,
+                "scope": GITHUB_SCOPE, "missingNames": missing}
+    try:
+        c = _config()
+    except HTTPException as exc:
+        detail = str(exc.detail)
+        if "callback" in detail.lower():
+            invalid = ["SWRLZ_GITHUB_OAUTH_CALLBACK_URL"]
+        elif "encryption key" in detail.lower():
+            invalid = ["SWRLZ_GITHUB_ENCRYPTION_KEY"]
+        elif "redis" in detail.lower():
+            invalid = ["UPSTASH_REDIS_REST_URL"]
+        else:
+            invalid = ["GITHUB_CONFIGURATION"]
+        return {"configured": False, "linked": False, "durable": False,
+                "scope": GITHUB_SCOPE, "invalidNames": invalid}
     record = _load(c, user_id)
     return {"configured": True, "linked": bool(record), "durable": True,
             "scope": GITHUB_SCOPE, "login": record["login"] if record else None,
