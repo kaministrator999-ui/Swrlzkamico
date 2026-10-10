@@ -9,7 +9,7 @@ from typing import Any
 
 _COUNT = re.compile(
     r"(?<!\w)(\d{1,3})\s*(?:[-–—]\s*)?"
-    r"(?:(?:original|new|fresh|rap|freestyle|chopper|technical|bouncy|"
+    r"(?:(?:original|new|fresh|rap|freestyle|chopper|fast|technical|bouncy|"
     r"funny|lyrical|rhyming|hip[- ]hop|hard[- ]hitting)\s+){0,4}"
     r"(?:lyric\s+)?(?:line|bar)s?\b", re.I
 )
