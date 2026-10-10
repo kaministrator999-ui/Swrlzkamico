@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.345
-REVISION=2.3.345-hf-v195-native-lyrics-and-fallback-release
+VERSION=2.3.346
+REVISION=2.3.346-google-owned-durable-chat-history-v195
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
