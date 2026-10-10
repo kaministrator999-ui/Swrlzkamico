@@ -1191,12 +1191,23 @@ async def send(request:Request):
     if not isinstance(user_profile,str) or len(user_profile)>2000:raise HTTPException(400,"Invalid user profile")
     if not isinstance(prompt,str) or not prompt.strip() or len(prompt)>32768:raise HTTPException(400,"Invalid prompt")
     if not all(isinstance(v,str) and 0<len(v)<=160 for v in (tid,rid)):raise HTTPException(400,"Invalid IDs")
+    # Evidence recovery uses only the account verified by the server, never the
+    # user-supplied thread id as an identity or OAuth credential.
+    _,verified_user=_account_session(request)
+    google_owner=str((verified_user or {}).get("id") or "")
+    recovered_project=None
+    if google_owner.startswith("google:") and project_thread_memory.relevant(prompt) and not github_connection.is_start_request(prompt):
+        try:recovered_project=project_thread_memory.load(google_owner,tid)
+        except Exception:recovered_project=None
     with _lock:
         if s["activeGeneration"] and not s["activeGeneration"]["terminal"]:raise HTTPException(409,"Generation already active")
         t=next((t for t in s["threads"] if t["id"]==tid),None)
         if t is None:
             t={"id":tid,"title":prompt[:48],"pinned":False,"messagePins":{},"codeArtifacts":[],"programmingState":None,"createdAt":time.time()*1000,"messages":[]}
             s["threads"].append(t)
+        if recovered_project and not isinstance(t.get("projectContext"),dict):
+            t["projectContext"]=recovered_project
+        active_project=copy.deepcopy(t.get("projectContext") or {})
         now_ms=int(time.time()*1000)
         temporal_context=_temporal_context(t["messages"],client_timezone,now_ms)
         # Attach up to three subsequent user turns to the most recent online
@@ -1223,6 +1234,10 @@ async def send(request:Request):
         s["currentId"]=tid;s["revision"]+=1
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    # Inject into all model routes as bounded evidence only on relevant follow-ups.
+    if google_owner.startswith("google:"):
+        memory_evidence=project_thread_memory.model_context(active_project,prompt)
+        if memory_evidence:payload["projectThreadEvidence"]=memory_evidence
     # Explicit §tart requests use server-side, read-only GitHub evidence, not a
     # fabricated model tool call or privileged instructions from repo content.
     if github_connection.is_start_request(prompt):
