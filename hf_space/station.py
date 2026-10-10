@@ -616,7 +616,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation"})
     try:
-        if model_id=="r39" and _generate is None:raise RuntimeError("R39 generator is not installed")
+        if model_id=="r39" and _generate is None and not payload.get("githubStart"):raise RuntimeError("R39 generator is not installed")
         if model_id=="stock" and _stock_generate is None:raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
