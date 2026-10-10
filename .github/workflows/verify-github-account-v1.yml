@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/github-account-project-start-v1
+      - feature/github-account-project-start-v191-integration
   workflow_dispatch:
 
 jobs:
