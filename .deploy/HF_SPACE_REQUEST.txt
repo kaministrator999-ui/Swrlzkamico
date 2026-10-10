@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/github-oauth-safe-config-diagnostics-v192
-REQUEST_NONCE=2026-10-10-github-oauth-configuration-key-diagnostics-v192-001
+SOURCE_REF=feature/lyric-story-spine-v193
+REQUEST_NONCE=2026-10-09-v193-model-causal-spine-lyrics-001
