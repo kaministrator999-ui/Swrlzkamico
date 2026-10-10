@@ -1,8 +1,8 @@
 """Bounded model-authored continuation for exact-line original verses.
 
-Decode until the requested number of complete, nonempty authored lines,
-then stop consuming tokens at that line boundary. This is an explicit output
-stop condition, not post-generation editing, artificial padding, or an
+Decode a requested original verse OR its short continuation until the
+specified number of complete, nonempty model-authored lines, then stop at
+that line boundary. This is an explicit output stop condition, not post-generation editing, artificial padding, or an
 opportunity to drop unsafe duplicated lines. Formal validation still owns
 acceptance and always sees every line returned by this bounded decoder.
 
@@ -29,7 +29,7 @@ def _nth_completed_line_end(text: str, wanted: int) -> int | None:
     return None
 
 
-def buffered_bounded_lyric_continuation(
+def buffered_bounded_original_lyrics(
     model: Any,
     messages: list[dict[str, Any]],
     max_tokens: int,
@@ -37,14 +37,14 @@ def buffered_bounded_lyric_continuation(
     *,
     max_lines: int,
 ) -> tuple[str, dict[str, Any]]:
-    """Capture bounded model output, never synthesize or alter a lyrical line.
+    """Capture a bounded original song, never synthesize or alter a lyrical line.
 
     If the model has already emitted extra tokens within a streaming chunk,
     the explicit *generation* cap treats them as beyond the output boundary.
     Non-lyrical material, repeated lines and malformed candidates still fail
     the separate existing continuation validator.
     """
-    limit = max(1, min(8, int(max_lines)))
+    limit = max(1, min(120, int(max_lines)))
     started = time.perf_counter()
     first_token_at = None
     chunks = 0
@@ -80,3 +80,18 @@ def buffered_bounded_lyric_continuation(
         "requestedSegmentLines": limit,
         "returnedSegmentLines": len([line for line in buffer.splitlines() if line.strip()]),
     }
+
+
+def buffered_bounded_lyric_continuation(
+    model: Any,
+    messages: list[dict[str, Any]],
+    max_tokens: int,
+    temperature: float,
+    *,
+    max_lines: int,
+) -> tuple[str, dict[str, Any]]:
+    """Existing small-chunk interface: never request more than eight authored bars."""
+    return buffered_bounded_original_lyrics(
+        model, messages, max_tokens, temperature,
+        max_lines=max(1, min(8, int(max_lines))),
+    )
