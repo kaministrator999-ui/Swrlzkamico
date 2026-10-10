@@ -81,6 +81,37 @@ def test_oauth_state_cookie_google_binding_and_one_use():
         replay=client.get("/api/github/callback",params={"state":cookie,"code":"anything"},follow_redirects=False)
         assert replay.status_code==403
 
+def test_authenticated_configuration_diagnostics_do_not_expose_values():
+    key=Fernet.generate_key()
+    cfg=_mock_config(key)
+    with mock.patch.object(gh, "_google", return_value="google:alice"):
+        missing=dict(cfg)
+        missing["fernet"]=""
+        missing["redis_token"]=""
+        with mock.patch.object(gh, "_settings", return_value=missing):
+            payload=gh.status(object())
+        assert not payload["configured"]
+        assert set(payload["missingNames"])=={"SWRLZ_GITHUB_ENCRYPTION_KEY","UPSTASH_REDIS_REST_TOKEN"}
+        assert "test-secret" not in json.dumps(payload)
+        assert "test-id" not in json.dumps(payload)
+        assert "opaque" not in json.dumps(payload)
+        invalid=dict(cfg)
+        invalid["fernet"]="not-a-fernet-key"
+        with mock.patch.object(gh, "_settings", return_value=invalid):
+            payload=gh.status(object())
+        assert payload["invalidNames"]==["SWRLZ_GITHUB_ENCRYPTION_KEY"]
+        assert "not-a-fernet-key" not in json.dumps(payload)
+        callback=dict(cfg)
+        callback["callback"]="http://unsafe.example/api/github/callback"
+        with mock.patch.object(gh, "_settings", return_value=callback):
+            payload=gh.status(object())
+        assert payload["invalidNames"]==["SWRLZ_GITHUB_OAUTH_CALLBACK_URL"]
+        with mock.patch.object(gh, "_settings", return_value=cfg),mock.patch.object(gh,"_load",return_value=None):
+            payload=gh.status(object())
+        assert payload["configured"] and not payload["linked"]
+        assert "missingNames" not in payload and "invalidNames" not in payload
+
+
 def test_startup_source_evidence_no_write_and_no_fake_activation():
     token="fake-token"
     def fake_api(_, path):
@@ -126,5 +157,6 @@ if __name__=="__main__":
     test_no_untrusted_repository_paths()
     test_account_isolation_encryption_persistence()
     test_oauth_state_cookie_google_binding_and_one_use()
+    test_authenticated_configuration_diagnostics_do_not_expose_values()
     test_startup_source_evidence_no_write_and_no_fake_activation()
     print("GitHub account/source boundary tests passed")
