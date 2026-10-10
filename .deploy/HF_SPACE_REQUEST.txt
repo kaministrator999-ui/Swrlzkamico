@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/social-checkin-v197-persistence-restart
-REQUEST_NONCE=2026-10-10-v197-social-checkin-chat-restart-test-001
+SOURCE_REF=feature/rap-rhythm-lessons-v198
+REQUEST_NONCE=2026-10-10-v198-rap-microcurriculum-source-001
