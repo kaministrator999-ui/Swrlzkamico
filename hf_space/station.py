@@ -1143,8 +1143,10 @@ async def send(request:Request):
     body=await request.json()
     model_id=body.get("modelId","auto")
     route=next((r for r in routes() if r.model_id==model_id),None)
-    if route is None or not route.available:raise HTTPException(422,"Selected model is not configured")
     prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
+    # GitHub startup is Station-owned evidence retrieval and does not consume a model.
+    if route is None or (not route.available and not github_connection.is_start_request(prompt)):
+        raise HTTPException(422,"Selected model is not configured")
     profile=body.get("profile","")
     user_profile=body.get("userProfile","")
     client_timezone=body.get("timeZone","UTC")
