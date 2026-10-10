@@ -1,0 +1,59 @@
+name: GitHub OAuth live public-route smoke
+on:
+  push:
+    branches:
+      - feature/github-postrelease-smoke-v1
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Verify deployed Hugging Face revision and public OAuth boundary
+        env:
+          EXPECTED_SPACE_SHA: a6c5b81e0d42a4f27aef81f9a2f5356810f28ff5
+        run: |
+          python - <<'PY'
+          import json, os, time, urllib.error, urllib.request
+          origin="https://kamiloki-swyrlz.hf.space"
+          expected=os.environ["EXPECTED_SPACE_SHA"]
+          def get(url):
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(url,headers={"Accept":"application/json","User-Agent":"SWRLZ-Guarded-Postrelease-Check/1"}),timeout=16) as r:
+                      return r.status, r.read(8192)
+              except urllib.error.HTTPError as e:
+                  return e.code, e.read(4096)
+              except Exception as e:
+                  return 0, type(e).__name__.encode()
+          status,body=get("https://huggingface.co/api/spaces/kamiloki/Swyrlz")
+          if status==200:
+              data=json.loads(body)
+              revision=data.get("sha")
+              print("Public Hugging Face revision matches deployed checkpoint:",revision==expected)
+              if revision and revision!=expected:
+                  raise SystemExit("Space source revision changed; do not infer expected runtime")
+          else:
+              print("Public Hugging Face revision unavailable, HTTP",status,"— runtime probes still required")
+          for i in range(20):
+              status,body=get(origin+"/api/account/status")
+              if status==200:
+                  try:
+                      google=json.loads(body).get("googleClientId")
+                  except Exception:
+                      google=None
+                  if google:
+                      print("Google account status endpoint: 200; client authority present")
+                      break
+              print("Wait for Space HTTP startup",i+1,"status",status,"detail",body[:80].decode(errors="replace"))
+              time.sleep(9)
+          else:
+              raise SystemExit("LIVE ROUTE UNVERIFIED: account status did not reach HTTP 200")
+          status,body=get(origin+"/api/github/status")
+          print("Unauthenticated GitHub status: HTTP",status)
+          if status!=401:
+              raise SystemExit("Expected account-owned GitHub endpoint to reject requests without Google session (401)")
+          print("PASS: live Google identity route and server-side GitHub account guard present")
+          print("NOTE: no user login, token retrieval or Upstash secret access was attempted")
+          PY
