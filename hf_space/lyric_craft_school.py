@@ -7,6 +7,7 @@ No prompt guidance here changes GGUF model weights.
 from __future__ import annotations
 
 from functools import lru_cache
+from lyric_structure_school import structure_teaching
 from pathlib import Path
 import hashlib
 import json
@@ -158,4 +159,5 @@ def lyric_craft_policy(prompt: str, *, structural_reference: bool = False) -> st
             return ""
         if not _CRAFT_REQUEST.search(text):
             return ""
-    return LYRIC_CRAFT_SCHOOL + _focused_teaching(text, structural_reference=structural_reference)
+    return (LYRIC_CRAFT_SCHOOL + _focused_teaching(text, structural_reference=structural_reference)
+            + structure_teaching(text))
