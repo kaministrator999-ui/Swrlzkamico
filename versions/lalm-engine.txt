@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.172
-REVISION=2.1.172-original-story-spine-v193
+VERSION=2.1.173
+REVISION=2.1.173-evidence-bound-project-thread-context-v1
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
