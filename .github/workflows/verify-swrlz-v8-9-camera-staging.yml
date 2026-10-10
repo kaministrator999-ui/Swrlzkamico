@@ -1,4 +1,4 @@
-name: Validate §E v9.4 camera-safe storybook staging
+name: Validate §E v9.5 camera-safe storybook staging
 on:
   push:
     branches: [main]
@@ -11,6 +11,8 @@ on:
       - "projects/swrlz-forge-moba/patches/v9_2_depth_theatre.py"
       - "projects/swrlz-forge-moba/patches/v9_3_character_alignment.py"
       - "projects/swrlz-forge-moba/patches/v9_4_socket_book_emergence.py"
+      - "projects/swrlz-forge-moba/patches/v9_5_staff_grip_fit.py"
+      - "projects/swrlz-forge-moba/patches/v9_5_character_depth_sections.py"
       - "projects/swrlz-forge-moba/runtime/**"
       - "projects/swrlz-forge-moba/assets/anime/**"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
@@ -18,6 +20,7 @@ on:
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-depth.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json"
       - "projects/swrlz-forge-moba/build_space.py"
   pull_request:
     branches: [main]
@@ -47,13 +50,13 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
-          assert len(manifest['patches'])==53
-          assert manifest['patches'][-1]=='patches/v9_4_socket_book_emergence.py'
+          assert len(manifest['patches'])==55
+          assert manifest['patches'][-1]=='patches/v9_5_character_depth_sections.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
           assert len(s.encode())==manifest['finalBytes']
           assert hashlib.sha256(s.encode()).hexdigest()==manifest['finalSha256']
-          for feature in ('V9_4_SOCKET_PUPPETS_BOOK_EMERGENCE','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE',
-                          'anime-rig-sockets-v1','anime-book-emergence-v1','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
+          for feature in ('V9_5_FITTED_STAFF_CHARACTER_RELIEF','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
+                          'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
                           'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
                           'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):
               assert feature in s, feature

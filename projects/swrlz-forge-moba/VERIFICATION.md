@@ -1,25 +1,42 @@
-# §wyrl§ Engine v9.4 candidate · Socket Puppets and Book Emergence acceptance
+# §wyrl§ Engine v9.5 candidate · Fitted Staff and Character Relief acceptance
 
-The 53rd governed patch is `patches/v9_4_socket_book_emergence.py`; artifact `swyrl_engine_v9_4.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_4_SOCKET_PUPPETS_BOOK_EMERGENCE`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes six episode scene JSON exports, the historical episode HTML and eight PNGs, for fifteen media assets.
+## Current v9.5 candidate · Fitted Staff and Character Relief
 
-The starter keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json`. Each character has 19 socket-bearing parts and 18 anatomical connections. Connections belong to `project.animeSockets` (`anime-rig-sockets-v1`) and the opening to `project.animeEmergence` (`anime-book-emergence-v1`). Existing per-character rest layouts, 425 limb/face keys and 341 scenery keys remain independent. The v9.3 positioned, v9.2 depth, v9.1 rigged, v9.0 storybook and original production exports remain bundled, together with all eight artwork PNGs and the historical episode HTML.
+Kami’s gripping hand wraps from the viewer’s left toward the right around the upright staff. The staff head’s opaque painted gold stem now joins the long pole at a saved **Staff → shaft** socket, with the brass collar behind the artwork. Fitting the staff’s width and height updates this mount in the same native Undo action. In **Animation Studio → Character Rig → Limb Sockets**, choose **Staff** and **Outgoing · shaft**, then use **Apply Socket** to adjust the join.
 
-`tests/socket_emergence_playwright.mjs` adds desktop/phone acceptance for page-emergence progress, snapped socket contact during rotation, the visible staff hand, native connection authoring, Undo/Redo, Save/Load and shared Play/Watch rendering. The existing native cinematic, storybook authoring, character rig, depth theatre and character alignment suites remain required. Reconstruction checks all 53 governed patches; packaging compares all fifteen media assets against committed source bytes and SHA-256.
+Every body piece of Kami and §wyrlz has three separately editable depth sections. Raised armor and folds give the painted pieces volume, while cloth and armor flex with the character’s saved motion. Connection points stay pinned to their limb sockets; expressions follow the head’s relief. These settings belong to each character and body piece, so editing one piece preserves the other mage and all pose, face and scenery keys. Preview Frame, native Play and Watch render the same geometry; native Undo/Redo and Save/Load retain the section settings.
 
-- [ ] Complete desktop/phone socket and opening authoring acceptance with visual inspection.
+In **Animation Studio**, select **Kami** or **§wyrlz** and expand **Character Rig → Character Piece Depth Sections**. Choose a **Depth body piece**, adjust **Depth Left**, **Depth Centre**, **Depth Right**, **Paper thickness** and **Costume Flex**, then use **Apply Piece Depth**. **Reset Piece Depth** restores that piece’s defaults. Pause playback before authoring, and use Preview Frame or Play to inspect how the robe and armor follow the pose. A flex value of 0 keeps the piece rigid.
+
+The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json`. The starter retains its 12-second book opening, 70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, 425 limb/face keys and 341 scenery keys. The v9.4 sockets export and all earlier exports remain bundled. The candidate has **55 governed patches and 16 media assets**: seven scene JSON files, eight unchanged PNGs and the historical episode HTML. Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V9_5_FITTED_STAFF_CHARACTER_RELIEF`; artifact: `swyrl_engine_v9_5.html`.
+
+Validation and hosted deployment are pending. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Production authority belongs to the final `DEPLOY_REQUEST.json`, its exact dedicated deployment run and the hosted audit of the normalized HTML, `SOURCE.json` and all sixteen assets.
+
+## Historical verified v9.4
+
+The previous v9.4 Socket Puppets and Book Emergence release is verified live: [deployment 37942614513](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37942614513) and [hosted audit 37942679834](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37942679834) passed. Source `511668bf024b1c225ff3280ef14837152e4602a2`, final trigger `fd1b3812a5445ee335328da7e6a34e1e7c0e1c1d`, seals 53 patches, 1,044,257 bytes, SHA-256 `cd761d29218dc36d0f0626968bfa9882584388c55f84411ce37caac16f4c1f01`, and 15 assets. These receipts certify v9.4; the v9.5 candidate requires its own final deployment and hosted verification.
+
+
+The 54th governed patch repairs the staff in `patches/v9_5_staff_grip_fit.py`; the 55th adds per-piece relief in `patches/v9_5_character_depth_sections.py`; artifact `swyrl_engine_v9_5.html`; marker `SWYRL_ENGINE_DEPLOY_MARKER: V9_5_FITTED_STAFF_CHARACTER_RELIEF`. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Packaging includes seven episode scene JSON exports, the historical episode HTML and eight PNGs, for sixteen media assets.
+
+The starter keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json`. Each character has 19 socket-bearing parts and 18 anatomical connections. Connections belong to `project.animeSockets` (`anime-rig-sockets-v1`) and the opening to `project.animeEmergence` (`anime-book-emergence-v1`). Existing per-character rest layouts, 425 limb/face keys and 341 scenery keys remain independent. The v9.4 sockets, v9.3 positioned, v9.2 depth, v9.1 rigged, v9.0 storybook and original production exports remain bundled, together with all eight artwork PNGs and the historical episode HTML.
+
+`tests/character_relief_playwright.mjs` adds desktop/phone acceptance for all piece sections, actual front/back/edge depth, pose-driven cloth and armor motion, anchored sockets and facial surfaces, native controls, Undo/Redo and fresh-context Save/Load. `tests/socket_emergence_playwright.mjs` adds desktop/phone acceptance for page-emergence progress, snapped socket contact during rotation, the visible staff hand, native connection authoring, Undo/Redo, Save/Load and shared Play/Watch rendering. The existing native cinematic, storybook authoring, character rig, depth theatre and character alignment suites remain required. Reconstruction checks all 55 governed patches; packaging compares all sixteen media assets against committed source bytes and SHA-256.
+
+- [ ] Complete desktop/phone staff/grip and per-piece section-depth authoring acceptance with visual inspection.
 - [ ] Complete all five existing native cinematic, Studio, rig, scenery and body-fit regressions.
 - [ ] Seal the generated artifact and pass Node/Python syntax plus remote engine CI.
 - [ ] Follow the exact final source/trigger deployment to terminal success.
-- [ ] Verify the current marker, normalized served HTML, SOURCE receipt, all six scene exports, screening HTML and all eight PNGs against committed source.
+- [ ] Verify the current marker, normalized served HTML, SOURCE receipt, all seven scene exports, screening HTML and all eight PNGs against committed source.
 
-v9.4 is a source candidate. Desktop/phone socket connection and book-emergence acceptance, all existing native Play/Studio/rig/depth/body-fit regressions, exact sealed reconstruction, and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all fifteen media assets.
+v9.5 is a source candidate. Desktop/phone acceptance must verify the painted staff-to-pole join, the right-facing grip, each piece’s section depth and motion, socket connections, native Undo/Redo and Save/Load. All existing native Play/Studio/rig/scenery/body-fit/book-opening regressions, exact sealed reconstruction and remote engine CI must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all sixteen media assets.
 
 
 ---
 
 # Historical verified §wyrl§ Engine v9.3 · Connected Character Pieces
 
-The previous **v9.3 Connected Character Pieces** release is verified live: [deployment 37893678594](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893678594) and [exact hosted audit 37893722231](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893722231) passed. Source [`84d8966f4240`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/84d8966f4240cef8ebe037dbc03baac43099c06e) seals 52 patches, **980,767 bytes**, SHA-256 `caba518b67524567899d93a74308bc894cf40413fd69b330b8f7f5f7b6c042be`, with all fourteen media assets. These receipts certify v9.3; v9.4 requires its own final deployment and hosted audit.
+The previous **v9.3 Connected Character Pieces** release is verified live: [deployment 37893678594](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893678594) and [exact hosted audit 37893722231](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893722231) passed. Source [`84d8966f4240`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/84d8966f4240cef8ebe037dbc03baac43099c06e) seals 52 patches, **980,767 bytes**, SHA-256 `caba518b67524567899d93a74308bc894cf40413fd69b330b8f7f5f7b6c042be`, with all fourteen media assets. These receipts certify v9.3; v9.5 requires its own final deployment and hosted audit.
 
 ---
 

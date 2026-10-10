@@ -257,7 +257,13 @@ try{
     await page.screenshot({path:resolve(output,'character-alignment-'+mode.name+'-play.png')});
     await page.locator('#animeCineExit').click();await frames(page);
     assert.equal((await status(page)).playing,false,'Stop failed to return to the native editor');
-    assert.deepEqual((await model(page,'kami')).layout[part],pausedFit,'Stop discarded a paused body fit');
+    const stoppedFit=(await model(page,'kami')).layout[part];
+    assert.deepEqual(Object.keys(stoppedFit).sort(),Object.keys(pausedFit).sort(),'Stop changed the body-fit field set');
+    for(const [field,value] of Object.entries(pausedFit)){
+      // Native degree/radian fields may round by one floating-point step.
+      if(field==='rotationZ')close(stoppedFit[field],value,'Stop discarded a paused body-fit angle',1e-12);
+      else assert.equal(stoppedFit[field],value,'Stop discarded a paused body fit: '+field);
+    }
     assert.deepEqual((await stage(page)).editorCamera,editorCamera,'Play/Stop altered the editor camera');
     independent(await project(page),original,mode.name+' Play/Stop fit');
 

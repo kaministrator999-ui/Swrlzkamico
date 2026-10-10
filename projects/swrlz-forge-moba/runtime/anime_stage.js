@@ -180,7 +180,7 @@ function storyBindArtwork(layer,source){
   if(typeof scenerySetArtworkMode==='function')scenerySetArtworkMode(layer);
   actor.userData.storyVisual={...actor.userData.storyVisual,asset};
   const replacement=storyPaperVisual(actor.userData.storyVisual);
-  for(const old of [...actor.children]){actor.remove(old);old.traverse(o=>{o.geometry?.dispose();o.material?.dispose()})}
+  for(const old of [...actor.children]){actor.remove(old);old.traverse(o=>{o.geometry?.dispose();for(const material of Array.isArray(o.material)?o.material:o.material?[o.material]:[])material.dispose();})}
   for(const child of [...replacement.children])actor.add(child);
   if(replacement.userData.rig)actor.userData.rig=replacement.userData.rig;else delete actor.userData.rig;
   if(replacement.userData.storyScenery)actor.userData.storyScenery=replacement.userData.storyScenery;else delete actor.userData.storyScenery;
