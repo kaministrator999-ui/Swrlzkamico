@@ -67,6 +67,11 @@ async function closeStudio(page){
   if(await page.locator('#storyStudioPanel').isVisible())await page.locator('#storyClose').click();
 }
 async function historyAction(page,action){
+  // A paused editor preview hides the phone Tools sheet. Leave the preview
+  // before using history, as in the body-fit, sockets and relief suites.
+  if(!(await status(page)).playing){
+    await page.evaluate(()=>window.SWYRL_ENGINE_STORYBOARD.exitPreview());await frames(page);
+  }
   const quick=page.locator(action==='undo'?'#quickUndoBtn':'#quickRedoBtn');
   if(await quick.isVisible()){await quick.click();return;}
   if(!await page.locator('#mobileToolsPanel').isVisible())await page.locator('#mobileToolsBtn').click();
