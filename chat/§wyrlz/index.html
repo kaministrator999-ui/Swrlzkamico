@@ -355,6 +355,9 @@
     .github-connect select,.github-connect input{width:100%;box-sizing:border-box;background:rgba(1,14,28,.8);border:1px solid rgba(126,214,255,.24);border-radius:7px;padding:7px;color:#efffff;font-size:11px;margin:3px 0}
     .github-connect [hidden]{display:none!important}
 
+    .assistant-body.github-start-document{padding:12px 14px!important}
+    .assistant-body.github-start-document .message-text{line-height:1.6}
+    .assistant-body.github-start-document .message-text h2{border-bottom:1px solid rgba(126,214,255,.22);padding-bottom:9px}
     /* Safe Markdown presentation; never let long repo names/URLs escape the card. */
     .assistant-body,.assistant-body .message-text,.assistant-body .misc-surface{min-width:0;max-width:100%;box-sizing:border-box}
     .assistant-body .message-text p,.assistant-body .message-text li,.assistant-body .message-text h1,.assistant-body .message-text h2,.assistant-body .message-text h3{overflow-wrap:anywhere;word-break:normal}
@@ -1230,6 +1233,12 @@
           const children=[...container.children];
           if(!children.length||children.some(node=>node.classList?.contains("code-block")))return;
           const meaningful=source.trim();
+          // Source-grounded GitHub reports are documents, never code artifacts.
+          // Avoid an oversized nested RESPONSE frame on narrow mobile screens.
+          if(meaningful.includes("## GitHub project startup · evidence-backed")){
+            container.classList.add("github-start-document");
+            return;
+          }
           const structured=/^(?:#{1,6}\s|[-*]\s|\d+[.)]\s)|\n\s*(?:#{1,6}\s|[-*]\s|\d+[.)]\s)/m.test(meaningful);
           if(!structured||meaningful.length<180)return;
           const block=document.createElement("section");block.className="code-block theme-misc prose-container";block.dataset.containerTheme="misc";
