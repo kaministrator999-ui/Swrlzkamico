@@ -9,6 +9,9 @@ from cryptography.fernet import Fernet
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import account_chat_store as store
 import github_connection as gh
+# CI checks repository files without constructing the Hugging Face Space stage.
+# The production deploy packages its Chat assets separately.
+(Path(__file__).parent/'chat/§wyrlz/assets').mkdir(parents=True,exist_ok=True)
 import station
 
 OWNER="google:alice123456789"
