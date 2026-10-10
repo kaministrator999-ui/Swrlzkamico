@@ -17,7 +17,7 @@ HISTORY_CUE = re.compile(
 )
 COMPARISON_CUE = re.compile(r"\b(?:compare|difference|versus|vs\.?|between|newer|older|upgrade|downgrade)\b", re.I)
 RECALL_CUE = re.compile(
-    r"\b(?:again|remind\s+me|what\s+(?:were|are|was|is)|which|list|show|current|latest)\b", re.I
+    r"\b(?:again|remind\s+me|what\s+(?:were|are)|which|list|show|current|latest)\b", re.I
 )
 
 
