@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.346
-REVISION=2.3.346-google-owned-durable-chat-history-v195
+VERSION=2.3.347
+REVISION=2.3.347-hf-v196-fresh-retained-lyric-research
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
