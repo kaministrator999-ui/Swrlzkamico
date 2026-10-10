@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/version-literacy-content-layout-v199
-REQUEST_NONCE=2026-10-10-v199-version-literacy-content-first-001
+SOURCE_REF=feature/lyric-eight-bar-intent-validator-v200
+REQUEST_NONCE=2026-10-10-v200-eight-original-bars-markdown-sections-001
