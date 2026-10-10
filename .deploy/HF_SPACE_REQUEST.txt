@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/rap-rhythm-lessons-v198
-REQUEST_NONCE=2026-10-10-v198-rap-microcurriculum-source-001
+SOURCE_REF=feature/version-literacy-content-layout-v199
+REQUEST_NONCE=2026-10-10-v199-version-literacy-content-first-001
