@@ -63,7 +63,8 @@ def test_modifier_bounded_counts_preserve_existing_numbered_contract():
               "Compose 24 fresh funny freestyle bars",
               "Write a 40-line original song")
     expected=(8,8,12,16,24,40)
-    assert [lyric_shape_request(p)["requestedLines"] for p in variants]==list(expected)
+    counts=[lyric_shape_request(p)["requestedLines"] for p in variants]
+    assert counts==list(expected), list(zip(variants,counts,expected))
     assert lyric_shape_request("Make 8 minutes of rap")["requestedLines"] is None
     assert lyric_shape_request("Write a 999-line rap")["requestedLines"] is None
 
