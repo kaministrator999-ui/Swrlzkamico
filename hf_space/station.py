@@ -659,6 +659,33 @@ async def stream_generation(request:Request, requestId:str):
             await asyncio.sleep(0.025)
     return StreamingResponse(events(),media_type="application/x-ndjson",headers={"Cache-Control":"no-store, no-transform","X-Accel-Buffering":"no"})
 
+def _ordered_native_threads(threads):
+    """Export-only view: pinned first, then latest native message activity.
+
+    Does not mutate canonical Redis insertion order or reorder messages inside
+    individual conversations. This mirrors the clean-room Chat sidebar.
+    """
+    def stamp(value):
+        if isinstance(value,bool):
+            return 0
+        try:
+            candidate=float(value)
+            return candidate if 0<candidate<float("inf") else 0
+        except (TypeError,ValueError,OverflowError):
+            return 0
+
+    def activity(thread):
+        latest=max(stamp(thread.get("createdAt")),stamp(thread.get("updatedAt")))
+        for message in thread.get("messages") or []:
+            if isinstance(message,dict):
+                latest=max(latest,stamp(message.get("createdAt")))
+        return latest
+
+    return sorted(threads,key=lambda thread:(
+        -int(bool(thread.get("pinned"))),-activity(thread),str(thread.get("id") or "")
+    ))
+
+
 @app.get("/api/lalm_station/export")
 def export_session(request:Request):
     """Export the verified user's account-owned chat history or anonymous session."""
@@ -669,7 +696,7 @@ def export_session(request:Request):
     durable=str(s.get("ownerGoogleId") or "").startswith("google:")
     document={"format":"swrlz-hf-session-export-v1","exportedAtUnixMs":int(time.time()*1000),
               "storage":"encrypted-google-account-redis" if durable else "anonymous-process-local",
-              "threads":snapshot["threads"],"activeGeneration":snapshot["activeGeneration"]}
+              "threads":_ordered_native_threads(snapshot["threads"]),"activeGeneration":snapshot["activeGeneration"]}
     return Response(content=json.dumps(document,ensure_ascii=False,indent=2),media_type="application/json",headers={"Content-Disposition":"attachment; filename=swrlz-dragon-chat.json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"})
 
 @app.post("/api/chat_state")
