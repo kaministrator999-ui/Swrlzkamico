@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v9.6",
+  "name": "§wyrl§ Engine v9.7",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v9_6.html",
+  "finalArtifact": "swyrl_engine_v9_7.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -70,8 +70,9 @@
     "patches/v9_4_socket_book_emergence.py",
     "patches/v9_5_staff_grip_fit.py",
     "patches/v9_5_character_depth_sections.py",
-    "patches/v9_6_natural_staff_painted_faces.py"
+    "patches/v9_6_natural_staff_painted_faces.py",
+    "patches/v9_7_ornate_staff.py"
   ],
-  "finalBytes": 1099583,
-  "finalSha256": "d78dedc68ae0fe7bcbd368ee949bb2926c6f9bf321586e5254ad3fb97c1f07bd"
+  "finalBytes": 1111978,
+  "finalSha256": "0e1d8a7cbf90e956714245364d923107d7c8d0e8ab8476aa7b81e0fcbad43ac3"
 }

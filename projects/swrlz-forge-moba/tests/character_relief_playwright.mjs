@@ -1,7 +1,8 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
-import {mkdir,readFile} from 'node:fs/promises';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
+import {inflateSync} from 'node:zlib';
 
 // Verify the real indexed costume surfaces, their physical back faces and
 // movement driven by saved body poses, through native Play and Watch.
@@ -40,6 +41,7 @@ async function start(page){
   await page.waitForFunction(()=>window.SWYRL_ENGINE_RELIEF?.renderStatus&&window.SWYRL_ENGINE_RIG?.renderStatus&&
     window.SWYRL_ENGINE_SOCKETS?.model&&window.SWYRL_ENGINE_ANIMATION&&window.SWYRL_ENGINE_STORYBOARD,
     undefined,{timeout:60000,polling:100});
+  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v9.7','Staff acceptance loaded a different engine release');
   await page.waitForFunction(()=>{const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
     return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000,polling:100});
   await frames(page);
@@ -190,6 +192,162 @@ function unchangedContent(saved,original,label){
   assert.deepEqual(savedEditor,originalEditor,'Piece depth editing overwrites native layers or settings: '+label);
 }
 
+// Use the same independent PNG decoder as the socket acceptance. The gold
+// material must appear in the WebGL image, in addition to having real geometry.
+function pngPixels(buffer){
+  let width=0,height=0,channels=0;const data=[];
+  for(let offset=8;offset<buffer.length;){
+    const length=buffer.readUInt32BE(offset),type=buffer.toString('ascii',offset+4,offset+8),chunk=buffer.subarray(offset+8,offset+8+length);
+    if(type==='IHDR'){width=chunk.readUInt32BE(0);height=chunk.readUInt32BE(4);assert.equal(chunk[8],8,'Unsupported screenshot bit depth');
+      assert.ok(chunk[9]===2||chunk[9]===6,'Unsupported screenshot color type');channels=chunk[9]===6?4:3;assert.equal(chunk[12],0,'Interlaced screenshot');}
+    if(type==='IDAT')data.push(chunk);offset+=length+12;
+  }
+  const raw=inflateSync(Buffer.concat(data)),stride=width*channels,pixels=Buffer.alloc(stride*height);
+  const paeth=(a,b,c)=>{const p=a+b-c,pa=Math.abs(p-a),pb=Math.abs(p-b),pc=Math.abs(p-c);return pa<=pb&&pa<=pc?a:pb<=pc?b:c;};
+  for(let y=0;y<height;y++)for(let x=0;x<stride;x++){
+    const filter=raw[y*(stride+1)],index=y*stride+x,a=x>=channels?pixels[index-channels]:0,
+      b=y?pixels[index-stride]:0,c=y&&x>=channels?pixels[index-stride-channels]:0;
+    const prediction=filter===0?0:filter===1?a:filter===2?b:filter===3?Math.floor((a+b)/2):filter===4?paeth(a,b,c):NaN;
+    assert.ok(Number.isFinite(prediction),'Unknown screenshot PNG filter');pixels[index]=(raw[y*(stride+1)+x+1]+prediction)&255;
+  }
+  return {width,height,rgb:(x,y)=>Array.from(pixels.subarray((y*width+x)*channels,(y*width+x)*channels+3))};
+}
+function transformed(point,matrix){
+  const [x,y,z]=point,w=matrix[3]*x+matrix[7]*y+matrix[11]*z+matrix[15];
+  return [0,1,2].map(row=>(matrix[row]*x+matrix[row+4]*y+matrix[row+8]*z+matrix[row+12])/w);
+}
+function ornamentBox(box,label){
+  assert.ok(box?.min?.length===3&&box.max?.length===3&&box.min.every(Number.isFinite)&&box.max.every(Number.isFinite),
+    'Staff metalwork has no measured vertex bounds: '+label);
+  assert.ok(box.max.every((value,index)=>value>=box.min[index]),'Staff metalwork bounds are inverted: '+label);
+}
+function finishMaterial(material,label){
+  assert.equal(material?.type,'MeshBasicMaterial','Staff finish is not painted onto its actual mesh: '+label);
+  assert.equal(material.mapIsCanvas,true,'Staff finish has no actual painted canvas texture: '+label);
+  assert.ok(material.mapType!==null&&material.width>=256&&material.height>=128,'Staff finish has no resolved texture image: '+label);
+}
+function ornamentGeometry(render,label){
+  const grip=render.staffGrip,ornament=grip?.ornament,core=grip?.shaftGeometry;
+  assert.equal(ornament?.style,'ebony-inlay-v1','Kami is missing the ornate socketed staff: '+label);
+  assert.equal(core?.type,'CylinderGeometry','Staff ornament replaced the continuous round pole: '+label);
+  assert.equal(core.radialSegments,24,'The fitted pole lost its actual round cross-section: '+label);
+  close(core.diameter,.11,'Staff metalwork changed the grip diameter: '+label,1e-7);
+  close(grip.gripError,distance(grip.gripWorld,grip.shaftGripWorld),'Staff ornament grip error ignores measured sockets: '+label,1e-7);
+  close(grip.shaftMountError,distance(grip.headStemAnchorWorld,grip.shaftMountWorld),'Staff ornament mount error ignores measured sockets: '+label,1e-7);
+  assert.ok(grip.gripError<1e-5&&grip.shaftMountError<1e-5&&grip.headStemAxisError<1e-5,
+    'Decorating the staff separated its hand or painted crest socket: '+label);
+  assert.ok(grip.ferruleFrontClearance>.001&&grip.shaftFrontClearance>.001&&grip.ferruleFrontWorldClearance>0,
+    'The rounded crest sleeve covers the painted joining stem: '+label);
+  assert.ok(ornament.shaftMatrixWorld?.length===16&&ornament.shaftMatrixWorld.every(Number.isFinite)&&
+    ornament.cameraWorld?.length===3&&ornament.cameraWorld.every(Number.isFinite),'Staff metalwork lacks the actual pole/camera transforms: '+label);
+  const matrix=ornament.shaftMatrixWorld,scaleY=Math.hypot(matrix[4],matrix[5],matrix[6]),
+    gripY=ornament.shaftEndpoints[0]+grip.lowerPoleReach/scaleY;
+  close(distance(transformed([0,ornament.shaftEndpoints[0],0],matrix),grip.shaftBaseWorld),0,
+    'Ornament pole endpoints do not use the actual shaft matrix: '+label,1e-6);
+  close(distance(transformed([0,ornament.shaftEndpoints[1],0],matrix),grip.shaftTopWorld),0,
+    'Ornament top does not use the actual shaft matrix: '+label,1e-6);
+  close(distance(transformed([0,gripY,0],matrix),grip.shaftGripWorld),0,
+    'Ornament grip exclusion does not follow the actual hand socket: '+label,1e-6);
+  finishMaterial(ornament.coreMaterial,label+' ebony core');
+  assert.ok(ornament.coreSamples?.length>=12,'Ebony material has no real camera-facing ray intersections: '+label);
+  const colors=[];
+  for(const sample of ornament.coreSamples){
+    assert.equal(sample.meshUUID,ornament.shaftMesh,'Core texture sample belongs to a different mesh: '+label);
+    assert.ok(sample.mapPixel?.length===2&&sample.mapRGB?.length===3&&sample.rgb?.length===3&&sample.alpha>.9,
+      'Core detail sample does not read actual texture RGBA: '+label);
+    close(distance(transformed(sample.local,matrix),sample.world),0,'Core texture sample ignores actual pole geometry: '+label,1e-6);
+    colors.push(sample.mapRGB);
+  }
+  assert.ok(colors.some((rgb,index)=>colors.slice(index+1).some(next=>distance(rgb,next)>30)),
+    'The staff finish is a flat color with no measured grain/inlay variation: '+label);
+  assert.deepEqual(ornament.parts.map(part=>part.id).sort(),['butt-cap','neck','ring-1','ring-2','ring-3','ring-4'],
+    'Staff loses the rounded crest sleeve, close-fitting bands or lower shoe: '+label);
+  assert.equal(new Set(ornament.parts.map(part=>part.meshUUID)).size,6,'Staff details reuse a nominal mesh instead of separate geometry: '+label);
+  let measuredGripClearance=Infinity,measuredEndpointClearance=Infinity;
+  for(const part of ornament.parts){
+    const partLabel=label+' '+part.id;
+    assert.equal(part.geometryType,'LatheGeometry','Staff detail has a box silhouette: '+partLabel);
+    assert.equal(part.radialSegments,24,'Staff detail is not built around the round pole: '+partLabel);
+    assert.ok(part.vertexCount>=48&&part.vertices?.length>=48,'Staff detail has no actual rounded geometry vertices: '+partLabel);
+    ornamentBox(part.boundsLocal,partLabel+' local');ornamentBox(part.boundsWorld,partLabel+' world');finishMaterial(part.material,partLabel);
+    const center=[0,2].map(axis=>(part.boundsLocal.min[axis]+part.boundsLocal.max[axis])*.5),angles=new Set();
+    for(const vertex of part.vertices){
+      assert.ok(vertex.local?.length===3&&vertex.world?.length===3&&vertex.local.every(Number.isFinite)&&vertex.world.every(Number.isFinite),
+        'Staff detail contains a non-finite actual vertex: '+partLabel);
+      close(distance(transformed(vertex.local,matrix),vertex.world),0,'Staff detail does not follow its real pole matrix: '+partLabel,1e-6);
+      for(let axis=0;axis<3;axis++){
+        assert.ok(vertex.local[axis]>=part.boundsLocal.min[axis]-1e-7&&vertex.local[axis]<=part.boundsLocal.max[axis]+1e-7,
+          'Staff detail local bounds exclude its actual vertices: '+partLabel);
+        assert.ok(vertex.world[axis]>=part.boundsWorld.min[axis]-1e-7&&vertex.world[axis]<=part.boundsWorld.max[axis]+1e-7,
+          'Staff detail world bounds exclude its actual vertices: '+partLabel);
+      }
+      const radius=Math.hypot(vertex.local[0]-center[0],vertex.local[2]-center[1]);
+      assert.ok(radius<=part.radialRange[1]+1e-6,'Staff detail radius ignores its actual geometry: '+partLabel);
+      if(radius>.001)angles.add(Math.round(Math.atan2(vertex.local[2]-center[1],vertex.local[0]-center[0])*1e5));
+      const poleY=vertex.local[1]-gripY;
+      assert.ok(Math.abs(poleY)>.30,'A metal ornament occupies the space needed by the fingers: '+partLabel);
+      measuredGripClearance=Math.min(measuredGripClearance,Math.abs(poleY)-.30);
+      if(part.id==='butt-cap')measuredEndpointClearance=Math.min(measuredEndpointClearance,
+        vertex.local[1]-ornament.shaftEndpoints[0],ornament.shaftEndpoints[1]-vertex.local[1]);
+    }
+    assert.ok(angles.size>=24,'Staff detail only reports rounded bounds around angular/box geometry: '+partLabel);
+    close(part.axialRange[0],part.boundsLocal.min[1],'Staff detail axial range ignores actual bounds: '+partLabel,1e-7);
+    close(part.axialRange[1],part.boundsLocal.max[1],'Staff detail axial range ignores actual bounds: '+partLabel,1e-7);
+    for(let index=0;index<2;index++)close(part.poleAxialRange[index],part.axialRange[index]-gripY,
+      'Staff detail axial position ignores the hand socket: '+partLabel,1e-6);
+    if(part.id.startsWith('ring-')){
+      assert.ok(part.radialRange[1]>=.063&&part.radialRange[1]<=.068001,'A staff band is too thin to read or has become a broad collar: '+partLabel);
+      assert.ok(Math.abs(center[0])<1e-6&&Math.abs(center[1])<1e-6,'A staff band is not centred around the actual pole: '+partLabel);
+    }else assert.ok(part.radialRange[1]<=.068001,'The staff crest sleeve or shoe has become an oversized block: '+partLabel);
+    if(part.id==='butt-cap'){
+      assert.ok(part.axialRange[0]>=ornament.shaftEndpoints[0]-1e-7&&part.axialRange[1]<=ornament.shaftEndpoints[0]+.24,
+        'The rounded shoe extends the staff into the book: '+partLabel);
+    }
+    for(const sample of part.screenSamples){
+      assert.equal(sample.meshUUID,part.meshUUID,'Staff gold sample belongs to a different mesh: '+partLabel);
+      assert.ok(sample.uv?.length===2&&sample.mapPixel?.length===2&&sample.rgb?.length===3&&sample.alpha>.9,
+        'Staff gold sample does not come from an actual textured ray intersection: '+partLabel);
+      close(distance(transformed(sample.local,matrix),sample.world),0,'Staff gold sample is not on its transformed mesh: '+partLabel,1e-6);
+    }
+  }
+  close(ornament.gripExclusionHalfLength,.30,'Staff metalwork does not preserve the finger contact zone: '+label,1e-7);
+  close(ornament.gripZoneClearance,measuredGripClearance,'Grip clearance does not measure actual ornament vertices: '+label,1e-6);
+  assert.ok(ornament.gripZoneClearance>0,'Staff metalwork collides with the gripping hand: '+label);
+  close(ornament.endpointClearance,measuredEndpointClearance,'Staff shoe endpoint clearance is not actual geometry: '+label,1e-6);
+  assert.ok(ornament.endpointClearance>=-1e-7,'Staff shoe crosses the original pole endpoint: '+label);
+  return ornament;
+}
+async function goldOnScreen(page,render,label){
+  const ornament=render.staffGrip.ornament,buffer=await page.locator('canvas:visible').first().screenshot(),image=pngPixels(buffer),measured=[];
+  let matches=0;const matchedParts=new Set();
+  for(const part of ornament.parts)for(const sample of part.screenSamples){
+    const cx=Math.round(sample.screen[0]*image.width),cy=Math.round(sample.screen[1]*image.height);let error=Infinity;
+    assert.ok(sample.screen.every(Number.isFinite),'Staff gold has no actual camera projection: '+label+' '+part.id);
+    for(let y=Math.max(0,cy-2);y<=Math.min(image.height-1,cy+2);y++)for(let x=Math.max(0,cx-2);x<=Math.min(image.width-1,cx+2);x++)
+      error=Math.min(error,distance(image.rgb(x,y),sample.rgb)/Math.sqrt(3));
+    measured.push({id:part.id,screen:sample.screen,rgb:sample.rgb,error});
+    if(error<43){matches++;matchedParts.add(part.id);}
+  }
+  if(matches<3||matchedParts.size<2){
+    const name=label.replace(/[^a-z0-9]+/gi,'-');
+    await writeFile(resolve(output,name+'-staff-gold-failure.png'),buffer);
+    await writeFile(resolve(output,name+'-staff-gold-failure.json'),JSON.stringify({width:image.width,height:image.height,ornament,measured},null,2));
+  }
+  assert.ok(matches>=3&&matchedParts.size>=2,'The actual WebGL image does not show the staff metalwork: '+label+
+    ' matched samples '+matches+' on '+matchedParts.size+' parts');
+}
+function ornamentFollows(frames,label){
+  const first=frames[0];assert.ok(frames.length>=3,'Staff animation was inspected at too few authored poses: '+label);
+  assert.ok(frames.some(frame=>distance(frame.render.staffGrip.shaftTopWorld,first.render.staffGrip.shaftTopWorld)>.003),
+    'The authored story never moves the ornamented staff: '+label);
+  for(const frame of frames.slice(1))for(const original of first.ornament.parts){
+    const next=frame.ornament.parts.find(part=>part.id===original.id);
+    assert.equal(next.meshUUID,original.meshUUID,'An animated ornament is rebuilt as a detached prop: '+label+' '+original.id);
+    for(const bound of ['min','max'])close(distance(next.boundsLocal[bound],original.boundsLocal[bound]),0,
+      'An ornament drifts relative to the moving pole: '+label+' '+original.id,1e-6);
+  }
+}
+
 let passed=false;
 try{
   for(const mode of modes){
@@ -205,17 +363,22 @@ try{
     await page.locator('#playBtn').click();
     await page.waitForFunction(()=>window.SWYRL_ENGINE_ANIMATION.status().active,undefined,{timeout:15000});
     await page.locator('#animeCinePause').click();
-    const story=[];
+    const story=[],staffPlay=[];
     for(const time of [0,6,12,19,38,72,110]){
       safe(await seek(page,time),mode.name+' native Play '+time+'s');
       const snapshot={time,characters:{}};
       for(const character of ['kami','swyrlz']){
         const actual=await relief(page,character);pieceDepth(actual,originals[character],mode.name+' '+character+' '+time+'s');
-        pinned(await rig(page,character),mode.name+' '+character+' '+time+'s');snapshot.characters[character]=actual;
+        const body=await rig(page,character);pinned(body,mode.name+' '+character+' '+time+'s');snapshot.characters[character]=actual;
+        if(character==='kami'&&time>=12){
+          staffPlay.push({time,render:body,ornament:ornamentGeometry(body,mode.name+' native Play '+time+'s')});
+          if([19,72,110].includes(time))await goldOnScreen(page,body,mode.name+' native Play '+time+'s');
+        }
       }
       story.push(snapshot);
       if([12,19,72].includes(time))await page.screenshot({path:resolve(output,'character-relief-'+mode.name+'-play-'+time+'.png')});
     }
+    ornamentFollows(staffPlay,mode.name+' native Play');
     for(const character of ['kami','swyrlz'])for(const id of ['cape','pelvis','torso']){
       assert.ok(story.some(frame=>Math.abs(frame.characters[character].parts[id].secondaryFlex)>1e-7),
         'The saved robe/body poses never drive costume flex: '+mode.name+' '+character+' '+id);
@@ -224,6 +387,23 @@ try{
     sameGeometry(await relief(page,'kami'),repeat,mode.name+' repeated saved pose');
     await page.locator('#animeCineExit').click();await frames(page);
     unchangedContent(await project(page),original,mode.name+' native Play/Stop');
+
+    // Inspect the original authored camera and staff poses in Watch before
+    // the depth/pose edits below, including the genuine canvas pixels.
+    await page.locator('#animeScreeningBtn').click();
+    await page.waitForFunction(()=>window.SWYRL_ENGINE_ANIMATION.status().active,undefined,{timeout:15000});
+    assert.equal(await page.locator('#storyCinemaStage canvas').count(),1,'Staff Watch does not mount the genuine WebGL stage');
+    await page.locator('#animeCinePause').click();const staffWatch=[];
+    for(const time of [12,19,72,110]){
+      safe(await seek(page,time),mode.name+' original staff Watch '+time+'s');
+      const actual=await rig(page,'kami');pinned(actual,mode.name+' original staff Watch '+time+'s');
+      staffWatch.push({time,render:actual,ornament:ornamentGeometry(actual,mode.name+' original staff Watch '+time+'s')});
+      if([19,72,110].includes(time))await goldOnScreen(page,actual,mode.name+' original staff Watch '+time+'s');
+    }
+    ornamentFollows(staffWatch,mode.name+' original Watch');
+    await seek(page,19);await page.screenshot({path:resolve(output,'character-relief-'+mode.name+'-staff-watch.png')});
+    await page.locator('#animeScreeningClose').click();await frames(page);
+    unchangedContent(await project(page),original,mode.name+' staff Watch/Close');
 
     // Edit real left/centre/right folds and physical thickness in the editor.
     await seek(page,19);const before=await relief(page,'kami'),beforeRig=await rig(page,'kami');
@@ -268,6 +448,7 @@ try{
     await seek(page,12);const motionBefore=await relief(page,'kami');
     await seek(page,20);const moving=await relief(page,'kami'),movingRig=await rig(page,'kami');
     pieceDepth(moving,await reliefModel(page,'kami'),mode.name+' keyed costume motion');pinned(movingRig,mode.name+' keyed costume motion');
+    ornamentGeometry(movingRig,mode.name+' keyed costume motion');
     for(const id of ['cape','pelvis','torso','leftUpperArm']){
       assert.ok(Math.abs(moving.parts[id].secondaryFlex)>1e-7,'Body movement leaves '+id+' secondary sections rigid');
       assert.ok(distance(boxCenter(motionBefore.parts[id].sections[1].worldBounds),boxCenter(moving.parts[id].sections[1].worldBounds))>.005,
@@ -331,6 +512,7 @@ try{
       for(const character of ['kami','swyrlz']){
         const actual=await rig(page,character);pinned(actual,mode.name+' Watch '+character+' '+time+'s');
         pieceDepth(actual.depthSections,await reliefModel(page,character),mode.name+' Watch '+character+' '+time+'s');
+        if(character==='kami')ornamentGeometry(actual,mode.name+' posed staff Watch '+time+'s');
         if(time===20){faceFront(actual,mode.name+' Watch '+character+' maximum face');sameGeometry(actual.depthSections,savedGeometry[character],mode.name+' Watch '+character);}
       }
     }
@@ -349,10 +531,19 @@ try{
       const actual=await rig(fresh,character);pinned(actual,mode.name+' fresh '+character);faceFront(actual,mode.name+' fresh '+character+' face');
       pieceDepth(actual.depthSections,await reliefModel(fresh,character),mode.name+' fresh '+character);
       sameGeometry(actual.depthSections,savedGeometry[character],mode.name+' fresh '+character);
+      if(character==='kami')ornamentGeometry(actual,mode.name+' fresh staff');
     }
     const legacy=structuredClone(exported);delete legacy.project.animeRelief;
     await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),legacy);await frames(fresh);await seek(fresh,19);
     for(const character of ['kami','swyrlz'])pieceDepth(await relief(fresh,character),await reliefModel(fresh,character),mode.name+' legacy '+character);
+    const originalGrip=structuredClone(exported);originalGrip.project.animeRigs.characters.kami.gripStyle='original';
+    await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),originalGrip);await frames(fresh);await seek(fresh,19);
+    assert.equal((await rig(fresh,'kami')).staffGrip.ornament,null,'An original glove profile acquired incompatible staff metalwork');
+    const customAtlas=structuredClone(exported);customAtlas.project.animeRigs.characters.kami.asset='assets/anime/swyrlz-rig.png';
+    await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),customAtlas);await frames(fresh);await seek(fresh,19);
+    assert.equal((await project(fresh)).project.animeRigs.characters.kami.asset,customAtlas.project.animeRigs.characters.kami.asset,
+      'Staff finish replaces a supplied custom atlas');
+    assert.equal((await rig(fresh,'kami')).staffGrip.ornament,null,'A custom atlas acquired incompatible staff metalwork');
     const malformed=structuredClone(exported);
     malformed.project.animeRelief.characters.kami.parts.unknown={left:.2};
     malformed.project.animeRelief.characters.kami.parts.cape.center=Infinity;
