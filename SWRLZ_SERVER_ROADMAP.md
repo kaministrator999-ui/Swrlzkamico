@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-10 — v204 sidebar toggle for imported ChatGPT conversations
+
+**User-visible request:** After confirming the v203 ZIP import finished with 2,556 saved visible-text conversations and 52 unsupported threads, the user showed their mobile drawer and requested a compact document-with-up-arrow toggle immediately beside CHATS. Tapping it should switch the drawer's §wyrlz-native chat list to the imported ChatGPT archive list, and back again.
+
+**Observed baseline:** The active v203 candidate at `feature/google-chatgpt-archive-import-v202` commit `b98abc7572be719eb4a31509a19f63159f641e77` serves `/chat/§wyrlz` from canonical Chat HTML and a bounded import Settings adapter. The existing encrypted Google-owned archive already exposes paginated `GET /api/chatgpt_archive/list` and private `GET /api/chatgpt_archive/thread/{conversation_id}`. Native Station stores chat state independently, and `renderThreads()` and `renderConversation()` are intentionally private to the Chat inline runtime. Runtime registry: Repository Work 1.0.142, Web Chat 1.5.97, Server Runtime 2.3.354, Google Account Architecture 1.0.11.
+
+**Architectural plan:** Extend the existing Chat presentation with one small, independently loaded sidebar/reader adapter, rather than merge imported transcripts into native /api/lalm_station/sync snapshots or alter archive storage. Insert a keyboard-accessible document/upload-arrow button beside CHATS; switch sidebar list visibility to paginated authenticated imported records; open a selected imported thread in the existing conversation viewport with safe plain-text read-only messages; hide the native composer only during archive mode and restore it instantly when switching back. Keep native thread navigation/metadata intact. No text-to-model injection, writes or duplicate copies, and preserve the existing v203 import settings/progress UX.
+
+**Scope/validation:** Candidate `feature/chatgpt-archive-sidebar-v204` branched from the accepted v203 source, separate from main Roadmap and runtime version registry. Add static DOM wiring, data isolation, UI navigation and pagination checks alongside the current verified account/import regression and guarded HF deployment. Versions advance only upon verified governed completion and publication. Mobile visual/user acceptance separately pending.
+
+**Status:** IN PROGRESS — no mutation of imported archives or in-flight server processing planned.
+
 ## UPDATE FINISHED — 2026-10-10 — v203 Android-interrupted ChatGPT import recovery
 
 **Outcome:** SOURCE COMPLETE / THREE CI GATES SUCCESS / GUARDED HF SPACE PUBLICATION SUCCESS / ANDROID OWNER FULL-ZIP ACCEPTANCE PENDING.
