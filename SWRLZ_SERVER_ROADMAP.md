@@ -1,3 +1,17 @@
+## UPDATE STARTED — 2026-10-11 — v209.1 live failure: native Chat snapshot capacity and durable write truth
+
+**Live user acceptance:** Owner reports v209 still does **not save** new native §wyrlz conversations. Treat v209 acceptance as FAILED/UNVERIFIED despite successful production publication. Old threads and separate ChatGPT import archive remained accessible before the report. Do not claim restored/saved data without an authenticated readback; do not delete or reset the owner's encrypted records.
+
+**Source diagnosis:** Existing `hf_space/account_chat_store.py` serializes the entire Google-owner native Chat snapshot into one JSON document and fails with HTTP 413 when raw JSON grows beyond `MAX_BYTES=2,200,000`, even when it could safely compress. This is a concrete bounded-capacity failure path consistent with old chats loading while new writes fail; live failure's exact HTTP code is unverified without private owner evidence. In Station `_run`, an assistant completion that fails its durable write can reenter failure handling and attempt another write, potentially leaving a visible but unsaved response. v209 only repaired stale in-process sync/refresh, not either failure.
+
+**Parallel-work guard:** `main` has an independent in-progress v210 GitHub-capabilities tier; preserve that workflow and branch. This is a separate **v209.1 native persistence corrective follow-up** based on the exact deployed v209 source `4fe3ede62a198f841adc30b1b673e2ae28ec7ed0`; no merges, speculative version bump, or overlapping GitHub capability changes.
+
+**Primary Focus:** authenticated clean-room native Chat durable storage. **Focus Group:** verified Google Account Redis storage + Station Chat persistence + Web Chat save feedback + Server Runtime activation. Keep old legacy native snapshot readable, authenticated owner isolation, atomic CAS revision, no silent truncation, no plaintext leakage, no imported ChatGPT archive/model changes.
+
+**Implementation plan:** preserve the original encrypted Redis record and revision authority; add backwards-compatible bounded compressed/chunked snapshot representation for large native histories, publish manifest only after all encrypted chunks persist; failed CAS must never replace previous records. Add regression for histories beyond previous cap, legacy recovery, chunks missing/tampered, stale writer and owner isolation, and accepted-response save failure disclosure without a second doomed persist. Test exact source with Google account and HF candidate CI, then guarded release only if validated, rollback checkpoint and synchronized version/Roadmap; signed-in Android reload/export still final acceptance.
+
+**Status:** IN PROGRESS / live failure documented / corrective source and CI pending.
+
 ## UPDATE STARTED — 2026-10-11 — v210 GitHub permission-aware Chat tools
 
 **User outcome:** Expand authenticated §wyrlz Chat's direct GitHub capabilities beyond the existing read-only §tart reader. Verify *effective* access per requested operation (OAuth token grant + actual repository permission), allow read operations to continue independently, and mention a missing permission or authorization scope only when the requested action needs it. Repository owner stated read/write is enabled; do not equate that claim with the independently linked §wyrlz OAuth token.
