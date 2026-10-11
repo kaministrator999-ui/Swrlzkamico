@@ -4,6 +4,7 @@ import json
 import re
 import sys
 import tempfile
+import time
 import zipfile
 from pathlib import Path
 from types import SimpleNamespace
@@ -16,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).parent.resolve()))
 import github_connection as gh
 import chatgpt_archive as archive
 import chatgpt_upload_session as upload_session
+import chatgpt_import_job as import_job
 import station
 
 ALICE = "google:alice123456789"
@@ -27,6 +29,19 @@ def make_redis():
     def command(_cfg, method, *args):
         if method == "GET":
             return values.get(args[0])
+        if method == "SET":
+            key, value, *options = args
+            if "NX" in options and key in values:
+                return None
+            values[key] = value
+            return "OK"
+        if method == "EVAL" and args[0] == import_job._UNLOCK:
+            script, count, key, token = args
+            assert count == "1"
+            if values.get(key) == token:
+                del values[key]
+                return 1
+            return 0
         if method == "EVAL":
             script, count, key, expected, new_json = args
             assert script == archive._CAS and count == "1"
@@ -198,21 +213,40 @@ def run():
             assert start.status_code == 200, start.text
             transfer = start.json()
             token = transfer["uploadId"]
-            assert transfer["chunkSize"] == 256*1024
+            assert transfer["chunkSize"] == 2*1024*1024
             wrong = client.post("/api/chatgpt_archive/chunk/" + token + "?offset=1",
                 content=zipped[:16], headers={"Origin": "http://testserver", "X-Swrlz-Import": "1"})
             assert wrong.status_code == 409
             split = len(zipped)//2
+            assert client.get("/api/chatgpt_archive/upload/" + token).json()["received"] == 0
             for start_offset, chunk in ((0,zipped[:split]),(split,zipped[split:])):
                 sent = client.post("/api/chatgpt_archive/chunk/" + token + "?offset=" + str(start_offset),
                     content=chunk, headers={"Origin": "http://testserver",
                                             "X-Swrlz-Import": "1"})
                 assert sent.status_code == 200, sent.text
+            # Interrupted network acknowledgements must not append duplicate bytes.
+            duplicate = client.post("/api/chatgpt_archive/chunk/" + token + "?offset=0",
+                content=zipped[:split], headers={"Origin": "http://testserver",
+                                                  "X-Swrlz-Import": "1"})
+            assert duplicate.status_code == 200
+            assert duplicate.json()["received"] == len(zipped)
+            with mock.patch.object(station, "_account_session", return_value=("other", {"id": BOB})):
+                assert client.get("/api/chatgpt_archive/upload/" + token).status_code == 404
+                assert client.get("/api/chatgpt_archive/status").json()["storedTotal"] == 0
+
             completed = client.post("/api/chatgpt_archive/complete/" + token,
                 headers={"Origin": "http://testserver", "X-Swrlz-Import": "1"})
-            assert completed.status_code == 200
-            events = [json.loads(line) for line in completed.text.splitlines()]
-            assert events[-1]["type"] == "COMPLETE" and events[-1]["addedMessages"] == 4
+            assert completed.status_code == 202
+            assert completed.json()["state"] == "running"
+            # HTTP response is already closed: import continues in its own thread.
+            for attempt in range(150):
+                observed = client.get("/api/chatgpt_archive/status").json()
+                if observed["state"] != "running":
+                    break
+                time.sleep(.02)
+            assert observed["state"] == "complete", observed
+            assert observed["created"] == 1 and observed["addedMessages"] == 4
+            assert observed["storedTotal"] == 1
             assert archive.list_archive(ALICE)["total"] == 1
             # Same conversation from an older ZIP: no duplicate.
             old = archive.normalize(make_thread("test-thread-0004", 2, 500))
@@ -232,12 +266,12 @@ def run():
         source = Path("hf_space/station.py").read_text(encoding="utf-8")
         prepare = Path("scripts/prepare_hf_space.py").read_text(encoding="utf-8")
         assert "chatgpt-archive-import-v1.js" in source and "chatgpt-archive-import-v1.js" in prepare
-        for marker in ("ChatGPT imports", "/api/chatgpt_archive/init",
+        for marker in ("ChatGPT imports", "/api/chatgpt_archive/status", "/api/chatgpt_archive/upload/", "/api/chatgpt_archive/init",
                        "/api/chatgpt_archive/chunk/", "/api/chatgpt_archive/complete/",
                        "X-Swrlz-Import", "unsupported", "addedMessages"):
             assert marker in html, marker
         assert "SWRLZ_GITHUB_ENCRYPTION_KEY" not in html
-    print("ChatGPT import v202: account isolation, encrypted CAS/idempotence, ZIP and route checks PASS")
+    print("ChatGPT import v203: detached owner-scoped jobs, persisted progress, resume and archive integrity PASS")
 
 
 if __name__ == "__main__":
