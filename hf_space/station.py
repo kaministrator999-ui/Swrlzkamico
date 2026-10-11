@@ -1342,7 +1342,25 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     },
                 }
                 g["githubTelemetryPersistence"]={"state":"QUEUED","path":"runtime-diagnostics/programming/"+request_id+"/candidate-attempt-telemetry.json","branch":"runtime"}
-            _commit_revision(s)
+            try:
+                _commit_revision(s)
+            except Exception as save_exc:
+                # A model response may already have streamed, but a failed
+                # CAS/Redis/size-limit commit is NOT durable. Never append a
+                # second failure message and try the same doomed write again.
+                # Keep the generated text only in activeGeneration so the
+                # user can copy it before navigating away.
+                thread["messages"]=[m for m in thread["messages"]
+                                    if str(m.get("id") or "")!=str(assistant_id)]
+                g.update(terminal=True,terminalType="FAILED",phase="CHAT_SAVE_FAILED")
+                code=getattr(save_exc,"status_code",503)
+                reason=("Response generated but NOT saved to your account. "
+                        "Copy it before leaving; existing saved chats are unchanged. "
+                        +("Storage limit reached." if code==413 else
+                          "Revision conflict; refresh before another send." if code==409 else
+                          "Durable storage failed; retry after checking account status."))
+                g["status"].append({"phase":"CHAT_SAVE_FAILED","reason":reason})
+                return
             # The browser may see a completed generation ONLY after its
             # assistant message is confirmed in account-owned durable storage.
             g.update(terminal=True,phase="COMPLETE")
