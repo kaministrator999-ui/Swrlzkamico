@@ -1,9 +1,9 @@
 // Synthetic/no-user-data DOM integration regression for the v204 archive drawer.
 // Executes the real production adapter without installing jsdom or reaching a network.
 "use strict";
-const fs = require("fs");
-const vm = require("vm");
-const assert = require("assert");
+import fs from "node:fs";
+import vm from "node:vm";
+import assert from "node:assert";
 
 class Node {
   constructor(tag = "div") {
