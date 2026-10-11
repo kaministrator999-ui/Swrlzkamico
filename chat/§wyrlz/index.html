@@ -1572,6 +1572,24 @@
         renderPinRail(thread);restoreCodeViewState();renderWorkSurface();renderedConversationSignature=signature;followLatestIfNeeded();return true;
       };
       const closeThreadPopups = except => document.querySelectorAll(".thread-popup").forEach(p=>{if(p!==except)p.hidden=true;});
+      // Native Chat persists threads in insertion order. Only order the
+      // presentation: pinned first, then most recently active, without
+      // mutating account-owned Redis snapshots or message chronology.
+      const orderNativeThreads = threads => {
+        const timestamp = value => {const n=Number(value);return Number.isFinite(n)&&n>0?n:0;};
+        const activity = thread => {
+          let latest=Math.max(timestamp(thread?.createdAt),timestamp(thread?.updatedAt));
+          for(const message of (Array.isArray(thread?.messages)?thread.messages:[])){
+            latest=Math.max(latest,timestamp(message?.createdAt));
+          }
+          return latest;
+        };
+        return [...(Array.isArray(threads)?threads:[])].sort((a,b)=>
+          Number(!!b?.pinned)-Number(!!a?.pinned) ||
+          activity(b)-activity(a) ||
+          String(a?.id||"").localeCompare(String(b?.id||""))
+        );
+      };
       const renderThreads = () => {
         threadList.innerHTML="";
         const selectionBar=document.createElement("div"); selectionBar.className="thread-selection-bar"; selectionBar.hidden=!threadSelectionMode;
@@ -1580,7 +1598,8 @@
         delSelected.onclick=async()=>{const ids=[...selectedThreadIds]; if(!ids.length||!confirm("Delete "+ids.length+" selected chat"+(ids.length===1?"":"s")+"?"))return; await mutateChat(ids.map(threadId=>({type:"DELETE_THREAD",threadId}))); selectedThreadIds.clear();threadSelectionMode=false;await syncStation();if(ids.includes(activeThreadId))startDraft();};
         const cancelSelected=document.createElement("button"); cancelSelected.type="button"; cancelSelected.textContent="Cancel"; cancelSelected.onclick=()=>{selectedThreadIds.clear();threadSelectionMode=false;renderThreads();};
         selectionBar.append(count,delSelected,cancelSelected); threadList.appendChild(selectionBar);
-        const rows = draftThread ? [{id:"__draft__",title:"New conversation",messages:[],draft:true},...chatThreads] : chatThreads;
+        const newestFirst=orderNativeThreads(chatThreads);
+        const rows = draftThread ? [{id:"__draft__",title:"New conversation",messages:[],draft:true},...newestFirst] : newestFirst;
         for(const t of rows){
           const row=document.createElement("div"); row.className="thread-row"+((t.draft||t.id===activeThreadId)?" active":"")+(selectedThreadIds.has(t.id)?" selected":"");
           const main=document.createElement("button"); main.type="button"; main.className="thread-main";

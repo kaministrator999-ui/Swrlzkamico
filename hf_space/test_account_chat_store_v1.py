@@ -245,6 +245,41 @@ def test_native_accepted_send_and_restart_persist_beyond_legacy_cap():
             station._sessions.clear()
 
 
+def test_native_export_newest_first_without_rewriting_saved_chat():
+    from starlette.testclient import TestClient
+    kv,redis=fake_store()
+    c=config()
+    prior=[
+        {**make_thread("Older first"),"id":"older","createdAt":100},
+        {**make_thread("Newest created"),"id":"recent","createdAt":800},
+        {**make_thread("Old chat with a new reply"),"id":"active","createdAt":200,
+         "messages":[{"id":"new-reply","role":"assistant","text":"later","createdAt":1500}]},
+        {**make_thread("Pinned old conversation"),"id":"pinned","createdAt":150,
+         "pinned":True},
+    ]
+    # Keep fixture message times below createdAt for old and recent threads.
+    with (mock.patch.object(gh,"_settings",return_value=c),
+          mock.patch.object(gh,"_redis",side_effect=redis),
+          mock.patch.object(station,"_account_session",return_value=("browser-A",USER))):
+        station._sessions.clear()
+        state={"revision":1,"ownerGoogleId":OWNER,"currentId":"recent","threads":prior}
+        assert store.save_chat(OWNER,state,0)
+        stored_ids=[t["id"] for t in store.load_chat(OWNER)["threads"]]
+        assert stored_ids==["older","recent","active","pinned"]
+        station._sessions.clear()
+        with TestClient(station.app) as client:
+            result=client.get("/api/lalm_station/export")
+            assert result.status_code==200,result.text[:180]
+            exported=result.json()
+            assert exported["storage"]=="encrypted-google-account-redis"
+            assert [t["id"] for t in exported["threads"]]==[
+                "pinned","active","recent","older"]
+            assert [t["id"] for t in store.load_chat(OWNER)["threads"]]==stored_ids
+            # Export sorting must NEVER sort messages within each conversation.
+            assert exported["threads"][2]["messages"]==prior[1]["messages"]
+        station._sessions.clear()
+
+
 def test_limits_enforced_no_silent_truncation_and_identity_isolation():
     kv,redis=fake_store()
     with mock.patch.object(gh,"_settings",return_value=config()),mock.patch.object(gh,"_redis",side_effect=redis):
@@ -279,6 +314,7 @@ if __name__=="__main__":
     test_legacy_native_owner_history_over_old_cap_saves_without_truncation()
     test_chunked_native_chat_atomic_pointer_and_integrity()
     test_native_accepted_send_and_restart_persist_beyond_legacy_cap()
+    test_native_export_newest_first_without_rewriting_saved_chat()
     test_limits_enforced_no_silent_truncation_and_identity_isolation()
     test_source_wiring_and_sync_contract()
     print("Durable Google account chat persistence, restart and CAS checks passed")
