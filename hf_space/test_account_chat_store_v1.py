@@ -212,10 +212,11 @@ def test_native_accepted_send_and_restart_persist_beyond_legacy_cap():
     from starlette.testclient import TestClient
     kv,redis=fake_store()
     c=config()
-    with mock.patch.object(gh,"_settings",return_value=c),mock.patch.object(gh,"_redis",side_effect=redis),\\
-         mock.patch.object(station,"_account_session",return_value=("browser-session",USER)),\\
-         mock.patch.object(station,"routes",return_value=[SimpleNamespace(model_id="700m",available=True)]),\\
-         mock.patch.object(station._pool,"submit",return_value=None):
+    with (mock.patch.object(gh,"_settings",return_value=c),
+          mock.patch.object(gh,"_redis",side_effect=redis),
+          mock.patch.object(station,"_account_session",return_value=("browser-session",USER)),
+          mock.patch.object(station,"routes",return_value=[SimpleNamespace(model_id="700m",available=True)]),
+          mock.patch.object(station._pool,"submit",return_value=None)):
         station._sessions.clear()
         with TestClient(station.app) as client:
             # Real Station /send saves a newly opened conversation before
