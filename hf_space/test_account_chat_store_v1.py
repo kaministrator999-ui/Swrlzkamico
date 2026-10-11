@@ -202,7 +202,7 @@ def test_chunked_native_chat_atomic_pointer_and_integrity():
         else:raise AssertionError("Tampered encrypted chat piece must fail closed")
         kv[partkey]=encrypted
         assert store.load_chat(OWNER)["revision"]==1
-        stale={**state,"revision":2}
+        stale={**state,"revision":1}
         assert store.save_chat(OWNER,stale,0) is False
         assert store.load_chat(OWNER)["revision"]==1
         assert store.load_chat(OTHER) is None
