@@ -38,8 +38,7 @@ def load_prompts(path):
 
 def inspect_form(text, row):
     """Necessary shape checks ONLY. These do not score cadence, rhyme or originality."""
-    lines = [l.strip() for l in text.splitlines() if l.strip() and not l.lstrip().startswith("&#")]
-    lines = [l for l in lines if not l.startswith("&#96;&#96;&#96;") and not l.startswith("'''")]
+    lines = [l.strip() for l in text.splitlines() if l.strip()]
     # Strip Markdown code fence markers without changing the captured raw output.
     lines = [l for l in lines if not l.startswith(chr(96) * 3)]
     lyric_lines = [l for l in lines if not _SECTION.match(l) and not l.startswith("#")]
