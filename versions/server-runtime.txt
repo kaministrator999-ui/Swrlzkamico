@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.362
-REVISION=2.3.362-hf-v2091-v210-combined-native-storage-github-capabilities
+VERSION=2.3.363
+REVISION=2.3.363-hf-v211-model-guided-github-tool-progress
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active

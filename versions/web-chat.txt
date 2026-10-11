@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.101
-REVISION=1.5.101-chat-native-save-github-consent-v210
+VERSION=1.5.102
+REVISION=1.5.102-github-live-inference-tool-status-v211
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active

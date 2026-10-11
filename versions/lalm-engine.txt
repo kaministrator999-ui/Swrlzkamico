@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.187
-REVISION=2.1.187-station-native-chat-capacity-github-tools-v210
+VERSION=2.1.188
+REVISION=2.1.188-station-github-model-plan-action-progress-v211
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
