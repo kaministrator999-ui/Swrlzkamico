@@ -1,0 +1,26 @@
+name: v210 GitHub capability HF candidate validation
+
+on:
+  push:
+    branches:
+      - feature/github-capability-preflight-v210
+    paths:
+      - hf_space/github_connection.py
+      - hf_space/station.py
+      - hf_space/test_github_capabilities_v210.py
+      - chat/§wyrlz/index.html
+      - chat/§wyrlz/VERSION.txt
+      - .github/workflows/verify-hf-github-capabilities-v210.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hf-candidate:
+    uses: ./.github/workflows/manual-hf-space.yml
+    with:
+      source_ref: feature/github-capability-preflight-v210
+      mode: validate
+      approved: "no"
+    secrets: inherit
