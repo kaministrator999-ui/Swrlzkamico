@@ -1,0 +1,631 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-mv3y0e7h-1583753755-3514640633",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "2147f8e9a363e6d01e646f86fa31e41cb6865cc7",
+  "persistedAtUnixMs": 1791730409854,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "freshness-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 1,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1528,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Can you tell me how many exported conversation threads we have imported right now",
+          "title": "How to Export ChatGPT, Claude & Gemini Conversations (2026 Guide)",
+          "url": "https://hundredtabs.com/blog/export-ai-chats",
+          "source": "hundredtabs.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Export and save your AI conversations from ChatGPT, Claude, and Gemini. Step-by-step guide for all platforms. Free tools included."
+        },
+        {
+          "query": "Can you tell me how many exported conversation threads we have imported right now",
+          "title": "How to Bulk Export ChatGPT Conversations (Every Method Compared, 2026)",
+          "url": "https://www.chatgptexporter.com/en/blog/how-to-bulk-export-chatgpt-conversations",
+          "source": "www.chatgptexporter.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "In this guide, we'll compare every method available in 2026 for bulk exporting ChatGPT conversations , from OpenAI's official data export to browser extensions and Python scripts. We'll be honest about what each method can and can't do, so you can pick the right approach for your"
+        },
+        {
+          "query": "Can you tell me how many exported conversation threads we have imported right now",
+          "title": "Microsoft Teams - How to save or export a Chat?",
+          "url": "https://learn.microsoft.com/en-us/answers/questions/5976106/microsoft-teams-how-to-save-or-export-a-chat",
+          "source": "learn.microsoft.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "When the export is ready, download and extract the .tar file; the conversations are stored in messages.json. You can then locate the individual chat you need. If you only need to keep a few important messages, you can also use More options > Save this message in Teams."
+        },
+        {
+          "query": "Can you tell me how many exported conversation threads we have imported right now",
+          "title": "Threads Reply Scraper — Export Full Conversation Tree · Apify",
+          "url": "https://apify.com/devilscrapes/threads-reply-tree",
+          "source": "apify.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Threads reply scraper: export every reply in a public threads .net post as a depth-linked conversation tree. No Meta login. Engagement counts on every node."
+        },
+        {
+          "query": "Can you tell me how many exported conversation threads we have imported right now",
+          "title": "Exporting Teams Channel Conversations",
+          "url": "https://help.spanning.kaseya.com/help/Content/K-Span-365/Teams-channel-conv-export.htm",
+          "source": "help.spanning.kaseya.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Exporting Teams Channel Conversations If you are backing up Teams Channel Conversations , you can easily search for and export conversation threads using the procedure below."
+        },
+        {
+          "query": "Can you tell me how many exported conversation threads we have imported right now",
+          "title": "ChatGPT Export Viewer: Open conversations.json Online | TidyOutput",
+          "url": "https://tidyoutput.com/tools/chatgpt-export-viewer/",
+          "source": "tidyoutput.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "How to get your ChatGPT export Open ChatGPT and go to Settings, then Data controls. Click Export data and confirm. OpenAI emails you a download link. Download the ZIP file and extract it. Choose the conversations .json file from the extracted folder in this tool. What the viewer "
+        },
+        {
+          "query": "Can you tell me how many exported conversation threads we have imported right now",
+          "title": "Transfer exported conversations between ChatGPT accounts",
+          "url": "https://help.openai.com/en/articles/9106926-transfer-exported-conversations-between-chatgpt-accounts",
+          "source": "help.openai.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "ChatGPT does not support fully merging accounts or moving conversations from one account's chat history into another account's chat history. You can export conversations from one eligible ChatGPT account, then upload the exported conversation file to a new conversation in another"
+        },
+        {
+          "query": "Can you tell me how many exported conversation threads we have imported right now",
+          "title": "How to Import Your ChatGPT History and Continue Conversations Elsewhere",
+          "url": "https://www.deepest.app/blog/import-chatgpt-history",
+          "source": "www.deepest.app",
+          "rank": 8,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "ChatGPT lets you export your full conversation history, but making sense of it (searching it, analyzing it, or migrating to another tool) requires some work. This guide covers how to export, what the export contains, and how to use your history productively."
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791730387726,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791730387734,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791730387877,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791730387877,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791730389032,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791730389032,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791730389035,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.chatgptexporter.com",
+        "url": "https://www.chatgptexporter.com/en/blog/how-to-bulk-export-chatgpt-conversations"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791730389253,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.chatgptexporter.com",
+        "url": "https://www.chatgptexporter.com/en/blog/how-to-bulk-export-chatgpt-conversations",
+        "httpStatus": 200,
+        "responseBytes": 82093
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791730389254,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      }
+    ],
+    "sources": [
+      {
+        "title": "How to Bulk Export ChatGPT Conversations (Every Method Compared, 2026)",
+        "source": "www.chatgptexporter.com",
+        "url": "https://www.chatgptexporter.com/en/blog/how-to-bulk-export-chatgpt-conversations",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "www.chatgptexporter.com"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "search-results",
+        "version": 1,
+        "title": "Online search · Can you tell me how many exported conversation threads we have imported right now",
+        "provider": "bounded-web-search-chain-v1",
+        "data": {
+          "query": "Can you tell me how many exported conversation threads we have imported right now",
+          "results": [
+            {
+              "title": "How to Bulk Export ChatGPT Conversations (Every Method Compared, 2026)",
+              "url": "https://www.chatgptexporter.com/en/blog/how-to-bulk-export-chatgpt-conversations",
+              "snippet": "In this guide, we'll compare every method available in 2026 for bulk exporting ChatGPT conversations , from OpenAI's official data export to browser extensions and Python scripts. We'll be honest about what each method can and can't do, so you can pick the right approach for your situation.",
+              "source": "www.chatgptexporter.com"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up Can you tell me how many exported conversation threads we have imported right now…",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": 8
+      },
+      {
+        "seq": 9,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.chatgptexporter.com",
+        "url": "https://www.chatgptexporter.com/en/blog/how-to-bulk-export-chatgpt-conversations",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null
+      },
+      {
+        "seq": 10,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.chatgptexporter.com",
+        "url": "https://www.chatgptexporter.com/en/blog/how-to-bulk-export-chatgpt-conversations",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null
+      },
+      {
+        "seq": 11,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 1
+      },
+      {
+        "seq": 12,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 13,
+        "phase": "WIDGET_READY",
+        "reason": "search-results",
+        "categories": [
+          "WIDGET"
+        ]
+      },
+      {
+        "seq": 14,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ]
+      },
+      {
+        "seq": 15,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": ""
+      },
+      {
+        "seq": 16,
+        "phase": "RESPONSE_COGNITION",
+        "reason": ""
+      },
+      {
+        "seq": 17,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": []
+      },
+      {
+        "seq": 18,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": ""
+      },
+      {
+        "seq": 19,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": []
+      },
+      {
+        "seq": 20,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active"
+      },
+      {
+        "seq": 21,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1"
+      },
+      {
+        "seq": 22,
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": ""
+      },
+      {
+        "seq": 23,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": ""
+      },
+      {
+        "seq": 25,
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "calculate",
+      "historyAvailable": false,
+      "historyTurns": 0,
+      "anchorUserIndex": null,
+      "anchorAssistantIndex": null,
+      "explicitReference": false,
+      "questionLike": true,
+      "detailMode": "normal",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": false,
+      "programming": false
+    },
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": []
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial-streaming",
+        "durationMs": 20350.897,
+        "firstTokenLatencyMs": 14462.305,
+        "deltaChunks": 404,
+        "candidateFingerprint": "369485aea552e2ba",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "NOT_APPLICABLE",
+        "validationReasons": [],
+        "accepted": false
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "NOT_APPLICABLE",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 28.073,
+      "visibleFirstDeltaLatencyMs": 14490.467,
+      "engineTotalLatencyMs": 20379.697,
+      "totalCandidateGenerationMs": 20350.897,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 20350.897,
+          "firstTokenLatencyMs": 14462.305,
+          "deltaChunks": 404,
+          "candidateFingerprint": "369485aea552e2ba",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "NOT_APPLICABLE",
+          "validationReasons": [],
+          "accepted": false
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 20379.697,
+      "loadLatencyMs": 28.073,
+      "firstDeltaLatencyMs": 14490.467
+    },
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 6738,
+      "reservedOutputTokens": 1326,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 6718,
+        "history": 0,
+        "currentPrompt": 20,
+        "total": 6738
+      }
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 8,
+      "batchThreads": 16,
+      "maxResponseTokens": 768
+    },
+    "finalResponse": "Based on the provided context, the exact number of exported conversation threads currently imported is not explicitly quantified. However, we can infer a reasonable range through the information given:\n\n1. **Bulk Export Limitations**: The primary bulk export method described is \"ChatGPT’s Built-in Data Export\" (Section 1). This method yields a JSON file containing all conversations at once, which is described as containing:\n   - `conversations.json`: A single JSON file with all messages\n   - `chat.html`: Basic HTML view of conversations\n   - No explicit limits on size or format beyond JSON and HTML.\n\n2. **Bulk Export Method Comparison**: The alternative method mentioned is \"ChatGPT Exporter\" (Section 2), which:\n   - Lays out steps for bulk exports:\n     - Full backup with ChatGPT Exporter\n     - Batch export of important conversations\n   - Suggests a more structured workflow but does not specify limits.\n\n3. **Current Context**: The user explicitly states, \"How many exported conversation threads we have imported right now?\" This implies there's a need to check the current state of imports, but no direct measurement is provided.\n\n4. **Estimated Range**: Given the bulk export methods and typical usage patterns:\n   - A single bulk export might import 1-10 conversations (assuming a moderate-to-large account).\n   - The exact number could be closer to 5-20, depending on account size and the efficiency of the exports.\n\n**Conclusion**: Without a direct count mechanism in the provided text, the most accurate answer is that the exact number is undetermined. However, based on typical usage and the described methods, the number of imported threads likely ranges from 5 to 20, depending on the specific account size and export configurations. For precise tracking, the user would need to monitor the exported data or use the provided tools to query the exported JSON files.",
+    "finalResponseSha256": "97234944731dc01372d98485d07e654d70f5eb881151145926b5df053c29360a",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1791730387498,
+      "startedAtUnixMs": 1791730387716,
+      "completedAtUnixMs": 1791730409641,
+      "queueWaitMs": 218,
+      "stationRunMs": 21925,
+      "endToEndMs": 22143
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
