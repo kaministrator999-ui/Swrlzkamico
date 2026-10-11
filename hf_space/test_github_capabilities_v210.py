@@ -147,7 +147,9 @@ def test_no_silent_approval_or_untrusted_code_execution():
     assert "GETDEL" in source and "issue-write" in source and "branch-write" in source
     assert "requests.put(" not in source and "requests.delete(" not in source
     assert "SWRLZ_GITHUB_ENCRYPTION_KEY" in source
-    assert "github_connection.command_events(" in Path(__file__).with_name("station.py").read_text()
+    station = Path(__file__).with_name("station.py").read_text()
+    assert "github_connection.agent_events(" in station
+    assert "yield from command_events(data)" in source  # explicit writes retain v210 confirmation owner
     assert 'id="githubCheckAccess"' in Path(__file__).parent.parent.joinpath("chat/§wyrlz/index.html").read_text()
 
 
