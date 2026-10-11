@@ -26,6 +26,8 @@ def _api(_token,path):
 def test_natural_routing_and_no_false_github_actions():
     assert gh.is_github_conversation("Show my repo issues and pull requests")
     assert gh.is_github_conversation("@GitHub ask check the permission on my repo")
+    assert gh.is_github_conversation("Can you check my GitHub permissions?")
+    assert gh.is_github_conversation("Could you please show our repo commits?")
     assert not gh.is_github_conversation("What is GitHub?")
     assert not gh.is_github_conversation("Write a fantasy story about a repo")
     assert gh._agent_allowed_tool("issues","Show my repo issues") == "issues"
