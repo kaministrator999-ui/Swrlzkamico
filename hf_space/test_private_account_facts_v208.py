@@ -57,7 +57,7 @@ with patch.object(memory,"_STATE",{OWNER:{"state":"ready","docs":[
      patch.object(facts.gh,"_redis",return_value=2),\
      patch.object(facts,"_count_status",side_effect=AssertionError("recomputed ready index")):
     value=facts.answer(OWNER,threads,"How many imported chat messages")
-    assert "11 stored text messages" in value,value
+    assert "11 stored visible text messages" in value,value
 
 facts._CACHE[OWNER]={"state":"ready","messages":999,"total":2556}
 facts.invalidate(OWNER)
