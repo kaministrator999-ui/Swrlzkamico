@@ -379,6 +379,16 @@ def _archive_owner(request: Request):
     return owner
 
 
+def _archive_origin_guard(request: Request):
+    origin = request.headers.get("origin", "")
+    parsed = urllib.parse.urlsplit(origin)
+    if (request.headers.get("x-swrlz-import") != "1" or not origin
+        or parsed.scheme not in ("https", "http")
+        or parsed.netloc != request.headers.get("host")
+        or parsed.username or parsed.password or parsed.path or parsed.query or parsed.fragment):
+        raise HTTPException(403, "Imported history changes require an authenticated same-origin request")
+
+
 @app.get("/api/chatgpt_archive/list")
 def chatgpt_archive_list(request: Request, offset: int = 0, limit: int = 30):
     owner = _archive_owner(request)
@@ -393,17 +403,27 @@ def chatgpt_archive_thread(request: Request, conversation_id: str):
                         headers={"Cache-Control": "private, no-store"})
 
 
+@app.delete("/api/chatgpt_archive/thread/{conversation_id}")
+def delete_chatgpt_archive_thread(request: Request, conversation_id: str):
+    owner = _archive_owner(request)
+    _archive_origin_guard(request)
+    return JSONResponse(chatgpt_archive.delete_archive(owner, conversation_id),
+                        headers={"Cache-Control": "private, no-store"})
+
+
+@app.delete("/api/chatgpt_archive")
+def delete_chatgpt_archive_all(request: Request):
+    owner = _archive_owner(request)
+    _archive_origin_guard(request)
+    return JSONResponse(chatgpt_archive.delete_all_archive(owner),
+                        headers={"Cache-Control": "private, no-store"})
+
+
 @app.post("/api/chatgpt_archive/import")
 async def chatgpt_archive_import(request: Request):
     owner = _archive_owner(request)
-    # A custom header and strict same-origin check block cross-site form upload.
-    origin = request.headers.get("origin", "")
-    parsed = urllib.parse.urlsplit(origin)
-    if (request.headers.get("x-swrlz-import") != "1" or not origin
-        or parsed.scheme not in ("https", "http")
-        or parsed.netloc != request.headers.get("host")
-        or parsed.username or parsed.password or parsed.path or parsed.query or parsed.fragment):
-        raise HTTPException(403, "Import requires a same-origin authenticated request")
+    # A custom header and strict same-origin check block cross-site uploads.
+    _archive_origin_guard(request)
     if request.headers.get("content-type", "").split(";")[0].lower() not in (
         "application/zip", "application/octet-stream", "application/x-zip-compressed"):
         raise HTTPException(415, "Upload a ChatGPT ZIP archive")
