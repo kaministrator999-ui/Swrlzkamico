@@ -924,6 +924,7 @@
           return "idle";
         }
         if(phase.includes("APPROVAL")||phase==="PROPOSAL_QUEUED")return "approval";
+        if(phase.startsWith("GITHUB_MODEL_")||phase==="GITHUB_PLAN_READY")return "thinking";
         if(phase.includes("ERROR")||phase.includes("FAILED"))return "error";
         if(phase.includes("ACTION")||phase.includes("TOOL")||phase.includes("ACTING")||phase.includes("EXECUT")||phase.includes("SEARCH")||phase.includes("FETCH")||phase.includes("PROPOSAL_AUTO_APPLIED"))return "acting";
         if(String(g?.text||"").length>0)return "responding";
@@ -1745,8 +1746,8 @@
         const onlineEvents=(Array.isArray(g.status)?g.status:[]).filter(item=>{
           const phase=String(item?.phase||item?.type||"").toUpperCase();
           const cats=Array.isArray(item?.categories)?item.categories.map(v=>String(v).toUpperCase()):[];
-          return cats.some(v=>v.includes("ONLINE_RESEARCH")||v.includes("SEARCH")||v.includes("FETCH")||v.includes("WEATHER"))||/(SEARCH|FETCH|WEATHER|RESEARCH)/.test(phase);
-        }).slice(-6);
+          return cats.some(v=>v.includes("ONLINE_RESEARCH")||v.includes("SEARCH")||v.includes("FETCH")||v.includes("WEATHER")||v==="GITHUB")||/(SEARCH|FETCH|WEATHER|RESEARCH|GITHUB)/.test(phase);
+        }).slice(-10);
         if(onlineEvents.length){
           if(!onlineTrail){onlineTrail=document.createElement("div");onlineTrail.className="station-online-trail";status.after(onlineTrail);}
           onlineTrail.replaceChildren();
