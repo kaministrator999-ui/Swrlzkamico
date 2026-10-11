@@ -279,7 +279,7 @@ def _restore_chat_from_store(s):
         return fresh
     return None
 
-def _refresh_account_chat(s):
+def _refresh_account_chat(s,force=False):
     """Reconcile idle account projections against the durable Google-owner store.
 
     Distinct HF workers have independent process-local _sessions dictionaries.
@@ -294,7 +294,14 @@ def _refresh_account_chat(s):
     generation=s.get("activeGeneration")
     if isinstance(generation,dict) and not generation.get("terminal"):
         return False
+    # The browser polls its in-process Station every 2s. Bound the external
+    # Redis reads independently; explicit writes, exports and focus refreshes
+    # can bypass this short cache. Never put the timer in durable chat data.
+    now=time.monotonic()
+    if not force and now-float(s.get("_lastAccountStoreCheck") or 0)<10:
+        return False
     fresh=account_chat_store.load_chat(owner)
+    s["_lastAccountStoreCheck"]=now
     if fresh is None:
         if int(s.get("revision") or 0)>0:
             raise HTTPException(503,"Account chat persistence temporarily unavailable; local state retained")
@@ -601,7 +608,7 @@ async def chatgpt_archive_import(request: Request):
 def sync(request:Request):
     key,s=_session(request)
     with _lock:
-        _refresh_account_chat(s)
+        _refresh_account_chat(s,force=request.query_params.get("fresh")=="1")
         response=JSONResponse(_snapshot(s))
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400,path="/")
     return response
@@ -657,7 +664,7 @@ def export_session(request:Request):
     """Export the verified user's account-owned chat history or anonymous session."""
     key,s=_session(request)
     with _lock:
-        _refresh_account_chat(s)
+        _refresh_account_chat(s,force=True)
         snapshot=_snapshot(s)
     durable=str(s.get("ownerGoogleId") or "").startswith("google:")
     document={"format":"swrlz-hf-session-export-v1","exportedAtUnixMs":int(time.time()*1000),
@@ -674,7 +681,7 @@ async def mutate(request:Request):
     google_owner=str((account or {}).get("id") or "")
     deleted_threads=[]
     with _lock:
-        _refresh_account_chat(s)
+        _refresh_account_chat(s,force=True)
         if int(body.get("expectedRevision",-1))!=s["revision"]:
             return JSONResponse(_snapshot(s),status_code=409)
         # Retain a rollback snapshot if the Redis compare-and-swap rejects this.
@@ -1510,7 +1517,7 @@ async def send(request:Request):
         try:recovered_project=project_thread_memory.load(google_owner,tid)
         except Exception:recovered_project=None
     with _lock:
-        _refresh_account_chat(s)
+        _refresh_account_chat(s,force=True)
         if s["activeGeneration"] and not s["activeGeneration"]["terminal"]:raise HTTPException(409,"Generation already active")
         old_threads=copy.deepcopy(s["threads"])
         old_current=s["currentId"]
