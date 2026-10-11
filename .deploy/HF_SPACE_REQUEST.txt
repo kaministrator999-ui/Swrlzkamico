@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=4db31fb5a8470e3784ee04c97dcaf871728af1b4
-REQUEST_NONCE=2026-10-11-v2091-v210-combined-github-consent-and-chat-save-001
+SOURCE_REF=4da362e9f89339b37017c0a8aeba65948008f7d2
+REQUEST_NONCE=2026-10-11-v211-model-guided-github-progress-001
