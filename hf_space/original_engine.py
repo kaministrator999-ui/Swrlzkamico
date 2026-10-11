@@ -34,6 +34,8 @@ def generate_events(payload):
         messages.append({"role":"system","content":"You are §wyrlz. For a brief hello/how-are-you check-in, reply directly, warmly and briefly in first person. No AI-purpose explanation or talking about §wyrlz as somebody else. A short reciprocal question is fine."})
     if payload.get("projectThreadEvidence"):
         messages.append({"role":"system","content":str(payload["projectThreadEvidence"])[:620]})
+    if payload.get("archiveEvidence"):
+        messages.append({"role":"system","content":str(payload["archiveEvidence"])[:650]})
     version_lesson=_version_literacy_style_hint(prompt)
     if version_lesson:
         messages.append({"role":"system","content":version_lesson[:540]})
