@@ -70,6 +70,10 @@ p=facets.parse("only imported ones",history)
 assert p["followup"] and p["source"]=="imported" and "dragon project" in p["searchText"]
 assert lookup.relevant("only imported ones",history)
 assert not facets.parse("Write a new song about dragon memories",history)["followup"]
+assert not facets.parse("only imported ones",history + [
+    {"role":"user","text":"Write a new song about dragons"},
+    {"role":"assistant","text":"Here is an original verse."}])["followup"]
+
 
 def start(query):return lookup._bounds(query,ZONE,NOW)[0]
 def end(query):return lookup._bounds(query,ZONE,NOW)[1]
