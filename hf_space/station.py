@@ -932,8 +932,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation"})
     try:
-        if model_id=="r39" and _generate is None and not (payload.get("githubStart") or payload.get("verifiedPrivateAnswer")):raise RuntimeError("R39 generator is not installed")
-        if model_id=="stock" and _stock_generate is None and not payload.get("verifiedPrivateAnswer"):raise RuntimeError("Original HF generator is not installed")
+        if model_id=="r39" and _generate is None and not (payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer")):raise RuntimeError("R39 generator is not installed")
+        if model_id=="stock" and _stock_generate is None and not (payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction")):raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
         # Server-verified private counts/disabled-recall notices are deterministic:
@@ -943,6 +943,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
         else:
             event_source=(github_connection.start_events(payload["githubStart"])
                           if isinstance(payload.get("githubStart"),dict)
+                          else github_connection.command_events(payload["githubAction"])
+                          if isinstance(payload.get("githubAction"),dict)
                           else dispatch(model_id,payload,_generate,_stock_generate,_large_generate,_coder_generate))
         for event in event_source:
             with _lock:
@@ -1488,7 +1490,7 @@ async def send(request:Request):
     route=next((r for r in routes() if r.model_id==model_id),None)
     prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
     # GitHub startup is Station-owned evidence retrieval and does not consume a model.
-    if route is None or (not route.available and not github_connection.is_start_request(prompt)):
+    if route is None or (not route.available and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt))):
         raise HTTPException(422,"Selected model is not configured")
     profile=body.get("profile","")
     user_profile=body.get("userProfile","")
@@ -1610,6 +1612,9 @@ async def send(request:Request):
     if github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
         payload["githubStart"]={"userId":str((verified_account or {}).get("id") or "")}
+    elif github_connection.is_github_command(prompt):
+        _, verified_account = _account_session(request)
+        payload["githubAction"]={"userId":str((verified_account or {}).get("id") or ""), "prompt":prompt}
 
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
