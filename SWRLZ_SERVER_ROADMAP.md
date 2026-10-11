@@ -1,3 +1,21 @@
+## UPDATE FINISHED — 2026-10-11 — v211 model-guided GitHub tools with live inference/action progress
+
+**Outcome:** EXACT SOURCE / GITHUB ACCOUNT+MODEL PLAN TESTS / HF OFFLINE / MOBILE CI **SUCCESS**; one guarded deployment to existing Hugging Face Space **SUCCESS**; affected module registry atomic readback **SUCCESS**; signed-in owner tool/progress behavioral acceptance **PENDING**.
+
+**Source:** [draft PR #104](https://github.com/kaministrator999-ui/Swrlzkamico/pull/104), published `feature/github-model-guided-progress-v211@4da362e9f89339b37017c0a8aeba65948008f7d2`, based on latest v209.1+v210 published source `4db31fb5a8470e3784ee04c97dcaf871728af1b4`. `hf_space/github_connection.py` handles model-planned strict READ-ONLY allowlist and retained server-verified Google OAuth scope/repo role checks; `hf_space/station.py` selects installed local inference generator and streams tool events; Chat `index.html` renders actual inference/tool phases. Private model output never exposed as chain-of-thought or executable authority, no paid per-call service, no automatic write scope. Exact writes remain one-time owner-confirmed v210 route. Native Chat save repair remains included. Chat source version 1.1.06.
+
+**Source CI at exact commit:** [GitHub account/model-tool tests #38172413647](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38172413647) **SUCCESS**, [HF offline #38172418055](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38172418055) **SUCCESS**, [mobile #38172418079](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38172418079) **SUCCESS**. Offline tests use synthetic model tool plans and simulated GitHub responses; no owner tokens/logs.
+
+**Guarded publication:** Canonical `main:.deploy/HF_SPACE_REQUEST.txt` commit `f05f32f2aa8dd071c4cfe864e34a2a5e493e86d0`, nonce `2026-10-11-v211-model-guided-github-progress-001`. [GitHub HF Actions #38172514064](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38172514064) **COMPLETED/SUCCESS**, exact source SHA matched. Existing Space `kamiloki/Swyrlz` new revision `e5760d09a5e30a5ba1cfba3b52c28a4127248e49`; predeploy rollback `e77d03f2263bd3be1734fe32aeda16c3ce74c6a9`. Release artifact `hf-release-checkpoint` ID `11714447048`, rollback artifact `hf-rollback-checkpoint` ID `11714731321`. Release remains `DEPLOYED_UNVERIFIED` until signed-in behavior is observed.
+
+**Runtime version authority:** Guarded atomic `runtime@2bda8d76f9b25ed9e2c5cda408dc1528bf4c32fa`, registered Repository Work 1.0.150→**1.0.151**, Server Runtime 2.3.362→**2.3.363**, Web Chat 1.5.101→**1.5.102**, LALM Engine 2.1.187→**2.1.188**. Google Account remains 1.0.14; no OAuth/Google identity change. VERSION.txt unchanged, other module authorities unchanged. All reread at matching values.
+
+**Full report:** [reports/V211_GITHUB_MODEL_GUIDED_PROGRESS_2026-10-11.md](reports/V211_GITHUB_MODEL_GUIDED_PROGRESS_2026-10-11.md).
+
+**Live user acceptance:** On existing Space signed into connected Google account try `@GitHub ask show my repo permissions and recent pull requests`, then `@GitHub permissions`. The natural-language request should show actual selected-model planning and read preflights (or explicit safe fallback), then GitHub tool and evidence statuses. Exact permission commands should not force slow model planning. User-controlled OAuth authorization and any GitHub write still require explicit consent; do not claim a live write was performed. Verify native Chat saving/reload separately.
+
+**Status:** FINISHED — VERIFIED ENGINEERING + GUARDED PUBLICATION / LIVE SIGNED-IN BEHAVIOR PENDING.
+
 ## UPDATE CHECKPOINT — 2026-10-11 — native §wyrlz newest-first sidebar and JSON export ordering defect
 
 **User screenshot/finding:** Authenticated Android §wyrlz Chat sidebar lists existing native threads in insertion order, with newer chats appearing toward the bottom. User observed this while previously believing new conversations were not saved. **Verified source cause:** v209.1/v210 and v211 Chat renderer iterated unsorted `chatThreads` from Station's append-only thread array; `/api/lalm_station/export` also returned the same raw array. This proves the apparent reverse ordering defect, but not that all earlier failed saves were successful.
