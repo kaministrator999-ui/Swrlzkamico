@@ -546,6 +546,8 @@ def generate_events(payload):
                 "A repeated failing executable candidate is not a repair; change strategy when the candidate or failure set stalls.")
     if payload.get("projectThreadEvidence"):
         system+="\n"+str(payload["projectThreadEvidence"])[:1650]
+    if payload.get("archiveEvidence"):
+        system+="\n"+str(payload["archiveEvidence"])[:1250]
     system+="\n"+_response_mode(prompt,programming)
     if not programming.get("codingTask"):
         social_style=_social_checkin_style_hint(prompt)
