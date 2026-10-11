@@ -77,6 +77,10 @@ def followup_anchor(prompt,history):
         older=str(message.get("text") or message.get("content") or "")[:600]
         if older and _QUESTION.search(older):
             return older
+        # Never jump over an unrelated intervening user question. A chain of
+        # short search refinements may still inherit the original query.
+        if older and not _FOLLOWUP.search(older):
+            return ""
     return ""
 
 
