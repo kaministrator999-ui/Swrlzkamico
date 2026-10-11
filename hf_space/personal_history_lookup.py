@@ -69,7 +69,69 @@ def _bounds(prompt, tz, now=None):
     today=base.date()
     day=None
     label=""
-    if "last night" in s:
+    interval=re.search(r"\b(?:between|from)\s+(20\d{2}-\d{2}-\d{2})\s+(?:and|to|through|until)\s+(20\d{2}-\d{2}-\d{2})\b",s)
+    rolling=re.search(r"\b(?:past|last)\s+(\d{1,2})\s+(days?|weeks?)\b",s)
+    month=re.search(r"\b(?:in|during|from)\s+("+"|".join(_MONTHS)+r")\s+(20\d{2})\b",s)
+    if interval:
+        try:
+            first=datetime.strptime(interval.group(1),"%Y-%m-%d").date()
+            final=datetime.strptime(interval.group(2),"%Y-%m-%d").date()
+        except ValueError:return None
+        if first>final or (final-first).days>366:
+            return (base.astimezone(timezone.utc),base.astimezone(timezone.utc),"invalid date range")
+        start=datetime.combine(first,clock.min,zone)
+        end=datetime.combine(final+timedelta(days=1),clock.min,zone)
+        label="between "+str(first)+" and "+str(final)
+        day=None
+    elif rolling:
+        amount=max(1,min(90,int(rolling.group(1))))
+        days=amount*(7 if rolling.group(2).startswith("week") else 1)
+        start=base-timedelta(days=days)
+        end=base
+        label="last "+str(amount)+" "+rolling.group(2)
+        day=None
+    elif "last weekend" in s:
+        monday=today-timedelta(days=today.weekday())
+        first=monday-timedelta(days=2)
+        start=datetime.combine(first,clock.min,zone)
+        end=start+timedelta(days=2)
+        label="last weekend"
+        day=None
+    elif "this weekend" in s:
+        first=today-timedelta(days=today.weekday())+timedelta(days=5)
+        start=datetime.combine(first,clock.min,zone)
+        end=start+timedelta(days=2)
+        label="this weekend"
+        day=None
+    elif "last month" in s or "this month" in s:
+        first=today.replace(day=1)
+        end=datetime.combine(first,clock.min,zone)
+        if "last month" in s:
+            previous=first-timedelta(days=1)
+            start=datetime.combine(previous.replace(day=1),clock.min,zone)
+            label="last month"
+        else:
+            start=end
+            end=base
+            label="this month"
+        day=None
+    elif "this week" in s:
+        first=today-timedelta(days=today.weekday())
+        start=datetime.combine(first,clock.min,zone)
+        end=base
+        label="this week"
+        day=None
+    elif month:
+        month_number=_MONTHS.index(month.group(1))+1
+        year=int(month.group(2))
+        first=datetime(year,month_number,1).date()
+        next_first=(first.replace(year=year+1,month=1) if month_number==12
+                    else first.replace(month=month_number+1))
+        start=datetime.combine(first,clock.min,zone)
+        end=datetime.combine(next_first,clock.min,zone)
+        label=month.group(1)+" "+str(year)
+        day=None
+    elif "last night" in s:
         day=today-timedelta(days=1)
         start=datetime.combine(day,clock(18),zone)
         end=datetime.combine(today,clock(6),zone)
@@ -125,6 +187,16 @@ def _bounds(prompt, tz, now=None):
             start=start.replace(hour=12);end=start.replace(hour=17)
         elif re.search(r"\b(?:night)\b",s):
             start=start.replace(hour=18);end=start+timedelta(hours=12)
+    # Optional local clock restriction on the specified calendar day or range.
+    exact_clock=re.search(r"\b(?:around|about|at|near)\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b",s)
+    if exact_clock:
+        hour=int(exact_clock.group(1))%12+(12 if exact_clock.group(3)=="pm" else 0)
+        minute=int(exact_clock.group(2) or "0")
+        if minute<=59:
+            target=datetime.combine(start.date(),clock(hour,minute),zone)
+            start=max(start,target-timedelta(minutes=60))
+            end=min(end,target+timedelta(minutes=60))
+            label+=" around "+exact_clock.group(0)
     end=min(end,base)
     if end<=start:return (base.astimezone(timezone.utc),base.astimezone(timezone.utc),label)
     return (start.astimezone(timezone.utc),end.astimezone(timezone.utc),label)
