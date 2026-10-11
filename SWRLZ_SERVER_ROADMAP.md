@@ -1,3 +1,23 @@
+## UPDATE FINISHED — 2026-10-11 — v208.1 private-history count and calendar follow-up
+
+**Outcome:** GOOGLE ACCOUNT/IMPORT CI PASSED / HF CANDIDATE CI PASSED / GUARDED SPACE PUBLICATION SUCCEEDED / OWNER'S LIVE ANDROID RECALL ACCEPTANCE PENDING.
+
+**Trigger:** user's mobile screenshot confirmed the imported archive still contains **2,556** stored ChatGPT conversations and their native chat export showed incorrect answers to account-specific thread counts, cumulative imported-message totals, and historical discussions. Initial v208 repair had already shipped. Continued on the same feature branch to fix extra natural-language month and error-fallback cases, preserving the user-owned encrypted archive, Google identity boundary and native thread snapshot.
+
+**Candidate:** `feature/private-account-facts-v208` final SHA `6a1e55af26dcfe0dc03dafc8e8aa19d251741f36`. v208.1 recognizes "five months ago" as well as "5 months ago" as a true local calendar-month search, filters date expressions out of lexical search terms, invalidates temporary count tallies upon completed ZIP imports, and reports private-history errors rather than letting the model guess. The v208 direct deterministic imported-thread `ZCARD` count and cumulative text-message status remain. No new public endpoint, transcript corpus or model training.
+
+**Final checks:** owner/Google account [#38155344415](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38155344415) **SUCCESS**; HF candidate [#38155344246](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38155344246) and repeat [#38155347697](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38155347697) **SUCCESS** at pinned SHA. Includes synthetic prompt forms from the observed acceptance failure, time zone-specific "five months ago" May 2026 validation, count/index/failed-search handling and existing legacy integration checks.
+
+**Guarded HF release:** [#38155453196](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38155453196) **SUCCESS** on existing `kamiloki/Swyrlz` Space. New revision `645229dfbc1c4d29329c682458a9e860910a2577`. Rollback revision `75adf3fc54a6da99b729fe532308c190f64919ce`. Release artifact `hf-release-checkpoint` ID `11708562081` reports `DEPLOYED_UNVERIFIED`: workflow publication has been validated, signed-in Android account recall not independently verified.
+
+**Versions:** Repository Work **1.0.148**, Server Runtime **2.3.360**, LALM Engine **2.1.185**; Web Chat **1.5.99** and Google Account Architecture **1.0.12** unchanged; Online Research and Deployment Control unchanged.
+
+**Owner acceptance:** Refresh original §wyrlz Chat while signed in, ask "How many ChatGPT conversations did I import?" (must use actual account index—previous screenshot indicated 2,556, but never hardcode), then "How many imported messages are stored?" (may first report background count). Enable Settings → ChatGPT imports → private memory and wait for Ready before requesting yesterday's chats or chats from five months ago. Missing evidence should be reported without fabricated matches.
+
+**Full report:** [reports/V2081_PRIVATE_HISTORY_CALENDAR_FOLLOWUP_2026-10-11.md](reports/V2081_PRIVATE_HISTORY_CALENDAR_FOLLOWUP_2026-10-11.md).
+
+**Status:** FINISHED / GUARDED PUBLISHED / LIVE OWNER ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-11 — v208.1 precise historical-date follow-up
 
 **Source baseline:** Live v208 `e85859fc558646e10d3f2e94212d147817974b5b`, published to `kamiloki/Swyrlz` Space revision `75adf3fc54a6da99b729fe532308c190f64919ce`; live Android owner acceptance remains unverified. The original CSV/JSON conversation export and 2,556 encrypted imported ChatGPT records are never reuploaded, copied into source or mutated.
