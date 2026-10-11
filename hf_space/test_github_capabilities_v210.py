@@ -120,6 +120,28 @@ def test_issue_write_requires_separate_user_confirmation_and_is_one_time():
         assert "already used" in gh._github_command(OWNER,"@GitHub confirm "+token2)
 
 
+def test_access_messages_make_grant_boundary_explicit_and_keep_unknowns_unknown():
+    with mock.patch.object(gh, "_config", return_value={}), mock.patch.object(gh, "_load", return_value=None):
+        disconnected = gh._github_command(OWNER, "@GitHub issues")
+        assert "cannot silently obtain" in disconnected and "approve access at GitHub" in disconnected
+        assert "No permissions have been granted" in disconnected
+    with mock.patch.object(gh, "_config", return_value={}), \
+         mock.patch.object(gh, "_load", return_value=RECORD), \
+         mock.patch.object(gh, "_api", side_effect=HTTPException(404, "Not Found")):
+        unknown=gh._github_command(OWNER, "@GitHub issues")
+        assert "could not be verified" in unknown
+        assert "Effective read/write permissions remain unverified" in unknown
+        assert "You must explicitly" not in unknown or "YOU must explicitly" in unknown
+        assert "No repository access or OAuth permission was granted or changed" in unknown
+    with mock.patch.object(gh, "_api", return_value=repo_info()):
+        denied=gh._effective_access(RECORD, REPO, "branch-write")
+        explanation=gh._permission_message(denied)
+        assert "Available: read" in explanation and "has NOT been granted" in explanation
+        assert "approve the requested permission at GitHub" in explanation
+        assert "cannot silently grant itself read or write access" in explanation
+        assert "authorizeUrl" not in str(gh._effective_access(RECORD, REPO, "read"))
+
+
 def test_no_silent_approval_or_untrusted_code_execution():
     source=Path(__file__).with_name("github_connection.py").read_text()
     assert "GETDEL" in source and "issue-write" in source and "branch-write" in source
@@ -134,5 +156,6 @@ if __name__=="__main__":
     test_prompt_routing_requires_anchored_user_command()
     test_read_continues_when_write_scope_absent_and_denial_never_writes()
     test_issue_write_requires_separate_user_confirmation_and_is_one_time()
+    test_access_messages_make_grant_boundary_explicit_and_keep_unknowns_unknown()
     test_no_silent_approval_or_untrusted_code_execution()
     print("GitHub v210 scoped permissions and confirmed-write tests passed")
