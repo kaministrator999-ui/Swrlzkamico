@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-10 — v203 Android-interrupted ChatGPT import recovery
+
+**Trigger:** the owner completed the ~55 MiB browser upload from a real Android device, observed ~20 indexed conversations every 3–5 seconds, and then switched to the ChatGPT app and back after approximately 1,300 processed conversations. The v202 browser streaming request stopped, its client progress reset and no import summary appeared. This is valuable live acceptance evidence: v202 deployment was successful but unattended mobile import was not.
+
+**Root cause / ownership:** v202 processed the ZIP inside the browser's long-lived HTTP streaming response; leaving/suspending that response could cancel enumeration and lose its progress display even though per-conversation encrypted Redis commits were already durable. 256 KiB sequential chunks also created ~210 request/response cycles for the owner's ZIP.
+
+**v203 correction:** start a detached, account-owned server worker on ZIP completion and return HTTP 202 immediately; keep bounded job counters with 7-day retention in per-Google-account Redis records; reconnect via authenticated /status to continue polling after navigation; report prior saved archive counts even for an old v202 interrupted job. Use 2 MiB chunks, owner-scoped upload offset GET and idempotent retry after lost acknowledgments; allow a reselected same file to resume incomplete transport. Safely reimport after server restarts by union of original conversation/message IDs; temporary ZIPs remain non-durable, so a host restart still requires reselecting the ZIP, never discarding committed history. Deletion and new imports are blocked during an active account job. No private transcript contents are added to GitHub or diagnostic receipts.
+
+**Acceptance criteria:** disconnected browser cannot cancel a running import in the same live host process; after return, the UI reports either ongoing progress, complete, or interrupted status and durable archive total. A repeat import never duplicates prior conversation/message IDs. Keep verified Google scope and native §wyrlz conversations unaffected. Test synthetic account isolation and detached finish; report full owner ZIP/browser acceptance separately.
+
+**Status:** IN PROGRESS — source patch and detached job regression validation performed; guarded release and owner re-test pending.
+
 ## UPDATE FINISHED — 2026-10-10 — v202 ChatGPT export import with account-owned incremental archive
 
 **Result: SOURCE COMPLETE / SYNTHETIC + EXISTING HF CI SUCCESS / GUARDED HUGGING FACE SPACE PUBLICATION SUCCESS / PRIVATE REAL-EXPORT AND LIVE MOBILE ACCEPTANCE PENDING.** User requested Settings import of exported ChatGPT conversations and repeat imports that merge newly updated messages rather than duplicating conversations. The importer and read-only archive browser are deployed as v202, but the user's August 30 export has **not** been imported by this engineering task and has not left this conversation's private file workspace.
