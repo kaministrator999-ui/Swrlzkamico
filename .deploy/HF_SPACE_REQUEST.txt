@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/grounded-version-recall-v201
-REQUEST_NONCE=2026-10-10-v201-grounded-version-recall-001
+SOURCE_REF=feature/google-chatgpt-archive-import-v202
+REQUEST_NONCE=2026-10-10-v202-chunked-google-history-import-001
