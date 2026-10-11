@@ -556,14 +556,33 @@ def _current_connection(request):
     c = _config()
     record = _load(c, user)
     if record is None:
-        raise HTTPException(409, "Connect GitHub to your signed-in Google account first")
+        raise HTTPException(409, "GitHub is not connected to this Google account. §wyrlz cannot authorize access itself: choose Connect GitHub and approve the requested access with GitHub.")
     return user, c, record
 
 
 @router.get("/api/github/capabilities")
 def capabilities(request: Request, operation: str = "read"):
     _user, _config_data, record = _current_connection(request)
-    return _effective_access(record, _repo_name(record.get("repo")), operation)
+    repo = _repo_name(record.get("repo"))
+    try:
+        return _effective_access(record, repo, operation)
+    except HTTPException as exc:
+        if exc.status_code in (401, 403, 404):
+            raise HTTPException(409, _unverified_read_message(repo)) from None
+        raise
+
+
+def _unverified_read_message(repo):
+    """Never guess a missing scope when GitHub has not verified the repository."""
+    return (
+        "GitHub access to " + repo + " could not be verified. No repository access "
+        "or OAuth permission was granted or changed. This can mean a revoked/expired "
+        "connection, a private repository outside the token's grants, an unavailable "
+        "repository, or a GitHub access restriction. Verify your selected repository "
+        "and GitHub connection. If private access is needed, YOU must explicitly "
+        "authorize it through GitHub; §wyrlz cannot obtain it silently. "
+        "Effective read/write permissions remain unverified for this request."
+    )
 
 
 def _permission_message(result):
@@ -572,7 +591,10 @@ def _permission_message(result):
     if result.get("missing"):
         message += "\nOnly this action needs: " + result["missing"] + "."
     if result.get("authorizeUrl"):
-        message += "\nAuthorize only when needed: " + result["authorizeUrl"]
+        message += ("\nThis access has NOT been granted. You must explicitly open "
+                    + result["authorizeUrl"]
+                    + " and approve the requested permission at GitHub. "
+                    "§wyrlz cannot silently grant itself read or write access.")
     return message
 
 
@@ -607,7 +629,7 @@ def _github_command(user, prompt):
     c = _config()
     rec = _load(c, user)
     if rec is None:
-        return "GitHub is not connected to this Google account. Connect it in Chat settings."
+        return ("GitHub is not connected to this Google account. §wyrlz cannot silently obtain even authenticated read access, let alone write access. Open Chat settings, choose Connect GitHub, and approve access at GitHub. No permissions have been granted by this request.")
     repo = _repo_name(rec.get("repo"))
     cmd = re.sub(r"^@github\s+", "", str(prompt or "").strip(), flags=re.I)
     lower = cmd.lower()
@@ -646,7 +668,12 @@ def _github_command(user, prompt):
 
     operation = ("issue-write" if lower.startswith("create issue ") else
                  "branch-write" if lower.startswith("create branch ") else "read")
-    check = _effective_access(rec, repo, operation)
+    try:
+        check = _effective_access(rec, repo, operation)
+    except HTTPException as exc:
+        if exc.status_code in (401, 403, 404):
+            return _unverified_read_message(repo)
+        raise
     if not check["allowed"]:
         return _permission_message(check)
     if lower == "help":
@@ -660,7 +687,9 @@ def _github_command(user, prompt):
         return ("## Verified GitHub access\nRepository: " + repo +
                 "\nAvailable operations: " + ", ".join(check["available"]) +
                 "\nToken grant: " + check["tokenAccess"] +
-                "\nWrite requests are rechecked and require a separate confirmation. No upgrade required for these available operations.")
+                "\nThese permissions were observed, not requested or changed. "
+                "Any new OAuth access requires your explicit GitHub approval. "
+                "Write operations also require separate confirmation in Chat.")
     proposed = None
     if lower.startswith("create issue "):
         parts = cmd[13:].split(" :: ", 1)
