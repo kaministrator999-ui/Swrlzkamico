@@ -51,6 +51,60 @@
     const refresh = el("button", "cga-action", "Refresh imported conversations");
     refresh.type = "button";
     pane.appendChild(refresh);
+    const memoryControl = el("label", "cga-control");
+    memoryControl.style.display = "flex";
+    memoryControl.style.gap = "9px";
+    memoryControl.style.alignItems = "center";
+    const memoryEnabled = el("input");
+    memoryEnabled.type = "checkbox";
+    memoryEnabled.setAttribute("aria-label", "Use imported ChatGPT conversations as §wyrlz memory");
+    memoryControl.append(memoryEnabled, el("span", "",
+      "Let §wyrlz recall relevant details from my imported conversations"));
+    pane.appendChild(memoryControl);
+    const memoryStatus = el("div", "cga-status",
+      "Imported memories are off until you enable them. No model weight training.");
+    memoryStatus.setAttribute("role", "status");
+    pane.appendChild(memoryStatus);
+    async function refreshMemory() {
+      try {
+        const response = await fetch("/api/chatgpt_archive/memory",
+          {credentials:"same-origin",cache:"no-store"});
+        if (!response.ok) throw Error(response.status===401 ?
+          "Sign in with Google to enable memory." : "Memory status HTTP "+response.status);
+        const state = await response.json();
+        memoryEnabled.checked = !!state.enabled;
+        memoryStatus.textContent = !state.enabled
+          ? "Off. Imported conversations stay private and read-only; §wyrlz does not retrieve them."
+          : state.state === "ready"
+            ? "Ready: " + state.indexed + " conversations indexed for private contextual recall."
+            : state.state === "building"
+              ? "Preparing private memory index on the server: " + state.indexed +
+                " / " + state.total + ". This continues while you leave Chat."
+              : state.state === "error"
+                ? "Memory preparation interrupted. Switch off, then on to retry."
+                : "Memory is enabled. Private indexing is queued.";
+      } catch (err) { memoryStatus.textContent=err.message; }
+    }
+    memoryEnabled.addEventListener("change", async () => {
+      const desired=!!memoryEnabled.checked;
+      memoryEnabled.disabled=true;
+      try {
+        const res=await fetch("/api/chatgpt_archive/memory",{
+          method:"POST",credentials:"same-origin",cache:"no-store",
+          headers:{"Content-Type":"application/json","X-Swrlz-Import":"1"},
+          body:JSON.stringify({enabled:desired})
+        });
+        if (!res.ok) throw Error("Could not save memory preference (HTTP "+res.status+").");
+        await refreshMemory();
+      } catch (err) {
+        memoryEnabled.checked=!desired;
+        memoryStatus.textContent=err.message;
+      } finally { memoryEnabled.disabled=false; }
+    });
+    setInterval(() => {
+      if (pane.classList.contains("active") && memoryEnabled.checked && !memoryEnabled.disabled)
+        refreshMemory();
+    }, 5000);
     const eraseAll = el("button", "cga-action", "Delete all imported conversations");
     eraseAll.type = "button";
     pane.appendChild(eraseAll);
@@ -59,7 +113,7 @@
     status.setAttribute("aria-live", "polite");
     pane.appendChild(status);
     pane.appendChild(el("p", "cga-sub",
-      "Imports save visible user/assistant text only. Images, audio, hidden reasoning, attachments and alternate branches are not imported. Nothing is shared with models or training automatically."));
+      "Imports save visible user/assistant text only. Images, audio, hidden reasoning, attachments and alternate branches are not imported. Relevant older excerpts may be used as model context only if you enable memory above; imported history is never used for weight training."));
     const listing = el("div", "cga-list");
     pane.appendChild(listing);
     const pager = el("div");
@@ -205,8 +259,9 @@
       document.querySelectorAll(".settings-pane").forEach(n => n.classList.toggle("active", n === pane));
       offset = 0;
       load().then(checkJob);
+      refreshMemory();
     });
-    refresh.addEventListener("click", () => {offset=0;load().then(checkJob);});
+    refresh.addEventListener("click", () => {offset=0;load().then(checkJob);refreshMemory();});
     eraseAll.addEventListener("click", async () => {
       if (busy || !window.confirm("Permanently delete ALL imported ChatGPT conversations from your §wyrlz account? Your native chats are not affected.")) return;
       if (!window.confirm("Confirm deletion of every imported ChatGPT archive conversation. This cannot be undone.")) return;
