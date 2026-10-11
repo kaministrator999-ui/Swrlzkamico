@@ -1,3 +1,21 @@
+## UPDATE STARTED — 2026-10-11 — v211.2 show persisted native Chat immediately on first accepted user message
+
+**Owner acceptance:** v211.1 mobile scroll, Versions placement and native newest-first Chats now reported working. New issue: the first chat thread is displayed only after AI inference completes, instead of immediately after first user message is accepted. Uploaded private Chat JSON also demonstrates separate response-quality failures; do not place the private messages/transcripts into the repository or silently turn this bounded UI task into a model rewrite.
+
+**Exact source diagnosis:** Existing `hf_space/station.py:/api/lalm_station/send` writes the first user message to verified Google-owner encrypted Redis CAS and only THEN returns 202 Accepted; inference runs independently. Client `chat/§wyrlz/index.html` displays the local submitted turn but holds the created thread in `pendingDraftThread`, excluded from `renderThreads` `chatThreads` view until subsequent synchronization. This is a client projection timing bug, not need for a new persistence system.
+
+**Primary Focus / Focus Group:** native Chat first-send visibility; clean-room Web Chat and Station durable CAS semantics. Preserve §wyrlz v211.1 mobile chronology/Versions access, v211 model-guided GitHub permissions, v209.1 encrypted native storage, imported archive, model weights and unrelated ongoing §E release work.
+
+**Isolated candidate:** [draft PR #108](https://github.com/kaministrator999-ui/Swrlzkamico/pull/108), `fix/native-chat-first-send-ack-v2112@f81ffd43647a8796feb47ebd6c3c0ad80f5df545`, based on exact v211.1 `fix/native-chat-mobile-sidebar-access-v2111@2284fccb589625449fc83405e170fcd428864834`. On matching 202 request ACK only, promote the already-accepted first thread into the view list and immediately render it; asynchronously reconcile server state while model inference streams. No client-side save, extra CAS commit, duplicate thread or pre-ack false saved state. Chat source version `1.1.07→1.1.08`.
+
+**Test receipts:** [Google account/integrity #38174752781](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38174752781) SUCCESS; Node test asserts ACK gating, no phantom/duplicate and ordering before streamed inference; Python verifies the actual Station POST saves first user message, returns 202, and immediately supplies a retrievable conversation while inference is still nonterminal. [HF candidate #38174756719](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38174756719) SUCCESS; [mobile integrity #38174756722](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38174756722) SUCCESS.
+
+**Independent inference-quality observation:** Private owner export shows social greetings incorrectly answered as meta-analysis or identity documents, synthetic dialogue not grounded in actual turns, and web retrieval triggered for an ordinary greeting. These motivate a separate, verified intent/role/online-trigger follow-up after this release; never copy user's private transcript into a public code fixture. No model-routing change in v211.2.
+
+**Next:** verify no concurrent deployment to `kamiloki/Swyrlz`, publish ONE existing guarded HF source request at exact tested SHA, collect terminal revision/rollback receipts, atomically advance affected registered runtime module versions and Roadmap FINISHED. Request Android first-send drawer appearance *while inference is running*, reload same Google account, and ensure no phantom chat on rejected send. Do not mark known-good without actual user verification.
+
+**Status:** SOURCE AND CI VERIFIED / DEPLOYMENT PENDING / LIVE ACCOUNT ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-11 — v211.1 native Chat newest-first and mobile Versions overlap repair
 
 **Outcome:** SOURCE BUG CONFIRMED / GITHUB ACCOUNT+MOBILE+HF CI SUCCESS / CANONICAL GUARDED SPACE DEPLOY SUCCESS / AFFECTED RUNTIME REGISTRY VERIFIED / ACTUAL ANDROID OWNER ACCEPTANCE PENDING.
