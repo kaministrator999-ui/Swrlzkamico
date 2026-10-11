@@ -1,0 +1,29 @@
+name: 700M Songwriting Research Gates
+on:
+  pull_request:
+    paths:
+      - 'training/700m/songwriting/**'
+      - '.github/workflows/700m-songwriting-research.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  corpus-and-benchmark-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile offline songwriting research source
+        run: python -m compileall -q training/700m/songwriting
+      - name: Run fail-closed corpus and form tests without model download
+        run: python -m unittest discover -v -s training/700m/songwriting -p test_songwriting.py
+      - name: Prove no runtime or production model references changed
+        run: |
+          test -f training/700m/songwriting/benchmark_first_pass.py
+          test -f training/700m/songwriting/train_songwriting_lora.py
+          test -f training/700m/songwriting/prompts.jsonl
