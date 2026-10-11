@@ -135,7 +135,7 @@ def test_two_browser_cached_worker_refresh_and_non_destructive_conflicts():
         assert [t["id"] for t in worker_a["threads"]]==["threadA","threadB","threadC"]
 
         # An old revision is never allowed to replace either browser's work.
-        stale={"revision":3,"ownerGoogleId":OWNER,"currentId":"threadA",
+        stale={"revision":2,"ownerGoogleId":OWNER,"currentId":"threadA",
                "threads":[make_thread("Stale overwrite attempt")]}
         assert not store.save_chat(OWNER,stale,1)
         assert len(store.load_chat(OWNER)["threads"])==3
