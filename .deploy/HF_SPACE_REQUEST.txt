@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/google-chatgpt-archive-import-v202
-REQUEST_NONCE=2026-10-10-v203-android-detached-import-recovery-001
+SOURCE_REF=feature/chatgpt-archive-sidebar-v204
+REQUEST_NONCE=2026-10-10-v204-archive-sidebar-toggle-001
