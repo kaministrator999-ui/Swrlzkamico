@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_run:
-    workflows: ["Deploy §wyrl§ Engine v9.7 to Hugging Face"]
+    workflows: ["Deploy §wyrl§ Engine v9.8 to Hugging Face"]
     types: [completed]
     branches: [main]
 permissions:
@@ -73,7 +73,8 @@ jobs:
                            'scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json',
                            'scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json',
                            'scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json',
-                           'scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json'):
+                           'scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json',
+                           'scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json'):
               if authored in source_paths:expected_assets.add(authored)
           expected_assets.update(path for path in source_paths if path.startswith('assets/anime/') and path.endswith('.png'))
           assert set(receipt['assets'])==expected_assets,'Bundled asset set differs from committed source'

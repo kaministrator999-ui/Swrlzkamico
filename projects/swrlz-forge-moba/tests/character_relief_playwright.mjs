@@ -41,7 +41,7 @@ async function start(page){
   await page.waitForFunction(()=>window.SWYRL_ENGINE_RELIEF?.renderStatus&&window.SWYRL_ENGINE_RIG?.renderStatus&&
     window.SWYRL_ENGINE_SOCKETS?.model&&window.SWYRL_ENGINE_ANIMATION&&window.SWYRL_ENGINE_STORYBOARD,
     undefined,{timeout:60000,polling:100});
-  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v9.7','Staff acceptance loaded a different engine release');
+  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v9.8','Staff acceptance loaded a different engine release');
   await page.waitForFunction(()=>{const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
     return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000,polling:100});
   await frames(page);
@@ -210,7 +210,8 @@ function pngPixels(buffer){
     const prediction=filter===0?0:filter===1?a:filter===2?b:filter===3?Math.floor((a+b)/2):filter===4?paeth(a,b,c):NaN;
     assert.ok(Number.isFinite(prediction),'Unknown screenshot PNG filter');pixels[index]=(raw[y*(stride+1)+x+1]+prediction)&255;
   }
-  return {width,height,rgb:(x,y)=>Array.from(pixels.subarray((y*width+x)*channels,(y*width+x)*channels+3))};
+  return {width,height,rgb:(x,y)=>Array.from(pixels.subarray((y*width+x)*channels,(y*width+x)*channels+3)),
+    alpha:(x,y)=>channels===4?pixels[(y*width+x)*channels+3]:255};
 }
 function transformed(point,matrix){
   const [x,y,z]=point,w=matrix[3]*x+matrix[7]*y+matrix[11]*z+matrix[15];
@@ -347,6 +348,146 @@ function ornamentFollows(frames,label){
       'An ornament drifts relative to the moving pole: '+label+' '+original.id,1e-6);
   }
 }
+async function fullStaffSource(page){
+  const response=await page.request.get(base+'/assets/anime/kami-full-staff.png');
+  assert.equal(response.status(),200,'The complete painted staff artwork is not packaged');
+  return pngPixels(await response.body());
+}
+function fullStaffGeometry(render,source,label){
+  const grip=render.staffGrip,full=grip?.fullStaff,shaft=grip?.shaftGeometry;
+  assert.equal(full?.style,'painted-full-v1','Kami is still holding a separate small wand above a pole: '+label);
+  assert.equal(full.asset,'assets/anime/kami-full-staff.png','Staff card uses the old isolated crest artwork: '+label);
+  assert.equal(grip.ornament,null,'Full painted staff has duplicate collars over its integrated shaft: '+label);
+  assert.equal(full.source.width,source.width,'Staff source width differs from its actual PNG: '+label);
+  assert.equal(full.source.height,source.height,'Staff source height differs from its actual PNG: '+label);
+  const crop=full.source.crop,card=full.card,core=full.core,matrix=card.matrixWorld;
+  assert.ok(crop.x0>=0&&crop.y0>=0&&crop.x1<=source.width&&crop.y1<=source.height&&crop.x1>crop.x0&&crop.y1>crop.y0,
+    'Complete staff artwork has an invalid source crop: '+label);
+  assert.ok(card.width>.7&&card.height>4.5&&card.height<6.5,'The complete painted staff still has wand proportions: '+label);
+  close(card.width/card.height,(crop.x1-crop.x0)/(crop.y1-crop.y0),'The staff card stretches its painted proportions: '+label,1e-6);
+  assert.ok(card.frontMesh&&card.backMesh&&card.edgeMesh&&new Set([card.frontMesh,card.backMesh,card.edgeMesh]).size===3,
+    'Complete staff lacks separate painted front, back and paper cut edge: '+label);
+  assert.ok(matrix?.length===16&&matrix.every(Number.isFinite)&&card.vertices?.length>=24,
+    'Complete staff has no actual transformed card geometry: '+label);
+  for(const vertex of card.vertices){
+    assert.ok(vertex.local?.length===3&&vertex.world?.length===3&&vertex.local.every(Number.isFinite)&&vertex.world.every(Number.isFinite),
+      'Complete staff contains a non-finite actual vertex: '+label);
+    close(distance(transformed(vertex.local,matrix),vertex.world),0,'The painted staff does not follow its real card transform: '+label,1e-6);
+  }
+  assert.equal(shaft?.type,'CylinderGeometry','Complete staff has no physical round core inside the grip: '+label);
+  assert.equal(core.radialSegments,24,'Complete staff core has a box cross-section: '+label);
+  close(core.radius*2,shaft.diameter,'Painted staff core width ignores its actual cylinder: '+label,1e-7);
+  assert.ok(shaft.diameter>=.10&&shaft.diameter<=.15,'Complete staff core is too narrow or has become a broad block: '+label);
+  const span=core.sourceGripSpan;
+  assert.ok(Number.isInteger(span?.pixelY)&&Number.isInteger(span.minX)&&Number.isInteger(span.maxX)&&span.maxX>=span.minX,
+    'The staff core does not measure the actual painted grip width: '+label);
+  for(let x=span.minX;x<=span.maxX;x++)assert.ok(source.alpha(x,span.pixelY)>=235,
+    'The fitted staff core measures transparent grip margin: '+label);
+  close(span.opaqueWidth,span.maxX-span.minX+1,'The staff grip width ignores actual opaque source pixels: '+label,1e-7);
+  close(span.widthLocal,span.opaqueWidth*card.width/(crop.x1-crop.x0),'Staff grip width ignores its actual painted card scale: '+label,1e-7);
+  assert.ok(shaft.diameter<=span.widthLocal*1.02,'The round core protrudes beyond the painted staff grip: '+label);
+  assert.ok(core.matrixWorld?.length===16&&core.matrixWorld.every(Number.isFinite),'The full staff core lacks its actual transform: '+label);
+  assert.ok(core.foot&&core.foot.meshUUID===core.footMesh&&core.foot.geometryType==='LatheGeometry'&&core.foot.vertices?.length>=48,
+    'The complete painted staff shoe has no measured round tapered backing: '+label);
+  let coreFootY=Infinity;
+  for(const vertex of core.foot.vertices){
+    assert.ok(vertex.local?.length===3&&vertex.world?.length===3&&vertex.local.every(Number.isFinite)&&vertex.world.every(Number.isFinite),
+      'The tapered staff shoe contains a non-finite actual vertex: '+label);
+    close(distance(transformed(vertex.local,core.matrixWorld),vertex.world),0,'The tapered shoe does not follow its real staff core transform: '+label,1e-6);
+    assert.ok(Math.hypot(vertex.local[0],vertex.local[2])<=core.radius+1e-6,'The shoe expands into a box beneath the painted staff: '+label);
+    coreFootY=Math.min(coreFootY,vertex.local[1]);
+  }
+  const physicalPoleLength=core.endpointsLocal[1][1]-coreFootY;
+  assert.ok(physicalPoleLength/card.height>.65&&physicalPoleLength/card.height<.9,
+    'The painted crest is not integrated with a full-length round pole and tapered foot: '+label);
+  close(core.gripLocal[1]-coreFootY,core.paintedFootReach,'The painted shoe reach ignores its actual backing vertices: '+label,1e-6);
+  for(let index=0;index<2;index++){
+    close(distance(transformed(core.endpointsLocal[index],core.matrixWorld),core.endpointsWorld[index]),0,
+      'The full staff endpoints ignore actual core geometry: '+label,1e-6);
+    close(distance(core.endpointsWorld[index],index?grip.shaftTopWorld:grip.shaftBaseWorld),0,
+      'The painted staff core and measured shaft endpoints differ: '+label,1e-6);
+  }
+  close(core.height,distance(core.endpointsLocal[0],core.endpointsLocal[1]),'Full staff core height does not measure its actual endpoints: '+label,1e-6);
+  close(distance(transformed(core.gripLocal,core.matrixWorld),grip.shaftGripWorld),0,
+    'Full painted staff core misses its actual grip point: '+label,1e-6);
+  close(grip.gripError,distance(grip.gripWorld,grip.shaftGripWorld),'Painted staff grip error ignores actual sockets: '+label,1e-7);
+  close(grip.shaftMountError,distance(grip.headStemAnchorWorld,grip.shaftMountWorld),'Painted staff stem mount ignores actual sockets: '+label,1e-7);
+  assert.ok(grip.gripError<1e-5&&grip.shaftMountError<1e-5&&grip.headStemAxisError<1e-5,
+    'The complete painted staff separates from its hand or upper stem: '+label);
+  assert.ok(full.poleFrontClearance>.005,'The round core obscures the painted pole inside the grip: '+label);
+  assert.ok(grip.naturalGrip?.layered&&grip.fingerFrontClearance>.005,'The fingers do not wrap in front of the complete staff: '+label);
+  for(const [field,sign] of [['palmSamples',-1],['fingerSamples',1]]){
+    assert.ok(grip.naturalGrip[field]?.length>=3,'Complete staff has no measured '+field+' around its grip: '+label);
+    for(const sample of grip.naturalGrip[field]){
+      const clearance=distance(grip.naturalGrip.cameraWorld,sample.shaftFrontWorld)-distance(grip.naturalGrip.cameraWorld,sample.world);
+      close(sample.frontClearance,clearance,'Painted staff grip layering ignores actual surfaces: '+label,1e-7);
+      assert.ok(clearance*sign>.001,'Complete staff is not between its rear palm and front fingers: '+label);
+    }
+  }
+  assert.deepEqual(full.regions.map(region=>region.id).sort(),['crest','gripContact','lowerPole','neck','shoe','upperPole'],
+    'The complete staff does not measure its crest, integrated stem, grip and lower pole separately: '+label);
+  const checkPaintedSample=(sample,sampleLabel)=>{
+    assert.ok(sample.pixel?.length===2&&sample.pixel.every(Number.isInteger)&&sample.pixel[0]>=0&&sample.pixel[0]<source.width&&
+      sample.pixel[1]>=0&&sample.pixel[1]<source.height,'A painted staff sample has no actual source pixel: '+sampleLabel);
+    const sourceRGB=source.rgb(...sample.pixel);
+    assert.ok(sample.rgb?.length===3&&sample.rgb.every((value,index)=>Math.abs(value-sourceRGB[index])<=1),
+      'Painted staff RGB differs from the actual supplied PNG beyond canvas alpha-rounding: '+sampleLabel);
+    close(sample.alpha,source.alpha(...sample.pixel)/255,'Painted staff alpha differs from the actual supplied PNG: '+sampleLabel,1e-7);
+    assert.ok(sample.alpha>.9,'Complete staff samples transparent margin instead of painted ink: '+sampleLabel);
+    const expectedX=((sample.pixel[0]+.5-crop.x0)/(crop.x1-crop.x0)-.5)*card.width,
+      expectedY=(.5-(sample.pixel[1]+.5-crop.y0)/(crop.y1-crop.y0))*card.height;
+    close(sample.local[0],expectedX,'Staff sample is detached from its source-image X: '+sampleLabel,card.width/(crop.x1-crop.x0)*.501);
+    close(sample.local[1],expectedY,'Staff sample is detached from its source-image Y: '+sampleLabel,card.height/(crop.y1-crop.y0)*.501);
+    close(distance(transformed(sample.local,matrix),sample.world),0,'Painted staff ink is not on the actual transformed card: '+sampleLabel,1e-6);
+    assert.ok(sample.screen?.length===3&&sample.screen.every(Number.isFinite),'Painted staff ink has no actual camera projection: '+sampleLabel);
+  };
+  for(const region of full.regions){
+    assert.ok(region.samples.length>=3,'Complete staff has no high-alpha painted samples in '+region.id+': '+label);
+    for(const sample of region.samples)checkPaintedSample(sample,label+' '+region.id);
+  }
+  assert.ok(full.spine?.length>=35,'The complete staff has no measured painted continuity from crest to shoe: '+label);
+  for(const sample of full.spine)checkPaintedSample(sample,label+' painted spine');
+  const poleSpine=full.spine.filter(sample=>sample.pixel[1]>=full.source.anchors.shaftY).sort((a,b)=>a.pixel[1]-b.pixel[1]);
+  assert.ok(poleSpine.length>=25&&poleSpine[0].pixel[1]<=full.source.anchors.shaftY+64&&poleSpine.at(-1).pixel[1]>=crop.y1-64,
+    'The integrated painted pole stops at the hand or misses its upper stem/lower shoe: '+label);
+  for(let index=1;index<poleSpine.length;index++)assert.ok(poleSpine[index].pixel[1]-poleSpine[index-1].pixel[1]<=64,
+    'The full staff has a transparent break between its crest and lower pole: '+label);
+  return full;
+}
+async function fullStaffOnScreen(page,render,label){
+  const full=render.staffGrip.fullStaff,buffer=await page.locator('canvas:visible').first().screenshot(),image=pngPixels(buffer),measured=[];
+  assert.ok(render.staffGrip.gripFacingRight&&render.staffGrip.wristScreen[0]<render.staffGrip.gripScreen[0],
+    'Kami’s hand does not enter from the viewer’s left and wrap right around the complete staff: '+label);
+  for(const id of ['crest','neck','upperPole','lowerPole']){
+    const region=full.regions.find(region=>region.id===id);let matches=0;
+    for(const sample of region.samples){
+      const cx=Math.round(sample.screen[0]*image.width),cy=Math.round(sample.screen[1]*image.height);let error=Infinity;
+      for(let y=Math.max(0,cy-2);y<=Math.min(image.height-1,cy+2);y++)for(let x=Math.max(0,cx-2);x<=Math.min(image.width-1,cx+2);x++)
+        error=Math.min(error,distance(image.rgb(x,y),sample.rgb)/Math.sqrt(3));
+      measured.push({id,pixel:sample.pixel,screen:sample.screen,rgb:sample.rgb,error});if(error<43)matches++;
+    }
+    if(matches<3){
+      const name=label.replace(/[^a-z0-9]+/gi,'-');
+      await writeFile(resolve(output,name+'-full-staff-failure.png'),buffer);
+      await writeFile(resolve(output,name+'-full-staff-failure.json'),JSON.stringify({width:image.width,height:image.height,full,measured},null,2));
+    }
+    assert.ok(matches>=3,'The actual WebGL image does not show the complete painted staff '+id+': '+label+' matched '+matches);
+  }
+}
+function fullStaffFollows(frames,label){
+  const first=frames[0];assert.ok(frames.length>=3,'Complete staff inspected at too few authored poses: '+label);
+  assert.ok(frames.some(frame=>distance(frame.render.staffGrip.shaftTopWorld,first.render.staffGrip.shaftTopWorld)>.003),
+    'The authored animation never moves the complete staff: '+label);
+  for(const frame of frames.slice(1)){
+    assert.equal(frame.full.card.frontMesh,first.full.card.frontMesh,'The complete painted staff is rebuilt as a detached prop: '+label);
+    assert.equal(frame.full.core.meshUUID,first.full.core.meshUUID,'The staff core detaches while the painted prop animates: '+label);
+    for(const region of first.full.regions){
+      const actual=frame.full.regions.find(value=>value.id===region.id);
+      assert.deepEqual(actual.samples.map(sample=>sample.pixel),region.samples.map(sample=>sample.pixel),
+        'An animated staff changes its authored source-image anchor: '+label+' '+region.id);
+    }
+  }
+}
 
 let passed=false;
 try{
@@ -354,7 +495,8 @@ try{
     const options={viewport:mode.viewport,isMobile:mode.isMobile,hasTouch:mode.hasTouch,acceptDownloads:true};
     const context=await browser.newContext(options),page=await context.newPage(),errors=watch(page);
     await start(page);
-    const original=await project(page);
+    const original=await project(page),staffSource=await fullStaffSource(page);
+    assert.equal(original.project.animeRigs.characters.kami.staffArt,'painted-full-v1','Starter does not save the complete staff artwork profile');
     assert.equal(original.project.animeRelief?.schema,'anime-character-relief-v1','Starter does not save independent character piece relief');
     assert.equal(original.scene.actors.length,70,'Relief replaces native actors');assert.equal(original.editor.layers.length,11,'Relief replaces editor layers');
     const originals=Object.fromEntries(await Promise.all(['kami','swyrlz'].map(async character=>[character,await reliefModel(page,character)])));
@@ -371,14 +513,14 @@ try{
         const actual=await relief(page,character);pieceDepth(actual,originals[character],mode.name+' '+character+' '+time+'s');
         const body=await rig(page,character);pinned(body,mode.name+' '+character+' '+time+'s');snapshot.characters[character]=actual;
         if(character==='kami'&&time>=12){
-          staffPlay.push({time,render:body,ornament:ornamentGeometry(body,mode.name+' native Play '+time+'s')});
-          if([19,72,110].includes(time))await goldOnScreen(page,body,mode.name+' native Play '+time+'s');
+          staffPlay.push({time,render:body,full:fullStaffGeometry(body,staffSource,mode.name+' native Play '+time+'s')});
+          if([19,72,110].includes(time))await fullStaffOnScreen(page,body,mode.name+' native Play '+time+'s');
         }
       }
       story.push(snapshot);
       if([12,19,72].includes(time))await page.screenshot({path:resolve(output,'character-relief-'+mode.name+'-play-'+time+'.png')});
     }
-    ornamentFollows(staffPlay,mode.name+' native Play');
+    fullStaffFollows(staffPlay,mode.name+' native Play');
     for(const character of ['kami','swyrlz'])for(const id of ['cape','pelvis','torso']){
       assert.ok(story.some(frame=>Math.abs(frame.characters[character].parts[id].secondaryFlex)>1e-7),
         'The saved robe/body poses never drive costume flex: '+mode.name+' '+character+' '+id);
@@ -397,10 +539,10 @@ try{
     for(const time of [12,19,72,110]){
       safe(await seek(page,time),mode.name+' original staff Watch '+time+'s');
       const actual=await rig(page,'kami');pinned(actual,mode.name+' original staff Watch '+time+'s');
-      staffWatch.push({time,render:actual,ornament:ornamentGeometry(actual,mode.name+' original staff Watch '+time+'s')});
-      if([19,72,110].includes(time))await goldOnScreen(page,actual,mode.name+' original staff Watch '+time+'s');
+      staffWatch.push({time,render:actual,full:fullStaffGeometry(actual,staffSource,mode.name+' original staff Watch '+time+'s')});
+      if([19,72,110].includes(time))await fullStaffOnScreen(page,actual,mode.name+' original staff Watch '+time+'s');
     }
-    ornamentFollows(staffWatch,mode.name+' original Watch');
+    fullStaffFollows(staffWatch,mode.name+' original Watch');
     await seek(page,19);await page.screenshot({path:resolve(output,'character-relief-'+mode.name+'-staff-watch.png')});
     await page.locator('#animeScreeningClose').click();await frames(page);
     unchangedContent(await project(page),original,mode.name+' staff Watch/Close');
@@ -448,7 +590,7 @@ try{
     await seek(page,12);const motionBefore=await relief(page,'kami');
     await seek(page,20);const moving=await relief(page,'kami'),movingRig=await rig(page,'kami');
     pieceDepth(moving,await reliefModel(page,'kami'),mode.name+' keyed costume motion');pinned(movingRig,mode.name+' keyed costume motion');
-    ornamentGeometry(movingRig,mode.name+' keyed costume motion');
+    fullStaffGeometry(movingRig,staffSource,mode.name+' keyed costume motion');
     for(const id of ['cape','pelvis','torso','leftUpperArm']){
       assert.ok(Math.abs(moving.parts[id].secondaryFlex)>1e-7,'Body movement leaves '+id+' secondary sections rigid');
       assert.ok(distance(boxCenter(motionBefore.parts[id].sections[1].worldBounds),boxCenter(moving.parts[id].sections[1].worldBounds))>.005,
@@ -512,7 +654,7 @@ try{
       for(const character of ['kami','swyrlz']){
         const actual=await rig(page,character);pinned(actual,mode.name+' Watch '+character+' '+time+'s');
         pieceDepth(actual.depthSections,await reliefModel(page,character),mode.name+' Watch '+character+' '+time+'s');
-        if(character==='kami')ornamentGeometry(actual,mode.name+' posed staff Watch '+time+'s');
+        if(character==='kami')fullStaffGeometry(actual,staffSource,mode.name+' posed staff Watch '+time+'s');
         if(time===20){faceFront(actual,mode.name+' Watch '+character+' maximum face');sameGeometry(actual.depthSections,savedGeometry[character],mode.name+' Watch '+character);}
       }
     }
@@ -531,19 +673,100 @@ try{
       const actual=await rig(fresh,character);pinned(actual,mode.name+' fresh '+character);faceFront(actual,mode.name+' fresh '+character+' face');
       pieceDepth(actual.depthSections,await reliefModel(fresh,character),mode.name+' fresh '+character);
       sameGeometry(actual.depthSections,savedGeometry[character],mode.name+' fresh '+character);
-      if(character==='kami')ornamentGeometry(actual,mode.name+' fresh staff');
+      if(character==='kami')fullStaffGeometry(actual,staffSource,mode.name+' fresh staff');
     }
     const legacy=structuredClone(exported);delete legacy.project.animeRelief;
     await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),legacy);await frames(fresh);await seek(fresh,19);
     for(const character of ['kami','swyrlz'])pieceDepth(await relief(fresh,character),await reliefModel(fresh,character),mode.name+' legacy '+character);
+
+    // The previous natural-grip export must retain its socketed ebony/gold
+    // assembly until the native preset explicitly authors the complete staff.
+    const natural=await fresh.evaluate(async()=>await (await fetch('scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json')).json());
+    delete natural.project.animeRigs.characters.kami.staffArt;
+    await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),natural);await frames(fresh);
+    const previousProfile=await project(fresh),previousStaff=[];
+    await fresh.evaluate(()=>window.SWYRL_ENGINE_STORYBOARD.exitPreview());await frames(fresh);
+    await fresh.locator('#playBtn').click();
+    await fresh.waitForFunction(()=>window.SWYRL_ENGINE_ANIMATION.status().active,undefined,{timeout:15000});
+    await fresh.locator('#animeCinePause').click();
+    for(const time of [12,19,72,110]){
+      safe(await seek(fresh,time),mode.name+' imported natural staff '+time+'s');
+      const actual=await rig(fresh,'kami');pinned(actual,mode.name+' imported natural staff '+time+'s');
+      assert.equal(actual.staffGrip.fullStaff,null,'A historical natural-grip project silently acquired the complete staff artwork');
+      previousStaff.push({time,render:actual,ornament:ornamentGeometry(actual,mode.name+' imported natural staff '+time+'s')});
+      if([19,72,110].includes(time))await goldOnScreen(fresh,actual,mode.name+' imported natural staff '+time+'s');
+    }
+    ornamentFollows(previousStaff,mode.name+' imported natural staff');
+    await fresh.locator('#animeCineExit').click();await frames(fresh);
+    await fresh.locator('#animeScreeningBtn').click();
+    await fresh.waitForFunction(()=>window.SWYRL_ENGINE_ANIMATION.status().active,undefined,{timeout:15000});
+    await fresh.locator('#animeCinePause').click();const previousWatch=[];
+    for(const time of [12,19,72,110]){
+      safe(await seek(fresh,time),mode.name+' imported natural staff Watch '+time+'s');
+      const actual=await rig(fresh,'kami');pinned(actual,mode.name+' imported natural staff Watch '+time+'s');
+      previousWatch.push({time,render:actual,ornament:ornamentGeometry(actual,mode.name+' imported natural staff Watch '+time+'s')});
+      if([19,72,110].includes(time))await goldOnScreen(fresh,actual,mode.name+' imported natural staff Watch '+time+'s');
+    }
+    ornamentFollows(previousWatch,mode.name+' imported natural staff Watch');
+    await fresh.locator('#animeScreeningClose').click();await frames(fresh);
+    await openStudio(fresh);await fresh.locator('#storyTrack').selectOption('kami');await fresh.locator('#rigPart').selectOption('staff');
+    await input(fresh,'#storyTime',19);
+    assert.equal(await fresh.locator('#rigUseFullStaff').isDisabled(),false,'Paused editor does not permit the complete staff preset');
+    await fresh.locator('#rigUseFullStaff').click();await seek(fresh,19);
+    const preset=await project(fresh);
+    assert.equal(preset.project.animeRigs.characters.kami.staffArt,'painted-full-v1','Native preset does not save the full staff profile');
+    for(const field of ['animeTimeline','animeScenery','animeEmergence'])assert.deepEqual(preset.project[field],previousProfile.project[field],
+      'Staff preset overwrites the saved story, scenery or book opening: '+field);
+    assert.deepEqual(preset.scene,previousProfile.scene,'Staff preset overwrites native actors');
+    for(const character of ['kami','swyrlz'])for(const field of ['joints','face'])assert.deepEqual(
+      preset.project.animeRigs.characters[character][field],previousProfile.project.animeRigs.characters[character][field],
+      'Staff preset overwrites saved limb or face animation: '+character+' '+field);
+    fullStaffGeometry(await rig(fresh,'kami'),staffSource,mode.name+' native full staff preset');
+    await fullStaffOnScreen(fresh,await rig(fresh,'kami'),mode.name+' native full staff preset');
+    await historyAction(fresh,'undo');await seek(fresh,19);
+    for(const field of ['animeRigs','animeSockets'])assert.deepEqual((await project(fresh)).project[field],previousProfile.project[field],
+      'One native Undo does not restore the previous staff artwork, fit and socket assembly: '+field);
+    assert.equal((await rig(fresh,'kami')).staffGrip.fullStaff,null,'One Undo leaves the complete staff attached to the previous profile');
+    ornamentGeometry(await rig(fresh,'kami'),mode.name+' full staff preset Undo');
+    await historyAction(fresh,'redo');await seek(fresh,19);
+    for(const field of ['animeRigs','animeSockets'])assert.deepEqual((await project(fresh)).project[field],preset.project[field],
+      'Native Redo does not restore the complete staff artwork, fit and socket assembly: '+field);
+    fullStaffGeometry(await rig(fresh,'kami'),staffSource,mode.name+' full staff preset Redo');
+    await openStudio(fresh);await fresh.locator('#storyTrack').selectOption('kami');await fresh.locator('#rigPart').selectOption('staff');
+    await input(fresh,'#rigFitHeight',6.2);await input(fresh,'#rigFitArtX',.1);await input(fresh,'#rigFitRotationZ',10);
+    await fresh.locator('#rigApplyFit').click();await seek(fresh,19);
+    const resizedStaff=await project(fresh);
+    close(resizedStaff.project.animeRigs.characters.kami.layout.staff.height,6.2,'Native full staff height is clamped to the old wand limit');
+    await fresh.locator('#rigResetFit').click();await seek(fresh,19);
+    for(const field of ['animeRigs','animeSockets'])assert.deepEqual((await project(fresh)).project[field],preset.project[field],
+      'Native Reset restores the old wand fit instead of the full staff fit and sockets: '+field);
+    fullStaffGeometry(await rig(fresh,'kami'),staffSource,mode.name+' full staff native Reset');
+    await historyAction(fresh,'undo');await seek(fresh,19);
+    for(const field of ['animeRigs','animeSockets'])assert.deepEqual((await project(fresh)).project[field],resizedStaff.project[field],
+      'One native Undo does not restore the resized full staff before Reset: '+field);
+    await historyAction(fresh,'redo');await seek(fresh,19);
+    for(const field of ['animeRigs','animeSockets'])assert.deepEqual((await project(fresh)).project[field],preset.project[field],
+      'Native Redo loses the full staff Reset: '+field);
+    await openStudio(fresh);const presetDownloadPending=fresh.waitForEvent('download',{timeout:15000});
+    await fresh.locator('#storySaveProject').click();const presetDownload=await presetDownloadPending,
+      presetExport=JSON.parse(await readFile(await presetDownload.path(),'utf8'));
+    for(const field of ['animeRigs','animeSockets'])assert.deepEqual(presetExport.project[field],preset.project[field],
+      'Native Save loses the full staff artwork, fit or sockets: '+field);
+    await closeStudio(fresh);await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),natural);await frames(fresh);
+    await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),presetExport);await frames(fresh);await seek(fresh,19);
+    for(const field of ['animeRigs','animeSockets'])assert.deepEqual((await project(fresh)).project[field],presetExport.project[field],
+      'Native Load loses the saved complete staff preset: '+field);
+    fullStaffGeometry(await rig(fresh,'kami'),staffSource,mode.name+' loaded native full staff preset');
     const originalGrip=structuredClone(exported);originalGrip.project.animeRigs.characters.kami.gripStyle='original';
     await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),originalGrip);await frames(fresh);await seek(fresh,19);
     assert.equal((await rig(fresh,'kami')).staffGrip.ornament,null,'An original glove profile acquired incompatible staff metalwork');
+    assert.equal((await rig(fresh,'kami')).staffGrip.fullStaff,null,'An original glove profile acquired incompatible complete staff artwork');
     const customAtlas=structuredClone(exported);customAtlas.project.animeRigs.characters.kami.asset='assets/anime/swyrlz-rig.png';
     await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),customAtlas);await frames(fresh);await seek(fresh,19);
     assert.equal((await project(fresh)).project.animeRigs.characters.kami.asset,customAtlas.project.animeRigs.characters.kami.asset,
       'Staff finish replaces a supplied custom atlas');
     assert.equal((await rig(fresh,'kami')).staffGrip.ornament,null,'A custom atlas acquired incompatible staff metalwork');
+    assert.equal((await rig(fresh,'kami')).staffGrip.fullStaff,null,'A custom atlas acquired incompatible complete staff artwork');
     const malformed=structuredClone(exported);
     malformed.project.animeRelief.characters.kami.parts.unknown={left:.2};
     malformed.project.animeRelief.characters.kami.parts.cape.center=Infinity;

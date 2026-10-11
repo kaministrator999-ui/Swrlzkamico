@@ -1,4 +1,4 @@
-name: Verify §E v9.7 native cinematic candidate
+name: Verify §E v9.8 native cinematic candidate
 on:
   push:
     branches: [main]
@@ -18,6 +18,7 @@ on:
       - "projects/swrlz-forge-moba/patches/v9_5_character_depth_sections.py"
       - "projects/swrlz-forge-moba/patches/v9_6_natural_staff_painted_faces.py"
       - "projects/swrlz-forge-moba/patches/v9_7_ornate_staff.py"
+      - "projects/swrlz-forge-moba/patches/v9_8_full_length_staff.py"
       - "projects/swrlz-forge-moba/runtime/**"
       - "projects/swrlz-forge-moba/assets/anime/**"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
@@ -27,6 +28,7 @@ on:
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json"
   pull_request:
     branches: [main]
 permissions:
@@ -60,12 +62,12 @@ jobs:
           output=source.encode("utf-8")
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
-          assert len(manifest["patches"])==57
-          assert manifest['patches'][-1]=='patches/v9_7_ornate_staff.py'
+          assert len(manifest["patches"])==58
+          assert manifest['patches'][-1]=='patches/v9_8_full_length_staff.py'
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
           for needle in (
-            'V9_7_ORNATE_MAGE_STAFF','Maker v9.7','animeStartCinematic',
+            'V9_8_FULL_LENGTH_MAGE_STAFF','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v9.8','animeStartCinematic',
             'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','storyEditorInstall',
             'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',
