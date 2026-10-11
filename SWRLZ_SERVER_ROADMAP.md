@@ -1,3 +1,13 @@
+## UPDATE CONTINUATION STARTED — 2026-10-11 — v209.1 + v210 single integrated guarded release owner
+
+**User direction:** continue and finish the GitHub permission-explanation capability work. The native Chat save-capacity v209.1 work is concurrently pending but not released. To avoid two incompatible sequential publications, assign **one** guarded HF release owner to the exact combined candidate `feature/github-capabilities-v210-v2091-integrated@4db31fb5a8470e3784ee04c97dcaf871728af1b4`, based on corrective v209.1 branch `9fecf01937b83d2b2082e311189e4ec9c005994d`. This supersedes separate not-yet-triggered v209.1 publication *only for this release step*; keep its original branch, source tests and PR #101 unchanged, preserve its contribution to the combined candidate. No force merge, no release of original v209-base v210 branch.
+
+**Evidence preflight:** Exact integrated source passed [GitHub/account #38166008958](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38166008958), [HF offline candidate #38166012949](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38166012949) and [Mobile #38166013025](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38166013025). Includes large encrypted Google-owned native snapshots, legacy v1 read, atomic chunk manifests, genuine durable save-failure display and Google-account isolation; plus request-scoped GitHub effective OAuth/repo capability checks and explicit user consent. Native Chat source version 1.1.05. `main:.deploy/HF_SPACE_REQUEST.txt` still references previously deployed v209, so no competing production request is active. Published old rollback/source preserved.
+
+**Plan:** issue one new nonce on canonical `main:.deploy/HF_SPACE_REQUEST.txt` with exact immutable source SHA, observe terminal HF workflow and deployed Space revision, inspect checkpoint artifact/readback, then advance **only affected** `runtime:VERSION.txt` modules using the atomic version authority contract and record FINISHED outcome. Signed-in Android persistence/OAuth permission and write tests remain LIVE ACCEPTANCE PENDING until the owner performs them; never declare known-good on CI/deploy alone.
+
+**Status:** SOURCE CI VERIFIED / ONE GUARDED COMBINED RELEASE REQUEST NEXT.
+
 ## UPDATE CHECKPOINT — 2026-10-11 — v210 explain denied vs unverified GitHub access and explicit OAuth consent
 
 **User correction:** Making write scopes nonautomatic is not enough; §wyrlz must also explain that it cannot silently acquire **authenticated read** or write access, what was actually verified, and what user-controlled GitHub approval would be required. A 401/403/404 on a read is not proof of a missing specific scope.
