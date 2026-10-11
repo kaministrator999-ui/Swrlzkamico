@@ -1,0 +1,414 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-mv3dns0o-644749063-274540048",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "cf59320f169c1ae56efb0abb3b743ae165f4ae7a",
+  "persistedAtUnixMs": 1791696212107,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-mv3dns0o-644749063-274540048",
+    "trigger": {
+      "userText": "Can you provide the lyrics to roll call by tech n9ne",
+      "sha256": "6b74e0285ee048a44bbc804480c3138a4aff4acce37b449f5db089a87daedab1"
+    },
+    "research": {
+      "kind": "search",
+      "status": "OK",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "existing-lyrics-retrieval",
+      "query": "",
+      "resultCount": 3,
+      "sources": [
+        {
+          "title": "Roll Call by Tech N9ne - lyrics.lol",
+          "source": "lyrics.lol",
+          "url": "https://lyrics.lol/artist/506-tech-n9ne/lyrics/9961843-roll-call",
+          "snippet": "",
+          "rank": null
+        }
+      ],
+      "sourceSites": [
+        "lyrics.lol"
+      ],
+      "widgetKinds": [
+        "search-results"
+      ],
+      "trace": [
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_REJECTED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate did not satisfy verification",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_RESCUE_SEARCH",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Seeking verified song sources before final page fetch",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "duckduckgo-lite",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "duckduckgo-lite",
+          "activity": "Using duckduckgo-lite",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_FALLBACK_FETCH",
+          "provider": "web-page",
+          "activity": "Trying alternate lyrics source",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFICATION",
+          "provider": "lyrics-verifier",
+          "activity": "Checking fetched lyrics candidate",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+          "provider": "lyrics-verifier",
+          "activity": "Fetched destination matches the requested song identity",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_SOURCE_VERIFIED",
+          "provider": "lyrics-verifier",
+          "activity": "Lyrics candidate verified",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-lite",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "bing-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "bing-html",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "bing-html",
+          "activity": "Using bing-html",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-lite",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "bing-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "bing-html",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "bing-html",
+          "activity": "Using bing-html",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "Okay — here’s the verified lyric text for **\"roll call\" by tech n9ne**:\n\n---\n\n**[Intro: DJ Doc]**\nStrangers come out to play\n(Wyshmaster on the beat)\nStrangers come out to play\n\n────────\n\n**[Verse 1: Tech N9ne]**\nI am A-Aaron, I'm everywhere like say Breyon\nI don’t like the false and fakes they spawn\nSo when the tapes on I spray napalm\nDon't like the way lake Lanier was made race dom-\n-Ination hate I get impatient, mate\nWhen I hear an amazing break\nSo when invasion wakes, I play Draymond, uh\nCeiling fan in the winter, micro dose in the cinema\nA winnеr feelin' grand when I’m in her, healin' fans in a sprintеr\nI go both grim and sinister, I mess with the rare ones\nNever rollin' with the scare-some\nProclamation from the mayor done\nIt's really no comparison, my energy, beware, never glare, bums\nMy aura's something like a flare gun, or Bruce Leroy\nI'ma Troost B. Boy, and I boost thee noise, and I do be poised\nBut with the swimmin' I am who's devoid\nDon’t ever make a goofy choice\nAnd lie profusely, we spooky, and you p’noid (Rrr)\nI used to like a lusty life\nNow I need that like a Muslim (Bruh) need Christ\nDon't let nobody touch me twice\nIf they don’t know it's rude to say \"it must be nice\"\n\n────────\n\n**[Verse 2: King Iso]**\nLike I'm bumping Lyfe\nJennings I'm winning but in the beginning\nThem plenty didn’t love King Is-O\nI'm rude my name is, I just said it\nGot problems? Dead it!\nFor beef I Bun B fries\nThere ain't a large or medium, better call and speak to one\nHit you all with what you call a front seat right\nI'm from the zero making a hundun c-notes\nAn unsung hero making the sluts sing why?\nRepping the middle where Malcolm Little hailed after getting held in a psychiatric prison cell\nHad to spit it but what you finna spit, it didn't sell, laughter!\nNow they wanna copy me saying \"mental health matters\"\nKilla Rel's back to makin' infidels have to get on their knees and pray and then they yell \"Master!\"\nI'm getting brain from a dame with a Yale Master's\nRed fitted cap on like I'm finna yell \"MAGA!\"\nThe fuck is you talkin' like Strange Music is over fool\nGiving ‘em all the platinum and gold records you know it too\nEven the one Iso produced, steppin' on y'all in soldier boots\nNow fix how you talking like engineers up in the vocal booth\nI'm in the gym while men try stoning you\nGod body, the source, time to get my quotable\nBig time to little ones, a bit microbial\nI'm takin' all fades, that go for the fake homies, too, and I bet that I'm\n\n────────\n\n**[Chorus: Tech N9ne & Lex Bratcher]**\nNever gonna be defeated\nMoney never be depleted\nAnymore, folks don't need it\n'Cause the energy so completed\nRoll call\nSayin' my crew tough, ok, ok I know\nSo raw\nGotta turn this up, ok, ok, I know\n\n────────\n\n**[Verse 3: Joey Cool]**\nIf you waiting for me to give a crap, better have a lunch packed\nI ain't even upset, I ain't got a \"What!\" left\nI ain't really with it you dig it, you lookin suspect\nEverybody know I'm a chemist, I'm cooking up, jack, Muggs voice\nYou ain't got enough coupons\nYou couldn't afford it, you gonna need a Groupon\nYou witnessin' Joey C in his evolution\nThey knew me as Taven but I put Joey Cool on (Let's go)\nI would like to formally give apology\nAcknowledging anyone and everyone I ain't offended yet\nGot a gentlemen philosophy\nIt done been the policy ever since the people saw me on the internet\nAt the restaurant with the upper echelon\nA heavy one, I can show you how to pick a proper dinner set\nI had a conversation out with the delegation\nCheck it check it my ninja, that's usually where the winners at\nReal One, Swank Lord, Coolie Baby or The Chairman\nMe and Trav' skirted off in the McLaren\nCircle way too small for the square ones\nMan ya heard big Tech, it's a Roll Call\nAnd we still DIBKIS, man I told y'all, so raw\nSo we gone ball\nHold my 'Mana, yo, I'm 'bouta make a phone call, brrt\n\n────────\n\n**[Verse 4: JL & Yung Prez]**\nHello, I'm high, how're you, tada mean I'm JL the night owl who\nGot you wired to fire flower, I got firepower too\nWith the WTF out of the side I'll do\nWild crew yeah we blessed\nNo crowd ‘round knew what the end of the tunnel's like\nYes I'll climb through from the stomach come growl sounds\nBut gals mouth droll, turn me up and consequently the AL-Pines blew\nWhew, whew, how's y'all view?\nWord to Coo the ceiling drop namaste on it\nFind a piece when they wonder where I be\nWay down in the jungle deep\nBaby girl put your weight on it\nWhat's popular homie really poppin' blockin' the boulevard\nWe shooting a movie pop up on me gassing the woodie spark\nGot my name in the discussion don't forget the B. Hood part\nTop up, top of the morning I'm off to a good start\nGood heart, same crew, same facts\nTito's or mi casamigos, we cashing in rain checks\nI done said too much, too many ain't catch\nLookin for something, I'ma have to put on the chain wax\nI be with the predators at the apex, and we all triumphant\nListen to me and don't skip a song, I love it\nYou said I was history I was on the wrong side of it\n\n────────\n\n**[Verse 5: Lex Bratcher]**\nIt's Lex, I ain't luthin' (Take the grill out)\nI'm gracin' lanes like name's Suki\nWhen feminine brains study Yates\nYou get the dame fans saying\n\"She need to get a chain from Strange Music\"\nShe with the flavor, she make it rain, inclusive\nBeen bringing the pain so the naysayers don't do it\nAnd even if pay ain't arranged I'll always bang Bat and Snake so that iron'll bang on Beirut shit\nAnd I be killing ol' reeling motherfuckers with the IG videos\nI keep feeling those hypebeasts copy my lead but I know\nHigh key, I'm thee sight see when in Rome\nMight be in her phone\nShe wanting I, said she made of candy, her and her friend probably wanna go\nTie me nicely, guide me to the O\nAfter the \"I-E, I-E\", send 'em home\nOoh, these onlookers wanna be watching all my progress\nTruly got the mobs hooked on my ramen, got Maruchan\nSoon these newer groupies will see the very prophet\nSpoon full of booger sugars, the drug dealing Mary Poppins\nVery confidently burying opps in the necropolis\nFairly 'bout my \"bawk bawk\", Nando's-Peri, my favorite option\nTo eating haricot vert with High Deaf' and Joey at Azaba\nPlotting on how we rockin' all of the crowds that Tech has brought us and we obviously\n\n────────\n\n**[Chorus: Tech N9ne & Lex Bratcher]**\nNever gonna be defeated\nMoney never be depleted\nAnymore, folks don't need it\n'Cause the energy so completed\nRoll call\nSayin' my crew tough, ok, ok I know\nSo raw\nGotta turn this up, ok, ok, I know\n\n────────\n\n**[Verse 6: X-Raided]**\nI'm the X-R-A-I-D-E-D\nHot spitter, the Blocc figure from GBC\nMe and my co-d assisted more Star Wars than R2D2 and CP3\nOG, what you over there lookin' all hard for?\nMad I'm the one your lady legs stay ajar for\nNeverending Story, Falkor\nGet it jumping like parkour\nI came to Strange from the West\nWith a brain full of anger and death\nI was deranged and depressed\nI had a heart full of pain and the stress\nWas enough to put a strain on my chest\n(Bang!) Don't ever put a stain on my rep\nI'll put the flame on your flesh\nThe gang started to change how they stepped\nOnce Trav' put the chain on my neck\nAin't got the range or the depth\nFor me to have me to explain or impress you\nBut that ain't what I came to express\nArrr! Shiver me timbers, you so brave\nI didn't remember, I forgot to be afraid\nI'll get the clippers and take your fade\nI'll put you in the blender even if you a member\nYou ain't certified, you pretender\nThere's no hope, not a glimmer\nI'm an angel and a demon, I'm a saint and a sinner\nAnd I'm just getting started but I ain't no beginner\n\n────────\n\n**[Verse 7: Rittz]**\nHomie I been up for days on a bender\nThen I put the ink to the page like a printer\nI came to a simmer\nStarted rocking stages, Mesa to Denver\nI signed a deal then I became a Strange representer\nThey bitter, my chain and my bracelet, it shimmer like glitter\nIf that's your girlfriend, better get her\nShe told me let me give you head 'cause she a giver\nI got hoes all around the globe, no Tinder\nI came and left her hangin' like a blazer at coat check\nBlue diamonds in the watch, what you thought it was, topaz?\nWaking up to a thot I thought was hotter than CHROMAZZ\nEating some crab cakes, hollandaise and a poached egg\nIt's hard to process my process\nI'm so next level, could smell the cigar smoke on a goat's breath\nI'm grotesque, I enjoy provokin' your wokeness\nThese broke hoes get they throat stretched for a show pass, uh\nWhy you so mad at me? Bitch, don't be that way\nMaybe I'm like Stevie J and I'm in need of Faith\nMaybe I'm bitter because you don't consider me a great\nI might've started CNT but I ain't never leaving Strange\nTech told me kill 'em, get a shovel and a coffin\nShittin' on rappers, go hit the switch on the exhaust fan\nThey thought that I was down but really I was playin' possum\nI'm Strange affiliated, yea-uh-yea, yea-uh-yeah, CA-UH-COSM!\nAll Artists:\n\n---\n\n**Lyrics source:** Roll Call by Tech N9ne - lyrics.lol — https://lyrics.lol/artist/506-tech-n9ne/lyrics/9961843-roll-call",
+      "sha256": "d07bb0189e793197ee0fb5e8193f75d8e91b8d88309de5cc07c47a441f1a8ce9"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using duckduckgo-lite"
+      },
+      {
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate"
+      },
+      {
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "reason": "Fetched destination matches the requested song identity"
+      },
+      {
+        "phase": "LYRICS_SOURCE_VERIFIED",
+        "reason": "Lyrics candidate verified"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK"
+      },
+      {
+        "phase": "WIDGET_READY",
+        "reason": "search-results"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok."
+      },
+      {
+        "phase": "SOURCE_FOUND",
+        "reason": "There we go — I found relevant verified material on Roll Call by Tech N9ne - lyrics.lol."
+      },
+      {
+        "phase": "EVIDENCE_SCOPING",
+        "reason": "Give me one second — preparing the requested material."
+      },
+      {
+        "phase": "LYRICS_VERIFIED_PAYLOAD",
+        "reason": "Serving frozen lyrics payload from successfully fetched evidence."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      }
+    ]
+  }
+}
