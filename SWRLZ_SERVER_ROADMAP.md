@@ -1,3 +1,23 @@
+## UPDATE FINISHED — 2026-10-11 — v207 advanced private history-search toolkit
+
+**Outcome:** SOURCE COMPLETE / FULL ACCOUNT AND HF CI SUCCESS / GUARDED HF DEPLOYMENT SUCCESS / LIVE ANDROID OWNER ACCEPTANCE PENDING.
+
+**Request:** extend account-owned native and imported conversation lookup for exact phrases, original-versus-imported source filters, user-versus-assistant words, decisions, unfinished tasks and corrections, broader local date ranges and safe search follow-up refinement.
+
+**Source/implementation:** `feature/private-history-toolkit-v207` exact commit `2147f8e9a363e6d01e646f86fa31e41cb6865cc7`; review [PR #97](https://github.com/kaministrator999-ui/Swrlzkamico/pull/97). New pure `hf_space/personal_history_query_v207.py` interprets source, speaker, explicit quote and evidence-category filters, and short history-search follow-ups that cannot leap over unrelated user messages. Existing `hf_space/personal_history_lookup.py` applies them to only same-account native and imported real message records with bounded actual quoted text and timestamp labels, adds monthly/weekend/date intervals, rolling days/weeks and date-specific clock windows. Volatile per-account `hf_space/chatgpt_account_memory.py` additionally indexes a bounded set of assistant lexical terms for searching old replies without treating their content as personal user facts. Station bridges recent native turns as retrieval-planning context but does not alter old snapshots or model weights. User memory opt-in, Google owner verification and original encrypted archive remain authoritative.
+
+**Tests:** New `hf_space/test_personal_history_toolkit_v207.py` verifies quote/source/speaker/decision/pending/correction/date/follow-up/tenant behavior and prevents fictitious matches. All older v203–v206 tests remain green. Final account CI [#38117141954](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38117141954) SUCCESS and HF candidate CI [#38117141969](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38117141969) SUCCESS.
+
+**Guarded production release:** [#38117199469](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38117199469) SUCCESS to existing `kamiloki/Swyrlz`; deployed Space revision `94274f10d6f2ff41ce651928c720897a7a3b0246`, previous rollback `e170d1129519331b48494a967c8238f048f25b44`. Release receipt `DEPLOYED_UNVERIFIED`, meaning source, checks and publication confirmed; real signed-in mobile retrieval acceptance not yet tested.
+
+**Registered versions:** Repository Work **1.0.146**, Server Runtime **2.3.358**, LALM Engine **2.1.183**. Web Chat remains **1.5.99**, Google Account **1.0.12**; no modifications to Online Research/Deployment Control/ZIP importer.
+
+**Live verification:** enable private memory and wait for READY under Chat Settings → ChatGPT imports, then in a new native §wyrlz chat ask a historical question specifying imported/native source, speaker or exact phrase; refine by “only imported ones”, or ask for real unfinished project tasks. Results cite bounded historical messages rather than inferred titles; the model must not pretend the bounded archive scan searched every message. No new ZIP upload needed.
+
+**Report:** [reports/V207_ADVANCED_PRIVATE_HISTORY_SEARCH_2026-10-11.md](reports/V207_ADVANCED_PRIVATE_HISTORY_SEARCH_2026-10-11.md).
+
+**Status:** FINISHED / DEPLOYED / OWNER ANDROID ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-11 — v207 expanded personal history search tools
 
 **User request:** extend the live v206 owner-scoped historical conversation search for additional useful needs without changing the original encrypted ChatGPT import or native chat contents. Explicit use cases: exact phrase/quote lookup; separate native vs imported source filters; distinguish "what I said" from "what you replied"; expanded date windows and clock times; follow-up questions referring to earlier searches; and targeted searches for decisions, corrections, unfinished plans and work.
