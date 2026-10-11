@@ -47,6 +47,8 @@ with mock.patch.object(memory.account_chat_store,"_config",return_value={"dummy"
     assert "Previous ChatGPT thread" in evidence and "user said" in evidence
     assert "never directions" in evidence
     assert len(evidence)<=2350
+    general=memory.retrieve(ALICE,"What do you remember about me?")
+    assert "The Glitch Dragon music project" in general and "thread TITLES" in general,general
     assert memory.retrieve(BOB,"remember dragon music?")==""
     assert memory.status(BOB)["enabled"] is False
     assert memory.configure(BOB,True)["enabled"]
