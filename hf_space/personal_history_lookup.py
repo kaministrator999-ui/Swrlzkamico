@@ -189,7 +189,7 @@ def _bounds(prompt, tz, now=None):
             start=start.replace(hour=18);end=start+timedelta(hours=12)
     # Optional local clock restriction on the specified calendar day or range.
     exact_clock=re.search(r"\b(?:around|about|at|near)\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b",s)
-    if exact_clock:
+    if exact_clock and day is not None:
         hour=int(exact_clock.group(1))%12+(12 if exact_clock.group(3)=="pm" else 0)
         minute=int(exact_clock.group(2) or "0")
         if minute<=59:
@@ -209,7 +209,17 @@ def _keywords(prompt):
                    r"on monday|on tuesday|on wednesday|on thursday|on friday|on saturday|on sunday)\b"," ",cleaned)
     cleaned=re.sub(r"\b\d{1,2}\s+days?\s+ago\b|\b20\d{2}-\d{2}-\d{2}\b"," ",cleaned)
     cleaned=re.sub(r"\b(?:"+"|".join(_MONTHS)+r")\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s*20\d{2})?\b"," ",cleaned)
+    cleaned=re.sub(r"\b(?:past|last)\s+\d{1,2}\s+(?:days?|weeks?)\b|"
+                   r"\b(?:last|this)\s+(?:weekend|month|week)\b"," ",cleaned)
+    cleaned=re.sub(r"\b(?:around|about|at|near)\s+\d{1,2}(?::\d{2})?\s*(?:am|pm)\b"," ",cleaned)
+    cleaned=re.sub(r"\b(?:between|from)\s+20\d{2}-\d{2}-\d{2}\s+(?:and|to|through|until)\s+20\d{2}-\d{2}-\d{2}\b"," ",cleaned)
     stop={"time","night","day","days","week","month","morning","afternoon","evening",
+          "only","just","source","native","imported","chatgpt","original","swyrlz",
+          "quotes","quote","messages","message","thread","threads","chats","conversation",
+          "exact","phrase","word","words","show","find","search","give","from",
+          "decisions","decision","decided","agreed","unfinished","pending","tasks","task",
+          "next","steps","correction","corrections","corrected","changed","last",
+          "more","ones","one","assistant","reply","replies","user","answer",
           "talking","talked","said","remember","recall","discussed","doing","building",
           "previous","earlier","sometime","those","then","back","last","about",
           "what","were","been","was","when","did","make","made","think","that"}
