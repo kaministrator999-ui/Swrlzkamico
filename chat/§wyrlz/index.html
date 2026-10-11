@@ -764,6 +764,8 @@
           <div class="github-connect-actions">
             <button id="githubRepoSave" type="button">Use repository</button>
             <button id="githubReadStart" type="button">Read §tart</button>
+            <button id="githubCheckAccess" type="button">Check permissions</button>
+            <button id="githubAuthorizeAccess" type="button" hidden>Authorize required access</button>
           </div>
         </div>
       </div>
@@ -848,7 +850,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.04";
+      const SWRLZ_CHAT_VERSION = "1.1.05";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -2732,10 +2734,13 @@
       const githubRepoManual=document.getElementById("githubRepoManual");
       const githubRepoSave=document.getElementById("githubRepoSave");
       const githubReadStart=document.getElementById("githubReadStart");
+      const githubCheckAccess=document.getElementById("githubCheckAccess");
+      const githubAuthorizeAccess=document.getElementById("githubAuthorizeAccess");
+      let githubAuthorizationPath="";
       let githubLinked=false;
       const refreshGitHub=async()=>{
         githubLinked=false;
-        githubConnectButton.hidden=true;githubDisconnectButton.hidden=true;githubRepoTools.hidden=true;
+        githubConnectButton.hidden=true;githubDisconnectButton.hidden=true;githubRepoTools.hidden=true;githubAuthorizeAccess.hidden=true;githubAuthorizationPath="";
         if(!accountUser){githubConnectStatus.textContent="Sign in with Google to connect GitHub.";return;}
         try{
           const r=await fetch("/api/github/status",{credentials:"same-origin",cache:"no-store"});
@@ -2746,16 +2751,40 @@
           githubConnectButton.hidden=githubLinked;
           githubDisconnectButton.hidden=!githubLinked;
           githubRepoTools.hidden=!githubLinked;
-          githubConnectStatus.textContent=githubLinked?("Connected as @"+d.login+" · linked to this Google account. Reconnect only if access is revoked."):"Connect GitHub to browse public repositories. Authorization is read-only in §wyrlz; GitHub grants read:user OAuth scope.";
+          githubConnectStatus.textContent=githubLinked?("Connected as @"+d.login+" · GitHub access is verified per requested operation."):"Connect GitHub to browse public repositories. Default authorization is read-only; GitHub grants read:user OAuth scope.";
           if(!githubLinked)return;
           githubRepoManual.value=String(d.repo||"");
           githubRepoSelect.replaceChildren(new Option("Choose a repository…",""));
           const list=await fetch("/api/github/repositories",{credentials:"same-origin",cache:"no-store"}).then(r=>r.ok?r.json():{repositories:[]});
-          for(const item of list.repositories||[])if(item.fullName&&!item.private)githubRepoSelect.add(new Option(item.fullName,item.fullName));
+          for(const item of list.repositories||[])if(item.fullName)githubRepoSelect.add(new Option(item.fullName,item.fullName));
           githubRepoSelect.value=d.repo||"";
         }catch(_){githubConnectStatus.textContent="GitHub status could not be verified. No connection assumed.";}
       };
       githubConnectButton.addEventListener("click",()=>{if(accountUser)location.assign("/api/github/start");});
+      githubCheckAccess.addEventListener("click",async()=>{
+        if(!githubLinked)return;
+        githubCheckAccess.disabled=true;githubAuthorizeAccess.hidden=true;githubAuthorizationPath="";
+        try{
+          const repo=githubRepoManual.value.trim();
+          if(repo){
+            const response=await fetch("/api/github/default-repo",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({repository:repo})});
+            if(!response.ok)throw new Error("Selected repository could not be verified.");
+          }
+          const operation=window.prompt("Which operation should §wyrlz check? Type read, issue-write, or branch-write.","read");
+          if(operation===null)return;
+          if(!["read","issue-write","branch-write"].includes(operation.trim()))throw new Error("Choose read, issue-write or branch-write.");
+          const response=await fetch("/api/github/capabilities?operation="+encodeURIComponent(operation.trim()),{credentials:"same-origin",cache:"no-store"});
+          const data=await response.json().catch(()=>({}));
+          if(!response.ok)throw new Error(data.detail||"GitHub verification unavailable.");
+          githubConnectStatus.textContent="Verified for "+data.repository+": available "+(data.available||[]).join(", ")+
+            (data.allowed?". Requested permission confirmed.":". This operation needs "+(data.missing||"additional access")+".");
+          if(!data.allowed&&typeof data.authorizeUrl==="string"&&data.authorizeUrl.startsWith("/api/github/start?access=")){
+            githubAuthorizationPath=data.authorizeUrl;githubAuthorizeAccess.hidden=false;
+          }
+        }catch(error){githubConnectStatus.textContent=String(error?.message||"GitHub permissions could not be verified.");}
+        finally{githubCheckAccess.disabled=false;}
+      });
+      githubAuthorizeAccess.addEventListener("click",()=>{if(githubLinked&&githubAuthorizationPath)location.assign(githubAuthorizationPath);});
       githubRepoSelect.addEventListener("change",()=>{if(githubRepoSelect.value)githubRepoManual.value=githubRepoSelect.value;});
       githubRepoSave.addEventListener("click",async()=>{
         if(!githubLinked)return;
