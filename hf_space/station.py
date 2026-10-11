@@ -943,7 +943,14 @@ def _run(key,request_id,model_id,payload,assistant_id):
         else:
             event_source=(github_connection.start_events(payload["githubStart"])
                           if isinstance(payload.get("githubStart"),dict)
-                          else github_connection.command_events(payload["githubAction"])
+                          else github_connection.agent_events(
+                              payload["githubAction"],
+                              model_generator={
+                                  "r39": _generate,
+                                  "stock": _stock_generate,
+                                  "700m": _large_generate,
+                                  "coder": _coder_generate,
+                              }.get(model_id, _large_generate))
                           if isinstance(payload.get("githubAction"),dict)
                           else dispatch(model_id,payload,_generate,_stock_generate,_large_generate,_coder_generate))
         for event in event_source:
@@ -1508,7 +1515,7 @@ async def send(request:Request):
     route=next((r for r in routes() if r.model_id==model_id),None)
     prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
     # GitHub startup is Station-owned evidence retrieval and does not consume a model.
-    if route is None or (not route.available and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt))):
+    if route is None or (not route.available and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt))):
         raise HTTPException(422,"Selected model is not configured")
     profile=body.get("profile","")
     user_profile=body.get("userProfile","")
@@ -1592,7 +1599,7 @@ async def send(request:Request):
     # Treat private history like an evidence provider, not model training or
     # instructions. Explicit historical lookups span native account chat and
     # imported ChatGPT archives, and can constrain actual message timestamps.
-    if google_owner.startswith("google:") and not count_kind and not github_connection.is_start_request(prompt):
+    if google_owner.startswith("google:") and not count_kind and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt)):
         historical=""
         try:
             if personal_history_lookup.relevant(prompt,history) and not chatgpt_account_memory.enabled(google_owner):
@@ -1630,7 +1637,7 @@ async def send(request:Request):
     if github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
         payload["githubStart"]={"userId":str((verified_account or {}).get("id") or "")}
-    elif github_connection.is_github_command(prompt):
+    elif github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt):
         _, verified_account = _account_session(request)
         payload["githubAction"]={"userId":str((verified_account or {}).get("id") or ""), "prompt":prompt}
 
