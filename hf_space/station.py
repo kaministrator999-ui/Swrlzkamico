@@ -26,6 +26,7 @@ import account_chat_store
 import chatgpt_archive
 import chatgpt_upload_session
 import chatgpt_import_job
+import chatgpt_account_memory
 import tempfile
 try:
     from google.auth.transport import requests as google_requests
@@ -391,6 +392,24 @@ def _archive_origin_guard(request: Request):
         raise HTTPException(403, "Imported history changes require an authenticated same-origin request")
 
 
+@app.get("/api/chatgpt_archive/memory")
+def chatgpt_memory_status(request: Request):
+    owner = _archive_owner(request)
+    return JSONResponse(chatgpt_account_memory.status(owner),
+                        headers={"Cache-Control": "private, no-store"})
+
+
+@app.post("/api/chatgpt_archive/memory")
+async def chatgpt_memory_configure(request: Request):
+    owner = _archive_owner(request)
+    _archive_origin_guard(request)
+    body = await request.json()
+    if not isinstance(body, dict) or type(body.get("enabled")) is not bool:
+        raise HTTPException(400, "Expected enabled boolean")
+    return JSONResponse(chatgpt_account_memory.configure(owner, body["enabled"]),
+                        headers={"Cache-Control": "private, no-store"})
+
+
 @app.get("/api/chatgpt_archive/status")
 def chatgpt_archive_status(request: Request):
     owner = _archive_owner(request)
@@ -427,7 +446,9 @@ def delete_chatgpt_archive_thread(request: Request, conversation_id: str):
     owner = _archive_owner(request)
     _archive_origin_guard(request)
     chatgpt_import_job.assert_not_running(owner)
-    return JSONResponse(chatgpt_archive.delete_archive(owner, conversation_id),
+    result = chatgpt_archive.delete_archive(owner, conversation_id)
+    chatgpt_account_memory.invalidate(owner)
+    return JSONResponse(result,
                         headers={"Cache-Control": "private, no-store"})
 
 
@@ -436,7 +457,9 @@ def delete_chatgpt_archive_all(request: Request):
     owner = _archive_owner(request)
     _archive_origin_guard(request)
     chatgpt_import_job.assert_not_running(owner)
-    return JSONResponse(chatgpt_archive.delete_all_archive(owner),
+    result = chatgpt_archive.delete_all_archive(owner)
+    chatgpt_account_memory.invalidate(owner)
+    return JSONResponse(result,
                         headers={"Cache-Control": "private, no-store"})
 
 
@@ -478,6 +501,7 @@ def chatgpt_archive_upload_complete(request: Request, upload_id: str):
         raise HTTPException(400, "Invalid upload identifier")
     chatgpt_import_job.assert_not_running(owner)
     filename = chatgpt_upload_session.finish(owner, upload_id)
+    chatgpt_account_memory.invalidate(owner)
     try:
         job = chatgpt_import_job.start(owner, filename, upload_id)
     except Exception:
@@ -516,6 +540,7 @@ async def chatgpt_archive_import(request: Request):
         os.unlink(filename)
         raise
 
+    chatgpt_account_memory.invalidate(owner)
     def results():
         try:
             for update in chatgpt_archive.import_archive(filename, owner):
@@ -528,6 +553,7 @@ async def chatgpt_archive_import(request: Request):
             yield json.dumps({"type": "ERROR", "code": 503,
                               "message": "Import interrupted; reselect this ZIP to resume safely"}) + "\n"
         finally:
+            chatgpt_account_memory.invalidate(owner)
             try: os.unlink(filename)
             except FileNotFoundError: pass
 
@@ -1481,6 +1507,14 @@ async def send(request:Request):
             raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    # Account-scoped archived history is data, not new instructions or model weights.
+    # Never accept archive evidence from the browser/body.
+    if google_owner.startswith("google:") and not github_connection.is_start_request(prompt):
+        try:
+            historical = chatgpt_account_memory.retrieve(google_owner, prompt)
+            if historical: payload["archiveEvidence"] = historical
+        except Exception:
+            pass  # Private archive outages cannot block native chat generation.
     # Inject into all model routes as bounded evidence only on relevant follow-ups.
     if google_owner.startswith("google:"):
         memory_evidence=project_thread_memory.model_context(active_project,prompt)
