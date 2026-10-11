@@ -17,6 +17,7 @@ from fastapi import HTTPException
 
 import account_chat_store
 import chatgpt_archive
+import chatgpt_account_memory
 import github_connection as gh
 
 STATUS_TTL = 7 * 86400
@@ -125,6 +126,7 @@ def _work(owner, filename, token, initial):
         try: _save(owner, final)
         except Exception: pass
     finally:
+        chatgpt_account_memory.invalidate(owner)
         try: os.unlink(filename)
         except FileNotFoundError: pass
         try: gh._redis(account_chat_store._config(), "EVAL", _UNLOCK, "1", lock_key, token)
