@@ -27,6 +27,7 @@ import chatgpt_archive
 import chatgpt_upload_session
 import chatgpt_import_job
 import chatgpt_account_memory
+import personal_history_lookup
 import tempfile
 try:
     from google.auth.transport import requests as google_requests
@@ -1507,14 +1508,21 @@ async def send(request:Request):
             raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
-    # Account-scoped archived history is data, not new instructions or model weights.
-    # Never accept archive evidence from the browser/body.
+    # Treat private history like an evidence provider, not model training or
+    # instructions. Explicit historical lookups span native account chat and
+    # imported ChatGPT archives, and can constrain actual message timestamps.
     if google_owner.startswith("google:") and not github_connection.is_start_request(prompt):
         try:
-            historical = chatgpt_account_memory.retrieve(google_owner, prompt)
-            if historical: payload["archiveEvidence"] = historical
+            if personal_history_lookup.relevant(prompt):
+                historical = personal_history_lookup.lookup(
+                    google_owner, prompt, client_timezone,
+                    s["threads"], active_thread_id=tid)
+            else:
+                historical = chatgpt_account_memory.retrieve(google_owner, prompt)
+            if historical:
+                payload["archiveEvidence"] = historical
         except Exception:
-            pass  # Private archive outages cannot block native chat generation.
+            pass  # Optional account recall must never interrupt native generation.
     # Inject into all model routes as bounded evidence only on relevant follow-ups.
     if google_owner.startswith("google:"):
         memory_evidence=project_thread_memory.model_context(active_project,prompt)
