@@ -166,7 +166,7 @@ def test_source_wiring_and_sync_contract():
     assert "with _lock:_hf_accounts[sid]=user" not in source
     assert "account_chat_store.save_login(sid,user)" in source
     assert "project_thread_memory" in source
-    assert source.count("_refresh_account_chat(s)")>=4
+    assert source.count("_refresh_account_chat(s,")>=4
     assert "account_chat_store.load_chat(owner)" in source
     assert "github_connection.install(app, _account_session)" in source
 
