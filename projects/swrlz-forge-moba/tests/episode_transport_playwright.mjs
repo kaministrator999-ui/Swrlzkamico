@@ -84,11 +84,13 @@ async function frozenScene(page){
   });
 }
 async function canvasPixels(page){
-  const clip=await page.locator('#storyCinemaStage canvas').evaluate(canvas=>{
-    const r=canvas.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};
+  const data=await page.evaluate(()=>{
+    // Read the real WebGL drawing buffer in the same task as a paused render.
+    // A page clip also captures the overlaid HUD and its touch hover states.
+    window.__episodeTestClock.step(1,50);
+    return document.querySelector('#storyCinemaStage canvas').toDataURL('image/png');
   });
-  // Page-level clipping avoids Locator.screenshot's RAF stability wait.
-  return page.screenshot({clip});
+  return Buffer.from(data.split(',')[1],'base64');
 }
 async function backwardsFrame(page,time,mode){
   // Enter the frame by actual rewind, then compare it to native direct seeking.
@@ -153,6 +155,9 @@ try{
     page.setDefaultTimeout(30000);
     await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
     await page.waitForFunction(()=>window.SWYRL_ENGINE_TRANSPORT&&window.SWYRL_ENGINE_ANIMATION?.status().projectId==='ghosts-different-forms-ep01',undefined,{timeout:60000});
+    // Compare story frames at the same native resolution. Auto graphics may
+    // adapt the drawing buffer during the deliberately slow fixed test RAF.
+    await page.locator('#perfPreset').selectOption('medium',{force:true});
     const initial=await project(page);
     await page.locator('#animeScreeningBtn').click();
     await page.waitForFunction(()=>window.SWYRL_ENGINE_SCREENING.status().open&&window.SWYRL_ENGINE_STORYBOARD.stageStatus().assetsReady&&
