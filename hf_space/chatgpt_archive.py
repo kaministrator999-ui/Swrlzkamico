@@ -263,3 +263,35 @@ def read_archive(owner, conversation_id):
         raise HTTPException(404, "Imported conversation not found")
     return {"id": record["id"], "title": record["title"], "updatedAt": record["updatedAt"],
             "messages": record["messages"]}
+
+
+def delete_archive(owner, conversation_id):
+    """Account-scoped deletion; native Chat and other users stay untouched."""
+    c = _config()
+    _key(owner, conversation_id)
+    deleted = gh._redis(c, "DEL", _key(owner, conversation_id))
+    removed = gh._redis(c, "ZREM", _index(owner), conversation_id)
+    if not isinstance(deleted, int) or not isinstance(removed, int):
+        raise HTTPException(503, "Archive delete was not confirmed; retry is safe")
+    return {"deleted": int(bool(deleted or removed))}
+
+
+def delete_all_archive(owner):
+    """Bounded Redis requests; failures leave remaining index entries retryable."""
+    c = _config()
+    count = 0
+    while True:
+        ids = gh._redis(c, "ZREVRANGE", _index(owner), "0", "49")
+        if not isinstance(ids, list):
+            raise HTTPException(503, "Archive index unavailable for deletion")
+        if not ids:
+            return {"deleted": count}
+        # Remove records first, then remove their index entries. A partial
+        # failure can safely be retried without exposing other tenant data.
+        removed = gh._redis(c, "DEL", *[_key(owner, cid) for cid in ids])
+        if not isinstance(removed, int):
+            raise HTTPException(503, "Archive record deletion could not be confirmed")
+        removed_index = gh._redis(c, "ZREM", _index(owner), *ids)
+        if not isinstance(removed_index, int) or removed_index != len(ids):
+            raise HTTPException(503, "Archive index deletion interrupted; retry is safe")
+        count += len(ids)
