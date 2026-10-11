@@ -1803,11 +1803,11 @@
         stopButton.hidden=!!g.terminal;sendButton.hidden=!g.terminal;
         renderWorkSurface();followLatestIfNeeded();
       };
-      const syncStation = async () => {
+      const syncStation = async (fresh=false) => {
         if(stationSyncInFlight){stationSyncAgain=true;return false;}
         stationSyncInFlight=true;
         try{
-          const r=await fetch("/api/lalm_station/sync",{credentials:"same-origin",cache:"no-store"});
+          const r=await fetch("/api/lalm_station/sync"+(fresh?"?fresh=1":""),{credentials:"same-origin",cache:"no-store"});
           if(!r.ok){renderThreads();return false}
           const data=await r.json(); applyChatState(data);
           if(stationAwaitingCommit || (stationGeneration&&!stationGeneration.terminal)) scheduleStationSync();
@@ -1817,8 +1817,8 @@
       };
       const scheduleStationSync=(delay=700)=>{clearTimeout(stationPoll);stationPoll=setTimeout(syncStation,delay)};
       // Server owns conversation/generation state; keep the visible projection hydrated.
-      const keepStationHydrated=()=>{if(document.visibilityState==="visible")scheduleStationSync(0)};
-      const loadChatState = syncStation;
+      const keepStationHydrated=()=>{if(document.visibilityState==="visible")syncStation(true)};
+      const loadChatState = ()=>syncStation(true);
       document.addEventListener("visibilitychange",keepStationHydrated);
       window.addEventListener("focus",keepStationHydrated);
       window.addEventListener("pageshow",keepStationHydrated);
@@ -1914,6 +1914,7 @@
       const commitDraftFromPrompt = async () => {
         const text=prompt.value.trim(); if(!text||sending)return false;
         const contentTag=classifyUserContent(text);
+        let sendAcknowledged=false;
         sending=true; sendButton.disabled=true;
         try{
           if(draftThread){
@@ -1960,6 +1961,7 @@
           // reach the Mask as they are generated instead of waiting on snapshot polling.
           const accepted=await response.json();
           if(accepted.requestId!==requestId)throw new Error("SEND_ACK_REQUEST_MISMATCH");
+          sendAcknowledged=true;
           stationGeneration.status=[{type:"QUEUED",phase:"QUEUED"}];
           setCompanionState("accepted","send-ack");
           renderStationGeneration();
@@ -1980,7 +1982,13 @@
           return true;
         }catch(err){
           setCompanionState("error","client-transport");
-          if(stationGeneration){stationGeneration.status=[...(stationGeneration.status||[]),{type:"FAILED",phase:"CLIENT_TRANSPORT",reason:String(err)}];stationGeneration.terminal=true;renderStationGeneration();}
+          const raw=String(err?.message||err);
+          const reason=/SEND_HTTP_413/.test(raw)
+            ?"New message not saved: native account snapshot storage limit reached. Draft restored; existing history remains preserved."
+            :"New message not confirmed saved. Draft restored; refresh saved conversations before retrying.";
+          if(!sendAcknowledged){prompt.value=text;resizeComposer();}
+          if(stationGeneration){stationGeneration.status=[...(stationGeneration.status||[]),{type:"FAILED",phase:"CLIENT_TRANSPORT",reason}];stationGeneration.terminal=true;renderStationGeneration();}
+          uiCamera("chat-save-unconfirmed",{reasonCode:/SEND_HTTP_413/.test(raw)?"SNAPSHOT_LIMIT":"SEND_FAILED",acknowledged:sendAcknowledged});
           return false;
         }finally{sending=false;streamAbortController=null;sendButton.disabled=false;sendButton.hidden=false;stopButton.hidden=true;scheduleStationSync()}
       };
@@ -2708,6 +2716,7 @@
         accountAction.textContent = "Sign out";
         accountAction.style.display = user ? "inline-block" : "none";
         if(user) googleSlot.innerHTML="";
+        if(priorUserId!==(accountUser?.id||""))syncStation(true);
         refreshGitHub();
       };
       const githubConnectStatus=document.getElementById("githubConnectStatus");
