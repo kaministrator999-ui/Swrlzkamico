@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/private-history-toolkit-v207
-REQUEST_NONCE=2026-10-11-v207-private-recall-query-toolkit-001
+SOURCE_REF=feature/private-account-facts-v208
+REQUEST_NONCE=2026-10-11-v208-live-private-history-count-fix-001
