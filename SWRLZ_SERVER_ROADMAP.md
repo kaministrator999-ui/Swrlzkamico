@@ -1,3 +1,27 @@
+## UPDATE FINISHED — 2026-10-11 — v211.2 first-message Chat appears on durable send ACK before inference
+
+**Outcome:** SOURCE/ACCOUNT AND MOBILE CI/HF CANDIDATE VERIFIED / ONE GUARDED HF PUBLICATION SUCCESS / RUNTIME REGISTRY READBACK VERIFIED / LIVE SIGNED-IN ANDROID ACCEPTANCE PENDING.
+
+**Owner's requirement:** A new native Chat conversation must appear in the sidebar **immediately after the first user message is accepted/saved**, even while the local AI is still queued or generating. Prior v211.1 newest-first list and Versions/footer mobile scroll reported working. A separate uploaded private JSON export requested inspection of newer 700M answers; no private message bodies were committed to repo.
+
+**Evidence and precise scope:** `hf_space/station.py:/api/lalm_station/send` already stores the first user message to verified Google-owner encrypted Redis CAS **before** returning 202. The client `chat/§wyrlz/index.html` retained `pendingDraftThread` outside `chatThreads` until later sync; this made a successfully accepted/saved new conversation invisible in the Chats drawer during inference. Corrected client-only view: on matching 202 ACK, promote pending thread exactly once to displayed newest-first list, render immediately, schedule **nonblocking** authoritative sync, then consume inference. Before ACK/rejected send, no phantom saved thread; previous draft recovery retained. Inference runtime, imported ChatGPT archive, original history, account auth, v211 GitHub model-guided consent/tools and §E projects unchanged. Clean-room Chat source **1.1.08**.
+
+**Source lineage:** Based on deployed v211.1 `2284fccb589625449fc83405e170fcd428864834`; tested/published [draft PR #108](https://github.com/kaministrator999-ui/Swrlzkamico/pull/108), `fix/native-chat-first-send-ack-v2112@f81ffd43647a8796feb47ebd6c3c0ad80f5df545`. No parallel unrelated branch merge or second Space.
+
+**Exact CI:** [Account/Node/Python first message before inference #38174752781](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38174752781) **SUCCESS**, [HF candidate #38174756719](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38174756719) **SUCCESS**, [mobile #38174756722](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38174756722) **SUCCESS**. Tests prove synthetic Station 202 response has durable first user message and nonterminal generation; exact browser runtime acceptance still required.
+
+**HF production:** Existing guarded request `main:.deploy/HF_SPACE_REQUEST.txt`, exact source and nonce `2026-10-11-v2112-immediate-first-native-thread-on-send-ack-001` at request commit `c86d7df311934be2e37685c0f71a39f7e1cea385`. [Guarded HF Actions #38174894177](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38174894177) terminal **SUCCESS**, new existing `kamiloki/Swyrlz` Space revision **`a583a03912723c9f24200a14de0fcbd491b409f2`**, rollback **`6c06b10f6328da082ead77a77c1d1b690495bb17`**. Release checkpoint artifact `hf-release-checkpoint` ID **11715526895**, `knownGood=false`, `verificationState=DEPLOYED_UNVERIFIED`. No manufactured acceptance.
+
+**Atomic registered version:** `runtime@4266cd0d9054efa555bcd4c252db765422616ff3` with re-read Repository Work **1.0.152→1.0.153**, Server Runtime **2.3.364→2.3.365**, Web Chat **1.5.103→1.5.104**. LALM Engine **2.1.189** and Google Account **1.0.14** unchanged because their runtime contracts were not modified; all other modules unchanged.
+
+**Separate evidence-led model follow-up, NOT implemented by this release:** Recent private export shows a normal greeting answered directly sometimes but other simple greetings diverted into identity documents, invented third-party/sample dialogue and a web search triggered by `today` keyword; private historical questions previously saw public search or speculative counts before verified facts. Existing fixed self/USER role provenance instructions do not ensure the 700M inference follows them every time. Next independent review should test social intent vs real-freshness classification, assistant/user role attribution, fabricated-dialogue guard and private-source priority with synthetic examples. Preserve user confidentiality, the local model route and bounded resource budget. Do not claim these response-quality failures are fixed by v211.2.
+
+**Full report:** [reports/V2112_FIRST_MESSAGE_CHAT_ACK_AND_RESPONSE_REVIEW_2026-10-11.md](reports/V2112_FIRST_MESSAGE_CHAT_ACK_AND_RESPONSE_REVIEW_2026-10-11.md).
+
+**User acceptance:** In same signed-in account, create a new chat, send first message, open drawer WHILE AI still thinking; newly saved thread should already appear and be tappable, persist on reload and another browser. If it doesn't, report status and protect existing history, without claiming success from CI alone.
+
+**Status:** FINISHED — SOURCE/CI/DEPLOYMENT/REGISTRY VERIFIED — LIVE MOBILE ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-11 — v211.2 show persisted native Chat immediately on first accepted user message
 
 **Owner acceptance:** v211.1 mobile scroll, Versions placement and native newest-first Chats now reported working. New issue: the first chat thread is displayed only after AI inference completes, instead of immediately after first user message is accepted. Uploaded private Chat JSON also demonstrates separate response-quality failures; do not place the private messages/transcripts into the repository or silently turn this bounded UI task into a model rewrite.
