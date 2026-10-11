@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mv3y0e7h-1583753755-3514640633",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_3",
+  "sourceRef": "2147f8e9a363e6d01e646f86fa31e41cb6865cc7",
+  "persistedAtUnixMs": 1791730529299,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mv3y0e7h-1583753755-3514640633",
+    "turnIndex": 3,
+    "userText": "Can you tell me what chat threads we had 5 months ago",
+    "capturedAtUnixMs": 1791730529298
+  }
+}
