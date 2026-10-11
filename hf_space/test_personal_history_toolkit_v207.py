@@ -105,7 +105,7 @@ with patch.object(memory,"enabled",side_effect=lambda owner:owner==OWNER), \
     assert "radiant falcon circuitry" in phrase,phrase
     assert "not found" not in phrase.lower()
     no_phrase=run('Find the exact phrase "never-said-secret-starlight" in chats')
-    assert "no matching stored messages" in no_phrase,no_phrase
+    assert "no matching stored messages" in no_phrase,(repr(no_phrase),facets.parse('Find the exact phrase "never-said-secret-starlight" in chats'))
     decision=run("Find decisions we made about the dragon project")
     assert "We agreed" in decision or "We decided" in decision,decision
     assert "Next step:" not in decision,decision
