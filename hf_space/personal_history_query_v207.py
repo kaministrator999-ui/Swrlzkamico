@@ -22,7 +22,7 @@ _ASSISTANT_ROLE=re.compile(r"(?i)\b(?:what did you (?:say|tell|reply)|what you s
                            r"how did you (?:reply|respond)|"
                            r"only (?:your|assistant) (?:messages|words|replies))\b")
 _FOCUS={
-    "decision":re.compile(r"(?i)\b(?:decisions?|decided|agreed|settled on|chose|"
+    "decision":re.compile(r"(?i)\b(?:decisions?|decide|decided|agree|agreed|settled on|chose|"
                           r"chosen|concluded|finalized|finalised)\b"),
     "pending":re.compile(r"(?i)\b(?:unfinished|remaining|pending|todo|to-do|"
                          r"outstanding|next steps?|left off|still (?:have|need|to do)|"
@@ -55,6 +55,7 @@ _QUESTION=re.compile(
     r"(?:say|discuss|talk|decide)|search (?:our|my) (?:chat|conversation)|"
     r"where did (?:we|you|i) (?:say|talk|mention)|"
     r"what were we (?:working|talking|discussing)|"
+    r"find (?:our|the|my)?\s*(?:decisions|pending|unfinished|corrections|tasks)|"
     r"where did we leave off|what happened last (?:night|weekend))\b"
 )
 
