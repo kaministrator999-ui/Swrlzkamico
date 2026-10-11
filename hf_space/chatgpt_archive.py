@@ -117,8 +117,8 @@ def _visible_messages(conv):
                         selected.append({"id": msg_id, "role": role, "text": value,
                                          "createdAt": message.get("create_time") if isinstance(message.get("create_time"), (int, float)) else None})
         node_id = node.get("parent")
-    if not selected and mapping:
-        raise HTTPException(422, "No supported visible conversation messages found")
+    # Empty/attachment-only conversations in genuine exports are reported as
+    # unsupported, not an import-killing exception.
     selected.reverse()
     if len(selected) > MAX_MESSAGES:
         raise HTTPException(413, "Imported conversation has too many messages")
@@ -134,7 +134,9 @@ def normalize(conv):
     title = str(conv.get("title") or "Untitled ChatGPT conversation")[:240]
     timestamp = conv.get("update_time")
     updated = float(timestamp) if isinstance(timestamp, (int, float)) and 0 <= timestamp < 1e12 else 0
-    return {"id": cid, "title": title, "updatedAt": updated, "messages": _visible_messages(conv)}
+    messages = _visible_messages(conv)
+    return {"id": cid, "title": title, "updatedAt": updated, "messages": messages,
+            "unsupported": not bool(messages)}
 
 
 def merge(old, new, owner):
@@ -210,11 +212,15 @@ def archive_entries(path):
 def import_archive(path, owner):
     # Streaming progress lets a browser acknowledge partial commits and retry.
     seen = set()
-    stats = {"conversations": 0, "created": 0, "updated": 0, "skipped": 0, "addedMessages": 0}
+    stats = {"conversations": 0, "created": 0, "updated": 0, "skipped": 0,
+             "unsupported": 0, "addedMessages": 0}
     for item in archive_entries(path):
         if item["id"] in seen:
             continue
         seen.add(item["id"])
+        if item.get("unsupported"):
+            stats["unsupported"] += 1
+            continue
         if len(seen) > MAX_THREADS:
             raise HTTPException(413, "Too many conversations in archive")
         result = upsert(owner, item)
