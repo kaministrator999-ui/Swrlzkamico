@@ -232,9 +232,10 @@ def run():
         source = Path("hf_space/station.py").read_text(encoding="utf-8")
         prepare = Path("scripts/prepare_hf_space.py").read_text(encoding="utf-8")
         assert "chatgpt-archive-import-v1.js" in source and "chatgpt-archive-import-v1.js" in prepare
-        for marker in ("ChatGPT imports", "/api/chatgpt_archive/import", "X-Swrlz-Import",
-                       "unsupported", "addMessages"):
-            assert marker in html or marker == "addMessages", marker
+        for marker in ("ChatGPT imports", "/api/chatgpt_archive/init",
+                       "/api/chatgpt_archive/chunk/", "/api/chatgpt_archive/complete/",
+                       "X-Swrlz-Import", "unsupported", "addedMessages"):
+            assert marker in html, marker
         assert "SWRLZ_GITHUB_ENCRYPTION_KEY" not in html
     print("ChatGPT import v202: account isolation, encrypted CAS/idempotence, ZIP and route checks PASS")
 
