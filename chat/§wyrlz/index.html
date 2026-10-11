@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.07">
+  <meta name="swrlz-chat-version" content="1.1.08">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -864,7 +864,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.07";
+      const SWRLZ_CHAT_VERSION = "1.1.08";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -1605,6 +1605,13 @@
           String(a?.id||"").localeCompare(String(b?.id||""))
         );
       };
+      // A 202 response is returned only after Station commits the first user
+      // message to its account-owned history. Promotion is local projection
+      // only: never create a second Redis write or wait for model completion.
+      const promoteAcceptedNativeThread = (threads,pending,acceptedId,requestId) => {
+        if(!pending||!pending.id||!requestId||acceptedId!==requestId)return threads;
+        return threads.some(thread=>thread.id===pending.id) ? threads : [...threads,pending];
+      };
       const renderThreads = () => {
         threadList.innerHTML="";
         const selectionBar=document.createElement("div"); selectionBar.className="thread-selection-bar"; selectionBar.hidden=!threadSelectionMode;
@@ -2003,6 +2010,17 @@
           const accepted=await response.json();
           if(accepted.requestId!==requestId)throw new Error("SEND_ACK_REQUEST_MISMATCH");
           sendAcknowledged=true;
+          if(pendingDraftThread?.id===activeThreadId){
+            chatThreads=promoteAcceptedNativeThread(chatThreads,pendingDraftThread,accepted.requestId,requestId);
+            pendingDraftThread=null;
+            // Show this server-confirmed thread in the drawer immediately.
+            // The model may still be queued, generating, stopped or fail later.
+            renderThreads();
+            uiCamera("native-thread-shown-on-durable-send-ack",{requestId,threadId:activeThreadId});
+          }
+          // Reconcile the authoritative messages in the background. Do not
+          // block opening the thread or listening to streamed tokens on sync.
+          void syncStation(true);
           stationGeneration.status=[{type:"QUEUED",phase:"QUEUED"}];
           setCompanionState("accepted","send-ack");
           renderStationGeneration();
