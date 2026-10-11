@@ -1,3 +1,21 @@
+## UPDATE FINISHED — 2026-10-10 — v203 Android-interrupted ChatGPT import recovery
+
+**Outcome:** SOURCE COMPLETE / THREE CI GATES SUCCESS / GUARDED HF SPACE PUBLICATION SUCCESS / ANDROID OWNER FULL-ZIP ACCEPTANCE PENDING.
+
+**Observed owner bug:** v202 Android uploaded the ~55 MiB/2,608-thread ChatGPT export; saw ~20 conversations every 3–5 seconds for roughly 1,300 before navigating out of browser; v202 request-bound streamed processor stopped and progress disappeared. Previously committed per-conversation Redis records may survive, but the exact owner total cannot be proven from CI.
+
+**Corrected boundary:** `hf_space/chatgpt_import_job.py` detaches per-user ZIP processing from the browser HTTP response, persists counters and job receipt to account-hashed Redis, blocks concurrent imports, and returns HTTP 202; `/api/chatgpt_archive/status` returns both job state and authoritative stored total. Settings reconnects/polls every 3 seconds when active; completed/error/stale states survive reload. `chatgpt_upload_session.py` uses 2 MiB chunks, account-scoped received-byte lookup and identical-chunk retry, with client marker to resume transfer after reselecting the same file.
+
+**Isolation/regression:** Google verified session, origin/CSRF, encrypted archive, message ID union, native Chat separation and safe DELETE retained; synthetic tests cover detached completion after HTTP exit, account isolation, safe redundant chunk acknowledgement and readback total. Source candidate `b98abc7572be719eb4a31509a19f63159f641e77` on `feature/google-chatgpt-archive-import-v202`. Account CI [#38107171325](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38107171325) **SUCCESS**; HF candidate CI [#38107171298](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38107171298) **SUCCESS**; candidate repeat [#38107174048](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38107174048) **SUCCESS**.
+
+**Guarded deployment:** existing request-file lane [#38107249882](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38107249882) completed **SUCCESS**, after source/model/package safety checks, predeploy snapshot and rollback checkpoint. Space `kamiloki/Swyrlz` revision `5ba3d56c81003ceb89cb1d4af34de84b72a0b4a1`; rollback revision `d5d79c6eed41ad3a8e8fb51eddc63cecfac426bd`. Deployment receipt marked `DEPLOYED_UNVERIFIED`: workflow publication does not prove actual Android background/resume/full archive throughput.
+
+**Registered module evolution:** Repository Work `1.0.142`, Server Runtime `2.3.354`, Web Chat `1.5.97`, Google Account Architecture `1.0.11`. LALM/Online Research/Deployment Control unchanged.
+
+**Remaining bound:** v203 ZIP staging and worker are host-process-local, not survive Space crash/restart; existing indexed Redis records survive, and retry with reselected ZIP is idempotent. The old v202 uploaded temp ZIP cannot be promised to exist after stream cancellation. Imported ChatGPT archive remains read-only in Settings, not native sidebar Chat; owner live full-export rerun needed to certify final count and recovery. Details: [reports/V203_CHATGPT_MOBILE_IMPORT_RECOVERY_2026-10-10.md](reports/V203_CHATGPT_MOBILE_IMPORT_RECOVERY_2026-10-10.md).
+
+**Status:** FINISHED / DEPLOYED / FULL OWNER ANDROID ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-10 — v203 Android-interrupted ChatGPT import recovery
 
 **Trigger:** the owner completed the ~55 MiB browser upload from a real Android device, observed ~20 indexed conversations every 3–5 seconds, and then switched to the ChatGPT app and back after approximately 1,300 processed conversations. The v202 browser streaming request stopped, its client progress reset and no import summary appeared. This is valuable live acceptance evidence: v202 deployment was successful but unattended mobile import was not.
