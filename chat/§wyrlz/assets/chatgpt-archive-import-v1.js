@@ -165,12 +165,14 @@
           if (event.type === "PROGRESS") status.textContent =
             "Indexed " + event.conversations + " conversations · new: " + event.created +
             " · updated: " + event.updated + " · already present: " + event.skipped +
-            " · newly added messages: " + event.addedMessages;
+            " · newly added messages: " + event.addedMessages +
+            " · unsupported/empty: " + event.unsupported;
           if (event.type === "COMPLETE") {
             terminal = true;
             status.textContent = "Import complete: " + event.created + " new conversations, " +
               event.updated + " updated, " + event.skipped + " unchanged, " +
-              event.addedMessages + " newly added messages.";
+              event.addedMessages + " newly added messages, " +
+              event.unsupported + " empty or non-text-only conversations skipped.";
           }
           if (event.type === "ERROR") throw Error(event.message || "Import interrupted; reselect the same ZIP to resume.");
         };
