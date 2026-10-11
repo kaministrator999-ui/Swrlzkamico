@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-11 — v207 expanded personal history search tools
+
+**User request:** extend the live v206 owner-scoped historical conversation search for additional useful needs without changing the original encrypted ChatGPT import or native chat contents. Explicit use cases: exact phrase/quote lookup; separate native vs imported source filters; distinguish "what I said" from "what you replied"; expanded date windows and clock times; follow-up questions referring to earlier searches; and targeted searches for decisions, corrections, unfinished plans and work.
+
+**Plan / source:** isolated `feature/private-history-toolkit-v207` from validated v206 source `e8bc07e5ff80ced6c0a02ce454b7504efd294f80`. Extend `hf_space/personal_history_lookup.py` while preserving the Google-auth-only, opted-in same-owner search and established `archiveEvidence` runtime bridge; reference recent native message context for follow-up continuity without reinterpreting old quoted results as a new user command. Keep context bounded, actual speaker roles, timestamps, thread IDs, and source labels; no new permanent transcript, model weight update, or new public endpoints. Add candidate filtering and clock/date parsing safeguards, and test exclusion and no-match behavior so filters are not silently ignored.
+
+**Acceptance:** quote search finds only real matching message text; source and role filters are respected; broader dates don't mislabel thread updatedAt as message time; explicit current-time query and wrong-day results are excluded; follow-ups reapply previous search anchor, with refreshed filters; intent-specific decisions/pending tasks use actual visible user/assistant message snippets and do not invent action items. Regressions cover v203 importer/v204 sidebar/v205 opt-in/v206 timed recall and 700M model. Guarded HF publication after passing CI; update source-owned versions/roadmap only on completion.
+
+**Status:** IN PROGRESS — v206 in production remains untouched until a passing candidate is released.
+
 ## UPDATE FINISHED — 2026-10-11 — v206 private cross-thread search by topic and local time
 
 **Outcome:** SOURCE COMPLETE / ACCOUNT + HF REGRESSION CI SUCCESS / GUARDED HF SPACE PUBLICATION SUCCESS / REAL OWNER ANDROID HISTORY-LOOKUP ACCEPTANCE PENDING.
