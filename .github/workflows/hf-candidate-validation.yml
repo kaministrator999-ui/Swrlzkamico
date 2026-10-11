@@ -5,6 +5,7 @@ on:
       - feature/version-literacy-content-layout-v199
       - feature/grounded-version-recall-v201
       - feature/google-chatgpt-archive-import-v202
+      - feature/chatgpt-archive-sidebar-v204
   pull_request:
     paths:
       - 'hf_space/**'
@@ -41,5 +42,7 @@ jobs:
           python -m unittest discover -s tests -p test_hf_candidate.py -v
           python hf_space/test_chatgpt_archive_import_v202.py
           node --check 'chat/§wyrlz/assets/chatgpt-archive-import-v1.js'
+          node --check 'chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js'
+          node tests/test_chatgpt_archive_sidebar_v204.mjs
       - name: Report scope
         run: echo "Offline checks only. Model reconstruction, inference, HF Space and Chat parity remain unverified."
