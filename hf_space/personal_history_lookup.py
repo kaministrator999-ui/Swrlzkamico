@@ -242,31 +242,39 @@ def _entry(source,cid,title,msg,dt,zone):
     return f"[{source} | {title[:90]!r} | thread {cid[:120]} | {local} | {msg['role']}]: {text!r}"
 
 
-def lookup(owner,prompt,timezone_name,native_threads,active_thread_id="",now=None):
-    """Bounded native+imported historical citations. Never use browser-supplied identities."""
-    if not relevant(prompt) or not memory.enabled(owner):return ""
+def lookup(owner,prompt,timezone_name,native_threads,active_thread_id="",now=None,history=None):
+    """Scoped evidence search, filters derived from the user's current request."""
+    if not relevant(prompt,history) or not memory.enabled(owner):return ""
     archive._owner(owner)
-    window=_bounds(prompt,timezone_name,now)
-    keywords=_keywords(prompt)
+    query=facets.parse(prompt,history)
+    current_window=_bounds(query["currentText"],timezone_name,now)
+    window=current_window if current_window is not None else (
+        _bounds(query["searchText"],timezone_name,now) if query["followup"] else None)
+    keywords=_keywords(query["searchText"])
+    exact=query["exactPhrase"].casefold()
+    if exact:keywords=list(dict.fromkeys(keywords+memory._terms(exact)))[:16]
     zone=_zone(timezone_name)
-    prefer="assistant" if re.search(r"(?i)\b(?:you said|did you say|your response|you told)\b",prompt) else "user"
+    prefer="assistant" if query["role"]=="assistant" else "user"
     candidates=[]
     def add(source,thread_id,title,messages,millis):
         scored=[]
         for msg in messages:
             if msg.get("role") not in ("user","assistant") or not msg.get("text"):continue
+            if query["role"]!="any" and msg["role"]!=query["role"]:continue
+            if exact and exact not in " ".join(str(msg["text"]).split()).casefold():continue
+            if not facets.evidence_matches(query["focus"],msg["text"]):continue
             dt=_dt(msg.get("createdAt"),millis=millis)
             if not _matches_timestamp(dt,window):continue
             score=_score(msg,keywords,prefer)
-            # A time-only query retrieves real dated messages; a topical query
-            # must match actual message text, not just the conversation title.
-            if keywords and not score:continue
-            if not keywords and window is None:continue
+            # Exact phrases and project decisions are confirmed from actual
+            # message text, not inferred from a title.
+            if keywords and not score and not (exact or query["focus"]):continue
+            if not keywords and window is None and not (exact or query["focus"]):continue
             scored.append((score,dt or datetime.min.replace(tzinfo=timezone.utc),msg))
         scored.sort(key=lambda x:(x[0],x[1]),reverse=True)
         for score,dt,msg in scored[:2]:
             candidates.append((score,dt,source,thread_id,title,msg))
-    for thread in (native_threads or [])[:180]:
+    for thread in ((native_threads or [])[:180] if query['source']!='imported' else []):
         if not isinstance(thread,dict) or str(thread.get("id"))==str(active_thread_id):continue
         add("§wyrlz native",str(thread.get("id") or ""),str(thread.get("title") or "Untitled"),
             thread.get("messages") or [],True)
