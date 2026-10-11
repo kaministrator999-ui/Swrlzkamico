@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/chatgpt-archive-sidebar-v204
-REQUEST_NONCE=2026-10-10-v204-archive-sidebar-toggle-001
+SOURCE_REF=feature/chatgpt-account-memory-v205
+REQUEST_NONCE=2026-10-11-v205-private-archive-recall-001
