@@ -1,4 +1,4 @@
-name: Validate §E v9.8 camera-safe storybook staging
+name: Validate §E v9.9 camera-safe storybook staging
 on:
   push:
     branches: [main]
@@ -16,7 +16,9 @@ on:
       - "projects/swrlz-forge-moba/patches/v9_6_natural_staff_painted_faces.py"
       - "projects/swrlz-forge-moba/patches/v9_7_ornate_staff.py"
       - "projects/swrlz-forge-moba/patches/v9_8_full_length_staff.py"
+      - "projects/swrlz-forge-moba/patches/v9_9_episode_shuttle.py"
       - "projects/swrlz-forge-moba/runtime/**"
+      - "projects/swrlz-forge-moba/tests/episode_transport_playwright.mjs"
       - "projects/swrlz-forge-moba/assets/anime/**"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json"
@@ -55,12 +57,12 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
-          assert len(manifest['patches'])==58
-          assert manifest['patches'][-1]=='patches/v9_8_full_length_staff.py'
+          assert len(manifest['patches'])==59
+          assert manifest['patches'][-1]=='patches/v9_9_episode_shuttle.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
           assert len(s.encode())==manifest['finalBytes']
           assert hashlib.sha256(s.encode()).hexdigest()==manifest['finalSha256']
-          for feature in ('V9_8_FULL_LENGTH_MAGE_STAFF','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
+          for feature in ('V9_9_EPISODE_SHUTTLE_CONTROLS','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
                           'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
                           'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):
