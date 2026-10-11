@@ -106,7 +106,15 @@ def _visible_messages(conv):
         if isinstance(message, dict):
             role = (message.get("author") or {}).get("role")
             body = message.get("content") or {}
-            if role in ("user", "assistant") and isinstance(body, dict) and body.get("content_type") in ("text", "multimodal_text"):
+            metadata = message.get("metadata") or {}
+            channel = metadata.get("channel") if isinstance(metadata, dict) else None
+            recipient = message.get("recipient")
+            # Exclude tool calls and hidden/private reasoning channels.
+            visible = role in ("user", "assistant") and channel not in (
+                "analysis", "justify", "confidence", "summary", "complete", "notification")
+            if role == "assistant" and recipient not in (None, "", "all"):
+                visible = False
+            if visible and isinstance(body, dict) and body.get("content_type") in ("text", "multimodal_text"):
                 parts = body.get("parts") or []
                 if isinstance(parts, list):
                     value = "\n".join(p for p in parts if isinstance(p, str)).strip()
