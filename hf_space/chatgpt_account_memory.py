@@ -92,7 +92,15 @@ def _build(owner,token):
                 for message in item["messages"]:
                     if message["role"]=="user":
                         counter.update(_terms(str(message["text"])[:1800]))
+                # A thread may be edited across many days. For temporal recall
+                # the *actual* message times (not last-updated date) define
+                # whether it could contain something from the requested night.
+                timestamps=[float(m["createdAt"]) for m in item["messages"]
+                            if type(m.get("createdAt")) in (int,float)
+                            and 0<float(m["createdAt"])<32503680000]
                 docs.append({"id":cid,"title":title,"timestamp":item.get("updatedAt",0),
+                             "firstAt":min(timestamps) if timestamps else None,
+                             "lastAt":max(timestamps) if timestamps else None,
                              "titleTokens":set(_terms(title)),
                              "terms":dict(counter.most_common(MAX_TERMS))})
             with _LOCK:
