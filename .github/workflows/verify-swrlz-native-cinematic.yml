@@ -1,4 +1,4 @@
-name: Verify §E v9.6 native cinematic candidate
+name: Verify §E v9.7 native cinematic candidate
 on:
   push:
     branches: [main]
@@ -17,6 +17,7 @@ on:
       - "projects/swrlz-forge-moba/patches/v9_5_staff_grip_fit.py"
       - "projects/swrlz-forge-moba/patches/v9_5_character_depth_sections.py"
       - "projects/swrlz-forge-moba/patches/v9_6_natural_staff_painted_faces.py"
+      - "projects/swrlz-forge-moba/patches/v9_7_ornate_staff.py"
       - "projects/swrlz-forge-moba/runtime/**"
       - "projects/swrlz-forge-moba/assets/anime/**"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
@@ -59,12 +60,12 @@ jobs:
           output=source.encode("utf-8")
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
-          assert len(manifest["patches"])==56
-          assert manifest['patches'][-1]=='patches/v9_6_natural_staff_painted_faces.py'
+          assert len(manifest["patches"])==57
+          assert manifest['patches'][-1]=='patches/v9_7_ornate_staff.py'
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
           for needle in (
-            'V9_6_NATURAL_STAFF_PAINTED_FACES','Maker v9.6','animeStartCinematic',
+            'V9_7_ORNATE_MAGE_STAFF','Maker v9.7','animeStartCinematic',
             'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','storyEditorInstall',
             'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',
