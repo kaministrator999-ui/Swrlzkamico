@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.356
-REVISION=2.3.356-hf-v205-private-cross-thread-archive-recall
+VERSION=2.3.357
+REVISION=2.3.357-hf-v206-native-imported-temporal-history-search
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
