@@ -1,3 +1,25 @@
+## UPDATE FINISHED — 2026-10-11 — v211.1 native Chat newest-first and mobile Versions overlap repair
+
+**Outcome:** SOURCE BUG CONFIRMED / GITHUB ACCOUNT+MOBILE+HF CI SUCCESS / CANONICAL GUARDED SPACE DEPLOY SUCCESS / AFFECTED RUNTIME REGISTRY VERIFIED / ACTUAL ANDROID OWNER ACCEPTANCE PENDING.
+
+**Owner observation:** Native §wyrlz Chats appeared oldest-first with new chats at the bottom, and tall Google/GitHub account settings plus anchored Versions footer made the bottom rows on Android inaccessible. Exact published v211 source displayed insertion-order `chatThreads` and native Chat JSON export returned the same unsorted threads. Separate imported ChatGPT archive already used newest-first `ZREVRANGE`. The display/interaction failure does not prove all previously missing chats were saved.
+
+**Source / focus group:** Primary Focus clean-room Web Chat mobile navigation; Focus Group native Station export and existing verified-Google account Chat history. The isolated and published [draft PR #107](https://github.com/kaministrator999-ui/Swrlzkamico/pull/107) targets v211 rather than older v210, exact `fix/native-chat-mobile-sidebar-access-v2111@2284fccb589625449fc83405e170fcd428864834`, base `feature/github-model-guided-progress-v211@4da362e9f89339b37017c0a8aeba65948008f7d2`. The earlier UI-only [PR #105](https://github.com/kaministrator999-ui/Swrlzkamico/pull/105) remained unshipped and must not replace current v211 state. Clean-room source version **1.1.07**.
+
+**Implementation:** One complete `100dvh` vertically scrollable mobile menu contains account card + every Chat row + Versions at the bottom, with Android safe-area padding and no capped/nested 36dvh Chat list or bottom footer overlay. Native sidebar sorts a COPY by pinned first then latest activity across messages/updatedAt/createdAt, stable thread-ID tie, unsaved new chat draft first. `/api/lalm_station/export` orders only the returned native *threads* identically, leaving Redis thread array, CAS/revision, messages within each thread and separate imported ChatGPT archive unchanged. Existing v211 model-guided GitHub read tools/progress, per-operation permission preflight and explicit write consent preserved.
+
+**Exact source CI:** [GitHub account + Python export + Node newest-first/mobile drawer #38173174329](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38173174329) **SUCCESS**, [HF candidate #38173202771](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38173202771) **SUCCESS**, [Mobile integrity #38173202808](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38173202808) **SUCCESS**. CI is not physical Android touch/hit testing.
+
+**Guarded deployment:** Single existing `main:.deploy/HF_SPACE_REQUEST.txt` nonce `2026-10-11-v2111-native-chat-scroll-and-newest-first-001` at commit `52a84d0be271ed2626a0856264bc6f2da3522060`; [HF Actions #38173292795](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38173292795) **SUCCESS** with exact source, model/inference smoke and rollback. New existing `kamiloki/Swyrlz` Space revision **`6c06b10f6328da082ead77a77c1d1b690495bb17`**; predeploy rollback revision **`e5760d09a5e30a5ba1cfba3b52c28a4127248e49`**. Checkpoint artifact `hf-release-checkpoint` ID **11714418503**; `knownGood=false`, `verificationState=DEPLOYED_UNVERIFIED`. User browser acceptance remains needed.
+
+**Atomic runtime registry:** `runtime@216715faab329508881b41231e0e6ea0f5062e7a` and confirmed module readback: Repository Work **1.0.151→1.0.152**, Server Runtime **2.3.363→2.3.364**, Web Chat **1.5.102→1.5.103**, LALM Engine/Station **2.1.188→2.1.189**. Google Account stays 1.0.14, Runtime Manifest/Stream Contract/Online Research and unrelated §E projects unchanged.
+
+**Full release report:** [reports/V2111_NATIVE_CHAT_ORDER_AND_MOBILE_ACCESS_2026-10-11.md](reports/V2111_NATIVE_CHAT_ORDER_AND_MOBILE_ACCESS_2026-10-11.md).
+
+**Owner acceptance:** Load current Space on signed-in Android, open drawer with account section expanded and scroll all the way to Versions: every chat row must be visible/tappable and Versions must follow the last row without blocking. New unpinned saved chat must appear newest-first, survive reload and appear in same-Google account Browser B. Export must have the same native thread ordering. If any chat vanishes after reload, handle as separate account persistence issue with exact safe status; do not delete/reset old records. Do not promote known-good until user confirms.
+
+**Status:** FINISHED — TESTED AND DEPLOYED / USER LIVE SIDEBAR/CHAT RELOAD ACCEPTANCE PENDING.
+
 ## UPDATE CHECKPOINT — 2026-10-11 — v211.1 mobile sidebar Versions overlap + newest-first native Chat release
 
 **Owner acceptance evidence:** Android screenshot shows a large Google/GitHub account card followed by native Chat rows, with the collapsed Versions panel obscuring or making lower conversations untappable. A separate verified source error lists the newest native thread at the bottom because both the drawer and native JSON export follow insertion order.
