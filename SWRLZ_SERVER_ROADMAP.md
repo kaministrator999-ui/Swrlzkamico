@@ -1,3 +1,15 @@
+## UPDATE CHECKPOINT — 2026-10-11 — v211 model-guided GitHub inference/tool progress source and exact CI verified
+
+**Source:** [draft PR #104](https://github.com/kaministrator999-ui/Swrlzkamico/pull/104), isolated `feature/github-model-guided-progress-v211@4da362e9f89339b37017c0a8aeba65948008f7d2`, based on published v209.1+v210 integrated `4db31fb5a8470e3784ee04c97dcaf871728af1b4`. Preserves encrypted Google-account native Chat repair and existing GitHub least-privilege consent/write proposal contract. Local clean-room Chat source `1.1.06`.
+
+**Working design:** The selected existing §wyrlz local model proposes a strict allowlisted 1–3 step READ plan for natural GitHub requests. Generated model text stays private as an untrusted tool suggestion, never presented as chain-of-thought. The server validates every tool and repo permission independently, streams real phases (model loading/generation, plan selected, GitHub read preflight, tool started/completed), and appends actual verified source output to the answer. Existing exact write commands remain deterministic with user confirmation. Invalid/unavailable model planning yields a plainly labeled deterministic read fallback. No new OAuth scope or repo write is ever inferred.
+
+**Exact CI at candidate SHA:** [GitHub account #38172413647](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38172413647) SUCCESS, [HF offline candidate #38172418055](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38172418055) SUCCESS, [Mobile integrity #38172418079](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38172418079) SUCCESS. First account check failed due to old test referencing v210 handler; fixed test now asserts new Station dispatcher AND old explicit write confirmation owner; passing run preserved.
+
+**Version/release gate:** Current runtime authority Repository Work 1.0.150, Server Runtime 2.3.362, Web Chat 1.5.101, LALM Engine 2.1.187, Google Account 1.0.14. One existing Space guarded deploy of exact v211 candidate next; no other module version changes planned. Owner Android model/tool and native save acceptance pending, never equate publication with working private account.
+
+**Status:** SOURCE AND PREDEPLOY CI VERIFIED / GUARDED RELEASE REQUEST NEXT.
+
 ## UPDATE STARTED — 2026-10-11 — v211 model-guided GitHub tool orchestration and live visible progress
 
 **User intent:** §wyrlz's inference model should participate in selecting and using GitHub tools, checking permission and framing evidence, with visible real-time steps. Display meaningful high-level progress rather than raw internal chain-of-thought. Never expose OAuth tokens or untrusted repo content in diagnostic logs. Every tool must still be independently server-authorized, and writes require existing one-time explicit user confirmation.
