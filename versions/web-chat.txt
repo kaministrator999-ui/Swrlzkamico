@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.96
-REVISION=1.5.96-chatgpt-export-import-settings-v202
+VERSION=1.5.97
+REVISION=1.5.97-chatgpt-import-background-progress-resume-v203
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
