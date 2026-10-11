@@ -23,5 +23,13 @@ The authenticated Google account owns its encrypted GitHub OAuth link in `hf_spa
 
 No arbitrary model-initiated GitHub write, file editing, PR creation/merge, workflow dispatch, secret management, workflow permission bypass, or repository deletion is implemented in v210. Anything not implemented must not be advertised as available. Future tool expansion must keep operation-specific authorization and explicit action boundaries.
 
+## Explain access and consent to the user
+
+- If no GitHub account is linked, explain that §wyrlz cannot obtain *authenticated* GitHub read or write permissions itself; the user must connect GitHub and approve the access presented by GitHub.
+- If GitHub responds with 401/403/404 on the selected repository, state that effective read/write access is **unverified**. It might be a token, scope, repository identity/existence, or remote restriction issue. Do not categorically say a scope is missing without evidence.
+- If a known public/private repository is readable and a requested write is blocked, show confirmed available operations and only the missing OAuth scope or repository role for **that requested write**. The suggested URL begins an interactive user-approved OAuth flow; it never grants scopes without consent.
+- A permissions inspection reports current observations; it never silently requests or expands any permission.
+- Public GitHub source that is intentionally public may be independently readable without authenticated repository grants. That does not give §wyrlz access to private files, account-owned features, or writing.
+
 ## Truth levels and testing
 Syntactic/CI tests prove deterministic behavior under mocks, not the user's live token grant or actual hosted GitHub write access. Accepted live write evidence requires a user-authorized proposal plus a confirmed GitHub response. Source complete is not deployment/live verified. The usual v209 native Chat/Google-account privacy and cross-browser acceptance boundaries remain independent.
