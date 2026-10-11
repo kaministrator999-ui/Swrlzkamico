@@ -24,7 +24,8 @@ router = APIRouter()
 GITHUB_API = "https://api.github.com"
 GITHUB_AUTH = "https://github.com/login/oauth/authorize"
 GITHUB_TOKEN = "https://github.com/login/oauth/access_token"
-GITHUB_SCOPE = "read:user"  # public repositories only, deliberately NOT broad repo/write scope
+GITHUB_SCOPE = "read:user"  # least-privilege default; upgrades only on explicit request
+_GITHUB_ACCESS = {"read": "read:user", "public-write": "read:user public_repo", "private-write": "read:user repo"}
 _REPO = re.compile(r"^[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}$")
 _VERSION = re.compile(r"^([A-Z_]+)=versions/([a-z0-9-]+\.txt)$", re.M)
 _EVENTS = re.compile(r"^#{2,3}\s+UPDATE (FINISHED|COMPLETED|STARTED|CONTINUATION STARTED|CONTINUATION ENDED|ABORTED|SUPERSEDED)\s+—\s+(\d{4}-\d{2}-\d{2})\s+—\s+(.+)$", re.M)
@@ -136,6 +137,7 @@ def _save(c, user_id, item):
     payload = {"owner": user_id, "token": item["token"],
                "githubId": int(item["githubId"]), "login": str(item["login"])[:100],
                "repo": str(item.get("repo") or "")[:202],
+               "scopes": str(item.get("scopes") or "")[:400],
                "connectedAt": int(item.get("connectedAt") or time.time())}
     encrypted = Fernet(c["fernet"].encode("ascii")).encrypt(json.dumps(payload, separators=(",", ":")).encode("utf-8")).decode("ascii")
     if _redis(c, "SET", _user_key(user_id), encrypted) != "OK":
@@ -233,22 +235,25 @@ def status(request: Request):
     record = _load(c, user_id)
     return {"configured": True, "linked": bool(record), "durable": True,
             "scope": GITHUB_SCOPE, "login": record["login"] if record else None,
-            "repo": record.get("repo") if record else None}
+            "repo": record.get("repo") if record else None,
+            "access": _scope_level(record.get("scopes", "")) if record else "not-connected"}
 
 
 @router.get("/api/github/start")
-def start(request: Request):
+def start(request: Request, access: str = "read"):
     user_id = _google(request)
     c = _config()
+    if access not in _GITHUB_ACCESS:
+        raise HTTPException(422, "Unsupported GitHub access request")
     state = secrets.token_urlsafe(32)
     verifier = secrets.token_urlsafe(48)
     challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode("ascii")).digest()).decode("ascii").rstrip("=")
-    one_time = {"owner": user_id, "verifier": verifier}
+    one_time = {"owner": user_id, "verifier": verifier, "access": access}
     stored = _redis(c, "SET", _state_key(state), json.dumps(one_time), "EX", 600, "NX")
     if stored != "OK":
         raise HTTPException(503, "Could not begin GitHub authorization")
     auth_url = GITHUB_AUTH + "?" + urlencode({"client_id": c["client"],
-        "redirect_uri": c["callback"], "scope": GITHUB_SCOPE,
+        "redirect_uri": c["callback"], "scope": _GITHUB_ACCESS[access],
         "state": state, "code_challenge": challenge, "code_challenge_method": "S256"})
     response = RedirectResponse(auth_url, status_code=303)
     response.set_cookie("swrlz_github_oauth", state, httponly=True, secure=True,
@@ -291,8 +296,10 @@ def callback(request: Request, code: str = "", state: str = "", error: str = "")
         raise HTTPException(502, "GitHub did not return a verified identity")
     prior = _load(c, user_id)
     default_repo = prior.get("repo", "") if prior and prior.get("githubId") == int(identity["id"]) else ""
+    # OAuth token exchange supplies the *granted* scopes (never assume requested == granted).
+    granted = str(response_data.get("scope") or "")
     _save(c, user_id, {"token": token, "githubId": identity["id"],
-                       "login": identity["login"], "repo": default_repo})
+                       "login": identity["login"], "repo": default_repo, "scopes": granted})
     response = RedirectResponse("/chat/§wyrlz#github=connected", status_code=303)
     response.delete_cookie("swrlz_github_oauth", path="/api/github/callback")
     return response
