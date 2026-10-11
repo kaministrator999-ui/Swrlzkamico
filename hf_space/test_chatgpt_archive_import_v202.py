@@ -41,6 +41,22 @@ def make_redis():
             was_new = ident not in group
             group[ident] = float(score)
             return int(was_new)
+        if method == "DEL":
+            deleted = 0
+            for key in args:
+                if key in values:
+                    del values[key]
+                    deleted += 1
+            return deleted
+        if method == "ZREM":
+            key, *ids = args
+            group = indexes.setdefault(key, {})
+            removed = 0
+            for ident in ids:
+                if ident in group:
+                    del group[ident]
+                    removed += 1
+            return removed
         if method == "ZCARD":
             return len(indexes.get(args[0], {}))
         if method == "ZREVRANGE":
@@ -101,6 +117,13 @@ def run():
         except Exception as exc:
             assert getattr(exc, "status_code", None) == 404
         assert "Fixture text only" not in str(values) and "test-secret" not in str(values)
+        # Archive deletion never changes another user's account.
+        archive.upsert(BOB, initial)
+        assert archive.delete_archive(ALICE, initial["id"]) == {"deleted": 1}
+        assert archive.list_archive(ALICE)["total"] == 0
+        assert archive.list_archive(BOB)["total"] == 1
+        assert archive.delete_all_archive(BOB) == {"deleted": 1}
+        assert archive.list_archive(BOB)["total"] == 0
         # Regenerated branches do not blindly duplicate messages on losing paths.
         branch = make_thread(count=3)
         branch["mapping"]["alternative-message-9999"] = {
@@ -159,7 +182,13 @@ def run():
             events = [json.loads(x) for x in response.text.splitlines()]
             assert events[-1]["type"] == "COMPLETE"
             assert events[-1]["created"] == 1
-            assert client.get("/api/chatgpt_archive/list").json()["total"] == 3
+            assert client.get("/api/chatgpt_archive/list").json()["total"] == 2
+            assert client.delete("/api/chatgpt_archive",
+                headers={"Origin": "https://evil.invalid", "X-Swrlz-Import": "1"}).status_code == 403
+            good_delete = client.delete("/api/chatgpt_archive",
+                headers={"Origin": "http://testserver", "X-Swrlz-Import": "1"})
+            assert good_delete.status_code == 200 and good_delete.json()["deleted"] == 2
+            assert client.get("/api/chatgpt_archive/list").json()["total"] == 0
         html = Path("chat/§wyrlz/assets/chatgpt-archive-import-v1.js").read_text(encoding="utf-8")
         source = Path("hf_space/station.py").read_text(encoding="utf-8")
         prepare = Path("scripts/prepare_hf_space.py").read_text(encoding="utf-8")
