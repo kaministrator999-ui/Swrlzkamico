@@ -21,6 +21,7 @@ on:
       - fix/native-google-chat-cross-browser-20261011
       - fix/native-chat-capacity-v2091
       - feature/github-capabilities-v210-v2091-integrated
+      - fix/native-chat-mobile-sidebar-access-v2111
       - feature/github-model-guided-progress-v211
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
@@ -71,6 +72,8 @@ jobs:
           node --check 'chat/§wyrlz/assets/chatgpt-archive-import-v1.js'
           node --check 'chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js'
           node tests/test_chatgpt_archive_sidebar_v204.mjs
+          node tests/test_native_chat_order_v211.mjs
+          node tests/test_native_sidebar_mobile_access_v211.mjs
       - name: Guard no OAuth secrets embedded into Chat
         run: |
           python - <<'PY'
