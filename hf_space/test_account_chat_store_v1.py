@@ -237,6 +237,16 @@ def test_native_accepted_send_and_restart_persist_beyond_legacy_cap():
             response=client.post("/api/lalm_station/send",json=body)
             assert response.status_code==202,response.text[:300]
             assert store.load_chat(OWNER)["revision"]==2
+            # The first message and a selectable thread are already durable
+            # at the 202 ACK. Inference hasn't even been submitted in this
+            # synthetic test; the assistant reply must not gate visibility.
+            before_inference=client.get("/api/lalm_station/sync?fresh=1")
+            assert before_inference.status_code==200
+            saved=next(t for t in before_inference.json()["threads"] if t["id"]=="thread-new")
+            assert len(saved["messages"])==1
+            assert saved["messages"][0]["role"]=="user"
+            assert saved["messages"][0]["text"]==body["prompt"]
+            assert before_inference.json()["activeGeneration"]["terminal"] is False
             station._sessions.clear()
             synced=client.get("/api/lalm_station/sync?fresh=1")
             assert synced.status_code==200,synced.text[:300]
