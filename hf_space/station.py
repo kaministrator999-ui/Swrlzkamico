@@ -279,6 +279,43 @@ def _restore_chat_from_store(s):
         return fresh
     return None
 
+def _refresh_account_chat(s,force=False):
+    """Reconcile idle account projections against the durable Google-owner store.
+
+    Distinct HF workers have independent process-local _sessions dictionaries.
+    An already-cached process must never present its stale history as the latest
+    account state, or try to mutate it without first seeing the committed CAS
+    revision. Do not replace an in-flight local generation mid-stream.
+    Called only while the Station process lock is held.
+    """
+    owner=str(s.get("ownerGoogleId") or "")
+    if not owner.startswith("google:"):
+        return False
+    generation=s.get("activeGeneration")
+    if isinstance(generation,dict) and not generation.get("terminal"):
+        return False
+    # The browser polls its in-process Station every 2s. Bound the external
+    # Redis reads independently; explicit writes, exports and focus refreshes
+    # can bypass this short cache. Never put the timer in durable chat data.
+    now=time.monotonic()
+    if not force and now-float(s.get("_lastAccountStoreCheck") or 0)<10:
+        return False
+    fresh=account_chat_store.load_chat(owner)
+    s["_lastAccountStoreCheck"]=now
+    if fresh is None:
+        if int(s.get("revision") or 0)>0:
+            raise HTTPException(503,"Account chat persistence temporarily unavailable; local state retained")
+        return False
+    local_rev=int(s.get("revision") or 0)
+    saved_rev=int(fresh["revision"])
+    if saved_rev<local_rev:
+        raise HTTPException(503,"Saved account chat revision regressed; refusing stale replacement")
+    if (saved_rev!=local_rev or s.get("threads")!=fresh["threads"]
+            or s.get("currentId")!=fresh["currentId"]):
+        s.update(fresh)
+        return True
+    return False
+
 def _commit_revision(s):
     # Every Station-visible revision is a durable CAS transition when a Google
     # identity is active. For anonymous sessions, retain existing local behavior.
@@ -570,7 +607,9 @@ async def chatgpt_archive_import(request: Request):
 @app.get("/api/lalm_station/sync")
 def sync(request:Request):
     key,s=_session(request)
-    with _lock: response=JSONResponse(_snapshot(s))
+    with _lock:
+        _refresh_account_chat(s,force=request.query_params.get("fresh")=="1")
+        response=JSONResponse(_snapshot(s))
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400,path="/")
     return response
 
@@ -624,7 +663,9 @@ async def stream_generation(request:Request, requestId:str):
 def export_session(request:Request):
     """Export the verified user's account-owned chat history or anonymous session."""
     key,s=_session(request)
-    with _lock:snapshot=_snapshot(s)
+    with _lock:
+        _refresh_account_chat(s,force=True)
+        snapshot=_snapshot(s)
     durable=str(s.get("ownerGoogleId") or "").startswith("google:")
     document={"format":"swrlz-hf-session-export-v1","exportedAtUnixMs":int(time.time()*1000),
               "storage":"encrypted-google-account-redis" if durable else "anonymous-process-local",
@@ -640,6 +681,7 @@ async def mutate(request:Request):
     google_owner=str((account or {}).get("id") or "")
     deleted_threads=[]
     with _lock:
+        _refresh_account_chat(s,force=True)
         if int(body.get("expectedRevision",-1))!=s["revision"]:
             return JSONResponse(_snapshot(s),status_code=409)
         # Retain a rollback snapshot if the Redis compare-and-swap rejects this.
@@ -1475,6 +1517,7 @@ async def send(request:Request):
         try:recovered_project=project_thread_memory.load(google_owner,tid)
         except Exception:recovered_project=None
     with _lock:
+        _refresh_account_chat(s,force=True)
         if s["activeGeneration"] and not s["activeGeneration"]["terminal"]:raise HTTPException(409,"Generation already active")
         old_threads=copy.deepcopy(s["threads"])
         old_current=s["currentId"]

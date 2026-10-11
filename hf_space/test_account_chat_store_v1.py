@@ -86,6 +86,63 @@ def test_account_owner_chat_after_restart_and_conflicts():
         assert not store.save_chat(OWNER,{"revision":2,"ownerGoogleId":OWNER,"currentId":"threadA","threads":[make_thread("stale write")]},1)
         assert store.load_chat(OWNER)["threads"][0]["title"]=="new title"
 
+def test_two_browser_cached_worker_refresh_and_non_destructive_conflicts():
+    # Two browser requests can land on separate HF workers. A process-local
+    # _sessions cache must not hide another worker's committed Google history.
+    kv,redis=fake_store()
+    c=config()
+    with mock.patch.object(gh,"_settings",return_value=c),mock.patch.object(gh,"_redis",side_effect=redis),mock.patch.object(station,"_account_session",return_value=("browser-A",USER)):
+        station._sessions.clear()
+        request=SimpleNamespace(cookies={})
+        key,worker_a=station._session(request)
+        worker_a["threads"]=[make_thread("Original account chat")]
+        worker_a["currentId"]="threadA"
+        station._commit_revision(worker_a)
+        assert worker_a["revision"]==1
+
+        # This is a second worker's independent read, with the same verified owner.
+        worker_b=store.load_chat(OWNER)
+        assert worker_b["revision"]==1
+        another=make_thread("New thread saved from Browser B")
+        another["id"]="threadB"
+        worker_b["threads"].append(another)
+        worker_b["currentId"]="threadB"
+        worker_b["revision"]=2
+        assert store.save_chat(OWNER,worker_b,1)
+
+        # Before reconciliation, A is stale. B's data must not be overwritten.
+        assert worker_a["revision"]==1 and len(worker_a["threads"])==1
+        assert station._refresh_account_chat(worker_a,force=True) is True
+        assert worker_a["revision"]==2
+        assert [t["id"] for t in worker_a["threads"]]==["threadA","threadB"]
+        assert worker_a["currentId"]=="threadB"
+        assert station._refresh_account_chat(worker_a) is False
+
+        # Another remote write during local inference must not evict A's active
+        # generation, but becomes visible immediately once A finishes it.
+        worker_a["activeGeneration"]={"requestId":"ongoing-A","terminal":False}
+        worker_b=store.load_chat(OWNER)
+        third=make_thread("Third account chat")
+        third["id"]="threadC"
+        worker_b["threads"].append(third)
+        worker_b["revision"]=3
+        assert store.save_chat(OWNER,worker_b,2)
+        assert station._refresh_account_chat(worker_a,force=True) is False
+        assert worker_a["activeGeneration"]["requestId"]=="ongoing-A"
+        assert len(worker_a["threads"])==2
+        worker_a["activeGeneration"]["terminal"]=True
+        assert station._refresh_account_chat(worker_a,force=True) is True
+        assert [t["id"] for t in worker_a["threads"]]==["threadA","threadB","threadC"]
+
+        # An old revision is never allowed to replace either browser's work.
+        stale={"revision":2,"ownerGoogleId":OWNER,"currentId":"threadA",
+               "threads":[make_thread("Stale overwrite attempt")]}
+        assert not store.save_chat(OWNER,stale,1)
+        assert len(store.load_chat(OWNER)["threads"])==3
+        assert store.load_chat(OTHER) is None
+        station._sessions.clear()
+
+
 def test_limits_enforced_no_silent_truncation_and_identity_isolation():
     kv,redis=fake_store()
     with mock.patch.object(gh,"_settings",return_value=config()),mock.patch.object(gh,"_redis",side_effect=redis):
@@ -109,11 +166,14 @@ def test_source_wiring_and_sync_contract():
     assert "with _lock:_hf_accounts[sid]=user" not in source
     assert "account_chat_store.save_login(sid,user)" in source
     assert "project_thread_memory" in source
+    assert source.count("_refresh_account_chat(s,")>=4
+    assert "account_chat_store.load_chat(owner)" in source
     assert "github_connection.install(app, _account_session)" in source
 
 if __name__=="__main__":
     test_google_cookie_redis_rehydrates_and_revokes()
     test_account_owner_chat_after_restart_and_conflicts()
+    test_two_browser_cached_worker_refresh_and_non_destructive_conflicts()
     test_limits_enforced_no_silent_truncation_and_identity_isolation()
     test_source_wiring_and_sync_contract()
     print("Durable Google account chat persistence, restart and CAS checks passed")

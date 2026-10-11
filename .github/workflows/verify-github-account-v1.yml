@@ -18,6 +18,7 @@ on:
       - feature/private-history-search-v206
       - feature/private-history-toolkit-v207
       - feature/private-account-facts-v208
+      - fix/native-google-chat-cross-browser-20261011
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 
