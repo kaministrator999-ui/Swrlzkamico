@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-10 — v205 opt-in account-owned cross-thread ChatGPT archive memory
+
+**Request/observed baseline:** the user's August 30 ChatGPT export completed with 2,556 encrypted text-bearing conversations (52 non-text unsupported), and v204 made them browsable through the new 📄↑ drawer toggle. User now explicitly requests §wyrlz AI to use relevant imported past conversations to better understand them and continue context in new §wyrlz chat threads, analogous to ChatGPT's personal/past-conversation continuity. Current inference payload uses only the active native thread plus scoped project-source evidence; the imported archive is not consulted by any model.
+
+**Source owner/expected affected components:** `feature/chatgpt-account-memory-v205` from verified v204 source `cf59320f169c1ae56efb0abb3b743ae165f4ae7a`; backend Station/account archive preference and bounded evidence retrieval, existing inference payload dispatch (700M/R39/stock/coder), Settings import panel presentation. Preserve archive original records, tenant boundaries, main native conversation snapshot and current v203 upload/delete/import behavior. Build on existing `hf_space/chatgpt_archive.py`, `hf_space/station.py`, and model routes; don't introduce global assistant persona facts derived from one user's export.
+
+**Planned lifecycle/consent:** verified-Google-account-owned enable/disable preference (off by default for other users), explicit settings control, retrieval from that same account's encrypted archive only when enabled. Background ephemeral lexical index warms incrementally from existing 2,556 archived threads so foreground inference never scans/loads all archived messages per turn; no new durable plaintext copy. Retrieve limited matching, actual verified surviving messages on topical prompts, cap ~2k characters and label older user/assistant text as non-authoritative historical quotes (never instructions, verified current facts or trained weights). Remove account cache on disable and archive deletion; old thread/PII must not leak into another Google account.
+
+**Validation plan:** synthetic fake Redis owner-isolation/opt-in tests, no-context when disabled or unrelated, no instructions obeyed from old quoted text, bounded evidence, delete invalidation, lazy index coverage and mobile Settings state; existing account/archive/Chat/CI safety suites. Only version owner(s) actually affected may advance at governed completion after guarded deployment. Full 2,556-item live index throughput and real new-thread recall require owner acceptance after publication.
+
+**Status:** IN PROGRESS — code and tests pending.
+
 ## UPDATE FINISHED — 2026-10-10 — v204 imported ChatGPT archive sidebar toggle
 
 **Outcome:** SOURCE COMPLETE / SYNTHETIC DOM + ACCOUNT + HF CI SUCCESS / GUARDED HF PUBLICATION SUCCESS / LIVE ANDROID TOGGLE ACCEPTANCE PENDING.
