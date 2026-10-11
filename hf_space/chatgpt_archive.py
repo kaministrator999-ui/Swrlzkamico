@@ -21,7 +21,7 @@ import github_connection as gh
 
 SCHEMA = "swrlz-chatgpt-archive-v1"
 ID = re.compile(r"^[a-zA-Z0-9_-]{8,120}$")
-ENTRY = re.compile(r"^(?:conversations(?:-\\d{3})?|chat)\\.json$")
+ENTRY = re.compile(r"^(?:conversations(?:-\d{3})?|chat)\.json$")
 MAX_ZIP = 110 * 1024 * 1024
 MAX_EXPANDED = 400 * 1024 * 1024
 MAX_ENTRY = 64 * 1024 * 1024
