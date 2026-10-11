@@ -17,6 +17,7 @@ on:
       - feature/chatgpt-account-memory-v205
       - feature/private-history-search-v206
       - feature/private-history-toolkit-v207
+      - feature/private-account-facts-v208
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 
@@ -32,7 +33,7 @@ jobs:
         run: python -m pip install 'fastapi>=0.115,<1' 'starlette>=0.40' 'httpx>=0.27,<1' 'requests>=2.32,<3' 'cryptography>=43,<47'
       - name: Python syntax and account isolation tests
         run: |
-          python -m py_compile hf_space/github_connection.py hf_space/station.py hf_space/test_github_connection_v1.py hf_space/project_thread_memory.py hf_space/test_project_thread_memory_v1.py hf_space/lfm2_700m_engine.py hf_space/qwen_coder_engine.py hf_space/original_engine.py hf_space/account_chat_store.py hf_space/test_account_chat_store_v1.py hf_space/social_checkin.py hf_space/test_social_checkin_v197.py hf_space/test_project_version_recall_v201.py hf_space/version_literacy.py hf_space/test_version_presentation_v199.py hf_space/chatgpt_archive.py hf_space/test_chatgpt_archive_import_v202.py hf_space/chatgpt_account_memory.py hf_space/test_chatgpt_account_memory_v205.py hf_space/personal_history_lookup.py hf_space/test_personal_history_lookup_v206.py hf_space/personal_history_query_v207.py hf_space/test_personal_history_toolkit_v207.py
+          python -m py_compile hf_space/github_connection.py hf_space/station.py hf_space/test_github_connection_v1.py hf_space/project_thread_memory.py hf_space/test_project_thread_memory_v1.py hf_space/lfm2_700m_engine.py hf_space/qwen_coder_engine.py hf_space/original_engine.py hf_space/account_chat_store.py hf_space/test_account_chat_store_v1.py hf_space/social_checkin.py hf_space/test_social_checkin_v197.py hf_space/test_project_version_recall_v201.py hf_space/version_literacy.py hf_space/test_version_presentation_v199.py hf_space/chatgpt_archive.py hf_space/test_chatgpt_archive_import_v202.py hf_space/chatgpt_account_memory.py hf_space/test_chatgpt_account_memory_v205.py hf_space/personal_history_lookup.py hf_space/test_personal_history_lookup_v206.py hf_space/personal_history_query_v207.py hf_space/private_account_facts_v208.py hf_space/test_private_account_facts_v208.py hf_space/test_personal_history_toolkit_v207.py
           python hf_space/test_github_connection_v1.py
           python hf_space/test_project_thread_memory_v1.py
           python hf_space/test_account_chat_store_v1.py
@@ -43,6 +44,7 @@ jobs:
           python hf_space/test_chatgpt_account_memory_v205.py
           python hf_space/test_personal_history_lookup_v206.py
           python hf_space/test_personal_history_toolkit_v207.py
+          python hf_space/test_private_account_facts_v208.py
       - name: Verify canonical Chat inline JavaScript parses
         run: |
           node - <<'NODE'

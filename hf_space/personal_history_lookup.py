@@ -38,7 +38,9 @@ def relevant(prompt, history=None):
     """Historical intent only; small follow-ups inherit a previous explicit query."""
     s=str(prompt or "").lower()
     query=facets.parse(prompt,history)
-    return bool(query["followup"] or _INTENT.search(s) or (
+    return bool(query["followup"] or _INTENT.search(s) or re.search(
+        r"\b(?:what|which|show|list|find|tell me)\b.{0,100}\b(?:chat|chats|threads|conversations)\b.{0,75}\b(?:ago|last|yesterday|on|in)\b",s
+    ) or (
         any(pattern.search(s) for pattern in facets._FOCUS.values())
         and bool(re.search(r"\b(?:what|which|where|when|find|search|show|list|remember|recap|summarize)\b",s))
     ) or re.search(r"\b(?:find|search|look up|show)\b.{0,65}\b(?:quote|phrase|message|chat|chats|thread|threads|conversation|conversations|history)\b",s) or (
@@ -70,10 +72,23 @@ def _bounds(prompt, tz, now=None):
     today=base.date()
     day=None
     label=""
+    months_ago=re.search(r"\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s+months?\s+ago\b",s)
     interval=re.search(r"\b(?:between|from)\s+(20\d{2}-\d{2}-\d{2})\s+(?:and|to|through|until)\s+(20\d{2}-\d{2}-\d{2})\b",s)
     rolling=re.search(r"\b(?:past|last)\s+(\d{1,2})\s+(days?|weeks?)\b",s)
     month=re.search(r"\b(?:in|during|from)\s+("+"|".join(_MONTHS)+r")\s+(20\d{2})\b",s)
-    if interval:
+    if months_ago:
+        words={"one":1,"two":2,"three":3,"four":4,"five":5,"six":6,"seven":7,"eight":8,"nine":9,"ten":10,"eleven":11,"twelve":12}
+        months_back=min(int(months_ago.group(1)) if months_ago.group(1).isdigit() else words[months_ago.group(1)],36)
+        idx=today.year*12+today.month-1-months_back
+        year,month_idx=divmod(idx,12)
+        target=datetime(year,month_idx+1,1).date()
+        following=(target.replace(year=year+1,month=1) if target.month==12
+                   else target.replace(month=target.month+1))
+        start=datetime.combine(target,clock.min,zone)
+        end=datetime.combine(following,clock.min,zone)
+        label=str(target)[:7]
+        day=None
+    elif interval:
         try:
             first=datetime.strptime(interval.group(1),"%Y-%m-%d").date()
             final=datetime.strptime(interval.group(2),"%Y-%m-%d").date()
@@ -210,13 +225,14 @@ def _keywords(prompt):
                    r"on monday|on tuesday|on wednesday|on thursday|on friday|on saturday|on sunday)\b"," ",cleaned)
     cleaned=re.sub(r"\b\d{1,2}\s+days?\s+ago\b|\b20\d{2}-\d{2}-\d{2}\b"," ",cleaned)
     cleaned=re.sub(r"\b(?:"+"|".join(_MONTHS)+r")\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s*20\d{2})?\b"," ",cleaned)
+    cleaned=re.sub(r"\b(?:\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s+months?\s+ago\b"," ",cleaned)
     cleaned=re.sub(r"\b(?:past|last)\s+\d{1,2}\s+(?:days?|weeks?)\b|"
                    r"\b(?:last|this)\s+(?:weekend|month|week)\b"," ",cleaned)
     cleaned=re.sub(r"\b(?:around|about|at|near)\s+\d{1,2}(?::\d{2})?\s*(?:am|pm)\b"," ",cleaned)
     cleaned=re.sub(r"\b(?:between|from)\s+20\d{2}-\d{2}-\d{2}\s+(?:and|to|through|until)\s+20\d{2}-\d{2}-\d{2}\b"," ",cleaned)
-    stop={"time","night","day","days","week","month","morning","afternoon","evening",
+    stop={"time","night","day","days","week","month","months","ago","morning","afternoon","evening",
           "only","just","source","native","imported","chatgpt","original","swyrlz",
-          "quotes","quote","messages","message","thread","threads","chats","conversation",
+          "quotes","quote","messages","message","thread","threads","chat","chats","conversation","conversations",
           "exact","phrase","word","words","show","find","search","give","from",
           "decisions","decision","decided","agreed","unfinished","pending","tasks","task",
           "next","steps","correction","corrections","corrected","changed","last",
