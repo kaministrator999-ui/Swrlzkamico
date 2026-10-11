@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-11 — v210 GitHub permission-aware Chat tools
+
+**User outcome:** Expand authenticated §wyrlz Chat's direct GitHub capabilities beyond the existing read-only §tart reader. Verify *effective* access per requested operation (OAuth token grant + actual repository permission), allow read operations to continue independently, and mention a missing permission or authorization scope only when the requested action needs it. Repository owner stated read/write is enabled; do not equate that claim with the independently linked §wyrlz OAuth token.
+
+**Architecture / focus:** Current `hf_space/github_connection.py` owns Google-session-bound encrypted GitHub OAuth, fixed API endpoints, selected repository and startup retrieval. `hf_space/station.py` owns deterministic, server-authorized GitHub action routing; `chat/§wyrlz/index.html` remains a simple presenter. Extend those owners only; preserve Google ID, origin/CSRF, encrypted Redis token storage, untrusted source/data boundary, and explicit user confirmation before any write. No GitHub token in Chat text, prompts, logs, or browser storage. No second tool provider or store.
+
+**Baseline / isolation:** main `631bce99de4c43e8ec67f3e8b18dcf1dff882502`; runtime `b5d37fef0ba5eef460c74f98ae772c545239ead3`; deployed v209 source `fix/native-google-chat-cross-browser-20261011@4fe3ede62a198f841adc30b1b673e2ae28ec7ed0`. Independent candidate `feature/github-capability-preflight-v210` created from exact v209. Registered Repository Work 1.0.149, Server Runtime 2.3.361, Web Chat 1.5.100, Google Account 1.0.13, LALM Engine 2.1.186. Do not preassign new versions.
+
+**Implementation/acceptance:** Add least-privilege, explicit GitHub OAuth upgrades when needed for public/private writes; server-side request-specific capability preflight; bounded GitHub file/repo/issue/PR inspection from Chat; owner-scoped explicit write proposals and one-time confirmations where supported. Run deterministic OAuth/permission/owner-isolation/denial/read-continuation/write-confirmation tests and existing HF candidate checks. Publish only after tests and reconciliation through canonical existing-Space Hugging Face workflow if safe and authorized. Protect v209 live two-browser acceptance from conflation with v210.
+
+**Status:** IN PROGRESS — architecture confirmed, isolated branch created, implementation not yet activated.
+
 ## UPDATE FINISHED — 2026-10-11 — v209 verified Google native Chat cross-browser sync repair
 
 **Outcome:** SOURCE/ACCOUNT CI/MOBILE CI/HF CANDIDATE VERIFIED / GUARDED HF SPACE PUBLICATION SUCCESS / LIVE SIGNED-IN ANDROID CROSS-BROWSER ACCEPTANCE PENDING.
