@@ -1798,7 +1798,12 @@
           if(onlineTrail){onlineTrail.remove();onlineTrail=null;}
           status.hidden=responseStarted;
         }else if(status){
-          status.hidden=!!nextText;
+          // A streamed response is not a saved response. Keep the server's
+          // explicit persistence-failure notice visible alongside any text
+          // that the user can still copy before leaving.
+          status.hidden=!!nextText && !(
+            g.terminal && String(g.phase||"")==="CHAT_SAVE_FAILED"
+          );
         }
         stopButton.hidden=!!g.terminal;sendButton.hidden=!g.terminal;
         renderWorkSurface();followLatestIfNeeded();
