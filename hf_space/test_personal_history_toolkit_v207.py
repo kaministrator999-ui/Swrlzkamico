@@ -44,7 +44,8 @@ docs=[{"id":imported["id"],"title":imported["title"],"timestamp":NIGHT,
        "firstAt":AUG,"lastAt":NIGHT+90,
        "titleTokens":{"dragon","history","engine"},
        "terms":{"dragon":3,"project":1,"search":2,"offline":1,"unusual":1,
-                "orbital":1,"mango":1,"launcher":1,"blue":1,"falcon":1,"radiant":1}}]
+                "orbital":1,"mango":1,"launcher":1,"blue":1},
+       "assistantTerms":{"radiant":1,"falcon":1,"circuitry":1,"still":1,"validate":1}}]
 state={"state":"ready","docs":docs,"frequency":Counter(
     {"dragon":1,"project":1,"search":1,"offline":1,"unusual":1,"orbital":1,
      "mango":1,"launcher":1,"blue":1,"falcon":1,"radiant":1})}
