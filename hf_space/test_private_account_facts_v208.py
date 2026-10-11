@@ -26,11 +26,16 @@ assert facts.classify("Can you tell me what chat threads we had 5 months ago")==
 assert facts.classify("How many jokes in that song?")==""
 assert lookup.relevant("Can you tell me what chat threads we had 5 months ago")
 assert lookup.relevant("Do you remember what conversations we had yesterday?")
+assert lookup.relevant("What conversations did we have five months ago?")
 NOW=datetime(2026,10,11,15,1,tzinfo=timezone.utc)
 window=lookup._bounds("What chat threads did we have 5 months ago?","America/Chicago",NOW)
 assert window[0]==datetime(2026,5,1,5,tzinfo=timezone.utc),window
 assert window[1]==datetime(2026,6,1,5,tzinfo=timezone.utc),window
 assert not lookup._keywords("Can you tell me what chat threads we had 5 months ago"), lookup._keywords("Can you tell me what chat threads we had 5 months ago")
+words=lookup._bounds("What conversations did we have five months ago?","America/Chicago",NOW)
+assert words[0]==window[0] and words[1]==window[1],words
+assert not lookup._keywords("What conversations did we have five months ago?")
+assert facts.classify("How many imported conversations did we have five months ago?")==""
 
 with patch.object(facts.account_chat_store,"_config",return_value={"stub":"yes"}),\
      patch.object(facts.gh,"_redis",side_effect=fake_redis),\
@@ -71,4 +76,8 @@ assert 'private_account_facts_v208.answer(' in station
 assert 'private_account_facts_v208.classify(' in station
 assert 'Sign in with Google to check private conversation totals.' in station
 
+# Direct factual responses must not be left to general online search or memory inference.
+assert 'event_source=iter(({"type":"DELTA","text":payload["verifiedPrivateAnswer"]}' in station
+assert 'if not chatgpt_account_memory.enabled(google_owner)' in station
+assert 'PERSONAL HISTORY SEARCH INCOMPLETE:' in station
 print("v208 PASS: real prompt forms, exact owner count, cumulative total not import delta, month ago, native isolation, deterministic Station routing")
