@@ -1,5 +1,5 @@
 ID=google-account
-VERSION=1.0.11
+VERSION=1.0.12
 KIND=account-auth-architecture
 SOURCE_BRANCH=mixed
 STATUS=active
@@ -8,3 +8,4 @@ UPDATE_POLICY=runtime-ui/stable-auth-boundary
 BASELINE_NOTE=Google sign-in repairs empty or specifically retired browser OAuth state synchronously before the Chat account footer initializes Google Identity Services, preventing the prior boot-order race. Any non-retired browser-proven OAuth Web Client ID remains preserved. Server-side Google ID-token verification and signed HttpOnly account sessions remain authoritative after credential issuance; durable Google-owned chat histories and verified login session rehydration now use encrypted Redis REST-backed records (v195 persisted-chat release); live browser restart acceptance remains pending. Full account profiles are still separately scoped.
 ARCHIVE_NOTE=V202 adds separate Google-session-owned encrypted ChatGPT import archive with per-conversation/message deduplication, bounded chunk uploads and deletion. Native chat storage and OAuth token verification remain unchanged; full-user-export upload/live acceptance pending.
 V203_IMPORT_NOTE=Confirmed Android interrupted v202 processing upon leaving page. v203 adds detached server-side import worker after upload completion, Redis-persisted Google-owner status/progress and stored totals, reconnectable Settings polling, 2 MiB resumable byte-offset chunks with idempotent retry. Previously committed per-conversation content remains encrypted and deduplicated. Server restarts may interrupt temporary staging; actual full owner ZIP/browser acceptance pending.
+V205_MEMORY_NOTE=Account-owned opt-in memory preference uses the verified Google session and origin guard; encrypted ChatGPT archive remains sole persisted transcript source. Only an ephemeral owner-scoped lexical index and bounded history excerpts are available to model inference while enabled. No weight training; disabling clears the active index. CI and guarded HF release passed; signed-in Android acceptance and full index warm-up pending.\n
