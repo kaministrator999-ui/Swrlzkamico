@@ -4,6 +4,7 @@ on:
     branches:
       - feature/version-literacy-content-layout-v199
       - feature/grounded-version-recall-v201
+      - feature/google-chatgpt-archive-import-v202
   pull_request:
     paths:
       - 'hf_space/**'
@@ -36,7 +37,9 @@ jobs:
           python tests/test_archive_grounded_lyric_craft_v182.py
       - name: Check syntax and contracts
         run: |
-          python -m py_compile hf_space/app.py hf_space/station.py hf_space/model_router.py hf_space/brain_programming.py hf_space/accepted_runtime/lalm/r39_engine.py hf_space/swyrlz/backend.py hf_space/swyrlz/r39_inference.py
+          python -m py_compile hf_space/chatgpt_archive.py hf_space/app.py hf_space/station.py hf_space/model_router.py hf_space/brain_programming.py hf_space/accepted_runtime/lalm/r39_engine.py hf_space/swyrlz/backend.py hf_space/swyrlz/r39_inference.py
           python -m unittest discover -s tests -p test_hf_candidate.py -v
+          python hf_space/test_chatgpt_archive_import_v202.py
+          node --check 'chat/§wyrlz/assets/chatgpt-archive-import-v1.js'
       - name: Report scope
         run: echo "Offline checks only. Model reconstruction, inference, HF Space and Chat parity remain unverified."
