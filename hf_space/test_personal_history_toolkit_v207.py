@@ -59,6 +59,7 @@ assert facets.parse("What did I say in our chats?")["role"]=="user"
 assert facets.parse("What did you say in the chats?")["role"]=="assistant"
 assert facets.parse("Find the exact phrase “radiant falcon circuitry”")["exactPhrase"]=="radiant falcon circuitry"
 assert facets.parse("Which decisions did we make?")["focus"]=="decision"
+assert lookup.relevant("What did we decide about the dragon project?")
 assert facets.parse("Find our unfinished work")["focus"]=="pending"
 assert facets.parse("Show my corrections")["focus"]=="correction"
 assert not lookup.relevant("Design an unfinished dragon puzzle game")
