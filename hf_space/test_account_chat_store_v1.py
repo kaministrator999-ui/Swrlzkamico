@@ -112,7 +112,7 @@ def test_two_browser_cached_worker_refresh_and_non_destructive_conflicts():
 
         # Before reconciliation, A is stale. B's data must not be overwritten.
         assert worker_a["revision"]==1 and len(worker_a["threads"])==1
-        assert station._refresh_account_chat(worker_a) is True
+        assert station._refresh_account_chat(worker_a,force=True) is True
         assert worker_a["revision"]==2
         assert [t["id"] for t in worker_a["threads"]]==["threadA","threadB"]
         assert worker_a["currentId"]=="threadB"
@@ -127,11 +127,11 @@ def test_two_browser_cached_worker_refresh_and_non_destructive_conflicts():
         worker_b["threads"].append(third)
         worker_b["revision"]=3
         assert store.save_chat(OWNER,worker_b,2)
-        assert station._refresh_account_chat(worker_a) is False
+        assert station._refresh_account_chat(worker_a,force=True) is False
         assert worker_a["activeGeneration"]["requestId"]=="ongoing-A"
         assert len(worker_a["threads"])==2
         worker_a["activeGeneration"]["terminal"]=True
-        assert station._refresh_account_chat(worker_a) is True
+        assert station._refresh_account_chat(worker_a,force=True) is True
         assert [t["id"] for t in worker_a["threads"]]==["threadA","threadB","threadC"]
 
         # An old revision is never allowed to replace either browser's work.
