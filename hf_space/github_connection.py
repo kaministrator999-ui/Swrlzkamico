@@ -833,9 +833,11 @@ def _agent_fallback_plan(prompt):
     return result[:3] or ["permissions"]
 
 
-def _agent_model_plan(prompt, generator):
+def _agent_model_plan_events(prompt, generator):
+    """Yield only bounded public status and one validated plan, never raw model tokens."""
     if generator is None:
-        return []
+        yield {"type": "PLAN_RESULT", "plan": []}
+        return
     instruction = (
         "Choose 1 to 3 read-only GitHub checks relevant to this request. "
         "Return ONLY JSON, e.g. {\"tools\":[\"permissions\",\"pulls\"]}. "
@@ -849,47 +851,56 @@ def _agent_model_plan(prompt, generator):
                "contentTag": "", "githubPlanning": True}
     fragments = []
     length = 0
+    last_progress = 0
+    finished = False
     try:
         for event in generator(payload):
             if not isinstance(event, dict):
                 continue
-            if event.get("type") == "DELTA":
+            kind = str(event.get("type") or "")
+            if kind == "STATUS" and event.get("phase") in ("LOADING", "GENERATING"):
+                yield {"type": "STATUS", "phase": "GITHUB_MODEL_" + str(event["phase"]),
+                       "reason": ("Local inference is loading." if event["phase"] == "LOADING"
+                                  else "Local inference is choosing permitted read tools."),
+                       "categories": ["GITHUB", "INFERENCE"]}
+            if kind == "DELTA":
                 fragment = str(event.get("text") or "")
                 length += len(fragment)
                 if length > 2000:
-                    return []
+                    break
                 fragments.append(fragment)
-            if event.get("type") == "FAILED":
-                return []
-            if event.get("type") in ("COMPLETE", "COMPLETED"):
+                if length // 100 > last_progress:
+                    last_progress = length // 100
+                    yield {"type": "STATUS", "phase": "GITHUB_MODEL_PROGRESS",
+                           "reason": "Checking a bounded tool-plan candidate (" + str(length) + " generated characters).",
+                           "categories": ["GITHUB", "INFERENCE"]}
+            if kind == "FAILED":
+                break
+            if kind in ("COMPLETE", "COMPLETED"):
+                finished = True
                 break
     except Exception:
-        return []
-    raw = "".join(fragments).strip()
+        pass
+    raw = "".join(fragments).strip() if finished else ""
     if raw.startswith(chr(96)*3):
         raw = re.sub(r"^" + re.escape(chr(96)*3) + r"(?:json)?\s*|\s*" +
                      re.escape(chr(96)*3) + r"$", "", raw, flags=re.I)
-    if not (raw.startswith("{") and raw.endswith("}")):
-        return []
     try:
-        obj = json.loads(raw)
+        obj = json.loads(raw) if raw.startswith("{") and raw.endswith("}") else None
     except (TypeError, ValueError):
-        return []
-    if not isinstance(obj, dict) or set(obj) - {"tools", "summary"}:
-        return []
-    items = obj.get("tools")
-    if not isinstance(items, list) or not 1 <= len(items) <= 3:
-        return []
+        obj = None
     result = []
-    for item in items:
-        if not isinstance(item, str):
-            return []
-        tool = _agent_allowed_tool(item, prompt)
-        if not tool:
-            return []
-        if tool not in result:
-            result.append(tool)
-    return result
+    if isinstance(obj, dict) and not set(obj) - {"tools", "summary"}:
+        items = obj.get("tools")
+        if isinstance(items, list) and 1 <= len(items) <= 3:
+            for item in items:
+                tool = _agent_allowed_tool(item, prompt) if isinstance(item, str) else None
+                if tool is None:
+                    result = []
+                    break
+                if tool not in result:
+                    result.append(tool)
+    yield {"type": "PLAN_RESULT", "plan": result}
 
 
 def agent_events(data, model_generator=None):
@@ -935,7 +946,12 @@ def agent_events(data, model_generator=None):
                "reason": ("Using local model inference to choose bounded read checks."
                           if model_generator else "Local planning model unavailable; selecting bounded read checks."),
                "categories": ["GITHUB", "INFERENCE"]}
-        plan = _agent_model_plan(natural, model_generator)
+        plan = []
+        for update in _agent_model_plan_events(natural, model_generator):
+            if update.get("type") == "PLAN_RESULT":
+                plan = update.get("plan") or []
+            else:
+                yield update
         source = "model-planned" if plan else "safe deterministic fallback"
         if not plan:
             plan = _agent_fallback_plan(natural)
