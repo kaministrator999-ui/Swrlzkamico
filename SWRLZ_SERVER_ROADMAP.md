@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-11 — v208.1 precise historical-date follow-up
+
+**Source baseline:** Live v208 `e85859fc558646e10d3f2e94212d147817974b5b`, published to `kamiloki/Swyrlz` Space revision `75adf3fc54a6da99b729fe532308c190f64919ce`; live Android owner acceptance remains unverified. The original CSV/JSON conversation export and 2,556 encrypted imported ChatGPT records are never reuploaded, copied into source or mutated.
+
+**Follow-up scope:** User requested continuing the v208 real-account acceptance repair after uploading a screenshot confirming 2,556 imported threads. Candidate `feature/private-account-facts-v208` advances source to commit `6a1e55af26dcfe0dc03dafc8e8aa19d251741f36` with written-out calendar intervals (`five months ago` in addition to `5 months ago`), account-count worker invalidation on final ZIP import, explicit historical storage/index failure notice, and focused regression tests of the exact expected owner count and date-filtered private lookup. Current deployed v208 direct private count fast path remains unchanged.
+
+**Validation:** Owner/Google account CI [#38155344415](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38155344415) **SUCCESS**, HF candidate [#38155344246](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38155344246) **SUCCESS**, repeated HF candidate [#38155347697](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38155347697) **SUCCESS** at exact candidate SHA. Live Android memory recall continues to require signed-in owner testing; these synthetic tests do not establish that private indexing is READY on the hosted account.
+
+**Next:** guarded HF deploy the passing source, verify successful published revision and rollback point, advance the affected version modules only after publication, then mark follow-up finished.
+
+**Status:** IN PROGRESS / CI VERIFIED / HF PUBLICATION PENDING.
+
 ## UPDATE FINISHED — 2026-10-11 — v208 authenticated account totals and historical recall failure repair
 
 **Outcome:** SOURCE/CI/VERIFIED HF PUBLICATION COMPLETE; LIVE GOOGLE-OWNER ANDROID RETEST PENDING.
