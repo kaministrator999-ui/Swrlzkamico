@@ -597,11 +597,13 @@ def is_github_command(prompt):
     # Only anchored user commands. An ordinary discussion about GitHub
     # must not perform any repository operation.
     return bool(re.match(
-        r"^@github\s+(permissions|capabilities|files(?:\s|$)|read file\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
+        r"^@github\s+(help(?:\s|$)|permissions|capabilities|branches(?:\s|$)|files(?:\s|$)|read file\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
         str(prompt or "").strip(), re.I))
 
 
 def _github_command(user, prompt):
+    if not str(user or "").startswith("google:"):
+        return "Sign in with your verified Google account before using connected GitHub tools."
     c = _config()
     rec = _load(c, user)
     if rec is None:
@@ -647,6 +649,13 @@ def _github_command(user, prompt):
     check = _effective_access(rec, repo, operation)
     if not check["allowed"]:
         return _permission_message(check)
+    if lower == "help":
+        return ("GitHub commands for the selected repository: @GitHub permissions, @GitHub files, "
+                "@GitHub files docs, @GitHub read file README.md, @GitHub branches, "
+                "@GitHub issues, @GitHub pulls, @GitHub commits, "
+                "@GitHub create issue TITLE :: BODY, "
+                "@GitHub create branch feature/name from main. "
+                "Writes require a fresh verified permission check and a second explicit confirmation.")
     if lower in ("permissions", "capabilities"):
         return ("## Verified GitHub access\nRepository: " + repo +
                 "\nAvailable operations: " + ", ".join(check["available"]) +
@@ -677,6 +686,7 @@ def _github_command(user, prompt):
         label = (proposed["title"] if proposed["kind"] == "issue" else proposed["branch"] + " from " + proposed["base"])
         return ("**GitHub write proposal — not executed**\nRepository: " + repo +
                 "\nAction: " + proposed["kind"] + " — " + label +
+                ("\nIssue body: " + proposed["body"][:1000] if proposed["kind"] == "issue" else "") +
                 "\nPermission verified: " + operation +
                 "\nTo approve within 10 minutes, send **@GitHub confirm " + code + "**. Otherwise nothing changes.")
 
@@ -708,6 +718,14 @@ def _github_command(user, prompt):
             for item in data[:60] if isinstance(item, dict)) +
             ("\n(First 60 entries.)" if len(data) > 60 else ""))
 
+    if lower == "branches":
+        items = _api(rec["token"], "/repos/" + repo + "/branches?per_page=30")
+        if not isinstance(items, list):
+            return "GitHub did not return a branch list."
+        return "## GitHub branches · " + repo + "\n" + ("\n".join(
+            "- " + _safe_fragment(item.get("name"), 120) +
+            " · " + str((item.get("commit") or {}).get("sha") or "")[:12]
+            for item in items[:30] if isinstance(item, dict)) or "No branches returned.")
     routes = {"issues": "/issues?state=open&per_page=12",
               "pulls": "/pulls?state=open&per_page=12",
               "commits": "/commits?per_page=12"}
@@ -717,7 +735,7 @@ def _github_command(user, prompt):
             return "GitHub returned an unexpected list response."
         entries = []
         for item in items[:12]:
-            if not isinstance(item, dict):
+            if not isinstance(item, dict) or (lower == "issues" and item.get("pull_request")):
                 continue
             title = (item.get("title") or ((item.get("commit") or {}).get("message") or "").split("\n")[0])
             number = ("#" + str(item.get("number"))) if lower != "commits" else str(item.get("sha") or "")[:12]
