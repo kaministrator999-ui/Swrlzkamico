@@ -1530,6 +1530,7 @@ async def send(request:Request):
     # instructions. Explicit historical lookups span native account chat and
     # imported ChatGPT archives, and can constrain actual message timestamps.
     if google_owner.startswith("google:") and not count_kind and not github_connection.is_start_request(prompt):
+        historical=""
         try:
             if personal_history_lookup.relevant(prompt,history) and not chatgpt_account_memory.enabled(google_owner):
                 payload["verifiedPrivateAnswer"]=(
@@ -1549,7 +1550,12 @@ async def send(request:Request):
                 else:
                     payload["archiveEvidence"] = historical
         except Exception:
-            pass  # Optional account recall must never interrupt native generation.
+            if personal_history_lookup.relevant(prompt,history):
+                payload["verifiedPrivateAnswer"]=(
+                    "Private conversation search encountered a temporary storage or indexing error. "
+                    "I cannot verify a result right now; retry shortly or check index status "
+                    "under Settings → ChatGPT imports.")
+            # Optional topical recall may still be skipped on transient failure.
     # Inject into all model routes as bounded evidence only on relevant follow-ups.
     if google_owner.startswith("google:"):
         memory_evidence=project_thread_memory.model_context(active_project,prompt)
