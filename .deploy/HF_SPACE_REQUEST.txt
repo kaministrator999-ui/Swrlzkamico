@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/private-account-facts-v208
-REQUEST_NONCE=2026-10-11-v2081-month-name-owner-recall-001
+SOURCE_REF=fix/native-google-chat-cross-browser-20261011
+REQUEST_NONCE=2026-10-11-v209-native-cross-browser-preserve-001
