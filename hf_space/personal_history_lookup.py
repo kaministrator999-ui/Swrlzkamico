@@ -289,6 +289,8 @@ def lookup(owner,prompt,timezone_name,native_threads,active_thread_id="",now=Non
         else:
             docs=[]
             indexing=str((cached or {}).get("state") or "warming")
+    if query["source"]=="native":
+        indexing="native-only"  # Never require imported indexing for native-only lookup.
     if indexing!="ready" and query["source"]!="native":
         memory.warm(owner)
     if indexing=="ready" and query["source"]!="native":
@@ -303,7 +305,8 @@ def lookup(owner,prompt,timezone_name,native_threads,active_thread_id="",now=Non
                     continue
             score=sum(math.log1p((corpus+1)/(1+frequency.get(word,0)))*
                       (2 if word in doc.get("titleTokens",()) else 1)
-                      for word in keywords if word in doc.get("terms",{}))
+                      for word in keywords if (word in doc.get("terms",{})
+                                               or word in doc.get("assistantTerms",{})))
             if not keywords and (window or query["focus"]):score=1
             if keywords and score<.8:
                 if not query["focus"] or len(keywords)>2:continue
