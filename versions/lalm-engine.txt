@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.185
-REVISION=2.1.185-account-private-history-failure-truth-v2081
+VERSION=2.1.186
+REVISION=2.1.186-station-google-chat-cas-refresh-v209
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active

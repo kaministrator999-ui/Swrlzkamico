@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.99
-REVISION=1.5.99-opt-in-chatgpt-archive-memory-v205
+VERSION=1.5.100
+REVISION=1.5.100-native-chat-cross-browser-refresh-v209
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active

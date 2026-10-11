@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.360
-REVISION=2.3.360-hf-v2081-private-history-monthname-recovery
+VERSION=2.3.361
+REVISION=2.3.361-hf-v209-google-chat-cross-browser-sync
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
