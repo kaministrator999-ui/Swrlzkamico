@@ -72,12 +72,13 @@ def _bounds(prompt, tz, now=None):
     today=base.date()
     day=None
     label=""
-    months_ago=re.search(r"\b(\d{1,2})\s+months?\s+ago\b",s)
+    months_ago=re.search(r"\\b(\\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\\s+months?\\s+ago\\b",s)
     interval=re.search(r"\b(?:between|from)\s+(20\d{2}-\d{2}-\d{2})\s+(?:and|to|through|until)\s+(20\d{2}-\d{2}-\d{2})\b",s)
     rolling=re.search(r"\b(?:past|last)\s+(\d{1,2})\s+(days?|weeks?)\b",s)
     month=re.search(r"\b(?:in|during|from)\s+("+"|".join(_MONTHS)+r")\s+(20\d{2})\b",s)
     if months_ago:
-        months_back=min(int(months_ago.group(1)),36)
+        words={"one":1,"two":2,"three":3,"four":4,"five":5,"six":6,"seven":7,"eight":8,"nine":9,"ten":10,"eleven":11,"twelve":12}
+        months_back=min(int(months_ago.group(1)) if months_ago.group(1).isdigit() else words[months_ago.group(1)],36)
         idx=today.year*12+today.month-1-months_back
         year,month_idx=divmod(idx,12)
         target=datetime(year,month_idx+1,1).date()
@@ -224,7 +225,7 @@ def _keywords(prompt):
                    r"on monday|on tuesday|on wednesday|on thursday|on friday|on saturday|on sunday)\b"," ",cleaned)
     cleaned=re.sub(r"\b\d{1,2}\s+days?\s+ago\b|\b20\d{2}-\d{2}-\d{2}\b"," ",cleaned)
     cleaned=re.sub(r"\b(?:"+"|".join(_MONTHS)+r")\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s*20\d{2})?\b"," ",cleaned)
-    cleaned=re.sub(r"\b\d{1,2}\s+months?\s+ago\b"," ",cleaned)
+    cleaned=re.sub(r"\b(?:\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s+months?\s+ago\b"," ",cleaned)
     cleaned=re.sub(r"\b(?:past|last)\s+\d{1,2}\s+(?:days?|weeks?)\b|"
                    r"\b(?:last|this)\s+(?:weekend|month|week)\b"," ",cleaned)
     cleaned=re.sub(r"\b(?:around|about|at|near)\s+\d{1,2}(?::\d{2})?\s*(?:am|pm)\b"," ",cleaned)
