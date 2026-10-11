@@ -133,10 +133,10 @@ def retrieve(owner,prompt):
     if not enabled(owner):return ""
     user_prompt=str(prompt or "")[:1200]
     broad=bool(re.search(
-        r"(?i)\\b(?:what\\s+(?:do\\s+you\\s+)?(?:know|remember)\\s+about\\s+me|"
-        r"what\\s+have\\s+we\\s+(?:talked|discussed|worked)\\s+about|"
-        r"(?:recap|summari[sz]e)\\s+(?:our|my)\\s+(?:chat|conversation)\\s+history|"
-        r"my\\s+(?:past\\s+)?(?:interests|projects))\\b",user_prompt))
+        r"(?i)\b(?:what\s+(?:do\s+you\s+)?(?:know|remember)\s+about\s+me|"
+        r"what\s+have\s+we\s+(?:talked|discussed|worked)\s+about|"
+        r"(?:recap|summari[sz]e)\s+(?:our|my)\s+(?:chat|conversation)\s+history|"
+        r"my\s+(?:past\s+)?(?:interests|projects))\b",user_prompt))
     query=list(dict.fromkeys(_terms(user_prompt)))[:16]
     if not query and not broad:return ""
     with _LOCK:
