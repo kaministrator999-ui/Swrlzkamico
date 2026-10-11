@@ -783,3 +783,235 @@ def command_events(data):
         report = "GitHub action verification or execution failed. No write success assumed."
     yield {"type": "DELTA", "text": report}
     yield {"type": "COMPLETED", "phase": "COMPLETE"}
+
+
+# v211 GitHub model-planned READ tools, with observable lifecycle and no raw thought exposure.
+_AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits")
+
+
+def is_github_conversation(prompt):
+    q = str(prompt or "").strip()
+    if re.match(r"^@github\s+(?:ask|explore|analyze)\s+\S", q, re.I):
+        return True
+    return bool(
+        re.match(r"^(?:(?:please\s+)?|(?:can|could|would|will)\s+you\s+(?:please\s+)?)(?:check|show|list|review|inspect|summarize|look\s+at|find|read)\b", q, re.I)
+        and re.search(r"\b(?:my|our|the)\s+(?:github|repo|repository|pull\s+requests?|prs?|issues?|branches?|commits?)\b", q, re.I)
+    )
+
+
+def _agent_allowed_tool(value, prompt):
+    name = str(value or "").strip()
+    if name in _AGENT_TOOLS:
+        return name
+    if name.startswith("read file ") or name.startswith("files "):
+        is_directory = name.startswith("files ")
+        path = name[6:].strip() if is_directory else name[10:].strip()
+        if not path or len(path) > 150 or path.startswith("/") or any(
+            seg in ("", ".", "..") for seg in path.split("/")
+        ) or re.search(r"[\s?#%\\]", path):
+            return None
+        # A model may only read a specific path if the user named that path.
+        if path.casefold() not in str(prompt or "").casefold():
+            return None
+        return ("files " if is_directory else "read file ") + path
+    return None
+
+
+def _agent_fallback_plan(prompt):
+    q = " " + str(prompt or "").lower() + " "
+    result = []
+    for pattern, tool in (
+        (r"\b(permission|access|scope|authorization|authorize|capabilit)", "permissions"),
+        (r"\b(pull request|pulls|\bprs?\b)", "pulls"),
+        (r"\bissues?\b", "issues"),
+        (r"\bbranches?\b", "branches"),
+        (r"\bcommits?\b", "commits"),
+        (r"\b(files?|folders?|directories|directory)\b", "files"),
+    ):
+        if re.search(pattern, q) and tool not in result:
+            result.append(tool)
+    return result[:3] or ["permissions"]
+
+
+def _agent_model_plan_events(prompt, generator):
+    """Yield only bounded public status and one validated plan, never raw model tokens."""
+    if generator is None:
+        yield {"type": "PLAN_RESULT", "plan": []}
+        return
+    instruction = (
+        "Choose 1 to 3 read-only GitHub checks relevant to this request. "
+        "Return ONLY JSON, e.g. {\"tools\":[\"permissions\",\"pulls\"]}. "
+        "Valid tools: permissions, files, branches, issues, pulls, commits. "
+        "Specific files PATH or read file PATH permitted only when PATH is in the user request. "
+        "Do not propose writes, URL fetches, authorization changes or other commands. "
+        "No chain-of-thought. User request: " + str(prompt)[:900]
+    )
+    payload = {"prompt": instruction, "history": [], "profile": "",
+               "userProfile": "", "requestId": "github-tool-plan",
+               "contentTag": "", "githubPlanning": True}
+    fragments = []
+    length = 0
+    last_progress = 0
+    finished = False
+    try:
+        for event in generator(payload):
+            if not isinstance(event, dict):
+                continue
+            kind = str(event.get("type") or "")
+            if kind == "STATUS" and event.get("phase") in ("LOADING", "GENERATING"):
+                yield {"type": "STATUS", "phase": "GITHUB_MODEL_" + str(event["phase"]),
+                       "reason": ("Local inference is loading." if event["phase"] == "LOADING"
+                                  else "Local inference is choosing permitted read tools."),
+                       "categories": ["GITHUB", "INFERENCE"]}
+            if kind == "DELTA":
+                fragment = str(event.get("text") or "")
+                length += len(fragment)
+                if length > 2000:
+                    break
+                fragments.append(fragment)
+                if length // 100 > last_progress:
+                    last_progress = length // 100
+                    yield {"type": "STATUS", "phase": "GITHUB_MODEL_PROGRESS",
+                           "reason": "Checking a bounded tool-plan candidate (" + str(length) + " generated characters).",
+                           "categories": ["GITHUB", "INFERENCE"]}
+            if kind == "FAILED":
+                break
+            if kind in ("COMPLETE", "COMPLETED"):
+                finished = True
+                break
+    except Exception:
+        pass
+    raw = "".join(fragments).strip() if finished else ""
+    if raw.startswith(chr(96)*3):
+        raw = re.sub(r"^" + re.escape(chr(96)*3) + r"(?:json)?\s*|\s*" +
+                     re.escape(chr(96)*3) + r"$", "", raw, flags=re.I)
+    try:
+        obj = json.loads(raw) if raw.startswith("{") and raw.endswith("}") else None
+    except (TypeError, ValueError):
+        obj = None
+    result = []
+    if isinstance(obj, dict) and not set(obj) - {"tools", "summary"}:
+        items = obj.get("tools")
+        if isinstance(items, list) and 1 <= len(items) <= 3:
+            for item in items:
+                tool = _agent_allowed_tool(item, prompt) if isinstance(item, str) else None
+                if tool is None:
+                    result = []
+                    break
+                if tool not in result:
+                    result.append(tool)
+    yield {"type": "PLAN_RESULT", "plan": result}
+
+
+def agent_events(data, model_generator=None):
+    """Station-facing tool events: observed progress, no secret or raw reasoning."""
+    user = str(data.get("userId") or "")
+    prompt = str(data.get("prompt") or "").strip()
+    exact = is_github_command(prompt)
+    if exact and re.match(r"^@github\s+(?:create\s+(?:issue|branch)|confirm)\s+", prompt, re.I):
+        yield {"type": "STATUS", "phase": "GITHUB_WRITE_PREFLIGHT",
+               "reason": "Checking requested GitHub write authorization and confirmation.",
+               "categories": ["GITHUB", "TOOL", "PERMISSION"]}
+        yield from command_events(data)
+        return
+    if not (exact or is_github_conversation(prompt)):
+        return
+    if not user.startswith("google:"):
+        yield {"type": "DELTA", "text": "Sign in with Google first; I cannot acquire GitHub access without your authorization."}
+        yield {"type": "COMPLETED", "phase": "COMPLETE"}
+        return
+    natural = re.sub(r"^@github\s+(?:ask|explore|analyze)\s+", "", prompt, flags=re.I)
+    if exact:
+        command = re.sub(r"^@github\s+", "", prompt, flags=re.I).strip()
+        tool = _agent_allowed_tool(command, natural)
+        if tool:
+            plan = [tool]
+        else:
+            yield from command_events(data)
+            return
+        source = "exact command; no inference required"
+    else:
+        if re.search(r"\b(create|delete|remove|merge|push|write|deploy|edit|commit\s+changes)\b", natural, re.I):
+            yield {"type": "STATUS", "phase": "GITHUB_APPROVAL_REQUIRED",
+                   "reason": "Conversational planning cannot authorize a write.",
+                   "categories": ["GITHUB", "TOOL", "APPROVAL"]}
+            yield {"type": "DELTA", "text":
+                   "I can inspect GitHub, but a conversational plan cannot authorize a repository change. "
+                   "For supported writes, use @GitHub create issue TITLE :: BODY or "
+                   "@GitHub create branch feature/name from main. Each needs separate confirmation. "
+                   "No write attempted."}
+            yield {"type": "COMPLETED", "phase": "COMPLETE"}
+            return
+        yield {"type": "STATUS", "phase": "GITHUB_MODEL_PLAN_STARTED",
+               "reason": ("Using local model inference to choose bounded read checks."
+                          if model_generator else "Local planning model unavailable; selecting bounded read checks."),
+               "categories": ["GITHUB", "INFERENCE"]}
+        plan = []
+        for update in _agent_model_plan_events(natural, model_generator):
+            if update.get("type") == "PLAN_RESULT":
+                plan = update.get("plan") or []
+            else:
+                yield update
+        source = "model-planned" if plan else "safe deterministic fallback"
+        if not plan:
+            plan = _agent_fallback_plan(natural)
+    yield {"type": "STATUS", "phase": "GITHUB_PLAN_READY",
+           "reason": "Read checks: " + ", ".join(plan) + " (" + source + ").",
+           "categories": ["GITHUB", "INFERENCE", "ACTION"]}
+    try:
+        c = _config()
+        rec = _load(c, user)
+        if rec is None:
+            yield {"type": "STATUS", "phase": "GITHUB_CONNECTION_MISSING",
+                   "reason": "GitHub OAuth connection is not available for this Google account.",
+                   "categories": ["GITHUB", "PERMISSION", "TOOL"]}
+            yield {"type": "DELTA", "text":
+                   "GitHub isn't connected. I cannot silently obtain authenticated read or write access. "
+                   "Connect and approve GitHub access in Chat settings."}
+            yield {"type": "COMPLETED", "phase": "COMPLETE"}
+            return
+        repo = _repo_name(rec.get("repo"))
+    except HTTPException as exc:
+        yield {"type": "DELTA", "text": "GitHub connection unavailable: " + str(exc.detail)}
+        yield {"type": "COMPLETED", "phase": "COMPLETE"}
+        return
+    yield {"type": "DELTA", "text": "## GitHub checks · " + repo + "\n\n"}
+    for i, tool in enumerate(plan, 1):
+        yield {"type": "STATUS", "phase": "GITHUB_PERMISSION_CHECK",
+               "reason": "Verifying read access for " + tool + " (" + str(i) + "/" + str(len(plan)) + ").",
+               "categories": ["GITHUB", "PERMISSION", "TOOL"]}
+        try:
+            check = _effective_access(rec, repo, "read")
+        except HTTPException as exc:
+            yield {"type": "STATUS", "phase": "GITHUB_ACCESS_UNVERIFIED",
+                   "reason": "Read authority is unverified; no missing scope inferred.",
+                   "categories": ["GITHUB", "PERMISSION", "TOOL"]}
+            answer = (_unverified_read_message(repo) if exc.status_code in (401,403,404) else
+                      "GitHub access verification failed (" + str(exc.status_code) + ").")
+            yield {"type": "DELTA", "text": "### " + tool + "\n" + answer + "\n"}
+            break
+        if not check["allowed"]:
+            yield {"type": "DELTA", "text": _permission_message(check) + "\n"}
+            break
+        yield {"type": "STATUS", "phase": "GITHUB_PERMISSION_VERIFIED",
+               "reason": "Authenticated repository read confirmed; no new scope granted.",
+               "categories": ["GITHUB", "PERMISSION", "TOOL"]}
+        yield {"type": "STATUS", "phase": "GITHUB_TOOL_STARTED",
+               "reason": "Retrieving " + tool + " evidence.",
+               "categories": ["GITHUB", "TOOL", "ACTION"]}
+        try:
+            answer = _github_command(user, "@GitHub " + tool)
+        except HTTPException as exc:
+            answer = "GitHub read error (" + str(exc.status_code) + "): " + str(exc.detail)
+            yield {"type": "STATUS", "phase": "GITHUB_TOOL_FAILED",
+                   "reason": tool + " did not return verified evidence.",
+                   "categories": ["GITHUB", "TOOL", "ERROR"]}
+        else:
+            yield {"type": "STATUS", "phase": "GITHUB_TOOL_COMPLETE",
+                   "reason": tool + " returned a checked result.",
+                   "categories": ["GITHUB", "TOOL", "ACTION"]}
+        yield {"type": "DELTA", "text": "### " + tool + "\n" + answer + "\n\n"}
+    yield {"type": "STATUS", "phase": "GITHUB_EVIDENCE_COMPLETE",
+           "reason": "All requested checks finished; no write or scope change attempted.",
+           "categories": ["GITHUB", "INFERENCE", "TOOL"]}
+    yield {"type": "COMPLETED", "phase": "COMPLETE"}

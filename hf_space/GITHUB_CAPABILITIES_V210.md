@@ -31,5 +31,17 @@ No arbitrary model-initiated GitHub write, file editing, PR creation/merge, work
 - A permissions inspection reports current observations; it never silently requests or expands any permission.
 - Public GitHub source that is intentionally public may be independently readable without authenticated repository grants. That does not give §wyrlz access to private files, account-owned features, or writing.
 
+## v211 — model-guided read operations and visible inference progress
+
+The core v210 permission/confirmation contract remains authoritative. v211 adds bounded conversational interpretation **within** that contract: the existing selected §wyrlz local model may suggest 1–3 read-only operations from a request such as "Can you show my repo issues and pull requests?" or "@GitHub ask check my repo permissions". Exact commands still select tools deterministically; exact write proposals and confirmations remain solely in the v210 server-owned authorization path.
+
+- Planner receives a brief user request plus strict JSON tool-selection rules; no OAuth token, encrypted history, Google subject, raw private conversations, profile details, or arbitrary URLs are put into model context. Planner text is captured as untrusted proposed actions, **never displayed as internal reasoning**.
+- Allowlist: permissions, files, branches, issues, pulls, commits, and a specific read-file/directory path only when explicitly present in the user's request. Up to three checks. No GitHub write, workflow dispatch, PR merge, branch deletion or scope upgrade can be model-selected. Invalid, missing, excessive or forbidden model output falls back to bounded deterministic read checks.
+- Each proposed tool is independently checked using the existing Google-bound encrypted connection and live GitHub repo permission preflight. Failure leaves read unverified rather than inventing missing scopes; subsequent checks stop instead of continuing unverified. Direct user-typed write commands retain the existing one-time explicit approval requirement.
+- Station emits actual ordered STATUS events: GITHUB_MODEL_PLAN_STARTED, GITHUB_MODEL_LOADING/GENERATING/PROGRESS (only when reported/produced), GITHUB_PLAN_READY, GITHUB_PERMISSION_CHECK, GITHUB_PERMISSION_VERIFIED (only after actual repo evidence), GITHUB_TOOL_STARTED, GITHUB_TOOL_COMPLETE or GITHUB_TOOL_FAILED, GITHUB_EVIDENCE_COMPLETE. The NDJSON stream and existing Chat progress trail render those events without invented percentages or simulated internal thought.
+- Verified tool responses—not a model's unsupported reconstruction—provide the final evidence. Permission checks disclose the relevant missing permission only for a requested operation; a read does not ask for write. If no model exists, explain safe fallback via the plan status; never falsely label fallback as model inference.
+
+The v211 work reuses the single account connection, Station lifecycle and existing Chat UI. It creates neither an AI identity fork nor a separate GitHub token store. Source/CI/release status must be reported separately; real signed-in Android observations are the last acceptance boundary.
+
 ## Truth levels and testing
 Syntactic/CI tests prove deterministic behavior under mocks, not the user's live token grant or actual hosted GitHub write access. Accepted live write evidence requires a user-authorized proposal plus a confirmed GitHub response. Source complete is not deployment/live verified. The usual v209 native Chat/Google-account privacy and cross-browser acceptance boundaries remain independent.
