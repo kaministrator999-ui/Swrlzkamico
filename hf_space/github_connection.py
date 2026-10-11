@@ -794,7 +794,7 @@ def is_github_conversation(prompt):
     if re.match(r"^@github\s+(?:ask|explore|analyze)\s+\S", q, re.I):
         return True
     return bool(
-        re.match(r"^(?:please\s+)?(?:check|show|list|review|inspect|summarize|look\s+at|find|read)\b", q, re.I)
+        re.match(r"^(?:(?:please\s+)?|(?:can|could|would|will)\s+you\s+(?:please\s+)?)(?:check|show|list|review|inspect|summarize|look\s+at|find|read)\b", q, re.I)
         and re.search(r"\b(?:my|our|the)\s+(?:github|repo|repository|pull\s+requests?|prs?|issues?|branches?|commits?)\b", q, re.I)
     )
 
