@@ -25,6 +25,7 @@ import project_thread_memory
 import account_chat_store
 import chatgpt_archive
 import chatgpt_upload_session
+import chatgpt_import_job
 import tempfile
 try:
     from google.auth.transport import requests as google_requests
@@ -390,6 +391,23 @@ def _archive_origin_guard(request: Request):
         raise HTTPException(403, "Imported history changes require an authenticated same-origin request")
 
 
+@app.get("/api/chatgpt_archive/status")
+def chatgpt_archive_status(request: Request):
+    owner = _archive_owner(request)
+    state = chatgpt_import_job.status(owner)
+    count = github_connection._redis(account_chat_store._config(), "ZCARD",
+                                    chatgpt_archive._index(owner))
+    return JSONResponse({**state, "storedTotal": int(count or 0)},
+                        headers={"Cache-Control": "private, no-store"})
+
+
+@app.get("/api/chatgpt_archive/upload/{upload_id}")
+def chatgpt_archive_upload_status(request: Request, upload_id: str):
+    owner = _archive_owner(request)
+    return JSONResponse(chatgpt_upload_session.progress(owner, upload_id),
+                        headers={"Cache-Control": "private, no-store"})
+
+
 @app.get("/api/chatgpt_archive/list")
 def chatgpt_archive_list(request: Request, offset: int = 0, limit: int = 30):
     owner = _archive_owner(request)
@@ -408,6 +426,7 @@ def chatgpt_archive_thread(request: Request, conversation_id: str):
 def delete_chatgpt_archive_thread(request: Request, conversation_id: str):
     owner = _archive_owner(request)
     _archive_origin_guard(request)
+    chatgpt_import_job.assert_not_running(owner)
     return JSONResponse(chatgpt_archive.delete_archive(owner, conversation_id),
                         headers={"Cache-Control": "private, no-store"})
 
@@ -416,6 +435,7 @@ def delete_chatgpt_archive_thread(request: Request, conversation_id: str):
 def delete_chatgpt_archive_all(request: Request):
     owner = _archive_owner(request)
     _archive_origin_guard(request)
+    chatgpt_import_job.assert_not_running(owner)
     return JSONResponse(chatgpt_archive.delete_all_archive(owner),
                         headers={"Cache-Control": "private, no-store"})
 
@@ -428,6 +448,7 @@ async def chatgpt_archive_upload_init(request: Request):
     data = await request.json()
     if not isinstance(data, dict):
         raise HTTPException(400, "Invalid ZIP upload request")
+    chatgpt_import_job.assert_not_running(owner)
     return JSONResponse(chatgpt_upload_session.begin(owner, data.get("size")),
                         headers={"Cache-Control": "private, no-store"})
 
@@ -455,25 +476,16 @@ def chatgpt_archive_upload_complete(request: Request, upload_id: str):
     _archive_origin_guard(request)
     if len(upload_id) != 32 or not all(c in "0123456789abcdef" for c in upload_id):
         raise HTTPException(400, "Invalid upload identifier")
+    chatgpt_import_job.assert_not_running(owner)
     filename = chatgpt_upload_session.finish(owner, upload_id)
-
-    def progress():
-        try:
-            for event in chatgpt_archive.import_archive(filename, owner):
-                yield json.dumps(event, separators=(",", ":")) + "\n"
-        except HTTPException as exc:
-            yield json.dumps({"type": "ERROR", "code": exc.status_code,
-                              "message": str(exc.detail)[:240]}) + "\n"
-        except Exception:
-            yield json.dumps({"type": "ERROR", "code": 503,
-                              "message": "Import interrupted; reselect the same ZIP to resume"}) + "\n"
-        finally:
-            try: os.unlink(filename)
-            except FileNotFoundError: pass
-
-    return StreamingResponse(progress(), media_type="application/x-ndjson",
-                             headers={"Cache-Control": "private, no-store",
-                                      "X-Content-Type-Options": "nosniff"})
+    try:
+        job = chatgpt_import_job.start(owner, filename, upload_id)
+    except Exception:
+        try: os.unlink(filename)
+        except FileNotFoundError: pass
+        raise
+    return JSONResponse(job, status_code=202,
+                        headers={"Cache-Control": "private, no-store"})
 
 
 @app.post("/api/chatgpt_archive/import")
