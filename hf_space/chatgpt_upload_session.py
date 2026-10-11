@@ -13,7 +13,7 @@ from fastapi import HTTPException
 import account_chat_store
 from chatgpt_archive import MAX_ZIP
 
-CHUNK_SIZE = 256 * 1024
+CHUNK_SIZE = 2 * 1024 * 1024
 MAX_SESSIONS = 4
 SESSION_TTL = 3600
 _lock = threading.RLock()
@@ -52,18 +52,35 @@ def begin(owner, size):
     return {"uploadId": token, "chunkSize": CHUNK_SIZE, "received": 0}
 
 
+def progress(owner, token):
+    """An upload marker is opaque and only readable by its original Google owner."""
+    with _lock:
+        _cleanup()
+        state = _pending.get(str(token))
+        if state is None or state["owner"] != owner:
+            raise HTTPException(404, "Upload session expired or belongs to another account")
+        return {"uploadId": str(token), "received": state["received"],
+                "size": state["size"], "chunkSize": CHUNK_SIZE}
+
+
 def append(owner, token, offset, chunk):
     with _lock:
         _cleanup()
         state = _pending.get(str(token))
         if state is None or state["owner"] != owner:
             raise HTTPException(404, "Upload session not found; restart this ZIP import")
-        if not isinstance(offset, int) or offset != state["received"]:
-            raise HTTPException(409, "Chunk offset mismatch; resume from server-reported position")
         if not isinstance(chunk, bytes) or not chunk or len(chunk) > CHUNK_SIZE:
             raise HTTPException(413, "Upload chunk too large or empty")
-        if state["received"] + len(chunk) > state["size"]:
-            raise HTTPException(413, "Upload exceeds declared ZIP size")
+        if not isinstance(offset, int) or offset < 0 or offset + len(chunk) > state["size"]:
+            raise HTTPException(413, "Upload chunk offset or size is invalid")
+        if offset != state["received"]:
+            # If an acknowledgement was lost, an identical retransmission is safe.
+            if offset < state["received"] and offset + len(chunk) <= state["received"]:
+                with open(state["path"], "rb") as f:
+                    f.seek(offset)
+                    if f.read(len(chunk)) == chunk:
+                        return {"received": state["received"], "size": state["size"]}
+            raise HTTPException(409, "Chunk offset mismatch; resume from server-reported position")
         with open(state["path"], "ab") as f:
             f.write(chunk)
         state["received"] += len(chunk)
