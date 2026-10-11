@@ -8,6 +8,32 @@
 
 The many pages of operating rules protect that compact idea against real-world failure modes: duplicate architecture, forgotten requirements, incompatible changes, stale versions, interrupted work, and unverified deployment.
 
+## One-way onboarding, not a README loop
+
+This is a **straight-line path into actual work**, not a recursive document dependency:
+
+```text
+Need to understand WHY the project process matters?
+    ├── Yes → this optional README-for-the-README ─┐
+    └── No ─────────────────────────────────────────┤
+                                                    ↓
+                                       §tart / project README
+                                (understand what already exists)
+                                                    ↓
+                                    BUILD / EXTEND THE PROJECT
+```
+
+**The explanation is optional. Project understanding is foundational. Project work is the destination.**
+
+- **README for the README — only when helpful:** Explains why the architecture, history, versions, and workflow matter. It is not an extra mandatory startup gate, a competing source of truth, or an invitation to write a README for this README.
+- **§tart / project README — reconstruct before changing:** Identify existing capabilities, relevant architecture, past decisions, current versions, unfinished work, and operating rules. The purpose of reading it is to act competently on the project—not to loop back through onboarding indefinitely.
+- **Project work — move forward:** Implement the user's actual request, integrate and test, record relevant changes, and publish or hand off according to the user's agreed workflow. Complete the job instead of repeatedly explaining the documents.
+
+During implementation, **consulting the Roadmap, source, version registry, or other authoritative guides again is normal evidence checking**—especially after concurrent edits or a changed source baseline. That does **not** mean repeating the optional explanation or restarting the user's onboarding journey.
+
+**Directionality matters:** `optional WHY → authoritative WHAT EXISTS / HOW TO WORK → DO THE WORK`. Reference material supports the work; it must not trap it in a circular dependency.
+
+
 ## Why the workflow matters
 
 - **Architecture discovery and Roadmap:** Learn which features, interfaces, experiments and partial foundations exist *before* building a second implementation. The Roadmap describes what has been attempted, completed, verified, deferred and still needs work; current code and contracts remain necessary to confirm the present design.
