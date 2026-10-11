@@ -1,3 +1,23 @@
+## UPDATE FINISHED — 2026-10-11 — v205 opt-in owner-scoped cross-thread ChatGPT archive memory
+
+**Outcome:** SOURCE COMPLETE / GOOGLE ACCOUNT & HF CI SUCCESS / GUARDED HF PUBLICATION SUCCESS / REAL 2,556-THREAD MEMORY WARM-UP AND MOBILE ANSWER ACCEPTANCE PENDING.
+
+**Trigger:** after v203 imported 2,556 text-bearing ChatGPT conversations and v204 displayed them in the 📄↑ Chat drawer, user explicitly asked that §wyrlz AI use those old conversations as background knowledge in new chat threads, analogous to ChatGPT memory.
+
+**Source and architecture:** `feature/chatgpt-account-memory-v205` source commit `362ac0746d3ca7f7a07a1c1edeed1cbd053a6bfa` from v204 candidate; draft [PR #95](https://github.com/kaministrator999-ui/Swrlzkamico/pull/95). Adds `hf_space/chatgpt_account_memory.py` (account-scoped, volatile, detached search indexing with an encrypted archive remaining source-of-truth), verified-Google-only GET/POST memory preference endpoints with strict same-origin POST guard in Station, opt-in Settings toggle / progress reader, and bounded historical evidence into standard 700M/coder/stock/R39 model routes. No archive conversion to native chat, no universal assistant identity pollution, no separate permanent transcript copy or model weight training. Quotes from past assistant/user messages are evidence, not instruction authority; titles alone never establish biographical facts. Account opt-out clears cache, archive upload/delete invalidates it.
+
+**Test evidence:** synthetic opt-in/opt-out and user isolation in `hf_space/test_chatgpt_account_memory_v205.py`; existing v203 account/import, v204 synthetic archive drawer, candidate/engine validation. Final Google account CI [#38115354615](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38115354615) **SUCCESS** and HF candidate CI [#38115354616](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38115354616) **SUCCESS** at exact SHA. An earlier broad-question regex defect was caught and corrected before final CI, not carried into release.
+
+**Guarded deployment:** [#38115397089](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38115397089) **SUCCESS**, existing `kamiloki/Swyrlz` HF Space revision `7c8ea60e52a511eb1a08619b8f6d3aa77a76aaa6`, rollback `ea37fbeb7c71a90da2227f85cbcc90bdf7e30f83`; receipt `DEPLOYED_UNVERIFIED`, so hosted publication is proven but live Android preference/index/new-thread recall not yet verified.
+
+**Module versions:** Repository Work **1.0.144**; Server Runtime **2.3.356**; Web Chat **1.5.99**; LALM Engine **2.1.181**; Google Account Architecture **1.0.12**. Other registered versions and runtime version registry unchanged.
+
+**User acceptance:** refresh §wyrlz Chat → Settings → ChatGPT imports → enable “Let §wyrlz recall relevant details from my imported conversations” → wait for Ready / indexed count → open a fresh native §wyrlz chat thread and ask about a distinctive past subject. The index uses the already-encrypted account-owned 2,556 original conversations, so no ZIP re-upload. Index warm-up is process-local and may be slow for this large archive; server restarts rebuild, not erase archive. Search is bounded lexical evidence retrieval and broad-title recall, not an exact recreation of ChatGPT's automatically curated memory summary.
+
+**Full report:** [reports/V205_PRIVATE_IMPORTED_CHAT_MEMORY_2026-10-11.md](reports/V205_PRIVATE_IMPORTED_CHAT_MEMORY_2026-10-11.md).
+
+**Status:** FINISHED / PUBLISHED / LIVE USER MEMORY ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-10 — v205 opt-in account-owned cross-thread ChatGPT archive memory
 
 **Request/observed baseline:** the user's August 30 ChatGPT export completed with 2,556 encrypted text-bearing conversations (52 non-text unsupported), and v204 made them browsable through the new 📄↑ drawer toggle. User now explicitly requests §wyrlz AI to use relevant imported past conversations to better understand them and continue context in new §wyrlz chat threads, analogous to ChatGPT's personal/past-conversation continuity. Current inference payload uses only the active native thread plus scoped project-source evidence; the imported archive is not consulted by any model.
