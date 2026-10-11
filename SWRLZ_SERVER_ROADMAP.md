@@ -1,3 +1,17 @@
+## UPDATE STARTED — 2026-10-11 — verified Google native-chat cross-browser persistence and freshness repair
+
+**Observed user acceptance:** Two Android browsers using §wyrlz do not consistently show new native conversations, even though prior native conversation history and the encrypted ChatGPT archive remain readable. Screenshot of a cumulative imported message count shows the background read-only tally progressing from 0/0 to 160/2,556; that scan is distinct from native conversation save/sync and is not itself evidence that saved threads need reimport.
+
+**Verified source defect:** In deployed v208.1 HF Station, `_session` caches an account snapshot in process memory, while `/api/lalm_station/sync`, `/api/lalm_station/export`, `/api/chat_state` and `/api/lalm_station/send` can use that snapshot without checking the newer encrypted Redis revision. Distinct worker/browser traffic can therefore see stale native history or encounter optimistic-CAS conflicts when creating new threads. Signed-in Google identity and archive storage remain separate authorities. This is an identified code-level inconsistency; exact live failure mode still requires account-specific acceptance evidence. Also inspect write-failure handling and safe snapshot limits; do not infer loss of encrypted data from a missing UI thread.
+
+**Primary Focus / Focus Group:** clean-room authenticated Chat native history synchronization (primary), plus Station persistence, Google Account verified owner boundary, and Server Runtime deployment/activation. Existing LALM engine, encrypted imported archive, stream semantics and model weights are unchanged unless test evidence requires a bounded compatible correction. Legacy `/chat` remains a control, not a competing history authority.
+
+**Source baseline / ownership:** current published feature branch `feature/private-account-facts-v208` SHA `6a1e55af26dcfe0dc03dafc8e8aa19d251741f36`; create separate isolated review branch, keep v208/v208.1 work and snapshot/rollback lineage intact. `runtime:VERSION.txt`: Repository Work 1.0.148, Server Runtime 2.3.360, Web Chat 1.5.99, LALM Engine 2.1.185, Google Account Architecture 1.0.12. Do not pre-assign new version numbers; only affected modules advance after tested and governed publication.
+
+**Plan / verification:** Reconcile the stored revision before idle sync, export, native writes and send; do not replace an in-flight local generation or overwrite independently saved messages. Keep optimistic concurrency and owner isolation. Add synthetic two-worker/same-owner save-read, distinct-account, active-generation and stale write regressions to the existing account test owner; run account CI and exact HF candidate validations. If verified, publish through the existing single guarded HF release chain, inspect terminal receipt, then request live A→B→A new-chat/refresh/re-login acceptance. Never log private message text, create a second store, change archive contents, or deploy an unvalidated candidate.
+
+**Status:** IN PROGRESS — source-level defect located / implementation and live acceptance pending.
+
 ## UPDATE FINISHED — 2026-10-11 — v208.1 private-history count and calendar follow-up
 
 **Outcome:** GOOGLE ACCOUNT/IMPORT CI PASSED / HF CANDIDATE CI PASSED / GUARDED SPACE PUBLICATION SUCCEEDED / OWNER'S LIVE ANDROID RECALL ACCEPTANCE PENDING.
