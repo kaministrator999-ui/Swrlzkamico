@@ -1,3 +1,17 @@
+## UPDATE CHECKPOINT — 2026-10-11 — v211.1 mobile sidebar Versions overlap + newest-first native Chat release
+
+**Owner acceptance evidence:** Android screenshot shows a large Google/GitHub account card followed by native Chat rows, with the collapsed Versions panel obscuring or making lower conversations untappable. A separate verified source error lists the newest native thread at the bottom because both the drawer and native JSON export follow insertion order.
+
+**Primary focus / focus group:** Existing clean-room Web Chat mobile navigation, native Chat export projection and unaffected verified Google-owner Station/Redis persistence. Imported ChatGPT archive already newest-first using `ZREVRANGE`; do not rewrite it or account-owned history. Preserve v211 model-guided GitHub tool orchestration, OAuth write consent, and all independent §E engineering.
+
+**Source lineage:** Published v211 `feature/github-model-guided-progress-v211@4da362e9f89339b37017c0a8aeba65948008f7d2`, independently deployed in guarded HF run #38172514064. Exact isolated corrective v211.1 source `fix/native-chat-mobile-sidebar-access-v2111@2284fccb589625449fc83405e170fcd428864834`, [draft PR #107](https://github.com/kaministrator999-ui/Swrlzkamico/pull/107). It incorporates and supersedes the older v210-based sidebar-only [draft PR #105](https://github.com/kaministrator999-ui/Swrlzkamico/pull/105) without deploying the older source over v211.
+
+**Change:** All account controls, native Chat rows and Versions live in one `100dvh` vertically scrollable mobile sidebar with safe-area padding, no capped inner `36dvh` chat list or footer overlay. Pinned native conversations appear first, remaining conversations by descending actual message activity, with deterministic tie break and unsaved draft at top. Native JSON export mirrors the same *thread* order only; the saved encrypted Redis array/revision and messages within a thread remain unchanged. Existing imported ChatGPT archive unaffected. Chat source `1.1.06→1.1.07`.
+
+**Tests / gate:** Node newest-first and mobile scrollability/style invariants, Python export readback verifying no Redis rewrites, old account isolation/snapshot suite, mobile parser, HF candidate. Account CI #38173174329 SUCCESS, mobile #38173202808 SUCCESS. HF offline #38173202771 pending at source-checkpoint time. Only if all CI pass and no concurrent same-Space release, issue one canonical guarded existing-Space publish request, inspect terminal success and rollback receipts, reconcile changed-only runtime registry and add FINISHED. No live owner-chat-save claim until owner verifies both browsers.
+
+**Status:** SOURCE CANDIDATE / PARTIAL CI VERIFIED / GUARDED PUBLICATION NOT YET TRIGGERED / LIVE USER ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-11 — v211 model-guided GitHub tools with live inference/action progress
 
 **Outcome:** EXACT SOURCE / GITHUB ACCOUNT+MODEL PLAN TESTS / HF OFFLINE / MOBILE CI **SUCCESS**; one guarded deployment to existing Hugging Face Space **SUCCESS**; affected module registry atomic readback **SUCCESS**; signed-in owner tool/progress behavioral acceptance **PENDING**.
