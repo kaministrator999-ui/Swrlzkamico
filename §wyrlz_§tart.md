@@ -6,6 +6,8 @@
 
 This file deliberately does **not** duplicate every architecture, versioning, diagnostic, deployment, or reporting rule. Those rules live in their dedicated owners below.
 
+**New to the reasoning behind §tart?** Read the optional [README for the README: Why §tart Exists](docs/engineering/SWRLZ_START_README.md) for the human explanation, beginning vs. starter templates, modular components, chunked integration, and project-owner choices. It is explanatory; the canonical router and dedicated contracts below still govern actual work.
+
 
 ### Specialized Forge engine entrypoint — `§tart §E`
 
