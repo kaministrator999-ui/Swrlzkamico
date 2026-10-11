@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.180
-REVISION=2.1.180-evidence-bound-short-version-recall-v201
+VERSION=2.1.181
+REVISION=2.1.181-owner-scoped-imported-history-evidence-v205
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
