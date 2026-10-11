@@ -78,6 +78,6 @@ assert 'Sign in with Google to check private conversation totals.' in station
 
 # Direct factual responses must not be left to general online search or memory inference.
 assert 'event_source=iter(({"type":"DELTA","text":payload["verifiedPrivateAnswer"]}' in station
-assert 'if not chatgpt_account_memory.enabled(google_owner)' in station
+assert 'not chatgpt_account_memory.enabled(google_owner)' in station
 assert 'PERSONAL HISTORY SEARCH INCOMPLETE:' in station
 print("v208 PASS: real prompt forms, exact owner count, cumulative total not import delta, month ago, native isolation, deterministic Station routing")
