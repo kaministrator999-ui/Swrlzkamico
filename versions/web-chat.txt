@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.102
-REVISION=1.5.102-github-live-inference-tool-status-v211
+VERSION=1.5.103
+REVISION=1.5.103-native-chat-mobile-sidebar-newest-first-v2111
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
