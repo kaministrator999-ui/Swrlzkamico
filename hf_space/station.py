@@ -300,7 +300,7 @@ def _chat_document():
     """Serve the canonical Chat document plus the bounded HF presentation adapter."""
     source=(ROOT/"chat/§wyrlz/index.html").read_text(encoding="utf-8")
     marker='</body>'
-    adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-import-v1.js" defer></script>'
+    adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-import-v1.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js" defer></script>'
     return source.replace(marker,adapter+marker,1) if marker in source else source+adapter
 
 @app.get("/")
