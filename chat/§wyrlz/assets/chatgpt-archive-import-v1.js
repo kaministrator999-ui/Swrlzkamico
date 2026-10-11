@@ -51,6 +51,9 @@
     const refresh = el("button", "cga-action", "Refresh imported conversations");
     refresh.type = "button";
     pane.appendChild(refresh);
+    const eraseAll = el("button", "cga-action", "Delete all imported conversations");
+    eraseAll.type = "button";
+    pane.appendChild(eraseAll);
     const status = el("div", "cga-status", "Sign in with Google to store and view imported conversations.");
     status.setAttribute("role", "status");
     status.setAttribute("aria-live", "polite");
@@ -75,7 +78,7 @@
     let total = 0;
     const setBusy = (value) => {
       busy = value;
-      upload.disabled = refresh.disabled = value;
+      upload.disabled = refresh.disabled = eraseAll.disabled = value;
       file.disabled = value;
     };
     async function jsonFetch(url) {
@@ -89,6 +92,22 @@
       try {
         const data = await jsonFetch("/api/chatgpt_archive/thread/" + encodeURIComponent(id));
         thread.appendChild(el("h4", "", data.title));
+        const eraseOne = el("button", "cga-action", "Delete this imported conversation");
+        eraseOne.type = "button";
+        eraseOne.addEventListener("click", async () => {
+          if (!window.confirm("Delete this imported ChatGPT conversation from your §wyrlz archive?")) return;
+          try {
+            const result = await fetch("/api/chatgpt_archive/thread/" + encodeURIComponent(id), {
+              method:"DELETE", credentials:"same-origin", headers:{"X-Swrlz-Import":"1"}
+            });
+            if (!result.ok) throw Error("Deletion failed (HTTP " + result.status + ").");
+            thread.replaceChildren();
+            offset = 0;
+            await load();
+            status.textContent = "Imported conversation deleted from this account.";
+          } catch (error) { status.textContent = error.message; }
+        });
+        thread.appendChild(eraseOne);
         for (const m of data.messages || []) {
           const card = el("div", "cga-msg");
           card.appendChild(el("span", "cga-sub", m.role === "user" ? "You" : "ChatGPT"));
@@ -132,6 +151,24 @@
       load();
     });
     refresh.addEventListener("click", () => {offset=0;load();});
+    eraseAll.addEventListener("click", async () => {
+      if (busy || !window.confirm("Permanently delete ALL imported ChatGPT conversations from your §wyrlz account? Your native chats are not affected.")) return;
+      if (!window.confirm("Confirm deletion of every imported ChatGPT archive conversation. This cannot be undone.")) return;
+      setBusy(true);
+      status.textContent = "Deleting your imported archive…";
+      try {
+        const response = await fetch("/api/chatgpt_archive", {
+          method:"DELETE", credentials:"same-origin", headers:{"X-Swrlz-Import":"1"}
+        });
+        if (!response.ok) throw Error("Deletion failed (HTTP " + response.status + ").");
+        const result = await response.json();
+        offset = 0;
+        listing.replaceChildren();
+        thread.replaceChildren();
+        status.textContent = "Deleted " + result.deleted + " imported conversations.";
+      } catch (error) { status.textContent = error.message; }
+      finally { setBusy(false); }
+    });
     previous.addEventListener("click", () => {offset=Math.max(0,offset-30);load();});
     next.addEventListener("click", () => {if(nextOffset!==null){offset=nextOffset;load();}});
     upload.addEventListener("click", async () => {
