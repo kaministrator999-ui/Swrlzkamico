@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=feature/private-history-search-v206
-REQUEST_NONCE=2026-10-11-v206-cross-thread-time-search-001
+SOURCE_REF=feature/private-history-toolkit-v207
+REQUEST_NONCE=2026-10-11-v207-private-recall-query-toolkit-001
