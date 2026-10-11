@@ -1,3 +1,23 @@
+## UPDATE FINISHED — 2026-10-11 — v206 private cross-thread search by topic and local time
+
+**Outcome:** SOURCE COMPLETE / ACCOUNT + HF REGRESSION CI SUCCESS / GUARDED HF SPACE PUBLICATION SUCCESS / REAL OWNER ANDROID HISTORY-LOOKUP ACCEPTANCE PENDING.
+
+**Request:** user requested an online-search-like private retrieval capability for §wyrlz to look back across *both* native §wyrlz and encrypted imported ChatGPT chats when asked “remember last night?”, about the earlier day/evening, or a particular old discussion. Preserve original conversation ownership/attribution; do not fabricate events from title updates.
+
+**Implementation:** isolated source branch `feature/private-history-search-v206` at `e8bc07e5ff80ced6c0a02ce454b7504efd294f80`, review [PR #96](https://github.com/kaministrator999-ui/Swrlzkamico/pull/96). New `hf_space/personal_history_lookup.py` parses explicit history-recall intent and server-clock anchored local date windows (IANA timezone; last night, yesterday/today, last week, N days ago, named dates/weekdays and local dayparts), searches verified-account native snapshot plus account-scoped imported archive using existing opt-in and ephemeral lexical index, retrieves only original timestamped user/assistant text, and returns bounded role/source/thread/date attributed historical evidence to existing model routes. Expanded v205 index with earliest/latest actual imported message timestamps to prefilter threads that span multiple days. Missing results/incomplete index are disclosed; private history stays separate from current user intent, public web research and universal assistant persona, and no ZIP reupload, duplicate persistent transcript or GGUF training occurs. v203–v205 upload, drawer and user-controlled opt-in remain unchanged.
+
+**Regression:** synthetic `hf_space/test_personal_history_lookup_v206.py` validates last-night midnight boundaries, timezone-specific Friday/yesterday/date/daypart, excludes future/unselected messages, native+imported source separation, owner scope/opt-out, incomplete index, limited fetch/result budget and role/date provenance. Account CI [#38116027007](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38116027007) **SUCCESS** and HF candidate CI [#38116027006](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38116027006) **SUCCESS** at pinned source SHA.
+
+**Published to existing Space:** guarded [#38116093896](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38116093896) **SUCCESS**; `kamiloki/Swyrlz` revision `e170d1129519331b48494a967c8238f048f25b44`; rollback revision `7c8ea60e52a511eb1a08619b8f6d3aa77a76aaa6`. Release receipt `DEPLOYED_UNVERIFIED`: HF publication verified, full signed-in Android owner time-specific lookup and complete 2,556-record archive warm-up still require real acceptance.
+
+**Registered versions:** Repository Work **1.0.145**; Server Runtime **2.3.357**; LALM Engine **2.1.182**. Web Chat remains **1.5.99**; Google Account remains **1.0.12**; Online Research and Deployment Control unchanged.
+
+**Owner test:** in Google-signed-in §wyrlz Chat enable private memory under Settings → ChatGPT imports and wait for Ready. In a fresh native thread ask “What did we talk about last night?” or ask for a distinctive subject/date from existing historical chats. A correct answer uses source/role/local timestamp from retrieved private messages and does not claim it searched every thread. If no timestamped matches or index not ready, it must not invent a discussion.
+
+**Report:** [reports/V206_PRIVATE_CROSS_THREAD_TEMPORAL_SEARCH_2026-10-11.md](reports/V206_PRIVATE_CROSS_THREAD_TEMPORAL_SEARCH_2026-10-11.md).
+
+**Status:** FINISHED / DEPLOYED / LIVE OWNER ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-11 — v206 private conversational search across native and imported threads
 
 **User request:** Let §wyrlz find and reference past conversations like an online search engine, but searching a user's own native §wyrlz chats and imported ChatGPT history: “remember that time when…”, “remember last night?”, or questions about prior days, named calendar days, time of day and specific prior exchanges. Relevant time-specific history should be retrieved from actual stored message timestamps, not fabricated, and available to the model in fresh threads.
