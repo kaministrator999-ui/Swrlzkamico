@@ -1,4 +1,6 @@
 """Offline regression of Google account and full chat snapshot retention/recovery."""
+import base64
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -143,6 +145,105 @@ def test_two_browser_cached_worker_refresh_and_non_destructive_conflicts():
         station._sessions.clear()
 
 
+def test_legacy_native_owner_history_over_old_cap_saves_without_truncation():
+    kv,redis=fake_store()
+    c=config()
+    with mock.patch.object(gh,"_settings",return_value=c),mock.patch.object(gh,"_redis",side_effect=redis):
+        original={"schema":store.SCHEMA,"owner":OWNER,"revision":1,
+                  "currentId":"threadA","threads":[make_thread("Legacy saved conversation")]}
+        key=store._chat_key(OWNER)
+        kv[key]=json.dumps({"revision":1,"encrypted":store._encrypt(c,original)})
+        loaded=store.load_chat(OWNER)
+        assert loaded["revision"]==1
+        # This old v1 document could not accept even one new user turn once
+        # the complete raw owner snapshot grew beyond 2,200,000 bytes.
+        new_text="new persisted reply " + "knowledge text " * 159000
+        loaded["threads"][0]["messages"].append(
+            {"id":"m3","role":"user","text":new_text,"createdAt":125})
+        loaded["revision"]=2
+        raw=json.dumps({"schema":store.SCHEMA,"owner":OWNER,"revision":2,
+                        "currentId":"threadA","threads":loaded["threads"]},
+                       ensure_ascii=False,separators=(",",":")).encode("utf-8")
+        assert len(raw)>store.MAX_BYTES and len(raw)<store.CHAT_MAX_RAW
+        assert store.save_chat(OWNER,loaded,1) is True
+        assert json.loads(kv[key])["format"]==store.CHAT_INLINE
+        saved=store.load_chat(OWNER)
+        assert saved["threads"][0]["messages"][0]["text"]=="Please review my GitHub project"
+        assert saved["threads"][0]["messages"][-1]["text"]==new_text
+        assert store.load_chat(OTHER) is None
+        # Future browser refreshes rehydrate the same durable revision.
+        assert store.load_chat(OWNER)["revision"]==2
+
+
+def test_chunked_native_chat_atomic_pointer_and_integrity():
+    kv,redis=fake_store()
+    c=config()
+    with mock.patch.object(gh,"_settings",return_value=c),mock.patch.object(gh,"_redis",side_effect=redis):
+        # Deterministic non-private high-entropy data forces two encrypted
+        # chunks; a repeated letter would only test the inline zlib path.
+        payload=base64.b64encode(hashlib.shake_256(b"native-chunk-v2091").digest(950000)).decode("ascii")
+        thread=make_thread("Chunked test")
+        thread["messages"].append({"id":"bulk","role":"assistant","text":payload,"createdAt":125})
+        state={"revision":1,"currentId":"threadA","threads":[thread],"ownerGoogleId":OWNER}
+        assert store.save_chat(OWNER,state,0)
+        envelope=json.loads(kv[store._chat_key(OWNER)])
+        assert envelope["format"]==store.CHAT_CHUNKED and envelope["parts"]>=2
+        partkey=store._chat_chunk_key(OWNER,envelope["nonce"],0)
+        encrypted=kv[partkey]
+        assert payload[:200] not in str(kv)
+        assert store.load_chat(OWNER)["threads"][0]["messages"][-1]["text"]==payload
+        kv.pop(partkey)
+        try:store.load_chat(OWNER)
+        except Exception as exc:assert getattr(exc,"status_code",None)==503
+        else:raise AssertionError("Missing encrypted chat piece must fail closed")
+        kv[partkey]=encrypted[:-1]+"X"
+        try:store.load_chat(OWNER)
+        except Exception as exc:assert getattr(exc,"status_code",None)==503
+        else:raise AssertionError("Tampered encrypted chat piece must fail closed")
+        kv[partkey]=encrypted
+        assert store.load_chat(OWNER)["revision"]==1
+        stale={**state,"revision":2}
+        assert store.save_chat(OWNER,stale,0) is False
+        assert store.load_chat(OWNER)["revision"]==1
+        assert store.load_chat(OTHER) is None
+
+
+def test_native_accepted_send_and_restart_persist_beyond_legacy_cap():
+    from starlette.testclient import TestClient
+    kv,redis=fake_store()
+    c=config()
+    with mock.patch.object(gh,"_settings",return_value=c),mock.patch.object(gh,"_redis",side_effect=redis),\\
+         mock.patch.object(station,"_account_session",return_value=("browser-session",USER)),\\
+         mock.patch.object(station,"routes",return_value=[SimpleNamespace(model_id="700m",available=True)]),\\
+         mock.patch.object(station._pool,"submit",return_value=None):
+        station._sessions.clear()
+        with TestClient(station.app) as client:
+            # Real Station /send saves a newly opened conversation before
+            # inference begins, without relying on a model's behavior.
+            request=SimpleNamespace(cookies={})
+            key,s=station._session(request)
+            oversized=make_thread("Large already-saved native thread")
+            oversized["messages"].append({"id":"mass","role":"assistant",
+                                           "text":"saved synthetic text " * 125000,"createdAt":300})
+            s["threads"]=[oversized]
+            s["currentId"]="threadA"
+            station._commit_revision(s)
+            assert store.load_chat(OWNER)["revision"]==1
+            body={"requestId":"request-large-1","threadId":"thread-new",
+                  "prompt":"First newly saved cross-browser conversation",
+                  "messageId":"new-user-1","assistantMessageId":"new-assistant-1",
+                  "modelId":"700m","timeZone":"UTC"}
+            response=client.post("/api/lalm_station/send",json=body)
+            assert response.status_code==202,response.text[:300]
+            assert store.load_chat(OWNER)["revision"]==2
+            station._sessions.clear()
+            synced=client.get("/api/lalm_station/sync?fresh=1")
+            assert synced.status_code==200,synced.text[:300]
+            found=next(t for t in synced.json()["threads"] if t["id"]=="thread-new")
+            assert found["messages"][0]["text"]==body["prompt"]
+            station._sessions.clear()
+
+
 def test_limits_enforced_no_silent_truncation_and_identity_isolation():
     kv,redis=fake_store()
     with mock.patch.object(gh,"_settings",return_value=config()),mock.patch.object(gh,"_redis",side_effect=redis):
@@ -174,6 +275,9 @@ if __name__=="__main__":
     test_google_cookie_redis_rehydrates_and_revokes()
     test_account_owner_chat_after_restart_and_conflicts()
     test_two_browser_cached_worker_refresh_and_non_destructive_conflicts()
+    test_legacy_native_owner_history_over_old_cap_saves_without_truncation()
+    test_chunked_native_chat_atomic_pointer_and_integrity()
+    test_native_accepted_send_and_restart_persist_beyond_legacy_cap()
     test_limits_enforced_no_silent_truncation_and_identity_isolation()
     test_source_wiring_and_sync_contract()
     print("Durable Google account chat persistence, restart and CAS checks passed")
