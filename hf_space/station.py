@@ -23,6 +23,8 @@ from model_router import dispatch, ModelUnavailable, routes
 import github_connection
 import project_thread_memory
 import account_chat_store
+import chatgpt_archive
+import tempfile
 try:
     from google.auth.transport import requests as google_requests
     from google.oauth2 import id_token as google_id_token
@@ -366,6 +368,84 @@ def account_logout(request:Request):
 # Connected GitHub belongs to the verified Google identity, never the anonymous
 # Station cookie or a user-supplied profile/name.
 github_connection.install(app, _account_session)
+
+# Imported ChatGPT history is NOT added to Station's 2.2 MB native snapshot.
+# This separate archive requires the verified Google session on every call.
+def _archive_owner(request: Request):
+    _, user = _account_session(request)
+    owner = str((user or {}).get("id") or "")
+    if not owner.startswith("google:"):
+        raise HTTPException(401, "Sign in with Google to import ChatGPT conversation history")
+    return owner
+
+
+@app.get("/api/chatgpt_archive/list")
+def chatgpt_archive_list(request: Request, offset: int = 0, limit: int = 30):
+    owner = _archive_owner(request)
+    return JSONResponse(chatgpt_archive.list_archive(owner, offset, limit),
+                        headers={"Cache-Control": "private, no-store"})
+
+
+@app.get("/api/chatgpt_archive/thread/{conversation_id}")
+def chatgpt_archive_thread(request: Request, conversation_id: str):
+    owner = _archive_owner(request)
+    return JSONResponse(chatgpt_archive.read_archive(owner, conversation_id),
+                        headers={"Cache-Control": "private, no-store"})
+
+
+@app.post("/api/chatgpt_archive/import")
+async def chatgpt_archive_import(request: Request):
+    owner = _archive_owner(request)
+    # A custom header and strict same-origin check block cross-site form upload.
+    origin = request.headers.get("origin", "")
+    parsed = urllib.parse.urlsplit(origin)
+    if (request.headers.get("x-swrlz-import") != "1" or not origin
+        or parsed.scheme not in ("https", "http")
+        or parsed.netloc != request.headers.get("host")
+        or parsed.username or parsed.password or parsed.path or parsed.query or parsed.fragment):
+        raise HTTPException(403, "Import requires a same-origin authenticated request")
+    if request.headers.get("content-type", "").split(";")[0].lower() not in (
+        "application/zip", "application/octet-stream", "application/x-zip-compressed"):
+        raise HTTPException(415, "Upload a ChatGPT ZIP archive")
+    size_header = request.headers.get("content-length")
+    if size_header and int(size_header) > chatgpt_archive.MAX_ZIP:
+        raise HTTPException(413, "ChatGPT export ZIP is too large")
+    # Spooled disk file avoids holding 55+ MB request bodies in Python memory.
+    with tempfile.NamedTemporaryFile(prefix="swrlz-chatgpt-", suffix=".zip", delete=False) as output:
+        filename = output.name
+    try:
+        total = 0
+        with open(filename, "wb") as destination:
+            async for chunk in request.stream():
+                total += len(chunk)
+                if total > chatgpt_archive.MAX_ZIP:
+                    raise HTTPException(413, "ChatGPT export ZIP is too large")
+                destination.write(chunk)
+        if not total:
+            raise HTTPException(400, "Empty ChatGPT archive upload")
+    except Exception:
+        os.unlink(filename)
+        raise
+
+    def results():
+        try:
+            for update in chatgpt_archive.import_archive(filename, owner):
+                yield json.dumps(update, separators=(",", ":")) + "\n"
+        except HTTPException as exc:
+            yield json.dumps({"type": "ERROR", "code": exc.status_code,
+                              "message": str(exc.detail)[:240]}) + "\n"
+        except Exception:
+            # Avoid accidentally putting private export content in traces/UI.
+            yield json.dumps({"type": "ERROR", "code": 503,
+                              "message": "Import interrupted; reselect this ZIP to resume safely"}) + "\n"
+        finally:
+            try: os.unlink(filename)
+            except FileNotFoundError: pass
+
+    return StreamingResponse(results(), media_type="application/x-ndjson",
+                             headers={"Cache-Control": "private, no-store",
+                                      "X-Content-Type-Options": "nosniff"})
+
 
 @app.get("/api/lalm_station/sync")
 def sync(request:Request):
