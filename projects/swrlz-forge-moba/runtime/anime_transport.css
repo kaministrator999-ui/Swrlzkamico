@@ -1,0 +1,18 @@
+.anime-episode-transport {
+  display:inline-flex; flex:0 0 auto; align-items:center; gap:5px;
+}
+.anime-cine-controls .anime-episode-transport button {
+  min-width:44px; min-height:36px; white-space:nowrap;
+}
+.anime-episode-transport button[aria-pressed="true"] {
+  background:#563f23; border-color:#e2b56b; color:#fff1cc;
+}
+.anime-cine-rate {
+  color:#f4cb83; font:700 11px system-ui; white-space:nowrap;
+  min-width:20px; font-variant-numeric:tabular-nums;
+}
+@media(max-width:640px) {
+  .anime-cine-controls .anime-episode-transport { flex-basis:100%; justify-content:center; gap:4px; }
+  .anime-screening.story-native-screening .anime-cine-controls .anime-episode-transport button,
+  .anime-cine-controls .anime-episode-transport button { min-width:44px; min-height:40px; padding:6px 8px; }
+}
