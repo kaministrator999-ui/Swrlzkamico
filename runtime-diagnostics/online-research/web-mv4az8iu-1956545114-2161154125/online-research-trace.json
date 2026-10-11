@@ -1,0 +1,244 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-mv4az8iu-1956545114-2161154125",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "2284fccb589625449fc83405e170fcd428864834",
+  "persistedAtUnixMs": 1791752170331,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "freshness-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 1,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1303,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "How's today going",
+          "title": "30 Other Ways to Say 'How Is Your Day Going' (With Examples)",
+          "url": "https://grammarheist.com/other-ways-to-say-how-is-your-day-going/",
+          "source": "grammarheist.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Discover Other Ways to Say How Is Your Day Going with warm, friendly examples that boost your daily chats and build connection fast today !!!"
+        },
+        {
+          "query": "How's today going",
+          "title": "30 Other Ways to Say 'How Is It Going?' (With Examples)",
+          "url": "https://grammarheist.com/other-ways-to-say-how-is-it-going/",
+          "source": "grammarheist.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Discover **other ways to say \" How is it going ?\"** with warmth and style! Explore creative phrases to make every conversation more meaningful."
+        },
+        {
+          "query": "How's today going",
+          "title": "How's it going? or How's going?? - TextRanch",
+          "url": "https://textranch.com/c/hows-it-going-or-hows-going/",
+          "source": "textranch.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "'How's it going?' is correct and commonly used to inquire about someone's well-being or to ask how things are progressing. On the other hand, 'how's going?' is an incorrect English construction. The addition of 'it' or another noun is necessary for grammatical accuracy."
+        },
+        {
+          "query": "How's today going",
+          "title": "How to Respond to \"How's It Going:\" 30+ Great Responses - wikiHow",
+          "url": "https://www.wikihow.com/Respond-to-How's-It-Going",
+          "source": "www.wikihow.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "You're going about your day when someone asks you \" How's it going ?\" A simple question, right? Then why can it feel so tricky to answer? Don't worry—we've compiled a list of the best ways to respond to \" How's it going ?\" from a loved one, friend, stranger, or dating app match. "
+        },
+        {
+          "query": "How's today going",
+          "title": "34+ Other Ways to Say \"How Is It Going?\" For 2026 - Formal and Informal ...",
+          "url": "https://englishblasts.com/other-ways-to-say-how-is-it-going/",
+          "source": "englishblasts.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Discover 34+ other ways to say \" How is it going ?\" with formal, informal, business, and casual alternatives. Learn meanings, examples, tones, and professional synonyms to improve your English fluency"
+        },
+        {
+          "query": "How's today going",
+          "title": "15 Other Ways to Say \"How Is Your Day Going\" - grammarmax.com",
+          "url": "https://grammarmax.com/how-is-your-day-going/",
+          "source": "grammarmax.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "15 creative alternatives to say \" How is your day going \" and make your daily check-ins more engaging and meaningful!"
+        },
+        {
+          "query": "How's today going",
+          "title": "How is it going today? or how is today going?? - TextRanch",
+          "url": "https://textranch.com/c/how-is-it-going-today-or-how-is-today-going/",
+          "source": "textranch.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Learn the correct usage of \" How is it going today ?\" and \" how is today going ?\" in English. Discover differences, examples, alternatives and tips for choosing the right phrase."
+        },
+        {
+          "query": "How's today going",
+          "title": "Other Ways to Say How Is Your Day Going - BetterWaystoSay",
+          "url": "https://betterwaystosay.com/other-ways-to-say-how-is-your-day-going/",
+          "source": "betterwaystosay.com",
+          "rank": 8,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Learn natural alternatives to how is your day going with examples, meanings, workplace options, texting phrases, and conversation tips for every situation."
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791752169028,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791752169036,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791752169113,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "activity": "Provider failed",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "errorType": "URLError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791752169114,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791752170092,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791752170092,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791752170094,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "grammarheist.com",
+        "url": "https://grammarheist.com/other-ways-to-say-how-is-your-day-going/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791752170330,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "grammarheist.com",
+        "url": "https://grammarheist.com/other-ways-to-say-how-is-your-day-going/",
+        "httpStatus": 200,
+        "responseBytes": 140856
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791752170331,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      }
+    ],
+    "sourceSites": [
+      "grammarheist.com"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
