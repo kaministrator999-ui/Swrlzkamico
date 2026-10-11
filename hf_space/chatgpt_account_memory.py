@@ -109,7 +109,8 @@ def _build(owner,token):
                              "lastAt":max(timestamps) if timestamps else None,
                              "titleTokens":set(_terms(title)),
                              "terms":dict(counter.most_common(MAX_TERMS)),
-                             "assistantTerms":dict(assistant_counter.most_common(120))})
+                             "assistantTerms":dict(assistant_counter.most_common(120)),
+                             "messageCount":len(item["messages"])})
             with _LOCK:
                 if _EPOCH[owner]!=token: return
                 _STATE[owner]["done"]=min(total,offset+len(ids))
