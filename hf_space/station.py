@@ -1513,10 +1513,10 @@ async def send(request:Request):
     # imported ChatGPT archives, and can constrain actual message timestamps.
     if google_owner.startswith("google:") and not github_connection.is_start_request(prompt):
         try:
-            if personal_history_lookup.relevant(prompt):
+            if personal_history_lookup.relevant(prompt,history):
                 historical = personal_history_lookup.lookup(
                     google_owner, prompt, client_timezone,
-                    s["threads"], active_thread_id=tid)
+                    s["threads"], active_thread_id=tid, history=history)
             else:
                 historical = chatgpt_account_memory.retrieve(google_owner, prompt)
             if historical:
