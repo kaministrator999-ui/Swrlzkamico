@@ -1,3 +1,23 @@
+## UPDATE FINISHED — 2026-10-10 — v204 imported ChatGPT archive sidebar toggle
+
+**Outcome:** SOURCE COMPLETE / SYNTHETIC DOM + ACCOUNT + HF CI SUCCESS / GUARDED HF PUBLICATION SUCCESS / LIVE ANDROID TOGGLE ACCEPTANCE PENDING.
+
+**User request:** place a document-with-up-arrow 📄↑ toggle slightly right of CHATS in the Chat drawer, switching native §wyrlz chats with the fully imported ChatGPT conversations. User screenshot confirmed v203 had saved 2,556 text conversations and skipped 52 unsupported of 2,608 archive threads, but prior sidebar still showed only native chats.
+
+**Implementation:** `chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js` adds the requested accessible SVG toggle into the existing drawer header and preserves native chat list via CSS mode switch. Imported list pages at 30 via already owner-verified archive list GET, with Newer/Older navigation. Selected imported threads open in main viewport, displaying safely escaped original text 100 messages at a time. While archived, native message list/composer/new-chat action hidden, not mutated; toggling back restores native thread and composer. Nothing inserted into Station native snapshots, model context or training; v203 ZIP importer untouched. Account sign-out clears imported overlay. Loaded by existing `hf_space/station.py` adapter and `scripts/prepare_hf_space.py` source packager. No new storage, backend endpoint or account-auth boundary.
+
+**Evidence:** isolated candidate `feature/chatgpt-archive-sidebar-v204` source `cf59320f169c1ae56efb0abb3b743ae165f4ae7a`; draft [PR #93](https://github.com/kaministrator999-ui/Swrlzkamico/pull/93). Account [#38109505024](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38109505024) **SUCCESS**, HF candidate [#38109505099](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38109505099) **SUCCESS**. Synthetic DOM test verifies native preservation, accessible toggle, safe read-only display, account gating and no mutation API.
+
+**Guarded HF release:** [#38109538281](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38109538281) completed **SUCCESS** to original `kamiloki/Swyrlz` Space, revision `ea37fbeb7c71a90da2227f85cbcc90bdf7e30f83`; rollback `5ba3d56c81003ceb89cb1d4af34de84b72a0b4a1`. Release receipt `DEPLOYED_UNVERIFIED` correctly indicates publication, not verified Android UI acceptance.
+
+**Module versions:** Repository Work **1.0.143**; Web Chat **1.5.98**; Server Runtime **2.3.355**. Google Account remains **1.0.11**; LALM/Online Research/Deployment Control unchanged.
+
+**Next verification:** Android reload of Chat → open slide-out menu → tap new 📄↑ beside CHATS → see imported list/count → open imported thread to read its messages in main viewport → tap toggle back → prior native chat and message composer remain unchanged. No need to reimport the already saved ZIP.
+
+**Provenance:** [reports/V204_CHATGPT_ARCHIVE_SIDEBAR_SWITCH_2026-10-10.md](reports/V204_CHATGPT_ARCHIVE_SIDEBAR_SWITCH_2026-10-10.md).
+
+**Status:** FINISHED / DEPLOYED / USER-VISIBLE MOBILE ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-10 — v204 sidebar toggle for imported ChatGPT conversations
 
 **User-visible request:** After confirming the v203 ZIP import finished with 2,556 saved visible-text conversations and 52 unsupported threads, the user showed their mobile drawer and requested a compact document-with-up-arrow toggle immediately beside CHATS. Tapping it should switch the drawer's §wyrlz-native chat list to the imported ChatGPT archive list, and back again.
