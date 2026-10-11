@@ -66,10 +66,11 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     (out / "index.html").write_bytes(html)
     (out / "README.md").write_text((ROOT / "SPACE_README.md").read_text(encoding="utf-8"), encoding="utf-8")
-    # Native starter source and episode screening travel together with engine.
+    # Native game starter source and episode screening travel with the engine.
     assets = {}
     media_paths = ["episodes/ghosts-in-different-forms-ep01.html",
-                   "scenes/ghosts-in-different-forms-ep01.swyrl.json"]
+                   "scenes/ghosts-in-different-forms-ep01.swyrl.json",
+                   "scenes/sheep-tag-meadow.swyrl.json"]
     for authored in ("scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json",
                      "scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json",
                      "scenes/ghosts-in-different-forms-ep01-depth.swyrl.json",

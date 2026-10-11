@@ -1,4 +1,4 @@
-name: Validate §E v9.9 authored pop-up storybook studio
+name: Validate §E v10.0 native starter and animation studio
 
 on:
   push:
@@ -6,6 +6,9 @@ on:
     paths: &anime_paths
       - ".github/workflows/verify-swrlz-storybook-v8-8.yml"
       - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v10_0_sheep_tag.py"
+      - "projects/swrlz-forge-moba/scenes/sheep-tag-meadow.swyrl.json"
+      - "projects/swrlz-forge-moba/tests/sheep_tag_playwright.mjs"
       - "projects/swrlz-forge-moba/patches/**"
       - "projects/swrlz-forge-moba/runtime/**"
       - "projects/swrlz-forge-moba/tests/episode_transport_playwright.mjs"
@@ -43,6 +46,7 @@ jobs:
           - socket_emergence
           - character_relief
           - episode_transport
+          - sheep_tag
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -51,7 +55,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Independently reconstruct sealed v9.9 source
+      - name: Independently reconstruct sealed v10.0 source
         run: |
           python - <<'PY'
           import base64,gzip,hashlib,json,runpy
@@ -62,15 +66,15 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes']
           assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
-          assert len(manifest['patches'])==59
-          assert manifest['patches'][-1]=='patches/v9_9_episode_shuttle.py'
+          assert len(manifest['patches'])==60
+          assert manifest['patches'][-1]=='patches/v10_0_sheep_tag.py'
           source=raw.decode('utf-8')
           for patch in manifest['patches']:
               source=mod['load_patch'](root/patch)(source)
           output=source.encode('utf-8')
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
-          for feature in ('V9_9_EPISODE_SHUTTLE_CONTROLS','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v9.9',
+          for feature in ('V10_0_SHEEP_TAG_STARTER','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.0',
                           'CANONICAL_ANIME_EPISODE_PROJECT','SWYRL_ENGINE_CINEMATIC',
                           'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1',
@@ -88,11 +92,11 @@ jobs:
           Path('/tmp/swyrl-anime-engine.mjs').write_text(source[begin:source.rindex('</script>')],encoding='utf-8')
           print('ENGINE_EXPECTED_BYTES='+str(len(output)))
           print('ENGINE_EXPECTED_SHA256='+hashlib.sha256(output).hexdigest())
-          print('CANDIDATE_59_PATCH_RECONSTRUCT_OK')
+          print('CANDIDATE_60_PATCH_RECONSTRUCT_OK')
           PY
           node --check /tmp/swyrl-anime-engine.mjs
           python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
-      - name: Verify complete v9.9 package against source and manifest
+      - name: Verify complete v10.0 package against source and manifest
         run: |
           python projects/swrlz-forge-moba/build_space.py --output /tmp/storybook-test
           cmp /tmp/swyrl-anime-engine.html /tmp/storybook-test/index.html
@@ -106,8 +110,8 @@ jobs:
           assert receipt['finalBytes']==manifest['finalBytes']
           assert receipt['finalSha256']==manifest['finalSha256']
           assert receipt['patches']==manifest['patches']
-          assert len(receipt['patches'])==59
-          assert receipt['patches'][-1]=='patches/v9_9_episode_shuttle.py'
+          assert len(receipt['patches'])==60
+          assert receipt['patches'][-1]=='patches/v10_0_sheep_tag.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
@@ -117,20 +121,33 @@ jobs:
                     'scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json',
-                    'scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json'}
+                    'scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json',
+                    'scenes/sheep-tag-meadow.swyrl.json'}
           expected.update('assets/anime/'+name+'.png' for name in (
               'kami','swyrlz','cathedral','workshop','foreground','kami-rig',
               'swyrlz-rig','scenery-parts','kami-grip-layers',
               'mage-faces-painted','kami-full-staff'))
           assert {p.relative_to(root).as_posix() for p in (root/'assets/anime').glob('*.png')}=={p for p in expected if p.endswith('.png')}
           assert set(receipt['assets'])==expected
-          assert len(receipt['assets'])==21
+          assert len(receipt['assets'])==22
+          meadow=json.loads((out/'scenes/sheep-tag-meadow.swyrl.json').read_text())
+          assert meadow['project']['canonicalId']=='sheep-tag-meadow'
+          assert meadow['project']['kind']=='sheep-tag'
+          assert meadow['project']['sheepTag']=={'duration':1200,'headstart':30,'bounds':40,'startGold':80,'role':'sheep'}
+          meadow_actors=meadow['scene']['actors']
+          assert len(meadow_actors)==66
+          for kind,count in (('st-sheep',6),('st-wolf',2),('st-pen',1),('st-meadow',1),('st-shop',4)):
+              assert sum(actor['type']==kind for actor in meadow_actors)==count,kind
+          assert all(actor['baked'] for actor in meadow_actors)
+          meadow_layers=meadow['editor']['layers']
+          assert len(meadow_layers)==4
+          assert all(any(layer['id'] in actor['editorLayerIds'] for actor in meadow_actors) for layer in meadow_layers)
           for asset,data in receipt['assets'].items():
               packed=(out/asset).read_bytes()
               assert (root/asset).read_bytes()==packed, asset
               assert len(packed)==data['bytes'], asset
               assert hashlib.sha256(packed).hexdigest()==data['sha256'], asset
-          print('PACKAGING_59_PATCHES_AND_ALL_ASSETS_VERIFIED')
+          print('PACKAGING_60_PATCHES_AND_ALL_ASSETS_VERIFIED')
           PY
       - name: Check browser acceptance suite syntax
         run: |
@@ -142,6 +159,7 @@ jobs:
           node --check projects/swrlz-forge-moba/tests/socket_emergence_playwright.mjs
           node --check projects/swrlz-forge-moba/tests/character_relief_playwright.mjs
           node --check projects/swrlz-forge-moba/tests/episode_transport_playwright.mjs
+          node --check projects/swrlz-forge-moba/tests/sheep_tag_playwright.mjs
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1
@@ -164,7 +182,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: v9-9-${{ matrix.suite }}-browser-views
+          name: v10-0-${{ matrix.suite }}-browser-views
           path: |
             native-anime-*.png
             storybook-acceptance/
@@ -174,4 +192,5 @@ jobs:
             socket-emergence-acceptance/
             character-relief-acceptance/
             episode-transport-acceptance/
+            sheep-tag-acceptance/
           retention-days: 5
