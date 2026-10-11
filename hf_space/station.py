@@ -28,6 +28,7 @@ import chatgpt_upload_session
 import chatgpt_import_job
 import chatgpt_account_memory
 import personal_history_lookup
+import private_account_facts_v208
 import tempfile
 try:
     from google.auth.transport import requests as google_requests
@@ -449,6 +450,7 @@ def delete_chatgpt_archive_thread(request: Request, conversation_id: str):
     chatgpt_import_job.assert_not_running(owner)
     result = chatgpt_archive.delete_archive(owner, conversation_id)
     chatgpt_account_memory.invalidate(owner)
+    private_account_facts_v208.invalidate(owner)
     return JSONResponse(result,
                         headers={"Cache-Control": "private, no-store"})
 
@@ -460,6 +462,7 @@ def delete_chatgpt_archive_all(request: Request):
     chatgpt_import_job.assert_not_running(owner)
     result = chatgpt_archive.delete_all_archive(owner)
     chatgpt_account_memory.invalidate(owner)
+    private_account_facts_v208.invalidate(owner)
     return JSONResponse(result,
                         headers={"Cache-Control": "private, no-store"})
 
@@ -503,6 +506,7 @@ def chatgpt_archive_upload_complete(request: Request, upload_id: str):
     chatgpt_import_job.assert_not_running(owner)
     filename = chatgpt_upload_session.finish(owner, upload_id)
     chatgpt_account_memory.invalidate(owner)
+    private_account_facts_v208.invalidate(owner)
     try:
         job = chatgpt_import_job.start(owner, filename, upload_id)
     except Exception:
@@ -886,13 +890,18 @@ def _run(key,request_id,model_id,payload,assistant_id):
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation"})
     try:
-        if model_id=="r39" and _generate is None and not payload.get("githubStart"):raise RuntimeError("R39 generator is not installed")
-        if model_id=="stock" and _stock_generate is None:raise RuntimeError("Original HF generator is not installed")
+        if model_id=="r39" and _generate is None and not (payload.get("githubStart") or payload.get("verifiedPrivateAnswer")):raise RuntimeError("R39 generator is not installed")
+        if model_id=="stock" and _stock_generate is None and not payload.get("verifiedPrivateAnswer"):raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
-        event_source=(github_connection.start_events(payload["githubStart"])
-                      if isinstance(payload.get("githubStart"),dict)
-                      else dispatch(model_id,payload,_generate,_stock_generate,_large_generate,_coder_generate))
+        # Server-verified private counts/disabled-recall notices are deterministic:
+        # never send these requests to public online search or ask the model to guess.
+        if payload.get("verifiedPrivateAnswer"):
+            event_source=iter(({"type":"DELTA","text":payload["verifiedPrivateAnswer"]},{"type":"COMPLETE"}))
+        else:
+            event_source=(github_connection.start_events(payload["githubStart"])
+                          if isinstance(payload.get("githubStart"),dict)
+                          else dispatch(model_id,payload,_generate,_stock_generate,_large_generate,_coder_generate))
         for event in event_source:
             with _lock:
                 active=s.get("activeGeneration")
@@ -1508,19 +1517,37 @@ async def send(request:Request):
             raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    # Account count questions are distinct from semantic memory search.
+    # The existing authenticated archive index, not internet search, owns the answer.
+    count_kind=private_account_facts_v208.classify(prompt)
+    if count_kind:
+        if google_owner.startswith("google:"):
+            payload["verifiedPrivateAnswer"]=private_account_facts_v208.answer(
+                google_owner,s["threads"],prompt)
+        else:
+            payload["verifiedPrivateAnswer"]="Sign in with Google to check private conversation totals."
     # Treat private history like an evidence provider, not model training or
     # instructions. Explicit historical lookups span native account chat and
     # imported ChatGPT archives, and can constrain actual message timestamps.
-    if google_owner.startswith("google:") and not github_connection.is_start_request(prompt):
+    if google_owner.startswith("google:") and not count_kind and not github_connection.is_start_request(prompt):
         try:
-            if personal_history_lookup.relevant(prompt,history):
+            if personal_history_lookup.relevant(prompt,history) and not chatgpt_account_memory.enabled(google_owner):
+                payload["verifiedPrivateAnswer"]=(
+                    "Private conversation recall is disabled for this Google account. "
+                    "To search previous §wyrlz and imported ChatGPT conversations, enable "
+                    "'Let §wyrlz recall relevant details from my imported conversations' "
+                    "in Settings → ChatGPT imports, then wait for Ready.")
+            elif personal_history_lookup.relevant(prompt,history):
                 historical = personal_history_lookup.lookup(
                     google_owner, prompt, client_timezone,
                     s["threads"], active_thread_id=tid, history=history)
             else:
                 historical = chatgpt_account_memory.retrieve(google_owner, prompt)
             if historical:
-                payload["archiveEvidence"] = historical
+                if historical.startswith("PERSONAL HISTORY SEARCH INCOMPLETE:") or historical.startswith("PERSONAL HISTORY SEARCH: no matching"):
+                    payload["verifiedPrivateAnswer"]=historical
+                else:
+                    payload["archiveEvidence"] = historical
         except Exception:
             pass  # Optional account recall must never interrupt native generation.
     # Inject into all model routes as bounded evidence only on relevant follow-ups.
