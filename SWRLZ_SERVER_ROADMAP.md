@@ -1,3 +1,17 @@
+## UPDATE CHECKPOINT — 2026-10-11 — native §wyrlz newest-first sidebar and JSON export ordering defect
+
+**User screenshot/finding:** Authenticated Android §wyrlz Chat sidebar lists existing native threads in insertion order, with newer chats appearing toward the bottom. User observed this while previously believing new conversations were not saved. **Verified source cause:** v209.1/v210 and v211 Chat renderer iterated unsorted `chatThreads` from Station's append-only thread array; `/api/lalm_station/export` also returned the same raw array. This proves the apparent reverse ordering defect, but not that all earlier failed saves were successful.
+
+**Scope:** Only native Chat sidebar and native `swrlz-hf-session-export-v1` thread presentation. Separate imported ChatGPT archive listing already requests `ZREVRANGE` (newest-first) and remains unchanged. Native conversation *messages* retain chronological order. Google-owner encrypted Redis snapshot, revision CAS, OAuth, export schema, imported archive and model weights remain unchanged.
+
+**Isolated fix:** [draft PR #105](https://github.com/kaministrator999-ui/Swrlzkamico/pull/105), `fix/native-chat-newest-first-v211-ui@4d07df2acac78b9579465652b73c6aa7888944da`, based on published integrated v209.1/v210 source. Sidebar sorts a detached copy with pinned first and descending activity timestamp from messages/updatedAt/createdAt; deterministic tie on thread ID. Unsaved draft remains at top. Station's export produces identical thread ordering only in the export response, not in persisted Redis. No extra metadata commits or conversation reads per sort.
+
+**Tests:** [Account/persistence #38172477449](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38172477449) SUCCESS, including Python native export endpoint + Redis unchanged regression and Node sidebar sort/immutability test. [HF offline candidate #38172515182](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38172515182) SUCCESS; [Mobile integrity #38172515196](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38172515196) SUCCESS.
+
+**Concurrent release guard:** An independent **v211 model-guided GitHub tools** guarded HF workflow [#38172514064](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38172514064) is already in progress for exact `feature/github-model-guided-progress-v211@4da362e9f89339b37017c0a8aeba65948008f7d2`. Do not trigger a second overlapping HF publication, overwrite its repo features, or claim this sort fix live. Integrate the six-line behavior owner diff plus tests onto the v211 source after that workflow terminal state, pass CI again, then use one canonical guarded deployment if required. No version increments before publication; live acceptance remains pending.
+
+**Status:** SOURCE BUG CONFIRMED / ISOLATED FIX CI VERIFIED / NOT DEPLOYED / PENDING v211-SAFE INTEGRATION.
+
 ## UPDATE CHECKPOINT — 2026-10-11 — v211 model-guided GitHub inference/tool progress source and exact CI verified
 
 **Source:** [draft PR #104](https://github.com/kaministrator999-ui/Swrlzkamico/pull/104), isolated `feature/github-model-guided-progress-v211@4da362e9f89339b37017c0a8aeba65948008f7d2`, based on published v209.1+v210 integrated `4db31fb5a8470e3784ee04c97dcaf871728af1b4`. Preserves encrypted Google-account native Chat repair and existing GitHub least-privilege consent/write proposal contract. Local clean-room Chat source `1.1.06`.
