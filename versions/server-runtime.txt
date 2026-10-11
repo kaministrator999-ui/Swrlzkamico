@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.358
-REVISION=2.3.358-hf-v207-private-history-search-facets
+VERSION=2.3.359
+REVISION=2.3.359-hf-v208-account-history-count-and-failure-truth
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
