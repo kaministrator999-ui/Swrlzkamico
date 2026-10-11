@@ -1,0 +1,42 @@
+name: v210 GitHub capability HF source validation
+
+on:
+  push:
+    branches:
+      - feature/github-capability-preflight-v210
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare and verify exact Hugging Face candidate without publishing
+        run: |
+          set -euo pipefail
+          export SWRLZ_SOURCE_COMMIT="$(git rev-parse HEAD)"
+          python scripts/prepare_hf_space.py
+          python scripts/prepare_hf_space.py --check
+          test -f hf_space/app.py
+          test -f hf_space/requirements.txt
+          test -f hf_space/accepted_runtime/lalm/r39_engine.py
+          test -f hf_space/chat/§wyrlz/index.html
+          python -m py_compile hf_space/github_connection.py hf_space/station.py hf_space/test_github_capabilities_v210.py hf_space/model_router.py
+          python - <<'PY'
+          from pathlib import Path
+          import ast
+          for name in ('app.py','station.py','github_connection.py','model_router.py'):
+              ast.parse(Path('hf_space',name).read_text())
+          for path in ('github_connection.py', 'station.py'):
+              assert Path('hf_space',path).is_file()
+          html=Path('hf_space/chat/§wyrlz/index.html').read_text()
+          assert 'githubCheckAccess' in html
+          assert 'SWRLZ_CHAT_VERSION = "1.1.04"' in html
+          print("v210 HF staged sources and GitHub tools: verified, no publish")
+          PY
