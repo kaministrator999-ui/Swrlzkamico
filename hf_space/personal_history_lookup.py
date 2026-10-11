@@ -231,7 +231,7 @@ def _keywords(prompt):
     cleaned=re.sub(r"\b(?:between|from)\s+20\d{2}-\d{2}-\d{2}\s+(?:and|to|through|until)\s+20\d{2}-\d{2}-\d{2}\b"," ",cleaned)
     stop={"time","night","day","days","week","month","months","ago","morning","afternoon","evening",
           "only","just","source","native","imported","chatgpt","original","swyrlz",
-          "quotes","quote","messages","message","thread","threads","chats","conversation",
+          "quotes","quote","messages","message","thread","threads","chat","chats","conversation","conversations",
           "exact","phrase","word","words","show","find","search","give","from",
           "decisions","decision","decided","agreed","unfinished","pending","tasks","task",
           "next","steps","correction","corrections","corrected","changed","last",
