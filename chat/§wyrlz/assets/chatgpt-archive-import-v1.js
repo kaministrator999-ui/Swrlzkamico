@@ -76,6 +76,19 @@
     let offset = 0;
     let nextOffset = null;
     let total = 0;
+    let pollTimer = null;
+    let jobState = null;
+    const uploadMarkerKey = "swrlz-chatgpt-upload-transfer-v2";
+    function readMarker() {
+      try { return JSON.parse(window.localStorage.getItem(uploadMarkerKey) || "null"); }
+      catch (_) { return null; }
+    }
+    function saveMarker(value) {
+      try {
+        if (value) window.localStorage.setItem(uploadMarkerKey, JSON.stringify(value));
+        else window.localStorage.removeItem(uploadMarkerKey);
+      } catch (_) { /* Imports remain safe when browser storage is disabled. */ }
+    }
     const setBusy = (value) => {
       busy = value;
       upload.disabled = refresh.disabled = eraseAll.disabled = value;
@@ -144,13 +157,56 @@
         previous.disabled = next.disabled = true;
       }
     }
+    async function checkJob() {
+      if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
+      if (busy) return;
+      try {
+        const previous = jobState && jobState.state;
+        const job = await jsonFetch("/api/chatgpt_archive/status");
+        jobState = job;
+        const stored = Number(job.storedTotal || 0);
+        if (job.state === "running") {
+          status.textContent = "Server import continuing: " + job.conversations +
+            " conversations processed · " + job.created + " new · " +
+            job.updated + " updated · " + job.skipped + " already present · " +
+            job.unsupported + " unsupported · " + stored +
+            " total stored. You may leave this page and return; importing continues on the server.";
+        } else if (job.state === "complete") {
+          status.textContent = "Import complete: " + job.created + " new, " +
+            job.updated + " updated, " + job.skipped + " unchanged · " +
+            job.addedMessages + " messages added · " + job.unsupported +
+            " non-text conversations skipped. " + stored + " total stored.";
+        } else if (job.state === "error" || job.state === "interrupted") {
+          status.textContent = "Import " + job.state + " after " +
+            (job.conversations || 0) + " conversations. " + (job.message || "") +
+            " " + stored + " conversations remain on the server. Reimporting this ZIP is safe.";
+        } else {
+          status.textContent = stored + " imported conversations stored on the server." +
+            (readMarker() ? " An unfinished ZIP upload can resume when you reselect the same file." : "");
+        }
+        if (previous === "running" && job.state !== "running") {
+          offset = 0;
+          await load();
+          // The list loader shows a generic count; retain the job receipt.
+          if (job.state === "complete") status.textContent =
+            "Import complete: " + job.created + " new, " + job.updated +
+            " updated, " + job.skipped + " unchanged. " + stored + " total stored.";
+        }
+        if (job.state === "running" && pane.classList.contains("active")) {
+          pollTimer = setTimeout(checkJob, 3000);
+        }
+      } catch (error) {
+        status.textContent = "Could not refresh import progress: " + error.message +
+          " Saved conversations are not deleted by a connection interruption.";
+      }
+    }
     button.addEventListener("click", () => {
       document.querySelectorAll(".settings-nav-button").forEach(n => n.classList.toggle("active", n === button));
       document.querySelectorAll(".settings-pane").forEach(n => n.classList.toggle("active", n === pane));
       offset = 0;
-      load();
+      load().then(checkJob);
     });
-    refresh.addEventListener("click", () => {offset=0;load();});
+    refresh.addEventListener("click", () => {offset=0;load().then(checkJob);});
     eraseAll.addEventListener("click", async () => {
       if (busy || !window.confirm("Permanently delete ALL imported ChatGPT conversations from your §wyrlz account? Your native chats are not affected.")) return;
       if (!window.confirm("Confirm deletion of every imported ChatGPT archive conversation. This cannot be undone.")) return;
@@ -181,86 +237,101 @@
         status.textContent = "This ZIP exceeds the 110 MiB upload limit.";
         return;
       }
+      if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
       setBusy(true);
-      status.textContent = "Uploading and indexing your ZIP… keep this page open. Progress will appear as messages are committed.";
+      let accepted = false;
       try {
         const uploadHeaders = {"X-Swrlz-Import":"1"};
-        const started = await fetch("/api/chatgpt_archive/init", {
-          method:"POST", credentials:"same-origin", cache:"no-store",
-          headers:{...uploadHeaders, "Content-Type":"application/json"},
-          body:JSON.stringify({size:selected.size})
-        });
-        if (!started.ok) throw Error("Cannot start import (HTTP " + started.status + ").");
-        const transfer = await started.json();
+        const fingerprint = {name:selected.name, size:selected.size, modified:selected.lastModified};
+        const saved = readMarker();
+        let transfer = null;
+        if (saved && saved.name === fingerprint.name &&
+            saved.size === fingerprint.size && saved.modified === fingerprint.modified &&
+            /^[0-9a-f]{32}$/.test(saved.uploadId || "")) {
+          try {
+            const previous = await fetch("/api/chatgpt_archive/upload/" + saved.uploadId, {
+              credentials:"same-origin", cache:"no-store"
+            });
+            if (previous.ok) {
+              const found = await previous.json();
+              if (found.size === selected.size) transfer = found;
+            }
+          } catch (_) { /* Resume discovery failed; restart only the transport. */ }
+        }
+        if (!transfer) {
+          saveMarker(null);
+          const started = await fetch("/api/chatgpt_archive/init", {
+            method:"POST", credentials:"same-origin", cache:"no-store",
+            headers:{...uploadHeaders, "Content-Type":"application/json"},
+            body:JSON.stringify({size:selected.size})
+          });
+          if (!started.ok) throw Error(started.status === 409 ?
+            "A server import is already running. Reopen this panel to view its progress." :
+            "Cannot start import (HTTP " + started.status + ").");
+          transfer = await started.json();
+          saveMarker({...fingerprint, uploadId:transfer.uploadId});
+        }
         if (!/^[0-9a-f]{32}$/.test(transfer.uploadId) ||
             !Number.isInteger(transfer.chunkSize) || transfer.chunkSize < 1024 ||
-            transfer.chunkSize > 256 * 1024) throw Error("Import server returned invalid upload instructions.");
-        let offset = 0;
-        while (offset < selected.size) {
-          const piece = selected.slice(offset, Math.min(offset + transfer.chunkSize, selected.size));
-          const sent = await fetch("/api/chatgpt_archive/chunk/" + transfer.uploadId + "?offset=" + offset, {
-            method:"POST", credentials:"same-origin", cache:"no-store",
-            headers:{...uploadHeaders, "Content-Type":"application/octet-stream"}, body:piece
-          });
-          if (!sent.ok) throw Error("ZIP chunk transfer stopped (HTTP " + sent.status +
-            "). Select the ZIP again to restart; previously imported conversations remain safe.");
-          const ack = await sent.json();
-          if (ack.received !== offset + piece.size) throw Error("Upload chunk acknowledgment mismatch.");
-          offset = ack.received;
-          status.textContent = "Uploading ZIP: " + Math.round(100 * offset / selected.size) +
-            "% (" + Math.round(offset / 1048576) + " / " +
-            Math.round(selected.size / 1048576) + " MiB).";
+            transfer.chunkSize > 2 * 1024 * 1024 ||
+            !Number.isInteger(transfer.received) || transfer.received < 0 ||
+            transfer.received > selected.size) throw Error("Import server returned invalid upload instructions.");
+
+        let sentBytes = transfer.received;
+        while (sentBytes < selected.size) {
+          const piece = selected.slice(sentBytes, Math.min(sentBytes + transfer.chunkSize, selected.size));
+          let acknowledged = false;
+          for (let attempt = 0; attempt < 3 && !acknowledged; attempt++) {
+            try {
+              const sent = await fetch("/api/chatgpt_archive/chunk/" + transfer.uploadId +
+                "?offset=" + sentBytes, {
+                method:"POST", credentials:"same-origin", cache:"no-store",
+                headers:{...uploadHeaders, "Content-Type":"application/octet-stream"}, body:piece
+              });
+              if (!sent.ok) throw Error("ZIP chunk transfer HTTP " + sent.status);
+              const ack = await sent.json();
+              if (ack.received !== sentBytes + piece.size) throw Error("Upload chunk acknowledgment mismatch");
+              sentBytes = ack.received;
+              acknowledged = true;
+            } catch (error) {
+              // A received chunk might have lost only its response; ask the server
+              // for its authoritative byte position rather than sending duplicates.
+              const resumed = await fetch("/api/chatgpt_archive/upload/" + transfer.uploadId, {
+                credentials:"same-origin", cache:"no-store"
+              });
+              if (!resumed.ok) throw Error("Upload session expired. Reselect this ZIP to restart safely.");
+              const actual = await resumed.json();
+              if (actual.received === sentBytes + piece.size) {
+                sentBytes = actual.received;
+                acknowledged = true;
+              } else if (actual.received !== sentBytes || attempt === 2) {
+                throw Error("Upload interrupted at " + Math.round(100 * sentBytes / selected.size) +
+                  "%. Reselect this ZIP to resume from the server's saved offset.");
+              }
+            }
+          }
+          status.textContent = "Uploading ZIP: " + Math.round(100 * sentBytes / selected.size) +
+            "% (" + Math.round(sentBytes / 1048576) + " / " +
+            Math.round(selected.size / 1048576) + " MiB). You may resume after an interruption.";
         }
-        status.textContent = "ZIP uploaded. Indexing and merging conversations…";
+        status.textContent = "ZIP transferred. Starting a server-owned import job…";
         const response = await fetch("/api/chatgpt_archive/complete/" + transfer.uploadId, {
           method:"POST", credentials:"same-origin", cache:"no-store", headers:uploadHeaders
         });
-        if (!response.ok || !response.body) throw Error(
-          response.status===401 ? "Sign in with Google first." :
-          "Import request failed (HTTP " + response.status + ").");
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let pending = "";
-        let terminal = false;
-        const handle = (line) => {
-          if (!line.trim()) return;
-          const event = JSON.parse(line);
-          if (event.type === "PROGRESS") status.textContent =
-            "Indexed " + event.conversations + " conversations · new: " + event.created +
-            " · updated: " + event.updated + " · already present: " + event.skipped +
-            " · newly added messages: " + event.addedMessages +
-            " · unsupported/empty: " + event.unsupported;
-          if (event.type === "COMPLETE") {
-            terminal = true;
-            status.textContent = "Import complete: " + event.created + " new conversations, " +
-              event.updated + " updated, " + event.skipped + " unchanged, " +
-              event.addedMessages + " newly added messages, " +
-              event.unsupported + " empty or non-text-only conversations skipped.";
-          }
-          if (event.type === "ERROR") throw Error(event.message || "Import interrupted; reselect the same ZIP to resume.");
-        };
-        while (true) {
-          const result = await reader.read();
-          if (result.done) break;
-          pending += decoder.decode(result.value, {stream:true});
-          let newline;
-          while ((newline = pending.indexOf("\n")) >= 0) {
-            const line = pending.slice(0, newline);
-            pending = pending.slice(newline + 1);
-            handle(line);
-          }
-        }
-        if (pending.trim()) handle(pending);
-        if (!terminal) throw Error("Upload stopped before completion. Reimport the same ZIP to resume; already saved messages will not duplicate.");
+        if (!response.ok) throw Error("Could not start background indexing (HTTP " + response.status + ").");
+        const job = await response.json();
+        if (job.state !== "running" && job.state !== "complete") throw Error("Invalid import job response");
+        accepted = true;
+        saveMarker(null);
+        status.textContent = "Server import started. You can switch apps or return later; stored progress will remain visible.";
       } catch (error) {
-        status.textContent = error.message || "Import interrupted; reselect this ZIP to resume.";
+        status.textContent = error.message || "Import interrupted. Previously stored conversations remain safe.";
       } finally {
         setBusy(false);
-        if (status.textContent.startsWith("Import complete")) {
-          const receipt = status.textContent;
-          offset=0;
+        if (accepted) {
+          offset = 0;
           await load();
-          status.textContent = receipt + "\n" + total + " total imported conversations.";
+          await checkJob();
         }
       }
     });
