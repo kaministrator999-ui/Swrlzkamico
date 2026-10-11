@@ -1,0 +1,1171 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-mv3dns0o-644749063-274540048",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "cf59320f169c1ae56efb0abb3b743ae165f4ae7a",
+  "persistedAtUnixMs": 1791696211932,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 3,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 5242,
+      "lyricsSourceAttemptCount": 3,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 2,
+          "origin": "fallback-candidate",
+          "requestedUrl": "https://b.azlyrics.com/?u=%2Flyrics%2Ftechn9ne%2Frollcall.html",
+          "finalUrl": "https://b.azlyrics.com/?u=%2Flyrics%2Ftechn9ne%2Frollcall.html",
+          "searchResultTitle": "Tech N9ne & Rittz - Roll Call Lyrics | AZLyrics.com",
+          "fetchedPageTitle": "AZLyrics - request for access",
+          "fetchStatus": 200,
+          "fetchedContent": {
+            "chars": 459,
+            "sha256": "2d2b0641bc408b86bce01b8c492be5a722295f420b23b95633d29cad9b2a7218",
+            "anchorIndex": null,
+            "anchorLine": "",
+            "sectionMarkers": [],
+            "performerMarkers": [],
+            "preview": "AZLyrics - request for access\n-->\nOur systems have detected unusual activity from your IP address (computer network).\nThis page checks to see if it's really you sending the requests, and not a robot.\nWe're checking your browser, please wait...\nPlease check the box below to regain access to AZLyrics.com.\nType the characters from the picture above:\nInput is case-insensitive\nSubmit\n-->\nAdvertise Here\nPrivacy Policy",
+            "previewChars": 415,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 0,
+            "sha256": "",
+            "preview": "",
+            "previewChars": 0,
+            "previewLimit": 600
+          },
+          "extractorDiagnostics": {
+            "requestedScope": "full-lyrics",
+            "rawChars": 459,
+            "rawLineCount": 29,
+            "anchorIndex": null,
+            "anchorLine": "",
+            "scopedLineCount": 16,
+            "scopedNonEmptyLineCount": 8,
+            "contentLineCount": 8,
+            "musicalSectionCueCount": 0,
+            "performerCueCount": 0,
+            "blankSeparatedChunkCount": 8,
+            "acceptedBlockCount": 0,
+            "blockLineCounts": [],
+            "continuousRunEligible": false,
+            "terminalBoundaryKind": "PAGE_NOISE_BOUNDARY",
+            "terminalBoundaryLine": "Privacy Policy",
+            "decision": "REJECTED",
+            "reason": "INSUFFICIENT_FULL_LYRIC_STRUCTURE",
+            "resultChars": 0,
+            "resultLineCount": 0
+          },
+          "sourceIdentityVerified": false,
+          "sourceIdentityScore": 0,
+          "snippetOverlapCount": 0,
+          "snippetInformativeTokenCount": 0,
+          "snippetSequenceSpan": 0,
+          "musicalSectionCount": 0,
+          "performerCueCount": 0,
+          "outcome": "REJECTED",
+          "rejectionReason": "NO_STRUCTURED_LYRIC_BODY"
+        },
+        {
+          "attempt": 3,
+          "origin": "fallback-candidate",
+          "requestedUrl": "https://lyrics.lol/artist/506-tech-n9ne/lyrics/9961843-roll-call",
+          "finalUrl": "https://lyrics.lol/artist/506-tech-n9ne/lyrics/9961843-roll-call",
+          "searchResultTitle": "Roll Call by Tech N9ne - lyrics.lol",
+          "fetchedPageTitle": "Lyrics.lol :: Roll Call by Tech N9ne",
+          "fetchStatus": 200,
+          "fetchedContent": {
+            "chars": 9105,
+            "sha256": "532ebd381ebec74dfa3e685b118cf6f32cdeb638b5789e70d84ee7e2153d30ad",
+            "anchorIndex": 0,
+            "anchorLine": "Lyrics.lol :: Roll Call by Tech N9ne Skip to content",
+            "sectionMarkers": [
+              "[Intro: DJ Doc]",
+              "[Verse 1: Tech N9ne]",
+              "[Verse 2: King Iso]",
+              "[Chorus: Tech N9ne & Lex Bratcher]",
+              "[Verse 3: Joey Cool]",
+              "[Verse 4: JL & Yung Prez]",
+              "[Verse 5: Lex Bratcher]",
+              "[Chorus: Tech N9ne & Lex Bratcher]",
+              "[Verse 6: X-Raided]",
+              "[Verse 7: Rittz]"
+            ],
+            "performerMarkers": [],
+            "preview": "Lyrics.lol :: Roll Call by Tech N9ne Skip to content\nSearch\nArtists\nCharts\nHome\nArtists\nT\nTech N9ne\nRoll Call\nRoll Call\nby Tech N9ne\n[Intro: DJ Doc]\nStrangers come out to play\n(Wyshmaster on the beat)\nStrangers come out to play",
+            "previewChars": 227,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 8402,
+            "sha256": "b6b94126c5a090051117c700d28be3dbf8fb44aeffb9b93f493a4eeaa3aec066",
+            "preview": "Strangers come out to play\n(Wyshmaster on the beat)\nStrangers come out to play\nI am A-Aaron, I'm everywhere like say Breyon\nI don’t like the false and fakes they spawn\nSo when the tapes on I spray napalm\nDon't like the way lake Lanier was made race dom-\n-Ination hate I get impatient, mate\nWhen I hear an amazing break\nSo when invasion wakes, I play Draymond, uh\nCeiling fan in the winter, micro dose in the cinema\nA winnеr feelin' grand when I’m in her, healin' fans in a sprintеr\nI go both grim and sinister, I mess with the rare ones\nNever rollin' with the scare-some\nProclamation from the mayor d",
+            "previewChars": 600,
+            "previewLimit": 600
+          },
+          "extractorDiagnostics": {
+            "requestedScope": "full-lyrics",
+            "rawChars": 9105,
+            "rawLineCount": 414,
+            "anchorIndex": 0,
+            "anchorLine": "Lyrics.lol :: Roll Call by Tech N9ne Skip to content",
+            "scopedLineCount": 399,
+            "scopedNonEmptyLineCount": 201,
+            "contentLineCount": 187,
+            "musicalSectionCueCount": 10,
+            "performerCueCount": 0,
+            "blankSeparatedChunkCount": 199,
+            "acceptedBlockCount": 10,
+            "blockLineCounts": [
+              3,
+              22,
+              24,
+              8,
+              23,
+              23,
+              23,
+              8,
+              27,
+              26
+            ],
+            "continuousRunEligible": false,
+            "terminalBoundaryKind": "PAGE_NOISE_BOUNDARY",
+            "terminalBoundaryLine": "Contact Us DMCA Policy Privacy Policy",
+            "decision": "ACCEPTED",
+            "reason": "MULTI_BLOCK_FULL_LYRICS",
+            "resultChars": 8402,
+            "resultLineCount": 187
+          },
+          "sourceIdentityVerified": true,
+          "sourceIdentityScore": 10,
+          "snippetOverlapCount": 31,
+          "snippetInformativeTokenCount": 40,
+          "snippetSequenceSpan": 21,
+          "musicalSectionCount": 10,
+          "performerCueCount": 0,
+          "outcome": "VERIFIED",
+          "rejectionReason": "VERIFIED"
+        }
+      ],
+      "blockedLyricsSourceFamilies": [
+        "azlyrics.com"
+      ],
+      "musicStructureDebug": {
+        "schema": "swrlz-music-structure-debug-v1",
+        "workType": "song",
+        "requestedScope": "full-lyrics",
+        "structureBasis": "explicit_musical_source_markers",
+        "sectionCount": 10,
+        "explicitSectionCount": 10,
+        "explicitMusicalSectionCount": 10,
+        "explicitPerformerCueCount": 0,
+        "sourceOrderPreserved": true,
+        "newlineEqualsBar": false,
+        "sections": [
+          {
+            "index": 1,
+            "rawLabel": "[Intro: DJ Doc]",
+            "type": "intro",
+            "number": null,
+            "performer": "DJ Doc",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 3,
+            "barCount": null
+          },
+          {
+            "index": 2,
+            "rawLabel": "[Verse 1: Tech N9ne]",
+            "type": "verse",
+            "number": 1,
+            "performer": "Tech N9ne",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 22,
+            "barCount": null
+          },
+          {
+            "index": 3,
+            "rawLabel": "[Verse 2: King Iso]",
+            "type": "verse",
+            "number": 2,
+            "performer": "King Iso",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 24,
+            "barCount": null
+          },
+          {
+            "index": 4,
+            "rawLabel": "[Chorus: Tech N9ne & Lex Bratcher]",
+            "type": "chorus",
+            "number": null,
+            "performer": "Tech N9ne & Lex Bratcher",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 8,
+            "barCount": null
+          },
+          {
+            "index": 5,
+            "rawLabel": "[Verse 3: Joey Cool]",
+            "type": "verse",
+            "number": 3,
+            "performer": "Joey Cool",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 23,
+            "barCount": null
+          },
+          {
+            "index": 6,
+            "rawLabel": "[Verse 4: JL & Yung Prez]",
+            "type": "verse",
+            "number": 4,
+            "performer": "JL & Yung Prez",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 23,
+            "barCount": null
+          },
+          {
+            "index": 7,
+            "rawLabel": "[Verse 5: Lex Bratcher]",
+            "type": "verse",
+            "number": 5,
+            "performer": "Lex Bratcher",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 23,
+            "barCount": null
+          },
+          {
+            "index": 8,
+            "rawLabel": "[Chorus: Tech N9ne & Lex Bratcher]",
+            "type": "chorus",
+            "number": null,
+            "performer": "Tech N9ne & Lex Bratcher",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 8,
+            "barCount": null
+          },
+          {
+            "index": 9,
+            "rawLabel": "[Verse 6: X-Raided]",
+            "type": "verse",
+            "number": 6,
+            "performer": "X-Raided",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 27,
+            "barCount": null
+          },
+          {
+            "index": 10,
+            "rawLabel": "[Verse 7: Rittz]",
+            "type": "verse",
+            "number": 7,
+            "performer": "Rittz",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 26,
+            "barCount": null
+          }
+        ],
+        "presentationChars": 8973,
+        "presentationSha256": "d07bb0189e793197ee0fb5e8193f75d8e91b8d88309de5cc07c47a441f1a8ce9",
+        "dividerPresentation": {
+          "outer": "---",
+          "inner": "────────",
+          "outerMeaning": "lyric_document_boundary",
+          "innerMeaning": "lyric_section_transition",
+          "blankLinesAroundDividers": true,
+          "mobileFirst": true
+        }
+      },
+      "candidateAdmissionDebug": [
+        {
+          "query": "roll call tech n9ne lyrics",
+          "title": "Tech N9ne - Roll Call Lyrics - Genius",
+          "url": "https://genius.com/Tech-n9ne-roll-call-lyrics",
+          "source": "genius.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Roll Call Lyrics : Strangers come out to play / (Wyshmaster on the beat) / Strangers come out to play / I am A-Aaron, I'm everywhere like say Breyon / I don't like the false and fakes they ..."
+        },
+        {
+          "query": "roll call tech n9ne lyrics",
+          "title": "Tech N9ne & Rittz - Roll Call Lyrics | AZLyrics.com",
+          "url": "https://www.azlyrics.com/lyrics/techn9ne/rollcall.html",
+          "source": "www.azlyrics.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "[ Tech N9ne & Lex Bratcher:] Never gonna be defeated Money never be depleted Anymore, folks don't need it 'Cause the energy so completed Roll call Sayin' my crew tough, OK, OK I know So raw Gotta turn this up, OK, OK, I know [Joey Cool:] If you waiting for me to give a crap, bett"
+        },
+        {
+          "query": "roll call tech n9ne lyrics",
+          "title": "Tech N9ne - Roll Call (Lyrics) - YouTube",
+          "url": "https://www.youtube.com/watch?v=uu0WYJzIL3I",
+          "source": "www.youtube.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Roll Call - Tech N9ne King Iso Joey Cool JL B Hood Lex Bratcher X-Raided Rittz Collabos Class of Strange Music Lyric Video"
+        },
+        {
+          "query": "roll call tech n9ne lyrics",
+          "title": "Lyrics to the song Roll Call - Tech N9ne - CANCIONEROS.COM",
+          "url": "https://www.cancioneros.com/lyrics/song/2731026/roll-call-tech-n9ne",
+          "source": "www.cancioneros.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Lyrics to the song Roll Call - Tech N9ne - Song lyrics of all styles."
+        },
+        {
+          "query": "roll call tech n9ne lyrics",
+          "title": "Tech N9ne - Roll Call Lyrics & Meaning - SONGLYRICS.com",
+          "url": "https://www.songlyrics.com/tech-n9ne/roll-call-lyrics/",
+          "source": "www.songlyrics.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Roll Call tech N9ne's \" Roll Call \" is a high-octane, fast-paced track that pulses with bravado and self-assured swagger. The lyrics are packed with rapid-fire rhymes, name-dropping figures from the hip-hop world while asserting dominance over both competition and critics alike."
+        },
+        {
+          "query": "roll call tech n9ne lyrics",
+          "title": "Tech N9ne - Roll Call (feat. King Iso, Joey Cool, Jl, Lex Bratcher & X ...",
+          "url": "https://www.lyricsmania.com/roll_call_feat_king_iso_joey_cool_jl_lex_bratcher_and_x-raided_lyrics_tech_n9ne.html",
+          "source": "www.lyricsmania.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Lyrics to Roll Call (feat. King Iso, Joey Cool, Jl, Lex Bratcher & X-raided) Strangers come out to play (Wyshmaster on the beat) Strangers come out to play I am A-Aaron, I'm everywhere like say Breyon I don't like the false and fakes they spawn So when the tapes on I spray napalm"
+        },
+        {
+          "query": "roll call tech n9ne lyrics",
+          "title": "Roll Call lyrics - Tech N9ne Collabos & Tech N9ne Collabos | Plyric",
+          "url": "https://plyric.com/tech-n9ne-collabos-roll-call",
+          "source": "plyric.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Roll Call lyrics by Tech N9ne Collabos & Tech N9ne Collabos | Lyrics From Snippet Verse: Tech N9ne So when invasion wakes, I play Drake, man, uh (Chuh) Celin..."
+        },
+        {
+          "query": "roll call tech n9ne lyrics",
+          "title": "Roll Call lyrics - Tech N9ne Collabos | Matchlyric",
+          "url": "https://matchlyric.com/tech-n9ne-collabos-roll-call",
+          "source": "matchlyric.com",
+          "rank": 8,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "coreTerms": [
+            "roll",
+            "call",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Roll Call lyrics * Lyrics From Snippet* Verse: Tech N9ne So when invasion wakes, I play Drake, man, uh (Chuh) Celin' fan in the winter, Mike Rhodes in the cinema A winner feelin' grand when I'm in a, healin' fans in the spring, ah"
+        }
+      ],
+      "songIdentity": {
+        "schema": "swrlz-song-identity-v1",
+        "rawSubject": "\"roll call\" by tech n9ne",
+        "title": "roll call",
+        "titleFolded": "roll call",
+        "titleTokens": [
+          "roll",
+          "call"
+        ],
+        "primaryArtist": "tech n9ne",
+        "primaryArtistFolded": "tech n9ne",
+        "artistTokens": [
+          "tech",
+          "n9ne"
+        ],
+        "featuredArtists": [],
+        "requestedVersion": null,
+        "ambiguity": {
+          "level": "low",
+          "score": 2,
+          "commonWordCollision": [],
+          "shortTitle": true,
+          "punctuationHeavy": false,
+          "quotedTitleRequired": false,
+          "artistRequired": true
+        }
+      },
+      "songDiscoveryPlan": [
+        {
+          "strategy": "exact-title-artist",
+          "query": "\"roll call\" \"tech n9ne\" lyrics"
+        },
+        {
+          "strategy": "artist-title-song",
+          "query": "\"tech n9ne\" \"roll call\" song lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:genius.com"
+        },
+        {
+          "strategy": "title-artist-verse",
+          "query": "\"roll call\" \"tech n9ne\" verse chorus lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:azlyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:musixmatch.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:allthelyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:lyricsfreak.com"
+        }
+      ],
+      "lyricsRescueSearchDebug": [
+        {
+          "query": "\"roll call\" \"tech n9ne\" complete lyrics text",
+          "strategy": "last-slot-identity-verified-discovery",
+          "resultCount": 8,
+          "admittedCount": 2,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "Tech N9ne - Roll Call Lyrics - Genius",
+              "url": "https://genius.com/Tech-n9ne-roll-call-lyrics",
+              "source": "",
+              "rank": null,
+              "allowed": false,
+              "score": 0,
+              "reason": "",
+              "signals": [],
+              "exactTitle": true,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": true,
+              "titleNeeded": 0,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "ALREADY_CONSIDERED",
+              "sourceFamily": "genius.com",
+              "identityScore": 59,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": true
+            },
+            {
+              "title": "Tech N9ne & Rittz - Roll Call Lyrics | AZLyrics.com",
+              "url": "https://www.azlyrics.com/lyrics/techn9ne/rollcall.html",
+              "source": "",
+              "rank": null,
+              "allowed": false,
+              "score": 0,
+              "reason": "",
+              "signals": [],
+              "exactTitle": true,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": true,
+              "titleNeeded": 0,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "ALREADY_CONSIDERED",
+              "sourceFamily": "azlyrics.com",
+              "identityScore": 59,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": true
+            },
+            {
+              "title": "Tech N9ne - Roll Call (feat. King Iso, Joey Cool, Jl ... - Lyrics Mania",
+              "url": "https://www.lyricsmania.com/roll_call_feat_king_iso_joey_cool_jl_lex_bratcher_and_x-raided_lyrics_tech_n9ne.html",
+              "source": "",
+              "rank": null,
+              "allowed": false,
+              "score": 0,
+              "reason": "",
+              "signals": [],
+              "exactTitle": true,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": true,
+              "titleNeeded": 0,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "ALREADY_CONSIDERED",
+              "sourceFamily": "lyricsmania.com",
+              "identityScore": 47,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": true
+            },
+            {
+              "title": "Lyrics to the song Roll Call - Tech N9ne - CANCIONEROS.COM",
+              "url": "https://www.cancioneros.com/lyrics/song/2731026/roll-call-tech-n9ne",
+              "source": "",
+              "rank": null,
+              "allowed": false,
+              "score": 0,
+              "reason": "",
+              "signals": [],
+              "exactTitle": true,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": true,
+              "titleNeeded": 0,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "ALREADY_CONSIDERED",
+              "sourceFamily": "cancioneros.com",
+              "identityScore": 47,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": true
+            },
+            {
+              "title": "Tech N9ne - Roll Call Lyrics & Meaning - SONGLYRICS.com",
+              "url": "https://www.songlyrics.com/tech-n9ne/roll-call-lyrics/",
+              "source": "",
+              "rank": null,
+              "allowed": false,
+              "score": 0,
+              "reason": "",
+              "signals": [],
+              "exactTitle": true,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": true,
+              "titleNeeded": 0,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "ALREADY_CONSIDERED",
+              "sourceFamily": "songlyrics.com",
+              "identityScore": 59,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": true
+            },
+            {
+              "title": "ROLL CALL - Lyrics and Music by Tech N9ne arranged by Dalfromdao",
+              "url": "https://www.smule.com/song/tech-n9ne-roll-call-karaoke-lyrics/19829254_19829254/arrangement",
+              "source": "",
+              "rank": null,
+              "allowed": false,
+              "score": 0,
+              "reason": "",
+              "signals": [],
+              "exactTitle": true,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": true,
+              "titleNeeded": 0,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "SONG_IDENTITY_UNCERTAIN",
+              "sourceFamily": "smule.com",
+              "identityScore": 40,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": true
+            },
+            {
+              "title": "Roll Call Lyrics - Tech N9ne (Feat. [\"King Iso\",\"Joey Cool\",\"JL\",\"Lex ...",
+              "url": "https://www.letrasboom.com/letra/roll-call-tech-n9ne",
+              "source": "",
+              "rank": null,
+              "allowed": false,
+              "score": 0,
+              "reason": "",
+              "signals": [],
+              "exactTitle": true,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": true,
+              "titleNeeded": 0,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "ACCEPTED",
+              "sourceFamily": "letrasboom.com",
+              "identityScore": 47,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": true
+            },
+            {
+              "title": "Roll Call by Tech N9ne - lyrics.lol",
+              "url": "https://lyrics.lol/artist/506-tech-n9ne/lyrics/9961843-roll-call",
+              "source": "",
+              "rank": null,
+              "allowed": false,
+              "score": 0,
+              "reason": "",
+              "signals": [],
+              "exactTitle": true,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": true,
+              "titleNeeded": 0,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "ACCEPTED",
+              "sourceFamily": "lyrics.lol",
+              "identityScore": 55,
+              "sectionMarkersInSnippet": true,
+              "lyricTitleCue": true
+            }
+          ]
+        }
+      ],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696206689,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696206697,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696206829,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696206829,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696207987,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696207988,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696207990,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "genius.com",
+        "url": "https://genius.com/Tech-n9ne-roll-call-lyrics"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696208067,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "genius.com",
+        "url": "https://genius.com/Tech-n9ne-roll-call-lyrics",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696208069,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/rollcall.html",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1791696208071
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696208073,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.azlyrics.com",
+        "url": "https://www.azlyrics.com/lyrics/techn9ne/rollcall.html"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696208775,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "httpStatus": 200,
+        "responseBytes": 6838
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791696208775
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "b.azlyrics.com",
+        "url": "https://b.azlyrics.com/",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1791696208777
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Seeking verified song sources before final page fetch",
+        "atUnixMs": 1791696208777
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696208777,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696208911,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696208911,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696209824,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696209824,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "lyrics.lol",
+        "url": "https://lyrics.lol/artist/506-tech-n9ne/lyrics/9961843-roll-call",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1791696209827
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696209829,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "lyrics.lol",
+        "url": "https://lyrics.lol/artist/506-tech-n9ne/lyrics/9961843-roll-call"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696210162,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "lyrics.lol",
+        "url": "https://lyrics.lol/artist/506-tech-n9ne/lyrics/9961843-roll-call",
+        "httpStatus": 200,
+        "responseBytes": 40573
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "lyrics.lol",
+        "url": "https://lyrics.lol/artist/506-tech-n9ne/lyrics/9961843-roll-call",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1791696210162
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "lyrics.lol",
+        "url": "https://lyrics.lol/artist/506-tech-n9ne/lyrics/9961843-roll-call",
+        "activity": "Fetched destination matches the requested song identity",
+        "atUnixMs": 1791696210162
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "lyrics.lol",
+        "url": "https://lyrics.lol/artist/506-tech-n9ne/lyrics/9961843-roll-call",
+        "activity": "Lyrics candidate verified",
+        "atUnixMs": 1791696210183
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696210184,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696210312,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696210312,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696210443,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696210443,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696211177,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696211177,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696211177,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696211309,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696211309,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696211433,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696211433,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696211928,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1791696211928,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      }
+    ],
+    "sourceSites": [
+      "lyrics.lol"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
