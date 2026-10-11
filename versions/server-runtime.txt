@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.353
-REVISION=2.3.353-hf-v202-google-owned-chatgpt-archive-import
+VERSION=2.3.354
+REVISION=2.3.354-hf-v203-detached-chatgpt-import-progress
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
