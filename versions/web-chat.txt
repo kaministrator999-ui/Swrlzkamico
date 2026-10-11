@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.103
-REVISION=1.5.103-native-chat-mobile-sidebar-newest-first-v2111
+VERSION=1.5.104
+REVISION=1.5.104-native-chat-first-message-display-before-inference
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active

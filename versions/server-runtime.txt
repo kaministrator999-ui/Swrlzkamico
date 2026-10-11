@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.364
-REVISION=2.3.364-hf-v2111-native-chat-sidebar-access-export-order
+VERSION=2.3.365
+REVISION=2.3.365-hf-v2112-native-first-send-ack-visibility
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
