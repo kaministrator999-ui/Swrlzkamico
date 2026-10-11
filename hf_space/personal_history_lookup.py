@@ -15,6 +15,7 @@ import re
 import account_chat_store
 import chatgpt_account_memory as memory
 import chatgpt_archive as archive
+import personal_history_query_v207 as facets
 
 _INTENT = re.compile(
     r"(?i)\b(?:remember|recall|remind me|previous(?:ly)? (?:chat|conversation|discussion)|"
@@ -33,11 +34,14 @@ MAX_ITEMS = 4
 MAX_CONTEXT = 2150
 
 
-def relevant(prompt):
-    """Use personal sources only for a requested historical conversation lookup."""
+def relevant(prompt, history=None):
+    """Historical intent only; small follow-ups inherit a previous explicit query."""
     s=str(prompt or "").lower()
-    return bool(_INTENT.search(s) or (
-        re.search(r"\b(?:last night|yesterday|last week|earlier today|on (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday))\b", s)
+    query=facets.parse(prompt,history)
+    return bool(query["followup"] or _INTENT.search(s) or any(
+        pattern.search(s) for pattern in facets._FOCUS.values()
+    ) or re.search(r"\b(?:find|search|look up|show)\b.{0,65}\b(?:quote|message|chat|thread|conversation|history)\b",s) or (
+        re.search(r"\b(?:last night|yesterday|last week|last weekend|earlier today|on (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday))\b", s)
         and re.search(r"\b(?:chat|thread|convo|talk|said|discuss|we|you|remember)\b", s)
     ))
 
