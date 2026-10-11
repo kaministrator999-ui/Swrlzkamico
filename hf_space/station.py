@@ -24,6 +24,7 @@ import github_connection
 import project_thread_memory
 import account_chat_store
 import chatgpt_archive
+import chatgpt_upload_session
 import tempfile
 try:
     from google.auth.transport import requests as google_requests
@@ -417,6 +418,62 @@ def delete_chatgpt_archive_all(request: Request):
     _archive_origin_guard(request)
     return JSONResponse(chatgpt_archive.delete_all_archive(owner),
                         headers={"Cache-Control": "private, no-store"})
+
+
+
+@app.post("/api/chatgpt_archive/init")
+async def chatgpt_archive_upload_init(request: Request):
+    owner = _archive_owner(request)
+    _archive_origin_guard(request)
+    data = await request.json()
+    if not isinstance(data, dict):
+        raise HTTPException(400, "Invalid ZIP upload request")
+    return JSONResponse(chatgpt_upload_session.begin(owner, data.get("size")),
+                        headers={"Cache-Control": "private, no-store"})
+
+
+@app.post("/api/chatgpt_archive/chunk/{upload_id}")
+async def chatgpt_archive_upload_chunk(request: Request, upload_id: str, offset: int):
+    owner = _archive_owner(request)
+    _archive_origin_guard(request)
+    if len(upload_id) != 32 or not all(c in "0123456789abcdef" for c in upload_id):
+        raise HTTPException(400, "Invalid upload identifier")
+    parts = []
+    total = 0
+    async for part in request.stream():
+        total += len(part)
+        if total > chatgpt_upload_session.CHUNK_SIZE:
+            raise HTTPException(413, "ZIP upload chunk too large")
+        parts.append(part)
+    return JSONResponse(chatgpt_upload_session.append(owner, upload_id, offset, b"".join(parts)),
+                        headers={"Cache-Control": "private, no-store"})
+
+
+@app.post("/api/chatgpt_archive/complete/{upload_id}")
+def chatgpt_archive_upload_complete(request: Request, upload_id: str):
+    owner = _archive_owner(request)
+    _archive_origin_guard(request)
+    if len(upload_id) != 32 or not all(c in "0123456789abcdef" for c in upload_id):
+        raise HTTPException(400, "Invalid upload identifier")
+    filename = chatgpt_upload_session.finish(owner, upload_id)
+
+    def progress():
+        try:
+            for event in chatgpt_archive.import_archive(filename, owner):
+                yield json.dumps(event, separators=(",", ":")) + "\n"
+        except HTTPException as exc:
+            yield json.dumps({"type": "ERROR", "code": exc.status_code,
+                              "message": str(exc.detail)[:240]}) + "\n"
+        except Exception:
+            yield json.dumps({"type": "ERROR", "code": 503,
+                              "message": "Import interrupted; reselect the same ZIP to resume"}) + "\n"
+        finally:
+            try: os.unlink(filename)
+            except FileNotFoundError: pass
+
+    return StreamingResponse(progress(), media_type="application/x-ndjson",
+                             headers={"Cache-Control": "private, no-store",
+                                      "X-Content-Type-Options": "nosniff"})
 
 
 @app.post("/api/chatgpt_archive/import")
