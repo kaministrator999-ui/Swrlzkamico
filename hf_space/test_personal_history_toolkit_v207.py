@@ -80,7 +80,7 @@ assert start("remember last month?")==datetime(2026,9,1,5,tzinfo=timezone.utc)
 assert end("remember last month?")==datetime(2026,10,1,5,tzinfo=timezone.utc)
 assert start("remember in August 2026?")==datetime(2026,8,1,5,tzinfo=timezone.utc)
 assert start("remember from 2026-10-08 to 2026-10-10?")==datetime(2026,10,8,5,tzinfo=timezone.utc)
-assert end("remember from 2026-10-08 to 2026-10-10?")==NOW
+assert end("remember from 2026-10-08 to 2026-10-10?")==datetime(2026,10,11,5,tzinfo=timezone.utc)
 assert start("remember on October 10 around 10pm?")==datetime(2026,10,11,2,tzinfo=timezone.utc)
 assert end("remember on October 10 around 10pm?")==datetime(2026,10,11,4,tzinfo=timezone.utc)
 assert start("remember from 2026-10-10 to 2026-10-08?")==NOW
