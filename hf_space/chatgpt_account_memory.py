@@ -89,9 +89,15 @@ def _build(owner,token):
                 if not item: continue
                 title=str(item["title"])[:240]
                 counter=Counter(_terms(title))
+                assistant_counter=Counter()
                 for message in item["messages"]:
                     if message["role"]=="user":
                         counter.update(_terms(str(message["text"])[:1800]))
+                    elif message["role"]=="assistant":
+                        # Searchability only: retain a small separate volatile
+                        # index of assistant terms, never promote their claims
+                        # into permanent personal preferences or user memories.
+                        assistant_counter.update(_terms(str(message["text"])[:1200]))
                 # A thread may be edited across many days. For temporal recall
                 # the *actual* message times (not last-updated date) define
                 # whether it could contain something from the requested night.
@@ -102,7 +108,8 @@ def _build(owner,token):
                              "firstAt":min(timestamps) if timestamps else None,
                              "lastAt":max(timestamps) if timestamps else None,
                              "titleTokens":set(_terms(title)),
-                             "terms":dict(counter.most_common(MAX_TERMS))})
+                             "terms":dict(counter.most_common(MAX_TERMS)),
+                             "assistantTerms":dict(assistant_counter.most_common(120))})
             with _LOCK:
                 if _EPOCH[owner]!=token: return
                 _STATE[owner]["done"]=min(total,offset+len(ids))
