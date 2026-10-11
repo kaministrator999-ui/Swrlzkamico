@@ -184,10 +184,36 @@
       setBusy(true);
       status.textContent = "Uploading and indexing your ZIP… keep this page open. Progress will appear as messages are committed.";
       try {
-        const response = await fetch("/api/chatgpt_archive/import", {
-          method:"POST", credentials:"same-origin",
-          headers:{"Content-Type":"application/zip","X-Swrlz-Import":"1"},
-          body:selected
+        const uploadHeaders = {"X-Swrlz-Import":"1"};
+        const started = await fetch("/api/chatgpt_archive/init", {
+          method:"POST", credentials:"same-origin", cache:"no-store",
+          headers:{...uploadHeaders, "Content-Type":"application/json"},
+          body:JSON.stringify({size:selected.size})
+        });
+        if (!started.ok) throw Error("Cannot start import (HTTP " + started.status + ").");
+        const transfer = await started.json();
+        if (!/^[0-9a-f]{32}$/.test(transfer.uploadId) ||
+            !Number.isInteger(transfer.chunkSize) || transfer.chunkSize < 1024 ||
+            transfer.chunkSize > 256 * 1024) throw Error("Import server returned invalid upload instructions.");
+        let offset = 0;
+        while (offset < selected.size) {
+          const piece = selected.slice(offset, Math.min(offset + transfer.chunkSize, selected.size));
+          const sent = await fetch("/api/chatgpt_archive/chunk/" + transfer.uploadId + "?offset=" + offset, {
+            method:"POST", credentials:"same-origin", cache:"no-store",
+            headers:{...uploadHeaders, "Content-Type":"application/octet-stream"}, body:piece
+          });
+          if (!sent.ok) throw Error("ZIP chunk transfer stopped (HTTP " + sent.status +
+            "). Select the ZIP again to restart; previously imported conversations remain safe.");
+          const ack = await sent.json();
+          if (ack.received !== offset + piece.size) throw Error("Upload chunk acknowledgment mismatch.");
+          offset = ack.received;
+          status.textContent = "Uploading ZIP: " + Math.round(100 * offset / selected.size) +
+            "% (" + Math.round(offset / 1048576) + " / " +
+            Math.round(selected.size / 1048576) + " MiB).";
+        }
+        status.textContent = "ZIP uploaded. Indexing and merging conversations…";
+        const response = await fetch("/api/chatgpt_archive/complete/" + transfer.uploadId, {
+          method:"POST", credentials:"same-origin", cache:"no-store", headers:uploadHeaders
         });
         if (!response.ok || !response.body) throw Error(
           response.status===401 ? "Sign in with Google first." :
