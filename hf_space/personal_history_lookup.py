@@ -38,8 +38,9 @@ def relevant(prompt, history=None):
     """Historical intent only; small follow-ups inherit a previous explicit query."""
     s=str(prompt or "").lower()
     query=facets.parse(prompt,history)
-    return bool(query["followup"] or _INTENT.search(s) or any(
-        pattern.search(s) for pattern in facets._FOCUS.values()
+    return bool(query["followup"] or _INTENT.search(s) or (
+        any(pattern.search(s) for pattern in facets._FOCUS.values())
+        and bool(re.search(r"\b(?:what|which|where|when|find|search|show|list|remember|recap|summarize)\b",s))
     ) or re.search(r"\b(?:find|search|look up|show)\b.{0,65}\b(?:quote|message|chat|thread|conversation|history)\b",s) or (
         re.search(r"\b(?:last night|yesterday|last week|last weekend|earlier today|on (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday))\b", s)
         and re.search(r"\b(?:chat|thread|convo|talk|said|discuss|we|you|remember)\b", s)
