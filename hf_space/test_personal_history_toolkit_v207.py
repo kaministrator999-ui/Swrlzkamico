@@ -105,6 +105,9 @@ with patch.object(memory,"enabled",side_effect=lambda owner:owner==OWNER), \
     phrase=run("Find the exact phrase “radiant falcon circuitry” in chat conversations")
     assert "radiant falcon circuitry" in phrase,phrase
     assert "not found" not in phrase.lower()
+    imported_assistant_quote=run('Find only imported ChatGPT chats with the exact phrase "radiant falcon circuitry"')
+    assert "ChatGPT imported" in imported_assistant_quote and "| assistant]" in imported_assistant_quote,imported_assistant_quote
+    assert "§wyrlz native" not in imported_assistant_quote,imported_assistant_quote
     no_phrase=run('Find the exact phrase "never-said-secret-starlight" in chats')
     assert "no matching stored messages" in no_phrase,(repr(no_phrase),facets.parse('Find the exact phrase "never-said-secret-starlight" in chats'))
     decision=run("Find decisions we made about the dragon project")
