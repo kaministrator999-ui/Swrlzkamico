@@ -291,24 +291,41 @@ try{
       'Historical import changed the saved glove fit');
     assert.deepEqual(historicalSaved.project.animeSockets,historical.project.animeSockets,'Historical import changed the saved staff sockets');
     assert.equal((await model(fresh,'kami')).gripStyle,'original','Historical project acquired incompatible grip artwork');
+    assert.equal((await model(fresh,'kami')).staffArt,'atlas','Historical project acquired incompatible complete staff artwork');
     await seek(fresh,19);
     assert.equal((await rendered(fresh,'kami')).staffGrip.naturalGrip.layered,false,'Historical project rendered the new split grip');
+    assert.equal((await rendered(fresh,'kami')).staffGrip.fullStaff,null,'Historical project rendered the complete staff in its saved atlas fit');
 
-    // v9.2 saves have the same pose data but no static-fit section. They must
-    // acquire the improved default assembly without losing a single key.
+    // Older saves have no static-fit section or complete-staff profile. Their
+    // default atlas staff is recorded by the previous natural-grip export;
+    // every other default body fit still matches the current starter exactly.
+    const natural=await fresh.evaluate(async()=>await (await fetch('scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json')).json());
+    const legacyLayouts=structuredClone(baselineLayouts);
+    for(const character of ['kami','swyrlz']){
+      const previous=natural.project.animeRigs.characters[character].layout;
+      assert.deepEqual(Object.keys(previous),Object.keys(baselineLayouts[character]),'Previous atlas export lost default body parts');
+      for(const [id,fit] of Object.entries(previous))for(const [field,value] of Object.entries(fit))
+        if(character!=='kami'||id!=='staff')close(value,baselineLayouts[character][id][field],
+          'Previous atlas export differs from a current default body fit '+character+'.'+id+'.'+field,1e-6);
+    }
+    legacyLayouts.kami.staff=structuredClone(natural.project.animeRigs.characters.kami.layout.staff);
     const legacy=structuredClone(original);
-    for(const config of Object.values(legacy.project.animeRigs.characters))delete config.layout;
+    for(const config of Object.values(legacy.project.animeRigs.characters)){
+      delete config.layout;delete config.staffArt;
+    }
     delete legacy.project.animeSockets;
     delete legacy.project.animeEmergence;
     await fresh.evaluate(data=>window.SWYRL_ENGINE_STORYBOARD.importProject(data),legacy);await frames(fresh);
     independent(await project(fresh),original,mode.name+' older project default fits');
     await seek(fresh,19);
+    assert.equal((await model(fresh,'kami')).staffArt,'atlas','Older save silently opted into the complete staff artwork');
+    assert.equal((await rendered(fresh,'kami')).staffGrip.fullStaff,null,'Older save used complete staff artwork with atlas defaults');
     for(const character of ['kami','swyrlz']){
       const migrated=(await model(fresh,character)).layout;
-      assert.deepEqual(Object.keys(migrated),Object.keys(baselineLayouts[character]),'Older save lost default body parts');
+      assert.deepEqual(Object.keys(migrated),Object.keys(legacyLayouts[character]),'Older save lost default body parts');
       // Native degree fields round-trip through radians. A few billionths of
       // a radian do not change geometry or indicate a failed migration.
-      for(const [id,fit] of Object.entries(baselineLayouts[character]))for(const [field,value] of Object.entries(fit))
+      for(const [id,fit] of Object.entries(legacyLayouts[character]))for(const [field,value] of Object.entries(fit))
         close(migrated[id][field],value,'Older save did not receive improved default assembly '+character+'.'+id+'.'+field,1e-6);
       attachments(await rendered(fresh,character),mode.name+' imported older '+character);
     }
@@ -324,7 +341,7 @@ try{
     const bounded=await model(fresh,'kami');
     assert.equal(Object.hasOwn(bounded.layout,'unknownPart'),false,'Unknown imported body part reached the renderer');
     for(const [id,fit] of Object.entries(bounded.layout))for(const [field,value] of Object.entries(fit)){
-      const [low,high]=bounded.layoutBounds[field];
+      const [low,high]=bounded.layoutBoundsByPart?.[id]?.[field]||bounded.layoutBounds[field];
       assert.ok(Number.isFinite(value)&&value>=low&&value<=high,'Imported body fit escaped finite bounds: '+id+'.'+field);
     }
     independent(await project(fresh),original,mode.name+' malformed fit import');

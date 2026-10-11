@@ -15,8 +15,12 @@ rigCleanPartLayout=function(character,part,value){
 };
 const fullStaffOriginalSanitize=rigSanitizeModel;
 rigSanitizeModel=function(value,duration){
-  const result=fullStaffOriginalSanitize(value,duration),input=rigObject(rigObject(value).characters).kami;
-  result.characters.kami.staffArt=rigUsesNaturalGrip('kami',result.characters.kami)&&rigObject(input).staffArt===RIG_FULL_STAFF_STYLE?RIG_FULL_STAFF_STYLE:'atlas';
+  const result=fullStaffOriginalSanitize(value,duration),input=rigObject(rigObject(value).characters).kami,
+    staff=rigObject(rigObject(rigObject(input).layout).staff),fitted=['width','height'].every(field=>
+      Object.hasOwn(staff,field)&&Number.isFinite(Number(staff[field]))&&Number(staff[field])>=.2);
+  // An explicit full-art flag without its fitted card cannot safely inherit
+  // the old wand dimensions. Keep that incomplete import on its atlas profile.
+  result.characters.kami.staffArt=rigUsesNaturalGrip('kami',result.characters.kami)&&fitted&&rigObject(input).staffArt===RIG_FULL_STAFF_STYLE?RIG_FULL_STAFF_STYLE:'atlas';
   return result;
 };
 const fullStaffOriginalSignature=rigVisualSignature;
@@ -146,12 +150,18 @@ const fullStaffOriginalPartRelief=rigPartRelief;
 rigPartRelief=function(part,amount,pins){
   const result=fullStaffOriginalPartRelief(part,amount,pins);if(!part?.userData.fullStaff)return result;
   const thickness=part.userData.reliefThickness||part.userData.reliefBaseThickness,cell=part.userData.rigCell,
-    neck=cell?rigFullStaffLocal(cell,part.userData.rigSize.width,part.userData.rigSize.height,442,540).y:part.userData.rigSize.height/2;
+    front=part.children.find(mesh=>mesh.name.endsWith('painted front')),
+    neck=cell?rigFullStaffLocal(cell,part.userData.rigSize.width,part.userData.rigSize.height,442,540).y:part.userData.rigSize.height/2,
+    mountY=part.parent?.userData.rigSocketPart?.sockets.shaft?.y??neck,
+    // Surface sampling interpolates adjacent grid rows. Pin the first row
+    // above the real neck as well, so maximum relief cannot lift the joining
+    // ink away from the cylinder through the triangle containing the mount.
+    pinLimit=Math.max(neck,mountY)+part.userData.rigSize.height/(front.geometry.parameters.heightSegments||1);
   for(const mesh of part.children.filter(child=>child.userData.rigRestVertices)){
     const front=mesh.name.endsWith('painted front'),back=mesh.name.endsWith('paper back');
     mesh.position.z=front?RIG_FULL_STAFF_FRONT:back?RIG_FULL_STAFF_FRONT-thickness:RIG_FULL_STAFF_FRONT-thickness/2;
     const positions=mesh.geometry.getAttribute('position'),rest=mesh.userData.rigRestVertices;
-    for(let i=0;i<positions.count;i++)if(rest[i*3+1]<=neck)
+    for(let i=0;i<positions.count;i++)if(rest[i*3+1]<=pinLimit)
       positions.setZ(i,rest[i*3+2]*thickness/part.userData.reliefBaseThickness);
     positions.needsUpdate=true;mesh.geometry.computeBoundingBox();mesh.geometry.computeBoundingSphere();
   }
