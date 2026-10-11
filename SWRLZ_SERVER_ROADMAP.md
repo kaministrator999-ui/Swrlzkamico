@@ -1,3 +1,17 @@
+## UPDATE CHECKPOINT — 2026-10-11 — native Chat cross-browser persistence isolated candidate passes CI
+
+**Review:** [draft PR #100](https://github.com/kaministrator999-ui/Swrlzkamico/pull/100) targets the deployed v208.1 feature branch without merging or overwriting it. **Final tested source:** `fix/native-google-chat-cross-browser-20261011` SHA `4fe3ede62a198f841adc30b1b673e2ae28ec7ed0`.
+
+**Architecture correction:** existing verified Google-owner Redis CAS record remains sole durable native Chat authority. Station now refreshes its per-process cached snapshot before new sends/writes/exports and periodically while idle; browser activation/login can request immediate refresh. Workers with an active local generation are not replaced mid-stream. The source preserves owner validation and CAS protection, including a non-destructive error for a regressed persisted revision. Chat restores a draft upon an unconfirmed send, with a bounded storage-limit-specific notice rather than false save success. Distinct imported ChatGPT archive indexing/counting remains untouched. One read every ~10 seconds bounds ordinary background Redis reconciliation rather than fetching all encrypted history every 2-second UI tick.
+
+**Tests:** Account/persistence [CI #38162460190](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38162460190) **SUCCESS**, including synthetic independent-worker A/B saved chat, stale revision rejection, active generation preservation and owner isolation. HF candidate [CI #38162463967](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38162463967) **SUCCESS**. Mobile HTML/parser [CI #38162463966](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38162463966) **SUCCESS**. Intermediate failed synthetic test setups corrected before final passing candidate and preserved in Action history.
+
+**Source version:** `chat/§wyrlz/VERSION.txt` advanced `1.1.02 → 1.1.03` on candidate; Chat diagnostic camera aligned from stale `1.0.91` to `1.1.03`. Runtime registry versions remain Repository Work 1.0.148, Server Runtime 2.3.360, Web Chat 1.5.99, Google Account 1.0.12, LALM Engine 2.1.185 until guarded publication is confirmed; then advance only affected version authorities with actual release receipts. No schema migration, Google OAuth identity rotation, hidden export upload or destructive archive mutation.
+
+**Next:** execute **one** existing `main:.deploy/HF_SPACE_REQUEST.txt` guarded request to same `kamiloki/Swyrlz` Space from exact validated candidate, observe terminal publication and rollback, reconcile version/FINISHED record, then owner Android two-browser persistence/read-after-write acceptance. The 2.2 MB native snapshot safety limit remains; this change surfaces an explicit error rather than pretending oversized writes succeeded.
+
+**Status:** SOURCE COMPLETE / ACCOUNT AND HF CI VERIFIED / DEPLOYMENT READY / LIVE USER ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-11 — verified Google native-chat cross-browser persistence and freshness repair
 
 **Observed user acceptance:** Two Android browsers using §wyrlz do not consistently show new native conversations, even though prior native conversation history and the encrypted ChatGPT archive remain readable. Screenshot of a cumulative imported message count shows the background read-only tally progressing from 0/0 to 160/2,556; that scan is distinct from native conversation save/sync and is not itself evidence that saved threads need reimport.
