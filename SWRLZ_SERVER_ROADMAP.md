@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-11 — v211 model-guided GitHub tool orchestration and live visible progress
+
+**User intent:** §wyrlz's inference model should participate in selecting and using GitHub tools, checking permission and framing evidence, with visible real-time steps. Display meaningful high-level progress rather than raw internal chain-of-thought. Never expose OAuth tokens or untrusted repo content in diagnostic logs. Every tool must still be independently server-authorized, and writes require existing one-time explicit user confirmation.
+
+**Baseline:** Existing published integrated v209.1+v210 source 4db31fb5a8470e3784ee04c97dcaf871728af1b4. Runtime authority 25bfb1a3375c023b80616e99f77500a0d19a9556: Repository Work 1.0.150, Server Runtime 2.3.362, Web Chat 1.5.101, Google Account 1.0.14, LALM Engine 2.1.187. Existing HF Space revision e77d03f2263bd3be1734fe32aeda16c3ce74c6a9 remains DEPLOYED_UNVERIFIED pending user live save/OAuth acceptance. Source candidate isolated at feature/github-model-guided-progress-v211 based exactly on previously published source.
+
+**Ownership:** Reuse hf_space/github_connection.py as canonical GitHub OAuth/permission/read API owner, hf_space/station.py as active inference and tool-lifecycle owner, existing Chat NDJSON activity UI as presenter. Selected existing local model can propose a bounded **read-only** tool plan for conversational requests. Never treat model output as authority for access escalation, writes, arbitrary URLs, private tool credentials or changing selected owner/repo. Explicit @GitHub write proposal and confirmation remain deterministic and separate. Expose user-facing activity statuses for model inference, scope preflight, tool execution and evidence; never show raw hidden reasoning.
+
+**Tests/release:** Strict plan whitelist, account isolation, no model-authorized writes, genuine status sequence, safe deterministic fallback and unchanged native Chat saving. Run GitHub/account, HF offline and mobile gates; only guarded deploy if current production release is reconciled and source pinned. Preserve previous rollback and never promote user acceptance without signed-in evidence.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-11 — v209.1 native Chat saving + v210 GitHub capabilities integrated guarded release
 
 **Outcome:** SOURCE/ACCOUNT CI/HF CANDIDATE/MOBILE CI VERIFIED / SINGLE GUARDED EXISTING-SPACE DEPLOYMENT SUCCESS / RUNTIME REGISTRY READBACK VERIFIED / OWNER LIVE ACCEPTANCE PENDING. v209 native Chat saving **failed live owner acceptance**, and this release addresses previously unhandled snapshot-size and save-failure defects; do not mark this new release known-good until owner readback.
