@@ -778,6 +778,7 @@
           <div class="github-connect-actions">
             <button id="githubRepoSave" type="button">Use repository</button>
             <button id="githubReadStart" type="button">Read §tart</button>
+            <button id="githubWorkflowGuide" type="button">Actions guide</button>
             <label for="githubCheckOperation" style="font-size:0.78rem">Check</label>
             <select id="githubCheckOperation" aria-label="GitHub capability to check">
               <option value="read">Read repository</option>
@@ -2794,6 +2795,7 @@
       const githubRepoManual=document.getElementById("githubRepoManual");
       const githubRepoSave=document.getElementById("githubRepoSave");
       const githubReadStart=document.getElementById("githubReadStart");
+      const githubWorkflowGuide=document.getElementById("githubWorkflowGuide");
       const githubCheckAccess=document.getElementById("githubCheckAccess");
       const githubCheckOperation=document.getElementById("githubCheckOperation");
       const githubAuthorizeAccess=document.getElementById("githubAuthorizeAccess");
@@ -2870,6 +2872,13 @@
           setMenu(false);prompt.focus();
           githubConnectStatus.textContent="Project-start request prepared. Press Send to run it.";
         }catch(_){githubConnectStatus.textContent="Could not verify the repository; no startup request was sent.";}
+      });
+      githubWorkflowGuide.addEventListener("click",()=>{
+        if(!githubLinked)return;
+        prompt.value="@GitHub workflow guide";
+        prompt.dispatchEvent(new Event("input",{bubbles:true}));
+        setMenu(false);prompt.focus();
+        githubConnectStatus.textContent="Actions guide command prepared. Press Send to learn workflow setup.";
       });
       githubDisconnectButton.addEventListener("click",async()=>{
         if(!githubLinked||!confirm("Disconnect this GitHub account from your Google profile?"))return;
