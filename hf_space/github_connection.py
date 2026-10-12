@@ -16,6 +16,8 @@ import time
 from urllib.parse import quote, urlencode, urlparse
 
 import requests
+import sys
+import github_workflows_v212
 from cryptography.fernet import Fernet, InvalidToken
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -25,7 +27,7 @@ GITHUB_API = "https://api.github.com"
 GITHUB_AUTH = "https://github.com/login/oauth/authorize"
 GITHUB_TOKEN = "https://github.com/login/oauth/access_token"
 GITHUB_SCOPE = "read:user"  # least-privilege default; upgrades only on explicit request
-_GITHUB_ACCESS = {"read": "read:user", "public-write": "read:user public_repo", "private-write": "read:user repo"}
+_GITHUB_ACCESS = {"read": "read:user", "public-write": "read:user public_repo", "private-write": "read:user repo", "public-workflow": "read:user public_repo workflow", "private-workflow": "read:user repo workflow"}
 _REPO = re.compile(r"^[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}$")
 _VERSION = re.compile(r"^([A-Z_]+)=versions/([a-z0-9-]+\.txt)$", re.M)
 _EVENTS = re.compile(r"^#{2,3}\s+UPDATE (FINISHED|COMPLETED|STARTED|CONTINUATION STARTED|CONTINUATION ENDED|ABORTED|SUPERSEDED)\s+—\s+(\d{4}-\d{2}-\d{2})\s+—\s+(.+)$", re.M)
@@ -512,7 +514,7 @@ def start_events(data):
 
 # Request-scoped GitHub actions belong to the authenticated Station, not the LALM.
 # Repository contents are evidence/data; they never authorize tool execution.
-_OPS = ("read", "issue-write", "branch-write")
+_OPS = ("read", "issue-write", "branch-write", "workflow-dispatch", "workflow-create")
 
 
 def _scope_level(value):
@@ -535,8 +537,11 @@ def _effective_access(record, repo, operation="read"):
     can_token_write = "repo" in grants or (not private and "public_repo" in grants)
     branch = bool(roles.get("push") or roles.get("admin") or roles.get("maintain"))
     issue = bool(branch or roles.get("triage"))
+    can_workflow_files = can_token_write and branch and "workflow" in grants
     available = {"read": True, "issue-write": can_token_write and issue,
-                 "branch-write": can_token_write and branch}
+                 "branch-write": can_token_write and branch,
+                 "workflow-dispatch": can_token_write and branch,
+                 "workflow-create": can_workflow_files}
     result = {"repository": str(info["full_name"]), "private": private,
               "defaultBranch": str(info.get("default_branch") or "main"),
               "requested": operation, "allowed": bool(available[operation]),
@@ -545,7 +550,11 @@ def _effective_access(record, repo, operation="read"):
     if not available[operation]:
         if not can_token_write:
             result["missing"] = "repo OAuth scope" if private else "public_repo or repo OAuth scope"
-            result["authorizeUrl"] = "/api/github/start?access=" + ("private-write" if private else "public-write")
+            mode = ("private-workflow" if private else "public-workflow") if operation == "workflow-create" else ("private-write" if private else "public-write")
+            result["authorizeUrl"] = "/api/github/start?access=" + mode
+        elif operation == "workflow-create" and branch and "workflow" not in grants:
+            result["missing"] = "GitHub OAuth workflow scope to create workflow YAML"
+            result["authorizeUrl"] = "/api/github/start?access=" + ("private-workflow" if private else "public-workflow")
         else:
             result["missing"] = "repository role permission for " + operation
     return result
@@ -618,6 +627,8 @@ def _post_github(token, path, body):
 def is_github_command(prompt):
     # Only anchored user commands. An ordinary discussion about GitHub
     # must not perform any repository operation.
+    if github_workflows_v212.is_command(prompt):
+        return True
     return bool(re.match(
         r"^@github\s+(help(?:\s|$)|permissions|capabilities|branches(?:\s|$)|files(?:\s|$)|read file\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
         str(prompt or "").strip(), re.I))
@@ -648,6 +659,8 @@ def _github_command(user, prompt):
         if action.get("owner") != user or action.get("repo") != repo:
             return "GitHub proposal ownership mismatch; nothing written."
         kind = action.get("kind")
+        if kind in ("workflow-file", "workflow-dispatch", "workflow-pr", "workflow-retry"):
+            return github_workflows_v212.confirm(sys.modules[__name__], c, rec, user, repo, action)
         preflight = _effective_access(rec, repo, "issue-write" if kind == "issue" else "branch-write")
         if not preflight["allowed"]:
             return _permission_message(preflight)
@@ -666,6 +679,9 @@ def _github_command(user, prompt):
             return ("GitHub confirmed branch creation: " + repo + "/" + action["branch"]) if result.get("ref") else "GitHub did not confirm branch creation."
         return "Unknown GitHub proposal; nothing written."
 
+    if github_workflows_v212.is_command(prompt):
+        return github_workflows_v212.execute(sys.modules[__name__], user, prompt)
+
     operation = ("issue-write" if lower.startswith("create issue ") else
                  "branch-write" if lower.startswith("create branch ") else "read")
     try:
@@ -681,8 +697,14 @@ def _github_command(user, prompt):
                 "@GitHub files docs, @GitHub read file README.md, @GitHub branches, "
                 "@GitHub issues, @GitHub pulls, @GitHub commits, "
                 "@GitHub create issue TITLE :: BODY, "
-                "@GitHub create branch feature/name from main. "
-                "Writes require a fresh verified permission check and a second explicit confirmation.")
+                "@GitHub create branch feature/name from main, @GitHub workflow guide, "
+                "@GitHub workflows, @GitHub workflow runs, @GitHub workflow inspect name.yml, "
+                "@GitHub run status ID, @GitHub workflow create python-check as check.yml on feature/my-checks, "
+                "@GitHub workflow dispatch name.yml on main, @GitHub workflow pr feature/checks into main, "
+                "@GitHub run retry RUN_ID. "
+                "Workflow creation needs separate GitHub workflow OAuth scope; writes require a fresh preflight and explicit confirmation.")
+    if lower in ("workflows", "workflow list", "workflow runs", "workflow guide") or lower.startswith(("workflow inspect ", "run status ")):
+        return github_workflows_v212.execute(sys.modules[__name__], user, "@GitHub " + cmd)
     if lower in ("permissions", "capabilities"):
         return ("## Verified GitHub access\nRepository: " + repo +
                 "\nAvailable operations: " + ", ".join(check["available"]) +
@@ -786,16 +808,21 @@ def command_events(data):
 
 
 # v211 GitHub model-planned READ tools, with observable lifecycle and no raw thought exposure.
-_AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits")
+_AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits", "workflows", "workflow runs", "workflow guide")
 
 
 def is_github_conversation(prompt):
     q = str(prompt or "").strip()
     if re.match(r"^@github\s+(?:ask|explore|analyze)\s+\S", q, re.I):
         return True
+    if (re.search(r"\b(?:github|repo|repository|actions|workflow|workflows)\b", q, re.I)
+            and re.match(r"^(?:please\s+)?(?:teach|explain|how\s+(?:can|do|would)|"
+                         r"(?:can|could|would)\s+you\s+(?:please\s+)?"
+                         r"(?:create|build|set\s+up|trigger|dispatch|retry|rerun))\b", q, re.I)):
+        return True
     return bool(
         re.match(r"^(?:(?:please\s+)?|(?:can|could|would|will)\s+you\s+(?:please\s+)?)(?:check|show|list|review|inspect|summarize|look\s+at|find|read)\b", q, re.I)
-        and re.search(r"\b(?:my|our|the)\s+(?:github|repo|repository|pull\s+requests?|prs?|issues?|branches?|commits?)\b", q, re.I)
+        and re.search(r"\b(?:my|our|the)\s+(?:github|repo|repository|pull\s+requests?|prs?|issues?|branches?|commits?|workflows?|actions|runs?)\b", q, re.I)
     )
 
 
@@ -826,6 +853,9 @@ def _agent_fallback_plan(prompt):
         (r"\bissues?\b", "issues"),
         (r"\bbranches?\b", "branches"),
         (r"\bcommits?\b", "commits"),
+        (r"\b(workflows?|actions)\b", "workflows"),
+        (r"\b(teach|learn|guide|how|setup|set up|templates?)\b", "workflow guide"),
+        (r"\b(runs?|jobs?|failures?)\b", "workflow runs"),
         (r"\b(files?|folders?|directories|directory)\b", "files"),
     ):
         if re.search(pattern, q) and tool not in result:
@@ -841,7 +871,7 @@ def _agent_model_plan_events(prompt, generator):
     instruction = (
         "Choose 1 to 3 read-only GitHub checks relevant to this request. "
         "Return ONLY JSON, e.g. {\"tools\":[\"permissions\",\"pulls\"]}. "
-        "Valid tools: permissions, files, branches, issues, pulls, commits. "
+        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide. "
         "Specific files PATH or read file PATH permitted only when PATH is in the user request. "
         "Do not propose writes, URL fetches, authorization changes or other commands. "
         "No chain-of-thought. User request: " + str(prompt)[:900]
@@ -914,6 +944,9 @@ def agent_events(data, model_generator=None):
                "categories": ["GITHUB", "TOOL", "PERMISSION"]}
         yield from command_events(data)
         return
+    if github_workflows_v212.is_command(prompt) and not re.match(r"^@github\s+confirm\s+", prompt, re.I):
+        yield from github_workflows_v212.events(sys.modules[__name__], data)
+        return
     if not (exact or is_github_conversation(prompt)):
         return
     if not user.startswith("google:"):
@@ -936,10 +969,15 @@ def agent_events(data, model_generator=None):
                    "reason": "Conversational planning cannot authorize a write.",
                    "categories": ["GITHUB", "TOOL", "APPROVAL"]}
             yield {"type": "DELTA", "text":
-                   "I can inspect GitHub, but a conversational plan cannot authorize a repository change. "
-                   "For supported writes, use @GitHub create issue TITLE :: BODY or "
-                   "@GitHub create branch feature/name from main. Each needs separate confirmation. "
-                   "No write attempted."}
+                   "I can inspect GitHub, but a conversational plan cannot authorize a repository change. " +
+                   ("For GitHub Actions, start with @GitHub workflow guide. "
+                    "Then use @GitHub workflow create python-check as syntax.yml on feature/my-checks, "
+                    "@GitHub workflow pr feature/my-checks into main, or "
+                    "@GitHub workflow dispatch syntax.yml on main. "
+                    if re.search(r"\b(?:workflow|actions|dispatch|run|retry)\b", natural, re.I) else
+                    "For other supported writes, use @GitHub create issue TITLE :: BODY or "
+                    "@GitHub create branch feature/name from main. ") +
+                   "Each supported mutation needs a separate explicit confirmation. No write attempted."}
             yield {"type": "COMPLETED", "phase": "COMPLETE"}
             return
         yield {"type": "STATUS", "phase": "GITHUB_MODEL_PLAN_STARTED",
