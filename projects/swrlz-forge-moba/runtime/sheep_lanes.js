@@ -81,9 +81,7 @@ stCanBuild = function(kind,x,z,ownerId=null,rotation=0) {
   const fit=stLanesCanBuildBase(kind,x,z,ownerId,rotation);
   if (!fit.ok) return fit;
   const owner=stSession.units.find(u=>u.id===(ownerId||stSession.controlledId));
-  // Ground creatures can still stand beneath an elevated wall.
-  const overlaps=!(fit.kind==='st-wall'&&owner.pos.y<(stSession.rules.wallHeight??3.3)-1.2)&&
-    stIntersectsObstacle(owner.pos.x,owner.pos.z,stUnitRadius(owner),fit);
+  const overlaps=stIntersectsObstacle(owner.pos.x,owner.pos.z,stUnitRadius(owner),fit);
   if (overlaps) {
     const exit=stLanesEjection(owner,fit);
     if (!exit) return stResult(false,'No clear side can safely move your sheep out of this structure.',fit);
@@ -95,7 +93,7 @@ stCanBuild = function(kind,x,z,ownerId=null,rotation=0) {
 const stLanesNewBuildingBase = stNewBuilding;
 stNewBuilding = function(kind,x,z,owner,authored=null,rotation=0) {
   const unit=stSession.units.find(u=>u.id===owner),fp=stFootprint(x,z,1.2,ST_BUILDINGS[kind]?.length?3:1.2,rotation);
-  const needsExit=!authored&&unit&&!unit.captured&&!(kind==='st-wall'&&unit.pos.y<(stSession.rules.wallHeight??3.3)-1.2)&&
+  const needsExit=!authored&&unit&&!unit.captured&&
     stIntersectsObstacle(unit.pos.x,unit.pos.z,stUnitRadius(unit),fp);
   const exit=needsExit?stLanesEjection(unit,fp):null;
   if (needsExit&&!exit) return null;

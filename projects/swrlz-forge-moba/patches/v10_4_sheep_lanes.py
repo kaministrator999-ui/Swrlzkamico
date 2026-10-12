@@ -14,8 +14,8 @@ def apply(html):
     html = once(html,
         'snap=s?.rules.buildSnap??.15,snappedX=Math.round(Number(x)/snap)*snap,snappedZ=Math.round(Number(z)/snap)*snap,angle=',
         'snap=s?.rules.buildSnap??.15,aligned=stLanesSnapHouse(kind,x,z,snap),snappedX=aligned.x,snappedZ=aligned.z,angle=')
-    html = once(html, 'for(const u of s.units)if(!u.captured&&!u.isIllusion&&!(kind===',
-                        'for(const u of s.units)if(u.id!==owner.id&&!u.captured&&!u.isIllusion&&!(kind===')
+    html = once(html, "for(const u of s.units)if(!u.captured&&!u.isIllusion&&!(kind==='st-wall'&&stEntityHeight(u)<(s.rules.wallHeight??3.3)-1.2)&&stIntersectsObstacle",
+                        'for(const u of s.units)if(u.id!==owner.id&&!u.captured&&!u.isIllusion&&stIntersectsObstacle')
     html = once(html, "stUiFeedback(name + ' ordered. Your sheep will walk to the construction site.');",
                         "stUiFeedback(name + ' ordered at the displayed footprint.');")
     # A migration in the appended module upgrades the old saved default while

@@ -40,6 +40,15 @@ for(const [start,expected]of [[[[-18.85,0,-18]],[-19.495,-18]],[[[-17.15,0,-18]]
   assert.equal(s.buildings.length,1);assert.equal(api.status().gold,before);assert.equal(api.blocked(u.pos.x,u.pos.z,api.radius(u)),false);separated();
 }pass('self_construction_uses_all_four_nearest_clear_sides');
 
+for(const kind of ['income','fort','wall','ramp']) {
+  reset([[-18.85,0,-18]]);currentProject.sheepTag.elevated=true;api.start();
+  const site=api.canBuild(kind,-18,-18),before=api.status().gold;assert.equal(site.ok,true,kind+' rejects its own builder');
+  assert.equal(api.command('build',{kind,x:-18,z:-18}).ok,true);const u=api.session().units[0];
+  close(u.pos.x,-19.495,kind+' nearest safe side');assert.equal(api.status().gold,before-site.cost);
+  assert.equal(api.blocked(u.pos.x,u.pos.z,api.radius(u)),false,kind+' trapped its builder inside its footprint');
+}
+currentProject.sheepTag.elevated=false;pass('income_fort_wall_and_ramp_also_eject_their_own_builder_and_charge_once');
+
 reset([[-18.85,0,-18]]);actor('neighbour','st-farm',-20.4,-18);api.start();
 const fit=api.canBuild('farm',-18,-18);assert.equal(fit.ok,true);assert.ok(fit.builderExit);
 assert.ok(Math.abs(fit.builderExit[0]+19.495)>.1,'Builder was pushed inside the flush neighbour');
