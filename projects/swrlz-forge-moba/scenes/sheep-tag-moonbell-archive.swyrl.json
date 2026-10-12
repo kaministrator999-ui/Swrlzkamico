@@ -1,0 +1,5462 @@
+{
+  "engine": "§wyrl§ Engine · Maker v10.1",
+  "version": 10.1,
+  "project": {
+    "name": "Sheep Tag · Moonbell Meadow",
+    "canonicalId": "sheep-tag-meadow",
+    "template": "sheep-tag-meadow",
+    "kind": "sheep-tag",
+    "environment": "spatial-workspace",
+    "workspaces": {
+      "schema": "swyrl-workspaces-v1",
+      "stations": {}
+    },
+    "teleportZones": [],
+    "sheepTag": {
+      "duration": 1200,
+      "headstart": 30,
+      "bounds": 40,
+      "startGold": 80,
+      "role": "sheep",
+      "preset": "archive",
+      "buildSnap": 0.15,
+      "sheepSpeed": 5.4,
+      "wolfSpeed": 7.2,
+      "wolfDamage": 85,
+      "attackInterval": 0.65,
+      "farmHp": 180,
+      "incomeHp": 240,
+      "fortHp": 650,
+      "sheepRadius": 0.27,
+      "wolfRadius": 0.68,
+      "houseLimit": 28,
+      "fogMode": "team",
+      "sheepVision": 18,
+      "wolfVision": 20,
+      "rescueProtection": 3,
+      "rescueHold": 0.6,
+      "thorns": true,
+      "totems": true,
+      "elevated": true,
+      "split": true,
+      "events": false,
+      "thornChance": 0.35,
+      "thornDuration": 15,
+      "thornCooldown": 6,
+      "scentInterval": 2,
+      "densityRadius": 8,
+      "totemRadius": 5.5,
+      "fadeSeconds": 3,
+      "revealSeconds": 2,
+      "totemLimit": "once",
+      "totemCooldown": 120,
+      "wallCost": 45,
+      "rampCost": 55,
+      "wallHp": 360,
+      "rampHp": 300,
+      "wallHeight": 3.3,
+      "wolvesUseRamps": true,
+      "splitUnlock": 2,
+      "progressionSeconds": 45,
+      "rescueXp": 30,
+      "splitCooldown": 30,
+      "splitLifetime": 5,
+      "eventInterval": 150,
+      "eventWarning": 8,
+      "eventDuration": 15,
+      "seed": 0,
+      "eventPool": [
+        "pressure",
+        "fog",
+        "supply"
+      ],
+      "permittedStructures": [
+        "st-farm",
+        "st-income",
+        "st-fort",
+        "st-wall",
+        "st-ramp"
+      ]
+    },
+    "environmentSettings": {
+      "background": "#b5d9db",
+      "fogNear": 130,
+      "fogFar": 230,
+      "exposure": 1.05,
+      "showTerrain": false,
+      "showScenery": false
+    }
+  },
+  "editor": {
+    "transformSpace": "world",
+    "snapEnabled": true,
+    "terrainSnapEnabled": true,
+    "viewMode": "lit",
+    "cameraView": "perspective",
+    "revision": 285,
+    "layers": [
+      {
+        "id": "layer-a_50rimxku",
+        "name": "01 · Meadow & painted routes",
+        "visible": true
+      },
+      {
+        "id": "layer-a_p6lu7dks",
+        "name": "02 · Spirit pen & merchants",
+        "visible": true
+      },
+      {
+        "id": "layer-a_z7jdtxo3",
+        "name": "03 · Woodland & ponds",
+        "visible": true
+      },
+      {
+        "id": "layer-a_abvjba07",
+        "name": "04 · Thorn shortcuts",
+        "visible": true
+      },
+      {
+        "id": "layer-a_h2ox1z9x",
+        "name": "05 · Protected market grounds",
+        "visible": true
+      },
+      {
+        "id": "layer-a_iw7zc6eo",
+        "name": "06 · Sheep & wolf spawns",
+        "visible": true
+      }
+    ],
+    "activeLayerId": "layer-a_iw7zc6eo"
+  },
+  "scene": {
+    "background": "#b5d9db",
+    "waveInterval": 7,
+    "paths": {},
+    "actors": [
+      {
+        "id": "a_195cyd0s",
+        "name": "Moonbell Meadow · buildable pasture",
+        "type": "st-meadow",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_50rimxku"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Terrain",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/meadow",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_foz6drml",
+        "name": "Spirit Pen · four open rescue paths",
+        "type": "st-pen",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_p6lu7dks"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/pen",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_rl99ip48",
+        "name": "Corner Merchant 1",
+        "type": "st-shop",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_p6lu7dks"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -32,
+          0,
+          -32
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/shop",
+        "colliderRadius": 1.5,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ftux23ft",
+        "name": "Corner Merchant 2",
+        "type": "st-shop",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_p6lu7dks"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          32,
+          0,
+          -32
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/shop",
+        "colliderRadius": 1.5,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_2rcip0tz",
+        "name": "Corner Merchant 3",
+        "type": "st-shop",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_p6lu7dks"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -32,
+          0,
+          32
+        ],
+        "rotation": [
+          0,
+          3.141592653589793,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/shop",
+        "colliderRadius": 1.5,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_kxissos9",
+        "name": "Corner Merchant 4",
+        "type": "st-shop",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_p6lu7dks"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          32,
+          0,
+          32
+        ],
+        "rotation": [
+          0,
+          3.141592653589793,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/shop",
+        "colliderRadius": 1.5,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_wde33mxe",
+        "name": "West Lily Pond",
+        "type": "st-pond",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -29,
+          0,
+          -12
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/pond",
+        "colliderRadius": 3,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ynphpqqh",
+        "name": "East Lily Pond",
+        "type": "st-pond",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          29,
+          0,
+          12
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/pond",
+        "colliderRadius": 3,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_r58b5l5e",
+        "name": "Meadow Boulder 1",
+        "type": "st-rock",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -12,
+          0,
+          -14
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/rock",
+        "colliderRadius": 1.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_3fofs6e6",
+        "name": "Meadow Boulder 2",
+        "type": "st-rock",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -14,
+          0,
+          -13
+        ],
+        "rotation": [
+          0,
+          0.37,
+          0
+        ],
+        "scale": [
+          1.18,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/rock",
+        "colliderRadius": 1.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_zcmndgw9",
+        "name": "Meadow Boulder 3",
+        "type": "st-rock",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12,
+          0,
+          14
+        ],
+        "rotation": [
+          0,
+          0.74,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/rock",
+        "colliderRadius": 1.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_sob8egtb",
+        "name": "Meadow Boulder 4",
+        "type": "st-rock",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          14,
+          0,
+          13
+        ],
+        "rotation": [
+          0,
+          1.1099999999999999,
+          0
+        ],
+        "scale": [
+          1.18,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/rock",
+        "colliderRadius": 1.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_it5tp5kh",
+        "name": "Meadow Boulder 5",
+        "type": "st-rock",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -13,
+          0,
+          12
+        ],
+        "rotation": [
+          0,
+          1.48,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/rock",
+        "colliderRadius": 1.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_fhz15xxd",
+        "name": "Meadow Boulder 6",
+        "type": "st-rock",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          13,
+          0,
+          -12
+        ],
+        "rotation": [
+          0,
+          1.85,
+          0
+        ],
+        "scale": [
+          1.18,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/rock",
+        "colliderRadius": 1.8,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_4xmc4n00",
+        "name": "Forest Edge Pine 1",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -33,
+          0,
+          -38
+        ],
+        "rotation": [
+          0,
+          0.67,
+          0
+        ],
+        "scale": [
+          1.02,
+          1.05,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_0z42k5ee",
+        "name": "Forest Edge Pine 2",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -33,
+          0,
+          38
+        ],
+        "rotation": [
+          0,
+          1.34,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1.1,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_xdrh8szn",
+        "name": "Forest Edge Pine 3",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -38,
+          0,
+          -33
+        ],
+        "rotation": [
+          0,
+          2.0100000000000002,
+          0
+        ],
+        "scale": [
+          0.9,
+          1.15,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_cn1qc3sn",
+        "name": "Forest Edge Pine 4",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          38,
+          0,
+          -33
+        ],
+        "rotation": [
+          0,
+          2.68,
+          0
+        ],
+        "scale": [
+          1.02,
+          1,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_xgg685tm",
+        "name": "Forest Edge Pine 5",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -25,
+          0,
+          -38
+        ],
+        "rotation": [
+          0,
+          3.35,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1.05,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_at5nee2c",
+        "name": "Forest Edge Pine 6",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -25,
+          0,
+          38
+        ],
+        "rotation": [
+          0,
+          4.0200000000000005,
+          0
+        ],
+        "scale": [
+          0.9,
+          1.1,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ngt3nexf",
+        "name": "Forest Edge Pine 7",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -38,
+          0,
+          -25
+        ],
+        "rotation": [
+          0,
+          4.69,
+          0
+        ],
+        "scale": [
+          1.02,
+          1.15,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_3ghexyhy",
+        "name": "Forest Edge Pine 8",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          38,
+          0,
+          -25
+        ],
+        "rotation": [
+          0,
+          5.36,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_jb16bypf",
+        "name": "Forest Edge Pine 9",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -17,
+          0,
+          -38
+        ],
+        "rotation": [
+          0,
+          6.03,
+          0
+        ],
+        "scale": [
+          0.9,
+          1.05,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_0erdrvkx",
+        "name": "Forest Edge Pine 10",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -17,
+          0,
+          38
+        ],
+        "rotation": [
+          0,
+          6.7,
+          0
+        ],
+        "scale": [
+          1.02,
+          1.1,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_vp6qoz32",
+        "name": "Forest Edge Pine 11",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -38,
+          0,
+          -17
+        ],
+        "rotation": [
+          0,
+          7.37,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1.15,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_xxdfvz6t",
+        "name": "Forest Edge Pine 12",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          38,
+          0,
+          -17
+        ],
+        "rotation": [
+          0,
+          8.040000000000001,
+          0
+        ],
+        "scale": [
+          0.9,
+          1,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_qvukirgf",
+        "name": "Forest Edge Pine 13",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -9,
+          0,
+          -38
+        ],
+        "rotation": [
+          0,
+          8.71,
+          0
+        ],
+        "scale": [
+          1.02,
+          1.05,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_3gogyiv6",
+        "name": "Forest Edge Pine 14",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -9,
+          0,
+          38
+        ],
+        "rotation": [
+          0,
+          9.38,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1.1,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_lclhgrs6",
+        "name": "Forest Edge Pine 15",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -38,
+          0,
+          -9
+        ],
+        "rotation": [
+          0,
+          10.05,
+          0
+        ],
+        "scale": [
+          0.9,
+          1.15,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_b7icme0t",
+        "name": "Forest Edge Pine 16",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          38,
+          0,
+          -9
+        ],
+        "rotation": [
+          0,
+          10.72,
+          0
+        ],
+        "scale": [
+          1.02,
+          1,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_1woenaqr",
+        "name": "Forest Edge Pine 17",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -38
+        ],
+        "rotation": [
+          0,
+          11.39,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1.05,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_pbl3nyms",
+        "name": "Forest Edge Pine 18",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          38
+        ],
+        "rotation": [
+          0,
+          12.06,
+          0
+        ],
+        "scale": [
+          0.9,
+          1.1,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_o34y2ggw",
+        "name": "Forest Edge Pine 19",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -38,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          12.73,
+          0
+        ],
+        "scale": [
+          1.02,
+          1.15,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_fr6nsvkj",
+        "name": "Forest Edge Pine 20",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          38,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          13.4,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_1nmueii6",
+        "name": "Forest Edge Pine 21",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          9,
+          0,
+          -38
+        ],
+        "rotation": [
+          0,
+          14.07,
+          0
+        ],
+        "scale": [
+          0.9,
+          1.05,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_lz2p5d65",
+        "name": "Forest Edge Pine 22",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          9,
+          0,
+          38
+        ],
+        "rotation": [
+          0,
+          14.74,
+          0
+        ],
+        "scale": [
+          1.02,
+          1.1,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_jwx202ic",
+        "name": "Forest Edge Pine 23",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -38,
+          0,
+          9
+        ],
+        "rotation": [
+          0,
+          15.41,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1.15,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ogg15unc",
+        "name": "Forest Edge Pine 24",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          38,
+          0,
+          9
+        ],
+        "rotation": [
+          0,
+          16.080000000000002,
+          0
+        ],
+        "scale": [
+          0.9,
+          1,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ke8fiezq",
+        "name": "Forest Edge Pine 25",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          17,
+          0,
+          -38
+        ],
+        "rotation": [
+          0,
+          16.75,
+          0
+        ],
+        "scale": [
+          1.02,
+          1.05,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_71lh3rdz",
+        "name": "Forest Edge Pine 26",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          17,
+          0,
+          38
+        ],
+        "rotation": [
+          0,
+          17.42,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1.1,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_m10oc6pi",
+        "name": "Forest Edge Pine 27",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -38,
+          0,
+          17
+        ],
+        "rotation": [
+          0,
+          18.09,
+          0
+        ],
+        "scale": [
+          0.9,
+          1.15,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_7ebjo8lr",
+        "name": "Forest Edge Pine 28",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          38,
+          0,
+          17
+        ],
+        "rotation": [
+          0,
+          18.76,
+          0
+        ],
+        "scale": [
+          1.02,
+          1,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_uf1bhseg",
+        "name": "Forest Edge Pine 29",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          25,
+          0,
+          -38
+        ],
+        "rotation": [
+          0,
+          19.43,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1.05,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_wf3d4b1q",
+        "name": "Forest Edge Pine 30",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          25,
+          0,
+          38
+        ],
+        "rotation": [
+          0,
+          20.1,
+          0
+        ],
+        "scale": [
+          0.9,
+          1.1,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_aled4346",
+        "name": "Forest Edge Pine 31",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -38,
+          0,
+          25
+        ],
+        "rotation": [
+          0,
+          20.77,
+          0
+        ],
+        "scale": [
+          1.02,
+          1.15,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_mdx23448",
+        "name": "Forest Edge Pine 32",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          38,
+          0,
+          25
+        ],
+        "rotation": [
+          0,
+          21.44,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_5ru2f8d5",
+        "name": "Forest Edge Pine 33",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          33,
+          0,
+          -38
+        ],
+        "rotation": [
+          0,
+          22.110000000000003,
+          0
+        ],
+        "scale": [
+          0.9,
+          1.05,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_xkxyiq77",
+        "name": "Forest Edge Pine 34",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          33,
+          0,
+          38
+        ],
+        "rotation": [
+          0,
+          22.78,
+          0
+        ],
+        "scale": [
+          1.02,
+          1.1,
+          1.02
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_4ak13m1j",
+        "name": "Forest Edge Pine 35",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -38,
+          0,
+          33
+        ],
+        "rotation": [
+          0,
+          23.450000000000003,
+          0
+        ],
+        "scale": [
+          1.1400000000000001,
+          1.15,
+          1.1400000000000001
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ubwfsyjt",
+        "name": "Forest Edge Pine 36",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          38,
+          0,
+          33
+        ],
+        "rotation": [
+          0,
+          24.12,
+          0
+        ],
+        "scale": [
+          0.9,
+          1,
+          0.9
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_8nmujdm5",
+        "name": "Pasture Grove Pine 1",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -24,
+          0,
+          -25
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.82,
+          1,
+          0.82
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_243hkl1c",
+        "name": "Pasture Grove Pine 2",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -26,
+          0,
+          -25
+        ],
+        "rotation": [
+          0,
+          0.4,
+          0
+        ],
+        "scale": [
+          0.82,
+          1,
+          0.82
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_dcbec2mk",
+        "name": "Pasture Grove Pine 3",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          24,
+          0,
+          25
+        ],
+        "rotation": [
+          0,
+          0.8,
+          0
+        ],
+        "scale": [
+          0.82,
+          1,
+          0.82
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_dsf58i56",
+        "name": "Pasture Grove Pine 4",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          26,
+          0,
+          25
+        ],
+        "rotation": [
+          0,
+          1.2000000000000002,
+          0
+        ],
+        "scale": [
+          0.82,
+          1,
+          0.82
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_mtv0d31s",
+        "name": "Pasture Grove Pine 5",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -25,
+          0,
+          25
+        ],
+        "rotation": [
+          0,
+          1.6,
+          0
+        ],
+        "scale": [
+          0.82,
+          1,
+          0.82
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_6gmcfd1a",
+        "name": "Pasture Grove Pine 6",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          25,
+          0,
+          -25
+        ],
+        "rotation": [
+          0,
+          2,
+          0
+        ],
+        "scale": [
+          0.82,
+          1,
+          0.82
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_yq5t84sp",
+        "name": "Pasture Grove Pine 7",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -7,
+          0,
+          -25
+        ],
+        "rotation": [
+          0,
+          2.4000000000000004,
+          0
+        ],
+        "scale": [
+          0.82,
+          1,
+          0.82
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_zcj8xal1",
+        "name": "Pasture Grove Pine 8",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_z7jdtxo3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          7,
+          0,
+          25
+        ],
+        "rotation": [
+          0,
+          2.8000000000000003,
+          0
+        ],
+        "scale": [
+          0.82,
+          1,
+          0.82
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Nature",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_6gz4k32n",
+        "name": "Painted route 1",
+        "type": "st-road",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "terrain-paint"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_50rimxku"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          9,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0.7853981633974483,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Terrain",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/road",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_y2z3ny0w",
+        "name": "Painted route 2",
+        "type": "st-road",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "terrain-paint"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_50rimxku"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -9,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0.7853981633974483,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Terrain",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/road",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ibjt11mx",
+        "name": "Painted route 3",
+        "type": "st-road",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "terrain-paint"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_50rimxku"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          9
+        ],
+        "rotation": [
+          0,
+          0.7853981633974483,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Terrain",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/road",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ej9wue4x",
+        "name": "Painted route 4",
+        "type": "st-road",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "terrain-paint"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_50rimxku"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -9
+        ],
+        "rotation": [
+          0,
+          0.7853981633974483,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Terrain",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/road",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_2mhghkpq",
+        "name": "Painted route 5",
+        "type": "st-road",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "terrain-paint"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_50rimxku"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12,
+          0,
+          -12
+        ],
+        "rotation": [
+          0,
+          0.7853981633974483,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Terrain",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/road",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_kixb1nz6",
+        "name": "Painted route 6",
+        "type": "st-road",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "terrain-paint"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_50rimxku"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -12,
+          0,
+          12
+        ],
+        "rotation": [
+          0,
+          0.7853981633974483,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Terrain",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/road",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_zuidfo0k",
+        "name": "Worn pasture shortcut 1",
+        "type": "st-earth",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "terrain-paint"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_50rimxku"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -23,
+          0,
+          9
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Terrain",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/earth",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_ulx9wzgg",
+        "name": "Worn pasture shortcut 2",
+        "type": "st-earth",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "terrain-paint"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_50rimxku"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          23,
+          0,
+          -9
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Terrain",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/earth",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_6rw2nlps",
+        "name": "Worn pasture shortcut 3",
+        "type": "st-earth",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "terrain-paint"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_50rimxku"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          31
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Terrain",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/earth",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_7i0qf5ju",
+        "name": "Thorn shortcut 1",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          0,
+          10
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_kd1qovqz",
+        "name": "Thorn shortcut 2",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -22,
+          0,
+          9
+        ],
+        "rotation": [
+          0,
+          0.49,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_uyyaxwy3",
+        "name": "Thorn shortcut 3",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          0,
+          -10
+        ],
+        "rotation": [
+          0,
+          0.98,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_h4wn0glp",
+        "name": "Thorn shortcut 4",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          22,
+          0,
+          -9
+        ],
+        "rotation": [
+          0,
+          1.47,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_b160ru9f",
+        "name": "Thorn shortcut 5",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -10,
+          0,
+          -22
+        ],
+        "rotation": [
+          0,
+          1.96,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_06180pui",
+        "name": "Thorn shortcut 6",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -9,
+          0,
+          -20
+        ],
+        "rotation": [
+          0,
+          2.45,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_38e3hys7",
+        "name": "Thorn shortcut 7",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          10,
+          0,
+          22
+        ],
+        "rotation": [
+          0,
+          2.94,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_g0w8k2ds",
+        "name": "Thorn shortcut 8",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          9,
+          0,
+          20
+        ],
+        "rotation": [
+          0,
+          3.4299999999999997,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_1zrihaa4",
+        "name": "Thorn shortcut 9",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -31,
+          0,
+          17
+        ],
+        "rotation": [
+          0,
+          3.92,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_5k0wmbxj",
+        "name": "Thorn shortcut 10",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          31,
+          0,
+          -17
+        ],
+        "rotation": [
+          0,
+          4.41,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_81baw3yo",
+        "name": "Thorn shortcut 11",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -14,
+          0,
+          4
+        ],
+        "rotation": [
+          0,
+          4.9,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_v6q9qw0o",
+        "name": "Thorn shortcut 12",
+        "type": "st-thorn",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_abvjba07"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          14,
+          0,
+          -4
+        ],
+        "rotation": [
+          0,
+          5.39,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/thorn",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_gqaqm63g",
+        "name": "Protected merchant grounds 1",
+        "type": "st-zone",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "no-build",
+          "editor-guide"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_h2ox1z9x"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -32,
+          0,
+          -32
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/zone",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_0mg9nx6g",
+        "name": "Protected merchant grounds 2",
+        "type": "st-zone",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "no-build",
+          "editor-guide"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_h2ox1z9x"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          32,
+          0,
+          32
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Landmarks",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/zone",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_s9p2h9a7",
+        "name": "Kami · Your Sheep",
+        "type": "st-sheep",
+        "team": "blue",
+        "baked": true,
+        "role": "sheep",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_iw7zc6eo"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -18,
+          0,
+          18
+        ],
+        "rotation": [
+          0,
+          2.356194490192345,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Spawns",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/sheep",
+        "colliderRadius": 0.27,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_gkc9lsgn",
+        "name": "Clover",
+        "type": "st-sheep",
+        "team": "blue",
+        "baked": true,
+        "role": "sheep",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_iw7zc6eo"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          18,
+          0,
+          18
+        ],
+        "rotation": [
+          0,
+          -2.356194490192345,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Spawns",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/sheep",
+        "colliderRadius": 0.27,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_8z6jk1pi",
+        "name": "Biscuit",
+        "type": "st-sheep",
+        "team": "blue",
+        "baked": true,
+        "role": "sheep",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_iw7zc6eo"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -18,
+          0,
+          -18
+        ],
+        "rotation": [
+          0,
+          0.7853981633974483,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Spawns",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/sheep",
+        "colliderRadius": 0.27,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_4cyx6eaa",
+        "name": "Mallow",
+        "type": "st-sheep",
+        "team": "blue",
+        "baked": true,
+        "role": "sheep",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_iw7zc6eo"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          18,
+          0,
+          -18
+        ],
+        "rotation": [
+          0,
+          -0.7853981633974483,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Spawns",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/sheep",
+        "colliderRadius": 0.27,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_uppr72kf",
+        "name": "Juniper",
+        "type": "st-sheep",
+        "team": "blue",
+        "baked": true,
+        "role": "sheep",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_iw7zc6eo"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -27,
+          0,
+          3
+        ],
+        "rotation": [
+          0,
+          1.6814535479687922,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Spawns",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/sheep",
+        "colliderRadius": 0.27,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_na8yxo2b",
+        "name": "Pebble",
+        "type": "st-sheep",
+        "team": "blue",
+        "baked": true,
+        "role": "sheep",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_iw7zc6eo"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          27,
+          0,
+          -3
+        ],
+        "rotation": [
+          0,
+          -1.460139105621001,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Spawns",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/sheep",
+        "colliderRadius": 0.27,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_7tzr33y2",
+        "name": "Fern",
+        "type": "st-sheep",
+        "team": "blue",
+        "baked": true,
+        "role": "sheep",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_iw7zc6eo"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          26
+        ],
+        "rotation": [
+          0,
+          -3.141592653589793,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Spawns",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/sheep",
+        "colliderRadius": 0.27,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_afcq1lhl",
+        "name": "Moon",
+        "type": "st-sheep",
+        "team": "blue",
+        "baked": true,
+        "role": "sheep",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_iw7zc6eo"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -26
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Spawns",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/sheep",
+        "colliderRadius": 0.27,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_3lngzykb",
+        "name": "Shadowpaw",
+        "type": "st-wolf",
+        "team": "red",
+        "baked": true,
+        "role": "wolf",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_iw7zc6eo"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -6,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          -1.5707963267948966,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Spawns",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/wolf",
+        "colliderRadius": 0.68,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_puuaddu8",
+        "name": "Ashfang",
+        "type": "st-wolf",
+        "team": "red",
+        "baked": true,
+        "role": "wolf",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_iw7zc6eo"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          6,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Spawns",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/wolf",
+        "colliderRadius": 0.68,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "a_vm3bkigo",
+        "name": "Briarclaw",
+        "type": "st-wolf",
+        "team": "red",
+        "baked": true,
+        "role": "wolf",
+        "tags": [
+          "sheep-tag"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "layer-a_iw7zc6eo"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          6
+        ],
+        "rotation": [
+          0,
+          1.5707963267948966,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Spawns",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/wolf",
+        "colliderRadius": 0.68,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      }
+    ]
+  }
+}

@@ -86,6 +86,7 @@ async function loadFixture(page,canonical,farm,options={}){
   const wolves=actors.filter(a=>a.type==='st-wolf').slice(0,1);
   const shop=actors.find(a=>a.type==='st-shop');
   const keep=actors.filter(a=>a.type==='st-meadow'||a.type==='st-pen');
+  keep.find(a=>a.type==='st-pen').position=options.pen||[0,0,0];
   sheep.forEach((a,index)=>{a.position=options.sheep?.[index]||[18,0,-18];a.rotation=[0,0,0];});
   wolves[0].position=options.wolf||[-18,0,18];wolves[0].rotation=[0,0,0];
   data.scene.actors=[...keep,...sheep,...wolves,...(options.shops||[]).map((position,index)=>
@@ -93,11 +94,12 @@ async function loadFixture(page,canonical,farm,options={}){
     ...(options.farms||[]).map((position,index)=>
     ({...structuredClone(farm),id:'acceptance-farm-'+index,name:'Authored acceptance farm '+index,
       baked:true,position,rotation:[0,0,0],scale:[1,1,1]}))];
-  data.project.sheepTag={duration:1200,headstart:30,bounds:40,startGold:200,role:'sheep',...options.rules};
+  data.project.sheepTag={...canonical.project.sheepTag,duration:1200,headstart:30,bounds:40,startGold:200,role:'sheep',preset:'classic',fogMode:'off',sheepSpeed:5.4,wolfSpeed:6.2,wolfDamage:65,attackInterval:.75,rescueHold:.2,thorns:false,totems:false,elevated:false,split:false,events:false,...options.rules};
   await page.evaluate(data=>window.SWYRL_ENGINE_AGENT.loadScene(data),data);
   await frames(page,2);
   assert.deepEqual(authored(await saved(page)),authored(data),'Native import changed the authored fixture');
   await nativeButton(page,'playBtn');
+  assert.equal((await state(page)).active,true,'Authored fixture failed Play preflight: '+JSON.stringify(await page.evaluate(()=>window.SWYRL_ENGINE_SHEEP_TAG.validateStarts())));
   return {data,sheep:sheep.map(a=>a.id),wolf:wolves[0].id};
 }
 async function visibleBuildSite(page,kind){
@@ -137,16 +139,17 @@ try{
     await page.locator('#perfPreset').selectOption('medium',{force:true});
     await page.evaluate(()=>window.__sheepTestClock.freeze());await frames(page,2);
     const canonical=await saved(page);
-    assert.equal(canonical.version,10,'Wrong sealed engine release');
+    assert.equal(canonical.version,10.1,'Wrong native project release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.1','Wrong sealed engine release');
     assert.equal(canonical.project.kind,'sheep-tag');
     assert.equal(canonical.project.sheepTag.duration,1200,'Classic starter survival timer changed');
     assert.equal(canonical.project.sheepTag.headstart,30,'Sheep need a real building head start');
-    assert.equal(canonical.scene.actors.filter(a=>a.type==='st-sheep').length,6);
-    assert.equal(canonical.scene.actors.filter(a=>a.type==='st-wolf').length,2);
+    assert.equal(canonical.scene.actors.filter(a=>a.type==='st-sheep').length,8);
+    assert.equal(canonical.scene.actors.filter(a=>a.type==='st-wolf').length,3);
     assert.equal(canonical.scene.actors.filter(a=>a.type==='st-pen').length,1);
     assert.ok(canonical.scene.actors.some(a=>a.type==='st-tree')&&canonical.scene.actors.some(a=>a.type==='st-pond'),
       'Starter map lacks its native woodland, water, and escape spaces');
-    assert.ok(canonical.editor.layers.length>=4,'Map scenery, pen, and spawns do not have editable layers');
+    assert.ok(canonical.editor.layers.length>=6,'Map scenery, pen, and spawns do not have editable layers');
     for(const actor of canonical.scene.actors)assert.ok(actor.editorLayerIds?.length&&actor.baked,'Starter has an unlayered or unbaked actor: '+actor.name);
     const initialRules=canonical.project.sheepTag;
     await tap(page,'sheepTagRulesBtn');
@@ -177,7 +180,7 @@ try{
     await nativeButton(page,'playBtn');
     let s=await state(page);assert.equal(s.active,true);assert.equal(s.role,'sheep');
     const unreleasedWolves=s.units.filter(u=>u.kind==='wolf').map(u=>({id:u.id,pos:u.pos}));
-    assert.equal(s.units.length,8);assert.ok(s.headstartRemaining>29,'Hunt skipped its head start');
+    assert.equal(s.units.length,11);assert.ok(s.headstartRemaining>29,'Hunt skipped its head start');
     assert.equal(await page.locator('#sheepTagHUD').isVisible(),true,'Native Play did not open the game controls');
     assert.equal(await page.evaluate(()=>document.pointerLockElement),null,'RTS player entered first person pointer lock');
     const metrics=await page.locator('#stBuildFarm,#stBuildIncome,#stBuildFort,#stPause,#stStop,#stRestart,#stSelectMine').evaluateAll(buttons=>buttons.map(button=>{
@@ -192,8 +195,8 @@ try{
     const controlled=s.units.find(u=>u.id===s.controlledId),moveSite={x:controlled.pos[0],z:controlled.pos[2]-6};
     await tap(page,'stSelectMine');await worldTap(page,moveSite.x,moveSite.z);
     s=await until(page,s=>distance(s.units.find(u=>u.id===s.controlledId).pos,[moveSite.x,0,moveSite.z])<.6,'Visible canvas move');
+    await tap(page,'stBuildIncome');assert.equal(await page.locator('#stBuildIncome').getAttribute('aria-pressed'),'true');await frames(page,1);
     const site=await visibleBuildSite(page,'st-income'),beforeBuild=await state(page);
-    await tap(page,'stBuildIncome');assert.equal(await page.locator('#stBuildIncome').getAttribute('aria-pressed'),'true');
     await worldTap(page,site.x,site.z);
     let constructing=await until(page,s=>s.buildings.some(b=>b.owner===s.controlledId&&b.kind==='st-income'),'Visible construction order',200);
     const income=constructing.buildings.find(b=>b.owner===constructing.controlledId&&b.kind==='st-income');
@@ -224,8 +227,9 @@ try{
     assert.ok(!s.buildings.some(b=>b.id===income.id),'Visible Sell did not clear the selected owned farm');
     close(s.gold-beforeSell.gold,55,'Upgraded income farm sell refund');
     await tap(page,'stSelectMine');
+    await tap(page,'stBuildFarm');await frames(page,1);
     const freeSite=await visibleBuildSite(page,'st-farm'),beforeFree=await state(page);
-    await tap(page,'stBuildFarm');await worldTap(page,freeSite.x,freeSite.z);
+    await worldTap(page,freeSite.x,freeSite.z);
     s=await until(page,s=>s.buildings.some(b=>b.owner===s.controlledId&&b.kind==='st-farm'),'Visible free farm construction',150);
     assert.ok(s.gold>=beforeFree.gold,'Free blocking farm incorrectly spent the sheep’s gold');
     const freeFarm=s.buildings.find(b=>b.owner===s.controlledId&&b.kind==='st-farm');
@@ -244,12 +248,12 @@ try{
     // Continuous authored farm wall: sheep fit its 0.6-unit gaps; larger wolves
     // cannot route through or around its boundary-to-boundary barrier.
     const wall=[];for(let x=-15;x<=15;x+=3)wall.push([x,0,0]);
-    await loadFixture(page,canonical,farm,{sheep:[[1.5,0,-6]],wolf:[10,0,10],farms:wall,rules:{bounds:16}});
+    await loadFixture(page,canonical,farm,{sheep:[[1.5,0,-6]],wolf:[10,0,10],farms:wall,pen:[-10,0,10],rules:{bounds:16}});
     assert.equal((await command(page,'move',{x:1.5,z:6})).ok,true,'Sheep cannot enter its narrow farm passage');
     s=await until(page,s=>s.units.find(u=>u.controlled).pos[2]>5.5,'Sheep-only passage',150);
     assert.ok(s.units.find(u=>u.controlled).pos[0]>1.2&&s.units.find(u=>u.controlled).pos[0]<1.8,'Sheep crossed through a farm rather than the gap');
     await tap(page,'stStop');await frames(page,1);
-    await loadFixture(page,canonical,farm,{sheep:[[10,0,10]],wolf:[1.5,0,-6],farms:wall,rules:{bounds:16,role:'wolf',headstart:0}});
+    await loadFixture(page,canonical,farm,{sheep:[[10,0,10]],wolf:[1.5,0,-6],farms:wall,pen:[-10,0,10],rules:{bounds:16,role:'wolf',headstart:0}});
     const wolfBefore=(await state(page)).units.find(u=>u.controlled).pos;
     const blocked=await command(page,'move',{x:1.5,z:6});assert.equal(blocked.ok,false,'Wolf fitted into the sheep-only farm gap');
     assert.match(blocked.reason,/route/i);await frames(page,5);
