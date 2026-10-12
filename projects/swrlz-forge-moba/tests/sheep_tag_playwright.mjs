@@ -107,6 +107,12 @@ async function loadFixture(page,canonical,farm,options={}){
 }
 async function visibleBuildSite(page,kind){
   const s=await state(page),unit=s.units.find(u=>u.id===s.controlledId);
+  // Frame nearby sites in the usable phone playfield after the build controls
+  // open, leaving room below the preview for its actual finger position.
+  if(touchPages.has(page)){
+    await page.evaluate(pos=>window.SWYRL_ENGINE_SHEEP_TAG.focus(pos),[unit.pos[0],0,unit.pos[2]+8]);
+    await frames(page,1);
+  }
   const sites=[];
   for(const [dx,dz] of [[3,0],[-3,0],[0,-3],[0,3],[3,-3],[-3,3],[6,0],[-6,0],[0,-6],[0,6]]){
     const fit=await page.evaluate(({kind,x,z})=>window.SWYRL_ENGINE_SHEEP_TAG.canBuild(kind,x,z),
