@@ -205,6 +205,7 @@
     .top-edge::after{content:"";position:absolute;left:50px;right:10px;bottom:0;height:1px;background:linear-gradient(90deg,rgba(56,232,255,.48),rgba(165,120,255,.16),transparent 82%);pointer-events:none}
     .top-brand{display:flex;align-items:center;gap:7px;min-width:0}.top-brand-mark{width:24px;height:24px;border-radius:7px;object-fit:cover;border:1px solid rgba(126,214,255,.34);box-shadow:0 0 16px rgba(56,232,255,.11)}.top-brand-name{font-size:12px;font-weight:800;letter-spacing:.08em;color:#e6fbff;white-space:nowrap}
     .top-thread{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;color:#cfe3ee;font-size:12px;font-weight:650;letter-spacing:.01em}
+    .top-thread .github-thread-subtitle{display:block;color:#90d9ff;font-size:9px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .top-status{display:flex;align-items:center;gap:6px;min-width:0;font-family:var(--font-telemetry);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#9dbacb}.top-model{padding:4px 6px;border:1px solid rgba(165,120,255,.24);border-radius:7px;background:rgba(88,59,132,.15);color:#d8c7ff}.ready-dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 9px rgba(104,244,207,.48)}.top-edge[data-state="busy"] .ready-dot{background:var(--cyan);box-shadow:0 0 10px rgba(56,232,255,.62);animation:swrlzSignal 2.4s ease-in-out infinite}.top-edge[data-state="error"] .ready-dot{background:var(--danger);box-shadow:0 0 10px rgba(255,107,122,.48)}
     @keyframes swrlzSignal{0%,100%{opacity:.56;transform:scale(.9)}50%{opacity:1;transform:scale(1.2)}}
     .menu-shade{background:rgba(0,8,18,.72);backdrop-filter:blur(3px)}
@@ -944,6 +945,13 @@
         const title=thread?.title || "New conversation";
         if(topThreadTitle.textContent!==title) topThreadTitle.textContent=title;
         topThreadTitle.title=title;
+        topThreadTitle.querySelector(".github-thread-subtitle")?.remove();
+        const repo=thread?.githubContext?.repo,branch=thread?.githubContext?.branch;
+        if(repo&&branch){
+          const sub=document.createElement("small");sub.className="github-thread-subtitle";
+          sub.textContent="GitHub · "+repo.split("/").pop()+" · "+branch;
+          sub.title=repo+" · "+branch+" (read-only)";topThreadTitle.appendChild(sub);
+        }
       };
       const companionStates=new Set(["idle","listen","accepted","thinking","acting","responding","approval","error"]);
       const setCompanionState=(next,source="ui")=>{
