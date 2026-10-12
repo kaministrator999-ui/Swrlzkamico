@@ -1134,7 +1134,10 @@ def _github_command(user, prompt):
                 ("\n(Truncated to 12,000 characters.)" if len(obj["body"]) > 12000 else ""))
 
     if lower == "largest" or lower.startswith("largest "):
-        scope = cmd[8:].strip() if len(cmd) > 7 else ""
+        raw = cmd[8:].strip() if len(cmd) > 7 else ""
+        size_match = re.fullmatch(r"(\d{1,2})(?:\s+(.*))?",raw)
+        limit = max(1,min(30,int(size_match[1]))) if size_match else 15
+        scope = (size_match[2] or "").strip() if size_match else raw
         try:
             snapshot = explorer.pinned_tree(_api, rec["token"], repo, check["defaultBranch"])
             target = explorer.safe_path(scope)
@@ -1146,8 +1149,8 @@ def _github_command(user, prompt):
             return ("## GitHub largest files\nRepository: "+repo+
                     "\nBranch: "+snapshot["branch"]+"\nRevision: "+snapshot["sourceSha"]+
                     "\nScope: "+(target or "/")+"\n"+
-                    "\n".join("- "+str(x["sizeBytes"])+" bytes · "+x["path"] for x in candidates[:15])+
-                    ("\n(Top 15 files by Git blob bytes.)" if len(candidates)>15 else ""))
+                    "\n".join("- "+str(x["sizeBytes"])+" bytes · "+x["path"] for x in candidates[:limit])+
+                    ("\n(Top 15 files by Git blob bytes.)" if len(candidates)>limit else ""))
         except explorer.ExplorerError as exc:
             return "Could not verify largest-file list: "+str(exc)
     if lower.startswith("search "):
@@ -1319,8 +1322,9 @@ def _implicit_repo_command(prompt, context):
         return "@GitHub stats" + scope
     if re.fullmatch(r"(?:list|show|browse|open)\s+(?:the )?(?:files|folders|directory|contents)(?: (?:here|in (?:here|this (?:directory|folder|repo|repository))))?",q):
         return "@GitHub files" + scope
-    if re.fullmatch(r"(?:show|list|what are)\s+(?:the )?(?:largest|biggest)(?: \d{1,2})? (?:files|items)(?: (?:in|here).*)?", q):
-        return "@GitHub largest" + scope
+    largest = re.fullmatch(r"(?:show|list|what are)\s+(?:the )?(?:largest|biggest)(?: (\d{1,2}))? (?:files|items)(?: (?:in|here).*)?", q)
+    if largest:
+        return "@GitHub largest " + str(max(1,min(30,int(largest[1] or 15)))) + scope
     if re.fullmatch(r"(?:when was|when did|what is)\s+(?:that|the|this) (?:file|source)(?: (?:last )?(?:changed|modified|created|added))?",q) and last_file:
         return "@GitHub history " + last_file
     if re.fullmatch(r"(?:read|open|show)(?: me)? (?:that|this|the previous|the last) file",q) and last_file:
@@ -1328,6 +1332,7 @@ def _implicit_repo_command(prompt, context):
     filetype = re.fullmatch(r"(?:show|find|list|which|how many)\s+(?:the |all )?([a-z0-9+#.-]{2,24}) files(?: (?:here|in (?:this directory|the repo)))?",q)
     if filetype:
         suffix = filetype[1]
+        suffix = {"python":".py","javascript":".js","typescript":".ts","kotlin":".kt","markdown":".md","json":".json","html":".html","css":".css","java":".java","yaml":".yml"}.get(suffix,suffix)
         return "@GitHub search " + (suffix if suffix.startswith(".") else "."+suffix)
     term = re.fullmatch(r"(?:where (?:is|are)|find|which files? (?:handle|contain|implement))\s+(?:the )?([a-z0-9_. -]{2,60})(?: (?:files?|code|implementation))?",q)
     if term:
