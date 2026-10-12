@@ -1,4 +1,4 @@
-name: Validate §E v10.0 independent anime cel layers
+name: Validate §E v10.1 independent anime cel layers
 
 on:
   push:
@@ -9,6 +9,9 @@ on:
       - "projects/swrlz-forge-moba/patches/v10_0_sheep_tag.py"
       - "projects/swrlz-forge-moba/scenes/sheep-tag-meadow.swyrl.json"
       - "projects/swrlz-forge-moba/tests/sheep_tag_playwright.mjs"
+      - "projects/swrlz-forge-moba/patches/v10_1_sheep_tag_archive.py"
+      - "projects/swrlz-forge-moba/scenes/sheep-tag-moonbell-archive.swyrl.json"
+      - "projects/swrlz-forge-moba/tests/sheep_archive_playwright.mjs"
       - "projects/swrlz-forge-moba/patches/**"
       - "projects/swrlz-forge-moba/runtime/**"
       - "projects/swrlz-forge-moba/tests/episode_transport_playwright.mjs"
@@ -41,7 +44,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Independently reconstruct sealed v10.0 source
+      - name: Independently reconstruct sealed v10.1 source
         run: |
           python - <<'PY'
           import base64,gzip,hashlib,json,runpy
@@ -52,15 +55,15 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes']
           assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
-          assert len(manifest['patches'])==60
-          assert manifest['patches'][-1]=='patches/v10_0_sheep_tag.py'
+          assert len(manifest['patches'])==61
+          assert manifest['patches'][-1]=='patches/v10_1_sheep_tag_archive.py'
           source=raw.decode('utf-8')
           for patch in manifest['patches']:
               source=mod['load_patch'](root/patch)(source)
           output=source.encode('utf-8')
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
-          for feature in ('V10_0_SHEEP_TAG_STARTER','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.0',
+          for feature in ('V10_1_SHEEP_TAG_ARCHIVE','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.1',
                           'CANONICAL_ANIME_EPISODE_PROJECT','SWYRL_ENGINE_CINEMATIC',
                           'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1',
@@ -78,11 +81,11 @@ jobs:
           Path('/tmp/swyrl-anime-engine.mjs').write_text(source[begin:source.rindex('</script>')],encoding='utf-8')
           print('ENGINE_EXPECTED_BYTES='+str(len(output)))
           print('ENGINE_EXPECTED_SHA256='+hashlib.sha256(output).hexdigest())
-          print('CANDIDATE_60_PATCH_RECONSTRUCT_OK')
+          print('CANDIDATE_61_PATCH_RECONSTRUCT_OK')
           PY
           node --check /tmp/swyrl-anime-engine.mjs
           python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
-      - name: Verify complete v10.0 package against source and manifest
+      - name: Verify complete v10.1 package against source and manifest
         run: |
           python projects/swrlz-forge-moba/build_space.py --output /tmp/swyrl-anime-cel-test
           cmp /tmp/swyrl-anime-engine.html /tmp/swyrl-anime-cel-test/index.html
@@ -96,8 +99,8 @@ jobs:
           assert receipt['finalBytes']==manifest['finalBytes']
           assert receipt['finalSha256']==manifest['finalSha256']
           assert receipt['patches']==manifest['patches']
-          assert len(receipt['patches'])==60
-          assert receipt['patches'][-1]=='patches/v10_0_sheep_tag.py'
+          assert len(receipt['patches'])==61
+          assert receipt['patches'][-1]=='patches/v10_1_sheep_tag_archive.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
@@ -108,14 +111,15 @@ jobs:
                     'scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json',
-                    'scenes/sheep-tag-meadow.swyrl.json'}
+                    'scenes/sheep-tag-meadow.swyrl.json',
+                    'scenes/sheep-tag-moonbell-archive.swyrl.json'}
           expected.update('assets/anime/'+name+'.png' for name in (
               'kami','swyrlz','cathedral','workshop','foreground','kami-rig',
               'swyrlz-rig','scenery-parts','kami-grip-layers',
               'mage-faces-painted','kami-full-staff'))
           assert {p.relative_to(root).as_posix() for p in (root/'assets/anime').glob('*.png')}=={p for p in expected if p.endswith('.png')}
           assert set(receipt['assets'])==expected
-          assert len(receipt['assets'])==22
+          assert len(receipt['assets'])==23
           meadow=json.loads((out/'scenes/sheep-tag-meadow.swyrl.json').read_text())
           assert meadow['project']['canonicalId']=='sheep-tag-meadow'
           assert meadow['project']['kind']=='sheep-tag'
@@ -128,12 +132,58 @@ jobs:
           meadow_layers=meadow['editor']['layers']
           assert len(meadow_layers)==4
           assert all(any(layer['id'] in actor['editorLayerIds'] for actor in meadow_actors) for layer in meadow_layers)
+          assert len({actor['id'] for actor in meadow_actors})==66
+          archive=json.loads((out/'scenes/sheep-tag-moonbell-archive.swyrl.json').read_text())
+          assert archive['project']['canonicalId']=='sheep-tag-meadow'
+          assert archive['project']['kind']=='sheep-tag'
+          archive_rules=archive['project']['sheepTag']
+          required_rules={'duration','headstart','bounds','startGold','role','preset','buildSnap',
+                          'sheepSpeed','wolfSpeed','wolfDamage','attackInterval','farmHp','incomeHp',
+                          'fortHp','sheepRadius','wolfRadius','houseLimit','fogMode','sheepVision',
+                          'wolfVision','rescueProtection','rescueHold','thorns','totems','elevated',
+                          'split','events','thornChance','thornDuration','thornCooldown','scentInterval',
+                          'densityRadius','totemRadius','fadeSeconds','revealSeconds','totemLimit',
+                          'totemCooldown','wallCost','rampCost','wallHp','rampHp','wallHeight',
+                          'wolvesUseRamps','splitUnlock','progressionSeconds','rescueXp',
+                          'splitCooldown','splitLifetime','eventInterval','eventWarning',
+                          'eventDuration','eventPool','seed','permittedStructures'}
+          assert required_rules.issubset(archive_rules),required_rules-set(archive_rules)
+          for key,value in {'preset':'archive','duration':1200,'headstart':30,'bounds':40,
+                            'startGold':80,'role':'sheep','buildSnap':0.15,'houseLimit':28,
+                            'fogMode':'team','thorns':True,'totems':True,'elevated':True,
+                            'split':True,'events':False,'wolvesUseRamps':True,'seed':0}.items():
+              assert archive_rules[key]==value,key
+          assert all(type(archive_rules[key]) is bool for key in ('thorns','totems','elevated','split','events','wolvesUseRamps'))
+          assert archive_rules['totemLimit'] in ('once','cooldown')
+          assert archive_rules['eventPool']==['pressure','fog','supply']
+          assert archive_rules['permittedStructures']==['st-farm','st-income','st-fort','st-wall','st-ramp']
+          numeric_rules=required_rules-{'role','preset','fogMode','thorns','totems','elevated',
+                                        'split','events','totemLimit','wolvesUseRamps','eventPool','permittedStructures'}
+          assert all(type(archive_rules[key]) in (int,float) and
+                     archive_rules[key]==archive_rules[key] and abs(archive_rules[key])<1e9
+                     for key in numeric_rules)
+          archive_actors=archive['scene']['actors']
+          assert len(archive_actors)==92
+          assert len({actor['id'] for actor in archive_actors})==92
+          for kind,count in (('st-sheep',8),('st-wolf',3),('st-pen',1),('st-meadow',1),
+                             ('st-shop',4),('st-thorn',12),('st-zone',2)):
+              assert sum(actor['type']==kind for actor in archive_actors)==count,kind
+          assert sum(actor['type'] in ('st-road','st-grass','st-earth') for actor in archive_actors)==9
+          assert not any(actor['type'] in ('st-farm','st-income','st-fort','st-wall','st-ramp','st-totem') for actor in archive_actors)
+          assert all(actor['baked'] and actor['visible'] for actor in archive_actors)
+          archive_layers=archive['editor']['layers']
+          assert len(archive_layers)==6
+          assert len({layer['id'] for layer in archive_layers})==6
+          assert all(any(layer['id'] in actor['editorLayerIds'] for actor in archive_actors)
+                     for layer in archive_layers)
+          assert all(any(layer['id'] in actor['editorLayerIds'] for layer in archive_layers)
+                     for actor in archive_actors)
           for asset,data in receipt['assets'].items():
               packed=(out/asset).read_bytes()
               assert (root/asset).read_bytes()==packed, asset
               assert len(packed)==data['bytes'], asset
               assert hashlib.sha256(packed).hexdigest()==data['sha256'], asset
-          print('PACKAGING_60_PATCHES_AND_ALL_ASSETS_VERIFIED')
+          print('PACKAGING_61_PATCHES_AND_ALL_ASSETS_VERIFIED')
           PY
       - name: Check browser acceptance suite syntax
         run: |
@@ -150,7 +200,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: v10-0-anime-cel-browser-views
+          name: v10-1-anime-cel-browser-views
           path: |
             native-anime-*.png
             storybook-acceptance/

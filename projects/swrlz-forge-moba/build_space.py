@@ -70,7 +70,8 @@ def main():
     assets = {}
     media_paths = ["episodes/ghosts-in-different-forms-ep01.html",
                    "scenes/ghosts-in-different-forms-ep01.swyrl.json",
-                   "scenes/sheep-tag-meadow.swyrl.json"]
+                   "scenes/sheep-tag-meadow.swyrl.json",
+                   "scenes/sheep-tag-moonbell-archive.swyrl.json"]
     for authored in ("scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json",
                      "scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json",
                      "scenes/ghosts-in-different-forms-ep01-depth.swyrl.json",

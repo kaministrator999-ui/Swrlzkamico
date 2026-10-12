@@ -93,7 +93,7 @@ async function loadFixture(page,canonical,farm,options={}){
     ...(options.farms||[]).map((position,index)=>
     ({...structuredClone(farm),id:'acceptance-farm-'+index,name:'Authored acceptance farm '+index,
       baked:true,position,rotation:[0,0,0],scale:[1,1,1]}))];
-  data.project.sheepTag={duration:1200,headstart:30,bounds:40,startGold:200,role:'sheep',...options.rules};
+  data.project.sheepTag={...canonical.project.sheepTag,duration:1200,headstart:30,bounds:40,startGold:200,role:'sheep',preset:'classic',fogMode:'off',sheepSpeed:5.4,wolfSpeed:6.2,wolfDamage:65,attackInterval:.75,rescueHold:.2,thorns:false,totems:false,elevated:false,split:false,events:false,...options.rules};
   await page.evaluate(data=>window.SWYRL_ENGINE_AGENT.loadScene(data),data);
   await frames(page,2);
   assert.deepEqual(authored(await saved(page)),authored(data),'Native import changed the authored fixture');
@@ -137,16 +137,17 @@ try{
     await page.locator('#perfPreset').selectOption('medium',{force:true});
     await page.evaluate(()=>window.__sheepTestClock.freeze());await frames(page,2);
     const canonical=await saved(page);
-    assert.equal(canonical.version,10,'Wrong sealed engine release');
+    assert.equal(canonical.version,10.1,'Wrong native project release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.1','Wrong sealed engine release');
     assert.equal(canonical.project.kind,'sheep-tag');
     assert.equal(canonical.project.sheepTag.duration,1200,'Classic starter survival timer changed');
     assert.equal(canonical.project.sheepTag.headstart,30,'Sheep need a real building head start');
-    assert.equal(canonical.scene.actors.filter(a=>a.type==='st-sheep').length,6);
-    assert.equal(canonical.scene.actors.filter(a=>a.type==='st-wolf').length,2);
+    assert.equal(canonical.scene.actors.filter(a=>a.type==='st-sheep').length,8);
+    assert.equal(canonical.scene.actors.filter(a=>a.type==='st-wolf').length,3);
     assert.equal(canonical.scene.actors.filter(a=>a.type==='st-pen').length,1);
     assert.ok(canonical.scene.actors.some(a=>a.type==='st-tree')&&canonical.scene.actors.some(a=>a.type==='st-pond'),
       'Starter map lacks its native woodland, water, and escape spaces');
-    assert.ok(canonical.editor.layers.length>=4,'Map scenery, pen, and spawns do not have editable layers');
+    assert.ok(canonical.editor.layers.length>=6,'Map scenery, pen, and spawns do not have editable layers');
     for(const actor of canonical.scene.actors)assert.ok(actor.editorLayerIds?.length&&actor.baked,'Starter has an unlayered or unbaked actor: '+actor.name);
     const initialRules=canonical.project.sheepTag;
     await tap(page,'sheepTagRulesBtn');
@@ -177,7 +178,7 @@ try{
     await nativeButton(page,'playBtn');
     let s=await state(page);assert.equal(s.active,true);assert.equal(s.role,'sheep');
     const unreleasedWolves=s.units.filter(u=>u.kind==='wolf').map(u=>({id:u.id,pos:u.pos}));
-    assert.equal(s.units.length,8);assert.ok(s.headstartRemaining>29,'Hunt skipped its head start');
+    assert.equal(s.units.length,11);assert.ok(s.headstartRemaining>29,'Hunt skipped its head start');
     assert.equal(await page.locator('#sheepTagHUD').isVisible(),true,'Native Play did not open the game controls');
     assert.equal(await page.evaluate(()=>document.pointerLockElement),null,'RTS player entered first person pointer lock');
     const metrics=await page.locator('#stBuildFarm,#stBuildIncome,#stBuildFort,#stPause,#stStop,#stRestart,#stSelectMine').evaluateAll(buttons=>buttons.map(button=>{
