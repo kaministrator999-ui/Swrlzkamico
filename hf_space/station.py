@@ -996,6 +996,11 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 g["lastSeq"]+=1
                 if kind=="DELTA":
                     delta=str(event.get("text") or "");text+=delta;g["text"]=text
+                elif kind=="GITHUB_CONTEXT":
+                    candidate=github_connection.normalize_thread_context(event.get("context"))
+                    if candidate and isinstance(payload.get("githubAction"),dict):
+                        g["githubContext"]=candidate
+                        g["status"].append({"seq":g["lastSeq"],"phase":"GITHUB_CONTEXT_READY","reason":"Verified repository context available to this thread"})
                 elif kind=="PROJECT_CONTEXT":
                     candidate=project_thread_memory.normalize(event.get("context"))
                     if candidate:
@@ -1194,6 +1199,12 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 if context and user_id.startswith("google:"):
                     thread["projectContext"]=context
                     project_memory_receipt=(user_id,str(thread["id"]),context)
+            gh_context=github_connection.normalize_thread_context(g.get("githubContext")) if isinstance(payload.get("githubAction"),dict) else None
+            if gh_context:
+                previous=github_connection.normalize_thread_context(thread.get("githubContext"))
+                if previous and previous["repo"]==gh_context["repo"] and previous["directory"]==gh_context["directory"] and not gh_context["lastFile"]:
+                    gh_context["lastFile"]=previous["lastFile"]
+                thread["githubContext"]=gh_context
             intent=g.get("programmingIntent") if isinstance(g.get("programmingIntent"),dict) else {}
             if intent.get("codingTask"):
                 thread["programmingState"]=copy.deepcopy(intent)
@@ -1225,6 +1236,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 "structuredReceipt":copy.deepcopy(((intent.get("failureEvidence") or {}).get("receiptSemantics") or {}).get("structuredReceipt") or {}),
             } if intent.get("codingTask") else None
             telemetry_meta={}
+            if gh_context: telemetry_meta["githubContext"]=copy.deepcopy(gh_context)
             if response_cognition: telemetry_meta["responseCognition"]=response_cognition
             online_research=copy.deepcopy(g.get("onlineResearch") or {})
             online_sources=copy.deepcopy((g.get("sources") or [])[:24])
@@ -1582,6 +1594,18 @@ async def send(request:Request):
         if recovered_project and not isinstance(t.get("projectContext"),dict):
             t["projectContext"]=recovered_project
         active_project=copy.deepcopy(t.get("projectContext") or {})
+        active_github=github_connection.normalize_thread_context(t.get("githubContext"))
+        if not active_github:
+            for prior in reversed(t.get("messages") or []):
+                if prior.get("role")=="assistant" and isinstance((prior.get("meta") or {}).get("githubContext"),dict):
+                    active_github=github_connection.normalize_thread_context(prior["meta"]["githubContext"])
+                    if active_github:break
+        if active_github and google_owner.startswith("google:"):
+            try:
+                linked=github_connection._load(github_connection._config(),google_owner)
+                if not linked or str(linked.get("repo") or "").casefold()!=active_github["repo"].casefold():active_github=None
+            except Exception:active_github=None
+        else:active_github=None
         now_ms=int(time.time()*1000)
         temporal_context=_temporal_context(t["messages"],client_timezone,now_ms)
         # Attach up to three subsequent user turns to the most recent online
@@ -1672,9 +1696,10 @@ async def send(request:Request):
     if github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
         payload["githubStart"]={"userId":str((verified_account or {}).get("id") or "")}
-    elif github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt):
+    elif github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt) or (active_github and github_connection._implicit_repo_command(prompt,active_github)):
         _, verified_account = _account_session(request)
-        payload["githubAction"]={"userId":str((verified_account or {}).get("id") or ""), "prompt":prompt}
+        payload["githubAction"]={"userId":str((verified_account or {}).get("id") or ""), "prompt":prompt,
+                                 "githubContext":active_github}
 
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
