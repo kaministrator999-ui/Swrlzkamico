@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.109
-REVISION=1.5.109-engine-coding-mission-progress-and-ci-evidence
+VERSION=1.5.110
+REVISION=1.5.110-github-explorer-mobile-readonly-v223
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
