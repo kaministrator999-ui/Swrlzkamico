@@ -1,3 +1,23 @@
+## UPDATE FINISHED — 2026-10-12 — v224 nested GitHub folder Chat explorer parser correction
+
+**Result:** Source-level interactive Chat nested-directory bug corrected, three exact-source CI gates **SUCCESS**, guarded same-Space Hugging Face release **COMPLETED/SUCCESS**, atomic registered module versions confirmed through readback. Real signed-in owner/Android browser behavior remains **UNVERIFIED**.
+
+**Observed production defect:** `chat/§wyrlz/assets/github-explorer-v223.js:parseListing` accepted only headings beginning `GitHub directory: /`. The real `hf_space/github_connection.py` lists subfolders with relative headings such as `## GitHub directory: docs`. The custom explorer therefore rejected valid nested-folder outputs, presenting raw text despite otherwise functioning root browsing.
+
+**Architecture/repair:** Reused the existing v223 browser repository explorer, extended its pure filename-list parser to accept both root `/` and validated relative folder paths. Rejected traversal, malformed headings, embedded HTML-like file lines, and unrelated text. Exported a pure parser entry for deterministic JavaScript unit tests. No parallel file browser, new GitHub source, model-weight mutation, account migration, unauthorized repository write, OAuth escalation, or separate §E release. Primary Focus: Chat mobile GitHub source explorer; Focus Group Web Chat + read-only GitHub.
+
+**Exact source:** Published v223 source `feature/github-explorer-ui-v223@45cbeb928f9064025907f84213ac43931242fd70` → candidate `fix/github-explorer-subfolders-v224@2873e1a161d0a79b0156e22fbbda3b02a4f2a451`, [draft PR #128](https://github.com/kaministrator999-ui/Swrlzkamico/pull/128). Changed `chat/§wyrlz/assets/github-explorer-v223.js`; added `tests/test_github_directory_parser_v224.mjs`; modified three CI workflow definitions for explicit parser regression execution.
+
+**Three exact-source CI gates:** [GitHub account #38309058077](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38309058077), [HF Candidate Offline #38309089420](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38309089420), and [Mobile Integrity #38309089352](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38309089352) all **COMPLETED/SUCCESS** at exact candidate SHA. The Node regression parses root, docs, nested docs/engineering, hf_space, Unicode and truncation, and correctly rejects traversal/HTML-like/malformed lines.
+
+**Guarded Chat-only publication:** Existing `main:.deploy/HF_SPACE_REQUEST.txt` request commit `b6caa1f85b63132370de00949de7062b7591a07f`, source `2873e1a161d0a79b0156e22fbbda3b02a4f2a451`, target unchanged `kamiloki/Swyrlz`, nonce `2026-10-12-v224-nested-github-directory-parser-001`. [HF deploy #38309288881](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38309288881) **COMPLETED/SUCCESS** after R39 model/700M smoke test, rollback reference snapshot and guarded upload. New Space revision `3a841e1f996e695e94c085ae8a4ffb3be1d51589`, rollback `f21de3bf1f56090b3db343c9347561f49ba415a9`. Artifacts: release checkpoint `11773493630`, rollback checkpoint `11773348933`, predeploy reference `11773259267`, R39 compatibility `11774321316`. Receipt `DEPLOYED_UNVERIFIED`, `knownGood=false`: CI and upload do not prove an authenticated real-user UI session.
+
+**Version authority:** Atomic `runtime@1ecfd399709c950a2c0df7761f2f7b7a093adb63` over `c54c2753ea39809205ccb78a4beabeb959dcdca8`; verified readback Repository Work **1.0.164→1.0.165**, Server Runtime **2.3.376→2.3.377**, Web Chat **1.5.110→1.5.111**. LALM Engine **2.1.196**, Online Research **1.0.31**, Google Account **1.0.15**, Runtime Manifest **152** unchanged. No §E engine version or Space touched.
+
+**Next independent user acceptance:** In the signed-in Google + GitHub session, `@GitHub files` should open the interactive root explorer. Click a nested folder or ask `@GitHub files docs`; verify the same collapsible explorer, breadcrumbs, source file open, metadata sorting, folder stats, and follow-up "how many files are here?" uses that thread's selected repo/folder. Check read-only write denials remain intact. A completed automated release is not a claim of visual Android acceptance.
+
+**Status:** FINISHED — SOURCE + THREE GREEN CI + GUARDED SAME-SPACE CHAT RELEASE + VERIFIED MODULE LINEAGE; LIVE SIGNED-IN BROWSER ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-12 — v224 nested GitHub folders remain interactive in Chat
 
 **User intent:** Continue and finish the §wyrlz mobile GitHub explorer while leaving its production Stage-1 repository access read-only. Inspect the released v223 source and fix any actually evidenced behavior gaps before claiming full acceptance.
