@@ -1007,6 +1007,9 @@ def agent_events(data, model_generator=None):
     if github_project_v213.is_command(prompt):
         yield from github_project_v213.events(sys.modules[__name__], data)
         return
+    if engine_starter_pack_v215.is_command(prompt):
+        yield from engine_starter_pack_v215.events(sys.modules[__name__], data)
+        return
     if forge_project_tools_v213.is_command(prompt) or forge_project_tools_v213.is_conversation(prompt):
         yield from forge_project_tools_v213.events(sys.modules[__name__], data)
         return
