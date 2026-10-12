@@ -1542,7 +1542,7 @@ async def send(request:Request):
     route=next((r for r in routes() if r.model_id==model_id),None)
     prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
     # GitHub startup is Station-owned evidence retrieval and does not consume a model.
-    if route is None or (not route.available and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt))):
+    if route is None or (not route.available and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt))):
         raise HTTPException(422,"Selected model is not configured")
     profile=body.get("profile","")
     user_profile=body.get("userProfile","")
@@ -1626,7 +1626,7 @@ async def send(request:Request):
     # Treat private history like an evidence provider, not model training or
     # instructions. Explicit historical lookups span native account chat and
     # imported ChatGPT archives, and can constrain actual message timestamps.
-    if google_owner.startswith("google:") and not count_kind and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt)):
+    if google_owner.startswith("google:") and not count_kind and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt)):
         historical=""
         try:
             if personal_history_lookup.relevant(prompt,history) and not chatgpt_account_memory.enabled(google_owner):
@@ -1664,7 +1664,7 @@ async def send(request:Request):
     if github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
         payload["githubStart"]={"userId":str((verified_account or {}).get("id") or "")}
-    elif github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt):
+    elif github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt):
         _, verified_account = _account_session(request)
         payload["githubAction"]={"userId":str((verified_account or {}).get("id") or ""), "prompt":prompt}
 
