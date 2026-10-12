@@ -136,7 +136,7 @@ def _candidate_paths(gh, rec, repo, sha, goal):
     # Strong name-level source relevance, or no edit is proposed.
     if not matches or matches[0][0]<3:
         return []
-    return [x[1] for x in matches[:35]]
+    return [x[1] for x in matches if x[0]>=3][:35]
 
 
 def _pick_model_events(model, goal, candidates):
