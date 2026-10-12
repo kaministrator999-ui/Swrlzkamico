@@ -140,7 +140,7 @@ def _propose(gh, cfg, rec, user, repo, seed, dest, branch):
         "The ONE atomic Git commit will create exactly these TWO files:\n" +
         "\n".join("- " + path for path, _ in files) +
         "\nBoth copies preserve the seed's existing actor arrangement and gameplay type. "
-        "The descriptor records source hashes and required future engine work; it is NOT an installed "
+        "This starter is draft-unregistered. The descriptor records source hashes and future work; it is NOT an installed "
         "Projects card, independent mode or live game. No build/merge/deploy authorized.\n"
         "To approve this exact source snapshot once, send @GitHub confirm " + code + " within 10 minutes."
     )
