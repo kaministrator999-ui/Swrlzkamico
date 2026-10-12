@@ -78,7 +78,7 @@ def _compare(gh, token, repo, base, head):
 
 
 def _n(value, cap=200):
-    return str(value or "").replace("\r", " ").replace("\n", " ").replace(chr(96)*3, "'''")[:cap]
+    return str(value if value is not None else "").replace("\r", " ").replace("\n", " ").replace(chr(96)*3, "'''")[:cap]
 
 
 def _sha(value):
