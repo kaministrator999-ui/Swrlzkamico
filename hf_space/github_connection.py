@@ -30,7 +30,32 @@ router = APIRouter()
 GITHUB_API = "https://api.github.com"
 GITHUB_AUTH = "https://github.com/login/oauth/authorize"
 GITHUB_TOKEN = "https://github.com/login/oauth/access_token"
-GITHUB_SCOPE = "read:user"  # least-privilege default; upgrades only on explicit request
+GITHUB_SCOPE = "read:user"  # read-only repository stage, no write scope upgrades
+# Source-controlled learning ladder. A later stage requires separately reviewed code
+# and tests; neither the model, chat command nor OAuth token can unlock a stage.
+GITHUB_CAPABILITY_STAGE = "read-repository"
+_READ_STAGE_DESCRIPTION = ("GitHub Stage 1: repository reading only. Enabled: list directories, "
+                           "read existing files and inspect startup documents. "
+                           "File creation, editing, deletion, branches, issues, PRs, "
+                           "workflow mutations and deployments are disabled.")
+
+
+def _read_stage_command(prompt):
+    """Tiny explicit allowlist; all legacy GitHub tool families remain locked."""
+    match = re.fullmatch(r"@github\s+(.+)", str(prompt or "").strip(), re.I | re.S)
+    if not match:
+        return False
+    cmd = match[1].strip().lower()
+    return bool(cmd in ("help", "permissions", "capabilities", "files")
+                or re.fullmatch(r"files\s+[^\r\n]{1,200}", cmd)
+                or re.fullmatch(r"read file\s+[^\r\n]{1,220}", cmd))
+
+
+def _stage_blocks(prompt):
+    # Fail closed on an unknown stage, and never let a pending confirmation from
+    # an earlier release execute through the now-locked legacy write pathways.
+    return GITHUB_CAPABILITY_STAGE != "read-repository" or not _read_stage_command(prompt)
+
 _GITHUB_ACCESS = {"read": "read:user", "public-write": "read:user public_repo", "private-write": "read:user repo", "public-workflow": "read:user public_repo workflow", "private-workflow": "read:user repo workflow"}
 _REPO = re.compile(r"^[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}$")
 _VERSION = re.compile(r"^([A-Z_]+)=versions/([a-z0-9-]+\.txt)$", re.M)
@@ -256,6 +281,8 @@ def start(request: Request, access: str = "read"):
     c = _config()
     if access not in _GITHUB_ACCESS:
         raise HTTPException(422, "Unsupported GitHub access request")
+    if GITHUB_CAPABILITY_STAGE != "read-repository" or access != "read":
+        raise HTTPException(403, _READ_STAGE_DESCRIPTION + " No write OAuth request initiated.")
     state = secrets.token_urlsafe(32)
     verifier = secrets.token_urlsafe(48)
     challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode("ascii")).digest()).decode("ascii").rstrip("=")
@@ -287,6 +314,8 @@ def callback(request: Request, code: str = "", state: str = "", error: str = "")
         pending = None
     if not isinstance(pending, dict) or pending.get("owner") != user_id:
         raise HTTPException(403, "GitHub authorization expired or belongs to another account")
+    if GITHUB_CAPABILITY_STAGE != "read-repository" or pending.get("access") != "read":
+        raise HTTPException(403, _READ_STAGE_DESCRIPTION + " Prior write authorization was not completed.")
     if error or not code or len(code) > 512:
         raise HTTPException(400, "GitHub authorization declined or expired")
     try:
@@ -583,7 +612,13 @@ def capabilities(request: Request, operation: str = "read"):
     _user, _config_data, record = _current_connection(request)
     repo = _repo_name(record.get("repo"))
     try:
-        return _effective_access(record, repo, operation)
+        result = _effective_access(record, repo, operation)
+        if GITHUB_CAPABILITY_STAGE != "read-repository" or operation != "read":
+            return {**result, "allowed": False, "available": ["read"],
+                    "stage": GITHUB_CAPABILITY_STAGE, "stageLocked": True,
+                    "missing": _READ_STAGE_DESCRIPTION, "authorizeUrl": None}
+        return {**result, "available": ["read"], "stage": GITHUB_CAPABILITY_STAGE,
+                "stageLocked": False}
     except HTTPException as exc:
         if exc.status_code in (401, 403, 404):
             raise HTTPException(409, _unverified_read_message(repo)) from None
@@ -651,6 +686,8 @@ def _github_command(user, prompt):
     if rec is None:
         return ("GitHub is not connected to this Google account. §wyrlz cannot silently obtain even authenticated read access, let alone write access. Open Chat settings, choose Connect GitHub, and approve access at GitHub. No permissions have been granted by this request.")
     repo = _repo_name(rec.get("repo"))
+    if _stage_blocks(prompt):
+        return _READ_STAGE_DESCRIPTION + " No GitHub mutation or confirmation attempted."
     cmd = re.sub(r"^@github\s+", "", str(prompt or "").strip(), flags=re.I)
     lower = cmd.lower()
     if lower.startswith("confirm "):
@@ -717,6 +754,10 @@ def _github_command(user, prompt):
         raise
     if not check["allowed"]:
         return _permission_message(check)
+    if lower == "help" and GITHUB_CAPABILITY_STAGE == "read-repository":
+        return (_READ_STAGE_DESCRIPTION + "\nCommands: @GitHub files, @GitHub files docs, "
+                "@GitHub read file README.md, @GitHub permissions. The §§ startup "
+                "reader also remains available for source-grounded orientation.")
     if lower == "help":
         return ("GitHub commands for the selected repository: @GitHub permissions, @GitHub files, "
                 "@GitHub files docs, @GitHub read file README.md, @GitHub branches, "
@@ -738,6 +779,12 @@ def _github_command(user, prompt):
                 "Workflow creation needs separate GitHub workflow OAuth scope; writes require a fresh preflight and explicit confirmation.")
     if lower in ("workflows", "workflow list", "workflow runs", "workflow guide") or lower.startswith(("workflow inspect ", "run status ")):
         return github_workflows_v212.execute(sys.modules[__name__], user, "@GitHub " + cmd)
+    if lower in ("permissions", "capabilities") and GITHUB_CAPABILITY_STAGE == "read-repository":
+        return ("## GitHub Stage 1 · Reading\nRepository: " + repo +
+                "\nEnabled capabilities: read/list files and startup documents only." +
+                "\nToken grant observed: " + check["tokenAccess"] +
+                "\nA previously granted OAuth scope is not permission to execute locked operations." +
+                "\n" + _READ_STAGE_DESCRIPTION)
     if lower in ("permissions", "capabilities"):
         return ("## Verified GitHub access\nRepository: " + repo +
                 "\nAvailable operations: " + ", ".join(check["available"]) +
@@ -1005,6 +1052,31 @@ def agent_events(data, model_generator=None):
     user = str(data.get("userId") or "")
     prompt = str(data.get("prompt") or "").strip()
     exact = is_github_command(prompt)
+    # The sole Stage-1 runtime entrypoint: no legacy read/workflow/engine agent
+    # can execute by bypassing the explicit list/read allowlist below.
+    if GITHUB_CAPABILITY_STAGE != "read-repository":
+        yield {"type":"DELTA","text":_READ_STAGE_DESCRIPTION + " Unknown stage; fail closed."}
+        yield {"type":"COMPLETED","phase":"COMPLETE"}
+        return
+    if exact or is_github_conversation(prompt):
+        if _read_stage_command(prompt):
+            yield {"type":"STATUS","phase":"GITHUB_READ_STAGE",
+                   "reason":"Read-only GitHub repository capability; all writes locked.",
+                   "categories":["GITHUB","READ_ONLY","PERMISSION"]}
+            yield from command_events(data)
+        elif not exact and re.search(r"\b(?:read|list|show|inspect|browse|files?|folders?|directories|repository|repo)\b",prompt,re.I) and not re.search(r"\b(?:create|edit|update|delete|remove|write|push|commit|merge|deploy|workflow|issue|pull request|branch)\b",prompt,re.I):
+            yield {"type":"STATUS","phase":"GITHUB_READ_STAGE",
+                   "reason":"Mapping repository inspection request to a bounded root file listing.",
+                   "categories":["GITHUB","READ_ONLY","TOOL"]}
+            yield from command_events({**data,"prompt":"@GitHub files"})
+        else:
+            yield {"type":"STATUS","phase":"GITHUB_STAGE_LOCKED",
+                   "reason":"Requested GitHub capability is not enabled in Stage 1.",
+                   "categories":["GITHUB","PERMISSION","BLOCKED"]}
+            yield {"type":"DELTA","text":_READ_STAGE_DESCRIPTION +
+                   "\nTry @GitHub files or @GitHub read file README.md. No write attempted."}
+            yield {"type":"COMPLETED","phase":"COMPLETE"}
+        return
     if exact and re.match(r"^@github\s+(?:create\s+(?:issue|branch)|confirm)\s+", prompt, re.I):
         yield {"type": "STATUS", "phase": "GITHUB_WRITE_PREFLIGHT",
                "reason": "Checking requested GitHub write authorization and confirmation.",
