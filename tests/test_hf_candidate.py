@@ -159,6 +159,26 @@ class Candidate(unittest.TestCase):
     self.assertTrue(result["requested"])
     self.assertEqual(result["kind"],kind)
 
+ def test_v219_model_dispatch_does_not_call_online_for_greeting(self):
+  import model_router
+  old_stream=model_router.stream_online_request
+  def fail_if_online(*args,**kwargs):
+   raise AssertionError("social greeting unexpectedly used public search")
+  def model(_payload):
+   yield {"type":"DELTA","text":"Hi! What's up?"}
+   yield {"type":"COMPLETED","phase":"COMPLETE"}
+  try:
+   model_router.stream_online_request=fail_if_online
+   events=list(dispatch("700m",{
+      "requestId":"v219-social-dispatch",
+      "prompt":"Hey, how are you today?",
+      "history":[{"role":"user","text":"Tell me about Mars."}]},
+      model,model,model,model))
+  finally:
+   model_router.stream_online_request=old_stream
+  self.assertTrue(any(e.get("type")=="DELTA" for e in events),events)
+  self.assertFalse(any(e.get("phase") in ("SEARCH_STARTED","WEATHER_FETCH_STARTED") for e in events),events)
+
  def test_model_routes_fail_closed(self):
   self.assertEqual([r.model_id for r in routes()],["r39","stock","700m","coder","compare"])
   self.assertTrue(routes()[1].available)
