@@ -79,6 +79,10 @@ On `§tart §E`:
 9. Follow the dedicated engine deployment to terminal state.
 10. Require the actual served static host to contain the current deploy marker before reporting success.
 
+### Atomic starter-pack draft & engine-upgrade handoff (v215 source guidance)
+
+For user-owned §E work that derives a native project seed into an eventual editor starter or new game mode, read [`docs/engineering/SWRLZ_ENGINE_PACK_AUTHORING_V215.md`](docs/engineering/SWRLZ_ENGINE_PACK_AUTHORING_V215.md) alongside the v214 ladder. This describes the current two-file **unregistered data draft** and the separate steps for Projects registration, per-game controls, mode-specific rules, deterministic ordered engine patching, desktop/phone tests, PR review and dedicated §E release. A plain scene clone or descriptor must never be reported as a playable mode, and no AI Chat Hugging Face deployment may publish engine work. This documentation has no deployment authority.
+
 ### GitHub/AI editor-and-starter development ladder (source-only)
 
 For a §wyrlz AI session that aims to edit this §E editor, derive native starter packs, build new playable modes or update engine internals, consult `docs/engineering/SWRLZ_ENGINE_AGENT_V214_BUILD_LADDER.md` after this start router. It distinguishes real current GitHub tool capabilities (verified source mapping, planned work, approval-gated scene draft and draft PR) from not-yet-supported multi-file patch generation, automatic starter registration, engine release, or verified live gameplay. The specialized §E build and dedicated deploy rules in this document remain authoritative. Reading this reference is non-deploying.
