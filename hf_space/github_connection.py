@@ -257,7 +257,7 @@ def status(request: Request):
     missing = [name for field, name in _CONFIG_KEYS.items() if not settings[field]]
     if missing:
         return {"configured": False, "linked": False, "durable": False,
-                "scope": GITHUB_SCOPE, "missingNames": missing}
+                "scope": GITHUB_SCOPE, "capabilityStage": GITHUB_CAPABILITY_STAGE, "missingNames": missing}
     try:
         c = _config()
     except HTTPException as exc:
@@ -271,10 +271,11 @@ def status(request: Request):
         else:
             invalid = ["GITHUB_CONFIGURATION"]
         return {"configured": False, "linked": False, "durable": False,
-                "scope": GITHUB_SCOPE, "invalidNames": invalid}
+                "scope": GITHUB_SCOPE, "capabilityStage": GITHUB_CAPABILITY_STAGE, "invalidNames": invalid}
     record = _load(c, user_id)
     return {"configured": True, "linked": bool(record), "durable": True,
-            "scope": GITHUB_SCOPE, "login": record["login"] if record else None,
+            "scope": GITHUB_SCOPE, "capabilityStage": GITHUB_CAPABILITY_STAGE,
+            "login": record["login"] if record else None,
             "repo": record.get("repo") if record else None,
             "access": _scope_level(record.get("scopes", "")) if record else "not-connected"}
 
@@ -584,12 +585,21 @@ def _effective_access(record, repo, operation="read"):
                  "branch-write": can_token_write and branch,
                  "workflow-dispatch": can_token_write and branch,
                  "workflow-create": can_workflow_files}
+    # OAuth grants and repository role can be broader than the abilities
+    # enabled for this assistant. Enforce our training stage separately.
+    if GITHUB_CAPABILITY_STAGE != "legacy-test-only":
+        stage_ok = GITHUB_CAPABILITY_STAGE == "read-repository" and operation == "read"
+        available = {name: (name == "read" and stage_ok) for name in _OPS}
     result = {"repository": str(info["full_name"]), "private": private,
               "defaultBranch": str(info.get("default_branch") or "main"),
               "requested": operation, "allowed": bool(available[operation]),
               "available": [k for k in _OPS if available[k]],
               "tokenAccess": _scope_level(record.get("scopes"))}
     if not available[operation]:
+        if GITHUB_CAPABILITY_STAGE != "legacy-test-only":
+            result["stageLocked"] = True
+            result["missing"] = _READ_STAGE_DESCRIPTION
+            return result
         if not can_token_write:
             result["missing"] = "repo OAuth scope" if private else "public_repo or repo OAuth scope"
             mode = ("private-workflow" if private else "public-workflow") if operation == "workflow-create" else ("private-write" if private else "public-write")
@@ -658,6 +668,10 @@ def _permission_message(result):
 
 
 def _post_github(token, path, body):
+    # Defense in depth: even callers of this legacy lower-level helper cannot
+    # create issues or refs while Stage 1 is read-only.
+    if GITHUB_CAPABILITY_STAGE != "legacy-test-only":
+        raise HTTPException(403, _READ_STAGE_DESCRIPTION)
     # Fixed GitHub REST families only; no arbitrary URLs or secret disclosure.
     if not re.fullmatch(r"/repos/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/(issues|git/refs)", path):
         raise HTTPException(422, "Unsupported GitHub mutation")
