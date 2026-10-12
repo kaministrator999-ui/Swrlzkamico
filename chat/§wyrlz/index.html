@@ -1415,7 +1415,7 @@
               const name=document.createElement("span");name.textContent=(item.type==="dir"?"📁 ":"📄 ")+item.name;
               const copy=document.createElement("button");copy.type="button";copy.textContent="Copy path";
               copy.setAttribute("aria-label","Copy "+item.name+" path");
-              copy.onclick=async()=>{try{await navigator.clipboard.writeText((title[1]==="/ "?"":title[1].replace(/^\/|\/$/g,"")+"/")+item.name);copy.textContent="Copied";}catch(_){copy.textContent="Unavailable";}};
+              copy.onclick=async()=>{try{await navigator.clipboard.writeText((title[1]==="/"? "":title[1].replace(/^\/|\/$/g,"")+"/")+item.name);copy.textContent="Copied";}catch(_){copy.textContent="Unavailable";}};
               row.append(name,copy);list.appendChild(row);
             }
             if(!rows.length){const empty=document.createElement("div");empty.className="repo-explorer-empty";empty.textContent="No matching entries";list.appendChild(empty);}
