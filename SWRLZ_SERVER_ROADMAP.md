@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-11 — v212 GitHub Actions workflow workbench and manual trigger
+
+**Intent:** Extend account-owned §wyrlz GitHub from issue/branch/read tools into practical workflow development: inspect existing workflows and run/job outcomes, explain GitHub Actions concepts from verified evidence, propose safe manually triggered workflow templates on separate feature branches, initiate explicit manually approved workflow_dispatch runs, and show actual model/tool/approval progress. All writes must use owner-bound short-lived two-step confirmations with fresh scope/repo checks, no silent OAuth upgrade. Never bypass guarded HF release pipeline.
+
+**Source baseline:** exact last published v211.2 `fix/native-chat-first-send-ack-v2112@f81ffd43647a8796feb47ebd6c3c0ad80f5df545`; independent isolated branch `feature/github-workflow-studio-v212`. Existing native Google save/first-send ACK and v211 model tool progress preserved. Latest runtime registry `runtime@c29ce4972e60b23ba2e83ac4c89dfa127246784b`; obtain and reconcile exact registered values at version-commit boundary. GitHub OAuth/Station canonical owners unchanged. Existing Hugging Face Space `kamiloki/Swyrlz` baseline latest v211.2 with protected release gate.
+
+**Permission architecture:** For OAuth classic tokens, workflow YAML creation requires an actual `workflow` scope plus repo write capability; dispatch requires a matching repository Actions write grant and live GitHub confirmation. Separate user-controlled `/api/github/start?access=` modes only when denied action needs them. No browser-held tokens, model-proposed arbitrary workflow bodies, auto-created secrets, destructive GitHub action, unreviewed production deploy, or raw private reasoning. For workflow files accept only reviewed immutable safe templates and nonprotected existing branches; never overwrite. For dispatch require named existing active manually triggerable workflow, explicit user proposal and confirmation, bound ref/inputs/risk. Report trigger accepted vs run complete distinctly.
+
+**Verification:** Synthetic account OAuth/scope tests, forbidden-plan injection, replay, stale branch, protected run, Workflow REST result accuracy, actual Station NDJSON progress, Chat UI parser, exact CI candidate, guarded HF deploy only after tests, module/roadmap lineage; live OAuth and real owner workflow acceptance separately pending.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-11 — v211.2 first-message Chat appears on durable send ACK before inference
 
 **Outcome:** SOURCE/ACCOUNT AND MOBILE CI/HF CANDIDATE VERIFIED / ONE GUARDED HF PUBLICATION SUCCESS / RUNTIME REGISTRY READBACK VERIFIED / LIVE SIGNED-IN ANDROID ACCEPTANCE PENDING.
