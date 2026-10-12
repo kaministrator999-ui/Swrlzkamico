@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=ccf4ee25cd206e10505cb432ea60b3af960c8ace
-REQUEST_NONCE=2026-10-11-v212-github-actions-workflow-workbench-integrated-v2113-001
+SOURCE_REF=002f4bde2b2d142647019b22da21382c7047b2d6
+REQUEST_NONCE=2026-10-11-v213-github-project-engineering-evidence-scoped-edit-001
