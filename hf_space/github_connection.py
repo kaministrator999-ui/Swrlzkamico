@@ -846,6 +846,8 @@ _AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits"
 
 def is_github_conversation(prompt):
     q = str(prompt or "").strip()
+    if engine_code_agent_v217.is_coding_intent(q):
+        return True
     if re.match(r"^@github\s+(?:ask|explore|analyze)\s+\S", q, re.I):
         return True
     if (re.search(r"\b(?:github|repo|repository|actions|workflow|workflows)\b", q, re.I)
@@ -1009,7 +1011,7 @@ def agent_events(data, model_generator=None):
                "categories": ["GITHUB", "TOOL", "PERMISSION"]}
         yield from command_events(data)
         return
-    if engine_code_agent_v217.is_command(prompt):
+    if engine_code_agent_v217.is_command(prompt) or engine_code_agent_v217.is_coding_intent(prompt):
         yield from engine_code_agent_v217.events(sys.modules[__name__], data, model_generator)
         return
     if github_project_v213.is_command(prompt):
