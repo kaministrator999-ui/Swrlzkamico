@@ -901,6 +901,8 @@ def _agent_fallback_plan(prompt):
         (r"\b(workflows?|actions)\b", "workflows"),
         (r"\b(teach|learn|guide|how|setup|set up|templates?)\b", "workflow guide"),
         (r"\b(runs?|jobs?|failures?)\b", "workflow runs"),
+        (r"\b(?:§e|game engine|forge engine)\b", "engine status"),
+        (r"\b(?:starter pack|starter scenes?)\b", "engine starters"),
         (r"\b(repository|repo|project|architecture|overview)\b", "overview"),
         (r"\b(onboard|documentation|contributing|project rules)\b", "project brief"),
         (r"\b(dependencies|build files|packages|requirements)\b", "dependencies"),
