@@ -177,7 +177,7 @@ def comparison(api, token, repo, base, head):
                       "patch": str(entry.get("patch") or "")[:10000]})
     return {"repository": repo, "base": base, "head": head,
             "baseSha": str((record.get("base_commit") or {}).get("sha") or ""),
-            "headSha": str((record.get("commits") or [{}])[-1].get("sha") or ""),
-            "totalFiles": int(record.get("total_commits") or 0),
+            "headSha": str((record.get("head_commit") or {}).get("sha") or ""),
+            "totalCommits": int(record.get("total_commits") or 0),
             "files": files, "partial": len(record["files"]) >= 30,
             "caution": "Up to 30 files and 10,000 patch characters each; not a complete merge review."}
