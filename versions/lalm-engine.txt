@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.191
-REVISION=2.1.191-github-model-guided-workflow-tools-v212
+VERSION=2.1.192
+REVISION=2.1.192-github-project-source-aware-tools-v213
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active

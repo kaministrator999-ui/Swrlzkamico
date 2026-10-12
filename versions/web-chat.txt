@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.105
-REVISION=1.5.105-github-workflow-guide-operation-specific-access-v212
+VERSION=1.5.106
+REVISION=1.5.106-github-project-guide-source-progress-v213
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
