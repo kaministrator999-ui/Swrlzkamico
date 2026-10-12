@@ -30,7 +30,7 @@ _MAX_FILE = 90000
 _TTL = 600
 _REPO_LIMIT = 110
 COMMAND = re.compile(
-    r"^@github\s+(?:overview(?:\s|$)|triage(?:\s|$)|dependencies(?:\s|$)|project\s+(?:brief|readiness)(?:\s|$)|tree(?:\s|$)|code\s+search\s+|"
+    r"^@github\s+(?:overview(?:\s|$)|releases(?:\s|$)|branch\s+policy(?:\s|$)|triage(?:\s|$)|dependencies(?:\s|$)|project\s+(?:brief|readiness)(?:\s|$)|tree(?:\s|$)|code\s+search\s+|"
     r"file\s+history\s+|compare\s+|pr\s+(?:review|draft)\s+|"
     r"issue\s+inspect\s+|checks\s+|project\s+guide(?:\s|$)|edit\s+file\s+)", re.I
 )
@@ -191,6 +191,47 @@ def _project_readiness(gh, rec, repo):
 
 def _summary(gh, record, repo, cmd):
     token = record["token"]
+    if cmd == "releases":
+        data = _api(gh, token, repo, "/releases?per_page=12")
+        if not isinstance(data, list):
+            raise HTTPException(502, "GitHub release inventory not verified")
+        lines = ["## GitHub releases · " + repo]
+        for item in data[:12]:
+            if isinstance(item,dict):
+                lines.append("- " + _n(item.get("tag_name"),80) + " · " +
+                             _n(item.get("name"),100) + " · draft=" + str(bool(item.get("draft"))) +
+                             " / prerelease=" + str(bool(item.get("prerelease"))) +
+                             " · " + _n(item.get("published_at") or item.get("created_at"),40))
+        lines.append("Tags/releases differ from deployment and actual runtime verification.")
+        return "\n".join(lines)
+    if cmd == "branch policy":
+        access = gh._effective_access(record, repo, "read")
+        ref = access["defaultBranch"]
+        try:
+            policy = _api(gh, token, repo, "/branches/" + quote(ref,safe="") + "/protection")
+        except HTTPException as exc:
+            if exc.status_code in (401,403,404):
+                return ("Default-branch protection for " + ref +
+                        " could NOT be verified using this token. GitHub may restrict inspection; "
+                        "do not infer the branch is unprotected. Review repository Settings > Branches/Rulesets.")
+            raise
+        if not isinstance(policy,dict):
+            raise HTTPException(502, "GitHub branch policy response unverified")
+        required = policy.get("required_status_checks")
+        reviews = policy.get("required_pull_request_reviews")
+        lines = ["## Default-branch governance · " + repo,
+                 "Branch: " + ref,
+                 "Required status checks: " +
+                 ("configured" if isinstance(required,dict) else "not reported in this response"),
+                 "Required PR reviews: " +
+                 ("configured" if isinstance(reviews,dict) else "not reported in this response"),
+                 "Linear history setting: " + _n((policy.get("required_linear_history") or {}).get("enabled") if isinstance(policy.get("required_linear_history"),dict) else "unverified",35)]
+        if isinstance(required,dict):
+            contexts = required.get("contexts")
+            if isinstance(contexts,list):
+                lines.append("Reported check contexts: " + ", ".join(_n(k,70) for k in contexts[:12]))
+        lines.append("This endpoint does not establish every applicable organization ruleset, environment gate or live acceptance.")
+        return "\n".join(lines)
     if cmd in ("project brief", "dependencies"):
         return _project_brief(gh, record, repo, cmd)
     if cmd == "triage":
@@ -224,7 +265,8 @@ def _summary(gh, record, repo, cmd):
                 "@GitHub compare main...feature/my-work, @GitHub pr review 123, @GitHub issue inspect 456,",
                 "@GitHub checks <40-char-commit-SHA>, @GitHub edit file PATH on feature/my-work replace OLD :: NEW,",
                 "@GitHub pr draft feature/my-work into main. Also use @GitHub project brief, "
-                "@GitHub dependencies, @GitHub triage and @GitHub project readiness. "
+                "@GitHub dependencies, @GitHub triage, @GitHub project readiness, "
+                "@GitHub branch policy and @GitHub releases. "
                 "Writes require a separate @GitHub confirm CODE."
             ])
         return "\n".join(lines)
