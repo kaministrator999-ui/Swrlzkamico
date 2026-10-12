@@ -1,3 +1,19 @@
+## UPDATE CHECKPOINT — 2026-10-11 — v211.3 direct assistant identity source guard
+
+**Owner-provided evidence:** In a private native Chat export, short direct questions asking whether this product was ChatGPT or §wyrlz produced incompatible, self-contradictory 700M responses. One ordinary greeting was handled correctly. The private export was inspected without publishing messages, personal profiles or the child's account information to GitHub.
+
+**Verified cause / scope:** The 700M engine's existing direct identity shortcut covers 'Who are you?' and 'What's your name?' but not short product-identity yes/no or negated follow-up forms. `hf_space/model_router.py` routed those uncovered prompts into ordinary small-model inference. Correct source product identity is §wyrlz, an AI chat application distinct from OpenAI ChatGPT. Focus: shared `model_router` deterministic answer for direct own-identity questions only, independent of local GGUF route or user account profile. Do not change unrelated ChatGPT comparisons, model tasks, personal profile or account identity.
+
+**Isolated source:** [draft PR #109](https://github.com/kaministrator999-ui/Swrlzkamico/pull/109), `fix/assistant-brand-identity-clarity-v2113@6c928770b16ae16fe4694f93d45d6af9a07f3fa5`, based on published v211.2 `f81ffd43647a8796feb47ebd6c3c0ad80f5df545`. The bounded fast path recognizes direct questions including affirmative and negated ChatGPT / §wyrlz variants, responds consistently and terminates before external search or GGUF. Broad discussions, quoted questions and comparisons still reach normal inferencing. Synthetic tests use generic phrases only and prove all R39/stock/700M/coder routes do not call model/search; even contradictory optional profile text cannot alter app identity.
+
+**CI:** Google/account/identity [#38190668607](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38190668607) **SUCCESS** and HF offline candidate [#38190672584](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38190672584) **SUCCESS** at exact final source.
+
+**Concurrent-source guard:** A separate [v212 GitHub workflow workbench](https://github.com/kaministrator999-ui/Swrlzkamico/blob/main/SWRLZ_SERVER_ROADMAP.md) is in progress based on previous v211.2. This v211.3 release must not modify v212's development branch or invent its completion. Future v212 publish source must integrate this exact source-owned app identity guard or deliberately merge on a common base; do not deploy v212 old-base and erase this repair. Separate account/speaker personalization remains distinct: a signed-in Google account does not prove which family member is typing.
+
+**Next:** single guarded existing `kamiloki/Swyrlz` Space release, terminal revision/rollback receipt, changed-only runtime registry, journal FINISHED. Live user identity acceptance remains pending. No model weights, history, identity accounts or GitHub permissions changed.
+
+**Status:** SOURCE+CI VERIFIED / DEPLOYMENT PENDING / LIVE ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-11 — v212 GitHub Actions workflow workbench and manual trigger
 
 **Intent:** Extend account-owned §wyrlz GitHub from issue/branch/read tools into practical workflow development: inspect existing workflows and run/job outcomes, explain GitHub Actions concepts from verified evidence, propose safe manually triggered workflow templates on separate feature branches, initiate explicit manually approved workflow_dispatch runs, and show actual model/tool/approval progress. All writes must use owner-bound short-lived two-step confirmations with fresh scope/repo checks, no silent OAuth upgrade. Never bypass guarded HF release pipeline.
