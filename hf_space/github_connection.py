@@ -588,7 +588,7 @@ def _effective_access(record, repo, operation="read"):
     # OAuth grants and repository role can be broader than the abilities
     # enabled for this assistant. Enforce our training stage separately.
     if GITHUB_CAPABILITY_STAGE != "legacy-test-only":
-        stage_ok = GITHUB_CAPABILITY_STAGE == "read-repository" and operation == "read"
+        stage_ok = GITHUB_CAPABILITY_STAGE == "read-repository"
         available = {name: (name == "read" and stage_ok) for name in _OPS}
     result = {"repository": str(info["full_name"]), "private": private,
               "defaultBranch": str(info.get("default_branch") or "main"),
