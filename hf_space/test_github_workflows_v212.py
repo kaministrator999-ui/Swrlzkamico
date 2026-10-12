@@ -175,6 +175,52 @@ def test_protected_workflows_cannot_dispatch():
         assert "Protected" in got
 
 
+def test_workflow_draft_pr_and_failed_jobs_retry_require_second_confirmation():
+    saved = {}
+    def redis(_cfg, op, key, *args):
+        if op == "SET":
+            saved[key] = args[0]
+            return "OK"
+        if op == "GETDEL":
+            return saved.pop(key, None)
+        raise AssertionError("unexpected state mutation " + op)
+    replies = iter([
+        {"number": 73, "html_url": "https://github.com/owner/repository/pull/73"},
+        {"accepted": True}
+    ])
+    with mock.patch.object(gh, "_config", return_value={}), \
+         mock.patch.object(gh, "_load", return_value=RECORD), \
+         mock.patch.object(gh, "_api", side_effect=lambda token, path: info(path)), \
+         mock.patch.object(gh, "_redis", side_effect=redis), \
+         mock.patch.object(w, "_write_request", side_effect=lambda *args: next(replies)) as write:
+        proposal=gh._github_command(OWNER, "@GitHub workflow pr feature/test into main")
+        assert "NOT created" in proposal and not write.called
+        code=re.search(r"@GitHub confirm ([\w-]+)", proposal).group(1)
+        done=gh._github_command(OWNER, "@GitHub confirm " + code)
+        assert "DRAFT PR #73" in done and "NOT merged" in done and write.call_count == 1
+        proposal=gh._github_command(OWNER, "@GitHub run retry 9876")
+        assert "NOT executed" in proposal and write.call_count == 1
+        code=re.search(r"@GitHub confirm ([\w-]+)", proposal).group(1)
+        accepted=gh._github_command(OWNER, "@GitHub confirm " + code)
+        assert "accepted a retry request" in accepted
+        assert "NOT a completed run" in accepted
+        assert write.call_count == 2
+        assert "already used" in gh._github_command(OWNER, "@GitHub confirm " + code)
+
+
+def test_read_only_guidance_never_requests_oauth_upgrade():
+    with mock.patch.object(gh, "_config", return_value={}), \
+         mock.patch.object(gh, "_load", return_value=RECORD), \
+         mock.patch.object(gh, "_api", side_effect=lambda token, path: info(path)):
+        report=gh._github_command(OWNER, "@GitHub workflow guide")
+        assert "workflow_dispatch" in report
+        assert "OAuth workflow scope" in report
+        assert "Authorize" not in report
+    ui=(Path(__file__).parent.parent/"chat/§wyrlz/index.html").read_text()
+    assert 'id="githubWorkflowGuide"' in ui
+    assert 'prompt.value="@GitHub workflow guide"' in ui
+
+
 def test_static_station_progress_and_read_only_model_plan():
     station=(Path(__file__).parent/"station.py").read_text()
     chat=(Path(__file__).parent.parent/"chat/§wyrlz/index.html").read_text()
@@ -195,5 +241,7 @@ if __name__=="__main__":
     test_dispatch_is_explicit_and_accepted_is_not_success()
     test_cross_owner_and_stale_branch_never_execute()
     test_protected_workflows_cannot_dispatch()
+    test_workflow_draft_pr_and_failed_jobs_retry_require_second_confirmation()
+    test_read_only_guidance_never_requests_oauth_upgrade()
     test_static_station_progress_and_read_only_model_plan()
     print("v212 GitHub Actions workflow workbench regressions passed")
