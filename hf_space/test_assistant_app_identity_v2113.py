@@ -13,10 +13,14 @@ def test_direct_identity_variants_and_scope():
         "Are you chatGPT", "Are you ChatGPT?",
         "So you are not swyrlz", "Are you §wyrlz?",
         "Wait you're not swurlz", "Is this ChatGPT?",
+        "Are you not ChatGPT?", "Are you not §wyrlz?",
     ):
         result=route.direct_app_identity_answer(prompt)
         assert "§wyrlz" in result,(prompt,result)
-        assert "not ChatGPT" in result or "different AI product" in result
+        if "chatgpt" in prompt.casefold():
+            assert "not ChatGPT" in result,(prompt,result)
+        if "not swyrlz" in prompt.casefold() or "not §wyrlz" in prompt.casefold():
+            assert "I am §wyrlz" in result,(prompt,result)
     for prompt in (
         "What is ChatGPT?", "Compare ChatGPT and §wyrlz",
         "Write a story where someone asks 'Are you ChatGPT?'",
