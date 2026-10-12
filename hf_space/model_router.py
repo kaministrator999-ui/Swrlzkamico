@@ -281,14 +281,18 @@ def direct_app_identity_answer(prompt: str) -> str:
         return ""
     direct=re.fullmatch(
         r"(?:(?:so|wait|ok)\s+)?(?:are you|you are|you're|is this)\s+"
-        r"(?:not\s+)?(?:chat\s*gpt|swyrlz|§wyrlz|swurlz)[?! .]*",
+        r"(?P<negative>not\s+)?(?P<product>chat\s*gpt|swyrlz|§wyrlz|swurlz)[?! .]*",
         text,re.I,
     )
     if not direct:
         return ""
-    if re.search(r"chat\s*gpt",text,re.I):
-        return "No, I'm §wyrlz, the assistant in this app. ChatGPT is a different AI product."
-    return "I'm §wyrlz, the assistant in this app—not ChatGPT."
+    if "gpt" in direct.group("product").lower():
+        return ("Correct—I'm §wyrlz, not ChatGPT."
+                if direct.group("negative") else
+                "No—I'm §wyrlz, the assistant in this app, not ChatGPT.")
+    return ("Actually, I am §wyrlz—the assistant in this app."
+            if direct.group("negative") else
+            "Yes—I'm §wyrlz, the assistant in this app.")
 
 
 def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict[str,Any]],Iterator[dict[str,Any]]], stock_generate=None,large_generate=None,coder_generate=None):
