@@ -23,6 +23,8 @@ Make §wyrlz useful for genuine GitHub-based project engineering: understand a r
 | `@GitHub issue inspect 123` | Inspect one verified issue, bounded description/labels/recent comments |
 | `@GitHub checks <40-char-SHA>` | Read check-run state for one exact commit; no fabricated CI pass |
 | `@GitHub project readiness` | Read HEAD and check-run/Actions evidence, explicitly **not** a release approval certificate |
+| `@GitHub branch policy` | Inspect GitHub default-branch protections when this account can read them; 403 is **unknown**, not unprotected |
+| `@GitHub releases` | List bounded GitHub Releases/tag metadata; a Release is not proof of deployed healthy runtime |
 
 The selected existing §wyrlz model may propose up to three allowlisted read operations from a conversational request. It may include a parameterized read such as `pr review 123`, `issue inspect 123`, `checks SHA`, `code search TERM`, `file history PATH`, or `compare BASE...HEAD` only when the user's actual message names the relevant identifier and intent. All model proposals are untrusted: server-side tool validation and a fresh repository permission check remain authoritative. Invalid model plans fall back to labeled, bounded read checks.
 
