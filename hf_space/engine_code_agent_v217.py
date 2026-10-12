@@ -28,6 +28,55 @@ def is_command(prompt):
     return bool(COMMAND.match(str(prompt or "").strip()))
 
 
+
+def is_coding_intent(prompt):
+    """Recognize an explicit engine-coding task, without authorizing changes."""
+    q=str(prompt or "").strip()
+    if len(q)<16 or len(q)>850 or q.lower().startswith("@github confirm "):
+        return False
+    q=re.sub(r"^@github\s+(?:ask|explore|analyze)\s+","",q,flags=re.I)
+    actionable=re.match(
+        r"^(?:(?:please\s+)?|(?:can|could|would|will)\s+you\s+(?:please\s+)?|"
+        r"(?:i\s+want\s+you\s+to|i(?:'d|\s+would)\s+like\s+you\s+to)\s+)"
+        r"(?:build|implement|fix|add|create|develop|repair|update|upgrade|"
+        r"extend|improve|modify|make)\b",q,re.I)
+    return bool(actionable and re.search(
+        r"(?:§e\b|§wyrl[§z]\s+engine|our\s+(?:game\s+)?(?:engine|editor)|"
+        r"game\s+engine|starter\s+packs?|native\s+editor|sheep\s+tag|"
+        r"anime\s+studio|forge\s+editor)",q,re.I))
+
+
+def _natural_mission(gh,rec,repo,prompt):
+    """Read real main manifest/tree to guide an approved coding workflow."""
+    engine._access(gh,rec,repo,"read")
+    goal=re.sub(r"^@github\s+(?:ask|explore|analyze)\s+","",prompt,flags=re.I).strip()
+    report=engine._plan(gh,rec,repo,goal[:260])
+    head=approvals._branch_sha(gh,rec["token"],repo,"main")
+    candidates=_candidate_paths(gh,rec,repo,head,goal)
+    lines=[
+        "## §E coding mission — source inspected, NOTHING CHANGED",
+        "Goal: "+goal[:400],
+        "Verified main commit: "+head,
+        "",
+        "### Source architecture and initial plan",
+        report,
+        "",
+        "### Relevant existing source candidates (not automatically modified)",
+        *("- "+p for p in candidates[:10]),
+    ]
+    if not candidates:
+        lines.append("No sufficiently relevant existing runtime source found. A new component may be needed; the current bounded source-edit tool cannot create arbitrary runtime modules.")
+    lines.extend([
+        "",
+        "### Authorized continuation",
+        "1. Request @GitHub create branch feature/engine-review from main, then approve the branch proposal.",
+        "2. Once that branch exists, request @GitHub engine code task "+goal[:240]+" on feature/engine-review to have the local coding model inspect source and prepare a reviewable edit.",
+        "3. Use @GitHub engine code verify feature/engine-review to see GitHub CI evidence, then @GitHub engine review feature/engine-review for a draft PR and the separate engine build/release gates.",
+        "For scene-based starters derived from existing modes use @GitHub engine starters and the approved @GitHub engine pack flow. A copied scene is not a newly coded game mode.",
+        "No branch, source edit, starter, PR, or deployment was created by this plan."
+    ])
+    return "\n".join(lines)
+
 def _path(value):
     path=str(value or "")
     if (not path.startswith(ROOT) or len(path)>185 or "%" in path or "\\" in path
@@ -430,7 +479,12 @@ def events(gh,data,model=None):
         if rec is None:raise HTTPException(409,"GitHub must be connected through user approval.")
         repo=engine._repo(gh,rec)
         cmd=re.sub(r"^@github\s+","",prompt,flags=re.I)
-        if cmd=="engine code help":
+        if is_coding_intent(prompt) and not is_command(prompt):
+            yield {"type":"STATUS","phase":"ENGINE_MISSION_CONTEXT",
+                   "reason":"Inspecting verified engine main and source before planning a code change.",
+                   "categories":["GITHUB","ENGINE","INFERENCE","TOOL"]}
+            yield {"type":"DELTA","text":_natural_mission(gh,rec,repo,prompt)}
+        elif cmd=="engine code help":
             result=("## Engine coding workbench\n"
                     "@GitHub engine code plan DESCRIBE GOAL\n"
                     "@GitHub engine code inspect projects/swrlz-forge-moba/runtime/anime_timeline.js\n"
