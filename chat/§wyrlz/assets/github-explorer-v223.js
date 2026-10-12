@@ -78,7 +78,7 @@ function parseListing(source){
   const heading=lines[0]?.match(/^(?:##\s*)?GitHub directory:\s*(\/|[^\r\n]+)$/);
   if(!heading||lines.length>3000)return null;
   const requested=heading[1].trim().replace(/^\/|\/$/g,"");
-  if(requested.startsWith("/")||requested.split("/").some(part=>!part||part==="."||part==="..")||/[<>\\?#%*{}\[\]\x00-\x1f]/.test(requested))return null;
+  if(requested.startsWith("/")||(requested&&requested.split("/").some(part=>!part||part==="."||part===".."))||/[<>\\?#%*{}\[\]\x00-\x1f]/.test(requested))return null;
   const items=[];
   for(const line of lines.slice(1)){
     if(!line.trim()||/^\(First \d+ entries\.\)$/.test(line.trim()))continue;
