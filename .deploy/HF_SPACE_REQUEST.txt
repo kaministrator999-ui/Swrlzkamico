@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=f05900407818be66e276360da427b8b0bebb461e
-REQUEST_NONCE=2026-10-12-v221-stage-1-github-read-repository-only-001
+SOURCE_REF=a2f9b8005230d9189a4a0caa36fc59b2a551647d
+REQUEST_NONCE=2026-10-12-v222-github-filename-auto-resolution-001
