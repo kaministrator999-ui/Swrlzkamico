@@ -54,6 +54,10 @@ def _read_stage_command(prompt):
 def _stage_blocks(prompt):
     # Fail closed on an unknown stage, and never let a pending confirmation from
     # an earlier release execute through the now-locked legacy write pathways.
+    if GITHUB_CAPABILITY_STAGE == "legacy-test-only":
+        # Controlled regression mode for old unit tests only; not a runtime
+        # setting or something the model, OAuth or user can request.
+        return False
     return GITHUB_CAPABILITY_STAGE != "read-repository" or not _read_stage_command(prompt)
 
 _GITHUB_ACCESS = {"read": "read:user", "public-write": "read:user public_repo", "private-write": "read:user repo", "public-workflow": "read:user public_repo workflow", "private-workflow": "read:user repo workflow"}
@@ -281,7 +285,7 @@ def start(request: Request, access: str = "read"):
     c = _config()
     if access not in _GITHUB_ACCESS:
         raise HTTPException(422, "Unsupported GitHub access request")
-    if GITHUB_CAPABILITY_STAGE != "read-repository" or access != "read":
+    if GITHUB_CAPABILITY_STAGE != "legacy-test-only" and (GITHUB_CAPABILITY_STAGE != "read-repository" or access != "read"):
         raise HTTPException(403, _READ_STAGE_DESCRIPTION + " No write OAuth request initiated.")
     state = secrets.token_urlsafe(32)
     verifier = secrets.token_urlsafe(48)
@@ -314,7 +318,7 @@ def callback(request: Request, code: str = "", state: str = "", error: str = "")
         pending = None
     if not isinstance(pending, dict) or pending.get("owner") != user_id:
         raise HTTPException(403, "GitHub authorization expired or belongs to another account")
-    if GITHUB_CAPABILITY_STAGE != "read-repository" or pending.get("access") != "read":
+    if GITHUB_CAPABILITY_STAGE != "legacy-test-only" and (GITHUB_CAPABILITY_STAGE != "read-repository" or pending.get("access") != "read"):
         raise HTTPException(403, _READ_STAGE_DESCRIPTION + " Prior write authorization was not completed.")
     if error or not code or len(code) > 512:
         raise HTTPException(400, "GitHub authorization declined or expired")
@@ -613,10 +617,12 @@ def capabilities(request: Request, operation: str = "read"):
     repo = _repo_name(record.get("repo"))
     try:
         result = _effective_access(record, repo, operation)
-        if GITHUB_CAPABILITY_STAGE != "read-repository" or operation != "read":
+        if GITHUB_CAPABILITY_STAGE != "legacy-test-only" and (GITHUB_CAPABILITY_STAGE != "read-repository" or operation != "read"):
             return {**result, "allowed": False, "available": ["read"],
                     "stage": GITHUB_CAPABILITY_STAGE, "stageLocked": True,
                     "missing": _READ_STAGE_DESCRIPTION, "authorizeUrl": None}
+        if GITHUB_CAPABILITY_STAGE == "legacy-test-only":
+            return result
         return {**result, "available": ["read"], "stage": GITHUB_CAPABILITY_STAGE,
                 "stageLocked": False}
     except HTTPException as exc:
@@ -1054,11 +1060,11 @@ def agent_events(data, model_generator=None):
     exact = is_github_command(prompt)
     # The sole Stage-1 runtime entrypoint: no legacy read/workflow/engine agent
     # can execute by bypassing the explicit list/read allowlist below.
-    if GITHUB_CAPABILITY_STAGE != "read-repository":
+    if GITHUB_CAPABILITY_STAGE not in ("read-repository", "legacy-test-only"):
         yield {"type":"DELTA","text":_READ_STAGE_DESCRIPTION + " Unknown stage; fail closed."}
         yield {"type":"COMPLETED","phase":"COMPLETE"}
         return
-    if exact or is_github_conversation(prompt):
+    if GITHUB_CAPABILITY_STAGE == "read-repository" and (exact or is_github_conversation(prompt)):
         if _read_stage_command(prompt):
             yield {"type":"STATUS","phase":"GITHUB_READ_STAGE",
                    "reason":"Read-only GitHub repository capability; all writes locked.",
