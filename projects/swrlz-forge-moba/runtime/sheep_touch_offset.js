@@ -104,10 +104,18 @@ stUiPlacePreview=function(point) {
 const stTouchPlacementOriginalOrder=stUiOrderAt;
 stUiOrderAt=function(clientX,clientY) {
   const context=stTouchPlacement.context;
-  if (context && stUi.build && !stTouchPlacement.valid) {
-    stUiFeedback(stTouchPlacement.reason || 'Aim on clear ground, away from the controls.',true); return;
+  const released=context?.type==='pointerup' ? stTouchPlacement.gesture : null;
+  try {
+    if (context && stUi.build && !stTouchPlacement.valid) {
+      stUiFeedback(stTouchPlacement.reason || 'Aim on clear ground, away from the controls.',true); return;
+    }
+    return stTouchPlacementOriginalOrder(clientX,clientY);
+  } finally {
+    // End the gesture synchronously after the native release order. Timer
+    // cleanup remains a fallback when the viewport does not receive an order.
+    if (released && stTouchPlacement.gesture===released) stTouchPlacementReset('touch released');
+    if (released) stTouchPlacement.blockedPointers.delete(released.id);
   }
-  return stTouchPlacementOriginalOrder(clientX,clientY);
 };
 const stTouchPlacementOriginalCommand=stUiCommand;
 stUiCommand=function(action,payload={}) {
@@ -251,3 +259,15 @@ document.addEventListener('visibilitychange',()=>{
     stTouchPlacementReset('document hidden',true); stTouchPlacementHide(null);
   }
 });
+// On a short landscape phone the original full-width command panel covers
+// the playfield. Keep controls scrollable to one side while the finger aims.
+const stTouchPlacementStyle=document.createElement('style');
+stTouchPlacementStyle.id='sheepTouchPlacementStyles';
+stTouchPlacementStyle.textContent=`
+@media (pointer:coarse) and (min-width:621px) and (max-height:520px){
+  .sheep-tag-runtime #sheepTagHUD .st-commandbar{left:auto;right:12px;width:344px;max-width:calc(100vw - 24px);max-height:calc(100vh - 215px);overflow-y:auto;display:block;box-sizing:border-box;margin:0}
+  .sheep-tag-runtime #sheepTagHUD .st-commandbar .st-map{display:none}
+  .sheep-tag-runtime #sheepTagHUD .st-commandbar .st-camera{flex-wrap:wrap}
+  .sheep-tag-runtime #sheepTagHUD .st-commandbar .st-camera>span{display:none}
+}`;
+document.head.append(stTouchPlacementStyle);

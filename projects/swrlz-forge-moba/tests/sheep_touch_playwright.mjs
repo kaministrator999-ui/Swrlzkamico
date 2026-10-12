@@ -298,7 +298,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
       for(let y=rect.top+20;y<rect.bottom-10;y+=12)for(const fraction of [.5,.35,.65,.2,.8]){const x=rect.left+rect.width*fraction,n=document.elementFromPoint(x,y);
         if(n?.tagName==='CANVAS'||n?.id==='viewport')result.push({x,y});}return result;});let heldLandscape=null;
     for(const candidate of candidates){await touchEvent(page,'touchStart',candidate);await frames(page,1);const current=await ui(page);
-      if(current.touchPlacement.active&&current.touchPlacement.fit?.ok&&current.placementGrid?.valid){heldLandscape=current;break;}
+      if(current.touchPlacement.active&&current.touchPlacement.offsetPx>0&&current.touchPlacement.fit?.ok&&current.placementGrid?.valid){heldLandscape=current;break;}
       await touchEvent(page,'touchCancel');await frames(page,1);}
     assert.ok(heldLandscape,'No legal above-finger placement remained usable in the landscape canvas');
     const landscapeTarget=heldLandscape.touchPlacement.targetScreen,landscapeRaw=heldLandscape.touchPlacement.rawScreen;

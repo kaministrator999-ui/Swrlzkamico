@@ -14,7 +14,7 @@ short_description: Sheep Tag, paper theatre, Dragon Den and Starforge
 
 ## Current v10.3 candidate · Touch placement above the finger
 
-In **Sheep Tag · Moonbell Meadow**, touch construction aims **64 screen pixels above the finger** so the building preview and ground grid remain visible. Hold and drag to aim, then release to place at the displayed snapped footprint. Near controls or the viewport edge, the offset shortens to keep the target on the playable canvas. Moving over controls or cancelling a gesture cannot place a hidden building. Mouse placement stays under the cursor; ordinary sheep movement, double-tap building selection, wisp rescue and wolf attacks keep their existing controls.
+In **Sheep Tag · Moonbell Meadow**, touch construction aims **64 screen pixels above the finger** so the building preview and ground grid remain visible. Hold and drag to aim, then release to place at the displayed snapped footprint. Near controls or the viewport edge, the offset shortens to keep the target on the playable canvas. Moving over controls or cancelling a gesture cannot place a hidden building. Short landscape phones use scrollable controls at the side to leave room for aiming. Mouse placement stays under the cursor; ordinary sheep movement, double-tap building selection, wisp rescue and wolf attacks keep their existing controls.
 
 Packaging appends `patches/v10_3_sheep_touch_offset.py` and `runtime/sheep_touch_offset.js`: **63 governed patches and the unchanged 23 assets**, artifact `swyrl_engine_v10_3.html`, marker `SWYRL_ENGINE_DEPLOY_MARKER: V10_3_SHEEP_TOUCH_OFFSET`. All 62 earlier patches, runtime modules and bundled map/media assets remain unchanged. Exact bytes and SHA-256 resolve from the sealed manifest and generated `SOURCE.json`.
 

@@ -79,6 +79,6 @@
     "patches/v10_2_sheep_touch_placement.py",
     "patches/v10_3_sheep_touch_offset.py"
   ],
-  "finalBytes": 1500423,
-  "finalSha256": "d24f7950ec3b87b4e30f742390066d318c2e4b99e924b665ace9f9f5df23ec58"
+  "finalBytes": 1501714,
+  "finalSha256": "6b0f2f461ea2bb1595e0be2ef4dbc58a114ecb39bd8e1828ac745cd0b7ed2653"
 }
