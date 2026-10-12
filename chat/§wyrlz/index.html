@@ -1602,7 +1602,7 @@
           String(a?.id||""),Number(a?.currentRevision||0),String(a?.title||""),
           (a?.files||[]).map(file=>[String(file?.path||""),String(file?.language||""),String(file?.content||"")])
         ]);
-        return JSON.stringify([String(thread.id||""),messages,artifactState]);
+        return JSON.stringify([String(thread.id||""),thread.githubContext||null,messages,artifactState]);
       };
       const renderConversation = (thread,force=false) => {
         const signature=conversationRenderSignature(thread);
@@ -2814,7 +2814,7 @@
         chatAccountUser = accountUser;
         accountProfile=profile&&typeof profile==="object"?profile:null;
         accountProfileDurable=!!accountUser&&!!durable&&Number(accountProfile?.version||0)>0;
-        if(priorUserId!==(accountUser?.id||"")){loreRecords=[];loreLoadedForUser="";closeLoreEditor();renderLoreRecords();rapportRecords=[];rapportControl=null;rapportLoadedKey="";closeRapportEditor();renderRapportRecords();proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();renderProposalRecords();}
+        if(priorUserId!==(accountUser?.id||"")){window.SwrlzGitHubExplorerV223?.reset();loreRecords=[];loreLoadedForUser="";closeLoreEditor();renderLoreRecords();rapportRecords=[];rapportControl=null;rapportLoadedKey="";closeRapportEditor();renderRapportRecords();proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();renderProposalRecords();}
         populateSettingsControls();
         refreshSettingsDurability();
         if(!draftThread)renderConversation(currentThread()); else renderConversation(null);
