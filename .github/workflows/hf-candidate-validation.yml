@@ -44,6 +44,7 @@ jobs:
         run: |
           python -m py_compile hf_space/chatgpt_archive.py hf_space/chatgpt_account_memory.py hf_space/personal_history_lookup.py hf_space/personal_history_query_v207.py hf_space/private_account_facts_v208.py hf_space/test_private_account_facts_v208.py hf_space/app.py hf_space/station.py hf_space/model_router.py hf_space/brain_programming.py hf_space/accepted_runtime/lalm/r39_engine.py hf_space/swyrlz/backend.py hf_space/swyrlz/r39_inference.py
           python -m unittest discover -s tests -p test_hf_candidate.py -v
+          python hf_space/test_github_explorer_v223.py
           python hf_space/test_chatgpt_archive_import_v202.py
           python hf_space/test_chatgpt_account_memory_v205.py
           python hf_space/test_personal_history_lookup_v206.py
@@ -51,6 +52,7 @@ jobs:
           python hf_space/test_private_account_facts_v208.py
           node --check 'chat/§wyrlz/assets/chatgpt-archive-import-v1.js'
           node --check 'chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js'
+          node --check 'chat/§wyrlz/assets/github-explorer-v223.js'
           node tests/test_chatgpt_archive_sidebar_v204.mjs
       - name: Report scope
         run: echo "Offline checks only. Model reconstruction, inference, HF Space and Chat parity remain unverified."
