@@ -695,6 +695,8 @@ def _github_command(user, prompt):
 
     if github_project_v213.is_command(prompt):
         return github_project_v213.execute(sys.modules[__name__], user, prompt)
+    if engine_starter_pack_v215.is_command(prompt):
+        return engine_starter_pack_v215.execute(sys.modules[__name__], user, prompt)
     if forge_project_tools_v213.is_command(prompt):
         return forge_project_tools_v213.execute(sys.modules[__name__], user, prompt)
     if github_workflows_v212.is_command(prompt):
