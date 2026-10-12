@@ -155,7 +155,7 @@ def test_readback_digest_verifies_actual_github_files():
     with mock.patch.object(gh,"_api",side_effect=fake_api), \
          mock.patch.object(gh,"_read_optional",side_effect=lambda tok,repo,path,ref,max_bytes:source[path]):
         report=pack._verify(gh,REC,REPO,"dawn-meadow","feature/dawn")
-        assert "data only" in report and "digest" not in report.lower()
+        assert "data only" in report and "digest checks PASS" in report
         assert "SHA-256" in report and "does NOT verify editor registration" in report
         changed=json.loads(source[scene_files[1][0]]["body"])
         changed["scene"]["sha256"]="0"*64
