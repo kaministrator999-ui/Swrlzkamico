@@ -94,6 +94,40 @@ def test_pending_or_no_checks_not_green():
         assert "CI checks observed green ONLY" not in report
 
 
+
+def test_natural_engine_requests_are_grounded_and_do_not_mutate():
+    import github_connection as gh
+    intents=[
+        "Can you build a starter pack for our game engine?",
+        "Please improve our editor timeline",
+        "I want you to implement Sheep Tag gameplay in our editor",
+        "@GitHub ask add timeline Undo/Redo to our editor",
+    ]
+    for q in intents:
+        assert agent.is_coding_intent(q), q
+        assert gh.is_github_conversation(q), q
+    for q in ("How do I learn programming?",
+              "What's new with GitHub?",
+              "Can you build a website for someone else?",
+              "Can you create an issue on GitHub?"):
+        assert not agent.is_coding_intent(q), q
+    assert not agent.is_coding_intent("@GitHub confirm Whatever123")
+    with mock.patch.object(agent.engine,"_access",return_value={"allowed":True}), \
+         mock.patch.object(agent.engine,"_plan",return_value="SOURCE VERIFIED: editor runtime, manifest and scene schema"), \
+         mock.patch.object(agent.approvals,"_branch_sha",return_value=SHA_MAIN), \
+         mock.patch.object(agent,"_candidate_paths",return_value=[PATH]):
+        report=agent._natural_mission(object(),{"token":"private-test-token"},
+                         engine.ENGINE_REPO,"Can you improve our editor timeline?")
+    assert "SOURCE VERIFIED" in report
+    assert PATH in report and SHA_MAIN in report
+    assert "NOTHING CHANGED" in report
+    assert "engine code task" in report and "review" in report
+    assert "no branch" not in report.lower() or "No branch" in report
+    code_source=Path(agent.__file__).read_text()
+    assert 'if is_coding_intent(prompt) and not is_command(prompt)' in code_source
+    assert 'engine_code_agent_v217.is_coding_intent(prompt)' in Path(gh.__file__).read_text()
+
+
 def test_commands_and_protection():
     assert agent.is_command("@GitHub engine code context "+PATH+" :: Fix Timeline Scrub")
     assert agent.is_command("@GitHub engine code verify feature/review")
@@ -120,4 +154,5 @@ if __name__=="__main__":
     test_verified_green_does_not_claim_engine_release()
     test_pending_or_no_checks_not_green()
     test_commands_and_protection()
+    test_natural_engine_requests_are_grounded_and_do_not_mutate()
     print("v218 engine source context and branch CI truth checks passed")
