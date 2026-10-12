@@ -75,8 +75,10 @@ function highlight(pre,text){
 }
 function parseListing(source){
   const lines=String(source||"").trim().split(/\r?\n/);
-  const heading=lines[0]?.match(/^(?:##\s*)?GitHub directory:\s*(\/[^\n]*)$/);
+  const heading=lines[0]?.match(/^(?:##\s*)?GitHub directory:\s*(\/|[^\r\n]+)$/);
   if(!heading||lines.length>3000)return null;
+  const requested=heading[1].trim().replace(/^\/|\/$/g,"");
+  if(requested.startsWith("/")||(requested&&requested.split("/").some(part=>!part||part==="."||part===".."))||/[<>\\?#%*{}\[\]\x00-\x1f]/.test(requested))return null;
   const items=[];
   for(const line of lines.slice(1)){
     if(!line.trim()||/^\(First \d+ entries\.\)$/.test(line.trim()))continue;
@@ -87,7 +89,7 @@ function parseListing(source){
     items.push({path,type:entry[1].toLowerCase(),name:path.split("/").pop(),sizeBytes:null});
   }
   if(!items.length)return null;
-  return {path:heading[1].replace(/^\/|\/$/g,""),entries:items,
+  return {path:requested,entries:items,
     incomplete:/\(First \d+ entries\.\)/.test(source)};
 }
 function render(container,source,options={}){
@@ -348,5 +350,5 @@ function render(container,source,options={}){
   if(state.info){breadcrumbs();stats();renderRows();}
   return true;
 }
-window.SwrlzGitHubExplorerV223={render,version:"223",reset:()=>{historyCache.clear();stateCache.clear();}};
+window.SwrlzGitHubExplorerV223={render,parseDirectoryResponse:parseListing,version:"224",reset:()=>{historyCache.clear();stateCache.clear();}};
 })();

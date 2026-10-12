@@ -34,6 +34,7 @@ on:
       - feature/github-staged-read-only-v221
       - feature/github-natural-file-read-v222
       - feature/github-explorer-ui-v223
+      - fix/github-explorer-subfolders-v224
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 
@@ -91,6 +92,7 @@ jobs:
         run: |
           node --check 'chat/§wyrlz/assets/chatgpt-archive-import-v1.js'
           node --check 'chat/§wyrlz/assets/github-explorer-v223.js'
+          node tests/test_github_directory_parser_v224.mjs
           node --check 'chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js'
           node tests/test_chatgpt_archive_sidebar_v204.mjs
           node tests/test_native_chat_order_v211.mjs
