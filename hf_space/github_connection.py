@@ -844,6 +844,28 @@ def _agent_allowed_tool(value, prompt):
     name = str(value or "").strip()
     if name in _AGENT_TOOLS:
         return name
+    # Model-selected investigations are read-only and may use only literal IDs,
+    # refs, and paths explicitly present in the current user's request.
+    request = str(prompt or "")
+    match = re.fullmatch(r"(pr review|issue inspect) ([1-9][0-9]{0,9})", name)
+    if match and match[2] in request and re.search(
+        r"\\b(?:pr|pull request)\\b" if match[1] == "pr review"
+        else r"\\bissue\\b", request, re.I):
+        return name
+    match = re.fullmatch(r"checks ([a-f0-9]{40})", name)
+    if match and match[1] in request and re.search(r"\\b(?:check|ci|status|workflow)\\b", request, re.I):
+        return name
+    match = re.fullmatch(r"code search ([A-Za-z0-9_.-]{2,60})", name)
+    if match and match[1].casefold() in request.casefold() and re.search(
+        r"\\b(?:code|search|find|symbol)\\b", request, re.I):
+        return name
+    match = re.fullmatch(r"file history ([^\\s?#%\\\\]+)", name)
+    if match and match[1] in request and re.search(r"\\b(?:history|commits?|changes?)\\b", request, re.I):
+        return name
+    match = re.fullmatch(r"compare ([A-Za-z0-9._/-]+)\\.\\.\\.([A-Za-z0-9._/-]+)", name)
+    if match and all(ref in request for ref in (match[1],match[2])) and re.search(
+        r"\\b(?:compare|diff|changes?|branches?)\\b",request,re.I):
+        return name
     if name.startswith("read file ") or name.startswith("files "):
         is_directory = name.startswith("files ")
         path = name[6:].strip() if is_directory else name[10:].strip()
@@ -887,7 +909,7 @@ def _agent_model_plan_events(prompt, generator):
     instruction = (
         "Choose 1 to 3 read-only GitHub checks relevant to this request. "
         "Return ONLY JSON, e.g. {\"tools\":[\"permissions\",\"pulls\"]}. "
-        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide, overview, tree, project guide. "
+        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide, overview, tree, project guide. Specific read-only PR/issue IDs, checks SHAs, code search terms, file-history paths, or compare refs are allowed ONLY when the user explicitly named those identifiers. "
         "Specific files PATH or read file PATH permitted only when PATH is in the user request. "
         "Do not propose writes, URL fetches, authorization changes or other commands. "
         "No chain-of-thought. User request: " + str(prompt)[:900]
