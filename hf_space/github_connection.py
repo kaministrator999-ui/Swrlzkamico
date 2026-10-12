@@ -849,22 +849,22 @@ def _agent_allowed_tool(value, prompt):
     request = str(prompt or "")
     match = re.fullmatch(r"(pr review|issue inspect) ([1-9][0-9]{0,9})", name)
     if match and match[2] in request and re.search(
-        r"\\b(?:pr|pull request)\\b" if match[1] == "pr review"
-        else r"\\bissue\\b", request, re.I):
+        r"\b(?:pr|pull request)\b" if match[1] == "pr review"
+        else r"\bissue\b", request, re.I):
         return name
     match = re.fullmatch(r"checks ([a-f0-9]{40})", name)
-    if match and match[1] in request and re.search(r"\\b(?:check|ci|status|workflow)\\b", request, re.I):
+    if match and match[1] in request and re.search(r"\b(?:check|ci|status|workflow)\b", request, re.I):
         return name
     match = re.fullmatch(r"code search ([A-Za-z0-9_.-]{2,60})", name)
     if match and match[1].casefold() in request.casefold() and re.search(
-        r"\\b(?:code|search|find|symbol)\\b", request, re.I):
+        r"\b(?:code|search|find|symbol)\b", request, re.I):
         return name
-    match = re.fullmatch(r"file history ([^\\s?#%\\\\]+)", name)
-    if match and match[1] in request and re.search(r"\\b(?:history|commits?|changes?)\\b", request, re.I):
+    match = re.fullmatch(r"file history ([^\s?#%\\]+)", name)
+    if match and match[1] in request and re.search(r"\b(?:history|commits?|changes?)\b", request, re.I):
         return name
-    match = re.fullmatch(r"compare ([A-Za-z0-9._/-]+)\\.\\.\\.([A-Za-z0-9._/-]+)", name)
+    match = re.fullmatch(r"compare ([A-Za-z0-9._/-]+)\.\.\.([A-Za-z0-9._/-]+)", name)
     if match and all(ref in request for ref in (match[1],match[2])) and re.search(
-        r"\\b(?:compare|diff|changes?|branches?)\\b",request,re.I):
+        r"\b(?:compare|diff|changes?|branches?)\b",request,re.I):
         return name
     if name.startswith("read file ") or name.startswith("files "):
         is_directory = name.startswith("files ")
