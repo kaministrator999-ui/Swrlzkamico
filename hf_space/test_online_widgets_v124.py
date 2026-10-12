@@ -44,6 +44,50 @@ assert coding_web["requested"] is True,coding_web
 coding_fresh=classify_online_request("What changed in the latest FastAPI release?",HISTORY,{"codingTask":True},None)
 assert coding_fresh["requested"] is True and coding_fresh["kind"]=="search",coding_fresh
 
+# v219: simple conversational check-ins do not become a public search
+# merely because "today" or "tonight" appears in the user's greeting.
+from social_checkin import is_simple_checkin
+for utterance in (
+    "Hi", "Hello!", "Hey, how are you today?",
+    "How are you doing today?", "What's up today?",
+    "You good tonight?", "Yo!",
+):
+    assert is_simple_checkin(utterance),utterance
+    plan=classify_online_request(utterance,HISTORY,{},None)
+    assert plan["requested"] is False and plan["kind"]=="none",plan
+    assert plan["reason"]=="social-checkin",plan
+
+# These are actual information requests, not conversational greetings.
+for utterance, expected_kind in (
+    ("Search online for the latest assistant release", "search"),
+    ("What's the weather in Kansas City today?", "weather"),
+    ("What's the time in New York?", "time"),
+    ("What are today's headlines?", "search"),
+):
+    plan=classify_online_request(utterance,HISTORY,{},None)
+    assert plan["requested"] is True and plan["kind"]==expected_kind,plan
+
+# End-to-end dispatch must NOT invoke online research for an ordinary greeting.
+# Keep the real generator selected; never return an invented canned greeting.
+original_online_stream=model_router.stream_online_request
+def reject_social_online_call(*_args,**_kwargs):
+    raise AssertionError("A pure social greeting attempted a public online search")
+def conversational_test_model(_payload):
+    yield {"type":"DELTA","text":"Hey! How's it going?"}
+    yield {"type":"COMPLETED","phase":"COMPLETE"}
+try:
+    model_router.stream_online_request=reject_social_online_call
+    social_events=list(model_router.dispatch(
+        "700m",
+        {"requestId":"v219-social","prompt":"Hey, how are you today?","history":HISTORY},
+        conversational_test_model,conversational_test_model,
+        conversational_test_model,conversational_test_model,
+    ))
+finally:
+    model_router.stream_online_request=original_online_stream
+assert any(event.get("type")=="DELTA" for event in social_events),social_events
+assert not any(event.get("phase") in ("SEARCH_STARTED","WEATHER_FETCH_STARTED") for event in social_events),social_events
+
 # Weather provider parsing without network.
 orig_json_get=online_tools._json_get
 calls=[]

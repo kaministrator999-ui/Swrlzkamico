@@ -137,6 +137,48 @@ class Candidate(unittest.TestCase):
   self.assertFalse(intent["artifactMutationRequested"])
   self.assertEqual(intent["artifactTargetId"],"")
 
+ def test_v219_social_checkin_stays_out_of_public_freshness_search(self):
+  from social_checkin import is_simple_checkin
+  from online_tools import classify_online_request
+  for prompt in ("Hi", "Hello!", "Hey, how are you today?",
+                 "How are you doing today?", "What's up today?", "You good tonight?"):
+   with self.subTest(prompt=prompt):
+    self.assertTrue(is_simple_checkin(prompt))
+    result=classify_online_request(prompt,[],{},None)
+    self.assertFalse(result["requested"])
+    self.assertEqual(result["kind"],"none")
+    self.assertEqual(result["reason"],"social-checkin")
+  for prompt,kind in (
+      ("Search online for today's headlines","search"),
+      ("What are today's headlines?","search"),
+      ("What's the weather in Kansas City today?","weather"),
+      ("What's the time in Tokyo?","time"),
+      ("What is the latest FastAPI release?","search")):
+   with self.subTest(prompt=prompt):
+    result=classify_online_request(prompt,[],{},None)
+    self.assertTrue(result["requested"])
+    self.assertEqual(result["kind"],kind)
+
+ def test_v219_model_dispatch_does_not_call_online_for_greeting(self):
+  import model_router
+  old_stream=model_router.stream_online_request
+  def fail_if_online(*args,**kwargs):
+   raise AssertionError("social greeting unexpectedly used public search")
+  def model(_payload):
+   yield {"type":"DELTA","text":"Hi! What's up?"}
+   yield {"type":"COMPLETED","phase":"COMPLETE"}
+  try:
+   model_router.stream_online_request=fail_if_online
+   events=list(dispatch("700m",{
+      "requestId":"v219-social-dispatch",
+      "prompt":"Hey, how are you today?",
+      "history":[{"role":"user","text":"Tell me about Mars."}]},
+      model,model,model,model))
+  finally:
+   model_router.stream_online_request=old_stream
+  self.assertTrue(any(e.get("type")=="DELTA" for e in events),events)
+  self.assertFalse(any(e.get("phase") in ("SEARCH_STARTED","WEATHER_FETCH_STARTED") for e in events),events)
+
  def test_model_routes_fail_closed(self):
   self.assertEqual([r.model_id for r in routes()],["r39","stock","700m","coder","compare"])
   self.assertTrue(routes()[1].available)
