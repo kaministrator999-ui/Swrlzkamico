@@ -346,12 +346,17 @@ def _propose(gh, c, rec, user, repo, cmd):
         if not access["allowed"]:
             return gh._permission_message(access)
         info = _workflow_info(gh, rec["token"], repo, name)
+        if _PROTECTED.search(name) or _PROTECTED.search(str(info.get("name") or "")):
+            return ("Protected/production workflow cannot be dispatched through §wyrlz Chat. "
+                    "Use the repository's existing reviewed deployment/approval path; no trigger attempted.")
         if info.get("state") != "active":
             return "Workflow is not active according to GitHub; no dispatch proposal."
         default = access["defaultBranch"]
         body = gh._read_optional(rec["token"], repo, _workflow_path(name), default, 25000)
         if not body or not _triggers_manually(body["body"]):
             return "Could not verify workflow_dispatch on the default branch. GitHub requires a manually triggerable registered workflow."
+        if _PROTECTED.search(body["body"]):
+            return "Workflow contains potentially privileged/release-affecting actions; use the reviewed GitHub Actions UI and release policy instead."
         # Protect the existing production and privilege-bearing pipeline.
         if _PROTECTED.search(name) or _PROTECTED.search(str(info.get("name") or "")):
             return ("Protected/production workflow cannot be dispatched through §wyrlz Chat. "
@@ -446,6 +451,8 @@ def confirm(gh, c, rec, user, repo, pending):
     body = gh._read_optional(rec["token"], repo, _workflow_path(name), permission["defaultBranch"], 25000)
     if not body or str(body.get("sha") or "") != str(pending.get("workflowSha") or "") or not _triggers_manually(body["body"]):
         return "Workflow YAML changed or manual trigger not verified; no dispatch."
+    if _PROTECTED.search(body["body"]):
+        return "Workflow content has privileged operations; no dispatch attempted."
     inputs = pending.get("inputs")
     if not isinstance(inputs, dict) or _parse_dispatch_inputs(",".join(k + "=" + v for k, v in inputs.items())) != inputs:
         return "Workflow input approval invalid; no dispatch."
