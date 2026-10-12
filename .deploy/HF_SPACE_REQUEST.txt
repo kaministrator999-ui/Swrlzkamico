@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=adb3a4d4a6bcbdc54062bc7af1324ebeaa07857e
-REQUEST_NONCE=2026-10-12-v215-atomic-engine-starter-pack-github-tools-001
+SOURCE_REF=23a540ab0257e14009147d7202be203743c8641f
+REQUEST_NONCE=2026-10-12-v217-v218-source-grounded-engine-coder-001
