@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.110
-REVISION=1.5.110-github-explorer-mobile-readonly-v223
+VERSION=1.5.111
+REVISION=1.5.111-github-nested-directory-explorer-v224
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
