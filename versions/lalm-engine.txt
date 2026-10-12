@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.195
-REVISION=2.1.195-github-source-grounded-local-model-engine-code-v218
+VERSION=2.1.196
+REVISION=2.1.196-private-history-vs-web-freshness-v220
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
