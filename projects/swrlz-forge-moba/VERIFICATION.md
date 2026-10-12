@@ -1,14 +1,16 @@
 # §wyrl§ Engine v10.2 candidate · Sheep selection and placement acceptance
 
-## Current v10.2 candidate · Sheep selection and placement
+## Current v10.3 candidate · Touch placement above the finger
 
-In **Sheep Tag · Moonbell Meadow**, sheep select a house or building with a **double tap or double click** on the same building. A single tap/click orders ground movement with the controlled sheep; when the tapped building blocks that ground point, the order uses a nearby reachable passage. Wolves keep their single-tap attack controls. Movement still follows physical routes, and deliberately sealed sheep pockets remain legal.
+In **Sheep Tag · Moonbell Meadow**, touch construction aims **64 screen pixels above the finger** so the building preview and ground grid remain visible. Hold and drag to aim, then release to place at the displayed snapped footprint. Near controls or the viewport edge, the offset shortens to keep the target on the playable canvas. Moving over controls or cancelling a gesture cannot place a hidden building. Short landscape phones use scrollable controls at the side to leave room for aiming. Mouse placement stays under the cursor; ordinary sheep movement, double-tap building selection, wisp rescue and wolf attacks keep their existing controls.
 
-During construction, a temporary **ground grid and full footprint boundary** show where the building will stand. Houses occupy 2.4 × 2.4 ground units; walls and ramps occupy 2.4 × 6. The guide follows rotation and the selected **0.15-unit fine snap** or **3-unit coarse snap** (readable major grid lines and fine edge ticks), with green for a valid site and red for a rejected site. Placement guides do not add collision or enter saved maps, and disappear when placement ends.
+Packaging appends `patches/v10_3_sheep_touch_offset.py` and `runtime/sheep_touch_offset.js`: **63 governed patches and the unchanged 23 assets**, artifact `swyrl_engine_v10_3.html`, marker `SWYRL_ENGINE_DEPLOY_MARKER: V10_3_SHEEP_TOUCH_OFFSET`. All 62 earlier patches, runtime modules and bundled map/media assets remain unchanged. Exact bytes and SHA-256 resolve from the sealed manifest and generated `SOURCE.json`.
 
-Packaging uses **62 governed patches and the unchanged 23 assets**: `patches/v10_2_sheep_touch_placement.py`, artifact `swyrl_engine_v10_2.html`, marker `SWYRL_ENGINE_DEPLOY_MARKER: V10_2_SHEEP_TOUCH_PLACEMENT`. The previous 61 patches, published runtime source and all map/media assets remain unchanged. Exact bytes and SHA-256 resolve from the sealed manifest and generated `SOURCE.json`.
+Acceptance requires all **eleven desktop/phone browser suites** and all **six engine CI workflows**. The focused touch suite checks held/dragged construction, agreement between preview and placed building, cancellation, screen boundaries, mouse placement and normal movement. Production authority resolves from the final deliberate `DEPLOY_REQUEST.json`, terminal success of its dedicated deployment, and hosted matching of HTML, `SOURCE.json` and all 23 assets. These candidate notes make no claim that v10.3 is already published.
 
-Acceptance requires **eleven desktop/phone browser suites** and all **six engine CI workflows**, including `tests/sheep_touch_playwright.mjs` for real canvas single/double taps, reachable passage movement, wolf attacks, grid bounds/rotation/snap/rejection and placement cleanup. Existing archive, creator, animation and Den regressions remain required. This candidate text does not claim v10.2 checks or deployment have passed. Production authority requires the final deliberate `DEPLOY_REQUEST.json`, terminal success of its exact dedicated deployment, and hosted matching of the marker, normalized HTML, `SOURCE.json` and all 23 assets. [Sheep Tag controls](SHEEP_TAG.md) and [archive decisions](SHEEP_TAG_ARCHIVE.md) describe the game.
+## Historical verified v10.2 · Sheep selection and ground placement
+
+The v10.2 release is verified live: merged source `0144031ae3b35630de1eb969fd05f7c0efbade74`, final trigger `3bf7004e716c3bea29f3f3e683d33c0700ef8669`, [deployment 38273428696](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38273428696) and [hosted audit 38273499402](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38273499402). It seals **62 patches, 23 assets and 1,487,394 bytes**, SHA-256 `2c0d10636bda9cf6062e6ec49d8173a77a104fa208c841d6eda4d48409a9ba35`. All six workflows and eleven desktop/phone suites passed, followed by eleven live controls cases on each layout and normal Projects/Play checks. Sheep use deliberate double taps to select buildings; single taps keep movement available. A terrain-following grid, filled footprint and green/red boundary show full house, wall and ramp extent. Marker: `V10_2_SHEEP_TOUCH_PLACEMENT`; artifact: `swyrl_engine_v10_2.html`.
 
 ## Historical verified v10.1 · Sheep Tag Design Archive
 
@@ -75,7 +77,7 @@ Pose, grip and effects references: [PoseMyArt’s male casting-spell pose](https
 - [ ] Follow the exact final source/trigger deployment to terminal success.
 - [ ] Verify the current marker, normalized served HTML, SOURCE receipt, all nine scene exports, screening HTML and all eleven PNGs against committed source.
 
-The verified v10.1 source and production receipts are recorded above. The current v10.2 candidate requires its own eleven-suite desktop/phone browser matrix, six engine CI workflows, final dedicated deployment and exact hosted package audit.
+The verified v10.1 source and production receipts are recorded above. The current v10.3 candidate requires its own eleven-suite desktop/phone browser matrix, six engine CI workflows, final dedicated deployment and exact hosted package audit.
 
 
 ---

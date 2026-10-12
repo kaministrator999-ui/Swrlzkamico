@@ -38,16 +38,28 @@ async function point(page,x,z,y=0){const p=await page.evaluate(({x,z,y})=>window
   assert.ok(p?.visible,'World input is outside the visible canvas: '+JSON.stringify({x,z,y,screen:p}));
   assert.equal(await page.evaluate(p=>{const n=document.elementFromPoint(p.x,p.y);return n?.tagName==='CANVAS'||n?.id==='viewport';},p),true,
     'World input hits an editor/HUD panel: '+JSON.stringify(p));return p;}
-async function screenTap(page,p){if(touchPages.has(page))await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);await frames(page,1);}
-async function worldTap(page,x,z,y=0){await screenTap(page,await point(page,x,z,y));}
+async function screenTap(page,p){assert.equal(await page.evaluate(p=>{const n=document.elementFromPoint(p.x,p.y);return n?.tagName==='CANVAS'||n?.id==='viewport';},p),true,
+  'Physical world input hits an editor/HUD panel: '+JSON.stringify(p));if(touchPages.has(page))await page.touchscreen.tap(p.x,p.y);else await page.mouse.click(p.x,p.y);await frames(page,1);}
+async function worldTap(page,x,z,y=0){const p=await point(page,x,z,y);
+  if(touchPages.has(page)&&(await ui(page)).build)p.y+=64;await screenTap(page,p);}
+async function placementPoint(page,x,z){const p=await point(page,x,z);if(touchPages.has(page))p.y+=64;
+  assert.equal(await page.evaluate(p=>{const n=document.elementFromPoint(p.x,p.y);return n?.tagName==='CANVAS'||n?.id==='viewport';},p),true,
+    'The physical placement finger would hit a HUD panel: '+JSON.stringify(p));return p;}
+async function touchEvent(page,type,p){await touchSessions.get(page).send('Input.dispatchTouchEvent',{type,
+  touchPoints:p?[{x:p.x,y:p.y,radiusX:2,radiusY:2,force:1,id:0}]:[]});}
 async function houseTap(page,id){const building=(await view(page)).buildings.find(b=>b.id===id);assert.ok(building,'Building must be visible to the player before tapping');
   await worldTap(page,building.pos[0],building.pos[2],1);}
-async function previewAt(page,x,z){const p=await point(page,x,z);if(touchPages.has(page)){
-    const session=touchSessions.get(page);await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:p.x,y:p.y,radiusX:2,radiusY:2,force:1,id:0}]});
-    // Actual touch cancellation updates the visible guide without committing a
-    // building. It also exercises the browser's pointercancel cleanup path.
-    await session.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
-  }else await page.mouse.move(p.x,p.y);await frames(page,1);return (await ui(page)).placementGrid;}
+async function previewAt(page,x,z){const p=await placementPoint(page,x,z);if(touchPages.has(page)){
+    await touchEvent(page,'touchStart',p);await frames(page,1);const guide=(await ui(page)).placementGrid;
+    // Inspect actual rendered geometry while the finger is held. Cancellation
+    // then removes the active finger offset without placing anything.
+    await touchEvent(page,'touchCancel');await frames(page,1);
+    // A subsequent real mouse hover restores a neutral preview so the old
+    // snap/rotation controls inspect visible geometry after touch cancellation.
+    const mousePoint=await point(page,x,z);await page.mouse.move(mousePoint.x,mousePoint.y);await frames(page,1);
+    const restored=(await ui(page)).placementGrid;close(restored.center[0],guide.center[0],'Touch/mouse preview X');
+    close(restored.center[1],guide.center[1],'Touch/mouse preview Z');return restored;
+  }await page.mouse.move(p.x,p.y);await frames(page,1);return (await ui(page)).placementGrid;}
 async function drag(page,p){if(touchPages.has(page)){
     const session=touchSessions.get(page);await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:p.x,y:p.y,radiusX:2,radiusY:2,force:1,id:0}]});
     await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:p.x+28,y:p.y-18,radiusX:2,radiusY:2,force:1,id:0}]});
@@ -88,7 +100,11 @@ async function visibleSite(page,kind){const s=await view(page),sheep=controlled(
   for(const [dx,dz]of [[-3,-3],[3,-3],[-6,0],[6,0],[0,-6],[-6,-3],[6,-3],[0,6]]){
     const fit=await page.evaluate(({kind,x,z})=>window.SWYRL_ENGINE_SHEEP_TAG.canBuild(kind,x,z),{kind,x:sheep.pos[0]+dx,z:sheep.pos[2]+dz});
     if(!fit.ok)continue;const p=await page.evaluate(({x,z})=>window.SWYRL_ENGINE_SHEEP_TAG.pointScreen(x,z),fit);
-    const canvas=await page.evaluate(p=>{const n=document.elementFromPoint(p.x,p.y);return n?.tagName==='CANVAS'||n?.id==='viewport';},p);
+    const canvas=await page.evaluate(({p,touch})=>{
+      if(touch)for(const n of document.querySelectorAll('#sheepTagHUD .st-score,#sheepTagHUD .st-phase,#sheepTagHUD .st-event,#sheepTagHUD .st-attack-feedback')){
+        if(n.hidden||!n.getClientRects().length)continue;const r=n.getBoundingClientRect();if(p.x>=r.left-16&&p.x<=r.right+16&&p.y<r.bottom+24)return false;}
+      return [p,{x:p.x,y:p.y+(touch?64:0)}].every(q=>{const n=document.elementFromPoint(q.x,q.y);return n?.tagName==='CANVAS'||n?.id==='viewport';});
+    },{p,touch:touchPages.has(page)});
     if(p.visible&&canvas)sites.push(fit);
   }assert.ok(sites.length,'No visible legal site after opening the placement controls');return sites[0];}
 function guideGeometry(guide,label){assert.ok(guide?.visible,label+' has no visible ground guide');assert.ok(guide.fillVertices>=6,label+' has no filled footprint');
@@ -111,7 +127,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_TAG?.uiStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='sheep-tag-meadow',undefined,{timeout:60000});
   await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__sheepTouchClock.freeze());await frames(page,2);
-  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.2','Wrong engine release');
+  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.3','Wrong engine release');
   const canonical=await saved(page),prototypes=await models(page,canonical),houses=fixture(canonical,prototypes);
 
   await load(page,houses);let s=await state(page);const a='touch-building-0',b='touch-building-1';
@@ -164,7 +180,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   pass('wolf_single_tap_still_orders_and_damages_house');await stop(page);
 
   const ground=fixture(canonical,prototypes,{sheep:[-18,0,-21],pieces:[{type:'st-farm',pos:[-18,0,-18]}],rules:{elevated:true}});
-  await load(page,ground);const beforePreview=authored(await saved(page));
+  await load(page,ground);await focus(page,[-16.5,0,-10]);const beforePreview=authored(await saved(page));
   // No mousemove or canvas touch occurs between native Play and this control.
   await tap(page,'stBuildFarm');await frames(page,1);let guide=(await ui(page)).placementGrid;
   guideGeometry(guide,'Immediate '+mode.name+' house preview');assert.equal(guide.kind,'st-farm');
@@ -204,6 +220,96 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     await page.screenshot({path:resolve(output,mode.name+'-'+kind+'-rotated-grid.png')});await tap(page,'stCancelBuild');await frames(page,1);
     assert.equal((await ui(page)).placementGridResources.live,0,kind+' cancellation leaked the guide');
   }pass('wall_and_ramp_full_six_unit_footprints_rotate_with_preview');
+
+  // Hold and slide a real pointer before release. Both the rendered guide and
+  // final construction must use the same projected point above a touch finger.
+  await tap(page,'stBuildFarm');await frames(page,1);const dragSite=await visibleSite(page,'st-farm');
+  const finalFinger=await placementPoint(page,dragSite.x,dragSite.z),startFinger={x:finalFinger.x-12,y:finalFinger.y+8};
+  const beforeHeld=(await state(page)).buildings.map(v=>v.id);
+  if(mode.hasTouch)await touchEvent(page,'touchStart',startFinger);else{await page.mouse.move(startFinger.x,startFinger.y);await page.mouse.down();}
+  await frames(page,1);let offset=(await ui(page)).touchPlacement;assert.ok(offset,'Missing actual pointer placement diagnostics');
+  assert.equal(offset.active,mode.hasTouch,'Mouse and touch placement were not distinguished');
+  if(mode.hasTouch){close(offset.offsetPx,64,'Configured touch clearance in CSS pixels');
+    close(offset.rawScreen[1]-offset.targetScreen[1],64,'Held preview is not above the finger');}
+  else close(offset.offsetPx,0,'Mouse preview inherited the touch clearance');
+  if(mode.hasTouch)await touchEvent(page,'touchMove',finalFinger);else await page.mouse.move(finalFinger.x,finalFinger.y);
+  await frames(page,1);const heldUi=await ui(page),heldGuide=heldUi.placementGrid;offset=heldUi.touchPlacement;
+  guideGeometry(heldGuide,'Held sliding construction preview');assert.equal(heldGuide.valid,true,'A legal touch target produced a blocked preview');
+  assert.equal((await state(page)).buildings.length,beforeHeld.length,'Holding a placement pointer built before release');
+  close(heldGuide.center[0],dragSite.x,'Held preview snapped X');close(heldGuide.center[1],dragSite.z,'Held preview snapped Z');
+  if(mode.hasTouch){close(offset.rawScreen[0],finalFinger.x,'Held finger screen X');close(offset.rawScreen[1],finalFinger.y,'Held finger screen Y');
+    close(offset.targetScreen[0],finalFinger.x,'Touch placement shifted sideways');
+    close(offset.targetScreen[1],finalFinger.y-64,'Sliding preview lost the above-finger clearance');
+    close(offset.fit.x,heldGuide.center[0],'Touch target and drawn boundary disagree in X');
+    close(offset.fit.z,heldGuide.center[1],'Touch target and drawn boundary disagree in Z');}
+  await page.screenshot({path:resolve(output,mode.name+'-held-above-finger-placement.png')});
+  if(mode.hasTouch)await touchEvent(page,'touchEnd');else await page.mouse.up();await frames(page,1);
+  const afterHeld=await until(page,s=>s.buildings.some(v=>!beforeHeld.includes(v.id)),
+    'Actual construction at the released preview',200),placed=afterHeld.buildings.find(v=>!beforeHeld.includes(v.id));
+  assert.ok(placed,'Release did not construct the held preview');
+  close(placed.pos[0],heldGuide.center[0],'Release jumped away from preview X');close(placed.pos[2],heldGuide.center[1],'Release jumped away from preview Z');
+  if(mode.hasTouch){const committed=(await ui(page)).touchPlacement.lastCommitted;assert.ok(committed,'Touch release has no committed-placement receipt');
+    close(committed.x,heldGuide.center[0],'Committed target differs from drawn X');close(committed.z,heldGuide.center[1],'Committed target differs from drawn Z');
+    close(committed.targetScreen[1],offset.targetScreen[1],'Release changed the screen placement target');}
+  assert.equal((await ui(page)).build,null);assert.equal((await ui(page)).placementGrid,null);
+  pass('held_pointer_slide_uses_above_finger_preview_and_release_does_not_jump');
+  await stop(page);await load(page,ground);await focus(page,[-16.5,0,-10]);
+
+  // A canceled finger must neither place a structure nor leave its offset on
+  // a later mouse move. A real landscape resize exercises the HUD edge clamp.
+  await tap(page,'stBuildFarm');await frames(page,1);const cancelSite=await visibleSite(page,'st-farm');
+  const cancelFinger=await placementPoint(page,cancelSite.x,cancelSite.z),cancelCount=(await state(page)).buildings.length;
+  if(mode.hasTouch){await touchEvent(page,'touchStart',cancelFinger);await frames(page,1);assert.equal((await ui(page)).touchPlacement.active,true);
+    await touchEvent(page,'touchCancel');await frames(page,1);assert.equal((await ui(page)).touchPlacement.active,false,'Touch cancellation left a held offset active');
+    assert.equal((await state(page)).buildings.length,cancelCount,'Canceled touch constructed a building');assert.equal((await ui(page)).build,'st-farm','Canceling a finger exited placement mode');
+    const session=touchSessions.get(page),touch=(p,id)=>({x:p.x,y:p.y,radiusX:2,radiusY:2,force:1,id});
+    const fingers=[touch(cancelFinger,0),touch({x:cancelFinger.x+12,y:cancelFinger.y},1),touch({x:cancelFinger.x+24,y:cancelFinger.y},2)];
+    const multiple=async(type,points)=>{await session.send('Input.dispatchTouchEvent',{type,touchPoints:points});await frames(page,1);};
+    // Second and third fingers cancel the gesture. Moving existing fingers
+    // must not revive the first finger or commit its stale preview.
+    await multiple('touchStart',[fingers[0]]);assert.equal((await ui(page)).touchPlacement.active,true);
+    await multiple('touchStart',fingers.slice(0,2));assert.equal((await ui(page)).touchPlacement.active,false,'Second finger did not cancel construction');
+    await multiple('touchStart',fingers);assert.equal((await ui(page)).touchPlacement.active,false,'Third finger started another construction gesture');
+    await multiple('touchMove',fingers);
+    assert.equal((await ui(page)).touchPlacement.active,false,'Remaining fingers revived a canceled placement');
+    await multiple('touchEnd',[]);assert.equal((await state(page)).buildings.length,cancelCount,'A canceled multi-touch release built a structure');
+    // A held finger on the HUD also prevents a secondary canvas finger from
+    // starting construction, even though no placement was active beforehand.
+    const hud=await page.locator('#stTip').boundingBox();assert.ok(hud);const hudFinger=touch({x:hud.x+hud.width/2,y:hud.y+hud.height/2},0);
+    await multiple('touchStart',[hudFinger]);await multiple('touchStart',[hudFinger,fingers[1]]);
+    assert.equal((await ui(page)).touchPlacement.active,false,'Secondary canvas finger started placement while the HUD finger was held');
+    await multiple('touchStart',[hudFinger,fingers[1],fingers[2]]);assert.equal((await ui(page)).touchPlacement.active,false,'Third finger bypassed the held HUD finger');
+    await multiple('touchEnd',[]);assert.equal((await state(page)).buildings.length,cancelCount,'HUD-first multi-touch placed an invisible structure');
+    // Pointer capture keeps the finger gesture on the native canvas listener;
+    // physical release over a HUD control must still reject placement.
+    await multiple('touchStart',[fingers[0]]);assert.equal((await ui(page)).touchPlacement.active,true);
+    const cancelButton=await page.locator('#stCancelBuild').boundingBox();assert.ok(cancelButton);
+    const overHUD=touch({x:cancelButton.x+cancelButton.width/2,y:cancelButton.y+cancelButton.height/2},0);
+    await multiple('touchMove',[overHUD]);let invalid=await ui(page);assert.equal(invalid.touchPlacement.valid,false,'A finger over the HUD still has a valid placement target');
+    assert.equal(!!invalid.placementGrid?.visible,false,'Moving onto the HUD left an apparently placeable guide');
+    await multiple('touchEnd',[]);assert.equal((await state(page)).buildings.length,cancelCount,'Releasing over the HUD built a structure');
+    assert.equal((await ui(page)).touchPlacement.active,false,'HUD release left a finger active');assert.equal((await ui(page)).build,'st-farm','HUD release changed construction mode');}
+  const mouseTarget=await point(page,cancelSite.x,cancelSite.z);await page.mouse.move(mouseTarget.x,mouseTarget.y);await frames(page,1);
+  const mouseUi=await ui(page);close(mouseUi.touchPlacement.offsetPx,0,'Mouse after touch cancellation retained the finger offset');
+  assert.equal(mouseUi.touchPlacement.active,false);close(mouseUi.placementGrid.center[0],cancelSite.x,'Mouse preview X changed');
+  close(mouseUi.placementGrid.center[1],cancelSite.z,'Mouse preview Z changed');
+  if(mode.hasTouch){await page.setViewportSize({width:844,height:390});await page.waitForTimeout(150);await frames(page,2);await focus(page,[-16.5,0,-18]);
+    const candidates=await page.evaluate(()=>{const rect=document.getElementById('viewport').getBoundingClientRect(),result=[];
+      for(let y=rect.top+20;y<rect.bottom-10;y+=12)for(const fraction of [.5,.35,.65,.2,.8]){const x=rect.left+rect.width*fraction,n=document.elementFromPoint(x,y);
+        if(n?.tagName==='CANVAS'||n?.id==='viewport')result.push({x,y});}return result;});let heldLandscape=null;
+    for(const candidate of candidates){await touchEvent(page,'touchStart',candidate);await frames(page,1);const current=await ui(page);
+      if(current.touchPlacement.active&&current.touchPlacement.offsetPx>0&&current.touchPlacement.fit?.ok&&current.placementGrid?.valid){heldLandscape=current;break;}
+      await touchEvent(page,'touchCancel');await frames(page,1);}
+    assert.ok(heldLandscape,'No legal above-finger placement remained usable in the landscape canvas');
+    const landscapeTarget=heldLandscape.touchPlacement.targetScreen,landscapeRaw=heldLandscape.touchPlacement.rawScreen;
+    assert.ok(landscapeRaw[1]-landscapeTarget[1]>0&&landscapeRaw[1]-landscapeTarget[1]<=64.01,'Landscape placement is not above the finger or exceeds its clearance');
+    assert.equal(await page.evaluate(p=>{const n=document.elementFromPoint(...p);return n?.tagName==='CANVAS'||n?.id==='viewport';},landscapeTarget),true,'Landscape preview is hidden behind a HUD control');
+    guideGeometry(heldLandscape.placementGrid,'Landscape held placement');await page.screenshot({path:resolve(output,'mobile-landscape-above-finger-placement.png')});
+    await touchEvent(page,'touchCancel');await frames(page,1);assert.equal((await state(page)).buildings.length,cancelCount);
+    assert.equal((await ui(page)).touchPlacement.active,false,'Landscape cancellation retained a finger gesture');
+    await page.setViewportSize(mode.viewport);await page.waitForTimeout(150);await frames(page,2);await focus(page,[-16.5,0,-18]);}
+  await tap(page,'stCancelBuild');await frames(page,1);assert.equal((await ui(page)).placementGridResources.live,0);
+  pass('cancel_clears_finger_offset_mouse_is_unchanged_and_landscape_target_stays_visible');
 
   await tap(page,'stBuildFarm');await frames(page,1);const buildSite=await visibleSite(page,'st-farm');await worldTap(page,buildSite.x,buildSite.z);
   assert.equal((await ui(page)).build,null,'Successful construction left build mode active');assert.equal((await ui(page)).placementGrid,null,'Placed house retained its guide');
