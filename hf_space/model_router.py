@@ -325,6 +325,15 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     payload["selectedModelId"]=model_id
     online_result=None
     online_plan=classify_online_request(str(payload.get("prompt") or ""),history,intent,payload.get("clientLocation"))
+    # A server-classified personal-history lookup uses verified account evidence;
+    # generic "today" freshness must not send that private question to public search.
+    # Keep an explicitly requested web search, as well as independent structured
+    # time/weather requests, on their normal existing routes.
+    if payload.get("privateHistoryIntent") is True and online_plan.get("reason")=="freshness-intent":
+        online_plan={**online_plan,"requested":False,"kind":"none","reason":"private-history-intent","query":""}
+        yield {"type":"STATUS","phase":"PRIVATE_HISTORY_PRIORITY",
+               "reason":"Conversation recall takes priority over public freshness search.",
+               "categories":["PERSONAL_HISTORY","ROUTING","PRIVACY"]}
     if not online_plan.get("requested") and online_plan.get("reason")=="creative-music-transform":
         yield {
             "type":"STATUS","phase":"CREATIVE_MUSIC_STARTED",

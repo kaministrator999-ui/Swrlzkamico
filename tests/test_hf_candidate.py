@@ -179,6 +179,53 @@ class Candidate(unittest.TestCase):
   self.assertTrue(any(e.get("type")=="DELTA" for e in events),events)
   self.assertFalse(any(e.get("phase") in ("SEARCH_STARTED","WEATHER_FETCH_STARTED") for e in events),events)
 
+ def test_v220_private_history_over_generic_freshness(self):
+  import model_router
+  from personal_history_lookup import relevant
+  from online_tools import classify_online_request
+  request="What did we talk about today?"
+  self.assertTrue(relevant(request,[]))
+  self.assertEqual(classify_online_request(request,[],{},None)["reason"],"freshness-intent")
+  current_news=classify_online_request("What happened in today's technology news?",[],{},None)
+  self.assertTrue(current_news["requested"])
+  self.assertEqual(current_news["kind"],"search")
+  explicit=classify_online_request("Search online for the latest release notes",[],{},None)
+  self.assertEqual(explicit["reason"],"explicit-web-intent")
+  old_stream=model_router.stream_online_request
+  def no_public_private_recall(*args,**kwargs):
+   raise AssertionError("Private conversation request must not use public web")
+  def local_model(_payload):
+   yield {"type":"DELTA","text":"I can discuss retrieved history when available."}
+   yield {"type":"COMPLETED","phase":"COMPLETE"}
+  try:
+   model_router.stream_online_request=no_public_private_recall
+   events=list(dispatch("700m",{"requestId":"v220-private-test",
+         "prompt":request,"history":[],"privateHistoryIntent":True},
+         local_model,local_model,local_model,local_model))
+  finally:
+   model_router.stream_online_request=old_stream
+  self.assertTrue(any(e.get("phase")=="PRIVATE_HISTORY_PRIORITY" for e in events),events)
+  self.assertTrue(any(e.get("type")=="DELTA" for e in events),events)
+  self.assertFalse(any(e.get("phase")=="SEARCH_STARTED" for e in events),events)
+
+ def test_v220_station_derives_private_history_flag(self):
+  captured={}
+  def model(payload):
+   captured["privateHistoryIntent"]=payload.get("privateHistoryIntent")
+   yield {"type":"DELTA","text":"Evidence-based response."}
+   yield {"type":"COMPLETED","phase":"COMPLETE"}
+  set_generator(model,model,model,model)
+  with TestClient(station_app) as client:
+   body={"requestId":"v220-history-intent","threadId":"v220-private-thread",
+      "messageId":"v220-user-message","assistantMessageId":"v220-assistant-message",
+      "prompt":"What did we talk about today?","modelId":"stock"}
+   self.assertEqual(client.post("/api/lalm_station/send",json=body).status_code,202)
+   for _ in range(100):
+    snap=client.get("/api/lalm_station/sync").json()
+    if snap.get("activeGeneration") and snap["activeGeneration"].get("terminal"):break
+    time.sleep(.01)
+  self.assertIs(captured.get("privateHistoryIntent"),True,captured)
+
  def test_model_routes_fail_closed(self):
   self.assertEqual([r.model_id for r in routes()],["r39","stock","700m","coder","compare"])
   self.assertTrue(routes()[1].available)
