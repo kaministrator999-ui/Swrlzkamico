@@ -87,6 +87,17 @@ api.start();s=api.session();s.rules.headstart=0;const chooser=s.units.find(u=>u.
 assert.equal(chooser.order.id,'s1','An unreachable nearby sheep caused demolition while another sheep was reachable');
 pass('wolf_checks_all_visible_sheep_before_demolishing_an_unreachable_targets_maze');
 
+reset([[-18,0,-6]],[[-22,0,-6]]);currentProject.sheepTag.elevated=true;currentProject.sheepTag.wolvesUseRamps=true;
+actor('ramp','st-ramp',-18,-12);actor('deck','st-wall',-18,-18);api.start();
+assert.equal(api.command('move',{x:-18,z:-18,layer:'upper'}).ok,true);
+for(let i=0;i<140;i++){api.update(.05,i*.05);separated();}
+s=api.session();assert.equal(s.units[0].archiveOnUpper,true,'Raised fixture never reached the deck on foot');
+s.rules.headstart=0;const climber=s.units.find(u=>u.kind==='wolf');climber.botAt=0;api.bot(climber);
+assert.equal(climber.order.id,'s0','Wolf demolished a connected ramp rather than chasing its reachable raised sheep');
+for(let i=0;i<240&&!s.units[0].captured;i++){api.update(.05,i*.05);separated();}
+assert.equal(s.units[0].captured,true,'Wolf failed to climb the connected ramp and tag the prioritized sheep');
+currentProject.sheepTag.elevated=false;pass('wolf_prioritizes_reachable_raised_sheep_and_uses_connected_ramp');
+
 reset([[-18,0,-18],[-23,0,-23]]);api.start();s=api.session();const captive=s.units[1],rescuer=s.units[0];captive.captured=true;captive.spirit=new THREE.Group();captive.spirit.position.copy(rescuer.pos);scene.add(captive.spirit);
 assert.equal(api.rescue(captive,rescuer),true);separated();pass('rescue_chooses_free_landing_instead_of_overlapping_rescuer');
 

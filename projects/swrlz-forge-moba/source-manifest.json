@@ -80,6 +80,6 @@
     "patches/v10_3_sheep_touch_offset.py",
     "patches/v10_4_sheep_lanes.py"
   ],
-  "finalBytes": 1520482,
-  "finalSha256": "78a47865d2ee3749e6bbd42a4aedfa80d07f56db277208f8fc602a329d58c739"
+  "finalBytes": 1520699,
+  "finalSha256": "5b350298b0377fb7e68c3ea65a69af9a09bddee31b1f65eeab7d30c3189db5fa"
 }

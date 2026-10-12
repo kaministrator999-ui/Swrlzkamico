@@ -253,7 +253,10 @@ stBotWolf = function(unit) {
   const visible=s.units.filter(u=>u.kind==='sheep'&&!u.captured&&stPerceives(unit,u)).sort((a,b)=>a.pos.distanceToSquared(unit.pos)-b.pos.distanceToSquared(unit.pos));
   for(const sheep of visible) {
     const approach=stLanesSheepApproach(unit,sheep);
-    if(!approach)continue;
+    const raised=s.rules.elevated&&s.rules.wolvesUseRamps&&
+      (sheep.archiveOnUpper?stArchivePlanUpper(unit,sheep.pos.x,sheep.pos.z).ok:
+       unit.archiveOnUpper&&stArchivePlanExit(unit,sheep.pos).ok);
+    if(!approach&&!raised)continue;
     unit.botAt=s.elapsed+.5;unit.aiIntent='pursue a reachable sheep before buildings';
     if(unit.order?.action!=='attack'||unit.order.id!==sheep.id)stSetOrder(unit,{action:'attack',id:sheep.id});
     return;
