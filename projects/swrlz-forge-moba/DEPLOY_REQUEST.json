@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v10.2",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V10_2_SHEEP_TOUCH_PLACEMENT",
-  "reason": "Deploy Sheep Tag touch selection and ground placement from PR #120. A single building tap keeps sheep movement available; a deliberate double tap selects the building. Construction displays a snapped ground grid with the actual structure footprint, boundary and placement validity. The existing 92-piece Moonbell Meadow archive map, editable rules and native creator remain available. All six engine workflows and eleven remote desktop/phone browser suites passed on 381f21e41719021eb411661598327397bb9c0d3c. Matrix: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38271946081. The sealed package contains 62 governed patches, 23 assets and 1,487,394 HTML bytes, SHA-256 2c0d10636bda9cf6062e6ec49d8173a77a104fa208c841d6eda4d48409a9ba35. All 61 earlier patches, runtime modules, payloads and all 23 existing assets remain unchanged. This dedicated request is the final repository mutation for this engine release. Completion requires the exact dedicated deployment, normalized hosted HTML/SOURCE/all 23 assets, hosted audit and live desktop/phone playtests.",
-  "sourceCommit": "0144031ae3b35630de1eb969fd05f7c0efbade74",
-  "sourceIntegritySha256": "2c0d10636bda9cf6062e6ec49d8173a77a104fa208c841d6eda4d48409a9ba35"
+  "releaseVersion": "v10.3",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V10_3_SHEEP_TOUCH_OFFSET",
+  "reason": "Deploy Sheep Tag touch placement above the finger from PR #127. Touch construction projects the preview and ground footprint above the contact point so the player can see the exact snapped location and boundaries. Release commits that displayed location; desktop mouse placement remains direct. Double-tap building selection, the ground placement grid, the existing 92-piece Moonbell Meadow archive map, editable rules and native creator remain available. All six engine workflows and eleven remote desktop/phone browser suites passed on 11903850bb1f1f3639433e2e036b36ed57b61314. Matrix: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38310570023. The sealed package contains 63 governed patches, 23 assets and 1,501,714 HTML bytes, SHA-256 6b0f2f461ea2bb1595e0be2ef4dbc58a114ecb39bd8e1828ac745cd0b7ed2653. All 62 earlier patches, runtime modules, payloads and all 23 existing assets remain unchanged. This dedicated request is the final repository mutation for this engine release. Completion requires the exact dedicated deployment, normalized hosted HTML/SOURCE/all 23 assets, hosted audit and live desktop/phone playtests.",
+  "sourceCommit": "de24b04c95e13993313b0abd3496b6fb2602c9be",
+  "sourceIntegritySha256": "6b0f2f461ea2bb1595e0be2ef4dbc58a114ecb39bd8e1828ac745cd0b7ed2653"
 }
