@@ -362,6 +362,9 @@ def execute(gh, user, prompt):
             "@GitHub engine plan build a MOBA starter pack — plan real source, editor, tests and dedicated release\n"
             "@GitHub engine clone sheep-tag-meadow as arena-draft on feature/arena — propose a new draft native scene on an existing feature branch\n"
             "@GitHub engine review feature/arena — propose a draft PR for scoped engine project files\n"
+            "@GitHub engine pack help — two-file native scene plus provenance descriptor, atomic on a feature branch\n"
+            "@GitHub engine pack sheep-tag-meadow as arena-draft on feature/arena — approval-gated starter pack draft\n"
+            "@GitHub engine pack verify arena-draft on feature/arena — verify saved metadata, actor/layer schema and SHA-256\n"
             "Writes require actual GitHub scope/repo role, a second explicit @GitHub confirm CODE and source/ref rechecks. "
             "Draft scene copies are NOT new game engines or playable-mode registrations."
         )

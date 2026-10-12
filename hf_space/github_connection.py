@@ -20,6 +20,7 @@ import sys
 import github_workflows_v212
 import github_project_v213
 import forge_project_tools_v213
+import engine_starter_pack_v215
 from cryptography.fernet import Fernet, InvalidToken
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -634,7 +635,7 @@ def _post_github(token, path, body):
 def is_github_command(prompt):
     # Only anchored user commands. An ordinary discussion about GitHub
     # must not perform any repository operation.
-    if github_workflows_v212.is_command(prompt) or github_project_v213.is_command(prompt) or forge_project_tools_v213.is_command(prompt):
+    if github_workflows_v212.is_command(prompt) or github_project_v213.is_command(prompt) or forge_project_tools_v213.is_command(prompt) or engine_starter_pack_v215.is_command(prompt):
         return True
     return bool(re.match(
         r"^@github\s+(help(?:\s|$)|permissions|capabilities|branches(?:\s|$)|files(?:\s|$)|read file\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
@@ -672,6 +673,8 @@ def _github_command(user, prompt):
             return github_project_v213.confirm(sys.modules[__name__], c, rec, user, repo, action)
         if kind in ("engine-scene-draft", "engine-review-pr"):
             return forge_project_tools_v213.confirm(sys.modules[__name__], c, rec, user, repo, action)
+        if kind == "engine-atomic-pack":
+            return engine_starter_pack_v215.confirm(sys.modules[__name__], c, rec, user, repo, action)
         preflight = _effective_access(rec, repo, "issue-write" if kind == "issue" else "branch-write")
         if not preflight["allowed"]:
             return _permission_message(preflight)
@@ -692,6 +695,8 @@ def _github_command(user, prompt):
 
     if github_project_v213.is_command(prompt):
         return github_project_v213.execute(sys.modules[__name__], user, prompt)
+    if engine_starter_pack_v215.is_command(prompt):
+        return engine_starter_pack_v215.execute(sys.modules[__name__], user, prompt)
     if forge_project_tools_v213.is_command(prompt):
         return forge_project_tools_v213.execute(sys.modules[__name__], user, prompt)
     if github_workflows_v212.is_command(prompt):
@@ -1001,6 +1006,9 @@ def agent_events(data, model_generator=None):
         return
     if github_project_v213.is_command(prompt):
         yield from github_project_v213.events(sys.modules[__name__], data)
+        return
+    if engine_starter_pack_v215.is_command(prompt):
+        yield from engine_starter_pack_v215.events(sys.modules[__name__], data)
         return
     if forge_project_tools_v213.is_command(prompt) or forge_project_tools_v213.is_conversation(prompt):
         yield from forge_project_tools_v213.events(sys.modules[__name__], data)
