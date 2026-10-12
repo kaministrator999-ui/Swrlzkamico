@@ -408,7 +408,6 @@ def confirm(gh, c, rec, user, repo, pending):
     initial_sha = str(pending.get("baseSha") or pending.get("branchSha") or "")
     if head != initial_sha:
         return "Branch moved since proposal; no write or dispatch attempted. Create a fresh proposal."
-    name = _safe_workflow(pending.get("name"))
     if kind == "workflow-pr":
         base = _safe_ref(pending.get("base"))
         if base != permission["defaultBranch"]:
@@ -427,6 +426,7 @@ def confirm(gh, c, rec, user, repo, pending):
         if not isinstance(number,int) or not url.startswith("https://github.com/" + repo + "/pull/"):
             return "GitHub PR response unverified; inspect repository before retrying."
         return "GitHub confirmed DRAFT PR #" + str(number) + ": " + url + ". NOT merged; no workflow dispatched."
+    name = _safe_workflow(pending.get("name"))
     if kind == "workflow-file":
         template = pending.get("template")
         if template not in _TEMPLATES or _already_exists(gh, rec["token"], repo, _workflow_path(name), branch):
