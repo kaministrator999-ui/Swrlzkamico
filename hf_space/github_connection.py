@@ -149,7 +149,12 @@ def _save(c, user_id, item):
 
 def _api(token, path):
     # Caller supplies only fixed endpoints or separately validated repo names.
-    if not path.startswith("/") or "://" in path or ".." in path:
+    # GitHub compare routes use exactly BASE...HEAD; retain traversal rejection
+    # for every other endpoint and verify the entire comparison shape here.
+    compare_route = bool(re.fullmatch(
+        r"/repos/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/compare/"
+        r"[A-Za-z0-9%._-]+\\.{3}[A-Za-z0-9%._-]+\\?per_page=30", path))
+    if not path.startswith("/") or "://" in path or (".." in path and not compare_route):
         raise ValueError("Bad API path")
     try:
         r = requests.get(GITHUB_API + path, headers={
