@@ -708,6 +708,31 @@ def explorer_file(request: Request, path: str, branch: str = ""):
         _explorer_failure(exc)
 
 
+
+@router.get("/api/github/explorer/modified")
+def explorer_modified(request: Request, path: str, branch: str = ""):
+    _owner, record, repo, default = _explorer_owner(request)
+    try:
+        snapshot = explorer.pinned_tree(_api, record["token"], repo, branch or default)
+        clean = explorer.safe_path(path, allow_root=False)
+        if not any(x["path"] == clean for x in snapshot["items"]):
+            raise explorer.ExplorerError("Path not in verified repository tree")
+        route = ("/repos/" + repo + "/commits?sha=" + snapshot["sourceSha"] +
+                 "&path=" + quote(clean, safe="") + "&per_page=1&page=1")
+        chunk = _api(record["token"], route)
+        if not isinstance(chunk, list):
+            raise explorer.ExplorerError("Last-change commit lookup unavailable")
+        item = chunk[0] if chunk else {}
+        commit = item.get("commit") if isinstance(item, dict) else {}
+        person = (commit.get("committer") or commit.get("author") or {}) if isinstance(commit, dict) else {}
+        return {"repository": repo, "branch": snapshot["branch"], "sourceSha": snapshot["sourceSha"],
+                "path": clean, "lastChangedAt": str(person.get("date") or "")[:40],
+                "commitSha": str(item.get("sha") or "") if isinstance(item, dict) else "",
+                "dateType": "LAST_PATH_COMMIT_NOT_FILESYSTEM_MTIME"}
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
+
+
 @router.get("/api/github/explorer/history")
 def explorer_history(request: Request, path: str, branch: str = ""):
     _owner, record, repo, default = _explorer_owner(request)
