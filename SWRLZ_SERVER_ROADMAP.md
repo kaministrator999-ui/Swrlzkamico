@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-11 — v213 GitHub project-development workbench
+
+**User request:** expand §wyrlz beyond workflow setup into all practical GitHub project engineering tasks: repository orientation, branch/file/code/history discovery, PR review, CI evidence, issue triage, safe code edits and draft review changes. Reuse the existing local model only as a bounded read-tool planner and show actual lifecycle events, not raw chain-of-thought. Preserve owner-specific repo selection, true OAuth scopes, audit evidence, local-first efficiency, no unauthorized writes.
+
+**Baseline:** Protected published v212 + v211.3 source `feature/github-workflow-studio-v212-v2113-integrated@ccf4ee25cd206e10505cb432ea60b3af960c8ace`, current runtime `4a82b204675870b664351a1ba59a085247e8a5c9` (Repository Work 1.0.155, Server Runtime 2.3.367, Web Chat 1.5.105, LALM Engine 2.1.191, Google Account 1.0.15). Create isolated `feature/github-project-workbench-v213` based **exactly** on published v212. Do not rewrite original Start/bootstrap, native Chat history or accepted weights. Preserve original Space/rollback.
+
+**Implementation goals:** (1) bounded server-authenticated read-only repository map, code search, branch comparison, file commit history, selected PR/issue investigation and check-run failures, with precise source SHAs, truncation labels and documented fallbacks; (2) human-proposed exact replacement of one bounded existing source-file line on an existing nonprotected feature branch, with before/after review and one-use confirmation, repo/role recheck, branch and blob CAS, no binary/workflow/secret/production file paths and no auto merge; (3) draft PR creation for a scoped feature-branch change after review of its concrete diff. Every meaningful read/write emits Station STATUS phases and evidence and no hidden asynchronous claims. Never let inferred model text authorize a mutation.
+
+**Testing:** Include v210/v211/v212 and v211.3 regression suite, new mock-driven v213 rights, pagination/truncation, stale branch/file prevention, protected path checks, PR status provenance, natural model read routing, CI + HF offline + mobile exact-source passes. Guarded Hugging Face release only if no newer concurrent production source; signed-in owner acceptance separate.
+
+**Status:** IN PROGRESS.
+
 ## UPDATE FINISHED — 2026-10-11 — v212 GitHub Actions workbench workflow creation, safe manual triggering and reasoning/tool guidance
 
 **Outcome:** SOURCE + INTEGRATED ACCOUNT/HF OFFLINE/MOBILE CI **SUCCESS** / ONE GUARDED EXISTING HUGGING FACE SPACE PUBLICATION **SUCCESS** / REGISTERED MODULE VERSION ATOMIC READBACK **SUCCESS** / SIGNED-IN OWNER OAUTH/WORKFLOW ACTION ACCEPTANCE **PENDING**. User asked §wyrlz to understand and help author, manually trigger and inspect GitHub Actions workflows like ChatGPT's connected GitHub tools, without silently claiming permissions or effects.
