@@ -18,6 +18,7 @@ from urllib.parse import quote, urlencode, urlparse
 import requests
 import sys
 import github_workflows_v212
+import github_project_v213
 from cryptography.fernet import Fernet, InvalidToken
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -148,7 +149,12 @@ def _save(c, user_id, item):
 
 def _api(token, path):
     # Caller supplies only fixed endpoints or separately validated repo names.
-    if not path.startswith("/") or "://" in path or ".." in path:
+    # GitHub compare routes use exactly BASE...HEAD; retain traversal rejection
+    # for every other endpoint and verify the entire comparison shape here.
+    compare_route = bool(re.fullmatch(
+        r"/repos/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/compare/"
+        r"[A-Za-z0-9%._-]+\.{3}[A-Za-z0-9%._-]+\?per_page=30", path))
+    if not path.startswith("/") or "://" in path or (".." in path and not compare_route):
         raise ValueError("Bad API path")
     try:
         r = requests.get(GITHUB_API + path, headers={
@@ -627,7 +633,7 @@ def _post_github(token, path, body):
 def is_github_command(prompt):
     # Only anchored user commands. An ordinary discussion about GitHub
     # must not perform any repository operation.
-    if github_workflows_v212.is_command(prompt):
+    if github_workflows_v212.is_command(prompt) or github_project_v213.is_command(prompt):
         return True
     return bool(re.match(
         r"^@github\s+(help(?:\s|$)|permissions|capabilities|branches(?:\s|$)|files(?:\s|$)|read file\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
@@ -661,6 +667,8 @@ def _github_command(user, prompt):
         kind = action.get("kind")
         if kind in ("workflow-file", "workflow-dispatch", "workflow-pr", "workflow-retry"):
             return github_workflows_v212.confirm(sys.modules[__name__], c, rec, user, repo, action)
+        if kind in ("project-edit", "project-draft-pr"):
+            return github_project_v213.confirm(sys.modules[__name__], c, rec, user, repo, action)
         preflight = _effective_access(rec, repo, "issue-write" if kind == "issue" else "branch-write")
         if not preflight["allowed"]:
             return _permission_message(preflight)
@@ -679,6 +687,8 @@ def _github_command(user, prompt):
             return ("GitHub confirmed branch creation: " + repo + "/" + action["branch"]) if result.get("ref") else "GitHub did not confirm branch creation."
         return "Unknown GitHub proposal; nothing written."
 
+    if github_project_v213.is_command(prompt):
+        return github_project_v213.execute(sys.modules[__name__], user, prompt)
     if github_workflows_v212.is_command(prompt):
         return github_workflows_v212.execute(sys.modules[__name__], user, prompt)
 
@@ -701,7 +711,12 @@ def _github_command(user, prompt):
                 "@GitHub workflows, @GitHub workflow runs, @GitHub workflow inspect name.yml, "
                 "@GitHub run status ID, @GitHub workflow create python-check as check.yml on feature/my-checks, "
                 "@GitHub workflow dispatch name.yml on main, @GitHub workflow pr feature/checks into main, "
-                "@GitHub run retry RUN_ID. "
+                "@GitHub run retry RUN_ID, @GitHub project guide, @GitHub overview, @GitHub tree, "
+                "@GitHub code search TERM, @GitHub file history PATH, @GitHub compare main...feature/name, "
+                "@GitHub pr review NUMBER, @GitHub issue inspect NUMBER, @GitHub checks SHA, "
+                "@GitHub edit file PATH on feature/name replace OLD :: NEW, "
+                "@GitHub pr draft feature/name into main, @GitHub project brief, @GitHub dependencies, "
+                "@GitHub triage, @GitHub project readiness. "
                 "Workflow creation needs separate GitHub workflow OAuth scope; writes require a fresh preflight and explicit confirmation.")
     if lower in ("workflows", "workflow list", "workflow runs", "workflow guide") or lower.startswith(("workflow inspect ", "run status ")):
         return github_workflows_v212.execute(sys.modules[__name__], user, "@GitHub " + cmd)
@@ -808,7 +823,7 @@ def command_events(data):
 
 
 # v211 GitHub model-planned READ tools, with observable lifecycle and no raw thought exposure.
-_AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits", "workflows", "workflow runs", "workflow guide")
+_AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits", "workflows", "workflow runs", "workflow guide", "overview", "tree", "project guide", "project brief", "dependencies", "triage", "project readiness", "branch policy", "releases")
 
 
 def is_github_conversation(prompt):
@@ -829,6 +844,28 @@ def is_github_conversation(prompt):
 def _agent_allowed_tool(value, prompt):
     name = str(value or "").strip()
     if name in _AGENT_TOOLS:
+        return name
+    # Model-selected investigations are read-only and may use only literal IDs,
+    # refs, and paths explicitly present in the current user's request.
+    request = str(prompt or "")
+    match = re.fullmatch(r"(pr review|issue inspect) ([1-9][0-9]{0,9})", name)
+    if match and match[2] in request and re.search(
+        r"\b(?:pr|pull request)\b" if match[1] == "pr review"
+        else r"\bissue\b", request, re.I):
+        return name
+    match = re.fullmatch(r"checks ([a-f0-9]{40})", name)
+    if match and match[1] in request and re.search(r"\b(?:check|ci|status|workflow)\b", request, re.I):
+        return name
+    match = re.fullmatch(r"code search ([A-Za-z0-9_.-]{2,60})", name)
+    if match and match[1].casefold() in request.casefold() and re.search(
+        r"\b(?:code|search|find|symbol)\b", request, re.I):
+        return name
+    match = re.fullmatch(r"file history ([^\s?#%\\]+)", name)
+    if match and match[1] in request and re.search(r"\b(?:history|commits?|changes?)\b", request, re.I):
+        return name
+    match = re.fullmatch(r"compare ([A-Za-z0-9._/-]+)\.\.\.([A-Za-z0-9._/-]+)", name)
+    if match and all(ref in request for ref in (match[1],match[2])) and re.search(
+        r"\b(?:compare|diff|changes?|branches?)\b",request,re.I):
         return name
     if name.startswith("read file ") or name.startswith("files "):
         is_directory = name.startswith("files ")
@@ -856,6 +893,14 @@ def _agent_fallback_plan(prompt):
         (r"\b(workflows?|actions)\b", "workflows"),
         (r"\b(teach|learn|guide|how|setup|set up|templates?)\b", "workflow guide"),
         (r"\b(runs?|jobs?|failures?)\b", "workflow runs"),
+        (r"\b(repository|repo|project|architecture|overview)\b", "overview"),
+        (r"\b(onboard|documentation|contributing|project rules)\b", "project brief"),
+        (r"\b(dependencies|build files|packages|requirements)\b", "dependencies"),
+        (r"\b(triage|prioritize|backlog)\b", "triage"),
+        (r"\b(release readiness|release checks|release status)\b", "project readiness"),
+        (r"\b(branch protection|rulesets?|branch rules|branch policy)\b", "branch policy"),
+        (r"\b(releases|versions|tags)\b", "releases"),
+        (r"\b(structure|tree|layout|map)\b", "tree"),
         (r"\b(files?|folders?|directories|directory)\b", "files"),
     ):
         if re.search(pattern, q) and tool not in result:
@@ -871,7 +916,7 @@ def _agent_model_plan_events(prompt, generator):
     instruction = (
         "Choose 1 to 3 read-only GitHub checks relevant to this request. "
         "Return ONLY JSON, e.g. {\"tools\":[\"permissions\",\"pulls\"]}. "
-        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide. "
+        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide, overview, tree, project guide, project brief, dependencies, triage, project readiness, branch policy, releases. Specific read-only PR/issue IDs, checks SHAs, code search terms, file-history paths, or compare refs are allowed ONLY when the user explicitly named those identifiers. "
         "Specific files PATH or read file PATH permitted only when PATH is in the user request. "
         "Do not propose writes, URL fetches, authorization changes or other commands. "
         "No chain-of-thought. User request: " + str(prompt)[:900]
@@ -943,6 +988,9 @@ def agent_events(data, model_generator=None):
                "reason": "Checking requested GitHub write authorization and confirmation.",
                "categories": ["GITHUB", "TOOL", "PERMISSION"]}
         yield from command_events(data)
+        return
+    if github_project_v213.is_command(prompt):
+        yield from github_project_v213.events(sys.modules[__name__], data)
         return
     if github_workflows_v212.is_command(prompt) and not re.match(r"^@github\s+confirm\s+", prompt, re.I):
         yield from github_workflows_v212.events(sys.modules[__name__], data)
