@@ -152,8 +152,8 @@ try{
     await page.locator('#perfPreset').selectOption('medium',{force:true});
     await page.evaluate(()=>window.__sheepTestClock.freeze());await frames(page,2);
     const canonical=await saved(page);
-    assert.equal(canonical.version,10.3,'Wrong native project release');
-    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.3','Wrong sealed engine release');
+    assert.equal(canonical.version,10.4,'Wrong native project release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.4','Wrong sealed engine release');
     assert.equal(canonical.project.kind,'sheep-tag');
     assert.equal(canonical.project.sheepTag.duration,1200,'Classic starter survival timer changed');
     assert.equal(canonical.project.sheepTag.headstart,30,'Sheep need a real building head start');
@@ -326,7 +326,7 @@ try{
     // Three legal tags earn enough bounty to buy a hunting upgrade beside an
     // authored merchant. A fourth distant living sheep keeps the round open.
     // The native fixture places these spawns before Play; no gold is injected.
-    await loadFixture(page,canonical,farm,{sheep:[[-11.6,0,12],[-12.2,0,12],[-12,0,12.4],[20,0,-20]],
+    await loadFixture(page,canonical,farm,{sheep:[[-11.3,0,12],[-12.35,0,11.394],[-12.35,0,12.606],[20,0,-20]],
       wolf:[-12,0,12],shops:[[-15,0,12]],rules:{role:'wolf',headstart:0}});
     s=await until(page,s=>s.units.filter(u=>u.captured).length===3,'Hunting tag bounty',10);
     assert.equal(s.winner,null,'Merchant fixture ended before the living sheep could survive');
