@@ -9,6 +9,8 @@ from unittest import mock
 from fastapi import HTTPException
 sys.path.insert(0, str(Path(__file__).parent))
 import github_connection as gh
+# Historical mutation test cases use test-only capability mode.
+gh.GITHUB_CAPABILITY_STAGE = "legacy-test-only"
 import forge_project_tools_v213 as engine
 import engine_starter_pack_v215 as pack
 import github_workflows_v212 as wf
