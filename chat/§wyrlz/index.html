@@ -1376,14 +1376,14 @@
         const appendRepositoryExplorer=value=>{
           const raw=String(value||"").trim();
           const lines=raw.split("\n");
-          const title=lines[0]?.match(/^GitHub directory:\s*(\/[^\n]*)$/);
+          const title=lines[0]?.match(/^(?:##\s*)?GitHub directory:\s*(\/[^\n]*)$/);
           if(!title||lines.length>3000)return false;
           const entries=[];
           for(const line of lines.slice(1)){
             if(!line.trim())continue;
             const m=line.match(/^\s*[-*•]\s*(dir|file)\s+(.+?)\s*$/i);
-            if(!m)return false;
-            const name=m[2].trim();
+            if(!m){if(/^\(First \d+ entries\.\)$/.test(line.trim()))continue;return false;}
+            const name=m[2].trim().replace(/^\/+/, "");
             if(!name||name.length>260||/[<>]/.test(name))return false;
             entries.push({type:m[1].toLowerCase(),name});
           }
@@ -1397,10 +1397,10 @@
           header.append(heading,fullscreen);
           const folders=entries.filter(x=>x.type==="dir").length;
           const meta=document.createElement("div");meta.className="repo-explorer-meta";
-          meta.textContent=entries.length+" entries · "+folders+" folders · "+(entries.length-folders)+" files · current directory only";
+          meta.textContent=entries.length+" displayed entries · "+folders+" folders · "+(entries.length-folders)+" files · current directory only"+(raw.includes("(First 60 entries.)")?" · partial listing":"");
           const controls=document.createElement("div");controls.className="repo-explorer-controls";
           const sort=document.createElement("select");sort.setAttribute("aria-label","Sort repository entries");
-          [["name","Name"],["type","Type"],["name-desc","Name Z–A"]].forEach(([v,t])=>sort.add(new Option(t,v)));
+          [["name","Name A–Z"],["name-desc","Name Z–A"],["type","Type"]].forEach(([v,t])=>sort.add(new Option(t,v)));
           const filter=document.createElement("select");filter.setAttribute("aria-label","Filter repository entries");
           [["all","All items"],["file","Files"],["dir","Folders"]].forEach(([v,t])=>filter.add(new Option(t,v)));
           const toggle=document.createElement("button");toggle.type="button";toggle.textContent="Expand";
@@ -1416,7 +1416,16 @@
               const copy=document.createElement("button");copy.type="button";copy.textContent="Copy path";
               copy.setAttribute("aria-label","Copy "+item.name+" path");
               copy.onclick=async()=>{try{await navigator.clipboard.writeText((title[1]==="/"? "":title[1].replace(/^\/|\/$/g,"")+"/")+item.name);copy.textContent="Copied";}catch(_){copy.textContent="Unavailable";}};
-              row.append(name,copy);list.appendChild(row);
+              const open=document.createElement("button");open.type="button";open.textContent=item.type==="dir"?"Browse":"Read";
+              open.onclick=()=>{
+                const path=item.name;
+                const query=item.type==="dir"?"@GitHub files "+path:"@GitHub read file "+path;
+                const field=document.querySelector('textarea, [contenteditable="true"]');
+                if(field&&field.tagName==="TEXTAREA"){field.value=query;field.dispatchEvent(new Event("input",{bubbles:true}));field.focus();}
+                else if(field&&field.isContentEditable){field.textContent=query;field.dispatchEvent(new Event("input",{bubbles:true}));field.focus();}
+                else navigator.clipboard?.writeText(query).catch(()=>{});
+              };
+              row.append(name,open,copy);list.appendChild(row);
             }
             if(!rows.length){const empty=document.createElement("div");empty.className="repo-explorer-empty";empty.textContent="No matching entries";list.appendChild(empty);}
           };
