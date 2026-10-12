@@ -9,6 +9,9 @@ from fastapi import HTTPException
 sys.path.insert(0,str(Path(__file__).parent))
 import github_connection as gh
 import github_explorer_v223 as exp
+# The lightweight GitHub CI does not run full HF packaging first; Station
+# mounts this directory at import time, so create its empty test-only shell.
+(Path(__file__).parent/"chat/§wyrlz/assets").mkdir(parents=True,exist_ok=True)
 import station
 
 REPO="owner/demo"
