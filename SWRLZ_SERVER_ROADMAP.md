@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-12 — v220 private-history recall over generic freshness search
+
+**User intent:** Continue §wyrlz Chat reliability and tool-choice upgrades after v219. Prevent an owner-scoped request to recall our conversations (for example "What did we talk about today?") from producing an unrelated public online search merely because the request includes freshness words. Do not disable actual user-requested web search or other real-time capabilities.
+
+**Architecture:** `hf_space/personal_history_lookup.py:relevant` owns memory intent; `hf_space/station.py` owns authenticated account evidence and may provide a server-derived bounded private-history intent flag; `hf_space/model_router.py:dispatch` owns whether to start public research; `hf_space/online_tools.py` continues owning actual web intent. Reuse all existing sources, avoid duplicate stores/authorities, preserve §E engine independence. Primary focus clean-room Chat recall-vs-web tool reasoning. Focus Group Google-scoped history + Station/LALM + Online Research dispatch.
+
+**Source baseline:** Exact v219 Chat Space source `68eb54f76319515a9ed69a153b5bc0bd78b6f088`; review branch `fix/chat-private-history-freshness-v220-20261012` based exactly on source SHA. Runtime baseline Repository Work 1.0.160, Server Runtime 2.3.372, LALM Engine 2.1.195, Online Research 1.0.31, Web Chat 1.5.109, Google Account 1.0.15. Version numbers not reserved.
+
+**Acceptance:** Synthetic verified-account/reader fast path and model-dispatch tests for "What did we talk about today?", no public research on generic freshness; current news search and explicitly requested web keep routing. No auth bypass, leaked transcripts or fabricated history; source CI and governed publication if applicable; distinguish deployed from authenticated live acceptance.
+
+**Status:** STARTED / source and CI pending.
+
 ## UPDATE FINISHED — 2026-10-12 — v219 Chat social greeting vs public freshness intent
 
 **Outcome:** Targeted existing-owner source change, new deterministic regression, exact HF offline PR check **SUCCESS**, guarded same-Space production deployment **COMPLETED/SUCCESS**, atomic runtime version authority readback pending. Real signed-in 700M greeting/browser behavior remains **UNVERIFIED**, not known-good.
