@@ -1614,6 +1614,14 @@ async def send(request:Request):
             raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    # A user asking to recall conversation history is not requesting
+    # public freshness research merely because the prompt says "today".
+    # This flag is derived at the Station owner boundary, not by the model.
+    try:
+        private_history_intent=bool(personal_history_lookup.relevant(prompt,history))
+    except Exception:
+        private_history_intent=False
+    payload["privateHistoryIntent"]=private_history_intent
     # Account count questions are distinct from semantic memory search.
     # The existing authenticated archive index, not internet search, owns the answer.
     count_kind=private_account_facts_v208.classify(prompt)
@@ -1629,13 +1637,13 @@ async def send(request:Request):
     if google_owner.startswith("google:") and not count_kind and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt)):
         historical=""
         try:
-            if personal_history_lookup.relevant(prompt,history) and not chatgpt_account_memory.enabled(google_owner):
+            if private_history_intent and not chatgpt_account_memory.enabled(google_owner):
                 payload["verifiedPrivateAnswer"]=(
                     "Private conversation recall is disabled for this Google account. "
                     "To search previous §wyrlz and imported ChatGPT conversations, enable "
                     "'Let §wyrlz recall relevant details from my imported conversations' "
                     "in Settings → ChatGPT imports, then wait for Ready.")
-            elif personal_history_lookup.relevant(prompt,history):
+            elif private_history_intent:
                 historical = personal_history_lookup.lookup(
                     google_owner, prompt, client_timezone,
                     s["threads"], active_thread_id=tid, history=history)
@@ -1647,7 +1655,7 @@ async def send(request:Request):
                 else:
                     payload["archiveEvidence"] = historical
         except Exception:
-            if personal_history_lookup.relevant(prompt,history):
+            if private_history_intent:
                 payload["verifiedPrivateAnswer"]=(
                     "Private conversation search encountered a temporary storage or indexing error. "
                     "I cannot verify a result right now; retry shortly or check index status "
