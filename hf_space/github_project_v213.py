@@ -21,7 +21,7 @@ _TERM = re.compile(r"^[A-Za-z0-9_.-]{2,60}$")
 _FEATURE = re.compile(r"^(?:feature|fix|chore)/[A-Za-z0-9][A-Za-z0-9._/-]{0,85}$")
 _SOURCE_FILE = re.compile(r"^[^\s?#%\\]+$")
 _PROTECTED = re.compile(
-    r"(?:^\.github/|^\.deploy/|^versions/|^\.env|^VERSION\.txt$|"
+    r"(?:^\.github/|^\.deploy/|^versions/|(?:^|/)\.env(?:\.|$)|^VERSION\.txt$|"
     r"(?:^|/)(?:secrets?|tokens?|credentials?|keys?|certificates?|\.git)(?:/|\.|$)|"
     r"(?:^|/)(?:SWRLZ_SERVER_ROADMAP|SWRLZ_VERSION_MODULE_EVOLUTION)\.md$)", re.I
 )
